@@ -267,9 +267,54 @@
                         Settings.NodeJsBaseTimeUsedInMilliseconds,
                         Settings.NodeJsBaseMemoryUsedInBytes);
                     break;
+                case ExecutionStrategyType.NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMocha:
+                    executionStrategy = new NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategy(
+                        Settings.NodeJsExecutablePath,
+                        Settings.MochaModulePath,
+                        Settings.ChaiModulePath,
+                        Settings.JsDomModulePath,
+                        Settings.JQueryModulePath,
+                        Settings.HandlebarsModulePath,
+                        Settings.SinonModulePath,
+                        Settings.SinonChaiModulePath,
+                        Settings.UnderscoreModulePath,
+                        Settings.BrowserifyModulePath,
+                        Settings.BabelifyModulePath,
+                        Settings.Es2015ImportPluginPath,
+                        Settings.NodeJsBaseTimeUsedInMilliseconds,
+                        Settings.NodeJsBaseMemoryUsedInBytes);
+                    break;
                 case ExecutionStrategyType.IoJsPreprocessExecuteAndRunJsDomUnitTests:
                     executionStrategy = new IoJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy(
-                        Settings.IoJsExecutablePath,
+                        Settings.NodeJsExecutablePath,
+                        Settings.MochaModulePath,
+                        Settings.ChaiModulePath,
+                        Settings.JsDomModulePath,
+                        Settings.JQueryModulePath,
+                        Settings.HandlebarsModulePath,
+                        Settings.SinonModulePath,
+                        Settings.SinonChaiModulePath,
+                        Settings.UnderscoreModulePath,
+                        Settings.NodeJsBaseTimeUsedInMilliseconds,
+                        Settings.NodeJsBaseMemoryUsedInBytes);
+                    break;
+                case ExecutionStrategyType.NodeJsPreprocessExecuteAndRunUnitTestsWithStubbedRequestsUsingSinonAndMochaExecutionStrategy:
+                    executionStrategy = new NodeJsPreprocessExecuteAndRunUnitTestsWithStubbedRequestsUsingSinonAndMochaExecutionStrategy(
+                        Settings.NodeJsExecutablePath,
+                        Settings.MochaModulePath,
+                        Settings.ChaiModulePath,
+                        Settings.JsDomModulePath,
+                        Settings.JQueryModulePath,
+                        Settings.HandlebarsModulePath,
+                        Settings.SinonJsDomModulePath,
+                        Settings.SinonChaiModulePath,
+                        Settings.UnderscoreModulePath,
+                        Settings.NodeJsBaseTimeUsedInMilliseconds,
+                        Settings.NodeJsBaseMemoryUsedInBytes);
+                    break;
+                case ExecutionStrategyType.NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy:
+                    executionStrategy = new NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy(
+                        Settings.NodeJsExecutablePath,
                         Settings.MochaModulePath,
                         Settings.ChaiModulePath,
                         Settings.JsDomModulePath,
