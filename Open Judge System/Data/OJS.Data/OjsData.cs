@@ -4,7 +4,7 @@
     using System.Collections.Generic;
 
     using Microsoft.AspNet.Identity.EntityFramework;
-
+    using MongoDB.Driver;
     using OJS.Data.Contracts;
     using OJS.Data.Models;
     using OJS.Data.Repositories;
@@ -14,17 +14,19 @@
     public class OjsData : IOjsData
     {
         private readonly IOjsDbContext context;
+        private readonly IMongoDatabase mongoDatabase;
 
         private readonly Dictionary<Type, object> repositories = new Dictionary<Type, object>();
 
         public OjsData()
-            : this(new OjsDbContext())
+            : this(new OjsDbContext(), new MongoClient())
         {
         }
 
-        public OjsData(IOjsDbContext context)
+        public OjsData(IOjsDbContext context, IMongoClient mongoClient)
         {
             this.context = context;
+            this.mongoDatabase = mongoClient.GetDatabase("OJS");
         }
 
         public IContestsRepository Contests => (ContestsRepository)this.GetRepository<Contest>();

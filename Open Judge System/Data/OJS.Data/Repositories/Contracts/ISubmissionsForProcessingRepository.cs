@@ -3,7 +3,7 @@
     using OJS.Data.Contracts;
     using OJS.Data.Models;
 
-    public interface ISubmissionsForProcessingRepository : IRepository<SubmissionForProcessing>
+    public interface ISubmissionsForProcessingRepository
     {
         void AddOrUpdate(int submissionId);
 

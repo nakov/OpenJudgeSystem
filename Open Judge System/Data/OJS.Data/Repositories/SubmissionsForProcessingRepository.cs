@@ -1,22 +1,24 @@
 ﻿namespace OJS.Data.Repositories
 {
     using System.Linq;
+    using MongoDB.Driver;
 
     using OJS.Data.Models;
     using OJS.Data.Repositories.Base;
     using OJS.Data.Repositories.Contracts;
 
-    public class SubmissionsForProcessingRepository : GenericRepository<SubmissionForProcessing>, ISubmissionsForProcessingRepository
+    public class SubmissionsForProcessingRepository : GenericMongoRepository<SubmissionForProcessing>, ISubmissionsForProcessingRepository
     {
-        public SubmissionsForProcessingRepository(IOjsDbContext context) 
-            : base(context)
+        public SubmissionsForProcessingRepository(IMongoDatabase mongoDatabase) 
+            : base(mongoDatabase)
         {
         }
 
         public void AddOrUpdate(int submissionId)
         {
-            var submissionForProcessing = this.Context.SubmissionsForProcessing
-                .FirstOrDefault(sfp => sfp.SubmissionId == submissionId);
+            var submissionsForProcessing = this.Database.GetCollection<SubmissionForProcessing>("submissionsForProcessing");
+            var filter = new FilterDefinitionBuilder<SubmissionForProcessing>().Where(s => s.SubmissionId == submissionId);
+            var submissionForProcessing = submissionsForProcessing.Find(filter).ToList().FirstOrDefault();
 
             if (submissionForProcessing != null)
             {
@@ -27,9 +29,11 @@
             {
                 submissionForProcessing = new SubmissionForProcessing()
                 {
-                    SubmissionId = submissionId
+                    SubmissionId = submissionId,
+                    Processed = false,
+                    Processing = false
                 };
-                this.Context.SubmissionsForProcessing.Add(submissionForProcessing);
+                submissionsForProcessing.InsertOne(submissionForProcessing);
             }
         }
 
@@ -43,5 +47,7 @@
                 this.Delete(submissionForProcessing.Id);
             }
         }
+
+  
     }
 }
