@@ -1,13 +1,15 @@
 ﻿namespace OJS.Data.Repositories
 {
     using System.Linq;
+    using MongoDB.Bson;
     using MongoDB.Driver;
 
     using OJS.Data.Models;
     using OJS.Data.Repositories.Base;
     using OJS.Data.Repositories.Contracts;
 
-    public class SubmissionsForProcessingRepository : GenericMongoRepository<SubmissionForProcessing>, ISubmissionsForProcessingRepository
+    public class SubmissionsForProcessingRepository : 
+        GenericMongoRepository<SubmissionForProcessing, ObjectId>, ISubmissionsForProcessingRepository
     {
         public SubmissionsForProcessingRepository(IMongoDatabase mongoDatabase) 
             : base(mongoDatabase)

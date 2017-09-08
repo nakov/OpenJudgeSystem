@@ -117,6 +117,8 @@
     <Compile Include="Migrations\DefaultMigrationConfiguration.cs" />
     <Compile Include="Providers\GlimpseConnectionEfSqlBulkInsertProvider.cs" />
     <Compile Include="Providers\Registries\EfBulkInsertGlimpseProviderRegistry.cs" />
+    <Compile Include="Repositories\Base\IMongoRepository.cs" />
+    <Compile Include="Repositories\Base\GenericMongoRepository.cs" />
     <Compile Include="Repositories\ContestsRepository.cs" />
     <Compile Include="Repositories\Base\DeletableEntityRepository.cs" />
     <Compile Include="Repositories\Base\GenericRepository.cs" />

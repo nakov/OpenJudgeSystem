@@ -1,6 +1,6 @@
 ﻿namespace OJS.Data.Contracts
 {
-    public interface IEntity<TIdentifier>
+    public interface IMongoEntity<TIdentifier>
     {
         TIdentifier Id { get; set; }
     }

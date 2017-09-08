@@ -1,12 +1,13 @@
 ﻿namespace OJS.Data.Repositories.Base
 {
     using System.Collections.Generic;
-    using Data.Contracts;
-    using MongoDB.Bson;
+
     using MongoDB.Driver;
 
+    using OJS.Data.Contracts;
+
     public interface IMongoRepository<TEntity, TIdentifier>
-        where TEntity : class, IEntity<TIdentifier>
+        where TEntity : class, IMongoEntity<TIdentifier>
     {
         IMongoDatabase Database { get; set; }
 
