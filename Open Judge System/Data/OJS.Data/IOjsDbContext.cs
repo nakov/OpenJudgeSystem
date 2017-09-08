@@ -33,8 +33,6 @@
         IDbSet<Test> Tests { get; set; }
 
         IDbSet<Submission> Submissions { get; set; }
-
-        IDbSet<SubmissionForProcessing> SubmissionsForProcessing { get; set; } 
             
         IDbSet<SubmissionType> SubmissionTypes { get; set; }
 

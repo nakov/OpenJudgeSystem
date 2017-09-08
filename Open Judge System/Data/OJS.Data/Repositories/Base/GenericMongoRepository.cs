@@ -26,7 +26,7 @@
 
         public IMongoDatabase Database { get; set; }
 
-        public IMongoQueryable<TMongoEntity> GetAll()
+        public IMongoQueryable<TMongoEntity> All()
         {
             return this.Database.GetCollection<TMongoEntity>(typeof(TMongoEntity).Name).AsQueryable();
         }

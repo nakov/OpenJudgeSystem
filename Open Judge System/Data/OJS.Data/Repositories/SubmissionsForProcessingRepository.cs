@@ -18,9 +18,8 @@
 
         public void AddOrUpdate(int submissionId)
         {
-            var submissionsForProcessing = this.Database.GetCollection<SubmissionForProcessing>("submissionsForProcessing");
-            var filter = new FilterDefinitionBuilder<SubmissionForProcessing>().Where(s => s.SubmissionId == submissionId);
-            var submissionForProcessing = submissionsForProcessing.Find(filter).ToList().FirstOrDefault();
+
+            var submissionForProcessing = this.All().FirstOrDefault(s => s.SubmissionId == submissionId);
 
             if (submissionForProcessing != null)
             {
@@ -35,19 +34,18 @@
                     Processed = false,
                     Processing = false
                 };
-                submissionsForProcessing.InsertOne(submissionForProcessing);
+                this.Add(submissionForProcessing);
             }
         }
 
         public void Remove(int submissionId)
         {
-            //var submissionForProcessing = this.Context.SubmissionsForProcessing
-            //    .FirstOrDefault(sfp => sfp.SubmissionId == submissionId);
+            var submissionForProcessing = this.All().FirstOrDefault(s => s.SubmissionId == submissionId);
 
-            //if (submissionForProcessing != null)
-            //{
-            //    this.Delete(submissionForProcessing.Id);
-            //}
+            if (submissionForProcessing != null)
+            {
+                this.Delete(submissionForProcessing.Id);
+            }
         }
 
   

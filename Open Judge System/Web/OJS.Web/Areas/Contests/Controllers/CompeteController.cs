@@ -15,7 +15,6 @@
     using MissingFeatures;
 
     using OJS.Common;
-    using OJS.Common.Extensions;
     using OJS.Common.Models;
     using OJS.Data;
     using OJS.Data.Models;

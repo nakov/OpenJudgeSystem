@@ -12,7 +12,7 @@
     {
         IMongoDatabase Database { get; set; }
 
-        IMongoQueryable<TMongoEntity> GetAll();
+        IMongoQueryable<TMongoEntity> All();
 
         TMongoEntity GetById(TIdentifier id);
 

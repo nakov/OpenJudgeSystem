@@ -4,7 +4,10 @@
     using System.Collections.Generic;
 
     using Microsoft.AspNet.Identity.EntityFramework;
+
+    using MongoDB.Bson;
     using MongoDB.Driver;
+
     using OJS.Data.Contracts;
     using OJS.Data.Models;
     using OJS.Data.Repositories;
@@ -51,7 +54,7 @@
         public ISubmissionsRepository Submissions => (SubmissionsRepository)this.GetRepository<Submission>();
 
         public ISubmissionsForProcessingRepository SubmissionsForProcessing => (SubmissionsForProcessingRepository)
-            this.GetRepository<SubmissionForProcessing>();
+            this.GetMongoRepository<SubmissionForProcessing,ObjectId>();
 
         public IRepository<SubmissionType> SubmissionTypes => this.GetRepository<SubmissionType>();
 
@@ -157,6 +160,24 @@
             }
 
             return (IRepository<T>)this.repositories[typeof(T)];
+        }
+
+        private IMongoRepository<TMongoEntity, TIdentifier> GetMongoRepository<TMongoEntity, TIdentifier>()
+            where TMongoEntity : class, IMongoEntity<TIdentifier>
+        {
+            if (!this.repositories.ContainsKey(typeof(TMongoEntity)))
+            {
+                var type = typeof(GenericMongoRepository<TMongoEntity, TIdentifier>);
+
+                if (typeof(TMongoEntity).IsAssignableFrom(typeof(SubmissionForProcessing)))
+                {
+                    type = typeof(SubmissionsForProcessingRepository);
+                }
+
+                this.repositories.Add(typeof(TMongoEntity), Activator.CreateInstance(type, this.mongoDatabase));
+            }
+
+            return (IMongoRepository<TMongoEntity, TIdentifier>) this.repositories[typeof(TMongoEntity)];
         }
 
         private IDeletableEntityRepository<T> GetDeletableEntityRepository<T>()
