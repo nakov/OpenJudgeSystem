@@ -41,13 +41,13 @@
 
         public void Remove(int submissionId)
         {
-            var submissionForProcessing = this.Context.SubmissionsForProcessing
-                .FirstOrDefault(sfp => sfp.SubmissionId == submissionId);
+            //var submissionForProcessing = this.Context.SubmissionsForProcessing
+            //    .FirstOrDefault(sfp => sfp.SubmissionId == submissionId);
 
-            if (submissionForProcessing != null)
-            {
-                this.Delete(submissionForProcessing.Id);
-            }
+            //if (submissionForProcessing != null)
+            //{
+            //    this.Delete(submissionForProcessing.Id);
+            //}
         }
 
   
