@@ -82,7 +82,8 @@
         {
             var collection = this.Database.GetCollection<TMongoEntity>(typeof(TMongoEntity).Name);
 
-            collection.DeleteOne(x => x.Id.Equals(entity.Id));
+            var idFilter = Builders<TMongoEntity>.Filter.Eq("_id", entity.Id);
+            collection.DeleteOne(idFilter);
         }
 
         public void Delete(Expression<Func<TMongoEntity, bool>> filterExpression)

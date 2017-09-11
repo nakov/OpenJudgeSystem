@@ -1,6 +1,7 @@
 ﻿namespace OJS.Data.Repositories
 {
     using System.Linq;
+
     using MongoDB.Bson;
     using MongoDB.Driver;
 
@@ -18,13 +19,13 @@
 
         public void AddOrUpdate(int submissionId)
         {
-
             var submissionForProcessing = this.All().FirstOrDefault(s => s.SubmissionId == submissionId);
 
             if (submissionForProcessing != null)
             {
                 submissionForProcessing.Processing = false;
                 submissionForProcessing.Processed = false;
+                this.Update(submissionForProcessing);
             }
             else
             {
@@ -47,7 +48,5 @@
                 this.Delete(submissionForProcessing.Id);
             }
         }
-
-  
     }
 }

@@ -81,7 +81,7 @@
                             if (submission != null && submissionForProcessing != null && !submission.Processing)
                             {
                                 submissionForProcessing.Processing = true;
-                                data.SaveChanges();
+                                data.SubmissionsForProcessing.Update(submissionForProcessing);
                             }
                         }
                     }
@@ -122,7 +122,9 @@
                 }
 
                 submission.Processed = true;
-                data.SubmissionsForProcessing.Delete(submissionForProcessing);
+                submissionForProcessing.Processed = true;
+                submissionForProcessing.Processing = false;
+                data.SubmissionsForProcessing.Update(submissionForProcessing);
 
                 try
                 {
@@ -496,4 +498,6 @@
         }
     }
 }
+
+
 
