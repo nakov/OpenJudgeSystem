@@ -12,6 +12,9 @@
     public class GenericMongoRepository<TMongoEntity, TIdentifier> : IMongoRepository<TMongoEntity, TIdentifier>
         where TMongoEntity : class, IMongoEntity<TIdentifier>
     {
+
+        private readonly IMongoDatabase database;
+
         public GenericMongoRepository(IMongoDatabase mongoDatabase)
         {
             if (mongoDatabase == null)
@@ -21,38 +24,38 @@
                     nameof(mongoDatabase));
             }
 
-            this.Database = mongoDatabase;
+            this.database = mongoDatabase;
         }
 
-        public IMongoDatabase Database { get; set; }
+        public IMongoDatabase Database => this.database;
 
         public IMongoQueryable<TMongoEntity> All()
         {
-            return this.Database.GetCollection<TMongoEntity>(typeof(TMongoEntity).Name).AsQueryable();
+            return this.database.GetCollection<TMongoEntity>(typeof(TMongoEntity).Name).AsQueryable();
         }
 
         public TMongoEntity GetById(TIdentifier id)
         {
-            return this.Database.GetCollection<TMongoEntity>(typeof(TMongoEntity).Name)
+            return this.database.GetCollection<TMongoEntity>(typeof(TMongoEntity).Name)
                 .Find(x => x.Id.Equals(id))
                 .FirstOrDefault();
         }
 
         public void Add(TMongoEntity entity)
         {
-            var collection = this.Database.GetCollection<TMongoEntity>(typeof(TMongoEntity).Name);
+            var collection = this.database.GetCollection<TMongoEntity>(typeof(TMongoEntity).Name);
             collection.InsertOne(entity);
         }
 
         public void Add(IEnumerable<TMongoEntity> entities)
         {
-            var collection = this.Database.GetCollection<TMongoEntity>(typeof(TMongoEntity).Name);
+            var collection = this.database.GetCollection<TMongoEntity>(typeof(TMongoEntity).Name);
             collection.InsertMany(entities);         
         }
 
         public void Update(TMongoEntity entity)
         {
-            var collection = this.Database.GetCollection<TMongoEntity>(typeof(TMongoEntity).Name);
+            var collection = this.database.GetCollection<TMongoEntity>(typeof(TMongoEntity).Name);
             collection.ReplaceOne(e => e.Id.Equals(entity.Id), entity, new UpdateOptions
             {
                 IsUpsert = true
@@ -63,7 +66,7 @@
             Expression<Func<TMongoEntity, bool>> filterExpression, 
             UpdateDefinition<TMongoEntity> updateExpression)
         {
-            this.Database
+            this.database
                 .GetCollection<TMongoEntity>(typeof(TMongoEntity).Name)
                 .UpdateMany(filterExpression, updateExpression, new UpdateOptions
                 {
@@ -73,14 +76,14 @@
 
         public void Delete(TIdentifier id)
         {
-            var collection = this.Database.GetCollection<TMongoEntity>(typeof(TMongoEntity).Name);
+            var collection = this.database.GetCollection<TMongoEntity>(typeof(TMongoEntity).Name);
 
             collection.DeleteOne(x => x.Id.Equals(id));
         }
 
         public void Delete(TMongoEntity entity)
         {
-            var collection = this.Database.GetCollection<TMongoEntity>(typeof(TMongoEntity).Name);
+            var collection = this.database.GetCollection<TMongoEntity>(typeof(TMongoEntity).Name);
 
             var idFilter = Builders<TMongoEntity>.Filter.Eq("_id", entity.Id);
             collection.DeleteOne(idFilter);
@@ -88,7 +91,7 @@
 
         public void Delete(Expression<Func<TMongoEntity, bool>> filterExpression)
         {
-            var collection = this.Database.GetCollection<TMongoEntity>(typeof(TMongoEntity).Name);
+            var collection = this.database.GetCollection<TMongoEntity>(typeof(TMongoEntity).Name);
 
             collection.DeleteMany(filterExpression);
         }

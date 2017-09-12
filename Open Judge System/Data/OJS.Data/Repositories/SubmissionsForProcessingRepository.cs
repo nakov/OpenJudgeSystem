@@ -9,10 +9,10 @@
     using OJS.Data.Repositories.Base;
     using OJS.Data.Repositories.Contracts;
 
-    public class SubmissionsForProcessingRepository : 
+    public class SubmissionsForProcessingRepository :
         GenericMongoRepository<SubmissionForProcessing, ObjectId>, ISubmissionsForProcessingRepository
     {
-        public SubmissionsForProcessingRepository(IMongoDatabase mongoDatabase) 
+        public SubmissionsForProcessingRepository(IMongoDatabase mongoDatabase)
             : base(mongoDatabase)
         {
         }
@@ -47,6 +47,11 @@
             {
                 this.Delete(submissionForProcessing.Id);
             }
+        }
+
+        public void DeleteAllProcessed()
+        {
+            this.Delete(x => x.Processed);
         }
     }
 }

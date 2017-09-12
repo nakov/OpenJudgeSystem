@@ -10,7 +10,7 @@
     public interface IMongoRepository<TMongoEntity, TIdentifier>
         where TMongoEntity : class, IMongoEntity<TIdentifier>
     {
-        IMongoDatabase Database { get; set; }
+        IMongoDatabase Database { get; }
 
         IMongoQueryable<TMongoEntity> All();
 

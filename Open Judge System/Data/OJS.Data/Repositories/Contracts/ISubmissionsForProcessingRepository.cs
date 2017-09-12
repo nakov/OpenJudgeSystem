@@ -10,5 +10,7 @@
         void AddOrUpdate(int submissionId);
 
         void Remove(int submissionId);
+
+        void DeleteAllProcessed();
     }
 }

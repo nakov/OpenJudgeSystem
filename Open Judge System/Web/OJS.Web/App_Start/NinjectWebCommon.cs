@@ -6,6 +6,7 @@ namespace OJS.Web
     using System;
     using System.Web;
     using Microsoft.Web.Infrastructure.DynamicModuleHelper;
+    using MongoDB.Driver;
     using Ninject;
     using Ninject.Modules;
     using Ninject.Web.Common;
@@ -76,6 +77,7 @@ namespace OJS.Web
             kernel.Bind<ISimilarityFinder>().To<SimilarityFinder>().InRequestScope();
             kernel.Bind<IPlagiarismDetectorFactory>().To<PlagiarismDetectorFactory>().InRequestScope();
             kernel.Bind<IBackgroundJobService>().To<HangfireBackgroundJobService>().InRequestScope();
+            kernel.Bind<IMongoDatabase>().ToConstant(new MongoClient().GetDatabase("OJS"));
         }
     }
 }
