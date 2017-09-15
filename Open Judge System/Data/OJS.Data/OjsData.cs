@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Configuration;
 
     using Microsoft.AspNet.Identity.EntityFramework;
 
@@ -22,14 +23,16 @@
         private readonly Dictionary<Type, object> repositories = new Dictionary<Type, object>();
 
         public OjsData()
-            : this(new OjsDbContext(), new MongoClient())
-        {
+            : this(
+                  new OjsDbContext(), 
+                  new MongoClient(ConfigurationManager.ConnectionStrings["DefaultMongoConnection"].ConnectionString))
+        {           
         }
 
         public OjsData(IOjsDbContext context, IMongoClient mongoClient)
         {
             this.context = context;
-            this.mongoDatabase = mongoClient.GetDatabase("OJS");
+            this.mongoDatabase = mongoClient.GetDatabase(ConfigurationManager.AppSettings.Get("MongoDbName"));
         }
 
         public IContestsRepository Contests => (ContestsRepository)this.GetRepository<Contest>();
