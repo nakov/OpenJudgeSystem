@@ -29,7 +29,7 @@
 
     public class ParticipantsController : LecturerBaseGridController
     {
-        private IBackgroundJobService backgroundJobService;
+        private readonly IBackgroundJobService backgroundJobService;
 
         public ParticipantsController(IOjsData data, IBackgroundJobService service)
             : base(data)

@@ -3,8 +3,10 @@
     using System;
     using System.Collections.Generic;
     using System.Linq.Expressions;
+
     using MongoDB.Driver;
     using MongoDB.Driver.Linq;
+
     using OJS.Data.Contracts;
 
     public interface IMongoRepository<TMongoEntity, TIdentifier>
