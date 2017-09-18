@@ -7,13 +7,13 @@ namespace OJS.Data.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class IdentityMigration : IMigrationMetadata
+    public sealed partial class SubmissionsForProcessingDropTable : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(IdentityMigration));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(SubmissionsForProcessingDropTable));
         
         string IMigrationMetadata.Id
         {
-            get { return "201708301414567_IdentityMigration"; }
+            get { return "201709181417327_SubmissionsForProcessingDropTable"; }
         }
         
         string IMigrationMetadata.Source
