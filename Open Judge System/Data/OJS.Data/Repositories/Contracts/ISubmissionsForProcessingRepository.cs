@@ -1,12 +1,16 @@
 ﻿namespace OJS.Data.Repositories.Contracts
 {
-    using OJS.Data.Contracts;
-    using OJS.Data.Models;
+    using MongoDB.Bson;
 
-    public interface ISubmissionsForProcessingRepository : IRepository<SubmissionForProcessing>
+    using OJS.Data.Models;
+    using OJS.Data.Repositories.Base;
+
+    public interface ISubmissionsForProcessingRepository : IMongoRepository<SubmissionForProcessing, ObjectId>
     {
         void AddOrUpdate(int submissionId);
 
         void Remove(int submissionId);
+
+        void DeleteAllProcessed();
     }
 }

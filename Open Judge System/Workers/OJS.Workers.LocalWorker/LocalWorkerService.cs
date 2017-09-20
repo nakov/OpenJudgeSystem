@@ -97,9 +97,8 @@
                         foreach (var unprocessedSubmission in allProcessingSubmissions)
                         {
                             unprocessedSubmission.Processing = false;
+                            data.SubmissionsForProcessing.Update(unprocessedSubmission);
                         }
-
-                        data.SaveChanges();
                     }
                     catch (Exception e)
                     {

@@ -1,11 +1,12 @@
 ﻿namespace OJS.Data.Models
 {
-    using System.ComponentModel.DataAnnotations.Schema;
+    using MongoDB.Bson;
 
-    [Table("SubmissionsForProcessing")]
-    public class SubmissionForProcessing
+    using OJS.Data.Contracts;
+
+    public class SubmissionForProcessing : IMongoEntity<ObjectId>
     {
-        public int Id { get; set; }
+        public ObjectId Id { get; set; }
 
         public int SubmissionId { get; set; }
 

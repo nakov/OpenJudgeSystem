@@ -15,7 +15,6 @@
     using MissingFeatures;
 
     using OJS.Common;
-    using OJS.Common.Extensions;
     using OJS.Common.Models;
     using OJS.Data;
     using OJS.Data.Models;
@@ -345,7 +344,6 @@
                 SubmissionId = newSubmission.Id
             };
             this.Data.SubmissionsForProcessing.Add(submissionForProcessing);
-            this.Data.SaveChanges();
 
             return this.Json(participantSubmission.ProblemId);
         }
@@ -430,7 +428,6 @@
                 SubmissionId = newSubmission.Id
             };
             this.Data.SubmissionsForProcessing.Add(submissionForProcessing);
-            this.Data.SaveChanges();
 
             this.TempData.Add(GlobalConstants.InfoMessage, Resource.ContestsGeneral.Solution_uploaded);
             return this.Redirect(string.Format("/Contests/{2}/Index/{0}#{1}", problem.ContestId, returnProblem ?? 0, official ? CompeteActionName : PracticeActionName));
