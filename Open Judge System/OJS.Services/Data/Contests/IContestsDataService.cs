@@ -9,6 +9,8 @@
     {
         Contest GetById(int contestId);
 
+        OJS.Data.Models.Contest GetByIdWithProblems(int contestId);
+
         IQueryable<Contest> GetByIdQuery(int contestId);
 
         IQueryable<Contest> GetAllActive();

@@ -37,17 +37,16 @@
                         IsOnline = contest.Type == ContestType.OnlinePracticalExam,
                         ContestPassword = contest.ContestPassword,
                         PracticePassword = contest.PracticePassword,
-                        HasContestQuestions = contest.Questions.Any(x => x.AskOfficialParticipants),
-                        HasPracticeQuestions = contest.Questions.Any(x => x.AskPracticeParticipants),
-                        ContestType = contest.Type,
-                        OfficialParticipants = contest.Participants.Count(x => x.IsOfficial),
-                        PracticeParticipants = contest.Participants.Count(x => !x.IsOfficial),
-                        ProblemsCount = contest.Problems.Count(x => !x.IsDeleted),
+                        HasContestQuestions = contest.Questions.Any(q => q.AskOfficialParticipants),
+                        HasPracticeQuestions = contest.Questions.Any(q => q.AskPracticeParticipants),
+                        OfficialParticipants = contest.Participants.Count(p => p.Scores.Any() && p.IsOfficial),
+                        PracticeParticipants = contest.Participants.Count(p => p.Scores.Any() && !p.IsOfficial),
+                        ProblemsCount = contest.Problems.Count(pr => !pr.IsDeleted),
                         Problems = contest.Problems
                             .AsQueryable()
-                            .Where(x => !x.IsDeleted)
-                            .OrderBy(x => x.OrderBy)
-                            .ThenBy(x => x.Name)
+                            .Where(pr => !pr.IsDeleted)
+                            .OrderBy(pr => pr.OrderBy)
+                            .ThenBy(pr => pr.Name)
                             .Select(ContestProblemViewModel.FromProblem),
                         LimitBetweenSubmissions = contest.LimitBetweenSubmissions,
                         Description = contest.Description,

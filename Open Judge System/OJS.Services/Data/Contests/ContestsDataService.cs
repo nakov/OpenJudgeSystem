@@ -1,6 +1,7 @@
 ﻿namespace OJS.Services.Data.Contests
 {
     using System;
+    using System.Data.Entity;
     using System.Linq;
 
     using OJS.Common.Models;
@@ -15,6 +16,9 @@
             this.contests = contests;
 
         public Contest GetById(int contestId) => this.contests.GetById(contestId);
+
+        public Contest GetByIdWithProblems(int contestId) =>
+            this.contests.All().Include(c => c.Problems).FirstOrDefault(c => c.Id == contestId);
 
         public IQueryable<Contest> GetByIdQuery(int contestId) =>
             this.contests.All().Where(c => c.Id == contestId);
