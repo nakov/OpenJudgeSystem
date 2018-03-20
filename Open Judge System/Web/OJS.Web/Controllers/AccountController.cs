@@ -49,7 +49,7 @@
                 ExternalUserViewModel externalUser;
                 try
                 {
-                    externalUser = await this.GetExternalUser(model.UserName);
+                    externalUser = await this.GetExternalUserByUsername(model.UserName);
                 }
                 catch (Exception)
                 {
@@ -193,14 +193,14 @@
             this.Data.SaveChanges();
         }
 
-        private async Task<ExternalUserViewModel> GetExternalUser(string userName)
+        private async Task<ExternalUserViewModel> GetExternalUserByUsername(string userName)
         {
             using (var httpClient = new HttpClient())
             {
                 var jsonMediaType = new MediaTypeWithQualityHeaderValue(GlobalConstants.JsonMimeType);
                 httpClient.DefaultRequestHeaders.Accept.Add(jsonMediaType);
 
-                var response = await httpClient.PostAsJsonAsync(Settings.GetExternalUserUrl, new { userName });
+                var response = await httpClient.PostAsJsonAsync(Settings.GetExternalUserByUsernameUrl, new { userName });
                 if (response.IsSuccessStatusCode)
                 {
                     var externalUser = await response.Content.ReadAsAsync<ExternalUserViewModel>();
