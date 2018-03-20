@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections;
-    using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
     using System.Text;
@@ -14,14 +13,13 @@
     using OJS.Common.Models;
     using OJS.Data;
     using OJS.Data.Models;
+    using OJS.Services.Business.Contests;
     using OJS.Services.Business.Participants;
+    using OJS.Services.Data.ContestCategories;
     using OJS.Services.Data.Contests;
-    using OJS.Services.Data.Participants;
-    using OJS.Services.Data.ParticipantScores;
     using OJS.Web.Areas.Administration.Controllers.Common;
     using OJS.Web.Areas.Administration.InputModels.Contests;
     using OJS.Web.Areas.Administration.ViewModels.Contest;
-    using OJS.Web.Areas.Contests.Helpers;
     using OJS.Web.Areas.Contests.Models;
     using OJS.Web.Common.Extensions;
     using OJS.Web.ViewModels.Common;
@@ -36,19 +34,22 @@
         private const int StartTimeDelayInSeconds = 10;
         private const int LabDurationInSeconds = 30 * 60;
 
-        private readonly IParticipantScoresDataService participantScoresData;
         private readonly IContestsDataService contestsData;
+        private readonly IContestCategoriesDataService contestCategoriesData;
+        private readonly IContestsBusinessService contestsBusiness;
         private readonly IParticipantsBusinessService participantsBusiness;
 
         public ContestsController(
             IOjsData data,
-            IParticipantScoresDataService participantScoresData,
             IContestsDataService contestsData,
+            IContestCategoriesDataService contestCategoriesData,
+            IContestsBusinessService contestsBusiness,
             IParticipantsBusinessService participantsBusiness)
                 : base(data)
         {
-            this.participantScoresData = participantScoresData;
             this.contestsData = contestsData;
+            this.contestCategoriesData = contestCategoriesData;
+            this.contestsBusiness = contestsBusiness;
             this.participantsBusiness = participantsBusiness;
         }        
 
@@ -78,10 +79,24 @@
         }
 
         [HttpGet]
-        public ActionResult Create()
+        public ActionResult Create(int? categoryId)
         {
             this.PrepareViewBagData();
-            return this.View(new ViewModelType());
+
+            var viewModel = new ViewModelType();
+
+            if (categoryId.HasValue)
+            {
+                var categoryName = this.contestCategoriesData.GetNameById(categoryId.Value);
+
+                if (categoryName != null)
+                {
+                    viewModel.CategoryId = categoryId;
+                    viewModel.CategoryName = categoryName;
+                }
+            }
+
+            return this.View(viewModel);
         }
 
         [HttpPost]
@@ -456,85 +471,19 @@
         {
             if (!this.User.IsAdmin())
             {
-                this.TempData[GlobalConstants.DangerMessage] = GlobalConstants.NoPrivilegesMessage;
+                this.TempData.AddDangerMessage(GlobalConstants.NoPrivilegesMessage);
                 return this.RedirectToAction<ContestsController>(c => c.Index());
             }
 
-            var categoryContest = this.Data.Contests.GetById(model.Id);
+            var result = this.contestsBusiness.TransferParticipantsToPracticeById(model.Id);
 
-            if (categoryContest.CanBeCompeted)
+            if (result.IsError)
             {
-                this.TempData[GlobalConstants.DangerMessage] = Resource.Active_contest_forbidden_for_transfer;
+                this.TempData.AddDangerMessage(result.Error);
                 return this.RedirectToAction<ContestsController>(c => c.Index());
             }
 
-            var competeOnlyParticipants = categoryContest
-                .Participants
-                .GroupBy(p => p.UserId)
-                .Where(g => g.Count() == 1 && g.All(p => p.IsOfficial))
-                .Select(gr => gr.FirstOrDefault());
-
-            foreach (var participant in competeOnlyParticipants)
-            {
-                foreach (var participantScore in participant.Scores)
-                {
-                    participantScore.IsOfficial = false;
-                }
-
-                participant.IsOfficial = false;
-            }
-
-            var competeAndPracticeParticipants = categoryContest
-                .Participants
-                .GroupBy(p => p.UserId)
-                .Where(g => g.Count() == 2)
-                .ToDictionary(grp => grp.Key, grp => grp.OrderBy(p => p.IsOfficial));
-
-            foreach (var competeAndPracticeParticipant in competeAndPracticeParticipants)
-            {
-                var unofficialParticipant = competeAndPracticeParticipants[competeAndPracticeParticipant.Key].First();
-                var officialParticipant = competeAndPracticeParticipants[competeAndPracticeParticipant.Key].Last();
-
-                foreach (var officialParticipantSubmission in officialParticipant.Submissions)
-                {
-                    officialParticipantSubmission.Participant = unofficialParticipant;
-                }
-
-                var scoresForDeletion = new List<ParticipantScore>();
-
-                foreach (var officialParticipantScore in officialParticipant.Scores)
-                {
-                    var unofficialParticipantScore = unofficialParticipant
-                        .Scores
-                        .FirstOrDefault(s => s.ProblemId == officialParticipantScore.ProblemId);
-
-                    if (unofficialParticipantScore != null)
-                    {
-                        if (unofficialParticipantScore.Points < officialParticipantScore.Points ||
-                            (unofficialParticipantScore.Points == officialParticipantScore.Points &&
-                             unofficialParticipantScore.Id < officialParticipantScore.Id))
-                        {
-                            unofficialParticipantScore = officialParticipantScore;
-                            unofficialParticipantScore.IsOfficial = false;
-                            unofficialParticipantScore.Participant = unofficialParticipant;
-                        }
-
-                        scoresForDeletion.Add(officialParticipantScore);
-                    }
-                    else
-                    {
-                        officialParticipantScore.IsOfficial = false;
-                        officialParticipantScore.Participant = unofficialParticipant;
-                    }
-                }
-
-                this.participantScoresData.Delete(scoresForDeletion);
-
-                this.Data.Participants.Delete(officialParticipant);
-                this.Data.SaveChanges();
-            }
-
-            this.TempData[GlobalConstants.InfoMessage] = Resource.Participants_transferred;
+            this.TempData.AddInfoMessage(Resource.Participants_transferred);
 
             if (string.IsNullOrWhiteSpace(returnUrl))
             {
