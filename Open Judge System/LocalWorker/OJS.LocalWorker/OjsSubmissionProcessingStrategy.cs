@@ -31,8 +31,10 @@
             ITestRunsDataService testRunsData,
             IParticipantsDataService participantsData,
             IParticipantScoresDataService participantScoresData,
-            ISubmissionsForProcessingDataService submissionsForProcessingData)
+            ISubmissionsForProcessingDataService submissionsForProcessingData,
+            Submission submission = null)
         {
+            this.submission = submission;
             this.submissionsData = submissionsData;
             this.testRunsData = testRunsData;
             this.participantsData = participantsData;
@@ -44,32 +46,24 @@
         {
             lock (this.SubmissionsForProcessing)
             {
-                if (this.SubmissionsForProcessing.IsEmpty)
-                {
-                    this.submissionsForProcessingData
-                        .GetAllUnprocessed()
-                        .OrderBy(x => x.Id)
-                        .Select(x => x.SubmissionId)
-                        .ToList()
-                        .ForEach(this.SubmissionsForProcessing.Enqueue);
-                }
+                var submissionId = this.GetSubmissionId();
 
-                var isSubmissionRetrieved = this.SubmissionsForProcessing.TryDequeue(out var submissionId);
-
-                if (!isSubmissionRetrieved)
+                if (submissionId < 0)
                 {
                     return null;
                 }
 
                 this.Logger.InfoFormat($"Submission #{submissionId} retrieved from data store successfully");
 
-                this.submission = this.submissionsData.GetById(submissionId);
+                var (submission, submissionForProcessing) = this.GetSubmissionAndSubmissionForProcessing(submissionId);
 
-                this.submissionForProcessing = this.submissionsForProcessingData.GetBySubmission(submissionId);
+                var isSuccessful = this.TrySetSubmissionAndSubmissionForProcessing(
+                    submission,
+                    submissionForProcessing,
+                    submissionId);
 
-                if (this.submission == null || this.submissionForProcessing == null)
+                if (!isSuccessful)
                 {
-                    this.Logger.Error($"Cannot retrieve submission #{submissionId} from database");
                     return null;
                 }
 
@@ -77,6 +71,45 @@
             }
 
             return this.GetSubmissionModel();
+        }
+
+        private (Submission, SubmissionForProcessing) GetSubmissionAndSubmissionForProcessing(int submissionId)
+            => (this.submissionsData.GetById(submissionId),
+                this.submissionsForProcessingData.GetBySubmission(submissionId));
+
+        private bool TrySetSubmissionAndSubmissionForProcessing(
+            Submission submission,
+            SubmissionForProcessing submissionForProcessing,
+            int submissionId)
+        {
+            if (submission == null || submissionForProcessing == null)
+            {
+                this.Logger.Error($"Cannot retrieve submission #{submissionId} from database");
+                return false;
+            }
+
+            this.submission = submission;
+            this.submissionForProcessing = submissionForProcessing;
+            return true;
+        }
+
+        private int GetSubmissionId()
+        {
+            if (this.SubmissionsForProcessing.IsEmpty)
+            {
+                this.submissionsForProcessingData
+                    .GetAllUnprocessed()
+                    .OrderBy(x => x.Id)
+                    .Select(x => x.SubmissionId)
+                    .ToList()
+                    .ForEach(this.SubmissionsForProcessing.Enqueue);
+            }
+
+            var isSubmissionRetrieved = this.SubmissionsForProcessing.TryDequeue(out var submissionId);
+
+            return isSubmissionRetrieved
+                ? submissionId
+                : -1;
         }
 
         public override void BeforeExecute()
@@ -90,6 +123,12 @@
             this.submission.ProcessingComment = submissionModel.ProcessingComment;
 
             this.UpdateResults();
+        }
+
+        public override void SetSubmissionById(int id)
+        {
+            this.submission = this.submissionsData.GetById(id);
+            this.submissionForProcessing = this.submissionsForProcessingData.GetBySubmission(id);
         }
 
         protected override void ProcessTestsExecutionResult(IExecutionResult<TestResult> executionResult)
