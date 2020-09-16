@@ -23,18 +23,13 @@
         private readonly IParticipantScoresDataService participantScoresData;
         private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
 
-        private Submission submission;
-        private SubmissionForProcessing submissionForProcessing;
-
         public OjsSubmissionProcessingStrategy(
             ISubmissionsDataService submissionsData,
             ITestRunsDataService testRunsData,
             IParticipantsDataService participantsData,
             IParticipantScoresDataService participantScoresData,
-            ISubmissionsForProcessingDataService submissionsForProcessingData,
-            Submission submission = null)
+            ISubmissionsForProcessingDataService submissionsForProcessingData)
         {
-            this.submission = submission;
             this.submissionsData = submissionsData;
             this.testRunsData = testRunsData;
             this.participantsData = participantsData;
@@ -55,11 +50,11 @@
 
                 this.Logger.InfoFormat($"Submission #{submissionId} retrieved from data store successfully");
 
-                var (submission, submissionForProcessing) = this.GetSubmissionAndSubmissionForProcessing(submissionId);
+                var (newSubmission, newSubmissionForProcessing) = this.GetSubmissionAndSubmissionForProcessing(submissionId);
 
-                var isSuccessful = this.TrySetSubmissionAndSubmissionForProcessing(
-                    submission,
-                    submissionForProcessing,
+                var isSuccessful = this.VerifySubmissionAndSubmissionForProcessing(
+                    newSubmission,
+                    newSubmissionForProcessing,
                     submissionId);
 
                 if (!isSuccessful)
@@ -67,30 +62,76 @@
                     return null;
                 }
 
-                this.SetSubmissionToProcessing();
+                this.SetSubmissionToProcessing(newSubmission, newSubmissionForProcessing);
+
+                return this.GetSubmissionModel(newSubmission);
+            }
+        }
+
+        public override void BeforeExecute(int submissionId)
+        {
+            var (submission, submissionForProcessing) = this.GetSubmissionAndSubmissionForProcessing(submissionId);
+            submission.ProcessingComment = null;
+            this.testRunsData.DeleteBySubmission(submission.Id);
+        }
+
+        public override void OnError(IOjsSubmission submissionModel)
+        {
+            var (submission, submissionForProcessing) = this.GetSubmissionAndSubmissionForProcessing((int)submissionModel.Id);
+            submission.ProcessingComment = submissionModel.ProcessingComment;
+
+            this.UpdateResults(submission, submissionForProcessing);
+        }
+
+        protected override void ProcessTestsExecutionResult(
+            IExecutionResult<TestResult> executionResult,
+            int submissionId)
+        {
+            var (submission, submissionForProcessing) = this.GetSubmissionAndSubmissionForProcessing(submissionId);
+            submission.IsCompiledSuccessfully = executionResult.IsCompiledSuccessfully;
+            submission.CompilerComment = executionResult.CompilerComment;
+
+            if (!executionResult.IsCompiledSuccessfully)
+            {
+                this.UpdateResults(submission, submissionForProcessing);
+                return;
             }
 
-            return this.GetSubmissionModel();
+            submission.TestRuns = executionResult.Results
+                .Select(testResult => new TestRun
+                {
+                    CheckerComment = testResult.CheckerDetails.Comment,
+                    ExpectedOutputFragment = testResult.CheckerDetails.ExpectedOutputFragment,
+                    UserOutputFragment = testResult.CheckerDetails.UserOutputFragment,
+                    ExecutionComment = testResult.ExecutionComment,
+                    MemoryUsed = testResult.MemoryUsed,
+                    ResultType = testResult.ResultType,
+                    TestId = testResult.Id,
+                    TimeUsed = testResult.TimeUsed
+                })
+                .ToList();
+
+            this.submissionsData.Update(submission);
+
+            this.UpdateResults(submission, submissionForProcessing);
         }
 
         private (Submission, SubmissionForProcessing) GetSubmissionAndSubmissionForProcessing(int submissionId)
             => (this.submissionsData.GetById(submissionId),
                 this.submissionsForProcessingData.GetBySubmission(submissionId));
 
-        private bool TrySetSubmissionAndSubmissionForProcessing(
-            Submission submission,
-            SubmissionForProcessing submissionForProcessing,
+        private bool VerifySubmissionAndSubmissionForProcessing(
+            Submission newSubmission,
+            SubmissionForProcessing newSubmissionForProcessing,
             int submissionId)
         {
-            if (submission == null || submissionForProcessing == null)
+            if (newSubmission != null && newSubmissionForProcessing != null)
             {
-                this.Logger.Error($"Cannot retrieve submission #{submissionId} from database");
-                return false;
+                return true;
             }
 
-            this.submission = submission;
-            this.submissionForProcessing = submissionForProcessing;
-            return true;
+            this.Logger.Error($"Cannot retrieve submission #{submissionId} from database");
+            return false;
         }
 
         private int GetSubmissionId()
@@ -112,108 +153,56 @@
                 : -1;
         }
 
-        public override void BeforeExecute()
+        private void UpdateResults(Submission submission, SubmissionForProcessing submissionForProcessing)
         {
-            this.submission.ProcessingComment = null;
-            this.testRunsData.DeleteBySubmission(this.submission.Id);
+            this.CalculatePointsForSubmission(submission);
+
+            this.SaveParticipantScore(submission);
+
+            this.CacheTestRuns(submission);
+
+            this.SetSubmissionToProcessed(submission, submissionForProcessing);
         }
 
-        public override void OnError(IOjsSubmission submissionModel)
-        {
-            this.submission.ProcessingComment = submissionModel.ProcessingComment;
-
-            this.UpdateResults();
-        }
-
-        public override void SetSubmissionById(int id)
-        {
-            this.submission = this.submissionsData.GetById(id);
-            this.submissionForProcessing = this.submissionsForProcessingData.GetBySubmission(id);
-        }
-
-        protected override void ProcessTestsExecutionResult(IExecutionResult<TestResult> executionResult)
-        {
-            this.submission.IsCompiledSuccessfully = executionResult.IsCompiledSuccessfully;
-            this.submission.CompilerComment = executionResult.CompilerComment;
-
-            if (!executionResult.IsCompiledSuccessfully)
-            {
-                this.UpdateResults();
-                return;
-            }
-
-            foreach (var testResult in executionResult.Results)
-            {
-                var testRun = new TestRun
-                {
-                    CheckerComment = testResult.CheckerDetails.Comment,
-                    ExpectedOutputFragment = testResult.CheckerDetails.ExpectedOutputFragment,
-                    UserOutputFragment = testResult.CheckerDetails.UserOutputFragment,
-                    ExecutionComment = testResult.ExecutionComment,
-                    MemoryUsed = testResult.MemoryUsed,
-                    ResultType = testResult.ResultType,
-                    TestId = testResult.Id,
-                    TimeUsed = testResult.TimeUsed
-                };
-
-                this.submission.TestRuns.Add(testRun);
-            }
-
-            this.submissionsData.Update(this.submission);
-
-            this.UpdateResults();
-        }
-
-        private void UpdateResults()
-        {
-            this.CalculatePointsForSubmission();
-
-            this.SaveParticipantScore();
-
-            this.CacheTestRuns();
-
-            this.SetSubmissionToProcessed();
-        }
-
-        private void CalculatePointsForSubmission()
+        private void CalculatePointsForSubmission(Submission submission)
         {
             try
             {
                 // Internal joke: submission.Points = new Random().Next(0, submission.Problem.MaximumPoints + 1) + Weather.Instance.Today("Sofia").IsCloudy ? 10 : 0;
-                if (this.submission.Problem.Tests.Count == 0 || this.submission.TestsWithoutTrialTestsCount == 0)
+                if (submission.Problem.Tests.Count == 0 || submission.TestsWithoutTrialTestsCount == 0)
                 {
-                    this.submission.Points = 0;
+                    submission.Points = 0;
                 }
                 else
                 {
-                    var coefficient = (double)this.submission.CorrectTestRunsWithoutTrialTestsCount /
-                        this.submission.TestsWithoutTrialTestsCount;
+                    var coefficient = (double)submission.CorrectTestRunsWithoutTrialTestsCount /
+                        submission.TestsWithoutTrialTestsCount;
 
-                    this.submission.Points = (int)(coefficient * this.submission.Problem.MaximumPoints);
+                    submission.Points = (int)(coefficient * submission.Problem.MaximumPoints);
                 }
             }
             catch (Exception ex)
             {
                 this.Logger.ErrorFormat(
                     "CalculatePointsForSubmission on submission #{0} has thrown an exception: {1}",
-                    this.submission.Id,
+                    submission.Id,
                     ex);
 
-                this.submission.ProcessingComment = $"Exception in CalculatePointsForSubmission: {ex.Message}";
+                submission.ProcessingComment = $"Exception in CalculatePointsForSubmission: {ex.Message}";
             }
         }
 
-        private void SaveParticipantScore()
+        private void SaveParticipantScore(Submission submission)
         {
             try
             {
-                if (this.submission.ParticipantId == null || this.submission.ProblemId == null)
+                if (submission.ParticipantId == null || submission.ProblemId == null)
                 {
                     return;
                 }
 
                 var participant = this.participantsData
-                    .GetByIdQuery(this.submission.ParticipantId.Value)
+                    .GetByIdQuery(submission.ParticipantId.Value)
                     .Select(p => new
                     {
                         p.IsOfficial,
@@ -231,14 +220,14 @@
                 lock (this.SharedLockObject)
                 {
                     existingScore = this.participantScoresData.GetByParticipantIdProblemIdAndIsOfficial(
-                        this.submission.ParticipantId.Value,
-                        this.submission.ProblemId.Value,
+                        submission.ParticipantId.Value,
+                        submission.ProblemId.Value,
                         participant.IsOfficial);
 
                     if (existingScore == null)
                     {
                         this.participantScoresData.AddBySubmissionByUsernameAndIsOfficial(
-                            this.submission,
+                            submission,
                             participant.UserName,
                             participant.IsOfficial);
 
@@ -246,99 +235,99 @@
                     }
                 }
 
-                if (this.submission.Points > existingScore.Points ||
-                    this.submission.Id == existingScore.SubmissionId)
+                if (submission.Points > existingScore.Points ||
+                    submission.Id == existingScore.SubmissionId)
                 {
                     this.participantScoresData.UpdateBySubmissionAndPoints(
                         existingScore,
-                        this.submission.Id,
-                        this.submission.Points);
+                        submission.Id,
+                        submission.Points);
                 }
             }
             catch (Exception ex)
             {
                 this.Logger.ErrorFormat(
                     "SaveParticipantScore on submission #{0} has thrown an exception: {1}",
-                    this.submission.Id,
+                    submission.Id,
                     ex);
 
-                this.submission.ProcessingComment = $"Exception in SaveParticipantScore: {ex.Message}";
+                submission.ProcessingComment = $"Exception in SaveParticipantScore: {ex.Message}";
             }
         }
 
-        private void SetSubmissionToProcessed()
+        private void SetSubmissionToProcessed(Submission submission, SubmissionForProcessing submissionForProcessing)
         {
             try
             {
-                this.submission.Processed = true;
-                this.submissionForProcessing.Processed = true;
-                this.submissionForProcessing.Processing = false;
+                submission.Processed = true;
+                submissionForProcessing.Processed = true;
+                submissionForProcessing.Processing = false;
 
-                this.submissionsData.Update(this.submission);
-                this.submissionsForProcessingData.Update(this.submissionForProcessing);
+                this.submissionsData.Update(submission);
+                this.submissionsForProcessingData.Update(submissionForProcessing);
             }
             catch (Exception ex)
             {
                 this.Logger.ErrorFormat(
                     "Unable to save changes to the submission #{0}! Exception: {1}",
-                    this.submission.Id,
+                    submission.Id,
                     ex);
             }
         }
 
-        private void SetSubmissionToProcessing()
+        private void SetSubmissionToProcessing(Submission submission, SubmissionForProcessing submissionForProcessing)
         {
             try
             {
-                this.submissionForProcessing.Processed = false;
-                this.submissionForProcessing.Processing = true;
+                submissionForProcessing.Processed = false;
+                submissionForProcessing.Processing = true;
 
-                this.submissionsForProcessingData.Update(this.submissionForProcessing);
+                this.submissionsForProcessingData.Update(submissionForProcessing);
             }
             catch (Exception ex)
             {
                 this.Logger.ErrorFormat(
                     "Unable to set submission #{0} to processing! Exception: {1}",
-                    this.submission.Id,
+                    submission.Id,
                     ex);
             }
         }
 
-        private void CacheTestRuns()
+        private void CacheTestRuns(Submission submission)
         {
             try
             {
-                this.submission.CacheTestRuns();
+                submission.CacheTestRuns();
             }
             catch (Exception ex)
             {
                 this.Logger.ErrorFormat(
                     "CacheTestRuns on submission #{0} has thrown an exception: {1}",
-                    this.submission.Id,
+                    submission.Id,
                     ex);
 
-                this.submission.ProcessingComment = $"Exception in CacheTestRuns: {ex.Message}";
+                submission.ProcessingComment = $"Exception in CacheTestRuns: {ex.Message}";
             }
         }
 
-        private IOjsSubmission GetSubmissionModel() => new OjsSubmission<TestsInputModel>()
+        private IOjsSubmission GetSubmissionModel(Submission submission) => new OjsSubmission<TestsInputModel>()
         {
-            Id = this.submission.Id,
-            AdditionalCompilerArguments = this.submission.SubmissionType.AdditionalCompilerArguments,
-            AllowedFileExtensions = this.submission.SubmissionType.AllowedFileExtensions,
-            FileContent = this.submission.Content,
-            CompilerType = this.submission.SubmissionType.CompilerType,
-            TimeLimit = this.submission.Problem.TimeLimit,
-            MemoryLimit = this.submission.Problem.MemoryLimit,
-            ExecutionStrategyType = this.submission.SubmissionType.ExecutionStrategyType,
+            Id = submission.Id,
+            AdditionalCompilerArguments = submission.SubmissionType.AdditionalCompilerArguments,
+            AllowedFileExtensions = submission.SubmissionType.AllowedFileExtensions,
+            FileContent = submission.Content,
+            CompilerType = submission.SubmissionType.CompilerType,
+            TimeLimit = submission.Problem.TimeLimit,
+            MemoryLimit = submission.Problem.MemoryLimit,
+            ExecutionStrategyType = submission.SubmissionType.ExecutionStrategyType,
             ExecutionType = ExecutionType.TestsExecution,
             Input = new TestsInputModel
             {
-                TaskSkeleton = this.submission.Problem.SolutionSkeleton,
-                CheckerParameter = this.submission.Problem.Checker.Parameter,
-                CheckerAssemblyName = this.submission.Problem.Checker.DllFile,
-                CheckerTypeName = this.submission.Problem.Checker.ClassName,
-                Tests = this.submission.Problem.Tests
+                TaskSkeleton = submission.Problem.SolutionSkeleton,
+                CheckerParameter = submission.Problem.Checker.Parameter,
+                CheckerAssemblyName = submission.Problem.Checker.DllFile,
+                CheckerTypeName = submission.Problem.Checker.ClassName,
+                Tests = submission.Problem.Tests
                     .AsQueryable()
                     .Select(t => new TestContext
                     {
