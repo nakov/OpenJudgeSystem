@@ -1,4 +1,6 @@
-﻿namespace OJS.LocalWorker
+﻿using OJS.Workers.SubmissionProcessors.SubmissionProcessingStrategies;
+
+namespace OJS.LocalWorker
 {
     using System.Data.Entity;
     using System.Linq;
