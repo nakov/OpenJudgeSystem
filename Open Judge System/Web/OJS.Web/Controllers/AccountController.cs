@@ -54,33 +54,33 @@
 
             ExternalUserInfoModel externalUser;
 
-            var result = await this.httpRequester.GetAsync<ExternalUserInfoModel>(
-                new { model.UserName },
-                string.Format(UrlConstants.GetUserInfoByUsernameApiFormat, Settings.SulsPlatformBaseUrl),
-                Settings.ApiKey);
+            //var result = await this.httpRequester.GetAsync<ExternalUserInfoModel>(
+            //    new { model.UserName },
+            //    string.Format(UrlConstants.GetUserInfoByUsernameApiFormat, Settings.SulsPlatformBaseUrl),
+            //    Settings.ApiKey);
 
-            if (result.IsSuccess)
-            {
-                externalUser = result.Data;
-            }
-            else
-            {
-                this.TempData.AddInfoMessage(Resources.Account.AccountControllers.Inactive_login_system);
-                return this.RedirectToHome();
-            }
+            //if (result.IsSuccess)
+            //{
+            //    externalUser = result.Data;
+            //}
+            //else
+            //{
+            //    this.TempData.AddInfoMessage(Resources.Account.AccountControllers.Inactive_login_system);
+            //    return this.RedirectToHome();
+            //}
 
-            if (externalUser != null)
-            {
-                var userEntity = externalUser.Entity;
-                this.AddOrUpdateUser(userEntity);
+            //if (externalUser != null)
+            //{
+            // var userEntity = externalUser.Entity;
+            // this.AddOrUpdateUser(userEntity);
 
-                var user = await this.UserManager.FindAsync(model.UserName, model.Password);
-                if (user != null)
-                {
-                    await this.SignInAsync(userEntity, model.RememberMe);
-                    return this.RedirectToLocal(returnUrl);
-                }
+            var user = await this.UserManager.FindAsync(model.UserName, model.Password);
+            if (user != null)
+            {
+                await this.SignInAsync(user, model.RememberMe);
+                return this.RedirectToLocal(returnUrl);
             }
+            //}
 
             this.ModelState.AddModelError(
                 string.Empty,
