@@ -73,8 +73,9 @@
                     return null;
                 }
             }
-
-            return this.GetSubmissionModel();
+             
+            var submissionModel = this.GetSubmissionModel();
+            return submissionModel;
         }
 
         public override void BeforeExecute()
@@ -90,13 +91,31 @@
             this.UpdateResults();
         }
 
+        public override void SetSubmissionWorker(string worker)
+        {
+            try
+            {
+                this.submission.Worker = worker;
+
+                this.submissionsData.Update(submission);
+            }
+            catch (Exception ex)
+            {
+                this.Logger.ErrorFormat(
+                    "Unable to set worker #{0} to submission#{1}! Exception: {2}",
+                    worker,
+                    this.submission.Id,
+                    ex);
+            }
+        }
+
         public override void SetSubmissionToProcessing()
         {
             try
             {
                 this.submissionForProcessing.Processed = false;
                 this.submissionForProcessing.Processing = true;
-
+                
                 this.submissionsForProcessingData.Update(this.submissionForProcessing);
             }
             catch (Exception ex)
