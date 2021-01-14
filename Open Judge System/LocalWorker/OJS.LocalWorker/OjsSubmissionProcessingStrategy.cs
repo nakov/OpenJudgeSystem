@@ -73,9 +73,8 @@
                     return null;
                 }
             }
-             
-            var submissionModel = this.GetSubmissionModel();
-            return submissionModel;
+
+            return this.GetSubmissionModel();
         }
 
         public override void BeforeExecute()
