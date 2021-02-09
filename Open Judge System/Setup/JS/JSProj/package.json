@@ -8,16 +8,5 @@
         "page": "1.11.6",
         "underscore": "^1.12.0"
     },
-    "scripts": {
-        "test": "mocha",
-        "dev": "http-server -P http://localhost:8080? -s --cors"
-    },
-    "author": "",
-    "license": "ISC",
-    "devDependencies": {
-        "chai": "^4.2.0",
-        "http-server": "^0.12.3",
-        "mocha": "^8.2.1",
-        "playwright": "^1.6.2"
-    }
+    "license": "ISC"
 }
