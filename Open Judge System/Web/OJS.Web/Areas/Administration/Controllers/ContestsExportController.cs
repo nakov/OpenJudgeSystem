@@ -119,7 +119,7 @@
                 includeDateInFileName ? $"{problem.Name}-{submission.CreatedOn:dd-MM-yyyy HH:mm:ss:fff}" : problem.Name;
 
             var fileName =
-                $"{fileNameWithoutExtension}.{submission.FileExtension ?? submission.SubmissionType.FileNameExtension}"
+                $"{fileNameWithoutExtension}.{submission.FileExtension ?? submission.SubmissionType.FileNameExtension}-{submission.Id}"
                     .ToValidFileName();
 
             var content = submission.IsBinaryFile ? submission.Content : submission.ContentAsString.ToByteArray();
@@ -135,7 +135,8 @@
             {
                 Comment = fileComment.ToString(),
                 AlternateEncoding = Encoding.UTF8,
-                AlternateEncodingUsage = ZipOption.AsNecessary
+                AlternateEncodingUsage = ZipOption.AsNecessary,
+                UseZip64WhenSaving = Zip64Option.Always
             };
 
             return file;
