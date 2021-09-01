@@ -1,4 +1,6 @@
-﻿namespace OJS.Web.ViewModels.Search
+﻿using System.Linq;
+
+namespace OJS.Web.ViewModels.Search
 {
     using System;
     using System.Linq.Expressions;
@@ -16,7 +18,9 @@
                     Id = problem.Id,
                     Name = problem.Name,
                     ParentId = problem.ProblemGroup.ContestId,
-                    ParentName = problem.ProblemGroup.Contest.Name
+                    ParentName = problem.ProblemGroup.Contest.Name,
+                    ParentCategoryId = problem.ProblemGroup.Contest.Category.Id,
+                    ParentCategoryName = problem.ProblemGroup.Contest.Category.Name,
                 };
             }
         }
@@ -53,5 +57,9 @@
         public int? ParentId { get; set; }
 
         public string ParentName { get; set; }
+        
+        public int? ParentCategoryId { get; set; }
+
+        public string ParentCategoryName { get; set; }
     }
 }
