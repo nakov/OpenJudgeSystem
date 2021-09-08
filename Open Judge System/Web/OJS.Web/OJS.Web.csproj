@@ -1926,6 +1926,7 @@
     <Content Include="Content\css\administration\problems\problems-index.css" />
     <Content Include="Content\css\common\loading-mask.css" />
     <Content Include="Content\css\home\index\home.css" />
+    <Content Include="Content\css\home\search\search-results.css" />
     <Content Include="Content\docs.css" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Content\KendoUI\Black\editor.png" />
@@ -2438,6 +2439,7 @@
     <Content Include="Areas\Administration\Views\Resources\Create.cshtml" />
     <Content Include="Areas\Administration\Views\Resources\Edit.cshtml" />
     <Content Include="Areas\Contests\Views\List\BySubmissionType.cshtml" />
+    <Content Include="Scripts\Home\Search\search-results.js" />
     <Content Include="Views\Shared\EditorTemplates\NonEditable.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\MultiLineText.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\SingleLineText.cshtml" />
