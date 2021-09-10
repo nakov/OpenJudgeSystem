@@ -35,11 +35,7 @@
             }
             else
             {
-                var latestSubmissionId = this.submissionsData
-                    .GetAll()
-                    .OrderByDescending(s => s.Id)
-                    .Select(s => s.Id)
-                    .FirstOrDefault();
+                var latestSubmissionId = this.submissionsData.GetAll().Max(s => s.Id);
 
                 // using Id for better performance since it is only for displaying purposes
                 this.ViewBag.TotalSubsmissionsCount = latestSubmissionId;
