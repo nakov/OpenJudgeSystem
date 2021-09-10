@@ -19,7 +19,7 @@ namespace Resources.Submissions.Views {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class AdvancedSubmissions {
@@ -66,6 +66,15 @@ namespace Resources.Submissions.Views {
         public static string Page_title {
             get {
                 return ResourceManager.GetString("Page_title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Latest {0} submissions out of {1} total.
+        /// </summary>
+        public static string Page_title_for_regular_user {
+            get {
+                return ResourceManager.GetString("Page_title_for_regular_user", resourceCulture);
             }
         }
     }

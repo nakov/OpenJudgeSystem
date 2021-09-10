@@ -120,4 +120,7 @@
   <data name="Page_title" xml:space="preserve">
     <value>Latest submissions</value>
   </data>
+  <data name="Page_title_for_regular_user" xml:space="preserve">
+    <value>Latest {0} submissions out of {1} total</value>
+  </data>
 </root>

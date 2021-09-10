@@ -2,6 +2,11 @@
 
 @model OJS.Web.ViewModels.Submission.SubmissionsFilterViewModel
 
+@{
+    var userIsAdminOrLecturer = User.IsAdmin() || User.IsLecturer();
+    var pageSize = WebConstants.AdvancedSubmissionsGridPageSize;
+}
+
 @(Html.Kendo().Grid<OJS.Web.ViewModels.Submission.SubmissionViewModel>()
     .Name("Submissions")
     .Columns(columns =>
@@ -33,7 +38,7 @@
                     "<strong class=\"text-primary\">#: ProblemName #</strong>" +
                 "</div>" +
                 "<div>" +
-                    "<small>#: Contest #</small>" +
+                    "<small><a href=\"/Contests/#: ContestId #/#= convertToContestUrlName(Contest) #\">#: Contest #</a></small>" +
                 "</div>"
             );
         columns.Bound(s => s.Points).Title(Resource.Result).ClientTemplate(
@@ -71,16 +76,16 @@
                 "Submissions",
                 new
                 {
-                    userId = Model.UserId,
                     notProcessedOnly = Model.NotProcessedOnly,
                     contestId = Model.ContestId,
                     area = string.Empty
                 }))
-        .PageSize(25)
+        .PageSize(pageSize)
     )
-    .Pageable(page => page.ButtonCount(10).Refresh(true))
+    .Pageable(page => page.Enabled(userIsAdminOrLecturer).ButtonCount(10).Refresh(true))
 )
 
+@Scripts.Render("~/Scripts/Helpers/url-helpers.js")
 <script>
     function dataBound() {
         var page = this.dataSource.page() - 1;

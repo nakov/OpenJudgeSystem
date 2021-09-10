@@ -120,4 +120,7 @@
   <data name="Page_title" xml:space="preserve">
     <value>Последно изпратени решения</value>
   </data>
+  <data name="Page_title_for_regular_user" xml:space="preserve">
+    <value>Последните {0} изпратени решения от общо {1}</value>
+  </data>
 </root>

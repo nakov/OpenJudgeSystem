@@ -29,5 +29,7 @@
 
         public const string ZeroTestStandardSignature = ".000.";
         public const string OpenTestStandardSignature = ".open.";
+
+        public const int AdvancedSubmissionsGridPageSize = 25;
     }
 }

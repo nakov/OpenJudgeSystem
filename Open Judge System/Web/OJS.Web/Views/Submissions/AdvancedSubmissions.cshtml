@@ -1,7 +1,17 @@
 ﻿@using Resource = Resources.Submissions.Views.AdvancedSubmissions
 
 @{
-    ViewBag.Title = Resource.Page_title;
+    if (User.IsAdmin() || User.IsLecturer())
+    {
+        ViewBag.Title = Resource.Page_title;
+    }
+    else
+    {
+        ViewBag.Title = string.Format(
+            Resource.Page_title_for_regular_user,
+            WebConstants.AdvancedSubmissionsGridPageSize,
+            ViewBag.TotalSubsmissionsCount);
+    }
 }
 
 <script src="/Scripts/Helpers/test-results.js"></script>

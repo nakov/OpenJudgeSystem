@@ -2439,6 +2439,7 @@
     <Content Include="Areas\Administration\Views\Resources\Create.cshtml" />
     <Content Include="Areas\Administration\Views\Resources\Edit.cshtml" />
     <Content Include="Areas\Contests\Views\List\BySubmissionType.cshtml" />
+    <Content Include="Scripts\Helpers\url-helpers.js" />
     <Content Include="Scripts\Home\Search\search-results.js" />
     <Content Include="Views\Shared\EditorTemplates\NonEditable.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\MultiLineText.cshtml" />

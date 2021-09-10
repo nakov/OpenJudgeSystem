@@ -10,13 +10,12 @@
     using Newtonsoft.Json;
 
     using OJS.Common;
-    using OJS.Common.Models;
     using OJS.Data;
     using OJS.Services.Data.Submissions;
-    using OJS.Web.Common.Attributes;
     using OJS.Web.Common.Extensions;
     using OJS.Web.ViewModels.Submission;
     using OJS.Workers.Common;
+    using static OJS.Web.Common.WebConstants;
 
     public class SubmissionsController : BaseController
     {
@@ -28,18 +27,27 @@
             : base(data) =>
                 this.submissionsData = submissionsData;
 
-        [AuthorizeRoles(SystemRole.Administrator, SystemRole.Lecturer)]
         public ActionResult Index()
         {
             if (this.User.IsAdmin())
             {
                 this.ViewBag.SubmissionsInQueue = this.Data.Submissions.All().Count(x => !x.Processed);
             }
+            else
+            {
+                var latestSubmissionId = this.submissionsData
+                    .GetAll()
+                    .OrderByDescending(s => s.Id)
+                    .Select(s => s.Id)
+                    .FirstOrDefault();
+
+                // using Id for better performance since it is only for displaying purposes
+                this.ViewBag.TotalSubsmissionsCount = latestSubmissionId;
+            }
 
             return this.View("AdvancedSubmissions");
         }
 
-        [AuthorizeRoles(SystemRole.Administrator, SystemRole.Lecturer)]
         public ActionResult GetSubmissionsGrid(
             bool notProcessedOnly = false,
             string userId = null,
@@ -56,10 +64,8 @@
         }
 
         [HttpPost]
-        [Authorize]
         public ActionResult ReadSubmissions(
             [DataSourceRequest]DataSourceRequest request,
-            string userId,
             bool notProcessedOnly = false,
             int? contestId = null)
         {
@@ -67,21 +73,17 @@
 
             var userIsAdmin = this.User.IsAdmin();
             var userIsLecturer = this.User.IsLecturer();
+            var userIsAdminOrLecturer = userIsAdmin || userIsLecturer;
 
             if (userIsLecturer && !userIsAdmin)
             {
                 data = this.submissionsData.GetAllFromContestsByLecturer(this.UserProfile.Id);
             }
 
-            // UserId filter is available only for administrators and lecturers
-            if (!userIsAdmin && !userIsLecturer)
+            // For regular users return only one page of submissions
+            if (!userIsAdminOrLecturer)
             {
-                userId = this.UserProfile.Id;
-            }
-
-            if (!string.IsNullOrWhiteSpace(userId))
-            {
-                data = data.Where(s => s.Participant.UserId == userId);
+                data = data.OrderByDescending(s => s.CreatedOn).Take(AdvancedSubmissionsGridPageSize);
             }
 
             // NotProcessedOnly filter is available only for administrators
@@ -95,7 +97,9 @@
                 data = data.Where(s => s.Problem.ProblemGroup.ContestId == contestId.Value);
             }
 
-            var result = data.Select(SubmissionViewModel.FromSubmission);
+            var result = userIsAdminOrLecturer
+                ? data.Select(SubmissionViewModel.FromSubmission)
+                : data.Select(SubmissionViewModel.FromSubmissionWithoutTestRuns);
 
             var serializationSettings = new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
             var json = JsonConvert.SerializeObject(result.ToDataSourceResult(request), Formatting.None, serializationSettings);

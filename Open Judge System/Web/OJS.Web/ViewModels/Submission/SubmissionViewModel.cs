@@ -22,6 +22,7 @@
                     ProblemName = submission.Problem.Name,
                     ProblemMaximumPoints = submission.Problem.MaximumPoints,
                     Contest = submission.Problem.ProblemGroup.Contest.Name,
+                    ContestId = submission.Problem.ProblemGroup.ContestId,
                     ParticipantId = submission.ParticipantId,
                     ParticipantName = submission.Participant.User.UserName,
                     SubmissionType = submission.SubmissionType.Name,
@@ -29,6 +30,28 @@
                     Points = submission.Points,
                     IsCompiledSuccessfully = submission.IsCompiledSuccessfully,
                     TestResults = submission.TestRuns.AsQueryable().Where(x => !x.Test.IsTrialTest).Select(TestRunViewModel.FromTestRun)
+                };
+            }
+        }
+
+        public static Expression<Func<Submission, SubmissionViewModel>> FromSubmissionWithoutTestRuns
+        {
+            get
+            {
+                return submission => new SubmissionViewModel
+                {
+                    Id = submission.Id,
+                    SubmitedOn = submission.CreatedOn,
+                    ProblemId = submission.ProblemId,
+                    ProblemName = submission.Problem.Name,
+                    ProblemMaximumPoints = submission.Problem.MaximumPoints,
+                    Contest = submission.Problem.ProblemGroup.Contest.Name,
+                    ContestId = submission.Problem.ProblemGroup.ContestId,
+                    ParticipantName = submission.Participant.User.UserName,
+                    SubmissionType = submission.SubmissionType.Name,
+                    Processed = submission.Processed,
+                    Points = submission.Points,
+                    IsCompiledSuccessfully = submission.IsCompiledSuccessfully,
                 };
             }
         }
@@ -49,11 +72,13 @@
 
         public string Contest { get; set; }
 
+        public int ContestId { get; set; }
+
         public string ProgrammingLanguage { get; set; }
 
         public bool IsCompiledSuccessfully { get; set; }
 
-        public IEnumerable<TestRunViewModel> TestResults { get; set; }
+        public IEnumerable<TestRunViewModel> TestResults { get; set; } = Enumerable.Empty<TestRunViewModel>();
 
         public bool Processed { get; set; }
 
