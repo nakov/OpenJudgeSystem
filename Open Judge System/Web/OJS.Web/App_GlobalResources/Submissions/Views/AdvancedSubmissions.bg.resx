@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Breadcrumb_home" xml:space="preserve">
+    <value>Начало</value>
+  </data>
+  <data name="Breadcrumb_submissions" xml:space="preserve">
+    <value>Решения</value>
+  </data>
   <data name="Page_title" xml:space="preserve">
     <value>Последно изпратени решения</value>
   </data>

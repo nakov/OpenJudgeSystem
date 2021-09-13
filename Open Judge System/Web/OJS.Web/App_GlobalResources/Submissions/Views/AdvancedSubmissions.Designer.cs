@@ -61,6 +61,24 @@ namespace Resources.Submissions.Views {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Home.
+        /// </summary>
+        public static string Breadcrumb_home {
+            get {
+                return ResourceManager.GetString("Breadcrumb_home", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Submissions.
+        /// </summary>
+        public static string Breadcrumb_submissions {
+            get {
+                return ResourceManager.GetString("Breadcrumb_submissions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Latest submissions.
         /// </summary>
         public static string Page_title {
