@@ -1628,6 +1628,16 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SearchResults.resx</DependentUpon>
     </Compile>
+    <Compile Include="App_GlobalResources\Statistics\Views\StatisticsIndex.bg.designer.cs">
+      <DependentUpon>StatisticsIndex.bg.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="App_GlobalResources\Statistics\Views\StatisticsIndex.designer.cs">
+      <DependentUpon>StatisticsIndex.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="App_GlobalResources\Submissions\Views\AdvancedSubmissions.bg.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1844,6 +1854,7 @@
     <Compile Include="Areas\Users\Helpers\NullDisplayFormatAttribute.cs" />
     <Compile Include="Areas\Users\UsersAreaRegistration.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\StatisticsController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Areas\Contests\Controllers\TestsController.cs" />
     <Compile Include="Controllers\TempController.cs" />
@@ -3458,6 +3469,7 @@
     <Content Include="Views\Shared\_LoadingMask.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\NumericTextBox.cshtml" />
     <Content Include="Views\Shared\ExceededRequestQuota.cshtml" />
+    <Content Include="Views\Statistics\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -3904,6 +3916,18 @@
       <LastGenOutput>SearchResults.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Resources.Search.Views</CustomToolNamespace>
     </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\Statistics\Views\StatisticsIndex.bg.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>StatisticsIndex.bg.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+      <CustomToolNamespace>Resources.Statistics.Views</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\Statistics\Views\StatisticsIndex.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>StatisticsIndex.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+      <CustomToolNamespace>Resources.Statistics.Views</CustomToolNamespace>
+    </EmbeddedResource>
     <EmbeddedResource Include="App_GlobalResources\Submissions\Views\AdvancedSubmissions.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>AdvancedSubmissions.Designer.cs</LastGenOutput>
@@ -3949,6 +3973,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Layout.bg.designer.cs</LastGenOutput>
       <CustomToolNamespace>Resources.Views.Shared</CustomToolNamespace>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="App_GlobalResources\Base\Main.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
