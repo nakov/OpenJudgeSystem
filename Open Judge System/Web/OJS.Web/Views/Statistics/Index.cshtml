@@ -5,3 +5,44 @@
 }
 
 <h1>@ViewBag.Title</h1>
+
+<style>
+    .k-chart {
+        width: 1110px;
+        height: 800px;
+    }
+</style>
+
+<div class="wide">
+    @(Html.Kendo().Chart()
+        .Name("chart")
+        .Title("Submissions per month \n (last 12 months)")
+        .SeriesColors("#5DADE2")
+        .Legend(legend => legend
+            .Visible(false)
+        )
+        .ChartArea(chartArea => chartArea
+            .Background("transparent")
+        )
+        .Series(series => {
+            series
+                .Column(new double[] { 56000, 63000, 74000, 91000, 117000, 78000, 10000, 18000, 138000, 156000, 38000, 5300 })
+                .Name("Total Submissions");
+        })
+        .CategoryAxis(axis => axis
+            .Categories("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+            .MajorGridLines(lines => lines.Visible(true))
+        )
+        .ValueAxis(axis => axis
+            .Numeric()
+            .Max(150000)
+            .Line(line => line.Visible(false))
+            .MajorGridLines(lines => lines.Visible(true))
+        )
+        .Tooltip(tooltip => tooltip
+            .Visible(true)
+            .Color("#FFF")
+            .Template("#= series.name #: #= value #")
+        )
+    )
+</div>
