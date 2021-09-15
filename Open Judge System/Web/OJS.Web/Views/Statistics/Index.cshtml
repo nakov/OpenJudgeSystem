@@ -14,7 +14,7 @@
 </style>
 
 <div class="wide">
-    @(Html.Kendo().Chart()
+    @(Html.Kendo().Chart<OJS.Web.ViewModels.Statistics.SubmissionsStatisticsViewModel>()
         .Name("chart")
         .Title("Submissions per month \n (last 12 months)")
         .SeriesColors("#5DADE2")
@@ -26,16 +26,15 @@
         )
         .Series(series => {
             series
-                .Column(new double[] { 56000, 63000, 74000, 91000, 117000, 78000, 10000, 18000, 138000, 156000, 38000, 5300 })
+                .Column(model => model.TotalSubmissionsCount)
                 .Name("Total Submissions");
         })
         .CategoryAxis(axis => axis
-            .Categories("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+            .Categories(model => model.Month)
             .MajorGridLines(lines => lines.Visible(true))
         )
         .ValueAxis(axis => axis
             .Numeric()
-            .Max(150000)
             .Line(line => line.Visible(false))
             .MajorGridLines(lines => lines.Visible(true))
         )
@@ -43,6 +42,15 @@
             .Visible(true)
             .Color("#FFF")
             .Template("#= series.name #: #= value #")
+        )
+        .DataSource(dataSource => dataSource
+            .ServerOperation(true)
+            .Read(read => read
+                .Type(HttpVerbs.Post)
+                .Action(
+                    "GetLatestTwelveMonthSubmissionsCount",
+                    "Statistics")
+            )
         )
     )
 </div>

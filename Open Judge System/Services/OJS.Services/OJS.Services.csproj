@@ -95,6 +95,7 @@
     <Compile Include="Business\Submissions\ArchivedSubmissions\IArchivedSubmissionsBusinessService.cs" />
     <Compile Include="Business\Submissions\ISubmissionsBusinessService.cs" />
     <Compile Include="Business\Submissions\Models\ParticipantScoreModel.cs" />
+    <Compile Include="Business\Submissions\Models\SubmissionCountByMonthStatisticsModel.cs" />
     <Compile Include="Business\Submissions\SubmissionsBusinessService.cs" />
     <Compile Include="Cache\CacheItemsProviderService.cs" />
     <Compile Include="Cache\Models\CategoryMenuItemViewModel.cs" />
