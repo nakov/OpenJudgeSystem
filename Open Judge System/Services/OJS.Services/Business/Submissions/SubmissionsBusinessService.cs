@@ -159,35 +159,5 @@
                 scope.Complete();
             }
         }
-
-        public IEnumerable<SubmissionCountByMonthStatisticsModel> GetSubmissionsCountByMonthForLast12Months()
-        {
-            var oneYearAgoDate = GetFirstDayOfNextMonthAfterCurrentMonthForLastYearDate();
-
-            var result = this.submissionsData
-                .GetAll()
-                .Where(s => s.CreatedOn >= oneYearAgoDate)
-                .GroupBy(s => new { s.CreatedOn.Year, s.CreatedOn.Month })
-                .OrderBy(g => g.Min(s => s.CreatedOn))
-                .Select(g => new SubmissionCountByMonthStatisticsModel
-                {
-                    MonthNumber = g.Key.Month,
-                    TotalSubmissionsCount = g.Count(),
-                })
-                .ToList();
-
-            return result;
-        }
-
-        private DateTime GetFirstDayOfNextMonthAfterCurrentMonthForLastYearDate()
-        {
-            var currentDate = DateTime.UtcNow;
-            var elevenMonthsAgoDate = currentDate.AddMonths(-11);
-            var year = elevenMonthsAgoDate.Year;
-            var month = elevenMonthsAgoDate.Month;
-            var day = 1;
-
-            return new DateTime(year, month, day);
-        }
     }
 }

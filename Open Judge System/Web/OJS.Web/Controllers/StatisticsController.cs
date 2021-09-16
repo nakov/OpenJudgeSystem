@@ -7,17 +7,17 @@
     using System.Web.Mvc;
 
     using OJS.Data;
-    using OJS.Services.Business.Submissions;
+    using OJS.Services.Cache.Statistics;
     using OJS.Web.ViewModels.Statistics;
 
     public class StatisticsController : BaseController
     {
-        private readonly ISubmissionsBusinessService submissionsBusiness;
+        private readonly ISubmissionStatisticsCacheService submissionStatisticsCache;
 
-        public StatisticsController(IOjsData data, ISubmissionsBusinessService submissionsBusiness)
+        public StatisticsController(IOjsData data, ISubmissionStatisticsCacheService submissionStatisticsCache)
             : base(data)
         {
-            this.submissionsBusiness = submissionsBusiness;
+            this.submissionStatisticsCache = submissionStatisticsCache;
         }
 
         public ActionResult Index()
@@ -31,8 +31,8 @@
             var result = new List<SubmissionsStatisticsViewModel>();
             var currentCulture = Thread.CurrentThread.CurrentUICulture;
 
-            this.submissionsBusiness
-                .GetSubmissionsCountByMonthForLast12Months()
+            this.submissionStatisticsCache
+                .GetSubsmissionsCountByMonthForPastYear()
                 .ToList()
                 .ForEach(x =>
                 {
