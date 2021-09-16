@@ -68,5 +68,23 @@ namespace Resources.Statistics.Views {
                 return ResourceManager.GetString("Page_title", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Submissions per month \n (last 12 months).
+        /// </summary>
+        public static string Submissions_count_per_month_title {
+            get {
+                return ResourceManager.GetString("Submissions_count_per_month_title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total submissions.
+        /// </summary>
+        public static string Total_submissions {
+            get {
+                return ResourceManager.GetString("Total_submissions", resourceCulture);
+            }
+        }
     }
 }

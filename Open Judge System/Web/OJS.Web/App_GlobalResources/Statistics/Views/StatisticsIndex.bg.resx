@@ -120,4 +120,10 @@
   <data name="Page_title" xml:space="preserve">
     <value>Статистика</value>
   </data>
+  <data name="Submissions_count_per_month_title" xml:space="preserve">
+    <value>Брой решения на месец \n (последните 12 месеца)</value>
+  </data>
+  <data name="Total_submissions" xml:space="preserve">
+    <value>Общо решения</value>
+  </data>
 </root>

@@ -16,7 +16,7 @@
 <div class="wide">
     @(Html.Kendo().Chart<OJS.Web.ViewModels.Statistics.SubmissionsStatisticsViewModel>()
         .Name("chart")
-        .Title("Submissions per month \n (last 12 months)")
+        .Title(Resource.Submissions_count_per_month_title)
         .SeriesColors("#5DADE2")
         .Legend(legend => legend
             .Visible(false)
@@ -27,7 +27,7 @@
         .Series(series => {
             series
                 .Column(model => model.TotalSubmissionsCount)
-                .Name("Total Submissions");
+                .Name(Resource.Total_submissions);
         })
         .CategoryAxis(axis => axis
             .Categories(model => model.Month)
