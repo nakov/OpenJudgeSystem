@@ -3471,7 +3471,6 @@
     <Content Include="Views\Shared\_LoadingMask.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\NumericTextBox.cshtml" />
     <Content Include="Views\Shared\ExceededRequestQuota.cshtml" />
-    <Content Include="Views\Statistics\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
