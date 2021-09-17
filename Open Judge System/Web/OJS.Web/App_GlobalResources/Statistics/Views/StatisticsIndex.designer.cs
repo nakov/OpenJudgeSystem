@@ -61,15 +61,6 @@ namespace Resources.Statistics.Views {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Statistics.
-        /// </summary>
-        public static string Page_title {
-            get {
-                return ResourceManager.GetString("Page_title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Submissions per month \n (last 12 months).
         /// </summary>
         public static string Submissions_count_per_month_title {

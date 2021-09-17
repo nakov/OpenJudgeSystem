@@ -61,16 +61,7 @@
                             <li><a href="/Contests">@Resource.All</a></li>
                         </ul>
                     </li>
-                    <li class="dropdown">
-                        <a href="" class="dropdown-toggle" data-toggle="dropdown">
-                            @Resource.Submissions
-                            <strong class="caret"></strong>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/Submissions">@Resource.Latest_submissions</a></li>
-                            <li><a href="/Statistics">@Resource.Statistics</a></li>
-                        </ul>
-                    </li>
+                    <li>@(Html.ActionLink<OJS.Web.Controllers.SubmissionsController>(Resource.Submissions, c => c.Index()))</li>
                     @if (userIsLoggedIn)
                     {
                         <li><a href="/Feedback">@Resource.Feedback</a></li>

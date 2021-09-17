@@ -187,15 +187,6 @@ namespace Resources.Views.Shared {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Latest Submissions.
-        /// </summary>
-        public static string Latest_submissions {
-            get {
-                return ResourceManager.GetString("Latest_submissions", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Lecturers in contests and categories.
         /// </summary>
         public static string LecturersInContestAndCategories {
@@ -282,15 +273,6 @@ namespace Resources.Views.Shared {
         public static string Settings {
             get {
                 return ResourceManager.GetString("Settings", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Statistics.
-        /// </summary>
-        public static string Statistics {
-            get {
-                return ResourceManager.GetString("Statistics", resourceCulture);
             }
         }
         

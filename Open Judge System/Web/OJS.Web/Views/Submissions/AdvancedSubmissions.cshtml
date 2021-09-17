@@ -1,5 +1,6 @@
 ﻿@using OJS.Common.Extensions
 @using Resource = Resources.Submissions.Views.AdvancedSubmissions
+@using StatisticsResource = Resources.Statistics.Views.StatisticsIndex
 
 @{
     if (User.IsAdmin() || User.IsLecturer())
@@ -13,6 +14,10 @@
             WebConstants.AdvancedSubmissionsGridPageSize,
             ((int)ViewBag.TotalSubsmissionsCount).ToSeparatedString(" "));
     }
+}
+
+@section Styles{
+    @Styles.Render("~/Content/css/statistics/index/statistics.css")
 }
 
 <script src="/Scripts/Helpers/test-results.js"></script>
@@ -31,10 +36,10 @@
             <h4>
                 Решения в опашката: @ViewBag.SubmissionsInQueue
                 (@Ajax.ActionLink(
-                    "Покажи решенията в опашката",
-                    "GetSubmissionsGrid",
-                    new { notProcessedOnly = true },
-                    new AjaxOptions { HttpMethod = "GET", InsertionMode = InsertionMode.Replace, UpdateTargetId = "submissions-container" }) /
+                  "Покажи решенията в опашката",
+                  "GetSubmissionsGrid",
+                  new { notProcessedOnly = true },
+                  new AjaxOptions { HttpMethod = "GET", InsertionMode = InsertionMode.Replace, UpdateTargetId = "submissions-container" }) /
                 @Ajax.ActionLink(
                     "Покажи всички решения",
                     "GetSubmissionsGrid",
@@ -54,4 +59,47 @@
 
 <div id="submissions-container">
     @Html.Action("GetSubmissionsGrid")
+</div>
+
+<br />
+<div class="wide">
+    @(Html.Kendo().Chart<OJS.Web.ViewModels.Statistics.SubmissionsStatisticsViewModel>()
+        .Name("chart")
+        .Title(StatisticsResource.Submissions_count_per_month_title)
+        .SeriesColors("#5DADE2")
+        .Legend(legend => legend
+            .Visible(false)
+        )
+        .ChartArea(chartArea => chartArea
+            .Background("transparent")
+        )
+        .Series(series => {
+            series
+                .Column(model => model.TotalSubmissionsCount)
+                .Name(StatisticsResource.Total_submissions);
+        })
+        .CategoryAxis(axis => axis
+            .Categories(model => model.Month)
+            .MajorGridLines(lines => lines.Visible(true))
+        )
+        .ValueAxis(axis => axis
+            .Numeric()
+            .Line(line => line.Visible(false))
+            .MajorGridLines(lines => lines.Visible(true))
+        )
+        .Tooltip(tooltip => tooltip
+            .Visible(true)
+            .Color("#FFF")
+            .Template("#= series.name #: #= value #")
+        )
+        .DataSource(dataSource => dataSource
+            .ServerOperation(true)
+            .Read(read => read
+                .Type(HttpVerbs.Post)
+                .Action(
+                    "GetLatestTwelveMonthSubmissionsCount",
+                    "Statistics")
+            )
+        )
+    )
 </div>
