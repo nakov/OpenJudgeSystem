@@ -6,12 +6,9 @@
 
 <h1>@ViewBag.Title</h1>
 
-<style>
-    .k-chart {
-        width: 1110px;
-        height: 800px;
-    }
-</style>
+@section Styles{
+    @Styles.Render("~/Content/css/statistics/index/statistics.css")
+}
 
 <div class="wide">
     @(Html.Kendo().Chart<OJS.Web.ViewModels.Statistics.SubmissionsStatisticsViewModel>()

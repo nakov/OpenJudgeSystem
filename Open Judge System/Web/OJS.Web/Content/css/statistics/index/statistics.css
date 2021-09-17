@@ -1,0 +1,25 @@
+﻿.k-chart {
+    margin: 0 auto;
+    width: 500px;
+    height: 500px;
+}
+
+@media screen and (min-width: 700px) {
+    .k-chart {
+        width: 600px;
+    }
+}
+
+@media screen and (min-width: 991px) {
+    .k-chart {
+        width: 800px;
+        height: 600px;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .k-chart {
+        width: 1100px;
+        height: 800px;
+    }
+}
