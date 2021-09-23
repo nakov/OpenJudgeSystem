@@ -58,10 +58,13 @@ function testResult(
         result += '<span class="glyphicon glyphicon-remove text-danger" title="Compilation failed"></span>';
         result += '<strong class="text-danger"> Грешка при компилация</strong>' + '<small> | ' + submissionType + '</small>';
     } else {
+        let memoryAndTimeUsedPart = tests.length
+            ? (maxUsedMemory / 1024 / 1024).toFixed(2) + ' MB | ' + (maxUsedTime / 1000).toFixed(3) + ' sec. | '
+            : '';
+
         result += '<div><strong class="text-primary"> ' + points +
             ' / ' + problemMaximumPoints + '</strong>' +
-            '<small> ' + (maxUsedMemory / 1024 / 1024).toFixed(2) + ' MB | ' +
-            (maxUsedTime / 1000).toFixed(3) + ' sec. | ' + submissionType + '</small></div> ';
+            '<small> ' + memoryAndTimeUsedPart + submissionType + '</small></div> ';
         result += displayTestRuns(tests);
     }
 

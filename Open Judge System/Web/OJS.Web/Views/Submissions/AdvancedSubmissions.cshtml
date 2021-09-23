@@ -1,14 +1,25 @@
-﻿@using Resource = Resources.Submissions.Views.AdvancedSubmissions
+﻿@using OJS.Common.Extensions
+@using Resource = Resources.Submissions.Views.AdvancedSubmissions
 
 @{
-    ViewBag.Title = Resource.Page_title;
+    if (User.IsAdmin() || User.IsLecturer())
+    {
+        ViewBag.Title = Resource.Page_title;
+    }
+    else
+    {
+        ViewBag.Title = string.Format(
+            Resource.Page_title_for_regular_user,
+            WebConstants.AdvancedSubmissionsGridPageSize,
+            ((int)ViewBag.TotalSubsmissionsCount).ToSeparatedString(" "));
+    }
 }
 
 <script src="/Scripts/Helpers/test-results.js"></script>
 
 <ol class="breadcrumb">
-    <li><a href="/">Начало</a></li>
-    <li class="active">Решения</li>
+    <li><a href="/">@Resource.Breadcrumb_home</a></li>
+    <li class="active">@Resource.Breadcrumb_submissions</li>
 </ol>
 
 <h1>@ViewBag.Title</h1>
@@ -20,10 +31,10 @@
             <h4>
                 Решения в опашката: @ViewBag.SubmissionsInQueue
                 (@Ajax.ActionLink(
-                     "Покажи решенията в опашката",
-                     "GetSubmissionsGrid",
-                     new { notProcessedOnly = true },
-                     new AjaxOptions { HttpMethod = "GET", InsertionMode = InsertionMode.Replace, UpdateTargetId = "submissions-container" }) /
+                    "Покажи решенията в опашката",
+                    "GetSubmissionsGrid",
+                    new { notProcessedOnly = true },
+                    new AjaxOptions { HttpMethod = "GET", InsertionMode = InsertionMode.Replace, UpdateTargetId = "submissions-container" }) /
                 @Ajax.ActionLink(
                     "Покажи всички решения",
                     "GetSubmissionsGrid",

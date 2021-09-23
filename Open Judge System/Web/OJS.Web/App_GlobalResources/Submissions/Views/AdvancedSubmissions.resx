@@ -117,7 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Breadcrumb_home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Breadcrumb_submissions" xml:space="preserve">
+    <value>Submissions</value>
+  </data>
   <data name="Page_title" xml:space="preserve">
     <value>Latest submissions</value>
+  </data>
+  <data name="Page_title_for_regular_user" xml:space="preserve">
+    <value>Latest {0} submissions out of {1} total</value>
   </data>
 </root>
