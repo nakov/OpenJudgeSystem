@@ -95,10 +95,13 @@
     <Compile Include="Business\Submissions\ArchivedSubmissions\IArchivedSubmissionsBusinessService.cs" />
     <Compile Include="Business\Submissions\ISubmissionsBusinessService.cs" />
     <Compile Include="Business\Submissions\Models\ParticipantScoreModel.cs" />
+    <Compile Include="Business\Submissions\Models\SubmissionCountByMonthStatisticsModel.cs" />
     <Compile Include="Business\Submissions\SubmissionsBusinessService.cs" />
     <Compile Include="Cache\CacheItemsProviderService.cs" />
     <Compile Include="Cache\Models\CategoryMenuItemViewModel.cs" />
     <Compile Include="Cache\Models\ContestCategoryListViewModel.cs" />
+    <Compile Include="Cache\Statistics\ISubmissionStatisticsCacheService.cs" />
+    <Compile Include="Cache\Statistics\SubmissionStatisticsCacheService.cs" />
     <Compile Include="Data\Checkers\CheckersDataService.cs" />
     <Compile Include="Data\Checkers\ICheckersDataService.cs" />
     <Compile Include="Data\ContestCategories\ContestCategoriesDataService.cs" />

@@ -61,7 +61,7 @@
                             <li><a href="/Contests">@Resource.All</a></li>
                         </ul>
                     </li>
-                    <li><a href="/Submissions">@Resource.Submissions</a></li>
+                    <li>@(Html.ActionLink<OJS.Web.Controllers.SubmissionsController>(Resource.Submissions, c => c.Index()))</li>
                     @if (userIsLoggedIn)
                     {
                         <li><a href="/Feedback">@Resource.Feedback</a></li>

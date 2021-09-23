@@ -6,8 +6,7 @@
 
     public class MemoryCacheService : ICacheService
     {
-        public T Get<T>(string cacheId, Func<T> getItemCallback, int? cacheSeconds)
-            where T : class
+        public T Get<T>(string cacheId, Func<T> getItemCallback, DateTime absoluteExpiration) where T : class
         {
             if (HttpRuntime.Cache.Get(cacheId) is T item)
             {
@@ -16,20 +15,25 @@
 
             item = getItemCallback();
 
-            SetCache(cacheId, item, cacheSeconds);
+            SetCache(cacheId, item, absoluteExpiration);
 
             return item;
         }
 
-        public void Remove(string cacheId) => HttpRuntime.Cache.Remove(cacheId);
-
-        private static void SetCache<T>(string cacheId, T item, int? cacheSeconds)
+        public T Get<T>(string cacheId, Func<T> getItemCallback, int? cacheSeconds)
+            where T : class
         {
             var absoluteExpiration = cacheSeconds.HasValue
                 ? DateTime.Now.AddSeconds(cacheSeconds.Value)
                 : Cache.NoAbsoluteExpiration;
 
-            HttpContext.Current.Cache.Add(
+            return this.Get(cacheId, getItemCallback, absoluteExpiration);
+        }
+
+        public void Remove(string cacheId) => HttpRuntime.Cache.Remove(cacheId);
+
+        private static void SetCache<T>(string cacheId, T item, DateTime absoluteExpiration)
+            => HttpContext.Current.Cache.Add(
                 cacheId,
                 item,
                 null,
@@ -37,6 +41,5 @@
                 Cache.NoSlidingExpiration,
                 CacheItemPriority.Default,
                 null);
-        }
     }
 }

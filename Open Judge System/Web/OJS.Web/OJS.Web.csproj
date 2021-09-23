@@ -1628,6 +1628,16 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SearchResults.resx</DependentUpon>
     </Compile>
+    <Compile Include="App_GlobalResources\Statistics\Views\StatisticsIndex.bg.designer.cs">
+      <DependentUpon>StatisticsIndex.bg.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="App_GlobalResources\Statistics\Views\StatisticsIndex.designer.cs">
+      <DependentUpon>StatisticsIndex.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="App_GlobalResources\Submissions\Views\AdvancedSubmissions.bg.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1844,6 +1854,7 @@
     <Compile Include="Areas\Users\Helpers\NullDisplayFormatAttribute.cs" />
     <Compile Include="Areas\Users\UsersAreaRegistration.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\StatisticsController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Areas\Contests\Controllers\TestsController.cs" />
     <Compile Include="Controllers\TempController.cs" />
@@ -1898,6 +1909,7 @@
     <Compile Include="ViewModels\Search\SearchResultGroupViewModel.cs" />
     <Compile Include="ViewModels\Search\SearchResultViewModel.cs" />
     <Compile Include="ViewModels\Shared\PaginationViewModel.cs" />
+    <Compile Include="ViewModels\Statistics\SubmissionsStatisticsViewModel.cs" />
     <Compile Include="ViewModels\Submission\SubmissionsFilterViewModel.cs" />
     <Compile Include="ViewModels\Submission\SubmissionViewModel.cs" />
     <Compile Include="Areas\Contests\ViewModels\Tests\TestInputDataViewModel.cs" />
@@ -1927,6 +1939,7 @@
     <Content Include="Content\css\common\loading-mask.css" />
     <Content Include="Content\css\home\index\home.css" />
     <Content Include="Content\css\home\search\search-results.css" />
+    <Content Include="Content\css\statistics\index\statistics.css" />
     <Content Include="Content\docs.css" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Content\KendoUI\Black\editor.png" />
@@ -3904,6 +3917,18 @@
       <LastGenOutput>SearchResults.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Resources.Search.Views</CustomToolNamespace>
     </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\Statistics\Views\StatisticsIndex.bg.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>StatisticsIndex.bg.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+      <CustomToolNamespace>Resources.Statistics.Views</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\Statistics\Views\StatisticsIndex.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>StatisticsIndex.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+      <CustomToolNamespace>Resources.Statistics.Views</CustomToolNamespace>
+    </EmbeddedResource>
     <EmbeddedResource Include="App_GlobalResources\Submissions\Views\AdvancedSubmissions.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>AdvancedSubmissions.Designer.cs</LastGenOutput>
@@ -3949,6 +3974,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Layout.bg.designer.cs</LastGenOutput>
       <CustomToolNamespace>Resources.Views.Shared</CustomToolNamespace>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="App_GlobalResources\Base\Main.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

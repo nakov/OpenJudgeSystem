@@ -4,6 +4,9 @@
 
     public interface ICacheService : IService
     {
+        T Get<T>(string cacheId, Func<T> getItemCallback, DateTime absoluteExpiration)
+           where T : class;
+
         T Get<T>(string cacheId, Func<T> getItemCallback, int? cacheSeconds)
             where T : class;
 
