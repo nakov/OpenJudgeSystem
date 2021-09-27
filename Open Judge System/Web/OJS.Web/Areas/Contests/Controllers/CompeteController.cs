@@ -7,6 +7,7 @@
     using System.Linq;
     using System.Net;
     using System.Text.RegularExpressions;
+    using System.Threading.Tasks;
     using System.Web;
     using System.Web.Mvc;
     using System.Web.Mvc.Expressions;
@@ -497,7 +498,7 @@
 
             var requestBody = this.submissionsBusiness.BuildDistributorSubmissionBody(newSubmission);
 
-            this.http.PostJson<object, string>(this.distributorEndpoint, requestBody);
+            Task.Run(async () => await this.http.PostJsonAsync<object>(this.distributorEndpoint, requestBody));
 
             // Should be removed after fully migrating to distributor
             this.submissionsForProcessingData.AddOrUpdateBySubmission(newSubmission.Id);

@@ -165,6 +165,7 @@
             }
         }
 
+        // TODO: Pass a Service model instead of Data model
         public object BuildDistributorSubmissionBody(Submission submission)
         {
             var executionType = ExecutionType.TestsExecution.ToString().ToHyphenSeparatedWords();
