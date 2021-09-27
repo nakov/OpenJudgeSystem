@@ -114,7 +114,7 @@
             {
                 this.submissionForProcessing.Processed = false;
                 this.submissionForProcessing.Processing = true;
-                
+
                 this.submissionsForProcessingData.Update(this.submissionForProcessing);
             }
             catch (Exception ex)
