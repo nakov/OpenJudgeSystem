@@ -11,6 +11,8 @@
 
         Problem GetWithProblemGroupById(int id);
 
+        Problem GetWithProblemGroupChecherAndTestsById(int id);
+
         Problem GetWithContestById(int id);
 
         IQueryable<Problem> GetAll();

@@ -4036,6 +4036,14 @@
       <Project>{8570183B-9D7A-408D-9EA6-F86F59B05A10}</Project>
       <Name>OJS.Workers.Compilers</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Workers\OJS.Workers.ExecutionStrategies\OJS.Workers.ExecutionStrategies.csproj">
+      <Project>{69966098-E5B2-46CD-88E9-1F79B245ADE0}</Project>
+      <Name>OJS.Workers.ExecutionStrategies</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Workers\OJS.Workers.SubmissionProcessors\OJS.Workers.SubmissionProcessors.csproj">
+      <Project>{6E2902A5-E47F-4888-953E-4F81467B40C7}</Project>
+      <Name>OJS.Workers.SubmissionProcessors</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Workers\OJS.Workers.Tools\OJS.Workers.Tools.csproj">
       <Project>{a1f48412-495a-434c-bdd0-e70aedad6897}</Project>
       <Name>OJS.Workers.Tools</Name>

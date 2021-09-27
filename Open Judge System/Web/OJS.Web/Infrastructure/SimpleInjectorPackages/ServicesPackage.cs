@@ -11,6 +11,7 @@
     using OJS.Services.Data.ExamGroups;
     using OJS.Services.Data.SubmissionsForProcessing;
     using OJS.Services.Data.Users;
+    using OJS.Workers.SubmissionProcessors.Formatters;
 
     using SimpleInjector;
     using SimpleInjector.Packaging;
@@ -34,6 +35,10 @@
                     container.GetInstance<IHangfireBackgroundJobService>(),
                     Settings.SulsPlatformBaseUrl,
                     Settings.ApiKey),
+                Lifestyle.Scoped);
+
+            container.Register<IFormatterServiceFactory>(
+                () => new FormatterServiceFactory(),
                 Lifestyle.Scoped);
         }
 

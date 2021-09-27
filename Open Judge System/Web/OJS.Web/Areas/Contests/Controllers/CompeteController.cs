@@ -22,12 +22,14 @@
     using OJS.Data.Models;
     using OJS.Services.Business.Contests;
     using OJS.Services.Business.Participants;
+    using OJS.Services.Business.Submissions;
     using OJS.Services.Data.Contests;
     using OJS.Services.Data.Ips;
     using OJS.Services.Data.Participants;
     using OJS.Services.Data.Problems;
     using OJS.Services.Data.Submissions;
     using OJS.Services.Data.SubmissionsForProcessing;
+    using OJS.Services.Data.SubmissionTypes;
     using OJS.Web.Areas.Contests.Helpers;
     using OJS.Web.Areas.Contests.Models;
     using OJS.Web.Areas.Contests.ViewModels.Contests;
@@ -38,6 +40,9 @@
     using OJS.Web.Common.Exceptions;
     using OJS.Web.Common.Extensions;
     using OJS.Web.Controllers;
+    using OJS.Workers.Common;
+    using OJS.Workers.Common.Extensions;
+    using OJS.Workers.SubmissionProcessors.Common;
 
     using Resource = Resources.Areas.Contests;
 
@@ -46,6 +51,7 @@
         public const string CompeteActionName = "Compete";
         public const string PracticeActionName = "Practice";
 
+        private readonly HttpService http;
         private readonly IParticipantsBusinessService participantsBusiness;
         private readonly IContestsBusinessService contestsBusiness;
         private readonly IParticipantsDataService participantsData;
@@ -53,7 +59,10 @@
         private readonly IProblemsDataService problemsData;
         private readonly ISubmissionsDataService submissionsData;
         private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
+        private readonly ISubmissionTypesDataService submissionTypesData;
+        private readonly ISubmissionsBusinessService submissionsBusiness;
         private readonly IIpsDataService ipsData;
+        private readonly string distributorEndpoint;
 
         public CompeteController(
             IOjsData data,
@@ -64,6 +73,8 @@
             IProblemsDataService problemsData,
             ISubmissionsDataService submissionsData,
             ISubmissionsForProcessingDataService submissionsForProcessingData,
+            ISubmissionTypesDataService submissionTypesData,
+            ISubmissionsBusinessService submissionsBusiness,
             IIpsDataService ipsData)
             : base(data)
         {
@@ -74,7 +85,11 @@
             this.problemsData = problemsData;
             this.submissionsData = submissionsData;
             this.submissionsForProcessingData = submissionsForProcessingData;
+            this.submissionTypesData = submissionTypesData;
+            this.submissionsBusiness = submissionsBusiness;
             this.ipsData = ipsData;
+            this.http = new HttpService();
+            this.distributorEndpoint = $"{Settings.DistributorServiceLocation}/submissions/add";
         }
 
         protected CompeteController(
@@ -409,7 +424,7 @@
         [ValidateAntiForgeryToken]
         public ActionResult Submit(SubmissionModel participantSubmission, bool official)
         {
-            var problem = this.problemsData.GetWithProblemGroupById(participantSubmission.ProblemId);
+            var problem = this.problemsData.GetWithProblemGroupChecherAndTestsById(participantSubmission.ProblemId);
             if (problem == null)
             {
                 throw new HttpException((int)HttpStatusCode.Unauthorized, Resource.ContestsGeneral.Problem_not_found);
@@ -477,6 +492,14 @@
             this.Data.Submissions.Add(newSubmission);
             this.Data.SaveChanges();
 
+            newSubmission.Problem = problem;
+            newSubmission.SubmissionType = this.submissionTypesData.GetById(newSubmission.SubmissionTypeId.Value);
+
+            var requestBody = this.submissionsBusiness.BuildDistributorSubmissionBody(newSubmission);
+
+            this.http.PostJson<object, string>(this.distributorEndpoint, requestBody);
+
+            // Should be removed after fully migrating to distributor
             this.submissionsForProcessingData.AddOrUpdateBySubmission(newSubmission.Id);
 
             return this.Json(participantSubmission.ProblemId);

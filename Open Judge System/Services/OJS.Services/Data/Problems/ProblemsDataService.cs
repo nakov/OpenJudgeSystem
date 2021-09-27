@@ -29,6 +29,14 @@
                 .Include(p => p.ProblemGroup)
                 .FirstOrDefault(p => p.Id == id);
 
+        public Problem GetWithProblemGroupChecherAndTestsById(int id) =>
+            this.problems
+                .All()
+                .Include(p => p.ProblemGroup)
+                .Include(p => p.Checker)
+                .Include(p => p.Tests)
+                .FirstOrDefault(p => p.Id == id);
+
         public Problem GetWithContestById(int id) =>
             this.problems
                 .All()
