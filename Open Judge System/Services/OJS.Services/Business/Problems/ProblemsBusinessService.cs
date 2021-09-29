@@ -2,11 +2,13 @@
 {
     using System.Data.Entity;
     using System.Linq;
+    using System.Threading.Tasks;
 
     using OJS.Common.Helpers;
     using OJS.Data.Models;
     using OJS.Data.Repositories.Contracts;
     using OJS.Services.Business.ProblemGroups;
+    using OJS.Services.Business.SubmissionsDistributor;
     using OJS.Services.Common;
     using OJS.Services.Data.Contests;
     using OJS.Services.Data.ParticipantScores;
@@ -33,6 +35,7 @@
         private readonly ITestRunsDataService testRunsData;
         private readonly ISubmissionTypesDataService submissionTypesData;
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
+        private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
 
         public ProblemsBusinessService(
             IEfDeletableEntityRepository<Problem> problems,
@@ -44,7 +47,8 @@
             ISubmissionsForProcessingDataService submissionsForProcessingData,
             ITestRunsDataService testRunsData,
             ISubmissionTypesDataService submissionTypesData,
-            IProblemGroupsBusinessService problemGroupsBusiness)
+            IProblemGroupsBusinessService problemGroupsBusiness,
+            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication)
         {
             this.problems = problems;
             this.contestsData = contestsData;
@@ -56,11 +60,19 @@
             this.testRunsData = testRunsData;
             this.submissionTypesData = submissionTypesData;
             this.problemGroupsBusiness = problemGroupsBusiness;
+            this.submissionsDistributorCommunication = submissionsDistributorCommunication;
         }
 
         public void RetestById(int id)
         {
-            var submissionIds = this.submissionsData.GetIdsByProblem(id).ToList();
+            var submissions = this.submissionsData.GetAllByProblem(id)
+                .Include(s => s.SubmissionType)
+                .Include(s => s.Problem)
+                .Include(s => s.Problem.Checker)
+                .Include(s => s.Problem.Tests)
+                .ToList();
+
+            var submissionIds = submissions.Select(s => s.Id).ToList();
 
             using (var scope = TransactionsHelper.CreateTransactionScope(IsolationLevel.RepeatableRead))
             {
@@ -72,6 +84,12 @@
 
                 scope.Complete();
             }
+
+            var tasks = submissions
+                .Select(s => Task.Run(async () =>
+                    await this.submissionsDistributorCommunication.AddSubmissionForProcessing(s)));
+
+            Task.WhenAll(tasks);
         }
 
         public void DeleteById(int id)
