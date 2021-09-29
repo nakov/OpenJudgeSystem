@@ -166,7 +166,6 @@
             var executionResult = submissionExecutionResult.ExecutionResult;
 
             submission.Processed = true;
-            submission.IsCompiledSuccessfully = executionResult?.IsCompiledSuccessfully ?? false;
 
             if (executionResult != null)
             {
@@ -174,7 +173,7 @@
                 submission.CompilerComment = executionResult.CompilerComment;
                 submission.Points = executionResult.TaskResult.Points;
 
-                foreach (var testResult in executionResult?.TaskResult.TestResults)
+                foreach (var testResult in executionResult.TaskResult.TestResults)
                 {
                     var testRun = new TestRun
                     {
