@@ -1,5 +1,6 @@
 ﻿namespace OJS.Web.Controllers
 {
+    using System;
     using System.Diagnostics;
     using System.Linq;
     using System.Web.Mvc;
@@ -11,21 +12,31 @@
 
     using OJS.Common;
     using OJS.Data;
+    using OJS.Data.Models;
     using OJS.Services.Data.Submissions;
+    using OJS.Services.Data.SubmissionsForProcessing;
     using OJS.Web.Common.Extensions;
+    using OJS.Web.Models.Submissions;
     using OJS.Web.ViewModels.Submission;
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
+
     using static OJS.Web.Common.WebConstants;
 
     public class SubmissionsController : BaseController
     {
         private readonly ISubmissionsDataService submissionsData;
+        private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
 
         public SubmissionsController(
             IOjsData data,
-            ISubmissionsDataService submissionsData)
-            : base(data) =>
-                this.submissionsData = submissionsData;
+            ISubmissionsDataService submissionsData,
+            ISubmissionsForProcessingDataService submissionsForProcessingData)
+            : base(data)
+        {
+            this.submissionsData = submissionsData;
+            this.submissionsForProcessingData = submissionsForProcessingData;
+        }
 
         public ActionResult Index()
         {
@@ -144,6 +155,56 @@
             }
 
             return this.RedirectToAction<SubmissionsController>(c => c.Index());
+        }
+
+        [HttpPost]
+        public ActionResult SaveExecutionResult(SubmissionExecutionResult submissionExecutionResult)
+        {
+            var submission = this.submissionsData.GetById(submissionExecutionResult.SubmissionId);
+
+            var exception = submissionExecutionResult.Exception;
+            var executionResult = submissionExecutionResult.ExecutionResult;
+
+            submission.Processed = true;
+            submission.IsCompiledSuccessfully = executionResult?.IsCompiledSuccessfully ?? false;
+
+            if (executionResult != null)
+            {
+                submission.IsCompiledSuccessfully = executionResult.IsCompiledSuccessfully;
+                submission.CompilerComment = executionResult.CompilerComment;
+                submission.Points = executionResult.TaskResult.Points;
+
+                foreach (var testResult in executionResult?.TaskResult.TestResults)
+                {
+                    var testRun = new TestRun
+                    {
+                        CheckerComment = testResult.CheckerDetails.Comment,
+                        ExpectedOutputFragment = testResult.CheckerDetails.ExpectedOutputFragment,
+                        UserOutputFragment = testResult.CheckerDetails.UserOutputFragment,
+                        ExecutionComment = testResult.ExecutionComment,
+                        MemoryUsed = testResult.MemoryUsed,
+                        ResultType = (TestRunResultType)Enum.Parse(typeof(TestRunResultType), testResult.ResultType),
+                        TestId = testResult.Id,
+                        TimeUsed = testResult.TimeUsed
+                    };
+
+                    submission.TestRuns.Add(testRun);
+                }
+            }
+            else if (exception != null)
+            {
+                submission.ProcessingComment = exception.Message + Environment.NewLine + exception.StackTrace;
+            }
+            else
+            {
+                submission.ProcessingComment = "Invalid execution result received. Please contact an administrator.";
+            }
+
+            this.submissionsData.Update(submission);
+
+            this.submissionsForProcessingData.RemoveBySubmission(submission.Id);
+
+            return this.JsonSuccess(submissionExecutionResult.SubmissionId);
         }
     }
 }
