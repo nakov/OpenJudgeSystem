@@ -157,6 +157,7 @@
             return this.RedirectToAction<SubmissionsController>(c => c.Index());
         }
 
+        // TODO: restrict this endpoint to be available only to the distributor
         [HttpPost]
         public ActionResult SaveExecutionResult(SubmissionExecutionResult submissionExecutionResult)
         {
