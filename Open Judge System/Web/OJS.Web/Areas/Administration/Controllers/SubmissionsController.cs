@@ -1,7 +1,9 @@
 ﻿namespace OJS.Web.Areas.Administration.Controllers
 {
     using System.Collections;
+    using System.Data.Entity;
     using System.Linq;
+    using System.Threading.Tasks;
     using System.Web.Mvc;
 
     using Kendo.Mvc.Extensions;
@@ -13,8 +15,10 @@
     using OJS.Data;
     using OJS.Data.Models;
     using OJS.Services.Business.ParticipantScores;
+    using OJS.Services.Business.SubmissionsDistributor;
     using OJS.Services.Data.Participants;
     using OJS.Services.Data.ParticipantScores;
+    using OJS.Services.Data.Submissions;
     using OJS.Services.Data.SubmissionsForProcessing;
     using OJS.Services.Data.TestRuns;
     using OJS.Web.Areas.Administration.Controllers.Common;
@@ -32,29 +36,33 @@
         protected const int RequestsPerInterval = 2;
         protected const int RestrictInterval = 180;
         protected const string TooManyRequestsErrorMessage = "Прекалено много заявки. Моля, опитайте по-късно.";
-
+        private readonly ISubmissionsDataService submissionsData;
         private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
         private readonly IParticipantScoresBusinessService participantScoresBusiness;
         private readonly IParticipantScoresDataService participantScoresData;
         private readonly IParticipantsDataService participantsData;
         private readonly ITestRunsDataService testRunsData;
-
+        private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
         private int? contestId;
 
         public SubmissionsController(
             IOjsData data,
+            ISubmissionsDataService submissionsData,
             ISubmissionsForProcessingDataService submissionsForProcessingData,
             IParticipantScoresBusinessService participantScoresBusiness,
             IParticipantScoresDataService participantScoresData,
             IParticipantsDataService participantsData,
-            ITestRunsDataService testRunsData)
+            ITestRunsDataService testRunsData,
+            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication)
             : base(data)
         {
+            this.submissionsData = submissionsData;
             this.submissionsForProcessingData = submissionsForProcessingData;
             this.participantScoresBusiness = participantScoresBusiness;
             this.participantScoresData = participantScoresData;
             this.participantsData = participantsData;
             this.testRunsData = testRunsData;
+            this.submissionsDistributorCommunication = submissionsDistributorCommunication;
         }
 
         public override IEnumerable GetData()
@@ -431,7 +439,13 @@
             ErrorMessage = TooManyRequestsErrorMessage)]
         public ActionResult Retest(int id)
         {
-            var submission = this.Data.Submissions.GetById(id);
+            var submission = this.submissionsData
+                .GetByIdQuery(id)
+                .Include(s => s.SubmissionType)
+                .Include(s => s.Problem)
+                .Include(s => s.Problem.Checker)
+                .Include(s => s.Problem.Tests)
+                .FirstOrDefault();
 
             if (!this.ModelState.IsValid)
             {
@@ -502,6 +516,8 @@
 
                     scope.Complete();
                 }
+
+                Task.Run(async () => this.submissionsDistributorCommunication.AddSubmissionForProcessing(submission));
 
                 this.TempData.AddInfoMessage(Resource.Retest_successful);
                 return this.RedirectToAction("View", "Submissions", new { area = "Contests", id });
