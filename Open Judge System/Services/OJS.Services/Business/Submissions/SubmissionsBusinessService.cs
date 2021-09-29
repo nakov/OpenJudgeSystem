@@ -17,9 +17,7 @@
     using OJS.Services.Data.ParticipantScores;
     using OJS.Services.Data.Submissions;
     using OJS.Services.Data.Submissions.ArchivedSubmissions;
-    using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Models;
-    using OJS.Workers.SubmissionProcessors.Formatters;
 
     public class SubmissionsBusinessService : ISubmissionsBusinessService
     {
@@ -27,20 +25,17 @@
         private readonly ISubmissionsDataService submissionsData;
         private readonly IArchivedSubmissionsDataService archivedSubmissionsData;
         private readonly IParticipantScoresDataService participantScoresData;
-        private readonly IFormatterServiceFactory formatterServiceFactory;
 
         public SubmissionsBusinessService(
             IEfDeletableEntityRepository<Submission> submissions,
             ISubmissionsDataService submissionsData,
             IArchivedSubmissionsDataService archivedSubmissionsData,
-            IParticipantScoresDataService participantScoresData,
-            IFormatterServiceFactory formatterServiceFactory)
+            IParticipantScoresDataService participantScoresData)
         {
             this.submissions = submissions;
             this.submissionsData = submissionsData;
             this.archivedSubmissionsData = archivedSubmissionsData;
             this.participantScoresData = participantScoresData;
-            this.formatterServiceFactory = formatterServiceFactory;
         }
 
         public IQueryable<Submission> GetAllForArchiving()
@@ -163,56 +158,6 @@
 
                 scope.Complete();
             }
-        }
-
-        // TODO: Pass a Service model instead of Data model
-        public object BuildDistributorSubmissionBody(Submission submission)
-        {
-            var executionType = ExecutionType.TestsExecution.ToString().ToHyphenSeparatedWords();
-
-            var executionStrategy = this.formatterServiceFactory
-                .Get<ExecutionStrategyType>()
-                .Format(submission.SubmissionType.ExecutionStrategyType);
-
-            var checkerType = this.formatterServiceFactory
-               .Get<string>()
-               .Format(submission.Problem.Checker.ClassName);
-
-            var fileContent = string.IsNullOrEmpty(submission.ContentAsString)
-                ? submission.Content
-                : null;
-
-            var code = submission.ContentAsString ?? string.Empty;
-           
-            var tests = submission.Problem.Tests
-                .Select(t => new
-                {
-                    t.Id,
-                    Input = t.InputData,
-                    Output = t.OutputDataAsString,
-                    t.IsTrialTest,
-                    t.OrderBy,
-                });
-
-            var submissionRequestBody = new
-            {
-                Id = submission.Id,
-                ExecutionType = executionType,
-                ExecutionStrategy = executionStrategy,
-                FileContent = fileContent,
-                Code = code,
-                submission.Problem.TimeLimit,
-                submission.Problem.MemoryLimit,
-                ExecutionDetails = new
-                {
-                    MaxPoints = submission.Problem.MaximumPoints,
-                    CheckerType = checkerType,
-                    Tests = tests,
-                    submission.Problem.SolutionSkeleton
-                },
-            };
-
-            return submissionRequestBody;
         }
     }
 }

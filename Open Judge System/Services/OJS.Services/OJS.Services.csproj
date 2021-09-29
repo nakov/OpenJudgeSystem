@@ -89,6 +89,8 @@
     <Compile Include="Business\Problems\ProblemsBusinessService.cs" />
     <Compile Include="Business\ProblemGroups\IProblemGroupsBusinessService.cs" />
     <Compile Include="Business\ProblemGroups\ProblemGroupsBusinessService.cs" />
+    <Compile Include="Business\SubmissionsDistributor\ISubmissionsDistributorCommunicationService.cs" />
+    <Compile Include="Business\SubmissionsDistributor\SubmissionsDistributorCommunicationService.cs" />
     <Compile Include="Business\SubmissionsForProcessing\ISubmissionsForProcessingBusinessService.cs" />
     <Compile Include="Business\SubmissionsForProcessing\SubmissionsForProcessingBusinessService.cs" />
     <Compile Include="Business\Submissions\ArchivedSubmissions\ArchivedSubmissionsBusinessService.cs" />

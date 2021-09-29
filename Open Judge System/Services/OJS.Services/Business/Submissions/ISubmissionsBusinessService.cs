@@ -12,7 +12,5 @@
         void RecalculatePointsByProblem(int problemId);
 
         void HardDeleteAllArchived();
-
-        object BuildDistributorSubmissionBody(Submission submission);
     }
 }
