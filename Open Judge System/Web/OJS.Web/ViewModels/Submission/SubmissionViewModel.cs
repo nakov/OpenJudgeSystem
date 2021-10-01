@@ -7,6 +7,7 @@
 
     using OJS.Data.Models;
     using OJS.Web.ViewModels.TestRun;
+    using Resource = Resources.Submissions.Views.Partial.AdvancedSubmissionsGridPartial;
 
     public class SubmissionViewModel
     {
@@ -103,5 +104,9 @@
         }
 
         public string SubmissionType { get; set; }
+
+        public string InProcessingString => Resource.InProcessing;
+
+        public string CompileTimeErrorString => Resource.CompileTimeError;
     }
 }

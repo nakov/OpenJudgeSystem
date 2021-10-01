@@ -45,7 +45,9 @@ function testResult(
     maxUsedTime,
     processed,
     isCompiledSuccessfully,
-    submissionType) {
+    submissionType,
+    inProcessingString,
+    compileTimeErrorString) {
     'use strict';
 
     var result = '';
@@ -53,10 +55,10 @@ function testResult(
     /* eslint no-negated-condition: 0 */
     if (!processed) {
         result += '<span class="glyphicon glyphicon-time text-primary" title="Loading..."></span>';
-        result += '<strong class="text-primary"> Обработва се...</strong>';
+        result += '<strong class="text-primary"> ' + inProcessingString +'</strong>';
     } else if (!isCompiledSuccessfully) {
         result += '<span class="glyphicon glyphicon-remove text-danger" title="Compilation failed"></span>';
-        result += '<strong class="text-danger"> Грешка при компилация</strong>' + '<small> | ' + submissionType + '</small>';
+        result += '<strong class="text-danger"> ' + compileTimeErrorString +'</strong>' + '<small> | ' + submissionType + '</small>';
     } else {
         let memoryAndTimeUsedPart = tests.length
             ? (maxUsedMemory / 1024 / 1024).toFixed(2) + ' MB | ' + (maxUsedTime / 1000).toFixed(3) + ' sec. | '
