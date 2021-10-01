@@ -30,7 +30,10 @@
             var elevenMonthsSubmissionsResult = this.GetSubsmissionsCountByMonthForPastYearExceptLastMonth(currentDate);
             var lastMonthSubmissionsResult = this.GetSubsmissionsCountByMonthForLastMonth(currentDate);
 
-            if(elevenMonthsSubmissionsResult.Last().MonthNumber == lastMonthSubmissionsResult.Single().MonthNumber)
+            var lastMonthNumber = elevenMonthsSubmissionsResult.Last().MonthNumber;
+            var currentMonthNumber = lastMonthSubmissionsResult.Single().MonthNumber;
+
+            if (lastMonthNumber == currentMonthNumber)
             {
                 // Next month has just started before the cache for last month is expired
                 this.cache.Remove(SubmissionsCountForLastMonthKey);
@@ -57,7 +60,8 @@
 
         private List<SubmissionCountByMonthStatisticsModel> GetSubmissionsCountGroupsByMonths(
             Expression<Func<Submission, bool>> filter,
-            bool orderGroups)
+            bool orderGroups,
+            int defaultMonthIfEmpty)
         {
             var groups = this.submissionsData
                 .GetAll()
@@ -75,6 +79,12 @@
                     MonthNumber = g.Key.Month,
                     TotalSubmissionsCount = g.Count(),
                 })
+                .AsEnumerable()
+                .DefaultIfEmpty(new SubmissionCountByMonthStatisticsModel
+                {
+                    MonthNumber = defaultMonthIfEmpty,
+                    TotalSubmissionsCount = 0,
+                })
                 .ToList();
         }
 
@@ -86,7 +96,8 @@
 
             return this.GetSubmissionsCountGroupsByMonths(
                 s => s.CreatedOn >= begginingOfYearSet && s.CreatedOn < begginingOfCurrentMont,
-                orderGroups: true);
+                orderGroups: true,
+                defaultMonthIfEmpty: begginingOfYearSet.Month);
         }
 
         private IEnumerable<SubmissionCountByMonthStatisticsModel> GetSubmissionsCountGroupForLastMonth(
@@ -97,7 +108,8 @@
 
             return this.GetSubmissionsCountGroupsByMonths(
                 s => s.CreatedOn >= begginingOfCurrentMont && s.CreatedOn <= endOfCurrentMonth,
-                orderGroups: false);
+                orderGroups: false,
+                defaultMonthIfEmpty: begginingOfCurrentMont.Month);
         }
 
         private DateTime GetAbsoluteBeggingOfMonth(DateTime date)
