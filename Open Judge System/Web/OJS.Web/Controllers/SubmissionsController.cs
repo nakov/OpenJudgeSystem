@@ -62,6 +62,7 @@
         [HttpPost]
         public ActionResult ReadSubmissions(
             [DataSourceRequest]DataSourceRequest request,
+            string userId,
             bool notProcessedOnly = false,
             int? contestId = null)
         {
@@ -70,21 +71,24 @@
             var userIsAdmin = this.User.IsAdmin();
             var userIsLecturer = this.User.IsLecturer();
             var userIsAdminOrLecturer = userIsAdmin || userIsLecturer;
+            var filterByUser = !string.IsNullOrWhiteSpace(userId);
 
-            if (userIsLecturer && !userIsAdmin)
+            if (filterByUser)
+            {
+                data = data.Where(s => s.Participant.UserId == userId);
+            }
+            else if (!userIsAdminOrLecturer)
+            {
+                // For regular users return only one page of submissions
+                data = data.OrderByDescending(s => s.CreatedOn).Take(AdvancedSubmissionsGridPageSize);
+            }
+            else if (userIsLecturer && !userIsAdmin)
             {
                 data = this.submissionsData.GetAllFromContestsByLecturer(this.UserProfile.Id);
             }
-
-            // For regular users return only one page of submissions
-            if (!userIsAdminOrLecturer)
+            else if (notProcessedOnly)
             {
-                data = data.OrderByDescending(s => s.CreatedOn).Take(AdvancedSubmissionsGridPageSize);
-            }
-
-            // NotProcessedOnly filter is available only for administrators
-            if (userIsAdmin && notProcessedOnly)
-            {
+                // NotProcessedOnly filter is available only for administrators
                 data = data.Where(s => !s.Processed);
             }
 
@@ -93,7 +97,7 @@
                 data = data.Where(s => s.Problem.ProblemGroup.ContestId == contestId.Value);
             }
 
-            var result = userIsAdminOrLecturer
+            var result = userIsAdminOrLecturer || filterByUser
                 ? data.Select(SubmissionViewModel.FromSubmission)
                 : data.Select(SubmissionViewModel.FromSubmissionWithoutTestRuns);
 
