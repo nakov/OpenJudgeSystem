@@ -204,7 +204,10 @@
 
             this.submissionsForProcessingData.RemoveBySubmission(submission.Id);
 
-            return this.JsonSuccess(submissionExecutionResult.SubmissionId);
+            return this.Json(new SaveExecutionResultResponseModel
+            {
+                SubmissionId = submission.Id,
+            });
         }
     }
 }
