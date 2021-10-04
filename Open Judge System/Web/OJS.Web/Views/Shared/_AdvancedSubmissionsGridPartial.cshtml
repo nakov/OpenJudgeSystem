@@ -43,7 +43,7 @@
             );
         columns.Bound(s => s.Points).Title(Resource.Result).ClientTemplate(
                 "<div>" +
-                    "#= testResult(TestResults, Points, ProblemMaximumPoints, MaxUsedMemory, MaxUsedTime, Processed, IsCompiledSuccessfully, SubmissionType) #" +
+                    "#= testResult(TestResults, Points, ProblemMaximumPoints, MaxUsedMemory, MaxUsedTime, Processed, IsCompiledSuccessfully, SubmissionType, InProcessingString, CompileTimeErrorString) #" +
                 "</div>"
             ).Width("25%");
 
@@ -76,6 +76,7 @@
                 "Submissions",
                 new
                 {
+                    userId = Model.UserId,
                     notProcessedOnly = Model.NotProcessedOnly,
                     contestId = Model.ContestId,
                     area = string.Empty

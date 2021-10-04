@@ -120,6 +120,12 @@
   <data name="Admin" xml:space="preserve">
     <value>Admin</value>
   </data>
+  <data name="CompileTimeError" xml:space="preserve">
+    <value>Compile time error</value>
+  </data>
+  <data name="InProcessing" xml:space="preserve">
+    <value>In processing...</value>
+  </data>
   <data name="Result" xml:space="preserve">
     <value>Result</value>
   </data>

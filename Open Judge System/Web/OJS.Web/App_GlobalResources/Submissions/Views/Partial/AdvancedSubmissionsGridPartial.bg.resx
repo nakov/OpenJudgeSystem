@@ -120,6 +120,12 @@
   <data name="Admin" xml:space="preserve">
     <value>Админ</value>
   </data>
+  <data name="CompileTimeError" xml:space="preserve">
+    <value>Грешка при компилацията</value>
+  </data>
+  <data name="InProcessing" xml:space="preserve">
+    <value>Обработва се...</value>
+  </data>
   <data name="Result" xml:space="preserve">
     <value>Резултат</value>
   </data>
