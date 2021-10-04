@@ -30,10 +30,10 @@
             var elevenMonthsSubmissionsResult = this.GetSubsmissionsCountByMonthForPastYearExceptLastMonth(currentDate);
             var lastMonthSubmissionsResult = this.GetSubsmissionsCountByMonthForLastMonth(currentDate);
 
-            var lastMonthNumber = elevenMonthsSubmissionsResult.Last().MonthNumber;
-            var currentMonthNumber = lastMonthSubmissionsResult.Single().MonthNumber;
+            var eleventhMonth = elevenMonthsSubmissionsResult.Last().MonthNumber;
+            var lastMonth = lastMonthSubmissionsResult.Single().MonthNumber;
 
-            if (lastMonthNumber == currentMonthNumber)
+            if (eleventhMonth == lastMonth)
             {
                 // Next month has just started before the cache for last month is expired
                 this.cache.Remove(SubmissionsCountForLastMonthKey);
@@ -92,10 +92,10 @@
             DateTime currentDate)
         {
             var begginingOfYearSet = this.GetAbsoluteBeggingOfMonth(currentDate.AddMonths(-11));
-            var begginingOfCurrentMont = this.GetAbsoluteBeggingOfMonth(currentDate);
+            var begginingOfCurrentMonth = this.GetAbsoluteBeggingOfMonth(currentDate);
 
             return this.GetSubmissionsCountGroupsByMonths(
-                s => s.CreatedOn >= begginingOfYearSet && s.CreatedOn < begginingOfCurrentMont,
+                s => s.CreatedOn >= begginingOfYearSet && s.CreatedOn < begginingOfCurrentMonth,
                 orderGroups: true,
                 defaultMonthIfEmpty: begginingOfYearSet.Month);
         }
@@ -103,13 +103,13 @@
         private IEnumerable<SubmissionCountByMonthStatisticsModel> GetSubmissionsCountGroupForLastMonth(
             DateTime currentDate)
         {
-            var begginingOfCurrentMont = this.GetAbsoluteBeggingOfMonth(currentDate);
+            var begginingOfCurrentMonth = this.GetAbsoluteBeggingOfMonth(currentDate);
             var endOfCurrentMonth = this.GetAbsoluteEndOfMonth(currentDate);
 
             return this.GetSubmissionsCountGroupsByMonths(
-                s => s.CreatedOn >= begginingOfCurrentMont && s.CreatedOn <= endOfCurrentMonth,
+                s => s.CreatedOn >= begginingOfCurrentMonth && s.CreatedOn <= endOfCurrentMonth,
                 orderGroups: false,
-                defaultMonthIfEmpty: begginingOfCurrentMont.Month);
+                defaultMonthIfEmpty: begginingOfCurrentMonth.Month);
         }
 
         private DateTime GetAbsoluteBeggingOfMonth(DateTime date)
