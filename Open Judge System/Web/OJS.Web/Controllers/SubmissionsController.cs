@@ -174,7 +174,12 @@
                 submission.CompilerComment = executionResult.CompilerComment;
                 submission.Points = executionResult.TaskResult.Points;
 
-                foreach (var testResult in executionResult.TaskResult.TestResults)
+                var testResults = executionResult
+                    .TaskResult
+                    ?.TestResults
+                    ?? Enumerable.Empty<TestResultResponseModel>();
+
+                foreach (var testResult in testResults)
                 {
                     var testRun = new TestRun
                     {
