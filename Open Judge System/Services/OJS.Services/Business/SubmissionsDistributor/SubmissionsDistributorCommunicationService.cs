@@ -54,7 +54,7 @@
                 .Select(t => new
                 {
                     t.Id,
-                    Input = t.InputData,
+                    Input = t.InputDataAsString,
                     Output = t.OutputDataAsString,
                     t.IsTrialTest,
                     t.OrderBy,
