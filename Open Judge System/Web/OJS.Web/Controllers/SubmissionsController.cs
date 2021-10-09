@@ -14,7 +14,6 @@
     using OJS.Services.Busines.Submissions.Models;
     using OJS.Services.Business.Submissions;
     using OJS.Services.Data.Submissions;
-    using OJS.Services.Data.SubmissionsForProcessing;
     using OJS.Web.Common.Extensions;
     using OJS.Web.Models.Submissions;
     using OJS.Web.ViewModels.Submission;
@@ -26,18 +25,15 @@
     {
         private readonly ISubmissionsBusinessService submissionsBusiness;
         private readonly ISubmissionsDataService submissionsData;
-        private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
 
         public SubmissionsController(
             IOjsData data,
             ISubmissionsBusinessService submissionsBusiness,
-            ISubmissionsDataService submissionsData,
-            ISubmissionsForProcessingDataService submissionsForProcessingData)
+            ISubmissionsDataService submissionsData)
             : base(data)
         {
             this.submissionsBusiness = submissionsBusiness;
             this.submissionsData = submissionsData;
-            this.submissionsForProcessingData = submissionsForProcessingData;
         }
 
         public ActionResult Index()
