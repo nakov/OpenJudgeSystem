@@ -210,34 +210,6 @@
             this.SetSubmissionToProcessed(submission, submissionForProcessing);
         }
 
-        private Submission CalculatePointsForSubmission(Submission submission)
-        {
-            try
-            {
-                // Internal joke: submission.Points = new Random().Next(0, submission.Problem.MaximumPoints + 1) + Weather.Instance.Today("Sofia").IsCloudy ? 10 : 0;
-                if (submission.Problem.Tests.Count == 0 || submission.TestsWithoutTrialTestsCount == 0)
-                {
-                    submission.Points = 0;
-                }
-                else
-                {
-                    var totalTestRunsWithoutTrialTestsCount = submission.CorrectTestRunsWithoutTrialTestsCount + submission.IncorrectTestRunsWithoutTrialTestsCount;
-
-                    var coefficient = totalTestRunsWithoutTrialTestsCount > 0
-                        ? (double)submission.CorrectTestRunsWithoutTrialTestsCount / totalTestRunsWithoutTrialTestsCount
-                        : 0;
-
-                    submission.Points = (int)(coefficient * submission.Problem.MaximumPoints);
-                }
-            }
-            catch (Exception ex)
-            {
-                submission.ProcessingComment = $"Exception in CalculatePointsForSubmission: {ex.Message}";
-            }
-
-            return submission;
-        }
-
         private void SaveParticipantScore(Submission submission)
         {
             try
@@ -274,8 +246,6 @@
 
         private void UpdateResults(Submission submission)
         {
-            this.CalculatePointsForSubmission(submission);
-
             this.SaveParticipantScore(submission);
 
             this.CacheTestRuns(submission);
@@ -287,6 +257,7 @@
         {
             submission.IsCompiledSuccessfully = executionResult.IsCompiledSuccessfully;
             submission.CompilerComment = executionResult.CompilerComment;
+            submission.Points = executionResult.TaskResult.Points;
 
             if (!executionResult.IsCompiledSuccessfully)
             {
@@ -301,6 +272,8 @@
 
             foreach (var testResult in testResults)
             {
+                var resultType = (TestRunResultType)Enum.Parse(typeof(TestRunResultType), testResult.ResultType);
+
                 var testRun = new TestRun
                 {
                     CheckerComment = testResult.CheckerDetails.Comment,
@@ -308,9 +281,9 @@
                     UserOutputFragment = testResult.CheckerDetails.UserOutputFragment,
                     ExecutionComment = testResult.ExecutionComment,
                     MemoryUsed = testResult.MemoryUsed,
-                    ResultType = (TestRunResultType)Enum.Parse(typeof(TestRunResultType), testResult.ResultType),
+                    ResultType = resultType,
                     TestId = testResult.Id,
-                    TimeUsed = testResult.TimeUsed
+                    TimeUsed = testResult.TimeUsed,
                 };
 
                 submission.TestRuns.Add(testRun);
