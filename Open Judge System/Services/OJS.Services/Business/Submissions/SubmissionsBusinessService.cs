@@ -14,11 +14,13 @@
     using OJS.Data.Models;
     using OJS.Data.Repositories.Contracts;
     using OJS.Services.Busines.Submissions.Models;
+    using OJS.Services.Business.ParticipantScores;
     using OJS.Services.Business.Submissions.Models;
     using OJS.Services.Data.ParticipantScores;
     using OJS.Services.Data.Submissions;
     using OJS.Services.Data.Submissions.ArchivedSubmissions;
     using OJS.Services.Data.SubmissionsForProcessing;
+    using OJS.Services.Data.TestRuns;
     using OJS.Workers.Common.Models;
 
     public class SubmissionsBusinessService : ISubmissionsBusinessService
@@ -28,19 +30,25 @@
         private readonly IArchivedSubmissionsDataService archivedSubmissionsData;
         private readonly IParticipantScoresDataService participantScoresData;
         private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
+        private readonly ITestRunsDataService testRunsData;
+        private readonly IParticipantScoresBusinessService participantScoresBusiness;
 
         public SubmissionsBusinessService(
             IEfDeletableEntityRepository<Submission> submissions,
             ISubmissionsDataService submissionsData,
             IArchivedSubmissionsDataService archivedSubmissionsData,
             IParticipantScoresDataService participantScoresData,
-            ISubmissionsForProcessingDataService submissionsForProcessingData)
+            ISubmissionsForProcessingDataService submissionsForProcessingData,
+            ITestRunsDataService testRunsData,
+            IParticipantScoresBusinessService participantScoresBusiness)
         {
             this.submissions = submissions;
             this.submissionsData = submissionsData;
             this.archivedSubmissionsData = archivedSubmissionsData;
             this.participantScoresData = participantScoresData;
             this.submissionsForProcessingData = submissionsForProcessingData;
+            this.testRunsData = testRunsData;
+            this.participantScoresBusiness = participantScoresBusiness;
         }
 
         public IQueryable<Submission> GetAllForArchiving()
@@ -167,40 +175,28 @@
 
         public void ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult)
         {
-            var submission = this.submissionsData.GetById(submissionExecutionResult.SubmissionId);
+            var submission = this.submissionsData
+                .GetByIdQuery(submissionExecutionResult.SubmissionId)
+                .Include(s => s.Problem.Tests)
+                .FirstOrDefault();
+
+            var submissionForProcessing = this.submissionsForProcessingData.GetBySubmission(submission.Id);
+
+            if (submission == null || submissionForProcessing == null)
+            {
+                throw new ArgumentException(
+                    $"Submission with Id: \"{submissionExecutionResult.SubmissionId}\" not found.");
+            }
 
             var exception = submissionExecutionResult.Exception;
             var executionResult = submissionExecutionResult.ExecutionResult;
 
-            submission.Processed = true;
+            submission.ProcessingComment = null;
+            this.testRunsData.DeleteBySubmission(submission.Id);
 
             if (executionResult != null)
             {
-                submission.IsCompiledSuccessfully = executionResult.IsCompiledSuccessfully;
-                submission.CompilerComment = executionResult.CompilerComment;
-                submission.Points = executionResult.TaskResult.Points;
-
-                var testResults = executionResult
-                    .TaskResult
-                    ?.TestResults
-                    ?? Enumerable.Empty<TestResultResponseModel>();
-
-                foreach (var testResult in testResults)
-                {
-                    var testRun = new TestRun
-                    {
-                        CheckerComment = testResult.CheckerDetails.Comment,
-                        ExpectedOutputFragment = testResult.CheckerDetails.ExpectedOutputFragment,
-                        UserOutputFragment = testResult.CheckerDetails.UserOutputFragment,
-                        ExecutionComment = testResult.ExecutionComment,
-                        MemoryUsed = testResult.MemoryUsed,
-                        ResultType = (TestRunResultType)Enum.Parse(typeof(TestRunResultType), testResult.ResultType),
-                        TestId = testResult.Id,
-                        TimeUsed = testResult.TimeUsed
-                    };
-
-                    submission.TestRuns.Add(testRun);
-                }
+                this.ProcessTestsExecutionResult(submission, executionResult);
             }
             else if (exception != null)
             {
@@ -211,9 +207,118 @@
                 submission.ProcessingComment = "Invalid execution result received. Please contact an administrator.";
             }
 
-            this.submissionsData.Update(submission);
+            this.SetSubmissionToProcessed(submission, submissionForProcessing);
+        }
 
-            this.submissionsForProcessingData.RemoveBySubmission(submission.Id);
+        private Submission CalculatePointsForSubmission(Submission submission)
+        {
+            try
+            {
+                // Internal joke: submission.Points = new Random().Next(0, submission.Problem.MaximumPoints + 1) + Weather.Instance.Today("Sofia").IsCloudy ? 10 : 0;
+                if (submission.Problem.Tests.Count == 0 || submission.TestsWithoutTrialTestsCount == 0)
+                {
+                    submission.Points = 0;
+                }
+                else
+                {
+                    var totalTestRunsWithoutTrialTestsCount = submission.CorrectTestRunsWithoutTrialTestsCount + submission.IncorrectTestRunsWithoutTrialTestsCount;
+
+                    var coefficient = totalTestRunsWithoutTrialTestsCount > 0
+                        ? (double)submission.CorrectTestRunsWithoutTrialTestsCount / totalTestRunsWithoutTrialTestsCount
+                        : 0;
+
+                    submission.Points = (int)(coefficient * submission.Problem.MaximumPoints);
+                }
+            }
+            catch (Exception ex)
+            {
+                submission.ProcessingComment = $"Exception in CalculatePointsForSubmission: {ex.Message}";
+            }
+
+            return submission;
+        }
+
+        private void SaveParticipantScore(Submission submission)
+        {
+            try
+            {
+                this.participantScoresBusiness.SaveForSubmission(submission);
+            }
+            catch (Exception ex)
+            {
+                submission.ProcessingComment = $"Exception in SaveParticipantScore: {ex.Message}";
+            }
+        }
+
+        private void CacheTestRuns(Submission submission)
+        {
+            try
+            {
+                submission.CacheTestRuns();
+            }
+            catch (Exception ex)
+            {
+                submission.ProcessingComment = $"Exception in CacheTestRuns: {ex.Message}";
+            }
+        }
+
+        private void SetSubmissionToProcessed(Submission submission, SubmissionForProcessing submissionForProcessing)
+        {
+            submission.Processed = true;
+            submissionForProcessing.Processed = true;
+            submissionForProcessing.Processing = false;
+
+            submissionsData.Update(submission);
+            submissionsForProcessingData.Update(submissionForProcessing);
+        }
+
+        private void UpdateResults(Submission submission)
+        {
+            this.CalculatePointsForSubmission(submission);
+
+            this.SaveParticipantScore(submission);
+
+            this.CacheTestRuns(submission);
+        }
+
+        private void ProcessTestsExecutionResult(
+            Submission submission,
+            ExecutionResultResponseModel executionResult)
+        {
+            submission.IsCompiledSuccessfully = executionResult.IsCompiledSuccessfully;
+            submission.CompilerComment = executionResult.CompilerComment;
+
+            if (!executionResult.IsCompiledSuccessfully)
+            {
+                this.UpdateResults(submission);
+                return;
+            }
+
+            var testResults = executionResult
+                .TaskResult
+                ?.TestResults
+                ?? Enumerable.Empty<TestResultResponseModel>();
+
+            foreach (var testResult in testResults)
+            {
+                var testRun = new TestRun
+                {
+                    CheckerComment = testResult.CheckerDetails.Comment,
+                    ExpectedOutputFragment = testResult.CheckerDetails.ExpectedOutputFragment,
+                    UserOutputFragment = testResult.CheckerDetails.UserOutputFragment,
+                    ExecutionComment = testResult.ExecutionComment,
+                    MemoryUsed = testResult.MemoryUsed,
+                    ResultType = (TestRunResultType)Enum.Parse(typeof(TestRunResultType), testResult.ResultType),
+                    TestId = testResult.Id,
+                    TimeUsed = testResult.TimeUsed
+                };
+
+                submission.TestRuns.Add(testRun);
+            }
+
+            submissionsData.Update(submission);
+
+            this.UpdateResults(submission);
         }
     }
 }

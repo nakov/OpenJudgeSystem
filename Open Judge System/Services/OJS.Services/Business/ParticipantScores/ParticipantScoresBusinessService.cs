@@ -3,19 +3,24 @@
     using System.Linq;
 
     using OJS.Common.Helpers;
+    using OJS.Data.Models;
+    using OJS.Services.Data.Participants;
     using OJS.Services.Data.ParticipantScores;
     using OJS.Services.Data.Submissions;
 
     public class ParticipantScoresBusinessService : IParticipantScoresBusinessService
     {
         private readonly IParticipantScoresDataService participantScoresData;
+        private readonly IParticipantsDataService participantsData;
         private readonly ISubmissionsDataService submissionsData;
 
         public ParticipantScoresBusinessService(
             IParticipantScoresDataService participantScoresData,
+            IParticipantsDataService participantsData,
             ISubmissionsDataService submissionsData)
         {
             this.participantScoresData = participantScoresData;
+            this.participantsData = participantsData;
             this.submissionsData = submissionsData;
         }
 
@@ -74,5 +79,51 @@
                         x.ParticipantScore,
                         x.ParticipantScore.SubmissionId,
                         x.ProblemMaxPoints));
+
+        public void SaveForSubmission(Submission submission)
+        {
+            if (submission.ParticipantId == null || submission.ProblemId == null)
+            {
+                return;
+            }
+
+            var participant = this.participantsData
+                .GetByIdQuery(submission.ParticipantId.Value)
+                .Select(p => new
+                {
+                    p.IsOfficial,
+                    p.User.UserName
+                })
+                .FirstOrDefault();
+
+            if (participant == null)
+            {
+                return;
+            }
+
+            var existingScore = this.participantScoresData.GetByParticipantIdProblemIdAndIsOfficial(
+                submission.ParticipantId.Value,
+                submission.ProblemId.Value,
+                participant.IsOfficial);
+
+            if (existingScore == null)
+            {
+                this.participantScoresData.AddBySubmissionByUsernameAndIsOfficial(
+                    submission,
+                    participant.UserName,
+                    participant.IsOfficial);
+
+                return;
+            }
+
+            if (submission.Points > existingScore.Points ||
+                submission.Id == existingScore.SubmissionId)
+            {
+                this.participantScoresData.UpdateBySubmissionAndPoints(
+                    existingScore,
+                    submission.Id,
+                    submission.Points);
+            }
+        }
     }
 }
