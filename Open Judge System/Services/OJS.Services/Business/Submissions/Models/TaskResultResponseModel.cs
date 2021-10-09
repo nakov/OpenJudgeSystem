@@ -1,4 +1,4 @@
-﻿namespace OJS.Web.Models.Submissions
+﻿namespace OJS.Services.Busines.Submissions.Models
 {
     using System.Collections.Generic;
 

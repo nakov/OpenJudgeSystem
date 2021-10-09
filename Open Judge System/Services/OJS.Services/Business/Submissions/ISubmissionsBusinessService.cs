@@ -3,6 +3,7 @@
     using System.Linq;
 
     using OJS.Data.Models;
+    using OJS.Services.Busines.Submissions.Models;
     using OJS.Services.Common;
 
     public interface ISubmissionsBusinessService : IService
@@ -12,5 +13,7 @@
         void RecalculatePointsByProblem(int problemId);
 
         void HardDeleteAllArchived();
+
+        void ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult);
     }
 }

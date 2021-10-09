@@ -1878,14 +1878,7 @@
     <Compile Include="Infrastructure\SimpleInjectorPackages\DataPackage.cs" />
     <Compile Include="Infrastructure\SimpleInjectorPackages\ServicesPackage.cs" />
     <Compile Include="Infrastructure\SimpleInjectorPackages\ToolsPackage.cs" />
-    <Compile Include="Models\Submissions\CheckerDetailsResponseModel.cs" />
-    <Compile Include="Models\Submissions\ExceptionModel.cs" />
-    <Compile Include="Models\Submissions\ExecutionResultResponseModel.cs" />
-    <Compile Include="Models\Submissions\OutputResultResponseModel.cs" />
     <Compile Include="Models\Submissions\SaveExecutionResultResponseModel.cs" />
-    <Compile Include="Models\Submissions\SubmissionExecutionResult.cs" />
-    <Compile Include="Models\Submissions\TaskResultResponseModel.cs" />
-    <Compile Include="Models\Submissions\TestResultResponseModel.cs" />
     <Compile Include="ViewModels\Account\ChangeUsernameViewModel.cs" />
     <Compile Include="Areas\Users\ViewModels\UserParticipationViewModel.cs" />
     <Compile Include="Areas\Users\ViewModels\UserSettingsViewModel.cs" />

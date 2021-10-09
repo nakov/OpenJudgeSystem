@@ -1,6 +1,5 @@
 ﻿namespace OJS.Web.Controllers
 {
-    using System;
     using System.Diagnostics;
     using System.Linq;
     using System.Web.Mvc;
@@ -12,28 +11,31 @@
 
     using OJS.Common;
     using OJS.Data;
-    using OJS.Data.Models;
+    using OJS.Services.Busines.Submissions.Models;
+    using OJS.Services.Business.Submissions;
     using OJS.Services.Data.Submissions;
     using OJS.Services.Data.SubmissionsForProcessing;
     using OJS.Web.Common.Extensions;
     using OJS.Web.Models.Submissions;
     using OJS.Web.ViewModels.Submission;
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Models;
 
     using static OJS.Web.Common.WebConstants;
 
     public class SubmissionsController : BaseController
     {
+        private readonly ISubmissionsBusinessService submissionsBusiness;
         private readonly ISubmissionsDataService submissionsData;
         private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
 
         public SubmissionsController(
             IOjsData data,
+            ISubmissionsBusinessService submissionsBusiness,
             ISubmissionsDataService submissionsData,
             ISubmissionsForProcessingDataService submissionsForProcessingData)
             : base(data)
         {
+            this.submissionsBusiness = submissionsBusiness;
             this.submissionsData = submissionsData;
             this.submissionsForProcessingData = submissionsForProcessingData;
         }
@@ -161,57 +163,11 @@
         [HttpPost]
         public ActionResult SaveExecutionResult(SubmissionExecutionResult submissionExecutionResult)
         {
-            var submission = this.submissionsData.GetById(submissionExecutionResult.SubmissionId);
-
-            var exception = submissionExecutionResult.Exception;
-            var executionResult = submissionExecutionResult.ExecutionResult;
-
-            submission.Processed = true;
-
-            if (executionResult != null)
-            {
-                submission.IsCompiledSuccessfully = executionResult.IsCompiledSuccessfully;
-                submission.CompilerComment = executionResult.CompilerComment;
-                submission.Points = executionResult.TaskResult.Points;
-
-                var testResults = executionResult
-                    .TaskResult
-                    ?.TestResults
-                    ?? Enumerable.Empty<TestResultResponseModel>();
-
-                foreach (var testResult in testResults)
-                {
-                    var testRun = new TestRun
-                    {
-                        CheckerComment = testResult.CheckerDetails.Comment,
-                        ExpectedOutputFragment = testResult.CheckerDetails.ExpectedOutputFragment,
-                        UserOutputFragment = testResult.CheckerDetails.UserOutputFragment,
-                        ExecutionComment = testResult.ExecutionComment,
-                        MemoryUsed = testResult.MemoryUsed,
-                        ResultType = (TestRunResultType)Enum.Parse(typeof(TestRunResultType), testResult.ResultType),
-                        TestId = testResult.Id,
-                        TimeUsed = testResult.TimeUsed
-                    };
-
-                    submission.TestRuns.Add(testRun);
-                }
-            }
-            else if (exception != null)
-            {
-                submission.ProcessingComment = exception.Message + Environment.NewLine + exception.StackTrace;
-            }
-            else
-            {
-                submission.ProcessingComment = "Invalid execution result received. Please contact an administrator.";
-            }
-
-            this.submissionsData.Update(submission);
-
-            this.submissionsForProcessingData.RemoveBySubmission(submission.Id);
+            this.submissionsBusiness.ProcessExecutionResult(submissionExecutionResult);
 
             return this.Json(new SaveExecutionResultResponseModel
             {
-                SubmissionId = submission.Id,
+                SubmissionId = submissionExecutionResult.SubmissionId,
             });
         }
     }

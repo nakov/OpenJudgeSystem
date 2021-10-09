@@ -96,8 +96,15 @@
     <Compile Include="Business\Submissions\ArchivedSubmissions\ArchivedSubmissionsBusinessService.cs" />
     <Compile Include="Business\Submissions\ArchivedSubmissions\IArchivedSubmissionsBusinessService.cs" />
     <Compile Include="Business\Submissions\ISubmissionsBusinessService.cs" />
+    <Compile Include="Business\Submissions\Models\CheckerDetailsResponseModel.cs" />
+    <Compile Include="Business\Submissions\Models\ExceptionModel.cs" />
+    <Compile Include="Business\Submissions\Models\ExecutionResultResponseModel.cs" />
+    <Compile Include="Business\Submissions\Models\OutputResultResponseModel.cs" />
     <Compile Include="Business\Submissions\Models\ParticipantScoreModel.cs" />
     <Compile Include="Business\Submissions\Models\SubmissionCountByMonthStatisticsModel.cs" />
+    <Compile Include="Business\Submissions\Models\SubmissionExecutionResult.cs" />
+    <Compile Include="Business\Submissions\Models\TaskResultResponseModel.cs" />
+    <Compile Include="Business\Submissions\Models\TestResultResponseModel.cs" />
     <Compile Include="Business\Submissions\SubmissionsBusinessService.cs" />
     <Compile Include="Cache\CacheItemsProviderService.cs" />
     <Compile Include="Cache\Models\CategoryMenuItemViewModel.cs" />

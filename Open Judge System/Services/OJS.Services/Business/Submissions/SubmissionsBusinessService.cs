@@ -13,10 +13,12 @@
     using OJS.Common.Helpers;
     using OJS.Data.Models;
     using OJS.Data.Repositories.Contracts;
+    using OJS.Services.Busines.Submissions.Models;
     using OJS.Services.Business.Submissions.Models;
     using OJS.Services.Data.ParticipantScores;
     using OJS.Services.Data.Submissions;
     using OJS.Services.Data.Submissions.ArchivedSubmissions;
+    using OJS.Services.Data.SubmissionsForProcessing;
     using OJS.Workers.Common.Models;
 
     public class SubmissionsBusinessService : ISubmissionsBusinessService
@@ -25,17 +27,20 @@
         private readonly ISubmissionsDataService submissionsData;
         private readonly IArchivedSubmissionsDataService archivedSubmissionsData;
         private readonly IParticipantScoresDataService participantScoresData;
+        private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
 
         public SubmissionsBusinessService(
             IEfDeletableEntityRepository<Submission> submissions,
             ISubmissionsDataService submissionsData,
             IArchivedSubmissionsDataService archivedSubmissionsData,
-            IParticipantScoresDataService participantScoresData)
+            IParticipantScoresDataService participantScoresData,
+            ISubmissionsForProcessingDataService submissionsForProcessingData)
         {
             this.submissions = submissions;
             this.submissionsData = submissionsData;
             this.archivedSubmissionsData = archivedSubmissionsData;
             this.participantScoresData = participantScoresData;
+            this.submissionsForProcessingData = submissionsForProcessingData;
         }
 
         public IQueryable<Submission> GetAllForArchiving()
@@ -158,6 +163,57 @@
 
                 scope.Complete();
             }
+        }
+
+        public void ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult)
+        {
+            var submission = this.submissionsData.GetById(submissionExecutionResult.SubmissionId);
+
+            var exception = submissionExecutionResult.Exception;
+            var executionResult = submissionExecutionResult.ExecutionResult;
+
+            submission.Processed = true;
+
+            if (executionResult != null)
+            {
+                submission.IsCompiledSuccessfully = executionResult.IsCompiledSuccessfully;
+                submission.CompilerComment = executionResult.CompilerComment;
+                submission.Points = executionResult.TaskResult.Points;
+
+                var testResults = executionResult
+                    .TaskResult
+                    ?.TestResults
+                    ?? Enumerable.Empty<TestResultResponseModel>();
+
+                foreach (var testResult in testResults)
+                {
+                    var testRun = new TestRun
+                    {
+                        CheckerComment = testResult.CheckerDetails.Comment,
+                        ExpectedOutputFragment = testResult.CheckerDetails.ExpectedOutputFragment,
+                        UserOutputFragment = testResult.CheckerDetails.UserOutputFragment,
+                        ExecutionComment = testResult.ExecutionComment,
+                        MemoryUsed = testResult.MemoryUsed,
+                        ResultType = (TestRunResultType)Enum.Parse(typeof(TestRunResultType), testResult.ResultType),
+                        TestId = testResult.Id,
+                        TimeUsed = testResult.TimeUsed
+                    };
+
+                    submission.TestRuns.Add(testRun);
+                }
+            }
+            else if (exception != null)
+            {
+                submission.ProcessingComment = exception.Message + Environment.NewLine + exception.StackTrace;
+            }
+            else
+            {
+                submission.ProcessingComment = "Invalid execution result received. Please contact an administrator.";
+            }
+
+            this.submissionsData.Update(submission);
+
+            this.submissionsForProcessingData.RemoveBySubmission(submission.Id);
         }
     }
 }
