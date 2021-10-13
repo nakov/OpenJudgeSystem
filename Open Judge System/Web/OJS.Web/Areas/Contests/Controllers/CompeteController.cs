@@ -7,7 +7,6 @@
     using System.Linq;
     using System.Net;
     using System.Text.RegularExpressions;
-    using System.Threading.Tasks;
     using System.Web;
     using System.Web.Mvc;
     using System.Web.Mvc.Expressions;
@@ -494,10 +493,8 @@
             newSubmission.Problem = problem;
             newSubmission.SubmissionType = this.submissionTypesData.GetById(newSubmission.SubmissionTypeId.Value);
 
-            Task.Run(async () => await this.submissionsDistributorCommunication.AddSubmissionForProcessing(newSubmission));
-
-            // Should be removed after fully migrating to distributor
-            this.submissionsForProcessingData.AddOrUpdateBySubmission(newSubmission.Id);
+            var response = this.submissionsDistributorCommunication.AddSubmissionForProcessing(newSubmission).Result;
+            this.submissionsForProcessingData.AddOrUpdateBySubmission(newSubmission.Id, response.IsSuccess);
 
             return this.Json(participantSubmission.ProblemId);
         }

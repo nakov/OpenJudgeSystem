@@ -498,7 +498,8 @@
                 {
                     submission.Processed = false;
 
-                    this.submissionsForProcessingData.AddOrUpdateBySubmission(submission.Id);
+                    var response = this.submissionsDistributorCommunication.AddSubmissionForProcessing(submission).Result;
+                    this.submissionsForProcessingData.AddOrUpdateBySubmission(submission.Id, response.IsSuccess);
 
                     var submissionIsBestSubmission = this.IsBestSubmission(
                         submissionProblemId,
@@ -516,8 +517,6 @@
 
                     scope.Complete();
                 }
-
-                Task.Run(async () => await this.submissionsDistributorCommunication.AddSubmissionForProcessing(submission));
 
                 this.TempData.AddInfoMessage(Resource.Retest_successful);
                 return this.RedirectToAction("View", "Submissions", new { area = "Contests", id });

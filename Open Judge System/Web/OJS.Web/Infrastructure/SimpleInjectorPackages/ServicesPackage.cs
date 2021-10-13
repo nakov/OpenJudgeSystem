@@ -5,6 +5,7 @@
     using MissingFeatures;
 
     using OJS.Services.Business.ExamGroups;
+    using OJS.Services.Business.SubmissionsDistributor;
     using OJS.Services.Common;
     using OJS.Services.Common.BackgroundJobs;
     using OJS.Services.Common.HttpRequester;
@@ -34,6 +35,14 @@
                     container.GetInstance<IHttpRequesterService>(),
                     container.GetInstance<IHangfireBackgroundJobService>(),
                     Settings.SulsPlatformBaseUrl,
+                    Settings.ApiKey),
+                Lifestyle.Scoped);
+
+            container.Register<ISubmissionsDistributorCommunicationService>(
+                () => new SubmissionsDistributorCommunicationService(
+                    container.GetInstance<IFormatterServiceFactory>(),
+                    container.GetInstance<IHttpRequesterService>(),
+                    Settings.DistributorServiceBaseUrl,
                     Settings.ApiKey),
                 Lifestyle.Scoped);
 

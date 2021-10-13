@@ -101,6 +101,7 @@
     <Compile Include="Business\Submissions\Models\ExecutionResultResponseModel.cs" />
     <Compile Include="Business\Submissions\Models\OutputResultResponseModel.cs" />
     <Compile Include="Business\Submissions\Models\ParticipantScoreModel.cs" />
+    <Compile Include="Business\Submissions\Models\SubmissionAddedToDistributorResponseServiceModel.cs" />
     <Compile Include="Business\Submissions\Models\SubmissionCountByMonthStatisticsModel.cs" />
     <Compile Include="Business\Submissions\Models\SubmissionExecutionResult.cs" />
     <Compile Include="Business\Submissions\Models\TaskResultResponseModel.cs" />
