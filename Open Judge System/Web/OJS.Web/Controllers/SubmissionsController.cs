@@ -15,6 +15,7 @@
     using OJS.Services.Business.Submissions;
     using OJS.Services.Data.Submissions;
     using OJS.Web.Common.Extensions;
+    using OJS.Web.Infrastructure.Filters.Attributes;
     using OJS.Web.Models.Submissions;
     using OJS.Web.ViewModels.Submission;
     using OJS.Workers.Common;
@@ -159,8 +160,8 @@
             return this.RedirectToAction<SubmissionsController>(c => c.Index());
         }
 
-        // TODO: restrict this endpoint to be available only to the distributor
         [HttpPost]
+        [ValidateRemoteDataApiKey]
         public ActionResult SaveExecutionResult(SubmissionExecutionResult submissionExecutionResult)
         {
             this.submissionsBusiness.ProcessExecutionResult(submissionExecutionResult);
