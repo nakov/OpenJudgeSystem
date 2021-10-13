@@ -1,10 +1,12 @@
 ﻿namespace OJS.Services.Business.SubmissionsDistributor
 {
+    using OJS.Common;
     using OJS.Data.Models;
-    using OJS.Workers.Common;
+    using OJS.Services.Business.Submissions.Models;
+    using OJS.Services.Common.HttpRequester;
+    using OJS.Services.Common.HttpRequester.Models;
     using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Models;
-    using OJS.Workers.SubmissionProcessors.Common;
     using OJS.Workers.SubmissionProcessors.Formatters;
 
     using System.Linq;
@@ -12,24 +14,34 @@
 
     public class SubmissionsDistributorCommunicationService : ISubmissionsDistributorCommunicationService
     {
-        private readonly string addSubmissionEndpoint;
-        private readonly HttpService http;
         private readonly IFormatterServiceFactory formatterServiceFactory;
+        private readonly IHttpRequesterService httpRequester;
+        private readonly string distributorBaseUrl;
+        private readonly string apiKey;
 
         public SubmissionsDistributorCommunicationService(
-            IFormatterServiceFactory formatterServiceFactory)
+            IFormatterServiceFactory formatterServiceFactory,
+            IHttpRequesterService httpRequester,
+            string distributorBaseUrl,
+            string apiKey)
         {
             this.formatterServiceFactory = formatterServiceFactory;
-            this.addSubmissionEndpoint = $"{Settings.DistributorServiceLocation}/submissions/add";
-            this.http = new HttpService();
+            this.httpRequester = httpRequester;
+            this.distributorBaseUrl = distributorBaseUrl;
+            this.apiKey = apiKey;
+            
         }
 
         // TODO: Pass a Service model instead of Data model
-        public Task AddSubmissionForProcessing(Submission submission)
+        public Task<ExternalDataRetrievalResult<SubmissionAddedToDistributorResponseServiceModel>> AddSubmissionForProcessing(
+            Submission submission)
         {
+            var url = string.Format(UrlConstants.AddSubmissionToDistributor, distributorBaseUrl);
+
             var requestBody = this.BuildDistributorSubmissionBody(submission);
 
-            return this.http.PostJsonAsync(this.addSubmissionEndpoint, requestBody);
+            return this.httpRequester
+                .GetAsync<SubmissionAddedToDistributorResponseServiceModel>(requestBody, url, this.apiKey);
         }
 
         private object BuildDistributorSubmissionBody(Submission submission)

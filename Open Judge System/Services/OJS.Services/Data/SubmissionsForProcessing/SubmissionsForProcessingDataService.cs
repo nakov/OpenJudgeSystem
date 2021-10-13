@@ -56,20 +56,21 @@
             }
         }
 
-        public void AddOrUpdateBySubmission(int submissionId)
+        public void AddOrUpdateBySubmission(int submissionId, bool processing = false)
         {
             var submissionForProcessing = this.GetBySubmission(submissionId);
 
             if (submissionForProcessing != null)
             {
-                submissionForProcessing.Processing = false;
+                submissionForProcessing.Processing = processing;
                 submissionForProcessing.Processed = false;
             }
             else
             {
                 submissionForProcessing = new SubmissionForProcessing
                 {
-                    SubmissionId = submissionId
+                    SubmissionId = submissionId,
+                    Processing = processing,
                 };
 
                 this.submissionsForProcessing.Add(submissionForProcessing);

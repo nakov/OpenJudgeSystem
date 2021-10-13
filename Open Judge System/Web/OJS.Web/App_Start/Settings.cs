@@ -22,6 +22,8 @@
 
         public static string LearningSystemSvnDownloadBaseUrl => GetSetting("LearningSystemSvnDownloadBaseUrl");
 
+        public static string DistributorServiceBaseUrl => GetSetting("DistributorServiceBaseUrl");
+
         public static int CSharpCompilerProcessExitTimeOutMultiplier =>
             GetSettingOrDefault("CSharpCompilerProcessExitTimeOutMultiplier", 1);
 

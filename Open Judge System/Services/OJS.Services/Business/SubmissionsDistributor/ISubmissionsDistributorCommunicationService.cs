@@ -1,11 +1,13 @@
 ﻿namespace OJS.Services.Business.SubmissionsDistributor
 {
-    using OJS.Services.Common;
     using OJS.Data.Models;
     using System.Threading.Tasks;
+    using OJS.Services.Business.Submissions.Models;
+    using OJS.Services.Common.HttpRequester.Models;
 
-    public interface ISubmissionsDistributorCommunicationService : IService
+    public interface ISubmissionsDistributorCommunicationService
     {
-        Task AddSubmissionForProcessing(Submission submission);
+        Task<ExternalDataRetrievalResult<SubmissionAddedToDistributorResponseServiceModel>> AddSubmissionForProcessing(
+            Submission submission);
     }
 }

@@ -16,7 +16,7 @@
 
         void AddOrUpdateBySubmissionIds(ICollection<int> submissionIds);
 
-        void AddOrUpdateBySubmission(int submissionId);
+        void AddOrUpdateBySubmission(int submissionId, bool processing = false);
 
         void RemoveBySubmission(int submissionId);
 
