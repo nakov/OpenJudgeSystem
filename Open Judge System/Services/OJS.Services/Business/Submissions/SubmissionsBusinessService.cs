@@ -241,8 +241,8 @@
             submissionForProcessing.Processed = true;
             submissionForProcessing.Processing = false;
 
-            submissionsData.Update(submission);
-            submissionsForProcessingData.Update(submissionForProcessing);
+            this.submissionsData.Update(submission);
+            this.submissionsForProcessingData.Update(submissionForProcessing);
         }
 
         private void UpdateResults(Submission submission)
@@ -290,7 +290,7 @@
                 submission.TestRuns.Add(testRun);
             }
 
-            submissionsData.Update(submission);
+            this.submissionsData.Update(submission);
 
             this.UpdateResults(submission);
         }
