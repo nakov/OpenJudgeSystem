@@ -2,13 +2,11 @@
 {
     using System.Data.Entity;
     using System.Linq;
-    using System.Threading.Tasks;
 
     using OJS.Common.Helpers;
     using OJS.Data.Models;
     using OJS.Data.Repositories.Contracts;
     using OJS.Services.Business.ProblemGroups;
-    using OJS.Services.Business.SubmissionsDistributor;
     using OJS.Services.Common;
     using OJS.Services.Data.Contests;
     using OJS.Services.Data.ParticipantScores;
@@ -35,7 +33,6 @@
         private readonly ITestRunsDataService testRunsData;
         private readonly ISubmissionTypesDataService submissionTypesData;
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
-        private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
 
         public ProblemsBusinessService(
             IEfDeletableEntityRepository<Problem> problems,
@@ -47,8 +44,7 @@
             ISubmissionsForProcessingDataService submissionsForProcessingData,
             ITestRunsDataService testRunsData,
             ISubmissionTypesDataService submissionTypesData,
-            IProblemGroupsBusinessService problemGroupsBusiness,
-            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication)
+            IProblemGroupsBusinessService problemGroupsBusiness)
         {
             this.problems = problems;
             this.contestsData = contestsData;
@@ -60,7 +56,6 @@
             this.testRunsData = testRunsData;
             this.submissionTypesData = submissionTypesData;
             this.problemGroupsBusiness = problemGroupsBusiness;
-            this.submissionsDistributorCommunication = submissionsDistributorCommunication;
         }
 
         public void RetestById(int id)
@@ -84,12 +79,6 @@
 
                 scope.Complete();
             }
-
-            var tasks = submissions
-                .Select(s => Task.Run(async () =>
-                    await this.submissionsDistributorCommunication.AddSubmissionForProcessing(s)));
-
-            Task.WhenAll(tasks);
         }
 
         public void DeleteById(int id)
@@ -158,7 +147,7 @@
             {
                 return new ServiceResult(Resource.Cannot_copy_problems_into_active_contest);
             }
-            
+
             this.CopyProblemToContest(problem, contestId, problemGroupId);
 
             return ServiceResult.Success;
