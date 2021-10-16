@@ -5,10 +5,13 @@
     using OJS.Services.Business.Submissions.Models;
     using OJS.Services.Common.HttpRequester;
     using OJS.Services.Common.HttpRequester.Models;
+    using OJS.Services.Data.Submissions;
+    using OJS.Services.Data.SubmissionsForProcessing;
     using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Models;
     using OJS.Workers.SubmissionProcessors.Formatters;
-
+    using System;
+    using System.Data.Entity;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -16,32 +19,66 @@
     {
         private readonly IFormatterServiceFactory formatterServiceFactory;
         private readonly IHttpRequesterService httpRequester;
+        private readonly ISubmissionsDataService submissionsData;
+        private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
         private readonly string distributorBaseUrl;
         private readonly string apiKey;
 
         public SubmissionsDistributorCommunicationService(
             IFormatterServiceFactory formatterServiceFactory,
             IHttpRequesterService httpRequester,
+            ISubmissionsDataService submissionsData,
+            ISubmissionsForProcessingDataService submissionsForProcessingData,
             string distributorBaseUrl,
             string apiKey)
         {
             this.formatterServiceFactory = formatterServiceFactory;
             this.httpRequester = httpRequester;
+            this.submissionsData = submissionsData;
+            this.submissionsForProcessingData = submissionsForProcessingData;
             this.distributorBaseUrl = distributorBaseUrl;
             this.apiKey = apiKey;
-            
         }
 
         // TODO: Pass a Service model instead of Data model
         public Task<ExternalDataRetrievalResult<SubmissionAddedToDistributorResponseServiceModel>> AddSubmissionForProcessing(
             Submission submission)
         {
-            var url = string.Format(UrlConstants.AddSubmissionToDistributor, distributorBaseUrl);
+            var url = string.Format(UrlConstants.AddSubmissionToDistributor, this.distributorBaseUrl);
 
             var requestBody = this.BuildDistributorSubmissionBody(submission);
 
             return this.httpRequester
                 .GetAsync<SubmissionAddedToDistributorResponseServiceModel>(requestBody, url, this.apiKey);
+        }
+
+        public async Task AddAllUnprocessed()
+        {
+            var unprocessedSubmissionIds = await this.submissionsForProcessingData
+                .GetAllUnprocessed()
+                .Select(s => s.SubmissionId)
+                .ToListAsync();
+
+            if (!unprocessedSubmissionIds.Any())
+            {
+                return;
+            }
+
+            var submissionsToAdd = await this.submissionsData
+                .GetAllByIdsQuery(unprocessedSubmissionIds)
+                .Include(s => s.Problem.Checker)
+                .Include(s => s.Problem.Tests)
+                .ToListAsync();
+
+            foreach (var submission in submissionsToAdd)
+            {
+                var response = await this.AddSubmissionForProcessing(submission);
+
+                if (!response.IsSuccess)
+                {
+                    throw new Exception(response.ErrorMessage);
+                }
+            }
         }
 
         private object BuildDistributorSubmissionBody(Submission submission)

@@ -10,6 +10,7 @@
     using OJS.Services.Common.BackgroundJobs;
     using OJS.Services.Common.HttpRequester;
     using OJS.Services.Data.ExamGroups;
+    using OJS.Services.Data.Submissions;
     using OJS.Services.Data.SubmissionsForProcessing;
     using OJS.Services.Data.Users;
     using OJS.Workers.SubmissionProcessors.Formatters;
@@ -42,6 +43,8 @@
                 () => new SubmissionsDistributorCommunicationService(
                     container.GetInstance<IFormatterServiceFactory>(),
                     container.GetInstance<IHttpRequesterService>(),
+                    container.GetInstance<ISubmissionsDataService>(),
+                    container.GetInstance<ISubmissionsForProcessingDataService>(),
                     Settings.DistributorServiceBaseUrl,
                     Settings.ApiKey),
                 Lifestyle.Scoped);

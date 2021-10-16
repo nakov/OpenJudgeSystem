@@ -19,6 +19,7 @@
     using OJS.Data.Repositories.Base;
     using OJS.Services.Business.ParticipantScores;
     using OJS.Services.Business.Submissions.ArchivedSubmissions;
+    using OJS.Services.Business.SubmissionsDistributor;
     using OJS.Services.Common.BackgroundJobs;
     using OJS.Services.Common.HttpRequester;
     using OJS.Services.Common.HttpRequester.Models.Users;
@@ -86,6 +87,16 @@
                 "NormalizePointsExceedingMaxPointsForProblem",
                 x => x.NormalizeAllPointsThatExceedAllowedLimit(),
                 Cron.Daily(2));
+
+            return null;
+        }
+
+        public ActionResult RegisterJobForAddingUnprocessedSubmissionsToDistributor()
+        {
+            this.backgroundJobs.AddOrUpdateRecurringJob<ISubmissionsDistributorCommunicationService>(
+                "AddAllUnprocessedSubmissionsToDistributor",
+                x => x.AddAllUnprocessed(),
+                Cron.Minutely());
 
             return null;
         }
