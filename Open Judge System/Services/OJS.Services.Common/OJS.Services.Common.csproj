@@ -114,6 +114,7 @@
     <Compile Include="Cache\MemoryCacheService.cs" />
     <Compile Include="Emails\IEmailSenderService.cs" />
     <Compile Include="Emails\EmailSenderService.cs" />
+    <Compile Include="Exceptions\BusinessServiceException.cs" />
     <Compile Include="HttpRequester\Models\Users\ExternalUserInfoModel.cs" />
     <Compile Include="IService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -133,6 +134,5 @@
       <Name>OJS.Data.Models</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -16,6 +16,7 @@
     using OJS.Services.Busines.Submissions.Models;
     using OJS.Services.Business.ParticipantScores;
     using OJS.Services.Business.Submissions.Models;
+    using OJS.Services.Common.Exceptions;
     using OJS.Services.Data.ParticipantScores;
     using OJS.Services.Data.Submissions;
     using OJS.Services.Data.Submissions.ArchivedSubmissions;
@@ -180,11 +181,11 @@
                 .Include(s => s.Problem.Tests)
                 .FirstOrDefault();
 
-            var submissionForProcessing = this.submissionsForProcessingData.GetBySubmission(submission.Id);
+            var submissionForProcessing = this.submissionsForProcessingData.GetBySubmission(submission?.Id ?? 0);
 
             if (submission == null || submissionForProcessing == null)
             {
-                throw new ArgumentException(
+                throw new BusinessServiceException(
                     $"Submission with Id: \"{submissionExecutionResult.SubmissionId}\" not found.");
             }
 

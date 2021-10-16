@@ -4,6 +4,7 @@
     using System.Web.Mvc;
 
     using MissingFeatures;
+    using OJS.Web.Infrastructure.Filters;
     using Suls.Web.Common.Filters;
 
     public class FilterConfig
@@ -20,6 +21,7 @@
                 Settings.ThrottleIpWhitelist));
 
             filters.Add(new HandleErrorAttribute());
+            filters.Add(new CustomExceptionHandlerFilter());
 
             otherFilters?.ForEach(filters.Add);
         }
