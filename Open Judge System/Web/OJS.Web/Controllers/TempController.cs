@@ -96,7 +96,7 @@
             this.backgroundJobs.AddOrUpdateRecurringJob<ISubmissionsDistributorCommunicationService>(
                 "AddAllUnprocessedSubmissionsToDistributor",
                 x => x.AddAllUnprocessed(),
-                Cron.Minutely());
+                Cron.MinuteInterval(5));
 
             return null;
         }
