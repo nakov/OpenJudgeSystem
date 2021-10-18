@@ -46,7 +46,8 @@
                     container.GetInstance<ISubmissionsDataService>(),
                     container.GetInstance<ISubmissionsForProcessingDataService>(),
                     Settings.DistributorServiceBaseUrl,
-                    Settings.ApiKey),
+                    Settings.ApiKey,
+                    Settings.SubmissionsToAddToDistributorBatchSize),
                 Lifestyle.Scoped);
 
             container.Register<IFormatterServiceFactory>(

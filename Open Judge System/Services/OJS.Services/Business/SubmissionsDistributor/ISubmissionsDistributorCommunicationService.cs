@@ -10,6 +10,6 @@
         Task<ExternalDataRetrievalResult<SubmissionAddedToDistributorResponseServiceModel>> AddSubmissionForProcessing(
             Submission submission);
 
-        Task AddAllUnprocessed();
+        void AddAllUnprocessed();
     }
 }

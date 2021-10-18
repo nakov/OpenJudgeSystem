@@ -11,6 +11,7 @@
     using OJS.Workers.Common.Models;
     using OJS.Workers.SubmissionProcessors.Formatters;
     using System;
+    using System.Collections.Generic;
     using System.Data.Entity;
     using System.Linq;
     using System.Threading.Tasks;
@@ -23,6 +24,7 @@
         private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
         private readonly string distributorBaseUrl;
         private readonly string apiKey;
+        private readonly int submissionsToAddToDistributorBatchSize;
 
         public SubmissionsDistributorCommunicationService(
             IFormatterServiceFactory formatterServiceFactory,
@@ -30,7 +32,8 @@
             ISubmissionsDataService submissionsData,
             ISubmissionsForProcessingDataService submissionsForProcessingData,
             string distributorBaseUrl,
-            string apiKey)
+            string apiKey,
+            int submissionsToAddToDistributorBatchSize)
         {
             this.formatterServiceFactory = formatterServiceFactory;
             this.httpRequester = httpRequester;
@@ -38,6 +41,7 @@
             this.submissionsForProcessingData = submissionsForProcessingData;
             this.distributorBaseUrl = distributorBaseUrl;
             this.apiKey = apiKey;
+            this.submissionsToAddToDistributorBatchSize = submissionsToAddToDistributorBatchSize;
         }
 
         // TODO: Pass a Service model instead of Data model
@@ -52,33 +56,25 @@
                 .GetAsync<SubmissionAddedToDistributorResponseServiceModel>(requestBody, url, this.apiKey);
         }
 
-        public async Task AddAllUnprocessed()
+        public void AddAllUnprocessed()
         {
-            var unprocessedSubmissionIds = await this.submissionsForProcessingData
+            var unprocessedSubmissionIds = this.submissionsForProcessingData
                 .GetAllUnprocessed()
                 .Select(s => s.SubmissionId)
-                .ToListAsync();
+                .ToList();
 
             if (!unprocessedSubmissionIds.Any())
             {
                 return;
             }
 
-            var submissionsToAdd = await this.submissionsData
+            var submissionsToAdd = this.submissionsData
                 .GetAllByIdsQuery(unprocessedSubmissionIds)
                 .Include(s => s.Problem.Checker)
                 .Include(s => s.Problem.Tests)
-                .ToListAsync();
+                .ToList();
 
-            foreach (var submission in submissionsToAdd)
-            {
-                var response = await this.AddSubmissionForProcessing(submission);
-
-                if (!response.IsSuccess)
-                {
-                    throw new Exception(response.ErrorMessage);
-                }
-            }
+            this.BatchAddSubmissionsForProcessing(submissionsToAdd, this.submissionsToAddToDistributorBatchSize);
         }
 
         private object BuildDistributorSubmissionBody(Submission submission)
@@ -128,6 +124,38 @@
             };
 
             return submissionRequestBody;
+        }
+
+        private Task<ExternalDataRetrievalResult<SubmissionAddedToDistributorResponseServiceModel>> AddManySubmissionsForProcessing(
+            IEnumerable<Submission> submissions)
+        {
+            var url = string.Format(UrlConstants.AddManySubmissionsToDistributor, this.distributorBaseUrl);
+
+            var requestBody = submissions.Select(this.BuildDistributorSubmissionBody).ToList();
+
+            return this.httpRequester
+                .GetAsync<SubmissionAddedToDistributorResponseServiceModel>(requestBody, url, this.apiKey);
+        }
+
+        private void BatchAddSubmissionsForProcessing(ICollection<Submission> submissions, int batchSize)
+        {
+            var submissionsAddedCount = 0;
+
+            while (submissionsAddedCount < submissions.Count)
+            {
+                var batchToAdd = submissions
+                    .Skip(submissionsAddedCount)
+                    .Take(batchSize);
+
+                var response = this.AddManySubmissionsForProcessing(batchToAdd).Result;
+
+                if (!response.IsSuccess)
+                {
+                    throw new Exception(response.ErrorMessage);
+                }
+
+                submissionsAddedCount += batchSize;
+            }
         }
     }
 }

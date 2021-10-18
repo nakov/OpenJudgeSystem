@@ -40,6 +40,9 @@
 
         public static string[] ThrottleIpWhitelist => GetSetting("ThrottleIpWhitelist").Split(',');
 
+        public static int SubmissionsToAddToDistributorBatchSize =>
+            GetIntSetting("SubmissionsToAddToDistributorBatchSize");
+
         private static int GetIntSetting(string settingName) => int.Parse(GetSetting(settingName));
     }
 }
