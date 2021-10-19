@@ -211,6 +211,7 @@
             var participantsForUser = this.participantsData.GetAllByUser(user.Id);
 
             var participantIdsForUser = participantsForUser.Select(x => x.Id).ToList();
+            var examGroupsForUser = user.ExamGroups.ToList();
 
             using (var scope = TransactionsHelper.CreateTransactionScope())
             {
@@ -220,6 +221,9 @@
                     {
                         UserId = tempUserIdToStoreParticipants,
                     });
+
+                user.ExamGroups.Clear();
+                this.Data.SaveChanges();
 
                 this.Data.Users.Update(
                     u => u.UserName == userName,
@@ -242,12 +246,21 @@
                         });
                 }
 
+                if (examGroupsForUser.Any())
+                {
+                    var newUser = this.Data.Users.GetById(correctUserId);
+
+                    newUser.ExamGroups = examGroupsForUser;
+                    this.Data.SaveChanges();
+                }
+
                 scope.Complete();
             }
 
             return this.Content(
-                $@"Done. Changed Id of User ""{userName}"" to match the Id from Suls that is ""{correctUserId}"" 
-                and modified his {participantIdsForUser.Count} Participants to point to the new Id");
+                $@"Done. Changed Id of User ""{userName}"" to match the Id from Suls that is ""{correctUserId}""
+                and modified his {participantIdsForUser.Count} Participants and {examGroupsForUser.Count} ExamGroups
+                to point to the new Id");
         }
     }
 }
