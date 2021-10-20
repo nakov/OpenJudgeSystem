@@ -89,11 +89,7 @@
                .Get<string>()
                .Format(submission.Problem.Checker.ClassName);
 
-            var fileContent = string.IsNullOrEmpty(submission.ContentAsString)
-                ? submission.Content
-                : null;
-
-            var code = submission.ContentAsString ?? string.Empty;
+           var (fileContent, code) = this.GetSubmissionContent(submission);
 
             var tests = submission.Problem.Tests
                 .Select(t => new
@@ -156,6 +152,23 @@
 
                 submissionsAddedCount += batchSize;
             }
+        }
+
+        private (byte[] fileContent, string code) GetSubmissionContent(Submission submission)
+        {
+            byte[] fileContent = null;
+            var code = string.Empty;
+
+            if (submission.IsBinaryFile)
+            {
+                fileContent = submission.Content;
+            }
+            else
+            {
+                code = submission.ContentAsString;
+            }
+
+            return (fileContent, code);
         }
     }
 }
