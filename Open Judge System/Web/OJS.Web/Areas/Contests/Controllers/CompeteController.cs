@@ -507,7 +507,7 @@
                 throw new HttpException((int)HttpStatusCode.BadRequest, Resource.ContestsGeneral.Upload_file);
             }
 
-            var problem = this.problemsData.GetWithProblemGroupById(participantSubmission.ProblemId);
+            var problem = this.problemsData.GetWithProblemGroupChecherAndTestsById(participantSubmission.ProblemId);
             if (problem == null)
             {
                 throw new HttpException((int)HttpStatusCode.Unauthorized, Resource.ContestsGeneral.Problem_not_found);
@@ -572,6 +572,9 @@
 
             this.Data.Submissions.Add(newSubmission);
             this.Data.SaveChanges();
+
+            newSubmission.Problem = problem;
+            newSubmission.SubmissionType = this.submissionTypesData.GetById(newSubmission.SubmissionTypeId.Value);
 
             var response = this.submissionsDistributorCommunication.AddSubmissionForProcessing(newSubmission).Result;
             this.submissionsForProcessingData.AddOrUpdateBySubmission(newSubmission.Id, response.IsSuccess);
