@@ -573,7 +573,8 @@
             this.Data.Submissions.Add(newSubmission);
             this.Data.SaveChanges();
 
-            this.submissionsForProcessingData.AddOrUpdateBySubmission(newSubmission.Id);
+            var response = this.submissionsDistributorCommunication.AddSubmissionForProcessing(newSubmission).Result;
+            this.submissionsForProcessingData.AddOrUpdateBySubmission(newSubmission.Id, response.IsSuccess);
 
             this.TempData.Add(GlobalConstants.InfoMessage, Resource.ContestsGeneral.Solution_uploaded);
             return this.Redirect(string.Format("/Contests/{2}/Index/{0}#{1}", problem.ProblemGroup.ContestId, returnProblem ?? 0, official ? CompeteActionName : PracticeActionName));
