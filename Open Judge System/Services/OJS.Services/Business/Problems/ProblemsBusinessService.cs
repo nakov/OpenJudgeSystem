@@ -1,5 +1,6 @@
 ﻿namespace OJS.Services.Business.Problems
 {
+    using System;
     using System.Data.Entity;
     using System.Linq;
 
@@ -7,6 +8,7 @@
     using OJS.Data.Models;
     using OJS.Data.Repositories.Contracts;
     using OJS.Services.Business.ProblemGroups;
+    using OJS.Services.Business.SubmissionsDistributor;
     using OJS.Services.Common;
     using OJS.Services.Data.Contests;
     using OJS.Services.Data.ParticipantScores;
@@ -33,6 +35,7 @@
         private readonly ITestRunsDataService testRunsData;
         private readonly ISubmissionTypesDataService submissionTypesData;
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
+        private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
 
         public ProblemsBusinessService(
             IEfDeletableEntityRepository<Problem> problems,
@@ -44,7 +47,8 @@
             ISubmissionsForProcessingDataService submissionsForProcessingData,
             ITestRunsDataService testRunsData,
             ISubmissionTypesDataService submissionTypesData,
-            IProblemGroupsBusinessService problemGroupsBusiness)
+            IProblemGroupsBusinessService problemGroupsBusiness,
+            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication)
         {
             this.problems = problems;
             this.contestsData = contestsData;
@@ -56,6 +60,7 @@
             this.testRunsData = testRunsData;
             this.submissionTypesData = submissionTypesData;
             this.problemGroupsBusiness = problemGroupsBusiness;
+            this.submissionsDistributorCommunication = submissionsDistributorCommunication;
         }
 
         public void RetestById(int id)
@@ -78,6 +83,13 @@
                 this.submissionsForProcessingData.AddOrUpdateBySubmissionIds(submissionIds);
 
                 scope.Complete();
+            }
+
+            var response = this.submissionsDistributorCommunication.AddSubmissionsForProcessing(submissions).Result;
+            if (!response.IsSuccess)
+            {
+                throw new Exception(
+                    "An error has occured while sending submissions for processing: " + response.ErrorMessage);
             }
         }
 

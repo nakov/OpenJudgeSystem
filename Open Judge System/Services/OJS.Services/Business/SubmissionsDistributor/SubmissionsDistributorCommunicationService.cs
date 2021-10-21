@@ -56,7 +56,13 @@
                 .GetAsync<SubmissionAddedToDistributorResponseServiceModel>(requestBody, url, this.apiKey);
         }
 
-        public void AddAllUnprocessed()
+        public Task<ExternalDataRetrievalResult<SubmissionAddedToDistributorResponseServiceModel>> AddSubmissionsForProcessing(
+            IEnumerable<Submission> submissions) =>
+            this.BatchAddSubmissionsForProcessing(
+                submissions.ToList(),
+                this.submissionsToAddToDistributorBatchSize);
+
+        public async Task AddAllUnprocessed()
         {
             var unprocessedSubmissionIds = this.submissionsForProcessingData
                 .GetAllUnprocessed()
@@ -74,7 +80,7 @@
                 .Include(s => s.Problem.Tests)
                 .ToList();
 
-            this.BatchAddSubmissionsForProcessing(submissionsToAdd, this.submissionsToAddToDistributorBatchSize);
+            await this.BatchAddSubmissionsForProcessing(submissionsToAdd, this.submissionsToAddToDistributorBatchSize);
         }
 
         private object BuildDistributorSubmissionBody(Submission submission)
@@ -133,9 +139,13 @@
                 .GetAsync<SubmissionAddedToDistributorResponseServiceModel>(requestBody, url, this.apiKey);
         }
 
-        private void BatchAddSubmissionsForProcessing(ICollection<Submission> submissions, int batchSize)
+        private async Task<ExternalDataRetrievalResult<SubmissionAddedToDistributorResponseServiceModel>> BatchAddSubmissionsForProcessing(
+            ICollection<Submission> submissions,
+            int batchSize)
         {
             var submissionsAddedCount = 0;
+
+            ExternalDataRetrievalResult<SubmissionAddedToDistributorResponseServiceModel> response = null;
 
             while (submissionsAddedCount < submissions.Count)
             {
@@ -143,7 +153,7 @@
                     .Skip(submissionsAddedCount)
                     .Take(batchSize);
 
-                var response = this.AddManySubmissionsForProcessing(batchToAdd).Result;
+                response = await this.AddManySubmissionsForProcessing(batchToAdd).ConfigureAwait(false);
 
                 if (!response.IsSuccess)
                 {
@@ -152,6 +162,8 @@
 
                 submissionsAddedCount += batchSize;
             }
+
+            return response;
         }
 
         private (byte[] fileContent, string code) GetSubmissionContent(Submission submission)
