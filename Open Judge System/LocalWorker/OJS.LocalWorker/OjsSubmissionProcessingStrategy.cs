@@ -82,6 +82,7 @@
         public override void BeforeExecute()
         {
             this.submission.ProcessingComment = null;
+            this.submission.CompilerComment = null;
             this.testRunsData.DeleteBySubmission(this.submission.Id);
         }
 
