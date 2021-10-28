@@ -1,25 +1,31 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-
 namespace OJS.Servers.Ui
 {
-    public class Startup
-    {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
+    using OJS.Common.Enumerations;
+    using OJS.Common.Utils;
+    using OJS.Data;
+    using OJS.Servers.Infrastructure.Extensions;
 
-        private IConfiguration Configuration { get; }
+    public class UiStartup
+    {
+        private readonly IConfiguration configuration;
+        private readonly string connectionString;
+
+        public UiStartup(IConfiguration configuration)
+        {
+            this.configuration = configuration;
+            this.connectionString = EnvironmentUtils.GetApplicationConnectionString(ApplicationName.OpenJudgeSystem);
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddControllersWithViews();
-        }
+            => services
+                .AddDatabase<OjsDbContext>(this.connectionString)
+                .AddControllersWithViews();
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

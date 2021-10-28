@@ -4,4 +4,9 @@
         <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\Common\OJS.Common\OJS.Common.csproj" />
+      <ProjectReference Include="..\..\Data\OJS.Data\OJS.Data.csproj" />
+    </ItemGroup>
+
 </Project>

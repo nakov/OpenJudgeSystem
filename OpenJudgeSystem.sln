@@ -22,7 +22,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Data", "Data\OJS.Data\O
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Common", "Common\OJS.Common\OJS.Common.csproj", "{7F4451AF-8633-4122-8371-1809D7325306}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Servers.Common", "Servers\Common\OJS.Servers.Common\OJS.Servers.Common.csproj", "{AB446939-4C53-4E2E-AA41-7ACDC2568769}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Servers.Infrastructure", "Servers\Infrastructure\OJS.Servers.Infrastructure\OJS.Servers.Infrastructure.csproj", "{AB446939-4C53-4E2E-AA41-7ACDC2568769}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Servers.Ui.Infrastructure", "Servers\UI\OJS.Servers.Ui.Infrastructure\OJS.Servers.Ui.Infrastructure.csproj", "{811C022D-186E-4581-AB55-DC5B4621132F}"
 EndProject
@@ -36,7 +36,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{99
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Business.Tests", "Tests\Services\OJS.Services.Business.Tests\OJS.Services.Business.Tests.csproj", "{5EC14F1C-4A21-4F62-8C8B-BF3A969AF5C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Common", "Services\Common\OJS.Services.Common\OJS.Services.Common.csproj", "{62DCFD87-8C48-45CC-B14E-66C936178819}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Infrastructure", "Services\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj", "{62DCFD87-8C48-45CC-B14E-66C936178819}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{A663FE9F-A608-4518-B863-ADA8D71FF498}"
 EndProject
@@ -45,6 +45,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Common.Tests", "Tests\Services\Common\OJS.Services.Common.Tests\OJS.Services.Common.Tests.csproj", "{58538E0A-CA03-40A2-A942-3F65EF9EF9FE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Tests.Infrastructure", "Tests\Infrastructure\OJS.Tests.Infrastructure\OJS.Tests.Infrastructure.csproj", "{FF2B04A7-2E76-4CAA-870A-B41CDA5EF542}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Data.Infrastructure", "Data\Infrastructure\OJS.Data.Infrastructure\OJS.Data.Infrastructure.csproj", "{2C50C6EF-4B32-426F-9C21-B9A74E75AC7E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -70,6 +72,7 @@ Global
 		{0B23701D-B869-4BFB-B704-34F4354723BA} = {A663FE9F-A608-4518-B863-ADA8D71FF498}
 		{58538E0A-CA03-40A2-A942-3F65EF9EF9FE} = {998FEA04-6712-4645-B103-72E75B7110BC}
 		{FF2B04A7-2E76-4CAA-870A-B41CDA5EF542} = {49E796BB-BF99-4A1B-8FDE-AE2BAF87B028}
+		{2C50C6EF-4B32-426F-9C21-B9A74E75AC7E} = {EE89E503-154F-42F5-9B43-8DB820D2338B}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{CDBD0A16-E35C-43F7-A20E-A3878F26384E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -136,5 +139,9 @@ Global
 		{FF2B04A7-2E76-4CAA-870A-B41CDA5EF542}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF2B04A7-2E76-4CAA-870A-B41CDA5EF542}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF2B04A7-2E76-4CAA-870A-B41CDA5EF542}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C50C6EF-4B32-426F-9C21-B9A74E75AC7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C50C6EF-4B32-426F-9C21-B9A74E75AC7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C50C6EF-4B32-426F-9C21-B9A74E75AC7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C50C6EF-4B32-426F-9C21-B9A74E75AC7E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

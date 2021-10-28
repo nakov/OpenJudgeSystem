@@ -5,4 +5,9 @@
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\Data\OJS.Data\OJS.Data.csproj" />
+      <ProjectReference Include="..\..\Infrastructure\OJS.Servers.Infrastructure\OJS.Servers.Infrastructure.csproj" />
+    </ItemGroup>
+
 </Project>
