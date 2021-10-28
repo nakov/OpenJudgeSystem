@@ -7,7 +7,12 @@
     <ItemGroup>
       <ProjectReference Include="..\..\..\Common\OJS.Common\OJS.Common.csproj" />
       <ProjectReference Include="..\..\..\Data\Infrastructure\OJS.Data.Infrastructure\OJS.Data.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\..\Services\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj" />
       <ProjectReference Include="..\..\..\Services\OJS.Services.Data\OJS.Services.Data.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     </ItemGroup>
 
 </Project>

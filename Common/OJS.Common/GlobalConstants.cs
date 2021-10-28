@@ -2,6 +2,14 @@ namespace OJS.Common
 {
     public static class GlobalConstants
     {
+        public static class Assemblies
+        {
+            // Services
+            public const string BusinessServices = "OJS.Services.Business";
+            public const string DataServices = "OJS.Services.Data";
+            public const string InfrastructureServices = "OJS.Services.Infrastructure";
+        }
+
         public static class RegexPatterns
         {
             public const string UpperCaseGroupsRegex = @"(?<!^)(?=[A-Z])";
