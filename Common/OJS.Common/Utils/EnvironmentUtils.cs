@@ -38,7 +38,10 @@ namespace OJS.Common.Utils
             return Environment.GetEnvironmentVariable(key);
         }
 
-        private static string GetDatabaseName(ApplicationName appName) => appName.ToString();
+        private static string GetDatabaseName(ApplicationName appName)
+            => appName == ApplicationName.Ui
+                ? "OpenJudgeSystem"
+                : $"OJS.Servers.{appName}";
 
         private static string GetDatabaseUser(ApplicationName appName, bool appUsesMultipleDatabases)
         {

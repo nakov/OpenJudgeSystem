@@ -20,6 +20,6 @@ namespace OJS.Data
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.ConfigureDbOptions(ApplicationName.OpenJudgeSystem);
+            => options.ConfigureDbOptions(ApplicationName.Ui);
     }
 }

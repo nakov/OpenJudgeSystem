@@ -18,7 +18,7 @@ namespace OJS.Servers.Ui
         public UiStartup(IConfiguration configuration)
         {
             this.configuration = configuration;
-            this.connectionString = EnvironmentUtils.GetApplicationConnectionString(ApplicationName.OpenJudgeSystem);
+            this.connectionString = EnvironmentUtils.GetApplicationConnectionString(ApplicationName.Ui);
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
