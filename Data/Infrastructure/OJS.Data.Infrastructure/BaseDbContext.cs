@@ -25,12 +25,6 @@ namespace OJS.Data.Infrastructure
         }
 
         public BaseDbContext(
-            DbContextOptions<TDbContext> options)
-            : base(options)
-        {
-        }
-
-        public BaseDbContext(
             DbContextOptions<TDbContext> options,
             IGlobalQueryFilterTypesCache globalQueryFilterTypesCache)
             : base(options)

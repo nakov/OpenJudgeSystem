@@ -1,6 +1,7 @@
 namespace OJS.Data
 {
     using Microsoft.EntityFrameworkCore;
+    using OJS.Common.Contracts;
     using OJS.Common.Enumerations;
     using OJS.Data.Infrastructure;
     using OJS.Data.Infrastructure.Extensions;
@@ -11,8 +12,10 @@ namespace OJS.Data
         {
         }
 
-        public OjsDbContext(DbContextOptions<OjsDbContext> options)
-            : base(options)
+        public OjsDbContext(
+            DbContextOptions<OjsDbContext> options,
+            IGlobalQueryFilterTypesCache globalQueryFilterTypesCache)
+            : base(options, globalQueryFilterTypesCache)
         {
         }
 
