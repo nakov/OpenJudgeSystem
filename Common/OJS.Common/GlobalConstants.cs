@@ -4,6 +4,9 @@ namespace OJS.Common
     {
         public static class Assemblies
         {
+            // Models
+            public const string ModelsRegexPattern = "^OJS\\..+Models,";
+
             // Services
             public const string BusinessServices = "OJS.Services.Business";
             public const string DataServices = "OJS.Services.Data";

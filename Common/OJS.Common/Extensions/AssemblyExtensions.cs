@@ -7,9 +7,9 @@ namespace OJS.Common.Extensions
 
     public static class AssemblyExtensions
     {
-        public static IEnumerable<Assembly> GetAllReferencedAssembliesWhereFullNameMatchesPattern(
+        public static IEnumerable<Assembly> GetAllReferencedAssembliesWhereFullNameMatchesPatterns(
             this Assembly assembly,
-            string regexPattern)
+            params string[] regexPatterns)
         {
             var returnAssemblies = new List<Assembly>();
             var loadedAssemblies = new HashSet<string>();
@@ -17,7 +17,7 @@ namespace OJS.Common.Extensions
 
             assembliesToCheck.Enqueue(assembly);
 
-            var regex = new Regex(regexPattern);
+            var regexes = regexPatterns.Select(rp => new Regex(rp));
 
             while(assembliesToCheck.Any())
             {
@@ -25,7 +25,7 @@ namespace OJS.Common.Extensions
 
                 var filteredAssemblies = assemblyToCheck
                     .GetReferencedAssemblies()
-                    .Where(x => regex.IsMatch(x.FullName))
+                    .Where(x => regexes.Any(r => r.IsMatch(x.FullName)))
                     .ToList();
 
                 foreach(var reference in filteredAssemblies)

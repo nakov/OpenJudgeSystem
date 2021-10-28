@@ -26,7 +26,7 @@ namespace OJS.Servers.Infrastructure.Extensions
             this IServiceCollection services,
             IConfiguration configuration)
             => services
-                .AddAutomapperConfigurations<TStartup>()
+                .AddAutoMapperConfigurations<TStartup>()
                 .AddWebServerServices();
 
         public static IServiceCollection AddDatabase<TDbContext>(
@@ -116,10 +116,12 @@ namespace OJS.Servers.Infrastructure.Extensions
             return services;
         }
 
-        private static IServiceCollection AddAutomapperConfigurations<TStartup>(this IServiceCollection services)
+        private static IServiceCollection AddAutoMapperConfigurations<TStartup>(this IServiceCollection services)
         {
             var assemblies = typeof(TStartup).Assembly
-                 .GetAllReferencedAssembliesWhereFullNameMatchesPattern("^OJS\\.")
+                 .GetAllReferencedAssembliesWhereFullNameMatchesPatterns(
+                     InfrastructureServices,
+                     ModelsRegexPattern)
                  .ToArray();
 
              return services
