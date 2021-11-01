@@ -1,5 +1,7 @@
 namespace OJS.Servers.Infrastructure.Extensions
 {
+    using Microsoft.AspNetCore.Authentication.Cookies;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
@@ -25,22 +27,38 @@ namespace OJS.Servers.Infrastructure.Extensions
         public static IServiceCollection AddWebServer<TStartup>(
             this IServiceCollection services,
             IConfiguration configuration)
-            => services
+        {
+            services
                 .AddAutoMapperConfigurations<TStartup>()
-                .AddWebServerServices();
+                .AddWebServerServices()
+                .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie();
 
-        public static IServiceCollection AddDatabase<TDbContext>(
+            return services;
+        }
+
+        public static IServiceCollection AddIdentityDatabase<TDbContext, TIdentityUser>(
             this IServiceCollection services,
             string connectionString,
             IEnumerable<GlobalQueryFilterType> globalQueryFilterTypes = null)
             where TDbContext : DbContext
-            => services
+            where TIdentityUser : IdentityUser
+        {
+            services
                 .AddScoped<DbContext, TDbContext>()
                 .AddGlobalQueryFilterTypes(globalQueryFilterTypes)
                 .AddDbContext<TDbContext>(options => options
                     .UseSqlServer(connectionString))
                 .ApplyMigrations<TDbContext>()
                 .AddTransient<ITransactionsProvider, TransactionsProvider<TDbContext>>();
+
+            services
+                .AddIdentity<TIdentityUser, IdentityRole>()
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<DbContext>();
+
+            return services;
+        }
 
         private static IServiceCollection AddWebServerServices(
             this IServiceCollection services)

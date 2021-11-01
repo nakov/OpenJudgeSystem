@@ -24,5 +24,11 @@ namespace OJS.Common
             public const string DockerValue = "Docker";
             public const string ProductionValue = "Production";
         }
+
+        public static class Roles
+        {
+            public const string Administrator = "Administrator";
+            public const string Lecturer = "Lecturer";
+        }
     }
 }
