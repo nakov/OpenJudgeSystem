@@ -4,4 +4,10 @@
         <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\Common\OJS.Common\OJS.Common.csproj" />
+      <ProjectReference Include="..\Infrastructure\OJS.Data.Infrastructure\OJS.Data.Infrastructure.csproj" />
+      <ProjectReference Include="..\OJS.Data.Validation\OJS.Data.Validation.csproj" />
+    </ItemGroup>
+
 </Project>

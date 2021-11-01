@@ -5,8 +5,9 @@ namespace OJS.Data
     using OJS.Common.Enumerations;
     using OJS.Data.Infrastructure;
     using OJS.Data.Infrastructure.Extensions;
+    using OJS.Data.Models.Users;
 
-    public class OjsDbContext : BaseDbContext<OjsDbContext>
+    public class OjsDbContext : BaseAuthDbContext<OjsDbContext, UserProfile>
     {
         public OjsDbContext()
         {
@@ -17,6 +18,20 @@ namespace OJS.Data
             IGlobalQueryFilterTypesCache globalQueryFilterTypesCache)
             : base(options, globalQueryFilterTypesCache)
         {
+        }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<UserProfile>()
+                .Property(x => x.UserName)
+                .IsRequired()
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            builder.Entity<UserProfile>()
+                .OwnsOne(x => x.UserSettings);
+
+            base.OnModelCreating(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)

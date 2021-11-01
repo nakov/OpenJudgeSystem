@@ -1,5 +1,7 @@
 namespace OJS.Data.Infrastructure
 {
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -14,17 +16,18 @@ namespace OJS.Data.Infrastructure
     using OJS.Data.Infrastructure.Configurators;
     using OJS.Data.Infrastructure.Models;
 
-    public class BaseDbContext<TDbContext> : DbContext
+    public class BaseAuthDbContext<TDbContext, TUser> : IdentityDbContext<TUser>
         where TDbContext : DbContext
+        where TUser : IdentityUser
     {
         private readonly IGlobalQueryFilterTypesCache globalQueryFilterTypesCache;
 
         // This constructor is needed for migration creation during design time.
-        public BaseDbContext()
+        public BaseAuthDbContext()
         {
         }
 
-        public BaseDbContext(
+        public BaseAuthDbContext(
             DbContextOptions<TDbContext> options,
             IGlobalQueryFilterTypesCache globalQueryFilterTypesCache)
             : base(options)
