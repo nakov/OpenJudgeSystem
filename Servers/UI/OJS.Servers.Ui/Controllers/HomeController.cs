@@ -1,22 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using OJS.Servers.Ui.Models;
-
-namespace OJS.Servers.Ui.Controllers
+﻿namespace OJS.Servers.Ui.Controllers
 {
-    public class HomeController : Controller
+    using System.Diagnostics;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
+    using OJS.Servers.Ui.Models;
+    using Microsoft.AspNetCore.Authorization;
+    using OJS.Services.Infrastructure.Mapping;
+    using OJS.Services.Models;
+
+    public class HomeController : BaseViewController
     {
         private readonly ILogger<HomeController> logger;
+        private readonly IMapperService mapper;
 
-        public HomeController(ILogger<HomeController> logger) => this.logger = logger;
+        public HomeController(ILogger<HomeController> logger, IMapperService mapper)
+        {
+            this.logger = logger;
+            this.mapper = mapper;
+        }
 
-        public IActionResult Index() => View();
+        public IActionResult Index()
+        {
+            var serviceModel = new TestServiceModel();
 
+            var mappedModel = this.mapper.Map<TestModel>(serviceModel);
+
+            return this.View();
+        }
+
+        [Authorize]
         public IActionResult Privacy() => View();
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

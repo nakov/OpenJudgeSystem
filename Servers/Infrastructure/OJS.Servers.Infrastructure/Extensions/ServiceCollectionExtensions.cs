@@ -26,11 +26,18 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         public static IServiceCollection AddWebServer<TStartup>(
             this IServiceCollection services,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            params string[] projectNames)
         {
+            var currentProjectName = typeof(TStartup).GetProjectName();
+            if (projectNames == null || !projectNames.Any())
+            {
+                projectNames = new[] { currentProjectName };
+            }
+
             services
                 .AddAutoMapperConfigurations<TStartup>()
-                .AddWebServerServices()
+                .AddWebServerServices(projectNames)
                 .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie();
 
@@ -61,12 +68,24 @@ namespace OJS.Servers.Infrastructure.Extensions
         }
 
         private static IServiceCollection AddWebServerServices(
-            this IServiceCollection services)
+            this IServiceCollection services,
+            params string[] projectNames)
             => services
-                .AddFrom(
-                    DataServices,
-                    BusinessServices,
-                    InfrastructureServices);
+                .AddFrom(projectNames
+                    .Select(projectName => new[]
+                    {
+                        string.Format(DataServices, projectName),
+                        string.Format(BusinessServices, projectName),
+                    })
+                    .SelectMany(x => x)
+                    .Concat(new []
+                    {
+                        CommonDataServices,
+                        CommonBusinessServices,
+                        InfrastructureServices,
+                    })
+                    .ToArray())
+                .AddTransient(typeof(IDataService<>), typeof(DataService<>));
 
         private static IServiceCollection ApplyMigrations<TDbContext>(this IServiceCollection services)
             where TDbContext : DbContext

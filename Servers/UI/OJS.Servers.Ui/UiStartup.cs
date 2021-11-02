@@ -2,7 +2,6 @@ namespace OJS.Servers.Ui
 {
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
@@ -12,8 +11,6 @@ namespace OJS.Servers.Ui
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Extensions;
     using System;
-    using System.Threading.Tasks;
-    using static OJS.Common.GlobalConstants.Roles;
 
     public class UiStartup
     {
@@ -55,7 +52,7 @@ namespace OJS.Servers.Ui
             app.UseAuthentication();
             app.UseAuthorization();
 
-            this.CreateRoles(serviceProvider).Wait();
+            serviceProvider.CreateOrUpdateRoles().Wait();
 
             app.UseEndpoints(endpoints =>
             {
@@ -63,40 +60,6 @@ namespace OJS.Servers.Ui
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
-        }
-
-        private async Task CreateRoles(IServiceProvider serviceProvider)
-        {
-            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            var userManager = serviceProvider.GetRequiredService<UserManager<UserProfile>>();
-            string[] roleNames = { Administrator, Lecturer };
-
-            foreach (var roleName in roleNames)
-            {
-                var roleExist = await roleManager.RoleExistsAsync(roleName);
-                if (!roleExist)
-                {
-                    await roleManager.CreateAsync(new IdentityRole(roleName));
-                }
-            }
-
-            var userProfile = new UserProfile
-            {
-                UserName = "judge_admin",
-                Email = "judge_admin@softuni.org",
-            };
-
-            var userPassword = "1234QwERt)";
-            var user = await userManager.FindByEmailAsync(userProfile.Email);
-
-            if(user == null)
-            {
-                var createPowerUser = await userManager.CreateAsync(userProfile, userPassword);
-                if (createPowerUser.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(userProfile, Administrator);
-                }
-            }
         }
     }
 }

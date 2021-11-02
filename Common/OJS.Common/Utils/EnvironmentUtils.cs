@@ -39,7 +39,7 @@ namespace OJS.Common.Utils
         }
 
         private static string GetDatabaseName(ApplicationName appName)
-            => appName == ApplicationName.Ui
+            => appName is ApplicationName.Ui or ApplicationName.Administration
                 ? "OpenJudgeSystem"
                 : $"OJS.Servers.{appName}";
 

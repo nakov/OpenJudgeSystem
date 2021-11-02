@@ -6,7 +6,7 @@ namespace OJS.Data.Models.Users
     using System.ComponentModel.DataAnnotations;
     using static OJS.Data.Validation.ConstraintConstants.User;
 
-    public class UserProfile : IdentityUser, IDeletableEntity, IAuditInfo
+    public class UserProfile : IdentityUser, IDeletableEntity, IAuditInfo, IEntity<string>
     {
         [Required]
         [MaxLength(EmailMaxLength)]

@@ -10,6 +10,7 @@ namespace OJS.Servers.Ui.Controllers
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using static OJS.Common.GlobalConstants;
 
     [Authorize]
     public class AccountController : BaseViewController
@@ -28,14 +29,14 @@ namespace OJS.Servers.Ui.Controllers
         [AllowAnonymous]
         public IActionResult Login(string returnUrl)
         {
-            this.ViewData["ReturnUrl"] = returnUrl;
+            this.ViewData[ViewDataKeys.ReturnUrl] = returnUrl;
             return this.View();
         }
 
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl)
+        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = "/")
         {
             if (!this.ModelState.IsValid)
             {
@@ -76,6 +77,12 @@ namespace OJS.Servers.Ui.Controllers
                 authProperties);
 
             return this.Redirect(returnUrl);
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            await this.signInManager.SignOutAsync();
+            return this.RedirectToAction("Index", "Home");
         }
     }
 }
