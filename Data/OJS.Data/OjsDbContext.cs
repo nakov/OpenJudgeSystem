@@ -82,10 +82,10 @@ namespace OJS.Data
                 .IsUnique();
 
             builder.Entity<LecturerInContest>()
-                .HasIndex(x => new { x.LecturerId, x.ContestId });
+                .HasKey(x => new { x.LecturerId, x.ContestId });
 
             builder.Entity<LecturerInContestCategory>()
-                .HasIndex(x => new { x.LecturerId, x.ContestCategoryId });
+                .HasKey(x => new { x.LecturerId, x.ContestCategoryId });
 
             builder.Entity<UsersInExamGroups>()
                 .HasKey(x => new { x.UserId, x.ExamGroupId });
