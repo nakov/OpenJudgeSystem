@@ -13,6 +13,7 @@ namespace OJS.Data.Models.Users
     {
         [Column(nameof(FirstName))]
         [MaxLength(NameMaxLength)]
+        [MinLength(NameMinLength)]
         public string FirstName { get; set; }
 
         [Column(nameof(LastName))]

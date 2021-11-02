@@ -1,0 +1,51 @@
+namespace OJS.Data.Models.Tests
+{
+    using OJS.Common.Extensions.Strings;
+    using OJS.Data.Infrastructure.Models;
+    using OJS.Data.Models.Problems;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations.Schema;
+
+    public class Test : Entity<int>, IOrderableEntity
+    {
+        public int ProblemId { get; set; }
+
+        public Problem Problem { get; set; }
+
+        /// <remarks>
+        /// Using byte[] (compressed with zip) to save database space.
+        /// </remarks>
+        public byte[] InputData { get; set; }
+
+        [NotMapped]
+        public string InputDataAsString
+        {
+            get => this.InputData.Decompress();
+
+            set => this.InputData = value.Compress();
+        }
+
+        /// <remarks>
+        /// Using byte[] (compressed with zip) to save database space.
+        /// </remarks>
+        public byte[] OutputData { get; set; }
+
+        [NotMapped]
+        public string OutputDataAsString
+        {
+            get => this.OutputData.Decompress();
+
+            set => this.OutputData = value.Compress();
+        }
+
+        public bool IsTrialTest { get; set; }
+
+        public bool IsOpenTest { get; set; }
+
+        public bool HideInput { get; set; }
+
+        public double OrderBy { get; set; }
+
+        public ICollection<TestRun> TestRuns { get; set; } = new HashSet<TestRun>();
+    }
+}

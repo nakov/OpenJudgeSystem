@@ -2,7 +2,7 @@ namespace OJS.Data.Infrastructure.Models
 {
     using System;
 
-    public interface IAuditInfo
+    public interface IAuditInfoEntity : IEntity
     {
         DateTime CreatedOn { get; set; }
 

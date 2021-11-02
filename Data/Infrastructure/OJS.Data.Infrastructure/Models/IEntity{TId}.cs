@@ -1,7 +1,7 @@
 namespace OJS.Data.Infrastructure.Models
 {
-    public interface IEntity<out TId>
+    public interface IEntity<TId> : IEntity
     {
-        TId Id { get; }
+        TId Id { get; set; }
     }
 }

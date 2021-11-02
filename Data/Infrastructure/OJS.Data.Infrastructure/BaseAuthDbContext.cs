@@ -74,11 +74,11 @@ namespace OJS.Data.Infrastructure
             => this.ChangeTracker
                 .Entries()
                 .Where(e =>
-                    e.Entity is IAuditInfo &&
+                    e.Entity is IAuditInfoEntity &&
                     e.State is EntityState.Added or EntityState.Modified)
                 .ForEach(entry =>
                 {
-                    var entity = (IAuditInfo)entry.Entity;
+                    var entity = (IAuditInfoEntity)entry.Entity;
                     if (entry.State == EntityState.Added)
                     {
                         entity.CreatedOn = DateTime.UtcNow;

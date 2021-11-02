@@ -2,10 +2,13 @@
 {
     public static class ConstraintConstants
     {
+        public const int FileExtensionMaxLength = 4;
+        public const int IpAddressMaxLength = 45;
+
         public static class User
         {
             public const int UsernameMinLength = 5;
-            public const int UsernameMaxLength = 32;
+            public const int UsernameMaxLength = 50;
             public const string UsernameRegEx = @"^[a-zA-Z]([/._]?[a-zA-Z0-9]+)+$";
 
             public const int PasswordMinLength = 6;
@@ -26,6 +29,43 @@
             public const int JobTitleMinLength = 2;
             public const int JobTitleMaxLength = 100;
             public const int FacultyNumberMaxLength = 30;
+        }
+
+        public static class Contest
+        {
+            public const int NameMaxLength = 100;
+            public const int NameMinLength = 4;
+
+            public const int PasswordMaxLength = 20;
+
+            public const int CategoryNameMaxLength = 100;
+            public const int CategoryNameMinLength = 6;
+        }
+
+        public static class ExamGroup
+        {
+            public const int NameMinLength = 2;
+            public const int NameMaxLength = 600;
+        }
+
+        public static class SubmissionTypes
+        {
+            public const int NameMaxLength = 100;
+            public const int NameMinLength = 1;
+        }
+
+        public static class Problem
+        {
+            public const int NameMaxLength = 50;
+
+            public const int ResourceNameMaxLength = 50;
+            public const int ResourceNameMinLength = 3;
+        }
+
+        public static class Checker
+        {
+            public const int NameMaxLength = 100;
+            public const int NameMinLength = 1;
         }
     }
 }
