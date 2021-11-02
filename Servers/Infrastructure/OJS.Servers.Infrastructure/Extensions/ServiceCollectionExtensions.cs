@@ -156,9 +156,7 @@ namespace OJS.Servers.Infrastructure.Extensions
         private static IServiceCollection AddAutoMapperConfigurations<TStartup>(this IServiceCollection services)
         {
             var assemblies = typeof(TStartup).Assembly
-                 .GetAllReferencedAssembliesWhereFullNameMatchesPatterns(
-                     InfrastructureServices,
-                     ModelsRegexPattern)
+                 .GetAllReferencedAssembliesWhereFullNameMatchesPatterns(ModelsRegexPattern)
                  .ToArray();
 
              return services
