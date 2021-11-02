@@ -105,7 +105,7 @@
 
         public const int ProblemNameMaxLength = 50;
 
-        public const string ProblemDefaultName = "Име";
+        public const string ProblemDefaultName = "Name";
         public const int ProblemDefaultOrderBy = 0;
         public const int ProblemDefaultMaximumPoints = 100;
         public const int ProblemDefaultTimeLimit = 100;

@@ -16,7 +16,7 @@
         private const int DefaultRestrictInterval = 300;
 
         // The default Error Message that will be displayed in case of excessive Requests
-        private string errorMessage = "Моля, изчакайте 10 секунди преди да пробвате пак.";
+        private string errorMessage = "Please, try in 10 seconds!";
 
         // This will store the URL to Redirect errors to
         // NOTE: Not implemented.

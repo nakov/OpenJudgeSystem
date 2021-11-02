@@ -24,10 +24,10 @@
 
         public int Id { get; set; }
 
-        [Display(Name = "Компилация")]
+        [Display(Name = "Is Compiled successfully")]
         public bool IsCompiledSuccessfully { get; set; }
 
-        [Display(Name = "Изпратено на")]
+        [Display(Name = "Submitted on")]
         public DateTime SubmissionDate { get; set; }
 
         public bool IsCalculated { get; set; }

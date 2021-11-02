@@ -43,7 +43,7 @@
         {
             if (!this.CheckIfUserHasProblemPermissions(id))
             {
-                this.TempData[GlobalConstants.DangerMessage] = "Нямате привилегиите за това действие";
+                this.TempData[GlobalConstants.DangerMessage] = "No permission for this action";
                 return this.Json("No premmissions");
             }
 

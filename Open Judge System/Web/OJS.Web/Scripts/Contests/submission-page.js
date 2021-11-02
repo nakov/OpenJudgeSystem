@@ -88,7 +88,7 @@ function Notifier() {
         codeMirrorInstance.setValue('');
 
         showMessage({
-            message: 'Успешно изпратено!',
+            message: 'Submission send!',
             response: response,
             cssClass: 'alert alert-success'
         });
@@ -155,7 +155,7 @@ function validateSubmissionContent() {
 
     if (!codeMirrorText || codeMirrorText.length < 5) {
         messageNotifier.showMessage({
-            message: 'Решението трябва да съдържа поне 5 символа!',
+            message: 'The submission must be at least 5 characters long',
             cssClass: 'alert alert-warning'
         });
 
@@ -171,7 +171,7 @@ function validateBinaryFileExists(fileInput) {
 
     if (!fileInput.files[0]) {
         messageNotifier.notifyWarning({
-            statusText: 'Моля изберете файл, който да изпратите.'
+            statusText: 'Please, select a file for submission.'
         });
         return false;
     }
@@ -190,7 +190,7 @@ function validateBinaryFileSize(fileInput, size) {
     var file = fileInput.files[0];
     if (file && file.size > size) {
         messageNotifier.notifyWarning({
-            statusText: 'Избраният файл е твърде голям. Моля, изберете файл с по-малък размер.'
+            statusText: 'The chosen file is too big. Please, choose a smaller file.'
         });
 
         return false;
@@ -212,7 +212,7 @@ function validateBinaryFileAllowedExtensions(fileInput, extensions) {
 
     if ($.inArray(fileExtension, extensions) < 0) {
         messageNotifier.notifyWarning({
-            statusText: 'Избраният тип файл не е позволен. Разрешените формати са: ' + extensions.join(',') + '.'
+            statusText: 'The chosen file\'s format is unsupported. Supported file formats: ' + extensions.join(',') + '.'
         });
 
         return false;
@@ -255,7 +255,7 @@ var submissionTimeValidator = function (initialServerTime) {
 
             if (differenceBetweenSubmissionAndLimit > 0) {
                 messageNotifier.showMessage({
-                    message: 'Моля, изчакайте още ' + differenceBetweenSubmissionAndLimit + ' секунди преди да изпратите решение.',
+                    message: 'Please, wait ' + differenceBetweenSubmissionAndLimit + ' more seconds before a new submission.',
                     cssClass: 'alert alert-warning'
                 });
 

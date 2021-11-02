@@ -141,7 +141,7 @@
         {
             if (!this.CheckIfUserHasContestPermissions(contestId))
             {
-                this.TempData[GlobalConstants.DangerMessage] = "Нямате привилегиите за това действие";
+                this.TempData[GlobalConstants.DangerMessage] = "No permission for this action!";
                 throw new UnauthorizedAccessException("No premissions");
             }
 

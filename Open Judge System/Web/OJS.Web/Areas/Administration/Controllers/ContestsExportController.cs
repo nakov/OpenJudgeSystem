@@ -48,7 +48,7 @@
             var contestName = this.contestsData.GetNameById(id);
             if (string.IsNullOrWhiteSpace(contestName))
             {
-                this.TempData[GlobalConstants.DangerMessage] = "Няма такова състезание";
+                this.TempData[GlobalConstants.DangerMessage] = "No such contest";
                 return this.RedirectToAction("Index", "Home", new { area = string.Empty });
             }
 

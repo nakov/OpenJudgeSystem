@@ -9,10 +9,10 @@
     public class SubmissionSimilarityFiltersInputModel
     {
         [Required]
-        [Display(Name = "Състезание")]
+        [Display(Name = "Contest")]
         public int? ContestId { get; set; }
 
-        [Display(Name = "Тип детектор")]
+        [Display(Name = "Detector Type")]
         public PlagiarismDetectorType PlagiarismDetectorType { get; set; }
 
         public IEnumerable<DropdownViewModel> PlagiarismDetectorTypes { get; set; }

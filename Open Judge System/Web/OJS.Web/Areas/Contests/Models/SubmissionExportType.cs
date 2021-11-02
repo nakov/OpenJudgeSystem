@@ -4,13 +4,13 @@
 
     public enum SubmissionExportType
     {
-        [Description("Всички решения")]
+        [Description("All submission")]
         AllSubmissions = 1,
 
-        [Description("Най-добри решения")]
+        [Description("Best submission")]
         BestSubmissions = 2,
 
-        [Description("Последни решения")]
+        [Description("Latest submissions")]
         LastSubmissions = 3,
     }
 }

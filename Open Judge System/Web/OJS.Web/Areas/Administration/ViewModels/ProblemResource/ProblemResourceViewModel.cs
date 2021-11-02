@@ -45,7 +45,7 @@
             MinimumLength = GlobalConstants.ProblemResourceNameMinLength,
             ErrorMessageResourceName = "Name_length",
             ErrorMessageResourceType = typeof(Resource))]
-        [DefaultValue("Име")]
+        [DefaultValue("Name")]
         public string Name { get; set; }
 
         public int ProblemId { get; set; }

@@ -817,7 +817,7 @@
 
             if (!string.Equals(contest.NewIpPassword, model.NewIpPassword, StringComparison.InvariantCulture))
             {
-                this.ModelState.AddModelError("NewIpPassword", "Невалидна парола.");
+                this.ModelState.AddModelError("NewIpPassword", "Invalid password");
                 return this.View(model);
             }
 

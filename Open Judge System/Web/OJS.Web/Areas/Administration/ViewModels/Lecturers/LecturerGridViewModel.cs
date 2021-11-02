@@ -19,8 +19,8 @@
                     {
                         UserId = x.Id,
                         UserName = x.UserName,
-                        FirstName = x.UserSettings.FirstName ?? "Няма",
-                        LastName = x.UserSettings.LastName ?? "Няма",
+                        FirstName = x.UserSettings.FirstName ?? "No name",
+                        LastName = x.UserSettings.LastName ?? "No name",
                         Email = x.Email
                     };
             }
@@ -28,14 +28,14 @@
 
         public string UserId { get; set; }
 
-        [Display(Name = "Потребителско име")]
-        [Required(ErrorMessage = "Потребителското име е задължително.")]
+        [Display(Name = "Username")]
+        [Required(ErrorMessage = "Username is mandatory.")]
         public string UserName { get; set; }
 
-        [Display(Name = "Име")]
+        [Display(Name = "First name")]
         public string FirstName { get; set; }
 
-        [Display(Name = "Фамилия")]
+        [Display(Name = "Last name")]
         public string LastName { get; set; }
 
         [Display(Name = "E-mail")]
