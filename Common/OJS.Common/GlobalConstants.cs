@@ -10,8 +10,8 @@ namespace OJS.Common
             // Services
             public const string BusinessServices = "OJS.Services.{0}.Business";
             public const string DataServices = "OJS.Services.{0}.Data";
-            public const string CommonBusinessServices = "OJS.Services.Business";
-            public const string CommonDataServices = "OJS.Services.Data";
+            public const string CommonBusinessServices = "OJS.Services.Common.Business";
+            public const string CommonDataServices = "OJS.Services.Common.Data";
             public const string InfrastructureServices = "OJS.Services.Infrastructure";
         }
 

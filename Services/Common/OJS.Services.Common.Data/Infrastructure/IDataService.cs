@@ -1,4 +1,4 @@
-namespace OJS.Services.Data.Infrastructure
+namespace OJS.Services.Common.Data.Infrastructure
 {
     using OJS.Data.Infrastructure.Models;
     using OJS.Services.Infrastructure;

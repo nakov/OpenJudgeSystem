@@ -5,8 +5,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\..\Services\Common\OJS.Services.Common.Models\OJS.Services.Common.Models.csproj" />
       <ProjectReference Include="..\..\..\Services\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj" />
-      <ProjectReference Include="..\..\..\Services\OJS.Services.Models\OJS.Services.Models.csproj" />
     </ItemGroup>
 
 </Project>

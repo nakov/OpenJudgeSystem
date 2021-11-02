@@ -6,7 +6,7 @@
     using OJS.Servers.Ui.Models;
     using Microsoft.AspNetCore.Authorization;
     using OJS.Services.Infrastructure.Mapping;
-    using OJS.Services.Models;
+    using OJS.Services.Common.Models;
 
     public class HomeController : BaseViewController
     {

@@ -1,4 +1,4 @@
-namespace OJS.Services.Models
+namespace OJS.Services.Common.Models
 {
     public class TestServiceModel
     {

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj" />
+      <ProjectReference Include="..\OJS.Services.Common.Data\OJS.Services.Common.Data.csproj" />
+      <ProjectReference Include="..\OJS.Services.Common.Models\OJS.Services.Common.Models.csproj" />
+    </ItemGroup>
+
+</Project>

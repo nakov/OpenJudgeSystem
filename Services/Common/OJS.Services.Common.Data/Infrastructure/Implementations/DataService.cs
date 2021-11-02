@@ -1,4 +1,4 @@
-namespace OJS.Services.Data.Infrastructure.Implementations
+namespace OJS.Services.Common.Data.Infrastructure.Implementations
 {
     using Microsoft.EntityFrameworkCore;
     using OJS.Data.Infrastructure.Models;

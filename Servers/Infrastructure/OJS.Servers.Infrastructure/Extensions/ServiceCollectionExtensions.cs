@@ -10,8 +10,8 @@ namespace OJS.Servers.Infrastructure.Extensions
     using OJS.Common.Extensions;
     using OJS.Common.Extensions.Strings;
     using OJS.Common.Utils;
-    using OJS.Services.Data.Infrastructure;
-    using OJS.Services.Data.Infrastructure.Implementations;
+    using OJS.Services.Common.Data.Infrastructure;
+    using OJS.Services.Common.Data.Infrastructure.Implementations;
     using OJS.Services.Infrastructure;
     using System;
     using System.Collections.Generic;
