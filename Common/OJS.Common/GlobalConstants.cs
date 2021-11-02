@@ -2,6 +2,8 @@ namespace OJS.Common
 {
     public static class GlobalConstants
     {
+        public const string ApplicationFullName = "OpenJudgeSystem";
+
         public static class Assemblies
         {
             // Models
@@ -25,17 +27,15 @@ namespace OJS.Common
             public const string EnvironmentKey = "ASPNETCORE_ENVIRONMENT";
             public const string DockerValue = "Docker";
             public const string ProductionValue = "Production";
+            public const string PathToCommonKeyRingFolder = "PATH_TO_COMMON_KEY_RING_FOLDER";
         }
 
         public static class Roles
         {
             public const string Administrator = "Administrator";
             public const string Lecturer = "Lecturer";
-        }
 
-        public static class ViewDataKeys
-        {
-            public const string ReturnUrl = "ReturnUrl";
+            public const string AdministratorOrLecturer = Administrator + ", " + Lecturer;
         }
     }
 }

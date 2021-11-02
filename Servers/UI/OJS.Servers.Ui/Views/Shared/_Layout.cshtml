@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using OJS.Servers.Infrastructure.Extensions
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
@@ -24,7 +26,7 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                     </li>
-                    @if (this.User.Identity?.IsAuthenticated ?? false)
+                    @if (this.User.IsAuthenticated())
                     {
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Log out</a>

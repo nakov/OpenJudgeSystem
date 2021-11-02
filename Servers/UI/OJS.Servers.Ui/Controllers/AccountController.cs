@@ -1,16 +1,16 @@
 namespace OJS.Servers.Ui.Controllers
 {
     using Microsoft.AspNetCore.Authentication;
-    using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using OJS.Data.Models.Users;
+    using OJS.Servers.Infrastructure.Controllers;
     using OJS.Servers.Ui.Models;
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
-    using static OJS.Common.GlobalConstants;
+    using static OJS.Servers.Infrastructure.ServerConstants;
 
     [Authorize]
     public class AccountController : BaseViewController
@@ -64,7 +64,7 @@ namespace OJS.Servers.Ui.Controllers
             claims.Add(new Claim(ClaimTypes.Name, user.UserName));
 
             var claimsIdentity = new ClaimsIdentity(
-                claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                claims, Authentication.SharedCookiesScheme);
 
             var authProperties = new AuthenticationProperties
             {
@@ -72,7 +72,7 @@ namespace OJS.Servers.Ui.Controllers
             };
 
             await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
+                Authentication.SharedCookiesScheme,
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
 

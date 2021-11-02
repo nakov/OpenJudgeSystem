@@ -1,6 +1,6 @@
 namespace OJS.Servers.Infrastructure.Extensions
 {
-    using Microsoft.AspNetCore.Authentication.Cookies;
+    using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
@@ -15,8 +15,12 @@ namespace OJS.Servers.Infrastructure.Extensions
     using OJS.Services.Infrastructure;
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.Assemblies;
+    using static OJS.Common.GlobalConstants.EnvironmentVariables;
+    using static OJS.Servers.Infrastructure.ServerConstants;
 
     public static class ServiceCollectionExtensions
     {
@@ -35,13 +39,10 @@ namespace OJS.Servers.Infrastructure.Extensions
                 projectNames = new[] { currentProjectName };
             }
 
-            services
+            return services
                 .AddAutoMapperConfigurations<TStartup>()
                 .AddWebServerServices(projectNames)
-                .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie();
-
-            return services;
+                .AddAuthenticationServices();
         }
 
         public static IServiceCollection AddIdentityDatabase<TDbContext, TIdentityUser>(
@@ -161,6 +162,25 @@ namespace OJS.Servers.Infrastructure.Extensions
 
              return services
                  .AddAutoMapper(assemblies);
+        }
+
+        private static IServiceCollection AddAuthenticationServices(this IServiceCollection services)
+        {
+            var keysDirectory = new DirectoryInfo(EnvironmentUtils.GetByKey(PathToCommonKeyRingFolder));
+
+            services
+                .AddDataProtection()
+                .PersistKeysToFileSystem(keysDirectory)
+                .SetApplicationName(ApplicationFullName);
+
+            services
+                .AddAuthentication(Authentication.SharedCookiesScheme)
+                .AddCookie(Authentication.SharedCookiesScheme, opt =>
+                {
+                    opt.Cookie.Name = Authentication.SharedCookieName;
+                });
+
+            return services;
         }
 
         private static Type GetInterfaceOf(Type type)

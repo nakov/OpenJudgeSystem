@@ -13,7 +13,8 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "DbContext": "Server=.;Database=OpenJudgeSystem;Integrated Security=True;"
+        "DbContext": "Server=.;Database=OpenJudgeSystem;Integrated Security=True;",
+        "PATH_TO_COMMON_KEY_RING_FOLDER": "../../../Keys"
       }
     },
     "OJS.Servers.Ui": {
@@ -23,7 +24,8 @@
       "applicationUrl": "https://localhost:5002",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "DbContext": "Server=localhost;Database=OpenJudgeSystem;User Id=sa;Password=1123QwER;"
+        "DbContext": "Server=localhost;Database=OpenJudgeSystem;User Id=sa;Password=1123QwER;",
+        "PATH_TO_COMMON_KEY_RING_FOLDER": "../../../Keys"
       }
     }
   }

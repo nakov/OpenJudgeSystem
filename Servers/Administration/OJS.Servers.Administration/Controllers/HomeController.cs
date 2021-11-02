@@ -4,8 +4,9 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using OJS.Servers.Administration.Models;
+    using OJS.Servers.Infrastructure.Controllers;
 
-    public class HomeController : Controller
+    public class HomeController : BaseViewController
     {
         private readonly ILogger<HomeController> logger;
 

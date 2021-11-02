@@ -5,6 +5,7 @@
     using Microsoft.Extensions.Logging;
     using OJS.Servers.Ui.Models;
     using Microsoft.AspNetCore.Authorization;
+    using OJS.Servers.Infrastructure.Controllers;
     using OJS.Services.Infrastructure.Mapping;
     using OJS.Services.Common.Models;
 

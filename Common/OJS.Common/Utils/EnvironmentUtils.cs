@@ -8,6 +8,9 @@ namespace OJS.Common.Utils
 
     public static class EnvironmentUtils
     {
+        public static string GetByKey(string key)
+            => Environment.GetEnvironmentVariable(key);
+
         public static string GetApplicationConnectionString(
             ApplicationName appName,
             bool appUsesMultipleDatabases = false)

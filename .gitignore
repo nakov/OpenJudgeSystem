@@ -184,3 +184,6 @@ typings/
 
 # dotenv environment variables file
 .env
+
+# Key ring folder
+Keys/

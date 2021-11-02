@@ -1,4 +1,4 @@
-namespace OJS.Servers.Ui.Controllers
+namespace OJS.Servers.Infrastructure.Controllers
 {
     using Microsoft.AspNetCore.Mvc;
 
