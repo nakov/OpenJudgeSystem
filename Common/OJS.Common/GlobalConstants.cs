@@ -24,10 +24,13 @@ namespace OJS.Common
 
         public static class EnvironmentVariables
         {
+            // Keys
             public const string EnvironmentKey = "ASPNETCORE_ENVIRONMENT";
+            public const string PathToCommonKeyRingFolderKey = "PATH_TO_COMMON_KEY_RING_FOLDER";
+
+            // Values
             public const string DockerValue = "Docker";
             public const string ProductionValue = "Production";
-            public const string PathToCommonKeyRingFolder = "PATH_TO_COMMON_KEY_RING_FOLDER";
         }
 
         public static class Roles

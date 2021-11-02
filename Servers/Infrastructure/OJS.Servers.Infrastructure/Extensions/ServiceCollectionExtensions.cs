@@ -166,7 +166,7 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         private static IServiceCollection AddAuthenticationServices(this IServiceCollection services)
         {
-            var keysDirectory = new DirectoryInfo(EnvironmentUtils.GetByKey(PathToCommonKeyRingFolder));
+            var keysDirectory = new DirectoryInfo(EnvironmentUtils.GetByKey(PathToCommonKeyRingFolderKey));
 
             services
                 .AddDataProtection()
