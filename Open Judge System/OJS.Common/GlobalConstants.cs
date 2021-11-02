@@ -64,7 +64,7 @@
 
         public const string BulgarianCultureInfoName = "bg-BG";
         public const string EnglishCultureInfoName = "en-GB";
-        public const string BulgarianCultureCookieValue = "bg";
+        public const string BulgarianCultureCookieValue = "en";
         public const string EnglishCultureCookieValue = "en";
 
         public const int DefaultProblemGroupsCountForOnlineContest = 2;

@@ -165,13 +165,9 @@
 
             switch (languageCookie.Value)
             {
-                case GlobalConstants.BulgarianCultureCookieValue:
-                    Thread.CurrentThread.CurrentUICulture = new CultureInfo(GlobalConstants.BulgarianCultureInfoName);
-                    break;
-                case GlobalConstants.EnglishCultureCookieValue:
+                default:
                     Thread.CurrentThread.CurrentUICulture = new CultureInfo(GlobalConstants.EnglishCultureInfoName);
                     break;
-                default: return;
             }
         }
 
