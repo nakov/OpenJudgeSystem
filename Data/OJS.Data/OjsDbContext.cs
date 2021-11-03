@@ -1,5 +1,6 @@
 namespace OJS.Data
 {
+    using System.Linq;
     using Microsoft.EntityFrameworkCore;
     using OJS.Common.Contracts;
     using OJS.Common.Enumerations;
@@ -17,6 +18,8 @@ namespace OJS.Data
 
     public class OjsDbContext : BaseAuthDbContext<OjsDbContext, UserProfile>
     {
+        private readonly IGlobalQueryFilterTypesCache globalQueryFilterTypesCache;
+
         public OjsDbContext()
         {
         }
@@ -25,8 +28,7 @@ namespace OJS.Data
             DbContextOptions<OjsDbContext> options,
             IGlobalQueryFilterTypesCache globalQueryFilterTypesCache)
             : base(options, globalQueryFilterTypesCache)
-        {
-        }
+            => this.globalQueryFilterTypesCache = globalQueryFilterTypesCache;
 
         public DbSet<Contest> Contests { get; set; }
 
@@ -96,10 +98,44 @@ namespace OJS.Data
             builder.Entity<IpInContest>()
                 .HasKey(x => new { x.ContestId, x.IpId });
 
+            if (this.globalQueryFilterTypesCache.GetAll().Any(f => f == GlobalQueryFilterType.DeletableEntity))
+            {
+                this.RegisterMatchingGlobalQueryFiltersForRequiredDeletableEntities(builder);
+            }
+
             base.OnModelCreating(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.ConfigureDbOptions(ApplicationName.Ui);
+
+        // Could be made a generic logic for registering Matching Query filters in BaseDbContext
+        // https://docs.microsoft.com/en-us/ef/core/querying/filters#accessing-entity-with-query-filter-using-required-navigation
+        private void RegisterMatchingGlobalQueryFiltersForRequiredDeletableEntities(ModelBuilder builder)
+        {
+            builder.Entity<IpInContest>()
+                .HasQueryFilter(x => !x.Contest.IsDeleted);
+
+            builder.Entity<LecturerInContest>()
+                .HasQueryFilter(x => !x.Contest.IsDeleted);
+
+            builder.Entity<LecturerInContestCategory>()
+                .HasQueryFilter(x => !x.ContestCategory.IsDeleted);
+
+            builder.Entity<Participant>()
+                .HasQueryFilter(x => !x.Contest.IsDeleted);
+
+            builder.Entity<ParticipantScore>()
+                .HasQueryFilter(x => !x.Problem.IsDeleted);
+
+            builder.Entity<ProblemsForParticipants>()
+                .HasQueryFilter(x => !x.Problem.IsDeleted);
+
+            builder.Entity<Test>()
+                .HasQueryFilter(x => !x.Problem.IsDeleted);
+
+            builder.Entity<TestRun>()
+                .HasQueryFilter(x => !x.Submission.IsDeleted);
+        }
     }
 }
