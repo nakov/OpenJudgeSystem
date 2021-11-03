@@ -1,5 +1,6 @@
 namespace OJS.Servers.Administration
 {
+    using Hangfire;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
@@ -10,7 +11,9 @@ namespace OJS.Servers.Administration
     using OJS.Data;
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Extensions;
+    using OJS.Servers.Infrastructure.Filters;
     using System;
+    using static OJS.Common.GlobalConstants.Urls;
 
     public class AdministrationStartup
     {
@@ -27,6 +30,7 @@ namespace OJS.Servers.Administration
         public void ConfigureServices(IServiceCollection services)
             => services
                 .AddWebServer<AdministrationStartup>(this.configuration)
+                .AddHangfireServer(this.connectionString)
                 .AddIdentityDatabase<OjsDbContext, UserProfile>(this.connectionString)
                 .AddControllersWithViews();
 
@@ -52,6 +56,8 @@ namespace OJS.Servers.Administration
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseHangfireDashboard();
+
             serviceProvider.CreateOrUpdateRoles().Wait();
 
             app.UseEndpoints(endpoints =>
@@ -59,6 +65,11 @@ namespace OJS.Servers.Administration
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapHangfireDashboard(HangfirePath, new DashboardOptions
+                {
+                    Authorization = new[] { new HangfireAuthorizationFilter() },
+                });
             });
         }
     }

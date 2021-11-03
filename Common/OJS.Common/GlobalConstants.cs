@@ -40,5 +40,10 @@ namespace OJS.Common
 
             public const string AdministratorOrLecturer = Administrator + ", " + Lecturer;
         }
+
+        public static class Urls
+        {
+            public const string HangfirePath = "/hangfire";
+        }
     }
 }

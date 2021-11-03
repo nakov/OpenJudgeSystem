@@ -13,6 +13,9 @@
 
     <ItemGroup>
       <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+      <PackageReference Include="Hangfire.AspNetCore" Version="1.7.26" />
+      <PackageReference Include="Hangfire.Core" Version="1.7.26" />
+      <PackageReference Include="Hangfire.SqlServer" Version="1.7.26" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.11" />

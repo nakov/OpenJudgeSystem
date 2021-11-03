@@ -27,6 +27,7 @@ namespace OJS.Servers.Ui
         public void ConfigureServices(IServiceCollection services)
             => services
                 .AddWebServer<UiStartup>(this.configuration)
+                .AddHangfireServer(this.connectionString)
                 .AddIdentityDatabase<OjsDbContext, UserProfile>(this.connectionString)
                 .AddControllersWithViews();
 

@@ -1,5 +1,7 @@
 namespace OJS.Servers.Infrastructure.Extensions
 {
+    using Hangfire;
+    using Hangfire.SqlServer;
     using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
@@ -64,6 +66,26 @@ namespace OJS.Servers.Infrastructure.Extensions
                 .AddIdentity<TIdentityUser, IdentityRole>()
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<DbContext>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddHangfireServer(this IServiceCollection services, string connectionString)
+        {
+            services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSqlServerStorage(connectionString, new SqlServerStorageOptions
+                {
+                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                    QueuePollInterval = TimeSpan.Zero,
+                    UseRecommendedIsolationLevel = true,
+                    DisableGlobalLocks = true,
+                }));
+
+            services.AddHangfireServer();
 
             return services;
         }
