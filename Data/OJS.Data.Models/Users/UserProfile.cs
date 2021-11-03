@@ -33,7 +33,7 @@ namespace OJS.Data.Models.Users
         public virtual ICollection<LecturerInContestCategory> LecturersInContestCategories { get; set; } =
             new HashSet<LecturerInContestCategory>();
 
-        public virtual ICollection<UsersInExamGroups> UsersInExamGroups { get; set; } =
-            new HashSet<UsersInExamGroups>();
+        public virtual ICollection<UserInExamGroup> UsersInExamGroups { get; set; } =
+            new HashSet<UserInExamGroup>();
     }
 }

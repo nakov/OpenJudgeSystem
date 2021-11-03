@@ -1,9 +1,8 @@
-namespace OJS.Data.Models.Contests
+namespace OJS.Data.Models
 {
     using OJS.Data.Infrastructure.Models;
+    using OJS.Data.Models.Contests;
     using OJS.Data.Models.Users;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
 
     public class LecturerInContest : AuditInfoEntity
     {

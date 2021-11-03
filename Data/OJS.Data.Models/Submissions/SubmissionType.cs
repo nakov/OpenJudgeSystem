@@ -3,7 +3,6 @@ namespace OJS.Data.Models.Submissions
     using OJS.Common.Enumerations;
     using OJS.Common.Extensions;
     using OJS.Data.Infrastructure.Models;
-    using OJS.Data.Models.Problems;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -52,7 +51,8 @@ namespace OJS.Data.Models.Submissions
             }
         }
 
-        public ICollection<Problem> Problems { get; set; } = new HashSet<Problem>();
+        public ICollection<SubmissionTypeInProblem> SubmissionTypesInProblems { get; set; } =
+            new HashSet<SubmissionTypeInProblem>();
 
         [NotMapped]
         public string FileNameExtension

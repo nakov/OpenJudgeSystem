@@ -29,17 +29,25 @@ namespace OJS.Data
             : base(options, globalQueryFilterTypesCache)
             => this.globalQueryFilterTypesCache = globalQueryFilterTypesCache;
 
+        public DbSet<Setting> Settings { get; set; }
+
         public DbSet<Contest> Contests { get; set; }
+
+        public DbSet<IpInContest> ContestIps { get; set; }
 
         public DbSet<ExamGroup> ExamGroups { get; set; }
 
-        public DbSet<UsersInExamGroups> UsersInExamGroups { get; set; }
+        public DbSet<UserInExamGroup> UsersInExamGroups { get; set; }
 
         public DbSet<Problem> Problems { get; set; }
 
         public DbSet<ProblemGroup> ProblemGroups { get; set; }
 
-        public DbSet<ProblemsForParticipants> ProblemsForParticipants { get; set; }
+        public DbSet<ProblemResource> ProblemResources { get; set; }
+
+        public DbSet<ProblemForParticipant> ProblemsForParticipants { get; set; }
+
+        public DbSet<Event> Events { get; set; }
 
         public DbSet<Participant> Participants { get; set; }
 
@@ -47,17 +55,29 @@ namespace OJS.Data
 
         public DbSet<ContestCategory> ContestCategories { get; set; }
 
+        public DbSet<ContestQuestion> ContestQuestions { get; set; }
+
+        public DbSet<ContestQuestionAnswer> ContestQuestionAnswers { get; set; }
+
         public DbSet<Checker> Checkers { get; set; }
 
         public DbSet<Test> Tests { get; set; }
 
         public DbSet<Submission> Submissions { get; set; }
 
+        public DbSet<SubmissionForProcessing> SubmissionsForProcessing { get; set; }
+
         public DbSet<SubmissionType> SubmissionTypes { get; set; }
+
+        public DbSet<SubmissionTypeInProblem> SubmissionTypeProblems { get; set; }
+
+        public DbSet<SourceCode> SourceCodes { get; set; }
 
         public DbSet<TestRun> TestRuns { get; set; }
 
         public DbSet<FeedbackReport> FeedbackReports { get; set; }
+
+        public DbSet<ParticipantAnswer> ParticipantAnswers { get; set; }
 
         public DbSet<LecturerInContest> LecturersInContests { get; set; }
 
@@ -66,6 +86,10 @@ namespace OJS.Data
         public DbSet<Ip> Ips { get; set; }
 
         public DbSet<AccessLog> AccessLogs { get; set; }
+
+        public DbSet<Tag> Tags { get; set; }
+
+        public DbSet<TagInProblem> TagProblems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -88,14 +112,23 @@ namespace OJS.Data
             builder.Entity<LecturerInContestCategory>()
                 .HasKey(x => new { x.LecturerId, x.ContestCategoryId });
 
-            builder.Entity<UsersInExamGroups>()
+            builder.Entity<UserInExamGroup>()
                 .HasKey(x => new { x.UserId, x.ExamGroupId });
 
-            builder.Entity<ProblemsForParticipants>()
+            builder.Entity<ProblemForParticipant>()
                 .HasKey(x => new { x.ProblemId, x.ParticipantId });
+
+            builder.Entity<SubmissionTypeInProblem>()
+                .HasKey(x => new { x.SubmissionTypeId, x.ProblemId });
 
             builder.Entity<IpInContest>()
                 .HasKey(x => new { x.ContestId, x.IpId });
+
+            builder.Entity<ParticipantAnswer>()
+                .HasKey(x => new { x.ParticipantId, x.ContestQuestionId });
+
+            builder.Entity<TagInProblem>()
+                .HasKey(x => new { x.TagId, x.ProblemId });
 
             this.FixMultipleCascadePaths(builder);
 
@@ -126,6 +159,12 @@ namespace OJS.Data
                 .WithOne(x => x.Test)
                 .HasForeignKey(x => x.TestId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<ContestQuestion>()
+                .HasMany(x => x.ParticipantAnswers)
+                .WithOne(x => x.ContestQuestion)
+                .HasForeignKey(x => x.ContestQuestionId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
         // Could be made a generic logic for registering Matching Query filters in BaseDbContext
@@ -144,19 +183,28 @@ namespace OJS.Data
             builder.Entity<LecturerInContest>()
                 .HasQueryFilter(x => !x.Contest.IsDeleted);
 
+            builder.Entity<Participant>()
+                .HasQueryFilter(x => !x.Contest.IsDeleted);
+
             builder.Entity<LecturerInContestCategory>()
                 .HasQueryFilter(x => !x.ContestCategory.IsDeleted);
 
-            builder.Entity<Participant>()
-                .HasQueryFilter(x => !x.Contest.IsDeleted);
+            builder.Entity<ParticipantAnswer>()
+                .HasQueryFilter(x => !x.ContestQuestion.IsDeleted);
 
             builder.Entity<ParticipantScore>()
                 .HasQueryFilter(x => !x.Problem.IsDeleted);
 
-            builder.Entity<ProblemsForParticipants>()
+            builder.Entity<ProblemForParticipant>()
                 .HasQueryFilter(x => !x.Problem.IsDeleted);
 
             builder.Entity<Test>()
+                .HasQueryFilter(x => !x.Problem.IsDeleted);
+
+            builder.Entity<SubmissionTypeInProblem>()
+                .HasQueryFilter(x => !x.Problem.IsDeleted);
+
+            builder.Entity<TagInProblem>()
                 .HasQueryFilter(x => !x.Problem.IsDeleted);
 
             builder.Entity<TestRun>()

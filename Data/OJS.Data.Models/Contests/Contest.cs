@@ -86,6 +86,8 @@ namespace OJS.Data.Models.Contests
 
         public ICollection<LecturerInContest> LecturersInContests { get; set; } = new HashSet<LecturerInContest>();
 
+        public ICollection<ContestQuestion> Questions { get; set; } = new HashSet<ContestQuestion>();
+
         public ICollection<ProblemGroup> ProblemGroups { get; set; } = new HashSet<ProblemGroup>();
 
         public ICollection<Participant> Participants { get; set; } = new HashSet<Participant>();

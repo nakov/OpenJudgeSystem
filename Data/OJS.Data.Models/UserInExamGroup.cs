@@ -1,8 +1,9 @@
-namespace OJS.Data.Models.Contests
+namespace OJS.Data.Models
 {
+    using OJS.Data.Models.Contests;
     using OJS.Data.Models.Users;
 
-    public class UsersInExamGroups
+    public class UserInExamGroup
     {
         public string UserId { get; set; }
 

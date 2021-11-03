@@ -40,6 +40,12 @@
 
             public const int CategoryNameMaxLength = 100;
             public const int CategoryNameMinLength = 6;
+
+            public const int QuestionMaxLength = 100;
+            public const int QuestionMinLength = 1;
+
+            public const int QuestionAnswerMaxLength = 100;
+            public const int QuestionAnswerMinLength = 1;
         }
 
         public static class ExamGroup

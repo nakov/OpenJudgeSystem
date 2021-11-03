@@ -1,5 +1,7 @@
-namespace OJS.Data.Models.Contests
+namespace OJS.Data.Models
 {
+    using OJS.Data.Models.Contests;
+
     public class IpInContest
     {
         public int ContestId { get; set; }

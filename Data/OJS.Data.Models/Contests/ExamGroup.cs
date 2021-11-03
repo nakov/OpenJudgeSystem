@@ -20,6 +20,6 @@ namespace OJS.Data.Models.Contests
 
         public Contest Contest { get; set; }
 
-        public ICollection<UsersInExamGroups> UsersInExamGroups { get; set; } = new HashSet<UsersInExamGroups>();
+        public ICollection<UserInExamGroup> UsersInExamGroups { get; set; } = new HashSet<UserInExamGroup>();
     }
 }

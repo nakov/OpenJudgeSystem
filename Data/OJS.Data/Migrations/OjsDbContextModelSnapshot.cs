@@ -329,6 +329,72 @@ namespace OJS.Data.Migrations
                     b.ToTable("ContestCategories");
                 });
 
+            modelBuilder.Entity("OJS.Data.Models.Contests.ContestQuestion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("AskOfficialParticipants")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("AskPracticeParticipants")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ContestId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("RegularExpressionValidation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Text")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContestId");
+
+                    b.ToTable("ContestQuestions");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.Contests.ContestQuestionAnswer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("ContestQuestionAnswers");
+                });
+
             modelBuilder.Entity("OJS.Data.Models.Contests.ExamGroup", b =>
                 {
                     b.Property<int>("Id")
@@ -357,79 +423,38 @@ namespace OJS.Data.Migrations
                     b.ToTable("ExamGroups");
                 });
 
-            modelBuilder.Entity("OJS.Data.Models.Contests.IpInContest", b =>
+            modelBuilder.Entity("OJS.Data.Models.Event", b =>
                 {
-                    b.Property<int>("ContestId")
-                        .HasColumnType("int");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("IpId")
-                        .HasColumnType("int");
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsOriginallyAllowed")
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.HasKey("ContestId", "IpId");
-
-                    b.HasIndex("IpId");
-
-                    b.ToTable("IpInContest");
-                });
-
-            modelBuilder.Entity("OJS.Data.Models.Contests.LecturerInContest", b =>
-                {
-                    b.Property<string>("LecturerId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("ContestId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedOn")
+                    b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("LecturerId", "ContestId");
+                    b.Property<string>("Url")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("ContestId");
+                    b.HasKey("Id");
 
-                    b.ToTable("LecturersInContests");
-                });
-
-            modelBuilder.Entity("OJS.Data.Models.Contests.LecturerInContestCategory", b =>
-                {
-                    b.Property<string>("LecturerId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("ContestCategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("LecturerId", "ContestCategoryId");
-
-                    b.HasIndex("ContestCategoryId");
-
-                    b.ToTable("LecturersInContestCategories");
-                });
-
-            modelBuilder.Entity("OJS.Data.Models.Contests.UsersInExamGroups", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("ExamGroupId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "ExamGroupId");
-
-                    b.HasIndex("ExamGroupId");
-
-                    b.ToTable("UsersInExamGroups");
+                    b.ToTable("Events");
                 });
 
             modelBuilder.Entity("OJS.Data.Models.FeedbackReport", b =>
@@ -490,6 +515,66 @@ namespace OJS.Data.Migrations
                     b.ToTable("Ips");
                 });
 
+            modelBuilder.Entity("OJS.Data.Models.IpInContest", b =>
+                {
+                    b.Property<int>("ContestId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IpId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsOriginallyAllowed")
+                        .HasColumnType("bit");
+
+                    b.HasKey("ContestId", "IpId");
+
+                    b.HasIndex("IpId");
+
+                    b.ToTable("ContestIps");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.LecturerInContest", b =>
+                {
+                    b.Property<string>("LecturerId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ContestId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("LecturerId", "ContestId");
+
+                    b.HasIndex("ContestId");
+
+                    b.ToTable("LecturersInContests");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.LecturerInContestCategory", b =>
+                {
+                    b.Property<string>("LecturerId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ContestCategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("LecturerId", "ContestCategoryId");
+
+                    b.HasIndex("ContestCategoryId");
+
+                    b.ToTable("LecturersInContestCategories");
+                });
+
             modelBuilder.Entity("OJS.Data.Models.Participants.Participant", b =>
                 {
                     b.Property<int>("Id")
@@ -535,6 +620,24 @@ namespace OJS.Data.Migrations
                     b.ToTable("Participants");
                 });
 
+            modelBuilder.Entity("OJS.Data.Models.Participants.ParticipantAnswer", b =>
+                {
+                    b.Property<int>("ParticipantId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ContestQuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Answer")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ParticipantId", "ContestQuestionId");
+
+                    b.HasIndex("ContestQuestionId");
+
+                    b.ToTable("ParticipantAnswers");
+                });
+
             modelBuilder.Entity("OJS.Data.Models.Participants.ParticipantScore", b =>
                 {
                     b.Property<int>("Id")
@@ -571,13 +674,15 @@ namespace OJS.Data.Migrations
                     b.ToTable("ParticipantScores");
                 });
 
-            modelBuilder.Entity("OJS.Data.Models.Participants.ProblemsForParticipants", b =>
+            modelBuilder.Entity("OJS.Data.Models.ProblemForParticipant", b =>
                 {
                     b.Property<int>("ProblemId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("Problem_Id");
 
                     b.Property<int>("ParticipantId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("Participant_Id");
 
                     b.HasKey("ProblemId", "ParticipantId");
 
@@ -716,7 +821,71 @@ namespace OJS.Data.Migrations
 
                     b.HasIndex("ProblemId");
 
-                    b.ToTable("ProblemResource");
+                    b.ToTable("ProblemResources");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.Setting", b =>
+                {
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Name");
+
+                    b.ToTable("Settings");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.SubmissionTypeInProblem", b =>
+                {
+                    b.Property<int>("SubmissionTypeId")
+                        .HasColumnType("int")
+                        .HasColumnName("SubmissionType_Id");
+
+                    b.Property<int>("ProblemId")
+                        .HasColumnType("int")
+                        .HasColumnName("Problem_Id");
+
+                    b.HasKey("SubmissionTypeId", "ProblemId");
+
+                    b.HasIndex("ProblemId");
+
+                    b.ToTable("SubmissionTypeProblems");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.Submissions.SourceCode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AuthorId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<byte[]>("Content")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ProblemId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("ProblemId");
+
+                    b.ToTable("SourceCodes");
                 });
 
             modelBuilder.Entity("OJS.Data.Models.Submissions.Submission", b =>
@@ -786,6 +955,27 @@ namespace OJS.Data.Migrations
                     b.ToTable("Submissions");
                 });
 
+            modelBuilder.Entity("OJS.Data.Models.Submissions.SubmissionForProcessing", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Processed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Processing")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("SubmissionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SubmissionsForProcessing");
+                });
+
             modelBuilder.Entity("OJS.Data.Models.Submissions.SubmissionType", b =>
                 {
                     b.Property<int>("Id")
@@ -822,6 +1012,53 @@ namespace OJS.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SubmissionTypes");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.Tag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("BackgroundColor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ForegroundColor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tags");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.TagInProblem", b =>
+                {
+                    b.Property<int>("TagId")
+                        .HasColumnType("int")
+                        .HasColumnName("Tag_Id");
+
+                    b.Property<int>("ProblemId")
+                        .HasColumnType("int")
+                        .HasColumnName("Problem_Id");
+
+                    b.HasKey("TagId", "ProblemId");
+
+                    b.HasIndex("ProblemId");
+
+                    b.ToTable("TagProblems");
                 });
 
             modelBuilder.Entity("OJS.Data.Models.Tests.Test", b =>
@@ -900,6 +1137,21 @@ namespace OJS.Data.Migrations
                     b.HasIndex("TestId");
 
                     b.ToTable("TestRuns");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.UserInExamGroup", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ExamGroupId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "ExamGroupId");
+
+                    b.HasIndex("ExamGroupId");
+
+                    b.ToTable("UsersInExamGroups");
                 });
 
             modelBuilder.Entity("OJS.Data.Models.Users.UserProfile", b =>
@@ -982,21 +1234,6 @@ namespace OJS.Data.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("ProblemSubmissionType", b =>
-                {
-                    b.Property<int>("ProblemsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SubmissionTypesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProblemsId", "SubmissionTypesId");
-
-                    b.HasIndex("SubmissionTypesId");
-
-                    b.ToTable("ProblemSubmissionType");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -1075,6 +1312,28 @@ namespace OJS.Data.Migrations
                     b.Navigation("Parent");
                 });
 
+            modelBuilder.Entity("OJS.Data.Models.Contests.ContestQuestion", b =>
+                {
+                    b.HasOne("OJS.Data.Models.Contests.Contest", "Contest")
+                        .WithMany("Questions")
+                        .HasForeignKey("ContestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Contest");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.Contests.ContestQuestionAnswer", b =>
+                {
+                    b.HasOne("OJS.Data.Models.Contests.ContestQuestion", "Question")
+                        .WithMany("Answers")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Question");
+                });
+
             modelBuilder.Entity("OJS.Data.Models.Contests.ExamGroup", b =>
                 {
                     b.HasOne("OJS.Data.Models.Contests.Contest", "Contest")
@@ -1084,7 +1343,16 @@ namespace OJS.Data.Migrations
                     b.Navigation("Contest");
                 });
 
-            modelBuilder.Entity("OJS.Data.Models.Contests.IpInContest", b =>
+            modelBuilder.Entity("OJS.Data.Models.FeedbackReport", b =>
+                {
+                    b.HasOne("OJS.Data.Models.Users.UserProfile", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.IpInContest", b =>
                 {
                     b.HasOne("OJS.Data.Models.Contests.Contest", "Contest")
                         .WithMany("IpsInContests")
@@ -1103,7 +1371,7 @@ namespace OJS.Data.Migrations
                     b.Navigation("Ip");
                 });
 
-            modelBuilder.Entity("OJS.Data.Models.Contests.LecturerInContest", b =>
+            modelBuilder.Entity("OJS.Data.Models.LecturerInContest", b =>
                 {
                     b.HasOne("OJS.Data.Models.Contests.Contest", "Contest")
                         .WithMany("LecturersInContests")
@@ -1122,7 +1390,7 @@ namespace OJS.Data.Migrations
                     b.Navigation("Lecturer");
                 });
 
-            modelBuilder.Entity("OJS.Data.Models.Contests.LecturerInContestCategory", b =>
+            modelBuilder.Entity("OJS.Data.Models.LecturerInContestCategory", b =>
                 {
                     b.HasOne("OJS.Data.Models.Contests.ContestCategory", "ContestCategory")
                         .WithMany("LecturersInContestCategories")
@@ -1139,34 +1407,6 @@ namespace OJS.Data.Migrations
                     b.Navigation("ContestCategory");
 
                     b.Navigation("Lecturer");
-                });
-
-            modelBuilder.Entity("OJS.Data.Models.Contests.UsersInExamGroups", b =>
-                {
-                    b.HasOne("OJS.Data.Models.Contests.ExamGroup", "ExamGroup")
-                        .WithMany("UsersInExamGroups")
-                        .HasForeignKey("ExamGroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OJS.Data.Models.Users.UserProfile", "User")
-                        .WithMany("UsersInExamGroups")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ExamGroup");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("OJS.Data.Models.FeedbackReport", b =>
-                {
-                    b.HasOne("OJS.Data.Models.Users.UserProfile", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("OJS.Data.Models.Participants.Participant", b =>
@@ -1188,6 +1428,25 @@ namespace OJS.Data.Migrations
                     b.Navigation("Contest");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.Participants.ParticipantAnswer", b =>
+                {
+                    b.HasOne("OJS.Data.Models.Contests.ContestQuestion", "ContestQuestion")
+                        .WithMany("ParticipantAnswers")
+                        .HasForeignKey("ContestQuestionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("OJS.Data.Models.Participants.Participant", "Participant")
+                        .WithMany("Answers")
+                        .HasForeignKey("ParticipantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ContestQuestion");
+
+                    b.Navigation("Participant");
                 });
 
             modelBuilder.Entity("OJS.Data.Models.Participants.ParticipantScore", b =>
@@ -1215,7 +1474,7 @@ namespace OJS.Data.Migrations
                     b.Navigation("Submission");
                 });
 
-            modelBuilder.Entity("OJS.Data.Models.Participants.ProblemsForParticipants", b =>
+            modelBuilder.Entity("OJS.Data.Models.ProblemForParticipant", b =>
                 {
                     b.HasOne("OJS.Data.Models.Participants.Participant", "Participant")
                         .WithMany("ProblemsForParticipants")
@@ -1273,6 +1532,40 @@ namespace OJS.Data.Migrations
                     b.Navigation("Problem");
                 });
 
+            modelBuilder.Entity("OJS.Data.Models.SubmissionTypeInProblem", b =>
+                {
+                    b.HasOne("OJS.Data.Models.Problems.Problem", "Problem")
+                        .WithMany("SubmissionTypesInProblems")
+                        .HasForeignKey("ProblemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OJS.Data.Models.Submissions.SubmissionType", "SubmissionType")
+                        .WithMany("SubmissionTypesInProblems")
+                        .HasForeignKey("SubmissionTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Problem");
+
+                    b.Navigation("SubmissionType");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.Submissions.SourceCode", b =>
+                {
+                    b.HasOne("OJS.Data.Models.Users.UserProfile", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId");
+
+                    b.HasOne("OJS.Data.Models.Problems.Problem", "Problem")
+                        .WithMany()
+                        .HasForeignKey("ProblemId");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Problem");
+                });
+
             modelBuilder.Entity("OJS.Data.Models.Submissions.Submission", b =>
                 {
                     b.HasOne("OJS.Data.Models.Participants.Participant", "Participant")
@@ -1292,6 +1585,25 @@ namespace OJS.Data.Migrations
                     b.Navigation("Problem");
 
                     b.Navigation("SubmissionType");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.TagInProblem", b =>
+                {
+                    b.HasOne("OJS.Data.Models.Problems.Problem", "Problem")
+                        .WithMany("TagsInProblems")
+                        .HasForeignKey("ProblemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OJS.Data.Models.Tag", "Tag")
+                        .WithMany("TagsInProblems")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Problem");
+
+                    b.Navigation("Tag");
                 });
 
             modelBuilder.Entity("OJS.Data.Models.Tests.Test", b =>
@@ -1322,6 +1634,25 @@ namespace OJS.Data.Migrations
                     b.Navigation("Submission");
 
                     b.Navigation("Test");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.UserInExamGroup", b =>
+                {
+                    b.HasOne("OJS.Data.Models.Contests.ExamGroup", "ExamGroup")
+                        .WithMany("UsersInExamGroups")
+                        .HasForeignKey("ExamGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OJS.Data.Models.Users.UserProfile", "User")
+                        .WithMany("UsersInExamGroups")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ExamGroup");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("OJS.Data.Models.Users.UserProfile", b =>
@@ -1380,21 +1711,6 @@ namespace OJS.Data.Migrations
                     b.Navigation("UserSettings");
                 });
 
-            modelBuilder.Entity("ProblemSubmissionType", b =>
-                {
-                    b.HasOne("OJS.Data.Models.Problems.Problem", null)
-                        .WithMany()
-                        .HasForeignKey("ProblemsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OJS.Data.Models.Submissions.SubmissionType", null)
-                        .WithMany()
-                        .HasForeignKey("SubmissionTypesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("OJS.Data.Models.Contests.Contest", b =>
                 {
                     b.Navigation("ExamGroups");
@@ -1406,6 +1722,8 @@ namespace OJS.Data.Migrations
                     b.Navigation("Participants");
 
                     b.Navigation("ProblemGroups");
+
+                    b.Navigation("Questions");
                 });
 
             modelBuilder.Entity("OJS.Data.Models.Contests.ContestCategory", b =>
@@ -1415,6 +1733,13 @@ namespace OJS.Data.Migrations
                     b.Navigation("Contests");
 
                     b.Navigation("LecturersInContestCategories");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.Contests.ContestQuestion", b =>
+                {
+                    b.Navigation("Answers");
+
+                    b.Navigation("ParticipantAnswers");
                 });
 
             modelBuilder.Entity("OJS.Data.Models.Contests.ExamGroup", b =>
@@ -1429,6 +1754,8 @@ namespace OJS.Data.Migrations
 
             modelBuilder.Entity("OJS.Data.Models.Participants.Participant", b =>
                 {
+                    b.Navigation("Answers");
+
                     b.Navigation("ProblemsForParticipants");
 
                     b.Navigation("Scores");
@@ -1446,6 +1773,10 @@ namespace OJS.Data.Migrations
 
                     b.Navigation("Submissions");
 
+                    b.Navigation("SubmissionTypesInProblems");
+
+                    b.Navigation("TagsInProblems");
+
                     b.Navigation("Tests");
                 });
 
@@ -1457,6 +1788,16 @@ namespace OJS.Data.Migrations
             modelBuilder.Entity("OJS.Data.Models.Submissions.Submission", b =>
                 {
                     b.Navigation("TestRuns");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.Submissions.SubmissionType", b =>
+                {
+                    b.Navigation("SubmissionTypesInProblems");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.Tag", b =>
+                {
+                    b.Navigation("TagsInProblems");
                 });
 
             modelBuilder.Entity("OJS.Data.Models.Tests.Test", b =>

@@ -40,7 +40,9 @@ namespace OJS.Data.Models.Participants
 
         public ICollection<ParticipantScore> Scores { get; set; } = new HashSet<ParticipantScore>();
 
-        public ICollection<ProblemsForParticipants> ProblemsForParticipants { get; set; }
-            = new HashSet<ProblemsForParticipants>();
+        public ICollection<ProblemForParticipant> ProblemsForParticipants { get; set; } =
+            new HashSet<ProblemForParticipant>();
+
+        public virtual ICollection<ParticipantAnswer> Answers { get; set; } = new HashSet<ParticipantAnswer>();
     }
 }
