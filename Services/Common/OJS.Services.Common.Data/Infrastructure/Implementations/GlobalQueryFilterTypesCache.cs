@@ -13,5 +13,8 @@ namespace OJS.Services.Common.Data.Infrastructure.Implementations
             => this.globalQueryFilterTypes = globalQueryFilterTypes ?? Enumerable.Empty<GlobalQueryFilterType>();
 
         public IEnumerable<GlobalQueryFilterType> GetAll() => this.globalQueryFilterTypes;
+
+        public bool Contains(GlobalQueryFilterType globalQueryFilterType)
+            => this.GetAll().Any(ft => ft == globalQueryFilterType);
     }
 }

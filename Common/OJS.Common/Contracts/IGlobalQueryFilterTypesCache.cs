@@ -6,5 +6,7 @@ namespace OJS.Common.Contracts
     public interface IGlobalQueryFilterTypesCache
     {
         IEnumerable<GlobalQueryFilterType> GetAll();
+
+        bool Contains(GlobalQueryFilterType globalQueryFilterType);
     }
 }

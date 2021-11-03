@@ -1,6 +1,5 @@
 namespace OJS.Data
 {
-    using System.Linq;
     using Microsoft.EntityFrameworkCore;
     using OJS.Common.Contracts;
     using OJS.Common.Enumerations;
@@ -98,10 +97,9 @@ namespace OJS.Data
             builder.Entity<IpInContest>()
                 .HasKey(x => new { x.ContestId, x.IpId });
 
-            if (this.globalQueryFilterTypesCache?.GetAll().Any(f => f == GlobalQueryFilterType.DeletableEntity) ?? false)
-            {
-                this.RegisterMatchingGlobalQueryFiltersForRequiredDeletableEntities(builder);
-            }
+            this.FixMultipleCascadePaths(builder);
+
+            this.TryRegisterMatchingGlobalQueryFiltersForRequiredDeletableEntities(builder);
 
             base.OnModelCreating(builder);
         }
@@ -109,10 +107,37 @@ namespace OJS.Data
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.ConfigureDbOptions(ApplicationName.Ui);
 
+        private void FixMultipleCascadePaths(ModelBuilder builder)
+        {
+            builder.Entity<ProblemGroup>()
+                .HasMany(p => p.Problems)
+                .WithOne(c => c.ProblemGroup)
+                .HasForeignKey(p => p.ProblemGroupId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Problem>()
+                .HasMany(x => x.ParticipantScores)
+                .WithOne(x => x.Problem)
+                .HasForeignKey(x => x.ProblemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Test>()
+                .HasMany(x => x.TestRuns)
+                .WithOne(x => x.Test)
+                .HasForeignKey(x => x.TestId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
+
         // Could be made a generic logic for registering Matching Query filters in BaseDbContext
         // https://docs.microsoft.com/en-us/ef/core/querying/filters#accessing-entity-with-query-filter-using-required-navigation
-        private void RegisterMatchingGlobalQueryFiltersForRequiredDeletableEntities(ModelBuilder builder)
+        private void TryRegisterMatchingGlobalQueryFiltersForRequiredDeletableEntities(ModelBuilder builder)
         {
+            if (this.globalQueryFilterTypesCache == null ||
+                !this.globalQueryFilterTypesCache.Contains(GlobalQueryFilterType.DeletableEntity))
+            {
+                return;
+            }
+
             builder.Entity<IpInContest>()
                 .HasQueryFilter(x => !x.Contest.IsDeleted);
 
