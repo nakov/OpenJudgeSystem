@@ -98,7 +98,7 @@ namespace OJS.Data
             builder.Entity<IpInContest>()
                 .HasKey(x => new { x.ContestId, x.IpId });
 
-            if (this.globalQueryFilterTypesCache.GetAll().Any(f => f == GlobalQueryFilterType.DeletableEntity))
+            if (this.globalQueryFilterTypesCache?.GetAll().Any(f => f == GlobalQueryFilterType.DeletableEntity) ?? false)
             {
                 this.RegisterMatchingGlobalQueryFiltersForRequiredDeletableEntities(builder);
             }
