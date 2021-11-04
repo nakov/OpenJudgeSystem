@@ -26,7 +26,7 @@ namespace OJS.Servers.Infrastructure.Extensions
 
             var userProfile = new UserProfile
             {
-                UserName = "admin",
+                UserName = "judge.admin",
                 Email = "judge.admin@softuni.org",
             };
 
