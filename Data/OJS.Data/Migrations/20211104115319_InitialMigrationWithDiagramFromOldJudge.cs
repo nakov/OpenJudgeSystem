@@ -534,6 +534,38 @@
                 });
 
             migrationBuilder.CreateTable(
+                name: "Participants",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ContestId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ParticipationStartTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ParticipationEndTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsOfficial = table.Column<bool>(type: "bit", nullable: false),
+                    IsInvalidated = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Participants", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Participants_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Participants_Contests_ContestId",
+                        column: x => x.ContestId,
+                        principalTable: "Contests",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ProblemGroups",
                 columns: table => new
                 {
@@ -607,6 +639,31 @@
                 });
 
             migrationBuilder.CreateTable(
+                name: "ParticipantAnswers",
+                columns: table => new
+                {
+                    ParticipantId = table.Column<int>(type: "int", nullable: false),
+                    ContestQuestionId = table.Column<int>(type: "int", nullable: false),
+                    Answer = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ParticipantAnswers", x => new { x.ParticipantId, x.ContestQuestionId });
+                    table.ForeignKey(
+                        name: "FK_ParticipantAnswers_ContestQuestions_ContestQuestionId",
+                        column: x => x.ContestQuestionId,
+                        principalTable: "ContestQuestions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ParticipantAnswers_Participants_ParticipantId",
+                        column: x => x.ParticipantId,
+                        principalTable: "Participants",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Problems",
                 columns: table => new
                 {
@@ -647,45 +704,6 @@
                 });
 
             migrationBuilder.CreateTable(
-                name: "Participants",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ContestId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    ParticipationStartTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ParticipationEndTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsOfficial = table.Column<bool>(type: "bit", nullable: false),
-                    IsInvalidated = table.Column<bool>(type: "bit", nullable: false),
-                    ProblemId = table.Column<int>(type: "int", nullable: true),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Participants", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Participants_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Participants_Contests_ContestId",
-                        column: x => x.ContestId,
-                        principalTable: "Contests",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Participants_Problems_ProblemId",
-                        column: x => x.ProblemId,
-                        principalTable: "Problems",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ProblemResources",
                 columns: table => new
                 {
@@ -708,6 +726,30 @@
                     table.PrimaryKey("PK_ProblemResources", x => x.Id);
                     table.ForeignKey(
                         name: "FK_ProblemResources_Problems_ProblemId",
+                        column: x => x.ProblemId,
+                        principalTable: "Problems",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProblemsForParticipants",
+                columns: table => new
+                {
+                    ProblemId = table.Column<int>(type: "int", nullable: false),
+                    ParticipantId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProblemsForParticipants", x => new { x.ProblemId, x.ParticipantId });
+                    table.ForeignKey(
+                        name: "FK_ProblemsForParticipants_Participants_ParticipantId",
+                        column: x => x.ParticipantId,
+                        principalTable: "Participants",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProblemsForParticipants_Problems_ProblemId",
                         column: x => x.ProblemId,
                         principalTable: "Problems",
                         principalColumn: "Id",
@@ -744,128 +786,6 @@
                         principalTable: "Problems",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SubmissionTypeProblems",
-                columns: table => new
-                {
-                    SubmissionType_Id = table.Column<int>(type: "int", nullable: false),
-                    Problem_Id = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SubmissionTypeProblems", x => new { x.SubmissionType_Id, x.Problem_Id });
-                    table.ForeignKey(
-                        name: "FK_SubmissionTypeProblems_Problems_Problem_Id",
-                        column: x => x.Problem_Id,
-                        principalTable: "Problems",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_SubmissionTypeProblems_SubmissionTypes_SubmissionType_Id",
-                        column: x => x.SubmissionType_Id,
-                        principalTable: "SubmissionTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TagProblems",
-                columns: table => new
-                {
-                    Tag_Id = table.Column<int>(type: "int", nullable: false),
-                    Problem_Id = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TagProblems", x => new { x.Tag_Id, x.Problem_Id });
-                    table.ForeignKey(
-                        name: "FK_TagProblems_Problems_Problem_Id",
-                        column: x => x.Problem_Id,
-                        principalTable: "Problems",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TagProblems_Tags_Tag_Id",
-                        column: x => x.Tag_Id,
-                        principalTable: "Tags",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Tests",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProblemId = table.Column<int>(type: "int", nullable: false),
-                    InputData = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
-                    OutputData = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
-                    IsTrialTest = table.Column<bool>(type: "bit", nullable: false),
-                    IsOpenTest = table.Column<bool>(type: "bit", nullable: false),
-                    HideInput = table.Column<bool>(type: "bit", nullable: false),
-                    OrderBy = table.Column<double>(type: "float", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tests", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Tests_Problems_ProblemId",
-                        column: x => x.ProblemId,
-                        principalTable: "Problems",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ParticipantAnswers",
-                columns: table => new
-                {
-                    ParticipantId = table.Column<int>(type: "int", nullable: false),
-                    ContestQuestionId = table.Column<int>(type: "int", nullable: false),
-                    Answer = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ParticipantAnswers", x => new { x.ParticipantId, x.ContestQuestionId });
-                    table.ForeignKey(
-                        name: "FK_ParticipantAnswers_ContestQuestions_ContestQuestionId",
-                        column: x => x.ContestQuestionId,
-                        principalTable: "ContestQuestions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ParticipantAnswers_Participants_ParticipantId",
-                        column: x => x.ParticipantId,
-                        principalTable: "Participants",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ProblemsForParticipants",
-                columns: table => new
-                {
-                    Problem_Id = table.Column<int>(type: "int", nullable: false),
-                    Participant_Id = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProblemsForParticipants", x => new { x.Problem_Id, x.Participant_Id });
-                    table.ForeignKey(
-                        name: "FK_ProblemsForParticipants_Participants_Participant_Id",
-                        column: x => x.Participant_Id,
-                        principalTable: "Participants",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ProblemsForParticipants_Problems_Problem_Id",
-                        column: x => x.Problem_Id,
-                        principalTable: "Problems",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -914,6 +834,79 @@
                         principalTable: "SubmissionTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SubmissionTypeProblems",
+                columns: table => new
+                {
+                    SubmissionTypeId = table.Column<int>(type: "int", nullable: false),
+                    ProblemId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SubmissionTypeProblems", x => new { x.SubmissionTypeId, x.ProblemId });
+                    table.ForeignKey(
+                        name: "FK_SubmissionTypeProblems_Problems_ProblemId",
+                        column: x => x.ProblemId,
+                        principalTable: "Problems",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SubmissionTypeProblems_SubmissionTypes_SubmissionTypeId",
+                        column: x => x.SubmissionTypeId,
+                        principalTable: "SubmissionTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TagProblems",
+                columns: table => new
+                {
+                    TagId = table.Column<int>(type: "int", nullable: false),
+                    ProblemId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TagProblems", x => new { x.TagId, x.ProblemId });
+                    table.ForeignKey(
+                        name: "FK_TagProblems_Problems_ProblemId",
+                        column: x => x.ProblemId,
+                        principalTable: "Problems",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TagProblems_Tags_TagId",
+                        column: x => x.TagId,
+                        principalTable: "Tags",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tests",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProblemId = table.Column<int>(type: "int", nullable: false),
+                    InputData = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    OutputData = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    IsTrialTest = table.Column<bool>(type: "bit", nullable: false),
+                    IsOpenTest = table.Column<bool>(type: "bit", nullable: false),
+                    HideInput = table.Column<bool>(type: "bit", nullable: false),
+                    OrderBy = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Tests_Problems_ProblemId",
+                        column: x => x.ProblemId,
+                        principalTable: "Problems",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1091,11 +1084,6 @@
                 column: "ContestId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Participants_ProblemId",
-                table: "Participants",
-                column: "ProblemId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Participants_UserId",
                 table: "Participants",
                 column: "UserId");
@@ -1136,9 +1124,9 @@
                 column: "ProblemGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProblemsForParticipants_Participant_Id",
+                name: "IX_ProblemsForParticipants_ParticipantId",
                 table: "ProblemsForParticipants",
-                column: "Participant_Id");
+                column: "ParticipantId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SourceCodes_AuthorId",
@@ -1166,14 +1154,14 @@
                 column: "SubmissionTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SubmissionTypeProblems_Problem_Id",
+                name: "IX_SubmissionTypeProblems_ProblemId",
                 table: "SubmissionTypeProblems",
-                column: "Problem_Id");
+                column: "ProblemId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TagProblems_Problem_Id",
+                name: "IX_TagProblems_ProblemId",
                 table: "TagProblems",
-                column: "Problem_Id");
+                column: "ProblemId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TestRuns_SubmissionId",
@@ -1295,10 +1283,10 @@
                 name: "SubmissionTypes");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Problems");
 
             migrationBuilder.DropTable(
-                name: "Problems");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Checkers");

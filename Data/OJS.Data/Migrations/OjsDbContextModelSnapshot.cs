@@ -651,17 +651,12 @@ namespace OJS.Data.Migrations
                     b.Property<DateTime?>("ParticipationStartTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("ProblemId")
-                        .HasColumnType("int");
-
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ContestId");
-
-                    b.HasIndex("ProblemId");
 
                     b.HasIndex("UserId");
 
@@ -725,12 +720,10 @@ namespace OJS.Data.Migrations
             modelBuilder.Entity("OJS.Data.Models.ProblemForParticipant", b =>
                 {
                     b.Property<int>("ProblemId")
-                        .HasColumnType("int")
-                        .HasColumnName("Problem_Id");
+                        .HasColumnType("int");
 
                     b.Property<int>("ParticipantId")
-                        .HasColumnType("int")
-                        .HasColumnName("Participant_Id");
+                        .HasColumnType("int");
 
                     b.HasKey("ProblemId", "ParticipantId");
 
@@ -906,12 +899,10 @@ namespace OJS.Data.Migrations
             modelBuilder.Entity("OJS.Data.Models.SubmissionTypeInProblem", b =>
                 {
                     b.Property<int>("SubmissionTypeId")
-                        .HasColumnType("int")
-                        .HasColumnName("SubmissionType_Id");
+                        .HasColumnType("int");
 
                     b.Property<int>("ProblemId")
-                        .HasColumnType("int")
-                        .HasColumnName("Problem_Id");
+                        .HasColumnType("int");
 
                     b.HasKey("SubmissionTypeId", "ProblemId");
 
@@ -1131,12 +1122,10 @@ namespace OJS.Data.Migrations
             modelBuilder.Entity("OJS.Data.Models.TagInProblem", b =>
                 {
                     b.Property<int>("TagId")
-                        .HasColumnType("int")
-                        .HasColumnName("Tag_Id");
+                        .HasColumnType("int");
 
                     b.Property<int>("ProblemId")
-                        .HasColumnType("int")
-                        .HasColumnName("Problem_Id");
+                        .HasColumnType("int");
 
                     b.HasKey("TagId", "ProblemId");
 
@@ -1501,10 +1490,6 @@ namespace OJS.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("OJS.Data.Models.Problems.Problem", null)
-                        .WithMany("Participants")
-                        .HasForeignKey("ProblemId");
-
                     b.HasOne("OJS.Data.Models.Users.UserProfile", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
@@ -1567,7 +1552,7 @@ namespace OJS.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("OJS.Data.Models.Problems.Problem", "Problem")
-                        .WithMany()
+                        .WithMany("ProblemsForParticipants")
                         .HasForeignKey("ProblemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1849,9 +1834,9 @@ namespace OJS.Data.Migrations
 
             modelBuilder.Entity("OJS.Data.Models.Problems.Problem", b =>
                 {
-                    b.Navigation("Participants");
-
                     b.Navigation("ParticipantScores");
+
+                    b.Navigation("ProblemsForParticipants");
 
                     b.Navigation("Resources");
 
