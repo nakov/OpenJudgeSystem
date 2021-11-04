@@ -58,7 +58,8 @@ namespace OJS.Servers.Administration
 
             app.UseHangfireDashboard();
 
-            serviceProvider.CreateOrUpdateRoles().Wait();
+            // Roles are copied from old Judge
+            // serviceProvider.CreateOrUpdateRoles().Wait();
 
             app.UseEndpoints(endpoints =>
             {

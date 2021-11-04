@@ -53,7 +53,8 @@ namespace OJS.Servers.Ui
             app.UseAuthentication();
             app.UseAuthorization();
 
-            serviceProvider.CreateOrUpdateRoles().Wait();
+            // Roles are copied from old Judge
+            // serviceProvider.CreateOrUpdateRoles().Wait();
 
             app.UseEndpoints(endpoints =>
             {
