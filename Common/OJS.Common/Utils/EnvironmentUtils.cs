@@ -43,7 +43,7 @@ namespace OJS.Common.Utils
 
         private static string GetDatabaseName(ApplicationName appName)
             => appName is ApplicationName.Ui or ApplicationName.Administration
-                ? "OnlineJudgeSystem"
+                ? "OpenJudgeSystem"
                 : $"OJS.Servers.{appName}";
 
         private static string GetDatabaseUser(ApplicationName appName, bool appUsesMultipleDatabases)
