@@ -10,7 +10,7 @@ using OJS.Data;
 namespace OJS.Data.Migrations
 {
     [DbContext(typeof(OjsDbContext))]
-    [Migration("20211103171703_InitialMigrationWithDiagramFromOldJudge")]
+    [Migration("20211104095917_InitialMigrationWithDiagramFromOldJudge")]
     partial class InitialMigrationWithDiagramFromOldJudge
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -501,8 +501,14 @@ namespace OJS.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Value")
                         .IsRequired()

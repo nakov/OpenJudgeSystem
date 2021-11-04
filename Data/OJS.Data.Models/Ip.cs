@@ -1,12 +1,11 @@
 namespace OJS.Data.Models
 {
     using OJS.Data.Infrastructure.Models;
-    using OJS.Data.Models.Contests;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using static OJS.Data.Validation.ConstraintConstants;
 
-    public class Ip : Entity<int>
+    public class Ip : AuditInfoEntity<int>
     {
         [Required]
         [MaxLength(IpAddressMaxLength)]
