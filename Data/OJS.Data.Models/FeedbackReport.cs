@@ -4,7 +4,7 @@ namespace OJS.Data.Models
     using OJS.Data.Models.Users;
     using System.ComponentModel.DataAnnotations;
 
-    public class FeedbackReport : DeletableEntity<int>
+    public class FeedbackReport : DeletableAuditInfoEntity<int>
     {
         public string Name { get; set; }
 

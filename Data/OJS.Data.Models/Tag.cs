@@ -3,7 +3,7 @@ namespace OJS.Data.Models
     using OJS.Data.Infrastructure.Models;
     using System.Collections.Generic;
 
-    public class Tag : DeletableEntity<int>
+    public class Tag : DeletableAuditInfoEntity<int>
     {
         public string Name { get; set; }
 

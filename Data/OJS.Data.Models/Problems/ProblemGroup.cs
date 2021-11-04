@@ -5,7 +5,7 @@ namespace OJS.Data.Models.Problems
     using OJS.Data.Models.Contests;
     using System.Collections.Generic;
 
-    public class ProblemGroup : DeletableEntity<int>, IOrderableEntity
+    public class ProblemGroup : DeletableAuditInfoEntity<int>, IOrderableEntity
     {
         public int ContestId { get; set; }
 

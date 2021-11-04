@@ -2,7 +2,7 @@ namespace OJS.Data.Infrastructure.Models
 {
     using System;
 
-    public class DeletableEntity<TId> : Entity<TId>, IDeletableEntity<TId>
+    public class DeletableAuditInfoEntity<TId> : AuditInfoEntity<TId>, IDeletableAuditInfoEntity<TId>
     {
         public bool IsDeleted { get; set; }
 

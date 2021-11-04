@@ -8,7 +8,7 @@ namespace OJS.Data.Models.Contests
     using System.ComponentModel.DataAnnotations;
     using static OJS.Data.Validation.ConstraintConstants.Contest;
 
-    public class ContestQuestion : DeletableEntity<int>
+    public class ContestQuestion : DeletableAuditInfoEntity<int>
     {
         public int ContestId { get; set; }
 

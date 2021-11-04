@@ -6,7 +6,7 @@ namespace OJS.Data.Models.Contests
     using System.ComponentModel.DataAnnotations.Schema;
     using static OJS.Data.Validation.ConstraintConstants.Contest;
 
-    public class ContestCategory : DeletableEntity<int>, IOrderableEntity, IVisibleEntity
+    public class ContestCategory : DeletableAuditInfoEntity<int>, IOrderableEntity, IVisibleEntity
     {
         [Required]
         [MaxLength(CategoryNameMaxLength)]

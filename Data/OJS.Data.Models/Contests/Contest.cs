@@ -11,7 +11,7 @@ namespace OJS.Data.Models.Contests
     using System.Linq;
     using static OJS.Data.Validation.ConstraintConstants.Contest;
 
-    public class Contest : DeletableEntity<int>, IOrderableEntity
+    public class Contest : DeletableAuditInfoEntity<int>, IOrderableEntity
     {
         [MaxLength(NameMaxLength)]
         [MinLength(NameMinLength)]

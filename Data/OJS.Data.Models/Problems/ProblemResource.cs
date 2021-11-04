@@ -6,7 +6,7 @@ namespace OJS.Data.Models.Problems
     using static OJS.Data.Validation.ConstraintConstants;
     using static OJS.Data.Validation.ConstraintConstants.Problem;
 
-    public class ProblemResource : DeletableEntity<int>, IOrderableEntity
+    public class ProblemResource : DeletableAuditInfoEntity<int>, IOrderableEntity
     {
         public int ProblemId { get; set; }
 

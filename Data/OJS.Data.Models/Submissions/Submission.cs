@@ -14,7 +14,7 @@ namespace OJS.Data.Models.Submissions
     using System.Linq;
     using System.Text;
 
-    public class Submission : DeletableEntity<int>
+    public class Submission : DeletableAuditInfoEntity<int>
     {
         public int? ParticipantId { get; set; }
 

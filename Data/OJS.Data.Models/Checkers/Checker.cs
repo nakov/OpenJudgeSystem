@@ -4,7 +4,7 @@ namespace OJS.Data.Models.Checkers
     using System.ComponentModel.DataAnnotations;
     using static OJS.Data.Validation.ConstraintConstants.Checker;
 
-    public class Checker : DeletableEntity<int>
+    public class Checker : DeletableAuditInfoEntity<int>
     {
         [Required]
         [MinLength(NameMinLength)]

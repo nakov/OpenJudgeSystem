@@ -10,7 +10,7 @@ namespace OJS.Data.Models.Problems
     using System.ComponentModel.DataAnnotations;
     using static OJS.Data.Validation.ConstraintConstants.Problem;
 
-    public class Problem : DeletableEntity<int>, IOrderableEntity
+    public class Problem : DeletableAuditInfoEntity<int>, IOrderableEntity
     {
         public int ProblemGroupId { get; set; }
 

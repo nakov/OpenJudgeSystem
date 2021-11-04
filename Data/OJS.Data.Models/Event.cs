@@ -4,7 +4,7 @@ namespace OJS.Data.Models
     using System;
     using System.ComponentModel.DataAnnotations;
 
-    public class Event : DeletableEntity<int>
+    public class Event : DeletableAuditInfoEntity<int>
     {
         [Required(AllowEmptyStrings = false)]
         public string Title { get; set; }

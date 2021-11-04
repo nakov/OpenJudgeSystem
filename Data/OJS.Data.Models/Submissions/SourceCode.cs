@@ -6,7 +6,7 @@ namespace OJS.Data.Models.Submissions
     using OJS.Data.Models.Users;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    public class SourceCode : DeletableEntity<int>
+    public class SourceCode : DeletableAuditInfoEntity<int>
     {
         public string AuthorId { get; set; }
 
