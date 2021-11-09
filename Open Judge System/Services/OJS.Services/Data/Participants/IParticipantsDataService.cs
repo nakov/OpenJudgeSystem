@@ -16,6 +16,8 @@
 
         Participant GetWithContestByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial);
 
+        IQueryable<Participant> GetAllByManyContestsAndUserId(int[] contestIds, string userId);
+
         IQueryable<Participant> GetByIdQuery(int id);
 
         IQueryable<Participant> GetAll();
