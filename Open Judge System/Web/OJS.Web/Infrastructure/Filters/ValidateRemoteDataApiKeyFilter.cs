@@ -18,10 +18,13 @@
     {
         private const string ApiKeyQueryStringParamName = "apiKey";
 
+        private string ApiKeySecondary = Settings.ApiKey;
+
         private readonly UserManager<UserProfile> userManager;
 
-        public ValidateRemoteDataApiKeyFilter(IOjsDbContext context) =>
+        public ValidateRemoteDataApiKeyFilter(IOjsDbContext context) => 
             this.userManager = new OjsUserManager<UserProfile>(new UserStore<UserProfile>(context.DbContext));
+
 
         public void OnActionExecuting(
             ValidateRemoteDataApiKeyAttribute attribute,
@@ -31,10 +34,13 @@
             var apiKey = request.QueryString[ApiKeyQueryStringParamName] ?? request[ApiKeyQueryStringParamName];
 
             var isValidApiKey = !string.IsNullOrWhiteSpace(apiKey) &&
-                this.userManager.Users.Any(u => u.Id == apiKey && u.IsDeleted == false) &&
-                this.userManager.IsInRole(apiKey, GlobalConstants.AdministratorRoleName);
+                                this.userManager.Users.Any(u => u.Id == apiKey && u.IsDeleted == false) &&
+                                this.userManager.IsInRole(apiKey, GlobalConstants.AdministratorRoleName);
 
-            if (!isValidApiKey)
+            var isValidSecondaryApiKey = !string.IsNullOrWhiteSpace(apiKey) &&
+                                         apiKey == Settings.ApiKeySecondary;
+
+            if (!isValidApiKey && !isValidSecondaryApiKey)
             {
                 filterContext.Result = new HttpStatusCodeResult(HttpStatusCode.Forbidden, "Invalid API key.");
             }
