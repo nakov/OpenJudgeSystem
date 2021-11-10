@@ -5,7 +5,6 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using OJS.Common.Contracts;
     using OJS.Common.Enumerations;
@@ -32,7 +31,6 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         public static IServiceCollection AddWebServer<TStartup>(
             this IServiceCollection services,
-            IConfiguration configuration,
             params string[] projectNames)
         {
             var currentProjectName = typeof(TStartup).GetProjectName();
@@ -68,8 +66,10 @@ namespace OJS.Servers.Infrastructure.Extensions
             return services;
         }
 
-        public static IServiceCollection AddHangfireServer(this IServiceCollection services, string connectionString)
+        public static IServiceCollection AddHangfireServer(this IServiceCollection services, ApplicationName app)
         {
+            var connectionString = EnvironmentUtils.GetApplicationConnectionString(app);
+
             services.AddHangfire(configuration => configuration
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
                 .UseSimpleAssemblyNameTypeSerializer()

@@ -1,17 +1,39 @@
 namespace OJS.Servers.Administration
 {
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.Extensions.Hosting;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.Extensions.DependencyInjection;
+    using OJS.Common.Enumerations;
+    using OJS.Data;
+    using OJS.Data.Models.Users;
+    using OJS.Servers.Infrastructure.Extensions;
 
     public class Program
     {
-        public static void Main(string[] args) => CreateHostBuilder(args).Build().Run();
+        private const ApplicationName AppName = ApplicationName.Administration;
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<AdministrationStartup>();
-                });
+        public static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
+            ConfigureServices(builder.Services);
+
+            var app = builder.Build();
+            Configure(app);
+
+            app.Run();
+        }
+
+        private static void ConfigureServices(IServiceCollection services)
+            => services
+                .AddWebServer<Program>()
+                .AddHangfireServer(AppName)
+                .AddIdentityDatabase<OjsDbContext, UserProfile>()
+                .AddControllersWithViews();
+
+        private static void Configure(WebApplication app)
+            => app
+                .UseDefaults()
+                .MapDefaultRoutes()
+                .UseAndMapHangfireDashboard();
+
     }
 }
