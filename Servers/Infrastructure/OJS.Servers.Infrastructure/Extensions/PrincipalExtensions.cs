@@ -13,5 +13,8 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         public static bool IsLecturer(this IPrincipal principal)
             => principal.IsInRole(GlobalConstants.Roles.Lecturer);
+
+        public static bool IsAdminOrLecturer(this IPrincipal principal)
+            => principal.IsAdmin() || principal.IsLecturer();
     }
 }

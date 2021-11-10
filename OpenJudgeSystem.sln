@@ -72,6 +72,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Ui.Business", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{C0BBA7AB-3119-43F4-81A7-F6FDA8D888E6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Servers.Administration.Infrastructure", "Servers\Administration\OJS.Servers.Administration.Infrastructure\OJS.Servers.Administration.Infrastructure.csproj", "{736A846B-E356-4E75-BD19-D7E2945AE8C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Servers.Ui.Infrastructure", "Servers\UI\OJS.Servers.Ui.Infrastructure\OJS.Servers.Ui.Infrastructure.csproj", "{331E1783-7C12-4DFD-BE65-6A7662CFFFB4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -109,6 +113,8 @@ Global
 		{C0BBA7AB-3119-43F4-81A7-F6FDA8D888E6} = {998FEA04-6712-4645-B103-72E75B7110BC}
 		{58538E0A-CA03-40A2-A942-3F65EF9EF9FE} = {C0BBA7AB-3119-43F4-81A7-F6FDA8D888E6}
 		{5EC14F1C-4A21-4F62-8C8B-BF3A969AF5C4} = {C0BBA7AB-3119-43F4-81A7-F6FDA8D888E6}
+		{736A846B-E356-4E75-BD19-D7E2945AE8C5} = {0E797985-3CB4-427C-98A5-48EF2C5C8403}
+		{331E1783-7C12-4DFD-BE65-6A7662CFFFB4} = {6B680E41-21CE-4A3E-8774-B5B03CA511EC}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{CDBD0A16-E35C-43F7-A20E-A3878F26384E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -207,5 +213,13 @@ Global
 		{68C6A8DD-1BF1-47CC-9875-CE44FE33C22E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68C6A8DD-1BF1-47CC-9875-CE44FE33C22E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{68C6A8DD-1BF1-47CC-9875-CE44FE33C22E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{736A846B-E356-4E75-BD19-D7E2945AE8C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{736A846B-E356-4E75-BD19-D7E2945AE8C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{736A846B-E356-4E75-BD19-D7E2945AE8C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{736A846B-E356-4E75-BD19-D7E2945AE8C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{331E1783-7C12-4DFD-BE65-6A7662CFFFB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{331E1783-7C12-4DFD-BE65-6A7662CFFFB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{331E1783-7C12-4DFD-BE65-6A7662CFFFB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{331E1783-7C12-4DFD-BE65-6A7662CFFFB4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
