@@ -17,9 +17,7 @@
     public class ValidateRemoteDataApiKeyFilter : IActionFilter<ValidateRemoteDataApiKeyAttribute>
     {
         private const string ApiKeyQueryStringParamName = "apiKey";
-
-        private string ApiKeySecondary = Settings.ApiKey;
-
+        
         private readonly UserManager<UserProfile> userManager;
 
         public ValidateRemoteDataApiKeyFilter(IOjsDbContext context) => 
