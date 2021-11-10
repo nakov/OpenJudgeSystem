@@ -4,7 +4,6 @@
     using System.Globalization;
     using System.Linq;
     using System.Web.Mvc;
-    using MissingFeatures;
     using OJS.Common.Models;
     using OJS.Data.Models;
     using OJS.Services.Data.Contests;
