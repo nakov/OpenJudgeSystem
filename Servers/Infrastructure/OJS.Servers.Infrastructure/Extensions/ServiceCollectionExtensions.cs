@@ -49,7 +49,6 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         public static IServiceCollection AddIdentityDatabase<TDbContext, TIdentityUser>(
             this IServiceCollection services,
-            string connectionString,
             IEnumerable<GlobalQueryFilterType> globalQueryFilterTypes = null)
             where TDbContext : DbContext
             where TIdentityUser : IdentityUser
@@ -57,8 +56,7 @@ namespace OJS.Servers.Infrastructure.Extensions
             services
                 .AddScoped<DbContext, TDbContext>()
                 .AddGlobalQueryFilterTypes(globalQueryFilterTypes)
-                .AddDbContext<TDbContext>(options => options
-                    .UseSqlServer(connectionString))
+                .AddDbContext<TDbContext>()
                 .ApplyMigrations<TDbContext>()
                 .AddTransient<ITransactionsProvider, TransactionsProvider<TDbContext>>();
 

@@ -28,7 +28,7 @@ namespace OJS.Servers.Ui
             => services
                 .AddWebServer<UiStartup>(this.configuration)
                 .AddHangfireServer(this.connectionString)
-                .AddIdentityDatabase<OjsDbContext, UserProfile>(this.connectionString)
+                .AddIdentityDatabase<OjsDbContext, UserProfile>()
                 .AddControllersWithViews();
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

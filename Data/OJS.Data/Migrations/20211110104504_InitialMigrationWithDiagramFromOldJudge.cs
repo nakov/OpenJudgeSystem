@@ -1,8 +1,10 @@
-﻿namespace OJS.Data.Migrations
-{
-    using System;
-    using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
+#nullable disable
+
+namespace OJS.Data.Migrations
+{
     public partial class InitialMigrationWithDiagramFromOldJudge : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -101,8 +103,7 @@
                         name: "FK_ContestCategories_ContestCategories_ParentId",
                         column: x => x.ParentId,
                         principalTable: "ContestCategories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -251,8 +252,7 @@
                         name: "FK_AccessLogs_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -363,8 +363,7 @@
                         name: "FK_FeedbackReports_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -402,8 +401,7 @@
                         name: "FK_Contests_ContestCategories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "ContestCategories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -503,8 +501,7 @@
                         name: "FK_ExamGroups_Contests_ContestId",
                         column: x => x.ContestId,
                         principalTable: "Contests",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -555,8 +552,7 @@
                         name: "FK_Participants_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Participants_Contests_ContestId",
                         column: x => x.ContestId,
@@ -693,8 +689,7 @@
                         name: "FK_Problems_Checkers_CheckerId",
                         column: x => x.CheckerId,
                         principalTable: "Checkers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Problems_ProblemGroups_ProblemGroupId",
                         column: x => x.ProblemGroupId,
@@ -778,14 +773,12 @@
                         name: "FK_SourceCodes_AspNetUsers_AuthorId",
                         column: x => x.AuthorId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_SourceCodes_Problems_ProblemId",
                         column: x => x.ProblemId,
                         principalTable: "Problems",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -820,20 +813,17 @@
                         name: "FK_Submissions_Participants_ParticipantId",
                         column: x => x.ParticipantId,
                         principalTable: "Participants",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Submissions_Problems_ProblemId",
                         column: x => x.ProblemId,
                         principalTable: "Problems",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Submissions_SubmissionTypes_SubmissionTypeId",
                         column: x => x.SubmissionTypeId,
                         principalTable: "SubmissionTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -941,8 +931,7 @@
                         name: "FK_ParticipantScores_Submissions_SubmissionId",
                         column: x => x.SubmissionId,
                         principalTable: "Submissions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
