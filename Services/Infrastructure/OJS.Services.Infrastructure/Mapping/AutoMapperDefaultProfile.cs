@@ -1,8 +1,7 @@
-namespace OJS.Services.Common.Models
+namespace OJS.Services.Infrastructure.Mapping
 {
     using AutoMapper;
     using OJS.Common.Extensions;
-    using OJS.Services.Infrastructure.Mapping;
     using System;
     using System.Collections.Generic;
     using System.Linq;

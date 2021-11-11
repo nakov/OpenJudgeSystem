@@ -4,4 +4,10 @@
         <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj" />
+      <ProjectReference Include="..\OJS.Services.Ui.Data\OJS.Services.Ui.Data.csproj" />
+      <ProjectReference Include="..\OJS.Services.Ui.Models\OJS.Services.Ui.Models.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -8,7 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Servers.Ui", "Servers\U
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{DFBB5F84-EC8E-4E14-9467-C255071E821F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Common.Business", "Services\Common\OJS.Services.Common.Business\OJS.Services.Common.Business.csproj", "{80E97386-4389-4508-9569-975230730A73}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Common", "Services\Common\OJS.Services.Common\OJS.Services.Common.csproj", "{80E97386-4389-4508-9569-975230730A73}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Common.Data", "Services\Common\OJS.Services.Common.Data\OJS.Services.Common.Data.csproj", "{51410337-F0D0-4DBE-89DF-1512396AD5F9}"
 EndProject

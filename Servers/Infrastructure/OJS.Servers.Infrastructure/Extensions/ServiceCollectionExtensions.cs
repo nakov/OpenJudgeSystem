@@ -17,6 +17,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using OJS.Services.Infrastructure;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Infrastructure.HttpClients.Implementations;
+    using OJS.Services.Infrastructure.Mapping;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -107,7 +108,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                     .Concat(new[]
                     {
                         CommonDataServices,
-                        CommonBusinessServices,
+                        CommonServices,
                         InfrastructureServices,
                     })
                     .ToArray())
@@ -189,10 +190,12 @@ namespace OJS.Servers.Infrastructure.Extensions
         {
             var assemblies = typeof(TStartup).Assembly
                  .GetAllReferencedAssembliesWhereFullNameMatchesPatterns(ModelsRegexPattern)
-                 .ToArray();
+                 .ToList();
 
-             return services
-                 .AddAutoMapper(assemblies);
+            assemblies.Add(typeof(AutoMapperDefaultProfile).Assembly);
+
+            return services
+                .AddAutoMapper(assemblies);
         }
 
         private static IServiceCollection AddAuthenticationServices(this IServiceCollection services)

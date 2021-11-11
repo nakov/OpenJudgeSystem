@@ -2,32 +2,41 @@
 {
     using System.Diagnostics;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
     using OJS.Servers.Ui.Models;
     using Microsoft.AspNetCore.Authorization;
     using OJS.Servers.Infrastructure.Controllers;
+    using OJS.Servers.Ui.Models.Home;
+    using OJS.Servers.Ui.Models.Home.Index;
     using OJS.Services.Infrastructure.Mapping;
-    using OJS.Services.Common.Models;
-    using OJS.Services.Infrastructure.HttpClients;
+    using OJS.Services.Ui.Business;
+    using System.Threading.Tasks;
 
     public class HomeController : BaseViewController
     {
-        private readonly ILogger<HomeController> logger;
+        private readonly IContestsBusinessService contestsBusiness;
         private readonly IMapperService mapper;
-        private readonly ISulsPlatformHttpClientService sulsPlatformHttpClient;
 
-        public HomeController(ILogger<HomeController> logger, IMapperService mapper, ISulsPlatformHttpClientService sulsPlatformHttpClient)
+        public HomeController(
+            IContestsBusinessService contestsBusiness,
+            IMapperService mapper)
         {
-            this.logger = logger;
+            this.contestsBusiness = contestsBusiness;
             this.mapper = mapper;
-            this.sulsPlatformHttpClient = sulsPlatformHttpClient;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var serviceModel = new TestServiceModel();
+            var activeContests = this.mapper.MapCollection<HomeContestViewModel>(
+                await this.contestsBusiness.GetAllCompetable());
 
-            var mappedModel = this.mapper.Map<TestModel>(serviceModel);
+            var pastContests = this.mapper.MapCollection<HomeContestViewModel>(
+                await this.contestsBusiness.GetAllPast());
+
+            var indexViewModel = new IndexViewModel
+            {
+                ActiveContests = activeContests,
+                PastContests = pastContests,
+            };
 
             return this.View();
         }

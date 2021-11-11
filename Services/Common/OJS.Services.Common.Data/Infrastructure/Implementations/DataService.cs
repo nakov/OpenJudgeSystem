@@ -12,33 +12,32 @@ namespace OJS.Services.Common.Data.Infrastructure.Implementations
     public class DataService<TEntity> : IDataService<TEntity>
         where TEntity : class, IEntity
     {
-        private readonly IMapperService mapper;
+        private readonly DbContext db;
+        protected readonly IMapperService Mapper;
 
-        public DataService(DbContext dbContext, IMapperService mapper)
+        public DataService(DbContext db, IMapperService mapper)
         {
-            this.mapper = mapper;
-            this.DbContext = dbContext;
+            this.db = db;
+            this.Mapper = mapper;
         }
 
-        private DbContext DbContext { get; }
-
-        private DbSet<TEntity> DbSet
-            => this.DbContext.Set<TEntity>();
+        protected DbSet<TEntity> DbSet
+            => this.db.Set<TEntity>();
 
         public virtual void Add(TEntity entity)
-            => this.DbContext.Add(entity);
+            => this.db.Add(entity);
 
         public virtual void AddMany(IEnumerable<TEntity> entities)
-            => this.DbContext.AddRange(entities);
+            => this.db.AddRange(entities);
 
         public virtual void Update(TEntity entity)
-            => this.DbContext.Update(entity);
+            => this.db.Update(entity);
 
         public virtual void Delete(TEntity entity)
-            => this.DbContext.Remove(entity);
+            => this.db.Remove(entity);
 
         public virtual void DeleteMany(IEnumerable<TEntity> entities)
-            => this.DbContext.RemoveRange(entities);
+            => this.db.RemoveRange(entities);
 
         public virtual async Task<IEnumerable<TEntity>> All(
             Expression<Func<TEntity, bool>> filter = null,
@@ -57,16 +56,16 @@ namespace OJS.Services.Common.Data.Infrastructure.Implementations
             int? skip = null,
             int? take = null)
             where TResult : class
-            => await this.mapper
+            => await this.Mapper
                 .ProjectTo<TResult>(this.GetQuery(filter, orderBy, descending, skip, take))
                 .ToListAsync();
 
         public virtual async Task<TEntity> OneById(object id)
-            => await this.DbContext.FindAsync<TEntity>(id);
+            => await this.db.FindAsync<TEntity>(id);
 
         public virtual async Task<TResult> OneByIdTo<TResult>(object id)
            where TResult : class
-           => await this.mapper
+           => await this.Mapper
                .ProjectTo<TResult>(
                    this.DbSet
                        .Where(x => x is IEntity<int>
@@ -81,7 +80,7 @@ namespace OJS.Services.Common.Data.Infrastructure.Implementations
 
         public virtual async Task<TResult> OneTo<TResult>(Expression<Func<TEntity, bool>> filter)
             where TResult : class
-            => await this.mapper
+            => await this.Mapper
                 .ProjectTo<TResult>(this.GetQuery(filter))
                 .FirstOrDefaultAsync();
 
@@ -96,7 +95,7 @@ namespace OJS.Services.Common.Data.Infrastructure.Implementations
                 .AnyAsync();
 
         public virtual async Task SaveChanges()
-            => await this.DbContext.SaveChangesAsync();
+            => await this.db.SaveChangesAsync();
 
         protected virtual IQueryable<TEntity> GetQuery(
             Expression<Func<TEntity, bool>> filter = null,
