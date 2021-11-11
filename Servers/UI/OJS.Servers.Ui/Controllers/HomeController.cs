@@ -8,16 +8,19 @@
     using OJS.Servers.Infrastructure.Controllers;
     using OJS.Services.Infrastructure.Mapping;
     using OJS.Services.Common.Models;
+    using OJS.Services.Infrastructure.HttpClients;
 
     public class HomeController : BaseViewController
     {
         private readonly ILogger<HomeController> logger;
         private readonly IMapperService mapper;
+        private readonly ISulsPlatformHttpClientService sulsPlatformHttpClient;
 
-        public HomeController(ILogger<HomeController> logger, IMapperService mapper)
+        public HomeController(ILogger<HomeController> logger, IMapperService mapper, ISulsPlatformHttpClientService sulsPlatformHttpClient)
         {
             this.logger = logger;
             this.mapper = mapper;
+            this.sulsPlatformHttpClient = sulsPlatformHttpClient;
         }
 
         public IActionResult Index()

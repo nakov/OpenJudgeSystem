@@ -14,7 +14,8 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DbContext": "Server=.;Database=OpenJudgeSystem;Integrated Security=True;",
-        "PATH_TO_COMMON_KEY_RING_FOLDER": "../../../Keys"
+        "PATH_TO_COMMON_KEY_RING_FOLDER": "../../../Keys",
+        "SULS_PLATFORM_BASE_URL": "https://localhost:44304"
       }
     },
     "OJS.Servers.Ui": {
@@ -25,7 +26,8 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DbContext": "Server=localhost;Database=OpenJudgeSystem;User Id=sa;Password=1234;",
-        "PATH_TO_COMMON_KEY_RING_FOLDER": "../../../Keys"
+        "PATH_TO_COMMON_KEY_RING_FOLDER": "../../../Keys",
+        "SULS_PLATFORM_BASE_URL": "https://localhost:44304"
       }
     }
   }

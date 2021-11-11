@@ -6,6 +6,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Net.Http.Headers;
     using OJS.Common.Contracts;
     using OJS.Common.Enumerations;
     using OJS.Common.Extensions;
@@ -14,10 +15,13 @@ namespace OJS.Servers.Infrastructure.Extensions
     using OJS.Services.Common.Data.Infrastructure;
     using OJS.Services.Common.Data.Infrastructure.Implementations;
     using OJS.Services.Infrastructure;
+    using OJS.Services.Infrastructure.HttpClients;
+    using OJS.Services.Infrastructure.HttpClients.Implementations;
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Net.Http;
     using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.Assemblies;
     using static OJS.Common.GlobalConstants.EnvironmentVariables;
@@ -91,7 +95,8 @@ namespace OJS.Servers.Infrastructure.Extensions
         private static IServiceCollection AddWebServerServices(
             this IServiceCollection services,
             params string[] projectNames)
-            => services
+        {
+            services
                 .AddFrom(projectNames
                     .Select(projectName => new[]
                     {
@@ -99,7 +104,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                         string.Format(BusinessServices, projectName),
                     })
                     .SelectMany(x => x)
-                    .Concat(new []
+                    .Concat(new[]
                     {
                         CommonDataServices,
                         CommonBusinessServices,
@@ -107,6 +112,12 @@ namespace OJS.Servers.Infrastructure.Extensions
                     })
                     .ToArray())
                 .AddTransient(typeof(IDataService<>), typeof(DataService<>));
+
+            services.AddHttpClient<IHttpClientService, HttpClientService>(ConfigureHttpClient);
+            services.AddHttpClient<ISulsPlatformHttpClientService, SulsPlatformHttpClientService>(ConfigureHttpClient);
+
+            return services;
+        }
 
         private static IServiceCollection ApplyMigrations<TDbContext>(this IServiceCollection services)
             where TDbContext : DbContext
@@ -205,5 +216,8 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         private static Type GetInterfaceOf(Type type)
             => type.GetInterface($"I{type.Name}");
+
+        private static void ConfigureHttpClient(HttpClient client)
+            => client.DefaultRequestHeaders.Add(HeaderNames.Accept, MimeTypes.ApplicationJson);
     }
 }
