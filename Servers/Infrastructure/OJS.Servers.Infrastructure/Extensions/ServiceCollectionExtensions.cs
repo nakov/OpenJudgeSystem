@@ -1,5 +1,6 @@
 namespace OJS.Servers.Infrastructure.Extensions
 {
+    using AutoMapper;
     using Hangfire;
     using Hangfire.SqlServer;
     using Microsoft.AspNetCore.DataProtection;
@@ -17,7 +18,6 @@ namespace OJS.Servers.Infrastructure.Extensions
     using OJS.Services.Infrastructure;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Infrastructure.HttpClients.Implementations;
-    using OJS.Services.Infrastructure.Mapping;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -188,14 +188,16 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         private static IServiceCollection AddAutoMapperConfigurations<TStartup>(this IServiceCollection services)
         {
-            var assemblies = typeof(TStartup).Assembly
+            var mappingAssemblies = typeof(TStartup).Assembly
                  .GetAllReferencedAssembliesWhereFullNameMatchesPatterns(ModelsRegexPattern)
-                 .ToList();
+                 .ToArray();
 
-            assemblies.Add(typeof(AutoMapperDefaultProfile).Assembly);
+            var configuration = new MapperConfiguration(config => config.RegisterMappingsFrom(mappingAssemblies));
 
-            return services
-                .AddAutoMapper(assemblies);
+            var mapper = new Mapper(configuration);
+            services.AddSingleton(mapper);
+
+            return services;
         }
 
         private static IServiceCollection AddAuthenticationServices(this IServiceCollection services)

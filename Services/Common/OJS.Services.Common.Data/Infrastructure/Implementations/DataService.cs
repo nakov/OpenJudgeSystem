@@ -13,13 +13,9 @@ namespace OJS.Services.Common.Data.Infrastructure.Implementations
         where TEntity : class, IEntity
     {
         private readonly DbContext db;
-        protected readonly IMapperService Mapper;
 
-        public DataService(DbContext db, IMapperService mapper)
-        {
-            this.db = db;
-            this.Mapper = mapper;
-        }
+        public DataService(DbContext db)
+            => this.db = db;
 
         protected DbSet<TEntity> DbSet
             => this.db.Set<TEntity>();
@@ -56,8 +52,8 @@ namespace OJS.Services.Common.Data.Infrastructure.Implementations
             int? skip = null,
             int? take = null)
             where TResult : class
-            => await this.Mapper
-                .ProjectTo<TResult>(this.GetQuery(filter, orderBy, descending, skip, take))
+            => await this.GetQuery(filter, orderBy, descending, skip, take)
+                .MapCollection<TResult>()
                 .ToListAsync();
 
         public virtual async Task<TEntity> OneById(object id)
@@ -65,12 +61,11 @@ namespace OJS.Services.Common.Data.Infrastructure.Implementations
 
         public virtual async Task<TResult> OneByIdTo<TResult>(object id)
            where TResult : class
-           => await this.Mapper
-               .ProjectTo<TResult>(
-                   this.DbSet
-                       .Where(x => x is IEntity<int>
-                           ? ((IEntity<int>)x).Id == (int)id
-                           : ((IEntity<string>)x).Id == (string)id))
+           => await this.DbSet
+               .Where(x => x is IEntity<int>
+                   ? ((IEntity<int>)x).Id == (int)id
+                   : ((IEntity<string>)x).Id == (string)id)
+               .MapCollection<TResult>()
                .FirstOrDefaultAsync();
 
         public virtual async Task<TEntity> One(Expression<Func<TEntity, bool>> filter)
@@ -80,8 +75,8 @@ namespace OJS.Services.Common.Data.Infrastructure.Implementations
 
         public virtual async Task<TResult> OneTo<TResult>(Expression<Func<TEntity, bool>> filter)
             where TResult : class
-            => await this.Mapper
-                .ProjectTo<TResult>(this.GetQuery(filter))
+            => await this.GetQuery(filter)
+                .MapCollection<TResult>()
                 .FirstOrDefaultAsync();
 
         public virtual async Task<int> Count(Expression<Func<TEntity, bool>> filter = null)

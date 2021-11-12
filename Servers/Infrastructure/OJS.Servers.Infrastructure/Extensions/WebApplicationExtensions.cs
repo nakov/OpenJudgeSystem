@@ -1,9 +1,12 @@
 namespace OJS.Servers.Infrastructure.Extensions
 {
+    using AutoMapper;
     using Hangfire;
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using OJS.Servers.Infrastructure.Filters;
+    using OJS.Services.Infrastructure.Mapping;
     using static OJS.Common.GlobalConstants.Urls;
 
     public static class WebApplicationExtensions
@@ -20,6 +23,8 @@ namespace OJS.Servers.Infrastructure.Extensions
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseAutoMapper();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -50,6 +55,20 @@ namespace OJS.Servers.Infrastructure.Extensions
 
             app.UseHangfireDashboard(HangfirePath);
             app.MapHangfireDashboard(dashboardOptions);
+
+            return app;
+        }
+
+        private static IApplicationBuilder UseAutoMapper(this WebApplication app)
+        {
+            var hostApplicationLifetime = app.Services.GetRequiredService<IHostApplicationLifetime>();
+
+            hostApplicationLifetime.ApplicationStarted.Register(() =>
+            {
+                var mapper = app.Services.GetRequiredService<Mapper>();
+
+                AutoMapperSingleton.Init(mapper);
+            });
 
             return app;
         }

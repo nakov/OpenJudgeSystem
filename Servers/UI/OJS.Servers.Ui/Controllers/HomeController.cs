@@ -14,23 +14,20 @@
     public class HomeController : BaseViewController
     {
         private readonly IContestsBusinessService contestsBusiness;
-        private readonly IMapperService mapper;
 
         public HomeController(
-            IContestsBusinessService contestsBusiness,
-            IMapperService mapper)
-        {
-            this.contestsBusiness = contestsBusiness;
-            this.mapper = mapper;
-        }
+            IContestsBusinessService contestsBusiness)
+            => this.contestsBusiness = contestsBusiness;
 
         public async Task<IActionResult> Index()
         {
-            var activeContests = this.mapper.MapCollection<HomeContestViewModel>(
-                await this.contestsBusiness.GetAllCompetable());
+            var activeContests = await this.contestsBusiness
+                .GetAllCompetable()
+                .MapCollection<HomeContestViewModel>();
 
-            var pastContests = this.mapper.MapCollection<HomeContestViewModel>(
-                await this.contestsBusiness.GetAllPast());
+            var pastContests = await this.contestsBusiness
+                .GetAllPast()
+                .MapCollection<HomeContestViewModel>();
 
             var indexViewModel = new IndexViewModel
             {
