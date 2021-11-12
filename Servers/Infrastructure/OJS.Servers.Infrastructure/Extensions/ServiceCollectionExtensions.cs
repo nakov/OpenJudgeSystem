@@ -153,7 +153,6 @@ namespace OJS.Servers.Infrastructure.Extensions
                     ServiceType.IsAssignableFrom(t) ||
                     ScopedServiceType.IsAssignableFrom(t) ||
                     SingletonServiceType.IsAssignableFrom(t))
-                .Where(t => GetInterfaceOf(t) != null)
                 .Select(t => new
                 {
                     Implementation = t,
@@ -161,27 +160,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                         ? GetInterfaceOf(t).GetGenericTypeDefinition()
                         : GetInterfaceOf(t),
                 })
-                .ForEach(s =>
-                {
-                    if (s.Service == null)
-                    {
-                        throw new InvalidOperationException(
-                            $"Service {s.Implementation.Namespace} does not have corresponding interface");
-                    }
-
-                    if (SingletonServiceType.IsAssignableFrom(s.Service))
-                    {
-                        services.AddSingleton(s.Service, s.Implementation);
-                    }
-                    else if (ScopedServiceType.IsAssignableFrom(s.Service))
-                    {
-                        services.AddScoped(s.Service, s.Implementation);
-                    }
-                    else
-                    {
-                        services.AddTransient(s.Service, s.Implementation);
-                    }
-                });
+                .ForEach(s => services.RegisterService(s.Implementation, s.Service));
 
             return services;
         }
@@ -192,7 +171,12 @@ namespace OJS.Servers.Infrastructure.Extensions
                  .GetAllReferencedAssembliesWhereFullNameMatchesPatterns(ModelsRegexPattern)
                  .ToArray();
 
-            var configuration = new MapperConfiguration(config => config.RegisterMappingsFrom(mappingAssemblies));
+            var configuration = new MapperConfiguration(config =>
+            {
+                config.RegisterMappingsFrom(mappingAssemblies);
+            });
+
+            configuration.AssertConfigurationIsValid();
 
             var mapper = configuration.CreateMapper();
             services.AddSingleton(mapper);
@@ -224,5 +208,47 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         private static void ConfigureHttpClient(HttpClient client)
             => client.DefaultRequestHeaders.Add(HeaderNames.Accept, MimeTypes.ApplicationJson);
+
+        private static void RegisterService(this IServiceCollection services, Type implementation, Type service = null)
+        {
+            if (implementation == null)
+            {
+                throw new ArgumentException("Cannot register service with no implementation");
+            }
+
+            if (SingletonServiceType.IsAssignableFrom(implementation))
+            {
+                if (service == null)
+                {
+                    services.AddSingleton(implementation);
+                }
+                else
+                {
+                    services.AddSingleton(service, implementation);
+                }
+            }
+            else if (ScopedServiceType.IsAssignableFrom(implementation))
+            {
+                if (service == null)
+                {
+                    services.AddScoped(implementation);
+                }
+                else
+                {
+                    services.AddScoped(service, implementation);
+                }
+            }
+            else
+            {
+                if (service == null)
+                {
+                    services.AddTransient(implementation);
+                }
+                else
+                {
+                    services.AddTransient(service, implementation);
+                }
+            }
+        }
     }
 }
