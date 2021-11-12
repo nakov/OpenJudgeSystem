@@ -194,7 +194,7 @@ namespace OJS.Servers.Infrastructure.Extensions
 
             var configuration = new MapperConfiguration(config => config.RegisterMappingsFrom(mappingAssemblies));
 
-            var mapper = new Mapper(configuration);
+            var mapper = configuration.CreateMapper();
             services.AddSingleton(mapper);
 
             return services;

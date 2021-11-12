@@ -65,7 +65,7 @@ namespace OJS.Servers.Infrastructure.Extensions
 
             hostApplicationLifetime.ApplicationStarted.Register(() =>
             {
-                var mapper = app.Services.GetRequiredService<Mapper>();
+                var mapper = app.Services.GetRequiredService<IMapper>();
 
                 AutoMapperSingleton.Init(mapper);
             });

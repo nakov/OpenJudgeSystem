@@ -4,14 +4,14 @@ namespace OJS.Services.Infrastructure.Mapping
 
     public class AutoMapperSingleton
     {
-        private AutoMapperSingleton(Mapper mapper)
+        private AutoMapperSingleton(IMapper mapper)
             => this.Mapper = mapper;
 
-        public Mapper Mapper { get; }
+        public IMapper Mapper { get; }
 
         public static AutoMapperSingleton Instance { get; private set; }
 
-        public static void Init(Mapper mapper)
+        public static void Init(IMapper mapper)
             => Instance = new AutoMapperSingleton(mapper);
     }
 }
