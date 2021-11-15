@@ -1,6 +1,6 @@
 namespace OJS.Services.Ui.Business.Implementations
 {
-    using OJS.Common.Extensions;
+    using FluentExtensions.Extensions;
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Contests;
     using System.Collections.Generic;
