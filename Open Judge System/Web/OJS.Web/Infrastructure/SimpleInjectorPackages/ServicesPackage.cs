@@ -33,7 +33,7 @@
                     container.GetInstance<IHttpRequesterService>(),
                     container.GetInstance<IHangfireBackgroundJobService>(),
                     Settings.SulsPlatformBaseUrl,
-                    Settings.ApiKey),
+                    Settings.SulsApiKey),
                 Lifestyle.Scoped);
         }
 

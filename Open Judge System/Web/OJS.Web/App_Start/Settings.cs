@@ -4,9 +4,9 @@
 
     public static class Settings
     {
-        public static string ApiKey => GetSetting("ApiKey");
+        public static string SulsApiKey => GetSetting("SulsApiKey");
         
-        public static string ApiKeySecondary => GetSetting("ApiKeySecondary");
+        public static string ApiKey => GetSetting("ApiKey");
 
         public static string CSharpCompilerPath => GetSetting("CSharpCompilerPath");
 

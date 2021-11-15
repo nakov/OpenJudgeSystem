@@ -32,13 +32,9 @@
             var apiKey = request.QueryString[ApiKeyQueryStringParamName] ?? request[ApiKeyQueryStringParamName];
 
             var isValidApiKey = !string.IsNullOrWhiteSpace(apiKey) &&
-                                this.userManager.Users.Any(u => u.Id == apiKey && u.IsDeleted == false) &&
-                                this.userManager.IsInRole(apiKey, GlobalConstants.AdministratorRoleName);
+                                (this.IsApiKeyInAdminUsers(apiKey) || this.IsApiKeyInSettings(apiKey));
 
-            var isValidSecondaryApiKey = !string.IsNullOrWhiteSpace(apiKey) &&
-                                         apiKey == Settings.ApiKeySecondary;
-
-            if (!isValidApiKey && !isValidSecondaryApiKey)
+            if (!isValidApiKey)
             {
                 filterContext.Result = new HttpStatusCodeResult(HttpStatusCode.Forbidden, "Invalid API key.");
             }
@@ -48,6 +44,18 @@
             ValidateRemoteDataApiKeyAttribute attribute,
             ActionExecutedContext filterContext)
         {
+        }
+        
+        private bool IsApiKeyInAdminUsers(string apiKey)
+        {
+            return 
+                this.userManager.Users.Any(u => u.Id == apiKey && u.IsDeleted == false) &&
+                this.userManager.IsInRole(apiKey, GlobalConstants.AdministratorRoleName);
+        }
+        
+        private bool IsApiKeyInSettings(string apiKey)
+        {
+            return apiKey == Settings.ApiKey;
         }
     }
 }
