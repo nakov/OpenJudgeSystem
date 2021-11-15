@@ -35,6 +35,12 @@ namespace OJS.Services.Ui.Data.Implementations
                 .MapCollection<TServiceModel>()
                 .ToListAsync();
 
+        public Task<bool> IsUserLecturerInByContestAndUser(int id, string userId)
+            => this.GetByIdQuery(id)
+                .AnyAsync(c =>
+                    c.LecturersInContests.Any(l => l.LecturerId == userId) ||
+                    c.Category.LecturersInContestCategories.Any(l => l.LecturerId == userId));
+
         private IQueryable<Contest> GetAllVisibleQuery()
             => this.DbSet
                 .Where(c => c.IsVisible);

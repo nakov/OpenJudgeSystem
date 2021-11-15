@@ -13,5 +13,7 @@ namespace OJS.Services.Ui.Data
 
         Task<IEnumerable<TServiceModel>> GetAllPast<TServiceModel>()
             where TServiceModel : IMapFrom<Contest>;
+
+        Task<bool> IsUserLecturerInByContestAndUser(int id, string userId);
     }
 }

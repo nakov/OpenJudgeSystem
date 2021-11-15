@@ -5,8 +5,8 @@ namespace OJS.Services.Ui.Data
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    public interface IParticipantsDataService : IDataService<Participant>
+    public interface IParticipantScoresDataService : IDataService<ParticipantScore>
     {
-        Task Delete(IEnumerable<Participant> participants);
+        Task Delete(IEnumerable<ParticipantScore> participantScores);
     }
 }

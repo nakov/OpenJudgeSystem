@@ -9,4 +9,8 @@
       <ProjectReference Include="..\..\Common\OJS.Services.Common\OJS.Services.Common.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="6.13.0" />
+    </ItemGroup>
+
 </Project>

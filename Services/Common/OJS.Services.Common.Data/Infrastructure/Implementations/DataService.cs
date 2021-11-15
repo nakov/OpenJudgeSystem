@@ -33,6 +33,13 @@ namespace OJS.Services.Common.Data.Infrastructure.Implementations
         public virtual void Delete(TEntity entity)
             => this.db.Remove(entity);
 
+        public virtual async Task DeleteById(object id)
+        {
+            var entity = await this.DbSet.FindAsync(id);
+
+            this.Delete(entity);
+        }
+
         public virtual void DeleteMany(IEnumerable<TEntity> entities)
             => this.db.RemoveRange(entities);
 
@@ -91,6 +98,12 @@ namespace OJS.Services.Common.Data.Infrastructure.Implementations
         public virtual async Task SaveChanges()
             => await this.db.SaveChangesAsync();
 
+        public IQueryable<TEntity> GetByIdQuery(object id)
+        {
+            var filter = ExpressionBuilder.BuildEqualsFilter<TEntity>(id, nameof(IEntity<object>.Id));
+            return this.DbSet.Where(filter);
+        }
+
         protected virtual IQueryable<TEntity> GetQuery(
             Expression<Func<TEntity, bool>> filter = null,
             Expression<Func<TEntity, object>> orderBy = null,
@@ -123,12 +136,6 @@ namespace OJS.Services.Common.Data.Infrastructure.Implementations
             }
 
             return query;
-        }
-
-        private IQueryable<TEntity> GetByIdQuery(object id)
-        {
-            var filter = ExpressionBuilder.BuildEqualsFilter<TEntity>(id, nameof(IEntity<object>.Id));
-            return this.DbSet.Where(filter);
         }
     }
 }
