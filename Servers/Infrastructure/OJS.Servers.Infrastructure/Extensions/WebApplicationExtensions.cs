@@ -6,6 +6,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using OJS.Servers.Infrastructure.Filters;
+    using OJS.Servers.Infrastructure.Middleware;
     using OJS.Services.Infrastructure.Mapping;
     using static OJS.Common.GlobalConstants.Urls;
 
@@ -13,16 +14,13 @@ namespace OJS.Servers.Infrastructure.Extensions
     {
         public static WebApplication UseDefaults(this WebApplication app)
         {
-            if (app.Environment.IsDevelopment())
+            if (!app.Environment.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseCustomExceptionHandling();
 
             app.UseAutoMapper();
 
@@ -69,6 +67,20 @@ namespace OJS.Servers.Infrastructure.Extensions
 
                 AutoMapperSingleton.Init(mapper);
             });
+
+            return app;
+        }
+
+        private static WebApplication UseCustomExceptionHandling(this WebApplication app)
+        {
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler(errorApp => errorApp.Run(Rfc7807ExceptionMiddleware.Get));
+            }
 
             return app;
         }
