@@ -1,6 +1,7 @@
 namespace OJS.Services.Common.Data.Infrastructure.Implementations
 {
     using Microsoft.EntityFrameworkCore;
+    using OJS.Common.Utils;
     using OJS.Data.Infrastructure.Models;
     using OJS.Services.Infrastructure.Mapping;
     using System;
@@ -57,14 +58,12 @@ namespace OJS.Services.Common.Data.Infrastructure.Implementations
                 .ToListAsync();
 
         public virtual async Task<TEntity> OneById(object id)
-            => await this.db.FindAsync<TEntity>(id);
+            => await this.GetByIdQuery(id)
+                .FirstOrDefaultAsync();
 
         public virtual async Task<TResult> OneByIdTo<TResult>(object id)
            where TResult : class
-           => await this.DbSet
-               .Where(x => x is IEntity<int>
-                   ? ((IEntity<int>)x).Id == (int)id
-                   : ((IEntity<string>)x).Id == (string)id)
+           => await this.GetByIdQuery(id)
                .MapCollection<TResult>()
                .FirstOrDefaultAsync();
 
@@ -124,6 +123,12 @@ namespace OJS.Services.Common.Data.Infrastructure.Implementations
             }
 
             return query;
+        }
+
+        private IQueryable<TEntity> GetByIdQuery(object id)
+        {
+            var filter = ExpressionBuilder.BuildEqualsFilter<TEntity>(id, nameof(IEntity<object>.Id));
+            return this.DbSet.Where(filter);
         }
     }
 }
