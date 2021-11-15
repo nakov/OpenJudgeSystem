@@ -42,7 +42,7 @@
         
         public IQueryable<Participant> GetAllByManyContestsAndUserId(int[] contestIds, string userId) =>
             this.GetAll()
-                .Where(p => contestIds.Contains(p.ContestId) && p.User.Id == userId);
+                .Where(p => contestIds.Contains(p.ContestId) && p.UserId == userId);
 
         public IQueryable<Participant> GetByIdQuery(int id) =>
             this.GetAll()
