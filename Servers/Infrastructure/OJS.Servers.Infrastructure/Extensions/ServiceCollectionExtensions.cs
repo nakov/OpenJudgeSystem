@@ -1,6 +1,7 @@
 namespace OJS.Servers.Infrastructure.Extensions
 {
     using AutoMapper;
+    using FluentExtensions.Extensions;
     using Hangfire;
     using Hangfire.SqlServer;
     using Microsoft.AspNetCore.DataProtection;

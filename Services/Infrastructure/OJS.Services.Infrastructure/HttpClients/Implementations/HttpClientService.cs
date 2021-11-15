@@ -1,6 +1,6 @@
 namespace OJS.Services.Infrastructure.HttpClients.Implementations
 {
-    using OJS.Common.Extensions.Json;
+    using FluentExtensions.Extensions;
     using System;
     using System.Net.Http;
     using System.Net.Http.Json;

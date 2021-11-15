@@ -1,8 +1,8 @@
 namespace OJS.Servers.Infrastructure.Extensions
 {
+    using FluentExtensions.Extensions;
     using Microsoft.AspNetCore.Http;
     using OJS.Common;
-    using OJS.Common.Extensions.Json;
     using System.Net;
     using System.Threading.Tasks;
 

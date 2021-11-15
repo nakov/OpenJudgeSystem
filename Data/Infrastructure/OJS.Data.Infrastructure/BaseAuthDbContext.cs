@@ -1,5 +1,6 @@
 namespace OJS.Data.Infrastructure
 {
+    using FluentExtensions.Extensions;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using System;
@@ -11,7 +12,6 @@ namespace OJS.Data.Infrastructure
     using Microsoft.EntityFrameworkCore;
     using OJS.Common.Contracts;
     using OJS.Common.Enumerations;
-    using OJS.Common.Extensions;
     using OJS.Data.Infrastructure.Attributes;
     using OJS.Data.Infrastructure.Configurators;
     using OJS.Data.Infrastructure.Models;

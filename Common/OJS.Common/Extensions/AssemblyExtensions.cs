@@ -1,5 +1,6 @@
 namespace OJS.Common.Extensions
 {
+    using FluentExtensions.Extensions;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
@@ -23,23 +24,21 @@ namespace OJS.Common.Extensions
             {
                 var assemblyToCheck = assembliesToCheck.Dequeue();
 
-                var filteredAssemblies = assemblyToCheck
+                assemblyToCheck
                     .GetReferencedAssemblies()
                     .Where(x => regexes.Any(r => r.IsMatch(x.FullName)))
-                    .ToList();
-
-                foreach(var reference in filteredAssemblies)
-                {
-                    if (loadedAssemblies.Contains(reference.FullName))
+                    .ForEach(reference =>
                     {
-                        continue;
-                    }
+                        if (loadedAssemblies.Contains(reference.FullName))
+                        {
+                            return;
+                        }
 
-                    var loadedAssembly = Assembly.Load(reference);
-                    assembliesToCheck.Enqueue(loadedAssembly);
-                    loadedAssemblies.Add(reference.FullName);
-                    returnAssemblies.Add(loadedAssembly);
-                }
+                        var loadedAssembly = Assembly.Load(reference);
+                        assembliesToCheck.Enqueue(loadedAssembly);
+                        loadedAssemblies.Add(reference.FullName);
+                        returnAssemblies.Add(loadedAssembly);
+                    });
             }
 
             return returnAssemblies;
