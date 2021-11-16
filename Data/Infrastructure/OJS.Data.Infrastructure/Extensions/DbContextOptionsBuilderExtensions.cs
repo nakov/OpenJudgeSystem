@@ -18,6 +18,10 @@ namespace OJS.Data.Infrastructure.Extensions
             // For migrations
             // options.UseSqlServer("Server=.;Database=OpenJudgeSystem;User Id=sa;Password=1234;");
             options.UseSqlServer(EnvironmentUtils.GetApplicationConnectionString(applicationName));
+
+            // TODO: remove this after all the logic is refactored and nothing depends on it
+            options.UseLazyLoadingProxies();
+
             return options;
         }
     }
