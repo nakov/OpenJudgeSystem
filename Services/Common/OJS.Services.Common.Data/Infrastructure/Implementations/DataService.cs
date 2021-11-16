@@ -95,6 +95,11 @@ namespace OJS.Services.Common.Data.Infrastructure.Implementations
                 .GetQuery(filter)
                 .AnyAsync();
 
+        public virtual async Task<bool> ExistsById(object id)
+            => await this
+                .GetByIdQuery(id)
+                .AnyAsync();
+
         public virtual async Task SaveChanges()
             => await this.db.SaveChangesAsync();
 

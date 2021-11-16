@@ -51,6 +51,8 @@ namespace OJS.Services.Common.Data.Infrastructure
 
         Task<bool> Exists(Expression<Func<TEntity, bool>> filter = null);
 
+        Task<bool> ExistsById(object id);
+
         Task SaveChanges();
     }
 }
