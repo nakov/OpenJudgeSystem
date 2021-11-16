@@ -2,7 +2,7 @@ namespace OJS.Services.Common.Models
 {
     public class ServiceResult
     {
-        public static ServiceResult Success => new(null);
+        public static ServiceResult Success => new ServiceResult(null);
 
         public ServiceResult(string error) => this.Error = error;
 

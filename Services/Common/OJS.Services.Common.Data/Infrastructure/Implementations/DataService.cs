@@ -21,11 +21,11 @@ namespace OJS.Services.Common.Data.Infrastructure.Implementations
         protected DbSet<TEntity> DbSet
             => this.db.Set<TEntity>();
 
-        public virtual void Add(TEntity entity)
-            => this.db.Add(entity);
+        public virtual async Task Add(TEntity entity)
+            => await this.db.AddAsync(entity);
 
-        public virtual void AddMany(IEnumerable<TEntity> entities)
-            => this.db.AddRange(entities);
+        public virtual async Task AddMany(IEnumerable<TEntity> entities)
+            => await this.db.AddRangeAsync(entities);
 
         public virtual void Update(TEntity entity)
             => this.db.Update(entity);

@@ -11,9 +11,9 @@ namespace OJS.Services.Common.Data.Infrastructure
     public interface IDataService<TEntity> : IService
         where TEntity : class, IEntity
     {
-        void Add(TEntity entity);
+        Task Add(TEntity entity);
 
-        void AddMany(IEnumerable<TEntity> entities);
+        Task AddMany(IEnumerable<TEntity> entities);
 
         void Update(TEntity entity);
 

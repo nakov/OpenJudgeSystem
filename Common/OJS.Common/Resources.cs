@@ -1,6 +1,6 @@
 namespace OJS.Common
 {
-    public class Resource
+    public class Resources
     {
         public static class ContestsGeneral
         {
@@ -34,6 +34,14 @@ namespace OJS.Common
             public const string User_has_not_processed_submission_for_problem = "You have unprocessed submission for this problem. Please wait until the submission is processed.";
             public const string User_is_not_registered_for_exam = "You are not registered for this exam!";
             public const string Yes = "Yes";
+        }
+
+        public static class ParticipantsBusiness
+        {
+            public const string Participant_does_not_exist = "Participant does not exist!";
+            public const string Contest_duration_not_set = "The contest does not have duration set!";
+            public const string Participant_participation_time_not_set = "Participant does not have participation time set!";
+            public const string Participation_time_reduce_below_duration_warning = "Participant time cannot be reduced, because it will be below the contest duration!";
         }
     }
 }
