@@ -24,6 +24,11 @@ namespace OJS.Services.Ui.Data.Implementations
             => this.GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
                 .FirstOrDefaultAsync();
 
+        public Task<Participant> GetWithContestByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial) =>
+            this.GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
+                .Include(p => p.Contest)
+                .FirstOrDefaultAsync();
+
         public IQueryable<Participant> GetAllByUser(string userId)
             => this.DbSet
                 .Where(p => p.UserId == userId);
