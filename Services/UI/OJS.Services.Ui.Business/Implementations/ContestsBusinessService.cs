@@ -1,7 +1,6 @@
 namespace OJS.Services.Ui.Business.Implementations
 {
     using FluentExtensions.Extensions;
-    using Microsoft.EntityFrameworkCore;
     using OJS.Data.Models.Participants;
     using OJS.Services.Common.Models;
     using OJS.Services.Ui.Data;
@@ -55,10 +54,7 @@ namespace OJS.Services.Ui.Business.Implementations
             bool isAdmin,
             bool allowToAdminAlways = false)
         {
-            var contest = await this.contestsData
-                .GetByIdQuery(contestId)
-                .Include(c => c.Participants)
-                .FirstOrDefaultAsync();
+            var contest = await this.contestsData.OneById(contestId);
 
             var isUserAdminOrLecturerInContest = isAdmin || await this.contestsData
                 .IsUserLecturerInByContestAndUser(contestId, userId);
@@ -91,10 +87,7 @@ namespace OJS.Services.Ui.Business.Implementations
         // TODO: Extract different logic blocks in separate services
         public async Task<ServiceResult> TransferParticipantsToPracticeById(int contestId)
         {
-            var contest = await this.contestsData
-                .GetByIdQuery(contestId)
-                .Include(c => c.Participants)
-                .FirstOrDefaultAsync();
+            var contest = await this.contestsData.OneById(contestId);
 
             if (contest == null)
             {

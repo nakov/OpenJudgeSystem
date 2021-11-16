@@ -4,7 +4,6 @@ namespace OJS.Services.Common.Data.Infrastructure
     using OJS.Services.Infrastructure;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
 
@@ -53,8 +52,5 @@ namespace OJS.Services.Common.Data.Infrastructure
         Task<bool> Exists(Expression<Func<TEntity, bool>> filter = null);
 
         Task SaveChanges();
-
-        // Temporary for easier migration of services from old to new judge
-        IQueryable<TEntity> GetByIdQuery(object id);
     }
 }
