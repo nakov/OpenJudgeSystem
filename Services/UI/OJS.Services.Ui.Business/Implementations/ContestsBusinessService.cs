@@ -54,7 +54,7 @@ namespace OJS.Services.Ui.Business.Implementations
             bool isAdmin,
             bool allowToAdminAlways = false)
         {
-            var contest = await this.contestsData.OneById(contestId);
+            var contest = await this.contestsData.GetByIdWithParticipants(contestId);
 
             var isUserAdminOrLecturerInContest = isAdmin || await this.contestsData
                 .IsUserLecturerInByContestAndUser(contestId, userId);
@@ -87,7 +87,7 @@ namespace OJS.Services.Ui.Business.Implementations
         // TODO: Extract different logic blocks in separate services
         public async Task<ServiceResult> TransferParticipantsToPracticeById(int contestId)
         {
-            var contest = await this.contestsData.OneById(contestId);
+            var contest = await this.contestsData.GetByIdWithParticipants(contestId);
 
             if (contest == null)
             {

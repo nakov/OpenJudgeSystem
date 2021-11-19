@@ -103,7 +103,7 @@ namespace OJS.Services.Common.Data.Implementations
         public virtual async Task SaveChanges()
             => await this.db.SaveChangesAsync();
 
-        protected IQueryable<TEntity> GetByIdQuery(object id)
+        protected virtual IQueryable<TEntity> GetByIdQuery(object id)
         {
             var filter = ExpressionBuilder.BuildEqualsFilter<TEntity>(id, nameof(IEntity<object>.Id));
             return this.DbSet.Where(filter);
