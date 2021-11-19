@@ -1,5 +1,6 @@
 namespace OJS.Services.Ui.Business.Implementations
 {
+    using Microsoft.EntityFrameworkCore;
     using OJS.Data.Models;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Participants;
@@ -53,7 +54,11 @@ namespace OJS.Services.Ui.Business.Implementations
 
         public async Task<ServiceResult<string>> UpdateParticipationEndTimeByIdAndTimeInMinutes(int id, int minutes)
         {
-            var participant = await this.participantsData.OneById(id);
+            var participant = await this.participantsData
+                .GetByIdQuery(id)
+                .Include(p => p.Contest)
+                .Include(p => p.User)
+                .FirstOrDefaultAsync();
 
             if (participant == null)
             {

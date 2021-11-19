@@ -4,6 +4,7 @@ namespace OJS.Services.Common.Data
     using SoftUni.Services.Infrastructure;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
 
@@ -54,5 +55,8 @@ namespace OJS.Services.Common.Data
         Task<bool> ExistsById(object id);
 
         Task SaveChanges();
+
+        // TODO: Refactor services to not use this as public method and remove it
+        IQueryable<TEntity> GetByIdQuery(object id);
     }
 }
