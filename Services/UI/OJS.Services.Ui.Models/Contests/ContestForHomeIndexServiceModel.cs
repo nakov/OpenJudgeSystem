@@ -1,7 +1,7 @@
 namespace OJS.Services.Ui.Models.Contests
 {
     using OJS.Data.Models.Contests;
-    using OJS.Services.Infrastructure.Mapping;
+    using SoftUni.AutoMapper.Infrastructure.Models;
     using System;
 
     public class ContestForHomeIndexServiceModel : IMapFrom<Contest>

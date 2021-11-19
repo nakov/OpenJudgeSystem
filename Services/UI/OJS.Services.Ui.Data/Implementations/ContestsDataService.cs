@@ -7,7 +7,8 @@ namespace OJS.Services.Ui.Data.Implementations
     using OJS.Data.Models.Problems;
     using OJS.Services.Common;
     using OJS.Services.Common.Data.Implementations;
-    using OJS.Services.Infrastructure.Mapping;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using SoftUni.AutoMapper.Infrastructure.Models;
     using System;
     using System.Collections.Generic;
     using System.Linq;

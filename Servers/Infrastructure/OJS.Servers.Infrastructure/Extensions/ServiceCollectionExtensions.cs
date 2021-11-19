@@ -1,6 +1,5 @@
 namespace OJS.Servers.Infrastructure.Extensions
 {
-    using AutoMapper;
     using FluentExtensions.Extensions;
     using Hangfire;
     using Hangfire.SqlServer;
@@ -18,6 +17,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using OJS.Services.Infrastructure;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Infrastructure.HttpClients.Implementations;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.Data.Infrastructure.Enumerations;
     using SoftUni.Data.Infrastructure.Extensions;
     using System;
@@ -137,25 +137,6 @@ namespace OJS.Servers.Infrastructure.Extensions
                         : GetInterfaceOf(t),
                 })
                 .ForEach(s => services.RegisterService(s.Implementation, s.Service));
-
-            return services;
-        }
-
-        private static IServiceCollection AddAutoMapperConfigurations<TStartup>(this IServiceCollection services)
-        {
-            var mappingAssemblies = typeof(TStartup).Assembly
-                 .GetAllReferencedAssembliesWhereFullNameMatchesPatterns(ModelsRegexPattern)
-                 .ToArray();
-
-            var configuration = new MapperConfiguration(config =>
-            {
-                config.RegisterMappingsFrom(mappingAssemblies);
-            });
-
-            configuration.AssertConfigurationIsValid();
-
-            var mapper = configuration.CreateMapper();
-            services.AddSingleton(mapper);
 
             return services;
         }

@@ -10,4 +10,8 @@
       <ProjectReference Include="..\..\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="SoftUni.AutoMapper.Infrastructure" Version="1.0.2" />
+    </ItemGroup>
+
 </Project>

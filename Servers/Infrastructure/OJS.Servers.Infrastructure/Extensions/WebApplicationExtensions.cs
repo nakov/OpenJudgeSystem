@@ -1,13 +1,11 @@
 namespace OJS.Servers.Infrastructure.Extensions
 {
-    using AutoMapper;
     using Hangfire;
     using Microsoft.AspNetCore.Builder;
-    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using OJS.Servers.Infrastructure.Filters;
     using OJS.Servers.Infrastructure.Middleware;
-    using OJS.Services.Infrastructure.Mapping;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
     using static OJS.Common.GlobalConstants.Urls;
 
     public static class WebApplicationExtensions
@@ -53,20 +51,6 @@ namespace OJS.Servers.Infrastructure.Extensions
 
             app.UseHangfireDashboard(HangfirePath);
             app.MapHangfireDashboard(dashboardOptions);
-
-            return app;
-        }
-
-        private static IApplicationBuilder UseAutoMapper(this WebApplication app)
-        {
-            var hostApplicationLifetime = app.Services.GetRequiredService<IHostApplicationLifetime>();
-
-            hostApplicationLifetime.ApplicationStarted.Register(() =>
-            {
-                var mapper = app.Services.GetRequiredService<IMapper>();
-
-                AutoMapperSingleton.Init(mapper);
-            });
 
             return app;
         }

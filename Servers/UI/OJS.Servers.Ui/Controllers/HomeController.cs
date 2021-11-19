@@ -7,8 +7,8 @@
     using OJS.Servers.Infrastructure.Controllers;
     using OJS.Servers.Ui.Models.Home;
     using OJS.Servers.Ui.Models.Home.Index;
-    using OJS.Services.Infrastructure.Mapping;
     using OJS.Services.Ui.Business;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
     using System.Threading.Tasks;
 
     public class HomeController : BaseViewController

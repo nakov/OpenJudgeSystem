@@ -12,12 +12,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
       <PackageReference Include="Hangfire.AspNetCore" Version="1.7.26" />
       <PackageReference Include="Hangfire.SqlServer" Version="1.7.26" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.0" />
+      <PackageReference Include="SoftUni.AutoMapper.Infrastructure" Version="1.0.3" />
+      <PackageReference Include="SoftUni.Services.Infrastructure" Version="1.0.2" />
     </ItemGroup>
 
 </Project>
