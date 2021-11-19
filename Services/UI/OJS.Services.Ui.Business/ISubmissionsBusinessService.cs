@@ -1,9 +1,8 @@
 namespace OJS.Services.Ui.Business
 {
-    using OJS.Services.Infrastructure;
+    using SoftUni.Services.Infrastructure;
 
     public interface ISubmissionsBusinessService : IService
     {
-
     }
 }

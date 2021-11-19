@@ -1,6 +1,5 @@
 namespace OJS.Servers.Infrastructure.Extensions
 {
-    using FluentExtensions.Extensions;
     using Hangfire;
     using Hangfire.SqlServer;
     using Microsoft.AspNetCore.DataProtection;
@@ -9,48 +8,30 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Net.Http.Headers;
     using OJS.Common.Enumerations;
-    using OJS.Common.Extensions;
-    using OJS.Common.Extensions.Strings;
     using OJS.Common.Utils;
     using OJS.Services.Common.Data;
     using OJS.Services.Common.Data.Implementations;
-    using OJS.Services.Infrastructure;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Infrastructure.HttpClients.Implementations;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.Data.Infrastructure.Enumerations;
     using SoftUni.Data.Infrastructure.Extensions;
+    using SoftUni.Services.Infrastructure.Extensions;
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
     using System.Net.Http;
     using static OJS.Common.GlobalConstants;
-    using static OJS.Common.GlobalConstants.Assemblies;
     using static OJS.Common.GlobalConstants.EnvironmentVariables;
     using static OJS.Servers.Infrastructure.ServerConstants;
 
     public static class ServiceCollectionExtensions
     {
-        private static readonly Type ServiceType = typeof(IService);
-        private static readonly Type ScopedServiceType = typeof(IScopedService);
-        private static readonly Type SingletonServiceType = typeof(ISingletonService);
-
-        public static IServiceCollection AddWebServer<TStartup>(
-            this IServiceCollection services,
-            params string[] projectNames)
-        {
-            var currentProjectName = typeof(TStartup).GetProjectName();
-            if (projectNames == null || !projectNames.Any())
-            {
-                projectNames = new[] { currentProjectName };
-            }
-
-            return services
+        public static IServiceCollection AddWebServer<TStartup>(this IServiceCollection services)
+            => services
                 .AddAutoMapperConfigurations<TStartup>()
-                .AddWebServerServices(projectNames)
+                .AddWebServerServices<TStartup>()
                 .AddAuthenticationServices();
-        }
 
         public static IServiceCollection AddIdentityDatabase<TDbContext, TIdentityUser>(
             this IServiceCollection services,
@@ -91,52 +72,14 @@ namespace OJS.Servers.Infrastructure.Extensions
             return services;
         }
 
-        private static IServiceCollection AddWebServerServices(
-            this IServiceCollection services,
-            params string[] projectNames)
+        private static IServiceCollection AddWebServerServices<TStartUp>(this IServiceCollection services)
         {
             services
-                .AddFrom(projectNames
-                    .Select(projectName => new[]
-                    {
-                        string.Format(DataServices, projectName),
-                        string.Format(BusinessServices, projectName),
-                    })
-                    .SelectMany(x => x)
-                    .Concat(new[]
-                    {
-                        CommonDataServices,
-                        CommonServices,
-                        InfrastructureServices,
-                    })
-                    .ToArray())
+                .AddConventionServices<TStartUp>()
                 .AddTransient(typeof(IDataService<>), typeof(DataService<>));
 
             services.AddHttpClient<IHttpClientService, HttpClientService>(ConfigureHttpClient);
             services.AddHttpClient<ISulsPlatformHttpClientService, SulsPlatformHttpClientService>(ConfigureHttpClient);
-
-            return services;
-        }
-
-        private static IServiceCollection AddFrom(
-            this IServiceCollection services,
-            params string[] assemblyNames)
-        {
-            assemblyNames
-                .GetExportedTypes()
-                .Where(t => t.IsClass && !t.IsAbstract)
-                .Where(t =>
-                    ServiceType.IsAssignableFrom(t) ||
-                    ScopedServiceType.IsAssignableFrom(t) ||
-                    SingletonServiceType.IsAssignableFrom(t))
-                .Select(t => new
-                {
-                    Implementation = t,
-                    Service = t.IsGenericTypeDefinition
-                        ? GetInterfaceOf(t).GetGenericTypeDefinition()
-                        : GetInterfaceOf(t),
-                })
-                .ForEach(s => services.RegisterService(s.Implementation, s.Service));
 
             return services;
         }
@@ -160,52 +103,7 @@ namespace OJS.Servers.Infrastructure.Extensions
             return services;
         }
 
-        private static Type GetInterfaceOf(Type type)
-            => type.GetInterface($"I{type.Name}");
-
         private static void ConfigureHttpClient(HttpClient client)
             => client.DefaultRequestHeaders.Add(HeaderNames.Accept, MimeTypes.ApplicationJson);
-
-        private static void RegisterService(this IServiceCollection services, Type implementation, Type service = null)
-        {
-            if (implementation == null)
-            {
-                throw new ArgumentException("Cannot register service with no implementation");
-            }
-
-            if (SingletonServiceType.IsAssignableFrom(implementation))
-            {
-                if (service == null)
-                {
-                    services.AddSingleton(implementation);
-                }
-                else
-                {
-                    services.AddSingleton(service, implementation);
-                }
-            }
-            else if (ScopedServiceType.IsAssignableFrom(implementation))
-            {
-                if (service == null)
-                {
-                    services.AddScoped(implementation);
-                }
-                else
-                {
-                    services.AddScoped(service, implementation);
-                }
-            }
-            else
-            {
-                if (service == null)
-                {
-                    services.AddTransient(implementation);
-                }
-                else
-                {
-                    services.AddTransient(service, implementation);
-                }
-            }
-        }
     }
 }

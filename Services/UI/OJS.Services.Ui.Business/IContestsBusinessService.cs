@@ -1,8 +1,8 @@
 namespace OJS.Services.Ui.Business
 {
     using OJS.Services.Common.Models;
-    using OJS.Services.Infrastructure;
     using OJS.Services.Ui.Models.Contests;
+    using SoftUni.Services.Infrastructure;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 

@@ -1,6 +1,6 @@
 namespace OJS.Services.Infrastructure.BackgroundJobs
 {
-    using OJS.Services.Infrastructure;
+    using SoftUni.Services.Infrastructure;
     using System;
     using System.Linq.Expressions;
 

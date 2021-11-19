@@ -3,7 +3,7 @@ namespace OJS.Services.Ui.Business
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Participants;
     using OJS.Services.Common.Models;
-    using OJS.Services.Infrastructure;
+    using SoftUni.Services.Infrastructure;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;

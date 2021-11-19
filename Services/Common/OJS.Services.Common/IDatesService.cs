@@ -1,6 +1,6 @@
 namespace OJS.Services.Common
 {
-    using OJS.Services.Infrastructure;
+    using SoftUni.Services.Infrastructure;
     using System;
 
     public interface IDatesService : ISingletonService

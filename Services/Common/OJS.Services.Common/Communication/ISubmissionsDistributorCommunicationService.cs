@@ -1,9 +1,8 @@
 namespace OJS.Services.Common.Communication
 {
-    using OJS.Services.Infrastructure;
+    using SoftUni.Services.Infrastructure;
 
     public interface ISubmissionsDistributorCommunicationService : IService
     {
-
     }
 }

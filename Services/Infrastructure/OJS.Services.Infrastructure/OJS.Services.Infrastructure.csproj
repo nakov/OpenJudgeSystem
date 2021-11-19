@@ -6,6 +6,7 @@
 
     <ItemGroup>
       <PackageReference Include="Hangfire.Core" Version="1.7.26" />
+      <PackageReference Include="SoftUni.Services.Infrastructure" Version="1.0.4" />
     </ItemGroup>
 
     <ItemGroup>

@@ -4,19 +4,6 @@ namespace OJS.Common
     {
         public const string ApplicationFullName = "OpenJudgeSystem";
 
-        public static class Assemblies
-        {
-            // Models
-            public const string ModelsRegexPattern = "^OJS\\..+Models,";
-
-            // Services
-            public const string BusinessServices = "OJS.Services.{0}.Business";
-            public const string DataServices = "OJS.Services.{0}.Data";
-            public const string CommonServices = "OJS.Services.Common";
-            public const string CommonDataServices = "OJS.Services.Common.Data";
-            public const string InfrastructureServices = "OJS.Services.Infrastructure";
-        }
-
         public static class RegexPatterns
         {
             public const string UpperCaseGroupsRegex = @"(?<!^)(?=[A-Z])";
