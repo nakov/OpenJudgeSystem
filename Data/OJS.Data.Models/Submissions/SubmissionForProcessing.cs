@@ -1,6 +1,6 @@
 namespace OJS.Data.Models.Submissions
 {
-    using OJS.Data.Infrastructure.Models;
+    using SoftUni.Data.Infrastructure.Models;
 
     public class SubmissionForProcessing : Entity<int>
     {

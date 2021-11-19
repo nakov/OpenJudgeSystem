@@ -10,4 +10,8 @@
       <ProjectReference Include="..\OJS.Data.Validation\OJS.Data.Validation.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="SoftUni.Data.Infrastructure" Version="1.0.3" />
+    </ItemGroup>
+
 </Project>

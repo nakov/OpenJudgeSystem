@@ -1,9 +1,9 @@
-namespace OJS.Services.Common.Data.Infrastructure.Implementations
+namespace OJS.Services.Common.Data.Implementations
 {
     using Microsoft.EntityFrameworkCore;
     using OJS.Common.Utils;
-    using OJS.Data.Infrastructure.Models;
     using OJS.Services.Infrastructure.Mapping;
+    using SoftUni.Data.Infrastructure.Models;
     using System;
     using System.Collections.Generic;
     using System.Linq;

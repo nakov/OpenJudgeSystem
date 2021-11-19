@@ -1,7 +1,7 @@
 namespace OJS.Data.Models.Contests
 {
     using OJS.Common.Enumerations;
-    using OJS.Data.Infrastructure.Models;
+    using SoftUni.Data.Infrastructure.Models;
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Problems;
     using System;

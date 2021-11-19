@@ -1,6 +1,6 @@
 namespace OJS.Data.Models.Problems
 {
-    using OJS.Data.Infrastructure.Models;
+    using SoftUni.Data.Infrastructure.Models;
     using OJS.Data.Models.Checkers;
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Submissions;

@@ -1,6 +1,6 @@
 namespace OJS.Data.Models.Participants
 {
-    using OJS.Data.Infrastructure.Models;
+    using SoftUni.Data.Infrastructure.Models;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Submissions;
     using OJS.Data.Models.Users;

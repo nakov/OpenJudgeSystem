@@ -1,9 +1,7 @@
 namespace OJS.Data
 {
     using Microsoft.EntityFrameworkCore;
-    using OJS.Common.Contracts;
     using OJS.Common.Enumerations;
-    using OJS.Data.Infrastructure;
     using OJS.Data.Infrastructure.Extensions;
     using OJS.Data.Models;
     using OJS.Data.Models.Checkers;
@@ -14,6 +12,8 @@ namespace OJS.Data
     using OJS.Data.Models.Tests;
     using OJS.Data.Models.Users;
     using OJS.Data.Validation;
+    using SoftUni.Data.Infrastructure;
+    using SoftUni.Data.Infrastructure.Enumerations;
 
     public class OjsDbContext : BaseAuthDbContext<OjsDbContext, UserProfile>
     {

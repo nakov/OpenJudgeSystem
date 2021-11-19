@@ -4,7 +4,7 @@ namespace OJS.Services.Ui.Data.Implementations
     using OJS.Common.Enumerations;
     using OJS.Data;
     using OJS.Data.Models.Participants;
-    using OJS.Services.Common.Data.Infrastructure.Implementations;
+    using OJS.Services.Common.Data.Implementations;
     using System;
     using System.Collections.Generic;
     using System.Linq;

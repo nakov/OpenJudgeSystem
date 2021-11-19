@@ -1,7 +1,7 @@
 namespace OJS.Data.Models.Submissions
 {
     using OJS.Common.Extensions.Strings;
-    using OJS.Data.Infrastructure.Models;
+    using SoftUni.Data.Infrastructure.Models;
     using OJS.Data.Models.Problems;
     using OJS.Data.Models.Users;
     using System.ComponentModel.DataAnnotations.Schema;

@@ -2,7 +2,7 @@ namespace OJS.Services.Ui.Data.Implementations
 {
     using OJS.Data;
     using OJS.Data.Models.Contests;
-    using OJS.Services.Common.Data.Infrastructure.Implementations;
+    using OJS.Services.Common.Data.Implementations;
     using System.Threading.Tasks;
 
     public class ExamGroupsDataService : DataService<ExamGroup>, IExamGroupsDataService

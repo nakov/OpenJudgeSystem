@@ -6,7 +6,7 @@ namespace OJS.Services.Ui.Data.Implementations
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Problems;
     using OJS.Services.Common;
-    using OJS.Services.Common.Data.Infrastructure.Implementations;
+    using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Infrastructure.Mapping;
     using System;
     using System.Collections.Generic;

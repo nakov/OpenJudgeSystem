@@ -1,7 +1,7 @@
 namespace OJS.Services.Ui.Data
 {
     using OJS.Data.Models.Participants;
-    using OJS.Services.Common.Data.Infrastructure;
+    using OJS.Services.Common.Data;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 

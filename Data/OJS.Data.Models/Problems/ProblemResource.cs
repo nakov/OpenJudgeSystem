@@ -1,7 +1,7 @@
 namespace OJS.Data.Models.Problems
 {
     using OJS.Common.Enumerations;
-    using OJS.Data.Infrastructure.Models;
+    using SoftUni.Data.Infrastructure.Models;
     using System.ComponentModel.DataAnnotations;
     using static OJS.Data.Validation.ConstraintConstants;
     using static OJS.Data.Validation.ConstraintConstants.Problem;

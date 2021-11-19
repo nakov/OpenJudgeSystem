@@ -2,7 +2,7 @@ namespace OJS.Data.Models.Submissions
 {
     using OJS.Common.Enumerations;
     using OJS.Common.Extensions;
-    using OJS.Data.Infrastructure.Models;
+    using SoftUni.Data.Infrastructure.Models;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;

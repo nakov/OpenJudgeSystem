@@ -3,7 +3,7 @@
     using Microsoft.EntityFrameworkCore;
     using OJS.Data;
     using OJS.Data.Models.Checkers;
-    using OJS.Services.Common.Data.Infrastructure.Implementations;
+    using OJS.Services.Common.Data.Implementations;
     using System.Threading.Tasks;
 
     public class CheckersDataService : DataService<Checker>, ICheckersDataService

@@ -3,7 +3,7 @@
     using Microsoft.EntityFrameworkCore;
     using OJS.Data;
     using OJS.Data.Models.Contests;
-    using OJS.Services.Common.Data.Infrastructure.Implementations;
+    using OJS.Services.Common.Data.Implementations;
     using System.Linq;
     using System.Threading.Tasks;
 

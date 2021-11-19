@@ -1,6 +1,6 @@
 namespace OJS.Data.Models
 {
-    using OJS.Data.Infrastructure.Models;
+    using SoftUni.Data.Infrastructure.Models;
     using OJS.Data.Models.Users;
 
     public class AccessLog : AuditInfoEntity<int>

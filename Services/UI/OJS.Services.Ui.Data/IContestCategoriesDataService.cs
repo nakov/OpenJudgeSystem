@@ -1,7 +1,7 @@
 ﻿namespace OJS.Services.Ui.Data
 {
     using OJS.Data.Models.Contests;
-    using OJS.Services.Common.Data.Infrastructure;
+    using OJS.Services.Common.Data;
     using System.Linq;
     using System.Threading.Tasks;
 

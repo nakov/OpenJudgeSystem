@@ -9,16 +9,17 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Net.Http.Headers;
-    using OJS.Common.Contracts;
     using OJS.Common.Enumerations;
     using OJS.Common.Extensions;
     using OJS.Common.Extensions.Strings;
     using OJS.Common.Utils;
-    using OJS.Services.Common.Data.Infrastructure;
-    using OJS.Services.Common.Data.Infrastructure.Implementations;
+    using OJS.Services.Common.Data;
+    using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Infrastructure;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Infrastructure.HttpClients.Implementations;
+    using SoftUni.Data.Infrastructure.Enumerations;
+    using SoftUni.Data.Infrastructure.Extensions;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -58,11 +59,7 @@ namespace OJS.Servers.Infrastructure.Extensions
             where TIdentityUser : IdentityUser
         {
             services
-                .AddScoped<DbContext, TDbContext>()
-                .AddGlobalQueryFilterTypes(globalQueryFilterTypes)
-                .AddDbContext<TDbContext>()
-                .ApplyMigrations<TDbContext>()
-                .AddTransient<ITransactionsProvider, TransactionsProvider<TDbContext>>();
+                .AddSqlDatabase<TDbContext>(globalQueryFilterTypes);
 
             services
                 .AddIdentity<TIdentityUser, IdentityRole>()
@@ -120,28 +117,6 @@ namespace OJS.Servers.Infrastructure.Extensions
 
             return services;
         }
-
-        private static IServiceCollection ApplyMigrations<TDbContext>(this IServiceCollection services)
-            where TDbContext : DbContext
-        {
-            var scopeFactory = services
-                .BuildServiceProvider()
-                .GetRequiredService<IServiceScopeFactory>();
-
-            using var scope = scopeFactory.CreateScope();
-            using var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
-            dbContext.Database.Migrate();
-
-            return services;
-        }
-
-        private static IServiceCollection AddGlobalQueryFilterTypes(
-            this IServiceCollection services,
-            IEnumerable<GlobalQueryFilterType> globalQueryFilterTypes)
-            => services
-                .AddSingleton<IGlobalQueryFilterTypesCache>(
-                    new GlobalQueryFilterTypesCache(
-                        globalQueryFilterTypes ?? EnumUtils.GetValuesFrom<GlobalQueryFilterType>()));
 
         private static IServiceCollection AddFrom(
             this IServiceCollection services,

@@ -1,7 +1,7 @@
 namespace OJS.Data.Models.Tests
 {
     using OJS.Common.Extensions.Strings;
-    using OJS.Data.Infrastructure.Models;
+    using SoftUni.Data.Infrastructure.Models;
     using OJS.Data.Models.Problems;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations.Schema;

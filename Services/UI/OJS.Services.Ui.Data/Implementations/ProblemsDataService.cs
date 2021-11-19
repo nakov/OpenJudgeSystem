@@ -3,7 +3,7 @@ namespace OJS.Services.Ui.Data.Implementations
     using Microsoft.EntityFrameworkCore;
     using OJS.Data;
     using OJS.Data.Models.Problems;
-    using OJS.Services.Common.Data.Infrastructure.Implementations;
+    using OJS.Services.Common.Data.Implementations;
     using System.Threading.Tasks;
 
     public class ProblemsDataService : DataService<Problem>, IProblemsDataService

@@ -1,7 +1,7 @@
-namespace OJS.Services.Common.Data.Infrastructure
+namespace OJS.Services.Common.Data
 {
-    using OJS.Data.Infrastructure.Models;
     using OJS.Services.Infrastructure;
+    using SoftUni.Data.Infrastructure.Models;
     using System;
     using System.Collections.Generic;
     using System.Linq.Expressions;
