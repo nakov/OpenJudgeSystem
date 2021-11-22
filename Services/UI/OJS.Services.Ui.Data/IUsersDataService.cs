@@ -3,9 +3,9 @@
     using System.Threading.Tasks;
 
     using OJS.Data.Models.Users;
-    using SoftUni.Services.Infrastructure;
+    using OJS.Services.Common.Data;
 
-    public interface IUsersDataService : IService
+    public interface IUsersDataService : IDataService<UserProfile>
     {
         Task<UserProfile> GetByUsername(string username);
     }
