@@ -19,6 +19,8 @@ namespace OJS.Services.Common.Data
 
         void Delete(TEntity entity);
 
+        void Delete(Expression<Func<TEntity, bool>> filter = null);
+
         Task DeleteById(object id);
 
         void DeleteMany(IEnumerable<TEntity> entities);

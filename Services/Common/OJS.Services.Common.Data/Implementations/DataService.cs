@@ -33,6 +33,9 @@ namespace OJS.Services.Common.Data.Implementations
         public virtual void Delete(TEntity entity)
             => this.db.Remove(entity);
 
+        public void Delete(Expression<Func<TEntity, bool>> filter = null)
+            => this.db.RemoveRange(this.GetQuery(filter));
+
         public virtual async Task DeleteById(object id)
         {
             var entity = await this.DbSet.FindAsync(id);
