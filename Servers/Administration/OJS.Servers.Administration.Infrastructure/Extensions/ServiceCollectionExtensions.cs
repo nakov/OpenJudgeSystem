@@ -6,6 +6,8 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
     using OJS.Data;
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Extensions;
+    using SoftUni.Data.Infrastructure.Enumerations;
+    using System.Linq;
 
     public static class ServiceCollectionExtensions
     {
@@ -15,7 +17,7 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
             => services
                 .AddWebServer<TProgram>()
                 .AddHangfireServer(AppName)
-                .AddIdentityDatabase<OjsDbContext, UserProfile>()
+                .AddIdentityDatabase<OjsDbContext, UserProfile>(Enumerable.Empty<GlobalQueryFilterType>())
                 .UseAutoCrudAdmin()
                 .AddControllersWithViews();
     }
