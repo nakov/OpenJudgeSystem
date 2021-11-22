@@ -1,13 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using OJS.Data.Models.Tests;
-using OJS.Services.Common.Data.Infrastructure.Implementations;
-using System.Linq;
-
-namespace OJS.Services.Ui.Data.Implementations
+﻿namespace OJS.Services.Ui.Data.Implementations
 {
+    using Microsoft.EntityFrameworkCore;
+    using OJS.Data.Models.Tests;
+    using System.Linq;
+    using OJS.Services.Common.Data.Implementations;
+
     public class TestsDataService : DataService<Test>, ITestsDataService
     {
-
         public TestsDataService(DbContext tests) : base(tests) {}
 
         public IQueryable<Test> GetByIdQuery(int id) =>
