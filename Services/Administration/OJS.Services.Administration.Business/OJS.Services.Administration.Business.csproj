@@ -4,4 +4,13 @@
         <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\Common\OJS.Services.Common.Models\OJS.Services.Common.Models.csproj" />
+      <ProjectReference Include="..\..\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Implementations" />
+    </ItemGroup>
+
 </Project>
