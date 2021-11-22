@@ -6,6 +6,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj" />
+        <ProjectReference Include="..\OJS.Services.Common.Models\OJS.Services.Common.Models.csproj" />
     </ItemGroup>
 
 </Project>
