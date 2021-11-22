@@ -6,6 +6,9 @@ namespace OJS.Common
         public const int BatchOperationsChunkSize = 3000;
         public const double ProblemDefaultOrderBy = 0;
 
+        public const int BestSubmissionEligibleForArchiveAgeInYears = 2;
+        public const int NonBestSubmissionEligibleForArchiveAgeInYears = 1;
+
         public static class RegexPatterns
         {
             public const string UpperCaseGroupsRegex = @"(?<!^)(?=[A-Z])";

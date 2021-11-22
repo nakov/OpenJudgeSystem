@@ -32,5 +32,9 @@ namespace OJS.Services.Ui.Data
         void DeleteByProblem(int problemId);
 
         void RemoveTestRunsCacheByProblem(int problemId);
+
+        bool HasSubmissionTimeLimitPassedForParticipant(int participantId, int limitBetweenSubmissions);
+
+        bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId);
     }
 }

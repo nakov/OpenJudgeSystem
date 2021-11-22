@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace OJS.Services.Ui.Data.Implementations
 {
     using Microsoft.EntityFrameworkCore;
@@ -77,5 +79,31 @@ namespace OJS.Services.Ui.Data.Implementations
                 {
                     TestRunsCache = null
                 });
+
+        public bool HasSubmissionTimeLimitPassedForParticipant(int participantId, int limitBetweenSubmissions)
+        {
+            var lastSubmission =
+                this.DbSet
+                    .Where(s => s.ParticipantId == participantId)
+                    .OrderByDescending(s => s.CreatedOn)
+                    .Select(s => new { s.Id, s.CreatedOn })
+                    .FirstOrDefault();
+
+            if (lastSubmission != null)
+            {
+                // check if the submission was sent after the submission time limit has passed
+                var latestSubmissionTime = lastSubmission.CreatedOn;
+                var differenceBetweenSubmissions = DateTime.Now - latestSubmissionTime;
+                if (differenceBetweenSubmissions.TotalSeconds < limitBetweenSubmissions)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId) =>
+            this.DbSet.Any(s => s.ProblemId == problemId && s.Participant.UserId == userId && !s.Processed);
     }
 }

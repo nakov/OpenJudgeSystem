@@ -1,9 +1,10 @@
-﻿namespace OJS.Services.Ui.Business
+﻿using System.Threading.Tasks;
+
+namespace OJS.Services.Administration.Business
 {
     using OJS.Data.Models.Submissions;
     using SoftUni.Services.Infrastructure;
     using System.Linq;
-    using System.Threading.Tasks;
 
     public interface ISubmissionsBusinessService : IService
     {
@@ -11,6 +12,6 @@
 
         Task RecalculatePointsByProblem(int problemId);
 
-        // Task HardDeleteAllArchived();
+        Task HardDeleteAllArchived();
     }
 }
