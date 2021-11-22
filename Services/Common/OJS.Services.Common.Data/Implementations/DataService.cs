@@ -108,7 +108,7 @@ namespace OJS.Services.Common.Data.Implementations
             return this.DbSet.Where(filter);
         }
 
-        protected virtual IQueryable<TEntity> GetQuery(
+        public virtual IQueryable<TEntity> GetQuery(
             Expression<Func<TEntity, bool>> filter = null,
             Expression<Func<TEntity, object>> orderBy = null,
             bool descending = false,

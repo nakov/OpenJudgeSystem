@@ -56,7 +56,14 @@ namespace OJS.Services.Common.Data
 
         Task SaveChanges();
 
-        // TODO: Refactor services to not use this as public method and remove it
+        // TODO: Refactor services to not use the following methods as public and remove them from here
         IQueryable<TEntity> GetByIdQuery(object id);
+
+        IQueryable<TEntity> GetQuery(
+            Expression<Func<TEntity, bool>> filter = null,
+            Expression<Func<TEntity, object>> orderBy = null,
+            bool descending = false,
+            int? skip = null,
+            int? take = null);
     }
 }
