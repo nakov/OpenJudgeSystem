@@ -65,8 +65,7 @@ namespace OJS.Services.Common.Data.Implementations
                 .ToListAsync();
 
         public virtual async Task<TEntity> OneById(object id)
-            => await this.GetByIdQuery(id)
-                .FirstOrDefaultAsync();
+            => await this.DbSet.FindAsync(id);
 
         public virtual async Task<TResult> OneByIdTo<TResult>(object id)
            where TResult : class
