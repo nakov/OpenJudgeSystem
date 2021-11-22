@@ -8,6 +8,7 @@
     public interface IUsersDataService : IService
     {
         Task<UserProfile> GetByUsername(string username);
-        IQueryable<UserProfile> GetAllByRole(string roleId);
+
+        // IQueryable<UserProfile> GetAllByRole(string roleId);
     }
 }

@@ -4,7 +4,7 @@ namespace OJS.Common
     {
         public const string ApplicationFullName = "OpenJudgeSystem";
         public const int BatchOperationsChunkSize = 3000;
-        public const int ProblemDefaultOrderBy = 0;
+        public const double ProblemDefaultOrderBy = 0;
 
         public static class RegexPatterns
         {

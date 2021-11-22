@@ -16,7 +16,7 @@ namespace OJS.Services.Administration.Data
 
         Task<IEnumerable<int>> GetIdsOfAllProcessing();
 
-        Task AddOrUpdateBySubmissionIds(ICollection<int> submissionIds);
+        // Task AddOrUpdateBySubmissionIds(ICollection<int> submissionIds);
 
         Task AddOrUpdateBySubmission(int submissionId);
 

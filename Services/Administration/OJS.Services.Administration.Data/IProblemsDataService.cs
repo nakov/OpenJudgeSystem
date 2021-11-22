@@ -18,9 +18,9 @@ namespace OJS.Services.Administration.Data
 
         bool ExistsById(int id);
 
-        int GetNewOrderByContest(int contestId);
+        double GetNewOrderByContest(int contestId);
 
-        int GetNewOrderByProblemGroup(int problemGroupId);
+        double GetNewOrderByProblemGroup(int problemGroupId);
 
         string GetNameById(int id);
     }
