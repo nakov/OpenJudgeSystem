@@ -17,6 +17,7 @@ namespace OJS.Common
             public const string EnvironmentKey = "ASPNETCORE_ENVIRONMENT";
             public const string PathToCommonKeyRingFolderKey = "PATH_TO_COMMON_KEY_RING_FOLDER";
             public const string SulsPlatformBaseUrlKey = "SULS_PLATFORM_BASE_URL";
+            public const string SulsPlatformApiKeyKey = "SULS_PLATFORM_API_KEY";
 
             // Values
             public const string DockerValue = "Docker";
@@ -34,6 +35,12 @@ namespace OJS.Common
         public static class Urls
         {
             public const string HangfirePath = "/hangfire";
+
+            public const string GetUserInfoByIdPath = "/api/users/getjudgeuserinfobyuserid";
+            public const string GetUserInfoByUsernamePath = "/api/users/getjudgeuserinfobyusername";
+            public const string ExternalRegisterPath = "/identity/externaljudgeregister";
+            public const string AddSubmissionToDistributorPath = "/submissions/add";
+            public const string AddManySubmissionsToDistributorPath = "/submissions/addmany";
         }
 
         public static class MimeTypes

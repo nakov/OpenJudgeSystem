@@ -11,10 +11,10 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
 
     public class HttpClientService : IHttpClientService
     {
-        private readonly HttpClient client;
+        protected readonly HttpClient Client;
 
         public HttpClientService(HttpClient client)
-            => this.client = client;
+            => this.Client = client;
 
         public async Task<TResponse> Post<TResponse>(object model, string url)
         {
@@ -67,7 +67,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
                 throw new ArgumentException(UrlCannotBeNull);
             }
 
-            var responseMessage = await this.client.GetAsync(url);
+            var responseMessage = await this.Client.GetAsync(url);
             await this.ValidateResponseMessage(responseMessage);
 
             return responseMessage;
@@ -75,7 +75,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
 
         private async Task<TResponse> Post<TResponse>(HttpContent content, string url)
         {
-            var responseMessage = await this.client.PostAsync(url, content);
+            var responseMessage = await this.Client.PostAsync(url, content);
             await this.ValidateResponseMessage(responseMessage);
             var result = await responseMessage.Content.ReadFromJsonAsync<TResponse>();
 
