@@ -59,11 +59,12 @@ namespace OJS.Services.Ui.Data.Implementations
         }
 
         public Task RemoveContestByContest(int contestId)
-            =>  this.DbSet.UpdateFromQueryAsync(
-                eg => eg.ContestId == contestId,
-                examGroup => new ExamGroup
-                {
-                    ContestId = null
-                });
+            => this.DbSet
+                .Where(eg => eg.ContestId == contestId)
+                .UpdateFromQueryAsync(
+                    examGroup => new ExamGroup
+                    {
+                        ContestId = null,
+                    });
     }
 }

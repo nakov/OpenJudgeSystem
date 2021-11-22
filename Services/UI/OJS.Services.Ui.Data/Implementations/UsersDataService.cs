@@ -9,8 +9,7 @@
 
     public class UsersDataService : DataService<UserProfile>, IUsersDataService
     {
-        public UsersDataService(OjsDbContext db)
-            : base(db)
+        public UsersDataService(OjsDbContext db) : base(db)
         {
         }
 
