@@ -32,7 +32,7 @@
             var apiKey = request.QueryString[ApiKeyQueryStringParamName] ?? request[ApiKeyQueryStringParamName];
 
             var isValidApiKey = !string.IsNullOrWhiteSpace(apiKey) &&
-                                (this.IsApiKeyInAdminUsers(apiKey) || this.IsApiKeyInSettings(apiKey));
+                                (this.IsApiKeyInSettings(apiKey) || this.IsApiKeyInAdminUsers(apiKey));
 
             if (!isValidApiKey)
             {
