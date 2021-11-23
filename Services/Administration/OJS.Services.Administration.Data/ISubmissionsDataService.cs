@@ -1,4 +1,5 @@
 ﻿using OJS.Data.Models.Submissions;
+using OJS.Services.Common.Data;
 using OJS.Services.Infrastructure;
 using SoftUni.Services.Infrastructure;
 using System;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace OJS.Services.Administration.Data
 {
-    public interface ISubmissionsDataService : IService
+    public interface ISubmissionsDataService : IDataService<Submission>
     {
         Submission GetBestForParticipantByProblem(int participantId, int problemId);
 

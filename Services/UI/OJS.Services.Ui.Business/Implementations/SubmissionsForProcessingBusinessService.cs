@@ -1,9 +1,8 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-
-namespace OJS.Services.Ui.Business.Implementations
+﻿namespace OJS.Services.Ui.Business.Implementations
 {
     using OJS.Services.Ui.Data;
+    using System.Linq;
+    using System.Threading.Tasks;
 
     public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessingBusinessService
     {

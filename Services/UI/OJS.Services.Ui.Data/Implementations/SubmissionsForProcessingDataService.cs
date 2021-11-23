@@ -1,14 +1,14 @@
 ﻿namespace OJS.Services.Ui.Data.Implementations
 {
-    using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
-    using OJS.Common;
-    using OJS.Common.Helpers;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Data.Implementations;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using FluentExtensions.Extensions;
+    using OJS.Common;
+    using OJS.Common.Helpers;
 
 
     public class SubmissionsForProcessingDataService : DataService<SubmissionForProcessing>, ISubmissionsForProcessingDataService
@@ -30,7 +30,7 @@
                 .Select(sfp => sfp.Id)
                 .ToListAsync();
 
-        public async Task AddOrUpdateBySubmissionIds(ICollection<int> submissionIds)
+        public Task AddOrUpdateBySubmissionIds(ICollection<int> submissionIds)
         {
             var newSubmissionsForProcessing = submissionIds
                 .Select(sId => new SubmissionForProcessing
@@ -38,19 +38,18 @@
                     SubmissionId = sId
                 });
 
-            using var scope = TransactionsHelper.CreateTransactionScope();
-            await submissionIds
-                .Chunk(GlobalConstants.BatchOperationsChunkSize)
-                .ForEachSequential(async chunk =>
-                {
-                    this.Delete(sfp => chunk.Contains(sfp.SubmissionId));
-                    await this.SaveChanges();
-                });
+            using (var scope = TransactionsHelper.CreateTransactionScope())
+            {
+                submissionIds
+                    .Chunk(GlobalConstants.BatchOperationsChunkSize)
+                    .ForEach(chunk => base.Delete(sfp => chunk.Contains(sfp.SubmissionId)));
 
-            await this.AddMany(newSubmissionsForProcessing);
-            await this.SaveChanges();
+                base.AddMany(newSubmissionsForProcessing);
 
-            scope.Complete();
+                scope.Complete();
+            }
+
+            return Task.CompletedTask;
         }
 
         public async Task AddOrUpdateBySubmission(int submissionId)
@@ -98,5 +97,11 @@
 
         public void Clean() =>
             this.DbSet.RemoveRange(this.DbSet.Where(sfp => sfp.Processed && !sfp.Processing));
+
+        public async Task Update(SubmissionForProcessing submissionForProcessing)
+        {
+            base.Update(submissionForProcessing);
+            await base.SaveChanges();
+        }
     }
 }
