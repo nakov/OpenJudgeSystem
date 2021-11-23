@@ -1,4 +1,4 @@
-namespace OJS.Services.Common.Communication
+namespace OJS.Services.Ui.Business
 {
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Models;

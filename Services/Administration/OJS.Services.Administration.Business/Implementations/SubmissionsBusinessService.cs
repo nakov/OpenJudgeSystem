@@ -1,8 +1,7 @@
-﻿namespace OJS.Services.Administration.Business.Implementations
+namespace OJS.Services.Administration.Business.Implementations
 {
     using Microsoft.EntityFrameworkCore;
     using OJS.Common;
-    using OJS.Common.Enumerations;
     using OJS.Common.Helpers;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Administration.Data;
@@ -11,6 +10,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using SoftUni.Judge.Common.Enumerations;
 
     public class SubmissionsBusinessService : ISubmissionsBusinessService
     {

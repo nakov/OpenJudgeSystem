@@ -3,6 +3,7 @@ namespace OJS.Services.Ui.Data
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Data;
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     public interface ISubmissionsDataService : IDataService<Submission>
@@ -24,6 +25,8 @@ namespace OJS.Services.Ui.Data
         IQueryable<Submission> GetAllHavingPointsExceedingLimit();
 
         IQueryable<int> GetIdsByProblem(int problemId);
+
+        IQueryable<Submission> GetAllByIdsQuery(IEnumerable<int> ids);
 
         bool IsOfficialById(int id);
 

@@ -1,12 +1,12 @@
 namespace OJS.Data.Models.Submissions
 {
-    using OJS.Common.Enumerations;
     using OJS.Common.Extensions.Strings;
     using SoftUni.Data.Infrastructure.Models;
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Problems;
     using OJS.Data.Models.Tests;
     using OJS.Data.Validation;
+    using SoftUni.Judge.Common.Enumerations;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;

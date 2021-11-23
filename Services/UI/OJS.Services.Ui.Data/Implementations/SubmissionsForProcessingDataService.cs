@@ -98,11 +98,5 @@
 
         public void Clean() =>
             this.DbSet.RemoveRange(this.DbSet.Where(sfp => sfp.Processed && !sfp.Processing));
-
-        public async Task Update(SubmissionForProcessing submissionForProcessing)
-        {
-            base.Update(submissionForProcessing);
-            await base.SaveChanges();
-        }
     }
 }
