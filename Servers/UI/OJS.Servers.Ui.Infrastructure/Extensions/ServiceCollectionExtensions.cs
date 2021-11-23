@@ -15,6 +15,7 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
                 .AddWebServer<TProgram>()
                 .AddHangfireServer(AppName)
                 .AddIdentityDatabase<OjsDbContext, UserProfile>()
+                .AddMemoryCache()
                 .AddControllersWithViews();
     }
 }
