@@ -12,6 +12,6 @@ namespace OJS.Services.Administration.Business
 
         Task RecalculatePointsByProblem(int problemId);
 
-        Task HardDeleteAllArchived();
+        // Task HardDeleteAllArchived();
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace OJS.Services.Administration.Business.Implementations
+﻿namespace OJS.Services.Administration.Business.Implementations
 {
     using Microsoft.EntityFrameworkCore;
     using OJS.Common;
@@ -8,27 +6,24 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Common.Helpers;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Administration.Data;
+    using OJS.Services.Administration.Models;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Transactions;
+    using System.Threading.Tasks;
 
     public class SubmissionsBusinessService : ISubmissionsBusinessService
     {
-        private readonly IEfDeletableEntityRepository<Submission> submissions;
         private readonly ISubmissionsDataService submissionsData;
-        private readonly IArchivedSubmissionsDataService archivedSubmissionsData;
+        // private readonly IArchivedSubmissionsDataService archivedSubmissionsData;
         private readonly IParticipantScoresDataService participantScoresData;
 
         public SubmissionsBusinessService(
-            IEfDeletableEntityRepository<Submission> submissions,
             ISubmissionsDataService submissionsData,
-            IArchivedSubmissionsDataService archivedSubmissionsData,
             IParticipantScoresDataService participantScoresData)
         {
-            this.submissions = submissions;
             this.submissionsData = submissionsData;
-            this.archivedSubmissionsData = archivedSubmissionsData;
+            // this.archivedSubmissionsData = archivedSubmissionsData;
             this.participantScoresData = participantScoresData;
         }
 
@@ -40,10 +35,10 @@ namespace OJS.Services.Administration.Business.Implementations
             var archiveNonBestSubmissionsLimit = DateTime.Now.AddYears(
                 -GlobalConstants.NonBestSubmissionEligibleForArchiveAgeInYears);
 
-            return this.submissionsData
+            return Task.FromResult(this.submissionsData
                 .GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate(
                     archiveBestSubmissionsLimit,
-                    archiveNonBestSubmissionsLimit);
+                    archiveNonBestSubmissionsLimit));
         }
 
         public Task RecalculatePointsByProblem(int problemId)
@@ -109,7 +104,7 @@ namespace OJS.Services.Administration.Business.Implementations
                     }
                 }
 
-                this.submissions.SaveChanges();
+                this.submissionsData.SaveChanges();
 
                 var participants = topResults.Keys.ToList();
 
@@ -126,32 +121,36 @@ namespace OJS.Services.Administration.Business.Implementations
                     existingScore.SubmissionId = topScore.SubmissionId;
                 }
 
-                this.submissions.SaveChanges();
+                this.submissionsData.SaveChanges();
 
                 scope.Complete();
             }
+
+            return Task.CompletedTask;
         }
 
-        public Task HardDeleteAllArchived() =>
-            this.archivedSubmissionsData
-                .GetAllUndeletedFromMainDatabase()
-                .Select(s => s.Id)
-                .AsEnumerable()
-                .ChunkBy(GlobalConstants.BatchOperationsChunkSize)
-                .ForEach(submissionIds =>
-                    this.HardDeleteByArchivedIds(new HashSet<int>(submissionIds)));
+        // public async Task HardDeleteAllArchived() =>
+        //     (await this.archivedSubmissionsData
+        //         .GetAllUndeletedFromMainDatabase())
+        //         .Select(s => s.Id)
+        //         .AsEnumerable()
+        //         .ChunkBy(GlobalConstants.BatchOperationsChunkSize)
+        //         .ForEach(submissionIds =>
+        //             this.HardDeleteByArchivedIds(new HashSet<int>(submissionIds)));
 
-        private void HardDeleteByArchivedIds(ICollection<int> ids)
-        {
-            using (var scope = TransactionsHelper.CreateTransactionScope(IsolationLevel.ReadCommitted))
-            {
-                this.participantScoresData.RemoveSubmissionIdsBySubmissionIds(ids);
-                this.submissions.HardDelete(s => ids.Contains(s.Id));
-
-                this.archivedSubmissionsData.SetToHardDeletedFromMainDatabaseByIds(ids);
-
-                scope.Complete();
-            }
-        }
+        // private Task HardDeleteByArchivedIds(ICollection<int> ids)
+        // {
+        //     using (var scope = TransactionsHelper.CreateTransactionScope(IsolationLevel.ReadCommitted))
+        //     {
+        //         this.participantScoresData.RemoveSubmissionIdsBySubmissionIds(ids);
+        //         this.submissionsData.Delete(s => ids.Contains(s.Id));
+        //
+        //         this.archivedSubmissionsData.SetToHardDeletedFromMainDatabaseByIds(ids);
+        //
+        //         scope.Complete();
+        //     }
+        //
+        //     return Task.CompletedTask;
+        // }
     }
 }
