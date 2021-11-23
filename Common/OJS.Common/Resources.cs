@@ -50,5 +50,11 @@ namespace OJS.Common
             public const string Cannot_copy_problem_groups_into_same_contest = "Cannot copy problem groups into the same contest";
             public const string Cannot_delete_problem_group_with_problems = "Cannot delete problem group with problems";
         }
+
+        public static class ProblemsBusiness
+        {
+            public const string Cannot_copy_problems_into_active_contest = "Cannot copy problems into an active contest";
+            public const string Cannot_copy_problems_into_same_contest = "Cannot copy problems into the same contest";
+        }
     }
 }

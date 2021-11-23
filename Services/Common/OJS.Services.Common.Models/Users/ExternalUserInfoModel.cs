@@ -38,7 +38,7 @@ namespace OJS.Services.Common.Models.Users
         public DateTime? DeletedOn { get; set; }
 
         public UserProfile Entity
-            => new()
+            => new UserProfile
             {
                 Id = this.Id,
                 UserName = this.UserName,

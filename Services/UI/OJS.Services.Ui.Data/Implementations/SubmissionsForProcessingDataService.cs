@@ -1,6 +1,9 @@
 ﻿namespace OJS.Services.Ui.Data.Implementations
 {
+    using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
+    using OJS.Common;
+    using OJS.Common.Helpers;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Data.Implementations;
     using System.Collections.Generic;
@@ -27,27 +30,28 @@
                 .Select(sfp => sfp.Id)
                 .ToListAsync();
 
-        // public Task AddOrUpdateBySubmissionIds(ICollection<int> submissionIds)
-        // {
-        //     var newSubmissionsForProcessing = submissionIds
-        //         .Select(sId => new SubmissionForProcessing
-        //         {
-        //             SubmissionId = sId
-        //         });
-        //
-        //     using (var scope = TransactionsHelper.CreateTransactionScope())
-        //     {
-        //         submissionIds
-        //             .Chunk(GlobalConstants.BatchOperationsChunkSize)
-        //             .ForEach(chunk => base.Delete(sfp => chunk.Contains(sfp.SubmissionId)));
-        //
-        //         base.AddMany(newSubmissionsForProcessing);
-        //
-        //         scope.Complete();
-        //     }
-        //
-        //     return Task.CompletedTask;
-        // }
+        public async Task AddOrUpdateBySubmissionIds(ICollection<int> submissionIds)
+        {
+            var newSubmissionsForProcessing = submissionIds
+                .Select(sId => new SubmissionForProcessing
+                {
+                    SubmissionId = sId
+                });
+
+            using var scope = TransactionsHelper.CreateTransactionScope();
+            await submissionIds
+                .Chunk(GlobalConstants.BatchOperationsChunkSize)
+                .ForEachSequential(async chunk =>
+                {
+                    this.Delete(sfp => chunk.Contains(sfp.SubmissionId));
+                    await this.SaveChanges();
+                });
+
+            await this.AddMany(newSubmissionsForProcessing);
+            await this.SaveChanges();
+
+            scope.Complete();
+        }
 
         public async Task AddOrUpdateBySubmission(int submissionId)
         {

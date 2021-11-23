@@ -25,5 +25,7 @@
         Task Update(SubmissionForProcessing submissionForProcessing);
 
         void Clean();
+
+        Task AddOrUpdateBySubmissionIds(ICollection<int> submissionIds);
     }
 }
