@@ -1,6 +1,6 @@
 namespace OJS.Common.Extensions
 {
-    using OJS.Common.Enumerations;
+    using SoftUni.Judge.Common.Enumerations;
 
     public static class CompilerTypeExtensions
     {

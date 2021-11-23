@@ -18,15 +18,15 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
         public SulsPlatformHttpClientService(HttpClient client)
             : base(client)
         {
-            var baseUrl = EnvironmentUtils.GetByKey(SulsPlatformBaseUrlKey);
+            var sulsPlatformBaseUrl = EnvironmentUtils.GetByKey(SulsPlatformBaseUrlKey);
 
-            if (string.IsNullOrWhiteSpace(baseUrl))
+            if (string.IsNullOrWhiteSpace(sulsPlatformBaseUrl))
             {
                 throw new ArgumentException(
                     string.Format(ValueCannotBeNullOrWhiteSpaceTemplate, SulsPlatformBaseUrlKey));
             }
 
-            client.BaseAddress = new Uri(baseUrl);
+            client.BaseAddress = new Uri(sulsPlatformBaseUrl);
 
             this.apiKey = EnvironmentUtils.GetByKey(SulsPlatformApiKeyKey);
 

@@ -1,8 +1,8 @@
 namespace OJS.Data.Models.Submissions
 {
-    using OJS.Common.Enumerations;
     using OJS.Common.Extensions;
     using SoftUni.Data.Infrastructure.Models;
+    using SoftUni.Judge.Common.Enumerations;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;

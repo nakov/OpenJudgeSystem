@@ -17,7 +17,7 @@ namespace OJS.Data.Models.Users
         public override string Email { get; set; }
 
         [Required]
-        public UserSettings UserSettings { get; set; } = new();
+        public UserSettings UserSettings { get; set; } = new UserSettings();
 
         public bool IsDeleted { get; set; }
 

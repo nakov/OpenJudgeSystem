@@ -4,7 +4,6 @@ namespace OJS.Services.Ui.Business.Implementations
     using Microsoft.EntityFrameworkCore;
     using OJS.Common.Helpers;
     using OJS.Data.Models.Problems;
-    using OJS.Services.Common.Communication;
     using OJS.Services.Common.Models;
     using OJS.Services.Ui.Data;
     using System;

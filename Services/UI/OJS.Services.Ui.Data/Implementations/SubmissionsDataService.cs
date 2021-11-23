@@ -7,6 +7,7 @@ namespace OJS.Services.Ui.Data.Implementations
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Data.Implementations;
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataService
@@ -58,6 +59,10 @@ namespace OJS.Services.Ui.Data.Implementations
         public IQueryable<int> GetIdsByProblem(int problemId)
             => this.GetAllByProblem(problemId)
                 .Select(s => s.Id);
+
+        public IQueryable<Submission> GetAllByIdsQuery(IEnumerable<int> ids)
+            => this.GetQuery()
+                .Where(s => ids.Contains(s.Id));
 
         public bool IsOfficialById(int id) =>
             this.GetByIdQuery(id)
