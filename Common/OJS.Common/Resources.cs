@@ -43,5 +43,12 @@ namespace OJS.Common
             public const string Participant_participation_time_not_set = "Participant does not have participation time set!";
             public const string Participation_time_reduce_below_duration_warning = "Participant time cannot be reduced, because it will be below the contest duration!";
         }
+
+        public static class ProblemGroupsBusiness
+        {
+            public const string Cannot_copy_problem_groups_into_active_contest = "Cannot copy problem group into an active contest";
+            public const string Cannot_copy_problem_groups_into_same_contest = "Cannot copy problem groups into the same contest";
+            public const string Cannot_delete_problem_group_with_problems = "Cannot delete problem group with problems";
+        }
     }
 }
