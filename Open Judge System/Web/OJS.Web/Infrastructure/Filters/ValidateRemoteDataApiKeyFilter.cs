@@ -17,11 +17,12 @@
     public class ValidateRemoteDataApiKeyFilter : IActionFilter<ValidateRemoteDataApiKeyAttribute>
     {
         private const string ApiKeyQueryStringParamName = "apiKey";
-
+        
         private readonly UserManager<UserProfile> userManager;
 
-        public ValidateRemoteDataApiKeyFilter(IOjsDbContext context) =>
+        public ValidateRemoteDataApiKeyFilter(IOjsDbContext context) => 
             this.userManager = new OjsUserManager<UserProfile>(new UserStore<UserProfile>(context.DbContext));
+
 
         public void OnActionExecuting(
             ValidateRemoteDataApiKeyAttribute attribute,
@@ -31,8 +32,7 @@
             var apiKey = request.QueryString[ApiKeyQueryStringParamName] ?? request[ApiKeyQueryStringParamName];
 
             var isValidApiKey = !string.IsNullOrWhiteSpace(apiKey) &&
-                this.userManager.Users.Any(u => u.Id == apiKey && u.IsDeleted == false) &&
-                this.userManager.IsInRole(apiKey, GlobalConstants.AdministratorRoleName);
+                                (this.IsApiKeyInSettings(apiKey) || this.IsApiKeyInAdminUsers(apiKey));
 
             if (!isValidApiKey)
             {
@@ -44,6 +44,18 @@
             ValidateRemoteDataApiKeyAttribute attribute,
             ActionExecutedContext filterContext)
         {
+        }
+        
+        private bool IsApiKeyInAdminUsers(string apiKey)
+        {
+            return 
+                this.userManager.Users.Any(u => u.Id == apiKey && u.IsDeleted == false) &&
+                this.userManager.IsInRole(apiKey, GlobalConstants.AdministratorRoleName);
+        }
+        
+        private bool IsApiKeyInSettings(string apiKey)
+        {
+            return apiKey == Settings.ApiKey;
         }
     }
 }

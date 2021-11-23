@@ -169,7 +169,7 @@
             var userInfoResponse = await this.httpRequester.GetAsync<ExternalUserInfoModel>(
                 new { userName },
                 string.Format(UrlConstants.GetUserInfoByUsernameApiFormat, Settings.SulsPlatformBaseUrl),
-                Settings.ApiKey);
+                Settings.SulsApiKey);
 
             if (!userInfoResponse.IsSuccess || userInfoResponse.Data == null)
             {

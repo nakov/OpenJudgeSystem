@@ -4,11 +4,11 @@
     using System.Globalization;
     using System.Linq;
     using System.Web.Mvc;
-
     using OJS.Common.Models;
     using OJS.Data.Models;
     using OJS.Services.Data.Contests;
     using OJS.Services.Data.Participants;
+    using OJS.Services.Data.Users;
     using OJS.Web.Areas.Api.Models;
     using OJS.Web.Infrastructure.Filters.Attributes;
 
@@ -22,13 +22,16 @@
 
         private readonly IContestsDataService contestsData;
         private readonly IParticipantsDataService participantsData;
+        private readonly IUsersDataService usersData;
 
         public ResultsController(
             IContestsDataService contestsData,
-            IParticipantsDataService participantsData)
+            IParticipantsDataService participantsData,
+            IUsersDataService usersData)
         {
             this.contestsData = contestsData;
             this.participantsData = participantsData;
+            this.usersData = usersData;
         }
 
         public ContentResult GetPointsByAnswer(string apiKey, int? contestId, string answer)
@@ -187,6 +190,42 @@
                 .ToList();
 
             return this.Json(participants, JsonRequestBehavior.AllowGet);
+        }
+        
+        public JsonResult GetUserContestsScore(string apiKey, string username, int[] contestIds)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                return this.Json(new ErrorMessageViewModel(InvalidArgumentsMessage), JsonRequestBehavior.AllowGet);
+            }
+
+            var user = this.usersData.GetByUsername(username);
+            if (user == null)
+            {
+                return this.Json(new ErrorMessageViewModel(InvalidArgumentsMessage), JsonRequestBehavior.AllowGet);
+            }
+            
+            var participants = this.participantsData
+                .GetAllByManyContestsAndUserId(
+                    contestIds,
+                    user.Id)
+                .ToList();
+
+            var participantsResults = participants.Select(participant => new
+                {
+                    participant.ContestId,
+                    MaxPoints = this.contestsData.GetMaxPointsById(participant.ContestId),
+                    Points = this.GetParticipantPoints(participant)
+                })
+                .ToList();
+
+            return this.Json(
+                new
+                {
+                    username,
+                    results = participantsResults
+                }, 
+                JsonRequestBehavior.AllowGet);
         }
 
         private int GetParticipantPoints(Participant participant) =>

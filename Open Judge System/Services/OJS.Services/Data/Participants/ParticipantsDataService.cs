@@ -39,6 +39,10 @@
         public IQueryable<Participant> GetAllByContest(int contestId) =>
             this.GetAll()
                 .Where(p => p.ContestId == contestId);
+        
+        public IQueryable<Participant> GetAllByManyContestsAndUserId(int[] contestIds, string userId) =>
+            this.GetAll()
+                .Where(p => contestIds.Contains(p.ContestId) && p.UserId == userId);
 
         public IQueryable<Participant> GetByIdQuery(int id) =>
             this.GetAll()
