@@ -22,6 +22,8 @@
 
         Task ResetProcessingStatusById(int id);
 
+        Task Update(SubmissionForProcessing submissionForProcessing);
+
         void Clean();
     }
 }
