@@ -6,7 +6,7 @@
 
     <ItemGroup>
       <PackageReference Include="Core.Fluent.Extensions" Version="1.0.1" />
-      <PackageReference Include="SoftUni.Judge.Common" Version="1.0.0" />
+      <PackageReference Include="SoftUni.Judge.Common" Version="1.0.2" />
     </ItemGroup>
 
 </Project>

@@ -8,7 +8,7 @@ namespace OJS.Servers.Administration
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            builder.Services.Configure<Program>();
+            builder.Services.ConfigureServices<Program>();
 
             builder
                 .Build()

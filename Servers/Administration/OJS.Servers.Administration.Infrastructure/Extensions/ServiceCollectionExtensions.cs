@@ -13,7 +13,7 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
     {
         private const ApplicationName AppName = ApplicationName.Administration;
 
-        public static void Configure<TProgram>(this IServiceCollection services)
+        public static void ConfigureServices<TProgram>(this IServiceCollection services)
             => services
                 .AddWebServer<TProgram>()
                 .AddHangfireServer(AppName)

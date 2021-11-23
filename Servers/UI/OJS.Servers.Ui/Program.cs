@@ -8,7 +8,7 @@ namespace OJS.Servers.Ui
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            builder.Services.Configure<Program>();
+            builder.Services.ConfigureServices<Program>(builder.Configuration);
 
             builder
                 .Build()

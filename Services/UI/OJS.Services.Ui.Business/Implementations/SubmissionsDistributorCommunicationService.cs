@@ -1,11 +1,13 @@
 namespace OJS.Services.Ui.Business.Implementations
 {
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Options;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Models;
     using OJS.Services.Common.Models.Submissions;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Ui.Data;
+    using OJS.Services.Ui.Models.Configurations;
     using SoftUni.Judge.Common.Enumerations;
     using SoftUni.Judge.Common.Extensions;
     using SoftUni.Judge.Common.Formatters;
@@ -21,20 +23,20 @@ namespace OJS.Services.Ui.Business.Implementations
         private readonly IDistributorHttpClientService distributorHttpClient;
         private readonly ISubmissionsDataService submissionsData;
         private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
-        private readonly int submissionsToAddToDistributorBatchSize;
+        private readonly DistributorConfig distributorConfig;
 
         public SubmissionsDistributorCommunicationService(
             IFormatterServiceFactory formatterServiceFactory,
             IDistributorHttpClientService distributorHttpClient,
             ISubmissionsDataService submissionsData,
             ISubmissionsForProcessingDataService submissionsForProcessingData,
-            int submissionsToAddToDistributorBatchSize)
+            IOptions<DistributorConfig> distributorConfigAccessor)
         {
             this.formatterServiceFactory = formatterServiceFactory;
             this.distributorHttpClient = distributorHttpClient;
             this.submissionsData = submissionsData;
             this.submissionsForProcessingData = submissionsForProcessingData;
-            this.submissionsToAddToDistributorBatchSize = submissionsToAddToDistributorBatchSize;
+            this.distributorConfig = distributorConfigAccessor.Value;
         }
 
         // TODO: Pass a Service model instead of Data model
@@ -50,10 +52,10 @@ namespace OJS.Services.Ui.Business.Implementations
         }
 
         public Task<ExternalDataRetrievalResult<SubmissionAddedToDistributorResponseServiceModel>> AddSubmissionsForProcessing(
-            IEnumerable<Submission> submissions) =>
-            this.BatchAddSubmissionsForProcessing(
+            IEnumerable<Submission> submissions)
+            => this.BatchAddSubmissionsForProcessing(
                 submissions.ToList(),
-                this.submissionsToAddToDistributorBatchSize);
+                this.distributorConfig.SubmissionsToAddBatchSize);
 
         public async Task AddAllUnprocessed()
         {
@@ -73,7 +75,9 @@ namespace OJS.Services.Ui.Business.Implementations
                 .Include(s => s.Problem.Tests)
                 .ToListAsync();
 
-            await this.BatchAddSubmissionsForProcessing(submissionsToAdd, this.submissionsToAddToDistributorBatchSize);
+            await this.BatchAddSubmissionsForProcessing(
+                submissionsToAdd,
+                this.distributorConfig.SubmissionsToAddBatchSize);
         }
 
         private object BuildDistributorSubmissionBody(Submission submission)
