@@ -18,5 +18,7 @@ namespace OJS.Data.Models.Checkers
         public string ClassName { get; set; }
 
         public string Parameter { get; set; }
+
+        public override string ToString() => this.Name;
     }
 }

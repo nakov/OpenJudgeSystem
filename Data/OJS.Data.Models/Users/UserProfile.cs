@@ -35,5 +35,7 @@ namespace OJS.Data.Models.Users
 
         public virtual ICollection<UserInExamGroup> UsersInExamGroups { get; set; } =
             new HashSet<UserInExamGroup>();
+
+        public override string ToString() => this.UserName;
     }
 }

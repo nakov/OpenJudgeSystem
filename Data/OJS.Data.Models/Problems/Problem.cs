@@ -75,5 +75,7 @@ namespace OJS.Data.Models.Problems
 
         public ICollection<ProblemForParticipant> ProblemsForParticipants { get; set; } =
             new HashSet<ProblemForParticipant>();
+
+        public override string ToString() => $"#{this.Id} {this.Name}";
     }
 }

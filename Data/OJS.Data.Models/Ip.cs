@@ -14,5 +14,7 @@ namespace OJS.Data.Models
         public string Description { get; set; }
 
         public ICollection<IpInContest> IpsInContests { get; set; } = new HashSet<IpInContest>();
+
+        public override string ToString() => this.Value;
     }
 }

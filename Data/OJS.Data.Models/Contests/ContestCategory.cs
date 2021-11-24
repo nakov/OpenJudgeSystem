@@ -28,5 +28,7 @@ namespace OJS.Data.Models.Contests
 
         public ICollection<LecturerInContestCategory> LecturersInContestCategories { get; set; } =
             new HashSet<LecturerInContestCategory>();
+
+        public override string ToString() => this.Name;
     }
 }
