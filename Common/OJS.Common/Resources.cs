@@ -56,5 +56,25 @@ namespace OJS.Common
             public const string Cannot_copy_problems_into_active_contest = "Cannot copy problems into an active contest";
             public const string Cannot_copy_problems_into_same_contest = "Cannot copy problems into the same contest";
         }
+
+        public static class AdministrationGeneral
+        {
+            public const string Add = "Add";
+            public const string Back_to_navigation = "Back to navigation";
+            public const string Cancel = "Cancel";
+            public const string Change = "Change";
+            public const string Choose_file = "Choose File";
+            public const string Create = "Create";
+            public const string Created_on = "Created on";
+            public const string Delete = "Delete";
+            public const string Delete_prompt = "Do you want to delete this item?";
+            public const string Edit = "Edit";
+            public const string Export_to_excel = "Export To Excel";
+            public const string Group_by_message = "Drag and drop here the title of the column you wish to group by";
+            public const string Modified_on = "Modified on";
+            public const string Name = "Name";
+            public const string No_privileges_message = "You don't have privileges for this action!";
+            public const string Remove = "Remove";
+        }
     }
 }
