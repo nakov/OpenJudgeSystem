@@ -64,7 +64,7 @@
 
             if (isInContestCategory)
             {
-                this.ModelState.AddModelError("LecturerId", "Потребителят вече е лектор в тази категория състезания.");
+                this.ModelState.AddModelError("LecturerId", "The user is already a lecturer in this contest category.");
             }
             else
             {

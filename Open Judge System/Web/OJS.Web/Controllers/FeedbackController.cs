@@ -38,7 +38,7 @@
         [RestrictRequests(
             RequestsPerInterval = RequestsPerInterval,
             RestrictInterval = RestrictInterval,
-            ErrorMessage = "Прекалено много заявки. Моля, опитайте по-късно.")]
+            ErrorMessage = "Too many request. Please, try again later")]
         public ActionResult Index(FeedbackViewModel model, bool? captchaValid = null)
         {
             if (this.ModelState.IsValid)

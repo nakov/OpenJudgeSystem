@@ -6,12 +6,12 @@
 
     public abstract class DeletableEntity : AuditInfo, IDeletableEntity
     {
-        [Display(Name = "Изтрит?")]
+        [Display(Name = "Is deleted")]
         [Editable(false)]
         [Index]
         public bool IsDeleted { get; set; }
 
-        [Display(Name = "Дата на изтриване")]
+        [Display(Name = "Deletion date")]
         [Editable(false)]
         [DataType(DataType.DateTime)]
         public DateTime? DeletedOn { get; set; }

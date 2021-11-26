@@ -27,7 +27,7 @@
         [Display(Name = "№")]
         public int ContestId { get; set; }
 
-        [Display(Name = "Състезанието")]
+        [Display(Name = "Contest")]
         public string ContestName { get; set; }
 
         public string LecturerId { get; set; }

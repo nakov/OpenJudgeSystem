@@ -83,7 +83,7 @@
         public string Name { get; set; }
 
         [DatabaseProperty]
-        [Display(Name = "Тип")]
+        [Display(Name = "Type")]
         [UIHint(KendoDropDownList)]
         public int Type { get; set; }
 
@@ -138,7 +138,7 @@
         public string PracticePassword { get; set; }
 
         [DatabaseProperty]
-        [Display(Name = "Парола за ново IP")]
+        [Display(Name = "Password for new IP")]
         [UIHint(SingleLineText)]
         public string NewIpPassword { get; set; }
 
@@ -187,7 +187,7 @@
         [UIHint(SingleLineText)]
         public string CategoryName { get; set; }
 
-        [Display(Name = "Позволени IP-та")]
+        [Display(Name = "Allowed IPs")]
         public string AllowedIps { get; set; }
 
         public string RawAllowedIps

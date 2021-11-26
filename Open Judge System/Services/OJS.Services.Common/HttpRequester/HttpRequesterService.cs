@@ -12,10 +12,10 @@
     public class HttpRequesterService : IHttpRequesterService
     {
         // TODO: Add to resource
-        private const string InvalidUrlMessage = "Невалиден URL.";
+        private const string InvalidUrlMessage = "Invalid URL.";
 
-        private const string InvalidApiKeyMessage = "Невалиден API ключ.";
-        private const string ErrorInConnectingToTheRemoteServerMessage = "Грешка при връзката с отдалечения сървър.";
+        private const string InvalidApiKeyMessage = "Invalid API key.";
+        private const string ErrorInConnectingToTheRemoteServerMessage = "Remote server connection problem.";
 
         public ExternalDataRetrievalResult<TData> Get<TData>(object requestData, string url, string apiKey)
         {

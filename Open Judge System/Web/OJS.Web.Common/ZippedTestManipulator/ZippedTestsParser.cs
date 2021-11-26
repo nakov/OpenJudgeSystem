@@ -15,8 +15,8 @@
 
     public class ZippedTestsParser
     {
-        private const string InvalidNameForInputTestErrorMessage = "Невалидно име на входен тест";
-        private const string InvalidInputTestsCountErrorMessage = "Невалиден брой входни тестове";
+        private const string InvalidNameForInputTestErrorMessage = "Invalid input test name";
+        private const string InvalidInputTestsCountErrorMessage = "Invalid count of input tests ";
 
         public static TestsParseResult Parse(Stream stream)
         {

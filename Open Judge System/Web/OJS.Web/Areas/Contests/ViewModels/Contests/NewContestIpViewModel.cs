@@ -6,8 +6,8 @@
     {
         public int ContestId { get; set; }
 
-        [Display(Name = "Парола за ново IP за състезание")]
-        [Required(ErrorMessage = "Моля, въведете парола.")]
+        [Display(Name = "Password for new IP for contest")]
+        [Required(ErrorMessage = "Please, enter password")]
         public string NewIpPassword { get; set; }
     }
 }

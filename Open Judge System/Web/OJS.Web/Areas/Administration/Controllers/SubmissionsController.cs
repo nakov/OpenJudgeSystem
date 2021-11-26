@@ -31,7 +31,7 @@
     {
         protected const int RequestsPerInterval = 2;
         protected const int RestrictInterval = 180;
-        protected const string TooManyRequestsErrorMessage = "Прекалено много заявки. Моля, опитайте по-късно.";
+        protected const string TooManyRequestsErrorMessage = "Too many requests. Please, try again later!";
 
         private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
         private readonly IParticipantScoresBusinessService participantScoresBusiness;
@@ -168,7 +168,7 @@
 
             if (!submission.ProblemId.HasValue || !this.CheckIfUserHasProblemPermissions(submission.ProblemId.Value))
             {
-                this.TempData[GlobalConstants.DangerMessage] = "Нямате привилегиите за това действие";
+                this.TempData[GlobalConstants.DangerMessage] = "No permission for this action!";
                 return this.RedirectToAction("Index", "Contests", new { area = "Administration" });
             }
 
@@ -184,7 +184,7 @@
             {
                 if (!model.ProblemId.HasValue || !this.CheckIfUserHasProblemPermissions(model.ProblemId.Value))
                 {
-                    this.TempData[GlobalConstants.DangerMessage] = "Нямате привилегиите за това действие";
+                    this.TempData[GlobalConstants.DangerMessage] = "No permission for this action";
                     return this.RedirectToAction("Index", "Contests", new { area = "Administration" });
                 }
 
@@ -282,7 +282,7 @@
 
             if (!submission.ProblemId.HasValue || !this.CheckIfUserHasProblemPermissions(submission.ProblemId.Value))
             {
-                this.TempData[GlobalConstants.DangerMessage] = "Нямате привилегиите за това действие";
+                this.TempData[GlobalConstants.DangerMessage] = "No permission for this action!";
                 return this.RedirectToAction("Index", "Contests", new { area = "Administration" });
             }
 
@@ -303,13 +303,13 @@
 
             if (!submission.ProblemId.HasValue || !this.CheckIfUserHasProblemPermissions(submission.ProblemId.Value))
             {
-                this.TempData[GlobalConstants.DangerMessage] = "Нямате привилегиите за това действие";
+                this.TempData[GlobalConstants.DangerMessage] = "No permission for this action!";
                 return this.RedirectToAction("Index", "Contests", new { area = "Administration" });
             }
 
             if (!submission.ParticipantId.HasValue)
             {
-                this.TempData[GlobalConstants.DangerMessage] = "Потребителя не съществува!";
+                this.TempData[GlobalConstants.DangerMessage] = "User does not exist!";
                 return this.RedirectToAction(nameof(ContestsController.Index), "Contests", new { area = "Administration" });
             }
 
@@ -369,7 +369,7 @@
 
                     if (!dbSubmission.ParticipantId.HasValue)
                     {
-                        this.TempData[GlobalConstants.DangerMessage] = "Потребителя не съществува!";
+                        this.TempData[GlobalConstants.DangerMessage] = "No such user!";
                         return this.RedirectToAction(nameof(ContestsController.Index), "Contests", new { area = "Administration" });
                     }
 
@@ -394,7 +394,7 @@
                 scope.Complete();
             }
 
-            this.TempData[GlobalConstants.InfoMessage] = $"Успешно изтрихте {submissionsDataSourceResult.Total} решения.";
+            this.TempData[GlobalConstants.InfoMessage] = $"{submissionsDataSourceResult.Total} submission deleted successfully.";
             return this.RedirectToAction<SubmissionsController>(c => c.Index());
         }
 
@@ -467,7 +467,7 @@
             {
                 if (!submission.ParticipantId.HasValue)
                 {
-                    this.TempData[GlobalConstants.DangerMessage] = "Потребителя не съществува!";
+                    this.TempData[GlobalConstants.DangerMessage] = "No such user!";
                     return this.RedirectToAction(nameof(ContestsController.Index), "Contests", new { area = "Administration" });
                 }
 
@@ -507,7 +507,7 @@
                 return this.RedirectToAction("View", "Submissions", new { area = "Contests", id });
             }
 
-            this.TempData[GlobalConstants.DangerMessage] = "Решението не може да бъде ретествано в момента";
+            this.TempData[GlobalConstants.DangerMessage] = "The submission cannot be retested right now.";
             return this.RedirectToAction(nameof(ContestsController.Index), "Contests", new { area = string.Empty });
         }
 

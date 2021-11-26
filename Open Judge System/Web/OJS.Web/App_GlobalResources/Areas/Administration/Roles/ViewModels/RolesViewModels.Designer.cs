@@ -116,7 +116,7 @@ namespace Resources.Areas.Administration.Roles.ViewModels {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Потребителското име е задължително!.
+        ///   Looks up a localized string similar to Username is mandatory.
         /// </summary>
         public static string UserName_required {
             get {
