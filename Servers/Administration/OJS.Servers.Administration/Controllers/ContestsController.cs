@@ -7,6 +7,7 @@ namespace OJS.Servers.Administration.Controllers
     using OJS.Services.Administration.Data;
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using AdminResource = OJS.Common.Resources.AdministrationGeneral;
 
     public class ContestsController : AutoCrudAdminController<Contest>
@@ -16,22 +17,22 @@ namespace OJS.Servers.Administration.Controllers
         public ContestsController(IContestCategoriesDataService contestCategoriesData)
             => this.contestCategoriesData = contestCategoriesData;
 
-        protected override IEnumerable<Func<Contest, ValidatorResult>> EntityValidators
-            => new Func<Contest, ValidatorResult>[]
+        protected override IEnumerable<Func<Contest, Task<ValidatorResult>>> AsyncEntityValidators
+            => new Func<Contest, Task<ValidatorResult>>[]
             {
                 this.ValidateContestCategoryPermissions,
             };
 
-        private ValidatorResult ValidateContestCategoryPermissions(Contest contest)
+        private async Task<ValidatorResult> ValidateContestCategoryPermissions(Contest contest)
         {
             var userId = this.User.GetId();
             var userIsAdmin = this.User.IsAdmin();
 
             if (contest.CategoryId.HasValue &&
-                this.contestCategoriesData.UserHasContestCategoryPermissions(
+                await this.contestCategoriesData.UserHasContestCategoryPermissions(
                     contest.CategoryId.Value,
                     userId,
-                    userIsAdmin).Result)
+                    userIsAdmin))
             {
                 return ValidatorResult.Success();
             }
