@@ -2,11 +2,14 @@ namespace OJS.Servers.Administration.Controllers
 {
     using AutoCrudAdmin.Controllers;
     using AutoCrudAdmin.ViewModels;
+    using OJS.Data.Models;
     using OJS.Data.Models.Contests;
+    using OJS.Data.Models.Problems;
     using OJS.Servers.Infrastructure.Extensions;
     using OJS.Services.Administration.Data;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using AdminResource = OJS.Common.Resources.AdministrationGeneral;
     using Resource = OJS.Common.Resources.ContestsControllers;
@@ -17,13 +20,19 @@ namespace OJS.Servers.Administration.Controllers
 
         private readonly IContestsDataService contestsData;
         private readonly IContestCategoriesDataService contestCategoriesData;
+        private readonly IIpsDataService ipsData;
+        private readonly IParticipantsDataService participantsData;
 
         public ContestsController(
             IContestsDataService contestsData,
-            IContestCategoriesDataService contestCategoriesData)
+            IContestCategoriesDataService contestCategoriesData,
+            IIpsDataService ipsData,
+            IParticipantsDataService participantsData)
         {
             this.contestsData = contestsData;
             this.contestCategoriesData = contestCategoriesData;
+            this.ipsData = ipsData;
+            this.participantsData = participantsData;
         }
 
         protected override IEnumerable<Func<Contest, EntityAction, Task<ValidatorResult>>> AsyncEntityValidators
@@ -32,6 +41,55 @@ namespace OJS.Servers.Administration.Controllers
                 this.ValidateContestCategoryPermissions,
                 this.ValidateContest,
             };
+
+        protected override async Task BeforeEntitySaveOnCreateAsync(
+            Contest contest,
+            IDictionary<string, string> entityDict)
+        {
+            this.AddProblemGroupsToContest(contest, contest.NumberOfProblemGroups);
+            await this.AddIpsToContest(contest, entityDict["AllowedIps"]);
+        }
+
+        protected override async Task BeforeEntitySaveOnEditAsync(
+            Contest contest,
+            IDictionary<string, string> entityDict)
+        {
+            if (contest.IsOnline && contest.ProblemGroups.Count == 0)
+            {
+                this.AddProblemGroupsToContest(contest, contest.NumberOfProblemGroups);
+            }
+
+            if (!contest.IsOnline && contest.Duration != null)
+            {
+                contest.Duration = null;
+            }
+
+            contest.IpsInContests.Clear();
+            await this.AddIpsToContest(contest, entityDict["AllowedIps"]);
+        }
+
+        protected override async Task AfterEntitySaveOnEditAsync(
+            Contest contest,
+            IDictionary<string, string> entityDict)
+        {
+            // TODO: Fix logic. Original values before the edit are not passed here.
+            var originalContestPassword = entityDict[nameof(contest.ContestPassword)];
+            var originalPracticePassword = entityDict[nameof(contest.PracticePassword)];
+
+            await this.InvalidateParticipants(originalContestPassword, originalPracticePassword, contest);
+        }
+
+        protected override IEnumerable<FormControlViewModel> GenerateFormControls(Contest entity, EntityAction action)
+            => base.GenerateFormControls(entity, action)
+                .Concat(new []
+                {
+                    new FormControlViewModel
+                    {
+                        Name = "AllowedIps",
+                        Type = typeof(string),
+                        Value = default,
+                    },
+                });
 
         private async Task<ValidatorResult> ValidateContestCategoryPermissions(Contest contest, EntityAction action)
         {
@@ -111,6 +169,49 @@ namespace OJS.Servers.Administration.Controllers
             }
 
             return ValidatorResult.Success();
+        }
+
+        private void AddProblemGroupsToContest(Contest contest, int problemGroupsCount)
+        {
+            for (var i = 1; i <= problemGroupsCount; i++)
+            {
+                contest.ProblemGroups.Add(new ProblemGroup
+                {
+                    OrderBy = i,
+                });
+            }
+        }
+
+        private async Task AddIpsToContest(Contest contest, string mergedIps)
+        {
+            if (!string.IsNullOrWhiteSpace(mergedIps))
+            {
+                var ipValues = mergedIps.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var ipValue in ipValues)
+                {
+                    var ip = await this.ipsData.GetByValue(ipValue) ?? new Ip { Value = ipValue };
+
+                    contest.IpsInContests.Add(new IpInContest { Ip = ip, IsOriginallyAllowed = true });
+                }
+            }
+        }
+
+        private async Task InvalidateParticipants(
+            string originalContestPassword,
+            string originalPracticePassword,
+            Contest contest)
+        {
+            if (originalContestPassword != contest.ContestPassword &&
+                !string.IsNullOrWhiteSpace(contest.ContestPassword))
+            {
+                await this.participantsData.InvalidateByContestAndIsOfficial(contest.Id, isOfficial: true);
+            }
+
+            if (originalPracticePassword != contest.PracticePassword &&
+                !string.IsNullOrWhiteSpace(contest.PracticePassword))
+            {
+                await this.participantsData.InvalidateByContestAndIsOfficial(contest.Id, isOfficial: false);
+            }
         }
     }
 }

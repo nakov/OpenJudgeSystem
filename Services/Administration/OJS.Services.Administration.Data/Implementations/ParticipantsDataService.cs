@@ -1,17 +1,16 @@
-using Microsoft.EntityFrameworkCore;
-using OJS.Common.Enumerations;
-using OJS.Data;
-using OJS.Data.Models.Participants;
-using OJS.Services.Common.Data.Implementations;
-using OJS.Services.Ui.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-
 namespace OJS.Services.Administration.Data.Implementations
 {
+    using Microsoft.EntityFrameworkCore;
+    using OJS.Common.Enumerations;
+    using OJS.Data;
+    using OJS.Data.Models.Participants;
+    using OJS.Services.Common.Data.Implementations;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using System.Threading.Tasks;
+
     public class ParticipantsDataService : DataService<Participant>, IParticipantsDataService
     {
         public ParticipantsDataService(OjsDbContext db) : base(db)
