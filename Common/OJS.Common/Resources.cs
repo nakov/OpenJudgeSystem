@@ -76,5 +76,34 @@ namespace OJS.Common
             public const string No_privileges_message = "You don't have privileges for this action!";
             public const string Remove = "Remove";
         }
+
+        public static class ContestsControllers
+        {
+            public const string Active_contest_cannot_edit_duration_type = "Contest is active and Duration and Type cannot be edited!";
+            public const string Active_contest_forbidden_for_deletion = "Contest is active and cannot be deleted!";
+            public const string Active_contest_forbidden_for_transfer = "Contest is active and participants cannot be transferred";
+            public const string Added_time_to_participants_online = "Successfully added {0} minutes to the times of all selected active participants in the contest {1}";
+            public const string Added_time_to_single_participant_online = "Successfully added {0} minutes to the time of the participant with username: {1}, in the contest {2}";
+            public const string Contest_added = "Contest added successfully";
+            public const string Contest_edited = "Contest edited successfully";
+            public const string Contest_not_found = "Contest not found";
+            public const string Contest_not_valid = "Contest is not valid";
+            public const string Contest_start_date_before_end = "Contest start date must be before the contest end date";
+            public const string Duration_invalid_format = "Duration must be in format \"hh:mm\"";
+            public const string Failed_to_update_participants_duration = "<br />WARNING: The following users' contest duration was not updated because their contest duration would have been reduced below the base contest duration: {0}";
+            public const string No_active_contests = "No active contests";
+            public const string No_future_contests = "No future contests";
+            public const string No_latest_contests = "No latest contests";
+            public const string No_question_by_id = "Question could not be found by given Id";
+            public const string Participant_not_in_contest = "The participant is not in the contest!";
+            public const string Participants_transferred = "Participants transferred successfully";
+            public const string Practice_start_date_before_end = "Practice start date must be before the practice end date";
+            public const string Problem_groups_count_limit = "Problem groups count cannot be more than {0}";
+            public const string Report_zip_format = "{1} submissions for {0}.zip";
+            public const string Required_field_for_online = "The field is required for Online Contest";
+            public const string Select_one_submission_type = "Choose at least one submission type!";
+            public const string Subtracted_time_from_participants_online = "Successfully subtracted {0} minutes from the times of all selected active participants in the contest {1}";
+            public const string Subtracted_time_from_single_participant_online = "Successfully subtracted {0} minutes from the time of the participant with username: {1}, in the contest {2}";
+        }
     }
 }

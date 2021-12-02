@@ -9,18 +9,33 @@ namespace OJS.Servers.Administration.Controllers
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using AdminResource = OJS.Common.Resources.AdministrationGeneral;
+    using Resource = OJS.Common.Resources.ContestsControllers;
 
     public class ContestsController : AutoCrudAdminController<Contest>
     {
+        private const int ProblemGroupsCountLimit = 40;
+
+        private readonly IContestsDataService contestsData;
         private readonly IContestCategoriesDataService contestCategoriesData;
 
-        public ContestsController(IContestCategoriesDataService contestCategoriesData)
-            => this.contestCategoriesData = contestCategoriesData;
+        public ContestsController(
+            IContestsDataService contestsData,
+            IContestCategoriesDataService contestCategoriesData)
+        {
+            this.contestsData = contestsData;
+            this.contestCategoriesData = contestCategoriesData;
+        }
 
         protected override IEnumerable<Func<Contest, Task<ValidatorResult>>> AsyncEntityValidators
             => new Func<Contest, Task<ValidatorResult>>[]
             {
                 this.ValidateContestCategoryPermissions,
+            };
+
+        protected override IEnumerable<Func<Contest, ValidatorResult>> EntityValidators
+            => new Func<Contest, ValidatorResult>[]
+            {
+                this.ValidateContest,
             };
 
         private async Task<ValidatorResult> ValidateContestCategoryPermissions(Contest contest)
@@ -38,6 +53,64 @@ namespace OJS.Servers.Administration.Controllers
             }
 
             return ValidatorResult.Error(AdminResource.No_privileges_message);
+        }
+
+        private ValidatorResult ValidateContest(Contest model)
+        {
+            if (model.StartTime >= model.EndTime)
+            {
+                return ValidatorResult.Error(Resource.Contest_start_date_before_end);
+            }
+
+            if (model.PracticeStartTime >= model.PracticeEndTime)
+            {
+                return ValidatorResult.Error(Resource.Practice_start_date_before_end);
+            }
+
+            if (model.IsOnline)
+            {
+                if (!model.Duration.HasValue)
+                {
+                    return ValidatorResult.Error(Resource.Required_field_for_online);
+                }
+
+                if (model.Duration.Value.TotalHours >= 24)
+                {
+                    return ValidatorResult.Error(Resource.Duration_invalid_format);
+                }
+
+                if (model.NumberOfProblemGroups <= 0)
+                {
+                    return ValidatorResult.Error(Resource.Required_field_for_online);
+                }
+
+                if (model.NumberOfProblemGroups > ProblemGroupsCountLimit)
+                {
+                    return ValidatorResult.Error(
+                        string.Format(Resource.Problem_groups_count_limit, ProblemGroupsCountLimit));
+                }
+            }
+
+            return ValidatorResult.Success();
+        }
+
+        private async Task<ValidatorResult> ValidateContestOnEdit(Contest model)
+        {
+            var contest = await this.contestsData.OneById(model.Id);
+
+            if (contest == null)
+            {
+                return ValidatorResult.Error(Resource.Contest_not_found);
+            }
+
+            if (contest.IsOnline &&
+                contest.IsActive &&
+                (contest.Duration != model.Duration || contest.Type != model.Type))
+            {
+                return ValidatorResult.Error(Resource.Active_contest_cannot_edit_duration_type);
+            }
+
+            return ValidatorResult.Success();
         }
     }
 }
