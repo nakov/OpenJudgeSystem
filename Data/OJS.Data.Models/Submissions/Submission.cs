@@ -18,11 +18,11 @@ namespace OJS.Data.Models.Submissions
     {
         public int? ParticipantId { get; set; }
 
-        public Participant Participant { get; set; }
+        public virtual Participant Participant { get; set; }
 
         public int? ProblemId { get; set; }
 
-        public Problem Problem { get; set; }
+        public virtual Problem Problem { get; set; }
 
         public int? SubmissionTypeId { get; set; }
 

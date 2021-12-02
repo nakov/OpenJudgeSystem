@@ -7,10 +7,10 @@ namespace OJS.Data.Models
     {
         public string UserId { get; set; }
 
-        public UserProfile User { get; set; }
+        public virtual UserProfile User { get; set; }
 
         public int ExamGroupId { get; set; }
 
-        public ExamGroup ExamGroup { get; set; }
+        public virtual ExamGroup ExamGroup { get; set; }
     }
 }

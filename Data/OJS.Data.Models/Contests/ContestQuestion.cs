@@ -12,7 +12,7 @@ namespace OJS.Data.Models.Contests
     {
         public int ContestId { get; set; }
 
-        public Contest Contest { get; set; }
+        public virtual Contest Contest { get; set; }
 
         [MaxLength(QuestionMaxLength)]
         [MinLength(QuestionMinLength)]
@@ -28,8 +28,8 @@ namespace OJS.Data.Models.Contests
 
         public string RegularExpressionValidation { get; set; }
 
-        public ICollection<ContestQuestionAnswer> Answers { get; set; } = new HashSet<ContestQuestionAnswer>();
+        public virtual ICollection<ContestQuestionAnswer> Answers { get; set; } = new HashSet<ContestQuestionAnswer>();
 
-        public ICollection<ParticipantAnswer> ParticipantAnswers { get; set; } = new HashSet<ParticipantAnswer>();
+        public virtual ICollection<ParticipantAnswer> ParticipantAnswers { get; set; } = new HashSet<ParticipantAnswer>();
     }
 }

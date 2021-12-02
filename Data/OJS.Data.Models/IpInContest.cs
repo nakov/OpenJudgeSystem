@@ -6,11 +6,11 @@ namespace OJS.Data.Models
     {
         public int ContestId { get; set; }
 
-        public Contest Contest { get; set; }
+        public virtual Contest Contest { get; set; }
 
         public int IpId { get; set; }
 
-        public Ip Ip { get; set; }
+        public virtual Ip Ip { get; set; }
 
         public bool IsOriginallyAllowed { get; set; }
     }

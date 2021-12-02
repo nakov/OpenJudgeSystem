@@ -10,7 +10,7 @@ namespace OJS.Data.Models.Tests
     {
         public int ProblemId { get; set; }
 
-        public Problem Problem { get; set; }
+        public virtual Problem Problem { get; set; }
 
         /// <remarks>
         /// Using byte[] (compressed with zip) to save database space.
@@ -46,6 +46,6 @@ namespace OJS.Data.Models.Tests
 
         public double OrderBy { get; set; }
 
-        public ICollection<TestRun> TestRuns { get; set; } = new HashSet<TestRun>();
+        public virtual ICollection<TestRun> TestRuns { get; set; } = new HashSet<TestRun>();
     }
 }

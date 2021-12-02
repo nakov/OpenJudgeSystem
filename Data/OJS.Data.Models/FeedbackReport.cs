@@ -15,7 +15,7 @@ namespace OJS.Data.Models
 
         public string UserId { get; set; }
 
-        public UserProfile User { get; set; }
+        public virtual UserProfile User { get; set; }
 
         public bool IsFixed { get; set; }
     }

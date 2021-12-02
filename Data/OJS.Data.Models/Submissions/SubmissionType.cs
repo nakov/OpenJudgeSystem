@@ -51,7 +51,7 @@ namespace OJS.Data.Models.Submissions
             }
         }
 
-        public ICollection<SubmissionTypeInProblem> SubmissionTypesInProblems { get; set; } =
+        public virtual ICollection<SubmissionTypeInProblem> SubmissionTypesInProblems { get; set; } =
             new HashSet<SubmissionTypeInProblem>();
 
         [NotMapped]

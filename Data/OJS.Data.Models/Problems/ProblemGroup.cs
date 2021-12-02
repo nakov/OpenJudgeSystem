@@ -9,12 +9,12 @@ namespace OJS.Data.Models.Problems
     {
         public int ContestId { get; set; }
 
-        public Contest Contest { get; set; }
+        public virtual Contest Contest { get; set; }
 
         public double OrderBy { get; set; }
 
         public ProblemGroupType? Type { get; set; }
 
-        public ICollection<Problem> Problems { get; set; } = new HashSet<Problem>();
+        public virtual ICollection<Problem> Problems { get; set; } = new HashSet<Problem>();
     }
 }

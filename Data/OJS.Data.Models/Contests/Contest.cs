@@ -23,7 +23,7 @@ namespace OJS.Data.Models.Contests
 
         public int? CategoryId { get; set; }
 
-        public ContestCategory Category { get; set; }
+        public virtual ContestCategory Category { get; set; }
 
         public ContestType Type { get; set; }
 
@@ -84,17 +84,17 @@ namespace OJS.Data.Models.Contests
 
         public string Description { get; set; }
 
-        public ICollection<LecturerInContest> LecturersInContests { get; set; } = new HashSet<LecturerInContest>();
+        public virtual ICollection<LecturerInContest> LecturersInContests { get; set; } = new HashSet<LecturerInContest>();
 
-        public ICollection<ContestQuestion> Questions { get; set; } = new HashSet<ContestQuestion>();
+        public virtual ICollection<ContestQuestion> Questions { get; set; } = new HashSet<ContestQuestion>();
 
-        public ICollection<ProblemGroup> ProblemGroups { get; set; } = new HashSet<ProblemGroup>();
+        public virtual ICollection<ProblemGroup> ProblemGroups { get; set; } = new HashSet<ProblemGroup>();
 
-        public ICollection<Participant> Participants { get; set; } = new HashSet<Participant>();
+        public virtual ICollection<Participant> Participants { get; set; } = new HashSet<Participant>();
 
-        public ICollection<IpInContest> IpsInContests { get; set; } = new HashSet<IpInContest>();
+        public virtual ICollection<IpInContest> IpsInContests { get; set; } = new HashSet<IpInContest>();
 
-        public ICollection<ExamGroup> ExamGroups { get; set; } = new HashSet<ExamGroup>();
+        public virtual ICollection<ExamGroup> ExamGroups { get; set; } = new HashSet<ExamGroup>();
 
         [NotMapped]
         public bool CanBeCompeted

@@ -14,7 +14,7 @@ namespace OJS.Data.Models.Problems
     {
         public int ProblemGroupId { get; set; }
 
-        public ProblemGroup ProblemGroup { get; set; }
+        public virtual ProblemGroup ProblemGroup { get; set; }
 
         [Required]
         [MaxLength(NameMaxLength)]
@@ -39,7 +39,7 @@ namespace OJS.Data.Models.Problems
 
         public int? CheckerId { get; set; }
 
-        public Checker Checker { get; set; }
+        public virtual Checker Checker { get; set; }
 
         public double OrderBy { get; set; }
 
@@ -60,20 +60,20 @@ namespace OJS.Data.Models.Problems
         [DefaultValue(false)]
         public bool ShowDetailedFeedback { get; set; }
 
-        public ICollection<Test> Tests { get; set; } = new HashSet<Test>();
+        public virtual ICollection<Test> Tests { get; set; } = new HashSet<Test>();
 
-        public ICollection<ProblemResource> Resources { get; set; } = new HashSet<ProblemResource>();
+        public virtual ICollection<ProblemResource> Resources { get; set; } = new HashSet<ProblemResource>();
 
-        public ICollection<Submission> Submissions { get; set; } = new HashSet<Submission>();
+        public virtual ICollection<Submission> Submissions { get; set; } = new HashSet<Submission>();
 
-        public ICollection<TagInProblem> TagsInProblems { get; set; } = new HashSet<TagInProblem>();
+        public virtual ICollection<TagInProblem> TagsInProblems { get; set; } = new HashSet<TagInProblem>();
 
-        public ICollection<ParticipantScore> ParticipantScores { get; set; } = new HashSet<ParticipantScore>();
+        public virtual ICollection<ParticipantScore> ParticipantScores { get; set; } = new HashSet<ParticipantScore>();
 
-        public ICollection<SubmissionTypeInProblem> SubmissionTypesInProblems { get; set; } =
+        public virtual ICollection<SubmissionTypeInProblem> SubmissionTypesInProblems { get; set; } =
             new HashSet<SubmissionTypeInProblem>();
 
-        public ICollection<ProblemForParticipant> ProblemsForParticipants { get; set; } =
+        public virtual ICollection<ProblemForParticipant> ProblemsForParticipants { get; set; } =
             new HashSet<ProblemForParticipant>();
 
         public override string ToString() => $"#{this.Id} {this.Name}";

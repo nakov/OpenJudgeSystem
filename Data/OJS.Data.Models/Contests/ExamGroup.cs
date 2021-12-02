@@ -18,9 +18,9 @@ namespace OJS.Data.Models.Contests
 
         public int? ContestId { get; set; }
 
-        public Contest Contest { get; set; }
+        public virtual Contest Contest { get; set; }
 
-        public ICollection<UserInExamGroup> UsersInExamGroups { get; set; } = new HashSet<UserInExamGroup>();
+        public virtual ICollection<UserInExamGroup> UsersInExamGroups { get; set; } = new HashSet<UserInExamGroup>();
 
         public override string ToString() => this.Name;
     }

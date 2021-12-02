@@ -13,6 +13,6 @@ namespace OJS.Data.Models
 
         public string BackgroundColor { get; set; }
 
-        public ICollection<TagInProblem> TagsInProblems { get; set; } = new HashSet<TagInProblem>();
+        public virtual ICollection<TagInProblem> TagsInProblems { get; set; } = new HashSet<TagInProblem>();
     }
 }

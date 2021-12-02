@@ -17,16 +17,16 @@ namespace OJS.Data.Models.Contests
 
         public int? ParentId { get; set; }
 
-        public ContestCategory Parent { get; set; }
+        public virtual ContestCategory Parent { get; set; }
 
         public bool IsVisible { get; set; }
 
         [InverseProperty(nameof(Parent))]
-        public ICollection<ContestCategory> Children { get; set; } = new HashSet<ContestCategory>();
+        public virtual ICollection<ContestCategory> Children { get; set; } = new HashSet<ContestCategory>();
 
-        public ICollection<Contest> Contests { get; set; } = new HashSet<Contest>();
+        public virtual ICollection<Contest> Contests { get; set; } = new HashSet<Contest>();
 
-        public ICollection<LecturerInContestCategory> LecturersInContestCategories { get; set; } =
+        public virtual ICollection<LecturerInContestCategory> LecturersInContestCategories { get; set; } =
             new HashSet<LecturerInContestCategory>();
 
         public override string ToString() => this.Name;
