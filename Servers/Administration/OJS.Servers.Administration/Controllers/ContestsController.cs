@@ -26,19 +26,14 @@ namespace OJS.Servers.Administration.Controllers
             this.contestCategoriesData = contestCategoriesData;
         }
 
-        protected override IEnumerable<Func<Contest, Task<ValidatorResult>>> AsyncEntityValidators
-            => new Func<Contest, Task<ValidatorResult>>[]
+        protected override IEnumerable<Func<Contest, EntityAction, Task<ValidatorResult>>> AsyncEntityValidators
+            => new Func<Contest, EntityAction, Task<ValidatorResult>>[]
             {
                 this.ValidateContestCategoryPermissions,
-            };
-
-        protected override IEnumerable<Func<Contest, ValidatorResult>> EntityValidators
-            => new Func<Contest, ValidatorResult>[]
-            {
                 this.ValidateContest,
             };
 
-        private async Task<ValidatorResult> ValidateContestCategoryPermissions(Contest contest)
+        private async Task<ValidatorResult> ValidateContestCategoryPermissions(Contest contest, EntityAction action)
         {
             var userId = this.User.GetId();
             var userIsAdmin = this.User.IsAdmin();
@@ -55,7 +50,7 @@ namespace OJS.Servers.Administration.Controllers
             return ValidatorResult.Error(AdminResource.No_privileges_message);
         }
 
-        private ValidatorResult ValidateContest(Contest model)
+        private async Task<ValidatorResult> ValidateContest(Contest model, EntityAction action)
         {
             if (model.StartTime >= model.EndTime)
             {
@@ -89,6 +84,11 @@ namespace OJS.Servers.Administration.Controllers
                     return ValidatorResult.Error(
                         string.Format(Resource.Problem_groups_count_limit, ProblemGroupsCountLimit));
                 }
+            }
+
+            if (action == EntityAction.Edit)
+            {
+                return await this.ValidateContestOnEdit(model);
             }
 
             return ValidatorResult.Success();
