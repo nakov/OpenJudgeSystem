@@ -1,0 +1,46 @@
+@import "src/styles/components";
+
+.modal {
+  background-color: #fff;
+  width: 480px;
+  max-width: 98%;
+  padding: 45px;
+  //border: 1px solid #c5c5c5;
+  box-shadow: 0 0 2px rgba(0, 0, 0, .14), 0 2px 2px rgba(0, 0, 0, .12), 0 1px 3px rgba(0, 0, 0, .2);
+  border-radius: 3px;
+  transition: all .28s ease-in-out;
+}
+
+.modalOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modalHeader {
+  font-size: 24px;
+  font-weight: normal;
+}
+
+.modalContent {
+  font-size: 21px;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: right;
+  gap: 30px;
+}
+
+.modalHeader,
+.modalContent,
+.modalFooter {
+  padding: 15px 0;
+}
+

@@ -1,12 +1,10 @@
-﻿using OJS.Services.Infrastructure.Constants;
-using OJS.Services.Ui.Models.Cache;
-using System.Threading.Tasks;
-
-namespace OJS.Services.Ui.Business
+﻿namespace OJS.Services.Ui.Business
 {
     using SoftUni.Services.Infrastructure;
     using System.Collections.Generic;
-
+    using OJS.Services.Infrastructure.Constants;
+    using OJS.Services.Ui.Models.Cache;
+    using System.Threading.Tasks;
 
     public interface ICacheItemsProviderService : IService
     {
