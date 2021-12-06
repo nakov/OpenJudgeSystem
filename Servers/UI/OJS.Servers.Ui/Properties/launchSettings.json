@@ -1,0 +1,36 @@
+﻿{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:36663",
+      "sslPort": 44332
+    }
+  },
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DbContext": "Server=.;Database=OpenJudgeSystem;Integrated Security=True;",
+        "PATH_TO_COMMON_KEY_RING_FOLDER": "../../../Keys",
+        "SULS_PLATFORM_BASE_URL": "https://localhost:44304",
+        "SULS_PLATFORM_API_KEY": "1234"
+      }
+    },
+    "OJS.Servers.Ui": {
+      "commandName": "Project",
+      "dotnetRunMessages": "true",
+      "launchBrowser": true,
+      "applicationUrl": "https://localhost:5002",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DbContext": "Server=217.174.159.217;Database=OpenJudgeSystem;User Id=sa;Password=",
+        "PATH_TO_COMMON_KEY_RING_FOLDER": "../../../Keys",
+        "SULS_PLATFORM_BASE_URL": "https://localhost:44304",
+        "SULS_PLATFORM_API_KEY": "1234"
+      }
+    }
+  }
+}
