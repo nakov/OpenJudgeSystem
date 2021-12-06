@@ -26,58 +26,58 @@ namespace OJS.Servers.Ui.Controllers
             this.signInManager = signInManager;
         }
 
-        [AllowAnonymous]
-        public IActionResult Login(string returnUrl)
-        {
-            this.ViewData[ViewDataKeys.ReturnUrl] = returnUrl;
-            return this.View();
-        }
+        // [AllowAnonymous]
+        // public IActionResult Login(string returnUrl)
+        // {
+        //     this.ViewData[ViewDataKeys.ReturnUrl] = returnUrl;
+        //     return this.View();
+        // }
 
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = "/")
-        {
-            if (!this.ModelState.IsValid)
-            {
-                return this.View(model);
-            }
-
-            var signInResult = await this.signInManager
-                .PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
-
-            if (!signInResult.Succeeded)
-            {
-                this.ModelState.AddModelError(
-                    string.Empty,
-                    "Invalid username or password");
-
-                return this.View(model);
-            }
-
-            var user = await this.userManager.FindByNameAsync(model.UserName);
-
-            var roles = await this.userManager.GetRolesAsync(user);
-
-            var claims = roles.Select(r => new Claim(ClaimTypes.Role, r)).ToList();
-
-            claims.Add(new Claim(ClaimTypes.Name, user.UserName));
-
-            var claimsIdentity = new ClaimsIdentity(
-                claims, Authentication.SharedCookiesScheme);
-
-            var authProperties = new AuthenticationProperties
-            {
-                // ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
-            };
-
-            await HttpContext.SignInAsync(
-                Authentication.SharedCookiesScheme,
-                new ClaimsPrincipal(claimsIdentity),
-                authProperties);
-
-            return this.Redirect(returnUrl);
-        }
+        // [HttpPost]
+        // [AllowAnonymous]
+        // [ValidateAntiForgeryToken]
+        // public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = "/")
+        // {
+        //     if (!this.ModelState.IsValid)
+        //     {
+        //         return this.View(model);
+        //     }
+        //
+        //     var signInResult = await this.signInManager
+        //         .PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
+        //
+        //     if (!signInResult.Succeeded)
+        //     {
+        //         this.ModelState.AddModelError(
+        //             string.Empty,
+        //             "Invalid username or password");
+        //
+        //         return this.View(model);
+        //     }
+        //
+        //     var user = await this.userManager.FindByNameAsync(model.UserName);
+        //
+        //     var roles = await this.userManager.GetRolesAsync(user);
+        //
+        //     var claims = roles.Select(r => new Claim(ClaimTypes.Role, r)).ToList();
+        //
+        //     claims.Add(new Claim(ClaimTypes.Name, user.UserName));
+        //
+        //     var claimsIdentity = new ClaimsIdentity(
+        //         claims, Authentication.SharedCookiesScheme);
+        //
+        //     var authProperties = new AuthenticationProperties
+        //     {
+        //         // ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
+        //     };
+        //
+        //     await HttpContext.SignInAsync(
+        //         Authentication.SharedCookiesScheme,
+        //         new ClaimsPrincipal(claimsIdentity),
+        //         authProperties);
+        //
+        //     return this.Redirect(returnUrl);
+        // }
 
         public async Task<IActionResult> Logout()
         {

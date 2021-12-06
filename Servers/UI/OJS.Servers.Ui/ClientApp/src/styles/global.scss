@@ -1,0 +1,12 @@
+@import 'src/styles/__resets';
+
+body,
+#root {
+  font-family: 'Montserrat-Medium',sans-serif;
+  margin: 0;
+  padding:0;
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+

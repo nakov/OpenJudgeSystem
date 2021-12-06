@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OJS.Services.Administration.Data
 {
-    public interface ITestsDataService : IService, IDataService<Test>
+    public interface ITestsDataService : IDataService<Test>
     {
         IQueryable<Test> GetByIdQuery(int id);
 

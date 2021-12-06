@@ -18,6 +18,9 @@ namespace OJS.Common.Utils
                 ? BuildAndGetConnectionString(appName, appUsesMultipleDatabases)
                 : Environment.GetEnvironmentVariable(GetConnectionStringName(appName, appUsesMultipleDatabases));
 
+        public static string GetApplicationUrl(ApplicationName appName)
+            => Environment.GetEnvironmentVariable(GetApplicationUrlEnvironmentName(appName));
+
         private static string GetConnectionStringName(ApplicationName appName, bool appUsesMultipleDatabases)
             => appUsesMultipleDatabases
                 ? $"{appName}DbContext"
@@ -63,6 +66,9 @@ namespace OJS.Common.Utils
 
             return Environment.GetEnvironmentVariable(key);
         }
+
+        private static string GetApplicationUrlEnvironmentName(ApplicationName appName)
+            => $"{GetApplicationEnvironmentPrefix(appName)}_URL";
 
         private static string GetApplicationEnvironmentPrefix(ApplicationName appName)
             => string.Join("_", Regex.Split(appName.ToString(), UpperCaseGroupsRegex)).ToUpper();

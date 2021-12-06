@@ -1,0 +1,14 @@
+@import "src/styles/components";
+
+.userTestBody {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80vh
+}
+
+.buttonsContainer {
+  display: flex;
+  gap: 25px;
+}
+

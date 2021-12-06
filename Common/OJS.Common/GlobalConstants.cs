@@ -72,5 +72,17 @@ namespace OJS.Common
             public const string ValueCannotBeLessThanOrEqualToZero = "Value cannot be less than or equal to 0";
             public const string ValueCannotBeNullOrWhiteSpaceTemplate = "{0} cannot be null or white space";
         }
+
+        public static class FileExtensions
+        {
+            public const string Json = ".json";
+            public const string Txt = ".txt";
+            public const string Html = ".html";
+            public const string Excel = ".xlsx";
+            public const string Xml = ".xml";
+            public const string Csv = ".csv";
+            public const string Zip = ".zip";
+            public static readonly string[] AllowedImageFileExtensions = new string[] { ".jpg", ".jpeg", ".png" };
+        }
     }
 }
