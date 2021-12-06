@@ -8,7 +8,6 @@
     using System.Collections.Generic;
     using System.Linq;
 
-
     public class CacheItemsProviderService : ICacheItemsProviderService
     {
         private readonly ICacheService cache;

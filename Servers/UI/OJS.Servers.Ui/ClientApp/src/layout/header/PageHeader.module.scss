@@ -1,0 +1,46 @@
+@import "src/styles/colors";
+@import "src/styles/components";
+
+.header {
+  display: flex;
+  justify-content: center;
+
+  padding: 0 50px;
+  height: 75px;
+
+
+  @media only screen and (max-width: 425px) {
+    padding: 0 5px;
+  }
+
+  h1 {
+    color: white;
+  }
+
+  img {
+    max-height: 40px;
+  }
+}
+
+.headerSize {
+  @extend .contentSize;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .14), 0 3px 4px rgba(0, 0, 0, .12), 0 1px 5px rgba(0, 0, 0, .2);
+  background-color: #fff;
+  padding: 0 30px;
+  border-radius: 0 0 8px 8px;
+  
+  @media only screen and (max-width: 425px) {
+    box-shadow: none;
+    padding: 0;
+  }
+}
+
+.heading {
+  @media only screen and (max-width: 425px) {
+   width: 100px;
+  }
+}

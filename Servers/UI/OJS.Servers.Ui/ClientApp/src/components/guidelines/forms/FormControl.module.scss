@@ -1,0 +1,90 @@
+@import "src/styles/colors";
+
+.formControl {
+  position: relative;
+
+  &[type="text"],
+  &.formControlTextArea {
+    display: block;
+    max-height: 50px;
+    width: 100%;
+    padding: 16px;
+
+    font-weight: 400;
+    color: #565656;
+    border: 1px solid #565656;
+    outline: none;
+    border-radius: 6px;
+
+    &:focus {
+      border: 1px solid #565656;
+    }
+  }
+
+  &[type='checkbox'],
+  &[type='radio'] {
+    width: 18px;
+    height: 18px;
+    border-radius: 3px;
+    padding: 0;
+    border: 1px solid;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    &:after {
+      content: '';
+      transition: all .2s ease-in;
+      background-size: 16px;
+      position: absolute;
+      text-align: center;
+      padding: 0;
+      top: 0;
+      left: 0;
+      width: 16px;
+      height: 16px;
+      border-radius: 2px;
+      background: url('./check-white.svg') no-repeat 35%;
+      background-size: 70%;
+    }
+
+    &:checked {
+      border-color: $background-color;
+
+      &:after {
+        background-color: #44a9f8;
+        transform: scale(1);
+      }
+    }
+
+    &:not(:checked) {
+      &:after {
+        transform: scale(0);
+      }
+    }
+  }
+}
+
+.formLabel {
+  display: flex;
+  align-items: center;
+  //padding: 15px 15px;
+  padding-left: 15px;
+  width: 100%;
+  border-bottom: 1px solid #c2c2c2;
+
+  &:hover {
+    cursor: pointer;
+    //background-color: $background-color-btn-secondary-hover;
+  }
+
+  &:last-of-type {
+    border-bottom: 0;
+  }
+}
+
+.formControlContainer {
+  display: flex;
+  align-items: flex-start;
+}
