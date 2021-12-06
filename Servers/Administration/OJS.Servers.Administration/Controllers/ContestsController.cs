@@ -18,28 +18,30 @@ namespace OJS.Servers.Administration.Controllers
     {
         private const int ProblemGroupsCountLimit = 40;
 
-        private readonly IContestsDataService contestsData;
         private readonly IContestCategoriesDataService contestCategoriesData;
         private readonly IIpsDataService ipsData;
         private readonly IParticipantsDataService participantsData;
 
         public ContestsController(
-            IContestsDataService contestsData,
             IContestCategoriesDataService contestCategoriesData,
             IIpsDataService ipsData,
             IParticipantsDataService participantsData)
         {
-            this.contestsData = contestsData;
             this.contestCategoriesData = contestCategoriesData;
             this.ipsData = ipsData;
             this.participantsData = participantsData;
         }
 
-        protected override IEnumerable<Func<Contest, EntityAction, Task<ValidatorResult>>> AsyncEntityValidators
-            => new Func<Contest, EntityAction, Task<ValidatorResult>>[]
+        protected override IEnumerable<Func<Contest, Contest, EntityAction, ValidatorResult>> EntityValidators
+            =>new Func<Contest, Contest, EntityAction, ValidatorResult>[]
+            {
+                this.ValidateContest,
+            };
+
+        protected override IEnumerable<Func<Contest, Contest, EntityAction, Task<ValidatorResult>>> AsyncEntityValidators
+            => new Func<Contest, Contest, EntityAction, Task<ValidatorResult>>[]
             {
                 this.ValidateContestCategoryPermissions,
-                this.ValidateContest,
             };
 
         protected override async Task BeforeEntitySaveOnCreateAsync(
@@ -51,30 +53,31 @@ namespace OJS.Servers.Administration.Controllers
         }
 
         protected override async Task BeforeEntitySaveOnEditAsync(
-            Contest contest,
+            Contest existingContest,
+            Contest newContest,
             IDictionary<string, string> entityDict)
         {
-            if (contest.IsOnline && contest.ProblemGroups.Count == 0)
+            if (newContest.IsOnline && newContest.ProblemGroups.Count == 0)
             {
-                this.AddProblemGroupsToContest(contest, contest.NumberOfProblemGroups);
+                this.AddProblemGroupsToContest(newContest, newContest.NumberOfProblemGroups);
             }
 
-            if (!contest.IsOnline && contest.Duration != null)
+            if (!newContest.IsOnline && newContest.Duration != null)
             {
-                contest.Duration = null;
+                newContest.Duration = null;
             }
 
-            contest.IpsInContests.Clear();
-            await this.AddIpsToContest(contest, entityDict["AllowedIps"]);
+            newContest.IpsInContests.Clear();
+            await this.AddIpsToContest(newContest, entityDict["AllowedIps"]);
         }
 
         protected override async Task AfterEntitySaveOnEditAsync(
+            Contest oldContest,
             Contest contest,
             IDictionary<string, string> entityDict)
         {
-            // TODO: Fix logic. Original values before the edit are not passed here.
-            var originalContestPassword = entityDict[nameof(contest.ContestPassword)];
-            var originalPracticePassword = entityDict[nameof(contest.PracticePassword)];
+            var originalContestPassword = oldContest.ContestPassword;
+            var originalPracticePassword = oldContest.PracticePassword;
 
             await this.InvalidateParticipants(originalContestPassword, originalPracticePassword, contest);
         }
@@ -91,14 +94,17 @@ namespace OJS.Servers.Administration.Controllers
                     },
                 });
 
-        private async Task<ValidatorResult> ValidateContestCategoryPermissions(Contest contest, EntityAction action)
+        private async Task<ValidatorResult> ValidateContestCategoryPermissions(
+            Contest existingContest,
+            Contest newContest,
+            EntityAction action)
         {
             var userId = this.User.GetId();
             var userIsAdmin = this.User.IsAdmin();
 
-            if (contest.CategoryId.HasValue &&
+            if (newContest.CategoryId.HasValue &&
                 await this.contestCategoriesData.UserHasContestCategoryPermissions(
-                    contest.CategoryId.Value,
+                    newContest.CategoryId.Value,
                     userId,
                     userIsAdmin))
             {
@@ -108,62 +114,52 @@ namespace OJS.Servers.Administration.Controllers
             return ValidatorResult.Error(AdminResource.No_privileges_message);
         }
 
-        private async Task<ValidatorResult> ValidateContest(Contest model, EntityAction action)
+        private ValidatorResult ValidateContest(Contest existingContest, Contest newContest, EntityAction action)
         {
-            if (model.StartTime >= model.EndTime)
+            if (newContest.StartTime >= newContest.EndTime)
             {
                 return ValidatorResult.Error(Resource.Contest_start_date_before_end);
             }
 
-            if (model.PracticeStartTime >= model.PracticeEndTime)
+            if (newContest.PracticeStartTime >= newContest.PracticeEndTime)
             {
                 return ValidatorResult.Error(Resource.Practice_start_date_before_end);
             }
 
-            if (model.IsOnline)
+            if (newContest.IsOnline)
             {
-                if (!model.Duration.HasValue)
+                if (!newContest.Duration.HasValue)
                 {
                     return ValidatorResult.Error(Resource.Required_field_for_online);
                 }
 
-                if (model.Duration.Value.TotalHours >= 24)
+                if (newContest.Duration.Value.TotalHours >= 24)
                 {
                     return ValidatorResult.Error(Resource.Duration_invalid_format);
                 }
 
-                if (model.NumberOfProblemGroups <= 0)
+                if (newContest.NumberOfProblemGroups <= 0)
                 {
                     return ValidatorResult.Error(Resource.Required_field_for_online);
                 }
 
-                if (model.NumberOfProblemGroups > ProblemGroupsCountLimit)
+                if (newContest.NumberOfProblemGroups > ProblemGroupsCountLimit)
                 {
                     return ValidatorResult.Error(
                         string.Format(Resource.Problem_groups_count_limit, ProblemGroupsCountLimit));
                 }
             }
 
-            if (action == EntityAction.Edit)
-            {
-                return await this.ValidateContestOnEdit(model);
-            }
-
-            return ValidatorResult.Success();
+            return action == EntityAction.Edit
+                ? this.ValidateContestOnEdit(existingContest, newContest)
+                : ValidatorResult.Success();
         }
 
-        private async Task<ValidatorResult> ValidateContestOnEdit(Contest model)
+        private ValidatorResult ValidateContestOnEdit(Contest existingContest, Contest newContest)
         {
-            var contest = await this.contestsData.OneById(model.Id);
-
-            if (contest == null)
-            {
-                return ValidatorResult.Error(Resource.Contest_not_found);
-            }
-
-            if (contest.IsOnline &&
-                contest.IsActive &&
-                (contest.Duration != model.Duration || contest.Type != model.Type))
+            if (existingContest.IsOnline &&
+                existingContest.IsActive &&
+                (existingContest.Duration != newContest.Duration || existingContest.Type != newContest.Type))
             {
                 return ValidatorResult.Error(Resource.Active_contest_cannot_edit_duration_type);
             }
