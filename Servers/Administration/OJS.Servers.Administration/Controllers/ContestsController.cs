@@ -18,30 +18,28 @@ namespace OJS.Servers.Administration.Controllers
     {
         private const int ProblemGroupsCountLimit = 40;
 
+        private readonly IContestsDataService contestsData;
         private readonly IContestCategoriesDataService contestCategoriesData;
         private readonly IIpsDataService ipsData;
         private readonly IParticipantsDataService participantsData;
 
         public ContestsController(
+            IContestsDataService contestsData,
             IContestCategoriesDataService contestCategoriesData,
             IIpsDataService ipsData,
             IParticipantsDataService participantsData)
         {
+            this.contestsData = contestsData;
             this.contestCategoriesData = contestCategoriesData;
             this.ipsData = ipsData;
             this.participantsData = participantsData;
         }
 
-        protected override IEnumerable<Func<Contest, Contest, EntityAction, ValidatorResult>> EntityValidators
-            =>new Func<Contest, Contest, EntityAction, ValidatorResult>[]
-            {
-                this.ValidateContest,
-            };
-
         protected override IEnumerable<Func<Contest, Contest, EntityAction, Task<ValidatorResult>>> AsyncEntityValidators
             => new Func<Contest, Contest, EntityAction, Task<ValidatorResult>>[]
             {
                 this.ValidateContestCategoryPermissions,
+                this.ValidateContest,
             };
 
         protected override async Task BeforeEntitySaveOnCreateAsync(
@@ -114,7 +112,9 @@ namespace OJS.Servers.Administration.Controllers
             return ValidatorResult.Error(AdminResource.No_privileges_message);
         }
 
-        private ValidatorResult ValidateContest(Contest existingContest, Contest newContest, EntityAction action)
+        private async Task<ValidatorResult> ValidateContest(
+            Contest existingContest,
+            Contest newContest, EntityAction action)
         {
             if (newContest.StartTime >= newContest.EndTime)
             {
@@ -150,9 +150,12 @@ namespace OJS.Servers.Administration.Controllers
                 }
             }
 
-            return action == EntityAction.Edit
-                ? this.ValidateContestOnEdit(existingContest, newContest)
-                : ValidatorResult.Success();
+            return action switch
+            {
+                EntityAction.Edit => this.ValidateContestOnEdit(existingContest, newContest),
+                EntityAction.Delete => await this.ValidateContestOnDelete(newContest),
+                _ => ValidatorResult.Success(),
+            };
         }
 
         private ValidatorResult ValidateContestOnEdit(Contest existingContest, Contest newContest)
@@ -162,6 +165,16 @@ namespace OJS.Servers.Administration.Controllers
                 (existingContest.Duration != newContest.Duration || existingContest.Type != newContest.Type))
             {
                 return ValidatorResult.Error(Resource.Active_contest_cannot_edit_duration_type);
+            }
+
+            return ValidatorResult.Success();
+        }
+
+        private async Task<ValidatorResult> ValidateContestOnDelete(Contest contest)
+        {
+            if (await this.contestsData.IsActiveById(contest.Id))
+            {
+                return ValidatorResult.Error(Resource.Active_contest_forbidden_for_deletion);
             }
 
             return ValidatorResult.Success();
