@@ -16,6 +16,11 @@ namespace OJS.Servers.Administration.Controllers
 
     public class ContestsController : AutoCrudAdminController<Contest>
     {
+        private enum AdditionalFields
+        {
+            AllowedIps,
+        }
+
         private const int ProblemGroupsCountLimit = 40;
 
         private readonly IContestsDataService contestsData;
@@ -47,7 +52,7 @@ namespace OJS.Servers.Administration.Controllers
             IDictionary<string, string> entityDict)
         {
             this.AddProblemGroupsToContest(contest, contest.NumberOfProblemGroups);
-            await this.AddIpsToContest(contest, entityDict["AllowedIps"]);
+            await this.AddIpsToContest(contest, entityDict[AdditionalFields.AllowedIps.ToString()]);
         }
 
         protected override async Task BeforeEntitySaveOnEditAsync(
@@ -66,7 +71,7 @@ namespace OJS.Servers.Administration.Controllers
             }
 
             newContest.IpsInContests.Clear();
-            await this.AddIpsToContest(newContest, entityDict["AllowedIps"]);
+            await this.AddIpsToContest(newContest, entityDict[AdditionalFields.AllowedIps.ToString()]);
         }
 
         protected override async Task AfterEntitySaveOnEditAsync(
@@ -86,9 +91,9 @@ namespace OJS.Servers.Administration.Controllers
                 {
                     new FormControlViewModel
                     {
-                        Name = "AllowedIps",
+                        Name = AdditionalFields.AllowedIps.ToString(),
                         Type = typeof(string),
-                        Value = default,
+                        Value = string.Join(", ", entity.IpsInContests.Select(x => x.Ip.Value)),
                     },
                 });
 
