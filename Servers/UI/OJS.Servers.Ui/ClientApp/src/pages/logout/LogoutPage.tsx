@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { useHistory } from 'react-router';
 import { useEffect } from 'react';
-import { makePrivate } from '../shared/make-private';
-import { setLayout } from '../shared/set-layout';
-import { useAuth } from '../../hooks/use-auth';
 import { wait } from '../../utils/promise-utils';
+import { useAuth } from '../../hooks/use-auth';
 
 const LogoutPage = () => {
     const { signOut } = useAuth();
@@ -14,7 +12,7 @@ const LogoutPage = () => {
         (async () => {
             await signOut();
             await wait(0.7);
-            history.push('/');
+            window.location.href = '/';
         })();
     }, [ history, signOut ]);
 
@@ -23,4 +21,4 @@ const LogoutPage = () => {
     );
 };
 
-export default makePrivate(setLayout(makePrivate(LogoutPage)));
+export default LogoutPage;

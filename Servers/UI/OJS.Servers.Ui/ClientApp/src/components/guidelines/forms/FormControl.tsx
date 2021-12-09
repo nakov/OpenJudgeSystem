@@ -12,7 +12,7 @@ interface IFormControlProps {
     className?: string | string[],
     labelText?: string,
     labelClassName?: string | string[],
-    type?: 'radio' | 'checkbox' | 'text' | 'textarea',
+    type?: 'radio' | 'checkbox' | 'text' | 'textarea' | 'input' | 'password',
     onChange?: (value?:string) => void
     onInput?: (value?:string) => void,
     checked?: boolean

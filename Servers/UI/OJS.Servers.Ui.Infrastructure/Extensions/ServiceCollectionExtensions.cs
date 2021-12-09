@@ -24,6 +24,7 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
                 .AddIdentityDatabase<OjsDbContext, UserProfile>()
                 .AddMemoryCache()
                 .AddSoftUniJudgeCommonServices()
+                .AddLogging()
                 .ConfigureSettings(configuration)
                 .AddControllersWithViews();
         }

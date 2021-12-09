@@ -2,7 +2,7 @@ namespace OJS.Servers.Ui.Models
 {
     using System.ComponentModel.DataAnnotations;
 
-    public class LoginViewModel
+    public class LoginRequestModel
     {
         [Required]
         public string UserName { get; set; }

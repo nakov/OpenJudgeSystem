@@ -15,6 +15,7 @@ namespace OJS.Servers.Ui.Models
 
         public string HeadContent { get; set; }
         public string BodyContent { get; set; }
+        public bool IsAuthenticated { get; set; }
 
         public CreateReactAppViewModel(HttpContext context)
         {
@@ -45,6 +46,7 @@ namespace OJS.Servers.Ui.Models
 
             this.HeadContent = match.Groups["HeadContent"].Value;
             this.BodyContent = match.Groups["BodyContent"].Value;
+            this.IsAuthenticated = context.Request.Cookies[".AspNetCore.Identity.Application"] != null;
         }
     }
 }
