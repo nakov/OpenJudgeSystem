@@ -4,16 +4,15 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { HttpStatus } from '../common/common';
 import { IDictionary } from '../common/types';
-import { useAuth } from './use-auth';
 
 const useHttp = (url: string, headers: IDictionary<string> | null = null) => {
     const [ response, setResponse ] = useState<any>(null);
     const [ status, setStatus ] = useState<HttpStatus>(HttpStatus.NotStarted);
     const [ error, setError ] = useState<Error | null>(null);
     const [ actualHeaders, setActualHeaders ] = useState<IDictionary<string>>({});
-    const [ authHeader, setAuthHeader ] = useState({});
-    const { getToken } = useAuth();
-    const token = getToken();
+    // const [ authHeader, setAuthHeader ] = useState({});
+    // const { getToken } = useAuth();
+    // const token = getToken();
 
     const request = useCallback(async (func: () => Promise<any>) => {
         try {
@@ -25,9 +24,16 @@ const useHttp = (url: string, headers: IDictionary<string> | null = null) => {
             setError(null);
             setStatus(HttpStatus.Success);
         } catch (err: any) {
+            switch (err.response.status) {
+            case 401:
+                setStatus(HttpStatus.Unauthorized);
+                break;
+            default:
+                setStatus(HttpStatus.Error);
+                break;
+            }
             setError(err);
-            setResponse(null);
-            setStatus(HttpStatus.Error);
+            setResponse(err.response);
         }
     }, [ ]);
 
@@ -60,18 +66,17 @@ const useHttp = (url: string, headers: IDictionary<string> | null = null) => {
         () => {
             setActualHeaders({
                 'content-type': 'application/json',
-                ...authHeader,
                 ...headers ?? {},
             });
         },
-        [ authHeader, headers ],
+        [ headers ],
     );
 
-    useEffect(() => {
-        if (token) {
-            setAuthHeader({ Authorization: `Bearer ${token}` });
-        }
-    }, [ token ]);
+    // useEffect(() => {
+    //     if (token) {
+    //         setAuthHeader({ Authorization: `Bearer ${token}` });
+    //     }
+    // }, [ token ]);
 
     return {
         get,

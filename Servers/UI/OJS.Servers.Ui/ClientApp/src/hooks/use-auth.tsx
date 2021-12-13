@@ -1,12 +1,11 @@
-import React, {
-    createContext, useCallback,
-    useContext, useEffect, useMemo,
-    useState,
-} from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import IHaveChildrenProps from '../components/common/IHaveChildrenProps';
 import { useLoading } from './use-loading';
-import AuthService from '../services/auth-service';
-import { useServices } from './use-services';
+import { useHttp } from './use-http';
+import { useNotifications } from './use-notifications';
+import { INotificationType } from '../common/types';
+import { HttpStatus } from '../common/common';
+import { logoutUrl, loginSubmitUrl } from '../utils/urls';
 
 type UserType = {
   username: string,
@@ -16,18 +15,16 @@ type UserType = {
 interface IAuthContext {
   user: UserType,
   signIn: () => void;
-  signinRedirectCallback: () => void;
   signOut: () => Promise<void>;
-  signOutCallback: () => void;
-  signInSilentCallback: () => Promise<void>;
-  getToken: () => string | null;
   getUser: () => UserType;
+  setUsername: (value: string) => void;
+  setPassword: (value: string) => void;
 }
 
 const defaultState = {
     user: {
         username: '',
-        isLoggedIn: false,
+        isLoggedIn: window.isLoggedIn,
     },
 };
 
@@ -38,75 +35,65 @@ interface IAuthProviderProps extends IHaveChildrenProps {}
 const AuthProvider = ({ children }: IAuthProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
     const [ user, setUser ] = useState<UserType>(defaultState.user);
-    const { localStorageService } = useServices();
-
-    const authService = useMemo(
-        () => new AuthService(),
-        [],
-    );
+    const [ username, setUsername ] = useState<string>(defaultState.user.username);
+    const [ password, setPassword ] = useState<string>();
+    const { showError } = useNotifications();
+    const { post: loginSubmitRequest, response: loginSubmitRequestResponse, status: loginSubmitRequestStatus } = useHttp(loginSubmitUrl);
+    const { post: logoutRequest, response: logoutResponse } = useHttp(logoutUrl);
 
     const signIn = useCallback(
         async () => {
             startLoading();
-            await authService.signinRedirect();
-            stopLoading();
-        },
-        [ authService, startLoading, stopLoading ],
-    );
-
-    const signinRedirectCallback = useCallback(
-        async () => {
-            await authService.signInRedirectCallback();
-            const loadedUser = await authService.getUser();
-            localStorageService.set('user', loadedUser.profile.preferred_username!);
-            localStorageService.set('token', loadedUser.access_token);
-            setUser({
-                username: loadedUser.profile.preferred_username!,
-                isLoggedIn: true,
+            await loginSubmitRequest({
+                Username: username,
+                Password: password,
+                RememberMe: true,
             });
-        },
-        [ authService, localStorageService ],
-    );
-
-    const signInSilentCallback = useCallback(
-        async () => {
-            startLoading();
-            await authService.signInSilentCallback();
             stopLoading();
         },
-        [ authService, startLoading, stopLoading ],
+        [ loginSubmitRequest, password, startLoading, stopLoading, username ],
     );
 
     const signOut = useCallback(async () => {
-        authService.logout();
-    }, [ authService ]);
-
-    const signOutCallback = useCallback(async () => {
-        localStorageService.clear();
-    }, [ localStorageService ]);
-
-    const getToken = useCallback(() => localStorageService.get('token'), [ localStorageService ]);
-
-    const getUsername = useCallback(() => localStorageService.get('user'), [ localStorageService ]);
+        startLoading();
+        await logoutRequest({});
+        stopLoading();
+    }, [ logoutRequest, startLoading, stopLoading ]);
 
     const getUser = useCallback(() => user, [ user ]);
 
     useEffect(() => {
         setUser({
-            username: getUsername(),
-            isLoggedIn: !!getToken(),
+            username: user.username,
+            isLoggedIn: window.isLoggedIn,
         });
-    }, [ getToken, getUsername ]);
+    }, [ user.username ]);
+
+    useEffect(() => {
+        if (loginSubmitRequestResponse) {
+            if (loginSubmitRequestStatus === HttpStatus.Unauthorized) {
+                showError({ message: 'Invalid credentials.' } as INotificationType);
+                return;
+            }
+
+            setUser({
+                username: username!,
+                isLoggedIn: true,
+            });
+        }
+    }, [ loginSubmitRequestResponse, loginSubmitRequestStatus, showError ]);
+
+    useEffect(() => {
+        setUser(defaultState.user);
+    }, [ logoutResponse ]);
 
     const value = {
         user,
         signIn,
-        signinRedirectCallback,
-        signInSilentCallback,
         signOut,
-        signOutCallback,
-        getToken,
         getUser,
+        setUsername,
+        setPassword,
     };
 
     return (

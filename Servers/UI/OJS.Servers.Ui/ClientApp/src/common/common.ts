@@ -1,6 +1,7 @@
 enum HttpStatus {
     Pending,
     Success,
+    Unauthorized,
     Error,
     NotStarted
 }

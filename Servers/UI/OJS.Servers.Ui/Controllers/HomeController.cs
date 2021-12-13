@@ -18,24 +18,5 @@
             var vm = new CreateReactAppViewModel(HttpContext);
             return this.View(vm);
         }
-
-        // public async Task<IActionResult> Index()
-        // {
-        //     var activeContests = await this.contestsBusiness
-        //         .GetAllCompetable()
-        //         .MapCollection<HomeContestViewModel>();
-        //
-        //     var pastContests = await this.contestsBusiness
-        //         .GetAllPast()
-        //         .MapCollection<HomeContestViewModel>();
-        //
-        //     var indexViewModel = new IndexViewModel
-        //     {
-        //         ActiveContests = activeContests,
-        //         PastContests = pastContests,
-        //     };
-        //
-        //     return this.View();
-        // }
     }
 }
