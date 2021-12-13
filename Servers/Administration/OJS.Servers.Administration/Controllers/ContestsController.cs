@@ -69,7 +69,7 @@ namespace OJS.Servers.Administration.Controllers
         protected override IEnumerable<GridAction> CustomActions
             => new []
             {
-                new GridAction { Action = "DownloadSubmissions" },
+                new GridAction { Action = nameof(DownloadSubmissions) },
             };
 
         protected override async Task BeforeEntitySaveOnEditAsync(
