@@ -9,6 +9,10 @@ namespace OJS.Common
         public const int BestSubmissionEligibleForArchiveAgeInYears = 2;
         public const int NonBestSubmissionEligibleForArchiveAgeInYears = 1;
 
+        // TempData dictionary keys
+        public const string InfoMessage = "InfoMessage";
+        public const string DangerMessage = "DangerMessage";
+
         public static class RegexPatterns
         {
             public const string UpperCaseGroupsRegex = @"(?<!^)(?=[A-Z])";
