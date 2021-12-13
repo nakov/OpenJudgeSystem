@@ -16,6 +16,7 @@ namespace OJS.Servers.Administration.Controllers
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using static OJS.Common.GlobalConstants.MimeTypes;
     using ZipFile = Ionic.Zip.ZipFile;
 
     public class ContestsExportController : BaseAdminViewController
@@ -37,8 +38,14 @@ namespace OJS.Servers.Administration.Controllers
             this.problemsData = problemsData;
         }
 
-        public async Task<IActionResult> Solutions(int id, bool compete, SubmissionExportType exportType)
+        // TODO: remove DotNetZip nuget package and use System.IO.Compression for zip archive
+        [HttpPost]
+        public async Task<IActionResult> Solutions(DownloadSubmissionsModel model)
         {
+            var id = model.ContestId;
+            var compete = model.ContestExportResultType == ContestExportResultType.Compete;
+            var exportType = model.SubmissionExportType;
+
             var userHasAccessToContest = this.User.IsAdmin() ||
                 await this.contestsData.IsUserLecturerInByContestAndUser(id, this.User.GetId());
 
@@ -51,7 +58,7 @@ namespace OJS.Servers.Administration.Controllers
             if (string.IsNullOrWhiteSpace(contestName))
             {
                 this.TempData[GlobalConstants.DangerMessage] = "No such contest";
-                return this.RedirectToAction("Index", "Home", new { area = string.Empty });
+                return this.RedirectToAction("Index", "Contests");
             }
 
             var problems = this.GetContestProblems(id);
@@ -82,10 +89,12 @@ namespace OJS.Servers.Administration.Controllers
                     _ => "all"
                 });
 
-            // TODO: Test this approach for returning the zip file
-            var stream = new MemoryStream();
-            file.Save(stream);
-            return this.File(stream, zipFileName);
+            await using var ms = new MemoryStream();
+            file.Save(ms);
+            ms.Position = 0;
+            var data = ms.ToArray();
+
+            return this.File(data, ApplicationZip, zipFileName);
         }
 
         private static StringBuilder PrepareSolutionsFileComment(

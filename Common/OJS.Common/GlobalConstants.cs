@@ -55,6 +55,7 @@ namespace OJS.Common
         {
             public const string ApplicationJson = "application/json";
             public const string ApplicationPdf = "application/pdf";
+            public const string ApplicationZip = "application/zip";
             public const string Csv = "text/csv";
             public const string Tsv = "text/tsv";
             public const string CsvExcelSheet = "application/vnd.ms-excel";

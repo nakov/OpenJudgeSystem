@@ -2,9 +2,11 @@ namespace OJS.Servers.Administration.Controllers
 {
     using AutoCrudAdmin.Controllers;
     using AutoCrudAdmin.ViewModels;
+    using Microsoft.AspNetCore.Mvc;
     using OJS.Data.Models;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Problems;
+    using OJS.Servers.Administration.Models.Contests;
     using OJS.Servers.Infrastructure.Extensions;
     using OJS.Services.Administration.Data;
     using System;
@@ -32,8 +34,20 @@ namespace OJS.Servers.Administration.Controllers
             this.participantsData = participantsData;
         }
 
+        // TODO: make it as a popup window
+        [HttpGet]
+        public IActionResult DownloadSubmissions([FromQuery] IDictionary<string, string> complexId)
+        {
+            var model = new DownloadSubmissionsModel
+            {
+                ContestId = int.Parse(complexId.Values.First()),
+            };
+
+            return this.View(model);
+        }
+
         protected override IEnumerable<Func<Contest, Contest, EntityAction, ValidatorResult>> EntityValidators
-            =>new Func<Contest, Contest, EntityAction, ValidatorResult>[]
+            => new Func<Contest, Contest, EntityAction, ValidatorResult>[]
             {
                 this.ValidateContest,
             };
@@ -51,6 +65,12 @@ namespace OJS.Servers.Administration.Controllers
             this.AddProblemGroupsToContest(contest, contest.NumberOfProblemGroups);
             await this.AddIpsToContest(contest, entityDict["AllowedIps"]);
         }
+
+        protected override IEnumerable<GridAction> CustomActions
+            => new []
+            {
+                new GridAction { Action = "DownloadSubmissions" },
+            };
 
         protected override async Task BeforeEntitySaveOnEditAsync(
             Contest existingContest,

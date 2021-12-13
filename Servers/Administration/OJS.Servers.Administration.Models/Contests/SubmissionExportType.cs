@@ -1,16 +1,16 @@
 namespace OJS.Servers.Administration.Models.Contests
 {
-    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
 
     public enum SubmissionExportType
     {
-        [Description("All submission")]
+        [Display(Name = "All submission")]
         AllSubmissions = 1,
 
-        [Description("Best submission")]
+        [Display(Name = "Best submission")]
         BestSubmissions = 2,
 
-        [Description("Latest submissions")]
+        [Display(Name = "Latest submissions")]
         LastSubmissions = 3,
     }
 }
