@@ -30,7 +30,7 @@ const PageNav = () => {
         setRoutes(user.isLoggedIn
             ? userRoutes
             : anonymousRoutes);
-    }, [ user ]);
+    }, [ user.isLoggedIn ]);
 
     const itemFunc = ({ name, link, isPrimary }: IRouteType) => {
         const type = isPrimary

@@ -5,7 +5,6 @@ import AuthProvider from './hooks/use-auth';
 import PageHeader from './layout/header/PageHeader';
 import PageContent from './layout/content/PageContent';
 import PageFooter from './layout/footer/PageFooter';
-import SessionProvider from './hooks/use-session';
 import LoadingProvider from './hooks/use-loading';
 
 import './styles/global.scss';
@@ -17,13 +16,11 @@ const App = () => (
         <LoadingProvider>
             <NotificationsProvider>
                 <AuthProvider>
-                    <SessionProvider>
-                        <Router>
-                            <PageHeader />
-                            <PageContent />
-                            <PageFooter />
-                        </Router>
-                    </SessionProvider>
+                    <Router>
+                        <PageHeader />
+                        <PageContent />
+                        <PageFooter />
+                    </Router>
                 </AuthProvider>
             </NotificationsProvider>
         </LoadingProvider>
