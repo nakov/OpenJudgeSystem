@@ -10,9 +10,5 @@
       <ProjectReference Include="..\OJS.Servers.Administration.Infrastructure\OJS.Servers.Administration.Infrastructure.csproj" />
       <ProjectReference Include="..\OJS.Servers.Administration.Models\OJS.Servers.Administration.Models.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="DotNetZip " Version="1.16.0" />
-    </ItemGroup>
     
 </Project>
