@@ -10,6 +10,7 @@
 
     <ItemGroup>
       <PackageReference Include="SoftUni.AutoMapper.Infrastructure" Version="1.0.3" />
+      <PackageReference Include="X.PagedList" Version="8.1.0" />
     </ItemGroup>
 
 </Project>

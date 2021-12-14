@@ -16,11 +16,7 @@ namespace OJS.Services.Administration.Data
 
         IQueryable<Participant> GetAllByUser(string userId);
 
-        IQueryable<Participant> GetAllByContest(int contestId);
-
         IQueryable<Participant> GetAllOfficialByContest(int contestId);
-
-        IQueryable<Participant> GetAllByContestAndIsOfficial(int contestId, bool isOfficial);
 
         IQueryable<Participant> GetAllOfficialInOnlineContestByContestAndParticipationStartTimeRange(
             int contestId,

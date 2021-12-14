@@ -54,6 +54,17 @@ namespace OJS.Servers.Administration.Controllers
             return this.View(model);
         }
 
+        [HttpGet]
+        public IActionResult ExportResults([FromQuery] IDictionary<string, string> complexId)
+        {
+            var model = new ContestResultsExportRequestModel
+            {
+                Id = int.Parse(complexId.Values.First()),
+            };
+
+            return this.View(model);
+        }
+
         protected override IEnumerable<Func<Contest, Contest, EntityAction, Task<ValidatorResult>>> AsyncEntityValidators
             => new Func<Contest, Contest, EntityAction, Task<ValidatorResult>>[]
             {
@@ -72,7 +83,8 @@ namespace OJS.Servers.Administration.Controllers
         protected override IEnumerable<GridAction> CustomActions
             => new []
             {
-                new GridAction { Action = nameof(DownloadSubmissions) },
+                new GridAction { Action = nameof(this.DownloadSubmissions) },
+                new GridAction { Action = nameof(this.ExportResults) },
             };
 
         protected override async Task BeforeEntitySaveOnEditAsync(

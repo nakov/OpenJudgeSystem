@@ -11,6 +11,7 @@ using OJS.Servers.Administration.Models.Problems;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Data;
 using OJS.Services.Common;
+using OJS.Services.Common.Data;
 using OJS.Services.Common.Models;
 using System;
 using System.Collections.Generic;
@@ -23,20 +24,20 @@ using static OJS.Common.GlobalConstants.MimeTypes;
 public class ContestsExportController : BaseAdminViewController
 {
     private readonly IContestsDataService contestsData;
-    private readonly IParticipantsDataService participantsData;
+    private readonly IParticipantsCommonDataService participantsCommonData;
     private readonly ISubmissionsDataService submissionsData;
     private readonly IProblemsDataService problemsData;
     private readonly IZipArchivesService zipArchives;
 
     public ContestsExportController(
         IContestsDataService contestsData,
-        IParticipantsDataService participantsData,
+        IParticipantsCommonDataService participantsCommonData,
         ISubmissionsDataService submissionsData,
         IProblemsDataService problemsData,
         IZipArchivesService zipArchives)
     {
         this.contestsData = contestsData;
-        this.participantsData = participantsData;
+        this.participantsCommonData = participantsCommonData;
         this.submissionsData = submissionsData;
         this.problemsData = problemsData;
         this.zipArchives = zipArchives;
@@ -199,7 +200,7 @@ public class ContestsExportController : BaseAdminViewController
 
     private IList<ParticipantModel> GetContestParticipants(int contestId, bool isOfficialContest)
     {
-        var participants = this.participantsData
+        var participants = this.participantsCommonData
             .GetAllByContestAndIsOfficial(contestId, isOfficialContest)
             .Select(ParticipantModel.Model)
             .OrderBy(x => x.UserName)

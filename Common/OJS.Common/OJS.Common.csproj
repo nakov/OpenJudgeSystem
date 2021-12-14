@@ -6,6 +6,7 @@
 
     <ItemGroup>
       <PackageReference Include="Core.Fluent.Extensions" Version="1.0.1" />
+      <PackageReference Include="NPOI" Version="2.5.5" />
       <PackageReference Include="SoftUni.Judge.Common" Version="1.0.2" />
     </ItemGroup>
 
