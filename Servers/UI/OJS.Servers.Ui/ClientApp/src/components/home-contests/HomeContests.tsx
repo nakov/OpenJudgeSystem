@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 import { IIndexContestsType, useContests } from '../../hooks/use-contests';
-import { Button } from '../guidelines/buttons/Button';
+import { LinkButton } from '../guidelines/buttons/Button';
 import ContestCard from './contest-card/ContestCard';
 import Heading from '../guidelines/headings/Heading';
 import styles from './HomeContests.module.scss';
@@ -19,7 +19,7 @@ const HomeContests = () => {
 
     const render = (headerTitle: string, contests: IIndexContestsType[]) => (
         <>
-            <Heading className={styles.contestsHeading}>
+            <Heading>
                 {headerTitle}
                 {' '}
                 Contests
@@ -27,9 +27,9 @@ const HomeContests = () => {
             <div className={styles.contestCardsContainer}>
                 {renderContestsList(contests)}
             </div>
-            <Button
+            <LinkButton
+              to="/contests"
               text="See All"
-              onClick={() => {}}
               type="secondary"
               size="small"
               className={styles.contestsSeeAllButton}

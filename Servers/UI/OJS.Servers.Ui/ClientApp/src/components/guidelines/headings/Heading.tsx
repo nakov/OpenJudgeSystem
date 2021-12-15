@@ -1,9 +1,8 @@
 import * as React from 'react';
 
 import IHaveChildrenProps from '../../common/IHaveChildrenProps';
-
-import styles from './Heading.module.scss';
 import concatClassNames from '../../../utils/class-names';
+import styles from './Heading.module.scss';
 
 interface IHeadingProps extends IHaveChildrenProps {
     type?: 'primary' | 'secondary' | 'small';

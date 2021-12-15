@@ -1,15 +1,5 @@
 @import "src/styles/colors";
 
-.contestsHeading {
-  font-family: 'Montserrat', serif;
-  color: $text-dark-gray-color;
-  font-weight: 500;
-  font-size: 28px;
-  border-bottom: 1px solid;
-  border-bottom-color: $bottom-border-color;
-  padding: 10px;
-}
-
 .contestCardsContainer {
   display: flex;
   justify-content: space-around;

@@ -10,7 +10,7 @@ const PageHeader = () => (
     <header className={styles.header}>
         <ReactNotification />
         <div className={styles.headerSize}>
-            <Heading type="primary" className={styles.heading}>
+            <Heading type="secondary" className={styles.heading}>
                 <a href="/">
                     <img src={logo} alt="softuni logo" />
                 </a>

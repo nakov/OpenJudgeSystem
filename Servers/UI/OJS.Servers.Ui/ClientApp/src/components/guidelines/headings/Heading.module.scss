@@ -1,14 +1,19 @@
+@import "src/styles/colors";
+
 .base {
-  font-family: 'Montserrat-Medium', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-style: normal;
   font-weight: 500;
-  color: rgb(62, 76, 93);
+  color: $text-dark-gray-color;
 }
 
 .primary {
   @extend .base;
   font-size: 30px;
   line-height: 36px;
+  border-bottom: 1px solid;
+  border-bottom-color: $bottom-border-color;
+  padding: 10px;
 }
 
 .secondary {
