@@ -105,5 +105,14 @@ namespace OJS.Common
             public const string Subtracted_time_from_participants_online = "Successfully subtracted {0} minutes from the times of all selected active participants in the contest {1}";
             public const string Subtracted_time_from_single_participant_online = "Successfully subtracted {0} minutes from the time of the participant with username: {1}, in the contest {2}";
         }
+
+        public static class ExamGroupsController
+        {
+            public const string Cannot_add_users = "You cannot add users to exam group that is not attached to a contest.";
+            public const string Cannot_attach_contest = "You don't have privileges to attach this contest to an exam group!";
+            public const string Cannot_delete_group_with_active_contest = "You cannot delete exam group which has active contest attached to it.";
+            public const string Cannot_remove_users = "You cannot remove users from exam group that is not attached to a contest.";
+            public const string Users_added = "Users were added successfully to the exam group.";
+        }
     }
 }

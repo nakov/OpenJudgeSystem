@@ -30,7 +30,7 @@ public class ParticipantsController : AutoCrudAdminController<Participant>
         Participant newParticipant,
         EntityAction action)
     {
-        var userId = newParticipant.UserId;
+        var userId = this.User.GetId();
         var isUserAdmin = this.User.IsAdmin();
 
         if (await this.contestsBusiness.UserHasContestPermissions(newParticipant.ContestId, userId, isUserAdmin))
