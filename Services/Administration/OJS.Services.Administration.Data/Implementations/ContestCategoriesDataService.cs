@@ -17,5 +17,26 @@ namespace OJS.Services.Administration.Data.Implementations
                (isAdmin || await this.Exists(x =>
                    x.Id == categoryId &&
                    x.LecturersInContestCategories.Any(y => y.LecturerId == userId)));
+
+        public IQueryable<ContestCategory> GetAllVisible() =>
+            this.DbSet
+                .Where(cc => cc.IsVisible);
+
+        public IQueryable<ContestCategory> GetAllVisibleByLecturer(string lecturerId)
+            => this.GetAllVisible()
+                .Where(cc =>
+                    cc.LecturersInContestCategories.Any(l => l.LecturerId == lecturerId) ||
+                    cc.Contests.Any(c => c.LecturersInContests.Any(l => l.LecturerId == lecturerId)));
+
+        public Task<string> GetNameById(int id)
+            => this.DbSet
+                .Where(cc => cc.Id == id)
+                .Select(cc => cc.Name)
+                .FirstOrDefaultAsync();
+
+        public Task<bool> HasContestsById(int id)
+            => this.GetAllVisible()
+                .Where(cc => cc.Id == id)
+                .AnyAsync(cc => cc.Contests.Any());
     }
 }
