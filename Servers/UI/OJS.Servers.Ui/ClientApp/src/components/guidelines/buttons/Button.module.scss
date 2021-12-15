@@ -40,6 +40,20 @@
   }
 }
 
+.btnDisabled {
+  @extend .btn;
+
+  color: $color-btn-disabled;
+  box-shadow: none;
+  background-color: $background-color-btn-secondary;
+  border-color: $color-btn-disabled;
+
+  &:hover {
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
 .btnPlain {
   background: none;
   color: inherit;

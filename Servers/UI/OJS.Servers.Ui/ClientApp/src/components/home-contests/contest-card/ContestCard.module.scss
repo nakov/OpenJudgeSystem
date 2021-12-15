@@ -1,0 +1,46 @@
+@import "src/styles/colors";
+
+.contestCard {
+  font-family: 'Lato', serif;
+  display: grid;
+  flex-flow: wrap;
+  grid-template-rows: auto 1fr auto;
+  align-content: center;
+  grid-gap: 10px;
+  min-height: 10vh;
+  margin: 10px;
+  padding: 0.7vw;
+  box-shadow: $box-shadow-color;
+  border-radius: 8px;
+}
+
+.contestCardHeader {
+  font-family: 'Lato', serif;
+  font-weight: 500;
+  font-size: 18px;
+  min-height: 4vh;
+  margin: 10px;
+  border-bottom: 1px solid;
+  border-bottom-color: $bottom-border-color
+}
+
+.contestCardControls {
+  display: flex;
+  align-items: flex-end;
+  grid-gap: 10px;
+}
+
+.contestCardCountdown {
+  padding: 10px;
+  font-size: 12px;
+  font-weight: bold;
+  color: $text-dark-gray-color;
+}
+
+.contestCardCategoryLabel {
+  margin-left: 10px;
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: $text-light-gray-color;
+}

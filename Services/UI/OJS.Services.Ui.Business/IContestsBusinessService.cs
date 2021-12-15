@@ -8,6 +8,8 @@ namespace OJS.Services.Ui.Business
 
     public interface IContestsBusinessService : IService
     {
+        Task<ContestsForHomeIndexServiceModel> GetAllForHomeIndex();
+
         Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllCompetable();
 
         Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPast();

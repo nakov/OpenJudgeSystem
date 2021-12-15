@@ -7,6 +7,8 @@ const calculateTimeUntil = (date: Date) => intervalToDuration({
     end: date,
 });
 
+const formatDate = (date: Date, formatString = defaultDateTimeFormat) => format(date, formatString);
+
 const convertToSecondsRemaining = (date: Date) => {
     const { days, hours, minutes, seconds } = intervalToDuration({
         start: new Date(),
@@ -19,8 +21,6 @@ const convertToSecondsRemaining = (date: Date) => {
     const minutesRemaining = hoursRemaining * 60 + (minutes ?? 0);
     return minutesRemaining * 60 + (seconds ?? 0);
 };
-
-const formatDate = (date: Date, formatString = defaultDateTimeFormat) => format(date, formatString);
 
 const secondsToFullTime = (duration: number) => {
     const { days: daysInitial, hours: hoursInitial, minutes: minutesInitial, seconds: secondsInitial } =
