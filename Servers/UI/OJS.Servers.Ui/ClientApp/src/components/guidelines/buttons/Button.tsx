@@ -11,14 +11,14 @@ interface IButtonProps extends IHaveOptionalChildrenProps {
     text?: string,
     onClick: React.MouseEventHandler<HTMLButtonElement>,
     className?: string | string[],
-    type?: 'primary' | 'secondary' | 'plain',
+    type?: 'primary' | 'secondary' | 'plain' | 'disabled',
     size?: 'small' | 'medium' | 'large',
 }
 
 interface ILinkButtonProps {
     text: string,
     className?: string | string[],
-    type?: 'primary' | 'secondary' | 'plain'
+    type?: 'primary' | 'secondary' | 'plain' | 'disabled',
     size?: 'small' | 'medium' | 'large',
     to: string,
 }
@@ -44,6 +44,7 @@ const Button = ({
         primary: styles.btn,
         secondary: styles.btnSecondary,
         plain: styles.btnPlain,
+        disabled: styles.btnDisabled,
     };
 
     const typeClassName = classNameToType[type];

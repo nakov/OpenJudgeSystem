@@ -38,11 +38,11 @@ const useHttp = (url: string, headers: IDictionary<string> | null = null) => {
     }, [ ]);
 
     const data = useMemo(() => {
-        if (response == null || response.data.Data == null) {
+        if (response == null || response.data == null) {
             return null;
         }
 
-        return response.data.Data;
+        return response.data;
     }, [ response ]);
 
     const get = useCallback(

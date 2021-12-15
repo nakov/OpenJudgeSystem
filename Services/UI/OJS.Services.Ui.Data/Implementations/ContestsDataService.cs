@@ -24,8 +24,8 @@ namespace OJS.Services.Ui.Data.Implementations
             => this.dates = dates;
 
         public async Task<IEnumerable<TServiceModel>> GetAllCompetable<TServiceModel>()
-            where TServiceModel : IMapFrom<Contest>
             => await this.GetAllVisibleQuery()
+                .Include(c => c.Category)
                 .Where(c =>
                     c.StartTime <= this.dates.GetUtcNow() &&
                     c.EndTime.HasValue &&
@@ -34,8 +34,8 @@ namespace OJS.Services.Ui.Data.Implementations
                 .ToListAsync();
 
         public async Task<IEnumerable<TServiceModel>> GetAllPast<TServiceModel>()
-            where TServiceModel : IMapFrom<Contest>
             => await this.GetAllVisibleQuery()
+                .Include(c => c.Category)
                 .Where(c => c.EndTime < this.dates.GetUtcNow())
                 .MapCollection<TServiceModel>()
                 .ToListAsync();

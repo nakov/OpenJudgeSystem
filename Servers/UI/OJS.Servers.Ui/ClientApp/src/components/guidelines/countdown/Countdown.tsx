@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { secondsToFullTime } from '../../../utils/dates';
+import { convertToTwoDigitValues, secondsToFullTime } from '../../../utils/dates';
 
 interface ICountdownRemainingType {
     days: number;
@@ -13,18 +13,31 @@ interface ICountdownProps {
     duration: number;
     metric: 'seconds' | 'minutes' | 'hours' | 'days';
     renderRemainingTime?: (countdownRemaining: ICountdownRemainingType) => React.ReactElement;
-    handleOnCountdownEnd: () => void;
-    handleOnCountdownChange: (seconds: number) => void;
+    handleOnCountdownEnd?: () => void;
+    handleOnCountdownChange?: (seconds: number) => void;
 }
 
-const defaultRender = (countdownRemaining: ICountdownRemainingType) => (
-    <>
-        {JSON.stringify(countdownRemaining)}
-    </>
-);
+const defaultRender = (remainingTime: ICountdownRemainingType) => {
+    const { hours, minutes, seconds } = convertToTwoDigitValues(remainingTime);
+    return (
+        <>
+            <p>
+                Remaining time:
+                {' '}
+                <span>
+                    {hours}
+                    :
+                    {minutes}
+                    :
+                    {seconds}
+                </span>
+            </p>
+        </>
+    );
+};
 
 // eslint-disable-next-line max-len
-const Countdown = ({ duration, metric, renderRemainingTime = defaultRender, handleOnCountdownEnd, handleOnCountdownChange }: ICountdownProps) => {
+const Countdown = ({ duration, metric, renderRemainingTime = defaultRender, handleOnCountdownEnd = () => {}, handleOnCountdownChange = () => {} }: ICountdownProps) => {
     const metricsToSecondsDelta = useMemo(() => ({
         seconds: 1,
         minutes: 60,

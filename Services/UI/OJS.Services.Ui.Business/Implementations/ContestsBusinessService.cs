@@ -12,7 +12,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
     public class ContestsBusinessService : IContestsBusinessService
     {
-        private const int DefaultPastContestsToTake = 15;
+        private const int DefaultContestsToTake = 5;
 
         private readonly IContestsDataService contestsData;
         private readonly IExamGroupsDataService examGroupsData;
@@ -31,16 +31,25 @@ namespace OJS.Services.Ui.Business.Implementations
             this.participantScoresData = participantScoresData;
         }
 
+        public async Task<ContestsForHomeIndexServiceModel> GetAllForHomeIndex()
+        {
+            var active = await this.GetAllCompetable();
+            var past = await this.GetAllPast();
+
+            return new ContestsForHomeIndexServiceModel {ActiveContests = active, PastContests = past};
+        }
+
         public async Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllCompetable()
             => await this.contestsData
                 .GetAllCompetable<ContestForHomeIndexServiceModel>()
-                .OrderByAsync(ac => ac.EndTime);
+                .OrderByAsync(ac => ac.EndTime)
+                .TakeAsync(DefaultContestsToTake);
 
         public async Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPast()
             => await this.contestsData
                 .GetAllPast<ContestForHomeIndexServiceModel>()
                 .OrderByDescendingAsync(pc => pc.EndTime)
-                .TakeAsync(DefaultPastContestsToTake);
+                .TakeAsync(DefaultContestsToTake);
 
         public Task<bool> IsContestIpValidByContestAndIp(int contestId, string ip)
             => this.contestsData

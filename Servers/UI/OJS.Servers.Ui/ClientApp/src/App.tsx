@@ -10,17 +10,20 @@ import LoadingProvider from './hooks/use-loading';
 import './styles/global.scss';
 import ServicesProvider from './hooks/use-services';
 import NotificationsProvider from './hooks/use-notifications';
+import ContestsProvider from './hooks/use-contests';
 
 const App = () => (
     <ServicesProvider>
         <LoadingProvider>
             <NotificationsProvider>
                 <AuthProvider>
-                    <Router>
-                        <PageHeader />
-                        <PageContent />
-                        <PageFooter />
-                    </Router>
+                    <ContestsProvider>
+                        <Router>
+                            <PageHeader />
+                            <PageContent />
+                            <PageFooter />
+                        </Router>
+                    </ContestsProvider>
                 </AuthProvider>
             </NotificationsProvider>
         </LoadingProvider>
