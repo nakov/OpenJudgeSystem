@@ -13,7 +13,7 @@ interface IRouteType {
 }
 
 const userRoutes = [
-    { name: 'My tests', link: '/', isPrimary: true },
+    { name: 'My Profile', link: '/profile', isPrimary: true },
     { name: 'Log out', link: '/logout', isPrimary: false },
 ];
 
