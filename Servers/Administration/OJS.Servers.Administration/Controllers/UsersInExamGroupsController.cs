@@ -35,7 +35,6 @@ public class UsersInExamGroupsController : AutoCrudAdminController<UserInExamGro
     {
         var userId = this.User.GetId();
         var isUserAdmin = this.User.IsAdmin();
-
         var contestId = newEntity.ExamGroup.ContestId;
 
         if (action == EntityAction.Edit)
@@ -54,7 +53,7 @@ public class UsersInExamGroupsController : AutoCrudAdminController<UserInExamGro
 
         if (!await this.contestsBusiness.UserHasContestPermissions(contestId.Value, userId, isUserAdmin))
         {
-            return ValidatorResult.Error(GeneralResource.No_privileges_message);
+            return ValidatorResult.Error(GeneralResource.No_permissions_for_contest);
         }
 
         return ValidatorResult.Success();

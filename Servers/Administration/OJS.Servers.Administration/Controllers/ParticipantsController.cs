@@ -8,6 +8,7 @@ using OJS.Services.Administration.Business;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 
 public class ParticipantsController : AutoCrudAdminController<Participant>
 {
@@ -32,12 +33,13 @@ public class ParticipantsController : AutoCrudAdminController<Participant>
     {
         var userId = this.User.GetId();
         var isUserAdmin = this.User.IsAdmin();
+        var contestId = newParticipant.ContestId;
 
-        if (await this.contestsBusiness.UserHasContestPermissions(newParticipant.ContestId, userId, isUserAdmin))
+        if (!await this.contestsBusiness.UserHasContestPermissions(contestId, userId, isUserAdmin))
         {
-            return ValidatorResult.Success();
+            return ValidatorResult.Error(GeneralResource.No_permissions_for_contest);
         }
 
-        return ValidatorResult.Error("You don't have permissions for this contest.");
+        return ValidatorResult.Success();
     }
 }

@@ -12,6 +12,7 @@ namespace OJS.Servers.Administration.Controllers
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Threading.Tasks;
     using AdminResource = OJS.Common.Resources.AdministrationGeneral;
     using Resource = OJS.Common.Resources.ContestsControllers;
@@ -117,8 +118,11 @@ namespace OJS.Servers.Administration.Controllers
             await this.InvalidateParticipants(originalContestPassword, originalPracticePassword, contest);
         }
 
-        protected override IEnumerable<FormControlViewModel> GenerateFormControls(Contest entity, EntityAction action)
-            => base.GenerateFormControls(entity, action)
+        protected override IEnumerable<FormControlViewModel> GenerateFormControls(
+            Contest entity,
+            EntityAction action,
+            IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters)
+            => base.GenerateFormControls(entity, action, complexOptionFilters)
                 .Concat(new []
                 {
                     new FormControlViewModel
