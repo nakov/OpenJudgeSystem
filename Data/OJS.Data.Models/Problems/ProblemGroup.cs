@@ -16,5 +16,7 @@ namespace OJS.Data.Models.Problems
         public ProblemGroupType? Type { get; set; }
 
         public virtual ICollection<Problem> Problems { get; set; } = new HashSet<Problem>();
+
+        public override string ToString() => $"{this.OrderBy}";
     }
 }

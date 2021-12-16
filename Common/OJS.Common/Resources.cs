@@ -74,6 +74,7 @@ namespace OJS.Common
             public const string Modified_on = "Modified on";
             public const string Name = "Name";
             public const string No_privileges_message = "You don't have privileges for this action!";
+            public const string No_permissions_for_contest = "You don't have permissions for the contest!";
             public const string Remove = "Remove";
         }
 
