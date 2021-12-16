@@ -20,8 +20,8 @@ public class ParticipantsController : AutoCrudAdminController<Participant>
     protected override IEnumerable<GridAction> DefaultActions
         => new[] { new GridAction { Action = nameof(this.Delete) } };
 
-    protected override IEnumerable<Func<Participant, Participant, EntityAction, Task<ValidatorResult>>> AsyncEntityValidators
-        => new Func<Participant, Participant, EntityAction, Task<ValidatorResult>>[]
+    protected override IEnumerable<Func<Participant, Participant, EntityAction, IDictionary<string, string>, Task<ValidatorResult>>> AsyncEntityValidators
+        => new Func<Participant, Participant, EntityAction, IDictionary<string, string>, Task<ValidatorResult>>[]
         {
             this.ValidateContestPermissions,
         };
@@ -29,7 +29,8 @@ public class ParticipantsController : AutoCrudAdminController<Participant>
     private async Task<ValidatorResult> ValidateContestPermissions(
         Participant existingParticipant,
         Participant newParticipant,
-        EntityAction action)
+        EntityAction action,
+        IDictionary<string, string> entityDict)
     {
         var userId = this.User.GetId();
         var isUserAdmin = this.User.IsAdmin();

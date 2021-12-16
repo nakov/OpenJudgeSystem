@@ -24,8 +24,8 @@ public class ExamGroupsController : AutoCrudAdminController<ExamGroup>
         this.contestsData = contestsData;
     }
 
-    protected override IEnumerable<Func<ExamGroup, ExamGroup, EntityAction, Task<ValidatorResult>>> AsyncEntityValidators
-        => new Func<ExamGroup, ExamGroup, EntityAction, Task<ValidatorResult>>[]
+    protected override IEnumerable<Func<ExamGroup, ExamGroup, EntityAction, IDictionary<string, string>, Task<ValidatorResult>>> AsyncEntityValidators
+        => new Func<ExamGroup, ExamGroup, EntityAction, IDictionary<string, string>, Task<ValidatorResult>>[]
         {
             this.ValidateContestPermissions,
         };
@@ -33,7 +33,8 @@ public class ExamGroupsController : AutoCrudAdminController<ExamGroup>
     private async Task<ValidatorResult> ValidateContestPermissions(
         ExamGroup existingEntity,
         ExamGroup newEntity,
-        EntityAction action)
+        EntityAction action,
+        IDictionary<string, string> entityDict)
     {
         var userId = this.User.GetId();
         var isUserAdmin = this.User.IsAdmin();

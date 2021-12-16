@@ -2,9 +2,11 @@ namespace OJS.Servers.Administration.Controllers;
 
 using AutoCrudAdmin.Controllers;
 using AutoCrudAdmin.ViewModels;
+using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business;
+using OJS.Services.Administration.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +17,17 @@ using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 public class ProblemsController : AutoCrudAdminController<Problem>
 {
     private readonly IContestsBusinessService contestsBusiness;
+    private readonly IContestsDataService contestsData;
 
-    public ProblemsController(IContestsBusinessService contestsBusiness)
-        => this.contestsBusiness = contestsBusiness;
+    public ProblemsController(IContestsBusinessService contestsBusiness,
+        IContestsDataService contestsData)
+    {
+        this.contestsBusiness = contestsBusiness;
+        this.contestsData = contestsData;
+    }
 
-    protected override IEnumerable<Func<Problem, Problem, EntityAction, Task<ValidatorResult>>> AsyncEntityValidators
-        => new Func<Problem, Problem, EntityAction, Task<ValidatorResult>>[]
+    protected override IEnumerable<Func<Problem, Problem, EntityAction, IDictionary<string, string>, Task<ValidatorResult>>> AsyncEntityValidators
+        => new Func<Problem, Problem, EntityAction, IDictionary<string, string>, Task<ValidatorResult>>[]
         {
             this.ValidateContestPermissions,
         };
@@ -35,25 +42,51 @@ public class ProblemsController : AutoCrudAdminController<Problem>
                 nameof(entity.ProblemGroup),
                 pg => (pg as ProblemGroup).ContestId == entity.ProblemGroup.ContestId));
 
-        var formControls = base.GenerateFormControls(entity, action, complexOptionFilters);
+        var formControls = base.GenerateFormControls(entity, action, complexOptionFilters).ToList();
+
+        if (action == EntityAction.Create)
+        {
+            formControls.Add(new FormControlViewModel
+            {
+                Name = nameof(Contest),
+                Options = this.contestsData.GetQuery(),
+                Type = typeof(Contest),
+                IsComplex = true,
+                IsReadOnly = false,
+            });
+        }
 
         if (entity.ProblemGroup == null || !entity.ProblemGroup.Contest.IsOnline)
         {
             formControls = formControls
-                .Where(fc => fc.Name != nameof(Data.Models.Problems.Problem.ProblemGroup));
+                .Where(fc => fc.Name != nameof(Data.Models.Problems.Problem.ProblemGroup))
+                .ToList();
         }
 
         return formControls;
     }
 
+    protected override Task BeforeEntitySaveOnCreateAsync(Problem entity, IDictionary<string, string> entityDict)
+    {
+        // TODO: move logic from old judge
+        var contestId = int.Parse(entityDict[this.GetComplexFormControlNameFor<Contest>()]);
+
+        return base.BeforeEntitySaveOnCreateAsync(entity, entityDict);
+    }
+
     private async Task<ValidatorResult> ValidateContestPermissions(
         Problem existingEntity,
         Problem newEntity,
-        EntityAction action)
+        EntityAction action,
+        IDictionary<string, string> entityDict)
     {
         var userId = this.User.GetId();
         var isUserAdmin = this.User.IsAdmin();
-        var contestId = newEntity.ProblemGroup.ContestId;
+
+        if (!int.TryParse(entityDict[this.GetComplexFormControlNameFor<Contest>()], out var contestId))
+        {
+            return ValidatorResult.Error("A contest should be specified for the problem.");
+        }
 
         if (!await this.contestsBusiness.UserHasContestPermissions(contestId, userId, isUserAdmin))
         {

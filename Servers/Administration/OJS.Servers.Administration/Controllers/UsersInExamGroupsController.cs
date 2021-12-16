@@ -21,9 +21,9 @@ public class UsersInExamGroupsController : AutoCrudAdminController<UserInExamGro
     protected override IEnumerable<GridAction> DefaultActions
         => new[] { new GridAction { Action = nameof(this.Delete) } };
 
-    protected override IEnumerable<Func<UserInExamGroup, UserInExamGroup, EntityAction, Task<ValidatorResult>>>
+    protected override IEnumerable<Func<UserInExamGroup, UserInExamGroup, EntityAction, IDictionary<string, string>, Task<ValidatorResult>>>
         AsyncEntityValidators
-        => new Func<UserInExamGroup, UserInExamGroup, EntityAction, Task<ValidatorResult>>[]
+        => new Func<UserInExamGroup, UserInExamGroup, EntityAction, IDictionary<string, string>, Task<ValidatorResult>>[]
         {
             this.ValidateContestPermissions,
         };
@@ -31,7 +31,8 @@ public class UsersInExamGroupsController : AutoCrudAdminController<UserInExamGro
     private async Task<ValidatorResult> ValidateContestPermissions(
         UserInExamGroup existingEntity,
         UserInExamGroup newEntity,
-        EntityAction action)
+        EntityAction action,
+        IDictionary<string, string> entityDict)
     {
         var userId = this.User.GetId();
         var isUserAdmin = this.User.IsAdmin();

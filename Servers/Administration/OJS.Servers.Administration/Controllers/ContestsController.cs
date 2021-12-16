@@ -66,8 +66,8 @@ namespace OJS.Servers.Administration.Controllers
             return this.View(model);
         }
 
-        protected override IEnumerable<Func<Contest, Contest, EntityAction, Task<ValidatorResult>>> AsyncEntityValidators
-            => new Func<Contest, Contest, EntityAction, Task<ValidatorResult>>[]
+        protected override IEnumerable<Func<Contest, Contest, EntityAction, IDictionary<string, string>, Task<ValidatorResult>>> AsyncEntityValidators
+            => new Func<Contest, Contest, EntityAction, IDictionary<string, string>, Task<ValidatorResult>>[]
             {
                 this.ValidateContestCategoryPermissions,
                 this.ValidateContest,
@@ -136,7 +136,8 @@ namespace OJS.Servers.Administration.Controllers
         private async Task<ValidatorResult> ValidateContestCategoryPermissions(
             Contest existingContest,
             Contest newContest,
-            EntityAction action)
+            EntityAction action,
+            IDictionary<string, string> entityDict)
         {
             var userId = this.User.GetId();
             var userIsAdmin = this.User.IsAdmin();
@@ -155,7 +156,9 @@ namespace OJS.Servers.Administration.Controllers
 
         private async Task<ValidatorResult> ValidateContest(
             Contest existingContest,
-            Contest newContest, EntityAction action)
+            Contest newContest,
+            EntityAction action,
+            IDictionary<string, string> entityDict)
         {
             if (newContest.StartTime >= newContest.EndTime)
             {
