@@ -82,10 +82,18 @@ public class ProblemsController : AutoCrudAdminController<Problem>
     {
         var userId = this.User.GetId();
         var isUserAdmin = this.User.IsAdmin();
+        int contestId;
 
-        if (!int.TryParse(entityDict[this.GetComplexFormControlNameFor<Contest>()], out var contestId))
+        if (action == EntityAction.Create)
         {
-            return ValidatorResult.Error("A contest should be specified for the problem.");
+            if (!int.TryParse(entityDict[this.GetComplexFormControlNameFor<Contest>()], out contestId))
+            {
+                return ValidatorResult.Error("A contest should be specified for the problem.");
+            }
+        }
+        else
+        {
+            contestId = newEntity.ProblemGroup.ContestId;
         }
 
         if (!await this.contestsBusiness.UserHasContestPermissions(contestId, userId, isUserAdmin))
