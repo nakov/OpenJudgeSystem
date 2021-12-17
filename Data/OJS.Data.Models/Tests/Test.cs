@@ -1,6 +1,6 @@
 namespace OJS.Data.Models.Tests
 {
-    using OJS.Common.Extensions.Strings;
+    using FluentExtensions.Extensions;
     using SoftUni.Data.Infrastructure.Models;
     using OJS.Data.Models.Problems;
     using System.Collections.Generic;

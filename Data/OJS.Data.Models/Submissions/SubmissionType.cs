@@ -66,5 +66,7 @@ namespace OJS.Data.Models.Submissions
                 return extension;
             }
         }
+
+        public override string ToString() => this.Name;
     }
 }

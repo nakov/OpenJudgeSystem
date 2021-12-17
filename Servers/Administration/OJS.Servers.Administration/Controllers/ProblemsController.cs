@@ -2,6 +2,10 @@ namespace OJS.Servers.Administration.Controllers;
 
 using AutoCrudAdmin.Controllers;
 using AutoCrudAdmin.ViewModels;
+using FluentExtensions.Extensions;
+using OJS.Common.Enumerations;
+using OJS.Common.Extensions;
+using OJS.Common.Utils;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
 using OJS.Servers.Infrastructure.Extensions;
@@ -16,6 +20,12 @@ using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 
 public class ProblemsController : AutoCrudAdminController<Problem>
 {
+    private enum AdditionalFields
+    {
+        SolutionSkeletonData,
+        ProblemGroupType,
+    }
+
     private readonly IContestsBusinessService contestsBusiness;
     private readonly IContestsDataService contestsData;
 
@@ -48,6 +58,14 @@ public class ProblemsController : AutoCrudAdminController<Problem>
         {
             formControls.Add(new FormControlViewModel
             {
+                Name = AdditionalFields.ProblemGroupType.ToString(),
+                Options = EnumUtils.GetValuesFrom<ProblemGroupType>().Cast<object>(),
+                Type = typeof(ProblemGroupType),
+                Value = entity.ProblemGroup?.Type ?? default(ProblemGroupType),
+            });
+
+            formControls.Add(new FormControlViewModel
+            {
                 Name = nameof(Contest),
                 Options = this.contestsData.GetQuery(),
                 Type = typeof(Contest),
@@ -55,6 +73,13 @@ public class ProblemsController : AutoCrudAdminController<Problem>
                 IsReadOnly = false,
             });
         }
+
+        formControls.Add(new FormControlViewModel
+        {
+            Name = AdditionalFields.SolutionSkeletonData.ToString(),
+            Value = entity.SolutionSkeleton.Decompress(),
+            Type = typeof(string),
+        });
 
         if (entity.ProblemGroup == null || !entity.ProblemGroup.Contest.IsOnline)
         {
@@ -66,12 +91,37 @@ public class ProblemsController : AutoCrudAdminController<Problem>
         return formControls;
     }
 
+    protected override Task BeforeEntitySaveAsync(Problem entity, EntityAction action, IDictionary<string, string> entityDict)
+    {
+        entity.SolutionSkeleton = this.GetSolutionSkeleton(entityDict);
+
+        return base.BeforeEntitySaveAsync(entity, action, entityDict);
+    }
+
     protected override Task BeforeEntitySaveOnCreateAsync(Problem entity, IDictionary<string, string> entityDict)
     {
         // TODO: move logic from old judge
-        var contestId = int.Parse(entityDict[this.GetComplexFormControlNameFor<Contest>()]);
+        var contestId = this.GetContestId(entityDict);
+
+        if (entity.ProblemGroupId == default)
+        {
+            entity.ProblemGroup = new ProblemGroup
+            {
+                ContestId = contestId,
+                OrderBy = entity.OrderBy,
+                Type = this.GetProblemGroupType(entityDict).GetValidTypeOrNull(),
+            };
+        }
 
         return base.BeforeEntitySaveOnCreateAsync(entity, entityDict);
+    }
+
+    protected override Task BeforeEntitySaveOnEditAsync(Problem originalEntity, Problem newEntity, IDictionary<string, string> entityDict)
+    {
+        // TODO: move logic from old judge
+        var contestId = this.GetContestId(entityDict);
+
+        return base.BeforeEntitySaveOnCreateAsync(newEntity, entityDict);
     }
 
     private async Task<ValidatorResult> ValidateContestPermissions(
@@ -103,4 +153,13 @@ public class ProblemsController : AutoCrudAdminController<Problem>
 
         return ValidatorResult.Success();
     }
+
+    private byte[] GetSolutionSkeleton(IDictionary<string, string> entityDict)
+        => entityDict[AdditionalFields.SolutionSkeletonData.ToString()].Compress();
+
+    private int GetContestId(IDictionary<string, string> entityDict)
+        => int.Parse(entityDict[this.GetComplexFormControlNameFor<Contest>()]);
+
+    private ProblemGroupType? GetProblemGroupType(IDictionary<string, string> entityDict)
+        => entityDict[AdditionalFields.ProblemGroupType.ToString()].ToEnum<ProblemGroupType>();
 }

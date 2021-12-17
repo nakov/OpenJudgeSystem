@@ -1,6 +1,6 @@
 namespace OJS.Data.Models.Submissions
 {
-    using OJS.Common.Extensions.Strings;
+    using FluentExtensions.Extensions;
     using SoftUni.Data.Infrastructure.Models;
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Problems;
