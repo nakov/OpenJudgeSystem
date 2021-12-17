@@ -42,9 +42,11 @@ public class ProblemsController : AutoCrudAdminController<Problem>
             this.ValidateContestPermissions,
         };
 
-    protected override IEnumerable<FormControlViewModel> GenerateFormControls(
+    // TODO: move more logic from old judge
+    protected override async Task<IEnumerable<FormControlViewModel>> GenerateFormControlsAsync(
         Problem entity,
         EntityAction action,
+        IDictionary<string, string> entityDict,
         IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters)
     {
         complexOptionFilters.Add(
@@ -52,27 +54,25 @@ public class ProblemsController : AutoCrudAdminController<Problem>
                 nameof(entity.ProblemGroup),
                 pg => (pg as ProblemGroup).ContestId == entity.ProblemGroup.ContestId));
 
-        var formControls = base.GenerateFormControls(entity, action, complexOptionFilters).ToList();
+        var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters)
+            .ToListAsync();
 
-        if (action == EntityAction.Create)
+        var contestId = this.GetContestId(entityDict);
+
+        var contest = await this.contestsData.OneById(contestId);
+
+        if (contest == null)
         {
-            formControls.Add(new FormControlViewModel
-            {
-                Name = AdditionalFields.ProblemGroupType.ToString(),
-                Options = EnumUtils.GetValuesFrom<ProblemGroupType>().Cast<object>(),
-                Type = typeof(ProblemGroupType),
-                Value = entity.ProblemGroup?.Type ?? default(ProblemGroupType),
-            });
-
-            formControls.Add(new FormControlViewModel
-            {
-                Name = nameof(Contest),
-                Options = this.contestsData.GetQuery(),
-                Type = typeof(Contest),
-                IsComplex = true,
-                IsReadOnly = false,
-            });
+            throw new Exception("Contest not found.");
         }
+
+        formControls.Add(new FormControlViewModel
+        {
+            Name = AdditionalFields.ProblemGroupType.ToString(),
+            Options = EnumUtils.GetValuesFrom<ProblemGroupType>().Cast<object>(),
+            Type = typeof(ProblemGroupType),
+            Value = entity.ProblemGroup?.Type ?? default(ProblemGroupType),
+        });
 
         formControls.Add(new FormControlViewModel
         {
@@ -81,7 +81,7 @@ public class ProblemsController : AutoCrudAdminController<Problem>
             Type = typeof(string),
         });
 
-        if (entity.ProblemGroup == null || !entity.ProblemGroup.Contest.IsOnline)
+        if (entity.ProblemGroup == null || !contest.IsOnline)
         {
             formControls = formControls
                 .Where(fc => fc.Name != nameof(Data.Models.Problems.Problem.ProblemGroup))
@@ -98,9 +98,9 @@ public class ProblemsController : AutoCrudAdminController<Problem>
         return base.BeforeEntitySaveAsync(entity, action, entityDict);
     }
 
+    // TODO: move more logic from old judge
     protected override Task BeforeEntitySaveOnCreateAsync(Problem entity, IDictionary<string, string> entityDict)
     {
-        // TODO: move logic from old judge
         var contestId = this.GetContestId(entityDict);
 
         if (entity.ProblemGroupId == default)
@@ -132,18 +132,11 @@ public class ProblemsController : AutoCrudAdminController<Problem>
     {
         var userId = this.User.GetId();
         var isUserAdmin = this.User.IsAdmin();
-        int contestId;
+        var contestId = this.GetContestId(entityDict);
 
-        if (action == EntityAction.Create)
+        if (contestId == default)
         {
-            if (!int.TryParse(entityDict[this.GetComplexFormControlNameFor<Contest>()], out contestId))
-            {
-                return ValidatorResult.Error("A contest should be specified for the problem.");
-            }
-        }
-        else
-        {
-            contestId = newEntity.ProblemGroup.ContestId;
+            return ValidatorResult.Error("A contest should be specified for the problem.");
         }
 
         if (!await this.contestsBusiness.UserHasContestPermissions(contestId, userId, isUserAdmin))

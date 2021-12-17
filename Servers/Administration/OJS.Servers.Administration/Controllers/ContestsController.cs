@@ -121,8 +121,9 @@ namespace OJS.Servers.Administration.Controllers
         protected override IEnumerable<FormControlViewModel> GenerateFormControls(
             Contest entity,
             EntityAction action,
+            IDictionary<string, string> entityDict,
             IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters)
-            => base.GenerateFormControls(entity, action, complexOptionFilters)
+            => base.GenerateFormControls(entity, action, entityDict, complexOptionFilters)
                 .Concat(new []
                 {
                     new FormControlViewModel
