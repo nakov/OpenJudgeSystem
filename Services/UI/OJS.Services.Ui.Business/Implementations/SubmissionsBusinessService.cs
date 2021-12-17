@@ -11,20 +11,23 @@
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Submissions;
     using SoftUni.Judge.Common.Enumerations;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
 
     public class SubmissionsBusinessService : ISubmissionsBusinessService
     {
         private readonly ISubmissionsDataService submissionsData;
-        // private readonly IArchivedSubmissionsDataService archivedSubmissionsData;
+
+        private readonly IUsersBusinessService usersBusiness;
         private readonly IParticipantScoresDataService participantScoresData;
 
         public SubmissionsBusinessService(
             ISubmissionsDataService submissionsData,
-            IParticipantScoresDataService participantScoresData)
+            IParticipantScoresDataService participantScoresData,
+            IUsersBusinessService usersBusiness)
         {
             this.submissionsData = submissionsData;
-            // this.archivedSubmissionsData = archivedSubmissionsData;
             this.participantScoresData = participantScoresData;
+            this.usersBusiness = usersBusiness;
         }
 
         public Task<IQueryable<Submission>> GetAllForArchiving()
@@ -152,5 +155,22 @@
         //
         //     return Task.CompletedTask;
         // }
+
+        public async Task<IEnumerable<SubmissionServiceModel>> GetForProfileByUser(string username)
+        {
+            var user = await this.usersBusiness.GetUserProfileByUsername(username);
+            var data = await this.submissionsData
+                .GetQuery()
+                .Include(s => s.Problem)
+                .Include(s => s.TestRuns)
+                .Include(s => s.SubmissionType)
+                .Where(s => s.Participant.UserId == user.Id)
+                .Take(20)
+                .OrderByDescending(s => s.CreatedOn)
+                .MapCollection<SubmissionServiceModel>()
+                .ToListAsync();
+
+            return data;
+        }
     }
 }

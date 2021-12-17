@@ -6,6 +6,7 @@
     using Microsoft.EntityFrameworkCore;
     using OJS.Data;
     using OJS.Services.Common.Data.Implementations;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
 
     public class UsersDataService : DataService<UserProfile>, IUsersDataService
     {
@@ -13,9 +14,11 @@
         {
         }
 
-        public Task<UserProfile> GetByUsername(string username)
+        public Task<TServiceModel> GetByUsername<TServiceModel>(string username)
             => this.DbSet
+                .Include(up => up.UserSettings)
                 .Where(u => u.UserName == username)
+                .MapCollection<TServiceModel>()
                 .FirstOrDefaultAsync();
     }
 }

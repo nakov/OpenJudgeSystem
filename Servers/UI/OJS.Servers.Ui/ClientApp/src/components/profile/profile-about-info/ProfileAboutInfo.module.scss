@@ -1,0 +1,19 @@
+@import 'src/styles/colors';
+
+.profileAboutInfo {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.profileAboutInfoGroupControl {
+  margin-bottom: 10px;
+  color: $text-dark-gray-color;
+  font-family: 'Lato', serif;
+  
+  h2 {
+    font-size: 18px;
+    font-weight: bolder;
+    margin-bottom: 10px;
+  }
+}
