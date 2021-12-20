@@ -57,13 +57,18 @@ public class ProblemsController : AutoCrudAdminController<Problem>
         var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters)
             .ToListAsync();
 
-        var contestId = this.GetContestId(entityDict);
+        var contestId = this.GetContestId(entityDict, entity);
+
+        if (contestId == default)
+        {
+            throw new Exception($"A valid ContestId must be provided to be able to {action} a Problem.");
+        }
 
         var contest = await this.contestsData.OneById(contestId);
 
         if (contest == null)
         {
-            throw new Exception("Contest not found.");
+            throw new Exception($"Contest with Id: {contestId} not found.");
         }
 
         formControls.Add(new FormControlViewModel
@@ -101,7 +106,7 @@ public class ProblemsController : AutoCrudAdminController<Problem>
     // TODO: move more logic from old judge
     protected override Task BeforeEntitySaveOnCreateAsync(Problem entity, IDictionary<string, string> entityDict)
     {
-        var contestId = this.GetContestId(entityDict);
+        var contestId = this.GetContestId(entityDict, entity);
 
         if (entity.ProblemGroupId == default)
         {
@@ -119,7 +124,7 @@ public class ProblemsController : AutoCrudAdminController<Problem>
     protected override Task BeforeEntitySaveOnEditAsync(Problem originalEntity, Problem newEntity, IDictionary<string, string> entityDict)
     {
         // TODO: move logic from old judge
-        var contestId = this.GetContestId(entityDict);
+        var contestId = this.GetContestId(entityDict, newEntity);
 
         return base.BeforeEntitySaveOnCreateAsync(newEntity, entityDict);
     }
@@ -132,7 +137,7 @@ public class ProblemsController : AutoCrudAdminController<Problem>
     {
         var userId = this.User.GetId();
         var isUserAdmin = this.User.IsAdmin();
-        var contestId = this.GetContestId(entityDict);
+        var contestId = this.GetContestId(entityDict, newEntity);
 
         if (contestId == default)
         {
@@ -150,8 +155,10 @@ public class ProblemsController : AutoCrudAdminController<Problem>
     private byte[] GetSolutionSkeleton(IDictionary<string, string> entityDict)
         => entityDict[AdditionalFields.SolutionSkeletonData.ToString()].Compress();
 
-    private int GetContestId(IDictionary<string, string> entityDict)
-        => int.Parse(entityDict[this.GetComplexFormControlNameFor<Contest>()]);
+    private int GetContestId(IDictionary<string, string> entityDict, Problem problem)
+        => entityDict.TryGetValue(this.GetComplexFormControlNameFor<Contest>(), out var contestIdStr)
+            ? int.Parse(entityDict[contestIdStr])
+            : problem?.ProblemGroup?.ContestId ?? default;
 
     private ProblemGroupType? GetProblemGroupType(IDictionary<string, string> entityDict)
         => entityDict[AdditionalFields.ProblemGroupType.ToString()].ToEnum<ProblemGroupType>();
