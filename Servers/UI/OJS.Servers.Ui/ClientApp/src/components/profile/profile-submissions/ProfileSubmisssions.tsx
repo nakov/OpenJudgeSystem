@@ -2,19 +2,24 @@ import * as React from 'react';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { useEffect } from 'react';
 import { useSubmissions } from '../../../hooks/use-submissions';
+import { formatDate } from '../../../utils/dates';
+import ExecutionResult from '../../submissions/ExecutionResult';
 
 const columns: GridColDef[] = [
-    { field: 'id', headerName: '№', width: 90 },
+    { field: 'id', headerName: '№', minWidth: 70, flex: 1 },
     {
         field: 'submittedOn',
         headerName: 'Submitted On',
-        width: 150,
+        minWidth: 160,
+        flex: 1,
         sortable: true,
+        valueGetter: (params: GridValueGetterParams) => `${formatDate(new Date(params.row.submittedOn))}`,
     },
     {
         field: 'problem',
         headerName: 'Task',
-        width: 150,
+        minWidth: 150,
+        flex: 1,
         sortable: true,
         valueGetter: (params: GridValueGetterParams) => `${params.row.problem.name}`,
     },
@@ -22,9 +27,39 @@ const columns: GridColDef[] = [
         field: 'points',
         headerName: 'Points',
         type: 'number',
-        width: 110,
+        minWidth: 70,
+        flex: 1,
         sortable: true,
         valueGetter: (params: GridValueGetterParams) => `${params.row.points}/${params.row.problem.maximumPoints}`,
+    },
+    {
+        field: 'maxUsedTime',
+        headerName: 'Memory Used',
+        type: 'string',
+        minWidth: 70,
+        flex: 1,
+        hide: true,
+        sortable: false,
+    },
+    {
+        field: 'maxUsedMemory',
+        headerName: 'Memory Used',
+        type: 'string',
+        minWidth: 70,
+        hide: true,
+        sortable: true,
+    },
+    {
+        field: 'executionResult',
+        headerName: 'Execution Result',
+        type: 'string',
+        minWidth: 250,
+        flex: 1,
+        sortable: false,
+
+        renderCell: (params: GridValueGetterParams) => (
+            <ExecutionResult testRuns={params.row.testRuns} />
+        ),
     },
 ];
 

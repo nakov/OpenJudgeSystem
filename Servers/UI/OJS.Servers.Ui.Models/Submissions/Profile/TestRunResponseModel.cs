@@ -15,5 +15,7 @@ namespace OJS.Services.Ui.Models.Submissions
         public string ExecutionComment { get; set; }
 
         public string CheckerComment { get; set; }
+
+        public string ResultType { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OJS.Servers.Ui.Models.Submissions
+namespace OJS.Servers.Ui.Models.Submissions.Profile
 {
     using OJS.Services.Ui.Models.Submissions;
     using SoftUni.AutoMapper.Infrastructure.Models;
@@ -20,5 +20,9 @@ namespace OJS.Servers.Ui.Models.Submissions
         public int Points { get; set; }
 
         public IEnumerable<TestRunResponseModel> TestRuns { get; set; }
+
+        public double MaxUsedTime { get; set; }
+
+        public double MaxUsedMemory { get; set; }
     }
 }

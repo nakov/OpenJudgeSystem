@@ -12,10 +12,11 @@ interface IProblemType {
 
 interface ITestRunType {
     id: number,
-    timeUsed: number,
-    memoryUsed: number,
+    maxUsedTime: number,
+    maxUsedMemory: number,
     executionComment: string,
     checkerComment: string,
+    resultType: string
 }
 
 interface ISubmissionType {
@@ -25,6 +26,8 @@ interface ISubmissionType {
     submissionTypeName: string,
     points: number,
     testRuns: ITestRunType[]
+    maxUsedTime: number,
+    maxUsedMemory: number
 }
 
 interface ISubmissionsContext {
@@ -55,7 +58,6 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     useEffect(() => {
         if (getSubmissionsForProfileData != null) {
-            console.log(getSubmissionsForProfileData);
             setSubmissions(getSubmissionsForProfileData as ISubmissionType[]);
         }
     }, [ getSubmissionsForProfileData ]);
@@ -75,6 +77,6 @@ export {
     useSubmissions,
 };
 
-export type { ISubmissionType };
+export type { ISubmissionType, ITestRunType };
 
 export default SubmissionsProvider;
