@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useSubmissions } from '../../../hooks/use-submissions';
 import { formatDate } from '../../../utils/dates';
 import ExecutionResult from '../../submissions/ExecutionResult';
+import styles from './ProfileSubmissions.module.scss';
 
 const columns: GridColDef[] = [
     { field: 'id', headerName: '№', minWidth: 70, flex: 1 },
@@ -21,7 +23,9 @@ const columns: GridColDef[] = [
         minWidth: 150,
         flex: 1,
         sortable: true,
-        valueGetter: (params: GridValueGetterParams) => `${params.row.problem.name}`,
+        renderCell: (params: GridValueGetterParams) => (
+            <Link to={`/submission/${params.row.id}`} className={styles.contestLink}>{params.row.problem.name}</Link>
+        ),
     },
     {
         field: 'points',
@@ -56,7 +60,6 @@ const columns: GridColDef[] = [
         minWidth: 250,
         flex: 1,
         sortable: false,
-
         renderCell: (params: GridValueGetterParams) => (
             <ExecutionResult testRuns={params.row.testRuns} />
         ),
