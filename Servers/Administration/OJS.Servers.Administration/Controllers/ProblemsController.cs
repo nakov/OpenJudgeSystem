@@ -4,6 +4,8 @@ using AutoCrudAdmin.Controllers;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using FluentExtensions.Extensions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using OJS.Common.Enumerations;
 using OJS.Common.Extensions;
 using OJS.Common.Utils;
@@ -25,6 +27,8 @@ public class ProblemsController : AutoCrudAdminController<Problem>
     {
         SolutionSkeletonData,
         ProblemGroupType,
+        Tests,
+        Resources,
     }
 
     private readonly IContestsBusinessService contestsBusiness;
@@ -36,6 +40,20 @@ public class ProblemsController : AutoCrudAdminController<Problem>
         this.contestsBusiness = contestsBusiness;
         this.contestsData = contestsData;
     }
+
+    public override Task<IActionResult> Create(IDictionary<string, string> complexId, string postEndpointName)
+        => base.Edit(complexId, nameof(Create));
+
+    [HttpPost]
+    public Task<IActionResult> Create(IDictionary<string, string> entityDict, IFormFile tests, IFormFile resources)
+        => base.PostEdit(entityDict, new FormFilesContainer(tests, resources));
+
+    public override Task<IActionResult> Edit(IDictionary<string, string> complexId, string postEndpointName)
+        => base.Edit(complexId, nameof(Edit));
+
+    [HttpPost]
+    public Task<IActionResult> Edit(IDictionary<string, string> entityDict, IFormFile tests, IFormFile resources)
+        => base.PostEdit(entityDict, new FormFilesContainer(tests, resources));
 
     protected override IEnumerable<Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>> AsyncEntityValidators
         => new Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>[]
@@ -94,6 +112,18 @@ public class ProblemsController : AutoCrudAdminController<Problem>
             Type = typeof(string),
         });
 
+        formControls.Add(new FormControlViewModel
+        {
+            Name = AdditionalFields.Tests.ToString(),
+            Type = typeof(IFormFile),
+        });
+
+        formControls.Add(new FormControlViewModel
+        {
+            Name = AdditionalFields.Resources.ToString(),
+            Type = typeof(IFormFile),
+        });
+
         if (entity.ProblemGroup == null || !contest.IsOnline)
         {
             formControls = formControls
@@ -129,7 +159,10 @@ public class ProblemsController : AutoCrudAdminController<Problem>
         return base.BeforeEntitySaveOnCreateAsync(entity, actionContext);
     }
 
-    protected override Task BeforeEntitySaveOnEditAsync(Problem originalEntity, Problem newEntity, AdminActionContext actionContext)
+    protected override Task BeforeEntitySaveOnEditAsync(
+        Problem originalEntity,
+        Problem newEntity,
+        AdminActionContext actionContext)
     {
         // TODO: move logic from old judge
         var contestId = this.GetContestId(actionContext.EntityDict, newEntity);
