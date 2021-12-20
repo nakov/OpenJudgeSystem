@@ -1,6 +1,7 @@
 namespace OJS.Servers.Administration.Controllers;
 
 using AutoCrudAdmin.Controllers;
+using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using FluentExtensions.Extensions;
 using OJS.Common.Enumerations;
@@ -36,8 +37,8 @@ public class ProblemsController : AutoCrudAdminController<Problem>
         this.contestsData = contestsData;
     }
 
-    protected override IEnumerable<Func<Problem, Problem, EntityAction, IDictionary<string, string>, Task<ValidatorResult>>> AsyncEntityValidators
-        => new Func<Problem, Problem, EntityAction, IDictionary<string, string>, Task<ValidatorResult>>[]
+    protected override IEnumerable<Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>> AsyncEntityValidators
+        => new Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>[]
         {
             this.ValidateContestPermissions,
         };
@@ -86,6 +87,13 @@ public class ProblemsController : AutoCrudAdminController<Problem>
             Type = typeof(string),
         });
 
+        formControls.Add(new FormControlViewModel
+        {
+            Name = AdditionalFields.SolutionSkeletonData.ToString(),
+            Value = entity.SolutionSkeleton.Decompress(),
+            Type = typeof(string),
+        });
+
         if (entity.ProblemGroup == null || !contest.IsOnline)
         {
             formControls = formControls
@@ -96,17 +104,17 @@ public class ProblemsController : AutoCrudAdminController<Problem>
         return formControls;
     }
 
-    protected override Task BeforeEntitySaveAsync(Problem entity, EntityAction action, IDictionary<string, string> entityDict)
+    protected override Task BeforeEntitySaveAsync(Problem entity, AdminActionContext actionContext)
     {
-        entity.SolutionSkeleton = this.GetSolutionSkeleton(entityDict);
+        entity.SolutionSkeleton = this.GetSolutionSkeleton(actionContext.EntityDict);
 
-        return base.BeforeEntitySaveAsync(entity, action, entityDict);
+        return base.BeforeEntitySaveAsync(entity, actionContext);
     }
 
     // TODO: move more logic from old judge
-    protected override Task BeforeEntitySaveOnCreateAsync(Problem entity, IDictionary<string, string> entityDict)
+    protected override Task BeforeEntitySaveOnCreateAsync(Problem entity, AdminActionContext actionContext)
     {
-        var contestId = this.GetContestId(entityDict, entity);
+        var contestId = this.GetContestId(actionContext.EntityDict, entity);
 
         if (entity.ProblemGroupId == default)
         {
@@ -114,30 +122,29 @@ public class ProblemsController : AutoCrudAdminController<Problem>
             {
                 ContestId = contestId,
                 OrderBy = entity.OrderBy,
-                Type = this.GetProblemGroupType(entityDict).GetValidTypeOrNull(),
+                Type = this.GetProblemGroupType(actionContext.EntityDict).GetValidTypeOrNull(),
             };
         }
 
-        return base.BeforeEntitySaveOnCreateAsync(entity, entityDict);
+        return base.BeforeEntitySaveOnCreateAsync(entity, actionContext);
     }
 
-    protected override Task BeforeEntitySaveOnEditAsync(Problem originalEntity, Problem newEntity, IDictionary<string, string> entityDict)
+    protected override Task BeforeEntitySaveOnEditAsync(Problem originalEntity, Problem newEntity, AdminActionContext actionContext)
     {
         // TODO: move logic from old judge
-        var contestId = this.GetContestId(entityDict, newEntity);
+        var contestId = this.GetContestId(actionContext.EntityDict, newEntity);
 
-        return base.BeforeEntitySaveOnCreateAsync(newEntity, entityDict);
+        return base.BeforeEntitySaveOnCreateAsync(newEntity, actionContext);
     }
 
     private async Task<ValidatorResult> ValidateContestPermissions(
         Problem existingEntity,
         Problem newEntity,
-        EntityAction action,
-        IDictionary<string, string> entityDict)
+        AdminActionContext actionContext)
     {
         var userId = this.User.GetId();
         var isUserAdmin = this.User.IsAdmin();
-        var contestId = this.GetContestId(entityDict, newEntity);
+        var contestId = this.GetContestId(actionContext.EntityDict, newEntity);
 
         if (contestId == default)
         {

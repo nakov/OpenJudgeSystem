@@ -1,12 +1,12 @@
 namespace OJS.Servers.Administration.Controllers;
 
 using AutoCrudAdmin.Controllers;
+using AutoCrudAdmin.Models;
 using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Data;
 using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Infrastructure.Constants;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -29,19 +29,19 @@ public class ContestCategoriesController : AutoCrudAdminController<ContestCatego
     protected override Task BeforeEntitySaveOnEditAsync(
         ContestCategory existingEntity,
         ContestCategory newEntity,
-        IDictionary<string, string> entityDict)
+        AdminActionContext actionContext)
         => this.cacheItemsProvider.ClearContestCategory(existingEntity.Id);
 
     protected override Task BeforeEntitySaveOnDeleteAsync(
         ContestCategory entity,
-        IDictionary<string, string> entityDict)
+        AdminActionContext actionContext)
         => Task.WhenAll(
             this.cacheItemsProvider.ClearContestCategory(entity.Id),
             this.CascadeDeleteCategories(entity));
 
     protected override Task AfterEntitySaveOnCreateAsync(
         ContestCategory entity,
-        IDictionary<string, string> entityDict)
+        AdminActionContext actionContext)
     {
         this.ClearMainContestCategoriesCache();
         return Task.CompletedTask;
@@ -50,7 +50,7 @@ public class ContestCategoriesController : AutoCrudAdminController<ContestCatego
     protected override Task AfterEntitySaveOnEditAsync(
         ContestCategory oldEntity,
         ContestCategory entity,
-        IDictionary<string, string> entityDict)
+        AdminActionContext actionContext)
     {
         this.ClearMainContestCategoriesCache();
         return Task.CompletedTask;
@@ -58,7 +58,7 @@ public class ContestCategoriesController : AutoCrudAdminController<ContestCatego
 
     protected override Task AfterEntitySaveOnDeleteAsync(
         ContestCategory entity,
-        IDictionary<string, string> entityDict)
+        AdminActionContext actionContext)
     {
         this.ClearMainContestCategoriesCache();
         return Task.CompletedTask;

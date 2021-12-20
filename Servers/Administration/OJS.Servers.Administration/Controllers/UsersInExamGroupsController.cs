@@ -1,6 +1,7 @@
 namespace OJS.Servers.Administration.Controllers;
 
 using AutoCrudAdmin.Controllers;
+using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using OJS.Data.Models;
 using OJS.Servers.Infrastructure.Extensions;
@@ -21,9 +22,9 @@ public class UsersInExamGroupsController : AutoCrudAdminController<UserInExamGro
     protected override IEnumerable<GridAction> DefaultActions
         => new[] { new GridAction { Action = nameof(this.Delete) } };
 
-    protected override IEnumerable<Func<UserInExamGroup, UserInExamGroup, EntityAction, IDictionary<string, string>, Task<ValidatorResult>>>
+    protected override IEnumerable<Func<UserInExamGroup, UserInExamGroup, AdminActionContext, Task<ValidatorResult>>>
         AsyncEntityValidators
-        => new Func<UserInExamGroup, UserInExamGroup, EntityAction, IDictionary<string, string>, Task<ValidatorResult>>[]
+        => new Func<UserInExamGroup, UserInExamGroup, AdminActionContext, Task<ValidatorResult>>[]
         {
             this.ValidateContestPermissions,
         };
@@ -31,21 +32,20 @@ public class UsersInExamGroupsController : AutoCrudAdminController<UserInExamGro
     private async Task<ValidatorResult> ValidateContestPermissions(
         UserInExamGroup existingEntity,
         UserInExamGroup newEntity,
-        EntityAction action,
-        IDictionary<string, string> entityDict)
+        AdminActionContext actionContext)
     {
         var userId = this.User.GetId();
         var isUserAdmin = this.User.IsAdmin();
         var contestId = newEntity.ExamGroup.ContestId;
 
-        if (action == EntityAction.Edit)
+        if (actionContext.Action == EntityAction.Edit)
         {
             return ValidatorResult.Error("Action not permitted");
         }
 
         if (!contestId.HasValue)
         {
-            var message = action == EntityAction.Create
+            var message = actionContext.Action == EntityAction.Create
                 ? Resource.Cannot_add_users
                 : Resource.Cannot_remove_users;
 
