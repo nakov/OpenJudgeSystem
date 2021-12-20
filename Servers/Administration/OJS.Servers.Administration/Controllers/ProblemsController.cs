@@ -42,11 +42,11 @@ public class ProblemsController : AutoCrudAdminController<Problem>
     }
 
     public override Task<IActionResult> Create(IDictionary<string, string> complexId, string postEndpointName)
-        => base.Edit(complexId, nameof(Create));
+        => base.Create(complexId, nameof(Create));
 
     [HttpPost]
     public Task<IActionResult> Create(IDictionary<string, string> entityDict, IFormFile tests, IFormFile resources)
-        => base.PostEdit(entityDict, new FormFilesContainer(tests, resources));
+        => base.PostCreate(entityDict, new FormFilesContainer(tests, resources));
 
     public override Task<IActionResult> Edit(IDictionary<string, string> complexId, string postEndpointName)
         => base.Edit(complexId, nameof(Edit));
