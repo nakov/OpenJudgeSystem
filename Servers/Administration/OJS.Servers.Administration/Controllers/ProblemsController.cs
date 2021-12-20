@@ -107,13 +107,6 @@ public class ProblemsController : AutoCrudAdminController<Problem>
 
         formControls.Add(new FormControlViewModel
         {
-            Name = AdditionalFields.SolutionSkeletonData.ToString(),
-            Value = entity.SolutionSkeleton.Decompress(),
-            Type = typeof(string),
-        });
-
-        formControls.Add(new FormControlViewModel
-        {
             Name = AdditionalFields.Tests.ToString(),
             Type = typeof(IFormFile),
         });
