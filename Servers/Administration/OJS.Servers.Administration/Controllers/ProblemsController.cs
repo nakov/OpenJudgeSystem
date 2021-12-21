@@ -4,7 +4,6 @@ using AutoCrudAdmin.Controllers;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using FluentExtensions.Extensions;
-using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Common;
@@ -135,11 +134,10 @@ public class ProblemsController : AutoCrudAdminController<Problem>
         return formControls;
     }
 
-    protected override Task BeforeEntitySaveAsync(Problem entity, AdminActionContext actionContext)
+    protected override async Task BeforeEntitySaveAsync(Problem entity, AdminActionContext actionContext)
     {
-        entity.SolutionSkeleton = this.GetSolutionSkeleton(actionContext.EntityDict);
-
-        return base.BeforeEntitySaveAsync(entity, actionContext);
+        TryAddSolutionSkeleton(entity, actionContext);
+        await TryAddAdditionalFiles(entity, actionContext);
     }
 
     // TODO: move more logic from old judge
@@ -153,7 +151,7 @@ public class ProblemsController : AutoCrudAdminController<Problem>
             {
                 ContestId = contestId,
                 OrderBy = entity.OrderBy,
-                Type = this.GetProblemGroupType(actionContext.EntityDict).GetValidTypeOrNull(),
+                Type = GetProblemGroupType(actionContext.EntityDict).GetValidTypeOrNull(),
             };
         }
 
@@ -193,7 +191,7 @@ public class ProblemsController : AutoCrudAdminController<Problem>
         return this.ValidateUploadedFiles(actionContext.Files?.SingleFiles);
     }
 
-    private byte[] GetSolutionSkeleton(IDictionary<string, string> entityDict)
+    private static byte[] GetSolutionSkeleton(IDictionary<string, string> entityDict)
         => entityDict[AdditionalFields.SolutionSkeletonData.ToString()].Compress();
 
     private int GetContestId(IDictionary<string, string> entityDict, Problem problem)
@@ -201,13 +199,25 @@ public class ProblemsController : AutoCrudAdminController<Problem>
             ? int.Parse(entityDict[contestIdStr])
             : problem?.ProblemGroup?.ContestId ?? default;
 
-    private ProblemGroupType? GetProblemGroupType(IDictionary<string, string> entityDict)
+    private static ProblemGroupType? GetProblemGroupType(IDictionary<string, string> entityDict)
         => entityDict[AdditionalFields.ProblemGroupType.ToString()].ToEnum<ProblemGroupType>();
 
-    private ValidatorResult ValidateUploadedFiles([CanBeNull] IEnumerable<IFormFile> files)
-        => files
-                ?.Where(f => f != null)
-                .Any(f => this.fileSystem.GetFileExtension(f) != GlobalConstants.FileExtensions.Zip) ?? false
+    private static void TryAddSolutionSkeleton(Problem problem, AdminActionContext actionContext)
+        => problem.SolutionSkeleton = GetSolutionSkeleton(actionContext.EntityDict);
+
+    private static async Task TryAddAdditionalFiles(Problem problem, AdminActionContext actionContext)
+    {
+        var additionalFiles =
+            actionContext.Files.SingleFiles.FirstOrDefault(f => f.Name == AdditionalFields.AdditionalFiles.ToString());
+
+        if (additionalFiles != null)
+        {
+            problem.AdditionalFiles = await additionalFiles.ToByteArray();
+        }
+    }
+
+    private ValidatorResult ValidateUploadedFiles(IEnumerable<IFormFile> files)
+        => files.Any(f => this.fileSystem.GetFileExtension(f) != GlobalConstants.FileExtensions.Zip)
             ? ValidatorResult.Error(GlobalResource.Must_be_zip_file)
             : ValidatorResult.Success();
 }
