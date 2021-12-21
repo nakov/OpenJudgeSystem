@@ -18,6 +18,7 @@ using OJS.Services.Administration.Data;
 using OJS.Services.Common;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -37,15 +38,18 @@ public class ProblemsController : AutoCrudAdminController<Problem>
     private readonly IContestsBusinessService contestsBusiness;
     private readonly IContestsDataService contestsData;
     private readonly IFileSystemService fileSystem;
+    private readonly IZippedTestsParserService zippedTestsParser;
 
     public ProblemsController(
         IContestsBusinessService contestsBusiness,
         IContestsDataService contestsData,
-        IFileSystemService fileSystem)
+        IFileSystemService fileSystem,
+        IZippedTestsParserService zippedTestsParser)
     {
         this.contestsBusiness = contestsBusiness;
         this.contestsData = contestsData;
         this.fileSystem = fileSystem;
+        this.zippedTestsParser = zippedTestsParser;
     }
 
     public override Task<IActionResult> Create(IDictionary<string, string> complexId, string postEndpointName)
@@ -141,7 +145,7 @@ public class ProblemsController : AutoCrudAdminController<Problem>
     }
 
     // TODO: move more logic from old judge
-    protected override Task BeforeEntitySaveOnCreateAsync(Problem entity, AdminActionContext actionContext)
+    protected override async Task BeforeEntitySaveOnCreateAsync(Problem entity, AdminActionContext actionContext)
     {
         var contestId = this.GetContestId(actionContext.EntityDict, entity);
 
@@ -155,7 +159,7 @@ public class ProblemsController : AutoCrudAdminController<Problem>
             };
         }
 
-        return base.BeforeEntitySaveOnCreateAsync(entity, actionContext);
+        await this.TryAddTestsToProblem(entity, actionContext);
     }
 
     protected override Task BeforeEntitySaveOnEditAsync(
@@ -188,16 +192,19 @@ public class ProblemsController : AutoCrudAdminController<Problem>
             return ValidatorResult.Error(GeneralResource.No_permissions_for_contest);
         }
 
-        return this.ValidateUploadedFiles(actionContext.Files?.SingleFiles);
+        return this.ValidateUploadedFiles(actionContext.Files.SingleFiles);
     }
 
     private static byte[] GetSolutionSkeleton(IDictionary<string, string> entityDict)
         => entityDict[AdditionalFields.SolutionSkeletonData.ToString()].Compress();
 
-    private int GetContestId(IDictionary<string, string> entityDict, Problem problem)
+    private int GetContestId(IDictionary<string, string> entityDict, Problem? problem)
         => entityDict.TryGetValue(this.GetComplexFormControlNameFor<Contest>(), out var contestIdStr)
             ? int.Parse(entityDict[contestIdStr])
             : problem?.ProblemGroup?.ContestId ?? default;
+
+    private static IFormFile? GetFormFile(AdminActionContext actionContext, AdditionalFields field)
+        => actionContext.Files.SingleFiles.FirstOrDefault(f => f.Name == field.ToString());
 
     private static ProblemGroupType? GetProblemGroupType(IDictionary<string, string> entityDict)
         => entityDict[AdditionalFields.ProblemGroupType.ToString()].ToEnum<ProblemGroupType>();
@@ -207,13 +214,49 @@ public class ProblemsController : AutoCrudAdminController<Problem>
 
     private static async Task TryAddAdditionalFiles(Problem problem, AdminActionContext actionContext)
     {
-        var additionalFiles =
-            actionContext.Files.SingleFiles.FirstOrDefault(f => f.Name == AdditionalFields.AdditionalFiles.ToString());
+        var additionalFiles = GetFormFile(actionContext, AdditionalFields.AdditionalFiles);
 
-        if (additionalFiles != null)
+        if (additionalFiles == null)
         {
-            problem.AdditionalFiles = await additionalFiles.ToByteArray();
+            return;
         }
+
+        problem.AdditionalFiles = await additionalFiles.ToByteArray();
+    }
+
+    private async Task TryAddTestsToProblem(Problem problem, AdminActionContext actionContext)
+    {
+        var tests = GetFormFile(actionContext, AdditionalFields.Tests);
+
+        if (tests == null)
+        {
+            return;
+        }
+
+        try
+        {
+            await this.AddTestsToProblem(problem, tests);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(GlobalResource.Tests_cannot_be_improrted, ex);
+        }
+    }
+
+    private async Task AddTestsToProblem(Problem problem, IFormFile testsFile)
+    {
+        await using var memoryStream = new MemoryStream();
+        await testsFile.CopyToAsync(memoryStream);
+        memoryStream.Position = 0;
+
+        var parsedTests = this.zippedTestsParser.Parse(memoryStream);
+
+        if (!this.zippedTestsParser.AreTestsParsedCorrectly(parsedTests))
+        {
+            throw new ArgumentException(GlobalResource.Invalid_tests);
+        }
+
+        this.zippedTestsParser.AddTestsToProblem(problem, parsedTests);
     }
 
     private ValidatorResult ValidateUploadedFiles(IEnumerable<IFormFile> files)
