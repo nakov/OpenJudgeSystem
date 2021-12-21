@@ -250,8 +250,8 @@ namespace OJS.Servers.Administration.Controllers
         }
 
         private async Task InvalidateParticipants(
-            string originalContestPassword,
-            string originalPracticePassword,
+            string? originalContestPassword,
+            string? originalPracticePassword,
             Contest contest)
         {
             if (originalContestPassword != contest.ContestPassword &&

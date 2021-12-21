@@ -78,7 +78,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
         private async Task CopyProblemGroupToContest(ProblemGroup problemGroup, int contestId)
         {
-            problemGroup.Contest = null;
+            problemGroup.Contest = null!;
             problemGroup.ContestId = contestId;
 
             await problemGroup.Problems

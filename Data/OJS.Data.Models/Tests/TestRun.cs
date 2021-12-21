@@ -8,11 +8,11 @@ namespace OJS.Data.Models.Tests
     {
         public int SubmissionId { get; set; }
 
-        public virtual Submission Submission { get; set; }
+        public virtual Submission Submission { get; set; } = new();
 
         public int TestId { get; set; }
 
-        public virtual Test Test { get; set; }
+        public virtual Test Test { get; set; } = new();
 
         public int TimeUsed { get; set; }
 
@@ -20,12 +20,12 @@ namespace OJS.Data.Models.Tests
 
         public TestRunResultType ResultType { get; set; }
 
-        public string ExecutionComment { get; set; }
+        public string? ExecutionComment { get; set; }
 
-        public string CheckerComment { get; set; }
+        public string? CheckerComment { get; set; }
 
-        public string ExpectedOutputFragment { get; set; }
+        public string? ExpectedOutputFragment { get; set; }
 
-        public string UserOutputFragment { get; set; }
+        public string? UserOutputFragment { get; set; }
     }
 }

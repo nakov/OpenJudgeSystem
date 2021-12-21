@@ -17,7 +17,7 @@ namespace OJS.Data
 
     public class OjsDbContext : BaseAuthDbContext<OjsDbContext, UserProfile>
     {
-        private readonly IGlobalQueryFilterTypesCache globalQueryFilterTypesCache;
+        private readonly IGlobalQueryFilterTypesCache? globalQueryFilterTypesCache;
 
         public OjsDbContext()
         {
@@ -25,71 +25,71 @@ namespace OJS.Data
 
         public OjsDbContext(
             DbContextOptions<OjsDbContext> options,
-            IGlobalQueryFilterTypesCache globalQueryFilterTypesCache)
+            IGlobalQueryFilterTypesCache? globalQueryFilterTypesCache)
             : base(options, globalQueryFilterTypesCache)
             => this.globalQueryFilterTypesCache = globalQueryFilterTypesCache;
 
-        public DbSet<Setting> Settings { get; set; }
+        public DbSet<Setting> Settings { get; set; } = null!;
 
-        public DbSet<Contest> Contests { get; set; }
+        public DbSet<Contest> Contests { get; set; } = null!;
 
-        public DbSet<IpInContest> ContestIps { get; set; }
+        public DbSet<IpInContest> ContestIps { get; set; } = null!;
 
-        public DbSet<ExamGroup> ExamGroups { get; set; }
+        public DbSet<ExamGroup> ExamGroups { get; set; } = null!;
 
-        public DbSet<UserInExamGroup> UsersInExamGroups { get; set; }
+        public DbSet<UserInExamGroup> UsersInExamGroups { get; set; } = null!;
 
-        public DbSet<Problem> Problems { get; set; }
+        public DbSet<Problem> Problems { get; set; } = null!;
 
-        public DbSet<ProblemGroup> ProblemGroups { get; set; }
+        public DbSet<ProblemGroup> ProblemGroups { get; set; } = null!;
 
-        public DbSet<ProblemResource> ProblemResources { get; set; }
+        public DbSet<ProblemResource> ProblemResources { get; set; } = null!;
 
-        public DbSet<ProblemForParticipant> ProblemsForParticipants { get; set; }
+        public DbSet<ProblemForParticipant> ProblemsForParticipants { get; set; } = null!;
 
-        public DbSet<Event> Events { get; set; }
+        public DbSet<Event> Events { get; set; } = null!;
 
-        public DbSet<Participant> Participants { get; set; }
+        public DbSet<Participant> Participants { get; set; } = null!;
 
-        public DbSet<ParticipantScore> ParticipantScores { get; set; }
+        public DbSet<ParticipantScore> ParticipantScores { get; set; } = null!;
 
-        public DbSet<ContestCategory> ContestCategories { get; set; }
+        public DbSet<ContestCategory> ContestCategories { get; set; } = null!;
 
-        public DbSet<ContestQuestion> ContestQuestions { get; set; }
+        public DbSet<ContestQuestion> ContestQuestions { get; set; } = null!;
 
-        public DbSet<ContestQuestionAnswer> ContestQuestionAnswers { get; set; }
+        public DbSet<ContestQuestionAnswer> ContestQuestionAnswers { get; set; } = null!;
 
-        public DbSet<Checker> Checkers { get; set; }
+        public DbSet<Checker> Checkers { get; set; } = null!;
 
-        public DbSet<Test> Tests { get; set; }
+        public DbSet<Test> Tests { get; set; } = null!;
 
-        public DbSet<Submission> Submissions { get; set; }
+        public DbSet<Submission> Submissions { get; set; } = null!;
 
-        public DbSet<SubmissionForProcessing> SubmissionsForProcessing { get; set; }
+        public DbSet<SubmissionForProcessing> SubmissionsForProcessing { get; set; } = null!;
 
-        public DbSet<SubmissionType> SubmissionTypes { get; set; }
+        public DbSet<SubmissionType> SubmissionTypes { get; set; } = null!;
 
-        public DbSet<SubmissionTypeInProblem> SubmissionTypeProblems { get; set; }
+        public DbSet<SubmissionTypeInProblem> SubmissionTypeProblems { get; set; } = null!;
 
-        public DbSet<SourceCode> SourceCodes { get; set; }
+        public DbSet<SourceCode> SourceCodes { get; set; } = null!;
 
-        public DbSet<TestRun> TestRuns { get; set; }
+        public DbSet<TestRun> TestRuns { get; set; } = null!;
 
-        public DbSet<FeedbackReport> FeedbackReports { get; set; }
+        public DbSet<FeedbackReport> FeedbackReports { get; set; } = null!;
 
-        public DbSet<ParticipantAnswer> ParticipantAnswers { get; set; }
+        public DbSet<ParticipantAnswer> ParticipantAnswers { get; set; } = null!;
 
-        public DbSet<LecturerInContest> LecturersInContests { get; set; }
+        public DbSet<LecturerInContest> LecturersInContests { get; set; } = null!;
 
-        public DbSet<LecturerInContestCategory> LecturersInContestCategories { get; set; }
+        public DbSet<LecturerInContestCategory> LecturersInContestCategories { get; set; } = null!;
 
-        public DbSet<Ip> Ips { get; set; }
+        public DbSet<Ip> Ips { get; set; } = null!;
 
-        public DbSet<AccessLog> AccessLogs { get; set; }
+        public DbSet<AccessLog> AccessLogs { get; set; } = null!;
 
-        public DbSet<Tag> Tags { get; set; }
+        public DbSet<Tag> Tags { get; set; } = null!;
 
-        public DbSet<TagInProblem> TagProblems { get; set; }
+        public DbSet<TagInProblem> TagProblems { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -55,8 +55,8 @@ namespace OJS.Services.Ui.Business.Implementations
             var submissions = await this.submissionsData.GetAllByProblem(id)
                 .Include(s => s.SubmissionType)
                 .Include(s => s.Problem)
-                .Include(s => s.Problem.Checker)
-                .Include(s => s.Problem.Tests)
+                .Include(s => s.Problem!.Checker)
+                .Include(s => s.Problem!.Tests)
                 .ToListAsync();
 
             var submissionIds = submissions.Select(s => s.Id).ToList();
@@ -152,7 +152,7 @@ namespace OJS.Services.Ui.Business.Implementations
             return ServiceResult.Success;
         }
 
-        private async Task CopyProblemToContest(Problem problem, int contestId, int? problemGroupId)
+        private async Task CopyProblemToContest(Problem? problem, int contestId, int? problemGroupId)
         {
             double orderBy;
 
@@ -165,7 +165,7 @@ namespace OJS.Services.Ui.Business.Implementations
             {
                 orderBy = await this.problemsData.GetNewOrderByProblemGroup(problemGroupId.Value);
 
-                problem.ProblemGroup = null;
+                problem.ProblemGroup = null!;
                 problem.ProblemGroupId = problemGroupId.Value;
             }
             else

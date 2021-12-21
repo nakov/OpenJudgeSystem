@@ -13,9 +13,9 @@ namespace OJS.Services.Ui.Data
 
         Task<IEnumerable<TServiceModel>> GetAllPast<TServiceModel>();
 
-        Task<Contest> GetByIdWithProblems(int id);
+        Task<Contest?> GetByIdWithProblems(int id);
 
-        Task<Contest> GetByIdWithParticipants(int id);
+        Task<Contest?> GetByIdWithParticipants(int id);
 
         IQueryable<Contest> GetAllActive();
 
@@ -39,7 +39,7 @@ namespace OJS.Services.Ui.Data
 
         Task<int> GetMaxPointsForExportById(int id);
 
-        Task<string> GetNameById(int id);
+        Task<string?> GetNameById(int id);
 
         Task<bool> IsActiveById(int id);
 

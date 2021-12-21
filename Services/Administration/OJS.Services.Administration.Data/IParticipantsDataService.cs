@@ -10,9 +10,9 @@ namespace OJS.Services.Administration.Data
 
     public interface IParticipantsDataService : IDataService<Participant>
     {
-        Task<Participant> GetByContestByUserAndByIsOfficial(int contestId, string userId, bool isOfficial);
+        Task<Participant?> GetByContestByUserAndByIsOfficial(int contestId, string userId, bool isOfficial);
 
-        Task<Participant> GetWithContestByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial);
+        Task<Participant?> GetWithContestByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial);
 
         IQueryable<Participant> GetAllByUser(string userId);
 

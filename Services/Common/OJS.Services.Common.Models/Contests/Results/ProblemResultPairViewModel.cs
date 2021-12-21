@@ -33,7 +33,7 @@ public class ProblemResultPairViewModel
                     IsCompiledSuccessfully = score.Submission != null &&
                         score.Submission.IsCompiledSuccessfully,
                     SubmissionType = score.Submission != null
-                        ? score.Submission.SubmissionType.Name
+                        ? score.Submission.SubmissionType!.Name
                         : null,
                     TestRunsCache = score.Submission != null
                         ? score.Submission.TestRunsCache
@@ -62,5 +62,5 @@ public class ProblemResultPairViewModel
 
         public int MaximumPoints { get; set; }
 
-        public BestSubmissionViewModel BestSubmission { get; set; }
+        public BestSubmissionViewModel BestSubmission { get; set; } = new();
 }

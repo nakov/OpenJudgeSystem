@@ -6,6 +6,6 @@ namespace OJS.Services.Administration.Data
 
     public interface IIpsDataService : IDataService<Ip>
     {
-        Task<Ip> GetByValue(string value);
+        Task<Ip?> GetByValue(string value);
     }
 }

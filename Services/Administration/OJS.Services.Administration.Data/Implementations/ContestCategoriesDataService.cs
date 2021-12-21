@@ -12,7 +12,7 @@ namespace OJS.Services.Administration.Data.Implementations
         {
         }
 
-        public async Task<bool> UserHasContestCategoryPermissions(int categoryId, string userId, bool isAdmin)
+        public async Task<bool> UserHasContestCategoryPermissions(int categoryId, string? userId, bool isAdmin)
             => !string.IsNullOrWhiteSpace(userId) &&
                (isAdmin || await this.Exists(x =>
                    x.Id == categoryId &&
@@ -22,13 +22,13 @@ namespace OJS.Services.Administration.Data.Implementations
             this.DbSet
                 .Where(cc => cc.IsVisible);
 
-        public IQueryable<ContestCategory> GetAllVisibleByLecturer(string lecturerId)
+        public IQueryable<ContestCategory> GetAllVisibleByLecturer(string? lecturerId)
             => this.GetAllVisible()
                 .Where(cc =>
                     cc.LecturersInContestCategories.Any(l => l.LecturerId == lecturerId) ||
                     cc.Contests.Any(c => c.LecturersInContests.Any(l => l.LecturerId == lecturerId)));
 
-        public Task<string> GetNameById(int id)
+        public Task<string?> GetNameById(int id)
             => this.DbSet
                 .Where(cc => cc.Id == id)
                 .Select(cc => cc.Name)

@@ -7,13 +7,13 @@ namespace OJS.Services.Administration.Data
 
     public interface IContestCategoriesDataService : IDataService<ContestCategory>
     {
-        Task<bool> UserHasContestCategoryPermissions(int categoryId, string userId, bool isAdmin);
+        Task<bool> UserHasContestCategoryPermissions(int categoryId, string? userId, bool isAdmin);
 
         IQueryable<ContestCategory> GetAllVisible();
 
-        IQueryable<ContestCategory> GetAllVisibleByLecturer(string lecturerId);
+        IQueryable<ContestCategory> GetAllVisibleByLecturer(string? lecturerId);
 
-        Task<string> GetNameById(int id);
+        Task<string?> GetNameById(int id);
 
         Task<bool> HasContestsById(int id);
     }

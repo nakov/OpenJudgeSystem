@@ -10,12 +10,12 @@
     {
         public ProblemsDataService(DbContext problems) : base(problems) {}
 
-        public Problem GetWithProblemGroupById(int id) =>
+        public Problem? GetWithProblemGroupById(int id) =>
             base.DbSet
                 .Include(p => p.ProblemGroup)
                 .FirstOrDefault(p => p.Id == id);
 
-        public Problem GetWithContestById(int id) =>
+        public Problem? GetWithContestById(int id) =>
             base.DbSet
                 .Include(p => p.ProblemGroup.Contest)
                 .FirstOrDefault(p => p.Id == id);
@@ -46,7 +46,7 @@
                 .FirstOrDefault()
                 ?.OrderBy + 1 ?? GlobalConstants.ProblemDefaultOrderBy;
 
-        public string GetNameById(int id) =>
+        public string? GetNameById(int id) =>
             this.GetByIdQuery(id)
                 .Select(p => p.Name)
                 .FirstOrDefault();

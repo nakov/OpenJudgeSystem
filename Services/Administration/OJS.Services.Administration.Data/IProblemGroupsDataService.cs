@@ -7,7 +7,7 @@
 
     public interface IProblemGroupsDataService : IService
     {
-        ProblemGroup GetByProblem(int problemId);
+        ProblemGroup? GetByProblem(int problemId);
 
         IQueryable<ProblemGroup> GetAllWithDeleted();
 

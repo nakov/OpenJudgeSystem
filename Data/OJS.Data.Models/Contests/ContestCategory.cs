@@ -11,13 +11,13 @@ namespace OJS.Data.Models.Contests
         [Required]
         [MaxLength(CategoryNameMaxLength)]
         [MinLength(CategoryNameMinLength)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         public double OrderBy { get; set; }
 
         public int? ParentId { get; set; }
 
-        public virtual ContestCategory Parent { get; set; }
+        public virtual ContestCategory? Parent { get; set; }
 
         public bool IsVisible { get; set; }
 

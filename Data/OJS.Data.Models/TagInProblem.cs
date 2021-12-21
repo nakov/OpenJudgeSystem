@@ -6,10 +6,10 @@ namespace OJS.Data.Models
     {
         public int TagId { get; set; }
 
-        public virtual Tag Tag { get; set; }
+        public virtual Tag Tag { get; set; } = new();
 
         public int ProblemId { get; set; }
 
-        public virtual Problem Problem { get; set; }
+        public virtual Problem Problem { get; set; } = new();
     }
 }

@@ -10,7 +10,7 @@ namespace OJS.Services.Administration.Data.Implementations
     {
         public SubmissionsDataService(DbContext submissions) : base(submissions) {}
 
-        public Submission GetBestForParticipantByProblem(int participantId, int problemId) =>
+        public Submission? GetBestForParticipantByProblem(int participantId, int problemId) =>
             this.GetAllByProblemAndParticipant(problemId, participantId)
                 .Where(s => s.Processed)
                 .OrderByDescending(s => s.Points)
@@ -30,12 +30,12 @@ namespace OJS.Services.Administration.Data.Implementations
 
         public IQueryable<Submission> GetAllFromContestsByLecturer(string lecturerId) =>
             this.DbSet
-                .Include(s => s.Problem.ProblemGroup.Contest.LecturersInContests)
-                .Include(s => s.Problem.ProblemGroup.Contest.Category.LecturersInContestCategories)
+                .Include(s => s.Problem!.ProblemGroup.Contest.LecturersInContests)
+                .Include(s => s.Problem!.ProblemGroup.Contest.Category!.LecturersInContestCategories)
                 .Where(s =>
                     (s.IsPublic.HasValue && s.IsPublic.Value) ||
-                    s.Problem.ProblemGroup.Contest.LecturersInContests.Any(l => l.LecturerId == lecturerId) ||
-                    s.Problem.ProblemGroup.Contest.Category.LecturersInContestCategories.Any(l =>
+                    s.Problem!.ProblemGroup.Contest.LecturersInContests.Any(l => l.LecturerId == lecturerId) ||
+                    s.Problem!.ProblemGroup.Contest.Category!.LecturersInContestCategories.Any(l =>
                         l.LecturerId == lecturerId));
 
         public IQueryable<Submission> GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate(
@@ -44,11 +44,11 @@ namespace OJS.Services.Administration.Data.Implementations
             this.DbSet
                 .Where(s => s.CreatedOn < createdBeforeDate ||
                             (s.CreatedOn < nonBestCreatedBeforeDate &&
-                             s.Participant.Scores.All(ps => ps.SubmissionId != s.Id)));
+                             s.Participant!.Scores.All(ps => ps.SubmissionId != s.Id)));
 
         public IQueryable<Submission> GetAllHavingPointsExceedingLimit()
             => this.DbSet
-                .Where(s => s.Points > s.Problem.MaximumPoints);
+                .Where(s => s.Points > s.Problem!.MaximumPoints);
 
         public IQueryable<int> GetIdsByProblem(int problemId)
             => this.GetAllByProblem(problemId)
@@ -56,7 +56,7 @@ namespace OJS.Services.Administration.Data.Implementations
 
         public bool IsOfficialById(int id) =>
             this.GetByIdQuery(id)
-                .Any(s => s.Participant.IsOfficial);
+                .Any(s => s.Participant!.IsOfficial);
 
         public void SetAllToUnprocessedByProblem(int problemId) =>
             this.GetAllByProblem(problemId)

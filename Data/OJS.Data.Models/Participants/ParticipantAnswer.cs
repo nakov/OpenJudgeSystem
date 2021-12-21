@@ -6,12 +6,12 @@ namespace OJS.Data.Models.Participants
     {
         public int ParticipantId { get; set; }
 
-        public virtual Participant Participant { get; set; }
+        public virtual Participant Participant { get; set; } = new();
 
         public int ContestQuestionId { get; set; }
 
-        public virtual ContestQuestion ContestQuestion { get; set; }
+        public virtual ContestQuestion ContestQuestion { get; set; } = new();
 
-        public string Answer { get; set; }
+        public string? Answer { get; set; }
     }
 }

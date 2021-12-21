@@ -8,7 +8,7 @@
 
     public interface ISubmissionsForProcessingDataService : IService
     {
-        Task<SubmissionForProcessing> GetBySubmission(int submissionId);
+        Task<SubmissionForProcessing?> GetBySubmission(int submissionId);
 
         IQueryable<SubmissionForProcessing> GetAllUnprocessed();
 

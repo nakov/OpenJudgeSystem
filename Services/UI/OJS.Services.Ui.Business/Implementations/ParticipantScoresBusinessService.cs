@@ -53,7 +53,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 .Select(s => new
                 {
                     Submission = s,
-                    ProblemMaxPoints = s.Problem.MaximumPoints,
+                    ProblemMaxPoints = s.Problem!.MaximumPoints,
                 })
                 .ToListAsync())
                 .ForEachSequential(async x =>

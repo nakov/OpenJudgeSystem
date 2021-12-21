@@ -7,6 +7,6 @@
 
     public interface IUsersDataService : IDataService<UserProfile>
     {
-        Task<TServiceModel> GetByUsername<TServiceModel>(string username);
+        Task<TServiceModel?> GetByUsername<TServiceModel>(string? username);
     }
 }

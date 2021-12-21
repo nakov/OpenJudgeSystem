@@ -23,7 +23,7 @@
 
         public void DeleteByProblem(int problemId)
         {
-            var entity = this.DbSet.FirstOrDefault(t => t.ProblemId == problemId);
+            var entity = this.DbSet.First(t => t.ProblemId == problemId);
             this.Delete(entity);
             this.SaveChanges();
         }

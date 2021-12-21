@@ -8,7 +8,7 @@ namespace OJS.Services.Ui.Data
 
     public interface ISubmissionsDataService : IDataService<Submission>
     {
-        Submission GetBestForParticipantByProblem(int participantId, int problemId);
+        Submission? GetBestForParticipantByProblem(int participantId, int problemId);
 
         IQueryable<Submission> GetByIdQuery(int id);
 

@@ -14,7 +14,7 @@ namespace OJS.Services.Ui.Data.Implementations
         {
         }
 
-        public Task<ExamGroup> GetByExternalIdAndAppId(int? externalId, string appId)
+        public Task<ExamGroup?> GetByExternalIdAndAppId(int? externalId, string appId)
             => this.DbSet
                 .FirstOrDefaultAsync(eg =>
                     eg.ExternalExamGroupId == externalId &&
@@ -38,7 +38,7 @@ namespace OJS.Services.Ui.Data.Implementations
                 .Where(eg =>
                     eg.Contest == null ||
                     (eg.Contest.LecturersInContests.Any(l => l.LecturerId == lecturerId) ||
-                     eg.Contest.Category.LecturersInContestCategories.Any(l => l.LecturerId == lecturerId)));
+                     eg.Contest.Category!.LecturersInContestCategories.Any(l => l.LecturerId == lecturerId)));
 
         public IQueryable<UserProfile> GetUsersByIdQuery(int id) =>
             this.GetByIdQuery(id)
@@ -53,7 +53,7 @@ namespace OJS.Services.Ui.Data.Implementations
             var user = examGroup?.UsersInExamGroups.FirstOrDefault(u => u.UserId == userId);
             if (user != null)
             {
-                examGroup.UsersInExamGroups.Remove(user);
+                examGroup!.UsersInExamGroups.Remove(user);
                 await this.SaveChanges();
             }
         }

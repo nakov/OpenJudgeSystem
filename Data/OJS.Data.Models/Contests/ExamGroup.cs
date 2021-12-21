@@ -9,16 +9,16 @@ namespace OJS.Data.Models.Contests
     {
         public int? ExternalExamGroupId { get; set; }
 
-        public string ExternalAppId { get; set; }
+        public string? ExternalAppId { get; set; }
 
         [Required]
         [MinLength(NameMinLength)]
         [MaxLength(NameMaxLength)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         public int? ContestId { get; set; }
 
-        public virtual Contest Contest { get; set; }
+        public virtual Contest? Contest { get; set; }
 
         public virtual ICollection<UserInExamGroup> UsersInExamGroups { get; set; } = new HashSet<UserInExamGroup>();
 

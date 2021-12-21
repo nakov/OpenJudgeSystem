@@ -11,9 +11,9 @@ public class BestSubmissionViewModel
 
     public bool IsCompiledSuccessfully { get; set; }
 
-    public string SubmissionType { get; set; }
+    public string? SubmissionType { get; set; }
 
-    public string TestRunsCache { get; set; }
+    public string? TestRunsCache { get; set; }
 
     public IEnumerable<TestRunFullResultsViewModel> TestRuns =>
         TestRunFullResultsViewModel.FromCache(this.TestRunsCache);

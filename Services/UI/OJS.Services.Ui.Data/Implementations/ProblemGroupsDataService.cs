@@ -12,7 +12,7 @@ namespace OJS.Services.Ui.Data.Implementations
         {
         }
 
-        public Task<ProblemGroup> GetByProblem(int problemId) =>
+        public Task<ProblemGroup?> GetByProblem(int problemId) =>
             this.GetAll()
                 .FirstOrDefaultAsync(pg => pg.Problems
                     .Any(p => p.Id == problemId));

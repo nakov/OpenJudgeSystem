@@ -4,7 +4,7 @@ namespace OJS.Common.Extensions
 
     public static class CompilerTypeExtensions
     {
-        public static string GetFileExtension(this CompilerType compilerType)
+        public static string? GetFileExtension(this CompilerType compilerType)
             => compilerType switch
             {
                 CompilerType.None => null,

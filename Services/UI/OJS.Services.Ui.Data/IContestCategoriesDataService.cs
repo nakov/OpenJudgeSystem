@@ -11,7 +11,7 @@
 
         IQueryable<ContestCategory> GetAllVisibleByLecturer(string lecturerId);
 
-        Task<string> GetNameById(int id);
+        Task<string?> GetNameById(int id);
 
         Task<bool> HasContestsById(int id);
     }

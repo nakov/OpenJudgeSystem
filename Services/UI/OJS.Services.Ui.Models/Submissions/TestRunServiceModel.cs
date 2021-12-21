@@ -13,8 +13,8 @@ namespace OJS.Services.Ui.Models.Submissions
 
         public int SubmissionId { get; set; }
 
-        public string ExecutionComment { get; set; }
+        public string? ExecutionComment { get; set; }
 
-        public string CheckerComment { get; set; }
+        public string? CheckerComment { get; set; }
     }
 }

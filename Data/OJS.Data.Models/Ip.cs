@@ -9,9 +9,9 @@ namespace OJS.Data.Models
     {
         [Required]
         [MaxLength(IpAddressMaxLength)]
-        public string Value { get; set; }
+        public string Value { get; set; } = string.Empty;
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         public virtual ICollection<IpInContest> IpsInContests { get; set; } = new HashSet<IpInContest>();
 

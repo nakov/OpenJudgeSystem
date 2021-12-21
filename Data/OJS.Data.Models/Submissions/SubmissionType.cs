@@ -16,7 +16,7 @@ namespace OJS.Data.Models.Submissions
         [Required]
         [MaxLength(NameMaxLength)]
         [MinLength(NameMinLength)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [DefaultValue(false)]
         public bool IsSelectedByDefault { get; set; }
@@ -25,9 +25,9 @@ namespace OJS.Data.Models.Submissions
 
         public CompilerType CompilerType { get; set; }
 
-        public string AdditionalCompilerArguments { get; set; }
+        public string? AdditionalCompilerArguments { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [DefaultValue(false)]
         public bool AllowBinaryFilesUpload { get; set; }
@@ -37,7 +37,7 @@ namespace OJS.Data.Models.Submissions
         /// If the value is null or whitespace then only text values are allowed.
         /// If any extension is specified then no text input is allowed.
         /// </summary>
-        public string AllowedFileExtensions { get; set; }
+        public string? AllowedFileExtensions { get; set; }
 
         [NotMapped]
         public IEnumerable<string> AllowedFileExtensionsList
@@ -45,9 +45,9 @@ namespace OJS.Data.Models.Submissions
             get
             {
                 var list =
-                    this.AllowedFileExtensions.Split(new[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                    this.AllowedFileExtensions?.Split(new[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries)
                         .Select(x => x.Trim());
-                return list.ToArray();
+                return list?.ToArray() ?? Enumerable.Empty<string>();
             }
         }
 

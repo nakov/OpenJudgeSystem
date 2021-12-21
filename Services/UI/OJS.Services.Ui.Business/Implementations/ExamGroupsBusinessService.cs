@@ -105,7 +105,7 @@ namespace OJS.Services.Ui.Business.Implementations
             }
         }
 
-        private async Task AddExternalUser(ExamGroup examGroup, string userId, string username = null)
+        private async Task AddExternalUser(ExamGroup examGroup, string? userId, string? username = null)
         {
             ExternalDataRetrievalResult<ExternalUserInfoModel> response;
 

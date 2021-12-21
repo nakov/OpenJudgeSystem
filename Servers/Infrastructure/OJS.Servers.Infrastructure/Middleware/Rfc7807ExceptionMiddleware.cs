@@ -18,7 +18,8 @@ namespace OJS.Servers.Infrastructure.Middleware
             async httpContext =>
             {
                 var errorFeature = httpContext.Features.Get<IExceptionHandlerFeature>();
-                var exception = errorFeature.Error;
+                var exception = errorFeature
+                    ?.Error ?? new Exception($"Cannot get exception from {nameof(IExceptionHandlerFeature)}");
 
                 var instanceId = Guid.NewGuid();
                 var problemDetails = new ProblemDetails { Instance = instanceId.ToString() };
@@ -36,7 +37,7 @@ namespace OJS.Servers.Infrastructure.Middleware
                         break;
                 }
 
-                httpContext.Response.StatusCode = problemDetails.Status.Value;
+                httpContext.Response.StatusCode = problemDetails.Status ?? 500;
                 await httpContext.Response.WriteJson(problemDetails);
             };
 

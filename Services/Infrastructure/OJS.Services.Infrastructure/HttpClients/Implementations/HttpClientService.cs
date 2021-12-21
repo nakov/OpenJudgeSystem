@@ -16,7 +16,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
         public HttpClientService(HttpClient client)
             => this.Client = client;
 
-        public async Task<TResponse> Post<TResponse>(object model, string url)
+        public async Task<TResponse?> Post<TResponse>(object model, string url)
         {
             if (model == null)
             {
@@ -33,7 +33,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
             return await this.Post<TResponse>(requestContent, url);
         }
 
-        public async Task<TResponse> PostForm<TResponse>(MultipartFormDataContent form, string url)
+        public async Task<TResponse?> PostForm<TResponse>(MultipartFormDataContent form, string url)
         {
             if (form == null)
             {
@@ -48,7 +48,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
             return await this.Post<TResponse>(form, url);
         }
 
-        public async Task<TResponse> Get<TResponse>(string url)
+        public async Task<TResponse?> Get<TResponse>(string url)
         {
             var responseMessage = await this.GetResponse(url);
             return await responseMessage.Content.ReadFromJsonAsync<TResponse>();
@@ -73,7 +73,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
             return responseMessage;
         }
 
-        private async Task<TResponse> Post<TResponse>(HttpContent content, string url)
+        private async Task<TResponse?> Post<TResponse>(HttpContent content, string url)
         {
             var responseMessage = await this.Client.PostAsync(url, content);
             await this.ValidateResponseMessage(responseMessage);

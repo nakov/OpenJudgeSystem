@@ -2,19 +2,20 @@ namespace OJS.Services.Common.Models.Contests.Results;
 
 using OJS.Common.Enumerations;
 using System.Collections.Generic;
+using System.Linq;
 using X.PagedList;
 
 public class ContestResultsViewModel
 {
     public int Id { get; set; }
 
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
-    public IEnumerable<ContestProblemListViewModel> Problems { get; set; }
+    public IEnumerable<ContestProblemListViewModel> Problems { get; set; } = Enumerable.Empty<ContestProblemListViewModel>();
 
-    public IEnumerable<ParticipantResultViewModel> Results { get; set; }
+    public IEnumerable<ParticipantResultViewModel> Results { get; set; } = Enumerable.Empty<ParticipantResultViewModel>();
 
-    public IPagedList<ParticipantResultViewModel> PagedResults { get; private set; }
+    public IPagedList<ParticipantResultViewModel>? PagedResults { get; private set; }
 
     public bool ContestCanBeCompeted { get; set; }
 

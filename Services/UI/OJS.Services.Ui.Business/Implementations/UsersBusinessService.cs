@@ -9,13 +9,13 @@ namespace OJS.Services.Ui.Business.Implementations
 
     public class UsersBusinessService : IUsersBusinessService
     {
-        private IUsersDataService usersData;
+        private readonly IUsersDataService usersData;
 
         public UsersBusinessService(
             IUsersDataService usersData) =>
             this.usersData = usersData;
 
-        public Task<UserProfileServiceModel> GetUserProfileByUsername(string username)
+        public Task<UserProfileServiceModel?> GetUserProfileByUsername(string? username)
             => this.usersData
                 .GetByUsername<UserProfileServiceModel>(username);
     }

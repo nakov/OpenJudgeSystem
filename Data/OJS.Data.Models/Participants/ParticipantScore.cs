@@ -8,17 +8,17 @@ namespace OJS.Data.Models.Participants
     {
         public int ProblemId { get; set; }
 
-        public virtual Problem Problem { get; set; }
+        public virtual Problem Problem { get; set; } = new();
 
         public int ParticipantId { get; set; }
 
-        public virtual Participant Participant { get; set; }
+        public virtual Participant Participant { get; set; } = new();
 
         public int? SubmissionId { get; set; }
 
-        public virtual Submission Submission { get; set; }
+        public virtual Submission? Submission { get; set; }
 
-        public string ParticipantName { get; set; }
+        public string ParticipantName { get; set; } = string.Empty;
 
         public int Points { get; set; }
 

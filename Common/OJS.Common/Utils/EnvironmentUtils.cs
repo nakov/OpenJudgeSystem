@@ -8,17 +8,17 @@ namespace OJS.Common.Utils
 
     public static class EnvironmentUtils
     {
-        public static string GetByKey(string key)
+        public static string? GetByKey(string key)
             => Environment.GetEnvironmentVariable(key);
 
-        public static string GetApplicationConnectionString(
+        public static string? GetApplicationConnectionString(
             ApplicationName appName,
             bool appUsesMultipleDatabases = false)
             => IsProduction() || IsDocker()
                 ? BuildAndGetConnectionString(appName, appUsesMultipleDatabases)
                 : Environment.GetEnvironmentVariable(GetConnectionStringName(appName, appUsesMultipleDatabases));
 
-        public static string GetApplicationUrl(ApplicationName appName)
+        public static string? GetApplicationUrl(ApplicationName appName)
             => Environment.GetEnvironmentVariable(GetApplicationUrlEnvironmentName(appName));
 
         private static string GetConnectionStringName(ApplicationName appName, bool appUsesMultipleDatabases)
@@ -35,7 +35,7 @@ namespace OJS.Common.Utils
             return $"Server={server};Database={database};User Id={user}; Password={password};";
         }
 
-        private static string GetDatabaseServer(ApplicationName appName, bool appUsesMultipleDatabases)
+        private static string? GetDatabaseServer(ApplicationName appName, bool appUsesMultipleDatabases)
         {
             var key = appUsesMultipleDatabases
                 ? $"{GetApplicationEnvironmentPrefix(appName)}_DB_SERVER"
@@ -49,7 +49,7 @@ namespace OJS.Common.Utils
                 ? "OpenJudgeSystem"
                 : $"OJS.Servers.{appName}";
 
-        private static string GetDatabaseUser(ApplicationName appName, bool appUsesMultipleDatabases)
+        private static string? GetDatabaseUser(ApplicationName appName, bool appUsesMultipleDatabases)
         {
             var key = appUsesMultipleDatabases
                 ? $"{GetApplicationEnvironmentPrefix(appName)}_DB_USER"
@@ -58,7 +58,7 @@ namespace OJS.Common.Utils
             return Environment.GetEnvironmentVariable(key);
         }
 
-        private static string GetDatabasePassword(ApplicationName appName, bool appUsesMultipleDatabases)
+        private static string? GetDatabasePassword(ApplicationName appName, bool appUsesMultipleDatabases)
         {
             var key = appUsesMultipleDatabases
                 ? $"{GetApplicationEnvironmentPrefix(appName)}_DB_PASSWORD"

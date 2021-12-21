@@ -5,5 +5,5 @@ using System.Threading.Tasks;
 
 public interface IContestsBusinessService : IService
 {
-    Task<bool> UserHasContestPermissions(int contestId, string userId, bool isUserAdmin);
+    Task<bool> UserHasContestPermissions(int contestId, string? userId, bool isUserAdmin);
 }

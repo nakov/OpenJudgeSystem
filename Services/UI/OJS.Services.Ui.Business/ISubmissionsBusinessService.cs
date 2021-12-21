@@ -13,7 +13,7 @@
 
         Task RecalculatePointsByProblem(int problemId);
 
-        Task<IEnumerable<SubmissionServiceModel>> GetForProfileByUser(string username);
+        Task<IEnumerable<SubmissionServiceModel>> GetForProfileByUser(string? username);
 
         // Task HardDeleteAllArchived();
     }

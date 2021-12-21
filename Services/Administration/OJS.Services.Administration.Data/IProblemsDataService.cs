@@ -1,16 +1,14 @@
-﻿using OJS.Services.Common.Data;
-
-namespace OJS.Services.Administration.Data
+﻿namespace OJS.Services.Administration.Data
 {
+    using OJS.Services.Common.Data;
     using OJS.Data.Models.Problems;
-    using SoftUni.Services.Infrastructure;
     using System.Linq;
 
     public interface IProblemsDataService : IDataService<Problem>
     {
-        Problem GetWithProblemGroupById(int id);
+        Problem? GetWithProblemGroupById(int id);
 
-        Problem GetWithContestById(int id);
+        Problem? GetWithContestById(int id);
 
         IQueryable<Problem> GetAllByContest(int contestId);
 
@@ -22,6 +20,6 @@ namespace OJS.Services.Administration.Data
 
         double GetNewOrderByProblemGroup(int problemGroupId);
 
-        string GetNameById(int id);
+        string? GetNameById(int id);
     }
 }

@@ -8,7 +8,6 @@ namespace OJS.Services.Ui.Data.Implementations
     using OJS.Services.Common;
     using OJS.Services.Common.Data.Implementations;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
-    using SoftUni.AutoMapper.Infrastructure.Models;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -40,12 +39,12 @@ namespace OJS.Services.Ui.Data.Implementations
                 .MapCollection<TServiceModel>()
                 .ToListAsync();
 
-        public Task<Contest> GetByIdWithProblems(int id)
+        public Task<Contest?> GetByIdWithProblems(int id)
             => this.DbSet
                 .Include(c => c.ProblemGroups.Select(pg => pg.Problems))
                 .FirstOrDefaultAsync(c => c.Id == id);
 
-        public Task<Contest> GetByIdWithParticipants(int id)
+        public Task<Contest?> GetByIdWithParticipants(int id)
             => this.GetByIdQuery(id)
                 .Include(c => c.Participants)
                 .FirstOrDefaultAsync();
@@ -88,7 +87,7 @@ namespace OJS.Services.Ui.Data.Implementations
             => this.DbSet
                 .Where(c =>
                     c.LecturersInContests.Any(l => l.LecturerId == lecturerId) ||
-                    c.Category.LecturersInContestCategories.Any(l => l.LecturerId == lecturerId));
+                    c.Category!.LecturersInContestCategories.Any(l => l.LecturerId == lecturerId));
 
         public IQueryable<Contest> GetAllVisibleByCategoryAndLecturer(int categoryId, string lecturerId)
             => this.GetAllByLecturer(lecturerId)
@@ -102,7 +101,7 @@ namespace OJS.Services.Ui.Data.Implementations
         public Task<int> GetMaxPointsForExportById(int id)
             => this.GetMaxPointsByIdAndProblemGroupsFilter(id, pg => pg.Type != ProblemGroupType.ExcludedFromHomework);
 
-        public Task<string> GetNameById(int id)
+        public Task<string?> GetNameById(int id)
             => this.GetByIdQuery(id)
                 .Select(c => c.Name)
                 .FirstOrDefaultAsync();
@@ -122,7 +121,7 @@ namespace OJS.Services.Ui.Data.Implementations
             => this.GetByIdQuery(id)
                 .AnyAsync(c =>
                     c.LecturersInContests.Any(l => l.LecturerId == userId) ||
-                    c.Category.LecturersInContestCategories.Any(l => l.LecturerId == userId));
+                    c.Category!.LecturersInContestCategories.Any(l => l.LecturerId == userId));
 
         public Task<bool> IsUserParticipantInByContestAndUser(int id, string userId)
             => this.DbSet
@@ -142,7 +141,7 @@ namespace OJS.Services.Ui.Data.Implementations
                     .AsQueryable()
                     .Where(pg => pg.Problems.Any(p => !p.IsDeleted))
                     .Where(filter)
-                    .Sum(pg => (int?)pg.Problems.FirstOrDefault().MaximumPoints))
+                    .Sum(pg => (int?)pg.Problems.First().MaximumPoints))
                 .FirstOrDefaultAsync() ?? default(int);
 
         private IQueryable<Contest> GetAllVisibleQuery()

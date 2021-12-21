@@ -3,6 +3,7 @@ namespace OJS.Data.Models.Tests
     using FluentExtensions.Extensions;
     using SoftUni.Data.Infrastructure.Models;
     using OJS.Data.Models.Problems;
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations.Schema;
 
@@ -10,12 +11,12 @@ namespace OJS.Data.Models.Tests
     {
         public int ProblemId { get; set; }
 
-        public virtual Problem Problem { get; set; }
+        public virtual Problem Problem { get; set; } = new();
 
         /// <remarks>
         /// Using byte[] (compressed with zip) to save database space.
         /// </remarks>
-        public byte[] InputData { get; set; }
+        public byte[] InputData { get; set; } = Array.Empty<byte>();
 
         [NotMapped]
         public string InputDataAsString
@@ -28,7 +29,7 @@ namespace OJS.Data.Models.Tests
         /// <remarks>
         /// Using byte[] (compressed with zip) to save database space.
         /// </remarks>
-        public byte[] OutputData { get; set; }
+        public byte[] OutputData { get; set; } = Array.Empty<byte>();
 
         [NotMapped]
         public string OutputDataAsString

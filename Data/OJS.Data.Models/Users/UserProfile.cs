@@ -14,10 +14,10 @@ namespace OJS.Data.Models.Users
         [MinLength(EmailMinLength)]
         [RegularExpression(EmailRegEx)]
         [DataType(DataType.EmailAddress)]
-        public override string Email { get; set; }
+        public override string Email { get; set; } = string.Empty;
 
         [Required]
-        public UserSettings UserSettings { get; set; } = new UserSettings();
+        public UserSettings UserSettings { get; set; } = new();
 
         public bool IsDeleted { get; set; }
 

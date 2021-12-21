@@ -22,14 +22,14 @@ namespace OJS.Services.Administration.Data.Implementations
             : base(db)
             => this.participantsCommonData = participantsCommonData;
 
-        public Task<Participant> GetByContestByUserAndByIsOfficial(
+        public Task<Participant?> GetByContestByUserAndByIsOfficial(
             int contestId,
             string userId,
             bool isOfficial)
             => this.GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
                 .FirstOrDefaultAsync();
 
-        public Task<Participant> GetWithContestByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial) =>
+        public Task<Participant?> GetWithContestByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial) =>
             this.GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
                 .Include(p => p.Contest)
                 .FirstOrDefaultAsync();

@@ -6,13 +6,13 @@ namespace OJS.Data.Models
 
     public class LecturerInContestCategory : AuditInfoEntity
     {
-        public string LecturerId { get; set; }
+        public string LecturerId { get; set; } = string.Empty;
 
-        public virtual UserProfile Lecturer { get; set; }
+        public virtual UserProfile Lecturer { get; set; } = new();
 
 
         public int ContestCategoryId { get; set; }
 
-        public virtual ContestCategory ContestCategory { get; set; }
+        public virtual ContestCategory ContestCategory { get; set; } = new();
     }
 }

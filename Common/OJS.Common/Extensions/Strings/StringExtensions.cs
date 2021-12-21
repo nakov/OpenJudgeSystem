@@ -37,7 +37,7 @@
         public static string ToUrl(this string uglyString)
         {
             var resultString = new StringBuilder(uglyString.Length);
-            bool isLastCharacterDash = false;
+            var isLastCharacterDash = false;
 
             uglyString = uglyString.Replace("C#", "CSharp");
             uglyString = uglyString.Replace("C++", "CPlusPlus");
@@ -59,11 +59,11 @@
             return resultString.ToString().Trim('-');
         }
 
-        public static string Repeat(this string input, int count)
+        public static string Repeat(this string? input, int count)
         {
             var builder = new StringBuilder((input?.Length ?? 0) * count);
 
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 builder.Append(input);
             }
@@ -72,7 +72,7 @@
         }
 
         // TODO: Unit test
-        public static string MaxLengthWithEllipsis(this string stringToTrim, int maxLength)
+        public static string? MaxLengthWithEllipsis(this string? stringToTrim, int maxLength)
         {
             if (stringToTrim == null || stringToTrim.Length <= maxLength)
             {
@@ -94,7 +94,7 @@
         }
 
         // TODO: Test
-        public static string GetStringBetween(this string stringToParse, string beforeString, string afterString)
+        public static string? GetStringBetween(this string stringToParse, string beforeString, string afterString)
         {
             var strings = stringToParse.GetStringsBetween(beforeString, afterString).ToList();
             if (!strings.Any())
@@ -131,7 +131,7 @@
             return fixedString.ToString();
         }
 
-        public static string PascalCaseToText(this string input)
+        public static string? PascalCaseToText(this string? input)
         {
             if (input == null)
             {
@@ -144,13 +144,13 @@
             var currentWord = new StringBuilder();
             var abbreviation = new StringBuilder();
 
-            char previous = whiteSpace;
-            bool inWord = false;
-            bool isAbbreviation = false;
+            var previous = whiteSpace;
+            var inWord = false;
+            var isAbbreviation = false;
 
-            for (int i = 0; i < input.Length; i++)
+            for (var i = 0; i < input.Length; i++)
             {
-                char symbolToAdd = input[i];
+                var symbolToAdd = input[i];
 
                 if (char.IsUpper(symbolToAdd) && previous == whiteSpace && !inWord)
                 {

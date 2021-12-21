@@ -18,7 +18,7 @@ namespace OJS.Services.Ui.Data.Implementations
             base.DbSet
                 .Where(p => p.ProblemGroup.ContestId == contestId);
 
-        public Task<Problem> GetWithProblemGroupCheckerAndTestsById(int id)
+        public Task<Problem?> GetWithProblemGroupCheckerAndTestsById(int id)
             => this.DbSet
                 .Include(p => p.ProblemGroup)
                 .Include(p => p.Checker)

@@ -82,7 +82,7 @@ public class ProblemsController : AutoCrudAdminController<Problem>
         complexOptionFilters.Add(
             new KeyValuePair<string, Expression<Func<object, bool>>>(
                 nameof(entity.ProblemGroup),
-                pg => (pg as ProblemGroup).ContestId == entity.ProblemGroup.ContestId));
+                pg => ((pg as ProblemGroup)!).ContestId == entity.ProblemGroup.ContestId));
 
         var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters)
             .ToListAsync();
@@ -112,7 +112,7 @@ public class ProblemsController : AutoCrudAdminController<Problem>
         formControls.Add(new FormControlViewModel
         {
             Name = AdditionalFields.SolutionSkeletonData.ToString(),
-            Value = entity.SolutionSkeleton.Decompress(),
+            Value = entity.SolutionSkeleton?.Decompress(),
             Type = typeof(string),
         });
 

@@ -63,7 +63,7 @@
                             t.ResultType == TestRunResultType.CorrectAnswer &&
                             !t.Test.IsTrialTest),
                         AllTestRuns = s.TestRuns.Count(t => !t.Test.IsTrialTest),
-                        MaxPoints = s.Problem.MaximumPoints
+                        MaxPoints = s.Problem!.MaximumPoints
                     })
                     .ToList();
 
@@ -156,7 +156,7 @@
         //     return Task.CompletedTask;
         // }
 
-        public async Task<IEnumerable<SubmissionServiceModel>> GetForProfileByUser(string username)
+        public async Task<IEnumerable<SubmissionServiceModel>> GetForProfileByUser(string? username)
         {
             var user = await this.usersBusiness.GetUserProfileByUsername(username);
             var data = await this.submissionsData
@@ -164,7 +164,7 @@
                 .Include(s => s.Problem)
                 .Include(s => s.TestRuns)
                 .Include(s => s.SubmissionType)
-                .Where(s => s.Participant.UserId == user.Id)
+                .Where(s => s.Participant!.UserId == user!.Id)
                 .Take(20)
                 .OrderByDescending(s => s.CreatedOn)
                 .MapCollection<SubmissionServiceModel>()

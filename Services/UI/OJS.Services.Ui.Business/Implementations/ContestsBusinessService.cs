@@ -65,6 +65,11 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var contest = await this.contestsData.GetByIdWithParticipants(contestId);
 
+            if (contest == null)
+            {
+                return false;
+            }
+
             var isUserAdminOrLecturerInContest = isAdmin || await this.contestsData
                 .IsUserLecturerInByContestAndUser(contestId, userId);
 
@@ -115,6 +120,11 @@ namespace OJS.Services.Ui.Business.Implementations
 
             foreach (var participant in competeOnlyParticipants)
             {
+                if (participant == null)
+                {
+                    continue;
+                }
+
                 foreach (var participantScore in participant.Scores)
                 {
                     participantScore.IsOfficial = false;
