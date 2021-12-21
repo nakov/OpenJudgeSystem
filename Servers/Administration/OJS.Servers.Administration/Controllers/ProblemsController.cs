@@ -4,8 +4,10 @@ using AutoCrudAdmin.Controllers;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using FluentExtensions.Extensions;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OJS.Common;
 using OJS.Common.Enumerations;
 using OJS.Common.Extensions;
 using OJS.Common.Utils;
@@ -14,12 +16,14 @@ using OJS.Data.Models.Problems;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Data;
+using OJS.Services.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
+using GlobalResource = OJS.Common.Resources.ProblemsController;
 
 public class ProblemsController : AutoCrudAdminController<Problem>
 {
@@ -28,32 +32,36 @@ public class ProblemsController : AutoCrudAdminController<Problem>
         SolutionSkeletonData,
         ProblemGroupType,
         Tests,
-        Resources,
+        AdditionalFiles,
     }
 
     private readonly IContestsBusinessService contestsBusiness;
     private readonly IContestsDataService contestsData;
+    private readonly IFileSystemService fileSystem;
 
-    public ProblemsController(IContestsBusinessService contestsBusiness,
-        IContestsDataService contestsData)
+    public ProblemsController(
+        IContestsBusinessService contestsBusiness,
+        IContestsDataService contestsData,
+        IFileSystemService fileSystem)
     {
         this.contestsBusiness = contestsBusiness;
         this.contestsData = contestsData;
+        this.fileSystem = fileSystem;
     }
 
     public override Task<IActionResult> Create(IDictionary<string, string> complexId, string postEndpointName)
         => base.Create(complexId, nameof(Create));
 
     [HttpPost]
-    public Task<IActionResult> Create(IDictionary<string, string> entityDict, IFormFile tests, IFormFile resources)
-        => base.PostCreate(entityDict, new FormFilesContainer(tests, resources));
+    public Task<IActionResult> Create(IDictionary<string, string> entityDict, IFormFile tests, IFormFile additionalFiles)
+        => base.PostCreate(entityDict, new FormFilesContainer(tests, additionalFiles));
 
     public override Task<IActionResult> Edit(IDictionary<string, string> complexId, string postEndpointName)
         => base.Edit(complexId, nameof(Edit));
 
     [HttpPost]
-    public Task<IActionResult> Edit(IDictionary<string, string> entityDict, IFormFile tests, IFormFile resources)
-        => base.PostEdit(entityDict, new FormFilesContainer(tests, resources));
+    public Task<IActionResult> Edit(IDictionary<string, string> entityDict, IFormFile tests, IFormFile additionalFiles)
+        => base.PostEdit(entityDict, new FormFilesContainer(tests, additionalFiles));
 
     protected override IEnumerable<Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>> AsyncEntityValidators
         => new Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>[]
@@ -113,7 +121,7 @@ public class ProblemsController : AutoCrudAdminController<Problem>
 
         formControls.Add(new FormControlViewModel
         {
-            Name = AdditionalFields.Resources.ToString(),
+            Name = AdditionalFields.AdditionalFiles.ToString(),
             Type = typeof(IFormFile),
         });
 
@@ -182,7 +190,7 @@ public class ProblemsController : AutoCrudAdminController<Problem>
             return ValidatorResult.Error(GeneralResource.No_permissions_for_contest);
         }
 
-        return ValidatorResult.Success();
+        return this.ValidateUploadedFiles(actionContext.Files?.SingleFiles);
     }
 
     private byte[] GetSolutionSkeleton(IDictionary<string, string> entityDict)
@@ -195,4 +203,11 @@ public class ProblemsController : AutoCrudAdminController<Problem>
 
     private ProblemGroupType? GetProblemGroupType(IDictionary<string, string> entityDict)
         => entityDict[AdditionalFields.ProblemGroupType.ToString()].ToEnum<ProblemGroupType>();
+
+    private ValidatorResult ValidateUploadedFiles([CanBeNull] IEnumerable<IFormFile> files)
+        => files
+                ?.Where(f => f != null)
+                .Any(f => this.fileSystem.GetFileExtension(f) != GlobalConstants.FileExtensions.Zip) ?? false
+            ? ValidatorResult.Error(GlobalResource.Must_be_zip_file)
+            : ValidatorResult.Success();
 }

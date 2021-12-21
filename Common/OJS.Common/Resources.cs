@@ -115,5 +115,26 @@ namespace OJS.Common
             public const string Cannot_remove_users = "You cannot remove users from exam group that is not attached to a contest.";
             public const string Users_added = "Users were added successfully to the exam group.";
         }
+
+        public static class ProblemsController
+        {
+            public const string Active_contest_problems_permitted_for_deletion = "The contest is active and problems cannot be deleted!";
+            public const string Copy_problem_success_message = "Successfully copied the problem \"{0}\" into the contest \"{1}\"";
+            public const string Invalid_contest = "Invalid contest";
+            public const string Invalid_problem = "Invalid problem";
+            public const string Invalid_problem_group = "Invalid problem group";
+            public const string Invalid_tests = "Invalid tests";
+            public const string Invalid_user = "Invalid user";
+            public const string Must_be_zip_file = "Uploaded file must be in .ZIP format.";
+            public const string Problem_added = "Problem added successfully.";
+            public const string Problem_deleted = "Problem deleted successfully.";
+            public const string Problem_edited = "Problem edited successfully.";
+            public const string Problem_not_found = "The problem was not found!";
+            public const string Problem_retested = "Problem retested successfully.";
+            public const string Problems_deleted = "Problems deleted successfully.";
+            public const string Resources_not_complete = "Resources must be fully entered.";
+            public const string Select_one_submission_type = "Choose at least one submission type!";
+            public const string Tests_cannot_be_improrted = "The tests cannot be imported: {0}";
+        }
     }
 }
