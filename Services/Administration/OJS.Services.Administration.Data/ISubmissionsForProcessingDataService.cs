@@ -1,6 +1,4 @@
-﻿
-
-namespace OJS.Services.Administration.Data
+﻿namespace OJS.Services.Administration.Data
 {
     using OJS.Data.Models.Submissions;
     using System.Collections.Generic;
@@ -10,9 +8,9 @@ namespace OJS.Services.Administration.Data
 
     public interface ISubmissionsForProcessingDataService : IService
     {
-        Task<SubmissionForProcessing> GetBySubmission(int submissionId);
+        Task<SubmissionForProcessing?> GetBySubmission(int submissionId);
 
-        IQueryable<SubmissionForProcessing> GetAllUnprocessed();
+        IQueryable<SubmissionForProcessing?> GetAllUnprocessed();
 
         Task<IEnumerable<int>> GetIdsOfAllProcessing();
 

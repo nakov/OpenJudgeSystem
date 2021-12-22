@@ -14,7 +14,7 @@
         {
         }
 
-        public Task<TServiceModel> GetByUsername<TServiceModel>(string username)
+        public Task<TServiceModel?> GetByUsername<TServiceModel>(string? username)
             => this.DbSet
                 .Include(up => up.UserSettings)
                 .Where(u => u.UserName == username)

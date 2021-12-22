@@ -26,7 +26,7 @@ namespace OJS.Services.Administration.Data.Implementations
 
         public async Task DeleteByProblem(int problemId)
         {
-            var entity = base.DbSet.FirstOrDefault(t => t.ProblemId == problemId);
+            var entity = await base.DbSet.FirstAsync(t => t.ProblemId == problemId);
             this.Delete(entity);
             await this.SaveChanges();
         }

@@ -7,15 +7,15 @@ namespace OJS.Services.Common.Models
         {
         }
 
-        public ExternalDataRetrievalResult(TData data, string errorMessage)
+        public ExternalDataRetrievalResult(TData? data, string? errorMessage)
         {
             this.Data = data;
             this.ErrorMessage = errorMessage;
         }
 
-        public TData Data { get; set; }
+        public TData? Data { get; set; }
 
-        public string ErrorMessage { get; set; }
+        public string? ErrorMessage { get; set; }
 
         public bool IsSuccess => string.IsNullOrWhiteSpace(this.ErrorMessage);
     }

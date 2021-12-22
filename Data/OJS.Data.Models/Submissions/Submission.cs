@@ -18,31 +18,31 @@ namespace OJS.Data.Models.Submissions
     {
         public int? ParticipantId { get; set; }
 
-        public virtual Participant Participant { get; set; }
+        public virtual Participant? Participant { get; set; }
 
         public int? ProblemId { get; set; }
 
-        public virtual Problem Problem { get; set; }
+        public virtual Problem? Problem { get; set; }
 
         public int? SubmissionTypeId { get; set; }
 
-        public virtual SubmissionType SubmissionType { get; set; }
+        public virtual SubmissionType? SubmissionType { get; set; }
 
         /// <remarks>
         /// Using byte[] (compressed with deflate) to save database space for text inputs. For other file types the actual file content is saved in the field.
         /// </remarks>
-        public byte[] Content { get; set; }
+        public byte[] Content { get; set; } = Array.Empty<byte>();
 
         /// <remarks>
         /// If the value of FileExtension is null, then compressed text file is written in Content
         /// </remarks>
-        public string FileExtension { get; set; }
+        public string? FileExtension { get; set; }
 
-        public byte[] SolutionSkeleton { get; set; }
+        public byte[]? SolutionSkeleton { get; set; }
 
         [StringLength(ConstraintConstants.IpAddressMaxLength)]
         [Column(TypeName = "varchar")]
-        public string IpAddress { get; set; }
+        public string? IpAddress { get; set; }
 
         [NotMapped]
         public bool IsBinaryFile => !string.IsNullOrWhiteSpace(this.FileExtension);
@@ -73,7 +73,7 @@ namespace OJS.Data.Models.Submissions
 
         public bool IsCompiledSuccessfully { get; set; }
 
-        public string CompilerComment { get; set; }
+        public string? CompilerComment { get; set; }
 
         public bool? IsPublic { get; set; }
 
@@ -91,11 +91,11 @@ namespace OJS.Data.Models.Submissions
         ///   - Two 0 results (Correct Answer)
         ///   - One 2 result (Time Limit)
         /// </summary>
-        public string TestRunsCache { get; set; }
+        public string? TestRunsCache { get; set; }
 
         public bool Processed { get; set; }
 
-        public string ProcessingComment { get; set; }
+        public string? ProcessingComment { get; set; }
 
         /// <summary>
         /// Cache field for submissions points (to speed-up some of the database queries)
@@ -116,7 +116,7 @@ namespace OJS.Data.Models.Submissions
 
         [NotMapped]
         public int TestsWithoutTrialTestsCount
-            => this.Problem.Tests.Count(x => !x.IsTrialTest);
+            => this.Problem?.Tests.Count(x => !x.IsTrialTest) ?? 0;
 
         public void CacheTestRuns()
         {

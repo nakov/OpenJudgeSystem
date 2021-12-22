@@ -9,15 +9,15 @@ namespace OJS.Data.Models.Checkers
         [Required]
         [MinLength(NameMinLength)]
         [MaxLength(NameMaxLength)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
-        public string DllFile { get; set; }
+        public string? DllFile { get; set; }
 
-        public string ClassName { get; set; }
+        public string? ClassName { get; set; }
 
-        public string Parameter { get; set; }
+        public string? Parameter { get; set; }
 
         public override string ToString() => this.Name;
     }

@@ -15,7 +15,7 @@ namespace OJS.Data.Models.Contests
     {
         [MaxLength(NameMaxLength)]
         [MinLength(NameMinLength)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         public bool IsVisible { get; set; }
 
@@ -23,7 +23,7 @@ namespace OJS.Data.Models.Contests
 
         public int? CategoryId { get; set; }
 
-        public virtual ContestCategory Category { get; set; }
+        public virtual ContestCategory? Category { get; set; }
 
         public ContestType Type { get; set; }
 
@@ -51,20 +51,20 @@ namespace OJS.Data.Models.Contests
         /// If the ContestPassword is not null the contest participant should provide a valid password.
         /// </remarks>
         [MaxLength(PasswordMaxLength)]
-        public string ContestPassword { get; set; }
+        public string? ContestPassword { get; set; }
 
         /// <remarks>
         /// If PracticePassword is null the contest can be practiced by everyone without require a password.
         /// If the PracticePassword is not null the practice participant should provide a valid password.
         /// </remarks>
         [MaxLength(PasswordMaxLength)]
-        public string PracticePassword { get; set; }
+        public string? PracticePassword { get; set; }
 
         /// <remarks>
         /// NewIpPassword is user for allowing a new IP to be used for the contest.
         /// </remarks>
         [MaxLength(20)]
-        public string NewIpPassword { get; set; }
+        public string? NewIpPassword { get; set; }
 
         /// <remarks>
         /// If PracticeStartTime is null the contest cannot be practiced.
@@ -82,7 +82,7 @@ namespace OJS.Data.Models.Contests
 
         public short NumberOfProblemGroups { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         public virtual ICollection<LecturerInContest> LecturersInContests { get; set; } = new HashSet<LecturerInContest>();
 

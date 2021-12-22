@@ -33,22 +33,22 @@ namespace OJS.Services.Common.Data.Implementations
         public virtual void Delete(TEntity entity)
             => this.db.Remove(entity);
 
-        public void Delete(Expression<Func<TEntity, bool>> filter = null)
+        public void Delete(Expression<Func<TEntity, bool>>? filter = null)
             => this.db.RemoveRange(this.GetQuery(filter));
 
         public virtual async Task DeleteById(object id)
         {
             var entity = await this.DbSet.FindAsync(id);
 
-            this.Delete(entity);
+            this.Delete(entity!);
         }
 
         public virtual void DeleteMany(IEnumerable<TEntity> entities)
             => this.db.RemoveRange(entities);
 
         public virtual async Task<IEnumerable<TEntity>> All(
-            Expression<Func<TEntity, bool>> filter = null,
-            Expression<Func<TEntity, object>> orderBy = null,
+            Expression<Func<TEntity, bool>>? filter = null,
+            Expression<Func<TEntity, object>>? orderBy = null,
             bool descending = false,
             int? skip = null,
             int? take = null)
@@ -57,8 +57,8 @@ namespace OJS.Services.Common.Data.Implementations
                 .ToListAsync();
 
         public virtual async Task<IEnumerable<TResult>> AllTo<TResult>(
-            Expression<Func<TEntity, bool>> filter = null,
-            Expression<Func<TEntity, object>> orderBy = null,
+            Expression<Func<TEntity, bool>>? filter = null,
+            Expression<Func<TEntity, object>>? orderBy = null,
             bool descending = false,
             int? skip = null,
             int? take = null)
@@ -67,32 +67,32 @@ namespace OJS.Services.Common.Data.Implementations
                 .MapCollection<TResult>()
                 .ToListAsync();
 
-        public virtual async Task<TEntity> OneById(object id)
+        public virtual async Task<TEntity?> OneById(object id)
             => await this.DbSet.FindAsync(id);
 
-        public virtual async Task<TResult> OneByIdTo<TResult>(object id)
+        public virtual async Task<TResult?> OneByIdTo<TResult>(object id)
            where TResult : class
            => await this.GetByIdQuery(id)
                .MapCollection<TResult>()
                .FirstOrDefaultAsync();
 
-        public virtual async Task<TEntity> One(Expression<Func<TEntity, bool>> filter)
+        public virtual async Task<TEntity?> One(Expression<Func<TEntity, bool>> filter)
             => await this
                 .GetQuery(filter)
                 .FirstOrDefaultAsync();
 
-        public virtual async Task<TResult> OneTo<TResult>(Expression<Func<TEntity, bool>> filter)
+        public virtual async Task<TResult?> OneTo<TResult>(Expression<Func<TEntity, bool>> filter)
             where TResult : class
             => await this.GetQuery(filter)
                 .MapCollection<TResult>()
                 .FirstOrDefaultAsync();
 
-        public virtual async Task<int> Count(Expression<Func<TEntity, bool>> filter = null)
+        public virtual async Task<int> Count(Expression<Func<TEntity, bool>>? filter = null)
             => await this
                 .GetQuery(filter)
                 .CountAsync();
 
-        public virtual async Task<bool> Exists(Expression<Func<TEntity, bool>> filter = null)
+        public virtual async Task<bool> Exists(Expression<Func<TEntity, bool>>? filter = null)
             => await this
                 .GetQuery(filter)
                 .AnyAsync();
@@ -112,8 +112,8 @@ namespace OJS.Services.Common.Data.Implementations
         }
 
         public virtual IQueryable<TEntity> GetQuery(
-            Expression<Func<TEntity, bool>> filter = null,
-            Expression<Func<TEntity, object>> orderBy = null,
+            Expression<Func<TEntity, bool>>? filter = null,
+            Expression<Func<TEntity, object>>? orderBy = null,
             bool descending = false,
             int? skip = null,
             int? take = null)

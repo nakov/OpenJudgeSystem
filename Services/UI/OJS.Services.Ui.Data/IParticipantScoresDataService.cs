@@ -9,9 +9,9 @@ namespace OJS.Services.Ui.Data
 
     public interface IParticipantScoresDataService : IDataService<ParticipantScore>
     {
-        Task<ParticipantScore> GetByParticipantIdAndProblemId(int participantId, int problemId);
+        Task<ParticipantScore?> GetByParticipantIdAndProblemId(int participantId, int problemId);
 
-        Task<ParticipantScore> GetByParticipantIdProblemIdAndIsOfficial(int participantId, int problemId, bool isOfficial);
+        Task<ParticipantScore?> GetByParticipantIdProblemIdAndIsOfficial(int participantId, int problemId, bool isOfficial);
 
         IQueryable<ParticipantScore> GetAll();
 

@@ -19,7 +19,7 @@
 
         public Task<IEnumerable<SubmissionForProfileResponseModel>> GetForProfile()
             => this.submissionsBusiness
-                .GetForProfileByUser(this.User.Identity.Name)
-                .Map<IEnumerable<SubmissionForProfileResponseModel>>();
+                .GetForProfileByUser(this.User.Identity?.Name)
+                .MapCollection<SubmissionForProfileResponseModel>();
     }
 }

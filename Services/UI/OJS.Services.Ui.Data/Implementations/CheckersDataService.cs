@@ -13,7 +13,7 @@
         {
         }
 
-        public Task<Checker> GetByName(string name)
+        public Task<Checker?> GetByName(string name)
             => this.DbSet
                 .FirstOrDefaultAsync(ch => ch.Name == name);
 

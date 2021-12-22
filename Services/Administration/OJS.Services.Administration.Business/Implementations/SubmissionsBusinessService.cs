@@ -60,7 +60,7 @@ namespace OJS.Services.Administration.Business.Implementations
                             t.ResultType == TestRunResultType.CorrectAnswer &&
                             !t.Test.IsTrialTest),
                         AllTestRuns = s.TestRuns.Count(t => !t.Test.IsTrialTest),
-                        MaxPoints = s.Problem.MaximumPoints
+                        MaxPoints = s.Problem!.MaximumPoints
                     })
                     .ToList();
 

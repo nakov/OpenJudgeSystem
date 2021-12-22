@@ -4,7 +4,7 @@ namespace OJS.Common.Extensions
 
     public static class ExecutionStrategyTypeExtensions
     {
-        public static string GetFileExtension(this ExecutionStrategyType executionStrategyType)
+        public static string? GetFileExtension(this ExecutionStrategyType executionStrategyType)
             => executionStrategyType switch
             {
                 ExecutionStrategyType.CompileExecuteAndCheck => null, // The file extension depends on the compiler.

@@ -10,7 +10,7 @@ public class TestRunFullResultsViewModel
 
     public TestRunResultType ResultType { get; set; }
 
-    public static IEnumerable<TestRunFullResultsViewModel> FromCache(string testRunsCache)
+    public static IEnumerable<TestRunFullResultsViewModel> FromCache(string? testRunsCache)
     {
         if (string.IsNullOrWhiteSpace(testRunsCache))
         {

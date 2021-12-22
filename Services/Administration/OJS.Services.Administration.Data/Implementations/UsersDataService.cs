@@ -11,7 +11,7 @@ namespace OJS.Services.Administration.Data.Implementations
     {
         public UsersDataService(DbContext users) : base(users) {}
 
-        public Task<UserProfile> GetByUsername(string username) =>
+        public Task<UserProfile?> GetByUsername(string username) =>
             this.DbSet.Where(u => u.UserName == username).FirstOrDefaultAsync();
 
         public Task<IEnumerable<UserProfile>> GetAllWithDeleted() =>

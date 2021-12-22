@@ -10,21 +10,21 @@ namespace OJS.Data.Models.Problems
     {
         public int ProblemId { get; set; }
 
-        public virtual Problem Problem { get; set; }
+        public virtual Problem Problem { get; set; } = new();
 
         [Required]
         [MinLength(ResourceNameMinLength)]
         [MaxLength(ResourceNameMaxLength)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         public ProblemResourceType Type { get; set; }
 
-        public byte[] File { get; set; }
+        public byte[]? File { get; set; }
 
         [MaxLength(FileExtensionMaxLength)]
-        public string FileExtension { get; set; }
+        public string? FileExtension { get; set; }
 
-        public string Link { get; set; }
+        public string? Link { get; set; }
 
         public double OrderBy { get; set; }
     }

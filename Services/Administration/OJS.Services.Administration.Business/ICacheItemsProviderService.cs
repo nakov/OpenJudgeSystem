@@ -19,7 +19,7 @@ public interface ICacheItemsProviderService : IService
     IEnumerable<CategoryMenuItemViewModel> GetMainContestCategories(
         int? cacheSeconds = CacheConstants.OneDayInSeconds);
 
-    Task<string> GetContestCategoryName(
+    Task<string?> GetContestCategoryName(
         int categoryId,
         int? cacheSeconds = CacheConstants.OneDayInSeconds);
 

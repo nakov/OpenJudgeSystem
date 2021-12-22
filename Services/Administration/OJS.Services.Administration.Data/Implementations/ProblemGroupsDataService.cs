@@ -9,7 +9,7 @@
     {
         public ProblemGroupsDataService(DbContext problemGroups) : base(problemGroups) {}
 
-        public ProblemGroup GetByProblem(int problemId) =>
+        public ProblemGroup? GetByProblem(int problemId) =>
             this.DbSet
                 .FirstOrDefault(pg => pg.Problems
                     .Any(p => p.Id == problemId));

@@ -3,12 +3,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <script>
-    window.isLoggedIn = Boolean(@Model.IsAuthenticated.ToString().ToLower())
+    window.isLoggedIn = Boolean(@Model?.IsAuthenticated.ToString().ToLower())
 </script>
 <head>
-    @Html.Raw(Model.HeadContent)
+    @Html.Raw(Model?.HeadContent)
 </head>
 <body>
-    @Html.Raw(Model.BodyContent)
+    @Html.Raw(Model?.BodyContent)
 </body>
 </html>

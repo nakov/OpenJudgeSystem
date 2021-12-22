@@ -7,10 +7,10 @@ namespace OJS.Data.Models
     {
         public int SubmissionTypeId { get; set; }
 
-        public virtual SubmissionType SubmissionType { get; set; }
+        public virtual SubmissionType SubmissionType { get; set; } = new();
 
         public int ProblemId { get; set; }
 
-        public virtual Problem Problem { get; set; }
+        public virtual Problem Problem { get; set; } = new();
     }
 }

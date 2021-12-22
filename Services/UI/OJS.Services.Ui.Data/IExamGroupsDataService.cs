@@ -8,7 +8,7 @@ namespace OJS.Services.Ui.Data
 
     public interface IExamGroupsDataService : IDataService<ExamGroup>
     {
-        Task<ExamGroup> GetByExternalIdAndAppId(int? externalId, string appId);
+        Task<ExamGroup?> GetByExternalIdAndAppId(int? externalId, string appId);
 
         Task<int> GetIdByExternalIdAndAppId(int? externalId, string appId);
 

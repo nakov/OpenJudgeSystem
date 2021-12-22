@@ -7,9 +7,9 @@ namespace OJS.Data.Models
     public class Event : DeletableAuditInfoEntity<int>
     {
         [Required(AllowEmptyStrings = false)]
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         public DateTime StartTime { get; set; }
 
@@ -18,6 +18,6 @@ namespace OJS.Data.Models
         /// </remarks>
         public DateTime? EndTime { get; set; }
 
-        public string Url { get; set; }
+        public string? Url { get; set; }
     }
 }

@@ -10,7 +10,7 @@ public class ContestsBusinessService : IContestsBusinessService
     public ContestsBusinessService(IContestsDataService contestsData)
         => this.contestsData = contestsData;
 
-    public async Task<bool> UserHasContestPermissions(int contestId, string userId, bool isUserAdmin)
+    public async Task<bool> UserHasContestPermissions(int contestId, string? userId, bool isUserAdmin)
         => !string.IsNullOrWhiteSpace(userId) &&
            (isUserAdmin || await this.contestsData.IsUserLecturerInByContestAndUser(contestId, userId));
 }

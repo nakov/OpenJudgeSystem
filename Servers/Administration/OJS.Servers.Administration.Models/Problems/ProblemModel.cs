@@ -14,12 +14,12 @@ namespace OJS.Servers.Administration.Models.Problems
                 Name = p.Name,
                 MaximumPoints = p.MaximumPoints,
                 TimeLimit = p.TimeLimit,
-                MemoryLimit = p.MemoryLimit
+                MemoryLimit = p.MemoryLimit,
             };
 
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         public short MaximumPoints { get; set; }
 

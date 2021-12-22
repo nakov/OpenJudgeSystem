@@ -5,12 +5,12 @@ namespace OJS.Data.Models
 
     public class UserInExamGroup
     {
-        public string UserId { get; set; }
+        public string UserId { get; set; } = string.Empty;
 
-        public virtual UserProfile User { get; set; }
+        public virtual UserProfile User { get; set; } = new();
 
         public int ExamGroupId { get; set; }
 
-        public virtual ExamGroup ExamGroup { get; set; }
+        public virtual ExamGroup ExamGroup { get; set; } = new();
     }
 }

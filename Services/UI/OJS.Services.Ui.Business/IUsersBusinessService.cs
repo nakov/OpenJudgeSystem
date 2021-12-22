@@ -7,6 +7,6 @@ namespace OJS.Services.Ui.Business
 
     public interface IUsersBusinessService : IService
     {
-        public Task<UserProfileServiceModel> GetUserProfileByUsername(string username);
+        public Task<UserProfileServiceModel?> GetUserProfileByUsername(string? username);
     }
 }

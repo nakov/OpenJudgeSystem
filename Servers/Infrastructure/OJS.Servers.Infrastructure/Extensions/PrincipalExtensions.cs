@@ -6,7 +6,7 @@ namespace OJS.Servers.Infrastructure.Extensions
 
     public static class PrincipalExtensions
     {
-        public static string GetId(this ClaimsPrincipal principal)
+        public static string? GetId(this ClaimsPrincipal? principal)
             => principal?.FindFirstValue(ClaimTypes.NameIdentifier);
 
         public static bool IsAuthenticated(this IPrincipal principal)

@@ -71,8 +71,8 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var submissionsToAdd = await this.submissionsData
                 .GetAllByIdsQuery(unprocessedSubmissionIds)
-                .Include(s => s.Problem.Checker)
-                .Include(s => s.Problem.Tests)
+                .Include(s => s.Problem!.Checker)
+                .Include(s => s.Problem!.Tests)
                 .ToListAsync();
 
             await this.BatchAddSubmissionsForProcessing(
@@ -86,15 +86,15 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var executionStrategy = this.formatterServiceFactory
                 .Get<ExecutionStrategyType>()
-                ?.Format(submission.SubmissionType.ExecutionStrategyType);
+                ?.Format(submission.SubmissionType!.ExecutionStrategyType);
 
             var checkerType = this.formatterServiceFactory
                .Get<string>()
-               ?.Format(submission.Problem.Checker.ClassName);
+               ?.Format(submission.Problem!.Checker!.ClassName!);
 
            var (fileContent, code) = this.GetSubmissionContent(submission);
 
-            var tests = submission.Problem.Tests
+            var tests = submission.Problem!.Tests
                 .Select(t => new
                 {
                     t.Id,
@@ -142,7 +142,8 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var submissionsAddedCount = 0;
 
-            ExternalDataRetrievalResult<SubmissionAddedToDistributorResponseServiceModel> response = null;
+            ExternalDataRetrievalResult<SubmissionAddedToDistributorResponseServiceModel> response
+                = new ExternalDataRetrievalResult<SubmissionAddedToDistributorResponseServiceModel>();
 
             while (submissionsAddedCount < submissions.Count)
             {
@@ -163,9 +164,9 @@ namespace OJS.Services.Ui.Business.Implementations
             return response;
         }
 
-        private (byte[] fileContent, string code) GetSubmissionContent(Submission submission)
+        private (byte[]? fileContent, string code) GetSubmissionContent(Submission submission)
         {
-            byte[] fileContent = null;
+            byte[]? fileContent = null;
             var code = string.Empty;
 
             if (submission.IsBinaryFile)

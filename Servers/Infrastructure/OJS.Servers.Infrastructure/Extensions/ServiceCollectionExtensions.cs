@@ -35,7 +35,7 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         public static IServiceCollection AddIdentityDatabase<TDbContext, TIdentityUser>(
             this IServiceCollection services,
-            IEnumerable<GlobalQueryFilterType> globalQueryFilterTypes = null)
+            IEnumerable<GlobalQueryFilterType>? globalQueryFilterTypes = null)
             where TDbContext : DbContext
             where TIdentityUser : IdentityUser
         {
@@ -87,7 +87,14 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         private static IServiceCollection AddAuthenticationServices(this IServiceCollection services)
         {
-            var keysDirectory = new DirectoryInfo(EnvironmentUtils.GetByKey(PathToCommonKeyRingFolderKey));
+            var keysDirectoryPath = EnvironmentUtils.GetByKey(PathToCommonKeyRingFolderKey);
+
+            if (string.IsNullOrWhiteSpace(keysDirectoryPath))
+            {
+                throw new Exception($"{PathToCommonKeyRingFolderKey} is not provided in env variables.");
+            }
+
+            var keysDirectory = new DirectoryInfo(keysDirectoryPath);
 
             services
                 .AddDataProtection()

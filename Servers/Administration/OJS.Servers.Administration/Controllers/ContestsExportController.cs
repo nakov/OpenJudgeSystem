@@ -69,7 +69,7 @@ public class ContestsExportController : BaseAdminViewController
 
         var participants = this.GetContestParticipants(id, compete);
 
-        Func<int, int, Submission> getSubmissionFunc = exportType switch
+        Func<int, int, Submission?>? getSubmissionFunc = exportType switch
         {
             SubmissionExportType.BestSubmissions => this.GetBestSubmission,
             SubmissionExportType.LastSubmissions => this.GetLastSubmission,
@@ -144,7 +144,7 @@ public class ContestsExportController : BaseAdminViewController
             includeDateInFileName ? $"{problem.Name}-{submission.CreatedOn:dd-MM-yyyy HH:mm:ss:fff}" : problem.Name;
 
         var fileName =
-            $"{fileNameWithoutExtension}.{submission.FileExtension ?? submission.SubmissionType.FileNameExtension}-{submission.Id}"
+            $"{fileNameWithoutExtension}.{submission.FileExtension ?? submission.SubmissionType!.FileNameExtension}-{submission.Id}"
                 .ToValidFileName();
 
         var content = submission.IsBinaryFile ? submission.Content : submission.ContentAsString.ToByteArray();
@@ -159,7 +159,7 @@ public class ContestsExportController : BaseAdminViewController
     private IEnumerable<InMemoryFile> ZipParticipantsSolutions(
         IEnumerable<ParticipantModel> participants,
         ICollection<ProblemModel> problems,
-        Func<int, int, Submission> getSubmission)
+        Func<int, int, Submission?>? getSubmission)
     {
         var files = new List<InMemoryFile>();
 
@@ -222,7 +222,7 @@ public class ContestsExportController : BaseAdminViewController
         return problems;
     }
 
-    private Submission GetBestSubmission(int participantId, int problemId) =>
+    private Submission? GetBestSubmission(int participantId, int problemId) =>
         this.submissionsData
             .GetQuery()
             .Where(submission => submission.ParticipantId == participantId && submission.ProblemId == problemId)
@@ -230,7 +230,7 @@ public class ContestsExportController : BaseAdminViewController
             .ThenByDescending(submission => submission.CreatedOn)
             .FirstOrDefault();
 
-    private Submission GetLastSubmission(int participantId, int problemId) =>
+    private Submission? GetLastSubmission(int participantId, int problemId) =>
         this.submissionsData
             .GetQuery()
             .Where(submission => submission.ParticipantId == participantId && submission.ProblemId == problemId)

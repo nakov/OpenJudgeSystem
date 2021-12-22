@@ -47,10 +47,10 @@
 
         public static IWebHostBuilder ValidateConnectionStringsConfiguration(
             this IWebHostBuilder builder,
-            params ApplicationName[] applicationNames)
+            params ApplicationName[]? applicationNames)
         {
             ValidateConfigByApplicationName(
-                applicationNames ?? new ApplicationName[0],
+                applicationNames ?? Array.Empty<ApplicationName>(),
                 ConnectionStringVariableNotFoundExceptionMessageFormat,
                 appName => EnvironmentUtils.GetApplicationConnectionString(
                     appName,
@@ -60,10 +60,10 @@
 
         public static IWebHostBuilder ValidateApplicationUrlsConfiguration(
             this IWebHostBuilder builder,
-            params ApplicationName[] applicationNames)
+            params ApplicationName[]? applicationNames)
         {
             ValidateConfigByApplicationName(
-                applicationNames ?? new ApplicationName[0],
+                applicationNames ?? Array.Empty<ApplicationName>(),
                 UrlVariableNotFoundExceptionMessageFormat,
                 EnvironmentUtils.GetApplicationUrl);
             return builder;
@@ -72,8 +72,8 @@
         public static IWebHostBuilder BuildWebHostConfiguration<TStartup>(
             this IWebHostBuilder builder,
             string[] args,
-            ApplicationName[] connectionStrings = default,
-            ApplicationName[] applicationUrls = default)
+            ApplicationName[]? connectionStrings = default,
+            ApplicationName[]? applicationUrls = default)
             where TStartup : class
             => builder
                 .ValidateConnectionStringsConfiguration(connectionStrings)
@@ -198,7 +198,7 @@
         private static void ValidateConfigByApplicationName(
             ApplicationName[] applicationNames,
             string messageTemplate,
-            Func<ApplicationName, string> f)
+            Func<ApplicationName, string?> f)
         {
             var failingApplicationNames = applicationNames
                 .Where(appName =>

@@ -8,13 +8,14 @@ using System.Linq.Expressions;
 
 public class ParticipantResultViewModel
 {
-    public string ParticipantUsername { get; set; }
+    public string? ParticipantUsername { get; set; }
 
-    public string ParticipantFirstName { get; set; }
+    public string? ParticipantFirstName { get; set; }
 
-    public string ParticipantLastName { get; set; }
+    public string? ParticipantLastName { get; set; }
 
     public IEnumerable<ProblemResultPairViewModel> ProblemResults { get; set; }
+        = Enumerable.Empty<ProblemResultPairViewModel>();
 
     public string ParticipantFullName => $"{this.ParticipantFirstName?.Trim()} {this.ParticipantLastName?.Trim()}";
 
@@ -29,7 +30,7 @@ public class ParticipantResultViewModel
         .Where(pr => pr.ShowResult && !pr.IsExcludedFromHomework)
         .Sum(pr => pr.BestSubmission.Points);
 
-    public IEnumerable<int> ParticipantProblemIds { get; set; }
+    public IEnumerable<int> ParticipantProblemIds { get; set; } = Enumerable.Empty<int>();
 
     public static Expression<Func<Participant, ParticipantResultViewModel>> FromParticipantAsSimpleResultByContest(int contestId) =>
         participant => new ParticipantResultViewModel

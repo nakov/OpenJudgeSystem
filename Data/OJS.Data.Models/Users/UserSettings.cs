@@ -14,23 +14,23 @@ namespace OJS.Data.Models.Users
         [Column(nameof(FirstName))]
         [MaxLength(NameMaxLength)]
         [MinLength(NameMinLength)]
-        public string FirstName { get; set; }
+        public string? FirstName { get; set; }
 
         [Column(nameof(LastName))]
         [MaxLength(NameMaxLength)]
-        public string LastName { get; set; }
+        public string? LastName { get; set; }
 
         [Column(nameof(City))]
         [MinLength(CityMinLength)]
         [MaxLength(CityMaxLength)]
-        public string City { get; set; }
+        public string? City { get; set; }
 
         [Column(nameof(EducationalInstitution))]
-        public string EducationalInstitution { get; set; }
+        public string? EducationalInstitution { get; set; }
 
         [Column(nameof(FacultyNumber))]
         [MaxLength(FacultyNumberMaxLength)]
-        public string FacultyNumber { get; set; }
+        public string? FacultyNumber { get; set; }
 
         [Column(nameof(DateOfBirth))]
         public DateTime? DateOfBirth { get; set; }
@@ -38,12 +38,12 @@ namespace OJS.Data.Models.Users
         [Column(nameof(Company))]
         [MaxLength(CompanyMaxLength)]
         [MinLength(CompanyMinLength)]
-        public string Company { get; set; }
+        public string? Company { get; set; }
 
         [Column(nameof(JobTitle))]
         [MaxLength(JobTitleMaxLength)]
         [MinLength(JobTitleMinLength)]
-        public string JobTitle { get; set; }
+        public string? JobTitle { get; set; }
 
         [NotMapped]
         public byte? Age => Calculator.Age(this.DateOfBirth);

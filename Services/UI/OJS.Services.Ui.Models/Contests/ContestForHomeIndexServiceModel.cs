@@ -9,7 +9,7 @@ namespace OJS.Services.Ui.Models.Contests
     {
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         public DateTime? EndTime { get; set; }
 
@@ -17,7 +17,7 @@ namespace OJS.Services.Ui.Models.Contests
 
         public bool CanPractice { get; set; }
 
-        public string Category { get; set; }
+        public string Category { get; set; } = string.Empty;
 
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<Contest, ContestForHomeIndexServiceModel>()
@@ -26,6 +26,6 @@ namespace OJS.Services.Ui.Models.Contests
                 .ForMember(dest => dest.CanCompete,
                     opt => opt.MapFrom(src => (src.StartTime.HasValue && src.EndTime.HasValue)))
                 .ForMember(dest => dest.Category,
-                    opt => opt.MapFrom(src => src.Category.Name));
+                    opt => opt.MapFrom(src => src.Category!.Name));
     }
 }

@@ -1,6 +1,7 @@
 namespace OJS.Servers.Administration.Controllers;
 
 using AutoCrudAdmin.Controllers;
+using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using OJS.Data.Models.Contests;
 using OJS.Servers.Infrastructure.Extensions;
@@ -24,8 +25,8 @@ public class ExamGroupsController : AutoCrudAdminController<ExamGroup>
         this.contestsData = contestsData;
     }
 
-    protected override IEnumerable<Func<ExamGroup, ExamGroup, EntityAction, IDictionary<string, string>, Task<ValidatorResult>>> AsyncEntityValidators
-        => new Func<ExamGroup, ExamGroup, EntityAction, IDictionary<string, string>, Task<ValidatorResult>>[]
+    protected override IEnumerable<Func<ExamGroup, ExamGroup, AdminActionContext, Task<ValidatorResult>>> AsyncEntityValidators
+        => new Func<ExamGroup, ExamGroup, AdminActionContext, Task<ValidatorResult>>[]
         {
             this.ValidateContestPermissions,
         };
@@ -33,8 +34,7 @@ public class ExamGroupsController : AutoCrudAdminController<ExamGroup>
     private async Task<ValidatorResult> ValidateContestPermissions(
         ExamGroup existingEntity,
         ExamGroup newEntity,
-        EntityAction action,
-        IDictionary<string, string> entityDict)
+        AdminActionContext actionContext)
     {
         var userId = this.User.GetId();
         var isUserAdmin = this.User.IsAdmin();
@@ -49,7 +49,7 @@ public class ExamGroupsController : AutoCrudAdminController<ExamGroup>
             return ValidatorResult.Error(Resource.Cannot_attach_contest);
         }
 
-        if (action == EntityAction.Delete)
+        if (actionContext.Action == EntityAction.Delete)
         {
             if (await this.contestsData.IsActiveById(newEntity.ContestId.Value))
             {

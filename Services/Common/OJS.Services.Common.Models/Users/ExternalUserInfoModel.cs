@@ -5,29 +5,29 @@ namespace OJS.Services.Common.Models.Users
 
     public class ExternalUserInfoModel
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
-        public string UserName { get; set; }
+        public string UserName { get; set; } = string.Empty;
 
-        public string PasswordHash { get; set; }
+        public string? PasswordHash { get; set; }
 
-        public string SecurityStamp { get; set; }
+        public string? SecurityStamp { get; set; }
 
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
-        public string FirstName { get; set; }
+        public string? FirstName { get; set; }
 
-        public string LastName { get; set; }
+        public string? LastName { get; set; }
 
-        public string City { get; set; }
+        public string? City { get; set; }
 
-        public string EducationalInstitution { get; set; }
+        public string? EducationalInstitution { get; set; }
 
         public DateTime? DateOfBirth { get; set; }
 
-        public string Company { get; set; }
+        public string? Company { get; set; }
 
-        public string JobTitle { get; set; }
+        public string? JobTitle { get; set; }
 
         public DateTime CreatedOn { get; set; }
 

@@ -17,7 +17,7 @@
 
         public async Task<UserProfileResponseModel> GetProfileInfo()
             => await this.usersBusiness
-                .GetUserProfileByUsername(HttpContext.User.Identity.Name)
+                .GetUserProfileByUsername(HttpContext.User.Identity!.Name)
                 .Map<UserProfileResponseModel>();
     }
 }

@@ -19,40 +19,40 @@ namespace OJS.Services.Common.Data
 
         void Delete(TEntity entity);
 
-        void Delete(Expression<Func<TEntity, bool>> filter = null);
+        void Delete(Expression<Func<TEntity, bool>>? filter = null);
 
         Task DeleteById(object id);
 
         void DeleteMany(IEnumerable<TEntity> entities);
 
         Task<IEnumerable<TEntity>> All(
-            Expression<Func<TEntity, bool>> filter = null,
-            Expression<Func<TEntity, object>> orderBy = null,
+            Expression<Func<TEntity, bool>>? filter = null,
+            Expression<Func<TEntity, object>>? orderBy = null,
             bool descending = false,
             int? skip = null,
             int? take = null);
 
         Task<IEnumerable<TResult>> AllTo<TResult>(
-            Expression<Func<TEntity, bool>> filter = null,
-            Expression<Func<TEntity, object>> orderBy = null,
+            Expression<Func<TEntity, bool>>? filter = null,
+            Expression<Func<TEntity, object>>? orderBy = null,
             bool descending = false,
             int? skip = null,
             int? take = null)
             where TResult : class;
 
-        Task<TEntity> OneById(object id);
+        Task<TEntity?> OneById(object id);
 
-        Task<TResult> OneByIdTo<TResult>(object id)
+        Task<TResult?> OneByIdTo<TResult>(object id)
             where TResult : class;
 
-        Task<TEntity> One(Expression<Func<TEntity, bool>> filter);
+        Task<TEntity?> One(Expression<Func<TEntity, bool>> filter);
 
-        Task<TResult> OneTo<TResult>(Expression<Func<TEntity, bool>> filter)
+        Task<TResult?> OneTo<TResult>(Expression<Func<TEntity, bool>> filter)
             where TResult : class;
 
-        Task<int> Count(Expression<Func<TEntity, bool>> filter = null);
+        Task<int> Count(Expression<Func<TEntity, bool>>? filter = null);
 
-        Task<bool> Exists(Expression<Func<TEntity, bool>> filter = null);
+        Task<bool> Exists(Expression<Func<TEntity, bool>>? filter = null);
 
         Task<bool> ExistsById(object id);
 
@@ -62,8 +62,8 @@ namespace OJS.Services.Common.Data
         IQueryable<TEntity> GetByIdQuery(object id);
 
         IQueryable<TEntity> GetQuery(
-            Expression<Func<TEntity, bool>> filter = null,
-            Expression<Func<TEntity, object>> orderBy = null,
+            Expression<Func<TEntity, bool>>? filter = null,
+            Expression<Func<TEntity, object>>? orderBy = null,
             bool descending = false,
             int? skip = null,
             int? take = null);

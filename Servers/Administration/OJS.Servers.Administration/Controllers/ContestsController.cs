@@ -1,6 +1,7 @@
 namespace OJS.Servers.Administration.Controllers
 {
     using AutoCrudAdmin.Controllers;
+    using AutoCrudAdmin.Models;
     using AutoCrudAdmin.ViewModels;
     using Microsoft.AspNetCore.Mvc;
     using OJS.Data.Models;
@@ -66,8 +67,8 @@ namespace OJS.Servers.Administration.Controllers
             return this.View(model);
         }
 
-        protected override IEnumerable<Func<Contest, Contest, EntityAction, IDictionary<string, string>, Task<ValidatorResult>>> AsyncEntityValidators
-            => new Func<Contest, Contest, EntityAction, IDictionary<string, string>, Task<ValidatorResult>>[]
+        protected override IEnumerable<Func<Contest, Contest, AdminActionContext, Task<ValidatorResult>>> AsyncEntityValidators
+            => new Func<Contest, Contest, AdminActionContext, Task<ValidatorResult>>[]
             {
                 this.ValidateContestCategoryPermissions,
                 this.ValidateContest,
@@ -75,10 +76,10 @@ namespace OJS.Servers.Administration.Controllers
 
         protected override async Task BeforeEntitySaveOnCreateAsync(
             Contest contest,
-            IDictionary<string, string> entityDict)
+            AdminActionContext actionContext)
         {
             this.AddProblemGroupsToContest(contest, contest.NumberOfProblemGroups);
-            await this.AddIpsToContest(contest, entityDict[AdditionalFields.AllowedIps.ToString()]);
+            await this.AddIpsToContest(contest, actionContext.EntityDict[AdditionalFields.AllowedIps.ToString()]);
         }
 
         protected override IEnumerable<GridAction> CustomActions
@@ -91,7 +92,7 @@ namespace OJS.Servers.Administration.Controllers
         protected override async Task BeforeEntitySaveOnEditAsync(
             Contest existingContest,
             Contest newContest,
-            IDictionary<string, string> entityDict)
+            AdminActionContext actionContext)
         {
             if (newContest.IsOnline && newContest.ProblemGroups.Count == 0)
             {
@@ -104,13 +105,13 @@ namespace OJS.Servers.Administration.Controllers
             }
 
             newContest.IpsInContests.Clear();
-            await this.AddIpsToContest(newContest, entityDict[AdditionalFields.AllowedIps.ToString()]);
+            await this.AddIpsToContest(newContest, actionContext.EntityDict[AdditionalFields.AllowedIps.ToString()]);
         }
 
         protected override async Task AfterEntitySaveOnEditAsync(
             Contest oldContest,
             Contest contest,
-            IDictionary<string, string> entityDict)
+            AdminActionContext actionContext)
         {
             var originalContestPassword = oldContest.ContestPassword;
             var originalPracticePassword = oldContest.PracticePassword;
@@ -137,8 +138,7 @@ namespace OJS.Servers.Administration.Controllers
         private async Task<ValidatorResult> ValidateContestCategoryPermissions(
             Contest existingContest,
             Contest newContest,
-            EntityAction action,
-            IDictionary<string, string> entityDict)
+            AdminActionContext actionContext)
         {
             var userId = this.User.GetId();
             var userIsAdmin = this.User.IsAdmin();
@@ -158,8 +158,7 @@ namespace OJS.Servers.Administration.Controllers
         private async Task<ValidatorResult> ValidateContest(
             Contest existingContest,
             Contest newContest,
-            EntityAction action,
-            IDictionary<string, string> entityDict)
+            AdminActionContext actionContext)
         {
             if (newContest.StartTime >= newContest.EndTime)
             {
@@ -195,7 +194,7 @@ namespace OJS.Servers.Administration.Controllers
                 }
             }
 
-            return action switch
+            return actionContext.Action switch
             {
                 EntityAction.Edit => this.ValidateContestOnEdit(existingContest, newContest),
                 EntityAction.Delete => await this.ValidateContestOnDelete(newContest),
@@ -251,8 +250,8 @@ namespace OJS.Servers.Administration.Controllers
         }
 
         private async Task InvalidateParticipants(
-            string originalContestPassword,
-            string originalPracticePassword,
+            string? originalContestPassword,
+            string? originalPracticePassword,
             Contest contest)
         {
             if (originalContestPassword != contest.ContestPassword &&

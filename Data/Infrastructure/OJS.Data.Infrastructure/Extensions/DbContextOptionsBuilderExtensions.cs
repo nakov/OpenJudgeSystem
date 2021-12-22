@@ -16,8 +16,10 @@ namespace OJS.Data.Infrastructure.Extensions
             }
 
             // For migrations
-            // options.UseSqlServer("Server=.;Database=OpenJudgeSystem;User Id=sa;Password=1234;");
-            options.UseSqlServer(EnvironmentUtils.GetApplicationConnectionString(applicationName));
+            // var connectionString = "Server=.;Database=OpenJudgeSystem;User Id=sa;Password=1234;";
+            var connectionString = EnvironmentUtils.GetApplicationConnectionString(applicationName);
+
+            options.UseSqlServer(connectionString!);
 
             // TODO: refactor app to not use lazy loading globally and make navigational properties non virtual
             options.UseLazyLoadingProxies();

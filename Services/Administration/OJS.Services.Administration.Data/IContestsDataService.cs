@@ -15,9 +15,9 @@ namespace OJS.Services.Administration.Data
         Task<IEnumerable<TServiceModel>> GetAllPast<TServiceModel>()
             where TServiceModel : IMapFrom<Contest>;
 
-        Task<Contest> GetByIdWithProblems(int id);
+        Task<Contest?> GetByIdWithProblems(int id);
 
-        Task<Contest> GetByIdWithParticipants(int id);
+        Task<Contest?> GetByIdWithParticipants(int id);
 
         IQueryable<Contest> GetAllActive();
 
@@ -31,9 +31,9 @@ namespace OJS.Services.Administration.Data
 
         IQueryable<Contest> GetAllVisibleBySubmissionType(int submissionTypeId);
 
-        IQueryable<Contest> GetAllByLecturer(string lecturerId);
+        IQueryable<Contest> GetAllByLecturer(string? lecturerId);
 
-        IQueryable<Contest> GetAllVisibleByCategoryAndLecturer(int categoryId, string lecturerId);
+        IQueryable<Contest> GetAllVisibleByCategoryAndLecturer(int categoryId, string? lecturerId);
 
         IQueryable<Contest> GetAllWithDeleted();
 
@@ -41,16 +41,16 @@ namespace OJS.Services.Administration.Data
 
         Task<int> GetMaxPointsForExportById(int id);
 
-        Task<string> GetNameById(int id);
+        Task<string?> GetNameById(int id);
 
         Task<bool> IsActiveById(int id);
 
         Task<bool> IsOnlineById(int id);
 
-        Task<bool> IsUserLecturerInByContestAndUser(int id, string userId);
+        Task<bool> IsUserLecturerInByContestAndUser(int id, string? userId);
 
-        Task<bool> IsUserParticipantInByContestAndUser(int id, string userId);
+        Task<bool> IsUserParticipantInByContestAndUser(int id, string? userId);
 
-        Task<bool> IsUserInExamGroupByContestAndUser(int id, string userId);
+        Task<bool> IsUserInExamGroupByContestAndUser(int id, string? userId);
     }
 }

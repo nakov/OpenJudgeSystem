@@ -1,17 +1,13 @@
 ﻿using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Data;
-using OJS.Services.Infrastructure;
-using SoftUni.Services.Infrastructure;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace OJS.Services.Administration.Data
 {
     public interface ISubmissionsDataService : IDataService<Submission>
     {
-        Submission GetBestForParticipantByProblem(int participantId, int problemId);
+        Submission? GetBestForParticipantByProblem(int participantId, int problemId);
 
         IQueryable<Submission> GetByIdQuery(int id);
 
@@ -35,7 +31,7 @@ namespace OJS.Services.Administration.Data
 
         void DeleteByProblem(int problemId);
 
-        void Update(Submission submission);
+        new void Update(Submission submission);
 
         void RemoveTestRunsCacheByProblem(int problemId);
     }

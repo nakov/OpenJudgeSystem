@@ -85,7 +85,7 @@ public class CacheItemsProviderService : ICacheItemsProviderService
             cacheSeconds);
 
 
-    public async Task<string> GetContestCategoryName(int categoryId, int? cacheSeconds) =>
+    public async Task<string?> GetContestCategoryName(int categoryId, int? cacheSeconds) =>
         await this.cache.Get(
             string.Format(CacheConstants.ContestCategoryNameFormat, categoryId),
             () => this.contestCategoriesData.GetNameById(categoryId),

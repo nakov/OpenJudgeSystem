@@ -7,7 +7,7 @@ namespace OJS.Services.Ui.Data
 
     public interface IProblemGroupsDataService : IDataService<ProblemGroup>
     {
-        Task<ProblemGroup> GetByProblem(int problemId);
+        Task<ProblemGroup?> GetByProblem(int problemId);
 
         IQueryable<ProblemGroup> GetByIdQuery(int id);
 

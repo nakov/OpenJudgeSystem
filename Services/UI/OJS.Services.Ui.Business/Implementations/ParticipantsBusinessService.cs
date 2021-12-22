@@ -119,8 +119,8 @@ namespace OJS.Services.Ui.Business.Implementations
                         participationStartTimeRangeStart,
                         participationStartTimeRangeEnd)
                     .Where(p =>
-                        p.ParticipationEndTime.Value.AddMinutes(timeInMinutes) <
-                        p.ParticipationStartTime.Value.AddMinutes(contestTotalDurationInMinutes))
+                        p.ParticipationEndTime!.Value.AddMinutes(timeInMinutes) <
+                        p.ParticipationStartTime!.Value.AddMinutes(contestTotalDurationInMinutes))
                     .Select(p => p.User.UserName)
                     .ToList();
 
@@ -133,11 +133,11 @@ namespace OJS.Services.Ui.Business.Implementations
             await this.participantsData.Update(
                 participantsInTimeRange
                     .Where(p =>
-                        p.ParticipationEndTime.Value.AddMinutes(timeInMinutes) >=
-                        p.ParticipationStartTime.Value.AddMinutes(contestTotalDurationInMinutes)),
+                        p.ParticipationEndTime!.Value.AddMinutes(timeInMinutes) >=
+                        p.ParticipationStartTime!.Value.AddMinutes(contestTotalDurationInMinutes)),
                 p => new Participant
                 {
-                    ParticipationEndTime = p.ParticipationEndTime.Value.AddMinutes(timeInMinutes),
+                    ParticipationEndTime = p.ParticipationEndTime!.Value.AddMinutes(timeInMinutes),
                 });
 
             return ServiceResult<ICollection<string>>.Success(invalidForUpdateParticipantUsernames);

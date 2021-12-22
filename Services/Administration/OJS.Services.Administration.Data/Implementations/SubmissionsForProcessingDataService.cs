@@ -11,7 +11,7 @@ namespace OJS.Services.Administration.Data.Implementations
     {
         public SubmissionsForProcessingDataService(DbContext submissionsForProcessing) : base(submissionsForProcessing) {}
 
-        public Task<SubmissionForProcessing> GetBySubmission(int submissionId) =>
+        public Task<SubmissionForProcessing?> GetBySubmission(int submissionId) =>
             this.DbSet
                 .Where(s => s.SubmissionId == submissionId)
                 .FirstOrDefaultAsync();
@@ -71,7 +71,7 @@ namespace OJS.Services.Administration.Data.Implementations
 
         public async Task RemoveBySubmission(int submissionId)
         {
-            var submissionForProcessing = this.GetBySubmission(submissionId);
+            var submissionForProcessing = await this.GetBySubmission(submissionId);
 
             if (submissionForProcessing != null)
             {
@@ -94,7 +94,7 @@ namespace OJS.Services.Administration.Data.Implementations
         public void Clean() =>
             this.DbSet.RemoveRange(this.DbSet.Where(sfp => sfp.Processed && !sfp.Processing));
 
-        public async Task Update(SubmissionForProcessing submissionForProcessing)
+        public new async Task Update(SubmissionForProcessing submissionForProcessing)
         {
             base.Update(submissionForProcessing);
             await base.SaveChanges();

@@ -12,11 +12,11 @@ namespace OJS.Data.Models.Contests
     {
         public int ContestId { get; set; }
 
-        public virtual Contest Contest { get; set; }
+        public virtual Contest? Contest { get; set; }
 
         [MaxLength(QuestionMaxLength)]
         [MinLength(QuestionMinLength)]
-        public string Text { get; set; }
+        public string? Text { get; set; }
 
         [DefaultValue(true)]
         public bool AskOfficialParticipants { get; set; }
@@ -26,7 +26,7 @@ namespace OJS.Data.Models.Contests
 
         public ContestQuestionType Type { get; set; }
 
-        public string RegularExpressionValidation { get; set; }
+        public string? RegularExpressionValidation { get; set; }
 
         public virtual ICollection<ContestQuestionAnswer> Answers { get; set; } = new HashSet<ContestQuestionAnswer>();
 

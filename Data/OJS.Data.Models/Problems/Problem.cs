@@ -14,11 +14,11 @@ namespace OJS.Data.Models.Problems
     {
         public int ProblemGroupId { get; set; }
 
-        public virtual ProblemGroup ProblemGroup { get; set; }
+        public virtual ProblemGroup ProblemGroup { get; set; } = new();
 
         [Required]
         [MaxLength(NameMaxLength)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         public short MaximumPoints { get; set; }
 
@@ -39,20 +39,20 @@ namespace OJS.Data.Models.Problems
 
         public int? CheckerId { get; set; }
 
-        public virtual Checker Checker { get; set; }
+        public virtual Checker? Checker { get; set; }
 
         public double OrderBy { get; set; }
 
         /// <summary>
         /// Gets or sets a predefined skeleton for the task
         /// </summary>
-        public byte[] SolutionSkeleton { get; set; }
+        public byte[]? SolutionSkeleton { get; set; }
 
         /// <summary>
         /// Gets or sets Problem specific dependencies that will be compiled and executed with the user code
         /// such as Solution skeletons, mocks or data and text files.
         /// </summary>
-        public byte[] AdditionalFiles { get; set; }
+        public byte[]? AdditionalFiles { get; set; }
 
         [DefaultValue(true)]
         public bool ShowResults { get; set; }

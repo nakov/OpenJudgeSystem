@@ -12,7 +12,7 @@ namespace OJS.Services.Ui.Data.Implementations
         {
         }
 
-        public Task<Ip> GetByValue(string value)
+        public Task<Ip?> GetByValue(string value)
             => this.DbSet
                 .FirstOrDefaultAsync(ip => ip.Value == value);
     }

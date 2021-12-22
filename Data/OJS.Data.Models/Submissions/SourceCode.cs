@@ -4,19 +4,20 @@ namespace OJS.Data.Models.Submissions
     using SoftUni.Data.Infrastructure.Models;
     using OJS.Data.Models.Problems;
     using OJS.Data.Models.Users;
+    using System;
     using System.ComponentModel.DataAnnotations.Schema;
 
     public class SourceCode : DeletableAuditInfoEntity<int>
     {
-        public string AuthorId { get; set; }
+        public string AuthorId { get; set; } = string.Empty;
 
-        public virtual UserProfile Author { get; set; }
+        public virtual UserProfile Author { get; set; } = new();
 
         public int? ProblemId { get; set; }
 
-        public virtual Problem Problem { get; set; }
+        public virtual Problem? Problem { get; set; }
 
-        public byte[] Content { get; set; }
+        public byte[] Content { get; set; } = Array.Empty<byte>();
 
         [NotMapped]
         public string ContentAsString

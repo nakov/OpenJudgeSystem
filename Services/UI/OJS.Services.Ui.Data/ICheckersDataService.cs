@@ -7,7 +7,7 @@
 
     public interface ICheckersDataService : IDataService<Checker>
     {
-        Task<Checker> GetByName(string name);
+        Task<Checker?> GetByName(string name);
 
         IQueryable<Checker> GetAll();
     }

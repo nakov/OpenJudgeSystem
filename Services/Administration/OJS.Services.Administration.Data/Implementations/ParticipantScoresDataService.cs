@@ -19,13 +19,13 @@ namespace OJS.Services.Administration.Data.Implementations
             : base(db)
             => this.participantsData = participantsData;
 
-        public Task<ParticipantScore> GetByParticipantIdAndProblemId(int participantId, int problemId) =>
+        public Task<ParticipantScore?> GetByParticipantIdAndProblemId(int participantId, int problemId) =>
             this.DbSet
                 .FirstOrDefaultAsync(ps =>
                     ps.ParticipantId == participantId &&
                     ps.ProblemId == problemId);
 
-        public Task<ParticipantScore> GetByParticipantIdProblemIdAndIsOfficial(int participantId, int problemId, bool isOfficial) =>
+        public Task<ParticipantScore?> GetByParticipantIdProblemIdAndIsOfficial(int participantId, int problemId, bool isOfficial) =>
             this.DbSet
                 .FirstOrDefaultAsync(ps =>
                     ps.ParticipantId == participantId &&
@@ -111,8 +111,8 @@ namespace OJS.Services.Administration.Data.Implementations
         {
             await this.Add(new ParticipantScore
             {
-                ParticipantId = submission.ParticipantId.Value,
-                ProblemId = submission.ProblemId.Value,
+                ParticipantId = submission.ParticipantId!.Value,
+                ProblemId = submission.ProblemId!.Value,
                 SubmissionId = submission.Id,
                 ParticipantName = username,
                 Points = submission.Points,

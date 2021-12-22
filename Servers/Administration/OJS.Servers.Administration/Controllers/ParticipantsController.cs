@@ -1,6 +1,7 @@
 namespace OJS.Servers.Administration.Controllers;
 
 using AutoCrudAdmin.Controllers;
+using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using OJS.Data.Models.Participants;
 using OJS.Servers.Infrastructure.Extensions;
@@ -20,8 +21,8 @@ public class ParticipantsController : AutoCrudAdminController<Participant>
     protected override IEnumerable<GridAction> DefaultActions
         => new[] { new GridAction { Action = nameof(this.Delete) } };
 
-    protected override IEnumerable<Func<Participant, Participant, EntityAction, IDictionary<string, string>, Task<ValidatorResult>>> AsyncEntityValidators
-        => new Func<Participant, Participant, EntityAction, IDictionary<string, string>, Task<ValidatorResult>>[]
+    protected override IEnumerable<Func<Participant, Participant, AdminActionContext, Task<ValidatorResult>>> AsyncEntityValidators
+        => new Func<Participant, Participant, AdminActionContext, Task<ValidatorResult>>[]
         {
             this.ValidateContestPermissions,
         };
@@ -29,8 +30,7 @@ public class ParticipantsController : AutoCrudAdminController<Participant>
     private async Task<ValidatorResult> ValidateContestPermissions(
         Participant existingParticipant,
         Participant newParticipant,
-        EntityAction action,
-        IDictionary<string, string> entityDict)
+        AdminActionContext actionContext)
     {
         var userId = this.User.GetId();
         var isUserAdmin = this.User.IsAdmin();

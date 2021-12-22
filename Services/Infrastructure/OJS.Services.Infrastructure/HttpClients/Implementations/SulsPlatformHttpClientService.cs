@@ -13,7 +13,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
 
     public class SulsPlatformHttpClientService : HttpClientService, ISulsPlatformHttpClientService
     {
-        private readonly string apiKey;
+        private readonly string? apiKey;
 
         public SulsPlatformHttpClientService(HttpClient client)
             : base(client)
@@ -84,7 +84,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
         private static string GetQueryStringSeparator(string url)
             => url.Contains('?') ? "&" : "?";
 
-        private static T DeserializeJson<T>(Stream stream)
+        private static T? DeserializeJson<T>(Stream stream)
         {
             using var streamReader = new StreamReader(stream);
             using var jsonTextReader = new JsonTextReader(streamReader);

@@ -87,6 +87,10 @@ namespace OJS.Common
             public const string Xml = ".xml";
             public const string Csv = ".csv";
             public const string Zip = ".zip";
+            public const string InputFile = ".in";
+            public const string OutputFile = ".out";
+            public const string TestInputTxtFileExtension = InputFile + Txt;
+            public const string TestOutputTxtFileExtension = OutputFile + Txt;
             public static readonly string[] AllowedImageFileExtensions = new string[] { ".jpg", ".jpeg", ".png" };
         }
     }
