@@ -24,7 +24,7 @@ const columns: GridColDef[] = [
         flex: 1,
         sortable: true,
         renderCell: (params: GridValueGetterParams) => (
-            <Link to={`/submission/${params.row.id}`} className={styles.contestLink}>{params.row.problem.name}</Link>
+            <Link to={`/submissions/${params.row.id}`} className={styles.contestLink}>{params.row.problem.name}</Link>
         ),
     },
     {
