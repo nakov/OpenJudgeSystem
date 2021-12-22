@@ -72,6 +72,12 @@ public class ProblemsController : AutoCrudAdminController<Problem>
             this.ValidateContestPermissions,
         };
 
+    protected override IEnumerable<Func<Problem, Problem, AdminActionContext, ValidatorResult>> EntityValidators
+        => new Func<Problem, Problem, AdminActionContext, ValidatorResult>[]
+        {
+            this.ValidateUploadedFiles,
+        };
+
     // TODO: move more logic from old judge
     protected override async Task<IEnumerable<FormControlViewModel>> GenerateFormControlsAsync(
         Problem entity,
@@ -100,6 +106,14 @@ public class ProblemsController : AutoCrudAdminController<Problem>
         {
             throw new Exception($"Contest with Id: {contestId} not found.");
         }
+
+        formControls.Add(new FormControlViewModel
+        {
+            Name = this.GetComplexFormControlNameFor<Contest>(),
+            Value = contestId,
+            Type = typeof(int),
+            IsReadOnly = true,
+        });
 
         formControls.Add(new FormControlViewModel
         {
@@ -192,7 +206,7 @@ public class ProblemsController : AutoCrudAdminController<Problem>
             return ValidatorResult.Error(GeneralResource.No_permissions_for_contest);
         }
 
-        return this.ValidateUploadedFiles(actionContext.Files.SingleFiles);
+        return ValidatorResult.Success();
     }
 
     private static byte[] GetSolutionSkeleton(IDictionary<string, string> entityDict)
@@ -200,7 +214,7 @@ public class ProblemsController : AutoCrudAdminController<Problem>
 
     private int GetContestId(IDictionary<string, string> entityDict, Problem? problem)
         => entityDict.TryGetValue(this.GetComplexFormControlNameFor<Contest>(), out var contestIdStr)
-            ? int.Parse(entityDict[contestIdStr])
+            ? int.Parse(contestIdStr)
             : problem?.ProblemGroup?.ContestId ?? default;
 
     private static IFormFile? GetFormFile(AdminActionContext actionContext, AdditionalFields field)
@@ -239,7 +253,7 @@ public class ProblemsController : AutoCrudAdminController<Problem>
         }
         catch (Exception ex)
         {
-            throw new Exception(GlobalResource.Tests_cannot_be_improrted, ex);
+            throw new Exception(string.Format(GlobalResource.Tests_cannot_be_improrted, ex.Message), ex);
         }
     }
 
@@ -259,8 +273,11 @@ public class ProblemsController : AutoCrudAdminController<Problem>
         this.zippedTestsParser.AddTestsToProblem(problem, parsedTests);
     }
 
-    private ValidatorResult ValidateUploadedFiles(IEnumerable<IFormFile> files)
-        => files.Any(f => this.fileSystem.GetFileExtension(f) != GlobalConstants.FileExtensions.Zip)
+    private ValidatorResult ValidateUploadedFiles(
+        Problem existingEntity,
+        Problem newEntity,
+        AdminActionContext actionContext)
+        => actionContext.Files.SingleFiles.Any(f => this.fileSystem.GetFileExtension(f) != GlobalConstants.FileExtensions.Zip)
             ? ValidatorResult.Error(GlobalResource.Must_be_zip_file)
             : ValidatorResult.Success();
 }
