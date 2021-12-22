@@ -263,7 +263,7 @@ public class ProblemsController : AutoCrudAdminController<Problem>
         await testsFile.CopyToAsync(memoryStream);
         memoryStream.Position = 0;
 
-        var parsedTests = this.zippedTestsParser.Parse(memoryStream);
+        var parsedTests = await this.zippedTestsParser.Parse(memoryStream);
 
         if (!this.zippedTestsParser.AreTestsParsedCorrectly(parsedTests))
         {

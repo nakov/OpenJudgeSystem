@@ -1,23 +1,38 @@
 namespace OJS.Services.Administration.Business.Implementations;
 
-using ICSharpCode.SharpZipLib.Zip;
-using OJS.Common;
+using OJS.Common.Extensions;
 using OJS.Data.Models.Problems;
 using OJS.Services.Administration.Models.Tests;
+using OJS.Services.Common;
 using System;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using static OJS.Common.GlobalConstants;
 using static OJS.Common.GlobalConstants.FileExtensions;
 
 public class ZippedTestsParserService : IZippedTestsParserService
 {
-    public TestsParseResult Parse(Stream stream)
+    private readonly IFileIoService fileIo;
+    private const string InvalidNameForInputTestErrorMessage = "Invalid input test name";
+    private const string InvalidInputTestsCountErrorMessage = "Invalid count of input tests ";
+
+    public ZippedTestsParserService(IFileIoService fileIo)
+        => this.fileIo = fileIo;
+
+    public async Task<TestsParseResult> Parse(Stream stream)
     {
         var zipArchive = new ZipArchive(stream, ZipArchiveMode.Read);
 
         var result = new TestsParseResult();
 
-        ExtractTxtFiles(zipArchive, result);
+        await ExtractInAndSolFiles(zipArchive, result);
+        await ExtractInAndOutFiles(zipArchive, result);
+        await ExtractTxtFiles(zipArchive, result);
+        await ExtractIoiFiles(zipArchive, result);
+        await this.ExtractZipFiles(zipArchive, result);
 
         return result;
     }
@@ -25,35 +40,226 @@ public class ZippedTestsParserService : IZippedTestsParserService
     public int AddTestsToProblem(Problem problem, TestsParseResult tests)
         => throw new System.NotImplementedException();
 
-    public string ExtractFileFromStream(ZipEntry entry)
-        => throw new System.NotImplementedException();
-
     public bool AreTestsParsedCorrectly(TestsParseResult tests)
         => throw new System.NotImplementedException();
 
-    private static void ExtractTxtFiles(ZipArchive zipArchive, TestsParseResult result)
+    private static async Task ExtractTxtFiles(ZipArchive zipFile, TestsParseResult result)
     {
-        // var outOutputs = zipFile.GetZipEntriesByExtensions(TestOutputTxtFileExtension);
-        //
-        // foreach (var output in outOutputs)
-        // {
-        //     var input = GetInputByOutputAndExtension(zipFile, output, TestInputTxtFileExtension);
-        //
-        //     if (IsStandardZeroTest(input, output))
-        //     {
-        //         result.ZeroInputs.Add(ExtractFileFromStream(input));
-        //         result.ZeroOutputs.Add(ExtractFileFromStream(output));
-        //     }
-        //     else if (IsStandardOpenTest(input, output))
-        //     {
-        //         result.OpenInputs.Add(ExtractFileFromStream(input));
-        //         result.OpenOutputs.Add(ExtractFileFromStream(output));
-        //     }
-        //     else
-        //     {
-        //         result.Inputs.Add(ExtractFileFromStream(input));
-        //         result.Outputs.Add(ExtractFileFromStream(output));
-        //     }
-        // }
+        var outOutputs = zipFile.GetZipEntriesByExtensions(TestOutputTxt);
+
+        foreach (var output in outOutputs)
+        {
+            var input = GetInputByOutputAndExtension(zipFile, output, TestInputTxt);
+
+            if (IsStandardZeroTest(input, output))
+            {
+                result.ZeroInputs.Add(await input.ReadText());
+                result.ZeroOutputs.Add(await output.ReadText());
+            }
+            else if (IsStandardOpenTest(input, output))
+            {
+                result.OpenInputs.Add(await input.ReadText());
+                result.OpenOutputs.Add(await output.ReadText());
+            }
+            else
+            {
+                result.Inputs.Add(await input.ReadText());
+                result.Outputs.Add(await output.ReadText());
+            }
+        }
     }
+
+    private static async Task ExtractInAndSolFiles(ZipArchive zipFile, TestsParseResult result)
+    {
+        var solOutputs = zipFile.GetZipEntriesByExtensions(Sol);
+
+        foreach (var output in solOutputs)
+        {
+            var input = GetInputByOutputAndExtension(zipFile, output, Input);
+
+            var zeroTestInputSignature = $"00{Input}";
+            var zeroTestOutputSignature = $"00{Sol}";
+
+            var isZeroTest =
+                input.Name
+                    .Substring(
+                        input.Name.Length - zeroTestInputSignature.Length,
+                        zeroTestInputSignature.Length)
+                    .Equals(zeroTestInputSignature, StringComparison.OrdinalIgnoreCase) &&
+                output.Name
+                    .Substring(
+                        output.Name.Length - zeroTestOutputSignature.Length,
+                        zeroTestOutputSignature.Length)
+                    .Equals(zeroTestOutputSignature, StringComparison.OrdinalIgnoreCase);
+
+            if (isZeroTest)
+            {
+                result.ZeroInputs.Add(await input.ReadText());
+                result.ZeroOutputs.Add(await output.ReadText());
+            }
+            else
+            {
+                result.Inputs.Add(await input.ReadText());
+                result.Outputs.Add(await output.ReadText());
+            }
+        }
+    }
+
+    private static async Task ExtractInAndOutFiles(ZipArchive zipFile, TestsParseResult result)
+    {
+        var outOutputs = zipFile.GetZipEntriesByExtensions(Output);
+
+        foreach (var output in outOutputs)
+        {
+            var input = GetInputByOutputAndExtension(zipFile, output, Input);
+
+            const string zeroTestSignature = "et";
+
+            var isZeroTest =
+                input.Name
+                    .Substring(
+                        input.Name.LastIndexOf('_') - zeroTestSignature.Length,
+                        zeroTestSignature.Length)
+                    .Equals(zeroTestSignature, StringComparison.OrdinalIgnoreCase) &&
+                output.Name
+                    .Substring(
+                        output.Name.LastIndexOf('_') - zeroTestSignature.Length,
+                        zeroTestSignature.Length)
+                    .Equals(zeroTestSignature, StringComparison.OrdinalIgnoreCase);
+
+            if (isZeroTest)
+            {
+                result.ZeroInputs.Add(await input.ReadText());
+                result.ZeroOutputs.Add(await output.ReadText());
+            }
+            else
+            {
+                result.Inputs.Add(await input.ReadText());
+                result.Outputs.Add(await output.ReadText());
+            }
+        }
+    }
+
+    private static async Task ExtractIoiFiles(ZipArchive zipFile, TestsParseResult result)
+    {
+        // IOI test files
+        if (zipFile.Entries.Any(x => char.IsNumber(x.Name[x.Name.LastIndexOf('.') + 1])))
+        {
+            const string outputFileSignature = "out";
+            const string inputFileSignature = "in";
+
+            var outOutputs = zipFile.GetEntriesSorted()
+                .Where(x => x.Name
+                    .Substring(
+                        x.Name.LastIndexOf('.') - outputFileSignature.Length,
+                        outputFileSignature.Length)
+                    .Equals(outputFileSignature, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            foreach (var output in outOutputs)
+            {
+                var inputFileName = inputFileSignature + output.Name[output.Name.LastIndexOf('.')..];
+
+                var input = GetUniqueInputByFileName(zipFile, inputFileName);
+
+                result.Inputs.Add(await input.ReadText());
+                result.Outputs.Add(await output.ReadText());
+            }
+        }
+    }
+
+    private async Task ExtractZipFiles(ZipArchive zipFile, TestsParseResult result)
+    {
+        // Java Unit Testing test files
+        var outputs = zipFile.GetZipEntriesByExtensions(TestOutputZip).ToList();
+
+        if (!outputs.Any())
+        {
+            return;
+        }
+
+        var tempDir = this.fileIo.CreateTempDirectory();
+
+        foreach (var output in outputs)
+        {
+            var input = GetInputByOutputAndExtension(zipFile, output, TestInputZip);
+
+            var inputAsText = new StringBuilder();
+            var outputAsText = new StringBuilder();
+
+            input.ExtractToFile(tempDir);
+            output.ExtractToFile(tempDir);
+
+            var inputFile = ZipFile.OpenRead($"{tempDir}\\{input.Name}");
+            var outputFile = ZipFile.OpenRead($"{tempDir}\\{output.Name}");
+
+            var inputEntries = inputFile.Entries.Where(x => !x.Name.EndsWith("/"));
+            var outputEntries = outputFile.Entries.Where(x => !x.Name.EndsWith("/"));
+
+            foreach (var entry in inputEntries)
+            {
+                inputAsText.Append(ClassDelimiterWin);
+                inputAsText.AppendLine($"//{entry.Name}");
+                inputAsText.AppendLine(await entry.ReadText());
+            }
+
+            foreach (var entry in outputEntries)
+            {
+                outputAsText.AppendLine(await entry.ReadText());
+            }
+
+            inputFile.Dispose();
+            outputFile.Dispose();
+
+            if (IsStandardZeroTest(input, output))
+            {
+                result.ZeroInputs.Add(inputAsText.ToString());
+                result.ZeroOutputs.Add(outputAsText.ToString());
+            }
+            else if (IsStandardOpenTest(input, output))
+            {
+                result.OpenInputs.Add(inputAsText.ToString());
+                result.OpenOutputs.Add(outputAsText.ToString());
+            }
+            else
+            {
+                result.Inputs.Add(inputAsText.ToString());
+                result.Outputs.Add(outputAsText.ToString());
+            }
+        }
+
+        this.fileIo.SafeDeleteDirectory(tempDir, true);
+    }
+
+    private static ZipArchiveEntry GetInputByOutputAndExtension(
+        ZipArchive zipFile,
+        ZipArchiveEntry output,
+        string extension)
+    {
+        var fileName = output.Name[..(output.Name.Length - extension.Length - 1)] + extension;
+
+        return GetUniqueInputByFileName(zipFile, fileName);
+    }
+
+    private static ZipArchiveEntry GetUniqueInputByFileName(ZipArchive zipFile, string fileName)
+    {
+        var files = zipFile.Entries
+            .Where(x => x.Name.Equals(fileName, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        return files.Count switch
+        {
+            0 => throw new ArgumentException(InvalidNameForInputTestErrorMessage),
+            > 1 => throw new ArgumentException(InvalidInputTestsCountErrorMessage),
+            _ => files.First(),
+        };
+    }
+
+    private static bool IsStandardZeroTest(ZipArchiveEntry input, ZipArchiveEntry output) =>
+        input.Name.Contains(ZeroTestStandardSignature) &&
+        output.Name.Contains(ZeroTestStandardSignature);
+
+    private static bool IsStandardOpenTest(ZipArchiveEntry input, ZipArchiveEntry output) =>
+        input.Name.Contains(OpenTestStandardSignature) &&
+        output.Name.Contains(OpenTestStandardSignature);
 }

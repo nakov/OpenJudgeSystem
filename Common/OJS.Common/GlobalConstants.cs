@@ -13,6 +13,13 @@ namespace OJS.Common
         public const string InfoMessage = "InfoMessage";
         public const string DangerMessage = "DangerMessage";
 
+        public const string ZeroTestStandardSignature = ".000.";
+        public const string OpenTestStandardSignature = ".open.";
+
+        public const string NewLineUnix = "\n";
+        public const string NewLineWin = "\r\n";
+        public const string ClassDelimiterWin = $"~~!!!==#==!!!~~{NewLineWin}";
+
         public static class RegexPatterns
         {
             public const string UpperCaseGroupsRegex = @"(?<!^)(?=[A-Z])";
@@ -87,10 +94,13 @@ namespace OJS.Common
             public const string Xml = ".xml";
             public const string Csv = ".csv";
             public const string Zip = ".zip";
-            public const string InputFile = ".in";
-            public const string OutputFile = ".out";
-            public const string TestInputTxtFileExtension = InputFile + Txt;
-            public const string TestOutputTxtFileExtension = OutputFile + Txt;
+            public const string Sol = ".sol";
+            public const string Input = ".in";
+            public const string Output = ".out";
+            public const string TestInputTxt = Input + Txt;
+            public const string TestOutputTxt = Output + Txt;
+            public const string TestInputZip = Input + Zip;
+            public const string TestOutputZip = Output + Zip;
             public static readonly string[] AllowedImageFileExtensions = new string[] { ".jpg", ".jpeg", ".png" };
         }
     }
