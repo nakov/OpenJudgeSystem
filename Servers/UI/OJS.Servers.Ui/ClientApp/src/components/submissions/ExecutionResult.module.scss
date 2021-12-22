@@ -1,0 +1,12 @@
+.testResultsList {
+  display: flex;
+  gap: 2px;
+}
+
+.correctAnswerIcon {
+  color: green;
+}
+
+.wrongAnswerIcon {
+  color: red;
+}

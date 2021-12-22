@@ -4,8 +4,9 @@ import HomePage from '../../pages/home/HomePage';
 import LogoutPage from '../../pages/logout/LogoutPage';
 import LoginPage from '../../pages/login/LoginPage';
 import RegisterPage from '../../pages/register/RegisterPage';
-import styles from './PageContent.module.scss';
 import ProfilePage from '../../pages/profile/ProfilePage';
+import SubmissionPage from '../../pages/submissions/SubmissionPage';
+import styles from './PageContent.module.scss';
 
 const PageContent = () => (
     <main className={styles.main}>
@@ -15,6 +16,7 @@ const PageContent = () => (
             <Route exact path="/logout" component={LogoutPage} />
             <Route exact path="/" component={HomePage} />
             <Route exact path="/profile" component={ProfilePage} />
+            <Route exact path="/submissions/:submissionId" component={SubmissionPage} />
         </Switch>
     </main>
 );

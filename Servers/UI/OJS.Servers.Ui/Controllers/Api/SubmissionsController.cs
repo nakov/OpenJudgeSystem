@@ -1,12 +1,13 @@
 ﻿namespace OJS.Servers.Ui.Controllers.Api
 {
     using Microsoft.AspNetCore.Mvc;
-    using OJS.Servers.Ui.Models.Submissions;
     using OJS.Services.Ui.Business;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authorization;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using OJS.Servers.Ui.Models.Submissions.Profile;
+
 
     [Authorize]
     public class SubmissionsController : Controller
