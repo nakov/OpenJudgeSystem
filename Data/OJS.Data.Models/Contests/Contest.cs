@@ -15,7 +15,7 @@ namespace OJS.Data.Models.Contests
     {
         [MaxLength(NameMaxLength)]
         [MinLength(NameMinLength)]
-        public string Name { get; set; } = string.Empty;
+        public string? Name { get; set; }
 
         public bool IsVisible { get; set; }
 
