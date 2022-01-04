@@ -15,9 +15,10 @@ using static OJS.Common.GlobalConstants.FileExtensions;
 
 public class ZippedTestsParserService : IZippedTestsParserService
 {
-    private readonly IFileIoService fileIo;
     private const string InvalidNameForInputTestErrorMessage = "Invalid input test name";
     private const string InvalidInputTestsCountErrorMessage = "Invalid count of input tests ";
+
+    private readonly IFileIoService fileIo;
 
     public ZippedTestsParserService(IFileIoService fileIo)
         => this.fileIo = fileIo;
