@@ -13,6 +13,7 @@ import styles from './ProfilePage.module.scss';
 import ProfileSubmissions from '../../components/profile/profile-submissions/ProfileSubmisssions';
 import ProfileContestParticipations
     from '../../components/profile/profile-contest-participations/ProfileContestParticipations';
+import { makePrivate } from '../shared/make-private';
 
 const ProfilePage = () => {
     const { profile, getProfile } = useUsers();
@@ -61,4 +62,4 @@ const ProfilePage = () => {
     );
 };
 
-export default setLayout(ProfilePage);
+export default makePrivate(setLayout(ProfilePage));
