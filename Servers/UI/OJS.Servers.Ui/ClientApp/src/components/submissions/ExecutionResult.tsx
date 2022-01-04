@@ -25,7 +25,7 @@ const concatResultTypeIconClassname = (resultType: string) : string => concatCla
 
 const ExecutionResult = ({ testRuns }: IExecutionResultDetailsProps) => {
     // eslint-disable-next-line max-len
-    const renderTestRunIcons = (runs: ITestRunType[]) => runs.map((run) => (<i className={concatResultTypeIconClassname(run.resultType)} />));
+    const renderTestRunIcons = (runs: ITestRunType[]) => runs.map((run) => (<i key={run.id} className={concatResultTypeIconClassname(run.resultType)} />));
 
     return (
         <div className={styles.testResultsList}>{renderTestRunIcons(testRuns)}</div>
