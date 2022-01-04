@@ -1,9 +1,10 @@
-﻿using OJS.Data.Models.Tests;
-using SoftUni.AutoMapper.Infrastructure.Models;
-
-namespace OJS.Services.Ui.Models.Submissions
+﻿namespace OJS.Services.Ui.Models.Submissions
 {
-    public class TestRunServiceModel : IMapFrom<TestRun>
+    using AutoMapper;
+    using OJS.Data.Models.Tests;
+    using SoftUni.AutoMapper.Infrastructure.Models;
+
+    public class TestRunServiceModel : IMapExplicitly
     {
         public int Id { get; set; }
 
@@ -16,5 +17,11 @@ namespace OJS.Services.Ui.Models.Submissions
         public string? ExecutionComment { get; set; }
 
         public string? CheckerComment { get; set; }
+
+        public string ResultType { get; set; }
+
+        public void RegisterMappings(IProfileExpression configuration)
+            => configuration.CreateMap<TestRun, TestRunServiceModel>()
+                .ForMember(d => d.ResultType, opt => opt.MapFrom(s => s.ResultType.ToString()));
     }
 }
