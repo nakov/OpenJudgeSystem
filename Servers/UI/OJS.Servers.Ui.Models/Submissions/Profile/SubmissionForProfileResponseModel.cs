@@ -1,13 +1,14 @@
-﻿using System;
-
-namespace OJS.Servers.Ui.Models.Submissions.Profile
+﻿namespace OJS.Servers.Ui.Models.Submissions.Profile
 {
+    using System;
     using OJS.Services.Ui.Models.Submissions;
     using SoftUni.AutoMapper.Infrastructure.Models;
     using System.Collections.Generic;
-    using OJS.Servers.Ui.Models.Submissions.Profile;
+    using AutoMapper;
+    using OJS.Servers.Ui.Models.Submissions.Profile.Mapping;
 
-    public class SubmissionForProfileResponseModel : IMapFrom<SubmissionServiceModel>
+
+    public class SubmissionForProfileResponseModel : IMapExplicitly
     {
         public int Id { get; set; }
 
@@ -24,5 +25,10 @@ namespace OJS.Servers.Ui.Models.Submissions.Profile
         public double MaxUsedTime { get; set; }
 
         public double MaxUsedMemory { get; set; }
+
+        public void RegisterMappings(IProfileExpression configuration)
+            => configuration.CreateMap<SubmissionServiceModel, SubmissionForProfileResponseModel>()
+                .ForMember(d => d.MaxUsedMemory, opt => opt.MapFrom<MaxUsedMemoryValueResolver>())
+                .ForMember(d => d.MaxUsedTime, opt => opt.MapFrom<MaxUsedTimeValueResolver>());
     }
 }
