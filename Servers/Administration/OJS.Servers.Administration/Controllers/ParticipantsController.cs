@@ -27,6 +27,9 @@ public class ParticipantsController : AutoCrudAdminController<Participant>
             this.ValidateContestPermissions,
         };
 
+    protected override IEnumerable<string> ShownFormControlNamesOnCreate
+        => new[] { nameof(Participant.Contest), nameof(Participant.User), nameof(Participant.IsOfficial) };
+
     private async Task<ValidatorResult> ValidateContestPermissions(
         Participant existingParticipant,
         Participant newParticipant,
