@@ -8,7 +8,7 @@ namespace OJS.Data.Models.Contests
     {
         public int QuestionId { get; set; }
 
-        public virtual ContestQuestion Question { get; set; } = new();
+        public virtual ContestQuestion? Question { get; set; }
 
         [MaxLength(QuestionAnswerMaxLength)]
         [MinLength(QuestionAnswerMinLength)]

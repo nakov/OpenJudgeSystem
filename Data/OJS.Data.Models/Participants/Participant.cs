@@ -22,11 +22,11 @@ namespace OJS.Data.Models.Participants
 
         public int ContestId { get; set; }
 
-        public virtual Contest Contest { get; set; } = new();
+        public virtual Contest? Contest { get; set; }
 
         public string UserId { get; set; } = string.Empty;
 
-        public virtual UserProfile User { get; set; } = new();
+        public virtual UserProfile? User { get; set; }
 
         public DateTime? ParticipationStartTime { get; set; }
 

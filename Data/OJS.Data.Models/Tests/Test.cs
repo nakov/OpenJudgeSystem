@@ -11,7 +11,7 @@ namespace OJS.Data.Models.Tests
     {
         public int ProblemId { get; set; }
 
-        public virtual Problem Problem { get; set; } = new();
+        public virtual Problem? Problem { get; set; }
 
         /// <remarks>
         /// Using byte[] (compressed with zip) to save database space.
