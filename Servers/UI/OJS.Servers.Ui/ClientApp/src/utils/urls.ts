@@ -9,10 +9,13 @@ const getIndexContestsUrl = `${baseUrl}/Contests/GetForHomeIndex`;
 
 const getSubmissionsForProfileUrl = `${baseUrl}/Submissions/GetForProfile`;
 
+const getParticipationsForProfileUrl = `${baseUrl}/Participations/GetForProfile`;
+
 export {
     loginSubmitUrl,
     logoutUrl,
     getProfileInfoUrl,
     getIndexContestsUrl,
     getSubmissionsForProfileUrl,
+    getParticipationsForProfileUrl,
 };
