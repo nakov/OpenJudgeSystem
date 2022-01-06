@@ -10,7 +10,7 @@ namespace OJS.Data.Models.Problems
     {
         public int ProblemId { get; set; }
 
-        public virtual Problem? Problem { get; set; }
+        public virtual Problem Problem { get; set; } = null!;
 
         [Required]
         [MinLength(ResourceNameMinLength)]

@@ -12,7 +12,7 @@ namespace OJS.Data.Models.Contests
     {
         public int ContestId { get; set; }
 
-        public virtual Contest? Contest { get; set; }
+        public virtual Contest Contest { get; set; } = null!;
 
         [MaxLength(QuestionMaxLength)]
         [MinLength(QuestionMinLength)]

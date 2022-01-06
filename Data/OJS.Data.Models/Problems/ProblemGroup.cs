@@ -9,7 +9,7 @@ namespace OJS.Data.Models.Problems
     {
         public int ContestId { get; set; }
 
-        public virtual Contest? Contest { get; set; }
+        public virtual Contest Contest { get; set; } = null!;
 
         public double OrderBy { get; set; }
 

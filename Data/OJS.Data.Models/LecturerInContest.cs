@@ -8,10 +8,10 @@ namespace OJS.Data.Models
     {
         public string LecturerId { get; set; } = string.Empty;
 
-        public virtual UserProfile? Lecturer { get; set; }
+        public virtual UserProfile Lecturer { get; set; } = null!;
 
         public int ContestId { get; set; }
 
-        public virtual Contest? Contest { get; set; }
+        public virtual Contest Contest { get; set; } = null!;
     }
 }

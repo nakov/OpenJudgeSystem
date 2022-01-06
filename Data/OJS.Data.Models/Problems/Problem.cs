@@ -14,7 +14,7 @@ namespace OJS.Data.Models.Problems
     {
         public int ProblemGroupId { get; set; }
 
-        public virtual ProblemGroup? ProblemGroup { get; set; }
+        public virtual ProblemGroup ProblemGroup { get; set; } = null!;
 
         [Required]
         [MaxLength(NameMaxLength)]

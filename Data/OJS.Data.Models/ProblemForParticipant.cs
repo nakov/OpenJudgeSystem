@@ -7,10 +7,10 @@ namespace OJS.Data.Models
     {
         public int ProblemId { get; set; }
 
-        public virtual Problem? Problem { get; set; }
+        public virtual Problem Problem { get; set; } = null!;
 
         public int ParticipantId { get; set; }
 
-        public virtual Participant? Participant { get; set; }
+        public virtual Participant Participant { get; set; } = null!;
     }
 }
