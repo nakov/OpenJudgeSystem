@@ -136,5 +136,11 @@ namespace OJS.Common
             public const string Select_one_submission_type = "Choose at least one submission type!";
             public const string Tests_cannot_be_improrted = "The tests cannot be imported: {0}";
         }
+
+        public static class ProblemsRetest
+        {
+                public const string Retest = "Retest";
+                public const string Retest_confirmation_message = "Are you sure you want to Retest <strong>{0} submissions</strong> from the problem <strong>{1}</strong>?";
+        }
     }
 }

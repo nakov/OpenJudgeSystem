@@ -5,6 +5,7 @@
     using OJS.Services.Common.Data.Implementations;
     using System.Linq;
     using Microsoft.EntityFrameworkCore;
+    using System.Threading.Tasks;
 
     public class ProblemsDataService : DataService<Problem>, IProblemsDataService
     {
@@ -28,22 +29,22 @@
             base.DbSet
                 .Where(p => p.ProblemGroupId == problemGroupId);
 
-        public bool ExistsById(int id) =>
+        public Task<bool> ExistsById(int id) =>
             base.DbSet
-                .Any(p => p.Id == id);
+                .AnyAsync(p => p.Id == id);
 
-        public double GetNewOrderByContest(int contestId) =>
-            this.GetAllByContest(contestId)
+        public async Task<double> GetNewOrderByContest(int contestId) =>
+            (await this.GetAllByContest(contestId)
                 .OrderByDescending(p => p.OrderBy)
                 .Select(p => new { p.OrderBy })
-                .FirstOrDefault()
+                .FirstOrDefaultAsync())
                 ?.OrderBy + 1 ?? GlobalConstants.ProblemDefaultOrderBy;
 
-        public double GetNewOrderByProblemGroup(int problemGroupId) =>
-            this.GetAllByProblemGroup(problemGroupId)
+        public async Task<double> GetNewOrderByProblemGroup(int problemGroupId) =>
+            (await this.GetAllByProblemGroup(problemGroupId)
                 .OrderByDescending(p => p.OrderBy)
                 .Select(p => new { p.OrderBy })
-                .FirstOrDefault()
+                .FirstOrDefaultAsync())
                 ?.OrderBy + 1 ?? GlobalConstants.ProblemDefaultOrderBy;
 
         public string? GetNameById(int id) =>

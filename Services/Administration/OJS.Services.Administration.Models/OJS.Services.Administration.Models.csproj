@@ -8,4 +8,8 @@
       <ProjectReference Include="..\..\..\Data\OJS.Data.Models\OJS.Data.Models.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="SoftUni.AutoMapper.Infrastructure" Version="1.0.3" />
+    </ItemGroup>
+
 </Project>

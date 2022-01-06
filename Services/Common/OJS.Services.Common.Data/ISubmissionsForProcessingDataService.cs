@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Ui.Data
+﻿namespace OJS.Services.Common.Data
 {
     using OJS.Data.Models.Submissions;
     using SoftUni.Services.Infrastructure;

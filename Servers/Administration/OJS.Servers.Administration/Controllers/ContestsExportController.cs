@@ -20,6 +20,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static OJS.Common.GlobalConstants.MimeTypes;
+using ISubmissionsDataService = OJS.Services.Administration.Data.ISubmissionsDataService;
 
 public class ContestsExportController : BaseAdminViewController
 {

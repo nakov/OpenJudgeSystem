@@ -3,6 +3,7 @@
     using OJS.Services.Common.Data;
     using OJS.Data.Models.Problems;
     using System.Linq;
+    using System.Threading.Tasks;
 
     public interface IProblemsDataService : IDataService<Problem>
     {
@@ -14,11 +15,11 @@
 
         IQueryable<Problem> GetAllByProblemGroup(int problemGroupId);
 
-        bool ExistsById(int id);
+        Task<bool> ExistsById(int id);
 
-        double GetNewOrderByContest(int contestId);
+        Task<double> GetNewOrderByContest(int contestId);
 
-        double GetNewOrderByProblemGroup(int problemGroupId);
+        Task<double> GetNewOrderByProblemGroup(int problemGroupId);
 
         string? GetNameById(int id);
     }

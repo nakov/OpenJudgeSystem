@@ -7,6 +7,7 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Extensions;
     using SoftUni.Data.Infrastructure.Enumerations;
+    using SoftUni.Judge.Common.Extensions;
     using System.Linq;
 
     public static class ServiceCollectionExtensions
@@ -18,6 +19,7 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
                 .AddWebServer<TProgram>()
                 .AddHangfireServer(AppName)
                 .AddIdentityDatabase<OjsDbContext, UserProfile>(Enumerable.Empty<GlobalQueryFilterType>())
+                .AddSoftUniJudgeCommonServices()
                 .UseAutoCrudAdmin()
                 .AddControllersWithViews();
     }

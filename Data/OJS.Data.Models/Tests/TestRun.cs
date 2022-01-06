@@ -8,11 +8,11 @@ namespace OJS.Data.Models.Tests
     {
         public int SubmissionId { get; set; }
 
-        public virtual Submission Submission { get; set; } = new();
+        public virtual Submission Submission { get; set; } = null!;
 
         public int TestId { get; set; }
 
-        public virtual Test Test { get; set; } = new();
+        public virtual Test Test { get; set; } = null!;
 
         public int TimeUsed { get; set; }
 

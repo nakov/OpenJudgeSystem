@@ -11,7 +11,7 @@ namespace OJS.Data.Models.Submissions
     {
         public string AuthorId { get; set; } = string.Empty;
 
-        public virtual UserProfile Author { get; set; } = new();
+        public virtual UserProfile Author { get; set; } = null!;
 
         public int? ProblemId { get; set; }
 

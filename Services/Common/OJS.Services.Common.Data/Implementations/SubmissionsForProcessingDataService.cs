@@ -1,15 +1,13 @@
-﻿namespace OJS.Services.Ui.Data.Implementations
+﻿namespace OJS.Services.Common.Data.Implementations
 {
+    using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
+    using OJS.Common;
+    using OJS.Common.Helpers;
     using OJS.Data.Models.Submissions;
-    using OJS.Services.Common.Data.Implementations;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using FluentExtensions.Extensions;
-    using OJS.Common;
-    using OJS.Common.Helpers;
-
 
     public class SubmissionsForProcessingDataService : DataService<SubmissionForProcessing>, ISubmissionsForProcessingDataService
     {
@@ -42,7 +40,7 @@
             {
                 submissionIds
                     .Chunk(GlobalConstants.BatchOperationsChunkSize)
-                    .ForEach(chunk => base.Delete(sfp => chunk.Contains(sfp.SubmissionId)));
+                    .ForEach(chunk => base.Delete(sfp => Enumerable.Contains(chunk, sfp.SubmissionId)));
 
                 base.AddMany(newSubmissionsForProcessing);
 

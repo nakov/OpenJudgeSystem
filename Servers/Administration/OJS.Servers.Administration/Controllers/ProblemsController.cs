@@ -1,6 +1,5 @@
 namespace OJS.Servers.Administration.Controllers;
 
-using AutoCrudAdmin.Controllers;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using FluentExtensions.Extensions;
@@ -12,10 +11,13 @@ using OJS.Common.Extensions;
 using OJS.Common.Utils;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
+using OJS.Servers.Administration.Models.Problems;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Common;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,7 +27,7 @@ using System.Threading.Tasks;
 using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 using GlobalResource = OJS.Common.Resources.ProblemsController;
 
-public class ProblemsController : AutoCrudAdminController<Problem>
+public class ProblemsController : BaseAutoCrudAdminController<Problem>
 {
     private enum AdditionalFields
     {
@@ -35,19 +37,25 @@ public class ProblemsController : AutoCrudAdminController<Problem>
         AdditionalFiles,
     }
 
+    private readonly IProblemsBusinessService problemsBusiness;
     private readonly IContestsBusinessService contestsBusiness;
     private readonly IContestsDataService contestsData;
+    private readonly IProblemsDataService problemsData;
     private readonly IFileSystemService fileSystem;
     private readonly IZippedTestsParserService zippedTestsParser;
 
     public ProblemsController(
+        IProblemsBusinessService problemsBusiness,
         IContestsBusinessService contestsBusiness,
         IContestsDataService contestsData,
+        IProblemsDataService problemsData,
         IFileSystemService fileSystem,
         IZippedTestsParserService zippedTestsParser)
     {
+        this.problemsBusiness = problemsBusiness;
         this.contestsBusiness = contestsBusiness;
         this.contestsData = contestsData;
+        this.problemsData = problemsData;
         this.fileSystem = fileSystem;
         this.zippedTestsParser = zippedTestsParser;
     }
@@ -65,6 +73,72 @@ public class ProblemsController : AutoCrudAdminController<Problem>
     [HttpPost]
     public Task<IActionResult> Edit(IDictionary<string, string> entityDict, IFormFile tests, IFormFile additionalFiles)
         => base.PostEdit(entityDict, new FormFilesContainer(tests, additionalFiles));
+
+    public async Task<IActionResult> Retest([FromQuery] IDictionary<string, string> complexId)
+    {
+        if (!int.TryParse(complexId.Values.FirstOrDefault(), out var id))
+        {
+            this.TempData.AddDangerMessage(GlobalResource.Invalid_problem);
+            return this.RedirectToAction("Index", "Problems");
+        }
+
+        var problem = await this.problemsData.OneByIdTo<ProblemRetestServiceModel>(id);
+
+        if (problem == null)
+        {
+            this.TempData.AddDangerMessage(GlobalResource.Invalid_problem);
+            return this.RedirectToAction("Index", "Problems");
+        }
+
+        var userId = this.User.GetId();
+        var userIsAdmin = this.User.IsAdmin();
+
+        if (!await this.contestsBusiness.UserHasContestPermissions(problem.ContestId, userId, userIsAdmin))
+        {
+            this.TempData.AddDangerMessage(GeneralResource.No_privileges_message);
+            return this.RedirectToAction("Index", "Problems");
+        }
+
+        var referer = this.HttpContext.Request.GetTypedHeaders().Referer;
+
+        if (referer != null)
+        {
+            this.ViewBag.ReturnUrl = referer.AbsolutePath;
+        }
+
+        return this.View("RetestConfirmation", problem.Map<ProblemRetestViewModel>());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Retest(ProblemRetestViewModel? model)
+    {
+        if (model == null || !await this.problemsData.ExistsById(model.Id))
+        {
+            this.TempData.AddDangerMessage(GlobalResource.Invalid_problem);
+            return this.RedirectToAction("Index", "Problems");
+        }
+
+        var userId = this.User.GetId();
+        var userIsAdmin = this.User.IsAdmin();
+
+        if (!await this.contestsBusiness.UserHasContestPermissions(model.ContestId, userId, userIsAdmin))
+        {
+            this.TempData.AddDangerMessage(GeneralResource.No_privileges_message);
+            return this.RedirectToAction("Index", "Problems");
+        }
+
+        await this.problemsBusiness.RetestById(model.Id);
+
+        this.TempData.AddInfoMessage(GlobalResource.Problem_retested);
+        return this.RedirectToAction("Index");
+    }
+
+    protected override IEnumerable<GridAction> CustomActions
+        => new []
+        {
+            new GridAction { Action = nameof(this.Retest) },
+        };
 
     protected override IEnumerable<Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>> AsyncEntityValidators
         => new Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>[]

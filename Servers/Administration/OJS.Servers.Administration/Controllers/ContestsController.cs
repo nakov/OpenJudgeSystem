@@ -1,6 +1,5 @@
 namespace OJS.Servers.Administration.Controllers
 {
-    using AutoCrudAdmin.Controllers;
     using AutoCrudAdmin.Models;
     using AutoCrudAdmin.ViewModels;
     using Microsoft.AspNetCore.Mvc;
@@ -18,7 +17,7 @@ namespace OJS.Servers.Administration.Controllers
     using AdminResource = OJS.Common.Resources.AdministrationGeneral;
     using Resource = OJS.Common.Resources.ContestsControllers;
 
-    public class ContestsController : AutoCrudAdminController<Contest>
+    public class ContestsController : BaseAutoCrudAdminController<Contest>
     {
         private enum AdditionalFields
         {
@@ -67,6 +66,10 @@ namespace OJS.Servers.Administration.Controllers
             return this.View(model);
         }
 
+        [HttpGet]
+        public IActionResult CreateProblem([FromQuery] IDictionary<string, string> complexId)
+            => this.RedirectToAction("Create", "Problems", new { ContestId = complexId.Values.First() });
+
         protected override IEnumerable<Func<Contest, Contest, AdminActionContext, Task<ValidatorResult>>> AsyncEntityValidators
             => new Func<Contest, Contest, AdminActionContext, Task<ValidatorResult>>[]
             {
@@ -87,6 +90,7 @@ namespace OJS.Servers.Administration.Controllers
             {
                 new GridAction { Action = nameof(this.DownloadSubmissions) },
                 new GridAction { Action = nameof(this.ExportResults) },
+                new GridAction { Action = nameof(this.CreateProblem) },
             };
 
         protected override async Task BeforeEntitySaveOnEditAsync(

@@ -7,7 +7,7 @@ namespace OJS.Data.Models
     {
         public string UserId { get; set; } = string.Empty;
 
-        public virtual UserProfile User { get; set; } = new();
+        public virtual UserProfile User { get; set; } = null!;
 
         public string IpAddress { get; set; } = string.Empty;
 
