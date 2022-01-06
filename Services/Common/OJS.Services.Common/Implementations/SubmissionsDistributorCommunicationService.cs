@@ -1,13 +1,13 @@
-namespace OJS.Services.Ui.Business.Implementations
+namespace OJS.Services.Common.Implementations
 {
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Options;
     using OJS.Data.Models.Submissions;
+    using OJS.Services.Common.Data;
     using OJS.Services.Common.Models;
+    using OJS.Services.Common.Models.Configurations;
     using OJS.Services.Common.Models.Submissions;
     using OJS.Services.Infrastructure.HttpClients;
-    using OJS.Services.Ui.Data;
-    using OJS.Services.Ui.Models.Configurations;
     using SoftUni.Judge.Common.Enumerations;
     using SoftUni.Judge.Common.Extensions;
     using SoftUni.Judge.Common.Formatters;

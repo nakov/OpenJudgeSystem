@@ -4,6 +4,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using Microsoft.EntityFrameworkCore;
     using OJS.Common.Helpers;
     using OJS.Data.Models.Submissions;
+    using OJS.Services.Common.Data;
     using OJS.Services.Ui.Data;
     using System.Linq;
     using System.Threading.Tasks;

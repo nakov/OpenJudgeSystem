@@ -1,9 +1,8 @@
-namespace OJS.Services.Ui.Data.Implementations
+namespace OJS.Services.Common.Data.Implementations
 {
     using Microsoft.EntityFrameworkCore;
     using OJS.Data;
     using OJS.Data.Models.Submissions;
-    using OJS.Services.Common.Data.Implementations;
     using System;
     using System.Collections.Generic;
     using System.Linq;

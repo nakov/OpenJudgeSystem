@@ -4,10 +4,10 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
     using OJS.Data;
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Extensions;
-    using OJS.Services.Ui.Models.Configurations;
     using SoftUni.Judge.Common.Extensions;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Configuration;
+    using OJS.Services.Common.Models.Configurations;
 
     public static class ServiceCollectionExtensions
     {

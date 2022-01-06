@@ -1,11 +1,10 @@
 ﻿namespace OJS.Services.Administration.Data
 {
     using OJS.Data.Models.Problems;
-    using SoftUni.Services.Infrastructure;
+    using OJS.Services.Common.Data;
     using System.Linq;
 
-
-    public interface IProblemGroupsDataService : IService
+    public interface IProblemGroupsDataService : IDataService<ProblemGroup>
     {
         ProblemGroup? GetByProblem(int problemId);
 

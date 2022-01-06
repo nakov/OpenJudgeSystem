@@ -1,4 +1,4 @@
-namespace OJS.Services.Ui.Models.Configurations
+namespace OJS.Services.Common.Models.Configurations
 {
     public class DistributorConfig
     {

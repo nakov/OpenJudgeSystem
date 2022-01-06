@@ -1,13 +1,12 @@
-namespace OJS.Services.Ui.Business.Implementations
+namespace OJS.Services.Administration.Business.Implementations
 {
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
     using OJS.Common.Helpers;
     using OJS.Data.Models.Problems;
+    using OJS.Services.Administration.Data;
     using OJS.Services.Common;
-    using OJS.Services.Common.Data;
     using OJS.Services.Common.Models;
-    using OJS.Services.Ui.Data;
     using System;
     using System.Linq;
     using System.Threading.Tasks;
