@@ -1,6 +1,5 @@
 namespace OJS.Servers.Administration.Controllers;
 
-using AutoCrudAdmin.Controllers;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using FluentExtensions.Extensions;
@@ -25,7 +24,7 @@ using System.Threading.Tasks;
 using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 using GlobalResource = OJS.Common.Resources.ProblemsController;
 
-public class ProblemsController : AutoCrudAdminController<Problem>
+public class ProblemsController : BaseAutoCrudAdminController<Problem>
 {
     private enum AdditionalFields
     {

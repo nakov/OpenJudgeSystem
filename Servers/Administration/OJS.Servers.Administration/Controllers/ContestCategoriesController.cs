@@ -1,6 +1,5 @@
 namespace OJS.Servers.Administration.Controllers;
 
-using AutoCrudAdmin.Controllers;
 using AutoCrudAdmin.Models;
 using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Business;
@@ -10,7 +9,7 @@ using OJS.Services.Infrastructure.Constants;
 using System.Linq;
 using System.Threading.Tasks;
 
-public class ContestCategoriesController : AutoCrudAdminController<ContestCategory>
+public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCategory>
 {
     private readonly IContestCategoriesDataService contestCategoriesData;
     private readonly ICacheService cache;

@@ -1,6 +1,5 @@
 namespace OJS.Servers.Administration.Controllers;
 
-using AutoCrudAdmin.Controllers;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using OJS.Data.Models.Participants;
@@ -8,10 +7,11 @@ using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 
-public class ParticipantsController : AutoCrudAdminController<Participant>
+public class ParticipantsController : BaseAutoCrudAdminController<Participant>
 {
     private readonly IContestsBusinessService contestsBusiness;
 
@@ -28,7 +28,8 @@ public class ParticipantsController : AutoCrudAdminController<Participant>
         };
 
     protected override IEnumerable<string> ShownFormControlNamesOnCreate
-        => new[] { nameof(Participant.Contest), nameof(Participant.User), nameof(Participant.IsOfficial) };
+        => base.ShownFormControlNamesOnCreate
+            .Concat(new[] { nameof(Participant.Contest), nameof(Participant.User), nameof(Participant.IsOfficial) });
 
     private async Task<ValidatorResult> ValidateContestPermissions(
         Participant existingParticipant,

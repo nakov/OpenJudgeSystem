@@ -1,6 +1,5 @@
 namespace OJS.Servers.Administration.Controllers;
 
-using AutoCrudAdmin.Controllers;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using OJS.Data.Models;
@@ -12,7 +11,7 @@ using System.Threading.Tasks;
 using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 using Resource = OJS.Common.Resources.ExamGroupsController;
 
-public class UsersInExamGroupsController : AutoCrudAdminController<UserInExamGroup>
+public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExamGroup>
 {
     private readonly IContestsBusinessService contestsBusiness;
 
