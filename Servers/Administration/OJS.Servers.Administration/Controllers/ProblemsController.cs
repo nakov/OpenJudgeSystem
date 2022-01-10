@@ -242,7 +242,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                 {
                     Name = st.Name,
                     Value = st.Id,
-                    IsSelected = submissionTypes.Any(x => x.SubmissionTypeId == st.Id),
+                    IsChecked = submissionTypes.Any(x => x.SubmissionTypeId == st.Id),
                 }),
             FormControlType = FormControlType.MultiChoiceCheckbox,
             Type = typeof(object),
@@ -379,7 +379,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     private static void AddSubmissionTypes(Problem problem, AdminActionContext actionContext)
     {
         var newSubmissionTypes = GetSubmissionTypes(actionContext.EntityDict)
-            .Where(x => x.IsSelected)
+            .Where(x => x.IsChecked)
             .Select(x => new SubmissionTypeInProblem
             {
                 ProblemId = problem.Id,
@@ -402,7 +402,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         Problem existingEntity,
         Problem newEntity,
         AdminActionContext actionContext)
-        => GetSubmissionTypes(actionContext.EntityDict).Any(s => s.IsSelected)
+        => GetSubmissionTypes(actionContext.EntityDict).Any(s => s.IsChecked)
             ? ValidatorResult.Success()
             : ValidatorResult.Error(GlobalResource.Select_one_submission_type);
 }
