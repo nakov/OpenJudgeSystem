@@ -1,5 +1,6 @@
 namespace OJS.Servers.Administration.Controllers;
 
+using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using FluentExtensions.Extensions;
@@ -35,6 +36,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         ProblemGroupType,
         Tests,
         AdditionalFiles,
+        SubmissionTypes,
     }
 
     private readonly IProblemsBusinessService problemsBusiness;
@@ -43,6 +45,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     private readonly IProblemsDataService problemsData;
     private readonly IFileSystemService fileSystem;
     private readonly IZippedTestsParserService zippedTestsParser;
+    private readonly ISubmissionTypesDataService submissionTypesData;
 
     public ProblemsController(
         IProblemsBusinessService problemsBusiness,
@@ -50,7 +53,8 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         IContestsDataService contestsData,
         IProblemsDataService problemsData,
         IFileSystemService fileSystem,
-        IZippedTestsParserService zippedTestsParser)
+        IZippedTestsParserService zippedTestsParser,
+        ISubmissionTypesDataService submissionTypesData)
     {
         this.problemsBusiness = problemsBusiness;
         this.contestsBusiness = contestsBusiness;
@@ -58,6 +62,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         this.problemsData = problemsData;
         this.fileSystem = fileSystem;
         this.zippedTestsParser = zippedTestsParser;
+        this.submissionTypesData = submissionTypesData;
     }
 
     public override Task<IActionResult> Create(IDictionary<string, string> complexId, string postEndpointName)
@@ -223,6 +228,24 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                 .ToList();
         }
 
+        var submissionTypes = entity.SubmissionTypesInProblems.ToList();
+
+        formControls.Add(new FormControlViewModel
+        {
+            Name = AdditionalFields.SubmissionTypes.ToString(),
+            Options = this.submissionTypesData
+                .GetQuery()
+                .ToList()
+                .Select(st => new CheckboxFormControlViewModel
+                {
+                    Name = st.Name,
+                    Value = st.Id,
+                    IsSelected = submissionTypes.Any(x => x.SubmissionTypeId == st.Id),
+                }),
+            FormControlType = FormControlType.MultiChoiceCheckbox,
+            Type = typeof(object),
+        });
+
         return formControls;
     }
 
@@ -345,6 +368,11 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         }
 
         this.zippedTestsParser.AddTestsToProblem(problem, parsedTests);
+    }
+
+    private void AddSubmissionTypes(Problem problem, AdminActionContext actionContext)
+    {
+
     }
 
     private ValidatorResult ValidateUploadedFiles(
