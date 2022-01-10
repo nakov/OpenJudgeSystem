@@ -10,6 +10,7 @@ using OJS.Common;
 using OJS.Common.Enumerations;
 using OJS.Common.Extensions;
 using OJS.Common.Utils;
+using OJS.Data.Models;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
 using OJS.Servers.Administration.Models.Problems;
@@ -154,6 +155,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     protected override IEnumerable<Func<Problem, Problem, AdminActionContext, ValidatorResult>> EntityValidators
         => new Func<Problem, Problem, AdminActionContext, ValidatorResult>[]
         {
+            ValidateSubmissionTypeIsSelected,
             this.ValidateUploadedFiles,
         };
 
@@ -253,6 +255,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     {
         TryAddSolutionSkeleton(entity, actionContext);
         await TryAddAdditionalFiles(entity, actionContext);
+        AddSubmissionTypes(entity, actionContext);
     }
 
     // TODO: move more logic from old judge
@@ -320,6 +323,9 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     private static ProblemGroupType? GetProblemGroupType(IDictionary<string, string> entityDict)
         => entityDict[AdditionalFields.ProblemGroupType.ToString()].ToEnum<ProblemGroupType>();
 
+    private static IEnumerable<CheckboxFormControlViewModel> GetSubmissionTypes(IDictionary<string, string> entityDict)
+        => entityDict[AdditionalFields.SubmissionTypes.ToString()].FromJson<IEnumerable<CheckboxFormControlViewModel>>();
+
     private static void TryAddSolutionSkeleton(Problem problem, AdminActionContext actionContext)
         => problem.SolutionSkeleton = GetSolutionSkeleton(actionContext.EntityDict);
 
@@ -370,9 +376,18 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         this.zippedTestsParser.AddTestsToProblem(problem, parsedTests);
     }
 
-    private void AddSubmissionTypes(Problem problem, AdminActionContext actionContext)
+    private static void AddSubmissionTypes(Problem problem, AdminActionContext actionContext)
     {
+        var newSubmissionTypes = GetSubmissionTypes(actionContext.EntityDict)
+            .Where(x => x.IsSelected)
+            .Select(x => new SubmissionTypeInProblem
+            {
+                ProblemId = problem.Id,
+                SubmissionTypeId = int.Parse(x.Value!.ToString()!),
+            });
 
+        problem.SubmissionTypesInProblems.Clear();
+        problem.SubmissionTypesInProblems.AddRange(newSubmissionTypes);
     }
 
     private ValidatorResult ValidateUploadedFiles(
@@ -382,4 +397,12 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         => actionContext.Files.SingleFiles.Any(f => this.fileSystem.GetFileExtension(f) != GlobalConstants.FileExtensions.Zip)
             ? ValidatorResult.Error(GlobalResource.Must_be_zip_file)
             : ValidatorResult.Success();
+
+    private static ValidatorResult ValidateSubmissionTypeIsSelected(
+        Problem existingEntity,
+        Problem newEntity,
+        AdminActionContext actionContext)
+        => GetSubmissionTypes(actionContext.EntityDict).Any(s => s.IsSelected)
+            ? ValidatorResult.Success()
+            : ValidatorResult.Error(GlobalResource.Select_one_submission_type);
 }
