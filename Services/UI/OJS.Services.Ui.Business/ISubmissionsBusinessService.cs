@@ -9,11 +9,13 @@
 
     public interface ISubmissionsBusinessService : IService
     {
+        Task<SubmissionDetailsServiceModel?> GetById(int submissionId);
+
         Task<IQueryable<Submission>> GetAllForArchiving();
 
         Task RecalculatePointsByProblem(int problemId);
 
-        Task<IEnumerable<SubmissionServiceModel>> GetForProfileByUser(string? username);
+        Task<IEnumerable<SubmissionForProfileServiceModel>> GetForProfileByUser(string? username);
 
         // Task HardDeleteAllArchived();
     }

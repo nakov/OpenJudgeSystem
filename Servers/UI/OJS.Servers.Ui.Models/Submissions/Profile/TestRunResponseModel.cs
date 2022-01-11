@@ -1,6 +1,7 @@
-﻿using SoftUni.AutoMapper.Infrastructure.Models;
+﻿using OJS.Services.Ui.Models.Submissions;
+using SoftUni.AutoMapper.Infrastructure.Models;
 
-namespace OJS.Services.Ui.Models.Submissions
+namespace OJS.Servers.Ui.Models.Submissions.Profile
 {
     public class TestRunResponseModel : IMapFrom<TestRunServiceModel>
     {
@@ -17,5 +18,9 @@ namespace OJS.Services.Ui.Models.Submissions
         public string CheckerComment { get; set; }
 
         public string ResultType { get; set; }
+
+        public string? ExpectedOutputFragment { get; set; }
+
+        public string? UserOutputFragment { get; set; }
     }
 }

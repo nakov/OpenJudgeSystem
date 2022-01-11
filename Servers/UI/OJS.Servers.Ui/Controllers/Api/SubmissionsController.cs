@@ -1,4 +1,7 @@
-﻿namespace OJS.Servers.Ui.Controllers.Api
+﻿using OJS.Servers.Ui.Models.Submissions.Details;
+using System.Collections;
+
+namespace OJS.Servers.Ui.Controllers.Api
 {
     using Microsoft.AspNetCore.Mvc;
     using OJS.Services.Ui.Business;
@@ -16,6 +19,16 @@
 
         public SubmissionsController(ISubmissionsBusinessService submissionsBusiness)
             => this.submissionsBusiness = submissionsBusiness;
+
+        [HttpGet]
+        public async Task<SubmissionDetailsResponseModel> Details(int id)
+        {
+            var res = await this.submissionsBusiness
+                .GetById(id);
+
+
+            return res.Map<SubmissionDetailsResponseModel>();
+        }
 
         public Task<IEnumerable<SubmissionForProfileResponseModel>> GetForProfile()
             => this.submissionsBusiness

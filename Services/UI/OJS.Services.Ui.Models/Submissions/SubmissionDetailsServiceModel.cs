@@ -1,11 +1,11 @@
-﻿namespace OJS.Services.Ui.Models.Submissions
-{
-    using System;
-    using OJS.Data.Models.Submissions;
-    using SoftUni.AutoMapper.Infrastructure.Models;
-    using System.Collections.Generic;
+﻿using OJS.Data.Models.Submissions;
+using SoftUni.AutoMapper.Infrastructure.Models;
+using System;
+using System.Collections.Generic;
 
-    public class SubmissionServiceModel : IMapFrom<Submission>
+namespace OJS.Services.Ui.Models.Submissions
+{
+    public class SubmissionDetailsServiceModel : IMapFrom<Submission>
     {
         public int Id { get; set; }
 

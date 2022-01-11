@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { ITestRunType } from '../../hooks/use-submissions';
-import concatClassNames from '../../utils/class-names';
+import { ITestRunType } from '../../../hooks/use-submissions';
+import concatClassNames from '../../../utils/class-names';
 import styles from './ExecutionResult.module.scss';
 
 interface IExecutionResultDetailsProps {

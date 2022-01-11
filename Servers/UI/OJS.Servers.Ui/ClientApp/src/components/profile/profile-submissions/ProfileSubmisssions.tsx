@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSubmissions } from '../../../hooks/use-submissions';
 import { formatDate } from '../../../utils/dates';
-import ExecutionResult from '../../submissions/ExecutionResult';
+import ExecutionResult from '../../submissions/execution-result/ExecutionResult';
 import styles from './ProfileSubmissions.module.scss';
 
 const columns: GridColDef[] = [

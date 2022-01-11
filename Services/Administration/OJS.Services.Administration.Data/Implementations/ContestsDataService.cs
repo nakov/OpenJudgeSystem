@@ -38,7 +38,7 @@ namespace OJS.Services.Administration.Data.Implementations
             => await this.GetAllVisibleQuery()
                 .Where(c => c.EndTime < this.dates.GetUtcNow())
                 .MapCollection<TServiceModel>()
-                `
+                .ToListAsync();
 
         public Task<Contest?> GetByIdWithProblems(int id)
             => this.DbSet

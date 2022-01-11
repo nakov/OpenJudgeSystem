@@ -1,5 +1,9 @@
 import * as React from 'react';
 import { useParams } from 'react-router';
+import { useEffect } from 'react';
+import Heading from '../../components/guidelines/headings/Heading';
+import { useSubmissions } from '../../hooks/use-submissions';
+import SubmissionResults from '../../components/submissions/submission-results/SubmissionResults';
 
 interface IParamsProps {
     submissionId: string
@@ -7,11 +11,25 @@ interface IParamsProps {
 
 const SubmissionPage = () => {
     const { submissionId } = useParams<IParamsProps>();
+    const { setCurrentSubmissionId, getSubmission } = useSubmissions();
+
+    useEffect(() => {
+        setCurrentSubmissionId(Number(submissionId));
+    });
+
+    useEffect(() => {
+        getSubmission(Number(submissionId));
+    }, [ getSubmission, submissionId ]);
+
     return (
-        <h1>
-            submission
-            {submissionId}
-        </h1>
+        <>
+            <Heading>
+                Submission:
+                {' '}
+                {submissionId}
+            </Heading>
+            <SubmissionResults />
+        </>
     );
 };
 

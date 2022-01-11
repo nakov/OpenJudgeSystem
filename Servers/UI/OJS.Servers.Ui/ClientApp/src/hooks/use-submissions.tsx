@@ -1,8 +1,8 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import IHaveChildrenProps from '../components/common/IHaveChildrenProps';
 import { useLoading } from './use-loading';
 import { useHttp } from './use-http';
-import { getSubmissionsForProfileUrl } from '../utils/urls';
+import { getSubmissionUrl, getSubmissionsForProfileUrl } from '../utils/urls';
 
 interface IProblemType {
     id: number,
@@ -16,7 +16,9 @@ interface ITestRunType {
     maxUsedMemory: number,
     executionComment: string,
     checkerComment: string,
-    resultType: string
+    resultType: string,
+    expectedOutputFragment: string,
+    userOutputFragment: string,
 }
 
 interface ISubmissionType {
@@ -31,11 +33,14 @@ interface ISubmissionType {
 }
 
 interface ISubmissionsContext {
+    currentSubmission: ISubmissionType | undefined,
     submissions: ISubmissionType[]
+    getSubmission: (submissionId: number) => Promise<void>,
     getUserSubmissions: () => Promise<void>
+    setCurrentSubmissionId: (submissionId: number) => void;
 }
 
-const defaultState = {};
+const defaultState = { };
 
 const SubmissionsContext = createContext<ISubmissionsContext>(defaultState as ISubmissionsContext);
 
@@ -45,10 +50,21 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ submissions, setSubmissions ] = useState<ISubmissionType[]>([]);
+    const [ currentSubmissionId, setCurrentSubmissionId ] = useState<number>();
+    const [ currentSubmission, setCurrentSubmission ] = useState<ISubmissionType>();
+    const getCurrentSubmissionUrl = useMemo(() => `${getSubmissionUrl}/${currentSubmissionId}`, [
+        currentSubmissionId,
+    ]);
+
     const {
         get: getSubmissionsForProfileRequest,
         data: getSubmissionsForProfileData,
     } = useHttp(getSubmissionsForProfileUrl);
+
+    const {
+        get: getSubmissionRequest,
+        data: getSubmissionData,
+    } = useHttp(getCurrentSubmissionUrl);
 
     const getUserSubmissions = useCallback(async () => {
         startLoading();
@@ -56,13 +72,37 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         stopLoading();
     }, [ getSubmissionsForProfileRequest, startLoading, stopLoading ]);
 
+    const getSubmission = useCallback(async () => {
+        if (currentSubmissionId != null) {
+            startLoading();
+            await getSubmissionRequest();
+            stopLoading();
+        }
+    }, [ currentSubmissionId, getSubmissionRequest, startLoading, stopLoading ]);
+
     useEffect(() => {
         if (getSubmissionsForProfileData != null) {
             setSubmissions(getSubmissionsForProfileData as ISubmissionType[]);
         }
     }, [ getSubmissionsForProfileData ]);
 
-    const value = { submissions, getUserSubmissions };
+    useEffect(() => {
+        if (getSubmissionData != null) {
+            setCurrentSubmission(getSubmissionData as ISubmissionType);
+        }
+    }, [ getSubmissionData ]);
+
+    useEffect(() => {
+        console.log(currentSubmission);
+    });
+
+    const value = {
+        currentSubmission,
+        setCurrentSubmissionId,
+        submissions,
+        getUserSubmissions,
+        getSubmission,
+    };
 
     return (
         <SubmissionsContext.Provider value={value}>

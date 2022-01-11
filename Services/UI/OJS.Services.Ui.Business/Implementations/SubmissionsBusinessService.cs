@@ -31,6 +31,12 @@
             this.usersBusiness = usersBusiness;
         }
 
+        public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
+            => await this.submissionsData
+                .GetByIdQuery(submissionId)
+                .MapCollection<SubmissionDetailsServiceModel>()
+                .FirstOrDefaultAsync();
+
         public Task<IQueryable<Submission>> GetAllForArchiving()
         {
             var archiveBestSubmissionsLimit = DateTime.Now.AddYears(
@@ -157,7 +163,7 @@
         //     return Task.CompletedTask;
         // }
 
-        public async Task<IEnumerable<SubmissionServiceModel>> GetForProfileByUser(string? username)
+        public async Task<IEnumerable<SubmissionForProfileServiceModel>> GetForProfileByUser(string? username)
         {
             var user = await this.usersBusiness.GetUserProfileByUsername(username);
             var data = await this.submissionsData
@@ -168,7 +174,7 @@
                 .Where(s => s.Participant!.UserId == user!.Id)
                 .Take(20)
                 .OrderByDescending(s => s.CreatedOn)
-                .MapCollection<SubmissionServiceModel>()
+                .MapCollection<SubmissionForProfileServiceModel>()
                 .ToListAsync();
 
             return data;

@@ -1,18 +1,16 @@
-﻿using System.Linq;
-
-namespace OJS.Servers.Ui.Models.Submissions.Profile.Mapping
+﻿namespace OJS.Servers.Ui.Models.Submissions.Profile.Mapping
 {
     using AutoMapper;
     using OJS.Services.Ui.Models.Submissions;
-    using System.Collections.Generic;
+    using System.Linq;
 
     public class MaxUsedTimeValueResolver
-        : IValueResolver<SubmissionServiceModel, SubmissionForProfileResponseModel, double>
+        : IValueResolver<SubmissionForProfileServiceModel, SubmissionForProfileResponseModel, double>
     {
-        private readonly double defaultValue = 0;
+        private readonly double defaultValue = 0.0;
 
         public double Resolve(
-            SubmissionServiceModel source,
+            SubmissionForProfileServiceModel source,
             SubmissionForProfileResponseModel destination,
             double destMember,
             ResolutionContext context)

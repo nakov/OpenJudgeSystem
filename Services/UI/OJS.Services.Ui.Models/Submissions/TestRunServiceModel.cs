@@ -20,6 +20,10 @@
 
         public string ResultType { get; set; }
 
+        public string? ExpectedOutputFragment { get; set; }
+
+        public string? UserOutputFragment { get; set; }
+
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<TestRun, TestRunServiceModel>()
                 .ForMember(d => d.ResultType, opt => opt.MapFrom(s => s.ResultType.ToString()));
