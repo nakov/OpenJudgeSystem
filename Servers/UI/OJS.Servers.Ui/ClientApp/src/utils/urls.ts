@@ -7,7 +7,7 @@ const getProfileInfoUrl = `${baseUrl}/Users/GetProfileInfo`;
 
 const getIndexContestsUrl = `${baseUrl}/Contests/GetForHomeIndex`;
 
-const getSubmissionUrl = `${baseUrl}/Submissions/Details`;
+const getSubmissionDetailsUrl = `${baseUrl}/Submissions/Details`;
 const getSubmissionsForProfileUrl = `${baseUrl}/Submissions/GetForProfile`;
 
 const getParticipationsForProfileUrl = `${baseUrl}/Participations/GetForProfile`;
@@ -17,7 +17,7 @@ export {
     logoutUrl,
     getProfileInfoUrl,
     getIndexContestsUrl,
-    getSubmissionUrl,
+    getSubmissionDetailsUrl,
     getSubmissionsForProfileUrl,
     getParticipationsForProfileUrl,
 };

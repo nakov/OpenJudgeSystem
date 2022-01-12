@@ -31,6 +31,7 @@ const Diff = ({ expectedStr, actualStr } : ITestsRunDiffProps) => {
           newValue={actualStr}
           compareMethod={DiffMethod.CHARS}
           splitView
+          showDiffOnly
           renderContent={highlightSyntax}
         />
     );

@@ -11,6 +11,8 @@
     {
         Task<SubmissionDetailsServiceModel?> GetById(int submissionId);
 
+        Task<SubmissionDetailsServiceModel?> GetDetailsById(int submissionId);
+
         Task<IQueryable<Submission>> GetAllForArchiving();
 
         Task RecalculatePointsByProblem(int problemId);

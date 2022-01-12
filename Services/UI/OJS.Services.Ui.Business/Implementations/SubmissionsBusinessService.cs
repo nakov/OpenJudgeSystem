@@ -37,6 +37,14 @@
                 .MapCollection<SubmissionDetailsServiceModel>()
                 .FirstOrDefaultAsync();
 
+        public async Task<SubmissionDetailsServiceModel?> GetDetailsById(int submissionId)
+            => await this.submissionsData
+                .GetByIdQuery(submissionId)
+                .Include(s => s.Participant).ThenInclude(p => p.User)
+                .Include(s => s.TestRuns).ThenInclude(tr => tr.Test)
+                .MapCollection<SubmissionDetailsServiceModel>()
+                .FirstOrDefaultAsync();
+
         public Task<IQueryable<Submission>> GetAllForArchiving()
         {
             var archiveBestSubmissionsLimit = DateTime.Now.AddYears(
@@ -172,7 +180,7 @@
                 .Include(s => s.TestRuns)
                 .Include(s => s.SubmissionType)
                 .Where(s => s.Participant!.UserId == user!.Id)
-                .Take(20)
+                .Take(40)
                 .OrderByDescending(s => s.CreatedOn)
                 .MapCollection<SubmissionForProfileServiceModel>()
                 .ToListAsync();

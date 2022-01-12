@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { useParams } from 'react-router';
 import { useEffect } from 'react';
-import Heading from '../../components/guidelines/headings/Heading';
-import { useSubmissions } from '../../hooks/use-submissions';
 import SubmissionResults from '../../components/submissions/submission-results/SubmissionResults';
+import { useSubmissionsDetails } from '../../hooks/submissions/use-submissions-details';
+import SubmissionDetailsHeading from '../../components/submissions/test-runs/test-run-heading/SubmissionDetailsHeading';
+import { setLayout } from '../shared/set-layout';
 
 interface IParamsProps {
     submissionId: string
@@ -11,26 +12,23 @@ interface IParamsProps {
 
 const SubmissionPage = () => {
     const { submissionId } = useParams<IParamsProps>();
-    const { setCurrentSubmissionId, getSubmission } = useSubmissions();
+    const { setCurrentSubmissionId, getSubmissionDetails } = useSubmissionsDetails();
 
     useEffect(() => {
+        console.log(`curr subm ${submissionId}`);
         setCurrentSubmissionId(Number(submissionId));
     });
 
     useEffect(() => {
-        getSubmission(Number(submissionId));
-    }, [ getSubmission, submissionId ]);
+        getSubmissionDetails();
+    }, [ getSubmissionDetails, submissionId ]);
 
     return (
         <>
-            <Heading>
-                Submission:
-                {' '}
-                {submissionId}
-            </Heading>
+            <SubmissionDetailsHeading />
             <SubmissionResults />
         </>
     );
 };
 
-export default SubmissionPage;
+export default setLayout(SubmissionPage);

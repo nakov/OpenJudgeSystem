@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ITestRunType } from '../../../hooks/use-submissions';
+import { ITestRunType } from '../../../hooks/submissions/use-submissions';
 import concatClassNames from '../../../utils/class-names';
 import styles from './ExecutionResult.module.scss';
 

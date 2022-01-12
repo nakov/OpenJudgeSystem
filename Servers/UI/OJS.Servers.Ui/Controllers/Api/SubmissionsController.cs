@@ -1,5 +1,4 @@
 ﻿using OJS.Servers.Ui.Models.Submissions.Details;
-using System.Collections;
 
 namespace OJS.Servers.Ui.Controllers.Api
 {
@@ -24,8 +23,7 @@ namespace OJS.Servers.Ui.Controllers.Api
         public async Task<SubmissionDetailsResponseModel> Details(int id)
         {
             var res = await this.submissionsBusiness
-                .GetById(id);
-
+                .GetDetailsById(id);
 
             return res.Map<SubmissionDetailsResponseModel>();
         }

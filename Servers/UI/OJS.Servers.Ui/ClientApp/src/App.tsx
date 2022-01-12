@@ -10,7 +10,8 @@ import ServicesProvider from './hooks/use-services';
 import NotificationsProvider from './hooks/use-notifications';
 import ContestsProvider from './hooks/use-contests';
 import UsersProvider from './hooks/use-users';
-import SubmissionsProvider from './hooks/use-submissions';
+import SubmissionsProvider from './hooks/submissions/use-submissions';
+import SubmissionsDetailsProvider from './hooks/submissions/use-submissions-details';
 import ParticipationsProvider from './hooks/use-participations';
 
 import './styles/global.scss';
@@ -24,11 +25,13 @@ const App = () => (
                         <ContestsProvider>
                             <ParticipationsProvider>
                                 <SubmissionsProvider>
-                                    <Router>
-                                        <PageHeader />
-                                        <PageContent />
-                                        <PageFooter />
-                                    </Router>
+                                    <SubmissionsDetailsProvider>
+                                        <Router>
+                                            <PageHeader />
+                                            <PageContent />
+                                            <PageFooter />
+                                        </Router>
+                                    </SubmissionsDetailsProvider>
                                 </SubmissionsProvider>
                             </ParticipationsProvider>
                         </ContestsProvider>
