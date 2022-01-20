@@ -4,6 +4,7 @@ import { IIndexContestsType, useContests } from '../../hooks/use-contests';
 import { LinkButton } from '../guidelines/buttons/Button';
 import ContestCard from './contest-card/ContestCard';
 import Heading from '../guidelines/headings/Heading';
+import { setLayout } from '../../pages/shared/set-layout';
 import styles from './HomeContests.module.scss';
 
 const HomeContests = () => {
@@ -45,4 +46,4 @@ const HomeContests = () => {
     );
 };
 
-export default HomeContests;
+export default setLayout(HomeContests);

@@ -15,7 +15,6 @@ const SubmissionPage = () => {
     const { setCurrentSubmissionId, getSubmissionDetails } = useSubmissionsDetails();
 
     useEffect(() => {
-        console.log(`curr subm ${submissionId}`);
         setCurrentSubmissionId(Number(submissionId));
     });
 

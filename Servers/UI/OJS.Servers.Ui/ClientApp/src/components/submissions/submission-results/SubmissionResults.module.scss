@@ -1,11 +1,13 @@
-﻿.submissionResultContainer {
+﻿@import "src/styles/colors";
+
+.submissionResultContainer {
   margin-top: 30px;
 }
 
 .wrongTestRunHeading {
-  color: #fc4c50;
+  color: $primary-red;
 }
 
 .correctTestRunHeading {
-  color: #23BE5E;
+  color: $primary-green;
 }

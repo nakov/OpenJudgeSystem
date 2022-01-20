@@ -1,0 +1,76 @@
+﻿@import "src/styles/colors";
+@import "src/styles/components";
+@import "src/components/guidelines/headings/Heading.module";
+
+.header {
+}
+
+.headerContent {
+  @extend .contentSize;
+  
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.headerContentWrapper {
+  max-width: 90%;
+  padding: 40px;
+}
+
+.headerLeft {
+  padding-top: 75px;
+  background: #FDFDFD;
+  flex-basis: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.headerLeftButton {
+  margin-top: 20px;
+  margin-left: 10px;
+}
+
+.headerPrimaryHeading {
+  @extend .primary;
+  
+  padding: 0;
+  border: none;
+  font-size: 36px;
+}
+
+.headerBulletsWrapper {
+  padding: 10px;
+}
+
+.headerBullet {
+  i {
+    color: $primary-green;
+    padding-right: 5px;
+  }
+  
+  color: $text-dark-gray-color;
+  font-size: 18px;
+  font-family: 'Lato', serif;
+  font-weight: lighter;
+  padding-top: 10px;
+}
+
+.headerRight {
+  padding-top: 75px;
+  background: #3F4D5A;
+  align-self: stretch;
+  flex-basis: 50%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.youtubePlayer {
+  align-self: start;
+  margin-right: 30px;
+}

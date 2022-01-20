@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { setLayout } from '../shared/set-layout';
 import HomeContests from '../../components/home-contests/HomeContests';
+import HomeHeader from '../../components/home-header/HomeHeader';
 
 const HomePage = () => (
     <>
+        <HomeHeader />
         <HomeContests />
     </>
 );
 
-export default setLayout(HomePage);
+export default HomePage;

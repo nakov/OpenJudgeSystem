@@ -2,11 +2,11 @@
 @import "src/styles/components";
 
 .header {
+  position: absolute;
   display: flex;
   justify-content: center;
-
-  padding: 0 50px;
   height: 75px;
+  width: 100%;
 
 
   @media only screen and (max-width: 425px) {
