@@ -36,7 +36,7 @@ namespace OJS.Servers.Ui.Controllers
         [HttpPost]
         [AllowAnonymous]
         // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login([FromBody]LoginRequestModel model, string returnUrl = "/")
+        public async Task<IActionResult> Login([FromBody]LoginRequestModel model)
         {
             if (!this.ModelState.IsValid)
             {
