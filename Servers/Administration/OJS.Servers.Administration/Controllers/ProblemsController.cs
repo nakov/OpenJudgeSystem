@@ -196,13 +196,18 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             IsReadOnly = true,
         });
 
-        formControls.Add(new FormControlViewModel
+        if (!contest.IsOnline)
         {
-            Name = AdditionalFields.ProblemGroupType.ToString(),
-            Options = EnumUtils.GetValuesFrom<ProblemGroupType>().Cast<object>(),
-            Type = typeof(ProblemGroupType),
-            Value = entity.ProblemGroup?.Type ?? default(ProblemGroupType),
-        });
+            formControls.Add(new FormControlViewModel
+            {
+                Name = AdditionalFields.ProblemGroupType.ToString(),
+                Options = EnumUtils.GetValuesFrom<ProblemGroupType>().Cast<object>(),
+                Type = typeof(ProblemGroupType),
+                Value = entity.ProblemGroup?.Type ?? default(ProblemGroupType),
+            });
+
+            formControls.First(x => x.Name == nameof(Data.Models.Problems.Problem.ProblemGroup)).IsHidden = true;
+        }
 
         formControls.Add(new FormControlViewModel
         {
@@ -222,13 +227,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             Name = AdditionalFields.AdditionalFiles.ToString(),
             Type = typeof(IFormFile),
         });
-
-        if (entity.ProblemGroup == null || !contest.IsOnline)
-        {
-            formControls = formControls
-                .Where(fc => fc.Name != nameof(Data.Models.Problems.Problem.ProblemGroup))
-                .ToList();
-        }
 
         var submissionTypes = entity.SubmissionTypesInProblems.ToList();
 
@@ -276,15 +274,17 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         await this.TryAddTestsToProblem(entity, actionContext);
     }
 
-    protected override Task BeforeEntitySaveOnEditAsync(
+    protected override async Task BeforeEntitySaveOnEditAsync(
         Problem originalEntity,
         Problem newEntity,
         AdminActionContext actionContext)
     {
-        // TODO: move logic from old judge
-        var contestId = this.GetContestId(actionContext.EntityDict, newEntity);
+        if (!originalEntity.ProblemGroup.Contest.IsOnline)
+        {
+            newEntity.ProblemGroup.OrderBy = newEntity.OrderBy;
+        }
 
-        return base.BeforeEntitySaveOnCreateAsync(newEntity, actionContext);
+        await base.BeforeEntitySaveOnEditAsync(originalEntity, newEntity, actionContext);
     }
 
     private async Task<ValidatorResult> ValidateContestPermissions(
