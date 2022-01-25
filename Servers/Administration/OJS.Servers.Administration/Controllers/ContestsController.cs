@@ -7,7 +7,7 @@ namespace OJS.Servers.Administration.Controllers
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Problems;
     using OJS.Servers.Administration.Models.Contests;
-    using OJS.Servers.Infrastructure.Extensions;
+    using OJS.Services.Administration.Business.Validation;
     using OJS.Services.Administration.Data;
     using System;
     using System.Collections.Generic;
@@ -24,23 +24,18 @@ namespace OJS.Servers.Administration.Controllers
             AllowedIps,
         }
 
-        private const int ProblemGroupsCountLimit = 40;
-
-        private readonly IContestsDataService contestsData;
-        private readonly IContestCategoriesDataService contestCategoriesData;
         private readonly IIpsDataService ipsData;
         private readonly IParticipantsDataService participantsData;
+        private readonly IContestsValidationService contestsValidation;
 
         public ContestsController(
-            IContestsDataService contestsData,
-            IContestCategoriesDataService contestCategoriesData,
             IIpsDataService ipsData,
-            IParticipantsDataService participantsData)
+            IParticipantsDataService participantsData,
+            IContestsValidationService contestsValidation)
         {
-            this.contestsData = contestsData;
-            this.contestCategoriesData = contestCategoriesData;
             this.ipsData = ipsData;
             this.participantsData = participantsData;
+            this.contestsValidation = contestsValidation;
         }
 
         // TODO: make it as a popup window
@@ -70,12 +65,12 @@ namespace OJS.Servers.Administration.Controllers
         public IActionResult CreateProblem([FromQuery] IDictionary<string, string> complexId)
             => this.RedirectToAction("Create", "Problems", new { ContestId = complexId.Values.First() });
 
-        protected override IEnumerable<Func<Contest, Contest, AdminActionContext, Task<ValidatorResult>>> AsyncEntityValidators
-            => new Func<Contest, Contest, AdminActionContext, Task<ValidatorResult>>[]
-            {
-                this.ValidateContestCategoryPermissions,
-                this.ValidateContest,
-            };
+        protected override IEnumerable<Func<Contest, Contest, AdminActionContext, ValidatorResult>> EntityValidators
+            => this.contestsValidation.GetValidators();
+
+        protected override IEnumerable<Func<Contest, Contest, AdminActionContext, Task<ValidatorResult>>>
+            AsyncEntityValidators
+            => this.contestsValidation.GetAsyncValidators();
 
         protected override async Task BeforeEntitySaveOnCreateAsync(
             Contest contest,
@@ -138,95 +133,6 @@ namespace OJS.Servers.Administration.Controllers
                         Value = string.Join(", ", entity.IpsInContests.Select(x => x.Ip.Value)),
                     },
                 });
-
-        private async Task<ValidatorResult> ValidateContestCategoryPermissions(
-            Contest existingContest,
-            Contest newContest,
-            AdminActionContext actionContext)
-        {
-            var userId = this.User.GetId();
-            var userIsAdmin = this.User.IsAdmin();
-
-            if (newContest.CategoryId.HasValue &&
-                await this.contestCategoriesData.UserHasContestCategoryPermissions(
-                    newContest.CategoryId.Value,
-                    userId,
-                    userIsAdmin))
-            {
-                return ValidatorResult.Success();
-            }
-
-            return ValidatorResult.Error(AdminResource.No_privileges_message);
-        }
-
-        private async Task<ValidatorResult> ValidateContest(
-            Contest existingContest,
-            Contest newContest,
-            AdminActionContext actionContext)
-        {
-            if (newContest.StartTime >= newContest.EndTime)
-            {
-                return ValidatorResult.Error(Resource.Contest_start_date_before_end);
-            }
-
-            if (newContest.PracticeStartTime >= newContest.PracticeEndTime)
-            {
-                return ValidatorResult.Error(Resource.Practice_start_date_before_end);
-            }
-
-            if (newContest.IsOnline)
-            {
-                if (!newContest.Duration.HasValue)
-                {
-                    return ValidatorResult.Error(Resource.Required_field_for_online);
-                }
-
-                if (newContest.Duration.Value.TotalHours >= 24)
-                {
-                    return ValidatorResult.Error(Resource.Duration_invalid_format);
-                }
-
-                if (newContest.NumberOfProblemGroups <= 0)
-                {
-                    return ValidatorResult.Error(Resource.Required_field_for_online);
-                }
-
-                if (newContest.NumberOfProblemGroups > ProblemGroupsCountLimit)
-                {
-                    return ValidatorResult.Error(
-                        string.Format(Resource.Problem_groups_count_limit, ProblemGroupsCountLimit));
-                }
-            }
-
-            return actionContext.Action switch
-            {
-                EntityAction.Edit => this.ValidateContestOnEdit(existingContest, newContest),
-                EntityAction.Delete => await this.ValidateContestOnDelete(newContest),
-                _ => ValidatorResult.Success(),
-            };
-        }
-
-        private ValidatorResult ValidateContestOnEdit(Contest existingContest, Contest newContest)
-        {
-            if (existingContest.IsOnline &&
-                existingContest.IsActive &&
-                (existingContest.Duration != newContest.Duration || existingContest.Type != newContest.Type))
-            {
-                return ValidatorResult.Error(Resource.Active_contest_cannot_edit_duration_type);
-            }
-
-            return ValidatorResult.Success();
-        }
-
-        private async Task<ValidatorResult> ValidateContestOnDelete(Contest contest)
-        {
-            if (await this.contestsData.IsActiveById(contest.Id))
-            {
-                return ValidatorResult.Error(Resource.Active_contest_forbidden_for_deletion);
-            }
-
-            return ValidatorResult.Success();
-        }
 
         private void AddProblemGroupsToContest(Contest contest, int problemGroupsCount)
         {

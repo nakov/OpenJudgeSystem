@@ -2,8 +2,8 @@ namespace OJS.Servers.Administration.Controllers;
 
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
+using OJS.Common.Extensions;
 using OJS.Data.Models;
-using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business;
 using System;
 using System.Collections.Generic;

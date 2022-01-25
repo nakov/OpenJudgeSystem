@@ -2,7 +2,7 @@ namespace OJS.Servers.Administration.Infrastructure.Filters
 {
     using AutoCrudAdmin.Filters;
     using Microsoft.AspNetCore.Http;
-    using OJS.Servers.Infrastructure.Extensions;
+    using OJS.Common.Extensions;
 
     public class AutoCrudAdminAuthFilter : IAutoCrudAuthFilter
     {

@@ -1,7 +1,7 @@
 namespace OJS.Servers.Infrastructure.Filters
 {
     using Hangfire.Dashboard;
-    using OJS.Servers.Infrastructure.Extensions;
+    using OJS.Common.Extensions;
 
     public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
     {
