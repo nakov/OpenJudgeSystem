@@ -7,8 +7,10 @@ namespace OJS.Servers.Administration.Controllers
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Problems;
     using OJS.Servers.Administration.Models.Contests;
+    using OJS.Services.Administration.Business.Extensions;
     using OJS.Services.Administration.Business.Validation;
     using OJS.Services.Administration.Data;
+    using OJS.Services.Administration.Models;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -19,11 +21,6 @@ namespace OJS.Servers.Administration.Controllers
 
     public class ContestsController : BaseAutoCrudAdminController<Contest>
     {
-        private enum AdditionalFields
-        {
-            AllowedIps,
-        }
-
         private readonly IIpsDataService ipsData;
         private readonly IParticipantsDataService participantsData;
         private readonly IContestsValidationService contestsValidation;
@@ -77,7 +74,7 @@ namespace OJS.Servers.Administration.Controllers
             AdminActionContext actionContext)
         {
             this.AddProblemGroupsToContest(contest, contest.NumberOfProblemGroups);
-            await this.AddIpsToContest(contest, actionContext.EntityDict[AdditionalFields.AllowedIps.ToString()]);
+            await this.AddIpsToContest(contest, actionContext.GetFormValue(AdditionalFormFields.AllowedIps));
         }
 
         protected override IEnumerable<GridAction> CustomActions
@@ -104,7 +101,7 @@ namespace OJS.Servers.Administration.Controllers
             }
 
             newContest.IpsInContests.Clear();
-            await this.AddIpsToContest(newContest, actionContext.EntityDict[AdditionalFields.AllowedIps.ToString()]);
+            await this.AddIpsToContest(newContest, actionContext.GetFormValue(AdditionalFormFields.AllowedIps));
         }
 
         protected override async Task AfterEntitySaveOnEditAsync(
@@ -128,7 +125,7 @@ namespace OJS.Servers.Administration.Controllers
                 {
                     new FormControlViewModel
                     {
-                        Name = AdditionalFields.AllowedIps.ToString(),
+                        Name = AdditionalFormFields.AllowedIps.ToString(),
                         Type = typeof(string),
                         Value = string.Join(", ", entity.IpsInContests.Select(x => x.Ip.Value)),
                     },
