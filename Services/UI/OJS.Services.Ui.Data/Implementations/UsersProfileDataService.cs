@@ -8,9 +8,9 @@
     using OJS.Services.Common.Data.Implementations;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
 
-    public class UsersDataService : DataService<UserProfile>, IUsersDataService
+    public class UsersProfileDataService : DataService<UserProfile>, IUsersProfileDataService
     {
-        public UsersDataService(OjsDbContext db) : base(db)
+        public UsersProfileDataService(OjsDbContext db) : base(db)
         {
         }
 

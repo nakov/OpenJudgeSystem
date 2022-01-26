@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
+using System.Security.Claims;
 
 namespace OJS.Services.Ui.Business.Implementations
 {
@@ -9,14 +12,23 @@ namespace OJS.Services.Ui.Business.Implementations
 
     public class UsersBusinessService : IUsersBusinessService
     {
-        private readonly IUsersDataService usersData;
+        private readonly IUsersProfileDataService usersProfileData;
 
         public UsersBusinessService(
-            IUsersDataService usersData) =>
-            this.usersData = usersData;
+            IUsersProfileDataService usersProfileData) =>
+            this.usersProfileData = usersProfileData;
 
         public Task<UserProfileServiceModel?> GetUserProfileByUsername(string? username)
-            => this.usersData
+            => this.usersProfileData
                 .GetByUsername<UserProfileServiceModel>(username);
+
+        public async Task<UserProfileServiceModel?> GetUserProfileById(string userId)
+            => await this.usersProfileData
+                .GetByIdQuery(userId)
+                .MapCollection<UserProfileServiceModel>()
+                .FirstOrDefaultAsync();
+
+        public async Task<bool> IsLoggedInUserAdmin(ClaimsPrincipal userPrincipal)
+            => await Task.FromResult(userPrincipal.IsInRole("Administrator"));
     }
 }

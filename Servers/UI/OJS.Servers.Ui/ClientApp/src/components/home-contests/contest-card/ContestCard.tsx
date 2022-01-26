@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { IIndexContestsType } from '../../../hooks/use-contests';
-import { Button } from '../../guidelines/buttons/Button';
 import Countdown from '../../guidelines/countdown/Countdown';
 import { convertToSecondsRemaining } from '../../../utils/dates';
 import styles from './ContestCard.module.scss';
+import { LinkButton } from '../../guidelines/buttons/Button';
 
 interface IContestCardProps {
     contest: IIndexContestsType
@@ -20,24 +20,22 @@ const ContestCard = ({ contest }: IContestCardProps) => (
             />
         </div>
         <div className={styles.contestCardControls}>
-            <Button
+            <LinkButton
+              to={`/contests/${contest.id}/compete`}
               text="Compete"
-              onClick={() => {
-              }}
+              type={
+                  contest.canCompete
+                      ? 'primary'
+                      : 'disabled'
+              }
+              size="small"
+            />
+            <LinkButton
+              to={`/contests/${contest.id}/practice`}
+              text="Practice"
               type={
                     contest.canCompete
                         ? 'primary'
-                        : 'disabled'
-                }
-              size="small"
-            />
-            <Button
-              text="Practice"
-              onClick={() => {
-              }}
-              type={
-                    contest.canPractice
-                        ? 'secondary'
                         : 'disabled'
                 }
               size="small"

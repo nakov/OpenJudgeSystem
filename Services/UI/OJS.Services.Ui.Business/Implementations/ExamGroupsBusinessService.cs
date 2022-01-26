@@ -20,18 +20,18 @@ namespace OJS.Services.Ui.Business.Implementations
         private const string ExamGroupCannotBeNullMessage = "Exam group cannot be null";
 
         private readonly IExamGroupsDataService examGroupsData;
-        private readonly IUsersDataService usersData;
+        private readonly IUsersProfileDataService usersProfileData;
         private readonly ISulsPlatformHttpClientService sulsPlatformHttpClient;
         private readonly IHangfireBackgroundJobsService backgroundJobs;
 
         public ExamGroupsBusinessService(
             IExamGroupsDataService examGroupsData,
-            IUsersDataService usersData,
+            IUsersProfileDataService usersProfileData,
             ISulsPlatformHttpClientService sulsPlatformHttpClient,
             IHangfireBackgroundJobsService backgroundJobs)
         {
             this.examGroupsData = examGroupsData;
-            this.usersData = usersData;
+            this.usersProfileData = usersProfileData;
             this.sulsPlatformHttpClient = sulsPlatformHttpClient;
             this.backgroundJobs = backgroundJobs;
         }
@@ -40,7 +40,7 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var examGroup = await this.GetExamGroup(id);
 
-            var users = this.usersData
+            var users = this.usersProfileData
                 .GetQuery()
                 .Where(u => userIds.Contains(u.Id));
 
@@ -59,7 +59,7 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var examGroup = await this.GetExamGroup(id);
 
-            var users = this.usersData
+            var users = this.usersProfileData
                 .GetQuery()
                 .Where(u => usernames.Contains(u.UserName));
 

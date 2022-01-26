@@ -1,14 +1,17 @@
 namespace OJS.Services.Ui.Business.Implementations
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
     using FluentExtensions.Extensions;
     using OJS.Data.Models.Participants;
     using OJS.Services.Common.Models;
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Contests;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
+    using OJS.Data.Models.Contests;
+    using OJS.Services.Infrastructure.Exceptions;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
 
     public class ContestsBusinessService : IContestsBusinessService
     {
@@ -17,19 +20,111 @@ namespace OJS.Services.Ui.Business.Implementations
         private readonly IContestsDataService contestsData;
         private readonly IExamGroupsDataService examGroupsData;
         private readonly IParticipantsDataService participantsData;
+        private readonly IParticipantsBusinessService participantsBusiness;
         private readonly IParticipantScoresDataService participantScoresData;
+        private readonly IUsersBusinessService usersBusinessService;
 
         public ContestsBusinessService(
             IContestsDataService contestsData,
             IExamGroupsDataService examGroupsData,
             IParticipantsDataService participantsData,
-            IParticipantScoresDataService participantScoresData)
+            IParticipantScoresDataService participantScoresData,
+            IUsersBusinessService usersBusinessService,
+            IParticipantsBusinessService participantsBusiness)
         {
             this.contestsData = contestsData;
             this.examGroupsData = examGroupsData;
             this.participantsData = participantsData;
             this.participantScoresData = participantScoresData;
+            this.usersBusinessService = usersBusinessService;
+            this.participantsBusiness = participantsBusiness;
         }
+
+        public async Task<ContestParticipationServiceModel> StartContestParticipation(StartContestParticipationServiceModel model)
+        {
+            var contest = await this.contestsData.OneById(model.ContestId);
+
+            var isUserAdmin = await this.usersBusinessService.IsLoggedInUserAdmin(model.UserPrincipal);
+
+            var isUserLecturerInContest = this.IsUserLecturerInContest(contest, model.UserId);
+
+            await this.ValidateContest(contest, model.UserId, isUserAdmin, model.IsOfficial);
+
+            var userProfile = await this.usersBusinessService.GetUserProfileById(model.UserId);
+
+            var participant = await this.participantsData
+                .GetWithContestByContestByUserAndIsOfficial(
+                    model.ContestId,
+                    userProfile.Id,
+                    model.IsOfficial);
+
+            if (participant == null)
+            {
+                participant = await this.AddNewParticipantToContest(contest, model.IsOfficial, model.UserId, isUserAdmin);
+            }
+
+            if (model.IsOfficial &&
+                !await this.IsContestIpValidByContestAndIp(model.ContestId, model.UserHostAddress))
+            {
+                throw new BusinessServiceException("Invalid ip address.");
+            }
+
+            return participant.Contest.Map<ContestParticipationServiceModel>();
+        }
+
+        public Task<bool> IsContestIpValidByContestAndIp(int contestId, string ip)
+            => this.contestsData
+                .Exists(c =>
+                    c.Id == contestId &&
+                    (!c.IpsInContests.Any() || c.IpsInContests.Any(ai => ai.Ip.Value == ip)));
+
+        private async Task<Participant> AddNewParticipantToContest(Contest contest, bool official, string userId, bool isUserAdmin)
+        {
+            if (contest.IsOnline &&
+                official &&
+                !isUserAdmin &&
+                !this.IsUserLecturerInContest(contest, userId) &&
+                ! await this.contestsData.IsUserInExamGroupByContestAndUser(contest.Id, userId))
+            {
+                throw new BusinessServiceException("You are not registered for this exam!");
+            }
+            return await this.participantsBusiness.CreateNewByContestByUserByIsOfficialAndIsAdmin(
+                contest,
+                userId,
+                official,
+                isUserAdmin);
+        }
+
+        private async Task ValidateContest(Contest contest, string userId, bool isUserAdmin, bool official)
+        {
+            var isUserLecturerInContest = this.IsUserLecturerInContest(contest, userId);
+
+            if (contest == null ||
+                contest.IsDeleted ||
+                (!contest.IsVisible && !isUserLecturerInContest))
+            {
+                throw new BusinessServiceException("Contest not found");
+            }
+
+            if (official &&
+                !await this.CanUserCompeteByContestByUserAndIsAdmin(
+                    contest.Id,
+                    userId,
+                    isUserAdmin,
+                    allowToAdminAlways: true))
+            {
+                throw new BusinessServiceException("Contest cannot be competed");
+            }
+
+            if (!official && !contest.CanBePracticed && !isUserLecturerInContest)
+            {
+                throw new BusinessServiceException("Contest cannot be practiced");
+            }
+        }
+
+        private bool IsUserLecturerInContest(Contest contest, string userId) =>
+            contest.LecturersInContests.Any(c => c.LecturerId == userId) ||
+            contest.Category.LecturersInContestCategories.Any(cl => cl.LecturerId == userId);
 
         public async Task<ContestsForHomeIndexServiceModel> GetAllForHomeIndex()
         {
@@ -50,12 +145,6 @@ namespace OJS.Services.Ui.Business.Implementations
                 .GetAllPast<ContestForHomeIndexServiceModel>()
                 .OrderByDescendingAsync(pc => pc.EndTime)
                 .TakeAsync(DefaultContestsToTake);
-
-        public Task<bool> IsContestIpValidByContestAndIp(int contestId, string ip)
-            => this.contestsData
-                .Exists(c =>
-                    c.Id == contestId &&
-                    (!c.IpsInContests.Any() || c.IpsInContests.Any(ai => ai.Ip.Value == ip)));
 
         public async Task<bool> CanUserCompeteByContestByUserAndIsAdmin(
             int contestId,

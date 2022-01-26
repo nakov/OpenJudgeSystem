@@ -6,6 +6,7 @@ const logoutUrl = `${baseUrl}/Account/Logout`;
 const getProfileInfoUrl = `${baseUrl}/Users/GetProfileInfo`;
 
 const getIndexContestsUrl = `${baseUrl}/Contests/GetForHomeIndex`;
+const startContestParticipationUrl = `${baseUrl}/Compete/Index`;
 
 const getSubmissionDetailsUrl = `${baseUrl}/Submissions/Details`;
 const getSubmissionsForProfileUrl = `${baseUrl}/Submissions/GetForProfile`;
@@ -17,6 +18,7 @@ export {
     logoutUrl,
     getProfileInfoUrl,
     getIndexContestsUrl,
+    startContestParticipationUrl,
     getSubmissionDetailsUrl,
     getSubmissionsForProfileUrl,
     getParticipationsForProfileUrl,
