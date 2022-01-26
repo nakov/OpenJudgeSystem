@@ -6,7 +6,6 @@ using AutoCrudAdmin.ViewModels;
 using FluentExtensions.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OJS.Common;
 using OJS.Common.Enumerations;
 using OJS.Common.Extensions;
 using OJS.Common.Utils;
@@ -16,7 +15,10 @@ using OJS.Data.Models.Problems;
 using OJS.Servers.Administration.Models.Problems;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business;
+using OJS.Services.Administration.Business.Extensions;
+using OJS.Services.Administration.Business.Validation;
 using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Common;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
@@ -31,15 +33,6 @@ using GlobalResource = OJS.Common.Resources.ProblemsController;
 
 public class ProblemsController : BaseAutoCrudAdminController<Problem>
 {
-    private enum AdditionalFields
-    {
-        SolutionSkeletonData,
-        ProblemGroupType,
-        Tests,
-        AdditionalFiles,
-        SubmissionTypes,
-    }
-
     private readonly IProblemsBusinessService problemsBusiness;
     private readonly IContestsBusinessService contestsBusiness;
     private readonly IContestsDataService contestsData;
@@ -47,6 +40,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     private readonly IFileSystemService fileSystem;
     private readonly IZippedTestsParserService zippedTestsParser;
     private readonly ISubmissionTypesDataService submissionTypesData;
+    private readonly IProblemsValidationService problemsValidation;
 
     public ProblemsController(
         IProblemsBusinessService problemsBusiness,
@@ -55,7 +49,8 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         IProblemsDataService problemsData,
         IFileSystemService fileSystem,
         IZippedTestsParserService zippedTestsParser,
-        ISubmissionTypesDataService submissionTypesData)
+        ISubmissionTypesDataService submissionTypesData,
+        IProblemsValidationService problemsValidation)
     {
         this.problemsBusiness = problemsBusiness;
         this.contestsBusiness = contestsBusiness;
@@ -64,6 +59,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         this.fileSystem = fileSystem;
         this.zippedTestsParser = zippedTestsParser;
         this.submissionTypesData = submissionTypesData;
+        this.problemsValidation = problemsValidation;
     }
 
     public override Task<IActionResult> Create(IDictionary<string, string> complexId, string postEndpointName)
@@ -146,18 +142,12 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             new GridAction { Action = nameof(this.Retest) },
         };
 
-    protected override IEnumerable<Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>> AsyncEntityValidators
-        => new Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>[]
-        {
-            this.ValidateContestPermissions,
-        };
+    protected override IEnumerable<Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>>
+        AsyncEntityValidators
+        => this.problemsValidation.GetAsyncValidators();
 
     protected override IEnumerable<Func<Problem, Problem, AdminActionContext, ValidatorResult>> EntityValidators
-        => new Func<Problem, Problem, AdminActionContext, ValidatorResult>[]
-        {
-            ValidateSubmissionTypeIsSelected,
-            this.ValidateUploadedFiles,
-        };
+        => this.problemsValidation.GetValidators();
 
     // TODO: move more logic from old judge
     protected override async Task<IEnumerable<FormControlViewModel>> GenerateFormControlsAsync(
@@ -174,7 +164,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters)
             .ToListAsync();
 
-        var contestId = this.GetContestId(entityDict, entity);
+        var contestId = GetContestId(entityDict, entity);
 
         if (contestId == default)
         {
@@ -196,45 +186,43 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             IsReadOnly = true,
         });
 
-        formControls.Add(new FormControlViewModel
+        if (!contest.IsOnline)
         {
-            Name = AdditionalFields.ProblemGroupType.ToString(),
-            Options = EnumUtils.GetValuesFrom<ProblemGroupType>().Cast<object>(),
-            Type = typeof(ProblemGroupType),
-            Value = entity.ProblemGroup?.Type ?? default(ProblemGroupType),
-        });
+            formControls.Add(new FormControlViewModel
+            {
+                Name = AdditionalFormFields.ProblemGroupType.ToString(),
+                Options = EnumUtils.GetValuesFrom<ProblemGroupType>().Cast<object>(),
+                Type = typeof(ProblemGroupType),
+                Value = entity.ProblemGroup?.Type ?? default(ProblemGroupType),
+            });
+
+            formControls.First(x => x.Name == nameof(Data.Models.Problems.Problem.ProblemGroup)).IsHidden = true;
+        }
 
         formControls.Add(new FormControlViewModel
         {
-            Name = AdditionalFields.SolutionSkeletonData.ToString(),
+            Name = AdditionalFormFields.SolutionSkeletonData.ToString(),
             Value = entity.SolutionSkeleton?.Decompress(),
             Type = typeof(string),
         });
 
         formControls.Add(new FormControlViewModel
         {
-            Name = AdditionalFields.Tests.ToString(),
+            Name = AdditionalFormFields.Tests.ToString(),
             Type = typeof(IFormFile),
         });
 
         formControls.Add(new FormControlViewModel
         {
-            Name = AdditionalFields.AdditionalFiles.ToString(),
+            Name = AdditionalFormFields.AdditionalFiles.ToString(),
             Type = typeof(IFormFile),
         });
-
-        if (entity.ProblemGroup == null || !contest.IsOnline)
-        {
-            formControls = formControls
-                .Where(fc => fc.Name != nameof(Data.Models.Problems.Problem.ProblemGroup))
-                .ToList();
-        }
 
         var submissionTypes = entity.SubmissionTypesInProblems.ToList();
 
         formControls.Add(new FormControlViewModel
         {
-            Name = AdditionalFields.SubmissionTypes.ToString(),
+            Name = AdditionalFormFields.SubmissionTypes.ToString(),
             Options = this.submissionTypesData
                 .GetQuery()
                 .ToList()
@@ -261,7 +249,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     // TODO: move more logic from old judge
     protected override async Task BeforeEntitySaveOnCreateAsync(Problem entity, AdminActionContext actionContext)
     {
-        var contestId = this.GetContestId(actionContext.EntityDict, entity);
+        var contestId = GetContestId(actionContext.EntityDict, entity);
 
         if (entity.ProblemGroupId == default)
         {
@@ -269,69 +257,35 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             {
                 ContestId = contestId,
                 OrderBy = entity.OrderBy,
-                Type = GetProblemGroupType(actionContext.EntityDict).GetValidTypeOrNull(),
+                Type = actionContext.GetProblemGroupType().GetValidTypeOrNull(),
             };
         }
 
         await this.TryAddTestsToProblem(entity, actionContext);
     }
 
-    protected override Task BeforeEntitySaveOnEditAsync(
+    protected override async Task BeforeEntitySaveOnEditAsync(
         Problem originalEntity,
         Problem newEntity,
         AdminActionContext actionContext)
     {
-        // TODO: move logic from old judge
-        var contestId = this.GetContestId(actionContext.EntityDict, newEntity);
-
-        return base.BeforeEntitySaveOnCreateAsync(newEntity, actionContext);
-    }
-
-    private async Task<ValidatorResult> ValidateContestPermissions(
-        Problem existingEntity,
-        Problem newEntity,
-        AdminActionContext actionContext)
-    {
-        var userId = this.User.GetId();
-        var isUserAdmin = this.User.IsAdmin();
-        var contestId = this.GetContestId(actionContext.EntityDict, newEntity);
-
-        if (contestId == default)
+        if (!originalEntity.ProblemGroup.Contest.IsOnline)
         {
-            return ValidatorResult.Error("A contest should be specified for the problem.");
+            newEntity.ProblemGroup.OrderBy = newEntity.OrderBy;
         }
 
-        if (!await this.contestsBusiness.UserHasContestPermissions(contestId, userId, isUserAdmin))
-        {
-            return ValidatorResult.Error(GeneralResource.No_permissions_for_contest);
-        }
-
-        return ValidatorResult.Success();
+        await base.BeforeEntitySaveOnEditAsync(originalEntity, newEntity, actionContext);
     }
 
-    private static byte[] GetSolutionSkeleton(IDictionary<string, string> entityDict)
-        => entityDict[AdditionalFields.SolutionSkeletonData.ToString()].Compress();
-
-    private int GetContestId(IDictionary<string, string> entityDict, Problem? problem)
-        => entityDict.TryGetValue(this.GetComplexFormControlNameFor<Contest>(), out var contestIdStr)
-            ? int.Parse(contestIdStr)
-            : problem?.ProblemGroup?.ContestId ?? default;
-
-    private static IFormFile? GetFormFile(AdminActionContext actionContext, AdditionalFields field)
-        => actionContext.Files.SingleFiles.FirstOrDefault(f => f.Name == field.ToString());
-
-    private static ProblemGroupType? GetProblemGroupType(IDictionary<string, string> entityDict)
-        => entityDict[AdditionalFields.ProblemGroupType.ToString()].ToEnum<ProblemGroupType>();
-
-    private static IEnumerable<CheckboxFormControlViewModel> GetSubmissionTypes(IDictionary<string, string> entityDict)
-        => entityDict[AdditionalFields.SubmissionTypes.ToString()].FromJson<IEnumerable<CheckboxFormControlViewModel>>();
+    private static int GetContestId(IDictionary<string, string> entityDict, Problem? problem)
+        => entityDict.TryGetEntityId<Contest>() ?? problem?.ProblemGroup?.ContestId ?? default;
 
     private static void TryAddSolutionSkeleton(Problem problem, AdminActionContext actionContext)
-        => problem.SolutionSkeleton = GetSolutionSkeleton(actionContext.EntityDict);
+        => problem.SolutionSkeleton = actionContext.GetSolutionSkeleton();
 
     private static async Task TryAddAdditionalFiles(Problem problem, AdminActionContext actionContext)
     {
-        var additionalFiles = GetFormFile(actionContext, AdditionalFields.AdditionalFiles);
+        var additionalFiles = actionContext.GetFormFile(AdditionalFormFields.AdditionalFiles);
 
         if (additionalFiles == null)
         {
@@ -343,7 +297,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
     private async Task TryAddTestsToProblem(Problem problem, AdminActionContext actionContext)
     {
-        var tests = GetFormFile(actionContext, AdditionalFields.Tests);
+        var tests = actionContext.GetFormFile(AdditionalFormFields.Tests);
 
         if (tests == null)
         {
@@ -378,7 +332,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
     private static void AddSubmissionTypes(Problem problem, AdminActionContext actionContext)
     {
-        var newSubmissionTypes = GetSubmissionTypes(actionContext.EntityDict)
+        var newSubmissionTypes = actionContext.GetSubmissionTypes()
             .Where(x => x.IsChecked)
             .Select(x => new SubmissionTypeInProblem
             {
@@ -389,20 +343,4 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         problem.SubmissionTypesInProblems.Clear();
         problem.SubmissionTypesInProblems.AddRange(newSubmissionTypes);
     }
-
-    private ValidatorResult ValidateUploadedFiles(
-        Problem existingEntity,
-        Problem newEntity,
-        AdminActionContext actionContext)
-        => actionContext.Files.SingleFiles.Any(f => this.fileSystem.GetFileExtension(f) != GlobalConstants.FileExtensions.Zip)
-            ? ValidatorResult.Error(GlobalResource.Must_be_zip_file)
-            : ValidatorResult.Success();
-
-    private static ValidatorResult ValidateSubmissionTypeIsSelected(
-        Problem existingEntity,
-        Problem newEntity,
-        AdminActionContext actionContext)
-        => GetSubmissionTypes(actionContext.EntityDict).Any(s => s.IsChecked)
-            ? ValidatorResult.Success()
-            : ValidatorResult.Error(GlobalResource.Select_one_submission_type);
 }

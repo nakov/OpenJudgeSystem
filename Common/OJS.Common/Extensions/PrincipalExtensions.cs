@@ -1,6 +1,5 @@
-namespace OJS.Servers.Infrastructure.Extensions
+namespace OJS.Common.Extensions
 {
-    using OJS.Common;
     using System.Security.Claims;
     using System.Security.Principal;
 

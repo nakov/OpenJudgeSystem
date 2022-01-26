@@ -3,6 +3,7 @@ namespace OJS.Servers.Infrastructure.Middleware
     using Microsoft.AspNetCore.Diagnostics;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using OJS.Common.Extensions;
     using OJS.Servers.Infrastructure.Extensions;
     using OJS.Services.Infrastructure.Exceptions;
     using System;
