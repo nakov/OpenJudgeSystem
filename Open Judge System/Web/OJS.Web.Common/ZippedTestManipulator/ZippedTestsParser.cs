@@ -10,6 +10,7 @@
     using OJS.Common;
     using OJS.Data.Models;
     using OJS.Web.Common.Extensions;
+    using OJS.Web.Common.Helpers;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
 
@@ -35,6 +36,8 @@
 
         public static int AddTestsToProblem(Problem problem, TestsParseResult tests)
         {
+            var tryOptimizeMysqlQuery = ShouldTryOptimizeMysqlQuery(problem);
+
             var lastTrialTest = problem.Tests
                 .Where(x => x.IsTrialTest)
                 .OrderByDescending(x => x.OrderBy)
@@ -56,7 +59,7 @@
                     IsTrialTest = true,
                     OrderBy = zeroTestsOrder,
                     Problem = problem,
-                    InputDataAsString = tests.ZeroInputs[i],
+                    InputDataAsString = GetInputData(tests.ZeroInputs[i], tryOptimizeMysqlQuery),
                     OutputDataAsString = tests.ZeroOutputs[i],
                 });
 
@@ -84,7 +87,7 @@
                     IsOpenTest = true,
                     OrderBy = orderBy,
                     Problem = problem,
-                    InputDataAsString = tests.OpenInputs[i],
+                    InputDataAsString = GetInputData(tests.OpenInputs[i], tryOptimizeMysqlQuery),
                     OutputDataAsString = tests.OpenOutputs[i]
                 });
 
@@ -99,7 +102,7 @@
                     IsTrialTest = false,
                     OrderBy = orderBy,
                     Problem = problem,
-                    InputDataAsString = tests.Inputs[i],
+                    InputDataAsString = GetInputData(tests.Inputs[i], tryOptimizeMysqlQuery),
                     OutputDataAsString = tests.Outputs[i]
                 });
 
@@ -364,5 +367,14 @@
         private static bool IsStandardOpenTest(ZipEntry input, ZipEntry output) =>
             input.FileName.Contains(WebConstants.OpenTestStandardSignature) &&
             output.FileName.Contains(WebConstants.OpenTestStandardSignature);
+
+        private static string GetInputData(string input, bool optimizeMysqlQuery)
+            => optimizeMysqlQuery ? MySqlStrategiesHelper.TryOptimizeQuery(input) : input;
+
+        private static bool ShouldTryOptimizeMysqlQuery(Problem problem)
+            => problem.SubmissionTypes
+                .Any(
+                    st => MySqlStrategiesHelper.ExecutionStrategyTypesForOptimization
+                        .Any(x => x == st.ExecutionStrategyType));
     }
 }
