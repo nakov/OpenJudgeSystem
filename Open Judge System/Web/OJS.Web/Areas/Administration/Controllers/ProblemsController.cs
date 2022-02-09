@@ -40,11 +40,11 @@
     using OJS.Web.Common;
     using OJS.Web.Common.Attributes;
     using OJS.Web.Common.Extensions;
+    using OJS.Web.Common.Helpers;
     using OJS.Web.Common.ZippedTestManipulator;
     using OJS.Web.ViewModels.Common;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Extensions;
-
     using GeneralResource = Resources.Areas.Administration.AdministrationGeneral;
     using GlobalResource = Resources.Areas.Administration.Problems.ProblemsControllers;
     using ViewModelType = OJS.Web.Areas.Administration.ViewModels.Problem.ProblemAdministrationViewModel;
@@ -213,6 +213,8 @@
                 }
             });
 
+            problem.SolutionSkeleton = this.GetOptimizedSolutionSkeleton(problem);
+
             if (problem.SolutionSkeletonData != null && problem.SolutionSkeletonData.Any())
             {
                 newProblem.SolutionSkeleton = problem.SolutionSkeletonData;
@@ -345,6 +347,8 @@
 
                 return this.View(problem);
             }
+
+            problem.SolutionSkeleton = this.GetOptimizedSolutionSkeleton(problem);
 
             existingProblem = problem.GetEntityModel(existingProblem);
             existingProblem.Checker = this.checkersData.GetByName(problem.Checker);
@@ -955,6 +959,23 @@
             }
 
             return isValid;
+        }
+
+        private string GetOptimizedSolutionSkeleton(ProblemAdministrationViewModel problem)
+        {
+            var skeleton = problem.SolutionSkeleton;
+
+            var tryOptimizeMysql = problem.SubmissionTypes
+                .Any(
+                    st => st.IsChecked && MySqlStrategiesHelper.ExecutionStrategyTypesForOptimization
+                        .Any(x => x == st.ExecutionStrategyType));
+
+            if (tryOptimizeMysql)
+            {
+                skeleton = MySqlStrategiesHelper.TryOptimizeQuery(skeleton);
+            }
+
+            return skeleton;
         }
     }
 }
