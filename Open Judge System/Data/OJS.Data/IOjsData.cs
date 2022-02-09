@@ -48,6 +48,8 @@
 
         IRepository<AccessLog> AccessLogs { get; }
 
+        IRepository<Test> Tests { get; }
+
         IOjsDbContext Context { get; }
 
         int SaveChanges();

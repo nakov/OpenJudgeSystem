@@ -53,6 +53,8 @@
 
         public IRepository<AccessLog> AccessLogs => this.GetRepository<AccessLog>();
 
+        public IRepository<Test> Tests => this.GetRepository<Test>();
+
         public IDeletableEntityRepository<FeedbackReport> FeedbackReports =>
             this.GetDeletableEntityRepository<FeedbackReport>();
 
