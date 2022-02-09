@@ -49,7 +49,7 @@
         }
 
         private static string FormatInsertStatement(
-            string currLine,
+            string line,
             string prevLine,
             string nextLine,
             Regex insertStatementRegex)
@@ -59,22 +59,22 @@
 
             if (prevLineIsInsertStatement || nextLineIsInsertStatement)
             {
-                var currLineInsertTable = insertStatementRegex.Match(currLine).Groups[1].Value;
+                var lineInsertTable = insertStatementRegex.Match(line).Groups[1].Value;
                 var prevLineInsertTable = insertStatementRegex.Match(prevLine).Groups[1].Value;
                 var nextLineInsertTable = insertStatementRegex.Match(nextLine).Groups[1].Value;
 
-                if (currLineInsertTable == prevLineInsertTable)
+                if (lineInsertTable == prevLineInsertTable)
                 {
-                    currLine = insertStatementRegex.Replace(currLine, string.Empty);
+                    line = insertStatementRegex.Replace(line, string.Empty);
                 }
 
-                if (currLineInsertTable == nextLineInsertTable)
+                if (lineInsertTable == nextLineInsertTable)
                 {
-                    currLine = currLine.TrimEnd(';') + ',';
+                    line = line.Trim().TrimEnd(';') + ',';
                 }
             }
 
-            return currLine;
+            return line;
         }
     }
 }
