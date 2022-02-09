@@ -26,7 +26,7 @@
 
             var newQuery = new StringBuilder();
 
-            var lines = query.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            var lines = query.Split(new[] { "\n", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             var insertStatementRegex = new Regex(InsertIntoTableRegexPattern, RegexOptions.IgnoreCase);
 
             for (var i = 0; i < lines.Length; i++)
@@ -71,6 +71,10 @@
                 if (lineInsertTable == nextLineInsertTable)
                 {
                     line = line.Trim().TrimEnd(';') + ',';
+                }
+                else
+                {
+                    line += Environment.NewLine;
                 }
             }
 
