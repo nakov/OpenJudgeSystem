@@ -247,7 +247,7 @@
                 this.RedirectToContestsAdminPanelWithNoPrivilegesMessage();
             }
 
-            existingTest.InputDataAsString = this.GetOptimizedInput(test.InputFull, existingTest.ProblemId);
+            test.InputFull = this.GetOptimizedInput(test.InputFull, existingTest.ProblemId);
 
             using (var scope = TransactionsHelper.CreateTransactionScope(IsolationLevel.RepeatableRead))
             {
