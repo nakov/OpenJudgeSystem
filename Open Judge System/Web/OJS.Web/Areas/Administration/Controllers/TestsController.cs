@@ -738,7 +738,7 @@
                         .Any(x => x == est));
 
             return shouldTryOptimizeMysqlQuery
-                ? MySqlStrategiesHelper.TryOptimizeQuery(input)
+                ? MySqlStrategiesHelper.TryOptimizeQuery(input, out var newInput) ? newInput : input
                 : input;
         }
 

@@ -17,21 +17,19 @@
             ExecutionStrategyType.MySqlRunSkeletonRunQueriesAndCheckDatabase,
         };
 
-        public static string TryOptimizeQuery(string query)
-        {
-            if (string.IsNullOrWhiteSpace(query))
-            {
-                return query;
-            }
+        private static Regex InsertStatementRegex => new Regex(InsertIntoTableRegexPattern, RegexOptions.IgnoreCase);
 
-            var insertStatementRegex = new Regex(InsertIntoTableRegexPattern, RegexOptions.IgnoreCase);
-            if (!insertStatementRegex.IsMatch(query))
+        public static bool TryOptimizeQuery(string query, out string result)
+        {
+            if (string.IsNullOrWhiteSpace(query) || !QueryCanBeOptimized(query))
             {
-                return query;
+                result = query;
+                return false;
             }
 
             var lines = query.Split(new[] { "\n", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             var newQuery = new StringBuilder();
+            var wasOptimized = false;
 
             for (var i = 0; i < lines.Length; i++)
             {
@@ -39,40 +37,43 @@
                 var prevLine = i > 0 ? lines[i - 1] : string.Empty;
                 var nextLine = i < lines.Length - 1 ? lines[i + 1] : string.Empty;
 
-                if (insertStatementRegex.IsMatch(currLine))
+                if (InsertStatementRegex.IsMatch(currLine))
                 {
-                    currLine = FormatInsertStatement(currLine, prevLine, nextLine, insertStatementRegex);
+                    currLine = FormatInsertStatement(currLine, prevLine, nextLine, ref wasOptimized);
                 }
 
                 newQuery.AppendLine(currLine);
             }
 
-            return newQuery.ToString();
+            result = newQuery.ToString();
+            return wasOptimized;
         }
 
         private static string FormatInsertStatement(
             string line,
             string prevLine,
             string nextLine,
-            Regex insertStatementRegex)
+            ref bool wasOptimized)
         {
-            var prevLineIsInsertStatement = insertStatementRegex.IsMatch(prevLine);
-            var nextLineIsInsertStatement = insertStatementRegex.IsMatch(nextLine);
+            var prevLineIsInsertStatement = InsertStatementRegex.IsMatch(prevLine);
+            var nextLineIsInsertStatement = InsertStatementRegex.IsMatch(nextLine);
 
             if (prevLineIsInsertStatement || nextLineIsInsertStatement)
             {
-                var lineInsertTable = insertStatementRegex.Match(line).Groups[1].Value;
-                var prevLineInsertTable = insertStatementRegex.Match(prevLine).Groups[1].Value;
-                var nextLineInsertTable = insertStatementRegex.Match(nextLine).Groups[1].Value;
+                var lineInsertTable = InsertStatementRegex.Match(line).Groups[1].Value;
+                var prevLineInsertTable = InsertStatementRegex.Match(prevLine).Groups[1].Value;
+                var nextLineInsertTable = InsertStatementRegex.Match(nextLine).Groups[1].Value;
 
                 if (lineInsertTable == prevLineInsertTable)
                 {
-                    line = insertStatementRegex.Replace(line, string.Empty);
+                    line = InsertStatementRegex.Replace(line, string.Empty);
+                    wasOptimized = true;
                 }
 
                 if (lineInsertTable == nextLineInsertTable)
                 {
                     line = line.Trim().TrimEnd(';') + ',';
+                    wasOptimized = true;
                 }
                 else
                 {
@@ -82,5 +83,8 @@
 
             return line;
         }
+
+        private static bool QueryCanBeOptimized(string query)
+            => InsertStatementRegex.IsMatch(query);
     }
 }

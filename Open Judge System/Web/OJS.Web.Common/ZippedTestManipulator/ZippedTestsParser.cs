@@ -369,7 +369,14 @@
             output.FileName.Contains(WebConstants.OpenTestStandardSignature);
 
         private static string GetInputData(string input, bool optimizeMysqlQuery)
-            => optimizeMysqlQuery ? MySqlStrategiesHelper.TryOptimizeQuery(input) : input;
+        {
+            if (!optimizeMysqlQuery)
+            {
+                return input;
+            }
+
+            return MySqlStrategiesHelper.TryOptimizeQuery(input, out var newInput) ? newInput : input;
+        }
 
         private static bool ShouldTryOptimizeMysqlQuery(Problem problem)
             => problem.SubmissionTypes

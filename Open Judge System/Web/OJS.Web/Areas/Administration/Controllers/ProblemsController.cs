@@ -965,14 +965,16 @@
         {
             var skeleton = problem.SolutionSkeleton;
 
-            var tryOptimizeMysql = problem.SubmissionTypes
+            var shouldTryOptimizeMysql = problem.SubmissionTypes
                 .Any(
                     st => st.IsChecked && MySqlStrategiesHelper.ExecutionStrategyTypesForOptimization
                         .Any(x => x == st.ExecutionStrategyType));
 
-            if (tryOptimizeMysql)
+            if (shouldTryOptimizeMysql)
             {
-                skeleton = MySqlStrategiesHelper.TryOptimizeQuery(skeleton);
+                skeleton = MySqlStrategiesHelper.TryOptimizeQuery(skeleton, out var newSkeleton)
+                    ? newSkeleton
+                    : skeleton;
             }
 
             return skeleton;
