@@ -24,10 +24,14 @@
                 return query;
             }
 
-            var newQuery = new StringBuilder();
+            var insertStatementRegex = new Regex(InsertIntoTableRegexPattern, RegexOptions.IgnoreCase);
+            if (!insertStatementRegex.IsMatch(query))
+            {
+                return query;
+            }
 
             var lines = query.Split(new[] { "\n", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-            var insertStatementRegex = new Regex(InsertIntoTableRegexPattern, RegexOptions.IgnoreCase);
+            var newQuery = new StringBuilder();
 
             for (var i = 0; i < lines.Length; i++)
             {
@@ -43,9 +47,7 @@
                 newQuery.AppendLine(currLine);
             }
 
-            var result = newQuery.ToString();
-
-            return result;
+            return newQuery.ToString();
         }
 
         private static string FormatInsertStatement(
