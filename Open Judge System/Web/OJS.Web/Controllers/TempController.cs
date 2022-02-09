@@ -257,6 +257,9 @@
 
         public ActionResult OptimizeMysqlProblemSkeletonAndTestInputQueries()
         {
+            var changedSkeletonsCount = 0;
+            var changedTestsCount = 0;
+
             var problems = this.Data.Problems.All()
                 .Include(p => p.Tests)
                 .Where(
@@ -276,6 +279,7 @@
                         problem.SolutionSkeleton = newSkeleton.Compress();
 
                         this.Data.Problems.Update(problem);
+                        changedSkeletonsCount++;
                     }
                 }
 
@@ -286,13 +290,17 @@
                         test.InputData = newInput.Compress();
 
                         this.Data.Tests.Update(test);
+                        changedTestsCount++;
                     }
                 }
             }
 
             this.Data.SaveChanges();
 
-            return this.Content($"Done. Processed {problems.Count} Problems.");
+            return this.Content(
+                $"Done. Processed {problems.Count} Problems. <br/>" +
+                $"Updated {changedSkeletonsCount} solution skeletons. <br/>" +
+                $"Updated {changedTestsCount} test inputs.");
         }
     }
 }
