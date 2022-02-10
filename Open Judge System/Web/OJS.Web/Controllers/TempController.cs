@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Data.Entity;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
@@ -26,6 +27,8 @@
     using OJS.Services.Data.ProblemGroups;
     using OJS.Services.Data.SubmissionsForProcessing;
     using OJS.Web.Common.Attributes;
+    using OJS.Web.Common.Helpers;
+    using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Helpers;
 
     [AuthorizeRoles(SystemRole.Administrator)]
@@ -250,6 +253,54 @@
                 $@"Done. Changed Id of User ""{userName}"" to match the Id from Suls that is ""{correctUserId}""
                 and modified his {participantIdsForUser.Count} Participants and {examGroupsForUser.Count} ExamGroups
                 to point to the new Id");
+        }
+
+        public ActionResult OptimizeMysqlProblemSkeletonAndTestInputQueries()
+        {
+            var changedSkeletonsCount = 0;
+            var changedTestsCount = 0;
+
+            var problems = this.Data.Problems.All()
+                .Include(p => p.Tests)
+                .Where(
+                    p => p.SubmissionTypes.Any(
+                        st => MySqlStrategiesHelper.ExecutionStrategyTypesForOptimization
+                            .Any(x => x == st.ExecutionStrategyType)))
+                .ToList();
+
+            foreach (var problem in problems)
+            {
+                var skeleton = problem.SolutionSkeleton.Decompress();
+
+                if (!string.IsNullOrWhiteSpace(skeleton))
+                {
+                    if (MySqlStrategiesHelper.TryOptimizeQuery(skeleton, out var newSkeleton))
+                    {
+                        problem.SolutionSkeleton = newSkeleton.Compress();
+
+                        this.Data.Problems.Update(problem);
+                        changedSkeletonsCount++;
+                    }
+                }
+
+                foreach (var test in problem.Tests)
+                {
+                    if (MySqlStrategiesHelper.TryOptimizeQuery(test.InputDataAsString, out var newInput))
+                    {
+                        test.InputData = newInput.Compress();
+
+                        this.Data.Tests.Update(test);
+                        changedTestsCount++;
+                    }
+                }
+            }
+
+            this.Data.SaveChanges();
+
+            return this.Content(
+                $"Done. Processed {problems.Count} Problems. <br/>" +
+                $"Updated {changedSkeletonsCount} solution skeletons. <br/>" +
+                $"Updated {changedTestsCount} test inputs.");
         }
     }
 }

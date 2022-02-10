@@ -34,9 +34,10 @@
     using OJS.Web.Areas.Administration.ViewModels.TestRun;
     using OJS.Web.Common;
     using OJS.Web.Common.Extensions;
+    using OJS.Web.Common.Helpers;
     using OJS.Web.Common.ZippedTestManipulator;
     using OJS.Workers.Common;
-
+    using OJS.Workers.Common.Models;
     using static OJS.Web.Common.WebConstants;
 
     using GeneralResource = Resources.Areas.Administration.AdministrationGeneral;
@@ -169,7 +170,7 @@
 
             this.testsData.Add(new Test
             {
-                InputDataAsString = test.InputFull,
+                InputDataAsString = this.GetOptimizedInput(test.InputFull, id),
                 OutputDataAsString = test.OutputFull,
                 ProblemId = id,
                 IsTrialTest = test.Type == TestType.Trial,
@@ -245,6 +246,8 @@
             {
                 this.RedirectToContestsAdminPanelWithNoPrivilegesMessage();
             }
+
+            test.InputFull = this.GetOptimizedInput(test.InputFull, existingTest.ProblemId);
 
             using (var scope = TransactionsHelper.CreateTransactionScope(IsolationLevel.RepeatableRead))
             {
@@ -724,5 +727,25 @@
 
             return result;
         }
+
+        private string GetOptimizedInput(string input, int problemId)
+        {
+            var executionStrategyTypes = this.GetExecutionStrategyTypesForProblem(problemId);
+
+            var shouldTryOptimizeMysqlQuery = executionStrategyTypes
+                .Any(
+                    est => MySqlStrategiesHelper.ExecutionStrategyTypesForOptimization
+                        .Any(x => x == est));
+
+            return shouldTryOptimizeMysqlQuery
+                ? MySqlStrategiesHelper.TryOptimizeQuery(input, out var newInput) ? newInput : input
+                : input;
+        }
+
+        private IEnumerable<ExecutionStrategyType> GetExecutionStrategyTypesForProblem(int problemId)
+            => this.problemsData.GetByIdQuery(problemId)
+                .SelectMany(p => p.SubmissionTypes)
+                .Select(st => st.ExecutionStrategyType)
+                .ToList();
     }
 }

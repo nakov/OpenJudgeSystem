@@ -7,6 +7,7 @@
     using OJS.Common.DataAnnotations;
     using OJS.Data.Models;
     using OJS.Web.Areas.Administration.ViewModels.Problem;
+    using OJS.Workers.Common.Models;
 
     public class SubmissionTypeViewModel
     {
@@ -18,7 +19,8 @@
                 return st => new SubmissionTypeViewModel
                 {
                     Id = st.Id,
-                    Name = st.Name
+                    Name = st.Name,
+                    ExecutionStrategyType = st.ExecutionStrategyType,
                 };
             }
         }
@@ -29,6 +31,8 @@
 
         public bool IsChecked { get; set; }
 
+        public ExecutionStrategyType ExecutionStrategyType { get; set; }
+
         public static Action<SubmissionTypeViewModel> ApplySelectedTo(ProblemAdministrationViewModel problem)
         {
             return st =>
@@ -38,6 +42,7 @@
                     Id = st.Id,
                     Name = st.Name,
                     IsChecked = false,
+                    ExecutionStrategyType = st.ExecutionStrategyType,
                 };
 
                 var selectedSubmission = problem.SelectedSubmissionTypes.FirstOrDefault(s => s.Id == st.Id);
