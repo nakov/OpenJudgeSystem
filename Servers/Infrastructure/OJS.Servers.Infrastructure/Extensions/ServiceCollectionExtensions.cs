@@ -3,6 +3,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Hangfire;
     using Hangfire.SqlServer;
     using Microsoft.AspNetCore.DataProtection;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
@@ -76,7 +77,8 @@ namespace OJS.Servers.Infrastructure.Extensions
         {
             services
                 .AddConventionServices<TStartUp>()
-                .AddTransient(typeof(IDataService<>), typeof(DataService<>));
+                .AddTransient(typeof(IDataService<>), typeof(DataService<>))
+                .AddHttpContextServices();
 
             services.AddHttpClient<IHttpClientService, HttpClientService>(ConfigureHttpClient);
             services.AddHttpClient<ISulsPlatformHttpClientService, SulsPlatformHttpClientService>(ConfigureHttpClient);
@@ -84,6 +86,11 @@ namespace OJS.Servers.Infrastructure.Extensions
 
             return services;
         }
+
+        private static IServiceCollection AddHttpContextServices(this IServiceCollection services)
+            =>  services
+                .AddHttpContextAccessor()
+                .AddTransient(s => s.GetRequiredService<IHttpContextAccessor>().HttpContext!.User);
 
         private static IServiceCollection AddAuthenticationServices(this IServiceCollection services)
         {
