@@ -14,6 +14,7 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
         {
             public const string Role = "role";
             public const string EmailAddress = "email";
+            public const string NameIdentifier = "nameidentifier";
             public const string Subject = "sub";
 
             public const string Administrator = "Administrator";
@@ -22,7 +23,7 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
 
         public static async Task<string> GetUserId(this HttpContext httpContext)
             => httpContext.User
-                ?.Claims.FirstOrDefault(x => x.Type == Constants.Subject)
+                ?.Claims.FirstOrDefault(x => x.Type.Contains(Constants.NameIdentifier))
                 ?.Value;
 
         public static async Task<string> GetUserEmail(this HttpContext httpContext)

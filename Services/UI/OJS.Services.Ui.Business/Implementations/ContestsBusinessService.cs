@@ -1,3 +1,5 @@
+using OJS.Services.Common;
+
 namespace OJS.Services.Ui.Business.Implementations
 {
     using System;
@@ -23,6 +25,7 @@ namespace OJS.Services.Ui.Business.Implementations
         private readonly IParticipantsBusinessService participantsBusiness;
         private readonly IParticipantScoresDataService participantScoresData;
         private readonly IUsersBusinessService usersBusinessService;
+        private readonly IUserProviderService userProviderService;
 
         public ContestsBusinessService(
             IContestsDataService contestsData,
@@ -30,6 +33,7 @@ namespace OJS.Services.Ui.Business.Implementations
             IParticipantsDataService participantsData,
             IParticipantScoresDataService participantScoresData,
             IUsersBusinessService usersBusinessService,
+            IUserProviderService userProviderService,
             IParticipantsBusinessService participantsBusiness)
         {
             this.contestsData = contestsData;
@@ -37,12 +41,15 @@ namespace OJS.Services.Ui.Business.Implementations
             this.participantsData = participantsData;
             this.participantScoresData = participantScoresData;
             this.usersBusinessService = usersBusinessService;
+            this.userProviderService = userProviderService;
             this.participantsBusiness = participantsBusiness;
         }
 
         public async Task<ContestParticipationServiceModel> StartContestParticipation(StartContestParticipationServiceModel model)
         {
             var contest = await this.contestsData.OneById(model.ContestId);
+
+            var user = this.userProviderService.GetCurrentUser();
 
             var isUserAdmin = await this.usersBusinessService.IsLoggedInUserAdmin(model.UserPrincipal);
 
