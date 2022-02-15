@@ -6,14 +6,10 @@ namespace OJS.Servers.Ui
     public class Program
     {
         public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
-            builder.Services.ConfigureServices<Program>(builder.Configuration);
-
-            builder
+            => WebApplication.CreateBuilder(args)
+                .ConfigureBuilder<Program>()
                 .Build()
-                .Configure()
+                .ConfigureWebApplication()
                 .Run();
-        }
     }
 }

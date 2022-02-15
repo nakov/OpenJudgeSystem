@@ -9,12 +9,11 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
 
     public static class WebApplicationExtensions
     {
-        public static WebApplication Configure(this WebApplication app)
+        public static WebApplication ConfigureWebApplication(this WebApplication app)
         {
             app
                 .UseDefaults()
                 .MapDefaultRoutes();
-
 
             app.UseSpaStaticFiles();
 

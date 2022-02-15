@@ -8,7 +8,7 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
 
     public static class WebApplicationExtensions
     {
-        public static WebApplication Configure(this WebApplication app)
+        public static WebApplication ConfigureWebApplication(this WebApplication app)
             => app
                 .UseDefaults()
                 .UseAutoCrudAdmin()

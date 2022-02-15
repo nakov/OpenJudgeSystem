@@ -12,6 +12,7 @@ using OJS.Common.Utils;
 using OJS.Data.Models;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
+using OJS.Data.Models.Tests;
 using OJS.Servers.Administration.Models.Problems;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business;
@@ -20,7 +21,6 @@ using OJS.Services.Administration.Business.Validation;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.Problems;
-using OJS.Services.Common;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
@@ -37,7 +37,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     private readonly IContestsBusinessService contestsBusiness;
     private readonly IContestsDataService contestsData;
     private readonly IProblemsDataService problemsData;
-    private readonly IFileSystemService fileSystem;
     private readonly IZippedTestsParserService zippedTestsParser;
     private readonly ISubmissionTypesDataService submissionTypesData;
     private readonly IProblemsValidationService problemsValidation;
@@ -47,7 +46,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         IContestsBusinessService contestsBusiness,
         IContestsDataService contestsData,
         IProblemsDataService problemsData,
-        IFileSystemService fileSystem,
         IZippedTestsParserService zippedTestsParser,
         ISubmissionTypesDataService submissionTypesData,
         IProblemsValidationService problemsValidation)
@@ -56,10 +54,15 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         this.contestsBusiness = contestsBusiness;
         this.contestsData = contestsData;
         this.problemsData = problemsData;
-        this.fileSystem = fileSystem;
         this.zippedTestsParser = zippedTestsParser;
         this.submissionTypesData = submissionTypesData;
         this.problemsValidation = problemsValidation;
+    }
+
+    public IActionResult ByContest(int contestId)
+    {
+        this.MasterGridFilter = p => p.ProblemGroup.ContestId == contestId;
+        return base.Index();
     }
 
     public override Task<IActionResult> Create(IDictionary<string, string> complexId, string postEndpointName)
@@ -75,6 +78,17 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     [HttpPost]
     public Task<IActionResult> Edit(IDictionary<string, string> entityDict, IFormFile tests, IFormFile additionalFiles)
         => base.PostEdit(entityDict, new FormFilesContainer(tests, additionalFiles));
+
+    public IActionResult Tests([FromQuery] IDictionary<string, string> complexId)
+    {
+        if (!int.TryParse(complexId.Values.FirstOrDefault(), out var id))
+        {
+            this.TempData.AddDangerMessage(GlobalResource.Invalid_problem);
+            return this.RedirectToAction("Index", "Problems");
+        }
+
+        return this.RedirectToActionWithNumberFilter(nameof(TestsController), nameof(Test.ProblemId), id);
+    }
 
     public async Task<IActionResult> Retest([FromQuery] IDictionary<string, string> complexId)
     {
@@ -140,6 +154,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         => new []
         {
             new GridAction { Action = nameof(this.Retest) },
+            new GridAction { Action = nameof(this.Tests) },
         };
 
     protected override IEnumerable<Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>>
@@ -149,7 +164,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     protected override IEnumerable<Func<Problem, Problem, AdminActionContext, ValidatorResult>> EntityValidators
         => this.problemsValidation.GetValidators();
 
-    // TODO: move more logic from old judge
     protected override async Task<IEnumerable<FormControlViewModel>> GenerateFormControlsAsync(
         Problem entity,
         EntityAction action,

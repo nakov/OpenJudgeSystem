@@ -16,7 +16,8 @@
         "DbContext": "Server=.;Database=OpenJudgeSystem;Integrated Security=True;",
         "PATH_TO_COMMON_KEY_RING_FOLDER": "../../../Keys",
         "SULS_PLATFORM_BASE_URL": "https://localhost:44304",
-        "SULS_PLATFORM_API_KEY": "1234"
+        "SULS_PLATFORM_API_KEY": "1234",
+        "LOGGER_FILES_FOLDER_PATH": "../../../../Logs"
       }
     },
     "OJS.Servers.Ui": {
@@ -29,7 +30,8 @@
         "DbContext": "Server=217.174.159.217;Database=OpenJudgeSystem;User Id=sa;Password=y#4jS1ys$jBC*ChY;",
         "PATH_TO_COMMON_KEY_RING_FOLDER": "../../../Keys",
         "SULS_PLATFORM_BASE_URL": "https://localhost:44304",
-        "SULS_PLATFORM_API_KEY": "1234"
+        "SULS_PLATFORM_API_KEY": "1234",
+        "LOGGER_FILES_FOLDER_PATH": "../../../Logs"
       }
     }
   }

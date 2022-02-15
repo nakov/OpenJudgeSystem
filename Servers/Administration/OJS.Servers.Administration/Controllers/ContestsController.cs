@@ -5,6 +5,7 @@ namespace OJS.Servers.Administration.Controllers
     using Microsoft.AspNetCore.Mvc;
     using OJS.Data.Models;
     using OJS.Data.Models.Contests;
+    using OJS.Data.Models.Participants;
     using OJS.Data.Models.Problems;
     using OJS.Servers.Administration.Models.Contests;
     using OJS.Services.Administration.Business.Extensions;
@@ -62,6 +63,18 @@ namespace OJS.Servers.Administration.Controllers
         public IActionResult CreateProblem([FromQuery] IDictionary<string, string> complexId)
             => this.RedirectToAction("Create", "Problems", new { ContestId = complexId.Values.First() });
 
+        public IActionResult Participants([FromQuery] IDictionary<string, string> complexId)
+            => this.RedirectToActionWithNumberFilter(
+                nameof(ParticipantsController),
+                nameof(Participant.ContestId),
+                int.Parse(complexId.Values.First()));
+
+        public IActionResult Problems([FromQuery] IDictionary<string, string> complexId)
+        {
+            var contestId = int.Parse(complexId.Values.First());
+            return this.RedirectToAction("ByContest", "Problems", new { contestId });
+        }
+
         protected override IEnumerable<Func<Contest, Contest, AdminActionContext, ValidatorResult>> EntityValidators
             => this.contestsValidation.GetValidators();
 
@@ -82,7 +95,9 @@ namespace OJS.Servers.Administration.Controllers
             {
                 new GridAction { Action = nameof(this.DownloadSubmissions) },
                 new GridAction { Action = nameof(this.ExportResults) },
+                new GridAction { Action = nameof(this.Problems) },
                 new GridAction { Action = nameof(this.CreateProblem) },
+                new GridAction { Action = nameof(this.Participants) },
             };
 
         protected override async Task BeforeEntitySaveOnEditAsync(

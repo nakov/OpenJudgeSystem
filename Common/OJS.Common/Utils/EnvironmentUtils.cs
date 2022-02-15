@@ -1,6 +1,7 @@
 namespace OJS.Common.Utils
 {
     using OJS.Common.Enumerations;
+    using OJS.Common.Extensions;
     using System;
     using System.Text.RegularExpressions;
     using static OJS.Common.GlobalConstants.EnvironmentVariables;
@@ -20,6 +21,9 @@ namespace OJS.Common.Utils
 
         public static string? GetApplicationUrl(ApplicationName appName)
             => Environment.GetEnvironmentVariable(GetApplicationUrlEnvironmentName(appName));
+
+        public static string GetLoggerFilePath<TProjectStartUp>()
+            => $"{Environment.GetEnvironmentVariable(LoggerFilesFolderPath)}/{typeof(TProjectStartUp).GetProjectName()}";
 
         private static string GetConnectionStringName(ApplicationName appName, bool appUsesMultipleDatabases)
             => appUsesMultipleDatabases
