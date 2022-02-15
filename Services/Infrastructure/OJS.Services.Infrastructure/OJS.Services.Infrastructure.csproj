@@ -9,7 +9,7 @@
       <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
       <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="6.0.0" />
       <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.0" />
-      <PackageReference Include="SoftUni.Services.Infrastructure" Version="1.0.5" />
+      <PackageReference Include="SoftUni.Services.Infrastructure" Version="1.0.6" />
     </ItemGroup>
 
     <ItemGroup>
