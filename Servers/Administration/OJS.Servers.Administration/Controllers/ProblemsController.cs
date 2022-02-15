@@ -59,6 +59,12 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         this.problemsValidation = problemsValidation;
     }
 
+    public IActionResult ByContest(int contestId)
+    {
+        this.MasterGridFilter = p => p.ProblemGroup.ContestId == contestId;
+        return base.Index();
+    }
+
     public override Task<IActionResult> Create(IDictionary<string, string> complexId, string postEndpointName)
         => base.Create(complexId, nameof(Create));
 

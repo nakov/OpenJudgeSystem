@@ -69,6 +69,12 @@ namespace OJS.Servers.Administration.Controllers
                 nameof(Participant.ContestId),
                 int.Parse(complexId.Values.First()));
 
+        public IActionResult Problems([FromQuery] IDictionary<string, string> complexId)
+        {
+            var contestId = int.Parse(complexId.Values.First());
+            return this.RedirectToAction("ByContest", "Problems", new { contestId });
+        }
+
         protected override IEnumerable<Func<Contest, Contest, AdminActionContext, ValidatorResult>> EntityValidators
             => this.contestsValidation.GetValidators();
 
@@ -89,6 +95,7 @@ namespace OJS.Servers.Administration.Controllers
             {
                 new GridAction { Action = nameof(this.DownloadSubmissions) },
                 new GridAction { Action = nameof(this.ExportResults) },
+                new GridAction { Action = nameof(this.Problems) },
                 new GridAction { Action = nameof(this.CreateProblem) },
                 new GridAction { Action = nameof(this.Participants) },
             };
