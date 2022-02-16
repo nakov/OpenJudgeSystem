@@ -1,12 +1,16 @@
-﻿using OJS.Common.Enumerations;
+﻿using AutoMapper;
+using OJS.Common.Enumerations;
+using OJS.Data.Models.Contests;
 using OJS.Services.Ui.Models.SubmissionTypes;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
+using SoftUni.AutoMapper.Infrastructure.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace OJS.Services.Ui.Models.Contests
 {
-    public class ContestServiceModel
+    public class ContestServiceModel : IMapExplicitly
     {
         public int Id { get; set; }
 
@@ -167,5 +171,27 @@ namespace OJS.Services.Ui.Models.Contests
         public bool UserIsParticipant { get; set; }
 
         public bool IsActive { get; set; }
+
+        public void RegisterMappings(IProfileExpression configuration)
+            => configuration.CreateMap<Contest, ContestServiceModel>()
+                .ForMember(d => d.HasContestQuestions,
+                    opt => opt.MapFrom(s => s.Questions.Any(x => x.AskOfficialParticipants)))
+                .ForMember(d => d.HasPracticeQuestions,
+                    opt => opt.MapFrom(s => s.Questions.Any(x => x.AskPracticeParticipants)))
+                .ForMember(d => d.OfficialParticipants,
+                    opt => opt.MapFrom(s => s.Participants.Count(x => x.IsOfficial)))
+                .ForMember(d => d.PracticeParticipants,
+                    opt => opt.MapFrom(s => s.Participants.Count(x => !x.IsOfficial)))
+                .ForMember(d => d.ProblemsCount,
+                    opt => opt.MapFrom(s => s.ProblemGroups.SelectMany(pg => pg.Problems).Count(p => !p.IsDeleted)))
+                .ForMember(d => d.ContestType, opt => opt.Ignore())
+                .ForMember(d => d.AllowedSubmissionTypes, opt => opt.Ignore())
+                .ForMember(d => d.Problems, opt => opt.Ignore())
+                // .ForMember(d => d.Problems, opt => opt.MapFrom(s => s.ProblemGroups.Select(pg => pg.Problems).ToList()))
+                .ForMember(d => d.ParentCategories, opt => opt.Ignore())
+                .ForMember(d => d.UserIsAdminOrLecturerInContest, opt => opt.Ignore())
+                .ForMember(d => d.UserCanCompete, opt => opt.Ignore())
+                .ForMember(d => d.UserIsParticipant, opt => opt.Ignore());
+
     }
 }

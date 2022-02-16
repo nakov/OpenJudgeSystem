@@ -9,10 +9,6 @@ namespace OJS.Services.Ui.Models.Contests
 
         public bool IsOfficial { get; set; }
 
-        public ClaimsPrincipal UserPrincipal { get; set; }
-
-        public string UserId { get; set; }
-
         public string UserHostAddress { get; set; }
     }
 }
