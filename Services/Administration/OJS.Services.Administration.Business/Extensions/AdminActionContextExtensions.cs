@@ -28,8 +28,8 @@ public static class AdminActionContextExtensions
         where TEntity : class
         => actionContext.EntityDict.TryGetEntityId<TEntity>();
 
-    public static byte[] GetSolutionSkeleton(this AdminActionContext actionContext)
-        => actionContext.EntityDict[AdditionalFormFields.SolutionSkeletonData.ToString()].Compress();
+    public static byte[] GetByteArrayFromStringInput(this AdminActionContext actionContext, AdditionalFormFields field)
+        => actionContext.EntityDict[field.ToString()].Compress();
 
     public static int? TryGetEntityId<TEntity>(this IDictionary<string, string> entityDict)
         where TEntity : class
