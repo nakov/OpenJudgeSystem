@@ -13,6 +13,21 @@ using System.Threading.Tasks;
 
 public class TestsController : BaseAutoCrudAdminController<Test>
 {
+    protected override IEnumerable<CustomGridColumn<Test>> CustomColumns
+        => new CustomGridColumn<Test>[]
+        {
+            new()
+            {
+                Name = AdditionalFormFields.Input.ToString(),
+                ValueFunc = t => t.InputDataAsString,
+            },
+            new()
+            {
+                Name = AdditionalFormFields.Output.ToString(),
+                ValueFunc = t => t.OutputDataAsString,
+            },
+        };
+
     protected override IEnumerable<FormControlViewModel> GenerateFormControls(
         Test entity,
         EntityAction action,
