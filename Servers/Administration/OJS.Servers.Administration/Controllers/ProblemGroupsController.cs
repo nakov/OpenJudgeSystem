@@ -40,6 +40,11 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
             Value = entity?.Type ?? default(ProblemGroupType),
         });
 
+        if (action == EntityAction.Edit)
+        {
+            formControls.First(fc => fc.Name == nameof(ProblemGroup.Contest)).IsReadOnly = true;
+        }
+
         return formControls;
     }
 }
