@@ -1,22 +1,38 @@
 namespace OJS.Servers.Administration.Controllers;
 
+using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Common.Enumerations;
 using OJS.Common.Utils;
 using OJS.Data.Models.Problems;
+using OJS.Services.Administration.Business.Validation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
 {
+    private readonly IProblemGroupsValidationService problemGroupsValidation;
+
+    public ProblemGroupsController(IProblemGroupsValidationService problemGroupsValidation)
+        => this.problemGroupsValidation = problemGroupsValidation;
+
     public IActionResult Problems([FromQuery] IDictionary<string, string> complexId)
         => this.RedirectToActionWithNumberFilter(
             nameof(ProblemsController),
             nameof(OJS.Data.Models.Problems.Problem.ProblemGroupId),
             int.Parse(complexId.Values.First()));
+
+    protected override IEnumerable<Func<ProblemGroup, ProblemGroup, AdminActionContext, ValidatorResult>>
+        EntityValidators
+        => this.problemGroupsValidation.GetValidators();
+
+    protected override IEnumerable<Func<ProblemGroup, ProblemGroup, AdminActionContext, Task<ValidatorResult>>>
+        AsyncEntityValidators
+        => this.problemGroupsValidation.GetAsyncValidators();
 
     protected override IEnumerable<GridAction> CustomActions
         => new GridAction[]

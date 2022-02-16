@@ -33,7 +33,7 @@ public static class AdminActionContextExtensions
 
     public static int? TryGetEntityId<TEntity>(this IDictionary<string, string> entityDict)
         where TEntity : class
-        => entityDict.TryGetValue(typeof(TEntity).Name + "Id", out var contestIdStr)
-            ? int.Parse(contestIdStr)
+        => entityDict.TryGetValue(typeof(TEntity).Name + "Id", out var idStr)
+            ? int.Parse(idStr)
             : null;
 }
