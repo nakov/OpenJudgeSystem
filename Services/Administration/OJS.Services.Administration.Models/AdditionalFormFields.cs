@@ -2,10 +2,12 @@ namespace OJS.Services.Administration.Models;
 
 public enum AdditionalFormFields
 {
-    SolutionSkeletonData,
+    SolutionSkeleton,
     ProblemGroupType,
     Tests,
     AdditionalFiles,
     SubmissionTypes,
     AllowedIps,
+    Input,
+    Output,
 }
