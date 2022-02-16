@@ -10,9 +10,6 @@ const useHttp = (url: string, headers: IDictionary<string> | null = null) => {
     const [ status, setStatus ] = useState<HttpStatus>(HttpStatus.NotStarted);
     const [ error, setError ] = useState<Error | null>(null);
     const [ actualHeaders, setActualHeaders ] = useState<IDictionary<string>>({});
-    // const [ authHeader, setAuthHeader ] = useState({});
-    // const { getToken } = useAuth();
-    // const token = getToken();
 
     const request = useCallback(async (func: () => Promise<any>) => {
         try {
@@ -37,6 +34,13 @@ const useHttp = (url: string, headers: IDictionary<string> | null = null) => {
         }
     }, [ ]);
 
+    const replaceParameters = (urlToReplace: string, parameters: IDictionary<string>) => urlToReplace.replace(/%\w+%/g, (placeholder) => {
+        const placeholderKey = placeholder
+            .replace(/^%/, '')
+            .replace(/%$/, '');
+        return parameters[placeholderKey] || placeholder;
+    });
+
     const data = useMemo(() => {
         if (response == null || response.data == null) {
             return null;
@@ -46,16 +50,20 @@ const useHttp = (url: string, headers: IDictionary<string> | null = null) => {
     }, [ response ]);
 
     const get = useCallback(
-        () => request(() => axios.get(
-            url,
+        (parameters?: IDictionary<string>) => request(() => axios.get(
+            replaceParameters(url, parameters == null
+                ? {}
+                : parameters),
             { headers: actualHeaders },
         )),
         [ actualHeaders, request, url ],
     );
 
     const post = useCallback(
-        (requestData: any) => request(() => axios.post(
-            url,
+        (requestData: any, parameters?: IDictionary<string>) => request(() => axios.post(
+            replaceParameters(url, parameters == null
+                ? {}
+                : parameters),
             requestData,
             { headers: actualHeaders },
         )),
@@ -71,12 +79,6 @@ const useHttp = (url: string, headers: IDictionary<string> | null = null) => {
         },
         [ headers ],
     );
-
-    // useEffect(() => {
-    //     if (token) {
-    //         setAuthHeader({ Authorization: `Bearer ${token}` });
-    //     }
-    // }, [ token ]);
 
     return {
         get,

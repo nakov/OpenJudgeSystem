@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import IHaveChildrenProps from '../components/common/IHaveChildrenProps';
 import { getIndexContestsUrl, startContestParticipationUrl } from '../utils/urls';
 import { useHttp } from './use-http';
@@ -22,8 +22,7 @@ interface IContestsContext {
     activeContests: IIndexContestsType[]
     pastContests: IIndexContestsType[]
     getForHome: () => Promise<void>;
-    startContestParticipation: () => Promise<void>;
-    setCurrentContestId: (contestId: number) => void;
+    startContestParticipation: (id: number, isOfficial: boolean) => Promise<void>;
 }
 
 interface IGetContestsForIndexResponseType {
@@ -40,7 +39,6 @@ interface IContestsProviderProps extends IHaveChildrenProps {}
 const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ activeContests, setActiveContests ] = useState<IIndexContestsType[]>([]);
     const [ pastContests, setPastContests ] = useState<IIndexContestsType[]>([]);
-    const [ currentContestId, setCurrentContestId ] = useState<number>();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ currentContest, setCurrentContest ] = useState<IContestType>();
     const { startLoading, stopLoading } = useLoading();
@@ -49,23 +47,21 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         data: getContestsForIndexData,
     } = useHttp(getIndexContestsUrl);
 
-    const startCurrentContestParticipationUrl = useMemo(() => `${startContestParticipationUrl}/${currentContestId}`, [
-        currentContestId,
-    ]);
     const {
         get: startContestParticipationRequest,
         data: startContestParticipationData,
-    } = useHttp(startCurrentContestParticipationUrl);
+    } = useHttp(startContestParticipationUrl);
 
     const getForHome = useCallback(async () => {
         startLoading();
-        await getContestsForIndexRequest();
+        await getContestsForIndexRequest({});
         stopLoading();
     }, [ getContestsForIndexRequest, startLoading, stopLoading ]);
 
-    const startContestParticipation = useCallback(async () => {
+    const startContestParticipation = useCallback(async (id: number, isOfficial: boolean) => {
         startLoading();
-        await startContestParticipationRequest();
+        const idStr = id.toString();
+        await startContestParticipationRequest({ id: idStr, official: isOfficial.toString() });
         stopLoading();
     }, [ startContestParticipationRequest, startLoading, stopLoading ]);
 
@@ -89,7 +85,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         pastContests,
         getForHome,
         startContestParticipation,
-        setCurrentContestId,
     };
 
     return (

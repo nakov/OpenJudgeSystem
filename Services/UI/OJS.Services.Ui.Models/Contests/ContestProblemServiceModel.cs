@@ -1,8 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using AutoMapper;
+using OJS.Common.Enumerations;
+using OJS.Data.Models.Problems;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
+using SoftUni.AutoMapper.Infrastructure.Models;
+using System.Collections.Generic;
 
 namespace OJS.Services.Ui.Models.Contests
 {
-    public class ContestProblemServiceModel
+    public class ContestProblemServiceModel : IMapExplicitly
     {
         public int ContestId { get; set; }
 
@@ -60,5 +65,14 @@ namespace OJS.Services.Ui.Models.Contests
         private int timeLimitInMs;
 
         private int? fileSizeLimitInBytes;
+
+        public void RegisterMappings(IProfileExpression configuration)
+            => configuration.CreateMap<Problem, ContestProblemServiceModel>()
+                .ForMember(d => d.ContestId, opt => opt.MapFrom(s => s.ProblemGroup.ContestId))
+                .ForMember(d => d.ProblemId, opt => opt.MapFrom(s => s.Id))
+                .ForMember(d => d.IsExcludedFromHomework,
+                    opt => opt.MapFrom(s => s.ProblemGroup.Type == ProblemGroupType.ExcludedFromHomework))
+                .ForMember(d => d.FileSizeLimit, opt => opt.MapFrom(s => s.SourceCodeSizeLimit))
+                .ForMember(d => d.UserHasAdminRights, opt => opt.Ignore());
     }
 }

@@ -51,13 +51,9 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var user = this.userProviderService.GetCurrentUser();
 
-            var isUserAdmin = await this.usersBusinessService.IsLoggedInUserAdmin(model.UserPrincipal);
+            await this.ValidateContest(contest, user.Id, user.IsAdmin, model.IsOfficial);
 
-            var isUserLecturerInContest = this.IsUserLecturerInContest(contest, model.UserId);
-
-            await this.ValidateContest(contest, model.UserId, isUserAdmin, model.IsOfficial);
-
-            var userProfile = await this.usersBusinessService.GetUserProfileById(model.UserId);
+            var userProfile = await this.usersBusinessService.GetUserProfileById(user.Id);
 
             var participant = await this.participantsData
                 .GetWithContestByContestByUserAndIsOfficial(
@@ -67,7 +63,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (participant == null)
             {
-                participant = await this.AddNewParticipantToContest(contest, model.IsOfficial, model.UserId, isUserAdmin);
+                participant = await this.AddNewParticipantToContest(contest, model.IsOfficial, user.Id, user.IsAdmin);
             }
 
             if (model.IsOfficial &&
@@ -76,7 +72,10 @@ namespace OJS.Services.Ui.Business.Implementations
                 throw new BusinessServiceException("Invalid ip address.");
             }
 
-            return participant.Contest.Map<ContestParticipationServiceModel>();
+            var participationModel = participant.Map<ContestParticipationServiceModel>();
+            participationModel.ContestIsCompete = model.IsOfficial;
+
+            return participationModel;
         }
 
         public Task<bool> IsContestIpValidByContestAndIp(int contestId, string ip)

@@ -1,8 +1,13 @@
-﻿using System;
+﻿using AutoMapper;
+using OJS.Data.Models.Contests;
+using OJS.Data.Models.Participants;
+using SoftUni.AutoMapper.Infrastructure.Models;
+using System;
+using System.Linq;
 
 namespace OJS.Services.Ui.Models.Contests
 {
-    public class ContestParticipationServiceModel
+    public class ContestParticipationServiceModel : IMapExplicitly
     {
         public ContestServiceModel Contest { get; set; }
 
@@ -12,6 +17,17 @@ namespace OJS.Services.Ui.Models.Contests
 
         public double? RemainingTimeInMilliseconds { get; set; }
 
-        private readonly DateTime? participationEndTime;
+        public void RegisterMappings(IProfileExpression configuration)
+            => configuration.CreateMap<Participant, ContestParticipationServiceModel>()
+                .ForMember(d => d.Contest, opt => opt.MapFrom(s => s.Contest))
+                .ForMember(d => d.LastSubmissionTime, opt => opt.MapFrom(s =>
+                    s.Submissions.Any()
+                        ? (DateTime?)s.Submissions.Max(x => x.CreatedOn)
+                        : null))
+                .ForMember(d => d.RemainingTimeInMilliseconds, opt => opt.MapFrom(s =>
+                    s.ParticipationEndTime.HasValue
+                        ? (s.ParticipationEndTime.Value - DateTime.Now).TotalMilliseconds
+                        : 0))
+                .ForMember(d => d.ContestIsCompete, opt => opt.Ignore());
     }
 }
