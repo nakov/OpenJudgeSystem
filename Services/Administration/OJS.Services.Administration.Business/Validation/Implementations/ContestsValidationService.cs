@@ -3,6 +3,7 @@ namespace OJS.Services.Administration.Business.Validation.Implementations;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using OJS.Data.Models.Contests;
+using OJS.Services.Administration.Business.Extensions;
 using OJS.Services.Administration.Data;
 using OJS.Services.Common;
 using System;
@@ -18,15 +19,18 @@ public class ContestsValidationService : IContestsValidationService
     private readonly IContestsDataService contestsData;
     private readonly IContestCategoriesDataService contestCategoriesData;
     private readonly IUserProviderService userProvider;
+    private readonly IContestsBusinessService contestsBusiness;
 
     public ContestsValidationService(
         IContestsDataService contestsData,
         IContestCategoriesDataService contestCategoriesData,
-        IUserProviderService userProvider)
+        IUserProviderService userProvider,
+        IContestsBusinessService contestsBusiness)
     {
         this.contestsData = contestsData;
         this.contestCategoriesData = contestCategoriesData;
         this.userProvider = userProvider;
+        this.contestsBusiness = contestsBusiness;
     }
 
     public IEnumerable<Func<Contest, Contest, AdminActionContext, ValidatorResult>> GetValidators()
@@ -45,6 +49,24 @@ public class ContestsValidationService : IContestsValidationService
             this.ValidateContestCategoryPermissions,
             this.ValidateContestIsNotActiveOnDelete,
         };
+
+    public async Task<ValidatorResult> ValidateContestPermissionsOfCurrentUser(AdminActionContext actionContext)
+    {
+        var user = this.userProvider.GetCurrentUser();
+        var contestId = actionContext.TryGetEntityId<Contest>();
+
+        if (contestId == null)
+        {
+            return ValidatorResult.Error("A contest should be specified for the problem group.");
+        }
+
+        if (!await this.contestsBusiness.UserHasContestPermissions(contestId.Value, user.Id, user.IsAdmin))
+        {
+            return ValidatorResult.Error(AdminResource.No_permissions_for_contest);
+        }
+
+        return ValidatorResult.Success();
+    }
 
     private async Task<ValidatorResult> ValidateContestCategoryPermissions(
             Contest existingContest,
