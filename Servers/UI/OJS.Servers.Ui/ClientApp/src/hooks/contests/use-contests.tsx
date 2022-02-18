@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import IHaveChildrenProps from '../components/common/IHaveChildrenProps';
-import { getIndexContestsUrl, startContestParticipationUrl } from '../utils/urls';
-import { useHttp } from './use-http';
-import { useLoading } from './use-loading';
+import IHaveChildrenProps from '../../components/common/IHaveChildrenProps';
+import { getIndexContestsUrl, startContestParticipationUrl } from '../../utils/urls';
+import { useHttp } from '../use-http';
+import { useLoading } from '../use-loading';
+import { IContestType } from './types';
 
 interface IIndexContestsType {
     id: number,
@@ -14,11 +15,8 @@ interface IIndexContestsType {
     category: string
 }
 
-interface IContestType {
-
-}
-
 interface IContestsContext {
+    currentContest: IContestType | null,
     activeContests: IIndexContestsType[]
     pastContests: IIndexContestsType[]
     getForHome: () => Promise<void>;
@@ -30,7 +28,14 @@ interface IGetContestsForIndexResponseType {
     pastContests: IIndexContestsType[]
 }
 
-const defaultState = {};
+interface IStartParticipationResponseType {
+    contest: IContestType,
+    contestIsCompete: boolean,
+    lastSubmissionTime: Date,
+    remainingTimeInMilliseconds: number
+}
+
+const defaultState = { currentContest: null };
 
 const ContestsContext = createContext<IContestsContext>(defaultState as IContestsContext);
 
@@ -40,7 +45,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ activeContests, setActiveContests ] = useState<IIndexContestsType[]>([]);
     const [ pastContests, setPastContests ] = useState<IIndexContestsType[]>([]);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [ currentContest, setCurrentContest ] = useState<IContestType>();
+    const [ currentContest, setCurrentContest ] = useState<IContestType | null>(defaultState.currentContest);
     const { startLoading, stopLoading } = useLoading();
     const {
         get: getContestsForIndexRequest,
@@ -75,17 +80,22 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     useEffect(() => {
         if (startContestParticipationData != null) {
-            const responseData = startContestParticipationData as IGetContestsForIndexResponseType;
-            setCurrentContest(responseData);
+            const responseData = startContestParticipationData as IStartParticipationResponseType;
+            setCurrentContest(responseData.contest);
         }
     }, [ startContestParticipationData ]);
 
     const value = {
+        currentContest,
         activeContests,
         pastContests,
         getForHome,
         startContestParticipation,
     };
+
+    useEffect(() => {
+        console.log(currentContest);
+    }, [ currentContest ]);
 
     return (
         <ContestsContext.Provider value={value}>

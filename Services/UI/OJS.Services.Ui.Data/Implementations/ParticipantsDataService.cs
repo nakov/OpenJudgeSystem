@@ -27,6 +27,8 @@ namespace OJS.Services.Ui.Data.Implementations
         public Task<Participant?> GetWithContestByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial) =>
             this.GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
                 .Include(p => p.Contest)
+                .ThenInclude(c => c.ProblemGroups)
+                .ThenInclude(pg => pg.Problems)
                 .FirstOrDefaultAsync();
 
         public IQueryable<Participant> GetAllByUser(string userId)

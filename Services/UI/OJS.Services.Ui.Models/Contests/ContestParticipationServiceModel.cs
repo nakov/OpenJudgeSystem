@@ -28,6 +28,6 @@ namespace OJS.Services.Ui.Models.Contests
                     s.ParticipationEndTime.HasValue
                         ? (s.ParticipationEndTime.Value - DateTime.Now).TotalMilliseconds
                         : 0))
-                .ForMember(d => d.ContestIsCompete, opt => opt.Ignore());
+                .ForAllOtherMembers(opt => opt.Ignore());
     }
 }
