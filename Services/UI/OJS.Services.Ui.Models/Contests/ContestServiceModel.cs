@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using FluentExtensions.Extensions;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Contests;
+using OJS.Data.Models.Problems;
 using OJS.Services.Ui.Models.SubmissionTypes;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using SoftUni.AutoMapper.Infrastructure.Models;
@@ -58,7 +60,7 @@ namespace OJS.Services.Ui.Models.Contests
 
         public IEnumerable<SubmissionTypeServiceModel> AllowedSubmissionTypes { get; set; }
 
-        public IEnumerable<ContestProblemServiceModel> Problems { get; set; }
+        public ICollection<ContestProblemServiceModel> Problems { get; set; }
 
         public IEnumerable<ContestCategoryListViewModel> ParentCategories { get; set; } =
             Enumerable.Empty<ContestCategoryListViewModel>();
@@ -172,8 +174,8 @@ namespace OJS.Services.Ui.Models.Contests
 
         public bool IsActive { get; set; }
 
-        public void RegisterMappings(IProfileExpression configuration)
-            => configuration.CreateMap<Contest, ContestServiceModel>()
+        public void RegisterMappings(IProfileExpression configuration) =>
+            configuration.CreateMap<Contest, ContestServiceModel>()
                 .ForMember(d => d.HasContestQuestions,
                     opt => opt.MapFrom(s => s.Questions.Any(x => x.AskOfficialParticipants)))
                 .ForMember(d => d.HasPracticeQuestions,
@@ -184,14 +186,19 @@ namespace OJS.Services.Ui.Models.Contests
                     opt => opt.MapFrom(s => s.Participants.Count(x => !x.IsOfficial)))
                 .ForMember(d => d.ProblemsCount,
                     opt => opt.MapFrom(s => s.ProblemGroups.SelectMany(pg => pg.Problems).Count(p => !p.IsDeleted)))
-                .ForMember(d => d.ContestType, opt => opt.Ignore())
-                .ForMember(d => d.AllowedSubmissionTypes, opt => opt.Ignore())
-                .ForMember(d => d.Problems, opt => opt.Ignore())
-                // .ForMember(d => d.Problems, opt => opt.MapFrom(s => s.ProblemGroups.Select(pg => pg.Problems).ToList()))
+                .ForMember(d => d.ContestType, opt => opt.MapFrom(s => s.Type))
+                .ForMember(d => d.AllowedSubmissionTypes,
+                    opt =>
+                        opt.MapFrom(s =>
+                            s.ProblemGroups
+                                .SelectMany(pg => pg.Problems
+                                    .SelectMany(p => p.SubmissionTypesInProblems)
+                                    .Select(st => st.SubmissionType)
+                                    .DistinctBy(st => st.Id))))
+                .ForMember(d => d.Problems, opt => opt.MapFrom(s => s.ProblemGroups.SelectMany(pg => pg.Problems)))
                 .ForMember(d => d.ParentCategories, opt => opt.Ignore())
                 .ForMember(d => d.UserIsAdminOrLecturerInContest, opt => opt.Ignore())
                 .ForMember(d => d.UserCanCompete, opt => opt.Ignore())
                 .ForMember(d => d.UserIsParticipant, opt => opt.Ignore());
-
     }
 }

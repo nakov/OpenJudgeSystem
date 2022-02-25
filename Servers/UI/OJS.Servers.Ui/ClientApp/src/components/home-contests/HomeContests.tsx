@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect } from 'react';
-import { IIndexContestsType, useContests } from '../../hooks/use-contests';
+import { IIndexContestsType, useContests } from '../../hooks/contests/use-contests';
 import { LinkButton } from '../guidelines/buttons/Button';
 import ContestCard from './contest-card/ContestCard';
 import Heading from '../guidelines/headings/Heading';

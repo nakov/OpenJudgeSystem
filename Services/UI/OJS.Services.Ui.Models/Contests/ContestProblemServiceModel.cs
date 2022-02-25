@@ -9,9 +9,8 @@ namespace OJS.Services.Ui.Models.Contests
 {
     public class ContestProblemServiceModel : IMapExplicitly
     {
+        public int Id { get; set; }
         public int ContestId { get; set; }
-
-        public int ProblemId { get; set; }
 
         public string Name { get; set; }
 
@@ -66,10 +65,9 @@ namespace OJS.Services.Ui.Models.Contests
 
         private int? fileSizeLimitInBytes;
 
-        public void RegisterMappings(IProfileExpression configuration)
-            => configuration.CreateMap<Problem, ContestProblemServiceModel>()
+        public void RegisterMappings(IProfileExpression configuration) =>
+            configuration.CreateMap<Problem, ContestProblemServiceModel>()
                 .ForMember(d => d.ContestId, opt => opt.MapFrom(s => s.ProblemGroup.ContestId))
-                .ForMember(d => d.ProblemId, opt => opt.MapFrom(s => s.Id))
                 .ForMember(d => d.IsExcludedFromHomework,
                     opt => opt.MapFrom(s => s.ProblemGroup.Type == ProblemGroupType.ExcludedFromHomework))
                 .ForMember(d => d.FileSizeLimit, opt => opt.MapFrom(s => s.SourceCodeSizeLimit))

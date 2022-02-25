@@ -15,7 +15,7 @@ namespace OJS.Servers.Ui.Controllers.Api
         public CompeteController(IContestsBusinessService contestsBusiness)
             => this.contestsBusiness = contestsBusiness;
 
-        public async Task Index(int id, [FromQuery] bool official)
+        public async Task<ContestParticipationServiceModel> Index(int id, [FromQuery] bool official)
             => await this.contestsBusiness.StartContestParticipation(new StartContestParticipationServiceModel
             {
                 ContestId = id,
