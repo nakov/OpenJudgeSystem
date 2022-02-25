@@ -6,7 +6,7 @@ const logoutUrl = `${baseUrl}/Account/Logout`;
 const getProfileInfoUrl = `${baseUrl}/Users/GetProfileInfo`;
 
 const getIndexContestsUrl = `${baseUrl}/Contests/GetForHomeIndex`;
-const startContestParticipationUrl = `${baseUrl}/Compete/Index`;
+const startContestParticipationUrl = `${baseUrl}/Compete/Index/%id%?official=%official%`;
 
 const getSubmissionDetailsUrl = `${baseUrl}/Submissions/Details`;
 const getSubmissionsForProfileUrl = `${baseUrl}/Submissions/GetForProfile`;

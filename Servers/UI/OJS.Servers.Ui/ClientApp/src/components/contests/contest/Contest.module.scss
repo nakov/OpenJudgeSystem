@@ -1,0 +1,33 @@
+@import "src/styles/colors";
+
+.contestWrapper {
+  min-height: 700px;
+  width: 100%;
+  margin: 0 auto;
+  box-shadow: $box-shadow-color;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: row;
+}
+
+.tasksSideNavigation {
+  text-align: center;
+  border-right: 1px solid;
+  border-right-color: $bottom-border-color;
+}
+
+.contestMainWrapper {
+  flex-grow: 2;
+}
+
+.tasksListSideNavigation {
+  align-items: start;
+  padding: 20px;
+}
+
+.taskSideNavigationItem {
+  text-align: start;
+  font-size: 18px;
+  font-family: 'Lato', serif;
+  margin-top: 10px;
+}

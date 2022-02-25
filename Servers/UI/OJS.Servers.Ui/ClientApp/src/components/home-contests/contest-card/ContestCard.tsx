@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IIndexContestsType } from '../../../hooks/use-contests';
+import { IIndexContestsType } from '../../../hooks/contests/use-contests';
 import Countdown from '../../guidelines/countdown/Countdown';
 import { convertToSecondsRemaining } from '../../../utils/dates';
 import styles from './ContestCard.module.scss';
