@@ -139,8 +139,19 @@ namespace OJS.Common
 
         public static class ProblemsRetest
         {
-                public const string Retest = "Retest";
-                public const string Retest_confirmation_message = "Are you sure you want to Retest <strong>{0} submissions</strong> from the problem <strong>{1}</strong>?";
+            public const string Retest = "Retest";
+            public const string Retest_confirmation_message = "Are you sure you want to Retest <strong>{0} submissions</strong> from the problem <strong>{1}</strong>?";
+        }
+
+        public static class ProblemGroupsControllers
+        {
+            public const string Active_contest_cannot_add_problem_group = "The contest is аctive and you cannot add problem groups";
+            public const string Active_contest_cannot_delete_problem_group = "The contest is аctive and you cannot delete problem groups";
+            public const string Can_create_only_in_online_contest = "You can create problem groups only in a contest which is of type {0}";
+            public const string Can_edit_orderby_only_in_online_contest = "You can edit problem groups order only in a contest which is of type {0}.";
+            public const string Contest_does_not_exist = "The selected contest does not exist";
+            public const string Contest_required = "Contest is required";
+            public const string Copy_all_problem_groups_success_message = "Successfully copied all problem groups from the contest \"{0}\" into the contest \"{1}\"";
         }
     }
 }
