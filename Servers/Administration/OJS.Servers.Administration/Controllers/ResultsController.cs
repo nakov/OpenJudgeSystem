@@ -6,7 +6,6 @@ using NPOI.SS.UserModel;
 using OJS.Common;
 using OJS.Common.Extensions;
 using OJS.Servers.Administration.Models.Contests;
-using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Data;
 using OJS.Services.Common;

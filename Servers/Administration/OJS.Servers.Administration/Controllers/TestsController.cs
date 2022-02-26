@@ -1,7 +1,10 @@
 namespace OJS.Servers.Administration.Controllers;
 
+using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using OJS.Data.Models.Problems;
 using OJS.Data.Models.Tests;
 using OJS.Services.Administration.Business.Extensions;
 using OJS.Services.Administration.Models;
@@ -13,6 +16,42 @@ using System.Threading.Tasks;
 
 public class TestsController : BaseAutoCrudAdminController<Test>
 {
+    private const string ProblemIdKey = nameof(Test.ProblemId);
+
+    public override IActionResult Index()
+    {
+        if (!this.TryGetEntityIdForColumnFilter(ProblemIdKey, out var problemId))
+        {
+            return base.Index();
+        }
+
+        this.MasterGridFilter = t => t.ProblemId == problemId;
+        this.CustomToolbarActions = new AutoCrudAdminGridToolbarActionViewModel[]
+        {
+            new()
+            {
+                Name = "Add new",
+                Action = nameof(this.AddNewTestToProblem),
+                RouteValues = new Dictionary<string, string>
+                {
+                    { nameof(problemId), problemId.ToString() },
+                },
+            },
+        };
+
+        return base.Index();
+    }
+
+    public IActionResult AddNewTestToProblem(int problemId)
+    {
+        this.TempData.Add(ProblemIdKey, problemId);
+
+        return this.RedirectToAction(
+            "Create",
+            "Tests",
+            new Dictionary<string, string> { { ProblemIdKey, problemId.ToString() }, });
+    }
+
     protected override IEnumerable<CustomGridColumn<Test>> CustomColumns
         => new CustomGridColumn<Test>[]
         {
@@ -35,6 +74,15 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters)
     {
         var formControls = base.GenerateFormControls(entity, action, entityDict, complexOptionFilters).ToList();
+
+        var problemId = entityDict.TryGetEntityId<Problem>();
+
+        if (problemId != null)
+        {
+            var problemInput = formControls.First(fc => fc.Name == nameof(Test.Problem));
+            problemInput.Value = problemId;
+            problemInput.IsReadOnly = true;
+        }
 
         formControls.Add(new FormControlViewModel
         {
