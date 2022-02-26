@@ -170,14 +170,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         IDictionary<string, string> entityDict,
         IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters)
     {
-        complexOptionFilters.Add(
-            new KeyValuePair<string, Expression<Func<object, bool>>>(
-                nameof(entity.ProblemGroup),
-                pg => ((pg as ProblemGroup)!).ContestId == entity.ProblemGroup.ContestId));
-
-        var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters)
-            .ToListAsync();
-
         var contestId = GetContestId(entityDict, entity);
 
         if (contestId == default)
@@ -191,6 +183,14 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         {
             throw new Exception($"Contest with Id: {contestId} not found.");
         }
+
+        complexOptionFilters.Add(
+            new KeyValuePair<string, Expression<Func<object, bool>>>(
+                nameof(entity.ProblemGroup),
+                pg => ((ProblemGroup)pg).ContestId == contestId));
+
+        var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters)
+            .ToListAsync();
 
         formControls.Add(new FormControlViewModel
         {
