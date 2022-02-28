@@ -13,9 +13,14 @@ namespace OJS.Common
         public const string InfoMessage = "InfoMessage";
         public const string DangerMessage = "DangerMessage";
 
+        // Tests
+        public const string TestInputTxtFileExtension = FileExtensions.Input + FileExtensions.Txt;
+        public const string TestOutputTxtFileExtension = FileExtensions.Output + FileExtensions.Txt;
+
         public const string ZeroTestStandardSignature = ".000.";
         public const string OpenTestStandardSignature = ".open.";
 
+        // Other
         public const string NewLineUnix = "\n";
         public const string NewLineWin = "\r\n";
         public const string ClassDelimiterWin = $"~~!!!==#==!!!~~{NewLineWin}";
