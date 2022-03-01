@@ -17,7 +17,7 @@ using OJS.Servers.Administration.Models.Problems;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Extensions;
-using OJS.Services.Administration.Business.Validation;
+using OJS.Services.Administration.Business.Validation.Factories;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.Problems;
@@ -39,7 +39,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     private readonly IProblemsDataService problemsData;
     private readonly IZippedTestsParserService zippedTestsParser;
     private readonly ISubmissionTypesDataService submissionTypesData;
-    private readonly IProblemsValidationService problemsValidation;
+    private readonly IProblemValidatorsFactory problemValidatorsFactory;
 
     public ProblemsController(
         IProblemsBusinessService problemsBusiness,
@@ -48,7 +48,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         IProblemsDataService problemsData,
         IZippedTestsParserService zippedTestsParser,
         ISubmissionTypesDataService submissionTypesData,
-        IProblemsValidationService problemsValidation)
+        IProblemValidatorsFactory problemValidatorsFactory)
     {
         this.problemsBusiness = problemsBusiness;
         this.contestsBusiness = contestsBusiness;
@@ -56,7 +56,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         this.problemsData = problemsData;
         this.zippedTestsParser = zippedTestsParser;
         this.submissionTypesData = submissionTypesData;
-        this.problemsValidation = problemsValidation;
+        this.problemValidatorsFactory = problemValidatorsFactory;
     }
 
     public IActionResult ByContest(int contestId)
@@ -159,10 +159,10 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
     protected override IEnumerable<Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>>
         AsyncEntityValidators
-        => this.problemsValidation.GetAsyncValidators();
+        => this.problemValidatorsFactory.GetAsyncValidators();
 
     protected override IEnumerable<Func<Problem, Problem, AdminActionContext, ValidatorResult>> EntityValidators
-        => this.problemsValidation.GetValidators();
+        => this.problemValidatorsFactory.GetValidators();
 
     protected override async Task<IEnumerable<FormControlViewModel>> GenerateFormControlsAsync(
         Problem entity,

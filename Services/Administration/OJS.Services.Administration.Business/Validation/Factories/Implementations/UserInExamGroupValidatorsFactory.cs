@@ -1,9 +1,9 @@
-namespace OJS.Services.Administration.Business.Validation.Implementations;
+namespace OJS.Services.Administration.Business.Validation.Factories.Implementations;
 
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using OJS.Data.Models;
-using OJS.Services.Common;
+using OJS.Services.Administration.Business.Validation.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,18 +11,13 @@ using System.Threading.Tasks;
 using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 using Resource = OJS.Common.Resources.ExamGroupsController;
 
-public class UsersInExamGroupsValidationService : IUsersInExamGroupsValidationService
+public class UserInExamGroupValidatorsFactory : IUserInExamGroupValidatorsFactory
 {
-    private readonly IUserProviderService userProvider;
-    private readonly IContestsBusinessService contestsBusiness;
+    private readonly IContestsValidationHelper contestsValidationHelper;
 
-    public UsersInExamGroupsValidationService(
-        IUserProviderService userProvider,
-        IContestsBusinessService contestsBusiness)
-    {
-        this.userProvider = userProvider;
-        this.contestsBusiness = contestsBusiness;
-    }
+    public UserInExamGroupValidatorsFactory(
+        IContestsValidationHelper contestsValidationHelper)
+        => this.contestsValidationHelper = contestsValidationHelper;
 
     public IEnumerable<Func<UserInExamGroup, UserInExamGroup, AdminActionContext, ValidatorResult>> GetValidators()
         => Enumerable.Empty<Func<UserInExamGroup, UserInExamGroup, AdminActionContext, ValidatorResult>>();
@@ -38,13 +33,12 @@ public class UsersInExamGroupsValidationService : IUsersInExamGroupsValidationSe
         UserInExamGroup newEntity,
         AdminActionContext actionContext)
     {
-        var user = this.userProvider.GetCurrentUser();
-        var contestId = newEntity.ExamGroup.ContestId;
-
         if (actionContext.Action == EntityAction.Edit)
         {
             return ValidatorResult.Error("Action not permitted");
         }
+
+        var contestId = newEntity.ExamGroup.ContestId;
 
         if (!contestId.HasValue)
         {
@@ -55,11 +49,11 @@ public class UsersInExamGroupsValidationService : IUsersInExamGroupsValidationSe
             return ValidatorResult.Error(message);
         }
 
-        if (!await this.contestsBusiness.UserHasContestPermissions(contestId.Value, user.Id, user.IsAdmin))
-        {
-            return ValidatorResult.Error(GeneralResource.No_permissions_for_contest);
-        }
+        var permissionsResult = await this.contestsValidationHelper.ValidatePermissionsOfCurrentUser(
+            contestId);
 
-        return ValidatorResult.Success();
+        return permissionsResult.IsValid
+            ? ValidatorResult.Success()
+            : ValidatorResult.Error(GeneralResource.No_permissions_for_contest);
     }
 }

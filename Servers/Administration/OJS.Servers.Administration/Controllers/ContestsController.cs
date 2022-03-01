@@ -9,7 +9,7 @@ namespace OJS.Servers.Administration.Controllers
     using OJS.Data.Models.Problems;
     using OJS.Servers.Administration.Models.Contests;
     using OJS.Services.Administration.Business.Extensions;
-    using OJS.Services.Administration.Business.Validation;
+    using OJS.Services.Administration.Business.Validation.Factories;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models;
     using System;
@@ -24,16 +24,16 @@ namespace OJS.Servers.Administration.Controllers
     {
         private readonly IIpsDataService ipsData;
         private readonly IParticipantsDataService participantsData;
-        private readonly IContestsValidationService contestsValidation;
+        private readonly IContestValidatorsFactory contestValidatorsFactory;
 
         public ContestsController(
             IIpsDataService ipsData,
             IParticipantsDataService participantsData,
-            IContestsValidationService contestsValidation)
+            IContestValidatorsFactory contestValidatorsFactory)
         {
             this.ipsData = ipsData;
             this.participantsData = participantsData;
-            this.contestsValidation = contestsValidation;
+            this.contestValidatorsFactory = contestValidatorsFactory;
         }
 
         // TODO: make it as a popup window
@@ -76,11 +76,11 @@ namespace OJS.Servers.Administration.Controllers
         }
 
         protected override IEnumerable<Func<Contest, Contest, AdminActionContext, ValidatorResult>> EntityValidators
-            => this.contestsValidation.GetValidators();
+            => this.contestValidatorsFactory.GetValidators();
 
         protected override IEnumerable<Func<Contest, Contest, AdminActionContext, Task<ValidatorResult>>>
             AsyncEntityValidators
-            => this.contestsValidation.GetAsyncValidators();
+            => this.contestValidatorsFactory.GetAsyncValidators();
 
         protected override async Task BeforeEntitySaveOnCreateAsync(
             Contest contest,

@@ -1,8 +1,11 @@
-namespace OJS.Services.Administration.Business.Validation.Implementations;
+namespace OJS.Services.Administration.Business.Validation.Factories.Implementations;
 
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
+using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
+using OJS.Services.Administration.Business.Extensions;
+using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
 using System;
 using System.Collections.Generic;
@@ -11,16 +14,16 @@ using System.Threading.Tasks;
 using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 using Resource =  OJS.Common.Resources.ProblemGroupsControllers;
 
-public class ProblemGroupsValidationService : IProblemGroupsValidationService
+public class ProblemGroupValidatorsFactory : IProblemGroupValidatorsFactory
 {
-    private readonly IContestsValidationService contestsValidation;
+    private readonly IContestsValidationHelper contestsValidationHelper;
     private readonly IContestsDataService contestsData;
 
-    public ProblemGroupsValidationService(
-        IContestsValidationService contestsValidation,
+    public ProblemGroupValidatorsFactory(
+        IContestsValidationHelper contestsValidationHelper,
         IContestsDataService contestsData)
     {
-        this.contestsValidation = contestsValidation;
+        this.contestsValidationHelper = contestsValidationHelper;
         this.contestsData = contestsData;
     }
 
@@ -40,7 +43,14 @@ public class ProblemGroupsValidationService : IProblemGroupsValidationService
         ProblemGroup existingEntity,
         ProblemGroup newEntity,
         AdminActionContext actionContext)
-        => await this.contestsValidation.ValidateContestPermissionsOfCurrentUser(actionContext);
+    {
+        var permissionsResult = await this.contestsValidationHelper.ValidatePermissionsOfCurrentUser(
+            actionContext.TryGetEntityId<Contest>());
+
+        return permissionsResult.IsValid
+            ? ValidatorResult.Success()
+            : ValidatorResult.Error(permissionsResult.Message);
+    }
 
     private async Task<ValidatorResult> ValidateContestIsNotActiveOnDelete(
         ProblemGroup existingEntity,

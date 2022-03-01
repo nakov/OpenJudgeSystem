@@ -3,7 +3,7 @@ namespace OJS.Servers.Administration.Controllers;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using OJS.Data.Models.Participants;
-using OJS.Services.Administration.Business.Validation;
+using OJS.Services.Administration.Business.Validation.Factories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,21 +11,21 @@ using System.Threading.Tasks;
 
 public class ParticipantsController : BaseAutoCrudAdminController<Participant>
 {
-    private readonly IParticipantsValidationService participantsValidation;
+    private readonly IParticipantValidatorsFactory participantValidatorsFactory;
 
     public ParticipantsController(
-        IParticipantsValidationService participantsValidation)
-        => this.participantsValidation = participantsValidation;
+        IParticipantValidatorsFactory participantValidatorsFactory)
+        => this.participantValidatorsFactory = participantValidatorsFactory;
 
     protected override IEnumerable<GridAction> DefaultActions
         => new[] { new GridAction { Action = nameof(this.Delete) } };
 
     protected override IEnumerable<Func<Participant, Participant, AdminActionContext, ValidatorResult>> EntityValidators
-        => this.participantsValidation.GetValidators();
+        => this.participantValidatorsFactory.GetValidators();
 
     protected override IEnumerable<Func<Participant, Participant, AdminActionContext, Task<ValidatorResult>>>
         AsyncEntityValidators
-        => this.participantsValidation.GetAsyncValidators();
+        => this.participantValidatorsFactory.GetAsyncValidators();
 
     protected override IEnumerable<string> ShownFormControlNamesOnCreate
         => base.ShownFormControlNamesOnCreate

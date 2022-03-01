@@ -7,11 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Tests;
 using OJS.Services.Administration.Business.Extensions;
+using OJS.Services.Administration.Business.Validation;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
+using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Common;
 using OJS.Services.Common.Models;
-using OJS.Services.Infrastructure.Exceptions;
+using OJS.Services.Infrastructure.Extensions;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,14 +26,17 @@ public class TestsController : BaseAutoCrudAdminController<Test>
 {
     private readonly IProblemsDataService problemsData;
     private readonly IZipArchivesService zipArchives;
+    private readonly ITestsExportValidationService testsExportValidation;
     private const string ProblemIdKey = nameof(Test.ProblemId);
 
     public TestsController(
         IProblemsDataService problemsData,
-        IZipArchivesService zipArchives)
+        IZipArchivesService zipArchives,
+        ITestsExportValidationService testsExportValidation)
     {
         this.problemsData = problemsData;
         this.zipArchives = zipArchives;
+        this.testsExportValidation = testsExportValidation;
     }
 
     public override IActionResult Index()
@@ -79,19 +85,11 @@ public class TestsController : BaseAutoCrudAdminController<Test>
     {
         var problem = await this.problemsData.OneById(problemId);
 
-        if (problem == null)
-        {
-            throw new BusinessServiceException($"Invalid problem with id: {problemId}");
-        }
+        await this.testsExportValidation
+            .GetValidationResult(problem?.Map<ProblemShortDetailsServiceModel>())
+            .VerifyResult();
 
-        // TODO: validate user has problem permissions
-        // if (!this.CheckIfUserHasProblemPermissions(id))
-        // {
-        //     this.TempData.AddDangerMessage(GeneralResource.No_privileges_message);
-        //     return this.Json("No premissions");
-        // }
-
-        var tests = problem.Tests.OrderBy(x => x.OrderBy);
+        var tests = problem!.Tests.OrderBy(x => x.OrderBy);
 
         var files = new List<InMemoryFile>();
 

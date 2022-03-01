@@ -1,27 +1,22 @@
-namespace OJS.Services.Administration.Business.Validation.Implementations;
+namespace OJS.Services.Administration.Business.Validation.Factories.Implementations;
 
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using OJS.Data.Models.Participants;
-using OJS.Services.Common;
+using OJS.Services.Administration.Business.Validation.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 
-public class ParticipantsValidationService : IParticipantsValidationService
+public class ParticipantValidatorsFactory : IParticipantValidatorsFactory
 {
-    private readonly IUserProviderService userProvider;
-    private readonly IContestsBusinessService contestsBusiness;
+    private readonly IContestsValidationHelper contestsValidationHelper;
 
-    public ParticipantsValidationService(
-        IUserProviderService userProvider,
-        IContestsBusinessService contestsBusiness)
-    {
-        this.userProvider = userProvider;
-        this.contestsBusiness = contestsBusiness;
-    }
+    public ParticipantValidatorsFactory(
+        IContestsValidationHelper contestsValidationHelper)
+        => this.contestsValidationHelper = contestsValidationHelper;
 
     public IEnumerable<Func<Participant, Participant, AdminActionContext, ValidatorResult>> GetValidators()
         => Enumerable.Empty<Func<Participant, Participant, AdminActionContext, ValidatorResult>>();
@@ -29,7 +24,7 @@ public class ParticipantsValidationService : IParticipantsValidationService
     public IEnumerable<Func<Participant, Participant, AdminActionContext, Task<ValidatorResult>>> GetAsyncValidators()
         => new Func<Participant, Participant, AdminActionContext, Task<ValidatorResult>>[]
         {
-
+            this.ValidateContestPermissions,
         };
 
     private async Task<ValidatorResult> ValidateContestPermissions(
@@ -37,14 +32,11 @@ public class ParticipantsValidationService : IParticipantsValidationService
         Participant newParticipant,
         AdminActionContext actionContext)
     {
-        var user = this.userProvider.GetCurrentUser();
-        var contestId = newParticipant.ContestId;
+        var permissionsResult = await this.contestsValidationHelper.ValidatePermissionsOfCurrentUser(
+            newParticipant.ContestId);
 
-        if (!await this.contestsBusiness.UserHasContestPermissions(contestId, user.Id, user.IsAdmin))
-        {
-            return ValidatorResult.Error(GeneralResource.No_permissions_for_contest);
-        }
-
-        return ValidatorResult.Success();
+        return permissionsResult.IsValid
+            ? ValidatorResult.Success()
+            : ValidatorResult.Error(permissionsResult.Message);
     }
 }
