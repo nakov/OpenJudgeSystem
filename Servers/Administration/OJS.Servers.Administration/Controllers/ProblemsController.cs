@@ -13,6 +13,7 @@ using OJS.Data.Models;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Tests;
+using OJS.Servers.Administration.Infrastructure.Extensions;
 using OJS.Servers.Administration.Models.Problems;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business;
@@ -146,7 +147,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         await this.problemsBusiness.RetestById(model.Id);
 
-        this.TempData.AddInfoMessage(GlobalResource.Problem_retested);
+        this.TempData.AddSuccessMessage(GlobalResource.Problem_retested);
         return this.RedirectToAction("Index");
     }
 

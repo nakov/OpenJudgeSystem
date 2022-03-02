@@ -9,10 +9,6 @@ namespace OJS.Common
         public const int BestSubmissionEligibleForArchiveAgeInYears = 2;
         public const int NonBestSubmissionEligibleForArchiveAgeInYears = 1;
 
-        // TempData dictionary keys
-        public const string InfoMessage = "InfoMessage";
-        public const string DangerMessage = "DangerMessage";
-
         // Tests
         public const string TestInputTxtFileExtension = FileExtensions.Input + FileExtensions.Txt;
         public const string TestOutputTxtFileExtension = FileExtensions.Output + FileExtensions.Txt;

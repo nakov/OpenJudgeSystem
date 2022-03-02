@@ -3,40 +3,67 @@ namespace OJS.Servers.Administration.Controllers;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OJS.Common.Helpers;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Tests;
+using OJS.Servers.Administration.Infrastructure.Extensions;
+using OJS.Servers.Administration.Models.Tests;
+using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Extensions;
 using OJS.Services.Administration.Business.Validation;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.Problems;
+using OJS.Services.Administration.Models.Tests;
 using OJS.Services.Common;
 using OJS.Services.Common.Models;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using System.Transactions;
 using static OJS.Common.GlobalConstants;
+using Resource = OJS.Common.Resources.TestsControllers;
 
 public class TestsController : BaseAutoCrudAdminController<Test>
 {
     private readonly IProblemsDataService problemsData;
     private readonly IZipArchivesService zipArchives;
     private readonly ITestsExportValidationService testsExportValidation;
+    private readonly IFileSystemService fileSystem;
+    private readonly IZippedTestsParserService zippedTestsParser;
+    private readonly ISubmissionsDataService submissionsData;
+    private readonly ITestsDataService testsData;
+    private readonly ITestRunsDataService testRunsData;
+    private readonly IProblemsBusinessService problemsBusiness;
     private const string ProblemIdKey = nameof(Test.ProblemId);
 
     public TestsController(
         IProblemsDataService problemsData,
         IZipArchivesService zipArchives,
-        ITestsExportValidationService testsExportValidation)
+        ITestsExportValidationService testsExportValidation,
+        IFileSystemService fileSystem,
+        IZippedTestsParserService zippedTestsParser,
+        ISubmissionsDataService submissionsData,
+        ITestsDataService testsData,
+        ITestRunsDataService testRunsData,
+        IProblemsBusinessService problemsBusiness)
     {
         this.problemsData = problemsData;
         this.zipArchives = zipArchives;
         this.testsExportValidation = testsExportValidation;
+        this.fileSystem = fileSystem;
+        this.zippedTestsParser = zippedTestsParser;
+        this.submissionsData = submissionsData;
+        this.testsData = testsData;
+        this.testRunsData = testRunsData;
+        this.problemsBusiness = problemsBusiness;
     }
 
     public override IActionResult Index()
@@ -66,6 +93,12 @@ public class TestsController : BaseAutoCrudAdminController<Test>
                 Action = nameof(this.ExportZip),
                 RouteValues = routeValues,
             },
+            new()
+            {
+                Name = "Import tests",
+                Action = nameof(this.Import),
+                FormControls = this.GetFormControlsForImportTests(problemId),
+            },
         };
 
         return base.Index();
@@ -79,6 +112,85 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             "Create",
             "Tests",
             new Dictionary<string, string> { { ProblemIdKey, problemId.ToString() }, });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Import(TestsImportRequestModel model)
+    {
+        var problem = await this.problemsData.OneById(model.ProblemId);
+
+        await this.testsExportValidation
+            .GetValidationResult(problem?.Map<ProblemShortDetailsServiceModel>())
+            .VerifyResult();
+
+        var file = model.Tests;
+        var problemId = model.ProblemId;
+
+        if (file == null || file.Length == 0)
+        {
+            this.TempData.AddDangerMessage(Resource.No_empty_file);
+            return this.RedirectToActionWithNumberFilter(nameof(TestsController), ProblemIdKey, problemId);
+        }
+
+        var extension = this.fileSystem.GetFileExtension(file);
+
+        if (extension != FileExtensions.Zip)
+        {
+            this.TempData.AddDangerMessage(Resource.Must_be_zip);
+            return this.RedirectToActionWithNumberFilter(nameof(TestsController), ProblemIdKey, problemId);
+        }
+
+        TestsParseResult parsedTests;
+
+        await using (var memory = new MemoryStream())
+        {
+            await file.CopyToAsync(memory);
+            memory.Position = 0;
+
+            try
+            {
+                parsedTests = await this.zippedTestsParser.Parse(memory);
+            }
+            catch
+            {
+                this.TempData.AddDangerMessage(Resource.Zip_damaged);
+                return this.RedirectToActionWithNumberFilter(nameof(TestsController), ProblemIdKey, problemId);
+            }
+        }
+
+        if (!this.zippedTestsParser.AreTestsParsedCorrectly(parsedTests))
+        {
+            this.TempData.AddDangerMessage(Resource.Invalid_tests);
+            return this.RedirectToActionWithNumberFilter(nameof(TestsController), ProblemIdKey, problemId);
+        }
+
+        int addedTestsCount;
+
+        using (var scope = TransactionsHelper.CreateTransactionScope(IsolationLevel.RepeatableRead))
+        {
+            this.submissionsData.RemoveTestRunsCacheByProblem(problemId);
+
+            if (model.DeleteOldTests)
+            {
+                await this.testRunsData.DeleteByProblem(problemId);
+                await this.testsData.DeleteByProblem(problemId);
+            }
+
+            addedTestsCount = this.zippedTestsParser.AddTestsToProblem(problem!, parsedTests);
+
+            this.problemsData.Update(problem!);
+
+            if (model.RetestProblem)
+            {
+                await this.problemsBusiness.RetestById(problemId);
+            }
+
+            scope.Complete();
+        }
+
+        this.TempData.AddSuccessMessage(string.Format(Resource.Tests_added_to_problem, addedTestsCount));
+        return this.RedirectToActionWithNumberFilter(nameof(TestsController), ProblemIdKey, model.ProblemId);
     }
 
     public async Task<IActionResult> ExportZip(int problemId)
@@ -192,4 +304,33 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         entity.InputData = inputData;
         entity.OutputData = outputData;
     }
+
+    private IEnumerable<FormControlViewModel> GetFormControlsForImportTests(int problemId)
+        => new FormControlViewModel[]
+        {
+            new()
+            {
+                Name = nameof(TestsImportRequestModel.ProblemId),
+                Type = typeof(int),
+                IsHidden = true,
+                Value = problemId,
+            },
+            new()
+            {
+                Name = nameof(TestsImportRequestModel.Tests),
+                Type = typeof(IFormFile),
+            },
+            new()
+            {
+                Name = nameof(TestsImportRequestModel.RetestProblem),
+                Type = typeof(bool),
+                Value = false,
+            },
+            new()
+            {
+                Name = nameof(TestsImportRequestModel.DeleteOldTests),
+                Type = typeof(bool),
+                Value = true,
+            },
+        };
 }
