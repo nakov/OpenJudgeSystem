@@ -5,6 +5,7 @@ using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OJS.Common.Extensions.Strings;
 using OJS.Common.Helpers;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Tests;
@@ -33,6 +34,8 @@ using Resource = OJS.Common.Resources.TestsControllers;
 
 public class TestsController : BaseAutoCrudAdminController<Test>
 {
+    private const int TestInputMaxLengthInGrid = 20;
+
     private readonly IProblemsDataService problemsData;
     private readonly IZipArchivesService zipArchives;
     private readonly ITestsExportValidationService testsExportValidation;
@@ -247,12 +250,12 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             new()
             {
                 Name = AdditionalFormFields.Input.ToString(),
-                ValueFunc = t => t.InputDataAsString,
+                ValueFunc = t => t.InputDataAsString.ToEllipsis(TestInputMaxLengthInGrid),
             },
             new()
             {
                 Name = AdditionalFormFields.Output.ToString(),
-                ValueFunc = t => t.OutputDataAsString,
+                ValueFunc = t => t.OutputDataAsString.ToEllipsis(TestInputMaxLengthInGrid),
             },
         };
 
