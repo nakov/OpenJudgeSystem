@@ -1,9 +1,8 @@
-namespace OJS.Services.Administration.Business.Validation.Implementations;
+namespace OJS.Services.Administration.Business.Validation.Factories.Implementations;
 
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using OJS.Data.Models.Contests;
-using OJS.Services.Administration.Business.Extensions;
 using OJS.Services.Administration.Data;
 using OJS.Services.Common;
 using System;
@@ -12,25 +11,22 @@ using System.Threading.Tasks;
 using AdminResource = OJS.Common.Resources.AdministrationGeneral;
 using Resource = OJS.Common.Resources.ContestsControllers;
 
-public class ContestsValidationService : IContestsValidationService
+public class ContestValidatorsFactory : IContestValidatorsFactory
 {
     private const int ProblemGroupsCountLimit = 40;
 
     private readonly IContestsDataService contestsData;
     private readonly IContestCategoriesDataService contestCategoriesData;
     private readonly IUserProviderService userProvider;
-    private readonly IContestsBusinessService contestsBusiness;
 
-    public ContestsValidationService(
+    public ContestValidatorsFactory(
         IContestsDataService contestsData,
         IContestCategoriesDataService contestCategoriesData,
-        IUserProviderService userProvider,
-        IContestsBusinessService contestsBusiness)
+        IUserProviderService userProvider)
     {
         this.contestsData = contestsData;
         this.contestCategoriesData = contestCategoriesData;
         this.userProvider = userProvider;
-        this.contestsBusiness = contestsBusiness;
     }
 
     public IEnumerable<Func<Contest, Contest, AdminActionContext, ValidatorResult>> GetValidators()
@@ -49,24 +45,6 @@ public class ContestsValidationService : IContestsValidationService
             this.ValidateContestCategoryPermissions,
             this.ValidateContestIsNotActiveOnDelete,
         };
-
-    public async Task<ValidatorResult> ValidateContestPermissionsOfCurrentUser(AdminActionContext actionContext)
-    {
-        var user = this.userProvider.GetCurrentUser();
-        var contestId = actionContext.TryGetEntityId<Contest>();
-
-        if (contestId == null)
-        {
-            return ValidatorResult.Error("A contest should be specified for the problem group.");
-        }
-
-        if (!await this.contestsBusiness.UserHasContestPermissions(contestId.Value, user.Id, user.IsAdmin))
-        {
-            return ValidatorResult.Error(AdminResource.No_permissions_for_contest);
-        }
-
-        return ValidatorResult.Success();
-    }
 
     private async Task<ValidatorResult> ValidateContestCategoryPermissions(
             Contest existingContest,

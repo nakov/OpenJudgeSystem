@@ -5,8 +5,10 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Common.Helpers;
     using OJS.Data.Models.Problems;
     using OJS.Services.Administration.Data;
+    using OJS.Services.Administration.Models.Problems;
     using OJS.Services.Common;
     using OJS.Services.Common.Models;
+    using OJS.Services.Infrastructure.Exceptions;
     using System;
     using System.Linq;
     using System.Threading.Tasks;
@@ -26,6 +28,7 @@ namespace OJS.Services.Administration.Business.Implementations
         private readonly ISubmissionTypesDataService submissionTypesData;
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
         private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
+        private readonly IContestsBusinessService contestsBusiness;
 
         public ProblemsBusinessService(
             IContestsDataService contestsData,
@@ -37,7 +40,8 @@ namespace OJS.Services.Administration.Business.Implementations
             ITestRunsDataService testRunsData,
             ISubmissionTypesDataService submissionTypesData,
             IProblemGroupsBusinessService problemGroupsBusiness,
-            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication)
+            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication,
+            IContestsBusinessService contestsBusiness)
         {
             this.contestsData = contestsData;
             this.participantScoresData = participantScoresData;
@@ -49,6 +53,7 @@ namespace OJS.Services.Administration.Business.Implementations
             this.submissionTypesData = submissionTypesData;
             this.problemGroupsBusiness = problemGroupsBusiness;
             this.submissionsDistributorCommunication = submissionsDistributorCommunication;
+            this.contestsBusiness = contestsBusiness;
         }
 
         public async Task RetestById(int id)
@@ -151,6 +156,18 @@ namespace OJS.Services.Administration.Business.Implementations
             await this.CopyProblemToContest(problem, contestId, problemGroupId);
 
             return ServiceResult.Success;
+        }
+
+        public async Task<bool> UserHasProblemPermissions(int problemId, string? userId, bool isUserAdmin)
+        {
+            var problem = await this.problemsData.OneByIdTo<ProblemShortDetailsServiceModel>(problemId);
+
+            if (problem == null)
+            {
+                throw new BusinessServiceException("Problem cannot be null");
+            }
+
+            return await this.contestsBusiness.UserHasContestPermissions(problem.ContestId, userId, isUserAdmin);
         }
 
         private async Task CopyProblemToContest(Problem? problem, int contestId, int? problemGroupId)

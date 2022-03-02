@@ -1,4 +1,4 @@
-namespace OJS.Services.Administration.Business.Validation.Implementations;
+namespace OJS.Services.Administration.Business.Validation.Factories.Implementations;
 
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
@@ -6,6 +6,7 @@ using OJS.Common;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
 using OJS.Services.Administration.Business.Extensions;
+using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Common;
 using System;
 using System.Collections.Generic;
@@ -14,19 +15,16 @@ using System.Threading.Tasks;
 using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 using GlobalResource = OJS.Common.Resources.ProblemsController;
 
-public class ProblemsValidationService : IProblemsValidationService
+public class ProblemValidatorsFactory : IProblemValidatorsFactory
 {
-    private readonly IUserProviderService userProvider;
-    private readonly IContestsBusinessService contestsBusiness;
+    private readonly IContestsValidationHelper contestsValidationHelper;
     private readonly IFileSystemService fileSystem;
 
-    public ProblemsValidationService(
-        IUserProviderService userProvider,
-        IContestsBusinessService contestsBusiness,
+    public ProblemValidatorsFactory(
+        IContestsValidationHelper contestsValidationHelper,
         IFileSystemService fileSystem)
     {
-        this.userProvider = userProvider;
-        this.contestsBusiness = contestsBusiness;
+        this.contestsValidationHelper = contestsValidationHelper;
         this.fileSystem = fileSystem;
     }
 
@@ -48,20 +46,14 @@ public class ProblemsValidationService : IProblemsValidationService
         Problem newEntity,
         AdminActionContext actionContext)
     {
-        var user = this.userProvider.GetCurrentUser();
-        var contestId = actionContext.TryGetEntityId<Contest>() ?? newEntity.ProblemGroup?.ContestId ?? default;
+        var contestId = actionContext.TryGetEntityId<Contest>() ?? newEntity.ProblemGroup.ContestId;
 
-        if (contestId == default)
-        {
-            return ValidatorResult.Error("A contest should be specified for the problem.");
-        }
+        var permissionsResult = await this.contestsValidationHelper.ValidatePermissionsOfCurrentUser(
+            contestId);
 
-        if (!await this.contestsBusiness.UserHasContestPermissions(contestId, user.Id, user.IsAdmin))
-        {
-            return ValidatorResult.Error(GeneralResource.No_permissions_for_contest);
-        }
-
-        return ValidatorResult.Success();
+        return permissionsResult.IsValid
+            ? ValidatorResult.Success()
+            : ValidatorResult.Error(GeneralResource.No_permissions_for_contest);
     }
 
     private ValidatorResult ValidateUploadedFiles(

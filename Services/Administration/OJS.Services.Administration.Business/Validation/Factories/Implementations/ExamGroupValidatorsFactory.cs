@@ -1,30 +1,27 @@
-namespace OJS.Services.Administration.Business.Validation.Implementations;
+namespace OJS.Services.Administration.Business.Validation.Factories.Implementations;
 
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using OJS.Data.Models.Contests;
+using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
-using OJS.Services.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Resource = OJS.Common.Resources.ExamGroupsController;
 
-public class ExamGroupsValidationService : IExamGroupsValidationService
+public class ExamGroupValidatorsFactory : IExamGroupValidatorsFactory
 {
-    private readonly IUserProviderService userProvider;
-    private readonly IContestsBusinessService contestsBusiness;
     private readonly IContestsDataService contestsData;
+    private readonly IContestsValidationHelper contestsValidationHelper;
 
-    public ExamGroupsValidationService(
-        IUserProviderService userProvider,
-        IContestsBusinessService contestsBusiness,
-        IContestsDataService contestsData)
+    public ExamGroupValidatorsFactory(
+        IContestsDataService contestsData,
+        IContestsValidationHelper contestsValidationHelper)
     {
-        this.userProvider = userProvider;
-        this.contestsBusiness = contestsBusiness;
         this.contestsData = contestsData;
+        this.contestsValidationHelper = contestsValidationHelper;
     }
 
     public IEnumerable<Func<ExamGroup, ExamGroup, AdminActionContext, ValidatorResult>> GetValidators()
@@ -41,14 +38,15 @@ public class ExamGroupsValidationService : IExamGroupsValidationService
         ExamGroup newEntity,
         AdminActionContext actionContext)
     {
-        var user = this.userProvider.GetCurrentUser();
-
         if (!newEntity.ContestId.HasValue)
         {
             return ValidatorResult.Success();
         }
 
-        if (!await this.contestsBusiness.UserHasContestPermissions(newEntity.ContestId.Value, user.Id, user.IsAdmin))
+        var permissionsResult = await this.contestsValidationHelper.ValidatePermissionsOfCurrentUser(
+            newEntity.ContestId.Value);
+
+        if (!permissionsResult.IsValid)
         {
             return ValidatorResult.Error(Resource.Cannot_attach_contest);
         }

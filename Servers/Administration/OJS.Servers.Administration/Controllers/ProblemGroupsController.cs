@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using OJS.Common.Enumerations;
 using OJS.Common.Utils;
 using OJS.Data.Models.Problems;
-using OJS.Services.Administration.Business.Validation;
+using OJS.Services.Administration.Business.Validation.Factories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,10 +15,10 @@ using System.Threading.Tasks;
 
 public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
 {
-    private readonly IProblemGroupsValidationService problemGroupsValidation;
+    private readonly IProblemGroupValidatorsFactory problemGroupValidatorsFactory;
 
-    public ProblemGroupsController(IProblemGroupsValidationService problemGroupsValidation)
-        => this.problemGroupsValidation = problemGroupsValidation;
+    public ProblemGroupsController(IProblemGroupValidatorsFactory problemGroupValidatorsFactory)
+        => this.problemGroupValidatorsFactory = problemGroupValidatorsFactory;
 
     public IActionResult Problems([FromQuery] IDictionary<string, string> complexId)
         => this.RedirectToActionWithNumberFilter(
@@ -28,11 +28,11 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
 
     protected override IEnumerable<Func<ProblemGroup, ProblemGroup, AdminActionContext, ValidatorResult>>
         EntityValidators
-        => this.problemGroupsValidation.GetValidators();
+        => this.problemGroupValidatorsFactory.GetValidators();
 
     protected override IEnumerable<Func<ProblemGroup, ProblemGroup, AdminActionContext, Task<ValidatorResult>>>
         AsyncEntityValidators
-        => this.problemGroupsValidation.GetAsyncValidators();
+        => this.problemGroupValidatorsFactory.GetAsyncValidators();
 
     protected override IEnumerable<GridAction> CustomActions
         => new GridAction[]

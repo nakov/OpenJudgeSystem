@@ -153,5 +153,14 @@ namespace OJS.Common
             public const string Contest_required = "Contest is required";
             public const string Copy_all_problem_groups_success_message = "Successfully copied all problem groups from the contest \"{0}\" into the contest \"{1}\"";
         }
+
+        public static class TestsControllers
+        {
+            public const string No_empty_file = "File must not be empty";
+            public const string Must_be_zip = "File must be a zip";
+            public const string Zip_damaged = "Zip is damaged";
+            public const string Invalid_tests = "Invalid tests";
+            public const string Tests_added_to_problem = "{0} tests added to problem successfully.";
+        }
     }
 }

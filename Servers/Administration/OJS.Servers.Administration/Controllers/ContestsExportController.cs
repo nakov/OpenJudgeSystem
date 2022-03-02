@@ -6,6 +6,7 @@ using OJS.Common;
 using OJS.Common.Extensions;
 using OJS.Common.Extensions.Strings;
 using OJS.Data.Models.Submissions;
+using OJS.Servers.Administration.Infrastructure.Extensions;
 using OJS.Servers.Administration.Models.Contests;
 using OJS.Servers.Administration.Models.Participants;
 using OJS.Servers.Administration.Models.Problems;
@@ -62,7 +63,7 @@ public class ContestsExportController : BaseAdminViewController
         var contestName = await this.contestsData.GetNameById(id);
         if (string.IsNullOrWhiteSpace(contestName))
         {
-            this.TempData[GlobalConstants.DangerMessage] = "No such contest";
+            this.TempData.AddDangerMessage("No such contest");
             return this.RedirectToAction("Index", "Contests");
         }
 

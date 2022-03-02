@@ -1,4 +1,4 @@
-namespace OJS.Services.Administration.Business.Validation;
+namespace OJS.Services.Administration.Business.Validation.Factories;
 
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-public interface IValidationService<in TEntity> : IService
+public interface IValidatorsFactory<in TEntity> : IService
 {
     IEnumerable<Func<TEntity, TEntity, AdminActionContext, ValidatorResult>> GetValidators();
 

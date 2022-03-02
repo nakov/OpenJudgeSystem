@@ -9,7 +9,7 @@ namespace OJS.Services.Infrastructure.Exceptions
         {
         }
 
-        public BusinessServiceException(string message, string parameterName)
+        public BusinessServiceException(string message, string? parameterName)
             : base(message) => this.ParameterName = parameterName;
 
         public string? ParameterName { get; set; }
