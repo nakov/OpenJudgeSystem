@@ -7,8 +7,6 @@ $(document).ready(function() {
         }
     });
 
-    console.log('Hello from iniiit');
-
     const forms = $('form');
 
     forms.find('select').select2();
