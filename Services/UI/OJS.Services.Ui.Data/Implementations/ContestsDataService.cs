@@ -44,6 +44,13 @@ namespace OJS.Services.Ui.Data.Implementations
                 .Include(c => c.ProblemGroups.Select(pg => pg.Problems))
                 .FirstOrDefaultAsync(c => c.Id == id);
 
+        public Task<Contest?> GetByIdWithProblemsAndSubmissionTypes(int id)
+            => this.DbSet
+                .Include(c => c.ProblemGroups)
+                .ThenInclude(pg => pg.Problems)
+                .ThenInclude(p => p.SubmissionTypesInProblems)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
         public Task<Contest?> GetByIdWithParticipants(int id)
             => this.GetByIdQuery(id)
                 .Include(c => c.Participants)

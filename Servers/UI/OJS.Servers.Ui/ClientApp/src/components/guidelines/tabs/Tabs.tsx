@@ -26,11 +26,11 @@ const Tabs = ({ tabChildren, tabLabels, themeOverride }: ITabPanelProps) => {
     };
 
     const renderTabs = () => tabLabels.map((tl: string, index: number) => (
-        <Tab label={tl} value={index.toString()} />
+        <Tab key={tl} label={tl} value={index.toString()} />
     ));
 
     const renderTabChildren = () => tabChildren?.map((tc: React.ReactNode, index: number) => (
-        <TabPanel value={index.toString()}>{tc}</TabPanel>
+        <TabPanel key={index.toString()} value={index.toString()}>{tc}</TabPanel>
     ));
 
     return (
