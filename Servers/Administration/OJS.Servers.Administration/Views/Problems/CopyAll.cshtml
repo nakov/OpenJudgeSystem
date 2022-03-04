@@ -7,7 +7,6 @@
 <form asp-action="CopyAll" asp-controller="Problems" method="post">
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.FromContestId)
-    @Html.HiddenFor(m => m.ContestsToCopyTo)
 
     <div class="form-group">
         @Html.LabelFor(m => m.Id)
