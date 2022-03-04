@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OJS.Servers.Ui.Infrastructure.Extensions;
 using OJS.Services.Ui.Business;
 using OJS.Services.Ui.Models.Contests;
 using System.Threading.Tasks;

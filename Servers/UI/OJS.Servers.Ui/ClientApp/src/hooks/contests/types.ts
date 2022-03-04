@@ -1,6 +1,7 @@
 interface ISubmissionTypeType {
     id: number,
     name: string,
+    isSelectedByDefault: boolean,
 }
 
 interface ISubmissionResourceType {
@@ -22,6 +23,7 @@ interface IProblemType {
     checkerName: string,
     checkerDescription: string,
     resources: ISubmissionResourceType[],
+    allowedSubmissionTypes: ISubmissionTypeType[]
 }
 
 interface IContestType {
@@ -51,5 +53,33 @@ interface IContestType {
     isActive: boolean,
 }
 
+interface IIndexContestsType {
+    id: number,
+    name: string,
+    endTime: Date,
+    canPractice: boolean,
+    canCompete: boolean,
+    category: string
+}
+
+interface IGetContestsForIndexResponseType {
+    activeContests: IIndexContestsType[]
+    pastContests: IIndexContestsType[]
+}
+
+interface IStartParticipationResponseType {
+    contest: IContestType,
+    contestIsCompete: boolean,
+    lastSubmissionTime: Date,
+    remainingTimeInMilliseconds: number
+}
+
 // eslint-disable-next-line import/prefer-default-export
-export type { IContestType };
+export type {
+    IIndexContestsType,
+    IGetContestsForIndexResponseType,
+    IStartParticipationResponseType,
+    IContestType,
+    IProblemType,
+    ISubmissionTypeType,
+};

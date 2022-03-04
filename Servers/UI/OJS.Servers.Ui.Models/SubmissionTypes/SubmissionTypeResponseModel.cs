@@ -1,10 +1,10 @@
-﻿using OJS.Data.Models.Submissions;
+﻿using OJS.Services.Ui.Models.SubmissionTypes;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System.Collections.Generic;
 
-namespace OJS.Services.Ui.Models.SubmissionTypes
+namespace OJS.Servers.Ui.Models.SubmissionTypes
 {
-    public class SubmissionTypeServiceModel : IMapFrom<SubmissionType>
+    public class SubmissionTypeResponseModel : IMapFrom<SubmissionTypeServiceModel>
     {
         public int Id { get; set; }
 
@@ -14,6 +14,6 @@ namespace OJS.Services.Ui.Models.SubmissionTypes
 
         public bool AllowBinaryFilesUpload { get; set; }
 
-        public IEnumerable<string> AllowedFileExtensions { get; set; }
+        public IEnumerable<string>? AllowedFileExtensions { get; set; }
     }
 }

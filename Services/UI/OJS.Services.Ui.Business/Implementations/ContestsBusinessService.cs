@@ -47,7 +47,8 @@ namespace OJS.Services.Ui.Business.Implementations
 
         public async Task<ContestParticipationServiceModel> StartContestParticipation(StartContestParticipationServiceModel model)
         {
-            var contest = await this.contestsData.OneById(model.ContestId);
+            var contest = await this.contestsData
+                .GetByIdWithProblemsAndSubmissionTypes(model.ContestId);
 
             var user = this.userProviderService.GetCurrentUser();
 

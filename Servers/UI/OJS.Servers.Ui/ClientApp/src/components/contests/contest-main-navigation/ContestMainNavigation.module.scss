@@ -1,0 +1,25 @@
+@import "src/styles/colors";
+
+.contestMainWrapper {
+  flex-grow: 2;
+}
+
+.contestInnerLayout {
+  display: flex;
+  flex-direction: column;
+  margin-top: 30px;
+}
+
+.contestTabControls {
+  flex-grow: 2;
+}
+
+.editorAndProblemControlsWrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.executionTypeSelectors {
+  display: flex;
+  flex-direction: row;
+}

@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Problems;
+using OJS.Services.Ui.Models.SubmissionTypes;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace OJS.Services.Ui.Models.Contests
 {
@@ -57,6 +59,8 @@ namespace OJS.Services.Ui.Models.Contests
 
         public IEnumerable<ContestProblemResourceServiceModel> Resources { get; set; }
 
+        public IEnumerable<SubmissionTypeServiceModel> AllowedSubmissionTypes { get; set; }
+
         public bool UserHasAdminRights { get; set; }
 
         private int memoryLimitInBytes;
@@ -71,6 +75,8 @@ namespace OJS.Services.Ui.Models.Contests
                 .ForMember(d => d.IsExcludedFromHomework,
                     opt => opt.MapFrom(s => s.ProblemGroup.Type == ProblemGroupType.ExcludedFromHomework))
                 .ForMember(d => d.FileSizeLimit, opt => opt.MapFrom(s => s.SourceCodeSizeLimit))
-                .ForMember(d => d.UserHasAdminRights, opt => opt.Ignore());
+                .ForMember(d => d.UserHasAdminRights, opt => opt.Ignore())
+                .ForMember(d => d.AllowedSubmissionTypes,
+                    opt => opt.MapFrom(s => s.SubmissionTypesInProblems.Select(st => st.SubmissionType)));
     }
 }

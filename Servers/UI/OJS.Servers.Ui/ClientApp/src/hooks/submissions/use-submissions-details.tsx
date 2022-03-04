@@ -45,10 +45,6 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         }
     }, [ getSubmissionDetailsData ]);
 
-    useEffect(() => {
-        console.log(currentSubmission);
-    });
-
     const value = {
         setCurrentSubmissionId,
         currentSubmission,
