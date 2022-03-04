@@ -1,0 +1,28 @@
+@model OJS.Servers.Administration.Models.Problems.DeleteAllProblemsInContestViewModel;
+
+@using OJS.Data.Models.Problems
+@using Resource = OJS.Common.Resources.ProblemsDeleteAll;
+
+@{
+    ViewBag.Title = Resource.Page_title;
+}
+
+<h2>@Model.Name</h2>
+<h3>@ViewBag.Title</h3>
+
+<form asp-action="DeleteAll" asp-controller="Problems" method="post">
+    @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(m => m.Id)
+
+    <p>
+        @Resource.Confirm_message @Model.Name?
+    </p>
+    <button class="btn btn-primary">@Resource.Confirm</button>
+    @Html.ActionLink(
+        Resource.Back,
+        "Index",
+        "Problems",
+        new Dictionary<string, string> { { nameof(Problem.ProblemGroup.ContestId), Model.Id.ToString() } },
+        new { @class = "btn btn-primary" })
+</form>

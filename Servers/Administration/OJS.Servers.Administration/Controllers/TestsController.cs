@@ -16,7 +16,7 @@ using OJS.Services.Administration.Business.Extensions;
 using OJS.Services.Administration.Business.Validation;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
-using OJS.Services.Administration.Models.Problems;
+using OJS.Services.Administration.Models.Contests.Problems;
 using OJS.Services.Administration.Models.Tests;
 using OJS.Services.Common;
 using OJS.Services.Common.Models;

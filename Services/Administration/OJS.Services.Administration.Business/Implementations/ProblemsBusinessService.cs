@@ -5,7 +5,7 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Common.Helpers;
     using OJS.Data.Models.Problems;
     using OJS.Services.Administration.Data;
-    using OJS.Services.Administration.Models.Problems;
+    using OJS.Services.Administration.Models.Contests.Problems;
     using OJS.Services.Common;
     using OJS.Services.Common.Models;
     using OJS.Services.Infrastructure.Exceptions;

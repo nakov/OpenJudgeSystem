@@ -19,10 +19,12 @@ using OJS.Servers.Administration.Models.Problems;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Extensions;
+using OJS.Services.Administration.Business.Validation;
 using OJS.Services.Administration.Business.Validation.Factories;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
-using OJS.Services.Administration.Models.Problems;
+using OJS.Services.Administration.Models.Contests.Problems;
+using OJS.Services.Infrastructure.Extensions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
@@ -44,6 +46,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     private readonly IZippedTestsParserService zippedTestsParser;
     private readonly ISubmissionTypesDataService submissionTypesData;
     private readonly IProblemValidatorsFactory problemValidatorsFactory;
+    private readonly IContestDeleteProblemsValidationService contestDeleteProblemsValidation;
 
     public ProblemsController(
         IProblemsBusinessService problemsBusiness,
@@ -52,7 +55,8 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         IProblemsDataService problemsData,
         IZippedTestsParserService zippedTestsParser,
         ISubmissionTypesDataService submissionTypesData,
-        IProblemValidatorsFactory problemValidatorsFactory)
+        IProblemValidatorsFactory problemValidatorsFactory,
+        IContestDeleteProblemsValidationService contestDeleteProblemsValidation)
     {
         this.problemsBusiness = problemsBusiness;
         this.contestsBusiness = contestsBusiness;
@@ -61,6 +65,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         this.zippedTestsParser = zippedTestsParser;
         this.submissionTypesData = submissionTypesData;
         this.problemValidatorsFactory = problemValidatorsFactory;
+        this.contestDeleteProblemsValidation = contestDeleteProblemsValidation;
     }
 
     public override IActionResult Index()
@@ -84,6 +89,12 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                 Action = nameof(this.Create),
                 RouteValues = routeValues,
             },
+            new()
+            {
+                Name = "Delete all",
+                Action = nameof(this.DeleteAll),
+                RouteValues = routeValues,
+            }
         };
 
         return base.Index();
@@ -172,6 +183,40 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         this.TempData.AddSuccessMessage(GlobalResource.Problem_retested);
         return this.RedirectToAction("Index");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> DeleteAll(int? contestId)
+    {
+        if (!contestId.HasValue)
+        {
+            this.TempData.AddDangerMessage(GlobalResource.Invalid_contest);
+            return this.RedirectToAction("Index", "Problems");
+        }
+
+        var contest = await this.contestsData.OneById(contestId);
+
+        await this.contestDeleteProblemsValidation
+            .GetValidationResult(contest?.Map<ContestDeleteProblemsValidationServiceModel>())
+            .VerifyResult();
+
+        return this.View(contest!.Map<DeleteAllProblemsInContestViewModel>());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteAll(DeleteAllProblemsInContestViewModel model)
+    {
+        var contest = await this.contestsData.OneById(model.Id);
+
+        await this.contestDeleteProblemsValidation
+            .GetValidationResult(contest?.Map<ContestDeleteProblemsValidationServiceModel>())
+            .VerifyResult();
+
+        await this.problemsBusiness.DeleteByContest(contest!.Id);
+
+        this.TempData.AddSuccessMessage(GlobalResource.Problems_deleted);
+        return this.RedirectToActionWithNumberFilter(nameof(ProblemsController), ContestIdKey, model.Id);
     }
 
     protected override IEnumerable<GridAction> CustomActions

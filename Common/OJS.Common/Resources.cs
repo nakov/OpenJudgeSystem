@@ -162,5 +162,13 @@ namespace OJS.Common
             public const string Invalid_tests = "Invalid tests";
             public const string Tests_added_to_problem = "{0} tests added to problem successfully.";
         }
+
+        public static class ProblemsDeleteAll
+        {
+            public const string Back = "Back";
+            public const string Confirm = "Confirm";
+            public const string Confirm_message = "Do you want to delete all problems for";
+            public const string Page_title = "Delete all problems";
+        }
     }
 }
