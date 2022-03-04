@@ -1,8 +1,7 @@
 @model OJS.Servers.Administration.Models.Problems.DeleteAllProblemsInContestViewModel;
 
-@using OJS.Data.Models.Problems
-@using Resource = OJS.Common.Resources.ProblemsDeleteAll;
-@using SharedResource = OJS.Common.Resources.Partials;
+@using Resource = OJS.Common.Resources.ProblemsDeleteAll
+@using SharedResource = OJS.Common.Resources.Partials
 
 @{
     ViewBag.Title = Resource.Page_title;
@@ -20,10 +19,5 @@
         @Resource.Confirm_message @Model.Name?
     </p>
     <button class="btn btn-primary">@Resource.Confirm</button>
-    @Html.ActionLink(
-        SharedResource.Back,
-        "Index",
-        "Problems",
-        new Dictionary<string, string> { { nameof(Problem.ProblemGroup.ContestId), Model.Id.ToString() } },
-        new { @class = "btn btn-secondary" })
+    <a href="@ViewContext.GetReturnUrl()" class="btn btn-secondary">@SharedResource.Back</a>
 </form>

@@ -27,5 +27,14 @@ namespace OJS.Servers.Infrastructure.Extensions
             response.StatusCode = (int)HttpStatusCode.Unauthorized;
             return response.WriteAsync("Unauthorized");
         }
+
+        public static string GetReturnUrl(this HttpContext httpContext)
+        {
+            var referer = httpContext.Request.GetTypedHeaders().Referer;
+
+            return referer != null
+                ? referer.PathAndQuery
+                : "/";
+        }
     }
 }

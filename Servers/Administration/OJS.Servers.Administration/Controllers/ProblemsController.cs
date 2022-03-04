@@ -161,17 +161,10 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         if (!await this.contestsBusiness.UserHasContestPermissions(problem.ContestId, userId, userIsAdmin))
         {
             this.TempData.AddDangerMessage(GeneralResource.No_privileges_message);
-            return this.RedirectToAction("Index", "Problems");
+            return this.RedirectToActionWithNumberFilter(nameof(ProblemsController), ContestIdKey, problem.ContestId);
         }
 
-        var referer = this.HttpContext.Request.GetTypedHeaders().Referer;
-
-        if (referer != null)
-        {
-            this.ViewBag.ReturnUrl = referer.AbsolutePath;
-        }
-
-        return this.View("RetestConfirmation", problem.Map<ProblemRetestViewModel>());
+        return this.View(problem.Map<ProblemRetestViewModel>());
     }
 
     [HttpPost]
@@ -296,6 +289,11 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             destinationContest!.Name));
         return this.RedirectToActionWithNumberFilter(nameof(ProblemsController), ContestIdKey, sourceContestId);
     }
+
+    // public async Task<IActionResult> Copy()
+    // {
+    //
+    // }
 
     protected override IEnumerable<GridAction> CustomActions
         => new []
