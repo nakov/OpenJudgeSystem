@@ -1,6 +1,7 @@
 namespace OJS.Servers.Administration.Controllers;
 
 using AutoCrudAdmin.Enumerations;
+using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using FluentExtensions.Extensions;
@@ -34,6 +35,8 @@ using GlobalResource = OJS.Common.Resources.ProblemsController;
 
 public class ProblemsController : BaseAutoCrudAdminController<Problem>
 {
+    private const string ContestIdKey = nameof(OJS.Data.Models.Problems.Problem.ProblemGroup.ContestId);
+
     private readonly IProblemsBusinessService problemsBusiness;
     private readonly IContestsBusinessService contestsBusiness;
     private readonly IContestsDataService contestsData;
@@ -60,10 +63,40 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         this.problemValidatorsFactory = problemValidatorsFactory;
     }
 
-    public IActionResult ByContest(int contestId)
+    public override IActionResult Index()
     {
-        this.MasterGridFilter = p => p.ProblemGroup.ContestId == contestId;
+        if (!this.TryGetEntityIdForColumnFilter(ContestIdKey, out var contestId))
+        {
+            return base.Index();
+        }
+
+        var routeValues = new Dictionary<string, string>
+        {
+            { nameof(contestId), contestId.ToString() },
+        };
+
+        this.MasterGridFilter = t => t.ProblemGroup.ContestId == contestId;
+        this.CustomToolbarActions = new AutoCrudAdminGridToolbarActionViewModel[]
+        {
+            new()
+            {
+                Name = "Add new",
+                Action = nameof(this.AddNewTestToProblem),
+                RouteValues = routeValues,
+            },
+        };
+
         return base.Index();
+    }
+
+    public IActionResult AddNewTestToProblem(int contestId)
+    {
+        this.TempData.Add(ContestIdKey, contestId);
+
+        return this.RedirectToAction(
+            "Create",
+            "Problems",
+            new Dictionary<string, string> { { ContestIdKey, contestId.ToString() }, });
     }
 
     public override Task<IActionResult> Create(IDictionary<string, string> complexId, string postEndpointName)
