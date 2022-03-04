@@ -6,6 +6,7 @@ using FluentExtensions.Extensions;
 using Microsoft.AspNetCore.Http;
 using OJS.Common.Enumerations;
 using OJS.Services.Administration.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,7 +34,11 @@ public static class AdminActionContextExtensions
 
     public static int? TryGetEntityId<TEntity>(this IDictionary<string, string> entityDict)
         where TEntity : class
-        => entityDict.TryGetValue(typeof(TEntity).Name + "Id", out var idStr)
-            ? int.Parse(idStr)
+        => int.TryParse(
+            entityDict
+                .FirstOrDefault(x => x.Key.Equals(typeof(TEntity).Name + "Id", StringComparison.OrdinalIgnoreCase))
+                .Value, out var id)
+            ? id
             : null;
+
 }
