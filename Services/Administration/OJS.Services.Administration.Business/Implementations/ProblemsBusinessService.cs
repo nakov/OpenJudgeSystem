@@ -136,6 +136,7 @@ namespace OJS.Services.Administration.Business.Implementations
                 .AsNoTracking()
                 .Include(p => p.Tests)
                 .Include(p => p.Resources)
+                .Include(p => p.ProblemGroup)
                 .SingleOrDefaultAsync();
 
             if (problem?.ProblemGroup.ContestId == contestId)
