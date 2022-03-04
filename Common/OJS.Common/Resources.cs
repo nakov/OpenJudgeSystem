@@ -165,10 +165,31 @@ namespace OJS.Common
 
         public static class ProblemsDeleteAll
         {
-            public const string Back = "Back";
             public const string Confirm = "Confirm";
             public const string Confirm_message = "Do you want to delete all problems for";
             public const string Page_title = "Delete all problems";
+        }
+
+        public static class CopyProblem
+        {
+            public const string Bulk_copy_contest_label = "Search for the contest in which you want to copy all the problems";
+            public const string Contest_label = "Search for the contest in which you want to copy the problem in";
+            public const string Contest_required = "Contest is required";
+            public const string Problem_group_label = "Problem group:";
+            public const string Problem_group_placeholder = "Copy into a new problem group";
+        }
+
+        public static class Partials
+        {
+            public const string Back = "Back";
+            public const string Choose_contest = "Choose contest...";
+            public const string Choose_resource = "Choose resource";
+            public const string Copy = "Copy";
+            public const string Delete_current_questions = "Delete current questions";
+            public const string Details = "Details";
+            public const string File = "File";
+            public const string Name = "Name";
+            public const string Type = "Type";
         }
     }
 }

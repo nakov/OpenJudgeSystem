@@ -1,0 +1,36 @@
+@using OJS.Data.Models.Problems
+@using SharedResource = OJS.Common.Resources.Partials
+
+@model OJS.Servers.Administration.Models.Problems.CopyAllToAnotherContestViewModel
+
+<h2>Copy all problems from the contest "@Model.Name" into another contest</h2>
+
+<form asp-action="CopyAll" asp-controller="Problems" method="post">
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.FromContestId)
+    @Html.HiddenFor(m => m.ContestsToCopyTo)
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Id)
+        <br/>
+        <select id="contest-id" name="@nameof(Model.Id)" asp-items="@Model.ContestsToCopyTo">
+            <option value="null">--Select Contest--</option>
+        </select>
+        <br/>
+        @Html.ValidationMessageFor(m => m.Id)
+    </div>
+
+    <button class="btn btn-primary">@SharedResource.Copy</button>
+    @Html.ActionLink(
+        SharedResource.Back,
+        "Index",
+        "Problems",
+        new Dictionary<string, string> { { nameof(Problem.ProblemGroup.ContestId), Model.FromContestId.ToString() } },
+        new { @class = "btn btn-secondary" })
+</form>
+
+<script type="text/javascript">
+    $(function () {
+        $("#contest-id").select2();
+    });
+</script>

@@ -7,6 +7,7 @@ using AutoCrudAdmin.ViewModels;
 using FluentExtensions.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using OJS.Common.Enumerations;
 using OJS.Common.Extensions;
 using OJS.Common.Utils;
@@ -34,6 +35,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 using GlobalResource = OJS.Common.Resources.ProblemsController;
+using Resource = OJS.Common.Resources.ProblemGroupsControllers;
 
 public class ProblemsController : BaseAutoCrudAdminController<Problem>
 {
@@ -47,6 +49,8 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     private readonly ISubmissionTypesDataService submissionTypesData;
     private readonly IProblemValidatorsFactory problemValidatorsFactory;
     private readonly IContestDeleteProblemsValidationService contestDeleteProblemsValidation;
+    private readonly IContestCopyProblemsValidationService contestCopyProblemsValidation;
+    private readonly IProblemGroupsBusinessService problemGroupsBusiness;
 
     public ProblemsController(
         IProblemsBusinessService problemsBusiness,
@@ -56,7 +60,9 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         IZippedTestsParserService zippedTestsParser,
         ISubmissionTypesDataService submissionTypesData,
         IProblemValidatorsFactory problemValidatorsFactory,
-        IContestDeleteProblemsValidationService contestDeleteProblemsValidation)
+        IContestDeleteProblemsValidationService contestDeleteProblemsValidation,
+        IContestCopyProblemsValidationService contestCopyProblemsValidation,
+        IProblemGroupsBusinessService problemGroupsBusiness)
     {
         this.problemsBusiness = problemsBusiness;
         this.contestsBusiness = contestsBusiness;
@@ -66,6 +72,8 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         this.submissionTypesData = submissionTypesData;
         this.problemValidatorsFactory = problemValidatorsFactory;
         this.contestDeleteProblemsValidation = contestDeleteProblemsValidation;
+        this.contestCopyProblemsValidation = contestCopyProblemsValidation;
+        this.problemGroupsBusiness = problemGroupsBusiness;
     }
 
     public override IActionResult Index()
@@ -94,7 +102,13 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                 Name = "Delete all",
                 Action = nameof(this.DeleteAll),
                 RouteValues = routeValues,
-            }
+            },
+            new()
+            {
+                Name = "Copy all",
+                Action = nameof(this.CopyAll),
+                RouteValues = routeValues,
+            },
         };
 
         return base.Index();
@@ -217,6 +231,70 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         this.TempData.AddSuccessMessage(GlobalResource.Problems_deleted);
         return this.RedirectToActionWithNumberFilter(nameof(ProblemsController), ContestIdKey, model.Id);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> CopyAll(int? contestId)
+    {
+        if (!contestId.HasValue)
+        {
+            this.TempData.AddDangerMessage(GlobalResource.Invalid_contest);
+            return this.RedirectToAction("Index", "Problems");
+        }
+
+        var contest = await this.contestsData.OneByIdTo<ContestCopyProblemsValidationServiceModel>(contestId);
+
+        await this.contestCopyProblemsValidation
+            .GetValidationResult(contest)
+            .VerifyResult();
+
+        var model = contest!.Map<CopyAllToAnotherContestViewModel>();
+        await this.PrepareViewModelForCopyAll(model, contestId.Value);
+        return this.View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CopyAll(CopyAllToAnotherContestViewModel model)
+    {
+        if (!this.ModelState.IsValid)
+        {
+            await this.PrepareViewModelForCopyAll(model, model.FromContestId);
+            return this.View(model);
+        }
+
+        var sourceContestId = model.FromContestId;
+        var destinationContestId = model.Id;
+
+        if (!destinationContestId.HasValue ||
+            !await this.contestsData.ExistsById(sourceContestId))
+        {
+            this.TempData.AddDangerMessage(Resource.Contest_does_not_exist);
+            return this.View(model);
+        }
+
+        var destinationContest = await this.contestsData
+            .OneByIdTo<ContestCopyProblemsValidationServiceModel>(destinationContestId);
+
+        await this.contestCopyProblemsValidation
+            .GetValidationResult(destinationContest)
+            .VerifyResult();
+
+        var result = await this.problemGroupsBusiness
+            .CopyAllToContestBySourceAndDestinationContest(sourceContestId, destinationContestId.Value);
+
+        if (result.IsError)
+        {
+            this.TempData.AddDangerMessage(result.Error ?? "Copy failed due to an unexpected error");
+            await this.PrepareViewModelForCopyAll(model, model.FromContestId);
+            return this.View(model);
+        }
+
+        this.TempData.AddSuccessMessage(string.Format(
+            Resource.Copy_all_problem_groups_success_message,
+            await this.contestsData.GetNameById(sourceContestId),
+            destinationContest!.Name));
+        return this.RedirectToActionWithNumberFilter(nameof(ProblemsController), ContestIdKey, sourceContestId);
     }
 
     protected override IEnumerable<GridAction> CustomActions
@@ -425,5 +503,19 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         problem.SubmissionTypesInProblems.Clear();
         problem.SubmissionTypesInProblems.AddRange(newSubmissionTypes);
+    }
+
+    private async Task PrepareViewModelForCopyAll(CopyAllToAnotherContestViewModel model, int fromContestId)
+    {
+        model.FromContestId = fromContestId;
+        model.ContestsToCopyTo = await this.PrepareContestsToCopyTo();
+    }
+
+    private async Task<SelectList> PrepareContestsToCopyTo()
+    {
+        var contestsToCopyTo =
+            await this.contestsBusiness.GetAllAvailableForCurrentUser<ContestCopyProblemsValidationServiceModel>();
+
+        return new SelectList(contestsToCopyTo, nameof(Contest.Id), nameof(Contest.Name));
     }
 }

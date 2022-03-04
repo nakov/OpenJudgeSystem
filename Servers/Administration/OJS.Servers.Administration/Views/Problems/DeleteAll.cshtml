@@ -2,6 +2,7 @@
 
 @using OJS.Data.Models.Problems
 @using Resource = OJS.Common.Resources.ProblemsDeleteAll;
+@using SharedResource = OJS.Common.Resources.Partials;
 
 @{
     ViewBag.Title = Resource.Page_title;
@@ -20,9 +21,9 @@
     </p>
     <button class="btn btn-primary">@Resource.Confirm</button>
     @Html.ActionLink(
-        Resource.Back,
+        SharedResource.Back,
         "Index",
         "Problems",
         new Dictionary<string, string> { { nameof(Problem.ProblemGroup.ContestId), Model.Id.ToString() } },
-        new { @class = "btn btn-primary" })
+        new { @class = "btn btn-secondary" })
 </form>
