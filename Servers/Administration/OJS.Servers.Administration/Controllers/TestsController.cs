@@ -87,7 +87,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             new()
             {
                 Name = "Add new",
-                Action = nameof(this.AddNewTestToProblem),
+                Action = nameof(this.Create),
                 RouteValues = routeValues,
             },
             new()
@@ -105,16 +105,6 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         };
 
         return base.Index();
-    }
-
-    public IActionResult AddNewTestToProblem(int problemId)
-    {
-        this.TempData.Add(ProblemIdKey, problemId);
-
-        return this.RedirectToAction(
-            "Create",
-            "Tests",
-            new Dictionary<string, string> { { ProblemIdKey, problemId.ToString() }, });
     }
 
     [HttpPost]

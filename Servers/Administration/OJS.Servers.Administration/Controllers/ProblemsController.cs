@@ -81,22 +81,12 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             new()
             {
                 Name = "Add new",
-                Action = nameof(this.AddNewTestToProblem),
+                Action = nameof(this.Create),
                 RouteValues = routeValues,
             },
         };
 
         return base.Index();
-    }
-
-    public IActionResult AddNewTestToProblem(int contestId)
-    {
-        this.TempData.Add(ContestIdKey, contestId);
-
-        return this.RedirectToAction(
-            "Create",
-            "Problems",
-            new Dictionary<string, string> { { ContestIdKey, contestId.ToString() }, });
     }
 
     public override Task<IActionResult> Create(IDictionary<string, string> complexId, string postEndpointName)
