@@ -1,20 +1,25 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
+﻿FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
-EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["Servers/Administration/OJS.Servers.Administration/OJS.Servers.Administration.csproj", "OJS.Servers.Administration/"]
-RUN dotnet restore "Servers/Administration/OJS.Servers.Administration/OJS.Servers.Administration.csproj"
-COPY . .
-WORKDIR "/src/OJS.Servers.Administration"
-RUN dotnet build "OJS.Servers.Administration.csproj" -c Release -o /app/build
+COPY Servers/Administration ./Servers/Administration
+COPY Servers/Infrastructure ./Servers/Infrastructure
+COPY Services/Administration ./Services/Administration
+
+COPY AutoCrudAdmin ./AutoCrudAdmin
+
+COPY Common ./Common
+COPY Data ./Data
+COPY Services/Common ./Services/Common
+COPY Services/Infrastructure ./Services/Infrastructure
+COPY Directory.Build.props ./Directory.Build.props
 
 FROM build AS publish
-RUN dotnet publish "OJS.Servers.Administration.csproj" -c Release -o /app/publish
+RUN dotnet publish Servers/Administration/OJS.Servers.Administration/OJS.Servers.Administration.csproj -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "OJS.Servers.Administration.dll"]
+CMD dotnet OJS.Servers.Administration.dll

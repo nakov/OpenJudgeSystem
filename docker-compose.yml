@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  ui:
+    build:
+      context: .
+      dockerfile: Servers/UI/OJS.Servers.Ui/Dockerfile
+    image: ui
+    container_name: ui_instance
+    ports:
+      - "5002:80"
+    restart: on-failure
+    volumes:
+      - ./Logs:/Logs
+      - ./Keys:/Keys
+    env_file:
+      - Docker/common/common.env
+      - Docker/common/db.env
+      - Docker/applications/ui/ui.env
+    extra_hosts:
+      - "db: 217.174.159.217"
+  administration:
+    build:
+      context: .
+      dockerfile: Servers/Administration/OJS.Servers.Administration/Dockerfile
+    image: administration
+    container_name: administration_instance
+    ports:
+      - "5001:80"
+    restart: on-failure
+    volumes:
+      - ./Logs:/Logs
+      - ./Keys:/Keys
+    env_file:
+      - Docker/common/common.env
+      - Docker/common/db.env
+      - Docker/applications/administration/administration.env
+    extra_hosts:
+      - "db: 217.174.159.217"

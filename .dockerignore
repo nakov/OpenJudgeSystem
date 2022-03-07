@@ -1,0 +1,14 @@
+**/bin
+**/obj
+**/out
+**/.vscode
+**/.vs
+.dotnet
+**/node_modules
+.idea
+.dockerignore
+.env
+.git
+.gitignore
+docker-compose.yml
+docker-compose.*.yml
