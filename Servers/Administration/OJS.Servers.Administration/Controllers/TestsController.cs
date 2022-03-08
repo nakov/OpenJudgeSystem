@@ -16,7 +16,7 @@ using OJS.Services.Administration.Business.Extensions;
 using OJS.Services.Administration.Business.Validation;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
-using OJS.Services.Administration.Models.Problems;
+using OJS.Services.Administration.Models.Contests.Problems;
 using OJS.Services.Administration.Models.Tests;
 using OJS.Services.Common;
 using OJS.Services.Common.Models;
@@ -34,6 +34,7 @@ using Resource = OJS.Common.Resources.TestsControllers;
 
 public class TestsController : BaseAutoCrudAdminController<Test>
 {
+    private const string ProblemIdKey = nameof(Test.ProblemId);
     private const int TestInputMaxLengthInGrid = 20;
 
     private readonly IProblemsDataService problemsData;
@@ -45,7 +46,6 @@ public class TestsController : BaseAutoCrudAdminController<Test>
     private readonly ITestsDataService testsData;
     private readonly ITestRunsDataService testRunsData;
     private readonly IProblemsBusinessService problemsBusiness;
-    private const string ProblemIdKey = nameof(Test.ProblemId);
 
     public TestsController(
         IProblemsDataService problemsData,
@@ -87,7 +87,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             new()
             {
                 Name = "Add new",
-                Action = nameof(this.AddNewTestToProblem),
+                Action = nameof(this.Create),
                 RouteValues = routeValues,
             },
             new()
@@ -105,16 +105,6 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         };
 
         return base.Index();
-    }
-
-    public IActionResult AddNewTestToProblem(int problemId)
-    {
-        this.TempData.Add(ProblemIdKey, problemId);
-
-        return this.RedirectToAction(
-            "Create",
-            "Tests",
-            new Dictionary<string, string> { { ProblemIdKey, problemId.ToString() }, });
     }
 
     [HttpPost]

@@ -1,4 +1,4 @@
-namespace OJS.Services.Administration.Models.Problems;
+namespace OJS.Services.Administration.Models.Contests.Problems;
 
 using AutoMapper;
 using OJS.Data.Models.Problems;

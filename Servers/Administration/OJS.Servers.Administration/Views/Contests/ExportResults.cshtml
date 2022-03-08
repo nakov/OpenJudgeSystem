@@ -1,4 +1,6 @@
 @using OJS.Servers.Administration.Models.Contests
+@using SharedResource = OJS.Common.Resources.Partials
+
 @model ContestResultsExportRequestModel
 
 <form method="post" asp-controller="Results" asp-action="Export">
@@ -13,4 +15,5 @@
     <div class="modal-footer">
         <button type="submit" class="btn btn-primary">Export</button>
     </div>
+    <a href="@ViewContext.GetReturnUrl()" class="btn btn-secondary">@SharedResource.Back</a>
 </form>

@@ -1,6 +1,6 @@
 namespace OJS.Services.Administration.Business.Validation.Helpers.Implementations;
 
-using OJS.Services.Administration.Models.Problems;
+using OJS.Services.Administration.Models.Contests.Problems;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Validation.Helpers;
 using OJS.Services.Infrastructure.Extensions;

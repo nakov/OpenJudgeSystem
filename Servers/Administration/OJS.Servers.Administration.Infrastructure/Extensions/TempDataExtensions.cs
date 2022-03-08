@@ -5,10 +5,10 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
 
     public static class TempDataExtensions
     {
-        public static void AddSuccessMessage(this ITempDataDictionary tempData, string message)
-            => tempData.Add(SuccessMessage, message);
+        public static void AddSuccessMessage(this ITempDataDictionary tempData, string? message)
+            => tempData.Add(SuccessMessage, message ?? "Success!");
 
-        public static void AddDangerMessage(this ITempDataDictionary tempData, string message)
-            => tempData.Add(DangerMessage, message);
+        public static void AddDangerMessage(this ITempDataDictionary tempData, string? message)
+            => tempData.Add(DangerMessage, message ?? "An unexpected error has occured.");
     }
 }

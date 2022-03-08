@@ -1,11 +1,13 @@
 namespace OJS.Servers.Administration.Controllers;
 
 using AutoCrudAdmin.Enumerations;
+using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using FluentExtensions.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using OJS.Common.Enumerations;
 using OJS.Common.Extensions;
 using OJS.Common.Utils;
@@ -18,10 +20,13 @@ using OJS.Servers.Administration.Models.Problems;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Extensions;
+using OJS.Services.Administration.Business.Validation;
 using OJS.Services.Administration.Business.Validation.Factories;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
-using OJS.Services.Administration.Models.Problems;
+using OJS.Services.Administration.Models.Contests.Problems;
+using OJS.Services.Infrastructure.Exceptions;
+using OJS.Services.Infrastructure.Extensions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
@@ -31,9 +36,12 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 using GlobalResource = OJS.Common.Resources.ProblemsController;
+using Resource = OJS.Common.Resources.ProblemGroupsControllers;
 
 public class ProblemsController : BaseAutoCrudAdminController<Problem>
 {
+    private const string ContestIdKey = nameof(OJS.Data.Models.Problems.Problem.ProblemGroup.ContestId);
+
     private readonly IProblemsBusinessService problemsBusiness;
     private readonly IContestsBusinessService contestsBusiness;
     private readonly IContestsDataService contestsData;
@@ -41,6 +49,10 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     private readonly IZippedTestsParserService zippedTestsParser;
     private readonly ISubmissionTypesDataService submissionTypesData;
     private readonly IProblemValidatorsFactory problemValidatorsFactory;
+    private readonly IContestDeleteProblemsValidationService contestDeleteProblemsValidation;
+    private readonly IContestCopyProblemsValidationService contestCopyProblemsValidation;
+    private readonly IProblemGroupsBusinessService problemGroupsBusiness;
+    private readonly IProblemGroupsDataService problemGroupsData;
 
     public ProblemsController(
         IProblemsBusinessService problemsBusiness,
@@ -49,7 +61,11 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         IProblemsDataService problemsData,
         IZippedTestsParserService zippedTestsParser,
         ISubmissionTypesDataService submissionTypesData,
-        IProblemValidatorsFactory problemValidatorsFactory)
+        IProblemValidatorsFactory problemValidatorsFactory,
+        IContestDeleteProblemsValidationService contestDeleteProblemsValidation,
+        IContestCopyProblemsValidationService contestCopyProblemsValidation,
+        IProblemGroupsBusinessService problemGroupsBusiness,
+        IProblemGroupsDataService problemGroupsData)
     {
         this.problemsBusiness = problemsBusiness;
         this.contestsBusiness = contestsBusiness;
@@ -58,11 +74,47 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         this.zippedTestsParser = zippedTestsParser;
         this.submissionTypesData = submissionTypesData;
         this.problemValidatorsFactory = problemValidatorsFactory;
+        this.contestDeleteProblemsValidation = contestDeleteProblemsValidation;
+        this.contestCopyProblemsValidation = contestCopyProblemsValidation;
+        this.problemGroupsBusiness = problemGroupsBusiness;
+        this.problemGroupsData = problemGroupsData;
     }
 
-    public IActionResult ByContest(int contestId)
+    public override IActionResult Index()
     {
-        this.MasterGridFilter = p => p.ProblemGroup.ContestId == contestId;
+        if (!this.TryGetEntityIdForColumnFilter(ContestIdKey, out var contestId))
+        {
+            return base.Index();
+        }
+
+        var routeValues = new Dictionary<string, string>
+        {
+            { nameof(contestId), contestId.ToString() },
+        };
+
+        this.MasterGridFilter = t => t.ProblemGroup.ContestId == contestId;
+        this.CustomToolbarActions = new AutoCrudAdminGridToolbarActionViewModel[]
+        {
+            new()
+            {
+                Name = "Add new",
+                Action = nameof(this.Create),
+                RouteValues = routeValues,
+            },
+            new()
+            {
+                Name = "Delete all",
+                Action = nameof(this.DeleteAll),
+                RouteValues = routeValues,
+            },
+            new()
+            {
+                Name = "Copy all",
+                Action = nameof(this.CopyAll),
+                RouteValues = routeValues,
+            },
+        };
+
         return base.Index();
     }
 
@@ -113,17 +165,10 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         if (!await this.contestsBusiness.UserHasContestPermissions(problem.ContestId, userId, userIsAdmin))
         {
             this.TempData.AddDangerMessage(GeneralResource.No_privileges_message);
-            return this.RedirectToAction("Index", "Problems");
+            return this.RedirectToActionWithNumberFilter(nameof(ProblemsController), ContestIdKey, problem.ContestId);
         }
 
-        var referer = this.HttpContext.Request.GetTypedHeaders().Referer;
-
-        if (referer != null)
-        {
-            this.ViewBag.ReturnUrl = referer.AbsolutePath;
-        }
-
-        return this.View("RetestConfirmation", problem.Map<ProblemRetestViewModel>());
+        return this.View(problem.Map<ProblemRetestViewModel>());
     }
 
     [HttpPost]
@@ -151,11 +196,181 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         return this.RedirectToAction("Index");
     }
 
+    [HttpGet]
+    public async Task<IActionResult> DeleteAll(int? contestId)
+    {
+        if (!contestId.HasValue)
+        {
+            this.TempData.AddDangerMessage(GlobalResource.Invalid_contest);
+            return this.RedirectToAction("Index", "Problems");
+        }
+
+        var contest = await this.contestsData.OneById(contestId);
+
+        await this.contestDeleteProblemsValidation
+            .GetValidationResult(contest?.Map<ContestDeleteProblemsValidationServiceModel>())
+            .VerifyResult();
+
+        return this.View(contest!.Map<DeleteAllProblemsInContestViewModel>());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteAll(DeleteAllProblemsInContestViewModel model)
+    {
+        var contest = await this.contestsData.OneById(model.Id);
+
+        await this.contestDeleteProblemsValidation
+            .GetValidationResult(contest?.Map<ContestDeleteProblemsValidationServiceModel>())
+            .VerifyResult();
+
+        await this.problemsBusiness.DeleteByContest(contest!.Id);
+
+        this.TempData.AddSuccessMessage(GlobalResource.Problems_deleted);
+        return this.RedirectToActionWithNumberFilter(nameof(ProblemsController), ContestIdKey, model.Id);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> CopyAll(int? contestId)
+    {
+        if (!contestId.HasValue)
+        {
+            this.TempData.AddDangerMessage(GlobalResource.Invalid_contest);
+            return this.RedirectToAction("Index", "Problems");
+        }
+
+        var contest = await this.contestsData.OneByIdTo<ContestCopyProblemsValidationServiceModel>(contestId);
+
+        await this.contestCopyProblemsValidation
+            .GetValidationResult(contest)
+            .VerifyResult();
+
+        var model = contest!.Map<CopyAllToAnotherContestViewModel>();
+        await this.PrepareViewModelForCopyAll(model, contestId.Value);
+        return this.View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CopyAll(CopyAllToAnotherContestViewModel model)
+    {
+        if (!this.ModelState.IsValid)
+        {
+            await this.PrepareViewModelForCopyAll(model, model.FromContestId);
+            return this.View(model);
+        }
+
+        var sourceContestId = model.FromContestId;
+        var destinationContestId = model.Id;
+
+        if (!destinationContestId.HasValue ||
+            !await this.contestsData.ExistsById(sourceContestId))
+        {
+            this.TempData.AddDangerMessage(Resource.Contest_does_not_exist);
+            return this.View(model);
+        }
+
+        var destinationContest = await this.contestsData
+            .OneByIdTo<ContestCopyProblemsValidationServiceModel>(destinationContestId);
+
+        await this.contestCopyProblemsValidation
+            .GetValidationResult(destinationContest)
+            .VerifyResult();
+
+        var result = await this.problemGroupsBusiness
+            .CopyAllToContestBySourceAndDestinationContest(sourceContestId, destinationContestId.Value);
+
+        if (result.IsError)
+        {
+            this.TempData.AddDangerMessage(result.Error ?? "Copy failed due to an unexpected error");
+            await this.PrepareViewModelForCopyAll(model, model.FromContestId);
+            return this.View(model);
+        }
+
+        this.TempData.AddSuccessMessage(string.Format(
+            Resource.Copy_all_problem_groups_success_message,
+            await this.contestsData.GetNameById(sourceContestId),
+            destinationContest!.Name));
+        return this.RedirectToActionWithNumberFilter(nameof(ProblemsController), ContestIdKey, sourceContestId);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Copy(IDictionary<string, string> complexId)
+    {
+        int.TryParse(complexId.Values.FirstOrDefault() ?? string.Empty, out var problemId);
+
+        var problem = this.problemsData.GetWithContestById(problemId);
+
+        if (problem == null)
+        {
+            this.TempData.AddDangerMessage(GlobalResource.Invalid_problem);
+            return this.RedirectToAction("Index", "Problems");
+        }
+
+        var contest = problem.ProblemGroup.Contest;
+
+        await this.contestCopyProblemsValidation
+            .GetValidationResult(contest?.Map<ContestCopyProblemsValidationServiceModel>())
+            .VerifyResult();
+
+        var model = problem!.Map<CopyToAnotherContestViewModel>();
+        await this.PrepareViewModelForCopy(model);
+        return this.View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Copy(CopyToAnotherContestViewModel model)
+    {
+        var contestId = model.ToContestId;
+        int? problemGroupId = model.ToProblemGroupId == default ? null : model.ToProblemGroupId;
+
+        if (!this.ModelState.IsValid)
+        {
+            await this.PrepareViewModelForCopy(model);
+            return this.View(model);
+        }
+
+        if (!await this.problemsData.ExistsById(model.FromProblemId))
+        {
+            throw new BusinessServiceException(GlobalResource.Invalid_problem);
+        }
+
+        await this.contestCopyProblemsValidation
+            .GetValidationResult(model.Map<ContestCopyProblemsValidationServiceModel>())
+            .VerifyResult();
+
+        if (problemGroupId.HasValue &&
+            !this.problemGroupsData.IsFromContestByIdAndContest(problemGroupId.Value, contestId!.Value))
+        {
+            throw new BusinessServiceException(GlobalResource.Invalid_problem_group);
+        }
+
+        var result = await this.problemsBusiness.CopyToContestByIdByContestAndProblemGroup(
+            model.FromProblemId,
+            contestId!.Value,
+            problemGroupId);
+
+        if (result.IsError)
+        {
+            this.TempData.AddDangerMessage(result.Error);
+            await this.PrepareViewModelForCopy(model);
+            return this.View(model);
+        }
+
+        this.TempData.AddSuccessMessage(string.Format(
+            GlobalResource.Copy_problem_success_message,
+            this.problemsData.GetNameById(model.FromProblemId),
+            this.contestsData.GetNameById(contestId.Value)));
+        return this.RedirectToActionWithNumberFilter(nameof(ProblemsController), ContestIdKey, model.FromContestId);
+    }
+
     protected override IEnumerable<GridAction> CustomActions
         => new []
         {
             new GridAction { Action = nameof(this.Retest) },
             new GridAction { Action = nameof(this.Tests) },
+            new GridAction { Action = nameof(this.Copy) },
         };
 
     protected override IEnumerable<Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>>
@@ -357,5 +572,22 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         problem.SubmissionTypesInProblems.Clear();
         problem.SubmissionTypesInProblems.AddRange(newSubmissionTypes);
+    }
+
+    private async Task PrepareViewModelForCopyAll(CopyAllToAnotherContestViewModel model, int fromContestId)
+    {
+        model.FromContestId = fromContestId;
+        model.ContestsToCopyTo = await this.GetContestsToCopyToSelectList();
+    }
+
+    private async Task PrepareViewModelForCopy(CopyToAnotherContestViewModel model)
+        => model.ContestsToCopyTo = await this.GetContestsToCopyToSelectList();
+
+    private async Task<SelectList> GetContestsToCopyToSelectList()
+    {
+        var contestsToCopyTo =
+            await this.contestsBusiness.GetAllAvailableForCurrentUser<ContestCopyProblemsValidationServiceModel>();
+
+        return new SelectList(contestsToCopyTo, nameof(Contest.Id), nameof(Contest.Name));
     }
 }

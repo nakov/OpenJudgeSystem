@@ -5,7 +5,7 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Common.Helpers;
     using OJS.Data.Models.Problems;
     using OJS.Services.Administration.Data;
-    using OJS.Services.Administration.Models.Problems;
+    using OJS.Services.Administration.Models.Contests.Problems;
     using OJS.Services.Common;
     using OJS.Services.Common.Models;
     using OJS.Services.Infrastructure.Exceptions;
@@ -136,6 +136,7 @@ namespace OJS.Services.Administration.Business.Implementations
                 .AsNoTracking()
                 .Include(p => p.Tests)
                 .Include(p => p.Resources)
+                .Include(p => p.ProblemGroup)
                 .SingleOrDefaultAsync();
 
             if (problem?.ProblemGroup.ContestId == contestId)

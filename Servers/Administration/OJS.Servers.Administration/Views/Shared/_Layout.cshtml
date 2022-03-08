@@ -1,4 +1,5 @@
 ﻿@using OJS.Common.Extensions
+@using static AutoCrudAdmin.Constants.TempDataKeys;
 
 <!DOCTYPE html>
 <html lang="en">
@@ -8,6 +9,10 @@
     <title>@ViewData["Title"] - OJS.Servers.Administration</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/css/site.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css"/>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 </head>
 <body>
 <header>
@@ -39,6 +44,15 @@
 </header>
 <div class="container">
     <main role="main" class="pb-3">
+        @if (TempData.TryGetValue(DangerMessage, out var dangerMessage))
+        {
+            <p class="alert alert-danger">@Html.Raw(dangerMessage)</p>
+        }
+        else if (TempData.TryGetValue(SuccessMessage, out var successMessage))
+        {
+            <p class="alert alert-success">@Html.Raw(successMessage)</p>
+        }
+
         @RenderBody()
     </main>
 </div>
@@ -48,9 +62,13 @@
         &copy; 2021 - OJS.Servers.Administration - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
     </div>
 </footer>
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
+<script>
+    $('.alert').click(function (event) {
+        $(event.target).hide();
+    });
+</script>
 </body>
 </html>

@@ -72,7 +72,10 @@ namespace OJS.Servers.Administration.Controllers
         public IActionResult Problems([FromQuery] IDictionary<string, string> complexId)
         {
             var contestId = int.Parse(complexId.Values.First());
-            return this.RedirectToAction("ByContest", "Problems", new { contestId });
+            return this.RedirectToAction(
+                "Index",
+                "Problems",
+                new Dictionary<string, string> {  { nameof(contestId), contestId.ToString() } });
         }
 
         protected override IEnumerable<Func<Contest, Contest, AdminActionContext, ValidatorResult>> EntityValidators

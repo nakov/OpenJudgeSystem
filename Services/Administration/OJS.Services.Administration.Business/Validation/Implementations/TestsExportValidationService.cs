@@ -1,7 +1,7 @@
 namespace OJS.Services.Administration.Business.Validation.Implementations;
 
 using OJS.Services.Administration.Business.Validation.Helpers;
-using OJS.Services.Administration.Models.Problems;
+using OJS.Services.Administration.Models.Contests.Problems;
 using OJS.Services.Common.Models;
 using System.Threading.Tasks;
 
