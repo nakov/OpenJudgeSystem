@@ -12,6 +12,7 @@ const getAllowedSubmissionTypesForProblemUrl = `${baseUrl}/SubmissionTypes/GetAl
 
 const getSubmissionDetailsUrl = `${baseUrl}/Submissions/Details`;
 const getSubmissionsForProfileUrl = `${baseUrl}/Submissions/GetForProfile`;
+const submitUrl = `${baseUrl}/Compete/Submit?official=%official%`;
 
 const getParticipationsForProfileUrl = `${baseUrl}/Participations/GetForProfile`;
 
@@ -25,4 +26,5 @@ export {
     getSubmissionDetailsUrl,
     getSubmissionsForProfileUrl,
     getParticipationsForProfileUrl,
+    submitUrl,
 };

@@ -5,7 +5,6 @@ using OJS.Services.Ui.Business;
 using OJS.Services.Ui.Models.Contests;
 using OJS.Services.Ui.Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
-using System;
 using System.Threading.Tasks;
 
 namespace OJS.Servers.Ui.Controllers.Api
@@ -31,7 +30,8 @@ namespace OJS.Servers.Ui.Controllers.Api
                 IsOfficial = official
             });
 
-        public async Task Submit(SubmissionRequestModel model, bool isOfficial)
-            => await this.submissionsBusinessService.Submit(model.Map<SubmitSubmissionServiceModel>(), isOfficial);
+        [HttpPost]
+        public async Task Submit([FromBody] SubmissionRequestModel model)
+            => await this.submissionsBusinessService.Submit(model.Map<SubmitSubmissionServiceModel>());
     }
 }

@@ -49,6 +49,7 @@ namespace OJS.Services.Ui.Business.Implementations
             }
 
             await this.participantsData.Add(participant);
+            await this.participantsData.SaveChanges();
             return participant;
         }
 
