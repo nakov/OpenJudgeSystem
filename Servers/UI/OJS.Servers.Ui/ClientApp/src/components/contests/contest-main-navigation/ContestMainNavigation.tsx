@@ -10,6 +10,7 @@ import { ISubmissionTypeType } from '../../../hooks/contests/types';
 import { Button } from '../../guidelines/buttons/Button';
 import styles from './ContestMainNavigation.module.scss';
 import { useSubmissions } from '../../../hooks/submissions/use-submissions';
+import ProblemResources from '../../problems/problem-resources/ProblemResources';
 
 const ContestMainNavigation = () => {
     const { currentProblem, setSubmissionType } = useContests();
@@ -55,7 +56,7 @@ const ContestMainNavigation = () => {
                     <div className={styles.contestTabControls}>
                         <Tabs
                           tabLabels={[ 'Problem', 'Submissions' ]}
-                          tabChildren={[ <p>Problem Description</p>, <p>Submissions</p> ]}
+                          tabChildren={[ <ProblemResources resources={currentProblem?.resources} />, <p>Submissions</p> ]}
                         />
                     </div>
                 </div>

@@ -1,0 +1,8 @@
+﻿.resource {
+  display: flex;
+  flex-direction: row;
+  
+  & > i {
+    margin-right: 10px;
+  }
+}

@@ -4,7 +4,7 @@ interface ISubmissionTypeType {
     isSelectedByDefault: boolean,
 }
 
-interface ISubmissionResourceType {
+interface IProblemResourceType {
     id: number,
     name: string,
     link: string,
@@ -22,7 +22,7 @@ interface IProblemType {
     timeLimit: number,
     checkerName: string,
     checkerDescription: string,
-    resources: ISubmissionResourceType[],
+    resources: IProblemResourceType[],
     allowedSubmissionTypes: ISubmissionTypeType[]
 }
 
@@ -81,5 +81,6 @@ export type {
     IStartParticipationResponseType,
     IContestType,
     IProblemType,
+    IProblemResourceType,
     ISubmissionTypeType,
 };
