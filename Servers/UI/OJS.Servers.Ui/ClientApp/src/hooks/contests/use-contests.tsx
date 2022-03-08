@@ -4,11 +4,19 @@ import IHaveChildrenProps from '../../components/common/IHaveChildrenProps';
 import { getIndexContestsUrl, startContestParticipationUrl, getAllowedSubmissionTypesForProblemUrl } from '../../utils/urls';
 import { useHttp } from '../use-http';
 import { useLoading } from '../use-loading';
-import { IContestType, IProblemType, IIndexContestsType, IGetContestsForIndexResponseType, IStartParticipationResponseType } from './types';
+import {
+    IContestType,
+    IProblemType,
+    IIndexContestsType,
+    IGetContestsForIndexResponseType,
+    IStartParticipationResponseType,
+    ISubmissionTypeType,
+} from './types';
 
 interface IContestsContext {
     currentContest: IContestType | null,
     currentProblem: IProblemType | null,
+    selectedSubmissionTypeId: number | null,
     setProblem: (problem: IProblemType) => void,
     setSubmissionType: (id: number) => void,
     activeContests: IIndexContestsType[]
@@ -20,6 +28,7 @@ interface IContestsContext {
 const defaultState = {
     currentContest: null,
     currentProblem: null,
+    selectedSubmissionTypeId: 0,
 };
 
 const ContestsContext = createContext<IContestsContext>(defaultState as IContestsContext);
@@ -34,7 +43,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ allProblems, setAllProblems ] = useState<IProblemType[]>();
     const [ currentProblem, setCurrentProblem ] = useState<IProblemType | null>(defaultState.currentProblem);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [ selectedSubmissionTypeId, setSelectedSubmissionTypeId ] = useState<number>();
+    const [ selectedSubmissionTypeId, setSelectedSubmissionTypeId ] = useState<number>(defaultState.selectedSubmissionTypeId);
     const { startLoading, stopLoading } = useLoading();
     const {
         get: getContestsForIndexRequest,
@@ -72,12 +81,22 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         stopLoading();
     }, [ getAllowedSubmissionTypesForProblemRequest, startLoading, stopLoading ]);
 
-    const setProblem = (problem: IProblemType) => {
-        setCurrentProblem(problem);
-    };
+    const hasDefaultSubmissionType = (submissionTypes: ISubmissionTypeType[]) => submissionTypes.some((st) => st.isSelectedByDefault);
 
     const setSubmissionType = (id: number) => {
         setSelectedSubmissionTypeId(id);
+    };
+
+    const setDefaultSubmissionType = useCallback((submissionTypes: ISubmissionTypeType[]) => {
+        const submissionType = hasDefaultSubmissionType(submissionTypes)
+            ? submissionTypes.filter((st) => st.isSelectedByDefault)[0]
+            : submissionTypes[0];
+        setSubmissionType(submissionType.id);
+    }, []);
+
+    const setProblem = (problem: IProblemType) => {
+        setCurrentProblem(problem);
+        setDefaultSubmissionType(problem.allowedSubmissionTypes);
     };
 
     const orderProblemsByOrderBy = (problems: IProblemType[]) => problems.sort((a, b) => a.orderBy - b.orderBy);
@@ -94,22 +113,21 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         if (startContestParticipationData != null) {
             const responseData = startContestParticipationData as IStartParticipationResponseType;
             setCurrentContest(responseData.contest);
-            console.log(responseData.contest);
             const problems = orderProblemsByOrderBy(responseData.contest.problems);
             setAllProblems(problems);
             setCurrentProblem(problems[0]);
+            setDefaultSubmissionType(problems[0].allowedSubmissionTypes);
         }
-    }, [ startContestParticipationData ]);
+    }, [ setDefaultSubmissionType, startContestParticipationData ]);
 
-    // useEffect(() => {
-    //     if (currentProblem != null) {
-    //         getAllowedSubmissionTypesForProblem(currentProblem.id);
-    //     }
-    // }, [ currentProblem, getAllowedSubmissionTypesForProblem ]);
+    useEffect(() => {
+        console.log(selectedSubmissionTypeId);
+    }, [ selectedSubmissionTypeId ]);
 
     const value = {
         currentContest,
         currentProblem,
+        selectedSubmissionTypeId,
         setProblem,
         setSubmissionType,
         activeContests,

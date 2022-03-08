@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useEffect } from 'react';
 import { useContests } from '../../../hooks/contests/use-contests';
 import Heading from '../../guidelines/headings/Heading';
 import CodeEditor from '../../code-editor/CodeEditor';
@@ -7,14 +6,11 @@ import Tabs from '../../guidelines/tabs/Tabs';
 import ExecutionTypeSelector from '../execution-type-selector/ExecutionTypeSelector';
 import List from '../../guidelines/lists/List';
 import { ISubmissionTypeType } from '../../../hooks/contests/types';
+import { Button } from '../../guidelines/buttons/Button';
 import styles from './ContestMainNavigation.module.scss';
 
 const ContestMainNavigation = () => {
     const { currentProblem, setSubmissionType } = useContests();
-
-    useEffect(() => {
-        console.log(currentProblem);
-    }, [ currentProblem ]);
 
     const renderSubmissionTypesSelectors = (submissionType: ISubmissionTypeType) => {
         // eslint-disable-next-line eqeqeq
@@ -24,6 +20,7 @@ const ContestMainNavigation = () => {
 
         return (
             <ExecutionTypeSelector
+              id={submissionType.id}
               value={submissionType.name}
               isSelected={isSelected}
               onSelect={() => setSubmissionType(submissionType.id)}
@@ -54,8 +51,11 @@ const ContestMainNavigation = () => {
                         />
                     </div>
                 </div>
-                <div className={styles.executionTypeSelectors}>
-                    {renderSubmissionTypesSelectorsList()}
+                <div className={styles.contestSubmitControlsWrapper}>
+                    <div className={styles.executionTypeSelectors}>
+                        {renderSubmissionTypesSelectorsList()}
+                    </div>
+                    <div><Button type="primary" text="Submit" onClick={() => {}} /></div>
                 </div>
             </div>
         </div>

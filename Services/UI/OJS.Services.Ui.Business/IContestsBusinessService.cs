@@ -1,5 +1,6 @@
 namespace OJS.Services.Ui.Business
 {
+    using OJS.Data.Models.Contests;
     using OJS.Services.Common.Models;
     using OJS.Services.Ui.Models.Contests;
     using SoftUni.Services.Infrastructure;
@@ -34,5 +35,7 @@ namespace OJS.Services.Ui.Business
         Task<ServiceResult> TransferParticipantsToPracticeById(int contestId);
 
         Task DeleteById(int id);
+
+        Task ValidateContest(Contest contest, string userId, bool isUserAdmin, bool official);
     }
 }

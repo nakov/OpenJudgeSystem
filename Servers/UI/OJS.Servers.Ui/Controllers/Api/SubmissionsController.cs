@@ -19,6 +19,7 @@ namespace OJS.Servers.Ui.Controllers.Api
         public SubmissionsController(ISubmissionsBusinessService submissionsBusiness)
             => this.submissionsBusiness = submissionsBusiness;
 
+
         [HttpGet]
         public async Task<SubmissionDetailsResponseModel> Details(int id)
         {

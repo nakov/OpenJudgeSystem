@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { Box, createTheme, Tab } from '@material-ui/core';
+import { Box, createTheme, Tab, Theme } from '@material-ui/core';
 import { TabContext, TabList, TabPanel } from '@material-ui/lab';
 import { ThemeProvider } from '@mui/styles';
-import { ThemeOptions } from '@material-ui/core/styles/createTheme';
 
 interface ITabPanelProps {
     tabChildren: React.ReactNode[]
     tabLabels: string[]
-    themeOverride?: ThemeOptions
+    themeOverride?: Theme
 }
 
 const defaultState = { initialValue: '0' };

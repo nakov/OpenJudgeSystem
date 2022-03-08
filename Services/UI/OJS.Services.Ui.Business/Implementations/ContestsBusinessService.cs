@@ -102,7 +102,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 isUserAdmin);
         }
 
-        private async Task ValidateContest(Contest contest, string userId, bool isUserAdmin, bool official)
+        public async Task ValidateContest(Contest contest, string userId, bool isUserAdmin, bool official)
         {
             var isUserLecturerInContest = this.IsUserLecturerInContest(contest, userId);
 

@@ -9,6 +9,8 @@
 
     public interface ISubmissionsBusinessService : IService
     {
+        Task Submit(SubmitSubmissionServiceModel model, bool official);
+
         Task<SubmissionDetailsServiceModel?> GetById(int submissionId);
 
         Task<SubmissionDetailsServiceModel?> GetDetailsById(int submissionId);

@@ -1,3 +1,8 @@
+using OJS.Common;
+using OJS.Data.Models.Contests;
+using OJS.Data.Models.Participants;
+using OJS.Services.Infrastructure.Exceptions;
+
 namespace OJS.Services.Ui.Business.Implementations
 {
     using FluentExtensions.Extensions;
@@ -27,6 +32,7 @@ namespace OJS.Services.Ui.Business.Implementations
         private readonly ISubmissionTypesDataService submissionTypesData;
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
         private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
+        private readonly ILecturersInContestsBusinessService lecturersInContestsBusinessService;
 
         public ProblemsBusinessService(
             IContestsDataService contestsData,
@@ -38,7 +44,8 @@ namespace OJS.Services.Ui.Business.Implementations
             ITestRunsDataService testRunsData,
             ISubmissionTypesDataService submissionTypesData,
             IProblemGroupsBusinessService problemGroupsBusiness,
-            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication)
+            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication,
+            ILecturersInContestsBusinessService lecturersInContestsBusinessService)
         {
             this.contestsData = contestsData;
             this.participantScoresData = participantScoresData;
@@ -50,6 +57,7 @@ namespace OJS.Services.Ui.Business.Implementations
             this.submissionTypesData = submissionTypesData;
             this.problemGroupsBusiness = problemGroupsBusiness;
             this.submissionsDistributorCommunication = submissionsDistributorCommunication;
+            this.lecturersInContestsBusinessService = lecturersInContestsBusinessService;
         }
 
         public async Task RetestById(int id)
@@ -152,6 +160,17 @@ namespace OJS.Services.Ui.Business.Implementations
             await this.CopyProblemToContest(problem, contestId, problemGroupId);
 
             return ServiceResult.Success;
+        }
+
+        public void ValidateProblemForParticipant(Participant participant, Contest contest, int problemId, bool isOfficial)
+        {
+            if (isOfficial &&
+                contest.IsOnline &&
+                !this.lecturersInContestsBusinessService.IsUserAdminOrLecturerInContest(contest) &&
+                participant.ProblemsForParticipants.All(p => p.ProblemId != problemId))
+            {
+                throw new BusinessServiceException(Resources.ContestsGeneral.Problem_not_assigned_to_user);
+            }
         }
 
         private async Task CopyProblemToContest(Problem? problem, int contestId, int? problemGroupId)
