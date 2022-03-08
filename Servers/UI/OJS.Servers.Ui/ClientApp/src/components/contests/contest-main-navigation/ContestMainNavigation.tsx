@@ -13,7 +13,7 @@ import { useSubmissions } from '../../../hooks/submissions/use-submissions';
 
 const ContestMainNavigation = () => {
     const { currentProblem, setSubmissionType } = useContests();
-    const { submit: submitRequest } = useSubmissions();
+    const { submit: submitRequest, setCode } = useSubmissions();
 
     const renderSubmissionTypesSelectors = (submissionType: ISubmissionTypeType) => {
         // eslint-disable-next-line eqeqeq
@@ -43,7 +43,8 @@ const ContestMainNavigation = () => {
 
     const submit = useCallback(async () => {
         await submitRequest();
-    }, [ submitRequest ]);
+        setCode('');
+    }, [ setCode, submitRequest ]);
 
     return (
         <div className={styles.contestMainWrapper}>
