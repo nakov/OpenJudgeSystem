@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import IHaveChildrenProps from '../../components/common/IHaveChildrenProps';
-import { getIndexContestsUrl, startContestParticipationUrl, getAllowedSubmissionTypesForProblemUrl } from '../../utils/urls';
+import { getIndexContestsUrl, startContestParticipationUrl } from '../../utils/urls';
 import { useHttp } from '../use-http';
 import { useLoading } from '../use-loading';
 import {
@@ -55,12 +55,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         data: startContestParticipationData,
     } = useHttp(startContestParticipationUrl);
 
-    const {
-        get: getAllowedSubmissionTypesForProblemRequest,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        data: getAllowedSubmissionTypesForProblemData,
-    } = useHttp(getAllowedSubmissionTypesForProblemUrl);
-
     const getForHome = useCallback(async () => {
         startLoading();
         await getContestsForIndexRequest({});
@@ -73,13 +67,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         await startContestParticipationRequest({ id: idStr, official: isOfficial.toString() });
         stopLoading();
     }, [ startContestParticipationRequest, startLoading, stopLoading ]);
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const getAllowedSubmissionTypesForProblem = useCallback(async (problemId: number) => {
-        startLoading();
-        await getAllowedSubmissionTypesForProblemRequest({ id: problemId.toString() });
-        stopLoading();
-    }, [ getAllowedSubmissionTypesForProblemRequest, startLoading, stopLoading ]);
 
     const hasDefaultSubmissionType = (submissionTypes: ISubmissionTypeType[]) => submissionTypes.some((st) => st.isSelectedByDefault);
 
@@ -121,8 +108,8 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     }, [ setDefaultSubmissionType, startContestParticipationData ]);
 
     useEffect(() => {
-        console.log(selectedSubmissionTypeId);
-    }, [ selectedSubmissionTypeId ]);
+        console.log(currentProblem);
+    }, [ currentProblem ]);
 
     const value = {
         currentContest,

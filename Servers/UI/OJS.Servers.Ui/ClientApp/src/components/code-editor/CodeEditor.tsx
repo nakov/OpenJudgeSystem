@@ -1,34 +1,28 @@
 import * as React from 'react';
 import MonacoEditor from 'react-monaco-editor';
-import { useState } from 'react';
-
-const defaultState = { code: 'Write your code here' };
+import { useSubmissions } from '../../hooks/submissions/use-submissions';
 
 const CodeEditor = () => {
-    const [ code, setCode ] = useState<string>(defaultState.code);
+    const { currentSubmissionCode, setCode } = useSubmissions();
 
-    const onCodeChange = (newValue: string, e: any) => {
+    const onCodeChange = (newValue: string) => {
         setCode(newValue);
-        console.log('onChange', newValue, e);
     };
 
     return (
         <MonacoEditor
           width="600"
           height="400"
-          language="javascript"
+          language="JavaScript"
           theme="vs-dark"
-          value={code}
+          value={currentSubmissionCode}
           options={{
               selectOnLineNumbers: true,
               minimap: { enabled: false },
               automaticLayout: true,
               hideCursorInOverviewRuler: true,
               lineHeight: 20,
-              scrollbar: {
-                  horizontal: 'hidden',
-                  vertical: 'hidden',
-              },
+              scrollbar: { vertical: 'hidden' },
           }}
           onChange={onCodeChange}
         />

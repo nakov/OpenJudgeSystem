@@ -208,7 +208,7 @@
             return data;
         }
 
-        public async Task Submit(SubmitSubmissionServiceModel model, bool official)
+        public async Task Submit(SubmitSubmissionServiceModel model)
         {
             var problem = await this.problemsDataService.GetWithProblemGroupCheckerAndTestsById(model.ProblemId);
             if (problem == null)
@@ -219,19 +219,19 @@
             var currentUser = this.userProviderService.GetCurrentUser();
 
             var participant = await this.participantsDataService
-                .GetWithContestByContestByUserAndIsOfficial(problem.ProblemGroup.ContestId, currentUser.Id, official);
+                .GetWithContestByContestByUserAndIsOfficial(problem.ProblemGroup.ContestId, currentUser.Id, model.Official);
             if (participant == null)
             {
                 throw new BusinessServiceException(Resources.ContestsGeneral.User_is_not_registered_for_exam);
             }
 
-            await this.contestsBusinessService.ValidateContest(participant.Contest, currentUser.Id, currentUser.IsAdmin, official);
+            await this.contestsBusinessService.ValidateContest(participant.Contest, currentUser.Id, currentUser.IsAdmin, model.Official);
 
             this.problemsBusinessService.ValidateProblemForParticipant(
                 participant,
                 participant.Contest,
                 model.ProblemId,
-                official);
+                model.Official);
 
             // if (official &&
             //     !this.contestsBusinessService.IsContestIpValidByContestAndIp(problem.ProblemGroup.ContestId, this.Request.UserHostAddress))
