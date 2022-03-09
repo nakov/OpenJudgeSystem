@@ -18,7 +18,8 @@
         "SULS_PLATFORM_BASE_URL": "https://localhost:44304",
         "DISTRIBUTOR_BASE_URL": "https://localhost:44305",
         "SULS_PLATFORM_API_KEY": "1234",
-        "LOGGER_FILES_FOLDER_PATH": "../../../../Logs"
+        "LOGGER_FILES_FOLDER_PATH": "../../../../Logs",
+        "SHARED_AUTH_COOKIE_DOMAIN": "localhost"
       }
     },
     "OJS.Servers.Ui": {
@@ -28,12 +29,13 @@
       "applicationUrl": "https://localhost:5002",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "DbContext": "Server=217.174.159.217;Database=OpenJudgeSystem;User Id=sa;Password=y#4jS1ys$jBC*ChY;",
+        "DbContext": "Server=217.174.159.217;Database=OpenJudgeSystem;User Id=sa;Password=12345;",
         "PATH_TO_COMMON_KEY_RING_FOLDER": "../../../Keys",
         "SULS_PLATFORM_BASE_URL": "https://localhost:44304",
         "DISTRIBUTOR_BASE_URL": "https://localhost:44305",
         "SULS_PLATFORM_API_KEY": "1234",
-        "LOGGER_FILES_FOLDER_PATH": "../../../Logs"
+        "LOGGER_FILES_FOLDER_PATH": "../../../Logs",
+        "SHARED_AUTH_COOKIE_DOMAIN": "localhost"
       }
     }
   }

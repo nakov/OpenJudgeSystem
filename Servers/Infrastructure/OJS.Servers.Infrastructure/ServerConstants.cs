@@ -4,7 +4,7 @@ namespace OJS.Servers.Infrastructure
     {
         public static class Authentication
         {
-            public const string SharedCookiesScheme = "Identity.OJS.Application";
+            public const string SharedCookiesScheme = "Cookies";
             public const string SharedCookieName = ".AspNet.SharedOjsCookie";
         }
 

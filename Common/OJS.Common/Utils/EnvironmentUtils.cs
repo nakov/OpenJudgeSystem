@@ -3,12 +3,17 @@ namespace OJS.Common.Utils
     using OJS.Common.Enumerations;
     using OJS.Common.Extensions;
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Text.RegularExpressions;
     using static OJS.Common.GlobalConstants.EnvironmentVariables;
     using static OJS.Common.GlobalConstants.RegexPatterns;
 
     public static class EnvironmentUtils
     {
+        private const string EnvironmentVariableMustBeSetMessageFormat
+            = "Environment variable \"{0}\" must be set.";
+
         public static string? GetByKey(string key)
             => Environment.GetEnvironmentVariable(key);
 
@@ -24,6 +29,20 @@ namespace OJS.Common.Utils
 
         public static string GetLoggerFilePath<TProjectStartUp>()
             => $"{Environment.GetEnvironmentVariable(LoggerFilesFolderPath)}/{typeof(TProjectStartUp).GetProjectName()}";
+
+        public static void ValidateEnvironmentVariableExists(
+            IEnumerable<string> configurationValues)
+        {
+            var invalidConfigurationMessages = configurationValues
+                .Where(cf => string.IsNullOrWhiteSpace(GetByKey(cf)))
+                .Select(x => string.Format(EnvironmentVariableMustBeSetMessageFormat, x))
+                .ToList();
+
+            if (invalidConfigurationMessages.Any())
+            {
+                throw new ArgumentException(string.Join("\n", invalidConfigurationMessages));
+            }
+        }
 
         private static string GetConnectionStringName(ApplicationName appName, bool appUsesMultipleDatabases)
             => appUsesMultipleDatabases

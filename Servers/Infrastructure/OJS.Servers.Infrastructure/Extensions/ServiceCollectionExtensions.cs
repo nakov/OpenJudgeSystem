@@ -94,6 +94,9 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         private static IServiceCollection AddAuthenticationServices(this IServiceCollection services)
         {
+            EnvironmentUtils.ValidateEnvironmentVariableExists(
+                new [] { PathToCommonKeyRingFolderKey, SharedAuthCookieDomain });
+
             var keysDirectoryPath = EnvironmentUtils.GetByKey(PathToCommonKeyRingFolderKey);
 
             if (string.IsNullOrWhiteSpace(keysDirectoryPath))
@@ -110,9 +113,13 @@ namespace OJS.Servers.Infrastructure.Extensions
 
             services
                 .AddAuthentication(Authentication.SharedCookiesScheme)
-                .AddCookie(Authentication.SharedCookiesScheme, opt =>
+                .AddCookie();
+
+            services
+                .ConfigureApplicationCookie(opt =>
                 {
                     opt.Cookie.Name = Authentication.SharedCookieName;
+                    opt.Cookie.Domain = EnvironmentUtils.GetByKey(SharedAuthCookieDomain);
                 });
 
             return services;
