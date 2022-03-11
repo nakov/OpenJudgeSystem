@@ -7,9 +7,11 @@ namespace OJS.Servers.Ui.Controllers
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Controllers;
     using OJS.Servers.Ui.Models;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using static OJS.Common.GlobalConstants;
     using static OJS.Servers.Infrastructure.ServerConstants;
 
     [Authorize]
@@ -76,13 +78,31 @@ namespace OJS.Servers.Ui.Controllers
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
 
+            this.AppendAuthInfoCookies(roles, user.UserName);
             return this.RedirectToAction("Index", "Home");
         }
 
         public async Task<IActionResult> Logout()
         {
             await this.signInManager.SignOutAsync();
+            this.DeleteAuthInfoCookies();
             return this.RedirectToAction("Index", "Home");
+        }
+
+        private void AppendAuthInfoCookies(IEnumerable<string> roles, string username)
+        {
+            if (roles.Any(r => r is Roles.Administrator or Roles.Lecturer))
+            {
+                this.Response.Cookies.Append(Authentication.CanAccessAdministrationCookieName, "yes");
+            }
+
+            this.Response.Cookies.Append(Authentication.LoggedInUsername, username);
+        }
+
+        private void DeleteAuthInfoCookies()
+        {
+            this.Response.Cookies.Delete(Authentication.CanAccessAdministrationCookieName);
+            this.Response.Cookies.Delete(Authentication.LoggedInUsername);
         }
     }
 }

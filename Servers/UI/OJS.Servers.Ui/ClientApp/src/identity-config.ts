@@ -16,6 +16,8 @@ const IDENTITY_CONFIG = {
     scope: process.env.REACT_APP_IDENTITY_ALLOWED_SCOPES,
     response_type: process.env.REACT_APP_RESPONSE_TYPE,
     stateStore: new WebStorageStateStore({ store: window.localStorage }),
+    canAccessAdministrationCookieName: 'can_access_administration',
+    loggedInUsernameCookieName: 'logged_in_username',
 };
 
 const METADATA_OIDC = {

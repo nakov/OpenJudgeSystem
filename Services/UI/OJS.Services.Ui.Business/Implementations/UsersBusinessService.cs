@@ -26,13 +26,6 @@ namespace OJS.Services.Ui.Business.Implementations
             => this.usersProfileData
                 .GetByUsername<UserProfileServiceModel>(username);
 
-        public Task<UserPermissionsServiceModel> GetPermissionsOfCurrentUser()
-        {
-            var user = this.userProvider.GetCurrentUser();
-            var permissions = user.Map<UserPermissionsServiceModel>();
-            return Task.FromResult(permissions);
-        }
-
         public async Task<UserProfileServiceModel?> GetUserProfileById(string userId)
             => await this.usersProfileData
                 .GetByIdQuery(userId)

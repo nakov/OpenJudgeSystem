@@ -6,6 +6,8 @@ namespace OJS.Servers.Infrastructure
         {
             public const string SharedCookiesScheme = "Cookies";
             public const string SharedCookieName = ".AspNet.SharedOjsCookie";
+            public const string CanAccessAdministrationCookieName = "can_access_administration";
+            public const string LoggedInUsername = "logged_in_username";
         }
 
         public static class ViewDataKeys

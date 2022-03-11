@@ -6,25 +6,32 @@ import { useNotifications } from './use-notifications';
 import { INotificationType } from '../common/types';
 import { HttpStatus } from '../common/common';
 import { logoutUrl, loginSubmitUrl } from '../utils/urls';
+import { getCookie } from '../utils/cookies';
 
 type UserType = {
-  username: string,
-  isLoggedIn: boolean,
-};
+    username: string,
+    isLoggedIn: boolean,
+    permissions: IUserPermissionsType,
+  };
+
+interface IUserPermissionsType {
+    canAccessAdministration: boolean,
+}
 
 interface IAuthContext {
-  user: UserType,
-  signIn: () => void;
-  signOut: () => Promise<void>;
-  getUser: () => UserType;
-  setUsername: (value: string) => void;
-  setPassword: (value: string) => void;
+user: UserType,
+signIn: () => void;
+signOut: () => Promise<void>;
+getUser: () => UserType;
+setUsername: (value: string) => void;
+setPassword: (value: string) => void;
 }
 
 const defaultState = {
     user: {
         username: '',
-        isLoggedIn: window.isLoggedIn,
+        isLoggedIn: false,
+        permissions: { canAccessAdministration: false } as IUserPermissionsType,
     },
 };
 
@@ -57,34 +64,58 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
     const signOut = useCallback(async () => {
         startLoading();
         await logoutRequest({});
+        setUser(defaultState.user);
         stopLoading();
     }, [ logoutRequest, startLoading, stopLoading ]);
 
     const getUser = useCallback(() => user, [ user ]);
 
+    const tryGetUserDetailsFromCookie = () => {
+        const loggedInUsername = getCookie('logged_in_username');
+        const canAccessAdministrationCookie = getCookie('can_access_administration');
+
+        if (loggedInUsername) {
+            const canAccessAdministration = canAccessAdministrationCookie.length > 0;
+            const permissions = { canAccessAdministration } as IUserPermissionsType;
+
+            return {
+                username: loggedInUsername,
+                isLoggedIn: true,
+                permissions: permissions!,
+            };
+        }
+
+        return defaultState.user;
+    };
+
+    const setUserDetails = useCallback((userDetails: UserType | null) => {
+        if (userDetails == null) {
+            return;
+        }
+
+        setUser(userDetails);
+    }, []);
+
     useEffect(() => {
-        setUser({
-            username: user.username,
-            isLoggedIn: window.isLoggedIn,
-        });
-    }, [ user.username ]);
+        const loadedUser = tryGetUserDetailsFromCookie();
+        setUserDetails(loadedUser);
+    }, [ setUserDetails ]);
 
     useEffect(() => {
         if (loginSubmitRequestResponse) {
             if (loginSubmitRequestStatus === HttpStatus.Unauthorized) {
                 showError({ message: 'Invalid credentials.' } as INotificationType);
-                return;
             }
 
-            setUser({
-                username: username!,
-                isLoggedIn: true,
-            });
+            const loadedUser = tryGetUserDetailsFromCookie();
+            setUserDetails(loadedUser);
         }
-    }, [ loginSubmitRequestResponse, loginSubmitRequestStatus, showError ]);
+    }, [ loginSubmitRequestResponse, loginSubmitRequestStatus, showError, setUserDetails ]);
 
     useEffect(() => {
-        setUser(defaultState.user);
+        if (logoutResponse) {
+            setUser(defaultState.user);
+        }
     }, [ logoutResponse ]);
 
     const value = {

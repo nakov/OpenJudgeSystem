@@ -1,4 +1,5 @@
 const baseUrl = process.env.REACT_APP_BASE_URL;
+const administrationBaseUrl = process.env.REACT_APP_ADMINISTRATION_BASE_URL;
 
 const loginSubmitUrl = `${baseUrl}/Account/Login`;
 const logoutUrl = `${baseUrl}/Account/Logout`;
@@ -14,6 +15,8 @@ const submitUrl = `${baseUrl}/Compete/Submit?official=%official%`;
 
 const getParticipationsForProfileUrl = `${baseUrl}/Participations/GetForProfile`;
 
+const administrationContestsGridUrl = `${administrationBaseUrl}/Contests`;
+
 export {
     loginSubmitUrl,
     logoutUrl,
@@ -24,4 +27,5 @@ export {
     getSubmissionsForProfileUrl,
     getParticipationsForProfileUrl,
     submitUrl,
+    administrationContestsGridUrl,
 };

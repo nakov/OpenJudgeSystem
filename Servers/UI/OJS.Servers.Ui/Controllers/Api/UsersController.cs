@@ -19,10 +19,5 @@
             => await this.usersBusiness
                 .GetUserProfileByUsername(HttpContext.User.Identity!.Name)
                 .Map<UserProfileResponseModel>();
-
-        public async Task<UserPermissionsResponseModel> GetPermissionsInfo()
-            => await this.usersBusiness
-                .GetPermissionsOfCurrentUser()
-                .Map<UserPermissionsResponseModel>();
     }
 }
