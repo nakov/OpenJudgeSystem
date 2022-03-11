@@ -10,7 +10,7 @@
     [Authorize]
     public class UsersController : Controller
     {
-        private IUsersBusinessService usersBusiness;
+        private readonly IUsersBusinessService usersBusiness;
 
         public UsersController(IUsersBusinessService usersBusiness)
             => this.usersBusiness = usersBusiness;
@@ -19,5 +19,10 @@
             => await this.usersBusiness
                 .GetUserProfileByUsername(HttpContext.User.Identity!.Name)
                 .Map<UserProfileResponseModel>();
+
+        public async Task<UserPermissionsResponseModel> GetPermissionsInfo()
+            => await this.usersBusiness
+                .GetPermissionsOfCurrentUser()
+                .Map<UserPermissionsResponseModel>();
     }
 }

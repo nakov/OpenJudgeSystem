@@ -1,6 +1,7 @@
 namespace OJS.Servers.Ui.Models
 {
     using Microsoft.AspNetCore.Http;
+    using OJS.Common.Extensions;
     using System;
     using System.IO;
     using System.Net;
@@ -46,7 +47,7 @@ namespace OJS.Servers.Ui.Models
 
             this.HeadContent = match.Groups["HeadContent"].Value;
             this.BodyContent = match.Groups["BodyContent"].Value;
-            this.IsAuthenticated = context.Request.Cookies[".AspNetCore.Identity.Application"] != null;
+            this.IsAuthenticated = context.User.IsAuthenticated();
         }
     }
 }
