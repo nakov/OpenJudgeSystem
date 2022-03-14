@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { AxiosResponse } from 'axios';
 import IHaveChildrenProps from '../../components/common/IHaveChildrenProps';
-import { getIndexContestsUrl, startContestParticipationUrl } from '../../utils/urls';
+import { getIndexContestsUrl, getProblemResourceUrl, startContestParticipationUrl } from '../../utils/urls';
 import { useHttp } from '../use-http';
 import { useLoading } from '../use-loading';
 import {
@@ -23,6 +24,8 @@ interface IContestsContext {
     pastContests: IIndexContestsType[]
     getForHome: () => Promise<void>;
     startContestParticipation: (id: number, isOfficial: boolean) => Promise<void>;
+    gerProblemResourceFile: (resourceId: number) => Promise<void>;
+    getProblemResourceResponse: AxiosResponse;
 }
 
 const defaultState = {
@@ -54,6 +57,12 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         get: startContestParticipationRequest,
         data: startContestParticipationData,
     } = useHttp(startContestParticipationUrl);
+
+    const {
+        get: getProblemResourceRequest,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        response: getProblemResourceResponse,
+    } = useHttp(getProblemResourceUrl);
 
     const getForHome = useCallback(async () => {
         startLoading();
@@ -88,6 +97,12 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     const orderProblemsByOrderBy = (problems: IProblemType[]) => problems.sort((a, b) => a.orderBy - b.orderBy);
 
+    const gerProblemResourceFile = useCallback(async (resourceId: number) => {
+        startLoading();
+        await getProblemResourceRequest({ id: resourceId.toString() }, 'blob');
+        stopLoading();
+    }, [ getProblemResourceRequest, startLoading, stopLoading ]);
+
     useEffect(() => {
         if (getContestsForIndexData != null) {
             const responseData = getContestsForIndexData as IGetContestsForIndexResponseType;
@@ -107,10 +122,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         }
     }, [ setDefaultSubmissionType, startContestParticipationData ]);
 
-    useEffect(() => {
-        console.log(currentProblem);
-    }, [ currentProblem ]);
-
     const value = {
         currentContest,
         currentProblem,
@@ -121,6 +132,8 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         pastContests,
         getForHome,
         startContestParticipation,
+        gerProblemResourceFile,
+        getProblemResourceResponse,
     };
 
     return (

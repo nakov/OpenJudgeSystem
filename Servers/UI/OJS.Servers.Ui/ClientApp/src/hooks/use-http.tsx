@@ -50,11 +50,11 @@ const useHttp = (url: string, headers: IDictionary<string> | null = null) => {
     }, [ response ]);
 
     const get = useCallback(
-        (parameters?: IDictionary<string>) => request(() => axios.get(
+        (parameters?: IDictionary<string>, responseType = 'json') => request(() => axios.get(
             replaceParameters(url, parameters == null
                 ? {}
                 : parameters),
-            { headers: actualHeaders },
+            { responseType, headers: actualHeaders },
         )),
         [ actualHeaders, request, url ],
     );
