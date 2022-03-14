@@ -32,9 +32,23 @@ namespace OJS.Common.Utils
 
         public static void ValidateEnvironmentVariableExists(
             IEnumerable<string> configurationValues)
+            => ValidateEnvironmentVariableExists(configurationValues, GetByKey);
+
+        public static void ValidateApplicationUrlsExist(
+            IEnumerable<ApplicationName> appNames)
+            => ValidateEnvironmentVariableExists(appNames, GetApplicationUrl);
+
+        private static string GetConnectionStringName(ApplicationName appName, bool appUsesMultipleDatabases)
+            => appUsesMultipleDatabases
+                ? $"{appName}DbContext"
+                : "DbContext";
+
+        private static void ValidateEnvironmentVariableExists<T>(
+            IEnumerable<T> configurationValues,
+            Func<T, string?> valueFunc)
         {
             var invalidConfigurationMessages = configurationValues
-                .Where(cf => string.IsNullOrWhiteSpace(GetByKey(cf)))
+                .Where(cf => string.IsNullOrWhiteSpace(valueFunc(cf)))
                 .Select(x => string.Format(EnvironmentVariableMustBeSetMessageFormat, x))
                 .ToList();
 
@@ -43,11 +57,6 @@ namespace OJS.Common.Utils
                 throw new ArgumentException(string.Join("\n", invalidConfigurationMessages));
             }
         }
-
-        private static string GetConnectionStringName(ApplicationName appName, bool appUsesMultipleDatabases)
-            => appUsesMultipleDatabases
-                ? $"{appName}DbContext"
-                : "DbContext";
 
         private static string BuildAndGetConnectionString(ApplicationName appName, bool appUsesMultipleDatabases)
         {

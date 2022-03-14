@@ -19,7 +19,9 @@
         "DISTRIBUTOR_BASE_URL": "https://localhost:44305",
         "SULS_PLATFORM_API_KEY": "1234",
         "LOGGER_FILES_FOLDER_PATH": "../../../../Logs",
-        "SHARED_AUTH_COOKIE_DOMAIN": "localhost"
+        "SHARED_AUTH_COOKIE_DOMAIN": "localhost",
+        "UI_URL": "https://localhost:5002",
+        "ADMINISTRATION_URL": "https://localhost:5001"
       }
     },
     "OJS.Servers.Ui": {
@@ -35,7 +37,9 @@
         "DISTRIBUTOR_BASE_URL": "https://localhost:44305",
         "SULS_PLATFORM_API_KEY": "1234",
         "LOGGER_FILES_FOLDER_PATH": "../../../Logs",
-        "SHARED_AUTH_COOKIE_DOMAIN": "localhost"
+        "SHARED_AUTH_COOKIE_DOMAIN": "localhost",
+        "UI_URL": "https://localhost:5002",
+        "ADMINISTRATION_URL": "https://localhost:5001"
       }
     }
   }
