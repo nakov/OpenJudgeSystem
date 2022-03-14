@@ -15,6 +15,8 @@ const submitUrl = `${baseUrl}/Compete/Submit?official=%official%`;
 
 const getParticipationsForProfileUrl = `${baseUrl}/Participations/GetForProfile`;
 
+const getProblemResourceUrl = `${baseUrl}/ProblemResources/GetResource/%id%`;
+
 const administrationContestsGridUrl = `${administrationBaseUrl}/Contests`;
 
 export {
@@ -26,6 +28,7 @@ export {
     getSubmissionDetailsUrl,
     getSubmissionsForProfileUrl,
     getParticipationsForProfileUrl,
+    getProblemResourceUrl,
     submitUrl,
     administrationContestsGridUrl,
 };
