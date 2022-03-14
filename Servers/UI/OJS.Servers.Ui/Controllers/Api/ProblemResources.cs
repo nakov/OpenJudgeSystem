@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Services.Ui.Business;
+using SoftUni.Common;
+using static OJS.Common.GlobalConstants;
 
 namespace OJS.Servers.Ui.Controllers.Api;
 
@@ -19,7 +21,7 @@ public class ProblemResources : Controller
     {
         var resource = await this.problemResourcesBusinessService.GetResource(id);
 
-        Response.Headers.Add("Content-Disposition", $"attachment; filename*=UTF-8''{Uri.EscapeDataString(resource.Name)}.{resource.FileExtension}");
-        return File(resource.File, "application/octet-stream");
+        Response.Headers.Add(HeaderKeys.ContentDisposition, $"{HeaderValues.ContentDispositionFileNameUtf8}{Uri.EscapeDataString(resource.Name)}.{resource.FileExtension}");
+        return File(resource.File, MimeTypes.ApplicationOctetStream);
     }
 }

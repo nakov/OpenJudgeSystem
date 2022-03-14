@@ -66,12 +66,23 @@ namespace OJS.Common
             public const string ApplicationJson = "application/json";
             public const string ApplicationPdf = "application/pdf";
             public const string ApplicationZip = "application/zip";
+            public const string ApplicationOctetStream = "application/octet-stream";
             public const string Csv = "text/csv";
             public const string Tsv = "text/tsv";
             public const string CsvExcelSheet = "application/vnd.ms-excel";
             public const string ExcelSheet = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             public const string TextHtml = "text/html";
             public const string Plain = "text/plain";
+        }
+
+        public static class HeaderKeys
+        {
+            public const string ContentDisposition = "Content-Disposition";
+        }
+
+        public static class HeaderValues
+        {
+            public const string ContentDispositionFileNameUtf8 = "filename*=UTF-8''";
         }
 
         public static class ErrorMessages
