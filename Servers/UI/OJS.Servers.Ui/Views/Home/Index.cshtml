@@ -1,9 +1,14 @@
-﻿@model OJS.Servers.Ui.Models.CreateReactAppViewModel
+﻿@using OJS.Common.Enumerations
+@model OJS.Servers.Ui.Models.CreateReactAppViewModel
 
 <!DOCTYPE html>
 <html lang="en">
 <script>
     window.isLoggedIn = Boolean(@Model?.IsAuthenticated.ToString().ToLower())
+    window.URLS = {
+        UI_URL: '@applicationUrls.GetUrl(ApplicationName.Ui)',
+        ADMINISTRATION_URL: '@applicationUrls.GetUrl(ApplicationName.Administration)',
+    }
 </script>
 <head>
     @Html.Raw(Model?.HeadContent)

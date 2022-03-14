@@ -1,6 +1,6 @@
 import { WebStorageStateStore } from 'oidc-client';
 
-const appBaseUrl = process.env.REACT_APP_BASE_URL;
+const appBaseUrl = window.URLS.UI_URL;
 const authorityBaseUrl = process.env.REACT_APP_PLATFORM_IDENTITY_BASE_URL;
 const authorityUrl = `${process.env.REACT_APP_PLATFORM_IDENTITY_BASE_URL}${process.env.REACT_APP_PLATFORM_IDENTITY_AUTHORITY_URL_POSTFIX}`;
 // eslint-disable-next-line max-len

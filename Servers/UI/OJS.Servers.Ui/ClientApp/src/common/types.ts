@@ -1,6 +1,11 @@
 declare global {
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    interface Window { isLoggedIn: boolean; username: string; }
+    interface Window { isLoggedIn: boolean; username: string; URLS: URLS }
+
+    interface URLS {
+        UI_URL: string | undefined,
+        ADMINISTRATION_URL: string | undefined,
+    }
 }
 
 interface IDictionary<TValue> {
