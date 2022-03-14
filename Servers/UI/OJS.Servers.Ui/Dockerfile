@@ -2,6 +2,11 @@
 WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash
+RUN apt-get update -y && apt-get install -y nodejs
+RUN npm install --global yarn
+
 WORKDIR /src
 COPY Servers/UI ./Servers/UI
 COPY Servers/Infrastructure ./Servers/Infrastructure
@@ -14,7 +19,11 @@ COPY Services/Infrastructure ./Services/Infrastructure
 COPY Directory.Build.props ./Directory.Build.props
 
 FROM build AS publish
-RUN dotnet publish Servers/UI/OJS.Servers.Ui/OJS.Servers.Ui.csproj -c Release -o /app/publish
+WORKDIR /src/Servers/UI/OJS.Servers.Ui/ClientApp
+RUN yarn install && yarn build
+
+WORKDIR /src/Servers/UI/OJS.Servers.Ui
+RUN dotnet publish OJS.Servers.Ui.csproj -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
