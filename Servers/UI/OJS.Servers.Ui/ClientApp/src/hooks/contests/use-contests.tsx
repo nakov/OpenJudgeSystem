@@ -24,7 +24,7 @@ interface IContestsContext {
     pastContests: IIndexContestsType[]
     getForHome: () => Promise<void>;
     startContestParticipation: (id: number, isOfficial: boolean) => Promise<void>;
-    gerProblemResourceFile: (resourceId: number) => Promise<void>;
+    getProblemResourceFile: (resourceId: number) => Promise<void>;
     getProblemResourceResponse: AxiosResponse;
 }
 
@@ -97,7 +97,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     const orderProblemsByOrderBy = (problems: IProblemType[]) => problems.sort((a, b) => a.orderBy - b.orderBy);
 
-    const gerProblemResourceFile = useCallback(async (resourceId: number) => {
+    const getProblemResourceFile = useCallback(async (resourceId: number) => {
         startLoading();
         await getProblemResourceRequest({ id: resourceId.toString() }, 'blob');
         stopLoading();
@@ -122,6 +122,10 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         }
     }, [ setDefaultSubmissionType, startContestParticipationData ]);
 
+    useEffect(() => {
+        console.log(currentProblem);
+    }, [ currentProblem ]);
+
     const value = {
         currentContest,
         currentProblem,
@@ -132,7 +136,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         pastContests,
         getForHome,
         startContestParticipation,
-        gerProblemResourceFile,
+        getProblemResourceFile,
         getProblemResourceResponse,
     };
 

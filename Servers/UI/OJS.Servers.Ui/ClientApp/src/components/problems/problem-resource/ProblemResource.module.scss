@@ -1,0 +1,24 @@
+﻿@import "src/styles/colors";
+
+.resourceWrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  min-height: 50px;
+  align-items: center;
+}
+
+.resourceLink {
+  text-decoration: none;
+  color: $text-dark-gray-color;
+  
+  & > i {
+    margin-right: 10px;
+  }
+}
+
+.resourceLinkButton {
+  @extend .resourceLink;
+
+  padding: 0;
+}
