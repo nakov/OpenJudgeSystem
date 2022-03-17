@@ -62,16 +62,16 @@ public class ProblemResourceValidatorsFactory : IProblemResourceValidatorsFactor
             }
         }
 
+        if (actionContext.Action != EntityAction.Create)
+        {
+            return ValidatorResult.Success();
+        }
+
         if (newEntity.Type != ProblemResourceType.Link)
         {
             if (!this.ResourceHasFile(actionContext))
             {
                 return ValidatorResult.Error(Resource.File_required);
-            }
-
-            if (this.ResourceHasLink(newEntity))
-            {
-                return ValidatorResult.Error(Resource.Only_file_allowed);
             }
         }
 
