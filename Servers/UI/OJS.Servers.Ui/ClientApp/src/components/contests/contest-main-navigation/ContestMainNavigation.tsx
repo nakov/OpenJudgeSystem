@@ -37,6 +37,7 @@ const ContestMainNavigation = () => {
         ? null
         : (
             <List
+              className={styles.submissionTypesList}
               values={currentProblem.allowedSubmissionTypes}
               itemFunc={renderSubmissionTypesSelectors}
               orientation="horizontal"
