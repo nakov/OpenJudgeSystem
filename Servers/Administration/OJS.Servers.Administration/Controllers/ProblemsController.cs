@@ -143,6 +143,16 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         return this.RedirectToActionWithNumberFilter(nameof(TestsController), nameof(Test.ProblemId), id);
     }
 
+    public IActionResult Resources([FromQuery] IDictionary<string, string> complexId)
+    {
+        var id = int.Parse(complexId.Values.First());
+
+        return this.RedirectToActionWithNumberFilter(
+            nameof(ProblemResourcesController),
+            nameof(ProblemResource.ProblemId),
+            id);
+    }
+
     public async Task<IActionResult> Retest([FromQuery] IDictionary<string, string> complexId)
     {
         if (!int.TryParse(complexId.Values.FirstOrDefault(), out var id))
@@ -371,6 +381,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             new GridAction { Action = nameof(this.Retest) },
             new GridAction { Action = nameof(this.Tests) },
             new GridAction { Action = nameof(this.Copy) },
+            new GridAction { Action = nameof(this.Resources) },
         };
 
     protected override IEnumerable<Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>>
