@@ -120,7 +120,7 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
             new GridAction { Action = nameof(Download) }
         };
 
-    protected override object? GetDefaultRouteValuesForPostEntityFormRedirect(
+    protected override object GetDefaultRouteValuesForPostEntityFormRedirect(
         ProblemResource newEntity)
         => new Dictionary<string, string>
         {
