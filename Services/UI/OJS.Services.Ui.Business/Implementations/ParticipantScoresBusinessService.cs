@@ -1,3 +1,6 @@
+using System.Collections;
+using System.Collections.Generic;
+
 namespace OJS.Services.Ui.Business.Implementations
 {
     using FluentExtensions.Extensions;
@@ -8,21 +11,32 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Ui.Data;
     using System.Linq;
     using System.Threading.Tasks;
+    using OJS.Common;
+    using OJS.Services.Common;
+    using OJS.Services.Infrastructure.Exceptions;
+    using OJS.Services.Ui.Models.Problems;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
 
     public class ParticipantScoresBusinessService : IParticipantScoresBusinessService
     {
         private readonly IParticipantScoresDataService participantScoresData;
         private readonly IParticipantsDataService participantsData;
+        private readonly IProblemsDataService problemsDataService;
         private readonly ISubmissionsDataService submissionsData;
+        private readonly IUserProviderService userProviderService;
 
         public ParticipantScoresBusinessService(
             IParticipantScoresDataService participantScoresData,
             IParticipantsDataService participantsData,
-            ISubmissionsDataService submissionsData)
+            ISubmissionsDataService submissionsData,
+            IProblemsDataService problemsDataService,
+            IUserProviderService userProviderService)
         {
             this.participantScoresData = participantScoresData;
             this.participantsData = participantsData;
             this.submissionsData = submissionsData;
+            this.problemsDataService = problemsDataService;
+            this.userProviderService = userProviderService;
         }
 
         public async Task RecalculateForParticipantByProblem(int participantId, int problemId)
@@ -124,6 +138,43 @@ namespace OJS.Services.Ui.Business.Implementations
                     submission.Id,
                     submission.Points);
             }
+        }
+
+        public async Task<IEnumerable<ProblemResultServiceModel>> GetParticipantScoresByProblemForUser(int problemId, bool isOfficial)
+        {
+            var problem = await this.problemsDataService.GetWithProblemGroupById(problemId);
+
+            if (problem == null)
+            {
+                throw new BusinessServiceException(Resources.ContestsGeneral.Problem_not_found);
+            }
+
+            var user = this.userProviderService.GetCurrentUser();
+
+            var userHasParticipation = await this.participantsData
+                .ExistsByContestByUserAndIsOfficial(problem.ProblemGroup.ContestId, user.Id, isOfficial);
+
+            if (!userHasParticipation)
+            {
+                throw new BusinessServiceException(Resources.ContestsGeneral.User_is_not_registered_for_exam);
+            }
+
+            if (!problem.ShowResults)
+            {
+                throw new BusinessServiceException(Resources.ContestsGeneral.Problem_results_not_available);
+            }
+
+            var participant =
+                await this.participantsData.GetByContestByUserAndByIsOfficial(problem.ProblemGroup.ContestId, user.Id,
+                    isOfficial);
+
+            var results = await this.participantScoresData
+                .GetAll()
+                .Where(ps => ps.ProblemId == problem.Id && ps.IsOfficial == isOfficial && ps.ParticipantId == participant.Id)
+                .MapCollection<ProblemResultServiceModel>()
+                .ToListAsync();
+
+            return results;
         }
     }
 }

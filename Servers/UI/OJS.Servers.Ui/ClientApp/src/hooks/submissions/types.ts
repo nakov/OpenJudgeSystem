@@ -37,10 +37,23 @@ interface ISubmissionDetailsType extends ISubmissionType {
     user: IUserProfileType
 }
 
+interface ISubmissionResultType {
+    id: number,
+    problemId: number,
+    createdOn: Date,
+    points: number,
+    maximumPoints: number,
+    isProcessed: boolean,
+    isCompiledSuccessfully: boolean,
+    isOfficial: boolean,
+    testRuns: ITestRunDetailsType[]
+}
+
 export type {
     IProblemType,
     ITestRunType,
     ISubmissionType,
     ITestRunDetailsType,
     ISubmissionDetailsType,
+    ISubmissionResultType,
 };

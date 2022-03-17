@@ -23,7 +23,6 @@ interface ISubmissionsProviderProps extends IHaveChildrenProps {}
 const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
     const { selectedSubmissionTypeId, currentProblem } = useContests();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ submissions, setSubmissions ] = useState<ISubmissionType[]>([]);
     const [ currentSubmissionCode, setCurrentSubmissionCode ] = useState<string>(defaultState.currentSubmissionCode);
 
