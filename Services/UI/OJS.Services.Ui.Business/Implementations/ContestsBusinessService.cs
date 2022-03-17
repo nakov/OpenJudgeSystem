@@ -136,7 +136,7 @@ namespace OJS.Services.Ui.Business.Implementations
         public async Task<ContestsForHomeIndexServiceModel> GetAllForHomeIndex()
         {
             var active = await this.GetAllCompetable();
-            var past = await this.GetAllPast();
+            var past = await this.GetAllPracticable();
 
             return new ContestsForHomeIndexServiceModel {ActiveContests = active, PastContests = past};
         }
@@ -144,7 +144,14 @@ namespace OJS.Services.Ui.Business.Implementations
         public async Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllCompetable()
             => await this.contestsData
                 .GetAllCompetable<ContestForHomeIndexServiceModel>()
-                .OrderByAsync(ac => ac.EndTime)
+                .OrderByDescendingAsync(ac => ac.EndTime)
+                .TakeAsync(DefaultContestsToTake);
+
+        public async Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPracticable()
+            => await this.contestsData
+                .GetAllPast<ContestForHomeIndexServiceModel>()
+                .WhereAsync(c => c.CanBePracticed)
+                .OrderByDescendingAsync(ac => ac.PracticeStartTime)
                 .TakeAsync(DefaultContestsToTake);
 
         public async Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPast()

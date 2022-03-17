@@ -23,6 +23,13 @@ interface ILinkButtonProps {
     to: string,
 }
 
+const classNameToType = {
+    primary: styles.btn,
+    secondary: styles.btnSecondary,
+    plain: styles.btnPlain,
+    disabled: styles.btnDisabled,
+};
+
 const Button = ({
     onClick,
     text = '',
@@ -38,13 +45,6 @@ const Button = ({
         small: styles.btnSmall,
         medium: styles.btnMedium,
         large: styles.btnLarge,
-    };
-
-    const classNameToType = {
-        primary: styles.btn,
-        secondary: styles.btnSecondary,
-        plain: styles.btnPlain,
-        disabled: styles.btnDisabled,
     };
 
     const typeClassName = classNameToType[type];
@@ -77,9 +77,7 @@ const LinkButton = ({ text, to, className = '', type = 'primary', size = 'medium
         large: styles.large,
     };
 
-    const typeClassName = type === 'primary'
-        ? styles.btn
-        : styles.btnSecondary;
+    const typeClassName = classNameToType[type];
 
     const sizeClassName = sizeToClassName[size];
 

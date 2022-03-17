@@ -56,9 +56,12 @@ interface IContestType {
 interface IIndexContestsType {
     id: number,
     name: string,
+    startTime: Date,
     endTime: Date,
-    canPractice: boolean,
-    canCompete: boolean,
+    practiceStartTime: Date,
+    practiceEndTime: Date,
+    canBePracticed: boolean,
+    canBeCompeted: boolean,
     category: string
 }
 

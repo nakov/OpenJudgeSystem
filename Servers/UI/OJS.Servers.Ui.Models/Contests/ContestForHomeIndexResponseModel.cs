@@ -10,11 +10,17 @@
 
         public string Name { get; set; }
 
+        public DateTime? StartTime { get; set; }
+
         public DateTime? EndTime { get; set; }
 
-        public bool CanCompete { get; set; }
+        public DateTime? PracticeStartTime { get; set; }
 
-        public bool CanPractice { get; set; }
+        public DateTime? PracticeEndTime { get; set; }
+
+        public bool CanBeCompeted { get; set; }
+
+        public bool CanBePracticed { get; set; }
 
         public string Category { get; set; }
     }

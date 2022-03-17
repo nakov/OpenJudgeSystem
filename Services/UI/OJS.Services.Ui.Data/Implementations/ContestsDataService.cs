@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace OJS.Services.Ui.Data.Implementations
 {
     using Microsoft.EntityFrameworkCore;
