@@ -29,21 +29,21 @@ public class ProblemResourceValidatorsFactory : IProblemResourceValidatorsFactor
         GetAsyncValidators()
         => new Func<ProblemResource, ProblemResource, AdminActionContext, Task<ValidatorResult>>[]
         {
-            this.ValidateProblemPermissions,
+            this.ValidateOldProblemPermissions,
+            this.ValidateNewProblemPermissions,
         };
 
-    private async Task<ValidatorResult> ValidateProblemPermissions(
+    private Task<ValidatorResult> ValidateOldProblemPermissions(
         ProblemResource existingEntity,
         ProblemResource newEntity,
         AdminActionContext actionContext)
-    {
-        var permissionsResult = await this.problemsValidationHelper
-            .ValidatePermissionsOfCurrentUser(newEntity.ProblemId);
+        => this.ValidateProblemPermissions(existingEntity.ProblemId);
 
-        return permissionsResult.IsValid
-            ? ValidatorResult.Success()
-            : ValidatorResult.Error(GeneralResource.No_permissions_for_contest);
-    }
+    private Task<ValidatorResult> ValidateNewProblemPermissions(
+        ProblemResource existingEntity,
+        ProblemResource newEntity,
+        AdminActionContext actionContext)
+        => this.ValidateProblemPermissions(newEntity.ProblemId);
 
     private ValidatorResult ValidateForResourceType(
         ProblemResource existingEntity,
@@ -83,4 +83,14 @@ public class ProblemResourceValidatorsFactory : IProblemResourceValidatorsFactor
 
     private bool ResourceHasLink(ProblemResource newEntity)
         => !string.IsNullOrWhiteSpace(newEntity.Link);
+
+    private async Task<ValidatorResult> ValidateProblemPermissions(int problemId)
+    {
+        var permissionsResult = await this.problemsValidationHelper
+            .ValidatePermissionsOfCurrentUser(problemId);
+
+        return permissionsResult.IsValid
+            ? ValidatorResult.Success()
+            : ValidatorResult.Error(GeneralResource.No_permissions_for_contest);
+    }
 }
