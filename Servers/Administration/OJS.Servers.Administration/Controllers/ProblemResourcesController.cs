@@ -1,0 +1,119 @@
+namespace OJS.Servers.Administration.Controllers;
+
+using AutoCrudAdmin.Models;
+using AutoCrudAdmin.ViewModels;
+using FluentExtensions.Extensions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using OJS.Data.Models.Problems;
+using OJS.Servers.Infrastructure.Extensions;
+using OJS.Services.Administration.Business.Validation;
+using OJS.Services.Administration.Business.Validation.Factories;
+using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models;
+using OJS.Services.Administration.Models.ProblemResources;
+using OJS.Services.Common;
+using OJS.Services.Infrastructure.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+
+public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemResource>
+{
+    private readonly IProblemResourceValidatorsFactory problemResourceValidatorsFactory;
+    private readonly IProblemResourcesDataService problemResourcesData;
+    private readonly IProblemResourcesDownloadValidationService problemResourcesDownloadValidation;
+    private readonly IContentTypesService contentTypes;
+
+    public ProblemResourcesController(
+        IProblemResourceValidatorsFactory problemResourceValidatorsFactory,
+        IProblemResourcesDataService problemResourcesData,
+        IProblemResourcesDownloadValidationService problemResourcesDownloadValidation,
+        IContentTypesService contentTypes)
+    {
+        this.problemResourceValidatorsFactory = problemResourceValidatorsFactory;
+        this.problemResourcesData = problemResourcesData;
+        this.problemResourcesDownloadValidation = problemResourcesDownloadValidation;
+        this.contentTypes = contentTypes;
+    }
+
+    public override Task<IActionResult> Create(IDictionary<string, string> complexId, string postEndpointName)
+        => base.Create(complexId, nameof(Create));
+
+    [HttpPost]
+    public Task<IActionResult> Create(IDictionary<string, string> entityDict, IFormFile file)
+        => base.PostCreate(entityDict, new FormFilesContainer(file));
+
+    public override Task<IActionResult> Edit(IDictionary<string, string> complexId, string postEndpointName)
+        => base.Edit(complexId, nameof(Edit));
+
+    public async Task<IActionResult> Download([FromQuery] IDictionary<string, string> complexId)
+    {
+        var id =  int.Parse(complexId.Values.First());
+
+        var resource = await this.problemResourcesData.OneByIdTo<ProblemResourceDownloadServiceModel>(id);
+
+        await this.problemResourcesDownloadValidation
+            .GetValidationResult(resource)
+            .VerifyResult();
+
+        var file = resource?.File;
+
+        if (file == null)
+        {
+            return this.NotFound();
+        }
+
+        var contentType = this.contentTypes.GetByFileExtension(resource!.FileExtension);
+        var fileName = $"Resource-{resource.Id}-{resource.ProblemName.Replace(" ", string.Empty)}.{resource.FileExtension}";
+
+        return this.File(file, contentType, fileName);
+    }
+
+    [HttpPost]
+    public Task<IActionResult> Edit(IDictionary<string, string> entityDict, IFormFile file)
+        => base.PostEdit(entityDict, new FormFilesContainer(file));
+
+    protected override IEnumerable<Func<ProblemResource, ProblemResource, AdminActionContext, ValidatorResult>>
+        EntityValidators
+        => this.problemResourceValidatorsFactory.GetValidators();
+
+    protected override IEnumerable<Func<ProblemResource, ProblemResource, AdminActionContext, Task<ValidatorResult>>>
+        AsyncEntityValidators
+        => this.problemResourceValidatorsFactory.GetAsyncValidators();
+
+    protected override IEnumerable<GridAction> CustomActions
+        => new[]
+        {
+            new GridAction { Action = nameof(Download) }
+        };
+
+    protected override async Task<IEnumerable<FormControlViewModel>> GenerateFormControlsAsync(
+        ProblemResource entity,
+        EntityAction action,
+        IDictionary<string, string> entityDict,
+        IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters)
+    {
+        var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters)
+            .ToListAsync();
+
+        formControls.Add(new FormControlViewModel
+        {
+            Name = AdditionalFormFields.File.ToString(),
+            Type = typeof(IFormFile),
+        });
+
+        return formControls;
+    }
+
+    protected override async Task BeforeEntitySaveAsync(ProblemResource entity, AdminActionContext actionContext)
+    {
+        var file = actionContext.Files.SingleFiles.FirstOrDefault();
+        if (file != null)
+        {
+            entity.File = await file.ToByteArray();
+        }
+    }
+}

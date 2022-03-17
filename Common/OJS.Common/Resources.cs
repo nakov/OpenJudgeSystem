@@ -191,5 +191,16 @@ namespace OJS.Common
             public const string Name = "Name";
             public const string Type = "Type";
         }
+
+        public static class ProblemResourcesController
+        {
+            public const string File_required = "The file is required!";
+            public const string Only_link_allowed = "The resource should not have file, but only link";
+            public const string Only_file_allowed = "The resource should not have link, but only file";
+            public const string Invalid_resource = "Resource is invalid!";
+            public const string Link_not_empty = "The link must not be empty";
+            public const string Problem_not_found = "Problem not found.";
+            public const string Resource_not_found = "Resource not found.";
+        }
     }
 }

@@ -1,5 +1,6 @@
 namespace OJS.Services.Administration.Business.Validation.Helpers.Implementations;
 
+using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Contests.Problems;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Validation.Helpers;
@@ -10,14 +11,21 @@ public class ProblemsValidationHelper : IProblemsValidationHelper
 {
     private readonly IContestsValidationHelper contestsValidationHelper;
     private readonly INotDefaultValueValidationHelper notDefaultValueValidationHelper;
+    private readonly IProblemsDataService problemsData;
 
     public ProblemsValidationHelper(
         IContestsValidationHelper contestsValidationHelper,
-        INotDefaultValueValidationHelper notDefaultValueValidationHelper)
+        INotDefaultValueValidationHelper notDefaultValueValidationHelper,
+        IProblemsDataService problemsData)
     {
         this.contestsValidationHelper = contestsValidationHelper;
         this.notDefaultValueValidationHelper = notDefaultValueValidationHelper;
+        this.problemsData = problemsData;
     }
+
+    public async Task<ValidationResult> ValidatePermissionsOfCurrentUser(int problemId)
+        => await this.ValidatePermissionsOfCurrentUser(
+            await this.problemsData.OneByIdTo<ProblemShortDetailsServiceModel>(problemId));
 
     public Task<ValidationResult> ValidatePermissionsOfCurrentUser(ProblemShortDetailsServiceModel? problem)
     {
