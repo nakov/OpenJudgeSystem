@@ -12,6 +12,7 @@ public class ContentTypesService : IContentTypesService
 
         return fileExtension switch
         {
+            FileExtensions.Zip => MimeTypes.ApplicationZip,
             FileExtensions.Txt => MimeTypes.Plain,
             FileExtensions.Docx => MimeTypes.Docx,
             _ => MimeTypes.ApplicationUnknown,
