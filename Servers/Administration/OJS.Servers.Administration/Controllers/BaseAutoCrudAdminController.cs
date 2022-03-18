@@ -26,13 +26,13 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
             nameof(IEntity<object>.Id),
         };
 
-    protected TKey GetEntityIdFromQuery<TKey>(IDictionary<string, string> complexId)
+    protected TEntityId GetEntityIdFromQuery<TEntityId >(IDictionary<string, string> complexId)
     {
         var idString = this.GetPrimaryKeyValueFromQuery(complexId);
         object id;
-        var keyType = typeof(TKey);
+        var idType = typeof(TEntityId);
 
-        if (keyType == typeof(string))
+        if (idType == typeof(string))
         {
             id = idString;
         }
@@ -46,7 +46,7 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
             id = idInt;
         }
 
-        return (TKey)Convert.ChangeType(id, typeof(TKey));
+        return (TEntityId)Convert.ChangeType(id, typeof(TEntityId));
     }
 
     private string GetPrimaryKeyValueFromQuery(IDictionary<string, string> complexId)
