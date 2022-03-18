@@ -1,4 +1,6 @@
-﻿namespace OJS.Services.Ui.Business
+﻿using System.Collections;
+
+namespace OJS.Services.Ui.Business
 {
     using OJS.Data.Models.Submissions;
     using SoftUni.Services.Infrastructure;
@@ -20,6 +22,8 @@
         Task RecalculatePointsByProblem(int problemId);
 
         Task<IEnumerable<SubmissionForProfileServiceModel>> GetForProfileByUser(string? username);
+
+        Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(int problemId, bool isOfficial);
 
         // Task HardDeleteAllArchived();
     }

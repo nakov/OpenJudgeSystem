@@ -16,6 +16,7 @@ import {
 
 interface IContestsContext {
     currentContest: IContestType | null,
+    isContestParticipationOfficial: boolean,
     currentProblem: IProblemType | null,
     selectedSubmissionTypeId: number | null,
     setProblem: (problem: IProblemType) => void,
@@ -31,6 +32,7 @@ interface IContestsContext {
 const defaultState = {
     currentContest: null,
     currentProblem: null,
+    isContestParticipationOfficial: false,
     selectedSubmissionTypeId: 0,
 };
 
@@ -41,11 +43,12 @@ interface IContestsProviderProps extends IHaveChildrenProps {}
 const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ activeContests, setActiveContests ] = useState<IIndexContestsType[]>([]);
     const [ pastContests, setPastContests ] = useState<IIndexContestsType[]>([]);
+    const [ isContestParticipationOfficial, setIsContestParticipationOfficial ] =
+        useState<boolean>(defaultState.isContestParticipationOfficial);
     const [ currentContest, setCurrentContest ] = useState<IContestType | null>(defaultState.currentContest);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ allProblems, setAllProblems ] = useState<IProblemType[]>();
     const [ currentProblem, setCurrentProblem ] = useState<IProblemType | null>(defaultState.currentProblem);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ selectedSubmissionTypeId, setSelectedSubmissionTypeId ] = useState<number>(defaultState.selectedSubmissionTypeId);
     const { startLoading, stopLoading } = useLoading();
     const {
@@ -115,6 +118,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         if (startContestParticipationData != null) {
             const responseData = startContestParticipationData as IStartParticipationResponseType;
             setCurrentContest(responseData.contest);
+            setIsContestParticipationOfficial(responseData.contestIsCompete);
             const problems = orderProblemsByOrderBy(responseData.contest.problems);
             setAllProblems(problems);
             setCurrentProblem(problems[0]);
@@ -128,6 +132,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     const value = {
         currentContest,
+        isContestParticipationOfficial,
         currentProblem,
         selectedSubmissionTypeId,
         setProblem,

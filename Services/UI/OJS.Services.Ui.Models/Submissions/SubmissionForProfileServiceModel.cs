@@ -16,7 +16,7 @@ namespace OJS.Services.Ui.Models.Submissions
 
         public int Points { get; set; }
 
-        public IEnumerable<TestRunServiceModel> TestRuns { get; set; } = ArraySegment<TestRunServiceModel>.Empty;
+        public IEnumerable<TestRunServiceModel> TestRuns { get; set; } = Enumerable.Empty<TestRunServiceModel>();
 
         public DateTime SubmittedOn { get; set; }
 

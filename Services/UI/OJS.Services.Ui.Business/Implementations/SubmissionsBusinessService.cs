@@ -208,6 +208,43 @@
             return data;
         }
 
+        public async Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(int problemId,
+            bool isOfficial)
+        {
+            var problem = await this.problemsDataService.GetWithProblemGroupById(problemId);
+
+            if (problem == null)
+            {
+                throw new BusinessServiceException(Resources.ContestsGeneral.Problem_not_found);
+            }
+
+            var user = this.userProviderService.GetCurrentUser();
+
+            var userHasParticipation = await this.participantsDataService
+                .ExistsByContestByUserAndIsOfficial(problem.ProblemGroup.ContestId, user.Id, isOfficial);
+
+            if (!userHasParticipation)
+            {
+                throw new BusinessServiceException(Resources.ContestsGeneral.User_is_not_registered_for_exam);
+            }
+
+            if (!problem.ShowResults)
+            {
+                throw new BusinessServiceException(Resources.ContestsGeneral.Problem_results_not_available);
+            }
+
+            var participant =
+                await this.participantsDataService.GetByContestByUserAndByIsOfficial(problem.ProblemGroup.ContestId, user.Id,
+                    isOfficial);
+
+            var userSubmissions = await this.submissionsData
+                .GetAllByProblemAndParticipant(problemId, participant.Id)
+                .MapCollection<SubmissionResultsServiceModel>()
+                .ToListAsync();
+
+            return userSubmissions;
+        }
+
         public async Task Submit(SubmitSubmissionServiceModel model)
         {
             var problem = await this.problemsDataService.GetWithProblemGroupCheckerAndTestsById(model.ProblemId);

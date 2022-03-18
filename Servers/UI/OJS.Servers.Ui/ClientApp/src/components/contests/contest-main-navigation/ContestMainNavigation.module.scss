@@ -28,3 +28,9 @@
   display: flex;
   flex-direction: row;
 }
+
+.submissionTypesList {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 500px;
+}
