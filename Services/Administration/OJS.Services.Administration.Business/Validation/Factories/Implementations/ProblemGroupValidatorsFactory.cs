@@ -45,7 +45,7 @@ public class ProblemGroupValidatorsFactory : IProblemGroupValidatorsFactory
         AdminActionContext actionContext)
     {
         var permissionsResult = await this.contestsValidationHelper.ValidatePermissionsOfCurrentUser(
-            actionContext.TryGetEntityId<Contest>());
+            actionContext.GetEntityIdOrDefault<Contest>());
 
         return permissionsResult.IsValid
             ? ValidatorResult.Success()

@@ -504,7 +504,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     }
 
     private static int GetContestId(IDictionary<string, string> entityDict, Problem? problem)
-        => entityDict.TryGetEntityId<Contest>() ?? problem?.ProblemGroup?.ContestId ?? default;
+        => entityDict.GetEntityIdOrDefault<Contest>() ?? problem?.ProblemGroup?.ContestId ?? default;
 
     private static void TryAddSolutionSkeleton(Problem problem, AdminActionContext actionContext)
         => problem.SolutionSkeleton = actionContext.GetByteArrayFromStringInput(AdditionalFormFields.SolutionSkeleton);

@@ -170,7 +170,7 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         EntityAction action,
         IDictionary<string, string> entityDict)
     {
-        var problemId = entityDict.TryGetEntityId<Problem>();
+        var problemId = entityDict.GetEntityIdOrDefault<Problem>();
 
         if (problemId == null)
         {

@@ -257,7 +257,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
     {
         var formControls = base.GenerateFormControls(entity, action, entityDict, complexOptionFilters).ToList();
 
-        var problemId = entityDict.TryGetEntityId<Problem>();
+        var problemId = entityDict.GetEntityIdOrDefault<Problem>();
 
         if (problemId != null)
         {

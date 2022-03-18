@@ -46,7 +46,7 @@ public class ProblemValidatorsFactory : IProblemValidatorsFactory
         Problem newEntity,
         AdminActionContext actionContext)
     {
-        var contestId = actionContext.TryGetEntityId<Contest>() ?? newEntity.ProblemGroup.ContestId;
+        var contestId = actionContext.GetEntityIdOrDefault<Contest>() ?? newEntity.ProblemGroup.ContestId;
 
         var permissionsResult = await this.contestsValidationHelper.ValidatePermissionsOfCurrentUser(
             contestId);
