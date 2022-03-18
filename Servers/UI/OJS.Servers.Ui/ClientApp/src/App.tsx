@@ -16,30 +16,38 @@ import ParticipationsProvider from './hooks/use-participations';
 
 import './styles/global.scss';
 
-const App = () => (
-    <ServicesProvider>
-        <LoadingProvider>
-            <NotificationsProvider>
-                <AuthProvider>
-                    <UsersProvider>
-                        <ContestsProvider>
-                            <ParticipationsProvider>
-                                <SubmissionsProvider>
-                                    <SubmissionsDetailsProvider>
-                                        <Router>
-                                            <PageHeader />
-                                            <PageContent />
-                                            <PageFooter />
-                                        </Router>
-                                    </SubmissionsDetailsProvider>
-                                </SubmissionsProvider>
-                            </ParticipationsProvider>
-                        </ContestsProvider>
-                    </UsersProvider>
-                </AuthProvider>
-            </NotificationsProvider>
-        </LoadingProvider>
-    </ServicesProvider>
-);
+const InitProviders = ({ providers, children }: any) => {
+    const initial = (<>{{ children }}</>);
+    return providers
+        .reverse()
+        .reduce((current: any, Provider: any) => (
+            <Provider>
+                {{ current }}
+            </Provider>
+        ), initial);
+};
+
+const App = () => {
+    const providers = [
+        ServicesProvider,
+        LoadingProvider,
+        NotificationsProvider,
+        AuthProvider,
+        UsersProvider,
+        ContestsProvider,
+        ParticipationsProvider,
+        SubmissionsProvider,
+        SubmissionsDetailsProvider,
+    ];
+    return (
+        <InitProviders providers={providers}>
+            <Router>
+                <PageHeader />
+                <PageContent />
+                <PageFooter />
+            </Router>
+        </InitProviders>
+    );
+};
 
 export default App;
