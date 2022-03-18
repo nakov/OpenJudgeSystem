@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { IIndexContestsType, useContests } from '../../hooks/contests/use-contests';
 import { LinkButton } from '../guidelines/buttons/Button';
 import ContestCard from './contest-card/ContestCard';
@@ -9,7 +9,6 @@ import styles from './HomeContests.module.scss';
 
 const HomeContests = () => {
     const { activeContests, pastContests, getForHome } = useContests();
-    const [ goToContestId, setGoToContestId ] = useState<string>();
 
     useEffect(() => {
         getForHome();
@@ -18,18 +17,6 @@ const HomeContests = () => {
     const renderContestsList = (contests: IIndexContestsType[]) => contests.map((contest: IIndexContestsType) => (
         <ContestCard contest={contest} />
     ));
-
-    const renderGoToContest = () => (
-        <>
-            <input type="text" onChange={(e) => setGoToContestId(e.target.value)} />
-            <LinkButton
-              to={`/contests/${goToContestId}/compete`}
-              text="Go To Contest"
-              type="secondary"
-              size="small"
-            />
-        </>
-    );
 
     const render = (headerTitle: string, contests: IIndexContestsType[]) => (
         <>
@@ -55,7 +42,6 @@ const HomeContests = () => {
         <>
             { render('Active', activeContests) }
             { render('Past', pastContests) }
-            { renderGoToContest() }
         </>
     );
 };
