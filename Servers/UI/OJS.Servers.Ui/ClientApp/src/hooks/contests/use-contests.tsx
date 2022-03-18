@@ -27,7 +27,6 @@ interface IContestsContext {
     startContestParticipation: (id: number, isOfficial: boolean) => Promise<void>;
     getProblemResourceFile: (resourceId: number) => Promise<void>;
     getProblemResourceResponse: AxiosResponse;
-    getContestParticipationMode: () => string;
 }
 
 const defaultState = {
@@ -99,11 +98,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         setDefaultSubmissionType(problem.allowedSubmissionTypes);
     };
 
-    const getContestParticipationMode = () => (
-        isContestParticipationOfficial
-            ? 'Compete'
-            : 'Practice');
-
     const orderProblemsByOrderBy = (problems: IProblemType[]) => problems.sort((a, b) => a.orderBy - b.orderBy);
 
     const getProblemResourceFile = useCallback(async (resourceId: number) => {
@@ -149,7 +143,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         startContestParticipation,
         getProblemResourceFile,
         getProblemResourceResponse,
-        getContestParticipationMode,
     };
 
     return (
