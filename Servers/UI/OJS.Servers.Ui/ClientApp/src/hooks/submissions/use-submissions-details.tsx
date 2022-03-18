@@ -59,7 +59,6 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
 
     useEffect(() => {
         if (getProblemResultsData != null) {
-            console.log(getProblemResultsData);
             setCurrentProblemSubmissionResults(getProblemResultsData as ISubmissionResultType[]);
         }
     }, [ getProblemResultsData ]);
