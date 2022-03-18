@@ -136,27 +136,8 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
     {
         var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters)
             .ToListAsync();
-
-        var problemId = entityDict.TryGetEntityId<Problem>();
-
-        if (problemId == null)
-        {
-            throw new Exception($"A valid ProblemId must be provided to be able to {action} a Problem Resource.");
-        }
-
-        var problemInput = formControls.First(fc => fc.Name == nameof(ProblemResource.Problem));
-        problemInput.Value = problemId;
-        problemInput.IsReadOnly = true;
-
-        var orderByInput = formControls.First(fc => fc.Name == nameof(entity.OrderBy));
-        orderByInput.Value = await this.GetNewOrderBy(problemId.Value);
-
-        formControls.Add(new FormControlViewModel
-        {
-            Name = AdditionalFormFields.File.ToString(),
-            Type = typeof(IFormFile),
-        });
-
+        await this.ModifyFormControls(formControls, action, entityDict);
+        formControls.AddRange(this.GetAdditionalFormControls());
         return formControls;
     }
 
@@ -183,4 +164,34 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
 
         return (int)Math.Ceiling(resourcesForProblem.Max()) + 1;
     }
+
+    private async Task ModifyFormControls(
+        ICollection<FormControlViewModel> formControls,
+        EntityAction action,
+        IDictionary<string, string> entityDict)
+    {
+        var problemId = entityDict.TryGetEntityId<Problem>();
+
+        if (problemId == null)
+        {
+            throw new Exception($"A valid ProblemId must be provided to be able to {action} a Problem Resource.");
+        }
+
+        var problemInput = formControls.First(fc => fc.Name == nameof(ProblemResource.Problem));
+        problemInput.Value = problemId;
+        problemInput.IsReadOnly = true;
+
+        var orderByInput = formControls.First(fc => fc.Name == nameof(ProblemResource.OrderBy));
+        orderByInput.Value = await this.GetNewOrderBy(problemId.Value);
+    }
+
+    private IEnumerable<FormControlViewModel> GetAdditionalFormControls()
+        => new List<FormControlViewModel>
+        {
+            new()
+            {
+                Name = AdditionalFormFields.File.ToString(),
+                Type = typeof(IFormFile),
+            },
+        };
 }
