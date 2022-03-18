@@ -136,7 +136,7 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
     {
         var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters)
             .ToListAsync();
-        await this.ModifyFormControls(formControls, action, entityDict);
+        await this.ModifyFormControls(formControls, entity, action, entityDict);
         formControls.AddRange(this.GetAdditionalFormControls());
         return formControls;
     }
@@ -167,12 +167,13 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
 
     private async Task ModifyFormControls(
         ICollection<FormControlViewModel> formControls,
+        ProblemResource entity,
         EntityAction action,
         IDictionary<string, string> entityDict)
     {
-        var problemId = entityDict.GetEntityIdOrDefault<Problem>();
+        var problemId = entityDict.GetEntityIdOrDefault<Problem>() ?? entity.ProblemId;
 
-        if (problemId == null)
+        if (problemId == default)
         {
             throw new Exception($"A valid ProblemId must be provided to be able to {action} a Problem Resource.");
         }
@@ -182,7 +183,7 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         problemInput.IsReadOnly = true;
 
         var orderByInput = formControls.First(fc => fc.Name == nameof(ProblemResource.OrderBy));
-        orderByInput.Value = await this.GetNewOrderBy(problemId.Value);
+        orderByInput.Value = await this.GetNewOrderBy(problemId);
     }
 
     private IEnumerable<FormControlViewModel> GetAdditionalFormControls()

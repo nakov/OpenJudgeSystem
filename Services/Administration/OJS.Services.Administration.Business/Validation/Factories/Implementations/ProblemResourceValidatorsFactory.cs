@@ -29,21 +29,23 @@ public class ProblemResourceValidatorsFactory : IProblemResourceValidatorsFactor
         GetAsyncValidators()
         => new Func<ProblemResource, ProblemResource, AdminActionContext, Task<ValidatorResult>>[]
         {
-            this.ValidateOldProblemPermissions,
-            this.ValidateNewProblemPermissions,
+            this.ValidateProblemPermissions,
         };
 
-    private Task<ValidatorResult> ValidateOldProblemPermissions(
+    private async Task<ValidatorResult> ValidateProblemPermissions(
         ProblemResource existingEntity,
         ProblemResource newEntity,
         AdminActionContext actionContext)
-        => this.ValidateProblemPermissions(existingEntity.ProblemId);
+    {
+        var oldProblemPermissionsResult = await this.ValidateProblemPermissions(existingEntity.ProblemId);
 
-    private Task<ValidatorResult> ValidateNewProblemPermissions(
-        ProblemResource existingEntity,
-        ProblemResource newEntity,
-        AdminActionContext actionContext)
-        => this.ValidateProblemPermissions(newEntity.ProblemId);
+        if (oldProblemPermissionsResult.IsValid && existingEntity.ProblemId != newEntity.ProblemId)
+        {
+            return await this.ValidateProblemPermissions(newEntity.ProblemId);
+        }
+
+        return oldProblemPermissionsResult;
+    }
 
     private ValidatorResult ValidateForResourceType(
         ProblemResource existingEntity,
