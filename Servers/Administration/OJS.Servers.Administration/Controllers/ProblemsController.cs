@@ -136,17 +136,17 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         => this.RedirectToActionWithNumberFilter(
             nameof(TestsController),
             nameof(Test.ProblemId),
-            this.GetEntityIdFromQuery(complexId));
+            this.GetEntityIdFromQuery<int>(complexId));
 
     public IActionResult Resources([FromQuery] IDictionary<string, string> complexId)
         => this.RedirectToActionWithNumberFilter(
             nameof(ProblemResourcesController),
             nameof(ProblemResource.ProblemId),
-            this.GetEntityIdFromQuery(complexId));
+            this.GetEntityIdFromQuery<int>(complexId));
 
     public async Task<IActionResult> Retest([FromQuery] IDictionary<string, string> complexId)
     {
-        var id = this.GetEntityIdFromQuery(complexId);
+        var id = this.GetEntityIdFromQuery<int>(complexId);
 
         var problem = await this.problemsData.OneByIdTo<ProblemRetestServiceModel>(id);
 
@@ -294,7 +294,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     [HttpGet]
     public async Task<IActionResult> Copy(IDictionary<string, string> complexId)
     {
-        var id = this.GetEntityIdFromQuery(complexId);
+        var id = this.GetEntityIdFromQuery<int>(complexId);
         var problem = this.problemsData.GetWithContestById(id);
 
         if (problem == null)

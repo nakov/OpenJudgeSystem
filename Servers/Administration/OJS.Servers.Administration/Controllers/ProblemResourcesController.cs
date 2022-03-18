@@ -86,7 +86,7 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
 
     public async Task<IActionResult> Download([FromQuery] IDictionary<string, string> complexId)
     {
-        var id = this.GetEntityIdFromQuery(complexId);
+        var id = this.GetEntityIdFromQuery<int>(complexId);
 
         var resource = await this.problemResourcesData.OneByIdTo<ProblemResourceDownloadServiceModel>(id);
 

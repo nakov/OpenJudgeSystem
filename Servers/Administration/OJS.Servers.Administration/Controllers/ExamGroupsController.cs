@@ -20,7 +20,7 @@ public class ExamGroupsController : BaseAutoCrudAdminController<ExamGroup>
 
     public IActionResult Users([FromQuery] IDictionary<string, string> complexId)
     {
-        var examGroupId = this.GetEntityIdFromQuery(complexId);
+        var examGroupId = this.GetEntityIdFromQuery<int>(complexId);
         return this.RedirectToAction("ByExamGroup", "Users", new { examGroupId });
     }
 

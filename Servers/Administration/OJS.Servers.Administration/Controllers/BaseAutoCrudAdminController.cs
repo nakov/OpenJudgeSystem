@@ -4,6 +4,7 @@ using AutoCrudAdmin;
 using AutoCrudAdmin.Controllers;
 using OJS.Services.Infrastructure.Exceptions;
 using SoftUni.Data.Infrastructure.Models;
+using System;
 using System.Collections.Generic;
 
 public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEntity>
@@ -25,16 +26,27 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
             nameof(IEntity<object>.Id),
         };
 
-    protected int GetEntityIdFromQuery(IDictionary<string, string> complexId)
+    protected TKey GetEntityIdFromQuery<TKey>(IDictionary<string, string> complexId)
     {
         var idString = this.GetPrimaryKeyValueFromQuery(complexId);
+        object id;
+        var keyType = typeof(TKey);
 
-        if (!int.TryParse(idString, out var id))
+        if (keyType == typeof(string))
         {
-            throw new BusinessServiceException($"Value \"{idString}\" for primary key must be convertible to int.");
+            id = idString;
+        }
+        else
+        {
+            if (!int.TryParse(idString, out var idInt))
+            {
+                throw new BusinessServiceException($"Value \"{idString}\" for primary key must be convertible to int.");
+            }
+
+            id = idInt;
         }
 
-        return id;
+        return (TKey)Convert.ChangeType(id, typeof(TKey));
     }
 
     private string GetPrimaryKeyValueFromQuery(IDictionary<string, string> complexId)

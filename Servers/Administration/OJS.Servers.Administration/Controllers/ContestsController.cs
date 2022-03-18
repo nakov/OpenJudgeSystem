@@ -42,7 +42,7 @@ namespace OJS.Servers.Administration.Controllers
         {
             var model = new DownloadSubmissionsModel
             {
-                ContestId = this.GetEntityIdFromQuery(complexId),
+                ContestId = this.GetEntityIdFromQuery<int>(complexId),
             };
 
             return this.View(model);
@@ -53,7 +53,7 @@ namespace OJS.Servers.Administration.Controllers
         {
             var model = new ContestResultsExportRequestModel
             {
-                Id = this.GetEntityIdFromQuery(complexId),
+                Id = this.GetEntityIdFromQuery<int>(complexId),
             };
 
             return this.View(model);
@@ -67,11 +67,11 @@ namespace OJS.Servers.Administration.Controllers
             => this.RedirectToActionWithNumberFilter(
                 nameof(ParticipantsController),
                 nameof(Participant.ContestId),
-                this.GetEntityIdFromQuery(complexId));
+                this.GetEntityIdFromQuery<int>(complexId));
 
         public IActionResult Problems([FromQuery] IDictionary<string, string> complexId)
         {
-            var contestId = this.GetEntityIdFromQuery(complexId);
+            var contestId = this.GetEntityIdFromQuery<int>(complexId);
             return this.RedirectToAction(
                 "Index",
                 "Problems",
