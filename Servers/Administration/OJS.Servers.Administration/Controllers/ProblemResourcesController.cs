@@ -6,6 +6,7 @@ using AutoCrudAdmin.ViewModels;
 using FluentExtensions.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Problems;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business.Extensions;
@@ -138,12 +139,17 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
 
         var problemId = entityDict.TryGetEntityId<Problem>();
 
-        if (problemId != null)
+        if (problemId == null)
         {
-            var problemInput = formControls.First(fc => fc.Name == nameof(ProblemResource.Problem));
-            problemInput.Value = problemId;
-            problemInput.IsReadOnly = true;
+            throw new Exception($"A valid ProblemId must be provided to be able to {action} a Problem Resource.");
         }
+
+        var problemInput = formControls.First(fc => fc.Name == nameof(ProblemResource.Problem));
+        problemInput.Value = problemId;
+        problemInput.IsReadOnly = true;
+
+        var orderByInput = formControls.First(fc => fc.Name == nameof(entity.OrderBy));
+        orderByInput.Value = await this.GetNewOrderBy(problemId.Value);
 
         formControls.Add(new FormControlViewModel
         {
@@ -161,5 +167,20 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         {
             entity.File = await file.ToByteArray();
         }
+    }
+
+    private async Task<int> GetNewOrderBy(int problemId)
+    {
+        var resourcesForProblem = await this.problemResourcesData.GetByProblemQuery(problemId)
+            .Where(x => !x.IsDeleted)
+            .Select(x => x.OrderBy)
+            .ToListAsync();
+
+        if (!resourcesForProblem.Any())
+        {
+            return 0;
+        }
+
+        return (int)Math.Ceiling(resourcesForProblem.Max()) + 1;
     }
 }
