@@ -133,33 +133,20 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         => base.PostEdit(entityDict, new FormFilesContainer(tests, additionalFiles));
 
     public IActionResult Tests([FromQuery] IDictionary<string, string> complexId)
-    {
-        if (!int.TryParse(complexId.Values.FirstOrDefault(), out var id))
-        {
-            this.TempData.AddDangerMessage(GlobalResource.Invalid_problem);
-            return this.RedirectToAction("Index", "Problems");
-        }
-
-        return this.RedirectToActionWithNumberFilter(nameof(TestsController), nameof(Test.ProblemId), id);
-    }
+        => this.RedirectToActionWithNumberFilter(
+            nameof(TestsController),
+            nameof(Test.ProblemId),
+            this.GetEntityIdFromQuery(complexId));
 
     public IActionResult Resources([FromQuery] IDictionary<string, string> complexId)
-    {
-        var id = int.Parse(complexId.Values.First());
-
-        return this.RedirectToActionWithNumberFilter(
+        => this.RedirectToActionWithNumberFilter(
             nameof(ProblemResourcesController),
             nameof(ProblemResource.ProblemId),
-            id);
-    }
+            this.GetEntityIdFromQuery(complexId));
 
     public async Task<IActionResult> Retest([FromQuery] IDictionary<string, string> complexId)
     {
-        if (!int.TryParse(complexId.Values.FirstOrDefault(), out var id))
-        {
-            this.TempData.AddDangerMessage(GlobalResource.Invalid_problem);
-            return this.RedirectToAction("Index", "Problems");
-        }
+        var id = this.GetEntityIdFromQuery(complexId);
 
         var problem = await this.problemsData.OneByIdTo<ProblemRetestServiceModel>(id);
 
@@ -307,9 +294,8 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     [HttpGet]
     public async Task<IActionResult> Copy(IDictionary<string, string> complexId)
     {
-        int.TryParse(complexId.Values.FirstOrDefault() ?? string.Empty, out var problemId);
-
-        var problem = this.problemsData.GetWithContestById(problemId);
+        var id = this.GetEntityIdFromQuery(complexId);
+        var problem = this.problemsData.GetWithContestById(id);
 
         if (problem == null)
         {
@@ -320,10 +306,10 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         var contest = problem.ProblemGroup.Contest;
 
         await this.contestCopyProblemsValidation
-            .GetValidationResult(contest?.Map<ContestCopyProblemsValidationServiceModel>())
+            .GetValidationResult(contest.Map<ContestCopyProblemsValidationServiceModel>())
             .VerifyResult();
 
-        var model = problem!.Map<CopyToAnotherContestViewModel>();
+        var model = problem.Map<CopyToAnotherContestViewModel>();
         await this.PrepareViewModelForCopy(model);
         return this.View(model);
     }
@@ -487,7 +473,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         AddSubmissionTypes(entity, actionContext);
     }
 
-    // TODO: move more logic from old judge
     protected override async Task BeforeEntitySaveOnCreateAsync(Problem entity, AdminActionContext actionContext)
     {
         var contestId = GetContestId(actionContext.EntityDict, entity);

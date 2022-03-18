@@ -1,6 +1,8 @@
 namespace OJS.Servers.Administration.Controllers;
 
+using AutoCrudAdmin;
 using AutoCrudAdmin.Controllers;
+using OJS.Services.Infrastructure.Exceptions;
 using SoftUni.Data.Infrastructure.Models;
 using System.Collections.Generic;
 
@@ -22,4 +24,27 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
         {
             nameof(IEntity<object>.Id),
         };
+
+    protected int GetEntityIdFromQuery(IDictionary<string, string> complexId)
+    {
+        var idString = this.GetPrimaryKeyValueFromQuery(complexId);
+
+        if (!int.TryParse(idString, out var id))
+        {
+            throw new BusinessServiceException($"Value \"{idString}\" for primary key must be convertible to int.");
+        }
+
+        return id;
+    }
+
+    private string GetPrimaryKeyValueFromQuery(IDictionary<string, string> complexId)
+    {
+        const string key = Constants.Entity.SinglePrimaryKeyName;
+        if (!complexId.TryGetValue(key, out var idString))
+        {
+            throw new BusinessServiceException($"{key} query param must be provided for the entity");
+        }
+
+        return idString;
+    }
 }

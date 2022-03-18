@@ -7,7 +7,6 @@ using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Business.Validation.Factories;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Resource = OJS.Common.Resources.ExamGroupsController;
 
@@ -21,7 +20,7 @@ public class ExamGroupsController : BaseAutoCrudAdminController<ExamGroup>
 
     public IActionResult Users([FromQuery] IDictionary<string, string> complexId)
     {
-        var examGroupId = int.Parse(complexId.Values.First());
+        var examGroupId = this.GetEntityIdFromQuery(complexId);
         return this.RedirectToAction("ByExamGroup", "Users", new { examGroupId });
     }
 
