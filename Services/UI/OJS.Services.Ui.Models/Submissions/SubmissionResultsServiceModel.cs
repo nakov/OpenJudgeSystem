@@ -3,6 +3,7 @@ using OJS.Data.Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace OJS.Services.Ui.Models.Submissions;
 
@@ -24,7 +25,7 @@ public class SubmissionResultsServiceModel : IMapExplicitly
 
     public short MaximumPoints { get; set; }
 
-    public IEnumerable<TestRunServiceModel> TestRuns { get; set; } = ArraySegment<TestRunServiceModel>.Empty;
+    public IEnumerable<TestRunServiceModel> TestRuns { get; set; } = Enumerable.Empty<TestRunServiceModel>();
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Submission, SubmissionResultsServiceModel>()

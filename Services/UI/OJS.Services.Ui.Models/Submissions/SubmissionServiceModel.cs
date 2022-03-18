@@ -1,4 +1,6 @@
-﻿namespace OJS.Services.Ui.Models.Submissions
+﻿using System.Linq;
+
+namespace OJS.Services.Ui.Models.Submissions
 {
     using System;
     using OJS.Data.Models.Submissions;
@@ -13,6 +15,6 @@
 
         public int Points { get; set; }
 
-        public IEnumerable<TestRunServiceModel> TestRuns { get; set; } = ArraySegment<TestRunServiceModel>.Empty;
+        public IEnumerable<TestRunServiceModel> TestRuns { get; set; } = Enumerable.Empty<TestRunServiceModel>();
     }
 }
