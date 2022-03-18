@@ -1,17 +1,21 @@
 namespace OJS.Servers.Administration.Controllers;
 
-using Microsoft.AspNetCore.Mvc;
+using AutoCrudAdmin.Extensions;
+using OJS.Data.Models;
 using OJS.Data.Models.Users;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 public class UsersController : BaseAutoCrudAdminController<UserProfile>
 {
-    public IActionResult ByExamGroup(int examGroupId)
-    {
-        this.MasterGridFilter = u => u.UsersInExamGroups.Any(x => x.ExamGroupId == examGroupId);
-        return base.Index();
-    }
+    private const string ExamGroupIdKey = nameof(UserInExamGroup.ExamGroupId);
+
+    protected override Expression<Func<UserProfile, bool>>? MasterGridFilter
+        => this.TryGetEntityIdForColumnFilter(ExamGroupIdKey, out var examGroupId)
+            ? u => u.UsersInExamGroups.Any(x => x.ExamGroupId == examGroupId)
+            : base.MasterGridFilter;
 
     protected override IEnumerable<string> ShownColumnNames
         => new[]

@@ -44,31 +44,15 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         this.contentTypes = contentTypes;
     }
 
-    public override IActionResult Index()
-    {
-        if (!this.TryGetEntityIdForColumnFilter(ProblemIdKey, out var problemId))
-        {
-            return base.Index();
-        }
+    protected override Expression<Func<ProblemResource, bool>>? MasterGridFilter
+        => this.TryGetEntityIdForColumnFilter(ProblemIdKey, out var problemId)
+            ? x => x.ProblemId == problemId
+            : base.MasterGridFilter;
 
-        var routeValues = new Dictionary<string, string>
-        {
-            { nameof(problemId), problemId.ToString() },
-        };
-
-        this.MasterGridFilter = pr => pr.ProblemId == problemId;
-        this.CustomToolbarActions = new AutoCrudAdminGridToolbarActionViewModel[]
-        {
-            new()
-            {
-                Name = "Add new",
-                Action = nameof(this.Create),
-                RouteValues = routeValues,
-            },
-        };
-
-        return base.Index();
-    }
+    protected override IEnumerable<AutoCrudAdminGridToolbarActionViewModel> CustomToolbarActions
+        => this.TryGetEntityIdForColumnFilter(ProblemIdKey, out var problemId)
+            ? this.GetCustomToolbarActions(problemId)
+            : base.CustomToolbarActions;
 
     public override Task<IActionResult> Create(IDictionary<string, string> complexId, string postEndpointName)
         => base.Create(complexId, nameof(Create));
@@ -195,4 +179,22 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
                 Type = typeof(IFormFile),
             },
         };
+
+    private IEnumerable<AutoCrudAdminGridToolbarActionViewModel> GetCustomToolbarActions(int problemId)
+    {
+        var routeValues = new Dictionary<string, string>
+        {
+            { nameof(problemId), problemId.ToString() },
+        };
+
+        return new AutoCrudAdminGridToolbarActionViewModel[]
+        {
+            new()
+            {
+                Name = "Add new",
+                Action = nameof(this.Create),
+                RouteValues = routeValues,
+            },
+        };
+    }
 }

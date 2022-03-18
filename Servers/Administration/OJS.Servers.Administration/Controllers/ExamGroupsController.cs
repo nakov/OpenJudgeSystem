@@ -3,6 +3,7 @@ namespace OJS.Servers.Administration.Controllers;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using OJS.Data.Models;
 using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Business.Validation.Factories;
 using System;
@@ -21,7 +22,13 @@ public class ExamGroupsController : BaseAutoCrudAdminController<ExamGroup>
     public IActionResult Users([FromQuery] IDictionary<string, string> complexId)
     {
         var examGroupId = this.GetEntityIdFromQuery<int>(complexId);
-        return this.RedirectToAction("ByExamGroup", "Users", new { examGroupId });
+        return this.RedirectToAction(
+            "Index",
+            "Users",
+            new Dictionary<string, string>
+            {
+                { nameof(UserInExamGroup.ExamGroupId), examGroupId.ToString() },
+            });
     }
 
     protected override IEnumerable<Func<ExamGroup, ExamGroup, AdminActionContext, ValidatorResult>> EntityValidators

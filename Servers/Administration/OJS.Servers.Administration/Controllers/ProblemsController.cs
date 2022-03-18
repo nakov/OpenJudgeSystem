@@ -80,43 +80,15 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         this.problemGroupsData = problemGroupsData;
     }
 
-    public override IActionResult Index()
-    {
-        if (!this.TryGetEntityIdForColumnFilter(ContestIdKey, out var contestId))
-        {
-            return base.Index();
-        }
+    protected override Expression<Func<Problem, bool>>? MasterGridFilter
+        => this.TryGetEntityIdForColumnFilter(ContestIdKey, out var contestId)
+            ? t => t.ProblemGroup.ContestId == contestId
+            : base.MasterGridFilter;
 
-        var routeValues = new Dictionary<string, string>
-        {
-            { nameof(contestId), contestId.ToString() },
-        };
-
-        this.MasterGridFilter = t => t.ProblemGroup.ContestId == contestId;
-        this.CustomToolbarActions = new AutoCrudAdminGridToolbarActionViewModel[]
-        {
-            new()
-            {
-                Name = "Add new",
-                Action = nameof(this.Create),
-                RouteValues = routeValues,
-            },
-            new()
-            {
-                Name = "Delete all",
-                Action = nameof(this.DeleteAll),
-                RouteValues = routeValues,
-            },
-            new()
-            {
-                Name = "Copy all",
-                Action = nameof(this.CopyAll),
-                RouteValues = routeValues,
-            },
-        };
-
-        return base.Index();
-    }
+    protected override IEnumerable<AutoCrudAdminGridToolbarActionViewModel> CustomToolbarActions
+        => this.TryGetEntityIdForColumnFilter(ContestIdKey, out var problemId)
+            ? this.GetCustomToolbarActions(problemId)
+            : base.CustomToolbarActions;
 
     public override Task<IActionResult> Create(IDictionary<string, string> complexId, string postEndpointName)
         => base.Create(complexId, nameof(Create));
@@ -585,5 +557,35 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             await this.contestsBusiness.GetAllAvailableForCurrentUser<ContestCopyProblemsValidationServiceModel>();
 
         return new SelectList(contestsToCopyTo, nameof(Contest.Id), nameof(Contest.Name));
+    }
+
+    private IEnumerable<AutoCrudAdminGridToolbarActionViewModel> GetCustomToolbarActions(int contestId)
+    {
+        var routeValues = new Dictionary<string, string>
+        {
+            { nameof(contestId), contestId.ToString() },
+        };
+
+        return new AutoCrudAdminGridToolbarActionViewModel[]
+        {
+            new()
+            {
+                Name = "Add new",
+                Action = nameof(this.Create),
+                RouteValues = routeValues,
+            },
+            new()
+            {
+                Name = "Delete all",
+                Action = nameof(this.DeleteAll),
+                RouteValues = routeValues,
+            },
+            new()
+            {
+                Name = "Copy all",
+                Action = nameof(this.CopyAll),
+                RouteValues = routeValues,
+            },
+        };
     }
 }

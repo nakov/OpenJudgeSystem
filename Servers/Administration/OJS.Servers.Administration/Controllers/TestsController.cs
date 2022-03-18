@@ -69,43 +69,15 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         this.problemsBusiness = problemsBusiness;
     }
 
-    public override IActionResult Index()
-    {
-        if (!this.TryGetEntityIdForColumnFilter(ProblemIdKey, out var problemId))
-        {
-            return base.Index();
-        }
+    protected override Expression<Func<Test, bool>>? MasterGridFilter
+        => this.TryGetEntityIdForColumnFilter(ProblemIdKey, out var problemId)
+            ? t => t.ProblemId == problemId
+            : base.MasterGridFilter;
 
-        var routeValues = new Dictionary<string, string>
-        {
-            { nameof(problemId), problemId.ToString() },
-        };
-
-        this.MasterGridFilter = t => t.ProblemId == problemId;
-        this.CustomToolbarActions = new AutoCrudAdminGridToolbarActionViewModel[]
-        {
-            new()
-            {
-                Name = "Add new",
-                Action = nameof(this.Create),
-                RouteValues = routeValues,
-            },
-            new()
-            {
-                Name = "Export Zip",
-                Action = nameof(this.ExportZip),
-                RouteValues = routeValues,
-            },
-            new()
-            {
-                Name = "Import tests",
-                Action = nameof(this.Import),
-                FormControls = this.GetFormControlsForImportTests(problemId),
-            },
-        };
-
-        return base.Index();
-    }
+    protected override IEnumerable<AutoCrudAdminGridToolbarActionViewModel> CustomToolbarActions
+        => this.TryGetEntityIdForColumnFilter(ProblemIdKey, out var problemId)
+            ? this.GetCustomToolbarActions(problemId)
+            : base.CustomToolbarActions;
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -326,4 +298,34 @@ public class TestsController : BaseAutoCrudAdminController<Test>
                 Value = true,
             },
         };
+
+    private IEnumerable<AutoCrudAdminGridToolbarActionViewModel> GetCustomToolbarActions(int problemId)
+    {
+        var routeValues = new Dictionary<string, string>
+        {
+            { nameof(problemId), problemId.ToString() },
+        };
+
+        return new AutoCrudAdminGridToolbarActionViewModel[]
+        {
+            new()
+            {
+                Name = "Add new",
+                Action = nameof(this.Create),
+                RouteValues = routeValues,
+            },
+            new()
+            {
+                Name = "Export Zip",
+                Action = nameof(this.ExportZip),
+                RouteValues = routeValues,
+            },
+            new()
+            {
+                Name = "Import tests",
+                Action = nameof(this.Import),
+                FormControls = this.GetFormControlsForImportTests(problemId),
+            },
+        };
+    }
 }
