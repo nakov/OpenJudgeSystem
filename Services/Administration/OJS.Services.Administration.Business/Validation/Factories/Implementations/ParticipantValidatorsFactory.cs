@@ -10,7 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 
-public class ParticipantValidatorsFactory : IParticipantValidatorsFactory
+public class ParticipantValidatorsFactory : IValidatorsFactory<Participant>
 {
     private readonly IContestsValidationHelper contestsValidationHelper;
 

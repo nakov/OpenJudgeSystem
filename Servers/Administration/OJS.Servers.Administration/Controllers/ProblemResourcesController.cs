@@ -27,13 +27,13 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
 {
     private const string ProblemIdKey = nameof(ProblemResource.ProblemId);
 
-    private readonly IProblemResourceValidatorsFactory problemResourceValidatorsFactory;
+    private readonly IValidatorsFactory<ProblemResource> problemResourceValidatorsFactory;
     private readonly IProblemResourcesDataService problemResourcesData;
     private readonly IProblemResourcesDownloadValidationService problemResourcesDownloadValidation;
     private readonly IContentTypesService contentTypes;
 
     public ProblemResourcesController(
-        IProblemResourceValidatorsFactory problemResourceValidatorsFactory,
+        IValidatorsFactory<ProblemResource> problemResourceValidatorsFactory,
         IProblemResourcesDataService problemResourcesData,
         IProblemResourcesDownloadValidationService problemResourcesDownloadValidation,
         IContentTypesService contentTypes)

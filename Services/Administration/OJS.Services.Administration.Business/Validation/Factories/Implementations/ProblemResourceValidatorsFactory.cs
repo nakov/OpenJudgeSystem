@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 using Resource = OJS.Common.Resources.ProblemResourcesController;
 
-public class ProblemResourceValidatorsFactory : IProblemResourceValidatorsFactory
+public class ProblemResourceValidatorsFactory :IValidatorsFactory<ProblemResource>
 {
     private readonly IProblemsValidationHelper problemsValidationHelper;
 

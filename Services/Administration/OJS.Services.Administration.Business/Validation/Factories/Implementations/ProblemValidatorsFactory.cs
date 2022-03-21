@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 using GlobalResource = OJS.Common.Resources.ProblemsController;
 
-public class ProblemValidatorsFactory : IProblemValidatorsFactory
+public class ProblemValidatorsFactory : IValidatorsFactory<Problem>
 {
     private readonly IContestsValidationHelper contestsValidationHelper;
     private readonly IFileSystemService fileSystem;

@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 
 public class ParticipantsController : BaseAutoCrudAdminController<Participant>
 {
-    private readonly IParticipantValidatorsFactory participantValidatorsFactory;
+    private readonly IValidatorsFactory<Participant> participantValidatorsFactory;
 
     public ParticipantsController(
-        IParticipantValidatorsFactory participantValidatorsFactory)
+        IValidatorsFactory<Participant> participantValidatorsFactory)
         => this.participantValidatorsFactory = participantValidatorsFactory;
 
     protected override IEnumerable<GridAction> DefaultActions

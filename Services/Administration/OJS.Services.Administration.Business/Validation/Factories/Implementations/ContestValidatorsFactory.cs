@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using AdminResource = OJS.Common.Resources.AdministrationGeneral;
 using Resource = OJS.Common.Resources.ContestsControllers;
 
-public class ContestValidatorsFactory : IContestValidatorsFactory
+public class ContestValidatorsFactory : IValidatorsFactory<Contest>
 {
     private const int ProblemGroupsCountLimit = 40;
 

@@ -48,7 +48,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     private readonly IProblemsDataService problemsData;
     private readonly IZippedTestsParserService zippedTestsParser;
     private readonly ISubmissionTypesDataService submissionTypesData;
-    private readonly IProblemValidatorsFactory problemValidatorsFactory;
+    private readonly IValidatorsFactory<Problem> problemValidatorsFactory;
     private readonly IContestDeleteProblemsValidationService contestDeleteProblemsValidation;
     private readonly IContestCopyProblemsValidationService contestCopyProblemsValidation;
     private readonly IProblemGroupsBusinessService problemGroupsBusiness;
@@ -61,7 +61,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         IProblemsDataService problemsData,
         IZippedTestsParserService zippedTestsParser,
         ISubmissionTypesDataService submissionTypesData,
-        IProblemValidatorsFactory problemValidatorsFactory,
+        IValidatorsFactory<Problem> problemValidatorsFactory,
         IContestDeleteProblemsValidationService contestDeleteProblemsValidation,
         IContestCopyProblemsValidationService contestCopyProblemsValidation,
         IProblemGroupsBusinessService problemGroupsBusiness,

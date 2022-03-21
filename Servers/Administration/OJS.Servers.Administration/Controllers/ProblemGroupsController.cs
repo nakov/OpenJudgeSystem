@@ -15,9 +15,9 @@ using System.Threading.Tasks;
 
 public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
 {
-    private readonly IProblemGroupValidatorsFactory problemGroupValidatorsFactory;
+    private readonly IValidatorsFactory<ProblemGroup> problemGroupValidatorsFactory;
 
-    public ProblemGroupsController(IProblemGroupValidatorsFactory problemGroupValidatorsFactory)
+    public ProblemGroupsController(IValidatorsFactory<ProblemGroup> problemGroupValidatorsFactory)
         => this.problemGroupValidatorsFactory = problemGroupValidatorsFactory;
 
     public IActionResult Problems([FromQuery] IDictionary<string, string> complexId)

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 using Resource = OJS.Common.Resources.ExamGroupsController;
 
-public class UserInExamGroupValidatorsFactory : IUserInExamGroupValidatorsFactory
+public class UserInExamGroupValidatorsFactory : IValidatorsFactory<UserInExamGroup>
 {
     private readonly IContestsValidationHelper contestsValidationHelper;
 

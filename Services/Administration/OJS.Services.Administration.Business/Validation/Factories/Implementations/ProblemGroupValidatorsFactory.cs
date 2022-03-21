@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 using Resource =  OJS.Common.Resources.ProblemGroupsControllers;
 
-public class ProblemGroupValidatorsFactory : IProblemGroupValidatorsFactory
+public class ProblemGroupValidatorsFactory : IValidatorsFactory<ProblemGroup>
 {
     private readonly IContestsValidationHelper contestsValidationHelper;
     private readonly IContestsDataService contestsData;

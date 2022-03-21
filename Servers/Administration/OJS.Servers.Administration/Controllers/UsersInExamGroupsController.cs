@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExamGroup>
 {
-    private readonly IUserInExamGroupValidatorsFactory userInExamGroupValidatorsFactory;
+    private readonly IValidatorsFactory<UserInExamGroup> userInExamGroupValidatorsFactory;
 
     public UsersInExamGroupsController(
-        IUserInExamGroupValidatorsFactory userInExamGroupValidatorsFactory)
+        IValidatorsFactory<UserInExamGroup> userInExamGroupValidatorsFactory)
         => this.userInExamGroupValidatorsFactory = userInExamGroupValidatorsFactory;
 
     protected override IEnumerable<GridAction> DefaultActions

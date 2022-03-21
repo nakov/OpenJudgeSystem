@@ -26,14 +26,14 @@ namespace OJS.Servers.Administration.Controllers
     {
         private readonly IIpsDataService ipsData;
         private readonly IParticipantsDataService participantsData;
-        private readonly IContestValidatorsFactory contestValidatorsFactory;
+        private readonly IValidatorsFactory<Contest> contestValidatorsFactory;
         private readonly IContestCategoriesValidationHelper contestCategoriesValidationHelper;
         private readonly IContestsValidationHelper contestsValidationHelper;
 
         public ContestsController(
             IIpsDataService ipsData,
             IParticipantsDataService participantsData,
-            IContestValidatorsFactory contestValidatorsFactory,
+            IValidatorsFactory<Contest> contestValidatorsFactory,
             IContestCategoriesValidationHelper contestCategoriesValidationHelper,
             IContestsValidationHelper contestsValidationHelper)
         {
