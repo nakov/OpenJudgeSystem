@@ -20,4 +20,6 @@ public class ContestForActivityServiceModel : IContestForActivityServiceModel
     public DateTime? PracticeStartTime { get; set; }
 
     public DateTime? PracticeEndTime { get; set; }
+
+    public bool IsOnline => this.Type == ContestType.OnlinePracticalExam;
 }

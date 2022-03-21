@@ -1,5 +1,6 @@
 namespace OJS.Services.Common.Models.Contests;
 
+using AutoMapper;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Contests;
 using SoftUni.AutoMapper.Infrastructure.Models;
@@ -22,4 +23,7 @@ public interface IContestForActivityServiceModel : IMapFrom<Contest>
     DateTime? PracticeStartTime { get; set; }
 
     DateTime? PracticeEndTime { get; set; }
+
+    [IgnoreMap]
+    bool IsOnline { get; }
 }
