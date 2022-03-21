@@ -86,7 +86,7 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         }
 
         var contentType = this.contentTypes.GetByFileExtension(resource!.FileExtension);
-        var fileName = $"Resource-{resource.Id}-{resource.ProblemName.Replace(" ", string.Empty)}.{resource.FileExtension}";
+        var fileName = GetResourceFileNameForDownload(resource);
 
         return this.File(file, contentType, fileName);
     }
@@ -196,5 +196,11 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
                 RouteValues = routeValues,
             },
         };
+    }
+
+    private static string GetResourceFileNameForDownload(ProblemResourceDownloadServiceModel resource)
+    {
+        var problemName = resource.ProblemName.Replace(" ", string.Empty);
+        return $"Resource-{resource.Id}-{problemName}.{resource.FileExtension}";
     }
 }

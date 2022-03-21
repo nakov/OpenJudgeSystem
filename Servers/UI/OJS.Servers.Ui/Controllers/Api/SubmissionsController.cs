@@ -1,4 +1,6 @@
 ﻿using OJS.Servers.Ui.Models.Submissions.Details;
+using OJS.Servers.Ui.Models.Submissions.Results;
+using System.Collections;
 
 namespace OJS.Servers.Ui.Controllers.Api
 {
@@ -33,5 +35,12 @@ namespace OJS.Servers.Ui.Controllers.Api
             => this.submissionsBusiness
                 .GetForProfileByUser(this.User.Identity?.Name)
                 .MapCollection<SubmissionForProfileResponseModel>();
+
+        public async Task<IEnumerable<SubmissionResultsResponseModel>> GetSubmissionResultsByProblem(
+            int id,
+            [FromQuery]bool isOfficial)
+            => await this.submissionsBusiness
+                .GetSubmissionResultsByProblem(id, isOfficial)
+                .MapCollection<SubmissionResultsResponseModel>();
     }
 }
