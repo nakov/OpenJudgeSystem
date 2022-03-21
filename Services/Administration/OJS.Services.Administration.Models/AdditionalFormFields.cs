@@ -10,4 +10,5 @@ public enum AdditionalFormFields
     AllowedIps,
     Input,
     Output,
+    File,
 }

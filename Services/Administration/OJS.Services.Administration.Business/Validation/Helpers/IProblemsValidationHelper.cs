@@ -7,5 +7,7 @@ using System.Threading.Tasks;
 
 public interface IProblemsValidationHelper : IService
 {
+    Task<ValidationResult> ValidatePermissionsOfCurrentUser(int problemId);
+
     Task<ValidationResult> ValidatePermissionsOfCurrentUser(ProblemShortDetailsServiceModel? problem);
 }

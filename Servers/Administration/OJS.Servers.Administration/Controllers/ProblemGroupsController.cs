@@ -24,7 +24,7 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
         => this.RedirectToActionWithNumberFilter(
             nameof(ProblemsController),
             nameof(OJS.Data.Models.Problems.Problem.ProblemGroupId),
-            int.Parse(complexId.Values.First()));
+            this.GetEntityIdFromQuery<int>(complexId));
 
     protected override IEnumerable<Func<ProblemGroup, ProblemGroup, AdminActionContext, ValidatorResult>>
         EntityValidators

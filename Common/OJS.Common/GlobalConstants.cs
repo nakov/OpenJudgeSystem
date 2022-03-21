@@ -66,11 +66,13 @@ namespace OJS.Common
             public const string ApplicationJson = "application/json";
             public const string ApplicationPdf = "application/pdf";
             public const string ApplicationZip = "application/zip";
+            public const string ApplicationUnknown = "application/unknown";
             public const string ApplicationOctetStream = "application/octet-stream";
             public const string Csv = "text/csv";
             public const string Tsv = "text/tsv";
             public const string CsvExcelSheet = "application/vnd.ms-excel";
             public const string ExcelSheet = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            public const string Docx = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
             public const string TextHtml = "text/html";
             public const string Plain = "text/plain";
         }
@@ -111,6 +113,7 @@ namespace OJS.Common
             public const string Sol = ".sol";
             public const string Input = ".in";
             public const string Output = ".out";
+            public const string Docx = ".docx";
             public const string TestInputTxt = Input + Txt;
             public const string TestOutputTxt = Output + Txt;
             public const string TestInputZip = Input + Zip;

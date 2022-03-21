@@ -80,43 +80,15 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         this.problemGroupsData = problemGroupsData;
     }
 
-    public override IActionResult Index()
-    {
-        if (!this.TryGetEntityIdForColumnFilter(ContestIdKey, out var contestId))
-        {
-            return base.Index();
-        }
+    protected override Expression<Func<Problem, bool>>? MasterGridFilter
+        => this.TryGetEntityIdForColumnFilter(ContestIdKey, out var contestId)
+            ? t => t.ProblemGroup.ContestId == contestId
+            : base.MasterGridFilter;
 
-        var routeValues = new Dictionary<string, string>
-        {
-            { nameof(contestId), contestId.ToString() },
-        };
-
-        this.MasterGridFilter = t => t.ProblemGroup.ContestId == contestId;
-        this.CustomToolbarActions = new AutoCrudAdminGridToolbarActionViewModel[]
-        {
-            new()
-            {
-                Name = "Add new",
-                Action = nameof(this.Create),
-                RouteValues = routeValues,
-            },
-            new()
-            {
-                Name = "Delete all",
-                Action = nameof(this.DeleteAll),
-                RouteValues = routeValues,
-            },
-            new()
-            {
-                Name = "Copy all",
-                Action = nameof(this.CopyAll),
-                RouteValues = routeValues,
-            },
-        };
-
-        return base.Index();
-    }
+    protected override IEnumerable<AutoCrudAdminGridToolbarActionViewModel> CustomToolbarActions
+        => this.TryGetEntityIdForColumnFilter(ContestIdKey, out var problemId)
+            ? this.GetCustomToolbarActions(problemId)
+            : base.CustomToolbarActions;
 
     public override Task<IActionResult> Create(IDictionary<string, string> complexId, string postEndpointName)
         => base.Create(complexId, nameof(Create));
@@ -133,23 +105,20 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         => base.PostEdit(entityDict, new FormFilesContainer(tests, additionalFiles));
 
     public IActionResult Tests([FromQuery] IDictionary<string, string> complexId)
-    {
-        if (!int.TryParse(complexId.Values.FirstOrDefault(), out var id))
-        {
-            this.TempData.AddDangerMessage(GlobalResource.Invalid_problem);
-            return this.RedirectToAction("Index", "Problems");
-        }
+        => this.RedirectToActionWithNumberFilter(
+            nameof(TestsController),
+            nameof(Test.ProblemId),
+            this.GetEntityIdFromQuery<int>(complexId));
 
-        return this.RedirectToActionWithNumberFilter(nameof(TestsController), nameof(Test.ProblemId), id);
-    }
+    public IActionResult Resources([FromQuery] IDictionary<string, string> complexId)
+        => this.RedirectToActionWithNumberFilter(
+            nameof(ProblemResourcesController),
+            nameof(ProblemResource.ProblemId),
+            this.GetEntityIdFromQuery<int>(complexId));
 
     public async Task<IActionResult> Retest([FromQuery] IDictionary<string, string> complexId)
     {
-        if (!int.TryParse(complexId.Values.FirstOrDefault(), out var id))
-        {
-            this.TempData.AddDangerMessage(GlobalResource.Invalid_problem);
-            return this.RedirectToAction("Index", "Problems");
-        }
+        var id = this.GetEntityIdFromQuery<int>(complexId);
 
         var problem = await this.problemsData.OneByIdTo<ProblemRetestServiceModel>(id);
 
@@ -297,9 +266,8 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     [HttpGet]
     public async Task<IActionResult> Copy(IDictionary<string, string> complexId)
     {
-        int.TryParse(complexId.Values.FirstOrDefault() ?? string.Empty, out var problemId);
-
-        var problem = this.problemsData.GetWithContestById(problemId);
+        var id = this.GetEntityIdFromQuery<int>(complexId);
+        var problem = this.problemsData.GetWithContestById(id);
 
         if (problem == null)
         {
@@ -310,10 +278,10 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         var contest = problem.ProblemGroup.Contest;
 
         await this.contestCopyProblemsValidation
-            .GetValidationResult(contest?.Map<ContestCopyProblemsValidationServiceModel>())
+            .GetValidationResult(contest.Map<ContestCopyProblemsValidationServiceModel>())
             .VerifyResult();
 
-        var model = problem!.Map<CopyToAnotherContestViewModel>();
+        var model = problem.Map<CopyToAnotherContestViewModel>();
         await this.PrepareViewModelForCopy(model);
         return this.View(model);
     }
@@ -371,6 +339,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             new GridAction { Action = nameof(this.Retest) },
             new GridAction { Action = nameof(this.Tests) },
             new GridAction { Action = nameof(this.Copy) },
+            new GridAction { Action = nameof(this.Resources) },
         };
 
     protected override IEnumerable<Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>>
@@ -476,7 +445,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         AddSubmissionTypes(entity, actionContext);
     }
 
-    // TODO: move more logic from old judge
     protected override async Task BeforeEntitySaveOnCreateAsync(Problem entity, AdminActionContext actionContext)
     {
         var contestId = GetContestId(actionContext.EntityDict, entity);
@@ -508,7 +476,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     }
 
     private static int GetContestId(IDictionary<string, string> entityDict, Problem? problem)
-        => entityDict.TryGetEntityId<Contest>() ?? problem?.ProblemGroup?.ContestId ?? default;
+        => entityDict.GetEntityIdOrDefault<Contest>() ?? problem?.ProblemGroup?.ContestId ?? default;
 
     private static void TryAddSolutionSkeleton(Problem problem, AdminActionContext actionContext)
         => problem.SolutionSkeleton = actionContext.GetByteArrayFromStringInput(AdditionalFormFields.SolutionSkeleton);
@@ -589,5 +557,35 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             await this.contestsBusiness.GetAllAvailableForCurrentUser<ContestCopyProblemsValidationServiceModel>();
 
         return new SelectList(contestsToCopyTo, nameof(Contest.Id), nameof(Contest.Name));
+    }
+
+    private IEnumerable<AutoCrudAdminGridToolbarActionViewModel> GetCustomToolbarActions(int contestId)
+    {
+        var routeValues = new Dictionary<string, string>
+        {
+            { nameof(contestId), contestId.ToString() },
+        };
+
+        return new AutoCrudAdminGridToolbarActionViewModel[]
+        {
+            new()
+            {
+                Name = "Add new",
+                Action = nameof(this.Create),
+                RouteValues = routeValues,
+            },
+            new()
+            {
+                Name = "Delete all",
+                Action = nameof(this.DeleteAll),
+                RouteValues = routeValues,
+            },
+            new()
+            {
+                Name = "Copy all",
+                Action = nameof(this.CopyAll),
+                RouteValues = routeValues,
+            },
+        };
     }
 }

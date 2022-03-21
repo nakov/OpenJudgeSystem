@@ -25,14 +25,14 @@ public static class AdminActionContextExtensions
         => actionContext.EntityDict[AdditionalFormFields.SubmissionTypes.ToString()]
             .FromJson<IEnumerable<CheckboxFormControlViewModel>>();
 
-    public static int? TryGetEntityId<TEntity>(this AdminActionContext actionContext)
+    public static int? GetEntityIdOrDefault<TEntity>(this AdminActionContext actionContext)
         where TEntity : class
-        => actionContext.EntityDict.TryGetEntityId<TEntity>();
+        => actionContext.EntityDict.GetEntityIdOrDefault<TEntity>();
 
     public static byte[] GetByteArrayFromStringInput(this AdminActionContext actionContext, AdditionalFormFields field)
         => actionContext.EntityDict[field.ToString()].Compress();
 
-    public static int? TryGetEntityId<TEntity>(this IDictionary<string, string> entityDict)
+    public static int? GetEntityIdOrDefault<TEntity>(this IDictionary<string, string> entityDict)
         where TEntity : class
         => int.TryParse(
             entityDict
