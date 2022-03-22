@@ -20,12 +20,12 @@ using OJS.Servers.Administration.Models.Problems;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Extensions;
-using OJS.Services.Administration.Business.Validation;
 using OJS.Services.Administration.Business.Validation.Factories;
 using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.Contests.Problems;
+using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
@@ -50,8 +50,8 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     private readonly IZippedTestsParserService zippedTestsParser;
     private readonly ISubmissionTypesDataService submissionTypesData;
     private readonly IValidatorsFactory<Problem> problemValidatorsFactory;
-    private readonly IContestDeleteProblemsValidationService contestDeleteProblemsValidation;
-    private readonly IContestCopyProblemsValidationService contestCopyProblemsValidation;
+    private readonly IValidationService<ContestDeleteProblemsValidationServiceModel> contestDeleteProblemsValidation;
+    private readonly IValidationService<ContestCopyProblemsValidationServiceModel> contestCopyProblemsValidation;
     private readonly IProblemGroupsBusinessService problemGroupsBusiness;
     private readonly IProblemGroupsDataService problemGroupsData;
     private readonly IContestsValidationHelper contestsValidationHelper;
@@ -64,8 +64,8 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         IZippedTestsParserService zippedTestsParser,
         ISubmissionTypesDataService submissionTypesData,
         IValidatorsFactory<Problem> problemValidatorsFactory,
-        IContestDeleteProblemsValidationService contestDeleteProblemsValidation,
-        IContestCopyProblemsValidationService contestCopyProblemsValidation,
+        IValidationService<ContestDeleteProblemsValidationServiceModel> contestDeleteProblemsValidation,
+        IValidationService<ContestCopyProblemsValidationServiceModel> contestCopyProblemsValidation,
         IProblemGroupsBusinessService problemGroupsBusiness,
         IProblemGroupsDataService problemGroupsData,
         IContestsValidationHelper contestsValidationHelper)
@@ -180,11 +180,15 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         var contest = await this.contestsData.OneById(contestId);
 
-        await this.contestDeleteProblemsValidation
+        this.contestDeleteProblemsValidation
             .GetValidationResult(contest?.Map<ContestDeleteProblemsValidationServiceModel>())
             .VerifyResult();
 
-        return this.View(contest!.Map<DeleteAllProblemsInContestViewModel>());
+        await this.contestsValidationHelper
+            .ValidatePermissionsOfCurrentUser(contest!.Id)
+            .VerifyResult();
+
+        return this.View(contest.Map<DeleteAllProblemsInContestViewModel>());
     }
 
     [HttpPost]
@@ -193,11 +197,15 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     {
         var contest = await this.contestsData.OneById(model.Id);
 
-        await this.contestDeleteProblemsValidation
+        this.contestDeleteProblemsValidation
             .GetValidationResult(contest?.Map<ContestDeleteProblemsValidationServiceModel>())
             .VerifyResult();
 
-        await this.problemsBusiness.DeleteByContest(contest!.Id);
+        await this.contestsValidationHelper
+            .ValidatePermissionsOfCurrentUser(contest!.Id)
+            .VerifyResult();
+
+        await this.problemsBusiness.DeleteByContest(contest.Id);
 
         this.TempData.AddSuccessMessage(GlobalResource.Problems_deleted);
         return this.RedirectToActionWithNumberFilter(nameof(ProblemsController), ContestIdKey, model.Id);
@@ -214,11 +222,15 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         var contest = await this.contestsData.OneByIdTo<ContestCopyProblemsValidationServiceModel>(contestId);
 
-        await this.contestCopyProblemsValidation
+        this.contestCopyProblemsValidation
             .GetValidationResult(contest)
             .VerifyResult();
 
-        var model = contest!.Map<CopyAllToAnotherContestViewModel>();
+        await this.contestsValidationHelper
+            .ValidatePermissionsOfCurrentUser(contest!.Id)
+            .VerifyResult();
+
+        var model = contest.Map<CopyAllToAnotherContestViewModel>();
         await this.PrepareViewModelForCopyAll(model, contestId.Value);
         return this.View(model);
     }
@@ -246,8 +258,12 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         var destinationContest = await this.contestsData
             .OneByIdTo<ContestCopyProblemsValidationServiceModel>(destinationContestId);
 
-        await this.contestCopyProblemsValidation
+        this.contestCopyProblemsValidation
             .GetValidationResult(destinationContest)
+            .VerifyResult();
+
+        await this.contestsValidationHelper
+            .ValidatePermissionsOfCurrentUser(destinationContest!.Id)
             .VerifyResult();
 
         var result = await this.problemGroupsBusiness
@@ -263,7 +279,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         this.TempData.AddSuccessMessage(string.Format(
             Resource.Copy_all_problem_groups_success_message,
             await this.contestsData.GetNameById(sourceContestId),
-            destinationContest!.Name));
+            destinationContest.Name));
         return this.RedirectToActionWithNumberFilter(nameof(ProblemsController), ContestIdKey, sourceContestId);
     }
 
@@ -281,8 +297,12 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         var contest = problem.ProblemGroup.Contest;
 
-        await this.contestCopyProblemsValidation
+        this.contestCopyProblemsValidation
             .GetValidationResult(contest.Map<ContestCopyProblemsValidationServiceModel>())
+            .VerifyResult();
+
+        await this.contestsValidationHelper
+            .ValidatePermissionsOfCurrentUser(contest.Id)
             .VerifyResult();
 
         var model = problem.Map<CopyToAnotherContestViewModel>();
@@ -308,8 +328,14 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             throw new BusinessServiceException(GlobalResource.Invalid_problem);
         }
 
-        await this.contestCopyProblemsValidation
-            .GetValidationResult(model.Map<ContestCopyProblemsValidationServiceModel>())
+        var validationModel = model.Map<ContestCopyProblemsValidationServiceModel>();
+
+        this.contestCopyProblemsValidation
+            .GetValidationResult(validationModel)
+            .VerifyResult();
+
+        await this.contestsValidationHelper
+            .ValidatePermissionsOfCurrentUser(validationModel.Id)
             .VerifyResult();
 
         if (problemGroupId.HasValue &&
