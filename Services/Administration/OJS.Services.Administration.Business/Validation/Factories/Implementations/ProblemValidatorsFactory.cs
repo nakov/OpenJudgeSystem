@@ -3,10 +3,8 @@ namespace OJS.Services.Administration.Business.Validation.Factories.Implementati
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using OJS.Common;
-using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
 using OJS.Services.Administration.Business.Extensions;
-using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Common;
 using System;
 using System.Collections.Generic;
@@ -17,16 +15,11 @@ using GlobalResource = OJS.Common.Resources.ProblemsController;
 
 public class ProblemValidatorsFactory : IValidatorsFactory<Problem>
 {
-    private readonly IContestsValidationHelper contestsValidationHelper;
     private readonly IFileSystemService fileSystem;
 
     public ProblemValidatorsFactory(
-        IContestsValidationHelper contestsValidationHelper,
         IFileSystemService fileSystem)
-    {
-        this.contestsValidationHelper = contestsValidationHelper;
-        this.fileSystem = fileSystem;
-    }
+        => this.fileSystem = fileSystem;
 
     public IEnumerable<Func<Problem, Problem, AdminActionContext, ValidatorResult>> GetValidators()
         => new Func<Problem, Problem, AdminActionContext, ValidatorResult>[]
@@ -36,25 +29,7 @@ public class ProblemValidatorsFactory : IValidatorsFactory<Problem>
         };
 
     public IEnumerable<Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>> GetAsyncValidators()
-        => new Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>[]
-        {
-            this.ValidateContestPermissions,
-        };
-
-    private async Task<ValidatorResult> ValidateContestPermissions(
-        Problem existingEntity,
-        Problem newEntity,
-        AdminActionContext actionContext)
-    {
-        var contestId = actionContext.GetEntityIdOrDefault<Contest>() ?? newEntity.ProblemGroup.ContestId;
-
-        var permissionsResult = await this.contestsValidationHelper.ValidatePermissionsOfCurrentUser(
-            contestId);
-
-        return permissionsResult.IsValid
-            ? ValidatorResult.Success()
-            : ValidatorResult.Error(GeneralResource.No_permissions_for_contest);
-    }
+        => Enumerable.Empty<Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>>();
 
     private ValidatorResult ValidateUploadedFiles(
         Problem existingEntity,

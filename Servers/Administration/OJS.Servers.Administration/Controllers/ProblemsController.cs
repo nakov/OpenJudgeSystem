@@ -22,6 +22,7 @@ using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Extensions;
 using OJS.Services.Administration.Business.Validation;
 using OJS.Services.Administration.Business.Validation.Factories;
+using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.Contests.Problems;
@@ -53,6 +54,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     private readonly IContestCopyProblemsValidationService contestCopyProblemsValidation;
     private readonly IProblemGroupsBusinessService problemGroupsBusiness;
     private readonly IProblemGroupsDataService problemGroupsData;
+    private readonly IContestsValidationHelper contestsValidationHelper;
 
     public ProblemsController(
         IProblemsBusinessService problemsBusiness,
@@ -65,7 +67,8 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         IContestDeleteProblemsValidationService contestDeleteProblemsValidation,
         IContestCopyProblemsValidationService contestCopyProblemsValidation,
         IProblemGroupsBusinessService problemGroupsBusiness,
-        IProblemGroupsDataService problemGroupsData)
+        IProblemGroupsDataService problemGroupsData,
+        IContestsValidationHelper contestsValidationHelper)
     {
         this.problemsBusiness = problemsBusiness;
         this.contestsBusiness = contestsBusiness;
@@ -78,6 +81,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         this.contestCopyProblemsValidation = contestCopyProblemsValidation;
         this.problemGroupsBusiness = problemGroupsBusiness;
         this.problemGroupsData = problemGroupsData;
+        this.contestsValidationHelper = contestsValidationHelper;
     }
 
     protected override Expression<Func<Problem, bool>>? MasterGridFilter
@@ -438,8 +442,22 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         return formControls;
     }
 
+    protected override async Task BeforeGeneratingForm(
+        Problem entity,
+        EntityAction action,
+        IDictionary<string, string> entityDict)
+        => await this.contestsValidationHelper
+            .ValidatePermissionsOfCurrentUser(GetContestId(entity, entityDict))
+            .VerifyResult();
+
     protected override async Task BeforeEntitySaveAsync(Problem entity, AdminActionContext actionContext)
     {
+        var contestId = GetContestId(entity, actionContext.EntityDict);
+
+        await this.contestsValidationHelper
+            .ValidatePermissionsOfCurrentUser(contestId)
+            .VerifyResult();
+
         TryAddSolutionSkeleton(entity, actionContext);
         await TryAddAdditionalFiles(entity, actionContext);
         AddSubmissionTypes(entity, actionContext);
@@ -588,4 +606,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             },
         };
     }
+
+    private int GetContestId(Problem entity, IDictionary<string, string> entityDuct)
+        => entityDuct.GetEntityIdOrDefault<Contest>() ?? entity.ProblemGroup.ContestId;
 }
