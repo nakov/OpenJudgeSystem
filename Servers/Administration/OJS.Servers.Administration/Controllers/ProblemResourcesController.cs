@@ -12,6 +12,7 @@ using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business.Extensions;
 using OJS.Services.Administration.Business.Validation;
 using OJS.Services.Administration.Business.Validation.Factories;
+using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.ProblemResources;
@@ -31,17 +32,20 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
     private readonly IProblemResourcesDataService problemResourcesData;
     private readonly IProblemResourcesDownloadValidationService problemResourcesDownloadValidation;
     private readonly IContentTypesService contentTypes;
+    private readonly IProblemsValidationHelper problemsValidationHelper;
 
     public ProblemResourcesController(
         IValidatorsFactory<ProblemResource> problemResourceValidatorsFactory,
         IProblemResourcesDataService problemResourcesData,
         IProblemResourcesDownloadValidationService problemResourcesDownloadValidation,
-        IContentTypesService contentTypes)
+        IContentTypesService contentTypes,
+        IProblemsValidationHelper problemsValidationHelper)
     {
         this.problemResourceValidatorsFactory = problemResourceValidatorsFactory;
         this.problemResourcesData = problemResourcesData;
         this.problemResourcesDownloadValidation = problemResourcesDownloadValidation;
         this.contentTypes = contentTypes;
+        this.problemsValidationHelper = problemsValidationHelper;
     }
 
     protected override Expression<Func<ProblemResource, bool>>? MasterGridFilter
@@ -125,12 +129,39 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         return formControls;
     }
 
+    protected override async Task BeforeGeneratingForm(ProblemResource entity, EntityAction action, IDictionary<string, string> entityDict)
+    {
+        if (entity.ProblemId != default)
+        {
+            await this.problemsValidationHelper
+                .ValidatePermissionsOfCurrentUser(entity.ProblemId)
+                .VerifyResult();
+        }
+    }
+
     protected override async Task BeforeEntitySaveAsync(ProblemResource entity, AdminActionContext actionContext)
     {
+        await this.problemsValidationHelper
+            .ValidatePermissionsOfCurrentUser(entity.ProblemId)
+            .VerifyResult();
+
         var file = actionContext.Files.SingleFiles.FirstOrDefault();
         if (file != null)
         {
             entity.File = await file.ToByteArray();
+        }
+    }
+
+    protected override async Task BeforeEntitySaveOnEditAsync(
+        ProblemResource existingEntity,
+        ProblemResource newEntity,
+        AdminActionContext actionContext)
+    {
+        if (existingEntity.ProblemId != newEntity.ProblemId)
+        {
+            await this.problemsValidationHelper
+                .ValidatePermissionsOfCurrentUser(existingEntity.ProblemId)
+                .VerifyResult();
         }
     }
 
