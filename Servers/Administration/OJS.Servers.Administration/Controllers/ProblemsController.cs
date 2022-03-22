@@ -25,6 +25,7 @@ using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.Contests.Problems;
+using OJS.Services.Common;
 using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
@@ -55,6 +56,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     private readonly IProblemGroupsBusinessService problemGroupsBusiness;
     private readonly IProblemGroupsDataService problemGroupsData;
     private readonly IContestsValidationHelper contestsValidationHelper;
+    private readonly IContestsActivityService contestsActivity;
 
     public ProblemsController(
         IProblemsBusinessService problemsBusiness,
@@ -68,7 +70,8 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         IValidationService<ContestCopyProblemsValidationServiceModel> contestCopyProblemsValidation,
         IProblemGroupsBusinessService problemGroupsBusiness,
         IProblemGroupsDataService problemGroupsData,
-        IContestsValidationHelper contestsValidationHelper)
+        IContestsValidationHelper contestsValidationHelper,
+        IContestsActivityService contestsActivity)
     {
         this.problemsBusiness = problemsBusiness;
         this.contestsBusiness = contestsBusiness;
@@ -82,6 +85,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         this.problemGroupsBusiness = problemGroupsBusiness;
         this.problemGroupsData = problemGroupsData;
         this.contestsValidationHelper = contestsValidationHelper;
+        this.contestsActivity = contestsActivity;
     }
 
     protected override Expression<Func<Problem, bool>>? MasterGridFilter
@@ -178,14 +182,14 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             return this.RedirectToAction("Index", "Problems");
         }
 
-        var contest = await this.contestsData.OneById(contestId);
+        var contest = await this.contestsActivity.GetContestActivity(contestId.Value);
 
         this.contestDeleteProblemsValidation
-            .GetValidationResult(contest?.Map<ContestDeleteProblemsValidationServiceModel>())
+            .GetValidationResult(contest.Map<ContestDeleteProblemsValidationServiceModel>())
             .VerifyResult();
 
         await this.contestsValidationHelper
-            .ValidatePermissionsOfCurrentUser(contest!.Id)
+            .ValidatePermissionsOfCurrentUser(contest.Id)
             .VerifyResult();
 
         return this.View(contest.Map<DeleteAllProblemsInContestViewModel>());
@@ -195,14 +199,14 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteAll(DeleteAllProblemsInContestViewModel model)
     {
-        var contest = await this.contestsData.OneById(model.Id);
+        var contest = await this.contestsActivity.GetContestActivity(model.Id);
 
         this.contestDeleteProblemsValidation
-            .GetValidationResult(contest?.Map<ContestDeleteProblemsValidationServiceModel>())
+            .GetValidationResult(contest.Map<ContestDeleteProblemsValidationServiceModel>())
             .VerifyResult();
 
         await this.contestsValidationHelper
-            .ValidatePermissionsOfCurrentUser(contest!.Id)
+            .ValidatePermissionsOfCurrentUser(contest.Id)
             .VerifyResult();
 
         await this.problemsBusiness.DeleteByContest(contest.Id);
@@ -519,6 +523,15 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         await base.BeforeEntitySaveOnEditAsync(originalEntity, newEntity, actionContext);
     }
 
+    protected override async Task BeforeEntitySaveOnDeleteAsync(Problem entity, AdminActionContext actionContext)
+    {
+        var contest = await this.contestsActivity.GetContestActivity(entity.ProblemGroup.ContestId);
+
+        this.contestDeleteProblemsValidation
+            .GetValidationResult(contest.Map<ContestDeleteProblemsValidationServiceModel>())
+            .VerifyResult();
+    }
+
     private static int GetContestId(IDictionary<string, string> entityDict, Problem? problem)
         => entityDict.GetEntityIdOrDefault<Contest>() ?? problem?.ProblemGroup?.ContestId ?? default;
 
@@ -633,6 +646,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         };
     }
 
-    private int GetContestId(Problem entity, IDictionary<string, string> entityDuct)
-        => entityDuct.GetEntityIdOrDefault<Contest>() ?? entity.ProblemGroup.ContestId;
+    private int GetContestId(Problem entity, IDictionary<string, string> entityDict)
+        => entityDict.GetEntityIdOrDefault<Contest>() ?? entity.ProblemGroup?.ContestId ?? default;
 }
