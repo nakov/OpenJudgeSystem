@@ -10,13 +10,13 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Problems;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business.Extensions;
-using OJS.Services.Administration.Business.Validation;
 using OJS.Services.Administration.Business.Validation.Factories;
 using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.ProblemResources;
 using OJS.Services.Common;
+using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
@@ -30,14 +30,14 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
 
     private readonly IValidatorsFactory<ProblemResource> problemResourceValidatorsFactory;
     private readonly IProblemResourcesDataService problemResourcesData;
-    private readonly IProblemResourcesDownloadValidationService problemResourcesDownloadValidation;
+    private readonly IValidationService<ProblemResourceDownloadServiceModel> problemResourcesDownloadValidation;
     private readonly IContentTypesService contentTypes;
     private readonly IProblemsValidationHelper problemsValidationHelper;
 
     public ProblemResourcesController(
         IValidatorsFactory<ProblemResource> problemResourceValidatorsFactory,
         IProblemResourcesDataService problemResourcesData,
-        IProblemResourcesDownloadValidationService problemResourcesDownloadValidation,
+        IValidationService<ProblemResourceDownloadServiceModel> problemResourcesDownloadValidation,
         IContentTypesService contentTypes,
         IProblemsValidationHelper problemsValidationHelper)
     {
@@ -78,18 +78,22 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
 
         var resource = await this.problemResourcesData.OneByIdTo<ProblemResourceDownloadServiceModel>(id);
 
-        await this.problemResourcesDownloadValidation
+        this.problemResourcesDownloadValidation
             .GetValidationResult(resource)
             .VerifyResult();
 
-        var file = resource?.File;
+        await this.problemsValidationHelper
+            .ValidatePermissionsOfCurrentUser(resource!.ProblemId)
+            .VerifyResult();
+
+        var file = resource.File;
 
         if (file == null)
         {
             return this.NotFound();
         }
 
-        var contentType = this.contentTypes.GetByFileExtension(resource!.FileExtension);
+        var contentType = this.contentTypes.GetByFileExtension(resource.FileExtension);
         var fileName = GetResourceFileNameForDownload(resource);
 
         return this.File(file, contentType, fileName);
