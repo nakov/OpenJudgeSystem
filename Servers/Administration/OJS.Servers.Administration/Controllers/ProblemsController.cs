@@ -434,7 +434,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         formControls.Add(new FormControlViewModel
         {
-            Name = AdditionalFormFields.SolutionSkeleton.ToString(),
+            Name = AdditionalFormFields.SolutionSkeletonRaw.ToString(),
             Value = entity.SolutionSkeleton?.Decompress(),
             Type = typeof(string),
         });
@@ -536,7 +536,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         => entityDict.GetEntityIdOrDefault<Contest>() ?? problem?.ProblemGroup?.ContestId ?? default;
 
     private static void TryAddSolutionSkeleton(Problem problem, AdminActionContext actionContext)
-        => problem.SolutionSkeleton = actionContext.GetByteArrayFromStringInput(AdditionalFormFields.SolutionSkeleton);
+        => problem.SolutionSkeleton = actionContext.GetByteArrayFromStringInput(AdditionalFormFields.SolutionSkeletonRaw);
 
     private static async Task TryAddAdditionalFiles(Problem problem, AdminActionContext actionContext)
     {
