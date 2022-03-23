@@ -17,12 +17,13 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
 
         private static WebApplication UseAutoCrudAdmin(this WebApplication app)
         {
-            var adminOptions = new AutoCrudAdminOptions
+            var options = new AutoCrudAdminOptions
             {
                 Authorization = new []{ new AutoCrudAdminAuthFilter() },
+                LayoutName = "_Layout",
             };
 
-            app.AddAutoCrudAdmin(options: adminOptions);
+            app.AddAutoCrudAdmin(options: options);
 
             return app;
         }

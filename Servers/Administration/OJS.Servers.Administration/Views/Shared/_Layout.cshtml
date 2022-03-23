@@ -17,7 +17,7 @@
 <body>
 <header>
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-        <div class="container">
+        <div class="container-fluid">
             <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">OJS.Servers.Administration</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
@@ -28,12 +28,66 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                    <li class="nav-item dropdown">
+                        <a
+                            class="nav-link dropdown-toggle"
+                            href="#"
+                            role="button"
+                            data-toggle="dropdown"
+                            aria-expanded="false"
+                        >
+                            Contests
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="#">Contests &raquo;</a>
+                                <ul class="dropdown-menu dropdown-submenu">
+                                    <li>
+                                        <a class="dropdown-item" asp-action="Index" asp-controller="Contests">All</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-action="Create" asp-controller="Contests">Create</a>
+                                    </li>
+                                </ul>
+                            </li>
+                             <li>
+                                <a class="dropdown-item" href="#">Lecturers In Contests &raquo;</a>
+                                <ul class="dropdown-menu dropdown-submenu">
+                                    <li>
+                                        <a class="dropdown-item" asp-action="Index" asp-controller="LecturersInContests">All</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-action="Create" asp-controller="LecturersInContests">Create</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">Lecturers In Contest Categories &raquo;</a>
+                                <ul class="dropdown-menu dropdown-submenu">
+                                    <li>
+                                        <a class="dropdown-item" asp-action="Index" asp-controller="LecturersInContestCategories">All</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-action="Create" asp-controller="LecturersInContestCategories">Create</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">Exam Groups &raquo;</a>
+                                <ul class="dropdown-menu dropdown-submenu">
+                                    <li>
+                                        <a class="dropdown-item" asp-action="Index" asp-controller="ExamGroups">All</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-action="Create" asp-controller="ExamGroups">Create</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
                     </li>
                     @if (User.IsAuthenticated())
                     {
-                        <li class="nav-item">
+                        <li class="nav-item ml-auto">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Log out</a>
                         </li>
                     }
@@ -42,7 +96,7 @@
         </div>
     </nav>
 </header>
-<div class="container">
+<div class="root">
     <main role="main" class="pb-3">
         @if (TempData.TryGetValue(DangerMessage, out var dangerMessage))
         {
