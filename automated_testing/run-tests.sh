@@ -1,0 +1,1 @@
+docker-compose build && docker-compose up -d tests && docker-compose logs -f tests
