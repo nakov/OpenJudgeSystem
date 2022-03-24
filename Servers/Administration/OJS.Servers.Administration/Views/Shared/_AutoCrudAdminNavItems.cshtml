@@ -1,0 +1,80 @@
+<li class="nav-item dropdown">
+    <a
+        class="nav-link dropdown-toggle"
+        href="#"
+        role="button"
+        data-toggle="dropdown"
+        aria-expanded="false"
+    >
+        Contests
+    </a>
+    <ul class="dropdown-menu">
+        <li>
+            <a class="dropdown-item" href="#">Contests &raquo;</a>
+            <ul class="dropdown-menu dropdown-submenu">
+                <li>
+                    <a class="dropdown-item" asp-action="Index" asp-controller="Contests">All</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-action="Create" asp-controller="Contests">Create</a>
+                </li>
+            </ul>
+        </li>
+         <li>
+            <a class="dropdown-item" href="#">Lecturers In Contests &raquo;</a>
+            <ul class="dropdown-menu dropdown-submenu">
+                <li>
+                    <a class="dropdown-item" asp-action="Index" asp-controller="LecturersInContests">All</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-action="Create" asp-controller="LecturersInContests">Create</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a class="dropdown-item" href="#">Lecturers In Contest Categories &raquo;</a>
+            <ul class="dropdown-menu dropdown-submenu">
+                <li>
+                    <a class="dropdown-item" asp-action="Index" asp-controller="LecturersInContestCategories">All</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-action="Create" asp-controller="LecturersInContestCategories">Create</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a class="dropdown-item" href="#">Exam Groups &raquo;</a>
+            <ul class="dropdown-menu dropdown-submenu">
+                <li>
+                    <a class="dropdown-item" asp-action="Index" asp-controller="ExamGroups">All</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-action="Create" asp-controller="ExamGroups">Create</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</li>
+<li class="nav-item dropdown">
+    <a
+        class="nav-link dropdown-toggle"
+        href="#"
+        role="button"
+        data-toggle="dropdown"
+        aria-expanded="false"
+    >
+        Problems
+    </a>
+    <ul class="dropdown-menu">
+        <li>
+            <a class="dropdown-item" asp-action="Index" asp-controller="Problems">Problems</a>
+        </li>
+        <li>
+            <a class="dropdown-item" asp-action="Index" asp-controller="ProblemResources">Problem Resources</a>
+        </li>
+        <li>
+            <a class="dropdown-item" asp-action="Index" asp-controller="ProblemGroups">Problem Groups</a>
+        </li>
+    </ul>
+</li>
+
