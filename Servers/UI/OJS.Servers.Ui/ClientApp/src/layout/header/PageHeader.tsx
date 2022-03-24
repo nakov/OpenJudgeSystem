@@ -26,7 +26,7 @@ const PageHeader = () => {
     }, [ user ]);
 
     return (
-        <header className={styles.header}>
+        <header id="pageHeader" className={styles.header}>
             <ReactNotification />
             <div className={styles.headerSize}>
                 <div className={styles.headerLinks}>
