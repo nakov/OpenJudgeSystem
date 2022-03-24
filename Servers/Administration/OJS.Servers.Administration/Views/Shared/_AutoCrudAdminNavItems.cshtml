@@ -53,6 +53,17 @@
                 </li>
             </ul>
         </li>
+        <li>
+            <a class="dropdown-item" href="#">Participants &raquo;</a>
+            <ul class="dropdown-menu dropdown-submenu">
+                <li>
+                    <a class="dropdown-item" asp-action="Index" asp-controller="Participants">All</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-action="Create" asp-controller="Participants">Create</a>
+                </li>
+            </ul>
+        </li>
     </ul>
 </li>
 <li class="nav-item dropdown">
@@ -74,6 +85,74 @@
         </li>
         <li>
             <a class="dropdown-item" asp-action="Index" asp-controller="ProblemGroups">Problem Groups</a>
+        </li>
+        <li>
+            <a class="dropdown-item" asp-action="Index" asp-controller="Tests">Tests</a>
+        </li>
+    </ul>
+</li>
+<li class="nav-item dropdown">
+    <a
+        class="nav-link dropdown-toggle"
+        href="#"
+        role="button"
+        data-toggle="dropdown"
+        aria-expanded="false"
+    >
+        Submissions
+    </a>
+    <ul class="dropdown-menu">
+        <li>
+            <a class="dropdown-item" asp-action="Index" asp-controller="Submissions">Submissions</a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="#">Submission Types &raquo;</a>
+            <ul class="dropdown-menu dropdown-submenu">
+                <li>
+                    <a class="dropdown-item" asp-action="Index" asp-controller="SubmissionTypes">All</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-action="Create" asp-controller="SubmissionTypes">Create</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</li>
+<li class="nav-item dropdown">
+    <a
+        class="nav-link dropdown-toggle"
+        href="#"
+        role="button"
+        data-toggle="dropdown"
+        aria-expanded="false"
+    >
+        Checkers
+    </a>
+    <ul class="dropdown-menu">
+        <li>
+            <a class="dropdown-item" asp-action="Index" asp-controller="Checkers">All</a>
+        </li>
+        <li>
+            <a class="dropdown-item" asp-action="Create" asp-controller="Checkers">Create</a>
+        </li>
+    </ul>
+</li>
+<li class="nav-item dropdown">
+    <a
+        class="nav-link dropdown-toggle"
+        href="#"
+        role="button"
+        data-toggle="dropdown"
+        aria-expanded="false"
+    >
+        Users
+    </a>
+    <ul class="dropdown-menu">
+        <li>
+            <a class="dropdown-item" asp-action="Index" asp-controller="Users">All</a>
+        </li>
+        <li>
+            <a class="dropdown-item" asp-action="Create" asp-controller="FeedbackReports">Feedback Reports</a>
         </li>
     </ul>
 </li>
