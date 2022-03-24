@@ -9,6 +9,10 @@ using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ExamGroups;
 using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Extensions;
+using OJS.Data.Models.Contests;
+using OJS.Services.Administration.Business.Extensions;
+using System.Linq;
+using System.Linq.Expressions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -43,6 +47,17 @@ public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExa
         AsyncEntityValidators
         => this.userInExamGroupValidatorsFactory.GetAsyncValidators();
 
+    protected override IEnumerable<FormControlViewModel> GenerateFormControls(
+        UserInExamGroup entity,
+        EntityAction action,
+        IDictionary<string, string> entityDict,
+        IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters)
+    {
+        var formControls = base.GenerateFormControls(entity, action, entityDict, complexOptionFilters).ToList();
+        this.ModifyFormControls(formControls, entityDict);
+        return formControls;
+    }
+
     protected override async Task BeforeEntitySaveAsync(UserInExamGroup entity, AdminActionContext actionContext)
     {
         var contestId = await this.examGroupsData.GetContestIdById(entity.ExamGroupId);
@@ -60,5 +75,24 @@ public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExa
         await this.contestsValidationHelper
             .ValidatePermissionsOfCurrentUser(contestId)
             .VerifyResult();
+    }
+
+    private void LockExamGroupId(IEnumerable<FormControlViewModel> formControls, int examGroupId)
+    {
+        var problemInput = formControls.First(fc => fc.Name == nameof(UserInExamGroup.ExamGroup));
+        problemInput.Value = examGroupId;
+        problemInput.IsReadOnly = true;
+    }
+
+    private void ModifyFormControls(
+        IEnumerable<FormControlViewModel> formControls,
+        IDictionary<string, string> entityDict)
+    {
+        var predefinedExamGroupId = entityDict.GetEntityIdOrDefault<ExamGroup>();
+
+        if (predefinedExamGroupId.HasValue)
+        {
+            this.LockExamGroupId(formControls, predefinedExamGroupId.Value);
+        }
     }
 }
