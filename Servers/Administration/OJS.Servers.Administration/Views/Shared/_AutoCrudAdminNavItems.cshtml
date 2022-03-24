@@ -154,6 +154,28 @@
         <li>
             <a class="dropdown-item" asp-action="Create" asp-controller="FeedbackReports">Feedback Reports</a>
         </li>
+        <li>
+            <a class="dropdown-item" href="#">Users in Roles &raquo;</a>
+            <ul class="dropdown-menu dropdown-submenu">
+                <li>
+                    <a class="dropdown-item" asp-action="Index" asp-controller="UserRoles">All</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-action="Create" asp-controller="UserRoles">Create</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+             <a class="dropdown-item" href="#">Roles &raquo;</a>
+             <ul class="dropdown-menu dropdown-submenu">
+                 <li>
+                     <a class="dropdown-item" asp-action="Index" asp-controller="Roles">All</a>
+                 </li>
+                 <li>
+                     <a class="dropdown-item" asp-action="Create" asp-controller="Roles">Create</a>
+                 </li>
+             </ul>
+        </li>
     </ul>
 </li>
 
