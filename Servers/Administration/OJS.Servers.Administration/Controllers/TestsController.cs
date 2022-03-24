@@ -13,7 +13,7 @@ using OJS.Servers.Administration.Infrastructure.Extensions;
 using OJS.Servers.Administration.Models.Tests;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Extensions;
-using OJS.Services.Administration.Business.Validation;
+using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.Contests.Problems;
@@ -39,34 +39,34 @@ public class TestsController : BaseAutoCrudAdminController<Test>
 
     private readonly IProblemsDataService problemsData;
     private readonly IZipArchivesService zipArchives;
-    private readonly ITestsExportValidationService testsExportValidation;
     private readonly IFileSystemService fileSystem;
     private readonly IZippedTestsParserService zippedTestsParser;
     private readonly ISubmissionsDataService submissionsData;
     private readonly ITestsDataService testsData;
     private readonly ITestRunsDataService testRunsData;
     private readonly IProblemsBusinessService problemsBusiness;
+    private readonly IProblemsValidationHelper problemsValidationHelper;
 
     public TestsController(
         IProblemsDataService problemsData,
         IZipArchivesService zipArchives,
-        ITestsExportValidationService testsExportValidation,
         IFileSystemService fileSystem,
         IZippedTestsParserService zippedTestsParser,
         ISubmissionsDataService submissionsData,
         ITestsDataService testsData,
         ITestRunsDataService testRunsData,
-        IProblemsBusinessService problemsBusiness)
+        IProblemsBusinessService problemsBusiness,
+        IProblemsValidationHelper problemsValidationHelper)
     {
         this.problemsData = problemsData;
         this.zipArchives = zipArchives;
-        this.testsExportValidation = testsExportValidation;
         this.fileSystem = fileSystem;
         this.zippedTestsParser = zippedTestsParser;
         this.submissionsData = submissionsData;
         this.testsData = testsData;
         this.testRunsData = testRunsData;
         this.problemsBusiness = problemsBusiness;
+        this.problemsValidationHelper = problemsValidationHelper;
     }
 
     protected override Expression<Func<Test, bool>>? MasterGridFilter
@@ -85,8 +85,8 @@ public class TestsController : BaseAutoCrudAdminController<Test>
     {
         var problem = await this.problemsData.OneById(model.ProblemId);
 
-        await this.testsExportValidation
-            .GetValidationResult(problem?.Map<ProblemShortDetailsServiceModel>())
+        await this.problemsValidationHelper
+            .ValidatePermissionsOfCurrentUser(problem?.Map<ProblemShortDetailsServiceModel>())
             .VerifyResult();
 
         var file = model.Tests;
@@ -162,8 +162,8 @@ public class TestsController : BaseAutoCrudAdminController<Test>
     {
         var problem = await this.problemsData.OneById(problemId);
 
-        await this.testsExportValidation
-            .GetValidationResult(problem?.Map<ProblemShortDetailsServiceModel>())
+        await this.problemsValidationHelper
+            .ValidatePermissionsOfCurrentUser(problem?.Map<ProblemShortDetailsServiceModel>())
             .VerifyResult();
 
         var tests = problem!.Tests.OrderBy(x => x.OrderBy);

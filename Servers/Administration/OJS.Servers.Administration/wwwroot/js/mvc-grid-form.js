@@ -11,10 +11,12 @@ $(document).ready(function() {
 
     forms.find('select').select2();
 
-    forms.submit(function() {
-        $('select').prop('disabled', false);
+    forms.submit(function(ev) {
+        const form = $(ev.target);
 
-        $('fieldset').each(function (ev, fs) {
+        form.find('select').prop('disabled', false);
+
+        form.find('fieldset').each(function (ev, fs) {
             const selectedCheckboxes = $(fs).find('input[type=checkbox]').toArray();
             const result = selectedCheckboxes.map(x => ({
                 name: $(x).data("name"),

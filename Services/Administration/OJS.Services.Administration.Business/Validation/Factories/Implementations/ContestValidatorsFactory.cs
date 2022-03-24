@@ -3,31 +3,16 @@ namespace OJS.Services.Administration.Business.Validation.Factories.Implementati
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using OJS.Data.Models.Contests;
-using OJS.Services.Administration.Data;
-using OJS.Services.Common;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AdminResource = OJS.Common.Resources.AdministrationGeneral;
 using Resource = OJS.Common.Resources.ContestsControllers;
 
-public class ContestValidatorsFactory : IContestValidatorsFactory
+public class ContestValidatorsFactory : IValidatorsFactory<Contest>
 {
     private const int ProblemGroupsCountLimit = 40;
-
-    private readonly IContestsDataService contestsData;
-    private readonly IContestCategoriesDataService contestCategoriesData;
-    private readonly IUserProviderService userProvider;
-
-    public ContestValidatorsFactory(
-        IContestsDataService contestsData,
-        IContestCategoriesDataService contestCategoriesData,
-        IUserProviderService userProvider)
-    {
-        this.contestsData = contestsData;
-        this.contestCategoriesData = contestCategoriesData;
-        this.userProvider = userProvider;
-    }
 
     public IEnumerable<Func<Contest, Contest, AdminActionContext, ValidatorResult>> GetValidators()
         => new Func<Contest, Contest, AdminActionContext, ValidatorResult>[]
@@ -37,33 +22,11 @@ public class ContestValidatorsFactory : IContestValidatorsFactory
             ValidateOnlineContestDuration,
             ValidateOnlineContestProblemGroups,
             ValidateActiveContestCannotEditDurationTypeOnEdit,
+            ValidateContestIsNotActiveOnDelete,
         };
 
     public IEnumerable<Func<Contest, Contest, AdminActionContext, Task<ValidatorResult>>> GetAsyncValidators()
-        => new Func<Contest, Contest, AdminActionContext, Task<ValidatorResult>>[]
-        {
-            this.ValidateContestCategoryPermissions,
-            this.ValidateContestIsNotActiveOnDelete,
-        };
-
-    private async Task<ValidatorResult> ValidateContestCategoryPermissions(
-            Contest existingContest,
-            Contest newContest,
-            AdminActionContext actionContext)
-    {
-        var user = this.userProvider.GetCurrentUser();
-
-        if (newContest.CategoryId.HasValue &&
-            await this.contestCategoriesData.UserHasContestCategoryPermissions(
-                newContest.CategoryId.Value,
-                user.Id,
-                user.IsAdmin))
-        {
-            return ValidatorResult.Success();
-        }
-
-        return ValidatorResult.Error(AdminResource.No_privileges_message);
-    }
+        => Enumerable.Empty<Func<Contest, Contest, AdminActionContext, Task<ValidatorResult>>>();
 
     private static ValidatorResult ValidateActiveContestCannotEditDurationTypeOnEdit(
         Contest existingContest,
@@ -85,14 +48,14 @@ public class ContestValidatorsFactory : IContestValidatorsFactory
             return ValidatorResult.Success();
         }
 
-        private async Task<ValidatorResult> ValidateContestIsNotActiveOnDelete(Contest contest, Contest _, AdminActionContext actionContext)
+        private static ValidatorResult ValidateContestIsNotActiveOnDelete(Contest contest, Contest _, AdminActionContext actionContext)
         {
             if (actionContext.Action != EntityAction.Delete)
             {
                 return ValidatorResult.Success();
             }
 
-            if (await this.contestsData.IsActiveById(contest.Id))
+            if (contest.IsActive)
             {
                 return ValidatorResult.Error(Resource.Active_contest_forbidden_for_deletion);
             }
