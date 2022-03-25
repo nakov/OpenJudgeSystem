@@ -11,7 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="SoftUni.Data.Infrastructure" Version="1.0.3" />
+      <PackageReference Include="SoftUni.Data.Infrastructure" Version="1.0.4" />
     </ItemGroup>
 
 </Project>

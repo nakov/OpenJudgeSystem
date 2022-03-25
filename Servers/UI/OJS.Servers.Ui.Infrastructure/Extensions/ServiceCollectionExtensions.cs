@@ -21,7 +21,7 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
             services
                 .AddWebServer<TProgram>()
                 .AddHangfireServer(AppName)
-                .AddIdentityDatabase<OjsDbContext, UserProfile>()
+                .AddIdentityDatabase<OjsDbContext, UserProfile, Role>()
                 .AddMemoryCache()
                 .AddSoftUniJudgeCommonServices()
                 .AddLogging()

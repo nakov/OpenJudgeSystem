@@ -34,18 +34,19 @@ namespace OJS.Servers.Infrastructure.Extensions
                 .AddWebServerServices<TStartup>()
                 .AddAuthenticationServices();
 
-        public static IServiceCollection AddIdentityDatabase<TDbContext, TIdentityUser>(
+        public static IServiceCollection AddIdentityDatabase<TDbContext, TIdentityUser, TIdentityRole>(
             this IServiceCollection services,
             IEnumerable<GlobalQueryFilterType>? globalQueryFilterTypes = null)
             where TDbContext : DbContext
             where TIdentityUser : IdentityUser
+            where TIdentityRole : IdentityRole
         {
             services
                 .AddSqlDatabase<TDbContext>(globalQueryFilterTypes);
 
             services
-                .AddIdentity<TIdentityUser, IdentityRole>()
-                .AddRoles<IdentityRole>()
+                .AddIdentity<TIdentityUser, TIdentityRole>()
+                .AddRoles<TIdentityRole>()
                 .AddEntityFrameworkStores<DbContext>();
 
             return services;
