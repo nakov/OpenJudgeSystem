@@ -29,6 +29,7 @@ const HomeContests = () => {
                 {renderContestsList(contests)}
             </div>
             <LinkButton
+              id="button-see-all-contests"
               to="/contests"
               text="See All"
               type="secondary"
