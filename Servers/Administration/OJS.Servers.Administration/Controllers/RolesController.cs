@@ -8,13 +8,10 @@ using System.Collections.Generic;
 public class RolesController : BaseAutoCrudAdminController<Role>
 {
     public IActionResult UsersInRole(IDictionary<string, string> complexId)
-        => this.RedirectToAction(
-            "Index",
-            "UserRoles",
-            new Dictionary<string, string>
-            {
-                { UserRolesController.RoleIdKey, this.GetEntityIdFromQuery<string>(complexId) },
-            });
+        => this.RedirectToActionWithStringFilter(
+            nameof(UserRolesController),
+            UserRolesController.RoleIdKey,
+            this.GetEntityIdFromQuery<string>(complexId));
 
     protected override IEnumerable<GridAction> CustomActions
         => new GridAction[]

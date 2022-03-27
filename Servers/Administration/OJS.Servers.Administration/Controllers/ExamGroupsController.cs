@@ -36,16 +36,10 @@ public class ExamGroupsController : BaseAutoCrudAdminController<ExamGroup>
     }
 
     public IActionResult Users([FromQuery] IDictionary<string, string> complexId)
-    {
-        var examGroupId = this.GetEntityIdFromQuery<int>(complexId);
-        return this.RedirectToAction(
-            "Index",
-            "UsersInExamGroups",
-            new Dictionary<string, string>
-            {
-                { UsersInExamGroupsController.ExamGroupIdKey, examGroupId.ToString() },
-            });
-    }
+        => this.RedirectToActionWithNumberFilter(
+            nameof(UsersInExamGroupsController),
+            UsersInExamGroupsController.ExamGroupIdKey,
+            this.GetEntityIdFromQuery<int>(complexId));
 
     protected override IEnumerable<Func<ExamGroup, ExamGroup, AdminActionContext, ValidatorResult>> EntityValidators
         => this.examGroupValidatorsFactory.GetValidators();

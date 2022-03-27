@@ -40,12 +40,12 @@ public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExa
     }
 
     protected override Expression<Func<UserInExamGroup, bool>>? MasterGridFilter
-        => this.TryGetEntityIdForColumnFilter<int>(ExamGroupIdKey, out var examGroupId)
+        => this.TryGetEntityIdForNumberColumnFilter(ExamGroupIdKey, out var examGroupId)
             ? u => u.ExamGroupId == examGroupId
             : base.MasterGridFilter;
 
     protected override IEnumerable<AutoCrudAdminGridToolbarActionViewModel> CustomToolbarActions
-        => this.TryGetEntityIdForColumnFilter<int>(ExamGroupIdKey, out var examGroupId)
+        => this.TryGetEntityIdForNumberColumnFilter(ExamGroupIdKey, out var examGroupId)
             ? this.GetCustomToolbarActions(examGroupId)
             : base.CustomToolbarActions;
 

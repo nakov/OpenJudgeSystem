@@ -49,12 +49,12 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
     }
 
     protected override Expression<Func<ProblemResource, bool>>? MasterGridFilter
-        => this.TryGetEntityIdForColumnFilter<int>(ProblemIdKey, out var problemId)
+        => this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
             ? x => x.ProblemId == problemId
             : base.MasterGridFilter;
 
     protected override IEnumerable<AutoCrudAdminGridToolbarActionViewModel> CustomToolbarActions
-        => this.TryGetEntityIdForColumnFilter<int>(ProblemIdKey, out var problemId)
+        => this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
             ? this.GetCustomToolbarActions(problemId)
             : base.CustomToolbarActions;
 

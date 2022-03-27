@@ -70,12 +70,12 @@ public class TestsController : BaseAutoCrudAdminController<Test>
     }
 
     protected override Expression<Func<Test, bool>>? MasterGridFilter
-        => this.TryGetEntityIdForColumnFilter<int>(ProblemIdKey, out var problemId)
+        => this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
             ? t => t.ProblemId == problemId
             : base.MasterGridFilter;
 
     protected override IEnumerable<AutoCrudAdminGridToolbarActionViewModel> CustomToolbarActions
-        => this.TryGetEntityIdForColumnFilter<int>(ProblemIdKey, out var problemId)
+        => this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
             ? this.GetCustomToolbarActions(problemId)
             : base.CustomToolbarActions;
 

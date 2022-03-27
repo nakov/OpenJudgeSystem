@@ -10,7 +10,7 @@ public class UserRolesController : BaseAutoCrudAdminController<UserInRole>
     public const string RoleIdKey = nameof(UserInRole.RoleId);
 
     protected override Expression<Func<UserInRole, bool>>? MasterGridFilter
-        => this.TryGetEntityIdForColumnFilter<string>(RoleIdKey, out var roleId)
+        => this.TryGetEntityIdForStringColumnFilter(RoleIdKey, out var roleId)
             ? ur => ur.RoleId == roleId
             : base.MasterGridFilter;
 }
