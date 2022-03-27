@@ -1,5 +1,6 @@
 namespace OJS.Servers.Administration.Controllers;
 
+using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using OJS.Data.Models;
@@ -19,6 +20,8 @@ using System.Threading.Tasks;
 
 public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExamGroup>
 {
+    public const string ExamGroupIdKey = nameof(UserInExamGroup.ExamGroupId);
+
     private readonly IValidatorsFactory<UserInExamGroup> userInExamGroupValidatorsFactory;
     private readonly IValidationService<UserInExamGroupCreateDeleteValidationServiceModel> usersInExamGroupsCreateDeleteValidation;
     private readonly IContestsValidationHelper contestsValidationHelper;
@@ -35,6 +38,16 @@ public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExa
         this.contestsValidationHelper = contestsValidationHelper;
         this.examGroupsData = examGroupsData;
     }
+
+    protected override Expression<Func<UserInExamGroup, bool>>? MasterGridFilter
+        => this.TryGetEntityIdForColumnFilter<int>(ExamGroupIdKey, out var examGroupId)
+            ? u => u.ExamGroupId == examGroupId
+            : base.MasterGridFilter;
+
+    protected override IEnumerable<AutoCrudAdminGridToolbarActionViewModel> CustomToolbarActions
+        => this.TryGetEntityIdForColumnFilter<int>(ExamGroupIdKey, out var examGroupId)
+            ? this.GetCustomToolbarActions(examGroupId)
+            : base.CustomToolbarActions;
 
     protected override IEnumerable<GridAction> DefaultActions
         => new[] { new GridAction { Action = nameof(this.Delete) } };
@@ -94,5 +107,23 @@ public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExa
         {
             this.LockExamGroupId(formControls, predefinedExamGroupId.Value);
         }
+    }
+
+    private IEnumerable<AutoCrudAdminGridToolbarActionViewModel> GetCustomToolbarActions(int examGroupId)
+    {
+        var routeValues = new Dictionary<string, string>
+        {
+            { nameof(examGroupId), examGroupId.ToString() },
+        };
+
+        return new AutoCrudAdminGridToolbarActionViewModel[]
+        {
+            new()
+            {
+                Name = "Add new",
+                Action = nameof(this.Create),
+                RouteValues = routeValues,
+            },
+        };
     }
 }
