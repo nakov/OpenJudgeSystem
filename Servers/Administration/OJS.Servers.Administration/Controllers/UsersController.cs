@@ -25,12 +25,12 @@ public class UsersController : BaseAutoCrudAdminController<UserProfile>
             });
 
     protected override Expression<Func<UserProfile, bool>>? MasterGridFilter
-        => this.TryGetEntityIdForColumnFilter(ExamGroupIdKey, out var examGroupId)
+        => this.TryGetEntityIdForColumnFilter<int>(ExamGroupIdKey, out var examGroupId)
             ? u => u.UsersInExamGroups.Any(x => x.ExamGroupId == examGroupId)
             : base.MasterGridFilter;
 
     protected override IEnumerable<AutoCrudAdminGridToolbarActionViewModel> CustomToolbarActions
-        => this.TryGetEntityIdForColumnFilter(ExamGroupIdKey, out var examGroupId)
+        => this.TryGetEntityIdForColumnFilter<int>(ExamGroupIdKey, out var examGroupId)
             ? this.GetCustomToolbarActions(examGroupId)
             : base.CustomToolbarActions;
 

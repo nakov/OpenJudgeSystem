@@ -5,6 +5,10 @@ using System.Collections.Generic;
 
 public class Role : IdentityRole
 {
+    public Role()
+    {
+    }
+
     public Role(string name)
         : base(name)
     {
