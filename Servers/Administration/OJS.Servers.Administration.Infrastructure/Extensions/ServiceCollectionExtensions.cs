@@ -18,7 +18,7 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
             => services
                 .AddWebServer<TProgram>()
                 .AddHangfireServer(AppName)
-                .AddIdentityDatabase<OjsDbContext, UserProfile, Role>(Enumerable.Empty<GlobalQueryFilterType>())
+                .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(Enumerable.Empty<GlobalQueryFilterType>())
                 .AddSoftUniJudgeCommonServices()
                 .UseAutoCrudAdmin()
                 .AddControllersWithViews();

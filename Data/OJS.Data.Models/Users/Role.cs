@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public class Role : IdentityRole
 {
     public Role()
+        : base()
     {
     }
 
