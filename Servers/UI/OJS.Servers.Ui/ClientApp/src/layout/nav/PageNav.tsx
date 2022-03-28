@@ -19,8 +19,8 @@ const userRoutes = [
 ];
 
 const anonymousRoutes = [
-    { name: 'Login', link: '/login', isPrimary: false },
-    { name: 'Register', link: '/register', isPrimary: true },
+    { name: 'Login', link: '/login', isPrimary: false, id: 'anonymous-login-link' },
+    { name: 'Register', link: '/register', isPrimary: true, id: 'anonymous-register-link' },
 ];
 
 const PageNav = () => {
