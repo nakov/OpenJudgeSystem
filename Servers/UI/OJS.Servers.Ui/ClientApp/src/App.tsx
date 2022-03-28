@@ -17,12 +17,12 @@ import ParticipationsProvider from './hooks/use-participations';
 import './styles/global.scss';
 
 const InitProviders = ({ providers, children }: any) => {
-    const initial = (<>{{ children }}</>);
+    const initial = (<>{ children }</>);
     return providers
         .reverse()
         .reduce((current: any, Provider: any) => (
             <Provider>
-                {{ current }}
+                { current }
             </Provider>
         ), initial);
 };
