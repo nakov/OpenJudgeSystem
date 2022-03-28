@@ -34,7 +34,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     };
 
     return (
-        <div className={styles.contestCard}>
+        <div id="contest-card" className={styles.contestCard}>
             <div className={styles.contestCardHeader}>{contest.name}</div>
             <div className={styles.contestCardCategoryLabel}>{contest.category}</div>
             <div className={styles.contestCardCountdown}>

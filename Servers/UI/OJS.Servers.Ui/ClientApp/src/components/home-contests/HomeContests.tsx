@@ -25,7 +25,7 @@ const HomeContests = () => {
                 {' '}
                 Contests
             </Heading>
-            <div className={styles.contestCardsContainer}>
+            <div id="index-contests-list" className={styles.contestCardsContainer}>
                 {renderContestsList(contests)}
             </div>
             <LinkButton

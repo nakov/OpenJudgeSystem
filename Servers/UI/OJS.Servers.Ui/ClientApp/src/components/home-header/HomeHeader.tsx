@@ -28,7 +28,7 @@ const HomeHeader = () => {
                             SoftUni Judge System
                         </Heading>
                         <Heading
-                          id="index-title-heading-h1"
+                          id="index-title-heading-h2"
                           type="secondary"
                         >
                             Automatic Algorithm Test Platform
