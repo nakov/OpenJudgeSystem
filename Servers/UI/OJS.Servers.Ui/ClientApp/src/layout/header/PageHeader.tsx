@@ -18,19 +18,19 @@ const PageHeader = () => {
 
         return (
             <>
-                <Link to="/contests/all" className={styles.headerLink}>Contests</Link>
-                <Link to="/submissions" className={styles.headerLink}>Submissions</Link>
+                <Link id="nav-contests-link" to="/contests/all" className={styles.headerLink}>Contests</Link>
+                <Link id="nav-submissions-link" to="/submissions" className={styles.headerLink}>Submissions</Link>
                 { administrationLink }
             </>
         );
     }, [ user ]);
 
     return (
-        <header className={styles.header}>
+        <header id="pageHeader" className={styles.header}>
             <ReactNotification />
             <div className={styles.headerSize}>
                 <div className={styles.headerLinks}>
-                    <Heading type="secondary" className={styles.heading}>
+                    <Heading id="page-header-h2" type="secondary" className={styles.heading}>
                         <a href="/">
                             <img src={logo} alt="softuni logo" />
                         </a>

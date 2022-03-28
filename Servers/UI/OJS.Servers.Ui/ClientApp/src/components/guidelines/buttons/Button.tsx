@@ -4,11 +4,13 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import concatClassNames from '../../../utils/class-names';
 import { IHaveOptionalChildrenProps } from '../../common/IHaveChildrenProps';
+import generateId from '../../../utils/id-generator';
 
 import styles from './Button.module.scss';
 
 interface IButtonProps extends IHaveOptionalChildrenProps {
     text?: string,
+    id?: string,
     onClick: React.MouseEventHandler<HTMLButtonElement>,
     className?: string | string[],
     type?: 'primary' | 'secondary' | 'plain' | 'disabled',
@@ -17,6 +19,7 @@ interface IButtonProps extends IHaveOptionalChildrenProps {
 
 interface ILinkButtonProps {
     text: string,
+    id?: string,
     className?: string | string[],
     type?: 'primary' | 'secondary' | 'plain' | 'disabled',
     size?: 'small' | 'medium' | 'large',
@@ -37,6 +40,7 @@ const Button = ({
     className = '',
     type = 'primary',
     size = 'medium',
+    id = generateId(),
 }: IButtonProps) => {
     if (!text && !children) {
         throw new Error('Buttons must have only `text` or `children`');
@@ -64,13 +68,14 @@ const Button = ({
           type="button"
           onClick={onClick}
           className={buttonClassName}
+          id={id}
         >
             {content}
         </button>
     );
 };
 
-const LinkButton = ({ text, to, className = '', type = 'primary', size = 'medium' }: ILinkButtonProps) => {
+const LinkButton = ({ text, to, className = '', type = 'primary', size = 'medium', id = generateId() }: ILinkButtonProps) => {
     const sizeToClassName = {
         small: styles.small,
         medium: styles.medium,
@@ -92,6 +97,7 @@ const LinkButton = ({ text, to, className = '', type = 'primary', size = 'medium
           type="button"
           to={to}
           className={buttonClassName}
+          id={id}
         >
             {text}
         </Link>

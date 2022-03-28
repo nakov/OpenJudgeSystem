@@ -20,8 +20,19 @@ const HomeHeader = () => {
             <div className={styles.headerContent}>
                 <div className={styles.headerLeft}>
                     <div className={styles.headerContentWrapper}>
-                        <Heading type="primary" className={styles.headerPrimaryHeading}>SoftUni Judge System</Heading>
-                        <Heading type="secondary">Automatic Algorithm Test Platform</Heading>
+                        <Heading
+                          id="index-title-heading-h1"
+                          type="primary"
+                          className={styles.headerPrimaryHeading}
+                        >
+                            SoftUni Judge System
+                        </Heading>
+                        <Heading
+                          id="index-title-heading-h2"
+                          type="secondary"
+                        >
+                            Automatic Algorithm Test Platform
+                        </Heading>
                         <div className={styles.headerBulletsWrapper}>
                             <div className={styles.headerBullet}>
                                 <i className="fas fa-check-circle" />
@@ -37,6 +48,7 @@ const HomeHeader = () => {
                             </div>
                         </div>
                         <Button
+                          id="button-see-contests"
                           type="primary"
                           text="See Contests"
                           className={styles.headerLeftButton}
@@ -48,7 +60,7 @@ const HomeHeader = () => {
                 <div className={styles.headerRight}>
                     <div className={styles.headerContentWrapper}>
                         {/* eslint-disable-next-line max-len */}
-                        <YouTube containerClassName={styles.youtubePlayer} videoId="IwLET8SDBE4" opts={opts} onReady={(event) => event.target.pauseVideo()} />
+                        <YouTube id="youtube-video" containerClassName={styles.youtubePlayer} videoId="IwLET8SDBE4" opts={opts} onReady={(event) => event.target.pauseVideo()} />
                     </div>
                 </div>
             </div>
