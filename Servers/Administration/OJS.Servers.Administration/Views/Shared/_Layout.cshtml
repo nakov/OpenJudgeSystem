@@ -17,23 +17,20 @@
 <header>
     @await Html.PartialAsync("_NavPartial")
 </header>
-<div class="root">
-    <main role="main" class="pb-3">
-        @if (TempData.TryGetValue(DangerMessage, out var dangerMessage))
-        {
-            <p class="alert alert-danger">@Html.Raw(dangerMessage)</p>
-        }
-        else if (TempData.TryGetValue(SuccessMessage, out var successMessage))
-        {
-            <p class="alert alert-success">@Html.Raw(successMessage)</p>
-        }
+<main role="main" class="container-fluid pb-3">
+    @if (TempData.TryGetValue(DangerMessage, out var dangerMessage))
+    {
+        <p class="alert alert-danger">@Html.Raw(dangerMessage)</p>
+    }
+    else if (TempData.TryGetValue(SuccessMessage, out var successMessage))
+    {
+        <p class="alert alert-success">@Html.Raw(successMessage)</p>
+    }
 
-        @RenderBody()
-    </main>
-</div>
-
+    @RenderBody()
+</main>
 <footer class="border-top footer text-muted">
-    <div class="container">
+    <div class="container-fluid">
         &copy; 2022 - OJS Administration - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
     </div>
 </footer>
