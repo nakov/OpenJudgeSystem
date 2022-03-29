@@ -34,7 +34,8 @@ using Resource = OJS.Common.Resources.TestsControllers;
 
 public class TestsController : BaseAutoCrudAdminController<Test>
 {
-    private const string ProblemIdKey = nameof(Test.ProblemId);
+    public const string ProblemIdKey = nameof(Test.ProblemId);
+
     private const int TestInputMaxLengthInGrid = 20;
 
     private readonly IProblemsDataService problemsData;

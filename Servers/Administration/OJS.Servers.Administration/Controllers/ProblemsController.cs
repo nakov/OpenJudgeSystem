@@ -14,6 +14,7 @@ using OJS.Common.Utils;
 using OJS.Data.Models;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
+using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
 using OJS.Servers.Administration.Infrastructure.Extensions;
 using OJS.Servers.Administration.Models.Problems;
@@ -42,7 +43,7 @@ using Resource = OJS.Common.Resources.ProblemGroupsControllers;
 
 public class ProblemsController : BaseAutoCrudAdminController<Problem>
 {
-    private const string ContestIdKey = nameof(OJS.Data.Models.Problems.Problem.ProblemGroup.ContestId);
+    public const string ContestIdKey = nameof(OJS.Data.Models.Problems.Problem.ProblemGroup.ContestId);
 
     private readonly IProblemsBusinessService problemsBusiness;
     private readonly IContestsBusinessService contestsBusiness;
@@ -115,13 +116,19 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     public IActionResult Tests([FromQuery] IDictionary<string, string> complexId)
         => this.RedirectToActionWithNumberFilter(
             nameof(TestsController),
-            nameof(Test.ProblemId),
+            TestsController.ProblemIdKey,
             this.GetEntityIdFromQuery<int>(complexId));
 
     public IActionResult Resources([FromQuery] IDictionary<string, string> complexId)
         => this.RedirectToActionWithNumberFilter(
             nameof(ProblemResourcesController),
-            nameof(ProblemResource.ProblemId),
+            ProblemResourcesController.ProblemIdKey,
+            this.GetEntityIdFromQuery<int>(complexId));
+
+    public IActionResult Submissions([FromQuery] IDictionary<string, string> complexId)
+        => this.RedirectToActionWithNumberFilter(
+            nameof(SubmissionsController),
+            SubmissionsController.ProblemIdKey,
             this.GetEntityIdFromQuery<int>(complexId));
 
     public async Task<IActionResult> Retest([FromQuery] IDictionary<string, string> complexId)
@@ -374,6 +381,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             new GridAction { Action = nameof(this.Tests) },
             new GridAction { Action = nameof(this.Copy) },
             new GridAction { Action = nameof(this.Resources) },
+            new GridAction { Action = nameof(this.Submissions) },
         };
 
     protected override IEnumerable<Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>>

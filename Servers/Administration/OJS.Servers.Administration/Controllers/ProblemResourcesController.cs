@@ -26,7 +26,7 @@ using System.Threading.Tasks;
 
 public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemResource>
 {
-    private const string ProblemIdKey = nameof(ProblemResource.ProblemId);
+    public const string ProblemIdKey = nameof(ProblemResource.ProblemId);
 
     private readonly IValidatorsFactory<ProblemResource> problemResourceValidatorsFactory;
     private readonly IProblemResourcesDataService problemResourcesData;

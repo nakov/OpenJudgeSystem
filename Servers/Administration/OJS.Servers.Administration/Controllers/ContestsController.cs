@@ -74,17 +74,20 @@ namespace OJS.Servers.Administration.Controllers
         public IActionResult Participants([FromQuery] IDictionary<string, string> complexId)
             => this.RedirectToActionWithNumberFilter(
                 nameof(ParticipantsController),
-                nameof(Participant.ContestId),
+                ParticipantsController.ContestIdKey,
+                this.GetEntityIdFromQuery<int>(complexId));
+
+        public IActionResult Submissions([FromQuery] IDictionary<string, string> complexId)
+            => this.RedirectToActionWithNumberFilter(
+                nameof(SubmissionsController),
+                SubmissionsController.ContestIdKey,
                 this.GetEntityIdFromQuery<int>(complexId));
 
         public IActionResult Problems([FromQuery] IDictionary<string, string> complexId)
-        {
-            var contestId = this.GetEntityIdFromQuery<int>(complexId);
-            return this.RedirectToAction(
-                "Index",
-                "Problems",
-                new Dictionary<string, string> {  { nameof(contestId), contestId.ToString() } });
-        }
+            => this.RedirectToActionWithNumberFilter(
+                nameof(ProblemsController),
+                ProblemsController.ContestIdKey,
+                this.GetEntityIdFromQuery<int>(complexId));
 
         protected override IEnumerable<Func<Contest, Contest, AdminActionContext, ValidatorResult>> EntityValidators
             => this.contestValidatorsFactory.GetValidators();
@@ -146,6 +149,7 @@ namespace OJS.Servers.Administration.Controllers
                 new GridAction { Action = nameof(this.Problems) },
                 new GridAction { Action = nameof(this.CreateProblem) },
                 new GridAction { Action = nameof(this.Participants) },
+                new GridAction { Action = nameof(this.Submissions) },
             };
 
         protected override async Task BeforeEntitySaveOnEditAsync(
