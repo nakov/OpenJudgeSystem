@@ -1,5 +1,6 @@
 namespace OJS.Servers.Administration.Controllers;
 
+using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
@@ -244,6 +245,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             Name = AdditionalFormFields.Input.ToString(),
             Type = typeof(string),
             Value = entity.InputDataAsString,
+            FormControlType = FormControlType.TextArea,
         });
 
         formControls.Add(new FormControlViewModel
@@ -251,6 +253,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             Name = AdditionalFormFields.Output.ToString(),
             Type = typeof(string),
             Value = entity.OutputDataAsString,
+            FormControlType = FormControlType.TextArea,
         });
 
         return formControls;
