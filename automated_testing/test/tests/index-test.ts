@@ -59,7 +59,7 @@ describe('Testing index', () => {
 
     it('Expect YouTub video to exist', async () => {
         await IndexPage.open();
-        const btn = await IndexPage.youtubeVideo;
-        await expect(btn).toExist();
+        const video = await IndexPage.youtubeVideo;
+        await expect(video).toExist();
     });
 });

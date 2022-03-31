@@ -9,6 +9,7 @@ import styles from './FormControl.module.scss';
 interface IFormControlProps {
     name: string,
     value: string,
+    id?: string,
     className?: string | string[],
     labelText?: string,
     labelClassName?: string | string[],
@@ -24,7 +25,7 @@ interface ILabelInternalProps extends IHaveChildrenProps {
     forKey: string,
 }
 
-const LabelInternal = ({ text, className, forKey, children }: ILabelInternalProps) => {
+const LabelInternal = ({ id, text, className, forKey, children }: ILabelInternalProps) => {
     if (!text && !className) {
         return (
             <>

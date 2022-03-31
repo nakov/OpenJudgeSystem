@@ -17,15 +17,17 @@ class IndexPage extends Page {
 
     private pageRegisterButtonSelector = '#anonymous-register-link';
 
-    private pageNavContestsLink = '#nav-contests-link';
+    private pageNavContestsLinkSelector = '#nav-contests-link';
 
-    private pageNavSubmissionssLink = '#nav-submissions-link';
+    private pageNavSubmissionssLinkSelector = '#nav-submissions-link';
 
-    private pageSeeContestsButton = '#button-see-contests';
+    private pageSeeContestsButtonSelector = '#button-see-contests';
 
     // private pageCompeteCardButton = '#button-card-compete';
 
     // private pagePracticeCardButton = '#button-card-practice';
+
+    private cartContestClassSelector = '.ContestCard_contestCard__1Pn8q';
 
     private pageYoutubeVideo = '#youtube-video';
 
@@ -34,11 +36,11 @@ class IndexPage extends Page {
     }
 
     public get navSubmissionssLink() {
-        return $(this.pageNavSubmissionssLink);
+        return $(this.pageNavSubmissionssLinkSelector);
     }
 
     public get navContestsLink() {
-        return $(this.pageNavContestsLink);
+        return $(this.pageNavContestsLinkSelector);
     }
 
     public get youtubeVideo() {
@@ -46,7 +48,7 @@ class IndexPage extends Page {
     }
 
     public get seeContestsButton() {
-        return $(this.pageSeeContestsButton);
+        return $(this.pageSeeContestsButtonSelector);
     }
 
     public get footer() {

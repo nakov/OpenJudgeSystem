@@ -29,11 +29,11 @@ const LoginPage = () => {
 
     return (
         <>
-            <form action="">
-                <FormControl name="Username" type="input" onChange={(value) => onChangeUpdateUsername(value)} value="" />
-                <FormControl name="Password" type="password" onChange={(value) => onChangeUpdatePassword(value)} value="" />
-                <FormControl name="Password" type="checkbox" value="false" />
-                <Button text="Login" type="primary" onClick={submitLoginOnClick} />
+            <form id="loginForm" action="">
+                <FormControl id="username" name="Username" type="input" onChange={(value) => onChangeUpdateUsername(value)} value="" />
+                <FormControl id="password" name="Password" type="password" onChange={(value) => onChangeUpdatePassword(value)} value="" />
+                <FormControl id="auth-password-checkbox" name="Password" type="checkbox" value="false" />
+                <Button id="auth-login-button" text="Login" type="primary" onClick={submitLoginOnClick} />
             </form>
         </>
     );
