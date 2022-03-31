@@ -39,7 +39,6 @@ namespace OJS.Services.Common.Implementations
             this.distributorConfig = distributorConfigAccessor.Value;
         }
 
-        // TODO: Pass a Service model instead of Data model
         public Task<ExternalDataRetrievalResult<SubmissionAddedToDistributorResponseServiceModel>> AddSubmissionForProcessing(
             Submission submission)
         {

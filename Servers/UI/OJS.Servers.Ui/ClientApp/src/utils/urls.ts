@@ -11,7 +11,7 @@ const startContestParticipationUrl = `${baseUrl}/Compete/Index/%id%?official=%of
 
 const getSubmissionDetailsUrl = `${baseUrl}/Submissions/Details`;
 const getSubmissionsForProfileUrl = `${baseUrl}/Submissions/GetForProfile`;
-const submitUrl = `${baseUrl}/Compete/Submit?official=%official%`;
+const submitUrl = `${baseUrl}/Compete/Submit`;
 
 const getParticipationsForProfileUrl = `${baseUrl}/Participations/GetForProfile`;
 

@@ -11,6 +11,8 @@ namespace OJS.Services.Ui.Data
     {
         Task<ParticipantScore?> GetByParticipantIdAndProblemId(int participantId, int problemId);
 
+        Task<IEnumerable<ParticipantScore>> GetByProblemIdAndParticipants(IEnumerable<int> participantIds, int problemId);
+
         Task<ParticipantScore?> GetByParticipantIdProblemIdAndIsOfficial(int participantId, int problemId, bool isOfficial);
 
         IQueryable<ParticipantScore> GetAll();

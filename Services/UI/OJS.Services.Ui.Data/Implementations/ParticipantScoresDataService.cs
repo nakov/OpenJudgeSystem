@@ -25,6 +25,11 @@ namespace OJS.Services.Ui.Data.Implementations
                     ps.ParticipantId == participantId &&
                     ps.ProblemId == problemId);
 
+        public async Task<IEnumerable<ParticipantScore>> GetByProblemIdAndParticipants(IEnumerable<int> participantIds, int problemId)
+            => await this.GetAllByProblem(problemId)
+                    .Where(p => participantIds.Contains(p.ParticipantId))
+                    .ToListAsync();
+
         public Task<ParticipantScore?> GetByParticipantIdProblemIdAndIsOfficial(int participantId, int problemId, bool isOfficial) =>
             this.DbSet
                 .FirstOrDefaultAsync(ps =>
