@@ -37,9 +37,10 @@ namespace OJS.Servers.Ui.Controllers.Api
 
         public async Task<IEnumerable<SubmissionResultsResponseModel>> GetSubmissionResultsByProblem(
             int id,
-            [FromQuery]bool isOfficial)
+            [FromQuery]bool isOfficial,
+            [FromQuery]int take)
             => await this.submissionsBusiness
-                .GetSubmissionResultsByProblem(id, isOfficial)
+                .GetSubmissionResultsByProblem(id, isOfficial, take: take)
                 .MapCollection<SubmissionResultsResponseModel>();
 
         [HttpPost]

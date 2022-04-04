@@ -53,7 +53,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
 
     const getSubmissionResults = useCallback(async (problemId: number) => {
         startLoading();
-        await getProblemResultsRequest({ id: problemId.toString(), isOfficial: isContestParticipationOfficial.toString() });
+        await getProblemResultsRequest({ id: problemId.toString(), isOfficial: isContestParticipationOfficial.toString(), take: '3' });
         stopLoading();
     }, [ getProblemResultsRequest, isContestParticipationOfficial, startLoading, stopLoading ]);
 

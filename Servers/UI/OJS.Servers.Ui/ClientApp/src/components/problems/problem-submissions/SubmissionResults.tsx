@@ -4,6 +4,8 @@ import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import { ISubmissionResultType } from '../../../hooks/submissions/types';
 import { formatDate } from '../../../utils/dates';
+import { Button } from '../../guidelines/buttons/Button';
+import styles from './SubmissionResults.module.scss';
 
 interface ISubmissionResultsProps {
     problemId?: number,
@@ -17,7 +19,7 @@ const getResultText = (submissionResult: ISubmissionResultType) => (
 const columns: GridColDef[] = [
     { field: 'id', headerName: '№', flex: 0.5 },
     {
-        field: 'submittedOn',
+        field: 'createdOn',
         headerName: 'Submitted On',
         flex: 1,
         sortable: true,
@@ -42,24 +44,33 @@ const SubmissionResults = ({ problemId }: ISubmissionResultsProps) => {
         }
     }, [ getSubmissionResults, problemId ]);
 
-    useEffect(() => {
+    const reload = () => {
         (async () => {
             await getResults();
         })();
+    };
+
+    useEffect(() => {
+        if (currentProblemSubmissionResults.length !== 0) { return; }
+        reload();
     }, []);
 
     return (
         currentProblemSubmissionResults.length === 0
             ? <p> No results for this problem yet.</p>
             : (
-                <div style={{ height: 300, width: '100%' }}>
-                    <DataGrid
-                      rows={currentProblemSubmissionResults}
-                      columns={columns}
-                      pageSize={5}
-                      rowsPerPageOptions={[ 5 ]}
-                      disableSelectionOnClick
-                    />
+                <div className={styles.submissionResultsContent}>
+                    <div style={{ height: 300, width: '100%' }}>
+                        <DataGrid
+                          rows={currentProblemSubmissionResults}
+                          columns={columns}
+                          pageSize={5}
+                          rowsPerPageOptions={[ 5 ]}
+                          disableSelectionOnClick
+                        />
+
+                    </div>
+                    <Button type="secondary" className={styles.refreshBtn} onClick={reload} text="Refresh" />
                 </div>
             )
     );

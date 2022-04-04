@@ -23,7 +23,7 @@ namespace OJS.Services.Ui.Business
 
         Task<IEnumerable<SubmissionForProfileServiceModel>> GetForProfileByUser(string? username);
 
-        Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(int problemId, bool isOfficial);
+        Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(int problemId, bool isOfficial, int take = 0);
 
         void ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult);
 
