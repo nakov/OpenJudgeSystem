@@ -21,7 +21,7 @@ const HomeContests = () => {
 
     const render = (headerTitle: string, contests: IIndexContestsType[]) => {
         const contestsSeeAllButtonClassName = concatClassNames(styles.contestsSeeAllButton, `btn-see-all-contests-${headerTitle}`);
-
+        const allContestCardsContainer = concatClassNames(styles.contestCardsContainer, `${headerTitle}-contests-cards-list`);
         return (
             <>
                 <Heading>
@@ -29,7 +29,7 @@ const HomeContests = () => {
                     {' '}
                     Contests
                 </Heading>
-                <div className={styles.contestCardsContainer}>
+                <div className={allContestCardsContainer}>
                     {renderContestsList(contests)}
                 </div>
                 <LinkButton

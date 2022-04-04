@@ -54,12 +54,20 @@ describe('Testing index', () => {
         await IndexPage.open();
         const btn = await IndexPage.seeContestsButton;
         await expect(btn).toExist();
-    // await expect(btn).toHaveHrefContaining('.....'); once the page is ready we will add it
+    //  await expect(btn).toHaveHrefContaining('.....'); once the page is ready we will add it
     });
 
-    it('Expect YouTub video to exist', async () => {
+    xit('Expect YouTub video to exist', async () => {
         await IndexPage.open();
         const video = await IndexPage.youtubeVideo;
         await expect(video).toExist();
+    });
+
+    it('Expect Youtube video to have src', async () => {
+        await IndexPage.open();
+        const video = await IndexPage.youtubeVideo;
+        await expect(video).toHaveAttr('src');
+        const src = await video.getAttribute('src');
+        await expect(src).not.toBeNull();
     });
 });

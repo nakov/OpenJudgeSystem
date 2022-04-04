@@ -11,7 +11,7 @@ interface IContestCardProps {
 }
 
 const ContestCard = ({ contest }: IContestCardProps) => {
-    const cardContestsClassName = concatClassNames(styles.contestCard, `card-contests-${contest.id}`);
+    const cardContestsClassName = concatClassNames(styles.contestCard, 'all-cards-contests');
     const renderCountdown = () => {
         if (contest.canBePracticed && contest.practiceEndTime == null) {
             return <p>No practice end time.</p>;
@@ -44,7 +44,6 @@ const ContestCard = ({ contest }: IContestCardProps) => {
             </div>
             <div className={styles.contestCardControls}>
                 <LinkButton
-                  id="button-card-compete"
                   to={`/contests/${contest.id}/compete`}
                   text="Compete"
                   type={
@@ -55,7 +54,6 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   size="small"
                 />
                 <LinkButton
-                  id="button-card-practice"
                   to={`/contests/${contest.id}/practice`}
                   text="Practice"
                   type={
