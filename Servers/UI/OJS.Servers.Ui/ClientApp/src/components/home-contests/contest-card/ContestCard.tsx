@@ -11,7 +11,8 @@ interface IContestCardProps {
 }
 
 const ContestCard = ({ contest }: IContestCardProps) => {
-    const cardContestsClassName = concatClassNames(styles.contestCard, 'all-cards-contests');
+    const cardsContests = 'all-cards-contests';
+    const cardContestsClassName = concatClassNames(styles.contestCard, cardsContests);
     const renderCountdown = () => {
         if (contest.canBePracticed && contest.practiceEndTime == null) {
             return <p>No practice end time.</p>;

@@ -20,8 +20,10 @@ const HomeContests = () => {
     ));
 
     const render = (headerTitle: string, contests: IIndexContestsType[]) => {
-        const contestsSeeAllButtonClassName = concatClassNames(styles.contestsSeeAllButton, `btn-see-all-contests-${headerTitle}`);
-        const allContestCardsContainer = concatClassNames(styles.contestCardsContainer, `${headerTitle}-contests-cards-list`);
+        const seeAllButton = `btn-see-all-contests-${headerTitle}`;
+        const contestsSeeAllButtonClassName = concatClassNames(styles.contestsSeeAllButton, seeAllButton);
+        const allContestCardsContainer = `${headerTitle}-contests-cards-list`;
+        const allContestsCardsContainer = concatClassNames(styles.contestCardsContainer, allContestCardsContainer);
         return (
             <>
                 <Heading>
@@ -29,7 +31,7 @@ const HomeContests = () => {
                     {' '}
                     Contests
                 </Heading>
-                <div className={allContestCardsContainer}>
+                <div className={allContestsCardsContainer}>
                     {renderContestsList(contests)}
                 </div>
                 <LinkButton

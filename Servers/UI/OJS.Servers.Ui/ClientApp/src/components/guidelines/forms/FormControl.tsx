@@ -9,23 +9,24 @@ import styles from './FormControl.module.scss';
 interface IFormControlProps {
     name: string,
     value: string,
-    id?: string,
     className?: string | string[],
     labelText?: string,
     labelClassName?: string | string[],
     type?: 'radio' | 'checkbox' | 'text' | 'textarea' | 'input' | 'password',
     onChange?: (value?:string) => void
     onInput?: (value?:string) => void,
-    checked?: boolean
+    checked?: boolean,
+    id: string,
 }
 
 interface ILabelInternalProps extends IHaveChildrenProps {
     text: string,
     className: string | string[],
     forKey: string,
+    id: string,
 }
 
-const LabelInternal = ({ id, text, className, forKey, children }: ILabelInternalProps) => {
+const LabelInternal = ({ text, className, forKey, children, id, }: ILabelInternalProps) => {
     if (!text && !className) {
         return (
             <>
@@ -58,10 +59,10 @@ const FormControl = ({
     labelClassName = '',
     type = 'text',
     checked = false,
+    id = generateId(),
 }: IFormControlProps) => {
     const [ formControlValue, setFormControlValue ] = useState(value);
 
-    const id = generateId();
     const componentClassName = concatClassNames(styles.formControl, className);
     const handleOnChange = (ev:any) => {
         setFormControlValue(ev.target.value);
@@ -100,7 +101,7 @@ const FormControl = ({
     };
 
     return (
-        <LabelInternal text={labelText} className={labelClassName} forKey={id}>
+        <LabelInternal id={`${id}-label`} text={labelText} className={labelClassName} forKey={id}>
             {generateFormControl()}
         </LabelInternal>
     );
