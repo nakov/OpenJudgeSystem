@@ -25,7 +25,7 @@ namespace OJS.Services.Ui.Business
 
         Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(int problemId, bool isOfficial);
 
-        void ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult);
+        Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult);
 
         // Task HardDeleteAllArchived();
     }
