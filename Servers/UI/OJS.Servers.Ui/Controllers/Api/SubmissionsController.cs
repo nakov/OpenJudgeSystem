@@ -40,7 +40,7 @@ namespace OJS.Servers.Ui.Controllers.Api
             [FromQuery]bool isOfficial,
             [FromQuery]int take)
             => await this.submissionsBusiness
-                .GetSubmissionResultsByProblem(id, isOfficial, take: take)
+                .GetSubmissionResultsByProblem(id, isOfficial, take)
                 .MapCollection<SubmissionResultsResponseModel>();
 
         [HttpPost]
