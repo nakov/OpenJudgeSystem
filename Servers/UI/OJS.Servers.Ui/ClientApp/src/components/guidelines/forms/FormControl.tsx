@@ -26,7 +26,7 @@ interface ILabelInternalProps extends IHaveChildrenProps {
     id: string,
 }
 
-const LabelInternal = ({ text, className, forKey, children, id, }: ILabelInternalProps) => {
+const LabelInternal = ({ id, text, className, forKey, children }: ILabelInternalProps) => {
     if (!text && !className) {
         return (
             <>
@@ -40,7 +40,7 @@ const LabelInternal = ({ text, className, forKey, children, id, }: ILabelInterna
     return (
         <div className={styles.formControlContainer}>
             {children}
-            <label className={componentClassName} htmlFor={forKey}>
+            <label id={id} className={componentClassName} htmlFor={forKey}>
                 <span>{text}</span>
             </label>
         </div>
