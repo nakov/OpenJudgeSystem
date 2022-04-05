@@ -5,14 +5,15 @@ import { convertToSecondsRemaining } from '../../../utils/dates';
 import styles from './ContestCard.module.scss';
 import { LinkButton } from '../../guidelines/buttons/Button';
 import concatClassNames from '../../../utils/class-names';
+import { text } from 'stream/consumers';
 
 interface IContestCardProps {
     contest: IIndexContestsType
 }
 
 const ContestCard = ({ contest }: IContestCardProps) => {
-    const cardsContests = 'all-cards-contests';
-    const cardContestsClassName = concatClassNames(styles.contestCard, cardsContests);
+    const contestCard = 'card-contests';
+    const contestCardClassName = concatClassNames(styles.contestCard, contestCard);
     const renderCountdown = () => {
         if (contest.canBePracticed && contest.practiceEndTime == null) {
             return <p>No practice end time.</p>;
@@ -37,7 +38,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     };
 
     return (
-        <div className={cardContestsClassName}>
+        <div className={contestCardClassName}>
             <div className={styles.contestCardHeader}>{contest.name}</div>
             <div className={styles.contestCardCategoryLabel}>{contest.category}</div>
             <div className={styles.contestCardCountdown}>

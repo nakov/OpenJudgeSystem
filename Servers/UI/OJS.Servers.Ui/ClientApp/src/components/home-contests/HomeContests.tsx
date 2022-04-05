@@ -20,10 +20,10 @@ const HomeContests = () => {
     ));
 
     const render = (headerTitle: string, contests: IIndexContestsType[]) => {
-        const seeAllButton = `btn-see-all-contests-${headerTitle}`;
-        const contestsSeeAllButtonClassName = concatClassNames(styles.contestsSeeAllButton, seeAllButton);
-        const allContestCardsContainer = `${headerTitle}-contests-cards-list`;
-        const allContestsCardsContainer = concatClassNames(styles.contestCardsContainer, allContestCardsContainer);
+        const seeAllButtonClassName = `btn-see-all-contests-${headerTitle}`;
+        const contestsSeeAllButtonClassName = concatClassNames(styles.contestsSeeAllButton, seeAllButtonClassName);
+        const allContestCardsContainerClassName = `${headerTitle}-contests-cards-list`;
+        const allContestsCardsContainer = concatClassNames(styles.contestCardsContainer, allContestCardsContainerClassName);
         return (
             <>
                 <Heading>
