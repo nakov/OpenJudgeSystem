@@ -5,6 +5,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Net.Http.Headers;
@@ -34,19 +35,31 @@ namespace OJS.Servers.Infrastructure.Extensions
                 .AddWebServerServices<TStartup>()
                 .AddAuthenticationServices();
 
-        public static IServiceCollection AddIdentityDatabase<TDbContext, TIdentityUser>(
+        public static IServiceCollection AddIdentityDatabase<TDbContext, TIdentityUser, TIdentityRole, TIdentityUserRole>(
             this IServiceCollection services,
             IEnumerable<GlobalQueryFilterType>? globalQueryFilterTypes = null)
             where TDbContext : DbContext
             where TIdentityUser : IdentityUser
+            where TIdentityRole : IdentityRole
+            where TIdentityUserRole : IdentityUserRole<string>, new()
         {
             services
                 .AddSqlDatabase<TDbContext>(globalQueryFilterTypes);
 
             services
-                .AddIdentity<TIdentityUser, IdentityRole>()
-                .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<DbContext>();
+                .AddIdentity<TIdentityUser, TIdentityRole>()
+                .AddRoles<TIdentityRole>()
+                .AddEntityFrameworkStores<TDbContext>()
+                .AddUserStore<UserStore<
+                    TIdentityUser,
+                    TIdentityRole,
+                    TDbContext,
+                    string,
+                    IdentityUserClaim<string>,
+                    TIdentityUserRole,
+                    IdentityUserLogin<string>,
+                    IdentityUserToken<string>,
+                    IdentityRoleClaim<string>>>();
 
             return services;
         }

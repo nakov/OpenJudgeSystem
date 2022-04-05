@@ -26,7 +26,7 @@ using System.Threading.Tasks;
 
 public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemResource>
 {
-    private const string ProblemIdKey = nameof(ProblemResource.ProblemId);
+    public const string ProblemIdKey = nameof(ProblemResource.ProblemId);
 
     private readonly IValidatorsFactory<ProblemResource> problemResourceValidatorsFactory;
     private readonly IProblemResourcesDataService problemResourcesData;
@@ -49,12 +49,12 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
     }
 
     protected override Expression<Func<ProblemResource, bool>>? MasterGridFilter
-        => this.TryGetEntityIdForColumnFilter(ProblemIdKey, out var problemId)
+        => this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
             ? x => x.ProblemId == problemId
             : base.MasterGridFilter;
 
     protected override IEnumerable<AutoCrudAdminGridToolbarActionViewModel> CustomToolbarActions
-        => this.TryGetEntityIdForColumnFilter(ProblemIdKey, out var problemId)
+        => this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
             ? this.GetCustomToolbarActions(problemId)
             : base.CustomToolbarActions;
 
