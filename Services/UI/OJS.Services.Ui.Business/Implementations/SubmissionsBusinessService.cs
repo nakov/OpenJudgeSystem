@@ -1,4 +1,5 @@
-﻿using FluentExtensions.Extensions;
+using OJS.Data.Models.Problems;
+using FluentExtensions.Extensions;
 using OJS.Data.Models.Tests;
 
 namespace OJS.Services.Ui.Business.Implementations
@@ -213,11 +214,30 @@ namespace OJS.Services.Ui.Business.Implementations
             return data;
         }
 
-        public async Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(int problemId,
-            bool isOfficial)
+        public async Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(int problemId, bool isOfficial, int take = 0)
         {
             var problem = await this.problemsDataService.GetWithProblemGroupById(problemId);
 
+            await this.ValidateUserCanViewResults(problem, isOfficial);
+
+            var participant =
+                await this.participantsDataService.GetByContestByUserAndByIsOfficial(problem.ProblemGroup.ContestId, this.userProviderService.GetCurrentUser().Id,
+                    isOfficial);
+
+            var userSubmissions = this.submissionsData
+                .GetAllByProblemAndParticipant(problemId, participant.Id)
+                .MapCollection<SubmissionResultsServiceModel>();
+
+            if (take != 0)
+            {
+                userSubmissions = userSubmissions.Take(take);
+            }
+
+            return await userSubmissions.ToListAsync();
+        }
+
+        private async Task ValidateUserCanViewResults(Problem problem, bool isOfficial)
+        {
             if (problem == null)
             {
                 throw new BusinessServiceException(Resources.ContestsGeneral.Problem_not_found);
@@ -237,17 +257,6 @@ namespace OJS.Services.Ui.Business.Implementations
             {
                 throw new BusinessServiceException(Resources.ContestsGeneral.Problem_results_not_available);
             }
-
-            var participant =
-                await this.participantsDataService.GetByContestByUserAndByIsOfficial(problem.ProblemGroup.ContestId, user.Id,
-                    isOfficial);
-
-            var userSubmissions = await this.submissionsData
-                .GetAllByProblemAndParticipant(problemId, participant.Id)
-                .MapCollection<SubmissionResultsServiceModel>()
-                .ToListAsync();
-
-            return userSubmissions;
         }
 
         public async Task Submit(SubmitSubmissionServiceModel model)

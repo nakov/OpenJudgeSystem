@@ -1,3 +1,9 @@
+using FluentExtensions.Extensions;
+using OJS.Services.Infrastructure.Extensions;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
+using System.Collections;
+using X.PagedList;
+
 namespace OJS.Services.Ui.Data.Implementations
 {
     using Microsoft.EntityFrameworkCore;
@@ -25,10 +31,12 @@ namespace OJS.Services.Ui.Data.Implementations
                     ps.ParticipantId == participantId &&
                     ps.ProblemId == problemId);
 
-        public async Task<IEnumerable<ParticipantScore>> GetByProblemIdAndParticipants(IEnumerable<int> participantIds, int problemId)
-            => await this.GetAllByProblem(problemId)
-                    .Where(p => participantIds.Contains(p.ParticipantId))
-                    .ToListAsync();
+        public Task<IEnumerable<ParticipantScore>> GetByProblemIdAndParticipants(IEnumerable<int> participantIds,
+            int problemId)
+            => this.DbSet
+                .Where(ps => ps.ProblemId == problemId)
+                .Where(p => participantIds.Contains(p.ParticipantId))
+                .ToEnumerableAsync();
 
         public Task<ParticipantScore?> GetByParticipantIdProblemIdAndIsOfficial(int participantId, int problemId, bool isOfficial) =>
             this.DbSet

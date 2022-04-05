@@ -178,10 +178,11 @@ namespace OJS.Services.Ui.Business.Implementations
             return results;
         }
 
-        public async Task<IEnumerable<ParticipantScoreModel>> GetByProblemForParticipants(
+        public Task<IEnumerable<ParticipantScoreModel>> GetByProblemForParticipants(
             IEnumerable<int> participantIds, int problemId)
-            => await this.participantScoresData
+            => this.participantScoresData
                 .GetByProblemIdAndParticipants(participantIds, problemId)
-                .MapCollection<ParticipantScoreModel>();
+                .MapCollection<ParticipantScoreModel>()
+                .ToEnumerableAsync();
     }
 }

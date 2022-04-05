@@ -28,8 +28,10 @@ namespace OJS.Services.Common.Data.Implementations
             => base.DbSet.Where(s => s.ProblemId == problemId);
 
         public IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId) =>
-            this.DbSet
-                .Where(s => s.ParticipantId == participantId && s.ProblemId == problemId);
+            this.GetQuery(
+                filter: s => s.ParticipantId == participantId && s.ProblemId == problemId,
+                orderBy: q => q.CreatedOn,
+                descending: true);
 
         public IQueryable<Submission> GetAllFromContestsByLecturer(string lecturerId) =>
             this.DbSet

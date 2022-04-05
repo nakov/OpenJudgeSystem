@@ -55,21 +55,21 @@ const ContestMainNavigation = () => {
             <div className={styles.contestInnerLayout}>
                 <div className={styles.editorAndProblemControlsWrapper}>
                     <CodeEditor />
-                    <div className={styles.contestTabControls}>
-                        <Tabs
-                          tabLabels={[ 'Problem', 'Submissions' ]}
-                          tabChildren={[
-                              <ProblemResources resources={currentProblem?.resources} />,
-                              <SubmissionResults problemId={currentProblem?.id} />,
-                          ]}
-                        />
+                    <div className={styles.contestSubmitControlsWrapper}>
+                        <div className={styles.executionTypeSelectors}>
+                            {renderSubmissionTypesSelectorsList()}
+                        </div>
+                        <div><Button type="primary" text="Submit" onClick={submit} /></div>
                     </div>
                 </div>
-                <div className={styles.contestSubmitControlsWrapper}>
-                    <div className={styles.executionTypeSelectors}>
-                        {renderSubmissionTypesSelectorsList()}
-                    </div>
-                    <div><Button type="primary" text="Submit" onClick={submit} /></div>
+                <div className={styles.contestTabControls}>
+                    <Tabs
+                      tabLabels={[ 'Problem', 'Submissions' ]}
+                      tabChildren={[
+                          <ProblemResources resources={currentProblem?.resources} />,
+                          <SubmissionResults problemId={currentProblem?.id} />,
+                      ]}
+                    />
                 </div>
             </div>
         </div>
