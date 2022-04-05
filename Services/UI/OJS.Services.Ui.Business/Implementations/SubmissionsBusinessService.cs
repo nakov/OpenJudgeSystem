@@ -1,4 +1,7 @@
-﻿namespace OJS.Services.Ui.Business.Implementations
+﻿using FluentExtensions.Extensions;
+using OJS.Data.Models.Tests;
+
+namespace OJS.Services.Ui.Business.Implementations
 {
     using System;
     using System.Threading.Tasks;
@@ -21,27 +24,30 @@
         private readonly ISubmissionsDataService submissionsData;
 
         private readonly IUsersBusinessService usersBusiness;
-        private readonly IParticipantScoresDataService participantScoresData;
+        private readonly IParticipantScoresBusinessService participantScoresBusinessService;
         private readonly IParticipantsDataService participantsDataService;
         private readonly IProblemsDataService problemsDataService;
         private readonly IUserProviderService userProviderService;
         private readonly IContestsBusinessService contestsBusinessService;
         private readonly IProblemsBusinessService problemsBusinessService;
         private readonly ISubmissionTypesBusinessService submissionTypesBusinessService;
+        private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunicationService;
+        private readonly ITestRunsDataService testRunsDataService;
 
         public SubmissionsBusinessService(
             ISubmissionsDataService submissionsData,
-            IParticipantScoresDataService participantScoresData,
             IUsersBusinessService usersBusiness,
             IProblemsDataService problemsDataService,
             IParticipantsDataService participantsDataService,
             IUserProviderService userProviderService,
             IContestsBusinessService contestsBusinessService,
             IProblemsBusinessService problemsBusinessService,
-            ISubmissionTypesBusinessService submissionTypesBusinessService)
+            ISubmissionTypesBusinessService submissionTypesBusinessService,
+            ISubmissionsDistributorCommunicationService submissionsDistributorCommunicationService,
+            ITestRunsDataService testRunsDataService,
+            IParticipantScoresBusinessService participantScoresBusinessService)
         {
             this.submissionsData = submissionsData;
-            this.participantScoresData = participantScoresData;
             this.usersBusiness = usersBusiness;
             this.problemsDataService = problemsDataService;
             this.participantsDataService = participantsDataService;
@@ -49,6 +55,9 @@
             this.contestsBusinessService = contestsBusinessService;
             this.problemsBusinessService = problemsBusinessService;
             this.submissionTypesBusinessService = submissionTypesBusinessService;
+            this.submissionsDistributorCommunicationService = submissionsDistributorCommunicationService;
+            this.testRunsDataService = testRunsDataService;
+            this.participantScoresBusinessService = participantScoresBusinessService;
         }
 
         public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
@@ -79,7 +88,7 @@
                     archiveNonBestSubmissionsLimit));
         }
 
-        public Task RecalculatePointsByProblem(int problemId)
+        public async Task RecalculatePointsByProblem(int problemId)
         {
             using (var scope = TransactionsHelper.CreateTransactionScope())
             {
@@ -146,10 +155,8 @@
 
                 var participants = topResults.Keys.ToList();
 
-                var existingScores = this.participantScoresData
-                    .GetAllByProblem(problemId)
-                    .Where(p => participants.Contains(p.ParticipantId))
-                    .ToList();
+                var existingScores =
+                    await this.participantScoresBusinessService.GetByProblemForParticipants(participants, problemId);
 
                 foreach (var existingScore in existingScores)
                 {
@@ -159,12 +166,10 @@
                     existingScore.SubmissionId = topScore.SubmissionId;
                 }
 
-                this.submissionsData.SaveChanges();
+                await this.submissionsData.SaveChanges();
 
                 scope.Complete();
             }
-
-            return Task.CompletedTask;
         }
 
         // public async Task HardDeleteAllArchived() =>
@@ -312,11 +317,113 @@
             await this.submissionsData.Add(newSubmission);
             await this.submissionsData.SaveChanges();
 
-            // newSubmission.Problem = problem;
-            // newSubmission.SubmissionType = await this.submissionTypesBusinessService.GetById(newSubmission.SubmissionTypeId.Value);
+            newSubmission.Problem = problem;
 
-            // var response = this.submissionsDistributorCommunication.AddSubmissionForProcessing(newSubmission).Result;
-            // this.submissionsForProcessingData.AddOrUpdateBySubmission(newSubmission.Id, response.IsSuccess);
+            var response = this.submissionsDistributorCommunicationService.AddSubmissionForProcessing(newSubmission).Result;
+        }
+
+        public async Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult)
+        {
+            var submission = await this.submissionsData
+                .GetByIdQuery(submissionExecutionResult.SubmissionId)
+                .Include(s => s.Problem.Tests)
+                .FirstOrDefaultAsync();
+
+            if (submission == null)
+            {
+                throw new BusinessServiceException(
+                    $"Submission with Id: \"{submissionExecutionResult.SubmissionId}\" not found.");
+            }
+
+            var exception = submissionExecutionResult.Exception;
+            var executionResult = submissionExecutionResult.ExecutionResult;
+
+            submission.ProcessingComment = null;
+            await this.testRunsDataService.DeleteBySubmission(submission.Id);
+
+            if (exception != null)
+            {
+                submission.ProcessingComment = exception.Message + Environment.NewLine + exception.StackTrace;
+                return;
+            }
+
+            if (executionResult == null)
+            {
+                submission.ProcessingComment = "Invalid execution result received. Please contact an administrator.";
+                return;
+            }
+
+            await this.ProcessTestsExecutionResult(submission, executionResult);
+        }
+
+        private async Task ProcessTestsExecutionResult(
+            Submission submission,
+            ExecutionResultResponseModel executionResult)
+        {
+            submission.IsCompiledSuccessfully = executionResult.IsCompiledSuccessfully;
+            submission.CompilerComment = executionResult.CompilerComment;
+            submission.Points = executionResult.TaskResult.Points;
+
+            if (!executionResult.IsCompiledSuccessfully)
+            {
+                await this.UpdateResults(submission);
+            }
+
+            var testResults = executionResult
+                                  .TaskResult
+                                  ?.TestResults
+                              ?? Enumerable.Empty<TestResultResponseModel>();
+
+            submission.TestRuns.AddRange(testResults.Select(testResult =>
+                new TestRun
+                {
+                    CheckerComment = testResult.CheckerDetails.Comment,
+                    ExpectedOutputFragment = testResult.CheckerDetails.ExpectedOutputFragment,
+                    UserOutputFragment = testResult.CheckerDetails.UserOutputFragment,
+                    ExecutionComment = testResult.ExecutionComment,
+                    MemoryUsed = testResult.MemoryUsed,
+                    ResultType = (TestRunResultType)Enum.Parse(typeof(TestRunResultType), testResult.ResultType),
+                    TestId = testResult.Id,
+                    TimeUsed = testResult.TimeUsed,
+                }
+            ));
+
+            submission.Processed = true;
+            this.submissionsData.Update(submission);
+            await this.submissionsData.SaveChanges();
+
+            await this.UpdateResults(submission);
+        }
+
+        private async Task UpdateResults(Submission submission)
+        {
+            await this.SaveParticipantScore(submission);
+
+            this.CacheTestRuns(submission);
+        }
+
+        private async Task SaveParticipantScore(Submission submission)
+        {
+            try
+            {
+                await this.participantScoresBusinessService.SaveForSubmission(submission);
+            }
+            catch (Exception ex)
+            {
+                submission.ProcessingComment = $"Exception in SaveParticipantScore: {ex.Message}";
+            }
+        }
+
+        private void CacheTestRuns(Submission submission)
+        {
+            try
+            {
+                submission.CacheTestRuns();
+            }
+            catch (Exception ex)
+            {
+                submission.ProcessingComment = $"Exception in CacheTestRuns: {ex.Message}";
+            }
         }
     }
 }

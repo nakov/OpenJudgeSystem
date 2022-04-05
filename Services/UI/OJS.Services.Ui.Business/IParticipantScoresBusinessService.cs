@@ -1,4 +1,6 @@
 using OJS.Services.Ui.Models.Problems;
+using OJS.Services.Ui.Models.Submissions;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace OJS.Services.Ui.Business
@@ -17,5 +19,7 @@ namespace OJS.Services.Ui.Business
 
         Task<IEnumerable<ProblemResultServiceModel>> GetParticipantScoresByProblemForUser(int problemId,
             bool isOfficial);
+
+        Task<IEnumerable<ParticipantScoreModel>> GetByProblemForParticipants(IEnumerable<int> participantIds, int problemId);
     }
 }

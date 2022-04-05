@@ -118,6 +118,7 @@ namespace OJS.Data.Models.Submissions
         public int TestsWithoutTrialTestsCount
             => this.Problem?.Tests.Count(x => !x.IsTrialTest) ?? 0;
 
+        // TODO: Should be moved to a data/business service
         public void CacheTestRuns()
         {
             if (this.TestRuns.Any())
