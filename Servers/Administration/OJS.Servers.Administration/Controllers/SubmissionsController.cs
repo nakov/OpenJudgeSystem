@@ -3,6 +3,7 @@ namespace OJS.Servers.Administration.Controllers;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
+using OJS.Data.Models.Participants;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Business;
@@ -75,6 +76,20 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
                 ValueFunc = s => s.Problem != null ? s.Problem!.ProblemGroup.ContestId.ToString() : string.Empty,
             },
         };
+
+    protected override IEnumerable<FormControlViewModel> GenerateFormControls(
+        Submission entity,
+        EntityAction action,
+        IDictionary<string, string> entityDict,
+        IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters)
+    {
+        complexOptionFilters.Add(
+            new KeyValuePair<string, Expression<Func<object, bool>>>(
+                nameof(entity.Participant),
+                p => ((Participant)p).Id == entity.ParticipantId));
+
+        return base.GenerateFormControls(entity, action, entityDict, complexOptionFilters);
+    }
 
     protected override async Task BeforeEntitySaveAsync(Submission submission, AdminActionContext actionContext)
         => await this.problemsValidationHelper
