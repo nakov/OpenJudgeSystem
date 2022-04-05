@@ -1,3 +1,4 @@
+// TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/133
 const baseUrl = window.URLS.UI_URL;
 const administrationBaseUrl = window.URLS.ADMINISTRATION_URL;
 
