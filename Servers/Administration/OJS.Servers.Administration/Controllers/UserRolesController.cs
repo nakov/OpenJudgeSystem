@@ -2,11 +2,14 @@ namespace OJS.Servers.Administration.Controllers;
 
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using OJS.Data.Models.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using static OJS.Common.GlobalConstants.Roles;
 
+[Authorize(Roles = Administrator)]
 public class UserRolesController : BaseAutoCrudAdminController<UserInRole>
 {
     public const string RoleIdKey = nameof(UserInRole.RoleId);
