@@ -17,7 +17,7 @@ const getResultText = (submissionResult: ISubmissionResultType) => (
         : 'Not processed yet.');
 
 const columns: GridColDef[] = [
-    { field: 'id', headerName: '№', flex: 0.5 },
+    { field: 'id', headerName: '#', flex: 0.5 },
     {
         field: 'createdOn',
         headerName: 'Submitted On',
@@ -44,15 +44,15 @@ const SubmissionResults = ({ problemId }: ISubmissionResultsProps) => {
         }
     }, [ getSubmissionResults, problemId ]);
 
-    const reload = () => {
-        (async () => {
-            await getResults();
-        })();
-    };
+    const reload = useCallback(async () => {
+        await getResults();
+    }, []);
 
     useEffect(() => {
         if (currentProblemSubmissionResults.length !== 0) { return; }
-        reload();
+        (async () => {
+            await reload();
+        })();
     }, []);
 
     return (
