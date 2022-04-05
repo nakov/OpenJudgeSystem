@@ -2,12 +2,13 @@ namespace OJS.Servers.Administration.Controllers;
 
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
+using AutoCrudAdmin.ViewModels;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Business;
+using OJS.Services.Administration.Business.Validation.Factories;
 using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
-using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.Data.Infrastructure;
 using System;
@@ -28,6 +29,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
     private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
     private readonly ITestRunsDataService testRunsData;
     private readonly ITransactionsProvider transactions;
+    private readonly IValidatorsFactory<Submission> submissionValidatorsFactory;
 
     public SubmissionsController(
         IProblemsValidationHelper problemsValidationHelper,
@@ -36,7 +38,8 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         ISubmissionsDataService submissionsData,
         ISubmissionsForProcessingDataService submissionsForProcessingData,
         ITestRunsDataService testRunsData,
-        ITransactionsProvider transactions)
+        ITransactionsProvider transactions,
+        IValidatorsFactory<Submission> submissionValidatorsFactory)
     {
         this.problemsValidationHelper = problemsValidationHelper;
         this.participantScoresData = participantScoresData;
@@ -45,10 +48,18 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         this.submissionsForProcessingData = submissionsForProcessingData;
         this.testRunsData = testRunsData;
         this.transactions = transactions;
+        this.submissionValidatorsFactory = submissionValidatorsFactory;
     }
 
     protected override Expression<Func<Submission, bool>>? MasterGridFilter
         => GetMasterGridFilter();
+
+    protected override IEnumerable<Func<Submission, Submission, AdminActionContext, ValidatorResult>> EntityValidators
+        => this.submissionValidatorsFactory.GetValidators();
+
+    protected override IEnumerable<Func<Submission, Submission, AdminActionContext, Task<ValidatorResult>>>
+        AsyncEntityValidators
+        => this.submissionValidatorsFactory.GetAsyncValidators();
 
     protected override IEnumerable<CustomGridColumn<Submission>> CustomColumns
         => new CustomGridColumn<Submission>[]
@@ -66,16 +77,9 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         };
 
     protected override async Task BeforeEntitySaveAsync(Submission submission, AdminActionContext actionContext)
-    {
-        await this.problemsValidationHelper
+        => await this.problemsValidationHelper
             .ValidatePermissionsOfCurrentUser(submission.ProblemId ?? default)
             .VerifyResult();
-
-        if (!submission.ParticipantId.HasValue)
-        {
-            throw new BusinessServiceException("The participant does not exist.");
-        }
-    }
 
     protected override async Task DeleteEntityAndSaveAsync(Submission submission, AdminActionContext actionContext)
     {
