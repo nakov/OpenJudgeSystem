@@ -34,7 +34,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     };
 
     return (
-        <div className={styles.contestCard}>
+        <div id="contest-card" className={styles.contestCard}>
             <div className={styles.contestCardHeader}>{contest.name}</div>
             <div className={styles.contestCardCategoryLabel}>{contest.category}</div>
             <div className={styles.contestCardCountdown}>
@@ -42,6 +42,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
             </div>
             <div className={styles.contestCardControls}>
                 <LinkButton
+                  id="button-card-compete"
                   to={`/contests/${contest.id}/compete`}
                   text="Compete"
                   type={
@@ -52,6 +53,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   size="small"
                 />
                 <LinkButton
+                  id="button-card-practice"
                   to={`/contests/${contest.id}/practice`}
                   text="Practice"
                   type={

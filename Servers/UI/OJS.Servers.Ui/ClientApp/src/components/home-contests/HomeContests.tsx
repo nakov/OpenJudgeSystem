@@ -25,10 +25,11 @@ const HomeContests = () => {
                 {' '}
                 Contests
             </Heading>
-            <div className={styles.contestCardsContainer}>
+            <div id="index-contests-list" className={styles.contestCardsContainer}>
                 {renderContestsList(contests)}
             </div>
             <LinkButton
+              id="button-see-all-contests"
               to="/contests"
               text="See All"
               type="secondary"

@@ -16,7 +16,7 @@ const HeaderGreeting = () => {
         : '';
 
     return (
-        <p className={className}>{text}</p>
+        <p id="greetingMessage" className={className}>{text}</p>
     );
 };
 

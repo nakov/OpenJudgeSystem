@@ -10,16 +10,17 @@ interface IRouteType {
     name: string;
     link: string;
     isPrimary: boolean;
+    id: string;
 }
 
 const userRoutes = [
-    { name: 'My Profile', link: '/profile', isPrimary: true },
-    { name: 'Log out', link: '/logout', isPrimary: false },
+    { id: 'nav-my-profile-link', name: 'My Profile', link: '/profile', isPrimary: true },
+    { id: 'nav-logout-link', name: 'Log out', link: '/logout', isPrimary: false },
 ];
 
 const anonymousRoutes = [
-    { name: 'Login', link: '/login', isPrimary: false },
-    { name: 'Register', link: '/register', isPrimary: true },
+    { name: 'Login', link: '/login', isPrimary: false, id: 'anonymous-login-link' },
+    { name: 'Register', link: '/register', isPrimary: true, id: 'anonymous-register-link' },
 ];
 
 const PageNav = () => {
@@ -32,7 +33,7 @@ const PageNav = () => {
             : anonymousRoutes);
     }, [ user.isLoggedIn ]);
 
-    const itemFunc = ({ name, link, isPrimary }: IRouteType) => {
+    const itemFunc = ({ name, link, isPrimary, id }: IRouteType) => {
         const type = isPrimary
             ? 'primary'
             : 'secondary';
@@ -40,7 +41,7 @@ const PageNav = () => {
         const btnClassName = styles.btn;
 
         return (
-            <LinkButton to={link} text={name} type={type} className={btnClassName} />
+            <LinkButton to={link} id={id} text={name} type={type} className={btnClassName} />
         );
     };
 
@@ -51,6 +52,7 @@ const PageNav = () => {
               itemFunc={itemFunc}
               orientation="horizontal"
               className={styles.listNav}
+
             />
         </nav>
     );

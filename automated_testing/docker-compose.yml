@@ -1,0 +1,12 @@
+version: '3.3'
+
+services:
+  tests:
+    image: tests
+    network_mode: host
+    build:
+      context: .
+      dockerfile: test/Dockerfile
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock 
+      - ./restore:/queries/restore
