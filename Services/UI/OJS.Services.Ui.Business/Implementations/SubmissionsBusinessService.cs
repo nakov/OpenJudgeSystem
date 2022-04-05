@@ -1,4 +1,5 @@
-﻿using OJS.Data.Models.Problems;
+using OJS.Data.Models.Problems;
+using FluentExtensions.Extensions;
 using OJS.Data.Models.Tests;
 
 namespace OJS.Services.Ui.Business.Implementations
@@ -330,12 +331,12 @@ namespace OJS.Services.Ui.Business.Implementations
             var response = this.submissionsDistributorCommunicationService.AddSubmissionForProcessing(newSubmission).Result;
         }
 
-        public void ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult)
+        public async Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult)
         {
-            var submission = this.submissionsData
+            var submission = await this.submissionsData
                 .GetByIdQuery(submissionExecutionResult.SubmissionId)
                 .Include(s => s.Problem.Tests)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             if (submission == null)
             {
@@ -347,23 +348,24 @@ namespace OJS.Services.Ui.Business.Implementations
             var executionResult = submissionExecutionResult.ExecutionResult;
 
             submission.ProcessingComment = null;
-            this.testRunsDataService.DeleteBySubmission(submission.Id);
+            await this.testRunsDataService.DeleteBySubmission(submission.Id);
 
-            if (executionResult != null)
-            {
-                this.ProcessTestsExecutionResult(submission, executionResult);
-            }
-            else if (exception != null)
+            if (exception != null)
             {
                 submission.ProcessingComment = exception.Message + Environment.NewLine + exception.StackTrace;
+                return;
             }
-            else
+
+            if (executionResult == null)
             {
                 submission.ProcessingComment = "Invalid execution result received. Please contact an administrator.";
+                return;
             }
+
+            await this.ProcessTestsExecutionResult(submission, executionResult);
         }
 
-        private void ProcessTestsExecutionResult(
+        private async Task ProcessTestsExecutionResult(
             Submission submission,
             ExecutionResultResponseModel executionResult)
         {
@@ -373,8 +375,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (!executionResult.IsCompiledSuccessfully)
             {
-                this.UpdateResults(submission);
-                return;
+                await this.UpdateResults(submission);
             }
 
             var testResults = executionResult
@@ -382,44 +383,39 @@ namespace OJS.Services.Ui.Business.Implementations
                                   ?.TestResults
                               ?? Enumerable.Empty<TestResultResponseModel>();
 
-            foreach (var testResult in testResults)
-            {
-                var resultType = (TestRunResultType)Enum.Parse(typeof(TestRunResultType), testResult.ResultType);
-
-                var testRun = new TestRun
+            submission.TestRuns.AddRange(testResults.Select(testResult =>
+                new TestRun
                 {
                     CheckerComment = testResult.CheckerDetails.Comment,
                     ExpectedOutputFragment = testResult.CheckerDetails.ExpectedOutputFragment,
                     UserOutputFragment = testResult.CheckerDetails.UserOutputFragment,
                     ExecutionComment = testResult.ExecutionComment,
                     MemoryUsed = testResult.MemoryUsed,
-                    ResultType = resultType,
+                    ResultType = (TestRunResultType)Enum.Parse(typeof(TestRunResultType), testResult.ResultType),
                     TestId = testResult.Id,
                     TimeUsed = testResult.TimeUsed,
-                };
-
-                submission.TestRuns.Add(testRun);
-            }
+                }
+            ));
 
             submission.Processed = true;
             this.submissionsData.Update(submission);
-            this.submissionsData.SaveChanges();
+            await this.submissionsData.SaveChanges();
 
-            this.UpdateResults(submission);
+            await this.UpdateResults(submission);
         }
 
-        private void UpdateResults(Submission submission)
+        private async Task UpdateResults(Submission submission)
         {
-            this.SaveParticipantScore(submission);
+            await this.SaveParticipantScore(submission);
 
             this.CacheTestRuns(submission);
         }
 
-        private void SaveParticipantScore(Submission submission)
+        private async Task SaveParticipantScore(Submission submission)
         {
             try
             {
-                this.participantScoresBusinessService.SaveForSubmission(submission);
+                await this.participantScoresBusinessService.SaveForSubmission(submission);
             }
             catch (Exception ex)
             {

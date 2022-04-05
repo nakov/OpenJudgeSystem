@@ -46,7 +46,7 @@ namespace OJS.Servers.Ui.Controllers.Api
         [HttpPost]
         public async Task<SaveExecutionResultResponseModel> SaveExecutionResult([FromBody] SubmissionExecutionResult submissionExecutionResult)
         {
-            this.submissionsBusiness.ProcessExecutionResult(submissionExecutionResult);
+            await this.submissionsBusiness.ProcessExecutionResult(submissionExecutionResult);
 
             return new SaveExecutionResultResponseModel
             {
