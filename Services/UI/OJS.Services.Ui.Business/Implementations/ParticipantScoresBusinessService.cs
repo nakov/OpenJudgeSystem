@@ -182,6 +182,7 @@ namespace OJS.Services.Ui.Business.Implementations
             IEnumerable<int> participantIds, int problemId)
             => await this.participantScoresData
                 .GetByProblemIdAndParticipants(participantIds, problemId)
-                .MapCollection<ParticipantScoreModel>();
+                .MapCollection<ParticipantScoreModel>()
+                .ToListAsync();
     }
 }
