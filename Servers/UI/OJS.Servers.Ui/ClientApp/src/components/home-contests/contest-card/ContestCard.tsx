@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { IIndexContestsType } from '../../../hooks/contests/use-contests';
+import { useCallback, useMemo } from 'react';
+import { IIndexContestsType } from '../../../hooks/contests/types';
 import Countdown from '../../guidelines/countdown/Countdown';
 import { convertToSecondsRemaining } from '../../../utils/dates';
 import styles from './ContestCard.module.scss';
@@ -10,43 +11,56 @@ interface IContestCardProps {
 }
 
 const ContestCard = ({ contest }: IContestCardProps) => {
-    const renderCountdown = () => {
-        if (contest.canBePracticed && contest.practiceEndTime == null) {
-            return <p>No practice end time.</p>;
-        }
+    const {
+        id,
+        name,
+        category,
+        canBePracticed,
+        practiceEndTime,
+        canBeCompeted,
+        endTime,
+    } = useMemo(
+        () => contest,
+        [ contest ],
+    );
 
-        const timeToRender = contest.canBeCompeted && !contest.canBePracticed
-        // render compete time
-            ? contest.endTime
-            : contest.practiceEndTime;
+    const renderCountdown = useCallback(
+        () => {
+            if (canBePracticed && practiceEndTime == null) {
+                return <p>No practice end time.</p>;
+            }
 
-        // console.log(contest.id);
-        // console.log(timeToRender);
-        // console.log(convertToSecondsRemaining(new Date(timeToRender)));
+            const endDate = canBeCompeted && !canBePracticed
+                ? endTime
+                : practiceEndTime;
+            console.log(endDate);
+            console.log(new Date(endDate));
 
-        return (
-            <Countdown
-              key={contest.id}
-              duration={convertToSecondsRemaining(new Date(timeToRender))}
-              metric="seconds"
-            />
-        );
-    };
+            return (
+                <Countdown
+                  key={id}
+                  duration={convertToSecondsRemaining(new Date(endDate))}
+                  metric="seconds"
+                />
+            );
+        },
+        [ canBeCompeted, canBePracticed, endTime, id, practiceEndTime ],
+    );
 
     return (
         <div id="contest-card" className={styles.contestCard}>
-            <div className={styles.contestCardHeader}>{contest.name}</div>
-            <div className={styles.contestCardCategoryLabel}>{contest.category}</div>
+            <div className={styles.contestCardHeader}>{name}</div>
+            <div className={styles.contestCardCategoryLabel}>{category}</div>
             <div className={styles.contestCardCountdown}>
                 {renderCountdown()}
             </div>
             <div className={styles.contestCardControls}>
                 <LinkButton
                   id="button-card-compete"
-                  to={`/contests/${contest.id}/compete`}
+                  to={`/contests/${id}/compete`}
                   text="Compete"
                   type={
-                        contest.canBeCompeted
+                        canBeCompeted
                             ? 'primary'
                             : 'disabled'
                     }
@@ -54,10 +68,10 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                 />
                 <LinkButton
                   id="button-card-practice"
-                  to={`/contests/${contest.id}/practice`}
+                  to={`/contests/${id}/practice`}
                   text="Practice"
                   type={
-                        contest.canBePracticed
+                        canBePracticed
                             ? 'secondary'
                             : 'disabled'
                     }
