@@ -46,7 +46,7 @@ const SubmissionResults = ({ problemId }: ISubmissionResultsProps) => {
         (async () => {
             await getResults();
         })();
-    }, []);
+    }, [ getResults ]);
 
     return (
         currentProblemSubmissionResults.length === 0

@@ -13,9 +13,12 @@ const SubmissionResults = () => {
 
     const getIsCorrectAnswerResultType = (run: ITestRunDetailsType) => run.resultType === 'CorrectAnswer';
 
-    const getTestRunHeadingClassName = (run: ITestRunDetailsType) => (getIsCorrectAnswerResultType(run)
-        ? styles.correctTestRunHeading
-        : styles.wrongTestRunHeading);
+    const getTestRunHeadingClassName = useCallback(
+        (run: ITestRunDetailsType) => (getIsCorrectAnswerResultType(run)
+            ? styles.correctTestRunHeading
+            : styles.wrongTestRunHeading),
+        [],
+    );
 
     const renderTimeAndMemoryUsed = (run: ITestRunDetailsType) => (
         <>

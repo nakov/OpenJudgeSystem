@@ -21,7 +21,7 @@ const ContestPage = () => {
         (async () => {
             await startContestParticipation(Number(contestId), participationType === 'compete');
         })();
-    }, []);
+    }, [ contestId, participationType, startContestParticipation ]);
 
     return (
         <Contest />

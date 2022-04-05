@@ -15,7 +15,7 @@ const HomeContests = () => {
     }, [ getForHome ]);
 
     const renderContestsList = (contests: IIndexContestsType[]) => contests.map((contest: IIndexContestsType) => (
-        <ContestCard contest={contest} />
+        <ContestCard key={contest.id} contest={contest} />
     ));
 
     const render = (headerTitle: string, contests: IIndexContestsType[]) => (

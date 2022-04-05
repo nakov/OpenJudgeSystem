@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.css": "/static/css/main.9f4f14d1.chunk.css",
+    "main.js": "/static/js/main.4ddb34e0.chunk.js",
+    "main.js.map": "/static/js/main.4ddb34e0.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.53df192c.js",
+    "runtime-main.js.map": "/static/js/runtime-main.53df192c.js.map",
+    "static/css/2.e492b76a.chunk.css": "/static/css/2.e492b76a.chunk.css",
+    "static/js/2.b196f4d3.chunk.js": "/static/js/2.b196f4d3.chunk.js",
+    "static/js/2.b196f4d3.chunk.js.map": "/static/js/2.b196f4d3.chunk.js.map",
+    "index.html": "/index.html",
+    "static/css/2.e492b76a.chunk.css.map": "/static/css/2.e492b76a.chunk.css.map",
+    "static/css/main.9f4f14d1.chunk.css.map": "/static/css/main.9f4f14d1.chunk.css.map",
+    "static/js/2.b196f4d3.chunk.js.LICENSE.txt": "/static/js/2.b196f4d3.chunk.js.LICENSE.txt",
+    "static/media/Loading.a5b6dda5.svg": "/static/media/Loading.a5b6dda5.svg",
+    "static/media/FormControl.module.scss": "/static/media/check-white.cd9947aa.svg",
+    "static/media/codicon.css": "/static/media/codicon.f1fd2824.ttf",
+    "static/media/softuni-logo-horizontal.c94ee051.svg": "/static/media/softuni-logo-horizontal.c94ee051.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.53df192c.js",
+    "static/css/2.e492b76a.chunk.css",
+    "static/js/2.b196f4d3.chunk.js",
+    "static/css/main.9f4f14d1.chunk.css",
+    "static/js/main.4ddb34e0.chunk.js"
+  ]
+}
