@@ -1,5 +1,6 @@
 namespace OJS.Servers.Administration.Controllers;
 
+using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
@@ -34,7 +35,8 @@ using Resource = OJS.Common.Resources.TestsControllers;
 
 public class TestsController : BaseAutoCrudAdminController<Test>
 {
-    private const string ProblemIdKey = nameof(Test.ProblemId);
+    public const string ProblemIdKey = nameof(Test.ProblemId);
+
     private const int TestInputMaxLengthInGrid = 20;
 
     private readonly IProblemsDataService problemsData;
@@ -70,12 +72,12 @@ public class TestsController : BaseAutoCrudAdminController<Test>
     }
 
     protected override Expression<Func<Test, bool>>? MasterGridFilter
-        => this.TryGetEntityIdForColumnFilter(ProblemIdKey, out var problemId)
+        => this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
             ? t => t.ProblemId == problemId
             : base.MasterGridFilter;
 
     protected override IEnumerable<AutoCrudAdminGridToolbarActionViewModel> CustomToolbarActions
-        => this.TryGetEntityIdForColumnFilter(ProblemIdKey, out var problemId)
+        => this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
             ? this.GetCustomToolbarActions(problemId)
             : base.CustomToolbarActions;
 
@@ -243,6 +245,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             Name = AdditionalFormFields.Input.ToString(),
             Type = typeof(string),
             Value = entity.InputDataAsString,
+            FormControlType = FormControlType.TextArea,
         });
 
         formControls.Add(new FormControlViewModel
@@ -250,6 +253,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             Name = AdditionalFormFields.Output.ToString(),
             Type = typeof(string),
             Value = entity.OutputDataAsString,
+            FormControlType = FormControlType.TextArea,
         });
 
         return formControls;

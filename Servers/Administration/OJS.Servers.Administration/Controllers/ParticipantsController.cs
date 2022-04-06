@@ -2,6 +2,7 @@ namespace OJS.Servers.Administration.Controllers;
 
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Participants;
 using OJS.Services.Administration.Business.Validation.Factories;
 using OJS.Services.Administration.Business.Validation.Helpers;
@@ -13,6 +14,8 @@ using System.Threading.Tasks;
 
 public class ParticipantsController : BaseAutoCrudAdminController<Participant>
 {
+    public const string ContestIdKey = nameof(Participant.ContestId);
+
     private readonly IValidatorsFactory<Participant> participantValidatorsFactory;
     private readonly IContestsValidationHelper contestsValidationHelper;
 
@@ -24,8 +27,20 @@ public class ParticipantsController : BaseAutoCrudAdminController<Participant>
         this.contestsValidationHelper = contestsValidationHelper;
     }
 
+    public IActionResult Submissions([FromQuery] IDictionary<string, string> complexId)
+        => this.RedirectToActionWithNumberFilter(
+            nameof(SubmissionsController),
+            SubmissionsController.ParticipantIdKey,
+            this.GetEntityIdFromQuery<int>(complexId));
+
     protected override IEnumerable<GridAction> DefaultActions
         => new[] { new GridAction { Action = nameof(this.Delete) } };
+
+    protected override IEnumerable<GridAction> CustomActions
+        => new []
+        {
+            new GridAction { Action = nameof(this.Submissions) },
+        };
 
     protected override IEnumerable<Func<Participant, Participant, AdminActionContext, ValidatorResult>> EntityValidators
         => this.participantValidatorsFactory.GetValidators();

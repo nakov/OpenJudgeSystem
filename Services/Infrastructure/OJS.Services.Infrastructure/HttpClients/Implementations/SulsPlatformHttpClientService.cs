@@ -54,7 +54,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
             var externalDataResult = new ExternalDataRetrievalResult<TData>();
 
             var queryStringSeparator = GetQueryStringSeparator(endpoint);
-            var requestUrl = $"/{endpoint}{queryStringSeparator}apiKey={this.apiKey}";
+            var requestUrl = $"{endpoint}{queryStringSeparator}apiKey={this.apiKey}";
 
             try
             {

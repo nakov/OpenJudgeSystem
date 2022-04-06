@@ -44,5 +44,7 @@ namespace OJS.Data.Models.Participants
             new HashSet<ProblemForParticipant>();
 
         public virtual ICollection<ParticipantAnswer> Answers { get; set; } = new HashSet<ParticipantAnswer>();
+
+        public override string ToString() => this.UserId;
     }
 }

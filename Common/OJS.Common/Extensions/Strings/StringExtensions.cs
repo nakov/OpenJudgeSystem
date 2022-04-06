@@ -194,21 +194,5 @@
 
             return result.ToString();
         }
-
-        public static string ToEllipsis(this string longText, int maxLength)
-        {
-            var ellipsis = "...";
-            if (maxLength < ellipsis.Length)
-            {
-                throw new ArgumentException("Max length can't be less than the length of ellipsis", nameof(maxLength));
-            }
-
-            if (longText.Length > maxLength)
-            {
-                return longText[..(maxLength - ellipsis.Length + 1)] + ellipsis;
-            }
-
-            return longText;
-        }
     }
 }

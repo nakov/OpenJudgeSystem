@@ -15,7 +15,7 @@ namespace OJS.Data
     using SoftUni.Data.Infrastructure;
     using SoftUni.Data.Infrastructure.Enumerations;
 
-    public class OjsDbContext : BaseAuthDbContext<OjsDbContext, UserProfile>
+    public class OjsDbContext : BaseAuthDbContext<OjsDbContext, UserProfile, Role, UserInRole>
     {
         private readonly IGlobalQueryFilterTypesCache? globalQueryFilterTypesCache;
 
@@ -93,14 +93,28 @@ namespace OJS.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<UserProfile>()
-                .Property(x => x.UserName)
-                .IsRequired()
-                .HasMaxLength(ConstraintConstants.User.UsernameMaxLength)
-                .IsUnicode(false);
+            base.OnModelCreating(builder);
 
-            builder.Entity<UserProfile>()
-                .OwnsOne(x => x.UserSettings);
+            builder.Entity<UserProfile>(b =>
+            {
+                b.Property(x => x.UserName)
+                    .IsRequired()
+                    .HasMaxLength(ConstraintConstants.User.UsernameMaxLength)
+                    .IsUnicode(false);
+
+                b.OwnsOne(x => x.UserSettings);
+
+                b.HasMany(x => x.UsersInRoles)
+                    .WithOne(x => x.User)
+                    .HasForeignKey(x => x.UserId)
+                    .IsRequired();
+            });
+
+            builder.Entity<Role>()
+                .HasMany(x => x.UsersInRoles)
+                .WithOne(x => x.Role)
+                .HasForeignKey(x => x.RoleId)
+                .IsRequired();
 
             builder.Entity<Ip>()
                 .HasIndex(x => x.Value)
@@ -133,8 +147,6 @@ namespace OJS.Data
             this.FixMultipleCascadePaths(builder);
 
             this.TryRegisterMatchingGlobalQueryFiltersForRequiredDeletableEntities(builder);
-
-            base.OnModelCreating(builder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)

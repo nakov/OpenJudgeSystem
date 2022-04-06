@@ -11,7 +11,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     {
         public static async Task CreateOrUpdateRoles(this IServiceProvider serviceProvider)
         {
-            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<Role>>();
             var userManager = serviceProvider.GetRequiredService<UserManager<UserProfile>>();
             string[] roleNames = { Administrator, Lecturer };
 
@@ -20,7 +20,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                 var roleExist = await roleManager.RoleExistsAsync(roleName);
                 if (!roleExist)
                 {
-                    await roleManager.CreateAsync(new IdentityRole(roleName));
+                    await roleManager.CreateAsync(new Role(roleName));
                 }
             }
 

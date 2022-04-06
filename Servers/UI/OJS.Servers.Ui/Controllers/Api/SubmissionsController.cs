@@ -1,6 +1,7 @@
 ﻿using OJS.Servers.Ui.Models.Submissions.Details;
 using OJS.Servers.Ui.Models.Submissions.Results;
-using System.Collections;
+using OJS.Services.Ui.Models.Submissions;
+using OJS.Web.Models.Submissions;
 
 namespace OJS.Servers.Ui.Controllers.Api
 {
@@ -12,8 +13,6 @@ namespace OJS.Servers.Ui.Controllers.Api
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using OJS.Servers.Ui.Models.Submissions.Profile;
 
-
-    [Authorize]
     public class SubmissionsController : Controller
     {
         private ISubmissionsBusinessService submissionsBusiness;
@@ -38,9 +37,21 @@ namespace OJS.Servers.Ui.Controllers.Api
 
         public async Task<IEnumerable<SubmissionResultsResponseModel>> GetSubmissionResultsByProblem(
             int id,
-            [FromQuery]bool isOfficial)
+            [FromQuery]bool isOfficial,
+            [FromQuery]int take)
             => await this.submissionsBusiness
-                .GetSubmissionResultsByProblem(id, isOfficial)
+                .GetSubmissionResultsByProblem(id, isOfficial, take)
                 .MapCollection<SubmissionResultsResponseModel>();
+
+        [HttpPost]
+        public async Task<SaveExecutionResultResponseModel> SaveExecutionResult([FromBody] SubmissionExecutionResult submissionExecutionResult)
+        {
+            await this.submissionsBusiness.ProcessExecutionResult(submissionExecutionResult);
+
+            return new SaveExecutionResultResponseModel
+            {
+                SubmissionId = submissionExecutionResult.SubmissionId,
+            };
+        }
     }
 }

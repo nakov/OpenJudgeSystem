@@ -34,11 +34,11 @@ const useHttp = (url: string, headers: IDictionary<string> | null = null) => {
         }
     }, [ ]);
 
-    const replaceParameters = (urlToReplace: string, parameters: IDictionary<string>) => urlToReplace.replace(/%\w+%/g, (placeholder) => {
+    const replaceParameters = (urlToReplace: string, parameters: IDictionary<any>) => urlToReplace.replace(/%\w+%/g, (placeholder) => {
         const placeholderKey = placeholder
             .replace(/^%/, '')
             .replace(/%$/, '');
-        return parameters[placeholderKey] || placeholder;
+        return parameters[placeholderKey].toString() || placeholder;
     });
 
     const data = useMemo(() => {
@@ -50,7 +50,7 @@ const useHttp = (url: string, headers: IDictionary<string> | null = null) => {
     }, [ response ]);
 
     const get = useCallback(
-        (parameters?: IDictionary<string>, responseType = 'json') => request(() => axios.get(
+        (parameters?: IDictionary<any>, responseType = 'json') => request(() => axios.get(
             replaceParameters(url, parameters == null
                 ? {}
                 : parameters),
@@ -60,7 +60,7 @@ const useHttp = (url: string, headers: IDictionary<string> | null = null) => {
     );
 
     const post = useCallback(
-        (requestData: any, parameters?: IDictionary<string>) => request(() => axios.post(
+        (requestData: any, parameters?: IDictionary<any>) => request(() => axios.post(
             replaceParameters(url, parameters == null
                 ? {}
                 : parameters),

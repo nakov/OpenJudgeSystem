@@ -22,7 +22,7 @@ interface ISubmissionsProviderProps extends IHaveChildrenProps {}
 
 const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
-    const { selectedSubmissionTypeId, currentProblem } = useContests();
+    const { selectedSubmissionTypeId, currentProblem, isContestParticipationOfficial } = useContests();
     const [ submissions, setSubmissions ] = useState<ISubmissionType[]>([]);
     const [ currentSubmissionCode, setCurrentSubmissionCode ] = useState<string>(defaultState.currentSubmissionCode);
 
@@ -48,10 +48,17 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             ProblemId: currentProblem?.id,
             SubmissionTypeId: selectedSubmissionTypeId,
             Content: currentSubmissionCode,
-            Official: true,
+            Official: isContestParticipationOfficial,
         });
         stopLoading();
-    }, [ startLoading, submitRequest, currentProblem, selectedSubmissionTypeId, currentSubmissionCode, stopLoading ]);
+    }, [
+        startLoading,
+        submitRequest,
+        currentProblem?.id,
+        selectedSubmissionTypeId,
+        currentSubmissionCode,
+        isContestParticipationOfficial,
+        stopLoading ]);
 
     const setCode = (code: string) => {
         setCurrentSubmissionCode(code);
