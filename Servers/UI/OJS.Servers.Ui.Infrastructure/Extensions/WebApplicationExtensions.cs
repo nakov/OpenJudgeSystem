@@ -22,6 +22,7 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
                 endpoints.MapControllerRoute(
                     "default",
                     "{controller=Home}/{action=Index}");
+                endpoints.MapFallbackToController("index", "home");
             });
 
             app.UseSpa(spa =>

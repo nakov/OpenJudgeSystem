@@ -36,6 +36,8 @@
       <_ContentIncludedByDefault Remove="Views\Shared\Error.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Shared\_Layout.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Shared\_ValidationScriptsPartial.cshtml" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\9571ccf8bb84a418b2ad.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\asset-manifest.json" />
     </ItemGroup>
 
     <ItemGroup>
@@ -45,6 +47,7 @@
     <ItemGroup>
         <!-- Don't publish the SPA source files, but do show them in the project files list -->
         <Content Remove="$(SpaRoot)**" />
+        <Content Include="ClientApp\dist\asset-manifest.json" />
         <None Remove="$(SpaRoot)**" />
         <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
     </ItemGroup>
