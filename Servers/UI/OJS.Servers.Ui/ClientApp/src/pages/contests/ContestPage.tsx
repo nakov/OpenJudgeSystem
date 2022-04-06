@@ -13,7 +13,6 @@ interface IContestPageParamsProps {
 
 const ContestPage = () => {
     const { contestId } = useParams<IContestPageParamsProps>();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { participationType } = useParams<IContestPageParamsProps>();
     const { startContestParticipation } = useContests();
 
@@ -21,7 +20,7 @@ const ContestPage = () => {
         (async () => {
             await startContestParticipation(Number(contestId), participationType === 'compete');
         })();
-    }, []);
+    }, [ contestId, participationType, startContestParticipation ]);
 
     return (
         <Contest />

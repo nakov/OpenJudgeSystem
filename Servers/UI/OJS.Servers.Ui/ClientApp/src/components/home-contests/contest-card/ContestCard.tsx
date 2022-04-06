@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { IIndexContestsType } from '../../../hooks/contests/types';
 import Countdown from '../../guidelines/countdown/Countdown';
 import { convertToSecondsRemaining } from '../../../utils/dates';
@@ -19,11 +19,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
         practiceEndTime,
         canBeCompeted,
         endTime,
-    } = useMemo(
-        () => contest,
-        [ contest ],
-    );
-
+    } = contest;
     const renderCountdown = useCallback(
         () => {
             if (canBePracticed && practiceEndTime == null) {
@@ -33,8 +29,6 @@ const ContestCard = ({ contest }: IContestCardProps) => {
             const endDate = canBeCompeted && !canBePracticed
                 ? endTime
                 : practiceEndTime;
-            console.log(endDate);
-            console.log(new Date(endDate));
 
             return (
                 <Countdown

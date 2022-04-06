@@ -1,6 +1,7 @@
 ﻿namespace OJS.Servers.Ui.Controllers
 {
     using Microsoft.AspNetCore.Mvc;
+    using OJS.Common.Extensions;
     using OJS.Servers.Ui.Models;
     using OJS.Servers.Infrastructure.Controllers;
     using OJS.Services.Ui.Business;
@@ -14,9 +15,9 @@
             => this.contestsBusiness = contestsBusiness;
 
         public IActionResult Index()
-        {
-            var vm = new CreateReactAppViewModel(HttpContext);
-            return this.View(vm);
-        }
+            => this.View(new HomeViewModel
+            {
+                IsAuthenticated = this.HttpContext.User.IsAuthenticated(),
+            });
     }
 }

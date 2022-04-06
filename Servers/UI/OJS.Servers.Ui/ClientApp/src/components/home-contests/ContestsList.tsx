@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useCallback } from 'react';
 import { IIndexContestsType } from '../../hooks/contests/types';
 import ContestCard from './contest-card/ContestCard';
 import Heading from '../guidelines/headings/Heading';
@@ -15,9 +16,13 @@ const ContestsList = ({
     title,
     contests,
 }: IContestsListProps) => {
-    const renderContest = (contest: IIndexContestsType) => (
-        <ContestCard contest={contest} />
+    const renderContest = useCallback(
+        (contest: IIndexContestsType) => (
+            <ContestCard contest={contest} />
+        ),
+        [],
     );
+
     return (
         <>
             <Heading>

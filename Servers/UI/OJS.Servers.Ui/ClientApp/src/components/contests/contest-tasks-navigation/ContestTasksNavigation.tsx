@@ -1,42 +1,59 @@
 import * as React from 'react';
+import { useCallback } from 'react';
 import List from '../../guidelines/lists/List';
 import Heading from '../../guidelines/headings/Heading';
+import { Button } from '../../guidelines/buttons/Button';
+import { IProblemType } from '../../../hooks/contests/types';
 import { useContests } from '../../../hooks/contests/use-contests';
 import styles from './ContestTasksNavigation.module.scss';
-import { IProblemType } from '../../../hooks/contests/types';
+
+const compareByOrderBy = (p1: IProblemType, p2: IProblemType) => p1.orderBy - p2.orderBy;
 
 const ContestTasksNavigation = () => {
-    const { currentContest, currentProblem, setProblem } = useContests();
+    const {
+        currentContest,
+        currentProblem,
+        setProblem,
+    } = useContests();
 
-    const renderTask = (problem: IProblemType) => {
-        // eslint-disable-next-line eqeqeq
-        const className = currentProblem?.id == problem.id
-            ? styles.taskSideNavigationItemSelected
-            : styles.taskSideNavigationItem;
+    const renderTask = useCallback(
+        (problem: IProblemType) => {
+            const { id: currentId } = currentProblem || {};
+            const { id } = problem;
 
-        return (
-            // eslint-disable-next-line max-len
-            // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/click-events-have-key-events
-            <p
-              key={problem.id}
-              className={className}
-              onClick={() => setProblem(problem)}
-            >
-                {problem.name}
-            </p>
-        );
-    };
+            const className = currentId === id
+                ? styles.taskSideNavigationItemSelected
+                : styles.taskSideNavigationItem;
 
-    const renderTasksList = () => (
-        currentContest == null
-            ? null
-            : (
+            return (
+                <Button
+                  onClick={() => setProblem(problem)}
+                  className={className}
+                  type="plain"
+                >
+                    {problem.name}
+                </Button>
+            );
+        },
+        [ currentProblem, setProblem ],
+    );
+
+    const renderTasksList = useCallback(
+        () => {
+            if (currentContest === null) {
+                return null;
+            }
+
+            const { problems } = currentContest;
+            return (
                 <List
-                  values={currentContest.problems.sort((a, b) => a.orderBy - b.orderBy)}
+                  values={problems.sort(compareByOrderBy)}
                   itemFunc={renderTask}
                   className={styles.tasksListSideNavigation}
                 />
-            )
+            );
+        },
+        [ currentContest, renderTask ],
     );
 
     return (

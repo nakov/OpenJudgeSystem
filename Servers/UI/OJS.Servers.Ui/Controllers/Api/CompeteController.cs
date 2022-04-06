@@ -6,7 +6,6 @@ using OJS.Services.Ui.Business;
 using OJS.Services.Ui.Models.Contests;
 using OJS.Services.Ui.Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

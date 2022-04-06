@@ -1,9 +1,6 @@
-import React, {
-    createContext, useCallback,
-    useContext, useEffect, useState,
-} from 'react';
-
-import { store } from 'react-notifications-component';
+import * as React from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { Store } from 'react-notifications-component';
 import { INotificationType } from '../common/types';
 import 'react-notifications-component/dist/theme.css';
 
@@ -64,7 +61,7 @@ const NotificationsProvider = ({ children }: INotificationsProviderProps) => {
 
     useEffect(() => {
         if (showNotification) {
-            store.addNotification({
+            Store.addNotification({
                 title: notification.title,
                 message: notification.message,
                 type: notification.type,
