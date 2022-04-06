@@ -14,40 +14,58 @@ import ProblemResources from '../../problems/problem-resources/ProblemResources'
 import SubmissionResults from '../../problems/problem-submissions/SubmissionResults';
 
 const ContestMainNavigation = () => {
-    const { currentProblem, setSubmissionType } = useContests();
-    const { submit: submitRequest, setCode } = useSubmissions();
+    const {
+        currentProblem,
+        setSubmissionType,
+    } = useContests();
+    const {
+        submit,
+        setCode,
+    } = useSubmissions();
 
-    const renderSubmissionTypesSelectors = (submissionType: ISubmissionTypeType) => {
-        // eslint-disable-next-line eqeqeq
-        const isSelected = currentProblem?.allowedSubmissionTypes.length == 1
-            ? true
-            : submissionType.isSelectedByDefault;
+    const renderSubmissionTypesSelectors = useCallback(
+        (submissionType: ISubmissionTypeType) => {
+            const { id, name } = submissionType;
+            const { allowedSubmissionTypes } = currentProblem || {};
+            const isSelected = allowedSubmissionTypes && allowedSubmissionTypes.length === 1
+                ? true
+                : submissionType.isSelectedByDefault;
 
-        return (
-            <ExecutionTypeSelector
-              id={submissionType.id}
-              value={submissionType.name}
-              isSelected={isSelected}
-              onSelect={() => setSubmissionType(submissionType.id)}
-            />
-        );
-    };
+            return (
+                <ExecutionTypeSelector
+                  id={id}
+                  value={name}
+                  isSelected={isSelected}
+                  onSelect={() => setSubmissionType(id)}
+                />
+            );
+        },
+        [ currentProblem, setSubmissionType ],
+    );
 
-    const renderSubmissionTypesSelectorsList = () => (currentProblem == null
-        ? null
-        : (
-            <List
-              className={styles.submissionTypesList}
-              values={currentProblem.allowedSubmissionTypes}
-              itemFunc={renderSubmissionTypesSelectors}
-              orientation="horizontal"
-            />
-        ));
+    const renderSubmissionTypesSelectorsList = useCallback(
+        () => {
+            if (currentProblem == null) {
+                return null;
+            }
+            const { allowedSubmissionTypes } = currentProblem;
 
-    const submit = useCallback(async () => {
-        await submitRequest();
+            return (
+                <List
+                  className={styles.submissionTypesList}
+                  values={allowedSubmissionTypes}
+                  itemFunc={renderSubmissionTypesSelectors}
+                  orientation="horizontal"
+                />
+            );
+        },
+        [ currentProblem, renderSubmissionTypesSelectors ],
+    );
+
+    const handleOnSubmit = useCallback(async () => {
+        await submit();
         setCode('');
-    }, [ setCode, submitRequest ]);
+    }, [ setCode, submit ]);
 
     return (
         <div className={styles.contestMainWrapper}>
@@ -59,7 +77,13 @@ const ContestMainNavigation = () => {
                         <div className={styles.executionTypeSelectors}>
                             {renderSubmissionTypesSelectorsList()}
                         </div>
-                        <div><Button type="primary" text="Submit" onClick={submit} /></div>
+                        <div>
+                            <Button
+                              type="primary"
+                              text="Submit"
+                              onClick={handleOnSubmit}
+                            />
+                        </div>
                     </div>
                 </div>
                 <div className={styles.contestTabControls}>

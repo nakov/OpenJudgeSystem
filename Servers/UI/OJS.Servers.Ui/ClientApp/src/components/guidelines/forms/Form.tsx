@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useCallback, useMemo } from 'react';
 import IHaveChildrenProps from '../../common/IHaveChildrenProps';
 import { Button } from '../buttons/Button';
 import generateId from '../../../utils/id-generator';
@@ -15,17 +16,25 @@ const Form = ({
     submitText = 'Submit',
     id = generateId(),
 }: IFormProps) => {
-    const handleSubmit = async (ev: any) => {
-        ev.preventDefault();
-        onSubmit();
-        return false;
-    };
+    const handleSubmit = useCallback(
+        async (ev: any) => {
+            ev.preventDefault();
+            onSubmit();
+            return false;
+        },
+        [ onSubmit ],
+    );
+
+    const btnId = useMemo(
+        () => `btn-submit-${id}`,
+        [ id ],
+    );
 
     return (
         <form id={id} onSubmit={(ev) => handleSubmit(ev)}>
             {children}
             <Button
-              id="$btn-submit-{id}"
+              id={btnId}
               onClick={(ev) => handleSubmit(ev)}
               text={submitText}
               type="submit"

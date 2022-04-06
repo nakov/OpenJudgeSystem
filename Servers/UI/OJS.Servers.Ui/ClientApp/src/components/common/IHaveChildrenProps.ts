@@ -1,11 +1,11 @@
-import * as React from 'react';
+import { ReactNode } from 'react';
 
 interface IHaveChildrenProps {
-    children: React.ReactNode,
+    children: ReactNode,
 }
 
 interface IHaveOptionalChildrenProps {
-    children?: React.ReactNode,
+    children?: ReactNode,
 }
 
 export type {

@@ -38,7 +38,8 @@ const defaultState = {
 
 const ContestsContext = createContext<IContestsContext>(defaultState as IContestsContext);
 
-interface IContestsProviderProps extends IHaveChildrenProps {}
+interface IContestsProviderProps extends IHaveChildrenProps {
+}
 
 const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ activeContests, setActiveContests ] = useState<IIndexContestsType[]>([]);
@@ -63,7 +64,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     const {
         get: getProblemResourceRequest,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         response: getProblemResourceResponse,
     } = useHttp(getProblemResourceUrl);
 
@@ -80,25 +80,35 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         stopLoading();
     }, [ startContestParticipationRequest, startLoading, stopLoading ]);
 
-    const hasDefaultSubmissionType = (submissionTypes: ISubmissionTypeType[]) => submissionTypes.some((st) => st.isSelectedByDefault);
+    const hasDefaultSubmissionType = useCallback(
+        (submissionTypes: ISubmissionTypeType[]) => submissionTypes.some((st) => st.isSelectedByDefault),
+        [],
+    );
 
-    const setSubmissionType = (id: number) => {
-        setSelectedSubmissionTypeId(id);
-    };
+    const setSubmissionType = useCallback(
+        (id: number) => setSelectedSubmissionTypeId(id),
+        [],
+    );
 
     const setDefaultSubmissionType = useCallback((submissionTypes: ISubmissionTypeType[]) => {
         const submissionType = hasDefaultSubmissionType(submissionTypes)
             ? submissionTypes.filter((st) => st.isSelectedByDefault)[0]
             : submissionTypes[0];
         setSubmissionType(submissionType.id);
-    }, []);
+    }, [ hasDefaultSubmissionType, setSubmissionType ]);
 
-    const setProblem = (problem: IProblemType) => {
-        setCurrentProblem(problem);
-        setDefaultSubmissionType(problem.allowedSubmissionTypes);
-    };
+    const setProblem = useCallback(
+        (problem: IProblemType) => {
+            setCurrentProblem(problem);
+            setDefaultSubmissionType(problem.allowedSubmissionTypes);
+        },
+        [ setDefaultSubmissionType ],
+    );
 
-    const orderProblemsByOrderBy = (problems: IProblemType[]) => problems.sort((a, b) => a.orderBy - b.orderBy);
+    const orderProblemsByOrderBy = useCallback(
+        (problems: IProblemType[]) => problems.sort((a, b) => a.orderBy - b.orderBy),
+        [],
+    );
 
     const getProblemResourceFile = useCallback(async (resourceId: number) => {
         startLoading();
@@ -124,7 +134,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             setCurrentProblem(problems[0]);
             setDefaultSubmissionType(problems[0].allowedSubmissionTypes);
         }
-    }, [ setDefaultSubmissionType, startContestParticipationData ]);
+    }, [ orderProblemsByOrderBy, setDefaultSubmissionType, startContestParticipationData ]);
 
     useEffect(() => {
         console.log(currentProblem);
@@ -135,10 +145,10 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         isContestParticipationOfficial,
         currentProblem,
         selectedSubmissionTypeId,
-        setProblem,
-        setSubmissionType,
         activeContests,
         pastContests,
+        setProblem,
+        setSubmissionType,
         getForHome,
         startContestParticipation,
         getProblemResourceFile,

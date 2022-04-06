@@ -53,7 +53,7 @@ const SubmissionResults = ({ problemId }: ISubmissionResultsProps) => {
         (async () => {
             await reload();
         })();
-    }, []);
+    }, [ getResults ]);
 
     return (
         currentProblemSubmissionResults.length === 0
