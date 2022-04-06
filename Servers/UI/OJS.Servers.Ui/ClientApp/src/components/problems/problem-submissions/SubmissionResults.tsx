@@ -36,7 +36,10 @@ const columns: GridColDef[] = [
 ];
 
 const SubmissionResults = ({ problemId }: ISubmissionResultsProps) => {
-    const { currentProblemSubmissionResults, getSubmissionResults } = useSubmissionsDetails();
+    const {
+        currentProblemSubmissionResults,
+        getSubmissionResults,
+    } = useSubmissionsDetails();
 
     const getResults = useCallback(async () => {
         if (problemId != null) {
@@ -46,14 +49,14 @@ const SubmissionResults = ({ problemId }: ISubmissionResultsProps) => {
 
     const reload = useCallback(async () => {
         await getResults();
-    }, []);
+    }, [ getResults ]);
 
     useEffect(() => {
         if (currentProblemSubmissionResults.length !== 0) { return; }
         (async () => {
             await reload();
         })();
-    }, [ getResults ]);
+    }, [ currentProblemSubmissionResults, getResults, reload ]);
 
     return (
         currentProblemSubmissionResults.length === 0

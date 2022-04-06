@@ -6,6 +6,7 @@ import { Button } from '../../guidelines/buttons/Button';
 import { IProblemType } from '../../../hooks/contests/types';
 import { useContests } from '../../../hooks/contests/use-contests';
 import styles from './ContestTasksNavigation.module.scss';
+import concatClassNames from '../../../utils/class-names';
 
 const compareByOrderBy = (p1: IProblemType, p2: IProblemType) => p1.orderBy - p2.orderBy;
 
@@ -21,9 +22,14 @@ const ContestTasksNavigation = () => {
             const { id: currentId } = currentProblem || {};
             const { id } = problem;
 
-            const className = currentId === id
-                ? styles.taskSideNavigationItemSelected
-                : styles.taskSideNavigationItem;
+            const selectedClassName = currentId === id
+                ? styles.selected
+                : '';
+
+            const className = concatClassNames(
+                styles.taskSideNavigationItem,
+                selectedClassName,
+            );
 
             return (
                 <Button
@@ -50,6 +56,7 @@ const ContestTasksNavigation = () => {
                   values={problems.sort(compareByOrderBy)}
                   itemFunc={renderTask}
                   className={styles.tasksListSideNavigation}
+                  type="numbered"
                 />
             );
         },

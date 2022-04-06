@@ -5,7 +5,11 @@ import { setLayout } from '../../pages/shared/set-layout';
 import ContestsList from './ContestsList';
 
 const HomeContests = () => {
-    const { activeContests, pastContests, getForHome } = useContests();
+    const {
+        activeContests,
+        pastContests,
+        getForHome,
+    } = useContests();
 
     useEffect(() => {
         (async () => {

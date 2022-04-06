@@ -24,10 +24,8 @@ interface ISubmissionsDetailsProviderProps extends IHaveChildrenProps {}
 const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
     const { isContestParticipationOfficial } = useContests();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ currentSubmissionId, setCurrentSubmissionId ] = useState<number>();
     const [ currentSubmission, setCurrentSubmission ] = useState<ISubmissionDetailsType>();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ currentProblemSubmissionResults, setCurrentProblemSubmissionResults ] =
         useState<ISubmissionResultType[]>(defaultState.currentProblemSubmissionResults);
     const getCurrentSubmissionDetailsUrl = useMemo(() => `${getSubmissionDetailsUrl}/${currentSubmissionId}`, [

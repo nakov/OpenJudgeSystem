@@ -8,15 +8,15 @@
   display: flex;
   flex-direction: row;
   margin-top: 30px;
+  //align-items: center;
+  flex: 90% 1;
 }
 
-.contestTabControls {
-  flex-grow: 2;
-}
 
 .editorAndProblemControlsWrapper {
   display: flex;
   flex-direction: column;
+  flex: 3;
 }
 
 .executionTypeSelectors {
@@ -32,5 +32,9 @@
 .submissionTypesList {
   display: flex;
   flex-wrap: wrap;
-  max-width: 500px;
+  //max-width: 500px;
+}
+
+.taskName {
+  font-weight: bold;
 }

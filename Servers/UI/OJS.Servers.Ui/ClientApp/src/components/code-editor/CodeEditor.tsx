@@ -1,6 +1,7 @@
 import * as React from 'react';
 import MonacoEditor from 'react-monaco-editor';
 import { useSubmissions } from '../../hooks/submissions/use-submissions';
+import styles from './CodeEditor.module.scss';
 
 const CodeEditor = () => {
     const { currentSubmissionCode, setCode } = useSubmissions();
@@ -10,22 +11,23 @@ const CodeEditor = () => {
     };
 
     return (
-        <MonacoEditor
-          width="600"
-          height="400"
-          language="JavaScript"
-          theme="vs-dark"
-          value={currentSubmissionCode}
-          options={{
-              selectOnLineNumbers: true,
-              minimap: { enabled: false },
-              automaticLayout: true,
-              hideCursorInOverviewRuler: true,
-              lineHeight: 20,
-              scrollbar: { vertical: 'hidden' },
-          }}
-          onChange={onCodeChange}
-        />
+        <div className={styles.editor}>
+            <MonacoEditor
+              language="JavaScript"
+              theme="vs-dark"
+              value={currentSubmissionCode}
+              className={styles.editor}
+              options={{
+                  selectOnLineNumbers: true,
+                  minimap: { enabled: false },
+                  automaticLayout: true,
+                  hideCursorInOverviewRuler: true,
+                  lineHeight: 20,
+                  scrollbar: { vertical: 'hidden' },
+              }}
+              onChange={onCodeChange}
+            />
+        </div>
     );
 };
 

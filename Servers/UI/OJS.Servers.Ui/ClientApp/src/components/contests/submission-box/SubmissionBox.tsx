@@ -3,17 +3,14 @@ import { useCallback } from 'react';
 import { useContests } from '../../../hooks/contests/use-contests';
 import Heading from '../../guidelines/headings/Heading';
 import CodeEditor from '../../code-editor/CodeEditor';
-import Tabs from '../../guidelines/tabs/Tabs';
 import ExecutionTypeSelector from '../execution-type-selector/ExecutionTypeSelector';
 import List from '../../guidelines/lists/List';
 import { ISubmissionTypeType } from '../../../hooks/contests/types';
 import { Button } from '../../guidelines/buttons/Button';
-import styles from './ContestMainNavigation.module.scss';
+import styles from './SubmissionBox.module.scss';
 import { useSubmissions } from '../../../hooks/submissions/use-submissions';
-import ProblemResources from '../../problems/problem-resources/ProblemResources';
-import SubmissionResults from '../../problems/problem-submissions/SubmissionResults';
 
-const ContestMainNavigation = () => {
+const SubmissionBox = () => {
     const {
         currentProblem,
         setSubmissionType,
@@ -67,9 +64,17 @@ const ContestMainNavigation = () => {
         setCode('');
     }, [ setCode, submit ]);
 
+    const taskText = 'Task: ';
+
     return (
         <div className={styles.contestMainWrapper}>
-            <Heading type="secondary">{currentProblem?.name}</Heading>
+            <Heading type="secondary">
+                {taskText}
+                <span className={styles.taskName}>
+                    {currentProblem?.name}
+                </span>
+
+            </Heading>
             <div className={styles.contestInnerLayout}>
                 <div className={styles.editorAndProblemControlsWrapper}>
                     <CodeEditor />
@@ -86,18 +91,9 @@ const ContestMainNavigation = () => {
                         </div>
                     </div>
                 </div>
-                <div className={styles.contestTabControls}>
-                    <Tabs
-                      tabLabels={[ 'Problem', 'Submissions' ]}
-                      tabChildren={[
-                          <ProblemResources resources={currentProblem?.resources} />,
-                          <SubmissionResults problemId={currentProblem?.id} />,
-                      ]}
-                    />
-                </div>
             </div>
         </div>
     );
 };
 
-export default ContestMainNavigation;
+export default SubmissionBox;

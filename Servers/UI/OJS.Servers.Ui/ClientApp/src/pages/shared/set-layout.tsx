@@ -3,22 +3,30 @@ import { FC } from 'react';
 import IHaveChildrenProps from '../../components/common/IHaveChildrenProps';
 
 import styles from './set-layout.module.scss';
+import concatClassNames from '../../utils/class-names';
 
 interface ILayoutProps extends IHaveChildrenProps {
+    isWide: boolean;
 }
 
-const Layout = ({ children }: ILayoutProps) => (
-    <>
-        {children}
-    </>
-);
+const Layout = ({ children, isWide }: ILayoutProps) => {
+    const wideClassName = isWide
+        ? styles.wideContentWrapper
+        : '';
 
-const setLayout = (ComponentToWrap: FC) => (props: any) => (
-    <Layout>
-        <div className={styles.contentWrapper}>
-            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-            <ComponentToWrap {...props} />
+    const className = concatClassNames(styles.contentWrapper, wideClassName);
+
+    return (
+        <div className={className}>
+            {children}
         </div>
+    );
+};
+
+const setLayout = (ComponentToWrap: FC, isWide = false) => (props: any) => (
+    <Layout isWide={isWide}>
+        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+        <ComponentToWrap {...props} />
     </Layout>
 );
 

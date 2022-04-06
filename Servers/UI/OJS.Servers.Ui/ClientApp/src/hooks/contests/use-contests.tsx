@@ -118,9 +118,12 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     useEffect(() => {
         if (getContestsForIndexData != null) {
-            const responseData = getContestsForIndexData as IGetContestsForIndexResponseType;
-            setActiveContests(responseData.activeContests);
-            setPastContests(responseData.pastContests);
+            const {
+                activeContests: rActiveContests,
+                pastContests: rPastContests,
+            } = getContestsForIndexData as IGetContestsForIndexResponseType;
+            setActiveContests(rActiveContests);
+            setPastContests(rPastContests);
         }
     }, [ getContestsForIndexData ]);
 

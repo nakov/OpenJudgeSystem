@@ -23,6 +23,11 @@
   width: 1280px;
   max-width: 90%;
   box-sizing: border-box;
+  
+  &.wide {
+    width: 100%;
+    max-width: 100%;
+  }
 
   @media only screen and (max-width: 1440px) {
     width: 1280px;

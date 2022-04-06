@@ -7,6 +7,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using System.Linq;
     using System.Threading.Tasks;
     using FluentExtensions.Extensions;
+    using OJS.Common.Utils;
     using OJS.Data.Models.Participants;
     using OJS.Services.Common.Models;
     using OJS.Services.Ui.Data;
@@ -14,6 +15,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Data.Models.Contests;
     using OJS.Services.Infrastructure.Exceptions;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using System.ComponentModel.Design;
 
     public class ContestsBusinessService : IContestsBusinessService
     {
@@ -45,7 +47,8 @@ namespace OJS.Services.Ui.Business.Implementations
             this.participantsBusiness = participantsBusiness;
         }
 
-        public async Task<ContestParticipationServiceModel> StartContestParticipation(StartContestParticipationServiceModel model)
+        public async Task<ContestParticipationServiceModel> StartContestParticipation(
+            StartContestParticipationServiceModel model)
         {
             var contest = await this.contestsData
                 .GetByIdWithProblemsAndSubmissionTypes(model.ContestId);
@@ -85,16 +88,18 @@ namespace OJS.Services.Ui.Business.Implementations
                     c.Id == contestId &&
                     (!c.IpsInContests.Any() || c.IpsInContests.Any(ai => ai.Ip.Value == ip)));
 
-        private async Task<Participant> AddNewParticipantToContest(Contest contest, bool official, string userId, bool isUserAdmin)
+        private async Task<Participant> AddNewParticipantToContest(Contest contest, bool official, string userId,
+            bool isUserAdmin)
         {
             if (contest.IsOnline &&
                 official &&
                 !isUserAdmin &&
                 !this.IsUserLecturerInContest(contest, userId) &&
-                ! await this.contestsData.IsUserInExamGroupByContestAndUser(contest.Id, userId))
+                !await this.contestsData.IsUserInExamGroupByContestAndUser(contest.Id, userId))
             {
                 throw new BusinessServiceException("You are not registered for this exam!");
             }
+
             return await this.participantsBusiness.CreateNewByContestByUserByIsOfficialAndIsAdmin(
                 contest,
                 userId,
@@ -135,10 +140,16 @@ namespace OJS.Services.Ui.Business.Implementations
 
         public async Task<ContestsForHomeIndexServiceModel> GetAllForHomeIndex()
         {
-            var active = await this.GetAllCompetable();
-            var past = await this.GetAllPracticable();
+            var active = await this.GetAllCompetable()
+                .ToListAsync();
+            var past = await this.GetAllPracticable()
+                .ToListAsync();
 
-            return new ContestsForHomeIndexServiceModel {ActiveContests = active, PastContests = past};
+            return new ContestsForHomeIndexServiceModel
+            {
+                ActiveContests = active,
+                PastContests = past,
+            };
         }
 
         public async Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllCompetable()
