@@ -11,6 +11,7 @@ interface IListProps<TValue> {
     itemClassName?: string | string[];
     type?: 'normal' | 'numbered' | 'alpha' | 'bulleted';
     orientation?: 'vertical' | 'horizontal';
+    wrap?: boolean;
 }
 
 const defaultKeyFunc = <TValue extends unknown>(value: TValue) => {
@@ -31,22 +32,27 @@ const List = <TValue extends unknown>({
     itemClassName = '',
     type = 'normal',
     orientation = 'vertical',
+    wrap = false,
 }: IListProps<TValue>) => {
     const listTypeClassName =
         type === 'normal'
-            ? styles.listNormal
+            ? styles.normal
             : type === 'numbered'
-                ? styles.listNumbered
+                ? styles.numbered
                 : type === 'alpha'
-                    ? styles.listNumberedAlpha
-                    : styles.listBulleted;
+                    ? concatClassNames(styles.numbered, styles.alpha)
+                    : styles.bulleted;
 
     const listOrientationClassName =
         orientation === 'vertical'
             ? ''
-            : styles.listHorizontal;
+            : styles.horizontal;
 
-    const listClassName = concatClassNames(listTypeClassName, listOrientationClassName, className);
+    const listWrapClassName = wrap
+        ? styles.wrap
+        : '';
+
+    const listClassName = concatClassNames(styles.list, listTypeClassName, listOrientationClassName, listWrapClassName, className);
     const itemClassNameCombined = concatClassNames(itemClassName);
 
     const items = values.map((value) => (

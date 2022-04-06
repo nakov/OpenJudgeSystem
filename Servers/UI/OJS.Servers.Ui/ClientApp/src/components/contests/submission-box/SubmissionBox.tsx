@@ -53,6 +53,7 @@ const SubmissionBox = () => {
                   values={allowedSubmissionTypes}
                   itemFunc={renderSubmissionTypesSelectors}
                   orientation="horizontal"
+                  wrap
                 />
             );
         },
@@ -68,7 +69,7 @@ const SubmissionBox = () => {
 
     return (
         <div className={styles.contestMainWrapper}>
-            <Heading type="secondary">
+            <Heading type="secondary" className={styles.heading}>
                 {taskText}
                 <span className={styles.taskName}>
                     {currentProblem?.name}
@@ -82,7 +83,7 @@ const SubmissionBox = () => {
                         <div className={styles.executionTypeSelectors}>
                             {renderSubmissionTypesSelectorsList()}
                         </div>
-                        <div>
+                        <div className={styles.submitButtonContainer}>
                             <Button
                               type="primary"
                               text="Submit"
