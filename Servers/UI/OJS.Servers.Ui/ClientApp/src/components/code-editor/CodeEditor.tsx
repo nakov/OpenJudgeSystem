@@ -1,20 +1,63 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import MonacoEditor from 'react-monaco-editor';
 import { useSubmissions } from '../../hooks/submissions/use-submissions';
+import { useContests } from '../../hooks/contests/use-contests';
 import styles from './CodeEditor.module.scss';
 
+const possibleLanguages = [
+    'python',
+    'javascript',
+    'csharp',
+    'java',
+    'cpp',
+    'go',
+    'php',
+];
+const getMonacoLanguage = (submissionTypeName: string | null) => {
+    if (submissionTypeName == null) {
+        return 'javascript';
+    }
+
+    const lang = possibleLanguages.find((x) => submissionTypeName.toLowerCase().indexOf(x) >= 0);
+    console.log(lang);
+    return lang;
+};
+
 const CodeEditor = () => {
-    const { currentSubmissionCode, setCode } = useSubmissions();
+    const [ selectedSubmissionTypeName, setSelectedSubmissionTypeName ] = useState<string | null>(null);
+    const {
+        currentSubmissionCode,
+        setCode,
+    } = useSubmissions();
+
+    const {
+        currentProblem,
+        selectedSubmissionTypeId,
+    } = useContests();
+
+    const { allowedSubmissionTypes } = currentProblem || {};
 
     const onCodeChange = (newValue: string) => {
         setCode(newValue);
     };
 
+    useEffect(
+        () => {
+            if (allowedSubmissionTypes == null) {
+                return;
+            }
+            const submissionType = allowedSubmissionTypes.find((x) => x.id === selectedSubmissionTypeId);
+            setSelectedSubmissionTypeName(submissionType?.name || null);
+        },
+        [ allowedSubmissionTypes, selectedSubmissionTypeId ],
+    );
+
     return (
         <div className={styles.editor}>
             <MonacoEditor
-              language="JavaScript"
-              theme="vs-dark"
+              language={getMonacoLanguage(selectedSubmissionTypeName)}
+              theme="vs"
               value={currentSubmissionCode}
               className={styles.editor}
               options={{

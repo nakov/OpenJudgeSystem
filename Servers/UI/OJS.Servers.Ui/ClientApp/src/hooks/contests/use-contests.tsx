@@ -150,6 +150,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         selectedSubmissionTypeId,
         activeContests,
         pastContests,
+
         setProblem,
         setSubmissionType,
         getForHome,
