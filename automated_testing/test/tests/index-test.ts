@@ -6,6 +6,7 @@ describe('Testing index', () => {
         const btn = await IndexPage.logInButton;
         await expect(btn).toExist();
         await expect(btn).toHaveText('LOGIN');
+        await expect(btn).toHaveHrefContaining('/login');
     });
 
     it('Expect registerButton to exist', async () => {
@@ -13,6 +14,7 @@ describe('Testing index', () => {
         const btn = await IndexPage.registerButton;
         await expect(btn).toExist();
         await expect(btn).toHaveText('REGISTER');
+        await expect(btn).toHaveHrefContaining('/register');
     });
 
     it('Expect navBar to have headerLogoLink with href', async () => {
@@ -32,5 +34,40 @@ describe('Testing index', () => {
         await IndexPage.open();
         const footer = await IndexPage.footer;
         await expect(footer).toExist();
+    });
+
+    it('Expect contests link in navigation to exist and have the correct href', async () => {
+        await IndexPage.open();
+        const contestsLink = await IndexPage.navContestsLink;
+        await expect(contestsLink).toExist();
+        await expect(contestsLink).toHaveHrefContaining('/contests/all');
+    });
+
+    it('Expect submissions link in navigation to exist and have the correct href', async () => {
+        await IndexPage.open();
+        const submissionsLink = await IndexPage.navSubmissionssLink;
+        await expect(submissionsLink).toExist();
+        await expect(submissionsLink).toHaveHrefContaining('/submissions');
+    });
+
+    it('Expect "See contests" button in navigation to exist and have the correct href', async () => {
+        await IndexPage.open();
+        const btn = await IndexPage.seeContestsButton;
+        await expect(btn).toExist();
+    //  await expect(btn).toHaveHrefContaining('.....'); once the page is ready we will add it
+    });
+
+    it('Expect YouTub video to exist', async () => {
+        await IndexPage.open();
+        const video = await IndexPage.youtubeVideo;
+        await expect(video).toExist();
+    });
+
+    it('Expect Youtube video to have src', async () => {
+        await IndexPage.open();
+        const video = await IndexPage.youtubeVideo;
+        await expect(video).toHaveAttr('src');
+        const src = await video.getAttribute('src');
+        await expect(src).not.toBeNull();
     });
 });

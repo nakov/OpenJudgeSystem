@@ -4,12 +4,15 @@ import Countdown from '../../guidelines/countdown/Countdown';
 import { convertToSecondsRemaining } from '../../../utils/dates';
 import styles from './ContestCard.module.scss';
 import { LinkButton } from '../../guidelines/buttons/Button';
+import concatClassNames from '../../../utils/class-names';
 
 interface IContestCardProps {
     contest: IIndexContestsType
 }
 
 const ContestCard = ({ contest }: IContestCardProps) => {
+    const contestCard = 'card-contests';
+    const contestCardClassName = concatClassNames(styles.contestCard, contestCard);
     const renderCountdown = () => {
         if (contest.canBePracticed && contest.practiceEndTime == null) {
             return <p>No practice end time.</p>;
@@ -34,7 +37,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     };
 
     return (
-        <div id="contest-card" className={styles.contestCard}>
+        <div className={contestCardClassName}>
             <div className={styles.contestCardHeader}>{contest.name}</div>
             <div className={styles.contestCardCategoryLabel}>{contest.category}</div>
             <div className={styles.contestCardCountdown}>
@@ -42,7 +45,6 @@ const ContestCard = ({ contest }: IContestCardProps) => {
             </div>
             <div className={styles.contestCardControls}>
                 <LinkButton
-                  id="button-card-compete"
                   to={`/contests/${contest.id}/compete`}
                   text="Compete"
                   type={
@@ -53,7 +55,6 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   size="small"
                 />
                 <LinkButton
-                  id="button-card-practice"
                   to={`/contests/${contest.id}/practice`}
                   text="Practice"
                   type={

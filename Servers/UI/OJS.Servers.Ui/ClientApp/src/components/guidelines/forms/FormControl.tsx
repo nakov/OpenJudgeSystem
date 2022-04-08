@@ -15,16 +15,18 @@ interface IFormControlProps {
     type?: 'radio' | 'checkbox' | 'text' | 'textarea' | 'input' | 'password',
     onChange?: (value?:string) => void
     onInput?: (value?:string) => void,
-    checked?: boolean
+    checked?: boolean,
+    id: string,
 }
 
 interface ILabelInternalProps extends IHaveChildrenProps {
     text: string,
     className: string | string[],
     forKey: string,
+    id: string,
 }
 
-const LabelInternal = ({ text, className, forKey, children }: ILabelInternalProps) => {
+const LabelInternal = ({ id, text, className, forKey, children }: ILabelInternalProps) => {
     if (!text && !className) {
         return (
             <>
@@ -38,7 +40,7 @@ const LabelInternal = ({ text, className, forKey, children }: ILabelInternalProp
     return (
         <div className={styles.formControlContainer}>
             {children}
-            <label className={componentClassName} htmlFor={forKey}>
+            <label id={id} className={componentClassName} htmlFor={forKey}>
                 <span>{text}</span>
             </label>
         </div>
@@ -57,10 +59,10 @@ const FormControl = ({
     labelClassName = '',
     type = 'text',
     checked = false,
+    id = generateId(),
 }: IFormControlProps) => {
     const [ formControlValue, setFormControlValue ] = useState(value);
 
-    const id = generateId();
     const componentClassName = concatClassNames(styles.formControl, className);
     const handleOnChange = (ev:any) => {
         setFormControlValue(ev.target.value);
@@ -99,7 +101,7 @@ const FormControl = ({
     };
 
     return (
-        <LabelInternal text={labelText} className={labelClassName} forKey={id}>
+        <LabelInternal id={`${id}-label`} text={labelText} className={labelClassName} forKey={id}>
             {generateFormControl()}
         </LabelInternal>
     );

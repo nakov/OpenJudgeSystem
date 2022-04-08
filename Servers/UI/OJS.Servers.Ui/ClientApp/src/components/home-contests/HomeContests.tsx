@@ -6,6 +6,7 @@ import ContestCard from './contest-card/ContestCard';
 import Heading from '../guidelines/headings/Heading';
 import { setLayout } from '../../pages/shared/set-layout';
 import styles from './HomeContests.module.scss';
+import concatClassNames from '../../utils/class-names';
 
 const HomeContests = () => {
     const { activeContests, pastContests, getForHome } = useContests();
@@ -18,26 +19,31 @@ const HomeContests = () => {
         <ContestCard key={contest.id} contest={contest} />
     ));
 
-    const render = (headerTitle: string, contests: IIndexContestsType[]) => (
-        <>
-            <Heading>
-                {headerTitle}
-                {' '}
-                Contests
-            </Heading>
-            <div id="index-contests-list" className={styles.contestCardsContainer}>
-                {renderContestsList(contests)}
-            </div>
-            <LinkButton
-              id="button-see-all-contests"
-              to="/contests"
-              text="See All"
-              type="secondary"
-              size="small"
-              className={styles.contestsSeeAllButton}
-            />
-        </>
-    );
+    const render = (headerTitle: string, contests: IIndexContestsType[]) => {
+        const seeAllButtonClassName = `btn-see-all-contests-${headerTitle}`;
+        const contestsSeeAllButtonClassName = concatClassNames(styles.contestsSeeAllButton, seeAllButtonClassName);
+        const allContestCardsContainerClassName = `${headerTitle}-contests-cards-list`;
+        const allContestsCardsContainer = concatClassNames(styles.contestCardsContainer, allContestCardsContainerClassName);
+        return (
+            <>
+                <Heading>
+                    {headerTitle}
+                    {' '}
+                    Contests
+                </Heading>
+                <div className={allContestsCardsContainer}>
+                    {renderContestsList(contests)}
+                </div>
+                <LinkButton
+                  to="/contests"
+                  text="See All"
+                  type="secondary"
+                  size="small"
+                  className={contestsSeeAllButtonClassName}
+                />
+            </>
+        );
+    };
 
     return (
         <>
