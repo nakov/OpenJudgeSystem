@@ -5,7 +5,6 @@ import { convertToSecondsRemaining } from '../../../utils/dates';
 import styles from './ContestCard.module.scss';
 import { LinkButton } from '../../guidelines/buttons/Button';
 import concatClassNames from '../../../utils/class-names';
-import { text } from 'stream/consumers';
 
 interface IContestCardProps {
     contest: IIndexContestsType
