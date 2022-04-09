@@ -27,7 +27,7 @@ COPY Directory.Build.props ./Directory.Build.props
 
 FROM build AS publish
 WORKDIR /src/Servers/UI/OJS.Servers.Ui/ClientApp
-RUN yarn build
+RUN yarn add react-app-rewired && yarn build
 
 WORKDIR /src/Servers/UI/OJS.Servers.Ui
 RUN dotnet publish OJS.Servers.Ui.csproj -c Release -o /app/publish

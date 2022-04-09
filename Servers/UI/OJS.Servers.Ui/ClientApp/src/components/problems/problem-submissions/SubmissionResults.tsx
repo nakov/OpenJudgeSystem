@@ -46,14 +46,14 @@ const SubmissionResults = ({ problemId }: ISubmissionResultsProps) => {
 
     const reload = useCallback(async () => {
         await getResults();
-    }, []);
+    }, [ getResults ]);
 
     useEffect(() => {
         if (currentProblemSubmissionResults.length !== 0) { return; }
         (async () => {
             await reload();
         })();
-    }, [ getResults ]);
+    }, [ getResults, reload, currentProblemSubmissionResults.length ]);
 
     return (
         currentProblemSubmissionResults.length === 0
