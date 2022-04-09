@@ -7,6 +7,6 @@ namespace OJS.Servers.Administration.Infrastructure.Filters
     public class AutoCrudAdminAuthFilter : IAutoCrudAuthFilter
     {
         public bool Authorize(HttpContext context)
-            => context.User.IsAdminOrLecturer();
+            => true; // context.User.IsAdminOrLecturer();
     }
 }

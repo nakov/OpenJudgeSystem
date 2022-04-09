@@ -1,0 +1,28 @@
+@page
+@using SoftUni.Judge.Common.Enumerations
+@using Resource = OJS.Common.Resources.AntiCheatViews
+@model OJS.Servers.Administration.Pages.AntiCheat.BySubmissionSimilarity
+
+@{
+    ViewBag.Title = Resource.By_submission_page_title;
+    var plagiarismDetectorTypes = Html.GetEnumSelectList<PlagiarismDetectorType>();
+}
+
+<h2>@ViewBag.Title</h2>
+<form method="post">
+    <div class="form-group">
+        <label asp-for="Filters.ContestId">Contest</label>
+        <select asp-for="Filters.ContestId" asp-items="Model.Contests" class="form-control">
+            <option selected="selected" value="">@Resource.Choose_or_enter_contest</option>
+        </select>
+        <span class="text-danger" asp-validation-for="Filters.ContestId"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Filters.PlagiarismDetectorType">Plagiarism detector type</label>
+        <select asp-for="Filters.PlagiarismDetectorType" asp-items="@plagiarismDetectorTypes" class="form-control">
+            <option selected="selected" value="">@Resource.Choose_or_enter_plagiarism_detector_type</option>
+        </select>
+        <span class="text-danger" asp-validation-for="Filters.PlagiarismDetectorType"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">@Resource.Download_submission_similarities</button>
+</form>

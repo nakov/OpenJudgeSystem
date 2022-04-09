@@ -12,7 +12,7 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
             => app
                 .UseDefaults()
                 .UseAutoCrudAdmin()
-                .MapDefaultRoutes()
+                .MapRoutes()
                 .UseAndMapHangfireDashboard();
 
         private static WebApplication UseAutoCrudAdmin(this WebApplication app)
@@ -24,6 +24,14 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
             };
 
             app.AddAutoCrudAdmin(options: options);
+
+            return app;
+        }
+
+        private static WebApplication MapRoutes(this WebApplication app)
+        {
+            app.MapDefaultRoutes();
+            app.MapRazorPages();
 
             return app;
         }

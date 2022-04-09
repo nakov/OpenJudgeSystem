@@ -15,12 +15,17 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
         private const ApplicationName AppName = ApplicationName.Administration;
 
         public static void ConfigureServices<TProgram>(this IServiceCollection services)
-            => services
+        {
+            services.AddRazorPages();
+
+            services
                 .AddWebServer<TProgram>()
                 .AddHangfireServer(AppName)
-                .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(Enumerable.Empty<GlobalQueryFilterType>())
+                .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(
+                    Enumerable.Empty<GlobalQueryFilterType>())
                 .AddSoftUniJudgeCommonServices()
                 .UseAutoCrudAdmin()
                 .AddControllersWithViews();
+        }
     }
 }

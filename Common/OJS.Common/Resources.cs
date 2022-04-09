@@ -202,5 +202,22 @@ namespace OJS.Common
             public const string Problem_not_found = "Problem not found.";
             public const string Resource_not_found = "Resource not found.";
         }
+
+        public static class AntiCheatViews
+        {
+            public const string By_ip_page_title = "By IP";
+            public const string By_submission_page_title = "By submission similarity";
+            public const string Choose_or_enter_contest = "Choose or enter contest...";
+            public const string Choose_or_enter_plagiarism_detector_type = "Choose or enter plagiarism detector type..";
+            public const string Differences = "Differences";
+            public const string First_participant = "First Participant";
+            public const string Ip_addresses = "IP Addresses";
+            public const string Participant_id = "Participant Id";
+            public const string Percentage = "Percentage";
+            public const string Points = "Points";
+            public const string Second_participant = "Second Participant";
+            public const string Username = "Username";
+            public const string Download_submission_similarities = "Download submission similarities";
+        }
     }
 }

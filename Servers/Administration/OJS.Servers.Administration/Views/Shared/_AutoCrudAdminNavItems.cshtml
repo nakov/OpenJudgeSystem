@@ -177,15 +177,31 @@
             </ul>
         </li>
         <li>
-             <a class="dropdown-item" href="#">Roles &raquo;</a>
-             <ul class="dropdown-menu dropdown-submenu">
-                 <li>
-                     <a class="dropdown-item" asp-action="Index" asp-controller="Roles">All</a>
-                 </li>
-                 <li>
-                     <a class="dropdown-item" asp-action="Create" asp-controller="Roles">Create</a>
-                 </li>
-             </ul>
+            <a class="dropdown-item" href="#">Roles &raquo;</a>
+            <ul class="dropdown-menu dropdown-submenu">
+                <li>
+                    <a class="dropdown-item" asp-action="Index" asp-controller="Roles">All</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-action="Create" asp-controller="Roles">Create</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</li>
+<li class="nav-item dropdown">
+    <a
+        class="nav-link dropdown-toggle"
+        href="#"
+        role="button"
+        data-toggle="dropdown"
+        aria-expanded="false"
+    >
+        Anti cheat
+    </a>
+    <ul class="dropdown-menu">
+        <li>
+            <a class="dropdown-item" asp-page="/AntiCheat/BySubmissionSimilarity">By Submission Similarity</a>
         </li>
     </ul>
 </li>
