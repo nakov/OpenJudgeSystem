@@ -10,5 +10,9 @@
       <ProjectReference Include="..\..\..\AutoCrudAdmin\src\AutoCrudAdmin\AutoCrudAdmin.csproj" />
       <ProjectReference Include="..\..\Infrastructure\OJS.Servers.Infrastructure\OJS.Servers.Infrastructure.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="SoftUni.Judge.Workers.Tools" Version="1.0.1" />
+    </ItemGroup>
     
 </Project>

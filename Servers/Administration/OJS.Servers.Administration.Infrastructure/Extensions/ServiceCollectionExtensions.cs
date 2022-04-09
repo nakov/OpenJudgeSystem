@@ -8,6 +8,7 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
     using OJS.Servers.Infrastructure.Extensions;
     using SoftUni.Data.Infrastructure.Enumerations;
     using SoftUni.Judge.Common.Extensions;
+    using SoftUni.Judge.Workers.Tools.Extensions;
     using System.Linq;
 
     public static class ServiceCollectionExtensions
@@ -24,6 +25,7 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
                 .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(
                     Enumerable.Empty<GlobalQueryFilterType>())
                 .AddSoftUniJudgeCommonServices()
+                .AddSoftUniJudgeWorkersTools()
                 .UseAutoCrudAdmin()
                 .AddControllersWithViews();
         }

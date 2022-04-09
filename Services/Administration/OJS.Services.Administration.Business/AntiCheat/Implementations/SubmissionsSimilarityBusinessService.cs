@@ -1,19 +1,195 @@
 namespace OJS.Services.Administration.Business.AntiCheat.Implementations;
 
+using FluentExtensions.Extensions;
+using Microsoft.EntityFrameworkCore;
+using OJS.Common.Extensions;
+using OJS.Common.Utils;
+using OJS.Data.Models.Submissions;
+using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.AntiCheat;
+using SoftUni.Judge.Common;
+using SoftUni.Judge.Common.Enumerations;
+using SoftUni.Judge.Workers.Tools.AntiCheat;
+using SoftUni.Judge.Workers.Tools.AntiCheat.Contracts;
+using SoftUni.Judge.Workers.Tools.Similarity;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using static OJS.Common.GlobalConstants.FileExtensions;
 
 public class SubmissionsSimilarityBusinessService : ISubmissionsSimilarityBusinessService
 {
-    // TODO: implement
+    private const int MinSubmissionPointsToCheckForSimilarity = 20;
+
+    private readonly ISubmissionsDataService submissionsData;
+    private readonly ISimilarityFinder similarityFinder;
+    private readonly IPlagiarismDetectorFactory plagiarismDetectorFactory;
+
+    public SubmissionsSimilarityBusinessService(
+        ISubmissionsDataService submissionsData,
+        ISimilarityFinder similarityFinder,
+        IPlagiarismDetectorFactory plagiarismDetectorFactory)
+    {
+        this.submissionsData = submissionsData;
+        this.similarityFinder = similarityFinder;
+        this.plagiarismDetectorFactory = plagiarismDetectorFactory;
+    }
+
     public async Task<(byte[] file, string fileName)> GetSimilaritiesForFiltersCsv(
         SubmissionSimilarityFiltersServiceModel filters)
     {
+        var contestId = filters.ContestId;
+        var plagiarismDetectorType = filters.PlagiarismDetectorType;
+
+        var participantsSimilarSubmissionGroups =
+            (await this.GetSimilarSubmissions(new [] { contestId }, plagiarismDetectorType)
+                .Select(s => new
+                {
+                    s.Id,
+                    s.ProblemId,
+                    s.ParticipantId,
+                    s.Points,
+                    s.Content,
+                    s.CreatedOn,
+                    ParticipantName = s.Participant.User.UserName,
+                    ProblemName = s.Problem.Name,
+                    TestRuns = s.TestRuns.OrderBy(t => t.TestId).Select(t => new { t.TestId, t.ResultType })
+                })
+                .ToListAsync())
+                .GroupBy(s => new { s.ProblemId, s.ParticipantId })
+                .Select(g => g.OrderByDescending(s => s.Points).ThenByDescending(s => s.CreatedOn).FirstOrDefault())
+                .GroupBy(s => new { s.ProblemId, s.Points })
+                .ToList();
+
+        var plagiarismDetector = this.GetPlagiarismDetector(plagiarismDetectorType);
+
+        var similarities = new List<SubmissionSimilarityServiceModel>();
+        for (var index = 0; index < participantsSimilarSubmissionGroups.Count; index++)
+        {
+            var groupOfSubmissions = participantsSimilarSubmissionGroups[index].ToList();
+            for (var i = 0; i < groupOfSubmissions.Count; i++)
+            {
+                for (var j = i + 1; j < groupOfSubmissions.Count; j++)
+                {
+                    var result = plagiarismDetector.DetectPlagiarism(
+                        groupOfSubmissions[i].Content.Decompress(),
+                        groupOfSubmissions[j].Content.Decompress(),
+                        new List<IDetectPlagiarismVisitor> { new SortAndTrimLinesVisitor() });
+
+                    var save = true;
+
+                    var firstTestRuns = groupOfSubmissions[i].TestRuns.ToList();
+                    var secondTestRuns = groupOfSubmissions[j].TestRuns.ToList();
+
+                    if (firstTestRuns.Count < secondTestRuns.Count)
+                    {
+                        secondTestRuns = secondTestRuns
+                            .Where(x => firstTestRuns.Any(y => y.TestId == x.TestId))
+                            .OrderBy(x => x.TestId)
+                            .ToList();
+                    }
+                    else if (firstTestRuns.Count > secondTestRuns.Count)
+                    {
+                        firstTestRuns = firstTestRuns
+                            .Where(x => secondTestRuns.Any(y => y.TestId == x.TestId))
+                            .OrderBy(x => x.TestId)
+                            .ToList();
+                    }
+
+                    for (var k = 0; k < firstTestRuns.Count; k++)
+                    {
+                        if (firstTestRuns[k].ResultType != secondTestRuns[k].ResultType)
+                        {
+                            save = false;
+                            break;
+                        }
+                    }
+
+                    if (save && result.SimilarityPercentage != 0)
+                    {
+                        similarities.Add(new SubmissionSimilarityServiceModel
+                        {
+                            ProblemName = groupOfSubmissions[i].ProblemName,
+                            Points = groupOfSubmissions[i].Points,
+                            Differences = result.Differences.Count,
+                            Percentage = result.SimilarityPercentage,
+                            FirstSubmissionId = groupOfSubmissions[i].Id,
+                            FirstParticipantName = groupOfSubmissions[i].ParticipantName,
+                            FirstSubmissionCreatedOn = groupOfSubmissions[i].CreatedOn,
+                            SecondSubmissionId = groupOfSubmissions[j].Id,
+                            SecondParticipantName = groupOfSubmissions[j].ParticipantName,
+                            SecondSubmissionCreatedOn = groupOfSubmissions[j].CreatedOn,
+                        });
+                    }
+                }
+            }
+        }
+
+        // TODO: convert result to file
         var file = await Task.FromResult(Array.Empty<byte>());
         var fileName = $"Result{Csv}";
 
         return (file, fileName);
+    }
+
+    private IQueryable<Submission> GetSimilarSubmissions(
+        IEnumerable<int> contestIds,
+        PlagiarismDetectorType plagiarismDetectorType)
+    {
+        var orExpressionContestIds = ExpressionBuilder.BuildOrExpression<Submission, int>(
+            contestIds,
+            s => s.Participant.ContestId);
+
+        var plagiarismDetectorTypeCompatibleCompilerTypes = plagiarismDetectorType.GetCompatibleCompilerTypes();
+        var orExpressionCompilerTypes = ExpressionBuilder.BuildOrExpression<Submission, CompilerType>(
+            plagiarismDetectorTypeCompatibleCompilerTypes,
+            s => s.SubmissionType.CompilerType);
+
+        var result = this.submissionsData
+            .GetQuery()
+            .Where(orExpressionContestIds)
+            .Where(orExpressionCompilerTypes)
+            .Where(s => s.Participant.IsOfficial && s.Points >= MinSubmissionPointsToCheckForSimilarity);
+
+        return result;
+    }
+
+    private IPlagiarismDetector GetPlagiarismDetector(PlagiarismDetectorType type)
+    {
+        var plagiarismDetectorCreationContext =
+            this.CreatePlagiarismDetectorCreationContext(type);
+        var plagiarismDetector =
+            this.plagiarismDetectorFactory.CreatePlagiarismDetector(plagiarismDetectorCreationContext);
+
+        return plagiarismDetector;
+    }
+
+    private PlagiarismDetectorCreationContext CreatePlagiarismDetectorCreationContext(PlagiarismDetectorType type)
+    {
+        var result = new PlagiarismDetectorCreationContext(type, this.similarityFinder);
+
+        switch (type)
+        {
+            case PlagiarismDetectorType.CSharpCompileDisassemble:
+                result.CompilerPath = Settings.CSharpCompilerPath;
+                result.DisassemblerPath = Settings.DotNetDisassemblerPath;
+                break;
+
+            case PlagiarismDetectorType.CSharpDotNetCoreCompileDisassemble:
+                result.CompilerPath = Settings.DotNetCompilerPath;
+                result.DisassemblerPath = Settings.DotNetDisassemblerPath;
+                break;
+
+            case PlagiarismDetectorType.JavaCompileDisassemble:
+                result.CompilerPath = Settings.JavaCompilerPath;
+                result.DisassemblerPath = Settings.JavaDisassemblerPath;
+                break;
+
+            case PlagiarismDetectorType.PlainText:
+                break;
+        }
+
+        return result;
     }
 }

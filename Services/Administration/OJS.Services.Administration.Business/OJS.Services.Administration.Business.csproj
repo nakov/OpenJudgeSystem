@@ -12,4 +12,8 @@
       <ProjectReference Include="..\OJS.Services.Administration.Models\OJS.Services.Administration.Models.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="SoftUni.Judge.Workers.Tools" Version="1.0.1" />
+    </ItemGroup>
+
 </Project>
