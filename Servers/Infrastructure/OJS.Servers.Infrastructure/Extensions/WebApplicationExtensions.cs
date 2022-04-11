@@ -2,14 +2,10 @@ namespace OJS.Servers.Infrastructure.Extensions
 {
     using Hangfire;
     using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.Extensions.FileProviders;
     using Microsoft.Extensions.Hosting;
     using OJS.Servers.Infrastructure.Filters;
     using OJS.Servers.Infrastructure.Middleware;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
-    using System;
-    using System.IO;
     using static OJS.Common.GlobalConstants.Urls;
 
     public static class WebApplicationExtensions
@@ -19,18 +15,6 @@ namespace OJS.Servers.Infrastructure.Extensions
             app.UseCustomExceptionHandling();
 
             app.UseAutoMapper();
-
-            // app.UseHttpsRedirection();
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseStaticFiles();
-            }
-            else
-            {
-                var reactFilesPath = Path.Combine(Directory.GetCurrentDirectory(), "ClientApp", "build");
-                Console.WriteLine(reactFilesPath);
-                app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(reactFilesPath), });
-            }
 
             app.UseRouting();
 

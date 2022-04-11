@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 namespace OJS.Servers.Ui.Infrastructure.Extensions
 {
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.Extensions.FileProviders;
     using OJS.Servers.Infrastructure.Extensions;
 
     public static class WebApplicationExtensions
@@ -14,6 +15,17 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
             app
                 .UseDefaults()
                 .MapDefaultRoutes();
+
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseStaticFiles();
+            }
+            else
+            {
+                var reactFilesPath = Path.Combine(Directory.GetCurrentDirectory(), "ClientApp", "build");
+                Console.WriteLine(reactFilesPath);
+                app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(reactFilesPath), });
+            }
 
             app.UseEndpoints(endpoints =>
             {
