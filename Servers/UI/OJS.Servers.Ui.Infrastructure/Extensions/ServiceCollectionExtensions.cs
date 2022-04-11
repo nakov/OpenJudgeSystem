@@ -15,8 +15,11 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
 
         public static void ConfigureServices<TProgram>(this IServiceCollection services, IConfiguration configuration)
         {
-            services
-                .AddSpaStaticFiles(cnfg => { cnfg.RootPath = "ClientApp/dist"; });
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+            {
+                services
+                    .AddSpaStaticFiles(cnfg => { cnfg.RootPath = "ClientApp/dist"; });
+            }
 
             services
                 .AddWebServer<TProgram>()
