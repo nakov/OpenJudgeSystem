@@ -32,16 +32,18 @@ const addMonacoPlugin = (config) => {
             'php',
         ],
     });
+
     return {
         ...config,
-        plugins: {
+        plugins: [
             ...config.plugins,
             monacoPlugin,
-        },
+        ],
     };
 };
 
-const decorateWebpack = (config, ...funcs) => funcs.reduce((c, func) => func(c), config);
+const decorateWebpack = (config, ...funcs) => funcs
+    .reduce((c, func) => func(c), config);
 
 module.exports = {
     paths: (paths) => {
@@ -51,7 +53,11 @@ module.exports = {
             appHtml,
         };
     },
-    webpack: (config) => decorateWebpack(config, addMonacoPlugin, fixHtmlPlugin),
+    webpack: (config) => decorateWebpack(
+        config,
+        // addMonacoPlugin,
+        fixHtmlPlugin,
+    ),
     devServer(configFunction) {
         return function (proxy, allowedHost) {
             const config = configFunction(proxy, allowedHost);

@@ -1,7 +1,7 @@
 import React from 'react';
 import Tabs from '../../guidelines/tabs/Tabs';
 import ProblemResources from '../../problems/problem-resources/ProblemResources';
-import SubmissionResults from '../../problems/problem-submissions/SubmissionResults';
+import ProblemSubmissions from '../../problems/problem-submissions/ProblemSubmissions';
 import { useContests } from '../../../hooks/contests/use-contests';
 import styles from './ContestProblemDetails.module.scss';
 
@@ -14,7 +14,7 @@ const ContestProblemDetails = () => {
               tabLabels={[ 'Problem', 'Submissions' ]}
               tabChildren={[
                   <ProblemResources resources={currentProblem?.resources} />,
-                  <SubmissionResults problemId={currentProblem?.id} />,
+                  <ProblemSubmissions problemId={currentProblem?.id} />,
               ]}
             />
         </div>

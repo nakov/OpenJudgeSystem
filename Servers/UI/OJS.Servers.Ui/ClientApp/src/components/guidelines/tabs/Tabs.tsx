@@ -30,6 +30,7 @@ const Tabs = ({ tabChildren, tabLabels, themeOverride }: ITabPanelProps) => {
     ));
 
     const renderTabChildren = () => tabChildren?.map((tc: React.ReactNode, index: number) => (
+        // eslint-disable-next-line react/no-array-index-key
         <TabPanel key={index.toString()} value={index.toString()}>{tc}</TabPanel>
     ));
 

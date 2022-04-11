@@ -1,24 +1,42 @@
 import * as React from 'react';
 import styles from './Label.module.scss';
+import concatClassNames from '../../../utils/class-names';
+import { IHaveOptionalChildrenProps } from '../../common/IHaveChildrenProps';
 
-interface ITagProps {
-    text: string;
-    type: 'success' | 'danger' | 'warning';
+interface ILabelProps extends IHaveOptionalChildrenProps {
+    type: 'success' | 'danger' | 'warning' | 'info';
+    text?: string;
 }
 
-const Tag = ({ text, type }: ITagProps) => {
-    const className =
+const Label = ({
+    type,
+    text = '',
+    children = null,
+}: ILabelProps) => {
+    if (!text && !children) {
+        throw new Error('Buttons must have only `text` or `children`');
+    }
+    const content = children ?? text;
+
+    const typeClassName =
         type === 'success'
-            ? styles.tagSuccess
+            ? styles.success
             : type === 'warning'
-                ? styles.tagWarning
-                : styles.tagDanger;
+                ? styles.warning
+                : type === 'info'
+                    ? styles.info
+                    : styles.danger;
+
+    const className = concatClassNames(
+        styles.label,
+        typeClassName,
+    );
 
     return (
         <div className={className}>
-            {text}
+            {content}
         </div>
     );
 };
 
-export default Tag;
+export default Label;

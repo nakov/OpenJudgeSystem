@@ -14,6 +14,7 @@ const possibleLanguages = [
     'go',
     'php',
 ];
+
 const getMonacoLanguage = (submissionTypeName: string | null) => {
     if (submissionTypeName == null) {
         return 'javascript';

@@ -5,7 +5,7 @@
   align-items: center;
   flex-direction: column;
   flex-shrink: 0;
-  
+
   &.normal {
     list-style-type: none;
   }
@@ -13,20 +13,25 @@
   &.numbered {
     list-style-type: decimal;
     padding-left: 25px;
+
     &.alpha {
       list-style-type: upper-alpha;
     }
   }
-  
+
   &.bulleted {
     list-style-type: circle;
   }
-  
+
   &.horizontal {
     flex-direction: row;
   }
-  
-  &.wrap{
+
+  &.wrap {
     flex-wrap: wrap;
   }
+}
+
+.fullWidth {
+  width: 100%;
 }

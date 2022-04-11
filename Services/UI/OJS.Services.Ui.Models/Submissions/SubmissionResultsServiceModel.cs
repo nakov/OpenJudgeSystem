@@ -27,10 +27,13 @@ public class SubmissionResultsServiceModel : IMapExplicitly
 
     public IEnumerable<TestRunServiceModel> TestRuns { get; set; } = Enumerable.Empty<TestRunServiceModel>();
 
+    public string SubmissionType { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Submission, SubmissionResultsServiceModel>()
             .ForMember(d => d.ProblemId, opt => opt.MapFrom(s => s.Problem.Id))
             .ForMember(d => d.MaximumPoints, opt => opt.MapFrom(s => s.Problem.MaximumPoints))
             .ForMember(d => d.IsOfficial, opt => opt.MapFrom(s => s.Participant.IsOfficial))
-            .ForMember(d => d.IsProcessed, opt => opt.MapFrom(s => s.Processed));
+            .ForMember(d => d.IsProcessed, opt => opt.MapFrom(s => s.Processed))
+            .ForMember(d => d.SubmissionType, opt => opt.MapFrom(s => s.SubmissionType.Name));
 }

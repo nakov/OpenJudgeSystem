@@ -12,6 +12,7 @@ interface IListProps<TValue> {
     type?: 'normal' | 'numbered' | 'alpha' | 'bulleted';
     orientation?: 'vertical' | 'horizontal';
     wrap?: boolean;
+    fullWidth?: boolean;
 }
 
 const defaultKeyFunc = <TValue extends unknown>(value: TValue) => {
@@ -33,6 +34,7 @@ const List = <TValue extends unknown>({
     type = 'normal',
     orientation = 'vertical',
     wrap = false,
+    fullWidth = false,
 }: IListProps<TValue>) => {
     const listTypeClassName =
         type === 'normal'
@@ -53,7 +55,10 @@ const List = <TValue extends unknown>({
         : '';
 
     const listClassName = concatClassNames(styles.list, listTypeClassName, listOrientationClassName, listWrapClassName, className);
-    const itemClassNameCombined = concatClassNames(itemClassName);
+    const fullWidthItemClassName = fullWidth
+        ? styles.fullWidth
+        : '';
+    const itemClassNameCombined = concatClassNames(itemClassName, fullWidthItemClassName);
 
     const items = values.map((value) => (
         <li key={keyFunc(value)} className={itemClassNameCombined}>

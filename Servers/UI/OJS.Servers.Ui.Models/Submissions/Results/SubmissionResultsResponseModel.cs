@@ -25,5 +25,7 @@ public class SubmissionResultsResponseModel : IMapFrom<SubmissionResultsServiceM
 
     public short MaximumPoints { get; set; }
 
+    public string SubmissionType { get; set; }
+
     public IEnumerable<TestRunResponseModel> TestRuns { get; set; } = Enumerable.Empty<TestRunResponseModel>();
 }
