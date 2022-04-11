@@ -2,25 +2,23 @@ import * as React from 'react';
 import { useState } from 'react';
 import concatClassNames from '../../../utils/class-names';
 import generateId from '../../../utils/id-generator';
-import IHaveChildrenProps from '../../common/IHaveChildrenProps';
+import { ClassNameType, IHaveChildrenProps, IHaveOptionalClassName } from '../../common/Props';
 
 import styles from './FormControl.module.scss';
 
-interface IFormControlProps {
+interface IFormControlProps extends IHaveOptionalClassName{
     name: string,
     value: string,
-    className?: string | string[],
     labelText?: string,
-    labelClassName?: string | string[],
+    labelClassName?: ClassNameType,
     type?: 'radio' | 'checkbox' | 'text' | 'textarea' | 'input' | 'password',
     onChange?: (value?:string) => void
     onInput?: (value?:string) => void,
     checked?: boolean
 }
 
-interface ILabelInternalProps extends IHaveChildrenProps {
+interface ILabelInternalProps extends IHaveChildrenProps, IHaveOptionalClassName {
     text: string,
-    className: string | string[],
     forKey: string,
 }
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { IHaveOptionalChildrenProps } from '../../common/IHaveChildrenProps';
+import { IHaveOptionalChildrenProps, IHaveOptionalClassName } from '../../common/Props';
 
 import concatClassNames from '../../../utils/class-names';
 
@@ -13,10 +13,9 @@ enum TextType {
     Underlined = 3,
 }
 
-interface ITextProps extends IHaveOptionalChildrenProps {
+interface ITextProps extends IHaveOptionalChildrenProps, IHaveOptionalClassName {
     text?: string;
     type?: TextType;
-    className?: string | string[];
 }
 
 const typeClassNamesMap = {
@@ -25,12 +24,14 @@ const typeClassNamesMap = {
     [TextType.Italic]: styles.italic,
     [TextType.Underlined]: styles.underlined,
 };
+
 const componentMap = {
     [TextType.Normal]: 'span',
     [TextType.Bold]: 'strong',
     [TextType.Italic]: 'em',
     [TextType.Underlined]: 'u',
 };
+
 const Text = ({
     text = '',
     children = null,

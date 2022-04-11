@@ -1,9 +1,9 @@
 import * as React from 'react';
 import styles from './Label.module.scss';
 import concatClassNames from '../../../utils/class-names';
-import { IHaveOptionalChildrenProps } from '../../common/IHaveChildrenProps';
+import { IHaveOptionalChildrenProps, IHaveOptionalClassName } from '../../common/Props';
 
-interface ILabelProps extends IHaveOptionalChildrenProps {
+interface ILabelProps extends IHaveOptionalChildrenProps, IHaveOptionalClassName {
     type: 'success' | 'danger' | 'warning' | 'info';
     text?: string;
 }

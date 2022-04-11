@@ -4,7 +4,7 @@ import { Store } from 'react-notifications-component';
 import { INotificationType } from '../common/types';
 import 'react-notifications-component/dist/theme.css';
 
-import IHaveChildrenProps from '../components/common/IHaveChildrenProps';
+import { IHaveChildrenProps } from '../components/common/Props';
 
 interface INotificationsContext {
     notification: INotificationType,

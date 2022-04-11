@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import IHaveChildrenProps from '../components/common/IHaveChildrenProps';
+import { IHaveChildrenProps } from '../components/common/Props';
 import { useLoading } from './use-loading';
 import { useHttp } from './use-http';
 import { getParticipationsForProfileUrl } from '../utils/urls';

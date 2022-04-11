@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
-import IHaveChildrenProps from '../../common/IHaveChildrenProps';
+import { IHaveChildrenProps } from '../../common/Props';
 import { Button } from '../buttons/Button';
 import generateId from '../../../utils/id-generator';
 

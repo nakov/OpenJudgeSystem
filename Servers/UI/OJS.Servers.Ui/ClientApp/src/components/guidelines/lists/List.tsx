@@ -2,13 +2,13 @@ import * as React from 'react';
 import concatClassNames from '../../../utils/class-names';
 
 import styles from './List.module.scss';
+import { ClassNameType, IHaveOptionalClassName } from '../../common/Props';
 
-interface IListProps<TValue> {
+interface IListProps<TValue> extends IHaveOptionalClassName{
     values: TValue[];
     itemFunc: (value: TValue) => React.ReactElement;
     keyFunc?: (value: TValue) => string,
-    className?: string | string[];
-    itemClassName?: string | string[];
+    itemClassName?: ClassNameType;
     type?: 'normal' | 'numbered' | 'alpha' | 'bulleted';
     orientation?: 'vertical' | 'horizontal';
     wrap?: boolean;

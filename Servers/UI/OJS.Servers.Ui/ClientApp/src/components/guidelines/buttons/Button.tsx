@@ -3,24 +3,22 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import concatClassNames from '../../../utils/class-names';
-import { IHaveOptionalChildrenProps } from '../../common/IHaveChildrenProps';
+import { IHaveOptionalChildrenProps, IHaveOptionalClassName } from '../../common/Props';
 import generateId from '../../../utils/id-generator';
 
 import styles from './Button.module.scss';
 
-interface IButtonProps extends IHaveOptionalChildrenProps {
+interface IButtonProps extends IHaveOptionalChildrenProps, IHaveOptionalClassName {
     text?: string,
     id?: string,
     onClick: React.MouseEventHandler<HTMLButtonElement>,
-    className?: string | string[],
     type?: 'primary' | 'secondary' | 'plain' | 'disabled' | 'submit',
     size?: 'small' | 'medium' | 'large',
 }
 
-interface ILinkButtonProps {
+interface ILinkButtonProps extends IHaveOptionalClassName{
     text: string;
     id?: string;
-    className?: string | string[];
     type?: 'primary' | 'secondary' | 'plain' | 'disabled';
     size?: 'small' | 'medium' | 'large';
     to: string;
