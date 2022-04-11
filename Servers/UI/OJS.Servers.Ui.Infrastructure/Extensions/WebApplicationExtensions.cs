@@ -15,8 +15,6 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
                 .UseDefaults()
                 .MapDefaultRoutes();
 
-            app.UseSpaStaticFiles();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -25,14 +23,21 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
                 endpoints.MapFallbackToController("index", "home");
             });
 
-            app.UseSpa(spa =>
+            if (app.Environment.IsDevelopment())
             {
-                spa.Options.SourcePath = "ClientApp";
-                if (app.Environment.IsDevelopment())
+                app.UseSpaStaticFiles();
+                app.UseSpa(spa =>
                 {
-                    spa.UseReactDevelopmentServer(npmScript: "start");
-                }
-            });
+                    spa.Options.SourcePath = "ClientApp";
+                    if (app.Environment.IsDevelopment())
+                    {
+                        // spa.UseProxyToSpaDevelopmentServer("htp://");
+                        spa.UseReactDevelopmentServer(npmScript: "start");
+                    }
+                });
+            }
+
+
 
             return app;
         }
