@@ -59,6 +59,7 @@ namespace OJS.Common
             public const string ExternalRegisterPath = "/identity/externaljudgeregister";
             public const string AddSubmissionToDistributorPath = "/submissions/add";
             public const string AddManySubmissionsToDistributorPath = "/submissions/addmany";
+            public const string SubmissionDetailsPathTemplate = "/submissions/{0}";
         }
 
         public static class MimeTypes

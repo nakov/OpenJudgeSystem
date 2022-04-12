@@ -14,7 +14,11 @@ public class SubmissionSimilarityServiceModel
 
     public int FirstSubmissionId { get; set; }
 
+    public string FirstSubmissionLink { get; set; } = string.Empty;
+
     public int SecondSubmissionId { get; set; }
+
+    public string SecondSubmissionLink { get; set; } = string.Empty;
 
     public string FirstParticipantName { get; set; } = string.Empty;
 

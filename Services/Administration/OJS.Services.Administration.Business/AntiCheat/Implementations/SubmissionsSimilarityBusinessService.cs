@@ -2,12 +2,14 @@ namespace OJS.Services.Administration.Business.AntiCheat.Implementations;
 
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
+using OJS.Common.Enumerations;
 using OJS.Common.Extensions;
 using OJS.Common.Utils;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Business.Validation;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.AntiCheat;
+using OJS.Services.Common;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.Common.Extensions.Export;
 using SoftUni.Judge.Common;
@@ -19,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using static OJS.Common.GlobalConstants.FileExtensions;
+using static OJS.Common.GlobalConstants.Urls;
 
 public class SubmissionsSimilarityBusinessService : ISubmissionsSimilarityBusinessService
 {
@@ -29,19 +32,22 @@ public class SubmissionsSimilarityBusinessService : ISubmissionsSimilarityBusine
     private readonly IPlagiarismDetectorFactory plagiarismDetectorFactory;
     private readonly IContestsDataService contestsData;
     private readonly ISubmissionSimilaritiesValidationService submissionSimilaritiesValidation;
+    private readonly IApplicationUrlsService applicationUrls;
 
     public SubmissionsSimilarityBusinessService(
         ISubmissionsDataService submissionsData,
         ISimilarityFinder similarityFinder,
         IPlagiarismDetectorFactory plagiarismDetectorFactory,
         IContestsDataService contestsData,
-        ISubmissionSimilaritiesValidationService submissionSimilaritiesValidation)
+        ISubmissionSimilaritiesValidationService submissionSimilaritiesValidation,
+        IApplicationUrlsService applicationUrls)
     {
         this.submissionsData = submissionsData;
         this.similarityFinder = similarityFinder;
         this.plagiarismDetectorFactory = plagiarismDetectorFactory;
         this.contestsData = contestsData;
         this.submissionSimilaritiesValidation = submissionSimilaritiesValidation;
+        this.applicationUrls = applicationUrls;
     }
 
     public async Task<(byte[] file, string fileName)> GetSimilaritiesForFiltersAsExcel(
@@ -79,6 +85,7 @@ public class SubmissionsSimilarityBusinessService : ISubmissionsSimilarityBusine
         var plagiarismDetector = this.GetPlagiarismDetector(plagiarismDetectorType);
 
         var similarities = new List<SubmissionSimilarityServiceModel>();
+        var uiUrl = this.applicationUrls.GetUrl(ApplicationName.Ui);
         for (var index = 0; index < participantsSimilarSubmissionGroups.Count; index++)
         {
             var groupOfSubmissions = participantsSimilarSubmissionGroups[index].ToList();
@@ -122,16 +129,21 @@ public class SubmissionsSimilarityBusinessService : ISubmissionsSimilarityBusine
 
                     if (save && result.SimilarityPercentage != 0)
                     {
+                        var firstSubmissionId = groupOfSubmissions[i].Id;
+                        var secondSubmissionId = groupOfSubmissions[j].Id;
+
                         similarities.Add(new SubmissionSimilarityServiceModel
                         {
                             ProblemName = groupOfSubmissions[i].ProblemName,
                             Points = groupOfSubmissions[i].Points,
                             Differences = result.Differences.Count,
                             Percentage = result.SimilarityPercentage,
-                            FirstSubmissionId = groupOfSubmissions[i].Id,
+                            FirstSubmissionId = firstSubmissionId,
+                            FirstSubmissionLink = uiUrl + string.Format(SubmissionDetailsPathTemplate, firstSubmissionId),
                             FirstParticipantName = groupOfSubmissions[i].ParticipantName,
                             FirstSubmissionCreatedOn = groupOfSubmissions[i].CreatedOn,
-                            SecondSubmissionId = groupOfSubmissions[j].Id,
+                            SecondSubmissionId = secondSubmissionId,
+                            SecondSubmissionLink = uiUrl + string.Format(SubmissionDetailsPathTemplate, secondSubmissionId),
                             SecondParticipantName = groupOfSubmissions[j].ParticipantName,
                             SecondSubmissionCreatedOn = groupOfSubmissions[j].CreatedOn,
                         });
