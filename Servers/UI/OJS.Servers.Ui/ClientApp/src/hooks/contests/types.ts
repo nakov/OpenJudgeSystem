@@ -12,18 +12,19 @@ interface IProblemResourceType {
 }
 
 interface IProblemType {
-    id: number,
-    name: string,
-    orderBy: number,
-    maximumPoints: number,
-    isExcludedFromHomework: boolean,
-    memoryLimit: number,
-    fileSizeLimit: number,
-    timeLimit: number,
-    checkerName: string,
-    checkerDescription: string,
-    resources: IProblemResourceType[],
-    allowedSubmissionTypes: ISubmissionTypeType[]
+    id: number;
+    name: string;
+    orderBy: number;
+    points: number;
+    maximumPoints: number;
+    isExcludedFromHomework: boolean;
+    memoryLimit: number;
+    fileSizeLimit: number;
+    timeLimit: number;
+    checkerName: string;
+    checkerDescription: string;
+    resources: IProblemResourceType[];
+    allowedSubmissionTypes: ISubmissionTypeType[];
 }
 
 interface IContestType {

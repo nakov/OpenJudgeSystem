@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { FC } from 'react';
-import IHaveChildrenProps from '../../components/common/IHaveChildrenProps';
 
 import styles from './set-layout.module.scss';
 import concatClassNames from '../../utils/class-names';
+import { IHaveChildrenProps } from '../../components/common/Props';
 
 interface ILayoutProps extends IHaveChildrenProps {
     isWide: boolean;

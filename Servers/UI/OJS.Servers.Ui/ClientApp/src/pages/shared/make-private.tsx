@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { FC } from 'react';
 import { Redirect, useLocation } from 'react-router';
-import IHaveChildrenProps from '../../components/common/IHaveChildrenProps';
 import { useAuth } from '../../hooks/use-auth';
+import { IHaveChildrenProps } from '../../components/common/Props';
 
 interface IPrivatePageProps extends IHaveChildrenProps {
 }

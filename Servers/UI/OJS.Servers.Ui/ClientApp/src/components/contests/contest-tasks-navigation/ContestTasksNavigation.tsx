@@ -7,6 +7,9 @@ import { IProblemType } from '../../../hooks/contests/types';
 import { useContests } from '../../../hooks/contests/use-contests';
 import styles from './ContestTasksNavigation.module.scss';
 import concatClassNames from '../../../utils/class-names';
+import Label from '../../guidelines/labels/Label';
+import TickIcon from '../../guidelines/icons/TickIcon';
+import IconSize from '../../guidelines/icons/icon-sizes';
 
 const compareByOrderBy = (p1: IProblemType, p2: IProblemType) => p1.orderBy - p2.orderBy;
 
@@ -16,6 +19,29 @@ const ContestTasksNavigation = () => {
         currentProblem,
         setProblem,
     } = useContests();
+
+    const renderProblemLabel = useCallback(
+        ({ points, maximumPoints }: IProblemType) => {
+            if (points === 0) {
+                return null;
+            }
+
+            if (points === maximumPoints) {
+                return (
+                    <TickIcon size={IconSize.Medium} />
+                );
+            }
+
+            const pointsString = `${points}/${maximumPoints}`;
+
+            return (
+                <Label type="info">
+                    {pointsString}
+                </Label>
+            );
+        },
+        [],
+    );
 
     const renderTask = useCallback(
         (problem: IProblemType) => {
@@ -32,16 +58,19 @@ const ContestTasksNavigation = () => {
             );
 
             return (
-                <Button
-                  onClick={() => setProblem(problem)}
-                  className={className}
-                  type="plain"
-                >
-                    {problem.name}
-                </Button>
+                <>
+                    <Button
+                      onClick={() => setProblem(problem)}
+                      className={className}
+                      type="plain"
+                    >
+                        {problem.name}
+                    </Button>
+                    {renderProblemLabel(problem)}
+                </>
             );
         },
-        [ currentProblem, setProblem ],
+        [ currentProblem, renderProblemLabel, setProblem ],
     );
 
     const renderTasksList = useCallback(
@@ -56,6 +85,7 @@ const ContestTasksNavigation = () => {
                   values={problems.sort(compareByOrderBy)}
                   itemFunc={renderTask}
                   className={styles.tasksListSideNavigation}
+                  itemClassName={styles.taskListItem}
                   type="numbered"
                 />
             );

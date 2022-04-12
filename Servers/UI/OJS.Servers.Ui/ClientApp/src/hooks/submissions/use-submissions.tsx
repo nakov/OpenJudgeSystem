@@ -1,10 +1,10 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import IHaveChildrenProps from '../../components/common/IHaveChildrenProps';
 import { useLoading } from '../use-loading';
 import { useHttp } from '../use-http';
 import { ITestRunType, ISubmissionType } from './types';
 import { getSubmissionsForProfileUrl, submitUrl } from '../../utils/urls';
 import { useContests } from '../contests/use-contests';
+import { IHaveChildrenProps } from '../../components/common/Props';
 
 interface ISubmissionsContext {
     submissions: ISubmissionType[]

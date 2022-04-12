@@ -1,11 +1,11 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import IHaveChildrenProps from '../../components/common/IHaveChildrenProps';
 import { ITestRunType, ISubmissionType, ISubmissionDetailsType, ISubmissionResultType } from './types';
 import { getSubmissionDetailsUrl, getSubmissionResultsByProblem } from '../../utils/urls';
 import { useLoading } from '../use-loading';
 import { useHttp } from '../use-http';
 import { useContests } from '../contests/use-contests';
 import DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE from '../../common/constants';
+import { IHaveChildrenProps } from '../../components/common/Props';
 
 interface ISubmissionsDetailsContext {
     setCurrentSubmissionId: (submissionId: number) => void;

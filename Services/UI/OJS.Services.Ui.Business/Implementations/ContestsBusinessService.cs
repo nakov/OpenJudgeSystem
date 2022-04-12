@@ -7,6 +7,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using System.Linq;
     using System.Threading.Tasks;
     using FluentExtensions.Extensions;
+    using OJS.Common.Extensions;
     using OJS.Common.Utils;
     using OJS.Data.Models.Participants;
     using OJS.Services.Common.Models;
@@ -78,6 +79,21 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var participationModel = participant.Map<ContestParticipationServiceModel>();
             participationModel.ContestIsCompete = model.IsOfficial;
+            var participantsList = new List<int> { participant.Id, };
+
+            var maxParticipationScores = await this.participantScoresData
+                .GetMaxByProblemIdsAndParticipation(
+                    participationModel.Contest.Problems.Select(x => x.Id),
+                    participantsList
+                );
+
+            await participationModel.Contest.Problems.ForEachAsync(problem =>
+            {
+                problem.Points = maxParticipationScores
+                    .Where(ps => ps.ProblemId == problem.Id)
+                    .Select(x => x.Points)
+                    .FirstOrDefault();
+            });
 
             return participationModel;
         }
@@ -145,11 +161,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var past = await this.GetAllPracticable()
                 .ToListAsync();
 
-            return new ContestsForHomeIndexServiceModel
-            {
-                ActiveContests = active,
-                PastContests = past,
-            };
+            return new ContestsForHomeIndexServiceModel { ActiveContests = active, PastContests = past, };
         }
 
         public async Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllCompetable()

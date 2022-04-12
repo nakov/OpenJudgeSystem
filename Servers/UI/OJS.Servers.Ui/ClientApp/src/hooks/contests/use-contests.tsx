@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { AxiosResponse } from 'axios';
-import IHaveChildrenProps from '../../components/common/IHaveChildrenProps';
+import { IHaveChildrenProps } from '../../components/common/Props';
 import { getIndexContestsUrl, getProblemResourceUrl, startContestParticipationUrl } from '../../utils/urls';
 import { useHttp } from '../use-http';
 import { useLoading } from '../use-loading';
@@ -105,11 +105,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         [ setDefaultSubmissionType ],
     );
 
-    const orderProblemsByOrderBy = useCallback(
-        (problems: IProblemType[]) => problems.sort((a, b) => a.orderBy - b.orderBy),
-        [],
-    );
-
     const getProblemResourceFile = useCallback(async (resourceId: number) => {
         startLoading();
         await getProblemResourceRequest({ id: resourceId.toString() }, 'blob');
@@ -130,14 +125,18 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     useEffect(() => {
         if (startContestParticipationData != null) {
             const responseData = startContestParticipationData as IStartParticipationResponseType;
-            setCurrentContest(responseData.contest);
-            setIsContestParticipationOfficial(responseData.contestIsCompete);
-            const problems = orderProblemsByOrderBy(responseData.contest.problems);
+            const { contest, contestIsCompete } = responseData;
+            const { problems } = contest;
+
+            setCurrentContest(contest);
+            setIsContestParticipationOfficial(contestIsCompete);
             setAllProblems(problems);
-            setCurrentProblem(problems[0]);
-            setDefaultSubmissionType(problems[0].allowedSubmissionTypes);
+            const initialProblem = problems[0];
+            setCurrentProblem(initialProblem);
+            const { allowedSubmissionTypes } = initialProblem;
+            setDefaultSubmissionType(allowedSubmissionTypes);
         }
-    }, [ orderProblemsByOrderBy, setDefaultSubmissionType, startContestParticipationData ]);
+    }, [ setDefaultSubmissionType, startContestParticipationData ]);
 
     useEffect(() => {
         console.log(currentProblem);

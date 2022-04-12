@@ -9,12 +9,6 @@
   padding: 20px;
   display: flex;
 
-    //width: 100%;
-    //
-    //&:last-of-type {
-    //  border-bottom: 0;
-    //}
-
   .taskSideNavigationItem {
     text-align: start;
     font-size: 18px;
@@ -32,3 +26,9 @@
   }
 }
 
+.taskListItem {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

@@ -1,0 +1,23 @@
+@import 'src/styles/colors';
+
+
+.iconContainer {
+  &.small {
+
+  }
+
+  &.medium {
+    width: 15px;
+    height: 15px;
+  }
+
+  &.large {
+
+  }
+}
+.icon {
+}
+
+.success {
+  color: $icon-green;
+}
