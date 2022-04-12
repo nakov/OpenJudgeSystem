@@ -2,7 +2,6 @@ namespace OJS.Servers.Administration.Pages.AntiCheat;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using OJS.Common;
 using OJS.Servers.Administration.Models.AntiCheat;
 using OJS.Services.Administration.Business.AntiCheat;
 using OJS.Services.Administration.Business.Api;
@@ -11,6 +10,7 @@ using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static OJS.Common.GlobalConstants.MimeTypes;
 
 public class BySubmissionSimilarity : BasePageModel
 {
@@ -43,9 +43,9 @@ public class BySubmissionSimilarity : BasePageModel
         }
 
         var filters = this.Filters.Map<SubmissionSimilarityFiltersServiceModel>();
-        var (file, fileName) = await this.submissionsSimilarityBusiness.GetSimilaritiesForFiltersCsv(filters);
+        var (file, fileName) = await this.submissionsSimilarityBusiness.GetSimilaritiesForFiltersAsExcel(filters);
 
-        return this.File(file, GlobalConstants.MimeTypes.Csv, fileName);
+        return this.File(file, ExcelSheet, fileName);
     }
 
     private async Task PreparePageData()

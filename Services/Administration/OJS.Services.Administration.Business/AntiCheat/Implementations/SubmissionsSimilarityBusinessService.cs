@@ -5,14 +5,16 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Common.Extensions;
 using OJS.Common.Utils;
 using OJS.Data.Models.Submissions;
+using OJS.Services.Administration.Business.Validation;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.AntiCheat;
+using OJS.Services.Infrastructure.Extensions;
+using SoftUni.Common.Extensions.Export;
 using SoftUni.Judge.Common;
 using SoftUni.Judge.Common.Enumerations;
 using SoftUni.Judge.Workers.Tools.AntiCheat;
 using SoftUni.Judge.Workers.Tools.AntiCheat.Contracts;
 using SoftUni.Judge.Workers.Tools.Similarity;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,22 +27,34 @@ public class SubmissionsSimilarityBusinessService : ISubmissionsSimilarityBusine
     private readonly ISubmissionsDataService submissionsData;
     private readonly ISimilarityFinder similarityFinder;
     private readonly IPlagiarismDetectorFactory plagiarismDetectorFactory;
+    private readonly IContestsDataService contestsData;
+    private readonly ISubmissionSimilaritiesValidationService submissionSimilaritiesValidation;
 
     public SubmissionsSimilarityBusinessService(
         ISubmissionsDataService submissionsData,
         ISimilarityFinder similarityFinder,
-        IPlagiarismDetectorFactory plagiarismDetectorFactory)
+        IPlagiarismDetectorFactory plagiarismDetectorFactory,
+        IContestsDataService contestsData,
+        ISubmissionSimilaritiesValidationService submissionSimilaritiesValidation)
     {
         this.submissionsData = submissionsData;
         this.similarityFinder = similarityFinder;
         this.plagiarismDetectorFactory = plagiarismDetectorFactory;
+        this.contestsData = contestsData;
+        this.submissionSimilaritiesValidation = submissionSimilaritiesValidation;
     }
 
-    public async Task<(byte[] file, string fileName)> GetSimilaritiesForFiltersCsv(
+    public async Task<(byte[] file, string fileName)> GetSimilaritiesForFiltersAsExcel(
         SubmissionSimilarityFiltersServiceModel filters)
     {
         var contestId = filters.ContestId;
         var plagiarismDetectorType = filters.PlagiarismDetectorType;
+
+        var contest = await this.contestsData.OneById(contestId);
+
+        this.submissionSimilaritiesValidation
+            .GetValidationResult(contest)
+            .VerifyResult();
 
         var participantsSimilarSubmissionGroups =
             (await this.GetSimilarSubmissions(new [] { contestId }, plagiarismDetectorType)
@@ -127,8 +141,8 @@ public class SubmissionsSimilarityBusinessService : ISubmissionsSimilarityBusine
         }
 
         // TODO: convert result to file
-        var file = await Task.FromResult(Array.Empty<byte>());
-        var fileName = $"Result{Csv}";
+        var file = similarities.ToExcel();
+        var fileName = $"{contest!.Name}_similarities{Excel}";
 
         return (file, fileName);
     }

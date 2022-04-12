@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 public interface ISubmissionsSimilarityBusinessService : IService
 {
-    Task<(byte[] file, string fileName)> GetSimilaritiesForFiltersCsv(SubmissionSimilarityFiltersServiceModel filters);
+    Task<(byte[] file, string fileName)> GetSimilaritiesForFiltersAsExcel(SubmissionSimilarityFiltersServiceModel filters);
 }
