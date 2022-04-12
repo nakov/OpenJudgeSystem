@@ -23,13 +23,25 @@ class IndexPage extends Page {
 
     private pageSeeContestsButtonSelector = '#button-see-contests';
 
-    // private pageCompeteCardButton = '#button-card-compete';
+    private pageYoutubeVideoSelector = '#youtube-video';
 
-    // private pagePracticeCardButton = '#button-card-practice';
+    private pageSeeActiveContestsButtonSelector ='.btn-see-all-contests-Active';
 
-    private cartContestClassSelector = '.ContestCard_contestCard__1Pn8q';
+    private pageSeePastContestsButtonSelector = '.btn-see-all-contests-Past';
 
-    private pageYoutubeVideo = '#youtube-video';
+    private pageCompeteCardButtonSelector = '#button-card-compete'; // it will be changed or removed
+
+    private pagePracticeCardButtonSelector = '#button-card-practice'; // it will be changed or removed
+
+    private pageAllCardsSelector = '.Active-contests-cards-list';
+
+    private pageContestCardHeaderAndCategorySelector = '#index-contests-list div div';
+
+    private pageContestCardTimeTextSelector = '#index-contests-list p';
+
+    private pageContestCardTimerSelector = '#index-contests-list p span';
+
+    private pageContestCardButtonsSelector = '#index-contests-list a';
 
     public get headerHeading() {
         return $(this.pageHeaderHeadingSelector);
@@ -44,7 +56,7 @@ class IndexPage extends Page {
     }
 
     public get youtubeVideo() {
-        return $(this.pageYoutubeVideo);
+        return $(this.pageYoutubeVideoSelector);
     }
 
     public get seeContestsButton() {
@@ -69,6 +81,54 @@ class IndexPage extends Page {
 
     public get registerButton() {
         return $(this.pageRegisterButtonSelector);
+    }
+
+    public get allContestCards() {
+        return $$(this.pageAllCardsSelector);
+    }
+
+    public get allActiveContestCards() {
+        const activeCards = $$(this.pageAllCardsSelector);
+        return activeCards[0];
+    }
+
+    public get allPastContestCards() {
+        const pastCards = $$(this.pageAllCardsSelector);
+        return pastCards[1];
+    }
+
+    public get contestCardHeader() {
+        const cardHeader = $(this.pageContestCardHeaderAndCategorySelector);
+        return cardHeader[0];
+    }
+
+    public get contestCardCategory() {
+        const cardCategory = $$(this.pageContestCardHeaderAndCategorySelector);
+        return cardCategory[1];
+    }
+
+    public get contestCardTimeText() {
+        return $(this.pageContestCardTimeTextSelector);
+    }
+
+    public get contestCardTimer() {
+        return $(this.pageContestCardTimerSelector);
+    }
+
+    public get competeCardButton() {
+        return $(this.pageCompeteCardButtonSelector);
+    }
+
+    public get practiceCardButton() {
+        return $(this.pagePracticeCardButtonSelector);
+    }
+
+    public get seeAllActiveContestsButton() {
+        return $(this.pageSeeActiveContestsButtonSelector);
+    }
+
+    public get seeAllPastContestsButton() {
+        return $(this.pageSeePastContestsButtonSelector);
     }
 
     public open(): Promise<string> {

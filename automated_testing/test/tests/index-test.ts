@@ -1,20 +1,6 @@
 import IndexPage from '../pageobjects/index-page';
 
 describe('Testing index', () => {
-    const activeContestCards = async () => {
-        await IndexPage.open();
-        const activeCards = await IndexPage.allContestCards[0];
-        return activeCards;
-    };
-
-    const card = {
-        header: IndexPage.contestCardHeader,
-        practiceTimeText: IndexPage.contestCardTimeText,
-        timer: IndexPage.contestCardTimer,
-        competeBtn: IndexPage.competeCardButton,
-        practiceBtn: IndexPage.practiceCardButton,
-    };
-
     xit('Expect logInButton to exist', async () => {
         await IndexPage.open();
         const btn = await IndexPage.logInButton;
@@ -101,7 +87,7 @@ describe('Testing index', () => {
         await expect(btn).toBeClickable();
     });
 
-    it('Expect contest card to have displayed header', async () => {
+    xit('Expect contest card to have displayed header', async () => {
         await IndexPage.open();
         const el = await IndexPage.contestCardHeader;
 
@@ -109,7 +95,7 @@ describe('Testing index', () => {
         await expect(el).toBeDisplayed;
     });
 
-    it('Expect contest card to have displayed course category', async () => {
+    xit('Expect contest card to have displayed course category', async () => {
         await IndexPage.open();
         const el = await IndexPage.contestCardCategory;
 
@@ -117,7 +103,7 @@ describe('Testing index', () => {
         await expect(el).toBeDisplayed;
     });
 
-    it('Expect activeContest card to have displayed message for NO practice time ', async () => {
+    xit('Expect activeContest card to have displayed message for NO practice time ', async () => {
         await IndexPage.open();
         const text = await IndexPage.contestCardTimeText;
 
@@ -126,7 +112,7 @@ describe('Testing index', () => {
         await expect(text).toEqual('No practice end time.');
     });
 
-    it('Expect practice timer to be displayed in activeContest card ', async () => {
+    xit('Expect practice timer to be displayed in activeContest card ', async () => {
         await IndexPage.open();
         const text = await IndexPage.contestCardTimer;
 
@@ -134,7 +120,7 @@ describe('Testing index', () => {
         await expect(text).not.toBeDisplayed();
     });
 
-    it('Expect pastContest card to have displayed message for practice time ', async () => {
+    xit('Expect pastContest card to have displayed message for practice time ', async () => {
         await IndexPage.open();
         const text = await IndexPage.contestCardTimeText;
 
@@ -143,7 +129,7 @@ describe('Testing index', () => {
         await expect(text).toEqual('Remaining time:');
     });
 
-    it('Expect pastContest card to have displayed timer ', async () => {
+    xit('Expect pastContest card to have displayed timer ', async () => {
         await IndexPage.open();
         const text = await IndexPage.contestCardTimer;
 
@@ -165,5 +151,23 @@ describe('Testing index', () => {
 
         await expect(btn).toExist();
         await expect(btn).not.toBeClickable();
+    });
+
+    xit('Expect "See all" button in active contest section to be diplayed and redirect properly', async () => {
+        await IndexPage.open();
+        const btn = await IndexPage.seeAllActiveContestsButton;
+
+        await expect(btn).toExist();
+        await expect(btn).toHaveHrefContaining('/contests'); // must be to active
+        await expect(btn).toBeClickable();
+    });
+
+    it('Expect "See all" button in active contest section to exist and redirect properly', async () => {
+        await IndexPage.open();
+        const btn = await IndexPage.seeAllPastContestsButton;
+
+        await expect(btn).toExist();
+        await expect(btn).toHaveHrefContaining('/contests'); // must be to past
+        await expect(btn).toBeClickable();
     });
 });
