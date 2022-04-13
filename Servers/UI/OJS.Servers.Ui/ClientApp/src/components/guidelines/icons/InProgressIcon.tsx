@@ -1,21 +1,21 @@
 import React, { useCallback } from 'react';
-import { FaCheckCircle } from 'react-icons/fa';
+import { MdOutlineNetworkWifi } from 'react-icons/md';
 import { IHaveOptionalClassName } from '../../common/Props';
 import concatClassNames from '../../../utils/class-names';
 // eslint-disable-next-line css-modules/no-unused-class
 import styles from './Icons.module.scss';
 import IconSize from './icon-sizes';
 
-interface ITickIconProps extends IHaveOptionalClassName {
+interface IInProgressIconProps extends IHaveOptionalClassName {
     size?: IconSize;
     helperText?: string;
 }
 
-const TickIcon = ({
+const InProgressIcon = ({
     className = '',
     size = IconSize.Medium,
     helperText = '',
-}: ITickIconProps) => {
+}: IInProgressIconProps) => {
     const sizeClassName =
         size === IconSize.Small
             ? styles.small
@@ -25,7 +25,7 @@ const TickIcon = ({
 
     const iconClassName = concatClassNames(
         styles.icon,
-        styles.success,
+        styles.inProgress,
         className,
     );
 
@@ -46,7 +46,7 @@ const TickIcon = ({
 
     return (
         <div className={iconContainerClassName}>
-            <FaCheckCircle
+            <MdOutlineNetworkWifi
               className={iconClassName}
             />
             {renderHelperText()}
@@ -54,4 +54,4 @@ const TickIcon = ({
     );
 };
 
-export default TickIcon;
+export default InProgressIcon;

@@ -2,6 +2,8 @@
 
 
 .iconContainer {
+  position: relative;
+
   &.small {
 
   }
@@ -15,9 +17,29 @@
 
   }
 }
+
 .icon {
+  &.success {
+    color: $icon-green;
+  }
+  
+  &.inProgress {
+    color: $icon-blue;
+  }
+
+  &:hover {
+
+    & + .helperText {
+      display: inline-block;
+    }
+  }
 }
 
-.success {
-  color: $icon-green;
+.helperText {
+  position: absolute;
+  bottom: 100%;
+  left: 100%;
+  display: none;
+  width: 200px;
+  z-index: 1000;
 }

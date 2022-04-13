@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { AxiosResponse } from 'axios';
+import { sum } from 'lodash';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { getIndexContestsUrl, getProblemResourceUrl, startContestParticipationUrl } from '../../utils/urls';
 import { useHttp } from '../use-http';
@@ -15,14 +16,16 @@ import {
 } from './types';
 
 interface IContestsContext {
-    currentContest: IContestType | null,
-    isContestParticipationOfficial: boolean,
-    currentProblem: IProblemType | null,
-    selectedSubmissionTypeId: number | null,
-    setProblem: (problem: IProblemType) => void,
-    setSubmissionType: (id: number) => void,
-    activeContests: IIndexContestsType[]
-    pastContests: IIndexContestsType[]
+    currentContest: IContestType | null;
+    currentContestTotalScore: number;
+    currentContestMaxScore: number;
+    isContestParticipationOfficial: boolean;
+    currentProblem: IProblemType | null;
+    selectedSubmissionTypeId: number | null;
+    setProblem: (problem: IProblemType) => void;
+    setSubmissionType: (id: number) => void;
+    activeContests: IIndexContestsType[];
+    pastContests: IIndexContestsType[];
     getForHome: () => Promise<void>;
     startContestParticipation: (id: number, isOfficial: boolean) => Promise<void>;
     getProblemResourceFile: (resourceId: number) => Promise<void>;
@@ -34,6 +37,8 @@ const defaultState = {
     currentProblem: null,
     isContestParticipationOfficial: false,
     selectedSubmissionTypeId: 0,
+    currentContestTotalScore: 0,
+    currentContestMaxScore: 0,
 };
 
 const ContestsContext = createContext<IContestsContext>(defaultState as IContestsContext);
@@ -51,6 +56,9 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ allProblems, setAllProblems ] = useState<IProblemType[]>();
     const [ currentProblem, setCurrentProblem ] = useState<IProblemType | null>(defaultState.currentProblem);
     const [ selectedSubmissionTypeId, setSelectedSubmissionTypeId ] = useState<number>(defaultState.selectedSubmissionTypeId);
+    const [ currentContestTotalScore, setCurrentContestTotalScore ] = useState(defaultState.currentContestTotalScore);
+    const [ currentContestMaxScore, setCurrentContestMaxScore ] = useState(defaultState.currentContestMaxScore);
+
     const { startLoading, stopLoading } = useLoading();
     const {
         get: getContestsForIndexRequest,
@@ -142,6 +150,32 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         console.log(currentProblem);
     }, [ currentProblem ]);
 
+    useEffect(
+        () => {
+            const { problems } = currentContest || {};
+            if (!problems) {
+                return;
+            }
+
+            const totalScore = sum(problems.map((p) => p.points));
+            setCurrentContestTotalScore(totalScore);
+        },
+        [ currentContest ],
+    );
+
+    useEffect(
+        () => {
+            const { problems } = currentContest || {};
+            if (!problems) {
+                return;
+            }
+
+            const maxScore = sum(problems.map((p) => p.maximumPoints));
+            setCurrentContestMaxScore(maxScore);
+        },
+        [ currentContest ],
+    );
+
     const value = {
         currentContest,
         isContestParticipationOfficial,
@@ -149,6 +183,8 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         selectedSubmissionTypeId,
         activeContests,
         pastContests,
+        currentContestTotalScore,
+        currentContestMaxScore,
 
         setProblem,
         setSubmissionType,

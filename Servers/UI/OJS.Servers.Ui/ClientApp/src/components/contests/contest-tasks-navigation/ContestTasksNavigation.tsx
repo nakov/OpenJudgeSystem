@@ -7,9 +7,9 @@ import { IProblemType } from '../../../hooks/contests/types';
 import { useContests } from '../../../hooks/contests/use-contests';
 import styles from './ContestTasksNavigation.module.scss';
 import concatClassNames from '../../../utils/class-names';
-import Label from '../../guidelines/labels/Label';
 import TickIcon from '../../guidelines/icons/TickIcon';
 import IconSize from '../../guidelines/icons/icon-sizes';
+import InProgressIcon from '../../guidelines/icons/InProgressIcon';
 
 const compareByOrderBy = (p1: IProblemType, p2: IProblemType) => p1.orderBy - p2.orderBy;
 
@@ -20,7 +20,7 @@ const ContestTasksNavigation = () => {
         setProblem,
     } = useContests();
 
-    const renderProblemLabel = useCallback(
+    const renderIcon = useCallback(
         ({ points, maximumPoints }: IProblemType) => {
             if (points === 0) {
                 return null;
@@ -28,16 +28,17 @@ const ContestTasksNavigation = () => {
 
             if (points === maximumPoints) {
                 return (
-                    <TickIcon size={IconSize.Medium} />
+                    <TickIcon helperText="You solved this problem" size={IconSize.Medium} />
                 );
             }
 
-            const pointsString = `${points}/${maximumPoints}`;
+            const helperText = `You have ${points} out of ${maximumPoints} points.`;
 
             return (
-                <Label type="info">
-                    {pointsString}
-                </Label>
+                <InProgressIcon
+                  helperText={helperText}
+                  size={IconSize.Medium}
+                />
             );
         },
         [],
@@ -66,11 +67,11 @@ const ContestTasksNavigation = () => {
                     >
                         {problem.name}
                     </Button>
-                    {renderProblemLabel(problem)}
+                    {renderIcon(problem)}
                 </>
             );
         },
-        [ currentProblem, renderProblemLabel, setProblem ],
+        [ currentProblem, renderIcon, setProblem ],
     );
 
     const renderTasksList = useCallback(

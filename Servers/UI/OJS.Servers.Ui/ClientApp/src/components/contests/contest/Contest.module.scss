@@ -37,8 +37,13 @@
 .container {
   border-left: 1px $bottom-border-color solid;
   padding: 15px;
-  
+
   &:first-of-type {
     border-left: 0;
   }
+}
+
+.contestInfoContainer {
+  display: flex;
+  justify-content: space-around;
 }
