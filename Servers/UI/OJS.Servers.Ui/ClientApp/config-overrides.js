@@ -57,6 +57,7 @@ module.exports = {
         config,
         // addMonacoPlugin,
         fixHtmlPlugin,
+        addMonacoPlugin,
     ),
     devServer(configFunction) {
         return function (proxy, allowedHost) {

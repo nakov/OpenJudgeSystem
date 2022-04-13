@@ -7,9 +7,7 @@ import { IProblemType } from '../../../hooks/contests/types';
 import { useContests } from '../../../hooks/contests/use-contests';
 import styles from './ContestTasksNavigation.module.scss';
 import concatClassNames from '../../../utils/class-names';
-import TickIcon from '../../guidelines/icons/TickIcon';
-import IconSize from '../../guidelines/icons/icon-sizes';
-import InProgressIcon from '../../guidelines/icons/InProgressIcon';
+import Label from '../../guidelines/labels/Label';
 
 const compareByOrderBy = (p1: IProblemType, p2: IProblemType) => p1.orderBy - p2.orderBy;
 
@@ -22,23 +20,20 @@ const ContestTasksNavigation = () => {
 
     const renderIcon = useCallback(
         ({ points, maximumPoints }: IProblemType) => {
-            if (points === 0) {
-                return null;
-            }
+            const type = points === 0
+                ? 'warning'
+                : points === 100
+                    ? 'success'
+                    : 'info';
 
-            if (points === maximumPoints) {
-                return (
-                    <TickIcon helperText="You solved this problem" size={IconSize.Medium} />
-                );
-            }
+            const currentPoints = points === 0
+                ? '?'
+                : points;
 
-            const helperText = `You have ${points} out of ${maximumPoints} points.`;
+            const text = `${currentPoints}/${maximumPoints}`;
 
             return (
-                <InProgressIcon
-                  helperText={helperText}
-                  size={IconSize.Medium}
-                />
+                <Label className={styles.taskLabel} type={type}>{text}</Label>
             );
         },
         [],

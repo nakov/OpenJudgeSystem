@@ -12,6 +12,7 @@ const Label = ({
     type,
     text = '',
     children = null,
+    className = '',
 }: ILabelProps) => {
     if (!text && !children) {
         throw new Error('Buttons must have only `text` or `children`');
@@ -27,13 +28,14 @@ const Label = ({
                     ? styles.info
                     : styles.danger;
 
-    const className = concatClassNames(
+    const labelClassName = concatClassNames(
         styles.label,
         typeClassName,
+        className,
     );
 
     return (
-        <div className={className}>
+        <div className={labelClassName}>
             {content}
         </div>
     );

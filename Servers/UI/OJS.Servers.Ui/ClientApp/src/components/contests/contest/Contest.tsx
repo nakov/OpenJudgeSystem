@@ -21,7 +21,7 @@ const Contest = () => {
     } = useContests();
 
     const navigationClassName = concatClassNames(
-        styles.sizeTwo,
+        styles.sizeThree,
         styles.container,
     );
 

@@ -14,7 +14,13 @@ interface ISubmissionsContext {
     setCode: (code: string) => void;
 }
 
-const defaultState = { currentSubmissionCode: 'Write your code here' };
+const defaultState = {
+    currentSubmissionCode: `
+function hello() {
+    alert('Hello world!');
+}
+`,
+};
 
 const SubmissionsContext = createContext<ISubmissionsContext>(defaultState as ISubmissionsContext);
 
