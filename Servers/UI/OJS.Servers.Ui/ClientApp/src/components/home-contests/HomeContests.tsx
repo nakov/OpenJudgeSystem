@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect } from 'react';
-import { useContests } from '../../hooks/contests/use-contests';
+import { useContests } from '../../hooks/use-contests';
 import { setLayout } from '../../pages/shared/set-layout';
 import ContestsList from './ContestsList';
 

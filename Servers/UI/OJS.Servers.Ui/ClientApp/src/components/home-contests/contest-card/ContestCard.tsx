@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { useCallback } from 'react';
-import { IIndexContestsType } from '../../../hooks/contests/types';
 import Countdown from '../../guidelines/countdown/Countdown';
 import { convertToSecondsRemaining } from '../../../utils/dates';
-import styles from './ContestCard.module.scss';
 import { LinkButton } from '../../guidelines/buttons/Button';
+import { IIndexContestsType } from '../../../common/types';
+
+import styles from './ContestCard.module.scss';
 
 interface IContestCardProps {
     contest: IIndexContestsType

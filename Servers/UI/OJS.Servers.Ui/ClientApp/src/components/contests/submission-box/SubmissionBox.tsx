@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { useCallback } from 'react';
-import { useContests } from '../../../hooks/contests/use-contests';
+import { useContests } from '../../../hooks/use-contests';
 import Heading from '../../guidelines/headings/Heading';
 import CodeEditor from '../../code-editor/CodeEditor';
 import ExecutionTypeSelector from '../execution-type-selector/ExecutionTypeSelector';
 import List from '../../guidelines/lists/List';
-import { ISubmissionTypeType } from '../../../hooks/contests/types';
 import { Button } from '../../guidelines/buttons/Button';
 import styles from './SubmissionBox.module.scss';
 import { useSubmissions } from '../../../hooks/submissions/use-submissions';
+import { ISubmissionTypeType } from '../../../common/types';
 
 const SubmissionBox = () => {
     const {

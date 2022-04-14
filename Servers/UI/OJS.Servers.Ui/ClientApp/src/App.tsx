@@ -8,7 +8,7 @@ import PageFooter from './layout/footer/PageFooter';
 import LoadingProvider from './hooks/use-loading';
 import ServicesProvider from './hooks/use-services';
 import NotificationsProvider from './hooks/use-notifications';
-import ContestsProvider from './hooks/contests/use-contests';
+import ContestsProvider from './hooks/use-contests';
 import UsersProvider from './hooks/use-users';
 import SubmissionsProvider from './hooks/submissions/use-submissions';
 import SubmissionsDetailsProvider from './hooks/submissions/use-submissions-details';

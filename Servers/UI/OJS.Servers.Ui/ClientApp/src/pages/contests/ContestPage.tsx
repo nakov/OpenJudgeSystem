@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useParams } from 'react-router';
 import { useEffect } from 'react';
-import { useContests } from '../../hooks/contests/use-contests';
+import { useContests } from '../../hooks/use-contests';
 import Contest from '../../components/contests/contest/Contest';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';

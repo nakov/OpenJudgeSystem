@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import axios from 'axios';
 import { HttpStatus } from '../common/common';
-import { IDictionary } from '../common/types';
+import { IDictionary } from '../common/common-types';
 
 const useHttp = (url: string, headers: IDictionary<string> | null = null) => {
     const [ response, setResponse ] = useState<any>(null);

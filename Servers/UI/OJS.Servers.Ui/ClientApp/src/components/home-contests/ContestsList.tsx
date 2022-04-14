@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { useCallback } from 'react';
-import { IIndexContestsType } from '../../hooks/contests/types';
 import ContestCard from './contest-card/ContestCard';
 import Heading from '../guidelines/headings/Heading';
 import List from '../guidelines/lists/List';
 import { LinkButton } from '../guidelines/buttons/Button';
+import { IIndexContestsType } from '../../common/types';
+
 import styles from './ContestsList.module.scss';
 
 interface IContestsListProps {

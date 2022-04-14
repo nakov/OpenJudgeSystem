@@ -3,7 +3,7 @@ import { useLoading } from '../use-loading';
 import { useHttp } from '../use-http';
 import { ITestRunType, ISubmissionType } from './types';
 import { getSubmissionsForProfileUrl, submitUrl } from '../../utils/urls';
-import { useContests } from '../contests/use-contests';
+import { useContests } from '../use-contests';
 import { IHaveChildrenProps } from '../../components/common/Props';
 
 interface ISubmissionsContext {

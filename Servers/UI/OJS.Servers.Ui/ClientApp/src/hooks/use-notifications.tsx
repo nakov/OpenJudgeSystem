@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { Store } from 'react-notifications-component';
-import { INotificationType } from '../common/types';
+import { INotificationType } from '../common/common-types';
 import 'react-notifications-component/dist/theme.css';
 
 import { IHaveChildrenProps } from '../components/common/Props';

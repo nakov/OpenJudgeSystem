@@ -1,37 +1,90 @@
-declare global {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    interface Window { isLoggedIn: boolean; username: string; URLS: URLS }
-
-    interface URLS {
-        UI_URL: string | undefined,
-        ADMINISTRATION_URL: string | undefined,
-    }
+interface ISubmissionTypeType {
+    id: number,
+    name: string,
+    isSelectedByDefault: boolean,
 }
 
-interface IDictionary<TValue> {
-    [key: string]: TValue;
+interface IProblemResourceType {
+    id: number,
+    name: string,
+    link: string,
+    type: number
 }
 
-interface INotificationType {
-    title: string,
-    message: string,
-    type?: 'success' | 'danger' | 'info' | 'default' | 'warning',
-    leaveTimeout: number | null
+interface IProblemType {
+    id: number;
+    name: string;
+    orderBy: number;
+    points: number;
+    maximumPoints: number;
+    isExcludedFromHomework: boolean;
+    memoryLimit: number;
+    fileSizeLimit: number;
+    timeLimit: number;
+    checkerName: string;
+    checkerDescription: string;
+    resources: IProblemResourceType[];
+    allowedSubmissionTypes: ISubmissionTypeType[];
 }
 
-type QuestionTypeType = 'text' | 'single' | 'multiple';
+interface IContestType {
+    id: number,
+    name: string,
+    categoryId: number,
+    categoryName: string,
+    startTime: Date,
+    endTime: Date,
+    practiceStartTime: Date,
+    practiceEndTime: Date,
+    limitBetweenSubmissions: number,
+    isDeleted: boolean,
+    isVisible: boolean,
+    isOnline: boolean,
+    allowedSubmissionTypes: ISubmissionTypeType[],
+    problems: IProblemType[],
+    canBeCompeted: boolean,
+    canBePracticed: boolean,
+    resultsArePubliclyVisible: boolean,
+    hasContestPassword: boolean,
+    hasPracticePassword: boolean,
+    remainingTimeInMilliseconds: number,
+    userIsAdminOrLecturerInContest: boolean,
+    userCanCompete: boolean,
+    userIsParticipant: false,
+    isActive: boolean,
+}
 
-type FilterType = 'all' | 'done' | 'remaining'
+interface IIndexContestsType {
+    id: number,
+    name: string,
+    startTime: Date,
+    endTime: Date,
+    practiceStartTime: Date,
+    practiceEndTime: Date,
+    canBePracticed: boolean,
+    canBeCompeted: boolean,
+    category: string
+}
 
-export const SulsQuestionTypeMapping : { [key: number]: QuestionTypeType } = {
-    1: 'single' as QuestionTypeType,
-    2: 'multiple' as QuestionTypeType,
-    3: 'text' as QuestionTypeType,
-};
+interface IGetContestsForIndexResponseType {
+    activeContests: IIndexContestsType[]
+    pastContests: IIndexContestsType[]
+}
 
+interface IStartParticipationResponseType {
+    contest: IContestType,
+    contestIsCompete: boolean,
+    lastSubmissionTime: Date,
+    remainingTimeInMilliseconds: number
+}
+
+// eslint-disable-next-line import/prefer-default-export
 export type {
-    IDictionary,
-    INotificationType,
-    QuestionTypeType,
-    FilterType,
+    IIndexContestsType,
+    IGetContestsForIndexResponseType,
+    IStartParticipationResponseType,
+    IContestType,
+    IProblemType,
+    IProblemResourceType,
+    ISubmissionTypeType,
 };

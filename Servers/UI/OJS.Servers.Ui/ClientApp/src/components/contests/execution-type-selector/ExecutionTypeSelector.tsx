@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useCallback, useState } from 'react';
 import styles from './ExecutionTypeSelector.module.scss';
 import { Button } from '../../guidelines/buttons/Button';
-import { useContests } from '../../../hooks/contests/use-contests';
+import { useContests } from '../../../hooks/use-contests';
 
 interface IExecutionTypeSelectorProps {
     id: number,

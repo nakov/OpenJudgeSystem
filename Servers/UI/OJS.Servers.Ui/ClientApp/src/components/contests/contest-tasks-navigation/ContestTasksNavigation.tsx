@@ -3,11 +3,11 @@ import { useCallback } from 'react';
 import List from '../../guidelines/lists/List';
 import Heading from '../../guidelines/headings/Heading';
 import { Button } from '../../guidelines/buttons/Button';
-import { IProblemType } from '../../../hooks/contests/types';
-import { useContests } from '../../../hooks/contests/use-contests';
+import { useContests } from '../../../hooks/use-contests';
 import styles from './ContestTasksNavigation.module.scss';
 import concatClassNames from '../../../utils/class-names';
 import Label from '../../guidelines/labels/Label';
+import { IProblemType } from '../../../common/types';
 
 const compareByOrderBy = (p1: IProblemType, p2: IProblemType) => p1.orderBy - p2.orderBy;
 

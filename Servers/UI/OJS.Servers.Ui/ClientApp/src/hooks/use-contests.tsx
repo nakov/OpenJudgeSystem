@@ -2,10 +2,10 @@ import * as React from 'react';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { AxiosResponse } from 'axios';
 import { sum } from 'lodash';
-import { IHaveChildrenProps } from '../../components/common/Props';
-import { getIndexContestsUrl, getProblemResourceUrl, startContestParticipationUrl } from '../../utils/urls';
-import { useHttp } from '../use-http';
-import { useLoading } from '../use-loading';
+import { IHaveChildrenProps } from '../components/common/Props';
+import { getIndexContestsUrl, getProblemResourceUrl, startContestParticipationUrl } from '../utils/urls';
+import { useHttp } from './use-http';
+import { useLoading } from './use-loading';
 import {
     IContestType,
     IProblemType,
@@ -13,7 +13,7 @@ import {
     IGetContestsForIndexResponseType,
     IStartParticipationResponseType,
     ISubmissionTypeType,
-} from './types';
+} from '../common/types';
 
 interface IContestsContext {
     currentContest: IContestType | null;

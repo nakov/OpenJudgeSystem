@@ -2,7 +2,7 @@ import React from 'react';
 import Tabs from '../../guidelines/tabs/Tabs';
 import ProblemResources from '../../problems/problem-resources/ProblemResources';
 import ProblemSubmissions from '../../problems/problem-submissions/ProblemSubmissions';
-import { useContests } from '../../../hooks/contests/use-contests';
+import { useContests } from '../../../hooks/use-contests';
 import styles from './ContestProblemDetails.module.scss';
 
 const ContestProblemDetails = () => {

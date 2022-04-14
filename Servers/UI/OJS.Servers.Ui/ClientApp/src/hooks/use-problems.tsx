@@ -1,6 +1,6 @@
 // import React, { createContext, useContext } from 'react';
 // import { IHaveChildrenProps } from '../components/common/Props';
-// import {IProblemType} from "./contests/types";
+// import {IProblemType} from ".../common/types";
 //
 // interface IProblemsContext {
 //     state: {

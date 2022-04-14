@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IProblemResourceType } from '../../../hooks/contests/types';
+import { IProblemResourceType } from '../../../common/types';
 import List from '../../guidelines/lists/List';
 import ProblemResource from '../problem-resource/ProblemResource';
 import styles from './ProblemResources.module.scss';

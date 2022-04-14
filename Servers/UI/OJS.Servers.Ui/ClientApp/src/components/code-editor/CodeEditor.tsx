@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import MonacoEditor from 'react-monaco-editor';
 import { useSubmissions } from '../../hooks/submissions/use-submissions';
-import { useContests } from '../../hooks/contests/use-contests';
+import { useContests } from '../../hooks/use-contests';
 import styles from './CodeEditor.module.scss';
 
 const possibleLanguages = [

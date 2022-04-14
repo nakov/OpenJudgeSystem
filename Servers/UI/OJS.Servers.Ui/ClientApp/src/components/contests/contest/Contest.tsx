@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
-import { useContests } from '../../../hooks/contests/use-contests';
+import { useContests } from '../../../hooks/use-contests';
 import Heading from '../../guidelines/headings/Heading';
 import ContestTasksNavigation from '../contest-tasks-navigation/ContestTasksNavigation';
 import SubmissionBox from '../submission-box/SubmissionBox';

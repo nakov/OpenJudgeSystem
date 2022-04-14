@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { useCallback, useEffect } from 'react';
 import { saveAs } from 'file-saver';
-import { IProblemResourceType } from '../../../hooks/contests/types';
-import { useContests } from '../../../hooks/contests/use-contests';
+import { useContests } from '../../../hooks/use-contests';
 import { Button } from '../../guidelines/buttons/Button';
+import { IProblemResourceType } from '../../../common/types';
+
 import styles from './ProblemResource.module.scss';
 
 interface IProblemResourceProps {
