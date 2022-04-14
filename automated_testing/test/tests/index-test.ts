@@ -1,6 +1,8 @@
 import IndexPage from '../pageobjects/index-page';
 
 describe('Testing index', () => {
+    const displayedContectCardsCheck = (cards) => cards.length > 0;
+
     xit('Expect logInButton to exist', async () => {
         await IndexPage.open();
         const btn = await IndexPage.logInButton;
@@ -73,7 +75,7 @@ describe('Testing index', () => {
 
     xit('Expect activeContest card to have disabled "Practice" button ', async () => {
         await IndexPage.open();
-        const btn = await IndexPage.practiceCardButton;
+        const btn = await IndexPage.singleActiveContestCard;
 
         await expect(btn).toExist();
         await expect(btn).not.toBeClickable();
@@ -162,12 +164,28 @@ describe('Testing index', () => {
         await expect(btn).toBeClickable();
     });
 
-    it('Expect "See all" button in active contest section to exist and redirect properly', async () => {
+    xit('Expect "See all" button in active contest section to exist and redirect properly', async () => {
         await IndexPage.open();
         const btn = await IndexPage.seeAllPastContestsButton;
 
         await expect(btn).toExist();
         await expect(btn).toHaveHrefContaining('/contests'); // must be to past
         await expect(btn).toBeClickable();
+    });
+
+    it('Expect having at least one active contest card', async () => {
+        await IndexPage.open();
+        const cards = await IndexPage.allCardsForActiveContests;
+        const check = await displayedContectCardsCheck(cards);
+
+        await expect(check).toEqual(true);
+    });
+
+    it('Expect having at least one past contest card', async () => {
+        await IndexPage.open();
+        const cards = await IndexPage.allCardsForPastContests;
+        const check = await displayedContectCardsCheck(cards);
+
+        await expect(check).toEqual(true);
     });
 });

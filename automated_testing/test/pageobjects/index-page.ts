@@ -33,15 +33,17 @@ class IndexPage extends Page {
 
     private pagePracticeCardButtonSelector = '#button-card-practice'; // it will be changed or removed
 
-    private pageAllCardsSelector = '.Active-contests-cards-list';
+    private pageAllActiveCardsSelector = '.Active-contests-cards-list';
 
-    private pageContestCardHeaderAndCategorySelector = '#index-contests-list div div';
+    private pageAllPastCardsSelector = '.Past-contests-cards-list';
 
-    private pageContestCardTimeTextSelector = '#index-contests-list p';
+    private pageContestCardClassSelector = '.card-contests';
 
-    private pageContestCardTimerSelector = '#index-contests-list p span';
+    private pageContestCardHeaderAndCategorySelector ='.card-contests div';
 
-    private pageContestCardButtonsSelector = '#index-contests-list a';
+    private pageContestCardTimeTextSelector = '.card-contests p';
+
+    private pageContestCardTimerSelector = '.card-contests p span';
 
     public get headerHeading() {
         return $(this.pageHeaderHeadingSelector);
@@ -83,28 +85,31 @@ class IndexPage extends Page {
         return $(this.pageRegisterButtonSelector);
     }
 
-    public get allContestCards() {
-        return $$(this.pageAllCardsSelector);
+    public get activeContestCardsDiv() {
+        return $(this.pageAllActiveCardsSelector);
     }
 
-    public get allActiveContestCards() {
-        const activeCards = $$(this.pageAllCardsSelector);
-        return activeCards[0];
+    public get pastContestCardsDiv() {
+        return $(this.pageAllPastCardsSelector);
     }
 
-    public get allPastContestCards() {
-        const pastCards = $$(this.pageAllCardsSelector);
-        return pastCards[1];
+    public get allCardsForActiveContests() {
+        return $(this.pageAllActiveCardsSelector).$$(this.pageContestCardClassSelector);
     }
 
-    public get contestCardHeader() {
-        const cardHeader = $(this.pageContestCardHeaderAndCategorySelector);
-        return cardHeader[0];
+    public get allCardsForPastContests() {
+        return $(this.pageAllPastCardsSelector).$$(this.pageContestCardClassSelector);
+    }
+    // make them work
+
+    public get activeContestCardHeader() {
+        const header = $(this.pageAllActiveCardsSelector).$$(this.pageContestCardHeaderAndCategorySelector)[0];
+        return header;
     }
 
-    public get contestCardCategory() {
-        const cardCategory = $$(this.pageContestCardHeaderAndCategorySelector);
-        return cardCategory[1];
+    public get activeContestCardCategory() {
+        const category = $(this.pageAllActiveCardsSelector).$$(this.pageContestCardHeaderAndCategorySelector)[1];
+        return category;
     }
 
     public get contestCardTimeText() {
