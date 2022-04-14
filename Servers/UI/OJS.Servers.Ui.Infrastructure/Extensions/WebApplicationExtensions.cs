@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 namespace OJS.Servers.Ui.Infrastructure.Extensions
 {
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.Extensions.FileProviders;
     using OJS.Servers.Infrastructure.Extensions;
 
     public static class WebApplicationExtensions
@@ -15,7 +16,16 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
                 .UseDefaults()
                 .MapDefaultRoutes();
 
-            app.UseSpaStaticFiles();
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseStaticFiles();
+            }
+            else
+            {
+                var reactFilesPath = Path.Combine(Directory.GetCurrentDirectory(), "ClientApp", "build");
+                Console.WriteLine(reactFilesPath);
+                app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(reactFilesPath), });
+            }
 
             app.UseEndpoints(endpoints =>
             {
@@ -25,14 +35,21 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
                 endpoints.MapFallbackToController("index", "home");
             });
 
-            app.UseSpa(spa =>
+            if (app.Environment.IsDevelopment())
             {
-                spa.Options.SourcePath = "ClientApp";
-                if (app.Environment.IsDevelopment())
+                app.UseSpaStaticFiles();
+                app.UseSpa(spa =>
                 {
-                    spa.UseReactDevelopmentServer(npmScript: "start");
-                }
-            });
+                    spa.Options.SourcePath = "ClientApp";
+                    if (app.Environment.IsDevelopment())
+                    {
+                        // spa.UseProxyToSpaDevelopmentServer("htp://");
+                        spa.UseReactDevelopmentServer(npmScript: "start");
+                    }
+                });
+            }
+
+
 
             return app;
         }

@@ -9,18 +9,22 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
     public static class WebApplicationExtensions
     {
         public static WebApplication ConfigureWebApplication(this WebApplication app)
-            => app
+        {
+            app
                 .UseDefaults()
+                .UseStaticFiles();
+
+            return app
                 .UseAutoCrudAdmin()
                 .MapDefaultRoutes()
                 .UseAndMapHangfireDashboard();
+        }
 
         private static WebApplication UseAutoCrudAdmin(this WebApplication app)
         {
             var options = new AutoCrudAdminOptions
             {
-                Authorization = new []{ new AutoCrudAdminAuthFilter() },
-                LayoutName = "_Layout",
+                Authorization = new[] { new AutoCrudAdminAuthFilter() }, LayoutName = "_Layout",
             };
 
             app.AddAutoCrudAdmin(options: options);

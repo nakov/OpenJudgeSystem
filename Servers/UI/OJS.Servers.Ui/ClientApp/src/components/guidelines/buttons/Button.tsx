@@ -13,17 +13,17 @@ interface IButtonProps extends IHaveOptionalChildrenProps {
     id?: string,
     onClick: React.MouseEventHandler<HTMLButtonElement>,
     className?: string | string[],
-    type?: 'primary' | 'secondary' | 'plain' | 'disabled',
+    type?: 'primary' | 'secondary' | 'plain' | 'disabled' | 'submit',
     size?: 'small' | 'medium' | 'large',
 }
 
 interface ILinkButtonProps {
-    text: string,
-    id?: string,
-    className?: string | string[],
-    type?: 'primary' | 'secondary' | 'plain' | 'disabled',
-    size?: 'small' | 'medium' | 'large',
-    to: string,
+    text: string;
+    id?: string;
+    className?: string | string[];
+    type?: 'primary' | 'secondary' | 'plain' | 'disabled';
+    size?: 'small' | 'medium' | 'large';
+    to: string;
 }
 
 const classNameToType = {
@@ -31,6 +31,7 @@ const classNameToType = {
     secondary: styles.btnSecondary,
     plain: styles.btnPlain,
     disabled: styles.btnDisabled,
+    submit: styles.btn,
 };
 
 const Button = ({
@@ -65,7 +66,9 @@ const Button = ({
 
     return (
         <button
-          type="button"
+          type={type === 'submit'
+              ? 'submit'
+              : 'button'}
           onClick={onClick}
           className={buttonClassName}
           id={id}
@@ -75,7 +78,14 @@ const Button = ({
     );
 };
 
-const LinkButton = ({ text, to, className = '', type = 'primary', size = 'medium', id = generateId() }: ILinkButtonProps) => {
+const LinkButton = ({
+    text,
+    to,
+    className = '',
+    type = 'primary',
+    size = 'medium',
+    id = generateId(),
+}: ILinkButtonProps) => {
     const sizeToClassName = {
         small: styles.small,
         medium: styles.medium,
