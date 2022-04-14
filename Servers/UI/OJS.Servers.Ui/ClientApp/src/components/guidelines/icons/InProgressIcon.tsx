@@ -1,57 +1,24 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { MdOutlineNetworkWifi } from 'react-icons/md';
-import { IHaveOptionalClassName } from '../../common/Props';
-import concatClassNames from '../../../utils/class-names';
-// eslint-disable-next-line css-modules/no-unused-class
-import styles from './Icons.module.scss';
 import IconSize from './icon-sizes';
+import Icon, { IIconProps } from './Icon';
+import styles from './InProgressIcon.module.scss';
+import concatClassNames from '../../../utils/class-names';
 
-interface IInProgressIconProps extends IHaveOptionalClassName {
-    size?: IconSize;
-    helperText?: string;
+interface IInProgressIconProps extends IIconProps {
 }
 
 const InProgressIcon = ({
     className = '',
     size = IconSize.Medium,
     helperText = '',
-}: IInProgressIconProps) => {
-    const sizeClassName =
-        size === IconSize.Small
-            ? styles.small
-            : size === IconSize.Medium
-                ? styles.medium
-                : styles.large;
-
-    const iconClassName = concatClassNames(
-        styles.icon,
-        styles.inProgress,
-        className,
-    );
-
-    const iconContainerClassName = concatClassNames(
-        styles.iconContainer,
-        sizeClassName,
-    );
-
-    const renderHelperText = useCallback(
-        () => {
-            if (helperText === '') {
-                return null;
-            }
-            return <span className={styles.helperText}>{helperText}</span>;
-        },
-        [ helperText ],
-    );
-
-    return (
-        <div className={iconContainerClassName}>
-            <MdOutlineNetworkWifi
-              className={iconClassName}
-            />
-            {renderHelperText()}
-        </div>
-    );
-};
+}: IInProgressIconProps) => (
+    <Icon
+      className={concatClassNames(styles.icon, className)}
+      size={size}
+      helperText={helperText}
+      Component={MdOutlineNetworkWifi}
+    />
+);
 
 export default InProgressIcon;

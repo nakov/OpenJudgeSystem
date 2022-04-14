@@ -5,7 +5,8 @@
   position: relative;
 
   &.small {
-
+    width: 10px;
+    height: 10px;
   }
 
   &.medium {
@@ -14,19 +15,12 @@
   }
 
   &.large {
-
+    width: 25px;
+    height: 25px;
   }
 }
 
 .icon {
-  &.success {
-    color: $icon-green;
-  }
-  
-  &.inProgress {
-    color: $icon-blue;
-  }
-
   &:hover {
 
     & + .helperText {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import MonacoEditor, { monaco } from 'react-monaco-editor';
+import MonacoEditor from 'react-monaco-editor';
 import { useSubmissions } from '../../hooks/submissions/use-submissions';
 import { useContests } from '../../hooks/contests/use-contests';
 import styles from './CodeEditor.module.scss';
@@ -30,18 +30,6 @@ const CodeEditor = () => {
         setCode,
     } = useSubmissions();
 
-    // const editorRef = useRef(null);
-    //
-    // eslint-disable-next-line max-len
-    // const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor, monaco: MonacoEditor) => {
-    //     // @ts-ignore
-    //     editorRef.current = editor;
-    //
-    //     console.log(monaco.languages.getLanguages());
-    //     // @ts-ignore
-    //     console.log('editor', editor.getModel().getLanguageIdentifier().language);
-    // };
-
     const {
         currentProblem,
         selectedSubmissionTypeId,
@@ -64,8 +52,6 @@ const CodeEditor = () => {
         [ allowedSubmissionTypes, selectedSubmissionTypeId ],
     );
 
-    console.log(getMonacoLanguage(selectedSubmissionTypeName));
-
     return (
         <div className={styles.editor}>
             <MonacoEditor
@@ -81,8 +67,6 @@ const CodeEditor = () => {
                   lineHeight: 20,
                   scrollbar: { vertical: 'hidden' },
               }}
-              // editorWillMount={handleEditorDidMount}
-              // ref={editorRef}
               onChange={onCodeChange}
             />
         </div>

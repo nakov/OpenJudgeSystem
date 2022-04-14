@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import moment from 'moment';
 import { ISubmissionResultType } from '../../../hooks/submissions/types';
 import { Button } from '../../guidelines/buttons/Button';
@@ -7,6 +7,10 @@ import Text, { TextType } from '../../guidelines/text/Text';
 
 import styles from './ProblemSubmission.module.scss';
 import Label from '../../guidelines/labels/Label';
+import ProblemSubmissionDetails from '../../contests/problem-submission-details/ProblemSubmissionDetails';
+import concatClassNames from '../../../utils/class-names';
+import DetailsIcon from '../../guidelines/icons/DetailsIcon';
+import IconSize from '../../guidelines/icons/icon-sizes';
 
 interface ISubmissionResultProps {
     submission: ISubmissionResultType;
@@ -20,11 +24,18 @@ const ProblemSubmission = ({ submission }: ISubmissionResultProps) => {
         isProcessed,
         createdOn,
     } = submission;
+
+    const [ submissionDetailsContainerVisibilityClassName, setSubmissionDetailsContainerVisibilityClassName ] = useState(styles.hidden);
+    const [ isDetailsOpen, setDetailsOpen ] = useState(false);
     const showDetails = useCallback(
         () => {
-            alert(`${points}/${maximumPoints}`);
+            setSubmissionDetailsContainerVisibilityClassName(submissionDetailsContainerVisibilityClassName === styles.visible
+                ? styles.hidden
+                : styles.visible);
+
+            setDetailsOpen(!isDetailsOpen);
         },
-        [ maximumPoints, points ],
+        [ isDetailsOpen, submissionDetailsContainerVisibilityClassName ],
     );
     const isMaxPoints = points === maximumPoints;
 
@@ -76,12 +87,17 @@ const ProblemSubmission = ({ submission }: ISubmissionResultProps) => {
         [ isProcessed, maximumPoints, points ],
     );
 
+    const submissionDetailsContainerClassName = concatClassNames(
+        styles.submissionDetailsContainer,
+        submissionDetailsContainerVisibilityClassName,
+    );
+
     return (
-        <div className={styles.container}>
-            <div className={styles.labelContainer}>
-                {renderLabel()}
-            </div>
-            <div>
+        <div>
+            <div className={styles.container}>
+                <div className={styles.labelContainer}>
+                    {renderLabel()}
+                </div>
                 <div>
                     <Text type={TextType.Bold}>
                         {result}
@@ -102,9 +118,14 @@ const ProblemSubmission = ({ submission }: ISubmissionResultProps) => {
                         {formatTime(createdOn)}
                     </Text>
                 </div>
+                <div>
+                    <Button type="plain" onClick={() => showDetails()}>
+                        <DetailsIcon size={IconSize.Large} isOpen={isDetailsOpen} />
+                    </Button>
+                </div>
             </div>
-            <div>
-                <Button type="plain" onClick={() => showDetails()}>Details</Button>
+            <div className={submissionDetailsContainerClassName}>
+                <ProblemSubmissionDetails submission={submission} />
             </div>
         </div>
     );

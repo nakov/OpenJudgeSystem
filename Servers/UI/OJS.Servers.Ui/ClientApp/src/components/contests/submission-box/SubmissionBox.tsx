@@ -74,7 +74,6 @@ const SubmissionBox = () => {
                 <span className={styles.taskName}>
                     {currentProblem?.name}
                 </span>
-
             </Heading>
             <div className={styles.contestInnerLayout}>
                 <div className={styles.editorAndProblemControlsWrapper}>

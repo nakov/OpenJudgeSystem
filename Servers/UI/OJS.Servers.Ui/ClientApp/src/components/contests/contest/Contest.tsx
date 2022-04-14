@@ -45,6 +45,7 @@ const Contest = () => {
             if (score === '0/0') {
                 return null;
             }
+
             return (
                 <p>
                     Score:

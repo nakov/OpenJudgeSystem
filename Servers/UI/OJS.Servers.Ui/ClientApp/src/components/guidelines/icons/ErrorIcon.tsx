@@ -1,24 +1,24 @@
 import React from 'react';
-import { FaCheckCircle } from 'react-icons/fa';
-import Icon, { IIconProps } from './Icon';
+import { MdError } from 'react-icons/md';
 import IconSize from './icon-sizes';
+import Icon, { IIconProps } from './Icon';
+import styles from './ErrorIcon.module.scss';
 import concatClassNames from '../../../utils/class-names';
-import styles from './TickIcon.module.scss';
 
-interface ITickIconProps extends IIconProps {
+interface IInProgressIconProps extends IIconProps {
 }
 
-const TickIcon = ({
+const InProgressIcon = ({
     className = '',
     size = IconSize.Medium,
     helperText = '',
-}: ITickIconProps) => (
+}: IInProgressIconProps) => (
     <Icon
       className={concatClassNames(styles.icon, className)}
       size={size}
       helperText={helperText}
-      Component={FaCheckCircle}
+      Component={MdError}
     />
 );
 
-export default TickIcon;
+export default InProgressIcon;
