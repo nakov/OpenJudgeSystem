@@ -82,6 +82,8 @@ public class SubmissionsSimilarityBusinessService : ISubmissionsSimilarityBusine
                 .GroupBy(s => new { s.ProblemId, s.Points })
                 .ToList();
 
+        // TODO: Move this logic into separate worker. Judge should call endpoint to get the results.
+        // https://github.com/SoftUni-Internal/exam-systems-issues/issues/141
         var plagiarismDetector = this.GetPlagiarismDetector(plagiarismDetectorType);
 
         var similarities = new List<SubmissionSimilarityServiceModel>();
@@ -152,7 +154,6 @@ public class SubmissionsSimilarityBusinessService : ISubmissionsSimilarityBusine
             }
         }
 
-        // TODO: convert result to file
         var file = similarities.ToExcel();
         var fileName = $"{contest!.Name}_similarities{Excel}";
 
