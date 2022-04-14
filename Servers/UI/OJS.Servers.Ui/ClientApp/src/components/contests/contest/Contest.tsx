@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
-import { useContests } from '../../../hooks/use-contests';
 import Heading from '../../guidelines/headings/Heading';
 import ContestTasksNavigation from '../contest-tasks-navigation/ContestTasksNavigation';
 import SubmissionBox from '../submission-box/SubmissionBox';
@@ -12,13 +11,16 @@ import styles from './Contest.module.scss';
 import Text, { TextType } from '../../guidelines/text/Text';
 import Countdown, { ICountdownRemainingType } from '../../guidelines/countdown/Countdown';
 import { convertToSecondsRemaining, convertToTwoDigitValues } from '../../../utils/dates';
+import { useCurrentContest } from '../../../hooks/use-current-contest';
 
 const Contest = () => {
     const {
-        currentContest,
-        currentContestTotalScore,
-        currentContestMaxScore,
-    } = useContests();
+        state: {
+            contest,
+            score,
+            maxScore,
+        },
+    } = useCurrentContest();
 
     const navigationClassName = concatClassNames(
         styles.sizeThree,
@@ -35,14 +37,14 @@ const Contest = () => {
         styles.container,
     );
 
-    const score = useMemo(
-        () => `${currentContestTotalScore}/${currentContestMaxScore}`,
-        [ currentContestMaxScore, currentContestTotalScore ],
+    const scoreText = useMemo(
+        () => `${score}/${maxScore}`,
+        [ maxScore, score ],
     );
 
     const renderScore = useCallback(
         () => {
-            if (score === '0/0') {
+            if (scoreText === '0/0') {
                 return null;
             }
 
@@ -51,12 +53,12 @@ const Contest = () => {
                     Score:
                     {' '}
                     <Text type={TextType.Bold}>
-                        {score}
+                        {scoreText}
                     </Text>
                 </p>
             );
         },
-        [ score ],
+        [ scoreText ],
     );
 
     const renderCountdown = useCallback(
@@ -83,7 +85,7 @@ const Contest = () => {
 
     const renderTimeRemaining = useCallback(
         () => {
-            const { endTime } = currentContest || {};
+            const { endTime } = contest || {};
             if (!endTime) {
                 return null;
             }
@@ -92,7 +94,7 @@ const Contest = () => {
                 <Countdown renderRemainingTime={renderCountdown} duration={duration} metric="seconds" />
             );
         },
-        [ currentContest, renderCountdown ],
+        [ contest, renderCountdown ],
     );
 
     const secondaryHeadingClassName = useMemo(
@@ -104,7 +106,7 @@ const Contest = () => {
         <>
             <div className={styles.headingContest}>
                 <Heading type="primary" className={styles.contestHeading}>
-                    {currentContest?.name}
+                    {contest?.name}
                 </Heading>
                 <Heading type="secondary" className={secondaryHeadingClassName}>
                     {renderTimeRemaining()}

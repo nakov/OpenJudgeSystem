@@ -1,54 +1,45 @@
-import * as React from 'react';
-import { useCallback, useEffect } from 'react';
-import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
+import React, { useCallback } from 'react';
 import { Button } from '../../guidelines/buttons/Button';
-import styles from './SubmissionResults.module.scss';
 import List from '../../guidelines/lists/List';
-import { ISubmissionResultType } from '../../../hooks/submissions/types';
+
+import { ISubmissionDetails } from '../../../hooks/submissions/types';
+
+import { useProblemSubmissions } from '../../../hooks/submissions/use-problem-submissions';
+
 import ProblemSubmission from '../problem-submission/ProblemSubmission';
 
-interface ISubmissionResultsProps {
-    problemId?: number,
-}
+import styles from './SubmissionResults.module.scss';
 
-const ProblemSubmissions = ({ problemId }: ISubmissionResultsProps) => {
+const ProblemSubmissions = () => {
     const {
-        currentProblemSubmissionResults,
-        getSubmissionResults,
-    } = useSubmissionsDetails();
+        state: { submissions },
+        actions: { getSubmissions },
+    } = useProblemSubmissions();
 
-    const getResults = useCallback(async () => {
-        if (problemId != null) {
-            await getSubmissionResults(problemId);
-        }
-    }, [ getSubmissionResults, problemId ]);
+    const reload = useCallback(
+        async () => {
+            await getSubmissions();
+        },
+        [ getSubmissions ],
+    );
 
-    const reload = useCallback(async () => {
-        await getResults();
-    }, [ getResults ]);
+    const handleReloadClick = useCallback(async () => {
+        await reload();
+    }, [ reload ]);
 
-    useEffect(() => {
-        if (currentProblemSubmissionResults.length !== 0) {
-            return;
-        }
-        (async () => {
-            await reload();
-        })();
-    }, [ currentProblemSubmissionResults, getResults, reload ]);
-
-    const renderSubmission = (submission: ISubmissionResultType) => (
+    const renderSubmission = (submission: ISubmissionDetails) => (
         <ProblemSubmission submission={submission} />
     );
 
     const renderSubmissions = () => {
-        if (currentProblemSubmissionResults.length === 0) {
+        if (!submissions || submissions.length === 0) {
             return (
                 <p> No results for this problem yet.</p>
             );
         }
         return (
             <List
-              values={currentProblemSubmissionResults}
+              values={submissions}
               itemFunc={renderSubmission}
               itemClassName={styles.submissionItem}
               fullWidth
@@ -59,7 +50,12 @@ const ProblemSubmissions = ({ problemId }: ISubmissionResultsProps) => {
     return (
         <div className={styles.submissionResultsContent}>
             {renderSubmissions()}
-            <Button type="secondary" className={styles.refreshBtn} onClick={reload} text="Refresh" />
+            <Button
+              type="secondary"
+              className={styles.refreshBtn}
+              onClick={() => handleReloadClick}
+              text="Refresh"
+            />
         </div>
     );
 };

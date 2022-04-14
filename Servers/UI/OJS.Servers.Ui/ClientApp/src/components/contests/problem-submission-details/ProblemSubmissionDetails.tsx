@@ -1,5 +1,5 @@
 import React from 'react';
-import { ISubmissionResultType, ITestRunDetailsType } from '../../../hooks/submissions/types';
+import { ISubmissionDetails, ITestRunDetailsType } from '../../../hooks/submissions/types';
 import List from '../../guidelines/lists/List';
 import TickIcon from '../../guidelines/icons/TickIcon';
 
@@ -9,7 +9,7 @@ import concatClassNames from '../../../utils/class-names';
 import ErrorIcon from '../../guidelines/icons/ErrorIcon';
 
 interface IProblemSubmissionDetailsProps {
-    submission: ISubmissionResultType
+    submission: ISubmissionDetails
 }
 
 interface IProblemSubmissionProps {

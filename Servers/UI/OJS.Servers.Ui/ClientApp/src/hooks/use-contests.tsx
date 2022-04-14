@@ -1,25 +1,18 @@
 import * as React from 'react';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { AxiosResponse } from 'axios';
-import { sum } from 'lodash';
 import { IHaveChildrenProps } from '../components/common/Props';
-import { getIndexContestsUrl, getProblemResourceUrl, startContestParticipationUrl } from '../utils/urls';
+import { getIndexContestsUrl, getProblemResourceUrl } from '../utils/urls';
 import { useHttp } from './use-http';
 import { useLoading } from './use-loading';
 import {
-    IContestType,
     IProblemType,
     IIndexContestsType,
     IGetContestsForIndexResponseType,
-    IStartParticipationResponseType,
     ISubmissionTypeType,
 } from '../common/types';
 
-interface IContestsContext {
-    currentContest: IContestType | null;
-    currentContestTotalScore: number;
-    currentContestMaxScore: number;
-    isContestParticipationOfficial: boolean;
+interface IContestsContext2 {
     currentProblem: IProblemType | null;
     selectedSubmissionTypeId: number | null;
     setProblem: (problem: IProblemType) => void;
@@ -27,21 +20,16 @@ interface IContestsContext {
     activeContests: IIndexContestsType[];
     pastContests: IIndexContestsType[];
     getForHome: () => Promise<void>;
-    startContestParticipation: (id: number, isOfficial: boolean) => Promise<void>;
     getProblemResourceFile: (resourceId: number) => Promise<void>;
     getProblemResourceResponse: AxiosResponse;
 }
 
 const defaultState = {
-    currentContest: null,
     currentProblem: null,
-    isContestParticipationOfficial: false,
     selectedSubmissionTypeId: 0,
-    currentContestTotalScore: 0,
-    currentContestMaxScore: 0,
 };
 
-const ContestsContext = createContext<IContestsContext>(defaultState as IContestsContext);
+const ContestsContext = createContext<IContestsContext2>(defaultState as IContestsContext2);
 
 interface IContestsProviderProps extends IHaveChildrenProps {
 }
@@ -49,26 +37,16 @@ interface IContestsProviderProps extends IHaveChildrenProps {
 const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ activeContests, setActiveContests ] = useState<IIndexContestsType[]>([]);
     const [ pastContests, setPastContests ] = useState<IIndexContestsType[]>([]);
-    const [ isContestParticipationOfficial, setIsContestParticipationOfficial ] =
-        useState<boolean>(defaultState.isContestParticipationOfficial);
-    const [ currentContest, setCurrentContest ] = useState<IContestType | null>(defaultState.currentContest);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ allProblems, setAllProblems ] = useState<IProblemType[]>();
     const [ currentProblem, setCurrentProblem ] = useState<IProblemType | null>(defaultState.currentProblem);
     const [ selectedSubmissionTypeId, setSelectedSubmissionTypeId ] = useState<number>(defaultState.selectedSubmissionTypeId);
-    const [ currentContestTotalScore, setCurrentContestTotalScore ] = useState(defaultState.currentContestTotalScore);
-    const [ currentContestMaxScore, setCurrentContestMaxScore ] = useState(defaultState.currentContestMaxScore);
 
     const { startLoading, stopLoading } = useLoading();
     const {
         get: getContestsForIndexRequest,
         data: getContestsForIndexData,
     } = useHttp(getIndexContestsUrl);
-
-    const {
-        get: startContestParticipationRequest,
-        data: startContestParticipationData,
-    } = useHttp(startContestParticipationUrl);
 
     const {
         get: getProblemResourceRequest,
@@ -80,13 +58,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         await getContestsForIndexRequest({});
         stopLoading();
     }, [ getContestsForIndexRequest, startLoading, stopLoading ]);
-
-    const startContestParticipation = useCallback(async (id: number, isOfficial: boolean) => {
-        startLoading();
-        const idStr = id.toString();
-        await startContestParticipationRequest({ id: idStr, official: isOfficial.toString() });
-        stopLoading();
-    }, [ startContestParticipationRequest, startLoading, stopLoading ]);
 
     const hasDefaultSubmissionType = useCallback(
         (submissionTypes: ISubmissionTypeType[]) => submissionTypes.some((st) => st.isSelectedByDefault),
@@ -131,65 +102,18 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     }, [ getContestsForIndexData ]);
 
     useEffect(() => {
-        if (startContestParticipationData != null) {
-            const responseData = startContestParticipationData as IStartParticipationResponseType;
-            const { contest, contestIsCompete } = responseData;
-            const { problems } = contest;
-
-            setCurrentContest(contest);
-            setIsContestParticipationOfficial(contestIsCompete);
-            setAllProblems(problems);
-            const initialProblem = problems[0];
-            setCurrentProblem(initialProblem);
-            const { allowedSubmissionTypes } = initialProblem;
-            setDefaultSubmissionType(allowedSubmissionTypes);
-        }
-    }, [ setDefaultSubmissionType, startContestParticipationData ]);
-
-    useEffect(() => {
         console.log(currentProblem);
     }, [ currentProblem ]);
 
-    useEffect(
-        () => {
-            const { problems } = currentContest || {};
-            if (!problems) {
-                return;
-            }
-
-            const totalScore = sum(problems.map((p) => p.points));
-            setCurrentContestTotalScore(totalScore);
-        },
-        [ currentContest ],
-    );
-
-    useEffect(
-        () => {
-            const { problems } = currentContest || {};
-            if (!problems) {
-                return;
-            }
-
-            const maxScore = sum(problems.map((p) => p.maximumPoints));
-            setCurrentContestMaxScore(maxScore);
-        },
-        [ currentContest ],
-    );
-
     const value = {
-        currentContest,
-        isContestParticipationOfficial,
         currentProblem,
         selectedSubmissionTypeId,
         activeContests,
         pastContests,
-        currentContestTotalScore,
-        currentContestMaxScore,
 
         setProblem,
         setSubmissionType,
         getForHome,
-        startContestParticipation,
         getProblemResourceFile,
         getProblemResourceResponse,
     };

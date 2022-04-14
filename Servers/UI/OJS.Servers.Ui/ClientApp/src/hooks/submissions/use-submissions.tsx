@@ -5,6 +5,8 @@ import { ITestRunType, ISubmissionType } from './types';
 import { getSubmissionsForProfileUrl, submitUrl } from '../../utils/urls';
 import { useContests } from '../use-contests';
 import { IHaveChildrenProps } from '../../components/common/Props';
+import { useCurrentContest } from '../use-current-contest';
+import { useProblems } from '../use-problems';
 
 interface ISubmissionsContext {
     submissions: ISubmissionType[]
@@ -27,10 +29,18 @@ const SubmissionsContext = createContext<ISubmissionsContext>(defaultState as IS
 interface ISubmissionsProviderProps extends IHaveChildrenProps {}
 
 const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
-    const { startLoading, stopLoading } = useLoading();
-    const { selectedSubmissionTypeId, currentProblem, isContestParticipationOfficial } = useContests();
+    const {
+        startLoading,
+        stopLoading,
+    } = useLoading();
+    const { selectedSubmissionTypeId } = useContests();
+
+    const { state: { currentProblem } } = useProblems();
+
     const [ submissions, setSubmissions ] = useState<ISubmissionType[]>([]);
     const [ currentSubmissionCode, setCurrentSubmissionCode ] = useState<string>(defaultState.currentSubmissionCode);
+
+    const { state: { isOfficial } } = useCurrentContest();
 
     const {
         get: getSubmissionsForProfileRequest,
@@ -54,7 +64,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             ProblemId: currentProblem?.id,
             SubmissionTypeId: selectedSubmissionTypeId,
             Content: currentSubmissionCode,
-            Official: isContestParticipationOfficial,
+            Official: isOfficial,
         });
         stopLoading();
     }, [
@@ -63,7 +73,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         currentProblem?.id,
         selectedSubmissionTypeId,
         currentSubmissionCode,
-        isContestParticipationOfficial,
+        isOfficial,
         stopLoading ]);
 
     const setCode = (code: string) => {
@@ -81,6 +91,15 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             console.log(submitData);
         }
     }, [ submitData ]);
+
+    useEffect(
+        () => {
+            (async () => {
+                await getUserSubmissions();
+            })();
+        },
+        [ getUserSubmissions, currentProblem ],
+    );
 
     const value = {
         submissions,

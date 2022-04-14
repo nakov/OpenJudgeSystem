@@ -15,6 +15,10 @@ import SubmissionsDetailsProvider from './hooks/submissions/use-submissions-deta
 import ParticipationsProvider from './hooks/use-participations';
 
 import './styles/global.scss';
+import UrlsProvider from './hooks/use-urls';
+import CurrentContestsProvider from './hooks/use-current-contest';
+import ProblemsProvider from './hooks/use-problems';
+import ProblemSubmissionsProvider from './hooks/submissions/use-problem-submissions';
 
 const InitProviders = ({ providers, children }: any) => {
     const initial = (<>{ children }</>);
@@ -29,6 +33,7 @@ const InitProviders = ({ providers, children }: any) => {
 
 const App = () => {
     const providers = [
+        UrlsProvider,
         ServicesProvider,
         LoadingProvider,
         NotificationsProvider,
@@ -36,6 +41,9 @@ const App = () => {
         UsersProvider,
         ContestsProvider,
         ParticipationsProvider,
+        CurrentContestsProvider,
+        ProblemsProvider,
+        ProblemSubmissionsProvider,
         SubmissionsProvider,
         SubmissionsDetailsProvider,
     ];

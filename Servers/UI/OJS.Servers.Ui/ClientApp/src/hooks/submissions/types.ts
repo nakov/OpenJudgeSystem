@@ -37,7 +37,7 @@ interface ISubmissionDetailsType extends ISubmissionType {
     user: IUserProfileType;
 }
 
-interface ISubmissionResultType {
+interface ISubmissionDetails {
     id: number;
     problemId: number;
     createdOn: Date;
@@ -56,5 +56,5 @@ export type {
     ISubmissionType,
     ITestRunDetailsType,
     ISubmissionDetailsType,
-    ISubmissionResultType,
+    ISubmissionDetails,
 };

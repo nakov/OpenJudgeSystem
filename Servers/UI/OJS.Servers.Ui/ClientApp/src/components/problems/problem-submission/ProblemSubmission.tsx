@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import moment from 'moment';
-import { ISubmissionResultType } from '../../../hooks/submissions/types';
+import { ISubmissionDetails } from '../../../hooks/submissions/types';
 import { Button } from '../../guidelines/buttons/Button';
 import Text, { TextType } from '../../guidelines/text/Text';
 
@@ -13,7 +13,7 @@ import DetailsIcon from '../../guidelines/icons/DetailsIcon';
 import IconSize from '../../guidelines/icons/icon-sizes';
 
 interface ISubmissionResultProps {
-    submission: ISubmissionResultType;
+    submission: ISubmissionDetails;
 }
 
 const ProblemSubmission = ({ submission }: ISubmissionResultProps) => {

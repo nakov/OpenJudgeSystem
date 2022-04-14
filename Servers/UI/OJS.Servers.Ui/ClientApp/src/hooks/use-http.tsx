@@ -32,14 +32,21 @@ const useHttp = (url: string, headers: IDictionary<string> | null = null) => {
             setError(err);
             setResponse(err.response);
         }
-    }, [ ]);
+    }, []);
 
-    const replaceParameters = (urlToReplace: string, parameters: IDictionary<any>) => urlToReplace.replace(/%\w+%/g, (placeholder) => {
-        const placeholderKey = placeholder
-            .replace(/^%/, '')
-            .replace(/%$/, '');
-        return parameters[placeholderKey].toString() || placeholder;
-    });
+    const replacePlaceholder = useCallback(
+        (
+            urlToReplace: string,
+            parameter: string, value: any,
+        ) => urlToReplace.replace(`%${parameter}%`, (value || '').toString()),
+        [],
+    );
+
+    const replaceParameters = useCallback(
+        (urlToReplace: string, parameters: IDictionary<any>) => Object.keys(parameters)
+            .reduce((currentUrl, parameter) => replacePlaceholder(currentUrl, parameter, parameters[parameter]), urlToReplace),
+        [ replacePlaceholder ],
+    );
 
     const data = useMemo(() => {
         if (response == null || response.data == null) {
@@ -50,13 +57,17 @@ const useHttp = (url: string, headers: IDictionary<string> | null = null) => {
     }, [ response ]);
 
     const get = useCallback(
-        (parameters?: IDictionary<any>, responseType = 'json') => request(() => axios.get(
-            replaceParameters(url, parameters == null
+        (parameters?: IDictionary<any>, responseType = 'json') => {
+            const urlWithParameters = replaceParameters(url, parameters == null
                 ? {}
-                : parameters),
-            { responseType, headers: actualHeaders },
-        )),
-        [ actualHeaders, request, url ],
+                : parameters);
+
+            return request(() => axios.get(
+                urlWithParameters,
+                { responseType, headers: actualHeaders },
+            ));
+        },
+        [ actualHeaders, replaceParameters, request, url ],
     );
 
     const post = useCallback(
@@ -67,7 +78,7 @@ const useHttp = (url: string, headers: IDictionary<string> | null = null) => {
             requestData,
             { headers: actualHeaders },
         )),
-        [ actualHeaders, request, url ],
+        [ actualHeaders, replaceParameters, request, url ],
     );
 
     useEffect(

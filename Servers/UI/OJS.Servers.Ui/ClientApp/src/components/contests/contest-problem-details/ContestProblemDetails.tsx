@@ -6,6 +6,7 @@ import { useContests } from '../../../hooks/use-contests';
 import styles from './ContestProblemDetails.module.scss';
 
 const ContestProblemDetails = () => {
+    // TODO: remove this. Use `useProblems` inside `ProblemResources`
     const { currentProblem } = useContests();
 
     return (
@@ -14,7 +15,7 @@ const ContestProblemDetails = () => {
               tabLabels={[ 'Problem', 'Submissions' ]}
               tabChildren={[
                   <ProblemResources resources={currentProblem?.resources} />,
-                  <ProblemSubmissions problemId={currentProblem?.id} />,
+                  <ProblemSubmissions />,
               ]}
             />
         </div>

@@ -3,20 +3,22 @@ import { useCallback } from 'react';
 import List from '../../guidelines/lists/List';
 import Heading from '../../guidelines/headings/Heading';
 import { Button } from '../../guidelines/buttons/Button';
-import { useContests } from '../../../hooks/use-contests';
 import styles from './ContestTasksNavigation.module.scss';
 import concatClassNames from '../../../utils/class-names';
 import Label from '../../guidelines/labels/Label';
 import { IProblemType } from '../../../common/types';
+import { useProblems } from '../../../hooks/use-problems';
 
 const compareByOrderBy = (p1: IProblemType, p2: IProblemType) => p1.orderBy - p2.orderBy;
 
 const ContestTasksNavigation = () => {
     const {
-        currentContest,
-        currentProblem,
-        setProblem,
-    } = useContests();
+        state: {
+            currentProblem,
+            problems,
+        },
+        actions: { selectProblemById },
+    } = useProblems();
 
     const renderIcon = useCallback(
         ({ points, maximumPoints }: IProblemType) => {
@@ -56,7 +58,7 @@ const ContestTasksNavigation = () => {
             return (
                 <>
                     <Button
-                      onClick={() => setProblem(problem)}
+                      onClick={() => selectProblemById(problem.id)}
                       className={className}
                       type="plain"
                     >
@@ -66,27 +68,20 @@ const ContestTasksNavigation = () => {
                 </>
             );
         },
-        [ currentProblem, renderIcon, setProblem ],
+        [ currentProblem, renderIcon, selectProblemById ],
     );
 
     const renderTasksList = useCallback(
-        () => {
-            if (currentContest === null) {
-                return null;
-            }
-
-            const { problems } = currentContest;
-            return (
-                <List
-                  values={problems.sort(compareByOrderBy)}
-                  itemFunc={renderTask}
-                  className={styles.tasksListSideNavigation}
-                  itemClassName={styles.taskListItem}
-                  type="numbered"
-                />
-            );
-        },
-        [ currentContest, renderTask ],
+        () => (
+            <List
+              values={problems.sort(compareByOrderBy)}
+              itemFunc={renderTask}
+              className={styles.tasksListSideNavigation}
+              itemClassName={styles.taskListItem}
+              type="numbered"
+            />
+        ),
+        [ problems, renderTask ],
     );
 
     return (
