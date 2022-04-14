@@ -2,12 +2,14 @@ namespace OJS.Servers.Infrastructure.Extensions
 {
     using FluentExtensions.Extensions;
     using Microsoft.AspNetCore.Http;
+    using OJS.Common.Utils;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
     using static OJS.Common.GlobalConstants;
+    using static OJS.Common.GlobalConstants.EnvironmentVariables;
     using static OJS.Servers.Infrastructure.ServerConstants;
 
     public static class HttpExtensions
@@ -43,8 +45,13 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         public static void ClearAuthInfoCookies(this HttpContext httpContext)
         {
-            httpContext.Response.Cookies.Delete(Authentication.CanAccessAdministrationCookieName);
-            httpContext.Response.Cookies.Delete(Authentication.LoggedInUsername);
+            var cookieOptions = new CookieOptions
+            {
+                Domain = EnvironmentUtils.GetByKey(SharedAuthCookieDomain),
+            };
+
+            httpContext.Response.Cookies.Delete(Authentication.CanAccessAdministrationCookieName, cookieOptions);
+            httpContext.Response.Cookies.Delete(Authentication.LoggedInUsername, cookieOptions);
         }
 
         public static string GetReturnUrl(this HttpContext httpContext)

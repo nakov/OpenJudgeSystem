@@ -7,5 +7,7 @@ public interface IApplicationUrlsService : IService
 {
     string? GetUrl(ApplicationName appName);
 
+    string GetUiUrlOrDefault();
+
     string GetMainDomain();
 }

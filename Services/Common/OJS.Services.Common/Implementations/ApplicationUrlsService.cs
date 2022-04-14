@@ -13,6 +13,9 @@ public class ApplicationUrlsService : IApplicationUrlsService
     public string? GetUrl(ApplicationName appName)
         => this.environmentConfiguration.GetApplicationUrl(appName);
 
+    public string GetUiUrlOrDefault()
+        => this.GetUrl(ApplicationName.Ui) ?? "/";
+
     public string GetMainDomain()
         => new Uri(this.GetUrl(ApplicationName.Ui) ?? string.Empty).Authority;
 }
