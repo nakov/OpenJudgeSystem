@@ -1,14 +1,16 @@
 import React, { useEffect } from 'react';
-import { useContests } from '../../hooks/use-contests';
 import { setLayout } from '../../pages/shared/set-layout';
 import ContestsList from './ContestsList';
+import { useHomeContests } from '../../hooks/use-home-contests';
 
 const HomeContests = () => {
     const {
-        activeContests,
-        pastContests,
-        getForHome,
-    } = useContests();
+        state: {
+            activeContests,
+            pastContests,
+        },
+        actions: { getForHome },
+    } = useHomeContests();
 
     useEffect(() => {
         (async () => {
@@ -18,8 +20,15 @@ const HomeContests = () => {
 
     return (
         <>
-            <ContestsList title="Active" contests={activeContests} />
-            <ContestsList title="Past" contests={pastContests} />
+            <ContestsList
+              title="Active"
+              contests={activeContests}
+
+            />
+            <ContestsList
+              title="Past"
+              contests={pastContests}
+            />
         </>
     );
 };

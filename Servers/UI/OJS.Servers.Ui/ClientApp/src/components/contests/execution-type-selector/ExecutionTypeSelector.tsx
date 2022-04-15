@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { get } from 'lodash';
 import styles from './ExecutionTypeSelector.module.scss';
 import { Button } from '../../guidelines/buttons/Button';
-import { useContests } from '../../../hooks/use-contests';
+import { useSubmissions } from '../../../hooks/submissions/use-submissions';
 
 interface IExecutionTypeSelectorProps {
     id: number,
@@ -13,12 +14,18 @@ interface IExecutionTypeSelectorProps {
 
 const ExecutionTypeSelector = ({ id, value, isSelected, onSelect }: IExecutionTypeSelectorProps) => {
     const [ selected, setSelected ] = useState(isSelected);
-    const { selectedSubmissionTypeId } = useContests();
+    const { state: { selectedSubmissionType } } = useSubmissions();
+    const selectedSubmissionTypeId = useMemo(
+        () => get(selectedSubmissionType, 'id', null),
+        [ selectedSubmissionType ],
+    );
 
-    // eslint-disable-next-line eqeqeq
-    const getClassName = useCallback(() => (selectedSubmissionTypeId == id
-        ? styles.executionTypeSelectorActive
-        : styles.executionTypeSelectorInactive), [ id, selectedSubmissionTypeId ]);
+    const getClassName = useCallback(
+        () => (selectedSubmissionTypeId === id
+            ? styles.executionTypeSelectorActive
+            : styles.executionTypeSelectorInactive),
+        [ id, selectedSubmissionTypeId ],
+    );
 
     const select = useCallback(() => {
         onSelect();
@@ -26,8 +33,6 @@ const ExecutionTypeSelector = ({ id, value, isSelected, onSelect }: IExecutionTy
     }, [ onSelect, selected ]);
 
     return (
-        // eslint-disable-next-line max-len
-        // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
         <Button
           type="plain"
           className={getClassName()}

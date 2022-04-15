@@ -2,12 +2,12 @@ import React from 'react';
 import Tabs from '../../guidelines/tabs/Tabs';
 import ProblemResources from '../../problems/problem-resources/ProblemResources';
 import ProblemSubmissions from '../../problems/problem-submissions/ProblemSubmissions';
-import { useContests } from '../../../hooks/use-contests';
 import styles from './ContestProblemDetails.module.scss';
+import { useProblems } from '../../../hooks/use-problems';
 
 const ContestProblemDetails = () => {
     // TODO: remove this. Use `useProblems` inside `ProblemResources`
-    const { currentProblem } = useContests();
+    const { state: { currentProblem } } = useProblems();
 
     return (
         <div className={styles.contestTabControls}>

@@ -7,15 +7,18 @@ import { IIndexContestsType } from '../../common/types';
 
 import styles from './ContestsList.module.scss';
 import concatClassNames from '../../utils/class-names';
+import { ContestState } from '../../common/contest-types';
 
 interface IContestsListProps {
     title: string;
     contests: IIndexContestsType[];
+    contestState?: ContestState;
 }
 
 const ContestsList = ({
     title,
     contests,
+    contestState = ContestState.Active,
 }: IContestsListProps) => {
     const renderContest = useCallback(
         (contest: IIndexContestsType) => (
@@ -23,18 +26,20 @@ const ContestsList = ({
         ),
         [],
     );
+
     const seeAllButtonClassName = useMemo(
-        () => `btn-see-all-contests-${title}`,
-        [ title ],
+        () => `btn-see-all-contests-${contestState}`,
+        [ contestState ],
     );
     const contestsSeeAllButtonClassName = useMemo(
         () => concatClassNames(styles.contestsSeeAllButton, seeAllButtonClassName),
         [ seeAllButtonClassName ],
     );
     const allContestCardsContainerClassName = useMemo(
-        () => `${title}-contests-cards-list`,
-        [ title ],
+        () => `${contestState}-contests-cards-list`,
+        [ contestState ],
     );
+
     const allContestsCardsContainer = useMemo(
         () => concatClassNames(styles.contestCardsContainer, allContestCardsContainerClassName),
         [ allContestCardsContainerClassName ],

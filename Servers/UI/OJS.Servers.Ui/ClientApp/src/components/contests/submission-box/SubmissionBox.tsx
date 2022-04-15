@@ -10,14 +10,14 @@ import ExecutionTypeSelector from '../execution-type-selector/ExecutionTypeSelec
 
 import { ISubmissionTypeType } from '../../../common/types';
 
-import { useContests } from '../../../hooks/use-contests';
 import { useSubmissions } from '../../../hooks/submissions/use-submissions';
 import { useProblems } from '../../../hooks/use-problems';
 
 import styles from './SubmissionBox.module.scss';
 
 const SubmissionBox = () => {
-    const { setSubmissionType } = useContests();
+    // const { setSubmissionType } = useHomeContests();
+    const { actions: { selectSubmissionTypeById } } = useSubmissions();
     const {
         actions: {
             submitCode,
@@ -26,6 +26,13 @@ const SubmissionBox = () => {
     } = useSubmissions();
 
     const { state: { currentProblem } } = useProblems();
+
+    const handleSelectExecutionType = useCallback(
+        (id) => {
+            selectSubmissionTypeById(id);
+        },
+        [ selectSubmissionTypeById ],
+    );
 
     const renderSubmissionTypesSelectors = useCallback(
         (submissionType: ISubmissionTypeType) => {
@@ -40,11 +47,11 @@ const SubmissionBox = () => {
                   id={id}
                   value={name}
                   isSelected={isSelected}
-                  onSelect={() => setSubmissionType(id)}
+                  onSelect={() => handleSelectExecutionType(id)}
                 />
             );
         },
-        [ currentProblem, setSubmissionType ],
+        [ currentProblem, handleSelectExecutionType ],
     );
 
     const renderSubmissionTypesSelectorsList = useCallback(

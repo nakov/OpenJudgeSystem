@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useCallback, useEffect } from 'react';
 import { saveAs } from 'file-saver';
-import { useContests } from '../../../hooks/use-contests';
+import { useHomeContests } from '../../../hooks/use-home-contests';
 import { Button } from '../../guidelines/buttons/Button';
 import { IProblemResourceType } from '../../../common/types';
 
@@ -18,7 +18,7 @@ const resourceTypeToIconClassName : { [name: number]: string } = {
 };
 
 const ProblemResource = ({ resource }: IProblemResourceProps) => {
-    const { getProblemResourceFile, getProblemResourceResponse } = useContests();
+    const { getProblemResourceFile, getProblemResourceResponse } = useHomeContests();
 
     const saveFile = useCallback(() => {
         if (!getProblemResourceResponse) {

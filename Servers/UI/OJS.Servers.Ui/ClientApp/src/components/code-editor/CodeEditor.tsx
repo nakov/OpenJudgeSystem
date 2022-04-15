@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import MonacoEditor from 'react-monaco-editor';
+import { get, isNil } from 'lodash';
 import { useSubmissions } from '../../hooks/submissions/use-submissions';
-import { useContests } from '../../hooks/use-contests';
 import styles from './CodeEditor.module.scss';
+import { useProblems } from '../../hooks/use-problems';
 
 const possibleLanguages = [
     'python',
@@ -26,14 +27,14 @@ const getMonacoLanguage = (submissionTypeName: string | null) => {
 const CodeEditor = () => {
     const [ selectedSubmissionTypeName, setSelectedSubmissionTypeName ] = useState<string | null>(null);
     const {
-        state: { submissionCode },
+        state: {
+            submissionCode,
+            selectedSubmissionType,
+        },
         actions: { updateSubmissionCode },
     } = useSubmissions();
 
-    const {
-        currentProblem,
-        selectedSubmissionTypeId,
-    } = useContests();
+    const { state: { currentProblem } } = useProblems();
 
     const { allowedSubmissionTypes } = currentProblem || {};
 
@@ -43,13 +44,20 @@ const CodeEditor = () => {
 
     useEffect(
         () => {
-            if (allowedSubmissionTypes == null) {
+            if (isNil(allowedSubmissionTypes)) {
                 return;
             }
-            const submissionType = allowedSubmissionTypes.find((x) => x.id === selectedSubmissionTypeId);
-            setSelectedSubmissionTypeName(submissionType?.name || null);
+            const { id } = selectedSubmissionType || {};
+            if (isNil(id)) {
+                return;
+            }
+
+            const submissionType = allowedSubmissionTypes.find((x) => x.id === id);
+
+            const name = get(submissionType, 'name', null);
+            setSelectedSubmissionTypeName(name);
         },
-        [ allowedSubmissionTypes, selectedSubmissionTypeId ],
+        [ allowedSubmissionTypes, selectedSubmissionType ],
     );
 
     return (
