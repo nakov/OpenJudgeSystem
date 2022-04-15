@@ -12,7 +12,7 @@ const Contest = () => {
     const participationType = isContestParticipationOfficial
         ? CONTEST_PARTICIPATION_TYPES.COMPETE
         : CONTEST_PARTICIPATION_TYPES.PRACTICE;
-    const resultsLink = `/contests/results/${currentContest?.id}/${participationType}/${CONTEST_RESULT_TYPES.SIMPLE}`;
+    const resultsLink = `/contests/${currentContest?.id}/${participationType}/results/${CONTEST_RESULT_TYPES.SIMPLE}`;
 
     return (
         <>

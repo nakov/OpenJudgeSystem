@@ -20,7 +20,7 @@ const PageContent = () => (
             <Route exact path="/profile" component={ProfilePage} />
             <Route exact path="/submissions/:submissionId" component={SubmissionPage} />
             <Route exact path="/contests/:contestId/:participationType" component={ContestPage} />
-            <Route exact path="/contests/results/:contestId/:participationType/:resultType" component={ContestResultsPage} />
+            <Route exact path="/contests/:contestId/:participationType/results/:resultType" component={ContestResultsPage} />
         </Switch>
     </main>
 );
