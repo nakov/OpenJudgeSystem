@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import ContestCard from './contest-card/ContestCard';
 import Heading from '../guidelines/headings/Heading';
 import List from '../guidelines/lists/List';
@@ -7,6 +6,7 @@ import { LinkButton } from '../guidelines/buttons/Button';
 import { IIndexContestsType } from '../../common/types';
 
 import styles from './ContestsList.module.scss';
+import concatClassNames from '../../utils/class-names';
 
 interface IContestsListProps {
     title: string;
@@ -23,6 +23,22 @@ const ContestsList = ({
         ),
         [],
     );
+    const seeAllButtonClassName = useMemo(
+        () => `btn-see-all-contests-${title}`,
+        [ title ],
+    );
+    const contestsSeeAllButtonClassName = useMemo(
+        () => concatClassNames(styles.contestsSeeAllButton, seeAllButtonClassName),
+        [ seeAllButtonClassName ],
+    );
+    const allContestCardsContainerClassName = useMemo(
+        () => `${title}-contests-cards-list`,
+        [ title ],
+    );
+    const allContestsCardsContainer = useMemo(
+        () => concatClassNames(styles.contestCardsContainer, allContestCardsContainerClassName),
+        [ allContestCardsContainerClassName ],
+    );
 
     return (
         <>
@@ -31,7 +47,7 @@ const ContestsList = ({
                 {' '}
                 Contests
             </Heading>
-            <div id="index-contests-list" className={styles.contestCardsContainer}>
+            <div id="index-contests-list" className={allContestsCardsContainer}>
                 <List
                   values={contests}
                   itemFunc={renderContest}
@@ -44,7 +60,7 @@ const ContestsList = ({
               text="See All"
               type="secondary"
               size="small"
-              className={styles.contestsSeeAllButton}
+              className={contestsSeeAllButtonClassName}
             />
         </>
     );

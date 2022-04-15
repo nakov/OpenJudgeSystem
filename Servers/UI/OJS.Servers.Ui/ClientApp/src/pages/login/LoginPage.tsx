@@ -34,14 +34,26 @@ const LoginPage = () => {
               onSubmit={() => handleLoginClick()}
               submitText="Login"
             >
-                <FormControl name="Username" type="input" onChange={(value) => onChangeUpdateUsername(value)} value="" />
                 <FormControl
+                  id="username"
+                  name="Username"
+                  type="input"
+                  onChange={(value) => onChangeUpdateUsername(value)}
+                  value=""
+                />
+                <FormControl
+                  id="password"
                   name="Password"
                   type="password"
                   onChange={(value) => onChangeUpdatePassword(value)}
                   value=""
                 />
-                <FormControl name="Password" type="checkbox" value="false" />
+                <FormControl
+                  id="auth-password-checkbox"
+                  name="Password"
+                  type="checkbox"
+                  value="false"
+                />
             </Form>
         </>
     );

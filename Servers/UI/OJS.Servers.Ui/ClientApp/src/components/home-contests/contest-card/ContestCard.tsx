@@ -2,10 +2,11 @@ import * as React from 'react';
 import { useCallback } from 'react';
 import Countdown from '../../guidelines/countdown/Countdown';
 import { convertToSecondsRemaining } from '../../../utils/dates';
-import { LinkButton } from '../../guidelines/buttons/Button';
 import { IIndexContestsType } from '../../../common/types';
+import concatClassNames from '../../../utils/class-names';
 
 import styles from './ContestCard.module.scss';
+import { LinkButton } from '../../guidelines/buttons/Button';
 
 interface IContestCardProps {
     contest: IIndexContestsType
@@ -21,6 +22,9 @@ const ContestCard = ({ contest }: IContestCardProps) => {
         canBeCompeted,
         endTime,
     } = contest;
+    const contestCard = 'card-contests';
+    const contestCardClassName = concatClassNames(styles.contestCard, contestCard);
+
     const renderCountdown = useCallback(
         () => {
             if (canBePracticed && practiceEndTime == null) {
@@ -43,7 +47,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     );
 
     return (
-        <div id="contest-card" className={styles.contestCard}>
+        <div className={contestCardClassName}>
             <div className={styles.contestCardHeader}>{name}</div>
             <div className={styles.contestCardCategoryLabel}>{category}</div>
             <div className={styles.contestCardCountdown}>

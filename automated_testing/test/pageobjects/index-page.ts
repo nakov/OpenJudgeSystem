@@ -13,12 +13,42 @@ class IndexPage extends Page {
 
     private pageHeadingImageSelector = '#page-header-h2 a img';
 
-    private pageLogInButtonSelector = '#nav-login-link';
+    private pageLogInButtonSelector = '#anonymous-login-link';
 
-    private pageRegisterButtonSelector = '#nav-register-link';
+    private pageRegisterButtonSelector = '#anonymous-register-link';
+
+    private pageNavContestsLinkSelector = '#nav-contests-link';
+
+    private pageNavSubmissionssLinkSelector = '#nav-submissions-link';
+
+    private pageSeeContestsButtonSelector = '#button-see-contests';
+
+    // private pageCompeteCardButton = '#button-card-compete';
+
+    // private pagePracticeCardButton = '#button-card-practice';
+
+    private cartContestClassSelector = '.ContestCard_contestCard__1Pn8q';
+
+    private pageYoutubeVideo = '#youtube-video';
 
     public get headerHeading() {
         return $(this.pageHeaderHeadingSelector);
+    }
+
+    public get navSubmissionssLink() {
+        return $(this.pageNavSubmissionssLinkSelector);
+    }
+
+    public get navContestsLink() {
+        return $(this.pageNavContestsLinkSelector);
+    }
+
+    public get youtubeVideo() {
+        return $(this.pageYoutubeVideo);
+    }
+
+    public get seeContestsButton() {
+        return $(this.pageSeeContestsButtonSelector);
     }
 
     public get footer() {

@@ -1,5 +1,3 @@
-// eslint-disable import/no-default-export
-
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import concatClassNames from '../../../utils/class-names';
@@ -16,7 +14,7 @@ interface IButtonProps extends IHaveOptionalChildrenProps, IHaveOptionalClassNam
     size?: 'small' | 'medium' | 'large',
 }
 
-interface ILinkButtonProps extends IHaveOptionalClassName{
+interface ILinkButtonProps extends IHaveOptionalClassName {
     text: string;
     id?: string;
     type?: 'primary' | 'secondary' | 'plain' | 'disabled';
@@ -111,6 +109,8 @@ const LinkButton = ({
         </Link>
     );
 };
+
+export default Button;
 
 export {
     Button,
