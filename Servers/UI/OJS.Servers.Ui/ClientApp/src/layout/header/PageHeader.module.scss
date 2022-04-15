@@ -51,14 +51,3 @@
   align-items: center;
   justify-content: center;
 }
-
-.headerLink {
-  font-family: 'Lato', serif;
-  font-weight: 500;
-  text-decoration: none;
-  color: $text-dark-gray-color;
-  
-  &:hover {
-    color: $background-color-btn-primary;
-  }
-}

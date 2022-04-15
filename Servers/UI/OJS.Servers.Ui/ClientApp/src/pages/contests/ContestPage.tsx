@@ -5,6 +5,7 @@ import { useContests } from '../../hooks/contests/use-contests';
 import Contest from '../../components/contests/contest/Contest';
 import { setLayout } from '../shared/set-layout';
 import { makePrivate } from '../shared/make-private';
+import { CONTEST_PARTICIPATION_TYPES } from '../../common/constants';
 
 interface IContestPageParamsProps {
     contestId: string
@@ -19,7 +20,7 @@ const ContestPage = () => {
 
     useEffect(() => {
         (async () => {
-            await startContestParticipation(Number(contestId), participationType === 'compete');
+            await startContestParticipation(Number(contestId), participationType === CONTEST_PARTICIPATION_TYPES.COMPETE);
         })();
     }, [ contestId, participationType, startContestParticipation ]);
 

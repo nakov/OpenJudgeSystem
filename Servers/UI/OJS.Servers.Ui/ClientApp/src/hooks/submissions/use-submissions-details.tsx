@@ -5,7 +5,7 @@ import { getSubmissionDetailsUrl, getSubmissionResultsByProblem } from '../../ut
 import { useLoading } from '../use-loading';
 import { useHttp } from '../use-http';
 import { useContests } from '../contests/use-contests';
-import DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE from '../../common/constants';
+import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
 
 interface ISubmissionsDetailsContext {
     setCurrentSubmissionId: (submissionId: number) => void;

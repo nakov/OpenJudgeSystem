@@ -7,6 +7,7 @@ import RegisterPage from '../../pages/register/RegisterPage';
 import ProfilePage from '../../pages/profile/ProfilePage';
 import SubmissionPage from '../../pages/submissions/SubmissionPage';
 import ContestPage from '../../pages/contests/ContestPage';
+import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';
 import styles from './PageContent.module.scss';
 
 const PageContent = () => (
@@ -19,6 +20,7 @@ const PageContent = () => (
             <Route exact path="/profile" component={ProfilePage} />
             <Route exact path="/submissions/:submissionId" component={SubmissionPage} />
             <Route exact path="/contests/:contestId/:participationType" component={ContestPage} />
+            <Route exact path="/contests/results/:contestId/:participationType/:resultType" component={ContestResultsPage} />
         </Switch>
     </main>
 );
