@@ -20,5 +20,3 @@ export type {
     IHaveOptionalClassName,
     ClassNameType,
 };
-
-// export default IHaveChildrenProps;
