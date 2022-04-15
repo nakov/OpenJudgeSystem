@@ -1,139 +1,98 @@
+/* eslint-disable class-methods-use-this */
 import { ChainablePromiseElement } from 'webdriverio';
+import selectors from '../constants/index-page-selectors';
 
 import Page from './page';
 
 class IndexPage extends Page {
     private pageLocation = '';
 
-    private pageHeaderHeadingSelector = '#page-header-h2';
-
-    private pageFooterSelector = '#pageFooter';
-
-    private pageHeaderLogoLinkSelector = '#page-header-h2 a';
-
-    private pageHeadingImageSelector = '#page-header-h2 a img';
-
-    private pageLogInButtonSelector = '#anonymous-login-link';
-
-    private pageRegisterButtonSelector = '#anonymous-register-link';
-
-    private pageNavContestsLinkSelector = '#nav-contests-link';
-
-    private pageNavSubmissionssLinkSelector = '#nav-submissions-link';
-
-    private pageSeeContestsButtonSelector = '#button-see-contests';
-
-    private pageYoutubeVideoSelector = '#youtube-video';
-
-    private pageSeeActiveContestsButtonSelector ='.btn-see-all-contests-Active';
-
-    private pageSeePastContestsButtonSelector = '.btn-see-all-contests-Past';
-
-    private pageCompeteCardButtonSelector = '#button-card-compete'; // it will be changed or removed
-
-    private pagePracticeCardButtonSelector = '#button-card-practice'; // it will be changed or removed
-
-    private pageAllActiveCardsSelector = '.Active-contests-cards-list';
-
-    private pageAllPastCardsSelector = '.Past-contests-cards-list';
-
-    private pageContestCardClassSelector = '.card-contests';
-
-    private pageContestCardHeaderAndCategorySelector ='.card-contests div';
-
-    private pageContestCardTimeTextSelector = '.card-contests p';
-
-    private pageContestCardTimerSelector = '.card-contests p span';
-
     public get headerHeading() {
-        return $(this.pageHeaderHeadingSelector);
+        return $(selectors.pageHeaderHeadingSelector);
     }
 
     public get navSubmissionssLink() {
-        return $(this.pageNavSubmissionssLinkSelector);
+        return $(selectors.pageNavSubmissionssLinkSelector);
     }
 
     public get navContestsLink() {
-        return $(this.pageNavContestsLinkSelector);
+        return $(selectors.pageNavContestsLinkSelector);
     }
 
     public get youtubeVideo() {
-        return $(this.pageYoutubeVideoSelector);
+        return $(selectors.pageYoutubeVideoSelector);
     }
 
     public get seeContestsButton() {
-        return $(this.pageSeeContestsButtonSelector);
+        return $(selectors.pageSeeContestsButtonSelector);
     }
 
     public get footer() {
-        return $(this.pageFooterSelector);
+        return $(selectors.pageFooterSelector);
     }
 
     public get headerLogoLink() {
-        return $(this.pageHeaderLogoLinkSelector);
+        return $(selectors.pageHeaderLogoLinkSelector);
     }
 
     public get headingImage() {
-        return $(this.pageHeadingImageSelector);
+        return $(selectors.pageHeadingImageSelector);
     }
 
     public get logInButton() {
-        return $(this.pageLogInButtonSelector);
+        return $(selectors.pageLogInButtonSelector);
     }
 
     public get registerButton() {
-        return $(this.pageRegisterButtonSelector);
+        return $(selectors.pageRegisterButtonSelector);
     }
 
     public get activeContestCardsDiv() {
-        return $(this.pageAllActiveCardsSelector);
+        return $(selectors.pageAllActiveCardsSelector);
     }
 
     public get pastContestCardsDiv() {
-        return $(this.pageAllPastCardsSelector);
+        return $(selectors.pageAllPastCardsSelector);
     }
 
     public get allCardsForActiveContests() {
-        return $(this.pageAllActiveCardsSelector).$$(this.pageContestCardClassSelector);
+        return $(selectors.pageAllActiveCardsSelector).$$(selectors.pageContestCardClassSelector);
     }
 
     public get allCardsForPastContests() {
-        return $(this.pageAllPastCardsSelector).$$(this.pageContestCardClassSelector);
-    }
-    // make them work
-
-    public get activeContestCardHeader() {
-        const header = $(this.pageAllActiveCardsSelector).$$(this.pageContestCardHeaderAndCategorySelector)[0];
-        return header;
+        return $(selectors.pageAllPastCardsSelector).$$(selectors.pageContestCardClassSelector);
     }
 
-    public get activeContestCardCategory() {
-        const category = $(this.pageAllActiveCardsSelector).$$(this.pageContestCardHeaderAndCategorySelector)[1];
-        return category;
+    public get contestCardHeader() {
+        return $$(selectors.pageContestCardDivSelectors)[0];
+    }
+
+    public get contestCardCategory() {
+        return $$(selectors.pageContestCardDivSelectors)[1];
     }
 
     public get contestCardTimeText() {
-        return $(this.pageContestCardTimeTextSelector);
+        return $(selectors.pageContestCardTimeTextSelector);
     }
 
     public get contestCardTimer() {
-        return $(this.pageContestCardTimerSelector);
+        return $(selectors.pageContestCardTimerSelector);
     }
 
     public get competeCardButton() {
-        return $(this.pageCompeteCardButtonSelector);
+        return $(selectors.pageCardControlsSelector).$$('a')[0];
     }
 
     public get practiceCardButton() {
-        return $(this.pagePracticeCardButtonSelector);
+        return $(selectors.pageCardControlsSelector).$$('a')[1];
     }
 
     public get seeAllActiveContestsButton() {
-        return $(this.pageSeeActiveContestsButtonSelector);
+        return $(selectors.pageSeeActiveContestsButtonSelector);
     }
 
     public get seeAllPastContestsButton() {
-        return $(this.pageSeePastContestsButtonSelector);
+        return $(selectors.pageSeePastContestsButtonSelector);
     }
 
     public open(): Promise<string> {
