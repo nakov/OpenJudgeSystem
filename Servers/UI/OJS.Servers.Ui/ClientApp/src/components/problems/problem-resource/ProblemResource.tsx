@@ -18,7 +18,12 @@ const resourceTypeToIconClassName : { [name: number]: string } = {
 };
 
 const ProblemResource = ({ resource }: IProblemResourceProps) => {
-    const { getProblemResourceFile, getProblemResourceResponse } = useHomeContests();
+    const {
+        actions: {
+            getProblemResourceFile,
+            getProblemResourceResponse,
+        },
+    } = useHomeContests();
 
     const saveFile = useCallback(() => {
         if (!getProblemResourceResponse) {
