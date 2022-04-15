@@ -1,27 +1,38 @@
 @import "src/styles/colors";
 
 .contestMainWrapper {
-  flex-grow: 2;
 }
 
 .contestInnerLayout {
   display: flex;
   flex-direction: row;
   margin-top: 30px;
+  //align-items: center;
+  flex: 90% 1;
 }
 
-.contestTabControls {
-  flex-grow: 2;
+.heading {
+  text-align: center;
 }
+
 
 .editorAndProblemControlsWrapper {
   display: flex;
   flex-direction: column;
+  flex: 3;
 }
 
 .executionTypeSelectors {
   display: flex;
   flex-direction: row;
+  flex: 6;
+  //max-width: 100%;
+}
+
+.submitButtonContainer {
+  flex: 1;
+  padding: 5px 0;
+  text-align: center;
 }
 
 .contestSubmitControlsWrapper {
@@ -30,7 +41,10 @@
 }
 
 .submissionTypesList {
-  display: flex;
-  flex-wrap: wrap;
-  max-width: 500px;
+  max-width: 100%;
+  //max-width: 500px;
+}
+
+.taskName {
+  font-weight: bold;
 }

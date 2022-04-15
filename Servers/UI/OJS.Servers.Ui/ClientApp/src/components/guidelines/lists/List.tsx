@@ -2,15 +2,17 @@ import * as React from 'react';
 import concatClassNames from '../../../utils/class-names';
 
 import styles from './List.module.scss';
+import { ClassNameType, IHaveOptionalClassName } from '../../common/Props';
 
-interface IListProps<TValue> {
+interface IListProps<TValue> extends IHaveOptionalClassName{
     values: TValue[];
     itemFunc: (value: TValue) => React.ReactElement;
     keyFunc?: (value: TValue) => string,
-    className?: string | string[];
-    itemClassName?: string | string[];
+    itemClassName?: ClassNameType;
     type?: 'normal' | 'numbered' | 'alpha' | 'bulleted';
     orientation?: 'vertical' | 'horizontal';
+    wrap?: boolean;
+    fullWidth?: boolean;
 }
 
 const defaultKeyFunc = <TValue extends unknown>(value: TValue) => {
@@ -31,23 +33,32 @@ const List = <TValue extends unknown>({
     itemClassName = '',
     type = 'normal',
     orientation = 'vertical',
+    wrap = false,
+    fullWidth = false,
 }: IListProps<TValue>) => {
     const listTypeClassName =
         type === 'normal'
-            ? styles.listNormal
+            ? styles.normal
             : type === 'numbered'
-                ? styles.listNumbered
+                ? styles.numbered
                 : type === 'alpha'
-                    ? styles.listNumberedAlpha
-                    : styles.listBulleted;
+                    ? concatClassNames(styles.numbered, styles.alpha)
+                    : styles.bulleted;
 
     const listOrientationClassName =
         orientation === 'vertical'
             ? ''
-            : styles.listHorizontal;
+            : styles.horizontal;
 
-    const listClassName = concatClassNames(listTypeClassName, listOrientationClassName, className);
-    const itemClassNameCombined = concatClassNames(itemClassName);
+    const listWrapClassName = wrap
+        ? styles.wrap
+        : '';
+
+    const listClassName = concatClassNames(styles.list, listTypeClassName, listOrientationClassName, listWrapClassName, className);
+    const fullWidthItemClassName = fullWidth
+        ? styles.fullWidth
+        : '';
+    const itemClassNameCombined = concatClassNames(itemClassName, fullWidthItemClassName);
 
     const items = values.map((value) => (
         <li key={keyFunc(value)} className={itemClassNameCombined}>

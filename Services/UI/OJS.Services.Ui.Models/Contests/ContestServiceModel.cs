@@ -195,7 +195,13 @@ namespace OJS.Services.Ui.Models.Contests
                                     .SelectMany(p => p.SubmissionTypesInProblems)
                                     .Select(st => st.SubmissionType)
                                     .DistinctBy(st => st.Id))))
-                .ForMember(d => d.Problems, opt => opt.MapFrom(s => s.ProblemGroups.SelectMany(pg => pg.Problems)))
+                .ForMember(
+                    d => d.Problems,
+                    opt => opt.MapFrom(s =>
+                        s.ProblemGroups
+                            .SelectMany(pg => pg.Problems)
+                            .OrderBy(p => p.OrderBy)
+                        ))
                 .ForMember(d => d.ParentCategories, opt => opt.Ignore())
                 .ForMember(d => d.UserIsAdminOrLecturerInContest, opt => opt.Ignore())
                 .ForMember(d => d.UserCanCompete, opt => opt.Ignore())

@@ -8,13 +8,17 @@ import PageFooter from './layout/footer/PageFooter';
 import LoadingProvider from './hooks/use-loading';
 import ServicesProvider from './hooks/use-services';
 import NotificationsProvider from './hooks/use-notifications';
-import ContestsProvider from './hooks/contests/use-contests';
+import HomeContestsProvider from './hooks/use-home-contests';
 import UsersProvider from './hooks/use-users';
 import SubmissionsProvider from './hooks/submissions/use-submissions';
 import SubmissionsDetailsProvider from './hooks/submissions/use-submissions-details';
 import ParticipationsProvider from './hooks/use-participations';
 
 import './styles/global.scss';
+import UrlsProvider from './hooks/use-urls';
+import CurrentContestsProvider from './hooks/use-current-contest';
+import ProblemsProvider from './hooks/use-problems';
+import ProblemSubmissionsProvider from './hooks/submissions/use-problem-submissions';
 
 const InitProviders = ({ providers, children }: any) => {
     const initial = (<>{ children }</>);
@@ -29,13 +33,17 @@ const InitProviders = ({ providers, children }: any) => {
 
 const App = () => {
     const providers = [
+        UrlsProvider,
         ServicesProvider,
         LoadingProvider,
         NotificationsProvider,
         AuthProvider,
         UsersProvider,
-        ContestsProvider,
+        HomeContestsProvider,
         ParticipationsProvider,
+        CurrentContestsProvider,
+        ProblemsProvider,
+        ProblemSubmissionsProvider,
         SubmissionsProvider,
         SubmissionsDetailsProvider,
     ];

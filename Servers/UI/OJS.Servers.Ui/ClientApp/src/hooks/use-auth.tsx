@@ -1,30 +1,30 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import IHaveChildrenProps from '../components/common/IHaveChildrenProps';
+import { IHaveChildrenProps } from '../components/common/Props';
 import { useLoading } from './use-loading';
 import { useHttp } from './use-http';
 import { useNotifications } from './use-notifications';
-import { INotificationType } from '../common/types';
 import { HttpStatus } from '../common/common';
 import { logoutUrl, loginSubmitUrl } from '../utils/urls';
 import { getCookie } from '../utils/cookies';
+import { INotificationType } from '../common/common-types';
 
 type UserType = {
     username: string,
     isLoggedIn: boolean,
     permissions: IUserPermissionsType,
-  };
+};
 
 interface IUserPermissionsType {
     canAccessAdministration: boolean,
 }
 
 interface IAuthContext {
-user: UserType,
-signIn: () => void;
-signOut: () => Promise<void>;
-getUser: () => UserType;
-setUsername: (value: string) => void;
-setPassword: (value: string) => void;
+    user: UserType,
+    signIn: () => void;
+    signOut: () => Promise<void>;
+    getUser: () => UserType;
+    setUsername: (value: string) => void;
+    setPassword: (value: string) => void;
 }
 
 const defaultState = {
@@ -37,7 +37,8 @@ const defaultState = {
 
 const AuthContext = createContext<IAuthContext>(defaultState as IAuthContext);
 
-interface IAuthProviderProps extends IHaveChildrenProps {}
+interface IAuthProviderProps extends IHaveChildrenProps {
+}
 
 const AuthProvider = ({ children }: IAuthProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
@@ -45,7 +46,11 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
     const [ username, setUsername ] = useState<string>(defaultState.user.username);
     const [ password, setPassword ] = useState<string>();
     const { showError } = useNotifications();
-    const { post: loginSubmitRequest, response: loginSubmitRequestResponse, status: loginSubmitRequestStatus } = useHttp(loginSubmitUrl);
+    const {
+        post: loginSubmitRequest,
+        response: loginSubmitRequestResponse,
+        status: loginSubmitRequestStatus,
+    } = useHttp(loginSubmitUrl);
     const { post: logoutRequest, response: logoutResponse } = useHttp(logoutUrl);
 
     const signIn = useCallback(

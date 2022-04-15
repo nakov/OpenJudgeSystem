@@ -3,6 +3,7 @@ namespace OJS.Services.Ui.Data
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Data;
+    using OJS.Services.Ui.Models.Participations;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -37,5 +38,9 @@ namespace OJS.Services.Ui.Data
             int submissionPoints);
 
         Task RemoveSubmissionIdsBySubmissionIds(IEnumerable<int> submissionIds);
+
+        Task<IEnumerable<ParticipationForProblemMaxScoreServiceModel>> GetMaxByProblemIdsAndParticipation(
+            IEnumerable<int> problemIds,
+            IEnumerable<int> participantIds);
     }
 }

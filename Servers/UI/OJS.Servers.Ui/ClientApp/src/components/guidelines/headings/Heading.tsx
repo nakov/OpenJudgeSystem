@@ -1,13 +1,12 @@
 import * as React from 'react';
 
-import IHaveChildrenProps from '../../common/IHaveChildrenProps';
+import { IHaveChildrenProps, IHaveOptionalClassName } from '../../common/Props';
 import concatClassNames from '../../../utils/class-names';
 import styles from './Heading.module.scss';
 import generateId from '../../../utils/id-generator';
 
-interface IHeadingProps extends IHaveChildrenProps {
+interface IHeadingProps extends IHaveChildrenProps, IHaveOptionalClassName {
     type?: 'primary' | 'secondary' | 'small';
-    className?: string | string[];
     id?: string;
 }
 
