@@ -26,8 +26,8 @@ const getMonacoLanguage = (submissionTypeName: string | null) => {
 const CodeEditor = () => {
     const [ selectedSubmissionTypeName, setSelectedSubmissionTypeName ] = useState<string | null>(null);
     const {
-        currentSubmissionCode,
-        setCode,
+        state: { submissionCode },
+        actions: { updateSubmissionCode },
     } = useSubmissions();
 
     const {
@@ -38,7 +38,7 @@ const CodeEditor = () => {
     const { allowedSubmissionTypes } = currentProblem || {};
 
     const onCodeChange = (newValue: string) => {
-        setCode(newValue);
+        updateSubmissionCode(newValue);
     };
 
     useEffect(
@@ -57,7 +57,7 @@ const CodeEditor = () => {
             <MonacoEditor
               language={getMonacoLanguage(selectedSubmissionTypeName)}
               theme="vs-dark"
-              value={currentSubmissionCode}
+              value={submissionCode}
               className={styles.editor}
               options={{
                   selectOnLineNumbers: true,

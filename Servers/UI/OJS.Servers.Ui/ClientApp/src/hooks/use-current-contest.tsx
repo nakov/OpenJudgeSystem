@@ -20,10 +20,10 @@ interface ICurrentContestContext {
         score: number;
         maxScore: number;
         isOfficial: boolean;
-    }
+    };
     actions: {
         start: (info: IStartContestArgs) => Promise<void>;
-    },
+    };
 }
 
 const defaultState = {
@@ -83,17 +83,6 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             }
 
             setScore(sum(problems.map((p) => p.points)));
-        },
-        [ contest ],
-    );
-
-    useEffect(
-        () => {
-            const { problems } = contest || {};
-            if (!problems) {
-                return;
-            }
-
             setMaxScore(sum(problems.map((p) => p.maximumPoints)));
         },
         [ contest ],

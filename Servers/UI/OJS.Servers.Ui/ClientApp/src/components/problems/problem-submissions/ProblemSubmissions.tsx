@@ -53,7 +53,7 @@ const ProblemSubmissions = () => {
             <Button
               type="secondary"
               className={styles.refreshBtn}
-              onClick={() => handleReloadClick}
+              onClick={() => handleReloadClick()}
               text="Refresh"
             />
         </div>

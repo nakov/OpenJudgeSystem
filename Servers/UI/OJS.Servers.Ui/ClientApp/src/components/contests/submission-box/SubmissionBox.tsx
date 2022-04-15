@@ -1,24 +1,32 @@
 import * as React from 'react';
 import { useCallback } from 'react';
-import { useContests } from '../../../hooks/use-contests';
+
+import { isNil } from 'lodash';
+import { ALL } from 'dns';
 import Heading from '../../guidelines/headings/Heading';
 import CodeEditor from '../../code-editor/CodeEditor';
-import ExecutionTypeSelector from '../execution-type-selector/ExecutionTypeSelector';
 import List from '../../guidelines/lists/List';
 import { Button } from '../../guidelines/buttons/Button';
-import styles from './SubmissionBox.module.scss';
-import { useSubmissions } from '../../../hooks/submissions/use-submissions';
+import ExecutionTypeSelector from '../execution-type-selector/ExecutionTypeSelector';
+
 import { ISubmissionTypeType } from '../../../common/types';
 
+import { useContests } from '../../../hooks/use-contests';
+import { useSubmissions } from '../../../hooks/submissions/use-submissions';
+import { useProblems } from '../../../hooks/use-problems';
+
+import styles from './SubmissionBox.module.scss';
+
 const SubmissionBox = () => {
+    const { setSubmissionType } = useContests();
     const {
-        currentProblem,
-        setSubmissionType,
-    } = useContests();
-    const {
-        submit,
-        setCode,
+        actions: {
+            submitCode,
+            updateSubmissionCode,
+        },
     } = useSubmissions();
+
+    const { state: { currentProblem } } = useProblems();
 
     const renderSubmissionTypesSelectors = useCallback(
         (submissionType: ISubmissionTypeType) => {
@@ -42,10 +50,13 @@ const SubmissionBox = () => {
 
     const renderSubmissionTypesSelectorsList = useCallback(
         () => {
-            if (currentProblem == null) {
+            if (isNil(currentProblem)) {
                 return null;
             }
-            const { allowedSubmissionTypes } = currentProblem;
+            const { allowedSubmissionTypes } = currentProblem || {};
+            if (isNil(allowedSubmissionTypes)) {
+                return null;
+            }
 
             return (
                 <List
@@ -61,9 +72,9 @@ const SubmissionBox = () => {
     );
 
     const handleOnSubmit = useCallback(async () => {
-        await submit();
-        setCode('');
-    }, [ setCode, submit ]);
+        await submitCode();
+        updateSubmissionCode('');
+    }, [ submitCode, updateSubmissionCode ]);
 
     const taskText = 'Task: ';
 

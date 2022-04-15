@@ -1,112 +1,127 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { first } from 'lodash';
 import { useLoading } from '../use-loading';
 import { useHttp } from '../use-http';
 import { ITestRunType, ISubmissionType } from './types';
-import { getSubmissionsForProfileUrl, submitUrl } from '../../utils/urls';
-import { useContests } from '../use-contests';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useCurrentContest } from '../use-current-contest';
 import { useProblems } from '../use-problems';
+import { ISubmissionTypeType } from '../../common/types';
+import { submitUrl } from '../../utils/urls';
+import { useProblemSubmissions } from './use-problem-submissions';
 
 interface ISubmissionsContext {
-    submissions: ISubmissionType[]
-    currentSubmissionCode: string,
-    getUserSubmissions: () => Promise<void>
-    submit: () => Promise<void>
-    setCode: (code: string) => void;
+    state: {
+        submissionCode: string;
+        selectedSubmissionType: ISubmissionTypeType | null;
+    };
+    actions: {
+        submitCode: () => Promise<void>
+        updateSubmissionCode: (code: string) => void;
+        selectSubmissionTypeById: (id: number) => void;
+    };
 }
 
 const defaultState = {
-    currentSubmissionCode: `
+    state: {
+        submissionCode: `
 function hello() {
     alert('Hello world!');
 }
 `,
+        selectedSubmissionType: null,
+    },
 };
 
 const SubmissionsContext = createContext<ISubmissionsContext>(defaultState as ISubmissionsContext);
 
-interface ISubmissionsProviderProps extends IHaveChildrenProps {}
+interface ISubmissionsProviderProps extends IHaveChildrenProps {
+}
 
 const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
+    const [ selectedSubmissionType, setSelectedSubmissionType ] =
+        useState<ISubmissionTypeType | null>(defaultState.state.selectedSubmissionType);
+    const [ submissionCode, setSubmissionCode ] = useState<string>(defaultState.state.submissionCode);
+
     const {
         startLoading,
         stopLoading,
     } = useLoading();
-    const { selectedSubmissionTypeId } = useContests();
 
     const { state: { currentProblem } } = useProblems();
-
-    const [ submissions, setSubmissions ] = useState<ISubmissionType[]>([]);
-    const [ currentSubmissionCode, setCurrentSubmissionCode ] = useState<string>(defaultState.currentSubmissionCode);
-
+    const { actions: { getSubmissions } } = useProblemSubmissions();
     const { state: { isOfficial } } = useCurrentContest();
 
     const {
-        get: getSubmissionsForProfileRequest,
-        data: getSubmissionsForProfileData,
-    } = useHttp(getSubmissionsForProfileUrl);
-
-    const {
-        post: submitRequest,
-        data: submitData,
+        post: postApiSubmitCode,
+        data: apiSubmitCodeResult,
     } = useHttp(submitUrl);
 
-    const getUserSubmissions = useCallback(async () => {
+    const submitCode = useCallback(async () => {
         startLoading();
-        await getSubmissionsForProfileRequest();
-        stopLoading();
-    }, [ getSubmissionsForProfileRequest, startLoading, stopLoading ]);
-
-    const submit = useCallback(async () => {
-        startLoading();
-        await submitRequest({
-            ProblemId: currentProblem?.id,
-            SubmissionTypeId: selectedSubmissionTypeId,
-            Content: currentSubmissionCode,
+        const { id } = selectedSubmissionType || {};
+        const { id: problemId } = currentProblem || {};
+        await postApiSubmitCode({
+            ProblemId: problemId,
+            SubmissionTypeId: id,
+            Content: submissionCode,
             Official: isOfficial,
         });
         stopLoading();
-    }, [
-        startLoading,
-        submitRequest,
-        currentProblem?.id,
-        selectedSubmissionTypeId,
-        currentSubmissionCode,
-        isOfficial,
-        stopLoading ]);
+    }, [ startLoading, selectedSubmissionType, postApiSubmitCode, currentProblem, submissionCode, isOfficial, stopLoading ]);
 
-    const setCode = (code: string) => {
-        setCurrentSubmissionCode(code);
+    const selectSubmissionTypeById = useCallback(
+        (id) => {
+            const { allowedSubmissionTypes } = currentProblem || {};
+            if (allowedSubmissionTypes == null) {
+                return;
+            }
+            const newSubmissionType = allowedSubmissionTypes.find((st) => st.id === id);
+            if (!newSubmissionType) {
+                return;
+            }
+            setSelectedSubmissionType(newSubmissionType);
+        },
+        [ currentProblem ],
+    );
+
+    const updateSubmissionCode = (code: string) => {
+        setSubmissionCode(code);
     };
 
-    useEffect(() => {
-        if (getSubmissionsForProfileData != null) {
-            setSubmissions(getSubmissionsForProfileData as ISubmissionType[]);
-        }
-    }, [ getSubmissionsForProfileData ]);
-
-    useEffect(() => {
-        if (submitData != null) {
-            console.log(submitData);
-        }
-    }, [ submitData ]);
+    useEffect(
+        () => {
+            const { allowedSubmissionTypes } = currentProblem || {};
+            const submissionType = first(allowedSubmissionTypes);
+            if (submissionType) {
+                const { id } = submissionType;
+                selectSubmissionTypeById(id);
+            } else {
+                selectSubmissionTypeById(null);
+            }
+        },
+        [ currentProblem, selectSubmissionTypeById ],
+    );
 
     useEffect(
         () => {
             (async () => {
-                await getUserSubmissions();
+                await getSubmissions();
             })();
         },
-        [ getUserSubmissions, currentProblem ],
+        [ getSubmissions, apiSubmitCodeResult ],
     );
 
     const value = {
-        submissions,
-        getUserSubmissions,
-        submit,
-        currentSubmissionCode,
-        setCode,
+        state: {
+            submissionCode,
+            selectedSubmissionType,
+        },
+        actions: {
+            updateSubmissionCode,
+            selectSubmissionTypeById,
+            submitCode,
+        },
     };
 
     return (
