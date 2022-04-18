@@ -8,6 +8,13 @@ RUN apt-get update -y && apt-get install -y nodejs
 RUN npm install --global yarn
 
 WORKDIR /src
+COPY Servers/UI/OJS.Servers.Ui/ClientApp/package.json ./Servers/UI/OJS.Servers.Ui/ClientApp/package.json
+COPY Servers/UI/OJS.Servers.Ui/ClientApp/yarn.lock ./Servers/UI/OJS.Servers.Ui/ClientApp/yarn.lock
+
+WORKDIR /src/Servers/UI/OJS.Servers.Ui/ClientApp
+RUN yarn install
+
+WORKDIR /src
 COPY Servers/UI ./Servers/UI
 COPY Servers/Infrastructure ./Servers/Infrastructure
 COPY Services/UI ./Services/UI
@@ -20,7 +27,7 @@ COPY Directory.Build.props ./Directory.Build.props
 
 FROM build AS publish
 WORKDIR /src/Servers/UI/OJS.Servers.Ui/ClientApp
-RUN yarn install && yarn build
+RUN yarn build
 
 WORKDIR /src/Servers/UI/OJS.Servers.Ui
 RUN dotnet publish OJS.Servers.Ui.csproj -c Release -o /app/publish

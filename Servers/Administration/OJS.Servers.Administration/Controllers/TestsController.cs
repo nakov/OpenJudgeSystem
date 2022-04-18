@@ -1,5 +1,6 @@
 namespace OJS.Servers.Administration.Controllers;
 
+using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
@@ -13,7 +14,7 @@ using OJS.Servers.Administration.Infrastructure.Extensions;
 using OJS.Servers.Administration.Models.Tests;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Extensions;
-using OJS.Services.Administration.Business.Validation;
+using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.Contests.Problems;
@@ -34,48 +35,49 @@ using Resource = OJS.Common.Resources.TestsControllers;
 
 public class TestsController : BaseAutoCrudAdminController<Test>
 {
-    private const string ProblemIdKey = nameof(Test.ProblemId);
+    public const string ProblemIdKey = nameof(Test.ProblemId);
+
     private const int TestInputMaxLengthInGrid = 20;
 
     private readonly IProblemsDataService problemsData;
     private readonly IZipArchivesService zipArchives;
-    private readonly ITestsExportValidationService testsExportValidation;
     private readonly IFileSystemService fileSystem;
     private readonly IZippedTestsParserService zippedTestsParser;
     private readonly ISubmissionsDataService submissionsData;
     private readonly ITestsDataService testsData;
     private readonly ITestRunsDataService testRunsData;
     private readonly IProblemsBusinessService problemsBusiness;
+    private readonly IProblemsValidationHelper problemsValidationHelper;
 
     public TestsController(
         IProblemsDataService problemsData,
         IZipArchivesService zipArchives,
-        ITestsExportValidationService testsExportValidation,
         IFileSystemService fileSystem,
         IZippedTestsParserService zippedTestsParser,
         ISubmissionsDataService submissionsData,
         ITestsDataService testsData,
         ITestRunsDataService testRunsData,
-        IProblemsBusinessService problemsBusiness)
+        IProblemsBusinessService problemsBusiness,
+        IProblemsValidationHelper problemsValidationHelper)
     {
         this.problemsData = problemsData;
         this.zipArchives = zipArchives;
-        this.testsExportValidation = testsExportValidation;
         this.fileSystem = fileSystem;
         this.zippedTestsParser = zippedTestsParser;
         this.submissionsData = submissionsData;
         this.testsData = testsData;
         this.testRunsData = testRunsData;
         this.problemsBusiness = problemsBusiness;
+        this.problemsValidationHelper = problemsValidationHelper;
     }
 
     protected override Expression<Func<Test, bool>>? MasterGridFilter
-        => this.TryGetEntityIdForColumnFilter(ProblemIdKey, out var problemId)
+        => this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
             ? t => t.ProblemId == problemId
             : base.MasterGridFilter;
 
     protected override IEnumerable<AutoCrudAdminGridToolbarActionViewModel> CustomToolbarActions
-        => this.TryGetEntityIdForColumnFilter(ProblemIdKey, out var problemId)
+        => this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
             ? this.GetCustomToolbarActions(problemId)
             : base.CustomToolbarActions;
 
@@ -85,8 +87,8 @@ public class TestsController : BaseAutoCrudAdminController<Test>
     {
         var problem = await this.problemsData.OneById(model.ProblemId);
 
-        await this.testsExportValidation
-            .GetValidationResult(problem?.Map<ProblemShortDetailsServiceModel>())
+        await this.problemsValidationHelper
+            .ValidatePermissionsOfCurrentUser(problem?.Map<ProblemShortDetailsServiceModel>())
             .VerifyResult();
 
         var file = model.Tests;
@@ -162,8 +164,8 @@ public class TestsController : BaseAutoCrudAdminController<Test>
     {
         var problem = await this.problemsData.OneById(problemId);
 
-        await this.testsExportValidation
-            .GetValidationResult(problem?.Map<ProblemShortDetailsServiceModel>())
+        await this.problemsValidationHelper
+            .ValidatePermissionsOfCurrentUser(problem?.Map<ProblemShortDetailsServiceModel>())
             .VerifyResult();
 
         var tests = problem!.Tests.OrderBy(x => x.OrderBy);
@@ -243,6 +245,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             Name = AdditionalFormFields.Input.ToString(),
             Type = typeof(string),
             Value = entity.InputDataAsString,
+            FormControlType = FormControlType.TextArea,
         });
 
         formControls.Add(new FormControlViewModel
@@ -250,6 +253,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             Name = AdditionalFormFields.Output.ToString(),
             Type = typeof(string),
             Value = entity.OutputDataAsString,
+            FormControlType = FormControlType.TextArea,
         });
 
         return formControls;

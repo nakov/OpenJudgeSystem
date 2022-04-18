@@ -1,29 +1,25 @@
-// eslint-disable import/no-default-export
-
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import concatClassNames from '../../../utils/class-names';
-import { IHaveOptionalChildrenProps } from '../../common/IHaveChildrenProps';
+import { IHaveOptionalChildrenProps, IHaveOptionalClassName } from '../../common/Props';
 import generateId from '../../../utils/id-generator';
 
 import styles from './Button.module.scss';
 
-interface IButtonProps extends IHaveOptionalChildrenProps {
+interface IButtonProps extends IHaveOptionalChildrenProps, IHaveOptionalClassName {
     text?: string,
     id?: string,
     onClick: React.MouseEventHandler<HTMLButtonElement>,
-    className?: string | string[],
-    type?: 'primary' | 'secondary' | 'plain' | 'disabled',
+    type?: 'primary' | 'secondary' | 'plain' | 'disabled' | 'submit',
     size?: 'small' | 'medium' | 'large',
 }
 
-interface ILinkButtonProps {
-    text: string,
-    id?: string,
-    className?: string | string[],
-    type?: 'primary' | 'secondary' | 'plain' | 'disabled',
-    size?: 'small' | 'medium' | 'large',
-    to: string,
+interface ILinkButtonProps extends IHaveOptionalClassName {
+    text: string;
+    id?: string;
+    type?: 'primary' | 'secondary' | 'plain' | 'disabled';
+    size?: 'small' | 'medium' | 'large';
+    to: string;
 }
 
 const classNameToType = {
@@ -31,6 +27,7 @@ const classNameToType = {
     secondary: styles.btnSecondary,
     plain: styles.btnPlain,
     disabled: styles.btnDisabled,
+    submit: styles.btn,
 };
 
 const Button = ({
@@ -65,7 +62,9 @@ const Button = ({
 
     return (
         <button
-          type="button"
+          type={type === 'submit'
+              ? 'submit'
+              : 'button'}
           onClick={onClick}
           className={buttonClassName}
           id={id}
@@ -75,7 +74,14 @@ const Button = ({
     );
 };
 
-const LinkButton = ({ text, to, className = '', type = 'primary', size = 'medium', id = generateId() }: ILinkButtonProps) => {
+const LinkButton = ({
+    text,
+    to,
+    className = '',
+    type = 'primary',
+    size = 'medium',
+    id = generateId(),
+}: ILinkButtonProps) => {
     const sizeToClassName = {
         small: styles.small,
         medium: styles.medium,
@@ -103,6 +109,8 @@ const LinkButton = ({ text, to, className = '', type = 'primary', size = 'medium
         </Link>
     );
 };
+
+export default Button;
 
 export {
     Button,

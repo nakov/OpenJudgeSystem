@@ -1,3 +1,4 @@
+using OJS.Services.Ui.Models.Submissions;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -176,5 +177,12 @@ namespace OJS.Services.Ui.Business.Implementations
 
             return results;
         }
+
+        public Task<IEnumerable<ParticipantScoreModel>> GetByProblemForParticipants(
+            IEnumerable<int> participantIds, int problemId)
+            => this.participantScoresData
+                .GetByProblemIdAndParticipants(participantIds, problemId)
+                .MapCollection<ParticipantScoreModel>()
+                .ToEnumerableAsync();
     }
 }

@@ -16,9 +16,6 @@ namespace OJS.Servers.Infrastructure.Extensions
 
             app.UseAutoMapper();
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-
             app.UseRouting();
 
             app.UseAuthentication();

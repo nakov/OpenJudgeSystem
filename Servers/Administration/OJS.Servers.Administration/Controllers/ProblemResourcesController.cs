@@ -10,12 +10,13 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Problems;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business.Extensions;
-using OJS.Services.Administration.Business.Validation;
 using OJS.Services.Administration.Business.Validation.Factories;
+using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.ProblemResources;
 using OJS.Services.Common;
+using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
@@ -25,32 +26,35 @@ using System.Threading.Tasks;
 
 public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemResource>
 {
-    private const string ProblemIdKey = nameof(ProblemResource.ProblemId);
+    public const string ProblemIdKey = nameof(ProblemResource.ProblemId);
 
-    private readonly IProblemResourceValidatorsFactory problemResourceValidatorsFactory;
+    private readonly IValidatorsFactory<ProblemResource> problemResourceValidatorsFactory;
     private readonly IProblemResourcesDataService problemResourcesData;
-    private readonly IProblemResourcesDownloadValidationService problemResourcesDownloadValidation;
+    private readonly IValidationService<ProblemResourceDownloadServiceModel> problemResourcesDownloadValidation;
     private readonly IContentTypesService contentTypes;
+    private readonly IProblemsValidationHelper problemsValidationHelper;
 
     public ProblemResourcesController(
-        IProblemResourceValidatorsFactory problemResourceValidatorsFactory,
+        IValidatorsFactory<ProblemResource> problemResourceValidatorsFactory,
         IProblemResourcesDataService problemResourcesData,
-        IProblemResourcesDownloadValidationService problemResourcesDownloadValidation,
-        IContentTypesService contentTypes)
+        IValidationService<ProblemResourceDownloadServiceModel> problemResourcesDownloadValidation,
+        IContentTypesService contentTypes,
+        IProblemsValidationHelper problemsValidationHelper)
     {
         this.problemResourceValidatorsFactory = problemResourceValidatorsFactory;
         this.problemResourcesData = problemResourcesData;
         this.problemResourcesDownloadValidation = problemResourcesDownloadValidation;
         this.contentTypes = contentTypes;
+        this.problemsValidationHelper = problemsValidationHelper;
     }
 
     protected override Expression<Func<ProblemResource, bool>>? MasterGridFilter
-        => this.TryGetEntityIdForColumnFilter(ProblemIdKey, out var problemId)
+        => this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
             ? x => x.ProblemId == problemId
             : base.MasterGridFilter;
 
     protected override IEnumerable<AutoCrudAdminGridToolbarActionViewModel> CustomToolbarActions
-        => this.TryGetEntityIdForColumnFilter(ProblemIdKey, out var problemId)
+        => this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
             ? this.GetCustomToolbarActions(problemId)
             : base.CustomToolbarActions;
 
@@ -74,18 +78,22 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
 
         var resource = await this.problemResourcesData.OneByIdTo<ProblemResourceDownloadServiceModel>(id);
 
-        await this.problemResourcesDownloadValidation
+        this.problemResourcesDownloadValidation
             .GetValidationResult(resource)
             .VerifyResult();
 
-        var file = resource?.File;
+        await this.problemsValidationHelper
+            .ValidatePermissionsOfCurrentUser(resource!.ProblemId)
+            .VerifyResult();
+
+        var file = resource.File;
 
         if (file == null)
         {
             return this.NotFound();
         }
 
-        var contentType = this.contentTypes.GetByFileExtension(resource!.FileExtension);
+        var contentType = this.contentTypes.GetByFileExtension(resource.FileExtension);
         var fileName = GetResourceFileNameForDownload(resource);
 
         return this.File(file, contentType, fileName);
@@ -125,12 +133,39 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         return formControls;
     }
 
+    protected override async Task BeforeGeneratingForm(ProblemResource entity, EntityAction action, IDictionary<string, string> entityDict)
+    {
+        if (entity.ProblemId != default)
+        {
+            await this.problemsValidationHelper
+                .ValidatePermissionsOfCurrentUser(entity.ProblemId)
+                .VerifyResult();
+        }
+    }
+
     protected override async Task BeforeEntitySaveAsync(ProblemResource entity, AdminActionContext actionContext)
     {
+        await this.problemsValidationHelper
+            .ValidatePermissionsOfCurrentUser(entity.ProblemId)
+            .VerifyResult();
+
         var file = actionContext.Files.SingleFiles.FirstOrDefault();
         if (file != null)
         {
             entity.File = await file.ToByteArray();
+        }
+    }
+
+    protected override async Task BeforeEntitySaveOnEditAsync(
+        ProblemResource existingEntity,
+        ProblemResource newEntity,
+        AdminActionContext actionContext)
+    {
+        if (existingEntity.ProblemId != newEntity.ProblemId)
+        {
+            await this.problemsValidationHelper
+                .ValidatePermissionsOfCurrentUser(existingEntity.ProblemId)
+                .VerifyResult();
         }
     }
 

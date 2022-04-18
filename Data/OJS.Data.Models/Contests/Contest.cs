@@ -96,6 +96,7 @@ namespace OJS.Data.Models.Contests
 
         public virtual ICollection<ExamGroup> ExamGroups { get; set; } = new HashSet<ExamGroup>();
 
+        // TODO: use from service
         [NotMapped]
         public bool CanBeCompeted
         {
@@ -127,6 +128,7 @@ namespace OJS.Data.Models.Contests
             }
         }
 
+        // TODO: use from service
         [NotMapped]
         public bool CanBePracticed
         {
@@ -158,6 +160,7 @@ namespace OJS.Data.Models.Contests
             }
         }
 
+        // TODO: use from service
         [NotMapped]
         public bool IsActive => this.CanBeCompeted ||
             (this.Type == ContestType.OnlinePracticalExam &&

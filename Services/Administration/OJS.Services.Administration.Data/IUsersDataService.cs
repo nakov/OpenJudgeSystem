@@ -1,13 +1,12 @@
-﻿namespace OJS.Services.Administration.Data
+﻿namespace OJS.Services.Administration.Data;
+
+using OJS.Services.Common.Data;
+using OJS.Data.Models.Users;
+using System.Threading.Tasks;
+
+public interface IUsersDataService : IDataService<UserProfile>
 {
-    using OJS.Data.Models.Users;
-    using SoftUni.Services.Infrastructure;
-    using System.Threading.Tasks;
+    Task<UserProfile?> GetByUsername(string username);
 
-    public interface IUsersDataService : IService
-    {
-        Task<UserProfile?> GetByUsername(string username);
-
-        // IQueryable<UserProfile> GetAllByRole(string roleId);
-    }
+    // IQueryable<UserProfile> GetAllByRole(string roleId);
 }

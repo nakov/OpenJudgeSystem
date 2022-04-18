@@ -1,3 +1,4 @@
+// TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/133
 const baseUrl = window.URLS.UI_URL;
 const administrationBaseUrl = window.URLS.ADMINISTRATION_URL;
 
@@ -11,13 +12,13 @@ const startContestParticipationUrl = `${baseUrl}/Compete/Index/%id%?official=%of
 
 const getSubmissionDetailsUrl = `${baseUrl}/Submissions/Details`;
 const getSubmissionsForProfileUrl = `${baseUrl}/Submissions/GetForProfile`;
-const submitUrl = `${baseUrl}/Compete/Submit?official=%official%`;
+const submitUrl = `${baseUrl}/Compete/Submit`;
 
 const getParticipationsForProfileUrl = `${baseUrl}/Participations/GetForProfile`;
 
 const getProblemResourceUrl = `${baseUrl}/ProblemResources/GetResource/%id%`;
 
-const getSubmissionResultsByProblem = `${baseUrl}/Submissions/GetSubmissionResultsByProblem/%id%?isOfficial=%isOfficial%`;
+const getSubmissionResultsByProblem = `${baseUrl}/Submissions/GetSubmissionResultsByProblem/%id%?isOfficial=%isOfficial%&take=%take%`;
 
 const administrationContestsGridUrl = `${administrationBaseUrl}/Contests`;
 

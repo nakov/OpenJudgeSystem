@@ -1,3 +1,4 @@
+/* eslint-disable */
 import * as React from 'react';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { useEffect } from 'react';
@@ -67,23 +68,26 @@ const columns: GridColDef[] = [
 ];
 
 const ProfileSubmissions = () => {
-    const { submissions, getUserSubmissions } = useSubmissions();
+    // const { submissions, getUserSubmissions } = useSubmissions();
+    //
+    // useEffect(() => {
+    //     getUserSubmissions();
+    // }, [ getUserSubmissions ]);
+    //
+    // return (
+    //     <div style={{ height: 400, width: '100%' }}>
+    //         <DataGrid
+    //           rows={submissions}
+    //           columns={columns}
+    //           pageSize={5}
+    //           rowsPerPageOptions={[ 5 ]}
+    //           disableSelectionOnClick
+    //         />
+    //     </div>
+    // );
 
-    useEffect(() => {
-        getUserSubmissions();
-    }, [ getUserSubmissions ]);
-
-    return (
-        <div style={{ height: 400, width: '100%' }}>
-            <DataGrid
-              rows={submissions}
-              columns={columns}
-              pageSize={5}
-              rowsPerPageOptions={[ 5 ]}
-              disableSelectionOnClick
-            />
-        </div>
-    );
+    const x = 5;
+    return (<h1>{x}</h1>);
 };
 
 export default ProfileSubmissions;

@@ -1,0 +1,22 @@
+@import "src/styles/colors";
+@import "src/components/guidelines/buttons/Button.module";
+
+.submissionResultsContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.refreshBtn {
+  border: none;
+  align-self: end;
+  
+  &:hover {
+    background: none;
+    cursor: pointer;
+  }
+}
+
+.submissionItem {
+  border-bottom: 1px solid $bottom-border-color;
+  padding: 15px 0;
+}

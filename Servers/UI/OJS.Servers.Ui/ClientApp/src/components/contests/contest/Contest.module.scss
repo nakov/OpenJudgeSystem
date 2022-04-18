@@ -1,10 +1,10 @@
 @import "src/styles/colors";
+@import "src/styles/components";
 
 .contestWrapper {
   min-height: 700px;
   width: 100%;
   margin: 0 auto;
-  box-shadow: $box-shadow-color;
   border-radius: 8px;
   display: flex;
   flex-direction: row;
@@ -14,4 +14,32 @@
   padding: 0;
   margin-bottom: 30px;
   border: none;
+  text-align: center;
+}
+
+.sizeThree {
+  flex: 3;
+}
+
+.sizeRest {
+  flex: 7;
+}
+
+.headingContest {
+  @extend .contentSize;
+}
+
+
+.container {
+  border-left: 1px $bottom-border-color solid;
+  padding: 15px;
+
+  &:first-of-type {
+    border-left: 0;
+  }
+}
+
+.contestInfoContainer {
+  display: flex;
+  justify-content: space-around;
 }

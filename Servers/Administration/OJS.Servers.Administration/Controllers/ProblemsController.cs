@@ -14,17 +14,20 @@ using OJS.Common.Utils;
 using OJS.Data.Models;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
+using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
 using OJS.Servers.Administration.Infrastructure.Extensions;
 using OJS.Servers.Administration.Models.Problems;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Extensions;
-using OJS.Services.Administration.Business.Validation;
 using OJS.Services.Administration.Business.Validation.Factories;
+using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.Contests.Problems;
+using OJS.Services.Common;
+using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
@@ -40,7 +43,7 @@ using Resource = OJS.Common.Resources.ProblemGroupsControllers;
 
 public class ProblemsController : BaseAutoCrudAdminController<Problem>
 {
-    private const string ContestIdKey = nameof(OJS.Data.Models.Problems.Problem.ProblemGroup.ContestId);
+    public const string ContestIdKey = nameof(OJS.Data.Models.Problems.Problem.ProblemGroup.ContestId);
 
     private readonly IProblemsBusinessService problemsBusiness;
     private readonly IContestsBusinessService contestsBusiness;
@@ -48,11 +51,13 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     private readonly IProblemsDataService problemsData;
     private readonly IZippedTestsParserService zippedTestsParser;
     private readonly ISubmissionTypesDataService submissionTypesData;
-    private readonly IProblemValidatorsFactory problemValidatorsFactory;
-    private readonly IContestDeleteProblemsValidationService contestDeleteProblemsValidation;
-    private readonly IContestCopyProblemsValidationService contestCopyProblemsValidation;
+    private readonly IValidatorsFactory<Problem> problemValidatorsFactory;
+    private readonly IValidationService<ContestDeleteProblemsValidationServiceModel> contestDeleteProblemsValidation;
+    private readonly IValidationService<ContestCopyProblemsValidationServiceModel> contestCopyProblemsValidation;
     private readonly IProblemGroupsBusinessService problemGroupsBusiness;
     private readonly IProblemGroupsDataService problemGroupsData;
+    private readonly IContestsValidationHelper contestsValidationHelper;
+    private readonly IContestsActivityService contestsActivity;
 
     public ProblemsController(
         IProblemsBusinessService problemsBusiness,
@@ -61,11 +66,13 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         IProblemsDataService problemsData,
         IZippedTestsParserService zippedTestsParser,
         ISubmissionTypesDataService submissionTypesData,
-        IProblemValidatorsFactory problemValidatorsFactory,
-        IContestDeleteProblemsValidationService contestDeleteProblemsValidation,
-        IContestCopyProblemsValidationService contestCopyProblemsValidation,
+        IValidatorsFactory<Problem> problemValidatorsFactory,
+        IValidationService<ContestDeleteProblemsValidationServiceModel> contestDeleteProblemsValidation,
+        IValidationService<ContestCopyProblemsValidationServiceModel> contestCopyProblemsValidation,
         IProblemGroupsBusinessService problemGroupsBusiness,
-        IProblemGroupsDataService problemGroupsData)
+        IProblemGroupsDataService problemGroupsData,
+        IContestsValidationHelper contestsValidationHelper,
+        IContestsActivityService contestsActivity)
     {
         this.problemsBusiness = problemsBusiness;
         this.contestsBusiness = contestsBusiness;
@@ -78,15 +85,17 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         this.contestCopyProblemsValidation = contestCopyProblemsValidation;
         this.problemGroupsBusiness = problemGroupsBusiness;
         this.problemGroupsData = problemGroupsData;
+        this.contestsValidationHelper = contestsValidationHelper;
+        this.contestsActivity = contestsActivity;
     }
 
     protected override Expression<Func<Problem, bool>>? MasterGridFilter
-        => this.TryGetEntityIdForColumnFilter(ContestIdKey, out var contestId)
+        => this.TryGetEntityIdForNumberColumnFilter(ContestIdKey, out var contestId)
             ? t => t.ProblemGroup.ContestId == contestId
             : base.MasterGridFilter;
 
     protected override IEnumerable<AutoCrudAdminGridToolbarActionViewModel> CustomToolbarActions
-        => this.TryGetEntityIdForColumnFilter(ContestIdKey, out var problemId)
+        => this.TryGetEntityIdForNumberColumnFilter(ContestIdKey, out var problemId)
             ? this.GetCustomToolbarActions(problemId)
             : base.CustomToolbarActions;
 
@@ -107,13 +116,19 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     public IActionResult Tests([FromQuery] IDictionary<string, string> complexId)
         => this.RedirectToActionWithNumberFilter(
             nameof(TestsController),
-            nameof(Test.ProblemId),
+            TestsController.ProblemIdKey,
             this.GetEntityIdFromQuery<int>(complexId));
 
     public IActionResult Resources([FromQuery] IDictionary<string, string> complexId)
         => this.RedirectToActionWithNumberFilter(
             nameof(ProblemResourcesController),
-            nameof(ProblemResource.ProblemId),
+            ProblemResourcesController.ProblemIdKey,
+            this.GetEntityIdFromQuery<int>(complexId));
+
+    public IActionResult Submissions([FromQuery] IDictionary<string, string> complexId)
+        => this.RedirectToActionWithNumberFilter(
+            nameof(SubmissionsController),
+            SubmissionsController.ProblemIdKey,
             this.GetEntityIdFromQuery<int>(complexId));
 
     public async Task<IActionResult> Retest([FromQuery] IDictionary<string, string> complexId)
@@ -174,26 +189,34 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             return this.RedirectToAction("Index", "Problems");
         }
 
-        var contest = await this.contestsData.OneById(contestId);
+        var contest = await this.contestsActivity.GetContestActivity(contestId.Value);
 
-        await this.contestDeleteProblemsValidation
-            .GetValidationResult(contest?.Map<ContestDeleteProblemsValidationServiceModel>())
+        this.contestDeleteProblemsValidation
+            .GetValidationResult(contest.Map<ContestDeleteProblemsValidationServiceModel>())
             .VerifyResult();
 
-        return this.View(contest!.Map<DeleteAllProblemsInContestViewModel>());
+        await this.contestsValidationHelper
+            .ValidatePermissionsOfCurrentUser(contest.Id)
+            .VerifyResult();
+
+        return this.View(contest.Map<DeleteAllProblemsInContestViewModel>());
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteAll(DeleteAllProblemsInContestViewModel model)
     {
-        var contest = await this.contestsData.OneById(model.Id);
+        var contest = await this.contestsActivity.GetContestActivity(model.Id);
 
-        await this.contestDeleteProblemsValidation
-            .GetValidationResult(contest?.Map<ContestDeleteProblemsValidationServiceModel>())
+        this.contestDeleteProblemsValidation
+            .GetValidationResult(contest.Map<ContestDeleteProblemsValidationServiceModel>())
             .VerifyResult();
 
-        await this.problemsBusiness.DeleteByContest(contest!.Id);
+        await this.contestsValidationHelper
+            .ValidatePermissionsOfCurrentUser(contest.Id)
+            .VerifyResult();
+
+        await this.problemsBusiness.DeleteByContest(contest.Id);
 
         this.TempData.AddSuccessMessage(GlobalResource.Problems_deleted);
         return this.RedirectToActionWithNumberFilter(nameof(ProblemsController), ContestIdKey, model.Id);
@@ -210,11 +233,15 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         var contest = await this.contestsData.OneByIdTo<ContestCopyProblemsValidationServiceModel>(contestId);
 
-        await this.contestCopyProblemsValidation
+        this.contestCopyProblemsValidation
             .GetValidationResult(contest)
             .VerifyResult();
 
-        var model = contest!.Map<CopyAllToAnotherContestViewModel>();
+        await this.contestsValidationHelper
+            .ValidatePermissionsOfCurrentUser(contest!.Id)
+            .VerifyResult();
+
+        var model = contest.Map<CopyAllToAnotherContestViewModel>();
         await this.PrepareViewModelForCopyAll(model, contestId.Value);
         return this.View(model);
     }
@@ -242,8 +269,12 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         var destinationContest = await this.contestsData
             .OneByIdTo<ContestCopyProblemsValidationServiceModel>(destinationContestId);
 
-        await this.contestCopyProblemsValidation
+        this.contestCopyProblemsValidation
             .GetValidationResult(destinationContest)
+            .VerifyResult();
+
+        await this.contestsValidationHelper
+            .ValidatePermissionsOfCurrentUser(destinationContest!.Id)
             .VerifyResult();
 
         var result = await this.problemGroupsBusiness
@@ -259,7 +290,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         this.TempData.AddSuccessMessage(string.Format(
             Resource.Copy_all_problem_groups_success_message,
             await this.contestsData.GetNameById(sourceContestId),
-            destinationContest!.Name));
+            destinationContest.Name));
         return this.RedirectToActionWithNumberFilter(nameof(ProblemsController), ContestIdKey, sourceContestId);
     }
 
@@ -277,8 +308,12 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         var contest = problem.ProblemGroup.Contest;
 
-        await this.contestCopyProblemsValidation
+        this.contestCopyProblemsValidation
             .GetValidationResult(contest.Map<ContestCopyProblemsValidationServiceModel>())
+            .VerifyResult();
+
+        await this.contestsValidationHelper
+            .ValidatePermissionsOfCurrentUser(contest.Id)
             .VerifyResult();
 
         var model = problem.Map<CopyToAnotherContestViewModel>();
@@ -304,8 +339,14 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             throw new BusinessServiceException(GlobalResource.Invalid_problem);
         }
 
-        await this.contestCopyProblemsValidation
-            .GetValidationResult(model.Map<ContestCopyProblemsValidationServiceModel>())
+        var validationModel = model.Map<ContestCopyProblemsValidationServiceModel>();
+
+        this.contestCopyProblemsValidation
+            .GetValidationResult(validationModel)
+            .VerifyResult();
+
+        await this.contestsValidationHelper
+            .ValidatePermissionsOfCurrentUser(validationModel.Id)
             .VerifyResult();
 
         if (problemGroupId.HasValue &&
@@ -340,6 +381,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             new GridAction { Action = nameof(this.Tests) },
             new GridAction { Action = nameof(this.Copy) },
             new GridAction { Action = nameof(this.Resources) },
+            new GridAction { Action = nameof(this.Submissions) },
         };
 
     protected override IEnumerable<Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>>
@@ -400,7 +442,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         formControls.Add(new FormControlViewModel
         {
-            Name = AdditionalFormFields.SolutionSkeleton.ToString(),
+            Name = AdditionalFormFields.SolutionSkeletonRaw.ToString(),
             Value = entity.SolutionSkeleton?.Decompress(),
             Type = typeof(string),
         });
@@ -438,8 +480,22 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         return formControls;
     }
 
+    protected override async Task BeforeGeneratingForm(
+        Problem entity,
+        EntityAction action,
+        IDictionary<string, string> entityDict)
+        => await this.contestsValidationHelper
+            .ValidatePermissionsOfCurrentUser(GetContestId(entity, entityDict))
+            .VerifyResult();
+
     protected override async Task BeforeEntitySaveAsync(Problem entity, AdminActionContext actionContext)
     {
+        var contestId = GetContestId(entity, actionContext.EntityDict);
+
+        await this.contestsValidationHelper
+            .ValidatePermissionsOfCurrentUser(contestId)
+            .VerifyResult();
+
         TryAddSolutionSkeleton(entity, actionContext);
         await TryAddAdditionalFiles(entity, actionContext);
         AddSubmissionTypes(entity, actionContext);
@@ -475,11 +531,20 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         await base.BeforeEntitySaveOnEditAsync(originalEntity, newEntity, actionContext);
     }
 
+    protected override async Task BeforeEntitySaveOnDeleteAsync(Problem entity, AdminActionContext actionContext)
+    {
+        var contest = await this.contestsActivity.GetContestActivity(entity.ProblemGroup.ContestId);
+
+        this.contestDeleteProblemsValidation
+            .GetValidationResult(contest.Map<ContestDeleteProblemsValidationServiceModel>())
+            .VerifyResult();
+    }
+
     private static int GetContestId(IDictionary<string, string> entityDict, Problem? problem)
         => entityDict.GetEntityIdOrDefault<Contest>() ?? problem?.ProblemGroup?.ContestId ?? default;
 
     private static void TryAddSolutionSkeleton(Problem problem, AdminActionContext actionContext)
-        => problem.SolutionSkeleton = actionContext.GetByteArrayFromStringInput(AdditionalFormFields.SolutionSkeleton);
+        => problem.SolutionSkeleton = actionContext.GetByteArrayFromStringInput(AdditionalFormFields.SolutionSkeletonRaw);
 
     private static async Task TryAddAdditionalFiles(Problem problem, AdminActionContext actionContext)
     {
@@ -588,4 +653,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             },
         };
     }
+
+    private int GetContestId(Problem entity, IDictionary<string, string> entityDict)
+        => entityDict.GetEntityIdOrDefault<Contest>() ?? entity.ProblemGroup?.ContestId ?? default;
 }

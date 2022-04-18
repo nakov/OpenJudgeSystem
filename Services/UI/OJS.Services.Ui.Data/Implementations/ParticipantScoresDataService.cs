@@ -1,10 +1,18 @@
+using FluentExtensions.Extensions;
+using OJS.Services.Infrastructure.Extensions;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
+using System.Collections;
+using X.PagedList;
+
 namespace OJS.Services.Ui.Data.Implementations
 {
     using Microsoft.EntityFrameworkCore;
+    using OJS.Common.Extensions;
     using OJS.Data;
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Data.Implementations;
+    using OJS.Services.Ui.Models.Participations;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -24,6 +32,13 @@ namespace OJS.Services.Ui.Data.Implementations
                 .FirstOrDefaultAsync(ps =>
                     ps.ParticipantId == participantId &&
                     ps.ProblemId == problemId);
+
+        public Task<IEnumerable<ParticipantScore>> GetByProblemIdAndParticipants(IEnumerable<int> participantIds,
+            int problemId)
+            => this.DbSet
+                .Where(ps => ps.ProblemId == problemId)
+                .Where(p => participantIds.Contains(p.ParticipantId))
+                .ToEnumerableAsync();
 
         public Task<ParticipantScore?> GetByParticipantIdProblemIdAndIsOfficial(int participantId, int problemId, bool isOfficial) =>
             this.DbSet
@@ -142,5 +157,21 @@ namespace OJS.Services.Ui.Data.Implementations
                     {
                         SubmissionId = null
                     });
+
+        public Task<IEnumerable<ParticipationForProblemMaxScoreServiceModel>> GetMaxByProblemIdsAndParticipation(
+            IEnumerable<int> problemIds, IEnumerable<int> participantIds)
+            => this.DbSet
+                .Where(ps =>
+                    problemIds.Contains(ps.ProblemId)
+                    && participantIds.Contains(ps.ParticipantId))
+                .GroupBy(ps => ps.ProblemId)
+                .Select(ps =>
+                    new ParticipationForProblemMaxScoreServiceModel
+                    {
+                        ProblemId = ps.Key,
+                        Points = ps.Select(ps => ps.Points)
+                            .Max(),
+                    })
+                .ToEnumerableAsync();
     }
 }

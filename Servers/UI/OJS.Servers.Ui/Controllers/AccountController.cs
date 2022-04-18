@@ -6,12 +6,11 @@ namespace OJS.Servers.Ui.Controllers
     using Microsoft.AspNetCore.Mvc;
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Controllers;
+    using OJS.Servers.Infrastructure.Extensions;
     using OJS.Servers.Ui.Models;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
-    using static OJS.Common.GlobalConstants;
     using static OJS.Servers.Infrastructure.ServerConstants;
 
     [Authorize]
@@ -73,36 +72,20 @@ namespace OJS.Servers.Ui.Controllers
                 // ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
             };
 
-            await HttpContext.SignInAsync(
+            await this.HttpContext.SignInAsync(
                 Authentication.SharedCookiesScheme,
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
 
-            this.AppendAuthInfoCookies(roles, user.UserName);
+            this.HttpContext.AppendAuthInfoCookies(roles, user.UserName);
             return this.RedirectToAction("Index", "Home");
         }
 
         public async Task<IActionResult> Logout()
         {
             await this.signInManager.SignOutAsync();
-            this.DeleteAuthInfoCookies();
+            this.HttpContext.ClearAuthInfoCookies();
             return this.RedirectToAction("Index", "Home");
-        }
-
-        private void AppendAuthInfoCookies(IEnumerable<string> roles, string username)
-        {
-            if (roles.Any(r => r is Roles.Administrator or Roles.Lecturer))
-            {
-                this.Response.Cookies.Append(Authentication.CanAccessAdministrationCookieName, "yes");
-            }
-
-            this.Response.Cookies.Append(Authentication.LoggedInUsername, username);
-        }
-
-        private void DeleteAuthInfoCookies()
-        {
-            this.Response.Cookies.Delete(Authentication.CanAccessAdministrationCookieName);
-            this.Response.Cookies.Delete(Authentication.LoggedInUsername);
         }
     }
 }

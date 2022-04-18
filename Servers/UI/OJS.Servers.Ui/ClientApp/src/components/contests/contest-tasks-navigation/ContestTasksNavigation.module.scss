@@ -2,29 +2,43 @@
 
 .tasksSideNavigation {
   text-align: center;
-  border-right: 1px solid;
-  border-right-color: $bottom-border-color;
 }
 
 .tasksListSideNavigation {
   align-items: start;
   padding: 20px;
-}
+  display: flex;
 
-.taskSideNavigationItem {
-  text-align: start;
-  font-size: 18px;
-  font-family: 'Lato', serif;
-  margin-top: 10px;
-  color: $text-dark-gray-color;
-  
-  &:hover {
-    cursor: pointer;
+  .taskSideNavigationItem {
+    text-align: start;
+    font-size: 18px;
+    font-family: 'Lato', serif;
+    margin-top: 10px;
+    color: $text-dark-gray-color;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &.selected {
+      color: $color-btn-secondary;
+    }
   }
 }
 
-.taskSideNavigationItemSelected {
-  @extend .taskSideNavigationItem;
-  
-  color: $color-btn-secondary;
+.taskListItem {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding: 25px 0 5px;
+  border-bottom: 1px solid $bottom-border-color;
+}
+
+
+.taskLabel {
+  position: absolute;
+  top: 10px;
+  left: 0;
 }

@@ -10,8 +10,10 @@ namespace OJS.Servers.Administration.Controllers
     using OJS.Servers.Administration.Models.Contests;
     using OJS.Services.Administration.Business.Extensions;
     using OJS.Services.Administration.Business.Validation.Factories;
+    using OJS.Services.Administration.Business.Validation.Helpers;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models;
+    using OJS.Services.Infrastructure.Extensions;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -24,16 +26,22 @@ namespace OJS.Servers.Administration.Controllers
     {
         private readonly IIpsDataService ipsData;
         private readonly IParticipantsDataService participantsData;
-        private readonly IContestValidatorsFactory contestValidatorsFactory;
+        private readonly IValidatorsFactory<Contest> contestValidatorsFactory;
+        private readonly IContestCategoriesValidationHelper contestCategoriesValidationHelper;
+        private readonly IContestsValidationHelper contestsValidationHelper;
 
         public ContestsController(
             IIpsDataService ipsData,
             IParticipantsDataService participantsData,
-            IContestValidatorsFactory contestValidatorsFactory)
+            IValidatorsFactory<Contest> contestValidatorsFactory,
+            IContestCategoriesValidationHelper contestCategoriesValidationHelper,
+            IContestsValidationHelper contestsValidationHelper)
         {
             this.ipsData = ipsData;
             this.participantsData = participantsData;
             this.contestValidatorsFactory = contestValidatorsFactory;
+            this.contestCategoriesValidationHelper = contestCategoriesValidationHelper;
+            this.contestsValidationHelper = contestsValidationHelper;
         }
 
         // TODO: make it as a popup window
@@ -66,17 +74,20 @@ namespace OJS.Servers.Administration.Controllers
         public IActionResult Participants([FromQuery] IDictionary<string, string> complexId)
             => this.RedirectToActionWithNumberFilter(
                 nameof(ParticipantsController),
-                nameof(Participant.ContestId),
+                ParticipantsController.ContestIdKey,
+                this.GetEntityIdFromQuery<int>(complexId));
+
+        public IActionResult Submissions([FromQuery] IDictionary<string, string> complexId)
+            => this.RedirectToActionWithNumberFilter(
+                nameof(SubmissionsController),
+                SubmissionsController.ContestIdKey,
                 this.GetEntityIdFromQuery<int>(complexId));
 
         public IActionResult Problems([FromQuery] IDictionary<string, string> complexId)
-        {
-            var contestId = this.GetEntityIdFromQuery<int>(complexId);
-            return this.RedirectToAction(
-                "Index",
-                "Problems",
-                new Dictionary<string, string> {  { nameof(contestId), contestId.ToString() } });
-        }
+            => this.RedirectToActionWithNumberFilter(
+                nameof(ProblemsController),
+                ProblemsController.ContestIdKey,
+                this.GetEntityIdFromQuery<int>(complexId));
 
         protected override IEnumerable<Func<Contest, Contest, AdminActionContext, ValidatorResult>> EntityValidators
             => this.contestValidatorsFactory.GetValidators();
@@ -84,6 +95,43 @@ namespace OJS.Servers.Administration.Controllers
         protected override IEnumerable<Func<Contest, Contest, AdminActionContext, Task<ValidatorResult>>>
             AsyncEntityValidators
             => this.contestValidatorsFactory.GetAsyncValidators();
+
+        protected override async Task BeforeGeneratingForm(
+            Contest entity,
+            EntityAction action,
+            IDictionary<string, string> entityDict)
+        {
+            if (entity.CategoryId.HasValue)
+            {
+                await this.contestCategoriesValidationHelper
+                    .ValidatePermissionsOfCurrentUser(entity.CategoryId.Value)
+                    .VerifyResult();
+            }
+
+            if (action != EntityAction.Create)
+            {
+                await this.contestsValidationHelper
+                    .ValidatePermissionsOfCurrentUser(entity.Id)
+                    .VerifyResult();
+            }
+        }
+
+        protected override async Task BeforeEntitySaveAsync(Contest entity, AdminActionContext actionContext)
+        {
+            if (entity.CategoryId.HasValue)
+            {
+                await this.contestCategoriesValidationHelper
+                    .ValidatePermissionsOfCurrentUser(entity.CategoryId.Value)
+                    .VerifyResult();
+            }
+
+            if (actionContext.Action != EntityAction.Create)
+            {
+                await this.contestsValidationHelper
+                    .ValidatePermissionsOfCurrentUser(entity.Id)
+                    .VerifyResult();
+            }
+        }
 
         protected override async Task BeforeEntitySaveOnCreateAsync(
             Contest contest,
@@ -101,6 +149,7 @@ namespace OJS.Servers.Administration.Controllers
                 new GridAction { Action = nameof(this.Problems) },
                 new GridAction { Action = nameof(this.CreateProblem) },
                 new GridAction { Action = nameof(this.Participants) },
+                new GridAction { Action = nameof(this.Submissions) },
             };
 
         protected override async Task BeforeEntitySaveOnEditAsync(

@@ -1,20 +1,25 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import IHaveChildrenProps from '../../components/common/IHaveChildrenProps';
+import DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE from '../../common/constants';
+
+import { ITestRunType, ISubmissionType, ISubmissionDetailsType, ISubmissionDetails } from './types';
+import { IHaveChildrenProps } from '../../components/common/Props';
+
+import { getSubmissionDetailsUrl, getSubmissionResultsByProblem } from '../../utils/urls';
+
 import { useLoading } from '../use-loading';
 import { useHttp } from '../use-http';
-import { ITestRunType, ISubmissionType, ISubmissionDetailsType, ISubmissionResultType } from './types';
-import { getSubmissionDetailsUrl, getSubmissionResultsByProblem } from '../../utils/urls';
-import { useContests } from '../contests/use-contests';
+
+import { useCurrentContest } from '../use-current-contest';
 
 interface ISubmissionsDetailsContext {
     setCurrentSubmissionId: (submissionId: number) => void;
     currentSubmission: ISubmissionDetailsType | undefined,
     getSubmissionDetails: () => Promise<void>,
-    currentProblemSubmissionResults: ISubmissionResultType[]
+    currentProblemSubmissionResults: ISubmissionDetails[]
     getSubmissionResults: (problemId: number) => Promise<void>
 }
 
-const defaultState = { currentProblemSubmissionResults: [] as ISubmissionResultType[] };
+const defaultState = { currentProblemSubmissionResults: [] as ISubmissionDetails[] };
 
 const SubmissionsDetailsContext = createContext<ISubmissionsDetailsContext>(defaultState as ISubmissionsDetailsContext);
 
@@ -22,16 +27,15 @@ interface ISubmissionsDetailsProviderProps extends IHaveChildrenProps {}
 
 const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
-    const { isContestParticipationOfficial } = useContests();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { state: { isOfficial: isContestParticipationOfficial } } = useCurrentContest();
     const [ currentSubmissionId, setCurrentSubmissionId ] = useState<number>();
     const [ currentSubmission, setCurrentSubmission ] = useState<ISubmissionDetailsType>();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ currentProblemSubmissionResults, setCurrentProblemSubmissionResults ] =
-        useState<ISubmissionResultType[]>(defaultState.currentProblemSubmissionResults);
-    const getCurrentSubmissionDetailsUrl = useMemo(() => `${getSubmissionDetailsUrl}/${currentSubmissionId}`, [
-        currentSubmissionId,
-    ]);
+        useState<ISubmissionDetails[]>(defaultState.currentProblemSubmissionResults);
+    const getCurrentSubmissionDetailsUrl = useMemo(
+        () => `${getSubmissionDetailsUrl}/${currentSubmissionId}`,
+        [ currentSubmissionId ],
+    );
 
     const {
         get: getSubmissionDetailsRequest,
@@ -53,13 +57,17 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
 
     const getSubmissionResults = useCallback(async (problemId: number) => {
         startLoading();
-        await getProblemResultsRequest({ id: problemId.toString(), isOfficial: isContestParticipationOfficial.toString() });
+        await getProblemResultsRequest({
+            id: problemId,
+            isOfficial: isContestParticipationOfficial,
+            take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
+        });
         stopLoading();
     }, [ getProblemResultsRequest, isContestParticipationOfficial, startLoading, stopLoading ]);
 
     useEffect(() => {
         if (getProblemResultsData != null) {
-            setCurrentProblemSubmissionResults(getProblemResultsData as ISubmissionResultType[]);
+            setCurrentProblemSubmissionResults(getProblemResultsData as ISubmissionDetails[]);
         }
     }, [ getProblemResultsData ]);
 

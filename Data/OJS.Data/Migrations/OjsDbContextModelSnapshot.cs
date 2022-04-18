@@ -22,33 +22,6 @@ namespace OJS.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("AspNetRoles", (string)null);
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
@@ -121,21 +94,6 @@ namespace OJS.Data.Migrations
                     b.ToTable("AspNetUserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AspNetUserRoles", (string)null);
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.Property<string>("UserId")
@@ -167,6 +125,7 @@ namespace OJS.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("IpAddress")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("ModifiedOn")
@@ -176,12 +135,15 @@ namespace OJS.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RequestType")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Url")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -539,6 +501,7 @@ namespace OJS.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -668,6 +631,7 @@ namespace OJS.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -712,6 +676,7 @@ namespace OJS.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ParticipantName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Points")
@@ -909,6 +874,7 @@ namespace OJS.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Name");
@@ -925,9 +891,11 @@ namespace OJS.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("AuthorId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<byte[]>("Content")
+                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<DateTime>("CreatedOn")
@@ -969,6 +937,7 @@ namespace OJS.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<byte[]>("Content")
+                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<DateTime>("CreatedOn")
@@ -1137,6 +1106,7 @@ namespace OJS.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -1171,6 +1141,7 @@ namespace OJS.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<byte[]>("InputData")
+                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<bool>("IsOpenTest")
@@ -1183,6 +1154,7 @@ namespace OJS.Data.Migrations
                         .HasColumnType("float");
 
                     b.Property<byte[]>("OutputData")
+                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<int>("ProblemId")
@@ -1254,6 +1226,48 @@ namespace OJS.Data.Migrations
                     b.ToTable("UsersInExamGroups");
                 });
 
+            modelBuilder.Entity("OJS.Data.Models.Users.Role", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles", (string)null);
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.Users.UserInRole", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
             modelBuilder.Entity("OJS.Data.Models.Users.UserProfile", b =>
                 {
                     b.Property<string>("Id")
@@ -1317,9 +1331,9 @@ namespace OJS.Data.Migrations
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasMaxLength(256)
+                        .HasMaxLength(50)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(256)");
+                        .HasColumnType("varchar(50)");
 
                     b.HasKey("Id");
 
@@ -1336,7 +1350,7 @@ namespace OJS.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("OJS.Data.Models.Users.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1361,21 +1375,6 @@ namespace OJS.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OJS.Data.Models.Users.UserProfile", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.HasOne("OJS.Data.Models.Users.UserProfile", null)
@@ -1389,7 +1388,9 @@ namespace OJS.Data.Migrations
                 {
                     b.HasOne("OJS.Data.Models.Users.UserProfile", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -1447,7 +1448,9 @@ namespace OJS.Data.Migrations
                 {
                     b.HasOne("OJS.Data.Models.Users.UserProfile", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -1519,7 +1522,9 @@ namespace OJS.Data.Migrations
 
                     b.HasOne("OJS.Data.Models.Users.UserProfile", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Contest");
 
@@ -1632,7 +1637,9 @@ namespace OJS.Data.Migrations
                 {
                     b.HasOne("OJS.Data.Models.Users.UserProfile", "Author")
                         .WithMany()
-                        .HasForeignKey("AuthorId");
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("OJS.Data.Models.Problems.Problem", "Problem")
                         .WithMany()
@@ -1747,6 +1754,25 @@ namespace OJS.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("ExamGroup");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.Users.UserInRole", b =>
+                {
+                    b.HasOne("OJS.Data.Models.Users.Role", "Role")
+                        .WithMany("UsersInRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OJS.Data.Models.Users.UserProfile", "User")
+                        .WithMany("UsersInRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
 
                     b.Navigation("User");
                 });
@@ -1902,6 +1928,11 @@ namespace OJS.Data.Migrations
                     b.Navigation("TestRuns");
                 });
 
+            modelBuilder.Entity("OJS.Data.Models.Users.Role", b =>
+                {
+                    b.Navigation("UsersInRoles");
+                });
+
             modelBuilder.Entity("OJS.Data.Models.Users.UserProfile", b =>
                 {
                     b.Navigation("LecturersInContestCategories");
@@ -1909,6 +1940,8 @@ namespace OJS.Data.Migrations
                     b.Navigation("LecturersInContests");
 
                     b.Navigation("UsersInExamGroups");
+
+                    b.Navigation("UsersInRoles");
                 });
 #pragma warning restore 612, 618
         }
