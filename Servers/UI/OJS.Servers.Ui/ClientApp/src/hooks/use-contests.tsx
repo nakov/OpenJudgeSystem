@@ -1,5 +1,4 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isNil } from 'lodash';
 import { IHaveChildrenProps } from '../components/common/Props';
 import { IContestType } from '../common/types';
 import { ContestState } from '../common/contest-types';

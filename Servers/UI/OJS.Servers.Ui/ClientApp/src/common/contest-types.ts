@@ -6,8 +6,8 @@ enum ContestType {
 }
 
 enum ContestState {
-    Active = 1,
-    Past = 2,
+    Active = 'active',
+    Past = 'past',
 }
 
 export {
