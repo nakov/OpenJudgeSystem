@@ -6,14 +6,17 @@ import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 import { useCurrentContest } from '../../hooks/use-current-contest';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface IContestPageParamsProps {
     contestId: string
     participationType: string
 }
 
 const ContestPage = () => {
-    const { contestId } = useParams<IContestPageParamsProps>();
-    const { participationType } = useParams<IContestPageParamsProps>();
+    const {
+        contestId,
+        participationType,
+    } = useParams();
     const { actions: { start } } = useCurrentContest();
 
     useEffect(() => {

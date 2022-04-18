@@ -18,7 +18,7 @@ const PageHeader = () => {
 
         return (
             <>
-                <Link id="nav-contests-link" to="/contests/all" className={styles.headerLink}>Contests</Link>
+                <Link id="nav-contests-link" to="/contests" className={styles.headerLink}>Contests</Link>
                 <Link id="nav-submissions-link" to="/submissions" className={styles.headerLink}>Submissions</Link>
                 { administrationLink }
             </>
