@@ -7,6 +7,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Common\OJS.Services.Common.Data\OJS.Services.Common.Data.csproj" />
       <ProjectReference Include="..\..\Common\OJS.Services.Common\OJS.Services.Common.csproj" />
+      <ProjectReference Include="..\OJS.Services.Ui.Models\OJS.Services.Ui.Models.csproj" />
     </ItemGroup>
 
 </Project>

@@ -35,20 +35,22 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         public static void AppendAuthInfoCookies(this HttpContext httpContext, IEnumerable<string> roles, string username)
         {
+            var cookieOptions = GetAuthInfoCookieOptions();
+
             if (roles.Any(r => r is Roles.Administrator or Roles.Lecturer))
             {
-                httpContext.Response.Cookies.Append(Authentication.CanAccessAdministrationCookieName, "yes");
+                httpContext.Response.Cookies.Append(
+                    Authentication.CanAccessAdministrationCookieName,
+                    "yes",
+                    cookieOptions);
             }
 
-            httpContext.Response.Cookies.Append(Authentication.LoggedInUsername, username);
+            httpContext.Response.Cookies.Append(Authentication.LoggedInUsername, username, cookieOptions);
         }
 
         public static void ClearAuthInfoCookies(this HttpContext httpContext)
         {
-            var cookieOptions = new CookieOptions
-            {
-                Domain = EnvironmentUtils.GetByKey(SharedAuthCookieDomain),
-            };
+            var cookieOptions = GetAuthInfoCookieOptions();
 
             httpContext.Response.Cookies.Delete(Authentication.CanAccessAdministrationCookieName, cookieOptions);
             httpContext.Response.Cookies.Delete(Authentication.LoggedInUsername, cookieOptions);
@@ -62,5 +64,11 @@ namespace OJS.Servers.Infrastructure.Extensions
                 ? referer.PathAndQuery
                 : "/";
         }
+
+        private static CookieOptions GetAuthInfoCookieOptions()
+            => new CookieOptions
+            {
+                Domain = EnvironmentUtils.GetByKey(SharedAuthCookieDomain),
+            };
     }
 }

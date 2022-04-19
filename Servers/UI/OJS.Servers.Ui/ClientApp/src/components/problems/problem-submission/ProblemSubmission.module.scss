@@ -1,0 +1,32 @@
+.container {
+  display: flex;
+  flex: 2 1;
+  position: relative;
+  padding: 40px 5px 0;
+  justify-content: stretch;
+}
+
+.labelContainer {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  margin-bottom: 15px;
+}
+
+.spacing {
+  margin-left: 5px;
+}
+
+
+.submissionDetailsContainer {
+  overflow: hidden;
+  transition: max-height 0.55s ease-out;
+
+  &.visible {
+    max-height: 100px;
+  }
+
+  &.hidden {
+    max-height: 0;
+  }
+}

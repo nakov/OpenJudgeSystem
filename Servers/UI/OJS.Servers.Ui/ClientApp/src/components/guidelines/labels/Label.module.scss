@@ -1,6 +1,6 @@
 @import "src/styles/colors";
 
-.tag {
+.label {
   border: 2px solid transparent;
   border-radius: 2px;
   padding: 5px 15px;
@@ -9,19 +9,19 @@
   font-family: 'Lato-Regular',sans-serif;
   text-transform: uppercase;
   display: inline-block;
-}
-
-.tagSuccess {
-  @extend .tag;
-  background: rgb(35, 190, 94);
-}
-
-.tagWarning {
-  @extend .tag;
-  background-color: #FEC112;;
-}
-
-.tagDanger{
-  @extend .tag;
-  background-color: #fc4c50;;
+  &.success {
+    background: rgb(35, 190, 94);
+  }
+  
+  &.warning {
+    background-color: #FEC112;;
+  }
+  
+  &.danger {
+    background-color: #fc4c50;;
+  }
+  
+  &.info {
+    background-color: blue;
+  }
 }

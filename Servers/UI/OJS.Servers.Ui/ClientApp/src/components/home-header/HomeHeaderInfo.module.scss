@@ -1,0 +1,30 @@
+@import "src/styles/colors";
+
+.headerPrimaryHeading {
+  border: none;
+  font-size: 36px;
+}
+
+.headerBulletsWrapper {
+  padding: 10px;
+  align-items: flex-start;
+}
+
+.headerBullet {
+  i {
+    color: $primary-green;
+    padding-right: 5px;
+  }
+
+  color: $text-dark-gray-color;
+  font-size: 18px;
+  font-family: 'Lato', serif;
+  font-weight: lighter;
+  padding-top: 10px;
+  margin-top: 8px;
+}
+
+.headerLeftButton {
+  margin-top: 20px;
+  margin-left: 10px;
+}

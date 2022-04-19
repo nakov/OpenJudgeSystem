@@ -1,42 +1,87 @@
 import * as React from 'react';
+import { useCallback } from 'react';
 import List from '../../guidelines/lists/List';
 import Heading from '../../guidelines/headings/Heading';
-import { useContests } from '../../../hooks/contests/use-contests';
+import { Button } from '../../guidelines/buttons/Button';
 import styles from './ContestTasksNavigation.module.scss';
-import { IProblemType } from '../../../hooks/contests/types';
+import concatClassNames from '../../../utils/class-names';
+import Label from '../../guidelines/labels/Label';
+import { IProblemType } from '../../../common/types';
+import { useProblems } from '../../../hooks/use-problems';
+
+const compareByOrderBy = (p1: IProblemType, p2: IProblemType) => p1.orderBy - p2.orderBy;
 
 const ContestTasksNavigation = () => {
-    const { currentContest, currentProblem, setProblem } = useContests();
+    const {
+        state: {
+            currentProblem,
+            problems,
+        },
+        actions: { selectProblemById },
+    } = useProblems();
 
-    const renderTask = (problem: IProblemType) => {
-        // eslint-disable-next-line eqeqeq
-        const className = currentProblem?.id == problem.id
-            ? styles.taskSideNavigationItemSelected
-            : styles.taskSideNavigationItem;
+    const renderIcon = useCallback(
+        ({ points, maximumPoints }: IProblemType) => {
+            const type = points === 0
+                ? 'warning'
+                : points === 100
+                    ? 'success'
+                    : 'info';
 
-        return (
-            // eslint-disable-next-line max-len
-            // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/click-events-have-key-events
-            <p
-              key={problem.id}
-              className={className}
-              onClick={() => setProblem(problem)}
-            >
-                {problem.name}
-            </p>
-        );
-    };
+            const currentPoints = points === 0
+                ? '?'
+                : points;
 
-    const renderTasksList = () => (
-        currentContest == null
-            ? null
-            : (
-                <List
-                  values={currentContest.problems.sort((a, b) => a.orderBy - b.orderBy)}
-                  itemFunc={renderTask}
-                  className={styles.tasksListSideNavigation}
-                />
-            )
+            const text = `${currentPoints}/${maximumPoints}`;
+
+            return (
+                <Label className={styles.taskLabel} type={type}>{text}</Label>
+            );
+        },
+        [],
+    );
+
+    const renderTask = useCallback(
+        (problem: IProblemType) => {
+            const { id: currentId } = currentProblem || {};
+            const { id } = problem;
+
+            const selectedClassName = currentId === id
+                ? styles.selected
+                : '';
+
+            const className = concatClassNames(
+                styles.taskSideNavigationItem,
+                selectedClassName,
+            );
+
+            return (
+                <>
+                    <Button
+                      onClick={() => selectProblemById(problem.id)}
+                      className={className}
+                      type="plain"
+                    >
+                        {problem.name}
+                    </Button>
+                    {renderIcon(problem)}
+                </>
+            );
+        },
+        [ currentProblem, renderIcon, selectProblemById ],
+    );
+
+    const renderTasksList = useCallback(
+        () => (
+            <List
+              values={problems.sort(compareByOrderBy)}
+              itemFunc={renderTask}
+              className={styles.tasksListSideNavigation}
+              itemClassName={styles.taskListItem}
+              type="numbered"
+            />
+        ),
+        [ problems, renderTask ],
     );
 
     return (

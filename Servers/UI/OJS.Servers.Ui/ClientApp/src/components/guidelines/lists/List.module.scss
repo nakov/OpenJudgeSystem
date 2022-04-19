@@ -1,34 +1,37 @@
-.listBase {
+.list {
   display: flex;
   margin: 0;
   padding: 0;
   align-items: center;
   flex-direction: column;
   flex-shrink: 0;
+
+  &.normal {
+    list-style-type: none;
+  }
+
+  &.numbered {
+    list-style-type: decimal;
+    padding-left: 25px;
+
+    &.alpha {
+      list-style-type: upper-alpha;
+    }
+  }
+
+  &.bulleted {
+    list-style-type: circle;
+  }
+
+  &.horizontal {
+    flex-direction: row;
+  }
+
+  &.wrap {
+    flex-wrap: wrap;
+  }
 }
 
-.listNormal {
-  @extend .listBase;
-  list-style-type: none;
-}
-
-.listNumbered {
-  @extend .listBase;
-  list-style-type: decimal;
-  padding-left: 25px;
-}
-
-.listNumberedAlpha {
-  @extend .listBase;
-  list-style-type: upper-alpha;
-  padding-left: 25px;
-}
-
-.listBulleted {
-  @extend .listBase;
-  list-style-type: circle;
-}
-
-.listHorizontal {
-  flex-direction: row;
+.fullWidth {
+  width: 100%;
 }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { convertToTwoDigitValues, secondsToFullTime } from '../../../utils/dates';
 
 interface ICountdownRemainingType {
@@ -51,16 +51,21 @@ const Countdown = ({ duration, metric, renderRemainingTime = defaultRender, hand
         setRemainingInSeconds(duration * metricsToSecondsDelta[metric]);
     }, [ duration, metric, metricsToSecondsDelta ]);
 
+    const decreaseRemainingTime = useCallback(
+        () => setRemainingInSeconds(remainingInSeconds - 1),
+        [ remainingInSeconds ],
+    );
+
     useEffect(() => {
         if (remainingInSeconds < 0) {
             handleOnCountdownEnd();
             return () => {};
         }
 
-        const timer = setTimeout(() => setRemainingInSeconds(remainingInSeconds - 1), 1000);
+        const timer = setTimeout(decreaseRemainingTime, 1000);
 
         return () => clearTimeout(timer);
-    }, [ handleOnCountdownEnd, remainingInSeconds ]);
+    }, [ decreaseRemainingTime, handleOnCountdownEnd, remainingInSeconds ]);
 
     useEffect(() => {
         handleOnCountdownChange(remainingInSeconds);

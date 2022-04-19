@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { Button } from '../../components/guidelines/buttons/Button';
 import FormControl from '../../components/guidelines/forms/FormControl';
 import { useAuth } from '../../hooks/use-auth';
+import Form from '../../components/guidelines/forms/Form';
 
 const LoginPage = () => {
     const { setUsername, setPassword, signIn, user } = useAuth();
@@ -17,24 +17,44 @@ const LoginPage = () => {
         setPassword(value);
     }, [ setPassword ]);
 
-    const submitLoginOnClick = useCallback(async () => {
-        signIn();
+    const handleLoginClick = useCallback(async () => {
+        await signIn();
     }, [ signIn ]);
 
     useEffect(() => {
-        if (user.isLoggedIn) {
+        const { isLoggedIn } = user;
+        if (isLoggedIn) {
             history.push('/');
         }
-    }, [ history, user.isLoggedIn ]);
+    }, [ history, user ]);
 
     return (
         <>
-            <form id="loginForm" action="">
-                <FormControl id="username" name="Username" type="input" onChange={(value) => onChangeUpdateUsername(value)} value="" />
-                <FormControl id="password" name="Password" type="password" onChange={(value) => onChangeUpdatePassword(value)} value="" />
-                <FormControl id="auth-password-checkbox" name="Password" type="checkbox" value="false" />
-                <Button id="auth-login-button" text="Login" type="primary" onClick={submitLoginOnClick} />
-            </form>
+            <Form
+              onSubmit={() => handleLoginClick()}
+              submitText="Login"
+            >
+                <FormControl
+                  id="username"
+                  name="Username"
+                  type="input"
+                  onChange={(value) => onChangeUpdateUsername(value)}
+                  value=""
+                />
+                <FormControl
+                  id="password"
+                  name="Password"
+                  type="password"
+                  onChange={(value) => onChangeUpdatePassword(value)}
+                  value=""
+                />
+                <FormControl
+                  id="auth-password-checkbox"
+                  name="Password"
+                  type="checkbox"
+                  value="false"
+                />
+            </Form>
         </>
     );
 };

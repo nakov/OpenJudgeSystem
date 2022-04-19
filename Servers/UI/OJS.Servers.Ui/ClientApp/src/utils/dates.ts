@@ -48,15 +48,15 @@ const convertToTwoDigitValues = ({
     minutes: minutesValue,
     seconds: secondsValue,
 }: IConvertToTwoDigitValuesParamType) => {
-    const hours = hoursValue > 10
+    const hours = hoursValue >= 10
         ? hoursValue.toString()
         : `0${hoursValue}`;
 
-    const minutes = minutesValue > 10
+    const minutes = minutesValue >= 10
         ? minutesValue.toString()
         : `0${minutesValue}`;
 
-    const seconds = secondsValue > 10
+    const seconds = secondsValue >= 10
         ? secondsValue.toString()
         : `0${secondsValue}`;
 

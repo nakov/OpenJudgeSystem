@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import IHaveChildrenProps from '../components/common/IHaveChildrenProps';
+import { IHaveChildrenProps } from '../components/common/Props';
 import { useLoading } from './use-loading';
 import { useHttp } from './use-http';
 import { useNotifications } from './use-notifications';

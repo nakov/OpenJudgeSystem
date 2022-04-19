@@ -1,0 +1,39 @@
+@import 'src/styles/colors';
+
+
+.iconContainer {
+  position: relative;
+
+  &.small {
+    width: 10px;
+    height: 10px;
+  }
+
+  &.medium {
+    width: 15px;
+    height: 15px;
+  }
+
+  &.large {
+    width: 25px;
+    height: 25px;
+  }
+}
+
+.icon {
+  &:hover {
+
+    & + .helperText {
+      display: inline-block;
+    }
+  }
+}
+
+.helperText {
+  position: absolute;
+  bottom: 100%;
+  left: 100%;
+  display: none;
+  width: 200px;
+  z-index: 1000;
+}

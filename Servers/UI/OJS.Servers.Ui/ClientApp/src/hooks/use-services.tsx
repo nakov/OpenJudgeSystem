@@ -4,7 +4,7 @@ import React, {
     useMemo,
 } from 'react';
 
-import IHaveChildrenProps from '../components/common/IHaveChildrenProps';
+import { IHaveChildrenProps } from '../components/common/Props';
 import CacheService from '../services/storage-service';
 
 interface IServicesContext {

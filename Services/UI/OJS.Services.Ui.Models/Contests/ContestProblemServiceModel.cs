@@ -9,6 +9,8 @@ using System.Linq;
 
 namespace OJS.Services.Ui.Models.Contests
 {
+    using OJS.Common.Extensions;
+
     public class ContestProblemServiceModel : IMapExplicitly
     {
         public int Id { get; set; }
@@ -21,6 +23,8 @@ namespace OJS.Services.Ui.Models.Contests
         public int MaximumPoints { get; set; }
 
         public bool ShowResults { get; set; }
+
+        public int Points { get; set; }
 
         public bool IsExcludedFromHomework { get; set; }
 
@@ -77,6 +81,10 @@ namespace OJS.Services.Ui.Models.Contests
                 .ForMember(d => d.FileSizeLimit, opt => opt.MapFrom(s => s.SourceCodeSizeLimit))
                 .ForMember(d => d.UserHasAdminRights, opt => opt.Ignore())
                 .ForMember(d => d.AllowedSubmissionTypes,
-                    opt => opt.MapFrom(s => s.SubmissionTypesInProblems.Select(st => st.SubmissionType)));
+                    opt => opt.MapFrom(s => s.SubmissionTypesInProblems.Select(st => st.SubmissionType)))
+                .ForMember(
+                    d => d.Points,
+                    opt => opt.MapFrom(s => 0));
+
     }
 }

@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import ReactNotification from 'react-notifications-component';
+import ReactNotifications from 'react-notifications-component';
 import logo from './softuni-logo-horizontal.svg';
 import PageNav from '../nav/PageNav';
 import Heading from '../../components/guidelines/headings/Heading';
@@ -27,7 +27,7 @@ const PageHeader = () => {
 
     return (
         <header id="pageHeader" className={styles.header}>
-            <ReactNotification />
+            <ReactNotifications />
             <div className={styles.headerSize}>
                 <div className={styles.headerLinks}>
                     <Heading id="page-header-h2" type="secondary" className={styles.heading}>
