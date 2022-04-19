@@ -12,8 +12,6 @@ import Text, { TextType } from '../../guidelines/text/Text';
 import Countdown, { ICountdownRemainingType } from '../../guidelines/countdown/Countdown';
 import { convertToSecondsRemaining, convertToTwoDigitValues } from '../../../utils/dates';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
-import { CONTEST_PARTICIPATION_TYPES, CONTEST_RESULT_TYPES } from '../../../common/constants';
-import Hyperlink from '../../guidelines/buttons/Hyperlink';
 
 const Contest = () => {
     const {
@@ -105,11 +103,6 @@ const Contest = () => {
         [],
     );
 
-    const participationType = isOfficial
-        ? CONTEST_PARTICIPATION_TYPES.COMPETE
-        : CONTEST_PARTICIPATION_TYPES.PRACTICE;
-    const resultsLink = `/contests/${contest?.id}/${participationType}/results/${CONTEST_RESULT_TYPES.SIMPLE}`;
-
     return (
         <>
             <div className={styles.headingContest}>
@@ -119,8 +112,7 @@ const Contest = () => {
                 <Heading type="secondary" className={secondaryHeadingClassName}>
                     {renderTimeRemaining()}
                     {renderScore()}
-                </Heading>
-                <Hyperlink to={resultsLink} text="Results" />
+                </Heading>         
             </div>
 
             <div className={styles.contestWrapper}>

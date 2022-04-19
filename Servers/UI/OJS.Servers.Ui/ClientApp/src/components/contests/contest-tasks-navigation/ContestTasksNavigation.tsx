@@ -8,6 +8,9 @@ import concatClassNames from '../../../utils/class-names';
 import Label from '../../guidelines/labels/Label';
 import { IProblemType } from '../../../common/types';
 import { useProblems } from '../../../hooks/use-problems';
+import { useCurrentContest } from '../../../hooks/use-current-contest';
+import { CONTEST_PARTICIPATION_TYPES, CONTEST_RESULT_TYPES } from '../../../common/constants';
+import Hyperlink from '../../guidelines/buttons/Hyperlink';
 
 const compareByOrderBy = (p1: IProblemType, p2: IProblemType) => p1.orderBy - p2.orderBy;
 
@@ -19,6 +22,13 @@ const ContestTasksNavigation = () => {
         },
         actions: { selectProblemById },
     } = useProblems();
+
+    const {
+        state: {
+            contest,
+            isOfficial,
+        },
+    } = useCurrentContest();
 
     const renderIcon = useCallback(
         ({ points, maximumPoints }: IProblemType) => {
@@ -84,10 +94,16 @@ const ContestTasksNavigation = () => {
         [ problems, renderTask ],
     );
 
+    const participationType = isOfficial
+        ? CONTEST_PARTICIPATION_TYPES.COMPETE
+        : CONTEST_PARTICIPATION_TYPES.PRACTICE;
+    const resultsLink = `/contests/${contest?.id}/${participationType}/results/${CONTEST_RESULT_TYPES.SIMPLE}`;
+
     return (
         <div className={styles.tasksSideNavigation}>
             <Heading type="secondary">Tasks</Heading>
             {renderTasksList()}
+            <Hyperlink to={resultsLink} text="Results" />
         </div>
     );
 };
