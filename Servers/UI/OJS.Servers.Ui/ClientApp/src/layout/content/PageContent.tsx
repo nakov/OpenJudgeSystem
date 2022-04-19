@@ -6,7 +6,7 @@ import LoginPage from '../../pages/login/LoginPage';
 import RegisterPage from '../../pages/register/RegisterPage';
 import ProfilePage from '../../pages/profile/ProfilePage';
 import SubmissionPage from '../../pages/submissions/SubmissionPage';
-import ContestPage from '../../pages/contests/ContestPage';
+import ContestPage from '../../pages/contest/ContestPage';
 import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';
 import styles from './PageContent.module.scss';
 
