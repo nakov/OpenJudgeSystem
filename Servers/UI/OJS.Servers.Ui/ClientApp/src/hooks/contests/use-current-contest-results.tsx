@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { IHaveChildrenProps } from '../../components/common/Props';
-import { IContestResultsType } from './types';
+import { IContestResultsParticipationType, IContestResultsType } from './types';
 import { useLoading } from '../use-loading';
 import { useHttp } from '../use-http';
 import { getContestResultsUrl } from '../../utils/urls';
@@ -17,13 +17,18 @@ interface ICurrentContestResultsContext {
 interface ICurrentContestResultsProviderProps extends IHaveChildrenProps {
 }
 
-const defaultState = { state: { results: {} as IContestResultsType } };
+const defaultState = { 
+    state: { 
+        results: { 
+            results: [] as IContestResultsParticipationType[],
+        }  as IContestResultsType
+    },
+};
 
 const ContestResultsContext = createContext<ICurrentContestResultsContext>(defaultState as ICurrentContestResultsContext);
 
 const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProviderProps) => {
     const [ results, setResults ] = useState(defaultState.state.results);
-
     const { startLoading, stopLoading } = useLoading();
 
     const {
