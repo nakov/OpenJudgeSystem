@@ -63,12 +63,24 @@ class IndexPage extends Page {
         return $(selectors.pageAllPastCardsSelector).$$(selectors.pageContestCardClassSelector);
     }
 
-    public get contestCardHeader() {
-        return $$(selectors.pageContestCardDivSelectors)[0];
+    public get allActiveContestCardsHeaders() {
+        return $(selectors.pageAllActiveCardsSelector).$$(selectors.pageContestCardHeaderSelector);
+    }
+
+    public get allPastContestCardsHeaders() {
+        return $(selectors.pageAllPastCardsSelector).$$(selectors.pageContestCardHeaderSelector);
     }
 
     public get contestCardCategory() {
-        return $$(selectors.pageContestCardDivSelectors)[1];
+        return $(selectors.pageContestCardCategorySelector);
+    }
+
+    public get allActiveContestCardsCategories() {
+        return $(selectors.pageAllActiveCardsSelector).$$(selectors.pageContestCardCategorySelector);
+    }
+
+    public get allPastContestCardsCategories() {
+        return $(selectors.pageAllPastCardsSelector).$$(selectors.pageContestCardCategorySelector);
     }
 
     public get contestCardTimeText() {
@@ -80,11 +92,11 @@ class IndexPage extends Page {
     }
 
     public get competeCardButton() {
-        return $(selectors.pageCardControlsSelector).$$('a')[0];
+        return $$(selectors.pageCardControlsSelector)[0];
     }
 
     public get practiceCardButton() {
-        return $(selectors.pageCardControlsSelector).$$('a')[1];
+        return $$(selectors.pageCardControlsSelector)[1];
     }
 
     public get seeAllActiveContestsButton() {
