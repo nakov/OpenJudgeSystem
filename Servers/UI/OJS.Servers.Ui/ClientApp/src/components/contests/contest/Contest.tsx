@@ -19,7 +19,6 @@ const Contest = () => {
             contest,
             score,
             maxScore,
-            isOfficial,
         },
     } = useCurrentContest();
 
@@ -112,7 +111,7 @@ const Contest = () => {
                 <Heading type="secondary" className={secondaryHeadingClassName}>
                     {renderTimeRemaining()}
                     {renderScore()}
-                </Heading>         
+                </Heading>
             </div>
 
             <div className={styles.contestWrapper}>
