@@ -1,19 +1,22 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { without } from 'lodash';
 import { IHaveChildrenProps } from '../components/common/Props';
 import { IContestType } from '../common/types';
-import { ContestState } from '../common/contest-types';
+import { ContestState, FilterType, IFilter } from '../common/contest-types';
 import { useHttp } from './use-http';
 import { useUrls } from './use-urls';
+import { generateFilterItems } from '../common/filter-utils';
 
 interface IContestsContext {
     state: {
         contests: IContestType[];
-        filter: ContestState | null;
+        possibleFilters: IFilter[];
+        filters: IFilter[];
     };
     actions: {
         reload: () => Promise<void>;
-        selectFilter: (filter: ContestState | null) => void;
-        clearFilter: () => void;
+        applyFilter: (filter: IFilter) => void;
+        clearFilters: () => void;
     };
 }
 
@@ -23,7 +26,11 @@ interface IContestsProviderProps extends IHaveChildrenProps {
 const defaultState = {
     state: {
         contests: [] as IContestType[],
-        filter: null,
+        possibleFilters: [
+            ...generateFilterItems(FilterType.Status, ContestState.Active, ContestState.Past),
+            ...generateFilterItems(FilterType.Language, 'Py', 'JS', 'Java', 'C#', 'Go'),
+        ],
+        filters: [] as IFilter[],
     },
 };
 
@@ -31,13 +38,14 @@ const ContestsContext = createContext<IContestsContext>(defaultState as IContest
 
 const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ contests, setContests ] = useState(defaultState.state.contests);
-    const [ filter, setFilter ] = useState<ContestState | null>(defaultState.state.filter);
+    const [ possibleFilters ] = useState(defaultState.state.possibleFilters);
+    const [ filters, setFilters ] = useState(defaultState.state.filters);
 
     const { getUrlForAllContests } = useUrls();
 
     const getUrl = useCallback(
-        () => getUrlForAllContests({ filter }),
-        [ filter, getUrlForAllContests ],
+        () => getUrlForAllContests({ filters }),
+        [ filters, getUrlForAllContests ],
     );
 
     const {
@@ -45,16 +53,22 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         data,
     } = useHttp(getUrl);
 
-    const selectFilter = useCallback(
-        (newFilter) => {
-            setFilter(newFilter);
+    const applyFilter = useCallback(
+        (filter) => {
+            const newFilters = filters.indexOf(filter) >= 0
+                ? without(filters, filter)
+                : [ ...filters, filter ];
+
+            setFilters(newFilters);
         },
-        [],
+        [ filters ],
     );
 
-    const clearFilter = useCallback(
-        () => selectFilter(null),
-        [ selectFilter ],
+    const clearFilters = useCallback(
+        () => {
+            setFilters([]);
+        },
+        [],
     );
 
     const reload = useCallback(
@@ -83,12 +97,13 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const value = {
         state: {
             contests,
-            filter,
+            possibleFilters,
+            filters,
         },
         actions: {
             reload,
-            selectFilter,
-            clearFilter,
+            applyFilter,
+            clearFilters,
         },
     };
 

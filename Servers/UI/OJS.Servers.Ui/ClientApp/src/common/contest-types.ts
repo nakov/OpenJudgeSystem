@@ -1,5 +1,16 @@
 /* eslint-disable import/prefer-default-export */
 
+enum FilterType {
+    Status = 'Status',
+    Language = 'Language',
+}
+
+interface IFilter {
+    name: string;
+    id: number;
+    type: FilterType;
+}
+
 enum ContestType {
     Practice = 0,
     Compete = 1,
@@ -10,7 +21,12 @@ enum ContestState {
     Past = 'past',
 }
 
+export type {
+    IFilter,
+};
+
 export {
     ContestType,
     ContestState,
+    FilterType,
 };

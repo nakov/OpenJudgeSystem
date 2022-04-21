@@ -49,6 +49,7 @@ const App = () => {
         SubmissionsProvider,
         SubmissionsDetailsProvider,
     ];
+
     return (
         <InitProviders providers={providers}>
             <Router>

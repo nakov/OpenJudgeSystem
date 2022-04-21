@@ -3,10 +3,23 @@ import styles from './Label.module.scss';
 import concatClassNames from '../../../utils/class-names';
 import { IHaveOptionalChildrenProps, IHaveOptionalClassName } from '../../common/Props';
 
+type LabelType = 'success' | 'danger' | 'warning' | 'info' | 'plain';
+
 interface ILabelProps extends IHaveOptionalChildrenProps, IHaveOptionalClassName {
-    type: 'success' | 'danger' | 'warning' | 'info';
+    type: LabelType;
     text?: string;
 }
+
+const typeToClassName = (type: LabelType) => {
+    const map = {
+        success: styles.success,
+        warning: styles.warning,
+        info: styles.info,
+        danger: styles.danger,
+        plain: styles.plain,
+    };
+    return map[type];
+};
 
 const Label = ({
     type,
@@ -19,14 +32,7 @@ const Label = ({
     }
     const content = children ?? text;
 
-    const typeClassName =
-        type === 'success'
-            ? styles.success
-            : type === 'warning'
-                ? styles.warning
-                : type === 'info'
-                    ? styles.info
-                    : styles.danger;
+    const typeClassName = typeToClassName(type);
 
     const labelClassName = concatClassNames(
         styles.label,

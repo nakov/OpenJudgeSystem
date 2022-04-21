@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 
-import { ContestState } from './contest-types';
+import { IFilter } from './contest-types';
 
 interface IStartContestUrlParams {
     id: number;
@@ -8,7 +8,7 @@ interface IStartContestUrlParams {
 }
 
 interface IAllContestsUrlParams {
-    filter: ContestState | null;
+    filters: IFilter[];
 }
 
 export type {

@@ -51,6 +51,7 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
         response: loginSubmitRequestResponse,
         status: loginSubmitRequestStatus,
     } = useHttp(loginSubmitUrl);
+
     const { post: logoutRequest, response: logoutResponse } = useHttp(logoutUrl);
 
     const signIn = useCallback(
