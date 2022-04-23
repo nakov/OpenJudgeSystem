@@ -10,7 +10,7 @@ import { CONTEST_PARTICIPATION_TYPES, CONTEST_RESULT_TYPES } from '../../common/
 import Heading from '../../components/guidelines/headings/Heading';
 import { IContestResultsParticipationProblemType, IContestResultsType } from '../../hooks/contests/types';
 import Hyperlink from '../../components/guidelines/buttons/Hyperlink';
-import _ from 'lodash';
+import { isNil } from 'lodash';
 
 interface IContestResultsPageParamsProps {
     contestId: string
@@ -69,7 +69,7 @@ const getProblemResultColumns = (results: IContestResultsType) =>
             const problemResult = params.row.problemResults
                 .find((pr: IContestResultsParticipationProblemType) => pr.problemId === p.id) as IContestResultsParticipationProblemType;
             const bestSubmission = problemResult?.bestSubmission;
-            return results.userHasContestRights && !_.isNil(bestSubmission)
+            return results.userHasContestRights && !isNil(bestSubmission)
                 ? <Hyperlink
                     text={`${bestSubmission.points}`}
                     to={`/submissions/${bestSubmission.id}`}
@@ -80,27 +80,27 @@ const getProblemResultColumns = (results: IContestResultsType) =>
 
 const ContestResultsPage = () => {
     const { contestId, participationType, resultType } = useParams<IContestResultsPageParamsProps>();
+    const official = participationType === CONTEST_PARTICIPATION_TYPES.COMPETE;
+    const full = resultType === CONTEST_RESULT_TYPES.FULL;
 
     const {
-        state: { results },
-        actions: { getResults },
+        state: { contestResults },
+        actions: { load },
     } = useCurrentContestResults();
 
     useEffect(() => {
-        if (results.results.length) {
+        if (contestResults.results.length) {
             return;
         }
-        const official = participationType === CONTEST_PARTICIPATION_TYPES.COMPETE;
-        const full = resultType === CONTEST_RESULT_TYPES.FULL;
-        getResults(Number(contestId), official, full);
-    }, [ results, getResults, contestId, participationType, resultType ]);
+        load(Number(contestId), official, full);
+    }, [ contestResults, load ]);
 
     return (
         <>
-            <Heading>{resultType} {participationType} results for constest - {results.name}</Heading>
+            <Heading>{participationType} results for constest - {contestResults.name}</Heading>
             <DataGrid
-              rows={results.results}
-              columns={getColumns(results)}
+              rows={contestResults.results}
+              columns={getColumns(contestResults)}
               disableSelectionOnClick
               getRowId={(row) => row.participantUsername}
             />

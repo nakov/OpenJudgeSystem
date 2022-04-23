@@ -7,10 +7,10 @@ import { getContestResultsUrl } from '../../utils/urls';
 
 interface ICurrentContestResultsContext {
     state: {
-        results: IContestResultsType,
+        contestResults: IContestResultsType,
     };
     actions: {
-        getResults: (id: number, official: boolean, full: boolean) => Promise<void>,
+        load: (id: number, official: boolean, full: boolean) => Promise<void>,
     };
 }
 
@@ -19,7 +19,7 @@ interface ICurrentContestResultsProviderProps extends IHaveChildrenProps {
 
 const defaultState = { 
     state: { 
-        results: { 
+        contestResults: {
             results: [] as IContestResultsParticipationType[],
         }  as IContestResultsType
     },
@@ -28,7 +28,7 @@ const defaultState = {
 const ContestResultsContext = createContext<ICurrentContestResultsContext>(defaultState as ICurrentContestResultsContext);
 
 const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProviderProps) => {
-    const [ results, setResults ] = useState(defaultState.state.results);
+    const [ contestResults, setContestResults ] = useState(defaultState.state.contestResults);
     const { startLoading, stopLoading } = useLoading();
 
     const {
@@ -36,7 +36,7 @@ const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProvi
         data: apiContestResults,
     } = useHttp(getContestResultsUrl);
 
-    const getResults = useCallback(async (id, official, full) => {
+    const load = useCallback(async (id, official, full) => {
             startLoading();
             await getApiContestResults({
                 id,
@@ -49,15 +49,15 @@ const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProvi
     useEffect(
         () => {
             if (apiContestResults != null) {
-                setResults(apiContestResults);
+                setContestResults(apiContestResults);
             }
         },
         [ apiContestResults ],
     );
 
     const value = {
-        state: { results },
-        actions: { getResults },
+        state: { contestResults },
+        actions: { load },
     };
 
     return (
