@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { DataGrid, GridColDef, GridRenderCellParams, GridValueGetterParams } from '@mui/x-data-grid';
 import { useParams } from 'react-router';
-import { useEffect } from 'react';
 import { setLayout } from '../shared/set-layout';
 import { makePrivate } from '../shared/make-private';
 import { useCurrentContestResults } from '../../hooks/contests/use-current-contest-results';
@@ -89,11 +88,8 @@ const ContestResultsPage = () => {
     } = useCurrentContestResults();
 
     useEffect(() => {
-        if (contestResults.results.length) {
-            return;
-        }
         load(Number(contestId), official, full);
-    }, [ contestResults, load ]);
+    }, [ contestId, official, full, load ]);
 
     return (
         <>
