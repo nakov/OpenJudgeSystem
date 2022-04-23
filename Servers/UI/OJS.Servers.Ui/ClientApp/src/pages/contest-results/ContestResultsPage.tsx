@@ -5,7 +5,7 @@ import { useParams } from 'react-router';
 import { setLayout } from '../shared/set-layout';
 import { makePrivate } from '../shared/make-private';
 import { useCurrentContestResults } from '../../hooks/contests/use-current-contest-results';
-import { CONTEST_PARTICIPATION_TYPES, CONTEST_RESULT_TYPES } from '../../common/constants'
+import { ContestParticipationType, ContestResultType } from '../../common/constants'
 import Heading from '../../components/guidelines/headings/Heading';
 import { IContestResultsParticipationProblemType, IContestResultsType } from '../../hooks/contests/types';
 import Hyperlink from '../../components/guidelines/buttons/Hyperlink';
@@ -79,8 +79,8 @@ const getProblemResultColumns = (results: IContestResultsType) =>
 
 const ContestResultsPage = () => {
     const { contestId, participationType, resultType } = useParams<IContestResultsPageParamsProps>();
-    const official = participationType === CONTEST_PARTICIPATION_TYPES.COMPETE;
-    const full = resultType === CONTEST_RESULT_TYPES.FULL;
+    const official = participationType === ContestParticipationType.Compete;
+    const full = resultType === ContestResultType.Full;
 
     const {
         state: { contestResults },

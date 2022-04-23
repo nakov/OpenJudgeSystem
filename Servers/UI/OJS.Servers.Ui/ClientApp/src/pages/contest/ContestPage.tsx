@@ -5,7 +5,7 @@ import Contest from '../../components/contests/contest/Contest';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 import { useCurrentContest } from '../../hooks/use-current-contest';
-import { CONTEST_PARTICIPATION_TYPES } from '../../common/constants';
+import { ContestParticipationType } from '../../common/constants';
 
 interface IContestPageParamsProps {
     contestId: string
@@ -21,7 +21,7 @@ const ContestPage = () => {
         (async () => {
             const contest = {
                 id: Number(contestId),
-                isOfficial: participationType === CONTEST_PARTICIPATION_TYPES.COMPETE,
+                isOfficial: participationType === ContestParticipationType.Compete,
             };
             await start(contest);
         })();

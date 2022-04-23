@@ -9,7 +9,7 @@ import Label from '../../guidelines/labels/Label';
 import { IProblemType } from '../../../common/types';
 import { useProblems } from '../../../hooks/use-problems';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
-import { CONTEST_PARTICIPATION_TYPES, CONTEST_RESULT_TYPES } from '../../../common/constants';
+import { ContestParticipationType, ContestResultType } from '../../../common/constants';
 import Hyperlink from '../../guidelines/buttons/Hyperlink';
 
 const compareByOrderBy = (p1: IProblemType, p2: IProblemType) => p1.orderBy - p2.orderBy;
@@ -98,11 +98,11 @@ const ContestTasksNavigation = () => {
 
     useEffect(() => {
         const participationType = isOfficial
-            ? CONTEST_PARTICIPATION_TYPES.COMPETE
-            : CONTEST_PARTICIPATION_TYPES.PRACTICE;
-        const newResultsLink = `/contests/${contest?.id}/${participationType}/results/${CONTEST_RESULT_TYPES.SIMPLE}`;
+            ? ContestParticipationType.Compete
+            : ContestParticipationType.Practice;
+        const newResultsLink = `/contests/${contest?.id}/${participationType}/results/${ContestResultType.Simple}`;
         setResultsLink(newResultsLink);
-    }, [ isOfficial ]);
+    }, [ isOfficial, contest ]);
 
     return (
         <div className={styles.tasksSideNavigation}>
