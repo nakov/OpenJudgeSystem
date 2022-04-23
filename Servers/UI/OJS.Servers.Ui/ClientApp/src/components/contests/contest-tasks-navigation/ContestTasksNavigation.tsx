@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import List from '../../guidelines/lists/List';
 import Heading from '../../guidelines/headings/Heading';
 import { Button } from '../../guidelines/buttons/Button';
@@ -15,6 +15,8 @@ import Hyperlink from '../../guidelines/buttons/Hyperlink';
 const compareByOrderBy = (p1: IProblemType, p2: IProblemType) => p1.orderBy - p2.orderBy;
 
 const ContestTasksNavigation = () => {
+    const [ resultsLink, setResultsLink ] = useState('');
+
     const {
         state: {
             currentProblem,
@@ -94,10 +96,13 @@ const ContestTasksNavigation = () => {
         [ problems, renderTask ],
     );
 
-    const participationType = isOfficial
-        ? CONTEST_PARTICIPATION_TYPES.COMPETE
-        : CONTEST_PARTICIPATION_TYPES.PRACTICE;
-    const resultsLink = `/contests/${contest?.id}/${participationType}/results/${CONTEST_RESULT_TYPES.SIMPLE}`;
+    useEffect(() => {
+        const participationType = isOfficial
+            ? CONTEST_PARTICIPATION_TYPES.COMPETE
+            : CONTEST_PARTICIPATION_TYPES.PRACTICE;
+        const newResultsLink = `/contests/${contest?.id}/${participationType}/results/${CONTEST_RESULT_TYPES.SIMPLE}`;
+        setResultsLink(newResultsLink);
+    }, [ isOfficial ]);
 
     return (
         <div className={styles.tasksSideNavigation}>

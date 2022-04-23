@@ -22,9 +22,9 @@ const Hyperlink = ({
  }: IHyperlinkProps ) => {
     const linkClassName = concatClassNames(className, styles.link);
 
-    const toHref= isToExternal
-    ? { pathname: to }
-    : to;
+    const toHref = isToExternal
+        ? { pathname: to }
+        : to;
 
     const target = isToExternal
         ? "_blank"

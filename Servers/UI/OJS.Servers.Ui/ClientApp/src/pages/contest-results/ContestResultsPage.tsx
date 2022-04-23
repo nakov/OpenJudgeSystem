@@ -80,8 +80,6 @@ const getProblemResultColumns = (results: IContestResultsType) =>
 
 const ContestResultsPage = () => {
     const { contestId, participationType, resultType } = useParams<IContestResultsPageParamsProps>();
-    const official = participationType === CONTEST_PARTICIPATION_TYPES.COMPETE;
-    const full = resultType === CONTEST_RESULT_TYPES.FULL;
 
     const {
         state: { results },
@@ -92,8 +90,10 @@ const ContestResultsPage = () => {
         if (results.results.length) {
             return;
         }
+        const official = participationType === CONTEST_PARTICIPATION_TYPES.COMPETE;
+        const full = resultType === CONTEST_RESULT_TYPES.FULL;
         getResults(Number(contestId), official, full);
-    }, [ results, getResults ]);
+    }, [ results, getResults, contestId, participationType, resultType ]);
 
     return (
         <>
