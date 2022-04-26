@@ -20,18 +20,20 @@ const getUrlForStartContestParticipation =
     ({ id, official }: IStartContestUrlParams) => `${baseUrl}/Compete/Index/${id}?official=${official}`;
 
 const getUrlForAllContests = ({ filters }: IAllContestsUrlParams) => {
-    let statusParams = filters.filter((f) => f.type === FilterType.Status);
-    if (statusParams.length === 2) {
-        statusParams = [];
-    }
+    const queryParams = filters
+        .map(({ name, type }) => {
+            if (type == FilterType.Status) {
+                return `status=${name}`;
+            }
 
-    const statusParam = statusParams.map(({ name }) => `filter=${name}`)
-        .join('');
+            return `language=${name}`;
+        })
+        .join('&');
 
     return (
-        isNil(statusParam)
+        isNil(queryParams)
             ? `${baseUrl}/Contests/GetAll`
-            : `${baseUrl}/Contests/GetAll?${statusParam}`
+            : `${baseUrl}/Contests/GetAll?${queryParams}`
     );
 };
 
