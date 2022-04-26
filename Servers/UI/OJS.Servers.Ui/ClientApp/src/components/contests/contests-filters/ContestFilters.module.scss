@@ -1,9 +1,5 @@
 @import 'src/styles/colors';
 
-.container {
-
-}
-
 .heading {
   text-align: left;
   border-bottom: 1px solid $bottom-border-color;
@@ -24,5 +20,7 @@
 }
 
 .btnSelectFilter {
-  padding: 0;
+  padding: 7px 14px;
+  border-radius: 0;
+  border-width: 1px;
 }

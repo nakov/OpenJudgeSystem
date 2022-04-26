@@ -6,7 +6,6 @@ import Heading from '../../guidelines/headings/Heading';
 import { FilterType, IFilter } from '../../../common/contest-types';
 
 import styles from './ContestFilters.module.scss';
-import Label from '../../guidelines/labels/Label';
 import Button from '../../guidelines/buttons/Button';
 import { useContests } from '../../../hooks/use-contests';
 import { groupByType } from '../../../common/filter-utils';
@@ -41,17 +40,20 @@ const ContestFilters = () => {
     );
 
     const renderFilterItem = useCallback(
-        ({ id, name }: IFilter) => (
-            <Button
-              type="plain"
-              onClick={() => handleFilterClick(id)}
-              className={styles.btnSelectFilter}
-            >
-                <Label type="plain">
-                    {name}
-                </Label>
-            </Button>
-        ),
+        ({ id, name }: IFilter) => {
+            const filterIsSelected = filters.some(f => f.id === id);
+            const type = filterIsSelected ? "primary" : "secondary";
+            const size = filterIsSelected ? "medium" : "small";
+
+            return (
+                <Button
+                    type={type}
+                    onClick={() => handleFilterClick(id)}
+                    className={styles.btnSelectFilter}
+                    text={name}
+                    size={size}
+                />
+        )},
         [ handleFilterClick ],
     );
 
