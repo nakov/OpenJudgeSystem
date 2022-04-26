@@ -89,7 +89,9 @@ const ContestResultsPage = () => {
     } = useCurrentContestResults();
 
     useEffect(() => {
-        load(Number(contestId), official, full);
+        (async () =>
+            await load(Number(contestId), official, full)
+        )();
     }, [ contestId, official, full, load ]);
 
     return (
