@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useCallback, useState, useEffect } from 'react';
 import List from '../../guidelines/lists/List';
 import Heading from '../../guidelines/headings/Heading';
-import { Button } from '../../guidelines/buttons/Button';
+import { Button, LinkButton } from '../../guidelines/buttons/Button';
 import styles from './ContestTasksNavigation.module.scss';
 import concatClassNames from '../../../utils/class-names';
 import Label from '../../guidelines/labels/Label';
@@ -10,7 +10,6 @@ import { IProblemType } from '../../../common/types';
 import { useProblems } from '../../../hooks/use-problems';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import { ContestParticipationType, ContestResultType } from '../../../common/constants';
-import Hyperlink from '../../guidelines/buttons/Hyperlink';
 
 const compareByOrderBy = (p1: IProblemType, p2: IProblemType) => p1.orderBy - p2.orderBy;
 
@@ -108,7 +107,7 @@ const ContestTasksNavigation = () => {
         <div className={styles.tasksSideNavigation}>
             <Heading type="secondary">Tasks</Heading>
             {renderTasksList()}
-            <Hyperlink to={resultsLink} text="Results" />
+            <LinkButton type='a' to={resultsLink} text="Results" />
         </div>
     );
 };

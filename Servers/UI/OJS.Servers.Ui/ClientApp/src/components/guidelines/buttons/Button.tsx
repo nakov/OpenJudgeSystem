@@ -17,9 +17,10 @@ interface IButtonProps extends IHaveOptionalChildrenProps, IHaveOptionalClassNam
 interface ILinkButtonProps extends IHaveOptionalClassName {
     text: string;
     id?: string;
-    type?: 'primary' | 'secondary' | 'plain' | 'disabled';
+    type?: 'primary' | 'secondary' | 'plain' | 'disabled' | 'a';
     size?: 'small' | 'medium' | 'large';
     to: string;
+    isToExternal?: boolean,
 }
 
 const classNameToType = {
@@ -28,6 +29,7 @@ const classNameToType = {
     plain: styles.btnPlain,
     disabled: styles.btnDisabled,
     submit: styles.btn,
+    a: styles.link,
 };
 
 const Button = ({
@@ -81,6 +83,7 @@ const LinkButton = ({
     type = 'primary',
     size = 'medium',
     id = generateId(),
+    isToExternal = false,
 }: ILinkButtonProps) => {
     const sizeToClassName = {
         small: styles.small,
@@ -98,12 +101,23 @@ const LinkButton = ({
         sizeClassName,
     );
 
+    const toHref = isToExternal
+        ? { pathname: to }
+        : to;
+
+    const target = isToExternal
+        ? "_blank"
+        : undefined;
+
+    const linkType = type === "a" ? undefined : "button"
+
     return (
         <Link
-          type="button"
-          to={to}
+          type={linkType}
+          to={toHref}
           className={buttonClassName}
           id={id}
+          target={target}
         >
             {text}
         </Link>

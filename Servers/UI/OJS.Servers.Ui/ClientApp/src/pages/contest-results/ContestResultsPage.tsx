@@ -8,7 +8,7 @@ import { useCurrentContestResults } from '../../hooks/contests/use-current-conte
 import { ContestParticipationType, ContestResultType } from '../../common/constants'
 import Heading from '../../components/guidelines/headings/Heading';
 import { IContestResultsParticipationProblemType, IContestResultsType } from '../../hooks/contests/types';
-import Hyperlink from '../../components/guidelines/buttons/Hyperlink';
+import { LinkButton } from '../../components/guidelines/buttons/Button';
 import { isNil } from 'lodash';
 
 interface IContestResultsPageParamsProps {
@@ -69,7 +69,8 @@ const getProblemResultColumns = (results: IContestResultsType) =>
                 .find((pr: IContestResultsParticipationProblemType) => pr.problemId === p.id) as IContestResultsParticipationProblemType;
             const bestSubmission = problemResult?.bestSubmission;
             return results.userHasContestRights && !isNil(bestSubmission)
-                ? <Hyperlink
+                ? <LinkButton
+                    type='a'
                     text={`${bestSubmission.points}`}
                     to={`/submissions/${bestSubmission.id}`}
                 />

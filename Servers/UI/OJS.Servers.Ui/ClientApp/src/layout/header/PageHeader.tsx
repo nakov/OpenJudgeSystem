@@ -5,20 +5,20 @@ import Heading from '../../components/guidelines/headings/Heading';
 import styles from './PageHeader.module.scss';
 import { useAuth } from '../../hooks/use-auth';
 import { administrationContestsGridUrl } from '../../utils/urls';
-import Hyperlink from '../../components/guidelines/buttons/Hyperlink';
+import { LinkButton } from '../../components/guidelines/buttons/Button';
 
 const PageHeader = () => {
     const { user } = useAuth();
 
     const renderLinks = useCallback(() => {
         const administrationLink = user.permissions.canAccessAdministration
-            ? <Hyperlink to={administrationContestsGridUrl} isToExternal={true} text="Administration" />
+            ? <LinkButton type='a' to={administrationContestsGridUrl} isToExternal={true} text="Administration" />
             : null;
 
         return (
             <>
-                <Hyperlink id="nav-contests-link" to="/contests/all" text="Contests" />
-                <Hyperlink id="nav-submissions-link" to="/submissions" text="Submissions" />
+                <LinkButton type='a' id="nav-contests-link" to="/contests/all" text="Contests" />
+                <LinkButton type='a' id="nav-submissions-link" to="/submissions" text="Submissions" />
                 { administrationLink }
             </>
         );
