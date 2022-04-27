@@ -107,9 +107,7 @@ const useHttp = (
 
     useEffect(
         () => {
-            const newUrl = getUrl(url);
-            console.log(newUrl);
-            setInternalUrl(newUrl);
+            setInternalUrl(getUrl(url));
         },
         [ url ],
     );
