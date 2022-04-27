@@ -5,7 +5,7 @@ import { Button } from '../buttons/Button';
 import generateId from '../../../utils/id-generator';
 
 interface IFormProps extends IHaveChildrenProps {
-    onSubmit: () => {};
+    onSubmit: () => void;
     submitText?: string;
     id?: string;
 }

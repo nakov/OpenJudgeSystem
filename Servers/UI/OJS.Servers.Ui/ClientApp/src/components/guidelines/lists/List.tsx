@@ -1,10 +1,19 @@
 import * as React from 'react';
+import { useCallback } from 'react';
+import {
+    isEmpty,
+    isNil,
+} from 'lodash';
 import concatClassNames from '../../../utils/class-names';
 
-import styles from './List.module.scss';
-import { ClassNameType, IHaveOptionalClassName } from '../../common/Props';
+import {
+    ClassNameType,
+    IHaveOptionalClassName,
+} from '../../common/Props';
 
-interface IListProps<TValue> extends IHaveOptionalClassName{
+import styles from './List.module.scss';
+
+interface IListProps<TValue> extends IHaveOptionalClassName {
     values: TValue[];
     itemFunc: (value: TValue) => React.ReactElement;
     keyFunc?: (value: TValue) => string,
@@ -60,23 +69,32 @@ const List = <TValue extends unknown>({
         : '';
     const itemClassNameCombined = concatClassNames(itemClassName, fullWidthItemClassName);
 
-    const items = values.map((value) => (
-        <li key={keyFunc(value)} className={itemClassNameCombined}>
-            {itemFunc(value)}
-        </li>
-    ));
+    const renderItems = useCallback(
+        () => {
+            if (isNil(values) || isEmpty(values)) {
+                return null;
+            }
+
+            return values.map((value) => (
+                <li key={keyFunc(value)} className={itemClassNameCombined}>
+                    {itemFunc(value)}
+                </li>
+            ));
+        },
+        [ itemClassNameCombined, itemFunc, keyFunc, values ],
+    );
 
     if (type === 'numbered') {
         return (
             <ol className={listClassName}>
-                {items}
+                {renderItems()}
             </ol>
         );
     }
 
     return (
         <ul className={listClassName}>
-            {items}
+            {renderItems()}
         </ul>
     );
 };

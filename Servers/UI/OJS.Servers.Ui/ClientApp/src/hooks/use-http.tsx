@@ -2,10 +2,24 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import axios from 'axios';
+import { isFunction } from 'lodash';
 import { HttpStatus } from '../common/common';
 import { IDictionary } from '../common/common-types';
 
-const useHttp = (url: string, headers: IDictionary<string> | null = null) => {
+type UrlType = string | (() => string);
+
+const getUrl = (url: UrlType) => (
+    isFunction(url)
+        ? url()
+        : url
+);
+
+const useHttp = (
+    url: UrlType,
+    headers: IDictionary<string> | null = null,
+) => {
+    const [ internalUrl, setInternalUrl ] = useState(getUrl(url));
+
     const [ response, setResponse ] = useState<any>(null);
     const [ status, setStatus ] = useState<HttpStatus>(HttpStatus.NotStarted);
     const [ error, setError ] = useState<Error | null>(null);
@@ -58,7 +72,7 @@ const useHttp = (url: string, headers: IDictionary<string> | null = null) => {
 
     const get = useCallback(
         (parameters?: IDictionary<any>, responseType = 'json') => {
-            const urlWithParameters = replaceParameters(url, parameters == null
+            const urlWithParameters = replaceParameters(internalUrl, parameters == null
                 ? {}
                 : parameters);
 
@@ -67,18 +81,18 @@ const useHttp = (url: string, headers: IDictionary<string> | null = null) => {
                 { responseType, headers: actualHeaders },
             ));
         },
-        [ actualHeaders, replaceParameters, request, url ],
+        [ actualHeaders, replaceParameters, request, internalUrl ],
     );
 
     const post = useCallback(
         (requestData: any, parameters?: IDictionary<any>) => request(() => axios.post(
-            replaceParameters(url, parameters == null
+            replaceParameters(internalUrl, parameters == null
                 ? {}
                 : parameters),
             requestData,
             { headers: actualHeaders },
         )),
-        [ actualHeaders, replaceParameters, request, url ],
+        [ actualHeaders, replaceParameters, request, internalUrl ],
     );
 
     useEffect(
@@ -91,6 +105,13 @@ const useHttp = (url: string, headers: IDictionary<string> | null = null) => {
         [ headers ],
     );
 
+    useEffect(
+        () => {
+            setInternalUrl(getUrl(url));
+        },
+        [ url ],
+    );
+
     return {
         get,
         post,
@@ -100,7 +121,6 @@ const useHttp = (url: string, headers: IDictionary<string> | null = null) => {
         error,
     };
 };
-
 export {
     // eslint-disable-next-line import/prefer-default-export
     useHttp,

@@ -1,13 +1,12 @@
-﻿namespace OJS.Servers.Ui.Models.Contests
+﻿namespace OJS.Servers.Ui.Models.Contests;
+
+using System.Collections.Generic;
+using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Ui.Models.Contests;
+
+public class ContestsForHomeIndexResponseModel : IMapFrom<ContestsForHomeIndexServiceModel>
 {
-    using System.Collections.Generic;
-    using OJS.Services.Ui.Models.Contests;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    public IEnumerable<ContestForHomeIndexResponseModel> ActiveContests { get; set; }
 
-    public class ContestsForHomeIndexResponseModel : IMapFrom<ContestsForHomeIndexServiceModel>
-    {
-        public IEnumerable<ContestForHomeIndexResponseModel> ActiveContests { get; set; }
-
-        public IEnumerable<ContestForHomeIndexResponseModel> PastContests { get; set; }
-    }
+    public IEnumerable<ContestForHomeIndexResponseModel> PastContests { get; set; }
 }

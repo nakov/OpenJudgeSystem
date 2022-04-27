@@ -19,14 +19,15 @@ import UrlsProvider from './hooks/use-urls';
 import CurrentContestsProvider from './hooks/use-current-contest';
 import ProblemsProvider from './hooks/use-problems';
 import ProblemSubmissionsProvider from './hooks/submissions/use-problem-submissions';
+import ContestsProvider from './hooks/use-contests';
 
 const InitProviders = ({ providers, children }: any) => {
-    const initial = (<>{ children }</>);
+    const initial = (<>{children}</>);
     return providers
         .reverse()
         .reduce((current: any, Provider: any) => (
             <Provider>
-                { current }
+                {current}
             </Provider>
         ), initial);
 };
@@ -39,6 +40,7 @@ const App = () => {
         NotificationsProvider,
         AuthProvider,
         UsersProvider,
+        ContestsProvider,
         HomeContestsProvider,
         ParticipationsProvider,
         CurrentContestsProvider,
@@ -47,6 +49,7 @@ const App = () => {
         SubmissionsProvider,
         SubmissionsDetailsProvider,
     ];
+
     return (
         <InitProviders providers={providers}>
             <Router>
