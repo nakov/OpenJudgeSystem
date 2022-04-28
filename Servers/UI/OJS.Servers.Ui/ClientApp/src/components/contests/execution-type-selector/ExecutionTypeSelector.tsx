@@ -4,6 +4,7 @@ import { get } from 'lodash';
 import styles from './ExecutionTypeSelector.module.scss';
 import { Button } from '../../guidelines/buttons/Button';
 import { useSubmissions } from '../../../hooks/submissions/use-submissions';
+import concatClassNames from '../../../utils/class-names';
 
 interface IExecutionTypeSelectorProps {
     id: number,
@@ -20,10 +21,22 @@ const ExecutionTypeSelector = ({ id, value, isSelected, onSelect }: IExecutionTy
         [ selectedSubmissionType ],
     );
 
+    const executionTypeSelectorActiveClass = 'executionTypeSelectorActive';
+    const executionTypeSelectorActiveClassName = concatClassNames(
+        styles.executionTypeSelectorActive,
+        executionTypeSelectorActiveClass,
+    );
+    const executionTypeSelectorInactiveClass = 'executionTypeSelectorInactive';
+    const executionTypeSelectorInactiveClassName = concatClassNames(
+        styles.executionTypeSelectorInactive,
+        executionTypeSelectorInactiveClass,
+    );
+
     const getClassName = useCallback(
         () => (selectedSubmissionTypeId === id
-            ? styles.executionTypeSelectorActive
-            : styles.executionTypeSelectorInactive),
+            ? executionTypeSelectorActiveClassName
+            : executionTypeSelectorInactiveClassName),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [ id, selectedSubmissionTypeId ],
     );
 

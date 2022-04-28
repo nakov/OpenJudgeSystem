@@ -22,19 +22,25 @@ const Contest = () => {
         },
     } = useCurrentContest();
 
-    const navigationClassName = concatClassNames(
+    const navigationContestClass = 'navigationContest';
+    const navigationContestClassName = concatClassNames(
         styles.sizeThree,
         styles.container,
+        navigationContestClass,
     );
 
+    const submissionBoxClass = 'submissionBox';
     const submissionBoxClassName = concatClassNames(
         styles.sizeRest,
         styles.container,
+        submissionBoxClass,
     );
 
+    const problemInfoClass = 'problemInfo';
     const problemInfoClassName = concatClassNames(
         styles.sizeThree,
         styles.container,
+        problemInfoClass,
     );
 
     const scoreText = useMemo(
@@ -52,7 +58,7 @@ const Contest = () => {
                 <p>
                     Score:
                     {' '}
-                    <Text type={TextType.Bold}>
+                    <Text type={TextType.Bold} className="score">
                         {scoreText}
                     </Text>
                 </p>
@@ -69,7 +75,7 @@ const Contest = () => {
                     <p>
                         Remaining time:
                         {' '}
-                        <Text type={TextType.Bold}>
+                        <Text type={TextType.Bold} className="remainingTime">
                             {hours}
                             :
                             {minutes}
@@ -115,7 +121,7 @@ const Contest = () => {
             </div>
 
             <div className={styles.contestWrapper}>
-                <div className={navigationClassName}>
+                <div className={navigationContestClassName}>
                     <ContestTasksNavigation />
                 </div>
                 <div className={submissionBoxClassName}>
