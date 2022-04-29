@@ -11,13 +11,14 @@ const selectors = {
     pageYoutubeVideoSelector: '#youtube-video',
     pageSeeActiveContestsButtonSelector: '.btn-see-all-contests-Active',
     pageSeePastContestsButtonSelector: '.btn-see-all-contests-Past',
-    pageCardControlsSelector: '.ContestCard_contestCardControls__1x3RA', // it will be changed or removed
+    pageCardControlsSelector: '.card-control-buttons',
     pageAllActiveCardsSelector: '.Active-contests-cards-list',
     pageAllPastCardsSelector: '.Past-contests-cards-list',
     pageContestCardClassSelector: '.card-contests',
-    pageContestCardDivSelectors: '.card-contests div',
-    pageContestCardTimeTextSelector: '.card-contests p',
-    pageContestCardTimerSelector: '.card-contests p span',
-};
+    pageContestCardHeaderSelector: '.card-header',
+    pageContestCardCategorySelector: '.card-category',
+    pageContestCardTimeTextSelector: '.card-counter p',
+    pageContestCardTimerSelector: '.card-counter',
 
+};
 export default selectors;
