@@ -32,7 +32,6 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     const [ currentSubmission, setCurrentSubmission ] = useState<ISubmissionDetailsType>();
     const [ currentProblemSubmissionResults, setCurrentProblemSubmissionResults ] =
         useState<ISubmissionDetails[]>(defaultState.currentProblemSubmissionResults);
-
     const getCurrentSubmissionDetailsUrl = useMemo(
         () => `${getSubmissionDetailsUrl}/${currentSubmissionId}`,
         [ currentSubmissionId ],

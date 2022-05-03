@@ -6,22 +6,19 @@ import { isFunction } from 'lodash';
 import { HttpStatus } from '../common/common';
 import { IDictionary } from '../common/common-types';
 
-type UrlType = string | ((...args: any[]) => string);
+type UrlType = string | (() => string);
 
-const getUrl = (url: UrlType, parameters: IDictionary<any> | undefined) => {
-    if (isFunction(url)) {
-        const paramsList = parameters?.values();
-        return url(paramsList);
-    }
-
-    return url;
-};
+const getUrl = (url: UrlType) => (
+    isFunction(url)
+        ? url()
+        : url
+);
 
 const useHttp = (
     url: UrlType,
     headers: IDictionary<string> | null = null,
 ) => {
-    // const [ internalUrl, setInternalUrl ] = useState(getUrl(url));
+    const [ internalUrl, setInternalUrl ] = useState(getUrl(url));
 
     const [ response, setResponse ] = useState<any>(null);
     const [ status, setStatus ] = useState<HttpStatus>(HttpStatus.NotStarted);
@@ -75,29 +72,27 @@ const useHttp = (
 
     const get = useCallback(
         (parameters?: IDictionary<any>, responseType = 'json') => {
-            // const urlWithParameters = replaceParameters(getUrl(url), parameters == null
-            //     ? {}
-            //     : parameters);
-
-            const urlWithParameters = getUrl(url, parameters);
+            const urlWithParameters = replaceParameters(internalUrl, parameters == null
+                ? {}
+                : parameters);
 
             return request(() => axios.get(
                 urlWithParameters,
                 { responseType, headers: actualHeaders },
             ));
         },
-        [ actualHeaders, request, url ],
+        [ actualHeaders, replaceParameters, request, internalUrl ],
     );
 
     const post = useCallback(
         (requestData: any, parameters?: IDictionary<any>) => request(() => axios.post(
-            replaceParameters(getUrl(url, parameters), parameters == null
+            replaceParameters(internalUrl, parameters == null
                 ? {}
                 : parameters),
             requestData,
             { headers: actualHeaders },
         )),
-        [ actualHeaders, replaceParameters, request, url ],
+        [ actualHeaders, replaceParameters, request, internalUrl ],
     );
 
     useEffect(
@@ -110,14 +105,14 @@ const useHttp = (
         [ headers ],
     );
 
-    // useEffect(
-    //     () => {
-    //         const newUrl = getUrl(url);
-    //         console.log(newUrl);
-    //         setInternalUrl(newUrl);
-    //     },
-    //     [ url ],
-    // );
+    useEffect(
+        () => {
+            const newUrl = getUrl(url);
+            console.log(newUrl);
+            setInternalUrl(newUrl);
+        },
+        [ url ],
+    );
 
     return {
         get,
