@@ -56,14 +56,14 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         data: apiContest,
     } = useHttp(startContestParticipationUrl);
 
-    const start = useCallback(async ({ id, isOfficial: official }) => {
+    const start = useCallback(async ({ id }) => {
         startLoading();
         await getApiContest({
             id,
-            official,
+            isOfficial,
         });
         stopLoading();
-    }, [ getApiContest, startLoading, stopLoading ]);
+    }, [ getApiContest, isOfficial, startLoading, stopLoading ]);
 
     useEffect(() => {
         if (apiContest != null) {
