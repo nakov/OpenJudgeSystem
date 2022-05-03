@@ -3,17 +3,18 @@ import IndexPage from '../pageobjects/index-page';
 describe('Testing index', () => {
     let activeCards;
     let pastCards;
+
     before(async () => {
         await IndexPage.open();
         activeCards = await IndexPage.allCardsForActiveContests;
         pastCards = await IndexPage.allCardsForPastContests;
     });
+
     const contestCardsChecker = {
         cardsDisplayedCheck: (cards) => cards.length > 0,
         headersDisplayedCheck: (cards, headers) => cards.length === headers.length,
         categoriesDisplayedCheck: (cards, categories) => cards.length === categories.length,
         countersDisplayedCheck: (cards, counters) => cards.length === counters.length,
-
     };
 
     it('Expect logInButton to exist', async () => {

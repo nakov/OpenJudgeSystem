@@ -4,7 +4,7 @@ import selectors from '../constants/auth-page-selectors';
 import Page from './page';
 
 class AuthPage extends Page {
-    private pageLocation = '/Account/Login';
+    private pageLocation = '/account/login';
 
     public get username() {
         return $(selectors.usernameInputSelector);
