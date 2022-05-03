@@ -7,6 +7,7 @@ describe('Testing contest', () => {
         username: 'testuser123',
         password: '123456',
     };
+
     const loginWithCredentials = async (credentials) => {
         const { username, password } = credentials;
         await AuthPage.performLogIn(username, password);
@@ -16,6 +17,7 @@ describe('Testing contest', () => {
     before(async () => {
         await loginWithCredentials(validUserCredentials);
     });
+
     after(async () => {
         await AuthPage.performLogOut();
     });

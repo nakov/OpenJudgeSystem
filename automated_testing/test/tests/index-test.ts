@@ -3,7 +3,7 @@ import IndexPage from '../pageobjects/index-page';
 describe('Testing index', () => {
     let activeCards;
     let pastCards;
-    beforeEach(async () => {
+    before(async () => {
         await IndexPage.open();
         activeCards = await IndexPage.allCardsForActiveContests;
         pastCards = await IndexPage.allCardsForPastContests;
