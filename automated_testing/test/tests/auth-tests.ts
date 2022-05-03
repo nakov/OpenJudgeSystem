@@ -1,7 +1,7 @@
 import IndexPage from '../pageobjects/index-page';
 import AuthPage from '../pageobjects/auth-page';
 
-describe.skip('Testing AuthPage', () => {
+describe('Testing AuthPage', () => {
     const validUserCredentials = {
         username: 'testuser123',
         password: '123456',
@@ -34,8 +34,6 @@ describe.skip('Testing AuthPage', () => {
             console.log(' --- Success logout ---');
         } catch (err) {
             console.log(' --- Failed logout ---');
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const x = 5;
         }
     });
 
@@ -47,7 +45,7 @@ describe.skip('Testing AuthPage', () => {
         await expect(myTestsBtn).toExist();
     });
 
-    xit('Expect logOut button to exist', async () => {
+    it('Expect logOut button to exist', async () => {
         await AuthPage.open();
         await loginInWithValidCredentials();
         const btn = await AuthPage.authlogoutButton;
@@ -55,7 +53,7 @@ describe.skip('Testing AuthPage', () => {
         await expect(btn).toHaveText('LOG OUT');
     });
 
-    xit('Expect successful Log out', async () => {
+    it('Expect successful Log out', async () => {
         await AuthPage.open();
         await loginInWithValidCredentials();
         await AuthPage.performLogOut();

@@ -36,8 +36,7 @@ const ExecutionTypeSelector = ({ id, value, isSelected, onSelect }: IExecutionTy
         () => (selectedSubmissionTypeId === id
             ? executionTypeSelectorActiveClassName
             : executionTypeSelectorInactiveClassName),
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [ id, selectedSubmissionTypeId ],
+        [ executionTypeSelectorActiveClassName, executionTypeSelectorInactiveClassName, id, selectedSubmissionTypeId ],
     );
 
     const select = useCallback(() => {

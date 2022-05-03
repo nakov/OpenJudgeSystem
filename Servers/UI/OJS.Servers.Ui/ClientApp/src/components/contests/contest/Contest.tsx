@@ -48,6 +48,7 @@ const Contest = () => {
         [ maxScore, score ],
     );
 
+    const scoreClassName = 'score';
     const renderScore = useCallback(
         () => {
             if (scoreText === '0/0') {
@@ -58,7 +59,7 @@ const Contest = () => {
                 <p>
                     Score:
                     {' '}
-                    <Text type={TextType.Bold} className="score">
+                    <Text type={TextType.Bold} className={scoreClassName}>
                         {scoreText}
                     </Text>
                 </p>
@@ -67,6 +68,7 @@ const Contest = () => {
         [ scoreText ],
     );
 
+    const remainingTimeClassName = 'remainingTime';
     const renderCountdown = useCallback(
         (remainingTime: ICountdownRemainingType) => {
             const { hours, minutes, seconds } = convertToTwoDigitValues(remainingTime);
@@ -75,7 +77,7 @@ const Contest = () => {
                     <p>
                         Remaining time:
                         {' '}
-                        <Text type={TextType.Bold} className="remainingTime">
+                        <Text type={TextType.Bold} className={remainingTimeClassName}>
                             {hours}
                             :
                             {minutes}

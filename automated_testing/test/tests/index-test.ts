@@ -92,35 +92,35 @@ describe('Testing index', () => {
 
     it('Expect having at least one active contest card', async () => {
         const check = await contestCardsChecker.cardsDisplayedCheck(activeCards);
-        await expect(check).toEqual(true);
+        await expect(check).toBeTruthy();
     });
 
     it('Expect having at least one past contest card', async () => {
         const check = await contestCardsChecker.cardsDisplayedCheck(pastCards);
-        await expect(check).toEqual(true);
+        await expect(check).toBeTruthy();
     });
 
     it('Expect every active contest card to have header', async () => {
         const headers = await IndexPage.allActiveContestCardsHeaders;
         const check = await contestCardsChecker.headersDisplayedCheck(activeCards, headers);
-        await expect(check).toEqual(true);
+        await expect(check).toBeTruthy();
     });
 
     it('Expect every past contest card to have header', async () => {
         const headers = await IndexPage.allCardsForPastContests;
         const check = await contestCardsChecker.headersDisplayedCheck(activeCards, headers);
-        await expect(check).toEqual(true);
+        await expect(check).toBeTruthy();
     });
 
     it('Expect every active contest card to have category', async () => {
         const categories = await IndexPage.allActiveContestCardsCategories;
         const check = await contestCardsChecker.categoriesDisplayedCheck(activeCards, categories);
-        await expect(check).toEqual(true);
+        await expect(check).toBeTruthy();
     });
 
     it('Expect every past contest card to have category', async () => {
         const categories = await IndexPage.allActiveContestCardsCategories;
         const check = await contestCardsChecker.categoriesDisplayedCheck(activeCards, categories);
-        await expect(check).toEqual(true);
+        await expect(check).toBeTruthy();
     });
 });

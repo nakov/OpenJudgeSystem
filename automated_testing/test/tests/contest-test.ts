@@ -17,7 +17,7 @@ describe('Testing contest', () => {
         await loginWithCredentials(validUserCredentials);
     });
     after(async () => {
-        await AuthPage.performLogOut;
+        await AuthPage.performLogOut();
     });
 
     it('', async () => {
