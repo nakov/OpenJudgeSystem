@@ -1,14 +1,9 @@
+import { beforeEach } from 'mocha';
 import IndexPage from '../pageobjects/index-page';
 
 describe('Testing index', () => {
     let activeCards;
     let pastCards;
-
-    before(async () => {
-        await IndexPage.open();
-        activeCards = await IndexPage.allCardsForActiveContests;
-        pastCards = await IndexPage.allCardsForPastContests;
-    });
 
     const contestCardsChecker = {
         cardsDisplayedCheck: (cards) => cards.length > 0,
@@ -16,6 +11,12 @@ describe('Testing index', () => {
         categoriesDisplayedCheck: (cards, categories) => cards.length === categories.length,
         countersDisplayedCheck: (cards, counters) => cards.length === counters.length,
     };
+
+    beforeEach(async () => {
+        await IndexPage.open();
+        activeCards = await IndexPage.allCardsForActiveContests;
+        pastCards = await IndexPage.allCardsForPastContests;
+    });
 
     it('Expect logInButton to exist', async () => {
         const btn = await IndexPage.logInButton;
