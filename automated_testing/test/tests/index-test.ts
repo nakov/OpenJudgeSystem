@@ -51,7 +51,7 @@ describe('Testing index', () => {
     it('Expect contests link in navigation to exist and have the correct href', async () => {
         const contestsLink = await IndexPage.navContestsLink;
         await expect(contestsLink).toExist();
-        await expect(contestsLink).toHaveHrefContaining('/contests/all');
+        await expect(contestsLink).toHaveHrefContaining('/contests');
     });
 
     it('Expect submissions link in navigation to exist and have the correct href', async () => {
@@ -110,7 +110,7 @@ describe('Testing index', () => {
 
     it('Expect every past contest card to have header', async () => {
         const headers = await IndexPage.allCardsForPastContests;
-        const check = await contestCardsChecker.headersDisplayedCheck(activeCards, headers);
+        const check = await contestCardsChecker.headersDisplayedCheck(pastCards, headers);
         await expect(check).toBeTruthy();
     });
 
