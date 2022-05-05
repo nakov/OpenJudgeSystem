@@ -10,6 +10,7 @@ describe('Testing index', () => {
         headersDisplayedCheck: (cards, headers) => cards.length === headers.length,
         categoriesDisplayedCheck: (cards, categories) => cards.length === categories.length,
         countersDisplayedCheck: (cards, counters) => cards.length === counters.length,
+        competeButtonsActiveCarsCheck: (cards, buttons) => cards.length === buttons.length,
     };
 
     beforeEach(async () => {
@@ -123,6 +124,30 @@ describe('Testing index', () => {
     it('Expect every past contest card to have category', async () => {
         const categories = await IndexPage.allActiveContestCardsCategories;
         const check = await contestCardsChecker.categoriesDisplayedCheck(activeCards, categories);
+        await expect(check).toBeTruthy();
+    });
+
+    it('Expect every active contest card to have compete button', async () => {
+        const competeButtons = await IndexPage.competeCardButtonActivecontests;
+        const check = await contestCardsChecker.competeButtonsActiveCarsCheck(activeCards, competeButtons);
+        await expect(check).toBeTruthy();
+    });
+
+    it('Expect every active contest card to have practice button', async () => {
+        const practiceButtons = await IndexPage.practiceCardButtoActiveContests;
+        const check = await contestCardsChecker.competeButtonsActiveCarsCheck(activeCards, practiceButtons);
+        await expect(check).toBeTruthy();
+    });
+
+    it('Expect every past contest card to have compete button', async () => {
+        const competeButtons = await IndexPage.competeCardButtonPastcontests;
+        const check = await contestCardsChecker.competeButtonsActiveCarsCheck(pastCards, competeButtons);
+        await expect(check).toBeTruthy();
+    });
+
+    it('Expect every past contest card to have practice button', async () => {
+        const practiceButtons = await IndexPage.practiceCardButtoPastContests;
+        const check = await contestCardsChecker.competeButtonsActiveCarsCheck(pastCards, practiceButtons);
         await expect(check).toBeTruthy();
     });
 });
