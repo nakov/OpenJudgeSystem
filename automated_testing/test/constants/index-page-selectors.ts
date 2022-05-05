@@ -19,6 +19,7 @@ const selectors = {
     pageContestCardCategorySelector: '.card-category',
     pageContestCardTimeTextSelector: '.card-counter p',
     pageContestCardTimerSelector: '.card-counter',
-
+    pageCompeteButtonIdSelector: '#button-card-compete',
+    pagePracticeButtonIdSelector: '#button-card-practice',
 };
 export default selectors;
