@@ -21,27 +21,28 @@ const ProblemResource = ({ resource }: IProblemResourceProps) => {
     const {
         actions: {
             getProblemResourceFile,
-            getProblemResourceResponse,
+            problemResourceContent,
+            clearFileContentState,
         },
     } = useHomeContests();
 
     const saveFile = useCallback(() => {
-        if (!getProblemResourceResponse) {
+        if (!problemResourceContent) {
             return;
         }
 
         // todo: move this to http helper
-        const filename = getProblemResourceResponse
+        const filename = problemResourceContent
             .headers['content-disposition']
             .split('filename*=UTF-8\'\'')[1];
 
         const filenameDecoded = decodeURIComponent(filename);
 
         saveAs(
-            getProblemResourceResponse.data,
+            problemResourceContent.data,
             filenameDecoded,
         );
-    }, [ getProblemResourceResponse ]);
+    }, [ problemResourceContent ]);
 
     const onClickGetResourceFile = useCallback(async () => {
         await getProblemResourceFile(resource.id);
@@ -49,7 +50,8 @@ const ProblemResource = ({ resource }: IProblemResourceProps) => {
 
     useEffect(() => {
         saveFile();
-    }, [ getProblemResourceResponse, saveFile ]);
+        clearFileContentState();
+    }, [ clearFileContentState, problemResourceContent, saveFile ]);
 
     const renderResourceLink = (linkContent: React.ReactNode) => (resource.type === 3
         ? (

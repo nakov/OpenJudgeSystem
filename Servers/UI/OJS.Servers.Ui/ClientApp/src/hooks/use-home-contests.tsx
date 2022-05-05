@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { AxiosResponse } from 'axios';
 import { IHaveChildrenProps } from '../components/common/Props';
 import { getIndexContestsUrl, getProblemResourceUrl } from '../utils/urls';
 import { useHttp } from './use-http';
@@ -9,6 +8,7 @@ import {
     IIndexContestsType,
     IGetContestsForIndexResponseType,
 } from '../common/types';
+import { IFileResourceType } from '../common/common-types';
 
 interface IHomeContestsContext {
     state: {
@@ -18,7 +18,8 @@ interface IHomeContestsContext {
     actions: {
         getForHome: () => Promise<void>;
         getProblemResourceFile: (resourceId: number) => Promise<void>;
-        getProblemResourceResponse: AxiosResponse;
+        problemResourceContent: IFileResourceType | null;
+        clearFileContentState: () => void;
     }
 }
 
@@ -37,6 +38,7 @@ interface IHomeContestsProviderProps extends IHaveChildrenProps {
 const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
     const [ activeContests, setActiveContests ] = useState<IIndexContestsType[]>([]);
     const [ pastContests, setPastContests ] = useState<IIndexContestsType[]>([]);
+    const [ problemResourceContent, setProblemResourceContent ] = useState<IFileResourceType | null>(null);
 
     const {
         startLoading,
@@ -65,6 +67,16 @@ const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
         stopLoading();
     }, [ getProblemResourceRequest, startLoading, stopLoading ]);
 
+    const clearFileContentState = useCallback(() => {
+        setProblemResourceContent(null);
+    }, []);
+
+    useEffect(() => {
+        if (getProblemResourceResponse != null) {
+            setProblemResourceContent(getProblemResourceResponse as IFileResourceType);
+        }
+    }, [ getProblemResourceResponse ]);
+
     useEffect(() => {
         if (getContestsForIndexData != null) {
             const {
@@ -84,7 +96,8 @@ const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
         actions: {
             getForHome,
             getProblemResourceFile,
-            getProblemResourceResponse,
+            problemResourceContent,
+            clearFileContentState,
         },
     };
 
