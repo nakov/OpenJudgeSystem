@@ -14,7 +14,7 @@ const HomeHeader = () => {
     const primaryHeadingText = 'SoftUni Judge System';
     const secondaryHeadingText = 'Automatic Algorithm Test Platform';
 
-    const videoId = 'IwLET8SDBE4';
+    const videoId = window.Keys.YOUTUBE_VIDEO_ID;
 
     const handleCtaClick = () => {
         alert('See contests!');
