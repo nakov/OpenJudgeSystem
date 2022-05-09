@@ -3,8 +3,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import axios from 'axios';
 import { isFunction } from 'lodash';
+import { saveAs } from 'file-saver';
 import { HttpStatus } from '../common/common';
-import { IDictionary } from '../common/common-types';
+import { IDictionary, IFileResponseType, ResponseTypeType } from '../common/common-types';
 
 type UrlType = string | (() => string);
 
@@ -24,6 +25,10 @@ const useHttp = (
     const [ status, setStatus ] = useState<HttpStatus>(HttpStatus.NotStarted);
     const [ error, setError ] = useState<Error | null>(null);
     const [ actualHeaders, setActualHeaders ] = useState<IDictionary<string>>({});
+
+    const contentDispositionHeaderText = 'content-disposition';
+    const filenameStringPattern = 'filename*=UTF-8\'\'';
+    const defaultAttachmentFilename = 'attachment';
 
     const request = useCallback(async (func: () => Promise<any>) => {
         try {
@@ -71,7 +76,7 @@ const useHttp = (
     }, [ response ]);
 
     const get = useCallback(
-        (parameters?: IDictionary<any>, responseType = 'json') => {
+        (parameters?: IDictionary<any>, responseType?: 'json') => {
             const urlWithParameters = replaceParameters(internalUrl, parameters == null
                 ? {}
                 : parameters);
@@ -94,6 +99,31 @@ const useHttp = (
         )),
         [ actualHeaders, replaceParameters, request, internalUrl ],
     );
+
+    const getFilenameFromHeaders = useCallback((responseObj: IFileResponseType) => {
+        const filename = responseObj
+            .headers[contentDispositionHeaderText]
+            .split(filenameStringPattern)[1];
+
+        if (filename == null) {
+            return defaultAttachmentFilename;
+        }
+
+        return filename;
+    }, []);
+
+    const saveAttachment = useCallback((responseObj: IFileResponseType) => {
+        if (!responseObj) {
+            return;
+        }
+
+        const filename = decodeURIComponent(getFilenameFromHeaders(responseObj));
+
+        saveAs(
+            responseObj.data,
+            filename,
+        );
+    }, [ getFilenameFromHeaders ]);
 
     useEffect(
         () => {
@@ -119,6 +149,7 @@ const useHttp = (
         data,
         status,
         error,
+        saveAttachment,
     };
 };
 export {

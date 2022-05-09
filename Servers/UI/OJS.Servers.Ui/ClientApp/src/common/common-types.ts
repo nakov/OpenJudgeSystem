@@ -21,7 +21,7 @@ interface INotificationType {
     leaveTimeout: number | null
 }
 
-interface IFileResourceType {
+interface IFileResponseType {
     data: Blob,
     headers: IDictionary<any>,
 }
@@ -39,7 +39,7 @@ export const SulsQuestionTypeMapping : { [key: number]: QuestionTypeType } = {
 export type {
     IDictionary,
     INotificationType,
-    IFileResourceType,
+    IFileResponseType,
     QuestionTypeType,
     FilterType,
 };

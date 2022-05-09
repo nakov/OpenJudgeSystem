@@ -1,8 +1,12 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { first } from 'lodash';
 import { IProblemType } from '../common/types';
+import { IFileResponseType } from '../common/common-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 import { useCurrentContest } from './use-current-contest';
+import { useHttp } from './use-http';
+import { useLoading } from './use-loading';
+import { getProblemResourceUrl } from '../utils/urls';
 
 interface IProblemsContext {
     state: {
@@ -11,6 +15,7 @@ interface IProblemsContext {
     };
     actions: {
         selectProblemById: (id: number) => void;
+        getProblemResourceFile: (resourceId: number) => Promise<void>;
     };
 }
 
@@ -31,6 +36,17 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
 
     const [ problems, setProblems ] = useState(defaultState.state.problems);
     const [ currentProblem, setCurrentProblem ] = useState<IProblemType | null>(defaultState.state.currentProblem);
+
+    const {
+        startLoading,
+        stopLoading,
+    } = useLoading();
+
+    const {
+        get: getProblemResourceRequest,
+        response: getProblemResourceResponse,
+        saveAttachment,
+    } = useHttp(getProblemResourceUrl);
 
     const selectProblemById = useCallback(
         (problemId: number) => {
@@ -59,6 +75,18 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         [ contest, selectProblemById ],
     );
 
+    const getProblemResourceFile = useCallback(async (resourceId: number) => {
+        startLoading();
+        await getProblemResourceRequest({ id: resourceId.toString() }, 'blob');
+        stopLoading();
+    }, [ getProblemResourceRequest, startLoading, stopLoading ]);
+
+    useEffect(() => {
+        if (getProblemResourceResponse != null) {
+            saveAttachment(getProblemResourceResponse as IFileResponseType);
+        }
+    }, [ getProblemResourceResponse, saveAttachment ]);
+
     useEffect(
         () => {
             reloadProblems();
@@ -71,7 +99,10 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
             problems,
             currentProblem,
         },
-        actions: { selectProblemById },
+        actions: {
+            selectProblemById,
+            getProblemResourceFile,
+        },
     };
 
     return (

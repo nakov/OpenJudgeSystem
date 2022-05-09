@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { useCallback, useEffect } from 'react';
-import { saveAs } from 'file-saver';
-import { useHomeContests } from '../../../hooks/use-home-contests';
+import { useCallback } from 'react';
 import { Button } from '../../guidelines/buttons/Button';
 import { IProblemResourceType } from '../../../common/types';
 
 import styles from './ProblemResource.module.scss';
+import { useProblems } from '../../../hooks/use-problems';
 
 interface IProblemResourceProps {
     resource: IProblemResourceType
@@ -18,40 +17,11 @@ const resourceTypeToIconClassName : { [name: number]: string } = {
 };
 
 const ProblemResource = ({ resource }: IProblemResourceProps) => {
-    const {
-        actions: {
-            getProblemResourceFile,
-            problemResourceContent,
-            clearFileContentState,
-        },
-    } = useHomeContests();
-
-    const saveFile = useCallback(() => {
-        if (!problemResourceContent) {
-            return;
-        }
-
-        // todo: move this to http helper
-        const filename = problemResourceContent
-            .headers['content-disposition']
-            .split('filename*=UTF-8\'\'')[1];
-
-        const filenameDecoded = decodeURIComponent(filename);
-
-        saveAs(
-            problemResourceContent.data,
-            filenameDecoded,
-        );
-    }, [ problemResourceContent ]);
+    const { actions: { getProblemResourceFile } } = useProblems();
 
     const onClickGetResourceFile = useCallback(async () => {
         await getProblemResourceFile(resource.id);
     }, [ getProblemResourceFile, resource ]);
-
-    useEffect(() => {
-        saveFile();
-        clearFileContentState();
-    }, [ clearFileContentState, problemResourceContent, saveFile ]);
 
     const renderResourceLink = (linkContent: React.ReactNode) => (resource.type === 3
         ? (
@@ -69,11 +39,11 @@ const ProblemResource = ({ resource }: IProblemResourceProps) => {
               type="plain"
               className={styles.resourceLinkButton}
               onClick={
-                        (e) => {
-                            e.preventDefault();
-                            onClickGetResourceFile();
-                        }
+                    (e) => {
+                        e.preventDefault();
+                        onClickGetResourceFile();
                     }
+                }
             >
                 {linkContent}
             </Button>
