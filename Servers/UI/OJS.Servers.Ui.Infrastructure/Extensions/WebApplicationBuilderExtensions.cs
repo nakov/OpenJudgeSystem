@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Logging;
-
 namespace OJS.Servers.Ui.Infrastructure.Extensions;
 
 using Microsoft.AspNetCore.Builder;
