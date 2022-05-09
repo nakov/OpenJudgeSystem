@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { without } from 'lodash';
 import { IHaveChildrenProps } from '../components/common/Props';
-import { IContestType } from '../common/types';
+import { IIndexContestsType } from '../common/types';
 import { ContestState, FilterType, IFilter } from '../common/contest-types';
 import { useHttp } from './use-http';
 import { useUrls } from './use-urls';
@@ -9,7 +9,7 @@ import { generateFilterItems } from '../common/filter-utils';
 
 interface IContestsContext {
     state: {
-        contests: IContestType[];
+        contests: IIndexContestsType[];
         possibleFilters: IFilter[];
         filters: IFilter[];
     };
@@ -25,7 +25,7 @@ interface IContestsProviderProps extends IHaveChildrenProps {
 
 const defaultState = {
     state: {
-        contests: [] as IContestType[],
+        contests: [] as IIndexContestsType[],
         possibleFilters: [
             ...generateFilterItems(FilterType.Status, ContestState.Active, ContestState.Past),
             ...generateFilterItems(FilterType.Language, 'Py', 'JS', 'Java', 'C#', 'Go'),
@@ -89,7 +89,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     useEffect(
         () => {
-            setContests(data as IContestType[]);
+            setContests(data as IIndexContestsType[]);
         },
         [ data ],
     );

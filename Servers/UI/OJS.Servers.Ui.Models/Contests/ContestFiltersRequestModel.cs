@@ -8,7 +8,7 @@ using System.Collections.Generic;
 public class ContestFiltersRequestModel
 {
     [BindProperty(Name = "status")]
-    public ContestFilter? Filter { get; set; }
+    public IEnumerable<ContestFilter>? Filters { get; set; }
 
     [BindProperty(Name = "language")]
     public IEnumerable<ContestLanguageType>? LanguageTypes { get; set; }

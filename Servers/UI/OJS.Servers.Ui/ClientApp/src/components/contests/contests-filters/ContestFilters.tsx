@@ -91,7 +91,6 @@ const ContestFilters = () => {
               className={styles.listFilters}
               fullWidth
             />
-            {JSON.stringify(filters)}
         </div>
     );
 };

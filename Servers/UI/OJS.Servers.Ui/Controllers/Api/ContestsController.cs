@@ -21,10 +21,8 @@
                 .Map<ContestsForHomeIndexResponseModel>();
 
         public Task<IEnumerable<ContestForListingResponseModel>> GetAll(ContestFiltersRequestModel? model)
-            => (model?.Filter == null
-                    ? this.contestsBusinessService.GetAllContests()
-                    : this.contestsBusinessService.GetContestByFilter(model.Filter.Value)
-                )
+            => this.contestsBusinessService
+                .GetContestByFilters(model?.Filters)
                 .MapCollection<ContestForListingResponseModel>();
     }
 }

@@ -162,6 +162,19 @@ namespace OJS.Services.Ui.Business.Implementations
                 : this.contestsData
                     .GetAllPast<ContestForListingServiceModel>());
 
+        public async Task<IEnumerable<ContestForListingServiceModel>> GetContestByFilters(
+            IEnumerable<ContestFilter>? filters)
+        {
+            var contestFilters = filters?.ToList();
+
+            return contestFilters?.Count switch
+            {
+                1 => await this.GetContestByFilter(contestFilters.First()),
+                2 => await this.GetAllContests(),
+                _ => Enumerable.Empty<ContestForListingServiceModel>(),
+            };
+        }
+
         private bool IsUserLecturerInContest(Contest contest, string userId) =>
             contest.LecturersInContests.Any(c => c.LecturerId == userId) ||
             contest.Category.LecturersInContestCategories.Any(cl => cl.LecturerId == userId);

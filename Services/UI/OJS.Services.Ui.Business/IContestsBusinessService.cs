@@ -42,5 +42,7 @@ namespace OJS.Services.Ui.Business
         Task<IEnumerable<ContestForListingServiceModel>> GetAllContests();
 
         Task<IEnumerable<ContestForListingServiceModel>> GetContestByFilter(ContestFilter filter);
+
+        Task<IEnumerable<ContestForListingServiceModel>> GetContestByFilters(IEnumerable<ContestFilter>? filters);
     }
 }
