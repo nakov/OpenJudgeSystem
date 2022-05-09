@@ -1,8 +1,7 @@
-using OJS.Servers.Ui.Infrastructure.Extensions;
-
 namespace OJS.Servers.Ui
 {
     using Microsoft.AspNetCore.Builder;
+    using OJS.Servers.Ui.Infrastructure.Extensions;
 
     public class Program
     {
