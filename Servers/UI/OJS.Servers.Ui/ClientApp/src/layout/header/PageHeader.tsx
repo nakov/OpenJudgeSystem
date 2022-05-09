@@ -17,7 +17,7 @@ const PageHeader = () => {
 
         return (
             <>
-                <LinkButton type='a' id="nav-contests-link" to="/contests/all" text="Contests" />
+                <LinkButton type='a' id="nav-contests-link" to="/contests" text="Contests" />
                 <LinkButton type='a' id="nav-submissions-link" to="/submissions" text="Submissions" />
                 { administrationLink }
             </>

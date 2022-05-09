@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { setLayout } from '../../pages/shared/set-layout';
 import ContestsList from './ContestsList';
 import { useHomeContests } from '../../hooks/use-home-contests';
+import { ContestState } from '../../common/contest-types';
 
 const HomeContests = () => {
     const {
@@ -23,11 +24,12 @@ const HomeContests = () => {
             <ContestsList
               title="Active"
               contests={activeContests}
-
+              contestState={ContestState.Active}
             />
             <ContestsList
               title="Past"
               contests={pastContests}
+              contestState={ContestState.Past}
             />
         </>
     );

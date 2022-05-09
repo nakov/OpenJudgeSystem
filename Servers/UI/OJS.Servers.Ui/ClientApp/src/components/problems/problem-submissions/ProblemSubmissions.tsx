@@ -9,6 +9,7 @@ import { useProblemSubmissions } from '../../../hooks/submissions/use-problem-su
 import ProblemSubmission from '../problem-submission/ProblemSubmission';
 
 import styles from './SubmissionResults.module.scss';
+import concatClassNames from '../../../utils/class-names';
 
 const ProblemSubmissions = () => {
     const {
@@ -30,7 +31,8 @@ const ProblemSubmissions = () => {
     const renderSubmission = (submission: ISubmissionDetails) => (
         <ProblemSubmission submission={submission} />
     );
-
+    const refreshButtonClass = 'refreshButton';
+    const refreshButtonClassName = concatClassNames(styles.refreshBtn, refreshButtonClass);
     const renderSubmissions = () => {
         if (!submissions || submissions.length === 0) {
             return (
@@ -52,7 +54,7 @@ const ProblemSubmissions = () => {
             {renderSubmissions()}
             <Button
               type="secondary"
-              className={styles.refreshBtn}
+              className={refreshButtonClassName}
               onClick={() => handleReloadClick()}
               text="Refresh"
             />

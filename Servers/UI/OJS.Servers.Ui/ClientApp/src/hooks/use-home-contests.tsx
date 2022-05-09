@@ -38,7 +38,11 @@ const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
     const [ activeContests, setActiveContests ] = useState<IIndexContestsType[]>([]);
     const [ pastContests, setPastContests ] = useState<IIndexContestsType[]>([]);
 
-    const { startLoading, stopLoading } = useLoading();
+    const {
+        startLoading,
+        stopLoading,
+    } = useLoading();
+
     const {
         get: getContestsForIndexRequest,
         data: getContestsForIndexData,

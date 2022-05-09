@@ -1,0 +1,28 @@
+@import 'src/styles/colors';
+
+.container {
+
+}
+
+.heading {
+  text-align: left;
+  border-bottom: 1px solid $bottom-border-color;
+}
+
+.listFilters {
+  align-items: flex-start;
+}
+
+.listFilterItems {
+  margin-top: 5px;
+  .listFilterItem {
+    margin-left: 10px;
+    &:first-of-type {
+      margin: 5px 0 5px;
+    }
+  }
+}
+
+.btnSelectFilter {
+  padding: 0;
+}

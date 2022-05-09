@@ -31,10 +31,12 @@ const ContestsList = ({
         () => `btn-see-all-contests-${contestState}`,
         [ contestState ],
     );
+
     const contestsSeeAllButtonClassName = useMemo(
         () => concatClassNames(styles.contestsSeeAllButton, seeAllButtonClassName),
         [ seeAllButtonClassName ],
     );
+
     const allContestCardsContainerClassName = useMemo(
         () => `${contestState}-contests-cards-list`,
         [ contestState ],
@@ -43,6 +45,11 @@ const ContestsList = ({
     const allContestsCardsContainer = useMemo(
         () => concatClassNames(styles.contestCardsContainer, allContestCardsContainerClassName),
         [ allContestCardsContainerClassName ],
+    );
+
+    const link = useMemo(
+        () => `/contests?type=${contestState.toString()}`,
+        [ contestState ],
     );
 
     return (
@@ -61,7 +68,7 @@ const ContestsList = ({
             </div>
             <LinkButton
               id="button-see-all-contests"
-              to="/contests"
+              to={link}
               text="See All"
               type="secondary"
               size="small"

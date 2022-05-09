@@ -1,12 +1,17 @@
 // These are necessary for the app
 declare global {
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    interface Window { isLoggedIn: boolean; username: string; URLS: URLS }
+    interface Window { isLoggedIn: boolean; username: string; URLS: URLS, Keys: Keys }
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
     interface URLS {
         UI_URL: string | undefined,
         ADMINISTRATION_URL: string | undefined,
+    }
+
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    interface Keys {
+        YOUTUBE_VIDEO_ID: string,
     }
 }
 

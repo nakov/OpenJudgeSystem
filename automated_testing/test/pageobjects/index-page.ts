@@ -63,12 +63,24 @@ class IndexPage extends Page {
         return $(selectors.pageAllPastCardsSelector).$$(selectors.pageContestCardClassSelector);
     }
 
-    public get contestCardHeader() {
-        return $$(selectors.pageContestCardDivSelectors)[0];
+    public get allActiveContestCardsHeaders() {
+        return $(selectors.pageAllActiveCardsSelector).$$(selectors.pageContestCardHeaderSelector);
+    }
+
+    public get allPastContestCardsHeaders() {
+        return $(selectors.pageAllPastCardsSelector).$$(selectors.pageContestCardHeaderSelector);
     }
 
     public get contestCardCategory() {
-        return $$(selectors.pageContestCardDivSelectors)[1];
+        return $(selectors.pageContestCardCategorySelector);
+    }
+
+    public get allActiveContestCardsCategories() {
+        return $(selectors.pageAllActiveCardsSelector).$$(selectors.pageContestCardCategorySelector);
+    }
+
+    public get allPastContestCardsCategories() {
+        return $(selectors.pageAllPastCardsSelector).$$(selectors.pageContestCardCategorySelector);
     }
 
     public get contestCardTimeText() {
@@ -79,12 +91,20 @@ class IndexPage extends Page {
         return $(selectors.pageContestCardTimerSelector);
     }
 
-    public get competeCardButton() {
-        return $(selectors.pageCardControlsSelector).$$('a')[0];
+    public get competeCardButtonActivecontests() {
+        return $(selectors.pageAllActiveCardsSelector).$$(selectors.pageCompeteButtonIdSelector);
     }
 
-    public get practiceCardButton() {
-        return $(selectors.pageCardControlsSelector).$$('a')[1];
+    public get practiceCardButtoActiveContests() {
+        return $(selectors.pageAllActiveCardsSelector).$$(selectors.pagePracticeButtonIdSelector);
+    }
+
+    public get competeCardButtonPastcontests() {
+        return $(selectors.pageAllPastCardsSelector).$$(selectors.pageCompeteButtonIdSelector);
+    }
+
+    public get practiceCardButtoPastContests() {
+        return $(selectors.pageAllPastCardsSelector).$$(selectors.pagePracticeButtonIdSelector);
     }
 
     public get seeAllActiveContestsButton() {

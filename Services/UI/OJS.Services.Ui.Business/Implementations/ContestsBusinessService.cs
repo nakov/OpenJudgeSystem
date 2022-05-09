@@ -150,6 +150,18 @@ namespace OJS.Services.Ui.Business.Implementations
             }
         }
 
+        public async Task<IEnumerable<ContestForListingServiceModel>> GetAllContests()
+            => new List<ContestForListingServiceModel>()
+                .Concat(await this.GetContestByFilter(ContestFilter.Active))
+                .Concat(await this.GetContestByFilter(ContestFilter.Past));
+
+        public Task<IEnumerable<ContestForListingServiceModel>> GetContestByFilter(ContestFilter filter)
+            => (filter == ContestFilter.Active
+                ? this.contestsData
+                    .GetAllCompetable<ContestForListingServiceModel>()
+                : this.contestsData
+                    .GetAllPast<ContestForListingServiceModel>());
+
         private bool IsUserLecturerInContest(Contest contest, string userId) =>
             contest.LecturersInContests.Any(c => c.LecturerId == userId) ||
             contest.Category.LecturersInContestCategories.Any(cl => cl.LecturerId == userId);

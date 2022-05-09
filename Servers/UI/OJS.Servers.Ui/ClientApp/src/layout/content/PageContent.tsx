@@ -1,4 +1,4 @@
-import { Route, Switch } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import * as React from 'react';
 import HomePage from '../../pages/home/HomePage';
 import LogoutPage from '../../pages/logout/LogoutPage';
@@ -8,20 +8,55 @@ import ProfilePage from '../../pages/profile/ProfilePage';
 import SubmissionPage from '../../pages/submissions/SubmissionPage';
 import ContestPage from '../../pages/contest/ContestPage';
 import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';
+import ContestsPage from '../../pages/contests/ContestsPage';
 import styles from './PageContent.module.scss';
+
+const routes = [
+    {
+        path: '/login',
+        Element: LoginPage,
+    },
+    {
+        path: '/register',
+        Element: RegisterPage,
+    },
+    {
+        path: '/logout',
+        Element: LogoutPage,
+    },
+    {
+        path: '/',
+        Element: HomePage,
+    },
+    {
+        path: '/profile',
+        Element: ProfilePage,
+    },
+    {
+        path: '/submissions/:submissionId',
+        Element: SubmissionPage,
+    },
+    {
+        path: '/contests',
+        Element: ContestsPage,
+    },
+    {
+        path: '/contests/:contestId/:participationType',
+        Element: ContestPage,
+    },
+    {
+        path: '/contests/:contestId/:participationType/results/:resultType',
+        Element: ContestResultsPage,
+    },
+];
 
 const PageContent = () => (
     <main className={styles.main}>
-        <Switch>
-            <Route exact path="/login" component={LoginPage} />
-            <Route exact path="/register" component={RegisterPage} />
-            <Route exact path="/logout" component={LogoutPage} />
-            <Route exact path="/" component={HomePage} />
-            <Route exact path="/profile" component={ProfilePage} />
-            <Route exact path="/submissions/:submissionId" component={SubmissionPage} />
-            <Route exact path="/contests/:contestId/:participationType" component={ContestPage} />
-            <Route exact path="/contests/:contestId/:participationType/results/:resultType" component={ContestResultsPage} />
-        </Switch>
+        <Routes>
+            {routes.map(({ path, Element }) => (
+                <Route path={path} element={<Element />} />
+            ))}
+        </Routes>
     </main>
 );
 
