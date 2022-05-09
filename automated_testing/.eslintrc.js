@@ -13,6 +13,7 @@ module.exports = {
         before: true,
         after: true,
         $: true,
+        $$: true,
         expect: true,
         browser: true,
         xit: true,

@@ -24,6 +24,14 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     } = contest;
     const contestCard = 'card-contests';
     const contestCardClassName = concatClassNames(styles.contestCard, contestCard);
+    const contestCardHeader = 'card-header';
+    const contestCardHeaderClassName = concatClassNames(styles.contestCardHeader, contestCardHeader);
+    const contestCardCategory = 'card-category';
+    const contestCardCategoryClassName = concatClassNames(styles.contestCardCategoryLabel, contestCardCategory);
+    const contestCardCounter = 'card-counter';
+    const contestCardCounterClassName = concatClassNames(styles.contestCardCountdown, contestCardCounter);
+    const contestCardControlBtns = 'card-control-buttons';
+    const contestCardControlBtnsClassName = concatClassNames(styles.contestCardControls, contestCardControlBtns);
 
     const renderCountdown = useCallback(
         () => {
@@ -48,12 +56,12 @@ const ContestCard = ({ contest }: IContestCardProps) => {
 
     return (
         <div className={contestCardClassName}>
-            <div className={styles.contestCardHeader}>{name}</div>
-            <div className={styles.contestCardCategoryLabel}>{category}</div>
-            <div className={styles.contestCardCountdown}>
+            <div className={contestCardHeaderClassName}>{name}</div>
+            <div className={contestCardCategoryClassName}>{category}</div>
+            <div className={contestCardCounterClassName}>
                 {renderCountdown()}
             </div>
-            <div className={styles.contestCardControls}>
+            <div className={contestCardControlBtnsClassName}>
                 <LinkButton
                   id="button-card-compete"
                   to={`/contests/${id}/compete`}

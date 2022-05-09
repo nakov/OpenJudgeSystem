@@ -1,4 +1,5 @@
 ﻿@using OJS.Common.Enumerations;
+@using OJS.Common;
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,6 +41,9 @@
         window.URLS = {
             UI_URL: '@applicationUrls.GetUrl(ApplicationName.Ui)',
             ADMINISTRATION_URL: '@applicationUrls.GetUrl(ApplicationName.Administration)',
+        }
+        window.Keys = {
+            YOUTUBE_VIDEO_ID: '@environmentVariables.GetValue(GlobalConstants.EnvironmentVariables.UiHomeYouTubeVideoId)',
         }
     </script>
 </head>
