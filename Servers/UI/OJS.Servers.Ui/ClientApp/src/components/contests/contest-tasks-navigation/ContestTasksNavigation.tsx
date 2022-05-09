@@ -70,18 +70,19 @@ const ContestTasksNavigation = () => {
         },
         [ currentProblem, renderIcon, selectProblemById ],
     );
-
+    const sideBartasksList = 'all-tasks-list';
+    const sideBartasksListClassName = concatClassNames(styles.tasksListSideNavigation, sideBartasksList);
     const renderTasksList = useCallback(
         () => (
             <List
               values={problems.sort(compareByOrderBy)}
               itemFunc={renderTask}
-              className={styles.tasksListSideNavigation}
+              className={sideBartasksListClassName}
               itemClassName={styles.taskListItem}
               type="numbered"
             />
         ),
-        [ problems, renderTask ],
+        [ problems, renderTask, sideBartasksListClassName ],
     );
 
     return (

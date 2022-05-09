@@ -1,74 +1,118 @@
+/* eslint-disable class-methods-use-this */
 import { ChainablePromiseElement } from 'webdriverio';
+import selectors from '../constants/index-page-selectors';
 
 import Page from './page';
 
 class IndexPage extends Page {
     private pageLocation = '';
 
-    private pageHeaderHeadingSelector = '#page-header-h2';
-
-    private pageFooterSelector = '#pageFooter';
-
-    private pageHeaderLogoLinkSelector = '#page-header-h2 a';
-
-    private pageHeadingImageSelector = '#page-header-h2 a img';
-
-    private pageLogInButtonSelector = '#anonymous-login-link';
-
-    private pageRegisterButtonSelector = '#anonymous-register-link';
-
-    private pageNavContestsLinkSelector = '#nav-contests-link';
-
-    private pageNavSubmissionssLinkSelector = '#nav-submissions-link';
-
-    private pageSeeContestsButtonSelector = '#button-see-contests';
-
-    // private pageCompeteCardButton = '#button-card-compete';
-
-    // private pagePracticeCardButton = '#button-card-practice';
-
-    private cartContestClassSelector = '.ContestCard_contestCard__1Pn8q';
-
-    private pageYoutubeVideo = '#youtube-video';
-
     public get headerHeading() {
-        return $(this.pageHeaderHeadingSelector);
+        return $(selectors.pageHeaderHeadingSelector);
     }
 
     public get navSubmissionssLink() {
-        return $(this.pageNavSubmissionssLinkSelector);
+        return $(selectors.pageNavSubmissionssLinkSelector);
     }
 
     public get navContestsLink() {
-        return $(this.pageNavContestsLinkSelector);
+        return $(selectors.pageNavContestsLinkSelector);
     }
 
     public get youtubeVideo() {
-        return $(this.pageYoutubeVideo);
+        return $(selectors.pageYoutubeVideoSelector);
     }
 
     public get seeContestsButton() {
-        return $(this.pageSeeContestsButtonSelector);
+        return $(selectors.pageSeeContestsButtonSelector);
     }
 
     public get footer() {
-        return $(this.pageFooterSelector);
+        return $(selectors.pageFooterSelector);
     }
 
     public get headerLogoLink() {
-        return $(this.pageHeaderLogoLinkSelector);
+        return $(selectors.pageHeaderLogoLinkSelector);
     }
 
     public get headingImage() {
-        return $(this.pageHeadingImageSelector);
+        return $(selectors.pageHeadingImageSelector);
     }
 
     public get logInButton() {
-        return $(this.pageLogInButtonSelector);
+        return $(selectors.pageLogInButtonSelector);
     }
 
     public get registerButton() {
-        return $(this.pageRegisterButtonSelector);
+        return $(selectors.pageRegisterButtonSelector);
+    }
+
+    public get activeContestCardsDiv() {
+        return $(selectors.pageAllActiveCardsSelector);
+    }
+
+    public get pastContestCardsDiv() {
+        return $(selectors.pageAllPastCardsSelector);
+    }
+
+    public get allCardsForActiveContests() {
+        return $(selectors.pageAllActiveCardsSelector).$$(selectors.pageContestCardClassSelector);
+    }
+
+    public get allCardsForPastContests() {
+        return $(selectors.pageAllPastCardsSelector).$$(selectors.pageContestCardClassSelector);
+    }
+
+    public get allActiveContestCardsHeaders() {
+        return $(selectors.pageAllActiveCardsSelector).$$(selectors.pageContestCardHeaderSelector);
+    }
+
+    public get allPastContestCardsHeaders() {
+        return $(selectors.pageAllPastCardsSelector).$$(selectors.pageContestCardHeaderSelector);
+    }
+
+    public get contestCardCategory() {
+        return $(selectors.pageContestCardCategorySelector);
+    }
+
+    public get allActiveContestCardsCategories() {
+        return $(selectors.pageAllActiveCardsSelector).$$(selectors.pageContestCardCategorySelector);
+    }
+
+    public get allPastContestCardsCategories() {
+        return $(selectors.pageAllPastCardsSelector).$$(selectors.pageContestCardCategorySelector);
+    }
+
+    public get contestCardTimeText() {
+        return $(selectors.pageContestCardTimeTextSelector);
+    }
+
+    public get contestCardTimer() {
+        return $(selectors.pageContestCardTimerSelector);
+    }
+
+    public get competeCardButtonActivecontests() {
+        return $(selectors.pageAllActiveCardsSelector).$$(selectors.pageCompeteButtonIdSelector);
+    }
+
+    public get practiceCardButtoActiveContests() {
+        return $(selectors.pageAllActiveCardsSelector).$$(selectors.pagePracticeButtonIdSelector);
+    }
+
+    public get competeCardButtonPastcontests() {
+        return $(selectors.pageAllPastCardsSelector).$$(selectors.pageCompeteButtonIdSelector);
+    }
+
+    public get practiceCardButtoPastContests() {
+        return $(selectors.pageAllPastCardsSelector).$$(selectors.pagePracticeButtonIdSelector);
+    }
+
+    public get seeAllActiveContestsButton() {
+        return $(selectors.pageSeeActiveContestsButtonSelector);
+    }
+
+    public get seeAllPastContestsButton() {
+        return $(selectors.pageSeePastContestsButtonSelector);
     }
 
     public open(): Promise<string> {
