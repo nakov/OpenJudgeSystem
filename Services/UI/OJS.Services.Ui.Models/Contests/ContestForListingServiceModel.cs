@@ -31,9 +31,3 @@ public class ContestForListingServiceModel
             .ForMember(dest => dest.Category,
                 opt => opt.MapFrom(src => src.Category!.Name));
 }
-
-public enum ContestFilter
-{
-    Active = 1,
-    Past = 2,
-}

@@ -7,13 +7,10 @@ import { setLayout } from '../shared/set-layout';
 import styles from './ContestsPage.module.scss';
 
 const ContestsPage = () => {
-    const {
-        state: {
-            filters,
-            contests,
-        },
-    } = useContests();
+    const { state: { filters } } = useContests();
 
+    // TODO: this will be fixed in next PR
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ searchParams, setSearchParams ] = useSearchParams();
 
     useEffect(
@@ -32,22 +29,6 @@ const ContestsPage = () => {
             }, {}));
         },
         [ filters, setSearchParams ],
-    );
-
-    // Check search params and apply filters
-
-    useEffect(
-        () => {
-            console.log(searchParams);
-        },
-        [ searchParams ],
-    );
-
-    useEffect(
-        () => {
-            console.log((contests || []).length);
-        },
-        [ contests ],
     );
 
     return (
