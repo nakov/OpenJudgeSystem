@@ -2,7 +2,7 @@
 
 enum FilterType {
     Status = 'Status',
-    Language = 'Language',
+    Strategy = 'Execution Strategy',
 }
 
 interface IFilter {

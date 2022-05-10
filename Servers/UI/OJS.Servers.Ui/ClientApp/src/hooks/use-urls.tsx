@@ -26,7 +26,7 @@ const getUrlForAllContests = ({ filters }: IAllContestsUrlParams) => {
                 return `status=${name}`;
             }
 
-            return `language=${name}`;
+            return `strategy=${name}`;
         })
         .join('&');
 

@@ -3,6 +3,7 @@
     using Microsoft.AspNetCore.Mvc;
     using OJS.Servers.Ui.Models.Contests;
     using OJS.Services.Ui.Business;
+    using OJS.Services.Ui.Models.Contests;
     using System.Threading.Tasks;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using System.Collections.Generic;
@@ -22,7 +23,7 @@
 
         public Task<IEnumerable<ContestForListingResponseModel>> GetAll(ContestFiltersRequestModel? model)
             => this.contestsBusinessService
-                .GetContestByFilters(model?.Filters)
+                .GetAllByFilters(model?.Map<ContestFiltersServiceModel>())
                 .MapCollection<ContestForListingResponseModel>();
     }
 }

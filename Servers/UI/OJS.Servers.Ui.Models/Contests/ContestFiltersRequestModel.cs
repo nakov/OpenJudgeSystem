@@ -1,15 +1,18 @@
 namespace OJS.Servers.Ui.Models.Contests;
 
 using Microsoft.AspNetCore.Mvc;
-using OJS.Common.Enumerations;
 using OJS.Services.Ui.Models.Contests;
+using SoftUni.AutoMapper.Infrastructure.Models;
+using SoftUni.Judge.Common.Enumerations;
 using System.Collections.Generic;
 
-public class ContestFiltersRequestModel
+public class ContestFiltersRequestModel : IMapTo<ContestFiltersServiceModel>
 {
-    [BindProperty(Name = "status")]
-    public IEnumerable<ContestFilter>? Filters { get; set; }
+    public int? CategoryId { get; set; }
 
-    [BindProperty(Name = "language")]
-    public IEnumerable<ContestLanguageType>? LanguageTypes { get; set; }
+    [BindProperty(Name = "status")]
+    public IEnumerable<ContestStatus>? Statuses { get; set; }
+
+    [BindProperty(Name = "strategy")]
+    public IEnumerable<ExecutionStrategyType>? ExecutionStrategyTypes { get; set; }
 }

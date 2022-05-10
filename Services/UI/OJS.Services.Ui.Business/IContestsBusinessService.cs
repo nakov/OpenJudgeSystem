@@ -39,10 +39,7 @@ namespace OJS.Services.Ui.Business
         Task DeleteById(int id);
 
         Task ValidateContest(Contest contest, string userId, bool isUserAdmin, bool official);
-        Task<IEnumerable<ContestForListingServiceModel>> GetAllContests();
 
-        Task<IEnumerable<ContestForListingServiceModel>> GetContestByFilter(ContestFilter filter);
-
-        Task<IEnumerable<ContestForListingServiceModel>> GetContestByFilters(IEnumerable<ContestFilter>? filters);
+        Task<IEnumerable<ContestForListingServiceModel>> GetAllByFilters(ContestFiltersServiceModel? model);
     }
 }

@@ -7,8 +7,6 @@ namespace OJS.Services.Ui.Business.Implementations
     using System.Linq;
     using System.Threading.Tasks;
     using FluentExtensions.Extensions;
-    using OJS.Common.Extensions;
-    using OJS.Common.Utils;
     using OJS.Data.Models.Participants;
     using OJS.Services.Common.Models;
     using OJS.Services.Ui.Data;
@@ -16,7 +14,6 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Data.Models.Contests;
     using OJS.Services.Infrastructure.Exceptions;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
-    using System.ComponentModel.Design;
 
     public class ContestsBusinessService : IContestsBusinessService
     {
@@ -150,22 +147,48 @@ namespace OJS.Services.Ui.Business.Implementations
             }
         }
 
-        public async Task<IEnumerable<ContestForListingServiceModel>> GetAllContests()
-            => new List<ContestForListingServiceModel>()
-                .Concat(await this.GetContestByFilter(ContestFilter.Active))
-                .Concat(await this.GetContestByFilter(ContestFilter.Past));
+        public async Task<IEnumerable<ContestForListingServiceModel>> GetAllByFilters(ContestFiltersServiceModel? model)
+        {
+            if (model == null)
+            {
+                return Enumerable.Empty<ContestForListingServiceModel>();
+            }
 
-        public Task<IEnumerable<ContestForListingServiceModel>> GetContestByFilter(ContestFilter filter)
-            => (filter == ContestFilter.Active
+            var contests = await this.GetAllByStatuses(model.Statuses).ToListAsync();
+
+            if (model.CategoryId.HasValue)
+            {
+                contests = contests
+                    .Where(x => x.CategoryId == model.CategoryId.Value)
+                    .ToList();
+            }
+
+            if (model.ExecutionStrategyTypes.Any())
+            {
+                contests = contests
+                    .Where(x => x.ExecutionStrategyTypes.Any(est => model.ExecutionStrategyTypes.Contains(est)))
+                    .ToList();
+            }
+
+            return contests;
+        }
+
+        private async Task<IEnumerable<ContestForListingServiceModel>> GetAllContests()
+            => new List<ContestForListingServiceModel>()
+                .Concat(await this.GetContestByFilter(ContestStatus.Active))
+                .Concat(await this.GetContestByFilter(ContestStatus.Past));
+
+        private Task<IEnumerable<ContestForListingServiceModel>> GetContestByFilter(ContestStatus status)
+            => (status == ContestStatus.Active
                 ? this.contestsData
                     .GetAllCompetable<ContestForListingServiceModel>()
                 : this.contestsData
                     .GetAllPast<ContestForListingServiceModel>());
 
-        public async Task<IEnumerable<ContestForListingServiceModel>> GetContestByFilters(
-            IEnumerable<ContestFilter>? filters)
+        private async Task<IEnumerable<ContestForListingServiceModel>> GetAllByStatuses(
+            IEnumerable<ContestStatus>? statuses)
         {
-            var contestFilters = filters?.ToList();
+            var contestFilters = statuses?.ToList();
 
             return contestFilters?.Count switch
             {
