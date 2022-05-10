@@ -16,7 +16,7 @@ const submitUrl = `${baseUrl}/Compete/Submit`;
 
 const getParticipationsForProfileUrl = `${baseUrl}/Participations/GetForProfile`;
 
-const getProblemResourceUrl = `${baseUrl}/ProblemResources/GetResource/%id%`;
+const downloadProblemResourceUrl = `${baseUrl}/ProblemResources/GetResource/%id%`;
 
 const getSubmissionResultsByProblem = `${baseUrl}/Submissions/GetSubmissionResultsByProblem/%id%?isOfficial=%isOfficial%&take=%take%`;
 
@@ -31,7 +31,7 @@ export {
     getSubmissionDetailsUrl,
     getSubmissionsForProfileUrl,
     getParticipationsForProfileUrl,
-    getProblemResourceUrl,
+    downloadProblemResourceUrl,
     getSubmissionResultsByProblem,
     submitUrl,
     administrationContestsGridUrl,

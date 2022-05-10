@@ -6,7 +6,7 @@ import { IHaveChildrenProps } from '../components/common/Props';
 import { useCurrentContest } from './use-current-contest';
 import { useHttp } from './use-http';
 import { useLoading } from './use-loading';
-import { getProblemResourceUrl } from '../utils/urls';
+import { downloadProblemResourceUrl } from '../utils/urls';
 
 interface IProblemsContext {
     state: {
@@ -46,7 +46,7 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         get: downloadProblemResourceRequest,
         response: downloadProblemResourceResponse,
         saveAttachment,
-    } = useHttp(getProblemResourceUrl);
+    } = useHttp(downloadProblemResourceUrl);
 
     const selectProblemById = useCallback(
         (problemId: number) => {
