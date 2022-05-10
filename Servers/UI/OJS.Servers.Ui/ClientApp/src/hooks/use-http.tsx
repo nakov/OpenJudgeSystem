@@ -4,9 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { isFunction } from 'lodash';
 import { HttpStatus } from '../common/common';
-import { IDictionary } from '../common/common-types';
-
-type UrlType = string | (() => string);
+import { IDictionary, UrlType } from '../common/common-types';
 
 const getUrl = (url: UrlType) => (
     isFunction(url)
@@ -55,6 +53,12 @@ const useHttp = (
         ) => urlToReplace.replace(`%${parameter}%`, (value || '').toString()),
         [],
     );
+
+    // const replaceParameters = useCallback(
+    //     (urlToReplace: string, parameters: IDictionary<any>) => Object.keys(parameters)
+    //         .reduce((currentUrl, parameter) => replacePlaceholder(currentUrl, parameter, parameters[parameter]), urlToReplace),
+    //     [ replacePlaceholder ],
+    // );
 
     const replaceParameters = useCallback(
         (urlToReplace: string, parameters: IDictionary<any>) => Object.keys(parameters)

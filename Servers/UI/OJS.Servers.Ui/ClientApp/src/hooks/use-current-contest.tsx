@@ -8,6 +8,7 @@ import { IHaveChildrenProps } from '../components/common/Props';
 import { useLoading } from './use-loading';
 import { useHttp } from './use-http';
 import { startContestParticipationUrl } from '../utils/urls';
+import { UrlType } from '../common/common-types';
 
 interface IStartContestArgs {
     id: number;
@@ -54,7 +55,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const {
         get: getApiContest,
         data: apiContest,
-    } = useHttp(startContestParticipationUrl);
+    } = useHttp(startContestParticipationUrl as UrlType);
 
     const start = useCallback(async ({ id, isOfficial: official }) => {
         startLoading();
