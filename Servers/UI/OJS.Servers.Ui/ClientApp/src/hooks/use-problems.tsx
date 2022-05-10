@@ -43,8 +43,8 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     } = useLoading();
 
     const {
-        get: getProblemResourceRequest,
-        response: getProblemResourceResponse,
+        get: downloadProblemResourceRequest,
+        response: downloadProblemResourceResponse,
         saveAttachment,
     } = useHttp(getProblemResourceUrl);
 
@@ -77,15 +77,15 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
 
     const downloadProblemResourceFile = useCallback(async (resourceId: number) => {
         startLoading();
-        await getProblemResourceRequest({ id: resourceId.toString() }, 'blob');
+        await downloadProblemResourceRequest({ id: resourceId.toString() }, 'blob');
         stopLoading();
-    }, [ getProblemResourceRequest, startLoading, stopLoading ]);
+    }, [ downloadProblemResourceRequest, startLoading, stopLoading ]);
 
     useEffect(() => {
-        if (getProblemResourceResponse != null) {
-            saveAttachment(getProblemResourceResponse as IFileResponseType);
+        if (downloadProblemResourceResponse != null) {
+            saveAttachment(downloadProblemResourceResponse as IFileResponseType);
         }
-    }, [ getProblemResourceResponse, saveAttachment ]);
+    }, [ downloadProblemResourceResponse, saveAttachment ]);
 
     useEffect(
         () => {
