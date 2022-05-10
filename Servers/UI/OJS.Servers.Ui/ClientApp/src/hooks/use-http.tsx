@@ -76,7 +76,7 @@ const useHttp = (
     }, [ response ]);
 
     const get = useCallback(
-        (parameters?: IDictionary<any>, responseType?: 'json') => {
+        (parameters?: IDictionary<any>, responseType = 'json') => {
             const urlWithParameters = replaceParameters(internalUrl, parameters == null
                 ? {}
                 : parameters);
