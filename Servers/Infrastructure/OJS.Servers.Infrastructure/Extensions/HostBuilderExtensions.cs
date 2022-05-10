@@ -20,6 +20,8 @@ public static class HostBuilderExtensions
                 .Enrich
                 .FromLogContext()
                 .WriteTo
+                .Console()
+                .WriteTo
                 .File(
                     Path.Combine(EnvironmentUtils.GetLoggerFilePath<TStartup>(), "log.txt"),
                     rollingInterval: RollingInterval.Day,
