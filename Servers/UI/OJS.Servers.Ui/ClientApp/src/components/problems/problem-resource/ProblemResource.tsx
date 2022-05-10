@@ -17,11 +17,11 @@ const resourceTypeToIconClassName : { [name: number]: string } = {
 };
 
 const ProblemResource = ({ resource }: IProblemResourceProps) => {
-    const { actions: { getProblemResourceFile } } = useProblems();
+    const { actions: { downloadProblemResourceFile } } = useProblems();
 
-    const onClickGetResourceFile = useCallback(async () => {
-        await getProblemResourceFile(resource.id);
-    }, [ getProblemResourceFile, resource ]);
+    const handleDownloadResourceFile = useCallback(async () => {
+        await downloadProblemResourceFile(resource.id);
+    }, [ downloadProblemResourceFile, resource ]);
 
     const renderResourceLink = (linkContent: React.ReactNode) => (resource.type === 3
         ? (
@@ -41,7 +41,7 @@ const ProblemResource = ({ resource }: IProblemResourceProps) => {
               onClick={
                     (e) => {
                         e.preventDefault();
-                        onClickGetResourceFile();
+                        handleDownloadResourceFile();
                     }
                 }
             >

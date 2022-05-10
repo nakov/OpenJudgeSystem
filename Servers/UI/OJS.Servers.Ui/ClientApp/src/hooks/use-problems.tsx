@@ -15,7 +15,7 @@ interface IProblemsContext {
     };
     actions: {
         selectProblemById: (id: number) => void;
-        getProblemResourceFile: (resourceId: number) => Promise<void>;
+        downloadProblemResourceFile: (resourceId: number) => Promise<void>;
     };
 }
 
@@ -75,7 +75,7 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         [ contest, selectProblemById ],
     );
 
-    const getProblemResourceFile = useCallback(async (resourceId: number) => {
+    const downloadProblemResourceFile = useCallback(async (resourceId: number) => {
         startLoading();
         await getProblemResourceRequest({ id: resourceId.toString() }, 'blob');
         stopLoading();
@@ -101,7 +101,7 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         },
         actions: {
             selectProblemById,
-            getProblemResourceFile,
+            downloadProblemResourceFile,
         },
     };
 
