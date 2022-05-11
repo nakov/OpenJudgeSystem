@@ -3,8 +3,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import axios from 'axios';
 import { isFunction } from 'lodash';
+import { saveAs } from 'file-saver';
 import { HttpStatus } from '../common/common';
-import { IDictionary, UrlType } from '../common/common-types';
+import { UrlType, IDictionary, IFileResponseType } from '../common/common-types';
 
 const getUrl = (url: UrlType) => (
     isFunction(url)
@@ -22,6 +23,10 @@ const useHttp = (
     const [ status, setStatus ] = useState<HttpStatus>(HttpStatus.NotStarted);
     const [ error, setError ] = useState<Error | null>(null);
     const [ actualHeaders, setActualHeaders ] = useState<IDictionary<string>>({});
+
+    const contentDispositionHeaderText = 'content-disposition';
+    const filenameStringPattern = 'filename*=UTF-8\'\'';
+    const defaultAttachmentFilename = 'attachment';
 
     const request = useCallback(async (func: () => Promise<any>) => {
         try {
@@ -56,6 +61,7 @@ const useHttp = (
 
     // const replaceParameters = useCallback(
     //     (urlToReplace: string, parameters: IDictionary<any>) => Object.keys(parameters)
+    // eslint-disable-next-line max-len
     //         .reduce((currentUrl, parameter) => replacePlaceholder(currentUrl, parameter, parameters[parameter]), urlToReplace),
     //     [ replacePlaceholder ],
     // );
@@ -99,6 +105,31 @@ const useHttp = (
         [ actualHeaders, replaceParameters, request, internalUrl ],
     );
 
+    const getFilenameFromHeaders = useCallback((responseObj: IFileResponseType) => {
+        const filename = responseObj
+            .headers[contentDispositionHeaderText]
+            .split(filenameStringPattern)[1];
+
+        if (filename == null) {
+            return defaultAttachmentFilename;
+        }
+
+        return filename;
+    }, []);
+
+    const saveAttachment = useCallback((responseObj: IFileResponseType) => {
+        if (!responseObj) {
+            return;
+        }
+
+        const filename = decodeURIComponent(getFilenameFromHeaders(responseObj));
+
+        saveAs(
+            responseObj.data,
+            filename,
+        );
+    }, [ getFilenameFromHeaders ]);
+
     useEffect(
         () => {
             setActualHeaders({
@@ -123,6 +154,7 @@ const useHttp = (
         data,
         status,
         error,
+        saveAttachment,
     };
 };
 export {

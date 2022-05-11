@@ -28,6 +28,11 @@ interface INotificationType {
     leaveTimeout: number | null
 }
 
+interface IFileResponseType {
+    data: Blob,
+    headers: IDictionary<any>,
+}
+
 type QuestionTypeType = 'text' | 'single' | 'multiple';
 
 type FilterType = 'all' | 'done' | 'remaining'
@@ -41,6 +46,7 @@ export const SulsQuestionTypeMapping : { [key: number]: QuestionTypeType } = {
 export type {
     IDictionary,
     INotificationType,
+    IFileResponseType,
     QuestionTypeType,
     FilterType,
     UrlType,
