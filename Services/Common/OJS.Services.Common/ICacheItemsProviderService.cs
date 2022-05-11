@@ -1,9 +1,9 @@
-﻿namespace OJS.Services.Administration.Business;
+namespace OJS.Services.Common;
 
-using OJS.Services.Administration.Models.Cache;
+using OJS.Services.Common.Models.Cache;
+using OJS.Services.Infrastructure.Constants;
 using SoftUni.Services.Infrastructure;
 using System.Collections.Generic;
-using OJS.Services.Infrastructure.Constants;
 using System.Threading.Tasks;
 
 public interface ICacheItemsProviderService : IService

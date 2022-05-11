@@ -2,8 +2,8 @@ namespace OJS.Servers.Administration.Controllers;
 
 using AutoCrudAdmin.Models;
 using OJS.Data.Models.Contests;
-using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Data;
+using OJS.Services.Common;
 using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Infrastructure.Constants;
 using System.Linq;

@@ -1,7 +1,7 @@
-﻿namespace OJS.Services.Administration.Business.Implementations;
+namespace OJS.Services.Common.Implementations;
 
-using OJS.Services.Administration.Data;
-using OJS.Services.Administration.Models.Cache;
+using OJS.Services.Common.Data;
+using OJS.Services.Common.Models.Cache;
 using OJS.Services.Infrastructure.Constants;
 using System.Threading.Tasks;
 using OJS.Services.Infrastructure.Cache;

@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Administration.Models.Cache;
+﻿namespace OJS.Services.Common.Models.Cache;
 
 using OJS.Common.Extensions.Strings;
 using OJS.Data.Models.Contests;
