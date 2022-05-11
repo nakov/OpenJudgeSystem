@@ -1,8 +1,12 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { first } from 'lodash';
 import { IProblemType } from '../common/types';
+import { IFileResponseType } from '../common/common-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 import { useCurrentContest } from './use-current-contest';
+import { useHttp } from './use-http';
+import { useLoading } from './use-loading';
+import { downloadProblemResourceUrl } from '../utils/urls';
 
 interface IProblemsContext {
     state: {
@@ -11,6 +15,7 @@ interface IProblemsContext {
     };
     actions: {
         selectProblemById: (id: number) => void;
+        downloadProblemResourceFile: (resourceId: number) => Promise<void>;
     };
 }
 
@@ -31,6 +36,17 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
 
     const [ problems, setProblems ] = useState(defaultState.state.problems);
     const [ currentProblem, setCurrentProblem ] = useState<IProblemType | null>(defaultState.state.currentProblem);
+
+    const {
+        startLoading,
+        stopLoading,
+    } = useLoading();
+
+    const {
+        get: downloadProblemResourceRequest,
+        response: downloadProblemResourceResponse,
+        saveAttachment,
+    } = useHttp(downloadProblemResourceUrl);
 
     const selectProblemById = useCallback(
         (problemId: number) => {
@@ -59,6 +75,18 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         [ contest, selectProblemById ],
     );
 
+    const downloadProblemResourceFile = useCallback(async (resourceId: number) => {
+        startLoading();
+        await downloadProblemResourceRequest({ id: resourceId.toString() }, 'blob');
+        stopLoading();
+    }, [ downloadProblemResourceRequest, startLoading, stopLoading ]);
+
+    useEffect(() => {
+        if (downloadProblemResourceResponse != null) {
+            saveAttachment(downloadProblemResourceResponse as IFileResponseType);
+        }
+    }, [ downloadProblemResourceResponse, saveAttachment ]);
+
     useEffect(
         () => {
             reloadProblems();
@@ -71,7 +99,10 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
             problems,
             currentProblem,
         },
-        actions: { selectProblemById },
+        actions: {
+            selectProblemById,
+            downloadProblemResourceFile,
+        },
     };
 
     return (
