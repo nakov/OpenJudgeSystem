@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 public interface ICacheItemsProviderService : IService
 {
-    IEnumerable<ContestCategoryListViewModel> GetContestSubCategoriesList(
+    Task<IEnumerable<ContestCategoryListViewModel>> GetContestSubCategoriesList(
         int? categoryId,
         int? cacheSeconds = CacheConstants.OneDayInSeconds);
 
@@ -16,7 +16,7 @@ public interface ICacheItemsProviderService : IService
         int categoryId,
         int? cacheSeconds = CacheConstants.OneDayInSeconds);
 
-    IEnumerable<CategoryMenuItemViewModel> GetMainContestCategories(
+    Task<IEnumerable<ContestCategoryListViewModel>> GetMainContestCategories(
         int? cacheSeconds = CacheConstants.OneDayInSeconds);
 
     Task<string?> GetContestCategoryName(

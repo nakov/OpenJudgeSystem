@@ -1,10 +1,12 @@
 namespace OJS.Services.Common.Implementations;
 
+using Microsoft.EntityFrameworkCore;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Cache;
 using OJS.Services.Infrastructure.Constants;
 using System.Threading.Tasks;
 using OJS.Services.Infrastructure.Cache;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,7 +23,7 @@ public class CacheItemsProviderService : ICacheItemsProviderService
         this.contestCategoriesData = contestCategoriesData;
     }
 
-    public IEnumerable<ContestCategoryListViewModel> GetContestSubCategoriesList(
+    public async Task<IEnumerable<ContestCategoryListViewModel>> GetContestSubCategoriesList(
         int? categoryId,
         int? cacheSeconds)
     {
@@ -29,15 +31,15 @@ public class CacheItemsProviderService : ICacheItemsProviderService
             ? string.Format(CacheConstants.ContestSubCategoriesFormat, categoryId.Value)
             : CacheConstants.ContestCategoriesTree;
 
-        return this.cache.Get(cacheId, GetSubCategories, cacheSeconds);
+        return await this.cache.Get(cacheId, GetSubCategories, cacheSeconds);
 
-        IEnumerable<ContestCategoryListViewModel> GetSubCategories() =>
-            this.contestCategoriesData
+        async Task<IEnumerable<ContestCategoryListViewModel>> GetSubCategories()
+            => await this.contestCategoriesData
                 .GetAllVisible()
                 .Where(cc => categoryId.HasValue ? cc.ParentId == categoryId : cc.ParentId == null)
                 .OrderBy(cc => cc.OrderBy)
-                .Select(ContestCategoryListViewModel.FromCategory)
-                .ToList();
+                .MapCollection<ContestCategoryListViewModel>()
+                .ToListAsync();
     }
 
     public async Task<IEnumerable<ContestCategoryListViewModel>> GetContestCategoryParentsList(
@@ -46,7 +48,7 @@ public class CacheItemsProviderService : ICacheItemsProviderService
     {
         var cacheId = string.Format(CacheConstants.ContestParentCategoriesFormat, categoryId);
 
-        var contestCategories = await this.cache.Get(cacheId, GetParentCategories, cacheSeconds);
+        return await this.cache.Get(cacheId, GetParentCategories, cacheSeconds);
 
         async Task<IEnumerable<ContestCategoryListViewModel>> GetParentCategories()
         {
@@ -55,11 +57,7 @@ public class CacheItemsProviderService : ICacheItemsProviderService
 
             while (category != null)
             {
-                categories.Add(new ContestCategoryListViewModel
-                {
-                    Id = category.Id,
-                    Name = category.Name
-                });
+                categories.Add(category.Map<ContestCategoryListViewModel>());
 
                 category = category.Parent;
             }
@@ -68,27 +66,25 @@ public class CacheItemsProviderService : ICacheItemsProviderService
 
             return categories;
         }
-
-        return contestCategories;
     }
 
-    public IEnumerable<CategoryMenuItemViewModel> GetMainContestCategories(int? cacheSeconds) =>
-        this.cache.Get(
-            CacheConstants.MainContestCategoriesDropDown,
-            () =>
-                 this.contestCategoriesData
-                    .GetAllVisible()
-                    .Where(x => !x.ParentId.HasValue)
-                    .OrderBy(x => x.OrderBy)
-                    .Select(CategoryMenuItemViewModel.FromCategory)
-                    .ToList(),
-            cacheSeconds);
+    public async Task<IEnumerable<ContestCategoryListViewModel>> GetMainContestCategories(int? cacheSeconds)
+    {
+        return await this.cache.Get(CacheConstants.MainContestCategoriesDropDown, GetMainCategories, cacheSeconds);
 
+        async Task<IEnumerable<ContestCategoryListViewModel>> GetMainCategories()
+            => await this.contestCategoriesData
+                .GetAllVisible()
+                .Where(x => !x.ParentId.HasValue)
+                .OrderBy(x => x.OrderBy)
+                .MapCollection<ContestCategoryListViewModel>()
+                .ToListAsync();
+    }
 
-    public async Task<string?> GetContestCategoryName(int categoryId, int? cacheSeconds) =>
-        await this.cache.Get(
+    public Task<string?> GetContestCategoryName(int categoryId, int? cacheSeconds)
+        => this.cache.Get(
             string.Format(CacheConstants.ContestCategoryNameFormat, categoryId),
-            () => this.contestCategoriesData.GetNameById(categoryId),
+            async () => await this.contestCategoriesData.GetNameById(categoryId),
             cacheSeconds);
 
     public async Task ClearContestCategory(int categoryId)

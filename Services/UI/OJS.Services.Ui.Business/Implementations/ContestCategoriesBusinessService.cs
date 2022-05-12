@@ -12,9 +12,12 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
     public ContestCategoriesBusinessService(ICacheItemsProviderService cacheItemsProvider)
         => this.cacheItemsProvider = cacheItemsProvider;
 
-    public Task<IEnumerable<CategoryMenuItemViewModel>> GetAllMain()
-        => Task.FromResult(this.cacheItemsProvider.GetMainContestCategories());
+    public Task<IEnumerable<ContestCategoryListViewModel>> GetAllMain()
+        => this.cacheItemsProvider.GetMainContestCategories();
 
-    public Task<IEnumerable<ContestCategoryListViewModel>> GetAllByParent(int parentCategoryId)
-        => throw new System.NotImplementedException();
+    public Task<IEnumerable<ContestCategoryListViewModel>> GetAllSubcategories(int categoryId)
+        => this.cacheItemsProvider.GetContestSubCategoriesList(categoryId);
+
+    public Task<IEnumerable<ContestCategoryListViewModel>> GetAllParentCategories(int categoryId)
+        => this.cacheItemsProvider.GetContestCategoryParentsList(categoryId);
 }
