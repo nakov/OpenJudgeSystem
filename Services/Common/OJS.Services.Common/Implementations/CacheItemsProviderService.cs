@@ -74,11 +74,23 @@ public class CacheItemsProviderService : ICacheItemsProviderService
 
         async Task<IEnumerable<ContestCategoryListViewModel>> GetMainCategories()
             => await this.contestCategoriesData
-                .GetAllVisible()
-                .Where(x => !x.ParentId.HasValue)
+                .GetAllVisibleMain()
                 .OrderBy(x => x.OrderBy)
                 .MapCollection<ContestCategoryListViewModel>()
                 .ToListAsync();
+    }
+
+    public async Task<IEnumerable<ContestCategoryTreeViewModel>> GetAllContestCategoriesTree(int? cacheSeconds)
+    {
+        return await this.cache.Get(CacheConstants.ContestCategoriesTree, GetTree, cacheSeconds);
+
+        async Task<IEnumerable<ContestCategoryTreeViewModel>> GetTree()
+            => (await this.contestCategoriesData
+                .GetAllVisibleMain()
+                .OrderBy(x => x.OrderBy)
+                .Include(c => c.Children)
+                .ToListAsync())
+                .Select(category => category.Map<ContestCategoryTreeViewModel>());
     }
 
     public Task<string?> GetContestCategoryName(int categoryId, int? cacheSeconds)

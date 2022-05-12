@@ -12,6 +12,9 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
     public ContestCategoriesBusinessService(ICacheItemsProviderService cacheItemsProvider)
         => this.cacheItemsProvider = cacheItemsProvider;
 
+    public Task<IEnumerable<ContestCategoryTreeViewModel>> GetTree()
+        => this.cacheItemsProvider.GetAllContestCategoriesTree();
+
     public Task<IEnumerable<ContestCategoryListViewModel>> GetAllMain()
         => this.cacheItemsProvider.GetMainContestCategories();
 

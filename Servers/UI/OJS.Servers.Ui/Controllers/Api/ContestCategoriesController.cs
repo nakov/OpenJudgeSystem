@@ -12,6 +12,9 @@ public class ContestCategoriesController : ControllerBase
         IContestCategoriesBusinessService contestCategoriesBusiness)
         => this.contestCategoriesBusiness = contestCategoriesBusiness;
 
+    public async Task<IActionResult> GetCategoriesTree()
+        => this.Ok(await this.contestCategoriesBusiness.GetTree());
+
     public async Task<IActionResult> GetMainCategories()
         => this.Ok(await this.contestCategoriesBusiness.GetAllMain());
 

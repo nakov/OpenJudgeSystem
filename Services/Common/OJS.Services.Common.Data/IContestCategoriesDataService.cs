@@ -8,5 +8,7 @@ public interface IContestCategoriesDataService : IDataService<ContestCategory>
 {
     IQueryable<ContestCategory> GetAllVisible();
 
+    IQueryable<ContestCategory> GetAllVisibleMain();
+
     Task<string?> GetNameById(int id);
 }

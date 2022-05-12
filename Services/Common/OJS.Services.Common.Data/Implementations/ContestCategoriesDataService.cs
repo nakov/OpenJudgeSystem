@@ -15,6 +15,10 @@ public class ContestCategoriesDataService : DataService<ContestCategory>, IConte
         this.DbSet
             .Where(cc => cc.IsVisible);
 
+    public IQueryable<ContestCategory> GetAllVisibleMain()
+        => this.GetAllVisible()
+            .Where(x => !x.ParentId.HasValue);
+
     public Task<string?> GetNameById(int id)
         => this.DbSet
             .Where(cc => cc.Id == id)
