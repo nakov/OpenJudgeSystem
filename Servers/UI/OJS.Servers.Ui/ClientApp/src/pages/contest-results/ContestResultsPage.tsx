@@ -12,9 +12,9 @@ import { LinkButton } from '../../components/guidelines/buttons/Button';
 import { isNil } from 'lodash';
 
 interface IContestResultsPageParamsProps {
-    contestId: string
-    participationType: string
-    resultType: string
+    contestId: string;
+    participationType: string;
+    resultType: string;
 }
 
 const participantNamesColumns: GridColDef[] = [
@@ -70,7 +70,7 @@ const getProblemResultColumns = (results: IContestResultsType) =>
             const bestSubmission = problemResult?.bestSubmission;
             return results.userHasContestRights && !isNil(bestSubmission)
                 ? <LinkButton
-                    type='a'
+                    type='link'
                     text={`${bestSubmission.points}`}
                     to={`/submissions/${bestSubmission.id}`}
                 />
@@ -79,7 +79,7 @@ const getProblemResultColumns = (results: IContestResultsType) =>
     } as GridColDef));
 
 const ContestResultsPage = () => {
-    const { contestId, participationType, resultType } = useParams<IContestResultsPageParamsProps>();
+    const { contestId, participationType, resultType } = useParams();
     const official = participationType === ContestParticipationType.Compete;
     const full = resultType === ContestResultType.Full;
 

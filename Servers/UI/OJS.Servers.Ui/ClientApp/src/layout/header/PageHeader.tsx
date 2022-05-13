@@ -12,13 +12,13 @@ const PageHeader = () => {
 
     const renderLinks = useCallback(() => {
         const administrationLink = user.permissions.canAccessAdministration
-            ? <LinkButton type='a' to={administrationContestsGridUrl} isToExternal={true} text="Administration" />
+            ? <LinkButton type='link' to={administrationContestsGridUrl} isToExternal={true} text="Administration" />
             : null;
 
         return (
             <>
-                <LinkButton type='a' id="nav-contests-link" to="/contests" text="Contests" />
-                <LinkButton type='a' id="nav-submissions-link" to="/submissions" text="Submissions" />
+                <LinkButton type='link' id="nav-contests-link" to="/contests" text="Contests" />
+                <LinkButton type='link' id="nav-submissions-link" to="/submissions" text="Submissions" />
                 { administrationLink }
             </>
         );

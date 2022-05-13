@@ -108,7 +108,7 @@ const ContestTasksNavigation = () => {
         <div className={styles.tasksSideNavigation}>
             <Heading type="secondary">Tasks</Heading>
             {renderTasksList()}
-            <LinkButton type='a' to={resultsLink} text="Results" />
+            <LinkButton type='link' to={resultsLink} text="Results" />
         </div>
     );
 };
