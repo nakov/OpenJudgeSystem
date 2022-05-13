@@ -109,11 +109,8 @@ const LinkButton = ({
         ? "_blank"
         : undefined;
 
-    const linkType = type === "link" ? undefined : "button"
-
     return (
         <Link
-          type={linkType}
           to={toHref}
           className={buttonClassName}
           id={id}
