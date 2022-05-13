@@ -28,7 +28,7 @@ const defaultState = {
         contests: [] as IIndexContestsType[],
         possibleFilters: [
             ...generateFilterItems(FilterType.Status, ContestState.Active, ContestState.Past),
-            ...generateFilterItems(FilterType.Language, 'Py', 'JS', 'Java', 'C#', 'Go'),
+            ...generateFilterItems(FilterType.Strategy, 'Python', 'JS', 'Java', 'C#', 'Go'),
         ],
         filters: [] as IFilter[],
     },

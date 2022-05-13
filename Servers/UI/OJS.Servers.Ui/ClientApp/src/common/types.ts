@@ -66,6 +66,13 @@ interface IIndexContestsType {
     category: string
 }
 
+interface IContestCategoryTreeType {
+    id: number,
+    name: string,
+    nameUrl: string,
+    children?: IContestCategoryTreeType[],
+}
+
 interface IGetContestsForIndexResponseType {
     activeContests: IIndexContestsType[]
     pastContests: IIndexContestsType[]
@@ -87,4 +94,5 @@ export type {
     IProblemType,
     IProblemResourceType,
     ISubmissionTypeType,
+    IContestCategoryTreeType,
 };

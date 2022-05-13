@@ -11,7 +11,12 @@ interface IAllContestsUrlParams {
     filters: IFilter[];
 }
 
+interface IContestCategoriesUrlParams {
+    id: number;
+}
+
 export type {
     IStartContestUrlParams,
     IAllContestsUrlParams,
+    IContestCategoriesUrlParams,
 };

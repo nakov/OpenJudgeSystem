@@ -1,12 +1,16 @@
 import React, { createContext, useContext } from 'react';
 import { isNil } from 'lodash';
-import { IAllContestsUrlParams, IStartContestUrlParams } from '../common/url-types';
+import { IAllContestsUrlParams, IStartContestUrlParams, IContestCategoriesUrlParams } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 import { FilterType } from '../common/contest-types';
 
 interface IUrlsContext {
     getUrlForStartContestParticipation: (params: IStartContestUrlParams) => string;
     getUrlForAllContests: (params: IAllContestsUrlParams) => string;
+    getUrlForCategoriesTree: () => string;
+    getUrlForMainCategories: () => string;
+    getUrlForSubcategories: (params: IContestCategoriesUrlParams) => string;
+    getUrlForParentCategories: (params: IContestCategoriesUrlParams) => string;
 }
 
 const UrlsContext = createContext<IUrlsContext>({} as IUrlsContext);
@@ -37,10 +41,26 @@ const getUrlForAllContests = ({ filters }: IAllContestsUrlParams) => {
     );
 };
 
+const getUrlForCategoriesTree =
+    () => `${baseUrl}/ContestCategories/GetCategoriesTree`;
+
+const getUrlForMainCategories =
+    () => `${baseUrl}/ContestCategories/GetMainCategories`;
+
+const getUrlForSubcategories =
+    ({ id }: IContestCategoriesUrlParams) => `${baseUrl}/ContestCategories/GetSubcategories/${id}`;
+
+const getUrlForParentCategories =
+    ({ id }: IContestCategoriesUrlParams) => `${baseUrl}/ContestCategories/GetParentCategories/${id}`;
+
 const UrlsProvider = ({ children }: IUrlsProviderProps) => {
     const value = {
         getUrlForStartContestParticipation,
+        getUrlForCategoriesTree,
         getUrlForAllContests,
+        getUrlForMainCategories,
+        getUrlForSubcategories,
+        getUrlForParentCategories,
     };
 
     return (
