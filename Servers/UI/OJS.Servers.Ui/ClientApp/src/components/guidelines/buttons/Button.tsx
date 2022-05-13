@@ -93,7 +93,7 @@ const LinkButton = ({
 
     const typeClassName = classNameToType[type];
 
-    const sizeClassName = sizeToClassName[size];
+    const sizeClassName = type === 'link' ? '' : sizeToClassName[size];
 
     const buttonClassName = concatClassNames(
         className,
