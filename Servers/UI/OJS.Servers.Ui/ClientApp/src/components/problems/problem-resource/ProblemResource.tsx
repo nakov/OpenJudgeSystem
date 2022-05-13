@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { useCallback, useEffect } from 'react';
-import { saveAs } from 'file-saver';
-import { useHomeContests } from '../../../hooks/use-home-contests';
+import { useCallback } from 'react';
 import { Button } from '../../guidelines/buttons/Button';
 import { IProblemResourceType } from '../../../common/types';
 
 import styles from './ProblemResource.module.scss';
+import { useProblems } from '../../../hooks/use-problems';
 
 interface IProblemResourceProps {
     resource: IProblemResourceType
@@ -18,38 +17,11 @@ const resourceTypeToIconClassName : { [name: number]: string } = {
 };
 
 const ProblemResource = ({ resource }: IProblemResourceProps) => {
-    const {
-        actions: {
-            getProblemResourceFile,
-            getProblemResourceResponse,
-        },
-    } = useHomeContests();
+    const { actions: { downloadProblemResourceFile } } = useProblems();
 
-    const saveFile = useCallback(() => {
-        if (!getProblemResourceResponse) {
-            return;
-        }
-
-        // todo: move this to http helper
-        const filename = getProblemResourceResponse
-            .headers['content-disposition']
-            .split('filename*=UTF-8\'\'')[1];
-
-        const filenameDecoded = decodeURIComponent(filename);
-
-        saveAs(
-            getProblemResourceResponse.data,
-            filenameDecoded,
-        );
-    }, [ getProblemResourceResponse ]);
-
-    const onClickGetResourceFile = useCallback(async () => {
-        await getProblemResourceFile(resource.id);
-    }, [ getProblemResourceFile, resource ]);
-
-    useEffect(() => {
-        saveFile();
-    }, [ getProblemResourceResponse, saveFile ]);
+    const handleDownloadResourceFile = useCallback(async () => {
+        await downloadProblemResourceFile(resource.id);
+    }, [ downloadProblemResourceFile, resource ]);
 
     const renderResourceLink = (linkContent: React.ReactNode) => (resource.type === 3
         ? (
@@ -67,11 +39,11 @@ const ProblemResource = ({ resource }: IProblemResourceProps) => {
               type="plain"
               className={styles.resourceLinkButton}
               onClick={
-                        (e) => {
-                            e.preventDefault();
-                            onClickGetResourceFile();
-                        }
+                    (e) => {
+                        e.preventDefault();
+                        handleDownloadResourceFile();
                     }
+                }
             >
                 {linkContent}
             </Button>
