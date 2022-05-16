@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useCallback } from 'react';
 import List from '../../guidelines/lists/List';
 import Heading from '../../guidelines/headings/Heading';
-import { Button } from '../../guidelines/buttons/Button';
+import { Button, ButtonType } from '../../guidelines/buttons/Button';
 import styles from './ContestTasksNavigation.module.scss';
 import concatClassNames from '../../../utils/class-names';
 import Label from '../../guidelines/labels/Label';
@@ -60,7 +60,7 @@ const ContestTasksNavigation = () => {
                     <Button
                       onClick={() => selectProblemById(problem.id)}
                       className={className}
-                      type="plain"
+                      type={ButtonType.plain}
                     >
                         {problem.name}
                     </Button>

@@ -101,7 +101,6 @@ const SubmissionBox = () => {
                         </div>
                         <div className={styles.submitButtonContainer}>
                             <Button
-                              type="primary"
                               text="Submit"
                               onClick={handleOnSubmit}
                             />

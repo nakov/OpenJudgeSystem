@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import moment from 'moment';
 import { ISubmissionDetails } from '../../../hooks/submissions/types';
-import { Button } from '../../guidelines/buttons/Button';
+import { Button, ButtonType } from '../../guidelines/buttons/Button';
 import Text, { TextType } from '../../guidelines/text/Text';
 
 import styles from './ProblemSubmission.module.scss';
@@ -119,7 +119,10 @@ const ProblemSubmission = ({ submission }: ISubmissionResultProps) => {
                     </Text>
                 </div>
                 <div>
-                    <Button type="plain" onClick={() => showDetails()}>
+                    <Button
+                      type={ButtonType.plain}
+                      onClick={() => showDetails()}
+                    >
                         <DetailsIcon size={IconSize.Large} isOpen={isDetailsOpen} />
                     </Button>
                 </div>

@@ -2,7 +2,7 @@ import * as React from 'react';
 import styles from './HomeHeaderInfo.module.scss';
 import Heading from '../guidelines/headings/Heading';
 import List from '../guidelines/lists/List';
-import { Button } from '../guidelines/buttons/Button';
+import { Button, ButtonType } from '../guidelines/buttons/Button';
 
 interface IHomeHeaderInfoProps {
     primaryText: string;
@@ -46,7 +46,6 @@ const HomeHeaderInfo = ({
             />
             <Button
               id="button-see-contests"
-              type="primary"
               text="See Contests"
               className={styles.headerLeftButton}
               onClick={() => onCtaClick()}

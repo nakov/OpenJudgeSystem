@@ -113,7 +113,10 @@ const Contest = () => {
     return (
         <>
             <div className={styles.headingContest}>
-                <Heading type="primary" className={styles.contestHeading}>
+                <Heading
+                  type="primary"
+                  className={styles.contestHeading}
+                >
                     {contest?.name}
                 </Heading>
                 <Heading type="secondary" className={secondaryHeadingClassName}>

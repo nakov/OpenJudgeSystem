@@ -6,7 +6,7 @@ import { IIndexContestsType } from '../../../common/types';
 import concatClassNames from '../../../utils/class-names';
 
 import styles from './ContestCard.module.scss';
-import { LinkButton } from '../../guidelines/buttons/Button';
+import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 
 interface IContestCardProps {
     contest: IIndexContestsType
@@ -66,23 +66,24 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   id="button-card-compete"
                   to={`/contests/${id}/compete`}
                   text="Compete"
-                  type={
+                  state={
                         canBeCompeted
-                            ? 'primary'
-                            : 'disabled'
+                            ? ButtonState.enabled
+                            : ButtonState.disabled
                     }
-                  size="small"
+                  size={ButtonSize.small}
                 />
                 <LinkButton
                   id="button-card-practice"
                   to={`/contests/${id}/practice`}
                   text="Practice"
-                  type={
+                  type={LinkButtonType.secondary}
+                  state={
                         canBePracticed
-                            ? 'secondary'
-                            : 'disabled'
+                            ? ButtonState.enabled
+                            : ButtonState.disabled
                     }
-                  size="small"
+                  size={ButtonSize.small}
                 />
             </div>
         </div>

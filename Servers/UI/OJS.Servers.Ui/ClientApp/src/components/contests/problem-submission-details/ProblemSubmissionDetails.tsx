@@ -4,7 +4,7 @@ import List from '../../guidelines/lists/List';
 import TickIcon from '../../guidelines/icons/TickIcon';
 
 import styles from './ProblemSubmissionDetails.module.scss';
-import { Button } from '../../guidelines/buttons/Button';
+import { Button, ButtonType } from '../../guidelines/buttons/Button';
 import concatClassNames from '../../../utils/class-names';
 import ErrorIcon from '../../guidelines/icons/ErrorIcon';
 
@@ -40,7 +40,7 @@ const TestRun = ({
 
     return (
         <Button
-          type="plain"
+          type={ButtonType.plain}
           onClick={() => onSelect()}
           className={concatClassNames(styles.btnTestRun, disabledClassName)}
         >

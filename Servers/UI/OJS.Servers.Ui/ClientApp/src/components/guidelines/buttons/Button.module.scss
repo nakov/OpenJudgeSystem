@@ -12,70 +12,69 @@
   text-decoration: none;
   text-align: center;
   text-transform: uppercase;
-
   border: 2px solid transparent;
-  box-shadow: 0 4px 5px 0 rgba(0, 0, 0, .14), 0 1px 10px 0 rgba(0, 0, 0, .12), 0 2px 4px -1px rgba(0, 0, 0, .2);
-  background-color: $background-color-btn-primary;
-  color: white;
   transition: all .28s ease-in-out;
+  color: white;
 
-  &:hover {
-    box-shadow: 6px 8px 15px 1px rgba(27, 139, 249, 0.2);
-    cursor: pointer;
+  &.primary {
+    box-shadow: 0 4px 5px 0 rgba(0, 0, 0, .14), 0 1px 10px 0 rgba(0, 0, 0, .12), 0 2px 4px -1px rgba(0, 0, 0, .2);
+    background-color: $background-color-btn-primary;
+
+    &:hover {
+      box-shadow: 6px 8px 15px 1px rgba(27, 139, 249, 0.2);
+      cursor: pointer;
+    }
   }
-}
 
-.btnSecondary {
-  @extend .btn;
-
-  color: $color-btn-secondary;
-  box-shadow: none;
-  background-color: $background-color-btn-secondary;
-  border-color: #42abf8;
-
-  &:hover {
-    cursor: pointer;
-    background-color: $background-color-btn-secondary-hover;
+  &.secondary {
+    color: $color-btn-secondary;
     box-shadow: none;
+    background-color: $background-color-btn-secondary;
+    border-color: #42abf8;
+
+    &:hover {
+      background-color: $background-color-btn-secondary-hover;
+      box-shadow: none;
+    }
   }
-}
 
-.btnDisabled {
-  @extend .btn;
-
-  color: $color-btn-disabled;
-  box-shadow: none;
-  background-color: $background-color-btn-secondary;
-  border-color: $color-btn-disabled;
-
-  &:hover {
-    cursor: not-allowed;
-    box-shadow: none;
-  }
-}
-
-.btnPlain {
-  background: none;
-  color: inherit;
-  border: none;
-  font: inherit;
-  cursor: pointer;
-  outline: inherit;
-
-  &:hover {
+  &.plain {
+    background: none;
+    color: inherit;
+    border: none;
+    font: inherit;
     cursor: pointer;
+    outline: inherit;
+    padding: 0;
+    margin: 0;
+
+    &:hover {
+      cursor: pointer;
+    }
   }
-}
 
-.btnLarge {
-  @extend .large;
-}
+  &.disabled {
+    color: $color-btn-disabled;
+    box-shadow: none;
+    background-color: $background-color-btn-secondary;
+    border-color: $color-btn-disabled;
+    pointer-events: none;
 
-.btnMedium {
-  @extend .medium;
+    &:hover {
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+  }
 
-}
+  &.small {
+    @extend .small;
+  }
 
-.btnSmall {
-  @extend .small;
+  &.medium {
+    @extend .medium;
+  }
+
+  &.large {
+    @extend .large;
+  }
 }

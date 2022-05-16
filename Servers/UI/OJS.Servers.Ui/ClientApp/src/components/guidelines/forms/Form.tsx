@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
 import { IHaveChildrenProps } from '../../common/Props';
-import { Button } from '../buttons/Button';
+import { Button, ButtonType } from '../buttons/Button';
 import generateId from '../../../utils/id-generator';
 
 interface IFormProps extends IHaveChildrenProps {
@@ -37,7 +37,7 @@ const Form = ({
               id={btnId}
               onClick={(ev) => handleSubmit(ev)}
               text={submitText}
-              type="submit"
+              type={ButtonType.submit}
             />
         </form>
     );

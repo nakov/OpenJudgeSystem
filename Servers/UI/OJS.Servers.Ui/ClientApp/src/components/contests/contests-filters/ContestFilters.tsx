@@ -7,7 +7,7 @@ import { FilterType, IFilter } from '../../../common/contest-types';
 
 import styles from './ContestFilters.module.scss';
 import Label from '../../guidelines/labels/Label';
-import Button from '../../guidelines/buttons/Button';
+import Button, { ButtonType } from '../../guidelines/buttons/Button';
 import { useContests } from '../../../hooks/use-contests';
 import { groupByType } from '../../../common/filter-utils';
 
@@ -43,7 +43,7 @@ const ContestFilters = () => {
     const renderFilterItem = useCallback(
         ({ id, name }: IFilter) => (
             <Button
-              type="plain"
+              type={ButtonType.plain}
               onClick={() => handleFilterClick(id)}
               className={styles.btnSelectFilter}
             >
