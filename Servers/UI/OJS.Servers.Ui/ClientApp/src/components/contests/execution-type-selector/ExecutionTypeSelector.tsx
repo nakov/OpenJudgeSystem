@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import { get } from 'lodash';
 import styles from './ExecutionTypeSelector.module.scss';
 import { Button, ButtonType } from '../../guidelines/buttons/Button';
@@ -15,6 +15,7 @@ interface IExecutionTypeSelectorProps {
 
 const ExecutionTypeSelector = ({ id, value, isSelected, onSelect }: IExecutionTypeSelectorProps) => {
     const [ selected, setSelected ] = useState(isSelected);
+    const [ executionTypeSelectorClassName, setExecutionTypeSelectorClassName ] = useState('');
     const { state: { selectedSubmissionType } } = useSubmissions();
 
     const selectedSubmissionTypeId = useMemo(
@@ -34,8 +35,8 @@ const ExecutionTypeSelector = ({ id, value, isSelected, onSelect }: IExecutionTy
         executionTypeSelectorInactiveClass,
     );
 
-    const getClassName = useCallback(
-        () => (selectedSubmissionTypeId === id
+    useEffect(
+        () => setExecutionTypeSelectorClassName(selectedSubmissionTypeId === id
             ? executionTypeSelectorActiveClassName
             : executionTypeSelectorInactiveClassName),
         [ executionTypeSelectorActiveClassName, executionTypeSelectorInactiveClassName, id, selectedSubmissionTypeId ],
@@ -49,7 +50,7 @@ const ExecutionTypeSelector = ({ id, value, isSelected, onSelect }: IExecutionTy
     return (
         <Button
           type={ButtonType.plain}
-          className={getClassName()}
+          className={executionTypeSelectorClassName}
           onClick={select}
         >
             {value}
