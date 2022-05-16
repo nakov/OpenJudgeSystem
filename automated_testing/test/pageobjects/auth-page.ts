@@ -4,7 +4,7 @@ import selectors from '../constants/auth-page-selectors';
 import Page from './page';
 
 class AuthPage extends Page {
-    private pageLocation = '/account/login';
+    private pageLocation = '/login';
 
     public get username() {
         return $(selectors.usernameInputSelector);
@@ -18,12 +18,16 @@ class AuthPage extends Page {
         return $(selectors.authPasswordCheckboxSelector);
     }
 
-    public get authLoginButton() {
-        return $(selectors.authLoginButtonSelector);
+    public get authNavLoginButton() {
+        return $(selectors.authLoginButtonNavBarSelector);
+    }
+
+    public get authFormLoginButton() {
+        return $(selectors.authLoginButtonFormSelector);
     }
 
     public get authlogoutButton() {
-        return $(selectors.authLoginButtonSelector);
+        return $(selectors.authlogoutButtonSelector);
     }
 
     public get rememberMeCheckBox() {
@@ -32,6 +36,10 @@ class AuthPage extends Page {
 
     public get linkForNotRegisteredUsers() {
         return $(selectors.authLinkIfuserIsNoRegistered);
+    }
+
+    public get myProfileButton() {
+        return $(selectors.authNavigationMyProfileBtn);
     }
 
     public open(): Promise<string> {
@@ -49,7 +57,7 @@ class AuthPage extends Page {
     public async performLogIn(username, password) {
         await this.enterUsername(username);
         await this.enterPassword(password);
-        await (await this.authLoginButton).click();
+        await (await this.authFormLoginButton).click();
     }
 
     public async performLogOut() {

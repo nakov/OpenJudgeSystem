@@ -1,10 +1,12 @@
 const selectors = {
-    usernameInputSelector: '#UserName',
-    passwordInputSelector: '#Password',
+    usernameInputSelector: '#username',
+    passwordInputSelector: '#password',
     authPasswordCheckboxSelector: '#auth-password-checkbox',
-    authLoginButtonSelector: '.btn-btn-default', // '#auth-login-button',new aut
-    authlogoutButtonSelector: '.logged-user-wrap li a', // '#nav-logout-link',
+    authLoginButtonNavBarSelector: '#auth-login-button',
+    authLoginButtonFormSelector: '[type="submit"]', // '#anonymous-login-link',
+    authlogoutButtonSelector: '#nav-logout-link',
     authRememberMeCheckBoxSelector: '#RememberMe',
     authLinkIfuserIsNoRegistered: '.form-group p a',
+    authNavigationMyProfileBtn: '#nav-my-profile-link',
 };
 export default selectors;

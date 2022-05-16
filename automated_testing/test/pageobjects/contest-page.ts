@@ -6,11 +6,7 @@ import Page from './page';
 
 class ContestPage extends Page {
     public get allContestListSideNavigation() {
-        return $(selectors.pageAllContestListSideNavigationSelector);
-    }
-
-    public get singleContestSideNavigation() {
-        return $(selectors.pageSingleContestSideNavigationSelector);
+        return $$(selectors.pageAllContestListSideNavigationSelector);
     }
 
     public get contestNavigation() {
@@ -43,6 +39,14 @@ class ContestPage extends Page {
 
     public get refreshSubmissionButton() {
         return $(selectors.pageRefreshSubmissionButtonSelector);
+    }
+
+    public get leftSideNavigationTitle() {
+        return $(selectors.pageSideNavigationTitleSelector);
+    }
+
+    public get executionTypeAllActive() {
+        return $$(selectors.pageEexecutionTypeActiveSelector);
     }
 }
 export default new ContestPage();

@@ -1,7 +1,7 @@
 import IndexPage from '../pageobjects/index-page';
 import AuthPage from '../pageobjects/auth-page';
 
-describe('Testing AuthPage', () => {
+describe.skip('Testing AuthPage', () => {
     const validUserCredentials = {
         username: 'testuser123',
         password: '123456',
@@ -41,8 +41,9 @@ describe('Testing AuthPage', () => {
         await AuthPage.open();
         await loginInWithValidCredentials();
 
-        const myTestsBtn = await AuthPage.authLoginButton;
+        const myTestsBtn = await AuthPage.myProfileButton;
         await expect(myTestsBtn).toExist();
+        await expect(myTestsBtn).toHaveText('MY PROFILE');
     });
 
     it('Expect logOut button to exist', async () => {

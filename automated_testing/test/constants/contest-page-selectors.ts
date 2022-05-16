@@ -1,6 +1,6 @@
 const selectors = {
-    pageAllContestListSideNavigationSelector: '.all-tasks-list',
-    pageSingleContestSideNavigationSelector: '.all-tasks-list li',
+    pageAllContestListSideNavigationSelector: '.all-tasks-list li',
+    pageSideNavigationTitleSelector: '.navigationContest div h2',
     pageContestNavigationSelector: '.navigationContest',
     pageSubmissionBoxSelector: '.submissionBox',
     pageContestControlsSelector: '.contestTabControls',
@@ -9,6 +9,7 @@ const selectors = {
     pageExecutionTypeSelectorActiveSelector: '.executionTypeSelectorActive',
     pageExecutionTypeSelectorInactiveSelector: '.executionTypeSelectorInactive',
     pageRefreshSubmissionButtonSelector: '.refreshButton',
+    pageEexecutionTypeActiveSelector: '.executionTypeSelectorActive',
 
 };
 export default selectors;

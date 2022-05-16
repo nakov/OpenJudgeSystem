@@ -107,6 +107,10 @@ class IndexPage extends Page {
         return $(selectors.pageAllPastCardsSelector).$$(selectors.pagePracticeButtonIdSelector);
     }
 
+    public get firstPracticeCardButtoPastContests() {
+        return $(selectors.pageAllPastCardsSelector).$$(selectors.pagePracticeButtonIdSelector)[0];
+    }
+
     public get seeAllActiveContestsButton() {
         return $(selectors.pageSeeActiveContestsButtonSelector);
     }
