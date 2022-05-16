@@ -85,6 +85,14 @@ interface IStartParticipationResponseType {
     remainingTimeInMilliseconds: number
 }
 
+interface IPagedResultType<TItem> {
+    totalItemsCount: number,
+    itemsPerPage: number,
+    pagesCount: number,
+    pageNumber: number,
+    items?: TItem[],
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -95,4 +103,5 @@ export type {
     IProblemResourceType,
     ISubmissionTypeType,
     IContestCategoryTreeType,
+    IPagedResultType,
 };

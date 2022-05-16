@@ -2,7 +2,6 @@ import React, { createContext, useContext } from 'react';
 import { isNil } from 'lodash';
 import { IAllContestsUrlParams, IStartContestUrlParams, IContestCategoriesUrlParams } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
-import { FilterType } from '../common/contest-types';
 
 interface IUrlsContext {
     getUrlForStartContestParticipation: (params: IStartContestUrlParams) => string;
@@ -23,10 +22,11 @@ const baseUrl = window.URLS.UI_URL;
 const getUrlForStartContestParticipation =
     ({ id, official }: IStartContestUrlParams) => `${baseUrl}/Compete/Index/${id}?official=${official}`;
 
-const getUrlForAllContests = ({ filters }: IAllContestsUrlParams) => {
+const getUrlForAllContests = ({ filters, page }: IAllContestsUrlParams) => {
     const queryParams = filters
         .map(({ name, type }) => `${type.toLowerCase()}=${name}`)
-        .join('&');
+        .join('&')
+        + `&page=${page}`;
 
     return (
         isNil(queryParams)

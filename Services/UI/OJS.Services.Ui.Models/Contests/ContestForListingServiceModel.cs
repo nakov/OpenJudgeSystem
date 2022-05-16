@@ -31,6 +31,8 @@ public class ContestForListingServiceModel
 
     public int? CategoryId { get; set; }
 
+    public double OrderBy { get; set; }
+
     public IEnumerable<ExecutionStrategyType> ExecutionStrategyTypes { get; set; }
         = Enumerable.Empty<ExecutionStrategyType>();
 

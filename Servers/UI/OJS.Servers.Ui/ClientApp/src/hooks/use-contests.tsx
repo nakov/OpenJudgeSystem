@@ -1,14 +1,15 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isEmpty, isNil, without } from 'lodash';
-import { IHaveChildrenProps } from '../components/common/Props';
+import { isNil, without } from 'lodash';
+import { IHaveChildrenProps, IHavePagesProps } from '../components/common/Props';
 import { IIndexContestsType } from '../common/types';
 import { ContestState, FilterType, IFilter } from '../common/contest-types';
+import { IPagedResultType } from '../common/types';
 import { useHttp } from './use-http';
 import { useUrls } from './use-urls';
 import { generateFilterItems } from '../common/filter-utils';
 import { useLoading } from './use-loading';
 
-interface IContestsContext {
+interface IContestsContext extends IHavePagesProps {
     state: {
         contests: IIndexContestsType[];
         possibleFilters: IFilter[];
@@ -18,6 +19,7 @@ interface IContestsContext {
         reload: () => Promise<void>;
         applyFilter: (filter: IFilter, singleForType?: boolean) => void;
         clearFilters: () => void;
+        setPage: (page: number) => void;
     };
 }
 
@@ -33,6 +35,7 @@ const defaultState = {
         ],
         filters: [] as IFilter[],
     },
+    pageNumber: 1,
 };
 
 const ContestsContext = createContext<IContestsContext>(defaultState as IContestsContext);
@@ -41,13 +44,15 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ contests, setContests ] = useState(defaultState.state.contests);
     const [ possibleFilters ] = useState(defaultState.state.possibleFilters);
     const [ filters, setFilters ] = useState(defaultState.state.filters);
+    const [ page, setPage ] = useState(defaultState.pageNumber);
+    const [ pageProps, setPageProps ] = useState({} as IHavePagesProps);
 
     const { getUrlForAllContests } = useUrls();
     const { startLoading, stopLoading } = useLoading();
 
     const getUrl = useCallback(
-        () => getUrlForAllContests({ filters }),
-        [ filters, getUrlForAllContests ],
+        () => getUrlForAllContests({ filters, page }),
+        [ filters, getUrlForAllContests, page ],
     );
 
     const {
@@ -66,6 +71,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             }
 
             setFilters(newFilters);
+            setPage(defaultState.pageNumber);
         },
         [ filters ],
     );
@@ -97,7 +103,11 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     useEffect(
         () => {
-            setContests(data as IIndexContestsType[]);
+            const contestsResult = data as IPagedResultType<IIndexContestsType>;
+            const newData = contestsResult?.items as IIndexContestsType[];
+            setContests(newData);
+            const { pageNumber, itemsPerPage, pagesCount, totalItemsCount } = contestsResult || {};
+            setPageProps({ pageNumber, itemsPerPage, pagesCount, totalItemsCount });
         },
         [ data ],
     );
@@ -112,8 +122,10 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             reload,
             applyFilter,
             clearFilters,
+            setPage,
         },
-    };
+        ...pageProps,
+    } as IContestsContext;
 
     return (
         <ContestsContext.Provider value={value}>

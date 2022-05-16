@@ -171,7 +171,9 @@ namespace OJS.Services.Ui.Business.Implementations
                     .Where(x => x.ExecutionStrategyTypes.Any(est => model.ExecutionStrategyTypes.Contains(est)));
             }
 
-            return await contests.ToPagedResultAsync(itemsPerPage, pageNumber);
+            return await contests
+                .OrderBy(c => c.OrderBy)
+                .ToPagedResultAsync(itemsPerPage, pageNumber);
         }
 
         private IQueryable<ContestForListingServiceModel> GetContestByFilter(ContestStatus status, int? categoryId)
@@ -180,6 +182,13 @@ namespace OJS.Services.Ui.Business.Implementations
                     .GetAllCompetableQuery(categoryId).MapCollection<ContestForListingServiceModel>()
                 : this.contestsData
                     .GetAllPastQuery(categoryId).MapCollection<ContestForListingServiceModel>());
+
+        private IQueryable<ContestForListingServiceModel> GetAllVisibleContestsByCategory(int? categoryId)
+            => (categoryId.HasValue
+                ? this.contestsData
+                    .GetAllVisibleByCategory(categoryId.Value).MapCollection<ContestForListingServiceModel>()
+                : this.contestsData
+                    .GetAllVisible().MapCollection<ContestForListingServiceModel>());
 
         private IQueryable<ContestForListingServiceModel> GetAllByStatusAndCategory(
             IEnumerable<ContestStatus>? statuses,
@@ -190,7 +199,7 @@ namespace OJS.Services.Ui.Business.Implementations
             return contestFilters?.Count switch
             {
                 1 => this.GetContestByFilter(contestFilters.First(), categoryId),
-                _ => this.contestsData.GetAllVisible().MapCollection<ContestForListingServiceModel>(),
+                _ => this.GetAllVisibleContestsByCategory(categoryId),
             };
         }
 

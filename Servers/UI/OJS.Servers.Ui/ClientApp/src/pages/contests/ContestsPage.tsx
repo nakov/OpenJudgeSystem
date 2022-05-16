@@ -8,9 +8,19 @@ import styles from './ContestsPage.module.scss';
 import { IIndexContestsType } from '../../common/types';
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
 import List from '../../components/guidelines/lists/List';
+import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
 
 const ContestsPage = () => {
-    const { state: { contests, filters } } = useContests();
+    const { 
+        state: {
+            contests,
+            filters
+        },
+        actions: {
+            setPage,
+        },
+        pagesCount,
+    } = useContests();
 
     // TODO: this will be fixed in next PR
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -22,6 +32,10 @@ const ContestsPage = () => {
         ),
         [],
     );
+
+    const onPageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+        setPage(page);
+    };
 
     useEffect(
         () => {
@@ -50,6 +64,10 @@ const ContestsPage = () => {
                     itemFunc={renderContest}
                     orientation="horizontal"
                     wrap={true}
+                />
+                <PaginationControls
+                    count={pagesCount}
+                    onChange={onPageChange}
                 />
             </div>
         </div>
