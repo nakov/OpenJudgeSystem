@@ -22,24 +22,30 @@ namespace OJS.Services.Ui.Data.Implementations
             : base(db)
             => this.dates = dates;
 
-        public async Task<IEnumerable<TServiceModel>> GetAllCompetable<TServiceModel>(int? categoryId = null)
-            => await this.GetAllVisibleQuery()
-                .Where(c => !categoryId.HasValue || c.CategoryId == categoryId)
-                .Include(c => c.Category)
-                .Where(c =>
-                    c.StartTime <= this.dates.GetUtcNow() &&
-                    c.EndTime.HasValue &&
-                    c.EndTime >= this.dates.GetUtcNow())
+        public async Task<IEnumerable<TServiceModel>> GetAllCompetable<TServiceModel>()
+            => await this.GetAllCompetableQuery()
                 .MapCollection<TServiceModel>()
                 .ToListAsync();
 
-        public async Task<IEnumerable<TServiceModel>> GetAllPast<TServiceModel>(int? categoryId = null)
-            => await this.GetAllVisibleQuery()
-                .Where(c => !categoryId.HasValue || c.CategoryId == categoryId)
+        public IQueryable<Contest> GetAllCompetableQuery(int? categoryId = null)
+            => this.GetAllVisibleQuery()
                 .Include(c => c.Category)
-                .Where(c => c.EndTime < this.dates.GetUtcNow())
+                .Where(c => !categoryId.HasValue || c.CategoryId == categoryId)
+                .Where(c =>
+                    c.StartTime <= this.dates.GetUtcNow() &&
+                    c.EndTime.HasValue &&
+                    c.EndTime >= this.dates.GetUtcNow());
+
+        public async Task<IEnumerable<TServiceModel>> GetAllPast<TServiceModel>()
+            => await this.GetAllPastQuery()
                 .MapCollection<TServiceModel>()
                 .ToListAsync();
+
+        public IQueryable<Contest> GetAllPastQuery(int? categoryId = null)
+            => this.GetAllVisibleQuery()
+                .Where(c => !categoryId.HasValue || c.CategoryId == categoryId)
+                .Include(c => c.Category)
+                .Where(c => c.EndTime < this.dates.GetUtcNow());
 
         public Task<Contest?> GetByIdWithProblems(int id)
             => this.DbSet

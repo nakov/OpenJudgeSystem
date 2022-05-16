@@ -1,12 +1,12 @@
 ﻿namespace OJS.Servers.Ui.Controllers.Api
 {
     using Microsoft.AspNetCore.Mvc;
+    using OJS.Servers.Ui.Models;
     using OJS.Servers.Ui.Models.Contests;
     using OJS.Services.Ui.Business;
     using OJS.Services.Ui.Models.Contests;
     using System.Threading.Tasks;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
-    using System.Collections.Generic;
 
     public class ContestsController : Controller
     {
@@ -21,9 +21,9 @@
                 .GetAllForHomeIndex()
                 .Map<ContestsForHomeIndexResponseModel>();
 
-        public Task<IEnumerable<ContestForListingResponseModel>> GetAll(ContestFiltersRequestModel? model)
-            => this.contestsBusinessService
+        public async Task<PagedResultResponse<ContestForListingResponseModel>> GetAll(ContestFiltersRequestModel? model)
+            => await this.contestsBusinessService
                 .GetAllByFilters(model?.Map<ContestFiltersServiceModel>())
-                .MapCollection<ContestForListingResponseModel>();
+                .Map<PagedResultResponse<ContestForListingResponseModel>>();
     }
 }

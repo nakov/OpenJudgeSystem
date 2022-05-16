@@ -1,5 +1,3 @@
-using OJS.Services.Common;
-
 namespace OJS.Services.Ui.Business.Implementations
 {
     using System;
@@ -8,16 +6,20 @@ namespace OJS.Services.Ui.Business.Implementations
     using System.Threading.Tasks;
     using FluentExtensions.Extensions;
     using OJS.Data.Models.Participants;
+    using OJS.Services.Common;
     using OJS.Services.Common.Models;
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Contests;
     using OJS.Data.Models.Contests;
     using OJS.Services.Infrastructure.Exceptions;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using SoftUni.Common.Extensions;
+    using SoftUni.Common.Models;
 
     public class ContestsBusinessService : IContestsBusinessService
     {
         private const int DefaultContestsToTake = 5;
+        private const int DefaultContestsPerPage = 10;
 
         private readonly IContestsDataService contestsData;
         private readonly IExamGroupsDataService examGroupsData;
@@ -147,40 +149,39 @@ namespace OJS.Services.Ui.Business.Implementations
             }
         }
 
-        public async Task<IEnumerable<ContestForListingServiceModel>> GetAllByFilters(ContestFiltersServiceModel? model)
+        public async Task<PagedResult<ContestForListingServiceModel>> GetAllByFilters(
+            ContestFiltersServiceModel? model)
         {
+            var pageNumber = model?.PageNumber ?? 1;
+            var itemsPerPage = model?.ItemsPerPage ?? DefaultContestsPerPage;
+
             if (model == null)
             {
-                return Enumerable.Empty<ContestForListingServiceModel>();
+                return new PagedResult<ContestForListingServiceModel>
+                {
+                    PageNumber = pageNumber,
+                };
             }
 
-            var contests = await this.GetAllByStatusAndCategory(model.Statuses, model.CategoryId).ToListAsync();
+            var contests = this.GetAllByStatusAndCategory(model.Statuses, model.CategoryId);
 
             if (model.ExecutionStrategyTypes.Any())
             {
                 contests = contests
-                    .Where(x => x.ExecutionStrategyTypes.Any(est => model.ExecutionStrategyTypes.Contains(est)))
-                    .ToList();
+                    .Where(x => x.ExecutionStrategyTypes.Any(est => model.ExecutionStrategyTypes.Contains(est)));
             }
 
-            return contests;
+            return await contests.ToPagedResultAsync(itemsPerPage, pageNumber);
         }
 
-        private async Task<IEnumerable<ContestForListingServiceModel>> GetAllContests(int? categoryId)
-            => new List<ContestForListingServiceModel>()
-                .Concat(await this.GetContestByFilter(ContestStatus.Active, categoryId))
-                .Concat(await this.GetContestByFilter(ContestStatus.Past, categoryId));
-
-        private Task<IEnumerable<ContestForListingServiceModel>> GetContestByFilter(
-            ContestStatus status,
-            int? categoryId)
+        private IQueryable<ContestForListingServiceModel> GetContestByFilter(ContestStatus status, int? categoryId)
             => (status == ContestStatus.Active
                 ? this.contestsData
-                    .GetAllCompetable<ContestForListingServiceModel>(categoryId)
+                    .GetAllCompetableQuery(categoryId).MapCollection<ContestForListingServiceModel>()
                 : this.contestsData
-                    .GetAllPast<ContestForListingServiceModel>(categoryId));
+                    .GetAllPastQuery(categoryId).MapCollection<ContestForListingServiceModel>());
 
-        private async Task<IEnumerable<ContestForListingServiceModel>> GetAllByStatusAndCategory(
+        private IQueryable<ContestForListingServiceModel> GetAllByStatusAndCategory(
             IEnumerable<ContestStatus>? statuses,
             int? categoryId)
         {
@@ -188,8 +189,8 @@ namespace OJS.Services.Ui.Business.Implementations
 
             return contestFilters?.Count switch
             {
-                1 => await this.GetContestByFilter(contestFilters.First(), categoryId),
-                _ => await this.GetAllContests(categoryId),
+                1 => this.GetContestByFilter(contestFilters.First(), categoryId),
+                _ => this.contestsData.GetAllVisible().MapCollection<ContestForListingServiceModel>(),
             };
         }
 

@@ -3,6 +3,7 @@ namespace OJS.Services.Ui.Business
     using OJS.Data.Models.Contests;
     using OJS.Services.Common.Models;
     using OJS.Services.Ui.Models.Contests;
+    using SoftUni.Common.Models;
     using SoftUni.Services.Infrastructure;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -40,6 +41,6 @@ namespace OJS.Services.Ui.Business
 
         Task ValidateContest(Contest contest, string userId, bool isUserAdmin, bool official);
 
-        Task<IEnumerable<ContestForListingServiceModel>> GetAllByFilters(ContestFiltersServiceModel? model);
+        Task<PagedResult<ContestForListingServiceModel>> GetAllByFilters(ContestFiltersServiceModel? model);
     }
 }

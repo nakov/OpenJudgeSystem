@@ -12,4 +12,8 @@ public class ContestFiltersServiceModel
 
     public IEnumerable<ExecutionStrategyType> ExecutionStrategyTypes { get; set; } =
         Enumerable.Empty<ExecutionStrategyType>();
+
+    public int? PageNumber { get; set; }
+
+    public int? ItemsPerPage { get; set; }
 }

@@ -16,4 +16,8 @@ public class ContestFiltersRequestModel : IMapTo<ContestFiltersServiceModel>
 
     [BindProperty(Name = "strategy")]
     public IEnumerable<ExecutionStrategyType>? ExecutionStrategyTypes { get; set; }
+
+    public int? PageNumber { get; set; }
+
+    public int? ItemsPerPage { get; set; }
 }

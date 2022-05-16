@@ -2,16 +2,19 @@ namespace OJS.Services.Ui.Data
 {
     using OJS.Data.Models.Contests;
     using OJS.Services.Common.Data;
-    using SoftUni.AutoMapper.Infrastructure.Models;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
 
     public interface IContestsDataService : IDataService<Contest>
     {
-        Task<IEnumerable<TServiceModel>> GetAllCompetable<TServiceModel>(int? categoryId = null);
+        Task<IEnumerable<TServiceModel>> GetAllCompetable<TServiceModel>();
 
-        Task<IEnumerable<TServiceModel>> GetAllPast<TServiceModel>(int? categoryId = null);
+        IQueryable<Contest> GetAllCompetableQuery(int? categoryId);
+
+        Task<IEnumerable<TServiceModel>> GetAllPast<TServiceModel>();
+
+        IQueryable<Contest> GetAllPastQuery(int? categoryId);
 
         Task<Contest?> GetByIdWithProblems(int id);
 
