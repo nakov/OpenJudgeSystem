@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { isNil } from 'lodash';
-import List from '../../guidelines/lists/List';
+import List, { Orientation } from '../../guidelines/lists/List';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 
 import { FilterType, IFilter } from '../../../common/contest-types';
@@ -66,7 +66,7 @@ const ContestFilters = () => {
             <List
               values={groupFilters}
               itemFunc={renderFilterItem}
-              orientation="horizontal"
+              orientation={Orientation.horizontal}
               className={styles.listFilterItems}
               itemClassName={styles.listFilterItem}
             />

@@ -2,6 +2,13 @@ import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { convertToTwoDigitValues, secondsToFullTime } from '../../../utils/dates';
 
+enum Metric {
+    seconds = 1,
+    minutes = 2,
+    hours = 3,
+    days = 4,
+}
+
 interface ICountdownRemainingType {
     days: number;
     hours: number;
@@ -11,7 +18,7 @@ interface ICountdownRemainingType {
 
 interface ICountdownProps {
     duration: number;
-    metric: 'seconds' | 'minutes' | 'hours' | 'days';
+    metric: Metric;
     renderRemainingTime?: (countdownRemaining: ICountdownRemainingType) => React.ReactElement;
     handleOnCountdownEnd?: () => void;
     handleOnCountdownChange?: (seconds: number) => void;
@@ -39,10 +46,10 @@ const defaultRender = (remainingTime: ICountdownRemainingType) => {
 // eslint-disable-next-line max-len
 const Countdown = ({ duration, metric, renderRemainingTime = defaultRender, handleOnCountdownEnd = () => {}, handleOnCountdownChange = () => {} }: ICountdownProps) => {
     const metricsToSecondsDelta = useMemo(() => ({
-        seconds: 1,
-        minutes: 60,
-        hours: 60 * 60,
-        days: 24 * 60 * 60,
+        [Metric.seconds]: 1,
+        [Metric.minutes]: 60,
+        [Metric.hours]: 60 * 60,
+        [Metric.days]: 24 * 60 * 60,
     }), []);
 
     const [ remainingInSeconds, setRemainingInSeconds ] = useState(0);
@@ -79,6 +86,10 @@ const Countdown = ({ duration, metric, renderRemainingTime = defaultRender, hand
 };
 
 export default Countdown;
+
+export {
+    Metric,
+};
 
 export type {
     ICountdownRemainingType,

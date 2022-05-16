@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import ContestCard from './contest-card/ContestCard';
 import Heading from '../guidelines/headings/Heading';
-import List from '../guidelines/lists/List';
+import List, { Orientation } from '../guidelines/lists/List';
 import { ButtonSize, LinkButton, LinkButtonType } from '../guidelines/buttons/Button';
 import { IIndexContestsType } from '../../common/types';
 
@@ -63,7 +63,7 @@ const ContestsList = ({
                 <List
                   values={contests}
                   itemFunc={renderContest}
-                  orientation="horizontal"
+                  orientation={Orientation.horizontal}
                 />
             </div>
             <LinkButton

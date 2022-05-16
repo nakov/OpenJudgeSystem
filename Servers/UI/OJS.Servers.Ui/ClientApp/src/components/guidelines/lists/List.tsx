@@ -13,13 +13,25 @@ import {
 
 import styles from './List.module.scss';
 
+enum ListType {
+    normal = 1,
+    numbered = 2,
+    alpha = 3,
+    bulleted = 4,
+}
+
+enum Orientation {
+    vertical = 1,
+    horizontal = 2,
+}
+
 interface IListProps<TValue> extends IHaveOptionalClassName {
     values: TValue[];
     itemFunc: (value: TValue) => React.ReactElement;
     keyFunc?: (value: TValue) => string,
     itemClassName?: ClassNameType;
-    type?: 'normal' | 'numbered' | 'alpha' | 'bulleted';
-    orientation?: 'vertical' | 'horizontal';
+    type?: ListType;
+    orientation?: Orientation;
     wrap?: boolean;
     fullWidth?: boolean;
 }
@@ -40,22 +52,22 @@ const List = <TValue extends unknown>({
     keyFunc = defaultKeyFunc,
     className = '',
     itemClassName = '',
-    type = 'normal',
-    orientation = 'vertical',
+    type = ListType.normal,
+    orientation = Orientation.vertical,
     wrap = false,
     fullWidth = false,
 }: IListProps<TValue>) => {
     const listTypeClassName =
-        type === 'normal'
+        type === ListType.normal
             ? styles.normal
-            : type === 'numbered'
+            : type === ListType.numbered
                 ? styles.numbered
-                : type === 'alpha'
+                : type === ListType.alpha
                     ? concatClassNames(styles.numbered, styles.alpha)
                     : styles.bulleted;
 
     const listOrientationClassName =
-        orientation === 'vertical'
+        orientation === Orientation.vertical
             ? ''
             : styles.horizontal;
 
@@ -84,7 +96,7 @@ const List = <TValue extends unknown>({
         [ itemClassNameCombined, itemFunc, keyFunc, values ],
     );
 
-    if (type === 'numbered') {
+    if (type === ListType.numbered) {
         return (
             <ol className={listClassName}>
                 {renderItems()}
@@ -100,3 +112,8 @@ const List = <TValue extends unknown>({
 };
 
 export default List;
+
+export {
+    ListType,
+    Orientation,
+};

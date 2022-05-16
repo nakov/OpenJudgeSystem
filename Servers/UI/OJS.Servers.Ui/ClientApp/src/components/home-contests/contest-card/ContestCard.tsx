@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useCallback } from 'react';
-import Countdown from '../../guidelines/countdown/Countdown';
+import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
 import { convertToSecondsRemaining } from '../../../utils/dates';
 import { IIndexContestsType } from '../../../common/types';
 import concatClassNames from '../../../utils/class-names';
@@ -47,7 +47,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                 <Countdown
                   key={id}
                   duration={convertToSecondsRemaining(new Date(endDate))}
-                  metric="seconds"
+                  metric={Metric.seconds}
                 />
             );
         },

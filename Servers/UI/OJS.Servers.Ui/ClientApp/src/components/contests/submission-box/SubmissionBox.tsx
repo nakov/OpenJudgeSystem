@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { isNil } from 'lodash';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import CodeEditor from '../../code-editor/CodeEditor';
-import List from '../../guidelines/lists/List';
+import List, { Orientation } from '../../guidelines/lists/List';
 import { Button } from '../../guidelines/buttons/Button';
 import ExecutionTypeSelector from '../execution-type-selector/ExecutionTypeSelector';
 
@@ -69,7 +69,7 @@ const SubmissionBox = () => {
                   className={styles.submissionTypesList}
                   values={allowedSubmissionTypes}
                   itemFunc={renderSubmissionTypesSelectors}
-                  orientation="horizontal"
+                  orientation={Orientation.horizontal}
                   wrap
                 />
             );

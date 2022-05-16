@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useCallback } from 'react';
-import List from '../../guidelines/lists/List';
+import List, { ListType } from '../../guidelines/lists/List';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import { Button, ButtonType } from '../../guidelines/buttons/Button';
 import styles from './ContestTasksNavigation.module.scss';
@@ -84,7 +84,7 @@ const ContestTasksNavigation = () => {
               itemFunc={renderTask}
               className={sideBarTasksListClassName}
               itemClassName={styles.taskListItem}
-              type="numbered"
+              type={ListType.numbered}
             />
         ),
         [ problems, renderTask, sideBarTasksListClassName ],

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../hooks/use-auth';
 import { LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
-import List from '../../components/guidelines/lists/List';
+import List, { Orientation } from '../../components/guidelines/lists/List';
 
 import styles from './PageNav.module.scss';
 
@@ -50,7 +50,7 @@ const PageNav = () => {
             <List
               values={routes}
               itemFunc={itemFunc}
-              orientation="horizontal"
+              orientation={Orientation.horizontal}
               className={styles.listNav}
 
             />
