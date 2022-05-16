@@ -40,16 +40,16 @@ describe('Testing contest', () => {
         await expect(check).toBeTruthy();
     });
 
-    xit('Expect to have at least one active execution type', async () => {
+    it('Expect to have at least one active execution type', async () => {
         const strategies = await ContestPage.allContestListSideNavigation;
-        const check = await contestChecker.leftSideNavigationCheck(strategies);
+        const check = await contestChecker.executionTypeCheck(strategies);
         console.log('+++++++++++++++++++++++++++++++');
         console.log(strategies[0]);
         console.log('+++++++++++++++++++++++++++++++');
         await expect(check).toBeTruthy();
     });
 
-    it('Expect left navigation to have title', async () => {
+    xit('Expect left navigation to have title', async () => {
         const title = await ContestPage.leftSideNavigationTitle;
         await expect(title).toBeDisplayed();
         await expect(title).toHaveText('Tasks');
