@@ -8,7 +8,6 @@ import styles from './ContestsPage.module.scss';
 import { IIndexContestsType } from '../../common/types';
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
 import List from '../../components/guidelines/lists/List';
-import ContestCategories from '../../components/contests/contest-categories/ContestCategories';
 
 const ContestsPage = () => {
     const { state: { contests, filters } } = useContests();
@@ -44,10 +43,7 @@ const ContestsPage = () => {
 
     return (
         <div className={styles.container}>
-            <div>
-                <ContestCategories />
-                <ContestFilters />
-            </div>
+            <ContestFilters />
             <div>
                 <List
                     values={contests}

@@ -1,11 +1,12 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { without } from 'lodash';
+import { isEmpty, isNil, without } from 'lodash';
 import { IHaveChildrenProps } from '../components/common/Props';
 import { IIndexContestsType } from '../common/types';
 import { ContestState, FilterType, IFilter } from '../common/contest-types';
 import { useHttp } from './use-http';
 import { useUrls } from './use-urls';
 import { generateFilterItems } from '../common/filter-utils';
+import { useLoading } from './use-loading';
 
 interface IContestsContext {
     state: {
@@ -15,7 +16,7 @@ interface IContestsContext {
     };
     actions: {
         reload: () => Promise<void>;
-        applyFilter: (filter: IFilter) => void;
+        applyFilter: (filter: IFilter, singleForType?: boolean) => void;
         clearFilters: () => void;
     };
 }
@@ -42,6 +43,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ filters, setFilters ] = useState(defaultState.state.filters);
 
     const { getUrlForAllContests } = useUrls();
+    const { startLoading, stopLoading } = useLoading();
 
     const getUrl = useCallback(
         () => getUrlForAllContests({ filters }),
@@ -54,10 +56,14 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     } = useHttp(getUrl);
 
     const applyFilter = useCallback(
-        (filter) => {
-            const newFilters = filters.indexOf(filter) >= 0
-                ? without(filters, filter)
-                : [ ...filters, filter ];
+        (filter: IFilter, singleForType = false) => {
+            let newFilters = isNil(filters.find(f => f.id === filter.id))
+                ? [ ...filters, filter ]
+                : without(filters, filter);
+
+            if (singleForType) {
+                newFilters = newFilters.filter(f => f.type !== filter.type || f.id === filter.id);
+            }
 
             setFilters(newFilters);
         },
@@ -73,7 +79,9 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     const reload = useCallback(
         async () => {
+            startLoading();
             await get();
+            stopLoading();
         },
         [ get ],
     );

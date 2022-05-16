@@ -1,11 +1,10 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { without } from 'lodash';
+import { isEmpty } from 'lodash';
 import { IHaveChildrenProps } from '../components/common/Props';
-import { IContestCategoryTreeType, IIndexContestsType } from '../common/types';
-import { ContestState, FilterType, IFilter } from '../common/contest-types';
+import { IContestCategoryTreeType } from '../common/types';
 import { useHttp } from './use-http';
 import { useUrls } from './use-urls';
-import { generateFilterItems } from '../common/filter-utils';
+import { useLoading } from './use-loading';
 
 interface IContestCategoriesContext {
     state: {
@@ -30,6 +29,7 @@ const ContestCategoriesContext = createContext<IContestCategoriesContext>(defaul
 const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps) => {
     const [categories, setCategories] = useState(defaultState.state.categories);
     const { getUrlForCategoriesTree } = useUrls();
+    const { startLoading, stopLoading } = useLoading();
 
     const getCategoriesTreeUrl = useCallback(
         () => getUrlForCategoriesTree(),
@@ -43,7 +43,9 @@ const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps
 
     const reload = useCallback(
         async () => {
+            startLoading();
             await get();
+            stopLoading();
         },
         [ get ],
     );
@@ -59,6 +61,10 @@ const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps
 
     useEffect(
         () => {
+            if (isEmpty(data)) {
+                return;
+            }
+
             setCategories(data as IContestCategoryTreeType[]);
         },
         [ data ],

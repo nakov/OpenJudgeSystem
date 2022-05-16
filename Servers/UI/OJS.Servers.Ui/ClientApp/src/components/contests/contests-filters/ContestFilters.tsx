@@ -4,6 +4,7 @@ import List from '../../guidelines/lists/List';
 import Heading from '../../guidelines/headings/Heading';
 
 import { FilterType, IFilter } from '../../../common/contest-types';
+import ContestCategories from '../../../components/contests/contest-categories/ContestCategories';
 
 import styles from './ContestFilters.module.scss';
 import Button from '../../guidelines/buttons/Button';
@@ -85,6 +86,7 @@ const ContestFilters = () => {
     return (
         <div className={styles.container}>
             <Heading type="secondary">Filters: </Heading>
+            <ContestCategories />
             <List
               values={filtersGroups}
               itemFunc={renderFilter}

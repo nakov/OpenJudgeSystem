@@ -1,5 +1,6 @@
 namespace OJS.Services.Common.Implementations;
 
+using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Cache;
@@ -35,7 +36,7 @@ public class CacheItemsProviderService : ICacheItemsProviderService
 
         async Task<IEnumerable<ContestCategoryListViewModel>> GetSubCategories()
             => await this.contestCategoriesData
-                .GetAllVisible()
+                .GetAllVisibleOrdered()
                 .Where(cc => categoryId.HasValue ? cc.ParentId == categoryId : cc.ParentId == null)
                 .OrderBy(cc => cc.OrderBy)
                 .MapCollection<ContestCategoryListViewModel>()
@@ -74,9 +75,7 @@ public class CacheItemsProviderService : ICacheItemsProviderService
 
         async Task<IEnumerable<ContestCategoryListViewModel>> GetMainCategories()
             => await this.contestCategoriesData
-                .GetAllVisibleMain()
-                .OrderBy(x => x.OrderBy)
-                .MapCollection<ContestCategoryListViewModel>()
+                .GetAllVisibleMainOrdered<ContestCategoryListViewModel>()
                 .ToListAsync();
     }
 
@@ -85,12 +84,16 @@ public class CacheItemsProviderService : ICacheItemsProviderService
         return await this.cache.Get(CacheConstants.ContestCategoriesTree, GetTree, cacheSeconds);
 
         async Task<IEnumerable<ContestCategoryTreeViewModel>> GetTree()
-            => (await this.contestCategoriesData
-                .GetAllVisibleMain()
-                .OrderBy(x => x.OrderBy)
-                .Include(c => c.Children)
-                .ToListAsync())
-                .Select(category => category.Map<ContestCategoryTreeViewModel>());
+        {
+            var categories = await this.contestCategoriesData
+                .GetAllVisibleMainOrdered<ContestCategoryTreeViewModel>()
+                .ToListAsync();
+
+            await categories.ForEachSequential(async category =>
+                await AddChildren(category.Children));
+
+            return categories;
+        }
     }
 
     public Task<string?> GetContestCategoryName(int categoryId, int? cacheSeconds)
@@ -139,4 +142,16 @@ public class CacheItemsProviderService : ICacheItemsProviderService
             this.cache.Remove(parentCategoriesCacheId);
         }
     }
+
+    private Task AddChildren(IEnumerable<ContestCategoryTreeViewModel> children)
+        => children.ForEachSequential(async child =>
+        {
+            child.Children = await this.contestCategoriesData
+                .GetAllVisibleOrdered()
+                .Where(x => x.ParentId == child.Id)
+                .MapCollection<ContestCategoryTreeViewModel>()
+                .ToListAsync();
+
+            await this.AddChildren(child.Children);
+        });
 }

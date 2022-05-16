@@ -154,14 +154,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 return Enumerable.Empty<ContestForListingServiceModel>();
             }
 
-            var contests = await this.GetAllByStatuses(model.Statuses).ToListAsync();
-
-            if (model.CategoryId.HasValue)
-            {
-                contests = contests
-                    .Where(x => x.CategoryId == model.CategoryId.Value)
-                    .ToList();
-            }
+            var contests = await this.GetAllByStatusAndCategory(model.Statuses, model.CategoryId).ToListAsync();
 
             if (model.ExecutionStrategyTypes.Any())
             {
@@ -173,28 +166,30 @@ namespace OJS.Services.Ui.Business.Implementations
             return contests;
         }
 
-        private async Task<IEnumerable<ContestForListingServiceModel>> GetAllContests()
+        private async Task<IEnumerable<ContestForListingServiceModel>> GetAllContests(int? categoryId)
             => new List<ContestForListingServiceModel>()
-                .Concat(await this.GetContestByFilter(ContestStatus.Active))
-                .Concat(await this.GetContestByFilter(ContestStatus.Past));
+                .Concat(await this.GetContestByFilter(ContestStatus.Active, categoryId))
+                .Concat(await this.GetContestByFilter(ContestStatus.Past, categoryId));
 
-        private Task<IEnumerable<ContestForListingServiceModel>> GetContestByFilter(ContestStatus status)
+        private Task<IEnumerable<ContestForListingServiceModel>> GetContestByFilter(
+            ContestStatus status,
+            int? categoryId)
             => (status == ContestStatus.Active
                 ? this.contestsData
-                    .GetAllCompetable<ContestForListingServiceModel>()
+                    .GetAllCompetable<ContestForListingServiceModel>(categoryId)
                 : this.contestsData
-                    .GetAllPast<ContestForListingServiceModel>());
+                    .GetAllPast<ContestForListingServiceModel>(categoryId));
 
-        private async Task<IEnumerable<ContestForListingServiceModel>> GetAllByStatuses(
-            IEnumerable<ContestStatus>? statuses)
+        private async Task<IEnumerable<ContestForListingServiceModel>> GetAllByStatusAndCategory(
+            IEnumerable<ContestStatus>? statuses,
+            int? categoryId)
         {
             var contestFilters = statuses?.ToList();
 
             return contestFilters?.Count switch
             {
-                1 => await this.GetContestByFilter(contestFilters.First()),
-                2 => await this.GetAllContests(),
-                _ => Enumerable.Empty<ContestForListingServiceModel>(),
+                1 => await this.GetContestByFilter(contestFilters.First(), categoryId),
+                _ => await this.GetAllContests(categoryId),
             };
         }
 

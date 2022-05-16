@@ -9,9 +9,9 @@ namespace OJS.Services.Ui.Data
 
     public interface IContestsDataService : IDataService<Contest>
     {
-        Task<IEnumerable<TServiceModel>> GetAllCompetable<TServiceModel>();
+        Task<IEnumerable<TServiceModel>> GetAllCompetable<TServiceModel>(int? categoryId = null);
 
-        Task<IEnumerable<TServiceModel>> GetAllPast<TServiceModel>();
+        Task<IEnumerable<TServiceModel>> GetAllPast<TServiceModel>(int? categoryId = null);
 
         Task<Contest?> GetByIdWithProblems(int id);
 

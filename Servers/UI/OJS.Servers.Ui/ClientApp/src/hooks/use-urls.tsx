@@ -25,13 +25,7 @@ const getUrlForStartContestParticipation =
 
 const getUrlForAllContests = ({ filters }: IAllContestsUrlParams) => {
     const queryParams = filters
-        .map(({ name, type }) => {
-            if (type == FilterType.Status) {
-                return `status=${name}`;
-            }
-
-            return `strategy=${name}`;
-        })
+        .map(({ name, type }) => `${type.toLowerCase()}=${name}`)
         .join('&');
 
     return (

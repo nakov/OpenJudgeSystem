@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace OJS.Services.Ui.Data.Implementations
 {
     using Microsoft.EntityFrameworkCore;
@@ -7,7 +5,6 @@ namespace OJS.Services.Ui.Data.Implementations
     using OJS.Data;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Problems;
-    using OJS.Services.Common;
     using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Infrastructure;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
@@ -25,8 +22,9 @@ namespace OJS.Services.Ui.Data.Implementations
             : base(db)
             => this.dates = dates;
 
-        public async Task<IEnumerable<TServiceModel>> GetAllCompetable<TServiceModel>()
+        public async Task<IEnumerable<TServiceModel>> GetAllCompetable<TServiceModel>(int? categoryId = null)
             => await this.GetAllVisibleQuery()
+                .Where(c => !categoryId.HasValue || c.CategoryId == categoryId)
                 .Include(c => c.Category)
                 .Where(c =>
                     c.StartTime <= this.dates.GetUtcNow() &&
@@ -35,8 +33,9 @@ namespace OJS.Services.Ui.Data.Implementations
                 .MapCollection<TServiceModel>()
                 .ToListAsync();
 
-        public async Task<IEnumerable<TServiceModel>> GetAllPast<TServiceModel>()
+        public async Task<IEnumerable<TServiceModel>> GetAllPast<TServiceModel>(int? categoryId = null)
             => await this.GetAllVisibleQuery()
+                .Where(c => !categoryId.HasValue || c.CategoryId == categoryId)
                 .Include(c => c.Category)
                 .Where(c => c.EndTime < this.dates.GetUtcNow())
                 .MapCollection<TServiceModel>()

@@ -6,7 +6,9 @@ import Heading from '../../guidelines/headings/Heading';
 
 import styles from './ContestCategories.module.scss';
 import { IContestCategoryTreeType } from '../../../common/types';
+import { FilterType, IFilter } from '../../../common/contest-types';
 import { isArray, isEmpty } from 'lodash';
+import { useContests } from '../../../hooks/use-contests';
 
 const ContestCategories = () => {
     const {
@@ -14,6 +16,12 @@ const ContestCategories = () => {
             categories,
         },
     } = useContestCategories();
+
+    const {
+        actions: {
+            applyFilter,
+        }
+    } = useContests();
 
     const renderTree = (node: IContestCategoryTreeType) => (
         <TreeItem
@@ -33,20 +41,28 @@ const ContestCategories = () => {
             return;
         }
 
-        console.log('This is leaf node');
-        console.log(node);
-        // TODO: fetch contests on leaf node
+        const filter = {
+            name: node.id.toString(),
+            id: node.id,
+            type: FilterType.Category } as IFilter;
+        
+        applyFilter(filter, true);
     };
 
     return (
         <div className={styles.container}>
-            <Heading type="secondary">Categories: </Heading>
+            <Heading
+                type="small"
+                className={styles.heading}
+            >
+                Category
+            </Heading>
             <TreeView
                 aria-label="rich object"
                 defaultCollapseIcon={<MdExpandMore />}
                 defaultExpandIcon={<MdChevronRight />}
             >
-                {categories?.map((c) => renderTree(c))}
+                {categories.map((c) => renderTree(c))}
             </TreeView>
         </div>
     );

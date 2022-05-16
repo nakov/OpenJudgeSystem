@@ -8,6 +8,7 @@ using System.Collections.Generic;
 
 public class ContestFiltersRequestModel : IMapTo<ContestFiltersServiceModel>
 {
+    [BindProperty(Name = "category")]
     public int? CategoryId { get; set; }
 
     [BindProperty(Name = "status")]
