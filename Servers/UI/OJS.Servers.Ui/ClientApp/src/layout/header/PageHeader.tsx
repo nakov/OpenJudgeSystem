@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { ReactNotifications } from 'react-notifications-component';
 import logo from './softuni-logo-horizontal.svg';
 import PageNav from '../nav/PageNav';
-import Heading from '../../components/guidelines/headings/Heading';
-import styles from './PageHeader.module.scss';
+import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import { useAuth } from '../../hooks/use-auth';
 import { administrationContestsGridUrl } from '../../utils/urls';
+import styles from './PageHeader.module.scss';
 
 const PageHeader = () => {
     const { user } = useAuth();
@@ -30,7 +30,11 @@ const PageHeader = () => {
             <ReactNotifications />
             <div className={styles.headerSize}>
                 <div className={styles.headerLinks}>
-                    <Heading id="page-header-h2" type="secondary" className={styles.heading}>
+                    <Heading
+                      id="page-header-h2"
+                      type={HeadingType.secondary}
+                      className={styles.heading}
+                    >
                         <a href="/">
                             <img src={logo} alt="softuni logo" />
                         </a>

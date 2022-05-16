@@ -84,7 +84,8 @@
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "eject": "react-scripts eject",
-    "lint": "./node_modules/.bin/eslint ./src/**/*.ts ./src/**/*.tsx"
+    "lint": "./node_modules/.bin/eslint ./src/**/*.ts ./src/**/*.tsx",
+    "analyze": "source-map-explorer 'build/static/js/*.js'"
   },
   "browserslist": [
     ">0.2%",

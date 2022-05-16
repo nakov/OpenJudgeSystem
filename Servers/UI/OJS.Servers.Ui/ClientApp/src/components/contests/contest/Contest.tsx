@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
-import Heading from '../../guidelines/headings/Heading';
+import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import ContestTasksNavigation from '../contest-tasks-navigation/ContestTasksNavigation';
 import SubmissionBox from '../submission-box/SubmissionBox';
 import ContestProblemDetails from '../contest-problem-details/ContestProblemDetails';
@@ -114,12 +114,12 @@ const Contest = () => {
         <>
             <div className={styles.headingContest}>
                 <Heading
-                  type="primary"
+                  type={HeadingType.primary}
                   className={styles.contestHeading}
                 >
                     {contest?.name}
                 </Heading>
-                <Heading type="secondary" className={secondaryHeadingClassName}>
+                <Heading type={HeadingType.secondary} className={secondaryHeadingClassName}>
                     {renderTimeRemaining()}
                     {renderScore()}
                 </Heading>

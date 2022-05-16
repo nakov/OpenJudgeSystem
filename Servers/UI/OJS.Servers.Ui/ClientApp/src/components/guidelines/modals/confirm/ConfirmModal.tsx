@@ -4,7 +4,7 @@ import Modal from 'react-modal';
 import { Button, ButtonSize, ButtonType } from '../../buttons/Button';
 
 import styles from './ConfirmModal.module.scss';
-import Heading from '../../headings/Heading';
+import Heading, { HeadingType } from '../../headings/Heading';
 
 interface IConfirmModalProps {
     title: string,
@@ -25,7 +25,7 @@ const ConfirmModal = ({ title, content, isOpen, onConfirm, onCancel }: IConfirmM
           shouldCloseOnEsc
           shouldCloseOnOverlayClick
         >
-            <Heading type="small" className={styles.modalHeader}>
+            <Heading type={HeadingType.small} className={styles.modalHeader}>
                 {title}
             </Heading>
             <p className={styles.modalContent}>

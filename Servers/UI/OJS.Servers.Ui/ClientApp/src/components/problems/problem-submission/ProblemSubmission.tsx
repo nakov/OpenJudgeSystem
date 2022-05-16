@@ -6,7 +6,7 @@ import { Button, ButtonType } from '../../guidelines/buttons/Button';
 import Text, { TextType } from '../../guidelines/text/Text';
 
 import styles from './ProblemSubmission.module.scss';
-import Label from '../../guidelines/labels/Label';
+import Label, { LabelType } from '../../guidelines/labels/Label';
 import ProblemSubmissionDetails from '../../contests/problem-submission-details/ProblemSubmissionDetails';
 import concatClassNames from '../../../utils/class-names';
 import DetailsIcon from '../../guidelines/icons/DetailsIcon';
@@ -52,11 +52,11 @@ const ProblemSubmission = ({ submission }: ISubmissionResultProps) => {
         () => {
             const type = isProcessed
                 ? isMaxPoints
-                    ? 'success'
+                    ? LabelType.success
                     : points > 0
-                        ? 'warning'
-                        : 'danger'
-                : 'info';
+                        ? LabelType.warning
+                        : LabelType.danger
+                : LabelType.info;
 
             const text = isProcessed
                 ? isMaxPoints

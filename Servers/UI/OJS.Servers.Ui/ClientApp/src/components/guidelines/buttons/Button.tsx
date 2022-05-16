@@ -9,27 +9,27 @@ import generateId from '../../../utils/id-generator';
 import styles from './Button.module.scss';
 
 enum ButtonState {
-    enabled = 'active',
-    disabled = 'disabled',
+    enabled = 1,
+    disabled = 2,
 }
 
 enum ButtonType {
-    primary = 'primary',
-    secondary = 'secondary',
-    plain = 'plain',
-    submit = 'submit',
+    primary = 1,
+    secondary = 2,
+    plain = 3,
+    submit = 4,
 }
 
 enum LinkButtonType {
-    primary = 'primary',
-    secondary = 'secondary',
-    plain = 'plain',
+    primary = 1,
+    secondary = 2,
+    plain = 3,
 }
 
 enum ButtonSize {
-    small = 'small',
-    medium = 'medium',
-    large = 'large',
+    small = 1,
+    medium = 2,
+    large = 3,
 }
 
 interface IButtonBaseProps<TButtonType> extends IHaveOptionalClassName, IHaveOptionalChildrenProps {
@@ -99,7 +99,7 @@ const Button = ({
 
     return (
         <button
-          type={type === 'submit'
+          type={type === ButtonType.submit
               ? 'submit'
               : 'button'}
           onClick={onClick}

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import styles from './HomeHeaderInfo.module.scss';
-import Heading from '../guidelines/headings/Heading';
+import Heading, { HeadingType } from '../guidelines/headings/Heading';
 import List from '../guidelines/lists/List';
-import { Button, ButtonType } from '../guidelines/buttons/Button';
+import { Button } from '../guidelines/buttons/Button';
 
 interface IHomeHeaderInfoProps {
     primaryText: string;
@@ -27,14 +27,14 @@ const HomeHeaderInfo = ({
         <>
             <Heading
               id="index-title-heading-h1"
-              type="primary"
+              type={HeadingType.primary}
               className={styles.headerPrimaryHeading}
             >
                 {primaryText}
             </Heading>
             <Heading
               id="index-title-heading-h2"
-              type="secondary"
+              type={HeadingType.secondary}
             >
                 {secondaryText}
             </Heading>

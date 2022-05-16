@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../../hooks/use-auth';
-import { LinkButton } from '../../components/guidelines/buttons/Button';
+import { LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import List from '../../components/guidelines/lists/List';
 
 import styles from './PageNav.module.scss';
@@ -35,8 +35,8 @@ const PageNav = () => {
 
     const itemFunc = ({ name, link, isPrimary, id }: IRouteType) => {
         const type = isPrimary
-            ? 'primary'
-            : 'secondary';
+            ? LinkButtonType.primary
+            : LinkButtonType.secondary;
 
         const btnClassName = styles.btn;
 
