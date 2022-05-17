@@ -1,25 +1,24 @@
 import React, { useCallback } from 'react';
-import { Link } from 'react-router-dom';
-import { ReactNotifications } from 'react-notifications-component';
 import logo from './softuni-logo-horizontal.svg';
 import PageNav from '../nav/PageNav';
 import Heading from '../../components/guidelines/headings/Heading';
 import styles from './PageHeader.module.scss';
 import { useAuth } from '../../hooks/use-auth';
 import { administrationContestsGridUrl } from '../../utils/urls';
+import { LinkButton } from '../../components/guidelines/buttons/Button';
 
 const PageHeader = () => {
     const { user } = useAuth();
 
     const renderLinks = useCallback(() => {
         const administrationLink = user.permissions.canAccessAdministration
-            ? <a href={administrationContestsGridUrl} className={styles.headerLink}>Administration</a>
+            ? <LinkButton type='link' to={administrationContestsGridUrl} isToExternal={true} text="Administration" />
             : null;
 
         return (
             <>
-                <Link id="nav-contests-link" to="/contests" className={styles.headerLink}>Contests</Link>
-                <Link id="nav-submissions-link" to="/submissions" className={styles.headerLink}>Submissions</Link>
+                <LinkButton type='link' id="nav-contests-link" to="/contests" text="Contests" />
+                <LinkButton type='link' id="nav-submissions-link" to="/submissions" text="Submissions" />
                 { administrationLink }
             </>
         );
@@ -27,7 +26,6 @@ const PageHeader = () => {
 
     return (
         <header id="pageHeader" className={styles.header}>
-            <ReactNotifications />
             <div className={styles.headerSize}>
                 <div className={styles.headerLinks}>
                     <Heading id="page-header-h2" type="secondary" className={styles.heading}>
