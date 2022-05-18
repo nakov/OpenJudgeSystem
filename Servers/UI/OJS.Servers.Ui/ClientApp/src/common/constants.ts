@@ -1,13 +1,13 @@
 const DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE = 10;
 
 enum ContestParticipationType {
-    Compete = "compete",
-    Practice = "practice",
+    Compete = 'compete',
+    Practice = 'practice',
 }
 
 enum ContestResultType {
-    Simple = "simple",
-    Full = "full",
+    Simple = 'simple',
+    Full = 'full',
 }
 
 export {

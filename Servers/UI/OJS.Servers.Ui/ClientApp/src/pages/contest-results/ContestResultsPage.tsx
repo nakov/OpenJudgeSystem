@@ -1,21 +1,15 @@
 import * as React from 'react';
-import { useMemo, useEffect } from 'react';
-import { DataGrid, GridColDef, GridRenderCellParams, GridValueGetterParams } from '@mui/x-data-grid';
+import { useEffect, useCallback } from 'react';
+import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useParams } from 'react-router';
+import { isNil } from 'lodash';
 import { setLayout } from '../shared/set-layout';
 import { makePrivate } from '../shared/make-private';
 import { useCurrentContestResults } from '../../hooks/contests/use-current-contest-results';
-import { ContestParticipationType, ContestResultType } from '../../common/constants'
+import { ContestParticipationType, ContestResultType } from '../../common/constants';
 import Heading from '../../components/guidelines/headings/Heading';
 import { IContestResultsParticipationProblemType, IContestResultsType } from '../../hooks/contests/types';
 import { LinkButton } from '../../components/guidelines/buttons/Button';
-import { isNil } from 'lodash';
-
-interface IContestResultsPageParamsProps {
-    contestId: string;
-    participationType: string;
-    resultType: string;
-}
 
 const participantNamesColumns: GridColDef[] = [
     {
@@ -44,39 +38,29 @@ const totalResultColumn: GridColDef = {
     sortable: true,
 };
 
-const getColumns = (results: IContestResultsType) => {
-    const problemResultColumns = useMemo(
-        () => getProblemResultColumns(results) || [],
-        [ results.problems ]
-    );
-
-    return participantNamesColumns
-        .concat(problemResultColumns)
-        .concat(totalResultColumn);
-}
-
-const getProblemResultColumns = (results: IContestResultsType) =>
-    results.problems?.map((p) => ({
-        field: `${p.id}`,
-        headerName: p.name,
-        description: p.name,
-        type: 'number',
-        minWidth: 70,
-        flex: 1,
-        sortable: true,
-        renderCell: (params: GridRenderCellParams<number>) => {
-            const problemResult = params.row.problemResults
-                .find((pr: IContestResultsParticipationProblemType) => pr.problemId === p.id) as IContestResultsParticipationProblemType;
-            const bestSubmission = problemResult?.bestSubmission;
-            return results.userHasContestRights && !isNil(bestSubmission)
-                ? <LinkButton
-                    type='link'
-                    text={`${bestSubmission.points}`}
-                    to={`/submissions/${bestSubmission.id}`}
+const getProblemResultColumns = (results: IContestResultsType) => results.problems?.map((p) => ({
+    field: `${p.id}`,
+    headerName: p.name,
+    description: p.name,
+    type: 'number',
+    minWidth: 70,
+    flex: 1,
+    sortable: true,
+    renderCell: (params: GridRenderCellParams<number>) => {
+        const problemResult = params.row.problemResults
+            .find((pr: IContestResultsParticipationProblemType) => pr.problemId === p.id) as IContestResultsParticipationProblemType;
+        const bestSubmission = problemResult?.bestSubmission;
+        return results.userHasContestRights && !isNil(bestSubmission)
+            ? (
+                <LinkButton
+                  type="link"
+                  text={`${bestSubmission.points}`}
+                  to={`/submissions/${bestSubmission.id}`}
                 />
-                : <p>{bestSubmission?.points || '-'}</p>
-        },
-    } as GridColDef));
+            )
+            : <p>{bestSubmission?.points || '-'}</p>;
+    },
+} as GridColDef));
 
 const ContestResultsPage = () => {
     const { contestId, participationType, resultType } = useParams();
@@ -88,15 +72,28 @@ const ContestResultsPage = () => {
         actions: { load },
     } = useCurrentContestResults();
 
+    const getColumns = useCallback((results: IContestResultsType) => {
+        const problemResultColumns = getProblemResultColumns(results) || [];
+
+        return participantNamesColumns
+            .concat(problemResultColumns)
+            .concat(totalResultColumn);
+    }, []);
+
     useEffect(() => {
-        (async () =>
-            await load(Number(contestId), official, full)
+        (() => load(Number(contestId), official, full)
         )();
     }, [ contestId, official, full, load ]);
 
     return (
         <>
-            <Heading>{participationType} results for constest - {contestResults.name}</Heading>
+            <Heading>
+                {participationType}
+                {' '}
+                results for constest -
+                {' '}
+                {contestResults.name}
+            </Heading>
             <DataGrid
               rows={contestResults.results}
               columns={getColumns(contestResults)}

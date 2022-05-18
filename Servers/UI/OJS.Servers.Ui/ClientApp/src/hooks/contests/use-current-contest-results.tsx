@@ -17,13 +17,7 @@ interface ICurrentContestResultsContext {
 interface ICurrentContestResultsProviderProps extends IHaveChildrenProps {
 }
 
-const defaultState = { 
-    state: { 
-        contestResults: {
-            results: [] as IContestResultsParticipationType[],
-        }  as IContestResultsType
-    },
-};
+const defaultState = { state: { contestResults: { results: [] as IContestResultsParticipationType[] } as IContestResultsType } };
 
 const ContestResultsContext = createContext<ICurrentContestResultsContext>(defaultState as ICurrentContestResultsContext);
 
@@ -37,13 +31,13 @@ const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProvi
     } = useHttp(getContestResultsUrl);
 
     const load = useCallback(async (id, official, full) => {
-            startLoading();
-            await getApiContestResults({
-                id,
-                official,
-                full,
-            });
-            stopLoading();
+        startLoading();
+        await getApiContestResults({
+            id,
+            official,
+            full,
+        });
+        stopLoading();
     }, [ getApiContestResults, startLoading, stopLoading ]);
 
     useEffect(
