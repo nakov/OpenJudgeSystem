@@ -85,7 +85,6 @@ const ContestFilters = () => {
 
     return (
         <div className={styles.container}>
-            <Heading type="secondary">Filters: </Heading>
             <ContestCategories className={styles.filterTypeContainer} />
             <List
               values={filtersGroups}
