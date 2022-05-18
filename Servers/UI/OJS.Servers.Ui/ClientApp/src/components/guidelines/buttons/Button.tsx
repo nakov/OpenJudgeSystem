@@ -93,7 +93,9 @@ const LinkButton = ({
 
     const typeClassName = classNameToType[type];
 
-    const sizeClassName = type === 'link' ? '' : sizeToClassName[size];
+    const sizeClassName = type === 'link'
+        ? ''
+        : sizeToClassName[size];
 
     const buttonClassName = concatClassNames(
         className,
@@ -106,7 +108,8 @@ const LinkButton = ({
         : to;
 
     const target = isToExternal
-        ? "_blank"
+        ? '_blank'
+        // eslint-disable-next-line no-undefined
         : undefined;
 
     return (

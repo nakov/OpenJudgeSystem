@@ -22,7 +22,7 @@ const getSubmissionResultsByProblem = `${baseUrl}/Submissions/GetSubmissionResul
 
 const administrationContestsGridUrl = `${administrationBaseUrl}/Contests`;
 
-const getContestResultsUrl = `${baseUrl}/ContestResults/GetResults/%id%?official=%official%&full=%full%`
+const getContestResultsUrl = `${baseUrl}/ContestResults/GetResults/%id%?official=%official%&full=%full%`;
 
 export {
     loginSubmitUrl,

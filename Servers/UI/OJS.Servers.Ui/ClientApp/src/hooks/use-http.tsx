@@ -5,7 +5,7 @@ import axios from 'axios';
 import { isFunction } from 'lodash';
 import { saveAs } from 'file-saver';
 import { HttpStatus } from '../common/common';
-import { IDictionary, IFileResponseType, ResponseTypeType } from '../common/common-types';
+import { IDictionary, IFileResponseType } from '../common/common-types';
 
 type UrlType = string | (() => string);
 
