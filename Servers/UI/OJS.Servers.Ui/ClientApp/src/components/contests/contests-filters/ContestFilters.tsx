@@ -59,7 +59,7 @@ const ContestFilters = () => {
     );
 
     const renderFilter = ({ type, filters: groupFilters }: IFiltersGroup) => (
-        <div>
+        <div className={styles.filterTypeContainer}>
             <Heading
               type="small"
               className={styles.heading}
@@ -86,11 +86,10 @@ const ContestFilters = () => {
     return (
         <div className={styles.container}>
             <Heading type="secondary">Filters: </Heading>
-            <ContestCategories />
+            <ContestCategories className={styles.filterTypeContainer} />
             <List
               values={filtersGroups}
               itemFunc={renderFilter}
-              className={styles.listFilters}
               fullWidth
             />
         </div>

@@ -1,16 +1,24 @@
-import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
-import { TreeView, TreeItem } from '@material-ui/lab';
-import { MdChevronRight, MdExpandMore } from 'react-icons/md';
-import { useContestCategories } from '../../../hooks/use-contest-categories';
+import React from 'react';
+import {TreeItem, TreeView} from '@material-ui/lab';
+import {MdChevronRight, MdExpandMore} from 'react-icons/md';
+import {useContestCategories} from '../../../hooks/use-contest-categories';
 import Heading from '../../guidelines/headings/Heading';
 
 import styles from './ContestCategories.module.scss';
-import { IContestCategoryTreeType } from '../../../common/types';
-import { FilterType, IFilter } from '../../../common/contest-types';
-import { isArray, isEmpty } from 'lodash';
-import { useContests } from '../../../hooks/use-contests';
+import {IContestCategoryTreeType} from '../../../common/types';
+import {FilterType} from '../../../common/contest-types';
+import {isArray, isEmpty} from 'lodash';
+import {useContests} from '../../../hooks/use-contests';
+import {generateFilterItems} from "../../../common/filter-utils";
+import {ClassNameType, IHaveOptionalClassName} from "../../common/Props";
+import concatClassNames from "../../../utils/class-names";
 
-const ContestCategories = () => {
+interface IContestCategoriesProps extends IHaveOptionalClassName {
+}
+
+const ContestCategories = ({
+    className = ''
+}: IContestCategoriesProps) => {
     const {
         state: {
             categories,
@@ -40,17 +48,18 @@ const ContestCategories = () => {
         if (!isEmpty(node.children)) {
             return;
         }
-
-        const filter = {
-            name: node.id.toString(),
-            id: node.id,
-            type: FilterType.Category } as IFilter;
+        
+        const filter = generateFilterItems(
+            FilterType.Category,
+            { name: node.name, value: node.id.toString() })[0];
         
         applyFilter(filter, true);
     };
+    
+    const newClassName = concatClassNames(styles.container, className);
 
     return (
-        <div className={styles.container}>
+        <div className={newClassName}>
             <Heading
                 type="small"
                 className={styles.heading}

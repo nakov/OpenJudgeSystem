@@ -10,6 +10,7 @@ interface IUrlsContext {
     getUrlForMainCategories: () => string;
     getUrlForSubcategories: (params: IContestCategoriesUrlParams) => string;
     getUrlForParentCategories: (params: IContestCategoriesUrlParams) => string;
+    getUrlForAllContestStrategyFilter: () => string;
 }
 
 const UrlsContext = createContext<IUrlsContext>({} as IUrlsContext);
@@ -24,7 +25,7 @@ const getUrlForStartContestParticipation =
 
 const getUrlForAllContests = ({ filters, page }: IAllContestsUrlParams) => {
     const queryParams = filters
-        .map(({ name, type }) => `${type.toLowerCase()}=${name}`)
+        .map(({ value, type }) => `${type.toLowerCase()}=${value}`)
         .join('&')
         + `&page=${page}`;
 
@@ -47,6 +48,9 @@ const getUrlForSubcategories =
 const getUrlForParentCategories =
     ({ id }: IContestCategoriesUrlParams) => `${baseUrl}/ContestCategories/GetParentCategories/${id}`;
 
+const getUrlForAllContestStrategyFilter =
+    () => `${baseUrl}/SubmissionTypes/GetAll`;
+
 const UrlsProvider = ({ children }: IUrlsProviderProps) => {
     const value = {
         getUrlForStartContestParticipation,
@@ -55,6 +59,7 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
         getUrlForMainCategories,
         getUrlForSubcategories,
         getUrlForParentCategories,
+        getUrlForAllContestStrategyFilter,
     };
 
     return (

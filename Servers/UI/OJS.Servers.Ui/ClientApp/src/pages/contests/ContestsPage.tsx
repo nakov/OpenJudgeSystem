@@ -40,15 +40,15 @@ const ContestsPage = () => {
     useEffect(
         () => {
             setSearchParams(filters.reduce((p:any, f) => {
-                const { type, name } = f;
-                const names = isNil(p[type])
+                const { type, value } = f;
+                const values = isNil(p[type])
                     ? []
                     : p[type];
-                names.push(name);
+                values.push(value);
 
                 return {
                     ...p,
-                    [type]: names,
+                    [type]: values,
                 };
             }, {}));
         },

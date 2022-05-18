@@ -12,5 +12,7 @@ public interface ISubmissionTypesBusinessService : IService
 
     public Task<IEnumerable<SubmissionTypeServiceModel>> GetAllowedSubmissionTypes(int problemId);
 
+    public Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAll();
+
     void ValidateSubmissionType(int submissionTypeId, Problem problem, bool shouldAllowBinaryFiles = false);
 }

@@ -165,32 +165,37 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var contests = this.GetAllByStatusAndCategory(model.Statuses, model.CategoryId);
 
-            if (model.ExecutionStrategyTypes.Any())
+            if (model.SubmissionTypeIds.Any())
             {
                 contests = contests
-                    .Where(x => x.ExecutionStrategyTypes.Any(est => model.ExecutionStrategyTypes.Contains(est)));
+                    .Where(c => c.ProblemGroups
+                        .SelectMany(pg => pg.Problems)
+                        .SelectMany(x => x.SubmissionTypesInProblems)
+                        .Select(x => x.SubmissionTypeId)
+                        .Any(id => model.SubmissionTypeIds.Contains(id)));
             }
 
             return await contests
                 .OrderBy(c => c.OrderBy)
+                .MapCollection<ContestForListingServiceModel>()
                 .ToPagedResultAsync(itemsPerPage, pageNumber);
         }
 
-        private IQueryable<ContestForListingServiceModel> GetContestByFilter(ContestStatus status, int? categoryId)
+        private IQueryable<Contest> GetContestByFilter(ContestStatus status, int? categoryId)
             => (status == ContestStatus.Active
                 ? this.contestsData
-                    .GetAllCompetableQuery(categoryId).MapCollection<ContestForListingServiceModel>()
+                    .GetAllCompetableQuery(categoryId)
                 : this.contestsData
-                    .GetAllPastQuery(categoryId).MapCollection<ContestForListingServiceModel>());
+                    .GetAllPastQuery(categoryId));
 
-        private IQueryable<ContestForListingServiceModel> GetAllVisibleContestsByCategory(int? categoryId)
+        private IQueryable<Contest> GetAllVisibleContestsByCategory(int? categoryId)
             => (categoryId.HasValue
                 ? this.contestsData
-                    .GetAllVisibleByCategory(categoryId.Value).MapCollection<ContestForListingServiceModel>()
+                    .GetAllVisibleByCategory(categoryId.Value)
                 : this.contestsData
-                    .GetAllVisible().MapCollection<ContestForListingServiceModel>());
+                    .GetAllVisible());
 
-        private IQueryable<ContestForListingServiceModel> GetAllByStatusAndCategory(
+        private IQueryable<Contest> GetAllByStatusAndCategory(
             IEnumerable<ContestStatus>? statuses,
             int? categoryId)
         {

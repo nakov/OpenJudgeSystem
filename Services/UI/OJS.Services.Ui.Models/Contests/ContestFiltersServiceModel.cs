@@ -10,8 +10,8 @@ public class ContestFiltersServiceModel
 
     public IEnumerable<ContestStatus> Statuses { get; set; } = Enumerable.Empty<ContestStatus>();
 
-    public IEnumerable<ExecutionStrategyType> ExecutionStrategyTypes { get; set; } =
-        Enumerable.Empty<ExecutionStrategyType>();
+    public IEnumerable<int> SubmissionTypeIds { get; set; } =
+        Enumerable.Empty<int>();
 
     public int? PageNumber { get; set; }
 

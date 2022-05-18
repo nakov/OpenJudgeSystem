@@ -12,9 +12,10 @@ const getNextIdGen = function* () {
 
 const getId = getNextIdGen();
 
-const generateFilterItems = (type: FilterType, ...names: string[]) => names.map((name) => ({
-    name,
+const generateFilterItems = (type: FilterType, ...filters: { name: string, value: string }[]) => filters.map((f) => ({
+    name: f.name,
     type,
+    value: f.value,
     id: getId.next().value,
 }));
 

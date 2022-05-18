@@ -22,6 +22,7 @@ import ProblemSubmissionsProvider from './hooks/submissions/use-problem-submissi
 import ContestsProvider from './hooks/use-contests';
 import ContestCategoriesProvider from './hooks/use-contest-categories';
 import CurrentContestResultsProvider from './hooks/contests/use-current-contest-results';
+import ContestStrategyFiltersProvider from "./hooks/use-contest-strategy-filters"; 
 
 const InitProviders = ({ providers, children }: any) => {
     const initial = (<>{children}</>);
@@ -43,6 +44,7 @@ const App = () => {
         AuthProvider,
         UsersProvider,
         ContestCategoriesProvider,
+        ContestStrategyFiltersProvider,
         ContestsProvider,
         HomeContestsProvider,
         ParticipationsProvider,

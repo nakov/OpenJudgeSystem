@@ -8,8 +8,15 @@ enum FilterType {
 
 interface IFilter {
     name: string;
+    value: string;
     id: number;
     type: FilterType;
+}
+
+interface IContestStrategyFilter {
+    name: string;
+    id: number;
+    usageOrder: boolean;
 }
 
 enum ContestType {
@@ -24,6 +31,7 @@ enum ContestState {
 
 export type {
     IFilter,
+    IContestStrategyFilter,
 };
 
 export {

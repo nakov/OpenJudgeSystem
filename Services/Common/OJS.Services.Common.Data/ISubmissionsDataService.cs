@@ -4,6 +4,7 @@ namespace OJS.Services.Common.Data
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
 
     public interface ISubmissionsDataService : IDataService<Submission>
     {
@@ -38,5 +39,7 @@ namespace OJS.Services.Common.Data
         bool HasSubmissionTimeLimitPassedForParticipant(int participantId, int limitBetweenSubmissions);
 
         bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId);
+
+        Task<IEnumerable<object>> GetAllLatest<TServiceModel>(int count);
     }
 }

@@ -6,6 +6,7 @@ namespace OJS.Services.Common.Data.Implementations
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
 
     public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataService
     {
@@ -109,5 +110,15 @@ namespace OJS.Services.Common.Data.Implementations
 
         public bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId) =>
             this.DbSet.Any(s => s.ProblemId == problemId && s.Participant!.UserId == userId && !s.Processed);
+
+        public async Task<IEnumerable<object>> GetAllLatest<TServiceModel>(int count)
+            => await this.GetQuery(
+                    orderBy: s => s.CreatedOn,
+                    descending: true,
+                    take: count)
+                .GroupBy(s => s.SubmissionType)
+                .OrderBy(g => g.Count())
+                .Select(g => new { g.Key, Count = g.Count() })
+                .ToListAsync();
     }
 }

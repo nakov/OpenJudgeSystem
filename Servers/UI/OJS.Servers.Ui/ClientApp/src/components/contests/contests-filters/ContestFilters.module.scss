@@ -5,17 +5,14 @@
   border-bottom: 1px solid $bottom-border-color;
 }
 
-.listFilters {
-  align-items: flex-start;
+.filterTypeContainer {
+  margin-top: 10px;
 }
 
 .listFilterItems {
-  margin-top: 5px;
+  display: block;
   .listFilterItem {
-    margin-left: 10px;
-    &:first-of-type {
-      margin: 5px 0 5px;
-    }
+    margin-top: 5px;
   }
 }
 
@@ -23,4 +20,8 @@
   padding: 7px 14px;
   border-radius: 0;
   border-width: 1px;
+}
+
+.container {
+  min-width: 300px;
 }

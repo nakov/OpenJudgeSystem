@@ -15,7 +15,7 @@ public class ContestFiltersRequestModel : IMapTo<ContestFiltersServiceModel>
     public IEnumerable<ContestStatus>? Statuses { get; set; }
 
     [BindProperty(Name = "strategy")]
-    public IEnumerable<ExecutionStrategyType>? ExecutionStrategyTypes { get; set; }
+    public IEnumerable<int>? SubmissionTypeIds { get; set; }
 
     [BindProperty(Name = "page")]
     public int? PageNumber { get; set; }

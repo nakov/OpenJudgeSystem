@@ -1,13 +1,13 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isNil, without } from 'lodash';
-import { IHaveChildrenProps, IHavePagesProps } from '../components/common/Props';
-import { IIndexContestsType } from '../common/types';
-import { ContestState, FilterType, IFilter } from '../common/contest-types';
-import { IPagedResultType } from '../common/types';
-import { useHttp } from './use-http';
-import { useUrls } from './use-urls';
-import { generateFilterItems } from '../common/filter-utils';
-import { useLoading } from './use-loading';
+import React, {createContext, useCallback, useContext, useEffect, useState} from 'react';
+import {isEmpty, isNil, without} from 'lodash';
+import {IHaveChildrenProps, IHavePagesProps} from '../components/common/Props';
+import {IIndexContestsType, IPagedResultType} from '../common/types';
+import {ContestState, FilterType, IFilter} from '../common/contest-types';
+import {useHttp} from './use-http';
+import {useUrls} from './use-urls';
+import {generateFilterItems} from '../common/filter-utils';
+import {useLoading} from './use-loading';
+import {useContestStrategyFilters} from "./use-contest-strategy-filters";
 
 interface IContestsContext extends IHavePagesProps {
     state: {
@@ -30,8 +30,10 @@ const defaultState = {
     state: {
         contests: [] as IIndexContestsType[],
         possibleFilters: [
-            ...generateFilterItems(FilterType.Status, ContestState.Active, ContestState.Past),
-            ...generateFilterItems(FilterType.Strategy, 'Python', 'JS', 'Java', 'C#', 'Go'),
+            ...generateFilterItems(
+                FilterType.Status,
+                { name: ContestState.Active, value: ContestState.Active },
+                { name: ContestState.Past, value: ContestState.Past }),
         ],
         filters: [] as IFilter[],
     },
@@ -42,7 +44,7 @@ const ContestsContext = createContext<IContestsContext>(defaultState as IContest
 
 const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ contests, setContests ] = useState(defaultState.state.contests);
-    const [ possibleFilters ] = useState(defaultState.state.possibleFilters);
+    const [ possibleFilters, setPossibleFilters ] = useState(defaultState.state.possibleFilters);
     const [ filters, setFilters ] = useState(defaultState.state.filters);
     const [ page, setPage ] = useState(defaultState.pageNumber);
     const [ pageProps, setPageProps ] = useState({} as IHavePagesProps);
@@ -59,6 +61,12 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         get,
         data,
     } = useHttp(getUrl);
+    
+    const {
+        state: {
+            strategies,
+        },
+    } = useContestStrategyFilters();
 
     const applyFilter = useCallback(
         (filter: IFilter, singleForType = false) => {
@@ -99,6 +107,28 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             })();
         },
         [ reload ],
+    );
+
+    useEffect(
+        () => {
+            if (isNil(strategies) || isEmpty(strategies)) {
+                return;
+            }
+            
+            console.log(strategies);
+            
+            const strategyFilters = strategies.map((s) => {
+                return {
+                    name: s.name,
+                    value: s.id.toString(),
+                };
+            });
+            
+            const strategyFilterItems = generateFilterItems(FilterType.Strategy, ...strategyFilters);
+            const newPossibleFilters = possibleFilters.concat(strategyFilterItems);
+            setPossibleFilters(newPossibleFilters);
+        },
+        [ strategies ],
     );
 
     useEffect(
