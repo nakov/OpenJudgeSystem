@@ -39,7 +39,5 @@ namespace OJS.Services.Common.Data
         bool HasSubmissionTimeLimitPassedForParticipant(int participantId, int limitBetweenSubmissions);
 
         bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId);
-
-        Task<IEnumerable<object>> GetAllLatest<TServiceModel>(int count);
     }
 }
