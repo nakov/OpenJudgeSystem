@@ -1,9 +1,9 @@
-import * as React from 'react';
-import { useState } from 'react';
-import { Box, createTheme, Tab } from '@material-ui/core';
+import React, { useState } from 'react';
 import { TabContext, TabList, TabPanel } from '@material-ui/lab';
 import { ThemeProvider } from '@mui/styles';
 import { Theme } from '@material-ui/core/styles/createTheme';
+
+import { Box, createTheme, Tab } from '@material-ui/core';
 
 interface ITabPanelProps {
     tabChildren: React.ReactNode[]

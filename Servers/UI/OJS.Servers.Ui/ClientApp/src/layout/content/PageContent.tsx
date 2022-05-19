@@ -49,7 +49,7 @@ const PageContent = () => (
     <main className={styles.main}>
         <Routes>
             {routes.map(({ path, Element }) => (
-                <Route path={path} element={<Element />} />
+                <Route key={path} path={path} element={<Element />} />
             ))}
         </Routes>
     </main>

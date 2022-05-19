@@ -17,6 +17,12 @@ interface IHeadingProps extends IHaveChildrenProps, IHaveOptionalClassName {
     id?: string;
 }
 
+const headingTypeToElementTypeMap = {
+    [HeadingType.primary]: 'h1',
+    [HeadingType.secondary]: 'h2',
+    [HeadingType.small]: 'h3',
+};
+
 const Heading = ({ children, type = HeadingType.primary, className = '', id = generateId() }: IHeadingProps) => {
     const headingTypeClassName = type === HeadingType.primary
         ? styles.primary
@@ -30,7 +36,7 @@ const Heading = ({ children, type = HeadingType.primary, className = '', id = ge
         className,
     );
 
-    const elementType = 'h1';
+    const elementType = headingTypeToElementTypeMap[type];
 
     return createElement(
         elementType, {
