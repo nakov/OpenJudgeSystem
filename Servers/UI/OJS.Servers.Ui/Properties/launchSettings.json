@@ -39,7 +39,8 @@
         "LOGGER_FILES_FOLDER_PATH": "../../../Logs",
         "SHARED_AUTH_COOKIE_DOMAIN": "localhost",
         "UI_URL": "http://localhost:5002",
-        "ADMINISTRATION_URL": "http://localhost:5001"
+        "ADMINISTRATION_URL": "http://localhost:5001",
+        "UI_HOME_YOUTUBE_VIDEO_ID": "IwLET8SDBE4"
       }
     }
   }

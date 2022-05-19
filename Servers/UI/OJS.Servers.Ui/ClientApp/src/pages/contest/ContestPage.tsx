@@ -5,22 +5,26 @@ import Contest from '../../components/contests/contest/Contest';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 import { useCurrentContest } from '../../hooks/use-current-contest';
+import { ContestParticipationType } from '../../common/constants';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface IContestPageParamsProps {
     contestId: string
     participationType: string
 }
 
 const ContestPage = () => {
-    const { contestId } = useParams<IContestPageParamsProps>();
-    const { participationType } = useParams<IContestPageParamsProps>();
+    const {
+        contestId,
+        participationType,
+    } = useParams();
     const { actions: { start } } = useCurrentContest();
 
     useEffect(() => {
         (async () => {
             const contest = {
                 id: Number(contestId),
-                isOfficial: participationType === 'compete',
+                isOfficial: participationType === ContestParticipationType.Compete,
             };
             await start(contest);
         })();

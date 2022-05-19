@@ -7,21 +7,21 @@ import { ClassNameType, IHaveChildrenProps, IHaveOptionalClassName } from '../..
 import styles from './FormControl.module.scss';
 
 interface IFormControlProps extends IHaveOptionalClassName{
-    name: string,
-    value: string,
-    labelText?: string,
-    labelClassName?: ClassNameType,
-    type?: 'radio' | 'checkbox' | 'text' | 'textarea' | 'input' | 'password',
-    onChange?: (value?:string) => void
-    onInput?: (value?:string) => void,
-    checked?: boolean,
-    id?: string,
+    name: string;
+    value: string;
+    labelText?: string;
+    labelClassName?: ClassNameType;
+    type?: 'radio' | 'checkbox' | 'text' | 'textarea' | 'input' | 'password';
+    onChange?: (value?:string) => void;
+    onInput?: (value?:string) => void;
+    checked?: boolean;
+    id?: string;
 }
 
 interface ILabelInternalProps extends IHaveChildrenProps, IHaveOptionalClassName {
-    text: string,
-    forKey: string,
-    id: string,
+    text: string;
+    forKey: string;
+    id: string;
 }
 
 const LabelInternal = ({ id, text, className, forKey, children }: ILabelInternalProps) => {

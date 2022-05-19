@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useCallback, useEffect } from 'react';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import FormControl from '../../components/guidelines/forms/FormControl';
 import { useAuth } from '../../hooks/use-auth';
 import Form from '../../components/guidelines/forms/Form';
 
 const LoginPage = () => {
     const { setUsername, setPassword, signIn, user } = useAuth();
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const onChangeUpdateUsername = useCallback((value: any) => {
         setUsername(value);
@@ -24,9 +24,9 @@ const LoginPage = () => {
     useEffect(() => {
         const { isLoggedIn } = user;
         if (isLoggedIn) {
-            history.push('/');
+            navigate('/');
         }
-    }, [ history, user ]);
+    }, [ navigate, user ]);
 
     return (
         <>

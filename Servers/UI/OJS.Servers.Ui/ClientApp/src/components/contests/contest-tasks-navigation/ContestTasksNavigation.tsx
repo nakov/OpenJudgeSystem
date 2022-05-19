@@ -1,17 +1,21 @@
 import * as React from 'react';
-import { useCallback } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import List from '../../guidelines/lists/List';
 import Heading from '../../guidelines/headings/Heading';
-import { Button } from '../../guidelines/buttons/Button';
+import { Button, LinkButton } from '../../guidelines/buttons/Button';
 import styles from './ContestTasksNavigation.module.scss';
 import concatClassNames from '../../../utils/class-names';
 import Label from '../../guidelines/labels/Label';
 import { IProblemType } from '../../../common/types';
 import { useProblems } from '../../../hooks/use-problems';
+import { useCurrentContest } from '../../../hooks/use-current-contest';
+import { ContestParticipationType, ContestResultType } from '../../../common/constants';
 
 const compareByOrderBy = (p1: IProblemType, p2: IProblemType) => p1.orderBy - p2.orderBy;
 
 const ContestTasksNavigation = () => {
+    const [ resultsLink, setResultsLink ] = useState('');
+
     const {
         state: {
             currentProblem,
@@ -19,6 +23,13 @@ const ContestTasksNavigation = () => {
         },
         actions: { selectProblemById },
     } = useProblems();
+
+    const {
+        state: {
+            contest,
+            isOfficial,
+        },
+    } = useCurrentContest();
 
     const renderIcon = useCallback(
         ({ points, maximumPoints }: IProblemType) => {
@@ -85,10 +96,19 @@ const ContestTasksNavigation = () => {
         [ problems, renderTask, sideBartasksListClassName ],
     );
 
+    useEffect(() => {
+        const participationType = isOfficial
+            ? ContestParticipationType.Compete
+            : ContestParticipationType.Practice;
+        const newResultsLink = `/contests/${contest?.id}/${participationType}/results/${ContestResultType.Simple}`;
+        setResultsLink(newResultsLink);
+    }, [ isOfficial, contest ]);
+
     return (
         <div className={styles.tasksSideNavigation}>
             <Heading type="secondary">Tasks</Heading>
             {renderTasksList()}
+            <LinkButton type="link" to={resultsLink} text="Results" />
         </div>
     );
 };

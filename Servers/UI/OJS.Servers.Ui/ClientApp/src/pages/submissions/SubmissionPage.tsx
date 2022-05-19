@@ -6,12 +6,13 @@ import { useSubmissionsDetails } from '../../hooks/submissions/use-submissions-d
 import SubmissionDetailsHeading from '../../components/submissions/test-runs/test-run-heading/SubmissionDetailsHeading';
 import { setLayout } from '../shared/set-layout';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface IParamsProps {
     submissionId: string
 }
 
 const SubmissionPage = () => {
-    const { submissionId } = useParams<IParamsProps>();
+    const { submissionId } = useParams();
     const { setCurrentSubmissionId, getSubmissionDetails } = useSubmissionsDetails();
 
     useEffect(() => {
