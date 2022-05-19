@@ -17,7 +17,6 @@ interface IFiltersGroup {
 }
 
 const ContestFilters = () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ filtersGroups, setFiltersGroups ] = useState<IFiltersGroup[]>([]);
 
     const {

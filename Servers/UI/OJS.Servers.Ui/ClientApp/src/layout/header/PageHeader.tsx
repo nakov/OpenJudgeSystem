@@ -4,7 +4,7 @@ import PageNav from '../nav/PageNav';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import { useAuth } from '../../hooks/use-auth';
 import { administrationContestsGridUrl } from '../../utils/urls';
-import { ButtonSize, LinkButton } from '../../components/guidelines/buttons/Button';
+import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 
 import styles from './PageHeader.module.scss';
 
@@ -13,13 +13,33 @@ const PageHeader = () => {
 
     const renderLinks = useCallback(() => {
         const administrationLink = user.permissions.canAccessAdministration
-            ? <LinkButton size={ButtonSize.none} to={administrationContestsGridUrl} isToExternal text="Administration" />
+            ? (
+                <LinkButton
+                  type={LinkButtonType.plain}
+                  size={ButtonSize.none}
+                  to={administrationContestsGridUrl}
+                  isToExternal
+                  text="Administration"
+                />
+            )
             : null;
 
         return (
             <>
-                <LinkButton size={ButtonSize.none} id="nav-contests-link" to="/contests" text="Contests" />
-                <LinkButton size={ButtonSize.none} id="nav-submissions-link" to="/submissions" text="Submissions" />
+                <LinkButton
+                  id="nav-contests-link"
+                  type={LinkButtonType.plain}
+                  size={ButtonSize.none}
+                  to="/contests"
+                  text="Contests"
+                />
+                <LinkButton
+                  id="nav-submissions-link"
+                  type={LinkButtonType.plain}
+                  size={ButtonSize.none}
+                  to="/submissions"
+                  text="Submissions"
+                />
                 { administrationLink }
             </>
         );

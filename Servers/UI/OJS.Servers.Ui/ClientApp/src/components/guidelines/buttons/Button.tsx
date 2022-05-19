@@ -36,7 +36,7 @@ enum ButtonSize {
 interface IButtonBaseProps<TButtonType> extends IHaveOptionalClassName, IHaveOptionalChildrenProps {
     id?: string;
     size?: ButtonSize;
-    text?: string,
+    text?: string | null,
     type?: TButtonType;
     state?: ButtonState;
 }
@@ -72,7 +72,7 @@ const validateOnlyChildrenOrText = (text: string | null, children: ReactNode | n
 
 const Button = ({
     onClick,
-    text = '',
+    text = null,
     children = null,
     className = '',
     type = ButtonType.primary,
@@ -116,7 +116,7 @@ const Button = ({
 
 const LinkButton = ({
     to,
-    text = '',
+    text = null,
     children = null,
     className = '',
     type = LinkButtonType.primary,

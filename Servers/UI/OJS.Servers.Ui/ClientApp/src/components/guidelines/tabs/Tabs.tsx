@@ -3,7 +3,8 @@ import { TabContext, TabList, TabPanel } from '@material-ui/lab';
 import { ThemeProvider } from '@mui/styles';
 import { Theme } from '@material-ui/core/styles/createTheme';
 
-import { Box, createTheme, Tab } from '@material-ui/core';
+import { createTheme, Tab } from '@material-ui/core';
+import { Box } from '@mui/material';
 
 interface ITabPanelProps {
     tabChildren: React.ReactNode[]

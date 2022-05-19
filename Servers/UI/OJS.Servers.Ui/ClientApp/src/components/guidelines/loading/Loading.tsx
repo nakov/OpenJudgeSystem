@@ -44,7 +44,7 @@ const Loading = ({
 
     if (isLoading) {
         return ReactDOM.createPortal(
-            LoadingInternal,
+            (<LoadingInternal />),
             loadingRoot,
         );
     }

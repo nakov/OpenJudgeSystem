@@ -7,12 +7,6 @@ import { setLayout } from '../shared/set-layout';
 import { useCurrentContest } from '../../hooks/use-current-contest';
 import { ContestParticipationType } from '../../common/constants';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-interface IContestPageParamsProps {
-    contestId: string
-    participationType: string
-}
-
 const ContestPage = () => {
     const {
         contestId,
