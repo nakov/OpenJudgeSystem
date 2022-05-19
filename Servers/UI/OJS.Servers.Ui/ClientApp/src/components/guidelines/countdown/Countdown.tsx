@@ -43,8 +43,12 @@ const defaultRender = (remainingTime: ICountdownRemainingType) => {
     );
 };
 
-// eslint-disable-next-line max-len
-const Countdown = ({ duration, metric, renderRemainingTime = defaultRender, handleOnCountdownEnd = () => {}, handleOnCountdownChange = () => {} }: ICountdownProps) => {
+const Countdown = ({
+    duration,
+    metric,
+    renderRemainingTime = defaultRender,
+    handleOnCountdownEnd = () => {}, handleOnCountdownChange = () => {},
+}: ICountdownProps) => {
     const metricsToSecondsDelta = useMemo(() => ({
         [Metric.seconds]: 1,
         [Metric.minutes]: 60,
