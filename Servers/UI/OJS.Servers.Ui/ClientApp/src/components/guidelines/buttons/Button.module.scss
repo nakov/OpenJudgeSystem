@@ -1,4 +1,5 @@
 @import "src/styles/components";
+@import "src/styles/colors";
 
 .btn {
   font-weight: 700;
@@ -16,13 +17,16 @@
   transition: all .28s ease-in-out;
   color: white;
 
+  &:hover {
+    cursor: pointer;
+  }
+
   &.primary {
     box-shadow: 0 4px 5px 0 rgba(0, 0, 0, .14), 0 1px 10px 0 rgba(0, 0, 0, .12), 0 2px 4px -1px rgba(0, 0, 0, .2);
     background-color: $background-color-btn-primary;
 
     &:hover {
       box-shadow: 6px 8px 15px 1px rgba(27, 139, 249, 0.2);
-      cursor: pointer;
     }
   }
 
@@ -47,10 +51,6 @@
     outline: inherit;
     padding: 0;
     margin: 0;
-
-    &:hover {
-      cursor: pointer;
-    }
   }
 
   &.disabled {
@@ -77,4 +77,14 @@
   &.large {
     @extend .large;
   }
+
+  &.none {
+    font-family: 'Lato', serif;
+    color: $text-dark-gray-color;
+
+    &:hover {
+      color: $background-color-btn-primary;
+    }
+  }
+
 }

@@ -30,6 +30,7 @@ enum ButtonSize {
     small = 1,
     medium = 2,
     large = 3,
+    none = 4,
 }
 
 interface IButtonBaseProps<TButtonType> extends IHaveOptionalClassName, IHaveOptionalChildrenProps {
@@ -46,6 +47,7 @@ interface IButtonProps extends IButtonBaseProps<ButtonType> {
 
 interface ILinkButtonProps extends IButtonBaseProps<LinkButtonType> {
     to: string;
+    isToExternal?: boolean,
 }
 
 const classNameToType = {
@@ -59,10 +61,11 @@ const sizeToClassName = {
     [ButtonSize.small]: styles.small,
     [ButtonSize.medium]: styles.medium,
     [ButtonSize.large]: styles.large,
+    [ButtonSize.none]: styles.none,
 };
 
 const validateOnlyChildrenOrText = (text: string | null, children: ReactNode | null) => {
-    if (isNil(text) && isNil(children)) {
+    if (!isNil(text) && !isNil(children)) {
         throw new Error('Buttons must have only `text` or `children`');
     }
 };
@@ -112,14 +115,15 @@ const Button = ({
 };
 
 const LinkButton = ({
+    to,
     text = '',
     children = null,
-    to,
     className = '',
     type = LinkButtonType.primary,
     size = ButtonSize.medium,
     id = generateId(),
     state = ButtonState.enabled,
+    isToExternal = false,
 }: ILinkButtonProps) => {
     validateOnlyChildrenOrText(text, children);
     const isDisabled = state === ButtonState.disabled;
@@ -141,13 +145,20 @@ const LinkButton = ({
     );
 
     const content = children ?? text;
+    const toHref = isToExternal
+        ? { pathname: to }
+        : to;
+
+    const target = isToExternal
+        ? '_blank'
+        : '';
 
     return (
         <Link
-          type="button"
-          to={to}
+          to={toHref}
           className={buttonClassName}
           id={id}
+          target={target}
         >
             {content}
         </Link>

@@ -1,17 +1,24 @@
-import * as React from 'react';
-import { useCallback } from 'react';
-import List, { ListType } from '../../guidelines/lists/List';
+import React, { useCallback, useEffect, useState } from 'react';
+
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
-import { Button, ButtonType } from '../../guidelines/buttons/Button';
-import styles from './ContestTasksNavigation.module.scss';
-import concatClassNames from '../../../utils/class-names';
+import List, { ListType } from '../../guidelines/lists/List';
+import { Button, ButtonSize, ButtonType, LinkButton } from '../../guidelines/buttons/Button';
 import Label, { LabelType } from '../../guidelines/labels/Label';
+
+import concatClassNames from '../../../utils/class-names';
 import { IProblemType } from '../../../common/types';
+import { ContestParticipationType, ContestResultType } from '../../../common/constants';
+
 import { useProblems } from '../../../hooks/use-problems';
+import { useCurrentContest } from '../../../hooks/use-current-contest';
+
+import styles from './ContestTasksNavigation.module.scss';
 
 const compareByOrderBy = (p1: IProblemType, p2: IProblemType) => p1.orderBy - p2.orderBy;
 
 const ContestTasksNavigation = () => {
+    const [ resultsLink, setResultsLink ] = useState('');
+
     const {
         state: {
             currentProblem,
@@ -19,6 +26,13 @@ const ContestTasksNavigation = () => {
         },
         actions: { selectProblemById },
     } = useProblems();
+
+    const {
+        state: {
+            contest,
+            isOfficial,
+        },
+    } = useCurrentContest();
 
     const renderIcon = useCallback(
         ({ points, maximumPoints }: IProblemType) => {
@@ -90,10 +104,19 @@ const ContestTasksNavigation = () => {
         [ problems, renderTask, sideBarTasksListClassName ],
     );
 
+    useEffect(() => {
+        const participationType = isOfficial
+            ? ContestParticipationType.Compete
+            : ContestParticipationType.Practice;
+        const newResultsLink = `/contests/${contest?.id}/${participationType}/results/${ContestResultType.Simple}`;
+        setResultsLink(newResultsLink);
+    }, [ isOfficial, contest ]);
+
     return (
         <div className={styles.tasksSideNavigation}>
             <Heading type={HeadingType.secondary}>Tasks</Heading>
             {renderTasksList()}
+            <LinkButton size={ButtonSize.none} to={resultsLink} text="Results" />
         </div>
     );
 };

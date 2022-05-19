@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE from '../../common/constants';
+import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
 
 import { ITestRunType, ISubmissionType, ISubmissionDetailsType, ISubmissionDetails } from './types';
 import { IHaveChildrenProps } from '../../components/common/Props';
