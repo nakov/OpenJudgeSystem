@@ -1,17 +1,15 @@
 import React from 'react';
-import {TreeItem, TreeView} from '@material-ui/lab';
-import {MdChevronRight, MdExpandMore} from 'react-icons/md';
 import {useContestCategories} from '../../../hooks/use-contest-categories';
 import Heading from '../../guidelines/headings/Heading';
 
 import styles from './ContestCategories.module.scss';
-import {IContestCategoryTreeType} from '../../../common/types';
 import {FilterType} from '../../../common/contest-types';
-import {isArray, isEmpty} from 'lodash';
+import {isEmpty} from 'lodash';
 import {useContests} from '../../../hooks/use-contests';
 import {generateFilterItems} from "../../../common/filter-utils";
-import {ClassNameType, IHaveOptionalClassName} from "../../common/Props";
+import {IHaveOptionalClassName} from "../../common/Props";
 import concatClassNames from "../../../utils/class-names";
+import Tree, {ITreeItemType} from "../../guidelines/trees/Tree";
 
 interface IContestCategoriesProps extends IHaveOptionalClassName {
 }
@@ -31,28 +29,15 @@ const ContestCategories = ({
         }
     } = useContests();
 
-    const renderTree = (node: IContestCategoryTreeType) => (
-        <TreeItem
-            key={node.id}
-            nodeId={node.id.toString()}
-            label={node.name}
-            onLabelClick={() => handleTreeItemClick(node)}
-        >
-            {isArray(node.children)
-                ? node.children.map((child) => renderTree(child))
-                : null}
-        </TreeItem>
-      );
-
-    const handleTreeItemClick = (node: IContestCategoryTreeType) => {
+    const handleTreeItemClick = (node: ITreeItemType) => {
         if (!isEmpty(node.children)) {
             return;
         }
         
         const filter = generateFilterItems(
             FilterType.Category,
-            { name: node.name, value: node.id.toString() })[0];
-        
+            { name: node.name, value: node.id })[0];
+
         applyFilter(filter, true);
     };
     
@@ -66,13 +51,10 @@ const ContestCategories = ({
             >
                 Category
             </Heading>
-            <TreeView
-                aria-label="rich object"
-                defaultCollapseIcon={<MdExpandMore />}
-                defaultExpandIcon={<MdChevronRight />}
-            >
-                {categories.map((c) => renderTree(c))}
-            </TreeView>
+            <Tree
+                items={categories as ITreeItemType[]}
+                handleTreeItemClick={handleTreeItemClick}
+            />
         </div>
     );
 }

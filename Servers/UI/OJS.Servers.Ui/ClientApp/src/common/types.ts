@@ -1,3 +1,5 @@
+import {ITreeItemType} from "../components/guidelines/trees/Tree";
+
 interface ISubmissionTypeType {
     id: number,
     name: string,
@@ -66,11 +68,8 @@ interface IIndexContestsType {
     category: string
 }
 
-interface IContestCategoryTreeType {
-    id: number,
-    name: string,
+interface IContestCategoryTreeType extends ITreeItemType {
     nameUrl: string,
-    children?: IContestCategoryTreeType[],
 }
 
 interface IGetContestsForIndexResponseType {
