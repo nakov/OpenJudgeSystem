@@ -14,13 +14,14 @@ interface IButtonProps extends IHaveOptionalChildrenProps, IHaveOptionalClassNam
     size?: 'small' | 'medium' | 'large',
 }
 
-interface ILinkButtonProps extends IHaveOptionalClassName {
+interface ILinkButtonProps extends IHaveOptionalClassName, IHaveOptionalChildrenProps {
     text: string;
     id?: string;
     type?: 'primary' | 'secondary' | 'plain' | 'disabled' | 'link';
     size?: 'small' | 'medium' | 'large';
     to: string;
     isToExternal?: boolean,
+    onClick?: React.MouseEventHandler<HTMLAnchorElement>,
 }
 
 const classNameToType = {
@@ -79,11 +80,13 @@ const Button = ({
 const LinkButton = ({
     text,
     to,
+    onClick,
     className = '',
     type = 'primary',
     size = 'medium',
     id = generateId(),
     isToExternal = false,
+    children = null,
 }: ILinkButtonProps) => {
     const sizeToClassName = {
         small: styles.small,
@@ -118,8 +121,10 @@ const LinkButton = ({
           className={buttonClassName}
           id={id}
           target={target}
+          onClick={onClick}
         >
             {text}
+            {children}
         </Link>
     );
 };

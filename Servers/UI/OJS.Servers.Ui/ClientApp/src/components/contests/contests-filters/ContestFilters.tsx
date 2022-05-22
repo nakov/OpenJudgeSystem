@@ -10,6 +10,8 @@ import styles from './ContestFilters.module.scss';
 import Button from '../../guidelines/buttons/Button';
 import { useContests } from '../../../hooks/use-contests';
 import { groupByType } from '../../../common/filter-utils';
+import ShowMoreButton from "../../guidelines/buttons/ShowMoreButton";
+import concatClassNames from "../../../utils/class-names";
 
 interface IFiltersGroup {
     type: FilterType;
@@ -19,6 +21,7 @@ interface IFiltersGroup {
 const ContestFilters = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ filtersGroups, setFiltersGroups ] = useState<IFiltersGroup[]>([]);
+    const [ expanded, setExpanded ] = useState(false);
 
     const {
         state: {
@@ -57,24 +60,39 @@ const ContestFilters = () => {
         )},
         [ handleFilterClick ],
     );
+    
+    const toggleFiltersExpanded = () => {
+        setExpanded(!expanded);
+    }
 
-    const renderFilter = ({ type, filters: groupFilters }: IFiltersGroup) => (
-        <div className={styles.filterTypeContainer}>
+    const renderFilter =  ({ type, filters: groupFilters }: IFiltersGroup) => {
+        const className = concatClassNames(
+            styles.listFilterItems,
+            expanded
+                ? styles.expanded
+                : '');
+        
+        return <div className={styles.filterTypeContainer}>
             <Heading
-              type="small"
-              className={styles.heading}
+                type="small"
+                className={styles.heading}
             >
                 {type}
             </Heading>
             <List
-              values={groupFilters}
-              itemFunc={renderFilterItem}
-              orientation="horizontal"
-              className={styles.listFilterItems}
-              itemClassName={styles.listFilterItem}
+                values={groupFilters}
+                itemFunc={renderFilterItem}
+                orientation="horizontal"
+                className={className}
+                itemClassName={styles.listFilterItem}
             />
+            {
+                groupFilters.length > 3
+                    ? <ShowMoreButton onClick={toggleFiltersExpanded}/>
+                    : null
+            }
         </div>
-    );
+    };
 
     useEffect(
         () => {

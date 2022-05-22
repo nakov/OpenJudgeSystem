@@ -11,8 +11,15 @@
 
 .listFilterItems {
   display: block;
+  max-height: 100px;
+  overflow: hidden;
   .listFilterItem {
     margin-top: 5px;
+  }
+  
+  &.expanded {
+    max-height: none;
+    overflow: visible;
   }
 }
 

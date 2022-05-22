@@ -115,8 +115,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
                 return;
             }
             
-            console.log(strategies);
-            
             const strategyFilters = strategies.map((s) => {
                 return {
                     name: s.name,
