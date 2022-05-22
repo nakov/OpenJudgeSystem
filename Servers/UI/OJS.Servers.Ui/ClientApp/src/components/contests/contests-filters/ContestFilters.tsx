@@ -66,6 +66,7 @@ const ContestFilters = () => {
     }
 
     const renderFilter =  ({ type, filters: groupFilters }: IFiltersGroup) => {
+        const maxFiltersToDisplayCount = 3;
         const className = concatClassNames(
             styles.listFilterItems,
             expanded
@@ -87,7 +88,7 @@ const ContestFilters = () => {
                 itemClassName={styles.listFilterItem}
             />
             {
-                groupFilters.length > 3
+                groupFilters.length > maxFiltersToDisplayCount
                     ? <ShowMoreButton onClick={toggleFiltersExpanded}/>
                     : null
             }
