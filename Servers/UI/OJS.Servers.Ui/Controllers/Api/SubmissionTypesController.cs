@@ -21,6 +21,6 @@ public class SubmissionTypesController : Controller
 
     public async Task<IEnumerable<SubmissionTypeFilterResponseModel>> GetAll()
         => await this.submissionTypesBusinessService
-            .GetAll()
+            .GetAllOrderedByUsage()
             .MapCollection<SubmissionTypeFilterResponseModel>();
 }

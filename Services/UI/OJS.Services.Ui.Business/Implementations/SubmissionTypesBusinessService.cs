@@ -1,4 +1,7 @@
-﻿using OJS.Common;
+﻿namespace OJS.Services.Ui.Business.Implementations;
+
+using FluentExtensions.Extensions;
+using OJS.Common;
 using OJS.Data.Models.Problems;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Ui.Data;
@@ -8,8 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using X.PagedList;
-
-namespace OJS.Services.Ui.Business.Implementations;
 
 public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
 {
@@ -27,10 +28,16 @@ public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
             .MapCollection<SubmissionTypeServiceModel>()
             .ToListAsync();
 
-    public async Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAll()
-        => await this.submissionTypesData.GetQuery()
-            .MapCollection<SubmissionTypeFilterServiceModel>()
+    public async Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllOrderedByUsage()
+    {
+        var submissionTypesByUsage = await this.submissionTypesData
+            .GetAllOrderedByMostUsed<SubmissionTypeFilterServiceModel>()
             .ToListAsync();
+
+        submissionTypesByUsage.ForEach((i, st) => st.UsageOrder = i);
+
+        return submissionTypesByUsage;
+    }
 
     public void ValidateSubmissionType(int submissionTypeId, Problem problem, bool shouldAllowBinaryFiles = false)
     {
