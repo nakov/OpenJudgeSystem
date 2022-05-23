@@ -181,19 +181,12 @@ namespace OJS.Services.Ui.Business.Implementations
                 .ToPagedResultAsync(itemsPerPage, pageNumber);
         }
 
-        private IQueryable<Contest> GetContestByFilter(ContestStatus status, int? categoryId)
+        private IQueryable<Contest> GetContestsByFilter(ContestStatus status, int? categoryId)
             => (status == ContestStatus.Active
                 ? this.contestsData
                     .GetAllCompetableQuery(categoryId)
                 : this.contestsData
-                    .GetAllPastQuery(categoryId));
-
-        private IQueryable<Contest> GetAllVisibleContestsByCategory(int? categoryId)
-            => (categoryId.HasValue
-                ? this.contestsData
-                    .GetAllVisibleByCategory(categoryId.Value)
-                : this.contestsData
-                    .GetAllVisible());
+                    .GetAllPracticableQuery(categoryId));
 
         private IQueryable<Contest> GetAllByStatusAndCategory(
             IEnumerable<ContestStatus>? statuses,
@@ -203,8 +196,8 @@ namespace OJS.Services.Ui.Business.Implementations
 
             return contestFilters?.Count switch
             {
-                1 => this.GetContestByFilter(contestFilters.First(), categoryId),
-                _ => this.GetAllVisibleContestsByCategory(categoryId),
+                1 => this.GetContestsByFilter(contestFilters.First(), categoryId),
+                _ => this.contestsData.GetAllPracticableAndCompetableQuery(categoryId),
             };
         }
 
@@ -230,15 +223,8 @@ namespace OJS.Services.Ui.Business.Implementations
 
         public async Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPracticable()
             => await this.contestsData
-                .GetAllPast<ContestForHomeIndexServiceModel>()
-                .WhereAsync(c => c.CanBePracticed)
+                .GetAllPracticable<ContestForHomeIndexServiceModel>()
                 .OrderByDescendingAsync(ac => ac.PracticeStartTime)
-                .TakeAsync(DefaultContestsToTake);
-
-        public async Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPast()
-            => await this.contestsData
-                .GetAllPast<ContestForHomeIndexServiceModel>()
-                .OrderByDescendingAsync(pc => pc.EndTime)
                 .TakeAsync(DefaultContestsToTake);
 
         public async Task<bool> CanUserCompeteByContestByUserAndIsAdmin(

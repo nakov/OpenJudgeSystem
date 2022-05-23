@@ -28,24 +28,21 @@ namespace OJS.Services.Ui.Data.Implementations
                 .ToListAsync();
 
         public IQueryable<Contest> GetAllCompetableQuery(int? categoryId = null)
-            => this.GetAllVisibleQuery()
-                .Include(c => c.Category)
-                .Where(c => !categoryId.HasValue || c.CategoryId == categoryId)
-                .Where(c =>
-                    c.StartTime <= this.dates.GetUtcNow() &&
-                    c.EndTime.HasValue &&
-                    c.EndTime >= this.dates.GetUtcNow());
+            => this.GetAllVisibleQuery(categoryId)
+                .Where(this.CanBeCompeted());
 
-        public async Task<IEnumerable<TServiceModel>> GetAllPast<TServiceModel>()
-            => await this.GetAllPastQuery()
+        public async Task<IEnumerable<TServiceModel>> GetAllPracticable<TServiceModel>()
+            => await this.GetAllPracticableQuery()
                 .MapCollection<TServiceModel>()
                 .ToListAsync();
 
-        public IQueryable<Contest> GetAllPastQuery(int? categoryId = null)
-            => this.GetAllVisibleQuery()
-                .Where(c => !categoryId.HasValue || c.CategoryId == categoryId)
-                .Include(c => c.Category)
-                .Where(c => c.EndTime < this.dates.GetUtcNow());
+        public IQueryable<Contest> GetAllPracticableQuery(int? categoryId = null)
+            => this.GetAllVisibleQuery(categoryId)
+                .Where(this.CanBePracticed());
+
+        public IQueryable<Contest> GetAllPracticableAndCompetableQuery(int? categoryId = null)
+            => this.GetAllCompetableQuery(categoryId)
+                .Concat(this.GetAllPracticableQuery(categoryId));
 
         public Task<Contest?> GetByIdWithProblems(int id)
             => this.DbSet
@@ -160,8 +157,17 @@ namespace OJS.Services.Ui.Data.Implementations
                     .Sum(pg => (int?)pg.Problems.First().MaximumPoints))
                 .FirstOrDefaultAsync() ?? default(int);
 
-        private IQueryable<Contest> GetAllVisibleQuery()
+        private IQueryable<Contest> GetAllVisibleQuery(int? categoryId = null)
             => this.DbSet
-                .Where(c => c.IsVisible);
+                .Where(c => c.IsVisible)
+                .Where(c => !categoryId.HasValue || c.CategoryId == categoryId.Value);
+
+        private Expression<Func<Contest, bool>> CanBeCompeted()
+            => c => c.StartTime <= this.dates.GetUtcNow()
+                && (!c.EndTime.HasValue || c.EndTime > this.dates.GetUtcNow());
+
+        private Expression<Func<Contest, bool>> CanBePracticed()
+            => c => c.PracticeStartTime <= this.dates.GetUtcNow()
+                && (!c.PracticeEndTime.HasValue || c.PracticeEndTime > this.dates.GetUtcNow());
     }
 }

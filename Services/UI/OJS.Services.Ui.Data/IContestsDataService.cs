@@ -10,11 +10,13 @@ namespace OJS.Services.Ui.Data
     {
         Task<IEnumerable<TServiceModel>> GetAllCompetable<TServiceModel>();
 
-        IQueryable<Contest> GetAllCompetableQuery(int? categoryId);
+        IQueryable<Contest> GetAllCompetableQuery(int? categoryId = null);
 
-        Task<IEnumerable<TServiceModel>> GetAllPast<TServiceModel>();
+        Task<IEnumerable<TServiceModel>> GetAllPracticable<TServiceModel>();
 
-        IQueryable<Contest> GetAllPastQuery(int? categoryId);
+        IQueryable<Contest> GetAllPracticableQuery(int? categoryId = null);
+
+        IQueryable<Contest> GetAllPracticableAndCompetableQuery(int? categoryId = null);
 
         Task<Contest?> GetByIdWithProblems(int id);
 

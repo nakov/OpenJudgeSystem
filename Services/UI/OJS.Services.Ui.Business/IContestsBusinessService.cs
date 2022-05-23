@@ -18,8 +18,6 @@ namespace OJS.Services.Ui.Business
 
         Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPracticable();
 
-        Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPast();
-
         Task<bool> IsContestIpValidByContestAndIp(int contestId, string ip);
 
         /// <summary>
