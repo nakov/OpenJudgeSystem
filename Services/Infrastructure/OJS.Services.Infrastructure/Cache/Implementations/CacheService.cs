@@ -6,6 +6,8 @@ namespace OJS.Services.Infrastructure.Cache.Implementations
 
     public class CacheService : ICacheService
     {
+        // TODO: IMemoryCache does not work when used from different apps.
+        // https://github.com/SoftUni-Internal/exam-systems-issues/issues/156
         private readonly IMemoryCache memoryCache;
         private readonly IDatesService dates;
 
