@@ -56,10 +56,10 @@ const Contest = () => {
             }
 
             return (
-                <p>
+                <p className={scoreClassName}>
                     Score:
                     {' '}
-                    <Text type={TextType.Bold} className={scoreClassName}>
+                    <Text type={TextType.Bold}>
                         {scoreText}
                     </Text>
                 </p>
@@ -74,10 +74,10 @@ const Contest = () => {
             const { hours, minutes, seconds } = convertToTwoDigitValues(remainingTime);
             return (
                 <>
-                    <p>
+                    <p className={remainingTimeClassName}>
                         Remaining time:
                         {' '}
-                        <Text type={TextType.Bold} className={remainingTimeClassName}>
+                        <Text type={TextType.Bold}>
                             {hours}
                             :
                             {minutes}
