@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useParams } from 'react-router';
 import { isNil } from 'lodash';
@@ -9,7 +9,7 @@ import { useCurrentContestResults } from '../../hooks/contests/use-current-conte
 import { ContestParticipationType, ContestResultType } from '../../common/constants';
 import Heading from '../../components/guidelines/headings/Heading';
 import { IContestResultsParticipationProblemType, IContestResultsType } from '../../hooks/contests/types';
-import { LinkButton } from '../../components/guidelines/buttons/Button';
+import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 
 const participantNamesColumns: GridColDef[] = [
     {
@@ -53,7 +53,8 @@ const getProblemResultColumns = (results: IContestResultsType) => results.proble
         return results.userHasContestRights && !isNil(bestSubmission)
             ? (
                 <LinkButton
-                  type="link"
+                  type={LinkButtonType.plain}
+                  size={ButtonSize.none}
                   text={`${bestSubmission.points}`}
                   to={`/submissions/${bestSubmission.id}`}
                 />

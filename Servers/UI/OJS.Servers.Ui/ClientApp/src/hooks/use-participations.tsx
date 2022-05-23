@@ -26,13 +26,14 @@ const defaultState = {};
 
 const ParticipationsContext = createContext<IParticipationsContext>(defaultState as IParticipationsContext);
 
-interface IParticipationsProviderProps extends IHaveChildrenProps {}
+interface IParticipationsProviderProps extends IHaveChildrenProps {
+}
 
 const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
     const [ areUserParticipationsRetrieved, setAreUserParticipationsRetrieved ] = useState<boolean>(false);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ userParticipations, setUserParticipations ] = useState<IParticipationType[]>([]);
+
     const {
         get: getParticipationsForProfileRequest,
         data: getParticipationsForProfileData,
@@ -46,7 +47,6 @@ const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
 
     useEffect(() => {
         if (getParticipationsForProfileData != null) {
-            console.log(getParticipationsForProfileData);
             setUserParticipations(getParticipationsForProfileData as IParticipationType[]);
             setAreUserParticipationsRetrieved(true);
         }

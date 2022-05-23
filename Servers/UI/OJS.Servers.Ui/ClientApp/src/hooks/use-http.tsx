@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import axios from 'axios';
 import { isFunction } from 'lodash';
 import { saveAs } from 'file-saver';

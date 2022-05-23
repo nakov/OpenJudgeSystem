@@ -1,17 +1,18 @@
-import * as React from 'react';
-import { useCallback, useMemo } from 'react';
-import Heading from '../../guidelines/headings/Heading';
+import React, { useCallback, useMemo } from 'react';
+import Heading, { HeadingType } from '../../guidelines/headings/Heading';
+import Text, { TextType } from '../../guidelines/text/Text';
+import Countdown, { ICountdownRemainingType, Metric } from '../../guidelines/countdown/Countdown';
+
 import ContestTasksNavigation from '../contest-tasks-navigation/ContestTasksNavigation';
 import SubmissionBox from '../submission-box/SubmissionBox';
 import ContestProblemDetails from '../contest-problem-details/ContestProblemDetails';
 
 import concatClassNames from '../../../utils/class-names';
 
-import styles from './Contest.module.scss';
-import Text, { TextType } from '../../guidelines/text/Text';
-import Countdown, { ICountdownRemainingType } from '../../guidelines/countdown/Countdown';
 import { convertToSecondsRemaining, convertToTwoDigitValues } from '../../../utils/dates';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
+
+import styles from './Contest.module.scss';
 
 const Contest = () => {
     const {
@@ -99,7 +100,7 @@ const Contest = () => {
             }
             const duration = convertToSecondsRemaining(new Date(endTime));
             return (
-                <Countdown renderRemainingTime={renderCountdown} duration={duration} metric="seconds" />
+                <Countdown renderRemainingTime={renderCountdown} duration={duration} metric={Metric.seconds} />
             );
         },
         [ contest, renderCountdown ],
@@ -113,10 +114,13 @@ const Contest = () => {
     return (
         <>
             <div className={styles.headingContest}>
-                <Heading type="primary" className={styles.contestHeading}>
+                <Heading
+                  type={HeadingType.primary}
+                  className={styles.contestHeading}
+                >
                     {contest?.name}
                 </Heading>
-                <Heading type="secondary" className={secondaryHeadingClassName}>
+                <Heading type={HeadingType.secondary} className={secondaryHeadingClassName}>
                     {renderTimeRemaining()}
                     {renderScore()}
                 </Heading>
