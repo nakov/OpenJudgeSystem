@@ -8,11 +8,11 @@ namespace OJS.Services.Ui.Business;
 
 public interface ISubmissionTypesBusinessService : IService
 {
-    public Task<SubmissionTypeServiceModel> GetById(int id);
+    Task<SubmissionTypeServiceModel> GetById(int id);
 
-    public Task<IEnumerable<SubmissionTypeServiceModel>> GetAllowedSubmissionTypes(int problemId);
+    Task<IEnumerable<SubmissionTypeServiceModel>> GetAllowedSubmissionTypes(int problemId);
 
-    public Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAll();
+    Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAll();
 
     void ValidateSubmissionType(int submissionTypeId, Problem problem, bool shouldAllowBinaryFiles = false);
 }

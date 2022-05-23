@@ -19,7 +19,6 @@ interface IFiltersGroup {
 }
 
 const ContestFilters = () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ filtersGroups, setFiltersGroups ] = useState<IFiltersGroup[]>([]);
     const [ expanded, setExpanded ] = useState(false);
 
@@ -58,15 +57,21 @@ const ContestFilters = () => {
                     size={size}
                 />
         )},
-        [ handleFilterClick ],
+        [ handleFilterClick, filters ],
     );
     
-    const toggleFiltersExpanded = () => {
+    const toggleFiltersExpanded = useCallback(() => {
         setExpanded(!expanded);
-    }
-
-    const renderFilter =  ({ type, filters: groupFilters }: IFiltersGroup) => {
+    }, [expanded]);
+    
+    const renderShowMoreButton = (filters: IFilter[]) => {
         const maxFiltersToDisplayCount = 3;
+        return filters.length > maxFiltersToDisplayCount
+            ? <ShowMoreButton onClick={toggleFiltersExpanded}/>
+            : null
+    };
+
+    const renderFilter = ({ type, filters: groupFilters }: IFiltersGroup) => {
         const className = concatClassNames(
             styles.listFilterItems,
             expanded
@@ -87,11 +92,7 @@ const ContestFilters = () => {
                 className={className}
                 itemClassName={styles.listFilterItem}
             />
-            {
-                groupFilters.length > maxFiltersToDisplayCount
-                    ? <ShowMoreButton onClick={toggleFiltersExpanded}/>
-                    : null
-            }
+            {renderShowMoreButton(groupFilters)}
         </div>
     };
 
@@ -101,7 +102,7 @@ const ContestFilters = () => {
         },
         [ possibleFilters ],
     );
-
+    
     return (
         <div className={styles.container}>
             <ContestCategories className={styles.filterTypeContainer} />

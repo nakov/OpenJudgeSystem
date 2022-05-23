@@ -39,8 +39,7 @@ const ContestsPage = () => {
 
     useEffect(
         () => {
-            setSearchParams(filters.reduce((p:any, f) => {
-                const { type, value } = f;
+            setSearchParams(filters.reduce((p:any, {type, value }) => {
                 const values = isNil(p[type])
                     ? []
                     : p[type];

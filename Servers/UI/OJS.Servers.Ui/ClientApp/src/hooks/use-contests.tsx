@@ -70,12 +70,12 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     const applyFilter = useCallback(
         (filter: IFilter, singleForType = false) => {
-            let newFilters = isNil(filters.find(f => f.id === filter.id))
+            let newFilters = !filters.some(({ id }) => id === filter.id)
                 ? [ ...filters, filter ]
                 : without(filters, filter);
 
             if (singleForType) {
-                newFilters = newFilters.filter(f => f.type !== filter.type || f.id === filter.id);
+                newFilters = newFilters.filter(({ id, type }) => type !== filter.type || id === filter.id);
             }
 
             setFilters(newFilters);

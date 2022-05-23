@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {useContestCategories} from '../../../hooks/use-contest-categories';
 import Heading from '../../guidelines/headings/Heading';
 
@@ -29,22 +29,22 @@ const ContestCategories = ({
         }
     } = useContests();
 
-    const handleTreeItemClick = (node: ITreeItemType) => {
+    const handleTreeItemClick = useCallback((node: ITreeItemType) => {
         if (!isEmpty(node.children)) {
             return;
         }
         
-        const filter = generateFilterItems(
+        const [filter] = generateFilterItems(
             FilterType.Category,
-            { name: node.name, value: node.id })[0];
+            { name: node.name, value: node.id });
 
         applyFilter(filter, true);
-    };
+    }, []);
     
-    const newClassName = concatClassNames(styles.container, className);
+    const containerClassName = concatClassNames(styles.container, className);
 
     return (
-        <div className={newClassName}>
+        <div className={containerClassName}>
             <Heading
                 type="small"
                 className={styles.heading}
@@ -52,7 +52,7 @@ const ContestCategories = ({
                 Category
             </Heading>
             <Tree
-                items={categories as ITreeItemType[]}
+                items={categories}
                 handleTreeItemClick={handleTreeItemClick}
             />
         </div>
