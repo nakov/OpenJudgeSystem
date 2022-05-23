@@ -20,5 +20,5 @@ public interface IContestCategoriesCacheService : IService
         int? cacheSeconds = CacheConstants.OneDayInSeconds);
 
     Task<IEnumerable<ContestCategoryTreeViewModel>> GetAllContestCategoriesTree(
-        int? cacheSeconds = CacheConstants.OneDayInSeconds);
+        int? cacheSeconds = CacheConstants.OneHourInSeconds);
 }
