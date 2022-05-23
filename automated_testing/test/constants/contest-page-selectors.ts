@@ -10,6 +10,11 @@ const selectors = {
     pageExecutionTypeSelectorInactiveSelector: '.executionTypeSelectorInactive',
     pageRefreshSubmissionButtonSelector: '.refreshButton',
     pageEexecutionTypeActiveSelector: '.executionTypeSelectorActive',
+    pageContestNavigationLiSelector: '.navigationContest li',
+    pageSubmitButtonSelector: 'button*=Submit',
+    pageSubmissionLabelProcessing: 'div*=Processing',
+    pageSubmissionTab: 'span*=Submissions',
+    pageSubmissionResultConteiner: '.contestTabControls',
 
 };
 export default selectors;

@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { ChainablePromiseElement } from 'webdriverio';
+
 import selectors from '../constants/contest-page-selectors';
 
 import Page from './page';
@@ -30,11 +30,11 @@ class ContestPage extends Page {
     }
 
     public get executionTypeSelectorActive() {
-        return $(selectors.pageExecutionTypeSelectorActiveSelector);
+        return $$(selectors.pageExecutionTypeSelectorActiveSelector);
     }
 
     public get executionTypeSelectorInactive() {
-        return $(selectors.pageExecutionTypeSelectorInactiveSelector);
+        return $$(selectors.pageExecutionTypeSelectorInactiveSelector);
     }
 
     public get refreshSubmissionButton() {
@@ -47,6 +47,22 @@ class ContestPage extends Page {
 
     public get executionTypeAllActive() {
         return $$(selectors.pageEexecutionTypeActiveSelector);
+    }
+
+    public get submitButton() {
+        return $(selectors.pageSubmitButtonSelector);
+    }
+
+    public get divTest() {
+        return $(selectors.pageSubmissionLabelProcessing);
+    }
+
+    public get submissionTest() {
+        return $(selectors.pageSubmissionTab);
+    }
+
+    public get submissionResultConteiner() {
+        return $(selectors.pageSubmissionResultConteiner).$(selectors.pageSubmissionLabelProcessing);
     }
 }
 export default new ContestPage();
