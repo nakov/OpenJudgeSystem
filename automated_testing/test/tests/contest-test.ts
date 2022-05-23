@@ -25,33 +25,28 @@ describe('Testing contest', () => {
     before(async () => {
         await AuthPage.open();
         await loginInWithValidCredentials();
-        await IndexPage.firstPracticeCardButtoPastContests.click();
+        await IndexPage.firstCompeteCardButtonActiveContests.click();
+        await browser.setTimeout({ implicit: 3000 });
     });
-    /*     after(async () => {
-        await AuthPage.performLogOut();
-    }); */
 
-    xit('Expect left navigation to contain at least one problem', async () => {
+    after(async () => {
+        await AuthPage.performLogOut();
+    });
+
+    it('Expect left navigation to contain at least one problem', async () => {
         const problems = await ContestPage.allContestListSideNavigation;
         const check = await contestChecker.leftSideNavigationCheck(problems);
-        console.log('+++++++++++++++++++++++++++++++');
-        console.log(problems[0]);
-        console.log('+++++++++++++++++++++++++++++++');
         await expect(check).toBeTruthy();
     });
 
     it('Expect to have at least one active execution type', async () => {
-        const strategies = await ContestPage.allContestListSideNavigation;
+        const strategies = await ContestPage.executionTypeAllActive;
         const check = await contestChecker.executionTypeCheck(strategies);
-        console.log('+++++++++++++++++++++++++++++++');
-        console.log(strategies[0]);
-        console.log('+++++++++++++++++++++++++++++++');
-        await expect(check).toBeTruthy();
+        await expect(check).toBeTruthy;
     });
 
-    xit('Expect left navigation to have title', async () => {
+    it('Expect left navigation to have title', async () => {
         const title = await ContestPage.leftSideNavigationTitle;
-        await expect(title).toBeDisplayed();
         await expect(title).toHaveText('Tasks');
     });
 });
