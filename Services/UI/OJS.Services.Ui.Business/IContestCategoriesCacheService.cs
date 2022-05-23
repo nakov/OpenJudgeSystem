@@ -1,4 +1,4 @@
-namespace OJS.Services.Common;
+namespace OJS.Services.Ui.Business;
 
 using OJS.Services.Common.Models.Cache;
 using OJS.Services.Infrastructure.Constants;
@@ -6,7 +6,7 @@ using SoftUni.Services.Infrastructure;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-public interface ICacheItemsProviderService : IService
+public interface IContestCategoriesCacheService : IService
 {
     Task<IEnumerable<ContestCategoryListViewModel>> GetContestSubCategoriesList(
         int? categoryId,
@@ -21,10 +21,4 @@ public interface ICacheItemsProviderService : IService
 
     Task<IEnumerable<ContestCategoryTreeViewModel>> GetAllContestCategoriesTree(
         int? cacheSeconds = CacheConstants.OneDayInSeconds);
-
-    Task<string?> GetContestCategoryName(
-        int categoryId,
-        int? cacheSeconds = CacheConstants.OneDayInSeconds);
-
-    Task ClearContestCategory(int categoryId);
 }

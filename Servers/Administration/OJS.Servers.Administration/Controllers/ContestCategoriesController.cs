@@ -2,47 +2,42 @@ namespace OJS.Servers.Administration.Controllers;
 
 using AutoCrudAdmin.Models;
 using OJS.Data.Models.Contests;
+using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Data;
-using OJS.Services.Common;
-using OJS.Services.Infrastructure.Cache;
-using OJS.Services.Infrastructure.Constants;
 using System.Linq;
 using System.Threading.Tasks;
 
 public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCategory>
 {
     private readonly IContestCategoriesDataService contestCategoriesData;
-    private readonly ICacheService cache;
-    private readonly ICacheItemsProviderService cacheItemsProvider;
+    private readonly IContestCategoriesCacheService contestCategoriesCache;
 
     public ContestCategoriesController(
         IContestCategoriesDataService contestCategoriesData,
-        ICacheService cache,
-        ICacheItemsProviderService cacheItemsProvider)
+        IContestCategoriesCacheService contestCategoriesCache)
     {
         this.contestCategoriesData = contestCategoriesData;
-        this.cache = cache;
-        this.cacheItemsProvider = cacheItemsProvider;
+        this.contestCategoriesCache = contestCategoriesCache;
     }
 
     protected override Task BeforeEntitySaveOnEditAsync(
         ContestCategory existingEntity,
         ContestCategory newEntity,
         AdminActionContext actionContext)
-        => this.cacheItemsProvider.ClearContestCategory(existingEntity.Id);
+        => this.contestCategoriesCache.ClearContestCategory(existingEntity.Id);
 
     protected override Task BeforeEntitySaveOnDeleteAsync(
         ContestCategory entity,
         AdminActionContext actionContext)
         => Task.WhenAll(
-            this.cacheItemsProvider.ClearContestCategory(entity.Id),
+            this.contestCategoriesCache.ClearContestCategory(entity.Id),
             this.CascadeDeleteCategories(entity));
 
     protected override Task AfterEntitySaveOnCreateAsync(
         ContestCategory entity,
         AdminActionContext actionContext)
     {
-        this.ClearMainContestCategoriesCache();
+        this.contestCategoriesCache.ClearMainContestCategoriesCache();
         return Task.CompletedTask;
     }
 
@@ -51,7 +46,7 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
         ContestCategory entity,
         AdminActionContext actionContext)
     {
-        this.ClearMainContestCategoriesCache();
+        this.contestCategoriesCache.ClearMainContestCategoriesCache();
         return Task.CompletedTask;
     }
 
@@ -59,14 +54,8 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
         ContestCategory entity,
         AdminActionContext actionContext)
     {
-        this.ClearMainContestCategoriesCache();
+        this.contestCategoriesCache.ClearMainContestCategoriesCache();
         return Task.CompletedTask;
-    }
-
-    private void ClearMainContestCategoriesCache()
-    {
-        this.cache.Remove(CacheConstants.MainContestCategoriesDropDown);
-        this.cache.Remove(CacheConstants.ContestCategoriesTree);
     }
 
     private async Task CascadeDeleteCategories(ContestCategory contestCategory)

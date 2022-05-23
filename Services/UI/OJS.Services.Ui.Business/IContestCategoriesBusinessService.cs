@@ -11,7 +11,7 @@ public interface IContestCategoriesBusinessService : IService
 
     Task<IEnumerable<ContestCategoryListViewModel>> GetAllMain();
 
-    Task<IEnumerable<ContestCategoryListViewModel>> GetAllSubcategories(int categoryId);
+    Task<IEnumerable<ContestCategoryListViewModel>> GetAllSubcategories(int? categoryId);
 
     Task<IEnumerable<ContestCategoryListViewModel>> GetAllParentCategories(int categoryId);
 }
