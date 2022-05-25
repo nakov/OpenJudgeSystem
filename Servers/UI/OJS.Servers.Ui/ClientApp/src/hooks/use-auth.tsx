@@ -50,9 +50,9 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
     const { getLogoutUrl, getLoginSubmitUrl } = useUrls();
 
     const {
-        post: loginSubmitRequest,
-        response: loginSubmitRequestResponse,
-        status: loginSubmitRequestStatus,
+        post: loginSubmit,
+        response: loginSubmitResponse,
+        status: loginSubmitStatus,
     } = useHttp(getLoginSubmitUrl);
 
     const { post: logout, response: logoutResponse } = useHttp(getLogoutUrl);
@@ -60,14 +60,14 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
     const signIn = useCallback(
         async () => {
             startLoading();
-            await loginSubmitRequest({
+            await loginSubmit({
                 Username: username,
                 Password: password,
                 RememberMe: true,
             });
             stopLoading();
         },
-        [ loginSubmitRequest, password, startLoading, stopLoading, username ],
+        [ loginSubmit, password, startLoading, stopLoading, username ],
     );
 
     const signOut = useCallback(async () => {
@@ -111,15 +111,15 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
     }, [ setUserDetails ]);
 
     useEffect(() => {
-        if (loginSubmitRequestResponse) {
-            if (loginSubmitRequestStatus === HttpStatus.Unauthorized) {
+        if (loginSubmitResponse) {
+            if (loginSubmitStatus === HttpStatus.Unauthorized) {
                 showError({ message: 'Invalid credentials.' } as INotificationType);
             }
 
             const loadedUser = tryGetUserDetailsFromCookie();
             setUserDetails(loadedUser);
         }
-    }, [ loginSubmitRequestResponse, loginSubmitRequestStatus, showError, setUserDetails ]);
+    }, [ loginSubmitResponse, loginSubmitStatus, showError, setUserDetails ]);
 
     useEffect(() => {
         if (logoutResponse) {

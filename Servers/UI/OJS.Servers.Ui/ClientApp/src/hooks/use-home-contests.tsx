@@ -42,26 +42,26 @@ const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
     } = useLoading();
 
     const {
-        get: getContestsForIndexRequest,
-        data: getContestsForIndexData,
+        get: getContests,
+        data: getContestsData,
     } = useHttp(getGetIndexContestsUrl);
 
     const getForHome = useCallback(async () => {
         startLoading();
-        await getContestsForIndexRequest();
+        await getContests();
         stopLoading();
-    }, [ getContestsForIndexRequest, startLoading, stopLoading ]);
+    }, [ getContests, startLoading, stopLoading ]);
 
     useEffect(() => {
-        if (getContestsForIndexData != null) {
+        if (getContestsData != null) {
             const {
                 activeContests: rActiveContests,
                 pastContests: rPastContests,
-            } = getContestsForIndexData as IGetContestsForIndexResponseType;
+            } = getContestsData as IGetContestsForIndexResponseType;
             setActiveContests(rActiveContests);
             setPastContests(rPastContests);
         }
-    }, [ getContestsForIndexData ]);
+    }, [ getContestsData ]);
 
     const value = {
         state: {

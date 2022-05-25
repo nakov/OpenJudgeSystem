@@ -8,7 +8,7 @@ import { setLayout } from '../shared/set-layout';
 
 const SubmissionPage = () => {
     const { submissionId } = useParams();
-    const { setCurrentSubmissionId, getSubmissionDetails } = useSubmissionsDetails();
+    const { setCurrentSubmissionId, getDetails } = useSubmissionsDetails();
 
     useEffect(() => {
         setCurrentSubmissionId(Number(submissionId));
@@ -16,9 +16,9 @@ const SubmissionPage = () => {
 
     useEffect(() => {
         (async () => {
-            await getSubmissionDetails();
+            await getDetails();
         })();
-    }, [ getSubmissionDetails, submissionId ]);
+    }, [ getDetails, submissionId ]);
 
     return (
         <>

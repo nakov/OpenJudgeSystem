@@ -61,7 +61,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const { getStartContestParticipationUrl } = useUrls();
 
     const {
-        get: startContestRequest,
+        get: startContest,
         data: startContestData,
     } = useHttp(getStartContestParticipationUrl as UrlType, contestToStart);
 
@@ -88,10 +88,10 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
 
         (async () => {
             startLoading();
-            await startContestRequest();
+            await startContest();
             stopLoading();
         })();
-    }, [ contestToStart, startContestRequest, startLoading, stopLoading ]);
+    }, [ contestToStart, startContest, startLoading, stopLoading ]);
 
     useEffect(
         () => {

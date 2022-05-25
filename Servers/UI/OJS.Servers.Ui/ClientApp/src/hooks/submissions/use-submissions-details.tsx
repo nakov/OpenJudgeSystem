@@ -39,7 +39,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     const { getCurrentSubmissionDetailsUrl, getSubmissionResultsByProblemUrl } = useUrls();
 
     const {
-        get: getSubmissionDetailsRequest,
+        get: getSubmissionDetails,
         data: submissionDetailsData,
     } = useHttp(getCurrentSubmissionDetailsUrl as UrlType);
 
@@ -54,9 +54,9 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         }
 
         startLoading();
-        await getSubmissionDetailsRequest();
+        await getSubmissionDetails();
         stopLoading();
-    }, [ currentSubmissionId, getSubmissionDetailsRequest, startLoading, stopLoading ]);
+    }, [ currentSubmissionId, getSubmissionDetails, startLoading, stopLoading ]);
 
     const getSubmissionResults = useCallback(async (problemId: number) => {
         if (isNil(problemId)) {

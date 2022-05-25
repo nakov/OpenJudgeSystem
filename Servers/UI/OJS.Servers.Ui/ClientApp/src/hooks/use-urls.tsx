@@ -76,7 +76,7 @@ const getStartContestParticipationUrl = ({
     isOfficial,
 }: IStartContestParticipationUrlParams) => `${baseUrl}/Compete/Index/${id}?official=${isOfficial}`;
 
-const getGetSubmissionResultsByProblemUrl = ({
+const getSubmissionResultsByProblemUrl = ({
     id,
     isOfficial,
     take,
@@ -93,7 +93,7 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
         getUrlForAllContests,
         getStartContestParticipationUrl,
         getDownloadProblemResourceUrl,
-        getGetSubmissionResultsByProblemUrl,
+        getSubmissionResultsByProblemUrl,
         getGetIndexContestsUrl,
         getLoginSubmitUrl,
         getLogoutUrl,

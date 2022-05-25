@@ -45,7 +45,7 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     } = useLoading();
 
     const {
-        get: downloadProblemResourceRequest,
+        get: downloadProblemResource,
         response: downloadProblemResourceResponse,
         saveAttachment,
     } = useHttp(getDownloadProblemResourceUrl as UrlType, { id: problemResourceIdToDownload });
@@ -97,10 +97,10 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
 
         (async () => {
             startLoading();
-            await downloadProblemResourceRequest('blob');
+            await downloadProblemResource('blob');
             stopLoading();
         })();
-    }, [ downloadProblemResourceRequest, problemResourceIdToDownload, startLoading, stopLoading ]);
+    }, [ downloadProblemResource, problemResourceIdToDownload, startLoading, stopLoading ]);
 
     useEffect(
         () => {

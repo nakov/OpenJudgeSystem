@@ -36,15 +36,15 @@ const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
 
     const { getParticipationsForProfileUrl } = useUrls();
     const {
-        get: getParticipationsForProfileRequest,
+        get: getParticipationsForProfile,
         data: getParticipationsForProfileData,
     } = useHttp(getParticipationsForProfileUrl);
 
     const getUserParticipations = useCallback(async () => {
         startLoading();
-        await getParticipationsForProfileRequest();
+        await getParticipationsForProfile();
         stopLoading();
-    }, [ getParticipationsForProfileRequest, startLoading, stopLoading ]);
+    }, [ getParticipationsForProfile, startLoading, stopLoading ]);
 
     useEffect(() => {
         if (getParticipationsForProfileData != null) {
