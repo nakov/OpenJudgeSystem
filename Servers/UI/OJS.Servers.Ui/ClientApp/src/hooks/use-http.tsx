@@ -2,22 +2,23 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import axios from 'axios';
-import { isFunction } from 'lodash';
 import { saveAs } from 'file-saver';
+import { isFunction } from 'lodash';
 import { HttpStatus } from '../common/common';
 import { UrlType, IDictionary, IFileResponseType } from '../common/common-types';
 
-const getUrl = (url: UrlType) => (
+const getUrl = (url: UrlType, params: IDictionary<any> | null) => (
     isFunction(url)
-        ? url()
+        ? url(params)
         : url
 );
 
 const useHttp = (
     url: UrlType,
+    parameters: IDictionary<any> | null = null,
     headers: IDictionary<string> | null = null,
 ) => {
-    const [ internalUrl, setInternalUrl ] = useState(getUrl(url));
+    // const [ internalUrl, setInternalUrl ] = useState('');
 
     const [ response, setResponse ] = useState<any>(null);
     const [ status, setStatus ] = useState<HttpStatus>(HttpStatus.NotStarted);
@@ -51,27 +52,6 @@ const useHttp = (
         }
     }, []);
 
-    const replacePlaceholder = useCallback(
-        (
-            urlToReplace: string,
-            parameter: string, value: any,
-        ) => urlToReplace.replace(`%${parameter}%`, (value || '').toString()),
-        [],
-    );
-
-    // const replaceParameters = useCallback(
-    //     (urlToReplace: string, parameters: IDictionary<any>) => Object.keys(parameters)
-    // eslint-disable-next-line max-len
-    //         .reduce((currentUrl, parameter) => replacePlaceholder(currentUrl, parameter, parameters[parameter]), urlToReplace),
-    //     [ replacePlaceholder ],
-    // );
-
-    const replaceParameters = useCallback(
-        (urlToReplace: string, parameters: IDictionary<any>) => Object.keys(parameters)
-            .reduce((currentUrl, parameter) => replacePlaceholder(currentUrl, parameter, parameters[parameter]), urlToReplace),
-        [ replacePlaceholder ],
-    );
-
     const data = useMemo(() => {
         if (response == null || response.data == null) {
             return null;
@@ -81,28 +61,20 @@ const useHttp = (
     }, [ response ]);
 
     const get = useCallback(
-        (parameters?: IDictionary<any>, responseType = 'json') => {
-            const urlWithParameters = replaceParameters(internalUrl, parameters == null
-                ? {}
-                : parameters);
-
-            return request(() => axios.get(
-                urlWithParameters,
-                { responseType, headers: actualHeaders },
-            ));
-        },
-        [ actualHeaders, replaceParameters, request, internalUrl ],
+        (responseType = 'json') => request(() => axios.get(
+            getUrl(url, parameters),
+            { responseType, headers: actualHeaders },
+        )),
+        [ request, url, parameters, actualHeaders ],
     );
 
     const post = useCallback(
-        (requestData: any, parameters?: IDictionary<any>) => request(() => axios.post(
-            replaceParameters(internalUrl, parameters == null
-                ? {}
-                : parameters),
+        (requestData: any) => request(() => axios.post(
+            getUrl(url, parameters),
             requestData,
             { headers: actualHeaders },
         )),
-        [ actualHeaders, replaceParameters, request, internalUrl ],
+        [ request, url, parameters, actualHeaders ],
     );
 
     const getFilenameFromHeaders = useCallback((responseObj: IFileResponseType) => {
@@ -138,13 +110,6 @@ const useHttp = (
             });
         },
         [ headers ],
-    );
-
-    useEffect(
-        () => {
-            setInternalUrl(getUrl(url));
-        },
-        [ url ],
     );
 
     return {

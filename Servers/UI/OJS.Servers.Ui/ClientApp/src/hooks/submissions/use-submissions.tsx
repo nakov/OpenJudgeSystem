@@ -2,13 +2,13 @@ import React, { createContext, useCallback, useContext, useEffect, useState } fr
 import { first } from 'lodash';
 import { useLoading } from '../use-loading';
 import { useHttp } from '../use-http';
-import { ITestRunType, ISubmissionType } from './types';
-import { IHaveChildrenProps } from '../../components/common/Props';
 import { useCurrentContest } from '../use-current-contest';
 import { useProblems } from '../use-problems';
-import { ISubmissionTypeType } from '../../common/types';
-import { submitUrl } from '../../utils/urls';
 import { useProblemSubmissions } from './use-problem-submissions';
+import { useUrls } from '../use-urls';
+import { ISubmissionTypeType } from '../../common/types';
+import { ITestRunType, ISubmissionType } from './types';
+import { IHaveChildrenProps } from '../../components/common/Props';
 
 interface ISubmissionsContext {
     state: {
@@ -42,6 +42,8 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const [ selectedSubmissionType, setSelectedSubmissionType ] =
         useState<ISubmissionTypeType | null>(defaultState.state.selectedSubmissionType);
     const [ submissionCode, setSubmissionCode ] = useState<string>(defaultState.state.submissionCode);
+
+    const { submitUrl } = useUrls();
 
     const {
         startLoading,

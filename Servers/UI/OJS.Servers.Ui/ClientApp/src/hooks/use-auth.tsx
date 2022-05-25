@@ -3,9 +3,9 @@ import { IHaveChildrenProps } from '../components/common/Props';
 import { useLoading } from './use-loading';
 import { useHttp } from './use-http';
 import { useNotifications } from './use-notifications';
-import { HttpStatus } from '../common/common';
-import { logoutUrl, loginSubmitUrl } from '../utils/urls';
+import { useUrls } from './use-urls';
 import { getCookie } from '../utils/cookies';
+import { HttpStatus } from '../common/common';
 import { INotificationType } from '../common/common-types';
 
 type UserType = {
@@ -46,13 +46,16 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
     const [ username, setUsername ] = useState<string>(defaultState.user.username);
     const [ password, setPassword ] = useState<string>();
     const { showError } = useNotifications();
+
+    const { getLogoutUrl, getLoginSubmitUrl } = useUrls();
+
     const {
         post: loginSubmitRequest,
         response: loginSubmitRequestResponse,
         status: loginSubmitRequestStatus,
-    } = useHttp(loginSubmitUrl);
+    } = useHttp(getLoginSubmitUrl);
 
-    const { post: logoutRequest, response: logoutResponse } = useHttp(logoutUrl);
+    const { post: logoutRequest, response: logoutResponse } = useHttp(getLogoutUrl);
 
     const signIn = useCallback(
         async () => {

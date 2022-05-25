@@ -20,7 +20,9 @@ const SubmissionPage = () => {
     });
 
     useEffect(() => {
-        getSubmissionDetails();
+        (async () => {
+            await getSubmissionDetails();
+        })();
     }, [ getSubmissionDetails, submissionId ]);
 
     return (

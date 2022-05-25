@@ -6,10 +6,12 @@ import PageNav from '../nav/PageNav';
 import Heading from '../../components/guidelines/headings/Heading';
 import styles from './PageHeader.module.scss';
 import { useAuth } from '../../hooks/use-auth';
-import { administrationContestsGridUrl } from '../../utils/urls';
+import { useUrls } from '../../hooks/use-urls';
 
 const PageHeader = () => {
     const { user } = useAuth();
+
+    const { administrationContestsGridUrl } = useUrls();
 
     const renderLinks = useCallback(() => {
         const administrationLink = user.permissions.canAccessAdministration

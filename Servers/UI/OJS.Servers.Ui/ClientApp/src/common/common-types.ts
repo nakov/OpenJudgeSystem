@@ -19,7 +19,7 @@ interface IDictionary<TValue> {
     [key: string]: TValue;
 }
 
-type UrlType = string | (() => string);
+type UrlType = string | ((parameters: IDictionary<any> | null) => string);
 
 interface INotificationType {
     title: string,

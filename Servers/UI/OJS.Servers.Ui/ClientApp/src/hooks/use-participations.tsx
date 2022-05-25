@@ -3,7 +3,7 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 import { IHaveChildrenProps } from '../components/common/Props';
 import { useLoading } from './use-loading';
 import { useHttp } from './use-http';
-import { getParticipationsForProfileUrl } from '../utils/urls';
+import { useUrls } from './use-urls';
 
 interface IParticipationType {
     id: number,
@@ -33,6 +33,9 @@ const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
     const [ areUserParticipationsRetrieved, setAreUserParticipationsRetrieved ] = useState<boolean>(false);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ userParticipations, setUserParticipations ] = useState<IParticipationType[]>([]);
+
+    const { getParticipationsForProfileUrl } = useUrls();
+
     const {
         get: getParticipationsForProfileRequest,
         data: getParticipationsForProfileData,
@@ -46,7 +49,6 @@ const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
 
     useEffect(() => {
         if (getParticipationsForProfileData != null) {
-            console.log(getParticipationsForProfileData);
             setUserParticipations(getParticipationsForProfileData as IParticipationType[]);
             setAreUserParticipationsRetrieved(true);
         }

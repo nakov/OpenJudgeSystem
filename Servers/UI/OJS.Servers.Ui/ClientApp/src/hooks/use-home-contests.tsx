@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { IHaveChildrenProps } from '../components/common/Props';
-import { getIndexContestsUrl } from '../utils/urls';
+import { useUrls } from './use-urls';
 import { useHttp } from './use-http';
 import { useLoading } from './use-loading';
 import {
@@ -34,6 +34,7 @@ interface IHomeContestsProviderProps extends IHaveChildrenProps {
 const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
     const [ activeContests, setActiveContests ] = useState<IIndexContestsType[]>([]);
     const [ pastContests, setPastContests ] = useState<IIndexContestsType[]>([]);
+    const { getGetIndexContestsUrl } = useUrls();
 
     const {
         startLoading,
@@ -43,11 +44,11 @@ const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
     const {
         get: getContestsForIndexRequest,
         data: getContestsForIndexData,
-    } = useHttp(getIndexContestsUrl);
+    } = useHttp(getGetIndexContestsUrl);
 
     const getForHome = useCallback(async () => {
         startLoading();
-        await getContestsForIndexRequest({});
+        await getContestsForIndexRequest();
         stopLoading();
     }, [ getContestsForIndexRequest, startLoading, stopLoading ]);
 
