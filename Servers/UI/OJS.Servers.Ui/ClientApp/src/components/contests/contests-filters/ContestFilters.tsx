@@ -10,7 +10,7 @@ import styles from './ContestFilters.module.scss';
 import Button, {ButtonSize, ButtonType} from '../../guidelines/buttons/Button';
 import {useContests} from '../../../hooks/use-contests';
 import {groupByType} from '../../../common/filter-utils';
-import ShowMoreButton from "../../guidelines/buttons/ShowMoreButton";
+import ExpandButton from "../../guidelines/buttons/ExpandButton";
 import concatClassNames from "../../../utils/class-names";
 
 interface IFiltersGroup {
@@ -60,41 +60,50 @@ const ContestFilters = () => {
         [ handleFilterClick, filters ],
     );
     
-    const toggleFiltersExpanded = useCallback(() => {
-        setExpanded(!expanded);
-    }, [expanded]);
+    const toggleFiltersExpanded = useCallback(
+        () => {
+            setExpanded(!expanded);
+        },
+        [expanded],
+    );
     
-    const renderShowMoreButton = (filters: IFilter[]) => {
-        const maxFiltersToDisplayCount = 3;
-        return filters.length > maxFiltersToDisplayCount
-            ? <ShowMoreButton onClick={toggleFiltersExpanded}/>
-            : null
-    };
+    const renderExpandButton = useCallback(
+        (filters: IFilter[]) => {
+            const maxFiltersToDisplayCount = 3;
+            return filters.length > maxFiltersToDisplayCount
+                ? <ExpandButton onClick={toggleFiltersExpanded}/>
+                : null;
+        },
+    [toggleFiltersExpanded],
+    );
 
-    const renderFilter = ({ type, filters: groupFilters }: IFiltersGroup) => {
-        const className = concatClassNames(
-            styles.listFilterItems,
-            expanded
-                ? styles.expanded
-                : '');
+    const renderFilter = useCallback(
+        ({ type, filters: groupFilters }: IFiltersGroup) => {
+            const className = concatClassNames(
+                styles.listFilterItems,
+                expanded
+                    ? styles.expanded
+                    : '');
         
-        return <div className={styles.filterTypeContainer}>
-            <Heading
-                type={HeadingType.small}
-                className={styles.heading}
-            >
-                {type}
-            </Heading>
-            <List
-                values={groupFilters}
-                itemFunc={renderFilterItem}
-                orientation={Orientation.horizontal}
-                className={className}
-                itemClassName={styles.listFilterItem}
-            />
-            {renderShowMoreButton(groupFilters)}
-        </div>
-    };
+            return <div className={styles.filterTypeContainer}>
+                <Heading
+                    type={HeadingType.small}
+                    className={styles.heading}
+                >
+                    {type}
+                </Heading>
+                <List
+                    values={groupFilters}
+                    itemFunc={renderFilterItem}
+                    orientation={Orientation.horizontal}
+                    className={className}
+                    itemClassName={styles.listFilterItem}
+                />
+                    {renderExpandButton(groupFilters)}
+                </div>
+        },
+        [expanded, renderFilterItem, renderExpandButton],
+    );
 
     useEffect(
         () => {

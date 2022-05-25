@@ -2,9 +2,9 @@ import React, {useCallback, useState} from 'react';
 import {Button, ButtonSize, ButtonType} from "./Button";
 import {MdExpandLess, MdExpandMore} from "react-icons/md";
 
-import styles from './ShowMoreButton.module.scss'
+import styles from './ExpandButton.module.scss'
 
-interface IShowMoreButtonProps {
+interface IExpandButtonProps {
     expandedText?: string,
     collapsedText?: string,
     expandedIcon?: React.ReactElement,
@@ -12,13 +12,13 @@ interface IShowMoreButtonProps {
     onClick: () => void;
 }
 
-const ShowMoreButton = ({
+const ExpandButton = ({
     expandedText = "Show less",
     collapsedText = "Show more",
     expandedIcon = <MdExpandLess/>,
     collapsedIcon = <MdExpandMore/>,
     onClick,
-} : IShowMoreButtonProps) => {
+} : IExpandButtonProps) => {
     const [ expanded, setExpanded] = useState(false);
     
     const renderButtonText = useCallback(() => {
@@ -33,7 +33,7 @@ const ShowMoreButton = ({
             : collapsedIcon
     }, [expanded]);
     
-    const onExpandClick = useCallback(
+    const handleClick = useCallback(
         () => {
             setExpanded(!expanded);
             onClick();
@@ -46,7 +46,7 @@ const ShowMoreButton = ({
             <Button
               type={ButtonType.plain}
               size={ButtonSize.none}
-              onClick={onExpandClick}
+              onClick={handleClick}
               className={styles.link}
             >
                 {renderButtonText()}
@@ -56,4 +56,4 @@ const ShowMoreButton = ({
     )
 }
 
-export default ShowMoreButton;
+export default ExpandButton;
