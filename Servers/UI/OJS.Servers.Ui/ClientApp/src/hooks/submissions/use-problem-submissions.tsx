@@ -47,11 +47,11 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
         stopLoading,
     } = useLoading();
 
-    const { getGetSubmissionResultsByProblemUrl } = useUrls();
+    const { getSubmissionResultsByProblemUrl } = useUrls();
     const {
-        get: getProblemSubmissionsRequest,
-        data: getProblemSubmissionsData,
-    } = useHttp(getGetSubmissionResultsByProblemUrl as UrlType, submissionResultsToGetParameters);
+        get: getProblemSubmissions,
+        data: problemSubmissionsData,
+    } = useHttp(getSubmissionResultsByProblemUrl as UrlType, submissionResultsToGetParameters);
 
     const getSubmissions = useCallback(async () => {
         const { id } = currentProblem || {};
@@ -68,14 +68,14 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
 
     useEffect(
         () => {
-            if (isNil(getProblemSubmissionsData)) {
+            if (isNil(problemSubmissionsData)) {
                 return;
             }
 
-            setSubmissions(getProblemSubmissionsData);
+            setSubmissions(problemSubmissionsData);
             setSubmissionResultsToGetParameters(null);
         },
-        [ getProblemSubmissionsData ],
+        [ problemSubmissionsData ],
     );
 
     useEffect(
@@ -86,11 +86,11 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
 
             (async () => {
                 startLoading();
-                await getProblemSubmissionsRequest();
+                await getProblemSubmissions();
                 stopLoading();
             })();
         },
-        [ startLoading, stopLoading, getProblemSubmissionsRequest, submissionResultsToGetParameters ],
+        [ startLoading, stopLoading, getProblemSubmissions, submissionResultsToGetParameters ],
     );
 
     const value = {

@@ -14,7 +14,7 @@ interface IUrlsContext {
     getUrlForAllContests: (params: IAllContestsUrlParams) => string;
     getStartContestParticipationUrl: (params: IStartContestParticipationUrlParams) => string;
     getDownloadProblemResourceUrl: (params: IDownloadProblemResourceUrlParams) => string;
-    getGetSubmissionResultsByProblemUrl: (params: IGetSubmissionResultsByProblemUrlParams) => string;
+    getSubmissionResultsByProblemUrl: (params: IGetSubmissionResultsByProblemUrlParams) => string;
     getGetIndexContestsUrl: string;
     getLoginSubmitUrl: string;
     getLogoutUrl: string;

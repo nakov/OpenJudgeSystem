@@ -55,7 +55,7 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
         status: loginSubmitRequestStatus,
     } = useHttp(getLoginSubmitUrl);
 
-    const { post: logoutRequest, response: logoutResponse } = useHttp(getLogoutUrl);
+    const { post: logout, response: logoutResponse } = useHttp(getLogoutUrl);
 
     const signIn = useCallback(
         async () => {
@@ -72,10 +72,10 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
 
     const signOut = useCallback(async () => {
         startLoading();
-        await logoutRequest({});
+        await logout({});
         setUser(defaultState.user);
         stopLoading();
-    }, [ logoutRequest, startLoading, stopLoading ]);
+    }, [ logout, startLoading, stopLoading ]);
 
     const getUser = useCallback(() => user, [ user ]);
 

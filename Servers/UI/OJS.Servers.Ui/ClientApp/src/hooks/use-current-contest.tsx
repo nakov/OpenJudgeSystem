@@ -23,7 +23,7 @@ interface ICurrentContestContext {
         isOfficial: boolean;
     };
     actions: {
-        start: (info: IStartContestArgs) => Promise<void>;
+        start: (info: IStartContestArgs) => void;
     };
 }
 
@@ -65,7 +65,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         data: startContestData,
     } = useHttp(getStartContestParticipationUrl as UrlType, contestToStart);
 
-    const start = useCallback(async (obj) => {
+    const start = useCallback((obj) => {
         setContestToStart(obj);
     }, []);
 

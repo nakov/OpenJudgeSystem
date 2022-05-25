@@ -13,7 +13,7 @@ import { IHaveChildrenProps } from '../../components/common/Props';
 interface ISubmissionsDetailsContext {
     setCurrentSubmissionId: (submissionId: number) => void;
     currentSubmission: ISubmissionDetailsType | undefined,
-    getSubmissionDetails: () => Promise<void>,
+    getDetails: () => Promise<void>,
     currentProblemSubmissionResults: ISubmissionDetails[]
     getSubmissionResults: (problemId: number) => Promise<void>
 }
@@ -30,25 +30,25 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     const [ currentSubmissionId, setCurrentSubmissionId ] = useState<number>();
     const [ currentSubmission, setCurrentSubmission ] = useState<ISubmissionDetailsType>();
     const [
-        getSubmissionResultsByProblemUrlParams,
-        setGetSubmissionResultsByProblemUrlParams ] =
+        submissionResultsByProblemUrlParams,
+        setSubmissionResultsByProblemUrlParams ] =
         useState<IGetSubmissionResultsByProblemUrlParams | null>();
     const [ currentProblemSubmissionResults, setCurrentProblemSubmissionResults ] =
         useState<ISubmissionDetails[]>(defaultState.currentProblemSubmissionResults);
 
-    const { getCurrentSubmissionDetailsUrl, getGetSubmissionResultsByProblemUrl } = useUrls();
+    const { getCurrentSubmissionDetailsUrl, getSubmissionResultsByProblemUrl } = useUrls();
 
     const {
         get: getSubmissionDetailsRequest,
-        data: getSubmissionDetailsData,
+        data: submissionDetailsData,
     } = useHttp(getCurrentSubmissionDetailsUrl as UrlType);
 
     const {
         get: getProblemResultsRequest,
         data: getProblemResultsData,
-    } = useHttp(getGetSubmissionResultsByProblemUrl as UrlType, null);
+    } = useHttp(getSubmissionResultsByProblemUrl as UrlType, null);
 
-    const getSubmissionDetails = useCallback(async () => {
+    const getDetails = useCallback(async () => {
         if (isNil(currentSubmissionId)) {
             return;
         }
@@ -63,7 +63,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             return;
         }
 
-        setGetSubmissionResultsByProblemUrlParams({
+        setSubmissionResultsByProblemUrlParams({
             id: problemId,
             isOfficial: isContestParticipationOfficial,
             take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
@@ -71,7 +71,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     }, [ isContestParticipationOfficial ]);
 
     useEffect(() => {
-        if (isNil(getSubmissionResultsByProblemUrlParams)) {
+        if (isNil(submissionResultsByProblemUrlParams)) {
             return;
         }
 
@@ -91,18 +91,18 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     }, [ getProblemResultsData ]);
 
     useEffect(() => {
-        if (isNil(getSubmissionDetailsData)) {
+        if (isNil(submissionDetailsData)) {
             return;
         }
 
-        setCurrentSubmission(getSubmissionDetailsData as ISubmissionDetailsType);
-    }, [ getSubmissionDetailsData ]);
+        setCurrentSubmission(submissionDetailsData as ISubmissionDetailsType);
+    }, [ submissionDetailsData ]);
 
     const value = {
         setCurrentSubmissionId,
         currentSubmission,
         currentProblemSubmissionResults,
-        getSubmissionDetails,
+        getDetails,
         getSubmissionResults,
     };
 
