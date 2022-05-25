@@ -32,7 +32,6 @@ x64/
 *.tli
 *.tlh
 *.tmp
-*.log
 *.vspscc
 *.vssscc
 .builds
@@ -96,7 +95,6 @@ AppPackages/
 [Bb]in
 [Oo]bj
 sql
-TestResults/
 [Tt]est[Rr]esult*/
 *.Cache
 ClientBin
@@ -104,6 +102,9 @@ ClientBin
 ~$*
 *.dbmdl
 Generated_Code #added for RIA/Silverlight projects
+
+# MacOS specific
+.DS_Store
 
 # Backup & report files from converting an old project file to a newer
 # Visual Studio version. Backup files are not needed, because we have git ;-)
@@ -163,6 +164,7 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
+dist/
 
 # Typescript v1 declaration files
 typings/

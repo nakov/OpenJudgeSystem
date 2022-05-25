@@ -5,12 +5,7 @@ import Contest from '../../components/contests/contest/Contest';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 import { useCurrentContest } from '../../hooks/use-current-contest';
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-interface IContestPageParamsProps {
-    contestId: string
-    participationType: string
-}
+import { ContestParticipationType } from '../../common/constants';
 
 const ContestPage = () => {
     const {
@@ -23,7 +18,7 @@ const ContestPage = () => {
         (async () => {
             const contest = {
                 id: Number(contestId),
-                isOfficial: participationType === 'compete',
+                isOfficial: participationType === ContestParticipationType.Compete,
             };
             await start(contest);
         })();

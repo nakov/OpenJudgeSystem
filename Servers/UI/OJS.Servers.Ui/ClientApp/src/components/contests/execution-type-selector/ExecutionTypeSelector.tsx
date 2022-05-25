@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { get } from 'lodash';
 import styles from './ExecutionTypeSelector.module.scss';
-import { Button } from '../../guidelines/buttons/Button';
+import { Button, ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 import { useSubmissions } from '../../../hooks/submissions/use-submissions';
 import concatClassNames from '../../../utils/class-names';
 
@@ -15,7 +15,9 @@ interface IExecutionTypeSelectorProps {
 
 const ExecutionTypeSelector = ({ id, value, isSelected, onSelect }: IExecutionTypeSelectorProps) => {
     const [ selected, setSelected ] = useState(isSelected);
+    const [ executionTypeSelectorClassName, setExecutionTypeSelectorClassName ] = useState('');
     const { state: { selectedSubmissionType } } = useSubmissions();
+
     const selectedSubmissionTypeId = useMemo(
         () => get(selectedSubmissionType, 'id', null),
         [ selectedSubmissionType ],
@@ -23,17 +25,20 @@ const ExecutionTypeSelector = ({ id, value, isSelected, onSelect }: IExecutionTy
 
     const executionTypeSelectorActiveClass = 'executionTypeSelectorActive';
     const executionTypeSelectorActiveClassName = concatClassNames(
-        styles.executionTypeSelectorActive,
+        styles.executionTypeSelector,
+        styles.active,
         executionTypeSelectorActiveClass,
     );
+
     const executionTypeSelectorInactiveClass = 'executionTypeSelectorInactive';
     const executionTypeSelectorInactiveClassName = concatClassNames(
-        styles.executionTypeSelectorInactive,
+        styles.executionTypeSelector,
+        styles.inactive,
         executionTypeSelectorInactiveClass,
     );
 
-    const getClassName = useCallback(
-        () => (selectedSubmissionTypeId === id
+    useEffect(
+        () => setExecutionTypeSelectorClassName(selectedSubmissionTypeId === id
             ? executionTypeSelectorActiveClassName
             : executionTypeSelectorInactiveClassName),
         [ executionTypeSelectorActiveClassName, executionTypeSelectorInactiveClassName, id, selectedSubmissionTypeId ],
@@ -46,8 +51,9 @@ const ExecutionTypeSelector = ({ id, value, isSelected, onSelect }: IExecutionTy
 
     return (
         <Button
-          type="plain"
-          className={getClassName()}
+          type={ButtonType.secondary}
+          size={ButtonSize.small}
+          className={executionTypeSelectorClassName}
           onClick={select}
         >
             {value}

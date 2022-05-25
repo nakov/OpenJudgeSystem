@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useCallback } from 'react';
-import Heading from '../../guidelines/headings/Heading';
+import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import Diff from '../../Diff';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import { ITestRunDetailsType } from '../../../hooks/submissions/types';
@@ -38,7 +38,10 @@ const SubmissionResults = () => {
 
     const renderTrialTests = useCallback((trialTests: ITestRunDetailsType[]) => trialTests.map((run, index) => (
         <div className={styles.submissionResultContainer}>
-            <Heading type="secondary" className={(() => getTestRunHeadingClassName(run))()}>
+            <Heading
+              type={HeadingType.secondary}
+              className={(() => getTestRunHeadingClassName(run))()}
+            >
                 {`Zero ${getTestRunHeading(run, index)}`}
             </Heading>
             {
@@ -52,7 +55,10 @@ const SubmissionResults = () => {
 
     const renderCompeteTests = useCallback((competeTests: ITestRunDetailsType[]) => competeTests.map((run, index) => (
         <div className={styles.submissionResultContainer}>
-            <Heading type="secondary" className={(() => getTestRunHeadingClassName(run))()}>
+            <Heading
+              type={HeadingType.secondary}
+              className={(() => getTestRunHeadingClassName(run))()}
+            >
                 {getTestRunHeading(run, index)}
             </Heading>
             {renderTimeAndMemoryUsed(run)}
