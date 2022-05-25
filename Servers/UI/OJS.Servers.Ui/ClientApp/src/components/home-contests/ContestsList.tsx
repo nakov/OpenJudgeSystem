@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
 import ContestCard from './contest-card/ContestCard';
 import Heading from '../guidelines/headings/Heading';
-import List from '../guidelines/lists/List';
-import { LinkButton } from '../guidelines/buttons/Button';
+import List, { Orientation } from '../guidelines/lists/List';
+import { ButtonSize, LinkButton, LinkButtonType } from '../guidelines/buttons/Button';
 import { IIndexContestsType } from '../../common/types';
 
 import styles from './ContestsList.module.scss';
@@ -63,15 +63,15 @@ const ContestsList = ({
                 <List
                   values={contests}
                   itemFunc={renderContest}
-                  orientation="horizontal"
+                  orientation={Orientation.horizontal}
                 />
             </div>
             <LinkButton
               id="button-see-all-contests"
               to={link}
               text="See All"
-              type="secondary"
-              size="small"
+              type={LinkButtonType.secondary}
+              size={ButtonSize.small}
               className={contestsSeeAllButtonClassName}
             />
         </>

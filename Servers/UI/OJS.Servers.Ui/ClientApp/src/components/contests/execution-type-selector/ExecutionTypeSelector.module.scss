@@ -14,17 +14,17 @@
   &:hover {
     cursor: pointer;
   }
+
+
+  &.active {
+    border-color: $background-color;
+  }
+
+  &.inactive {
+    color: $color-btn-disabled;
+    border-color: $color-btn-disabled;
+  }
 }
 
-.executionTypeSelectorActive {
-  @extend .executionTypeSelector;
 
-  border-color: $background-color;
-}
 
-.executionTypeSelectorInactive {
-  @extend .executionTypeSelector;
-
-  color: $color-btn-disabled;
-  border-color: $color-btn-disabled;
-}

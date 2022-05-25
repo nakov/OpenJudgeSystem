@@ -1,6 +1,6 @@
 import React, {useCallback} from 'react';
 import {useContestCategories} from '../../../hooks/use-contest-categories';
-import Heading from '../../guidelines/headings/Heading';
+import Heading, {HeadingType} from '../../guidelines/headings/Heading';
 
 import styles from './ContestCategories.module.scss';
 import {FilterType} from '../../../common/contest-types';
@@ -46,7 +46,7 @@ const ContestCategories = ({
     return (
         <div className={containerClassName}>
             <Heading
-                type="small"
+                type={HeadingType.small}
                 className={styles.heading}
             >
                 Category

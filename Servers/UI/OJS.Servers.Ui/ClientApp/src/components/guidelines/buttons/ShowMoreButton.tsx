@@ -1,8 +1,9 @@
 import React, {useCallback, useState} from 'react';
-import {LinkButton} from "./Button";
+import {Button, ButtonSize, ButtonType} from "./Button";
 import {MdExpandLess, MdExpandMore} from "react-icons/md";
 
 import styles from './ShowMoreButton.module.scss'
+
 interface IShowMoreButtonProps {
     onClick: () => void;
 }
@@ -30,14 +31,15 @@ const ShowMoreButton = ({
 
     return (
         <div className={styles.container}>
-            <LinkButton
-              text={buttonText}
-              to={'#'}
-              type={'link'} onClick={onShowMoreClick}
+            <Button
+              type={ButtonType.plain}
+              size={ButtonSize.none}
+              onClick={onShowMoreClick}
               className={styles.link}
             >
+                {buttonText}
                 {buttonIcon}
-            </LinkButton>
+            </Button>
         </div>
     )
 }

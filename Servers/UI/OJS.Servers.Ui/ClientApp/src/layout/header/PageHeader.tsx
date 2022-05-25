@@ -1,24 +1,45 @@
 import React, { useCallback } from 'react';
 import logo from './softuni-logo-horizontal.svg';
 import PageNav from '../nav/PageNav';
-import Heading from '../../components/guidelines/headings/Heading';
-import styles from './PageHeader.module.scss';
+import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import { useAuth } from '../../hooks/use-auth';
 import { administrationContestsGridUrl } from '../../utils/urls';
-import { LinkButton } from '../../components/guidelines/buttons/Button';
+import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
+
+import styles from './PageHeader.module.scss';
 
 const PageHeader = () => {
     const { user } = useAuth();
 
     const renderLinks = useCallback(() => {
         const administrationLink = user.permissions.canAccessAdministration
-            ? <LinkButton type="link" to={administrationContestsGridUrl} isToExternal text="Administration" />
+            ? (
+                <LinkButton
+                  type={LinkButtonType.plain}
+                  size={ButtonSize.none}
+                  to={administrationContestsGridUrl}
+                  isToExternal
+                  text="Administration"
+                />
+            )
             : null;
 
         return (
             <>
-                <LinkButton type="link" id="nav-contests-link" to="/contests" text="Contests" />
-                <LinkButton type="link" id="nav-submissions-link" to="/submissions" text="Submissions" />
+                <LinkButton
+                  id="nav-contests-link"
+                  type={LinkButtonType.plain}
+                  size={ButtonSize.none}
+                  to="/contests"
+                  text="Contests"
+                />
+                <LinkButton
+                  id="nav-submissions-link"
+                  type={LinkButtonType.plain}
+                  size={ButtonSize.none}
+                  to="/submissions"
+                  text="Submissions"
+                />
                 { administrationLink }
             </>
         );
@@ -28,7 +49,11 @@ const PageHeader = () => {
         <header id="pageHeader" className={styles.header}>
             <div className={styles.headerSize}>
                 <div className={styles.headerLinks}>
-                    <Heading id="page-header-h2" type="secondary" className={styles.heading}>
+                    <Heading
+                      id="page-header-h2"
+                      type={HeadingType.secondary}
+                      className={styles.heading}
+                    >
                         <a href="/">
                             <img src={logo} alt="softuni logo" />
                         </a>

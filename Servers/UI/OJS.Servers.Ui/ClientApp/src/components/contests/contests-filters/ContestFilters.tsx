@@ -1,15 +1,15 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { isNil } from 'lodash';
-import List from '../../guidelines/lists/List';
-import Heading from '../../guidelines/headings/Heading';
+import React, {useCallback, useEffect, useState} from 'react';
+import {isNil} from 'lodash';
+import List, {Orientation} from '../../guidelines/lists/List';
+import Heading, {HeadingType} from '../../guidelines/headings/Heading';
 
-import { FilterType, IFilter } from '../../../common/contest-types';
+import {FilterType, IFilter} from '../../../common/contest-types';
 import ContestCategories from '../../../components/contests/contest-categories/ContestCategories';
 
 import styles from './ContestFilters.module.scss';
-import Button from '../../guidelines/buttons/Button';
-import { useContests } from '../../../hooks/use-contests';
-import { groupByType } from '../../../common/filter-utils';
+import Button, {ButtonSize, ButtonType} from '../../guidelines/buttons/Button';
+import {useContests} from '../../../hooks/use-contests';
+import {groupByType} from '../../../common/filter-utils';
 import ShowMoreButton from "../../guidelines/buttons/ShowMoreButton";
 import concatClassNames from "../../../utils/class-names";
 
@@ -45,8 +45,8 @@ const ContestFilters = () => {
     const renderFilterItem = useCallback(
         ({ id, name }: IFilter) => {
             const filterIsSelected = filters.some(f => f.id === id);
-            const type = filterIsSelected ? "primary" : "secondary";
-            const size = filterIsSelected ? "medium" : "small";
+            const type = filterIsSelected ? ButtonType.primary : ButtonType.secondary;
+            const size = filterIsSelected ? ButtonSize.medium : ButtonSize.small;
 
             return (
                 <Button
@@ -80,7 +80,7 @@ const ContestFilters = () => {
         
         return <div className={styles.filterTypeContainer}>
             <Heading
-                type="small"
+                type={HeadingType.small}
                 className={styles.heading}
             >
                 {type}
@@ -88,7 +88,7 @@ const ContestFilters = () => {
             <List
                 values={groupFilters}
                 itemFunc={renderFilterItem}
-                orientation="horizontal"
+                orientation={Orientation.horizontal}
                 className={className}
                 itemClassName={styles.listFilterItem}
             />

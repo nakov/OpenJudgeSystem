@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useCallback } from 'react';
 import { ITestRunType } from '../../../hooks/submissions/use-submissions';
 import concatClassNames from '../../../utils/class-names';
 import styles from './ExecutionResult.module.scss';
@@ -7,7 +8,7 @@ interface IExecutionResultDetailsProps {
     testRuns: ITestRunType[],
 }
 
-const classnameToTestRunResultType : { [name: string]: string } = {
+const classnameToTestRunResultType: { [name: string]: string } = {
     CorrectAnswer: 'fa-check',
     WrongAnswer: 'fa-times',
     TimeLimit: 'fa-clock',
@@ -15,7 +16,7 @@ const classnameToTestRunResultType : { [name: string]: string } = {
     RunTimeError: 'fa-asterisk',
 };
 
-const concatResultTypeIconClassname = (resultType: string) : string => concatClassNames(
+const concatResultTypeIconClassname = (resultType: string): string => concatClassNames(
     'fas',
     classnameToTestRunResultType[resultType],
     resultType === 'CorrectAnswer'
@@ -24,8 +25,16 @@ const concatResultTypeIconClassname = (resultType: string) : string => concatCla
 );
 
 const ExecutionResult = ({ testRuns }: IExecutionResultDetailsProps) => {
-    // eslint-disable-next-line max-len
-    const renderTestRunIcons = (runs: ITestRunType[]) => runs.map((run) => (<i key={run.id} className={concatResultTypeIconClassname(run.resultType)} />));
+    const renderRun = useCallback(
+        (run: ITestRunType) => (
+            <i key={run.id} className={concatResultTypeIconClassname(run.resultType)} />),
+        [],
+    );
+
+    const renderTestRunIcons = useCallback(
+        (runs: ITestRunType[]) => runs.map(renderRun),
+        [ renderRun ],
+    );
 
     return (
         <div className={styles.testResultsList}>{renderTestRunIcons(testRuns)}</div>
