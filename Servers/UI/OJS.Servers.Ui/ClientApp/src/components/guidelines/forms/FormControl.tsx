@@ -6,14 +6,23 @@ import { ClassNameType, IHaveChildrenProps, IHaveOptionalClassName } from '../..
 
 import styles from './FormControl.module.scss';
 
-interface IFormControlProps extends IHaveOptionalClassName{
+enum FormControlType {
+    'radio' = 'radio',
+    'checkbox' = 'checkbox',
+    'text' = 'text',
+    'textarea' = 'textarea',
+    'input' = 'input',
+    'password' = 'password',
+}
+
+interface IFormControlProps extends IHaveOptionalClassName {
     name: string;
     value: string;
     labelText?: string;
     labelClassName?: ClassNameType;
-    type?: 'radio' | 'checkbox' | 'text' | 'textarea' | 'input' | 'password';
-    onChange?: (value?:string) => void;
-    onInput?: (value?:string) => void;
+    type?:FormControlType;
+    onChange?: (value?: string) => void;
+    onInput?: (value?: string) => void;
     checked?: boolean;
     id?: string;
 }
@@ -49,30 +58,32 @@ const FormControl = ({
     name,
     value,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onChange = (v?:string) => { },
+    onChange = (v?: string) => {
+    },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onInput = (v?:string) => { },
+    onInput = (v?: string) => {
+    },
     className = '',
     labelText = '',
     labelClassName = '',
-    type = 'text',
+    type = FormControlType.text,
     checked = false,
     id = generateId(),
 }: IFormControlProps) => {
     const [ formControlValue, setFormControlValue ] = useState(value);
 
     const componentClassName = concatClassNames(styles.formControl, className);
-    const handleOnChange = (ev:any) => {
+    const handleOnChange = (ev: any) => {
         setFormControlValue(ev.target.value);
         onChange(ev.target.value);
     };
-    const handleOnInput = (ev:any) => {
+    const handleOnInput = (ev: any) => {
         setFormControlValue(ev.target.value);
         onChange(ev.target.value);
     };
 
     const generateFormControl = () => {
-        if (type === 'textarea') {
+        if (type === FormControlType.textarea) {
             return (
                 <textarea
                   className={concatClassNames(componentClassName, styles.formControlTextArea)}
@@ -99,10 +110,19 @@ const FormControl = ({
     };
 
     return (
-        <LabelInternal id={`${id}-label`} text={labelText} className={labelClassName} forKey={id}>
+        <LabelInternal
+          id={`${id}-label`}
+          text={labelText}
+          className={labelClassName}
+          forKey={id}
+        >
             {generateFormControl()}
         </LabelInternal>
     );
 };
 
 export default FormControl;
+
+export {
+    FormControlType,
+};

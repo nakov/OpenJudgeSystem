@@ -6,7 +6,7 @@ import { ISubmissionDetails } from './types';
 import { useLoading } from '../use-loading';
 import { useHttp } from '../use-http';
 import { useUrls } from '../use-urls';
-import DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE from '../../common/constants';
+import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
 import { useCurrentContest } from '../use-current-contest';
 import { UrlType } from '../../common/common-types';
 

@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { isNil } from 'lodash';
-import List from '../../guidelines/lists/List';
-import Heading from '../../guidelines/headings/Heading';
+import List, { Orientation } from '../../guidelines/lists/List';
+import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 
 import { FilterType, IFilter } from '../../../common/contest-types';
 
 import styles from './ContestFilters.module.scss';
-import Label from '../../guidelines/labels/Label';
-import Button from '../../guidelines/buttons/Button';
+import Label, { LabelType } from '../../guidelines/labels/Label';
+import Button, { ButtonType } from '../../guidelines/buttons/Button';
 import { useContests } from '../../../hooks/use-contests';
 import { groupByType } from '../../../common/filter-utils';
 
@@ -17,7 +17,6 @@ interface IFiltersGroup {
 }
 
 const ContestFilters = () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ filtersGroups, setFiltersGroups ] = useState<IFiltersGroup[]>([]);
 
     const {
@@ -43,11 +42,11 @@ const ContestFilters = () => {
     const renderFilterItem = useCallback(
         ({ id, name }: IFilter) => (
             <Button
-              type="plain"
+              type={ButtonType.plain}
               onClick={() => handleFilterClick(id)}
               className={styles.btnSelectFilter}
             >
-                <Label type="plain">
+                <Label type={LabelType.plain}>
                     {name}
                 </Label>
             </Button>
@@ -58,7 +57,7 @@ const ContestFilters = () => {
     const renderFilter = ({ type, filters: groupFilters }: IFiltersGroup) => (
         <div>
             <Heading
-              type="small"
+              type={HeadingType.small}
               className={styles.heading}
             >
                 {type}
@@ -66,7 +65,7 @@ const ContestFilters = () => {
             <List
               values={groupFilters}
               itemFunc={renderFilterItem}
-              orientation="horizontal"
+              orientation={Orientation.horizontal}
               className={styles.listFilterItems}
               itemClassName={styles.listFilterItem}
             />
@@ -82,7 +81,12 @@ const ContestFilters = () => {
 
     return (
         <div className={styles.container}>
-            <Heading type="secondary">Filters: </Heading>
+            <Heading
+              type={HeadingType.secondary}
+            >
+                Filters:
+                {' '}
+            </Heading>
             <List
               values={filtersGroups}
               itemFunc={renderFilter}

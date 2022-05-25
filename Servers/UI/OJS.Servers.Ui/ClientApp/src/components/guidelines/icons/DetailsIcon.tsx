@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { MdOutlineExpandLess, MdOutlineExpandMore } from 'react-icons/md';
-// eslint-disable-next-line css-modules/no-unused-class
 import styles from './DetailsIcon.module.scss';
 
 import IconSize from './icon-sizes';

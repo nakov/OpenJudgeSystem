@@ -1,12 +1,10 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { isNil } from 'lodash';
-
 import { useLoading } from '../use-loading';
 import { useHttp } from '../use-http';
 import { useUrls } from '../use-urls';
 import { useCurrentContest } from '../use-current-contest';
-
-import DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE from '../../common/constants';
+import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
 import { UrlType } from '../../common/common-types';
 import { IGetSubmissionResultsByProblemUrlParams } from '../../common/url-types';
 import { ITestRunType, ISubmissionType, ISubmissionDetailsType, ISubmissionDetails } from './types';
