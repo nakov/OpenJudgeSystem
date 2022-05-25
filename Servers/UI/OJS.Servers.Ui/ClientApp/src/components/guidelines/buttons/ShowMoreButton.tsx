@@ -5,28 +5,40 @@ import {MdExpandLess, MdExpandMore} from "react-icons/md";
 import styles from './ShowMoreButton.module.scss'
 
 interface IShowMoreButtonProps {
+    expandedText?: string,
+    collapsedText?: string,
+    expandedIcon?: React.ReactElement,
+    collapsedIcon?: React.ReactElement,
     onClick: () => void;
 }
 
 const ShowMoreButton = ({
+    expandedText = "Show less",
+    collapsedText = "Show more",
+    expandedIcon = <MdExpandLess/>,
+    collapsedIcon = <MdExpandMore/>,
     onClick,
 } : IShowMoreButtonProps) => {
-    const [ showMore, setShowMore] = useState(false);
+    const [ expanded, setExpanded] = useState(false);
     
-    const buttonText = showMore
-        ? "Show less"
-        : "Show more";
+    const renderButtonText = useCallback(() => {
+        return expanded
+            ? expandedText
+            : collapsedText
+    },[expanded]);
     
-    const buttonIcon = showMore
-        ? <MdExpandLess/>
-        : <MdExpandMore/>;
+    const renderButtonIcon = useCallback(() => {
+        return expanded
+            ? expandedIcon
+            : collapsedIcon
+    }, [expanded]);
     
-    const onShowMoreClick = useCallback(
+    const onExpandClick = useCallback(
         () => {
-            setShowMore(!showMore);
+            setExpanded(!expanded);
             onClick();
         },
-        [showMore],
+        [expanded],
     );
 
     return (
@@ -34,11 +46,11 @@ const ShowMoreButton = ({
             <Button
               type={ButtonType.plain}
               size={ButtonSize.none}
-              onClick={onShowMoreClick}
+              onClick={onExpandClick}
               className={styles.link}
             >
-                {buttonText}
-                {buttonIcon}
+                {renderButtonText()}
+                {renderButtonIcon()}
             </Button>
         </div>
     )
