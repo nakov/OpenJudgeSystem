@@ -44,6 +44,7 @@ const getAdministrationContestsGridUrl = () => `${administrationBaseUrl}/Contest
 // profile
 const getProfileInfoUrl = () => `${baseUrl}/Users/GetProfileInfo`;
 const getSubmissionsForProfileUrl = () => `${baseUrl}/Submissions/GetForProfile`;
+const getParticipationsForProfileUrl = () => `${baseUrl}/Participations/GetForProfile`;
 
 // contests
 const getIndexContestsUrl = () => `${baseUrl}/Contests/GetForHomeIndex`;
@@ -78,9 +79,6 @@ const getSubmissionsDetailsUrl = () => `${baseUrl}/Submissions/Details`;
 const getSubmissionDetailsByIdUrl =
     ({ submissionId }: IGetCurrentSubmissionDetailsUrlParams) => `${getSubmissionsDetailsUrl}/${submissionId}`;
 const getSubmitUrl = () => `${baseUrl}/Compete/Submit`;
-
-// participations
-const getParticipationsForProfileUrl = () => `${baseUrl}/Participations/GetForProfile`;
 
 // problem resources
 const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams) => `
