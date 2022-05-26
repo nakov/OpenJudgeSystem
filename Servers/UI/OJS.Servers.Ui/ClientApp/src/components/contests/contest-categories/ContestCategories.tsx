@@ -29,7 +29,7 @@ const ContestCategories = ({
         }
     } = useContests();
 
-    const handleTreeItemClick = useCallback((node: ITreeItemType) => {
+    const onTreeItemClick = useCallback((node: ITreeItemType) => {
         if (!isEmpty(node.children)) {
             return;
         }
@@ -53,7 +53,7 @@ const ContestCategories = ({
             </Heading>
             <Tree
                 items={categories}
-                handleTreeItemClick={handleTreeItemClick}
+                onTreeItemClick={onTreeItemClick}
             />
         </div>
     );

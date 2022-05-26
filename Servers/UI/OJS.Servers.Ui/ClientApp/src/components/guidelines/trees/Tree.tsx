@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useCallback} from "react";
 import {TreeView, TreeItem} from "@material-ui/lab";
 import {MdChevronRight, MdExpandMore} from "react-icons/md";
 import {isArray} from "lodash";
@@ -13,25 +13,31 @@ interface ITreeItemType {
 
 interface ITreeProps {
     items: ITreeItemType[],
-    handleTreeItemClick: (node: ITreeItemType) => void,   
+    onTreeItemClick: (node: ITreeItemType) => void,   
 }
 
 const Tree = ({
     items,
-    handleTreeItemClick,
+    onTreeItemClick,
 } : ITreeProps) => {
     const renderTree = (node: ITreeItemType) => (
         <TreeItem
             key={node.id}
             nodeId={node.id.toString()}
             label={node.name}
-            onLabelClick={() => handleTreeItemClick(node)}
+            onLabelClick={() => onTreeItemClick(node)}
         >
-            {isArray(node.children)
-                ? node.children.map((child) => renderTree(child))
-                : null}
+            {renderNodes(node)}
         </TreeItem>
     );
+    
+    const renderNodes = (node: ITreeItemType) => {
+        return isArray(node.children)
+            ? node.children.map((child) => renderTree(child))
+            : null;
+    };
+    
+    const renderTreeView = (items: ITreeItemType[]) => items.map((c) => renderTree(c));
     
     return <TreeView
         aria-label="rich object"
@@ -39,7 +45,7 @@ const Tree = ({
         defaultExpandIcon={<MdChevronRight />}
         className={styles.root}
     >
-        {items.map((c) => renderTree(c))}
+        {renderTreeView(items)}
     </TreeView>
 }
 
