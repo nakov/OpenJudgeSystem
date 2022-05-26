@@ -36,12 +36,12 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     const [ currentProblemSubmissionResults, setCurrentProblemSubmissionResults ] =
         useState<ISubmissionDetails[]>(defaultState.currentProblemSubmissionResults);
 
-    const { getCurrentSubmissionDetailsUrl, getSubmissionResultsByProblemUrl } = useUrls();
+    const { getSubmissionDetailsByIdUrl, getSubmissionResultsByProblemUrl } = useUrls();
 
     const {
         get: getSubmissionDetails,
         data: submissionDetailsData,
-    } = useHttp(getCurrentSubmissionDetailsUrl as UrlType);
+    } = useHttp(getSubmissionDetailsByIdUrl as UrlType);
 
     const {
         get: getProblemResultsRequest,
