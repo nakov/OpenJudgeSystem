@@ -46,12 +46,12 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ page, setPage ] = useState(defaultState.pageNumber);
     const [ pageProps, setPageProps ] = useState({} as IHavePagesProps);
 
-    const { getUrlForAllContests } = useUrls();
+    const { getAllContestsUrl } = useUrls();
     const { startLoading, stopLoading } = useLoading();
 
     const getUrl = useCallback(
-        () => getUrlForAllContests({ filters, page }),
-        [ filters, getUrlForAllContests, page ],
+        () => getAllContestsUrl({ filters, page }),
+        [ filters, getAllContestsUrl, page ],
     );
 
     const {

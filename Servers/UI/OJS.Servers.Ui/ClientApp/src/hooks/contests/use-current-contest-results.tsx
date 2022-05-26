@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { isNil } from 'lodash';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { IContestResultsParticipationType, IContestResultsType } from './types';
 import { useLoading } from '../use-loading';
@@ -26,25 +27,27 @@ const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProvi
     const { startLoading, stopLoading } = useLoading();
 
     const {
-        get: getApiContestResults,
+        get: getContestResults,
         data: apiContestResults,
     } = useHttp(getContestResultsUrl);
 
     const load = useCallback(async (id, official, full) => {
         startLoading();
-        await getApiContestResults({
+        await getContestResults({
             id,
             official,
             full,
         });
         stopLoading();
-    }, [ getApiContestResults, startLoading, stopLoading ]);
+    }, [ getContestResults, startLoading, stopLoading ]);
 
     useEffect(
         () => {
-            if (apiContestResults != null) {
-                setContestResults(apiContestResults);
+            if (isNil(apiContestResults)) {
+                return;
             }
+
+            setContestResults(apiContestResults);
         },
         [ apiContestResults ],
     );

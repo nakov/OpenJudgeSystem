@@ -1,12 +1,12 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { first } from 'lodash';
+import { first, isNil } from 'lodash';
 import { IProblemType } from '../common/types';
-import { IFileResponseType } from '../common/common-types';
+import { IFileResponseType, UrlType } from '../common/common-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 import { useCurrentContest } from './use-current-contest';
 import { useHttp } from './use-http';
 import { useLoading } from './use-loading';
-import { downloadProblemResourceUrl } from '../utils/urls';
+import { useUrls } from './use-urls';
 
 interface IProblemsContext {
     state: {
@@ -36,6 +36,8 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
 
     const [ problems, setProblems ] = useState(defaultState.state.problems);
     const [ currentProblem, setCurrentProblem ] = useState<IProblemType | null>(defaultState.state.currentProblem);
+    const [ problemResourceIdToDownload, setProblemResourceIdToDownload ] = useState<number | null>();
+    const { getDownloadProblemResourceUrl } = useUrls();
 
     const {
         startLoading,
@@ -43,10 +45,10 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     } = useLoading();
 
     const {
-        get: downloadProblemResourceRequest,
+        get: downloadProblemResource,
         response: downloadProblemResourceResponse,
         saveAttachment,
-    } = useHttp(downloadProblemResourceUrl);
+    } = useHttp(getDownloadProblemResourceUrl as UrlType, { id: problemResourceIdToDownload });
 
     const selectProblemById = useCallback(
         (problemId: number) => {
@@ -76,16 +78,29 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     );
 
     const downloadProblemResourceFile = useCallback(async (resourceId: number) => {
-        startLoading();
-        await downloadProblemResourceRequest({ id: resourceId.toString() }, 'blob');
-        stopLoading();
-    }, [ downloadProblemResourceRequest, startLoading, stopLoading ]);
+        setProblemResourceIdToDownload(resourceId);
+    }, []);
 
     useEffect(() => {
-        if (downloadProblemResourceResponse != null) {
-            saveAttachment(downloadProblemResourceResponse as IFileResponseType);
+        if (isNil(downloadProblemResourceResponse) && isNil(problemResourceIdToDownload)) {
+            return;
         }
-    }, [ downloadProblemResourceResponse, saveAttachment ]);
+
+        saveAttachment(downloadProblemResourceResponse as IFileResponseType);
+        setProblemResourceIdToDownload(null);
+    }, [ downloadProblemResourceResponse, problemResourceIdToDownload, saveAttachment ]);
+
+    useEffect(() => {
+        if (isNil(problemResourceIdToDownload)) {
+            return;
+        }
+
+        (async () => {
+            startLoading();
+            await downloadProblemResource('blob');
+            stopLoading();
+        })();
+    }, [ downloadProblemResource, problemResourceIdToDownload, startLoading, stopLoading ]);
 
     useEffect(
         () => {

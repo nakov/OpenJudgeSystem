@@ -26,12 +26,12 @@ const ContestStrategyFiltersProvider = ({ children }: IContestStrategyFiltersPro
     const [ strategies, setStrategies ] = useState(defaultState.state.strategies);
 
     const { startLoading, stopLoading } = useLoading();
-    const { getUrlForAllContestStrategyFilter } = useUrls();
+    const { getAllContestStrategyFiltersUrl } = useUrls();
 
     const {
         get,
         data,
-    } = useHttp(getUrlForAllContestStrategyFilter);
+    } = useHttp(getAllContestStrategyFiltersUrl);
 
     const load = useCallback(
         async () => {

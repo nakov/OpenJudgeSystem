@@ -19,6 +19,8 @@ interface IDictionary<TValue> {
     [key: string]: TValue;
 }
 
+type UrlType = string | ((parameters: IDictionary<any> | null) => string);
+
 interface INotificationType {
     title: string,
     message: string,
@@ -47,4 +49,5 @@ export type {
     IFileResponseType,
     QuestionTypeType,
     FilterType,
+    UrlType,
 };

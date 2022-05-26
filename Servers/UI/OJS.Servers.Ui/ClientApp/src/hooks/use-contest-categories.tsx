@@ -24,13 +24,8 @@ const ContestCategoriesContext = createContext<IContestCategoriesContext>(defaul
 
 const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps) => {
     const [ categories, setCategories ] = useState(defaultState.state.categories);
-    const { getUrlForCategoriesTree } = useUrls();
+    const { getCategoriesTreeUrl } = useUrls();
     const { startLoading, stopLoading } = useLoading();
-
-    const getCategoriesTreeUrl = useCallback(
-        () => getUrlForCategoriesTree(),
-        [ getUrlForCategoriesTree ],
-    );
 
     const {
         get,

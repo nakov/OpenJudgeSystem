@@ -1,12 +1,14 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { isNil } from 'lodash';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useProblems } from '../use-problems';
 import { ISubmissionDetails } from './types';
 import { useLoading } from '../use-loading';
 import { useHttp } from '../use-http';
-import { getSubmissionResultsByProblem } from '../../utils/urls';
+import { useUrls } from '../use-urls';
 import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
 import { useCurrentContest } from '../use-current-contest';
+import { UrlType } from '../../common/common-types';
 
 interface IProblemSubmissionsContext {
     state: {
@@ -20,6 +22,12 @@ interface IProblemSubmissionsContext {
 interface IProblemSubmissionsProviderProps extends IHaveChildrenProps {
 }
 
+interface IProblemSubmissionResultsRequestParametersType {
+    id: number;
+    isOfficial: boolean;
+    take: number;
+}
+
 const defaultState = { state: { submissions: [] as ISubmissionDetails[] } };
 
 const ProblemSubmissionsContext = createContext<IProblemSubmissionsContext>(defaultState as IProblemSubmissionsContext);
@@ -27,6 +35,10 @@ const ProblemSubmissionsContext = createContext<IProblemSubmissionsContext>(defa
 const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderProps) => {
     const [ submissions, setSubmissions ] = useState(defaultState.state.submissions);
     const { state: { currentProblem } } = useProblems();
+    const [
+        submissionResultsToGetParameters,
+        setSubmissionResultsToGetParameters,
+    ] = useState<IProblemSubmissionResultsRequestParametersType | null>(null);
 
     const { state: { isOfficial } } = useCurrentContest();
 
@@ -35,40 +47,50 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
         stopLoading,
     } = useLoading();
 
+    const { getSubmissionResultsByProblemUrl } = useUrls();
     const {
-        get: getApiProblemSubmissions,
+        get: getProblemSubmissions,
         data: apiProblemSubmissions,
-    } = useHttp(getSubmissionResultsByProblem);
+    } = useHttp(getSubmissionResultsByProblemUrl as UrlType, submissionResultsToGetParameters);
 
     const getSubmissions = useCallback(async () => {
         const { id } = currentProblem || {};
-        if (id) {
-            startLoading();
-            await getApiProblemSubmissions({
-                id,
-                isOfficial,
-                take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
-            });
-            stopLoading();
+        if (isNil(id)) {
+            return;
         }
-    }, [ currentProblem, getApiProblemSubmissions, isOfficial, startLoading, stopLoading ]);
+
+        setSubmissionResultsToGetParameters({
+            id,
+            isOfficial,
+            take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
+        } as IProblemSubmissionResultsRequestParametersType);
+    }, [ currentProblem, isOfficial ]);
 
     useEffect(
         () => {
-            if (apiProblemSubmissions != null) {
-                setSubmissions(apiProblemSubmissions);
+            if (isNil(apiProblemSubmissions)) {
+                return;
             }
+
+            setSubmissions(apiProblemSubmissions);
+            setSubmissionResultsToGetParameters(null);
         },
         [ apiProblemSubmissions ],
     );
 
     useEffect(
         () => {
+            if (isNil(submissionResultsToGetParameters)) {
+                return;
+            }
+
             (async () => {
-                await getSubmissions();
+                startLoading();
+                await getProblemSubmissions();
+                stopLoading();
             })();
         },
-        [ getSubmissions, currentProblem ],
+        [ startLoading, stopLoading, getProblemSubmissions, submissionResultsToGetParameters ],
     );
 
     const value = {

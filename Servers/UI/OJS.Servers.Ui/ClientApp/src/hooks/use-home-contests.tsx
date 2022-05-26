@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { isNil } from 'lodash';
 import { IHaveChildrenProps } from '../components/common/Props';
-import { getIndexContestsUrl } from '../utils/urls';
+import { useUrls } from './use-urls';
 import { useHttp } from './use-http';
 import { useLoading } from './use-loading';
 import {
@@ -34,6 +35,7 @@ interface IHomeContestsProviderProps extends IHaveChildrenProps {
 const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
     const [ activeContests, setActiveContests ] = useState<IIndexContestsType[]>([]);
     const [ pastContests, setPastContests ] = useState<IIndexContestsType[]>([]);
+    const { getIndexContestsUrl } = useUrls();
 
     const {
         startLoading,
@@ -41,26 +43,28 @@ const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
     } = useLoading();
 
     const {
-        get: getContestsForIndexRequest,
-        data: getContestsForIndexData,
+        get: getContests,
+        data: contestsData,
     } = useHttp(getIndexContestsUrl);
 
     const getForHome = useCallback(async () => {
         startLoading();
-        await getContestsForIndexRequest({});
+        await getContests();
         stopLoading();
-    }, [ getContestsForIndexRequest, startLoading, stopLoading ]);
+    }, [ getContests, startLoading, stopLoading ]);
 
     useEffect(() => {
-        if (getContestsForIndexData != null) {
-            const {
-                activeContests: rActiveContests,
-                pastContests: rPastContests,
-            } = getContestsForIndexData as IGetContestsForIndexResponseType;
-            setActiveContests(rActiveContests);
-            setPastContests(rPastContests);
+        if (isNil(contestsData)) {
+            return;
         }
-    }, [ getContestsForIndexData ]);
+
+        const {
+            activeContests: active,
+            pastContests: past,
+        } = contestsData as IGetContestsForIndexResponseType;
+        setActiveContests(active);
+        setPastContests(past);
+    }, [ contestsData ]);
 
     const value = {
         state: {

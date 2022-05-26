@@ -15,7 +15,9 @@ const ProfilePage = () => {
     const { profile, getProfile } = useUsers();
 
     useEffect(() => {
-        getProfile();
+        (async () => {
+            await getProfile();
+        })();
     }, [ getProfile ]);
 
     return (
