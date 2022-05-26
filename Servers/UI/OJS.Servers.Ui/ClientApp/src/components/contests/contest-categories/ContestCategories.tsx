@@ -39,7 +39,7 @@ const ContestCategories = ({
             { name: node.name, value: node.id });
 
         applyFilter(filter, true);
-    }, []);
+    }, [ applyFilter ]);
     
     const containerClassName = concatClassNames(styles.container, className);
 
