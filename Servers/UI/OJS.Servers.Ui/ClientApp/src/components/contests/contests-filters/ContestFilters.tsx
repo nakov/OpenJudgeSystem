@@ -116,7 +116,8 @@ const ContestFilters = () => {
 
     useEffect(
         () => {
-            setFiltersGroups(groupByType(possibleFilters));
+            const plainFilters = possibleFilters.filter(({ type }) => type !== FilterType.Category);
+            setFiltersGroups(groupByType(plainFilters));
         },
         [ possibleFilters ],
     );

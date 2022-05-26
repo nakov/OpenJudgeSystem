@@ -31,7 +31,7 @@ const ContestsPage = () => {
         [],
     );
 
-    const onPageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
         setPage(page);
     };
 
@@ -64,7 +64,7 @@ const ContestsPage = () => {
                 />
                 <PaginationControls
                   count={pagesCount}
-                  onChange={onPageChange}
+                  onChange={handlePageChange}
                 />
             </div>
         </div>
