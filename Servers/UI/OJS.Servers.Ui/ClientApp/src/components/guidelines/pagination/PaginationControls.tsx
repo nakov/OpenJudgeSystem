@@ -1,6 +1,6 @@
 import React from 'react';
-import Pagination from '@mui/material/Pagination'
-import { IHaveOptionalClassName } from '../../common/Props'
+import Pagination from '@mui/material/Pagination';
+import { IHaveOptionalClassName } from '../../common/Props';
 
 import styles from './PaginationControls.module.scss';
 import concatClassNames from '../../../utils/class-names';
@@ -16,12 +16,14 @@ const PaginationControls = ({
     className = '',
 } : IPaginationControlsProps) => {
     const paginationClassNames = concatClassNames(styles.paginationControlsMenu, className);
-    
-    return <Pagination
-        count={count}
-        onChange={onChange}
-        className={paginationClassNames}
-    />
-}
+
+    return (
+        <Pagination
+          count={count}
+          onChange={onChange}
+          className={paginationClassNames}
+        />
+    );
+};
 
 export default PaginationControls;

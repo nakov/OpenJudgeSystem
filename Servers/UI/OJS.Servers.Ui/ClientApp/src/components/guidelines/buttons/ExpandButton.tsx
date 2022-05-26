@@ -1,8 +1,8 @@
-import React, {useCallback, useState} from 'react';
-import {Button, ButtonSize, ButtonType} from "./Button";
-import {MdExpandLess, MdExpandMore} from "react-icons/md";
+import React, { useCallback, useState } from 'react';
+import { MdExpandLess, MdExpandMore } from 'react-icons/md';
+import { Button, ButtonSize, ButtonType } from './Button';
 
-import styles from './ExpandButton.module.scss'
+import styles from './ExpandButton.module.scss';
 
 interface IExpandButtonProps {
     expandedText?: string,
@@ -13,32 +13,28 @@ interface IExpandButtonProps {
 }
 
 const ExpandButton = ({
-    expandedText = "Show less",
-    collapsedText = "Show more",
-    expandedIcon = <MdExpandLess/>,
-    collapsedIcon = <MdExpandMore/>,
+    expandedText = 'Show less',
+    collapsedText = 'Show more',
+    expandedIcon = <MdExpandLess />,
+    collapsedIcon = <MdExpandMore />,
     onClick,
 } : IExpandButtonProps) => {
-    const [ expanded, setExpanded] = useState(false);
-    
-    const renderButtonText = useCallback(() => {
-        return expanded
-            ? expandedText
-            : collapsedText
-    },[expanded]);
-    
-    const renderButtonIcon = useCallback(() => {
-        return expanded
-            ? expandedIcon
-            : collapsedIcon
-    }, [expanded]);
-    
+    const [ expanded, setExpanded ] = useState(false);
+
+    const renderButtonText = useCallback(() => (expanded
+        ? expandedText
+        : collapsedText), [ collapsedText, expanded, expandedText ]);
+
+    const renderButtonIcon = useCallback(() => (expanded
+        ? expandedIcon
+        : collapsedIcon), [ collapsedIcon, expanded, expandedIcon ]);
+
     const handleClick = useCallback(
         () => {
             setExpanded(!expanded);
             onClick();
         },
-        [expanded],
+        [ expanded, onClick ],
     );
 
     return (
@@ -53,7 +49,7 @@ const ExpandButton = ({
                 {renderButtonIcon()}
             </Button>
         </div>
-    )
-}
+    );
+};
 
 export default ExpandButton;

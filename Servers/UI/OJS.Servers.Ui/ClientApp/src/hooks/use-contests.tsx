@@ -1,13 +1,13 @@
-import React, {createContext, useCallback, useContext, useEffect, useState} from 'react';
-import {isEmpty, isNil, without} from 'lodash';
-import {IHaveChildrenProps, IHavePagesProps} from '../components/common/Props';
-import {IIndexContestsType, IPagedResultType} from '../common/types';
-import {ContestState, FilterType, IFilter} from '../common/contest-types';
-import {useHttp} from './use-http';
-import {useUrls} from './use-urls';
-import {generateFilterItems} from '../common/filter-utils';
-import {useLoading} from './use-loading';
-import {useContestStrategyFilters} from "./use-contest-strategy-filters";
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { isEmpty, isNil, without } from 'lodash';
+import { IHaveChildrenProps, IHavePagesProps } from '../components/common/Props';
+import { IIndexContestsType, IPagedResultType } from '../common/types';
+import { ContestState, FilterType, IFilter } from '../common/contest-types';
+import { useHttp } from './use-http';
+import { useUrls } from './use-urls';
+import { generateFilterItems } from '../common/filter-utils';
+import { useLoading } from './use-loading';
+import { useContestStrategyFilters } from './use-contest-strategy-filters';
 
 interface IContestsContext extends IHavePagesProps {
     state: {
@@ -29,12 +29,7 @@ interface IContestsProviderProps extends IHaveChildrenProps {
 const defaultState = {
     state: {
         contests: [] as IIndexContestsType[],
-        possibleFilters: [
-            ...generateFilterItems(
-                FilterType.Status,
-                { name: ContestState.Active, value: ContestState.Active },
-                { name: ContestState.Past, value: ContestState.Past }),
-        ],
+        possibleFilters: [] as IFilter[],
         filters: [] as IFilter[],
     },
     pageNumber: 1,
@@ -61,12 +56,8 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         get,
         data,
     } = useHttp(getUrl);
-    
-    const {
-        state: {
-            strategies,
-        },
-    } = useContestStrategyFilters();
+
+    const { state: { strategies } } = useContestStrategyFilters();
 
     const applyFilter = useCallback(
         (filter: IFilter, singleForType = false) => {
@@ -97,8 +88,28 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             await get();
             stopLoading();
         },
-        [ get ],
+        [ get, startLoading, stopLoading ],
     );
+
+    const generatePossibleFilters = useCallback(() => {
+        const statusFilters = generateFilterItems(
+            FilterType.Status,
+            { name: ContestState.Active, value: ContestState.Active },
+            { name: ContestState.Past, value: ContestState.Past },
+        );
+
+        if (isNil(strategies) || isEmpty(strategies)) {
+            return statusFilters;
+        }
+
+        const strategyFilters = strategies.map((s) => ({
+            name: s.name,
+            value: s.id.toString(),
+        }));
+
+        const strategyFilterItems = generateFilterItems(FilterType.Strategy, ...strategyFilters);
+        return statusFilters.concat(strategyFilterItems);
+    }, [ strategies ]);
 
     useEffect(
         () => {
@@ -111,22 +122,9 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     useEffect(
         () => {
-            if (isNil(strategies) || isEmpty(strategies)) {
-                return;
-            }
-            
-            const strategyFilters = strategies.map((s) => {
-                return {
-                    name: s.name,
-                    value: s.id.toString(),
-                };
-            });
-            
-            const strategyFilterItems = generateFilterItems(FilterType.Strategy, ...strategyFilters);
-            const newPossibleFilters = possibleFilters.concat(strategyFilterItems);
-            setPossibleFilters(newPossibleFilters);
+            setPossibleFilters(generatePossibleFilters());
         },
-        [ strategies ],
+        [ setPossibleFilters, generatePossibleFilters ],
     );
 
     useEffect(

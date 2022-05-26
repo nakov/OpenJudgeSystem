@@ -1,17 +1,17 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {isNil} from 'lodash';
-import List, {Orientation} from '../../guidelines/lists/List';
-import Heading, {HeadingType} from '../../guidelines/headings/Heading';
+import React, { useCallback, useEffect, useState } from 'react';
+import { isNil } from 'lodash';
+import List, { Orientation } from '../../guidelines/lists/List';
+import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 
-import {FilterType, IFilter} from '../../../common/contest-types';
-import ContestCategories from '../../../components/contests/contest-categories/ContestCategories';
+import { FilterType, IFilter } from '../../../common/contest-types';
+import ContestCategories from '../contest-categories/ContestCategories';
 
 import styles from './ContestFilters.module.scss';
-import Button, {ButtonSize, ButtonType} from '../../guidelines/buttons/Button';
-import {useContests} from '../../../hooks/use-contests';
-import {groupByType} from '../../../common/filter-utils';
-import ExpandButton from "../../guidelines/buttons/ExpandButton";
-import concatClassNames from "../../../utils/class-names";
+import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
+import { useContests } from '../../../hooks/use-contests';
+import { groupByType } from '../../../common/filter-utils';
+import ExpandButton from '../../guidelines/buttons/ExpandButton';
+import concatClassNames from '../../../utils/class-names';
 
 interface IFiltersGroup {
     type: FilterType;
@@ -44,65 +44,74 @@ const ContestFilters = () => {
 
     const renderFilterItem = useCallback(
         ({ id, name }: IFilter) => {
-            const filterIsSelected = filters.some(f => f.id === id);
-            const type = filterIsSelected ? ButtonType.primary : ButtonType.secondary;
-            const size = filterIsSelected ? ButtonSize.medium : ButtonSize.small;
+            const filterIsSelected = filters.some((f) => f.id === id);
+            const type = filterIsSelected
+                ? ButtonType.primary
+                : ButtonType.secondary;
+            const size = filterIsSelected
+                ? ButtonSize.medium
+                : ButtonSize.small;
 
             return (
                 <Button
-                    type={type}
-                    onClick={() => handleFilterClick(id)}
-                    className={styles.btnSelectFilter}
-                    text={name}
-                    size={size}
+                  type={type}
+                  onClick={() => handleFilterClick(id)}
+                  className={styles.btnSelectFilter}
+                  text={name}
+                  size={size}
                 />
-        )},
+            );
+        },
         [ handleFilterClick, filters ],
     );
-    
+
     const toggleFiltersExpanded = useCallback(
         () => {
             setExpanded(!expanded);
         },
-        [expanded],
+        [ expanded ],
     );
-    
+
     const renderExpandButton = useCallback(
-        (filters: IFilter[]) => {
+        (allFilters: IFilter[]) => {
             const maxFiltersToDisplayCount = 3;
-            return filters.length > maxFiltersToDisplayCount
-                ? <ExpandButton onClick={toggleFiltersExpanded}/>
+            return allFilters.length > maxFiltersToDisplayCount
+                ? <ExpandButton onClick={toggleFiltersExpanded} />
                 : null;
         },
-    [toggleFiltersExpanded],
+        [ toggleFiltersExpanded ],
     );
 
     const renderFilter = useCallback(
-        ({ type, filters: groupFilters }: IFiltersGroup) => {
+        (fg: IFiltersGroup) => {
+            const { type, filters: groupFilters } = fg;
             const className = concatClassNames(
                 styles.listFilterItems,
                 expanded
                     ? styles.expanded
-                    : '');
-        
-            return <div className={styles.filterTypeContainer}>
-                <Heading
-                    type={HeadingType.small}
-                    className={styles.heading}
-                >
-                    {type}
-                </Heading>
-                <List
-                    values={groupFilters}
-                    itemFunc={renderFilterItem}
-                    orientation={Orientation.horizontal}
-                    className={className}
-                    itemClassName={styles.listFilterItem}
-                />
+                    : '',
+            );
+
+            return (
+                <div className={styles.filterTypeContainer}>
+                    <Heading
+                      type={HeadingType.small}
+                      className={styles.heading}
+                    >
+                        {type}
+                    </Heading>
+                    <List
+                      values={groupFilters}
+                      itemFunc={renderFilterItem}
+                      orientation={Orientation.horizontal}
+                      className={className}
+                      itemClassName={styles.listFilterItem}
+                    />
                     {renderExpandButton(groupFilters)}
                 </div>
+            );
         },
-        [expanded, renderFilterItem, renderExpandButton],
+        [ expanded, renderFilterItem, renderExpandButton ],
     );
 
     useEffect(
@@ -111,7 +120,7 @@ const ContestFilters = () => {
         },
         [ possibleFilters ],
     );
-    
+
     return (
         <div className={styles.container}>
             <ContestCategories className={styles.filterTypeContainer} />

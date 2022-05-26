@@ -1,24 +1,22 @@
-import React, {useCallback, useEffect} from 'react';
-import {useSearchParams} from 'react-router-dom';
-import {isNil} from 'lodash';
+import React, { useCallback, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { isNil } from 'lodash';
 import ContestFilters from '../../components/contests/contests-filters/ContestFilters';
-import {useContests} from '../../hooks/use-contests';
-import {setLayout} from '../shared/set-layout';
+import { useContests } from '../../hooks/use-contests';
+import { setLayout } from '../shared/set-layout';
 import styles from './ContestsPage.module.scss';
-import {IIndexContestsType} from '../../common/types';
+import { IIndexContestsType } from '../../common/types';
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
-import List, {Orientation} from '../../components/guidelines/lists/List';
+import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
 
 const ContestsPage = () => {
-    const { 
+    const {
         state: {
             contests,
-            filters
+            filters,
         },
-        actions: {
-            setPage,
-        },
+        actions: { setPage },
         pagesCount,
     } = useContests();
 
@@ -39,7 +37,7 @@ const ContestsPage = () => {
 
     useEffect(
         () => {
-            setSearchParams(filters.reduce((p:any, {type, value }) => {
+            setSearchParams(filters.reduce((p:any, { type, value }) => {
                 const values = isNil(p[type])
                     ? []
                     : p[type];
@@ -59,14 +57,14 @@ const ContestsPage = () => {
             <ContestFilters />
             <div>
                 <List
-                    values={contests}
-                    itemFunc={renderContest}
-                    orientation={Orientation.horizontal}
-                    wrap={true}
+                  values={contests}
+                  itemFunc={renderContest}
+                  orientation={Orientation.horizontal}
+                  wrap
                 />
                 <PaginationControls
-                    count={pagesCount}
-                    onChange={onPageChange}
+                  count={pagesCount}
+                  onChange={onPageChange}
                 />
             </div>
         </div>

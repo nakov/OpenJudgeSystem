@@ -18,16 +18,12 @@ interface IContestCategoriesContext {
 interface IContestCategoriesProviderProps extends IHaveChildrenProps {
 }
 
-const defaultState = {
-    state: {
-        categories: [] as IContestCategoryTreeType[],
-    },
-};
+const defaultState = { state: { categories: [] as IContestCategoryTreeType[] } };
 
 const ContestCategoriesContext = createContext<IContestCategoriesContext>(defaultState as IContestCategoriesContext);
 
 const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps) => {
-    const [categories, setCategories] = useState(defaultState.state.categories);
+    const [ categories, setCategories ] = useState(defaultState.state.categories);
     const { getUrlForCategoriesTree } = useUrls();
     const { startLoading, stopLoading } = useLoading();
 
@@ -47,7 +43,7 @@ const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps
             await get();
             stopLoading();
         },
-        [ get ],
+        [ get, startLoading, stopLoading ],
     );
 
     useEffect(
@@ -71,12 +67,8 @@ const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps
     );
 
     const value = {
-        state: {
-            categories,
-        },
-        actions: {
-            reload,
-        }
+        state: { categories },
+        actions: { reload },
     };
 
     return (
@@ -84,7 +76,7 @@ const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps
             {children}
         </ContestCategoriesContext.Provider>
     );
-}
+};
 
 const useContestCategories = () => useContext(ContestCategoriesContext);
 

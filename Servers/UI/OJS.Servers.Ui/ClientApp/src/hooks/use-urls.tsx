@@ -24,10 +24,10 @@ const getUrlForStartContestParticipation =
     ({ id, official }: IStartContestUrlParams) => `${baseUrl}/Compete/Index/${id}?official=${official}`;
 
 const getUrlForAllContests = ({ filters, page }: IAllContestsUrlParams) => {
-    const queryParams = filters
+    const queryParams = `${filters
         .map(({ value, type }) => `${type.toLowerCase()}=${value}`)
         .join('&')
-        + `&page=${page}`;
+    }&page=${page}`;
 
     return (
         isNil(queryParams)

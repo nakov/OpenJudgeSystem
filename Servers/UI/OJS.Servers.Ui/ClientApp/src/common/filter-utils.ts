@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import { groupBy } from 'lodash';
-import {FilterType, IFilter, FilterInfo} from './contest-types';
+import { FilterType, IFilter, FilterInfo } from './contest-types';
 
 const getNextIdGen = function* () {
     let index = 1;
@@ -13,9 +13,9 @@ const getNextIdGen = function* () {
 const getId = getNextIdGen();
 
 const generateFilterItems = (type: FilterType, ...filters: FilterInfo[]) => filters.map(({ name, value }) => ({
-    name: name,
+    name,
     type,
-    value: value,
+    value,
     id: getId.next().value,
 }));
 
