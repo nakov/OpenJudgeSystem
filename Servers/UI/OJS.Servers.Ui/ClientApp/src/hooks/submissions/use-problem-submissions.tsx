@@ -50,7 +50,7 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
     const { getSubmissionResultsByProblemUrl } = useUrls();
     const {
         get: getProblemSubmissions,
-        data: problemSubmissionsData,
+        data: apiProblemSubmissions,
     } = useHttp(getSubmissionResultsByProblemUrl as UrlType, submissionResultsToGetParameters);
 
     const getSubmissions = useCallback(async () => {
@@ -68,14 +68,14 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
 
     useEffect(
         () => {
-            if (isNil(problemSubmissionsData)) {
+            if (isNil(apiProblemSubmissions)) {
                 return;
             }
 
-            setSubmissions(problemSubmissionsData);
+            setSubmissions(apiProblemSubmissions);
             setSubmissionResultsToGetParameters(null);
         },
-        [ problemSubmissionsData ],
+        [ apiProblemSubmissions ],
     );
 
     useEffect(

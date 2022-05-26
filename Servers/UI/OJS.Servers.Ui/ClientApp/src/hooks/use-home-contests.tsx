@@ -44,7 +44,7 @@ const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
 
     const {
         get: getContests,
-        data: getContestsData,
+        data: contestsData,
     } = useHttp(getIndexContestsUrl);
 
     const getForHome = useCallback(async () => {
@@ -54,17 +54,17 @@ const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
     }, [ getContests, startLoading, stopLoading ]);
 
     useEffect(() => {
-        if (isNil(getContestsData)) {
+        if (isNil(contestsData)) {
             return;
         }
 
         const {
             activeContests: active,
             pastContests: past,
-        } = getContestsData as IGetContestsForIndexResponseType;
+        } = contestsData as IGetContestsForIndexResponseType;
         setActiveContests(active);
         setPastContests(past);
-    }, [ getContestsData ]);
+    }, [ contestsData ]);
 
     const value = {
         state: {

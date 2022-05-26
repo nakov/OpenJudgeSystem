@@ -33,25 +33,25 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
     const { getProfileInfoUrl } = useUrls();
 
     const {
-        get: getProfileInfoRequest,
-        data: getProfileInfoData,
+        get: getProfileInfo,
+        data: profileData,
     } = useHttp(getProfileInfoUrl);
 
     const getProfile = useCallback(async () => {
         startLoading();
-        await getProfileInfoRequest();
+        await getProfileInfo();
         stopLoading();
-    }, [ getProfileInfoRequest, startLoading, stopLoading ]);
+    }, [ getProfileInfo, startLoading, stopLoading ]);
 
     useEffect(() => {
-        if (isNil(getProfileInfoData)) {
+        if (isNil(profileData)) {
             return;
         }
 
-        setProfile(getProfileInfoData as IUserProfileType);
+        setProfile(profileData as IUserProfileType);
 
         // showError({ message: 'Could not retrieve profile info.' } as INotificationType);
-    }, [ getProfileInfoData, showError ]);
+    }, [ profileData, showError ]);
 
     const value = { profile, getProfile };
 

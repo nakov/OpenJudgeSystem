@@ -16,7 +16,7 @@ interface ISubmissionsContext {
         selectedSubmissionType: ISubmissionTypeType | null;
     };
     actions: {
-        submitCode: () => Promise<void>
+        submit: () => Promise<void>
         updateSubmissionCode: (code: string) => void;
         selectSubmissionTypeById: (id: number) => void;
     };
@@ -55,22 +55,22 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const { state: { isOfficial } } = useCurrentContest();
 
     const {
-        post: postApiSubmitCode,
-        data: apiSubmitCodeResult,
+        post: submitCode,
+        data: submitCodeResult,
     } = useHttp(getSubmitUrl);
 
-    const submitCode = useCallback(async () => {
+    const submit = useCallback(async () => {
         startLoading();
         const { id } = selectedSubmissionType || {};
         const { id: problemId } = currentProblem || {};
-        await postApiSubmitCode({
+        await submitCode({
             ProblemId: problemId,
             SubmissionTypeId: id,
             Content: submissionCode,
             Official: isOfficial,
         });
         stopLoading();
-    }, [ startLoading, selectedSubmissionType, postApiSubmitCode, currentProblem, submissionCode, isOfficial, stopLoading ]);
+    }, [ startLoading, selectedSubmissionType, currentProblem, submitCode, submissionCode, isOfficial, stopLoading ]);
 
     const selectSubmissionTypeById = useCallback(
         (id) => {
@@ -111,7 +111,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                 await getSubmissions();
             })();
         },
-        [ getSubmissions, apiSubmitCodeResult ],
+        [ getSubmissions, submitCodeResult ],
     );
 
     const value = {
@@ -122,7 +122,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         actions: {
             updateSubmissionCode,
             selectSubmissionTypeById,
-            submitCode,
+            submit,
         },
     };
 

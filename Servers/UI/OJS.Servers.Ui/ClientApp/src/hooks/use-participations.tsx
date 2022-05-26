@@ -38,7 +38,7 @@ const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
     const { getParticipationsForProfileUrl } = useUrls();
     const {
         get: getParticipationsForProfile,
-        data: getParticipationsForProfileData,
+        data: apiParticipationsForProfile,
     } = useHttp(getParticipationsForProfileUrl);
 
     const getUserParticipations = useCallback(async () => {
@@ -48,13 +48,13 @@ const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
     }, [ getParticipationsForProfile, startLoading, stopLoading ]);
 
     useEffect(() => {
-        if (isNil(getParticipationsForProfileData)) {
+        if (isNil(apiParticipationsForProfile)) {
             return;
         }
 
-        setUserParticipations(getParticipationsForProfileData as IParticipationType[]);
+        setUserParticipations(apiParticipationsForProfile as IParticipationType[]);
         setAreUserParticipationsRetrieved(true);
-    }, [ getParticipationsForProfileData ]);
+    }, [ apiParticipationsForProfile ]);
 
     const value = {
         areUserParticipationsRetrieved,

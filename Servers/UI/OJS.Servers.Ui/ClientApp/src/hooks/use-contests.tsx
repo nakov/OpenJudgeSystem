@@ -49,8 +49,8 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     );
 
     const {
-        get,
-        data,
+        get: getContests,
+        data: apiContests,
     } = useHttp(getUrl);
 
     const applyFilter = useCallback(
@@ -73,9 +73,9 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     const reload = useCallback(
         async () => {
-            await get();
+            await getContests();
         },
-        [ get ],
+        [ getContests ],
     );
 
     useEffect(
@@ -89,9 +89,9 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     useEffect(
         () => {
-            setContests(data as IContestType[]);
+            setContests(apiContests as IContestType[]);
         },
-        [ data ],
+        [ apiContests ],
     );
 
     const value = {

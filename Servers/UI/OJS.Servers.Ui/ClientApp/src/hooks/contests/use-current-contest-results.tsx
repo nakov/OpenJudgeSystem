@@ -27,19 +27,19 @@ const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProvi
     const { startLoading, stopLoading } = useLoading();
 
     const {
-        get: getApiContestResults,
+        get: getContestResults,
         data: apiContestResults,
     } = useHttp(getContestResultsUrl);
 
     const load = useCallback(async (id, official, full) => {
         startLoading();
-        await getApiContestResults({
+        await getContestResults({
             id,
             official,
             full,
         });
         stopLoading();
-    }, [ getApiContestResults, startLoading, stopLoading ]);
+    }, [ getContestResults, startLoading, stopLoading ]);
 
     useEffect(
         () => {

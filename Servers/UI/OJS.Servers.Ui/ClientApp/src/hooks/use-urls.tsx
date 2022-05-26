@@ -23,7 +23,6 @@ interface IUrlsContext {
     getSubmissionDetailsByIdUrl: (params: IGetCurrentSubmissionDetailsUrlParams) => string;
     getSubmitUrl: () => string;
     getDownloadProblemResourceUrl: (params: IDownloadProblemResourceUrlParams) => string;
-
 }
 
 const UrlsContext = createContext<IUrlsContext>({} as IUrlsContext);

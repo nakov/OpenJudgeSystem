@@ -40,12 +40,12 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
 
     const {
         get: getSubmissionDetails,
-        data: submissionDetailsData,
+        data: apiSubmissionDetails,
     } = useHttp(getSubmissionDetailsByIdUrl as UrlType);
 
     const {
         get: getProblemResultsRequest,
-        data: getProblemResultsData,
+        data: apiProblemResults,
     } = useHttp(getSubmissionResultsByProblemUrl as UrlType, null);
 
     const getDetails = useCallback(async () => {
@@ -83,20 +83,20 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     });
 
     useEffect(() => {
-        if (isNil(getProblemResultsData)) {
+        if (isNil(apiProblemResults)) {
             return;
         }
 
-        setCurrentProblemSubmissionResults(getProblemResultsData as ISubmissionDetails[]);
-    }, [ getProblemResultsData ]);
+        setCurrentProblemSubmissionResults(apiProblemResults as ISubmissionDetails[]);
+    }, [ apiProblemResults ]);
 
     useEffect(() => {
-        if (isNil(submissionDetailsData)) {
+        if (isNil(apiSubmissionDetails)) {
             return;
         }
 
-        setCurrentSubmission(submissionDetailsData as ISubmissionDetailsType);
-    }, [ submissionDetailsData ]);
+        setCurrentSubmission(apiSubmissionDetails as ISubmissionDetailsType);
+    }, [ apiSubmissionDetails ]);
 
     const value = {
         setCurrentSubmissionId,
