@@ -20,7 +20,7 @@ const SubmissionBox = () => {
     const { actions: { selectSubmissionTypeById } } = useSubmissions();
     const {
         actions: {
-            submitCode,
+            submit,
             updateSubmissionCode,
         },
     } = useSubmissions();
@@ -78,9 +78,9 @@ const SubmissionBox = () => {
     );
 
     const handleOnSubmit = useCallback(async () => {
-        await submitCode();
+        await submit();
         updateSubmissionCode('');
-    }, [ submitCode, updateSubmissionCode ]);
+    }, [ submit, updateSubmissionCode ]);
 
     const taskText = 'Task: ';
 
