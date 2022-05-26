@@ -72,7 +72,8 @@ const getSubmissionResultsByProblemUrl = ({
     id,
     isOfficial,
     take,
-}: IGetSubmissionResultsByProblemUrlParams) => `${baseUrl}/Submissions/GetSubmissionResultsByProblem/${id}?isOfficial=${isOfficial}&take=${take}`;
+}: IGetSubmissionResultsByProblemUrlParams) => `
+    ${baseUrl}/Submissions/GetSubmissionResultsByProblem/${id}?isOfficial=${isOfficial}&take=${take}`;
 const getSubmissionsDetailsUrl = `${baseUrl}/Submissions/Details`;
 const getSubmissionDetailsByIdUrl =
     ({ submissionId }: IGetCurrentSubmissionDetailsUrlParams) => `${getSubmissionsDetailsUrl}/${submissionId}`;
@@ -82,7 +83,9 @@ const getSubmitUrl = `${baseUrl}/Compete/Submit`;
 const getParticipationsForProfileUrl = `${baseUrl}/Participations/GetForProfile`;
 
 // problem resources
-const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams) => `${baseUrl}/ProblemResources/GetResource/${id}`;
+const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams) => `
+    ${baseUrl}/ProblemResources/GetResource/${id}
+`;
 
 const UrlsProvider = ({ children }: IUrlsProviderProps) => {
     const value = {
