@@ -3,13 +3,14 @@ import logo from './softuni-logo-horizontal.svg';
 import PageNav from '../nav/PageNav';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import { useAuth } from '../../hooks/use-auth';
-import { administrationContestsGridUrl } from '../../utils/urls';
+import { useUrls } from '../../hooks/use-urls';
 import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
-
 import styles from './PageHeader.module.scss';
 
 const PageHeader = () => {
     const { user } = useAuth();
+
+    const { getAdministrationContestsGridUrl } = useUrls();
 
     const renderLinks = useCallback(() => {
         const administrationLink = user.permissions.canAccessAdministration
@@ -17,7 +18,7 @@ const PageHeader = () => {
                 <LinkButton
                   type={LinkButtonType.plain}
                   size={ButtonSize.none}
-                  to={administrationContestsGridUrl}
+                  to={getAdministrationContestsGridUrl()}
                   isToExternal
                   text="Administration"
                 />
@@ -43,7 +44,7 @@ const PageHeader = () => {
                 { administrationLink }
             </>
         );
-    }, [ user ]);
+    }, [ getAdministrationContestsGridUrl, user.permissions.canAccessAdministration ]);
 
     return (
         <header id="pageHeader" className={styles.header}>

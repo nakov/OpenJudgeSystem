@@ -11,7 +11,30 @@ interface IAllContestsUrlParams {
     filters: IFilter[];
 }
 
+interface IStartContestParticipationUrlParams {
+    id: number;
+    isOfficial: boolean;
+}
+
+interface IDownloadProblemResourceUrlParams {
+    id: number;
+}
+
+interface IGetSubmissionResultsByProblemUrlParams {
+    id: number;
+    isOfficial: boolean;
+    take: number;
+}
+
+interface IGetCurrentSubmissionDetailsUrlParams {
+    submissionId: number;
+}
+
 export type {
     IStartContestUrlParams,
     IAllContestsUrlParams,
+    IStartContestParticipationUrlParams,
+    IDownloadProblemResourceUrlParams,
+    IGetSubmissionResultsByProblemUrlParams,
+    IGetCurrentSubmissionDetailsUrlParams,
 };
