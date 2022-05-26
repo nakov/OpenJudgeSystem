@@ -31,7 +31,7 @@ const ContestsPage = () => {
         [],
     );
 
-    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+    const handlePageChange = (page: number) => {
         setPage(page);
     };
 

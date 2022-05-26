@@ -1,15 +1,16 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { MdExpandLess, MdExpandMore } from 'react-icons/md';
 import { Button, ButtonSize, ButtonType } from './Button';
 
 import styles from './ExpandButton.module.scss';
 
 interface IExpandButtonProps {
+    onExpandChanged: (expanded: boolean) => void;
     expandedText?: string,
     collapsedText?: string,
     expandedIcon?: React.ReactElement,
     collapsedIcon?: React.ReactElement,
-    onClick: () => void;
+    expanded?: boolean,
 }
 
 const ExpandButton = ({
@@ -17,24 +18,34 @@ const ExpandButton = ({
     collapsedText = 'Show more',
     expandedIcon = <MdExpandLess />,
     collapsedIcon = <MdExpandMore />,
-    onClick,
+    onExpandChanged,
+    expanded = false,
 } : IExpandButtonProps) => {
-    const [ expanded, setExpanded ] = useState(false);
+    const [ expandedInternal, setExpandedInternal ] = useState(expanded);
 
-    const renderButtonText = useCallback(() => (expanded
+    const renderButtonText = useCallback(() => (expandedInternal
         ? expandedText
-        : collapsedText), [ collapsedText, expanded, expandedText ]);
+        : collapsedText), [ collapsedText, expandedInternal, expandedText ]);
 
-    const renderButtonIcon = useCallback(() => (expanded
+    const renderButtonIcon = useCallback(() => (expandedInternal
         ? expandedIcon
-        : collapsedIcon), [ collapsedIcon, expanded, expandedIcon ]);
+        : collapsedIcon), [ collapsedIcon, expandedInternal, expandedIcon ]);
 
     const handleClick = useCallback(
         () => {
-            setExpanded(!expanded);
-            onClick();
+            setExpandedInternal(!expandedInternal);
         },
-        [ expanded, onClick ],
+        [ expandedInternal ],
+    );
+
+    useEffect(
+        () => onExpandChanged(expandedInternal),
+        [ expandedInternal, onExpandChanged ],
+    );
+
+    useEffect(
+        () => setExpandedInternal(expanded),
+        [ expanded ],
     );
 
     return (

@@ -7,7 +7,7 @@ import concatClassNames from '../../../utils/class-names';
 
 interface IPaginationControlsProps extends IHaveOptionalClassName {
     count: number,
-    onChange: (event: React.ChangeEvent<unknown>, value: number) => void | undefined,
+    onChange: (value: number) => void | undefined,
 }
 
 const PaginationControls = ({
@@ -20,7 +20,7 @@ const PaginationControls = ({
     return (
         <Pagination
           count={count}
-          onChange={onChange}
+          onChange={(ev, value) => onChange(value)}
           className={paginationClassNames}
         />
     );

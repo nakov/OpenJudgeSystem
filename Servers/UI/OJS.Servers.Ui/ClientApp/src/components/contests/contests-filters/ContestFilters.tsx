@@ -66,17 +66,17 @@ const ContestFilters = () => {
     );
 
     const toggleFiltersExpanded = useCallback(
-        () => {
-            setExpanded(!expanded);
+        (isExpanded) => {
+            setExpanded(isExpanded);
         },
-        [ expanded ],
+        [],
     );
 
     const renderExpandButton = useCallback(
         (allFilters: IFilter[]) => {
             const maxFiltersToDisplayCount = 3;
             return allFilters.length > maxFiltersToDisplayCount
-                ? <ExpandButton onClick={toggleFiltersExpanded} />
+                ? <ExpandButton onExpandChanged={toggleFiltersExpanded} />
                 : null;
         },
         [ toggleFiltersExpanded ],

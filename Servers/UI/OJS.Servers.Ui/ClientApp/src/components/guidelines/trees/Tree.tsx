@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { TreeView, TreeItem } from '@material-ui/lab';
 import { MdChevronRight, MdExpandMore } from 'react-icons/md';
 import { isArray } from 'lodash';
@@ -20,7 +20,7 @@ const Tree = ({
     items,
     onTreeItemClick,
 } : ITreeProps) => {
-    const renderTree = (node: ITreeItemType) => (
+    const renderTree = useCallback((node: ITreeItemType) => (
         <TreeItem
           key={node.id}
           nodeId={node.id.toString()}
@@ -31,7 +31,7 @@ const Tree = ({
                 ? node.children.map((child) => renderTree(child))
                 : null}
         </TreeItem>
-    );
+    ), [ onTreeItemClick ]);
 
     const renderTreeView = (treeItems: ITreeItemType[]) => treeItems.map((c) => renderTree(c));
 
