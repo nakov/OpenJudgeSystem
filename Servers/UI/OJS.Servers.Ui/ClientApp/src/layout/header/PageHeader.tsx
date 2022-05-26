@@ -18,7 +18,7 @@ const PageHeader = () => {
                 <LinkButton
                   type={LinkButtonType.plain}
                   size={ButtonSize.none}
-                  to={getAdministrationContestsGridUrl}
+                  to={getAdministrationContestsGridUrl()}
                   isToExternal
                   text="Administration"
                 />
