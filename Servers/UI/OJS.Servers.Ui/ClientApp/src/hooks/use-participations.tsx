@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { isNil } from 'lodash';
 import { IHaveChildrenProps } from '../components/common/Props';
 import { useLoading } from './use-loading';
 import { useHttp } from './use-http';
@@ -47,10 +48,12 @@ const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
     }, [ getParticipationsForProfile, startLoading, stopLoading ]);
 
     useEffect(() => {
-        if (getParticipationsForProfileData != null) {
-            setUserParticipations(getParticipationsForProfileData as IParticipationType[]);
-            setAreUserParticipationsRetrieved(true);
+        if (isNil(getParticipationsForProfileData)) {
+            return;
         }
+
+        setUserParticipations(getParticipationsForProfileData as IParticipationType[]);
+        setAreUserParticipationsRetrieved(true);
     }, [ getParticipationsForProfileData ]);
 
     const value = {

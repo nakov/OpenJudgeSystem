@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { isNil } from 'lodash';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { IContestResultsParticipationType, IContestResultsType } from './types';
 import { useLoading } from '../use-loading';
@@ -42,9 +43,11 @@ const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProvi
 
     useEffect(
         () => {
-            if (apiContestResults != null) {
-                setContestResults(apiContestResults);
+            if (isNil(apiContestResults)) {
+                return;
             }
+
+            setContestResults(apiContestResults);
         },
         [ apiContestResults ],
     );

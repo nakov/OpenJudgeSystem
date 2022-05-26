@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { isNil } from 'lodash';
 import { IHaveChildrenProps } from '../components/common/Props';
 import { useUrls } from './use-urls';
 import { useHttp } from './use-http';
@@ -53,14 +54,16 @@ const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
     }, [ getContests, startLoading, stopLoading ]);
 
     useEffect(() => {
-        if (getContestsData != null) {
-            const {
-                activeContests: rActiveContests,
-                pastContests: rPastContests,
-            } = getContestsData as IGetContestsForIndexResponseType;
-            setActiveContests(rActiveContests);
-            setPastContests(rPastContests);
+        if (isNil(getContestsData)) {
+            return;
         }
+
+        const {
+            activeContests: active,
+            pastContests: past,
+        } = getContestsData as IGetContestsForIndexResponseType;
+        setActiveContests(active);
+        setPastContests(past);
     }, [ getContestsData ]);
 
     const value = {
