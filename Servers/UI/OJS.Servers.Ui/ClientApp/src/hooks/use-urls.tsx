@@ -4,27 +4,26 @@ import {
     IAllContestsUrlParams,
     IDownloadProblemResourceUrlParams, IGetCurrentSubmissionDetailsUrlParams, IGetSubmissionResultsByProblemUrlParams,
     IStartContestParticipationUrlParams,
-    IStartContestUrlParams,
 } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 import { FilterType } from '../common/contest-types';
 
 interface IUrlsContext {
-    getUrlForStartContestParticipation: (params: IStartContestUrlParams) => string;
-    getUrlForAllContests: (params: IAllContestsUrlParams) => string;
-    getStartContestParticipationUrl: (params: IStartContestParticipationUrlParams) => string;
-    getDownloadProblemResourceUrl: (params: IDownloadProblemResourceUrlParams) => string;
-    getSubmissionResultsByProblemUrl: (params: IGetSubmissionResultsByProblemUrlParams) => string;
-    getGetIndexContestsUrl: string;
     getLoginSubmitUrl: string;
     getLogoutUrl: string;
+    getAdministrationContestsGridUrl: string;
     getProfileInfoUrl: string;
-    getSubmissionDetailsUrl: string;
-    getCurrentSubmissionDetailsUrl: (params: IGetCurrentSubmissionDetailsUrlParams) => string;
     getSubmissionsForProfileUrl: string;
     getParticipationsForProfileUrl: string;
-    submitUrl: string;
-    administrationContestsGridUrl: string;
+    getIndexContestsUrl: string;
+    getAllContestsUrl: (params: IAllContestsUrlParams) => string;
+    getStartContestParticipationUrl: (params: IStartContestParticipationUrlParams) => string;
+    getSubmissionResultsByProblemUrl: (params: IGetSubmissionResultsByProblemUrlParams) => string;
+    getSubmissionsDetailsUrl: string;
+    getSubmissionDetailsByIdUrl: (params: IGetCurrentSubmissionDetailsUrlParams) => string;
+    getSubmitUrl: string;
+    getDownloadProblemResourceUrl: (params: IDownloadProblemResourceUrlParams) => string;
+
 }
 
 const UrlsContext = createContext<IUrlsContext>({} as IUrlsContext);
@@ -33,29 +32,22 @@ interface IUrlsProviderProps extends IHaveChildrenProps {
 }
 
 const baseUrl = window.URLS.UI_URL;
-const administrationBaseUrl = window.URLS.ADMINISTRATION_URL;
 
+// auth
 const getLoginSubmitUrl = `${baseUrl}/Account/Login`;
 const getLogoutUrl = `${baseUrl}/Account/Logout`;
 
+// admin
+const administrationBaseUrl = window.URLS.ADMINISTRATION_URL;
+const getAdministrationContestsGridUrl = `${administrationBaseUrl}/Contests`;
+
+// profile
 const getProfileInfoUrl = `${baseUrl}/Users/GetProfileInfo`;
-
-const getSubmissionDetailsUrl = `${baseUrl}/Submissions/Details`;
-const getCurrentSubmissionDetailsUrl =
-    ({ submissionId }: IGetCurrentSubmissionDetailsUrlParams) => `${getSubmissionDetailsUrl}/${submissionId}`;
 const getSubmissionsForProfileUrl = `${baseUrl}/Submissions/GetForProfile`;
-const submitUrl = `${baseUrl}/Compete/Submit`;
 
-const getParticipationsForProfileUrl = `${baseUrl}/Participations/GetForProfile`;
-
-const administrationContestsGridUrl = `${administrationBaseUrl}/Contests`;
-
-const getGetIndexContestsUrl = `${baseUrl}/Contests/GetForHomeIndex`;
-
-const getUrlForStartContestParticipation =
-    ({ id, official }: IStartContestUrlParams) => `${baseUrl}/Compete/Index/${id}?official=${official}`;
-
-const getUrlForAllContests = ({ filters }: IAllContestsUrlParams) => {
+// contests
+const getIndexContestsUrl = `${baseUrl}/Contests/GetForHomeIndex`;
+const getAllContestsUrl = ({ filters }: IAllContestsUrlParams) => {
     let statusParams = filters.filter((f) => f.type === FilterType.Status);
     if (statusParams.length === 2) {
         statusParams = [];
@@ -70,40 +62,44 @@ const getUrlForAllContests = ({ filters }: IAllContestsUrlParams) => {
             : `${baseUrl}/Contests/GetAll?${statusParam}`
     );
 };
-
 const getStartContestParticipationUrl = ({
     id,
     isOfficial,
 }: IStartContestParticipationUrlParams) => `${baseUrl}/Compete/Index/${id}?official=${isOfficial}`;
 
+// submissions
 const getSubmissionResultsByProblemUrl = ({
     id,
     isOfficial,
     take,
-}: IGetSubmissionResultsByProblemUrlParams) => {
-    const iurl = `${baseUrl}/Submissions/GetSubmissionResultsByProblem/${id}?isOfficial=${isOfficial}&take=${take}`;
-    return iurl;
-};
+}: IGetSubmissionResultsByProblemUrlParams) => `${baseUrl}/Submissions/GetSubmissionResultsByProblem/${id}?isOfficial=${isOfficial}&take=${take}`;
+const getSubmissionsDetailsUrl = `${baseUrl}/Submissions/Details`;
+const getSubmissionDetailsByIdUrl =
+    ({ submissionId }: IGetCurrentSubmissionDetailsUrlParams) => `${getSubmissionsDetailsUrl}/${submissionId}`;
+const getSubmitUrl = `${baseUrl}/Compete/Submit`;
 
+// participations
+const getParticipationsForProfileUrl = `${baseUrl}/Participations/GetForProfile`;
+
+// problem resources
 const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams) => `${baseUrl}/ProblemResources/GetResource/${id}`;
 
 const UrlsProvider = ({ children }: IUrlsProviderProps) => {
     const value = {
-        getUrlForStartContestParticipation,
-        getUrlForAllContests,
+        getLoginSubmitUrl,
+        getLogoutUrl,
+        getAdministrationContestsGridUrl,
+        getAllContestsUrl,
         getStartContestParticipationUrl,
         getDownloadProblemResourceUrl,
         getSubmissionResultsByProblemUrl,
-        getGetIndexContestsUrl,
-        getLoginSubmitUrl,
-        getLogoutUrl,
+        getIndexContestsUrl,
         getProfileInfoUrl,
-        getSubmissionDetailsUrl,
-        getCurrentSubmissionDetailsUrl,
+        getSubmissionsDetailsUrl,
+        getSubmissionDetailsByIdUrl,
         getSubmissionsForProfileUrl,
         getParticipationsForProfileUrl,
-        submitUrl,
-        administrationContestsGridUrl,
+        getSubmitUrl,
     };
 
     return (
@@ -112,7 +108,6 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
         </UrlsContext.Provider>
     );
 };
-
 const useUrls = () => useContext(UrlsContext);
 
 export default UrlsProvider;

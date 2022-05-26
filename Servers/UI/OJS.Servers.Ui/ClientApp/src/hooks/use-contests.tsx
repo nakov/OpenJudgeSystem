@@ -41,11 +41,11 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ possibleFilters ] = useState(defaultState.state.possibleFilters);
     const [ filters, setFilters ] = useState(defaultState.state.filters);
 
-    const { getUrlForAllContests } = useUrls();
+    const { getAllContestsUrl } = useUrls();
 
     const getUrl = useCallback(
-        () => getUrlForAllContests({ filters }),
-        [ filters, getUrlForAllContests ],
+        () => getAllContestsUrl({ filters }),
+        [ filters, getAllContestsUrl ],
     );
 
     const {

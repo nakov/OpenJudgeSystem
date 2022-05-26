@@ -43,7 +43,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         useState<ISubmissionTypeType | null>(defaultState.state.selectedSubmissionType);
     const [ submissionCode, setSubmissionCode ] = useState<string>(defaultState.state.submissionCode);
 
-    const { submitUrl } = useUrls();
+    const { getSubmitUrl } = useUrls();
 
     const {
         startLoading,
@@ -57,7 +57,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const {
         post: postApiSubmitCode,
         data: apiSubmitCodeResult,
-    } = useHttp(submitUrl);
+    } = useHttp(getSubmitUrl);
 
     const submitCode = useCallback(async () => {
         startLoading();

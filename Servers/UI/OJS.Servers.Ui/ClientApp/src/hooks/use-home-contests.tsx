@@ -34,7 +34,7 @@ interface IHomeContestsProviderProps extends IHaveChildrenProps {
 const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
     const [ activeContests, setActiveContests ] = useState<IIndexContestsType[]>([]);
     const [ pastContests, setPastContests ] = useState<IIndexContestsType[]>([]);
-    const { getGetIndexContestsUrl } = useUrls();
+    const { getIndexContestsUrl } = useUrls();
 
     const {
         startLoading,
@@ -44,7 +44,7 @@ const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
     const {
         get: getContests,
         data: getContestsData,
-    } = useHttp(getGetIndexContestsUrl);
+    } = useHttp(getIndexContestsUrl);
 
     const getForHome = useCallback(async () => {
         startLoading();
