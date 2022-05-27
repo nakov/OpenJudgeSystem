@@ -21,8 +21,9 @@ namespace OJS.Services.Ui.Data.Implementations
                     .Any(p => p.ProblemId == problemId));
 
         public Task<IEnumerable<TServiceModel>> GetAllOrderedByMostUsed<TServiceModel>()
-            => this.GetQuery()
-                .OrderByDescending(x => x.SubmissionTypesInProblems.Count(stp => !stp.Problem.IsDeleted))
+            => this.GetQuery(
+                    orderBy: x => x.SubmissionTypesInProblems.Count(stp => !stp.Problem.IsDeleted),
+                    descending: true)
                 .MapCollection<TServiceModel>()
                 .ToEnumerableAsync();
     }
