@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { isEmpty, isNil } from 'lodash';
+import { isEmpty, isEqual, isNil } from 'lodash';
 import { useContestCategories } from '../../../hooks/use-contest-categories';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 
@@ -24,7 +24,7 @@ const ContestCategories = ({ className = '' }: IContestCategoriesProps) => {
             return;
         }
 
-        const filter = possibleFilters.find(({ value }) => value.toString() === node.id.toString());
+        const filter = possibleFilters.find(({ value }) => isEqual(value.toString(), node.id.toString()));
 
         if (isNil(filter)) {
             return;

@@ -54,12 +54,9 @@ const getAllContestsUrl = ({ filters, page }: IAllContestsUrlParams) => {
         .join('&')
     }&page=${page}`;
 
-    return (
-        isNil(queryParams)
-            ? `${baseUrl}/Contests/GetAll`
-            : `${baseUrl}/Contests/GetAll?${queryParams}`
-    );
+    return `${baseUrl}/Contests/GetAll?${queryParams}`;
 };
+
 const getStartContestParticipationUrl = ({
     id,
     isOfficial,

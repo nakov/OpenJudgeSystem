@@ -66,9 +66,7 @@ const ContestFilters = () => {
     );
 
     const toggleFiltersExpanded = useCallback(
-        (isExpanded) => {
-            setExpanded(isExpanded);
-        },
+        (isExpanded) => setExpanded(isExpanded),
         [],
     );
 
