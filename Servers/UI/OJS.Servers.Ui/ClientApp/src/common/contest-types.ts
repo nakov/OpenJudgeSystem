@@ -2,13 +2,26 @@
 
 enum FilterType {
     Status = 'Status',
-    Language = 'Language',
+    Strategy = 'Strategy',
+    Category = 'Category',
+}
+
+type FilterInfo = {
+    name: string;
+    value: string;
 }
 
 interface IFilter {
     name: string;
+    value: string;
     id: number;
     type: FilterType;
+}
+
+interface IContestStrategyFilter {
+    name: string;
+    id: number;
+    usageOrder: boolean;
 }
 
 enum ContestType {
@@ -23,6 +36,8 @@ enum ContestState {
 
 export type {
     IFilter,
+    FilterInfo,
+    IContestStrategyFilter,
 };
 
 export {

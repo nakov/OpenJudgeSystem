@@ -48,7 +48,7 @@ const ContestsList = ({
     );
 
     const link = useMemo(
-        () => `/contests?type=${contestState.toString()}`,
+        () => `/contests?status=${contestState.toString()}`,
         [ contestState ],
     );
 

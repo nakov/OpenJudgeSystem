@@ -9,6 +9,11 @@ interface IStartContestUrlParams {
 
 interface IAllContestsUrlParams {
     filters: IFilter[];
+    page: number,
+}
+
+interface IContestCategoriesUrlParams {
+    id: number;
 }
 
 interface IStartContestParticipationUrlParams {
@@ -33,6 +38,7 @@ interface IGetCurrentSubmissionDetailsUrlParams {
 export type {
     IStartContestUrlParams,
     IAllContestsUrlParams,
+    IContestCategoriesUrlParams,
     IStartContestParticipationUrlParams,
     IDownloadProblemResourceUrlParams,
     IGetSubmissionResultsByProblemUrlParams,

@@ -1,4 +1,4 @@
-namespace OJS.Services.Common
+namespace OJS.Services.Infrastructure
 {
     using SoftUni.Services.Infrastructure;
     using System;
@@ -6,5 +6,7 @@ namespace OJS.Services.Common
     public interface IDatesService : ISingletonService
     {
         DateTime GetUtcNow();
+
+        DateTime GetMaxValue();
     }
 }

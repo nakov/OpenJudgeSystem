@@ -1,5 +1,3 @@
-using OJS.Services.Common;
-
 namespace OJS.Services.Ui.Business.Implementations
 {
     using System;
@@ -7,20 +5,20 @@ namespace OJS.Services.Ui.Business.Implementations
     using System.Linq;
     using System.Threading.Tasks;
     using FluentExtensions.Extensions;
-    using OJS.Common.Extensions;
-    using OJS.Common.Utils;
     using OJS.Data.Models.Participants;
+    using OJS.Services.Common;
     using OJS.Services.Common.Models;
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Contests;
     using OJS.Data.Models.Contests;
     using OJS.Services.Infrastructure.Exceptions;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
-    using System.ComponentModel.Design;
+    using SoftUni.Common.Models;
 
     public class ContestsBusinessService : IContestsBusinessService
     {
         private const int DefaultContestsToTake = 5;
+        private const int DefaultContestsPerPage = 10;
 
         private readonly IContestsDataService contestsData;
         private readonly IExamGroupsDataService examGroupsData;
@@ -150,17 +148,15 @@ namespace OJS.Services.Ui.Business.Implementations
             }
         }
 
-        public async Task<IEnumerable<ContestForListingServiceModel>> GetAllContests()
-            => new List<ContestForListingServiceModel>()
-                .Concat(await this.GetContestByFilter(ContestFilter.Active))
-                .Concat(await this.GetContestByFilter(ContestFilter.Past));
+        public async Task<PagedResult<ContestForListingServiceModel>> GetAllByFilters(
+            ContestFiltersServiceModel? model)
+        {
+            model ??= new ContestFiltersServiceModel();
+            model.PageNumber ??= 1;
+            model.ItemsPerPage ??= DefaultContestsPerPage;
 
-        public Task<IEnumerable<ContestForListingServiceModel>> GetContestByFilter(ContestFilter filter)
-            => (filter == ContestFilter.Active
-                ? this.contestsData
-                    .GetAllCompetable<ContestForListingServiceModel>()
-                : this.contestsData
-                    .GetAllPast<ContestForListingServiceModel>());
+            return await this.contestsData.GetAllAsPageByFilters<ContestForListingServiceModel>(model);
+        }
 
         private bool IsUserLecturerInContest(Contest contest, string userId) =>
             contest.LecturersInContests.Any(c => c.LecturerId == userId) ||
@@ -184,15 +180,8 @@ namespace OJS.Services.Ui.Business.Implementations
 
         public async Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPracticable()
             => await this.contestsData
-                .GetAllPast<ContestForHomeIndexServiceModel>()
-                .WhereAsync(c => c.CanBePracticed)
+                .GetAllPracticable<ContestForHomeIndexServiceModel>()
                 .OrderByDescendingAsync(ac => ac.PracticeStartTime)
-                .TakeAsync(DefaultContestsToTake);
-
-        public async Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPast()
-            => await this.contestsData
-                .GetAllPast<ContestForHomeIndexServiceModel>()
-                .OrderByDescendingAsync(pc => pc.EndTime)
                 .TakeAsync(DefaultContestsToTake);
 
         public async Task<bool> CanUserCompeteByContestByUserAndIsAdmin(

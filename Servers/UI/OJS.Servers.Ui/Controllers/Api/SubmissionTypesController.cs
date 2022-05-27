@@ -18,4 +18,9 @@ public class SubmissionTypesController : Controller
         => await this.submissionTypesBusinessService
             .GetAllowedSubmissionTypes(problemId)
             .MapCollection<SubmissionTypeResponseModel>();
+
+    public async Task<IEnumerable<SubmissionTypeFilterResponseModel>> GetAll()
+        => await this.submissionTypesBusinessService
+            .GetAll()
+            .MapCollection<SubmissionTypeFilterResponseModel>();
 }

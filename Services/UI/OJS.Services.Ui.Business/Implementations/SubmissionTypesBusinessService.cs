@@ -6,26 +6,32 @@ using OJS.Services.Ui.Models.SubmissionTypes;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
-using X.PagedList;
 
 namespace OJS.Services.Ui.Business.Implementations;
 
+using OJS.Services.Infrastructure.Extensions;
+
 public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
 {
-    private ISubmissionTypesDataService submissionTypesDataService;
+    private readonly ISubmissionTypesDataService submissionTypesData;
 
-    public SubmissionTypesBusinessService(ISubmissionTypesDataService submissionTypesDataService)
-        => this.submissionTypesDataService = submissionTypesDataService;
+    public SubmissionTypesBusinessService(
+        ISubmissionTypesDataService submissionTypesData)
+        => this.submissionTypesData = submissionTypesData;
 
     public Task<SubmissionTypeServiceModel> GetById(int id) => throw new System.NotImplementedException();
 
-    public async Task<IEnumerable<SubmissionTypeServiceModel>> GetAllowedSubmissionTypes(int problemId)
-        => await this.submissionTypesDataService
+    public Task<IEnumerable<SubmissionTypeServiceModel>> GetAllowedSubmissionTypes(int problemId)
+        => this.submissionTypesData
             .GetAllByProblem(problemId)
             .MapCollection<SubmissionTypeServiceModel>()
-            .ToListAsync();
+            .ToEnumerableAsync();
+
+    public Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAll()
+        => this.submissionTypesData.GetQuery()
+            .MapCollection<SubmissionTypeFilterServiceModel>()
+            .ToEnumerableAsync();
 
     public void ValidateSubmissionType(int submissionTypeId, Problem problem, bool shouldAllowBinaryFiles = false)
     {

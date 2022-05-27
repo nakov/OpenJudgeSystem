@@ -1,3 +1,5 @@
+import {ITreeItemType} from "../components/guidelines/trees/Tree";
+
 interface ISubmissionTypeType {
     id: number,
     name: string,
@@ -66,6 +68,10 @@ interface IIndexContestsType {
     category: string
 }
 
+interface IContestCategoryTreeType extends ITreeItemType {
+    nameUrl: string,
+}
+
 interface IGetContestsForIndexResponseType {
     activeContests: IIndexContestsType[]
     pastContests: IIndexContestsType[]
@@ -78,6 +84,14 @@ interface IStartParticipationResponseType {
     remainingTimeInMilliseconds: number
 }
 
+interface IPagedResultType<TItem> {
+    totalItemsCount: number,
+    itemsPerPage: number,
+    pagesCount: number,
+    pageNumber: number,
+    items?: TItem[],
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -87,4 +101,6 @@ export type {
     IProblemType,
     IProblemResourceType,
     ISubmissionTypeType,
+    IContestCategoryTreeType,
+    IPagedResultType,
 };
