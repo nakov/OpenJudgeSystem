@@ -21,14 +21,14 @@ namespace OJS.Services.Common.Implementations
     {
         private readonly IFormatterServiceFactory formatterServiceFactory;
         private readonly IDistributorHttpClientService distributorHttpClient;
-        private readonly ISubmissionsDataService submissionsData;
+        private readonly ISubmissionsCommonDataService submissionsData;
         private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
         private readonly DistributorConfig distributorConfig;
 
         public SubmissionsDistributorCommunicationService(
             IFormatterServiceFactory formatterServiceFactory,
             IDistributorHttpClientService distributorHttpClient,
-            ISubmissionsDataService submissionsData,
+            ISubmissionsCommonDataService submissionsData,
             ISubmissionsForProcessingDataService submissionsForProcessingData,
             IOptions<DistributorConfig> distributorConfigAccessor)
         {

@@ -19,9 +19,9 @@ public class SubmissionTypesCacheService : ISubmissionTypesCacheService
         this.submissionTypesBusiness = submissionTypesBusiness;
     }
 
-    public Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllByUsage(int? cacheSeconds)
+    public Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllOrderedByLatestUsage(int? cacheSeconds)
         => this.cache.Get(
             CacheConstants.SubmissionTypesByUsage,
-            this.submissionTypesBusiness.GetAllOrderedByUsage,
+            this.submissionTypesBusiness.GetAllOrderedByLatestUsage,
             cacheSeconds);
 }

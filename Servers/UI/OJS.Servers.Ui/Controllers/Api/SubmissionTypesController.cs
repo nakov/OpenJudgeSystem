@@ -26,8 +26,8 @@ public class SubmissionTypesController : Controller
             .GetAllowedSubmissionTypes(problemId)
             .MapCollection<SubmissionTypeResponseModel>();
 
-    public async Task<IEnumerable<SubmissionTypeFilterResponseModel>> GetAll()
+    public async Task<IEnumerable<SubmissionTypeFilterResponseModel>> GetAllOrderedByLatestUsage()
         => await this.submissionTypesCache
-            .GetAllByUsage()
+            .GetAllOrderedByLatestUsage()
             .MapCollection<SubmissionTypeFilterResponseModel>();
 }
