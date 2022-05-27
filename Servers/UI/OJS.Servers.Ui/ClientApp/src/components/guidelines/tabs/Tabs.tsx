@@ -30,7 +30,7 @@ const Tabs = ({ tabChildren, tabLabels, themeOverride }: ITabPanelProps) => {
         <Tab
           key={tl}
           label={tl}
-          value={index}
+          value={index.toString()}
         />
     ));
 
