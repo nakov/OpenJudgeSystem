@@ -1,62 +1,52 @@
-import React from 'react';
-import {useContestCategories} from '../../../hooks/use-contest-categories';
-import Heading from '../../guidelines/headings/Heading';
+import React, { useCallback } from 'react';
+import { isEmpty, isNil } from 'lodash';
+import { useContestCategories } from '../../../hooks/use-contest-categories';
+import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 
 import styles from './ContestCategories.module.scss';
-import {FilterType} from '../../../common/contest-types';
-import {isEmpty} from 'lodash';
-import {useContests} from '../../../hooks/use-contests';
-import {generateFilterItems} from "../../../common/filter-utils";
-import {IHaveOptionalClassName} from "../../common/Props";
-import concatClassNames from "../../../utils/class-names";
-import Tree, {ITreeItemType} from "../../guidelines/trees/Tree";
+import { useContests } from '../../../hooks/use-contests';
+import { IHaveOptionalClassName } from '../../common/Props';
+import Tree, { ITreeItemType } from '../../guidelines/trees/Tree';
 
 interface IContestCategoriesProps extends IHaveOptionalClassName {
 }
 
-const ContestCategories = ({
-    className = ''
-}: IContestCategoriesProps) => {
-    const {
-        state: {
-            categories,
-        },
-    } = useContestCategories();
+const ContestCategories = ({ className = '' }: IContestCategoriesProps) => {
+    const { state: { categories } } = useContestCategories();
 
     const {
-        actions: {
-            applyFilter,
-        }
+        state: { possibleFilters },
+        actions: { applyFilter },
     } = useContests();
 
-    const handleTreeItemClick = (node: ITreeItemType) => {
+    const handleTreeItemClick = useCallback((node: ITreeItemType) => {
         if (!isEmpty(node.children)) {
             return;
         }
-        
-        const filter = generateFilterItems(
-            FilterType.Category,
-            { name: node.name, value: node.id })[0];
+
+        const filter = possibleFilters.find(({ value }) => value.toString() === node.id.toString());
+
+        if (isNil(filter)) {
+            return;
+        }
 
         applyFilter(filter, true);
-    };
-    
-    const newClassName = concatClassNames(styles.container, className);
+    }, [ applyFilter, possibleFilters ]);
 
     return (
-        <div className={newClassName}>
+        <div className={className as string}>
             <Heading
-                type="small"
-                className={styles.heading}
+              type={HeadingType.small}
+              className={styles.heading}
             >
                 Category
             </Heading>
             <Tree
-                items={categories as ITreeItemType[]}
-                handleTreeItemClick={handleTreeItemClick}
+              items={categories}
+              onTreeItemClick={handleTreeItemClick}
             />
         </div>
     );
-}
+};
 
 export default ContestCategories;

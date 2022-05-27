@@ -3,9 +3,9 @@ import { IHaveChildrenProps } from '../components/common/Props';
 import { useLoading } from './use-loading';
 import { useHttp } from './use-http';
 import { useNotifications } from './use-notifications';
-import { HttpStatus } from '../common/common';
-import { logoutUrl, loginSubmitUrl } from '../utils/urls';
+import { useUrls } from './use-urls';
 import { getCookie } from '../utils/cookies';
+import { HttpStatus } from '../common/common';
 import { INotificationType } from '../common/common-types';
 
 type UserType = {
@@ -46,33 +46,36 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
     const [ username, setUsername ] = useState<string>(defaultState.user.username);
     const [ password, setPassword ] = useState<string>();
     const { showError } = useNotifications();
-    const {
-        post: loginSubmitRequest,
-        response: loginSubmitRequestResponse,
-        status: loginSubmitRequestStatus,
-    } = useHttp(loginSubmitUrl);
 
-    const { post: logoutRequest, response: logoutResponse } = useHttp(logoutUrl);
+    const { getLogoutUrl, getLoginSubmitUrl } = useUrls();
+
+    const {
+        post: loginSubmit,
+        response: loginSubmitResponse,
+        status: loginSubmitStatus,
+    } = useHttp(getLoginSubmitUrl);
+
+    const { post: logout, response: logoutResponse } = useHttp(getLogoutUrl);
 
     const signIn = useCallback(
         async () => {
             startLoading();
-            await loginSubmitRequest({
+            await loginSubmit({
                 Username: username,
                 Password: password,
                 RememberMe: true,
             });
             stopLoading();
         },
-        [ loginSubmitRequest, password, startLoading, stopLoading, username ],
+        [ loginSubmit, password, startLoading, stopLoading, username ],
     );
 
     const signOut = useCallback(async () => {
         startLoading();
-        await logoutRequest({});
+        await logout({});
         setUser(defaultState.user);
         stopLoading();
-    }, [ logoutRequest, startLoading, stopLoading ]);
+    }, [ logout, startLoading, stopLoading ]);
 
     const getUser = useCallback(() => user, [ user ]);
 
@@ -108,15 +111,15 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
     }, [ setUserDetails ]);
 
     useEffect(() => {
-        if (loginSubmitRequestResponse) {
-            if (loginSubmitRequestStatus === HttpStatus.Unauthorized) {
+        if (loginSubmitResponse) {
+            if (loginSubmitStatus === HttpStatus.Unauthorized) {
                 showError({ message: 'Invalid credentials.' } as INotificationType);
             }
 
             const loadedUser = tryGetUserDetailsFromCookie();
             setUserDetails(loadedUser);
         }
-    }, [ loginSubmitRequestResponse, loginSubmitRequestStatus, showError, setUserDetails ]);
+    }, [ loginSubmitResponse, loginSubmitStatus, showError, setUserDetails ]);
 
     useEffect(() => {
         if (logoutResponse) {

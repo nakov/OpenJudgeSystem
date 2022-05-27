@@ -7,7 +7,10 @@ namespace OJS.Services.Ui.Data.Implementations
     using OJS.Data.Models.Problems;
     using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Infrastructure;
+    using OJS.Services.Ui.Models.Contests;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using SoftUni.Common.Extensions;
+    using SoftUni.Common.Models;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -27,25 +30,31 @@ namespace OJS.Services.Ui.Data.Implementations
                 .MapCollection<TServiceModel>()
                 .ToListAsync();
 
-        public IQueryable<Contest> GetAllCompetableQuery(int? categoryId = null)
-            => this.GetAllVisibleQuery()
-                .Include(c => c.Category)
-                .Where(c => !categoryId.HasValue || c.CategoryId == categoryId)
-                .Where(c =>
-                    c.StartTime <= this.dates.GetUtcNow() &&
-                    c.EndTime.HasValue &&
-                    c.EndTime >= this.dates.GetUtcNow());
-
-        public async Task<IEnumerable<TServiceModel>> GetAllPast<TServiceModel>()
-            => await this.GetAllPastQuery()
+        public async Task<IEnumerable<TServiceModel>> GetAllPracticable<TServiceModel>()
+            => await this.GetAllPracticableQuery()
                 .MapCollection<TServiceModel>()
                 .ToListAsync();
 
-        public IQueryable<Contest> GetAllPastQuery(int? categoryId = null)
-            => this.GetAllVisibleQuery()
-                .Where(c => !categoryId.HasValue || c.CategoryId == categoryId)
-                .Include(c => c.Category)
-                .Where(c => c.EndTime < this.dates.GetUtcNow());
+        public async Task<PagedResult<TServiceModel>> GetAllAsPageByFilters<TServiceModel>(
+            ContestFiltersServiceModel model)
+        {
+            var contests = model.CategoryId.HasValue
+                ? this.GetAllVisibleByCategoryQuery(model.CategoryId.Value)
+                : this.GetAllVisibleQuery();
+
+            contests = this.FilterByStatus(contests, model.Statuses.ToList());
+
+            if (model.SubmissionTypeIds.Any())
+            {
+                contests = contests
+                    .Where(this.ContainsSubmissionTypeIds(model.SubmissionTypeIds));
+            }
+
+            return await contests
+                .OrderBy(c => c.OrderBy)
+                .MapCollection<TServiceModel>()
+                .ToPagedResultAsync(model.ItemsPerPage, model.PageNumber);
+        }
 
         public Task<Contest?> GetByIdWithProblems(int id)
             => this.DbSet
@@ -66,7 +75,7 @@ namespace OJS.Services.Ui.Data.Implementations
                 .FirstOrDefaultAsync();
 
         public IQueryable<Contest> GetAllActive()
-            => this.GetAllVisible()
+            => this.GetAllVisibleQuery()
                 .Where(c =>
                     c.StartTime <= DateTime.Now &&
                     (c.EndTime >= DateTime.Now ||
@@ -82,19 +91,11 @@ namespace OJS.Services.Ui.Data.Implementations
                     !c.Participants.Any(p => p.ParticipationEndTime < DateTime.Now));
 
         public IQueryable<Contest> GetAllUpcoming()
-            => this.GetAllVisible()
+            => this.GetAllVisibleQuery()
                 .Where(c => c.StartTime > DateTime.Now);
 
-        public IQueryable<Contest> GetAllVisible()
-            => this.DbSet
-                .Where(c => c.IsVisible);
-
-        public IQueryable<Contest> GetAllVisibleByCategory(int categoryId)
-            => this.GetAllVisible()
-                .Where(c => c.CategoryId == categoryId);
-
         public IQueryable<Contest> GetAllVisibleBySubmissionType(int submissionTypeId)
-            => this.GetAllVisible()
+            => this.GetAllVisibleQuery()
                 .Where(c => c.ProblemGroups
                     .SelectMany(pg => pg.Problems)
                     .Any(p => p.SubmissionTypesInProblems.Any(s => s.SubmissionTypeId == submissionTypeId)));
@@ -160,8 +161,66 @@ namespace OJS.Services.Ui.Data.Implementations
                     .Sum(pg => (int?)pg.Problems.First().MaximumPoints))
                 .FirstOrDefaultAsync() ?? default(int);
 
+        private IQueryable<Contest> GetAllVisibleByCategoryQuery(int categoryId)
+            => this.GetAllVisibleQuery()
+                .Where(c => c.CategoryId == categoryId);
+
+        private IQueryable<Contest> GetAllCompetableQuery()
+            => this.GetAllVisibleQuery()
+                .Where(this.CanBeCompeted());
+
+        private IQueryable<Contest> GetAllPracticableQuery()
+            => this.GetAllVisibleQuery()
+                .Where(this.CanBePracticed());
+
+        private IQueryable<Contest> GetAllPracticableAndCompetableQuery()
+            => this.GetAllCompetableQuery()
+                .Concat(this.GetAllPracticableQuery());
+
         private IQueryable<Contest> GetAllVisibleQuery()
             => this.DbSet
                 .Where(c => c.IsVisible);
+
+        private Expression<Func<Contest, bool>> CanBeCompeted()
+            => c => c.StartTime <= this.dates.GetUtcNow()
+                && (!c.EndTime.HasValue || c.EndTime > this.dates.GetUtcNow());
+
+        private Expression<Func<Contest, bool>> CanBePracticed()
+            => c => c.PracticeStartTime <= this.dates.GetUtcNow()
+                && (!c.PracticeEndTime.HasValue || c.PracticeEndTime > this.dates.GetUtcNow());
+
+        private Expression<Func<Contest, bool>> ContainsSubmissionTypeIds(IEnumerable<int> submissionTypeIds)
+            => c => c.ProblemGroups
+                .SelectMany(pg => pg.Problems)
+                .SelectMany(p => p.SubmissionTypesInProblems)
+                .Select(x => x.SubmissionTypeId)
+                .Any(x => submissionTypeIds.Contains(x)); // Does not work if converted to method group
+
+        private IQueryable<Contest> FilterByStatus(
+            IQueryable<Contest> contests,
+            ICollection<ContestStatus> statuses)
+        {
+            var competable = statuses.Any(s => s == ContestStatus.Active);
+            var practicable = statuses.Any(s => s == ContestStatus.Past);
+
+            if (competable && !practicable)
+            {
+                return contests.Where(this.CanBeCompeted());
+            }
+
+            if (!competable && practicable)
+            {
+                return contests.Where(this.CanBePracticed());
+            }
+
+            if (competable && practicable)
+            {
+                return contests
+                    .Where(this.CanBeCompeted())
+                    .Concat(contests.Where(this.CanBePracticed()));
+            }
+
+            return contests;
+        }
     }
 }

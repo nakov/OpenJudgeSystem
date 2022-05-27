@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IUserProfileType } from '../../../hooks/use-users';
 import styles from './ProfileAboutInfo.module.scss';
-import { LinkButton } from '../../guidelines/buttons/Button';
+import { LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 
 interface IProfileAboutInfoProps {
     value: IUserProfileType
@@ -25,7 +25,11 @@ const ProfileAboutInfo = ({ value } : IProfileAboutInfoProps) => (
             <h2>Email:</h2>
             <p>{value.email}</p>
         </div>
-        <LinkButton text="Update" to="/" type="secondary" />
+        <LinkButton
+          text="Update"
+          to="/"
+          type={LinkButtonType.secondary}
+        />
     </div>
 );
 

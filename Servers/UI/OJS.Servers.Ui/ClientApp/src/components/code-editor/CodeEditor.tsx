@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
-import MonacoEditor from 'react-monaco-editor';
+import { lazy, useCallback, useEffect, useState } from 'react';
 import { get, isNil } from 'lodash';
 import { useSubmissions } from '../../hooks/submissions/use-submissions';
 import styles from './CodeEditor.module.scss';
 import { useProblems } from '../../hooks/use-problems';
+
+const MonacoEditor = lazy(() => import('react-monaco-editor'));
 
 const possibleLanguages = [
     'python',
@@ -26,6 +27,7 @@ const getMonacoLanguage = (submissionTypeName: string | null) => {
 
 const CodeEditor = () => {
     const [ selectedSubmissionTypeName, setSelectedSubmissionTypeName ] = useState<string | null>(null);
+
     const {
         state: {
             submissionCode,
@@ -38,9 +40,12 @@ const CodeEditor = () => {
 
     const { allowedSubmissionTypes } = currentProblem || {};
 
-    const onCodeChange = (newValue: string) => {
-        updateSubmissionCode(newValue);
-    };
+    const onCodeChange = useCallback(
+        (newValue: string) => {
+            updateSubmissionCode(newValue);
+        },
+        [ updateSubmissionCode ],
+    );
 
     useEffect(
         () => {

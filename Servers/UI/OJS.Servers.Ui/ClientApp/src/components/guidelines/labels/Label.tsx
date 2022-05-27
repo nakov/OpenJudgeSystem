@@ -3,7 +3,13 @@ import styles from './Label.module.scss';
 import concatClassNames from '../../../utils/class-names';
 import { IHaveOptionalChildrenProps, IHaveOptionalClassName } from '../../common/Props';
 
-type LabelType = 'success' | 'danger' | 'warning' | 'info' | 'plain';
+enum LabelType {
+    success = 1,
+    danger = 2,
+    warning = 3,
+    info = 4,
+    plain = 5,
+}
 
 interface ILabelProps extends IHaveOptionalChildrenProps, IHaveOptionalClassName {
     type: LabelType;
@@ -12,11 +18,11 @@ interface ILabelProps extends IHaveOptionalChildrenProps, IHaveOptionalClassName
 
 const typeToClassName = (type: LabelType) => {
     const map = {
-        success: styles.success,
-        warning: styles.warning,
-        info: styles.info,
-        danger: styles.danger,
-        plain: styles.plain,
+        [LabelType.success]: styles.success,
+        [LabelType.warning]: styles.warning,
+        [LabelType.info]: styles.info,
+        [LabelType.danger]: styles.danger,
+        [LabelType.plain]: styles.plain,
     };
     return map[type];
 };
@@ -48,3 +54,7 @@ const Label = ({
 };
 
 export default Label;
+
+export {
+    LabelType,
+};

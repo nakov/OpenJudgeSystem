@@ -1,6 +1,4 @@
-﻿namespace OJS.Services.Ui.Business.Implementations;
-
-using FluentExtensions.Extensions;
+﻿using FluentExtensions.Extensions;
 using OJS.Common;
 using OJS.Data.Models.Problems;
 using OJS.Services.Infrastructure.Exceptions;
@@ -10,7 +8,10 @@ using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using X.PagedList;
+
+namespace OJS.Services.Ui.Business.Implementations;
+
+using OJS.Services.Infrastructure.Extensions;
 
 public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
 {
@@ -22,11 +23,11 @@ public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
 
     public Task<SubmissionTypeServiceModel> GetById(int id) => throw new System.NotImplementedException();
 
-    public async Task<IEnumerable<SubmissionTypeServiceModel>> GetAllowedSubmissionTypes(int problemId)
-        => await this.submissionTypesData
+    public Task<IEnumerable<SubmissionTypeServiceModel>> GetAllowedSubmissionTypes(int problemId)
+        => this.submissionTypesData
             .GetAllByProblem(problemId)
             .MapCollection<SubmissionTypeServiceModel>()
-            .ToListAsync();
+            .ToEnumerableAsync();
 
     public async Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllOrderedByUsage()
     {

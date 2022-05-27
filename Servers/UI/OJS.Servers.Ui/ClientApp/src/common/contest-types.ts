@@ -6,6 +6,11 @@ enum FilterType {
     Category = 'Category',
 }
 
+type FilterInfo = {
+    name: string;
+    value: string;
+}
+
 interface IFilter {
     name: string;
     value: string;
@@ -31,6 +36,7 @@ enum ContestState {
 
 export type {
     IFilter,
+    FilterInfo,
     IContestStrategyFilter,
 };
 

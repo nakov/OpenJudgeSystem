@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useCallback } from 'react';
-import { Button } from '../../guidelines/buttons/Button';
+import { Button, ButtonType } from '../../guidelines/buttons/Button';
 import { IProblemResourceType } from '../../../common/types';
 
 import styles from './ProblemResource.module.scss';
@@ -36,7 +36,7 @@ const ProblemResource = ({ resource }: IProblemResourceProps) => {
         )
         : (
             <Button
-              type="plain"
+              type={ButtonType.plain}
               className={styles.resourceLinkButton}
               onClick={
                     (e) => {

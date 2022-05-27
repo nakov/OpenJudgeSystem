@@ -15,6 +15,10 @@ public class ContestCategoryTreeViewModel : IMapExplicitly
 
     public string NameUrl => this.Name.ToUrl();
 
+    public int? ParentId { get; set; }
+
+    public double OrderBy { get; set; }
+
     public IEnumerable<ContestCategoryTreeViewModel> Children { get; set; }
         = Enumerable.Empty<ContestCategoryTreeViewModel>();
 

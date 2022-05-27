@@ -13,7 +13,6 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Data.Models.Contests;
     using OJS.Services.Infrastructure.Exceptions;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
-    using SoftUni.Common.Extensions;
     using SoftUni.Common.Models;
 
     public class ContestsBusinessService : IContestsBusinessService
@@ -152,60 +151,11 @@ namespace OJS.Services.Ui.Business.Implementations
         public async Task<PagedResult<ContestForListingServiceModel>> GetAllByFilters(
             ContestFiltersServiceModel? model)
         {
-            var pageNumber = model?.PageNumber ?? 1;
-            var itemsPerPage = model?.ItemsPerPage ?? DefaultContestsPerPage;
+            model ??= new ContestFiltersServiceModel();
+            model.PageNumber ??= 1;
+            model.ItemsPerPage ??= DefaultContestsPerPage;
 
-            if (model == null)
-            {
-                return new PagedResult<ContestForListingServiceModel>
-                {
-                    PageNumber = pageNumber,
-                };
-            }
-
-            var contests = this.GetAllByStatusAndCategory(model.Statuses, model.CategoryId);
-
-            if (model.SubmissionTypeIds.Any())
-            {
-                contests = contests
-                    .Where(c => c.ProblemGroups
-                        .SelectMany(pg => pg.Problems)
-                        .SelectMany(x => x.SubmissionTypesInProblems)
-                        .Select(x => x.SubmissionTypeId)
-                        .Any(id => model.SubmissionTypeIds.Contains(id)));
-            }
-
-            return await contests
-                .OrderBy(c => c.OrderBy)
-                .MapCollection<ContestForListingServiceModel>()
-                .ToPagedResultAsync(itemsPerPage, pageNumber);
-        }
-
-        private IQueryable<Contest> GetContestByFilter(ContestStatus status, int? categoryId)
-            => (status == ContestStatus.Active
-                ? this.contestsData
-                    .GetAllCompetableQuery(categoryId)
-                : this.contestsData
-                    .GetAllPastQuery(categoryId));
-
-        private IQueryable<Contest> GetAllVisibleContestsByCategory(int? categoryId)
-            => (categoryId.HasValue
-                ? this.contestsData
-                    .GetAllVisibleByCategory(categoryId.Value)
-                : this.contestsData
-                    .GetAllVisible());
-
-        private IQueryable<Contest> GetAllByStatusAndCategory(
-            IEnumerable<ContestStatus>? statuses,
-            int? categoryId)
-        {
-            var contestFilters = statuses?.ToList();
-
-            return contestFilters?.Count switch
-            {
-                1 => this.GetContestByFilter(contestFilters.First(), categoryId),
-                _ => this.GetAllVisibleContestsByCategory(categoryId),
-            };
+            return await this.contestsData.GetAllAsPageByFilters<ContestForListingServiceModel>(model);
         }
 
         private bool IsUserLecturerInContest(Contest contest, string userId) =>
@@ -230,15 +180,8 @@ namespace OJS.Services.Ui.Business.Implementations
 
         public async Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPracticable()
             => await this.contestsData
-                .GetAllPast<ContestForHomeIndexServiceModel>()
-                .WhereAsync(c => c.CanBePracticed)
+                .GetAllPracticable<ContestForHomeIndexServiceModel>()
                 .OrderByDescendingAsync(ac => ac.PracticeStartTime)
-                .TakeAsync(DefaultContestsToTake);
-
-        public async Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPast()
-            => await this.contestsData
-                .GetAllPast<ContestForHomeIndexServiceModel>()
-                .OrderByDescendingAsync(pc => pc.EndTime)
                 .TakeAsync(DefaultContestsToTake);
 
         public async Task<bool> CanUserCompeteByContestByUserAndIsAdmin(

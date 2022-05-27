@@ -1,13 +1,15 @@
-import React, {createContext, useCallback, useContext, useEffect, useState} from 'react';
-import {isEmpty, isNil, without} from 'lodash';
-import {IHaveChildrenProps, IHavePagesProps} from '../components/common/Props';
-import {IIndexContestsType, IPagedResultType} from '../common/types';
-import {ContestState, FilterType, IFilter} from '../common/contest-types';
-import {useHttp} from './use-http';
-import {useUrls} from './use-urls';
-import {generateFilterItems} from '../common/filter-utils';
-import {useLoading} from './use-loading';
-import {useContestStrategyFilters} from "./use-contest-strategy-filters";
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { isEmpty, isNil, without } from 'lodash';
+import { IHaveChildrenProps, IHavePagesProps } from '../components/common/Props';
+import { IIndexContestsType, IPagedResultType } from '../common/types';
+import { ContestState, FilterType, IFilter } from '../common/contest-types';
+import { useHttp } from './use-http';
+import { useUrls } from './use-urls';
+import { generateFilterItems } from '../common/filter-utils';
+import { useLoading } from './use-loading';
+import { useContestStrategyFilters } from './use-contest-strategy-filters';
+import { useContestCategories } from './use-contest-categories';
+import { ITreeItemType } from '../components/guidelines/trees/Tree';
 
 interface IContestsContext extends IHavePagesProps {
     state: {
@@ -29,12 +31,7 @@ interface IContestsProviderProps extends IHaveChildrenProps {
 const defaultState = {
     state: {
         contests: [] as IIndexContestsType[],
-        possibleFilters: [
-            ...generateFilterItems(
-                FilterType.Status,
-                { name: ContestState.Active, value: ContestState.Active },
-                { name: ContestState.Past, value: ContestState.Past }),
-        ],
+        possibleFilters: [] as IFilter[],
         filters: [] as IFilter[],
     },
     pageNumber: 1,
@@ -49,33 +46,30 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ page, setPage ] = useState(defaultState.pageNumber);
     const [ pageProps, setPageProps ] = useState({} as IHavePagesProps);
 
-    const { getUrlForAllContests } = useUrls();
+    const { getAllContestsUrl } = useUrls();
     const { startLoading, stopLoading } = useLoading();
 
     const getUrl = useCallback(
-        () => getUrlForAllContests({ filters, page }),
-        [ filters, getUrlForAllContests, page ],
+        () => getAllContestsUrl({ filters, page }),
+        [ filters, getAllContestsUrl, page ],
     );
 
     const {
         get,
         data,
     } = useHttp(getUrl);
-    
-    const {
-        state: {
-            strategies,
-        },
-    } = useContestStrategyFilters();
+
+    const { state: { strategies } } = useContestStrategyFilters();
+    const { state: { categories } } = useContestCategories();
 
     const applyFilter = useCallback(
         (filter: IFilter, singleForType = false) => {
-            let newFilters = isNil(filters.find(f => f.id === filter.id))
+            let newFilters = !filters.some(({ id }) => id === filter.id)
                 ? [ ...filters, filter ]
                 : without(filters, filter);
 
             if (singleForType) {
-                newFilters = newFilters.filter(f => f.type !== filter.type || f.id === filter.id);
+                newFilters = newFilters.filter(({ id, type }) => type !== filter.type || id === filter.id);
             }
 
             setFilters(newFilters);
@@ -97,8 +91,58 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             await get();
             stopLoading();
         },
-        [ get ],
+        [ get, startLoading, stopLoading ],
     );
+
+    const addCategoryLeafFilters = useCallback(
+        ({ id, name, children: treeChildren }: ITreeItemType, arr: IFilter[]) => {
+            treeChildren?.forEach((c) => {
+                addCategoryLeafFilters(c, arr);
+            });
+
+            const filter = { name, value: id.toString() } as IFilter;
+            arr.push(filter);
+        },
+        [],
+    );
+
+    const generateStrategyFilters = useCallback(() => {
+        if (isNil(strategies) || isEmpty(strategies)) {
+            return [];
+        }
+        const strategyFilters = strategies.map(({ name, id }) => ({
+            name,
+            value: id.toString(),
+        }));
+
+        return generateFilterItems(FilterType.Strategy, ...strategyFilters);
+    }, [ strategies ]);
+
+    const generateCategoryFilters = useCallback(() => {
+        if (isNil(categories) || isEmpty(categories)) {
+            return [];
+        }
+
+        const categoryFilters = [] as IFilter[];
+        categories.forEach((c) => addCategoryLeafFilters(c, categoryFilters));
+
+        return generateFilterItems(FilterType.Category, ...categoryFilters);
+    }, [ categories, addCategoryLeafFilters ]);
+
+    const generateStatusFilters = useCallback(() => generateFilterItems(
+        FilterType.Status,
+        { name: ContestState.Active, value: ContestState.Active },
+        { name: ContestState.Past, value: ContestState.Past },
+    ), []);
+
+    const generatePossibleFilters = useCallback(() => {
+        const statusFilters = generateStatusFilters();
+        const categoryFilterItems = generateCategoryFilters();
+        const strategyFilterItems = generateStrategyFilters();
+        return statusFilters
+            .concat(categoryFilterItems)
+            .concat(strategyFilterItems);
+    }, [ generateStatusFilters, generateCategoryFilters, generateStrategyFilters ]);
 
     useEffect(
         () => {
@@ -111,22 +155,9 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     useEffect(
         () => {
-            if (isNil(strategies) || isEmpty(strategies)) {
-                return;
-            }
-            
-            const strategyFilters = strategies.map((s) => {
-                return {
-                    name: s.name,
-                    value: s.id.toString(),
-                };
-            });
-            
-            const strategyFilterItems = generateFilterItems(FilterType.Strategy, ...strategyFilters);
-            const newPossibleFilters = possibleFilters.concat(strategyFilterItems);
-            setPossibleFilters(newPossibleFilters);
+            setPossibleFilters(generatePossibleFilters());
         },
-        [ strategies ],
+        [ setPossibleFilters, generatePossibleFilters ],
     );
 
     useEffect(
