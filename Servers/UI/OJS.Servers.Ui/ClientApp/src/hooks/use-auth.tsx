@@ -10,8 +10,8 @@ import { INotificationType } from '../common/common-types';
 
 type UserType = {
     username: string,
-    isLoggedIn: boolean,
     permissions: IUserPermissionsType,
+    isLoggedIn?: boolean | null,
 };
 
 interface IUserPermissionsType {
@@ -30,7 +30,7 @@ interface IAuthContext {
 const defaultState = {
     user: {
         username: '',
-        isLoggedIn: false,
+        isLoggedIn: null,
         permissions: { canAccessAdministration: false } as IUserPermissionsType,
     },
 };
@@ -79,23 +79,24 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
 
     const getUser = useCallback(() => user, [ user ]);
 
-    const tryGetUserDetailsFromCookie = () => {
+    const tryGetUserDetailsFromCookie = useCallback(() => {
         const loggedInUsername = getCookie('logged_in_username');
         const canAccessAdministrationCookie = getCookie('can_access_administration');
+        let { permissions } = defaultState.user;
+        let loggedIn = false;
 
         if (loggedInUsername) {
             const canAccessAdministration = canAccessAdministrationCookie.length > 0;
-            const permissions = { canAccessAdministration } as IUserPermissionsType;
-
-            return {
-                username: loggedInUsername,
-                isLoggedIn: true,
-                permissions: permissions!,
-            };
+            permissions = { canAccessAdministration } as IUserPermissionsType;
+            loggedIn = true;
         }
 
-        return defaultState.user;
-    };
+        return {
+            username: loggedInUsername,
+            isLoggedIn: loggedIn,
+            permissions,
+        };
+    }, []);
 
     const setUserDetails = useCallback((userDetails: UserType | null) => {
         if (userDetails == null) {
@@ -108,7 +109,7 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
     useEffect(() => {
         const loadedUser = tryGetUserDetailsFromCookie();
         setUserDetails(loadedUser);
-    }, [ setUserDetails ]);
+    }, [ setUserDetails, tryGetUserDetailsFromCookie ]);
 
     useEffect(() => {
         if (loginSubmitResponse) {
@@ -119,7 +120,7 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
             const loadedUser = tryGetUserDetailsFromCookie();
             setUserDetails(loadedUser);
         }
-    }, [ loginSubmitResponse, loginSubmitStatus, showError, setUserDetails ]);
+    }, [ loginSubmitResponse, loginSubmitStatus, showError, setUserDetails, tryGetUserDetailsFromCookie ]);
 
     useEffect(() => {
         if (logoutResponse) {

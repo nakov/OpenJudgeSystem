@@ -5,6 +5,7 @@ import {
     useLocation,
 
 } from 'react-router';
+import { isNil } from 'lodash';
 import { useAuth } from '../../hooks/use-auth';
 import { IHaveChildrenProps } from '../../components/common/Props';
 
@@ -18,7 +19,7 @@ const PrivatePage = ({ children }: IPrivatePageProps) => {
 
     const state = { from: location };
 
-    return !isLoggedIn
+    return !isNil(isLoggedIn) && !isLoggedIn
         ? <Navigate to="/login" state={state} />
         : (
             <>
