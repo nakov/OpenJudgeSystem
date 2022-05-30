@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import axios from 'axios';
 import { saveAs } from 'file-saver';
-import { isFunction } from 'lodash';
+import { isFunction, isNil } from 'lodash';
 import { HttpStatus } from '../common/common';
 import { UrlType, IDictionary, IFileResponseType } from '../common/common-types';
 

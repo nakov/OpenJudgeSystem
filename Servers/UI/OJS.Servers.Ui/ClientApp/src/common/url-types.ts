@@ -26,7 +26,7 @@ interface IGetSubmissionResultsByProblemUrlParams {
     take: number;
 }
 
-interface IGetCurrentSubmissionDetailsUrlParams {
+interface IGetSubmissionDetailsByIdUrlParams {
     submissionId: number;
 }
 
@@ -36,5 +36,5 @@ export type {
     IStartContestParticipationUrlParams,
     IDownloadProblemResourceUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
-    IGetCurrentSubmissionDetailsUrlParams,
+    IGetSubmissionDetailsByIdUrlParams,
 };

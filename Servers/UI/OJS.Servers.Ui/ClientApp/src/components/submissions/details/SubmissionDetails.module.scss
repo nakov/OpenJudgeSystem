@@ -1,0 +1,38 @@
+﻿@import "src/styles/global";
+@import "src/styles/components";
+
+.detailsWrapper {
+  @extend .wrapper;
+  
+}
+
+.headingDetails {
+  @extend .contentSize;
+}
+
+.navigation {
+  align-content: center;
+}
+
+.code {
+  @extend .navigation;
+  
+  border: 2px solid cadetblue;
+  flex: 4;
+}
+
+.submissionsNavigation {
+  @extend .navigation;
+  
+  border: 2px solid lightpink;
+  flex: 2;
+}
+
+.submissionDetails {
+  border: 2px solid #3F4D5A;
+  flex: 5;
+}
+
+.submissionList {
+  align-items: unset;
+}

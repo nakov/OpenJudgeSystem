@@ -19,6 +19,10 @@ const SubmissionBox = () => {
     // const { setSubmissionType } = useHomeContests();
     const { actions: { selectSubmissionTypeById } } = useSubmissions();
     const {
+        state: {
+            submissionCode,
+            selectedSubmissionType,
+        },
         actions: {
             submit,
             updateSubmissionCode,
@@ -26,6 +30,14 @@ const SubmissionBox = () => {
     } = useSubmissions();
 
     const { state: { currentProblem } } = useProblems();
+    const { allowedSubmissionTypes } = currentProblem || {};
+
+    const onCodeChange = useCallback(
+        (newValue: string) => {
+            updateSubmissionCode(newValue);
+        },
+        [ updateSubmissionCode ],
+    );
 
     const handleSelectExecutionType = useCallback(
         (id) => {
@@ -59,7 +71,7 @@ const SubmissionBox = () => {
             if (isNil(currentProblem)) {
                 return null;
             }
-            const { allowedSubmissionTypes } = currentProblem || {};
+
             if (isNil(allowedSubmissionTypes)) {
                 return null;
             }
@@ -74,7 +86,7 @@ const SubmissionBox = () => {
                 />
             );
         },
-        [ currentProblem, renderSubmissionTypesSelectors ],
+        [ allowedSubmissionTypes, currentProblem, renderSubmissionTypesSelectors ],
     );
 
     const handleOnSubmit = useCallback(async () => {
@@ -97,7 +109,13 @@ const SubmissionBox = () => {
             </Heading>
             <div className={styles.contestInnerLayout}>
                 <div className={styles.editorAndProblemControlsWrapper}>
-                    <CodeEditor />
+                    <CodeEditor
+                      readOnly={false}
+                      selectedSubmissionType={selectedSubmissionType}
+                      allowedSubmissionTypes={allowedSubmissionTypes}
+                      submissionCode={submissionCode}
+                      onCodeChange={onCodeChange}
+                    />
                     <div className={styles.contestSubmitControlsWrapper}>
                         <div className={styles.executionTypeSelectors}>
                             {renderSubmissionTypesSelectorsList()}

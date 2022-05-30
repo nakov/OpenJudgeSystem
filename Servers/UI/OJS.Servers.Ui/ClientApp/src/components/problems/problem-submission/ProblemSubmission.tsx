@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import moment from 'moment';
 import { ISubmissionDetails } from '../../../hooks/submissions/types';
-import { Button, ButtonType } from '../../guidelines/buttons/Button';
+import { Button, ButtonSize, ButtonType, LinkButton } from '../../guidelines/buttons/Button';
 import Text, { TextType } from '../../guidelines/text/Text';
 
 import styles from './ProblemSubmission.module.scss';
@@ -18,6 +18,7 @@ interface ISubmissionResultProps {
 
 const ProblemSubmission = ({ submission }: ISubmissionResultProps) => {
     const {
+        id,
         submissionType,
         points,
         maximumPoints,
@@ -92,6 +93,8 @@ const ProblemSubmission = ({ submission }: ISubmissionResultProps) => {
         submissionDetailsContainerVisibilityClassName,
     );
 
+    const submissionDetailsLink = useMemo(() => `/submissions/${id}/details`, [ id ]);
+
     return (
         <div>
             <div className={styles.container}>
@@ -129,6 +132,9 @@ const ProblemSubmission = ({ submission }: ISubmissionResultProps) => {
             </div>
             <div className={submissionDetailsContainerClassName}>
                 <ProblemSubmissionDetails submission={submission} />
+            </div>
+            <div>
+                <LinkButton size={ButtonSize.none} to={submissionDetailsLink} text="Details" />
             </div>
         </div>
     );

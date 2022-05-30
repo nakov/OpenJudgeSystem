@@ -31,7 +31,7 @@
       "applicationUrl": "http://localhost:5002",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "DbContext": "Server=217.174.159.217;Database=OpenJudgeSystem;User Id=sa;Password=12345",
+        "DbContext": "Server=217.174.159.217;Database=OpenJudgeSystem;User Id=sa;Password=8ot4ize@&NPf@emC*T",
         "PATH_TO_COMMON_KEY_RING_FOLDER": "../../../Keys",
         "SULS_PLATFORM_BASE_URL": "https://localhost:44304",
         "DISTRIBUTOR_BASE_URL": "https://localhost:44305",

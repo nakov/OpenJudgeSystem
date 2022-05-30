@@ -4,6 +4,7 @@ import { get, isNil } from 'lodash';
 import { useSubmissions } from '../../hooks/submissions/use-submissions';
 import styles from './CodeEditor.module.scss';
 import { useProblems } from '../../hooks/use-problems';
+import { ISubmissionTypeType } from '../../common/types';
 
 const MonacoEditor = lazy(() => import('react-monaco-editor'));
 
@@ -25,30 +26,23 @@ const getMonacoLanguage = (submissionTypeName: string | null) => {
     return possibleLanguages.find((x) => submissionTypeName.toLowerCase().indexOf(x) >= 0);
 };
 
-const CodeEditor = () => {
+interface ICodeEditorProps {
+    readOnly: boolean;
+    submissionCode?: string;
+    selectedSubmissionType?: ISubmissionTypeType;
+    allowedSubmissionTypes?: ISubmissionTypeType[];
+    onCodeChange?: (newValue: string) => void;
+}
+
+const CodeEditor = ({ readOnly, submissionCode, selectedSubmissionType, allowedSubmissionTypes, onCodeChange }: ICodeEditorProps) => {
     const [ selectedSubmissionTypeName, setSelectedSubmissionTypeName ] = useState<string | null>(null);
-
-    const {
-        state: {
-            submissionCode,
-            selectedSubmissionType,
-        },
-        actions: { updateSubmissionCode },
-    } = useSubmissions();
-
-    const { state: { currentProblem } } = useProblems();
-
-    const { allowedSubmissionTypes } = currentProblem || {};
-
-    const onCodeChange = useCallback(
-        (newValue: string) => {
-            updateSubmissionCode(newValue);
-        },
-        [ updateSubmissionCode ],
-    );
 
     useEffect(
         () => {
+            if (readOnly) {
+                return;
+            }
+
             if (isNil(allowedSubmissionTypes)) {
                 return;
             }
@@ -62,7 +56,7 @@ const CodeEditor = () => {
             const name = get(submissionType, 'name', null);
             setSelectedSubmissionTypeName(name);
         },
-        [ allowedSubmissionTypes, selectedSubmissionType ],
+        [ allowedSubmissionTypes, readOnly, selectedSubmissionType ],
     );
 
     return (
@@ -73,6 +67,7 @@ const CodeEditor = () => {
               value={submissionCode}
               className={styles.editor}
               options={{
+                  readOnly,
                   selectOnLineNumbers: true,
                   minimap: { enabled: false },
                   automaticLayout: true,

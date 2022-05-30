@@ -1,13 +1,9 @@
 @import "src/styles/colors";
 @import "src/styles/components";
+@import "src/styles/global";
 
 .contestWrapper {
-  min-height: 700px;
-  width: 100%;
-  margin: 0 auto;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: row;
+  @extend .wrapper;
 }
 
 .contestHeading {

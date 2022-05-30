@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using OJS.Common.Extensions.Strings;
 using OJS.Services.Ui.Models.Users;
 using System.Linq;
 
@@ -18,6 +19,8 @@ namespace OJS.Services.Ui.Models.Submissions
 
         public int Points { get; set; }
 
+        public string? Content { get; set; }
+
         public IEnumerable<TestRunDetailsServiceModel> TestRuns { get; set; } = Enumerable.Empty<TestRunDetailsServiceModel>();
 
         public UserProfileServiceModel User { get; set; }
@@ -36,6 +39,10 @@ namespace OJS.Services.Ui.Models.Submissions
                 .ForMember(d => d.MaxUsedTime, opt => opt.MapFrom(source =>
                     source.TestRuns.Any()
                         ? source.TestRuns.Max(tr => tr.TimeUsed)
-                        : 0.0));
+                        : 0.0))
+                .ForMember(d => d.Content, opt => opt.MapFrom(s =>
+                    s.IsBinaryFile
+                        ? null
+                        : s.ContentAsString));
     }
 }

@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { useParams } from 'react-router';
 import { useEffect } from 'react';
-import SubmissionResults from '../../components/submissions/submission-results/SubmissionResults';
 import { useSubmissionsDetails } from '../../hooks/submissions/use-submissions-details';
-import SubmissionDetailsHeading from '../../components/submissions/test-runs/test-run-heading/SubmissionDetailsHeading';
 import { setLayout } from '../shared/set-layout';
+import SubmissionDetails from '../../components/submissions/details/SubmissionDetails';
 
-const SubmissionPage = () => {
+const SubmissionDetailsPage = () => {
     const { submissionId } = useParams();
     const { getDetails } = useSubmissionsDetails();
 
@@ -17,11 +16,8 @@ const SubmissionPage = () => {
     }, [ getDetails, submissionId ]);
 
     return (
-        <>
-            <SubmissionDetailsHeading />
-            <SubmissionResults />
-        </>
+        <SubmissionDetails />
     );
 };
 
-export default setLayout(SubmissionPage);
+export default setLayout(SubmissionDetailsPage, true);

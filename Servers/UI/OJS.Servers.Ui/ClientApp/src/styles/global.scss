@@ -10,3 +10,12 @@ body,
   flex-direction: column;
 }
 
+.wrapper {
+  min-height: 700px;
+  width: 100%;
+  margin: 0 auto;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: row;
+}
+
