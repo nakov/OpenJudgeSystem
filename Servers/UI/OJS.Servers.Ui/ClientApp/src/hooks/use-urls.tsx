@@ -1,5 +1,4 @@
 import React, { createContext, useContext } from 'react';
-import { isNil } from 'lodash';
 import {
     IAllContestsUrlParams,
     IDownloadProblemResourceUrlParams, IGetCurrentSubmissionDetailsUrlParams, IGetSubmissionResultsByProblemUrlParams,
