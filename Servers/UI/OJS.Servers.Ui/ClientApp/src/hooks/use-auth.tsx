@@ -6,16 +6,7 @@ import { useNotifications } from './use-notifications';
 import { useUrls } from './use-urls';
 import { HttpStatus } from '../common/common';
 import { INotificationType } from '../common/common-types';
-
-interface IUserType {
-    username: string;
-    permissions: IUserPermissionsType;
-    isLoggedIn: boolean;
-}
-
-interface IUserPermissionsType {
-    canAccessAdministration: boolean,
-}
+import { IUserType, IUserPermissionsType } from '../common/types';
 
 interface IAuthContext {
     user: IUserType,

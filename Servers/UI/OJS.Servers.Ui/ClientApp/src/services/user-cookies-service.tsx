@@ -1,4 +1,4 @@
-import { IUserPermissionsType, IUserType } from '../hooks/use-auth';
+import { IUserType, IUserPermissionsType } from '../common/types';
 import { getCookie } from '../utils/cookies';
 
 class UserCookiesService {

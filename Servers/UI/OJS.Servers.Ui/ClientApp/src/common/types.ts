@@ -1,4 +1,4 @@
-import {ITreeItemType} from "../components/guidelines/trees/Tree";
+import { ITreeItemType } from '../components/guidelines/trees/Tree';
 
 interface ISubmissionTypeType {
     id: number,
@@ -92,6 +92,16 @@ interface IPagedResultType<TItem> {
     items?: TItem[],
 }
 
+interface IUserType {
+    username: string;
+    permissions: IUserPermissionsType;
+    isLoggedIn: boolean;
+}
+
+interface IUserPermissionsType {
+    canAccessAdministration: boolean,
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -103,4 +113,6 @@ export type {
     ISubmissionTypeType,
     IContestCategoryTreeType,
     IPagedResultType,
+    IUserType,
+    IUserPermissionsType,
 };
