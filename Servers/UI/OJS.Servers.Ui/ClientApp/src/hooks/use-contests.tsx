@@ -65,6 +65,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const applyFilters = useCallback(
         (newFilters: IFilter[]) => {
             setFilters(newFilters);
+            setPage(defaultState.pageNumber);
         },
         [],
     );
