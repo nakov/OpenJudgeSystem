@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isEmpty, isNil, without } from 'lodash';
+import { isEmpty, isNil } from 'lodash';
 import { IHaveChildrenProps, IHavePagesProps } from '../components/common/Props';
 import { IIndexContestsType, IPagedResultType } from '../common/types';
 import { ContestState, FilterType, IFilter } from '../common/contest-types';
@@ -19,7 +19,7 @@ interface IContestsContext extends IHavePagesProps {
     };
     actions: {
         reload: () => Promise<void>;
-        applyFilter: (filter: IFilter, singleForType?: boolean) => void;
+        applyFilters: (filters: IFilter[]) => void;
         clearFilters: () => void;
         setPage: (page: number) => void;
     };
@@ -62,20 +62,11 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const { state: { strategies } } = useContestStrategyFilters();
     const { state: { categories } } = useContestCategories();
 
-    const applyFilter = useCallback(
-        (filter: IFilter, singleForType = false) => {
-            let newFilters = !filters.some(({ id }) => id === filter.id)
-                ? [ ...filters, filter ]
-                : without(filters, filter);
-
-            if (singleForType) {
-                newFilters = newFilters.filter(({ id, type }) => type !== filter.type || id === filter.id);
-            }
-
+    const applyFilters = useCallback(
+        (newFilters: IFilter[]) => {
             setFilters(newFilters);
-            setPage(defaultState.pageNumber);
         },
-        [ filters ],
+        [],
     );
 
     const clearFilters = useCallback(
@@ -179,7 +170,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         },
         actions: {
             reload,
-            applyFilter,
+            applyFilters,
             clearFilters,
             setPage,
         },

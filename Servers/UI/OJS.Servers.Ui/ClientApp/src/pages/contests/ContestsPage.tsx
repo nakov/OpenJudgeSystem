@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { isNil } from 'lodash';
 import ContestFilters from '../../components/contests/contests-filters/ContestFilters';
 import { useContests } from '../../hooks/use-contests';
@@ -9,20 +9,23 @@ import { IIndexContestsType } from '../../common/types';
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
+import { IFilter } from '../../common/contest-types';
 
 const ContestsPage = () => {
     const {
         state: {
             contests,
-            filters,
+            possibleFilters,
         },
-        actions: { setPage },
+        actions: {
+            setPage,
+            applyFilters,
+        },
         pagesCount,
     } = useContests();
 
-    // TODO: this will be fixed in next PR
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ searchParams, setSearchParams ] = useSearchParams();
+    const location = useLocation();
 
     const renderContest = useCallback(
         (contest: IIndexContestsType) => (
@@ -35,26 +38,39 @@ const ContestsPage = () => {
         setPage(page);
     };
 
-    useEffect(
-        () => {
-            setSearchParams(filters.reduce((p:any, { type, value }) => {
-                const values = isNil(p[type])
-                    ? []
-                    : p[type];
-                values.push(value);
+    const handleFilterClick = useCallback((filter: IFilter) => {
+        const { type, value } = filter;
+        const name = type.toString();
+        searchParams.delete(name);
+        searchParams.delete(name.toLowerCase());
 
-                return {
-                    ...p,
-                    [type]: values,
-                };
-            }, {}));
-        },
-        [ filters, setSearchParams ],
-    );
+        const currentSearchParam = `${name}=${value}`;
+        const removeParam = location.search.toLowerCase().includes(currentSearchParam.toLowerCase());
+
+        if (!removeParam) {
+            searchParams.append(name.toLowerCase(), value);
+        }
+
+        setSearchParams(searchParams);
+    }, [ location, searchParams, setSearchParams ]);
+
+    useEffect(() => {
+        const filtersToApply = [] as IFilter[];
+        searchParams.forEach((val, key) => {
+            const filter = possibleFilters
+                .find(({ type, value }) => type.toString().toLowerCase() === key.toLowerCase() &&
+                    value.toLowerCase() === val.toLowerCase());
+            if (!isNil(filter)) {
+                filtersToApply.push(filter);
+            }
+        });
+
+        applyFilters(filtersToApply);
+    }, [ applyFilters, possibleFilters, searchParams ]);
 
     return (
         <div className={styles.container}>
-            <ContestFilters />
+            <ContestFilters onFilterClick={handleFilterClick} />
             <div>
                 <List
                   values={contests}

@@ -7,17 +7,18 @@ import styles from './ContestCategories.module.scss';
 import { useContests } from '../../../hooks/use-contests';
 import { IHaveOptionalClassName } from '../../common/Props';
 import Tree, { ITreeItemType } from '../../guidelines/trees/Tree';
+import { IFilter } from '../../../common/contest-types';
 
 interface IContestCategoriesProps extends IHaveOptionalClassName {
+    onLeafCategoryClick: (filter: IFilter) => void;
 }
 
-const ContestCategories = ({ className = '' }: IContestCategoriesProps) => {
+const ContestCategories = ({
+    className = '',
+    onLeafCategoryClick,
+}: IContestCategoriesProps) => {
     const { state: { categories } } = useContestCategories();
-
-    const {
-        state: { possibleFilters },
-        actions: { applyFilter },
-    } = useContests();
+    const { state: { possibleFilters } } = useContests();
 
     const handleTreeItemClick = useCallback((node: ITreeItemType) => {
         if (!isEmpty(node.children)) {
@@ -30,8 +31,8 @@ const ContestCategories = ({ className = '' }: IContestCategoriesProps) => {
             return;
         }
 
-        applyFilter(filter, true);
-    }, [ applyFilter, possibleFilters ]);
+        onLeafCategoryClick(filter);
+    }, [ possibleFilters, onLeafCategoryClick ]);
 
     return (
         <div className={className as string}>

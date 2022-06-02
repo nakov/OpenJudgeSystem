@@ -13,12 +13,16 @@ import { groupByType } from '../../../common/filter-utils';
 import ExpandButton from '../../guidelines/buttons/ExpandButton';
 import concatClassNames from '../../../utils/class-names';
 
+interface IContestFiltersProps {
+    onFilterClick: (filter: IFilter) => void;
+}
+
 interface IFiltersGroup {
     type: FilterType;
     filters: IFilter[];
 }
 
-const ContestFilters = () => {
+const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const [ filtersGroups, setFiltersGroups ] = useState<IFiltersGroup[]>([]);
     const [ expanded, setExpanded ] = useState(false);
 
@@ -27,7 +31,6 @@ const ContestFilters = () => {
             possibleFilters,
             filters,
         },
-        actions: { applyFilter },
     } = useContests();
 
     const handleFilterClick = useCallback(
@@ -37,9 +40,9 @@ const ContestFilters = () => {
                 return;
             }
 
-            applyFilter(filter);
+            onFilterClick(filter);
         },
-        [ applyFilter, possibleFilters ],
+        [ possibleFilters, onFilterClick ],
     );
 
     const renderFilterItem = useCallback(
@@ -122,7 +125,10 @@ const ContestFilters = () => {
 
     return (
         <div className={styles.container}>
-            <ContestCategories className={styles.filterTypeContainer} />
+            <ContestCategories
+              className={styles.filterTypeContainer}
+              onLeafCategoryClick={onFilterClick}
+            />
             <List
               values={filtersGroups}
               itemFunc={renderFilter}
