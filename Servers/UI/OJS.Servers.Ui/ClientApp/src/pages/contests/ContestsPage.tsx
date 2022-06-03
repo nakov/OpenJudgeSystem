@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { isNil } from 'lodash';
 import ContestFilters from '../../components/contests/contests-filters/ContestFilters';
 import { useContests } from '../../hooks/use-contests';
@@ -16,6 +16,7 @@ const ContestsPage = () => {
         state: {
             contests,
             possibleFilters,
+            filters,
         },
         actions: {
             setPage,
@@ -25,7 +26,6 @@ const ContestsPage = () => {
     } = useContests();
 
     const [ searchParams, setSearchParams ] = useSearchParams();
-    const location = useLocation();
 
     const renderContest = useCallback(
         (contest: IIndexContestsType) => (
@@ -44,15 +44,14 @@ const ContestsPage = () => {
         searchParams.delete(name);
         searchParams.delete(name.toLowerCase());
 
-        const currentSearchParam = `${name}=${value}`;
-        const removeParam = location.search.toLowerCase().includes(currentSearchParam.toLowerCase());
+        const removeFilter = filters.includes(filter);
 
-        if (!removeParam) {
+        if (!removeFilter) {
             searchParams.append(name.toLowerCase(), value);
         }
 
         setSearchParams(searchParams);
-    }, [ location, searchParams, setSearchParams ]);
+    }, [ filters, searchParams, setSearchParams ]);
 
     useEffect(() => {
         const filtersToApply = [] as IFilter[];
