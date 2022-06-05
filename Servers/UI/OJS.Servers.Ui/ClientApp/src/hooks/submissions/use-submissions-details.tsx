@@ -3,7 +3,6 @@ import { isNil } from 'lodash';
 import { useLoading } from '../use-loading';
 import { useHttp } from '../use-http';
 import { useUrls } from '../use-urls';
-import { useCurrentContest } from '../use-current-contest';
 import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
 import { UrlType } from '../../common/common-types';
 import { IGetSubmissionDetailsByIdUrlParams, IGetSubmissionResultsByProblemUrlParams } from '../../common/url-types';
@@ -12,6 +11,7 @@ import { IHaveChildrenProps } from '../../components/common/Props';
 
 interface ISubmissionsDetailsContext {
     currentSubmission: ISubmissionDetailsType | undefined,
+    setCurrentSubmissionId: (submissionId: number) => void;
     getDetails: (submissionId: number) => Promise<void>,
     currentProblemSubmissionResults: ISubmissionDetails[]
     getSubmissionResults: (problemId: number) => Promise<void>
@@ -25,7 +25,8 @@ interface ISubmissionsDetailsProviderProps extends IHaveChildrenProps {}
 
 const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
-    const { state: { isOfficial: isContestParticipationOfficial } } = useCurrentContest();
+    // const { state: { isOfficial: isContestParticipationOfficial } } = useCurrentContest();
+    const [ currentSubmissionId, setCurrentSubmissionId ] = useState<number>();
     const [ currentSubmission, setCurrentSubmission ] = useState<ISubmissionDetailsType>();
     const [ currentProblemSubmissionResults, setCurrentProblemSubmissionResults ] =
         useState<ISubmissionDetails[]>(defaultState.currentProblemSubmissionResults);
@@ -67,7 +68,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             isOfficial: true,
             take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
         });
-    }, [ isContestParticipationOfficial ]);
+    }, []);
 
     useEffect(() => {
         if (isNil(submissionResultsByProblemUrlParams)) {
@@ -110,8 +111,19 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         setCurrentSubmission(apiSubmissionDetails as ISubmissionDetailsType);
     }, [ apiSubmissionDetails ]);
 
+    useEffect(() => {
+        if (isNil(currentSubmissionId)) {
+            return;
+        }
+
+        (async () => {
+            await getDetails(currentSubmissionId);
+        })();
+    }, [ currentSubmissionId, getDetails ]);
+
     const value = {
         currentSubmission,
+        setCurrentSubmissionId,
         currentProblemSubmissionResults,
         getDetails,
         getSubmissionResults,

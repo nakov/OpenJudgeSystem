@@ -1,83 +1,45 @@
 import * as React from 'react';
-import { useCallback } from 'react';
-import Heading, { HeadingType } from '../../guidelines/headings/Heading';
-import Diff from '../../Diff';
+import { useCallback, useState } from 'react';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import { ITestRunDetailsType } from '../../../hooks/submissions/types';
-import styles from './SubmissionResults.module.scss';
+import TestRunDetails from '../test-run-details/TestRunDetails';
 
-const SubmissionResults = () => {
+interface ISubmissionResultsProps {
+    collapsible: boolean;
+}
+
+const SubmissionResults = ({ collapsible }: ISubmissionResultsProps) => {
     const { currentSubmission } = useSubmissionsDetails();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [ selectedTestRunId, setSelectedTestRunId ] = useState<number | null>(null);
 
-    const getTestRunHeading = (run: ITestRunDetailsType, runIndex: number) => `Test #${runIndex} (${run.resultType}) `;
+    const renderTestRunsDetails = useCallback((testRuns: ITestRunDetailsType[]) => testRuns.map((run, index) => (
+        <TestRunDetails
+          testRun={run}
+          testRunIndex={index}
+          collapsible={collapsible}
+        />
+    )), [ collapsible ]);
 
-    const getIsCorrectAnswerResultType = (run: ITestRunDetailsType) => run.resultType === 'CorrectAnswer';
-
-    const getTestRunHeadingClassName = useCallback(
-        (run: ITestRunDetailsType) => (getIsCorrectAnswerResultType(run)
-            ? styles.correctTestRunHeading
-            : styles.wrongTestRunHeading),
-        [],
+    const filterRuns = useCallback(
+        (trial: boolean) => currentSubmission!.testRuns.filter((tr) => tr.isTrialTest === trial),
+        [ currentSubmission ],
     );
-
-    const renderTimeAndMemoryUsed = (run: ITestRunDetailsType) => (
-        <>
-            <p>
-                Time used:
-                {run.maxUsedTime}
-                s
-            </p>
-            <p>
-                Memory used:
-                {run.maxUsedMemory}
-                {' '}
-                MB
-            </p>
-        </>
-    );
-
-    const renderTrialTests = useCallback((trialTests: ITestRunDetailsType[]) => trialTests.map((run, index) => (
-        <div className={styles.submissionResultContainer}>
-            <Heading
-              type={HeadingType.secondary}
-              className={(() => getTestRunHeadingClassName(run))()}
-            >
-                {`Zero ${getTestRunHeading(run, index)}`}
-            </Heading>
-            {
-                run.isTrialTest && (run.expectedOutputFragment !== null && run.userOutputFragment !== null)
-                    ? <Diff expectedStr={run.expectedOutputFragment} actualStr={run.userOutputFragment} />
-                    : null
-            }
-            {renderTimeAndMemoryUsed(run)}
-        </div>
-    )), [ getTestRunHeadingClassName ]);
-
-    const renderCompeteTests = useCallback((competeTests: ITestRunDetailsType[]) => competeTests.map((run, index) => (
-        <div className={styles.submissionResultContainer}>
-            <Heading
-              type={HeadingType.secondary}
-              className={(() => getTestRunHeadingClassName(run))()}
-            >
-                {getTestRunHeading(run, index)}
-            </Heading>
-            {renderTimeAndMemoryUsed(run)}
-        </div>
-    )), [ getTestRunHeadingClassName ]);
 
     const renderTestRuns = useCallback(
         () => {
             if (currentSubmission == null) {
                 return null;
             }
+
             return (
                 <>
-                    {renderTrialTests(currentSubmission!.testRuns.filter((tr) => tr.isTrialTest))}
-                    {renderCompeteTests(currentSubmission!.testRuns.filter((tr) => !tr.isTrialTest))}
+                    {renderTestRunsDetails(filterRuns(true))}
+                    {renderTestRunsDetails(filterRuns(false))}
                 </>
             );
         },
-        [ currentSubmission, renderCompeteTests, renderTrialTests ],
+        [ currentSubmission, filterRuns, renderTestRunsDetails ],
     );
 
     return (

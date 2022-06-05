@@ -113,7 +113,7 @@ const SubmissionBox = () => {
                       readOnly={false}
                       selectedSubmissionType={selectedSubmissionType}
                       allowedSubmissionTypes={allowedSubmissionTypes}
-                      submissionCode={submissionCode}
+                      code={submissionCode}
                       onCodeChange={onCodeChange}
                     />
                     <div className={styles.contestSubmitControlsWrapper}>

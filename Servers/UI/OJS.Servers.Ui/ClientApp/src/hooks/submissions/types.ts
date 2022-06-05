@@ -8,8 +8,8 @@ interface IProblemType {
 
 interface ITestRunType {
     id: number;
-    maxUsedTime: number;
-    maxUsedMemory: number;
+    timeUsed: number;
+    memoryUsed: number;
     executionComment: string;
     checkerComment: string;
     resultType: string;

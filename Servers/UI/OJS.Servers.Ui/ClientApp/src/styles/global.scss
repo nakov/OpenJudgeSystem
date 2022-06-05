@@ -1,10 +1,11 @@
 @import 'src/styles/__resets';
+@import 'src/styles/colors';
 
 body,
 #root {
-  font-family: 'Montserrat-Medium',sans-serif;
+  font-family: 'Montserrat-Medium', sans-serif;
   margin: 0;
-  padding:0;
+  padding: 0;
   display: flex;
   min-height: 100vh;
   flex-direction: column;
@@ -19,3 +20,18 @@ body,
   flex-direction: row;
 }
 
+.listItem {
+  text-align: start;
+  font-size: 18px;
+  font-family: 'Lato', serif;
+  margin-top: 10px;
+  color: $text-dark-gray-color;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &.selected {
+    color: $color-btn-secondary;
+  }
+}

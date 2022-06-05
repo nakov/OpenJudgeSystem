@@ -3,7 +3,6 @@
 
 .detailsWrapper {
   @extend .wrapper;
-  
 }
 
 .headingDetails {
@@ -12,27 +11,42 @@
 
 .navigation {
   align-content: center;
+  padding: 5px;
+  border-right: 1px #bebebe solid;
 }
 
 .code {
   @extend .navigation;
   
-  border: 2px solid cadetblue;
   flex: 4;
 }
 
 .submissionsNavigation {
   @extend .navigation;
   
-  border: 2px solid lightpink;
   flex: 2;
+  font-family: Lato, serif;
 }
 
 .submissionDetails {
-  border: 2px solid #3F4D5A;
+  @extend .navigation;
   flex: 5;
 }
 
 .submissionList {
   align-items: unset;
+}
+
+.submissionListItem {
+  @extend .listItem;
+  
+  margin-bottom: 10px;
+}
+
+.wrongTestRunHeading {
+  color: $primary-red;
+}
+
+.correctTestRunHeading {
+  color: $primary-green;
 }

@@ -1,24 +1,33 @@
 ﻿import * as React from 'react';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router';
 import { isNil } from 'lodash';
-import styles from './SubmissionDetails.module.scss';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
-import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import CodeEditor from '../../code-editor/CodeEditor';
-import { ISubmissionDetails } from '../../../hooks/submissions/types';
+import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List, { ListType, Orientation } from '../../guidelines/lists/List';
+import { ISubmissionDetails } from '../../../hooks/submissions/types';
+import { Button, ButtonType } from '../../guidelines/buttons/Button';
+import concatClassNames from '../../../utils/class-names';
+import styles from './SubmissionDetails.module.scss';
+import SubmissionResults from '../submission-results/SubmissionResults';
 
 const SubmissionDetails = () => {
     const {
         currentSubmission,
+        setCurrentSubmissionId,
         currentProblemSubmissionResults,
         getSubmissionResults,
     } = useSubmissionsDetails();
+    // @ts-ignore
     const { content: submissionCode } = currentSubmission || '';
 
-    const problemNameHeadingText = useMemo(() => `Problem ${currentSubmission?.problem.name}`, [ currentSubmission?.problem.name ]);
-
+    const problemNameHeadingText = useMemo(
+        () => `${currentSubmission?.problem.name} - ${currentSubmission?.problem.id}`,
+        [ currentSubmission?.problem.id, currentSubmission?.problem.name ],
+    );
     const detailsHeadingText = useMemo(() => `Details #${currentSubmission?.id}`, [ currentSubmission?.id ]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (isNil(currentSubmission)) {
@@ -30,24 +39,46 @@ const SubmissionDetails = () => {
         })();
     }, [ currentSubmission, getSubmissionResults ]);
 
-    const renderSubmissionListItem = (submissionDetails: ISubmissionDetails) => (
-        <p>
-            #
-            {submissionDetails.id}
-            {submissionDetails.submissionType}
-            ,
-            {' '}
-            {submissionDetails.points}
-            /
-            {submissionDetails.maximumPoints}
-        </p>
+    const handleOnSubmissionListItemOnClick = (submissionId: number) => {
+        navigate(`/submissions/${submissionId}/details`);
+        setCurrentSubmissionId(submissionId);
+    };
+
+    const getSubmissionListItemText = useCallback(
+        (submissionDetails: ISubmissionDetails) => `#${submissionDetails.id} ${submissionDetails.submissionType} 
+                    ${submissionDetails.points}/${submissionDetails.maximumPoints}`,
+        [],
     );
+
+    const renderSubmissionListItem = (submissionDetails: ISubmissionDetails) => {
+        const selectedClassName = submissionDetails.id === currentSubmission?.id
+            ? styles.selected
+            : '';
+
+        const className = concatClassNames(
+            styles.submissionListItem,
+            selectedClassName,
+        );
+        return (
+            <Button
+              type={ButtonType.plain}
+              className={className}
+              onClick={(ev) => {
+                  ev.stopPropagation();
+                  ev.preventDefault();
+                  handleOnSubmissionListItemOnClick(submissionDetails.id);
+              }}
+            >
+                {getSubmissionListItemText(submissionDetails)}
+            </Button>
+        );
+    };
 
     const renderSubmissionsForProblem =
         () => (
             <List
-              className={styles.submissionListItem}
-              itemClassName={styles.submissionListItem}
+              keyFunc={(v) => v.id.toString()}
+              className={styles.submissionList}
               values={currentProblemSubmissionResults}
               itemFunc={renderSubmissionListItem}
               type={ListType.normal}
@@ -69,7 +100,7 @@ const SubmissionDetails = () => {
                         <Heading type={HeadingType.secondary}>{problemNameHeadingText}</Heading>
                         <CodeEditor
                           readOnly
-                          submissionCode={submissionCode}
+                          code={submissionCode}
                         />
                     </div>
                     <div className={styles.submissionsNavigation}>
@@ -78,7 +109,7 @@ const SubmissionDetails = () => {
                     </div>
                     <div className={styles.submissionDetails}>
                         <Heading type={HeadingType.secondary}>{detailsHeadingText}</Heading>
-                        <p>Details go here</p>
+                        <SubmissionResults collapsible />
                     </div>
                 </div>
             </>

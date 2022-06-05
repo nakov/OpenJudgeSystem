@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { lazy, useCallback, useEffect, useState } from 'react';
+import { lazy, useEffect, useState } from 'react';
 import { get, isNil } from 'lodash';
-import { useSubmissions } from '../../hooks/submissions/use-submissions';
 import styles from './CodeEditor.module.scss';
-import { useProblems } from '../../hooks/use-problems';
 import { ISubmissionTypeType } from '../../common/types';
 
 const MonacoEditor = lazy(() => import('react-monaco-editor'));
@@ -28,13 +26,13 @@ const getMonacoLanguage = (submissionTypeName: string | null) => {
 
 interface ICodeEditorProps {
     readOnly: boolean;
-    submissionCode?: string;
+    code?: string;
     selectedSubmissionType?: ISubmissionTypeType;
     allowedSubmissionTypes?: ISubmissionTypeType[];
     onCodeChange?: (newValue: string) => void;
 }
 
-const CodeEditor = ({ readOnly, submissionCode, selectedSubmissionType, allowedSubmissionTypes, onCodeChange }: ICodeEditorProps) => {
+const CodeEditor = ({ readOnly, code, selectedSubmissionType, allowedSubmissionTypes, onCodeChange }: ICodeEditorProps) => {
     const [ selectedSubmissionTypeName, setSelectedSubmissionTypeName ] = useState<string | null>(null);
 
     useEffect(
@@ -64,7 +62,7 @@ const CodeEditor = ({ readOnly, submissionCode, selectedSubmissionType, allowedS
             <MonacoEditor
               language={getMonacoLanguage(selectedSubmissionTypeName)}
               theme="vs-dark"
-              value={submissionCode}
+              value={code}
               className={styles.editor}
               options={{
                   readOnly,
