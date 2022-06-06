@@ -112,7 +112,7 @@ const ContestCategories = ({
               items={categories}
               onTreeItemClick={handleTreeItemClick}
               expanded={expanded}
-              selected={[ selected.toString() ]}
+              selected={[ selected ]}
             />
         </div>
     );
