@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { isEmpty, isNil } from 'lodash';
+import { isNil } from 'lodash';
 import { useContestCategories } from '../../../hooks/use-contest-categories';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 
@@ -35,7 +35,7 @@ const ContestCategories = ({
             setExpanded(expanded);
         }
 
-        const filter = possibleFilters.find(({ value }) => value.toString() === node.id.toString());
+        const filter = possibleFilters.find(({ value }) => value.toString() === id);
 
         if (isNil(filter)) {
             return;
