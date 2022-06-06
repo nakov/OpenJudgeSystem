@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { isNil } from 'lodash';
+import { isEmpty, isNil } from 'lodash';
 import ContestFilters from '../../components/contests/contests-filters/ContestFilters';
 import { useContests } from '../../hooks/use-contests';
 import { setLayout } from '../shared/set-layout';
@@ -54,11 +54,15 @@ const ContestsPage = () => {
     }, [ filters, searchParams, setSearchParams ]);
 
     useEffect(() => {
+        if (isEmpty(possibleFilters)) {
+            return;
+        }
+
         const filtersToApply = [] as IFilter[];
         searchParams.forEach((val, key) => {
             const filter = possibleFilters
                 .find(({ type, value }) => type.toString().toLowerCase() === key.toLowerCase() &&
-                    value.toLowerCase() === val.toLowerCase());
+                        value.toLowerCase() === val.toLowerCase());
             if (!isNil(filter)) {
                 filtersToApply.push(filter);
             }
