@@ -1,16 +1,18 @@
 ﻿import * as React from 'react';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { isNil } from 'lodash';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
-import CodeEditor from '../../code-editor/CodeEditor';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List, { ListType, Orientation } from '../../guidelines/lists/List';
 import { ISubmissionDetails } from '../../../hooks/submissions/types';
 import { Button, ButtonType } from '../../guidelines/buttons/Button';
 import concatClassNames from '../../../utils/class-names';
-import styles from './SubmissionDetails.module.scss';
+import SubmissionResultPointsLabel from '../submission-result-points-label/SubmissionResultPointsLabel';
+import CodeEditor from '../../code-editor/CodeEditor';
 import SubmissionResults from '../submission-results/SubmissionResults';
+import styles from './SubmissionDetails.module.scss';
+import { formatDate } from '../../../utils/dates';
 
 const SubmissionDetails = () => {
     const {
@@ -44,43 +46,46 @@ const SubmissionDetails = () => {
         setCurrentSubmissionId(submissionId);
     };
 
-    const getSubmissionListItemText = useCallback(
-        (submissionDetails: ISubmissionDetails) => `#${submissionDetails.id} ${submissionDetails.submissionType} 
-                    ${submissionDetails.points}/${submissionDetails.maximumPoints}`,
-        [],
-    );
-
     const renderSubmissionListItem = (submissionDetails: ISubmissionDetails) => {
         const selectedClassName = submissionDetails.id === currentSubmission?.id
             ? styles.selected
             : '';
 
         const className = concatClassNames(
-            styles.submissionListItem,
+            styles.submissionsNavigationItem,
             selectedClassName,
         );
         return (
-            <Button
-              type={ButtonType.plain}
-              className={className}
-              onClick={(ev) => {
-                  ev.stopPropagation();
-                  ev.preventDefault();
-                  handleOnSubmissionListItemOnClick(submissionDetails.id);
-              }}
-            >
-                {getSubmissionListItemText(submissionDetails)}
-            </Button>
+            <>
+                <Button
+                  type={ButtonType.plain}
+                  className={className}
+                  onClick={(ev) => {
+                      ev.stopPropagation();
+                      ev.preventDefault();
+                      handleOnSubmissionListItemOnClick(submissionDetails.id);
+                  }}
+                >
+                    {submissionDetails.submissionType}
+                </Button>
+                <SubmissionResultPointsLabel
+                  points={submissionDetails.points}
+                  maximumPoints={submissionDetails.maximumPoints}
+                  isProcessed={submissionDetails.isProcessed}
+                />
+                <p className={styles.submissionCreatedOnParagraph}>{formatDate(new Date(submissionDetails.createdOn))}</p>
+            </>
         );
     };
 
     const renderSubmissionsForProblem =
         () => (
             <List
-              keyFunc={(v) => v.id.toString()}
-              className={styles.submissionList}
               values={currentProblemSubmissionResults}
+              keyFunc={(v) => v.id.toString()}
+              className={styles.sideNavigation}
               itemFunc={renderSubmissionListItem}
+              itemClassName={styles.submissionListItem}
               type={ListType.normal}
               orientation={Orientation.vertical}
             />
@@ -96,16 +101,21 @@ const SubmissionDetails = () => {
         return (
             <>
                 <div className={styles.detailsWrapper}>
+                    <div className={styles.submissionsNavigation}>
+                        <Heading type={HeadingType.secondary}>Submissions</Heading>
+                        {renderSubmissionsForProblem()}
+                    </div>
                     <div className={styles.code}>
-                        <Heading type={HeadingType.secondary}>{problemNameHeadingText}</Heading>
+                        <Heading
+                          type={HeadingType.secondary}
+                          className={styles.taskHeading}
+                        >
+                            {problemNameHeadingText}
+                        </Heading>
                         <CodeEditor
                           readOnly
                           code={submissionCode}
                         />
-                    </div>
-                    <div className={styles.submissionsNavigation}>
-                        <Heading type={HeadingType.secondary}>Submissions</Heading>
-                        {renderSubmissionsForProblem()}
                     </div>
                     <div className={styles.submissionDetails}>
                         <Heading type={HeadingType.secondary}>{detailsHeadingText}</Heading>

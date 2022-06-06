@@ -14,7 +14,7 @@ interface IIconInternalProps extends IIconProps {
     Component: React.FC<IconBaseProps>;
 }
 
-const InProgressIcon = ({
+const Icon = ({
     Component,
     className = '',
     size = IconSize.Medium,
@@ -55,7 +55,7 @@ const InProgressIcon = ({
     );
 };
 
-export default InProgressIcon;
+export default Icon;
 
 export type {
     IIconProps,

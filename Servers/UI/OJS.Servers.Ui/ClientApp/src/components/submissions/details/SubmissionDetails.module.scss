@@ -11,36 +11,40 @@
 
 .navigation {
   align-content: center;
-  padding: 5px;
   border-right: 1px #bebebe solid;
 }
 
 .code {
   @extend .navigation;
   
-  flex: 4;
+  flex: 7;
 }
 
 .submissionsNavigation {
   @extend .navigation;
+  @extend .sideNavigation;
   
-  flex: 2;
+  flex: 3;
   font-family: Lato, serif;
+}
+
+.submissionListItem {
+  @extend .sideNavigationListItem;
+}
+
+.submissionsNavigationItem {
+  @extend .sideNavigationItem;
 }
 
 .submissionDetails {
   @extend .navigation;
-  flex: 5;
-}
-
-.submissionList {
-  align-items: unset;
-}
-
-.submissionListItem {
-  @extend .listItem;
   
-  margin-bottom: 10px;
+  flex: 5;
+  border: none;
+}
+
+.taskHeading {
+  text-align: center;
 }
 
 .wrongTestRunHeading {
@@ -49,4 +53,10 @@
 
 .correctTestRunHeading {
   color: $primary-green;
+}
+
+.submissionCreatedOnParagraph {
+  font-size: 12px;
+  font-family: 'Lato', serif;
+  color: $text-light-gray-color;
 }

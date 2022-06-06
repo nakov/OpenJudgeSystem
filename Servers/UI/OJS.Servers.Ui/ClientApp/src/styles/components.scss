@@ -33,3 +33,34 @@
     width: 1280px;
   }
 }
+
+.sideNavigation {
+  align-items: start;
+  padding: 20px;
+
+  .sideNavigationItem {
+    text-align: start;
+    font-size: 18px;
+    font-family: 'Lato', serif;
+    color: $text-dark-gray-color;
+    margin-top: 10px;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &.selected {
+      color: $color-btn-secondary;
+    }
+  }
+}
+
+.sideNavigationListItem {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding: 25px 0 5px;
+  border-bottom: 1px solid $bottom-border-color;
+}

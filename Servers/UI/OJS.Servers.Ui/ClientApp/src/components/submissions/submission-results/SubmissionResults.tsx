@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import { ITestRunDetailsType } from '../../../hooks/submissions/types';
 import TestRunDetails from '../test-run-details/TestRunDetails';
@@ -10,13 +10,11 @@ interface ISubmissionResultsProps {
 
 const SubmissionResults = ({ collapsible }: ISubmissionResultsProps) => {
     const { currentSubmission } = useSubmissionsDetails();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [ selectedTestRunId, setSelectedTestRunId ] = useState<number | null>(null);
 
     const renderTestRunsDetails = useCallback((testRuns: ITestRunDetailsType[]) => testRuns.map((run, index) => (
         <TestRunDetails
           testRun={run}
-          testRunIndex={index}
+          testRunIndex={index + 1}
           collapsible={collapsible}
         />
     )), [ collapsible ]);

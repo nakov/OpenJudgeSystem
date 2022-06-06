@@ -1,0 +1,14 @@
+@import "src/styles/colors";
+
+.collapsibleButton {
+  font-family: 'Lato', serif;
+  color: $text-dark-gray-color;
+  align-self: flex-end;
+}
+
+.collapsibleHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
