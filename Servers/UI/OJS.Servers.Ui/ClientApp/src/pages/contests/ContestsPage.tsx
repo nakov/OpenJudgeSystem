@@ -9,7 +9,7 @@ import { IIndexContestsType } from '../../common/types';
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
-import { IFilter } from '../../common/contest-types';
+import { FilterType, IFilter } from '../../common/contest-types';
 
 const ContestsPage = () => {
     const {
@@ -44,7 +44,7 @@ const ContestsPage = () => {
         searchParams.delete(name);
         searchParams.delete(name.toLowerCase());
 
-        const removeFilter = filters.includes(filter);
+        const removeFilter = filters.includes(filter) && filter.type !== FilterType.Category;
 
         if (!removeFilter) {
             searchParams.append(name.toLowerCase(), value);

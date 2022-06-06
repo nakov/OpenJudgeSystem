@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { isNil } from 'lodash';
+import { useSearchParams } from 'react-router-dom';
 import List, { Orientation } from '../../guidelines/lists/List';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 
@@ -25,6 +26,9 @@ interface IFiltersGroup {
 const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const [ filtersGroups, setFiltersGroups ] = useState<IFiltersGroup[]>([]);
     const [ expanded, setExpanded ] = useState(false);
+    const [ defaultSelected, setDefaultSelected ] = useState('');
+    const [ searchParams ] = useSearchParams();
+    const [ isLoaded, setIsLoaded ] = useState(false);
 
     const {
         state: {
@@ -123,11 +127,34 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         [ possibleFilters ],
     );
 
+    useEffect(
+        () => {
+            if (isLoaded) {
+                return;
+            }
+
+            const searchParamName = FilterType.Category.toString();
+            let selectedCategory = searchParams.get(searchParamName);
+            if (isNil(selectedCategory)) {
+                selectedCategory = searchParams.get(searchParamName.toLowerCase());
+            }
+
+            if (isNil(selectedCategory)) {
+                return;
+            }
+
+            setIsLoaded(true);
+            setDefaultSelected(selectedCategory.toString());
+        },
+        [ isLoaded, searchParams ],
+    );
+
     return (
         <div className={styles.container}>
             <ContestCategories
               className={styles.filterTypeContainer}
               onLeafCategoryClick={onFilterClick}
+              defaultSelected={defaultSelected}
             />
             <List
               values={filtersGroups}

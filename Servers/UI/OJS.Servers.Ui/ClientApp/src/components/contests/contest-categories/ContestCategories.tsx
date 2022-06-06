@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { isEmpty, isNil } from 'lodash';
 import { useContestCategories } from '../../../hooks/use-contest-categories';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
@@ -11,18 +11,29 @@ import { IFilter } from '../../../common/contest-types';
 
 interface IContestCategoriesProps extends IHaveOptionalClassName {
     onLeafCategoryClick: (filter: IFilter) => void;
+    defaultSelected?: string,
 }
 
 const ContestCategories = ({
     className = '',
     onLeafCategoryClick,
+    defaultSelected = '',
 }: IContestCategoriesProps) => {
     const { state: { categories } } = useContestCategories();
     const { state: { possibleFilters } } = useContests();
+    const [ expanded, setExpanded ] = useState([ '' ]);
+    const [ selected, setSelected ] = useState('');
 
     const handleTreeItemClick = useCallback((node: ITreeItemType) => {
-        if (!isEmpty(node.children)) {
-            return;
+        const id = node.id.toString();
+        if (expanded.includes(id)) {
+            const newExpanded = expanded.filter((e) => e !== id);
+            setExpanded(newExpanded);
+        } else if (isEmpty(node.children)) {
+            setSelected(id);
+        } else {
+            expanded.push(id);
+            setExpanded(expanded);
         }
 
         const filter = possibleFilters.find(({ value }) => value.toString() === node.id.toString());
@@ -32,7 +43,63 @@ const ContestCategories = ({
         }
 
         onLeafCategoryClick(filter);
-    }, [ possibleFilters, onLeafCategoryClick ]);
+    }, [ possibleFilters, onLeafCategoryClick, expanded ]);
+
+    const flattenTree = useCallback(
+        (treeItems: ITreeItemType[], result: ITreeItemType[]) => {
+            treeItems.forEach(({ children, ...rest }) => {
+                result.push(rest);
+                if (!isNil(children)) {
+                    flattenTree(children, result);
+                }
+            });
+            return result;
+        },
+        [],
+    );
+
+    const getParents = useCallback(
+        (result: string[], allItems: ITreeItemType[], searchId?: string) => {
+            if (isNil(searchId)) {
+                return result;
+            }
+
+            const node = allItems.find(({ id }) => id.toString() === searchId);
+
+            if (isNil(node)) {
+                return result;
+            }
+
+            if (node.id.toString() === searchId) {
+                result.push(searchId);
+            }
+
+            getParents(result, allItems, node.parentId?.toString());
+
+            return result;
+        },
+        [],
+    );
+
+    const categoriesFlat = useMemo(
+        () => flattenTree(categories, []),
+        [ categories, flattenTree ],
+    );
+
+    const defaultExpanded = useMemo(
+        () => getParents([], categoriesFlat, defaultSelected),
+        [ defaultSelected, categoriesFlat, getParents ],
+    );
+
+    useEffect(
+        () => {
+            if (defaultSelected) {
+                setSelected(defaultSelected);
+                setExpanded(defaultExpanded);
+            }
+        },
+        [ defaultSelected, defaultExpanded ],
+    );
 
     return (
         <div className={className as string}>
@@ -45,6 +112,8 @@ const ContestCategories = ({
             <Tree
               items={categories}
               onTreeItemClick={handleTreeItemClick}
+              expanded={expanded}
+              selected={[ selected.toString() ]}
             />
         </div>
     );
