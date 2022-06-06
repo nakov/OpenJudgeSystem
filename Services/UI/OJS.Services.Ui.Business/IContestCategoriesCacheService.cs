@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 public interface IContestCategoriesCacheService : IService
 {
-    Task<IEnumerable<ContestCategoryListViewModel>> GetContestSubCategoriesList(
-        int? categoryId,
+    Task<IEnumerable<ContestCategoryTreeViewModel>> GetContestSubCategoriesList(
+        int categoryId,
         int? cacheSeconds = CacheConstants.OneDayInSeconds);
 
     Task<IEnumerable<ContestCategoryListViewModel>> GetContestCategoryParentsList(

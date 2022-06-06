@@ -14,6 +14,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Infrastructure.Exceptions;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.Common.Models;
+    using OJS.Services.Infrastructure.Constants;
 
     public class ContestsBusinessService : IContestsBusinessService
     {
@@ -24,6 +25,7 @@ namespace OJS.Services.Ui.Business.Implementations
         private readonly IExamGroupsDataService examGroupsData;
         private readonly IParticipantsDataService participantsData;
         private readonly IParticipantsBusinessService participantsBusiness;
+        private readonly IContestCategoriesCacheService contestCategoriesCache;
         private readonly IParticipantScoresDataService participantScoresData;
         private readonly IUsersBusinessService usersBusinessService;
         private readonly IUserProviderService userProviderService;
@@ -35,7 +37,8 @@ namespace OJS.Services.Ui.Business.Implementations
             IParticipantScoresDataService participantScoresData,
             IUsersBusinessService usersBusinessService,
             IUserProviderService userProviderService,
-            IParticipantsBusinessService participantsBusiness)
+            IParticipantsBusinessService participantsBusiness,
+            IContestCategoriesCacheService contestCategoriesCache)
         {
             this.contestsData = contestsData;
             this.examGroupsData = examGroupsData;
@@ -44,6 +47,7 @@ namespace OJS.Services.Ui.Business.Implementations
             this.usersBusinessService = usersBusinessService;
             this.userProviderService = userProviderService;
             this.participantsBusiness = participantsBusiness;
+            this.contestCategoriesCache = contestCategoriesCache;
         }
 
         public async Task<ContestParticipationServiceModel> StartContestParticipation(
@@ -154,6 +158,17 @@ namespace OJS.Services.Ui.Business.Implementations
             model ??= new ContestFiltersServiceModel();
             model.PageNumber ??= 1;
             model.ItemsPerPage ??= DefaultContestsPerPage;
+
+            if (model.CategoryId.HasValue)
+            {
+                var categories = await this.contestCategoriesCache
+                    .GetContestSubCategoriesList(model.CategoryId.Value, CacheConstants.OneHourInSeconds);
+
+                model.CategoryIds = categories
+                    .Select(cc => cc.Id)
+                    .Concat(new [] { model.CategoryId.Value })
+                    .ToList();
+            }
 
             return await this.contestsData.GetAllAsPageByFilters<ContestForListingServiceModel>(model);
         }

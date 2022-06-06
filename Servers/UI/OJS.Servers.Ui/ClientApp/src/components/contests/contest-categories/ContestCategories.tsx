@@ -10,13 +10,13 @@ import Tree, { ITreeItemType } from '../../guidelines/trees/Tree';
 import { IFilter } from '../../../common/contest-types';
 
 interface IContestCategoriesProps extends IHaveOptionalClassName {
-    onLeafCategoryClick: (filter: IFilter) => void;
+    onCategoryClick: (filter: IFilter) => void;
     defaultSelected?: string,
 }
 
 const ContestCategories = ({
     className = '',
-    onLeafCategoryClick,
+    onCategoryClick,
     defaultSelected = '',
 }: IContestCategoriesProps) => {
     const { state: { categories } } = useContestCategories();
@@ -26,11 +26,10 @@ const ContestCategories = ({
 
     const handleTreeItemClick = useCallback((node: ITreeItemType) => {
         const id = node.id.toString();
+        setSelected(id);
         if (expanded.includes(id)) {
             const newExpanded = expanded.filter((e) => e !== id);
             setExpanded(newExpanded);
-        } else if (isEmpty(node.children)) {
-            setSelected(id);
         } else {
             expanded.push(id);
             setExpanded(expanded);
@@ -42,8 +41,8 @@ const ContestCategories = ({
             return;
         }
 
-        onLeafCategoryClick(filter);
-    }, [ possibleFilters, onLeafCategoryClick, expanded ]);
+        onCategoryClick(filter);
+    }, [ possibleFilters, onCategoryClick, expanded ]);
 
     const flattenTree = useCallback(
         (treeItems: ITreeItemType[], result: ITreeItemType[]) => {

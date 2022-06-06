@@ -153,7 +153,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         <div className={styles.container}>
             <ContestCategories
               className={styles.filterTypeContainer}
-              onLeafCategoryClick={onFilterClick}
+              onCategoryClick={onFilterClick}
               defaultSelected={defaultSelected}
             />
             <List

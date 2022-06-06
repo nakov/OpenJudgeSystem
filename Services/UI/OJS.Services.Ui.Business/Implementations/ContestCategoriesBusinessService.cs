@@ -1,8 +1,8 @@
 namespace OJS.Services.Ui.Business.Implementations;
 
 using FluentExtensions.Extensions;
-using Microsoft.EntityFrameworkCore;
 using OJS.Services.Common.Models.Cache;
+using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Data;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
@@ -17,15 +17,12 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
         IContestCategoriesDataService contestCategoriesData)
         => this.contestCategoriesData = contestCategoriesData;
 
-    public async Task<IEnumerable<ContestCategoryTreeViewModel>> GetTree()
+    public async Task<IEnumerable<ContestCategoryTreeViewModel>> GetTree(int? categoryId = null)
     {
-        var allCategories = await this.contestCategoriesData
-            .GetAllVisible()
-            .MapCollection<ContestCategoryTreeViewModel>()
-            .ToListAsync();
+        var allCategories = await this.GetAlVisible<ContestCategoryTreeViewModel>().ToListAsync();
 
         var mainCategories = allCategories
-            .Where(c => !c.ParentId.HasValue)
+            .Where(c => categoryId.HasValue ? c.ParentId == categoryId : !c.ParentId.HasValue)
             .OrderBy(c => c.OrderBy)
             .ToList();
 
@@ -40,13 +37,22 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
             .GetAllVisibleMainOrdered<ContestCategoryListViewModel>()
             .ToListAsync();
 
-    public async Task<IEnumerable<ContestCategoryListViewModel>> GetAllSubcategories(int? categoryId)
-        => await this.contestCategoriesData
-            .GetAllVisibleOrdered()
-            .Where(cc => categoryId.HasValue ? cc.ParentId == categoryId : cc.ParentId == null)
-            .OrderBy(cc => cc.OrderBy)
-            .MapCollection<ContestCategoryListViewModel>()
-            .ToListAsync();
+    public async Task<IEnumerable<ContestCategoryTreeViewModel>> GetAllSubcategories(int categoryId)
+    {
+        var allCategories = await this.GetAlVisible<ContestCategoryTreeViewModel>().ToListAsync();
+
+        var result = new List<ContestCategoryTreeViewModel>();
+
+        var directSubcategories = allCategories
+            .Where(c => c.ParentId == categoryId)
+            .OrderBy(c => c.OrderBy)
+            .ToList();
+
+        directSubcategories
+            .ForEach(c => this.GetWithChildren(c, c.Children, allCategories, result));
+
+        return result;
+    }
 
     public async Task<IEnumerable<ContestCategoryListViewModel>> GetAllParentCategories(int categoryId)
     {
@@ -77,4 +83,28 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
 
             this.AddChildren(child.Children, allCategories);
         });
+
+    private void GetWithChildren(
+        ContestCategoryTreeViewModel category,
+        IEnumerable<ContestCategoryTreeViewModel> children,
+        ICollection<ContestCategoryTreeViewModel> allCategories,
+        ICollection<ContestCategoryTreeViewModel> result)
+    {
+        result.Add(category);
+
+        children.ForEach(child =>
+        {
+            result.AddRange(allCategories
+                .Where(x => x.ParentId == child.Id)
+                .ToList());
+
+            this.GetWithChildren(child, child.Children, allCategories, result);
+        });
+    }
+
+    private Task<IEnumerable<T>> GetAlVisible<T>()
+        => this.contestCategoriesData
+            .GetAllVisible()
+            .MapCollection<T>()
+            .ToEnumerableAsync();
 }
