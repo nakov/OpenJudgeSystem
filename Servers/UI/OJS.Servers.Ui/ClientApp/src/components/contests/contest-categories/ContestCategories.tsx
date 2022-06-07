@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { isNil } from 'lodash';
 import { useContestCategories } from '../../../hooks/use-contest-categories';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
@@ -21,28 +21,16 @@ const ContestCategories = ({
 }: IContestCategoriesProps) => {
     const { state: { categories } } = useContestCategories();
     const { state: { possibleFilters } } = useContests();
-    const [ expanded, setExpanded ] = useState([ '' ]);
-    const [ selected, setSelected ] = useState('');
 
     const handleTreeItemClick = useCallback((node: ITreeItemType) => {
-        const id = node.id.toString();
-        setSelected(id);
-        if (expanded.includes(id)) {
-            const newExpanded = expanded.filter((e) => e !== id);
-            setExpanded(newExpanded);
-        } else {
-            expanded.push(id);
-            setExpanded(expanded);
-        }
-
-        const filter = possibleFilters.find(({ value }) => value.toString() === id);
+        const filter = possibleFilters.find(({ value }) => value.toString() === node.id.toString());
 
         if (isNil(filter)) {
             return;
         }
 
         onCategoryClick(filter);
-    }, [ possibleFilters, onCategoryClick, expanded ]);
+    }, [ possibleFilters, onCategoryClick ]);
 
     const flattenTree = useCallback(
         (treeItems: ITreeItemType[], result: ITreeItemType[]) => {
@@ -90,16 +78,6 @@ const ContestCategories = ({
         [ defaultSelected, categoriesFlat, getParents ],
     );
 
-    useEffect(
-        () => {
-            if (defaultSelected) {
-                setSelected(defaultSelected);
-                setExpanded(defaultExpanded);
-            }
-        },
-        [ defaultSelected, defaultExpanded ],
-    );
-
     return (
         <div className={className as string}>
             <Heading
@@ -111,8 +89,8 @@ const ContestCategories = ({
             <Tree
               items={categories}
               onTreeItemClick={handleTreeItemClick}
-              expanded={expanded}
-              selected={[ selected ]}
+              defaultExpanded={defaultExpanded}
+              defaultSelected={[ defaultSelected ]}
             />
         </div>
     );
