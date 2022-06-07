@@ -1,19 +1,30 @@
-namespace OJS.Services.Common.Data.Implementations
+namespace OJS.Services.Ui.Data.Implementations;
+
+using Microsoft.EntityFrameworkCore;
+using OJS.Data.Models.Submissions;
+using OJS.Services.Common.Data.Implementations;
+using OJS.Services.Infrastructure.Extensions;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataService
 {
-    using Microsoft.EntityFrameworkCore;
-    using OJS.Data;
-    using OJS.Data.Models.Submissions;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
-    public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataService
+    public SubmissionsDataService(DbContext db) : base(db)
     {
-        public SubmissionsDataService(OjsDbContext db) : base(db)
-        {
-        }
+    }
 
-        public Submission? GetBestForParticipantByProblem(int participantId, int problemId) =>
+    public Task<IEnumerable<TServiceModel>> GetLatestSubmissions<TServiceModel>(int count)
+        => this.GetQuery(
+                orderBy: s => s.CreatedOn,
+                descending: true,
+                take: count)
+            .MapCollection<TServiceModel>()
+            .ToEnumerableAsync();
+
+    public Submission? GetBestForParticipantByProblem(int participantId, int problemId) =>
             this.GetAllByProblemAndParticipant(problemId, participantId)
                 .Where(s => s.Processed)
                 .OrderByDescending(s => s.Points)
@@ -109,5 +120,4 @@ namespace OJS.Services.Common.Data.Implementations
 
         public bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId) =>
             this.DbSet.Any(s => s.ProblemId == problemId && s.Participant!.UserId == userId && !s.Processed);
-    }
 }
