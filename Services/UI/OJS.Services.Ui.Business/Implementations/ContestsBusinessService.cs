@@ -159,15 +159,13 @@ namespace OJS.Services.Ui.Business.Implementations
             model.PageNumber ??= 1;
             model.ItemsPerPage ??= DefaultContestsPerPage;
 
-            if (model.CategoryId.HasValue)
+            if (model.CategoryIds.Count() == 1)
             {
-                var categories = await this.contestCategoriesCache
-                    .GetContestSubCategoriesList(model.CategoryId.Value, CacheConstants.OneHourInSeconds);
+                var subcategories = await this.contestCategoriesCache
+                    .GetContestSubCategoriesList(model.CategoryIds.First(), CacheConstants.OneHourInSeconds);
 
-                model.CategoryIds = categories
-                    .Select(cc => cc.Id)
-                    .Concat(new [] { model.CategoryId.Value })
-                    .ToList();
+                model.CategoryIds = model.CategoryIds
+                    .Concat(subcategories.Select(cc => cc.Id).ToList());
             }
 
             return await this.contestsData.GetAllAsPageByFilters<ContestForListingServiceModel>(model);
