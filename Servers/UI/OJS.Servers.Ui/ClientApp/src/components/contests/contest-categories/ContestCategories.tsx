@@ -17,7 +17,7 @@ interface IContestCategoriesProps extends IHaveOptionalClassName {
 const ContestCategories = ({
     className = '',
     onCategoryClick,
-    defaultSelected = '',
+    defaultSelected,
 }: IContestCategoriesProps) => {
     const { state: { categories } } = useContestCategories();
     const { state: { possibleFilters } } = useContests();
@@ -89,8 +89,8 @@ const ContestCategories = ({
             <Tree
               items={categories}
               onTreeItemClick={handleTreeItemClick}
+              defaultSelected={defaultSelected}
               defaultExpanded={defaultExpanded}
-              defaultSelected={[ defaultSelected ]}
             />
         </div>
     );

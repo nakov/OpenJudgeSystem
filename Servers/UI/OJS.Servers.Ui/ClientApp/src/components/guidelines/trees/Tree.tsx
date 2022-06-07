@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { TreeView, TreeItem } from '@material-ui/lab';
 import { MdChevronRight, MdExpandMore } from 'react-icons/md';
-import { isArray } from 'lodash';
+import { isArray, isEmpty } from 'lodash';
 
 import styles from './Tree.module.scss';
 
@@ -15,30 +15,23 @@ interface ITreeItemType {
 interface ITreeProps {
     items: ITreeItemType[];
     onTreeItemClick: (node: ITreeItemType) => void;
+    defaultSelected?: string;
     defaultExpanded?: string[];
-    defaultSelected?: string[];
 }
 
 const Tree = ({
     items,
     onTreeItemClick,
+    defaultSelected,
     defaultExpanded = [],
-    defaultSelected = [],
 } : ITreeProps) => {
     const [ expanded, setExpanded ] = useState([] as string[]);
-    const [ selected, setSelected ] = useState([] as string[]);
+    const [ selected, setSelected ] = useState('');
 
     const handleTreeItemClick = useCallback(
         (node: ITreeItemType) => {
             const id = node.id.toString();
-
-            if (selected.includes(id)) {
-                const newSelected = selected.filter((e) => e !== id);
-                setSelected(newSelected);
-            } else {
-                selected.push(id);
-                setSelected(selected);
-            }
+            setSelected(id);
 
             if (expanded.includes(id)) {
                 const newExpanded = expanded.filter((e) => e !== id);
@@ -50,25 +43,25 @@ const Tree = ({
 
             onTreeItemClick(node);
         },
-        [ expanded, selected, onTreeItemClick ],
+        [ expanded, onTreeItemClick ],
     );
 
     useEffect(
         () => {
-            if (defaultSelected) {
+            if (isEmpty(selected) && defaultSelected) {
                 setSelected(defaultSelected);
             }
         },
-        [ defaultSelected ],
+        [ defaultSelected, selected ],
     );
 
     useEffect(
         () => {
-            if (defaultExpanded) {
+            if (isEmpty(expanded) && !isEmpty(defaultExpanded)) {
                 setExpanded(defaultExpanded);
             }
         },
-        [ defaultExpanded ],
+        [ defaultExpanded, expanded ],
     );
 
     const renderTree = useCallback((node: ITreeItemType) => (
@@ -91,8 +84,8 @@ const Tree = ({
           aria-label="rich object"
           defaultCollapseIcon={<MdExpandMore />}
           defaultExpandIcon={<MdChevronRight />}
-          expanded={expanded}
           selected={selected}
+          expanded={expanded}
           className={styles.root}
         >
             {renderTreeView(items)}
