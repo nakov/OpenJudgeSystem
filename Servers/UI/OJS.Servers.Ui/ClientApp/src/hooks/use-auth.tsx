@@ -25,7 +25,7 @@ interface IAuthProviderProps extends IHaveChildrenProps {
 
 const AuthProvider = ({ user, children }: IAuthProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
-    const [ internalUser, setInternalUser ] = useState<IUserType>(user);
+    const [ internalUser, setInternalUser ] = useState(user);
     const [ username, setUsername ] = useState<string>(user.username);
     const [ password, setPassword ] = useState<string>();
     const { showError } = useNotifications();
