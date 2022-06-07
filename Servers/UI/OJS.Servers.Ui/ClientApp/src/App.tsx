@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import AuthProvider from './hooks/use-auth';
 import PageHeader from './layout/header/PageHeader';
@@ -23,44 +23,7 @@ import ContestCategoriesProvider from './hooks/use-contest-categories';
 import CurrentContestResultsProvider from './hooks/contests/use-current-contest-results';
 import ContestStrategyFiltersProvider from './hooks/use-contest-strategy-filters';
 import UserCookiesService from './services/user-cookies-service';
-
-interface IProvider {
-    Provider: FC,
-    props?: any,
-}
-
-type ProviderType = IProvider | FC;
-
-interface IInitProviderProps {
-    providers: ProviderType[],
-    children: any,
-}
-
-const InitProviders = ({ providers, children } : IInitProviderProps) => {
-    const initial = (<>{children}</>);
-    return providers
-        .reverse()
-        .reduce(
-            (current, item) => {
-                let Provider = item as FC;
-                let props = {};
-                const providerItem = item as IProvider;
-
-                if (providerItem.Provider) {
-                    Provider = providerItem.Provider;
-                    props = providerItem.props;
-                }
-
-                return (
-                // eslint-disable-next-line react/jsx-props-no-spreading
-                    <Provider {...props}>
-                        {current}
-                    </Provider>
-                );
-            },
-            initial,
-        );
-};
+import InitProviders, { ProviderType } from './components/common/InitProviders';
 
 const App = () => {
     const userCookiesService = useMemo(
