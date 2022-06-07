@@ -34,7 +34,7 @@ const Tree = ({
 
             if (selected.includes(id)) {
                 const newSelected = selected.filter((e) => e !== id);
-                setExpanded(newSelected);
+                setSelected(newSelected);
             } else {
                 selected.push(id);
                 setSelected(selected);
