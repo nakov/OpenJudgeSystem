@@ -78,7 +78,7 @@ const getSubmitUrl = () => `${baseUrl}/Compete/Submit`;
 
 // Submission types
 const getAllContestStrategyFiltersUrl =
-    () => `${baseUrl}/SubmissionTypes/GetAll`;
+    () => `${baseUrl}/SubmissionTypes/GetAllOrderedByLatestUsage`;
 
 // problem resources
 const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams) => `
