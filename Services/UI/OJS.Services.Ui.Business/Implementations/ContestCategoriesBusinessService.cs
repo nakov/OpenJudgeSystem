@@ -17,12 +17,12 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
         IContestCategoriesDataService contestCategoriesData)
         => this.contestCategoriesData = contestCategoriesData;
 
-    public async Task<IEnumerable<ContestCategoryTreeViewModel>> GetTree(int? categoryId = null)
+    public async Task<IEnumerable<ContestCategoryTreeViewModel>> GetTree()
     {
         var allCategories = await this.GetAlVisible<ContestCategoryTreeViewModel>().ToListAsync();
 
         var mainCategories = allCategories
-            .Where(c => categoryId.HasValue ? c.ParentId == categoryId : !c.ParentId.HasValue)
+            .Where(c => !c.ParentId.HasValue)
             .OrderBy(c => c.OrderBy)
             .ToList();
 

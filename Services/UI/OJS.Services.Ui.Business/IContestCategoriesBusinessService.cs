@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 public interface IContestCategoriesBusinessService : IService
 {
-    Task<IEnumerable<ContestCategoryTreeViewModel>> GetTree(int? categoryId = null);
+    Task<IEnumerable<ContestCategoryTreeViewModel>> GetTree();
 
     Task<IEnumerable<ContestCategoryListViewModel>> GetAllMain();
 

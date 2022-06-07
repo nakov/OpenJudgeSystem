@@ -52,6 +52,6 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
     public async Task<IEnumerable<ContestCategoryTreeViewModel>> GetAllContestCategoriesTree(int? cacheSeconds)
         => await this.cache.Get(
             CacheConstants.ContestCategoriesTree,
-            () => this.contestCategoriesBusiness.GetTree(),
+            this.contestCategoriesBusiness.GetTree,
             cacheSeconds);
 }
