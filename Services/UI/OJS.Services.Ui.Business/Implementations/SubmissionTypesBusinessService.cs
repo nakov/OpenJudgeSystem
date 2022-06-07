@@ -1,4 +1,5 @@
-﻿using OJS.Common;
+﻿using FluentExtensions.Extensions;
+using OJS.Common;
 using OJS.Data.Models.Problems;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Ui.Data;
@@ -10,15 +11,24 @@ using System.Threading.Tasks;
 
 namespace OJS.Services.Ui.Business.Implementations;
 
+using AutoMapper.Internal;
+using OJS.Common.Utils;
 using OJS.Services.Infrastructure.Extensions;
+using OJS.Services.Ui.Models.Submissions;
 
 public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
 {
+    private const int LatestSubmissionsCountForSubmissionTypesUsage = 10_000;
     private readonly ISubmissionTypesDataService submissionTypesData;
+    private readonly ISubmissionsDataService submissionsData;
 
     public SubmissionTypesBusinessService(
-        ISubmissionTypesDataService submissionTypesData)
-        => this.submissionTypesData = submissionTypesData;
+        ISubmissionTypesDataService submissionTypesData,
+        ISubmissionsDataService submissionsData)
+    {
+        this.submissionTypesData = submissionTypesData;
+        this.submissionsData = submissionsData;
+    }
 
     public Task<SubmissionTypeServiceModel> GetById(int id) => throw new System.NotImplementedException();
 
@@ -28,10 +38,24 @@ public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
             .MapCollection<SubmissionTypeServiceModel>()
             .ToEnumerableAsync();
 
-    public Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAll()
-        => this.submissionTypesData.GetQuery()
-            .MapCollection<SubmissionTypeFilterServiceModel>()
-            .ToEnumerableAsync();
+    public async Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllOrderedByLatestUsage()
+    {
+        var (latestSubmissions, allSubmissionTypes) = await TasksUtils.WhenAll(
+            this.submissionsData
+                .GetLatestSubmissions<SubmissionForSubmissionTypesFilterServiceModel>(
+                    LatestSubmissionsCountForSubmissionTypesUsage),
+            this.submissionTypesData
+                .AllTo<SubmissionTypeFilterServiceModel>()
+                .ToListAsync());
+
+        var submissionTypesUsageGroups = latestSubmissions
+            .GroupBy(x => x.SubmissionTypeId)
+            .Where(x => x.Key.HasValue)
+            .ToDictionary(x => x.Key!.Value, x => x.Count());
+
+        return allSubmissionTypes
+            .OrderByDescending(x => submissionTypesUsageGroups.GetOrDefault(x.Id));
+    }
 
     public void ValidateSubmissionType(int submissionTypeId, Problem problem, bool shouldAllowBinaryFiles = false)
     {

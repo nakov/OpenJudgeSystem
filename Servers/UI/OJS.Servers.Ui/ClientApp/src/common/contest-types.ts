@@ -21,7 +21,6 @@ interface IFilter {
 interface IContestStrategyFilter {
     name: string;
     id: number;
-    usageOrder: boolean;
 }
 
 enum ContestType {
