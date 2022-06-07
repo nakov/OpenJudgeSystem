@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 
+import { BrowserRouter as Router } from 'react-router-dom';
 import AuthProvider from './hooks/use-auth';
 import PageHeader from './layout/header/PageHeader';
 import PageContent from './layout/content/PageContent';
@@ -52,11 +53,13 @@ const App = () => {
     ] as ProviderType[];
 
     return (
-        <InitProviders providers={providers}>
-            <PageHeader />
-            <PageContent />
-            <PageFooter />
-        </InitProviders>
+        <Router>
+            <InitProviders providers={providers}>
+                <PageHeader />
+                <PageContent />
+                <PageFooter />
+            </InitProviders>
+        </Router>
     );
 };
 
