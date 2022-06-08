@@ -26,6 +26,10 @@ public class ContestForListingServiceModel
 
     public string Category { get; set; } = string.Empty;
 
+    public int? CategoryId { get; set; }
+
+    public double OrderBy { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Contest, ContestForListingServiceModel>()
             .ForMember(dest => dest.Category,

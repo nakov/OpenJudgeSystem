@@ -3,6 +3,7 @@ namespace OJS.Services.Ui.Business
     using OJS.Data.Models.Contests;
     using OJS.Services.Common.Models;
     using OJS.Services.Ui.Models.Contests;
+    using SoftUni.Common.Models;
     using SoftUni.Services.Infrastructure;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -16,8 +17,6 @@ namespace OJS.Services.Ui.Business
         Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllCompetable();
 
         Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPracticable();
-
-        Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPast();
 
         Task<bool> IsContestIpValidByContestAndIp(int contestId, string ip);
 
@@ -39,8 +38,7 @@ namespace OJS.Services.Ui.Business
         Task DeleteById(int id);
 
         Task ValidateContest(Contest contest, string userId, bool isUserAdmin, bool official);
-        Task<IEnumerable<ContestForListingServiceModel>> GetAllContests();
 
-        Task<IEnumerable<ContestForListingServiceModel>> GetContestByFilter(ContestFilter filter);
+        Task<PagedResult<ContestForListingServiceModel>> GetAllByFilters(ContestFiltersServiceModel? model);
     }
 }

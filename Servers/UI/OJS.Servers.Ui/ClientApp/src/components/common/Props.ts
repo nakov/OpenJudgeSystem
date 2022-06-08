@@ -14,9 +14,17 @@ interface IHaveOptionalClassName {
     className?: ClassNameType;
 }
 
+interface IHavePagesProps {
+    itemsPerPage: number,
+    pageNumber: number,
+    totalItemsCount: number,
+    pagesCount: number,
+}
+
 export type {
     IHaveChildrenProps,
     IHaveOptionalChildrenProps,
     IHaveOptionalClassName,
     ClassNameType,
+    IHavePagesProps,
 };

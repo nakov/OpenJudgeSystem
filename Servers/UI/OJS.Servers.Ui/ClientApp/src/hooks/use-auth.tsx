@@ -4,46 +4,29 @@ import { useLoading } from './use-loading';
 import { useHttp } from './use-http';
 import { useNotifications } from './use-notifications';
 import { useUrls } from './use-urls';
-import { getCookie } from '../utils/cookies';
 import { HttpStatus } from '../common/common';
 import { INotificationType } from '../common/common-types';
-
-type UserType = {
-    username: string,
-    isLoggedIn: boolean,
-    permissions: IUserPermissionsType,
-};
-
-interface IUserPermissionsType {
-    canAccessAdministration: boolean,
-}
+import { IUserType, IUserPermissionsType } from '../common/types';
 
 interface IAuthContext {
-    user: UserType,
+    user: IUserType,
     signIn: () => void;
     signOut: () => Promise<void>;
-    getUser: () => UserType;
+    getUser: () => IUserType;
     setUsername: (value: string) => void;
     setPassword: (value: string) => void;
 }
 
-const defaultState = {
-    user: {
-        username: '',
-        isLoggedIn: false,
-        permissions: { canAccessAdministration: false } as IUserPermissionsType,
-    },
-};
-
-const AuthContext = createContext<IAuthContext>(defaultState as IAuthContext);
+const AuthContext = createContext<IAuthContext>({} as IAuthContext);
 
 interface IAuthProviderProps extends IHaveChildrenProps {
+    user: IUserType;
 }
 
-const AuthProvider = ({ children }: IAuthProviderProps) => {
+const AuthProvider = ({ user, children }: IAuthProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
-    const [ user, setUser ] = useState<UserType>(defaultState.user);
-    const [ username, setUsername ] = useState<string>(defaultState.user.username);
+    const [ internalUser, setInternalUser ] = useState(user);
+    const [ username, setUsername ] = useState<string>(user.username);
     const [ password, setPassword ] = useState<string>();
     const { showError } = useNotifications();
 
@@ -55,7 +38,7 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
         status: loginSubmitStatus,
     } = useHttp(getLoginSubmitUrl);
 
-    const { post: logout, response: logoutResponse } = useHttp(getLogoutUrl);
+    const { post: logout } = useHttp(getLogoutUrl);
 
     const signIn = useCallback(
         async () => {
@@ -73,42 +56,22 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
     const signOut = useCallback(async () => {
         startLoading();
         await logout({});
-        setUser(defaultState.user);
+        setInternalUser(user);
         stopLoading();
-    }, [ logout, startLoading, stopLoading ]);
+    }, [ logout, startLoading, stopLoading, user ]);
 
-    const getUser = useCallback(() => user, [ user ]);
-
-    const tryGetUserDetailsFromCookie = () => {
-        const loggedInUsername = getCookie('logged_in_username');
-        const canAccessAdministrationCookie = getCookie('can_access_administration');
-
-        if (loggedInUsername) {
-            const canAccessAdministration = canAccessAdministrationCookie.length > 0;
-            const permissions = { canAccessAdministration } as IUserPermissionsType;
-
-            return {
-                username: loggedInUsername,
-                isLoggedIn: true,
-                permissions: permissions!,
-            };
-        }
-
-        return defaultState.user;
-    };
-
-    const setUserDetails = useCallback((userDetails: UserType | null) => {
+    const setUserDetails = useCallback((userDetails: IUserType | null) => {
         if (userDetails == null) {
             return;
         }
 
-        setUser(userDetails);
+        setInternalUser(userDetails);
     }, []);
 
-    useEffect(() => {
-        const loadedUser = tryGetUserDetailsFromCookie();
-        setUserDetails(loadedUser);
-    }, [ setUserDetails ]);
+    const getUser = useCallback(
+        () => user,
+        [ user ],
+    );
 
     useEffect(() => {
         if (loginSubmitResponse) {
@@ -116,19 +79,12 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
                 showError({ message: 'Invalid credentials.' } as INotificationType);
             }
 
-            const loadedUser = tryGetUserDetailsFromCookie();
-            setUserDetails(loadedUser);
+            window.location.reload();
         }
     }, [ loginSubmitResponse, loginSubmitStatus, showError, setUserDetails ]);
 
-    useEffect(() => {
-        if (logoutResponse) {
-            setUser(defaultState.user);
-        }
-    }, [ logoutResponse ]);
-
     const value = {
-        user,
+        user: internalUser,
         signIn,
         signOut,
         getUser,
@@ -147,6 +103,11 @@ const useAuth = () => useContext(AuthContext);
 
 export {
     useAuth,
+};
+
+export type {
+    IUserType,
+    IUserPermissionsType,
 };
 
 export default AuthProvider;

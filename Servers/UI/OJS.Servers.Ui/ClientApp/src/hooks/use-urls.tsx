@@ -1,12 +1,10 @@
 import React, { createContext, useContext } from 'react';
-import { isNil } from 'lodash';
 import {
     IAllContestsUrlParams,
     IDownloadProblemResourceUrlParams, IGetSubmissionDetailsByIdUrlParams, IGetSubmissionResultsByProblemUrlParams,
     IStartContestParticipationUrlParams,
 } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
-import { FilterType } from '../common/contest-types';
 
 interface IUrlsContext {
     getLoginSubmitUrl: () => string;
@@ -23,6 +21,8 @@ interface IUrlsContext {
     getSubmissionDetailsByIdUrl: (params: IGetSubmissionDetailsByIdUrlParams) => string;
     getSubmitUrl: () => string;
     getDownloadProblemResourceUrl: (params: IDownloadProblemResourceUrlParams) => string;
+    getCategoriesTreeUrl: () => string;
+    getAllContestStrategyFiltersUrl: () => string;
 }
 
 const UrlsContext = createContext<IUrlsContext>({} as IUrlsContext);
@@ -47,25 +47,22 @@ const getParticipationsForProfileUrl = () => `${baseUrl}/Participations/GetForPr
 
 // contests
 const getIndexContestsUrl = () => `${baseUrl}/Contests/GetForHomeIndex`;
-const getAllContestsUrl = ({ filters }: IAllContestsUrlParams) => {
-    let statusParams = filters.filter((f) => f.type === FilterType.Status);
-    if (statusParams.length === 2) {
-        statusParams = [];
-    }
+const getAllContestsUrl = ({ filters, page }: IAllContestsUrlParams) => {
+    const queryParams = `${filters
+        .map(({ value, type }) => `${type.toLowerCase()}=${value}`)
+        .join('&')
+    }&page=${page}`;
 
-    const statusParam = statusParams.map(({ name }) => `filter=${name}`)
-        .join('');
-
-    return (
-        isNil(statusParam)
-            ? `${baseUrl}/Contests/GetAll`
-            : `${baseUrl}/Contests/GetAll?${statusParam}`
-    );
+    return `${baseUrl}/Contests/GetAll?${queryParams}`;
 };
+
 const getStartContestParticipationUrl = ({
     id,
     isOfficial,
 }: IStartContestParticipationUrlParams) => `${baseUrl}/Compete/Index/${id}?official=${isOfficial}`;
+
+const getCategoriesTreeUrl =
+    () => `${baseUrl}/ContestCategories/GetCategoriesTree`;
 
 // submissions
 const getSubmissionResultsByProblemUrl = ({
@@ -78,6 +75,10 @@ const getSubmissionsDetailsUrl = () => `${baseUrl}/Submissions/Details`;
 const getSubmissionDetailsByIdUrl =
     ({ submissionId }: IGetSubmissionDetailsByIdUrlParams) => `${getSubmissionsDetailsUrl()}/${submissionId}`;
 const getSubmitUrl = () => `${baseUrl}/Compete/Submit`;
+
+// Submission types
+const getAllContestStrategyFiltersUrl =
+    () => `${baseUrl}/SubmissionTypes/GetAllOrderedByLatestUsage`;
 
 // problem resources
 const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams) => `
@@ -100,6 +101,8 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
         getSubmissionsForProfileUrl,
         getParticipationsForProfileUrl,
         getSubmitUrl,
+        getCategoriesTreeUrl,
+        getAllContestStrategyFiltersUrl,
     };
 
     return (
