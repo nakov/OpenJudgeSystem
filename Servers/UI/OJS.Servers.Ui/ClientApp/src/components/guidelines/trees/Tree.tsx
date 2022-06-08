@@ -14,14 +14,14 @@ interface ITreeItemType {
 
 interface ITreeProps {
     items: ITreeItemType[];
-    onTreeItemClick: (node: ITreeItemType) => void;
+    onTreeLabelClick: (node: ITreeItemType) => void;
     defaultSelected?: string;
     defaultExpanded?: string[];
 }
 
 const Tree = ({
     items,
-    onTreeItemClick,
+    onTreeLabelClick,
     defaultSelected,
     defaultExpanded = [],
 } : ITreeProps) => {
@@ -31,19 +31,26 @@ const Tree = ({
     const handleTreeItemClick = useCallback(
         (node: ITreeItemType) => {
             const id = node.id.toString();
-            setSelected(id);
+            let newExpanded = Array.from(expanded);
 
             if (expanded.includes(id)) {
-                const newExpanded = expanded.filter((e) => e !== id);
-                setExpanded(newExpanded);
+                newExpanded = newExpanded.filter((e) => e !== id);
             } else {
-                expanded.push(id);
-                setExpanded(expanded);
+                newExpanded.push(id);
             }
 
-            onTreeItemClick(node);
+            setExpanded(newExpanded);
         },
-        [ expanded, onTreeItemClick ],
+        [ expanded, setExpanded ],
+    );
+
+    const handleLabelClick = useCallback(
+        (node: ITreeItemType) => {
+            setSelected(node.id.toString());
+
+            onTreeLabelClick(node);
+        },
+        [ onTreeLabelClick ],
     );
 
     useEffect(
@@ -70,12 +77,13 @@ const Tree = ({
           nodeId={node.id.toString()}
           label={node.name}
           onClick={() => handleTreeItemClick(node)}
+          onLabelClick={() => handleLabelClick(node)}
         >
             {isArray(node.children)
                 ? node.children.map((child) => renderTree(child))
                 : null}
         </TreeItem>
-    ), [ handleTreeItemClick ]);
+    ), [ handleLabelClick, handleTreeItemClick ]);
 
     const renderTreeView = (treeItems: ITreeItemType[]) => treeItems.map((c) => renderTree(c));
 
