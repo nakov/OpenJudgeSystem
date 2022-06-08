@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { ReactNode, useCallback } from 'react';
-import { BiMemoryCard, BiTime } from 'react-icons/all';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import { ITestRunDetailsType } from '../../../hooks/submissions/types';
 import Collapsible from '../../guidelines/collapsible/Collapsible';
 import TestRunDiffView from '../test-run-diff-view/TestRunDiffView';
 import { useAuth } from '../../../hooks/use-auth';
 import concatClassNames from '../../../utils/class-names';
-import Icon from '../../guidelines/icons/Icon';
 import IconSize from '../../guidelines/icons/icon-sizes';
+import TimeLimitIcon from '../../guidelines/icons/TimeLimitIcon';
+import MemoryIcon from '../../guidelines/icons/MemoryIcon';
 import styles from './TestRunDetails.module.scss';
 
 interface ITestRunDetailsProps {
@@ -45,24 +45,23 @@ const TestRunDetails = ({ testRun, testRunIndex }: ITestRunDetailsProps) => {
     const renderTimeAndMemoryUsed = useCallback(() => (
         <span className={styles.testRunData}>
             <p className={styles.testRunDataParagraph}>
-                <Icon
-                  Component={BiTime}
-                  className={styles.testRunDataParagraphIcon}
+                <TimeLimitIcon
                   size={IconSize.Small}
                 />
-                :
-                {testRun.timeUsed}
-                `s.
+                <span>
+                    {testRun.timeUsed}
+                    s.
+                </span>
             </p>
             <p className={styles.testRunDataParagraph}>
-                <Icon
+                <MemoryIcon
                   className={styles.testRunDataParagraphIcon}
-                  Component={BiMemoryCard}
                   size={IconSize.Small}
                 />
-                :
-                {testRun.memoryUsed}
-                MB
+                <span>
+                    {testRun.memoryUsed}
+                    MB
+                </span>
             </p>
         </span>
     ), [ testRun ]);
