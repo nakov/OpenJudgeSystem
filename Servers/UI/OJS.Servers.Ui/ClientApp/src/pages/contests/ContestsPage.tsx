@@ -18,11 +18,9 @@ const ContestsPage = () => {
             possibleFilters,
             filters,
         },
-        actions: {
-            setPage,
-            applyFilters,
-        },
+        actions: { applyFilters },
         pagesCount,
+        pageNumber,
     } = useContests();
 
     const [ searchParams, setSearchParams ] = useSearchParams();
@@ -37,9 +35,9 @@ const ContestsPage = () => {
 
     const handlePageChange = useCallback(
         (page: number) => {
-            setPage(page);
+            applyFilters(filters, page);
         },
-        [ setPage ],
+        [ applyFilters, filters ],
     );
 
     const handleFilterClick = useCallback((filter: IFilter) => {
@@ -89,6 +87,7 @@ const ContestsPage = () => {
                 />
                 <PaginationControls
                   count={pagesCount}
+                  page={pageNumber}
                   onChange={handlePageChange}
                 />
             </div>

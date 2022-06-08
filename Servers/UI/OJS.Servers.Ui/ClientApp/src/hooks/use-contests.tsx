@@ -21,9 +21,8 @@ interface IContestsContext extends IHavePagesProps {
     };
     actions: {
         reload: () => Promise<void>;
-        applyFilters: (filters: IFilter[]) => void;
+        applyFilters: (filters: IFilter[], page?: number | undefined) => void;
         clearFilters: () => void;
-        setPage: (page: number) => void;
     };
 }
 
@@ -45,8 +44,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ contests, setContests ] = useState(defaultState.state.contests);
     const [ possibleFilters, setPossibleFilters ] = useState(defaultState.state.possibleFilters);
     const [ filters, setFilters ] = useState(defaultState.state.filters);
-    const [ page, setPage ] = useState(defaultState.pageNumber);
-    const [ pageProps, setPageProps ] = useState({} as IHavePagesProps);
+    const [ pageProps, setPageProps ] = useState({ pageNumber: defaultState.pageNumber } as IHavePagesProps);
     const [ getAllContestsUrlParams, setGetAllContestsUrlParams ] = useState<IAllContestsUrlParams | null>();
 
     const { getAllContestsUrl } = useUrls();
@@ -61,8 +59,12 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const { state: { categories, isLoaded: categoriesAreLoaded } } = useContestCategories();
 
     const applyFilters = useCallback(
-        (newFilters: IFilter[]) => {
+        (newFilters: IFilter[], pageToGo?: number) => {
             setFilters(newFilters);
+            setGetAllContestsUrlParams({
+                filters: newFilters,
+                page: pageToGo || defaultState.pageNumber,
+            });
         },
         [ ],
     );
@@ -163,16 +165,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         [ data ],
     );
 
-    useEffect(
-        () => {
-            setGetAllContestsUrlParams({
-                filters,
-                page,
-            });
-        },
-        [ filters, page ],
-    );
-
     const value = {
         state: {
             contests,
@@ -183,7 +175,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             reload,
             applyFilters,
             clearFilters,
-            setPage,
         },
         ...pageProps,
     } as IContestsContext;
