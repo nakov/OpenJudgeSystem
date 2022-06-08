@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isEmpty } from 'lodash';
+import { isNil } from 'lodash';
 import { IHaveChildrenProps } from '../components/common/Props';
 import { IContestStrategyFilter } from '../common/contest-types';
 import { useLoading } from './use-loading';
@@ -9,6 +9,7 @@ import { useHttp } from './use-http';
 interface IContestStrategyFiltersContext {
     state: {
         strategies: IContestStrategyFilter[];
+        isLoaded: boolean,
     };
     actions: {
         load: () => Promise<void>;
@@ -24,6 +25,7 @@ const ContestStrategyFiltersContext = createContext<IContestStrategyFiltersConte
 
 const ContestStrategyFiltersProvider = ({ children }: IContestStrategyFiltersProviderProps) => {
     const [ strategies, setStrategies ] = useState(defaultState.state.strategies);
+    const [ isLoaded, setIsLoaded ] = useState(false);
 
     const { startLoading, stopLoading } = useLoading();
     const { getAllContestStrategyFiltersUrl } = useUrls();
@@ -44,11 +46,12 @@ const ContestStrategyFiltersProvider = ({ children }: IContestStrategyFiltersPro
 
     useEffect(
         () => {
-            if (isEmpty(data)) {
+            if (isNil(data)) {
                 return;
             }
 
             setStrategies(data);
+            setIsLoaded(true);
         },
         [ data ],
     );
@@ -63,7 +66,10 @@ const ContestStrategyFiltersProvider = ({ children }: IContestStrategyFiltersPro
     );
 
     const value = {
-        state: { strategies },
+        state: {
+            strategies,
+            isLoaded,
+        },
         actions: { load },
     } as IContestStrategyFiltersContext;
 

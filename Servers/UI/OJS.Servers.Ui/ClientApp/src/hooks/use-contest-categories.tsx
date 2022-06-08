@@ -9,6 +9,7 @@ import { useLoading } from './use-loading';
 interface IContestCategoriesContext {
     state: {
         categories: IContestCategoryTreeType[];
+        isLoaded: boolean,
     };
     actions: {
         reload: () => Promise<void>;
@@ -26,6 +27,7 @@ const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps
     const [ categories, setCategories ] = useState(defaultState.state.categories);
     const { getCategoriesTreeUrl } = useUrls();
     const { startLoading, stopLoading } = useLoading();
+    const [ isLoaded, setIsLoaded ] = useState(false);
 
     const {
         get,
@@ -57,12 +59,16 @@ const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps
             }
 
             setCategories(data as IContestCategoryTreeType[]);
+            setIsLoaded(true);
         },
         [ data ],
     );
 
     const value = {
-        state: { categories },
+        state: {
+            categories,
+            isLoaded,
+        },
         actions: { reload },
     };
 

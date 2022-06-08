@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isEmpty, isNil } from 'lodash';
+import { isNil } from 'lodash';
 import { IHaveChildrenProps, IHavePagesProps } from '../components/common/Props';
 import { IIndexContestsType, IPagedResultType } from '../common/types';
 import { ContestState, FilterType, IFilter } from '../common/contest-types';
@@ -10,6 +10,8 @@ import { useLoading } from './use-loading';
 import { useContestStrategyFilters } from './use-contest-strategy-filters';
 import { useContestCategories } from './use-contest-categories';
 import { ITreeItemType } from '../components/guidelines/trees/Tree';
+import { UrlType } from '../common/common-types';
+import { IAllContestsUrlParams } from '../common/url-types';
 
 interface IContestsContext extends IHavePagesProps {
     state: {
@@ -45,36 +47,31 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ filters, setFilters ] = useState(defaultState.state.filters);
     const [ page, setPage ] = useState(defaultState.pageNumber);
     const [ pageProps, setPageProps ] = useState({} as IHavePagesProps);
+    const [ getAllContestsUrlParams, setGetAllContestsUrlParams ] = useState<IAllContestsUrlParams | null>();
 
     const { getAllContestsUrl } = useUrls();
     const { startLoading, stopLoading } = useLoading();
 
-    const getUrl = useCallback(
-        () => getAllContestsUrl({ filters, page }),
-        [ filters, getAllContestsUrl, page ],
-    );
-
     const {
         get,
         data,
-    } = useHttp(getUrl);
+    } = useHttp(getAllContestsUrl as UrlType, getAllContestsUrlParams);
 
-    const { state: { strategies } } = useContestStrategyFilters();
-    const { state: { categories } } = useContestCategories();
+    const { state: { strategies, isLoaded: strategiesAreLoaded } } = useContestStrategyFilters();
+    const { state: { categories, isLoaded: categoriesAreLoaded } } = useContestCategories();
 
     const applyFilters = useCallback(
         (newFilters: IFilter[]) => {
             setFilters(newFilters);
-            setPage(defaultState.pageNumber);
         },
-        [],
+        [ ],
     );
 
     const clearFilters = useCallback(
         () => {
             setFilters([]);
         },
-        [],
+        [ ],
     );
 
     const reload = useCallback(
@@ -99,24 +96,17 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     );
 
     const generateStrategyFilters = useCallback(() => {
-        if (isNil(strategies) || isEmpty(strategies)) {
-            return [];
-        }
-        const strategyFilters = strategies.map(({ name, id }) => ({
+        const strategyFilters = strategies?.map(({ name, id }) => ({
             name,
             value: id.toString(),
-        }));
+        })) ?? [];
 
         return generateFilterItems(FilterType.Strategy, ...strategyFilters);
     }, [ strategies ]);
 
     const generateCategoryFilters = useCallback(() => {
-        if (isNil(categories) || isEmpty(categories)) {
-            return [];
-        }
-
         const categoryFilters = [] as IFilter[];
-        categories.forEach((c) => addCategoryLeafFilters(c, categoryFilters));
+        categories?.forEach((c) => addCategoryLeafFilters(c, categoryFilters));
 
         return generateFilterItems(FilterType.Category, ...categoryFilters);
     }, [ categories, addCategoryLeafFilters ]);
@@ -138,29 +128,49 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     useEffect(
         () => {
+            if (isNil(getAllContestsUrlParams)) {
+                return;
+            }
+
             (async () => {
                 await reload();
             })();
         },
-        [ reload ],
+        [ getAllContestsUrlParams, reload ],
     );
 
     useEffect(
         () => {
-            setPossibleFilters(generatePossibleFilters());
+            if (strategiesAreLoaded && categoriesAreLoaded) {
+                setPossibleFilters(generatePossibleFilters());
+            }
         },
-        [ setPossibleFilters, generatePossibleFilters ],
+        [ setPossibleFilters, generatePossibleFilters, strategiesAreLoaded, categoriesAreLoaded ],
     );
 
     useEffect(
         () => {
+            if (isNil(data)) {
+                return;
+            }
+
             const contestsResult = data as IPagedResultType<IIndexContestsType>;
-            const newData = contestsResult?.items as IIndexContestsType[];
+            const newData = contestsResult.items as IIndexContestsType[];
             setContests(newData);
             const { pageNumber, itemsPerPage, pagesCount, totalItemsCount } = contestsResult || {};
             setPageProps({ pageNumber, itemsPerPage, pagesCount, totalItemsCount });
         },
         [ data ],
+    );
+
+    useEffect(
+        () => {
+            setGetAllContestsUrlParams({
+                filters,
+                page,
+            });
+        },
+        [ filters, page ],
     );
 
     const value = {

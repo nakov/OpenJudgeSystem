@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { isEmpty, isNil } from 'lodash';
 import ContestFilters from '../../components/contests/contests-filters/ContestFilters';
@@ -26,6 +26,7 @@ const ContestsPage = () => {
     } = useContests();
 
     const [ searchParams, setSearchParams ] = useSearchParams();
+    const [ filtersAreApplied, setFiltersAreApplied ] = useState(false);
 
     const renderContest = useCallback(
         (contest: IIndexContestsType) => (
@@ -34,9 +35,12 @@ const ContestsPage = () => {
         [],
     );
 
-    const handlePageChange = (page: number) => {
-        setPage(page);
-    };
+    const handlePageChange = useCallback(
+        (page: number) => {
+            setPage(page);
+        },
+        [ setPage ],
+    );
 
     const handleFilterClick = useCallback((filter: IFilter) => {
         const { type, value } = filter;
@@ -51,10 +55,11 @@ const ContestsPage = () => {
         }
 
         setSearchParams(searchParams);
+        setFiltersAreApplied(false);
     }, [ filters, searchParams, setSearchParams ]);
 
     useEffect(() => {
-        if (isEmpty(possibleFilters)) {
+        if (isEmpty(possibleFilters) || filtersAreApplied) {
             return;
         }
 
@@ -69,7 +74,8 @@ const ContestsPage = () => {
         });
 
         applyFilters(filtersToApply);
-    }, [ applyFilters, possibleFilters, searchParams ]);
+        setFiltersAreApplied(true);
+    }, [ applyFilters, filtersAreApplied, possibleFilters, searchParams ]);
 
     return (
         <div className={styles.container}>

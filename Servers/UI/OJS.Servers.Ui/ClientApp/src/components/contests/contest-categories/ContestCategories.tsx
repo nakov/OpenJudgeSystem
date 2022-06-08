@@ -22,7 +22,7 @@ const ContestCategories = ({
     const { state: { categories } } = useContestCategories();
     const { state: { possibleFilters } } = useContests();
 
-    const handleTreeItemClick = useCallback((node: ITreeItemType) => {
+    const handleTreeLabelClick = useCallback((node: ITreeItemType) => {
         const filter = possibleFilters.find(({ value }) => value.toString() === node.id.toString());
 
         if (isNil(filter)) {
@@ -88,7 +88,7 @@ const ContestCategories = ({
             </Heading>
             <Tree
               items={categories}
-              onTreeItemClick={handleTreeItemClick}
+              onTreeLabelClick={handleTreeLabelClick}
               defaultSelected={defaultSelected}
               defaultExpanded={defaultExpanded}
             />
