@@ -24,7 +24,7 @@ const ContestsPage = () => {
     } = useContests();
 
     const [ searchParams, setSearchParams ] = useSearchParams();
-    const [ filtersAreApplied, setFiltersAreApplied ] = useState(false);
+    const [ filtersAreCollected, setFiltersAreCollected ] = useState(false);
 
     const renderContest = useCallback(
         (contest: IIndexContestsType) => (
@@ -53,11 +53,11 @@ const ContestsPage = () => {
         }
 
         setSearchParams(searchParams);
-        setFiltersAreApplied(false);
+        setFiltersAreCollected(false);
     }, [ filters, searchParams, setSearchParams ]);
 
     useEffect(() => {
-        if (isEmpty(possibleFilters) || filtersAreApplied) {
+        if (isEmpty(possibleFilters) || filtersAreCollected) {
             return;
         }
 
@@ -72,8 +72,8 @@ const ContestsPage = () => {
         });
 
         applyFilters(filtersToApply);
-        setFiltersAreApplied(true);
-    }, [ applyFilters, filtersAreApplied, possibleFilters, searchParams ]);
+        setFiltersAreCollected(true);
+    }, [ applyFilters, filtersAreCollected, possibleFilters, searchParams ]);
 
     return (
         <div className={styles.container}>
