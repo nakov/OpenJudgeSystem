@@ -10,7 +10,7 @@ import { ITestRunType, ISubmissionType, ISubmissionDetailsType, ISubmissionDetai
 import { IHaveChildrenProps } from '../../components/common/Props';
 
 interface ISubmissionsDetailsContext {
-    currentSubmission: ISubmissionDetailsType | undefined,
+    currentSubmission: ISubmissionDetailsType | null,
     setCurrentSubmissionId: (submissionId: number) => void;
     getDetails: (submissionId: number) => Promise<void>,
     currentProblemSubmissionResults: ISubmissionDetails[]
@@ -27,7 +27,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     const { startLoading, stopLoading } = useLoading();
     // const { state: { isOfficial: isContestParticipationOfficial } } = useCurrentContest();
     const [ currentSubmissionId, setCurrentSubmissionId ] = useState<number>();
-    const [ currentSubmission, setCurrentSubmission ] = useState<ISubmissionDetailsType>();
+    const [ currentSubmission, setCurrentSubmission ] = useState<ISubmissionDetailsType | null>(null);
     const [ currentProblemSubmissionResults, setCurrentProblemSubmissionResults ] =
         useState<ISubmissionDetails[]>(defaultState.currentProblemSubmissionResults);
 
