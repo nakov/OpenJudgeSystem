@@ -41,15 +41,16 @@ const ContestsPage = () => {
     );
 
     const handleFilterClick = useCallback((filter: IFilter) => {
-        const { type, value } = filter;
-        const name = type.toString();
-        searchParams.delete(name);
-        searchParams.delete(name.toLowerCase());
+        const { name: filterName, type, value } = filter;
+        const paramName = type.toString();
+        searchParams.delete(paramName);
+        searchParams.delete(paramName.toLowerCase());
 
-        const removeFilter = filters.includes(filter) && filter.type !== FilterType.Category;
+        const removeFilter = filters.some(({ name }) => name === filterName) &&
+            filter.type !== FilterType.Category;
 
         if (!removeFilter) {
-            searchParams.append(name.toLowerCase(), value);
+            searchParams.append(paramName.toLowerCase(), value);
         }
 
         setSearchParams(searchParams);

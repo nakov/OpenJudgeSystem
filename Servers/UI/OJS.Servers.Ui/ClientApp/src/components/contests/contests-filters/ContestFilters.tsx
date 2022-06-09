@@ -55,7 +55,9 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
 
     const renderFilterItem = useCallback(
         ({ id, name }: IFilter) => {
-            const filterIsSelected = filters.some((f) => f.id === id);
+            // TODO: investigate why filters change ids
+            //  and use id instead of name for checking if filter is selected
+            const filterIsSelected = filters.some((f) => f.name === name);
             const type = filterIsSelected
                 ? ButtonType.primary
                 : ButtonType.secondary;
