@@ -92,20 +92,35 @@ const ProblemSubmission = ({ submission }: ISubmissionResultProps) => {
         submissionDetailsContainerVisibilityClassName,
     );
 
+    const labelClass = 'label';
+    const labelClassName = concatClassNames(
+        styles.labelContainer,
+        labelClass,
+    );
+
+    const showSubmissionDetailsButtonClassName = 'submissiondetailsButton';
+    const currentSubmissionTypeClass = 'currentSubmissionType';
+    const SubmissionTypeClassName = concatClassNames(
+        styles.spacing,
+        currentSubmissionTypeClass,
+    );
+    const submissionCreatedOnClassName = 'submissionCreatedOn';
+    const submissionResultClassName = 'submissionResult';
+
     return (
         <div>
             <div className={styles.container}>
-                <div className={styles.labelContainer}>
+                <div className={labelClassName}>
                     {renderLabel()}
                 </div>
                 <div>
-                    <Text type={TextType.Bold}>
+                    <Text type={TextType.Bold} className={submissionResultClassName}>
                         {result}
                     </Text>
                     <Text className={styles.spacing}>
                         with
                     </Text>
-                    <Text type={TextType.Underlined} className={styles.spacing}>
+                    <Text type={TextType.Underlined} className={SubmissionTypeClassName}>
                         {renderSubmissionType()}
                     </Text>
                     <Text className={styles.spacing}>
@@ -114,12 +129,16 @@ const ProblemSubmission = ({ submission }: ISubmissionResultProps) => {
                         run
                         {' '}
                     </Text>
-                    <Text type={TextType.Bold}>
+                    <Text className={submissionCreatedOnClassName} type={TextType.Bold}>
                         {formatTime(createdOn)}
                     </Text>
                 </div>
                 <div>
-                    <Button type="plain" onClick={() => showDetails()}>
+                    <Button
+                      className={showSubmissionDetailsButtonClassName}
+                      type="plain"
+                      onClick={() => showDetails()}
+                    >
                         <DetailsIcon size={IconSize.Large} isOpen={isDetailsOpen} />
                     </Button>
                 </div>

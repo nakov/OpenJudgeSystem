@@ -8,7 +8,8 @@ interface IProblemResourceType {
     id: number,
     name: string,
     link: string,
-    type: number
+    type: number,
+    className: string,
 }
 
 interface IProblemType {

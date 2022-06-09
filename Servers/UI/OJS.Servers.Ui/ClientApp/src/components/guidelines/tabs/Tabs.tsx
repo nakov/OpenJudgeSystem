@@ -9,11 +9,12 @@ interface ITabPanelProps {
     tabChildren: React.ReactNode[]
     tabLabels: string[]
     themeOverride?: Theme
+    className: string
 }
 
 const defaultState = { initialValue: '0' };
 
-const Tabs = ({ tabChildren, tabLabels, themeOverride }: ITabPanelProps) => {
+const Tabs = ({ tabChildren, tabLabels, themeOverride, className }: ITabPanelProps) => {
     const [ value, setValue ] = useState(defaultState.initialValue);
 
     const theme =
