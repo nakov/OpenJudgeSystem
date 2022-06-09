@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useState } fr
 import { isNil } from 'lodash';
 import { IHaveChildrenProps, IHavePagesProps } from '../components/common/Props';
 import { IIndexContestsType, IPagedResultType } from '../common/types';
-import { ContestState, FilterType, IFilter } from '../common/contest-types';
+import { ContestStatus, FilterType, IFilter } from '../common/contest-types';
 import { useHttp } from './use-http';
 import { useUrls } from './use-urls';
 import { generateFilterItems } from '../common/filter-utils';
@@ -115,8 +115,9 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     const generateStatusFilters = useCallback(() => generateFilterItems(
         FilterType.Status,
-        { name: ContestState.Active, value: ContestState.Active },
-        { name: ContestState.Past, value: ContestState.Past },
+        { name: ContestStatus.All, value: ContestStatus.All },
+        { name: ContestStatus.Active, value: ContestStatus.Active },
+        { name: ContestStatus.Past, value: ContestStatus.Past },
     ), []);
 
     const generatePossibleFilters = useCallback(() => {

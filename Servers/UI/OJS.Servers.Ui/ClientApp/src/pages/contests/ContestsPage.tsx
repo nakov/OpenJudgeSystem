@@ -9,7 +9,7 @@ import { IIndexContestsType } from '../../common/types';
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
-import { FilterType, IFilter } from '../../common/contest-types';
+import { ContestStatus, FilterType, IFilter } from '../../common/contest-types';
 
 const ContestsPage = () => {
     const {
@@ -71,6 +71,12 @@ const ContestsPage = () => {
                 filtersToApply.push(filter);
             }
         });
+
+        if (isEmpty(filtersToApply)) {
+            const defaultFilters = possibleFilters
+                .filter(({ name, type }) => type === FilterType.Status && name === ContestStatus.All);
+            filtersToApply.push(...defaultFilters);
+        }
 
         applyFilters(filtersToApply);
         setFiltersAreCollected(true);
