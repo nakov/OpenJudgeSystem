@@ -19,7 +19,7 @@ const SubmissionPage = () => {
     return (
         <>
             <SubmissionDetailsHeading />
-            <SubmissionResults />
+            <SubmissionResults collapsible={false} />
         </>
     );
 };

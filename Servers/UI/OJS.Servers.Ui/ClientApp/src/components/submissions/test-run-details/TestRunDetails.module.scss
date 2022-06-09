@@ -20,13 +20,13 @@
 
 .wrongTestRunHeading {
   @extend .testRunHeading;
-  
+
   color: $primary-red;
 }
 
 .correctTestRunHeading {
   @extend .testRunHeading;
-  
+
   color: $primary-green;
 }
 
