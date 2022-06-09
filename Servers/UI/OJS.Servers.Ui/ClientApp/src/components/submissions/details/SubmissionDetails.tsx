@@ -21,8 +21,6 @@ const SubmissionDetails = () => {
         currentProblemSubmissionResults,
         getSubmissionResults,
     } = useSubmissionsDetails();
-    // @ts-ignore
-    const { content: submissionCode } = currentSubmission || '';
 
     const problemNameHeadingText = useMemo(
         () => `${currentSubmission?.problem.name} - ${currentSubmission?.problem.id}`,
@@ -114,7 +112,7 @@ const SubmissionDetails = () => {
                         </Heading>
                         <CodeEditor
                           readOnly
-                          code={submissionCode}
+                          code={currentSubmission?.content}
                         />
                     </div>
                     <div className={styles.submissionDetails}>
