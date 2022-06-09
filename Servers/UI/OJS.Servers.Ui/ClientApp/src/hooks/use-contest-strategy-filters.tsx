@@ -25,7 +25,6 @@ const ContestStrategyFiltersContext = createContext<IContestStrategyFiltersConte
 
 const ContestStrategyFiltersProvider = ({ children }: IContestStrategyFiltersProviderProps) => {
     const [ strategies, setStrategies ] = useState(defaultState.state.strategies);
-    const [ isLoaded, setIsLoaded ] = useState(false);
 
     const { startLoading, stopLoading } = useLoading();
     const { getAllContestStrategyFiltersUrl } = useUrls();
@@ -33,6 +32,7 @@ const ContestStrategyFiltersProvider = ({ children }: IContestStrategyFiltersPro
     const {
         get,
         data,
+        isSuccess,
     } = useHttp(getAllContestStrategyFiltersUrl);
 
     const load = useCallback(
@@ -51,24 +51,14 @@ const ContestStrategyFiltersProvider = ({ children }: IContestStrategyFiltersPro
             }
 
             setStrategies(data);
-            setIsLoaded(true);
         },
         [ data ],
-    );
-
-    useEffect(
-        () => {
-            (async () => {
-                await load();
-            })();
-        },
-        [ load ],
     );
 
     const value = {
         state: {
             strategies,
-            isLoaded,
+            isLoaded: isSuccess,
         },
         actions: { load },
     } as IContestStrategyFiltersContext;

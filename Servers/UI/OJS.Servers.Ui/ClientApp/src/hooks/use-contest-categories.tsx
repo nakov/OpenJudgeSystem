@@ -12,7 +12,7 @@ interface IContestCategoriesContext {
         isLoaded: boolean,
     };
     actions: {
-        reload: () => Promise<void>;
+        load: () => Promise<void>;
     };
 }
 
@@ -27,14 +27,14 @@ const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps
     const [ categories, setCategories ] = useState(defaultState.state.categories);
     const { getCategoriesTreeUrl } = useUrls();
     const { startLoading, stopLoading } = useLoading();
-    const [ isLoaded, setIsLoaded ] = useState(false);
 
     const {
         get,
         data,
+        isSuccess,
     } = useHttp(getCategoriesTreeUrl);
 
-    const reload = useCallback(
+    const load = useCallback(
         async () => {
             startLoading();
             await get();
@@ -45,21 +45,11 @@ const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps
 
     useEffect(
         () => {
-            (async () => {
-                await reload();
-            })();
-        },
-        [ reload ],
-    );
-
-    useEffect(
-        () => {
             if (isEmpty(data)) {
                 return;
             }
 
             setCategories(data as IContestCategoryTreeType[]);
-            setIsLoaded(true);
         },
         [ data ],
     );
@@ -67,9 +57,9 @@ const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps
     const value = {
         state: {
             categories,
-            isLoaded,
+            isLoaded: isSuccess,
         },
-        actions: { reload },
+        actions: { load },
     };
 
     return (

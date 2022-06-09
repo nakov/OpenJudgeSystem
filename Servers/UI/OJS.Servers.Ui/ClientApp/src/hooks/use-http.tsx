@@ -4,7 +4,7 @@ import axios from 'axios';
 import { saveAs } from 'file-saver';
 import { isFunction } from 'lodash';
 import { HttpStatus } from '../common/common';
-import { UrlType, IDictionary, IFileResponseType } from '../common/common-types';
+import { IDictionary, IFileResponseType, UrlType } from '../common/common-types';
 
 const getUrl = (url: UrlType, params: IDictionary<any> | null) => (
     isFunction(url)
@@ -23,6 +23,7 @@ const useHttp = (
     const [ status, setStatus ] = useState<HttpStatus>(HttpStatus.NotStarted);
     const [ error, setError ] = useState<Error | null>(null);
     const [ actualHeaders, setActualHeaders ] = useState<IDictionary<string>>({});
+    const [ isSuccess, setIsSuccess ] = useState(false);
 
     const contentDispositionHeaderText = 'content-disposition';
     const filenameStringPattern = 'filename*=UTF-8\'\'';
@@ -111,6 +112,15 @@ const useHttp = (
         [ headers ],
     );
 
+    useEffect(
+        () => {
+            if (status === HttpStatus.Success) {
+                setIsSuccess(true);
+            }
+        },
+        [ status ],
+    );
+
     return {
         get,
         post,
@@ -119,6 +129,7 @@ const useHttp = (
         status,
         error,
         saveAttachment,
+        isSuccess,
     };
 };
 export {

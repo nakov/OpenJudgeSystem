@@ -13,6 +13,8 @@ import { useContests } from '../../../hooks/use-contests';
 import { groupByType } from '../../../common/filter-utils';
 import ExpandButton from '../../guidelines/buttons/ExpandButton';
 import concatClassNames from '../../../utils/class-names';
+import { useContestStrategyFilters } from '../../../hooks/use-contest-strategy-filters';
+import { useContestCategories } from '../../../hooks/use-contest-categories';
 
 interface IContestFiltersProps {
     onFilterClick: (filter: IFilter) => void;
@@ -29,6 +31,8 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const [ defaultSelected, setDefaultSelected ] = useState('');
     const [ searchParams ] = useSearchParams();
     const [ isLoaded, setIsLoaded ] = useState(false);
+    const { actions: { load: loadStrategies } } = useContestStrategyFilters();
+    const { actions: { load: loadCategories } } = useContestCategories();
 
     const {
         state: {
@@ -147,6 +151,24 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
             setDefaultSelected(selectedCategory.toString());
         },
         [ isLoaded, searchParams ],
+    );
+
+    useEffect(
+        () => {
+            (async () => {
+                await loadStrategies();
+            })();
+        },
+        [ loadStrategies ],
+    );
+
+    useEffect(
+        () => {
+            (async () => {
+                await loadCategories();
+            })();
+        },
+        [ loadCategories ],
     );
 
     return (
