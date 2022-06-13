@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import Label, { LabelType } from '../../guidelines/labels/Label';
 import styles from './SubmissionResultPointsLabel.module.scss';
 

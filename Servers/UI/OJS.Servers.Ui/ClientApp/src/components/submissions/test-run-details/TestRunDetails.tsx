@@ -1,38 +1,38 @@
 import * as React from 'react';
-import { ReactNode, useCallback } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { isNil } from 'lodash';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import { ITestRunDetailsType } from '../../../hooks/submissions/types';
 import { useAuth } from '../../../hooks/use-auth';
-import TestRunDetailsCollapsible from '../test-run-details-collapsible/TestRunDetailsCollapsible';
 import concatClassNames from '../../../utils/class-names';
 import TimeLimitIcon from '../../guidelines/icons/TimeLimitIcon';
 import IconSize from '../../guidelines/icons/icon-sizes';
 import MemoryIcon from '../../guidelines/icons/MemoryIcon';
 import styles from './TestRunDetails.module.scss';
+import { Button, ButtonType } from '../../guidelines/buttons/Button';
+import Collapsible from '../../collapsible/Collapsible';
+import TestRunDiffView from '../test-run-diff-view/TestRunDiffView';
 
 interface ITestRunDetailsProps {
     testRun: ITestRunDetailsType;
     testRunIndex: number;
-    collapsible: boolean;
 }
+
+const getResultIsWrongAnswerResultType = (run: ITestRunDetailsType) => run.resultType.toLowerCase() !== 'correctanswer';
 
 const TestRunDetails = ({ testRun, testRunIndex }: ITestRunDetailsProps) => {
     const { user } = useAuth();
-
-    const getIsCorrectAnswerResultType = useCallback(
-        () => testRun.resultType.toLowerCase() === 'correctanswer',
-        [ testRun.resultType ],
-    );
+    const [ isCollapsed, setIsCollapsed ] = useState<boolean>(testRun.isTrialTest &&
+        getResultIsWrongAnswerResultType(testRun));
 
     const getTestRunHeadingClassName = useCallback(
         () => concatClassNames(
             styles.testRunHeading,
-            getIsCorrectAnswerResultType()
-                ? styles.correctTestRunHeading
-                : styles.wrongTestRunHeading,
+            getResultIsWrongAnswerResultType(testRun)
+                ? styles.wrongTestRunHeading
+                : styles.correctTestRunHeading,
         ),
-        [ getIsCorrectAnswerResultType ],
+        [ testRun ],
     );
 
     const getIsOutputDiffAvailable = useCallback(
@@ -74,7 +74,7 @@ const TestRunDetails = ({ testRun, testRunIndex }: ITestRunDetailsProps) => {
         </span>
     ), [ testRun ]);
 
-    const getHeader = useCallback(
+    const renderHeader = useCallback(
         () => (
             <Heading
               type={HeadingType.small}
@@ -87,36 +87,59 @@ const TestRunDetails = ({ testRun, testRunIndex }: ITestRunDetailsProps) => {
         [ getTestRunHeadingClassName, renderTimeAndMemoryUsed, testRun, testRunIndex ],
     );
 
-    const renderCollapsible = useCallback((header: ReactNode) => (
-        <TestRunDetailsCollapsible
-          testRun={testRun}
-          header={header}
-        />
-    ), [ testRun ]);
+    const handleOnClickToggleCollapsible = useCallback(() => {
+        setIsCollapsed(!isCollapsed);
+    }, [ isCollapsed ]);
 
-    const render = useCallback(() => (
-        <div className={styles.testRun}>
-            {
-                getIsOutputDiffAvailable()
-                    // See trial test diff if result is incorrect
-                    ? (testRun.isTrialTest && !getIsCorrectAnswerResultType()) ||
-                    // See any if result is incorrect and user is admin
-                      (!getIsCorrectAnswerResultType() && user.permissions.canAccessAdministration)
-                        ? renderCollapsible(getHeader())
-                        : getHeader()
-                    : getHeader()
-            }
-        </div>
-    ), [
-        getHeader,
-        getIsCorrectAnswerResultType,
+    const renderCollapsible = useCallback(() => (
+        <>
+            <span className={styles.collapsibleHeader}>
+                {renderHeader()}
+                {/* eslint-disable-next-line react/jsx-no-undef */}
+                <Button
+                  type={ButtonType.plain}
+                  onClick={handleOnClickToggleCollapsible}
+                  className={styles.collapsibleButton}
+                >
+                    {isCollapsed
+                        ? 'Hide'
+                        : 'Details'}
+                </Button>
+            </span>
+            <Collapsible collapsed={isCollapsed}>
+                <TestRunDiffView testRun={testRun} />
+            </Collapsible>
+        </>
+    ), [ renderHeader, handleOnClickToggleCollapsible, isCollapsed, testRun ]);
+
+    const render = useCallback(() => {
+        if (!getIsOutputDiffAvailable()) {
+            return renderHeader();
+        }
+
+        if (getResultIsWrongAnswerResultType(testRun) &&
+            (user.permissions.canAccessAdministration || testRun.isTrialTest)) {
+            return renderCollapsible();
+        }
+
+        return renderHeader();
+    }, [
+        renderHeader,
         getIsOutputDiffAvailable,
         renderCollapsible,
         testRun,
         user.permissions.canAccessAdministration,
     ]);
 
-    return render();
+    useEffect(() => {
+        console.log(testRun);
+    }, [ testRun ]);
+
+    return (
+        <div className={styles.testRun}>
+            {render()}
+        </div>
+    );
 };
 
 export default TestRunDetails;

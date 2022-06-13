@@ -20,6 +20,19 @@
   color: $primary-red;
 }
 
+.collapsibleHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.collapsibleButton {
+  font-family: 'Lato', serif;
+  color: $text-dark-gray-color;
+  align-self: flex-end;
+}
+
 .correctTestRunHeading {
   @extend .testRunHeading;
 
