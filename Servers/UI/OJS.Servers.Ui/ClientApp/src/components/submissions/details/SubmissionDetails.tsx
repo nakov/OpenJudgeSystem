@@ -58,9 +58,7 @@ const SubmissionDetails = () => {
                 <Button
                   type={ButtonType.plain}
                   className={className}
-                  onClick={(ev) => {
-                      ev.stopPropagation();
-                      ev.preventDefault();
+                  onClick={() => {
                       handleOnSubmissionListItemOnClick(submissionDetails.id);
                   }}
                 >
