@@ -91,7 +91,13 @@ const TestRunDetails = ({ testRun, testRunIndex }: ITestRunDetailsProps) => {
                 { renderTimeAndMemoryUsed() }
             </Heading>
         ),
-        [ getTestRunHeadingClassName, renderTimeAndMemoryUsed, testRun, testRunIndex ],
+        [
+            getTestRunHeadingClassName,
+            getTestRunHeadingText,
+            renderTimeAndMemoryUsed,
+            testRun,
+            testRunIndex,
+        ],
     );
 
     const handleOnClickToggleCollapsible = useCallback(() => {
