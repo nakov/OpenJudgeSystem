@@ -17,10 +17,10 @@ const ContestsPage = () => {
             contests,
             possibleFilters,
             filters,
+            pagesCount,
+            pageNumber,
         },
         actions: { applyFilters },
-        pagesCount,
-        pageNumber,
     } = useContests();
 
     const [ searchParams, setSearchParams ] = useSearchParams();

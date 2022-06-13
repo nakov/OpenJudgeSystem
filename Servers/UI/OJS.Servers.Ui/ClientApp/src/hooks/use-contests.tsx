@@ -13,11 +13,15 @@ import { ITreeItemType } from '../components/guidelines/trees/Tree';
 import { UrlType } from '../common/common-types';
 import { IAllContestsUrlParams } from '../common/url-types';
 
-interface IContestsContext extends IHavePagesProps {
+interface IContestsContext {
     state: {
         contests: IIndexContestsType[];
         possibleFilters: IFilter[];
         filters: IFilter[];
+        itemsPerPage: number,
+        pageNumber: number,
+        totalItemsCount: number,
+        pagesCount: number,
     };
     actions: {
         reload: () => Promise<void>;
@@ -34,8 +38,8 @@ const defaultState = {
         contests: [] as IIndexContestsType[],
         possibleFilters: [] as IFilter[],
         filters: [] as IFilter[],
+        pageNumber: 1,
     },
-    pageNumber: 1,
 };
 
 const ContestsContext = createContext<IContestsContext>(defaultState as IContestsContext);
@@ -44,7 +48,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ contests, setContests ] = useState(defaultState.state.contests);
     const [ possibleFilters, setPossibleFilters ] = useState(defaultState.state.possibleFilters);
     const [ filters, setFilters ] = useState(defaultState.state.filters);
-    const [ pageProps, setPageProps ] = useState({ pageNumber: defaultState.pageNumber } as IHavePagesProps);
+    const [ pageProps, setPageProps ] = useState({ pageNumber: defaultState.state.pageNumber } as IHavePagesProps);
     const [ getAllContestsUrlParams, setGetAllContestsUrlParams ] = useState<IAllContestsUrlParams | null>();
 
     const { getAllContestsUrl } = useUrls();
@@ -63,7 +67,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             setFilters(newFilters);
             setGetAllContestsUrlParams({
                 filters: newFilters,
-                page: pageToGo || defaultState.pageNumber,
+                page: pageToGo || defaultState.state.pageNumber,
             });
         },
         [ ],
@@ -170,13 +174,13 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             contests,
             possibleFilters,
             filters,
+            ...pageProps,
         },
         actions: {
             reload,
             applyFilters,
             clearFilters,
         },
-        ...pageProps,
     } as IContestsContext;
 
     return (
