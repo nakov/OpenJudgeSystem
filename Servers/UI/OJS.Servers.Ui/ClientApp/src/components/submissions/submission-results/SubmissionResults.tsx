@@ -4,20 +4,15 @@ import { useSubmissionsDetails } from '../../../hooks/submissions/use-submission
 import { ITestRunDetailsType } from '../../../hooks/submissions/types';
 import TestRunDetails from '../test-run-details/TestRunDetails';
 
-interface ISubmissionResultsProps {
-    collapsible: boolean;
-}
-
-const SubmissionResults = ({ collapsible }: ISubmissionResultsProps) => {
+const SubmissionResults = () => {
     const { currentSubmission } = useSubmissionsDetails();
 
     const renderTestRunsDetails = useCallback((testRuns: ITestRunDetailsType[]) => testRuns.map((run, index) => (
         <TestRunDetails
           testRun={run}
           testRunIndex={index + 1}
-          collapsible={collapsible}
         />
-    )), [ collapsible ]);
+    )), []);
 
     const filterRuns = useCallback(
         (trial: boolean) => currentSubmission!.testRuns.filter((tr) => tr.isTrialTest === trial),

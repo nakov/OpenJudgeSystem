@@ -115,7 +115,7 @@ const SubmissionDetails = () => {
                             </div>
                             <div className={styles.submissionDetails}>
                                 <Heading type={HeadingType.secondary}>{detailsHeadingText}</Heading>
-                                <SubmissionResults collapsible />
+                                <SubmissionResults />
                             </div>
                         </div>
                     )
