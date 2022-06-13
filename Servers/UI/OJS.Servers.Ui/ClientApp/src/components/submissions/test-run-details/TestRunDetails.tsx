@@ -22,8 +22,8 @@ const getResultIsWrongAnswerResultType = (run: ITestRunDetailsType) => run.resul
 
 const TestRunDetails = ({ testRun, testRunIndex }: ITestRunDetailsProps) => {
     const { user } = useAuth();
-    const [ isCollapsed, setIsCollapsed ] = useState<boolean>(testRun.isTrialTest &&
-        getResultIsWrongAnswerResultType(testRun));
+    const initialIsCollapsed = testRun.isTrialTest && getResultIsWrongAnswerResultType(testRun);
+    const [ isCollapsed, setIsCollapsed ] = useState<boolean>(initialIsCollapsed);
 
     const collapsibleButtonText = useMemo(
         () => (isCollapsed
