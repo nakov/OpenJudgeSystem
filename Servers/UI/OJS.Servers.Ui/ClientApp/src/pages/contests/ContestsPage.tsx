@@ -46,10 +46,10 @@ const ContestsPage = () => {
         searchParams.delete(paramName);
         searchParams.delete(paramName.toLowerCase());
 
-        const removeFilter = filters.some(({ name }) => name === filterName) &&
+        const shouldRemoveFilter = filters.some(({ name }) => name === filterName) &&
             filter.type !== FilterType.Category;
 
-        if (!removeFilter) {
+        if (!shouldRemoveFilter) {
             searchParams.append(paramName.toLowerCase(), value);
         }
 
