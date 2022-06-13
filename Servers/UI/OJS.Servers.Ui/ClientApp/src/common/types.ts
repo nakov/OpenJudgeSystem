@@ -9,7 +9,6 @@ interface IProblemResourceType {
     name: string,
     link: string,
     type: number,
-    className: string,
 }
 
 interface IProblemType {

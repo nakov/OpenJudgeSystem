@@ -9,12 +9,12 @@ interface ITabPanelProps {
     tabChildren: React.ReactNode[]
     tabLabels: string[]
     themeOverride?: Theme
-    className: string
+    tabChildrenClassName: string
 }
 
 const defaultState = { initialValue: '0' };
 
-const Tabs = ({ tabChildren, tabLabels, themeOverride, className }: ITabPanelProps) => {
+const Tabs = ({ tabChildren, tabLabels, themeOverride, tabChildrenClassName }: ITabPanelProps) => {
     const [ value, setValue ] = useState(defaultState.initialValue);
 
     const theme =
@@ -25,9 +25,8 @@ const Tabs = ({ tabChildren, tabLabels, themeOverride, className }: ITabPanelPro
     const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
         setValue(newValue);
     };
-
     const renderTabs = () => tabLabels.map((tl: string, index: number) => (
-        <Tab key={tl} label={tl} value={index.toString()} />
+        <Tab key={tl} label={tl} value={index.toString()} className={tabChildrenClassName} />
     ));
 
     const renderTabChildren = () => tabChildren?.map((tc: React.ReactNode, index: number) => (

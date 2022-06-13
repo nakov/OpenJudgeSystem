@@ -100,7 +100,7 @@ const ProblemSubmission = ({ submission }: ISubmissionResultProps) => {
 
     const showSubmissionDetailsButtonClassName = 'submissiondetailsButton';
     const currentSubmissionTypeClass = 'currentSubmissionType';
-    const SubmissionTypeClassName = concatClassNames(
+    const currentSubmissionTypeClassName = concatClassNames(
         styles.spacing,
         currentSubmissionTypeClass,
     );
@@ -120,7 +120,7 @@ const ProblemSubmission = ({ submission }: ISubmissionResultProps) => {
                     <Text className={styles.spacing}>
                         with
                     </Text>
-                    <Text type={TextType.Underlined} className={SubmissionTypeClassName}>
+                    <Text type={TextType.Underlined} className={currentSubmissionTypeClassName}>
                         {renderSubmissionType()}
                     </Text>
                     <Text className={styles.spacing}>
