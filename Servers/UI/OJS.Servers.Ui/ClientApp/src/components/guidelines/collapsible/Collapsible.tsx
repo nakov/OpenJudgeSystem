@@ -6,12 +6,12 @@ import styles from './Collapsible.module.scss';
 
 interface ICollapsibleComponentProps extends IHaveChildrenProps {
     collapsed: boolean;
-    contentContainerClassName?: string;
+    containerClassName?: string;
 }
 
 const Collapsible = ({
     collapsed,
-    contentContainerClassName,
+    containerClassName = '',
     children,
 }: ICollapsibleComponentProps) => {
     const [ isCollapsed, setCollapsed ] = useState(collapsed);
@@ -22,13 +22,13 @@ const Collapsible = ({
 
     useEffect(() => {
         setInternalContainerClassName(concatClassNames(
-            contentContainerClassName,
+            containerClassName,
             styles.collapsibleContainer,
             isCollapsed
                 ? styles.visible
                 : styles.hidden,
         ));
-    }, [ contentContainerClassName, isCollapsed ]);
+    }, [ containerClassName, isCollapsed ]);
 
     useEffect(() => {
         setCollapsed(collapsed);
