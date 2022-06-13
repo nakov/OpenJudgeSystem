@@ -5,12 +5,12 @@ import { ISubmissionDetails } from '../../../hooks/submissions/types';
 import { Button, ButtonSize, ButtonType, LinkButton } from '../../guidelines/buttons/Button';
 import Text, { TextType } from '../../guidelines/text/Text';
 
-import styles from './ProblemSubmission.module.scss';
 import Label, { LabelType } from '../../guidelines/labels/Label';
 import ProblemSubmissionDetails from '../../contests/problem-submission-details/ProblemSubmissionDetails';
 import concatClassNames from '../../../utils/class-names';
 import DetailsIcon from '../../guidelines/icons/DetailsIcon';
 import IconSize from '../../guidelines/icons/icon-sizes';
+import styles from './ProblemSubmission.module.scss';
 
 interface ISubmissionResultProps {
     submission: ISubmissionDetails;
