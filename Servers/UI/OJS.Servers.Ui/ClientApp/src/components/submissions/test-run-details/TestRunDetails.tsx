@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ReactNode, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { isNil } from 'lodash';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import { ITestRunDetailsType } from '../../../hooks/submissions/types';
@@ -10,7 +10,7 @@ import IconSize from '../../guidelines/icons/icon-sizes';
 import MemoryIcon from '../../guidelines/icons/MemoryIcon';
 import styles from './TestRunDetails.module.scss';
 import { Button, ButtonType } from '../../guidelines/buttons/Button';
-import Collapsible from '../../collapsible/Collapsible';
+import Collapsible from '../../guidelines/collapsible/Collapsible';
 import TestRunDiffView from '../test-run-diff-view/TestRunDiffView';
 
 interface ITestRunDetailsProps {
