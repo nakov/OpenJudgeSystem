@@ -25,14 +25,20 @@ const getMonacoLanguage = (submissionTypeName: string | null) => {
 };
 
 interface ICodeEditorProps {
-    readOnly: boolean;
+    readOnly?: boolean;
     code?: string;
     selectedSubmissionType?: ISubmissionTypeType;
     allowedSubmissionTypes?: ISubmissionTypeType[];
     onCodeChange?: (newValue: string) => void;
 }
 
-const CodeEditor = ({ readOnly, code, selectedSubmissionType, allowedSubmissionTypes, onCodeChange }: ICodeEditorProps) => {
+const CodeEditor = ({
+    readOnly,
+    code,
+    selectedSubmissionType,
+    allowedSubmissionTypes,
+    onCodeChange,
+}: ICodeEditorProps) => {
     const [ selectedSubmissionTypeName, setSelectedSubmissionTypeName ] = useState<string | null>(null);
 
     useEffect(
