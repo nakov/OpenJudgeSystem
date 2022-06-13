@@ -41,14 +41,20 @@ const columns: GridColDef[] = [
 ];
 
 const ProfileContestParticipations = () => {
-    const { areUserParticipationsRetrieved, userParticipations, getUserParticipations } = useParticipations();
+    const {
+        areUserParticipationsRetrieved,
+        userParticipations,
+        getUserParticipations,
+    } = useParticipations();
 
     useEffect(() => {
-        console.log(userParticipations);
         if (areUserParticipationsRetrieved) {
             return;
         }
-        getUserParticipations();
+
+        (async () => {
+            await getUserParticipations();
+        })();
     }, [ areUserParticipationsRetrieved, getUserParticipations, userParticipations ]);
 
     return (

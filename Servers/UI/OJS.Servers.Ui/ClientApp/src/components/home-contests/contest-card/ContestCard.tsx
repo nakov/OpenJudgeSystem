@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useCallback } from 'react';
-import Countdown from '../../guidelines/countdown/Countdown';
+import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
 import { convertToSecondsRemaining } from '../../../utils/dates';
 import { IIndexContestsType } from '../../../common/types';
 import concatClassNames from '../../../utils/class-names';
 
 import styles from './ContestCard.module.scss';
-import { LinkButton } from '../../guidelines/buttons/Button';
+import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 
 interface IContestCardProps {
     contest: IIndexContestsType
@@ -47,7 +47,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                 <Countdown
                   key={id}
                   duration={convertToSecondsRemaining(new Date(endDate))}
-                  metric="seconds"
+                  metric={Metric.seconds}
                 />
             );
         },
@@ -66,23 +66,24 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   id="button-card-compete"
                   to={`/contests/${id}/compete`}
                   text="Compete"
-                  type={
+                  state={
                         canBeCompeted
-                            ? 'primary'
-                            : 'disabled'
+                            ? ButtonState.enabled
+                            : ButtonState.disabled
                     }
-                  size="small"
+                  size={ButtonSize.small}
                 />
                 <LinkButton
                   id="button-card-practice"
                   to={`/contests/${id}/practice`}
                   text="Practice"
-                  type={
+                  type={LinkButtonType.secondary}
+                  state={
                         canBePracticed
-                            ? 'secondary'
-                            : 'disabled'
+                            ? ButtonState.enabled
+                            : ButtonState.disabled
                     }
-                  size="small"
+                  size={ButtonSize.small}
                 />
             </div>
         </div>

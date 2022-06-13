@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router';
-import FormControl from '../../components/guidelines/forms/FormControl';
+import { useLocation, useNavigate } from 'react-router-dom';
+import FormControl, { FormControlType } from '../../components/guidelines/forms/FormControl';
 import { useAuth } from '../../hooks/use-auth';
 import Form from '../../components/guidelines/forms/Form';
 
 const LoginPage = () => {
     const { setUsername, setPassword, signIn, user } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const onChangeUpdateUsername = useCallback((value: any) => {
         setUsername(value);
@@ -24,9 +25,11 @@ const LoginPage = () => {
     useEffect(() => {
         const { isLoggedIn } = user;
         if (isLoggedIn) {
-            navigate('/');
+            // @ts-ignore
+            const origin = location.state?.from?.pathname || '/';
+            navigate(origin);
         }
-    }, [ navigate, user ]);
+    }, [ location, navigate, user ]);
 
     return (
         <>
@@ -37,21 +40,21 @@ const LoginPage = () => {
                 <FormControl
                   id="username"
                   name="Username"
-                  type="input"
+                  type={FormControlType.input}
                   onChange={(value) => onChangeUpdateUsername(value)}
                   value=""
                 />
                 <FormControl
                   id="password"
                   name="Password"
-                  type="password"
+                  type={FormControlType.password}
                   onChange={(value) => onChangeUpdatePassword(value)}
                   value=""
                 />
                 <FormControl
                   id="auth-password-checkbox"
                   name="Password"
-                  type="checkbox"
+                  type={FormControlType.checkbox}
                   value="false"
                 />
             </Form>

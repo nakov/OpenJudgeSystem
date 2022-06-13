@@ -1,33 +1,25 @@
-import * as React from 'react';
-import YouTube, { Options } from 'react-youtube';
+import React from 'react';
+import YouTube from 'react-youtube';
 import styles from './HomeHeaderVideo.module.scss';
 
 interface IHomeHeaderVideoProps {
     videoId: string;
 }
 
-const HomeHeaderVideo = ({ videoId }: IHomeHeaderVideoProps) => {
-    const opts = {
-        height: '292',
-        width: '520',
-        playerVars: {
-            // https://developers.google.com/youtube/player_parameters
-            autoplay: 1,
-        },
-    } as Options;
-    return (
-        <>
-            {/* eslint-disable-next-line max-len */}
-            <YouTube
-              id="youtube-video"
-              containerClassName={styles.youtubePlayer}
-                    /* TODO: This should come from the backend */
-              videoId={videoId}
-              opts={opts}
-              onReady={(event) => event.target.pauseVideo()}
-            />
-        </>
-    );
-};
+const HomeHeaderVideo = ({ videoId }: IHomeHeaderVideoProps) => (
+    <>
+        <YouTube
+          id="youtube-video"
+          className={styles.youtubePlayer}
+          videoId={videoId}
+          opts={{
+              height: '292',
+              width: '520',
+              playerVars: { autoplay: 0 },
+          }}
+          onReady={(event) => event.target.pauseVideo()}
+        />
+    </>
+);
 
 export default HomeHeaderVideo;

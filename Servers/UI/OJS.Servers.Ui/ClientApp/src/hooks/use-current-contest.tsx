@@ -1,13 +1,14 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
-import { sum } from 'lodash';
+import { isNil, sum } from 'lodash';
 import { IContestType, IStartParticipationResponseType } from '../common/types';
 
 import { IHaveChildrenProps } from '../components/common/Props';
 
 import { useLoading } from './use-loading';
 import { useHttp } from './use-http';
-import { startContestParticipationUrl } from '../utils/urls';
+import { useUrls } from './use-urls';
+import { UrlType } from '../common/common-types';
 
 interface IStartContestArgs {
     id: number;
@@ -22,7 +23,7 @@ interface ICurrentContestContext {
         isOfficial: boolean;
     };
     actions: {
-        start: (info: IStartContestArgs) => Promise<void>;
+        start: (info: IStartContestArgs) => void;
     };
 }
 
@@ -40,45 +41,62 @@ const CurrentContestsContext = createContext<ICurrentContestContext>(defaultStat
 interface ICurrentContestsProviderProps extends IHaveChildrenProps {
 }
 
+interface IContestToStartType {
+    id: number;
+    isOfficial: boolean;
+}
+
 const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) => {
     const [ contest, setContest ] = useState<IContestType | null>(defaultState.state.contest);
     const [ score, setScore ] = useState(defaultState.state.score);
     const [ maxScore, setMaxScore ] = useState(defaultState.state.maxScore);
-    const [ isOfficial, setOfficial ] = useState(defaultState.state.isOfficial);
+    const [ isOfficial, setIsOfficial ] = useState(defaultState.state.isOfficial);
+    const [ contestToStart, setContestToStart ] = useState<IContestToStartType | null>(null);
 
     const {
         startLoading,
         stopLoading,
     } = useLoading();
 
-    const {
-        get: getApiContest,
-        data: apiContest,
-    } = useHttp(startContestParticipationUrl);
+    const { getStartContestParticipationUrl } = useUrls();
 
-    const start = useCallback(async ({ id, isOfficial: official }) => {
-        startLoading();
-        await getApiContest({
-            id,
-            official,
-        });
-        stopLoading();
-    }, [ getApiContest, startLoading, stopLoading ]);
+    const {
+        get: startContest,
+        data: startContestData,
+    } = useHttp(getStartContestParticipationUrl as UrlType, contestToStart);
+
+    const start = useCallback((obj) => {
+        setContestToStart(obj);
+    }, []);
 
     useEffect(() => {
-        if (apiContest != null) {
-            const responseData = apiContest as IStartParticipationResponseType;
-            const { contest: newContest, contestIsCompete } = responseData;
-
-            setContest(newContest);
-            setOfficial(contestIsCompete);
+        if (isNil(startContestData)) {
+            return;
         }
-    }, [ apiContest ]);
+
+        const responseData = startContestData as IStartParticipationResponseType;
+        const { contest: newContest, contestIsCompete } = responseData;
+
+        setContest(newContest);
+        setIsOfficial(contestIsCompete);
+    }, [ startContestData ]);
+
+    useEffect(() => {
+        if (isNil(contestToStart)) {
+            return;
+        }
+
+        (async () => {
+            startLoading();
+            await startContest();
+            stopLoading();
+        })();
+    }, [ contestToStart, startContest, startLoading, stopLoading ]);
 
     useEffect(
         () => {
             const { problems } = contest || {};
-            if (!problems) {
+            if (isNil(problems)) {
                 return;
             }
 

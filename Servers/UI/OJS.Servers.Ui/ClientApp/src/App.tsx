@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import React, { useMemo } from 'react';
 
+import { BrowserRouter as Router } from 'react-router-dom';
 import AuthProvider from './hooks/use-auth';
 import PageHeader from './layout/header/PageHeader';
 import PageContent from './layout/content/PageContent';
@@ -20,27 +20,27 @@ import CurrentContestsProvider from './hooks/use-current-contest';
 import ProblemsProvider from './hooks/use-problems';
 import ProblemSubmissionsProvider from './hooks/submissions/use-problem-submissions';
 import ContestsProvider from './hooks/use-contests';
+import ContestCategoriesProvider from './hooks/use-contest-categories';
 import CurrentContestResultsProvider from './hooks/contests/use-current-contest-results';
-
-const InitProviders = ({ providers, children }: any) => {
-    const initial = (<>{children}</>);
-    return providers
-        .reverse()
-        .reduce((current: any, Provider: any) => (
-            <Provider>
-                {current}
-            </Provider>
-        ), initial);
-};
+import ContestStrategyFiltersProvider from './hooks/use-contest-strategy-filters';
+import UserCookiesService from './services/user-cookies-service';
+import InitProviders, { ProviderType } from './components/common/InitProviders';
 
 const App = () => {
+    const userCookiesService = useMemo(
+        () => new UserCookiesService(),
+        [],
+    );
+    const user = userCookiesService.getUser();
     const providers = [
         UrlsProvider,
         ServicesProvider,
         LoadingProvider,
         NotificationsProvider,
-        AuthProvider,
+        { Provider: AuthProvider, props: { user } },
         UsersProvider,
+        ContestCategoriesProvider,
+        ContestStrategyFiltersProvider,
         ContestsProvider,
         HomeContestsProvider,
         ParticipationsProvider,
@@ -50,16 +50,16 @@ const App = () => {
         ProblemSubmissionsProvider,
         SubmissionsProvider,
         SubmissionsDetailsProvider,
-    ];
+    ] as ProviderType[];
 
     return (
-        <InitProviders providers={providers}>
-            <Router>
+        <Router>
+            <InitProviders providers={providers}>
                 <PageHeader />
                 <PageContent />
                 <PageFooter />
-            </Router>
-        </InitProviders>
+            </InitProviders>
+        </Router>
     );
 };
 

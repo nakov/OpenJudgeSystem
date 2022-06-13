@@ -1,6 +1,6 @@
 namespace OJS.Services.Ui.Models.Contests;
 
-public enum ContestFilter
+public enum ContestStatus
 {
     Active = 1,
     Past = 2,

@@ -19,7 +19,6 @@ const ProblemResources = ({ resources }: IProblemResourcesProps) => {
             : (
                 <List
                   values={resources}
-                  orientation="vertical"
                   itemFunc={renderResource}
                   className={contestResourcesClassName}
                 />

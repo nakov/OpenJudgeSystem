@@ -1,62 +1,100 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { isNil } from 'lodash';
+import { ReactNode } from 'react';
 import concatClassNames from '../../../utils/class-names';
 import { IHaveOptionalChildrenProps, IHaveOptionalClassName } from '../../common/Props';
 import generateId from '../../../utils/id-generator';
 
 import styles from './Button.module.scss';
 
-interface IButtonProps extends IHaveOptionalChildrenProps, IHaveOptionalClassName {
-    text?: string,
-    id?: string,
-    onClick: React.MouseEventHandler<HTMLButtonElement>,
-    type?: 'primary' | 'secondary' | 'plain' | 'disabled' | 'submit',
-    size?: 'small' | 'medium' | 'large',
+enum ButtonState {
+    enabled = 1,
+    disabled = 2,
 }
 
-interface ILinkButtonProps extends IHaveOptionalClassName {
-    text: string;
+enum ButtonType {
+    primary = 1,
+    secondary = 2,
+    plain = 3,
+    submit = 4,
+}
+
+enum LinkButtonType {
+    primary = 1,
+    secondary = 2,
+    plain = 3,
+}
+
+enum ButtonSize {
+    small = 1,
+    medium = 2,
+    large = 3,
+    none = 4,
+}
+
+interface IButtonBaseProps<TButtonType> extends IHaveOptionalClassName, IHaveOptionalChildrenProps {
     id?: string;
-    type?: 'primary' | 'secondary' | 'plain' | 'disabled' | 'link';
-    size?: 'small' | 'medium' | 'large';
+    size?: ButtonSize;
+    text?: string | null,
+    type?: TButtonType;
+    state?: ButtonState;
+}
+
+interface IButtonProps extends IButtonBaseProps<ButtonType> {
+    onClick: React.MouseEventHandler<HTMLButtonElement>,
+}
+
+interface ILinkButtonProps extends IButtonBaseProps<LinkButtonType> {
     to: string;
     isToExternal?: boolean,
 }
 
 const classNameToType = {
-    primary: styles.btn,
-    secondary: styles.btnSecondary,
-    plain: styles.btnPlain,
-    disabled: styles.btnDisabled,
-    submit: styles.btn,
-    link: styles.link,
+    [ButtonType.primary]: styles.primary,
+    [ButtonType.submit]: styles.primary,
+    [ButtonType.secondary]: styles.secondary,
+    [ButtonType.plain]: styles.plain,
+};
+
+const sizeToClassName = {
+    [ButtonSize.small]: styles.small,
+    [ButtonSize.medium]: styles.medium,
+    [ButtonSize.large]: styles.large,
+    [ButtonSize.none]: styles.none,
+};
+
+const validateOnlyChildrenOrText = (text: string | null, children: ReactNode | null) => {
+    if (!isNil(text) && !isNil(children)) {
+        throw new Error('Buttons must have only `text` or `children`');
+    }
 };
 
 const Button = ({
     onClick,
-    text = '',
+    text = null,
     children = null,
     className = '',
-    type = 'primary',
-    size = 'medium',
+    type = ButtonType.primary,
+    size = ButtonSize.medium,
     id = generateId(),
+    state = ButtonState.enabled,
 }: IButtonProps) => {
-    if (!text && !children) {
-        throw new Error('Buttons must have only `text` or `children`');
-    }
-    const sizeToClassName = {
-        small: styles.btnSmall,
-        medium: styles.btnMedium,
-        large: styles.btnLarge,
-    };
+    validateOnlyChildrenOrText(text, children);
 
     const typeClassName = classNameToType[type];
 
     const sizeClassName = sizeToClassName[size];
 
+    const stateClassName = state === ButtonState.disabled
+        ? styles.disabled
+        : '';
+
     const buttonClassName = concatClassNames(
+        styles.btn,
         typeClassName,
         sizeClassName,
+        stateClassName,
         className,
     );
 
@@ -64,7 +102,7 @@ const Button = ({
 
     return (
         <button
-          type={type === 'submit'
+          type={type === ButtonType.submit
               ? 'submit'
               : 'button'}
           onClick={onClick}
@@ -77,40 +115,43 @@ const Button = ({
 };
 
 const LinkButton = ({
-    text,
     to,
+    text = null,
+    children = null,
     className = '',
-    type = 'primary',
-    size = 'medium',
+    type = LinkButtonType.primary,
+    size = ButtonSize.medium,
     id = generateId(),
+    state = ButtonState.enabled,
     isToExternal = false,
 }: ILinkButtonProps) => {
-    const sizeToClassName = {
-        small: styles.small,
-        medium: styles.medium,
-        large: styles.large,
-    };
+    validateOnlyChildrenOrText(text, children);
+    const isDisabled = state === ButtonState.disabled;
 
     const typeClassName = classNameToType[type];
 
-    const sizeClassName = type === 'link'
-        ? ''
-        : sizeToClassName[size];
+    const sizeClassName = sizeToClassName[size];
+
+    const stateClassName = isDisabled
+        ? styles.disabled
+        : '';
 
     const buttonClassName = concatClassNames(
-        className,
+        styles.btn,
         typeClassName,
         sizeClassName,
+        stateClassName,
+        className,
     );
 
+    const content = children ?? text;
     const toHref = isToExternal
         ? { pathname: to }
         : to;
 
     const target = isToExternal
         ? '_blank'
-        // eslint-disable-next-line no-undefined
-        : undefined;
+        : '';
 
     return (
         <Link
@@ -119,7 +160,7 @@ const LinkButton = ({
           id={id}
           target={target}
         >
-            {text}
+            {content}
         </Link>
     );
 };
@@ -129,4 +170,8 @@ export default Button;
 export {
     Button,
     LinkButton,
+    ButtonType,
+    LinkButtonType,
+    ButtonSize,
+    ButtonState,
 };

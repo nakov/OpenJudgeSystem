@@ -1,9 +1,10 @@
-import * as React from 'react';
-import { useState } from 'react';
-import { Box, createTheme, Tab } from '@material-ui/core';
+import React, { useState } from 'react';
 import { TabContext, TabList, TabPanel } from '@material-ui/lab';
 import { ThemeProvider } from '@mui/styles';
 import { Theme } from '@material-ui/core/styles/createTheme';
+
+import { createTheme, Tab } from '@material-ui/core';
+import { Box } from '@mui/material';
 
 interface ITabPanelProps {
     tabChildren: React.ReactNode[]
@@ -26,12 +27,21 @@ const Tabs = ({ tabChildren, tabLabels, themeOverride, tabChildrenClassName }: I
         setValue(newValue);
     };
     const renderTabs = () => tabLabels.map((tl: string, index: number) => (
-        <Tab key={tl} label={tl} value={index.toString()} className={tabChildrenClassName} />
+        <Tab
+          key={tl}
+          label={tl}
+          value={index.toString()}
+          className={tabChildrenClassName}
+        />
     ));
 
     const renderTabChildren = () => tabChildren?.map((tc: React.ReactNode, index: number) => (
-        // eslint-disable-next-line react/no-array-index-key
-        <TabPanel key={index.toString()} value={index.toString()}>{tc}</TabPanel>
+        <TabPanel
+          key={tabLabels[index]}
+          value={index.toString()}
+        >
+            {tc}
+        </TabPanel>
     ));
 
     return (

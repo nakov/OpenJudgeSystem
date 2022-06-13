@@ -2,7 +2,8 @@ namespace OJS.Services.Ui.Data
 {
     using OJS.Data.Models.Contests;
     using OJS.Services.Common.Data;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Ui.Models.Contests;
+    using SoftUni.Common.Models;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -11,7 +12,9 @@ namespace OJS.Services.Ui.Data
     {
         Task<IEnumerable<TServiceModel>> GetAllCompetable<TServiceModel>();
 
-        Task<IEnumerable<TServiceModel>> GetAllPast<TServiceModel>();
+        Task<IEnumerable<TServiceModel>> GetAllPracticable<TServiceModel>();
+
+        Task<PagedResult<TServiceModel>> GetAllAsPageByFilters<TServiceModel>(ContestFiltersServiceModel model);
 
         Task<Contest?> GetByIdWithProblems(int id);
 
@@ -24,10 +27,6 @@ namespace OJS.Services.Ui.Data
         IQueryable<Contest> GetAllInactive();
 
         IQueryable<Contest> GetAllUpcoming();
-
-        IQueryable<Contest> GetAllVisible();
-
-        IQueryable<Contest> GetAllVisibleByCategory(int categoryId);
 
         IQueryable<Contest> GetAllVisibleBySubmissionType(int submissionTypeId);
 

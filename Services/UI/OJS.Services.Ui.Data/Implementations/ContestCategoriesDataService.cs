@@ -4,6 +4,9 @@
     using OJS.Data;
     using OJS.Data.Models.Contests;
     using OJS.Services.Common.Data.Implementations;
+    using OJS.Services.Infrastructure.Extensions;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -34,5 +37,16 @@
             => this.GetAllVisible()
                 .Where(cc => cc.Id == id)
                 .AnyAsync(cc => cc.Contests.Any());
+
+        public IQueryable<ContestCategory> GetAllVisibleOrdered() =>
+            this.DbSet
+                .Where(cc => cc.IsVisible)
+                .OrderBy(x => x.OrderBy);
+
+        public Task<IEnumerable<TServiceModel>> GetAllVisibleMainOrdered<TServiceModel>()
+            => this.GetAllVisibleOrdered()
+                .Where(x => !x.ParentId.HasValue)
+                .MapCollection<TServiceModel>()
+                .ToEnumerableAsync();
     }
 }

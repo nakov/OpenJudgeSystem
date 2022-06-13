@@ -2,9 +2,9 @@ import * as React from 'react';
 import { useCallback } from 'react';
 
 import { isNil } from 'lodash';
-import Heading from '../../guidelines/headings/Heading';
+import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import CodeEditor from '../../code-editor/CodeEditor';
-import List from '../../guidelines/lists/List';
+import List, { Orientation } from '../../guidelines/lists/List';
 import { Button } from '../../guidelines/buttons/Button';
 import ExecutionTypeSelector from '../execution-type-selector/ExecutionTypeSelector';
 
@@ -20,7 +20,7 @@ const SubmissionBox = () => {
     const { actions: { selectSubmissionTypeById } } = useSubmissions();
     const {
         actions: {
-            submitCode,
+            submit,
             updateSubmissionCode,
         },
     } = useSubmissions();
@@ -69,7 +69,7 @@ const SubmissionBox = () => {
                   className={styles.submissionTypesList}
                   values={allowedSubmissionTypes}
                   itemFunc={renderSubmissionTypesSelectors}
-                  orientation="horizontal"
+                  orientation={Orientation.horizontal}
                   wrap
                 />
             );
@@ -78,15 +78,18 @@ const SubmissionBox = () => {
     );
 
     const handleOnSubmit = useCallback(async () => {
-        await submitCode();
+        await submit();
         updateSubmissionCode('');
-    }, [ submitCode, updateSubmissionCode ]);
+    }, [ submit, updateSubmissionCode ]);
 
     const taskText = 'Task: ';
 
     return (
         <div className={styles.contestMainWrapper}>
-            <Heading type="secondary" className={styles.heading}>
+            <Heading
+              type={HeadingType.secondary}
+              className={styles.heading}
+            >
                 {taskText}
                 <span className={styles.taskName}>
                     {currentProblem?.name}
@@ -101,7 +104,6 @@ const SubmissionBox = () => {
                         </div>
                         <div className={styles.submitButtonContainer}>
                             <Button
-                              type="primary"
                               text="Submit"
                               onClick={handleOnSubmit}
                             />

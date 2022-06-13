@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Button } from '../../guidelines/buttons/Button';
+import { Button, ButtonType } from '../../guidelines/buttons/Button';
 import List from '../../guidelines/lists/List';
 
 import { ISubmissionDetails } from '../../../hooks/submissions/types';
@@ -59,7 +59,7 @@ const ProblemSubmissions = () => {
         <div className={submissionResultsContentClassName}>
             {renderSubmissions()}
             <Button
-              type="secondary"
+              type={ButtonType.secondary}
               className={refreshButtonClassName}
               onClick={() => handleReloadClick()}
               text="Refresh"

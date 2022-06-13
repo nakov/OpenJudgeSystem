@@ -1,9 +1,10 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { isNil } from 'lodash';
 import { IHaveChildrenProps } from '../components/common/Props';
 import { useLoading } from './use-loading';
 import { useHttp } from './use-http';
 import { useNotifications } from './use-notifications';
-import { getProfileInfoUrl } from '../utils/urls';
+import { useUrls } from './use-urls';
 
 interface IUserProfileType {
     id: string,
@@ -28,24 +29,29 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
     const [ profile, setProfile ] = useState(defaultState.profile);
     const { showError } = useNotifications();
+
+    const { getProfileInfoUrl } = useUrls();
+
     const {
-        get: getProfileInfoRequest,
-        data: getProfileInfoData,
+        get: getProfileInfo,
+        data: profileData,
     } = useHttp(getProfileInfoUrl);
 
     const getProfile = useCallback(async () => {
         startLoading();
-        await getProfileInfoRequest();
+        await getProfileInfo();
         stopLoading();
-    }, [ getProfileInfoRequest, startLoading, stopLoading ]);
+    }, [ getProfileInfo, startLoading, stopLoading ]);
 
     useEffect(() => {
-        if (getProfileInfoData != null) {
-            setProfile(getProfileInfoData as IUserProfileType);
+        if (isNil(profileData)) {
+            return;
         }
 
+        setProfile(profileData as IUserProfileType);
+
         // showError({ message: 'Could not retrieve profile info.' } as INotificationType);
-    }, [ getProfileInfoData, showError ]);
+    }, [ profileData, showError ]);
 
     const value = { profile, getProfile };
 
