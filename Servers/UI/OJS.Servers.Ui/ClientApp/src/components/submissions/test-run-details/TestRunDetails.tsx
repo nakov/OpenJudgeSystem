@@ -48,7 +48,7 @@ const TestRunDetails = ({ testRun, testRunIndex }: ITestRunDetailsProps) => {
         [ testRun.expectedOutputFragment, testRun.userOutputFragment ],
     );
 
-    const getTestRunHeadingText = (run: ITestRunDetailsType, runIndex: number) => {
+    const getTestRunHeadingText = useCallback((run: ITestRunDetailsType, runIndex: number) => {
         const testRunText = `Test #${runIndex}`;
 
         if (run.isTrialTest) {
@@ -56,7 +56,7 @@ const TestRunDetails = ({ testRun, testRunIndex }: ITestRunDetailsProps) => {
         }
 
         return testRunText;
-    };
+    }, []);
 
     const renderTimeAndMemoryUsed = useCallback(() => (
         <span className={styles.testRunData}>
