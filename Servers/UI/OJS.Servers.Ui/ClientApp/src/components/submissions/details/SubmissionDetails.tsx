@@ -90,44 +90,36 @@ const SubmissionDetails = () => {
             [ currentProblemSubmissionResults, renderSubmissionListItem ],
         );
 
-    const render = useCallback(() => {
-        if (isNil(currentSubmission)) {
-            return (
-                <>No details fetched.</>
-            );
-        }
-
-        return (
-            <>
-                <div className={styles.detailsWrapper}>
-                    <div className={styles.submissionsNavigation}>
-                        <Heading type={HeadingType.secondary}>Submissions</Heading>
-                        {renderSubmissionsForProblem()}
-                    </div>
-                    <div className={styles.code}>
-                        <Heading
-                          type={HeadingType.secondary}
-                          className={styles.taskHeading}
-                        >
-                            {problemNameHeadingText}
-                        </Heading>
-                        <CodeEditor
-                          readOnly
-                          code={currentSubmission?.content}
-                        />
-                    </div>
-                    <div className={styles.submissionDetails}>
-                        <Heading type={HeadingType.secondary}>{detailsHeadingText}</Heading>
-                        <SubmissionResults collapsible />
-                    </div>
-                </div>
-            </>
-        );
-    }, [ currentSubmission, detailsHeadingText, problemNameHeadingText, renderSubmissionsForProblem ]);
-
     return (
         <div>
-            {render()}
+            {
+                isNil(currentSubmission)
+                    ? <>No details fetched.</>
+                    : (
+                        <div className={styles.detailsWrapper}>
+                            <div className={styles.submissionsNavigation}>
+                                <Heading type={HeadingType.secondary}>Submissions</Heading>
+                                {renderSubmissionsForProblem()}
+                            </div>
+                            <div className={styles.code}>
+                                <Heading
+                                  type={HeadingType.secondary}
+                                  className={styles.taskHeading}
+                                >
+                                    {problemNameHeadingText}
+                                </Heading>
+                                <CodeEditor
+                                  readOnly
+                                  code={currentSubmission?.content}
+                                />
+                            </div>
+                            <div className={styles.submissionDetails}>
+                                <Heading type={HeadingType.secondary}>{detailsHeadingText}</Heading>
+                                <SubmissionResults collapsible />
+                            </div>
+                        </div>
+                    )
+            }
         </div>
     );
 };
