@@ -32,7 +32,7 @@ const SubmissionBox = () => {
     const { state: { currentProblem } } = useProblems();
     const { allowedSubmissionTypes } = currentProblem || {};
 
-    const onCodeChange = useCallback(
+    const handleCodeChanged = useCallback(
         (newValue: string) => {
             updateSubmissionCode(newValue);
         },
@@ -112,7 +112,7 @@ const SubmissionBox = () => {
                       selectedSubmissionType={selectedSubmissionType!}
                       allowedSubmissionTypes={allowedSubmissionTypes}
                       code={submissionCode}
-                      onCodeChange={onCodeChange}
+                      onCodeChange={handleCodeChanged}
                     />
                     <div className={styles.contestSubmitControlsWrapper}>
                         <div className={styles.executionTypeSelectors}>
