@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { isNil } from 'lodash';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
@@ -39,12 +39,12 @@ const SubmissionDetails = () => {
         })();
     }, [ currentSubmission, getSubmissionResults ]);
 
-    const handleOnSubmissionListItemOnClick = (submissionId: number) => {
+    const handleOnSubmissionListItemOnClick = useCallback((submissionId: number) => {
         navigate(`/submissions/${submissionId}/details`);
         setCurrentSubmissionId(submissionId);
-    };
+    }, [ navigate, setCurrentSubmissionId ]);
 
-    const renderSubmissionListItem = (submissionDetails: ISubmissionDetails) => {
+    const renderSubmissionListItem = useCallback((submissionDetails: ISubmissionDetails) => {
         const selectedClassName = submissionDetails.id === currentSubmission?.id
             ? styles.selected
             : '';
@@ -72,22 +72,25 @@ const SubmissionDetails = () => {
                 <p className={styles.submissionCreatedOnParagraph}>{formatDate(new Date(submissionDetails.createdOn))}</p>
             </>
         );
-    };
+    }, [ currentSubmission, handleOnSubmissionListItemOnClick ]);
 
     const renderSubmissionsForProblem =
-        () => (
-            <List
-              values={currentProblemSubmissionResults}
-              keyFunc={(v) => v.id.toString()}
-              className={styles.sideNavigation}
-              itemFunc={renderSubmissionListItem}
-              itemClassName={styles.submissionListItem}
-              type={ListType.normal}
-              orientation={Orientation.vertical}
-            />
+        useCallback(
+            () => (
+                <List
+                  values={currentProblemSubmissionResults}
+                  keyFunc={(v) => v.id.toString()}
+                  className={styles.sideNavigation}
+                  itemFunc={renderSubmissionListItem}
+                  itemClassName={styles.submissionListItem}
+                  type={ListType.normal}
+                  orientation={Orientation.vertical}
+                />
+            ),
+            [ currentProblemSubmissionResults, renderSubmissionListItem ],
         );
 
-    const render = () => {
+    const render = useCallback(() => {
         if (isNil(currentSubmission)) {
             return (
                 <>No details fetched.</>
@@ -120,7 +123,7 @@ const SubmissionDetails = () => {
                 </div>
             </>
         );
-    };
+    }, [ currentSubmission, detailsHeadingText, problemNameHeadingText, renderSubmissionsForProblem ]);
 
     return (
         <div>
