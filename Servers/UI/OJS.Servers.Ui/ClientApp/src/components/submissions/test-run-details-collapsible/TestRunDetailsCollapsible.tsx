@@ -1,8 +1,9 @@
 import * as React from 'react';
-import useCollapse from 'react-collapsed';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import { ITestRunDetailsType } from '../../../hooks/submissions/types';
 import TestRunDiffView from '../test-run-diff-view/TestRunDiffView';
+import { Button, ButtonType } from '../../guidelines/buttons/Button';
+import Collapsible from '../../collapsible/Collapsible';
 import styles from './TestRunDetailsCollapsible.module.scss';
 
 interface ITestRunDetailsCollapsibleProps {
@@ -10,38 +11,34 @@ interface ITestRunDetailsCollapsibleProps {
     header: ReactNode
 }
 
-const TestRunDetailsCollapsible = ({ testRun, header }: ITestRunDetailsCollapsibleProps) => {
-    const {
-        getCollapseProps,
-        getToggleProps,
-        isExpanded,
-    } = useCollapse({ defaultExpanded: testRun.isTrialTest });
+const getResultIsWrongAnswerResultType = (testRunResult: string) => testRunResult.toLowerCase() === 'wronganswer';
 
-    const getResultIsWrongAnswerResultType = () => testRun.resultType === 'WrongAnswer';
+const TestRunDetailsCollapsible = ({ testRun, header }: ITestRunDetailsCollapsibleProps) => {
+    const [ isCollapsed, setIsCollapsed ] = useState<boolean>(testRun.isTrialTest &&
+        getResultIsWrongAnswerResultType(testRun.resultType));
+
+    const handleOnClickToggleCollapsible = () => {
+        setIsCollapsed(!isCollapsed);
+    };
 
     return (
-        <div className="collapsible">
-            <div className={styles.collapsibleHeader}>
+        <>
+            <span className={styles.collapsibleHeader}>
                 {header}
-                <div
+                <Button
+                  type={ButtonType.plain}
+                  onClick={handleOnClickToggleCollapsible}
                   className={styles.collapsibleButton}
-                  /* eslint-disable-next-line react/jsx-props-no-spreading */
-                  {...getToggleProps()}
                 >
-                    { testRun.isTrialTest && getResultIsWrongAnswerResultType()
-                        ? isExpanded
-                            ? 'Hide'
-                            : 'Details'
-                        : null}
-                </div>
-            </div>
-            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-            <div {...getCollapseProps()}>
-                <div className="content">
-                    <TestRunDiffView testRun={testRun} />
-                </div>
-            </div>
-        </div>
+                    {isCollapsed
+                        ? 'Hide'
+                        : 'Details'}
+                </Button>
+            </span>
+            <Collapsible collapsed={isCollapsed}>
+                <TestRunDiffView testRun={testRun} />
+            </Collapsible>
+        </>
     );
 };
 

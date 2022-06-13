@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ReactNode, useCallback } from 'react';
+import { isNil } from 'lodash';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import { ITestRunDetailsType } from '../../../hooks/submissions/types';
 import { useAuth } from '../../../hooks/use-auth';
@@ -19,16 +20,25 @@ interface ITestRunDetailsProps {
 const TestRunDetails = ({ testRun, testRunIndex }: ITestRunDetailsProps) => {
     const { user } = useAuth();
 
-    const getIsCorrectAnswerResultType = (run: ITestRunDetailsType) => run.resultType === 'CorrectAnswer';
+    const getIsCorrectAnswerResultType = useCallback(
+        () => testRun.resultType.toLowerCase() === 'correctanswer',
+        [ testRun.resultType ],
+    );
 
     const getTestRunHeadingClassName = useCallback(
-        (run: ITestRunDetailsType) => concatClassNames(
+        () => concatClassNames(
             styles.testRunHeading,
-            getIsCorrectAnswerResultType(run)
+            getIsCorrectAnswerResultType()
                 ? styles.correctTestRunHeading
                 : styles.wrongTestRunHeading,
         ),
-        [],
+        [ getIsCorrectAnswerResultType ],
+    );
+
+    const getIsOutputDiffAvailable = useCallback(
+        () => !isNil(testRun.expectedOutputFragment) && testRun.expectedOutputFragment !== '' &&
+            !isNil(testRun.userOutputFragment) && testRun.userOutputFragment !== '',
+        [ testRun.expectedOutputFragment, testRun.userOutputFragment ],
     );
 
     const getTestRunHeadingText = (run: ITestRunDetailsType, runIndex: number) => {
@@ -43,7 +53,7 @@ const TestRunDetails = ({ testRun, testRunIndex }: ITestRunDetailsProps) => {
 
     const renderTimeAndMemoryUsed = useCallback(() => (
         <span className={styles.testRunData}>
-            <p className={styles.testRunDataParagraph}>
+            <span className={styles.testRunDataParagraph}>
                 <TimeLimitIcon
                   size={IconSize.Small}
                 />
@@ -51,8 +61,8 @@ const TestRunDetails = ({ testRun, testRunIndex }: ITestRunDetailsProps) => {
                     {testRun.timeUsed}
                     s.
                 </span>
-            </p>
-            <p className={styles.testRunDataParagraph}>
+            </span>
+            <span className={styles.testRunDataParagraph}>
                 <MemoryIcon
                   size={IconSize.Small}
                 />
@@ -60,21 +70,19 @@ const TestRunDetails = ({ testRun, testRunIndex }: ITestRunDetailsProps) => {
                     {testRun.memoryUsed}
                     MB
                 </span>
-            </p>
+            </span>
         </span>
     ), [ testRun ]);
 
     const getHeader = useCallback(
         () => (
-            <>
-                <Heading
-                  type={HeadingType.small}
-                  className={(() => getTestRunHeadingClassName(testRun))()}
-                >
-                    { getTestRunHeadingText(testRun, testRunIndex) }
-                    {renderTimeAndMemoryUsed()}
-                </Heading>
-            </>
+            <Heading
+              type={HeadingType.small}
+              className={getTestRunHeadingClassName()}
+            >
+                { getTestRunHeadingText(testRun, testRunIndex) }
+                { renderTimeAndMemoryUsed() }
+            </Heading>
         ),
         [ getTestRunHeadingClassName, renderTimeAndMemoryUsed, testRun, testRunIndex ],
     );
@@ -89,12 +97,24 @@ const TestRunDetails = ({ testRun, testRunIndex }: ITestRunDetailsProps) => {
     const render = useCallback(() => (
         <div className={styles.testRun}>
             {
-                    user.permissions.canAccessAdministration
+                getIsOutputDiffAvailable()
+                    // See trial test diff if result is incorrect
+                    ? (testRun.isTrialTest && !getIsCorrectAnswerResultType()) ||
+                    // See any if result is incorrect and user is admin
+                      (!getIsCorrectAnswerResultType() && user.permissions.canAccessAdministration)
                         ? renderCollapsible(getHeader())
                         : getHeader()
-                }
+                    : getHeader()
+            }
         </div>
-    ), [ getHeader, renderCollapsible, user.permissions.canAccessAdministration ]);
+    ), [
+        getHeader,
+        getIsCorrectAnswerResultType,
+        getIsOutputDiffAvailable,
+        renderCollapsible,
+        testRun,
+        user.permissions.canAccessAdministration,
+    ]);
 
     return render();
 };

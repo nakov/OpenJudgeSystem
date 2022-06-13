@@ -49,7 +49,6 @@ const SubmissionBox = () => {
     const renderSubmissionTypesSelectors = useCallback(
         (submissionType: ISubmissionTypeType) => {
             const { id, name } = submissionType;
-            const { allowedSubmissionTypes } = currentProblem || {};
             const isSelected = allowedSubmissionTypes && allowedSubmissionTypes.length === 1
                 ? true
                 : submissionType.isSelectedByDefault;
@@ -63,7 +62,7 @@ const SubmissionBox = () => {
                 />
             );
         },
-        [ currentProblem, handleSelectExecutionType ],
+        [ allowedSubmissionTypes, handleSelectExecutionType ],
     );
 
     const renderSubmissionTypesSelectorsList = useCallback(
@@ -111,7 +110,7 @@ const SubmissionBox = () => {
                 <div className={styles.editorAndProblemControlsWrapper}>
                     <CodeEditor
                       readOnly={false}
-                      selectedSubmissionType={selectedSubmissionType}
+                      selectedSubmissionType={selectedSubmissionType!}
                       allowedSubmissionTypes={allowedSubmissionTypes}
                       code={submissionCode}
                       onCodeChange={onCodeChange}

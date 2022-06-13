@@ -1,4 +1,4 @@
-﻿import * as React from 'react';
+import * as React from 'react';
 import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { isNil } from 'lodash';
