@@ -19,19 +19,3 @@ body,
   display: flex;
   flex-direction: row;
 }
-
-.listItem {
-  text-align: start;
-  font-size: 18px;
-  font-family: 'Lato', serif;
-  margin-top: 10px;
-  color: $text-dark-gray-color;
-
-  &:hover {
-    cursor: pointer;
-  }
-
-  &.selected {
-    color: $color-btn-secondary;
-  }
-}
