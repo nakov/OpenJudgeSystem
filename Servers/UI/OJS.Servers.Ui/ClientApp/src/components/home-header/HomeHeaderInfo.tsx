@@ -2,20 +2,18 @@ import * as React from 'react';
 import styles from './HomeHeaderInfo.module.scss';
 import Heading, { HeadingType } from '../guidelines/headings/Heading';
 import List from '../guidelines/lists/List';
-import { Button } from '../guidelines/buttons/Button';
+import { LinkButton } from '../guidelines/buttons/Button';
 
 interface IHomeHeaderInfoProps {
     primaryText: string;
     secondaryText: string;
     bullets: string[];
-    onCtaClick?: () => void;
 }
 
 const HomeHeaderInfo = ({
     bullets,
     primaryText,
     secondaryText,
-    onCtaClick = () => {},
 }: IHomeHeaderInfoProps) => {
     const renderBullet = (text: string) => (
         <>
@@ -44,11 +42,11 @@ const HomeHeaderInfo = ({
               className={styles.headerBulletsWrapper}
               itemClassName={styles.headerBullet}
             />
-            <Button
+            <LinkButton
               id="button-see-contests"
               text="See Contests"
               className={styles.headerLeftButton}
-              onClick={() => onCtaClick()}
+              to="/contests"
             />
         </>
     );
