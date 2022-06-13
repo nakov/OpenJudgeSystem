@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { IHaveChildrenProps } from '../../common/Props';
 import concatClassNames from '../../../utils/class-names';
 import styles from './Collapsible.module.scss';
@@ -14,24 +14,18 @@ const Collapsible = ({
     containerClassName = '',
     children,
 }: ICollapsibleComponentProps) => {
-    const [ isCollapsed, setCollapsed ] = useState(collapsed);
-    const [
-        internalContainerClassName,
-        setInternalContainerClassName,
-    ] = useState<string>();
+    const [ internalCollapsed, setInternalCollapsed ] = useState(collapsed);
+
+    const internalContainerClassName = useMemo(() => concatClassNames(
+        containerClassName,
+        styles.collapsibleContainer,
+        internalCollapsed
+            ? styles.visible
+            : styles.hidden,
+    ), [ containerClassName, internalCollapsed ]);
 
     useEffect(() => {
-        setInternalContainerClassName(concatClassNames(
-            containerClassName,
-            styles.collapsibleContainer,
-            isCollapsed
-                ? styles.visible
-                : styles.hidden,
-        ));
-    }, [ containerClassName, isCollapsed ]);
-
-    useEffect(() => {
-        setCollapsed(collapsed);
+        setInternalCollapsed(collapsed);
     }, [ collapsed ]);
 
     return (
