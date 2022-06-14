@@ -8,18 +8,20 @@ interface IProblemType {
 
 interface ITestRunType {
     id: number;
-    maxUsedTime: number;
-    maxUsedMemory: number;
+    timeUsed: number;
+    memoryUsed: number;
     executionComment: string;
     checkerComment: string;
     resultType: string;
     expectedOutputFragment: string;
     userOutputFragment: string;
+    orderBy: number;
 }
 
 interface ISubmissionType {
     id: number;
     submittedOn: Date;
+    content: string;
     problem: IProblemType;
     submissionTypeName: string;
     points: number;
@@ -41,6 +43,7 @@ interface ISubmissionDetails {
     id: number;
     problemId: number;
     createdOn: Date;
+    content: string;
     points: number;
     maximumPoints: number;
     isProcessed: boolean;

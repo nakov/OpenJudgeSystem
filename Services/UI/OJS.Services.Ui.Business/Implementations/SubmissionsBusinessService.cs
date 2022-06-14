@@ -328,7 +328,8 @@ namespace OJS.Services.Ui.Business.Implementations
 
             newSubmission.Problem = problem;
 
-            var response = this.submissionsDistributorCommunicationService.AddSubmissionForProcessing(newSubmission).Result;
+            var response = await this.submissionsDistributorCommunicationService
+                .AddSubmissionForProcessing(newSubmission);
         }
 
         public async Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult)

@@ -23,12 +23,12 @@ const TestRun = ({
 }: IProblemSubmissionProps) => {
     const {
         resultType,
-        maxUsedTime,
-        maxUsedMemory,
+        timeUsed,
+        memoryUsed,
         isTrialTest,
     } = testRun;
 
-    const helperText = `Memory: ${maxUsedMemory}, Time: ${maxUsedTime}`;
+    const helperText = `Memory: ${memoryUsed}, Time: ${timeUsed}`;
 
     const IconComponent = resultType.toLowerCase() === 'correctanswer'
         ? TickIcon

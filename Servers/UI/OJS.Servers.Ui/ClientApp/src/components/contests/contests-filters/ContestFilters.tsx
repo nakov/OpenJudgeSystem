@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { isNil } from 'lodash';
+import { useSearchParams } from 'react-router-dom';
 import List, { Orientation } from '../../guidelines/lists/List';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 
@@ -12,22 +13,32 @@ import { useContests } from '../../../hooks/use-contests';
 import { groupByType } from '../../../common/filter-utils';
 import ExpandButton from '../../guidelines/buttons/ExpandButton';
 import concatClassNames from '../../../utils/class-names';
+import { useContestStrategyFilters } from '../../../hooks/use-contest-strategy-filters';
+import { useContestCategories } from '../../../hooks/use-contest-categories';
+
+interface IContestFiltersProps {
+    onFilterClick: (filter: IFilter) => void;
+}
 
 interface IFiltersGroup {
     type: FilterType;
     filters: IFilter[];
 }
 
-const ContestFilters = () => {
+const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const [ filtersGroups, setFiltersGroups ] = useState<IFiltersGroup[]>([]);
     const [ expanded, setExpanded ] = useState(false);
+    const [ defaultSelected, setDefaultSelected ] = useState('');
+    const [ searchParams ] = useSearchParams();
+    const [ isLoaded, setIsLoaded ] = useState(false);
+    const { actions: { load: loadStrategies } } = useContestStrategyFilters();
+    const { actions: { load: loadCategories } } = useContestCategories();
 
     const {
         state: {
             possibleFilters,
             filters,
         },
-        actions: { applyFilter },
     } = useContests();
 
     const handleFilterClick = useCallback(
@@ -37,14 +48,16 @@ const ContestFilters = () => {
                 return;
             }
 
-            applyFilter(filter);
+            onFilterClick(filter);
         },
-        [ applyFilter, possibleFilters ],
+        [ possibleFilters, onFilterClick ],
     );
 
     const renderFilterItem = useCallback(
         ({ id, name }: IFilter) => {
-            const filterIsSelected = filters.some((f) => f.id === id);
+            // TODO: investigate why filters change ids
+            //  and use id instead of name for checking if filter is selected
+            const filterIsSelected = filters.some((f) => f.name === name);
             const type = filterIsSelected
                 ? ButtonType.primary
                 : ButtonType.secondary;
@@ -120,9 +133,53 @@ const ContestFilters = () => {
         [ possibleFilters ],
     );
 
+    useEffect(
+        () => {
+            if (isLoaded) {
+                return;
+            }
+
+            const searchParamName = FilterType.Category.toString();
+            let selectedCategory = searchParams.get(searchParamName);
+            if (isNil(selectedCategory)) {
+                selectedCategory = searchParams.get(searchParamName.toLowerCase());
+            }
+
+            if (isNil(selectedCategory)) {
+                return;
+            }
+
+            setIsLoaded(true);
+            setDefaultSelected(selectedCategory.toString());
+        },
+        [ isLoaded, searchParams ],
+    );
+
+    useEffect(
+        () => {
+            (async () => {
+                await loadStrategies();
+            })();
+        },
+        [ loadStrategies ],
+    );
+
+    useEffect(
+        () => {
+            (async () => {
+                await loadCategories();
+            })();
+        },
+        [ loadCategories ],
+    );
+
     return (
         <div className={styles.container}>
-            <ContestCategories className={styles.filterTypeContainer} />
+            <ContestCategories
+              className={styles.filterTypeContainer}
+              onCategoryClick={onFilterClick}
+              defaultSelected={defaultSelected}
+            />
             <List
               values={filtersGroups}
               itemFunc={renderFilter}

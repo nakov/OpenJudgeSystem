@@ -14,6 +14,8 @@ namespace OJS.Servers.Ui.Models.Submissions.Details
 
         public int Points { get; set; }
 
+        public string? Content { get; set; }
+
         public IEnumerable<TestRunDetailsResponseModel> TestRuns { get; set; }
 
         public UserProfileResponseModel User { get; set; }

@@ -16,10 +16,6 @@ const HomeHeader = () => {
 
     const videoId = window.Keys.YOUTUBE_VIDEO_ID;
 
-    const handleCtaClick = () => {
-        alert('See contests!');
-    };
-
     return (
         <div className={styles.header}>
             <div className={styles.headerContent}>
@@ -29,7 +25,6 @@ const HomeHeader = () => {
                           primaryText={primaryHeadingText}
                           secondaryText={secondaryHeadingText}
                           bullets={bulletTexts}
-                          onCtaClick={() => handleCtaClick()}
                         />
                     </div>
                 </div>

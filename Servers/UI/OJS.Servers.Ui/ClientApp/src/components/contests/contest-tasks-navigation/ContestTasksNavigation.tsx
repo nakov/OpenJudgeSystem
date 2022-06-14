@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List, { ListType } from '../../guidelines/lists/List';
 import { Button, ButtonSize, ButtonType, LinkButton } from '../../guidelines/buttons/Button';
-import Label, { LabelType } from '../../guidelines/labels/Label';
 
 import concatClassNames from '../../../utils/class-names';
 import { IProblemType } from '../../../common/types';
@@ -11,6 +10,8 @@ import { ContestParticipationType, ContestResultType } from '../../../common/con
 
 import { useProblems } from '../../../hooks/use-problems';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
+
+import SubmissionResultPointsLabel from '../../submissions/submission-result-points-label/SubmissionResultPointsLabel';
 
 import styles from './ContestTasksNavigation.module.scss';
 
@@ -33,32 +34,6 @@ const ContestTasksNavigation = () => {
             isOfficial,
         },
     } = useCurrentContest();
-
-    const renderIcon = useCallback(
-        ({ points, maximumPoints }: IProblemType) => {
-            const type = points === 0
-                ? LabelType.warning
-                : points === 100
-                    ? LabelType.success
-                    : LabelType.info;
-
-            const currentPoints = points === 0
-                ? '?'
-                : points;
-
-            const text = `${currentPoints}/${maximumPoints}`;
-
-            return (
-                <Label
-                  className={styles.taskLabel}
-                  type={type}
-                >
-                    {text}
-                </Label>
-            );
-        },
-        [],
-    );
 
     const renderTask = useCallback(
         (problem: IProblemType) => {
@@ -83,11 +58,15 @@ const ContestTasksNavigation = () => {
                     >
                         {problem.name}
                     </Button>
-                    {renderIcon(problem)}
+                    <SubmissionResultPointsLabel
+                      points={problem.points}
+                      maximumPoints={problem.maximumPoints}
+                      isProcessed={false}
+                    />
                 </>
             );
         },
-        [ currentProblem, renderIcon, selectProblemById ],
+        [ currentProblem, selectProblemById ],
     );
     const sideBarTasksList = 'all-tasks-list';
     const sideBarTasksListClassName = concatClassNames(styles.tasksListSideNavigation, sideBarTasksList);

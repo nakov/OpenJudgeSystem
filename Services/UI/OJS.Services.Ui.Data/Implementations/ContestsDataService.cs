@@ -38,8 +38,8 @@ namespace OJS.Services.Ui.Data.Implementations
         public async Task<PagedResult<TServiceModel>> GetAllAsPageByFilters<TServiceModel>(
             ContestFiltersServiceModel model)
         {
-            var contests = model.CategoryId.HasValue
-                ? this.GetAllVisibleByCategoryQuery(model.CategoryId.Value)
+            var contests = model.CategoryIds.Any()
+                ? this.GetAllVisibleByCategories(model.CategoryIds)
                 : this.GetAllVisibleQuery();
 
             contests = this.FilterByStatus(contests, model.Statuses.ToList());
@@ -161,9 +161,9 @@ namespace OJS.Services.Ui.Data.Implementations
                     .Sum(pg => (int?)pg.Problems.First().MaximumPoints))
                 .FirstOrDefaultAsync() ?? default(int);
 
-        private IQueryable<Contest> GetAllVisibleByCategoryQuery(int categoryId)
+        private IQueryable<Contest> GetAllVisibleByCategories(IEnumerable<int> categoryIds)
             => this.GetAllVisibleQuery()
-                .Where(c => c.CategoryId == categoryId);
+                .Where(c => c.CategoryId.HasValue && categoryIds.Contains(c.CategoryId.Value));
 
         private IQueryable<Contest> GetAllCompetableQuery()
             => this.GetAllVisibleQuery()
