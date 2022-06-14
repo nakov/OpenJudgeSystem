@@ -75,7 +75,7 @@ const ContestsPage = () => {
 
         if (isEmpty(filterByType(filtersToApply, FilterType.Status))) {
             const defaultStatusFilters = filterByType(possibleFilters, FilterType.Status)
-                .filter((f) => f.name === ContestStatus.All);
+                .filter(({ name }) => name === ContestStatus.All);
             filtersToApply.push(...defaultStatusFilters);
         }
 

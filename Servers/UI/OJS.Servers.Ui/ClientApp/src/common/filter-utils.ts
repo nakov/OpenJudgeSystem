@@ -28,7 +28,7 @@ const groupByType = (filters: IFilter[]) => {
         }));
 };
 
-const filterByType = (filters: IFilter[], type: FilterType) => filters.filter((f) => f.type === type);
+const filterByType = (filters: IFilter[], filterType: FilterType) => filters.filter(({ type }) => filterType === type);
 
 export {
     generateFilterItems,
