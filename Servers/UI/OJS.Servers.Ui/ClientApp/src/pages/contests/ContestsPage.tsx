@@ -72,10 +72,10 @@ const ContestsPage = () => {
             }
         });
 
-        if (isEmpty(filtersToApply)) {
-            const defaultFilters = possibleFilters
+        if (isEmpty(filtersToApply.filter(({ type }) => type === FilterType.Status))) {
+            const defaultStatusFilters = possibleFilters
                 .filter(({ name, type }) => type === FilterType.Status && name === ContestStatus.All);
-            filtersToApply.push(...defaultFilters);
+            filtersToApply.push(...defaultStatusFilters);
         }
 
         applyFilters(filtersToApply);
