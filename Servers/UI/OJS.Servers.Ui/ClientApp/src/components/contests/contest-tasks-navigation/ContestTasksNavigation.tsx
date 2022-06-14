@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List, { ListType } from '../../guidelines/lists/List';
-import { Button, ButtonSize, ButtonType, LinkButton } from '../../guidelines/buttons/Button';
+import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 
 import concatClassNames from '../../../utils/class-names';
 import { IProblemType } from '../../../common/types';
@@ -95,7 +95,12 @@ const ContestTasksNavigation = () => {
         <div className={styles.tasksSideNavigation}>
             <Heading type={HeadingType.secondary}>Tasks</Heading>
             {renderTasksList()}
-            <LinkButton size={ButtonSize.none} to={resultsLink} text="Results" />
+            <LinkButton
+              size={ButtonSize.none}
+              type={LinkButtonType.plain}
+              to={resultsLink}
+              text="Results"
+            />
         </div>
     );
 };
