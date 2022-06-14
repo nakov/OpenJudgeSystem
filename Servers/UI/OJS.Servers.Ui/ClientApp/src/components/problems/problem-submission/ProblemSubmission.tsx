@@ -93,22 +93,37 @@ const ProblemSubmission = ({ submission }: ISubmissionResultProps) => {
         submissionDetailsContainerVisibilityClassName,
     );
 
+    const labelClass = 'label';
+    const labelClassName = concatClassNames(
+        styles.labelContainer,
+        labelClass,
+    );
+
+    const showSubmissionDetailsButtonClassName = 'submissiondetailsButton';
+    const currentSubmissionTypeClass = 'currentSubmissionType';
+    const currentSubmissionTypeClassName = concatClassNames(
+        styles.spacing,
+        currentSubmissionTypeClass,
+    );
+    const submissionCreatedOnClassName = 'submissionCreatedOn';
+    const submissionResultClassName = 'submissionResult';
+
     const submissionDetailsLink = useMemo(() => `/submissions/${id}/details`, [ id ]);
 
     return (
         <div>
             <div className={styles.container}>
-                <div className={styles.labelContainer}>
+                <div className={labelClassName}>
                     {renderLabel()}
                 </div>
                 <div>
-                    <Text type={TextType.Bold}>
+                    <Text type={TextType.Bold} className={submissionResultClassName}>
                         {result}
                     </Text>
                     <Text className={styles.spacing}>
                         with
                     </Text>
-                    <Text type={TextType.Underlined} className={styles.spacing}>
+                    <Text type={TextType.Underlined} className={currentSubmissionTypeClassName}>
                         {renderSubmissionType()}
                     </Text>
                     <Text className={styles.spacing}>
@@ -117,12 +132,13 @@ const ProblemSubmission = ({ submission }: ISubmissionResultProps) => {
                         run
                         {' '}
                     </Text>
-                    <Text type={TextType.Bold}>
+                    <Text className={submissionCreatedOnClassName} type={TextType.Bold}>
                         {formatTime(createdOn)}
                     </Text>
                 </div>
                 <div>
                     <Button
+                      className={showSubmissionDetailsButtonClassName}
                       type={ButtonType.plain}
                       onClick={() => showDetails()}
                     >

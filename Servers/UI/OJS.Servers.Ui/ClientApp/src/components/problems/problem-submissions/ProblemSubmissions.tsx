@@ -31,8 +31,14 @@ const ProblemSubmissions = () => {
     const renderSubmission = (submission: ISubmissionDetails) => (
         <ProblemSubmission submission={submission} />
     );
+
     const refreshButtonClass = 'refreshButton';
     const refreshButtonClassName = concatClassNames(styles.refreshBtn, refreshButtonClass);
+    const submissionResultsListItemClass = 'submission results';
+    const submissionResultsListItemClassName = concatClassNames(styles.submissionItem, submissionResultsListItemClass);
+    const submissionResultsContentClass = 'submissionResultsContent';
+    const submissionResultsContentClassName = concatClassNames(styles.submissionResultsContent, submissionResultsContentClass);
+
     const renderSubmissions = () => {
         if (!submissions || submissions.length === 0) {
             return (
@@ -43,14 +49,14 @@ const ProblemSubmissions = () => {
             <List
               values={submissions}
               itemFunc={renderSubmission}
-              itemClassName={styles.submissionItem}
+              itemClassName={submissionResultsListItemClassName}
               fullWidth
             />
         );
     };
 
     return (
-        <div className={styles.submissionResultsContent}>
+        <div className={submissionResultsContentClassName}>
             {renderSubmissions()}
             <Button
               type={ButtonType.secondary}

@@ -41,8 +41,9 @@ describe('Testing AuthPage', () => {
         await AuthPage.open();
         await loginInWithValidCredentials();
 
-        const myTestsBtn = await AuthPage.authLoginButton;
+        const myTestsBtn = await AuthPage.myProfileButton;
         await expect(myTestsBtn).toExist();
+        await expect(myTestsBtn).toHaveText('MY PROFILE');
     });
 
     it('Expect logOut button to exist', async () => {

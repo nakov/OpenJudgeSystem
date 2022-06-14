@@ -9,6 +9,7 @@ export default class Page {
 
     public open(subPath: string = ''): Promise<string> {
         const path = `${this.baseUrl}/${subPath}`;
+        browser.setTimeout({ implicit: 5000 });
         return browser.url(path);
     }
 }

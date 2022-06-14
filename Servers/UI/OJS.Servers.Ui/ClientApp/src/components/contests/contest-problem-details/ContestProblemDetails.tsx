@@ -11,11 +11,13 @@ const ContestProblemDetails = () => {
     const { state: { currentProblem } } = useProblems();
     const contestTabControlsClass = 'contestTabControls';
     const contestTabControlsClassName = concatClassNames(styles.contestTabControls, contestTabControlsClass);
+    const contestTabsClassName = 'contestTabs';
 
     return (
         <div className={contestTabControlsClassName}>
             <Tabs
               tabLabels={[ 'Problem', 'Submissions' ]}
+              tabChildrenClassName={contestTabsClassName}
               tabChildren={[
                   <ProblemResources resources={currentProblem?.resources} />,
                   <ProblemSubmissions />,
