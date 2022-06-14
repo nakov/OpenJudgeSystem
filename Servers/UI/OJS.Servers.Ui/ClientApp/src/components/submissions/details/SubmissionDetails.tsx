@@ -114,7 +114,7 @@ const SubmissionDetails = () => {
             </div>
             <div className={styles.submissionDetails}>
                 <Heading type={HeadingType.secondary}>{detailsHeadingText}</Heading>
-                <SubmissionResults />
+                <SubmissionResults testRuns={currentSubmission.testRuns} />
             </div>
         </div>
     );
