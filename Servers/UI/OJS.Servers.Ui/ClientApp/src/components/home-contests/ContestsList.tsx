@@ -7,18 +7,18 @@ import { IIndexContestsType } from '../../common/types';
 
 import styles from './ContestsList.module.scss';
 import concatClassNames from '../../utils/class-names';
-import { ContestState } from '../../common/contest-types';
+import { ContestStatus } from '../../common/contest-types';
 
 interface IContestsListProps {
     title: string;
     contests: IIndexContestsType[];
-    contestState?: ContestState;
+    contestState?: ContestStatus;
 }
 
 const ContestsList = ({
     title,
     contests,
-    contestState = ContestState.Active,
+    contestState = ContestStatus.Active,
 }: IContestsListProps) => {
     const renderContest = useCallback(
         (contest: IIndexContestsType) => (

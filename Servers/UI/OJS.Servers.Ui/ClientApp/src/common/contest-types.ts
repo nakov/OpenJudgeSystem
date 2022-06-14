@@ -28,7 +28,8 @@ enum ContestType {
     Compete = 1,
 }
 
-enum ContestState {
+enum ContestStatus {
+    All = 'all',
     Active = 'active',
     Past = 'past',
 }
@@ -41,6 +42,6 @@ export type {
 
 export {
     ContestType,
-    ContestState,
+    ContestStatus,
     FilterType,
 };
