@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { isNil } from 'lodash';
-import moment from 'moment/moment';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List, { ListType, Orientation } from '../../guidelines/lists/List';
@@ -91,36 +90,32 @@ const SubmissionDetails = () => {
             [ currentProblemSubmissionResults, renderSubmissionListItem ],
         );
 
+    if (isNil(currentSubmission)) {
+        return <div>No details fetched.</div>;
+    }
+
     return (
-        <div>
-            {
-                isNil(currentSubmission)
-                    ? <>No details fetched.</>
-                    : (
-                        <div className={styles.detailsWrapper}>
-                            <div className={styles.submissionsNavigation}>
-                                <Heading type={HeadingType.secondary}>Submissions</Heading>
-                                {renderSubmissionsForProblem()}
-                            </div>
-                            <div className={styles.code}>
-                                <Heading
-                                  type={HeadingType.secondary}
-                                  className={styles.taskHeading}
-                                >
-                                    {problemNameHeadingText}
-                                </Heading>
-                                <CodeEditor
-                                  readOnly
-                                  code={currentSubmission?.content}
-                                />
-                            </div>
-                            <div className={styles.submissionDetails}>
-                                <Heading type={HeadingType.secondary}>{detailsHeadingText}</Heading>
-                                <SubmissionResults />
-                            </div>
-                        </div>
-                    )
-            }
+        <div className={styles.detailsWrapper}>
+            <div className={styles.submissionsNavigation}>
+                <Heading type={HeadingType.secondary}>Submissions</Heading>
+                {renderSubmissionsForProblem()}
+            </div>
+            <div className={styles.code}>
+                <Heading
+                  type={HeadingType.secondary}
+                  className={styles.taskHeading}
+                >
+                    {problemNameHeadingText}
+                </Heading>
+                <CodeEditor
+                  readOnly
+                  code={currentSubmission?.content}
+                />
+            </div>
+            <div className={styles.submissionDetails}>
+                <Heading type={HeadingType.secondary}>{detailsHeadingText}</Heading>
+                <SubmissionResults />
+            </div>
         </div>
     );
 };
