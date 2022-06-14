@@ -25,7 +25,6 @@ interface ISubmissionsDetailsProviderProps extends IHaveChildrenProps {}
 
 const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
-    // const { state: { isOfficial: isContestParticipationOfficial } } = useCurrentContest();
     const [ currentSubmissionId, setCurrentSubmissionId ] = useState<number>();
     const [ currentSubmission, setCurrentSubmission ] = useState<ISubmissionDetailsType | null>(null);
     const [ currentProblemSubmissionResults, setCurrentProblemSubmissionResults ] =
