@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { isNil } from 'lodash';
+import moment from 'moment/moment';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List, { ListType, Orientation } from '../../guidelines/lists/List';
@@ -11,8 +12,8 @@ import concatClassNames from '../../../utils/class-names';
 import SubmissionResultPointsLabel from '../submission-result-points-label/SubmissionResultPointsLabel';
 import CodeEditor from '../../code-editor/CodeEditor';
 import SubmissionResults from '../submission-results/SubmissionResults';
+import { formatDateAsMomentToString } from '../../../utils/dates';
 import styles from './SubmissionDetails.module.scss';
-import { formatDate } from '../../../utils/dates';
 
 const SubmissionDetails = () => {
     const {
@@ -69,7 +70,7 @@ const SubmissionDetails = () => {
                   maximumPoints={submissionDetails.maximumPoints}
                   isProcessed={submissionDetails.isProcessed}
                 />
-                <p className={styles.submissionCreatedOnParagraph}>{formatDate(new Date(submissionDetails.createdOn))}</p>
+                <p className={styles.submissionCreatedOnParagraph}>{formatDateAsMomentToString(submissionDetails.createdOn)}</p>
             </>
         );
     }, [ currentSubmission, handleOnSubmissionListItemClick ]);
