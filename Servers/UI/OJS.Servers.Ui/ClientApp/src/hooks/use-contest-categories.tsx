@@ -9,9 +9,10 @@ import { useLoading } from './use-loading';
 interface IContestCategoriesContext {
     state: {
         categories: IContestCategoryTreeType[];
+        isLoaded: boolean,
     };
     actions: {
-        reload: () => Promise<void>;
+        load: () => Promise<void>;
     };
 }
 
@@ -30,24 +31,16 @@ const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps
     const {
         get,
         data,
+        isSuccess,
     } = useHttp(getCategoriesTreeUrl);
 
-    const reload = useCallback(
+    const load = useCallback(
         async () => {
             startLoading();
             await get();
             stopLoading();
         },
         [ get, startLoading, stopLoading ],
-    );
-
-    useEffect(
-        () => {
-            (async () => {
-                await reload();
-            })();
-        },
-        [ reload ],
     );
 
     useEffect(
@@ -62,8 +55,11 @@ const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps
     );
 
     const value = {
-        state: { categories },
-        actions: { reload },
+        state: {
+            categories,
+            isLoaded: isSuccess,
+        },
+        actions: { load },
     };
 
     return (

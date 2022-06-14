@@ -19,13 +19,11 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
         this.contestCategoriesBusiness = contestCategoriesBusiness;
     }
 
-    public async Task<IEnumerable<ContestCategoryListViewModel>> GetContestSubCategoriesList(
-        int? categoryId,
+    public async Task<IEnumerable<ContestCategoryTreeViewModel>> GetContestSubCategoriesList(
+        int categoryId,
         int? cacheSeconds)
     {
-        var cacheId = categoryId.HasValue
-            ? string.Format(CacheConstants.ContestSubCategoriesFormat, categoryId.Value)
-            : CacheConstants.ContestCategoriesTree;
+        var cacheId = string.Format(CacheConstants.ContestSubCategoriesFormat, categoryId);
 
         return await this.cache.Get(
             cacheId,
