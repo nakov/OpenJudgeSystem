@@ -34,7 +34,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         [ testRun ],
     );
 
-    const getIsOutputDiffAvailable = useCallback(
+    const isOutputDiffAvailable = useMemo(
         () => !isNil(testRun.expectedOutputFragment) && testRun.expectedOutputFragment !== '' &&
             !isNil(testRun.userOutputFragment) && testRun.userOutputFragment !== '',
         [ testRun.expectedOutputFragment, testRun.userOutputFragment ],
@@ -112,7 +112,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
     ), [ renderHeader, handleOnClickToggleCollapsible, isCollapsed, testRun ]);
 
     const render = useCallback(() => {
-        if (!getIsOutputDiffAvailable()) {
+        if (!isOutputDiffAvailable) {
             return renderHeader();
         }
 
@@ -124,7 +124,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         return renderHeader();
     }, [
         renderHeader,
-        getIsOutputDiffAvailable,
+        isOutputDiffAvailable,
         renderCollapsible,
         testRun,
         user.permissions.canAccessAdministration,
