@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { isNil } from 'lodash';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import { ITestRunDetailsType } from '../../../hooks/submissions/types';
@@ -8,9 +8,9 @@ import { useAuth } from '../../../hooks/use-auth';
 import concatClassNames from '../../../utils/class-names';
 import TimeLimitIcon from '../../guidelines/icons/TimeLimitIcon';
 import MemoryIcon from '../../guidelines/icons/MemoryIcon';
-import { Button, ButtonType } from '../../guidelines/buttons/Button';
 import Collapsible from '../../guidelines/collapsible/Collapsible';
 import TestRunDiffView from '../test-run-diff-view/TestRunDiffView';
+import ExpandButton from '../../guidelines/buttons/ExpandButton';
 import styles from './TestRunDetails.module.scss';
 
 interface ITestRunDetailsProps {
@@ -23,13 +23,6 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
     const { user } = useAuth();
     const initialIsCollapsed = testRun.isTrialTest && getResultIsWrongAnswerResultType(testRun);
     const [ isCollapsed, setIsCollapsed ] = useState<boolean>(initialIsCollapsed);
-
-    const collapsibleButtonText = useMemo(
-        () => (isCollapsed
-            ? 'Hide'
-            : 'Details'),
-        [ isCollapsed ],
-    );
 
     const getTestRunHeadingClassName = useCallback(
         () => concatClassNames(
@@ -97,32 +90,26 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         ],
     );
 
-    const handleOnClickToggleCollapsible = useCallback(() => {
-        setIsCollapsed(!isCollapsed);
-    }, [ isCollapsed ]);
+    const handleOnClickToggleCollapsible = useCallback((collapsed) => {
+        setIsCollapsed(collapsed);
+    }, []);
 
     const renderCollapsible = useCallback(() => (
         <>
             <span className={styles.collapsibleHeader}>
                 {renderHeader()}
-                <Button
-                  type={ButtonType.plain}
-                  onClick={handleOnClickToggleCollapsible}
-                  className={styles.collapsibleButton}
-                  text={collapsibleButtonText}
+                <ExpandButton
+                  collapsedText="Details"
+                  expandedText="Hide"
+                  expanded={isCollapsed}
+                  onExpandChanged={handleOnClickToggleCollapsible}
                 />
             </span>
             <Collapsible collapsed={isCollapsed}>
                 <TestRunDiffView testRun={testRun} />
             </Collapsible>
         </>
-    ), [
-        renderHeader,
-        handleOnClickToggleCollapsible,
-        collapsibleButtonText,
-        isCollapsed,
-        testRun,
-    ]);
+    ), [ renderHeader, handleOnClickToggleCollapsible, isCollapsed, testRun ]);
 
     const render = useCallback(() => {
         if (!getIsOutputDiffAvailable()) {
