@@ -15,6 +15,7 @@ interface ITestRunType {
     resultType: string;
     expectedOutputFragment: string;
     userOutputFragment: string;
+    orderBy: number;
 }
 
 interface ISubmissionType {

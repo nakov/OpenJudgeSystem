@@ -3,21 +3,14 @@ import { useCallback } from 'react';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import { ITestRunDetailsType } from '../../../hooks/submissions/types';
 import TestRunDetails from '../test-run-details/TestRunDetails';
+import List, { ListType, Orientation } from '../../guidelines/lists/List';
 
 const SubmissionResults = () => {
     const { currentSubmission } = useSubmissionsDetails();
 
-    const renderTestRunsDetails = useCallback((testRuns: ITestRunDetailsType[]) => testRuns.map((run, index) => (
-        <TestRunDetails
-          testRun={run}
-          testRunIndex={index + 1}
-        />
-    )), []);
-
-    const filterRuns = useCallback(
-        (trial: boolean) => currentSubmission!.testRuns.filter((tr) => tr.isTrialTest === trial),
-        [ currentSubmission ],
-    );
+    const renderTestRunsDetails = useCallback((run: ITestRunDetailsType) => (
+        <TestRunDetails testRun={run} />
+    ), []);
 
     const renderTestRuns = useCallback(
         () => {
@@ -26,13 +19,16 @@ const SubmissionResults = () => {
             }
 
             return (
-                <>
-                    {renderTestRunsDetails(filterRuns(true))}
-                    {renderTestRunsDetails(filterRuns(false))}
-                </>
+                <List
+                  values={currentSubmission.testRuns}
+                  orientation={Orientation.vertical}
+                  itemFunc={renderTestRunsDetails}
+                  type={ListType.normal}
+                  fullWidth
+                />
             );
         },
-        [ currentSubmission, filterRuns, renderTestRunsDetails ],
+        [ currentSubmission, renderTestRunsDetails ],
     );
 
     return (

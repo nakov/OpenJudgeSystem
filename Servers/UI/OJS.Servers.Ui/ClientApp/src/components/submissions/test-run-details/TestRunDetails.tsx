@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { isNil } from 'lodash';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import { ITestRunDetailsType } from '../../../hooks/submissions/types';
@@ -15,12 +15,11 @@ import styles from './TestRunDetails.module.scss';
 
 interface ITestRunDetailsProps {
     testRun: ITestRunDetailsType;
-    testRunIndex: number;
 }
 
 const getResultIsWrongAnswerResultType = (run: ITestRunDetailsType) => run.resultType.toLowerCase() !== 'correctanswer';
 
-const TestRunDetails = ({ testRun, testRunIndex }: ITestRunDetailsProps) => {
+const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
     const { user } = useAuth();
     const initialIsCollapsed = testRun.isTrialTest && getResultIsWrongAnswerResultType(testRun);
     const [ isCollapsed, setIsCollapsed ] = useState<boolean>(initialIsCollapsed);
@@ -48,15 +47,15 @@ const TestRunDetails = ({ testRun, testRunIndex }: ITestRunDetailsProps) => {
         [ testRun.expectedOutputFragment, testRun.userOutputFragment ],
     );
 
-    const getTestRunHeadingText = useCallback((run: ITestRunDetailsType, runIndex: number) => {
-        const testRunText = `Test #${runIndex}`;
+    const getTestRunHeadingText = useCallback(() => {
+        const testRunText = `Test #${testRun.orderBy + 1}`;
 
-        if (run.isTrialTest) {
+        if (testRun.isTrialTest) {
             return `Zero ${testRunText}`;
         }
 
         return testRunText;
-    }, []);
+    }, [ testRun ]);
 
     const renderTimeAndMemoryUsed = useCallback(() => (
         <span className={styles.testRunData}>
@@ -87,7 +86,7 @@ const TestRunDetails = ({ testRun, testRunIndex }: ITestRunDetailsProps) => {
               type={HeadingType.small}
               className={getTestRunHeadingClassName()}
             >
-                { getTestRunHeadingText(testRun, testRunIndex) }
+                { getTestRunHeadingText() }
                 { renderTimeAndMemoryUsed() }
             </Heading>
         ),
@@ -95,8 +94,6 @@ const TestRunDetails = ({ testRun, testRunIndex }: ITestRunDetailsProps) => {
             getTestRunHeadingClassName,
             getTestRunHeadingText,
             renderTimeAndMemoryUsed,
-            testRun,
-            testRunIndex,
         ],
     );
 
@@ -145,10 +142,6 @@ const TestRunDetails = ({ testRun, testRunIndex }: ITestRunDetailsProps) => {
         testRun,
         user.permissions.canAccessAdministration,
     ]);
-
-    useEffect(() => {
-        console.log(testRun);
-    }, [ testRun ]);
 
     return (
         <div className={styles.testRun}>
