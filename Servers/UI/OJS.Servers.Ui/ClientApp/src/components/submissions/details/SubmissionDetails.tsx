@@ -39,7 +39,7 @@ const SubmissionDetails = () => {
         })();
     }, [ currentSubmission, getSubmissionResults ]);
 
-    const handleOnSubmissionListItemClick = useCallback((submissionId: number) => {
+    const handleSubmissionClick = useCallback((submissionId: number) => {
         setCurrentSubmissionId(submissionId);
         navigate(`/submissions/${submissionId}/details`);
     }, [ navigate, setCurrentSubmissionId ]);
@@ -59,7 +59,7 @@ const SubmissionDetails = () => {
                   type={ButtonType.plain}
                   className={className}
                   onClick={() => {
-                      handleOnSubmissionListItemClick(submissionDetails.id);
+                      handleSubmissionClick(submissionDetails.id);
                   }}
                 >
                     {submissionDetails.submissionType}
@@ -72,7 +72,7 @@ const SubmissionDetails = () => {
                 <p className={styles.submissionCreatedOnParagraph}>{formatDateAsMomentToString(submissionDetails.createdOn)}</p>
             </>
         );
-    }, [ currentSubmission, handleOnSubmissionListItemClick ]);
+    }, [ currentSubmission, handleSubmissionClick ]);
 
     const renderSubmissionsForProblem =
         useCallback(
