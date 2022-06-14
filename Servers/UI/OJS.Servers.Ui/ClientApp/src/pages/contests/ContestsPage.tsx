@@ -10,7 +10,7 @@ import ContestCard from '../../components/home-contests/contest-card/ContestCard
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
 import { ContestStatus, FilterType, IFilter } from '../../common/contest-types';
-import { isStatusFilter } from '../../common/filter-utils';
+import { filterByType } from '../../common/filter-utils';
 
 const ContestsPage = () => {
     const {
@@ -73,9 +73,9 @@ const ContestsPage = () => {
             }
         });
 
-        if (isEmpty(filtersToApply.filter((f) => isStatusFilter(f)))) {
-            const defaultStatusFilters = possibleFilters
-                .filter((f) => isStatusFilter(f) && f.name === ContestStatus.All);
+        if (isEmpty(filterByType(filtersToApply, FilterType.Status))) {
+            const defaultStatusFilters = filterByType(possibleFilters, FilterType.Status)
+                .filter((f) => f.name === ContestStatus.All);
             filtersToApply.push(...defaultStatusFilters);
         }
 

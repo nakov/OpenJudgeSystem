@@ -28,10 +28,10 @@ const groupByType = (filters: IFilter[]) => {
         }));
 };
 
-const isStatusFilter = ({ type }: IFilter) => type === FilterType.Status;
+const filterByType = (filters: IFilter[], type: FilterType) => filters.filter((f) => f.type === type);
 
 export {
     generateFilterItems,
     groupByType,
-    isStatusFilter,
+    filterByType,
 };
