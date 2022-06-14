@@ -10,6 +10,7 @@ import ContestPage from '../../pages/contest/ContestPage';
 import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';
 import ContestsPage from '../../pages/contests/ContestsPage';
 import styles from './PageContent.module.scss';
+import SubmissionDetailsPage from '../../pages/submission-details/SubmissionDetailsPage';
 
 const routes = [
     {
@@ -35,6 +36,10 @@ const routes = [
     {
         path: '/submissions/:submissionId',
         Element: SubmissionPage,
+    },
+    {
+        path: '/submissions/:submissionId/details',
+        Element: SubmissionDetailsPage,
     },
     {
         path: '/contests',

@@ -1,7 +1,7 @@
 ﻿using OJS.Services.Ui.Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
-namespace OJS.Servers.Ui.Models.Submissions.Profile
+namespace OJS.Servers.Ui.Models.Submissions.Details
 {
     public class TestRunDetailsResponseModel : IMapFrom<TestRunDetailsServiceModel>
     {
@@ -24,5 +24,7 @@ namespace OJS.Servers.Ui.Models.Submissions.Profile
         public string? UserOutputFragment { get; set; }
 
         public bool IsTrialTest { get; set; }
+
+        public double OrderBy { get; set; }
     }
 }

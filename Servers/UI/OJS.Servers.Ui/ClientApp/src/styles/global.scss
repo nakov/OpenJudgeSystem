@@ -1,12 +1,21 @@
 @import 'src/styles/__resets';
+@import 'src/styles/colors';
 
 body,
 #root {
-  font-family: 'Montserrat-Medium',sans-serif;
+  font-family: 'Montserrat-Medium', sans-serif;
   margin: 0;
-  padding:0;
+  padding: 0;
   display: flex;
   min-height: 100vh;
   flex-direction: column;
 }
 
+.wrapper {
+  min-height: 700px;
+  width: 100%;
+  margin: 0 auto;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: row;
+}

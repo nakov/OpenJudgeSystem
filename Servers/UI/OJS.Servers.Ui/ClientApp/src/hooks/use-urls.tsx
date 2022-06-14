@@ -1,7 +1,7 @@
 import React, { createContext, useContext } from 'react';
 import {
     IAllContestsUrlParams,
-    IDownloadProblemResourceUrlParams, IGetCurrentSubmissionDetailsUrlParams, IGetSubmissionResultsByProblemUrlParams,
+    IDownloadProblemResourceUrlParams, IGetSubmissionDetailsByIdUrlParams, IGetSubmissionResultsByProblemUrlParams,
     IStartContestParticipationUrlParams,
 } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
@@ -18,7 +18,7 @@ interface IUrlsContext {
     getStartContestParticipationUrl: (params: IStartContestParticipationUrlParams) => string;
     getSubmissionResultsByProblemUrl: (params: IGetSubmissionResultsByProblemUrlParams) => string;
     getSubmissionsDetailsUrl: () => string;
-    getSubmissionDetailsByIdUrl: (params: IGetCurrentSubmissionDetailsUrlParams) => string;
+    getSubmissionDetailsByIdUrl: (params: IGetSubmissionDetailsByIdUrlParams) => string;
     getSubmitUrl: () => string;
     getDownloadProblemResourceUrl: (params: IDownloadProblemResourceUrlParams) => string;
     getCategoriesTreeUrl: () => string;
@@ -73,7 +73,7 @@ const getSubmissionResultsByProblemUrl = ({
     ${baseUrl}/Submissions/GetSubmissionResultsByProblem/${id}?isOfficial=${isOfficial}&take=${take}`;
 const getSubmissionsDetailsUrl = () => `${baseUrl}/Submissions/Details`;
 const getSubmissionDetailsByIdUrl =
-    ({ submissionId }: IGetCurrentSubmissionDetailsUrlParams) => `${getSubmissionsDetailsUrl}/${submissionId}`;
+    ({ submissionId }: IGetSubmissionDetailsByIdUrlParams) => `${getSubmissionsDetailsUrl()}/${submissionId}`;
 const getSubmitUrl = () => `${baseUrl}/Compete/Submit`;
 
 // Submission types
