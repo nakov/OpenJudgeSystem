@@ -40,8 +40,8 @@ const SubmissionDetails = () => {
     }, [ currentSubmission, getSubmissionResults ]);
 
     const handleOnSubmissionListItemOnClick = useCallback((submissionId: number) => {
-        navigate(`/submissions/${submissionId}/details`);
         setCurrentSubmissionId(submissionId);
+        navigate(`/submissions/${submissionId}/details`);
     }, [ navigate, setCurrentSubmissionId ]);
 
     const renderSubmissionListItem = useCallback((submissionDetails: ISubmissionDetails) => {
