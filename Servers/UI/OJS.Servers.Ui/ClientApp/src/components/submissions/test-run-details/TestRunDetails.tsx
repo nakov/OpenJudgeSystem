@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { isNil } from 'lodash';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import { ITestRunDetailsType } from '../../../hooks/submissions/types';
@@ -24,7 +24,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
     const initialIsCollapsed = testRun.isTrialTest && getResultIsWrongAnswerResultType(testRun);
     const [ isCollapsed, setIsCollapsed ] = useState<boolean>(initialIsCollapsed);
 
-    const getTestRunHeadingClassName = useCallback(
+    const testRunHeadingClassName = useMemo(
         () => concatClassNames(
             styles.testRunHeading,
             getResultIsWrongAnswerResultType(testRun)
@@ -77,14 +77,14 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         () => (
             <Heading
               type={HeadingType.small}
-              className={getTestRunHeadingClassName()}
+              className={testRunHeadingClassName}
             >
                 { getTestRunHeadingText() }
                 { renderTimeAndMemoryUsed() }
             </Heading>
         ),
         [
-            getTestRunHeadingClassName,
+            testRunHeadingClassName,
             getTestRunHeadingText,
             renderTimeAndMemoryUsed,
         ],
