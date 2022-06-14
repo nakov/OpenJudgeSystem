@@ -33,7 +33,7 @@ interface ICodeEditorProps {
 }
 
 const CodeEditor = ({
-    readOnly,
+    readOnly = false,
     code,
     selectedSubmissionType,
     allowedSubmissionTypes,
