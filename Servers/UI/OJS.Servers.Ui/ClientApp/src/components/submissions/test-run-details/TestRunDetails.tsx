@@ -113,7 +113,8 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
 
     const render = useCallback(() => {
         if (getResultIsWrongAnswerResultType(testRun) &&
-            (user.permissions.canAccessAdministration || testRun.isTrialTest) && isOutputDiffAvailable) {
+            (user.permissions.canAccessAdministration || testRun.isTrialTest) &&
+            isOutputDiffAvailable) {
             return renderCollapsible();
         }
 
