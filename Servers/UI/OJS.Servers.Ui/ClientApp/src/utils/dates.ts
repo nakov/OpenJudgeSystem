@@ -1,5 +1,4 @@
 import { format, intervalToDuration } from 'date-fns';
-import moment from 'moment/moment';
 
 const defaultDateTimeFormat = 'HH:MM, dd/MMM/yyyy';
 
@@ -9,8 +8,6 @@ const calculateTimeUntil = (date: Date) => intervalToDuration({
 });
 
 const formatDate = (date: Date, formatString = defaultDateTimeFormat) => format(date, formatString);
-
-const formatDateAsMomentToString = (date: Date, formatString = defaultDateTimeFormat) => moment(date).format(formatString);
 
 const convertToSecondsRemaining = (date: Date) => {
     const { days, hours, minutes, seconds } = intervalToDuration({
@@ -72,7 +69,6 @@ const convertToTwoDigitValues = ({
 
 export default {
     formatDate,
-    formatDateAsMomentToString,
     secondsToFullTime,
     calculateTimeUntil,
     convertToSecondsRemaining,
@@ -81,7 +77,6 @@ export default {
 
 export {
     formatDate,
-    formatDateAsMomentToString,
     secondsToFullTime,
     calculateTimeUntil,
     convertToSecondsRemaining,

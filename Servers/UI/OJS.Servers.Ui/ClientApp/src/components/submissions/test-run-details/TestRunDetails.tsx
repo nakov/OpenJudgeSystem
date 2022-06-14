@@ -40,7 +40,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         [ testRun.expectedOutputFragment, testRun.userOutputFragment ],
     );
 
-    const getTestRunHeadingText = useCallback(() => {
+    const testRunHeadingText = useMemo(() => {
         const testRunText = `Test #${testRun.orderBy + 1}`;
 
         if (testRun.isTrialTest) {
@@ -79,13 +79,13 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
               type={HeadingType.small}
               className={testRunHeadingClassName}
             >
-                { getTestRunHeadingText() }
+                { testRunHeadingText }
                 { renderTimeAndMemoryUsed() }
             </Heading>
         ),
         [
             testRunHeadingClassName,
-            getTestRunHeadingText,
+            testRunHeadingText,
             renderTimeAndMemoryUsed,
         ],
     );
