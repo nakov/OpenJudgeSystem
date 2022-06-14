@@ -13,9 +13,11 @@ const SubmissionResults = ({ testRuns } : ISubmissionResultsProps) => {
         <TestRunDetails testRun={run} />
     ), []);
 
+    const compareByOrderByAsc = (tr1: ITestRunDetailsType, tr2: ITestRunDetailsType) => tr1.orderBy - tr2.orderBy;
+
     return (
         <List
-          values={testRuns}
+          values={testRuns.sort(compareByOrderByAsc)}
           orientation={Orientation.vertical}
           itemFunc={renderTestRunsDetails}
           type={ListType.normal}
