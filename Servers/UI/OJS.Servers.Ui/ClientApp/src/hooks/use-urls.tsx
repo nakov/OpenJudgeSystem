@@ -1,7 +1,10 @@
 import React, { createContext, useContext } from 'react';
 import {
     IAllContestsUrlParams,
-    IDownloadProblemResourceUrlParams, IGetSubmissionDetailsByIdUrlParams, IGetSubmissionResultsByProblemUrlParams,
+    IDownloadProblemResourceUrlParams,
+    IGetContestResultsParams,
+    IGetSubmissionDetailsByIdUrlParams,
+    IGetSubmissionResultsByProblemUrlParams,
     IStartContestParticipationUrlParams,
 } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
@@ -23,6 +26,7 @@ interface IUrlsContext {
     getDownloadProblemResourceUrl: (params: IDownloadProblemResourceUrlParams) => string;
     getCategoriesTreeUrl: () => string;
     getAllContestStrategyFiltersUrl: () => string;
+    getContestResultsUrl: (params: IGetContestResultsParams) => string;
 }
 
 const UrlsContext = createContext<IUrlsContext>({} as IUrlsContext);
@@ -64,6 +68,12 @@ const getStartContestParticipationUrl = ({
 const getCategoriesTreeUrl =
     () => `${baseUrl}/ContestCategories/GetCategoriesTree`;
 
+const getContestResultsUrl = ({
+    id,
+    official,
+    full,
+} : IGetContestResultsParams) => `${baseUrl}/ContestResults/GetResults/${id}?official=${official}&full=${full}`;
+
 // submissions
 const getSubmissionResultsByProblemUrl = ({
     id,
@@ -103,6 +113,7 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
         getSubmitUrl,
         getCategoriesTreeUrl,
         getAllContestStrategyFiltersUrl,
+        getContestResultsUrl,
     };
 
     return (
