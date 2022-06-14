@@ -90,7 +90,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         ],
     );
 
-    const handleOnClickToggleCollapsible = useCallback((collapsed) => {
+    const handleToggleCollapsible = useCallback((collapsed) => {
         setIsCollapsed(collapsed);
     }, []);
 
@@ -102,14 +102,14 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
                   collapsedText="Details"
                   expandedText="Hide"
                   expanded={isCollapsed}
-                  onExpandChanged={handleOnClickToggleCollapsible}
+                  onExpandChanged={handleToggleCollapsible}
                 />
             </span>
             <Collapsible collapsed={isCollapsed}>
                 <TestRunDiffView testRun={testRun} />
             </Collapsible>
         </>
-    ), [ renderHeader, handleOnClickToggleCollapsible, isCollapsed, testRun ]);
+    ), [ renderHeader, handleToggleCollapsible, isCollapsed, testRun ]);
 
     const render = useCallback(() => {
         if (getResultIsWrongAnswerResultType(testRun) &&
