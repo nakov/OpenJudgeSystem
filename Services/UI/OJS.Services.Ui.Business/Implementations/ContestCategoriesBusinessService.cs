@@ -92,15 +92,15 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
     {
         result.Add(category);
 
-        children.ForEach(child =>
+        children.ForEach(childNode =>
         {
-            var childChildren = allCategories
-                .Where(x => x.ParentId == child.Id)
+            var grandChildren = allCategories
+                .Where(x => x.ParentId == childNode.Id)
                 .ToList();
 
-            result.AddRange(childChildren);
+            result.AddRange(grandChildren);
 
-            this.GetWithChildren(child, childChildren, allCategories, result);
+            this.GetWithChildren(childNode, grandChildren, allCategories, result);
         });
     }
 
