@@ -94,11 +94,13 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
 
         children.ForEach(child =>
         {
-            result.AddRange(allCategories
+            var childChildren = allCategories
                 .Where(x => x.ParentId == child.Id)
-                .ToList());
+                .ToList();
 
-            this.GetWithChildren(child, child.Children, allCategories, result);
+            result.AddRange(childChildren);
+
+            this.GetWithChildren(child, childChildren, allCategories, result);
         });
     }
 
