@@ -327,6 +327,10 @@ namespace OJS.Services.Ui.Business.Implementations
             await this.submissionsData.SaveChanges();
 
             newSubmission.Problem = problem;
+            newSubmission.SubmissionType =
+                problem.SubmissionTypesInProblems
+                    .First(st => st.SubmissionTypeId == model.SubmissionTypeId)
+                    .SubmissionType;
 
             var response = await this.submissionsDistributorCommunicationService
                 .AddSubmissionForProcessing(newSubmission);
