@@ -40,13 +40,14 @@ public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
 
     public async Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllOrderedByLatestUsage()
     {
-        var (latestSubmissions, allSubmissionTypes) = await TasksUtils.WhenAll(
-            this.submissionsData
-                .GetLatestSubmissions<SubmissionForSubmissionTypesFilterServiceModel>(
-                    LatestSubmissionsCountForSubmissionTypesUsage),
-            this.submissionTypesData
-                .AllTo<SubmissionTypeFilterServiceModel>()
-                .ToListAsync());
+        var (latestSubmissions, allSubmissionTypes)
+            = await TasksUtils.WhenAll(
+                this.submissionsData
+                    .GetLatestSubmissions<SubmissionForSubmissionTypesFilterServiceModel>(
+                        LatestSubmissionsCountForSubmissionTypesUsage),
+                this.submissionTypesData
+                    .AllTo<SubmissionTypeFilterServiceModel>()
+                    .ToListAsync());
 
         var submissionTypesUsageGroups = latestSubmissions
             .GroupBy(x => x.SubmissionTypeId)
@@ -59,7 +60,8 @@ public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
 
     public void ValidateSubmissionType(int submissionTypeId, Problem problem, bool shouldAllowBinaryFiles = false)
     {
-        var submissionType = problem.SubmissionTypesInProblems.FirstOrDefault(st => st.SubmissionTypeId == submissionTypeId);
+        var submissionType =
+            problem.SubmissionTypesInProblems.FirstOrDefault(st => st.SubmissionTypeId == submissionTypeId);
         if (submissionType == null)
         {
             throw new BusinessServiceException(Resources.ContestsGeneral.Submission_type_not_found);
