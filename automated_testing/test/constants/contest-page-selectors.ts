@@ -12,9 +12,12 @@ const selectors = {
     pageEexecutionTypeActiveSelector: '.executionTypeSelectorActive',
     pageContestNavigationLiSelector: '.navigationContest li',
     pageSubmitButtonSelector: 'button*=Submit',
-    pageSubmissionLabelProcessing: 'div*=Processing',
-    pageSubmissionTab: 'span*=Submissions',
+    pageSubmissionLabel: '.label div',
+    pageSubmissionTabs: '.contestTabs',
     pageSubmissionResultConteiner: '.contestTabControls',
+    pageCurrentChosenTaskTitle: 'submissionBox h2 span',
+    pageSubmissionResultInPoints: '.submissionResult',
+    pageStrategyTypePerSubmission: '.currentSubmissionType',
 
 };
 export default selectors;

@@ -53,16 +53,36 @@ class ContestPage extends Page {
         return $(selectors.pageSubmitButtonSelector);
     }
 
-    public get divTest() {
-        return $(selectors.pageSubmissionLabelProcessing);
-    }
-
     public get submissionTest() {
         return $(selectors.pageSubmissionTab);
     }
 
     public get submissionResultConteiner() {
         return $(selectors.pageSubmissionResultConteiner).$(selectors.pageSubmissionLabelProcessing);
+    }
+
+    public get taskListButtons() {
+        return $$(selectors.pageAllContestListTaskButtons);
+    }
+
+    public get currentChosenTaskTitle() {
+        return $(selectors.pageCurrentChosenTaskTitle);
+    }
+
+    public get controlsProblemTab() {
+        return $$(selectors.pageSubmissionTabs)[0];
+    }
+
+    public get controlsSubmissionTab() {
+        return $$(selectors.pageSubmissionTabs)[1];
+    }
+
+    public get scorePointsPerSubmission() {
+        return $(selectors.pageSubmissionResultInPoints);
+    }
+
+    public get strategyTypePerSubmission() {
+        return $(selectors.pageStrategyTypePerSubmission);
     }
 }
 export default new ContestPage();

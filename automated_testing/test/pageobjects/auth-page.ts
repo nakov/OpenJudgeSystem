@@ -27,7 +27,7 @@ class AuthPage extends Page {
     }
 
     public get authlogoutButton() {
-        return $(selectors.authlogoutButtonSelector);
+        return $(selectors.authNavLogOutBtnSelector);
     }
 
     public get rememberMeCheckBox() {
