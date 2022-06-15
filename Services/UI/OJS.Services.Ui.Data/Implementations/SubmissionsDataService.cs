@@ -18,7 +18,7 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
 
     public Task<IEnumerable<TServiceModel>> GetLatestSubmissions<TServiceModel>(int count)
         => this.GetQuery(
-                orderBy: s => s.CreatedOn,
+                orderBy: s => s.Id,
                 descending: true,
                 take: count)
             .MapCollection<TServiceModel>()
