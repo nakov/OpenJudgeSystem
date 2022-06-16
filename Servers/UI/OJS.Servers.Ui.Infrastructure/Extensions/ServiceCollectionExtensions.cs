@@ -8,12 +8,18 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Configuration;
     using OJS.Services.Common.Models.Configurations;
+    using static OJS.Common.GlobalConstants;
 
     public static class ServiceCollectionExtensions
     {
         private const ApplicationName AppName = ApplicationName.Ui;
 
-        public static void ConfigureServices<TProgram>(this IServiceCollection services, IConfiguration configuration)
+        private static readonly string ApiDocsTitle = $"{ApplicationFullName} {AppName} Api";
+
+        public static void ConfigureServices<TProgram>(
+            this IServiceCollection services,
+            IConfiguration configuration,
+            string apiVersion)
         {
             if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
             {
@@ -23,6 +29,7 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
 
             services
                 .AddWebServer<TProgram>()
+                .AddSwaggerDocs(apiVersion.ToApiName(), ApiDocsTitle, apiVersion)
                 .AddHangfireServer(AppName)
                 .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>()
                 .AddMemoryCache()

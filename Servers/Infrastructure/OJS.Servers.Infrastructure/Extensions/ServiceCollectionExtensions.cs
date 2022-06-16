@@ -9,6 +9,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Net.Http.Headers;
+    using Microsoft.OpenApi.Models;
     using OJS.Common.Enumerations;
     using OJS.Common.Utils;
     using OJS.Services.Common.Data;
@@ -85,6 +86,21 @@ namespace OJS.Servers.Infrastructure.Extensions
 
             return services;
         }
+
+        public static IServiceCollection AddSwaggerDocs(
+            this IServiceCollection services,
+            string name,
+            string title,
+            string version = "v1")
+            => services
+                .AddSwaggerGen(options =>
+                {
+                    options.SwaggerDoc(name, new OpenApiInfo
+                    {
+                        Title = title,
+                        Version = version,
+                    });
+                });
 
         private static IServiceCollection AddWebServerServices<TStartUp>(this IServiceCollection services)
         {
