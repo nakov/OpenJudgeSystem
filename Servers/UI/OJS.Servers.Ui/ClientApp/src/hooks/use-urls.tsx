@@ -35,6 +35,7 @@ interface IUrlsProviderProps extends IHaveChildrenProps {
 }
 
 const baseUrl = window.URLS.UI_URL;
+const baseApiUrl = `${baseUrl}/api`;
 
 // auth
 const getLoginSubmitUrl = () => `${baseUrl}/Account/Login`;
@@ -66,7 +67,7 @@ const getStartContestParticipationUrl = ({
 }: IStartContestParticipationUrlParams) => `${baseUrl}/Compete/Index/${id}?official=${isOfficial}`;
 
 const getCategoriesTreeUrl =
-    () => `${baseUrl}/ContestCategories/GetCategoriesTree`;
+    () => `${baseApiUrl}/ContestCategories/GetCategoriesTree`;
 
 const getContestResultsUrl = ({
     id,

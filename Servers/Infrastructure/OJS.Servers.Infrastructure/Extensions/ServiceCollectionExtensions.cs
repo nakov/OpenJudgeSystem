@@ -24,6 +24,8 @@ namespace OJS.Servers.Infrastructure.Extensions
     using System.Collections.Generic;
     using System.IO;
     using System.Net.Http;
+    using System.Reflection;
+    using static OJS.Common.GlobalConstants.FileExtensions;
     using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.EnvironmentVariables;
     using static OJS.Servers.Infrastructure.ServerConstants;
@@ -91,7 +93,7 @@ namespace OJS.Servers.Infrastructure.Extensions
             this IServiceCollection services,
             string name,
             string title,
-            string version = "v1")
+            string version)
             => services
                 .AddSwaggerGen(options =>
                 {
@@ -100,6 +102,13 @@ namespace OJS.Servers.Infrastructure.Extensions
                         Title = title,
                         Version = version,
                     });
+
+                    var entryAssembly = Assembly.GetEntryAssembly();
+                    if (entryAssembly != null)
+                    {
+                        var xmlFilename = $"{entryAssembly.GetName().Name}{Xml}";
+                        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+                    }
                 });
 
         private static IServiceCollection AddWebServerServices<TStartUp>(this IServiceCollection services)
