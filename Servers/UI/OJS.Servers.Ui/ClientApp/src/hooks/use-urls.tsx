@@ -73,7 +73,7 @@ const getContestResultsUrl = ({
     id,
     official,
     full,
-} : IGetContestResultsParams) => `${baseUrl}/ContestResults/GetResults/${id}?official=${official}&full=${full}`;
+} : IGetContestResultsParams) => `${baseApiUrl}/ContestResults/GetResults/${id}?official=${official}&full=${full}`;
 
 // submissions
 const getSubmissionResultsByProblemUrl = ({
