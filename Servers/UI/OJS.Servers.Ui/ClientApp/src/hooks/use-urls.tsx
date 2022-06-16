@@ -51,14 +51,14 @@ const getSubmissionsForProfileUrl = () => `${baseUrl}/Submissions/GetForProfile`
 const getParticipationsForProfileUrl = () => `${baseUrl}/Participations/GetForProfile`;
 
 // contests
-const getIndexContestsUrl = () => `${baseUrl}/Contests/GetForHomeIndex`;
+const getIndexContestsUrl = () => `${baseApiUrl}/Contests/GetForHomeIndex`;
 const getAllContestsUrl = ({ filters, page }: IAllContestsUrlParams) => {
     const queryParams = `${filters
         .map(({ value, type }) => `${type.toLowerCase()}=${value}`)
         .join('&')
     }&page=${page}`;
 
-    return `${baseUrl}/Contests/GetAll?${queryParams}`;
+    return `${baseApiUrl}/Contests/GetAll?${queryParams}`;
 };
 
 const getStartContestParticipationUrl = ({
