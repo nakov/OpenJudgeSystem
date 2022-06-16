@@ -64,7 +64,7 @@ const getAllContestsUrl = ({ filters, page }: IAllContestsUrlParams) => {
 const getStartContestParticipationUrl = ({
     id,
     isOfficial,
-}: IStartContestParticipationUrlParams) => `${baseUrl}/Compete/Index/${id}?official=${isOfficial}`;
+}: IStartContestParticipationUrlParams) => `${baseApiUrl}/Compete/Index/${id}?official=${isOfficial}`;
 
 const getCategoriesTreeUrl =
     () => `${baseApiUrl}/ContestCategories/GetCategoriesTree`;
@@ -85,7 +85,7 @@ const getSubmissionResultsByProblemUrl = ({
 const getSubmissionsDetailsUrl = () => `${baseUrl}/Submissions/Details`;
 const getSubmissionDetailsByIdUrl =
     ({ submissionId }: IGetSubmissionDetailsByIdUrlParams) => `${getSubmissionsDetailsUrl()}/${submissionId}`;
-const getSubmitUrl = () => `${baseUrl}/Compete/Submit`;
+const getSubmitUrl = () => `${baseApiUrl}/Compete/Submit`;
 
 // Submission types
 const getAllContestStrategyFiltersUrl =
