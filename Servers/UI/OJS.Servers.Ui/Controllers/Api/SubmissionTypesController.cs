@@ -2,30 +2,29 @@
 
 using Microsoft.AspNetCore.Mvc;
 using OJS.Servers.Ui.Models.SubmissionTypes;
-using OJS.Services.Ui.Business;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using OJS.Services.Ui.Business.Cache;
+using static Microsoft.AspNetCore.Http.StatusCodes;
 
-public class SubmissionTypesController : Controller
+public class SubmissionTypesController : BaseApiController
 {
-    private readonly ISubmissionTypesBusinessService submissionTypesBusiness;
     private readonly ISubmissionTypesCacheService submissionTypesCache;
 
     public SubmissionTypesController(
-        ISubmissionTypesBusinessService submissionTypesBusinessService,
         ISubmissionTypesCacheService submissionTypesCache)
-    {
-        this.submissionTypesBusiness = submissionTypesBusinessService;
-        this.submissionTypesCache = submissionTypesCache;
-    }
+        => this.submissionTypesCache = submissionTypesCache;
 
-    public async Task<IEnumerable<SubmissionTypeResponseModel>> GetAllowedForProblem(int problemId)
-        => await this.submissionTypesBusiness
-            .GetAllowedSubmissionTypes(problemId)
-            .MapCollection<SubmissionTypeResponseModel>();
-
+    /// <summary>
+    /// Gets all submission types ordered by most used to least.
+    /// </summary>
+    /// <returns>A collection of all submission types</returns>
+    /// <remarks>
+    /// Usage is determined by gathering information from latest submissions.
+    /// </remarks>
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<SubmissionTypeFilterResponseModel>), Status200OK)]
     public async Task<IEnumerable<SubmissionTypeFilterResponseModel>> GetAllOrderedByLatestUsage()
         => await this.submissionTypesCache
             .GetAllOrderedByLatestUsage()

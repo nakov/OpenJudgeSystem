@@ -89,7 +89,7 @@ const getSubmitUrl = () => `${baseApiUrl}/Compete/Submit`;
 
 // Submission types
 const getAllContestStrategyFiltersUrl =
-    () => `${baseUrl}/SubmissionTypes/GetAllOrderedByLatestUsage`;
+    () => `${baseApiUrl}/SubmissionTypes/GetAllOrderedByLatestUsage`;
 
 // problem resources
 const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams) => `
