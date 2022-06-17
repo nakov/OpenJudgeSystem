@@ -79,4 +79,19 @@ describe('Testing contest', () => {
         const check = await contestChecker.executionTypeCheck(strategies);
         await expect(check).toBeTruthy;
     });
+
+    it('Expect to have only one active execution type', async () => {
+        const activeStrategies = await ContestPage.executionTypeAllActive;
+        const countStrategies = activeStrategies.length;
+        await expect(countStrategies).toEqual(1);
+    });
+
+    it('Expect to have only one active execution type', async () => {
+        const activeStrategies = await ContestPage.executionTypeAllActive;
+        const countActiveStrategies = activeStrategies.length;
+        const inActiveStrategies = await ContestPage.executionTypeSelectorInactive;
+        const countInActiveStrategies = inActiveStrategies.length;
+        const total = countActiveStrategies + countInActiveStrategies;
+        await expect(countInActiveStrategies).toEqual(total - 1);
+    });
 });
