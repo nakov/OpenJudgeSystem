@@ -46,7 +46,7 @@ const administrationBaseUrl = window.URLS.ADMINISTRATION_URL;
 const getAdministrationContestsGridUrl = () => `${administrationBaseUrl}/Contests`;
 
 // profile
-const getProfileInfoUrl = () => `${baseUrl}/Users/GetProfileInfo`;
+const getProfileInfoUrl = () => `${baseApiUrl}/Users/GetProfileInfo`;
 const getSubmissionsForProfileUrl = () => `${baseApiUrl}/Submissions/GetForProfile`;
 const getParticipationsForProfileUrl = () => `${baseApiUrl}/Participations/GetForProfile`;
 
