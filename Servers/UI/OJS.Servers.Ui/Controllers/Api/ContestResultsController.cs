@@ -35,7 +35,7 @@ public class ContestResultsController : BaseApiController
     /// <returns>A complete collection of all the participants and their results</returns>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(ContestResultsViewModel), Status200OK)]
-    public async Task<ContestResultsViewModel> GetResults(int id, bool official, bool full)
+    public async Task<IActionResult> GetResults(int id, bool official, bool full)
     {
         var contest = await this.contestsData.GetByIdWithProblems(id);
 
@@ -49,6 +49,6 @@ public class ContestResultsController : BaseApiController
             this.User.IsAdminOrLecturer(),
             full);
 
-        return results;
+        return this.Ok(results);
     }
 }

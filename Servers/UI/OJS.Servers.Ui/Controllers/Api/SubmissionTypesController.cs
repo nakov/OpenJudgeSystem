@@ -1,6 +1,7 @@
 ﻿namespace OJS.Servers.Ui.Controllers.Api;
 
 using Microsoft.AspNetCore.Mvc;
+using OJS.Servers.Infrastructure.Extensions;
 using OJS.Servers.Ui.Models.SubmissionTypes;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
@@ -25,8 +26,9 @@ public class SubmissionTypesController : BaseApiController
     /// </remarks>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<SubmissionTypeFilterResponseModel>), Status200OK)]
-    public async Task<IEnumerable<SubmissionTypeFilterResponseModel>> GetAllOrderedByLatestUsage()
+    public async Task<IActionResult> GetAllOrderedByLatestUsage()
         => await this.submissionTypesCache
             .GetAllOrderedByLatestUsage()
-            .MapCollection<SubmissionTypeFilterResponseModel>();
+            .MapCollection<SubmissionTypeFilterResponseModel>()
+            .ToOkResult();
 }

@@ -1,6 +1,7 @@
 ﻿namespace OJS.Servers.Ui.Controllers.Api;
 
 using Microsoft.AspNetCore.Mvc;
+using OJS.Servers.Infrastructure.Extensions;
 using OJS.Servers.Ui.Models;
 using OJS.Servers.Ui.Models.Contests;
 using OJS.Services.Ui.Business;
@@ -22,10 +23,11 @@ public class ContestsController : BaseApiController
     /// <returns>A collection of active and past contests</returns>
     [HttpGet]
     [ProducesResponseType(typeof(ContestsForHomeIndexResponseModel), Status200OK)]
-    public async Task<ContestsForHomeIndexResponseModel> GetForHomeIndex()
+    public async Task<IActionResult> GetForHomeIndex()
         => await this.contestsBusinessService
             .GetAllForHomeIndex()
-            .Map<ContestsForHomeIndexResponseModel>();
+            .Map<ContestsForHomeIndexResponseModel>()
+            .ToOkResult();
 
     /// <summary>
     /// Gets a page with visible contests, by applied filters.
@@ -35,8 +37,9 @@ public class ContestsController : BaseApiController
     /// <returns>A page with contests, filtered by provided filters.</returns>
     [HttpGet]
     [ProducesResponseType(typeof(PagedResultResponse<ContestForListingResponseModel>), Status200OK)]
-    public async Task<PagedResultResponse<ContestForListingResponseModel>> GetAll([FromQuery] ContestFiltersRequestModel? model)
+    public async Task<IActionResult> GetAll([FromQuery] ContestFiltersRequestModel? model)
         => await this.contestsBusinessService
             .GetAllByFilters(model?.Map<ContestFiltersServiceModel>())
-            .Map<PagedResultResponse<ContestForListingResponseModel>>();
+            .Map<PagedResultResponse<ContestForListingResponseModel>>()
+            .ToOkResult();
 }

@@ -11,6 +11,7 @@ using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using OJS.Servers.Infrastructure.Extensions;
+using static Microsoft.AspNetCore.Http.StatusCodes;
 
 [Authorize]
 public class CompeteController : BaseApiController
@@ -36,12 +37,15 @@ public class CompeteController : BaseApiController
     /// <param name="official">Is the contest compete or practice</param>
     /// <returns>The new participant</returns>
     [HttpGet("{id:int}")]
-    public async Task<ContestParticipationServiceModel> Index(int id, [FromQuery] bool official)
-        => await this.contestsBusiness.StartContestParticipation(new StartContestParticipationServiceModel
-        {
-            ContestId = id,
-            IsOfficial = official
-        });
+    [ProducesResponseType(typeof(ContestParticipationServiceModel), Status200OK)]
+    public async Task<IActionResult> Index(int id, [FromQuery] bool official)
+        => await this.contestsBusiness
+            .StartContestParticipation(new StartContestParticipationServiceModel
+            {
+                ContestId = id,
+                IsOfficial = official,
+            })
+            .ToOkResult();
 
     /// <summary>
     /// Submits user's code for evaluation.
@@ -60,8 +64,10 @@ public class CompeteController : BaseApiController
     /// <param name="id">The id of the problem</param>
     /// <returns>A model with the best scores for the problem from all participants</returns>
     [HttpGet("{id:int}")]
-    public async Task<IEnumerable<ProblemResultResponseModel>> GetResultsByProblem(int id)
+    [ProducesResponseType(typeof(IEnumerable<ProblemResultResponseModel>), Status200OK)]
+    public async Task<IActionResult> GetResultsByProblem(int id)
         => await this.participantScoresBusinessService
             .GetParticipantScoresByProblemForUser(id, true)
-            .MapCollection<ProblemResultResponseModel>();
+            .MapCollection<ProblemResultResponseModel>()
+            .ToOkResult();
 }

@@ -26,7 +26,7 @@ public class ProblemResourcesController : BaseApiController
     [Authorize]
     [Produces(ApplicationOctetStream)]
     [ProducesResponseType(typeof(FileContentResult), Status200OK)]
-    public async Task<FileContentResult> GetResource(int id)
+    public async Task<IActionResult> GetResource(int id)
     {
         var resource = await this.problemResourcesBusinessService.GetResource(id);
 
