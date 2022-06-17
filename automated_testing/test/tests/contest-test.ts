@@ -48,7 +48,8 @@ describe('Testing contest', () => {
     it('Expect full total score to be tasks score multiplied by 100', async () => {
         const problems = await ContestPage.allContestListSideNavigation;
         const totalScore = problems.length * 100;
-        await expect(`0/${totalScore}`).toEqual('0/900'); // once score selector is fixed it will replace '0/900'
+        const score = await (await ContestPage.contestScore).getText();
+        await expect(`0/${totalScore}`).toEqual(score);
     });
 
     it('Expect Submit button to be enabled and clickable', async () => {
@@ -76,12 +77,6 @@ describe('Testing contest', () => {
     it('Expect to have active execution type', async () => {
         const strategies = await ContestPage.executionTypeAllActive;
         const check = await contestChecker.executionTypeCheck(strategies);
-        await expect(check).toBeTruthy;
-    });
-
-    it('Expect to have only one active execution type', async () => {
-        const strategies = await ContestPage.executionTypeAllActive;
-        const check = strategies.length;
         await expect(check).toBeTruthy;
     });
 });

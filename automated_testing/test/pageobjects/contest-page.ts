@@ -84,5 +84,9 @@ class ContestPage extends Page {
     public get strategyTypePerSubmission() {
         return $(selectors.pageStrategyTypePerSubmission);
     }
+
+    public get submissionLabel() {
+        return $(selectors.pageSubmissionLabel);
+    }
 }
 export default new ContestPage();
