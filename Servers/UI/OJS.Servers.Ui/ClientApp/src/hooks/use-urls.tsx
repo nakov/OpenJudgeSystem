@@ -48,7 +48,7 @@ const getAdministrationContestsGridUrl = () => `${administrationBaseUrl}/Contest
 // profile
 const getProfileInfoUrl = () => `${baseUrl}/Users/GetProfileInfo`;
 const getSubmissionsForProfileUrl = () => `${baseUrl}/Submissions/GetForProfile`;
-const getParticipationsForProfileUrl = () => `${baseUrl}/Participations/GetForProfile`;
+const getParticipationsForProfileUrl = () => `${baseApiUrl}/Participations/GetForProfile`;
 
 // contests
 const getIndexContestsUrl = () => `${baseApiUrl}/Contests/GetForHomeIndex`;
