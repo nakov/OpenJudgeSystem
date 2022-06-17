@@ -8,10 +8,8 @@ using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Business.Validation;
 using OJS.Services.Ui.Data;
 using System.Threading.Tasks;
-using static OJS.Common.GlobalConstants.MimeTypes;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
-[Produces(ApplicationJson)]
 public class ContestResultsController : BaseApiController
 {
     private readonly IContestResultsAggregatorService contestResultsAggregator;

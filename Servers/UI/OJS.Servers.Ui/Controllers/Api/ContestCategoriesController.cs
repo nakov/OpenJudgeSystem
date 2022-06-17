@@ -6,10 +6,8 @@ using OJS.Services.Common.Models.Cache;
 using OJS.Services.Ui.Business;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using static OJS.Common.GlobalConstants.MimeTypes;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
-[Produces(ApplicationJson)]
 public class ContestCategoriesController : BaseApiController
 {
     private readonly IContestCategoriesCacheService contestCategoriesCache;

@@ -47,7 +47,7 @@ const getAdministrationContestsGridUrl = () => `${administrationBaseUrl}/Contest
 
 // profile
 const getProfileInfoUrl = () => `${baseUrl}/Users/GetProfileInfo`;
-const getSubmissionsForProfileUrl = () => `${baseUrl}/Submissions/GetForProfile`;
+const getSubmissionsForProfileUrl = () => `${baseApiUrl}/Submissions/GetForProfile`;
 const getParticipationsForProfileUrl = () => `${baseApiUrl}/Participations/GetForProfile`;
 
 // contests
@@ -81,8 +81,8 @@ const getSubmissionResultsByProblemUrl = ({
     isOfficial,
     take,
 }: IGetSubmissionResultsByProblemUrlParams) => `
-    ${baseUrl}/Submissions/GetSubmissionResultsByProblem/${id}?isOfficial=${isOfficial}&take=${take}`;
-const getSubmissionsDetailsUrl = () => `${baseUrl}/Submissions/Details`;
+    ${baseApiUrl}/Submissions/GetSubmissionResultsByProblem/${id}?isOfficial=${isOfficial}&take=${take}`;
+const getSubmissionsDetailsUrl = () => `${baseApiUrl}/Submissions/Details`;
 const getSubmissionDetailsByIdUrl =
     ({ submissionId }: IGetSubmissionDetailsByIdUrlParams) => `${getSubmissionsDetailsUrl()}/${submissionId}`;
 const getSubmitUrl = () => `${baseApiUrl}/Compete/Submit`;
@@ -93,7 +93,7 @@ const getAllContestStrategyFiltersUrl =
 
 // problem resources
 const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams) => `
-    ${baseUrl}/ProblemResources/GetResource/${id}
+    ${baseApiUrl}/ProblemResources/GetResource/${id}
 `;
 
 const UrlsProvider = ({ children }: IUrlsProviderProps) => {

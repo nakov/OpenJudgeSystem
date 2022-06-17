@@ -6,6 +6,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Net.Http.Headers;
@@ -101,6 +102,11 @@ namespace OJS.Servers.Infrastructure.Extensions
                     {
                         Title = title,
                         Version = version,
+                    });
+
+                    options.MapType<FileContentResult>(() => new OpenApiSchema
+                    {
+                         Type = "file",
                     });
 
                     var entryAssembly = Assembly.GetEntryAssembly();
