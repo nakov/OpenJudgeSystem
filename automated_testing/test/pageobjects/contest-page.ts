@@ -88,5 +88,9 @@ class ContestPage extends Page {
     public get submissionLabel() {
         return $(selectors.pageSubmissionLabel);
     }
+
+    public get submissionsResultsList() {
+        return $(selectors.pageSubmissionResultsList);
+    }
 }
 export default new ContestPage();

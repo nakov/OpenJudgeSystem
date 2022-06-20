@@ -18,6 +18,6 @@ const selectors = {
     pageCurrentChosenTaskTitle: 'submissionBox h2 span',
     pageSubmissionResultInPoints: '.submissionResult',
     pageStrategyTypePerSubmission: '.currentSubmissionType',
-
+    pageSubmissionResultsList: '.submissionResultsContent ul',
 };
 export default selectors;
