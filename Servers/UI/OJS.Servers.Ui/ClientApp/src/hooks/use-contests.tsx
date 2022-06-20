@@ -70,14 +70,14 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
                 page: pageToGo || defaultState.state.pageNumber,
             });
         },
-        [ ],
+        [],
     );
 
     const clearFilters = useCallback(
         () => {
             setFilters([]);
         },
-        [ ],
+        [],
     );
 
     const reload = useCallback(

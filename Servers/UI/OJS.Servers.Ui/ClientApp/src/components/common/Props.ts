@@ -15,10 +15,10 @@ interface IHaveOptionalClassName {
 }
 
 interface IHavePagesProps {
-    itemsPerPage: number,
-    pageNumber: number,
-    totalItemsCount: number,
-    pagesCount: number,
+    itemsPerPage: number;
+    pageNumber: number;
+    totalItemsCount: number;
+    pagesCount: number;
 }
 
 export type {

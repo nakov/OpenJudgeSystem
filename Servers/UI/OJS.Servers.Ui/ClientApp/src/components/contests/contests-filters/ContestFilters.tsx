@@ -53,25 +53,27 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         [ possibleFilters, onFilterClick ],
     );
 
-    const renderFilterItem = useCallback(
-        ({ id, name }: IFilter) => {
+    const getRenderFilterItemFunc = useCallback(
+        (type: FilterType) => ({ id, name }: IFilter) => {
             // TODO: investigate why filters change ids
             //  and use id instead of name for checking if filter is selected
             const filterIsSelected = filters.some((f) => f.name === name);
-            const type = filterIsSelected
+            const buttonType = filterIsSelected
                 ? ButtonType.primary
                 : ButtonType.secondary;
-            const size = filterIsSelected
-                ? ButtonSize.medium
-                : ButtonSize.small;
+
+            const btmClassName = type === FilterType.Status
+                ? styles.btnSelectFilter
+                : '';
 
             return (
                 <Button
-                  type={type}
+                  type={buttonType}
                   onClick={() => handleFilterClick(id)}
-                  className={styles.btnSelectFilter}
+                  className={btmClassName}
                   text={name}
-                  size={size}
+                  size={ButtonSize.small}
+                  // isWide={isWide}
                 />
             );
         },
@@ -97,11 +99,15 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         (fg: IFiltersGroup) => {
             const { type, filters: groupFilters } = fg;
             const className = concatClassNames(
-                styles.listFilterItems,
+                styles.listFilters,
                 expanded
                     ? styles.expanded
                     : '',
             );
+
+            const listOrientation = type === FilterType.Status
+                ? Orientation.horizontal
+                : Orientation.vertical;
 
             return (
                 <div className={styles.filterTypeContainer}>
@@ -113,16 +119,17 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
                     </Heading>
                     <List
                       values={groupFilters}
-                      itemFunc={renderFilterItem}
-                      orientation={Orientation.horizontal}
+                      itemFunc={getRenderFilterItemFunc(type)}
+                      orientation={listOrientation}
                       className={className}
                       itemClassName={styles.listFilterItem}
+                      fullWidth
                     />
                     {renderExpandButton(groupFilters)}
                 </div>
             );
         },
-        [ expanded, renderFilterItem, renderExpandButton ],
+        [ expanded, getRenderFilterItemFunc, renderExpandButton ],
     );
 
     useEffect(

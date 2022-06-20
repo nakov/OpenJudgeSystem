@@ -79,7 +79,6 @@ const SubmissionDetails = () => {
             () => (
                 <List
                   values={currentProblemSubmissionResults}
-                  keyFunc={(v) => v.id.toString()}
                   className={styles.sideNavigation}
                   itemFunc={renderSubmissionListItem}
                   itemClassName={styles.submissionListItem}

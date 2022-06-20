@@ -87,5 +87,8 @@
       color: $background-color-btn-primary;
     }
   }
-
+  
+  &.wide {
+    width: 100%;
+  }
 }

@@ -42,12 +42,13 @@ interface IButtonBaseProps<TButtonType> extends IHaveOptionalClassName, IHaveOpt
 }
 
 interface IButtonProps extends IButtonBaseProps<ButtonType> {
-    onClick: React.MouseEventHandler<HTMLButtonElement>,
+    onClick: React.MouseEventHandler<HTMLButtonElement>;
+    isWide?: boolean;
 }
 
 interface ILinkButtonProps extends IButtonBaseProps<LinkButtonType> {
     to: string;
-    isToExternal?: boolean,
+    isToExternal?: boolean;
 }
 
 const classNameToType = {
@@ -79,6 +80,7 @@ const Button = ({
     size = ButtonSize.medium,
     id = generateId(),
     state = ButtonState.enabled,
+    isWide = false,
 }: IButtonProps) => {
     validateOnlyChildrenOrText(text, children);
 
@@ -90,11 +92,16 @@ const Button = ({
         ? styles.disabled
         : '';
 
+    const wideClassName = isWide
+        ? styles.wide
+        : '';
+
     const buttonClassName = concatClassNames(
         styles.btn,
         typeClassName,
         sizeClassName,
         stateClassName,
+        wideClassName,
         className,
     );
 
