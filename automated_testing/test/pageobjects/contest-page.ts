@@ -81,6 +81,10 @@ class ContestPage extends Page {
         return $(selectors.pageSubmissionLabel);
     }
 
+    public get submissionsResultsList() {
+        return $(selectors.pageSubmissionResultsList);
+    }
+
     public get contestNavigationResultsButton() {
         return $(selectors.pageLeftNavgationResultsBtn);
     }

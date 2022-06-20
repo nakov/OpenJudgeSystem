@@ -94,6 +94,12 @@ describe('Testing contest', () => {
         const total = countActiveStrategies + countInActiveStrategies;
         await expect(countInActiveStrategies).toEqual(total - 1);
     });
+    it('Expect to have empty list of submissions in submission navigation', async () => {
+        const submissionTab = await ContestPage.controlsSubmissionTab.click();
+        const submissionsList = await ContestPage.submissionsResultsList;
+
+        await expect(submissionsList).toBeNull();
+    });
 
     it('Expect Results button in left navigation to be enabled and clickable', async () => {
         const button = await ContestPage.contestNavigationResultsButton;

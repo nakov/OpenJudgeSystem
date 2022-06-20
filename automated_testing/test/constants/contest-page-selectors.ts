@@ -18,7 +18,11 @@ const selectors = {
     pageCurrentChosenTaskTitle: 'submissionBox h2 span',
     pageSubmissionResultInPoints: '.submissionResult',
     pageStrategyTypePerSubmission: '.currentSubmissionType',
+<<<<<<< HEAD
     pageLeftNavgationResultsBtn: '.navigationContest a',
 
+=======
+    pageSubmissionResultsList: '.submissionResultsContent ul',
+>>>>>>> 9963de1dc9d16e35fad38d7fa050689dcbe35157
 };
 export default selectors;
