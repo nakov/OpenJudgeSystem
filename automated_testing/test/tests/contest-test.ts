@@ -40,8 +40,8 @@ describe('Testing contest', () => {
     });
 
     it('Expect every problem in the list to be accessible', async () => {
-        const taskList = await ContestPage.taskListButtons;
-        const check = await taskList.forEach((b) => b.isClickable());
+        const taskList = await ContestPage.allContestListSideNavigation;
+        const check = await taskList.filter((b) => b.isClickable());
         await expect(check).toBeTruthy();
     });
 
@@ -93,5 +93,11 @@ describe('Testing contest', () => {
         const countInActiveStrategies = inActiveStrategies.length;
         const total = countActiveStrategies + countInActiveStrategies;
         await expect(countInActiveStrategies).toEqual(total - 1);
+    });
+
+    it('Expect Results button in left navigation to be enabled and clickable', async () => {
+        const button = await ContestPage.contestNavigationResultsButton;
+        await expect(button).toBeClickable();
+        await expect(button).toBeEnabled();
     });
 });

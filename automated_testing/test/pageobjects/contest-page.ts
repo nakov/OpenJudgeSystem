@@ -6,7 +6,7 @@ import Page from './page';
 
 class ContestPage extends Page {
     public get allContestListSideNavigation() {
-        return $$(selectors.pageAllContestListSideNavigationSelector);
+        return $$(selectors.pageSingleTaskFromSideNavigationSelector);
     }
 
     public get contestNavigation() {
@@ -46,23 +46,15 @@ class ContestPage extends Page {
     }
 
     public get executionTypeAllActive() {
-        return $$(selectors.pageEexecutionTypeActiveSelector);
+        return $$(selectors.pageExecutionTypeActiveSelector);
     }
 
     public get submitButton() {
         return $(selectors.pageSubmitButtonSelector);
     }
 
-    public get submissionTest() {
-        return $(selectors.pageSubmissionTab);
-    }
-
-    public get submissionResultConteiner() {
-        return $(selectors.pageSubmissionResultConteiner).$(selectors.pageSubmissionLabelProcessing);
-    }
-
-    public get taskListButtons() {
-        return $$(selectors.pageAllContestListTaskButtons);
+    public get tasksFromNavigationList() {
+        return $$(selectors.pageSingleTaskFromSideNavigationSelector);
     }
 
     public get currentChosenTaskTitle() {
@@ -87,6 +79,10 @@ class ContestPage extends Page {
 
     public get submissionLabel() {
         return $(selectors.pageSubmissionLabel);
+    }
+
+    public get contestNavigationResultsButton() {
+        return $(selectors.pageLeftNavgationResultsBtn);
     }
 }
 export default new ContestPage();
