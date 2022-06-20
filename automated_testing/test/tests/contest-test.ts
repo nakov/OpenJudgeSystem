@@ -94,11 +94,11 @@ describe('Testing contest', () => {
         const total = countActiveStrategies + countInActiveStrategies;
         await expect(countInActiveStrategies).toEqual(total - 1);
     });
-    it('Expect to have empty list of submissions in submission navigation', async () => {
+    it('Expect to have no results paragraph if nothing is submitted', async () => {
         const submissionTab = await ContestPage.controlsSubmissionTab.click();
-        const submissionsList = await ContestPage.submissionsResultsList;
+        const submissionsNoResultsParagraph = await ContestPage.submissionsResultsNoResultsParagraph;
 
-        await expect(submissionsList).toBeNull();
+        await expect(submissionsNoResultsParagraph).toExist();
     });
 
     it('Expect Results button in left navigation to be enabled and clickable', async () => {

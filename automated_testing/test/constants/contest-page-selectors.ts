@@ -20,5 +20,6 @@ const selectors = {
     pageStrategyTypePerSubmission: '.currentSubmissionType',
     pageSubmissionResultsList: '.submissionResultsContent ul',
     pageLeftNavgationResultsBtn: '.navigationContest a',
+    pageSubmissionResultsNoResultsParagraph: '.submissionResultsContent p',
 };
 export default selectors;
