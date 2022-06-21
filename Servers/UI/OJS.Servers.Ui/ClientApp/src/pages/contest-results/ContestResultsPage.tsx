@@ -56,7 +56,7 @@ const getProblemResultColumns = (results: IContestResultsType) => results.proble
                   type={LinkButtonType.plain}
                   size={ButtonSize.none}
                   text={`${bestSubmission.points}`}
-                  to={`/submissions/${bestSubmission.id}`}
+                  to={`/submissions/${bestSubmission.id}/details`}
                 />
             )
             : <p>{bestSubmission?.points || '-'}</p>;
