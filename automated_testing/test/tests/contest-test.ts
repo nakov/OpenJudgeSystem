@@ -97,10 +97,10 @@ describe('Testing contest', () => {
     });
 
     it('Expect to have no results paragraph if nothing is submitted', async () => {
-        const submissionTab = await ContestPage.controlsSubmissionTab.click();
+        await ContestPage.controlsSubmissionTab.click();
         const submissionsNoResultsParagraph = await ContestPage.submissionsResultsNoResultsParagraph;
-        await expect(submissionsNoResultsParagraph).toExist() 
-        && await expect(submissionsNoResultsParagraph.getText()).toEqual("No results for this problem yet.")
+        await expect(submissionsNoResultsParagraph).toExist() &&
+        await expect(submissionsNoResultsParagraph.getText()).toEqual('No results for this problem yet.');
     });
 
     it('Expect Results button in left navigation to be enabled and clickable', async () => {
