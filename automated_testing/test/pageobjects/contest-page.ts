@@ -88,5 +88,9 @@ class ContestPage extends Page {
     public get contestNavigationResultsButton() {
         return $(selectors.pageLeftNavgationResultsBtn);
     }
+
+    public get problemTabRequirements() {
+        return $$(selectors.pageProblemTabRequirements);
+    }
 }
 export default new ContestPage();

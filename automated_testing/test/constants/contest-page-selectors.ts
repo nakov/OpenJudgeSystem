@@ -21,5 +21,6 @@ const selectors = {
     pageSubmissionResultsList: '.submissionResultsContent ul',
     pageLeftNavgationResultsBtn: '.navigationContest a',
     pageSubmissionResultsNoResultsParagraph: '.submissionResultsContent p',
+    pageProblemTabRequirements: '.contestResources li',
 };
 export default selectors;

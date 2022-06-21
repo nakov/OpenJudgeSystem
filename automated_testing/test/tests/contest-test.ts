@@ -20,6 +20,7 @@ describe('Testing contest', () => {
     const contestChecker = {
         leftSideNavigationCheck: (problems) => problems.length > 0,
         executionTypeCheck: (strategies) => strategies.length > 0,
+        requirementsFiles: (files) => files.length > 0,
     };
 
     before(async () => {
@@ -69,9 +70,9 @@ describe('Testing contest', () => {
     });
 
     it('Expect selected task to have requirements file in "Problem"', async () => {
-        const problemTab = await ContestPage.controlsProblemTab;
-        await expect(problemTab).toExist();
-        await expect(problemTab).toHaveAttribute('button');
+        const files = await ContestPage.problemTabRequirements;
+        const check = await contestChecker.requirementsFiles(files);
+        await expect(check).toBeTruthy;
     });
 
     it('Expect to have active execution type', async () => {
@@ -86,7 +87,7 @@ describe('Testing contest', () => {
         await expect(countStrategies).toEqual(1);
     });
 
-    it('Expect to have only one active execution type', async () => {
+    it('Expect to have only one active execution type even if there are more choices', async () => {
         const activeStrategies = await ContestPage.executionTypeAllActive;
         const countActiveStrategies = activeStrategies.length;
         const inActiveStrategies = await ContestPage.executionTypeSelectorInactive;
@@ -99,7 +100,6 @@ describe('Testing contest', () => {
         const submissionTab = await ContestPage.controlsSubmissionTab.click();
         const submissionsNoResultsParagraph = await ContestPage.submissionsResultsNoResultsParagraph;
         await expect(submissionsNoResultsParagraph).toExist();
-        await expect(submissionsNoResultsParagraph).toHaveText(' No results for this problem yet.');
     });
 
     it('Expect Results button in left navigation to be enabled and clickable', async () => {
