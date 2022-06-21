@@ -94,16 +94,19 @@ describe('Testing contest', () => {
         const total = countActiveStrategies + countInActiveStrategies;
         await expect(countInActiveStrategies).toEqual(total - 1);
     });
+
     it('Expect to have no results paragraph if nothing is submitted', async () => {
         const submissionTab = await ContestPage.controlsSubmissionTab.click();
         const submissionsNoResultsParagraph = await ContestPage.submissionsResultsNoResultsParagraph;
-
         await expect(submissionsNoResultsParagraph).toExist();
+        await expect(submissionsNoResultsParagraph).toHaveText(' No results for this problem yet.');
     });
 
     it('Expect Results button in left navigation to be enabled and clickable', async () => {
         const button = await ContestPage.contestNavigationResultsButton;
+        const buttonHref = (await button.getAttribute('href')).toString();
         await expect(button).toBeClickable();
         await expect(button).toBeEnabled();
+        await expect(buttonHref).toContain('results'); // it will be better to check with ID of the current contest
     });
 });
