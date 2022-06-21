@@ -30,6 +30,11 @@
   &.wrap {
     flex-wrap: wrap;
   }
+  
+  &.scrollable {
+    max-height: 60vh;
+    overflow: scroll;
+  }
 }
 
 .fullWidth {

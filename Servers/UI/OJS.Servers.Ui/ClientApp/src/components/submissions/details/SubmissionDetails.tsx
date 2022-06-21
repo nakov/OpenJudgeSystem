@@ -22,7 +22,12 @@ const SubmissionDetails = () => {
         [ currentSubmission?.problem.id, currentSubmission?.problem.name ],
     );
 
-    const detailsHeadingText = useMemo(() => `Details #${currentSubmission?.id}`, [ currentSubmission?.id ]);
+    const detailsHeadingText = useMemo(
+        () => `Details #${currentSubmission?.id}`,
+        [ currentSubmission?.id ],
+    );
+
+    const { submissionType } = currentSubmission || {};
 
     useEffect(() => {
         if (isNil(currentSubmission)) {
@@ -57,6 +62,7 @@ const SubmissionDetails = () => {
                 <CodeEditor
                   readOnly
                   code={currentSubmission?.content}
+                  selectedSubmissionType={submissionType}
                 />
             </div>
             <div className={styles.navigation}>

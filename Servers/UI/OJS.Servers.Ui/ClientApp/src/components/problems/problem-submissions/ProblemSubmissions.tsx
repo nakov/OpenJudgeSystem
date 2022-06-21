@@ -1,12 +1,8 @@
 import React, { useCallback } from 'react';
+import { isEmpty, isNil } from 'lodash';
 import { Button, ButtonType } from '../../guidelines/buttons/Button';
-import List from '../../guidelines/lists/List';
-
-import { ISubmissionDetails } from '../../../hooks/submissions/types';
 
 import { useProblemSubmissions } from '../../../hooks/submissions/use-problem-submissions';
-
-import ProblemSubmission from '../problem-submission/ProblemSubmission';
 
 import styles from './SubmissionResults.module.scss';
 import concatClassNames from '../../../utils/class-names';
@@ -43,7 +39,7 @@ const ProblemSubmissions = () => {
     const submissionResultsContentClassName = concatClassNames(styles.submissionResultsContent, submissionResultsContentClass);
 
     const renderSubmissions = () => {
-        if (!submissions || submissions.length === 0) {
+        if (isNil(submissions) || isEmpty(submissions)) {
             return (
                 <p> No results for this problem yet.</p>
             );

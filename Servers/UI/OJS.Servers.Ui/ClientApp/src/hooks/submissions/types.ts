@@ -1,4 +1,5 @@
 ﻿import { IUserProfileType } from '../use-users';
+import { ISubmissionTypeType } from '../../common/types';
 
 interface IProblemType {
     id: number;
@@ -24,6 +25,7 @@ interface ISubmissionType {
     content: string;
     problem: IProblemType;
     submissionTypeName: string;
+    submissionType: ISubmissionTypeType;
     points: number;
     testRuns: ITestRunType[];
     maxUsedTime: number;

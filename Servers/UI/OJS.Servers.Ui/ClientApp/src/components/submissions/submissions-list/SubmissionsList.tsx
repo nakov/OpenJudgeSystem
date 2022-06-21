@@ -19,11 +19,6 @@ const SubmissionsList = ({
     items,
     selectedSubmission,
 }: ISubmissionsListProps) => {
-    // const handleSubmissionClick = useCallback((submissionId: number) => {
-    //     setCurrentSubmissionId(submissionId);
-    //     navigate();
-    // }, [ navigate, setCurrentSubmissionId ]);
-
     const renderSubmissionListItem = useCallback((submission: ISubmissionDetails) => {
         const { id: selectedSubmissionId } = selectedSubmission || {};
         const {
@@ -56,20 +51,20 @@ const SubmissionsList = ({
                       maximumPoints={maximumPoints}
                       isProcessed={isProcessed}
                     />
-
                     <p className={styles.submissionCreatedOnParagraph}>{formatDate(new Date(createdOn))}</p>
                 </div>
-                <Text>
-                    {submissionType}
-                </Text>
-
-                <LinkButton
-                  size={ButtonSize.small}
-                  to={`/submissions/${id}/details`}
-                  type={LinkButtonType.secondary}
-                  text="Details"
-                  state={buttonState}
-                />
+                <div className={styles.actionsContainer}>
+                    <Text>
+                        {submissionType}
+                    </Text>
+                    <LinkButton
+                      size={ButtonSize.small}
+                      to={`/submissions/${id}/details`}
+                      type={LinkButtonType.secondary}
+                      text="Details"
+                      state={buttonState}
+                    />
+                </div>
             </div>
         );
     }, [ selectedSubmission ]);
@@ -83,6 +78,7 @@ const SubmissionsList = ({
           type={ListType.normal}
           orientation={Orientation.vertical}
           fullWidth
+          scrollable
         />
     );
 };

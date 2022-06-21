@@ -24,25 +24,13 @@ const Contest = () => {
     } = useCurrentContest();
 
     const navigationContestClass = 'navigationContest';
-    const navigationContestClassName = concatClassNames(
-        // styles.sizeThree,
-        styles.container,
-        navigationContestClass,
-    );
+    const navigationContestClassName = concatClassNames(navigationContestClass);
 
     const submissionBoxClass = 'submissionBox';
-    const submissionBoxClassName = concatClassNames(
-        // styles.sizeRest,
-        styles.container,
-        submissionBoxClass,
-    );
+    const submissionBoxClassName = concatClassNames(submissionBoxClass);
 
     const problemInfoClass = 'problemInfo';
-    const problemInfoClassName = concatClassNames(
-        // styles.sizeFour,
-        styles.container,
-        problemInfoClass,
-    );
+    const problemInfoClassName = concatClassNames(problemInfoClass);
 
     const scoreText = useMemo(
         () => `${score}/${maxScore}`,

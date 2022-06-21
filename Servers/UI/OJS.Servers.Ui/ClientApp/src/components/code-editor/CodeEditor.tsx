@@ -28,7 +28,6 @@ interface ICodeEditorProps {
     readOnly?: boolean;
     code?: string;
     selectedSubmissionType?: ISubmissionTypeType;
-    allowedSubmissionTypes?: ISubmissionTypeType[];
     onCodeChange?: (newValue: string) => void;
 }
 
@@ -36,31 +35,20 @@ const CodeEditor = ({
     readOnly = false,
     code,
     selectedSubmissionType,
-    allowedSubmissionTypes,
     onCodeChange,
 }: ICodeEditorProps) => {
     const [ selectedSubmissionTypeName, setSelectedSubmissionTypeName ] = useState<string | null>(null);
 
     useEffect(
         () => {
-            if (readOnly) {
+            const { name } = selectedSubmissionType || {};
+            if (isNil(name)) {
                 return;
             }
 
-            if (isNil(allowedSubmissionTypes)) {
-                return;
-            }
-            const { id } = selectedSubmissionType || {};
-            if (isNil(id)) {
-                return;
-            }
-
-            const submissionType = allowedSubmissionTypes.find((x) => x.id === id);
-
-            const name = get(submissionType, 'name', null);
             setSelectedSubmissionTypeName(name);
         },
-        [ allowedSubmissionTypes, readOnly, selectedSubmissionType ],
+        [ selectedSubmissionType ],
     );
 
     return (
@@ -80,6 +68,7 @@ const CodeEditor = ({
                   scrollbar: { vertical: 'hidden' },
               }}
               onChange={onCodeChange}
+              editorWillUnmount={() => {}}
             />
         </div>
     );
