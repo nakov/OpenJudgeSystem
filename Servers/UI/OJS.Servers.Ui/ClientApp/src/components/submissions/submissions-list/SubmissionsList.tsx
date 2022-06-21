@@ -1,15 +1,14 @@
-import { useCallback } from 'react';
 import * as React from 'react';
-import { useNavigate } from 'react-router';
+import { useCallback } from 'react';
 import { ISubmissionDetails } from '../../../hooks/submissions/types';
 import concatClassNames from '../../../utils/class-names';
-import { Button, ButtonType } from '../../guidelines/buttons/Button';
+import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import SubmissionResultPointsLabel from '../submission-result-points-label/SubmissionResultPointsLabel';
 import { formatDate } from '../../../utils/dates';
 import List, { ListType, Orientation } from '../../guidelines/lists/List';
-import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 
 import styles from './SubmissionsList.module.scss';
+import Text from '../../guidelines/text/Text';
 
 interface ISubmissionsListProps {
     items: any[];
@@ -20,18 +19,23 @@ const SubmissionsList = ({
     items,
     selectedSubmission,
 }: ISubmissionsListProps) => {
-    const navigate = useNavigate();
+    // const handleSubmissionClick = useCallback((submissionId: number) => {
+    //     setCurrentSubmissionId(submissionId);
+    //     navigate();
+    // }, [ navigate, setCurrentSubmissionId ]);
 
-    const { setCurrentSubmissionId } = useSubmissionsDetails();
-
-    const handleSubmissionClick = useCallback((submissionId: number) => {
-        setCurrentSubmissionId(submissionId);
-        navigate(`/submissions/${submissionId}/details`);
-    }, [ navigate, setCurrentSubmissionId ]);
-
-    const renderSubmissionListItem = useCallback((submissionDetails: ISubmissionDetails) => {
-        const { id } = selectedSubmission || {};
-        const selectedClassName = submissionDetails.id === id
+    const renderSubmissionListItem = useCallback((submission: ISubmissionDetails) => {
+        const { id: selectedSubmissionId } = selectedSubmission || {};
+        const {
+            id,
+            points,
+            maximumPoints,
+            isProcessed,
+            createdOn,
+            submissionType,
+        } = submission;
+        const isSelectedSubmission = id === selectedSubmissionId;
+        const selectedClassName = isSelectedSubmission
             ? styles.selected
             : '';
 
@@ -40,25 +44,35 @@ const SubmissionsList = ({
             selectedClassName,
         );
 
+        const buttonState = isSelectedSubmission
+            ? ButtonState.disabled
+            : ButtonState.enabled;
+
         return (
             <div className={className}>
-                <Button
-                  type={ButtonType.plain}
-                  onClick={() => handleSubmissionClick(submissionDetails.id)}
-                >
-                    {submissionDetails.submissionType}
-                </Button>
-                <div className={styles.labelContainer}>
+                <div className={styles.infoContainer}>
                     <SubmissionResultPointsLabel
-                      points={submissionDetails.points}
-                      maximumPoints={submissionDetails.maximumPoints}
-                      isProcessed={submissionDetails.isProcessed}
+                      points={points}
+                      maximumPoints={maximumPoints}
+                      isProcessed={isProcessed}
                     />
+
+                    <p className={styles.submissionCreatedOnParagraph}>{formatDate(new Date(createdOn))}</p>
                 </div>
-                <p className={styles.submissionCreatedOnParagraph}>{formatDate(new Date(submissionDetails.createdOn))}</p>
+                <Text>
+                    {submissionType}
+                </Text>
+
+                <LinkButton
+                  size={ButtonSize.small}
+                  to={`/submissions/${id}/details`}
+                  type={LinkButtonType.secondary}
+                  text="Details"
+                  state={buttonState}
+                />
             </div>
         );
-    }, [ handleSubmissionClick, selectedSubmission ]);
+    }, [ selectedSubmission ]);
 
     return (
         <List

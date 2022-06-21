@@ -10,9 +10,11 @@ import SubmissionsList from '../submissions-list/SubmissionsList';
 
 const SubmissionDetails = () => {
     const {
-        currentSubmission,
-        currentProblemSubmissionResults,
-        getSubmissionResults,
+        state: {
+            currentSubmission,
+            currentProblemSubmissionResults,
+        },
+        actions: { getSubmissionResults },
     } = useSubmissionsDetails();
 
     const problemNameHeadingText = useMemo(
