@@ -25,21 +25,21 @@ const Contest = () => {
 
     const navigationContestClass = 'navigationContest';
     const navigationContestClassName = concatClassNames(
-        styles.sizeThree,
+        // styles.sizeThree,
         styles.container,
         navigationContestClass,
     );
 
     const submissionBoxClass = 'submissionBox';
     const submissionBoxClassName = concatClassNames(
-        styles.sizeRest,
+        // styles.sizeRest,
         styles.container,
         submissionBoxClass,
     );
 
     const problemInfoClass = 'problemInfo';
     const problemInfoClassName = concatClassNames(
-        styles.sizeThree,
+        // styles.sizeFour,
         styles.container,
         problemInfoClass,
     );

@@ -10,6 +10,7 @@ import ProblemSubmission from '../problem-submission/ProblemSubmission';
 
 import styles from './SubmissionResults.module.scss';
 import concatClassNames from '../../../utils/class-names';
+import SubmissionsList from '../../submissions/submissions-list/SubmissionsList';
 
 const ProblemSubmissions = () => {
     const {
@@ -28,14 +29,16 @@ const ProblemSubmissions = () => {
         await reload();
     }, [ reload ]);
 
-    const renderSubmission = (submission: ISubmissionDetails) => (
-        <ProblemSubmission submission={submission} />
-    );
+    // const renderSubmission = (submission: ISubmissionDetails) => (
+    //     <ProblemSubmission submission={submission} />
+    // );
 
     const refreshButtonClass = 'refreshButton';
     const refreshButtonClassName = concatClassNames(styles.refreshBtn, refreshButtonClass);
-    const submissionResultsListItemClass = 'submission results';
-    const submissionResultsListItemClassName = concatClassNames(styles.submissionItem, submissionResultsListItemClass);
+
+    // const submissionResultsListItemClass = 'submission results';
+    // const submissionResultsListItemClassName =
+    // concatClassNames(styles.submissionItem, submissionResultsListItemClass);
     const submissionResultsContentClass = 'submissionResultsContent';
     const submissionResultsContentClassName = concatClassNames(styles.submissionResultsContent, submissionResultsContentClass);
 
@@ -46,11 +49,15 @@ const ProblemSubmissions = () => {
             );
         }
         return (
-            <List
-              values={submissions}
-              itemFunc={renderSubmission}
-              itemClassName={submissionResultsListItemClassName}
-              fullWidth
+        // <List
+        //   values={submissions}
+        //   itemFunc={renderSubmission}
+        //   itemClassName={submissionResultsListItemClassName}
+        //   fullWidth
+        // />
+            <SubmissionsList
+              items={submissions}
+              selectedSubmission={null}
             />
         );
     };

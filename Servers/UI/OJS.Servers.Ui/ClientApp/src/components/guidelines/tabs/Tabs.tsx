@@ -7,15 +7,15 @@ import { createTheme, Tab } from '@material-ui/core';
 import { Box } from '@mui/material';
 
 interface ITabPanelProps {
-    tabChildren: React.ReactNode[]
-    tabLabels: string[]
+    labels: string[]
+    contents: React.ReactNode[]
     themeOverride?: Theme
-    tabChildrenClassName?: string
+    childrenClassName?: string
 }
 
 const defaultState = { initialValue: '0' };
 
-const Tabs = ({ tabChildren, tabLabels, themeOverride, tabChildrenClassName }: ITabPanelProps) => {
+const Tabs = ({ contents, labels, themeOverride, childrenClassName }: ITabPanelProps) => {
     const [ value, setValue ] = useState(defaultState.initialValue);
 
     const theme =
@@ -26,18 +26,19 @@ const Tabs = ({ tabChildren, tabLabels, themeOverride, tabChildrenClassName }: I
     const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
         setValue(newValue);
     };
-    const renderTabs = () => tabLabels.map((tl: string, index: number) => (
+
+    const renderTabs = () => labels.map((tl: string, index: number) => (
         <Tab
           key={tl}
           label={tl}
           value={index.toString()}
-          className={tabChildrenClassName}
+          className={childrenClassName}
         />
     ));
 
-    const renderTabChildren = () => tabChildren?.map((tc: React.ReactNode, index: number) => (
+    const renderTabChildren = () => contents?.map((tc: React.ReactNode, index: number) => (
         <TabPanel
-          key={tabLabels[index]}
+          key={labels[index]}
           value={index.toString()}
         >
             {tc}

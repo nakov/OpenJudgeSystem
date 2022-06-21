@@ -4,6 +4,7 @@
 
 .contestWrapper {
   @extend .wrapper;
+  @extend .columns-3;
 }
 
 .contestHeading {
@@ -13,26 +14,8 @@
   text-align: center;
 }
 
-.sizeThree {
-  flex: 3;
-}
-
-.sizeRest {
-  flex: 7;
-}
-
 .headingContest {
   @extend .contentSize;
-}
-
-
-.container {
-  border-left: 1px $bottom-border-color solid;
-  padding: 15px;
-
-  &:first-of-type {
-    border-left: 0;
-  }
 }
 
 .contestInfoContainer {

@@ -19,3 +19,24 @@ body,
   display: flex;
   flex-direction: row;
 }
+
+.columns-3 {
+
+  & > * {
+    padding: 0 15px;
+    border-left: 1px $bottom-border-color solid;
+
+    &:first-child {
+      border-left: 0;
+    }
+  }
+
+  & > *:first-child,
+  & > *:last-child {
+    flex: 4;
+  }
+
+  & > *:nth-child(2) {
+    flex: 7;
+  }
+}

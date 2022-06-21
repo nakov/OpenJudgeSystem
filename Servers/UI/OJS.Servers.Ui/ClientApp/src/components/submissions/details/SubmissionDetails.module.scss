@@ -3,6 +3,7 @@
 
 .detailsWrapper {
   @extend .wrapper;
+  @extend .columns-3;
 }
 
 .headingDetails {
@@ -11,7 +12,7 @@
 
 .navigation {
   align-content: center;
-  border-right: 1px #bebebe solid;
+  //border-right: 1px #bebebe solid;
   flex: 3;
 }
 

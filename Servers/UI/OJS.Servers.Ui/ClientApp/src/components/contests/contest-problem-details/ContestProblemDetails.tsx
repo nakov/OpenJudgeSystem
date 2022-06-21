@@ -16,9 +16,9 @@ const ContestProblemDetails = () => {
     return (
         <div className={contestTabControlsClassName}>
             <Tabs
-              tabLabels={[ 'Problem', 'Submissions' ]}
-              tabChildrenClassName={contestTabsClassName}
-              tabChildren={[
+              childrenClassName={contestTabsClassName}
+              labels={[ 'Problem', 'Submissions' ]}
+              contents={[
                   <ProblemResources resources={currentProblem?.resources} />,
                   <ProblemSubmissions />,
               ]}
