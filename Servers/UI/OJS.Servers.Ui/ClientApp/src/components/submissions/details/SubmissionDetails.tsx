@@ -50,6 +50,7 @@ const SubmissionDetails = () => {
                 <SubmissionsList
                   items={currentProblemSubmissionResults}
                   selectedSubmission={currentSubmission}
+                  className={styles.submissionsList}
                 />
             </div>
             <div className={styles.code}>

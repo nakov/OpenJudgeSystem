@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { ISubmissionDetails } from '../../../hooks/submissions/types';
 import concatClassNames from '../../../utils/class-names';
 import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
@@ -9,8 +9,9 @@ import List, { ListType, Orientation } from '../../guidelines/lists/List';
 
 import styles from './SubmissionsList.module.scss';
 import Text from '../../guidelines/text/Text';
+import { IHaveOptionalClassName } from '../../common/Props';
 
-interface ISubmissionsListProps {
+interface ISubmissionsListProps extends IHaveOptionalClassName {
     items: any[];
     selectedSubmission: any;
 }
@@ -18,7 +19,13 @@ interface ISubmissionsListProps {
 const SubmissionsList = ({
     items,
     selectedSubmission,
+    className = '',
 }: ISubmissionsListProps) => {
+    const containerClassName = useMemo(
+        () => concatClassNames(className),
+        [ className ],
+    );
+
     const renderSubmissionListItem = useCallback((submission: ISubmissionDetails) => {
         const { id: selectedSubmissionId } = selectedSubmission || {};
         const {
@@ -34,7 +41,7 @@ const SubmissionsList = ({
             ? styles.selected
             : '';
 
-        const className = concatClassNames(
+        const itemClassName = concatClassNames(
             styles.submissionContainer,
             selectedClassName,
         );
@@ -44,7 +51,7 @@ const SubmissionsList = ({
             : ButtonState.enabled;
 
         return (
-            <div className={className}>
+            <div className={itemClassName}>
                 <div className={styles.infoContainer}>
                     <SubmissionResultPointsLabel
                       points={points}
@@ -70,16 +77,18 @@ const SubmissionsList = ({
     }, [ selectedSubmission ]);
 
     return (
-        <List
-          values={items}
-          className={styles.submissionsList}
-          itemClassName={styles.submissionListItem}
-          itemFunc={renderSubmissionListItem}
-          type={ListType.normal}
-          orientation={Orientation.vertical}
-          fullWidth
-          scrollable
-        />
+        <div className={containerClassName}>
+            <List
+              values={items}
+              className={styles.submissionsList}
+              itemClassName={styles.submissionListItem}
+              itemFunc={renderSubmissionListItem}
+              type={ListType.normal}
+              orientation={Orientation.vertical}
+              fullWidth
+              scrollable
+            />
+        </div>
     );
 };
 

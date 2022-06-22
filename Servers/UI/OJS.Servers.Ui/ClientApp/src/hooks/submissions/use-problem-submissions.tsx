@@ -15,7 +15,7 @@ interface IProblemSubmissionsContext {
         submissions: ISubmissionDetails[],
     };
     actions: {
-        getSubmissions: () => Promise<void>,
+        loadSubmissions: () => Promise<void>,
     };
 }
 
@@ -53,7 +53,7 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
         data: apiProblemSubmissions,
     } = useHttp(getSubmissionResultsByProblemUrl as UrlType, submissionResultsToGetParameters);
 
-    const getSubmissions = useCallback(async () => {
+    const loadSubmissions = useCallback(async () => {
         const { id } = currentProblem || {};
         if (isNil(id)) {
             return;
@@ -95,7 +95,7 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
 
     const value = {
         state: { submissions },
-        actions: { getSubmissions },
+        actions: { loadSubmissions },
     };
 
     return (

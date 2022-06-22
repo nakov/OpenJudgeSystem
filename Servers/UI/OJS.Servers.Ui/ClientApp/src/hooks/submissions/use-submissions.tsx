@@ -51,7 +51,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     } = useLoading();
 
     const { state: { currentProblem } } = useProblems();
-    const { actions: { getSubmissions } } = useProblemSubmissions();
+    const { actions: { loadSubmissions } } = useProblemSubmissions();
     const { state: { isOfficial } } = useCurrentContest();
 
     const {
@@ -108,10 +108,10 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     useEffect(
         () => {
             (async () => {
-                await getSubmissions();
+                await loadSubmissions();
             })();
         },
-        [ getSubmissions, submitCodeResult ],
+        [ loadSubmissions, submitCodeResult ],
     );
 
     const value = {

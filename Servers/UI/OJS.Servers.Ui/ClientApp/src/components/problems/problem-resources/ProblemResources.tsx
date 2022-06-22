@@ -1,28 +1,33 @@
 import * as React from 'react';
+import { useCallback } from 'react';
+import { isNil } from 'lodash';
 import { IProblemResourceType } from '../../../common/types';
 import List from '../../guidelines/lists/List';
 import ProblemResource from '../problem-resource/ProblemResource';
 import styles from './ProblemResources.module.scss';
 import concatClassNames from '../../../utils/class-names';
+import { useProblems } from '../../../hooks/use-problems';
 
-interface IProblemResourcesProps {
-    resources: IProblemResourceType[] | undefined
-}
+const ProblemResources = () => {
+    const { state: { currentProblem } } = useProblems();
 
-const ProblemResources = ({ resources }: IProblemResourcesProps) => {
-    const renderResource = (resource: IProblemResourceType) => (<ProblemResource resource={resource} />);
+    const { resources } = currentProblem || {};
+    const renderResource = useCallback(
+        (resource: IProblemResourceType) => (<ProblemResource resource={resource} />),
+        [],
+    );
+
     const contestResourcesClass = 'contestResources';
     const contestResourcesClassName = concatClassNames(styles.resourcesList, contestResourcesClass);
+    if (isNil(resources)) {
+        return (<p>No additional resources.</p>);
+    }
     return (
-        resources == null
-            ? <p>No additional resources.</p>
-            : (
-                <List
-                  values={resources}
-                  itemFunc={renderResource}
-                  className={contestResourcesClassName}
-                />
-            )
+        <List
+          values={resources}
+          itemFunc={renderResource}
+          className={contestResourcesClassName}
+        />
     );
 };
 

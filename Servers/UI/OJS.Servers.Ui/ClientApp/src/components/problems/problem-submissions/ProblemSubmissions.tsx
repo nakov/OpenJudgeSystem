@@ -11,23 +11,19 @@ import SubmissionsList from '../../submissions/submissions-list/SubmissionsList'
 const ProblemSubmissions = () => {
     const {
         state: { submissions },
-        actions: { getSubmissions },
+        actions: { loadSubmissions },
     } = useProblemSubmissions();
 
     const reload = useCallback(
         async () => {
-            await getSubmissions();
+            await loadSubmissions();
         },
-        [ getSubmissions ],
+        [ loadSubmissions ],
     );
 
     const handleReloadClick = useCallback(async () => {
         await reload();
     }, [ reload ]);
-
-    // const renderSubmission = (submission: ISubmissionDetails) => (
-    //     <ProblemSubmission submission={submission} />
-    // );
 
     const refreshButtonClass = 'refreshButton';
     const refreshButtonClassName = concatClassNames(styles.refreshBtn, refreshButtonClass);
@@ -45,15 +41,10 @@ const ProblemSubmissions = () => {
             );
         }
         return (
-        // <List
-        //   values={submissions}
-        //   itemFunc={renderSubmission}
-        //   itemClassName={submissionResultsListItemClassName}
-        //   fullWidth
-        // />
             <SubmissionsList
               items={submissions}
               selectedSubmission={null}
+              className={styles.submissionsList}
             />
         );
     };

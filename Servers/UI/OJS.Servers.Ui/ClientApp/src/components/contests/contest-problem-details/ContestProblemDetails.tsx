@@ -1,28 +1,29 @@
 import React from 'react';
-import Tabs from '../../guidelines/tabs/Tabs';
+import styles from './ContestProblemDetails.module.scss';
+import concatClassNames from '../../../utils/class-names';
+import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import ProblemResources from '../../problems/problem-resources/ProblemResources';
 import ProblemSubmissions from '../../problems/problem-submissions/ProblemSubmissions';
-import styles from './ContestProblemDetails.module.scss';
-import { useProblems } from '../../../hooks/use-problems';
-import concatClassNames from '../../../utils/class-names';
 
 const ContestProblemDetails = () => {
-    // TODO: remove this. Use `useProblems` inside `ProblemResources`
-    const { state: { currentProblem } } = useProblems();
     const contestTabControlsClass = 'contestTabControls';
-    const contestTabControlsClassName = concatClassNames(styles.contestTabControls, contestTabControlsClass);
-    const contestTabsClassName = 'contestTabs';
+    const problemDetailsContainer = concatClassNames(styles.problemDetailsContainer, contestTabControlsClass);
+    // const contestTabsClassName = 'contestTabs';
 
     return (
-        <div className={contestTabControlsClassName}>
-            <Tabs
-              childrenClassName={contestTabsClassName}
-              labels={[ 'Problem', 'Submissions' ]}
-              contents={[
-                  <ProblemResources resources={currentProblem?.resources} />,
-                  <ProblemSubmissions />,
-              ]}
-            />
+        <div className={problemDetailsContainer}>
+            <div>
+                <Heading type={HeadingType.secondary}>
+                    Resources
+                </Heading>
+                <ProblemResources />
+            </div>
+            <div>
+                <Heading type={HeadingType.secondary}>
+                    Submissions
+                </Heading>
+                <ProblemSubmissions />
+            </div>
         </div>
     );
 };
