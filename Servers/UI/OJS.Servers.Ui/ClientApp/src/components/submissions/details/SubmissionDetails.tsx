@@ -28,6 +28,12 @@ const SubmissionDetails = () => {
     );
     const detailsHeadingText = useMemo(() => `Details #${currentSubmission?.id}`, [ currentSubmission?.id ]);
     const navigate = useNavigate();
+    
+    const submissionsNavigationClass = "submissionsNavigation";
+    const submissionsNavigationClassName = concatClassNames(styles.submissionsNavigation, submissionsNavigationClass);
+
+    const submissionDetailsClass = "submissionDetails";
+    const submissionDetailsClassName = concatClassNames(styles.submissionDetails, submissionDetailsClass);
 
     useEffect(() => {
         if (isNil(currentSubmission)) {
@@ -96,7 +102,7 @@ const SubmissionDetails = () => {
 
     return (
         <div className={styles.detailsWrapper}>
-            <div className={styles.submissionsNavigation}>
+            <div className={submissionsNavigationClassName}>
                 <Heading type={HeadingType.secondary}>Submissions</Heading>
                 {renderSubmissionsForProblem()}
             </div>
@@ -112,7 +118,7 @@ const SubmissionDetails = () => {
                   code={currentSubmission?.content}
                 />
             </div>
-            <div className={styles.submissionDetails}>
+            <div className={submissionDetailsClassName}>
                 <Heading type={HeadingType.secondary}>{detailsHeadingText}</Heading>
                 <SubmissionResults testRuns={currentSubmission.testRuns} />
             </div>
