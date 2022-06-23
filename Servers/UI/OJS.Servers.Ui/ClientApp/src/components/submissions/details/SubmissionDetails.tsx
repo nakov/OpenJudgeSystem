@@ -28,11 +28,11 @@ const SubmissionDetails = () => {
     );
     const detailsHeadingText = useMemo(() => `Details #${currentSubmission?.id}`, [ currentSubmission?.id ]);
     const navigate = useNavigate();
-    
-    const submissionsNavigationClass = "submissionsNavigation";
+
+    const submissionsNavigationClass = 'submissionsNavigation';
     const submissionsNavigationClassName = concatClassNames(styles.submissionsNavigation, submissionsNavigationClass);
 
-    const submissionDetailsClass = "submissionDetails";
+    const submissionDetailsClass = 'submissionDetails';
     const submissionDetailsClassName = concatClassNames(styles.submissionDetails, submissionDetailsClass);
 
     useEffect(() => {
