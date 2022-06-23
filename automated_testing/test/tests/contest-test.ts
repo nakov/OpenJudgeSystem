@@ -114,6 +114,12 @@ describe('Testing contest', () => {
             await expect(button).toBeEnabled();
             await expect(buttonHref).toContain('results'); // it will be better to check with ID of the current contest
         });
+
+        it('Expect URL to contain compete', async () => {
+            const urlCheck = await browser.getUrl();
+            const result = urlCheck.toString();
+            await expect(result).toContain('compete');
+        });
     });
 
     describe('Testing practice contest', () => {
@@ -188,6 +194,12 @@ describe('Testing contest', () => {
             await expect(button).toBeClickable();
             await expect(button).toBeEnabled();
             await expect(buttonHref).toContain('results'); // it will be better to check with ID of the current contest
+        });
+
+        it('Expect URL to contain practice', async () => {
+            const urlCheck = await browser.getUrl();
+            const result = urlCheck.toString();
+            await expect(result).toContain('practice');
         });
     });
 });
