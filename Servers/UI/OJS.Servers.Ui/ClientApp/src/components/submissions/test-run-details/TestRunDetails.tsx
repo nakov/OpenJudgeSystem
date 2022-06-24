@@ -27,6 +27,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
     const testRunHeadingClassName = useMemo(
         () => concatClassNames(
             styles.testRunHeading,
+            'testRunHeading',
             getResultIsWrongAnswerResultType(testRun)
                 ? styles.wrongTestRunHeading
                 : styles.correctTestRunHeading,
@@ -103,6 +104,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
                   expandedText="Hide"
                   expanded={isCollapsed}
                   onExpandChanged={handleToggleCollapsible}
+                  className="testRunDetailsExpandBtn"
                 />
             </span>
             <Collapsible collapsed={isCollapsed}>

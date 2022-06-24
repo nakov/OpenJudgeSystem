@@ -18,6 +18,8 @@ const SubmissionResults = ({ testRuns } : ISubmissionResultsProps) => {
     return (
         <List
           values={testRuns.sort(compareByOrderByAsc)}
+          className="submissionTestRunsList"
+          itemClassName="testRunDetails"
           orientation={Orientation.vertical}
           itemFunc={renderTestRunsDetails}
           type={ListType.normal}
