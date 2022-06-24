@@ -17,6 +17,9 @@ const Collapsible = ({
     const internalContainerClassName = useMemo(() => concatClassNames(
         styles.collapsibleContainer,
         internalCollapsed
+            ? 'collapsibleContainerVisible'
+            : 'collapsibleContainerHidden',
+        internalCollapsed
             ? styles.visible
             : styles.hidden,
     ), [ internalCollapsed ]);

@@ -14,6 +14,7 @@ import { useSubmissions } from '../../../hooks/submissions/use-submissions';
 import { useProblems } from '../../../hooks/use-problems';
 
 import styles from './SubmissionBox.module.scss';
+import concatClassNames from '../../../utils/class-names';
 
 const SubmissionBox = () => {
     // const { setSubmissionType } = useHomeContests();
@@ -94,6 +95,11 @@ const SubmissionBox = () => {
     }, [ submit, updateSubmissionCode ]);
 
     const taskText = 'Task: ';
+    const executionTypeListClass = 'executionTypeLis';
+    const executionTypeListClassName = concatClassNames(
+        styles.executionTypeSelectors,
+        executionTypeListClass,
+    );
 
     return (
         <div className={styles.contestMainWrapper}>
@@ -115,7 +121,7 @@ const SubmissionBox = () => {
                       onCodeChange={handleCodeChanged}
                     />
                     <div className={styles.contestSubmitControlsWrapper}>
-                        <div className={styles.executionTypeSelectors}>
+                        <div className={executionTypeListClassName}>
                             {renderSubmissionTypesSelectorsList()}
                         </div>
                         <div className={styles.submitButtonContainer}>

@@ -31,9 +31,13 @@ const SubmissionDetails = () => {
 
     const submissionsNavigationClass = 'submissionsNavigation';
     const submissionsNavigationClassName = concatClassNames(styles.submissionsNavigation, submissionsNavigationClass);
-
     const submissionDetailsClass = 'submissionDetails';
     const submissionDetailsClassName = concatClassNames(styles.submissionDetails, submissionDetailsClass);
+    const submissionsNavigationListClass = 'submissionsSideNavigationList';
+    const submissionsNavigationListClassName = concatClassNames(styles.sideNavigation, submissionsNavigationListClass);
+    const submissionListItemClass = 'submissionListItem';
+    const submissionListItemClassName = concatClassNames(styles.submissionListItem, submissionListItemClass);
+    const submissionBtnClass = 'submissionBtn';
 
     useEffect(() => {
         if (isNil(currentSubmission)) {
@@ -58,6 +62,7 @@ const SubmissionDetails = () => {
         const className = concatClassNames(
             styles.submissionsNavigationItem,
             selectedClassName,
+            submissionBtnClass,
         );
         return (
             <>
@@ -86,14 +91,19 @@ const SubmissionDetails = () => {
                 <List
                   values={currentProblemSubmissionResults}
                   keyFunc={(v) => v.id.toString()}
-                  className={styles.sideNavigation}
+                  className={submissionsNavigationListClassName}
                   itemFunc={renderSubmissionListItem}
-                  itemClassName={styles.submissionListItem}
+                  itemClassName={submissionListItemClassName}
                   type={ListType.normal}
                   orientation={Orientation.vertical}
                 />
             ),
-            [ currentProblemSubmissionResults, renderSubmissionListItem ],
+            [
+                currentProblemSubmissionResults,
+                renderSubmissionListItem,
+                submissionListItemClassName,
+                submissionsNavigationListClassName,
+            ],
         );
 
     if (isNil(currentSubmission)) {
