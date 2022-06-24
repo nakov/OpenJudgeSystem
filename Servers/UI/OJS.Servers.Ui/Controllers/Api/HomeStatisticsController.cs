@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-public class StatisticsController : ControllerBase
+public class HomeStatisticsController : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetForIndex()
