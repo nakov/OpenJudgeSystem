@@ -98,7 +98,8 @@ const SubmissionBox = () => {
     const executionTypeListClass = 'executionTypeLis';
     const executionTypeListClassName = concatClassNames(
         styles.executionTypeSelectors,
-        executionTypeListClass);
+        executionTypeListClass,
+    );
 
     return (
         <div className={styles.contestMainWrapper}>
