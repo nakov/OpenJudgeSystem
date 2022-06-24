@@ -24,10 +24,11 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
     const initialIsCollapsed = testRun.isTrialTest && getResultIsWrongAnswerResultType(testRun);
     const [ isCollapsed, setIsCollapsed ] = useState<boolean>(initialIsCollapsed);
 
+    const testRunHeadingClass = 'testRunHeading';
     const testRunHeadingClassName = useMemo(
         () => concatClassNames(
             styles.testRunHeading,
-            'testRunHeading',
+            testRunHeadingClass,
             getResultIsWrongAnswerResultType(testRun)
                 ? styles.wrongTestRunHeading
                 : styles.correctTestRunHeading,

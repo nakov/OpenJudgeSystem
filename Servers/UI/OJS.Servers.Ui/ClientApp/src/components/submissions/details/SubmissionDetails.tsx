@@ -37,6 +37,7 @@ const SubmissionDetails = () => {
     const submissionsNavigationListClassName = concatClassNames(styles.sideNavigation, submissionsNavigationListClass);
     const submissionListItemClass = 'submissionListItem';
     const submissionListItemClassName = concatClassNames(styles.submissionListItem, submissionListItemClass);
+    const submissionBtnClass = 'submissionBtn';
 
     useEffect(() => {
         if (isNil(currentSubmission)) {
@@ -61,7 +62,7 @@ const SubmissionDetails = () => {
         const className = concatClassNames(
             styles.submissionsNavigationItem,
             selectedClassName,
-            'submissionBtn',
+            submissionBtnClass,
         );
         return (
             <>
