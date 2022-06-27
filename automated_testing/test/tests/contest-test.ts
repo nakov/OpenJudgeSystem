@@ -3,7 +3,7 @@ import ContestPage from '../pageobjects/contest-page';
 import AuthPage from '../pageobjects/auth-page';
 import IndexPage from '../pageobjects/index-page';
 
-describe('Testing contest', () => {
+describe.skip('Testing contest', () => {
     const validUserCredentials = {
         username: 'testuser123',
         password: '123456',
@@ -99,7 +99,7 @@ describe('Testing contest', () => {
     it('Expect to have no results paragraph if nothing is submitted', async () => {
         await ContestPage.controlsSubmissionTab.click();
         const submissionsNoResultsParagraph = await ContestPage.submissionsResultsNoResultsParagraph;
-        await expect(submissionsNoResultsParagraph).toExist() &&
+        await expect(submissionsNoResultsParagraph).toExist();
         await expect(submissionsNoResultsParagraph.getText()).toEqual('No results for this problem yet.');
     });
 
