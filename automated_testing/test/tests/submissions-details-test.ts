@@ -7,9 +7,9 @@ describe('Testing SubmissionsDetails Page', () => {
         password: '123456',
     };
 
-    const checker = {
-        notEmpty: (itemsList) => itemsList.length > 0,
-    };
+    // const checker = {
+    //     notEmpty: (itemsList) => itemsList.length > 0,
+    // };
 
     const loginWithCredentials = async (credentials) => {
         const { username, password } = credentials;
