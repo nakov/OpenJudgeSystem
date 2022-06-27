@@ -22,23 +22,36 @@ describe('Testing SubmissionsDetails Page', () => {
     before(async () => {
         await AuthPage.open();
         await loginInWithValidCredentials();
-        await browser.url('/submissions/23665173/details');
+       // await SubmissionsDetailsPage.open();
+       await browser.url('submissions/23665173/details');
+       await browser.setTimeout({ implicit: 5000 });
     });
 
     // after(async () => {
     //     await AuthPage.performLogOut();
     // });
 
-    it('Expect left navigation to have at least 1 submission', async () => {
-        const submissionsList = await SubmissionsDetailsPage.submissionsInSubmissionNavigation;
-        const result = checker.notEmpty(submissionsList);
+    xit('Expect left navigation to have at least 1 submission', async () => {
+        const submissionsList = await SubmissionsDetailsPage.leftNavigationSubmissionsList;
+        console.log('*************************************');
+        console.log(submissionsList.length);
+        console.log('*************************************');
         await expect(result).toBeTruthy();
     });
 
-    it('Expect right navigation to have at least 1 test run', async () => {
+    xit('Expect right navigation to have at least 1 test run', async () => {
         const testRunsList = await SubmissionsDetailsPage.submissionTestRuns;
         const result = checker.notEmpty(testRunsList);
         await expect(result).toBeTruthy();
+    });
+
+    it('Expect title', async () => {
+        const title = await SubmissionsDetailsPage.leftSubmissionNavigationTitle;
+        console.log('*************************************');
+        console.log(title);
+        console.log('*************************************');
+        await expect(title).toExist();
+        await expect(title).toHaveText('Submissions');
     });
 
     // it('Expect submission with 0/100 results to have all test runs showing wrong answer or error', async () => {
