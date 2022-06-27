@@ -1,6 +1,8 @@
 const selectors = {
-    pageLeftNavigationSubmissionsListSelector: '.submissionsSideNavigationList',
-    pageRightNavigationSubmissionResultsSelector: '.submissionTestRunsList',
+    // pageLeftNavigationSubmissionsListSelector: '.submissionsSideNavigationList',
+    pageSubmissionsListItems: '.submissionListItem',
+    // pageRightNavigationSubmissionResultsSelector: '.submissionTestRunsList',
+    pageTestRunsListItems: '.testRunDetails',
     pageTestRunsHeadingSelector: '.testRunHeading',
 };
 
