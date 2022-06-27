@@ -1,5 +1,6 @@
 const selectors = {
-     pageLeftNavigationSubmissionsListSelector: '.submissionsSideNavigationList li',
+    pageSubmissionsNavigation: '.submissionsNavigation',
+    pageLeftNavigationSubmissionsListSelector: '.submissionsSideNavigationList li',
    // pageSubmissionsListItems: '.submissionListItem li',
     // pageRightNavigationSubmissionResultsSelector: '.submissionTestRunsList',
     pageTestRunsListItems: '.testRunDetails',

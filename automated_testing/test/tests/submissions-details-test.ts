@@ -22,24 +22,36 @@ describe('Testing SubmissionsDetails Page', () => {
     before(async () => {
         await AuthPage.open();
         await loginInWithValidCredentials();
-        await browser.url('/submissions/23665173/details');
+        await SubmissionsDetailsPage.open();
     });
 
     // after(async () => {
     //     await AuthPage.performLogOut();
     // });
 
-    it('Expect left navigation to have at least 1 submission', async () => {
-        const submissionsList = await SubmissionsDetailsPage.submissionsInSubmissionNavigation;
-        const result = checker.notEmpty(submissionsList);
-        await expect(result).toBeTruthy();
+    it('Expect left navigation to be there', async () => {
+        await browser.waitUntil(
+            () => browser.execute(() => document.readyState === 'complete'),
+            {
+                timeout: 10000,
+                timeoutMsg: 'Message on failure',
+            },
+        );
+        const navigation = await SubmissionsDetailsPage.submissionsNavigation;
+        await expect(navigation).toExist();
     });
 
-    it('Expect right navigation to have at least 1 test run', async () => {
-        const testRunsList = await SubmissionsDetailsPage.submissionTestRuns;
-        const result = checker.notEmpty(testRunsList);
-        await expect(result).toBeTruthy();
-    });
+    // it('Expect left navigation to have at least 1 submission', async () => {
+    //     const submissionsList = await SubmissionsDetailsPage;
+    //     const result = checker.notEmpty(submissionsList);
+    //     await expect(result).toBeTruthy();
+    // });
+    //
+    // it('Expect right navigation to have at least 1 test run', async () => {
+    //     const testRunsList = await SubmissionsDetailsPage.submissionTestRuns;
+    //     const result = checker.notEmpty(testRunsList);
+    //     await expect(result).toBeTruthy();
+    // });
 
     // it('Expect submission with 0/100 results to have all test runs showing wrong answer or error', async () => {
     //     await browser.url('/submissions/23665173/details');
