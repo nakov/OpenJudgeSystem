@@ -92,6 +92,8 @@ describe('Testing contest', () => {
         });
 
         it('Expect to have only one active execution type even if there are more choices', async () => {
+            await IndexPage.open();
+            await IndexPage.secondCompeteCardButtonActiveContests.click();
             const activeStrategies = await ContestPage.executionTypeAllActive;
             const countActiveStrategies = activeStrategies.length;
             const inActiveStrategies = await ContestPage.executionTypeSelectorInactive;
@@ -104,7 +106,7 @@ describe('Testing contest', () => {
             await ContestPage.controlsSubmissionTab.click();
             const submissionsNoResultsParagraph = await ContestPage.submissionsResultsNoResultsParagraph;
             await expect(submissionsNoResultsParagraph).toExist() &&
-        await expect(submissionsNoResultsParagraph.getText()).toEqual('No results for this problem yet.');
+            await expect(await submissionsNoResultsParagraph.getText()).toEqual('No results for this problem yet.');
         });
 
         it('Expect Results button in left navigation to be enabled and clickable', async () => {
@@ -179,6 +181,13 @@ describe('Testing contest', () => {
             const activeStrategies = await ContestPage.executionTypeAllActive;
             const countStrategies = activeStrategies.length;
             await expect(countStrategies).toEqual(1);
+        });
+
+        it('Expect to have no results paragraph if nothing is submitted', async () => {
+            await ContestPage.controlsSubmissionTab.click();
+            const submissionsNoResultsParagraph = await ContestPage.submissionsResultsNoResultsParagraph;
+            await expect(submissionsNoResultsParagraph).toExist() &&
+            await expect(await submissionsNoResultsParagraph.getText()).toEqual('No results for this problem yet.');
         });
 
         it('Expect to have no results paragraph if nothing is submitted', async () => {

@@ -112,7 +112,7 @@ class IndexPage extends Page {
     }
 
     public get firstCompeteCardButtonActiveContests() {
-        return $(selectors.pageAllActiveCardsSelector).$(selectors.pageCompeteButtonIdSelector);
+        return $(selectors.pageAllActiveCardsSelector).$$(selectors.pageCompeteButtonIdSelector)[0];
     }
 
     public get seeAllActiveContestsButton() {
@@ -121,6 +121,10 @@ class IndexPage extends Page {
 
     public get seeAllPastContestsButton() {
         return $(selectors.pageSeePastContestsButtonSelector);
+    }
+
+    public get secondCompeteCardButtonActiveContests() {
+        return $(selectors.pageAllActiveCardsSelector).$$(selectors.pageCompeteButtonIdSelector)[1];
     }
 
     public open(): Promise<string> {
