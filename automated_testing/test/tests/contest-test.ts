@@ -93,13 +93,24 @@ describe('Testing contest', () => {
 
         it('Expect to have only one active execution type even if there are more choices', async () => {
             await IndexPage.open();
-            await IndexPage.secondCompeteCardButtonActiveContests.click();
+            await IndexPage.secondPracticeCardButtoPastContests.click();
             const activeStrategies = await ContestPage.executionTypeAllActive;
             const countActiveStrategies = activeStrategies.length;
             const inActiveStrategies = await ContestPage.executionTypeSelectorInactive;
             const countInActiveStrategies = inActiveStrategies.length;
             const total = countActiveStrategies + countInActiveStrategies;
             await expect(countInActiveStrategies).toEqual(total - 1);
+        });
+
+        it('Expect to be able to change the strategy', async () => {
+            await IndexPage.open();
+            await IndexPage.secondPracticeCardButtoPastContests.click();
+            const inActiveStrategy = await ContestPage.executionTypeSelectorInactive[0];
+            await inActiveStrategy.click();
+            const inActiveStrategyToBeActive = await inActiveStrategy.getText();
+            const activeStrategy = await ContestPage.executionTypeAllActive[0];
+            const newActiveStrategy = await activeStrategy.getText();
+            await expect(inActiveStrategyToBeActive).toEqual(newActiveStrategy);
         });
 
         it('Expect to have no results paragraph if nothing is submitted', async () => {
@@ -124,7 +135,7 @@ describe('Testing contest', () => {
         });
     });
 
-    describe('Testing practice contest', () => {
+    describe.skip('Testing practice contest', () => {
         before(async () => {
             await IndexPage.firstPracticeCardButtoPastContests.click();
             await browser.setTimeout({ implicit: 5000 });
@@ -183,18 +194,33 @@ describe('Testing contest', () => {
             await expect(countStrategies).toEqual(1);
         });
 
-        it('Expect to have no results paragraph if nothing is submitted', async () => {
-            await ContestPage.controlsSubmissionTab.click();
-            const submissionsNoResultsParagraph = await ContestPage.submissionsResultsNoResultsParagraph;
-            await expect(submissionsNoResultsParagraph).toExist() &&
-            await expect(await submissionsNoResultsParagraph.getText()).toEqual('No results for this problem yet.');
+        it('Expect to have only one active execution type even if there are more choices', async () => {
+            await IndexPage.open();
+            await IndexPage.secondCompeteCardButtonActiveContests.click();
+            const activeStrategies = await ContestPage.executionTypeAllActive;
+            const countActiveStrategies = activeStrategies.length;
+            const inActiveStrategies = await ContestPage.executionTypeSelectorInactive;
+            const countInActiveStrategies = inActiveStrategies.length;
+            const total = countActiveStrategies + countInActiveStrategies;
+            await expect(countInActiveStrategies).toEqual(total - 1);
+        });
+
+        it('Expect to be able to change the strategy', async () => {
+            await IndexPage.open();
+            await IndexPage.secondCompeteCardButtonActiveContests.click();
+            const inActiveStrategy = await ContestPage.executionTypeSelectorInactive[0];
+            await inActiveStrategy.click();
+            const inActiveStrategyToBeActive = await inActiveStrategy.getText();
+            const activeStrategy = await ContestPage.executionTypeAllActive[0];
+            const newActiveStrategy = await activeStrategy.getText();
+            await expect(inActiveStrategyToBeActive).toEqual(newActiveStrategy);
         });
 
         it('Expect to have no results paragraph if nothing is submitted', async () => {
             await ContestPage.controlsSubmissionTab.click();
             const submissionsNoResultsParagraph = await ContestPage.submissionsResultsNoResultsParagraph;
             await expect(submissionsNoResultsParagraph).toExist() &&
-            await expect(submissionsNoResultsParagraph.getText()).toEqual('No results for this problem yet.');
+            await expect(await submissionsNoResultsParagraph.getText()).toEqual('No results for this problem yet.');
         });
 
         it('Expect Results button in left navigation to be enabled and clickable', async () => {
