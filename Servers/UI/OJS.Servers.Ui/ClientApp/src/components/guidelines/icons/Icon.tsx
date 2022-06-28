@@ -25,7 +25,9 @@ const Icon = ({
             ? styles.small
             : size === IconSize.Medium
                 ? styles.medium
-                : styles.large;
+                : size === IconSize.Large
+                    ? styles.large
+                    : styles.extraLarge;
 
     const iconClassName = concatClassNames(
         styles.icon,

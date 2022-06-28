@@ -1,41 +1,101 @@
-import * as React from 'react';
-
+import React, { FC, useCallback, useEffect, useMemo } from 'react';
+import { isNil } from 'lodash';
+import { useHomeStatistics } from '../../hooks/use-home-statistics';
+import List, { Orientation } from '../guidelines/lists/List';
+import { IDictionary, IKeyValuePair } from '../../common/common-types';
+import StatisticBox, { StatisticBoxSize } from '../statistic-box/StatisticBox';
 import styles from './HomeHeader.module.scss';
-import HomeHeaderInfo from './HomeHeaderInfo';
-import HomeHeaderVideo from './HomeHeaderVideo';
+import IconSize from '../guidelines/icons/icon-sizes';
+import UsersIcon from '../guidelines/icons/UsersIcon';
+import CodeIcon from '../guidelines/icons/CodeIcon';
+import ProblemIcon from '../guidelines/icons/ProblemIcon';
+import StrategyIcon from '../guidelines/icons/StrategyIcon';
+import ContestIcon from '../guidelines/icons/ContestIcon';
+import SubmissionsPerMinuteIcon from '../guidelines/icons/SubmissionsPerMinuteIcon';
+import Heading, { HeadingType } from '../guidelines/headings/Heading';
 
-const HomeHeader = () => {
-    const bulletTexts = [
-        'Solve problems in most popular programming languages',
-        'See results right away',
-        'Submit algorithms, projects etc.',
-    ];
-
-    const primaryHeadingText = 'SoftUni Judge System';
-    const secondaryHeadingText = 'Automatic Algorithm Test Platform';
-
-    const videoId = window.Keys.YOUTUBE_VIDEO_ID;
-
-    return (
-        <div className={styles.header}>
-            <div className={styles.headerContent}>
-                <div className={styles.headerLeft}>
-                    <div className={styles.headerContentWrapper}>
-                        <HomeHeaderInfo
-                          primaryText={primaryHeadingText}
-                          secondaryText={secondaryHeadingText}
-                          bullets={bulletTexts}
-                        />
-                    </div>
-                </div>
-                <div className={styles.headerRight}>
-                    <div className={styles.headerContentWrapper}>
-                        <HomeHeaderVideo videoId={videoId} />
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+const keyToNameMap: IDictionary<string> = {
+    usersCount: 'Users',
+    submissionsCount: 'Submissions',
+    submissionsPerMinute: 'Submissions per Minute',
+    problemsCount: 'Problems',
+    strategiesCount: 'Strategies',
+    contestsCount: 'Contests',
 };
 
+/* eslint-disable react/jsx-props-no-spreading */
+const keyToIconComponent: IDictionary<FC> = {
+    usersCount: (props: any) => (<UsersIcon {...props} />),
+    submissionsCount: (props: any) => (<CodeIcon {...props} />),
+    submissionsPerMinute: (props: any) => (<SubmissionsPerMinuteIcon {...props} />),
+    problemsCount: (props: any) => (<ProblemIcon {...props} />),
+    strategiesCount: (props: any) => (<StrategyIcon {...props} />),
+    contestsCount: (props: any) => (<ContestIcon {...props} />),
+};
+/* eslint-enable react/jsx-props-no-spreading */
+
+const HomeHeader = () => {
+    const {
+        state: { statistics },
+        actions: { load },
+    } = useHomeStatistics();
+
+    useEffect(
+        () => {
+            (async () => {
+                await load();
+            })();
+        },
+        [ load ],
+    );
+
+    const renderIcon = (type: string) => {
+        const props = { size: IconSize.ExtraLarge, children: {} };
+        const func = keyToIconComponent[type];
+        return func(props);
+    };
+
+    const renderStatistic = useCallback(
+        (statisticItem: IKeyValuePair<number>) => {
+            const { key, value } = statisticItem;
+            return (
+                <StatisticBox
+                  size={StatisticBoxSize.big}
+                  statistic={{ name: keyToNameMap[key], value }}
+                  renderIcon={() => renderIcon(key)}
+                />
+            );
+        },
+        [],
+    );
+
+    const statisticsList = useMemo(
+        () => {
+            if (isNil(statistics)) {
+                return [];
+            }
+
+            const statisticsAsAny = statistics as any;
+
+            return Object.keys(statistics).map((key) => ({ key, value: statisticsAsAny[key] }));
+        },
+        [ statistics ],
+    );
+
+    return (
+        <>
+            <Heading type={HeadingType.primary}>
+                Our Numbers
+            </Heading>
+            <List
+              values={statisticsList}
+              itemFunc={renderStatistic}
+              className={styles.statisticsList}
+              itemClassName={styles.statisticsListItem}
+              wrap
+              orientation={Orientation.horizontal}
+            />
+        </>
+    );
+};
 export default HomeHeader;

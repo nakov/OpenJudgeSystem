@@ -1,0 +1,34 @@
+@import "./Icon.module";
+
+@import 'src/styles/colors';
+
+.localIconContainer {
+  @extend .iconContainer;
+
+  &.localSmall {
+    @extend .small;
+  }
+
+  &.localMedium {
+    @extend .medium;
+  }
+
+  &.localLarge {
+    @extend .large;
+  }
+
+  &.localExtraLarge {
+    @extend .extraLarge;
+  }
+}
+
+.localIcon {
+  @extend .localIcon;
+  & > * {
+    width: 45%;
+  }
+}
+
+.localHelperText {
+  @extend .helperText;
+}

@@ -5,14 +5,14 @@ import Icon, { IIconProps } from './Icon';
 import styles from './ErrorIcon.module.scss';
 import concatClassNames from '../../../utils/class-names';
 
-interface IInProgressIconProps extends IIconProps {
+interface IErrorIconProps extends IIconProps {
 }
 
-const InProgressIcon = ({
+const ErrorIcon = ({
     className = '',
     size = IconSize.Medium,
     helperText = '',
-}: IInProgressIconProps) => (
+}: IErrorIconProps) => (
     <Icon
       className={concatClassNames(styles.icon, className)}
       size={size}
@@ -21,4 +21,4 @@ const InProgressIcon = ({
     />
 );
 
-export default InProgressIcon;
+export default ErrorIcon;

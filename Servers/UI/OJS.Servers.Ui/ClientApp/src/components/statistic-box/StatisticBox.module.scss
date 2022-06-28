@@ -1,0 +1,32 @@
+.box {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+  gap: 15px;
+  
+  .name,
+  .value {
+    width: 100%;
+  }
+
+  .name {
+  }
+
+  .value {    
+  }
+
+  .small {
+    
+  }
+
+  .big {
+
+  }
+  
+  .valuesContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+}

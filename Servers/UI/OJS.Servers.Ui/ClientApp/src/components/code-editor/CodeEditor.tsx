@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { lazy, useEffect, useState } from 'react';
-import { get, isNil } from 'lodash';
+import { isNil } from 'lodash';
 import styles from './CodeEditor.module.scss';
 import { ISubmissionTypeType } from '../../common/types';
 
