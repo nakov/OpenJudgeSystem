@@ -1,37 +1,37 @@
-﻿using FluentExtensions.Extensions;
-using Microsoft.AspNetCore.Authentication;
+﻿namespace OJS.Servers.Ui.Controllers.Api;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OJS.Common.Extensions;
+using OJS.Servers.Infrastructure.Extensions;
 using OJS.Servers.Ui.Models.Participations;
-using OJS.Servers.Ui.Models.Submissions.Profile;
 using OJS.Services.Ui.Business;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
+using static Microsoft.AspNetCore.Http.StatusCodes;
 
-namespace OJS.Servers.Ui.Controllers.Api
+public class ParticipationsController : BaseApiController
 {
-    public class ParticipationsController : Controller
-    {
-        private IParticipationsBusinessService participationsBusiness;
+    private readonly IParticipationsBusinessService participationsBusiness;
 
-        public ParticipationsController(IParticipationsBusinessService participationsBusiness)
-            => this.participationsBusiness = participationsBusiness;
+    public ParticipationsController(IParticipationsBusinessService participationsBusiness)
+        => this.participationsBusiness = participationsBusiness;
 
-        public async Task<IEnumerable<ParticipationsResponseModel>> GetForProfile()
-        {
-            var userId = this.GetUserId(HttpContext);
+    /// <summary>
+    /// Gets all the participations of the current user for all the contests.
+    /// </summary>
+    /// <returns>A collection of contest participations</returns>
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<ParticipationsResponseModel>), Status200OK)]
+    public async Task<IActionResult> GetForProfile()
+        => await this.participationsBusiness
+            .GetParticipationsByUserId(this.User.GetId())
+            .MapCollection<ParticipationsResponseModel>()
+            .ToOkResult();
 
-            return await this.participationsBusiness
-                .GetParticipationsByUserId(userId)
-                .MapCollection<ParticipationsResponseModel>();
-        }
-
-        private string? GetUserId(HttpContext context)
-            => context.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier"))
-                ?.Value;
-    }
+    private string? GetUserId(HttpContext context)
+        => context.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier"))
+            ?.Value;
 }

@@ -10,7 +10,9 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
 
     public static class WebApplicationExtensions
     {
-        public static WebApplication ConfigureWebApplication(this WebApplication app)
+        public static WebApplication ConfigureWebApplication(
+            this WebApplication app,
+            string apiVersion)
         {
             app
                 .UseDefaults()
@@ -19,6 +21,7 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
             if (app.Environment.IsDevelopment())
             {
                 app.UseStaticFiles();
+                app.UseSwaggerDocs(apiVersion.ToApiName());
             }
             else
             {

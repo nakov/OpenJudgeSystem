@@ -6,9 +6,11 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Net.Http.Headers;
+    using Microsoft.OpenApi.Models;
     using OJS.Common.Enumerations;
     using OJS.Common.Utils;
     using OJS.Services.Common.Data;
@@ -23,6 +25,8 @@ namespace OJS.Servers.Infrastructure.Extensions
     using System.Collections.Generic;
     using System.IO;
     using System.Net.Http;
+    using System.Reflection;
+    using static OJS.Common.GlobalConstants.FileExtensions;
     using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.EnvironmentVariables;
     using static OJS.Servers.Infrastructure.ServerConstants;
@@ -85,6 +89,33 @@ namespace OJS.Servers.Infrastructure.Extensions
 
             return services;
         }
+
+        public static IServiceCollection AddSwaggerDocs(
+            this IServiceCollection services,
+            string name,
+            string title,
+            string version)
+            => services
+                .AddSwaggerGen(options =>
+                {
+                    options.SwaggerDoc(name, new OpenApiInfo
+                    {
+                        Title = title,
+                        Version = version,
+                    });
+
+                    options.MapType<FileContentResult>(() => new OpenApiSchema
+                    {
+                         Type = "file",
+                    });
+
+                    var entryAssembly = Assembly.GetEntryAssembly();
+                    if (entryAssembly != null)
+                    {
+                        var xmlFilename = $"{entryAssembly.GetName().Name}{Xml}";
+                        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+                    }
+                });
 
         private static IServiceCollection AddWebServerServices<TStartUp>(this IServiceCollection services)
         {

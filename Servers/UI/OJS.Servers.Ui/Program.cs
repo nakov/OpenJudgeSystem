@@ -5,11 +5,13 @@ namespace OJS.Servers.Ui
 
     public class Program
     {
+        private const string ApiVersion = "v1";
+
         public static void Main(string[] args)
             => WebApplication.CreateBuilder(args)
-                .ConfigureBuilder<Program>()
+                .ConfigureBuilder<Program>(ApiVersion)
                 .Build()
-                .ConfigureWebApplication()
+                .ConfigureWebApplication(ApiVersion)
                 .Run();
     }
 }

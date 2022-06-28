@@ -8,6 +8,6 @@ namespace OJS.Services.Ui.Business
 
     public interface IParticipationsBusinessService : IService
     {
-        Task<IEnumerable<ParticipationServiceModel>> GetParticipationsByUserId(string userId);
+        Task<IEnumerable<ParticipationServiceModel>> GetParticipationsByUserId(string? userId);
     }
 }

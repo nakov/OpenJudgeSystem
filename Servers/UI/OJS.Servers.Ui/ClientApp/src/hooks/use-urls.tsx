@@ -35,6 +35,7 @@ interface IUrlsProviderProps extends IHaveChildrenProps {
 }
 
 const baseUrl = window.URLS.UI_URL;
+const baseApiUrl = `${baseUrl}/api`;
 
 // auth
 const getLoginSubmitUrl = () => `${baseUrl}/Account/Login`;
@@ -45,34 +46,34 @@ const administrationBaseUrl = window.URLS.ADMINISTRATION_URL;
 const getAdministrationContestsGridUrl = () => `${administrationBaseUrl}/Contests`;
 
 // profile
-const getProfileInfoUrl = () => `${baseUrl}/Users/GetProfileInfo`;
-const getSubmissionsForProfileUrl = () => `${baseUrl}/Submissions/GetForProfile`;
-const getParticipationsForProfileUrl = () => `${baseUrl}/Participations/GetForProfile`;
+const getProfileInfoUrl = () => `${baseApiUrl}/Users/GetProfileInfo`;
+const getSubmissionsForProfileUrl = () => `${baseApiUrl}/Submissions/GetForProfile`;
+const getParticipationsForProfileUrl = () => `${baseApiUrl}/Participations/GetForProfile`;
 
 // contests
-const getIndexContestsUrl = () => `${baseUrl}/Contests/GetForHomeIndex`;
+const getIndexContestsUrl = () => `${baseApiUrl}/Contests/GetForHomeIndex`;
 const getAllContestsUrl = ({ filters, page }: IAllContestsUrlParams) => {
     const queryParams = `${filters
         .map(({ value, type }) => `${type.toLowerCase()}=${value}`)
         .join('&')
     }&page=${page}`;
 
-    return `${baseUrl}/Contests/GetAll?${queryParams}`;
+    return `${baseApiUrl}/Contests/GetAll?${queryParams}`;
 };
 
 const getStartContestParticipationUrl = ({
     id,
     isOfficial,
-}: IStartContestParticipationUrlParams) => `${baseUrl}/Compete/Index/${id}?official=${isOfficial}`;
+}: IStartContestParticipationUrlParams) => `${baseApiUrl}/Compete/Index/${id}?official=${isOfficial}`;
 
 const getCategoriesTreeUrl =
-    () => `${baseUrl}/ContestCategories/GetCategoriesTree`;
+    () => `${baseApiUrl}/ContestCategories/GetCategoriesTree`;
 
 const getContestResultsUrl = ({
     id,
     official,
     full,
-} : IGetContestResultsParams) => `${baseUrl}/ContestResults/GetResults/${id}?official=${official}&full=${full}`;
+} : IGetContestResultsParams) => `${baseApiUrl}/ContestResults/GetResults/${id}?official=${official}&full=${full}`;
 
 // submissions
 const getSubmissionResultsByProblemUrl = ({
@@ -80,19 +81,19 @@ const getSubmissionResultsByProblemUrl = ({
     isOfficial,
     take,
 }: IGetSubmissionResultsByProblemUrlParams) => `
-    ${baseUrl}/Submissions/GetSubmissionResultsByProblem/${id}?isOfficial=${isOfficial}&take=${take}`;
-const getSubmissionsDetailsUrl = () => `${baseUrl}/Submissions/Details`;
+    ${baseApiUrl}/Submissions/GetSubmissionResultsByProblem/${id}?isOfficial=${isOfficial}&take=${take}`;
+const getSubmissionsDetailsUrl = () => `${baseApiUrl}/Submissions/Details`;
 const getSubmissionDetailsByIdUrl =
     ({ submissionId }: IGetSubmissionDetailsByIdUrlParams) => `${getSubmissionsDetailsUrl()}/${submissionId}`;
-const getSubmitUrl = () => `${baseUrl}/Compete/Submit`;
+const getSubmitUrl = () => `${baseApiUrl}/Compete/Submit`;
 
 // Submission types
 const getAllContestStrategyFiltersUrl =
-    () => `${baseUrl}/SubmissionTypes/GetAllOrderedByLatestUsage`;
+    () => `${baseApiUrl}/SubmissionTypes/GetAllOrderedByLatestUsage`;
 
 // problem resources
 const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams) => `
-    ${baseUrl}/ProblemResources/GetResource/${id}
+    ${baseApiUrl}/ProblemResources/GetResource/${id}
 `;
 
 const UrlsProvider = ({ children }: IUrlsProviderProps) => {
