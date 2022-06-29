@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useMemo } from 'react';
 import Label, { LabelType } from '../../guidelines/labels/Label';
 import styles from './SubmissionResultPointsLabel.module.scss';
+import concatClassNames from '../../../utils/class-names';
 
 interface ISubmissionResultPointsLabelProps {
     points: number;
@@ -26,9 +27,11 @@ const SubmissionResultPointsLabel = ({
 
     const text = useMemo(() => `${currentPoints}/${maximumPoints}`, [ currentPoints, maximumPoints ]);
 
+    const internalClassName = concatClassNames(styles.resultLabel, 'resultLabel');
+
     return (
         <Label
-          className={styles.resultLabel}
+          className={internalClassName}
           type={labelType}
         >
             {text}

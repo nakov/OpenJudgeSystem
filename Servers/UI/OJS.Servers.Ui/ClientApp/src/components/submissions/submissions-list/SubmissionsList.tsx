@@ -26,6 +26,21 @@ const SubmissionsList = ({
         [ className ],
     );
 
+    const submissionsListClass = 'submissionsSideNavigationList';
+    const submissionsListClassName = useMemo(
+        () => concatClassNames(styles.submissionsList, submissionsListClass),
+        [],
+    );
+    const submissionListItemClass = useMemo(
+        () => 'submissionListItem',
+        [],
+    );
+    const submissionListItemClassName = useMemo(
+        () => concatClassNames(styles.submissionListItem, submissionListItemClass),
+        [ submissionListItemClass ],
+    );
+    const submissionBtnClass = 'submissionBtn';
+
     const renderSubmissionListItem = useCallback((submission: ISubmissionDetails) => {
         const { id: selectedSubmissionId } = selectedSubmission || {};
         const {
@@ -67,6 +82,7 @@ const SubmissionsList = ({
                     <LinkButton
                       size={ButtonSize.small}
                       to={`/submissions/${id}/details`}
+                      className={submissionBtnClass}
                       type={LinkButtonType.secondary}
                       text="Details"
                       state={buttonState}
@@ -80,8 +96,8 @@ const SubmissionsList = ({
         <div className={containerClassName}>
             <List
               values={items}
-              className={styles.submissionsList}
-              itemClassName={styles.submissionListItem}
+              className={submissionsListClassName}
+              itemClassName={submissionListItemClassName}
               itemFunc={renderSubmissionListItem}
               type={ListType.normal}
               orientation={Orientation.vertical}

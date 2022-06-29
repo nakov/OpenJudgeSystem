@@ -7,6 +7,7 @@ import CodeEditor from '../../code-editor/CodeEditor';
 import SubmissionResults from '../submission-results/SubmissionResults';
 import styles from './SubmissionDetails.module.scss';
 import SubmissionsList from '../submissions-list/SubmissionsList';
+import concatClassNames from '../../../utils/class-names';
 
 const SubmissionDetails = () => {
     const {
@@ -29,6 +30,11 @@ const SubmissionDetails = () => {
 
     const { submissionType } = currentSubmission || {};
 
+    const submissionsNavigationClassName = 'submissionsNavigation';
+
+    const submissionDetailsClass = 'submissionDetails';
+    const submissionDetailsClassName = concatClassNames(styles.navigation, submissionDetailsClass);
+
     useEffect(() => {
         if (isNil(currentSubmission)) {
             return;
@@ -46,7 +52,9 @@ const SubmissionDetails = () => {
     return (
         <div className={styles.detailsWrapper}>
             <div className={styles.navigation}>
-                <Heading type={HeadingType.secondary}>Submissions</Heading>
+                <div className={submissionsNavigationClassName}>
+                    <Heading type={HeadingType.secondary}>Submissions</Heading>
+                </div>
                 <SubmissionsList
                   items={currentProblemSubmissionResults}
                   selectedSubmission={currentSubmission}
@@ -66,7 +74,7 @@ const SubmissionDetails = () => {
                   selectedSubmissionType={submissionType}
                 />
             </div>
-            <div className={styles.navigation}>
+            <div className={submissionDetailsClassName}>
                 <Heading type={HeadingType.secondary}>{detailsHeadingText}</Heading>
                 <SubmissionResults testRuns={currentSubmission.testRuns} />
             </div>

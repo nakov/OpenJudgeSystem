@@ -16,7 +16,7 @@ namespace OJS.Services.Ui.Business.Implementations
         public ParticipationsBusinessService(IParticipantsDataService participantsData)
             => this.participantsData = participantsData;
 
-        public async Task<IEnumerable<ParticipationServiceModel>> GetParticipationsByUserId(string userId)
+        public async Task<IEnumerable<ParticipationServiceModel>> GetParticipationsByUserId(string? userId)
             => await this.participantsData
                 .GetAllByUser(userId)
                 .ToList()

@@ -31,7 +31,7 @@ namespace OJS.Services.Ui.Data.Implementations
                 .ThenInclude(pg => pg.Problems)
                 .FirstOrDefaultAsync();
 
-        public IQueryable<Participant> GetAllByUser(string userId)
+        public IQueryable<Participant> GetAllByUser(string? userId)
             => this.DbSet
                 .Where(p => p.UserId == userId);
 
