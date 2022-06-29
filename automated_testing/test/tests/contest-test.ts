@@ -57,6 +57,14 @@ describe('Testing contest', () => {
             await expect(`0/${totalScore}`).toEqual(score);
         });
 
+        // The following test must be executed in contests with a succesfull submission 100/total;
+        it('Expect score with one succesfull task to be 100/{tasks count * 100}', async () => {
+            const problems = await ContestPage.allContestListSideNavigation;
+            const totalScore = problems.length * 100;
+            const score = await (await ContestPage.contestScore).getText();
+            await expect(`100/${totalScore}`).toEqual(score);
+        });
+
         it('Expect Submit button to be enabled and clickable', async () => {
             const button = await ContestPage.submitButton;
             await expect(button).toBeClickable();
@@ -135,7 +143,7 @@ describe('Testing contest', () => {
         });
     });
 
-    describe.skip('Testing practice contest', () => {
+    describe('Testing practice contest', () => {
         before(async () => {
             await IndexPage.firstPracticeCardButtoPastContests.click();
             await browser.setTimeout({ implicit: 5000 });
@@ -153,11 +161,19 @@ describe('Testing contest', () => {
             await expect(check).toBeTruthy();
         });
 
-        it('Expect full total score to be tasks score multiplied by 100', async () => {
+        it('Expect full total score to be tasks count multiplied by 100', async () => {
             const problems = await ContestPage.allContestListSideNavigation;
             const totalScore = problems.length * 100;
             const score = await (await ContestPage.contestScore).getText();
             await expect(`0/${totalScore}`).toEqual(score);
+        });
+
+        // The following test must be executed in contests with a succesfull submission 100/total;
+        it('Expect score with one succesfull task to be 100/{tasks count * 100}', async () => {
+            const problems = await ContestPage.allContestListSideNavigation;
+            const totalScore = problems.length * 100;
+            const score = await (await ContestPage.contestScore).getText();
+            await expect(`100/${totalScore}`).toEqual(score);
         });
 
         it('Expect Submit button to be enabled and clickable', async () => {
