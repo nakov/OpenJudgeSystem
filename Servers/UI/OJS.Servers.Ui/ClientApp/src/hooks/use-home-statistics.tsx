@@ -1,6 +1,8 @@
-import React, { createContext, useCallback, useContext, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { IHaveChildrenProps } from '../components/common/Props';
 import { useLoading } from './use-loading';
+import { useHttp } from './use-http';
+import { useUrls } from './use-urls';
 
 interface IHomeStatisticsContext {
     state: {
@@ -25,15 +27,6 @@ interface IHomeStatistics {
 interface IHomeStatisticsProviderProps extends IHaveChildrenProps {
 }
 
-const fakeData = {
-    usersCount: 15_000,
-    submissionsCount: 2_000_000,
-    submissionsPerMinute: 160,
-    contestsCount: 2000,
-    problemsCount: 10_000,
-    strategiesCount: 37,
-};
-
 const HomeStatisticsProvider = ({ children }: IHomeStatisticsProviderProps) => {
     const [ statistics, setStatistics ] = useState <IHomeStatistics | null>(null);
     const {
@@ -41,13 +34,27 @@ const HomeStatisticsProvider = ({ children }: IHomeStatisticsProviderProps) => {
         stopLoading,
     } = useLoading();
 
+    const { getHomeStatisticsUrl } = useUrls();
+
+    const {
+        get,
+        data,
+    } = useHttp(getHomeStatisticsUrl);
+
     const load = useCallback(
         async () => {
             await startLoading();
-            setStatistics(fakeData);
+            await get();
             await stopLoading();
         },
-        [ startLoading, stopLoading ],
+        [ get, startLoading, stopLoading ],
+    );
+
+    useEffect(
+        () => {
+            setStatistics(data as IHomeStatistics);
+        },
+        [ data ],
     );
 
     const value = {

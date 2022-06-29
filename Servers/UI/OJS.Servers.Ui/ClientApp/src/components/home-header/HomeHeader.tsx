@@ -17,20 +17,22 @@ import Heading, { HeadingType } from '../guidelines/headings/Heading';
 const keyToNameMap: IDictionary<string> = {
     usersCount: 'Users',
     submissionsCount: 'Submissions',
-    submissionsPerMinute: 'Submissions per Minute',
+    submissionsPerMinuteCount: 'Submissions per minute',
     problemsCount: 'Problems',
-    strategiesCount: 'Strategies',
+    strategiesCount: 'Test strategies',
     contestsCount: 'Contests',
 };
 
+const defeaultProps = { className: styles.icon };
+
 /* eslint-disable react/jsx-props-no-spreading */
 const keyToIconComponent: IDictionary<FC> = {
-    usersCount: (props: any) => (<UsersIcon {...props} />),
-    submissionsCount: (props: any) => (<CodeIcon {...props} />),
-    submissionsPerMinute: (props: any) => (<SubmissionsPerMinuteIcon {...props} />),
-    problemsCount: (props: any) => (<ProblemIcon {...props} />),
-    strategiesCount: (props: any) => (<StrategyIcon {...props} />),
-    contestsCount: (props: any) => (<ContestIcon {...props} />),
+    usersCount: (props: any) => (<UsersIcon {...defeaultProps} {...props} />),
+    submissionsCount: (props: any) => (<CodeIcon {...defeaultProps} {...props} />),
+    submissionsPerMinuteCount: (props: any) => (<SubmissionsPerMinuteIcon {...defeaultProps} {...props} />),
+    problemsCount: (props: any) => (<ProblemIcon {...defeaultProps} {...props} />),
+    strategiesCount: (props: any) => (<StrategyIcon {...defeaultProps} {...props} />),
+    contestsCount: (props: any) => (<ContestIcon {...defeaultProps} {...props} />),
 };
 /* eslint-enable react/jsx-props-no-spreading */
 
@@ -85,7 +87,7 @@ const HomeHeader = () => {
     return (
         <>
             <Heading type={HeadingType.primary}>
-                Our Numbers
+                SoftUni Judge Numbers
             </Heading>
             <List
               values={statisticsList}

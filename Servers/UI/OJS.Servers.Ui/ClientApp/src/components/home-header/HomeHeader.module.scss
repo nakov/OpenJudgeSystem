@@ -1,49 +1,16 @@
 ﻿@import "src/styles/colors";
-@import "src/styles/components";
-//
-//.header {
-//}
-//
-//.headerContent {
-//  @extend .contentSize;
-//
-//  width: 100%;
-//  max-width: 100%;
-//  display: flex;
-//  flex-direction: row;
-//}
-//
-//.headerContentWrapper {
-//  max-width: 90%;
-//  padding: 40px;
-//}
-//
-//.headerPart {
-//  padding-top: 75px;
-//  flex-basis: 50%;
-//  display: flex;
-//  align-items: center;
-//  justify-content: center;
-//}
-//
-//.headerLeft {
-//  @extend .headerPart;
-//  background: #FDFDFD;
-//}
-//
-//.headerRight {
-//  @extend .headerPart;
-//  background: #3F4D5A;
-//  align-self: stretch;
-//}
 
 .statisticsList {
   padding-top: 20px;
   justify-content: center;
+
+  .statisticsListItem {
+    padding: 15px;
+    margin: 20px 0;
+    flex: 1 1 30%; /*grow | shrink | basis */
+  }
 }
 
-.statisticsListItem {
-  width: 30%;
-  padding: 15px;
-  margin: 20px 0;
+.icon {
+  color: $success-background-color
 }

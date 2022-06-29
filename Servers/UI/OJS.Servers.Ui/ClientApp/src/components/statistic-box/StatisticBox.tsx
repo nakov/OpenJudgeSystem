@@ -59,7 +59,12 @@ const StatisticBox = ({
         <div className={boxClassName}>
             {renderIconInternal()}
             <div className={styles.valuesContainer}>
-                <Heading type={HeadingType.small}>{name}</Heading>
+                <Heading
+                  type={HeadingType.small}
+                  className={styles.name}
+                >
+                    {name}
+                </Heading>
                 <Heading
                   className={styles.value}
                   type={HeadingType.secondary}
