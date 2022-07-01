@@ -7,7 +7,7 @@
   .submissionListItem {
     text-align: start;
     font-size: 18px;
-    font-family: 'Lato', serif;
+    font-family: Lato, serif;
     color: $text-dark-gray-color;
     margin-top: 10px;
   }
@@ -18,9 +18,7 @@
   position: relative;
   width: 100%;
   padding: 45px 0 5px;
-
   justify-content: space-between;
-
   border-bottom: 1px solid $bottom-border-color;
 
   &.selected {
@@ -47,6 +45,6 @@
 
 .submissionCreatedOnParagraph {
   font-size: 12px;
-  font-family: 'Lato', serif;
+  font-family: Lato, serif;
   color: $text-light-gray-color;
 }

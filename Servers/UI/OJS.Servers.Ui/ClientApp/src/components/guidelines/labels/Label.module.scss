@@ -6,25 +6,26 @@
   padding: 5px 15px;
   font-size: 0.8em;
   color: white;
-  font-family: 'Lato-Regular',sans-serif;
+  font-family: Lato-Regular, sans-serif;
   text-transform: uppercase;
   display: inline-block;
+
   &.success {
-    background: rgb(35, 190, 94);
+    background: rgb(35 190 94);
   }
-  
+
   &.warning {
-    background-color: #FEC112;;
+    background-color: #fec112;
   }
-  
+
   &.danger {
-    background-color: #fc4c50;;
+    background-color: #fc4c50;
   }
-  
+
   &.info {
     background-color: blue;
   }
-  
+
   &.plain {
     background-color: #f1f1f1;
     color: #565656;

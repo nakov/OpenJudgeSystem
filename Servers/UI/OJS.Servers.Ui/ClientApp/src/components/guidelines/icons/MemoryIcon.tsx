@@ -1,6 +1,6 @@
 import React from 'react';
 import { BiMemoryCard } from 'react-icons/all';
-import IconSize from './icon-sizes';
+import IconSize from './common/icon-sizes';
 import Icon, { IIconProps } from './Icon';
 
 interface IMemoryIconProps extends IIconProps {

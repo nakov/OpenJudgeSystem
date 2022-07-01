@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unused-modules,no-undef
 module.exports = {
     env: {
         browser: true,
@@ -8,6 +9,7 @@ module.exports = {
         'plugin:react/recommended',
         'airbnb',
         'plugin:css-modules/recommended',
+        'stylelint',
     ],
     parser: '@typescript-eslint/parser',
     parserOptions: {
@@ -266,6 +268,10 @@ module.exports = {
         'import/prefer-default-export': 'error',
         'import/exports-last': 'error',
         'import/group-exports': 'error',
+        'import/no-unused-modules': [ 'error', {
+            unusedExports: true,
+            missingExports: true,
+        } ],
         // "import/dynamic-import-chunkname": ["error"],
 
         /* react rules */

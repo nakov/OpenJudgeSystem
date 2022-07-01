@@ -1,6 +1,6 @@
 import React from 'react';
 import { MdError } from 'react-icons/md';
-import IconSize from './icon-sizes';
+import IconSize from './common/icon-sizes';
 import Icon, { IIconProps } from './Icon';
 import styles from './ErrorIcon.module.scss';
 import concatClassNames from '../../../utils/class-names';

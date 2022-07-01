@@ -1,34 +1,34 @@
-@import "./Icon.module";
+@import "./common/icon-base";
+@import "src/styles/colors";
 
-@import 'src/styles/colors';
+.iconContainer {
+  @extend %iconContainer;
 
-.localIconContainer {
-  @extend .iconContainer;
-
-  &.localSmall {
-    @extend .small;
+  &.small {
+    @extend %small;
   }
 
-  &.localMedium {
-    @extend .medium;
+  &.medium {
+    @extend %medium;
   }
 
-  &.localLarge {
-    @extend .large;
+  &.large {
+    @extend %large;
   }
 
-  &.localExtraLarge {
-    @extend .extraLarge;
+  &.extraLarge {
+    @extend %extraLarge;
   }
 }
 
-.localIcon {
-  @extend .localIcon;
+.icon {
+  @extend %icon;
+
   & > * {
     width: 45%;
   }
 }
 
-.localHelperText {
-  @extend .helperText;
+.helperText {
+  @extend %helperText;
 }

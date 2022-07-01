@@ -96,7 +96,7 @@ const getAllContestStrategyFiltersUrl =
 const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams) => `${baseApiUrl}/ProblemResources/GetResource/${id}`;
 
 // Statistics
-const getHomeStatisticsUrl = () => `${baseUrl}/StatisticsPreview/GetForHome`;
+const getHomeStatisticsUrl = () => `${baseApiUrl}/StatisticsPreview/GetForHome`;
 
 const UrlsProvider = ({ children }: IUrlsProviderProps) => {
     const value = {

@@ -9,7 +9,7 @@ import Label, { LabelType } from '../../guidelines/labels/Label';
 import ProblemSubmissionDetails from '../../contests/problem-submission-details/ProblemSubmissionDetails';
 import concatClassNames from '../../../utils/class-names';
 import DetailsIcon from '../../guidelines/icons/DetailsIcon';
-import IconSize from '../../guidelines/icons/icon-sizes';
+import IconSize from '../../guidelines/icons/common/icon-sizes';
 import styles from './ProblemSubmission.module.scss';
 
 interface ISubmissionResultProps {
@@ -95,7 +95,7 @@ const ProblemSubmission = ({ submission }: ISubmissionResultProps) => {
 
     const labelClass = 'label';
     const labelClassName = concatClassNames(
-        styles.labelContainer,
+        styles.infoContainer,
         labelClass,
     );
 

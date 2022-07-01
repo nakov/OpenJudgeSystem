@@ -1,5 +1,4 @@
 @import "src/styles/colors";
-@import "src/components/guidelines/buttons/Button.module";
 
 .submissionResultsContent {
   display: flex;
@@ -9,13 +8,13 @@
 .refreshBtn {
   border: none;
   align-self: end;
-  
+
   &:hover {
     background: none;
     cursor: pointer;
   }
 }
 
-.submissionsList{
-  //height: 40vh;
+.submissionsList {
+  // height: 40vh;
 }

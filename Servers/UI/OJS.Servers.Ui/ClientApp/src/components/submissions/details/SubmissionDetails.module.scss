@@ -1,47 +1,46 @@
-﻿@import "src/styles/global";
+@import "src/styles/global";
 @import "src/styles/components";
 
 .detailsWrapper {
-  @extend .wrapper;
-  @extend .columns-3;
+  @extend %wrapper;
+  @extend %columnsThree;
 }
 
-.headingDetails {
-  @extend .contentSize;
-}
-
-.navigation {
+.navigation,
+%navigation {
   align-content: center;
-  //border-right: 1px #bebebe solid;
   flex: 3;
 }
 
 .code {
-  @extend .navigation;
-  
+  @extend %navigation;
+
   flex: 7;
-}
-
-
-.submissionDetails {
-  @extend .navigation;
-  
-  flex: 5;
-  border: none;
 }
 
 .taskHeading {
   text-align: center;
 }
 
-.wrongTestRunHeading {
-  color: $primary-red;
-}
-
-.correctTestRunHeading {
-  color: $primary-green;
-}
-
 .submissionsList {
   height: 60vh;
 }
+
+
+// .wrongTestRunHeading {
+//  color: $primary-red;
+// }
+
+// .correctTestRunHeading {
+//  color: $primary-green;
+// }
+
+// .submissionDetails {
+//  @extend %navigation;
+//  flex: 5;
+//  border: none;
+// }
+
+// .headingDetails {
+//  @extend %contentSize;
+// }

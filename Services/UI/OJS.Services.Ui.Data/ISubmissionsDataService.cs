@@ -42,4 +42,6 @@ public interface ISubmissionsDataService : IDataService<Submission>
     bool HasSubmissionTimeLimitPassedForParticipant(int participantId, int limitBetweenSubmissions);
 
     bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId);
+
+    Task<int> GetSubmissionsPerDayCount();
 }

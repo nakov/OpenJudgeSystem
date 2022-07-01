@@ -1,8 +1,7 @@
 @import "src/styles/colors";
 
-
 .heading {
-  font-family: 'Montserrat', sans-serif;
+  font-family: Montserrat, sans-serif;
   font-style: normal;
   font-weight: 500;
   color: $text-dark-gray-color;
@@ -28,5 +27,6 @@
   }
 
   &.small {
+    // to be  added
   }
 }

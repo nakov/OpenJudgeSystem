@@ -1,6 +1,6 @@
 import React from 'react';
 import { FaTrophy } from 'react-icons/fa';
-import IconSize from './icon-sizes';
+import IconSize from './common/icon-sizes';
 import Icon, { IIconProps } from './Icon';
 
 interface IContestIconProps extends IIconProps {

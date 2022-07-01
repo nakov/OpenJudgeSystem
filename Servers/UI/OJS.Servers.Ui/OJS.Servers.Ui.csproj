@@ -32,6 +32,7 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -43,6 +44,51 @@
       <_ContentIncludedByDefault Remove="Views\Shared\_ValidationScriptsPartial.cshtml" />
       <_ContentIncludedByDefault Remove="ClientApp\dist\9571ccf8bb84a418b2ad.hot-update.json" />
       <_ContentIncludedByDefault Remove="ClientApp\dist\asset-manifest.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\04e46b430b5d6d596c9b.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\0f82e3ea0784b67f1ffa.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\0fa8852772411fe65fd8.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\1316f95d7a54b2c78c69.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\15523dae81bebeccf0bd.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\17946d5dac6495fea8a2.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\19c3691a91ce2caaac6e.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\1a1e7762a9b2b5816ee1.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\1ef12b2e658c74b23aa9.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\1f3492fc985dbef58cd8.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\2282213594ba78fccac7.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\233b5de78af2aec71687.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\250eed5c08412e15ef6f.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\2c536e183ef0a602561c.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\2cd0c2e3eade566adc32.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\33c1a8b3907713db62d1.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\3773b86413e181ffd898.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\3923d7332c25c2c06917.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\3c77709edd393ff772a9.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\49bedc738574b2ee5d4f.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\4dbd3f7b21f54e9804ff.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\4eb793a7048ad851a977.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\598976871b28322020fe.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\5e8fd6057b8bf93beb11.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\7cc13a59f4a4888a81e6.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\83c00960fb01ff87b03f.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\9316516912f4a1fcb70a.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\953fff947051283fd1ca.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\97e480d85f3f440bdb36.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\9d0eeb6bfbe32b94c362.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\9dee5c53bce18c246037.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\a06ca52401fc4405ce12.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\a8030a1fb9c84f825807.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\af2e5d66c4330bfa5760.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\b477be622ee830a8186a.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\c00c74d0d8eceb32e4be.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\c93f76c16cfa85c8a56e.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\cbcc4ff062f9a6844d6f.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\d12ce98fa91fe3fbbdac.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\d1dbf204c9bf0151686b.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\d5da3665257c3376528d.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\dab3f3b7fd436fac9c9f.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\dc2903abaaef7f6904df.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\eaa30cc4d11c535985c9.hot-update.json" />
+      <_ContentIncludedByDefault Remove="ClientApp\dist\fd96dc40601953be31bf.hot-update.json" />
     </ItemGroup>
 
     <ItemGroup>
@@ -52,7 +98,6 @@
     <ItemGroup>
         <!-- Don't publish the SPA source files, but do show them in the project files list -->
         <Content Remove="$(SpaRoot)**" />
-        <Content Include="ClientApp\dist\asset-manifest.json" />
         <None Remove="$(SpaRoot)**" />
         <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
     </ItemGroup>

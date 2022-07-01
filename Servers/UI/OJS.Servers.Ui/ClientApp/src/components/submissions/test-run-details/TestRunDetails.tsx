@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { isNil } from 'lodash';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import { ITestRunDetailsType } from '../../../hooks/submissions/types';
-import IconSize from '../../guidelines/icons/icon-sizes';
+import IconSize from '../../guidelines/icons/common/icon-sizes';
 import { useAuth } from '../../../hooks/use-auth';
 import concatClassNames from '../../../utils/class-names';
 import TimeLimitIcon from '../../guidelines/icons/TimeLimitIcon';

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { get } from 'lodash';
 import styles from './ExecutionTypeSelector.module.scss';
-import { Button, ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
+import { Button, ButtonSize, ButtonState, ButtonType } from '../../guidelines/buttons/Button';
 import { useSubmissions } from '../../../hooks/submissions/use-submissions';
 import concatClassNames from '../../../utils/class-names';
 
@@ -15,7 +15,6 @@ interface IExecutionTypeSelectorProps {
 
 const ExecutionTypeSelector = ({ id, value, isSelected, onSelect }: IExecutionTypeSelectorProps) => {
     const [ selected, setSelected ] = useState(isSelected);
-    const [ executionTypeSelectorClassName, setExecutionTypeSelectorClassName ] = useState('');
     const { state: { selectedSubmissionType } } = useSubmissions();
 
     const selectedSubmissionTypeId = useMemo(
@@ -24,24 +23,23 @@ const ExecutionTypeSelector = ({ id, value, isSelected, onSelect }: IExecutionTy
     );
 
     const executionTypeSelectorActiveClass = 'executionTypeSelectorActive';
-    const executionTypeSelectorActiveClassName = concatClassNames(
-        styles.executionTypeSelector,
-        styles.active,
-        executionTypeSelectorActiveClass,
-    );
-
     const executionTypeSelectorInactiveClass = 'executionTypeSelectorInactive';
-    const executionTypeSelectorInactiveClassName = concatClassNames(
+    const stateClassName = useMemo(
+        () => (selectedSubmissionTypeId === id
+            ? executionTypeSelectorActiveClass
+            : executionTypeSelectorInactiveClass),
+        [ id, selectedSubmissionTypeId ],
+    );
+    const executionTypeSelectorClassName = concatClassNames(
         styles.executionTypeSelector,
-        styles.inactive,
-        executionTypeSelectorInactiveClass,
+        stateClassName,
     );
 
-    useEffect(
-        () => setExecutionTypeSelectorClassName(selectedSubmissionTypeId === id
-            ? executionTypeSelectorActiveClassName
-            : executionTypeSelectorInactiveClassName),
-        [ executionTypeSelectorActiveClassName, executionTypeSelectorInactiveClassName, id, selectedSubmissionTypeId ],
+    const buttonState = useMemo(
+        () => (selectedSubmissionTypeId === id
+            ? ButtonState.disabled
+            : ButtonState.enabled),
+        [ id, selectedSubmissionTypeId ],
     );
 
     const select = useCallback(() => {
@@ -54,6 +52,7 @@ const ExecutionTypeSelector = ({ id, value, isSelected, onSelect }: IExecutionTy
           type={ButtonType.secondary}
           size={ButtonSize.small}
           className={executionTypeSelectorClassName}
+          state={buttonState}
           onClick={select}
         >
             {value}

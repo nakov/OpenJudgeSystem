@@ -4,7 +4,7 @@ import {
     FaPython,
     FaJs, FaHtml5,
 } from 'react-icons/fa';
-import IconSize from './icon-sizes';
+import IconSize from './common/icon-sizes';
 import Icon, { IIconProps } from './Icon';
 import concatClassNames from '../../../utils/class-names';
 
@@ -26,20 +26,20 @@ const StrategyIcon = ({
 
     const sizeClassName =
         size === IconSize.Small
-            ? styles.localSmall
+            ? styles.small
             : size === IconSize.Medium
-                ? styles.localMedium
+                ? styles.medium
                 : size === IconSize.Large
-                    ? styles.localLarge
-                    : styles.localExtraLarge;
+                    ? styles.large
+                    : styles.extraLarge;
 
     const iconClassName = concatClassNames(
-        styles.localIcon,
+        styles.icon,
         className,
     );
 
     const iconContainerClassName = concatClassNames(
-        styles.localIconContainer,
+        styles.iconContainer,
         sizeClassName,
     );
     const renderHelperText = useCallback(
@@ -47,7 +47,7 @@ const StrategyIcon = ({
             if (helperText === '') {
                 return null;
             }
-            return <span className={styles.localHelperText}>{helperText}</span>;
+            return <span className={styles.helperText}>{helperText}</span>;
         },
         [ helperText ],
     );

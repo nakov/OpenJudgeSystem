@@ -1,7 +1,6 @@
 import React, { ReactNode, useCallback, useMemo } from 'react';
 import { isNil } from 'lodash';
 import { IStatistic } from '../../common/statistics-types';
-import concatClassNames from '../../utils/class-names';
 
 import styles from './StatisticBox.module.scss';
 import Heading, { HeadingType } from '../guidelines/headings/Heading';
@@ -15,26 +14,14 @@ enum StatisticBoxSize {
 
 interface IStatisticBoxProps {
     statistic: IStatistic;
-    size?: StatisticBoxSize;
     renderIcon?: (() => ReactNode) | null;
 }
 
 const StatisticBox = ({
     statistic,
-    size = StatisticBoxSize.medium,
     renderIcon = null,
 }: IStatisticBoxProps) => {
     const { name, value } = statistic;
-    const sizeClassName = size === StatisticBoxSize.big
-        ? styles.big
-        : size === StatisticBoxSize.small
-            ? styles.small
-            : '';
-
-    const boxClassName = useMemo(
-        () => concatClassNames(styles.box, sizeClassName),
-        [ sizeClassName ],
-    );
 
     const formattedValue = useMemo(
         () => format(value),
@@ -56,7 +43,7 @@ const StatisticBox = ({
     );
 
     return (
-        <div className={boxClassName}>
+        <div className={styles.box}>
             {renderIconInternal()}
             <div className={styles.valuesContainer}>
                 <Heading

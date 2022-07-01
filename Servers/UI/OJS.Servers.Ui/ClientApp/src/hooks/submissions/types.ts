@@ -1,4 +1,4 @@
-﻿import { IUserProfileType } from '../use-users';
+import { IUserProfileType } from '../use-users';
 import { ISubmissionTypeType } from '../../common/types';
 
 interface IProblemType {

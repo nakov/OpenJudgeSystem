@@ -5,19 +5,20 @@ import List, { Orientation } from '../guidelines/lists/List';
 import { IDictionary, IKeyValuePair } from '../../common/common-types';
 import StatisticBox, { StatisticBoxSize } from '../statistic-box/StatisticBox';
 import styles from './HomeHeader.module.scss';
-import IconSize from '../guidelines/icons/icon-sizes';
+import IconSize from '../guidelines/icons/common/icon-sizes';
 import UsersIcon from '../guidelines/icons/UsersIcon';
 import CodeIcon from '../guidelines/icons/CodeIcon';
 import ProblemIcon from '../guidelines/icons/ProblemIcon';
 import StrategyIcon from '../guidelines/icons/StrategyIcon';
 import ContestIcon from '../guidelines/icons/ContestIcon';
-import SubmissionsPerMinuteIcon from '../guidelines/icons/SubmissionsPerMinuteIcon';
+import SubmissionsPerDayIcon from '../guidelines/icons/SubmissionsPerDayIcon';
 import Heading, { HeadingType } from '../guidelines/headings/Heading';
+import { toList } from '../../utils/object-utils';
 
 const keyToNameMap: IDictionary<string> = {
     usersCount: 'Users',
     submissionsCount: 'Submissions',
-    submissionsPerMinuteCount: 'Submissions per minute',
+    submissionsPerDayCount: 'Submissions per day',
     problemsCount: 'Problems',
     strategiesCount: 'Test strategies',
     contestsCount: 'Contests',
@@ -29,7 +30,7 @@ const defeaultProps = { className: styles.icon };
 const keyToIconComponent: IDictionary<FC> = {
     usersCount: (props: any) => (<UsersIcon {...defeaultProps} {...props} />),
     submissionsCount: (props: any) => (<CodeIcon {...defeaultProps} {...props} />),
-    submissionsPerMinuteCount: (props: any) => (<SubmissionsPerMinuteIcon {...defeaultProps} {...props} />),
+    submissionsPerDayCount: (props: any) => (<SubmissionsPerDayIcon {...defeaultProps} {...props} />),
     problemsCount: (props: any) => (<ProblemIcon {...defeaultProps} {...props} />),
     strategiesCount: (props: any) => (<StrategyIcon {...defeaultProps} {...props} />),
     contestsCount: (props: any) => (<ContestIcon {...defeaultProps} {...props} />),
@@ -77,9 +78,7 @@ const HomeHeader = () => {
                 return [];
             }
 
-            const statisticsAsAny = statistics as any;
-
-            return Object.keys(statistics).map((key) => ({ key, value: statisticsAsAny[key] }));
+            return toList(statistics);
         },
         [ statistics ],
     );

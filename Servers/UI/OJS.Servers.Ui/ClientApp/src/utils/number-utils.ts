@@ -34,7 +34,7 @@ const format = (value: number, shortNames = true) => {
         return `${value}`;
     }
 
-    return `${normalizedValue.toFixed(0)} ${namesMap[name]}`;
+    return `${normalizedValue.toFixed(1)} ${namesMap[name]}`;
 };
 
 export default { format };

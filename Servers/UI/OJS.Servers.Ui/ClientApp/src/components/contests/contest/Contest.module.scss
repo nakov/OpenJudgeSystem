@@ -3,8 +3,8 @@
 @import "src/styles/global";
 
 .contestWrapper {
-  @extend .wrapper;
-  @extend .columns-3;
+  @extend %wrapper;
+  @extend %columnsThree;
 }
 
 .contestHeading {
@@ -15,7 +15,7 @@
 }
 
 .headingContest {
-  @extend .contentSize;
+  @extend %contentSize;
 }
 
 .contestInfoContainer {

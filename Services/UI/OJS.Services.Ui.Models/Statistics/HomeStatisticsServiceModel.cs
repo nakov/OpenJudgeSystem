@@ -8,7 +8,7 @@ public class HomeStatisticsServiceModel
 
     public int ProblemsCount { get; set; }
 
-    public int SubmissionsPerMinuteCount { get; set; }
+    public int SubmissionsPerDayCount { get; set; }
 
     public int StrategiesCount { get; set; }
 

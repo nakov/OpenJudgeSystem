@@ -3,7 +3,7 @@ import { IconBaseProps } from 'react-icons/lib/cjs/iconBase';
 import { IHaveOptionalClassName } from '../../common/Props';
 import concatClassNames from '../../../utils/class-names';
 import styles from './Icon.module.scss';
-import IconSize from './icon-sizes';
+import IconSize from './common/icon-sizes';
 
 interface IIconProps extends IHaveOptionalClassName {
     size?: IconSize;

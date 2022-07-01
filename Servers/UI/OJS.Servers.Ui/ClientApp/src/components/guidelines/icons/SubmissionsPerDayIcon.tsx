@@ -1,16 +1,16 @@
 import React from 'react';
 import { FaDeezer } from 'react-icons/fa';
-import IconSize from './icon-sizes';
+import IconSize from './common/icon-sizes';
 import Icon, { IIconProps } from './Icon';
 
-interface ISubmissionsPerMinuteIconProps extends IIconProps {
+interface ISubmissionsPerDayIconProps extends IIconProps {
 }
 
-const SubmissionsPerMinuteIcon = ({
+const SubmissionsPerDayIcon = ({
     className = '',
     size = IconSize.Medium,
     helperText = '',
-}: ISubmissionsPerMinuteIconProps) => (
+}: ISubmissionsPerDayIconProps) => (
     <Icon
       className={className}
       size={size}
@@ -19,4 +19,4 @@ const SubmissionsPerMinuteIcon = ({
     />
 );
 
-export default SubmissionsPerMinuteIcon;
+export default SubmissionsPerDayIcon;

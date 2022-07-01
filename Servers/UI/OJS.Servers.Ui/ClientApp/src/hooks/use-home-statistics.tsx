@@ -18,7 +18,7 @@ const HomeStatisticsContext = createContext<IHomeStatisticsContext>({} as IHomeS
 interface IHomeStatistics {
     usersCount: number;
     submissionsCount: number;
-    submissionsPerMinute: number;
+    submissionsPerDayCount: number;
     problemsCount: number;
     strategiesCount: number;
     contestsCount: number;

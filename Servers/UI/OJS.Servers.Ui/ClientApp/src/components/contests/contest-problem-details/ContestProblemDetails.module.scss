@@ -1,8 +1,9 @@
-@import 'src/styles/colors';
+@import "src/styles/colors";
 
 .problemDetailsContainer {
   & > * {
     border-bottom: 1px solid $bottom-border-color;
+
     &:last-of-type {
       border-bottom: 0;
     }
