@@ -33,6 +33,7 @@ const StatisticBox = ({
             if (isNil(renderIcon)) {
                 return null;
             }
+
             return (
                 <div>
                     {renderIcon()}

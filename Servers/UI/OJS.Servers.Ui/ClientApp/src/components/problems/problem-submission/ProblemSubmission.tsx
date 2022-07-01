@@ -45,6 +45,7 @@ const ProblemSubmission = ({ submission }: ISubmissionResultProps) => {
             const result = moment().diff(date, 'days') > 3
                 ? moment(date).format('DD MMM yyyy')
                 : moment(date).fromNow();
+
             return <>{result}</>;
         },
         [],

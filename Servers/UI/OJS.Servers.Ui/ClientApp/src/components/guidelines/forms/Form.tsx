@@ -20,6 +20,7 @@ const Form = ({
         async (ev: any) => {
             ev.preventDefault();
             onSubmit();
+
             return false;
         },
         [ onSubmit ],

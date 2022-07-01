@@ -38,6 +38,7 @@ const ContestsPage = () => {
         (filter: IFilter) => {
             const { name: filterName, type, value } = filter;
             const paramName = type.toString();
+
             searchParams.delete(paramName);
             searchParams.delete(paramName.toLowerCase());
 
@@ -70,6 +71,7 @@ const ContestsPage = () => {
                     </Heading>
                 );
             }
+
             return (
                 <>
                     <PaginationControls
@@ -96,10 +98,12 @@ const ContestsPage = () => {
         }
 
         const filtersToApply = [] as IFilter[];
+
         searchParams.forEach((val, key) => {
             const filter = possibleFilters
                 .find(({ type, value }) => type.toString().toLowerCase() === key.toLowerCase() &&
                     value.toLowerCase() === val.toLowerCase());
+
             if (!isNil(filter)) {
                 filtersToApply.push(filter);
             }
@@ -108,6 +112,7 @@ const ContestsPage = () => {
         if (isEmpty(filterByType(filtersToApply, FilterType.Status))) {
             const defaultStatusFilters = filterByType(possibleFilters, FilterType.Status)
                 .filter(({ name }) => name === ContestStatus.All);
+
             filtersToApply.push(...defaultStatusFilters);
         }
 

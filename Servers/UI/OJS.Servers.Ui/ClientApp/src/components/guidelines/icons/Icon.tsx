@@ -44,6 +44,7 @@ const Icon = ({
             if (helperText === '') {
                 return null;
             }
+
             return <span className={styles.helperText}>{helperText}</span>;
         },
         [ helperText ],

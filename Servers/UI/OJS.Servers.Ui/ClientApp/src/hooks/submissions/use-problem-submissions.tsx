@@ -55,6 +55,7 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
 
     const loadSubmissions = useCallback(async () => {
         const { id } = currentProblem || {};
+
         if (isNil(id)) {
             return;
         }

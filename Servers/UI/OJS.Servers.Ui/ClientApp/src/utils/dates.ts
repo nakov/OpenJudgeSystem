@@ -25,6 +25,7 @@ const convertToSecondsRemaining = (date: Date) => {
 
     const hoursRemaining = daysRemaining * 24 + (hours ?? 0);
     const minutesRemaining = hoursRemaining * 60 + (minutes ?? 0);
+
     return minutesRemaining * 60 + (seconds ?? 0);
 };
 

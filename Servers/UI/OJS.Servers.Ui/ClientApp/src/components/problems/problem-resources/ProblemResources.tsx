@@ -19,9 +19,11 @@ const ProblemResources = () => {
 
     const contestResourcesClass = 'contestResources';
     const contestResourcesClassName = concatClassNames(styles.resourcesList, contestResourcesClass);
+
     if (isNil(resources)) {
         return (<p>No additional resources.</p>);
     }
+
     return (
         <List
           values={resources}

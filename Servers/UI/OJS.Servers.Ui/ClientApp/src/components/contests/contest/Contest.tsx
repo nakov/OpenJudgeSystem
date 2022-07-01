@@ -61,6 +61,7 @@ const Contest = () => {
     const renderCountdown = useCallback(
         (remainingTime: ICountdownRemainingType) => {
             const { hours, minutes, seconds } = convertToTwoDigitValues(remainingTime);
+
             return (
                 <>
                     <p className={remainingTimeClassName}>
@@ -83,10 +84,13 @@ const Contest = () => {
     const renderTimeRemaining = useCallback(
         () => {
             const { endTime } = contest || {};
+
             if (!endTime) {
                 return null;
             }
+
             const duration = convertToSecondsRemaining(new Date(endTime));
+
             return (
                 <Countdown renderRemainingTime={renderCountdown} duration={duration} metric={Metric.seconds} />
             );

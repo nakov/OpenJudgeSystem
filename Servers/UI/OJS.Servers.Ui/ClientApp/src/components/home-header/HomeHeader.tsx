@@ -55,12 +55,14 @@ const HomeHeader = () => {
     const renderIcon = (type: string) => {
         const props = { size: IconSize.ExtraLarge, children: {} };
         const func = keyToIconComponent[type];
+
         return func(props);
     };
 
     const renderStatistic = useCallback(
         (statisticItem: IKeyValuePair<number>) => {
             const { key, value } = statisticItem;
+
             return (
                 <StatisticBox
                   size={StatisticBoxSize.big}
@@ -99,4 +101,5 @@ const HomeHeader = () => {
         </>
     );
 };
+
 export default HomeHeader;

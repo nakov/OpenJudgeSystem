@@ -40,6 +40,7 @@ const ProblemSubmissions = () => {
                 <p> No results for this problem yet.</p>
             );
         }
+
         return (
             <SubmissionsList
               items={submissions}

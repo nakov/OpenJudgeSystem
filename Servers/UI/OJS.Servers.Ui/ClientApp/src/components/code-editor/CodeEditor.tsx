@@ -42,6 +42,7 @@ const CodeEditor = ({
     useEffect(
         () => {
             const { name } = selectedSubmissionType || {};
+
             if (isNil(name)) {
                 return;
             }

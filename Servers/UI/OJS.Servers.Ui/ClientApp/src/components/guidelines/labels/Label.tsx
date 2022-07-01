@@ -24,6 +24,7 @@ const typeToClassName = (type: LabelType) => {
         [LabelType.danger]: styles.danger,
         [LabelType.plain]: styles.plain,
     };
+
     return map[type];
 };
 
@@ -36,6 +37,7 @@ const Label = ({
     if (!text && !children) {
         throw new Error('Buttons must have only `text` or `children`');
     }
+
     const content = children ?? text;
 
     const typeClassName = typeToClassName(type);

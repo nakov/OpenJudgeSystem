@@ -15,6 +15,7 @@ interface IInitProviderProps {
 
 const InitProviders = ({ providers, children } : IInitProviderProps) => {
     const initial = (<>{children}</>);
+
     return providers
         .reverse()
         .reduce(

@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
 import {
+    FaHtml5,
     FaJava,
-    FaPython,
-    FaJs, FaHtml5,
+    FaJs, FaPython,
 } from 'react-icons/fa';
 import IconSize from './common/icon-sizes';
 import Icon, { IIconProps } from './Icon';
@@ -47,6 +47,7 @@ const StrategyIcon = ({
             if (helperText === '') {
                 return null;
             }
+
             return <span className={styles.helperText}>{helperText}</span>;
         },
         [ helperText ],

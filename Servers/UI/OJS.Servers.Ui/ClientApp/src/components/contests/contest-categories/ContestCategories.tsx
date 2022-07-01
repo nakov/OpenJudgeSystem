@@ -36,10 +36,12 @@ const ContestCategories = ({
         (treeItems: ITreeItemType[], result: ITreeItemType[]) => {
             treeItems.forEach(({ children, ...rest }) => {
                 result.push(rest);
+
                 if (!isNil(children)) {
                     flattenTree(children, result);
                 }
             });
+
             return result;
         },
         [],

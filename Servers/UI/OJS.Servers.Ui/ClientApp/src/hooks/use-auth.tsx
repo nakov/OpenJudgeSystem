@@ -6,7 +6,7 @@ import { useNotifications } from './use-notifications';
 import { useUrls } from './use-urls';
 import { HttpStatus } from '../common/common';
 import { INotificationType } from '../common/common-types';
-import { IUserType, IUserPermissionsType } from '../common/types';
+import { IUserPermissionsType, IUserType } from '../common/types';
 
 interface IAuthContext {
     user: IUserType,

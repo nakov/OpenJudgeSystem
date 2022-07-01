@@ -5,6 +5,7 @@ import { setLayout } from '../shared/set-layout';
 
 const HomePage = () => {
     const HomeHeaderWithLayout = setLayout(HomeHeader);
+
     return (
         <>
             <HomeHeaderWithLayout />

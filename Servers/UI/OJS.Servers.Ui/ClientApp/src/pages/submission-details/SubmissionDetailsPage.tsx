@@ -23,6 +23,7 @@ const SubmissionDetailsPage = () => {
             if (selectedSubmissionId === submissionId) {
                 return;
             }
+
             setSelectedSubmissionId(Number(submissionId));
         },
         [ selectedSubmissionId, submissionId ],

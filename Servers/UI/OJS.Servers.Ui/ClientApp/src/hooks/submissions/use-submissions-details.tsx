@@ -6,7 +6,7 @@ import { useUrls } from '../use-urls';
 import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
 import { UrlType } from '../../common/common-types';
 import { IGetSubmissionDetailsByIdUrlParams, IGetSubmissionResultsByProblemUrlParams } from '../../common/url-types';
-import { ITestRunType, ISubmissionType, ISubmissionDetailsType, ISubmissionDetails } from './types';
+import { ISubmissionDetails, ISubmissionDetailsType, ISubmissionType, ITestRunType } from './types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 
 interface ISubmissionsDetailsContext {

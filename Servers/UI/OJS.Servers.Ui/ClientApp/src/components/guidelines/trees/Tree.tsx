@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { TreeView, TreeItem } from '@material-ui/lab';
+import { TreeItem, TreeView } from '@material-ui/lab';
 import { MdChevronRight, MdExpandMore } from 'react-icons/md';
 import { isArray, isEmpty } from 'lodash';
 

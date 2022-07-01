@@ -44,6 +44,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const handleFilterClick = useCallback(
         (filterId: number) => {
             const filter = possibleFilters.find(({ id }) => filterId === id);
+
             if (isNil(filter)) {
                 return;
             }
@@ -88,6 +89,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const renderExpandButton = useCallback(
         (allFilters: IFilter[]) => {
             const maxFiltersToDisplayCount = 3;
+
             return allFilters.length > maxFiltersToDisplayCount
                 ? <ExpandButton onExpandChanged={toggleFiltersExpanded} />
                 : null;
@@ -135,6 +137,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     useEffect(
         () => {
             const plainFilters = possibleFilters.filter(({ type }) => type !== FilterType.Category);
+
             setFiltersGroups(groupByType(plainFilters));
         },
         [ possibleFilters ],
@@ -148,6 +151,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
 
             const searchParamName = FilterType.Category.toString();
             let selectedCategory = searchParams.get(searchParamName);
+
             if (isNil(selectedCategory)) {
                 selectedCategory = searchParams.get(searchParamName.toLowerCase());
             }

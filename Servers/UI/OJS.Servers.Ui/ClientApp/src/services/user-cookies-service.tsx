@@ -1,4 +1,4 @@
-import { IUserType, IUserPermissionsType } from '../common/types';
+import { IUserPermissionsType, IUserType } from '../common/types';
 import { getCookie } from '../utils/cookies';
 
 class UserCookiesService {
@@ -20,6 +20,7 @@ class UserCookiesService {
 
         if (loggedInUsername) {
             const canAccessAdministration = canAccessAdministrationCookie.length > 0;
+
             permissions = { canAccessAdministration } as IUserPermissionsType;
             loggedIn = true;
         }

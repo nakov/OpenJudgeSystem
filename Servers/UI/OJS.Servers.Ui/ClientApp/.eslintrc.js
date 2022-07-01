@@ -52,8 +52,6 @@ module.exports = {
         'react-hooks/rules-of-hooks': 'error',
         'react-hooks/exhaustive-deps': 'error',
 
-        // Interactive rules
-
         'array-bracket-spacing': [ 'error', 'always', { singleValue: true } ],
         // enforces curly brackets for arrow functions only when needed
         'arrow-body-style': [ 'error', 'as-needed' ],

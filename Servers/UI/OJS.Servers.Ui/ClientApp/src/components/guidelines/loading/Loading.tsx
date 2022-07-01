@@ -30,7 +30,9 @@ const Loading = ({
             return () => {
             };
         }
+
         document.body.appendChild(loadingRoot);
+
         return () => {
             document.body.removeChild(loadingRoot);
         };

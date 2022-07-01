@@ -88,6 +88,7 @@ const ContestTasksNavigation = () => {
             ? ContestParticipationType.Compete
             : ContestParticipationType.Practice;
         const newResultsLink = `/contests/${contest?.id}/${participationType}/results/${ContestResultType.Simple}`;
+
         setResultsLink(newResultsLink);
     }, [ isOfficial, contest ]);
 
