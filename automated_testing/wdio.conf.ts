@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 // import { dropDb, setupDb } from './test/app';
 import { baseUrl } from './test/config';
+import { createDb, setupDb, dropDb } from './test/app';
 
 // eslint-disable-next-line import/prefer-default-export
 export const config: WebdriverIO.Config = {
@@ -32,8 +33,9 @@ export const config: WebdriverIO.Config = {
     } ],
     logLevel: 'info',
     bail: 0,
-
     baseUrl,
+    onPrepare: createDb,
+    // onComplete: dropDb,
     waitforTimeout: 10000,
     connectionRetryTimeout: 120000,
     connectionRetryCount: 3,
