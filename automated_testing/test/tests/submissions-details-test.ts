@@ -7,9 +7,7 @@ describe('Testing SubmissionsDetails Page', () => {
         password: '123456',
     };
 
-    const checker = {
-        notEmpty: (itemsList) => itemsList.length > 0,
-    };
+    const checker = { notEmpty: (itemsList) => itemsList.length > 0 };
 
     const loginWithCredentials = async (credentials) => {
         const { username, password } = credentials;
@@ -25,9 +23,9 @@ describe('Testing SubmissionsDetails Page', () => {
         await SubmissionsDetailsPage.open();
     });
 
-    // after(async () => {
-    //     await AuthPage.performLogOut();
-    // });
+    after(async () => {
+        await AuthPage.performLogOut();
+    });
 
     it('Expect left navigation to be there', async () => {
         await browser.waitUntil(
@@ -41,22 +39,21 @@ describe('Testing SubmissionsDetails Page', () => {
         await expect(navigation).toExist();
     });
 
-    it('Expect left navigation to have at least 1 submission', async () => {
+    it('Expect left navigation to have at least one submission', async () => {
         const submissionsList = await SubmissionsDetailsPage.submissionsListItems;
         const result = checker.notEmpty(submissionsList);
         await expect(result).toBeTruthy();
     });
 
-    it('Expect right navigation to have at least 1 test run', async () => {
+    it('Expect right navigation to have at least one test run', async () => {
         const testRunsList = await SubmissionsDetailsPage.submissionTestRuns;
         const result = checker.notEmpty(testRunsList);
         await expect(result).toBeTruthy();
     });
 
-    // xit('Expect submission with 0/100 results to have all test runs showing wrong answer or error', async () => {
-    //     await browser.url('/submissions/23665173/details');
-    //     const testRunsHeadings = await SubmissionsDetailsPage.submissionTestRunsHeadings;
-    //     const wrongTestRunHeadings = await SubmissionsDetailsPage.submissionWrongTestRunsHeadings;
-    //     await expect(testRunsHeadings.length).toEqual(wrongTestRunHeadings.length);
-    // });
+    it('Expect Monaco editor to be dispayed', async () => {
+        const editor = await SubmissionsDetailsPage.pageEditor;
+        await expect(editor).toBeDisplayed();
+        await expect(editor).toBeClickable();
+    });
 });

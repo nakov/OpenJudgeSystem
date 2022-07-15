@@ -1,10 +1,11 @@
 const selectors = {
-    pageSubmissionsNavigation: '.submissionsNavigation',
+    pageSubmissionsNavigationSelector: '.submissionsNavigation',
     pageSubmissionsListItemsSelector: '.submissionsSideNavigationList li',
     pageRightNavigationSubmissionResultsSelector: '.submissionTestRunsList',
-    pageTestRunsListItems: '.testRunDetails',
+    pageTestRunsListItemsSelector: '.testRunDetails',
     pageTestRunsHeadingSelector: '.testRunHeading',
-    pageLeftSubmissionNavigationTitle: ' submissionsNavigation h2',
+    pageLeftSubmissionNavigationTitleSelector: ' submissionsNavigation h2',
+    pageEditorSelector: '.react-monaco-editor-container',
 };
 
 export default selectors;

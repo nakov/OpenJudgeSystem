@@ -3,13 +3,10 @@ import selectors from '../constants/submissions-details-page-selectors';
 import Page from './page';
 
 class SubmissionsDetailsPage extends Page {
-    private pageLocation = 'submissions/23665173/details';
-    // public get submissionsNavigationList() {
-    //     return $(selectors.pageLeftNavigationSubmissionsListSelector);
-    // }
+    private pageLocation = 'submissions/23665175/details';
 
     public get submissionsNavigation() {
-        return $(selectors.pageSubmissionsNavigation);
+        return $(selectors.pageSubmissionsNavigationSelector);
     }
 
     public get submissionsListItems() {
@@ -21,7 +18,7 @@ class SubmissionsDetailsPage extends Page {
     }
 
     public get submissionTestRuns() {
-        return $$(selectors.pageTestRunsListItems);
+        return $$(selectors.pageTestRunsListItemsSelector);
     }
 
     public get submissionTestRunsHeadings() {
@@ -29,7 +26,11 @@ class SubmissionsDetailsPage extends Page {
     }
 
     public get leftSubmissionNavigationTitle() {
-        return $(selectors.pageLeftSubmissionNavigationTitle);
+        return $(selectors.pageLeftSubmissionNavigationTitleSelector);
+    }
+
+    public get pageEditor() {
+        return $(selectors.pageEditorSelector);
     }
 
     public open(): Promise<string> {
