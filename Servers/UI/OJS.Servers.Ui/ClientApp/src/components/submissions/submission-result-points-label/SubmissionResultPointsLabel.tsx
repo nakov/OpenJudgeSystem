@@ -1,5 +1,7 @@
+import { concat } from 'lodash';
 import * as React from 'react';
 import { useMemo } from 'react';
+import concatClassNames from '../../../utils/class-names';
 import Label, { LabelType } from '../../guidelines/labels/Label';
 import styles from './SubmissionResultPointsLabel.module.scss';
 
@@ -25,10 +27,11 @@ const SubmissionResultPointsLabel = ({
         : '?';
 
     const text = useMemo(() => `${currentPoints}/${maximumPoints}`, [ currentPoints, maximumPoints ]);
+    const labelTypeClassName = concatClassNames({ labelType }, styles.resultLabel);
 
     return (
         <Label
-          className={styles.resultLabel}
+          className={labelTypeClassName}
           type={labelType}
         >
             {text}

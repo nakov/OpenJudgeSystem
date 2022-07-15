@@ -1,4 +1,4 @@
-type classNamesType = string | string[] | null | undefined;
+type classNamesType = string | string[] | null | undefined | {};
 
 const concatClassNames = (...classNames:classNamesType[]) => classNames
     .filter((x) => x)

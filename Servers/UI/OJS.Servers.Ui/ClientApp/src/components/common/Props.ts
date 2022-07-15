@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-type ClassNameType = string | string[];
+type ClassNameType = string | string[] | {};
 
 interface IHaveChildrenProps {
     children: ReactNode;
