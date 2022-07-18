@@ -27,11 +27,10 @@ const SubmissionResultPointsLabel = ({
         : '?';
 
     const text = useMemo(() => `${currentPoints}/${maximumPoints}`, [ currentPoints, maximumPoints ]);
-    const labelTypeClassName = concatClassNames({ labelType }, styles.resultLabel);
 
     return (
         <Label
-          className={labelTypeClassName}
+          className={styles.resultLabel}
           type={labelType}
         >
             {text}
