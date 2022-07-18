@@ -40,7 +40,7 @@ const Label = ({
 
     const typeClassName = typeToClassName(type);
 
-    const labeTypeClassName = "labeType";
+    const labeTypeClassName = "labelType";
     const labelClassName = concatClassNames(
         styles.label,
         typeClassName,
