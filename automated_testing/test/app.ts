@@ -11,7 +11,11 @@ const sleep = (seconds: number) => new Promise((resolve) => {
 const createDb = async () => {
     console.log(' --- create ---');
     try {
-        await compose.exec('db_instance', '/bin/bash /queries/restore/create_db/create.sh');
+        await compose.config({
+            cwd: path.join(__dirname, '..'),
+        })
+        await compose.upOne('db');
+        await compose.exec('db', '/bin/bash /queries/restore/create_db/create.sh');
     } catch (err) {
         console.log(err);
     } finally {

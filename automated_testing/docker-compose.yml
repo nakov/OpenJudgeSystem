@@ -3,16 +3,17 @@ version: '3.3'
 services:
   db:
     image: mcr.microsoft.com/mssql/server:2019-latest
-    container_name: db_instance
     build:
       context: .
-      dockerfile: db/Dockerfile
+      dockerfile: ./db/Dockerfile
     ports:
       - "1433:1433"
     environment:
       SA_PASSWORD: 1123QwER
       ACCEPT_EULA: "Y"
     restart: always
+    volumes:
+      - ./result.txt:/result.txt
     # volumes:
     #   - ./sql_server/data:/var/opt/mssql/data
     #   - ./sql_server/log:/var/opt/mssql/log
@@ -28,11 +29,12 @@ services:
       - db
   tests:
     image: tests
+    # command: tail -F anything
     container_name: tests_instance
     network_mode: host
     build:
       context: .
-      dockerfile: test/Dockerfile
+      dockerfile: ./test/Dockerfile
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock 
+      - "/var/run/docker.sock:/var/run/docker.sock"
       - ./restore:/queries/restore
