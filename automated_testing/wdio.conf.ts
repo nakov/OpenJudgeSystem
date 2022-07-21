@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
-// import { dropDb, setupDb } from './test/app';
 import { baseUrl } from './test/config';
-import { createDb, setupDb, dropDb } from './test/app';
+import { createDb, dropDb } from './test/app';
 
 // eslint-disable-next-line import/prefer-default-export
 export const config: WebdriverIO.Config = {
@@ -19,22 +18,23 @@ export const config: WebdriverIO.Config = {
     exclude: [
     ],
     maxInstances: 1,
-    capabilities: [ {
-        maxInstances: 1,
-        browserName: 'chrome',
-        acceptInsecureCerts: true,
-        'goog:chromeOptions': {
-            args: [
-                '--headless',
-                '--disable-gpu',
-                '--no-sandbox',
-            ],
+    capabilities: [{
+            maxInstances: 1,
+            browserName: 'chrome',
+            acceptInsecureCerts: true,
+            'goog:chromeOptions': {
+                args: [
+                    '--headless',
+                    '--disable-gpu',
+                    '--no-sandbox',
+                ],
+            },
         },
-    } ],
+    ],
     logLevel: 'info',
     bail: 0,
     baseUrl,
-    onPrepare: createDb,
+    // onPrepare: createDb,
     // onComplete: dropDb,
     waitforTimeout: 10000,
     connectionRetryTimeout: 120000,
@@ -44,7 +44,7 @@ export const config: WebdriverIO.Config = {
     reporters: [ 'spec' ],
     mochaOpts: {
         ui: 'bdd',
-        timeout: 60000,
+        timeout: 6000000,
     },
     //
     // =====
@@ -64,15 +64,7 @@ export const config: WebdriverIO.Config = {
     /**
      * Gets executed before a worker process is spawned and can be used to initialize specific
      * service for that worker as wel as modify runtime environments in an async fashion.
-     * @param  {String} cid      capability id (e.g 0-0)
-     * @param  {[type]} caps     object containing capabilities for session that will be spawn
-     * in the worker
-     * @param  {[type]} specs    specs to be run in the worker process
-     * @param  {[type]} args     object that will be merged with the main configuration once
-     *  worker is initialised
-     * @param  {[type]} execArgv list of string arguments passed to the worker process
-     */
-    // onWorkerStart: function (cid, caps, specs, args, execArgv) {
+     * @param  {Strwebdriverio t: function (cid, caps, specs, args, execArgv) {
     // },
     /**
      * Gets executed just before initialising the webdriver session and test framework.
@@ -115,16 +107,17 @@ export const config: WebdriverIO.Config = {
      * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
      * beforeEach in Mocha)
      */
-    // beforeHook() {
-    //     return setupDb();
-    // },
+
+    beforeHook() {
+        return createDb();
+    },
     /**
      * Hook that gets executed _after_ a hook within the suite starts (e.g. runs after calling
      * afterEach in Mocha)
      */
-    // afterHook() {
-    //     dropDb();
-    // },
+    afterHook() {
+        return dropDb();
+    },
     /**
      * Function to be executed after a test (in Mocha/Jasmine only)
      * @param {Object}  test             test object

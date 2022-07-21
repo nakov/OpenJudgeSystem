@@ -1,7 +1,7 @@
 import { beforeEach } from 'mocha';
 import IndexPage from '../pageobjects/index-page';
 
-describe('Testing index', () => {
+describe.skip('Testing index', () => {
     let activeCards;
     let pastCards;
 

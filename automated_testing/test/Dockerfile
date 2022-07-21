@@ -13,6 +13,8 @@ COPY ./wdio.conf.ts /src/wdio.conf.ts
 COPY ./docker-compose.yml /src/docker-compose.yml
 COPY ./.eslintrc.js /src/.eslintrc.js
 
+COPY ./db /src/db
+COPY ./restore /src/restore
 COPY ./test /src/test
 
 # RUN apt update -y && apt upgrade -y && apt install -y dos2unix

@@ -2,6 +2,14 @@
 import * as compose from 'docker-compose';
 import * as path from 'path';
 
+const options = {
+    cwd: path.join(__dirname, '..'),
+    log: true,
+};
+
+// const dbAndApp = [ 'db', 'app' ];
+const dbAndApp = [ 'db' ];
+
 const sleep = (seconds: number) => new Promise((resolve) => {
     setTimeout(() => {
         resolve(null);
@@ -9,13 +17,28 @@ const sleep = (seconds: number) => new Promise((resolve) => {
 });
 
 const createDb = async () => {
-    console.log(' --- create ---');
     try {
-        await compose.config({
-            cwd: path.join(__dirname, '..'),
-        })
-        await compose.upOne('db');
+        console.log(' --- Building `app` and `db` ---');
+
+        await compose.buildMany(
+            dbAndApp,
+            options,
+        );
+
+        console.log(' --- "Up"-ing `app` and `db` ---');
+
+        await compose.upMany(
+            dbAndApp,
+            options,
+        );
+
+        console.log(' --- `db` and `app` are up ---');
+
+        await sleep(10);
+
         await compose.exec('db', '/bin/bash /queries/restore/create_db/create.sh');
+
+        console.log(' --- queries restored ---');
     } catch (err) {
         console.log(err);
     } finally {
@@ -34,7 +57,7 @@ const setupDb = async () => {
         await sleep(10);
 
         console.log(' --- running restore ---');
-        await compose.exec('db_instance', '/bin/bash /queries/restore/restore.sh');
+        await compose.exec('db', '/bin/bash /queries/restore/restore.sh');
     } catch (err) {
         console.log(err);
     } finally {
@@ -45,8 +68,8 @@ const setupDb = async () => {
 const dropDb = async () => {
     console.log(' --- drop ---');
     try {
-        await compose.exec('db_instance', '/bin/bash /queries/restore/drop_db/drop.sh');
-        await compose.down();
+        // await compose.exec('db', '/bin/bash /queries/restore/drop_db/drop.sh', options);
+        await compose.down(options);
     } catch (err) {
         console.log(err);
     } finally {
