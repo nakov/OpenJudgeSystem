@@ -44,8 +44,8 @@ const Label = ({
     const labelClassName = concatClassNames(
         styles.label,
         typeClassName,
-        className,
         labeTypeClassName,
+        className,
     );
 
     return (
