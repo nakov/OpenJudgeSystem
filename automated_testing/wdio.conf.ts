@@ -108,16 +108,16 @@ export const config: WebdriverIO.Config = {
      * beforeEach in Mocha)
      */
 
-    beforeHook() {
-        return createDb();
-    },
+    // beforeHook() {
+    //     return createDb();
+    // },
     /**
      * Hook that gets executed _after_ a hook within the suite starts (e.g. runs after calling
      * afterEach in Mocha)
      */
-    afterHook() {
-        return dropDb();
-    },
+    // afterHook() {
+    //     return dropDb();
+    // },
     /**
      * Function to be executed after a test (in Mocha/Jasmine only)
      * @param {Object}  test             test object

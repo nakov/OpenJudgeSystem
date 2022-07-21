@@ -12,8 +12,6 @@ services:
       SA_PASSWORD: 1123QwER
       ACCEPT_EULA: "Y"
     restart: always
-    volumes:
-      - ./result.txt:/result.txt
     # volumes:
     #   - ./sql_server/data:/var/opt/mssql/data
     #   - ./sql_server/log:/var/opt/mssql/log
