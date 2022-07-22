@@ -8,7 +8,7 @@ const options = {
 };
 
 // const dbAndApp = [ 'db', 'app' ];
-const dbAndApp = [ 'db' ];
+const dbAndApp = ['db'];
 
 const sleep = (seconds: number) => new Promise((resolve) => {
     setTimeout(() => {
@@ -32,11 +32,17 @@ const createDb = async () => {
             options,
         );
 
-        console.log(' --- `db` and `app` are up ---');
+        console.log(' --- Waiting 10 seconds for MS SQL to start ---');
 
         await sleep(10);
 
-        await compose.exec('db', '/bin/bash /queries/restore/create_db/create.sh');
+        console.log(' --- `db` and `app` are up ---');
+
+        await compose.exec(
+            'db',
+            '/bin/bash /queries/restore/create_db/create.sh',
+            options,
+        );
 
         console.log(' --- queries restored ---');
     } catch (err) {
@@ -68,7 +74,7 @@ const setupDb = async () => {
 const dropDb = async () => {
     console.log(' --- drop ---');
     try {
-        // await compose.exec('db', '/bin/bash /queries/restore/drop_db/drop.sh', options);
+        await compose.exec('db', '/bin/bash /queries/restore/drop_db/drop.sh', options);
         await compose.down(options);
     } catch (err) {
         console.log(err);

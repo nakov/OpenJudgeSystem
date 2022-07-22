@@ -13,7 +13,7 @@ describe('Testing index', () => {
         .forEach((_, index) => {
             describe(`Describe ${index + 1}`, () => {
                 it(`Test of "Describe ${index + 1}"`, async () => {
-                    await sleep(1);
+                    await sleep(10);
                     expect(5).toBe(5);
                 });
             });
