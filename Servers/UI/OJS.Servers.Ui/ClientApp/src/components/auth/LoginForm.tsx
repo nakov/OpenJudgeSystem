@@ -17,11 +17,11 @@ const LoginPage = () => {
     const usernameFieldName = 'Username';
     const passwordFieldName = 'Password';
 
-    const onChangeUpdateUsername = useCallback((value: any) => {
+    const handleOnChangeUpdateUsername = useCallback((value: any) => {
         setUsername(value);
     }, [ setUsername ]);
 
-    const onChangeUpdatePassword = useCallback((value: any) => {
+    const handleOnChangeUpdatePassword = useCallback((value: any) => {
         setPassword(value);
     }, [ setPassword ]);
 
@@ -29,13 +29,13 @@ const LoginPage = () => {
         await signIn();
     }, [ signIn ]);
 
-    const renderLoginErrorMessage = useCallback(() => {
-        if (isNil(loginErrorMessage)) {
-            return null;
-        }
+    const renderLoginErrorMessage = useCallback(
+        () => (!isNil(loginErrorMessage)
+            ? <span className={styles.errorMessage}>{loginErrorMessage}</span>
+            : null),
+        [ loginErrorMessage ],
+    );
 
-        return (<span className={styles.errorMessage}>{loginErrorMessage}</span>);
-    }, [ loginErrorMessage ]);
     return (
         <Form
           className={styles.loginForm}
@@ -63,7 +63,7 @@ const LoginPage = () => {
               name={usernameFieldName}
               labelText={usernameFieldName}
               type={FormControlType.input}
-              onChange={(value) => onChangeUpdateUsername(value)}
+              onChange={(value) => handleOnChangeUpdateUsername(value)}
               value=""
             />
             <FormControl
@@ -72,7 +72,7 @@ const LoginPage = () => {
               labelText={passwordFieldName}
               labelClassName={styles.floatingLabel}
               type={FormControlType.password}
-              onChange={(value) => onChangeUpdatePassword(value)}
+              onChange={(value) => handleOnChangeUpdatePassword(value)}
               value=""
             />
             <div className={styles.loginFormControls}>
