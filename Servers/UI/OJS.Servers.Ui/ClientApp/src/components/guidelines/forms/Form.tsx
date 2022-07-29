@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
-import { IHaveChildrenProps } from '../../common/Props';
+import { IHaveChildrenProps, IHaveOptionalClassName } from '../../common/Props';
 import { Button, ButtonType } from '../buttons/Button';
 import generateId from '../../../utils/id-generator';
+import concatClassNames from '../../../utils/class-names';
 
-interface IFormProps extends IHaveChildrenProps {
+interface IFormProps extends IHaveChildrenProps, IHaveOptionalClassName {
     onSubmit: () => void;
     submitText?: string;
     id?: string;
-    className?: string;
 }
 
 const Form = ({
@@ -32,8 +32,10 @@ const Form = ({
         [ id ],
     );
 
+    const internalClassName = concatClassNames(className);
+
     return (
-        <form id={id} onSubmit={(ev) => handleSubmit(ev)} className={className}>
+        <form id={id} onSubmit={(ev) => handleSubmit(ev)} className={internalClassName}>
             {children}
             <Button
               id={btnId}
