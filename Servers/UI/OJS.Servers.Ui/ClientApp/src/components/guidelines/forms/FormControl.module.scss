@@ -1,8 +1,35 @@
 @import "src/styles/colors";
 
-.formControl {
-  position: relative;
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active{
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+}
 
+.formControlContainer {
+  margin-top: 10px;
+}
+
+.formControl {
+  box-sizing: border-box;
+  font-size: 16px;
+  width: 100%;
+  min-height: 40px;
+  color: $text-dark-gray-color;
+  padding: 16px;
+  position: relative;
+  margin-top: 15px;
+  border: 1px solid $text-dark-gray-color;
+  border-radius: 6px;
+  
+  &:focus + label,
+  &:not(:placeholder-shown) + label {
+    transform: translateX(-13%) translateY(-130%) scale(0.80);
+    background: white;
+    padding: 5px;
+  }
+  
   &[type="text"],
   &.formControlTextArea {
     display: block;
@@ -15,10 +42,6 @@
     border: 1px solid #565656;
     outline: none;
     border-radius: 6px;
-
-    &:focus {
-      border: 1px solid #565656;
-    }
   }
 
   &[type='checkbox'],
@@ -27,7 +50,6 @@
     height: 18px;
     border-radius: 3px;
     padding: 0;
-    border: 1px solid;
     cursor: pointer;
     appearance: none;
     -webkit-appearance: none;
@@ -67,24 +89,17 @@
 }
 
 .formLabel {
-  display: flex;
-  align-items: center;
-  //padding: 15px 15px;
-  padding-left: 15px;
-  width: 100%;
-  border-bottom: 1px solid #c2c2c2;
+  display: block;
+  position: absolute;
+  top: 60%;
+  margin-left: 15px;
+  transform: translateY(-50%);
+}
 
-  &:hover {
-    cursor: pointer;
-    //background-color: $background-color-btn-secondary-hover;
-  }
-
-  &:last-of-type {
-    border-bottom: 0;
-  }
+input::placeholder{
+  opacity: 0;
 }
 
 .formControlContainer {
-  display: flex;
-  align-items: flex-start;
+  position: relative;
 }

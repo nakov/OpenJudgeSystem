@@ -8,6 +8,7 @@ interface IFormProps extends IHaveChildrenProps {
     onSubmit: () => void;
     submitText?: string;
     id?: string;
+    className?: string;
 }
 
 const Form = ({
@@ -15,6 +16,7 @@ const Form = ({
     children,
     submitText = 'Submit',
     id = generateId(),
+    className = '',
 }: IFormProps) => {
     const handleSubmit = useCallback(
         async (ev: any) => {
@@ -31,7 +33,7 @@ const Form = ({
     );
 
     return (
-        <form id={id} onSubmit={(ev) => handleSubmit(ev)}>
+        <form id={id} onSubmit={(ev) => handleSubmit(ev)} className={className}>
             {children}
             <Button
               id={btnId}

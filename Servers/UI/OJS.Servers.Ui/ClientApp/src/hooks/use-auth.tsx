@@ -5,11 +5,11 @@ import { useHttp } from './use-http';
 import { useNotifications } from './use-notifications';
 import { useUrls } from './use-urls';
 import { HttpStatus } from '../common/common';
-import { INotificationType } from '../common/common-types';
 import { IUserType, IUserPermissionsType } from '../common/types';
 
 interface IAuthContext {
-    user: IUserType,
+    user: IUserType;
+    loginErrorMessage: string;
     signIn: () => void;
     signOut: () => Promise<void>;
     getUser: () => IUserType;
@@ -28,6 +28,7 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
     const [ internalUser, setInternalUser ] = useState(user);
     const [ username, setUsername ] = useState<string>(user.username);
     const [ password, setPassword ] = useState<string>();
+    const [ loginErrorMessage, setLoginErrorMessage ] = useState<string>('');
     const { showError } = useNotifications();
 
     const { getLogoutUrl, getLoginSubmitUrl } = useUrls();
@@ -76,7 +77,8 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
     useEffect(() => {
         if (loginSubmitResponse) {
             if (loginSubmitStatus === HttpStatus.Unauthorized) {
-                showError({ message: 'Invalid credentials.' } as INotificationType);
+                setLoginErrorMessage('Invalid username or password.');
+                return;
             }
 
             window.location.reload();
@@ -85,6 +87,7 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
 
     const value = {
         user: internalUser,
+        loginErrorMessage,
         signIn,
         signOut,
         getUser,

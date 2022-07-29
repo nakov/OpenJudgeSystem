@@ -3,6 +3,7 @@ import { WebStorageStateStore } from 'oidc-client';
 const appBaseUrl = window.URLS.UI_URL;
 const authorityBaseUrl = process.env.REACT_APP_PLATFORM_IDENTITY_BASE_URL;
 const authorityUrl = `${process.env.REACT_APP_PLATFORM_IDENTITY_BASE_URL}${process.env.REACT_APP_PLATFORM_IDENTITY_AUTHORITY_URL_POSTFIX}`;
+const authorityRegisterUrl = `${authorityUrl}/register`;
 // eslint-disable-next-line max-len
 
 const IDENTITY_CONFIG = {
@@ -10,6 +11,7 @@ const IDENTITY_CONFIG = {
     client_id: process.env.REACT_APP_IDENTITY_CLIENT_ID,
     redirect_uri: `${appBaseUrl}/logincallback`,
     login: `${authorityUrl}`,
+    register: authorityRegisterUrl,
     automaticSilentRenew: false,
     loadUserInfo: true,
     silent_redirect_uri: `${appBaseUrl}/silentrenew`,
