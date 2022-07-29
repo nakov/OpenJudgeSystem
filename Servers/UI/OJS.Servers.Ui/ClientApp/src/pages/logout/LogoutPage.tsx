@@ -4,7 +4,7 @@ import { wait } from '../../utils/promise-utils';
 import { useAuth } from '../../hooks/use-auth';
 
 const LogoutPage = () => {
-    const { signOut } = useAuth();
+    const { actions: { signOut } } = useAuth();
 
     useEffect(() => {
         (async () => {

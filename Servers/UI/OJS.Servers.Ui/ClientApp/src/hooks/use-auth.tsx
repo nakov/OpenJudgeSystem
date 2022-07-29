@@ -8,13 +8,17 @@ import { HttpStatus } from '../common/common';
 import { IUserType, IUserPermissionsType } from '../common/types';
 
 interface IAuthContext {
-    user: IUserType;
-    loginErrorMessage: string;
-    signIn: () => void;
-    signOut: () => Promise<void>;
-    getUser: () => IUserType;
-    setUsername: (value: string) => void;
-    setPassword: (value: string) => void;
+    state: {
+        user: IUserType;
+        loginErrorMessage: string;
+    };
+    actions: {
+        signIn: () => void;
+        signOut: () => Promise<void>;
+        getUser: () => IUserType;
+        setUsername: (value: string) => void;
+        setPassword: (value: string) => void;
+    }
 }
 
 const AuthContext = createContext<IAuthContext>({} as IAuthContext);
@@ -86,13 +90,17 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
     }, [ loginSubmitResponse, loginSubmitStatus, showError, setUserDetails ]);
 
     const value = {
-        user: internalUser,
-        loginErrorMessage,
-        signIn,
-        signOut,
-        getUser,
-        setUsername,
-        setPassword,
+        state: {
+            user: internalUser,
+            loginErrorMessage,
+        },
+        actions: {
+            signIn,
+            signOut,
+            getUser,
+            setUsername,
+            setPassword,
+        },
     };
 
     return (

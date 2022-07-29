@@ -10,7 +10,10 @@ import { IDENTITY_CONFIG } from '../../identity-config';
 import styles from './LoginForm.module.scss';
 
 const LoginPage = () => {
-    const { setUsername, setPassword, signIn, loginErrorMessage } = useAuth();
+    const {
+        state: { loginErrorMessage },
+        actions: { setUsername, setPassword, signIn },
+    } = useAuth();
     const usernameFieldName = 'Username';
     const passwordFieldName = 'Password';
 
