@@ -42,10 +42,10 @@ namespace OJS.Services.Infrastructure.Cache.Implementations
         }
 
         public T Get<T>(string cacheId, Func<T> getItemCallback)
-            => this.Get(cacheId, getItemCallback, CacheConstants.OneHourInSeconds);
+            => this.Get(cacheId, getItemCallback, CacheConstants.OneDayInSeconds);
 
         public Task<T> Get<T>(string cacheId, Func<Task<T>> getItemCallback)
-            => this.Get(cacheId, getItemCallback, CacheConstants.OneHourInSeconds);
+            => this.Get(cacheId, getItemCallback, CacheConstants.OneDayInSeconds);
 
         public T Get<T>(string cacheId, Func<T> getItemCallback, int cacheSeconds)
             => this.Get(cacheId, getItemCallback, this.GetAbsoluteExpirationByCacheSeconds(cacheSeconds));

@@ -3,7 +3,7 @@ import { isNil } from 'lodash';
 import { useHomeStatistics } from '../../hooks/use-home-statistics';
 import List, { Orientation } from '../guidelines/lists/List';
 import { IDictionary, IKeyValuePair } from '../../common/common-types';
-import StatisticBox, { StatisticBoxSize } from '../statistic-box/StatisticBox';
+import StatisticBox from '../statistic-box/StatisticBox';
 import styles from './HomeHeader.module.scss';
 import IconSize from '../guidelines/icons/common/icon-sizes';
 import UsersIcon from '../guidelines/icons/UsersIcon';
@@ -65,7 +65,7 @@ const HomeHeader = () => {
 
             return (
                 <StatisticBox
-                  size={StatisticBoxSize.big}
+                  // size={StatisticBoxSize.big}
                   statistic={{ name: keyToNameMap[key], value }}
                   renderIcon={() => renderIcon(key)}
                 />

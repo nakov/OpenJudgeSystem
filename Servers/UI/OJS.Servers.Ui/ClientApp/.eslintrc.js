@@ -14,7 +14,7 @@ module.exports = {
     parser: '@typescript-eslint/parser',
     parserOptions: {
         ecmaFeatures: { jsx: true },
-        ecmaVersion: 12,
+        ecmaVersion: 2021,
         sourceType: 'module',
     },
     plugins: [
@@ -27,6 +27,11 @@ module.exports = {
     ],
     settings: { 'import/resolver': { typescript: {} } },
     rules: {
+        
+        'node/no-missing-import': 0,
+        'sort-imports': 0,
+        'no-confusing-arrow': 0,
+        'node/no-unsupported-features/es-syntax': 0,
         '@typescript-eslint/naming-convention': [
             'error',
             {
@@ -266,10 +271,10 @@ module.exports = {
         'import/prefer-default-export': 'error',
         'import/exports-last': 'error',
         'import/group-exports': 'error',
-        'import/no-unused-modules': [ 'error', {
-            unusedExports: true,
-            missingExports: true,
-        } ],
+        // 'import/no-unused-modules': [ 'error', {
+        //     unusedExports: true,
+        //     missingExports: true,
+        // } ],
         // "import/dynamic-import-chunkname": ["error"],
 
         /* react rules */

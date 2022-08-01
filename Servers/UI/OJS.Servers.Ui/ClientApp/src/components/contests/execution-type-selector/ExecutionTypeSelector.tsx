@@ -25,9 +25,9 @@ const ExecutionTypeSelector = ({ id, value, isSelected, onSelect }: IExecutionTy
     const executionTypeSelectorActiveClass = 'executionTypeSelectorActive';
     const executionTypeSelectorInactiveClass = 'executionTypeSelectorInactive';
     const stateClassName = useMemo(
-        () => (selectedSubmissionTypeId === id
+        () => (selectedSubmissionTypeId === id)
             ? executionTypeSelectorActiveClass
-            : executionTypeSelectorInactiveClass),
+            : executionTypeSelectorInactiveClass,
         [ id, selectedSubmissionTypeId ],
     );
     const executionTypeSelectorClassName = concatClassNames(
@@ -36,9 +36,9 @@ const ExecutionTypeSelector = ({ id, value, isSelected, onSelect }: IExecutionTy
     );
 
     const buttonState = useMemo(
-        () => (selectedSubmissionTypeId === id
+        () => (selectedSubmissionTypeId === id)
             ? ButtonState.disabled
-            : ButtonState.enabled),
+            : ButtonState.enabled,
         [ id, selectedSubmissionTypeId ],
     );
 

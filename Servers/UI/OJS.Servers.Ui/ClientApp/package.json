@@ -95,6 +95,9 @@
     "lint": "yarn run lint:eslint && yarn run",
     "analyze": "source-map-explorer 'build/static/js/*.js'"
   },
+  "engines": {
+    "node": ">=10.0.0"
+  },
   "browserslist": [
     ">0.2%",
     "not dead",
