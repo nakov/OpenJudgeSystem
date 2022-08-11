@@ -16,7 +16,17 @@ interface IContestCategoriesUrlParams {
     id: number;
 }
 
+interface IRegisterForContestUrlParams {
+    id: number;
+    isOfficial: boolean;
+}
+
 interface IStartContestParticipationUrlParams {
+    id: number;
+    isOfficial: boolean;
+}
+
+interface ISubmitContestPasswordUrlParams {
     id: number;
     isOfficial: boolean;
 }
@@ -42,6 +52,8 @@ interface IGetSubmissionDetailsByIdUrlParams {
 }
 
 export type {
+    IRegisterForContestUrlParams,
+    ISubmitContestPasswordUrlParams,
     IStartContestUrlParams,
     IAllContestsUrlParams,
     IContestCategoriesUrlParams,

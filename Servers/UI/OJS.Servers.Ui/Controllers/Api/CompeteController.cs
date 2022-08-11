@@ -1,4 +1,6 @@
-﻿namespace OJS.Servers.Ui.Controllers.Api;
+﻿using OJS.Servers.Ui.Models.Contests;
+
+namespace OJS.Servers.Ui.Controllers.Api;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +32,23 @@ public class CompeteController : BaseApiController
         this.participantScoresBusinessService = participantScoresBusinessService;
     }
 
-    /// <summary>
+    [HttpGet("{id:int}")]
+    [ProducesResponseType(typeof(RegisterUserForOfficialContestServiceModel), Status200OK)]
+    public async Task<IActionResult> Register(int id, [FromQuery] bool official)
+        => await this.contestsBusiness
+            .RegisterUserForContest(id, official)
+            .ToOkResult();
+
+    [HttpPost("{id:int}")]
+    public async Task<IActionResult> SubmitContestPassword(
+        int id,
+        [FromQuery] bool official,
+        [FromBody] SubmitContestPasswordRequestModel model)
+        => await this.contestsBusiness
+            .ValidateContestPassword(id, official, model.Password)
+            .ToOkResult();
+
+        /// <summary>
     /// Starts a contest for the user. Creates participant and starts time counter.
     /// </summary>
     /// <param name="id">The id of the contest</param>

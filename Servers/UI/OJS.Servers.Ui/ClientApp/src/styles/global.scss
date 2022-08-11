@@ -19,3 +19,9 @@ body,
   display: flex;
   flex-direction: row;
 }
+
+form {
+  & > button[type='submit'] {
+    margin-top: 10px;
+  }
+}

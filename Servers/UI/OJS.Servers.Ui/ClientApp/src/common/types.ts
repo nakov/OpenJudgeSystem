@@ -77,18 +77,24 @@ interface IGetContestsForIndexResponseType {
     pastContests: IIndexContestsType[]
 }
 
+interface IRegisterForContestResponseType {
+    id: number;
+    name: string;
+    requirePassword: boolean;
+}
+
 interface IStartParticipationResponseType {
-    contest: IContestType,
-    contestIsCompete: boolean,
+    contest: IContestType;
+    contestIsCompete: boolean;
     lastSubmissionTime: Date,
     remainingTimeInMilliseconds: number
 }
 
 interface IPagedResultType<TItem> {
-    totalItemsCount: number,
-    itemsPerPage: number,
-    pagesCount: number,
-    pageNumber: number,
+    totalItemsCount: number;
+    itemsPerPage: number;
+    pagesCount: number;
+    pageNumber: number;
     items?: TItem[],
 }
 
@@ -106,6 +112,7 @@ interface IUserPermissionsType {
 export type {
     IIndexContestsType,
     IGetContestsForIndexResponseType,
+    IRegisterForContestResponseType,
     IStartParticipationResponseType,
     IContestType,
     IProblemType,

@@ -64,7 +64,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
             <div className={contestCardControlBtnsClassName}>
                 <LinkButton
                   id="button-card-compete"
-                  to={`/contests/${id}/compete`}
+                  to={`/contests/${id}/register/compete`}
                   text="Compete"
                   state={
                         canBeCompeted

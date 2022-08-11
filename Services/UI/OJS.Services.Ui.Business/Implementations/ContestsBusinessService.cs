@@ -50,6 +50,53 @@ namespace OJS.Services.Ui.Business.Implementations
             this.contestCategoriesCache = contestCategoriesCache;
         }
 
+        public async Task<RegisterUserForOfficialContestServiceModel> RegisterUserForContest(int id, bool official)
+        {
+            var user = this.userProviderService.GetCurrentUser();
+            var userProfile = await this.usersBusinessService.GetUserProfileById(user.Id);
+
+            var participant = await this.participantsData
+                .GetWithContestByContestByUserAndIsOfficial(
+                    id,
+                    userProfile.Id,
+                    official);
+
+            var contest = this.contestsData
+                .GetByIdQuery(id)
+                .FirstOrDefault();
+
+            await this.ValidateContest(contest, user.Id, user.IsAdmin, official);
+
+            var registerModel = contest.Map<RegisterUserForOfficialContestServiceModel>();
+            if (participant != null && !participant.IsInvalidated)
+            {
+                registerModel.RequirePassword = false;
+            }
+
+            return registerModel;
+        }
+
+        public async Task ValidateContestPassword(int id, bool official, string password)
+        {
+            if (string.IsNullOrEmpty(password))
+            {
+                throw new BusinessServiceException("Password is empty");
+            }
+
+            var contest = await this.contestsData.OneById(id);
+
+            var isOfficialAndIsCompetePasswordCorrect =
+                official && contest.HasContestPassword && contest.ContestPassword == password;
+
+            var isPracticeAndIsPracticePasswordCorrect =
+                !official && contest.HasPracticePassword && contest.PracticePassword == password;
+
+            if (!isOfficialAndIsCompetePasswordCorrect && !isPracticeAndIsPracticePasswordCorrect)
+            {
+                throw new BusinessServiceException("Incorrect password!");
+            }
+        }
+
         public async Task<ContestParticipationServiceModel> StartContestParticipation(
             StartContestParticipationServiceModel model)
         {
@@ -70,6 +117,13 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (participant == null)
             {
+                var shouldEnterPassword = (model.IsOfficial && contest.HasContestPassword) || (!model.IsOfficial && contest.HasPracticePassword);
+
+                if (shouldEnterPassword)
+                {
+                    return new ContestParticipationServiceModel { ShouldEnterPassword = true };
+                }
+
                 participant = await this.AddNewParticipantToContest(contest, model.IsOfficial, user.Id, user.IsAdmin);
             }
 
