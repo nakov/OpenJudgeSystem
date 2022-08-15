@@ -23,10 +23,6 @@ class IndexPage extends Page {
         return $(selectors.pageYoutubeVideoSelector);
     }
 
-    public get seeContestsButton() {
-        return $(selectors.pageSeeContestsButtonSelector);
-    }
-
     public get footer() {
         return $(selectors.pageFooterSelector);
     }

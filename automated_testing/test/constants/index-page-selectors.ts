@@ -7,7 +7,6 @@ const selectors = {
     pageRegisterButtonSelector: '#anonymous-register-link',
     pageNavContestsLinkSelector: '#nav-contests-link',
     pageNavSubmissionssLinkSelector: '#nav-submissions-link',
-    pageSeeContestsButtonSelector: '#button-see-contests',
     pageYoutubeVideoSelector: '#youtube-video',
     pageSeeActiveContestsButtonSelector: '.btn-see-all-contests-active',
     pageSeePastContestsButtonSelector: '.btn-see-all-contests-past',

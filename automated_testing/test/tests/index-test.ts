@@ -61,24 +61,6 @@ describe('Testing index', () => {
         await expect(submissionsLink).toHaveHrefContaining('/submissions');
     });
 
-    it('Expect "See contests" button in navigation to exist and have the correct href', async () => {
-        const btn = await IndexPage.seeContestsButton;
-        await expect(btn).toExist();
-    //  await expect(btn).toHaveHrefContaining('.....'); once the page is ready we will add it
-    });
-
-    it('Expect YouTub video to exist', async () => {
-        const video = await IndexPage.youtubeVideo;
-        await expect(video).toExist();
-    });
-
-    it('Expect Youtube video to have src', async () => {
-        const video = await IndexPage.youtubeVideo;
-        await expect(video).toHaveAttr('src');
-        const src = await video.getAttribute('src');
-        await expect(src).not.toBeNull();
-    });
-
     it('Expect "See all" button in active contest section to be diplayed and redirect properly', async () => {
         const btn = await IndexPage.seeAllActiveContestsButton;
         await expect(btn).toExist();
