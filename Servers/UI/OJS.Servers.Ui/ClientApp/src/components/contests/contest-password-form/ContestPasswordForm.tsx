@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useParams } from 'react-router';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
+import { isNil } from 'lodash';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import FormControl, { FormControlType } from '../../guidelines/forms/FormControl';
@@ -14,22 +14,30 @@ interface IContestPasswordFormProps {
 
 const ContestPasswordForm = ({ id, isOfficial }: IContestPasswordFormProps) => {
     const {
-        state: { contest },
-        actions: {
-            setContestPassword,
-            submitPassword,
+        state: {
+            contest,
+            submitContestPasswordErrorMessage,
         },
+        actions: { submitPassword },
     } = useCurrentContest();
+    const [ passwordValue, setPasswordValue ] = useState<string>('');
 
     const passwordFieldName = 'contestPassword';
 
     const handleOnSubmitPassword = useCallback(async () => {
-        await submitPassword({ id, isOfficial });
-    }, [ id, isOfficial, submitPassword ]);
+        await submitPassword({ id, isOfficial, password: passwordValue });
+    }, [ id, isOfficial, passwordValue, submitPassword ]);
 
     const handleOnChangeUpdatePassword = useCallback((value: any) => {
-        setContestPassword(value);
-    }, [ setContestPassword ]);
+        setPasswordValue(value);
+    }, [ setPasswordValue ]);
+
+    const renderErrorMessage = useCallback(
+        () => (!isNil(submitContestPasswordErrorMessage)
+            ? <span className={styles.errorMessage}>{submitContestPasswordErrorMessage}</span>
+            : null),
+        [ submitContestPasswordErrorMessage ],
+    );
 
     return (
         <Form
@@ -41,6 +49,7 @@ const ContestPasswordForm = ({ id, isOfficial }: IContestPasswordFormProps) => {
             <header className={styles.formHeader}>
                 <Heading type={HeadingType.primary}>Enter contest password</Heading>
                 <Heading type={HeadingType.secondary} className={styles.contestNameHeading}>{contest?.name}</Heading>
+                { renderErrorMessage() }
             </header>
             <FormControl
               id={passwordFieldName.toLowerCase()}

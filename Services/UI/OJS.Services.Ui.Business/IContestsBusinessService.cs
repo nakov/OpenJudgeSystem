@@ -10,7 +10,7 @@ namespace OJS.Services.Ui.Business
 
     public interface IContestsBusinessService : IService
     {
-        Task<RegisterUserForOfficialContestServiceModel> RegisterUserForContest(int id, bool official);
+        Task<RegisterUserForContestServiceModel> RegisterUserForContest(int id, bool official);
 
         Task ValidateContestPassword(int id, bool official, string password);
 

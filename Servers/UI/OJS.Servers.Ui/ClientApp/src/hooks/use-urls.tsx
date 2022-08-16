@@ -66,13 +66,12 @@ const getAllContestsUrl = ({ filters, page }: IAllContestsUrlParams) => {
 const getRegisterForContestUrl = ({
     id,
     isOfficial,
-}: IStartContestParticipationUrlParams) => `${baseApiUrl}/Compete/Register/${id}?official=${isOfficial}`;
+}: IStartContestParticipationUrlParams) => `${baseApiUrl}/Contests/Register/${id}?official=${isOfficial}`;
 
 const getSubmitContestPasswordUrl = ({
     id,
     isOfficial,
-    password,
-}: ISubmitContestPasswordUrlParams) => `${baseApiUrl}/Compete/SubmitContestPassword/${id}?official=${isOfficial}`;
+}: ISubmitContestPasswordUrlParams) => `${baseApiUrl}/Contests/SubmitContestPassword/${id}?official=${isOfficial}`;
 
 const getStartContestParticipationUrl = ({
     id,

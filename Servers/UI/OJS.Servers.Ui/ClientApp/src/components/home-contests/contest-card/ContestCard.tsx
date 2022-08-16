@@ -75,7 +75,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                 />
                 <LinkButton
                   id="button-card-practice"
-                  to={`/contests/${id}/practice`}
+                  to={`/contests/${id}/register/practice`}
                   text="Practice"
                   type={LinkButtonType.secondary}
                   state={

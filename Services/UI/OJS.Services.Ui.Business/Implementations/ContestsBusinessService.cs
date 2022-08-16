@@ -50,7 +50,7 @@ namespace OJS.Services.Ui.Business.Implementations
             this.contestCategoriesCache = contestCategoriesCache;
         }
 
-        public async Task<RegisterUserForOfficialContestServiceModel> RegisterUserForContest(int id, bool official)
+        public async Task<RegisterUserForContestServiceModel> RegisterUserForContest(int id, bool official)
         {
             var user = this.userProviderService.GetCurrentUser();
             var userProfile = await this.usersBusinessService.GetUserProfileById(user.Id);
@@ -67,13 +67,20 @@ namespace OJS.Services.Ui.Business.Implementations
 
             await this.ValidateContest(contest, user.Id, user.IsAdmin, official);
 
-            var registerModel = contest.Map<RegisterUserForOfficialContestServiceModel>();
-            if (participant != null && !participant.IsInvalidated)
-            {
-                registerModel.RequirePassword = false;
-            }
+            var registerModel = contest.Map<RegisterUserForContestServiceModel>();
+            registerModel.RequirePassword = this.ShouldRequirePassword(contest, participant, official);
 
             return registerModel;
+        }
+
+        private bool ShouldRequirePassword(Contest contest, Participant participant, bool official)
+        {
+            if (participant != null && !participant.IsInvalidated)
+            {
+                return false;
+            }
+
+            return (official && contest.HasContestPassword) || (!official && contest.HasPracticePassword);
         }
 
         public async Task ValidateContestPassword(int id, bool official, string password)
@@ -117,12 +124,12 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (participant == null)
             {
-                var shouldEnterPassword = (model.IsOfficial && contest.HasContestPassword) || (!model.IsOfficial && contest.HasPracticePassword);
-
-                if (shouldEnterPassword)
-                {
-                    return new ContestParticipationServiceModel { ShouldEnterPassword = true };
-                }
+                // var shouldEnterPassword = (model.IsOfficial && contest.HasContestPassword) || (!model.IsOfficial && contest.HasPracticePassword);
+                //
+                // if (shouldEnterPassword)
+                // {
+                //     return new ContestParticipationServiceModel { ShouldEnterPassword = true };
+                // }
 
                 participant = await this.AddNewParticipantToContest(contest, model.IsOfficial, user.Id, user.IsAdmin);
             }

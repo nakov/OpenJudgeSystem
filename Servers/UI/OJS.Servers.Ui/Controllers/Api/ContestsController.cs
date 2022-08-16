@@ -17,6 +17,22 @@ public class ContestsController : BaseApiController
     public ContestsController(IContestsBusinessService contestsBusinessService)
         => this.contestsBusinessService = contestsBusinessService;
 
+    [HttpGet("{id:int}")]
+    [ProducesResponseType(typeof(RegisterUserForContestServiceModel), Status200OK)]
+    public async Task<IActionResult> Register(int id, [FromQuery] bool official)
+        => await this.contestsBusinessService
+            .RegisterUserForContest(id, official)
+            .ToOkResult();
+
+    [HttpPost("{id:int}")]
+    public async Task<IActionResult> SubmitContestPassword(
+        int id,
+        [FromQuery] bool official,
+        [FromBody] SubmitContestPasswordRequestModel model)
+        => await this.contestsBusinessService
+            .ValidateContestPassword(id, official, model.Password)
+            .ToOkResult();
+
     /// <summary>
     /// Gets contests summary with latest active and past contests for the home page.
     /// </summary>

@@ -5,7 +5,7 @@ using System;
 
 namespace OJS.Services.Ui.Models.Contests;
 
-public class RegisterUserForOfficialContestServiceModel : IMapExplicitly
+public class RegisterUserForContestServiceModel : IMapExplicitly
 {
     public int Id { get; set; }
 
@@ -14,6 +14,6 @@ public class RegisterUserForOfficialContestServiceModel : IMapExplicitly
     public bool RequirePassword { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
-        => configuration.CreateMap<Contest, RegisterUserForOfficialContestServiceModel>()
-            .ForMember(d => d.RequirePassword, opt => opt.MapFrom(s => s.HasContestPassword));
+        => configuration.CreateMap<Contest, RegisterUserForContestServiceModel>()
+            .ForAllOtherMembers(opt => opt.Ignore());
 }

@@ -1,19 +1,22 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-
 import { isNil, sum } from 'lodash';
 import { IContestType, IRegisterForContestResponseType, IStartParticipationResponseType } from '../common/types';
-
 import { IHaveChildrenProps } from '../components/common/Props';
-
+import { UrlType } from '../common/common-types';
+import { IRegisterForContestUrlParams, ISubmitContestPasswordUrlParams } from '../common/url-types';
 import { useLoading } from './use-loading';
 import { useHttp } from './use-http';
 import { useUrls } from './use-urls';
-import { UrlType } from '../common/common-types';
-import { IRegisterForContestUrlParams, ISubmitContestPasswordUrlParams } from '../common/url-types';
 
 interface IStartContestArgs {
     id: number;
     isOfficial: boolean;
+}
+
+interface ISubmitContestPasswordArgs {
+    id: number;
+    isOfficial: boolean;
+    password: string;
 }
 
 interface ICurrentContestContext {
@@ -23,13 +26,15 @@ interface ICurrentContestContext {
         score: number;
         maxScore: number;
         isOfficial: boolean;
-        requirePassword: boolean;
+        requirePassword: boolean | null;
+        submitContestPasswordErrorMessage: string | null;
+        isPasswordValid: boolean | null;
     };
     actions: {
         setContestPassword: (password: string) => void;
         start: (info: IStartContestArgs) => void;
         register: (info: IStartContestArgs) => void;
-        submitPassword: (info: IStartContestArgs) => void;
+        submitPassword: (info: ISubmitContestPasswordArgs) => void;
     };
 }
 
@@ -60,10 +65,12 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ score, setScore ] = useState(defaultState.state.score);
     const [ maxScore, setMaxScore ] = useState(defaultState.state.maxScore);
     const [ isOfficial, setIsOfficial ] = useState(defaultState.state.isOfficial);
-    const [ requirePassword, setRequirePassword ] = useState(defaultState.state.requirePassword);
+    const [ requirePassword, setRequirePassword ] = useState<boolean | null>(null);
     const [ contestToStart, setContestToStart ] = useState<IContestToStartType | null>(null);
     const [ registerForContestParams, setRegisterForContestParams ] = useState<IRegisterForContestUrlParams | null>(null);
     const [ submitContestPasswordUrlParams, setSubmitContestPasswordUrlParams ] = useState<ISubmitContestPasswordUrlParams | null>(null);
+    const [ submitContestPasswordErrorMessage, setSubmitContestPasswordErrorMessage ] = useState<string | null>(null);
+    const [ isPasswordValid, setIsPasswordValid ] = useState<boolean | null>(null);
 
     const {
         startLoading,
@@ -89,6 +96,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const {
         post: submitContestPassword,
         data: submitContestPasswordData,
+        response: submitContestPasswordResponse,
     } = useHttp(getSubmitContestPasswordUrl as UrlType, submitContestPasswordUrlParams);
 
     const start = useCallback((obj) => {
@@ -99,11 +107,12 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         setRegisterForContestParams({ id: obj.id, isOfficial: obj.isOfficial } as IRegisterForContestUrlParams);
     }, []);
 
-    const submitPassword = useCallback(({ id, isOfficial: official }: IStartContestArgs) => {
+    const submitPassword = useCallback(({ id, isOfficial: official, password }: ISubmitContestPasswordArgs) => {
         setSubmitContestPasswordUrlParams({
             id,
             isOfficial: official,
         } as ISubmitContestPasswordUrlParams);
+        setContestPassword(password);
     }, []);
 
     useEffect(() => {
@@ -171,8 +180,16 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             return;
         }
 
-        console.log(submitContestPasswordData);
-    }, [ registerForContestData, submitContestPasswordData ]);
+        // TODO: fix this https://github.com/SoftUni-Internal/exam-systems-issues/issues/224
+        if (!isNil(submitContestPasswordResponse) && submitContestPasswordResponse.status !== 200) {
+            setSubmitContestPasswordErrorMessage('Incorrect password');
+            setIsPasswordValid(false);
+            return;
+        }
+
+        setIsPasswordValid(true);
+        setSubmitContestPasswordErrorMessage(null);
+    }, [ registerForContestData, submitContestPasswordData, submitContestPasswordResponse ]);
 
     useEffect(
         () => {
@@ -195,6 +212,8 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             maxScore,
             isOfficial,
             requirePassword,
+            submitContestPasswordErrorMessage,
+            isPasswordValid,
         },
         actions: {
             setContestPassword,
