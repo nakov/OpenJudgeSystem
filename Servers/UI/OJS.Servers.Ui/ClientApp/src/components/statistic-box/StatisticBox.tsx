@@ -1,10 +1,14 @@
 import React, { ReactNode, useCallback, useMemo } from 'react';
+
 import { isNil } from 'lodash';
+
+import { format } from '../../utils/number-utils';
+
 import { IStatistic } from '../../common/statistics-types';
 
-import styles from './StatisticBox.module.scss';
 import Heading, { HeadingType } from '../guidelines/headings/Heading';
-import { format } from '../../utils/number-utils';
+
+import styles from './StatisticBox.module.scss';
 
 enum StatisticBoxSize {
     small = 1,

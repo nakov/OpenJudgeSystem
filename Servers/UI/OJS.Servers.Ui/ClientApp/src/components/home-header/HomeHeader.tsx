@@ -1,11 +1,13 @@
 import React, { FC, useCallback, useEffect, useMemo } from 'react';
+
 import { isNil } from 'lodash';
-import { useHomeStatistics } from '../../hooks/use-home-statistics';
-import List, { Orientation } from '../guidelines/lists/List';
+
 import { IDictionary, IKeyValuePair } from '../../common/common-types';
-import StatisticBox from '../statistic-box/StatisticBox';
-import styles from './HomeHeader.module.scss';
+import { toList } from '../../utils/object-utils';
 import IconSize from '../guidelines/icons/common/icon-sizes';
+
+import List, { Orientation } from '../guidelines/lists/List';
+import StatisticBox from '../statistic-box/StatisticBox';
 import UsersIcon from '../guidelines/icons/UsersIcon';
 import CodeIcon from '../guidelines/icons/CodeIcon';
 import ProblemIcon from '../guidelines/icons/ProblemIcon';
@@ -13,7 +15,10 @@ import StrategyIcon from '../guidelines/icons/StrategyIcon';
 import ContestIcon from '../guidelines/icons/ContestIcon';
 import SubmissionsPerDayIcon from '../guidelines/icons/SubmissionsPerDayIcon';
 import Heading, { HeadingType } from '../guidelines/headings/Heading';
-import { toList } from '../../utils/object-utils';
+
+import { useHomeStatistics } from '../../hooks/use-home-statistics';
+
+import styles from './HomeHeader.module.scss';
 
 const keyToNameMap: IDictionary<string> = {
     usersCount: 'Users',
@@ -65,7 +70,6 @@ const HomeHeader = () => {
 
             return (
                 <StatisticBox
-                  // size={StatisticBoxSize.big}
                   statistic={{ name: keyToNameMap[key], value }}
                   renderIcon={() => renderIcon(key)}
                 />

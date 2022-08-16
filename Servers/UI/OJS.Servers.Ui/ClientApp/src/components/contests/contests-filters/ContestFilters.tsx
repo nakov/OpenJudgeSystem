@@ -63,7 +63,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
                 ? ButtonType.primary
                 : ButtonType.secondary;
 
-            const btmClassName = type === FilterType.Status
+            const btnClassName = type === FilterType.Status
                 ? styles.btnSelectFilter
                 : '';
 
@@ -71,10 +71,9 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
                 <Button
                   type={buttonType}
                   onClick={() => handleFilterClick(id)}
-                  className={btmClassName}
+                  className={btnClassName}
                   text={name}
                   size={ButtonSize.small}
-                  // isWide={isWide}
                 />
             );
         },

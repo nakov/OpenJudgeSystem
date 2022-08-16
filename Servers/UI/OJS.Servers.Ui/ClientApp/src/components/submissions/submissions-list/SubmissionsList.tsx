@@ -1,15 +1,17 @@
-import * as React from 'react';
-import { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
+
 import { ISubmissionDetails } from '../../../hooks/submissions/types';
+import { IHaveOptionalClassName } from '../../common/Props';
 import concatClassNames from '../../../utils/class-names';
-import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
-import SubmissionResultPointsLabel from '../submission-result-points-label/SubmissionResultPointsLabel';
 import { formatDate } from '../../../utils/dates';
+
+import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+
 import List, { ListType, Orientation } from '../../guidelines/lists/List';
+import Text from '../../guidelines/text/Text';
+import SubmissionResultPointsLabel from '../submission-result-points-label/SubmissionResultPointsLabel';
 
 import styles from './SubmissionsList.module.scss';
-import Text from '../../guidelines/text/Text';
-import { IHaveOptionalClassName } from '../../common/Props';
 
 interface ISubmissionsListProps extends IHaveOptionalClassName {
     items: any[];

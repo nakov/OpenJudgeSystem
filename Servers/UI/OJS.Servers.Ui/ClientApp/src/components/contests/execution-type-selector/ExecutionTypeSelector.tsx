@@ -1,10 +1,13 @@
 import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { get } from 'lodash';
-import styles from './ExecutionTypeSelector.module.scss';
+
+import concatClassNames from '../../../utils/class-names';
+
 import { Button, ButtonSize, ButtonState, ButtonType } from '../../guidelines/buttons/Button';
 import { useSubmissions } from '../../../hooks/submissions/use-submissions';
-import concatClassNames from '../../../utils/class-names';
+
+import styles from './ExecutionTypeSelector.module.scss';
 
 interface IExecutionTypeSelectorProps {
     id: number,
@@ -25,7 +28,7 @@ const ExecutionTypeSelector = ({ id, value, isSelected, onSelect }: IExecutionTy
     const executionTypeSelectorActiveClass = 'executionTypeSelectorActive';
     const executionTypeSelectorInactiveClass = 'executionTypeSelectorInactive';
     const stateClassName = useMemo(
-        () => (selectedSubmissionTypeId === id)
+        () => selectedSubmissionTypeId === id
             ? executionTypeSelectorActiveClass
             : executionTypeSelectorInactiveClass,
         [ id, selectedSubmissionTypeId ],
@@ -36,7 +39,7 @@ const ExecutionTypeSelector = ({ id, value, isSelected, onSelect }: IExecutionTy
     );
 
     const buttonState = useMemo(
-        () => (selectedSubmissionTypeId === id)
+        () => selectedSubmissionTypeId === id
             ? ButtonState.disabled
             : ButtonState.enabled,
         [ id, selectedSubmissionTypeId ],
