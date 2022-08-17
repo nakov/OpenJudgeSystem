@@ -15,6 +15,9 @@
 }
 
 .contestCardHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   font-family: 'Lato', serif;
   font-weight: 500;
   font-size: 18px;
@@ -43,4 +46,10 @@
   text-transform: uppercase;
   font-weight: bold;
   color: $text-light-gray-color;
+}
+
+.contestPasswordLockIcon {
+  padding: 10px;
+  width: auto;
+  height: auto;
 }

@@ -65,6 +65,8 @@ interface IIndexContestsType {
     practiceEndTime: Date,
     canBePracticed: boolean,
     canBeCompeted: boolean,
+    hasContestPassword: boolean,
+    hasPracticePassword: boolean,
     category: string
 }
 

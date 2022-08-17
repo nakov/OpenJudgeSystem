@@ -124,13 +124,6 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (participant == null)
             {
-                // var shouldEnterPassword = (model.IsOfficial && contest.HasContestPassword) || (!model.IsOfficial && contest.HasPracticePassword);
-                //
-                // if (shouldEnterPassword)
-                // {
-                //     return new ContestParticipationServiceModel { ShouldEnterPassword = true };
-                // }
-
                 participant = await this.AddNewParticipantToContest(contest, model.IsOfficial, user.Id, user.IsAdmin);
             }
 

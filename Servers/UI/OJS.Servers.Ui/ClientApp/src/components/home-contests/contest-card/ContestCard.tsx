@@ -5,8 +5,9 @@ import { convertToSecondsRemaining } from '../../../utils/dates';
 import { IIndexContestsType } from '../../../common/types';
 import concatClassNames from '../../../utils/class-names';
 
-import styles from './ContestCard.module.scss';
 import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import LockIcon from '../../guidelines/icons/LockIcon';
+import styles from './ContestCard.module.scss';
 
 interface IContestCardProps {
     contest: IIndexContestsType
@@ -54,9 +55,19 @@ const ContestCard = ({ contest }: IContestCardProps) => {
         [ canBeCompeted, canBePracticed, endTime, id, practiceEndTime ],
     );
 
+    const renderContestLockIcon = useCallback(
+        () => ((canBeCompeted && contest.hasContestPassword) || (canBePracticed && contest.hasPracticePassword)
+            ? <LockIcon containerClassName={styles.contestPasswordLockIcon} />
+            : null),
+        [ canBeCompeted, canBePracticed, contest ],
+    );
+
     return (
         <div className={contestCardClassName}>
-            <div className={contestCardHeaderClassName}>{name}</div>
+            <div className={contestCardHeaderClassName}>
+                <span>{name}</span>
+                { renderContestLockIcon() }
+            </div>
             <div className={contestCardCategoryClassName}>{category}</div>
             <div className={contestCardCounterClassName}>
                 {renderCountdown()}
