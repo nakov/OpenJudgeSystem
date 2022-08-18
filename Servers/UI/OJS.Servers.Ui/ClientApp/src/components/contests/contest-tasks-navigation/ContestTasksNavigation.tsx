@@ -91,15 +91,18 @@ const ContestTasksNavigation = () => {
         setResultsLink(newResultsLink);
     }, [ isOfficial, contest ]);
 
+    const resultsButtonClass = 'resultsButton';
+    const refreshButtonClassName = concatClassNames(styles.resultsButton, resultsButtonClass);
+
     return (
         <div className={styles.tasksSideNavigation}>
             <Heading type={HeadingType.secondary}>Tasks</Heading>
             {renderTasksList()}
             <LinkButton
-              size={ButtonSize.none}
-              type={LinkButtonType.plain}
+              type={LinkButtonType.secondary}
               to={resultsLink}
               text="Results"
+              className={refreshButtonClassName}
             />
         </div>
     );
