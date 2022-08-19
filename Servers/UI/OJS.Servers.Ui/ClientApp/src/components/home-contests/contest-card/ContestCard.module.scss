@@ -1,7 +1,9 @@
 @import "src/styles/colors";
+@import "src/styles/fonts";
+@import "src/styles/variables";
 
 .contestCard {
-  font-family: 'Lato', serif;
+  @include font-family-lato;
   display: grid;
   flex-flow: wrap;
   grid-template-rows: auto 1fr auto;
@@ -15,9 +17,9 @@
 }
 
 .contestCardHeader {
-  font-family: 'Lato', serif;
+  @include font-family-lato;
   font-weight: 500;
-  font-size: 18px;
+  font-size: $f-size-18;
   min-height: 4vh;
   margin: 10px;
   border-bottom: 1px solid;
@@ -32,14 +34,14 @@
 
 .contestCardCountdown {
   padding: 10px;
-  font-size: 12px;
+  font-size: $f-size-12;
   font-weight: bold;
   color: $text-dark-gray-color;
 }
 
 .contestCardCategoryLabel {
   margin-left: 10px;
-  font-size: 10px;
+  font-size: $f-size-10;
   text-transform: uppercase;
   font-weight: bold;
   color: $text-light-gray-color;

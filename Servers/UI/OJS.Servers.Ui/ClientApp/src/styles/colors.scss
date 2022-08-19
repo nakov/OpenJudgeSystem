@@ -1,3 +1,8 @@
+$white-color: #fff;
+$warning-color: #FEC112;
+$grey-color: #565656;
+$light-blue-color: #42abf8;
+
 $background-color: #44a9f8;
 $background-color-footer:#3e4c5d;
 $background-color-light-gray:#FDFDFD;
@@ -5,7 +10,7 @@ $wrappers-border-color: #CBCBCB;
 $success-background-color:#42abf8;
 $success-font-color: #fff;
 
-$color-btn-secondary: #42abf8;
+$color-btn-secondary: $light-blue-color;
 
 $color-btn-disabled: #bebebe;
 

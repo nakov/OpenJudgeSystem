@@ -1,9 +1,10 @@
 @import "src/styles/components";
 @import "src/styles/colors";
+@import "src/styles/fonts";
 
 .btn {
   font-weight: 700;
-  font-family: Lato, serif;
+  @include font-family-lato;
 
   border-radius: 8px;
   padding: 10px 16px;
@@ -15,7 +16,7 @@
   text-transform: uppercase;
   border: 2px solid transparent;
   transition: all .28s ease-in-out;
-  color: white;
+  color: $white-color;
 
   &:hover {
     cursor: pointer;
@@ -34,7 +35,7 @@
     color: $color-btn-secondary;
     box-shadow: none;
     background-color: $background-color-btn-secondary;
-    border-color: #42abf8;
+    border-color: $light-blue-color;
 
     &:hover {
       background-color: $background-color-btn-secondary-hover;
@@ -80,7 +81,7 @@
   }
 
   &.none {
-    font-family: 'Lato', serif;
+    @include font-family-lato;
     color: $text-dark-gray-color;
 
     &:hover {

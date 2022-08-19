@@ -1,9 +1,10 @@
 @import 'src/styles/__resets';
 @import 'src/styles/colors';
+@import "src/styles/fonts";
 
 body,
 #root {
-  font-family: 'Montserrat-Medium', sans-serif;
+  @include font-family-montserrat-medium;
   margin: 0;
   padding: 0;
   display: flex;

@@ -28,7 +28,7 @@
 
 .headerLeft {
   @extend .headerPart;
-  background: #FDFDFD;
+  background: $background-color-light-gray;
 }
 
 .headerRight {

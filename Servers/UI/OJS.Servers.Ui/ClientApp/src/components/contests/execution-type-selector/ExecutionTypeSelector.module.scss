@@ -1,11 +1,12 @@
 ﻿@import "src/styles/colors";
+@import "src/styles/fonts";
 @import "src/components/guidelines/labels/Label.module";
 
 .executionTypeSelector {
   @extend .label;
 
   text-transform: none;
-  font-family: 'Lato', serif;
+  @include font-family-lato;
   font-weight: bold;
   border: 2px solid;
   color: $background-color;

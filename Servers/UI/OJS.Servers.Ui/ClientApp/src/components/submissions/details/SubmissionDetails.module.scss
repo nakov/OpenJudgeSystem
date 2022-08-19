@@ -1,5 +1,6 @@
 ﻿@import "src/styles/global";
 @import "src/styles/components";
+@import "src/styles/fonts";
 
 .detailsWrapper {
   @extend .wrapper;
@@ -15,8 +16,8 @@
 
   .sideNavigationItem {
     text-align: start;
-    font-size: 18px;
-    font-family: 'Lato', serif;
+    font-size: $f-size-18;
+    @include font-family-lato;
     color: $text-dark-gray-color;
     margin-top: 10px;
 
@@ -42,7 +43,7 @@
 
 .navigation {
   align-content: center;
-  border-right: 1px #bebebe solid;
+  border-right: 1px $bottom-border-color solid;
 }
 
 .code {
@@ -56,7 +57,7 @@
   @extend .sideNavigation;
   
   flex: 3;
-  font-family: Lato, serif;
+  @include font-family-lato;
 }
 
 .submissionListItem {
@@ -87,7 +88,7 @@
 }
 
 .submissionCreatedOnParagraph {
-  font-size: 12px;
-  font-family: 'Lato', serif;
+  font-size: $f-size-18;
+  @include font-family-lato;
   color: $text-light-gray-color;
 }

@@ -11,13 +11,13 @@
     padding: 16px;
 
     font-weight: 400;
-    color: #565656;
-    border: 1px solid #565656;
+    color: $grey-color;
+    border: 1px solid $grey-color;
     outline: none;
     border-radius: 6px;
 
     &:focus {
-      border: 1px solid #565656;
+      border: 1px solid $grey-color;
     }
   }
 
@@ -53,7 +53,7 @@
       border-color: $background-color;
 
       &:after {
-        background-color: #44a9f8;
+        background-color: $background-color;
         transform: scale(1);
       }
     }

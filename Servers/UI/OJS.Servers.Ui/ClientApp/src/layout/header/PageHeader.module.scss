@@ -14,7 +14,7 @@
   }
 
   h1 {
-    color: white;
+    color: $white-color;
   }
 
   img {
@@ -29,7 +29,7 @@
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, .14), 0 3px 4px rgba(0, 0, 0, .12), 0 1px 5px rgba(0, 0, 0, .2);
-  background-color: #fff;
+  background-color: $white-color;
   padding: 0 30px;
   border-radius: 0 0 8px 8px;
   
