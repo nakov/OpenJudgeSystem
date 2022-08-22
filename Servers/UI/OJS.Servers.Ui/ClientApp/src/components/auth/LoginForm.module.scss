@@ -1,0 +1,49 @@
+﻿@import "src/styles/colors";
+
+.loginForm {
+  text-align: center;
+  align-content: center;
+  margin: 20px auto;
+  width: 27vw;
+  max-width: 768px;
+  padding: 3vw;
+  box-shadow: $box-shadow-color;
+  border-radius: 8px;
+  font-family: 'Lato', serif;
+  color: $text-dark-gray-color;
+}
+
+.loginFormHeader {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.loginFormLink {
+  color: $background-color;
+  
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.loginFormControls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+
+.registerHeader {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.errorMessage {
+  margin-top: 10px;
+  color: $primary-red;
+  text-align: center;
+}

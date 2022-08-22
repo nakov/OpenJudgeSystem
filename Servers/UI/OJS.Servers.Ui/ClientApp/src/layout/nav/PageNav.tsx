@@ -24,7 +24,7 @@ const anonymousRoutes = [
 ];
 
 const PageNav = () => {
-    const { user } = useAuth();
+    const { state: { user } } = useAuth();
     const [ routes, setRoutes ] = useState(anonymousRoutes);
 
     useEffect(() => {

@@ -20,7 +20,7 @@ interface ITestRunDetailsProps {
 const getResultIsWrongAnswerResultType = (run: ITestRunDetailsType) => run.resultType.toLowerCase() !== 'correctanswer';
 
 const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
-    const { user } = useAuth();
+    const { state: { user } } = useAuth();
     const initialIsCollapsed = testRun.isTrialTest && getResultIsWrongAnswerResultType(testRun);
     const [ isCollapsed, setIsCollapsed ] = useState<boolean>(initialIsCollapsed);
 
