@@ -7,7 +7,7 @@ import { useProblems } from '../use-problems';
 import { useProblemSubmissions } from './use-problem-submissions';
 import { useUrls } from '../use-urls';
 import { ISubmissionTypeType } from '../../common/types';
-import { ITestRunType, ISubmissionType } from './types';
+import { ISubmissionType, ITestRunType } from './types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 
 interface ISubmissionsContext {
@@ -51,7 +51,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     } = useLoading();
 
     const { state: { currentProblem } } = useProblems();
-    const { actions: { getSubmissions } } = useProblemSubmissions();
+    const { actions: { loadSubmissions } } = useProblemSubmissions();
     const { state: { isOfficial } } = useCurrentContest();
 
     const {
@@ -63,6 +63,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         startLoading();
         const { id } = selectedSubmissionType || {};
         const { id: problemId } = currentProblem || {};
+
         await submitCode({
             ProblemId: problemId,
             SubmissionTypeId: id,
@@ -75,13 +76,17 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const selectSubmissionTypeById = useCallback(
         (id) => {
             const { allowedSubmissionTypes } = currentProblem || {};
+
             if (allowedSubmissionTypes == null) {
                 return;
             }
+
             const newSubmissionType = allowedSubmissionTypes.find((st) => st.id === id);
+
             if (!newSubmissionType) {
                 return;
             }
+
             setSelectedSubmissionType(newSubmissionType);
         },
         [ currentProblem ],
@@ -95,8 +100,10 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         () => {
             const { allowedSubmissionTypes } = currentProblem || {};
             const submissionType = first(allowedSubmissionTypes);
+
             if (submissionType) {
                 const { id } = submissionType;
+
                 selectSubmissionTypeById(id);
             } else {
                 selectSubmissionTypeById(null);
@@ -108,10 +115,10 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     useEffect(
         () => {
             (async () => {
-                await getSubmissions();
+                await loadSubmissions();
             })();
         },
-        [ getSubmissions, submitCodeResult ],
+        [ loadSubmissions, submitCodeResult ],
     );
 
     const value = {

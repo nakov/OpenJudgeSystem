@@ -25,8 +25,8 @@ const ProfilePage = () => {
             <Heading>Profile</Heading>
             <ProfileAboutInfo value={profile} />
             <Tabs
-              tabLabels={[ 'Submissions', 'Contest Participations' ]}
-              tabChildren={[ <ProfileSubmissions />, <ProfileContestParticipations /> ]}
+              labels={[ 'Submissions', 'Contest Participations' ]}
+              contents={[ <ProfileSubmissions />, <ProfileContestParticipations /> ]}
             />
         </>
     );

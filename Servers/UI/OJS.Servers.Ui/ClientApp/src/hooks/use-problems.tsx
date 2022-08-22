@@ -53,6 +53,7 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     const selectProblemById = useCallback(
         (problemId: number) => {
             const newProblem = problems.find((p) => p.id === problemId);
+
             if (newProblem) {
                 setCurrentProblem(newProblem);
             }
@@ -63,11 +64,14 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     const reloadProblems = useCallback(
         () => {
             const { problems: newProblems } = contest || {};
+
             if (!newProblems) {
                 return;
             }
+
             setProblems(newProblems);
             const { id } = first(newProblems) || {};
+
             if (!id) {
                 return;
             }

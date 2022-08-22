@@ -1,15 +1,19 @@
 import * as React from 'react';
+
 import { useCallback } from 'react';
+
 import { Button, ButtonType } from '../../guidelines/buttons/Button';
 import { IProblemResourceType } from '../../../common/types';
 
-import styles from './ProblemResource.module.scss';
 import { useProblems } from '../../../hooks/use-problems';
+
+import styles from './ProblemResource.module.scss';
 
 interface IProblemResourceProps {
     resource: IProblemResourceType
 }
 
+// TODO: These should be extracted into `Icons`
 const resourceTypeToIconClassName : { [name: number]: string } = {
     1: 'fa-file-alt',
     2: 'fa-lightbulb',
@@ -49,26 +53,22 @@ const ProblemResource = ({ resource }: IProblemResourceProps) => {
             </Button>
         ));
 
-    const renderResource = () => {
-        const resourceTypeIconClassName = resource.type == null
-            ? resourceTypeToIconClassName[1]
-            : resourceTypeToIconClassName[resource.type];
+    const resourceTypeIconClassName = resource.type == null
+        ? resourceTypeToIconClassName[1]
+        : resourceTypeToIconClassName[resource.type];
 
-        const resourceLinkContent = (
-            <>
-                <i className={`fal ${resourceTypeIconClassName}`} />
-                {resource.name}
-            </>
-        );
+    const resourceLinkContent = (
+        <>
+            <i className={`fal ${resourceTypeIconClassName}`} />
+            {resource.name}
+        </>
+    );
 
-        return (
-            <div className={styles.resourceWrapper}>
-                {renderResourceLink(resourceLinkContent)}
-            </div>
-        );
-    };
-
-    return renderResource();
+    return (
+        <div className={styles.resourceWrapper}>
+            {renderResourceLink(resourceLinkContent)}
+        </div>
+    );
 };
 
 export default ProblemResource;

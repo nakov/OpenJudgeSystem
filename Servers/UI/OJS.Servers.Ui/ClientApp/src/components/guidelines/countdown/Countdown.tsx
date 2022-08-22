@@ -26,6 +26,7 @@ interface ICountdownProps {
 
 const defaultRender = (remainingTime: ICountdownRemainingType) => {
     const { hours, minutes, seconds } = convertToTwoDigitValues(remainingTime);
+
     return (
         <>
             <p>
@@ -70,6 +71,7 @@ const Countdown = ({
     useEffect(() => {
         if (remainingInSeconds < 0) {
             handleOnCountdownEnd();
+
             return () => {};
         }
 

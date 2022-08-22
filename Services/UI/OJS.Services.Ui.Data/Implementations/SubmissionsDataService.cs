@@ -1,6 +1,7 @@
 namespace OJS.Services.Ui.Data.Implementations;
 
 using Microsoft.EntityFrameworkCore;
+using OJS.Common.Extensions;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Data.Implementations;
 using OJS.Services.Infrastructure.Extensions;
@@ -120,4 +121,10 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
 
         public bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId) =>
             this.DbSet.Any(s => s.ProblemId == problemId && s.Participant!.UserId == userId && !s.Processed);
+
+        public Task<int> GetSubmissionsPerDayCount()
+            => this.DbSet.GroupBy(x => new { x.CreatedOn.Year, x.CreatedOn.DayOfYear })
+                .Select(x => x.Count())
+                .AverageAsync()
+                .ToInt();
 }

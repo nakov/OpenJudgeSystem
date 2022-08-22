@@ -2,3 +2,7 @@
   display: flex;
   flex: 1 13;
 }
+
+.contestItem {
+  flex: 0 1 calc(100% / 4);
+}

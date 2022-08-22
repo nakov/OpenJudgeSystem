@@ -9,7 +9,10 @@ import { setLayout } from '../shared/set-layout';
 
 const SubmissionPage = () => {
     const { submissionId } = useParams();
-    const { currentSubmission, getDetails } = useSubmissionsDetails();
+    const {
+        state: { currentSubmission },
+        actions: { getDetails },
+    } = useSubmissionsDetails();
 
     useEffect(() => {
         (async () => {

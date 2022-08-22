@@ -37,9 +37,11 @@ namespace OJS.Servers.Infrastructure.Extensions
             => services
                 .AddAutoMapperConfigurations<TStartup>()
                 .AddWebServerServices<TStartup>()
-                .AddAuthenticationServices();
+                .AddAuthenticationServices()
+                .AddCaching<TStartup>();
 
-        public static IServiceCollection AddIdentityDatabase<TDbContext, TIdentityUser, TIdentityRole, TIdentityUserRole>(
+        public static IServiceCollection AddIdentityDatabase<TDbContext, TIdentityUser, TIdentityRole,
+            TIdentityUserRole>(
             this IServiceCollection services,
             IEnumerable<GlobalQueryFilterType>? globalQueryFilterTypes = null)
             where TDbContext : DbContext
@@ -98,16 +100,9 @@ namespace OJS.Servers.Infrastructure.Extensions
             => services
                 .AddSwaggerGen(options =>
                 {
-                    options.SwaggerDoc(name, new OpenApiInfo
-                    {
-                        Title = title,
-                        Version = version,
-                    });
+                    options.SwaggerDoc(name, new OpenApiInfo { Title = title, Version = version, });
 
-                    options.MapType<FileContentResult>(() => new OpenApiSchema
-                    {
-                         Type = "file",
-                    });
+                    options.MapType<FileContentResult>(() => new OpenApiSchema { Type = "file", });
 
                     var entryAssembly = Assembly.GetEntryAssembly();
                     if (entryAssembly != null)
@@ -116,6 +111,18 @@ namespace OJS.Servers.Infrastructure.Extensions
                         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
                     }
                 });
+
+        public static IServiceCollection AddCaching<TStartup>(this IServiceCollection services)
+        {
+            EnvironmentUtils.ValidateEnvironmentVariableExists(
+                new[] { RedisConnectionString });
+
+            return services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = EnvironmentUtils.GetByKey(RedisConnectionString);
+                options.InstanceName = typeof(TStartup).FullName;
+            });
+        }
 
         private static IServiceCollection AddWebServerServices<TStartUp>(this IServiceCollection services)
         {
@@ -132,14 +139,14 @@ namespace OJS.Servers.Infrastructure.Extensions
         }
 
         private static IServiceCollection AddHttpContextServices(this IServiceCollection services)
-            =>  services
+            => services
                 .AddHttpContextAccessor()
                 .AddTransient(s => s.GetRequiredService<IHttpContextAccessor>().HttpContext!.User);
 
         private static IServiceCollection AddAuthenticationServices(this IServiceCollection services)
         {
             EnvironmentUtils.ValidateEnvironmentVariableExists(
-                new [] { PathToCommonKeyRingFolderKey, SharedAuthCookieDomain });
+                new[] { PathToCommonKeyRingFolderKey, SharedAuthCookieDomain });
 
             var keysDirectoryPath = EnvironmentUtils.GetByKey(PathToCommonKeyRingFolderKey);
 

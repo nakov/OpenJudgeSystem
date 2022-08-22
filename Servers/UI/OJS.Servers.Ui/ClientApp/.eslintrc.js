@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unused-modules,no-undef
 module.exports = {
     env: {
         browser: true,
@@ -8,11 +9,12 @@ module.exports = {
         'plugin:react/recommended',
         'airbnb',
         'plugin:css-modules/recommended',
+        'stylelint',
     ],
     parser: '@typescript-eslint/parser',
     parserOptions: {
         ecmaFeatures: { jsx: true },
-        ecmaVersion: 12,
+        ecmaVersion: 2021,
         sourceType: 'module',
     },
     plugins: [
@@ -25,6 +27,11 @@ module.exports = {
     ],
     settings: { 'import/resolver': { typescript: {} } },
     rules: {
+        
+        'node/no-missing-import': 0,
+        'sort-imports': 0,
+        'no-confusing-arrow': 0,
+        'node/no-unsupported-features/es-syntax': 0,
         '@typescript-eslint/naming-convention': [
             'error',
             {
@@ -49,8 +56,6 @@ module.exports = {
         ],
         'react-hooks/rules-of-hooks': 'error',
         'react-hooks/exhaustive-deps': 'error',
-
-        // Interactive rules
 
         'array-bracket-spacing': [ 'error', 'always', { singleValue: true } ],
         // enforces curly brackets for arrow functions only when needed
@@ -266,6 +271,10 @@ module.exports = {
         'import/prefer-default-export': 'error',
         'import/exports-last': 'error',
         'import/group-exports': 'error',
+        // 'import/no-unused-modules': [ 'error', {
+        //     unusedExports: true,
+        //     missingExports: true,
+        // } ],
         // "import/dynamic-import-chunkname": ["error"],
 
         /* react rules */

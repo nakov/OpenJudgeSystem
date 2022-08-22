@@ -1,0 +1,34 @@
+@import "./common/icon-base";
+@import "src/styles/colors";
+
+.iconContainer {
+  @extend %iconContainer;
+
+  &.small {
+    @extend %small;
+  }
+
+  &.medium {
+    @extend %medium;
+  }
+
+  &.large {
+    @extend %large;
+  }
+
+  &.extraLarge {
+    @extend %extraLarge;
+  }
+}
+
+.icon {
+  @extend %icon;
+
+  & > * {
+    width: 45%;
+  }
+}
+
+.helperText {
+  @extend %helperText;
+}

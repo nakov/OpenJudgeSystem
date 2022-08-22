@@ -1,21 +1,25 @@
-﻿@import "src/styles/colors";
+@import "src/styles/colors";
 
 .testRun {
   margin-top: 10px;
   padding: 20px;
   border-bottom: 1px solid $bottom-border-color;
-  font-family: 'Lato', serif;
+  font-family: Lato, serif;
   color: $text-dark-gray-color;
 }
 
-.testRunHeading {
+%heading {
   font-size: 18px;
   margin-bottom: 10px;
   display: flex;
 }
 
+.testRunHeading {
+  @extend %heading;
+}
+
 .wrongTestRunHeading {
-  @extend .testRunHeading;
+  @extend %heading;
 
   color: $primary-red;
 }
@@ -27,14 +31,8 @@
   align-items: center;
 }
 
-.collapsibleButton {
-  font-family: 'Lato', serif;
-  color: $text-dark-gray-color;
-  align-self: flex-end;
-}
-
 .correctTestRunHeading {
-  @extend .testRunHeading;
+  @extend %heading;
 
   color: $primary-green;
 }
@@ -49,6 +47,6 @@
 
 .testRunDataParagraph {
   font-size: 12px;
-  font-family: 'Lato', serif;
+  font-family: Lato, serif;
   color: $text-light-gray-color;
 }

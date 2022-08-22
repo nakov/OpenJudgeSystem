@@ -70,14 +70,14 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
                 page: pageToGo || defaultState.state.pageNumber,
             });
         },
-        [ ],
+        [],
     );
 
     const clearFilters = useCallback(
         () => {
             setFilters([]);
         },
-        [ ],
+        [],
     );
 
     const reload = useCallback(
@@ -96,6 +96,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             });
 
             const filter = { name, value: id.toString() } as IFilter;
+
             arr.push(filter);
         },
         [],
@@ -112,6 +113,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     const generateCategoryFilters = useCallback(() => {
         const categoryFilters = [] as IFilter[];
+
         categories?.forEach((c) => addCategoryLeafFilters(c, categoryFilters));
 
         return generateFilterItems(FilterType.Category, ...categoryFilters);
@@ -128,6 +130,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         const statusFilters = generateStatusFilters();
         const categoryFilterItems = generateCategoryFilters();
         const strategyFilterItems = generateStrategyFilters();
+
         return statusFilters
             .concat(categoryFilterItems)
             .concat(strategyFilterItems);
@@ -163,8 +166,10 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
             const contestsResult = data as IPagedResultType<IIndexContestsType>;
             const newData = contestsResult.items as IIndexContestsType[];
+
             setContests(newData);
             const { pageNumber, itemsPerPage, pagesCount, totalItemsCount } = contestsResult || {};
+
             setPageProps({ pageNumber, itemsPerPage, pagesCount, totalItemsCount });
         },
         [ data ],

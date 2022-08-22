@@ -11,9 +11,11 @@ const LoginPage = () => {
 
     useEffect(() => {
         const { isLoggedIn } = user;
+
         if (isLoggedIn) {
             // @ts-ignore
             const origin = location.state?.from?.pathname || '/';
+
             navigate(origin);
         }
     }, [ location, navigate, user ]);

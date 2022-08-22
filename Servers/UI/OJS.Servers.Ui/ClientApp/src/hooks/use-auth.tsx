@@ -82,6 +82,7 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
         if (loginSubmitResponse) {
             if (loginSubmitStatus === HttpStatus.Unauthorized) {
                 setLoginErrorMessage('Invalid username or password.');
+                
                 return;
             }
 
