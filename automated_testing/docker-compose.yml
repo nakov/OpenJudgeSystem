@@ -17,14 +17,23 @@ services:
     #   - ./sql_server/log:/var/opt/mssql/log
     #   - ./sql_server/secrets:/var/opt/mssql/secrets
   app:
-    image: ui
-    container_name: app_instance
+    image: ui_for_tests
+    build:
+      context: ../
+      dockerfile: Servers/UI/OJS.Servers.Ui/Dockerfile
     ports:
       - "7150:80"
-    depends_on:
-      - db
-    links:
-      - db
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      DbContext: "Server=localhost;Database=OpenJudgeSystem;User Id=sa;Password=1123QwER"
+      SULS_PLATFORM_BASE_URL: "https://localhost:44304"
+      DISTRIBUTOR_BASE_URL: "https://localhost:44305"
+      SULS_PLATFORM_API_KEY: "1234"
+      LOGGER_FILES_FOLDER_PATH: "../../../Logs"
+      SHARED_AUTH_COOKIE_DOMAIN: "localhost"
+      UI_URL: "http://localhost:5002"
+      ADMINISTRATION_URL: "http://localhost:5001"
+      UI_HOME_YOUTUBE_VIDEO_ID: "IwLET8SDBE4"
   tests:
     image: tests
     # command: tail -F anything

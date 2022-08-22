@@ -7,8 +7,8 @@ const options = {
     log: true,
 };
 
-// const dbAndApp = [ 'db', 'app' ];
-const dbAndApp = ['db'];
+const services = [ 'db', 'app' ];
+// const dbAndApp = [ 'db' ];
 
 const sleep = (seconds: number) => new Promise((resolve) => {
     setTimeout(() => {
@@ -16,19 +16,25 @@ const sleep = (seconds: number) => new Promise((resolve) => {
     }, seconds * 1000);
 });
 
+const namesString = (() => {
+    const servicesInternal = [ ...services ].map((s) => `\`${s}\``);
+    const lastService = servicesInternal.pop();
+    return `${servicesInternal.join(', ')} and ${lastService}`;
+})();
+
 const createDb = async () => {
     try {
-        console.log(' --- Building `app` and `db` ---');
+        console.log(` --- Building ${namesString} ---`);
 
         await compose.buildMany(
-            dbAndApp,
+            services,
             options,
         );
 
-        console.log(' --- "Up"-ing `app` and `db` ---');
+        console.log(` --- "Up"-ing ${namesString} ---`);
 
         await compose.upMany(
-            dbAndApp,
+            services,
             options,
         );
 
@@ -36,7 +42,7 @@ const createDb = async () => {
 
         await sleep(10);
 
-        console.log(' --- `db` and `app` are up ---');
+        console.log(` --- ${namesString} are up ---);
 
         await compose.exec(
             'db',
