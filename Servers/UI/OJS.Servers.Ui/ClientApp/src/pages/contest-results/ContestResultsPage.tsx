@@ -50,13 +50,14 @@ const getProblemResultColumns = (results: IContestResultsType) => results.proble
         const problemResult = params.row.problemResults
             .find((pr: IContestResultsParticipationProblemType) => pr.problemId === p.id) as IContestResultsParticipationProblemType;
         const bestSubmission = problemResult?.bestSubmission;
+
         return results.userHasContestRights && !isNil(bestSubmission)
             ? (
                 <LinkButton
                   type={LinkButtonType.plain}
                   size={ButtonSize.none}
                   text={`${bestSubmission.points}`}
-                  to={`/submissions/${bestSubmission.id}`}
+                  to={`/submissions/${bestSubmission.id}/details`}
                 />
             )
             : <p>{bestSubmission?.points || '-'}</p>;

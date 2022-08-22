@@ -8,7 +8,6 @@
   height: 75px;
   width: 100%;
 
-
   @media only screen and (max-width: 425px) {
     padding: 0 5px;
   }
@@ -23,16 +22,16 @@
 }
 
 .headerSize {
-  @extend .contentSize;
+  @extend %contentSize;
 
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, .14), 0 3px 4px rgba(0, 0, 0, .12), 0 1px 5px rgba(0, 0, 0, .2);
+  box-shadow: 0 2px 4px rgb(0 0 0 / 14%), 0 3px 4px rgb(0 0 0 / 12%), 0 1px 5px rgb(0 0 0 / 20%);
   background-color: #fff;
   padding: 0 30px;
   border-radius: 0 0 8px 8px;
-  
+
   @media only screen and (max-width: 425px) {
     box-shadow: none;
     padding: 0;
@@ -41,7 +40,7 @@
 
 .heading {
   @media only screen and (max-width: 425px) {
-   width: 100px;
+    width: 100px;
   }
 }
 

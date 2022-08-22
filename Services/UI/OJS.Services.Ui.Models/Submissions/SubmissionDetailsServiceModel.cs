@@ -21,13 +21,16 @@ namespace OJS.Services.Ui.Models.Submissions
 
         public string? Content { get; set; }
 
-        public IEnumerable<TestRunDetailsServiceModel> TestRuns { get; set; } = Enumerable.Empty<TestRunDetailsServiceModel>();
+        public IEnumerable<TestRunDetailsServiceModel> TestRuns { get; set; } =
+            Enumerable.Empty<TestRunDetailsServiceModel>();
 
         public UserProfileServiceModel User { get; set; }
 
         public double MaxUsedTime { get; set; }
 
         public double MaxUsedMemory { get; set; }
+
+        public SubmissionTypeForSubmissionDetailsServiceModel SubmissionType { get; set; }
 
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<Submission, SubmissionDetailsServiceModel>()

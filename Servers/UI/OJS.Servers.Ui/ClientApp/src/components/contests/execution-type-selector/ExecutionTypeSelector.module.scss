@@ -1,30 +1,14 @@
-﻿@import "src/styles/colors";
-@import "src/components/guidelines/labels/Label.module";
+@import "src/styles/colors";
 
 .executionTypeSelector {
-  @extend .label;
-
   text-transform: none;
-  font-family: 'Lato', serif;
+  font-family: Lato, serif;
   font-weight: bold;
   border: 2px solid;
   color: $background-color;
   margin: 10px 5px;
-  
+
   &:hover {
     cursor: pointer;
   }
-
-
-  &.active {
-    border-color: $background-color;
-  }
-
-  &.inactive {
-    color: $color-btn-disabled;
-    border-color: $color-btn-disabled;
-  }
 }
-
-
-

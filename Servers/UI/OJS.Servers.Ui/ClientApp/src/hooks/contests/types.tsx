@@ -48,4 +48,4 @@ export type {
     IContestResultsParticipationProblemType,
     IContestResultsParticipationProblemBestSubmissionType,
     IContestResultsParticipationProblemBestSubmissionTestRunType,
-}
+};

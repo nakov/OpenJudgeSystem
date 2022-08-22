@@ -20,8 +20,12 @@ public class SubmissionTypesCacheService : ISubmissionTypesCacheService
     }
 
     public Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllOrderedByLatestUsage(int? cacheSeconds)
-        => this.cache.Get(
-            CacheConstants.SubmissionTypesByUsage,
-            this.submissionTypesBusiness.GetAllOrderedByLatestUsage,
-            cacheSeconds);
+        => cacheSeconds.HasValue
+            ? this.cache.Get(
+                CacheConstants.SubmissionTypesByUsage,
+                this.submissionTypesBusiness.GetAllOrderedByLatestUsage,
+                cacheSeconds.Value)
+            : this.cache.Get(
+                CacheConstants.SubmissionTypesByUsage,
+                this.submissionTypesBusiness.GetAllOrderedByLatestUsage);
 }

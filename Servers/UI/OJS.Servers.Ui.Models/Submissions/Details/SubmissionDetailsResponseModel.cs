@@ -20,8 +20,18 @@ namespace OJS.Servers.Ui.Models.Submissions.Details
 
         public UserProfileResponseModel User { get; set; }
 
+        public SubmissionTypeForSubmissionDetailsResponseModel SubmissionType { get; set; }
+
         public double MaxUsedTime { get; set; }
 
         public double MaxUsedMemory { get; set; }
+    }
+
+    public class
+        SubmissionTypeForSubmissionDetailsResponseModel : IMapFrom<SubmissionTypeForSubmissionDetailsServiceModel>
+    {
+        public int Id { get; set; }
+
+        public string Name { get; set; }
     }
 }

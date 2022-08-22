@@ -95,6 +95,7 @@ const FormControl = ({
                 />
             );
         }
+
         return (
             <input
               type={type}

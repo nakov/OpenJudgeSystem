@@ -41,6 +41,7 @@ const NotificationsProvider = ({ children }: INotificationsProviderProps) => {
                     ? defaultState.notification.leaveTimeout
                     : leaveTimeout,
         } as INotificationType;
+
         setNotification(n);
         setShowNotification(true);
     }, [ setNotification ]);
@@ -55,6 +56,7 @@ const NotificationsProvider = ({ children }: INotificationsProviderProps) => {
                     ? defaultState.notification.leaveTimeout
                     : leaveTimeout,
         } as INotificationType;
+
         setNotification(n);
         setShowNotification(true);
     }, [ setNotification ]);

@@ -17,7 +17,6 @@ import styles from './SubmissionBox.module.scss';
 import concatClassNames from '../../../utils/class-names';
 
 const SubmissionBox = () => {
-    // const { setSubmissionType } = useHomeContests();
     const { actions: { selectSubmissionTypeById } } = useSubmissions();
     const {
         state: {
@@ -116,7 +115,6 @@ const SubmissionBox = () => {
                 <div className={styles.editorAndProblemControlsWrapper}>
                     <CodeEditor
                       selectedSubmissionType={selectedSubmissionType!}
-                      allowedSubmissionTypes={allowedSubmissionTypes}
                       code={submissionCode}
                       onCodeChange={handleCodeChanged}
                     />
