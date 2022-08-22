@@ -82,6 +82,7 @@
     <Compile Include="Business\ExamGroups\ExamGroupsBusinessService.cs" />
     <Compile Include="Business\ExamGroups\IExamGroupsBusinessService.cs" />
     <Compile Include="Business\ParticipantScores\IParticipantScoresBusinessService.cs" />
+    <Compile Include="Business\ParticipantScores\Models\ParticipantScoresSummaryModel.cs" />
     <Compile Include="Business\ParticipantScores\ParticipantScoresBusinessService.cs" />
     <Compile Include="Business\Participants\IParticipantsBusinessService.cs" />
     <Compile Include="Business\Participants\ParticipantsBusinessService.cs" />
@@ -181,6 +182,5 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

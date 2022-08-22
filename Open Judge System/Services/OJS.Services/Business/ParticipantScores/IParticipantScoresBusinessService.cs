@@ -1,4 +1,7 @@
-﻿namespace OJS.Services.Business.ParticipantScores
+﻿using System.Collections.Generic;
+using OJS.Services.Business.ParticipantScores.Models;
+
+namespace OJS.Services.Business.ParticipantScores
 {
     using OJS.Services.Common;
 
@@ -7,5 +10,7 @@
         void RecalculateForParticipantByProblem(int participantId, int problemId);
 
         void NormalizeAllPointsThatExceedAllowedLimit();
+
+        ServiceResult<ICollection<ParticipantScoresSummary>> GetParticipationSummary(int id, bool official);
     }
 }

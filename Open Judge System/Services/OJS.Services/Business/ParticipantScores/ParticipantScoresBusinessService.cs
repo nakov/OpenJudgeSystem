@@ -1,4 +1,11 @@
-﻿namespace OJS.Services.Business.ParticipantScores
+﻿using System.Collections.Generic;
+using System.Data.Entity;
+using OJS.Common;
+using OJS.Data.Models;
+using OJS.Services.Business.ParticipantScores.Models;
+using OJS.Services.Common;
+
+namespace OJS.Services.Business.ParticipantScores
 {
     using System.Linq;
 
@@ -42,6 +49,32 @@
 
                 scope.Complete();
             }
+        }
+        
+        public ServiceResult<ICollection<ParticipantScoresSummary>> GetParticipationSummary(int id, bool official)
+        {
+            var participations = this.participantScoresData
+                .GetAll()
+                .Include(ps => ps.Submission)
+                .Include(ps => ps.Submission.Problem)
+                .Include(ps => ps.Participant)
+                .Where(ps => !ps.Submission.IsDeleted)
+                .Where(ps => ps.Submission != null)
+                .Where(ps => ps.IsOfficial == official)
+                .Where(ps => ps.Participant.ContestId == id)
+                .Select(ps => new ParticipantScoresSummary
+                {
+                    SubmissionId = ps.SubmissionId.Value,
+                    ProblemName = ps.Submission.Problem.Name,
+                    Points = ps.Points,
+                    CreatedOn = ps.Submission.CreatedOn.ToString(),
+                    ModifiedOn = ps.Submission.ModifiedOn.ToString(),
+                    ParticipantName = ps.ParticipantName,
+                    ParticipantId = ps.ParticipantId
+                })
+                .ToList();
+            
+            return ServiceResult<ICollection<ParticipantScoresSummary>>.Success(participations);
         }
 
         private void NormalizeSubmissionPoints() =>
