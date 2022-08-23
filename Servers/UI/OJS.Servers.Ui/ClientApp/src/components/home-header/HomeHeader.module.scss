@@ -1,4 +1,4 @@
-@import "src/styles/colors";
+﻿@import "src/styles/colors";
 
 .statisticsList {
   padding-top: 20px;
@@ -7,7 +7,7 @@
 
   .statisticsListItem {
     padding: 15px;
-  background: $background-color-light-gray;
+    background: $background-color-light-gray;
     margin: 20px 0;
     flex: 1 1 30%; /* grow | shrink | basis */
   }
