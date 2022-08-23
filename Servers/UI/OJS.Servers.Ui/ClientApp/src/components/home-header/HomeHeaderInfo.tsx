@@ -21,6 +21,7 @@ const HomeHeaderInfo = ({
             {text}
         </>
     );
+
     return (
         <>
             <Heading

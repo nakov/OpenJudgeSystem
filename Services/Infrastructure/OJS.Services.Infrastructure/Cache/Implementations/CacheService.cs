@@ -1,62 +1,93 @@
 namespace OJS.Services.Infrastructure.Cache.Implementations
 {
-    using Microsoft.Extensions.Caching.Memory;
+    using FluentExtensions.Extensions;
+    using Microsoft.Extensions.Caching.Distributed;
+    using OJS.Common.Extensions.Strings;
+    using OJS.Services.Infrastructure.Constants;
     using System;
+    using System.IO;
     using System.Threading.Tasks;
 
     public class CacheService : ICacheService
     {
-        // TODO: IMemoryCache does not work when used from different apps.
-        // https://github.com/SoftUni-Internal/exam-systems-issues/issues/156
-        private readonly IMemoryCache memoryCache;
+        private readonly IDistributedCache cache;
         private readonly IDatesService dates;
 
         public CacheService(
-            IMemoryCache memoryCache,
+            IDistributedCache cache,
             IDatesService dates)
         {
-            this.memoryCache = memoryCache;
+            this.cache = cache;
             this.dates = dates;
         }
 
         public T Get<T>(string cacheId, Func<T> getItemCallback, DateTime absoluteExpiration)
         {
-            if (this.memoryCache.TryGetValue(cacheId, out T item))
-            {
-                return item;
-            }
+            this.VerifyValueInCache(
+                    cacheId,
+                    () => Task.FromResult(getItemCallback),
+                    absoluteExpiration)
+                .Wait();
 
-            item = getItemCallback();
-
-            return this.SetCache(cacheId, item, absoluteExpiration);
+            return ParseValue<T>(this.cache.Get(cacheId));
         }
 
-        public T Get<T>(string cacheId, Func<T> getItemCallback, int? cacheSeconds)
+        public async Task<T> Get<T>(string cacheId, Func<Task<T>> getItemCallback, DateTime absoluteExpiration)
+        {
+            await this.VerifyValueInCache(
+                cacheId,
+                getItemCallback,
+                absoluteExpiration);
+            return ParseValue<T>(await this.cache.GetAsync(cacheId));
+        }
+
+        public T Get<T>(string cacheId, Func<T> getItemCallback)
+            => this.Get(cacheId, getItemCallback, CacheConstants.OneDayInSeconds);
+
+        public Task<T> Get<T>(string cacheId, Func<Task<T>> getItemCallback)
+            => this.Get(cacheId, getItemCallback, CacheConstants.OneDayInSeconds);
+
+        public T Get<T>(string cacheId, Func<T> getItemCallback, int cacheSeconds)
             => this.Get(cacheId, getItemCallback, this.GetAbsoluteExpirationByCacheSeconds(cacheSeconds));
 
-        public async Task<T> Get<T>(string cacheId, Func<Task<T>> getItemCallback, int? cacheSeconds)
+
+        public Task<T> Get<T>(string cacheId, Func<Task<T>> getItemCallback, int cacheSeconds)
+            => this.Get(cacheId, getItemCallback, this.GetAbsoluteExpirationByCacheSeconds(cacheSeconds));
+
+        public void Remove(string cacheId) => this.cache.Remove(cacheId);
+
+        private static T ParseValue<T>(byte[] valueAsByteArray)
+            => new StreamReader(new MemoryStream(valueAsByteArray))
+                .ReadToEnd()
+                .FromJson<T>();
+
+        private static byte[] ParseValue<T>(T obj)
+            => obj
+                .ToJson()
+                .ToByteArray();
+
+        private DateTime GetAbsoluteExpirationByCacheSeconds(int cacheSeconds)
+            => this.dates
+                .GetUtcNow()
+                .AddSeconds(cacheSeconds);
+
+        private async Task VerifyValueInCache<T>(
+            string cacheId,
+            Func<Task<T>> getItemCallback,
+            DateTime absoluteExpiration)
         {
-            if (this.memoryCache.TryGetValue(cacheId, out T item))
+            var value = await this.cache.GetAsync(cacheId);
+            if (value.IsNull())
             {
-                return item;
+                var options = new DistributedCacheEntryOptions()
+                    .SetAbsoluteExpiration(absoluteExpiration);
+
+                var result = await getItemCallback();
+                await this.cache.SetAsync(
+                    cacheId,
+                    ParseValue(result),
+                    options);
             }
-
-            item = await getItemCallback();
-
-            return this.SetCache(cacheId, item, this.GetAbsoluteExpirationByCacheSeconds(cacheSeconds));
         }
-
-        public void Remove(string cacheId) => this.memoryCache.Remove(cacheId);
-
-        private T SetCache<T>(string cacheId, T item, DateTime absoluteExpiration)
-            => this.memoryCache.Set(
-                cacheId,
-                item,
-                absoluteExpiration);
-
-        private DateTime GetAbsoluteExpirationByCacheSeconds(int? cacheSeconds)
-            => cacheSeconds.HasValue
-                ? this.dates.GetUtcNow().AddSeconds(cacheSeconds.Value)
-                : this.dates.GetMaxValue();
     }
 }

@@ -12,7 +12,7 @@ interface IPrivatePageProps extends IHaveChildrenProps {
 }
 
 const PrivatePage = ({ children }: IPrivatePageProps) => {
-    const { user } = useAuth();
+    const { state: { user } } = useAuth();
     const location = useLocation();
     const { isLoggedIn } = user;
 

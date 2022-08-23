@@ -37,6 +37,8 @@ namespace OJS.Common
             public const string LoggerFilesFolderPath = "LOGGER_FILES_FOLDER_PATH";
             public const string SharedAuthCookieDomain = "SHARED_AUTH_COOKIE_DOMAIN";
 
+            public const string RedisConnectionString = "REDIS_CONNECTION_STRING";
+
             public const string UiHomeYouTubeVideoId = "UI_HOME_YOUTUBE_VIDEO_ID";
 
             // Values

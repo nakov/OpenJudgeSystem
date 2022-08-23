@@ -1,4 +1,4 @@
-const DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE = 10;
+const DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE = 4;
 
 enum ContestParticipationType {
     Compete = 'compete',

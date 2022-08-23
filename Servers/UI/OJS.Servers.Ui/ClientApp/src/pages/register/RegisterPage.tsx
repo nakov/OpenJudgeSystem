@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router';
 import { useAuth } from '../../hooks/use-auth';
 
 const RegisterPage = () => {
-    const { user } = useAuth();
+    const { state: { user } } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {

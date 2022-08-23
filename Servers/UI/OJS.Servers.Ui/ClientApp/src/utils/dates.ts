@@ -1,13 +1,19 @@
-import { format, intervalToDuration } from 'date-fns';
+import { intervalToDuration } from 'date-fns';
+import moment from 'moment';
 
-const defaultDateTimeFormat = 'HH:MM, dd/MMM/yyyy';
+const defaultDateTimeFormat = 'HH:MM, DD/MMM/yyyy';
 
 const calculateTimeUntil = (date: Date) => intervalToDuration({
     start: new Date(),
     end: date,
 });
 
-const formatDate = (date: Date, formatString = defaultDateTimeFormat) => format(date, formatString);
+const formatDate = (
+    date: Date,
+    formatString = defaultDateTimeFormat,
+) => (moment().diff(date, 'days') > 3
+    ? moment(date).format(formatString)
+    : moment(date).fromNow());
 
 const convertToSecondsRemaining = (date: Date) => {
     const { days, hours, minutes, seconds } = intervalToDuration({
@@ -19,6 +25,7 @@ const convertToSecondsRemaining = (date: Date) => {
 
     const hoursRemaining = daysRemaining * 24 + (hours ?? 0);
     const minutesRemaining = hoursRemaining * 60 + (minutes ?? 0);
+
     return minutesRemaining * 60 + (seconds ?? 0);
 };
 

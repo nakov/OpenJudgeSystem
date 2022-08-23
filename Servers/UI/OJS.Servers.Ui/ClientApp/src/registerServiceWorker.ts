@@ -12,14 +12,16 @@ const isLocalhost = Boolean(window.location.hostname === 'localhost' ||
     // [::1] is the IPv6 localhost address.
     window.location.hostname === '[::1]' ||
     // 127.0.0.1/8 is considered localhost for IPv4.
-    window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/));
+    window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9]{1,2})){3}$/));
 
 const registerValidSW = async (swUrl: string) => {
     try {
         const registration = await navigator.serviceWorker
             .register(swUrl);
+
         registration.onupdatefound = () => {
             const installingWorker = registration.installing as ServiceWorker;
+
             installingWorker.onstatechange = () => {
                 if (installingWorker.state === 'installed') {
                     if (navigator.serviceWorker.controller) {
@@ -49,6 +51,7 @@ const checkValidServiceWorker = async (swUrl: string) => {
 
         // Ensure service worker exists, and that we really are getting a JS file.
         const contentType = response.headers.get('content-type');
+
         if (response.status === 404 || (contentType && contentType.indexOf('javascript') === -1)) {
             // No service worker found. Probably a different app. Reload the page.
             const registration = await navigator.serviceWorker.ready;
@@ -69,6 +72,7 @@ const register = () => {
         // The URL constructor is available in all browsers that support SW.
         const url = process.env.PUBLIC_URL as string;
         const publicUrl = new URL(url, window.location.toString());
+
         if (publicUrl.origin !== window.location.origin) {
             // Our service worker won't work if PUBLIC_URL is on a different origin
             // from what our page is served on. This might happen if a CDN is used to
@@ -93,6 +97,7 @@ const register = () => {
 const unregister = async () => {
     if ('serviceWorker' in navigator) {
         const registration = await navigator.serviceWorker.ready;
+
         await registration.unregister();
     }
 };

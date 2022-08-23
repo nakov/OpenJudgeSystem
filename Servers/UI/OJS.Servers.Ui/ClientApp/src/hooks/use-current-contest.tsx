@@ -96,6 +96,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     useEffect(
         () => {
             const { problems } = contest || {};
+
             if (isNil(problems)) {
                 return;
             }

@@ -19,6 +19,11 @@ interface IDictionary<TValue> {
     [key: string]: TValue;
 }
 
+interface IKeyValuePair<TValue> {
+    key: string;
+    value: TValue;
+}
+
 type UrlType = string | ((parameters: IDictionary<any> | null) => string);
 
 interface INotificationType {
@@ -45,6 +50,7 @@ export const SulsQuestionTypeMapping : { [key: number]: QuestionTypeType } = {
 
 export type {
     IDictionary,
+    IKeyValuePair,
     INotificationType,
     IFileResponseType,
     QuestionTypeType,

@@ -3,7 +3,7 @@ import { IconBaseProps } from 'react-icons/lib/cjs/iconBase';
 import { IHaveOptionalClassName } from '../../common/Props';
 import concatClassNames from '../../../utils/class-names';
 import styles from './Icon.module.scss';
-import IconSize from './icon-sizes';
+import IconSize from './common/icon-sizes';
 
 interface IIconProps extends IHaveOptionalClassName {
     size?: IconSize;
@@ -25,7 +25,9 @@ const Icon = ({
             ? styles.small
             : size === IconSize.Medium
                 ? styles.medium
-                : styles.large;
+                : size === IconSize.Large
+                    ? styles.large
+                    : styles.extraLarge;
 
     const iconClassName = concatClassNames(
         styles.icon,
@@ -42,6 +44,7 @@ const Icon = ({
             if (helperText === '') {
                 return null;
             }
+
             return <span className={styles.helperText}>{helperText}</span>;
         },
         [ helperText ],

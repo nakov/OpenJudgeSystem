@@ -6,8 +6,8 @@ import { useUrls } from './use-urls';
 import { useHttp } from './use-http';
 import { useLoading } from './use-loading';
 import {
-    IIndexContestsType,
     IGetContestsForIndexResponseType,
+    IIndexContestsType,
 } from '../common/types';
 
 interface IHomeContestsContext {
@@ -62,6 +62,7 @@ const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
             activeContests: active,
             pastContests: past,
         } = contestsData as IGetContestsForIndexResponseType;
+
         setActiveContests(active);
         setPastContests(past);
     }, [ contestsData ]);
