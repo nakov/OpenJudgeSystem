@@ -11,6 +11,8 @@
 
         Contest GetByIdWithProblems(int id);
 
+        Contest GetByIdWithProblemGroups(int id);
+
         IQueryable<Contest> GetByIdQuery(int id);
 
         IQueryable<Contest> GetAll();

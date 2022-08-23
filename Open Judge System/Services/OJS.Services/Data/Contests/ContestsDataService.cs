@@ -22,6 +22,11 @@
             this.GetAll()
                 .Include(c => c.ProblemGroups.Select(pg => pg.Problems))
                 .FirstOrDefault(c => c.Id == id);
+        
+        public Contest GetByIdWithProblemGroups(int id) =>
+            this.GetAll()
+                .Include(c => c.ProblemGroups)
+                .FirstOrDefault(c => c.Id == id);
 
         public IQueryable<Contest> GetByIdQuery(int id) =>
             this.GetAll()

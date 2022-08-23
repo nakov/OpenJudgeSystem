@@ -11,6 +11,6 @@ namespace OJS.Services.Business.ParticipantScores
 
         void NormalizeAllPointsThatExceedAllowedLimit();
 
-        ServiceResult<ICollection<ParticipantScoresSummary>> GetParticipationSummary(int id, bool official);
+        ServiceResult<ParticipationsSummaryServiceModel> GetParticipationSummary(int id, bool official);
     }
 }

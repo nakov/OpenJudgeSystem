@@ -1,9 +1,7 @@
 ﻿using System.IO;
 using NPOI.HSSF.UserModel;
-using NPOI.SS.UserModel;
 using OJS.Common;
 using OJS.Services.Business.ParticipantScores.Models;
-using OJS.Web.Areas.Contests.ViewModels.Results;
 using OJS.Web.Common.Extensions;
 
 namespace OJS.Web.Controllers
@@ -15,7 +13,6 @@ namespace OJS.Web.Controllers
     using System.Web.Mvc;
     using OJS.Data;
     using OJS.Services.Business.ParticipantScores;
-    using OJS.Services.Business.Submissions;
     using OJS.Services.Cache.Statistics;
     using OJS.Web.ViewModels.Statistics;
 
@@ -58,7 +55,6 @@ namespace OJS.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         public ActionResult GetContestParticipantScoreInfo(int id, bool official)
         {
             var participations = this.participantScoresBusiness.GetParticipationSummary(id, official);
@@ -72,7 +68,7 @@ namespace OJS.Web.Controllers
         }
 
         private MemoryStream GetParticipationsSummaryExcel(
-            IEnumerable<ParticipantScoresSummary> participantScoresSummaries)
+            ParticipationsSummaryServiceModel participationsSummary)
         {
             var workbook = new HSSFWorkbook();
             var sheet = workbook.CreateSheet();
@@ -91,17 +87,15 @@ namespace OJS.Web.Controllers
             {
                 var headerRow = sheet.CreateRow(0);
                 var columnNumber = 0;
-            
-                var fieldNames = typeof(ParticipantScoresSummary)
-                    .GetProperties()
-                    .Select(f => f.Name)
-                    .ToList()
-                    .OrderBy(s => s);
-            
-                foreach (var fieldName in fieldNames)
+                headerRow.CreateCell(columnNumber++).SetCellValue("Username");
+
+                for (int i = 1; i <= participationsSummary.ProblemsCount; i++)
                 {
-                    headerRow.CreateCell(columnNumber++).SetCellValue(fieldName);
+                    headerRow.CreateCell(columnNumber++).SetCellValue($"Problem {i}");
                 }
+                
+                headerRow.CreateCell(columnNumber++).SetCellValue("Time Total");
+                headerRow.CreateCell(columnNumber++).SetCellValue("Points Total");
 
                 return columnNumber;
             }
@@ -109,17 +103,18 @@ namespace OJS.Web.Controllers
             void FillSheet()
             {
                 var rowNumber = 1;
-                foreach (var summary in participantScoresSummaries)
+                foreach (var summary in participationsSummary.Results)
                 {
                     var colNumber = 0;
                     var row = sheet.CreateRow(rowNumber++);
-                    row.CreateCell(colNumber++).SetCellValue(summary.CreatedOn);
-                    row.CreateCell(colNumber++).SetCellValue(summary.ModifiedOn);
-                    row.CreateCell(colNumber++).SetCellValue(summary.ParticipantId);
                     row.CreateCell(colNumber++).SetCellValue(summary.ParticipantName);
-                    row.CreateCell(colNumber++).SetCellValue(summary.Points);
-                    row.CreateCell(colNumber++).SetCellValue(summary.ProblemName);
-                    row.CreateCell(colNumber++).SetCellValue(summary.SubmissionId);
+                    foreach (var resultPair in summary.ProblemOrderToMinutesTakenToSolve)
+                    {
+                        row.CreateCell(colNumber++).SetCellValue(resultPair.Value);
+                    }
+                    
+                    row.CreateCell(colNumber++).SetCellValue(summary.TimeTotal);
+                    row.CreateCell(colNumber++).SetCellValue(summary.PointsTotal == 0 ? 0 : summary.PointsTotal);
                 }
             }
 
