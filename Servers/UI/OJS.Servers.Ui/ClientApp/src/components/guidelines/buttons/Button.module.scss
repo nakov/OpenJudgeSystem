@@ -5,7 +5,6 @@
 .btn {
   font-weight: 700;
   @extend %font-family-lato;
-
   border-radius: 8px;
   padding: 10px 16px;
   margin: 0;
@@ -15,7 +14,7 @@
   text-align: center;
   text-transform: uppercase;
   border: 2px solid transparent;
-  transition: all .28s ease-in-out;
+  transition: all 0.28s ease-in-out;
   color: $white-color;
 
   &:hover {
@@ -23,11 +22,11 @@
   }
 
   &.primary {
-    box-shadow: 0 4px 5px 0 rgba(0, 0, 0, .14), 0 1px 10px 0 rgba(0, 0, 0, .12), 0 2px 4px -1px rgba(0, 0, 0, .2);
+    box-shadow: 0 4px 5px 0 rgb(0 0 0 / 14%), 0 1px 10px 0 rgb(0 0 0 / 12%), 0 2px 4px -1px rgb(0 0 0 / 20%);
     background-color: $background-color-btn-primary;
 
     &:hover {
-      box-shadow: 6px 8px 15px 1px rgba(27, 139, 249, 0.2);
+      box-shadow: 6px 8px 15px 1px rgb(27 139 249 / 20%);
     }
   }
 
@@ -45,7 +44,6 @@
 
   &.plain {
     background: none;
-    color: inherit;
     border: none;
     font: inherit;
     cursor: pointer;
@@ -69,15 +67,15 @@
   }
 
   &.small {
-    @extend .small;
+    @extend %small;
   }
 
   &.medium {
-    @extend .medium;
+    @extend %medium;
   }
 
   &.large {
-    @extend .large;
+    @extend %large;
   }
 
   &.none {
@@ -89,4 +87,7 @@
     }
   }
 
+  &.wide {
+    width: 100%;
+  }
 }

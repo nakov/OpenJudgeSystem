@@ -1,94 +1,28 @@
-﻿@import "src/styles/global";
+@import "src/styles/global";
 @import "src/styles/components";
 @import "src/styles/fonts";
 
 .detailsWrapper {
-  @extend .wrapper;
+  @extend %wrapper;
+  @extend %columnsThree;
 }
 
-.headingDetails {
-  @extend .contentSize;
-}
-
-.sideNavigation {
-  align-items: start;
-  padding: 20px;
-
-  .sideNavigationItem {
-    text-align: start;
-    font-size: $f-size-18;
-    @extend %font-family-lato;
-    color: $text-dark-gray-color;
-    margin-top: 10px;
-
-    &:hover {
-      cursor: pointer;
-    }
-
-    &.selected {
-      color: $color-btn-secondary;
-    }
-  }
-}
-
-.sideNavigationListItem {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-  padding: 25px 0 5px;
-  border-bottom: 1px solid $bottom-border-color;
-}
-
-.navigation {
+.navigation,
+%navigation {
   align-content: center;
-  border-right: 1px $bottom-border-color solid;
+  flex: 3;
 }
 
 .code {
-  @extend .navigation;
-  
+  @extend %navigation;
+
   flex: 7;
-}
-
-.submissionsNavigation {
-  @extend .navigation;
-  @extend .sideNavigation;
-  
-  flex: 3;
-  @extend %font-family-lato;
-}
-
-.submissionListItem {
-  @extend .sideNavigationListItem;
-}
-
-.submissionsNavigationItem {
-  @extend .sideNavigationItem;
-}
-
-.submissionDetails {
-  @extend .navigation;
-  
-  flex: 5;
-  border: none;
 }
 
 .taskHeading {
   text-align: center;
 }
 
-.wrongTestRunHeading {
-  color: $primary-red;
-}
-
-.correctTestRunHeading {
-  color: $primary-green;
-}
-
-.submissionCreatedOnParagraph {
-  font-size: $f-size-18;
-  @extend %font-family-lato;
-  color: $text-light-gray-color;
+.submissionsList {
+  height: 60vh;
 }

@@ -25,6 +25,7 @@ import CurrentContestResultsProvider from './hooks/contests/use-current-contest-
 import ContestStrategyFiltersProvider from './hooks/use-contest-strategy-filters';
 import UserCookiesService from './services/user-cookies-service';
 import InitProviders, { ProviderType } from './components/common/InitProviders';
+import HomeStatisticsProvider from './hooks/use-home-statistics';
 
 const App = () => {
     const userCookiesService = useMemo(
@@ -50,6 +51,7 @@ const App = () => {
         ProblemSubmissionsProvider,
         SubmissionsProvider,
         SubmissionsDetailsProvider,
+        HomeStatisticsProvider,
     ] as ProviderType[];
 
     return (

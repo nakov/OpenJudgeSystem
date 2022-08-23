@@ -1,7 +1,7 @@
 import React from 'react';
 import { FaCheckCircle } from 'react-icons/fa';
 import Icon, { IIconProps } from './Icon';
-import IconSize from './icon-sizes';
+import IconSize from './common/icon-sizes';
 import concatClassNames from '../../../utils/class-names';
 import styles from './TickIcon.module.scss';
 

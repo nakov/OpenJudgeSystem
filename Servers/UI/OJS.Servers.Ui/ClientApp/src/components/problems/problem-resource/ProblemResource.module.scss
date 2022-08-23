@@ -1,4 +1,4 @@
-﻿@import "src/styles/colors";
+@import "src/styles/colors";
 
 .resourceWrapper {
   display: flex;
@@ -8,17 +8,12 @@
   align-items: center;
 }
 
-.resourceLink {
+.resourceLink,
+.resourceLinkButton {
   text-decoration: none;
   color: $text-dark-gray-color;
-  
+
   & > i {
     margin-right: 10px;
   }
-}
-
-.resourceLinkButton {
-  @extend .resourceLink;
-
-  padding: 0;
 }

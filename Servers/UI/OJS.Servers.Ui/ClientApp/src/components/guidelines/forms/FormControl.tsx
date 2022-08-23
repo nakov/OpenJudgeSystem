@@ -3,7 +3,6 @@ import { useState } from 'react';
 import concatClassNames from '../../../utils/class-names';
 import generateId from '../../../utils/id-generator';
 import { ClassNameType, IHaveChildrenProps, IHaveOptionalClassName } from '../../common/Props';
-
 import styles from './FormControl.module.scss';
 
 enum FormControlType {
@@ -17,10 +16,11 @@ enum FormControlType {
 
 interface IFormControlProps extends IHaveOptionalClassName {
     name: string;
-    value: string;
+    value?: string;
+    containerClassName?: string;
     labelText?: string;
     labelClassName?: ClassNameType;
-    type?:FormControlType;
+    type?: FormControlType;
     onChange?: (value?: string) => void;
     onInput?: (value?: string) => void;
     checked?: boolean;
@@ -28,12 +28,15 @@ interface IFormControlProps extends IHaveOptionalClassName {
 }
 
 interface ILabelInternalProps extends IHaveChildrenProps, IHaveOptionalClassName {
-    text: string;
-    forKey: string;
     id: string;
+    forKey: string;
+    text: string;
+    fieldType: FormControlType;
+    internalContainerClassName?: string;
+
 }
 
-const LabelInternal = ({ id, text, className, forKey, children }: ILabelInternalProps) => {
+const LabelInternal = ({ id, text, className, internalContainerClassName, forKey, children, fieldType }: ILabelInternalProps) => {
     if (!text && !className) {
         return (
             <>
@@ -42,10 +45,21 @@ const LabelInternal = ({ id, text, className, forKey, children }: ILabelInternal
         );
     }
 
-    const componentClassName = concatClassNames(className, styles.formLabel);
+    const containerClassname = concatClassNames(
+        fieldType !== FormControlType.checkbox
+            ? styles.formControlContainer
+            : null,
+        internalContainerClassName,
+    );
+    const componentClassName = concatClassNames(
+        fieldType !== FormControlType.checkbox
+            ? styles.formLabel
+            : null,
+        className,
+    );
 
     return (
-        <div className={styles.formControlContainer}>
+        <div className={containerClassname}>
             {children}
             <label id={id} className={componentClassName} htmlFor={forKey}>
                 <span>{text}</span>
@@ -56,7 +70,7 @@ const LabelInternal = ({ id, text, className, forKey, children }: ILabelInternal
 
 const FormControl = ({
     name,
-    value,
+    value = '',
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onChange = (v?: string) => {
     },
@@ -64,6 +78,7 @@ const FormControl = ({
     onInput = (v?: string) => {
     },
     className = '',
+    containerClassName = '',
     labelText = '',
     labelClassName = '',
     type = FormControlType.text,
@@ -71,12 +86,23 @@ const FormControl = ({
     id = generateId(),
 }: IFormControlProps) => {
     const [ formControlValue, setFormControlValue ] = useState(value);
+    const [ isChecked, setIsChecked ] = useState<boolean>(checked);
 
-    const componentClassName = concatClassNames(styles.formControl, className);
+    const componentClassName = concatClassNames(type !== FormControlType.checkbox
+        ? styles.formControl
+        : null, className);
+
     const handleOnChange = (ev: any) => {
+        if (type === FormControlType.checkbox) {
+            setIsChecked(!isChecked);
+            
+            return;
+        }
+
         setFormControlValue(ev.target.value);
         onChange(ev.target.value);
     };
+
     const handleOnInput = (ev: any) => {
         setFormControlValue(ev.target.value);
         onChange(ev.target.value);
@@ -92,9 +118,24 @@ const FormControl = ({
                   onChange={handleOnChange}
                   onInput={handleOnInput}
                   value={formControlValue}
+                  placeholder={labelText}
                 />
             );
         }
+
+        if (type === FormControlType.checkbox) {
+            return (
+                <input
+                  type={type}
+                  className={componentClassName}
+                  name={name}
+                  id={id}
+                  checked={isChecked}
+                  onChange={handleOnChange}
+                />
+            );
+        }
+
         return (
             <input
               type={type}
@@ -105,6 +146,7 @@ const FormControl = ({
               onInput={handleOnInput}
               value={formControlValue}
               checked={checked}
+              placeholder={labelText}
             />
         );
     };
@@ -113,6 +155,8 @@ const FormControl = ({
         <LabelInternal
           id={`${id}-label`}
           text={labelText}
+          fieldType={type}
+          internalContainerClassName={containerClassName}
           className={labelClassName}
           forKey={id}
         >

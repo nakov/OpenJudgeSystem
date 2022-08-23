@@ -10,22 +10,23 @@
   @extend %font-family-lato-regular;
   text-transform: uppercase;
   display: inline-block;
+
   &.success {
-    background: rgb(35, 190, 94);
+    background: rgb(35 190 94);
   }
-  
+
   &.warning {
     background-color: $warning-color;
   }
-  
+
   &.danger {
     background-color: $primary-red;
   }
-  
+
   &.info {
     background-color: blue;
   }
-  
+
   &.plain {
     background-color: #f1f1f1;
     color: $grey-color;

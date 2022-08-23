@@ -7,7 +7,7 @@
 }
 
 .tasksListSideNavigation {
-  align-items: start;
+  align-items: flex-start;
   padding: 20px;
   display: flex;
 
@@ -34,6 +34,6 @@
   justify-content: space-between;
   align-items: center;
   position: relative;
-  padding: 25px 0 5px;
+  padding: 35px 0 5px;
   border-bottom: 1px solid $bottom-border-color;
 }

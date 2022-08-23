@@ -3,10 +3,12 @@ namespace OJS.Services.Ui.Business.Implementations;
 using OJS.Services.Common.Models.Cache;
 using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Infrastructure.Constants;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-public class ContestCategoriesCacheService : IContestCategoriesCacheService
+public class ContestCategoriesCacheService
+    : IContestCategoriesCacheService
 {
     private readonly ICacheService cache;
     private readonly IContestCategoriesBusinessService contestCategoriesBusiness;
@@ -19,39 +21,41 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
         this.contestCategoriesBusiness = contestCategoriesBusiness;
     }
 
-    public async Task<IEnumerable<ContestCategoryTreeViewModel>> GetContestSubCategoriesList(
+    public Task<IEnumerable<ContestCategoryTreeViewModel>> GetContestSubCategoriesList(
         int categoryId,
         int? cacheSeconds)
-    {
-        var cacheId = string.Format(CacheConstants.ContestSubCategoriesFormat, categoryId);
-
-        return await this.cache.Get(
-            cacheId,
+        => this.GetFromCache(
+            string.Format(CacheConstants.ContestSubCategoriesFormat, categoryId),
             () => this.contestCategoriesBusiness.GetAllSubcategories(categoryId),
             cacheSeconds);
-    }
 
-    public async Task<IEnumerable<ContestCategoryListViewModel>> GetContestCategoryParentsList(
+    public Task<IEnumerable<ContestCategoryListViewModel>> GetContestCategoryParentsList(
         int categoryId,
         int? cacheSeconds = CacheConstants.OneDayInSeconds)
-    {
-        var cacheId = string.Format(CacheConstants.ContestParentCategoriesFormat, categoryId);
-
-        return await this.cache.Get(
-            cacheId,
+        => this.GetFromCache(
+            string.Format(CacheConstants.ContestParentCategoriesFormat, categoryId),
             () => this.contestCategoriesBusiness.GetAllParentCategories(categoryId),
             cacheSeconds);
-    }
 
-    public async Task<IEnumerable<ContestCategoryListViewModel>> GetMainContestCategories(int? cacheSeconds)
-        => await this.cache.Get(
+    public Task<IEnumerable<ContestCategoryListViewModel>> GetMainContestCategories(int? cacheSeconds)
+        => this.GetFromCache(
             CacheConstants.MainContestCategoriesDropDown,
             this.contestCategoriesBusiness.GetAllMain,
             cacheSeconds);
 
-    public async Task<IEnumerable<ContestCategoryTreeViewModel>> GetAllContestCategoriesTree(int? cacheSeconds)
-        => await this.cache.Get(
+    public Task<IEnumerable<ContestCategoryTreeViewModel>> GetAllContestCategoriesTree(int? cacheSeconds)
+        => this.GetFromCache(
             CacheConstants.ContestCategoriesTree,
             this.contestCategoriesBusiness.GetTree,
             cacheSeconds);
+
+    private Task<T> GetFromCache<T>(string cacheId, Func<Task<T>> getValueFunc, int? cacheSeconds)
+        => cacheSeconds.HasValue
+            ? this.cache.Get(
+                cacheId,
+                getValueFunc,
+                cacheSeconds.Value)
+            : this.cache.Get(
+                cacheId,
+                getValueFunc);
 }

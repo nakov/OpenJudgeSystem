@@ -70,8 +70,11 @@ namespace OJS.Services.Ui.Business.Implementations
         public async Task<SubmissionDetailsServiceModel?> GetDetailsById(int submissionId)
             => await this.submissionsData
                 .GetByIdQuery(submissionId)
-                .Include(s => s.Participant).ThenInclude(p => p.User)
-                .Include(s => s.TestRuns).ThenInclude(tr => tr.Test)
+                .Include(s => s.Participant)
+                .ThenInclude(p => p.User)
+                .Include(s => s.TestRuns)
+                .ThenInclude(tr => tr.Test)
+                .Include(s => s.SubmissionType)
                 .MapCollection<SubmissionDetailsServiceModel>()
                 .FirstOrDefaultAsync();
 

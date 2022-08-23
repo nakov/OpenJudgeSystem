@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { isNil } from 'lodash';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import { ITestRunDetailsType } from '../../../hooks/submissions/types';
-import IconSize from '../../guidelines/icons/icon-sizes';
+import IconSize from '../../guidelines/icons/common/icon-sizes';
 import { useAuth } from '../../../hooks/use-auth';
 import concatClassNames from '../../../utils/class-names';
 import TimeLimitIcon from '../../guidelines/icons/TimeLimitIcon';
@@ -20,7 +20,7 @@ interface ITestRunDetailsProps {
 const getResultIsWrongAnswerResultType = (run: ITestRunDetailsType) => run.resultType.toLowerCase() !== 'correctanswer';
 
 const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
-    const { user } = useAuth();
+    const { state: { user } } = useAuth();
     const initialIsCollapsed = testRun.isTrialTest && getResultIsWrongAnswerResultType(testRun);
     const [ isCollapsed, setIsCollapsed ] = useState<boolean>(initialIsCollapsed);
 

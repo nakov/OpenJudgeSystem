@@ -1,0 +1,50 @@
+@import "src/styles/colors";
+
+.submissionsList {
+  align-items: start;
+  padding: 20px;
+
+  .submissionListItem {
+    text-align: start;
+    font-size: 18px;
+    font-family: Lato, serif;
+    color: $text-dark-gray-color;
+    margin-top: 10px;
+  }
+}
+
+.submissionContainer {
+  display: flex;
+  position: relative;
+  width: 100%;
+  padding: 45px 0 5px;
+  justify-content: space-between;
+  border-bottom: 1px solid $bottom-border-color;
+
+  &.selected {
+    color: $color-btn-secondary;
+  }
+}
+
+.actionsContainer {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+
+.infoContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.submissionCreatedOnParagraph {
+  font-size: 12px;
+  font-family: Lato, serif;
+  color: $text-light-gray-color;
+}

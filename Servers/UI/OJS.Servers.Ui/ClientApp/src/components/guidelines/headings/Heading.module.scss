@@ -1,7 +1,6 @@
 @import "src/styles/colors";
 @import "src/styles/fonts";
 @import "src/styles/variables";
-
 .heading {
   @extend %font-family-montserrat;
   font-weight: 500;
@@ -28,5 +27,6 @@
   }
 
   &.small {
+    // TODO: Add styles
   }
 }

@@ -5,16 +5,20 @@ import { useHttp } from './use-http';
 import { useNotifications } from './use-notifications';
 import { useUrls } from './use-urls';
 import { HttpStatus } from '../common/common';
-import { INotificationType } from '../common/common-types';
 import { IUserType, IUserPermissionsType } from '../common/types';
 
 interface IAuthContext {
-    user: IUserType,
-    signIn: () => void;
-    signOut: () => Promise<void>;
-    getUser: () => IUserType;
-    setUsername: (value: string) => void;
-    setPassword: (value: string) => void;
+    state: {
+        user: IUserType;
+        loginErrorMessage: string;
+    };
+    actions: {
+        signIn: () => void;
+        signOut: () => Promise<void>;
+        getUser: () => IUserType;
+        setUsername: (value: string) => void;
+        setPassword: (value: string) => void;
+    }
 }
 
 const AuthContext = createContext<IAuthContext>({} as IAuthContext);
@@ -28,6 +32,7 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
     const [ internalUser, setInternalUser ] = useState(user);
     const [ username, setUsername ] = useState<string>(user.username);
     const [ password, setPassword ] = useState<string>();
+    const [ loginErrorMessage, setLoginErrorMessage ] = useState<string>('');
     const { showError } = useNotifications();
 
     const { getLogoutUrl, getLoginSubmitUrl } = useUrls();
@@ -76,7 +81,9 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
     useEffect(() => {
         if (loginSubmitResponse) {
             if (loginSubmitStatus === HttpStatus.Unauthorized) {
-                showError({ message: 'Invalid credentials.' } as INotificationType);
+                setLoginErrorMessage('Invalid username or password.');
+                
+                return;
             }
 
             window.location.reload();
@@ -84,12 +91,17 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
     }, [ loginSubmitResponse, loginSubmitStatus, showError, setUserDetails ]);
 
     const value = {
-        user: internalUser,
-        signIn,
-        signOut,
-        getUser,
-        setUsername,
-        setPassword,
+        state: {
+            user: internalUser,
+            loginErrorMessage,
+        },
+        actions: {
+            signIn,
+            signOut,
+            getUser,
+            setUsername,
+            setPassword,
+        },
     };
 
     return (

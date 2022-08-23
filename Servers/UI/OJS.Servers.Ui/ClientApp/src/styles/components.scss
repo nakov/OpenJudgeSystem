@@ -1,31 +1,33 @@
 @import "colors";
 @import "variables";
 
-.small {
+%small {
   padding: 10px 18px;
   font-size: $f-size-12;
   line-height: 12px;
 }
 
-.medium {
+.medium,
+%medium {
   font-size: $f-size-16;
   line-height: 16px;
   padding: 13px 24px;
 }
 
-.large {
+.large,
+%large {
   padding: 16px 48px;
   font-size: $f-size-16;
   line-height: 16px;
 }
 
-.contentSize {
+%contentSize {
   margin: 0 auto;
   width: 1280px;
   max-width: 90%;
   box-sizing: border-box;
-  
-  &.wide {
+
+  &%wide {
     width: 100%;
     max-width: 100%;
   }

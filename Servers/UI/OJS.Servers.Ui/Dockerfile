@@ -27,6 +27,10 @@ COPY Directory.Build.props ./Directory.Build.props
 
 FROM build AS publish
 WORKDIR /src/Servers/UI/OJS.Servers.Ui/ClientApp
+
+# Increase to 6 GB
+ENV NODE_OPTIONS "--max-old-space-size=8124"
+
 RUN yarn build
 
 WORKDIR /src/Servers/UI/OJS.Servers.Ui
