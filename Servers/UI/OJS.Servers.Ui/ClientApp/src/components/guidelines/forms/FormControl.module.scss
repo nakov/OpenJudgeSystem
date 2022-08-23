@@ -50,10 +50,10 @@
     }
 
     &:checked {
-      border-color: $background-color;
+      border-color: $primary-blue;
 
       &:after {
-        background-color: $background-color;
+        background-color: $primary-blue;
         transform: scale(1);
       }
     }

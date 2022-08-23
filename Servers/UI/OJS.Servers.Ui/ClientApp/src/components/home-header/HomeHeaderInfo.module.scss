@@ -20,7 +20,7 @@
 
   color: $text-dark-gray-color;
   font-size: $f-size-18;
-  @include font-family-lato;
+  @extend %font-family-lato;
   font-weight: lighter;
   padding-top: 10px;
   margin-top: 8px;

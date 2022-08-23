@@ -3,7 +3,7 @@
 @import "src/styles/variables";
 
 .heading {
-  @include font-family-montserrat;
+  @extend %font-family-montserrat;
   font-weight: 500;
   color: $text-dark-gray-color;
 

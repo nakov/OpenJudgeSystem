@@ -1,5 +1,5 @@
 @import "src/styles/fonts";
 
 .tab {
-  @include font-family-lato;
+  @extend %font-family-lato;
 }

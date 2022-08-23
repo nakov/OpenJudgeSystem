@@ -14,7 +14,7 @@
   .taskSideNavigationItem {
     text-align: start;
     font-size: $f-size-18;
-    @include font-family-lato;
+    @extend %font-family-lato;
     margin-top: 10px;
     color: $text-dark-gray-color;
 

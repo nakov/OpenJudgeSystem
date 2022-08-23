@@ -6,10 +6,10 @@
   @extend .label;
 
   text-transform: none;
-  @include font-family-lato;
+  @extend %font-family-lato;
   font-weight: bold;
   border: 2px solid;
-  color: $background-color;
+  color: $primary-blue;
   margin: 10px 5px;
   
   &:hover {
@@ -18,7 +18,7 @@
 
 
   &.active {
-    border-color: $background-color;
+    border-color: $primary-blue;
   }
 
   &.inactive {

@@ -17,7 +17,7 @@
   .sideNavigationItem {
     text-align: start;
     font-size: $f-size-18;
-    @include font-family-lato;
+    @extend %font-family-lato;
     color: $text-dark-gray-color;
     margin-top: 10px;
 
@@ -57,7 +57,7 @@
   @extend .sideNavigation;
   
   flex: 3;
-  @include font-family-lato;
+  @extend %font-family-lato;
 }
 
 .submissionListItem {
@@ -89,6 +89,6 @@
 
 .submissionCreatedOnParagraph {
   font-size: $f-size-18;
-  @include font-family-lato;
+  @extend %font-family-lato;
   color: $text-light-gray-color;
 }

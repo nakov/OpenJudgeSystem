@@ -4,7 +4,7 @@
 
 body,
 #root {
-  @include font-family-montserrat-medium;
+  @extend %font-family-montserrat-medium;
   margin: 0;
   padding: 0;
   display: flex;

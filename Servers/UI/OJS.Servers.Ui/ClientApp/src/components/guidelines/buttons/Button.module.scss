@@ -4,7 +4,7 @@
 
 .btn {
   font-weight: 700;
-  @include font-family-lato;
+  @extend %font-family-lato;
 
   border-radius: 8px;
   padding: 10px 16px;
@@ -81,7 +81,7 @@
   }
 
   &.none {
-    @include font-family-lato;
+    @extend %font-family-lato;
     color: $text-dark-gray-color;
 
     &:hover {
