@@ -25,6 +25,8 @@ namespace OJS.Servers.Ui.Models.Submissions.Details
         public double MaxUsedTime { get; set; }
 
         public double MaxUsedMemory { get; set; }
+
+        public bool IsOfficial { get; set; }
     }
 
     public class

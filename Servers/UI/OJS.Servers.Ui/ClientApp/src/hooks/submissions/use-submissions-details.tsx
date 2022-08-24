@@ -17,7 +17,7 @@ interface ISubmissionsDetailsContext {
     actions: {
         selectSubmissionById: (submissionId: number) => void;
         getDetails: (submissionId: number) => Promise<void>;
-        getSubmissionResults: (problemId: number) => Promise<void>;
+        getSubmissionResults: (problemId: number, isOfficial: boolean) => Promise<void>;
     }
 }
 
@@ -77,14 +77,14 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     );
 
     const getSubmissionResults = useCallback(
-        async (problemId: number) => {
+        async (problemId: number, isOfficial: boolean) => {
             if (isNil(problemId)) {
                 return;
             }
 
             setSubmissionResultsByProblemUrlParams({
                 id: problemId,
-                isOfficial: true,
+                isOfficial: isOfficial,
                 take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
             });
         },

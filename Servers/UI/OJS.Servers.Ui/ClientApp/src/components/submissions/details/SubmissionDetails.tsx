@@ -41,7 +41,7 @@ const SubmissionDetails = () => {
         }
 
         (async () => {
-            await getSubmissionResults(currentSubmission.problem.id);
+            await getSubmissionResults(currentSubmission.problem.id, currentSubmission.isOfficial);
         })();
     }, [ currentSubmission, getSubmissionResults ]);
 
