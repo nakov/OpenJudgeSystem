@@ -1,8 +1,16 @@
 version: '3.3'
 
 services:
+  redis:
+    image: "redis:5.0"
+    ports:
+      - "6379:6379"
+    container_name: redis_instance
+    hostname: "interactive-rd"
+    command: "redis-server --requirepass redisPass123"
   db:
-    image: mcr.microsoft.com/mssql/server:2019-latest
+    image: db_for_tests
+    container_name: db_for_tests
     build:
       context: .
       dockerfile: ./db/Dockerfile
@@ -12,20 +20,30 @@ services:
       SA_PASSWORD: 1123QwER
       ACCEPT_EULA: "Y"
     restart: always
-    # volumes:
+    volumes:
+      - ../AutoCrudAdmin:/src/AutoCrudAdmin
+      - ../Common:/src/Common
+      - ../Data:/src/Data
+      - ../Docker:/src/Docker
+      - ./global.json:/src/global.json
+      - ../Servers:/src/Servers
+      - ../Services:/src/Services
+      - ../Tests:/src/Tests
+      - ../OpenJudgeSystem.sln:/src/OpenJudgeSystem.sln
     #   - ./sql_server/data:/var/opt/mssql/data
     #   - ./sql_server/log:/var/opt/mssql/log
     #   - ./sql_server/secrets:/var/opt/mssql/secrets
-  app:
-    image: ui_for_tests
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  judge_ui:
+    image: judge_ui_for_tests
     build:
       context: ../
       dockerfile: Servers/UI/OJS.Servers.Ui/Dockerfile
     ports:
-      - "7150:80"
+      - "5002:80"
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      DbContext: "Server=localhost;Database=OpenJudgeSystem;User Id=sa;Password=1123QwER"
+      ASPNETCORE_ENVIRONMENT: Docker
       SULS_PLATFORM_BASE_URL: "https://localhost:44304"
       DISTRIBUTOR_BASE_URL: "https://localhost:44305"
       SULS_PLATFORM_API_KEY: "1234"
@@ -34,6 +52,37 @@ services:
       UI_URL: "http://localhost:5002"
       ADMINISTRATION_URL: "http://localhost:5001"
       UI_HOME_YOUTUBE_VIDEO_ID: "IwLET8SDBE4"
+      PATH_TO_COMMON_KEY_RING_FOLDER: '../../'
+      REDIS_CONNECTION_STRING: "host.docker.internal,password=redisPass123,ConnectTimeout=10000,abortConnect=false"
+      DB_SERVER: host.docker.internal
+      DB_USER: sa
+      DB_PASSWORD: 1123QwER
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  judge_administration:
+    image: judge_administration_for_tests
+    build:
+      context: ../
+      dockerfile: Servers/Administration/OJS.Servers.Administration/Dockerfile
+    ports:
+      - "5001:80"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      SULS_PLATFORM_BASE_URL: "https://localhost:44304"
+      DISTRIBUTOR_BASE_URL: "https://localhost:44305"
+      SULS_PLATFORM_API_KEY: "1234"
+      LOGGER_FILES_FOLDER_PATH: "../../../Logs"
+      SHARED_AUTH_COOKIE_DOMAIN: "localhost"
+      UI_URL: "http://localhost:5002"
+      ADMINISTRATION_URL: "http://localhost:5001"
+      UI_HOME_YOUTUBE_VIDEO_ID: "IwLET8SDBE4"
+      PATH_TO_COMMON_KEY_RING_FOLDER: '../../'
+      REDIS_CONNECTION_STRING: "host.docker.internal,password=redisPass123,ConnectTimeout=10000,abortConnect=false"
+      DB_SERVER: host.docker.internal
+      DB_USER: sa
+      DB_PASSWORD: 1123QwER
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   tests:
     image: tests
     # command: tail -F anything
@@ -45,3 +94,5 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - ./restore:/queries/restore
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"

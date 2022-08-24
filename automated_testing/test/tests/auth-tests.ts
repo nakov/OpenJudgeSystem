@@ -1,7 +1,7 @@
 import IndexPage from '../pageobjects/index-page';
 import AuthPage from '../pageobjects/auth-page';
 
-describe.skip('Testing AuthPage', () => {
+describe('Testing AuthPage', () => {
     const validUserCredentials = {
         username: 'testuser123',
         password: '123456',

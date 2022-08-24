@@ -3,7 +3,7 @@ import ContestPage from '../pageobjects/contest-page';
 import AuthPage from '../pageobjects/auth-page';
 import IndexPage from '../pageobjects/index-page';
 
-describe.skip('Testing contest', () => {
+describe('Testing contest', () => {
     const validUserCredentials = {
         username: 'testuser123',
         password: '123456',

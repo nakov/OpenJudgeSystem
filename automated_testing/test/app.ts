@@ -7,50 +7,74 @@ const options = {
     log: true,
 };
 
-const services = [ 'db', 'app' ];
-// const dbAndApp = [ 'db' ];
+const sleep = (seconds: number, withTimer = false) => new Promise((resolve) => {
+    const sleepInternal = (currentLoop: number, loopSize: number, timeout: number) => {
+        console.log(` --- Sleeping ${currentLoop + 1}`);
 
-const sleep = (seconds: number) => new Promise((resolve) => {
-    setTimeout(() => {
-        resolve(null);
-    }, seconds * 1000);
+        if (currentLoop >= loopSize) {
+            return resolve(null);
+        }
+
+        return setTimeout(() => sleepInternal(currentLoop + 1, loopSize, timeout), timeout);
+    };
+
+    return sleepInternal(
+        0,
+        withTimer
+            ? seconds
+            : 1,
+        withTimer
+            ? 1000
+            : seconds * 1000,
+    );
 });
 
-const namesString = (() => {
-    const servicesInternal = [ ...services ].map((s) => `\`${s}\``);
-    const lastService = servicesInternal.pop();
-    return `${servicesInternal.join(', ')} and ${lastService}`;
-})();
+const appUpTimeout = 5;
+enum ServiceNames {
+    db= 'db',
+    ui= 'judge_ui',
+    admin= 'judge_administration',
+    redis= 'redis',
+}
 
 const createDb = async () => {
     try {
-        console.log(` --- Building ${namesString} ---`);
-
-        await compose.buildMany(
-            services,
+        console.log(` --- Building \`${ServiceNames.db}\` ---`);
+        await compose.buildOne(
+            ServiceNames.db,
             options,
         );
 
-        console.log(` --- "Up"-ing ${namesString} ---`);
-
+        console.log(` --- Uping \`${ServiceNames.db}\` and \`${ServiceNames.redis}\` ---`);
         await compose.upMany(
-            services,
+            [ ServiceNames.db, ServiceNames.redis ],
             options,
         );
 
-        console.log(' --- Waiting 10 seconds for MS SQL to start ---');
+        // console.log(` --- Waiting ${appUpTimeout} seconds for
+        // \`${ServiceNames.db}\` to initialize ---`);
+        // await sleep(appUpTimeout, true);
 
-        await sleep(10);
+        console.log(` --- \`${ServiceNames.db}\` and \`${ServiceNames.redis}\` are up ---`);
 
-        console.log(` --- ${namesString} are up ---);
-
+        console.log(` --- Restoring queries in \`${ServiceNames.db}\` ---`);
         await compose.exec(
-            'db',
+            ServiceNames.db,
             '/bin/bash /queries/restore/create_db/create.sh',
             options,
         );
 
-        console.log(' --- queries restored ---');
+        console.log(` --- Queries restored in \`${ServiceNames.db}\` ---`);
+
+        console.log(` --- Uping \`${ServiceNames.ui}\` ---`);
+        await compose.upOne(
+            ServiceNames.ui,
+            options,
+        );
+
+        console.log(` --- Waiting ${appUpTimeout} seconds for \`${ServiceNames.ui}\` to initialize ---`);
+        await sleep(appUpTimeout, true);
+        console.log(` --- \`${ServiceNames.ui}\` is up ---`);
     } catch (err) {
         console.log(err);
     } finally {
@@ -69,7 +93,7 @@ const setupDb = async () => {
         await sleep(10);
 
         console.log(' --- running restore ---');
-        await compose.exec('db', '/bin/bash /queries/restore/restore.sh');
+        await compose.exec(ServiceNames.db, '/bin/bash /queries/restore/restore.sh');
     } catch (err) {
         console.log(err);
     } finally {
@@ -80,7 +104,7 @@ const setupDb = async () => {
 const dropDb = async () => {
     console.log(' --- drop ---');
     try {
-        await compose.exec('db', '/bin/bash /queries/restore/drop_db/drop.sh', options);
+        await compose.exec(ServiceNames.db, '/bin/bash /queries/restore/drop_db/drop.sh', options);
         await compose.down(options);
     } catch (err) {
         console.log(err);
