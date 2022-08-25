@@ -31,6 +31,8 @@
 
         IEnumerable<int> GetIdsByProblem(int problemId);
 
+        Submission GetLastSubmittedForParticipant(int participantId);
+        
         bool IsOfficialById(int id);
 
         void SetAllToUnprocessedByProblem(int problemId);

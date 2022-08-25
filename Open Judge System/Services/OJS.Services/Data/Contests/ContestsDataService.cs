@@ -73,6 +73,20 @@
             this.GetAllVisible()
                 .Where(c => c.CategoryId == categoryId);
 
+        public IQueryable<Contest> GetAllNotDeletedByCategory(int categoryId, bool showHidden)
+        {
+            var contests = this.GetAll()
+                .Where(c => c.CategoryId == categoryId)
+                .Where(c => !c.IsDeleted);
+
+            if (!showHidden)
+            {
+                contests = contests.Where(c => c.IsVisible);
+            }
+
+            return contests;
+        }
+
         public IQueryable<Contest> GetAllVisibleBySubmissionType(int submissionTypeId) =>
             this.GetAllVisible()
                 .Where(c => c.ProblemGroups

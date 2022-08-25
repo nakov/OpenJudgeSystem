@@ -1,19 +1,18 @@
-﻿using System.IO;
-using NPOI.HSSF.UserModel;
-using OJS.Common;
-using OJS.Services.Business.ParticipantScores.Models;
-using OJS.Web.Common.Extensions;
-
-namespace OJS.Web.Controllers
+﻿namespace OJS.Web.Controllers
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Threading;
     using System.Web.Mvc;
+    using NPOI.HSSF.UserModel;
+    using OJS.Common;
     using OJS.Data;
     using OJS.Services.Business.ParticipantScores;
+    using OJS.Services.Business.ParticipantScores.Models;
     using OJS.Services.Cache.Statistics;
+    using OJS.Web.Common.Extensions;
     using OJS.Web.ViewModels.Statistics;
 
     public class StatisticsController : BaseController
@@ -55,20 +54,20 @@ namespace OJS.Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult GetContestParticipantScoreInfo(int id, bool official)
+        public ActionResult GetContestCategoryContestsParticipantScoreInfo(int id, bool showHidden = true)
         {
-            var participations = this.participantScoresBusiness.GetParticipationSummary(id, official);
+            var categoryParticipationSummary = this.participantScoresBusiness.GetCategoryParticipationSummary(id, showHidden);
 
-            var excel = this.GetParticipationsSummaryExcel(participations.Data);
-
+            var excel = this.GetParticipationsSummaryExcel(categoryParticipationSummary);
+            
             return this.File(
-                excel.ToArray(), // The binary data of the XLS file
-                GlobalConstants.ExcelMimeType, // MIME type of Excel files
+                excel.ToArray(),
+                GlobalConstants.ExcelMimeType,
                 "summary.xls");
         }
 
         private MemoryStream GetParticipationsSummaryExcel(
-            ParticipationsSummaryServiceModel participationsSummary)
+            CategoryContestsParticipationSummary categoryParticipationSummary)
         {
             var workbook = new HSSFWorkbook();
             var sheet = workbook.CreateSheet();
@@ -79,7 +78,6 @@ namespace OJS.Web.Controllers
 
             sheet.AutoSizeColumns(columnsCount);
 
-            // Write the workbook to a memory stream
             var outputStream = new MemoryStream();
             workbook.Write(outputStream);
             
@@ -87,9 +85,11 @@ namespace OJS.Web.Controllers
             {
                 var headerRow = sheet.CreateRow(0);
                 var columnNumber = 0;
+                headerRow.CreateCell(columnNumber++).SetCellValue("Contest");
+                headerRow.CreateCell(columnNumber++).SetCellValue("Problems Count (Groups)");
                 headerRow.CreateCell(columnNumber++).SetCellValue("Username");
 
-                for (int i = 1; i <= participationsSummary.ProblemsCount; i++)
+                for (int i = 1; i <= categoryParticipationSummary.MaxProblemsCount; i++)
                 {
                     headerRow.CreateCell(columnNumber++).SetCellValue($"Problem {i}");
                 }
@@ -103,18 +103,29 @@ namespace OJS.Web.Controllers
             void FillSheet()
             {
                 var rowNumber = 1;
-                foreach (var summary in participationsSummary.Results)
+                foreach (var contestSummary in categoryParticipationSummary.Results)
                 {
-                    var colNumber = 0;
-                    var row = sheet.CreateRow(rowNumber++);
-                    row.CreateCell(colNumber++).SetCellValue(summary.ParticipantName);
-                    foreach (var resultPair in summary.ProblemOrderToMinutesTakenToSolve)
+                    foreach (var participantSummary in contestSummary.Results)
                     {
-                        row.CreateCell(colNumber++).SetCellValue(resultPair.Value);
-                    }
+                        var row = sheet.CreateRow(rowNumber++);
+                        var colNumber = 0;
+                        row.CreateCell(colNumber++).SetCellValue(contestSummary.ContestName);
+                        row.CreateCell(colNumber++).SetCellValue(contestSummary.ProblemsCount);
+                        string participantName = participantSummary.ParticipantName;
+                        row.CreateCell(colNumber++).SetCellValue(participantName);
+                        foreach (var resultPair in participantSummary.ProblemOrderToMinutesTakenToSolve)
+                        {
+                            row.CreateCell(colNumber++).SetCellValue(resultPair.Value);
+                        }
+                        
+                        if (colNumber - 3 < categoryParticipationSummary.MaxProblemsCount)
+                        {
+                            colNumber = 3 + categoryParticipationSummary.MaxProblemsCount;
+                        }
                     
-                    row.CreateCell(colNumber++).SetCellValue(summary.TimeTotal);
-                    row.CreateCell(colNumber++).SetCellValue(summary.PointsTotal == 0 ? 0 : summary.PointsTotal);
+                        row.CreateCell(colNumber++).SetCellValue(participantSummary.TimeTotal);
+                        row.CreateCell(colNumber++).SetCellValue(participantSummary.PointsTotal == 0 ? 0 : participantSummary.PointsTotal);
+                    }
                 }
             }
 

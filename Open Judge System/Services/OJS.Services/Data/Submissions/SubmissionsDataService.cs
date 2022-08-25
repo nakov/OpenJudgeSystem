@@ -64,6 +64,14 @@
             this.GetAllByProblem(problemId)
                 .Select(s => s.Id);
 
+        public Submission GetLastSubmittedForParticipant(int participantId)
+            => this.submissions
+                .All()
+                .Where(s => !s.IsDeleted)
+                .Where(s => s.ParticipantId == participantId)
+                .OrderByDescending(s => s.CreatedOn)
+                .FirstOrDefault();
+            
         public bool IsOfficialById(int id) =>
             this.GetByIdQuery(id)
                 .Any(s => s.Participant.IsOfficial);
