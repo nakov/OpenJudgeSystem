@@ -1,5 +1,5 @@
 import { beforeEach } from 'mocha';
-import { createDb, dropDb } from '../app';
+import { prepareAppAndDb, cleanData, restoreData, cleanupAppAndDb } from '../app';
 import IndexPage from '../pageobjects/index-page';
 
 const sleep = (seconds: number) => new Promise((resolve) => {
@@ -7,20 +7,20 @@ const sleep = (seconds: number) => new Promise((resolve) => {
 });
 
 describe('Testing index', () => {
-    beforeEach(() => createDb());
-    afterEach(() => dropDb());
+    before(() => prepareAppAndDb());
+    after(() => cleanupAppAndDb());
 
-    // Array.from({ length: 15 })
-    //     .forEach((_, index) => {
-    //         describe(`Describe ${index + 1}`, () => {
-    //             it(`Test of "Describe ${index + 1}"`, async () => {
-    //                 await sleep(10);
-    //                 expect(5).toBe(5);
-    //             });
-    //         });
-    //     });
+    beforeEach(() => restoreData());
+    afterEach(() => cleanData());
 
-    it('Open browser', async () => {
-        await IndexPage.open();
-    });
+    Array.from({ length: 100 })
+        .forEach((_, index) => {
+            describe(`Describe ${index + 1}`, () => {
+                it(`Open browser ${index + 1}`, async () => {
+                    await IndexPage.open();
+                });
+            });
+        });
+
+
 });
