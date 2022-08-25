@@ -51,9 +51,9 @@ const createDb = async () => {
             options,
         );
 
-        // console.log(` --- Waiting ${appUpTimeout} seconds for
-        // \`${ServiceNames.db}\` to initialize ---`);
-        // await sleep(appUpTimeout, true);
+        console.log(` --- Waiting ${appUpTimeout} seconds for
+        \`${ServiceNames.db}\` to initialize ---`);
+        await sleep(appUpTimeout, true);
 
         console.log(` --- \`${ServiceNames.db}\` and \`${ServiceNames.redis}\` are up ---`);
 
