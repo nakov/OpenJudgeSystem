@@ -1,3 +1,5 @@
+/* eslint-disable import/prefer-default-export */
+
 const sleep = (seconds: number, withTimer = false) => new Promise((resolve) => {
     const sleepInternal = (currentLoop: number, loopSize: number, timeout: number) => {
         console.log(` --- Sleeping ${currentLoop + 1}`);

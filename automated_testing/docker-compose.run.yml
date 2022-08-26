@@ -1,0 +1,97 @@
+version: '3.3'
+
+services:
+  redis:
+    image: "redis:5.0"
+    ports:
+      - "6379:6379"
+    container_name: redis_instance
+    hostname: "interactive-rd"
+    command: "redis-server --requirepass redisPass123"
+  db:
+    image: db_for_tests
+    container_name: db_for_tests
+    build:
+      context: .
+      dockerfile: ./db/Dockerfile
+    ports:
+      - "1433:1433"
+    environment:
+      SA_PASSWORD: 1123QwER
+      ACCEPT_EULA: "Y"
+    user: root
+    restart: always
+    # volumes:
+    #   - ./sql_server/data:/var/opt/mssql/data
+    #   - ./sql_server/log:/var/opt/mssql/log
+    #   - ./sql_server/secrets:/var/opt/mssql/secrets
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # command: "/bin/bash /queries/restore/create_db/create.sh && /bin/bash /queries/restore/restore_db/restore.sh"
+  judge_ui:
+    image: judge_ui_for_tests
+    build:
+      context: ../
+      dockerfile: Servers/UI/OJS.Servers.Ui/Dockerfile
+    ports:
+      - "5002:80"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      SULS_PLATFORM_BASE_URL: "https://localhost:44304"
+      DISTRIBUTOR_BASE_URL: "https://localhost:44305"
+      SULS_PLATFORM_API_KEY: "1234"
+      SHARED_AUTH_COOKIE_DOMAIN: "localhost"
+      UI_URL: "http://localhost:5002"
+      ADMINISTRATION_URL: "http://localhost:5001"
+      UI_HOME_YOUTUBE_VIDEO_ID: "IwLET8SDBE4"
+      LOGGER_FILES_FOLDER_PATH: "../Logs"
+      PATH_TO_COMMON_KEY_RING_FOLDER: "../Keys"
+      REDIS_CONNECTION_STRING: "host.docker.internal,password=redisPass123,ConnectTimeout=10000,abortConnect=false"
+      DB_SERVER: host.docker.internal
+      DB_USER: sa
+      DB_PASSWORD: 1123QwER
+    volumes:
+      - ./Logs:/Logs
+      - ./Keys:/Keys
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  judge_administration:
+    image: judge_administration_for_tests
+    build:
+      context: ../
+      dockerfile: Servers/Administration/OJS.Servers.Administration/Dockerfile
+    ports:
+      - "5001:80"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      SULS_PLATFORM_BASE_URL: "https://localhost:44304"
+      DISTRIBUTOR_BASE_URL: "https://localhost:44305"
+      SULS_PLATFORM_API_KEY: "1234"
+      SHARED_AUTH_COOKIE_DOMAIN: "localhost"
+      UI_URL: "http://localhost:5002"
+      ADMINISTRATION_URL: "http://localhost:5001"
+      UI_HOME_YOUTUBE_VIDEO_ID: "IwLET8SDBE4"
+      LOGGER_FILES_FOLDER_PATH: "../Logs"
+      PATH_TO_COMMON_KEY_RING_FOLDER: "../Keys"
+      REDIS_CONNECTION_STRING: "host.docker.internal,password=redisPass123,ConnectTimeout=10000,abortConnect=false"
+      DB_SERVER: host.docker.internal
+      DB_USER: sa
+      DB_PASSWORD: 1123QwER
+    volumes:
+      - ./Logs:/Logs
+      - ./Keys:/Keys
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  tests:
+    image: tests
+    # command: tail -F anything
+    container_name: tests_instance
+    network_mode: host
+    build:
+      context: .
+      dockerfile: ./test/Dockerfile
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - ./restore:/queries/restore
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"

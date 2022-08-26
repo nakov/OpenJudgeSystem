@@ -2,10 +2,6 @@ import { beforeEach } from 'mocha';
 import { prepareAppAndDb, cleanData, restoreData, cleanupAppAndDb } from '../app';
 import IndexPage from '../pageobjects/index-page';
 
-const sleep = (seconds: number) => new Promise((resolve) => {
-    setTimeout(resolve, seconds * 1000);
-});
-
 describe('Testing index', () => {
     before(() => prepareAppAndDb());
     after(() => cleanupAppAndDb());
@@ -21,6 +17,4 @@ describe('Testing index', () => {
                 });
             });
         });
-
-
 });

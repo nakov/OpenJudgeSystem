@@ -16,21 +16,6 @@ enum ServiceNames {
     redis = 'redis',
 }
 
-const cleanData = async () => {
-    console.log(` --- Cleaning data in \`${ServiceNames.db}\` ---`);
-    try {
-        await compose.exec(ServiceNames.db, '/bin/bash /queries/restore/drop_db/drop.sh', options);
-    } catch (err) {
-        console.log(err);
-    } finally {
-        console.log(' --- complete drop ---');
-    }
-};
-const cleanupAppAndDb = async () => {
-    console.log(` --- Droping \`${ServiceNames.db}\` ---`);
-    await compose.rm(options, ServiceNames.db, ServiceNames.redis, ServiceNames.ui);
-}
-
 const createDb = async () => {
     console.log(` --- Executing creation queries in \`${ServiceNames.db}\` ---`);
     await compose.exec(
@@ -40,8 +25,7 @@ const createDb = async () => {
     );
 
     console.log(` --- Creation queries executed in \`${ServiceNames.db}\` ---`);
-}
-
+};
 
 const restoreData = async () => {
     console.log(` --- Executing restoration queries in \`${ServiceNames.db}\` ---`);
@@ -64,7 +48,23 @@ const runApp = async () => {
     console.log(` --- Waiting ${appUpTimeout} seconds for \`${ServiceNames.ui}\` to initialize ---`);
     await sleep(appUpTimeout, true);
     console.log(` --- \`${ServiceNames.ui}\` is up ---`);
-}
+};
+
+const cleanData = async () => {
+    console.log(` --- Cleaning data in \`${ServiceNames.db}\` ---`);
+    try {
+        await compose.exec(ServiceNames.db, '/bin/bash /queries/restore/drop_db/drop.sh', options);
+    } catch (err) {
+        console.log(err);
+    } finally {
+        console.log(' --- complete drop ---');
+    }
+};
+
+const cleanupAppAndDb = async () => {
+    console.log(` --- Droping \`${ServiceNames.db}\` ---`);
+    await compose.rm(options, ServiceNames.db, ServiceNames.redis, ServiceNames.ui);
+};
 
 const prepareAppAndDb = async () => {
     try {
@@ -76,7 +76,7 @@ const prepareAppAndDb = async () => {
 
         console.log(` --- Uping \`${ServiceNames.db}\` and \`${ServiceNames.redis}\` ---`);
         await compose.upMany(
-            [ServiceNames.db, ServiceNames.redis],
+            [ ServiceNames.db, ServiceNames.redis ],
             options,
         );
 
@@ -95,7 +95,6 @@ const prepareAppAndDb = async () => {
         console.log(' --- complete create ---');
     }
 };
-
 
 export {
     restoreData,
