@@ -122,9 +122,11 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
         public bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId) =>
             this.DbSet.Any(s => s.ProblemId == problemId && s.Participant!.UserId == userId && !s.Processed);
 
-        public Task<int> GetSubmissionsPerDayCount()
-            => this.DbSet.GroupBy(x => new { x.CreatedOn.Year, x.CreatedOn.DayOfYear })
-                .Select(x => x.Count())
-                .AverageAsync()
-                .ToInt();
+        public async Task<int> GetSubmissionsPerDayCount()
+            => await this.DbSet.AnyAsync()
+                ? await this.DbSet.GroupBy(x => new { x.CreatedOn.Year, x.CreatedOn.DayOfYear })
+                    .Select(x => x.Count())
+                    .AverageAsync()
+                    .ToInt()
+                : 0;
 }
