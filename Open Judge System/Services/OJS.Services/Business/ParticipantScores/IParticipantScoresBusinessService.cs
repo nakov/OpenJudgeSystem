@@ -11,8 +11,8 @@ namespace OJS.Services.Business.ParticipantScores
 
         void NormalizeAllPointsThatExceedAllowedLimit();
 
-        CategoryContestsParticipationSummary GetCategoryParticipationSummary(int categoryId, bool showHidden);
+        CategoryContestsParticipationSummary GetCategoryParticipationSummary(int categoryId, bool showHidden, bool official);
         
-        ParticipationsSummaryServiceModel GetParticipationSummaryForContest(Contest contest,  bool showHidden);
+        ParticipationsSummaryServiceModel GetParticipationSummaryForContest(Contest contest, bool official);
     }
 }
