@@ -37,3 +37,13 @@
   padding: 35px 0 5px;
   border-bottom: 1px solid $bottom-border-color;
 }
+
+.resultsButton {
+  border: none;
+  align-self: end;
+
+  &:hover {
+    background: none;
+    cursor: pointer;
+  }
+}
