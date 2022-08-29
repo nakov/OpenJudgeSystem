@@ -9,7 +9,7 @@ describe('Testing index', () => {
     beforeEach(() => restoreData());
     afterEach(() => cleanData());
 
-    Array.from({ length: 100 })
+    Array.from({ length: 5 })
         .forEach((_, index) => {
             describe(`Describe ${index + 1}`, () => {
                 it(`Open browser ${index + 1}`, async () => {
