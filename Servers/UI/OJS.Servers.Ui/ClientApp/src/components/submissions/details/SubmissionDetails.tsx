@@ -40,8 +40,10 @@ const SubmissionDetails = () => {
             return;
         }
 
+        const { problem: { id: problemId }, isOfficial } = currentSubmission;
+
         (async () => {
-            await getSubmissionResults(currentSubmission.problem.id, currentSubmission.isOfficial);
+            await getSubmissionResults(problemId, isOfficial);
         })();
     }, [ currentSubmission, getSubmissionResults ]);
 
