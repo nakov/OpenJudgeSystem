@@ -13,15 +13,24 @@ namespace OJS.Services.Business.ParticipantScores.Models
         public CategoryContestsParticipationSummary CategorySummary { get; set; }
         
         private int rowNumber = 1;
+        private int preProblemsColumnsCount = 3;
         private ISheet sheet;
 
         public CategoryContestsParticipationSummaryExcel(CategoryContestsParticipationSummary categorySummary)
         {
             this.CategorySummary = categorySummary;
-            Create();
+            this.Create();
+        }
+
+        public MemoryStream GetAsStream()
+        {
+            var outputStream = new MemoryStream();
+            Workbook.Write(outputStream);
+            
+            return outputStream;
         }
         
-        public void Create()
+        private void Create()
         {
             this.Workbook = new HSSFWorkbook();
             this.sheet = Workbook.CreateSheet();
@@ -32,15 +41,7 @@ namespace OJS.Services.Business.ParticipantScores.Models
             sheet.AutoSizeColumns(columnsCount);
         }
 
-        public MemoryStream GetAsStream()
-        {
-            var outputStream = new MemoryStream();
-            Workbook.Write(outputStream);
-            
-            return outputStream;
-        }
-
-        int CreateResultsSheetHeaderRow()
+        private int CreateResultsSheetHeaderRow()
         {
             var headerRow = sheet.CreateRow(0);
             var columnNumber = 0;
@@ -59,17 +60,17 @@ namespace OJS.Services.Business.ParticipantScores.Models
             return columnNumber;
         }
         
-        void FillSheet()
+        private void FillSheet()
         {
             CategorySummary.Results.ForEach(contestSummary => CreateContestSummaryRows(contestSummary));
         }
         
-        void CreateContestSummaryRows(ParticipationsSummaryServiceModel contestSummary)
+        private void CreateContestSummaryRows(ParticipationsSummaryServiceModel contestSummary)
         {
             contestSummary.Results.ForEach((participantSummary) => CreateParticipantSummaryRow(contestSummary, participantSummary));
         }
         
-        void CreateParticipantSummaryRow(ParticipationsSummaryServiceModel contestSummary, ParticipantScoresSummaryModel participantSummary)
+        private void CreateParticipantSummaryRow(ParticipationsSummaryServiceModel contestSummary, ParticipantScoresSummaryModel participantSummary)
         {
             var row = sheet.CreateRow(rowNumber++);
             var colNumber = 0;
@@ -78,11 +79,12 @@ namespace OJS.Services.Business.ParticipantScores.Models
             string participantName = participantSummary.ParticipantName;
             row.CreateCell(colNumber++).SetCellValue(participantName);
 
-            participantSummary.ProblemOrderToMinutesTakenToSolve.ForEach(resultPair => row.CreateCell(colNumber++).SetCellValue(resultPair.Value));
+            participantSummary.ProblemOrderToMinutesTakenToSolve
+                .ForEach(resultPair => row.CreateCell(colNumber++).SetCellValue(resultPair.Value));
 
-            if (colNumber - 3 < CategorySummary.MaxProblemsCount)
+            if (colNumber - this.preProblemsColumnsCount < CategorySummary.MaxProblemsCount)
             {
-                colNumber = 3 + CategorySummary.MaxProblemsCount;
+                colNumber = this.preProblemsColumnsCount + CategorySummary.MaxProblemsCount;
             }
                     
             row.CreateCell(colNumber++).SetCellValue(participantSummary.TimeTotal);
