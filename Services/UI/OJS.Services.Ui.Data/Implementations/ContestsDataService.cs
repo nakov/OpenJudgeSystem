@@ -50,19 +50,12 @@ namespace OJS.Services.Ui.Data.Implementations
                     .Where(this.ContainsSubmissionTypeIds(model.SubmissionTypeIds));
             }
 
-            contests = this.OrderContests(contests);
-
             return await contests
-                //.OrderBy(x=>x.OrderBy)
+                .OrderBy(c => c.OrderBy)
                 .MapCollection<TServiceModel>()
                 .ToPagedResultAsync(model.ItemsPerPage, model.PageNumber);
         }
 
-        private IQueryable<Contest> OrderContests(IQueryable<Contest> contests)
-            => contests
-                 .OrderByDescending(c=>c.StartTime)
-                 .ThenByDescending(c=>c.EndTime)
-                 .ThenBy(c=>c.Name);
         public Task<Contest?> GetByIdWithProblems(int id)
             => this.DbSet
                 .Include(c => c.ProblemGroups)
