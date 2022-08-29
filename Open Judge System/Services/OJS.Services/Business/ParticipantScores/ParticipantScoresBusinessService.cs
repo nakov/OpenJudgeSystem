@@ -82,6 +82,7 @@ namespace OJS.Services.Business.ParticipantScores
                 Results = categoryResults,
             };
         }
+        
         public ParticipationsSummaryServiceModel GetParticipationSummaryForContest(Contest contest, bool official)
         {
             var participants = 
