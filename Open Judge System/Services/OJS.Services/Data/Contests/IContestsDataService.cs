@@ -28,7 +28,7 @@
         IQueryable<Contest> GetAllPast();
 
         IQueryable<Contest> GetAllVisible();
-        
+
         IQueryable<Contest> GetAllVisibleByCategory(int categoryId);
 
         IQueryable<Contest> GetAllNotDeletedByCategory(int categoryId, bool showHidden);
