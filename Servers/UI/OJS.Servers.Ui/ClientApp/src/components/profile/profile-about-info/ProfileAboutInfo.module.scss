@@ -1,4 +1,6 @@
 @import "src/styles/colors";
+@import "src/styles/fonts";
+@import "src/styles/variables";
 
 .profileAboutInfo {
   padding: 10px;
@@ -9,10 +11,10 @@
 .profileAboutInfoGroupControl {
   margin-bottom: 10px;
   color: $text-dark-gray-color;
-  font-family: Lato, serif;
+  @extend %font-family-lato;
 
   h2 {
-    font-size: 18px;
+    font-size: $f-size-18;
     font-weight: bolder;
     margin-bottom: 10px;
   }

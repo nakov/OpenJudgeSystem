@@ -38,8 +38,8 @@ input:-webkit-autofill:active{
     padding: 16px;
 
     font-weight: 400;
-    color: #565656;
-    border: 1px solid #565656;
+    color: $grey-color;
+    border: 1px solid $grey-color;
     outline: none;
     border-radius: 6px;
   }
@@ -72,10 +72,10 @@ input:-webkit-autofill:active{
     }
 
     &:checked {
-      border-color: $background-color;
+      border-color: $primary-blue;
 
       &:after {
-        background-color: #44a9f8;
+        background-color: $primary-blue;
         transform: scale(1);
       }
     }
