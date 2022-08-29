@@ -1,15 +1,17 @@
 @import "src/styles/colors";
+@import "src/styles/fonts";
+@import "src/styles/variables";
 
 .testRun {
   margin-top: 10px;
   padding: 20px;
   border-bottom: 1px solid $bottom-border-color;
-  font-family: Lato, serif;
+  @extend %font-family-lato;
   color: $text-dark-gray-color;
 }
 
 %heading {
-  font-size: 18px;
+  font-size: $f-size-18;
   margin-bottom: 10px;
   display: flex;
 }
@@ -46,7 +48,7 @@
 }
 
 .testRunDataParagraph {
-  font-size: 12px;
-  font-family: Lato, serif;
+  font-size: $f-size-12;
+  @extend %font-family-lato;
   color: $text-light-gray-color;
 }

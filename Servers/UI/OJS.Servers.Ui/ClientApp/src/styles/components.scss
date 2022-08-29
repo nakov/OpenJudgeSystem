@@ -1,14 +1,15 @@
 @import "colors";
+@import "variables";
 
 %small {
   padding: 10px 18px;
-  font-size: 12px;
+  font-size: $f-size-12;
   line-height: 12px;
 }
 
 .medium,
 %medium {
-  font-size: 16px;
+  font-size: $f-size-16;
   line-height: 16px;
   padding: 13px 24px;
 }
@@ -16,7 +17,7 @@
 .large,
 %large {
   padding: 16px 48px;
-  font-size: 16px;
+  font-size: $f-size-16;
   line-height: 16px;
 }
 

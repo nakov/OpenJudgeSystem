@@ -1,4 +1,6 @@
 @import "src/styles/colors";
+@import "src/styles/fonts";
+@import "src/styles/variables";
 
 .tasksSideNavigation {
   text-align: center;
@@ -11,8 +13,8 @@
 
   .taskSideNavigationItem {
     text-align: start;
-    font-size: 18px;
-    font-family: Lato, serif;
+    font-size: $f-size-18;
+    @extend %font-family-lato;
     margin-top: 10px;
     color: $text-dark-gray-color;
 

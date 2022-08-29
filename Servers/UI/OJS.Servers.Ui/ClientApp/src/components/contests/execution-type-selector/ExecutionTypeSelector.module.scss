@@ -1,11 +1,12 @@
 @import "src/styles/colors";
+@import "src/styles/fonts";
 
 .executionTypeSelector {
   text-transform: none;
-  font-family: Lato, serif;
+  @extend %font-family-lato;
   font-weight: bold;
   border: 2px solid;
-  color: $background-color;
+  color: $primary-blue;
   margin: 10px 5px;
 
   &:hover {
