@@ -53,16 +53,10 @@ namespace OJS.Services.Ui.Data.Implementations
             contests = this.OrderContests(contests);
 
             return await contests
-                //.OrderBy(x=>x.OrderBy)
                 .MapCollection<TServiceModel>()
                 .ToPagedResultAsync(model.ItemsPerPage, model.PageNumber);
         }
 
-        private IQueryable<Contest> OrderContests(IQueryable<Contest> contests)
-            => contests
-                 .OrderByDescending(c=>c.StartTime)
-                 .ThenByDescending(c=>c.EndTime)
-                 .ThenBy(c=>c.Name);
         public Task<Contest?> GetByIdWithProblems(int id)
             => this.DbSet
                 .Include(c => c.ProblemGroups)
@@ -158,6 +152,12 @@ namespace OJS.Services.Ui.Data.Implementations
                 .AnyAsync(c =>
                     c.Id == id &&
                     c.ExamGroups.Any(eg => eg.UsersInExamGroups.Any(u => u.UserId == userId)));
+
+        private IQueryable<Contest> OrderContests(IQueryable<Contest> contests)
+            => contests
+                .OrderByDescending(c=>c.StartTime)
+                .ThenByDescending(c=>c.EndTime)
+                .ThenBy(c=>c.Name);
 
         private async Task<int> GetMaxPointsByIdAndProblemGroupsFilter(int id, Expression<Func<ProblemGroup, bool>> filter)
             => await this.GetByIdQuery(id)
