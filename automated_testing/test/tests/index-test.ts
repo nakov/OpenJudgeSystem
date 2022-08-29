@@ -26,150 +26,150 @@ describe('Testing index', () => {
         await expect(btn).toHaveHrefContaining('/login');
     });
 
-    xit('Expect registerButton to exist', async () => {
+    it('Expect registerButton to exist', async () => {
         const btn = await IndexPage.registerButton;
         await expect(btn).toExist();
         await expect(btn).toHaveText('REGISTER');
         await expect(btn).toHaveHrefContaining('/register');
     });
 
-    xit('Expect navBar to have headerLogoLink with href', async () => {
+    it('Expect navBar to have headerLogoLink with href', async () => {
         const a = await IndexPage.headerLogoLink;
         await expect(a).toHaveHrefContaining('/');
     });
 
-    xit('Expect to have imgTag with alt', async () => {
+    it('Expect to have imgTag with alt', async () => {
         const img = await IndexPage.headingImage;
         await expect(img).toExist();
         await expect(img).toHaveAttr('alt', 'softuni logo');
     });
 
-    xit('Expect footer to exist', async () => {
+    it('Expect footer to exist', async () => {
         const footer = await IndexPage.footer;
         await expect(footer).toExist();
     });
 
-    xit('Expect contests link in navigation to exist and have the correct href', async () => {
+    it('Expect contests link in navigation to exist and have the correct href', async () => {
         const contestsLink = await IndexPage.navContestsLink;
         await expect(contestsLink).toExist();
         await expect(contestsLink).toHaveHrefContaining('/contests');
     });
 
-    xit('Expect submissions link in navigation to exist and have the correct href', async () => {
+    it('Expect submissions link in navigation to exist and have the correct href', async () => {
         const submissionsLink = await IndexPage.navSubmissionssLink;
         await expect(submissionsLink).toExist();
         await expect(submissionsLink).toHaveHrefContaining('/submissions');
     });
 
-    xit('Expect "See contests" button in navigation to exist and have the correct href', async () => {
+    it('Expect "See contests" button in navigation to exist and have the correct href', async () => {
         const btn = await IndexPage.seeContestsButton;
         await expect(btn).toExist();
     //  await expect(btn).toHaveHrefContaining('.....'); once the page is ready we will add it
     });
 
-    xit('Expect YouTub video to exist', async () => {
+    it('Expect YouTub video to exist', async () => {
         const video = await IndexPage.youtubeVideo;
         await expect(video).toExist();
     });
 
-    xit('Expect Youtube video to have src', async () => {
+    it('Expect Youtube video to have src', async () => {
         const video = await IndexPage.youtubeVideo;
         await expect(video).toHaveAttr('src');
         const src = await video.getAttribute('src');
         await expect(src).not.toBeNull();
     });
 
-    xit('Expect "See all" button in active contest section to be diplayed and redirect properly', async () => {
+    it('Expect "See all" button in active contest section to be diplayed and redirect properly', async () => {
         const btn = await IndexPage.seeAllActiveContestsButton;
         await expect(btn).toExist();
         await expect(btn).toHaveHrefContaining('/contests'); // must be to active
         await expect(btn).toBeClickable();
     });
 
-    xit('Expect "See all" button in active contest section to exist and redirect properly', async () => {
+    it('Expect "See all" button in active contest section to exist and redirect properly', async () => {
         const btn = await IndexPage.seeAllPastContestsButton;
         await expect(btn).toExist();
         await expect(btn).toHaveHrefContaining('/contests'); // must be to past
         await expect(btn).toBeClickable();
     });
 
-    xit('Expect having at least one active contest card', async () => {
+    it('Expect having at least one active contest card', async () => {
         const check = await contestCardsChecker.cardsDisplayedCheck(activeCards);
         await expect(check).toBeTruthy();
     });
 
-    xit('Expect having at least one past contest card', async () => {
+    it('Expect having at least one past contest card', async () => {
         const check = await contestCardsChecker.cardsDisplayedCheck(pastCards);
         await expect(check).toBeTruthy();
     });
 
-    xit('Expect every active contest card to have header', async () => {
+    it('Expect every active contest card to have header', async () => {
         const headers = await IndexPage.allActiveContestCardsHeaders;
         const check = await contestCardsChecker.headersDisplayedCheck(activeCards, headers);
         await expect(check).toBeTruthy();
     });
 
-    xit('Expect every past contest card to have header', async () => {
+    it('Expect every past contest card to have header', async () => {
         const headers = await IndexPage.allCardsForPastContests;
         const check = await contestCardsChecker.headersDisplayedCheck(pastCards, headers);
         await expect(check).toBeTruthy();
     });
 
-    xit('Expect every active contest card to have category', async () => {
+    it('Expect every active contest card to have category', async () => {
         const categories = await IndexPage.allActiveContestCardsCategories;
         const check = await contestCardsChecker.categoriesDisplayedCheck(activeCards, categories);
         await expect(check).toBeTruthy();
     });
 
-    xit('Expect every past contest card to have category', async () => {
+    it('Expect every past contest card to have category', async () => {
         const categories = await IndexPage.allActiveContestCardsCategories;
         const check = await contestCardsChecker.categoriesDisplayedCheck(activeCards, categories);
         await expect(check).toBeTruthy();
     });
 
-    xit('Expect every active contest card to have compete button', async () => {
+    it('Expect every active contest card to have compete button', async () => {
         const competeButtons = await IndexPage.competeCardButtonActivecontests;
         const check = await contestCardsChecker.competeButtonsActiveCarsCheck(activeCards, competeButtons);
         await expect(check).toBeTruthy();
     });
 
-    xit('Expect every active contest card to have practice button', async () => {
+    it('Expect every active contest card to have practice button', async () => {
         const practiceButtons = await IndexPage.practiceCardButtoActiveContests;
         const check = await contestCardsChecker.competeButtonsActiveCarsCheck(activeCards, practiceButtons);
         await expect(check).toBeTruthy();
     });
 
-    xit('Expect every past contest card to have compete button', async () => {
+    it('Expect every past contest card to have compete button', async () => {
         const competeButtons = await IndexPage.competeCardButtonPastcontests;
         const check = await contestCardsChecker.competeButtonsActiveCarsCheck(pastCards, competeButtons);
         await expect(check).toBeTruthy();
     });
 
-    xit('Expect every past contest card to have practice button', async () => {
+    it('Expect every past contest card to have practice button', async () => {
         const practiceButtons = await IndexPage.practiceCardButtoPastContests;
         const check = await contestCardsChecker.competeButtonsActiveCarsCheck(pastCards, practiceButtons);
         await expect(check).toBeTruthy();
     });
 
-    xit('Expect every active contest card to have enabled compete button', async () => {
+    it('Expect every active contest card to have enabled compete button', async () => {
         const competeButtons = await IndexPage.competeCardButtonActivecontests;
         const check = await competeButtons.forEach((b) => b.isEnabled());
         await expect(check).toBeTruthy();
     });
 
-    xit('Expect every active contest card to have disabled practice button', async () => {
+    it('Expect every active contest card to have disabled practice button', async () => {
         const competeButtons = await IndexPage.competeCardButtonActivecontests;
         const check = await competeButtons.forEach((b) => b.isEnabled());
         await expect(check).toBeFalsy();
     });
 
-    xit('Expect every past contest card to have disabled compete button', async () => {
+    it('Expect every past contest card to have disabled compete button', async () => {
         const practiceButtons = await IndexPage.competeCardButtonPastcontests;
         const check = await practiceButtons.forEach((b) => b.isEnabled());
         await expect(check).toBeFalsy();
     });
 
-    xit('Expect every past contest card to have enabled practice button', async () => {
+    it('Expect every past contest card to have enabled practice button', async () => {
         const practiceButtons = await IndexPage.practiceCardButtoPastContests;
         const check = await practiceButtons.forEach((b) => b.isEnabled());
         await expect(check).toBeTruthy();
