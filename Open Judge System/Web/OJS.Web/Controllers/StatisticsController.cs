@@ -2,13 +2,14 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Web.Mvc;
-    using MissingFeatures;
     using OJS.Common;
     using OJS.Common.Models;
     using OJS.Data;
     using OJS.Services.Business.ParticipantScores;
+    using OJS.Services.Business.ParticipantScores.Models;
     using OJS.Services.Cache.Statistics;
     using OJS.Web.Common.Attributes;
     using OJS.Web.ViewModels.Statistics;

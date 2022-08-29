@@ -122,7 +122,7 @@ namespace OJS.Services.Business.ParticipantScores
 
             return new ParticipantScoresSummaryModel
             {
-                ParticipantName = participant.User.,
+                ParticipantName = participant.User.UserName,
                 ProblemOrderToMinutesTakenToSolve = problemOrderToTimeTakenBetweenBest,
                 PointsTotal = participant.Scores.Select(s => s.Points).Sum(),
                 TimeTotal = Math.Round((lastSubmission.CreatedOn - userStartTime).TotalMinutes),
