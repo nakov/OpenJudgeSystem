@@ -51,7 +51,9 @@ namespace OJS.Services.Ui.Data.Implementations
             }
 
             return await contests
-                .OrderBy(c => c.OrderBy)
+                .OrderByDescending(c => c.StartTime)
+                .ThenByDescending(c => c.EndTime)
+                .ThenBy(c => c.Name)
                 .MapCollection<TServiceModel>()
                 .ToPagedResultAsync(model.ItemsPerPage, model.PageNumber);
         }
