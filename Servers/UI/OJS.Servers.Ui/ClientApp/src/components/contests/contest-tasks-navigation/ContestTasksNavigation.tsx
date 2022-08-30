@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List, { ListType } from '../../guidelines/lists/List';
-import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import { Button, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 
 import concatClassNames from '../../../utils/class-names';
 import { IProblemType } from '../../../common/types';
