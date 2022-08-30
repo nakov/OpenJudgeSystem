@@ -1,4 +1,7 @@
-﻿namespace OJS.Services.Data.Submissions
+﻿using System.Data.Entity;
+using MissingFeatures;
+
+namespace OJS.Services.Data.Submissions
 {
     using System;
     using System.Collections.Generic;
@@ -40,6 +43,23 @@
             this.GetAllByProblem(problemId)
                 .Where(s => s.ParticipantId == participantId);
 
+        public IQueryable<IGrouping<int, Submission>> GetFirstBestForProblemIdsByParticipantGroupedByProblemId(
+            IEnumerable<int> problemIds,
+            int participantId)
+            => this.GetAll()
+                .Include(s => s.Problem)
+                .Where(s => problemIds.Contains(s.Problem.Id))
+                .Where(s => s.ParticipantId == participantId)
+                .Where(s => s.Points == s.Problem.MaximumPoints)
+                .OrderBy(s => s.CreatedOn)
+                .GroupBy(s => s.Problem.Id);
+
+        public IQueryable<IGrouping<int, Submission>> GetWithMaxPointsByParticipantIds(IEnumerable<int> participantIds)
+        => this.GetAll()
+                .Where(s => s.Points == s.Problem.MaximumPoints)
+                .Where(s => participantIds.Contains(s.ParticipantId.Value))
+                .GroupBy(s => s.ParticipantId.Value);
+
         public IQueryable<Submission> GetAllFromContestsByLecturer(string lecturerId) =>
             this.GetAll()
                 .Where(s =>
@@ -64,14 +84,16 @@
             this.GetAllByProblem(problemId)
                 .Select(s => s.Id);
 
-        public Submission GetLastSubmittedForParticipant(int participantId)
+        public IQueryable<IGrouping<int, Submission>> GetLastSubmittedForParticipants(IEnumerable<int> participantIds)
             => this.submissions
                 .All()
                 .Where(s => !s.IsDeleted)
-                .Where(s => s.ParticipantId == participantId)
+                .Where(s => participantIds.Contains(s.ParticipantId.Value))
                 .OrderByDescending(s => s.CreatedOn)
-                .FirstOrDefault();
-            
+                .GroupBy(s => s.ParticipantId)
+                .Select(s => s.FirstOrDefault())
+                .GroupBy(s => s.ParticipantId.Value);
+
         public bool IsOfficialById(int id) =>
             this.GetByIdQuery(id)
                 .Any(s => s.Participant.IsOfficial);

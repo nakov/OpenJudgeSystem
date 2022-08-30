@@ -68,8 +68,49 @@ namespace OJS.Services.Business.ParticipantScores
                 .OrderByDescending(c => c.CreatedOn)
                 .ToList();
 
+            var participants =
+                this.participantsData.GetAllByContestIdsAndIsOfficial(contests.Select(c => c.Id), official)
+                    .Include(p => p.User)
+                    .Include(p => p.Submissions)
+                    .Include(p => p.Scores)
+                    .Include(p => p.Problems)
+                    .ToList();
+
+            var participantIds = participants.Select(p => p.Id);
+
+            var maximumSubmissionsForParticipants = this.submissionsData
+                .GetWithMaxPointsByParticipantIds(participantIds)
+                .ToList()
+                .GroupBy(sg => sg.First().Participant.ContestId)
+                .ToList();
+
+            var lastSubmissionsForParticipants = this.submissionsData
+                .GetLastSubmittedForParticipants(participantIds)
+                .ToList()
+                .GroupBy(sg => sg.First().Participant.ContestId)
+                .ToList();
+
+            var participantsInfoByContest = participants
+                .Where(p => p.Scores.Count != 0)
+                .Select(p => new ParticipantSummaryInfoServiceModel
+                {
+                    Participant = p,
+                    LastSubmittedForParticipant = this.GetLastSubmittedForParticipant(lastSubmissionsForParticipants, p),
+                    MaximumPointsSubmissionsByProblems = this.GetListOfMaxSubmissionsForParticipant(maximumSubmissionsForParticipants, p),
+                })
+                .Where(p => p.LastSubmittedForParticipant != null)
+                .GroupBy(pinfo => pinfo.Participant.ContestId)
+                .ToList();
+            
             var categoryResults = contests
-                .Select(c => this.GetParticipationSummaryForContest(c, official))
+                .Select(c => this.GetParticipationSummaryForContest(
+                    c, 
+                    participantsInfoByContest
+                        .Where(g => g.Key == c.Id)
+                        .FirstOrDefault()
+                        .ToList(), 
+                    official)
+                )
                 .ToList();
             
             var maxProblemsCount = categoryResults
@@ -82,19 +123,39 @@ namespace OJS.Services.Business.ParticipantScores
                 Results = categoryResults,
             };
         }
-        
-        public ParticipationsSummaryServiceModel GetParticipationSummaryForContest(Contest contest, bool official)
+
+        private Submission GetLastSubmittedForParticipant(
+            IEnumerable<IGrouping<int, IGrouping<int, Submission>>> lastSubmittedByParticipants,
+            Participant participant)
+            => lastSubmittedByParticipants
+                .Where(x => x.Key == participant.ContestId)
+                .SelectMany(x => x.ToList())
+                .Where(p => p.Key == participant.Id)
+                .SelectMany(x => x.ToList())
+                .FirstOrDefault();
+
+        private IEnumerable<MaximumResultSubmissionByProblemServiceModel> GetListOfMaxSubmissionsForParticipant(
+            IEnumerable<IGrouping<int, IGrouping<int, Submission>>> maximumSubmissionsByParticipants,
+            Participant participant)
+            => maximumSubmissionsByParticipants
+                .Where(cg => cg.Key == participant.ContestId)
+                .SelectMany(x => x.ToList())
+                .Where(pg => pg.Key == participant.Id)
+                .SelectMany(x => x.ToList())
+                .Select(s => new MaximumResultSubmissionByProblemServiceModel
+                {
+                    ProblemId = s.ProblemId.Value,
+                    Submission = s
+                })
+                .ToList();
+
+        public ParticipationsSummaryServiceModel GetParticipationSummaryForContest(
+            Contest contest, 
+            IEnumerable<ParticipantSummaryInfoServiceModel> participants, 
+            bool official)
         {
-            var participants = 
-                        participantsData.GetAllByContestAndIsOfficial(contest.Id, official)
-                            .Include(p => p.User)
-                            .Include(p => p.Submissions)
-                            .Include(p => p.Scores)
-                            .Include(p => p.Problems)
-                    .ToList();
-            
             var results = participants
-                .Where(p => p.Scores.Count != 0 && p.Scores.All(ps => ps.Submission != null))
+                .Where(p => p.Participant.Scores.Count != 0 && p.Participant.Scores.All(ps => ps.Submission != null))
                 .Select(this.SummarizeParticipationWithMaximumPoints)
                 .ToList();
 
@@ -109,32 +170,30 @@ namespace OJS.Services.Business.ParticipantScores
             };
         }
 
-        private ParticipantScoresSummaryModel SummarizeParticipationWithMaximumPoints(Participant participant)
+        private ParticipantScoresSummaryModel SummarizeParticipationWithMaximumPoints(ParticipantSummaryInfoServiceModel participantInfo)
         {
-            Dictionary<int, DateTime> problemOrderToFirstBestSubmissionTimeCreated = this.CalculateFirstBestSubmissionTimeForProblems(participant);
+            Dictionary<int, DateTime> problemOrderToFirstBestSubmissionTimeCreated = this.CalculateFirstBestSubmissionTimeForProblems(participantInfo);
 
-            var userStartTime = participant.ParticipationStartTime ?? participant.CreatedOn;
+            var userStartTime = participantInfo.Participant.ParticipationStartTime ?? participantInfo.Participant.CreatedOn;
 
             SortedDictionary<int, double> problemOrderToTimeTakenBetweenBest =
                 this.CalculateTimeTakenBetweenBestForProblems(problemOrderToFirstBestSubmissionTimeCreated,
                     userStartTime);
 
-            var lastSubmission = this.submissionsData.GetLastSubmittedForParticipant(participant.Id);
-
             return new ParticipantScoresSummaryModel
             {
-                ParticipantName = participant.User.UserName,
+                ParticipantName = participantInfo.Participant.User.UserName,
                 ProblemOrderToMinutesTakenToSolve = problemOrderToTimeTakenBetweenBest,
-                PointsTotal = participant.Scores.Select(s => s.Points).Sum(),
-                TimeTotal = Math.Round((lastSubmission.CreatedOn - userStartTime).TotalMinutes),
+                PointsTotal = participantInfo.Participant.Scores.Select(s => s.Points).Sum(),
+                TimeTotal = Math.Round((participantInfo.LastSubmittedForParticipant.CreatedOn - userStartTime).TotalMinutes),
             };
         }
 
-        private Dictionary<int, DateTime> CalculateFirstBestSubmissionTimeForProblems(Participant participant)
+        private Dictionary<int, DateTime> CalculateFirstBestSubmissionTimeForProblems(ParticipantSummaryInfoServiceModel participantInfo)
         {
             Dictionary<int, DateTime> problemOrderToFirstBestSubmissionTimeCreated = new Dictionary<int, DateTime>();
 
-            var participationProblemsForUser = participant.Scores
+            var participationProblemsForUser = participantInfo.Participant.Scores
                 .Select(ps => ps.Problem)
                 .OrderBy(p => p.OrderBy);
 
@@ -142,19 +201,24 @@ namespace OJS.Services.Business.ParticipantScores
             participationProblemsForUser.ForEach(problem =>
             {
                 problemIndex++;
-                var problemUserSubmissions =
-                    this.submissionsData.GetAllByProblemAndParticipant(problem.Id, participant.Id)
-                        .Where(s => s.Points == problem.MaximumPoints)
-                        .OrderBy(s => s.CreatedOn);
-
-                var firstBestSubmissionForProblem = problemUserSubmissions.FirstOrDefault();
-
-                if (firstBestSubmissionForProblem == null)
+                if (participantInfo.MaximumPointsSubmissionsByProblems == null)
                 {
                     return;
                 }
+                 
+                var problemUserSubmissions = participantInfo
+                    .MaximumPointsSubmissionsByProblems
+                    .Where(s => s.ProblemId == problem.Id)
+                    .OrderBy(s => s.Submission.CreatedOn);
+
+                if (!problemUserSubmissions.Any())
+                {
+                    return;
+                }
+                
+                var firstBestSubmissionForProblem = problemUserSubmissions.FirstOrDefault();
                     
-                problemOrderToFirstBestSubmissionTimeCreated[problemIndex] = firstBestSubmissionForProblem.CreatedOn;
+                problemOrderToFirstBestSubmissionTimeCreated[problemIndex] = firstBestSubmissionForProblem.Submission.CreatedOn;
             });
 
             return problemOrderToFirstBestSubmissionTimeCreated;

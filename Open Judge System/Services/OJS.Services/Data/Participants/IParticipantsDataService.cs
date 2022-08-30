@@ -29,6 +29,8 @@
         IQueryable<Participant> GetAllOfficialByContest(int contestId);
 
         IQueryable<Participant> GetAllByContestAndIsOfficial(int contestId, bool isOfficial);
+        
+        IQueryable<Participant> GetAllByContestIdsAndIsOfficial(IEnumerable<int> contestIds, bool isOfficial);
 
         IQueryable<Participant> GetAllOfficialInOnlineContestByContestAndParticipationStartTimeRange(
             int contestId,

@@ -52,6 +52,11 @@
             this.GetAllByContest(contestId)
                 .Where(p => p.IsOfficial);
 
+        public IQueryable<Participant> GetAllByContestIdsAndIsOfficial(IEnumerable<int> contestIds, bool isOfficial)
+            => this.GetAll()
+                .Where(p => contestIds.Contains(p.ContestId))
+                .Where(p => p.IsOfficial == isOfficial);
+
         public IQueryable<Participant> GetAllOfficialInOnlineContestByContestAndParticipationStartTimeRange(
             int contestId,
             DateTime participationStartTimeRangeStart,

@@ -1,4 +1,5 @@
-﻿using OJS.Data.Models;
+﻿using System.Collections.Generic;
+using OJS.Data.Models;
 using OJS.Services.Business.ParticipantScores.Models;
 
 namespace OJS.Services.Business.ParticipantScores
@@ -13,6 +14,6 @@ namespace OJS.Services.Business.ParticipantScores
 
         CategoryContestsParticipationSummary GetCategoryParticipationSummary(int categoryId, bool showHidden, bool official);
         
-        ParticipationsSummaryServiceModel GetParticipationSummaryForContest(Contest contest, bool official);
+        ParticipationsSummaryServiceModel GetParticipationSummaryForContest(Contest contest, IEnumerable<ParticipantSummaryInfoServiceModel> participants, bool official);
     }
 }
