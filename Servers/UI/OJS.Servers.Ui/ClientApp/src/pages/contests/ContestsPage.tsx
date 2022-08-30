@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { isEmpty, isNil } from 'lodash';
 import ContestFilters from '../../components/contests/contests-filters/ContestFilters';
 import { useContests } from '../../hooks/use-contests';
@@ -12,6 +11,7 @@ import PaginationControls from '../../components/guidelines/pagination/Paginatio
 import { ContestStatus, FilterType, IFilter } from '../../common/contest-types';
 import { filterByType } from '../../common/filter-utils';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
+import { useUrlParams } from '../../hooks/common/use-url-params';
 
 const ContestsPage = () => {
     const {
@@ -25,7 +25,13 @@ const ContestsPage = () => {
         actions: { applyFilters },
     } = useContests();
 
-    const [ searchParams, setSearchParams ] = useSearchParams();
+    const {
+        state: { params },
+        actions: {
+            setParam,
+            unsetParam,
+        },
+    } = useUrlParams();
     const [ filtersAreCollected, setFiltersAreCollected ] = useState(false);
     const handlePageChange = useCallback(
         (page: number) => {
@@ -35,24 +41,22 @@ const ContestsPage = () => {
     );
 
     const handleFilterClick = useCallback(
-        (filter: IFilter) => {
+        async (filter: IFilter) => {
             const { name: filterName, type, value } = filter;
             const paramName = type.toString();
 
-            searchParams.delete(paramName);
-            searchParams.delete(paramName.toLowerCase());
+            await unsetParam(paramName);
 
             const shouldRemoveFilter = filters.some(({ name }) => name === filterName) &&
                 filter.type !== FilterType.Category;
 
             if (!shouldRemoveFilter) {
-                searchParams.append(paramName.toLowerCase(), value);
+                await setParam(paramName, value);
             }
 
-            setSearchParams(searchParams);
             setFiltersAreCollected(false);
         },
-        [ filters, searchParams, setSearchParams ],
+        [ filters, setParam, unsetParam ],
     );
 
     const renderContest = useCallback(
@@ -97,17 +101,17 @@ const ContestsPage = () => {
             return;
         }
 
-        const filtersToApply = [] as IFilter[];
-
-        searchParams.forEach((val, key) => {
+        const filtersToApply = params.reduce((fa, { value, key }) => {
             const filter = possibleFilters
-                .find(({ type, value }) => type.toString().toLowerCase() === key.toLowerCase() &&
+                .find(({ type, value: val }) => type.toString().toLowerCase() === key.toLowerCase() &&
                     value.toLowerCase() === val.toLowerCase());
 
-            if (!isNil(filter)) {
-                filtersToApply.push(filter);
+            if(!isNil(filter)) {
+                fa.push(filter);
             }
-        });
+
+            return fa;
+        }, []);
 
         if (isEmpty(filterByType(filtersToApply, FilterType.Status))) {
             const defaultStatusFilters = filterByType(possibleFilters, FilterType.Status)
@@ -118,7 +122,7 @@ const ContestsPage = () => {
 
         applyFilters(filtersToApply);
         setFiltersAreCollected(true);
-    }, [ applyFilters, filtersAreCollected, possibleFilters, searchParams ]);
+    }, [ applyFilters, filtersAreCollected, params, possibleFilters ]);
 
     return (
         <div className={styles.container}>
