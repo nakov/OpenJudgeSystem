@@ -84,7 +84,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
 
             setSubmissionResultsByProblemUrlParams({
                 id: problemId,
-                isOfficial: isOfficial,
+                isOfficial,
                 take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
             });
         },
