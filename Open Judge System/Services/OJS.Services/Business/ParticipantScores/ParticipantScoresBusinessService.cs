@@ -74,6 +74,7 @@ namespace OJS.Services.Business.ParticipantScores
                     .Include(p => p.Submissions)
                     .Include(p => p.Scores)
                     .Include(p => p.Problems)
+                    .Where(p => p.Scores.Count != 0)
                     .ToList();
 
             var participantIds = participants.Select(p => p.Id);
