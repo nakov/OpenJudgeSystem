@@ -1,6 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import { groupBy } from 'lodash';
 import { FilterInfo, FilterType, IFilter } from './contest-types';
+import { areStringEqual } from '../utils/compare-utils';
 
 const getNextIdGen = function* () {
     let index = 1;
@@ -32,12 +33,10 @@ const groupByType = (filters: IFilter[]) => {
 
 const filterByType = (filters: IFilter[], filterType: FilterType) => filters.filter(({ type }) => filterType === type);
 
-
-const findFilterByTypeAndName = (filters2: IFilter[], type: string, value: any) => filters2
-    .find(({ type: filterType, value: filterValue }) =>
-        filterType.toString().toLowerCase() === type.toLowerCase() &&
-        value.toLowerCase() === filterValue.toLowerCase());
-
+const findFilterByTypeAndName = (filters: IFilter[], type: string, value: any) => filters
+    .find(({ type: filterType, id }) =>
+        areStringEqual(filterType, type, false) && 
+        areStringEqual(value, id, false));
 
 export {
     generateFilterItems,

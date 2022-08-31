@@ -47,7 +47,7 @@ const ContestsContext = createContext<IContestsContext>(defaultState as IContest
 
 
 const collectFilters = (params: IUrlParam[], possibleFilters: IFilter[]) => {
-    const collectedFilters = params.map(({ value, key }) => findFilterByTypeAndName(possibleFilters, key, value))
+    const collectedFilters = params.map(({ key, value }) => findFilterByTypeAndName(possibleFilters, key, value))
         .filter(f => !isNil(f)) as IFilter[];
 
     if (isEmpty(filterByType(collectedFilters, FilterType.Status))) {
