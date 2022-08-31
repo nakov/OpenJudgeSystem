@@ -14,6 +14,7 @@ import { IAllContestsUrlParams } from '../common/url-types';
 import { useUrlParams } from './common/use-url-params';
 import { PageParams } from '../common/pages-types';
 import { generateCategoryFilters, generateStatusFilters, generateStrategyFilters } from './contests/contest-filter-utils';
+import { areStringEqual } from '../utils/compare-utils';
 
 interface IContestsContext {
     state: {
@@ -110,9 +111,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     );
 
     const clearFilters = useCallback(
-        () => {
-            clearParams();
-        },
+        () => clearParams(),
         [ clearParams ],
     );
 
@@ -135,15 +134,14 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     const toggleFilter = useCallback(
         (filter: IFilter) => {
-            const { type, id } = filter;
+            const { name, type, id } = filter;
             const paramName = type.toString();
-            
+
             const shouldRemoveFilter = params.some(({
                 key,
                 value,
-            }) => key.toString().toLowerCase() === type.toString().toLowerCase() && 
-                    value.toString().toLowerCase() === id.toString().toLowerCase()) ||
-                (filter.type === FilterType.Status && filter.name === ContestStatus.All);
+            }) => areStringEqual(key, type, false) && areStringEqual(value, id, false)) ||
+                (type === FilterType.Status && name === ContestStatus.All);
 
             unsetParam(paramName);
 
