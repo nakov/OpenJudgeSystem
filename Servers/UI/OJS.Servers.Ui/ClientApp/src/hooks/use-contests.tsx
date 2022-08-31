@@ -1,32 +1,34 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isNil } from 'lodash';
-import { IHaveChildrenProps, IHavePagesProps } from '../components/common/Props';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { isEmpty, isNil } from 'lodash';
+import { IHaveChildrenProps, IPagesInfo } from '../components/common/Props';
 import { IIndexContestsType, IPagedResultType } from '../common/types';
 import { ContestStatus, FilterType, IFilter } from '../common/contest-types';
 import { useHttp } from './use-http';
 import { useUrls } from './use-urls';
-import { generateFilterItems } from '../common/filter-utils';
+import { filterByType, findFilterByTypeAndName } from '../common/filter-utils';
 import { useLoading } from './use-loading';
 import { useContestStrategyFilters } from './use-contest-strategy-filters';
 import { useContestCategories } from './use-contest-categories';
-import { ITreeItemType } from '../components/guidelines/trees/Tree';
-import { UrlType } from '../common/common-types';
+import { IUrlParam, UrlType } from '../common/common-types';
 import { IAllContestsUrlParams } from '../common/url-types';
+import { useUrlParams } from './common/use-url-params';
+import { PageParams } from '../common/pages-types';
+import { generateCategoryFilters, generateStatusFilters, generateStrategyFilters } from './contests/contest-filter-utils';
+import { areStringEqual } from '../utils/compare-utils';
 
 interface IContestsContext {
     state: {
         contests: IIndexContestsType[];
         possibleFilters: IFilter[];
         filters: IFilter[];
-        itemsPerPage: number,
-        pageNumber: number,
-        totalItemsCount: number,
-        pagesCount: number,
+        pagesInfo: IPagesInfo;
+        currentPage: number;
     };
     actions: {
         reload: () => Promise<void>;
-        applyFilters: (filters: IFilter[], page?: number | undefined) => void;
         clearFilters: () => void;
+        toggleFilter: (filter: IFilter) => void;
+        changePage: (pageNumber: number) => void;
     };
 }
 
@@ -37,19 +39,46 @@ const defaultState = {
     state: {
         contests: [] as IIndexContestsType[],
         possibleFilters: [] as IFilter[],
-        filters: [] as IFilter[],
-        pageNumber: 1,
+        pagesInfo: { pageNumber: 1 },
     },
 };
 
 const ContestsContext = createContext<IContestsContext>(defaultState as IContestsContext);
 
+
+const collectFilters = (params: IUrlParam[], possibleFilters: IFilter[]) => {
+    const collectedFilters = params.map(({ key, value }) => findFilterByTypeAndName(possibleFilters, key, value))
+        .filter(f => !isNil(f)) as IFilter[];
+
+    if (isEmpty(filterByType(collectedFilters, FilterType.Status))) {
+        const defaultStatusFilters = filterByType(possibleFilters, FilterType.Status)
+            .filter(({ name }) => name === ContestStatus.All);
+
+        collectedFilters.push(...defaultStatusFilters);
+    }
+
+    return collectedFilters;
+};
+
+const collectCurrentPage = (params: IUrlParam[]) => {
+    const { value } = params.find(p => p.key === PageParams.page) || { value: 1 };
+
+    return parseInt(value, 10);
+};
+
 const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ contests, setContests ] = useState(defaultState.state.contests);
-    const [ possibleFilters, setPossibleFilters ] = useState(defaultState.state.possibleFilters);
-    const [ filters, setFilters ] = useState(defaultState.state.filters);
-    const [ pageProps, setPageProps ] = useState({ pageNumber: defaultState.state.pageNumber } as IHavePagesProps);
     const [ getAllContestsUrlParams, setGetAllContestsUrlParams ] = useState<IAllContestsUrlParams | null>();
+    const [ pagesInfo, setPagesInfo ] = useState<IPagesInfo>(defaultState.state.pagesInfo as IPagesInfo);
+
+    const {
+        state: { params },
+        actions: {
+            setParam,
+            unsetParam,
+            clearParams,
+        },
+    } = useUrlParams();
 
     const { getAllContestsUrl } = useUrls();
     const { startLoading, stopLoading } = useLoading();
@@ -62,22 +91,28 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const { state: { strategies, isLoaded: strategiesAreLoaded } } = useContestStrategyFilters();
     const { state: { categories, isLoaded: categoriesAreLoaded } } = useContestCategories();
 
-    const applyFilters = useCallback(
-        (newFilters: IFilter[], pageToGo?: number) => {
-            setFilters(newFilters);
-            setGetAllContestsUrlParams({
-                filters: newFilters,
-                page: pageToGo || defaultState.state.pageNumber,
-            });
-        },
-        [],
+    const possibleFilters = useMemo(
+        () => strategiesAreLoaded && categoriesAreLoaded
+            ? generateStatusFilters()
+                .concat(generateCategoryFilters(categories))
+                .concat(generateStrategyFilters(strategies))
+            : [],
+        [ categories, categoriesAreLoaded, strategies, strategiesAreLoaded ],
+    );
+
+    const filters = useMemo(
+        () => collectFilters(params, possibleFilters),
+        [ params, possibleFilters ],
+    );
+
+    const currentPage = useMemo(
+        () => collectCurrentPage(params),
+        [ params ],
     );
 
     const clearFilters = useCallback(
-        () => {
-            setFilters([]);
-        },
-        [],
+        () => clearParams(),
+        [ clearParams ],
     );
 
     const reload = useCallback(
@@ -89,52 +124,45 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         [ get, startLoading, stopLoading ],
     );
 
-    const addCategoryLeafFilters = useCallback(
-        ({ id, name, children: treeChildren }: ITreeItemType, arr: IFilter[]) => {
-            treeChildren?.forEach((c) => {
-                addCategoryLeafFilters(c, arr);
-            });
-
-            const filter = { name, value: id.toString() } as IFilter;
-
-            arr.push(filter);
+    const changePage = useCallback(
+        (pageNumber: number) => {
+            unsetParam(PageParams.page);
+            setParam(PageParams.page, pageNumber);
         },
-        [],
+        [ setParam, unsetParam ],
     );
 
-    const generateStrategyFilters = useCallback(() => {
-        const strategyFilters = strategies?.map(({ name, id }) => ({
-            name,
-            value: id.toString(),
-        })) ?? [];
+    const toggleFilter = useCallback(
+        (filter: IFilter) => {
+            const { name, type, id } = filter;
+            const paramName = type.toString();
 
-        return generateFilterItems(FilterType.Strategy, ...strategyFilters);
-    }, [ strategies ]);
+            const shouldRemoveFilter = params.some(({
+                key,
+                value,
+            }) => areStringEqual(key, type, false) && areStringEqual(value, id, false)) ||
+                (type === FilterType.Status && name === ContestStatus.All);
 
-    const generateCategoryFilters = useCallback(() => {
-        const categoryFilters = [] as IFilter[];
+            unsetParam(paramName);
 
-        categories?.forEach((c) => addCategoryLeafFilters(c, categoryFilters));
+            if (!shouldRemoveFilter) {
+                setParam(paramName, id);
+            }
 
-        return generateFilterItems(FilterType.Category, ...categoryFilters);
-    }, [ categories, addCategoryLeafFilters ]);
+            changePage(1);
+        },
+        [ changePage, params, setParam, unsetParam ],
+    );
 
-    const generateStatusFilters = useCallback(() => generateFilterItems(
-        FilterType.Status,
-        { name: ContestStatus.All, value: ContestStatus.All },
-        { name: ContestStatus.Active, value: ContestStatus.Active },
-        { name: ContestStatus.Past, value: ContestStatus.Past },
-    ), []);
-
-    const generatePossibleFilters = useCallback(() => {
-        const statusFilters = generateStatusFilters();
-        const categoryFilterItems = generateCategoryFilters();
-        const strategyFilterItems = generateStrategyFilters();
-
-        return statusFilters
-            .concat(categoryFilterItems)
-            .concat(strategyFilterItems);
-    }, [ generateStatusFilters, generateCategoryFilters, generateStrategyFilters ]);
+    useEffect(
+        () => {
+            setGetAllContestsUrlParams({
+                filters: collectFilters(params, possibleFilters),
+                page: currentPage,
+            });
+        },
+        [ currentPage, params, possibleFilters ],
+    );
 
     useEffect(
         () => {
@@ -151,26 +179,28 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     useEffect(
         () => {
-            if (strategiesAreLoaded && categoriesAreLoaded) {
-                setPossibleFilters(generatePossibleFilters());
-            }
-        },
-        [ setPossibleFilters, generatePossibleFilters, strategiesAreLoaded, categoriesAreLoaded ],
-    );
-
-    useEffect(
-        () => {
             if (isNil(data)) {
                 return;
             }
 
             const contestsResult = data as IPagedResultType<IIndexContestsType>;
             const newData = contestsResult.items as IIndexContestsType[];
+            const {
+                pageNumber,
+                itemsPerPage,
+                pagesCount,
+                totalItemsCount,
+            } = contestsResult || {};
+
+            const newPagesInfo = {
+                pageNumber,
+                itemsPerPage,
+                pagesCount,
+                totalItemsCount,
+            };
 
             setContests(newData);
-            const { pageNumber, itemsPerPage, pagesCount, totalItemsCount } = contestsResult || {};
-
-            setPageProps({ pageNumber, itemsPerPage, pagesCount, totalItemsCount });
+            setPagesInfo(newPagesInfo);
         },
         [ data ],
     );
@@ -179,13 +209,15 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         state: {
             contests,
             possibleFilters,
+            pagesInfo,
             filters,
-            ...pageProps,
+            currentPage,
         },
         actions: {
             reload,
-            applyFilters,
             clearFilters,
+            toggleFilter,
+            changePage,
         },
     } as IContestsContext;
 
