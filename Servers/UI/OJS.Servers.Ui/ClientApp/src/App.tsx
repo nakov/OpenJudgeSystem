@@ -35,6 +35,7 @@ const App = () => {
     );
     const user = userCookiesService.getUser();
     const providers = [
+        UrlParamsProvider,
         UrlsProvider,
         ServicesProvider,
         LoadingProvider,
@@ -53,7 +54,6 @@ const App = () => {
         SubmissionsProvider,
         SubmissionsDetailsProvider,
         HomeStatisticsProvider,
-        UrlParamsProvider,
     ] as ProviderType[];
 
     return (

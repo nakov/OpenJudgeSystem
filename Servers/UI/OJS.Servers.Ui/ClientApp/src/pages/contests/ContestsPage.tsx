@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { isEmpty, isNil } from 'lodash';
 import ContestFilters from '../../components/contests/contests-filters/ContestFilters';
 import { useContests } from '../../hooks/use-contests';
@@ -8,54 +8,30 @@ import { IIndexContestsType } from '../../common/types';
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
-import { ContestStatus, FilterType, IFilter } from '../../common/contest-types';
-import { filterByType, findFilterByTypeAndName } from '../../common/filter-utils';
+import { IFilter } from '../../common/contest-types';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
-import { useUrlParams } from '../../hooks/common/use-url-params';
-
 
 const ContestsPage = () => {
     const {
         state: {
             contests,
-            possibleFilters,
-            filters,
-            pagesCount,
-            pageNumber,
+            pagesInfo,
+            currentPage,
         },
-        actions: { applyFilters },
+        actions: {
+            toggleFilter,
+            changePage,
+        },
     } = useContests();
 
-    const {
-        state: { params },
-        actions: {
-            setParam,
-            unsetParam,
-        },
-    } = useUrlParams();
-
     const handlePageChange = useCallback(
-        (page: number) => {
-            applyFilters(filters, page);
-        },
-        [ applyFilters, filters ],
+        (page: number) => changePage(page),
+        [ changePage ],
     );
 
     const handleFilterClick = useCallback(
-        async (filter: IFilter) => {
-            const { name: filterName, type, value } = filter;
-            const paramName = type.toString();
-
-            await unsetParam(paramName);
-
-            const shouldRemoveFilter = filters.some(({ name }) => name === filterName) ||
-                (filter.type === FilterType.Status && filter.name === ContestStatus.All);
-
-            if (!shouldRemoveFilter) {
-                await setParam(paramName, value);
-            }
-        },
-        [ filters, setParam, unsetParam ],
+        (filter: IFilter) => toggleFilter(filter),
+        [ toggleFilter ],
     );
 
     const renderContest = useCallback(
@@ -75,11 +51,13 @@ const ContestsPage = () => {
                 );
             }
 
+            const { pagesCount } = pagesInfo;
+
             return (
                 <>
                     <PaginationControls
                         count={pagesCount}
-                        page={pageNumber}
+                        page={currentPage}
                         onChange={handlePageChange}
                     />
                     <List
@@ -92,22 +70,8 @@ const ContestsPage = () => {
                 </>
             );
         },
-        [ contests, handlePageChange, pageNumber, pagesCount, renderContest ],
+        [ contests, currentPage, handlePageChange, pagesInfo, renderContest ],
     );
-
-    useEffect(() => {
-        const filtersToApply = params.map(({ value, key }) => findFilterByTypeAndName(possibleFilters, key, value))
-            .filter(f => !isNil(f)) as IFilter[];
-
-        if (isEmpty(filterByType(filtersToApply, FilterType.Status))) {
-            const defaultStatusFilters = filterByType(possibleFilters, FilterType.Status)
-                .filter(({ name }) => name === ContestStatus.All);
-
-            filtersToApply.push(...defaultStatusFilters);
-        }
-
-        applyFilters(filtersToApply);
-    }, [ applyFilters, params, possibleFilters ]);
 
     return (
         <div className={styles.container}>

@@ -1,20 +1,16 @@
 import React, { createContext, useCallback, useContext, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { IHaveChildrenProps } from '../../components/common/Props';
-import { IDictionary } from '../../common/common-types';
-
-interface IParam {
-    key: string;
-    value: any;
-}
+import { IDictionary, IUrlParam } from '../../common/common-types';
 
 interface IUrlParamsContext {
     state: {
-        params: IParam[];
+        params: IUrlParam[];
     };
     actions: {
-        setParam: (key: string, value: any) => Promise<void>;
-        unsetParam: (key: string) => Promise<void>;
+        setParam: (key: string, value: any) => void;
+        unsetParam: (key: string) => void;
+        clearParams: () => void;
     };
 }
 
@@ -55,7 +51,7 @@ const UrlParamsProvider = ({ children }: IUrlParamsProviderProps) => {
     );
 
     const setParam = useCallback(
-        async (key: string, value: any) => {
+        (key: string, value: any) => {
             const keyToLower = key.toLowerCase();
 
             if (searchParams.has(keyToLower) || searchParams.has(key)) {
@@ -71,12 +67,19 @@ const UrlParamsProvider = ({ children }: IUrlParamsProviderProps) => {
     );
 
     const unsetParam = useCallback(
-        async (key: string) => {
+        (key: string) => {
             searchParams.delete(key);
             searchParams.delete(key.toLowerCase());
             setSearchParams(searchParams);
         },
         [ searchParams, setSearchParams ],
+    );
+    
+    const clearParams = useCallback(
+        () => {
+            setSearchParams({});
+        },
+        [ setSearchParams ],
     );
 
     const value = {
@@ -84,6 +87,7 @@ const UrlParamsProvider = ({ children }: IUrlParamsProviderProps) => {
         actions: {
             setParam,
             unsetParam,
+            clearParams,
         },
     };
 
