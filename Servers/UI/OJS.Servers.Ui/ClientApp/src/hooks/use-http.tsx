@@ -35,6 +35,7 @@ const useHttp = (
             setResponse(null);
             setError(null);
             const resp = await func();
+
             setResponse(await resp);
             setError(null);
             setStatus(HttpStatus.Success);
@@ -47,6 +48,7 @@ const useHttp = (
                 setStatus(HttpStatus.Error);
                 break;
             }
+
             setError(err);
             setResponse(err.response);
         }
@@ -132,6 +134,7 @@ const useHttp = (
         isSuccess,
     };
 };
+
 export {
     // eslint-disable-next-line import/prefer-default-export
     useHttp,

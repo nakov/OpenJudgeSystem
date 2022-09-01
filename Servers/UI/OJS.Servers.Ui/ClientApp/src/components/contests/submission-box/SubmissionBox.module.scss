@@ -1,20 +1,19 @@
 @import "src/styles/colors";
 
 .contestMainWrapper {
+  // no body
 }
 
 .contestInnerLayout {
   display: flex;
   flex-direction: row;
   margin-top: 30px;
-  //align-items: center;
   flex: 90% 1;
 }
 
 .heading {
   text-align: center;
 }
-
 
 .editorAndProblemControlsWrapper {
   display: flex;
@@ -26,7 +25,6 @@
   display: flex;
   flex-direction: row;
   flex: 6;
-  //max-width: 100%;
 }
 
 .submitButtonContainer {
@@ -42,7 +40,6 @@
 
 .submissionTypesList {
   max-width: 100%;
-  //max-width: 500px;
 }
 
 .taskName {

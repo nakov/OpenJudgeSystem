@@ -37,6 +37,7 @@ const ContestRegisterPage = () => {
                 id: contestIdToNumber,
                 isOfficial: isParticipationOfficial,
             };
+            
             await register(internalContest);
         })();
     }, [ contestIdToNumber, isParticipationOfficial, participationType, register ]);

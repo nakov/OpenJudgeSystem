@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Servers/UI/OJS.Servers.Ui/Dockerfile
-    image: ui
+    image: ghcr.io/softuni-internal/judge_web_ui:dev-2022-08-01
     container_name: ui_instance
     ports:
       - "5002:80"

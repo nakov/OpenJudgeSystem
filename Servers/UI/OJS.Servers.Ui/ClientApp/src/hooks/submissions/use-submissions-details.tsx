@@ -6,18 +6,22 @@ import { useUrls } from '../use-urls';
 import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
 import { UrlType } from '../../common/common-types';
 import { IGetSubmissionDetailsByIdUrlParams, IGetSubmissionResultsByProblemUrlParams } from '../../common/url-types';
-import { ITestRunType, ISubmissionType, ISubmissionDetailsType, ISubmissionDetails } from './types';
+import { ISubmissionDetails, ISubmissionDetailsType, ISubmissionType, ITestRunType } from './types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 
 interface ISubmissionsDetailsContext {
-    currentSubmission: ISubmissionDetailsType | null,
-    setCurrentSubmissionId: (submissionId: number) => void;
-    getDetails: (submissionId: number) => Promise<void>,
-    currentProblemSubmissionResults: ISubmissionDetails[]
-    getSubmissionResults: (problemId: number) => Promise<void>
+    state: {
+        currentSubmission: ISubmissionDetailsType | null;
+        currentProblemSubmissionResults: ISubmissionDetails[];
+    };
+    actions: {
+        selectSubmissionById: (submissionId: number) => void;
+        getDetails: (submissionId: number) => Promise<void>;
+        getSubmissionResults: (problemId: number) => Promise<void>;
+    }
 }
 
-const defaultState = { currentProblemSubmissionResults: [] as ISubmissionDetails[] };
+const defaultState = { state: { currentProblemSubmissionResults: [] as ISubmissionDetails[] } };
 
 const SubmissionsDetailsContext = createContext<ISubmissionsDetailsContext>(defaultState as ISubmissionsDetailsContext);
 
@@ -25,16 +29,27 @@ interface ISubmissionsDetailsProviderProps extends IHaveChildrenProps {}
 
 const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
-    const [ currentSubmissionId, setCurrentSubmissionId ] = useState<number>();
-    const [ currentSubmission, setCurrentSubmission ] = useState<ISubmissionDetailsType | null>(null);
-    const [ currentProblemSubmissionResults, setCurrentProblemSubmissionResults ] =
-        useState<ISubmissionDetails[]>(defaultState.currentProblemSubmissionResults);
+    const [ currentSubmissionId, selectSubmissionById ] = useState<number>();
+    const [
+        currentSubmission,
+        setCurrentSubmission,
+    ] = useState<ISubmissionDetailsType | null>(null);
 
-    const { getSubmissionDetailsByIdUrl, getSubmissionResultsByProblemUrl } = useUrls();
+    const [
+        currentProblemSubmissionResults,
+        setCurrentProblemSubmissionResults,
+    ] = useState(defaultState.state.currentProblemSubmissionResults);
+
+    const {
+        getSubmissionDetailsByIdUrl,
+        getSubmissionResultsByProblemUrl,
+    } = useUrls();
 
     const [
         getSubmissionDetailsByIdParams,
-        setGetSubmissionDetailsByIdParams ] = useState<IGetSubmissionDetailsByIdUrlParams | null>(null);
+        setGetSubmissionDetailsByIdParams,
+    ] = useState<IGetSubmissionDetailsByIdUrlParams | null>(null);
+
     const {
         get: getSubmissionDetails,
         data: apiSubmissionDetails,
@@ -42,45 +57,55 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
 
     const [
         submissionResultsByProblemUrlParams,
-        setSubmissionResultsByProblemUrlParams ] =
-        useState<IGetSubmissionResultsByProblemUrlParams | null>();
+        setSubmissionResultsByProblemUrlParams,
+    ] = useState<IGetSubmissionResultsByProblemUrlParams | null>();
+
     const {
         get: getProblemResultsRequest,
         data: apiProblemResults,
     } = useHttp(getSubmissionResultsByProblemUrl as UrlType, submissionResultsByProblemUrlParams);
 
-    const getDetails = useCallback(async (submissionId: number) => {
-        if (isNil(submissionId)) {
-            return;
-        }
+    const getDetails = useCallback(
+        async (submissionId: number) => {
+            if (isNil(submissionId)) {
+                return;
+            }
 
-        setGetSubmissionDetailsByIdParams({ submissionId } as IGetSubmissionDetailsByIdUrlParams);
-    }, []);
+            setGetSubmissionDetailsByIdParams({ submissionId } as IGetSubmissionDetailsByIdUrlParams);
+        },
+        [],
+    );
 
-    const getSubmissionResults = useCallback(async (problemId: number) => {
-        if (isNil(problemId)) {
-            return;
-        }
+    const getSubmissionResults = useCallback(
+        async (problemId: number) => {
+            if (isNil(problemId)) {
+                return;
+            }
 
-        setSubmissionResultsByProblemUrlParams({
-            id: problemId,
-            isOfficial: true,
-            take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
-        });
-    }, []);
+            setSubmissionResultsByProblemUrlParams({
+                id: problemId,
+                isOfficial: true,
+                take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
+            });
+        },
+        [],
+    );
 
-    useEffect(() => {
-        if (isNil(submissionResultsByProblemUrlParams)) {
-            return;
-        }
+    useEffect(
+        () => {
+            if (isNil(submissionResultsByProblemUrlParams)) {
+                return;
+            }
 
-        (async () => {
-            startLoading();
-            await getProblemResultsRequest();
-            setSubmissionResultsByProblemUrlParams(null);
-            stopLoading();
-        })();
-    }, [ getProblemResultsRequest, startLoading, stopLoading, submissionResultsByProblemUrlParams ]);
+            (async () => {
+                startLoading();
+                await getProblemResultsRequest();
+                setSubmissionResultsByProblemUrlParams(null);
+                stopLoading();
+            })();
+        },
+        [ getProblemResultsRequest, startLoading, stopLoading, submissionResultsByProblemUrlParams ],
+    );
 
     useEffect(() => {
         if (isNil(apiProblemResults)) {
@@ -90,42 +115,55 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         setCurrentProblemSubmissionResults(apiProblemResults as ISubmissionDetails[]);
     }, [ apiProblemResults ]);
 
-    useEffect(() => {
-        if (isNil(getSubmissionDetailsByIdParams)) {
-            return;
-        }
+    useEffect(
+        () => {
+            if (isNil(getSubmissionDetailsByIdParams)) {
+                return;
+            }
 
-        (async () => {
-            startLoading();
-            await getSubmissionDetails();
-            stopLoading();
-        })();
-    }, [ getSubmissionDetails, getSubmissionDetailsByIdParams, startLoading, stopLoading ]);
+            (async () => {
+                startLoading();
+                await getSubmissionDetails();
+                stopLoading();
+            })();
+        },
+        [ getSubmissionDetails, getSubmissionDetailsByIdParams, startLoading, stopLoading ],
+    );
 
-    useEffect(() => {
-        if (isNil(apiSubmissionDetails)) {
-            return;
-        }
+    useEffect(
+        () => {
+            if (isNil(apiSubmissionDetails)) {
+                return;
+            }
 
-        setCurrentSubmission(apiSubmissionDetails as ISubmissionDetailsType);
-    }, [ apiSubmissionDetails ]);
+            setCurrentSubmission(apiSubmissionDetails as ISubmissionDetailsType);
+        },
+        [ apiSubmissionDetails ],
+    );
 
-    useEffect(() => {
-        if (isNil(currentSubmissionId)) {
-            return;
-        }
+    useEffect(
+        () => {
+            if (isNil(currentSubmissionId)) {
+                return;
+            }
 
-        (async () => {
-            await getDetails(currentSubmissionId);
-        })();
-    }, [ currentSubmissionId, getDetails ]);
+            (async () => {
+                await getDetails(currentSubmissionId);
+            })();
+        },
+        [ currentSubmissionId, getDetails ],
+    );
 
     const value = {
-        currentSubmission,
-        setCurrentSubmissionId,
-        currentProblemSubmissionResults,
-        getDetails,
-        getSubmissionResults,
+        state: {
+            currentSubmission,
+            currentProblemSubmissionResults,
+        },
+        actions: {
+            selectSubmissionById,
+            getDetails,
+            getSubmissionResults,
+        },
     };
 
     return (

@@ -1,16 +1,16 @@
 @import "src/styles/components";
 
 .contentWrapper {
-  @extend .contentSize;
-  
+  @extend %contentSize;
+
   max-width: 90%;
   box-sizing: border-box;
   padding: 40px;
-  flex:1;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  
+
   &.wideContentWrapper {
-    @extend .wide;
+    @extend %wide;
   }
 }

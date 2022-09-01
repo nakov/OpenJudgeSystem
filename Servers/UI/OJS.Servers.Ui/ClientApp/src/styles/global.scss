@@ -1,9 +1,10 @@
-@import 'src/styles/__resets';
-@import 'src/styles/colors';
+@import "src/styles/resets";
+@import "src/styles/colors";
+@import "src/styles/fonts";
 
 body,
 #root {
-  font-family: 'Montserrat-Medium', sans-serif;
+  @extend %font-family-montserrat-medium;
   margin: 0;
   padding: 0;
   display: flex;
@@ -11,7 +12,8 @@ body,
   flex-direction: column;
 }
 
-.wrapper {
+.wrapper,
+%wrapper {
   min-height: 700px;
   width: 100%;
   margin: 0 auto;
@@ -22,6 +24,26 @@ body,
 
 form {
   & > button[type='submit'] {
-    margin-top: 10px;
+    margin-top: 10px
+  }
+}
+.columnsThree,
+%columnsThree {
+  & > * {
+    padding: 0 15px;
+    border-left: 1px $bottom-border-color solid;
+
+    &:first-child {
+      border-left: 0;
+    }
+  }
+
+  & > *:first-child,
+  & > *:last-child {
+    flex: 4;
+  }
+
+  & > *:nth-child(2) {
+    flex: 7;
   }
 }

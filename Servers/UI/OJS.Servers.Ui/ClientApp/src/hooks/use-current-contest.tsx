@@ -184,6 +184,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         if (!isNil(submitContestPasswordResponse) && submitContestPasswordResponse.status !== 200) {
             setSubmitContestPasswordErrorMessage('Incorrect password');
             setIsPasswordValid(false);
+            
             return;
         }
 
@@ -194,6 +195,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     useEffect(
         () => {
             const { problems } = contest || {};
+
             if (isNil(problems)) {
                 return;
             }

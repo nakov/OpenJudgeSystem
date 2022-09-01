@@ -1,32 +1,34 @@
 @import "src/styles/colors";
+@import "src/styles/fonts";
 
 .label {
   border: 2px solid transparent;
   border-radius: 2px;
   padding: 5px 15px;
   font-size: 0.8em;
-  color: white;
-  font-family: 'Lato-Regular',sans-serif;
+  color: $white-color;
+  @extend %font-family-lato-regular;
   text-transform: uppercase;
   display: inline-block;
+
   &.success {
-    background: rgb(35, 190, 94);
+    background: rgb(35 190 94);
   }
-  
+
   &.warning {
-    background-color: #FEC112;;
+    background-color: $warning-color;
   }
-  
+
   &.danger {
-    background-color: #fc4c50;;
+    background-color: $primary-red;
   }
-  
+
   &.info {
     background-color: blue;
   }
-  
+
   &.plain {
     background-color: #f1f1f1;
-    color: #565656;
+    color: $grey-color;
   }
 }

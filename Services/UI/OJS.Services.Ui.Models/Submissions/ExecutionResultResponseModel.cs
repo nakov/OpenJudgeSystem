@@ -10,7 +10,7 @@ namespace OJS.Services.Ui.Models.Submissions
 
         public string CompilerComment { get; set; }
 
-        public OutputResultResponseModel OutputResult { get; set; }
+        public OutputResultResponseModel? OutputResult { get; set; }
 
         public TaskResultResponseModel TaskResult { get; set; }
     }

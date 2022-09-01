@@ -34,6 +34,7 @@ interface IListProps<TValue> extends IHaveOptionalClassName {
     orientation?: Orientation;
     wrap?: boolean;
     fullWidth?: boolean;
+    scrollable?: boolean;
 }
 
 const defaultKeyFunc = <TValue extends unknown>(value: TValue) => {
@@ -56,6 +57,7 @@ const List = <TValue extends unknown>({
     orientation = Orientation.vertical,
     wrap = false,
     fullWidth = false,
+    scrollable = false,
 }: IListProps<TValue>) => {
     const listTypeClassName =
         type === ListType.normal
@@ -75,7 +77,19 @@ const List = <TValue extends unknown>({
         ? styles.wrap
         : '';
 
-    const listClassName = concatClassNames(styles.list, listTypeClassName, listOrientationClassName, listWrapClassName, className);
+    const listScrollableClassName =
+        scrollable
+            ? styles.scrollable
+            : '';
+
+    const listClassName = concatClassNames(
+        styles.list,
+        listTypeClassName,
+        listOrientationClassName,
+        listWrapClassName,
+        listScrollableClassName,
+        className,
+    );
     const fullWidthItemClassName = fullWidth
         ? styles.fullWidth
         : '';

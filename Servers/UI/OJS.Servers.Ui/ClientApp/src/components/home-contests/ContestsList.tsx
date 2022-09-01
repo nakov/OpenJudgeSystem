@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import ContestCard from './contest-card/ContestCard';
 import Heading from '../guidelines/headings/Heading';
 import List, { Orientation } from '../guidelines/lists/List';
@@ -61,6 +61,8 @@ const ContestsList = ({
             </Heading>
             <div id="index-contests-list" className={allContestsCardsContainer}>
                 <List
+                  className={styles.contestList}
+                  itemClassName={styles.contestListItem}
                   values={contests}
                   itemFunc={renderContest}
                   orientation={Orientation.horizontal}

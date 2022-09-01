@@ -1,3 +1,5 @@
+@import "src/styles/fonts";
+
 .tab {
-  font-family: 'Lato', serif;
+  @extend %font-family-lato;
 }

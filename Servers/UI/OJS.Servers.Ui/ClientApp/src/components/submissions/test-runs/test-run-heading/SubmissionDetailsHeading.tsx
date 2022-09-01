@@ -4,7 +4,7 @@ import { useSubmissionsDetails } from '../../../../hooks/submissions/use-submiss
 import Heading from '../../../guidelines/headings/Heading';
 
 const SubmissionDetailsHeading = () => {
-    const { currentSubmission } = useSubmissionsDetails();
+    const { state: { currentSubmission } } = useSubmissionsDetails();
 
     const getHeaderText = useMemo(
         () => `Solution #${currentSubmission?.id} for problem ${currentSubmission?.problem.name}`,

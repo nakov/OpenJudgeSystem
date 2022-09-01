@@ -1,9 +1,10 @@
 /* eslint-disable import/prefer-default-export */
 import { groupBy } from 'lodash';
-import { FilterType, IFilter, FilterInfo } from './contest-types';
+import { FilterInfo, FilterType, IFilter } from './contest-types';
 
 const getNextIdGen = function* () {
     let index = 1;
+
     while (true) {
         yield index;
         index += 1;
@@ -21,6 +22,7 @@ const generateFilterItems = (type: FilterType, ...filters: FilterInfo[]) => filt
 
 const groupByType = (filters: IFilter[]) => {
     const groupedGroups = groupBy(filters, (f) => f.type);
+
     return Object.keys(groupedGroups)
         .map((groupType) => ({
             type: groupType as FilterType,

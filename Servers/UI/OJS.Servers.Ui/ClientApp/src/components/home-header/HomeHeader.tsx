@@ -1,40 +1,108 @@
-import * as React from 'react';
+import React, { FC, useCallback, useEffect, useMemo } from 'react';
+
+import { isNil } from 'lodash';
+
+import { IDictionary, IKeyValuePair } from '../../common/common-types';
+import { toList } from '../../utils/object-utils';
+import IconSize from '../guidelines/icons/common/icon-sizes';
+
+import List, { Orientation } from '../guidelines/lists/List';
+import StatisticBox from '../statistic-box/StatisticBox';
+import UsersIcon from '../guidelines/icons/UsersIcon';
+import CodeIcon from '../guidelines/icons/CodeIcon';
+import ProblemIcon from '../guidelines/icons/ProblemIcon';
+import StrategyIcon from '../guidelines/icons/StrategyIcon';
+import ContestIcon from '../guidelines/icons/ContestIcon';
+import SubmissionsPerDayIcon from '../guidelines/icons/SubmissionsPerDayIcon';
+import Heading, { HeadingType } from '../guidelines/headings/Heading';
+
+import { useHomeStatistics } from '../../hooks/use-home-statistics';
 
 import styles from './HomeHeader.module.scss';
-import HomeHeaderInfo from './HomeHeaderInfo';
-import HomeHeaderVideo from './HomeHeaderVideo';
+
+const keyToNameMap: IDictionary<string> = {
+    usersCount: 'Users',
+    submissionsCount: 'Submissions',
+    submissionsPerDayCount: 'Submissions per day',
+    problemsCount: 'Problems',
+    strategiesCount: 'Test strategies',
+    contestsCount: 'Contests',
+};
+
+const defeaultProps = { className: styles.icon };
+
+/* eslint-disable react/jsx-props-no-spreading */
+const keyToIconComponent: IDictionary<FC> = {
+    usersCount: (props: any) => (<UsersIcon {...defeaultProps} {...props} />),
+    submissionsCount: (props: any) => (<CodeIcon {...defeaultProps} {...props} />),
+    submissionsPerDayCount: (props: any) => (<SubmissionsPerDayIcon {...defeaultProps} {...props} />),
+    problemsCount: (props: any) => (<ProblemIcon {...defeaultProps} {...props} />),
+    strategiesCount: (props: any) => (<StrategyIcon {...defeaultProps} {...props} />),
+    contestsCount: (props: any) => (<ContestIcon {...defeaultProps} {...props} />),
+};
+/* eslint-enable react/jsx-props-no-spreading */
 
 const HomeHeader = () => {
-    const bulletTexts = [
-        'Solve problems in most popular programming languages',
-        'See results right away',
-        'Submit algorithms, projects etc.',
-    ];
+    const {
+        state: { statistics },
+        actions: { load },
+    } = useHomeStatistics();
 
-    const primaryHeadingText = 'SoftUni Judge System';
-    const secondaryHeadingText = 'Automatic Algorithm Test Platform';
+    useEffect(
+        () => {
+            (async () => {
+                await load();
+            })();
+        },
+        [ load ],
+    );
 
-    const videoId = window.Keys.YOUTUBE_VIDEO_ID;
+    const renderIcon = (type: string) => {
+        const props = { size: IconSize.ExtraLarge, children: {} };
+        const func = keyToIconComponent[type];
+
+        return func(props);
+    };
+
+    const renderStatistic = useCallback(
+        (statisticItem: IKeyValuePair<number>) => {
+            const { key, value } = statisticItem;
+
+            return (
+                <StatisticBox
+                  statistic={{ name: keyToNameMap[key], value }}
+                  renderIcon={() => renderIcon(key)}
+                />
+            );
+        },
+        [],
+    );
+
+    const statisticsList = useMemo(
+        () => {
+            if (isNil(statistics)) {
+                return [];
+            }
+
+            return toList(statistics);
+        },
+        [ statistics ],
+    );
 
     return (
-        <div className={styles.header}>
-            <div className={styles.headerContent}>
-                <div className={styles.headerLeft}>
-                    <div className={styles.headerContentWrapper}>
-                        <HomeHeaderInfo
-                          primaryText={primaryHeadingText}
-                          secondaryText={secondaryHeadingText}
-                          bullets={bulletTexts}
-                        />
-                    </div>
-                </div>
-                <div className={styles.headerRight}>
-                    <div className={styles.headerContentWrapper}>
-                        <HomeHeaderVideo videoId={videoId} />
-                    </div>
-                </div>
-            </div>
-        </div>
+        <>
+            <Heading type={HeadingType.primary}>
+                SoftUni Judge Numbers
+            </Heading>
+            <List
+              values={statisticsList}
+              itemFunc={renderStatistic}
+              className={styles.statisticsList}
+              itemClassName={styles.statisticsListItem}
+              wrap
+              orientation={Orientation.horizontal}
+            />
+        </>
     );
 };
 

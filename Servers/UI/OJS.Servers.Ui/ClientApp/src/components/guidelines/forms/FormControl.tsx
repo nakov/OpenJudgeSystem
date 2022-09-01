@@ -95,6 +95,7 @@ const FormControl = ({
     const handleOnChange = (ev: any) => {
         if (type === FormControlType.checkbox) {
             setIsChecked(!isChecked);
+            
             return;
         }
 

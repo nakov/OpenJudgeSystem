@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List, { ListType } from '../../guidelines/lists/List';
-import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import { Button, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 
 import concatClassNames from '../../../utils/class-names';
 import { IProblemType } from '../../../common/types';
@@ -88,18 +88,22 @@ const ContestTasksNavigation = () => {
             ? ContestParticipationType.Compete
             : ContestParticipationType.Practice;
         const newResultsLink = `/contests/${contest?.id}/${participationType}/results/${ContestResultType.Simple}`;
+
         setResultsLink(newResultsLink);
     }, [ isOfficial, contest ]);
+
+    const resultsButtonClass = 'resultsButton';
+    const refreshButtonClassName = concatClassNames(styles.resultsButton, resultsButtonClass);
 
     return (
         <div className={styles.tasksSideNavigation}>
             <Heading type={HeadingType.secondary}>Tasks</Heading>
             {renderTasksList()}
             <LinkButton
-              size={ButtonSize.none}
-              type={LinkButtonType.plain}
+              type={LinkButtonType.secondary}
               to={resultsLink}
               text="Results"
+              className={refreshButtonClassName}
             />
         </div>
     );

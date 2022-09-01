@@ -29,6 +29,7 @@ interface IUrlsContext {
     getCategoriesTreeUrl: () => string;
     getAllContestStrategyFiltersUrl: () => string;
     getContestResultsUrl: (params: IGetContestResultsParams) => string;
+    getHomeStatisticsUrl: () => string;
 }
 
 const UrlsContext = createContext<IUrlsContext>({} as IUrlsContext);
@@ -104,9 +105,10 @@ const getAllContestStrategyFiltersUrl =
     () => `${baseApiUrl}/SubmissionTypes/GetAllOrderedByLatestUsage`;
 
 // problem resources
-const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams) => `
-    ${baseApiUrl}/ProblemResources/GetResource/${id}
-`;
+const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams) => `${baseApiUrl}/ProblemResources/GetResource/${id}`;
+
+// Statistics
+const getHomeStatisticsUrl = () => `${baseApiUrl}/StatisticsPreview/GetForHome`;
 
 const UrlsProvider = ({ children }: IUrlsProviderProps) => {
     const value = {
@@ -129,6 +131,7 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
         getCategoriesTreeUrl,
         getAllContestStrategyFiltersUrl,
         getContestResultsUrl,
+        getHomeStatisticsUrl,
     };
 
     return (
