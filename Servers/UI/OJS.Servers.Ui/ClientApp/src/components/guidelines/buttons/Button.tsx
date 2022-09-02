@@ -1,11 +1,9 @@
-import * as React from 'react';
+import React, { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { isNil } from 'lodash';
-import { ReactNode } from 'react';
 import concatClassNames from '../../../utils/class-names';
 import { IHaveOptionalChildrenProps, IHaveOptionalClassName } from '../../common/Props';
 import generateId from '../../../utils/id-generator';
-
 import styles from './Button.module.scss';
 
 enum ButtonState {

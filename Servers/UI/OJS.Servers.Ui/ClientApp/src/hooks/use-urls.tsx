@@ -43,9 +43,8 @@ const getLoginSubmitUrl = () => `${baseUrl}/Account/Login`;
 const getLogoutUrl = () => `${baseUrl}/Account/Logout`;
 
 // admin
-let administrationBaseUrl = window.URLS.ADMINISTRATION_URL;
-administrationBaseUrl = administrationBaseUrl?.slice(5);
-const getAdministrationContestsGridUrl = () => `//${administrationBaseUrl}/Contests`;
+const administrationBaseUrl = window.URLS.ADMINISTRATION_URL;
+const getAdministrationContestsGridUrl = () => `${administrationBaseUrl}/Contests`;
 
 // profile
 const getProfileInfoUrl = () => `${baseApiUrl}/Users/GetProfileInfo`;

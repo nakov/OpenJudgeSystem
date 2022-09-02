@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import HomePage from '../../pages/home/HomePage';
 import LogoutPage from '../../pages/logout/LogoutPage';
 import LoginPage from '../../pages/login/LoginPage';
@@ -9,6 +9,7 @@ import SubmissionPage from '../../pages/submissions/SubmissionPage';
 import ContestPage from '../../pages/contest/ContestPage';
 import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';
 import ContestsPage from '../../pages/contests/ContestsPage';
+import AdministrationPage from '../../pages/administration/AdministrationPage';
 import styles from './PageContent.module.scss';
 import SubmissionDetailsPage from '../../pages/submission-details/SubmissionDetailsPage';
 
@@ -53,6 +54,10 @@ const routes = [
         path: '/contests/:contestId/:participationType/results/:resultType',
         Element: ContestResultsPage,
     },
+    {
+        path: '/administration',
+        Element: AdministrationPage,
+    }
 ];
 
 const PageContent = () => (
@@ -61,6 +66,7 @@ const PageContent = () => (
             {routes.map(({ path, Element }) => (
                 <Route key={path} path={path} element={<Element />} />
             ))}
+            {/*<Route path='/administration' element={<RedirectPage />} />*/}
         </Routes>
     </main>
 );
