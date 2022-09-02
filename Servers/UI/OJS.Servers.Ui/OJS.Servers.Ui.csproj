@@ -56,14 +56,6 @@
         <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
     </ItemGroup>
 
-    <ItemGroup>
-      <None Remove="ClientApp\src\pages\administration\AdministrationPage.tsx" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <TypeScriptCompile Include="ClientApp\src\pages\administration\AdministrationPage.tsx" />
-    </ItemGroup>
-
     <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
         <ItemGroup>
             <DistFiles Include="$(SpaRoot)build\**; $(SpaRoot)build-ssr\**" />
