@@ -66,7 +66,6 @@ const PageContent = () => (
             {routes.map(({ path, Element }) => (
                 <Route key={path} path={path} element={<Element />} />
             ))}
-            {/*<Route path='/administration' element={<RedirectPage />} />*/}
         </Routes>
     </main>
 );
