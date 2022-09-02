@@ -95,3 +95,12 @@ services:
       - ./restore:/queries/restore
     # extra_hosts:
     #   - "host.docker.internal:host-gateway"
+  update_restore_sql:
+    image: update_restore_sql
+    build:
+      context: .
+      dockerfile: ./update_restore_queries/Dockerfile
+    volumes:
+      - ./restore/restore_db/queries:/queries
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
