@@ -2,7 +2,7 @@
 
 docker-compose -f docker-compose.run.yml build db judge_ui judge_administration
 docker-compose -f docker-compose.run.yml up -d db redis
-for i in {1..5}; do
+for i in {1..10}; do
     echo "Sleeping $i"
     sleep 1
 done;
