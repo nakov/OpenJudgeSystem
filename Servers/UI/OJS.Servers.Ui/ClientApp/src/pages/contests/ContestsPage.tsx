@@ -4,12 +4,20 @@ import ContestFilters from '../../components/contests/contests-filters/ContestFi
 import { useContests } from '../../hooks/use-contests';
 import { setLayout } from '../shared/set-layout';
 import styles from './ContestsPage.module.scss';
-import { IIndexContestsType } from '../../common/types';
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
 import { IFilter } from '../../common/contest-types';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
+import Breadcrumb from '../../components/guidelines/breadcrumb/Breadcrumb';
+import { IIndexContestsType } from '../../common/types';
+import { useCategoriesBreadcrumbContext } from '../../hooks/submissions/use-contest-categories-breadcrumb';
+import Text, { TextType } from '../../components/guidelines/text/Text';
+
+interface ICategoryBreadcrumbItem {
+    isLast: boolean,
+    value: string,
+}
 
 const ContestsPage = () => {
     const {
@@ -23,6 +31,8 @@ const ContestsPage = () => {
             changePage,
         },
     } = useContests();
+    
+    const { state: { breadcrumbItems } } = useCategoriesBreadcrumbContext();
 
     const handlePageChange = useCallback(
         (page: number) => changePage(page),
@@ -73,14 +83,29 @@ const ContestsPage = () => {
         [ contests, currentPage, handlePageChange, pagesInfo, renderContest ],
     );
 
-    return (
-        <div className={styles.container}>
+    const renderCategoriesBreadcrumbItem = useCallback(
+        (categoryBreadcrumbItem: ICategoryBreadcrumbItem) => {
+            const { value, isLast } = categoryBreadcrumbItem;
 
-            <ContestFilters onFilterClick={handleFilterClick}/>
-            <div>
-                {renderContests()}
+            return (
+                <Text type={isLast
+                    ? TextType.Bold
+                    : TextType.Normal} text={value} />
+            );
+        },
+        [ ],
+    );
+
+    return (
+        <>
+            <Breadcrumb items={breadcrumbItems} itemFunc={renderCategoriesBreadcrumbItem} />
+            <div className={styles.container}>
+                <ContestFilters onFilterClick={handleFilterClick}/>
+                <div>
+                    {renderContests()}
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 
