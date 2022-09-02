@@ -19,22 +19,15 @@ services:
     environment:
       SA_PASSWORD: 1123QwER
       ACCEPT_EULA: "Y"
+    user: root
     restart: always
-    volumes:
-      - ../AutoCrudAdmin:/src/AutoCrudAdmin
-      - ../Common:/src/Common
-      - ../Data:/src/Data
-      - ../Docker:/src/Docker
-      - ./global.json:/src/global.json
-      - ../Servers:/src/Servers
-      - ../Services:/src/Services
-      - ../Tests:/src/Tests
-      - ../OpenJudgeSystem.sln:/src/OpenJudgeSystem.sln
+    # volumes:
     #   - ./sql_server/data:/var/opt/mssql/data
     #   - ./sql_server/log:/var/opt/mssql/log
     #   - ./sql_server/secrets:/var/opt/mssql/secrets
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    # command: "/bin/bash /queries/restore/create_db/create.sh && /bin/bash /queries/restore/restore_db/restore.sh"
   judge_ui:
     image: judge_ui_for_tests
     build:
@@ -47,16 +40,19 @@ services:
       SULS_PLATFORM_BASE_URL: "https://localhost:44304"
       DISTRIBUTOR_BASE_URL: "https://localhost:44305"
       SULS_PLATFORM_API_KEY: "1234"
-      LOGGER_FILES_FOLDER_PATH: "../../../Logs"
       SHARED_AUTH_COOKIE_DOMAIN: "localhost"
       UI_URL: "http://localhost:5002"
       ADMINISTRATION_URL: "http://localhost:5001"
       UI_HOME_YOUTUBE_VIDEO_ID: "IwLET8SDBE4"
-      PATH_TO_COMMON_KEY_RING_FOLDER: '../../'
+      LOGGER_FILES_FOLDER_PATH: "../Logs"
+      PATH_TO_COMMON_KEY_RING_FOLDER: "../Keys"
       REDIS_CONNECTION_STRING: "host.docker.internal,password=redisPass123,ConnectTimeout=10000,abortConnect=false"
       DB_SERVER: host.docker.internal
       DB_USER: sa
       DB_PASSWORD: 1123QwER
+    volumes:
+      - ./Logs:/Logs
+      - ./Keys:/Keys
     extra_hosts:
       - "host.docker.internal:host-gateway"
   judge_administration:
@@ -71,16 +67,19 @@ services:
       SULS_PLATFORM_BASE_URL: "https://localhost:44304"
       DISTRIBUTOR_BASE_URL: "https://localhost:44305"
       SULS_PLATFORM_API_KEY: "1234"
-      LOGGER_FILES_FOLDER_PATH: "../../../Logs"
       SHARED_AUTH_COOKIE_DOMAIN: "localhost"
       UI_URL: "http://localhost:5002"
       ADMINISTRATION_URL: "http://localhost:5001"
       UI_HOME_YOUTUBE_VIDEO_ID: "IwLET8SDBE4"
-      PATH_TO_COMMON_KEY_RING_FOLDER: '../../'
+      LOGGER_FILES_FOLDER_PATH: "../Logs"
+      PATH_TO_COMMON_KEY_RING_FOLDER: "../Keys"
       REDIS_CONNECTION_STRING: "host.docker.internal,password=redisPass123,ConnectTimeout=10000,abortConnect=false"
       DB_SERVER: host.docker.internal
       DB_USER: sa
       DB_PASSWORD: 1123QwER
+    volumes:
+      - ./Logs:/Logs
+      - ./Keys:/Keys
     extra_hosts:
       - "host.docker.internal:host-gateway"
   tests:
