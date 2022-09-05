@@ -38,10 +38,11 @@ const addMonacoPlugin = (config) => ({
     ],
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const smp = new SpeedMeasurePlugin();
 
-const decorateWebpack = (config, ...funcs) => smp.wrap(funcs
-    .reduce((c, func) => func(c), config));
+const decorateWebpack = (config, ...funcs) => funcs
+    .reduce((c, func) => func(c), config);
 
 module.exports = {
     paths: (paths) => {
