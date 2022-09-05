@@ -1,9 +1,10 @@
 const {
     writeFileSync,
-    rmSync,
     existsSync,
     mkdirSync,
 } = require("fs");
+
+const rimraf = require('rimraf');
 
 const path = require("path");
 
@@ -20,7 +21,6 @@ const {
 
 const getData = async (sql) => {
     const tables = await sql.query('SELECT * FROM INFORMATION_SCHEMA.TABLES tables');
-    // console.log(JSON.stringify(tables));
     return await Promise.all(tables.recordset.map(async ({
         TABLE_NAME: name,
         TABLE_SCHEMA: schema,
@@ -82,17 +82,23 @@ GO
     }, [])
 };
 
-// const getQueriesDirectoryPath = () => path.join(__dirname, 'queries')
-const getQueriesDirectoryPath  = () => '/queries';
+const getQueriesDirectoryPath = () => '/queries';
 
-const ensureQueriesDirectoryExists = () => {
-    if (existsSync(getQueriesDirectoryPath())) {
-        rmSync(getQueriesDirectoryPath(), {
-            recursive: true,
-        });
-    }
-
-    mkdirSync(getQueriesDirectoryPath());
+const ensureEmptyQueriesDirectoryExists = () => {
+    return new Promise((resolve) => {
+        const queriesDirectoryPath = getQueriesDirectoryPath();
+        if (existsSync(queriesDirectoryPath)) {
+            rimraf(`${queriesDirectoryPath}/*`,
+                function () {
+                    console.log(`${queriesDirectoryPath} cleaned`);
+                    resolve();
+                });
+        }
+        else {
+            mkdirSync(queriesDirectoryPath);
+            resolve();
+        }
+    })
 };
 
 const saveQuery = async ({ query, table }, index) => {
@@ -100,22 +106,46 @@ const saveQuery = async ({ query, table }, index) => {
     writeFileSync(filepath, query, 'utf-8');
 };
 
+const getSql = async ({ server, user, password, database }) => {
+    const connetionString = [
+        `Server=${server}`,
+        `Database=${database}`,
+        `User Id=${user}`,
+        `Password=${password}`,
+        'Encrypt=False'
+    ]
+        .join(';');
+    await sql.connect(connetionString);
+    return sql;
+}
+
 const run = async () => {
+    const dbConfig = {
+        server: 'host.docker.internal',
+        user: 'sa',
+        password: '1123QwER',
+        database: 'OpenJudgeSystem',
+    };
+
     try {
-        await sql.connect('Server=host.docker.internal;Database=OpenJudgeSystem;User Id=sa;Password=1123QwER;Encrypt=False')
+        const sql = await getSql(dbConfig);
         const data = await getData(sql);
         const queries = buildQueries(data);
         const tablesOrder = await getTablesOrder(sql, queries.map(q => q.tableName));
 
-        ensureQueriesDirectoryExists();
+        await ensureEmptyQueriesDirectoryExists();
         await Promise.all(
             queries
                 .sort((x, y) => tablesOrder.indexOf(x.tableName) - tablesOrder.indexOf(y.tableName))
                 .map((query, index) => saveQuery(query, index))
         );
+        sql.disc
     }
     catch (ex) {
         console.error(ex);
+    }
+    finally {
+
     }
 };
 

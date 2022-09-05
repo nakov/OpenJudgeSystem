@@ -21,13 +21,8 @@ services:
       ACCEPT_EULA: "Y"
     user: root
     restart: always
-    # volumes:
-    #   - ./sql_server/data:/var/opt/mssql/data
-    #   - ./sql_server/log:/var/opt/mssql/log
-    #   - ./sql_server/secrets:/var/opt/mssql/secrets
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    # command: "/bin/bash /queries/restore/create_db/create.sh && /bin/bash /queries/restore/restore_db/restore.sh"
   judge_ui:
     image: judge_ui_for_tests
     build:
@@ -104,3 +99,5 @@ services:
       - ./restore/restore_db/queries:/queries
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    depends_on:
+      - db

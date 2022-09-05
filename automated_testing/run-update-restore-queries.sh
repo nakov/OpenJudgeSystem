@@ -8,3 +8,4 @@ done;
 
 docker-compose -f docker-compose.run.yml up -d --build update_restore_sql
 docker-compose -f docker-compose.run.yml exec update_restore_sql yarn start
+docker-compose -f docker-compose.run.yml stop update_restore_sql
