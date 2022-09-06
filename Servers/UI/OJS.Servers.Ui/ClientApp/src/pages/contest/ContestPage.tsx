@@ -20,6 +20,7 @@ const ContestPage = () => {
                 id: Number(contestId),
                 isOfficial: participationType === ContestParticipationType.Compete,
             };
+
             await start(contest);
         })();
     }, [ contestId, participationType, start ]);

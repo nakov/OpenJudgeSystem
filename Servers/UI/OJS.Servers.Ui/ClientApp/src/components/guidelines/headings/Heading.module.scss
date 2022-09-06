@@ -1,14 +1,13 @@
 @import "src/styles/colors";
-
-
+@import "src/styles/fonts";
+@import "src/styles/variables";
 .heading {
-  font-family: 'Montserrat', sans-serif;
-  font-style: normal;
+  @extend %font-family-montserrat;
   font-weight: 500;
   color: $text-dark-gray-color;
 
   &.primary {
-    font-size: 30px;
+    font-size: $f-size-30;
     line-height: 36px;
     border-bottom: 1px solid;
     border-bottom-color: $bottom-border-color;
@@ -16,17 +15,18 @@
   }
 
   &.secondary {
-    font-size: 24px;
+    font-size: $f-size-24;
     line-height: 30px;
     font-weight: 400;
     padding: 10px;
 
     @media only screen and (max-width: 1024px) {
-      font-size: 24px;
+      font-size: $f-size-24;
       line-height: 34px;
     }
   }
 
   &.small {
+    // TODO: Add styles
   }
 }

@@ -24,25 +24,13 @@ const Contest = () => {
     } = useCurrentContest();
 
     const navigationContestClass = 'navigationContest';
-    const navigationContestClassName = concatClassNames(
-        styles.sizeThree,
-        styles.container,
-        navigationContestClass,
-    );
+    const navigationContestClassName = concatClassNames(navigationContestClass);
 
     const submissionBoxClass = 'submissionBox';
-    const submissionBoxClassName = concatClassNames(
-        styles.sizeRest,
-        styles.container,
-        submissionBoxClass,
-    );
+    const submissionBoxClassName = concatClassNames(submissionBoxClass);
 
     const problemInfoClass = 'problemInfo';
-    const problemInfoClassName = concatClassNames(
-        styles.sizeThree,
-        styles.container,
-        problemInfoClass,
-    );
+    const problemInfoClassName = concatClassNames(problemInfoClass);
 
     const scoreText = useMemo(
         () => `${score}/${maxScore}`,
@@ -73,6 +61,7 @@ const Contest = () => {
     const renderCountdown = useCallback(
         (remainingTime: ICountdownRemainingType) => {
             const { hours, minutes, seconds } = convertToTwoDigitValues(remainingTime);
+
             return (
                 <>
                     <p className={remainingTimeClassName}>
@@ -95,10 +84,13 @@ const Contest = () => {
     const renderTimeRemaining = useCallback(
         () => {
             const { endTime } = contest || {};
+
             if (!endTime) {
                 return null;
             }
+
             const duration = convertToSecondsRemaining(new Date(endTime));
+
             return (
                 <Countdown renderRemainingTime={renderCountdown} duration={duration} metric={Metric.seconds} />
             );

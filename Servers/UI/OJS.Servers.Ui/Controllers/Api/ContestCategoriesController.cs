@@ -1,10 +1,14 @@
 namespace OJS.Servers.Ui.Controllers.Api;
 
 using Microsoft.AspNetCore.Mvc;
+using OJS.Servers.Infrastructure.Extensions;
+using OJS.Services.Common.Models.Cache;
 using OJS.Services.Ui.Business;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using static Microsoft.AspNetCore.Http.StatusCodes;
 
-public class ContestCategoriesController : ControllerBase
+public class ContestCategoriesController : BaseApiController
 {
     private readonly IContestCategoriesCacheService contestCategoriesCache;
 
@@ -12,6 +16,17 @@ public class ContestCategoriesController : ControllerBase
         IContestCategoriesCacheService contestCategoriesCache)
         => this.contestCategoriesCache = contestCategoriesCache;
 
+    /// <summary>
+    /// Gets contest categories, ordered in a tree.
+    /// </summary>
+    /// <returns>All contest categories as a tree</returns>
+    /// <remarks>
+    /// Retrieves the items from cache, that is invalidated every hour.
+    /// </remarks>
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<ContestCategoryTreeViewModel>), Status200OK)]
     public async Task<IActionResult> GetCategoriesTree()
-        => this.Ok(await this.contestCategoriesCache.GetAllContestCategoriesTree());
+        => await this.contestCategoriesCache
+            .GetAllContestCategoriesTree()
+            .ToOkResult();
 }

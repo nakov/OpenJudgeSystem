@@ -1,18 +1,20 @@
 @import "src/styles/colors";
+@import "src/styles/fonts";
+@import "src/styles/variables";
 
 .tasksSideNavigation {
   text-align: center;
 }
 
 .tasksListSideNavigation {
-  align-items: start;
+  align-items: flex-start;
   padding: 20px;
   display: flex;
 
   .taskSideNavigationItem {
     text-align: start;
-    font-size: 18px;
-    font-family: 'Lato', serif;
+    font-size: $f-size-18;
+    @extend %font-family-lato;
     margin-top: 10px;
     color: $text-dark-gray-color;
 
@@ -32,6 +34,16 @@
   justify-content: space-between;
   align-items: center;
   position: relative;
-  padding: 25px 0 5px;
+  padding: 35px 0 5px;
   border-bottom: 1px solid $bottom-border-color;
+}
+
+.resultsButton {
+  border: none;
+  align-self: end;
+
+  &:hover {
+    background: none;
+    cursor: pointer;
+  }
 }

@@ -61,6 +61,8 @@ const ContestsList = ({
             </Heading>
             <div id="index-contests-list" className={allContestsCardsContainer}>
                 <List
+                  className={styles.contestList}
+                  itemClassName={styles.contestListItem}
                   values={contests}
                   itemFunc={renderContest}
                   orientation={Orientation.horizontal}

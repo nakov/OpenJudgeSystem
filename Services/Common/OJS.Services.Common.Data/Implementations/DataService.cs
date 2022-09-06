@@ -43,6 +43,11 @@ namespace OJS.Services.Common.Data.Implementations
             this.Delete(entity!);
         }
 
+        public async Task<int> GetCount()
+            => await this.DbSet.AnyAsync()
+                ? await this.DbSet.CountAsync()
+                : 0;
+
         public virtual void DeleteMany(IEnumerable<TEntity> entities)
             => this.db.RemoveRange(entities);
 

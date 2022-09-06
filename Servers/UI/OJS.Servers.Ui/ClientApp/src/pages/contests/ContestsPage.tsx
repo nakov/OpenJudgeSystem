@@ -10,6 +10,8 @@ import ContestCard from '../../components/home-contests/contest-card/ContestCard
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
 import { ContestStatus, FilterType, IFilter } from '../../common/contest-types';
+import { filterByType } from '../../common/filter-utils';
+import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 
 const ContestsPage = () => {
     const {
@@ -25,6 +27,33 @@ const ContestsPage = () => {
 
     const [ searchParams, setSearchParams ] = useSearchParams();
     const [ filtersAreCollected, setFiltersAreCollected ] = useState(false);
+    const handlePageChange = useCallback(
+        (page: number) => {
+            applyFilters(filters, page);
+        },
+        [ applyFilters, filters ],
+    );
+
+    const handleFilterClick = useCallback(
+        (filter: IFilter) => {
+            const { name: filterName, type, value } = filter;
+            const paramName = type.toString();
+
+            searchParams.delete(paramName);
+            searchParams.delete(paramName.toLowerCase());
+
+            const shouldRemoveFilter = filters.some(({ name }) => name === filterName) &&
+                filter.type !== FilterType.Category;
+
+            if (!shouldRemoveFilter) {
+                searchParams.append(paramName.toLowerCase(), value);
+            }
+
+            setSearchParams(searchParams);
+            setFiltersAreCollected(false);
+        },
+        [ filters, searchParams, setSearchParams ],
+    );
 
     const renderContest = useCallback(
         (contest: IIndexContestsType) => (
@@ -33,29 +62,35 @@ const ContestsPage = () => {
         [],
     );
 
-    const handlePageChange = useCallback(
-        (page: number) => {
-            applyFilters(filters, page);
+    const renderContests = useCallback(
+        () => {
+            if (isNil(contests) || isEmpty(contests)) {
+                return (
+                    <Heading type={HeadingType.secondary}>
+                        No contests apply for this filter
+                    </Heading>
+                );
+            }
+
+            return (
+                <>
+                    <PaginationControls
+                      count={pagesCount}
+                      page={pageNumber}
+                      onChange={handlePageChange}
+                    />
+                    <List
+                      values={contests}
+                      itemFunc={renderContest}
+                      itemClassName={styles.contestItem}
+                      orientation={Orientation.horizontal}
+                      wrap
+                    />
+                </>
+            );
         },
-        [ applyFilters, filters ],
+        [ contests, handlePageChange, pageNumber, pagesCount, renderContest ],
     );
-
-    const handleFilterClick = useCallback((filter: IFilter) => {
-        const { name: filterName, type, value } = filter;
-        const paramName = type.toString();
-        searchParams.delete(paramName);
-        searchParams.delete(paramName.toLowerCase());
-
-        const shouldRemoveFilter = filters.some(({ name }) => name === filterName) &&
-            filter.type !== FilterType.Category;
-
-        if (!shouldRemoveFilter) {
-            searchParams.append(paramName.toLowerCase(), value);
-        }
-
-        setSearchParams(searchParams);
-        setFiltersAreCollected(false);
-    }, [ filters, searchParams, setSearchParams ]);
 
     useEffect(() => {
         if (isEmpty(possibleFilters) || filtersAreCollected) {
@@ -63,19 +98,22 @@ const ContestsPage = () => {
         }
 
         const filtersToApply = [] as IFilter[];
+
         searchParams.forEach((val, key) => {
             const filter = possibleFilters
                 .find(({ type, value }) => type.toString().toLowerCase() === key.toLowerCase() &&
-                        value.toLowerCase() === val.toLowerCase());
+                    value.toLowerCase() === val.toLowerCase());
+
             if (!isNil(filter)) {
                 filtersToApply.push(filter);
             }
         });
 
-        if (isEmpty(filtersToApply)) {
-            const defaultFilters = possibleFilters
-                .filter(({ name, type }) => type === FilterType.Status && name === ContestStatus.All);
-            filtersToApply.push(...defaultFilters);
+        if (isEmpty(filterByType(filtersToApply, FilterType.Status))) {
+            const defaultStatusFilters = filterByType(possibleFilters, FilterType.Status)
+                .filter(({ name }) => name === ContestStatus.All);
+
+            filtersToApply.push(...defaultStatusFilters);
         }
 
         applyFilters(filtersToApply);
@@ -84,19 +122,10 @@ const ContestsPage = () => {
 
     return (
         <div className={styles.container}>
+
             <ContestFilters onFilterClick={handleFilterClick} />
             <div>
-                <List
-                  values={contests}
-                  itemFunc={renderContest}
-                  orientation={Orientation.horizontal}
-                  wrap
-                />
-                <PaginationControls
-                  count={pagesCount}
-                  page={pageNumber}
-                  onChange={handlePageChange}
-                />
+                {renderContests()}
             </div>
         </div>
     );

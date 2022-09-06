@@ -1,3 +1,5 @@
+@import "src/styles/variables";
+
 .listNav {
   display: flex;
   gap: 15px;
@@ -6,6 +8,6 @@
 }
 
 .btn {
-  font-size: 12px;
+  font-size: $f-size-12;
   padding: 12px 8px;
 }

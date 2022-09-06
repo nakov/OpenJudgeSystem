@@ -1,4 +1,11 @@
+@import "src/styles/colors";
 
-.contestTabControls {
-  flex: 1;
+.problemDetailsContainer {
+  & > * {
+    border-bottom: 1px solid $bottom-border-color;
+
+    &:last-of-type {
+      border-bottom: 0;
+    }
+  }
 }

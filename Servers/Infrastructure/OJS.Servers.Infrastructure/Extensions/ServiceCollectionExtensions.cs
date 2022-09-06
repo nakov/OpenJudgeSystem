@@ -6,9 +6,11 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Net.Http.Headers;
+    using Microsoft.OpenApi.Models;
     using OJS.Common.Enumerations;
     using OJS.Common.Utils;
     using OJS.Services.Common.Data;
@@ -23,6 +25,8 @@ namespace OJS.Servers.Infrastructure.Extensions
     using System.Collections.Generic;
     using System.IO;
     using System.Net.Http;
+    using System.Reflection;
+    using static OJS.Common.GlobalConstants.FileExtensions;
     using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.EnvironmentVariables;
     using static OJS.Servers.Infrastructure.ServerConstants;
@@ -33,9 +37,11 @@ namespace OJS.Servers.Infrastructure.Extensions
             => services
                 .AddAutoMapperConfigurations<TStartup>()
                 .AddWebServerServices<TStartup>()
-                .AddAuthenticationServices();
+                .AddAuthenticationServices()
+                .AddCaching<TStartup>();
 
-        public static IServiceCollection AddIdentityDatabase<TDbContext, TIdentityUser, TIdentityRole, TIdentityUserRole>(
+        public static IServiceCollection AddIdentityDatabase<TDbContext, TIdentityUser, TIdentityRole,
+            TIdentityUserRole>(
             this IServiceCollection services,
             IEnumerable<GlobalQueryFilterType>? globalQueryFilterTypes = null)
             where TDbContext : DbContext
@@ -86,6 +92,38 @@ namespace OJS.Servers.Infrastructure.Extensions
             return services;
         }
 
+        public static IServiceCollection AddSwaggerDocs(
+            this IServiceCollection services,
+            string name,
+            string title,
+            string version)
+            => services
+                .AddSwaggerGen(options =>
+                {
+                    options.SwaggerDoc(name, new OpenApiInfo { Title = title, Version = version, });
+
+                    options.MapType<FileContentResult>(() => new OpenApiSchema { Type = "file", });
+
+                    var entryAssembly = Assembly.GetEntryAssembly();
+                    if (entryAssembly != null)
+                    {
+                        var xmlFilename = $"{entryAssembly.GetName().Name}{Xml}";
+                        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+                    }
+                });
+
+        public static IServiceCollection AddCaching<TStartup>(this IServiceCollection services)
+        {
+            EnvironmentUtils.ValidateEnvironmentVariableExists(
+                new[] { RedisConnectionString });
+
+            return services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = EnvironmentUtils.GetByKey(RedisConnectionString);
+                options.InstanceName = typeof(TStartup).FullName;
+            });
+        }
+
         private static IServiceCollection AddWebServerServices<TStartUp>(this IServiceCollection services)
         {
             services
@@ -101,14 +139,14 @@ namespace OJS.Servers.Infrastructure.Extensions
         }
 
         private static IServiceCollection AddHttpContextServices(this IServiceCollection services)
-            =>  services
+            => services
                 .AddHttpContextAccessor()
                 .AddTransient(s => s.GetRequiredService<IHttpContextAccessor>().HttpContext!.User);
 
         private static IServiceCollection AddAuthenticationServices(this IServiceCollection services)
         {
             EnvironmentUtils.ValidateEnvironmentVariableExists(
-                new [] { PathToCommonKeyRingFolderKey, SharedAuthCookieDomain });
+                new[] { PathToCommonKeyRingFolderKey, SharedAuthCookieDomain });
 
             var keysDirectoryPath = EnvironmentUtils.GetByKey(PathToCommonKeyRingFolderKey);
 

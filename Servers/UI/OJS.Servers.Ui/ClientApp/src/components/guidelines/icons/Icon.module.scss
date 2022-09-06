@@ -1,40 +1,30 @@
-@import 'src/styles/colors';
-
+@import "src/styles/colors";
+@import "./common/icon-base";
 
 .iconContainer {
-  position: relative;
-  display: inline-block;
+  @extend %iconContainer;
 
   &.small {
-    width: 10px;
-    height: 10px;
+    @extend %small;
   }
 
   &.medium {
-    width: 15px;
-    height: 15px;
+    @extend %medium;
   }
 
   &.large {
-    width: 25px;
-    height: 25px;
+    @extend %large;
   }
-}
 
-.icon {
-  &:hover {
-
-    & + .helperText {
-      display: inline-block;
-    }
+  &.extraLarge {
+    @extend %extraLarge;
   }
 }
 
 .helperText {
-  position: absolute;
-  bottom: 100%;
-  left: 100%;
-  display: none;
-  width: 200px;
-  z-index: 1000;
+  @extend %helperText;
+}
+
+.icon {
+  @extend %icon;
 }

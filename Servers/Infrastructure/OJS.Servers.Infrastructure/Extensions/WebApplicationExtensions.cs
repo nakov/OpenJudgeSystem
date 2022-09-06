@@ -46,6 +46,17 @@ namespace OJS.Servers.Infrastructure.Extensions
             return app;
         }
 
+        public static WebApplication UseSwaggerDocs(this WebApplication app, string name)
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint($"/swagger/{name}/swagger.json", name);
+            });
+
+            return app;
+        }
+
         private static WebApplication UseCustomExceptionHandling(this WebApplication app)
         {
             if (app.Environment.IsDevelopment())

@@ -8,7 +8,7 @@ import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guideli
 import styles from './PageHeader.module.scss';
 
 const PageHeader = () => {
-    const { user } = useAuth();
+    const { state: { user } } = useAuth();
 
     const { getAdministrationContestsGridUrl } = useUrls();
 

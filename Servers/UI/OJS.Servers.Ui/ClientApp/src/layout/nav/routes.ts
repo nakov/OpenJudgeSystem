@@ -22,6 +22,7 @@ const routes: RouteType[] = [
 const getRoutes = () => [ ...routes ];
 const getRoutesMap = () => {
     const routesMap: ILooseObject = {};
+
     routes.forEach(({ path, component }) => {
         routesMap[path] = { path, component };
     });

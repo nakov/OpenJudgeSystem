@@ -6,8 +6,8 @@ namespace OJS.Services.Ui.Models.Submissions
     {
         public int SubmissionId { get; set; }
 
-        public ExceptionModel Exception { get; set; }
+        public ExceptionModel? Exception { get; set; }
 
-        public ExecutionResultResponseModel ExecutionResult { get; set; }
+        public ExecutionResultResponseModel? ExecutionResult { get; set; }
     }
 }

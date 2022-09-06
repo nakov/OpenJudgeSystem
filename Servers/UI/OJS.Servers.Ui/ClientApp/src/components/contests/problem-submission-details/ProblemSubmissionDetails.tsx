@@ -55,15 +55,18 @@ const ProblemSubmissionDetails = ({ submission }: IProblemSubmissionDetailsProps
     const { testRuns } = submission;
     const handleTestRunClick = (testRun: ITestRunDetailsType) => {
         const { isTrialTest } = testRun;
+
         if (!isTrialTest) {
             return;
         }
+
         alert(JSON.stringify(testRun));
     };
 
     const renderTestRun = (testRun: ITestRunDetailsType) => (
         <TestRun testRun={testRun} onSelect={() => handleTestRunClick(testRun)} />
     );
+
     return (
         <>
             <List
@@ -75,4 +78,5 @@ const ProblemSubmissionDetails = ({ submission }: IProblemSubmissionDetailsProps
         </>
     );
 };
+
 export default ProblemSubmissionDetails;

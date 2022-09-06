@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Servers/UI/OJS.Servers.Ui/Dockerfile
-    image: ui
+    image: ghcr.io/softuni-internal/judge_web_ui:dev-2022-08-01
     container_name: ui_instance
     ports:
       - "5002:80"
@@ -18,7 +18,7 @@ services:
       - Docker/common/db.env
       - Docker/applications/ui/ui.env
     extra_hosts:
-      - "db: 217.174.159.217"
+      - "db:host-gateway"
       - "localhost:host-gateway"
   administration:
     build:
@@ -37,5 +37,5 @@ services:
       - Docker/common/db.env
       - Docker/applications/administration/administration.env
     extra_hosts:
-      - "db: 217.174.159.217"
+      - "db:host-gateway"
       - "localhost:host-gateway"

@@ -6,7 +6,8 @@ using SoftUni.Services.Infrastructure;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-public interface IContestCategoriesCacheService : IService
+public interface IContestCategoriesCacheService
+    : IService
 {
     Task<IEnumerable<ContestCategoryTreeViewModel>> GetContestSubCategoriesList(
         int categoryId,

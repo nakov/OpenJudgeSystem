@@ -1,7 +1,8 @@
-@import 'src/styles/colors';
+@import "src/styles/colors";
 
 .heading {
   text-align: left;
+  padding-bottom: 10px;
   border-bottom: 1px solid $bottom-border-color;
 }
 
@@ -9,14 +10,15 @@
   margin-top: 10px;
 }
 
-.listFilterItems {
-  display: block;
-  max-height: 115px;
+.listFilters {
+  max-height: 130px;
   overflow: hidden;
+  align-items: flex-start;
+
   .listFilterItem {
     margin-top: 5px;
   }
-  
+
   &.expanded {
     max-height: none;
     overflow: visible;
@@ -24,9 +26,7 @@
 }
 
 .btnSelectFilter {
-  padding: 7px 14px;
-  border-radius: 0;
-  border-width: 1px;
+  width: 95%;
 }
 
 .container {

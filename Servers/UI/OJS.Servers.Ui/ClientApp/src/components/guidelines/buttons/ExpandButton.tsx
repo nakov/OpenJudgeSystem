@@ -2,18 +2,21 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { MdExpandLess, MdExpandMore } from 'react-icons/md';
 import { Button, ButtonSize, ButtonType } from './Button';
 
+import concatClassNames from '../../../utils/class-names';
+import { IHaveOptionalClassName } from '../../common/Props';
 import styles from './ExpandButton.module.scss';
 
-interface IExpandButtonProps {
+interface IExpandButtonProps extends IHaveOptionalClassName {
     onExpandChanged: (expanded: boolean) => void;
-    expandedText?: string,
-    collapsedText?: string,
-    expandedIcon?: React.ReactElement,
-    collapsedIcon?: React.ReactElement,
-    expanded?: boolean,
+    expandedText?: string;
+    collapsedText?: string;
+    expandedIcon?: React.ReactElement;
+    collapsedIcon?: React.ReactElement;
+    expanded?: boolean;
 }
 
 const ExpandButton = ({
+    className = '',
     expandedText = 'Show less',
     collapsedText = 'Show more',
     expandedIcon = <MdExpandLess />,
@@ -30,6 +33,8 @@ const ExpandButton = ({
     const renderButtonIcon = useCallback(() => (expandedInternal
         ? expandedIcon
         : collapsedIcon), [ collapsedIcon, expandedInternal, expandedIcon ]);
+
+    const internalClassName = concatClassNames(styles.link, className);
 
     const handleClick = useCallback(
         () => {
@@ -54,7 +59,7 @@ const ExpandButton = ({
               type={ButtonType.plain}
               size={ButtonSize.none}
               onClick={handleClick}
-              className={styles.link}
+              className={internalClassName}
             >
                 {renderButtonText()}
                 {renderButtonIcon()}

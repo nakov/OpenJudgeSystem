@@ -18,8 +18,8 @@ namespace OJS.Services.Ui.Business.Implementations
 
     public class ContestsBusinessService : IContestsBusinessService
     {
-        private const int DefaultContestsToTake = 5;
-        private const int DefaultContestsPerPage = 10;
+        private const int DefaultContestsToTake = 4;
+        private const int DefaultContestsPerPage = 12;
 
         private readonly IContestsDataService contestsData;
         private readonly IExamGroupsDataService examGroupsData;
