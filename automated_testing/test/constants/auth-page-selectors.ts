@@ -8,6 +8,5 @@ const selectors = {
     authRememberMeCheckBoxSelector: '#RememberMe',
     authLinkIfuserIsNoRegistered: '.form-group p a',
     authNavigationMyProfileBtn: '#nav-my-profile-link',
-    authNavLogOutBtnSelector: '#nav-logout-link',
 };
 export default selectors;

@@ -1,4 +1,5 @@
 import { beforeEach } from 'mocha';
+import { isClassOrTypeElement } from 'typescript';
 import IndexPage from '../pageobjects/index-page';
 
 describe('Testing index', () => {
@@ -64,14 +65,14 @@ describe('Testing index', () => {
     it('Expect "See all" button in active contest section to be diplayed and redirect properly', async () => {
         const btn = await IndexPage.seeAllActiveContestsButton;
         await expect(btn).toExist();
-        await expect(btn).toHaveHrefContaining('/contests'); // must be to active
+        await expect(btn).toHaveHrefContaining('/contests?status=active');
         await expect(btn).toBeClickable();
     });
 
     it('Expect "See all" button in active contest section to exist and redirect properly', async () => {
         const btn = await IndexPage.seeAllPastContestsButton;
         await expect(btn).toExist();
-        await expect(btn).toHaveHrefContaining('/contests'); // must be to past
+        await expect(btn).toHaveHrefContaining('/contests?status=past');
         await expect(btn).toBeClickable();
     });
 
@@ -134,26 +135,26 @@ describe('Testing index', () => {
     });
 
     it('Expect every active contest card to have enabled compete button', async () => {
-        const competeButtons = await IndexPage.competeCardButtonActivecontests;
-        const check = await competeButtons.forEach((b) => b.isEnabled());
-        await expect(check).toBeTruthy();
+        const competeButtons = await IndexPage.competeButtonInActiveContestCard;
+        const check = await competeButtons.filter((b) => b.isEnabled());
+        await expect(competeButtons.length).toEqual(check.length);
     });
 
     it('Expect every active contest card to have disabled practice button', async () => {
-        const competeButtons = await IndexPage.competeCardButtonActivecontests;
-        const check = await competeButtons.forEach((b) => b.isEnabled());
-        await expect(check).toBeFalsy();
+        const practiceButtons = await IndexPage.practiceButtonInActiveContestsCard;
+        const check = await practiceButtons.filter((b) => b.isEnabled());
+        await expect(check.length).toEqual(0);
     });
 
     it('Expect every past contest card to have disabled compete button', async () => {
-        const practiceButtons = await IndexPage.competeCardButtonPastcontests;
-        const check = await practiceButtons.forEach((b) => b.isEnabled());
-        await expect(check).toBeFalsy();
+        const competeButtons = await IndexPage.competeButtonInPastContestsCard;
+        const check = await competeButtons.filter((b) => b.isEnabled());
+        await expect(check.length).toEqual(0);
     });
 
     it('Expect every past contest card to have enabled practice button', async () => {
-        const practiceButtons = await IndexPage.practiceCardButtoPastContests;
-        const check = await practiceButtons.forEach((b) => b.isEnabled());
-        await expect(check).toBeTruthy();
+        const practiceButtons = await IndexPage.practiceButtoInPastContestsCard;
+        const check = await practiceButtons.filter((b) => b.isEnabled());
+        await expect(practiceButtons.length).toEqual(check.length);
     });
 });
