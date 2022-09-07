@@ -54,6 +54,7 @@
 
         public IQueryable<Participant> GetAllByContestIdsAndIsOfficial(IEnumerable<int> contestIds, bool isOfficial)
             => this.GetAll()
+                .AsNoTracking()
                 .Where(p => contestIds.Contains(p.ContestId))
                 .Where(p => p.IsOfficial == isOfficial);
 

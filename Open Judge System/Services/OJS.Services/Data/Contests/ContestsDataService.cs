@@ -76,6 +76,7 @@
         public IQueryable<Contest> GetAllNotDeletedByCategory(int categoryId, bool showHidden)
         {
             var contests = this.GetAll()
+                .AsNoTracking()
                 .Where(c => c.CategoryId == categoryId)
                 .Where(c => !c.IsDeleted);
 

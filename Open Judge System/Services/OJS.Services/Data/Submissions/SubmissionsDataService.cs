@@ -1,4 +1,5 @@
 ﻿using System.Data.Entity;
+using System.Linq.Dynamic;
 using MissingFeatures;
 
 namespace OJS.Services.Data.Submissions
@@ -55,9 +56,12 @@ namespace OJS.Services.Data.Submissions
                 .GroupBy(s => s.Problem.Id);
 
         public IQueryable<IGrouping<int, Submission>> GetWithMaxPointsByParticipantIds(IEnumerable<int> participantIds)
-        => this.GetAll()
+            => this.GetAll()
+                .AsNoTracking()
                 .Where(s => s.Points == s.Problem.MaximumPoints)
                 .Where(s => participantIds.Contains(s.ParticipantId.Value))
+                .GroupBy(s => s.ParticipantId.Value)
+                .Select(g => g.OrderBy(s => s.CreatedOn).FirstOrDefault())
                 .GroupBy(s => s.ParticipantId.Value);
 
         public IQueryable<Submission> GetAllFromContestsByLecturer(string lecturerId) =>

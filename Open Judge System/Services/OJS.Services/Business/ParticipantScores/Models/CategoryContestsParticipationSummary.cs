@@ -6,6 +6,6 @@ namespace OJS.Services.Business.ParticipantScores.Models
     {
         public int MaxProblemsCount { get; set; }
         
-        public IEnumerable<ParticipationsSummaryServiceModel> Results { get; set; }
+        public ICollection<ParticipantScoresSummaryModel> Results { get; set; }
     }
 }

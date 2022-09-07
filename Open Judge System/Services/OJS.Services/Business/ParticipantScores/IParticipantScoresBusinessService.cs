@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using OJS.Data.Models;
-using OJS.Services.Business.ParticipantScores.Models;
+﻿using OJS.Services.Business.ParticipantScores.Models;
 
 namespace OJS.Services.Business.ParticipantScores
 {
@@ -13,7 +11,5 @@ namespace OJS.Services.Business.ParticipantScores
         void NormalizeAllPointsThatExceedAllowedLimit();
 
         CategoryContestsParticipationSummary GetCategoryParticipationSummary(int categoryId, bool showHidden, bool official);
-        
-        ParticipationsSummaryServiceModel GetParticipationSummaryForContest(Contest contest, IEnumerable<ParticipantSummaryInfoServiceModel> participants, bool official);
     }
 }

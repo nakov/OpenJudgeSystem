@@ -62,20 +62,20 @@ namespace OJS.Services.Business.ParticipantScores.Models
         
         private void FillSheet()
         {
-            CategorySummary.Results.ForEach(contestSummary => CreateContestSummaryRows(contestSummary));
+            CreateContestSummaryRows(this.CategorySummary);
         }
         
-        private void CreateContestSummaryRows(ParticipationsSummaryServiceModel contestSummary)
+        private void CreateContestSummaryRows(CategoryContestsParticipationSummary contestSummary)
         {
-            contestSummary.Results.ForEach((participantSummary) => CreateParticipantSummaryRow(contestSummary, participantSummary));
+            contestSummary.Results.ForEach(CreateParticipantSummaryRow);
         }
         
-        private void CreateParticipantSummaryRow(ParticipationsSummaryServiceModel contestSummary, ParticipantScoresSummaryModel participantSummary)
+        private void CreateParticipantSummaryRow(ParticipantScoresSummaryModel participantSummary)
         {
             var row = sheet.CreateRow(rowNumber++);
             var colNumber = 0;
-            row.CreateCell(colNumber++).SetCellValue(contestSummary.ContestName);
-            row.CreateCell(colNumber++).SetCellValue(contestSummary.ProblemsCount);
+            row.CreateCell(colNumber++).SetCellValue(participantSummary.ContestName);
+            row.CreateCell(colNumber++).SetCellValue(participantSummary.ProblemsCount);
             string participantName = participantSummary.ParticipantName;
             row.CreateCell(colNumber++).SetCellValue(participantName);
 

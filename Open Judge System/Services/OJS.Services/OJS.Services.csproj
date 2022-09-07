@@ -107,7 +107,6 @@
     <Compile Include="Business\ParticipantScores\Models\MaximumResultSubmissionByProblemServiceModel.cs" />
     <Compile Include="Business\ParticipantScores\Models\ParticipantScoresSummaryModel.cs" />
     <Compile Include="Business\ParticipantScores\Models\ParticipantSummaryInfoServiceModel.cs" />
-    <Compile Include="Business\ParticipantScores\Models\ParticipationsSummaryServiceModel.cs" />
     <Compile Include="Business\ParticipantScores\ParticipantScoresBusinessService.cs" />
     <Compile Include="Business\Participants\IParticipantsBusinessService.cs" />
     <Compile Include="Business\Participants\ParticipantsBusinessService.cs" />
