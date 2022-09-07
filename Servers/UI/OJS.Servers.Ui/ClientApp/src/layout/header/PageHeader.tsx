@@ -10,7 +10,7 @@ import styles from './PageHeader.module.scss';
 const PageHeader = () => {
     const { state: { user } } = useAuth();
 
-    const { getAdministrationContestsGridUrl } = useUrls();
+    const { getAdministrationNavigation } = useUrls();
 
     const renderLinks = useCallback(() => {
         const administrationLink = user.permissions.canAccessAdministration
@@ -18,7 +18,7 @@ const PageHeader = () => {
                 <LinkButton
                   type={LinkButtonType.plain}
                   size={ButtonSize.none}
-                  to={getAdministrationContestsGridUrl()}
+                  to={getAdministrationNavigation()}
                   isToExternal
                   text="Administration"
                 />
@@ -44,7 +44,7 @@ const PageHeader = () => {
                 { administrationLink }
             </>
         );
-    }, [ getAdministrationContestsGridUrl, user.permissions.canAccessAdministration ]);
+    }, [ getAdministrationNavigation , user.permissions.canAccessAdministration ]);
 
     return (
         <header id="pageHeader" className={styles.header}>
