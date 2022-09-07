@@ -5,7 +5,8 @@ import {
     IGetContestResultsParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
-    IStartContestParticipationUrlParams, ISubmitContestPasswordUrlParams,
+    IStartContestParticipationUrlParams, 
+    ISubmitContestPasswordUrlParams,
 } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 

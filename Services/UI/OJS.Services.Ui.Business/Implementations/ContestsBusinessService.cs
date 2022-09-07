@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace OJS.Services.Ui.Business.Implementations
 {
     using System;
@@ -61,9 +63,7 @@ namespace OJS.Services.Ui.Business.Implementations
                     userProfile.Id,
                     official);
 
-            var contest = this.contestsData
-                .GetByIdQuery(id)
-                .FirstOrDefault();
+            var contest = await this.contestsData.OneById(id);
 
             await this.ValidateContest(contest, user.Id, user.IsAdmin, official);
 

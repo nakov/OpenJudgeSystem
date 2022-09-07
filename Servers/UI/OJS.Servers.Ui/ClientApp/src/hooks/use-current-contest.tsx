@@ -104,7 +104,9 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     }, []);
 
     const register = useCallback((obj) => {
-        setRegisterForContestParams({ id: obj.id, isOfficial: obj.isOfficial } as IRegisterForContestUrlParams);
+        const { id, isOfficial: official } = obj;
+        
+        setRegisterForContestParams({ id, isOfficial: official } as IRegisterForContestUrlParams);
     }, []);
 
     const submitPassword = useCallback(({ id, isOfficial: official, password }: ISubmitContestPasswordArgs) => {

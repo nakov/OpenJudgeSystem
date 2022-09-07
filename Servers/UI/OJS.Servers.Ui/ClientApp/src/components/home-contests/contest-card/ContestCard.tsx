@@ -56,9 +56,13 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     );
 
     const renderContestLockIcon = useCallback(
-        () => ((canBeCompeted && contest.hasContestPassword) || (canBePracticed && contest.hasPracticePassword)
-            ? <LockIcon containerClassName={styles.contestPasswordLockIcon} />
-            : null),
+        () => {
+            const { hasContestPassword, hasPracticePassword } = contest;
+            
+            return (canBeCompeted && hasContestPassword) || (canBePracticed && hasPracticePassword)
+                ? <LockIcon containerClassName={styles.contestPasswordLockIcon} />
+                : null;
+        },
         [ canBeCompeted, canBePracticed, contest ],
     );
 

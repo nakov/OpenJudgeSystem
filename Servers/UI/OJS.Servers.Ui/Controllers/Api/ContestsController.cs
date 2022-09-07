@@ -17,6 +17,10 @@ public class ContestsController : BaseApiController
     public ContestsController(IContestsBusinessService contestsBusinessService)
         => this.contestsBusinessService = contestsBusinessService;
 
+    /// <summary>
+    /// Validates if user can participate in contest with or without password
+    /// </summary>
+    /// <returns>Model containing information about the id and name of the contest and if it requires password to enter.</returns>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(RegisterUserForContestServiceModel), Status200OK)]
     public async Task<IActionResult> Register(int id, [FromQuery] bool official)
@@ -24,6 +28,10 @@ public class ContestsController : BaseApiController
             .RegisterUserForContest(id, official)
             .ToOkResult();
 
+    /// <summary>
+    /// Submits a password value from the user and validates it against contest configurations.
+    /// </summary>
+    /// <returns>Ok result if password is correct and an exception if otherwise</returns>
     [HttpPost("{id:int}")]
     public async Task<IActionResult> SubmitContestPassword(
         int id,

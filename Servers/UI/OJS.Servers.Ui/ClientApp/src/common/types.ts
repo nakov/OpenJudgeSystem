@@ -97,7 +97,7 @@ interface IPagedResultType<TItem> {
     itemsPerPage: number;
     pagesCount: number;
     pageNumber: number;
-    items?: TItem[],
+    items?: TItem[];
 }
 
 interface IUserType {

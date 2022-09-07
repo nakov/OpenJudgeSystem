@@ -48,7 +48,7 @@ const ContestPasswordForm = ({ id, isOfficial }: IContestPasswordFormProps) => {
         >
             <header className={styles.formHeader}>
                 <Heading type={HeadingType.primary}>Enter contest password</Heading>
-                <Heading type={HeadingType.secondary} className={styles.contestNameHeading}>{contest?.name}</Heading>
+                <Heading type={HeadingType.secondary}>{contest?.name}</Heading>
                 { renderErrorMessage() }
             </header>
             <FormControl
