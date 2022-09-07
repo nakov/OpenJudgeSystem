@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useParams } from 'react-router';
 import { useEffect, useMemo } from 'react';
+import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import { isNil } from 'lodash';
 import { makePrivate } from '../shared/make-private';
@@ -19,7 +19,14 @@ const ContestRegisterPage = () => {
 
     const contestIdToNumber = useMemo(() => Number(contestId), [ contestId ]);
     const isParticipationOfficial = useMemo(() => participationType === ContestParticipationType.Compete, [ participationType ]);
-
+    const internalContest = useMemo(
+        () => ({
+            id: contestIdToNumber,
+            isOfficial: isParticipationOfficial,
+        })
+        , [ contestIdToNumber, isParticipationOfficial ],
+    );
+    
     const {
         state: {
             requirePassword,
@@ -33,14 +40,11 @@ const ContestRegisterPage = () => {
 
     useEffect(() => {
         (async () => {
-            const internalContest = {
-                id: contestIdToNumber,
-                isOfficial: isParticipationOfficial,
-            };
+            
             
             await register(internalContest);
         })();
-    }, [ contestIdToNumber, isParticipationOfficial, participationType, register ]);
+    }, [ internalContest, contestIdToNumber, isParticipationOfficial, participationType, register ]);
 
     useEffect(() => {
         if (doesNotRequirePassword || isSubmittedPasswordValid) {
