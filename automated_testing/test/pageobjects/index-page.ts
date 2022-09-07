@@ -127,6 +127,14 @@ class IndexPage extends Page {
         return $(selectors.pageAllPastCardsSelector).$$(selectors.pagePracticeButtonIdSelector)[1];
     }
 
+    public get allStatisticBoxes() {
+        return $$(selectors.pageStatisticsBoxSelector);
+    }
+
+    public get singleStatisticBox() {
+        return $(selectors.pageStatisticsBoxSelector);
+    }
+
     public open(): Promise<string> {
         return super.open(this.pageLocation);
     }

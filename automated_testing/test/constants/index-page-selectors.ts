@@ -1,8 +1,8 @@
 const selectors = {
-    pageHeaderHeadingSelector: '#page-header-h2',
+    pageHeaderHeadingSelector: '.headingSeconary',
     pageFooterSelector: '#pageFooter',
-    pageHeaderLogoLinkSelector: '#page-header-h2 a',
-    pageHeadingImageSelector: '#page-header-h2 a img',
+    pageHeaderLogoLinkSelector: '.headingSeconary a',
+    pageHeadingImageSelector: '.headingSeconary a img',
     pageLogInButtonSelector: '#anonymous-login-link',
     pageRegisterButtonSelector: '#anonymous-register-link',
     pageNavContestsLinkSelector: '#nav-contests-link',
@@ -20,5 +20,6 @@ const selectors = {
     pageContestCardTimerSelector: '.card-counter',
     pageCompeteButtonIdSelector: '#button-card-compete',
     pagePracticeButtonIdSelector: '#button-card-practice',
+    pageStatisticsBoxSelector: '.staticBox',
 };
 export default selectors;

@@ -157,4 +157,12 @@ describe('Testing index', () => {
         const check = await practiceButtons.filter((b) => b.isEnabled());
         await expect(practiceButtons.length).toEqual(check.length);
     });
+
+    it('Expect to have six statistic boxes', async () => {
+        const boxes = await IndexPage.allStatisticBoxes;
+        console.log('******************');
+        console.log(await boxes.length);
+        console.log('******************');
+        await expect(boxes.length).toEqual(6);
+    });
 });
