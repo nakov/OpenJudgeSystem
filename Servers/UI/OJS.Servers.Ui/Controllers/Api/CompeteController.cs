@@ -1,6 +1,4 @@
-﻿using OJS.Servers.Ui.Models.Contests;
-
-namespace OJS.Servers.Ui.Controllers.Api;
+﻿namespace OJS.Servers.Ui.Controllers.Api;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
