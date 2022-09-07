@@ -3,11 +3,11 @@ import ContestCard from './contest-card/ContestCard';
 import Heading from '../guidelines/headings/Heading';
 import List, { Orientation } from '../guidelines/lists/List';
 import { ButtonSize, LinkButton, LinkButtonType } from '../guidelines/buttons/Button';
-import { IIndexContestsType } from '../../common/types';
+import { IIndexContestsType } from '../code-editor/common/types';
 
 import styles from './ContestsList.module.scss';
 import concatClassNames from '../../utils/class-names';
-import { ContestStatus } from '../../common/contest-types';
+import { ContestStatus } from '../code-editor/common/contest-types';
 
 interface IContestsListProps {
     title: string;

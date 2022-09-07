@@ -8,7 +8,7 @@ import { useLoading } from './use-loading';
 import {
     IGetContestsForIndexResponseType,
     IIndexContestsType,
-} from '../common/types';
+} from '../components/code-editor/common/types';
 
 interface IHomeContestsContext {
     state: {

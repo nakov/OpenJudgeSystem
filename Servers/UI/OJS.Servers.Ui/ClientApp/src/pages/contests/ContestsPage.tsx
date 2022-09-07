@@ -5,12 +5,12 @@ import ContestFilters from '../../components/contests/contests-filters/ContestFi
 import { useContests } from '../../hooks/use-contests';
 import { setLayout } from '../shared/set-layout';
 import styles from './ContestsPage.module.scss';
-import { IIndexContestsType } from '../../common/types';
+import { IIndexContestsType } from '../../components/code-editor/common/types';
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
-import { ContestStatus, FilterType, IFilter } from '../../common/contest-types';
-import { filterByType } from '../../common/filter-utils';
+import { ContestStatus, FilterType, IFilter } from '../../components/code-editor/common/contest-types';
+import { filterByType } from '../../components/code-editor/common/filter-utils';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 
 const ContestsPage = () => {

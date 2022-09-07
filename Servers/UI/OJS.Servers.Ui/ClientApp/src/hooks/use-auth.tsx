@@ -4,8 +4,8 @@ import { useLoading } from './use-loading';
 import { useHttp } from './use-http';
 import { useNotifications } from './use-notifications';
 import { useUrls } from './use-urls';
-import { HttpStatus } from '../common/common';
-import { IUserType, IUserPermissionsType } from '../common/types';
+import { HttpStatus } from '../components/code-editor/common/common';
+import { IUserType, IUserPermissionsType } from '../components/code-editor/common/types';
 
 interface IAuthContext {
     state: {

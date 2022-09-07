@@ -1,5 +1,5 @@
 import { IUserProfileType } from '../use-users';
-import { ISubmissionTypeType } from '../../common/types';
+import { ISubmissionTypeType } from '../../components/code-editor/common/types';
 
 interface IProblemType {
     id: number;

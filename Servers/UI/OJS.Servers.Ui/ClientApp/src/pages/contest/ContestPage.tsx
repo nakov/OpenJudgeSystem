@@ -5,7 +5,7 @@ import Contest from '../../components/contests/contest/Contest';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 import { useCurrentContest } from '../../hooks/use-current-contest';
-import { ContestParticipationType } from '../../common/constants';
+import { ContestParticipationType } from '../../components/code-editor/common/constants';
 
 const ContestPage = () => {
     const {

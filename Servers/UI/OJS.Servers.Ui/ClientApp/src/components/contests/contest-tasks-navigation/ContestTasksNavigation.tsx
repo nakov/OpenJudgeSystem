@@ -5,8 +5,8 @@ import List, { ListType } from '../../guidelines/lists/List';
 import { Button, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 
 import concatClassNames from '../../../utils/class-names';
-import { IProblemType } from '../../../common/types';
-import { ContestParticipationType, ContestResultType } from '../../../common/constants';
+import { IProblemType } from '../../code-editor/common/types';
+import { ContestParticipationType, ContestResultType } from '../../code-editor/common/constants';
 
 import { useProblems } from '../../../hooks/use-problems';
 import { useCurrentContest } from '../../../hooks/use-current-contest';

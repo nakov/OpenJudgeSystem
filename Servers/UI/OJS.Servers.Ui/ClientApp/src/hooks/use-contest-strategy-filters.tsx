@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { isNil } from 'lodash';
 import { IHaveChildrenProps } from '../components/common/Props';
-import { IContestStrategyFilter } from '../common/contest-types';
+import { IContestStrategyFilter } from '../components/code-editor/common/contest-types';
 import { useLoading } from './use-loading';
 import { useUrls } from './use-urls';
 import { useHttp } from './use-http';

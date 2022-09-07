@@ -4,7 +4,7 @@ import { isNil } from 'lodash';
 
 import { format } from '../../utils/number-utils';
 
-import { IStatistic } from '../../common/statistics-types';
+import { IStatistic } from '../code-editor/common/statistics-types';
 
 import Heading, { HeadingType } from '../guidelines/headings/Heading';
 

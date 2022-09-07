@@ -3,8 +3,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
 import { isFunction } from 'lodash';
-import { HttpStatus } from '../common/common';
-import { IDictionary, IFileResponseType, UrlType } from '../common/common-types';
+import { HttpStatus } from '../components/code-editor/common/common';
+import { IDictionary, IFileResponseType, UrlType } from '../components/code-editor/common/common-types';
 
 const getUrl = (url: UrlType, params: IDictionary<any> | null) => (
     isFunction(url)

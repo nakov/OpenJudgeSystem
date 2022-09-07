@@ -6,7 +6,7 @@ import { useCurrentContest } from '../use-current-contest';
 import { useProblems } from '../use-problems';
 import { useProblemSubmissions } from './use-problem-submissions';
 import { useUrls } from '../use-urls';
-import { ISubmissionTypeType } from '../../common/types';
+import { ISubmissionTypeType } from '../../components/code-editor/common/types';
 import { ISubmissionType, ITestRunType } from './types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 

@@ -6,7 +6,7 @@ import { isNil } from 'lodash';
 import { setLayout } from '../shared/set-layout';
 import { makePrivate } from '../shared/make-private';
 import { useCurrentContestResults } from '../../hooks/contests/use-current-contest-results';
-import { ContestParticipationType, ContestResultType } from '../../common/constants';
+import { ContestParticipationType, ContestResultType } from '../../components/code-editor/common/constants';
 import Heading from '../../components/guidelines/headings/Heading';
 import { IContestResultsParticipationProblemType, IContestResultsType } from '../../hooks/contests/types';
 import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';

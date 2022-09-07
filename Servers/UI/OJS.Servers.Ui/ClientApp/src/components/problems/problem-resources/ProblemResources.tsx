@@ -3,7 +3,7 @@ import React, { useCallback } from 'react';
 import { isNil } from 'lodash';
 
 import concatClassNames from '../../../utils/class-names';
-import { IProblemResourceType } from '../../../common/types';
+import { IProblemResourceType } from '../../code-editor/common/types';
 
 import List from '../../guidelines/lists/List';
 import ProblemResource from '../problem-resource/ProblemResource';

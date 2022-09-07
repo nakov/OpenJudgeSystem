@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useCallback } from 'react';
 import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
 import { convertToSecondsRemaining } from '../../../utils/dates';
-import { IIndexContestsType } from '../../../common/types';
+import { IIndexContestsType } from '../../code-editor/common/types';
 import concatClassNames from '../../../utils/class-names';
 
 import styles from './ContestCard.module.scss';

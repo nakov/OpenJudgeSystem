@@ -4,13 +4,13 @@ import { useSearchParams } from 'react-router-dom';
 import List, { Orientation } from '../../guidelines/lists/List';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 
-import { FilterType, IFilter } from '../../../common/contest-types';
+import { FilterType, IFilter } from '../../code-editor/common/contest-types';
 import ContestCategories from '../contest-categories/ContestCategories';
 
 import styles from './ContestFilters.module.scss';
 import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 import { useContests } from '../../../hooks/use-contests';
-import { groupByType } from '../../../common/filter-utils';
+import { groupByType } from '../../code-editor/common/filter-utils';
 import ExpandButton from '../../guidelines/buttons/ExpandButton';
 import concatClassNames from '../../../utils/class-names';
 import { useContestStrategyFilters } from '../../../hooks/use-contest-strategy-filters';

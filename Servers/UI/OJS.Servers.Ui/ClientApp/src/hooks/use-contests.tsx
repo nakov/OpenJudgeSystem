@@ -1,17 +1,17 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { isNil } from 'lodash';
 import { IHaveChildrenProps, IHavePagesProps } from '../components/common/Props';
-import { IIndexContestsType, IPagedResultType } from '../common/types';
-import { ContestStatus, FilterType, IFilter } from '../common/contest-types';
+import { IIndexContestsType, IPagedResultType } from '../components/code-editor/common/types';
+import { ContestStatus, FilterType, IFilter } from '../components/code-editor/common/contest-types';
 import { useHttp } from './use-http';
 import { useUrls } from './use-urls';
-import { generateFilterItems } from '../common/filter-utils';
+import { generateFilterItems } from '../components/code-editor/common/filter-utils';
 import { useLoading } from './use-loading';
 import { useContestStrategyFilters } from './use-contest-strategy-filters';
 import { useContestCategories } from './use-contest-categories';
 import { ITreeItemType } from '../components/guidelines/trees/Tree';
-import { UrlType } from '../common/common-types';
-import { IAllContestsUrlParams } from '../common/url-types';
+import { UrlType } from '../components/code-editor/common/common-types';
+import { IAllContestsUrlParams } from '../components/code-editor/common/url-types';
 
 interface IContestsContext {
     state: {

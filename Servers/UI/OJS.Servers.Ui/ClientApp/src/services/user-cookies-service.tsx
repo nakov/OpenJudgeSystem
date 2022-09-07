@@ -1,4 +1,4 @@
-import { IUserPermissionsType, IUserType } from '../common/types';
+import { IUserPermissionsType, IUserType } from '../components/code-editor/common/types';
 import { getCookie } from '../utils/cookies';
 
 class UserCookiesService {

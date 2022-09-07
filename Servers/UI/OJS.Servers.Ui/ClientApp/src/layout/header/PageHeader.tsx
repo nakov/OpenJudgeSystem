@@ -18,7 +18,7 @@ const PageHeader = () => {
                 <LinkButton
                   type={LinkButtonType.plain}
                   size={ButtonSize.none}
-                    to={getAdministrationNavigation()}
+                  to={getAdministrationNavigation()}
                   isToExternal
                   text="Administration"
                 />

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useCallback } from 'react';
 
 import { Button, ButtonType } from '../../guidelines/buttons/Button';
-import { IProblemResourceType } from '../../../common/types';
+import { IProblemResourceType } from '../../code-editor/common/types';
 
 import { useProblems } from '../../../hooks/use-problems';
 

@@ -3,9 +3,9 @@ import { isNil } from 'lodash';
 import { useLoading } from '../use-loading';
 import { useHttp } from '../use-http';
 import { useUrls } from '../use-urls';
-import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
-import { UrlType } from '../../common/common-types';
-import { IGetSubmissionDetailsByIdUrlParams, IGetSubmissionResultsByProblemUrlParams } from '../../common/url-types';
+import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../components/code-editor/common/constants';
+import { UrlType } from '../../components/code-editor/common/common-types';
+import { IGetSubmissionDetailsByIdUrlParams, IGetSubmissionResultsByProblemUrlParams } from '../../components/code-editor/common/url-types';
 import { ISubmissionDetails, ISubmissionDetailsType, ISubmissionType, ITestRunType } from './types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 

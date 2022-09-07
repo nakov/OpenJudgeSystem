@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { setLayout } from '../../pages/shared/set-layout';
 import ContestsList from './ContestsList';
 import { useHomeContests } from '../../hooks/use-home-contests';
-import { ContestStatus } from '../../common/contest-types';
+import { ContestStatus } from '../code-editor/common/contest-types';
 
 const HomeContests = () => {
     const {

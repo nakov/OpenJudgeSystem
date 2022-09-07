@@ -2,7 +2,7 @@ import React, { FC, useCallback, useEffect, useMemo } from 'react';
 
 import { isNil } from 'lodash';
 
-import { IDictionary, IKeyValuePair } from '../../common/common-types';
+import { IDictionary, IKeyValuePair } from '../code-editor/common/common-types';
 import { toList } from '../../utils/object-utils';
 import IconSize from '../guidelines/icons/common/icon-sizes';
 

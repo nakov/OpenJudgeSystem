@@ -6,7 +6,7 @@ import {
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
     IStartContestParticipationUrlParams,
-} from '../common/url-types';
+} from '../components/code-editor/common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
 interface IUrlsContext {

@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { first, isNil } from 'lodash';
-import { IProblemType } from '../common/types';
-import { IFileResponseType, UrlType } from '../common/common-types';
+import { IProblemType } from '../components/code-editor/common/types';
+import { IFileResponseType, UrlType } from '../components/code-editor/common/common-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 import { useCurrentContest } from './use-current-contest';
 import { useHttp } from './use-http';

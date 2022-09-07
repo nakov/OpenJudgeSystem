@@ -1,14 +1,14 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
 import { isNil, sum } from 'lodash';
-import { IContestType, IStartParticipationResponseType } from '../common/types';
+import { IContestType, IStartParticipationResponseType } from '../components/code-editor/common/types';
 
 import { IHaveChildrenProps } from '../components/common/Props';
 
 import { useLoading } from './use-loading';
 import { useHttp } from './use-http';
 import { useUrls } from './use-urls';
-import { UrlType } from '../common/common-types';
+import { UrlType } from '../components/code-editor/common/common-types';
 
 interface IStartContestArgs {
     id: number;
