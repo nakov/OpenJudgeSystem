@@ -18,7 +18,6 @@ interface IIconInternalProps extends IIconProps {
 const Icon = ({
     Component,
     className = '',
-    containerClassName = '',
     size = IconSize.Medium,
     helperText = '',
 }: IIconInternalProps) => {
@@ -37,7 +36,6 @@ const Icon = ({
     );
 
     const iconContainerClassName = concatClassNames(
-        containerClassName,
         styles.iconContainer,
         sizeClassName,
     );
