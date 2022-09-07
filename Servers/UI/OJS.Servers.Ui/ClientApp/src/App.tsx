@@ -27,7 +27,7 @@ import UserCookiesService from './services/user-cookies-service';
 import InitProviders, { ProviderType } from './components/common/InitProviders';
 import HomeStatisticsProvider from './hooks/use-home-statistics';
 import UrlParamsProvider from './hooks/common/use-url-params';
-import CategoriesBreadcrumbProvider from './hooks/submissions/use-contest-categories-breadcrumb';
+import CategoriesBreadcrumbProvider from './hooks/use-contest-categories-breadcrumb';
 
 const App = () => {
     const userCookiesService = useMemo(

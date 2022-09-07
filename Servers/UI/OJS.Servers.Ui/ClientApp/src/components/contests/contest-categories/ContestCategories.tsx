@@ -8,7 +8,7 @@ import { useContests } from '../../../hooks/use-contests';
 import { IHaveOptionalClassName } from '../../common/Props';
 import Tree, { ITreeItemType } from '../../guidelines/trees/Tree';
 import { IFilter } from '../../../common/contest-types';
-import { useCategoriesBreadcrumbContext } from '../../../hooks/submissions/use-contest-categories-breadcrumb';
+import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
 
 interface IContestCategoriesProps extends IHaveOptionalClassName {
     onCategoryClick: (filter: IFilter) => void;
@@ -22,7 +22,7 @@ const ContestCategories = ({
 }: IContestCategoriesProps) => {
     const { state: { categories } } = useContestCategories();
     const { state: { possibleFilters } } = useContests();
-    const { actions: { updateBreadcrumb } } = useCategoriesBreadcrumbContext();
+    const { actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
     
     const flattenTree = useCallback(
         (treeItems: ITreeItemType[], result: ITreeItemType[]) => {

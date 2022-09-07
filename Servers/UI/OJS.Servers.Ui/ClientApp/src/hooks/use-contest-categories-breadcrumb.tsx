@@ -1,8 +1,8 @@
 ﻿import React, { createContext, useCallback, useContext, useState } from 'react';
 import { isNil } from 'lodash';
-import { IContestCategoryTreeType } from '../../common/types';
-import { ITreeItemType } from '../../components/guidelines/trees/Tree';
-import { IHaveChildrenProps } from '../../components/common/Props';
+import { ITreeItemType } from '../components/guidelines/trees/Tree';
+import { IHaveChildrenProps } from '../components/common/Props';
+import { IContestCategoryTreeType } from '../common/types';
 
 interface ICategoriesBreadcrumbContext {
     state: {
@@ -51,26 +51,27 @@ const CategoriesBreadcrumbProvider = ({ children }: ICategoriesBreacrumbProvider
             } as ICategoriesBreadcrumbItem);
 
             const populateBreadcrumbItemsByParents = (categoryParentId?: string) => {
-                if (isNil(parentId)){
+                if (isNil(categoryParentId)){
                     return;
                 }
 
                 index += 1;
 
-                const parentCategory = categoriesTree.find(x => x.id === categoryParentId);
+                const { id: parentCategoryId, name: parentCategoryName, parentId: currentParrentId } = categoriesTree
+                    .find(x => x.id === categoryParentId) as ITreeItemType;
 
-                if (isNil(parentCategory)) {
+                if (isNil(parentCategoryId)) {
                     return;
                 }
 
                 allBreadcrumbItems.push({
-                    id: parentCategory.id,
-                    value: parentCategory.name,
+                    id: parentCategoryId,
+                    value: parentCategoryName,
                     isLast: false,
                     orderBy: index,
                 } as ICategoriesBreadcrumbItem);
 
-                populateBreadcrumbItemsByParents(parentCategory.parentId);
+                populateBreadcrumbItemsByParents(currentParrentId);
             };
 
             populateBreadcrumbItemsByParents(parentId);
@@ -96,10 +97,14 @@ const CategoriesBreadcrumbProvider = ({ children }: ICategoriesBreacrumbProvider
 };
 
 
-const useCategoriesBreadcrumbContext = () => useContext(CategoriesBreadcrumbContext);
+const useCategoriesBreadcrumbs = () => useContext(CategoriesBreadcrumbContext);
 
 export default CategoriesBreadcrumbProvider;
 
 export {
-    useCategoriesBreadcrumbContext,
+    useCategoriesBreadcrumbs,
+};
+
+export type {
+    ICategoriesBreadcrumbItem,
 };

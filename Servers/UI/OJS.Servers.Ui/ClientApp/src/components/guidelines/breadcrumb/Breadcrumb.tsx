@@ -5,8 +5,8 @@ import { isNil } from 'lodash';
 import concatClassNames from '../../../utils/class-names';
 import { IHaveOptionalClassName } from '../../common/Props';
 import generateId from '../../../utils/id-generator';
-
 import styles from './Breadcrumb.module.scss';
+import defaultKeyFunc from '../../common/CollectionKeyUtils';
 
 interface IBreadcrumbProps<TValue> extends IHaveOptionalClassName {
     id?: string;
@@ -14,16 +14,6 @@ interface IBreadcrumbProps<TValue> extends IHaveOptionalClassName {
     itemFunc: (value: TValue) => React.ReactElement;
     keyFunc?: (value: TValue) => string,
 }
-
-const defaultKeyFunc = <TValue extends unknown>(value: TValue) => {
-    const objWithId = value as { id: string };
-
-    if (objWithId.id) {
-        return objWithId.id.toString();
-    }
-
-    return JSON.stringify(value);
-};
 
 const Breadcrumb = <TValue extends unknown>({
     id = generateId(),

@@ -7,17 +7,15 @@ import styles from './ContestsPage.module.scss';
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
-import { IFilter } from '../../common/contest-types';
+import { FilterType, IFilter } from '../../common/contest-types';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import Breadcrumb from '../../components/guidelines/breadcrumb/Breadcrumb';
 import { IIndexContestsType } from '../../common/types';
-import { useCategoriesBreadcrumbContext } from '../../hooks/submissions/use-contest-categories-breadcrumb';
-import Text, { TextType } from '../../components/guidelines/text/Text';
+import { ICategoriesBreadcrumbItem, useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
+import { LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
+import concatClassNames from '../../utils/class-names';
 
-interface ICategoryBreadcrumbItem {
-    isLast: boolean,
-    value: string,
-}
+const getBreadcrumbItemPath = (id: string) => `/contests?${FilterType.Category.toString()}=${id}`;
 
 const ContestsPage = () => {
     const {
@@ -32,7 +30,7 @@ const ContestsPage = () => {
         },
     } = useContests();
     
-    const { state: { breadcrumbItems } } = useCategoriesBreadcrumbContext();
+    const { state: { breadcrumbItems } } = useCategoriesBreadcrumbs();
 
     const handlePageChange = useCallback(
         (page: number) => changePage(page),
@@ -84,13 +82,13 @@ const ContestsPage = () => {
     );
 
     const renderCategoriesBreadcrumbItem = useCallback(
-        (categoryBreadcrumbItem: ICategoryBreadcrumbItem) => {
-            const { value, isLast } = categoryBreadcrumbItem;
+        (categoryBreadcrumbItem: ICategoriesBreadcrumbItem) => {
+            const { value, isLast, id } = categoryBreadcrumbItem;
 
             return (
-                <Text type={isLast
-                    ? TextType.Bold
-                    : TextType.Normal} text={value} />
+                <LinkButton type={LinkButtonType.plain} className={concatClassNames(styles.breadcrumbBtn, isLast
+                    ? styles.breadcrumbBtnLast
+                    : '')} to={getBreadcrumbItemPath(id)} text={value} />
             );
         },
         [ ],
