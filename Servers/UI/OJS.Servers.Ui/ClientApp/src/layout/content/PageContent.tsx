@@ -11,6 +11,7 @@ import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';
 import ContestsPage from '../../pages/contests/ContestsPage';
 import styles from './PageContent.module.scss';
 import SubmissionDetailsPage from '../../pages/submission-details/SubmissionDetailsPage';
+import AdministrationPage from '../../pages/administration/AdministrationPage';
 
 const routes = [
     {
@@ -52,6 +53,10 @@ const routes = [
     {
         path: '/contests/:contestId/:participationType/results/:resultType',
         Element: ContestResultsPage,
+    },
+    { 
+        path: '/administration',
+        Element: AdministrationPage,
     },
 ];
 

@@ -14,6 +14,7 @@ interface IUrlsContext {
     getLoginSubmitUrl: () => string;
     getLogoutUrl: () => string;
     getAdministrationContestsGridUrl: () => string;
+    getAdministrationNavigation: () => string;
     getProfileInfoUrl: () => string;
     getSubmissionsForProfileUrl: () => string;
     getParticipationsForProfileUrl: () => string;
@@ -46,6 +47,7 @@ const getLogoutUrl = () => `${baseUrl}/Account/Logout`;
 // admin
 const administrationBaseUrl = window.URLS.ADMINISTRATION_URL;
 const getAdministrationContestsGridUrl = () => `${administrationBaseUrl}/Contests`;
+const getAdministrationNavigation = () => '/administration';
 
 // profile
 const getProfileInfoUrl = () => `${baseApiUrl}/Users/GetProfileInfo`;
@@ -108,6 +110,7 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
         getLoginSubmitUrl,
         getLogoutUrl,
         getAdministrationContestsGridUrl,
+        getAdministrationNavigation,
         getAllContestsUrl,
         getStartContestParticipationUrl,
         getDownloadProblemResourceUrl,
