@@ -44,7 +44,7 @@ const PageHeader = () => {
                 { administrationLink }
             </>
         );
-    }, [ getAdministrationNavigation , user.permissions.canAccessAdministration ]);
+    }, [ getAdministrationNavigation, user.permissions.canAccessAdministration ]);
 
     return (
         <header id="pageHeader" className={styles.header}>
