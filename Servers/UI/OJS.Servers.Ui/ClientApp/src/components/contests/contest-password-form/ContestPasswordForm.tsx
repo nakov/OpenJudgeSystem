@@ -28,7 +28,7 @@ const ContestPasswordForm = ({ id, isOfficial }: IContestPasswordFormProps) => {
         await submitPassword({ id, isOfficial, password: passwordValue });
     }, [ id, isOfficial, passwordValue, submitPassword ]);
 
-    const handleOnChangeUpdatePassword = useCallback((value: any) => {
+    const handleOnChangeUpdatePassword = useCallback((value: string) => {
         setPasswordValue(value);
     }, [ setPasswordValue ]);
 
@@ -56,7 +56,9 @@ const ContestPasswordForm = ({ id, isOfficial }: IContestPasswordFormProps) => {
               name={passwordFieldName}
               labelText="Password"
               type={FormControlType.password}
-              onChange={(value) => handleOnChangeUpdatePassword(value)}
+              onChange={(value) => handleOnChangeUpdatePassword(isNil(value)
+                  ? ''
+                  : value.toString())}
               value=""
             />
         </Form>
