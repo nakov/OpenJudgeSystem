@@ -60,7 +60,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
             const { hasContestPassword, hasPracticePassword } = contest;
             
             return (canBeCompeted && hasContestPassword) || (canBePracticed && hasPracticePassword)
-                ? <LockIcon containerClassName={styles.contestPasswordLockIcon} />
+                ? <LockIcon />
                 : null;
         },
         [ canBeCompeted, canBePracticed, contest ],

@@ -9,13 +9,11 @@ interface ILockIconProps extends IIconProps {
 
 const LockIcon = ({
     className = '',
-    containerClassName = '',
     size = IconSize.Medium,
     helperText = '',
 }: ILockIconProps) => (
     <Icon
       className={className}
-      containerClassName={containerClassName}
       size={size}
       helperText={helperText}
       Component={AiOutlineLock}

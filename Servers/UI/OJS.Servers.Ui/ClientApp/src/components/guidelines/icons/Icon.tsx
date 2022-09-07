@@ -8,7 +8,6 @@ import styles from './Icon.module.scss';
 interface IIconProps extends IHaveOptionalClassName {
     size?: IconSize;
     helperText?: string;
-    containerClassName?: string;
 }
 
 interface IIconInternalProps extends IIconProps {
