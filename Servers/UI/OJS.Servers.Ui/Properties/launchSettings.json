@@ -40,7 +40,8 @@
         "SHARED_AUTH_COOKIE_DOMAIN": "localhost",
         "UI_URL": "http://localhost:5002",
         "ADMINISTRATION_URL": "http://localhost:5001",
-        "UI_HOME_YOUTUBE_VIDEO_ID": "IwLET8SDBE4"
+        "UI_HOME_YOUTUBE_VIDEO_ID": "IwLET8SDBE4",
+        "REDIS_CONNECTION_STRING": "localhost,password=redisPass123,ConnectTimeout=10000,abortConnect=false"
       }
     }
   }

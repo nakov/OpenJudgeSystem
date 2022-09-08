@@ -9,9 +9,10 @@ import SubmissionPage from '../../pages/submissions/SubmissionPage';
 import ContestPage from '../../pages/contest/ContestPage';
 import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';
 import ContestsPage from '../../pages/contests/ContestsPage';
-import styles from './PageContent.module.scss';
 import SubmissionDetailsPage from '../../pages/submission-details/SubmissionDetailsPage';
+import AdministrationPage from '../../pages/administration/AdministrationPage';
 import ContestRegisterPage from '../../pages/contest/ContestRegisterPage';
+import styles from './PageContent.module.scss';
 
 const routes = [
     {
@@ -57,6 +58,10 @@ const routes = [
     {
         path: '/contests/:contestId/:participationType/results/:resultType',
         Element: ContestResultsPage,
+    },
+    { 
+        path: '/administration',
+        Element: AdministrationPage,
     },
 ];
 

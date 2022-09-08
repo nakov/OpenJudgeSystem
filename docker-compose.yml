@@ -18,7 +18,7 @@ services:
       - Docker/common/db.env
       - Docker/applications/ui/ui.env
     extra_hosts:
-      - "db: 217.174.159.217"
+      - "db:host-gateway"
       - "localhost:host-gateway"
   administration:
     build:
@@ -37,5 +37,5 @@ services:
       - Docker/common/db.env
       - Docker/applications/administration/administration.env
     extra_hosts:
-      - "db: 217.174.159.217"
+      - "db:host-gateway"
       - "localhost:host-gateway"
