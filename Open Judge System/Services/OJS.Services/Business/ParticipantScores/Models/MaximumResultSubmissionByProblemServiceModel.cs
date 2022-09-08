@@ -1,7 +1,7 @@
-﻿using OJS.Data.Models;
-
-namespace OJS.Services.Business.ParticipantScores.Models
+﻿namespace OJS.Services.Business.ParticipantScores.Models
 {
+    using OJS.Data.Models;
+    
     public class MaximumResultSubmissionByProblemServiceModel
     {
         public int ProblemId { get; set; }

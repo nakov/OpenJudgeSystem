@@ -132,40 +132,31 @@
 
         private ParticipantScoresSummaryModel SummarizeParticipationWithMaximumPoints(ParticipantSummaryInfoServiceModel participantInfo)
         {
-            try
+            var topScoreSubmissionsOrderedByCreatedOn = participantInfo
+                .MaximumPointsSubmissionsByProblems
+                .OrderBy(s => s.Submission.CreatedOn);
+
+            var problemOrderToTimeTakenBetweenBest = this.CalculateTimeTakenBetweenBestForProblems(
+                topScoreSubmissionsOrderedByCreatedOn,
+                participantInfo.UserStartTime);
+
+            problemOrderToTimeTakenBetweenBest = NormalizeProblemGroupIndexes(
+                problemOrderToTimeTakenBetweenBest, 
+                participantInfo.ProblemGroups.Select(pg => pg.OrderBy));
+
+            return new ParticipantScoresSummaryModel
             {
-                var topScoreSubmissionsOrderedByCreatedOn = participantInfo
-                    .MaximumPointsSubmissionsByProblems
-                    .OrderBy(s => s.Submission.CreatedOn);
-
-                var problemOrderToTimeTakenBetweenBest = this.CalculateTimeTakenBetweenBestForProblems(
-                    topScoreSubmissionsOrderedByCreatedOn,
-                    participantInfo.UserStartTime);
-
-                problemOrderToTimeTakenBetweenBest = NormalizeProblemGroupIndexes(
-                    problemOrderToTimeTakenBetweenBest, 
-                    participantInfo.ProblemGroups.Select(pg => pg.OrderBy), 
-                    participantInfo.Participant.ContestId);
-
-                return new ParticipantScoresSummaryModel
-                {
-                    ParticipantName = participantInfo.Participant.User.UserName,
-                    ContestId = participantInfo.Participant.Contest.Id,
-                    ContestName = participantInfo.Participant.Contest.Name,
-                    ProblemsCount = participantInfo.ProblemGroups.Count,
-                    ProblemOrderToMinutesTakenToSolve = problemOrderToTimeTakenBetweenBest,
-                    PointsTotal = participantInfo.Participant.Scores.Select(s => s.Points).Sum(),
-                    TimeTotal = participantInfo.TimeInContest,
-                };
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine();
-                return null;
-            }
+                ParticipantName = participantInfo.Participant.User.UserName,
+                ContestId = participantInfo.Participant.Contest.Id,
+                ContestName = participantInfo.Participant.Contest.Name,
+                ProblemsCount = participantInfo.ProblemGroups.Count,
+                ProblemOrderToMinutesTakenToSolve = problemOrderToTimeTakenBetweenBest,
+                PointsTotal = participantInfo.Participant.Scores.Select(s => s.Points).Sum(),
+                TimeTotal = participantInfo.TimeInContest,
+            };
         }
         
-        private Dictionary<int, double> NormalizeProblemGroupIndexes(Dictionary<int, double> values, IEnumerable<int> problemGroupsOrderBy, int contestId)
+        private Dictionary<int, double> NormalizeProblemGroupIndexes(Dictionary<int, double> values, IEnumerable<int> problemGroupsOrderBy)
         {
             var sortedOrderedBy = problemGroupsOrderBy.OrderBy(n => n).ToList();
             

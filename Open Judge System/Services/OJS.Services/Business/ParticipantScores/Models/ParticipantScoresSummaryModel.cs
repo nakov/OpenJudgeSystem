@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace OJS.Services.Business.ParticipantScores.Models
+﻿namespace OJS.Services.Business.ParticipantScores.Models
 {
+    using System.Collections.Generic;
+    
     public class ParticipantScoresSummaryModel
     {
         public string ParticipantName { get; set; }

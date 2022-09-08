@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using OJS.Data.Models;
-
-namespace OJS.Services.Business.ParticipantScores.Models
+﻿namespace OJS.Services.Business.ParticipantScores.Models
 {
+    using System;
+    using System.Collections.Generic;
+    using OJS.Data.Models;
+    
     public class ParticipantSummaryInfoServiceModel
     {
         public Participant Participant { get; set; }
