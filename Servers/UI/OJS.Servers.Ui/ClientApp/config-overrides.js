@@ -1,9 +1,10 @@
 const path = require('path');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const fixHtmlPlugin = (config) => {
-    const [ htmlPlugin, ...rest ] = config.plugins;
+    const [htmlPlugin, ...rest] = config.plugins;
     const filename = path.join(__dirname, '../Views/Home/Index.cshtml');
 
     htmlPlugin.options = {
@@ -38,8 +39,18 @@ const addMonacoPlugin = (config) => ({
     ],
 });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const addBundleAnalyzerPlugin = (config) => ({
+    ...config,
+    plugins: [
+        ...config.plugins,
+        new BundleAnalyzerPlugin(),
+    ],
+});
+
 const smp = new SpeedMeasurePlugin();
+
+// const decorateWebpack = (config, ...funcs) => smp.wrap(funcs
+//     .reduce((c, func) => func(c), config));
 
 const decorateWebpack = (config, ...funcs) => funcs
     .reduce((c, func) => func(c), config);
