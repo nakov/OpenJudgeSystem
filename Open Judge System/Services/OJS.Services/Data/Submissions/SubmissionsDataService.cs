@@ -1,8 +1,4 @@
-﻿using System.Data.Entity;
-using System.Linq.Dynamic;
-using MissingFeatures;
-
-namespace OJS.Services.Data.Submissions
+﻿namespace OJS.Services.Data.Submissions
 {
     using System;
     using System.Collections.Generic;
@@ -12,6 +8,7 @@ namespace OJS.Services.Data.Submissions
 
     using OJS.Data.Models;
     using OJS.Data.Repositories.Contracts;
+    using System.Data.Entity;
 
     public class SubmissionsDataService : ISubmissionsDataService
     {

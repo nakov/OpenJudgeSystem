@@ -1,21 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using MissingFeatures;
-using OJS.Common;
-using OJS.Common.Extensions;
-using OJS.Data.Models;
-using OJS.Services.Business.ParticipantScores.Models;
-using OJS.Services.Data.Contests;
-using OJS.Services.Data.Participants;
-
-namespace OJS.Services.Business.ParticipantScores
+﻿namespace OJS.Services.Business.ParticipantScores
 {
     using System.Linq;
-
     using OJS.Common.Helpers;
     using OJS.Services.Data.ParticipantScores;
     using OJS.Services.Data.Submissions;
+    using System;
+    using System.Collections.Generic;
+    using System.Data.Entity;
+    using MissingFeatures;
+    using OJS.Common;
+    using OJS.Common.Extensions;
+    using OJS.Data.Models;
+    using OJS.Services.Business.ParticipantScores.Models;
+    using OJS.Services.Data.Contests;
+    using OJS.Services.Data.Participants;
+
 
     public class ParticipantScoresBusinessService : IParticipantScoresBusinessService
     {
