@@ -1,8 +1,7 @@
-﻿using OJS.Services.Business.ParticipantScores.Models;
-
-namespace OJS.Services.Business.ParticipantScores
+﻿namespace OJS.Services.Business.ParticipantScores
 {
     using OJS.Services.Common;
+    using OJS.Services.Business.ParticipantScores.Models;
 
     public interface IParticipantScoresBusinessService : IService
     {
