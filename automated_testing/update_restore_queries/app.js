@@ -102,7 +102,14 @@ const ensureEmptyQueriesDirectoryExists = () => {
 };
 
 const saveQuery = async ({ query, table }, index) => {
-    const filepath = path.join(getQueriesDirectoryPath(), `${index + 1}__${table}.sql`);
+    const normalizedIndex = index + 1;
+    const prefix = normalizedIndex < 10
+        ? '00'
+        : normalizedIndex < 100
+            ? '0'
+            : '';
+
+    const filepath = path.join(getQueriesDirectoryPath(), `${prefix}${normalizedIndex}__${table}.sql`);
     writeFileSync(filepath, query, 'utf-8');
 };
 
