@@ -1,13 +1,13 @@
-﻿using System.Globalization;
-using System.IO;
-using System.Linq;
-using MissingFeatures;
-using NPOI.HSSF.UserModel;
-using NPOI.SS.UserModel;
-using OJS.Web.Common.Extensions;
-
-namespace OJS.Services.Business.ParticipantScores.Models
+﻿namespace OJS.Services.Business.ParticipantScores.Models
 {
+    using System.Globalization;
+    using System.IO;
+    using System.Linq;
+    using MissingFeatures;
+    using NPOI.HSSF.UserModel;
+    using NPOI.SS.UserModel;
+    using OJS.Web.Common.Extensions;
+    
     public class CategoryContestsParticipationSummaryExcel
     {
         public HSSFWorkbook Workbook { get; set; }
