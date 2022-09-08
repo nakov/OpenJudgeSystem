@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Globalization;
+using System.IO;
+using System.Linq;
 using MissingFeatures;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
@@ -49,10 +51,11 @@ namespace OJS.Services.Business.ParticipantScores.Models
             headerRow.CreateCell(columnNumber++).SetCellValue("Problems Count (Groups)");
             headerRow.CreateCell(columnNumber++).SetCellValue("Username");
 
-            for (int i = 1; i <= CategorySummary.MaxProblemsCount; i++)
+            Enumerable.Range(1, CategorySummary.MaxProblemsCount)
+            .ForEach(index =>
             {
-                headerRow.CreateCell(columnNumber++).SetCellValue($"Problem {i}");
-            }
+                headerRow.CreateCell(columnNumber++).SetCellValue($"Problem {index}");
+            });
                 
             headerRow.CreateCell(columnNumber++).SetCellValue("Time Total");
             headerRow.CreateCell(columnNumber++).SetCellValue("Points Total");
@@ -76,11 +79,19 @@ namespace OJS.Services.Business.ParticipantScores.Models
             var colNumber = 0;
             row.CreateCell(colNumber++).SetCellValue(participantSummary.ContestName);
             row.CreateCell(colNumber++).SetCellValue(participantSummary.ProblemsCount);
-            string participantName = participantSummary.ParticipantName;
-            row.CreateCell(colNumber++).SetCellValue(participantName);
+            row.CreateCell(colNumber++).SetCellValue(participantSummary.ParticipantName);
+            
+            Enumerable.Range(1, this.CategorySummary.MaxProblemsCount)
+            .ForEach(index =>
+            {
+                var participantResults = participantSummary.ProblemOrderToMinutesTakenToSolve;
 
-            participantSummary.ProblemOrderToMinutesTakenToSolve
-                .ForEach(resultPair => row.CreateCell(colNumber++).SetCellValue(resultPair.Value));
+                var colValue = !participantResults.ContainsKey(index) || participantResults[index] == 0
+                    ? string.Empty
+                    : participantResults[index].ToString(CultureInfo.InvariantCulture);
+
+                row.CreateCell(colNumber++).SetCellValue(colValue);
+            });
 
             if (colNumber - this.preProblemsColumnsCount < CategorySummary.MaxProblemsCount)
             {
@@ -88,7 +99,7 @@ namespace OJS.Services.Business.ParticipantScores.Models
             }
                     
             row.CreateCell(colNumber++).SetCellValue(participantSummary.TimeTotal);
-            row.CreateCell(colNumber++).SetCellValue(participantSummary.PointsTotal == 0 ? 0 : participantSummary.PointsTotal);
+            row.CreateCell(colNumber++).SetCellValue(participantSummary.PointsTotal);
         }
     }
 }

@@ -59,7 +59,7 @@
             var categoryParticipationSummary = this.participantScoresBusiness.GetCategoryParticipationSummary(id, showHidden, official);
 
             var excel = new CategoryContestsParticipationSummaryExcel(categoryParticipationSummary);
-            
+
             return this.File(
                 excel.GetAsStream().ToArray(),
                 GlobalConstants.ExcelMimeType,

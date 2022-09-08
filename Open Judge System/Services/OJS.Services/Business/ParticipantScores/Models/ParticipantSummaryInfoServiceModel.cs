@@ -7,11 +7,15 @@ namespace OJS.Services.Business.ParticipantScores.Models
     public class ParticipantSummaryInfoServiceModel
     {
         public Participant Participant { get; set; }
+        
         public Submission LastSubmittedForParticipant { get; set; }
+
+        public double TimeInContest { get; set; }
+        
+        public DateTime UserStartTime { get; set; }
+        
+        public List<ProblemGroup> ProblemGroups { get; set; }
         
         public IEnumerable<MaximumResultSubmissionByProblemServiceModel> MaximumPointsSubmissionsByProblems { get; set; }
-        
-        public double TimeInContest { get; set; }
-        public DateTime UserStartTime { get; set; }
     }
 }

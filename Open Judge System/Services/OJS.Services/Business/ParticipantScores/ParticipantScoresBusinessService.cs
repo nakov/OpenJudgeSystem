@@ -67,12 +67,9 @@ namespace OJS.Services.Business.ParticipantScores
                 .GetAllNotDeletedByCategory(categoryId, showHidden)
                 .Include(c => c.ProblemGroups)
                 .Include(c => c.ProblemGroups.Select(pg => pg.Problems))
-                .Where(c => c.Participants.Any(p => p.IsOfficial == official && p.Contest.Name == "Programming Basics Online Pre - Exam - 13 and 14 August 2022"))
-                // .Where(c => c.Participants.Any(p => p.IsOfficial == official))
+                .Where(c => c.Participants.Any(p => p.IsOfficial == official))
                 .OrderByDescending(c => c.CreatedOn)
                 .ToList();
-
-            var results = new List<ParticipantScoresSummaryModel>();
 
             var participants =  this.participantsData.GetAllByContestIdsAndIsOfficial(contests.Select(c => c.Id), official)
                 .Include(p => p.User)
@@ -83,6 +80,7 @@ namespace OJS.Services.Business.ParticipantScores
                 .OrderBy(p => p.Contest.OrderBy)
                 .ToList();
            
+            var results = new List<ParticipantScoresSummaryModel>();
             participants
                 .ChunkBy(GlobalConstants.BatchOperationsChunkSize)
                 .ForEach(batch => results.AddRange(this.GetStatisticsForParticipants(batch)));
@@ -102,12 +100,14 @@ namespace OJS.Services.Business.ParticipantScores
             IEnumerable<Participant> participants)
         {
             var participantsTimeAndSubmissionsInfo = participants
-                .Where(p => p.Submissions.Any() && p.User.UserName == "RichiRichard")
-                // .Where(p => p.Submissions.Any())
+                .Where(p => p.Submissions.Any())
                 .Select(p => new ParticipantSummaryInfoServiceModel
                 {
                     Participant = p,
                     UserStartTime = p.ParticipationStartTime ?? p.CreatedOn,
+                    ProblemGroups = p.Contest.ProblemGroups
+                        .Where(group => !group.IsDeleted && group.Problems.Any(problem => !problem.IsDeleted))
+                        .ToList(),
                     TimeInContest =
                         Math.Round((p.Submissions
                              .Select(s => s.CreatedOn)
@@ -125,12 +125,10 @@ namespace OJS.Services.Business.ParticipantScores
                             })
                 });
 
-            var results = participantsTimeAndSubmissionsInfo
+            return participantsTimeAndSubmissionsInfo
                 .Where(i => i.MaximumPointsSubmissionsByProblems.Any())
                 .Select(this.SummarizeParticipationWithMaximumPoints)
-                .ToList();
-
-            return results;
+                .ToList();;
         }
 
         private ParticipantScoresSummaryModel SummarizeParticipationWithMaximumPoints(ParticipantSummaryInfoServiceModel participantInfo)
@@ -142,17 +140,20 @@ namespace OJS.Services.Business.ParticipantScores
                     .OrderBy(s => s.Submission.CreatedOn);
 
                 var problemOrderToTimeTakenBetweenBest = this.CalculateTimeTakenBetweenBestForProblems(
-                        topScoreSubmissionsOrderedByCreatedOn,
-                        participantInfo.UserStartTime)
-                    .Select((kv, i) => new KeyValuePair<int, double>(i + 1, kv.Value))
-                    .ToDictionary(k => k.Key, y => y.Value);
+                    topScoreSubmissionsOrderedByCreatedOn,
+                    participantInfo.UserStartTime);
+
+                problemOrderToTimeTakenBetweenBest = NormalizeProblemGroupIndexes(
+                    problemOrderToTimeTakenBetweenBest, 
+                    participantInfo.ProblemGroups.Select(pg => pg.OrderBy), 
+                    participantInfo.Participant.ContestId);
 
                 return new ParticipantScoresSummaryModel
                 {
                     ParticipantName = participantInfo.Participant.User.UserName,
                     ContestId = participantInfo.Participant.Contest.Id,
                     ContestName = participantInfo.Participant.Contest.Name,
-                    ProblemsCount = participantInfo.Participant.Contest.ProblemGroups.Count(pg => !pg.Problems.IsNullOrEmpty()),
+                    ProblemsCount = participantInfo.ProblemGroups.Count,
                     ProblemOrderToMinutesTakenToSolve = problemOrderToTimeTakenBetweenBest,
                     PointsTotal = participantInfo.Participant.Scores.Select(s => s.Points).Sum(),
                     TimeTotal = participantInfo.TimeInContest,
@@ -164,8 +165,25 @@ namespace OJS.Services.Business.ParticipantScores
                 return null;
             }
         }
+        
+        private Dictionary<int, double> NormalizeProblemGroupIndexes(Dictionary<int, double> values, IEnumerable<int> problemGroupsOrderBy, int contestId)
+        {
+            var sortedOrderedBy = problemGroupsOrderBy.OrderBy(n => n).ToList();
+            
+            return sortedOrderedBy
+                .Select(n => new
+                {
+                    Key = sortedOrderedBy.IndexOf(n) + 1,
+                    Value = values.ContainsKey(n) 
+                        ? values[n] 
+                        : 0
+                })
+                .ToDictionary(k => k.Key, v => v.Value);
+        }
 
-        private Dictionary<int, double> CalculateTimeTakenBetweenBestForProblems(IEnumerable<MaximumResultSubmissionByProblemServiceModel> maxSubmissionsBySubmissionTime, DateTime userStartTime)
+        private Dictionary<int, double> CalculateTimeTakenBetweenBestForProblems(
+            IEnumerable<MaximumResultSubmissionByProblemServiceModel> maxSubmissionsBySubmissionTime, 
+            DateTime userStartTime)
         {
             Dictionary<int, double> taskCompletionTimeByProblemOrder = new Dictionary<int, double>();
             
@@ -173,16 +191,20 @@ namespace OJS.Services.Business.ParticipantScores
             taskCompletionTimeByProblemOrder[earliestSubmission.Submission.Problem.ProblemGroup.OrderBy] =
                 Math.Round((earliestSubmission.Submission.CreatedOn - userStartTime)
                 .TotalMinutes);
+            
+            Enumerable
+                .Range(0, maxSubmissionsBySubmissionTime.Count() - 1)
+                .ForEach(index =>
+                {
+                    var earlierSubmission = maxSubmissionsBySubmissionTime.ElementAt(index);
+                    var laterSubmission = maxSubmissionsBySubmissionTime.ElementAt(index + 1);
 
-            for (int i = 0; i < maxSubmissionsBySubmissionTime.Count() - 1; i++)
-            {
-                var earlierSubmission = maxSubmissionsBySubmissionTime.ElementAt(i);
-                var laterSubmission = maxSubmissionsBySubmissionTime.ElementAt(i + 1);
-
-                
-                var taskCompletionDurationInMinutes = Math.Round((laterSubmission.Submission.CreatedOn - earlierSubmission.Submission.CreatedOn).TotalMinutes, 0);
-                taskCompletionTimeByProblemOrder[laterSubmission.Submission.Problem.ProblemGroup.OrderBy] = taskCompletionDurationInMinutes;
-            }
+                    var taskCompletionDurationInMinutes = Math.Round(
+                        (laterSubmission.Submission.CreatedOn - earlierSubmission.Submission.CreatedOn).TotalMinutes, 
+                        0);
+                    
+                    taskCompletionTimeByProblemOrder[laterSubmission.Submission.Problem.ProblemGroup.OrderBy] = taskCompletionDurationInMinutes;
+                });
             
             return taskCompletionTimeByProblemOrder;
         }
