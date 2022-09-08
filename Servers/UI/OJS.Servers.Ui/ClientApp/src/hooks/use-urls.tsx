@@ -1,4 +1,5 @@
 import React, { createContext, useContext } from 'react';
+import { isNil } from 'lodash';
 import {
     IAllContestsUrlParams,
     IDownloadProblemResourceUrlParams,
@@ -54,12 +55,16 @@ const getParticipationsForProfileUrl = () => `${baseApiUrl}/Participations/GetFo
 // contests
 const getIndexContestsUrl = () => `${baseApiUrl}/Contests/GetForHomeIndex`;
 const getAllContestsUrl = ({ filters, page }: IAllContestsUrlParams) => {
-    const queryParams = `${filters
+    const filtersQuery = `${filters
         .map(({ value, type }) => `${type.toLowerCase()}=${value}`)
         .join('&')
-    }&page=${page}`;
+    }`;
+    
+    const pageQuery = isNil(page)
+        ? ''
+        :`page=${page}`;
 
-    return `${baseApiUrl}/Contests/GetAll?${queryParams}`;
+    return `${baseApiUrl}/Contests/GetAll?${filtersQuery}&${pageQuery}`;
 };
 
 const getStartContestParticipationUrl = ({

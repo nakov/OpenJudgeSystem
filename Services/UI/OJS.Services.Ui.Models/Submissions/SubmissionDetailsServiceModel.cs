@@ -32,6 +32,8 @@ namespace OJS.Services.Ui.Models.Submissions
 
         public SubmissionTypeForSubmissionDetailsServiceModel SubmissionType { get; set; }
 
+        public bool IsOfficial { get; set; }
+
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<Submission, SubmissionDetailsServiceModel>()
                 .ForMember(s => s.User, opt => opt.MapFrom(s => s.Participant!.User))
@@ -46,6 +48,8 @@ namespace OJS.Services.Ui.Models.Submissions
                 .ForMember(d => d.Content, opt => opt.MapFrom(s =>
                     s.IsBinaryFile
                         ? null
-                        : s.ContentAsString));
+                        : s.ContentAsString))
+                .ForMember(d => d.IsOfficial, opt => opt.MapFrom(s =>
+                    s.Participant.IsOfficial));
     }
 }

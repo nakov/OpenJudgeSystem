@@ -30,6 +30,7 @@ interface ISubmissionType {
     testRuns: ITestRunType[];
     maxUsedTime: number;
     maxUsedMemory: number;
+    isOfficial: boolean;
 }
 
 interface ITestRunDetailsType extends ITestRunType {
