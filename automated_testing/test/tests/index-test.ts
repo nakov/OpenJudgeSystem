@@ -160,9 +160,6 @@ describe('Testing index', () => {
 
     it('Expect to have six statistic boxes', async () => {
         const boxes = await IndexPage.allStatisticBoxes;
-        console.log('******************');
-        console.log(await boxes.length);
-        console.log('******************');
         await expect(boxes.length).toEqual(6);
     });
 });
