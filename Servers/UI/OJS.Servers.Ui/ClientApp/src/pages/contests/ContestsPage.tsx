@@ -84,11 +84,12 @@ const ContestsPage = () => {
     const renderCategoriesBreadcrumbItem = useCallback(
         (categoryBreadcrumbItem: ICategoriesBreadcrumbItem) => {
             const { value, isLast, id } = categoryBreadcrumbItem;
+            const classNames = concatClassNames(styles.breadcrumbBtn, isLast
+                ? styles.breadcrumbBtnLast
+                : '');
 
             return (
-                <LinkButton type={LinkButtonType.plain} className={concatClassNames(styles.breadcrumbBtn, isLast
-                    ? styles.breadcrumbBtnLast
-                    : '')} to={getBreadcrumbItemPath(id)} text={value} />
+                <LinkButton type={LinkButtonType.plain} className={classNames} to={getBreadcrumbItemPath(id)} text={value} />
             );
         },
         [ ],

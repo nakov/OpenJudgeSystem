@@ -12,7 +12,7 @@ import {
 } from '../../common/Props';
 
 import styles from './List.module.scss';
-import defaultKeyFunc from '../../common/CollectionKeyUtils';
+import defaultKeyFunc from '../../common/colcollection-key-utils';
 
 enum ListType {
     normal = 1,
