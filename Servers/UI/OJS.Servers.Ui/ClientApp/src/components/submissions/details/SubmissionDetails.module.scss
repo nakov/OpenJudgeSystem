@@ -17,6 +17,7 @@
   @extend %navigation;
 
   flex: 7;
+  border-left: none;
 }
 
 .taskHeading {
@@ -26,4 +27,8 @@
 
 .submissionsList {
   height: 60vh;
+}
+
+.submissionDetails {
+  border-left: none;
 }
