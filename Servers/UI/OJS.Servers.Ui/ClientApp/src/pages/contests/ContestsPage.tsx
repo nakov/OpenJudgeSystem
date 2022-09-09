@@ -3,7 +3,6 @@ import { isEmpty, isNil } from 'lodash';
 import ContestFilters from '../../components/contests/contests-filters/ContestFilters';
 import { useContests } from '../../hooks/use-contests';
 import { setLayout } from '../shared/set-layout';
-import styles from './ContestsPage.module.scss';
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
@@ -14,6 +13,7 @@ import { IIndexContestsType } from '../../common/types';
 import { ICategoriesBreadcrumbItem, useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
 import { LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import concatClassNames from '../../utils/class-names';
+import styles from './ContestsPage.module.scss';
 
 const getBreadcrumbItemPath = (id: string) => `/contests?${FilterType.Category.toString()}=${id}`;
 
