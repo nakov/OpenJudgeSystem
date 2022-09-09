@@ -1,14 +1,15 @@
 import React, { Suspense } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import App from './App';
-import register from './registerServiceWorker';
 import Loading from './components/guidelines/loading/Loading';
 
-render(
+const Root = () => (
     <Suspense fallback={<Loading isWholePage isLoading />}>
         <App />
-    </Suspense>,
-    document.getElementById('root'),
+    </Suspense>
 );
 
-register();
+const container = document.getElementById('root');
+const root = createRoot(container!);
+
+root.render(<Root />);
