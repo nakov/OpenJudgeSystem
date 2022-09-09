@@ -107,12 +107,7 @@
                     ProblemGroups = p.Contest.ProblemGroups
                         .Where(group => !group.IsDeleted && group.Problems.Any(problem => !problem.IsDeleted))
                         .ToList(),
-                    TimeInContest =
-                        Math.Round((p.Submissions
-                             .Select(s => s.CreatedOn)
-                             .OrderByDescending(s => s)
-                             .FirstOrDefault()
-                         - (p.ParticipationStartTime ?? p.CreatedOn)).TotalMinutes),
+                    TimeInContest = CalculateTimeInMinutesFromParticipationStartToLastSubmission(p),
                     MaximumPointsSubmissionsByProblems = p.Submissions
                         .Where(s => s.Points == s.Problem.MaximumPoints)
                         .GroupBy(s => s.ProblemId)
@@ -175,29 +170,35 @@
             IEnumerable<MaximumResultSubmissionByProblemServiceModel> maxSubmissionsBySubmissionTime, 
             DateTime userStartTime)
         {
-            Dictionary<int, double> taskCompletionTimeByProblemOrder = new Dictionary<int, double>();
+            var maxSubmissionsBySubmissionTimeList = maxSubmissionsBySubmissionTime.ToList();
             
-            var earliestSubmission = maxSubmissionsBySubmissionTime.First();
-            taskCompletionTimeByProblemOrder[earliestSubmission.Submission.Problem.ProblemGroup.OrderBy] =
-                Math.Round((earliestSubmission.Submission.CreatedOn - userStartTime)
-                .TotalMinutes);
-            
-            Enumerable
-                .Range(0, maxSubmissionsBySubmissionTime.Count() - 1)
-                .ForEach(index =>
-                {
-                    var earlierSubmission = maxSubmissionsBySubmissionTime.ElementAt(index);
-                    var laterSubmission = maxSubmissionsBySubmissionTime.ElementAt(index + 1);
-
-                    var taskCompletionDurationInMinutes = Math.Round(
-                        (laterSubmission.Submission.CreatedOn - earlierSubmission.Submission.CreatedOn).TotalMinutes, 
-                        0);
+            var result = maxSubmissionsBySubmissionTimeList
+                .Skip(1)
+                .Select((laterSubmission, index) => {
+                    var earlierSubmission = maxSubmissionsBySubmissionTimeList[index]; 
                     
-                    taskCompletionTimeByProblemOrder[laterSubmission.Submission.Problem.ProblemGroup.OrderBy] = taskCompletionDurationInMinutes;
-                });
-            
-            return taskCompletionTimeByProblemOrder;
+                    return new {
+                        EarlierSubmission = earlierSubmission,
+                        LaterSubmission = laterSubmission,
+                    };
+                })
+                .ToDictionary(
+                    submissions => submissions.LaterSubmission.Submission.Problem.ProblemGroup.OrderBy,
+                    submissions => Math.Round((submissions.LaterSubmission.Submission.CreatedOn - submissions.EarlierSubmission.Submission.CreatedOn).TotalMinutes, 0
+                ));
+    
+            var earliestSubmission = maxSubmissionsBySubmissionTimeList.First();
+            result[earliestSubmission.Submission.Problem.ProblemGroup.OrderBy] = Math.Round((earliestSubmission.Submission.CreatedOn - userStartTime).TotalMinutes);
+    
+            return result;
         }
+        
+        private double CalculateTimeInMinutesFromParticipationStartToLastSubmission(Participant participant)
+            => Math.Round((participant.Submissions
+                               .Select(s => s.CreatedOn)
+                               .OrderByDescending(s => s)
+                               .FirstOrDefault()
+                           - (participant.ParticipationStartTime ?? participant.CreatedOn)).TotalMinutes);
 
         private void NormalizeSubmissionPoints() =>
             this.submissionsData
