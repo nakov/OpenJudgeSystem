@@ -22,6 +22,11 @@
 
         public bool CanBePracticed { get; set; }
 
+        public bool HasContestPassword { get; set; }
+
+        public bool HasPracticePassword { get; set; }
+
         public string Category { get; set; }
+
     }
 }

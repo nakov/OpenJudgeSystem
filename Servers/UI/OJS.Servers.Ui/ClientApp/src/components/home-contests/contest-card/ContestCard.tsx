@@ -5,8 +5,9 @@ import { convertToSecondsRemaining } from '../../../utils/dates';
 import { IIndexContestsType } from '../../../common/types';
 import concatClassNames from '../../../utils/class-names';
 
-import styles from './ContestCard.module.scss';
 import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import LockIcon from '../../guidelines/icons/LockIcon';
+import styles from './ContestCard.module.scss';
 
 interface IContestCardProps {
     contest: IIndexContestsType
@@ -54,9 +55,23 @@ const ContestCard = ({ contest }: IContestCardProps) => {
         [ canBeCompeted, canBePracticed, endTime, id, practiceEndTime ],
     );
 
+    const renderContestLockIcon = useCallback(
+        () => {
+            const { hasContestPassword, hasPracticePassword } = contest;
+            
+            return (canBeCompeted && hasContestPassword) || (canBePracticed && hasPracticePassword)
+                ? <LockIcon />
+                : null;
+        },
+        [ canBeCompeted, canBePracticed, contest ],
+    );
+
     return (
         <div className={contestCardClassName}>
-            <div className={contestCardHeaderClassName}>{name}</div>
+            <div className={contestCardHeaderClassName}>
+                <span>{name}</span>
+                { renderContestLockIcon() }
+            </div>
             <div className={contestCardCategoryClassName}>{category}</div>
             <div className={contestCardCounterClassName}>
                 {renderCountdown()}
@@ -64,7 +79,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
             <div className={contestCardControlBtnsClassName}>
                 <LinkButton
                   id="button-card-compete"
-                  to={`/contests/${id}/compete`}
+                  to={`/contests/${id}/register/compete`}
                   text="Compete"
                   state={
                         canBeCompeted
@@ -75,7 +90,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                 />
                 <LinkButton
                   id="button-card-practice"
-                  to={`/contests/${id}/practice`}
+                  to={`/contests/${id}/register/practice`}
                   text="Practice"
                   type={LinkButtonType.secondary}
                   state={
