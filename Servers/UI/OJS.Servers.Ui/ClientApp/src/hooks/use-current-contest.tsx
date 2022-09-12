@@ -21,7 +21,6 @@ interface ICurrentContestContext {
         score: number;
         maxScore: number;
         isOfficial: boolean;
-        remainingTimeInMilliseconds: number;
     };
     actions: {
         start: (info: IStartContestArgs) => void;
@@ -34,7 +33,6 @@ const defaultState = {
         score: 0,
         maxScore: 0,
         isOfficial: false,
-        remainingTimeInMilliseconds: 0.0,
     },
 };
 
@@ -54,7 +52,6 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ maxScore, setMaxScore ] = useState(defaultState.state.maxScore);
     const [ isOfficial, setIsOfficial ] = useState(defaultState.state.isOfficial);
     const [ contestToStart, setContestToStart ] = useState<IContestToStartType | null>(null);
-    const [ remainingTimeInMilliseconds, setRemainingTimeInMilliseconds ]=useState(defaultState.state.remainingTimeInMilliseconds);
 
     const {
         startLoading,
@@ -78,11 +75,10 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         }
 
         const responseData = startContestData as IStartParticipationResponseType;
-        const { contest: newContest, contestIsCompete, remainingTimeInMilliseconds: newRemainingTimeInMilliseconds } = responseData;
+        const { contest: newContest, contestIsCompete } = responseData;
 
         setContest(newContest);
         setIsOfficial(contestIsCompete);
-        setRemainingTimeInMilliseconds(newRemainingTimeInMilliseconds);
     }, [ startContestData ]);
 
     useEffect(() => {
@@ -117,7 +113,6 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             score,
             maxScore,
             isOfficial,
-            remainingTimeInMilliseconds,
         },
         actions: { start },
     };
