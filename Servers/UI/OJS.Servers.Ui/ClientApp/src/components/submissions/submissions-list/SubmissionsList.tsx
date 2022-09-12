@@ -50,10 +50,7 @@ const SubmissionsList = ({
         [ submissionListItemClass ],
     );
     const submissionBtnClass = 'submissionBtn';
-    const submissionsLabelTypeClassName = useMemo(
-        () => 'submissionTypeLabel',
-        [],
-    );
+    const submissionsLabelTypeClassName = 'submissionTypeLabel';
 
     const submissionsReloadBtnClassName = 'submissionReloadBtn';
 
@@ -122,7 +119,7 @@ const SubmissionsList = ({
                 </div>
             </div>
         );
-    }, [ selectedSubmission, submissionsLabelTypeClassName ]);
+    }, [ selectedSubmission ]);
 
     return (
         <div className={containerClassName}>
