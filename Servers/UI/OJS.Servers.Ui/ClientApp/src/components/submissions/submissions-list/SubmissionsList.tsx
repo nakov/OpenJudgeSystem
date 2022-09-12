@@ -55,10 +55,7 @@ const SubmissionsList = ({
         [],
     );
 
-    const submissionsReloadBtnClassName = useMemo(
-        () => 'submissionReloadBtn',
-        [],
-    );
+    const submissionsReloadBtnClassName = 'submissionReloadBtn';
 
     const handleReloadClick = useCallback(async () => {
         if (isNil(currentSubmission)) {
