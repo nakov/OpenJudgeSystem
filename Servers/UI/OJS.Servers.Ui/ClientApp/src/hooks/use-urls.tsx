@@ -6,7 +6,8 @@ import {
     IGetContestResultsParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
-    IStartContestParticipationUrlParams,
+    IStartContestParticipationUrlParams, 
+    ISubmitContestPasswordUrlParams,
 } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
@@ -14,11 +15,14 @@ interface IUrlsContext {
     getLoginSubmitUrl: () => string;
     getLogoutUrl: () => string;
     getAdministrationContestsGridUrl: () => string;
+    getAdministrationNavigation: () => string;
     getProfileInfoUrl: () => string;
     getSubmissionsForProfileUrl: () => string;
     getParticipationsForProfileUrl: () => string;
     getIndexContestsUrl: () => string;
     getAllContestsUrl: (params: IAllContestsUrlParams) => string;
+    getRegisterForContestUrl: (params: IStartContestParticipationUrlParams) => string;
+    getSubmitContestPasswordUrl: (params: ISubmitContestPasswordUrlParams) => string;
     getStartContestParticipationUrl: (params: IStartContestParticipationUrlParams) => string;
     getSubmissionResultsByProblemUrl: (params: IGetSubmissionResultsByProblemUrlParams) => string;
     getSubmissionsDetailsUrl: () => string;
@@ -46,6 +50,7 @@ const getLogoutUrl = () => `${baseUrl}/Account/Logout`;
 // admin
 const administrationBaseUrl = window.URLS.ADMINISTRATION_URL;
 const getAdministrationContestsGridUrl = () => `${administrationBaseUrl}/Contests`;
+const getAdministrationNavigation = () => '/administration';
 
 // profile
 const getProfileInfoUrl = () => `${baseApiUrl}/Users/GetProfileInfo`;
@@ -66,6 +71,16 @@ const getAllContestsUrl = ({ filters, page }: IAllContestsUrlParams) => {
 
     return `${baseApiUrl}/Contests/GetAll?${filtersQuery}&${pageQuery}`;
 };
+
+const getRegisterForContestUrl = ({
+    id,
+    isOfficial,
+}: IStartContestParticipationUrlParams) => `${baseApiUrl}/Contests/Register/${id}?official=${isOfficial}`;
+
+const getSubmitContestPasswordUrl = ({
+    id,
+    isOfficial,
+}: ISubmitContestPasswordUrlParams) => `${baseApiUrl}/Contests/SubmitContestPassword/${id}?official=${isOfficial}`;
 
 const getStartContestParticipationUrl = ({
     id,
@@ -108,7 +123,10 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
         getLoginSubmitUrl,
         getLogoutUrl,
         getAdministrationContestsGridUrl,
+        getAdministrationNavigation,
         getAllContestsUrl,
+        getRegisterForContestUrl,
+        getSubmitContestPasswordUrl,
         getStartContestParticipationUrl,
         getDownloadProblemResourceUrl,
         getSubmissionResultsByProblemUrl,

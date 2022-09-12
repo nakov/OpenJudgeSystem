@@ -2,8 +2,8 @@ import React, { useCallback } from 'react';
 import { IconBaseProps } from 'react-icons/lib/cjs/iconBase';
 import { IHaveOptionalClassName } from '../../common/Props';
 import concatClassNames from '../../../utils/class-names';
-import styles from './Icon.module.scss';
 import IconSize from './common/icon-sizes';
+import styles from './Icon.module.scss';
 
 interface IIconProps extends IHaveOptionalClassName {
     size?: IconSize;

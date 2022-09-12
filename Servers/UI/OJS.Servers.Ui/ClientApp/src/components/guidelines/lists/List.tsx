@@ -12,6 +12,7 @@ import {
 } from '../../common/Props';
 
 import styles from './List.module.scss';
+import defaultKeyFunc from '../../common/colcollection-key-utils';
 
 enum ListType {
     normal = 1,
@@ -36,16 +37,6 @@ interface IListProps<TValue> extends IHaveOptionalClassName {
     fullWidth?: boolean;
     scrollable?: boolean;
 }
-
-const defaultKeyFunc = <TValue extends unknown>(value: TValue) => {
-    const objWithId = value as { id: string };
-
-    if (objWithId.id) {
-        return objWithId.id.toString();
-    }
-
-    return JSON.stringify(value);
-};
 
 const List = <TValue extends unknown>({
     values,

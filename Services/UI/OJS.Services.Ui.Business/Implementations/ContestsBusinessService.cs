@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace OJS.Services.Ui.Business.Implementations
 {
     using System;
@@ -48,6 +50,58 @@ namespace OJS.Services.Ui.Business.Implementations
             this.userProviderService = userProviderService;
             this.participantsBusiness = participantsBusiness;
             this.contestCategoriesCache = contestCategoriesCache;
+        }
+
+        public async Task<RegisterUserForContestServiceModel> RegisterUserForContest(int id, bool official)
+        {
+            var user = this.userProviderService.GetCurrentUser();
+            var userProfile = await this.usersBusinessService.GetUserProfileById(user.Id);
+
+            var participant = await this.participantsData
+                .GetWithContestByContestByUserAndIsOfficial(
+                    id,
+                    userProfile.Id,
+                    official);
+
+            var contest = await this.contestsData.OneById(id);
+
+            await this.ValidateContest(contest, user.Id, user.IsAdmin, official);
+
+            var registerModel = contest.Map<RegisterUserForContestServiceModel>();
+            registerModel.RequirePassword = this.ShouldRequirePassword(contest, participant, official);
+
+            return registerModel;
+        }
+
+        private bool ShouldRequirePassword(Contest contest, Participant participant, bool official)
+        {
+            if (participant != null && !participant.IsInvalidated)
+            {
+                return false;
+            }
+
+            return (official && contest.HasContestPassword) || (!official && contest.HasPracticePassword);
+        }
+
+        public async Task ValidateContestPassword(int id, bool official, string password)
+        {
+            if (string.IsNullOrEmpty(password))
+            {
+                throw new BusinessServiceException("Password is empty");
+            }
+
+            var contest = await this.contestsData.OneById(id);
+
+            var isOfficialAndIsCompetePasswordCorrect =
+                official && contest.HasContestPassword && contest.ContestPassword == password;
+
+            var isPracticeAndIsPracticePasswordCorrect =
+                !official && contest.HasPracticePassword && contest.PracticePassword == password;
+
+            if (!isOfficialAndIsCompetePasswordCorrect && !isPracticeAndIsPracticePasswordCorrect)
+            {
+                throw new BusinessServiceException("Incorrect password!");
+            }
         }
 
         public async Task<ContestParticipationServiceModel> StartContestParticipation(

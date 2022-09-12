@@ -1,3 +1,5 @@
+@import "src/styles/colors";
+
 .container {
   display: flex;
   flex: 1 13;
@@ -5,4 +7,16 @@
 
 .contestItem {
   flex: 0 1 calc(100% / 4);
+}
+
+.breadcrumbBtn {
+  color: $text-light-gray-color;
+  
+  &:hover {
+    color: $text-dark-gray-color;
+  }
+}
+
+.breadcrumbBtnLast {
+  color: $text-dark-gray-color;
 }

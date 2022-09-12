@@ -17,6 +17,9 @@
 }
 
 .contestCardHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   @extend %font-family-lato;
   font-weight: 500;
   font-size: $f-size-18;

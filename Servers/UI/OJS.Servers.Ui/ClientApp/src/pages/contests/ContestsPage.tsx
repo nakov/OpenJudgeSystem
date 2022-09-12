@@ -3,13 +3,19 @@ import { isEmpty, isNil } from 'lodash';
 import ContestFilters from '../../components/contests/contests-filters/ContestFilters';
 import { useContests } from '../../hooks/use-contests';
 import { setLayout } from '../shared/set-layout';
-import styles from './ContestsPage.module.scss';
-import { IIndexContestsType } from '../../common/types';
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
-import { IFilter } from '../../common/contest-types';
+import { FilterType, IFilter } from '../../common/contest-types';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
+import Breadcrumb from '../../components/guidelines/breadcrumb/Breadcrumb';
+import { IIndexContestsType } from '../../common/types';
+import { ICategoriesBreadcrumbItem, useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
+import { LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
+import concatClassNames from '../../utils/class-names';
+import styles from './ContestsPage.module.scss';
+
+const getBreadcrumbItemPath = (id: string) => `/contests?${FilterType.Category.toString()}=${id}`;
 
 const ContestsPage = () => {
     const {
@@ -23,6 +29,8 @@ const ContestsPage = () => {
             changePage,
         },
     } = useContests();
+    
+    const { state: { breadcrumbItems } } = useCategoriesBreadcrumbs();
 
     const handlePageChange = useCallback(
         (page: number) => changePage(page),
@@ -73,14 +81,30 @@ const ContestsPage = () => {
         [ contests, currentPage, handlePageChange, pagesInfo, renderContest ],
     );
 
-    return (
-        <div className={styles.container}>
+    const renderCategoriesBreadcrumbItem = useCallback(
+        (categoryBreadcrumbItem: ICategoriesBreadcrumbItem) => {
+            const { value, isLast, id } = categoryBreadcrumbItem;
+            const classNames = concatClassNames(styles.breadcrumbBtn, isLast
+                ? styles.breadcrumbBtnLast
+                : '');
 
-            <ContestFilters onFilterClick={handleFilterClick}/>
-            <div>
-                {renderContests()}
+            return (
+                <LinkButton type={LinkButtonType.plain} className={classNames} to={getBreadcrumbItemPath(id)} text={value} />
+            );
+        },
+        [ ],
+    );
+
+    return (
+        <>
+            <Breadcrumb items={breadcrumbItems} itemFunc={renderCategoriesBreadcrumbItem} />
+            <div className={styles.container}>
+                <ContestFilters onFilterClick={handleFilterClick}/>
+                <div>
+                    {renderContests()}
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 

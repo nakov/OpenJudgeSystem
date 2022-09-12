@@ -21,7 +21,7 @@ const LoginPage = () => {
         setUsername(value);
     }, [ setUsername ]);
 
-    const handleOnChangeUpdatePassword = useCallback((value: any) => {
+    const handleOnChangeUpdatePassword = useCallback((value: string) => {
         setPassword(value);
     }, [ setPassword ]);
 
@@ -72,7 +72,9 @@ const LoginPage = () => {
               labelText={passwordFieldName}
               labelClassName={styles.floatingLabel}
               type={FormControlType.password}
-              onChange={(value) => handleOnChangeUpdatePassword(value)}
+              onChange={(value) => handleOnChangeUpdatePassword(isNil(value)
+                  ? ''
+                  : value.toString())}
               value=""
             />
             <div className={styles.loginFormControls}>
