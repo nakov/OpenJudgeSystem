@@ -20,6 +20,7 @@ const Contest = () => {
             contest,
             score,
             maxScore,
+            remainingTimeInMilliseconds,
         },
     } = useCurrentContest();
 
@@ -83,19 +84,17 @@ const Contest = () => {
 
     const renderTimeRemaining = useCallback(
         () => {
-            const { endTime } = contest || {};
-
-            if (!endTime) {
+            if (!remainingTimeInMilliseconds) {
                 return null;
             }
 
-            const duration = convertToSecondsRemaining(new Date(endTime));
+            const duration = convertToSecondsRemaining(new Date(remainingTimeInMilliseconds));
 
             return (
                 <Countdown renderRemainingTime={renderCountdown} duration={duration} metric={Metric.seconds} />
             );
         },
-        [ contest, renderCountdown ],
+        [ remainingTimeInMilliseconds , renderCountdown ],
     );
 
     const secondaryHeadingClassName = useMemo(
