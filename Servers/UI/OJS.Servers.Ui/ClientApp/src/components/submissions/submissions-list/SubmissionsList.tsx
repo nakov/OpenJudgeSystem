@@ -1,17 +1,20 @@
 import React, { useCallback, useMemo } from 'react';
 
+import { isNil } from 'lodash';
 import { ISubmissionDetails } from '../../../hooks/submissions/types';
 import { IHaveOptionalClassName } from '../../common/Props';
 import concatClassNames from '../../../utils/class-names';
 import { formatDate } from '../../../utils/dates';
 
-import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import { Button, ButtonSize, ButtonState, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 
 import List, { ListType, Orientation } from '../../guidelines/lists/List';
 import Text from '../../guidelines/text/Text';
 import SubmissionResultPointsLabel from '../submission-result-points-label/SubmissionResultPointsLabel';
 
 import styles from './SubmissionsList.module.scss';
+import Label, { LabelType } from '../../guidelines/labels/Label';
+import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 
 interface ISubmissionsListProps extends IHaveOptionalClassName {
     items: any[];
@@ -23,6 +26,11 @@ const SubmissionsList = ({
     selectedSubmission,
     className = '',
 }: ISubmissionsListProps) => {
+    const {
+        state: { currentSubmission },
+        actions: { getSubmissionResults },
+    } = useSubmissionsDetails();
+    
     const containerClassName = useMemo(
         () => concatClassNames(className),
         [ className ],
@@ -42,6 +50,25 @@ const SubmissionsList = ({
         [ submissionListItemClass ],
     );
     const submissionBtnClass = 'submissionBtn';
+    const submissionsLabelTypeClassName = useMemo(
+        () => 'submissionTypeLabel',
+        [],
+    );
+
+    const submissionsReloadBtnClassName = useMemo(
+        () => 'submissionReloadBtn',
+        [],
+    );
+
+    const handleReloadClick = useCallback(async () => {
+        if (isNil(currentSubmission)) {
+            return;
+        }
+
+        const { problem: { id: problemId }, isOfficial } = currentSubmission;
+        
+        await getSubmissionResults(problemId, isOfficial);
+    }, [ currentSubmission, getSubmissionResults ]);
 
     const renderSubmissionListItem = useCallback((submission: ISubmissionDetails) => {
         const { id: selectedSubmissionId } = selectedSubmission || {};
@@ -52,6 +79,7 @@ const SubmissionsList = ({
             isProcessed,
             createdOn,
             submissionType,
+            isOfficial,
         } = submission;
         const isSelectedSubmission = id === selectedSubmissionId;
         const selectedClassName = isSelectedSubmission
@@ -67,6 +95,10 @@ const SubmissionsList = ({
             ? ButtonState.disabled
             : ButtonState.enabled;
 
+        const typeLabelText = isOfficial
+            ? 'Compete'
+            : 'Practice';
+
         return (
             <div className={itemClassName}>
                 <div className={styles.infoContainer}>
@@ -81,6 +113,7 @@ const SubmissionsList = ({
                     <Text>
                         {submissionType}
                     </Text>
+                    <Label type={LabelType.plain} text={typeLabelText} className={submissionsLabelTypeClassName} />
                     <LinkButton
                       size={ButtonSize.small}
                       to={`/submissions/${id}/details`}
@@ -92,7 +125,7 @@ const SubmissionsList = ({
                 </div>
             </div>
         );
-    }, [ selectedSubmission ]);
+    }, [ selectedSubmission, submissionsLabelTypeClassName ]);
 
     return (
         <div className={containerClassName}>
@@ -106,6 +139,11 @@ const SubmissionsList = ({
               fullWidth
               scrollable={false}
             />
+            <Button
+              onClick={handleReloadClick}
+              text="Reload"
+              type={ButtonType.secondary}
+              className={submissionsReloadBtnClassName} />
         </div>
     );
 };
