@@ -104,7 +104,7 @@ const SubmissionsList = ({
               type={ListType.normal}
               orientation={Orientation.vertical}
               fullWidth
-              scrollable
+              scrollable={false}
             />
         </div>
     );

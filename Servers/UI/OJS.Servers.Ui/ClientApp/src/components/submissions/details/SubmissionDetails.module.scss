@@ -27,6 +27,12 @@
 
 .submissionsList {
   height: 60vh;
+  
+  ul {
+    overflow-x: hidden;
+    overflow-y: auto;
+    @extend %customScroll;
+  }
 }
 
 .submissionDetails {
