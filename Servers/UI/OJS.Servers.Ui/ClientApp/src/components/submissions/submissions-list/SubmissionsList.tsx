@@ -1,36 +1,30 @@
-import React, { useCallback, useMemo } from 'react';
-
-import { isNil } from 'lodash';
+import React, { FC, useCallback, useMemo } from 'react';
 import { ISubmissionDetails } from '../../../hooks/submissions/types';
 import { IHaveOptionalClassName } from '../../common/Props';
 import concatClassNames from '../../../utils/class-names';
 import { formatDate } from '../../../utils/dates';
-
-import { Button, ButtonSize, ButtonState, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
-
+import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import List, { ListType, Orientation } from '../../guidelines/lists/List';
 import Text from '../../guidelines/text/Text';
 import SubmissionResultPointsLabel from '../submission-result-points-label/SubmissionResultPointsLabel';
-
 import styles from './SubmissionsList.module.scss';
 import Label, { LabelType } from '../../guidelines/labels/Label';
-import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 
-interface ISubmissionsListProps extends IHaveOptionalClassName {
+interface ISubmissionsListBaseProps extends IHaveOptionalClassName {
     items: any[];
     selectedSubmission: any;
+}
+
+interface ISubmissionsListProps extends ISubmissionsListBaseProps {
+    refreshableButton: FC | any;
 }
 
 const SubmissionsList = ({
     items,
     selectedSubmission,
     className = '',
+    refreshableButton = null,
 }: ISubmissionsListProps) => {
-    const {
-        state: { currentSubmission },
-        actions: { getSubmissionResults },
-    } = useSubmissionsDetails();
-    
     const containerClassName = useMemo(
         () => concatClassNames(className),
         [ className ],
@@ -51,18 +45,6 @@ const SubmissionsList = ({
     );
     const submissionBtnClass = 'submissionBtn';
     const submissionsLabelTypeClassName = 'submissionTypeLabel';
-
-    const submissionsReloadBtnClassName = 'submissionReloadBtn';
-
-    const handleReloadClick = useCallback(async () => {
-        if (isNil(currentSubmission)) {
-            return;
-        }
-
-        const { problem: { id: problemId }, isOfficial } = currentSubmission;
-        
-        await getSubmissionResults(problemId, isOfficial);
-    }, [ currentSubmission, getSubmissionResults ]);
 
     const renderSubmissionListItem = useCallback((submission: ISubmissionDetails) => {
         const { id: selectedSubmissionId } = selectedSubmission || {};
@@ -133,13 +115,13 @@ const SubmissionsList = ({
               fullWidth
               scrollable={false}
             />
-            <Button
-              onClick={handleReloadClick}
-              text="Reload"
-              type={ButtonType.secondary}
-              className={submissionsReloadBtnClassName} />
+            { refreshableButton }
         </div>
     );
 };
 
 export default SubmissionsList;
+
+export type {
+    ISubmissionsListBaseProps,
+};

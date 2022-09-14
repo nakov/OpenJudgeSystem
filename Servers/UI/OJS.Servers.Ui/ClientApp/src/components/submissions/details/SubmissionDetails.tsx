@@ -6,8 +6,8 @@ import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import CodeEditor from '../../code-editor/CodeEditor';
 import SubmissionResults from '../submission-results/SubmissionResults';
 import styles from './SubmissionDetails.module.scss';
-import SubmissionsList from '../submissions-list/SubmissionsList';
 import concatClassNames from '../../../utils/class-names';
+import RefreshablSubmissionsList from '../submissions-list/RefreshableSubmissionsList';
 
 const SubmissionDetails = () => {
     const {
@@ -57,7 +57,7 @@ const SubmissionDetails = () => {
                 <div className={submissionsNavigationClassName}>
                     <Heading type={HeadingType.secondary}>Submissions</Heading>
                 </div>
-                <SubmissionsList
+                <RefreshablSubmissionsList
                   items={currentProblemSubmissionResults}
                   selectedSubmission={currentSubmission}
                   className={styles.submissionsList}
