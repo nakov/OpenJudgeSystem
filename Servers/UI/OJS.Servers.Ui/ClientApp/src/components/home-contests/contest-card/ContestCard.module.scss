@@ -49,3 +49,38 @@
   font-weight: bold;
   color: $text-light-gray-color;
 }
+
+.contestCardTitle {
+  white-space: nowrap;
+  overflow: hidden;
+  display: block;
+  text-overflow: ellipsis;
+  width: 225px;
+}
+
+.tooltip {
+  position: absolute;
+  display: none;
+  border-bottom: 1px dotted black;
+}
+
+.tooltiptext {
+  width: 245px;
+  background-color: grey;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+}
+
+.contestCardHeader:hover {
+  .tooltip {
+    display: block;
+  }
+}
+
+
+
