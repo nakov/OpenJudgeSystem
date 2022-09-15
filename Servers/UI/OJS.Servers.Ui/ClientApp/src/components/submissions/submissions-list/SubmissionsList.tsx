@@ -7,8 +7,9 @@ import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guide
 import List, { ListType, Orientation } from '../../guidelines/lists/List';
 import Text from '../../guidelines/text/Text';
 import SubmissionResultPointsLabel from '../submission-result-points-label/SubmissionResultPointsLabel';
-import styles from './SubmissionsList.module.scss';
 import Label, { LabelType } from '../../guidelines/labels/Label';
+import { ContestParticipationType } from '../../../common/constants';
+import styles from './SubmissionsList.module.scss';
 
 interface ISubmissionsListProps extends IHaveOptionalClassName {
     items: any[];
@@ -67,8 +68,8 @@ const SubmissionsList = ({
             : ButtonState.enabled;
 
         const typeLabelText = isOfficial
-            ? 'Compete'
-            : 'Practice';
+            ? ContestParticipationType.Compete
+            : ContestParticipationType.Practice;
 
         return (
             <div className={itemClassName}>

@@ -5,9 +5,9 @@ import { useSubmissionsDetails } from '../../../hooks/submissions/use-submission
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import CodeEditor from '../../code-editor/CodeEditor';
 import SubmissionResults from '../submission-results/SubmissionResults';
-import styles from './SubmissionDetails.module.scss';
 import concatClassNames from '../../../utils/class-names';
 import RefreshableSubmissionsList from '../submissions-list/RefreshableSubmissionsList';
+import styles from './SubmissionDetails.module.scss';
 
 const SubmissionDetails = () => {
     const {
