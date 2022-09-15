@@ -1,13 +1,13 @@
 import React, { useCallback } from 'react';
 import { isNil } from 'lodash';
-import SubmissionsList, { ISubmissionsListBaseProps } from './SubmissionsList';
+import SubmissionsList, { ISubmissionsListProps } from './SubmissionsList';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import Button, { ButtonType } from '../../guidelines/buttons/Button';
 
-interface IRefreshableSubmissionsListProps extends ISubmissionsListBaseProps {
+interface IRefreshableSubmissionsListProps extends ISubmissionsListProps {
 }
 
-const RefreshablSubmissionsList = ({
+const RefreshableSubmissionsList = ({
     items,
     selectedSubmission,
     className = '',
@@ -29,20 +29,20 @@ const RefreshablSubmissionsList = ({
         await getSubmissionResults(problemId, isOfficial);
     }, [ currentSubmission, getSubmissionResults ]);
     
-    const btn = <Button
-        onClick={handleReloadClick}
-        text="Reload"
-        type={ButtonType.secondary}
-        className={submissionsReloadBtnClassName} />;
-    
     return (
-        <SubmissionsList
-            items={items}
-            selectedSubmission={selectedSubmission}
-            className={className}
-            refreshableButton={btn}
-        />
+        <>
+            <SubmissionsList
+                items={items}
+                selectedSubmission={selectedSubmission}
+                className={className} />
+            
+            <Button
+                onClick={handleReloadClick}
+                text="Reload"
+                type={ButtonType.secondary}
+                className={submissionsReloadBtnClassName} />
+        </>
     );
 };
 
-export default RefreshablSubmissionsList;
+export default RefreshableSubmissionsList;

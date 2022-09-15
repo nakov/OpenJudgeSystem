@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { ISubmissionDetails } from '../../../hooks/submissions/types';
 import { IHaveOptionalClassName } from '../../common/Props';
 import concatClassNames from '../../../utils/class-names';
@@ -10,20 +10,15 @@ import SubmissionResultPointsLabel from '../submission-result-points-label/Submi
 import styles from './SubmissionsList.module.scss';
 import Label, { LabelType } from '../../guidelines/labels/Label';
 
-interface ISubmissionsListBaseProps extends IHaveOptionalClassName {
+interface ISubmissionsListProps extends IHaveOptionalClassName {
     items: any[];
     selectedSubmission: any;
-}
-
-interface ISubmissionsListProps extends ISubmissionsListBaseProps {
-    refreshableButton: FC | any;
 }
 
 const SubmissionsList = ({
     items,
     selectedSubmission,
     className = '',
-    refreshableButton = null,
 }: ISubmissionsListProps) => {
     const containerClassName = useMemo(
         () => concatClassNames(className),
@@ -115,7 +110,6 @@ const SubmissionsList = ({
               fullWidth
               scrollable={false}
             />
-            { refreshableButton }
         </div>
     );
 };
@@ -123,5 +117,5 @@ const SubmissionsList = ({
 export default SubmissionsList;
 
 export type {
-    ISubmissionsListBaseProps,
+    ISubmissionsListProps,
 };

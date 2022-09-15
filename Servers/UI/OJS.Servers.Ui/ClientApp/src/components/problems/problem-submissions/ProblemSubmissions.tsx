@@ -46,7 +46,6 @@ const ProblemSubmissions = () => {
               items={submissions}
               selectedSubmission={null}
               className={styles.submissionsList}
-              refreshableButton={null}
             />
         );
     };
