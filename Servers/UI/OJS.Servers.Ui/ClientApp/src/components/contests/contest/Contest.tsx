@@ -87,14 +87,14 @@ const Contest = () => {
             if (!remainingTimeInMilliseconds) {
                 return null;
             }
-            
-            const currentSeconds=remainingTimeInMilliseconds/1000;
-            
+
+            const currentSeconds = remainingTimeInMilliseconds / 1000;
+
             return (
-                <Countdown renderRemainingTime={renderCountdown} duration={currentSeconds} metric={Metric.seconds} />
+                <Countdown renderRemainingTime={renderCountdown} duration={currentSeconds} metric={Metric.seconds}/>
             );
         },
-        [ remainingTimeInMilliseconds , renderCountdown ],
+        [ remainingTimeInMilliseconds, renderCountdown ],
     );
 
     const secondaryHeadingClassName = useMemo(
@@ -106,8 +106,8 @@ const Contest = () => {
         <>
             <div className={styles.headingContest}>
                 <Heading
-                  type={HeadingType.primary}
-                  className={styles.contestHeading}
+                    type={HeadingType.primary}
+                    className={styles.contestHeading}
                 >
                     {contest?.name}
                 </Heading>
@@ -119,13 +119,13 @@ const Contest = () => {
 
             <div className={styles.contestWrapper}>
                 <div className={navigationContestClassName}>
-                    <ContestTasksNavigation />
+                    <ContestTasksNavigation/>
                 </div>
                 <div className={submissionBoxClassName}>
-                    <SubmissionBox />
+                    <SubmissionBox/>
                 </div>
                 <div className={problemInfoClassName}>
-                    <ContestProblemDetails />
+                    <ContestProblemDetails/>
                 </div>
             </div>
         </>
