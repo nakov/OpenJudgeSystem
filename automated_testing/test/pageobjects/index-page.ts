@@ -96,11 +96,11 @@ class IndexPage extends Page {
     }
 
     public get firstPracticeCardButtoPastContests() {
-        return $(selectors.pageAllPastCardsSelector).$$(selectors.pagePracticeButtonIdSelector)[0];
+        return this.practiceButtonsInActiveContestsCard[0];
     }
 
     public get firstCompeteCardButtonActiveContests() {
-        return $(selectors.pageAllActiveCardsSelector).$$(selectors.pageCompeteButtonIdSelector)[0];
+        return this.competeButtonsInActiveContestCard[0];
     }
 
     public get seeAllActiveContestsButton() {
@@ -112,10 +112,10 @@ class IndexPage extends Page {
     }
 
     public get secondCompeteCardButtonActiveContests() {
-        return $(selectors.pageAllActiveCardsSelector).$$(selectors.pageCompeteButtonIdSelector)[1];
+        return this.competeButtonsInActiveContestCard[1];
     }
 
-    public get secondPracticeCardButtoPastContests() {
+    public get secondPracticeCardButtonPastContests() {
         return $(selectors.pageAllPastCardsSelector).$$(selectors.pagePracticeButtonIdSelector)[1];
     }
 
