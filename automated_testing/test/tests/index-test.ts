@@ -111,13 +111,13 @@ describe('Testing index', () => {
     });
 
     it('Expect every active contest card to have compete button', async () => {
-        const competeButtons = await IndexPage.competeButtonInActiveContestCard;
+        const competeButtons = await IndexPage.competeButtonsInActiveContestCard;
         const check = await contestCardsChecker.competeButtonsActiveCarsCheck(activeCards, competeButtons);
         await expect(check).toBeTruthy();
     });
 
     it('Expect every active contest card to have practice button', async () => {
-        const practiceButtons = await IndexPage.competeButtonInActiveContestCard;
+        const practiceButtons = await IndexPage.competeButtonsInActiveContestCard;
         const check = await contestCardsChecker.competeButtonsActiveCarsCheck(activeCards, practiceButtons);
         await expect(check).toBeTruthy();
     });

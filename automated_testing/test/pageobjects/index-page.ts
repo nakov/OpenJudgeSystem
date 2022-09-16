@@ -87,20 +87,12 @@ class IndexPage extends Page {
         return $(selectors.pageContestCardTimerSelector);
     }
 
-    public get competeButtonInActiveContestCard() {
+    public get competeButtonsInActiveContestCard() {
         return $(selectors.pageAllActiveCardsSelector).$$(selectors.pageCompeteButtonIdSelector);
     }
 
-    public get practiceButtonInActiveContestsCard() {
+    public get practiceButtonsInActiveContestsCard() {
         return $(selectors.pageAllActiveCardsSelector).$$(selectors.pagePracticeButtonIdSelector);
-    }
-
-    public get competeButtonInPastContestsCard() {
-        return $(selectors.pageAllPastCardsSelector).$$(selectors.pageCompeteButtonIdSelector);
-    }
-
-    public get practiceButtoInPastContestsCard() {
-        return $(selectors.pageAllPastCardsSelector).$$(selectors.pagePracticeButtonIdSelector);
     }
 
     public get firstPracticeCardButtoPastContests() {
