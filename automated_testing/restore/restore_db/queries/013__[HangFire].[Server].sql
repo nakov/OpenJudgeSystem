@@ -7,8 +7,8 @@ IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [object_id] = OBJECT_ID(
 GO
 
 INSERT INTO [HangFire].[Server] ([Id], [Data], [LastHeartbeat])
-VALUES (N'3a972eabeb0a:8:9b725733-6a35-4f6e-9b68-bd28d5ceb813', N'{"WorkerCount":20,"Queues":["default"],"StartedAt":"2022-09-12T14:28:49.7408859Z"}', CAST(N'2022-09-12T14:29:49+00:00' AS DateTime2)),
-(N'9718b7db2f41:7:ac1576c2-c254-437e-86a2-a2c89e6f1ef7', N'{"WorkerCount":20,"Queues":["default"],"StartedAt":"2022-09-12T14:28:29.7498905Z"}', CAST(N'2022-09-12T14:29:59+00:00' AS DateTime2))
+VALUES (N'59615a44d33c:7:f42face1-4307-4428-97b4-317a5a46870c', N'{"WorkerCount":20,"Queues":["default"],"StartedAt":"2022-09-16T05:24:23.4197199Z"}', CAST(N'2022-09-16T05:27:23+00:00' AS DateTime2)),
+(N'd3b6f3917bbe:7:1fd0503a-b72f-40d8-91c7-4b94e0c4e594', N'{"WorkerCount":20,"Queues":["default"],"StartedAt":"2022-09-16T05:24:23.9617484Z"}', CAST(N'2022-09-16T05:27:24+00:00' AS DateTime2))
 GO
 
 IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [object_id] = OBJECT_ID(N'[HangFire].[Server]'))

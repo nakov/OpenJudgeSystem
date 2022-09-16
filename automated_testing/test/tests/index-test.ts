@@ -111,25 +111,25 @@ describe('Testing index', () => {
     });
 
     it('Expect every active contest card to have compete button', async () => {
-        const competeButtons = await IndexPage.competeCardButtonActivecontests;
+        const competeButtons = await IndexPage.competeButtonInActiveContestCard;
         const check = await contestCardsChecker.competeButtonsActiveCarsCheck(activeCards, competeButtons);
         await expect(check).toBeTruthy();
     });
 
     it('Expect every active contest card to have practice button', async () => {
-        const practiceButtons = await IndexPage.practiceCardButtoActiveContests;
+        const practiceButtons = await IndexPage.competeButtonInActiveContestCard;
         const check = await contestCardsChecker.competeButtonsActiveCarsCheck(activeCards, practiceButtons);
         await expect(check).toBeTruthy();
     });
 
     it('Expect every past contest card to have compete button', async () => {
-        const competeButtons = await IndexPage.competeCardButtonPastcontests;
+        const competeButtons = await IndexPage.competeButtonInPastContestsCard;
         const check = await contestCardsChecker.competeButtonsActiveCarsCheck(pastCards, competeButtons);
         await expect(check).toBeTruthy();
     });
 
     it('Expect every past contest card to have practice button', async () => {
-        const practiceButtons = await IndexPage.practiceCardButtoPastContests;
+        const practiceButtons = await IndexPage.competeButtonInPastContestsCard;
         const check = await contestCardsChecker.competeButtonsActiveCarsCheck(pastCards, practiceButtons);
         await expect(check).toBeTruthy();
     });
@@ -138,24 +138,6 @@ describe('Testing index', () => {
         const competeButtons = await IndexPage.competeButtonInActiveContestCard;
         const check = await competeButtons.filter((b) => b.isEnabled());
         await expect(competeButtons.length).toEqual(check.length);
-    });
-
-    it('Expect every active contest card to have disabled practice button', async () => {
-        const practiceButtons = await IndexPage.practiceButtonInActiveContestsCard;
-        const check = await practiceButtons.filter((b) => b.isEnabled());
-        await expect(check.length).toEqual(0);
-    });
-
-    it('Expect every past contest card to have disabled compete button', async () => {
-        const competeButtons = await IndexPage.competeButtonInPastContestsCard;
-        const check = await competeButtons.filter((b) => b.isEnabled());
-        await expect(check.length).toEqual(0);
-    });
-
-    it('Expect every past contest card to have enabled practice button', async () => {
-        const practiceButtons = await IndexPage.practiceButtoInPastContestsCard;
-        const check = await practiceButtons.filter((b) => b.isEnabled());
-        await expect(practiceButtons.length).toEqual(check.length);
     });
 
     it('Expect to have six statistic boxes', async () => {
