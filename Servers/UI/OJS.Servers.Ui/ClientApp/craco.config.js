@@ -58,24 +58,6 @@ module.exports = {
             addMonacoPlugin,
         ),
     },
-    devServer2(configFunction) {
-        return function (proxy, allowedHost) {
-            const config = configFunction(proxy, allowedHost);
-            const { historyApiFallback } = config;
-
-            return {
-                ...config,
-                devMiddleware: {
-                    ...config.devMiddleware,
-                    writeToDisk: true,
-                },
-                historyApiFallback: {
-                    ...historyApiFallback,
-                    index: '/',
-                },
-            };
-        };
-    },
     devServer: (config) => {
         const { historyApiFallback } = config;
 
