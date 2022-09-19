@@ -23,10 +23,6 @@ class IndexPage extends Page {
         return $(selectors.pageYoutubeVideoSelector);
     }
 
-    public get seeContestsButton() {
-        return $(selectors.pageSeeContestsButtonSelector);
-    }
-
     public get footer() {
         return $(selectors.pageFooterSelector);
     }
@@ -91,28 +87,20 @@ class IndexPage extends Page {
         return $(selectors.pageContestCardTimerSelector);
     }
 
-    public get competeCardButtonActivecontests() {
+    public get competeButtonsInActiveContestCard() {
         return $(selectors.pageAllActiveCardsSelector).$$(selectors.pageCompeteButtonIdSelector);
     }
 
-    public get practiceCardButtoActiveContests() {
+    public get practiceButtonsInActiveContestsCard() {
         return $(selectors.pageAllActiveCardsSelector).$$(selectors.pagePracticeButtonIdSelector);
     }
 
-    public get competeCardButtonPastcontests() {
-        return $(selectors.pageAllPastCardsSelector).$$(selectors.pageCompeteButtonIdSelector);
-    }
-
-    public get practiceCardButtoPastContests() {
-        return $(selectors.pageAllPastCardsSelector).$$(selectors.pagePracticeButtonIdSelector);
-    }
-
     public get firstPracticeCardButtoPastContests() {
-        return $(selectors.pageAllPastCardsSelector).$$(selectors.pagePracticeButtonIdSelector)[0];
+        return this.practiceButtonsInActiveContestsCard[0];
     }
 
     public get firstCompeteCardButtonActiveContests() {
-        return $(selectors.pageAllActiveCardsSelector).$(selectors.pageCompeteButtonIdSelector);
+        return this.competeButtonsInActiveContestCard[0];
     }
 
     public get seeAllActiveContestsButton() {
@@ -121,6 +109,22 @@ class IndexPage extends Page {
 
     public get seeAllPastContestsButton() {
         return $(selectors.pageSeePastContestsButtonSelector);
+    }
+
+    public get secondCompeteCardButtonActiveContests() {
+        return this.competeButtonsInActiveContestCard[1];
+    }
+
+    public get secondPracticeCardButtonPastContests() {
+        return $(selectors.pageAllPastCardsSelector).$$(selectors.pagePracticeButtonIdSelector)[1];
+    }
+
+    public get allStatisticBoxes() {
+        return $$(selectors.pageStatisticsBoxSelector);
+    }
+
+    public get singleStatisticBox() {
+        return $(selectors.pageStatisticsBoxSelector);
     }
 
     public open(): Promise<string> {
