@@ -92,5 +92,9 @@ class ContestPage extends Page {
     public get problemTabRequirements() {
         return $$(selectors.pageProblemTabRequirements);
     }
+
+    public get contestPassword() {
+        return $(selectors.pageContestControlsSelector);
+    }
 }
 export default new ContestPage();
