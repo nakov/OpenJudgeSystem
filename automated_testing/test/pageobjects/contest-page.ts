@@ -94,7 +94,7 @@ class ContestPage extends Page {
     }
 
     public get contestPassword() {
-        return $(selectors.pageContestControlsSelector);
+        return $(selectors.pageContestPasswordField);
     }
 }
 export default new ContestPage();
