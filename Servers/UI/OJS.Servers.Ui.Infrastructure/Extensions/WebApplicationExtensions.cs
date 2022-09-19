@@ -20,7 +20,10 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
 
             if (app.Environment.IsDevelopment())
             {
-                app.UseStaticFiles();
+                // app.UseStaticFiles();
+                var reactFilesPath = Path.Combine(Directory.GetCurrentDirectory(), "ClientApp", "dist");
+                Console.WriteLine(reactFilesPath);
+                app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(reactFilesPath), });
                 app.UseSwaggerDocs(apiVersion.ToApiName());
             }
             else

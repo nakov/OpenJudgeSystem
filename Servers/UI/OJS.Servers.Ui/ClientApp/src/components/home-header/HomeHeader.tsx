@@ -29,16 +29,16 @@ const keyToNameMap: IDictionary<string> = {
     contestsCount: 'Contests',
 };
 
-const defeaultProps = { className: styles.icon };
+const defaultProps = { className: styles.icon };
 
 /* eslint-disable react/jsx-props-no-spreading */
 const keyToIconComponent: IDictionary<FC> = {
-    usersCount: (props: any) => (<UsersIcon {...defeaultProps} {...props} />),
-    submissionsCount: (props: any) => (<CodeIcon {...defeaultProps} {...props} />),
-    submissionsPerDayCount: (props: any) => (<SubmissionsPerDayIcon {...defeaultProps} {...props} />),
-    problemsCount: (props: any) => (<ProblemIcon {...defeaultProps} {...props} />),
-    strategiesCount: (props: any) => (<StrategyIcon {...defeaultProps} {...props} />),
-    contestsCount: (props: any) => (<ContestIcon {...defeaultProps} {...props} />),
+    usersCount: (props: any) => (<UsersIcon {...defaultProps} {...props} />),
+    submissionsCount: (props: any) => (<CodeIcon {...defaultProps} {...props} />),
+    submissionsPerDayCount: (props: any) => (<SubmissionsPerDayIcon {...defaultProps} {...props} />),
+    problemsCount: (props: any) => (<ProblemIcon {...defaultProps} {...props} />),
+    strategiesCount: (props: any) => (<StrategyIcon {...defaultProps} {...props} />),
+    contestsCount: (props: any) => (<ContestIcon {...defaultProps} {...props} />),
 };
 /* eslint-enable react/jsx-props-no-spreading */
 
@@ -69,10 +69,12 @@ const HomeHeader = () => {
             const { key, value } = statisticItem;
 
             return (
-                <StatisticBox
-                  statistic={{ name: keyToNameMap[key], value }}
-                  renderIcon={() => renderIcon(key)}
-                />
+                <>
+                    <StatisticBox
+                        statistic={{ name: keyToNameMap[key], value }}
+                        renderIcon={() => renderIcon(key)}
+                    />
+                </>
             );
         },
         [],
@@ -95,12 +97,12 @@ const HomeHeader = () => {
                 SoftUni Judge Numbers
             </Heading>
             <List
-              values={statisticsList}
-              itemFunc={renderStatistic}
-              className={styles.statisticsList}
-              itemClassName={styles.statisticsListItem}
-              wrap
-              orientation={Orientation.horizontal}
+                values={statisticsList}
+                itemFunc={renderStatistic}
+                className={styles.statisticsList}
+                itemClassName={styles.statisticsListItem}
+                wrap
+                orientation={Orientation.horizontal}
             />
         </>
     );

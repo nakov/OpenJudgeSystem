@@ -92,7 +92,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         ],
     );
 
-    const handleToggleCollapsible = useCallback((collapsed) => {
+    const handleToggleCollapsible = useCallback((collapsed: boolean) => {
         setIsCollapsed(collapsed);
     }, []);
 

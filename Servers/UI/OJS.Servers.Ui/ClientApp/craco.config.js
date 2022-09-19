@@ -1,10 +1,9 @@
 const path = require('path');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const fixHtmlPlugin = (config) => {
-    const [htmlPlugin, ...rest] = config.plugins;
+    const [ htmlPlugin, ...rest ] = config.plugins;
     const filename = path.join(__dirname, '../Views/Home/Index.cshtml');
 
     htmlPlugin.options = {
@@ -39,14 +38,7 @@ const addMonacoPlugin = (config) => ({
     ],
 });
 
-const addBundleAnalyzerPlugin = (config) => ({
-    ...config,
-    plugins: [
-        ...config.plugins,
-        new BundleAnalyzerPlugin(),
-    ],
-});
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const smp = new SpeedMeasurePlugin();
 
 // const decorateWebpack = (config, ...funcs) => smp.wrap(funcs
@@ -55,24 +47,28 @@ const smp = new SpeedMeasurePlugin();
 const decorateWebpack = (config, ...funcs) => funcs
     .reduce((c, func) => func(c), config);
 
-module.exports = {
-    paths: (paths) => {
-        const appHtml = path.join(__dirname, '../Views/Home/Index.template.html');
 
-        return {
-            ...paths,
-            appHtml,
-        };
+module.exports = {
+    reactScriptsVersion: 'react-scripts',
+    eslint: { enable: false },
+    webpack: {
+        configure: (webpackConfig) => decorateWebpack(
+            webpackConfig,
+            fixHtmlPlugin,
+            addMonacoPlugin,
+        ),
     },
-    webpack: (config) => decorateWebpack(config, fixHtmlPlugin, addMonacoPlugin),
-    devServer(configFunction) {
+    devServer2(configFunction) {
         return function (proxy, allowedHost) {
             const config = configFunction(proxy, allowedHost);
             const { historyApiFallback } = config;
 
             return {
                 ...config,
-                writeToDisk: true,
+                devMiddleware: {
+                    ...config.devMiddleware,
+                    writeToDisk: true,
+                },
                 historyApiFallback: {
                     ...historyApiFallback,
                     index: '/',
@@ -80,4 +76,20 @@ module.exports = {
             };
         };
     },
+    devServer: (config) => {
+        const { historyApiFallback } = config;
+
+        return {
+            ...config,
+            devMiddleware: {
+                ...config.devMiddleware,
+                writeToDisk: true,
+            },
+            historyApiFallback: {
+                ...historyApiFallback,
+                index: '/',
+            },
+        };
+    },
+
 };

@@ -65,7 +65,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         data: startContestData,
     } = useHttp(getStartContestParticipationUrl as UrlType, contestToStart);
 
-    const start = useCallback((obj) => {
+    const start = useCallback((obj: IContestToStartType) => {
         setContestToStart(obj);
     }, []);
 
