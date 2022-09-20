@@ -6,6 +6,7 @@ import { useAuth } from '../../hooks/use-auth';
 import { useUrls } from '../../hooks/use-urls';
 import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import styles from './PageHeader.module.scss';
+import concatClassNames from '../../utils/class-names';
 
 const PageHeader = () => {
     const { state: { user } } = useAuth();
@@ -45,6 +46,9 @@ const PageHeader = () => {
             </>
         );
     }, [ getAdministrationNavigation, user.permissions.canAccessAdministration ]);
+        
+    const headingSecondaryClass = 'headingSeconary';
+    const headingSecondaryClassName = concatClassNames(styles.heading, headingSecondaryClass);
 
     return (
         <header id="pageHeader" className={styles.header}>
@@ -53,7 +57,7 @@ const PageHeader = () => {
                     <Heading
                       id="page-header-h2"
                       type={HeadingType.secondary}
-                      className={styles.heading}
+                      className={headingSecondaryClassName}
                     >
                         <a href="/">
                             <img src={logo} alt="softuni logo" />

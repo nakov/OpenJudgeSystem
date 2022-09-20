@@ -6,7 +6,7 @@ import Page from './page';
 
 class ContestPage extends Page {
     public get allContestListSideNavigation() {
-        return $$(selectors.pageAllContestListSideNavigationSelector);
+        return $$(selectors.pageSingleTaskFromSideNavigationSelector);
     }
 
     public get contestNavigation() {
@@ -46,23 +46,51 @@ class ContestPage extends Page {
     }
 
     public get executionTypeAllActive() {
-        return $$(selectors.pageEexecutionTypeActiveSelector);
+        return $$(selectors.pageExecutionTypeActiveSelector);
     }
 
     public get submitButton() {
         return $(selectors.pageSubmitButtonSelector);
     }
 
-    public get divTest() {
-        return $(selectors.pageSubmissionLabelProcessing);
+    public get tasksFromNavigationList() {
+        return $$(selectors.pageSingleTaskFromSideNavigationSelector);
     }
 
-    public get submissionTest() {
-        return $(selectors.pageSubmissionTab);
+    public get currentChosenTaskTitle() {
+        return $(selectors.pageCurrentChosenTaskTitle);
     }
 
-    public get submissionResultConteiner() {
-        return $(selectors.pageSubmissionResultConteiner).$(selectors.pageSubmissionLabelProcessing);
+    public get controlsProblemTab() {
+        return $$(selectors.pageSubmissionTabs)[0];
+    }
+
+    public get controlsSubmissionTab() {
+        return $$(selectors.pageSubmissionTabs)[1];
+    }
+
+    public get scorePointsPerSubmission() {
+        return $(selectors.pageSubmissionResultInPoints);
+    }
+
+    public get strategyTypePerSubmission() {
+        return $(selectors.pageStrategyTypePerSubmission);
+    }
+
+    public get submissionLabel() {
+        return $(selectors.pageSubmissionLabel);
+    }
+
+    public get submissionsResultsNoResultsParagraph() {
+        return $(selectors.pageSubmissionResultsNoResultsParagraph);
+    }
+
+    public get contestNavigationResultsButton() {
+        return $(selectors.pageLeftNavgationResultsBtn);
+    }
+
+    public get problemTabRequirements() {
+        return $$(selectors.pageProblemTabRequirements);
     }
 }
 export default new ContestPage();

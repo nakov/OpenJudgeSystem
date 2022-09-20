@@ -9,6 +9,7 @@ import { IStatistic } from '../../common/statistics-types';
 import Heading, { HeadingType } from '../guidelines/headings/Heading';
 
 import styles from './StatisticBox.module.scss';
+import concatClassNames from '../../utils/class-names';
 
 enum StatisticBoxSize {
     small = 1,
@@ -47,8 +48,11 @@ const StatisticBox = ({
         [ renderIcon ],
     );
 
+    const staticBoxClass = 'staticBox';
+    const staticBoxClassName = concatClassNames(styles.box, staticBoxClass);
+
     return (
-        <div className={styles.box}>
+        <div className={staticBoxClassName}>
             {renderIconInternal()}
             <div className={styles.valuesContainer}>
                 <Heading

@@ -1,4 +1,5 @@
 import { beforeEach } from 'mocha';
+import { isClassOrTypeElement } from 'typescript';
 import IndexPage from '../pageobjects/index-page';
 
 describe('Testing index', () => {
@@ -61,35 +62,17 @@ describe('Testing index', () => {
         await expect(submissionsLink).toHaveHrefContaining('/submissions');
     });
 
-    it('Expect "See contests" button in navigation to exist and have the correct href', async () => {
-        const btn = await IndexPage.seeContestsButton;
-        await expect(btn).toExist();
-    //  await expect(btn).toHaveHrefContaining('.....'); once the page is ready we will add it
-    });
-
-    it('Expect YouTub video to exist', async () => {
-        const video = await IndexPage.youtubeVideo;
-        await expect(video).toExist();
-    });
-
-    it('Expect Youtube video to have src', async () => {
-        const video = await IndexPage.youtubeVideo;
-        await expect(video).toHaveAttr('src');
-        const src = await video.getAttribute('src');
-        await expect(src).not.toBeNull();
-    });
-
     it('Expect "See all" button in active contest section to be diplayed and redirect properly', async () => {
         const btn = await IndexPage.seeAllActiveContestsButton;
         await expect(btn).toExist();
-        await expect(btn).toHaveHrefContaining('/contests'); // must be to active
+        await expect(btn).toHaveHrefContaining('/contests?status=active');
         await expect(btn).toBeClickable();
     });
 
     it('Expect "See all" button in active contest section to exist and redirect properly', async () => {
         const btn = await IndexPage.seeAllPastContestsButton;
         await expect(btn).toExist();
-        await expect(btn).toHaveHrefContaining('/contests'); // must be to past
+        await expect(btn).toHaveHrefContaining('/contests?status=past');
         await expect(btn).toBeClickable();
     });
 
@@ -128,50 +111,37 @@ describe('Testing index', () => {
     });
 
     it('Expect every active contest card to have compete button', async () => {
-        const competeButtons = await IndexPage.competeCardButtonActivecontests;
+        const competeButtons = await IndexPage.competeButtonsInActiveContestCard;
         const check = await contestCardsChecker.competeButtonsActiveCarsCheck(activeCards, competeButtons);
         await expect(check).toBeTruthy();
     });
 
     it('Expect every active contest card to have practice button', async () => {
-        const practiceButtons = await IndexPage.practiceCardButtoActiveContests;
+        const practiceButtons = await IndexPage.competeButtonsInActiveContestCard;
         const check = await contestCardsChecker.competeButtonsActiveCarsCheck(activeCards, practiceButtons);
         await expect(check).toBeTruthy();
     });
 
     it('Expect every past contest card to have compete button', async () => {
-        const competeButtons = await IndexPage.competeCardButtonPastcontests;
+        const competeButtons = await IndexPage.competeButtonInPastContestsCard;
         const check = await contestCardsChecker.competeButtonsActiveCarsCheck(pastCards, competeButtons);
         await expect(check).toBeTruthy();
     });
 
     it('Expect every past contest card to have practice button', async () => {
-        const practiceButtons = await IndexPage.practiceCardButtoPastContests;
+        const practiceButtons = await IndexPage.competeButtonInPastContestsCard;
         const check = await contestCardsChecker.competeButtonsActiveCarsCheck(pastCards, practiceButtons);
         await expect(check).toBeTruthy();
     });
 
     it('Expect every active contest card to have enabled compete button', async () => {
-        const competeButtons = await IndexPage.competeCardButtonActivecontests;
-        const check = await competeButtons.forEach((b) => b.isEnabled());
-        await expect(check).toBeTruthy();
+        const competeButtons = await IndexPage.competeButtonInActiveContestCard;
+        const check = await competeButtons.filter((b) => b.isEnabled());
+        await expect(competeButtons.length).toEqual(check.length);
     });
 
-    it('Expect every active contest card to have disabled practice button', async () => {
-        const competeButtons = await IndexPage.competeCardButtonActivecontests;
-        const check = await competeButtons.forEach((b) => b.isEnabled());
-        await expect(check).toBeFalsy();
-    });
-
-    it('Expect every past contest card to have disabled compete button', async () => {
-        const practiceButtons = await IndexPage.competeCardButtonPastcontests;
-        const check = await practiceButtons.forEach((b) => b.isEnabled());
-        await expect(check).toBeFalsy();
-    });
-
-    it('Expect every past contest card to have enabled practice button', async () => {
-        const practiceButtons = await IndexPage.practiceCardButtoPastContests;
-        const check = await practiceButtons.forEach((b) => b.isEnabled());
-        await expect(check).toBeTruthy();
+    it('Expect to have six statistic boxes', async () => {
+        const boxes = await IndexPage.allStatisticBoxes;
+        await expect(boxes.length).toEqual(6);
     });
 });
