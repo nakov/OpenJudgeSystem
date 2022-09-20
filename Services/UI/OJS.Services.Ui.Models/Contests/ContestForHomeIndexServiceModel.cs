@@ -1,3 +1,5 @@
+using FluentExtensions.Extensions;
+
 namespace OJS.Services.Ui.Models.Contests
 {
     using System;
@@ -23,6 +25,9 @@ namespace OJS.Services.Ui.Models.Contests
 
         public bool CanBePracticed { get; set; }
 
+        public bool HasContestPassword { get; set; }
+
+        public bool HasPracticePassword { get; set; }
 
         public string Category { get; set; } = string.Empty;
 

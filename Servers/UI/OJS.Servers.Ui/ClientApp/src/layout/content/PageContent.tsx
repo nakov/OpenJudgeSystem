@@ -11,6 +11,7 @@ import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';
 import ContestsPage from '../../pages/contests/ContestsPage';
 import SubmissionDetailsPage from '../../pages/submission-details/SubmissionDetailsPage';
 import AdministrationPage from '../../pages/administration/AdministrationPage';
+import ContestRegisterPage from '../../pages/contest/ContestRegisterPage';
 import styles from './PageContent.module.scss';
 
 const routes = [
@@ -41,6 +42,10 @@ const routes = [
     {
         path: '/submissions/:submissionId/details',
         Element: SubmissionDetailsPage,
+    },
+    {
+        path: '/contests/:contestId/register/:participationType',
+        Element: ContestRegisterPage,
     },
     {
         path: '/contests',

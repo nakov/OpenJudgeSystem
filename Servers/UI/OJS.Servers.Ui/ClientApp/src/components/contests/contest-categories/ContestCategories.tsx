@@ -8,6 +8,7 @@ import { useContests } from '../../../hooks/use-contests';
 import { IHaveOptionalClassName } from '../../common/Props';
 import Tree, { ITreeItemType } from '../../guidelines/trees/Tree';
 import { IFilter } from '../../../common/contest-types';
+import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
 
 interface IContestCategoriesProps extends IHaveOptionalClassName {
     onCategoryClick: (filter: IFilter) => void;
@@ -21,17 +22,8 @@ const ContestCategories = ({
 }: IContestCategoriesProps) => {
     const { state: { categories } } = useContestCategories();
     const { state: { possibleFilters } } = useContests();
-
-    const handleTreeLabelClick = useCallback((node: ITreeItemType) => {
-        const filter = possibleFilters.find(({ value }) => value.toString() === node.id.toString());
-
-        if (isNil(filter)) {
-            return;
-        }
-
-        onCategoryClick(filter);
-    }, [ possibleFilters, onCategoryClick ]);
-
+    const { actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
+    
     const flattenTree = useCallback(
         (treeItems: ITreeItemType[], result: ITreeItemType[]) => {
             treeItems.forEach(({ children, ...rest }) => {
@@ -80,6 +72,18 @@ const ContestCategories = ({
         [ defaultSelected, categoriesFlat, getParents ],
     );
 
+    const handleTreeLabelClick = useCallback((node: ITreeItemType) => {
+        const filter = possibleFilters.find(({ value }) => value.toString() === node.id.toString());
+        const category = categoriesFlat.find(({ id }) => id.toString() === node.id.toString());
+
+        if (isNil(filter)) {
+            return;
+        }
+
+        onCategoryClick(filter);
+        updateBreadcrumb(category, categoriesFlat);
+    }, [ possibleFilters, categoriesFlat, onCategoryClick, updateBreadcrumb ]);
+    
     return (
         <div className={className as string}>
             <Heading

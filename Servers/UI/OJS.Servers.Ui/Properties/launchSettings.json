@@ -31,7 +31,7 @@
       "applicationUrl": "http://localhost:5002",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "DbContext": "Server=127.0.0.1;Database=OpenJudgeSystem;User Id=sa;Password=1123QwER",
+        "DbContext": "Server=217.174.159.217;Database=OpenJudgeSystem;User Id=sa;Password=12345",
         "PATH_TO_COMMON_KEY_RING_FOLDER": "../../../Keys",
         "SULS_PLATFORM_BASE_URL": "https://localhost:44304",
         "DISTRIBUTOR_BASE_URL": "https://localhost:44305",
@@ -40,7 +40,8 @@
         "SHARED_AUTH_COOKIE_DOMAIN": "localhost",
         "UI_URL": "http://localhost:5002",
         "ADMINISTRATION_URL": "http://localhost:5001",
-        "UI_HOME_YOUTUBE_VIDEO_ID": "IwLET8SDBE4"
+        "UI_HOME_YOUTUBE_VIDEO_ID": "IwLET8SDBE4",
+        "REDIS_CONNECTION_STRING": "localhost,password=redisPass123,ConnectTimeout=10000,abortConnect=false"
       }
     }
   }

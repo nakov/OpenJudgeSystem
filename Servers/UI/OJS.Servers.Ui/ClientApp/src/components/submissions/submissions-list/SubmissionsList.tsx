@@ -1,16 +1,14 @@
 import React, { useCallback, useMemo } from 'react';
-
 import { ISubmissionDetails } from '../../../hooks/submissions/types';
 import { IHaveOptionalClassName } from '../../common/Props';
 import concatClassNames from '../../../utils/class-names';
 import { formatDate } from '../../../utils/dates';
-
 import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
-
 import List, { ListType, Orientation } from '../../guidelines/lists/List';
 import Text from '../../guidelines/text/Text';
 import SubmissionResultPointsLabel from '../submission-result-points-label/SubmissionResultPointsLabel';
-
+import Label, { LabelType } from '../../guidelines/labels/Label';
+import { ContestParticipationType } from '../../../common/constants';
 import styles from './SubmissionsList.module.scss';
 
 interface ISubmissionsListProps extends IHaveOptionalClassName {
@@ -42,6 +40,7 @@ const SubmissionsList = ({
         [ submissionListItemClass ],
     );
     const submissionBtnClass = 'submissionBtn';
+    const submissionsLabelTypeClassName = 'submissionTypeLabel';
 
     const renderSubmissionListItem = useCallback((submission: ISubmissionDetails) => {
         const { id: selectedSubmissionId } = selectedSubmission || {};
@@ -52,6 +51,7 @@ const SubmissionsList = ({
             isProcessed,
             createdOn,
             submissionType,
+            isOfficial,
         } = submission;
         const isSelectedSubmission = id === selectedSubmissionId;
         const selectedClassName = isSelectedSubmission
@@ -67,6 +67,10 @@ const SubmissionsList = ({
             ? ButtonState.disabled
             : ButtonState.enabled;
 
+        const typeLabelText = isOfficial
+            ? ContestParticipationType.Compete
+            : ContestParticipationType.Practice;
+
         return (
             <div className={itemClassName}>
                 <div className={styles.infoContainer}>
@@ -81,6 +85,7 @@ const SubmissionsList = ({
                     <Text>
                         {submissionType}
                     </Text>
+                    <Label type={LabelType.plain} text={typeLabelText} className={submissionsLabelTypeClassName} />
                     <LinkButton
                       size={ButtonSize.small}
                       to={`/submissions/${id}/details`}
@@ -104,10 +109,14 @@ const SubmissionsList = ({
               type={ListType.normal}
               orientation={Orientation.vertical}
               fullWidth
-              scrollable
+              scrollable={false}
             />
         </div>
     );
 };
 
 export default SubmissionsList;
+
+export type {
+    ISubmissionsListProps,
+};
