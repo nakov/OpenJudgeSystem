@@ -5,9 +5,9 @@ import { useSubmissionsDetails } from '../../../hooks/submissions/use-submission
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import CodeEditor from '../../code-editor/CodeEditor';
 import SubmissionResults from '../submission-results/SubmissionResults';
-import styles from './SubmissionDetails.module.scss';
-import SubmissionsList from '../submissions-list/SubmissionsList';
 import concatClassNames from '../../../utils/class-names';
+import RefreshableSubmissionsList from '../submissions-list/RefreshableSubmissionsList';
+import styles from './SubmissionDetails.module.scss';
 
 const SubmissionDetails = () => {
     const {
@@ -32,8 +32,8 @@ const SubmissionDetails = () => {
 
     const submissionsNavigationClassName = 'submissionsNavigation';
 
-    const submissionDetailsClass = 'submissionDetails';
-    const submissionDetailsClassName = concatClassNames(styles.navigation, submissionDetailsClass);
+    const submissionsDetails = 'submissionDetails';
+    const submissionDetailsClassName = concatClassNames(styles.navigation, styles.submissionDetails, submissionsDetails);
 
     useEffect(() => {
         if (isNil(currentSubmission)) {
@@ -57,7 +57,7 @@ const SubmissionDetails = () => {
                 <div className={submissionsNavigationClassName}>
                     <Heading type={HeadingType.secondary}>Submissions</Heading>
                 </div>
-                <SubmissionsList
+                <RefreshableSubmissionsList
                   items={currentProblemSubmissionResults}
                   selectedSubmission={currentSubmission}
                   className={styles.submissionsList}
