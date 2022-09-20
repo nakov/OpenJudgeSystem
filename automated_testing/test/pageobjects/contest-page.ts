@@ -96,5 +96,9 @@ class ContestPage extends Page {
     public get contestPassword() {
         return $(selectors.pageContestPasswordField);
     }
+
+    public get contestPasswordSubmitBtn() {
+        return $(selectors.pageContestPasswordSubmitButton);
+    }
 }
 export default new ContestPage();

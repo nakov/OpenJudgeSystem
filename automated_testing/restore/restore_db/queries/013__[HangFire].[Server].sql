@@ -7,8 +7,9 @@ IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [object_id] = OBJECT_ID(
 GO
 
 INSERT INTO [HangFire].[Server] ([Id], [Data], [LastHeartbeat])
-VALUES (N'59615a44d33c:7:f42face1-4307-4428-97b4-317a5a46870c', N'{"WorkerCount":20,"Queues":["default"],"StartedAt":"2022-09-16T05:24:23.4197199Z"}', CAST(N'2022-09-16T05:27:23+00:00' AS DateTime2)),
-(N'd3b6f3917bbe:7:1fd0503a-b72f-40d8-91c7-4b94e0c4e594', N'{"WorkerCount":20,"Queues":["default"],"StartedAt":"2022-09-16T05:24:23.9617484Z"}', CAST(N'2022-09-16T05:27:24+00:00' AS DateTime2))
+VALUES (N'0fee827af580:7:cc3dee4e-f544-4556-bfa5-28f8279b5827', N'{"WorkerCount":20,"Queues":["default"],"StartedAt":"2022-09-20T20:48:22.0334473Z"}', CAST(N'2022-09-20T20:50:52+00:00' AS DateTime2)),
+(N'3fcb2ca7b147:7:6597fe37-150d-40c8-a381-ff2574dfd815', N'{"WorkerCount":20,"Queues":["default"],"StartedAt":"2022-09-20T20:48:11.2163688Z"}', CAST(N'2022-09-20T20:48:11+00:00' AS DateTime2)),
+(N'd3b6f3917bbe:7:112c36ce-7e03-486c-8ace-ffe4b06b2387', N'{"WorkerCount":20,"Queues":["default"],"StartedAt":"2022-09-20T20:48:11.0471376Z"}', CAST(N'2022-09-20T20:50:41+00:00' AS DateTime2))
 GO
 
 IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [object_id] = OBJECT_ID(N'[HangFire].[Server]'))

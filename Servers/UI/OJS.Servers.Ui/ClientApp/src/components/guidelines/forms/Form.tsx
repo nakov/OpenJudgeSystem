@@ -34,12 +34,14 @@ const Form = ({
     );
 
     const internalClassName = concatClassNames(className);
+    const submitBtnClassName = 'submitButton';
 
     return (
         <form id={id} onSubmit={(ev) => handleSubmit(ev)} className={internalClassName}>
             {children}
             <Button
               id={btnId}
+              className={submitBtnClassName}
               onClick={(ev) => handleSubmit(ev)}
               text={submitText}
               type={ButtonType.submit}
