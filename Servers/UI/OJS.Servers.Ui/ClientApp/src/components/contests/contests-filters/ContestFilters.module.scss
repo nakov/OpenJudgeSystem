@@ -1,34 +1,9 @@
 @import "src/styles/colors";
 
-.heading {
-  text-align: left;
-  padding-bottom: 10px;
-  border-bottom: 1px solid $bottom-border-color;
+.container {
+  min-width: 300px;
 }
 
 .filterTypeContainer {
   margin-top: 10px;
-}
-
-.listFilters {
-  max-height: 130px;
-  overflow: hidden;
-  align-items: flex-start;
-
-  .listFilterItem {
-    margin-top: 5px;
-  }
-
-  &.expanded {
-    max-height: none;
-    overflow: visible;
-  }
-}
-
-.btnSelectFilter {
-  width: 95%;
-}
-
-.container {
-  min-width: 300px;
 }
