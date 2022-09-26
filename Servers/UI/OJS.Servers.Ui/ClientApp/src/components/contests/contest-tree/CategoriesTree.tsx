@@ -1,10 +1,12 @@
-import React, { useCallback, useEffect, useState } from 'react';
+﻿import React, { useCallback, useEffect, useState } from 'react';
 import { TreeItem, TreeView } from '@material-ui/lab';
 import { MdChevronRight, MdExpandMore } from 'react-icons/md';
 import { isArray, isEmpty } from 'lodash';
 import { ITreeItemType, ITreeProps } from '../../common/TreeProviders';
 
-const Tree = ({
+import styles from './CategoriesTree.module.scss';
+
+const CategoryTree = ({
     items,
     onTreeLabelClick,
     defaultSelected,
@@ -55,22 +57,31 @@ const Tree = ({
         },
         [ defaultExpanded, expanded ],
     );
-
-    const renderTree = useCallback((node: ITreeItemType) => (
-        <TreeItem
-            key={node.id}
-            nodeId={node.id.toString()}
-            label={node.name}
-            onClick={() => handleTreeItemClick(node)}
-            onLabelClick={() => handleLabelClick(node)}
-        >
-            {isArray(node.children)
-                ? node.children.map((child) => renderTree(child))
-                : null}
-        </TreeItem>
-    ), [ handleLabelClick, handleTreeItemClick ]);
     
-    const renderTreeView = (treeItems: ITreeItemType[]) => treeItems.map((c) => renderTree(c));
+    const renderCategoryTree = useCallback((node: ITreeItemType) => (
+        <div className={styles.categoriesTree}>
+            <div className={styles.tooltip}>
+                <div className={styles.tooltipElement}
+                     >
+                    {node.name}
+                </div>
+            </div>
+            <TreeItem
+                key={node.id}
+                className={styles.treeElement}
+                nodeId={node.id.toString()}
+                label={node.name}
+                onClick={() => handleTreeItemClick(node)}
+                onLabelClick={() => handleLabelClick(node)}
+            >
+                {isArray(node.children)
+                    ? node.children.map((child) => renderCategoryTree(child))
+                    : null}
+            </TreeItem>
+        </div>
+    ), [ handleTreeItemClick, handleLabelClick ]);
+    
+    const renderCategoryTreeView = (treeItems: ITreeItemType[]) => treeItems.map((c) => renderCategoryTree(c));
 
     return (
         <TreeView
@@ -80,12 +91,13 @@ const Tree = ({
             selected={selected}
             expanded={expanded}
         >
-            {renderTreeView(items)}
+            <div className={styles.tooltip}> {renderCategoryTreeView(items)}</div> 
+            {renderCategoryTreeView(items)}
         </TreeView>
     );
 };
 
-export default Tree;
+export default CategoryTree;
 
 export type {
     ITreeItemType,

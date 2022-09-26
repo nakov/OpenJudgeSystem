@@ -2,13 +2,14 @@ import React, { useCallback, useMemo } from 'react';
 import { isNil } from 'lodash';
 import { useContestCategories } from '../../../hooks/use-contest-categories';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
-
-import styles from './ContestCategories.module.scss';
 import { useContests } from '../../../hooks/use-contests';
 import { IHaveOptionalClassName } from '../../common/Props';
-import Tree, { ITreeItemType } from '../../guidelines/trees/Tree';
+import { ITreeItemType } from '../../common/TreeProviders';
 import { IFilter } from '../../../common/contest-types';
 import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
+import CategoryTree from '../contest-tree/CategoriesTree';
+
+import styles from './ContestCategories.module.scss';
 
 interface IContestCategoriesProps extends IHaveOptionalClassName {
     onCategoryClick: (filter: IFilter) => void;
@@ -92,7 +93,7 @@ const ContestCategories = ({
             >
                 Category
             </Heading>
-            <Tree
+            <CategoryTree
               items={categories}
               onTreeLabelClick={handleTreeLabelClick}
               defaultSelected={defaultSelected}
