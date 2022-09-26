@@ -13,7 +13,15 @@ const SubmissionResults = ({ testRuns } : ISubmissionResultsProps) => {
         <TestRunDetails testRun={run} />
     ), []);
 
-    const compareByOrderByAsc = (tr1: ITestRunDetailsType, tr2: ITestRunDetailsType) => tr1.orderBy - tr2.orderBy;
+    const compareByOrderByAsc = (tr1: ITestRunDetailsType, tr2: ITestRunDetailsType) => {
+        if(tr1.isTrialTest === tr2.isTrialTest)
+        {return tr1.orderBy-tr2.orderBy;}
+
+        if(tr1.isTrialTest)
+        {return -1;}
+
+        return 1;
+    };
 
     return (
         <List
