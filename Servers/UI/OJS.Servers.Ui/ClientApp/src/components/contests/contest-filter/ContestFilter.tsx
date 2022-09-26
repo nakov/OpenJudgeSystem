@@ -10,34 +10,33 @@ import concatClassNames from '../../../utils/class-names';
 import styles from './ContestFilter.module.scss';
 
 
-interface IContestFilterTypeProps {
+interface IContestFilterProps {
     values: IFilter[];
     type: FilterType;
-    orientation?: Orientation;
-    onFilterClick: (filterId: number) => void;
+    onSelect: (filterId: number) => void;
+    maxDisplayCount: number;
 }
 
 const ContestFilter = ({
     values,
     type,
-    orientation,
-    onFilterClick,
-}: IContestFilterTypeProps) => {
+    onSelect,
+    maxDisplayCount,
+}: IContestFilterProps) => {
     const [ expanded, setExpanded ] = useState(false);
-    const maxFiltersToDisplayCount = 3;
-    
-    const className = concatClassNames(
-        styles.listFilters,
-        expanded
-            ? styles.expanded
-            : '',
+
+    const listOrientation = useMemo(
+        () => type === FilterType.Status
+            ? Orientation.horizontal
+            : Orientation.vertical,
+        [ type ],
     );
     
     const filtersToDisplayCount = useMemo(
         () => expanded
             ? values.length
-            : maxFiltersToDisplayCount,
-        [ expanded, values ],
+            : maxDisplayCount,
+        [ expanded, values, maxDisplayCount ],
     );
     
     const toggleFiltersExpanded = useCallback(
@@ -48,10 +47,10 @@ const ContestFilter = ({
     );
 
     const renderExpandButton = useCallback(
-        (allFilters: IFilter[]) => allFilters.length > maxFiltersToDisplayCount
+        (allFilters: IFilter[]) => allFilters.length > maxDisplayCount
             ? <ExpandButton onExpandChanged={toggleFiltersExpanded}/>
             : null,
-        [ toggleFiltersExpanded ],
+        [ toggleFiltersExpanded, maxDisplayCount ],
     );
 
     const getRenderFilterItemFunc = useCallback(
@@ -70,14 +69,21 @@ const ContestFilter = ({
             return (
                 <Button
                     type={buttonType}
-                    onClick={() => onFilterClick(id)}
+                    onClick={() => onSelect(id)}
                     className={btnClassName}
                     text={name}
                     size={ButtonSize.small}
                 />
             );
         },
-        [ onFilterClick, values ],
+        [ onSelect, values ],
+    );
+    
+    const className = concatClassNames(
+        styles.listFilters,
+        expanded
+            ? styles.expanded
+            : '',
     );
     
     return (
@@ -91,7 +97,7 @@ const ContestFilter = ({
             <List
                 values={values}
                 itemFunc={getRenderFilterItemFunc(type)}
-                orientation={orientation}
+                orientation={listOrientation}
                 className={className}
                 itemClassName={styles.listFilterItem}
                 fullWidth

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
     isEmpty,
     isNil,
@@ -88,18 +88,24 @@ const List = <TValue extends unknown>({
         : '';
     const itemClassNameCombined = concatClassNames(itemClassName, fullWidthItemClassName);
 
+    const itemsToDisplay = useMemo(
+        () => itemsCount || values.length,
+        [ itemsCount, values ],
+    );
+    
     const renderItems = useCallback(
         () => {
             if (isNil(values) || isEmpty(values)) {
                 return null;
             }
-
-            return values.slice(0, itemsCount).map((value) => (
+            
+            
+            return values.slice(0, itemsToDisplay).map((value) => (
                 <li key={keyFunc(value)} className={itemClassNameCombined}>
                     {itemFunc(value)}</li>
             ));
         },
-        [ itemClassNameCombined, itemFunc, keyFunc, values, itemsCount ],
+        [ itemClassNameCombined, itemFunc, keyFunc, values, itemsToDisplay ],
     );
 
     if (type === ListType.numbered) {

@@ -10,7 +10,7 @@ import { useContests } from '../../../hooks/use-contests';
 import { groupByType } from '../../../common/filter-utils';
 import { useContestStrategyFilters } from '../../../hooks/use-contest-strategy-filters';
 import { useContestCategories } from '../../../hooks/use-contest-categories';
-import ContestFilterType from '../contest-filter/ContestFilter';
+import ContestFilter from '../contest-filter/ContestFilter';
 
 import styles from './ContestFilters.module.scss';
 
@@ -24,13 +24,13 @@ interface IFiltersGroup {
 }
 
 const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
+    const maxFiltersToDisplayCount = 3;
     const [ filtersGroups, setFiltersGroups ] = useState<IFiltersGroup[]>([]);
     const [ defaultSelected, setDefaultSelected ] = useState('');
     const [ searchParams ] = useSearchParams();
     const [ isLoaded, setIsLoaded ] = useState(false);
     const { actions: { load: loadStrategies } } = useContestStrategyFilters();
     const { actions: { load: loadCategories } } = useContestCategories();
-
 
     const { state: { possibleFilters } } = useContests();
 
@@ -51,16 +51,12 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         (fg: IFiltersGroup) => {
             const { type, filters: groupFilters } = fg;
 
-            const listOrientation = type === FilterType.Status
-                ? Orientation.horizontal
-                : Orientation.vertical;
-
             return (
-                <ContestFilterType
+                <ContestFilter
                     values={groupFilters}
                     type={type}
-                    orientation={listOrientation}
-                    onFilterClick={handleFilterClick}
+                    onSelect={handleFilterClick}
+                    maxDisplayCount={maxFiltersToDisplayCount}
                 />
             );
         },
