@@ -41,7 +41,7 @@
         public bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId) =>
             this.All().Any(s => s.ProblemId == problemId && s.Participant.UserId == userId && !s.Processed);
 
-        public bool UserHasUnprocessedSubmissionForContest(int contestId, string userId)
+        public bool UserHasUnprocessedSubmissionInContest(int contestId, string userId)
         {
             return this.All().Any(s =>
                 s.Problem.ProblemGroup.ContestId == contestId &&

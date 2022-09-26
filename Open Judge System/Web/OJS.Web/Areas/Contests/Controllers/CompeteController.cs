@@ -458,7 +458,7 @@
                 throw new HttpException((int)HttpStatusCode.BadRequest, Resource.ContestsGeneral.User_has_not_processed_submission_for_problem);
             }
             
-            if (participant.Contest.UsersCantSubmitConcurrently && this.Data.Submissions.UserHasUnprocessedSubmissionForContest(participant.ContestId, this.UserProfile.Id))
+            if (participant.Contest.UsersCantSubmitConcurrently && this.Data.Submissions.UserHasUnprocessedSubmissionInContest(participant.ContestId, this.UserProfile.Id))
             {
                 return this.JsonError(Resource.ContestsGeneral.User_has_not_processed_submission_for_contest);
             }

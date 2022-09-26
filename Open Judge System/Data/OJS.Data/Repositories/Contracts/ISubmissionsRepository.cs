@@ -9,6 +9,6 @@
 
         bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId);
         
-        bool UserHasUnprocessedSubmissionForContest(int contestId, string userId);
+        bool UserHasUnprocessedSubmissionInContest(int contestId, string userId);
     }
 }
