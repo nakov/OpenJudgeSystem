@@ -24,7 +24,7 @@ const ContestCategories = ({
     const { state: { categories } } = useContestCategories();
     const { state: { possibleFilters } } = useContests();
     const { actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
-    
+
     const flattenTree = useCallback(
         (treeItems: ITreeItemType[], result: ITreeItemType[]) => {
             treeItems.forEach(({ children, ...rest }) => {
@@ -84,20 +84,20 @@ const ContestCategories = ({
         onCategoryClick(filter);
         updateBreadcrumb(category, categoriesFlat);
     }, [ possibleFilters, categoriesFlat, onCategoryClick, updateBreadcrumb ]);
-    
+
     return (
         <div className={className as string}>
             <Heading
-              type={HeadingType.small}
-              className={styles.heading}
+                type={HeadingType.small}
+                className={styles.heading}
             >
                 Category
             </Heading>
             <CategoryTree
-              items={categories}
-              onTreeLabelClick={handleTreeLabelClick}
-              defaultSelected={defaultSelected}
-              defaultExpanded={defaultExpanded}
+                items={categories}
+                onTreeLabelClick={handleTreeLabelClick}
+                defaultSelected={defaultSelected}
+                defaultExpanded={defaultExpanded}
             />
         </div>
     );
