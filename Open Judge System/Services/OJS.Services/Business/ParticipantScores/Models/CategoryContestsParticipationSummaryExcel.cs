@@ -87,8 +87,8 @@
                 var participantResults = participantSummary.ProblemOrderToMinutesTakenToSolve;
 
                 var colValue = !participantResults.ContainsKey(index) || participantResults[index] == 0
-                    ? string.Empty
-                    : participantResults[index].ToString(CultureInfo.InvariantCulture);
+                    ? 0
+                    : participantResults[index];
 
                 row.CreateCell(colNumber++).SetCellValue(colValue);
             });
