@@ -1,4 +1,5 @@
 @import "src/styles/colors";
+@import "src/styles/fonts";
 
 .heading {
   text-align: left;
@@ -35,11 +36,18 @@
 
 .strategyHeader {
   width: 10px;
-}
 
-.strategyHeader:hover {
-  .tooltip {
-    display: block;
+  &:hover {
+    .tooltip {
+      display: block;
+    }
+  }
+
+  .strategyElementClassName {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 150px;
   }
 }
 
@@ -48,22 +56,15 @@
   left: 14%;
   margin-top: 12px;
   display: none;
-}
 
-.tooltipElement {
-  color: #42abf8;
-  border-radius: 6px;
-  padding: 10px;
-  font-family: Lato, serif;
-  border: 2px solid #42abf8;
-  text-transform: uppercase;
-  font-weight: 700;
-  font-size: 12px;
-}
-
-.strategyElementClassName {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 150px;
+  .tooltipElement {
+    color: $success-background-color;
+    border-radius: 6px;
+    padding: 10px;
+    font-family: $font-family-lato;
+    border: 2px solid $success-background-color;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+  }
 }
