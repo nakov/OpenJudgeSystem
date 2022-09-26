@@ -61,11 +61,11 @@ namespace OJS.Servers.Infrastructure.Extensions
         {
             if (app.Environment.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                app.UseExceptionHandler(errorApp => errorApp.Run(new DevelopmentExceptionMiddleware().Get));
             }
             else
             {
-                app.UseExceptionHandler(errorApp => errorApp.Run(Rfc7807ExceptionMiddleware.Get));
+                app.UseExceptionHandler(errorApp => errorApp.Run(new Rfc7807ExceptionMiddleware().Get));
             }
 
             return app;
