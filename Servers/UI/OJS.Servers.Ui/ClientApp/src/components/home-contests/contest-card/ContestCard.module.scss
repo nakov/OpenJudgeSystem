@@ -27,6 +27,12 @@
   margin: 10px;
   border-bottom: 1px solid;
   border-bottom-color: $bottom-border-color;
+
+  &:hover {
+    .tooltip {
+      display: block;
+    }
+  }
 }
 
 .contestCardControls {
@@ -62,25 +68,16 @@
   position: absolute;
   display: none;
   border-bottom: 1px dotted black;
-}
 
-.tooltiptext {
-  width: 245px;
-  background-color: grey;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px 0;
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-}
-
-.contestCardHeader:hover {
-  .tooltip {
-    display: block;
+  .tooltipText {
+    width: 245px;
+    background-color: grey;
+    color: $success-font-color;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
   }
 }
-
-
-

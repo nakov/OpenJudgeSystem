@@ -33,12 +33,6 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const contestCardCounterClassName = concatClassNames(styles.contestCardCountdown, contestCardCounter);
     const contestCardControlBtns = 'card-control-buttons';
     const contestCardControlBtnsClassName = concatClassNames(styles.contestCardControls, contestCardControlBtns);
-    const contestCardTitle = 'card-title';
-    const contestCardTitleClassName=concatClassNames(styles.contestCardTitle,contestCardTitle);
-    const contestCardTooltip='tooltip';
-    const contestCardTooltipClassName=concatClassNames(styles.tooltip,contestCardTooltip);
-    const contestCardTooltipText='tooltiptext';
-    const contestCardTooltipTextClassName=concatClassNames(styles.tooltiptext,contestCardTooltipText);
 
     const renderCountdown = useCallback(
         () => {
@@ -75,10 +69,10 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     return (
         <div className={contestCardClassName}>
             <div className={contestCardHeaderClassName}>
-                <div className={contestCardTooltipClassName}>
-                    <span className={contestCardTooltipTextClassName}>{name}</span>
+                <div className={styles.tooltip}>
+                    <span className={styles.tooltipText}>{name}</span>
                 </div>
-                <span className={contestCardTitleClassName}>{name}</span>
+                <span className={styles.contestCardTitle}>{name}</span>
                 { renderContestLockIcon() }
             </div>
             <div className={contestCardCategoryClassName}>{category}</div>
