@@ -452,10 +452,15 @@
             {
                 throw new HttpException((int)HttpStatusCode.BadRequest, Resource.ContestsGeneral.Submission_too_long);
             }
-
+            
             if (this.Data.Submissions.HasUserNotProcessedSubmissionForProblem(problem.Id, this.UserProfile.Id))
             {
                 throw new HttpException((int)HttpStatusCode.BadRequest, Resource.ContestsGeneral.User_has_not_processed_submission_for_problem);
+            }
+            
+            if (participant.Contest.UsersCantSubmitConcurrently && this.Data.Submissions.UserHasUnprocessedSubmissionForContest(participant.ContestId, this.UserProfile.Id))
+            {
+                return this.JsonError(Resource.ContestsGeneral.User_has_not_processed_submission_for_contest);
             }
 
             var contest = participant.Contest;

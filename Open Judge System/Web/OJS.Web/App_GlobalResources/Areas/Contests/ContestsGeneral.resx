@@ -177,6 +177,9 @@
   <data name="User_has_not_processed_submission_for_problem" xml:space="preserve">
     <value>You have unprocessed submission for this problem. Please wait until the submission is processed.</value>
   </data>
+  <data name="User_has_not_processed_submission_for_contest" xml:space="preserve">
+    <value>You have an unprocessed submission in this contest. Please wait until the submission is processed.</value>
+  </data>
   <data name="Upload_file" xml:space="preserve">
     <value>Please upload file.</value>
   </data>

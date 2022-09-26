@@ -249,5 +249,14 @@ namespace Resources.Areas.Administration.Contests.Views.Partials {
                 return ResourceManager.GetString("Submissions_limit", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose if the user can submit concurrently for different problems in the contest.
+        /// </summary>
+        public static string Users_cant_submit_concurrently {
+            get {
+                return ResourceManager.GetString("Users_cant_submit_concurrently", resourceCulture);
+            }
+        }
     }
 }

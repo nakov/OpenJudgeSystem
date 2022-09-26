@@ -8,5 +8,7 @@
         bool HasSubmissionTimeLimitPassedForParticipant(int participantId, int limitBetweenSubmissions);
 
         bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId);
+        
+        bool UserHasUnprocessedSubmissionForContest(int contestId, string userId);
     }
 }
