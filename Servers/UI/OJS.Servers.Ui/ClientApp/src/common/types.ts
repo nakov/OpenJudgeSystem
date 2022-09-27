@@ -1,4 +1,4 @@
-import { ITreeItemType } from '../components/guidelines/trees/Tree';
+import ITreeItemType from './tree-types';
 
 interface ISubmissionTypeType {
     id: number,

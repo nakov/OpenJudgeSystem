@@ -4,18 +4,15 @@ import { useContestCategories } from '../../../hooks/use-contest-categories';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import { useContests } from '../../../hooks/use-contests';
 import { IHaveOptionalClassName } from '../../common/Props';
-import { ITreeItemType } from '../../common/TreeProviders';
 import { IFilter } from '../../../common/contest-types';
 import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
-import CategoryTree from '../contest-tree/CategoriesTree';
-
+import CategoryTree, { ITreeItemType } from '../categories-tree/CategoriesTree';
 import styles from './ContestCategories.module.scss';
 
 interface IContestCategoriesProps extends IHaveOptionalClassName {
     onCategoryClick: (filter: IFilter) => void;
     defaultSelected?: string,
 }
-
 const ContestCategories = ({
     className = '',
     onCategoryClick,
@@ -24,7 +21,7 @@ const ContestCategories = ({
     const { state: { categories } } = useContestCategories();
     const { state: { possibleFilters } } = useContests();
     const { actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
-
+    
     const flattenTree = useCallback(
         (treeItems: ITreeItemType[], result: ITreeItemType[]) => {
             treeItems.forEach(({ children, ...rest }) => {
@@ -39,7 +36,6 @@ const ContestCategories = ({
         },
         [],
     );
-
     const getParents = useCallback(
         (result: string[], allItems: ITreeItemType[], searchId?: string) => {
             if (isNil(searchId)) {
@@ -62,17 +58,14 @@ const ContestCategories = ({
         },
         [],
     );
-
     const categoriesFlat = useMemo(
         () => flattenTree(categories, []),
         [ categories, flattenTree ],
     );
-
     const defaultExpanded = useMemo(
         () => getParents([], categoriesFlat, defaultSelected),
         [ defaultSelected, categoriesFlat, getParents ],
     );
-
     const handleTreeLabelClick = useCallback((node: ITreeItemType) => {
         const filter = possibleFilters.find(({ value }) => value.toString() === node.id.toString());
         const category = categoriesFlat.find(({ id }) => id.toString() === node.id.toString());
@@ -84,7 +77,7 @@ const ContestCategories = ({
         onCategoryClick(filter);
         updateBreadcrumb(category, categoriesFlat);
     }, [ possibleFilters, categoriesFlat, onCategoryClick, updateBreadcrumb ]);
-
+    
     return (
         <div className={className as string}>
             <Heading
@@ -95,7 +88,7 @@ const ContestCategories = ({
             </Heading>
             <CategoryTree
                 items={categories}
-                onTreeLabelClick={handleTreeLabelClick}
+                onCategoryLabelClick={handleTreeLabelClick}
                 defaultSelected={defaultSelected}
                 defaultExpanded={defaultExpanded}
             />

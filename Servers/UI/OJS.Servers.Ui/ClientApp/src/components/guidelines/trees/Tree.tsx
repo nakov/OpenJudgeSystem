@@ -1,59 +1,63 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { TreeItem, TreeView } from '@material-ui/lab';
-import { MdChevronRight, MdExpandMore } from 'react-icons/md';
-import { isArray, isEmpty } from 'lodash';
-import { ITreeItemType, ITreeProps } from '../../common/TreeProviders';
+import { isArray, isEmpty, without } from 'lodash';
+import MdExpandMoreIcon from '../icons/MdExpandMoreIcon';
+import MdChevronRightIcon from '../icons/MdChervronRightIcon';
+import ITreeItemType from '../../../common/tree-types';
+
+interface ITreeProps {
+    items: ITreeItemType[];
+    onCategoryLabelClick: (node: ITreeItemType) => void;
+    defaultSelected?: string;
+    defaultExpanded?: string[];
+}
 
 const Tree = ({
     items,
-    onTreeLabelClick,
+    onCategoryLabelClick,
     defaultSelected,
     defaultExpanded = [],
 }: ITreeProps) => {
-    const [ expanded, setExpanded ] = useState([] as string[]);
-    const [ selected, setSelected ] = useState('');
+    const [ expandedIds, setExpandedIds ] = useState([] as string[]);
+    const [ selectedIds, setSelected ] = useState('');
 
     const handleTreeItemClick = useCallback(
         (node: ITreeItemType) => {
             const id = node.id.toString();
-            let newExpanded = Array.from(expanded);
+            const newExpanded = expandedIds.includes(id)
+                ? without(expandedIds,id)
+                : [ ...expandedIds,id ];
 
-            if (expanded.includes(id)) {
-                newExpanded = newExpanded.filter((e) => e !== id);
-            } else {
-                newExpanded.push(id);
-            }
-
-            setExpanded(newExpanded);
+            setExpandedIds(newExpanded);
         },
-        [ expanded, setExpanded ],
+        [ expandedIds, setExpandedIds ],
     );
 
     const handleLabelClick = useCallback(
         (node: ITreeItemType) => {
             setSelected(node.id.toString());
 
-            onTreeLabelClick(node);
+            onCategoryLabelClick(node);
         },
-        [ onTreeLabelClick ],
+        [ onCategoryLabelClick ],
     );
 
     useEffect(
         () => {
-            if (isEmpty(selected) && defaultSelected) {
+            if (isEmpty(selectedIds) && defaultSelected) {
                 setSelected(defaultSelected);
             }
         },
-        [ defaultSelected, selected ],
+        [ defaultSelected, selectedIds ],
     );
 
     useEffect(
         () => {
-            if (isEmpty(expanded) && !isEmpty(defaultExpanded)) {
-                setExpanded(defaultExpanded);
+            if (isEmpty(expandedIds) && !isEmpty(defaultExpanded)) {
+                setExpandedIds(defaultExpanded);
             }
         },
-        [ defaultExpanded, expanded ],
+        [ defaultExpanded, expandedIds ],
     );
 
     const renderTree = useCallback((node: ITreeItemType) => (
@@ -75,10 +79,10 @@ const Tree = ({
     return (
         <TreeView
             aria-label="rich object"
-            defaultCollapseIcon={<MdExpandMore/>}
-            defaultExpandIcon={<MdChevronRight/>}
-            selected={selected}
-            expanded={expanded}
+            defaultCollapseIcon={<MdExpandMoreIcon />}
+            defaultExpandIcon={<MdChevronRightIcon />}
+            selected={selectedIds}
+            expanded={expandedIds}
         >
             {renderTreeView(items)}
         </TreeView>
@@ -88,5 +92,5 @@ const Tree = ({
 export default Tree;
 
 export type {
-    ITreeItemType,
+    ITreeProps,
 };

@@ -55,7 +55,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         [ possibleFilters, onFilterClick ],
     );
 
-    const getRenderStatusFilterItem = useCallback(
+    const renderStatusFilterItem = useCallback(
         (buttonType: ButtonType, btnClassName: string,name: string, id: number) => (
             <Button
                     type={buttonType}
@@ -68,7 +68,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         [ handleFilterClick ],
     );
     
-    const getRenderStrategyFilterItem = useCallback(
+    const renderStrategyFilterItem = useCallback(
         (buttonType: ButtonType, btnClassName: string, name: string, id: number)=> (
             <div className={styles.strategyHeader}>
                 <div className={styles.tooltip}>
@@ -98,11 +98,11 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
                 : '';
             
             return type === FilterType.Strategy 
-                ? getRenderStrategyFilterItem(buttonType,btnClassName,name,id) 
-                : getRenderStatusFilterItem(buttonType,btnClassName, name, id);
+                ? renderStrategyFilterItem(buttonType,btnClassName,name,id) 
+                : renderStatusFilterItem(buttonType,btnClassName, name, id);
             
         },
-        [ filters, getRenderStatusFilterItem, getRenderStrategyFilterItem ],
+        [ filters, renderStatusFilterItem, renderStrategyFilterItem ],
     );
     
     const toggleFiltersExpanded = useCallback(
