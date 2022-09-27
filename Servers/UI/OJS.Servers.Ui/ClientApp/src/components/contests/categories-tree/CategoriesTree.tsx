@@ -60,7 +60,7 @@ const CategoryTree = ({
     );
     
     const renderCategoryTree = useCallback((node: ITreeItemType) => (
-        <div className={styles.categoriesTree}>
+        <div className={styles.categoriesTree} key={node.id}>
             <div className={styles.tooltip}>
                 <div className={styles.tooltipElement}
                      >
