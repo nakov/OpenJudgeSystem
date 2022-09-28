@@ -2,10 +2,10 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
-
     using OJS.Common;
     using OJS.Common.Models;
     using OJS.Data.Contracts;
@@ -88,6 +88,8 @@
 
         public string Description { get; set; }
 
+        public bool UsersCantSubmitConcurrently { get; set; }
+        
         public virtual ICollection<LecturerInContest> Lecturers { get; set; } = new HashSet<LecturerInContest>();
 
         public virtual ICollection<ContestQuestion> Questions { get; set; } = new HashSet<ContestQuestion>();

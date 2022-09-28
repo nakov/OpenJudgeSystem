@@ -95,10 +95,19 @@ function Notifier() {
     }
 
     function notifyFailure(error) {
-        showMessage({
-            message: error.statusText,
+        var errorObj = {
+            message: '',
             cssClass: 'alert alert-danger'
-        });
+        }
+        
+        try {
+            var json = JSON.parse(error.responseText);
+            errorObj.message = json.errorMessages[0];
+        } catch (e) {
+            errorObj.message = error.statusText;
+        }
+        
+        showMessage(errorObj);
     }
 
     function notifyWarning(warning) {

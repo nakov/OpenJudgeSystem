@@ -251,6 +251,15 @@ namespace Resources.Areas.Administration.Contests.ViewModels {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Users cant submit concurrently.
+        /// </summary>
+        public static string UsersCantSubmitConcurrently {
+            get {
+                return ResourceManager.GetString("UsersCantSubmitConcurrently", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Is visible?.
         /// </summary>
         public static string Visibility {

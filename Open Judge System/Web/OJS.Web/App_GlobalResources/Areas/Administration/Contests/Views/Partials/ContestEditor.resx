@@ -165,6 +165,9 @@
   <data name="Submissions_limit" xml:space="preserve">
     <value>Enter a time limit between two consecutive submissions</value>
   </data>
+  <data name="Users_cant_submit_concurrently" xml:space="preserve">
+    <value>Choose if the user can submit concurrently for different problems in the contest</value>
+  </data>
   <data name="Submission_types" xml:space="preserve">
     <value>Submission types</value>
   </data>

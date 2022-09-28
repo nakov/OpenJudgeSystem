@@ -59,6 +59,7 @@
                     CreatedOn = contest.CreatedOn,
                     ModifiedOn = contest.ModifiedOn,
                     AutoChangeTestsFeedbackVisibility = contest.AutoChangeTestsFeedbackVisibility,
+                    UsersCantSubmitConcurrently = contest.UsersCantSubmitConcurrently,
                 };
             }
         }
@@ -166,6 +167,10 @@
         [DatabaseProperty]
         [Display(Name = nameof(Resource.Visibility), ResourceType = typeof(Resource))]
         public bool IsVisible { get; set; }
+        
+        [DatabaseProperty]
+        [Display(Name = nameof(Resource.UsersCantSubmitConcurrently), ResourceType = typeof(Resource))]
+        public bool UsersCantSubmitConcurrently { get; set; }
 
         [DatabaseProperty]
         [Display(

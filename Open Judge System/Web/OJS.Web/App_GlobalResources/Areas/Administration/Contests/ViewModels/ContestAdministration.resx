@@ -183,4 +183,7 @@
   <data name="Visibility" xml:space="preserve">
     <value>Is visible?</value>
   </data>
+  <data name="UsersCantSubmitConcurrently" xml:space="preserve">
+    <value>Users cant submit concurrently</value>
+  </data>
 </root>
