@@ -11,7 +11,7 @@ interface ITestsRunDiffProps {
 }
 
 const Diff = ({ expectedStr, actualStr } : ITestsRunDiffProps) => {
-    const highlightSyntax = useCallback((str) => {
+    const highlightSyntax = useCallback((str: string) => {
         if (str) {
             return (
                 <pre

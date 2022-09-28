@@ -41,32 +41,37 @@ const addMonacoPlugin = (config) => ({
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const smp = new SpeedMeasurePlugin();
 
+// const decorateWebpack = (config, ...funcs) => smp.wrap(funcs
+//     .reduce((c, func) => func(c), config));
+
 const decorateWebpack = (config, ...funcs) => funcs
     .reduce((c, func) => func(c), config);
 
+
 module.exports = {
-    paths: (paths) => {
-        const appHtml = path.join(__dirname, '../Views/Home/Index.template.html');
+    reactScriptsVersion: 'react-scripts',
+    eslint: { enable: false },
+    webpack: {
+        configure: (webpackConfig) => decorateWebpack(
+            webpackConfig,
+            fixHtmlPlugin,
+            addMonacoPlugin,
+        ),
+    },
+    devServer: (config) => {
+        const { historyApiFallback } = config;
 
         return {
-            ...paths,
-            appHtml,
-        };
-    },
-    webpack: (config) => decorateWebpack(config, fixHtmlPlugin, addMonacoPlugin),
-    devServer(configFunction) {
-        return function (proxy, allowedHost) {
-            const config = configFunction(proxy, allowedHost);
-            const { historyApiFallback } = config;
-
-            return {
-                ...config,
+            ...config,
+            devMiddleware: {
+                ...config.devMiddleware,
                 writeToDisk: true,
-                historyApiFallback: {
-                    ...historyApiFallback,
-                    index: '/',
-                },
-            };
+            },
+            historyApiFallback: {
+                ...historyApiFallback,
+                index: '/',
+            },
         };
     },
+
 };

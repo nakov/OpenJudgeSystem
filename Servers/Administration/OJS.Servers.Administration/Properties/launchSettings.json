@@ -35,7 +35,8 @@
         "SULS_PLATFORM_API_KEY": "1234",
         "DISTRIBUTOR_BASE_URL": "https://localhost:44305",
         "LOGGER_FILES_FOLDER_PATH": "../../../Logs",
-        "SHARED_AUTH_COOKIE_DOMAIN": "localhost"
+        "SHARED_AUTH_COOKIE_DOMAIN": "localhost",
+        "REDIS_CONNECTION_STRING": "redis,password=redisPass123,ConnectTimeout=10000,abortConnect=false"
       }
     }
   }
