@@ -2,7 +2,7 @@ import { beforeEach } from 'mocha';
 import { isClassOrTypeElement } from 'typescript';
 import IndexPage from '../pageobjects/index-page';
 
-describe.skip('Testing index', () => {
+describe('Testing index', () => {
     let activeCards;
     let pastCards;
 
