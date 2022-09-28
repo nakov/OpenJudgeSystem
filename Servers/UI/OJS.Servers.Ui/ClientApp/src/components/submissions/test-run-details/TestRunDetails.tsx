@@ -12,6 +12,7 @@ import Collapsible from '../../guidelines/collapsible/Collapsible';
 import TestRunDiffView from '../test-run-diff-view/TestRunDiffView';
 import ExpandButton from '../../guidelines/buttons/ExpandButton';
 import styles from './TestRunDetails.module.scss';
+import Label, { LabelType } from '../../guidelines/labels/Label';
 
 interface ITestRunDetailsProps {
     testRun: ITestRunDetailsType;
@@ -35,7 +36,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         ),
         [ testRun ],
     );
-
+    
     const isOutputDiffAvailable = useMemo(
         () => !isNil(testRun.expectedOutputFragment) && testRun.expectedOutputFragment !== '' &&
             !isNil(testRun.userOutputFragment) && testRun.userOutputFragment !== '',
@@ -52,7 +53,29 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         return testRunText;
     }, [ testRun ]);
 
-    const renderTimeAndMemoryUsed = useCallback(() => (
+    const renderLabel = useCallback(
+        () => {
+            const result = testRun.resultType.toLowerCase();
+            const type = result === 'correctanswer'
+                ? LabelType.success
+                : result === 'wronganswer'
+                    ? LabelType.danger
+                    : LabelType.warning;
+            
+            const resultSplit = testRun.resultType.split(/(?=[A-Z])/).join(' ');
+
+            return (
+                <Label
+                        type={type}
+                    >
+                    {resultSplit}
+                </Label>
+            );
+        },
+        [ testRun ],
+    );
+    
+    const renderTestRunData = useCallback(() => (
         <span className={styles.testRunData}>
             <span className={styles.testRunDataParagraph}>
                 <TimeLimitIcon
@@ -69,11 +92,13 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
                 />
                 <span>
                     {testRun.memoryUsed}
-                    MB
                 </span>
             </span>
+            <span className={styles.testRunDataParagraph}>
+                {renderLabel()}
+            </span>
         </span>
-    ), [ testRun ]);
+    ), [ testRun, renderLabel ]);
 
     const renderHeader = useCallback(
         () => (
@@ -82,13 +107,13 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
               className={testRunHeadingClassName}
             >
                 { testRunHeadingText }
-                { renderTimeAndMemoryUsed() }
+                { renderTestRunData() }
             </Heading>
         ),
         [
             testRunHeadingClassName,
             testRunHeadingText,
-            renderTimeAndMemoryUsed,
+            renderTestRunData,
         ],
     );
 
@@ -129,7 +154,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         testRun,
         user.permissions.canAccessAdministration,
     ]);
-
+    
     return (
         <div className={styles.testRun}>
             {render()}
