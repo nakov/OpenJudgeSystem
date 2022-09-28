@@ -6,13 +6,14 @@ import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import FormControl, { FormControlType } from '../../guidelines/forms/FormControl';
 import Form from '../../guidelines/forms/Form';
 import styles from './ContestPasswordForm.module.scss';
+import concatClassNames from '../../../utils/class-names';
 
 interface IContestPasswordFormProps {
     id: number;
     isOfficial: boolean;
 }
 
-const ContestPasswordForm = ({ id, isOfficial }: IContestPasswordFormProps) => {
+const ContestPasswordForm = ({ id, isOfficial, className }: IContestPasswordFormProps) => {
     const {
         state: {
             contest,
@@ -32,19 +33,22 @@ const ContestPasswordForm = ({ id, isOfficial }: IContestPasswordFormProps) => {
         setPasswordValue(value);
     }, [ setPasswordValue ]);
 
+    const errorMessageClass = 'errorMessage';
+    const errorMessageClassName = concatClassNames(styles.errorMessage, errorMessageClass);
+
     const renderErrorMessage = useCallback(
         () => (!isNil(submitContestPasswordErrorMessage)
-            ? <span className={styles.errorMessage}>{submitContestPasswordErrorMessage}</span>
+            ? <span className={errorMessageClassName}>{submitContestPasswordErrorMessage}</span>
             : null),
-        [ submitContestPasswordErrorMessage ],
+        [ submitContestPasswordErrorMessage, errorMessageClassName ],
     );
 
     return (
         <Form
           className={styles.contestPasswordForm}
-          onSubmit={() => {
-              handleOnSubmitPassword();
-          }}
+              onSubmit={() => {
+                  handleOnSubmitPassword();
+              }}
         >
             <header className={styles.formHeader}>
                 <Heading type={HeadingType.primary}>Enter contest password</Heading>

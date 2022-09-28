@@ -28,11 +28,11 @@ describe('Testing contest', () => {
         await loginInWithValidCredentials();
     });
 
-    after(async () => {
+    /*   after(async () => {
         await AuthPage.performLogOut();
-    });
+    }); */
 
-    describe('Testing compete contest', () => {
+    describe.skip('Testing compete contest', () => {
         before(async () => {
             await IndexPage.firstCompeteCardButtonActiveContests.click();
             await browser.setTimeout({ implicit: 5000 });
@@ -143,7 +143,7 @@ describe('Testing contest', () => {
         });
     });
 
-    describe('Testing practice contest', () => {
+    describe.skip('Testing practice contest', () => {
         before(async () => {
             await IndexPage.firstPracticeCardButtoPastContests.click();
             await browser.setTimeout({ implicit: 5000 });
@@ -244,6 +244,37 @@ describe('Testing contest', () => {
             const urlCheck = await browser.getUrl();
             const result = urlCheck.toString();
             await expect(result).toContain('practice');
+        });
+    });
+
+    describe('Testing password protected contest', () => {
+        const validPassword = 'test123';
+
+        const invalidPassword = {
+            emptyStr: '',
+            invalitdStr: 'test',
+            validPasswordUpperCase: 'TEST123',
+        };
+
+        before(async () => {
+            await ContestPage.open();
+            await browser.setTimeout({ implicit: 5000 });
+        });
+
+        xit('Expect successful enrollment with valid password', async () => {
+            await ContestPage.performeContstEnrollement(validPassword);
+            const contestURL = '';
+            const contestURLafterLogIn = await browser.getUrl();
+
+            await expect(contestURL).toEqual(contestURLafterLogIn);
+        });
+
+        it('Expect unsuccessful enrollment with invalid password', async () => {
+            await ContestPage.performeContstEnrollement(validPassword);
+            const contestURL = '';
+            const contestURLafterLogIn = await browser.getUrl();
+
+            await expect(contestURL).toEqual(contestURLafterLogIn);
         });
     });
 });

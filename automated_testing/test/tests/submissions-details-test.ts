@@ -2,7 +2,7 @@ import IndexPage from '../pageobjects/index-page';
 import AuthPage from '../pageobjects/auth-page';
 import SubmissionsDetailsPage from '../pageobjects/submissions-details-page';
 
-describe('Testing SubmissionsDetails Page', () => {
+describe.skip('Testing SubmissionsDetails Page', () => {
     const validUserCredentials = {
         username: 'testuser123',
         password: '123456',
