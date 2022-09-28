@@ -5,6 +5,8 @@ import selectors from '../constants/contest-page-selectors';
 import Page from './page';
 
 class ContestPage extends Page {
+    private passwordProtectedContestLocation = 'contests/3/register/compete';
+
     public get allContestListSideNavigation() {
         return $$(selectors.pageSingleTaskFromSideNavigationSelector);
     }
@@ -93,12 +95,25 @@ class ContestPage extends Page {
         return $$(selectors.pageProblemTabRequirements);
     }
 
-    public get contestPassword() {
+    public get contestPasswordField() {
         return $(selectors.pageContestPasswordField);
     }
 
     public get contestPasswordSubmitBtn() {
         return $(selectors.pageContestPasswordSubmitButton);
+    }
+
+    public open(): Promise<string> {
+        return super.open(this.passwordProtectedContestLocation);
+    }
+
+    public async enterPassword(input) {
+        return (await this.contestPasswordField).setValue(input);
+    }
+
+    public async performeContstEnrollement(password) {
+        await this.enterPassword(password);
+        await (await this.contestPasswordSubmitBtn).click();
     }
 }
 export default new ContestPage();

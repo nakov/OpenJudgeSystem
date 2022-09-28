@@ -7,9 +7,10 @@ IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [object_id] = OBJECT_ID(
 GO
 
 INSERT INTO [HangFire].[Server] ([Id], [Data], [LastHeartbeat])
-VALUES (N'0fee827af580:7:cc3dee4e-f544-4556-bfa5-28f8279b5827', N'{"WorkerCount":20,"Queues":["default"],"StartedAt":"2022-09-20T20:48:22.0334473Z"}', CAST(N'2022-09-20T20:50:52+00:00' AS DateTime2)),
-(N'3fcb2ca7b147:7:6597fe37-150d-40c8-a381-ff2574dfd815', N'{"WorkerCount":20,"Queues":["default"],"StartedAt":"2022-09-20T20:48:11.2163688Z"}', CAST(N'2022-09-20T20:48:11+00:00' AS DateTime2)),
-(N'd3b6f3917bbe:7:112c36ce-7e03-486c-8ace-ffe4b06b2387', N'{"WorkerCount":20,"Queues":["default"],"StartedAt":"2022-09-20T20:48:11.0471376Z"}', CAST(N'2022-09-20T20:50:41+00:00' AS DateTime2))
+VALUES (N'47a3009cf3f6:7:ac72b8bb-04e4-4f89-8514-b86f3640f4fc', N'{"WorkerCount":20,"Queues":["default"],"StartedAt":"2022-09-28T09:48:16.3535106Z"}', CAST(N'2022-09-28T09:49:16+00:00' AS DateTime2)),
+(N'47a3009cf3f6:7:f4352b67-5524-4991-bb43-92f6523e1402', N'{"WorkerCount":20,"Queues":["default"],"StartedAt":"2022-09-28T09:19:18.5952291Z"}', CAST(N'2022-09-28T09:38:49+00:00' AS DateTime2)),
+(N'9a626ca2260d:7:2822e8bb-203a-4133-80a8-d48eba422cfc', N'{"WorkerCount":20,"Queues":["default"],"StartedAt":"2022-09-28T09:19:18.0865167Z"}', CAST(N'2022-09-28T09:38:48+00:00' AS DateTime2)),
+(N'9a626ca2260d:7:ab1cab26-fd0e-4d1d-b24c-b4bfbc2ccfad', N'{"WorkerCount":20,"Queues":["default"],"StartedAt":"2022-09-28T09:48:16.3535107Z"}', CAST(N'2022-09-28T09:49:16+00:00' AS DateTime2))
 GO
 
 IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [object_id] = OBJECT_ID(N'[HangFire].[Server]'))

@@ -21,6 +21,5 @@ const selectors = {
     pageCompeteButtonIdSelector: '#button-card-compete',
     pagePracticeButtonIdSelector: '#button-card-practice',
     pageStatisticsBoxSelector: '.staticBox',
-    test: '*[class="disabled"]',
 };
 export default selectors;
