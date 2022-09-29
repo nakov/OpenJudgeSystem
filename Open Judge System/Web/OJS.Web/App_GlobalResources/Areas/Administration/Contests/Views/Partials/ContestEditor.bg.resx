@@ -180,4 +180,7 @@
   <data name="Problem_groups_edit_from_administration" xml:space="preserve">
     <value>Може да променяте броя на групите от Администрацията за Групи Проблеми</value>
   </data>
+  <data name="Users_cant_submit_concurrently" xml:space="preserve">
+    <value>Изберете дали потребителите могат да предават решения за различни задачи от състезанието едновременно</value>
+  </data>
 </root>

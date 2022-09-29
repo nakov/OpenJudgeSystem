@@ -304,6 +304,15 @@ namespace Resources.Areas.Contests {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You have an unprocessed submission in this contest. Please wait until the submission is processed..
+        /// </summary>
+        public static string User_has_not_processed_submission_for_contest {
+            get {
+                return ResourceManager.GetString("User_has_not_processed_submission_for_contest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You have unprocessed submission for this problem. Please wait until the submission is processed..
         /// </summary>
         public static string User_has_not_processed_submission_for_problem {

@@ -29,6 +29,7 @@
             columns.Bound(x => x.IsVisible).Hidden();
             columns.Bound(x => x.CreatedOn).Format(GlobalConstants.DefaultDateTimeFormatString).Hidden();
             columns.Bound(x => x.ModifiedOn).Format(GlobalConstants.DefaultDateTimeFormatString).Hidden();
+            columns.Bound(x => x.UsersCantSubmitConcurrently).Hidden();
             columns.Command(c => c.Custom(Resource.Download_submissions).Click("showDownloadSubmissionsPopup")).Title(Resource.Submissions).Width(200);
             columns.Template(@<text></text>).ClientTemplate($"<a class='k-button' href='{Url.Action<ResultsController>(c => c.Export(null, true))}/#=Id#'>{Resource.For_compete}</a><br /><a class='k-button' href='{Url.Action<ResultsController>(c => c.Export(null, false))}/#=Id#'>{Resource.For_practice}</a>").Title(Resource.Ranking).Width(200);
             columns.Template(@<text></text>).ClientTemplate($"<a class='k-button' href='Problems/Contest/#=Id#'>{Resource.Problems}</a><br /><a class='k-button' href='{Url.Action("Contest", "Participants")}/#=Id#'>{Resource.Participants}</a>").Title(Resource.Other);
