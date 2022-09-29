@@ -1,18 +1,29 @@
 ﻿FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash
-RUN apt-get update -y && apt-get install -y nodejs
-RUN npm install --global yarn
+# Node.js build
+FROM node:18-alpine as node_build
 
 WORKDIR /src
-COPY Servers/UI/OJS.Servers.Ui/ClientApp/package.json ./Servers/UI/OJS.Servers.Ui/ClientApp/package.json
-COPY Servers/UI/OJS.Servers.Ui/ClientApp/yarn.lock ./Servers/UI/OJS.Servers.Ui/ClientApp/yarn.lock
 
+COPY Servers/UI/OJS.Servers.Ui/ClientApp/package.json /src/Servers/UI/OJS.Servers.Ui/ClientApp/package.json
+COPY Servers/UI/OJS.Servers.Ui/ClientApp/yarn.lock /src/Servers/UI/OJS.Servers.Ui/ClientApp/yarn.lock
 WORKDIR /src/Servers/UI/OJS.Servers.Ui/ClientApp
 RUN yarn install
+
+WORKDIR /src
+
+COPY Servers/UI/OJS.Servers.Ui/Views /src/Servers/UI/OJS.Servers.Ui/Views
+COPY Servers/UI/OJS.Servers.Ui/ClientApp /src/Servers/UI/OJS.Servers.Ui/ClientApp
+
+WORKDIR /src/Servers/UI/OJS.Servers.Ui/ClientApp
+RUN yarn build
+
+
+# .Net build
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS dotnet_build
 
 WORKDIR /src
 
@@ -33,7 +44,6 @@ COPY Servers/Infrastructure/OJS.Servers.Infrastructure/OJS.Servers.Infrastructur
 COPY Common/OJS.Common/OJS.Common.csproj /src/Common/OJS.Common/OJS.Common.csproj
 COPY Data/OJS.Data.Validation/OJS.Data.Validation.csproj /src/Data/OJS.Data.Validation/OJS.Data.Validation.csproj
 
-
 RUN dotnet restore Servers/UI/OJS.Servers.Ui/OJS.Servers.Ui.csproj
 
 WORKDIR /src
@@ -47,17 +57,20 @@ COPY Services/Common ./Services/Common
 COPY Services/Infrastructure ./Services/Infrastructure
 COPY Directory.Build.props ./Directory.Build.props
 
-FROM build AS publish
-WORKDIR /src/Servers/UI/OJS.Servers.Ui/ClientApp
 
-# Increase to 6 GB
-ENV NODE_OPTIONS "--max-old-space-size=8124"
+# Dotnet Publish
+FROM dotnet_build AS publish
 
-RUN yarn build
+WORKDIR /src/Servers/UI/OJS.Servers.Ui
+
+COPY --from=node_build /src/Servers/UI/OJS.Servers.Ui/Views /src/Servers/UI/OJS.Servers.Ui/Views
+COPY --from=node_build /src/Servers/UI/OJS.Servers.Ui/ClientApp/build /src/Servers/UI/OJS.Servers.Ui/ClientApp/build
 
 WORKDIR /src/Servers/UI/OJS.Servers.Ui
 RUN dotnet publish OJS.Servers.Ui.csproj -c Release -o /app/publish
 
+
+# Dotnet Run
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .

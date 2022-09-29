@@ -17,10 +17,6 @@ const fixHtmlPlugin = (config) => {
         filename,
         template,        
     };
-    
-    console.log(filename);
-    console.log(htmlPlugin);
-    console.log(JSON.stringify(htmlPlugin));
 
     return {
         ...config,
