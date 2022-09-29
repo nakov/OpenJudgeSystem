@@ -38,22 +38,6 @@
 
             set => this.SolutionSkeletonData = !string.IsNullOrWhiteSpace(value) ? value.Compress() : null;
         }
-
-        [AllowHtml]
-        public string SolutionSkeletonShort
-        {
-            get
-            {
-                if (string.IsNullOrWhiteSpace(this.SolutionSkeleton))
-                {
-                    return null;
-                }
-
-                return this.SolutionSkeleton.Length > 200
-                    ? this.SolutionSkeleton.Substring(0, 200)
-                    : this.SolutionSkeleton;
-            }
-        }
         
         [AllowHtml]
         internal byte[] SolutionSkeletonData { get; set; }
