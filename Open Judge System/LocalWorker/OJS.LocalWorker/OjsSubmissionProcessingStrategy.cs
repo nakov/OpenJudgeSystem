@@ -316,7 +316,10 @@
             MaxPoints = this.submission.Problem.MaximumPoints,
             Input = new TestsInputModel
             {
-                TaskSkeleton = this.submission.Problem.SolutionSkeleton,
+                TaskSkeleton = this.submission.Problem
+                    .ProblemSubmissionTypesSkeletons.FirstOrDefault(
+                        x => x.SubmissionTypeId == this.submission
+                    .SubmissionTypeId)?.SolutionSkeleton,
                 CheckerParameter = this.submission.Problem.Checker.Parameter,
                 CheckerAssemblyName = this.submission.Problem.Checker.DllFile,
                 CheckerTypeName = this.submission.Problem.Checker.ClassName,

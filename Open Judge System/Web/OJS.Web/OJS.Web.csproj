@@ -1780,6 +1780,7 @@
     <Compile Include="Areas\Administration\ViewModels\Participant\UserViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\ProblemGroup\ProblemGroupAdministrationViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\ProblemGroup\CopyAllProblemGroupsViewModel.cs" />
+    <Compile Include="Areas\Administration\ViewModels\ProblemSubmissionTypesSkeleton\ProblemSubmissionTypesSkeletonViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\Problem\CopyProblemViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\Problem\DeleteProblemViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\Problem\ProblemAdministrationViewModel.cs" />
@@ -2408,6 +2409,7 @@
     <Content Include="Scripts\Administration\Problems\problems-create.js" />
     <Content Include="Scripts\Administration\Problems\problems-edit.js" />
     <Content Include="Scripts\Administration\Problems\problems-index.js" />
+    <Content Include="Scripts\Administration\Problems\problems-skeletons.js" />
     <Content Include="Scripts\Administration\Resources\resources-create.js" />
     <Content Include="Scripts\Administration\Resources\resources-edit.js" />
     <Content Include="Scripts\Administration\Tests\tests-details.js" />

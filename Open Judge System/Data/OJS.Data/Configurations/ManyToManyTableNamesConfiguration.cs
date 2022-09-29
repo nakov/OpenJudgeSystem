@@ -35,6 +35,23 @@
                     m.MapRightKey("ExamGroupId");
                     m.ToTable(UsersInExamGroupsTableName);
                 });
+
+            modelBuilder.Entity<ProblemSubmissionTypeSkeleton>().HasKey(
+                pst => 
+                new
+                { 
+                    pst.ProblemId, pst.SubmissionTypeId
+                });
+
+            modelBuilder.Entity<ProblemSubmissionTypeSkeleton>()
+                .HasRequired(pst =>pst.Problem)
+                .WithMany(p => p.ProblemSubmissionTypesSkeletons)
+                .HasForeignKey(pst => pst.ProblemId);
+
+            modelBuilder.Entity<ProblemSubmissionTypeSkeleton>()
+                .HasRequired(pst => pst.SubmissionType)
+                .WithMany(st => st.ProblemSubmissionTypesSkeletons)
+                .HasForeignKey(pst => pst.SubmissionTypeId);
         }
     }
 }

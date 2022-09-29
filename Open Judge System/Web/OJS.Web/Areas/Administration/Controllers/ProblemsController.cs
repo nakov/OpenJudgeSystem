@@ -204,16 +204,26 @@
             var newProblem = problem.GetEntityModel();
             newProblem.Checker = this.checkersData.GetByName(problem.Checker);
 
-            problem.SubmissionTypes.ForEach(s =>
+            problem.SubmissionTypes
+                .Where(s => s.IsChecked && s.Id.HasValue)
+                .ForEach(s =>
             {
-                if (s.IsChecked && s.Id.HasValue)
-                {
                     var submission = this.submissionTypesData.GetById(s.Id.Value);
                     newProblem.SubmissionTypes.Add(submission);
-                }
+                    
+                    if (!s.SolutionSkeletonData.IsNullOrEmpty())
+                    {
+                        newProblem.ProblemSubmissionTypesSkeletons.Add(
+                            new ProblemSubmissionTypeSkeleton
+                            {
+                                ProblemId = problem.Id,
+                                SubmissionTypeId = submission.Id,
+                                SolutionSkeleton = this.GetOptimizedSolutionSkeleton(problem, s.SolutionSkeleton)?.Compress()
+                            });
+                    }
             });
 
-            problem.SolutionSkeleton = this.GetOptimizedSolutionSkeleton(problem);
+            problem.SolutionSkeleton = this.GetOptimizedSolutionSkeleton(problem, problem.SolutionSkeleton);
 
             if (problem.SolutionSkeletonData != null && problem.SolutionSkeletonData.Any())
             {
@@ -299,7 +309,7 @@
                 .GetAll()
                 .Select(SubmissionTypeViewModel.ViewModel)
                 .ForEach(SubmissionTypeViewModel.ApplySelectedTo(selectedProblem));
-
+            
             return this.View(selectedProblem);
         }
 
@@ -348,7 +358,7 @@
                 return this.View(problem);
             }
 
-            problem.SolutionSkeleton = this.GetOptimizedSolutionSkeleton(problem);
+            problem.SolutionSkeleton = this.GetOptimizedSolutionSkeleton(problem, problem.SolutionSkeleton);
 
             existingProblem = problem.GetEntityModel(existingProblem);
             existingProblem.Checker = this.checkersData.GetByName(problem.Checker);
@@ -369,15 +379,20 @@
                     existingProblem.AdditionalFiles = archiveStream.ToArray();
                 }
             }
-
-            problem.SubmissionTypes.ForEach(s =>
-            {
-                if (s.IsChecked && s.Id.HasValue)
-                {
-                    var submission = this.submissionTypesData.GetById(s.Id.Value);
-                    existingProblem.SubmissionTypes.Add(submission);
-                }
-            });
+            
+            var currentSubmissionTypes = problem
+                .SubmissionTypes
+                .Where(x => x.IsChecked && x.Id.HasValue)
+                .ToList();
+            
+            currentSubmissionTypes.ForEach(
+                    s =>
+                    {
+                        var submission = this.submissionTypesData.GetById(s.Id.Value);
+                        existingProblem.SubmissionTypes.Add(submission);
+                    });
+            
+            this.ProcessProblemSubmissionTypesSkeletons(problem, currentSubmissionTypes, existingProblem);
 
             this.problemsData.Update(existingProblem);
 
@@ -961,10 +976,8 @@
             return isValid;
         }
 
-        private string GetOptimizedSolutionSkeleton(ProblemAdministrationViewModel problem)
+        private string GetOptimizedSolutionSkeleton(ProblemAdministrationViewModel problem, string skeleton)
         {
-            var skeleton = problem.SolutionSkeleton;
-
             var shouldTryOptimizeMysql = problem.SubmissionTypes
                 .Any(
                     st => st.IsChecked && MySqlStrategiesHelper.ExecutionStrategyTypesForOptimization
@@ -978,6 +991,53 @@
             }
 
             return skeleton;
+        }
+        
+        private void ProcessProblemSubmissionTypesSkeletons(
+            ProblemAdministrationViewModel problem,
+            List<SubmissionTypeViewModel> currentSubmissionTypes,
+            Problem existingProblem)
+        {
+            currentSubmissionTypes?
+                .Where(x => !x.SolutionSkeletonData.IsNullOrEmpty())
+                .ForEach(
+                    s =>
+                    {
+                        var currentPst = existingProblem
+                            .ProblemSubmissionTypesSkeletons
+                            .FirstOrDefault(pst => s.Id.HasValue && pst.SubmissionTypeId == s.Id.Value);
+
+                        if (currentPst != null)
+                        {
+                            currentPst.SolutionSkeleton =
+                                this.GetOptimizedSolutionSkeleton(problem, s.SolutionSkeleton)?.Compress();
+                        }
+                        else
+                        {
+                            existingProblem.ProblemSubmissionTypesSkeletons.Add(
+                                new ProblemSubmissionTypeSkeleton
+                                {
+                                    ProblemId = problem.Id,
+                                    SubmissionTypeId = s.Id.Value,
+                                    SolutionSkeleton = this.GetOptimizedSolutionSkeleton(problem, s.SolutionSkeleton)
+                                        ?.Compress()
+                                });
+                        }
+                    });
+
+            problem.SubmissionTypes
+                .Where(
+                    x => !x.IsChecked &&
+                         x.Id.HasValue && 
+                         existingProblem.ProblemSubmissionTypesSkeletons
+                             .Any(y => y.SubmissionTypeId == x.Id.Value))
+                .ForEach(
+                x =>
+                {
+                    existingProblem.ProblemSubmissionTypesSkeletons.Remove(
+                        existingProblem
+                            .ProblemSubmissionTypesSkeletons.FirstOrDefault(y => y.SubmissionTypeId == x.Id.Value));
+                });
         }
     }
 }
