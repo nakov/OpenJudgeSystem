@@ -5,10 +5,17 @@ const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
 const fixHtmlPlugin = (config) => {
     const [ htmlPlugin, ...rest ] = config.plugins;
     const filename = path.join(__dirname, '../Views/Home/Index.cshtml');
-
+    const template = path.join(__dirname, '../Views/Home/Index.template.html');
     htmlPlugin.options = {
         ...htmlPlugin.options,
         filename,
+        template,
+    };
+    
+    htmlPlugin.userOptions = {
+        ...htmlPlugin.userOptions,
+        filename,
+        template,        
     };
 
     return {

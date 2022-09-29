@@ -16,21 +16,12 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
         {
             app
                 .UseDefaults()
-                .MapDefaultRoutes();
+                .MapDefaultRoutes()
+                .UseReactStaticFiles();
 
             if (app.Environment.IsDevelopment())
             {
-                // app.UseStaticFiles();
-                var reactFilesPath = Path.Combine(Directory.GetCurrentDirectory(), "ClientApp", "dist");
-                Console.WriteLine(reactFilesPath);
-                app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(reactFilesPath), });
                 app.UseSwaggerDocs(apiVersion.ToApiName());
-            }
-            else
-            {
-                var reactFilesPath = Path.Combine(Directory.GetCurrentDirectory(), "ClientApp", "build");
-                Console.WriteLine(reactFilesPath);
-                app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(reactFilesPath), });
             }
 
             app.UseEndpoints(endpoints =>
@@ -56,7 +47,22 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
             }
 
 
+            return app;
+        }
 
+        public static WebApplication UseReactStaticFiles(this WebApplication app)
+        {
+            // var distDirectory = app.Environment.IsDevelopment()
+            //     ? "dist"
+            //     : "build";
+            var distDirectory = "build";
+            var reactFilesPath = Path.Combine(Directory.GetCurrentDirectory(), "ClientApp", distDirectory);
+            if (!Directory.Exists(reactFilesPath))
+            {
+                Directory.CreateDirectory(reactFilesPath);
+            }
+
+            app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(reactFilesPath), });
             return app;
         }
     }
