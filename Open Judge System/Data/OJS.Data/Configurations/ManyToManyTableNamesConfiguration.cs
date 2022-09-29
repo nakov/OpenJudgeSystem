@@ -44,7 +44,7 @@
                 });
 
             modelBuilder.Entity<ProblemSubmissionTypeSkeleton>()
-                .HasRequired(pst =>pst.Problem)
+                .HasRequired(pst => pst.Problem)
                 .WithMany(p => p.ProblemSubmissionTypesSkeletons)
                 .HasForeignKey(pst => pst.ProblemId);
 
