@@ -106,7 +106,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     );
     
     const toggleFiltersExpanded = useCallback(
-        (isExpanded) => setExpanded(isExpanded),
+        (isExpanded: boolean) => setExpanded(isExpanded),
         [],
     );
 
