@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { isNil } from 'lodash';
 import { useSearchParams } from 'react-router-dom';
-import List, { Orientation } from '../../guidelines/lists/List';
+import List from '../../guidelines/lists/List';
 
 import { FilterType, IFilter } from '../../../common/contest-types';
 import ContestCategories from '../contest-categories/ContestCategories';

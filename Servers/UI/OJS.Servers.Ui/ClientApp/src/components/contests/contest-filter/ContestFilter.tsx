@@ -23,7 +23,8 @@ const ContestFilter = ({
     onSelect,
     maxDisplayCount,
 }: IContestFilterProps) => {
-    const [ expanded, setExpanded ] = useState(false);
+    const initialExpanded = false;
+    const [ expanded, setExpanded ] = useState(initialExpanded);
 
     const listOrientation = useMemo(
         () => type === FilterType.Status
@@ -40,7 +41,7 @@ const ContestFilter = ({
     );
     
     const toggleFiltersExpanded = useCallback(
-        (isExpanded) => {
+        (isExpanded: boolean) => {
             setExpanded(isExpanded);
         },
         [],
