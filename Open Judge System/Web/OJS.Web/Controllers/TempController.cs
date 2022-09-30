@@ -308,7 +308,8 @@
         public ActionResult MigrateSolutionSkeletons()
         {
             var updatedProblemsCount = 0;
-            var exceptionCount = 0;
+
+            var exceptions = new List<Exception>();
 
             this.problemsDataService.GetAll()
                 .Where(
@@ -336,12 +337,16 @@
                         }
                         catch (Exception ex)
                         {
-                            exceptionCount++;
+                            exceptions.Add(ex);
                         }
                     });
 
+            var newLine = "<br />";
+
             return this.Content(
-                $"Updated problems count = {updatedProblemsCount} and exceptions count {exceptionCount}");
+                $"Updated problems count = {updatedProblemsCount} and exceptions count {exceptions.Count}" +
+                newLine +
+                $"{string.Join(newLine, exceptions.Select(ex => ex.ToString()).Distinct())}");
         }
     }
 }
