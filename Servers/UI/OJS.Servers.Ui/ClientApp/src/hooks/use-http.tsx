@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import axios from 'axios';
+import axios, { ResponseType } from 'axios';
 import { saveAs } from 'file-saver';
 import { isFunction } from 'lodash';
 import { HttpStatus } from '../common/common';
@@ -65,7 +65,7 @@ const useHttp = (
     const get = useCallback(
         (responseType = 'json') => request(() => axios.get(
             getUrl(url, parameters),
-            { responseType, headers: actualHeaders },
+            { responseType: responseType as ResponseType, headers: actualHeaders },
         )),
         [ request, url, parameters, actualHeaders ],
     );

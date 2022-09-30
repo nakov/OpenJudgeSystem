@@ -1,5 +1,5 @@
 import React from 'react';
-import { BiTime } from 'react-icons/all';
+import { BiTime } from 'react-icons/bi';
 
 import IconSize from './common/icon-sizes';
 import Icon, { IIconProps } from './Icon';

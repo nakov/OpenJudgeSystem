@@ -35,7 +35,7 @@ const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProvi
         data: apiContestResults,
     } = useHttp(getContestResultsUrl as UrlType, getContestResultsParams);
 
-    const load = useCallback(async (id, official, full) => {
+    const load = useCallback(async (id: number, official: boolean, full: boolean) => {
         if (isNil(id)) {
             return;
         }
