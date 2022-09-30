@@ -153,6 +153,7 @@
             modelBuilder.Configurations.Add(new ParticipantScoresConfiguration());
             modelBuilder.Configurations.Add(new UserProfileConfiguration());
             modelBuilder.Configurations.Add(new ProblemsConfiguration());
+            modelBuilder.Configurations.Add(new ProblemSubmissionTypeSkeletonConfiguration());
 
             ManyToManyTableNamesConfiguration.Configure(modelBuilder);
 
