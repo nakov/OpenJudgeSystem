@@ -246,4 +246,27 @@ describe('Testing contest', () => {
             await expect(result).toContain('practice');
         });
     });
+
+    describe('Testing password protected contest', () => {
+        const validPassword = 'test123';
+
+        const invalidPassword = {
+            emptyStr: '',
+            invalidStr: 'notValid',
+            validPasswordUpperCase: 'TEST123',
+        };
+
+        beforeEach(async () => {
+            await ContestPage.open();
+            await browser.setTimeout({ implicit: 5000 });
+        });
+
+        it('Expect successful enrollment with valid password', async () => {
+            await ContestPage.performeContstEnrollement(validPassword);
+            const contestURL = 'http://localhost:5002/contests/3/compete';
+            const contestURLafterLogIn = await browser.getUrl();
+
+            await expect(contestURL).toEqual(contestURLafterLogIn);
+        });
+});
 });

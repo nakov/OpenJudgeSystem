@@ -13,7 +13,7 @@ interface IContestPasswordFormProps {
     isOfficial: boolean;
 }
 
-const ContestPasswordForm = ({ id, isOfficial, className }: IContestPasswordFormProps) => {
+const ContestPasswordForm = ({ id, isOfficial }: IContestPasswordFormProps) => {
     const {
         state: {
             contest,
@@ -45,6 +45,7 @@ const ContestPasswordForm = ({ id, isOfficial, className }: IContestPasswordForm
 
     return (
         <Form
+          id='milatest'
           className={styles.contestPasswordForm}
               onSubmit={() => {
                   handleOnSubmitPassword();

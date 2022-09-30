@@ -24,5 +24,6 @@ const selectors = {
     pageProblemTabRequirements: '.contestResources li',
     pageContestPasswordField: '#contestpassword',
     pageContestPasswordSubmitButton: '.submitButton',
+    pagerContestErrorMessage: '.errorMessage',
 };
 export default selectors;

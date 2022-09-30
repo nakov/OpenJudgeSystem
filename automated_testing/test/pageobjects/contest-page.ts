@@ -103,6 +103,10 @@ class ContestPage extends Page {
         return $(selectors.pageContestPasswordSubmitButton);
     }
 
+    public get contestPasswordErrorMessage() {
+        return $(selectors.pagerContestErrorMessage);
+    }
+
     public open(): Promise<string> {
         return super.open(this.passwordProtectedContestLocation);
     }
