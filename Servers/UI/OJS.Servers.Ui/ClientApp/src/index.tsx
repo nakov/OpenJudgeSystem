@@ -1,14 +1,17 @@
 import React, { Suspense } from 'react';
-import { render } from 'react-dom';
-import App from './App';
-import register from './registerServiceWorker';
-import Loading from './components/guidelines/loading/Loading';
+import { createRoot } from 'react-dom/client';
 
-render(
-    <Suspense fallback={<Loading isWholePage isLoading />}>
-        <App />
-    </Suspense>,
-    document.getElementById('root'),
-);
+import App from './App';
+import Loading from './components/guidelines/loading/Loading';
+import register from './registerServiceWorker';
+
+const container = document.getElementById('root');
+const root = createRoot(container!);
+
+root
+    .render(<Suspense fallback={<Loading isWholePage isLoading/>}>
+        <App/>
+    </Suspense>);
+
 
 register();

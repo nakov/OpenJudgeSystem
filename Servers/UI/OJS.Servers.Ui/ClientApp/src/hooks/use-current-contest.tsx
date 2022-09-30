@@ -102,11 +102,11 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         response: submitContestPasswordResponse,
     } = useHttp(getSubmitContestPasswordUrl as UrlType, submitContestPasswordUrlParams);
 
-    const start = useCallback((obj) => {
+    const start = useCallback((obj: IContestToStartType) => {
         setContestToStart(obj);
     }, []);
 
-    const register = useCallback((obj) => {
+    const register = useCallback((obj: IStartContestArgs) => {
         const { id, isOfficial: official } = obj;
         
         setRegisterForContestParams({ id, isOfficial: official } as IRegisterForContestUrlParams);

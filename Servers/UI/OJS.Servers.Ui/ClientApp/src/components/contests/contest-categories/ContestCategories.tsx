@@ -87,16 +87,16 @@ const ContestCategories = ({
     return (
         <div className={className as string}>
             <Heading
-              type={HeadingType.small}
-              className={styles.heading}
+                type={HeadingType.small}
+                className={styles.heading}
             >
                 Category
             </Heading>
             <Tree
-              items={categories}
-              onTreeLabelClick={handleTreeLabelClick}
-              defaultSelected={defaultSelected}
-              defaultExpanded={defaultExpanded}
+                items={categories}
+                onTreeLabelClick={handleTreeLabelClick}
+                defaultSelected={defaultSelected}
+                defaultExpanded={defaultExpanded}
             />
         </div>
     );
