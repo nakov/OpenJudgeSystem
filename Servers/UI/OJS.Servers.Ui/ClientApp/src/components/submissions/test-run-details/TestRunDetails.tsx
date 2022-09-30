@@ -13,12 +13,15 @@ import TestRunDiffView from '../test-run-diff-view/TestRunDiffView';
 import ExpandButton from '../../guidelines/buttons/ExpandButton';
 import styles from './TestRunDetails.module.scss';
 import Label, { LabelType } from '../../guidelines/labels/Label';
+import { splitByCapitalLetter, toLowerCase } from '../../../utils/string-utils';
 
 interface ITestRunDetailsProps {
     testRun: ITestRunDetailsType;
 }
 
-const getResultIsWrongAnswerResultType = (run: ITestRunDetailsType) => run.resultType.toLowerCase() !== 'correctanswer';
+const correctAnswer = 'correctanswer';
+const wrongAnswer = 'wronganswer';
+const getResultIsWrongAnswerResultType = (run: ITestRunDetailsType) => toLowerCase(run.resultType) !== correctAnswer;
 
 const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
     const { state: { user } } = useAuth();
@@ -53,21 +56,19 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         return testRunText;
     }, [ testRun ]);
 
-    const renderLabel = useCallback(
+    const renderResultTypeLabel = useCallback(
         () => {
-            const result = testRun.resultType.toLowerCase();
-            const type = result === 'correctanswer'
+            const result = toLowerCase(testRun.resultType);
+            const type = result === correctAnswer
                 ? LabelType.success
-                : result === 'wronganswer'
+                : result === wrongAnswer
                     ? LabelType.danger
                     : LabelType.warning;
             
-            const resultSplit = testRun.resultType.split(/(?=[A-Z])/).join(' ');
+            const resultSplit = splitByCapitalLetter(testRun.resultType);
 
             return (
-                <Label
-                        type={type}
-                    >
+                <Label type={type}>
                     {resultSplit}
                 </Label>
             );
@@ -95,10 +96,10 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
                 </span>
             </span>
             <span className={styles.testRunDataParagraph}>
-                {renderLabel()}
+                {renderResultTypeLabel()}
             </span>
         </span>
-    ), [ testRun, renderLabel ]);
+    ), [ testRun, renderResultTypeLabel ]);
 
     const renderHeader = useCallback(
         () => (
