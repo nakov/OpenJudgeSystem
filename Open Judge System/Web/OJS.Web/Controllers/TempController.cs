@@ -7,11 +7,9 @@
     using System.Text;
     using System.Threading.Tasks;
     using System.Web.Mvc;
-
     using EntityFramework.Extensions;
     using Hangfire;
     using MissingFeatures;
-
     using OJS.Common;
     using OJS.Common.Helpers;
     using OJS.Common.Models;
@@ -25,6 +23,7 @@
     using OJS.Services.Common.HttpRequester.Models.Users;
     using OJS.Services.Data.Participants;
     using OJS.Services.Data.ProblemGroups;
+    using OJS.Services.Data.Problems;
     using OJS.Services.Data.SubmissionsForProcessing;
     using OJS.Web.Common.Attributes;
     using OJS.Web.Common.Helpers;
@@ -36,6 +35,7 @@
     {
         private readonly IHangfireBackgroundJobService backgroundJobs;
         private readonly IProblemGroupsDataService problemGroupsData;
+        private readonly IProblemsDataService problemsDataService;
         private readonly IParticipantsDataService participantsData;
         private readonly IHttpRequesterService httpRequester;
 
@@ -44,13 +44,15 @@
             IHangfireBackgroundJobService backgroundJobs,
             IProblemGroupsDataService problemGroupsData,
             IParticipantsDataService participantsData,
-            IHttpRequesterService httpRequester)
+            IHttpRequesterService httpRequester,
+            IProblemsDataService problemsDataService)
             : base(data)
         {
             this.backgroundJobs = backgroundJobs;
             this.problemGroupsData = problemGroupsData;
             this.participantsData = participantsData;
             this.httpRequester = httpRequester;
+            this.problemsDataService = problemsDataService;
         }
 
         public ActionResult RegisterJobForCleaningSubmissionsForProcessingTable()
@@ -301,6 +303,43 @@
                 $"Done. Processed {problems.Count} Problems. <br/>" +
                 $"Updated {changedSkeletonsCount} solution skeletons. <br/>" +
                 $"Updated {changedTestsCount} test inputs.");
+        }
+        
+        public ActionResult MigrateSolutionSkeletons()
+        {
+            var updatedProblemsCount = 0;
+            this.problemsDataService.GetAll()
+                .Where(x => x.SolutionSkeleton != null && x.SubmissionTypes.Any() && !x
+                .ProblemSubmissionTypesSkeletons.Any())
+                .ToList()
+                .ForEach(
+                    x =>
+                    {
+                        try
+                        {
+                            updatedProblemsCount++;
+
+                            x.ProblemSubmissionTypesSkeletons
+                                .AddRange(
+                                    x.SubmissionTypes
+                                        .Select(
+                                            y => new ProblemSubmissionTypeSkeleton()
+                                            {
+                                                Problem = x,
+                                                SubmissionType = y,
+                                                SolutionSkeleton = x.SolutionSkeleton
+                                            }));
+
+                            this.problemsDataService.Update(x);
+                        }
+                        catch (Exception ex)
+                        {
+                            updatedProblemsCount--;
+                            Console.WriteLine(ex);
+                        }
+                    });
+
+            return this.Content($"Updated problems count = {updatedProblemsCount}");
         }
     }
 }
