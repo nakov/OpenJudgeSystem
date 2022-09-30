@@ -313,24 +313,24 @@
                 .ProblemSubmissionTypesSkeletons.Any())
                 .ToList()
                 .ForEach(
-                    x =>
+                    p =>
                     {
                         try
                         {
                             updatedProblemsCount++;
 
-                            x.ProblemSubmissionTypesSkeletons
+                            p.ProblemSubmissionTypesSkeletons
                                 .AddRange(
-                                    x.SubmissionTypes
+                                    p.SubmissionTypes
                                         .Select(
-                                            y => new ProblemSubmissionTypeSkeleton()
+                                            st => new ProblemSubmissionTypeSkeleton
                                             {
-                                                Problem = x,
-                                                SubmissionType = y,
-                                                SolutionSkeleton = x.SolutionSkeleton
+                                                Problem = p,
+                                                SubmissionType = st,
+                                                SolutionSkeleton = p.SolutionSkeleton
                                             }));
 
-                            this.problemsDataService.Update(x);
+                            this.problemsDataService.Update(p);
                         }
                         catch (Exception ex)
                         {
