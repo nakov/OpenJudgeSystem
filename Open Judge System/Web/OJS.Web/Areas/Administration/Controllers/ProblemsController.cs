@@ -1027,17 +1027,17 @@
 
             problem.SubmissionTypes
                 .Where(
-                    x => !x.IsChecked &&
-                         x.Id.HasValue && 
+                    st => !st.IsChecked &&
+                         st.Id.HasValue &&
                          existingProblem.ProblemSubmissionTypesSkeletons
-                             .Any(y => y.SubmissionTypeId == x.Id.Value))
+                             .Any(y => y.SubmissionTypeId == st.Id.Value))
                 .ForEach(
-                x =>
-                {
-                    existingProblem.ProblemSubmissionTypesSkeletons.Remove(
-                        existingProblem
-                            .ProblemSubmissionTypesSkeletons.FirstOrDefault(y => y.SubmissionTypeId == x.Id.Value));
-                });
+                    st =>
+                    {
+                        existingProblem.ProblemSubmissionTypesSkeletons.Remove(
+                            existingProblem
+                                .ProblemSubmissionTypesSkeletons.FirstOrDefault(y => y.SubmissionTypeId == st.Id.Value));
+                    });
         }
     }
 }

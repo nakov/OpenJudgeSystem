@@ -308,17 +308,18 @@
         public ActionResult MigrateSolutionSkeletons()
         {
             var updatedProblemsCount = 0;
+            var exceptionCount = 0;
+
             this.problemsDataService.GetAll()
-                .Where(x => x.SolutionSkeleton != null && x.SubmissionTypes.Any() && !x
-                .ProblemSubmissionTypesSkeletons.Any())
+                .Where(
+                    p => p.SolutionSkeleton != null && p.SubmissionTypes.Any() &&
+                         !p.ProblemSubmissionTypesSkeletons.Any())
                 .ToList()
                 .ForEach(
                     p =>
                     {
                         try
                         {
-                            updatedProblemsCount++;
-
                             p.ProblemSubmissionTypesSkeletons
                                 .AddRange(
                                     p.SubmissionTypes
@@ -331,15 +332,16 @@
                                             }));
 
                             this.problemsDataService.Update(p);
+                            updatedProblemsCount++;
                         }
                         catch (Exception ex)
                         {
-                            updatedProblemsCount--;
-                            Console.WriteLine(ex);
+                            exceptionCount++;
                         }
                     });
 
-            return this.Content($"Updated problems count = {updatedProblemsCount}");
+            return this.Content(
+                $"Updated problems count = {updatedProblemsCount} and exceptions count {exceptionCount}");
         }
     }
 }
