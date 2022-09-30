@@ -40,7 +40,7 @@ const SubmissionBox = () => {
     );
 
     const handleSelectExecutionType = useCallback(
-        (id) => {
+        (id: number) => {
             selectSubmissionTypeById(id);
         },
         [ selectSubmissionTypeById ],

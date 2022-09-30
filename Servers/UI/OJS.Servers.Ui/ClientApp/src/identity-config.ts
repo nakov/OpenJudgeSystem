@@ -1,4 +1,4 @@
-import { WebStorageStateStore } from 'oidc-client';
+// import { WebStorageStateStore } from 'oidc-client';
 
 const appBaseUrl = window.URLS.UI_URL;
 const authorityBaseUrl = process.env.REACT_APP_PLATFORM_IDENTITY_BASE_URL;
@@ -17,7 +17,7 @@ const IDENTITY_CONFIG = {
     silent_redirect_uri: `${appBaseUrl}/silentrenew`,
     scope: process.env.REACT_APP_IDENTITY_ALLOWED_SCOPES,
     response_type: process.env.REACT_APP_RESPONSE_TYPE,
-    stateStore: new WebStorageStateStore({ store: window.localStorage }),
+    // stateStore: new WebStorageStateStore({ store: window.localStorage }),
     canAccessAdministrationCookieName: 'can_access_administration',
     loggedInUsernameCookieName: 'logged_in_username',
 };
