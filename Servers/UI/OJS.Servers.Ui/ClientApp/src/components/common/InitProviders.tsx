@@ -1,7 +1,8 @@
 import React, { FC } from 'react';
+import { IHaveChildrenProps } from './Props';
 
 interface IProvider {
-    Provider: FC,
+    Provider: FC<IHaveChildrenProps>,
     props?: any,
 }
 
@@ -13,14 +14,14 @@ interface IInitProviderProps {
     children: any,
 }
 
-const InitProviders = ({ providers, children } : IInitProviderProps) => {
+const InitProviders = ({ providers, children }: IInitProviderProps) => {
     const initial = (<>{children}</>);
 
     return providers
         .reverse()
         .reduce(
             (current, item) => {
-                let Provider = item as FC;
+                let Provider = item as FC<IHaveChildrenProps>;
                 let props = {};
                 const providerItem = item as IProvider;
 

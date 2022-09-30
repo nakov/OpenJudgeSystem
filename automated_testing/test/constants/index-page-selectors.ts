@@ -1,13 +1,12 @@
 const selectors = {
-    pageHeaderHeadingSelector: '#page-header-h2',
+    pageHeaderHeadingSelector: '.headingSeconary',
     pageFooterSelector: '#pageFooter',
-    pageHeaderLogoLinkSelector: '#page-header-h2 a',
-    pageHeadingImageSelector: '#page-header-h2 a img',
+    pageHeaderLogoLinkSelector: '.headingSeconary a',
+    pageHeadingImageSelector: '.headingSeconary a img',
     pageLogInButtonSelector: '#anonymous-login-link',
     pageRegisterButtonSelector: '#anonymous-register-link',
     pageNavContestsLinkSelector: '#nav-contests-link',
     pageNavSubmissionssLinkSelector: '#nav-submissions-link',
-    pageSeeContestsButtonSelector: '#button-see-contests',
     pageYoutubeVideoSelector: '#youtube-video',
     pageSeeActiveContestsButtonSelector: '.btn-see-all-contests-active',
     pageSeePastContestsButtonSelector: '.btn-see-all-contests-past',
@@ -21,5 +20,7 @@ const selectors = {
     pageContestCardTimerSelector: '.card-counter',
     pageCompeteButtonIdSelector: '#button-card-compete',
     pagePracticeButtonIdSelector: '#button-card-practice',
+    pageStatisticsBoxSelector: '.staticBox',
+    test: '*[class="disabled"]',
 };
 export default selectors;

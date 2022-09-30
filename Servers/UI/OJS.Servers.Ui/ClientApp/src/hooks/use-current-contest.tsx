@@ -29,6 +29,7 @@ interface ICurrentContestContext {
         requirePassword: boolean | null;
         submitContestPasswordErrorMessage: string | null;
         isPasswordValid: boolean | null;
+        remainingTimeInMilliseconds: number;
     };
     actions: {
         setContestPassword: (password: string) => void;
@@ -46,6 +47,7 @@ const defaultState = {
         maxScore: 0,
         isOfficial: false,
         requirePassword: false,
+        remainingTimeInMilliseconds: 0.0,
     },
 };
 
@@ -71,6 +73,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ submitContestPasswordUrlParams, setSubmitContestPasswordUrlParams ] = useState<ISubmitContestPasswordUrlParams | null>(null);
     const [ submitContestPasswordErrorMessage, setSubmitContestPasswordErrorMessage ] = useState<string | null>(null);
     const [ isPasswordValid, setIsPasswordValid ] = useState<boolean | null>(null);
+    const [ remainingTimeInMilliseconds, setRemainingTimeInMilliseconds ] = useState(defaultState.state.remainingTimeInMilliseconds);
 
     const {
         startLoading,
@@ -99,11 +102,11 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         response: submitContestPasswordResponse,
     } = useHttp(getSubmitContestPasswordUrl as UrlType, submitContestPasswordUrlParams);
 
-    const start = useCallback((obj) => {
+    const start = useCallback((obj: IContestToStartType) => {
         setContestToStart(obj);
     }, []);
 
-    const register = useCallback((obj) => {
+    const register = useCallback((obj: IStartContestArgs) => {
         const { id, isOfficial: official } = obj;
         
         setRegisterForContestParams({ id, isOfficial: official } as IRegisterForContestUrlParams);
@@ -135,10 +138,11 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         }
 
         const responseData = startContestData as IStartParticipationResponseType;
-        const { contest: newContest, contestIsCompete } = responseData;
+        const { contest: newContest, contestIsCompete, remainingTimeInMilliseconds: newRemainingTimeInMilliseconds } = responseData;
 
         setContest(newContest);
         setIsOfficial(contestIsCompete);
+        setRemainingTimeInMilliseconds(newRemainingTimeInMilliseconds);
     }, [ startContestData ]);
 
     useEffect(() => {
@@ -218,6 +222,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             requirePassword,
             submitContestPasswordErrorMessage,
             isPasswordValid,
+            remainingTimeInMilliseconds,
         },
         actions: {
             setContestPassword,

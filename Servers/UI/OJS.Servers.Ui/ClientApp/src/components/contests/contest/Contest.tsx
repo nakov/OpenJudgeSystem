@@ -9,7 +9,7 @@ import ContestProblemDetails from '../contest-problem-details/ContestProblemDeta
 
 import concatClassNames from '../../../utils/class-names';
 
-import { convertToSecondsRemaining, convertToTwoDigitValues } from '../../../utils/dates';
+import { convertToTwoDigitValues } from '../../../utils/dates';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 
 import styles from './Contest.module.scss';
@@ -20,6 +20,7 @@ const Contest = () => {
             contest,
             score,
             maxScore,
+            remainingTimeInMilliseconds,
         },
     } = useCurrentContest();
 
@@ -83,19 +84,17 @@ const Contest = () => {
 
     const renderTimeRemaining = useCallback(
         () => {
-            const { endTime } = contest || {};
-
-            if (!endTime) {
+            if (!remainingTimeInMilliseconds) {
                 return null;
             }
 
-            const duration = convertToSecondsRemaining(new Date(endTime));
+            const currentSeconds = remainingTimeInMilliseconds / 1000;
 
             return (
-                <Countdown renderRemainingTime={renderCountdown} duration={duration} metric={Metric.seconds} />
+                <Countdown renderRemainingTime={renderCountdown} duration={currentSeconds} metric={Metric.seconds}/>
             );
         },
-        [ contest, renderCountdown ],
+        [ remainingTimeInMilliseconds, renderCountdown ],
     );
 
     const secondaryHeadingClassName = useMemo(
@@ -107,8 +106,8 @@ const Contest = () => {
         <>
             <div className={styles.headingContest}>
                 <Heading
-                  type={HeadingType.primary}
-                  className={styles.contestHeading}
+                    type={HeadingType.primary}
+                    className={styles.contestHeading}
                 >
                     {contest?.name}
                 </Heading>
@@ -120,13 +119,13 @@ const Contest = () => {
 
             <div className={styles.contestWrapper}>
                 <div className={navigationContestClassName}>
-                    <ContestTasksNavigation />
+                    <ContestTasksNavigation/>
                 </div>
                 <div className={submissionBoxClassName}>
-                    <SubmissionBox />
+                    <SubmissionBox/>
                 </div>
                 <div className={problemInfoClassName}>
-                    <ContestProblemDetails />
+                    <ContestProblemDetails/>
                 </div>
             </div>
         </>

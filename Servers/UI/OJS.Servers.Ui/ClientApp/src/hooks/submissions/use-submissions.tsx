@@ -74,7 +74,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     }, [ startLoading, selectedSubmissionType, currentProblem, submitCode, submissionCode, isOfficial, stopLoading ]);
 
     const selectSubmissionTypeById = useCallback(
-        (id) => {
+        (id: number | null) => {
             const { allowedSubmissionTypes } = currentProblem || {};
 
             if (allowedSubmissionTypes == null) {

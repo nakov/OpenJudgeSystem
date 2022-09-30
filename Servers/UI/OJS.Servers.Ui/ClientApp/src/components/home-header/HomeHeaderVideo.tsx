@@ -1,3 +1,5 @@
+/* eslint-disable css-modules/no-unused-class */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 import YouTube from 'react-youtube';
 import styles from './HomeHeaderVideo.module.scss';
@@ -8,7 +10,7 @@ interface IHomeHeaderVideoProps {
 
 const HomeHeaderVideo = ({ videoId }: IHomeHeaderVideoProps) => (
     <>
-        <YouTube
+        {/* <YouTube
           id="youtube-video"
           className={styles.youtubePlayer}
           videoId={videoId}
@@ -18,7 +20,7 @@ const HomeHeaderVideo = ({ videoId }: IHomeHeaderVideoProps) => (
               playerVars: { autoplay: 0 },
           }}
           onReady={(event) => event.target.pauseVideo()}
-        />
+        /> */}
     </>
 );
 

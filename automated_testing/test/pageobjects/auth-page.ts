@@ -61,6 +61,7 @@ class AuthPage extends Page {
     }
 
     public async performLogOut() {
+        await browser.setTimeout({ implicit: 1000 });
         return (await this.authlogoutButton).click();
     }
 }
