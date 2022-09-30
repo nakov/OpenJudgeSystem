@@ -309,7 +309,7 @@
                 .GetAll()
                 .Select(SubmissionTypeViewModel.ViewModel)
                 .ForEach(SubmissionTypeViewModel.ApplySelectedTo(selectedProblem));
-            
+
             return this.View(selectedProblem);
         }
 
