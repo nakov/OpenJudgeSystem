@@ -45,7 +45,7 @@ const ContestPasswordForm = ({ id, isOfficial }: IContestPasswordFormProps) => {
 
     return (
         <Form
-          id='milatest'
+          id='form'
           className={styles.contestPasswordForm}
               onSubmit={() => {
                   handleOnSubmitPassword();
