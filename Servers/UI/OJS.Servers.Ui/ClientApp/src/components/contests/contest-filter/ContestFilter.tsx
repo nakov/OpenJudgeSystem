@@ -33,10 +33,10 @@ const ContestFilter = ({
         [ type ],
     );
     
-    const filtersToDisplayCount = useMemo(
+    const filtersToDisplay = useMemo(
         () => expanded
-            ? values.length
-            : maxDisplayCount,
+            ? values
+            : values.slice(0, maxDisplayCount),
         [ expanded, values, maxDisplayCount ],
     );
     
@@ -94,13 +94,12 @@ const ContestFilter = ({
                 {type}
             </Heading>
             <List
-                values={values}
+                values={filtersToDisplay}
                 itemFunc={getRenderFilterItemFunc(type)}
                 orientation={listOrientation}
                 className={className}
                 itemClassName={styles.listFilterItem}
                 fullWidth
-                itemsCount={filtersToDisplayCount}
             />
             {renderExpandButton(values)}
         </div>

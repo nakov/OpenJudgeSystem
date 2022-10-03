@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import {
     isEmpty,
     isNil,
@@ -36,7 +36,6 @@ interface IListProps<TValue> extends IHaveOptionalClassName {
     wrap?: boolean;
     fullWidth?: boolean;
     scrollable?: boolean;
-    itemsCount?: number;
 }
 
 const List = <TValue extends unknown>({
@@ -50,7 +49,6 @@ const List = <TValue extends unknown>({
     wrap = false,
     fullWidth = false,
     scrollable = false,
-    itemsCount = 0,
 }: IListProps<TValue>) => {
     const listTypeClassName =
         type === ListType.normal
@@ -87,13 +85,6 @@ const List = <TValue extends unknown>({
         ? styles.fullWidth
         : '';
     const itemClassNameCombined = concatClassNames(itemClassName, fullWidthItemClassName);
-
-    const itemsToDisplay = useMemo(
-        () => itemsCount === 0
-            ? values.length
-            : itemsCount,
-        [ itemsCount, values ],
-    );
     
     const renderItems = useCallback(
         () => {
@@ -102,12 +93,12 @@ const List = <TValue extends unknown>({
             }
             
             
-            return values.slice(0, itemsToDisplay).map((value) => (
+            return values.map((value) => (
                 <li key={keyFunc(value)} className={itemClassNameCombined}>
                     {itemFunc(value)}</li>
             ));
         },
-        [ itemClassNameCombined, itemFunc, keyFunc, values, itemsToDisplay ],
+        [ itemClassNameCombined, itemFunc, keyFunc, values ],
     );
 
     if (type === ListType.numbered) {
