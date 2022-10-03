@@ -12,7 +12,6 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Common;
     using OJS.Common.Helpers;
     using OJS.Data.Models.Submissions;
-    using OJS.Services.Common.Data;
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Submissions;
     using SoftUni.Judge.Common.Enumerations;
@@ -22,6 +21,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
     public class SubmissionsBusinessService : ISubmissionsBusinessService
     {
+        private const int DefaultPublicSubmissionsToReturn = 15;
         private readonly ISubmissionsDataService submissionsData;
 
         private readonly IUsersBusinessService usersBusiness;
@@ -125,7 +125,7 @@ namespace OJS.Services.Ui.Business.Implementations
                     if (submissionResult.AllTestRuns != 0)
                     {
                         points = (submissionResult.CorrectTestRuns * submissionResult.MaxPoints) /
-                            submissionResult.AllTestRuns;
+                                 submissionResult.AllTestRuns;
                     }
 
                     submission.Points = points;
@@ -142,8 +142,7 @@ namespace OJS.Services.Ui.Business.Implementations
                     {
                         topResults[participantId] = new ParticipantScoreModel
                         {
-                            Points = points,
-                            SubmissionId = submission.Id
+                            Points = points, SubmissionId = submission.Id
                         };
                     }
                     else if (topResults[participantId].Points == points)
@@ -217,14 +216,16 @@ namespace OJS.Services.Ui.Business.Implementations
             return data;
         }
 
-        public async Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(int problemId, bool isOfficial, int take = 0)
+        public async Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(int problemId,
+            bool isOfficial, int take = 0)
         {
             var problem = await this.problemsDataService.GetWithProblemGroupById(problemId);
 
             await this.ValidateUserCanViewResults(problem, isOfficial);
 
             var participant =
-                await this.participantsDataService.GetByContestByUserAndByIsOfficial(problem.ProblemGroup.ContestId, this.userProviderService.GetCurrentUser().Id,
+                await this.participantsDataService.GetByContestByUserAndByIsOfficial(problem.ProblemGroup.ContestId,
+                    this.userProviderService.GetCurrentUser().Id,
                     isOfficial);
 
             var userSubmissions = this.submissionsData
@@ -273,13 +274,15 @@ namespace OJS.Services.Ui.Business.Implementations
             var currentUser = this.userProviderService.GetCurrentUser();
 
             var participant = await this.participantsDataService
-                .GetWithContestByContestByUserAndIsOfficial(problem.ProblemGroup.ContestId, currentUser.Id, model.Official);
+                .GetWithContestByContestByUserAndIsOfficial(problem.ProblemGroup.ContestId, currentUser.Id,
+                    model.Official);
             if (participant == null)
             {
                 throw new BusinessServiceException(Resources.ContestsGeneral.User_is_not_registered_for_exam);
             }
 
-            await this.contestsBusinessService.ValidateContest(participant.Contest, currentUser.Id, currentUser.IsAdmin, model.Official);
+            await this.contestsBusinessService.ValidateContest(participant.Contest, currentUser.Id, currentUser.IsAdmin,
+                model.Official);
 
             this.problemsBusinessService.ValidateProblemForParticipant(
                 participant,
@@ -295,7 +298,8 @@ namespace OJS.Services.Ui.Business.Implementations
 
             this.submissionTypesBusinessService.ValidateSubmissionType(model.SubmissionTypeId, problem);
 
-            if (this.submissionsData.HasSubmissionTimeLimitPassedForParticipant(participant.Id, participant.Contest.LimitBetweenSubmissions))
+            if (this.submissionsData.HasSubmissionTimeLimitPassedForParticipant(participant.Id,
+                    participant.Contest.LimitBetweenSubmissions))
             {
                 throw new BusinessServiceException(Resources.ContestsGeneral.Submission_was_sent_too_soon);
             }
@@ -307,7 +311,8 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (this.submissionsData.HasUserNotProcessedSubmissionForProblem(problem.Id, currentUser.Id))
             {
-                throw new BusinessServiceException(Resources.ContestsGeneral.User_has_not_processed_submission_for_problem);
+                throw new BusinessServiceException(Resources.ContestsGeneral
+                    .User_has_not_processed_submission_for_problem);
             }
 
             var contest = participant.Contest;
@@ -320,10 +325,10 @@ namespace OJS.Services.Ui.Business.Implementations
                 ParticipantId = participant.Id,
                 IpAddress = "model.UserHostAddress",
                 IsPublic = ((participant.IsOfficial && contest.ContestPassword == null) ||
-                                (!participant.IsOfficial && contest.PracticePassword == null)) &&
-                            contest.IsVisible &&
-                            !contest.IsDeleted &&
-                            problem.ShowResults
+                            (!participant.IsOfficial && contest.PracticePassword == null)) &&
+                           contest.IsVisible &&
+                           !contest.IsDeleted &&
+                           problem.ShowResults
             };
 
             await this.submissionsData.Add(newSubmission);
@@ -372,6 +377,12 @@ namespace OJS.Services.Ui.Business.Implementations
 
             await this.ProcessTestsExecutionResult(submission, executionResult);
         }
+
+        public Task<IEnumerable<SubmissionForPublicSubmissionsServiceModel>> GetPublicSubmissions()
+            => this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(DefaultPublicSubmissionsToReturn);
+
+        public Task<int> GetTotalCount()
+            => this.submissionsData.Count();
 
         private async Task ProcessTestsExecutionResult(
             Submission submission,

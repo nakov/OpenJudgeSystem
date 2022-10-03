@@ -11,14 +11,23 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Servers.Ui.Models.Submissions.Profile;
+using OJS.Services.Infrastructure.Cache;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 public class SubmissionsController : BaseApiController
 {
-    private readonly ISubmissionsBusinessService submissionsBusiness;
+    private const string SubmissionsTotalCountCacheKey = "SUBMISSIONS-COUNT";
 
-    public SubmissionsController(ISubmissionsBusinessService submissionsBusiness)
-        => this.submissionsBusiness = submissionsBusiness;
+    private readonly ISubmissionsBusinessService submissionsBusiness;
+    private readonly ICacheService cache;
+
+    public SubmissionsController(
+        ISubmissionsBusinessService submissionsBusiness,
+        ICacheService cache)
+    {
+        this.submissionsBusiness = submissionsBusiness;
+        this.cache = cache;
+    }
 
 
     /// <summary>
@@ -57,8 +66,8 @@ public class SubmissionsController : BaseApiController
     [ProducesResponseType(typeof(IEnumerable<SubmissionResultsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetSubmissionResultsByProblem(
         int id,
-        [FromQuery]bool isOfficial,
-        [FromQuery]int take)
+        [FromQuery] bool isOfficial,
+        [FromQuery] int take)
         => await this.submissionsBusiness
             .GetSubmissionResultsByProblem(id, isOfficial, take)
             .MapCollection<SubmissionResultsResponseModel>()
@@ -80,11 +89,20 @@ public class SubmissionsController : BaseApiController
     {
         await this.submissionsBusiness.ProcessExecutionResult(submissionExecutionResult);
 
-        var result = new SaveExecutionResultResponseModel
-        {
-            SubmissionId = submissionExecutionResult.SubmissionId,
-        };
+        var result = new SaveExecutionResultResponseModel { SubmissionId = submissionExecutionResult.SubmissionId, };
 
         return this.Ok(result);
     }
+
+    public async Task<IActionResult> Public()
+        => await this.submissionsBusiness
+            .GetPublicSubmissions()
+            .ToOkResult();
+
+    public async Task<IActionResult> TotalCount()
+        => await this.cache.Get(
+                SubmissionsTotalCountCacheKey,
+                this.submissionsBusiness
+                    .GetTotalCount)
+            .ToOkResult();
 }
