@@ -55,7 +55,7 @@ const App = () => {
         SubmissionsProvider,
         SubmissionsDetailsProvider,
         HomeStatisticsProvider,
-        CategoriesBreadcrumbProvider
+        CategoriesBreadcrumbProvider,
     ] as ProviderType[];
 
     return (
