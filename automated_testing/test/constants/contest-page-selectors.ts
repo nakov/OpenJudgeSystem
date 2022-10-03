@@ -23,7 +23,7 @@ const selectors = {
     pageSubmissionResultsNoResultsParagraph: '.submissionResultsContent p',
     pageProblemTabRequirements: '.contestResources li',
     pageContestPasswordField: '#contestpassword',
-    pageContestPasswordSubmitButton: '.submitButton',
+    pageContestPasswordSubmitButton: '#btn-submit-form',
     pagerContestErrorMessage: '.errorMessage',
 };
 export default selectors;

@@ -5,7 +5,10 @@ import selectors from '../constants/contest-page-selectors';
 import Page from './page';
 
 class ContestPage extends Page {
-    private passwordProtectedContestLocation = 'contests/3/register/compete';
+    private passwordProtectedContestLocation = {
+        contestToEnroll: 'contests/3/register/compete',
+        alreadyEnrolled: '/contests/3/compete',
+    };
 
     public get allContestListSideNavigation() {
         return $$(selectors.pageSingleTaskFromSideNavigationSelector);
@@ -107,8 +110,12 @@ class ContestPage extends Page {
         return $(selectors.pagerContestErrorMessage);
     }
 
-    public open(): Promise<string> {
-        return super.open(this.passwordProtectedContestLocation);
+    public openContest(): Promise<string> {
+        return super.open(this.passwordProtectedContestLocation.contestToEnroll);
+    }
+
+    public openEnrolledContest(): Promise<string> {
+        return super.open(this.passwordProtectedContestLocation.alreadyEnrolled);
     }
 
     public async enterPassword(input) {
