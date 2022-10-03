@@ -50,7 +50,7 @@ const List = <TValue extends unknown>({
     wrap = false,
     fullWidth = false,
     scrollable = false,
-    itemsCount,
+    itemsCount = 0,
 }: IListProps<TValue>) => {
     const listTypeClassName =
         type === ListType.normal
@@ -89,7 +89,9 @@ const List = <TValue extends unknown>({
     const itemClassNameCombined = concatClassNames(itemClassName, fullWidthItemClassName);
 
     const itemsToDisplay = useMemo(
-        () => itemsCount || values.length,
+        () => itemsCount === 0
+            ? values.length
+            : itemsCount,
         [ itemsCount, values ],
     );
     
