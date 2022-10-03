@@ -10,6 +10,7 @@ import { IPublicSubmission, PublicSubmissionState } from '../../../hooks/submiss
 import { LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 
 import styles from './SubmissionGridRow.module.scss';
+import { ContestParticipationType } from '../../../common/constants';
 
 interface ISubmissionGridRowProps {
     submission: IPublicSubmission;
@@ -65,8 +66,8 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
 
     const participationType = useMemo(
         () => isOfficial
-            ? 'compete'
-            : 'practice',
+            ? ContestParticipationType.Compete
+            : ContestParticipationType.Practice,
         [ isOfficial ],
     );
 
@@ -92,7 +93,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
                                 className={styles.link}/>
                 </div>
                 <div className={styles.dateAndUsernameContainer}>
-                    <span className={styles.dateContainer}>{formatDate(createdOn)}</span>
+                    <span>{formatDate(createdOn)}</span>
                     <span>by {username}</span>
                 </div>
             </div>
