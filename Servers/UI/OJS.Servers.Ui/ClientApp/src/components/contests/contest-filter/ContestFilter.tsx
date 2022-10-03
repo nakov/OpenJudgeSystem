@@ -56,8 +56,6 @@ const ContestFilter = ({
 
     const getRenderFilterItemFunc = useCallback(
         (filterType: FilterType) => ({ id, name }: IFilter) => {
-            // TODO: investigate why filters change ids
-            //  and use id instead of name for checking if filter is selected
             const filterIsSelected = values.some((f) => f.name === name);
             const buttonType = filterIsSelected
                 ? ButtonType.primary
