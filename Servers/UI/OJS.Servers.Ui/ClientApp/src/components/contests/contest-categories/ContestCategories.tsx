@@ -1,18 +1,24 @@
-import React, { useCallback, useMemo } from 'react';
-import { isNil } from 'lodash';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { isEmpty, isNil } from 'lodash';
 import { useContestCategories } from '../../../hooks/use-contest-categories';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import { useContests } from '../../../hooks/use-contests';
 import { IHaveOptionalClassName } from '../../common/Props';
 import { IFilter } from '../../../common/contest-types';
 import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
-import CategoryTree, { ITreeItemType } from '../categories-tree/CategoriesTree';
+import ITreeItemType from '../../../common/tree-types';
+
 import styles from './ContestCategories.module.scss';
+import Tree from '../../guidelines/trees/Tree';
 
 interface IContestCategoriesProps extends IHaveOptionalClassName {
     onCategoryClick: (filter: IFilter) => void;
     defaultSelected?: string,
+   
 }
+
+
+
 const ContestCategories = ({
     className = '',
     onCategoryClick,
@@ -77,6 +83,83 @@ const ContestCategories = ({
         onCategoryClick(filter);
         updateBreadcrumb(category, categoriesFlat);
     }, [ possibleFilters, categoriesFlat, onCategoryClick, updateBreadcrumb ]);
+
+
+    const [ expandedCategoriesIds, setExpandedIds ] = useState([] as string[]);
+    const [ selectedCategoryId, setSelectedId ] = useState('');
+    
+    // const handleTreeItemClick = useCallback(
+    //     (node: ITreeItemType) => {
+    //         const id = node.id.toString();
+    //         const newExpanded = expandedCategoriesIds.includes(id)
+    //             ? without(expandedCategoriesIds,id)
+    //             : [ ...expandedCategoriesIds,id ];
+    //
+    //         setExpandedIds(newExpanded);
+    //     },
+    //     [ expandedCategoriesIds, setExpandedIds ],
+    // );
+    //
+    // const handleLabelClick = useCallback(
+    //     (node: ITreeItemType) => {
+    //         setSelectedId(node.id.toString());
+    //
+    //         handleTreeLabelClick(node);
+    //     },
+    //     [ handleTreeLabelClick ],
+    // );
+    
+    
+    // const renderCategoryTree = useCallback((node: ITreeItemType) => (
+    //     <div className={styles.categoriesTree} key={node.id}>
+    //         <div className={styles.tooltip}>
+    //             <div className={styles.tooltipElement}
+    //             >
+    //                 {node.name}
+    //             </div>
+    //         </div>
+    //         <TreeItem
+    //             key={node.id}
+    //             className={styles.treeElement}
+    //             nodeId={node.id.toString()}
+    //             label={node.name}
+    //             onClick={() => handleTreeItemClick(node)}
+    //             onLabelClick={() => handleLabelClick(node)}
+    //         >
+    //             {isArray(node.children)
+    //                 ? node.children.map((child) => renderCategoryTree(child))
+    //                 : null}
+    //         </TreeItem>
+    //     </div>
+    // ), [ handleLabelClick, handleTreeItemClick ]);
+    
+    useEffect(
+        () => {
+            if (isEmpty(selectedCategoryId) && defaultSelected) {
+                setSelectedId(defaultSelected);
+            }
+        },
+        [ defaultSelected, selectedCategoryId ],
+    );
+    
+    useEffect(() => {
+        console.log(expandedCategoriesIds);   
+    },[ expandedCategoriesIds ]);
+
+    useEffect(()=>{
+        if(!isEmpty(expandedCategoriesIds)){
+            setExpandedIds(defaultExpanded);
+        }
+    },[ defaultExpanded, expandedCategoriesIds ]);
+    
+    // useEffect(
+    //     () => {
+    //         if (isEmpty(expandedCategoriesIds) && !isEmpty(defaultExpanded)) {
+    //             setExpandedIds(defaultExpanded);
+    //         }
+    //     },
+    //     [ defaultExpanded, expandedCategoriesIds ],
+    // );
     
     return (
         <div className={className as string}>
@@ -86,11 +169,13 @@ const ContestCategories = ({
             >
                 Category
             </Heading>
-            <CategoryTree
+            <Tree
                 items={categories}
-                onCategoryLabelClick={handleTreeLabelClick}
+                onSelect={handleTreeLabelClick}
                 defaultSelected={defaultSelected}
                 defaultExpanded={defaultExpanded}
+                treeItemHasTooltip
+                // itemFunc={renderCategoryTree}
             />
         </div>
     );
