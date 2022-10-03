@@ -59,7 +59,6 @@ interface IPublicSubmissionsProviderProps extends IHaveChildrenProps {
 }
 
 const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps) => {
-    console.log('It works!');
     const {
         get: getSubmissions,
         data: apiSubmissions,
@@ -102,8 +101,7 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
             {children}
         </PublicSubmissionsContext.Provider>
     );
-}
-;
+};
 
 
 const usePublicSubmissions = () => useContext(PublicSubmissionsContext);
