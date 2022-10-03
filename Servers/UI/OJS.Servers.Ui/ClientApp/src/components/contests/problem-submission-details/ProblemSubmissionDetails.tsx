@@ -60,6 +60,7 @@ const ProblemSubmissionDetails = ({ submission }: IProblemSubmissionDetailsProps
             return;
         }
 
+        // eslint-disable-next-line no-alert
         alert(JSON.stringify(testRun));
     };
 

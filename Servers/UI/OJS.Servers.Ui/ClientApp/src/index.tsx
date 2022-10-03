@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unused-modules */
 import React, { Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 

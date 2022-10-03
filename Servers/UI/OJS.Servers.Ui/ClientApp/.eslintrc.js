@@ -271,10 +271,10 @@ module.exports = {
         'import/prefer-default-export': 'error',
         'import/exports-last': 'error',
         'import/group-exports': 'error',
-        // 'import/no-unused-modules': [ 'error', {
-        //     unusedExports: true,
-        //     missingExports: true,
-        // } ],
+        'import/no-unused-modules': [ 'error', {
+            unusedExports: true,
+            missingExports: true,
+        } ],
         // "import/dynamic-import-chunkname": ["error"],
 
         /* react rules */
