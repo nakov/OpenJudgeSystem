@@ -18,6 +18,7 @@ WORKDIR /src
 COPY Servers/UI/OJS.Servers.Ui/Views /src/Servers/UI/OJS.Servers.Ui/Views
 COPY Servers/UI/OJS.Servers.Ui/ClientApp /src/Servers/UI/OJS.Servers.Ui/ClientApp
 
+RUN yarn run lint
 WORKDIR /src/Servers/UI/OJS.Servers.Ui/ClientApp
 RUN yarn build
 
