@@ -1,4 +1,4 @@
-name: UI Build
+name: Administration Build
 
 
 
@@ -17,14 +17,14 @@ jobs:
     steps:
     - name: Configure Environment Variables
       run: |
-        IMG=judge_web_ui
+        IMG=judge_web_administration
         OWNER="$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')"
         echo "BUILD_VER=1.0.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
         echo "IMG=${IMG}" >> $GITHUB_ENV
         echo "IMAGE=ghcr.io/${OWNER}/${IMG}" >> $GITHUB_ENV
         echo "BUILD_DATE=$(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
         echo "GIT_SHA=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_ENV
-        echo "DOCKERFILE_PATH=Docker/Dockerfile.ui" >> $GITHUB_ENV
+        echo "DOCKERFILE_PATH=Docker/Dockerfile.admin" >> $GITHUB_ENV
     - name: Get branch name (merge)
       if: github.event_name != 'pull_request'
       shell: bash
