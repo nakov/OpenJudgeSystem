@@ -1,0 +1,34 @@
+{
+  "files": {
+    "main.js": "/static/js/bundle.js",
+    "static/js/data_image_png_base64_iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5_AAAAAXNSR0IArs4c6QAAAARnQU1-ba2ffd.chunk.js": "/static/js/data_image_png_base64_iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5_AAAAAXNSR0IArs4c6QAAAARnQU1-ba2ffd.chunk.js",
+    "static/js/node_modules_monaco-editor_esm_vs_basic-languages_python_python_js.chunk.js": "/static/js/node_modules_monaco-editor_esm_vs_basic-languages_python_python_js.chunk.js",
+    "static/js/node_modules_monaco-editor_esm_vs_basic-languages_javascript_javascript_js.chunk.js": "/static/js/node_modules_monaco-editor_esm_vs_basic-languages_javascript_javascript_js.chunk.js",
+    "static/js/node_modules_monaco-editor_esm_vs_basic-languages_csharp_csharp_js.chunk.js": "/static/js/node_modules_monaco-editor_esm_vs_basic-languages_csharp_csharp_js.chunk.js",
+    "static/js/node_modules_monaco-editor_esm_vs_basic-languages_java_java_js.chunk.js": "/static/js/node_modules_monaco-editor_esm_vs_basic-languages_java_java_js.chunk.js",
+    "static/js/node_modules_monaco-editor_esm_vs_basic-languages_cpp_cpp_js.chunk.js": "/static/js/node_modules_monaco-editor_esm_vs_basic-languages_cpp_cpp_js.chunk.js",
+    "static/js/node_modules_monaco-editor_esm_vs_basic-languages_go_go_js.chunk.js": "/static/js/node_modules_monaco-editor_esm_vs_basic-languages_go_go_js.chunk.js",
+    "static/js/vendors-node_modules_monaco-editor_esm_vs_basic-languages_php_php_js.chunk.js": "/static/js/vendors-node_modules_monaco-editor_esm_vs_basic-languages_php_php_js.chunk.js",
+    "static/js/vendors-node_modules_react-monaco-editor_lib_index_js.chunk.js": "/static/js/vendors-node_modules_react-monaco-editor_lib_index_js.chunk.js",
+    "editor.worker.js": "/editor.worker.js",
+    "static/media/codicon.ttf": "/static/media/codicon.f1fd2824f6c602ce2f26.ttf",
+    "static/media/softuni-logo-horizontal.svg": "/static/media/softuni-logo-horizontal.c94ee0518f1fb865004c6d6cfbad1151.svg",
+    "../../Views/Home/Index.cshtml": "/../../Views/Home/Index.cshtml",
+    "static/media/Loading.svg": "/static/media/Loading.a5b6dda5ab608100b3876e9d04e3a3b9.svg",
+    "static/media/check-white.svg": "/static/media/check-white.cd9947aa2e2a4af7629d.svg",
+    "bundle.js.map": "/static/js/bundle.js.map",
+    "main.hot-update.js.map": "/main.d63e52d6e5c1b29e5fdf.hot-update.js.map",
+    "node_modules_monaco-editor_esm_vs_basic-languages_python_python_js.chunk.js.map": "/static/js/node_modules_monaco-editor_esm_vs_basic-languages_python_python_js.chunk.js.map",
+    "node_modules_monaco-editor_esm_vs_basic-languages_javascript_javascript_js.chunk.js.map": "/static/js/node_modules_monaco-editor_esm_vs_basic-languages_javascript_javascript_js.chunk.js.map",
+    "node_modules_monaco-editor_esm_vs_basic-languages_csharp_csharp_js.chunk.js.map": "/static/js/node_modules_monaco-editor_esm_vs_basic-languages_csharp_csharp_js.chunk.js.map",
+    "node_modules_monaco-editor_esm_vs_basic-languages_java_java_js.chunk.js.map": "/static/js/node_modules_monaco-editor_esm_vs_basic-languages_java_java_js.chunk.js.map",
+    "node_modules_monaco-editor_esm_vs_basic-languages_cpp_cpp_js.chunk.js.map": "/static/js/node_modules_monaco-editor_esm_vs_basic-languages_cpp_cpp_js.chunk.js.map",
+    "node_modules_monaco-editor_esm_vs_basic-languages_go_go_js.chunk.js.map": "/static/js/node_modules_monaco-editor_esm_vs_basic-languages_go_go_js.chunk.js.map",
+    "vendors-node_modules_monaco-editor_esm_vs_basic-languages_php_php_js.chunk.js.map": "/static/js/vendors-node_modules_monaco-editor_esm_vs_basic-languages_php_php_js.chunk.js.map",
+    "vendors-node_modules_react-monaco-editor_lib_index_js.chunk.js.map": "/static/js/vendors-node_modules_react-monaco-editor_lib_index_js.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/js/bundle.js",
+    "main.d63e52d6e5c1b29e5fdf.hot-update.js"
+  ]
+}

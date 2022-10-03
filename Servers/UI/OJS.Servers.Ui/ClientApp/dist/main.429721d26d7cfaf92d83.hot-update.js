@@ -1,0 +1,15 @@
+webpackHotUpdate("main",{
+
+/***/ "./src/components/contests/contest-categories/ContestCategories.tsx":
+/*!**************************************************************************!*\
+  !*** ./src/components/contests/contest-categories/ContestCategories.tsx ***!
+  \**************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, exports) {
+
+throw new Error("Module build failed (from ./node_modules/react-scripts/node_modules/babel-loader/lib/index.js):\nSyntaxError: C:\\Users\\User\\Desktop\\OpenJudgeSystem\\Servers\\UI\\OJS.Servers.Ui\\ClientApp\\src\\components\\contests\\contest-categories\\ContestCategories.tsx: Unexpected token (121:37)\n\n  119 |                              <div className={styles.tooltip}>\n  120 |                                  <div className={styles.tooltipElement}\n> 121 |                                      <span>{node.name}</span>\n      |                                      ^\n  122 |                                  </div>\n  123 |                              </div>\n  124 |                                  key={node.id}\n    at instantiate (C:\\Users\\User\\Desktop\\OpenJudgeSystem\\Servers\\UI\\OJS.Servers.Ui\\ClientApp\\node_modules\\@babel\\parser\\lib\\index.js:72:32)\n    at constructor (C:\\Users\\User\\Desktop\\OpenJudgeSystem\\Servers\\UI\\OJS.Servers.Ui\\ClientApp\\node_modules\\@babel\\parser\\lib\\index.js:358:12)\n    at Object.raise (C:\\Users\\User\\Desktop\\OpenJudgeSystem\\Servers\\UI\\OJS.Servers.Ui\\ClientApp\\node_modules\\@babel\\parser\\lib\\index.js:3334:19)\n    at Object.unexpected (C:\\Users\\User\\Desktop\\OpenJudgeSystem\\Servers\\UI\\OJS.Servers.Ui\\ClientApp\\node_modules\\@babel\\parser\\lib\\index.js:3372:16)\n    at Object.jsxParseIdentifier (C:\\Users\\User\\Desktop\\OpenJudgeSystem\\Servers\\UI\\OJS.Servers.Ui\\ClientApp\\node_modules\\@babel\\parser\\lib\\index.js:7778:12)\n    at Object.jsxParseNamespacedName (C:\\Users\\User\\Desktop\\OpenJudgeSystem\\Servers\\UI\\OJS.Servers.Ui\\ClientApp\\node_modules\\@babel\\parser\\lib\\index.js:7788:23)\n    at Object.jsxParseAttribute (C:\\Users\\User\\Desktop\\OpenJudgeSystem\\Servers\\UI\\OJS.Servers.Ui\\ClientApp\\node_modules\\@babel\\parser\\lib\\index.js:7883:22)\n    at Object.jsxParseOpeningElementAfterName (C:\\Users\\User\\Desktop\\OpenJudgeSystem\\Servers\\UI\\OJS.Servers.Ui\\ClientApp\\node_modules\\@babel\\parser\\lib\\index.js:7904:28)\n    at Object.jsxParseOpeningElementAfterName (C:\\Users\\User\\Desktop\\OpenJudgeSystem\\Servers\\UI\\OJS.Servers.Ui\\ClientApp\\node_modules\\@babel\\parser\\lib\\index.js:10957:18)\n    at Object.jsxParseOpeningElementAt (C:\\Users\\User\\Desktop\\OpenJudgeSystem\\Servers\\UI\\OJS.Servers.Ui\\ClientApp\\node_modules\\@babel\\parser\\lib\\index.js:7897:17)");
+
+/***/ })
+
+})
+//# sourceMappingURL=main.429721d26d7cfaf92d83.hot-update.js.map
