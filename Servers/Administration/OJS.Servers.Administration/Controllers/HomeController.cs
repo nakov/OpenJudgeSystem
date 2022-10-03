@@ -1,4 +1,4 @@
-﻿namespace OJS.Servers.Administration.Controllers
+namespace OJS.Servers.Administration.Controllers
 {
     using System.Diagnostics;
     using Microsoft.AspNetCore.Mvc;

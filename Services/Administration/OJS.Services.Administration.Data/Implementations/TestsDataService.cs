@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Tests;
 using OJS.Services.Common.Data.Implementations;
 using System.Linq;

@@ -1,4 +1,4 @@
-﻿namespace OJS.Servers.Ui.Models.Submissions.Profile.Mapping
+namespace OJS.Servers.Ui.Models.Submissions.Profile.Mapping
 {
     using AutoMapper;
     using OJS.Services.Ui.Models.Submissions;

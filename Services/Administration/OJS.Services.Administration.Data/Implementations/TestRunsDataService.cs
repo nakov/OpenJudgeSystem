@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Administration.Data.Implementations;
+namespace OJS.Services.Administration.Data.Implementations;
 
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;

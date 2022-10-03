@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Administration.Models
+namespace OJS.Services.Administration.Models
 {
     public class ParticipantScoreModel
     {

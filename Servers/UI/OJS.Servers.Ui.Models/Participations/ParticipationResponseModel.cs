@@ -1,4 +1,4 @@
-﻿using OJS.Services.Ui.Models.Participations;
+using OJS.Services.Ui.Models.Participations;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System;
 

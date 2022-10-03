@@ -1,4 +1,4 @@
-﻿namespace OJS.Servers.Ui.Models.Users
+namespace OJS.Servers.Ui.Models.Users
 {
     using OJS.Services.Ui.Models.Users;
     using SoftUni.AutoMapper.Infrastructure.Models;

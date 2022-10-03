@@ -1,4 +1,4 @@
-﻿namespace OJS.Servers.Ui.Models.Contests
+namespace OJS.Servers.Ui.Models.Contests
 {
     using System;
     using OJS.Services.Ui.Models.Contests;

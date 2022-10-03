@@ -1,4 +1,4 @@
-﻿using OJS.Data.Models.Problems;
+using OJS.Data.Models.Problems;
 using OJS.Services.Common.Data;
 using SoftUni.Services.Infrastructure;
 using System.Linq;

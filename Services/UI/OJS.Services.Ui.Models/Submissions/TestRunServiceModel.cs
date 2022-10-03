@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Ui.Models.Submissions
+namespace OJS.Services.Ui.Models.Submissions
 {
     using AutoMapper;
     using OJS.Data.Models.Tests;

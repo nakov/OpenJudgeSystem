@@ -1,4 +1,4 @@
-﻿using SoftUni.Services.Infrastructure;
+using SoftUni.Services.Infrastructure;
 
 namespace OJS.Services.Ui.Business
 {

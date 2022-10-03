@@ -1,4 +1,4 @@
-﻿using OJS.Data.Models.Contests;
+using OJS.Data.Models.Contests;
 using OJS.Data.Models.Participants;
 using OJS.Services.Common;
 using OJS.Services.Ui.Data;

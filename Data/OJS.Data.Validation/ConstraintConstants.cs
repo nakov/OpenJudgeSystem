@@ -1,4 +1,4 @@
-﻿namespace OJS.Data.Validation
+namespace OJS.Data.Validation
 {
     public static class ConstraintConstants
     {

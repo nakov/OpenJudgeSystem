@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Ui.Models.Contests
+namespace OJS.Services.Ui.Models.Contests
 {
     using System.Collections.Generic;
     using System.Linq;

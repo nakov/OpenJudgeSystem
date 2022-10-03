@@ -1,4 +1,4 @@
-﻿namespace OJS.Servers.Ui.Controllers.Api;
+namespace OJS.Servers.Ui.Controllers.Api;
 
 using System;
 using System.Threading.Tasks;

@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Ui.Data
+namespace OJS.Services.Ui.Data
 {
     using System.Threading.Tasks;
 

@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Administration.Data.Implementations
+namespace OJS.Services.Administration.Data.Implementations
 {
     using OJS.Common;
     using OJS.Data.Models.Problems;

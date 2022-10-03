@@ -1,4 +1,4 @@
-﻿using OJS.Data.Models.Submissions;
+using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Data;
 using System;
 using System.Linq;

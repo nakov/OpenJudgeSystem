@@ -1,4 +1,4 @@
-﻿using OJS.Services.Ui.Models.Submissions;
+using OJS.Services.Ui.Models.Submissions;
 
 namespace OJS.Services.Busines.Submissions.Models
 {

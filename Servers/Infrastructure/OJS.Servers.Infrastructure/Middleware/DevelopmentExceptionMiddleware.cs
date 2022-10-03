@@ -1,4 +1,4 @@
-﻿namespace OJS.Servers.Infrastructure.Middleware
+namespace OJS.Servers.Infrastructure.Middleware
 {
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;

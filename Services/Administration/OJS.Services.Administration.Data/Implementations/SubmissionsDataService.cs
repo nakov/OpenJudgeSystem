@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Data.Implementations;
 using System;

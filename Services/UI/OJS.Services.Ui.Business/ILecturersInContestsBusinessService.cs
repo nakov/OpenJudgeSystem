@@ -1,4 +1,4 @@
-﻿using OJS.Data.Models.Contests;
+using OJS.Data.Models.Contests;
 using SoftUni.Services.Infrastructure;
 
 namespace OJS.Services.Ui.Business;

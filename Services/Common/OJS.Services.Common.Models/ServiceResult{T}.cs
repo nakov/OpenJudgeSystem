@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Common.Models
+namespace OJS.Services.Common.Models
 {
     public class ServiceResult<T> : ServiceResult
     {

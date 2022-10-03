@@ -1,4 +1,4 @@
-﻿using OJS.Data.Models.Submissions;
+using OJS.Data.Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System.Collections.Generic;
 

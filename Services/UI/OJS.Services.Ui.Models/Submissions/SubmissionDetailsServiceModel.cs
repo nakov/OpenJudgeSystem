@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using OJS.Common.Extensions.Strings;
 using OJS.Services.Ui.Models.Users;
 using System.Linq;

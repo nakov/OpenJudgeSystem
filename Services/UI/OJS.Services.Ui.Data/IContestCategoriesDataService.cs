@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Ui.Data
+namespace OJS.Services.Ui.Data
 {
     using OJS.Data.Models.Contests;
     using OJS.Services.Common.Data;

@@ -1,4 +1,4 @@
-﻿namespace OJS.Common.Extensions.Strings
+namespace OJS.Common.Extensions.Strings
 {
     using System;
     using System.Collections.Generic;

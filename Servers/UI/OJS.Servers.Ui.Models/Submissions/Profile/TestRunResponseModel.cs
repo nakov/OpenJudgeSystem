@@ -1,4 +1,4 @@
-﻿using OJS.Services.Ui.Models.Submissions;
+using OJS.Services.Ui.Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
 namespace OJS.Servers.Ui.Models.Submissions.Profile

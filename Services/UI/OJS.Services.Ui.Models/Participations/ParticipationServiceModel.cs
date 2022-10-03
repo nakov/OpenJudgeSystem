@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Ui.Models.Participations
+namespace OJS.Services.Ui.Models.Participations
 {
     using System;
 

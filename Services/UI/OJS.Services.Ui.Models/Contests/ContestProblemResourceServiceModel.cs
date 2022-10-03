@@ -1,4 +1,4 @@
-﻿using OJS.Common.Enumerations;
+using OJS.Common.Enumerations;
 using OJS.Data.Models.Problems;
 using SoftUni.AutoMapper.Infrastructure.Models;
 

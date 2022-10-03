@@ -1,4 +1,4 @@
-﻿using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Data;
 using System.Linq;
 using System.Threading.Tasks;
 

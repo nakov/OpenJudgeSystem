@@ -1,4 +1,4 @@
-﻿using OJS.Common.Extensions.Strings;
+using OJS.Common.Extensions.Strings;
 
 namespace OJS.Services.Ui.Models.Contests
 {

@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Infrastructure.Constants
+namespace OJS.Services.Infrastructure.Constants
 {
     public static class CacheConstants
     {

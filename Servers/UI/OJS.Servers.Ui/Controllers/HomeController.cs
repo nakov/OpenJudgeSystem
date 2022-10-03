@@ -1,4 +1,4 @@
-﻿namespace OJS.Servers.Ui.Controllers;
+namespace OJS.Servers.Ui.Controllers;
 
 using Microsoft.AspNetCore.Mvc;
 using OJS.Common.Extensions;

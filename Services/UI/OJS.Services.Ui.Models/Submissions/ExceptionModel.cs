@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Busines.Submissions.Models
+namespace OJS.Services.Busines.Submissions.Models
 {
     public class ExceptionModel
     {

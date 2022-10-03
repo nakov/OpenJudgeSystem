@@ -1,4 +1,4 @@
-﻿using FluentExtensions.Extensions;
+using FluentExtensions.Extensions;
 using OJS.Common;
 using OJS.Data.Models.Problems;
 using OJS.Services.Infrastructure.Exceptions;

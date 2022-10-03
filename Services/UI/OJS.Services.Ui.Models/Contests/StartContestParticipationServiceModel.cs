@@ -1,4 +1,4 @@
-﻿using OJS.Data.Validation;
+using OJS.Data.Validation;
 using System.Security.Claims;
 
 namespace OJS.Services.Ui.Models.Contests

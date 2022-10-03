@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Ui.Data.Implementations
+namespace OJS.Services.Ui.Data.Implementations
 {
     using OJS.Data.Models.Users;
     using System.Linq;

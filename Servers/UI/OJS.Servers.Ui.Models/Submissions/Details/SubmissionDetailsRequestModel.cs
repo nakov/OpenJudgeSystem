@@ -1,4 +1,4 @@
-﻿namespace OJS.Servers.Ui.Models.Submissions.Details
+namespace OJS.Servers.Ui.Models.Submissions.Details
 {
     public class SubmissionDetailsRequestModel
     {

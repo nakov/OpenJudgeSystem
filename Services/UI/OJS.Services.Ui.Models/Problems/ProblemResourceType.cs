@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Ui.Models.Problems
+namespace OJS.Services.Ui.Models.Problems
 {
     public enum ProblemResourceType
     {

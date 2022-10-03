@@ -1,4 +1,4 @@
-﻿namespace OJS.Common.Helpers
+namespace OJS.Common.Helpers
 {
     using System.Transactions;
 

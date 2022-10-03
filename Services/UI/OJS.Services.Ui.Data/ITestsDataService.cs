@@ -1,4 +1,4 @@
-﻿using OJS.Data.Models.Tests;
+using OJS.Data.Models.Tests;
 using OJS.Services.Common.Data;
 using SoftUni.Services.Infrastructure;
 using System.Linq;

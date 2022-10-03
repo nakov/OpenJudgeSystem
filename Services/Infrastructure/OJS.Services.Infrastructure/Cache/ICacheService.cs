@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Infrastructure.Cache
+namespace OJS.Services.Infrastructure.Cache
 {
     using SoftUni.Services.Infrastructure;
     using System;

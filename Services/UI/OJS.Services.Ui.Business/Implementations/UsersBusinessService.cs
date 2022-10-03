@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Security.Claims;
 

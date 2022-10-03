@@ -1,4 +1,4 @@
-﻿using FluentExtensions.Extensions;
+using FluentExtensions.Extensions;
 using Microsoft.AspNetCore.Http;
 using System.Text;
 

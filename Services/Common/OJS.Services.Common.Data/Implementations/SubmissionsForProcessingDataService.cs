@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Common.Data.Implementations
+namespace OJS.Services.Common.Data.Implementations
 {
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;

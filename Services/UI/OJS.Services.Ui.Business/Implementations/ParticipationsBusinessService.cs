@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.Participations;
 using SoftUni.AutoMapper.Infrastructure.Extensions;

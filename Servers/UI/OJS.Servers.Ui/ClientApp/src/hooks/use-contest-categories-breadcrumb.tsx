@@ -1,4 +1,4 @@
-﻿import React, { createContext, useCallback, useContext, useState } from 'react';
+import React, { createContext, useCallback, useContext, useState } from 'react';
 import { isNil } from 'lodash';
 import ITreeItemType from '../common/tree-types';
 import { IHaveChildrenProps } from '../components/common/Props';

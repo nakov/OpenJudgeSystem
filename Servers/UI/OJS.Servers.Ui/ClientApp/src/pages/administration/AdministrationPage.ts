@@ -1,4 +1,4 @@
-﻿import { useUrls } from '../../hooks/use-urls';
+import { useUrls } from '../../hooks/use-urls';
 import { RedirectExternal } from '../../components/common/RedirectExternal';
 
 const AdministrationPage = () => {

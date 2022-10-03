@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Problems;
 using OJS.Services.Ui.Models.SubmissionTypes;

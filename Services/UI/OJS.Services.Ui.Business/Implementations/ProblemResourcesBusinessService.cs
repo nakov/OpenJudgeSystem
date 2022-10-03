@@ -1,4 +1,4 @@
-﻿using FluentExtensions.Extensions;
+using FluentExtensions.Extensions;
 using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.Problems;
 using SoftUni.AutoMapper.Infrastructure.Extensions;

@@ -1,4 +1,4 @@
-﻿using OJS.Data.Models.Problems;
+using OJS.Data.Models.Problems;
 using OJS.Services.Ui.Models.SubmissionTypes;
 using SoftUni.Services.Infrastructure;
 using System.Collections.Generic;

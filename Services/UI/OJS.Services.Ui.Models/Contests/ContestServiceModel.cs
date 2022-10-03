@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FluentExtensions.Extensions;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Contests;

@@ -1,4 +1,4 @@
-﻿namespace OJS.Servers.Ui.Models.Contests;
+namespace OJS.Servers.Ui.Models.Contests;
 
 using System.Collections.Generic;
 using SoftUni.AutoMapper.Infrastructure.Models;

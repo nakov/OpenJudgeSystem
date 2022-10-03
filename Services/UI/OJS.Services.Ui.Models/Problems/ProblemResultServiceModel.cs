@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using OJS.Data.Models.Participants;
 using SoftUni.AutoMapper.Infrastructure.Models;
 

@@ -1,4 +1,4 @@
-﻿namespace OJS.Servers.Infrastructure.Extensions
+namespace OJS.Servers.Infrastructure.Extensions
 {
     using Microsoft.Extensions.Configuration;
     using System;

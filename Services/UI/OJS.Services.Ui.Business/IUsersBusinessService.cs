@@ -1,4 +1,4 @@
-﻿using OJS.Services.Ui.Models.Users;
+using OJS.Services.Ui.Models.Users;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
