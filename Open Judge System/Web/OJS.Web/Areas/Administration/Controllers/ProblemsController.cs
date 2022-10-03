@@ -223,8 +223,6 @@
                     }
             });
 
-            problem.SolutionSkeleton = this.GetOptimizedSolutionSkeleton(problem, problem.SolutionSkeleton);
-
             if (problem.SolutionSkeletonData != null && problem.SolutionSkeletonData.Any())
             {
                 newProblem.SolutionSkeleton = problem.SolutionSkeletonData;
@@ -357,8 +355,6 @@
 
                 return this.View(problem);
             }
-
-            problem.SolutionSkeleton = this.GetOptimizedSolutionSkeleton(problem, problem.SolutionSkeleton);
 
             existingProblem = problem.GetEntityModel(existingProblem);
             existingProblem.Checker = this.checkersData.GetByName(problem.Checker);

@@ -317,9 +317,10 @@
             Input = new TestsInputModel
             {
                 TaskSkeleton = this.submission.Problem
-                    .ProblemSubmissionTypesSkeletons.FirstOrDefault(
-                        x => x.SubmissionTypeId == this.submission
-                    .SubmissionTypeId)?.SolutionSkeleton,
+                    .ProblemSubmissionTypesSkeletons
+                    .Where(x => x.SubmissionTypeId == this.submission.SubmissionTypeId)
+                    .Select(x => x.SolutionSkeleton)
+                    .FirstOrDefault(),
                 CheckerParameter = this.submission.Problem.Checker.Parameter,
                 CheckerAssemblyName = this.submission.Problem.Checker.DllFile,
                 CheckerTypeName = this.submission.Problem.Checker.ClassName,
