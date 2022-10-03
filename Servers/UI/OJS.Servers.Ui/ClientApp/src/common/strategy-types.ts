@@ -1,14 +1,29 @@
 /* eslint-disable import/prefer-default-export */
 
 enum StrategyType {
-    MySql = 1,
-    DotNet = 2,
-    Python = 3,
-    JavaScript = 4,
-    Java = 5,
-    Cpp = 6,
+    // Code strategies
+    Cpp = 'cpp',
+    DotNet = 'dotnet',
+    Go = 'go',
+    Java = 'java',
+    JavaScript = 'js',
+    Php = 'php',
+    Python = 'py',
+    Ruby = 'ruby',
 
-    Unknown = 100,
+    // HTML & CSS strategies
+    HtmlCss = 'html-css',
+
+    // Database strategies
+    MySql = 'mysql',
+    SqlServer = 'sql-server',
+
+    // Other strategies
+    PlainText = 'plain-text',
+    FileUpload = 'file-upload',
+
+    // Unknown strategies
+    Unknown = 'unknown',
 }
 
 export { StrategyType };

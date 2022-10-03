@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { isNil } from 'lodash';
 import { IIconProps } from '../components/guidelines/icons/Icon';
 import MySqlIcon from '../components/guidelines/icons/strategies/MySqlIcon';
 import JavaIcon from '../components/guidelines/icons/strategies/JavaIcon';
@@ -7,56 +8,71 @@ import JavaScriptIcon from '../components/guidelines/icons/strategies/JavaScript
 import DotNetIcon from '../components/guidelines/icons/strategies/DotNetIcon';
 import CppIcon from '../components/guidelines/icons/strategies/CppIcon';
 import { StrategyType } from '../common/strategy-types';
+import { IDictionary } from '../common/common-types';
+import GoIcon from '../components/guidelines/icons/strategies/GoIcon';
+import PhpIcon from '../components/guidelines/icons/strategies/PhpIcon';
+import RubyIcon from '../components/guidelines/icons/strategies/RubyIcon';
+import HtmlCssIcon from '../components/guidelines/icons/strategies/HtmlCssIcon';
+import SqlServerIcon from '../components/guidelines/icons/strategies/SqlServerIcon';
+import PlainTextIcon from '../components/guidelines/icons/strategies/PlainTextIcon';
+import FileUploadIcon from '../components/guidelines/icons/strategies/FileUploadIcon';
+
+const shortNameToType: IDictionary<StrategyType> = {
+    mysql: StrategyType.MySql,
+    'sql server': StrategyType.SqlServer,
+    '.net': StrategyType.DotNet,
+    dotnet: StrategyType.DotNet,
+    'c#': StrategyType.DotNet,
+    python: StrategyType.Python,
+    java: StrategyType.Java,
+    javascript: StrategyType.JavaScript,
+    js: StrategyType.JavaScript,
+    'c++': StrategyType.Cpp,
+    go: StrategyType.Go,
+    php: StrategyType.Php,
+    ruby: StrategyType.Ruby,
+    'html and css': StrategyType.HtmlCss,
+    'plain text': StrategyType.PlainText,
+    'file upload': StrategyType.FileUpload,
+};
 
 const fullStrategyNameToStrategyType = (strategyName: string): StrategyType => {
     const strategyNameToLower = strategyName.toLowerCase();
 
-    if (strategyNameToLower.includes('mysql')) {
-        return StrategyType.MySql;
-    }
+    // Sorting here resolves that `java` is `included` in `javascript`:
+    // `['java', 'javascript'].pop()` returns `javascript` 
+    const strategyKey = Object.keys(shortNameToType)
+        .sort()
+        .filter(name => strategyNameToLower.includes(name))
+        .pop();
 
-    if (strategyNameToLower.includes('.net') || strategyNameToLower.includes('c#')) {
-        return StrategyType.DotNet;
-    }
-
-    if (strategyNameToLower.includes('python')) {
-        return StrategyType.Python;
-    }
-
-    if (strategyNameToLower.includes('javascript') || strategyNameToLower.includes('js')) {
-        return StrategyType.JavaScript;
-    }
-
-    if (strategyNameToLower.includes('java')) {
-        return StrategyType.Java;
-    }
-
-    if(strategyNameToLower.includes('c++')) {
-        return StrategyType.Cpp;
-    }
-
-    return StrategyType.Unknown;
+    return isNil(strategyKey)
+        ? StrategyType.Unknown
+        : shortNameToType[strategyKey];
 };
 
-const strategyTypeToIcon = (type: StrategyType): FC<IIconProps> | null => {
-    switch (type) {
-    case StrategyType.MySql:
-        return MySqlIcon;
-    case StrategyType.Java:
-        return JavaIcon;
-    case StrategyType.Python:
-        return PythonIcon;
-    case StrategyType.JavaScript:
-        return JavaScriptIcon;
-    case StrategyType.DotNet:
-        return DotNetIcon;
-    case StrategyType.Cpp:
-        return CppIcon;
-    default:
-        return null;
-    }
+
+const typeToIcon: IDictionary<FC<IIconProps>> = {
+    [StrategyType.Cpp.toString()]: CppIcon,
+    [StrategyType.DotNet.toString()]: DotNetIcon,
+    [StrategyType.Go.toString()]: GoIcon,
+    [StrategyType.Java.toString()]: JavaIcon,
+    [StrategyType.JavaScript.toString()]: JavaScriptIcon,
+    [StrategyType.Php.toString()]: PhpIcon,
+    [StrategyType.Python.toString()]: PythonIcon,
+    [StrategyType.Ruby.toString()]: RubyIcon,
+    [StrategyType.HtmlCss.toString()]: HtmlCssIcon,
+    [StrategyType.MySql.toString()]: MySqlIcon,
+    [StrategyType.SqlServer.toString()]: SqlServerIcon,
+    [StrategyType.PlainText.toString()]: PlainTextIcon,
+    [StrategyType.FileUpload.toString()]: FileUploadIcon,
 };
 
+
+const strategyTypeToIcon = (type: StrategyType): FC<IIconProps> | null =>
+    isNil(typeToIcon[type])
+        ? null
+        : typeToIcon[type];
 
 export {
     strategyTypeToIcon,
