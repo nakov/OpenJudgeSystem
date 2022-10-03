@@ -5,7 +5,7 @@ import { formatDate } from '../../../utils/dates';
 import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../utils/strategy-type-utils';
 
 import IconSize from '../../guidelines/icons/common/icon-sizes';
-import { IPublicSubmission } from '../../../hooks/submissions/use-public-submissions';
+import { IPublicSubmission, PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
 
 import { LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 
@@ -22,6 +22,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
         user: { username },
         result: { points, maxPoints },
         strategyName,
+        state,
         problem: {
             name: problemName,
             contest: {
@@ -45,6 +46,23 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
         [ strategyName ],
     );
 
+    const renderPoints = useCallback(
+        () => {
+            if(state === PublicSubmissionState.Ready) {
+                return (<>
+                    {points} / {maxPoints}
+                </>);
+            }
+            
+            return (
+                <>
+                    Processing
+                </>
+            );
+        },
+        [ state, maxPoints, points ],
+    );
+
     const participationType = useMemo(
         () => isOfficial
             ? 'compete'
@@ -58,7 +76,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
                 {renderStrategyIcon()}
             </div>
             <div className={styles.pointsContainer}>
-                {points} / {maxPoints}
+                {renderPoints()}
             </div>
             <div className={styles.detailsContainer}>
                 <div>

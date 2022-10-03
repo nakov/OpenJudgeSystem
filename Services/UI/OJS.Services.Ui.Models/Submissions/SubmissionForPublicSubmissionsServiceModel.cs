@@ -100,7 +100,10 @@ public class SubmissionForPublicSubmissionsServiceModel
             .ForMember(
                 x => x.State,
                 opt => opt.MapFrom(
-                    y => StateResultForPublicSubmissionsServiceModel.Ready))
+                    y => y.Processed
+                        ? StateResultForPublicSubmissionsServiceModel.Ready
+                        : StateResultForPublicSubmissionsServiceModel.Processing
+                ))
             .ForMember(
                 x => x.Result,
                 opt => opt.MapFrom(

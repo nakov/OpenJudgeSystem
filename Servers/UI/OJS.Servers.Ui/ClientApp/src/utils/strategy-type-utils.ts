@@ -36,6 +36,22 @@ const shortNameToType: IDictionary<StrategyType> = {
     'file upload': StrategyType.FileUpload,
 };
 
+const typeToIcon: IDictionary<FC<IIconProps>> = {
+    [StrategyType.Cpp]: CppIcon,
+    [StrategyType.DotNet]: DotNetIcon,
+    [StrategyType.Go]: GoIcon,
+    [StrategyType.Java]: JavaIcon,
+    [StrategyType.JavaScript]: JavaScriptIcon,
+    [StrategyType.Php]: PhpIcon,
+    [StrategyType.Python]: PythonIcon,
+    [StrategyType.Ruby]: RubyIcon,
+    [StrategyType.HtmlCss]: HtmlCssIcon,
+    [StrategyType.MySql]: MySqlIcon,
+    [StrategyType.SqlServer]: SqlServerIcon,
+    [StrategyType.PlainText]: PlainTextIcon,
+    [StrategyType.FileUpload]: FileUploadIcon,
+};
+
 const fullStrategyNameToStrategyType = (strategyName: string): StrategyType => {
     const strategyNameToLower = strategyName.toLowerCase();
 
@@ -50,24 +66,6 @@ const fullStrategyNameToStrategyType = (strategyName: string): StrategyType => {
         ? StrategyType.Unknown
         : shortNameToType[strategyKey];
 };
-
-
-const typeToIcon: IDictionary<FC<IIconProps>> = {
-    [StrategyType.Cpp.toString()]: CppIcon,
-    [StrategyType.DotNet.toString()]: DotNetIcon,
-    [StrategyType.Go.toString()]: GoIcon,
-    [StrategyType.Java.toString()]: JavaIcon,
-    [StrategyType.JavaScript.toString()]: JavaScriptIcon,
-    [StrategyType.Php.toString()]: PhpIcon,
-    [StrategyType.Python.toString()]: PythonIcon,
-    [StrategyType.Ruby.toString()]: RubyIcon,
-    [StrategyType.HtmlCss.toString()]: HtmlCssIcon,
-    [StrategyType.MySql.toString()]: MySqlIcon,
-    [StrategyType.SqlServer.toString()]: SqlServerIcon,
-    [StrategyType.PlainText.toString()]: PlainTextIcon,
-    [StrategyType.FileUpload.toString()]: FileUploadIcon,
-};
-
 
 const strategyTypeToIcon = (type: StrategyType): FC<IIconProps> | null =>
     isNil(typeToIcon[type])

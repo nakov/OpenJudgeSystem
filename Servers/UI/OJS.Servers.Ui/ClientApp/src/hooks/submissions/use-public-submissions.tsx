@@ -110,6 +110,7 @@ export default PublicSubmissionsProvider;
 
 export {
     usePublicSubmissions,
+    PublicSubmissionState,
 };
 
 export type {
