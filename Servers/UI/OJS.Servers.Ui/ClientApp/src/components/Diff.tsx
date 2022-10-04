@@ -1,3 +1,5 @@
+/* eslint-disable react/no-danger */
+
 import * as React from 'react';
 import { useCallback } from 'react';
 import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer';

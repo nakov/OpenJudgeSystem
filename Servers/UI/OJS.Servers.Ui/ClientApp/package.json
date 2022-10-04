@@ -86,14 +86,14 @@
     "stylelint-config-standard": "^26.0.0",
     "stylelint-config-standard-scss": "^4.0.0",
     "typescript": "^4.4.3",
-    "webpack-bundle-analyzer": "^4.6.1"
+    "webpack-bundle-analyzer": "^4.6.1",
+    "webpack-deadcode-plugin": "^0.1.17"
   },
   "scripts": {
     "start": "craco start",
     "build": "craco build",
     "eject": "react-scripts eject",
     "lint:eslint": "./node_modules/.bin/eslint ./src --ext .tsx --ext .ts",
-    "lint:stylelint": "node_modules/.bin/stylelint ./src/**/*.scss",
     "lint": "yarn run lint:eslint",
     "analyze": "source-map-explorer 'build/static/js/*.js'"
   },

@@ -12,7 +12,6 @@ class AuthService {
         });
 
         this.UserManager.events.addAccessTokenExpired(() => {
-            console.log('token expired');
             this.signInSilent();
         });
     }
