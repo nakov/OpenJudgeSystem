@@ -155,7 +155,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         testRun,
         user.permissions.canAccessAdministration,
     ]);
-    
+
     return (
         <div className={styles.testRun}>
             {render()}
