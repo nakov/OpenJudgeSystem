@@ -6,11 +6,11 @@ import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../uti
 
 import IconSize from '../../guidelines/icons/common/icon-sizes';
 import { IPublicSubmission, PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
+import { ContestParticipationType } from '../../../common/constants';
 
 import { LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 
 import styles from './SubmissionGridRow.module.scss';
-import { ContestParticipationType } from '../../../common/constants';
 
 interface ISubmissionGridRowProps {
     submission: IPublicSubmission;
@@ -49,12 +49,12 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
 
     const renderPoints = useCallback(
         () => {
-            if(state === PublicSubmissionState.Ready) {
+            if (state === PublicSubmissionState.Ready) {
                 return (<>
                     {points} / {maxPoints}
                 </>);
             }
-            
+
             return (
                 <>
                     Processing
