@@ -85,17 +85,17 @@ const List = <TValue extends unknown>({
         ? styles.fullWidth
         : '';
     const itemClassNameCombined = concatClassNames(itemClassName, fullWidthItemClassName);
-    
+
     const renderItems = useCallback(
         () => {
             if (isNil(values) || isEmpty(values)) {
                 return null;
             }
-            
-            
+
             return values.map((value) => (
                 <li key={keyFunc(value)} className={itemClassNameCombined}>
-                    {itemFunc(value)}</li>
+                    {itemFunc(value)}
+                </li>
             ));
         },
         [ itemClassNameCombined, itemFunc, keyFunc, values ],
