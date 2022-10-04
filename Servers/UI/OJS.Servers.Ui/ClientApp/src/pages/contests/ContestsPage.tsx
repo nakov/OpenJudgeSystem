@@ -100,7 +100,7 @@ const ContestsPage = () => {
             <Breadcrumb items={breadcrumbItems} itemFunc={renderCategoriesBreadcrumbItem} />
             <div className={styles.container}>
                 <ContestFilters onFilterClick={handleFilterClick}/>
-                <div>
+                <div className={styles.mainHeader}>
                     {renderContests()}
                 </div>
             </div>
