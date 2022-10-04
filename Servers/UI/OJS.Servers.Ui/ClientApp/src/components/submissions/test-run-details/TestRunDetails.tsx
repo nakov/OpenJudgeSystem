@@ -12,12 +12,16 @@ import Collapsible from '../../guidelines/collapsible/Collapsible';
 import TestRunDiffView from '../test-run-diff-view/TestRunDiffView';
 import ExpandButton from '../../guidelines/buttons/ExpandButton';
 import styles from './TestRunDetails.module.scss';
+import Label, { LabelType } from '../../guidelines/labels/Label';
+import { splitByCapitalLetter, toLowerCase } from '../../../utils/string-utils';
 
 interface ITestRunDetailsProps {
     testRun: ITestRunDetailsType;
 }
 
-const getResultIsWrongAnswerResultType = (run: ITestRunDetailsType) => run.resultType.toLowerCase() !== 'correctanswer';
+const correctAnswer = 'correctanswer';
+const wrongAnswer = 'wronganswer';
+const getResultIsWrongAnswerResultType = (run: ITestRunDetailsType) => toLowerCase(run.resultType) !== correctAnswer;
 
 const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
     const { state: { user } } = useAuth();
@@ -35,7 +39,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         ),
         [ testRun ],
     );
-
+    
     const isOutputDiffAvailable = useMemo(
         () => !isNil(testRun.expectedOutputFragment) && testRun.expectedOutputFragment !== '' &&
             !isNil(testRun.userOutputFragment) && testRun.userOutputFragment !== '',
@@ -52,7 +56,27 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         return testRunText;
     }, [ testRun ]);
 
-    const renderTimeAndMemoryUsed = useCallback(() => (
+    const renderResultTypeLabel = useCallback(
+        () => {
+            const result = toLowerCase(testRun.resultType);
+            const type = result === correctAnswer
+                ? LabelType.success
+                : result === wrongAnswer
+                    ? LabelType.danger
+                    : LabelType.warning;
+            
+            const resultSplit = splitByCapitalLetter(testRun.resultType);
+
+            return (
+                <Label type={type}>
+                    {resultSplit}
+                </Label>
+            );
+        },
+        [ testRun ],
+    );
+    
+    const renderTestRunData = useCallback(() => (
         <span className={styles.testRunData}>
             <span className={styles.testRunDataParagraph}>
                 <TimeLimitIcon
@@ -69,11 +93,13 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
                 />
                 <span>
                     {testRun.memoryUsed}
-                    MB
                 </span>
             </span>
+            <span className={styles.testRunDataParagraph}>
+                {renderResultTypeLabel()}
+            </span>
         </span>
-    ), [ testRun ]);
+    ), [ testRun, renderResultTypeLabel ]);
 
     const renderHeader = useCallback(
         () => (
@@ -82,13 +108,13 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
               className={testRunHeadingClassName}
             >
                 { testRunHeadingText }
-                { renderTimeAndMemoryUsed() }
+                { renderTestRunData() }
             </Heading>
         ),
         [
             testRunHeadingClassName,
             testRunHeadingText,
-            renderTimeAndMemoryUsed,
+            renderTestRunData,
         ],
     );
 
