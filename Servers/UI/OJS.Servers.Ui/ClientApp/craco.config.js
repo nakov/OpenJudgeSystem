@@ -1,11 +1,13 @@
 const path = require('path');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
+const DeadCodePlugin = require('webpack-deadcode-plugin');
 
 const fixHtmlPlugin = (config) => {
     const [ htmlPlugin, ...rest ] = config.plugins;
     const filename = path.join(__dirname, '../Views/Home/Index.cshtml');
     const template = path.join(__dirname, '../Views/Home/Index.template.html');
+
     htmlPlugin.options = {
         ...htmlPlugin.options,
         filename,
@@ -58,17 +60,25 @@ const decorateWebpack = (config, ...funcs) => funcs
 module.exports = {
     reactScriptsVersion: 'react-scripts',
     eslint: { enable: false },
+    optimization: { usedExports: true },
     webpack: {
         configure: (webpackConfig) => decorateWebpack(
             webpackConfig,
             fixHtmlPlugin,
             addMonacoPlugin,
         ),
+        plugins: [
+            new DeadCodePlugin({
+                patterns: [
+                    'src/**/*.(ts|tsx|scss)',
+                ],
+            }),
+        ],
     },
     devServer: (config) => {
         const { historyApiFallback } = config;
 
-        return {
+        return {    
             ...config,
             devMiddleware: {
                 ...config.devMiddleware,
