@@ -14,7 +14,7 @@
     using OJS.Services.Business.ParticipantScores.Models;
     using OJS.Services.Data.Contests;
     using OJS.Services.Data.Participants;
-
+    using System.Text.RegularExpressions;
 
     public class ParticipantScoresBusinessService : IParticipantScoresBusinessService
     {
@@ -135,7 +135,7 @@
                 topScoreSubmissionsOrderedByCreatedOn,
                 participantInfo.UserStartTime);
 
-            problemOrderToTimeTakenBetweenBest = NormalizeProblemGroupIndexes(
+            problemOrderToTimeTakenBetweenBest = NormalizeProblemGroupIndexesAndEmptyValues(
                 problemOrderToTimeTakenBetweenBest, 
                 participantInfo.ProblemGroups.Select(pg => pg.OrderBy));
 
@@ -151,7 +151,7 @@
             };
         }
         
-        private Dictionary<int, double> NormalizeProblemGroupIndexes(Dictionary<int, double> values, IEnumerable<int> problemGroupsOrderBy)
+        private Dictionary<int, ParticipantSummarySubmissionInfoServiceModel> NormalizeProblemGroupIndexesAndEmptyValues(Dictionary<int, ParticipantSummarySubmissionInfoServiceModel> values, IEnumerable<int> problemGroupsOrderBy)
         {
             var sortedOrderedBy = problemGroupsOrderBy.OrderBy(n => n).ToList();
             
@@ -161,12 +161,16 @@
                     Key = sortedOrderedBy.IndexOf(n) + 1,
                     Value = values.ContainsKey(n) 
                         ? values[n] 
-                        : 0
+                        : new ParticipantSummarySubmissionInfoServiceModel
+                        { 
+                            TimeTaken = 0,
+                            Length = 0
+                        }
                 })
                 .ToDictionary(k => k.Key, v => v.Value);
         }
 
-        private Dictionary<int, double> CalculateTimeTakenBetweenBestForProblems(
+        private Dictionary<int, ParticipantSummarySubmissionInfoServiceModel> CalculateTimeTakenBetweenBestForProblems(
             IEnumerable<MaximumResultSubmissionByProblemServiceModel> maxSubmissionsBySubmissionTime, 
             DateTime userStartTime)
         {
@@ -184,14 +188,25 @@
                 })
                 .ToDictionary(
                     submissions => submissions.LaterSubmission.Submission.Problem.ProblemGroup.OrderBy,
-                    submissions => Math.Round((submissions.LaterSubmission.Submission.CreatedOn - submissions.EarlierSubmission.Submission.CreatedOn).TotalMinutes, 0
-                ));
+                    submissions => new ParticipantSummarySubmissionInfoServiceModel
+                    {
+                        TimeTaken = Math.Round((submissions.LaterSubmission.Submission.CreatedOn - submissions.EarlierSubmission.Submission.CreatedOn).TotalMinutes, 0),
+                        Length = this.GetSubmissionCodeLength(submissions.LaterSubmission.Submission),
+                    }
+                );
     
             var earliestSubmission = maxSubmissionsBySubmissionTimeList.First();
-            result[earliestSubmission.Submission.Problem.ProblemGroup.OrderBy] = Math.Round((earliestSubmission.Submission.CreatedOn - userStartTime).TotalMinutes);
+            result[earliestSubmission.Submission.Problem.ProblemGroup.OrderBy] = new ParticipantSummarySubmissionInfoServiceModel
+            {
+                TimeTaken = Math.Round((earliestSubmission.Submission.CreatedOn - userStartTime).TotalMinutes),
+                Length = this.GetSubmissionCodeLength(earliestSubmission.Submission),
+            };
     
             return result;
         }
+
+        private int GetSubmissionCodeLength(Submission submission)
+            => Regex.Matches(submission.ContentAsString, "\n").Count + 1;
         
         private double CalculateTimeInMinutesFromParticipationStartToLastSubmission(Participant participant)
             => Math.Round((participant.Submissions

@@ -8,8 +8,6 @@
     {
         public Participant Participant { get; set; }
         
-        public Submission LastSubmittedForParticipant { get; set; }
-
         public double TimeInContest { get; set; }
         
         public DateTime UserStartTime { get; set; }

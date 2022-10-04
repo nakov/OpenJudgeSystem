@@ -55,6 +55,7 @@
             .ForEach(index =>
             {
                 headerRow.CreateCell(columnNumber++).SetCellValue($"Problem {index}");
+                headerRow.CreateCell(columnNumber++).SetCellValue($"Problem {index} Length");
             });
                 
             headerRow.CreateCell(columnNumber++).SetCellValue("Time Total");
@@ -86,11 +87,16 @@
             {
                 var participantResults = participantSummary.ProblemOrderToMinutesTakenToSolve;
 
-                var colValue = !participantResults.ContainsKey(index) || participantResults[index] == 0
+                var colTimeTakenValue = !participantResults.ContainsKey(index)
                     ? 0
-                    : participantResults[index];
+                    : participantResults[index].TimeTaken;
+                
+                var colLengthValue = !participantResults.ContainsKey(index)
+                    ? 0
+                    : participantResults[index].Length;
 
-                row.CreateCell(colNumber++).SetCellValue(colValue);
+                row.CreateCell(colNumber++).SetCellValue(colTimeTakenValue);
+                row.CreateCell(colNumber++).SetCellValue(colLengthValue);
             });
 
             if (colNumber - this.preProblemsColumnsCount < CategorySummary.MaxProblemsCount)
