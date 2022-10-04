@@ -13,6 +13,7 @@ public class UserForPublicSubmissionsServiceModel
     : IMapExplicitly
 {
     public string Id { get; set; }
+
     public object Username { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
@@ -67,6 +68,7 @@ public class SubmissionForPublicSubmissionsServiceModel
     public int Id { get; set; }
 
     public DateTime CreatedOn { get; set; }
+
     public string StrategyName { get; set; }
 
     public bool IsOfficial { get; set; }

@@ -88,6 +88,7 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         },
         [ getSubmissions, getTotalSubmissionsCount ],
     );
+
     const value = {
         state: {
             submissions,
