@@ -28,6 +28,7 @@ import InitProviders, { ProviderType } from './components/common/InitProviders';
 import HomeStatisticsProvider from './hooks/use-home-statistics';
 import UrlParamsProvider from './hooks/common/use-url-params';
 import CategoriesBreadcrumbProvider from './hooks/use-contest-categories-breadcrumb';
+import PublicSubmissionsProvider from './hooks/submissions/use-public-submissions';
 
 const App = () => {
     const userCookiesService = useMemo(
@@ -56,6 +57,7 @@ const App = () => {
         SubmissionsDetailsProvider,
         HomeStatisticsProvider,
         CategoriesBreadcrumbProvider,
+        PublicSubmissionsProvider,
     ] as ProviderType[];
 
     return (

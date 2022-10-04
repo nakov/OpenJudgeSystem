@@ -1,17 +1,20 @@
+import React from 'react';
+
 import { Route, Routes } from 'react-router-dom';
-import * as React from 'react';
+
 import HomePage from '../../pages/home/HomePage';
 import LogoutPage from '../../pages/logout/LogoutPage';
 import LoginPage from '../../pages/login/LoginPage';
 import RegisterPage from '../../pages/register/RegisterPage';
 import ProfilePage from '../../pages/profile/ProfilePage';
-import SubmissionPage from '../../pages/submissions/SubmissionPage';
 import ContestPage from '../../pages/contest/ContestPage';
 import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';
 import ContestsPage from '../../pages/contests/ContestsPage';
 import SubmissionDetailsPage from '../../pages/submission-details/SubmissionDetailsPage';
 import AdministrationPage from '../../pages/administration/AdministrationPage';
 import ContestRegisterPage from '../../pages/contest/ContestRegisterPage';
+import SubmissionsPage from '../../pages/submissions/SubmissionsPage';
+
 import styles from './PageContent.module.scss';
 
 const routes = [
@@ -36,8 +39,8 @@ const routes = [
         Element: ProfilePage,
     },
     {
-        path: '/submissions/:submissionId',
-        Element: SubmissionPage,
+        path: '/submissions',
+        Element: SubmissionsPage,
     },
     {
         path: '/submissions/:submissionId/details',
