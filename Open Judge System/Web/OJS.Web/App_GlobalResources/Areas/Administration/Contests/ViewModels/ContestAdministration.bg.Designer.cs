@@ -267,5 +267,14 @@ namespace Resources.Areas.Administration.Contests.ViewModels {
                 return ResourceManager.GetString("Visibility", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Видим от.
+        /// </summary>
+        public static string VisibleFrom {
+            get {
+                return ResourceManager.GetString("VisibleFrom", resourceCulture);
+            }
+        }
     }
 }

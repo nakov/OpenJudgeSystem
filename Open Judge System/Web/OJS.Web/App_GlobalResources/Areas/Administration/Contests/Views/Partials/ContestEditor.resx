@@ -135,6 +135,9 @@
   <data name="Contest_visibility" xml:space="preserve">
     <value>Choose if the contest is visible</value>
   </data>
+  <data name="Contest_visible_from" xml:space="preserve">
+    <value>Choose a date and time from which on the contest is visible</value>
+  </data>
   <data name="Duration_info" xml:space="preserve">
     <value>Duration information</value>
   </data>

@@ -43,6 +43,7 @@
                     PracticeEndTime = contest.PracticeEndTime,
                     Duration = contest.Duration,
                     IsVisible = contest.IsVisible,
+                    VisibleFrom = contest.VisibleFrom,
                     CategoryId = contest.CategoryId.Value,
                     CategoryName = contest.Category.Name,
                     ContestPassword = contest.ContestPassword,
@@ -167,6 +168,10 @@
         [DatabaseProperty]
         [Display(Name = nameof(Resource.Visibility), ResourceType = typeof(Resource))]
         public bool IsVisible { get; set; }
+        
+        [DatabaseProperty]
+        [Display(Name = nameof(Resource.VisibleFrom), ResourceType = typeof(Resource))]
+        public DateTime VisibleFrom { get; set; }
         
         [DatabaseProperty]
         [Display(Name = nameof(Resource.UsersCantSubmitConcurrently), ResourceType = typeof(Resource))]

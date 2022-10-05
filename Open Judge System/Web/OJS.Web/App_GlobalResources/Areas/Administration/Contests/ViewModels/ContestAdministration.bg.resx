@@ -186,4 +186,7 @@
   <data name="UsersCantSubmitConcurrently" xml:space="preserve">
     <value>Потребителите не могат да решават задачи едновременно</value>
   </data>
+  <data name="VisibleFrom" xml:space="preserve">
+    <value>Видим от</value>
+  </data>
 </root>

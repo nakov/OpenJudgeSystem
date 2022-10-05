@@ -21,7 +21,9 @@
 
         [Required]
         [Index]
-        public bool IsVisible { get; set; }
+        public bool Visible { get; set; }
+        
+        public DateTime? VisibleFrom { get; set; }
 
         public bool AutoChangeTestsFeedbackVisibility { get; set; }
 
@@ -130,6 +132,25 @@
                 }
 
                 return this.StartTime <= DateTime.Now && DateTime.Now <= this.EndTime;
+            }
+        }
+        
+        [NotMapped]
+        public bool IsVisible
+        {
+            get
+            {
+                if (!this.Visible && this.VisibleFrom == null)
+                {
+                    return false;
+                }
+                
+                if (this.Visible || (this.VisibleFrom != null && this.VisibleFrom <= DateTime.Now))
+                {
+                    return true;
+                }
+
+                return true;
             }
         }
 
