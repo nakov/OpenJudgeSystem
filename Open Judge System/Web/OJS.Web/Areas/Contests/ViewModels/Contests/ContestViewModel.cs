@@ -31,6 +31,7 @@
                 PracticeEndTime = contest.PracticeEndTime,
                 IsDeleted = contest.IsDeleted,
                 IsVisible = contest.IsVisible,
+                VisibleFrom = contest.VisibleFrom,
                 IsOnline = contest.Type == ContestType.OnlinePracticalExam,
                 ContestPassword = contest.ContestPassword,
                 PracticePassword = contest.PracticePassword,
