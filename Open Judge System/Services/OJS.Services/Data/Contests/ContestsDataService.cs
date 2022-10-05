@@ -62,7 +62,7 @@
 
         public IQueryable<Contest> GetAllVisible() =>
             this.GetAll()
-                .Where(c => c.IsVisible);
+                .Where(c => c.Visible);
 
         public IQueryable<Contest> GetAllVisibleByCategory(int categoryId) =>
             this.GetAllVisible()

@@ -55,7 +55,7 @@
             var userHasContestRights = isUserAdmin ||
                 this.contestsData.IsUserLecturerInByContestAndUser(id, userId);
 
-            if (contestViewModel == null || (!userHasContestRights && !contestViewModel.IsVisible))
+            if (contestViewModel == null || (!userHasContestRights && !contestViewModel.Visible))
             {
                 throw new HttpException((int)HttpStatusCode.NotFound, Resource.Contest_not_found);
             }

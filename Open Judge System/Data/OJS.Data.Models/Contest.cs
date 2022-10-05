@@ -21,7 +21,7 @@
 
         [Required]
         [Index]
-        public bool Visible { get; set; }
+        public bool IsVisible { get; set; }
         
         public DateTime? VisibleFrom { get; set; }
 
@@ -105,11 +105,30 @@
         public virtual ICollection<ExamGroup> ExamGroups { get; set; } = new HashSet<ExamGroup>();
 
         [NotMapped]
+        public bool Visible
+        {
+            get
+            {
+                if (!this.IsVisible && this.VisibleFrom == null)
+                {
+                    return false;
+                }
+                
+                if (this.IsVisible || (this.VisibleFrom != null && this.VisibleFrom <= DateTime.Now))
+                {
+                    return true;
+                }
+
+                return this.IsVisible;
+            }
+        }
+        
+        [NotMapped]
         public bool CanBeCompeted
         {
             get
             {
-                if (!this.IsVisible)
+                if (!this.Visible)
                 {
                     return false;
                 }
@@ -134,32 +153,13 @@
                 return this.StartTime <= DateTime.Now && DateTime.Now <= this.EndTime;
             }
         }
-        
-        [NotMapped]
-        public bool IsVisible
-        {
-            get
-            {
-                if (!this.Visible && this.VisibleFrom == null)
-                {
-                    return false;
-                }
-                
-                if (this.Visible || (this.VisibleFrom != null && this.VisibleFrom <= DateTime.Now))
-                {
-                    return true;
-                }
-
-                return true;
-            }
-        }
 
         [NotMapped]
         public bool CanBePracticed
         {
             get
             {
-                if (!this.IsVisible)
+                if (!this.Visible)
                 {
                     return false;
                 }
@@ -198,7 +198,7 @@
         {
             get
             {
-                if (!this.IsVisible)
+                if (!this.Visible)
                 {
                     return false;
                 }

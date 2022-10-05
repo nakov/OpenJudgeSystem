@@ -171,7 +171,7 @@
         
         [DatabaseProperty]
         [Display(Name = nameof(Resource.VisibleFrom), ResourceType = typeof(Resource))]
-        public DateTime VisibleFrom { get; set; }
+        public DateTime? VisibleFrom { get; set; }
         
         [DatabaseProperty]
         [Display(Name = nameof(Resource.UsersCantSubmitConcurrently), ResourceType = typeof(Resource))]

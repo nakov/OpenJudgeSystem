@@ -90,6 +90,8 @@
         public bool IsDeleted { get; set; }
 
         public bool IsVisible { get; set; }
+        
+        public DateTime? VisibleFrom { get; set; }
 
         public bool IsOnline { get; set; }
 
@@ -116,11 +118,29 @@
         public IEnumerable<ContestCategoryListViewModel> ParentCategories { get; set; } =
             Enumerable.Empty<ContestCategoryListViewModel>();
 
+        public bool Visible
+        {
+            get
+            {
+                if (!this.IsVisible && this.VisibleFrom == null)
+                {
+                    return false;
+                }
+                
+                if (this.IsVisible || (this.VisibleFrom != null && this.VisibleFrom <= DateTime.Now))
+                {
+                    return true;
+                }
+
+                return this.IsVisible;
+            }
+        }
+        
         public bool CanBeCompeted
         {
             get
             {
-                if (!this.IsVisible)
+                if (!this.Visible)
                 {
                     return false;
                 }
@@ -150,7 +170,7 @@
         {
             get
             {
-                if (!this.IsVisible)
+                if (!this.Visible)
                 {
                     return false;
                 }
@@ -180,7 +200,7 @@
         {
             get
             {
-                if (!this.IsVisible)
+                if (!this.Visible)
                 {
                     return false;
                 }
