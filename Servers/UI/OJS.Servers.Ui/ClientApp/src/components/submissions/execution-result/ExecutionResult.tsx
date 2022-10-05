@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useCallback } from 'react';
 import { ITestRunType } from '../../../hooks/submissions/use-submissions';
 import concatClassNames from '../../../utils/class-names';
-import { SubmissionResultType } from "../../../common/constants";
+import { SubmissionResultType } from '../../../common/constants';
 
 import styles from './ExecutionResult.module.scss';
 

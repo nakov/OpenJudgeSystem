@@ -13,7 +13,7 @@ import TestRunDiffView from '../test-run-diff-view/TestRunDiffView';
 import ExpandButton from '../../guidelines/buttons/ExpandButton';
 import Label, { LabelType } from '../../guidelines/labels/Label';
 import { splitByCapitalLetter, toLowerCase } from '../../../utils/string-utils';
-import { SubmissionResultType } from "../../../common/constants";
+import { SubmissionResultType } from '../../../common/constants';
 
 import styles from './TestRunDetails.module.scss';
 
