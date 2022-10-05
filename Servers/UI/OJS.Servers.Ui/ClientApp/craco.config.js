@@ -67,13 +67,15 @@ module.exports = {
             fixHtmlPlugin,
             addMonacoPlugin,
         ),
-        plugins: [
-            new DeadCodePlugin({
-                patterns: [
-                    'src/**/*.(ts|tsx|scss)',
-                ],
-            }),
-        ],
+        // This should be manually enabled for testing
+        // It breaks the build when it is always enabled
+        // plugins: [
+        //     new DeadCodePlugin({
+        //         patterns: [
+        //             'src/**/*.(ts|tsx|scss)',
+        //         ],
+        //     }),
+        // ],
     },
     devServer: (config) => {
         const { historyApiFallback } = config;
