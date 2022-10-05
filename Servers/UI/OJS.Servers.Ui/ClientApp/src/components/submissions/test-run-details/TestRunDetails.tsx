@@ -11,17 +11,17 @@ import MemoryIcon from '../../guidelines/icons/MemoryIcon';
 import Collapsible from '../../guidelines/collapsible/Collapsible';
 import TestRunDiffView from '../test-run-diff-view/TestRunDiffView';
 import ExpandButton from '../../guidelines/buttons/ExpandButton';
-import styles from './TestRunDetails.module.scss';
 import Label, { LabelType } from '../../guidelines/labels/Label';
 import { splitByCapitalLetter, toLowerCase } from '../../../utils/string-utils';
+import { SubmissionResultType } from "../../../common/constants";
+
+import styles from './TestRunDetails.module.scss';
 
 interface ITestRunDetailsProps {
     testRun: ITestRunDetailsType;
 }
 
-const correctAnswer = 'correctanswer';
-const wrongAnswer = 'wronganswer';
-const getResultIsWrongAnswerResultType = (run: ITestRunDetailsType) => toLowerCase(run.resultType) !== correctAnswer;
+const getResultIsWrongAnswerResultType = (run: ITestRunDetailsType) => toLowerCase(run.resultType) !== SubmissionResultType.CorrectAnswer;
 
 const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
     const { state: { user } } = useAuth();
@@ -59,9 +59,9 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
     const renderResultTypeLabel = useCallback(
         () => {
             const result = toLowerCase(testRun.resultType);
-            const type = result === correctAnswer
+            const type = result === SubmissionResultType.CorrectAnswer
                 ? LabelType.success
-                : result === wrongAnswer
+                : result === SubmissionResultType.WrongAnswer
                     ? LabelType.danger
                     : LabelType.warning;
             
