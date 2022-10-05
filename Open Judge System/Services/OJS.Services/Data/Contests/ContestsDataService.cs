@@ -62,7 +62,7 @@
 
         public IQueryable<Contest> GetAllVisible() =>
             this.GetAll()
-                .Where(c => c.Visible);
+                .Where(c => c.IsVisible || (c.VisibleFrom != null && c.VisibleFrom <= DateTime.Now));
 
         public IQueryable<Contest> GetAllVisibleByCategory(int categoryId) =>
             this.GetAllVisible()
