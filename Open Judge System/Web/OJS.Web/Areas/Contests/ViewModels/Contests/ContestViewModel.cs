@@ -119,23 +119,7 @@
         public IEnumerable<ContestCategoryListViewModel> ParentCategories { get; set; } =
             Enumerable.Empty<ContestCategoryListViewModel>();
 
-        public bool Visible
-        {
-            get
-            {
-                if (!this.IsVisible && this.VisibleFrom == null)
-                {
-                    return false;
-                }
-
-                if (this.IsVisible || (this.VisibleFrom != null && this.VisibleFrom <= DateTime.Now))
-                {
-                    return true;
-                }
-
-                return this.IsVisible;
-            }
-        }
+        public bool Visible => this.IsVisible || this.VisibleFrom < DateTime.Now;
         
         public bool CanBeCompeted
         {

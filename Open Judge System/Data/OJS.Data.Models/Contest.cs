@@ -105,24 +105,8 @@
         public virtual ICollection<ExamGroup> ExamGroups { get; set; } = new HashSet<ExamGroup>();
 
         [NotMapped]
-        public bool Visible
-        {
-            get
-            {
-                if (!this.IsVisible && this.VisibleFrom == null)
-                {
-                    return false;
-                }
+        public bool Visible => this.IsVisible || this.VisibleFrom < DateTime.Now;
 
-                if (this.IsVisible || (this.VisibleFrom != null && this.VisibleFrom <= DateTime.Now))
-                {
-                    return true;
-                }
-
-                return this.IsVisible;
-            }
-        }
-        
         [NotMapped]
         public bool CanBeCompeted
         {
