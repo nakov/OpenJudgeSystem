@@ -48,6 +48,12 @@ const Tree = ({
         [ onSelect ],
     );
 
+    const renderTooltip = useCallback((node: ITreeItemType) => (
+        <div className={styles.tooltip}>
+            {node.name}
+        </div>
+    ),[]);
+    
     const renderTreeItem = useCallback((node: ITreeItemType) => (
         <TreeItem
             className={styles.treeElement}
@@ -60,23 +66,21 @@ const Tree = ({
             {isArray(node.children)
                 ? node.children.map((child) =>
                     treeItemHasTooltip
-                        ? (<div className={styles.categoriesTree} key={child.id}>
-                            <div className={styles.tooltip}>
-                                {child.name}
-                            </div>
+                        ? (<div className={styles.Tree} key={child.id}>
+                            {renderTooltip(child)}
                             {renderTreeItem(child)}
                         </div>)
                         : renderTreeItem(child))
                 : null}
         </TreeItem>
-    ),[ handleLabelClick, handleTreeItemClick, treeItemHasTooltip ]);
+    ), [ handleLabelClick, handleTreeItemClick, renderTooltip, treeItemHasTooltip ]);
 
 
 
     const defaultItemFunc = useCallback(
         (node: ITreeItemType) => 
             treeItemHasTooltip
-                ? (<div className={styles.categoriesTree} key={node.id}>
+                ? (<div className={styles.Tree} key={node.id}>
                     <div className={styles.tooltip}>
                         {node.name}
                     </div>
