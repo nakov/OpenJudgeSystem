@@ -54,6 +54,37 @@ const ContestFilter = ({
         [ toggleFiltersExpanded, maxDisplayCount ],
     );
 
+    const renderStatusFilterItem = useCallback(
+        (buttonType: ButtonType, btnClassName: string,name: string, id: number) => (
+            <Button
+                type={buttonType}
+                onClick={() => onSelect(id)}
+                className={btnClassName}
+                text={name}
+                size={ButtonSize.small}
+            />
+        ),
+        [ onSelect ],
+    );
+
+    const renderStrategyFilterItem = useCallback(
+        (buttonType: ButtonType, btnClassName: string, name: string, id: number)=> (
+            <div className={styles.strategyHeader}>
+                <div className={styles.tooltip}>
+                    <span className={styles.tooltipElement}>{name}</span>
+                </div>
+                <Button
+                    type={buttonType}
+                    onClick={() => onSelect(id)}
+                    className={styles.strategyElementClassName}
+                    text={name}
+                    size={ButtonSize.small}
+                />
+            </div>
+        ),
+        [ onSelect ],
+    );
+
     const getRenderFilterItemFunc = useCallback(
         (filterType: FilterType) => ({ id, name }: IFilter) => {
             const filterIsSelected = values.some((f) => f.name === name);
@@ -65,17 +96,12 @@ const ContestFilter = ({
                 ? styles.btnSelectFilter
                 : '';
 
-            return (
-                <Button
-                    type={buttonType}
-                    onClick={() => onSelect(id)}
-                    className={btnClassName}
-                    text={name}
-                    size={ButtonSize.small}
-                />
-            );
+            return type === FilterType.Strategy
+                ? renderStrategyFilterItem(buttonType,btnClassName,name,id)
+                : renderStatusFilterItem(buttonType,btnClassName, name, id);
+            
         },
-        [ onSelect, values ],
+        [ renderStatusFilterItem, renderStrategyFilterItem, type, values ],
     );
     
     const className = concatClassNames(
