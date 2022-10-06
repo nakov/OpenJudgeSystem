@@ -125,7 +125,7 @@
 
             if (contest == null ||
                 contest.IsDeleted ||
-                (!contest.IsVisible && !isUserAdminOrLecturerInContest))
+                (!contest.Visible && !isUserAdminOrLecturerInContest))
             {
                 throw new HttpException(
                     (int)HttpStatusCode.NotFound,
@@ -474,7 +474,7 @@
                 IpAddress = this.Request.UserHostAddress,
                 IsPublic = ((participant.IsOfficial && contest.ContestPassword == null) ||
                                 (!participant.IsOfficial && contest.PracticePassword == null)) &&
-                            contest.IsVisible &&
+                            contest.Visible &&
                             !contest.IsDeleted &&
                             problem.ShowResults
             };

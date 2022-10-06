@@ -31,6 +31,7 @@
                 PracticeEndTime = contest.PracticeEndTime,
                 IsDeleted = contest.IsDeleted,
                 IsVisible = contest.IsVisible,
+                VisibleFrom = contest.VisibleFrom,
                 IsOnline = contest.Type == ContestType.OnlinePracticalExam,
                 ContestPassword = contest.ContestPassword,
                 PracticePassword = contest.PracticePassword,
@@ -91,6 +92,8 @@
 
         public bool IsVisible { get; set; }
 
+        public DateTime? VisibleFrom { get; set; }
+        
         public bool IsOnline { get; set; }
 
         public string ContestPassword { private get; set; }
@@ -116,6 +119,24 @@
         public IEnumerable<ContestCategoryListViewModel> ParentCategories { get; set; } =
             Enumerable.Empty<ContestCategoryListViewModel>();
 
+        public bool Visible
+        {
+            get
+            {
+                if (!this.IsVisible && this.VisibleFrom == null)
+                {
+                    return false;
+                }
+
+                if (this.IsVisible || (this.VisibleFrom != null && this.VisibleFrom <= DateTime.Now))
+                {
+                    return true;
+                }
+
+                return this.IsVisible;
+            }
+        }
+        
         public bool CanBeCompeted
         {
             get

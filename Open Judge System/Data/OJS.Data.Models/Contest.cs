@@ -22,6 +22,8 @@
         [Required]
         [Index]
         public bool IsVisible { get; set; }
+        
+        public DateTime? VisibleFrom { get; set; }
 
         public bool AutoChangeTestsFeedbackVisibility { get; set; }
 
@@ -103,11 +105,30 @@
         public virtual ICollection<ExamGroup> ExamGroups { get; set; } = new HashSet<ExamGroup>();
 
         [NotMapped]
+        public bool Visible
+        {
+            get
+            {
+                if (!this.IsVisible && this.VisibleFrom == null)
+                {
+                    return false;
+                }
+
+                if (this.IsVisible || (this.VisibleFrom != null && this.VisibleFrom <= DateTime.Now))
+                {
+                    return true;
+                }
+
+                return this.IsVisible;
+            }
+        }
+        
+        [NotMapped]
         public bool CanBeCompeted
         {
             get
             {
-                if (!this.IsVisible)
+                if (!this.Visible)
                 {
                     return false;
                 }
@@ -138,7 +159,7 @@
         {
             get
             {
-                if (!this.IsVisible)
+                if (!this.Visible)
                 {
                     return false;
                 }
@@ -177,7 +198,7 @@
         {
             get
             {
-                if (!this.IsVisible)
+                if (!this.Visible)
                 {
                     return false;
                 }
