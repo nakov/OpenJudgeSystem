@@ -6,7 +6,8 @@ import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import styles from './ContestCategories.module.scss';
 import { useContests } from '../../../hooks/use-contests';
 import { IHaveOptionalClassName } from '../../common/Props';
-import Tree, { ITreeItemType } from '../../guidelines/trees/Tree';
+import Tree from '../../guidelines/trees/Tree';
+import ITreeItemType from '../../../common/tree-types';
 import { IFilter } from '../../../common/contest-types';
 import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
 
@@ -94,9 +95,10 @@ const ContestCategories = ({
             </Heading>
             <Tree
                 items={categories}
-                onTreeLabelClick={handleTreeLabelClick}
+                onSelect={handleTreeLabelClick}
                 defaultSelected={defaultSelected}
                 defaultExpanded={defaultExpanded}
+                treeItemHasTooltip
             />
         </div>
     );

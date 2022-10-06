@@ -1,4 +1,4 @@
-import { ITreeItemType } from '../../components/guidelines/trees/Tree';
+import ITreeItemType from '../../common/tree-types';
 import { ContestStatus, FilterType, IContestStrategyFilter, IFilter } from '../../common/contest-types';
 import { generateFilterItems } from '../../common/filter-utils';
 import { IContestCategoryTreeType } from '../../common/types';

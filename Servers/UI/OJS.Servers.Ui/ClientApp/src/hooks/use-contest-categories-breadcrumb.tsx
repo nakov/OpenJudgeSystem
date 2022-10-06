@@ -1,6 +1,6 @@
 ﻿import React, { createContext, useCallback, useContext, useState } from 'react';
 import { isNil } from 'lodash';
-import { ITreeItemType } from '../components/guidelines/trees/Tree';
+import ITreeItemType from '../common/tree-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 import { IContestCategoryTreeType } from '../common/types';
 
