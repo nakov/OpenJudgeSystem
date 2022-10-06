@@ -60,7 +60,7 @@ const Tree = ({
             {isArray(node.children)
                 ? node.children.map((child) =>
                     treeItemHasTooltip
-                        ? (<div className={styles.categoriesTree}>
+                        ? (<div className={styles.categoriesTree} key={child.id}>
                             <div className={styles.tooltip}>
                                 {child.name}
                             </div>

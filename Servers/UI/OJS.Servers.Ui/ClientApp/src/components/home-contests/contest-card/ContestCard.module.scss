@@ -61,7 +61,8 @@
   overflow: hidden;
   display: block;
   text-overflow: ellipsis;
-  width: 225px;
+  width: 100%;
+  max-width: 225px;
 }
 
 .tooltip {
@@ -70,7 +71,9 @@
   border-bottom: 1px dotted black;
 
   .tooltipText {
-    width: 245px;
+    width: 100%;
+    min-width:245px;
+    max-width: 245px;
     background-color: grey;
     color: $success-font-color;
     text-align: center;

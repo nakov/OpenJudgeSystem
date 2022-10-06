@@ -3,14 +3,14 @@ import { MdExpandMore } from 'react-icons/md';
 import IconSize from './common/icon-sizes';
 import Icon, { IIconProps } from './Icon';
 
-interface IMdExpandMoreIconProps extends IIconProps{
+interface IExpandMoreIconProps extends IIconProps{
 }
 
 const ExpandMoreIcon =({
     className = '',
     size = IconSize.Medium,
     helperText = '',
-}: IMdExpandMoreIconProps) =>(
+}: IExpandMoreIconProps) =>(
     <Icon
         className={className}
         size={size}
