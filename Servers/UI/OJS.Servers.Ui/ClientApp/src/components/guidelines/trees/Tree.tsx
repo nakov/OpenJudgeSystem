@@ -81,13 +81,11 @@ const Tree = ({
         (node: ITreeItemType) => 
             treeItemHasTooltip
                 ? (<div className={styles.Tree} key={node.id}>
-                    <div className={styles.tooltip}>
-                        {node.name}
-                    </div>
+                    {renderTooltip(node)}
                     {renderTreeItem(node)}
                 </div>)
                 : renderTreeItem(node),
-        [ renderTreeItem, treeItemHasTooltip ],
+        [ renderTooltip, renderTreeItem, treeItemHasTooltip ],
     );
 
     const itemFuncInternal = useMemo(

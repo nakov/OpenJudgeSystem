@@ -29,8 +29,8 @@
   border-bottom-color: $bottom-border-color;
 
   &:hover {
-    .tooltip {
-      display: block;
+    .tooltip{
+      visibility: visible;
     }
   }
 }
@@ -67,20 +67,17 @@
 
 .tooltip {
   position: absolute;
-  display: none;
-  border-bottom: 1px dotted black;
+  visibility: hidden;
+  width: 100%;
+  max-width: 245px;
 
   .tooltipText {
-    width: 100%;
-    min-width:245px;
-    max-width: 245px;
-    background-color: grey;
+    background-color: $grey-color;
     color: $success-font-color;
     text-align: center;
     border-radius: 6px;
     padding: 5px 0;
     position: absolute;
     bottom: 100%;
-    left: 50%;
   }
 }
