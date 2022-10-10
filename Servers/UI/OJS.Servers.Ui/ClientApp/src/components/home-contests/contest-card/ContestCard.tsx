@@ -46,9 +46,9 @@ const ContestCard = ({ contest }: IContestCardProps) => {
 
             return (
                 <Countdown
-                  key={id}
-                  duration={convertToSecondsRemaining(new Date(endDate))}
-                  metric={Metric.seconds}
+                    key={id}
+                    duration={convertToSecondsRemaining(new Date(endDate))}
+                    metric={Metric.seconds}
                 />
             );
         },
@@ -58,7 +58,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const renderContestLockIcon = useCallback(
         () => {
             const { hasContestPassword, hasPracticePassword } = contest;
-            
+
             return (canBeCompeted && hasContestPassword) || (canBePracticed && hasPracticePassword)
                 ? <LockIcon />
                 : null;
@@ -69,7 +69,10 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     return (
         <div className={contestCardClassName}>
             <div className={contestCardHeaderClassName}>
-                <span>{name}</span>
+                <div className={styles.tooltip}>
+                    <span className={styles.tooltipText}>{name}</span>
+                </div>
+                <span className={styles.contestCardTitle}>{name}</span>
                 { renderContestLockIcon() }
             </div>
             <div className={contestCardCategoryClassName}>{category}</div>
@@ -78,27 +81,27 @@ const ContestCard = ({ contest }: IContestCardProps) => {
             </div>
             <div className={contestCardControlBtnsClassName}>
                 <LinkButton
-                  id="button-card-compete"
-                  to={`/contests/${id}/register/compete`}
-                  text="Compete"
-                  state={
+                    id="button-card-compete"
+                    to={`/contests/${id}/register/compete`}
+                    text="Compete"
+                    state={
                         canBeCompeted
                             ? ButtonState.enabled
                             : ButtonState.disabled
                     }
-                  size={ButtonSize.small}
+                    size={ButtonSize.small}
                 />
                 <LinkButton
-                  id="button-card-practice"
-                  to={`/contests/${id}/register/practice`}
-                  text="Practice"
-                  type={LinkButtonType.secondary}
-                  state={
+                    id="button-card-practice"
+                    to={`/contests/${id}/register/practice`}
+                    text="Practice"
+                    type={LinkButtonType.secondary}
+                    state={
                         canBePracticed
                             ? ButtonState.enabled
                             : ButtonState.disabled
                     }
-                  size={ButtonSize.small}
+                    size={ButtonSize.small}
                 />
             </div>
         </div>
