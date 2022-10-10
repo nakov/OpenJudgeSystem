@@ -117,7 +117,11 @@ namespace OJS.Services.Common.Implementations
                     MaxPoints = submission.Problem.MaximumPoints,
                     CheckerType = checkerType,
                     Tests = tests,
-                    submission.Problem.SolutionSkeleton
+                    SolutionSkeleton = submission.Problem
+                        .SubmissionTypesInProblems
+                        .Where(x => x.SubmissionTypeId == submission.SubmissionTypeId)
+                        .Select(x => x.SolutionSkeleton)
+                        .FirstOrDefault()
                 },
             };
 

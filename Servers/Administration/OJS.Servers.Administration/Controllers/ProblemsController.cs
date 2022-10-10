@@ -459,7 +459,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             Type = typeof(IFormFile),
         });
 
-        var submissionTypes = entity.SubmissionTypesInProblems.ToList();
+        var submissionTypesInProblem = entity.SubmissionTypesInProblems.ToList();
 
         formControls.Add(new FormControlViewModel
         {
@@ -467,13 +467,22 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             Options = this.submissionTypesData
                 .GetQuery()
                 .ToList()
-                .Select(st => new CheckboxFormControlViewModel
+                .Select(st => new ExpandableMultiChoiceCheckBoxFormControlViewModel
                 {
                     Name = st.Name,
                     Value = st.Id,
-                    IsChecked = submissionTypes.Any(x => x.SubmissionTypeId == st.Id),
+                    IsChecked = submissionTypesInProblem.Any(x => x.SubmissionTypeId == st.Id),
+                    Expand =  new FormControlViewModel
+                    {
+                        Name = st.Name + " " + AdditionalFormFields.SolutionSkeletonRaw.ToString(),
+                        Value = submissionTypesInProblem
+                            .Where(x => x.SubmissionTypeId == st.Id)
+                            .Select(x => x.SolutionSkeleton)
+                            .FirstOrDefault()?.Decompress(),
+                        Type = typeof(string),
+                    }
                 }),
-            FormControlType = FormControlType.MultiChoiceCheckbox,
+            FormControlType = FormControlType.ExpandableMultiChoiceCheckBox,
             Type = typeof(object),
         });
 
@@ -601,6 +610,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             {
                 ProblemId = problem.Id,
                 SubmissionTypeId = int.Parse(x.Value!.ToString()!),
+                SolutionSkeleton = x.Expand.Value?.ToString()?.Compress()
             });
 
         problem.SubmissionTypesInProblems.Clear();
