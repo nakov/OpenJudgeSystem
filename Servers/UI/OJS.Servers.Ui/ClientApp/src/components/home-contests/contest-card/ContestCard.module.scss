@@ -27,6 +27,12 @@
   margin: 10px;
   border-bottom: 1px solid;
   border-bottom-color: $bottom-border-color;
+
+  &:hover {
+    .tooltip {
+      visibility: visible;
+    }
+  }
 }
 
 .contestCardControls {
@@ -48,4 +54,30 @@
   text-transform: uppercase;
   font-weight: bold;
   color: $text-light-gray-color;
+}
+
+.contestCardTitle {
+  white-space: nowrap;
+  overflow: hidden;
+  display: block;
+  text-overflow: ellipsis;
+  width: 100%;
+  max-width: 225px;
+}
+
+.tooltip {
+  position: absolute;
+  visibility: hidden;
+  width: 100%;
+  max-width: 245px;
+
+  .tooltipText {
+    background-color: $grey-color;
+    color: $success-font-color;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    bottom: 100%;
+  }
 }
