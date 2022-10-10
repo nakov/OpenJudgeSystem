@@ -32,11 +32,14 @@
 
 .strategyHeader {
   width: 10px;
+  
   &:hover {
+    
     .tooltip {
       display: block;
     }
   }
+  
   .strategyElementClassName {
     white-space: nowrap;
     overflow: hidden;
