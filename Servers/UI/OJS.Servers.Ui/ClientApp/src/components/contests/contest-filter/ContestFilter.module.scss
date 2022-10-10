@@ -32,13 +32,11 @@
 
 .strategyHeader {
   width: 10px;
-
   &:hover {
     .tooltip {
       display: block;
     }
   }
-
   .strategyElementClassName {
     white-space: nowrap;
     overflow: hidden;
@@ -52,7 +50,7 @@
   left: 14%;
   margin-top: 12px;
   display: none;
-
+  
   .tooltipElement {
     color: $success-background-color;
     border-radius: 6px;
