@@ -7,14 +7,6 @@ $(document).ready(function () {
         }
     });
 
-    $(".expandable").on('click', function (event) {
-        const expandElementId = $(event.target).attr("expand");
-
-        $(`#${expandElementId}`).attr('class').includes('d-none')
-            ? $(`#${expandElementId}`).removeClass('d-none')
-            : $(`#${expandElementId}`).addClass('d-none');
-    });
-
     const forms = $('form');
 
     forms.find('select').select2();
