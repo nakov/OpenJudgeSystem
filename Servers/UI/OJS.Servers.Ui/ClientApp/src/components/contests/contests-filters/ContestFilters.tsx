@@ -3,7 +3,7 @@ import { isNil } from 'lodash';
 import { useSearchParams } from 'react-router-dom';
 import List from '../../guidelines/lists/List';
 
-import { FilterType, IFilter } from '../../../common/contest-types';
+import { FilterType, IFilter, ISort } from '../../../common/contest-types';
 import ContestCategories from '../contest-categories/ContestCategories';
 
 import { useContests } from '../../../hooks/use-contests';
@@ -13,6 +13,7 @@ import { useContestCategories } from '../../../hooks/use-contest-categories';
 import ContestFilter from '../contest-filter/ContestFilter';
 
 import styles from './ContestFilters.module.scss';
+import ContestSorting from '../contest-sorting/ContestSorting';
 
 interface IContestFiltersProps {
     onFilterClick: (filter: IFilter) => void;
@@ -32,8 +33,16 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const { actions: { load: loadStrategies } } = useContestStrategyFilters();
     const { actions: { load: loadCategories } } = useContestCategories();
 
-    const { state: { possibleFilters } } = useContests();
+    const {
+        state: { possibleFilters },
+        actions: { toggleSorting },
+    } = useContests();
 
+    const handleSortClick = useCallback(
+        (sorting: ISort) => toggleSorting(sorting),
+        [ toggleSorting ],
+    );
+    
     const handleFilterClick = useCallback(
         (filterId: number) => {
             const filter = possibleFilters.find(({ id }) => filterId === id);
@@ -120,6 +129,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
                 onCategoryClick={onFilterClick}
                 defaultSelected={defaultSelected}
             />
+            <ContestSorting onSortClick={handleSortClick}/>
             <List
                 values={filtersGroups}
                 itemFunc={renderFilter}

@@ -1,0 +1,23 @@
+﻿@import "src/styles/colors";
+@import "src/styles/fonts";
+
+.heading {
+  text-align: left;
+  padding-bottom: 10px;
+  border-bottom: 1px solid $bottom-border-color;
+}
+
+.sortingTypeContainer {
+  margin-top: 10px;
+}
+
+.listSorting {
+  max-height: 130px;
+  overflow: hidden;
+  align-items: flex-start;
+  justify-content: space-evenly;
+
+  .listSortingItem {
+    margin-top: 5px;
+  }
+}

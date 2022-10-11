@@ -58,12 +58,13 @@ public class ContestsController : BaseApiController
     /// If no page options are provided, default values are applied.
     /// </summary>
     /// <param name="model">The filters by which the contests should be filtered and page options</param>
+    /// /// <param name="sorting">The sorting by which the contests should be ordered</param>
     /// <returns>A page with contests, filtered by provided filters.</returns>
     [HttpGet]
     [ProducesResponseType(typeof(PagedResultResponse<ContestForListingResponseModel>), Status200OK)]
-    public async Task<IActionResult> GetAll([FromQuery] ContestFiltersRequestModel? model)
+    public async Task<IActionResult> GetAll([FromQuery] ContestFiltersAndSortingRequestModel? model)
         => await this.contestsBusinessService
-            .GetAllByFilters(model?.Map<ContestFiltersServiceModel>())
+            .GetAllByFiltersAndSorting(model?.Map<ContestFiltersAndSortingServiceModel>())
             .Map<PagedResultResponse<ContestForListingResponseModel>>()
             .ToOkResult();
 }

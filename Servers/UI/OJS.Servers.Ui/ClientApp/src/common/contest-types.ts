@@ -18,6 +18,24 @@ interface IFilter {
     type: FilterType;
 }
 
+enum SortType {
+    Name = 'name',
+    StartDate = 'startDate',
+    EndDate = 'endDate',
+}
+
+type SortInfo = {
+    name: string;
+    value: string;
+}
+
+interface ISort {
+    name: string;
+    value: string;
+    id: number;
+    type: string;
+}
+
 interface IContestStrategyFilter {
     name: string;
     id: number;
@@ -37,6 +55,8 @@ enum ContestStatus {
 export type {
     IFilter,
     FilterInfo,
+    ISort,
+    SortInfo,
     IContestStrategyFilter,
 };
 
@@ -44,4 +64,5 @@ export {
     ContestType,
     ContestStatus,
     FilterType,
+    SortType,
 };

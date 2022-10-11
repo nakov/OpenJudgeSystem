@@ -35,14 +35,15 @@ namespace OJS.Services.Ui.Data.Implementations
                 .MapCollection<TServiceModel>()
                 .ToListAsync();
 
-        public async Task<PagedResult<TServiceModel>> GetAllAsPageByFilters<TServiceModel>(
-            ContestFiltersServiceModel model)
+        public async Task<PagedResult<TServiceModel>> GetAllAsPageByFiltersAndSorting<TServiceModel>(
+            ContestFiltersAndSortingServiceModel model)
         {
             var contests = model.CategoryIds.Any()
                 ? this.GetAllVisibleByCategories(model.CategoryIds)
                 : this.GetAllVisibleQuery();
 
             contests = this.FilterByStatus(contests, model.Statuses.ToList());
+            contests = this.Sort(contests, model.SortType);
 
             if (model.SubmissionTypeIds.Any())
             {
@@ -51,9 +52,6 @@ namespace OJS.Services.Ui.Data.Implementations
             }
 
             return await contests
-                .OrderBy(c => c.StartTime)
-                .ThenBy(c => c.EndTime)
-                .ThenBy(c => c.Name)
                 .MapCollection<TServiceModel>()
                 .ToPagedResultAsync(model.ItemsPerPage, model.PageNumber);
         }
@@ -197,6 +195,37 @@ namespace OJS.Services.Ui.Data.Implementations
                 .SelectMany(p => p.SubmissionTypesInProblems)
                 .Select(x => x.SubmissionTypeId)
                 .Any(x => submissionTypeIds.Contains(x)); // Does not work if converted to method group
+
+        private IQueryable<Contest> Sort(
+            IQueryable<Contest> contests,
+            string sorting)
+        {
+            if (sorting == "startDate")
+            {
+                return contests
+                    .OrderByDescending(c => c.StartTime)
+                    .ThenByDescending(c => c.PracticeStartTime)
+                    .ThenBy(c => c.Name);
+            }
+
+            if (sorting == "endDate")
+            {
+                return contests
+                    .OrderByDescending(c => c.EndTime)
+                    .ThenByDescending(c => c.PracticeEndTime)
+                    .ThenBy(c => c.Name);
+            }
+
+            if (sorting == "name")
+            {
+                return contests
+                    .OrderBy(c => c.Name)
+                    .ThenByDescending(c => c.StartTime)
+                    .ThenByDescending(c => c.PracticeStartTime);
+            }
+
+            return contests;
+        }
 
         private IQueryable<Contest> FilterByStatus(
             IQueryable<Contest> contests,

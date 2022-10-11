@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using OJS.Servers.Ui.Models.Contests;
 
 namespace OJS.Services.Ui.Business.Implementations
 {
@@ -206,10 +207,10 @@ namespace OJS.Services.Ui.Business.Implementations
             }
         }
 
-        public async Task<PagedResult<ContestForListingServiceModel>> GetAllByFilters(
-            ContestFiltersServiceModel? model)
+        public async Task<PagedResult<ContestForListingServiceModel>> GetAllByFiltersAndSorting(
+            ContestFiltersAndSortingServiceModel? model)
         {
-            model ??= new ContestFiltersServiceModel();
+            model ??= new ContestFiltersAndSortingServiceModel();
             model.PageNumber ??= 1;
             model.ItemsPerPage ??= DefaultContestsPerPage;
 
@@ -222,7 +223,7 @@ namespace OJS.Services.Ui.Business.Implementations
                     .Concat(subcategories.Select(cc => cc.Id).ToList());
             }
 
-            return await this.contestsData.GetAllAsPageByFilters<ContestForListingServiceModel>(model);
+            return await this.contestsData.GetAllAsPageByFiltersAndSorting<ContestForListingServiceModel>(model);
         }
 
         private bool IsUserLecturerInContest(Contest contest, string userId) =>
