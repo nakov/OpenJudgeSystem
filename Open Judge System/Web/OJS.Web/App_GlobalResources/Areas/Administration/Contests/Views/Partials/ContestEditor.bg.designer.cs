@@ -125,6 +125,15 @@ namespace Resources.Areas.Administration.Contests.Views.Partials {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Изберете време и час от които състезанието става видимо.
+        /// </summary>
+        public static string Contest_visible_from {
+            get {
+                return ResourceManager.GetString("Contest_visible_from", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Въведете продължителността на изпита в часове.
         /// </summary>
         public static string Duration {
