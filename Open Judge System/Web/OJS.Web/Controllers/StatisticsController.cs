@@ -5,19 +5,28 @@
     using System.Linq;
     using System.Threading;
     using System.Web.Mvc;
-
+    using OJS.Common;
+    using OJS.Common.Models;
     using OJS.Data;
+    using OJS.Services.Business.ParticipantScores;
+    using OJS.Services.Business.ParticipantScores.Models;
     using OJS.Services.Cache.Statistics;
+    using OJS.Web.Common.Attributes;
     using OJS.Web.ViewModels.Statistics;
 
     public class StatisticsController : BaseController
     {
         private readonly ISubmissionStatisticsCacheService submissionStatisticsCache;
+        private readonly IParticipantScoresBusinessService participantScoresBusiness;
 
-        public StatisticsController(IOjsData data, ISubmissionStatisticsCacheService submissionStatisticsCache)
+        public StatisticsController(
+            IOjsData data, 
+            ISubmissionStatisticsCacheService submissionStatisticsCache, 
+            IParticipantScoresBusinessService participantScoresBusiness)
             : base(data)
         {
             this.submissionStatisticsCache = submissionStatisticsCache;
+            this.participantScoresBusiness = participantScoresBusiness;
         }
 
         public ActionResult Index()
@@ -41,6 +50,20 @@
                 });
 
             return this.Json(result);
+        }
+
+        [HttpGet]
+        [AuthorizeRoles(SystemRole.Administrator)]
+        public ActionResult GetContestCategoryContestsParticipantScoreInfo(int id, bool showHidden = true, bool official = true)
+        {
+            var categoryParticipationSummary = this.participantScoresBusiness.GetCategoryParticipationSummary(id, showHidden, official);
+
+            var excel = new CategoryContestsParticipationSummaryExcel(categoryParticipationSummary);
+
+            return this.File(
+                excel.GetAsStream().ToArray(),
+                GlobalConstants.ExcelMimeType,
+                $"Summary_{id}.xls");
         }
     }
 }

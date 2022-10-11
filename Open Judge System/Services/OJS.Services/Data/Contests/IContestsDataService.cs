@@ -11,6 +11,8 @@
 
         Contest GetByIdWithProblems(int id);
 
+        Contest GetByIdWithProblemGroups(int id);
+
         IQueryable<Contest> GetByIdQuery(int id);
 
         IQueryable<Contest> GetAll();
@@ -28,6 +30,8 @@
         IQueryable<Contest> GetAllVisible();
 
         IQueryable<Contest> GetAllVisibleByCategory(int categoryId);
+
+        IQueryable<Contest> GetAllNotDeletedByCategory(int categoryId, bool showHidden);
 
         IQueryable<Contest> GetAllVisibleBySubmissionType(int submissionTypeId);
 

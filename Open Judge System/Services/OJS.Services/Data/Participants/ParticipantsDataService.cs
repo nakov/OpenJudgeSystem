@@ -52,6 +52,12 @@
             this.GetAllByContest(contestId)
                 .Where(p => p.IsOfficial);
 
+        public IQueryable<Participant> GetAllByContestIdsAndIsOfficial(IEnumerable<int> contestIds, bool isOfficial)
+            => this.GetAll()
+                .AsNoTracking()
+                .Where(p => contestIds.Contains(p.ContestId))
+                .Where(p => p.IsOfficial == isOfficial);
+
         public IQueryable<Participant> GetAllOfficialInOnlineContestByContestAndParticipationStartTimeRange(
             int contestId,
             DateTime participationStartTimeRangeStart,
@@ -68,6 +74,15 @@
 
         public IQueryable<Participant> GetAllByContestAndIsOfficial(int contestId, bool isOfficial) =>
             this.GetAllByContest(contestId)
+                .Where(p => p.IsOfficial == isOfficial);
+        
+        public IQueryable<Participant> GetAllByContestAndIsOfficialWithUserSubmissionsScoresAndProblems(int contestId, bool isOfficial) =>
+            this.GetAllByContest(contestId)
+                .AsQueryable()
+                .Include(p => p.User)
+                .Include(p => p.Submissions)
+                .Include(p => p.Scores)
+                .Include(p => p.Problems)
                 .Where(p => p.IsOfficial == isOfficial);
 
         public bool ExistsByContestAndUser(int contestId, string userId) =>

@@ -37,6 +37,12 @@
                     ps.ProblemId == problemId &&
                     ps.IsOfficial == isOfficial);
 
+        public IQueryable<ParticipantScore> GetAllByParticipantIdAndIsOfficial(int participantId, bool isOfficial)
+            => this.participantScores
+                .All()
+                .Where(ps => ps.ParticipantId == participantId)
+                .Where(ps => ps.IsOfficial == isOfficial);
+
         public IQueryable<ParticipantScore> GetAll() =>
             this.participantScores.All();
 

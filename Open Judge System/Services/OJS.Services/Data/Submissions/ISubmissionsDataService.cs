@@ -20,6 +20,11 @@
         IQueryable<Submission> GetAllByProblem(int problemId);
 
         IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId);
+        
+        IQueryable<IGrouping<int, Submission>> GetFirstBestForProblemIdsByParticipantGroupedByProblemId(
+            IEnumerable<int> problemIds, int participantId);
+        
+        IQueryable<IGrouping<int, Submission>> GetWithMaxPointsByParticipantIds(IEnumerable<int> participantIds);
 
         IQueryable<Submission> GetAllFromContestsByLecturer(string lecturerId);
 
@@ -31,6 +36,8 @@
 
         IEnumerable<int> GetIdsByProblem(int problemId);
 
+        IQueryable<IGrouping<int, Submission>> GetLastSubmittedForParticipants(IEnumerable<int> participantId);
+        
         bool IsOfficialById(int id);
 
         void SetAllToUnprocessedByProblem(int problemId);

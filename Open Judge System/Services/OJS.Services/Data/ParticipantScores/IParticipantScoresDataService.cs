@@ -12,6 +12,8 @@
 
         ParticipantScore GetByParticipantIdProblemIdAndIsOfficial(int participantId, int problemId, bool isOfficial);
 
+        IQueryable<ParticipantScore> GetAllByParticipantIdAndIsOfficial(int participantId, bool isOfficial);
+
         IQueryable<ParticipantScore> GetAll();
 
         IQueryable<ParticipantScore> GetAllByProblem(int problemId);

@@ -22,6 +22,11 @@
             this.GetAll()
                 .Include(c => c.ProblemGroups.Select(pg => pg.Problems))
                 .FirstOrDefault(c => c.Id == id);
+        
+        public Contest GetByIdWithProblemGroups(int id) =>
+            this.GetAll()
+                .Include(c => c.ProblemGroups)
+                .FirstOrDefault(c => c.Id == id);
 
         public IQueryable<Contest> GetByIdQuery(int id) =>
             this.GetAll()
@@ -69,6 +74,21 @@
         public IQueryable<Contest> GetAllVisibleByCategory(int categoryId) =>
             this.GetAllVisible()
                 .Where(c => c.CategoryId == categoryId);
+
+        public IQueryable<Contest> GetAllNotDeletedByCategory(int categoryId, bool showHidden)
+        {
+            var contests = this.GetAll()
+                .AsNoTracking()
+                .Where(c => c.CategoryId == categoryId)
+                .Where(c => !c.IsDeleted);
+
+            if (!showHidden)
+            {
+                contests = contests.Where(c => c.IsVisible);
+            }
+
+            return contests;
+        }
 
         public IQueryable<Contest> GetAllVisibleBySubmissionType(int submissionTypeId) =>
             this.GetAllVisible()
