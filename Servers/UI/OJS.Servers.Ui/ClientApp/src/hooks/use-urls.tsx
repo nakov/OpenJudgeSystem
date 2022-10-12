@@ -1,5 +1,6 @@
 import React, { createContext, useContext } from 'react';
-import { isNil } from 'lodash';
+import isNil from 'lodash/isNil';
+
 import {
     IAllContestsUrlParams,
     IDownloadProblemResourceUrlParams,
@@ -37,8 +38,7 @@ interface IUrlsContext {
 
 const UrlsContext = createContext<IUrlsContext>({} as IUrlsContext);
 
-interface IUrlsProviderProps extends IHaveChildrenProps {
-}
+type IUrlsProviderProps = IHaveChildrenProps
 
 const baseUrl = window.URLS.UI_URL;
 const baseApiUrl = `${baseUrl}/api`;

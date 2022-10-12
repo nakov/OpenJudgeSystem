@@ -1,8 +1,9 @@
-import * as React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
+
 import concatClassNames from '../../../utils/class-names';
 import generateId from '../../../utils/id-generator';
 import { ClassNameType, IHaveChildrenProps, IHaveOptionalClassName } from '../../common/Props';
+
 import styles from './FormControl.module.scss';
 
 enum FormControlType {
@@ -72,11 +73,9 @@ const FormControl = ({
     name,
     value = '',
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onChange = (v?: string) => {
-    },
+    onChange = (v?: string) => null,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onInput = (v?: string) => {
-    },
+    onInput = (v?: string) => null,
     className = '',
     containerClassName = '',
     labelText = '',

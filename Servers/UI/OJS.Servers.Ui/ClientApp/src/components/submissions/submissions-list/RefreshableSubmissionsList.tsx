@@ -1,11 +1,12 @@
 import React, { useCallback } from 'react';
-import { isNil } from 'lodash';
-import SubmissionsList, { ISubmissionsListProps } from './SubmissionsList';
+import isNil from 'lodash/isNil';
+
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import Button, { ButtonType } from '../../guidelines/buttons/Button';
 
-interface IRefreshableSubmissionsListProps extends ISubmissionsListProps {
-}
+import SubmissionsList, { ISubmissionsListProps } from './SubmissionsList';
+
+type IRefreshableSubmissionsListProps = ISubmissionsListProps
 
 const RefreshableSubmissionsList = ({
     items,

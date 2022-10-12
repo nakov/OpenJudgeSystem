@@ -1,9 +1,9 @@
-import * as React from 'react';
-import { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
+
+import concatClassNames from '../../../utils/class-names';
+import generateId from '../../../utils/id-generator';
 import { IHaveChildrenProps, IHaveOptionalClassName } from '../../common/Props';
 import { Button, ButtonType } from '../buttons/Button';
-import generateId from '../../../utils/id-generator';
-import concatClassNames from '../../../utils/class-names';
 
 interface IFormProps extends IHaveChildrenProps, IHaveOptionalClassName {
     onSubmit: () => void;

@@ -1,7 +1,9 @@
-import * as React from 'react';
-import styles from './Label.module.scss';
+import React from 'react';
+
 import concatClassNames from '../../../utils/class-names';
 import { IHaveOptionalChildrenProps, IHaveOptionalClassName } from '../../common/Props';
+
+import styles from './Label.module.scss';
 
 enum LabelType {
     success = 1,

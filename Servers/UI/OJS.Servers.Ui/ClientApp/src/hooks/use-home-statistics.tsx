@@ -1,7 +1,9 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+
 import { IHaveChildrenProps } from '../components/common/Props';
-import { useLoading } from './use-loading';
+
 import { useHttp } from './use-http';
+import { useLoading } from './use-loading';
 import { useUrls } from './use-urls';
 
 interface IHomeStatisticsContext {
@@ -24,8 +26,7 @@ interface IHomeStatistics {
     contestsCount: number;
 }
 
-interface IHomeStatisticsProviderProps extends IHaveChildrenProps {
-}
+type IHomeStatisticsProviderProps = IHaveChildrenProps
 
 const HomeStatisticsProvider = ({ children }: IHomeStatisticsProviderProps) => {
     const [ statistics, setStatistics ] = useState <IHomeStatistics | null>(null);

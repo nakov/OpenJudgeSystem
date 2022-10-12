@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
-import { TabContext, TabList, TabPanel } from '@material-ui/lab';
-import { ThemeProvider } from '@mui/styles';
-import { Theme } from '@material-ui/core/styles/createTheme';
+import { Theme } from '@material-ui/core/styles/';
+import createTheme from '@material-ui/core/styles/createTheme';
+import Tab from '@material-ui/core/Tab';
+import TabContext from '@material-ui/lab/TabContext';
+import TabList from '@material-ui/lab/TabList';
+import TabPanel from '@material-ui/lab/TabPanel';
+import Box from '@mui/material/Box';
+import ThemeProvider from '@mui/styles/ThemeProvider';
 
-import { Tab, createTheme } from '@material-ui/core';
-import { Box } from '@mui/material';
+import { Anything } from '../../../common/common-types';
 
 interface ITabPanelProps {
     labels: string[]
@@ -23,7 +27,7 @@ const Tabs = ({ contents, labels, themeOverride, childrenClassName }: ITabPanelP
             ? createTheme({ overrides: { MuiTabs: { indicator: { backgroundColor: '#42abf8', height: 3 } } } })
             : themeOverride;
 
-    const handleChange = (event: React.ChangeEvent<{}>, newValue: string) => {
+    const handleChange = (event: React.ChangeEvent<Anything>, newValue: string) => {
         setValue(newValue);
     };
 

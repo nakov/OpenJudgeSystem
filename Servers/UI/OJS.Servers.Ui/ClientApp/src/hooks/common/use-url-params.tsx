@@ -1,7 +1,8 @@
 import React, { createContext, useCallback, useContext, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { IHaveChildrenProps } from '../../components/common/Props';
+
 import { IDictionary, IUrlParam } from '../../common/common-types';
+import { IHaveChildrenProps } from '../../components/common/Props';
 
 interface IUrlParamsContext {
     state: {
@@ -14,8 +15,7 @@ interface IUrlParamsContext {
     };
 }
 
-interface IUrlParamsProviderProps extends IHaveChildrenProps {
-}
+type IUrlParamsProviderProps = IHaveChildrenProps
 
 const defaultState = { state: {} };
 

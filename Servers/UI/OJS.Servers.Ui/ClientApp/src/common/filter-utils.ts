@@ -1,7 +1,9 @@
 /* eslint-disable import/prefer-default-export */
-import { groupBy } from 'lodash';
-import { FilterInfo, FilterType, IFilter } from './contest-types';
+import groupBy from 'lodash/groupBy';
+
 import { areStringEqual } from '../utils/compare-utils';
+
+import { FilterInfo, FilterType, IFilter } from './contest-types';
 
 const getNextIdGen = function* () {
     let index = 1;

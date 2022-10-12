@@ -1,20 +1,23 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { isEmpty, isNil } from 'lodash';
-import { IHaveChildrenProps, IPagesInfo } from '../components/common/Props';
-import { IIndexContestsType, IPagedResultType } from '../common/types';
-import { ContestStatus, FilterType, IFilter } from '../common/contest-types';
-import { useHttp } from './use-http';
-import { useUrls } from './use-urls';
-import { filterByType, findFilterByTypeAndName } from '../common/filter-utils';
-import { useLoading } from './use-loading';
-import { useContestStrategyFilters } from './use-contest-strategy-filters';
-import { useContestCategories } from './use-contest-categories';
+import isEmpty from 'lodash/isEmpty';
+import isNil from 'lodash/isNil';
+
 import { IUrlParam, UrlType } from '../common/common-types';
-import { IAllContestsUrlParams } from '../common/url-types';
-import { useUrlParams } from './common/use-url-params';
+import { ContestStatus, FilterType, IFilter } from '../common/contest-types';
+import { filterByType, findFilterByTypeAndName } from '../common/filter-utils';
 import { PageParams } from '../common/pages-types';
-import { generateCategoryFilters, generateStatusFilters, generateStrategyFilters } from './contests/contest-filter-utils';
+import { IIndexContestsType, IPagedResultType } from '../common/types';
+import { IAllContestsUrlParams } from '../common/url-types';
+import { IHaveChildrenProps, IPagesInfo } from '../components/common/Props';
 import { areStringEqual } from '../utils/compare-utils';
+
+import { useUrlParams } from './common/use-url-params';
+import { generateCategoryFilters, generateStatusFilters, generateStrategyFilters } from './contests/contest-filter-utils';
+import { useContestCategories } from './use-contest-categories';
+import { useContestStrategyFilters } from './use-contest-strategy-filters';
+import { useHttp } from './use-http';
+import { useLoading } from './use-loading';
+import { useUrls } from './use-urls';
 
 interface IContestsContext {
     state: {
@@ -32,8 +35,7 @@ interface IContestsContext {
     };
 }
 
-interface IContestsProviderProps extends IHaveChildrenProps {
-}
+type IContestsProviderProps = IHaveChildrenProps
 
 const defaultState = {
     state: {

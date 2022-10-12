@@ -1,13 +1,14 @@
-import * as React from 'react';
-import { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
-import { isNil } from 'lodash';
+import isNil from 'lodash/isNil';
+
+import { ContestParticipationType } from '../../common/constants';
+import ContestPasswordForm from '../../components/contests/contest-password-form/ContestPasswordForm';
+import { useCurrentContest } from '../../hooks/use-current-contest';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
-import { useCurrentContest } from '../../hooks/use-current-contest';
-import ContestPasswordForm from '../../components/contests/contest-password-form/ContestPasswordForm';
-import { ContestParticipationType } from '../../common/constants';
+
 import styles from './ContestRegisterPage.module.scss';
 
 const ContestRegisterPage = () => {

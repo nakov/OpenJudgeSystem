@@ -1,13 +1,10 @@
 import React, { useCallback } from 'react';
 
-import { format } from '../../../utils/number-utils';
-
-import List from '../../guidelines/lists/List';
-import Heading, { HeadingType } from '../../guidelines/headings/Heading';
-
-import SubmissionGridRow from '../submission-grid-row/SubmissionGridRow';
-
 import { IPublicSubmission, usePublicSubmissions } from '../../../hooks/submissions/use-public-submissions';
+import { format } from '../../../utils/number-utils';
+import Heading, { HeadingType } from '../../guidelines/headings/Heading';
+import List from '../../guidelines/lists/List';
+import SubmissionGridRow from '../submission-grid-row/SubmissionGridRow';
 
 import styles from './SubmissionsGrid.module.scss';
 

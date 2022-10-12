@@ -1,12 +1,13 @@
 import React, { useCallback } from 'react';
-import { isEmpty, isNil } from 'lodash';
-import { Button, ButtonType } from '../../guidelines/buttons/Button';
+import isEmpty from 'lodash/isEmpty';
+import isNil from 'lodash/isNil';
 
 import { useProblemSubmissions } from '../../../hooks/submissions/use-problem-submissions';
+import concatClassNames from '../../../utils/class-names';
+import { Button, ButtonType } from '../../guidelines/buttons/Button';
+import SubmissionsList from '../../submissions/submissions-list/SubmissionsList';
 
 import styles from './SubmissionResults.module.scss';
-import concatClassNames from '../../../utils/class-names';
-import SubmissionsList from '../../submissions/submissions-list/SubmissionsList';
 
 const ProblemSubmissions = () => {
     const {
@@ -43,9 +44,9 @@ const ProblemSubmissions = () => {
 
         return (
             <SubmissionsList
-              items={submissions}
-              selectedSubmission={null}
-              className={styles.submissionsList}
+                items={submissions}
+                selectedSubmission={null}
+                className={styles.submissionsList}
             />
         );
     };
@@ -54,10 +55,10 @@ const ProblemSubmissions = () => {
         <div className={submissionResultsContentClassName}>
             {renderSubmissions()}
             <Button
-              type={ButtonType.secondary}
-              className={refreshButtonClassName}
-              onClick={() => handleReloadClick()}
-              text="Refresh"
+                type={ButtonType.secondary}
+                className={refreshButtonClassName}
+                onClick={() => handleReloadClick()}
+                text="Refresh"
             />
         </div>
     );

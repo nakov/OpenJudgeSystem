@@ -1,14 +1,15 @@
-import * as React from 'react';
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isNil } from 'lodash';
-import { IHaveChildrenProps } from '../components/common/Props';
-import { useUrls } from './use-urls';
-import { useHttp } from './use-http';
-import { useLoading } from './use-loading';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import isNil from 'lodash/isNil';
+
 import {
     IGetContestsForIndexResponseType,
     IIndexContestsType,
 } from '../common/types';
+import { IHaveChildrenProps } from '../components/common/Props';
+
+import { useHttp } from './use-http';
+import { useLoading } from './use-loading';
+import { useUrls } from './use-urls';
 
 interface IHomeContestsContext {
     state: {
@@ -29,8 +30,7 @@ const defaultState = {
 
 const HomeContestsContext = createContext<IHomeContestsContext>(defaultState as IHomeContestsContext);
 
-interface IHomeContestsProviderProps extends IHaveChildrenProps {
-}
+type IHomeContestsProviderProps = IHaveChildrenProps
 
 const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
     const [ activeContests, setActiveContests ] = useState<IIndexContestsType[]>([]);

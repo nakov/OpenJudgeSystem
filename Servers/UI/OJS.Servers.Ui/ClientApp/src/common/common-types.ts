@@ -52,6 +52,9 @@ interface IUrlParam {
     value: any;
 }
 
+
+type Anything = Record<string | number, unknown>
+
 export const SulsQuestionTypeMapping: { [key: number]: QuestionTypeType } = {
     1: 'single' as QuestionTypeType,
     2: 'multiple' as QuestionTypeType,
@@ -68,4 +71,5 @@ export type {
     QuestionTypeType,
     FilterType,
     UrlType,
+    Anything,
 };

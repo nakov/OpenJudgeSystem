@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 
 const oneBillion = 10 ** 9;
 const oneMillion = 10 ** 6;

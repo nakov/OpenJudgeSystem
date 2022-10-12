@@ -1,13 +1,13 @@
 import React, { memo } from 'react';
 import { GrGolang } from 'react-icons/gr';
+
+import concatClassNames from '../../../../utils/class-names';
 import IconSize from '../common/icon-sizes';
 import Icon, { IIconProps } from '../Icon';
 
 import styles from './StrategyIcon.module.scss';
-import concatClassNames from '../../../../utils/class-names';
 
-interface IGoIconProps extends IIconProps {
-}
+type IGoIconProps = IIconProps
 
 const GoIcon = ({
     className = '',

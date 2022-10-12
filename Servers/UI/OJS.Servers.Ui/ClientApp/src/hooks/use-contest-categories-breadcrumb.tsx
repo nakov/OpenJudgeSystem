@@ -1,8 +1,9 @@
 ﻿import React, { createContext, useCallback, useContext, useState } from 'react';
-import { isNil } from 'lodash';
+import isNil from 'lodash/isNil';
+
 import ITreeItemType from '../common/tree-types';
-import { IHaveChildrenProps } from '../components/common/Props';
 import { IContestCategoryTreeType } from '../common/types';
+import { IHaveChildrenProps } from '../components/common/Props';
 
 interface ICategoriesBreadcrumbContext {
     state: {
@@ -13,8 +14,7 @@ interface ICategoriesBreadcrumbContext {
     };
 }
 
-interface ICategoriesBreacrumbProviderProps extends IHaveChildrenProps {
-}
+type ICategoriesBreacrumbProviderProps = IHaveChildrenProps
 
 interface ICategoriesBreadcrumbItem {
     id: string,

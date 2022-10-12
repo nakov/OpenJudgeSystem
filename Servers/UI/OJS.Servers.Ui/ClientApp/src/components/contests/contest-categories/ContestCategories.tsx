@@ -1,15 +1,16 @@
 import React, { useCallback, useMemo } from 'react';
-import { isNil } from 'lodash';
-import { useContestCategories } from '../../../hooks/use-contest-categories';
-import Heading, { HeadingType } from '../../guidelines/headings/Heading';
+import isNil from 'lodash/isNil';
 
-import styles from './ContestCategories.module.scss';
+import { IFilter } from '../../../common/contest-types';
+import ITreeItemType from '../../../common/tree-types';
+import { useContestCategories } from '../../../hooks/use-contest-categories';
+import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
 import { useContests } from '../../../hooks/use-contests';
 import { IHaveOptionalClassName } from '../../common/Props';
+import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import Tree from '../../guidelines/trees/Tree';
-import ITreeItemType from '../../../common/tree-types';
-import { IFilter } from '../../../common/contest-types';
-import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
+
+import styles from './ContestCategories.module.scss';
 
 interface IContestCategoriesProps extends IHaveOptionalClassName {
     onCategoryClick: (filter: IFilter) => void;

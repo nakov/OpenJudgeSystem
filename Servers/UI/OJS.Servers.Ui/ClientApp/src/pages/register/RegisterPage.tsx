@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router';
+
 import { useAuth } from '../../hooks/use-auth';
 
 const RegisterPage = () => {

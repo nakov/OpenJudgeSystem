@@ -1,9 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { TreeItem, TreeView } from '@material-ui/lab';
-import { isArray, isEmpty, isNil, without } from 'lodash';
+import TreeItem from '@material-ui/lab/TreeItem';
+import TreeView from '@material-ui/lab/TreeView';
+import isArray from 'lodash/isArray';
+import isEmpty from 'lodash/isEmpty';
+import isNil from 'lodash/isNil';
+import without from 'lodash/without';
+
+import ITreeItemType from '../../../common/tree-types';
 import ExpandMoreIcon from '../icons/ExpandMoreIcon';
 import RightArrowIcon from '../icons/RightArrowIcon';
-import ITreeItemType from '../../../common/tree-types';
 
 import styles from './Tree.module.scss';
 

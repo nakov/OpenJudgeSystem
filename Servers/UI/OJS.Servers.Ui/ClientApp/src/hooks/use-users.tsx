@@ -1,8 +1,10 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isNil } from 'lodash';
+import isNil from 'lodash/isNil';
+
 import { IHaveChildrenProps } from '../components/common/Props';
-import { useLoading } from './use-loading';
+
 import { useHttp } from './use-http';
+import { useLoading } from './use-loading';
 import { useNotifications } from './use-notifications';
 import { useUrls } from './use-urls';
 
@@ -23,7 +25,7 @@ const defaultState = { profile: { userName: '' } as IUserProfileType };
 
 const UsersContext = createContext<IUsersContext>(defaultState as IUsersContext);
 
-interface IUsersProviderProps extends IHaveChildrenProps {}
+type IUsersProviderProps = IHaveChildrenProps
 
 const UsersProvider = ({ children }: IUsersProviderProps) => {
     const { startLoading, stopLoading } = useLoading();

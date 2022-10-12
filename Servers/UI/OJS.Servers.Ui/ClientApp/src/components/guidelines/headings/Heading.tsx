@@ -1,8 +1,8 @@
 import { createElement } from 'react';
 
-import { IHaveChildrenProps, IHaveOptionalClassName } from '../../common/Props';
 import concatClassNames from '../../../utils/class-names';
 import generateId from '../../../utils/id-generator';
+import { IHaveChildrenProps, IHaveOptionalClassName } from '../../common/Props';
 
 import styles from './Heading.module.scss';
 

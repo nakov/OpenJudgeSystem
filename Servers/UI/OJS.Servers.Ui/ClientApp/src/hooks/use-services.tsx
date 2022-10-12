@@ -15,7 +15,7 @@ const defaultState = { };
 
 const ServicesContext = createContext<IServicesContext>(defaultState as IServicesContext);
 
-interface IServicesProviderProps extends IHaveChildrenProps {}
+type IServicesProviderProps = IHaveChildrenProps
 
 const ServicesProvider = ({ children }: IServicesProviderProps) => {
     const localStorageService = useMemo(() => new CacheService(window.localStorage), []);

@@ -1,10 +1,10 @@
 ﻿import React from 'react';
 import { MdExpandMore } from 'react-icons/md';
+
 import IconSize from './common/icon-sizes';
 import Icon, { IIconProps } from './Icon';
 
-interface IExpandMoreIconProps extends IIconProps{
-}
+type IExpandMoreIconProps = IIconProps
 
 const ExpandMoreIcon =({
     className = '',

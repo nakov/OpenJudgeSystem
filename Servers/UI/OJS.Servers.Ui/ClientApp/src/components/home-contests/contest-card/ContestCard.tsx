@@ -1,12 +1,12 @@
-import * as React from 'react';
-import { useCallback } from 'react';
-import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
-import { convertToSecondsRemaining } from '../../../utils/dates';
+import React, { useCallback } from 'react';
+
 import { IIndexContestsType } from '../../../common/types';
 import concatClassNames from '../../../utils/class-names';
-
+import { convertToSecondsRemaining } from '../../../utils/dates';
 import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
 import LockIcon from '../../guidelines/icons/LockIcon';
+
 import styles from './ContestCard.module.scss';
 
 interface IContestCardProps {

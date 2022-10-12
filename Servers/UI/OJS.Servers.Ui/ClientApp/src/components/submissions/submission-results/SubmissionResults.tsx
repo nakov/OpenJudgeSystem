@@ -1,8 +1,8 @@
-import * as React from 'react';
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
+
 import { ITestRunDetailsType } from '../../../hooks/submissions/types';
-import TestRunDetails from '../test-run-details/TestRunDetails';
 import List, { ListType, Orientation } from '../../guidelines/lists/List';
+import TestRunDetails from '../test-run-details/TestRunDetails';
 
 interface ISubmissionResultsProps {
     testRuns: ITestRunDetailsType[];

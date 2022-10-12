@@ -1,10 +1,10 @@
 ﻿import React from 'react';
 import { MdChevronRight } from 'react-icons/md';
+
 import IconSize from './common/icon-sizes';
 import Icon, { IIconProps } from './Icon';
 
-interface IRightArrowIconProps extends IIconProps{
-}
+type IRightArrowIconProps = IIconProps
 
 const RightArrowIcon=({
     className='',

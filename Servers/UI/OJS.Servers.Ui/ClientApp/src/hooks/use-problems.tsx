@@ -1,8 +1,11 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { first, isNil } from 'lodash';
-import { IProblemType } from '../common/types';
+import first from 'lodash/first';
+import isNil from 'lodash/isNil';
+
 import { IFileResponseType, UrlType } from '../common/common-types';
+import { IProblemType } from '../common/types';
 import { IHaveChildrenProps } from '../components/common/Props';
+
 import { useCurrentContest } from './use-current-contest';
 import { useHttp } from './use-http';
 import { useLoading } from './use-loading';
@@ -19,8 +22,7 @@ interface IProblemsContext {
     };
 }
 
-interface IProblemsProviderProps extends IHaveChildrenProps {
-}
+type IProblemsProviderProps = IHaveChildrenProps
 
 const defaultState = {
     state: {

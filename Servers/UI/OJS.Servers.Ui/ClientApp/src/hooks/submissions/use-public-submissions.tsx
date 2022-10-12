@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useMemo } from 'react';
+
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useHttp } from '../use-http';
 
@@ -55,8 +56,7 @@ const defaultState = {};
 
 const PublicSubmissionsContext = createContext<IPublicSubmissionsContext>(defaultState as IPublicSubmissionsContext);
 
-interface IPublicSubmissionsProviderProps extends IHaveChildrenProps {
-}
+type IPublicSubmissionsProviderProps = IHaveChildrenProps
 
 const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps) => {
     const {

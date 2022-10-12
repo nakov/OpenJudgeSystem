@@ -1,9 +1,10 @@
-import * as React from 'react';
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isNil } from 'lodash';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import isNil from 'lodash/isNil';
+
 import { IHaveChildrenProps } from '../components/common/Props';
-import { useLoading } from './use-loading';
+
 import { useHttp } from './use-http';
+import { useLoading } from './use-loading';
 import { useUrls } from './use-urls';
 
 interface IParticipationType {
@@ -27,8 +28,7 @@ const defaultState = {};
 
 const ParticipationsContext = createContext<IParticipationsContext>(defaultState as IParticipationsContext);
 
-interface IParticipationsProviderProps extends IHaveChildrenProps {
-}
+type IParticipationsProviderProps = IHaveChildrenProps
 
 const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
     const { startLoading, stopLoading } = useLoading();

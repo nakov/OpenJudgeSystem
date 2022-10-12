@@ -1,12 +1,13 @@
-import * as React from 'react';
-import { useCallback } from 'react';
-import { isNil } from 'lodash';
+import React, { useCallback } from 'react';
+import isNil from 'lodash/isNil';
+
 import { useAuth } from '../../hooks/use-auth';
-import FormControl, { FormControlType } from '../guidelines/forms/FormControl';
-import Form from '../guidelines/forms/Form';
-import Heading, { HeadingType } from '../guidelines/headings/Heading';
-import { LinkButton, LinkButtonType } from '../guidelines/buttons/Button';
 import { IDENTITY_CONFIG } from '../../identity-config';
+import { LinkButton, LinkButtonType } from '../guidelines/buttons/Button';
+import Form from '../guidelines/forms/Form';
+import FormControl, { FormControlType } from '../guidelines/forms/FormControl';
+import Heading, { HeadingType } from '../guidelines/headings/Heading';
+
 import styles from './LoginForm.module.scss';
 
 const LoginPage = () => {

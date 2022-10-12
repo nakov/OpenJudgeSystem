@@ -2,8 +2,8 @@
 import React, { Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import App from './App';
 import Loading from './components/guidelines/loading/Loading';
+import App from './App';
 import register from './registerServiceWorker';
 
 const container = document.getElementById('root');

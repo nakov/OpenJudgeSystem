@@ -1,16 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { ContestParticipationType, ContestResultType } from '../../../common/constants';
+import { IProblemType } from '../../../common/types';
+import { useCurrentContest } from '../../../hooks/use-current-contest';
+import { useProblems } from '../../../hooks/use-problems';
+import concatClassNames from '../../../utils/class-names';
+import { Button, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List, { ListType } from '../../guidelines/lists/List';
-import { Button, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
-
-import concatClassNames from '../../../utils/class-names';
-import { IProblemType } from '../../../common/types';
-import { ContestParticipationType, ContestResultType } from '../../../common/constants';
-
-import { useProblems } from '../../../hooks/use-problems';
-import { useCurrentContest } from '../../../hooks/use-current-contest';
-
 import SubmissionResultPointsLabel from '../../submissions/submission-result-points-label/SubmissionResultPointsLabel';
 
 import styles from './ContestTasksNavigation.module.scss';

@@ -1,7 +1,9 @@
-import * as React from 'react';
+import React from 'react';
+
 import { IUserProfileType } from '../../../hooks/use-users';
-import styles from './ProfileAboutInfo.module.scss';
 import { LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+
+import styles from './ProfileAboutInfo.module.scss';
 
 interface IProfileAboutInfoProps {
     value: IUserProfileType

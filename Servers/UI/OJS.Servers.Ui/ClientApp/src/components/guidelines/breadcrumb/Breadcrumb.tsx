@@ -1,12 +1,13 @@
-import * as React from 'react';
-import { Breadcrumbs } from '@material-ui/core';
-import { useCallback } from 'react';
-import { isNil } from 'lodash';
+import React, { useCallback } from 'react';
+import Breadcrumbs from '@material-ui/core/Breadcrumbs';
+import isNil from 'lodash/isNil';
+
 import concatClassNames from '../../../utils/class-names';
-import { IHaveOptionalClassName } from '../../common/Props';
 import generateId from '../../../utils/id-generator';
-import styles from './Breadcrumb.module.scss';
 import defaultKeyFunc from '../../common/colcollection-key-utils';
+import { IHaveOptionalClassName } from '../../common/Props';
+
+import styles from './Breadcrumb.module.scss';
 
 interface IBreadcrumbProps<TValue> extends IHaveOptionalClassName {
     id?: string;

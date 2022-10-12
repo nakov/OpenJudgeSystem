@@ -1,11 +1,9 @@
-import * as React from 'react';
-import { useCallback, useMemo, useState } from 'react';
-import { get } from 'lodash';
+import React, { useCallback, useMemo, useState } from 'react';
+import get from 'lodash/get';
 
-import concatClassNames from '../../../utils/class-names';
-
-import { Button, ButtonSize, ButtonState, ButtonType } from '../../guidelines/buttons/Button';
 import { useSubmissions } from '../../../hooks/submissions/use-submissions';
+import concatClassNames from '../../../utils/class-names';
+import { Button, ButtonSize, ButtonState, ButtonType } from '../../guidelines/buttons/Button';
 
 import styles from './ExecutionTypeSelector.module.scss';
 

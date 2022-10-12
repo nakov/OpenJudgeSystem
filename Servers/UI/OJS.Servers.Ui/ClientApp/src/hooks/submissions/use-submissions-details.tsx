@@ -1,13 +1,15 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isNil } from 'lodash';
-import { useLoading } from '../use-loading';
-import { useHttp } from '../use-http';
-import { useUrls } from '../use-urls';
-import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
+import isNil from 'lodash/isNil';
+
 import { UrlType } from '../../common/common-types';
+import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
 import { IGetSubmissionDetailsByIdUrlParams, IGetSubmissionResultsByProblemUrlParams } from '../../common/url-types';
-import { ISubmissionDetails, ISubmissionDetailsType, ISubmissionType, ITestRunType } from './types';
 import { IHaveChildrenProps } from '../../components/common/Props';
+import { useHttp } from '../use-http';
+import { useLoading } from '../use-loading';
+import { useUrls } from '../use-urls';
+
+import { ISubmissionDetails, ISubmissionDetailsType, ISubmissionType, ITestRunType } from './types';
 
 interface ISubmissionsDetailsContext {
     state: {
@@ -25,7 +27,7 @@ const defaultState = { state: { currentProblemSubmissionResults: [] as ISubmissi
 
 const SubmissionsDetailsContext = createContext<ISubmissionsDetailsContext>(defaultState as ISubmissionsDetailsContext);
 
-interface ISubmissionsDetailsProviderProps extends IHaveChildrenProps {}
+type ISubmissionsDetailsProviderProps = IHaveChildrenProps
 
 const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderProps) => {
     const { startLoading, stopLoading } = useLoading();

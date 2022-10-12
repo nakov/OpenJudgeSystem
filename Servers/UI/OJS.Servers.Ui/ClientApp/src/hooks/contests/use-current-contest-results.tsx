@@ -1,12 +1,14 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isNil } from 'lodash';
-import { IHaveChildrenProps } from '../../components/common/Props';
-import { IContestResultsParticipationType, IContestResultsType } from './types';
-import { useLoading } from '../use-loading';
-import { useHttp } from '../use-http';
-import { IGetContestResultsParams } from '../../common/url-types';
-import { useUrls } from '../use-urls';
+import isNil from 'lodash/isNil';
+
 import { UrlType } from '../../common/common-types';
+import { IGetContestResultsParams } from '../../common/url-types';
+import { IHaveChildrenProps } from '../../components/common/Props';
+import { useHttp } from '../use-http';
+import { useLoading } from '../use-loading';
+import { useUrls } from '../use-urls';
+
+import { IContestResultsParticipationType, IContestResultsType } from './types';
 
 interface ICurrentContestResultsContext {
     state: {
@@ -17,8 +19,7 @@ interface ICurrentContestResultsContext {
     };
 }
 
-interface ICurrentContestResultsProviderProps extends IHaveChildrenProps {
-}
+type ICurrentContestResultsProviderProps = IHaveChildrenProps
 
 const defaultState = { state: { contestResults: { results: [] as IContestResultsParticipationType[] } as IContestResultsType } };
 

@@ -1,5 +1,5 @@
-﻿import { useUrls } from '../../hooks/use-urls';
-import { RedirectExternal } from '../../components/common/RedirectExternal';
+﻿import { RedirectExternal } from '../../components/common/RedirectExternal';
+import { useUrls } from '../../hooks/use-urls';
 
 const AdministrationPage = () => {
     const { getAdministrationContestsGridUrl } = useUrls();

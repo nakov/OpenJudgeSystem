@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React from 'react';
+
 import { ITestRunDetailsType } from '../../../hooks/submissions/types';
 import Diff from '../../Diff';
 

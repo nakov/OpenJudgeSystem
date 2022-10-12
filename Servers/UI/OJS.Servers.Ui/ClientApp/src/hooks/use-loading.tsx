@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { createContext, useCallback, useContext, useState } from 'react';
+import React, { createContext, useCallback, useContext, useState } from 'react';
+
 import { IHaveChildrenProps } from '../components/common/Props';
 import Loading from '../components/guidelines/loading/Loading';
 

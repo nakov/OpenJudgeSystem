@@ -1,10 +1,12 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isNil } from 'lodash';
-import { IHaveChildrenProps } from '../components/common/Props';
+import isNil from 'lodash/isNil';
+
 import { IContestStrategyFilter } from '../common/contest-types';
+import { IHaveChildrenProps } from '../components/common/Props';
+
+import { useHttp } from './use-http';
 import { useLoading } from './use-loading';
 import { useUrls } from './use-urls';
-import { useHttp } from './use-http';
 
 interface IContestStrategyFiltersContext {
     state: {
@@ -18,8 +20,7 @@ interface IContestStrategyFiltersContext {
 
 const defaultState = { state: { strategies: [] as IContestStrategyFilter[] } };
 
-interface IContestStrategyFiltersProviderProps extends IHaveChildrenProps {
-}
+type IContestStrategyFiltersProviderProps = IHaveChildrenProps
 
 const ContestStrategyFiltersContext = createContext<IContestStrategyFiltersContext>(defaultState as IContestStrategyFiltersContext);
 

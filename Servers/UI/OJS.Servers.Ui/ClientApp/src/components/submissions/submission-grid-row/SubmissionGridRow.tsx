@@ -1,14 +1,12 @@
 import React, { useCallback, useMemo } from 'react';
-import { isNil } from 'lodash';
+import isNil from 'lodash/isNil';
 
+import { ContestParticipationType } from '../../../common/constants';
+import { IPublicSubmission, PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
 import { formatDate } from '../../../utils/dates';
 import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../utils/strategy-type-utils';
-
-import IconSize from '../../guidelines/icons/common/icon-sizes';
-import { IPublicSubmission, PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
-import { ContestParticipationType } from '../../../common/constants';
-
 import { LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import IconSize from '../../guidelines/icons/common/icon-sizes';
 
 import styles from './SubmissionGridRow.module.scss';
 

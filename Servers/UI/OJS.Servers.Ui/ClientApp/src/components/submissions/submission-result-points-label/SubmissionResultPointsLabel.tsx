@@ -1,8 +1,9 @@
-import * as React from 'react';
-import { useMemo } from 'react';
-import Label, { LabelType } from '../../guidelines/labels/Label';
-import styles from './SubmissionResultPointsLabel.module.scss';
+import React, { useMemo } from 'react';
+
 import concatClassNames from '../../../utils/class-names';
+import Label, { LabelType } from '../../guidelines/labels/Label';
+
+import styles from './SubmissionResultPointsLabel.module.scss';
 
 interface ISubmissionResultPointsLabelProps {
     points: number;

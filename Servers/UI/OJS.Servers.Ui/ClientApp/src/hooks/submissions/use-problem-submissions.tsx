@@ -1,14 +1,16 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isNil } from 'lodash';
-import { IHaveChildrenProps } from '../../components/common/Props';
-import { useProblems } from '../use-problems';
-import { ISubmissionDetails } from './types';
-import { useLoading } from '../use-loading';
-import { useHttp } from '../use-http';
-import { useUrls } from '../use-urls';
-import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
-import { useCurrentContest } from '../use-current-contest';
+import isNil from 'lodash/isNil';
+
 import { UrlType } from '../../common/common-types';
+import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
+import { IHaveChildrenProps } from '../../components/common/Props';
+import { useCurrentContest } from '../use-current-contest';
+import { useHttp } from '../use-http';
+import { useLoading } from '../use-loading';
+import { useProblems } from '../use-problems';
+import { useUrls } from '../use-urls';
+
+import { ISubmissionDetails } from './types';
 
 interface IProblemSubmissionsContext {
     state: {
@@ -19,8 +21,7 @@ interface IProblemSubmissionsContext {
     };
 }
 
-interface IProblemSubmissionsProviderProps extends IHaveChildrenProps {
-}
+type IProblemSubmissionsProviderProps = IHaveChildrenProps
 
 interface IProblemSubmissionResultsRequestParametersType {
     id: number;

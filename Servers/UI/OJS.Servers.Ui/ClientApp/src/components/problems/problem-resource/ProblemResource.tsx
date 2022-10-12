@@ -1,11 +1,8 @@
-import * as React from 'react';
+import React, { useCallback } from 'react';
 
-import { useCallback } from 'react';
-
-import { Button, ButtonType } from '../../guidelines/buttons/Button';
 import { IProblemResourceType } from '../../../common/types';
-
 import { useProblems } from '../../../hooks/use-problems';
+import { Button, ButtonType } from '../../guidelines/buttons/Button';
 
 import styles from './ProblemResource.module.scss';
 

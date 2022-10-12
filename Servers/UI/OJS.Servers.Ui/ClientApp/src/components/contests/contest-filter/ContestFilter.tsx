@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
+import { FilterType, IFilter } from '../../../common/contest-types';
+import concatClassNames from '../../../utils/class-names';
+import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
+import ExpandButton from '../../guidelines/buttons/ExpandButton';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List, { Orientation } from '../../guidelines/lists/List';
-import { FilterType, IFilter } from '../../../common/contest-types';
-import ExpandButton from '../../guidelines/buttons/ExpandButton';
-import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
-import concatClassNames from '../../../utils/class-names';
 
 import styles from './ContestFilter.module.scss';
 

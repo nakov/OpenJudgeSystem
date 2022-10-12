@@ -1,10 +1,12 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isEmpty } from 'lodash';
-import { IHaveChildrenProps } from '../components/common/Props';
+import isEmpty from 'lodash/isEmpty';
+
 import { IContestCategoryTreeType } from '../common/types';
+import { IHaveChildrenProps } from '../components/common/Props';
+
 import { useHttp } from './use-http';
-import { useUrls } from './use-urls';
 import { useLoading } from './use-loading';
+import { useUrls } from './use-urls';
 
 interface IContestCategoriesContext {
     state: {
@@ -16,8 +18,7 @@ interface IContestCategoriesContext {
     };
 }
 
-interface IContestCategoriesProviderProps extends IHaveChildrenProps {
-}
+type IContestCategoriesProviderProps = IHaveChildrenProps
 
 const defaultState = { state: { categories: [] as IContestCategoryTreeType[] } };
 

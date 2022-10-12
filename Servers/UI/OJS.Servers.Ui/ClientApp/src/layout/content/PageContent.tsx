@@ -1,18 +1,17 @@
 import React from 'react';
-
 import { Route, Routes } from 'react-router-dom';
 
-import HomePage from '../../pages/home/HomePage';
-import LogoutPage from '../../pages/logout/LogoutPage';
-import LoginPage from '../../pages/login/LoginPage';
-import RegisterPage from '../../pages/register/RegisterPage';
-import ProfilePage from '../../pages/profile/ProfilePage';
+import AdministrationPage from '../../pages/administration/AdministrationPage';
 import ContestPage from '../../pages/contest/ContestPage';
+import ContestRegisterPage from '../../pages/contest/ContestRegisterPage';
 import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';
 import ContestsPage from '../../pages/contests/ContestsPage';
+import HomePage from '../../pages/home/HomePage';
+import LoginPage from '../../pages/login/LoginPage';
+import LogoutPage from '../../pages/logout/LogoutPage';
+import ProfilePage from '../../pages/profile/ProfilePage';
+import RegisterPage from '../../pages/register/RegisterPage';
 import SubmissionDetailsPage from '../../pages/submission-details/SubmissionDetailsPage';
-import AdministrationPage from '../../pages/administration/AdministrationPage';
-import ContestRegisterPage from '../../pages/contest/ContestRegisterPage';
 import SubmissionsPage from '../../pages/submissions/SubmissionsPage';
 
 import styles from './PageContent.module.scss';

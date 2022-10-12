@@ -1,8 +1,9 @@
-import * as React from 'react';
-import { lazy, useEffect, useState } from 'react';
-import { isNil } from 'lodash';
-import styles from './CodeEditor.module.scss';
+import React, { lazy, useEffect, useState } from 'react';
+import isNil from 'lodash/isNil';
+
 import { ISubmissionTypeType } from '../../common/types';
+
+import styles from './CodeEditor.module.scss';
 
 const MonacoEditor = lazy(() => import('react-monaco-editor'));
 
@@ -52,6 +53,7 @@ const CodeEditor = ({
         [ selectedSubmissionType ],
     );
 
+    /* eslint-disable @typescript-eslint/no-empty-function */
     return (
         <div className={styles.editor}>
             <MonacoEditor

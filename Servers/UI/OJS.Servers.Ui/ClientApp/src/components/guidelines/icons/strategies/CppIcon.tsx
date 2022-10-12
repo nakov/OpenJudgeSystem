@@ -1,15 +1,13 @@
 import React, { memo } from 'react';
-
 import { CgCPlusPlus } from 'react-icons/cg';
-import concatClassNames from '../../../../utils/class-names';
 
+import concatClassNames from '../../../../utils/class-names';
 import IconSize from '../common/icon-sizes';
 import Icon, { IIconProps } from '../Icon';
 
 import styles from './StrategyIcon.module.scss';
 
-interface ICppIconProps extends IIconProps {
-}
+type ICppIconProps = IIconProps
 
 const CppIcon = ({
     className = '',

@@ -1,4 +1,4 @@
-import { isEqual } from 'lodash';
+import isEqual from 'lodash/isEqual';
 
 const areStringEqual = (obj1: any, obj2: any, isCaseSensitive = true) => {
     let str1 = obj1.toString();

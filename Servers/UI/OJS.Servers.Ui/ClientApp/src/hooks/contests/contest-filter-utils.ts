@@ -1,6 +1,6 @@
-import ITreeItemType from '../../common/tree-types';
 import { ContestStatus, FilterType, IContestStrategyFilter, IFilter } from '../../common/contest-types';
 import { generateFilterItems } from '../../common/filter-utils';
+import ITreeItemType from '../../common/tree-types';
 import { IContestCategoryTreeType } from '../../common/types';
 
 const addCategoryLeafFilters = ({ id, name, children: treeChildren }: ITreeItemType, arr: IFilter[], cache: Map<string, IFilter>) => {

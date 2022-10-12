@@ -1,7 +1,8 @@
-import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
-import { IHaveChildrenProps } from '../../common/Props';
+import React, { useEffect, useMemo, useState } from 'react';
+
 import concatClassNames from '../../../utils/class-names';
+import { IHaveChildrenProps } from '../../common/Props';
+
 import styles from './Collapsible.module.scss';
 
 interface ICollapsibleComponentProps extends IHaveChildrenProps {

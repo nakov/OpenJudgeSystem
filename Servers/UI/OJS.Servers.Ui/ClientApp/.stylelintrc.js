@@ -1,7 +1,7 @@
 module.exports = {
     'extends': [
         'stylelint-config-standard',
-        'stylelint-config-standard-scss',
+        'stylelint-config-sass-guidelines',
     ],
     'customSyntax': 'postcss-scss',
     'rules': {
