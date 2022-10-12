@@ -127,6 +127,7 @@ function calculateRemainingTimeOnClient(condownTimerContainerId, remainingTimeFo
 
     $('#' + condownTimerContainerId).prepend(remainingTimeFormat);
     var remainingTimeOnServer = parseInt(remainingTimeOnServerInMilliseconds);
+    remainingTimeOnServer = remainingTimeOnServer >= 0 ? remainingTimeOnServer : 0;
     var currentTimeOnClient = new Date();
     var remainingTimeOnClient = currentTimeOnClient;
     remainingTimeOnClient.setTime(currentTimeOnClient.getTime() + remainingTimeOnServer);
