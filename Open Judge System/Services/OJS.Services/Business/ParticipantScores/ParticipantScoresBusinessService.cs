@@ -206,7 +206,9 @@
         }
 
         private int GetSubmissionCodeLength(Submission submission)
-            => Regex.Matches(submission.ContentAsString, "\n").Count + 1;
+            => submission.IsBinaryFile
+                ? 0
+                : Regex.Matches(submission.ContentAsString, "\n").Count + 1;
         
         private double CalculateTimeInMinutesFromParticipationStartToLastSubmission(Participant participant)
             => Math.Round((participant.Submissions
