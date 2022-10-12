@@ -48,8 +48,6 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
         [ handleOnSortClick, possibleSorting ],
     );
     
-    const listOrientation = Orientation.horizontal;
-    
     return (
         <div className={styles.sortingTypeContainer}>
             <Heading
@@ -61,7 +59,7 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
             <List
                 values={possibleSorting}
                 itemFunc={getRenderSortingItemFunc}
-                orientation={listOrientation}
+                orientation={Orientation.horizontal}
                 className={styles.sortTypesList}
                 itemClassName={styles.listSortingItem}
             />
