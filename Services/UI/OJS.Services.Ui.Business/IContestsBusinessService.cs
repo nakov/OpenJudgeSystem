@@ -1,5 +1,3 @@
-using OJS.Servers.Ui.Models.Contests;
-
 namespace OJS.Services.Ui.Business
 {
     using OJS.Data.Models.Contests;
@@ -45,6 +43,6 @@ namespace OJS.Services.Ui.Business
 
         Task ValidateContest(Contest contest, string userId, bool isUserAdmin, bool official);
 
-        Task<PagedResult<ContestForListingServiceModel>> GetAllByFiltersAndSorting(ContestFiltersAndSortingServiceModel? model);
+        Task<PagedResult<ContestForListingServiceModel>> GetAllByFiltersAndSorting(ContestFiltersServiceModel? model);
     }
 }
