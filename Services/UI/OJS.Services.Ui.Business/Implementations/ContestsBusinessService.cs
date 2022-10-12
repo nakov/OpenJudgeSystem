@@ -1,6 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using OJS.Servers.Ui.Models.Contests;
-
 namespace OJS.Services.Ui.Business.Implementations
 {
     using System;
@@ -208,9 +205,9 @@ namespace OJS.Services.Ui.Business.Implementations
         }
 
         public async Task<PagedResult<ContestForListingServiceModel>> GetAllByFiltersAndSorting(
-            ContestFiltersAndSortingServiceModel? model)
+            ContestFiltersServiceModel? model)
         {
-            model ??= new ContestFiltersAndSortingServiceModel();
+            model ??= new ContestFiltersServiceModel();
             model.PageNumber ??= 1;
             model.ItemsPerPage ??= DefaultContestsPerPage;
 
