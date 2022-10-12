@@ -31,8 +31,8 @@ const Tree = ({
         (node: ITreeItemType) => {
             const id = node.id.toString();
             const newExpanded = expandedIds.includes(id)
-                ? without(expandedIds,id)
-                : [ ...expandedIds,id ];
+                ? without(expandedIds, id)
+                : [ ...expandedIds, id ];
 
             setExpandedIds(newExpanded);
         },
@@ -47,8 +47,7 @@ const Tree = ({
         },
         [ onSelect ],
     );
-    
-    
+
     const renderTreeItem = useCallback((node: ITreeItemType) => (
         <TreeItem
             className={styles.treeElement}
@@ -69,10 +68,8 @@ const Tree = ({
         </TreeItem>
     ), [ handleLabelClick, handleTreeItemClick, treeItemHasTooltip ]);
 
-
-
     const defaultItemFunc = useCallback(
-        (node: ITreeItemType) => 
+        (node: ITreeItemType) =>
             treeItemHasTooltip
                 ? (<div className={styles.Tree} key={node.id}>
                     {renderTreeItem(node)}
@@ -111,8 +108,8 @@ const Tree = ({
     return (
         <TreeView
             aria-label="rich object"
-            defaultCollapseIcon={<ExpandMoreIcon />}
-            defaultExpandIcon={<RightArrowIcon />}
+            defaultCollapseIcon={<ExpandMoreIcon/>}
+            defaultExpandIcon={<RightArrowIcon/>}
             selected={selectedId}
             expanded={expandedIds}
         >
