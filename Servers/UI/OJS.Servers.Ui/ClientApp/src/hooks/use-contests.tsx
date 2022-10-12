@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import { isEmpty, isNil } from 'lodash';
 import { IHaveChildrenProps, IPagesInfo } from '../components/common/Props';
 import { IIndexContestsType, IPagedResultType } from '../common/types';
-import { ContestStatus, FilterType, IFilter, ISort, SortType } from '../common/contest-types';
+import { ContestStatus, FilterType, IFilter, ISort, SortType, ToggleParam } from '../common/contest-types';
 import { useHttp } from './use-http';
 import { useUrls } from './use-urls';
 import {
@@ -39,8 +39,7 @@ interface IContestsContext {
         reload: () => Promise<void>;
         clearFilters: () => void;
         clearSorting: () => void;
-        toggleFilter: (filter: IFilter) => void;
-        toggleSorting: (sorting: ISort) => void;
+        toggleParam: (param: IFilter | ISort) => void;
         changePage: (pageNumber: number) => void;
     };
 }
@@ -57,7 +56,7 @@ const defaultState = {
     },
 };
 
-const defaultSorting = 'startDate';
+const defaultSorting = 'StartDate';
 const ContestsContext = createContext<IContestsContext>(defaultState as IContestsContext);
 
 
@@ -71,9 +70,44 @@ const collectFilters = (params: IUrlParam[], possibleFilters: IFilter[]) => {
 
         collectedFilters.push(...defaultStatusFilters);
     }
-
+    
     return collectedFilters;
 };
+
+const isSort = (value: ISort) : value is ISort => {
+    const valueType = value as ISort;
+
+    return valueType.type === 'string';
+};
+//
+// const filterFunc = <K extends ISort | IFilter>(key: string, value:any, possibleValues: K[]) => {
+//     if(possibleValues.every(v => isSort(v))) {
+//         return possibleValues.filter(s => s.id === Number(value) 
+//         && toLowerCase(s.type) === key) as ISort[];
+//     }
+//
+//     return findFilterByTypeAndName(possibleValues as IFilter[], key, value);
+// };
+//
+// const collectParams = <T extends IUrlParam, K extends ISort | IFilter, F extends Function>
+// (params: T[], possibleValues: K[], filter: F) => {
+//     const collectedValues = params.map(({ key, value }) => filter(key, value, possibleValues));
+//
+//     if (isEmpty(collectedValues)) {
+//         const defaultSortingType = possibleValues.filter(s => s.name === defaultSorting);
+//
+//         collectedValues.push(...defaultSortingType);
+//     }
+//
+//     if (isEmpty(filterByType(collectedValues as IFilter[], FilterType.Status))) {
+//         const defaultStatusFilters = filterByType(possibleValues as IFilter[], FilterType.Status)
+//             .filter(({ name }) => name === ContestStatus.All);
+//
+//         collectedValues.push(...defaultStatusFilters);
+//     }
+//
+//     return collectedValues;
+// };
 
 const collectSorting = (params: IUrlParam[], possibleSorting: ISort []) => {
     const collectedSorting = params.map(({ key, value }) => 
@@ -176,49 +210,26 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         [ setParam, unsetParam ],
     );
 
-    const toggleFilter = useCallback(
-        (filter: IFilter) => {
-            const { name, type, id } = filter;
-            const paramName = type.toString();
+    const toggleParam = useCallback<ToggleParam>((param) => {
+        const { name, type, id } = param;
+        const paramName = type.toString();
 
-            const shouldRemoveFilter = params.some(({
-                key,
-                value,
-            }) => areStringEqual(key, type, false) && areStringEqual(value, id, false)) ||
-                (type === FilterType.Status && name === ContestStatus.All);
+        const shouldRemoveFilter = params.some(({
+            key,
+            value,
+        }) => areStringEqual(key, type, false) && areStringEqual(value, id, false)) ||
+            isSort(param)
+            ? name === SortType.StartDate
+            : type === FilterType.Status && name === ContestStatus.All;
 
-            unsetParam(paramName);
+        unsetParam(paramName);
 
-            if (!shouldRemoveFilter) {
-                setParam(paramName, id);
-            }
+        if (!shouldRemoveFilter) {
+            setParam(paramName, id);
+        }
 
-            changePage(1);
-        },
-        [ changePage, params, setParam, unsetParam ],
-    );
-
-    const toggleSorting = useCallback(
-        (sort: ISort) => {
-            const { name, type, id } = sort;
-            const paramName = type;
-
-            const shouldRemoveSorting = params.some(({
-                key,
-                value,
-            }) => areStringEqual(key, type, false) && areStringEqual(value, id, false)) ||
-                (name === SortType.StartDate);
-
-            unsetParam(paramName);
-
-            if (!shouldRemoveSorting) {
-                setParam(paramName, id);
-            }
-
-            changePage(1);
-        },
-        [ changePage, params, setParam, unsetParam ],
-    );
+        changePage(1);
+    },[ changePage, params, setParam, unsetParam ]);
 
     useEffect(
         () => {
@@ -286,8 +297,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             reload,
             clearFilters,
             clearSorting,
-            toggleFilter,
-            toggleSorting,
+            toggleParam,
             changePage,
         },
     } as IContestsContext;
