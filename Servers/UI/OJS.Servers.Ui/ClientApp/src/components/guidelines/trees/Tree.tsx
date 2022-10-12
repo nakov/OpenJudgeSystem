@@ -47,12 +47,7 @@ const Tree = ({
         },
         [ onSelect ],
     );
-
-    const renderTooltip = useCallback((node: ITreeItemType) => (
-        <div className={styles.tooltip}>
-            {node.name}
-        </div>
-    ),[]);
+    
     
     const renderTreeItem = useCallback((node: ITreeItemType) => (
         <TreeItem
@@ -67,13 +62,12 @@ const Tree = ({
                 ? node.children.map((child) =>
                     treeItemHasTooltip
                         ? (<div className={styles.Tree} key={child.id}>
-                            {renderTooltip(child)}
                             {renderTreeItem(child)}
                         </div>)
                         : renderTreeItem(child))
                 : null}
         </TreeItem>
-    ), [ handleLabelClick, handleTreeItemClick, renderTooltip, treeItemHasTooltip ]);
+    ), [ handleLabelClick, handleTreeItemClick, treeItemHasTooltip ]);
 
 
 
@@ -81,11 +75,10 @@ const Tree = ({
         (node: ITreeItemType) => 
             treeItemHasTooltip
                 ? (<div className={styles.Tree} key={node.id}>
-                    {renderTooltip(node)}
                     {renderTreeItem(node)}
                 </div>)
                 : renderTreeItem(node),
-        [ renderTooltip, renderTreeItem, treeItemHasTooltip ],
+        [ renderTreeItem, treeItemHasTooltip ],
     );
 
     const itemFuncInternal = useMemo(
