@@ -48,7 +48,6 @@ const Tree = ({
         [ onSelect ],
     );
     
-    
     const renderTreeItem = useCallback((node: ITreeItemType) => (
         <TreeItem
             className={styles.treeElement}

@@ -5,12 +5,12 @@
   font-family: $font-family-lato-regular, "Helvetica", "Arial", sans-serif;
   font-weight: 400;
   line-height: 1.5;
-  cursor:pointer;
-  
+  cursor: pointer;
 }
-  .treeElement div:nth-child(2):hover {
-       max-width: none;
-  }
+
+.treeElement div:nth-child(2):hover {
+  max-width: none;
+}
 
 .treeElement div:nth-child(2) {
   white-space: nowrap;
