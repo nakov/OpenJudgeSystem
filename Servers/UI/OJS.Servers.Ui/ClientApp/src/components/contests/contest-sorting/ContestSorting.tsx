@@ -5,6 +5,7 @@ import { ISort } from '../../../common/contest-types';
 import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 import List, { Orientation } from '../../guidelines/lists/List';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
+import { splitByCapitalLetter } from '../../../utils/string-utils';
 
 import styles from './ContestSorting.module.scss';
 
@@ -15,7 +16,7 @@ interface IContestSortingProps {
 const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
     const { state: { possibleSorting } } = useContests();
     
-    const handleSortingClick = useCallback(
+    const handleOnSortClick = useCallback(
         (sortId: number) => {
             const sorting = possibleSorting.find(({ id }) => sortId === id);
 
@@ -35,21 +36,18 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
             const buttonType = sortingIsSelected
                 ? ButtonType.primary
                 : ButtonType.secondary;
-
-            const btnClassName = styles.btnSelectFilter;
             
             return (<Button
                 type={buttonType}
-                onClick={() => handleSortingClick(id)}
-                className={btnClassName}
-                text={name}
+                onClick={() => handleOnSortClick(id)}
+                className={styles.btnSelectFilter}
+                text={splitByCapitalLetter(name)}
                 size={ButtonSize.small}
             />);
         },
-        [ handleSortingClick, possibleSorting ],
+        [ handleOnSortClick, possibleSorting ],
     );
-
-    const headerName = 'Sorting';
+    
     const listOrientation = Orientation.horizontal;
     
     return (
@@ -58,13 +56,13 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
                 type={HeadingType.small}
                 className={styles.heading}
             >
-                {headerName}
+                Sorting
             </Heading>
             <List
                 values={possibleSorting}
                 itemFunc={getRenderSortingItemFunc}
                 orientation={listOrientation}
-                className={styles.listSorting}
+                className={styles.sortTypesList}
                 itemClassName={styles.listSortingItem}
             />
         </div>

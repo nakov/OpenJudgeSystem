@@ -35,12 +35,12 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
 
     const {
         state: { possibleFilters },
-        actions: { toggleSorting },
+        actions: { toggleParam },
     } = useContests();
 
     const handleSortClick = useCallback(
-        (sorting: ISort) => toggleSorting(sorting),
-        [ toggleSorting ],
+        (sorting: ISort) => toggleParam(sorting),
+        [ toggleParam ],
     );
     
     const handleFilterClick = useCallback(

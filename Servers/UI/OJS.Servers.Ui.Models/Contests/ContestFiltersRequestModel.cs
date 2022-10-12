@@ -1,3 +1,5 @@
+using System;
+
 namespace OJS.Servers.Ui.Models.Contests;
 
 using AutoMapper;
@@ -23,7 +25,6 @@ public class ContestFiltersRequestModel : IMapExplicitly
 
     public int? ItemsPerPage { get; set; }
 
-    [BindProperty(Name = "sorttype")]
     public string SortType { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
@@ -34,5 +35,9 @@ public class ContestFiltersRequestModel : IMapExplicitly
                 opt => opt.MapFrom(
                     src => src.CategoryId.HasValue
                         ? new List<int> { src.CategoryId.Value }
-                        : Enumerable.Empty<int>()));
+                        : Enumerable.Empty<int>()))
+            .ForMember(m => m.SortType,
+                opt => opt.MapFrom(
+                    src => Enum.Parse<ContestSortType>(src.SortType)));
+
 }

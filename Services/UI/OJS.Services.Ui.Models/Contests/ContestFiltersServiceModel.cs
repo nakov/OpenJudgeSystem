@@ -16,5 +16,5 @@ public class ContestFiltersServiceModel
 
     public int? ItemsPerPage { get; set; }
 
-    public string SortType { get; set; }
+    public ContestSortType? SortType { get; set; }
 }

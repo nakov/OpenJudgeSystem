@@ -1,5 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 
+type ToggleParam = (param: IFilter | ISort) => void;
+
 enum FilterType {
     Status = 'Status',
     Strategy = 'Strategy',
@@ -19,9 +21,9 @@ interface IFilter {
 }
 
 enum SortType {
-    Name = 'name',
-    StartDate = 'startDate',
-    EndDate = 'endDate',
+    Name = 'Name',
+    StartDate = 'StartDate',
+    EndDate = 'EndDate',
 }
 
 type SortInfo = {
@@ -58,6 +60,7 @@ export type {
     ISort,
     SortInfo,
     IContestStrategyFilter,
+    ToggleParam,
 };
 
 export {

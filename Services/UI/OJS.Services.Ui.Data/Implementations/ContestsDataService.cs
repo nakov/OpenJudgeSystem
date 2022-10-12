@@ -198,9 +198,9 @@ namespace OJS.Services.Ui.Data.Implementations
 
         private IQueryable<Contest> Sort(
             IQueryable<Contest> contests,
-            string sorting)
+            ContestSortType? sorting)
         {
-            if (sorting == "startDate")
+            if (sorting == ContestSortType.StartDate)
             {
                 return contests
                     .OrderByDescending(c => c.StartTime)
@@ -208,7 +208,7 @@ namespace OJS.Services.Ui.Data.Implementations
                     .ThenBy(c => c.Name);
             }
 
-            if (sorting == "endDate")
+            if (sorting == ContestSortType.EndDate)
             {
                 return contests
                     .OrderByDescending(c => c.EndTime)
@@ -216,7 +216,7 @@ namespace OJS.Services.Ui.Data.Implementations
                     .ThenBy(c => c.Name);
             }
 
-            if (sorting == "name")
+            if (sorting == ContestSortType.Name)
             {
                 return contests
                     .OrderBy(c => c.Name)
