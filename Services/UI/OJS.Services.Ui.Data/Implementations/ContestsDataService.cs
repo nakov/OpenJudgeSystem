@@ -36,7 +36,7 @@ namespace OJS.Services.Ui.Data.Implementations
                 .ToListAsync();
 
         public async Task<PagedResult<TServiceModel>> GetAllAsPageByFiltersAndSorting<TServiceModel>(
-            ContestFiltersAndSortingServiceModel model)
+            ContestFiltersServiceModel model)
         {
             var contests = model.CategoryIds.Any()
                 ? this.GetAllVisibleByCategories(model.CategoryIds)

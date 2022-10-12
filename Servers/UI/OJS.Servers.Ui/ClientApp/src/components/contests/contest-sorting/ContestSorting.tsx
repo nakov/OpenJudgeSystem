@@ -27,19 +27,6 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
         },
         [ possibleSorting, onSortClick ],
     );
-    
-    const renderSortingItem = useCallback(
-        (buttonType: ButtonType, btnClassName: string,name: string, id: number) => (
-            <Button
-                type={buttonType}
-                onClick={() => handleSortingClick(id)}
-                className={btnClassName}
-                text={name}
-                size={ButtonSize.small}
-            />
-        ),
-        [ handleSortingClick ],
-    );
 
     const getRenderSortingItemFunc = useCallback(
         (value : ISort) => {
@@ -50,10 +37,16 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
                 : ButtonType.secondary;
 
             const btnClassName = styles.btnSelectFilter;
-
-            return renderSortingItem(buttonType,btnClassName,name,id);
+            
+            return (<Button
+                type={buttonType}
+                onClick={() => handleSortingClick(id)}
+                className={btnClassName}
+                text={name}
+                size={ButtonSize.small}
+            />);
         },
-        [ renderSortingItem, possibleSorting ],
+        [ handleSortingClick, possibleSorting ],
     );
 
     const headerName = 'Sorting';

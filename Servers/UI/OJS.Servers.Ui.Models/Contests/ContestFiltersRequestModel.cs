@@ -7,7 +7,7 @@ using SoftUni.AutoMapper.Infrastructure.Models;
 using System.Collections.Generic;
 using System.Linq;
 
-public class ContestFiltersAndSortingRequestModel : IMapExplicitly
+public class ContestFiltersRequestModel : IMapExplicitly
 {
     [BindProperty(Name = "category")]
     public int? CategoryId { get; set; }
@@ -28,7 +28,7 @@ public class ContestFiltersAndSortingRequestModel : IMapExplicitly
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration
-            .CreateMap<ContestFiltersAndSortingRequestModel, ContestFiltersAndSortingServiceModel>()
+            .CreateMap<ContestFiltersRequestModel, ContestFiltersServiceModel>()
             .ForMember(
                 m => m.CategoryIds,
                 opt => opt.MapFrom(

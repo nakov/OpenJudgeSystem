@@ -14,7 +14,7 @@ namespace OJS.Services.Ui.Data
 
         Task<IEnumerable<TServiceModel>> GetAllPracticable<TServiceModel>();
 
-        Task<PagedResult<TServiceModel>> GetAllAsPageByFiltersAndSorting<TServiceModel>(ContestFiltersAndSortingServiceModel model);
+        Task<PagedResult<TServiceModel>> GetAllAsPageByFiltersAndSorting<TServiceModel>(ContestFiltersServiceModel model);
 
         Task<Contest?> GetByIdWithProblems(int id);
 

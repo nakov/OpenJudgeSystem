@@ -3,7 +3,7 @@ namespace OJS.Services.Ui.Models.Contests;
 using System.Collections.Generic;
 using System.Linq;
 
-public class ContestFiltersAndSortingServiceModel
+public class ContestFiltersServiceModel
 {
     public IEnumerable<int> CategoryIds { get; set; } = Enumerable.Empty<int>();
 
