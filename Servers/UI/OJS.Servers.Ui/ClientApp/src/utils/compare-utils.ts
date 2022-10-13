@@ -1,6 +1,8 @@
 import isEqual from 'lodash/isEqual';
 
-const areStringEqual = (obj1: any, obj2: any, isCaseSensitive = true) => {
+import { Anything } from '../common/common-types';
+
+const areStringEqual = (obj1: Anything, obj2: Anything, isCaseSensitive = true) => {
     let str1 = obj1.toString();
     let str2 = obj2.toString();
 
