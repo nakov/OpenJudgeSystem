@@ -1,11 +1,10 @@
-using System;
-
 namespace OJS.Servers.Ui.Models.Contests;
 
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Services.Ui.Models.Contests;
 using SoftUni.AutoMapper.Infrastructure.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
