@@ -176,14 +176,14 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         const { type, id } = param;
         const paramName = type.toString();
 
-        const shouldRemoveFilter = params.some(({
+        const shouldRemoveParam = params.some(({
             key,
             value,
         }) => areStringEqual(key, type, false) && areStringEqual(value, id, false));
 
         unsetParam(paramName);
 
-        if (!shouldRemoveFilter) {
+        if (!shouldRemoveParam) {
             setParam(paramName, id);
         }
 
