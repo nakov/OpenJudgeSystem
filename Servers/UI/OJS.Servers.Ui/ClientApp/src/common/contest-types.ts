@@ -2,26 +2,11 @@
 
 type ToggleParam = (param: IFilter | ISort) => void;
 
-interface IContestQueryParam {
-    name: string;
-    value: string;
-    id: number;
-    type: any;
-}
-
 enum FilterType {
     Status = 'Status',
     Strategy = 'Strategy',
     Category = 'Category',
-}
-
-type FilterInfo = {
-    name: string;
-    value: string;
-}
-
-interface IFilter extends IContestQueryParam {
-    type: FilterType;
+    Sort = 'SortType'
 }
 
 enum SortType {
@@ -30,14 +15,28 @@ enum SortType {
     EndDate = 'EndDate',
 }
 
+type FilterSortType = FilterType | SortType;
+
+type FilterInfo = {
+    name: string;
+    value: string;
+}
+
 type SortInfo = {
     name: string;
     value: string;
 }
 
-interface ISort extends IContestQueryParam {
-    type: SortType;
+interface IContestParam<T> {
+    name: string;
+    value: string;
+    id: number;
+    type: T;
 }
+
+interface IFilter extends IContestParam<FilterType> {}
+
+interface ISort extends IContestParam<SortType> {}
 
 interface IContestStrategyFilter {
     name: string;
@@ -56,13 +55,14 @@ enum ContestStatus {
 }
 
 export type {
+    IContestParam,
     IFilter,
-    FilterInfo,
     ISort,
+    FilterInfo,
     SortInfo,
+    FilterSortType,
     IContestStrategyFilter,
     ToggleParam,
-    IContestQueryParam,
 };
 
 export {

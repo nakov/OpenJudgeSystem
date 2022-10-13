@@ -1,6 +1,4 @@
-﻿import { SortInfo } from './contest-types';
-
-const sortingType = 'SortType';
+﻿import { FilterType, SortInfo } from './contest-types';
 
 const getNextIdGen = function* () {
     let index = 1;
@@ -13,9 +11,9 @@ const getNextIdGen = function* () {
 
 const getId = getNextIdGen();
 
-const generateSortingTypes = (...sorting: SortInfo[]) => sorting.map(({ name, value }) => ({
+const generateSortingTypes = (type: FilterType, ...sorting: SortInfo[]) => sorting.map(({ name, value }) => ({
     name,
-    type: sortingType,
+    type,
     value,
     id: getId.next().value,
 }));

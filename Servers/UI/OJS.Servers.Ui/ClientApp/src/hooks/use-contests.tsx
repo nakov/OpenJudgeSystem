@@ -2,10 +2,19 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import { isEmpty, isNil } from 'lodash';
 import { IHaveChildrenProps, IPagesInfo } from '../components/common/Props';
 import { IIndexContestsType, IPagedResultType } from '../common/types';
-import { ContestStatus, FilterType, IContestQueryParam, IFilter, ISort, SortType, ToggleParam } from '../common/contest-types';
+import {
+    ContestStatus,
+    FilterSortType,
+    FilterType,
+    IContestParam,
+    IFilter,
+    ISort,
+    SortType,
+    ToggleParam,
+} from '../common/contest-types';
 import { useHttp } from './use-http';
 import { useUrls } from './use-urls';
-import { filterByType } from '../common/filter-utils';
+import { filterByType, findFilterByTypeAndName } from '../common/filter-utils';
 import { useLoading } from './use-loading';
 import { useContestStrategyFilters } from './use-contest-strategy-filters';
 import { useContestCategories } from './use-contest-categories';
@@ -15,7 +24,6 @@ import { useUrlParams } from './common/use-url-params';
 import { PageParams } from '../common/pages-types';
 import { generateCategoryFilters, generateStatusFilters, generateStrategyFilters } from './contests/contest-filter-utils';
 import { areStringEqual } from '../utils/compare-utils';
-import { toLowerCase } from '../utils/string-utils';
 import generateSortingStrategy from '../common/contest-sorting-utils';
 
 interface IContestsContext {
@@ -52,94 +60,36 @@ const defaultState = {
 const ContestsContext = createContext<IContestsContext>(defaultState as IContestsContext);
 
 
-// const collectFilters = (params: IUrlParam[], possibleFilters: IFilter[]) => {
-//     const collectedFilters = params.map(({ key, value }) 
-//     => findFilterByTypeAndName(possibleFilters, key, value))
-//         .filter(f => !isNil(f)) as IFilter[];
-//
-//     if (isEmpty(filterByType(collectedFilters, FilterType.Status))) {
-//         const defaultStatusFilters = filterByType(possibleFilters, FilterType.Status)
-//             .filter(({ name }) => name === ContestStatus.All);
-//
-//         collectedFilters.push(...defaultStatusFilters);
-//     }
-//    
-//     return collectedFilters;
-// };
-
-const isSort = (value: ISort) : value is ISort => {
-    const valueType = value as ISort;
-
-    return valueType.type === SortType;
-};
-
-// const filterFunc = <T extends ISort | IFilter>(key: string, value:any, possibleValues: 
-// T[]) : ISort[] | IFilter | undefined => {
-//     console.log('TEST POSSIBLE  VALUES BLALALALA');
-//     console.log(possibleValues);
-//    
-//     if(possibleValues.every(v => isSort(v))) {
-//         const test = possibleValues.filter(s => s.id === Number(value) && 
-//         toLowerCase(s.type) === key).filter(s => !isNil(s)) as ISort[];
-//        
-//         return test;
-//     }
-//    
-//     console.log('FILTER FUNC POSSIBLE VALUES');
-//     console.log(possibleValues);
-//     console.log(key, value);
-//    
-//     return findFilterByTypeAndName(possibleValues as IFilter[], key, value);
-// };
-
-const collectParams = <T extends IUrlParam, K extends IContestQueryParam>
-    (params: T[], possibleValues: K[]) => {
-    console.log('POSSIBLE VALUES BEFORE');
-    console.log(possibleValues);
-    const collectedValues = params.map(({ key, value }) =>
-        possibleValues.filter(s => s.id === Number(value) && toLowerCase(s.type) === key));
+const collectParams = <T extends FilterSortType>(
+    params: IUrlParam[], 
+    possibleFilters: IContestParam<T>[], 
+    filterType: FilterType, 
+    defaultValue: any) => {
+    const collectedFilters = params
+        .map(({ key, value }) => findFilterByTypeAndName(possibleFilters, key, value))
+        .filter(f => !isNil(f)) as IContestParam<FilterSortType>[];
     
-    console.log('COLLECTED VALUES MIDDLE');
-    console.log(collectedValues);
-    
-    if (isEmpty(collectedValues)) {
-        const defaultSortingType = possibleValues.filter(s => s.name === SortType.StartDate) as unknown as ISort[];
+    if (isEmpty(filterByType(collectedFilters, filterType))) {
+        const defaultStatusFilters = filterByType(possibleFilters, filterType)
+            .filter(({ name }) => name === defaultValue);
 
-        collectedValues.push(...defaultSortingType);
+        collectedFilters.push(...defaultStatusFilters);
     }
-
-    if (isEmpty(filterByType(collectedValues, FilterType.Status))) {
-        const defaultStatusFilters = filterByType(possibleValues as IFilter[], FilterType.Status)
-            .filter(({ name }) => name === ContestStatus.All);
-
-        collectedValues.push(...defaultStatusFilters);
-    }
-
-    console.log('COLLECTED VALUES AFTER');
-    console.log(collectedValues);
     
-    return collectedValues.flat(2);
+    return collectedFilters;
 };
-
-// const collectSorting = (params: IUrlParam[], possibleSorting: ISort []) => {
-//     const collectedSorting = params.map(({ key, value }) => 
-//         possibleSorting.find(s => s.id === Number(value) && toLowerCase(s.type) === key))
-//         .filter(f => !isNil(f)) as unknown as ISort[];
-//    
-//     if (isEmpty(collectedSorting)) {
-//         const defaultSortingType = possibleSorting.filter(s => s.name === defaultSorting);
-//
-//         collectedSorting.push(...defaultSortingType);
-//     }
-//    
-//     return collectedSorting;
-// };
 
 const collectCurrentPage = (params: IUrlParam[]) => {
     const { value } = params.find(p => p.key === PageParams.page) || { value: 1 };
 
     return parseInt(value, 10);
 };
+
+const defaultFilterType = FilterType.Status;
+const defaultStatusFilterType = ContestStatus.All;
+
+const defaultSortFilterType = FilterType.Sort;
+const defaultSortType = SortType.StartDate;
 
 const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ contests, setContests ] = useState(defaultState.state.contests);
@@ -170,23 +120,23 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         () => strategiesAreLoaded && categoriesAreLoaded
             ? generateStatusFilters()
                 .concat(generateCategoryFilters(categories))
-                .concat(generateStrategyFilters(strategies))
-            : [],
+                .concat(generateStrategyFilters(strategies)) as IFilter[]
+            : [] as IFilter[],
         [ categories, categoriesAreLoaded, strategies, strategiesAreLoaded ],
     );
 
     const possibleSorting = useMemo(
-        () => generateSortingStrategy(),
+        () => generateSortingStrategy() as unknown as ISort[],
         [],
     );
     
     const filters = useMemo(
-        () => collectParams(params, possibleFilters),
+        () => collectParams(params, possibleFilters, defaultFilterType, defaultStatusFilterType),
         [ params, possibleFilters ],
     );
 
     const sorting = useMemo(
-        () => collectParams(params, possibleSorting),
+        () => collectParams(params, possibleSorting, defaultSortFilterType, defaultSortType),
         [ params, possibleSorting ],
     );
 
@@ -223,20 +173,17 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     );
 
     const toggleParam = useCallback<ToggleParam>((param) => {
-        const { name, type, id } = param;
+        const { type, id } = param;
         const paramName = type.toString();
 
-        const shouldRemoveParam = params.some(({
+        const shouldRemoveFilter = params.some(({
             key,
             value,
-        }) => areStringEqual(key, type, false) && areStringEqual(value, id, false)) ||
-            param.type === SortType
-            ? name === SortType.StartDate
-            : type === FilterType.Status && name === ContestStatus.All;
+        }) => areStringEqual(key, type, false) && areStringEqual(value, id, false));
 
         unsetParam(paramName);
 
-        if (!shouldRemoveParam) {
+        if (!shouldRemoveFilter) {
             setParam(paramName, id);
         }
 
@@ -245,13 +192,13 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     useEffect(
         () => {
-            setGetAllContestsUrlParams({
-                filters: collectParams(params, possibleFilters as IFilter[]),
-                sorting: collectParams(params, possibleSorting as ISort[]),
+            setGetAllContestsUrlParams({ 
+                filters: filters as IFilter[],
+                sorting: sorting as ISort[],
                 page: currentPage,
             });
         },
-        [ currentPage, params, possibleFilters, possibleSorting ],
+        [ currentPage, filters, sorting ],
     );
 
     useEffect(
