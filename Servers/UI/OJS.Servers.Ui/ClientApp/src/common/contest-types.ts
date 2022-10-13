@@ -9,7 +9,20 @@ enum FilterType {
     Sort = 'SortType'
 }
 
+enum SortType {
+    Name = 'Name',
+    StartDate = 'StartDate',
+    EndDate = 'EndDate',
+}
+
+type FilterSortType = FilterType | SortType;
+
 type FilterInfo = {
+    name: string;
+    value: string;
+}
+
+type SortInfo = {
     name: string;
     value: string;
 }
@@ -21,18 +34,7 @@ interface IContestParam<T> {
     type: T;
 }
 
-enum SortType {
-    Name = 'Name',
-    StartDate = 'StartDate',
-    EndDate = 'EndDate',
-}
-
 interface IFilter extends IContestParam<FilterType> {}
-
-type SortInfo = {
-    name: string;
-    value: string;
-}
 
 interface ISort extends IContestParam<SortType> {}
 
@@ -55,9 +57,10 @@ enum ContestStatus {
 export type {
     IContestParam,
     IFilter,
-    FilterInfo,
     ISort,
+    FilterInfo,
     SortInfo,
+    FilterSortType,
     IContestStrategyFilter,
     ToggleParam,
 };

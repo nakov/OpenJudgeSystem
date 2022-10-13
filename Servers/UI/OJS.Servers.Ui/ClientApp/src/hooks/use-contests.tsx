@@ -2,7 +2,16 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import { isEmpty, isNil } from 'lodash';
 import { IHaveChildrenProps, IPagesInfo } from '../components/common/Props';
 import { IIndexContestsType, IPagedResultType } from '../common/types';
-import { ContestStatus, FilterType, IContestParam, IFilter, ISort, SortType, ToggleParam } from '../common/contest-types';
+import {
+    ContestStatus,
+    FilterSortType,
+    FilterType,
+    IContestParam,
+    IFilter,
+    ISort,
+    SortType,
+    ToggleParam,
+} from '../common/contest-types';
 import { useHttp } from './use-http';
 import { useUrls } from './use-urls';
 import { filterByType, findFilterByTypeAndName } from '../common/filter-utils';
@@ -55,14 +64,14 @@ const defaultState = {
 const ContestsContext = createContext<IContestsContext>(defaultState as IContestsContext);
 
 
-const collectParams = <T extends unknown>(
+const collectParams = <T extends FilterSortType>(
     params: IUrlParam[], 
     possibleFilters: IContestParam<T>[], 
     filterType: FilterType, 
     defaultValue: any) => {
     const collectedFilters = params
         .map(({ key, value }) => findFilterByTypeAndName(possibleFilters, key, value))
-        .filter(f => !isNil(f)) as IContestParam<T>[];
+        .filter(f => !isNil(f)) as IContestParam<FilterSortType>[];
     
     if (isEmpty(filterByType(collectedFilters, filterType))) {
         const defaultStatusFilters = filterByType(possibleFilters, filterType)
@@ -70,8 +79,6 @@ const collectParams = <T extends unknown>(
 
         collectedFilters.push(...defaultStatusFilters);
     }
-    
-    console.log(collectedFilters);
     
     return collectedFilters;
 };
@@ -117,13 +124,13 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         () => strategiesAreLoaded && categoriesAreLoaded
             ? generateStatusFilters()
                 .concat(generateCategoryFilters(categories))
-                .concat(generateStrategyFilters(strategies))
-            : [],
+                .concat(generateStrategyFilters(strategies)) as IFilter[]
+            : [] as IFilter[],
         [ categories, categoriesAreLoaded, strategies, strategiesAreLoaded ],
     );
 
     const possibleSorting = useMemo(
-        () => generateSortingStrategy(),
+        () => generateSortingStrategy() as unknown as ISort[],
         [],
     );
     
