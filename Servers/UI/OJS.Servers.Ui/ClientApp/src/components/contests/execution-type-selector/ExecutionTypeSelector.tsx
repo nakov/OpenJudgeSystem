@@ -8,9 +8,9 @@ import { Button, ButtonSize, ButtonState, ButtonType } from '../../guidelines/bu
 import styles from './ExecutionTypeSelector.module.scss';
 
 interface IExecutionTypeSelectorProps {
-    id: number,
-    value: string
-    isSelected: boolean,
+    id: number;
+    value: string;
+    isSelected: boolean;
     onSelect: () => void;
 }
 

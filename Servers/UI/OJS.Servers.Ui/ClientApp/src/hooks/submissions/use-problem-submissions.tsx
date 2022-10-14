@@ -14,10 +14,10 @@ import { ISubmissionDetails } from './types';
 
 interface IProblemSubmissionsContext {
     state: {
-        submissions: ISubmissionDetails[],
+        submissions: ISubmissionDetails[];
     };
     actions: {
-        loadSubmissions: () => Promise<void>,
+        loadSubmissions: () => Promise<void>;
     };
 }
 

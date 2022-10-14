@@ -8,20 +8,20 @@ import { useLoading } from './use-loading';
 import { useUrls } from './use-urls';
 
 interface IParticipationType {
-    id: number,
-    contestId: number,
-    contestName: string,
-    competeResult?: number,
-    practiceResult?: number,
-    contestCompeteMaximumPoints?: number,
-    contestPracticeMaximumPoints?: number,
-    registrationTime: Date
+    id: number;
+    contestId: number;
+    contestName: string;
+    competeResult?: number;
+    practiceResult?: number;
+    contestCompeteMaximumPoints?: number;
+    contestPracticeMaximumPoints?: number;
+    registrationTime: Date;
 }
 
 interface IParticipationsContext {
-    areUserParticipationsRetrieved: boolean,
-    userParticipations: IParticipationType[]
-    getUserParticipations: () => Promise<void>
+    areUserParticipationsRetrieved: boolean;
+    userParticipations: IParticipationType[];
+    getUserParticipations: () => Promise<void>;
 }
 
 const defaultState = {};

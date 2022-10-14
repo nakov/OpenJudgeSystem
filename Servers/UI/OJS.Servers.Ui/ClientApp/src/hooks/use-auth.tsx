@@ -20,7 +20,7 @@ interface IAuthContext {
         getUser: () => IUserType;
         setUsername: (value: string) => void;
         setPassword: (value: string) => void;
-    }
+    };
 }
 
 const AuthContext = createContext<IAuthContext>({} as IAuthContext);

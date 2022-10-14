@@ -7,10 +7,10 @@ import { IHaveChildrenProps } from '../components/common/Props';
 import 'react-notifications-component/dist/theme.css';
 
 interface INotificationsContext {
-    notification: INotificationType,
-    showNotification: boolean,
-    showError(notificationObj: INotificationType): void
-    showWarning(notificationObj: INotificationType): void
+    notification: INotificationType;
+    showNotification: boolean;
+    showError(notificationObj: INotificationType): void;
+    showWarning(notificationObj: INotificationType): void;
 }
 
 const defaultState = {

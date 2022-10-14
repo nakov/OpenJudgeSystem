@@ -6,7 +6,7 @@ import { LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import styles from './ProfileAboutInfo.module.scss';
 
 interface IProfileAboutInfoProps {
-    value: IUserProfileType
+    value: IUserProfileType;
 }
 
 const ProfileAboutInfo = ({ value } : IProfileAboutInfoProps) => (

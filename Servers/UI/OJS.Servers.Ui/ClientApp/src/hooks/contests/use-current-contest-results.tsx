@@ -12,10 +12,10 @@ import { IContestResultsParticipationType, IContestResultsType } from './types';
 
 interface ICurrentContestResultsContext {
     state: {
-        contestResults: IContestResultsType,
+        contestResults: IContestResultsType;
     };
     actions: {
-        load: (id: number, official: boolean, full: boolean) => Promise<void>,
+        load: (id: number, official: boolean, full: boolean) => Promise<void>;
     };
 }
 

@@ -11,9 +11,9 @@ import styles from './Breadcrumb.module.scss';
 
 interface IBreadcrumbProps<TValue> extends IHaveOptionalClassName {
     id?: string;
-    items?: TValue[] | null,
+    items?: TValue[] | null;
     itemFunc: (value: TValue) => React.ReactElement;
-    keyFunc?: (value: TValue) => string,
+    keyFunc?: (value: TValue) => string;
 }
 
 const Breadcrumb = <TValue extends unknown>({

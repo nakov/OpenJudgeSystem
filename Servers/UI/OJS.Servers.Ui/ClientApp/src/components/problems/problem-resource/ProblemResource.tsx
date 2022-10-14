@@ -7,7 +7,7 @@ import { Button, ButtonType } from '../../guidelines/buttons/Button';
 import styles from './ProblemResource.module.scss';
 
 interface IProblemResourceProps {
-    resource: IProblemResourceType
+    resource: IProblemResourceType;
 }
 
 // TODO: These should be extracted into `Icons`

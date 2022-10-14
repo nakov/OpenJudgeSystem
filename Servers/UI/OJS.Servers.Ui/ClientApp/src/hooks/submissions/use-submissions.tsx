@@ -18,7 +18,7 @@ interface ISubmissionsContext {
         selectedSubmissionType: ISubmissionTypeType | null;
     };
     actions: {
-        submit: () => Promise<void>
+        submit: () => Promise<void>;
         updateSubmissionCode: (code: string) => void;
         selectSubmissionTypeById: (id: number) => void;
     };

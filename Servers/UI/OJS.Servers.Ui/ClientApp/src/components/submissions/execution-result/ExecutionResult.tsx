@@ -7,7 +7,7 @@ import concatClassNames from '../../../utils/class-names';
 import styles from './ExecutionResult.module.scss';
 
 interface IExecutionResultDetailsProps {
-    testRuns: ITestRunType[],
+    testRuns: ITestRunType[];
 }
 
 const classnameToTestRunResultType: { [name: string]: string } = {

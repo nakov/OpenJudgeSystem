@@ -9,8 +9,8 @@ import 'prismjs/components/prism-javascript';
 import 'prismjs/themes/prism-okaidia.css';
 
 interface ITestsRunDiffProps {
-    expectedStr: string,
-    actualStr: string
+    expectedStr: string;
+    actualStr: string;
 }
 
 const Diff = ({ expectedStr, actualStr } : ITestsRunDiffProps) => {

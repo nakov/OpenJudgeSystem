@@ -8,7 +8,7 @@ import styles from './SubmissionResultPointsLabel.module.scss';
 interface ISubmissionResultPointsLabelProps {
     points: number;
     maximumPoints: number;
-    isProcessed: boolean
+    isProcessed: boolean;
 }
 
 const SubmissionResultPointsLabel = ({

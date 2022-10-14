@@ -36,7 +36,7 @@ enum ButtonSize {
 interface IButtonBaseProps<TButtonType> extends IHaveOptionalClassName, IHaveOptionalChildrenProps {
     id?: string;
     size?: ButtonSize;
-    text?: string | null,
+    text?: string | null;
     type?: TButtonType;
     state?: ButtonState;
 }

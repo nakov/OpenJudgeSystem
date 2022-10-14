@@ -11,7 +11,7 @@ import { useUrls } from './use-urls';
 interface IContestStrategyFiltersContext {
     state: {
         strategies: IContestStrategyFilter[];
-        isLoaded: boolean,
+        isLoaded: boolean;
     };
     actions: {
         load: () => Promise<void>;

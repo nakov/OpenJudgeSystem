@@ -14,7 +14,7 @@ import styles from './ContestCategories.module.scss';
 
 interface IContestCategoriesProps extends IHaveOptionalClassName {
     onCategoryClick: (filter: IFilter) => void;
-    defaultSelected?: string,
+    defaultSelected?: string;
 }
 
 const ContestCategories = ({

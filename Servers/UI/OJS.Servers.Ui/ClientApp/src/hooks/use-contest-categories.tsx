@@ -11,7 +11,7 @@ import { useUrls } from './use-urls';
 interface IContestCategoriesContext {
     state: {
         categories: IContestCategoryTreeType[];
-        isLoaded: boolean,
+        isLoaded: boolean;
     };
     actions: {
         load: () => Promise<void>;

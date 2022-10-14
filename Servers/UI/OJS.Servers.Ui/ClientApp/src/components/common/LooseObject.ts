@@ -1,7 +1,7 @@
 import { Anything } from '../../common/common-types';
 
 interface ILooseObject {
-    [key: string]: Anything,
+    [key: string]: Anything;
 }
 
 export default ILooseObject;

@@ -7,9 +7,9 @@ import { IHaveOptionalClassName } from '../../common/Props';
 import styles from './PaginationControls.module.scss';
 
 interface IPaginationControlsProps extends IHaveOptionalClassName {
-    count: number,
-    page: number,
-    onChange: (value: number) => void | undefined,
+    count: number;
+    page: number;
+    onChange: (value: number) => void | undefined;
 }
 
 const PaginationControls = ({

@@ -18,7 +18,7 @@ interface IHomeContestsContext {
     };
     actions: {
         getForHome: () => Promise<void>;
-    }
+    };
 }
 
 const defaultState = {

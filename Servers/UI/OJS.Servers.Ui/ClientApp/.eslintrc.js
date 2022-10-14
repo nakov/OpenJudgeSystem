@@ -355,5 +355,18 @@ module.exports = {
             },
         ],
         '@typescript-eslint/explicit-module-boundary-types': 0,
+        '@typescript-eslint/member-delimiter-style': [
+            'error',
+            {
+                multiline: {
+                    delimiter: 'semi',
+                    requireLast: true,
+                },
+                singleline: {
+                    delimiter: 'semi',
+                    requireLast: false,
+                },
+            },
+        ],
     },
 };

@@ -8,7 +8,7 @@ import { IHaveChildrenProps } from '../components/common/Props';
 import CacheService from '../services/storage-service';
 
 interface IServicesContext {
-    localStorageService: CacheService
+    localStorageService: CacheService;
 }
 
 const defaultState = { };

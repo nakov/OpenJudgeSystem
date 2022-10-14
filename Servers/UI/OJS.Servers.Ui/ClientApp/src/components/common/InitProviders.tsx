@@ -5,15 +5,15 @@ import { Anything } from '../../common/common-types';
 import { IHaveChildrenProps } from './Props';
 
 interface IProvider {
-    Provider: FC<IHaveChildrenProps>,
-    props: Anything,
+    Provider: FC<IHaveChildrenProps>;
+    props: Anything;
 }
 
 // A provider could be FC or IProvider when props are needed
 type ProviderType = IProvider | FC;
 
 interface IInitProviderProps extends IHaveChildrenProps {
-    providers: ProviderType[],
+    providers: ProviderType[];
 }
 
 const InitProviders = ({

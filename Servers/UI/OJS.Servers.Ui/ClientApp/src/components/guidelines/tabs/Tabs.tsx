@@ -11,10 +11,10 @@ import ThemeProvider from '@mui/styles/ThemeProvider';
 import { Anything } from '../../../common/common-types';
 
 interface ITabPanelProps {
-    labels: string[]
-    contents: React.ReactNode[]
-    themeOverride?: Theme
-    childrenClassName?: string
+    labels: string[];
+    contents: React.ReactNode[];
+    themeOverride?: Theme;
+    childrenClassName?: string;
 }
 
 const defaultState = { initialValue: '0' };

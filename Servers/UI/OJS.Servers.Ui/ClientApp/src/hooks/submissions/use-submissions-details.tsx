@@ -20,7 +20,7 @@ interface ISubmissionsDetailsContext {
         selectSubmissionById: (submissionId: number) => void;
         getDetails: (submissionId: number) => Promise<void>;
         getSubmissionResults: (problemId: number, isOfficial: boolean) => Promise<void>;
-    }
+    };
 }
 
 const defaultState = { state: { currentProblemSubmissionResults: [] as ISubmissionDetails[] } };

@@ -9,16 +9,16 @@ import { useNotifications } from './use-notifications';
 import { useUrls } from './use-urls';
 
 interface IUserProfileType {
-    id: string,
-    userName: string,
-    firstName: string,
-    lastName: string,
-    email: string
+    id: string;
+    userName: string;
+    firstName: string;
+    lastName: string;
+    email: string;
 }
 
 interface IUsersContext {
-    profile: IUserProfileType,
-    getProfile: () => Promise<void>
+    profile: IUserProfileType;
+    getProfile: () => Promise<void>;
 }
 
 const defaultState = { profile: { userName: '' } as IUserProfileType };

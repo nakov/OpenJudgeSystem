@@ -10,7 +10,7 @@ import LockIcon from '../../guidelines/icons/LockIcon';
 import styles from './ContestCard.module.scss';
 
 interface IContestCardProps {
-    contest: IIndexContestsType
+    contest: IIndexContestsType;
 }
 
 const ContestCard = ({ contest }: IContestCardProps) => {

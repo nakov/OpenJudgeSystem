@@ -17,10 +17,10 @@ interface ICategoriesBreadcrumbContext {
 type ICategoriesBreacrumbProviderProps = IHaveChildrenProps
 
 interface ICategoriesBreadcrumbItem {
-    id: string,
-    isLast: boolean,
-    value: string,
-    orderBy: number,
+    id: string;
+    isLast: boolean;
+    value: string;
+    orderBy: number;
 }
 
 const defaultState = { state: { breadcrumbItems: [] as ICategoriesBreadcrumbItem[] } };
