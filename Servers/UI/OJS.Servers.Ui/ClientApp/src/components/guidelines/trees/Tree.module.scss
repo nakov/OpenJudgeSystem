@@ -5,12 +5,11 @@
   font-family: $font-family-lato-regular, "Helvetica", "Arial", sans-serif;
   font-weight: 400;
   line-height: 1.5;
+  cursor: pointer;
+}
 
-  &:hover {
-    .tooltip {
-      display: block;
-    }
-  }
+.treeElement div:nth-child(2):hover {
+  max-width: none;
 }
 
 .treeElement div:nth-child(2) {
@@ -19,16 +18,4 @@
   text-overflow: ellipsis;
   max-width: 150px;
   width: 100%;
-}
-
-.tooltip {
-  padding-left: 5px;
-  position: absolute;
-  left: 16%;
-  display: none;
-  width: 100%;
-  max-width: 183px;
-  background-color: #B0B0B0;
-  color: #fff;
-  border-radius: 6px;
 }
