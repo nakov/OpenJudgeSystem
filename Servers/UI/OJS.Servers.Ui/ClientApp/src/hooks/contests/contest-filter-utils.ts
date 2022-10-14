@@ -11,7 +11,9 @@ const addCategoryLeafFilters = ({ id, name, children: treeChildren }: ITreeItemT
     if(!cache.has(id)) {
         cache.set(id, { name, value: id.toString() } as IFilter); 
     }
-
+    
+    // We set this value above
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     arr.push(cache.get(id)!);
 };
 

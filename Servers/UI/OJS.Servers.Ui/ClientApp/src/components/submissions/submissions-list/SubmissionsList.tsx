@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 
 import { ContestParticipationType } from '../../../common/constants';
-import { ISubmissionDetails } from '../../../hooks/submissions/types';
+import { ISubmissionDetails, ISubmissionDetailsType } from '../../../hooks/submissions/types';
 import concatClassNames from '../../../utils/class-names';
 import { formatDate } from '../../../utils/dates';
 import { IHaveOptionalClassName } from '../../common/Props';
@@ -14,8 +14,8 @@ import SubmissionResultPointsLabel from '../submission-result-points-label/Submi
 import styles from './SubmissionsList.module.scss';
 
 interface ISubmissionsListProps extends IHaveOptionalClassName {
-    items: any[];
-    selectedSubmission: any;
+    items: ISubmissionDetails[];
+    selectedSubmission: ISubmissionDetailsType | null;
 }
 
 const SubmissionsList = ({

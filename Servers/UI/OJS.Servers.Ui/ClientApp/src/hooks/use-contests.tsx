@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -63,9 +64,13 @@ const collectFilters = (params: IUrlParam[], possibleFilters: IFilter[]) => {
 };
 
 const collectCurrentPage = (params: IUrlParam[]) => {
-    const { value } = params.find(p => p.key === PageParams.page) || { value: 1 };
+    const { value } = params.find(p => p.key === PageParams.page) || { value: '1' };
+    
+    const theValue = isArray(value)
+        ? value[0]
+        : value;
 
-    return parseInt(value, 10);
+    return parseInt(theValue, 10);
 };
 
 const ContestsProvider = ({ children }: IContestsProviderProps) => {

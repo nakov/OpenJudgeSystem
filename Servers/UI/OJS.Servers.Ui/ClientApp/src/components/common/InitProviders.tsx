@@ -1,21 +1,25 @@
 import React, { FC } from 'react';
 
+import { Anything } from '../../common/common-types';
+
 import { IHaveChildrenProps } from './Props';
 
 interface IProvider {
     Provider: FC<IHaveChildrenProps>,
-    props?: any,
+    props: Anything,
 }
 
 // A provider could be FC or IProvider when props are needed
 type ProviderType = IProvider | FC;
 
-interface IInitProviderProps {
+interface IInitProviderProps extends IHaveChildrenProps {
     providers: ProviderType[],
-    children: any,
 }
 
-const InitProviders = ({ providers, children }: IInitProviderProps) => {
+const InitProviders = ({
+    providers,
+    children,
+}: IInitProviderProps) => {
     const initial = (<>{children}</>);
 
     return providers

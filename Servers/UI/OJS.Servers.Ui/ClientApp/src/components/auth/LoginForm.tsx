@@ -18,12 +18,16 @@ const LoginPage = () => {
     const usernameFieldName = 'Username';
     const passwordFieldName = 'Password';
 
-    const handleOnChangeUpdateUsername = useCallback((value: any) => {
-        setUsername(value);
+    const handleOnChangeUpdateUsername = useCallback((value?: string) => {
+        setUsername(isNil(value)
+            ?''
+            :value);
     }, [ setUsername ]);
 
-    const handleOnChangeUpdatePassword = useCallback((value: string) => {
-        setPassword(value);
+    const handleOnChangeUpdatePassword = useCallback((value?: string) => {
+        setPassword(isNil(value)
+            ?''
+            :value);
     }, [ setPassword ]);
 
     const handleLoginClick = useCallback(async () => {
@@ -64,7 +68,7 @@ const LoginPage = () => {
               name={usernameFieldName}
               labelText={usernameFieldName}
               type={FormControlType.input}
-              onChange={(value) => handleOnChangeUpdateUsername(value)}
+              onChange={handleOnChangeUpdateUsername}
               value=""
             />
             <FormControl
@@ -73,9 +77,7 @@ const LoginPage = () => {
               labelText={passwordFieldName}
               labelClassName={styles.floatingLabel}
               type={FormControlType.password}
-              onChange={(value) => handleOnChangeUpdatePassword(isNil(value)
-                  ? ''
-                  : value.toString())}
+              onChange={handleOnChangeUpdatePassword}
               value=""
             />
             <div className={styles.loginFormControls}>

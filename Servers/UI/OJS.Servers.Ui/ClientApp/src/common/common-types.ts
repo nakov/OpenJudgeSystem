@@ -38,29 +38,20 @@ interface INotificationType {
     leaveTimeout: number | null
 }
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 interface IFileResponseType {
     data: Blob,
     headers: IDictionary<any>,
 }
-
-type QuestionTypeType = 'text' | 'single' | 'multiple';
-
-type FilterType = 'all' | 'done' | 'remaining'
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 interface IUrlParam {
     key: string;
-    value: any;
+    value: string | string[];
 }
 
 
 type Anything = Record<string | number, unknown>
-
-export const SulsQuestionTypeMapping: { [key: number]: QuestionTypeType } = {
-    1: 'single' as QuestionTypeType,
-    2: 'multiple' as QuestionTypeType,
-    3: 'text' as QuestionTypeType,
-};
-
 
 export type {
     IDictionary,
@@ -68,8 +59,6 @@ export type {
     INotificationType,
     IFileResponseType,
     IUrlParam,
-    QuestionTypeType,
-    FilterType,
     UrlType,
     Anything,
 };

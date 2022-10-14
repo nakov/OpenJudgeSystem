@@ -111,7 +111,7 @@ const SubmissionBox = () => {
             <div className={styles.contestInnerLayout}>
                 <div className={styles.editorAndProblemControlsWrapper}>
                     <CodeEditor
-                      selectedSubmissionType={selectedSubmissionType!}
+                      selectedSubmissionType={selectedSubmissionType}
                       code={submissionCode}
                       onCodeChange={handleCodeChanged}
                     />

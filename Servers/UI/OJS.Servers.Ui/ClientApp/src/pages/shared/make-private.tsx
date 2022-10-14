@@ -4,6 +4,7 @@ import {
     useLocation,
 } from 'react-router';
 
+import { Anything } from '../../common/common-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useAuth } from '../../hooks/use-auth';
 
@@ -25,7 +26,7 @@ const PrivatePage = ({ children }: IPrivatePageProps) => {
         );
 };
 
-const makePrivate = (ComponentToWrap: FC) => (props: any) => (
+const makePrivate = (ComponentToWrap: FC) => (props: Anything) => (
     <PrivatePage>
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <ComponentToWrap {...props} />

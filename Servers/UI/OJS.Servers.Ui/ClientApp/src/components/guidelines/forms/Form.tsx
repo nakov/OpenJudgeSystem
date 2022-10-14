@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { FormEvent, useCallback, useMemo } from 'react';
 
 import concatClassNames from '../../../utils/class-names';
 import generateId from '../../../utils/id-generator';
@@ -19,7 +19,7 @@ const Form = ({
     className = '',
 }: IFormProps) => {
     const handleSubmit = useCallback(
-        async (ev: any) => {
+        async (ev: FormEvent) => {
             ev.preventDefault();
             onSubmit();
 
@@ -36,13 +36,15 @@ const Form = ({
     const internalClassName = concatClassNames(className);
 
     return (
-        <form id={id} onSubmit={(ev) => handleSubmit(ev)} className={internalClassName}>
+        <form id={id}
+              onSubmit={(ev) => handleSubmit(ev)}
+              className={internalClassName}>
             {children}
             <Button
-              id={btnId}
-              onClick={(ev) => handleSubmit(ev)}
-              text={submitText}
-              type={ButtonType.submit}
+                id={btnId}
+                onClick={(ev) => handleSubmit(ev)}
+                text={submitText}
+                type={ButtonType.submit}
             />
         </form>
     );
