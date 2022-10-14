@@ -150,11 +150,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         [ clearParams ],
     );
 
-    const clearSorting = useCallback(
-        () => clearParams(),
-        [ clearParams ],
-    );
-
     const reload = useCallback(
         async () => {
             startLoading();
@@ -255,7 +250,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         actions: {
             reload,
             clearFilters,
-            clearSorting,
             toggleParam,
             changePage,
         },
