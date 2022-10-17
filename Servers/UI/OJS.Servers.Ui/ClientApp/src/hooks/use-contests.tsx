@@ -25,6 +25,7 @@ import { PageParams } from '../common/pages-types';
 import { generateCategoryFilters, generateStatusFilters, generateStrategyFilters } from './contests/contest-filter-utils';
 import { areStringEqual } from '../utils/compare-utils';
 import generateSortingStrategy from '../common/contest-sorting-utils';
+import { useCategoriesBreadcrumbs } from './use-contest-categories-breadcrumb';
 
 interface IContestsContext {
     state: {
@@ -38,7 +39,7 @@ interface IContestsContext {
     };
     actions: {
         reload: () => Promise<void>;
-        clearFilters: () => void;
+        clearFilters: (type: FilterType, defaultId: number | null) => void;
         clearSorting: () => void;
         toggleParam: (param: IFilter | ISort) => void;
         changePage: (pageNumber: number) => void;
@@ -101,7 +102,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         actions: {
             setParam,
             unsetParam,
-            clearParams,
         },
     } = useUrlParams();
 
@@ -115,6 +115,8 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     const { state: { strategies, isLoaded: strategiesAreLoaded } } = useContestStrategyFilters();
     const { state: { categories, isLoaded: categoriesAreLoaded } } = useContestCategories();
+    
+    const { actions: { clearBreadcrumb } } = useCategoriesBreadcrumbs();
 
     const possibleFilters = useMemo(
         () => strategiesAreLoaded && categoriesAreLoaded
@@ -146,8 +148,19 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     );
 
     const clearFilters = useCallback(
-        () => clearParams(),
-        [ clearParams ],
+        (type: FilterType, defaultId: number) => {
+            if (type === FilterType.Sort) {
+                unsetParam(type);
+                setParam(type, defaultId);
+            } else {
+                unsetParam(FilterType.Status);
+                unsetParam(FilterType.Strategy);
+                unsetParam(FilterType.Category);
+                setParam(FilterType.Status, defaultId);
+                clearBreadcrumb();
+            }
+        },
+        [ unsetParam, setParam, clearBreadcrumb ],
     );
 
     const reload = useCallback(

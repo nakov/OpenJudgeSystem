@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { isNil } from 'lodash';
 import { useSearchParams } from 'react-router-dom';
 import List from '../../guidelines/lists/List';
 
-import { FilterType, IFilter, ISort } from '../../../common/contest-types';
+import { ContestStatus, FilterType, IFilter, ISort } from '../../../common/contest-types';
 import ContestCategories from '../contest-categories/ContestCategories';
 
 import { useContests } from '../../../hooks/use-contests';
@@ -14,6 +14,7 @@ import ContestFilter from '../contest-filter/ContestFilter';
 
 import styles from './ContestFilters.module.scss';
 import ContestSorting from '../contest-sorting/ContestSorting';
+import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 
 interface IContestFiltersProps {
     onFilterClick: (filter: IFilter) => void;
@@ -30,12 +31,18 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const [ defaultSelected, setDefaultSelected ] = useState('');
     const [ searchParams ] = useSearchParams();
     const [ isLoaded, setIsLoaded ] = useState(false);
-    const { actions: { load: loadStrategies } } = useContestStrategyFilters();
-    const { actions: { load: loadCategories } } = useContestCategories();
+    const {
+        state: { isLoaded: strategiesAreLoaded }, 
+        actions: { load: loadStrategies }, 
+    } = useContestStrategyFilters();
+    const {
+        state: { isLoaded: categoriesAreLoaded }, 
+        actions: { load: loadCategories }, 
+    } = useContestCategories();
 
     const {
         state: { possibleFilters },
-        actions: { toggleParam },
+        actions: { toggleParam, clearFilters },
     } = useContests();
 
     const handleSortClick = useCallback(
@@ -122,8 +129,28 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         [ loadCategories ],
     );
 
+    const defaultStatusFilterId = useMemo(
+        () => {
+            if (strategiesAreLoaded && categoriesAreLoaded) {
+                const statusFilters = possibleFilters.filter(f => f.type === FilterType.Status);
+                
+                return statusFilters.filter(sf => sf.name === ContestStatus.All)[0].id;
+            } 
+                
+            return null;
+        },
+        [ possibleFilters, strategiesAreLoaded, categoriesAreLoaded ],
+    );
+
     return (
         <div className={styles.container}>
+            <Button
+                type={ButtonType.secondary}
+                onClick={() => clearFilters(FilterType.Status, defaultStatusFilterId)}
+                className={styles.button}
+                text='clear filters'
+                size={ButtonSize.small}
+            />
             <ContestCategories
                 className={styles.filterTypeContainer}
                 onCategoryClick={onFilterClick}

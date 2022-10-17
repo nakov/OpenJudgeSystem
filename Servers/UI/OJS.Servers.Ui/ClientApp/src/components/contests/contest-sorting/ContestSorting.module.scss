@@ -11,6 +11,18 @@
   margin-top: 10px;
 }
 
+.buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+}
+
+.button {
+  font-weight: 500;
+  border: none;
+  text-align: end;
+}
+
 .sortTypesList {
   max-height: 130px;
   overflow: hidden;

@@ -1,7 +1,7 @@
-﻿import React, { useCallback } from 'react';
+﻿import React, { useCallback, useMemo } from 'react';
 import { isNil } from 'lodash';
 import { useContests } from '../../../hooks/use-contests';
-import { ISort } from '../../../common/contest-types';
+import { FilterType, ISort, SortType } from '../../../common/contest-types';
 import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 import List, { Orientation } from '../../guidelines/lists/List';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
@@ -14,7 +14,10 @@ interface IContestSortingProps {
 }
 
 const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
-    const { state: { possibleSorting } } = useContests();
+    const {
+        state: { possibleSorting }, 
+        actions: { clearFilters }, 
+    } = useContests();
     
     const handleOnSortClick = useCallback(
         (sortId: number) => {
@@ -48,13 +51,29 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
         [ handleOnSortClick, possibleSorting ],
     );
     
+    const defaultSortingId = useMemo(
+        () => 
+            possibleSorting.filter(s => s.name === SortType.StartDate)[0].id
+        ,
+        [ possibleSorting ],
+    );
+    
     return (
         <div className={styles.sortingTypeContainer}>
             <Heading
                 type={HeadingType.small}
                 className={styles.heading}
             >
-                Sorting
+                <div className={styles.buttonContainer}>
+                    Sorting
+                    <Button
+                            type={ButtonType.secondary}
+                            onClick={() => clearFilters(FilterType.Sort, defaultSortingId)}
+                            className={styles.button}
+                            text='clear sorting'
+                            size={ButtonSize.small}
+                        />
+                </div>
             </Heading>
             <List
                 values={possibleSorting}
