@@ -40,13 +40,15 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
                 ? ButtonType.primary
                 : ButtonType.secondary;
             
-            return (<Button
+            return (
+                <Button
                 type={buttonType}
                 onClick={() => handleOnSortClick(id)}
                 className={styles.btnSelectFilter}
                 text={splitByCapitalLetter(name)}
                 size={ButtonSize.small}
-            />);
+            />
+            );
         },
         [ handleOnSortClick, possibleSorting ],
     );
