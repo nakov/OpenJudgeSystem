@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import axios, { ResponseType } from 'axios';
 import { saveAs } from 'file-saver';
-import { isFunction } from 'lodash';
+import { isFunction, isNil } from 'lodash';
 import { HttpStatus } from '../common/common';
 import { IDictionary, IFileResponseType, UrlType } from '../common/common-types';
 
@@ -91,19 +91,25 @@ const useHttp = (
         return filename;
     }, []);
 
-    const saveAttachment = useCallback((responseObj: IFileResponseType) => {
-        if (!responseObj) {
+    const saveAttachment = useCallback(() => {
+        if (!response) {
             return;
         }
 
-        const filename = decodeURIComponent(getFilenameFromHeaders(responseObj));
+        const filename = decodeURIComponent(getFilenameFromHeaders(response as IFileResponseType));
 
         saveAs(
-            responseObj.data,
+            response.data,
             filename,
         );
-    }, [ getFilenameFromHeaders ]);
+        
+        setResponse(null);
+    }, [ getFilenameFromHeaders, response ]);
 
+    useEffect(() => {
+        console.log(`usehttpresponse${ isNil(response)}`);
+    }, [ response ]);
+    
     useEffect(
         () => {
             setActualHeaders({

@@ -27,7 +27,7 @@ const ProblemResource = ({ resource }: IProblemResourceProps) => {
         await downloadProblemResourceFile(resource.id);
     }, [ downloadProblemResourceFile, resource ]);
 
-    const renderResourceLink = (linkContent: React.ReactNode) => (resource.type === 3
+    const renderResourceLink = useCallback((linkContent: React.ReactNode) => (resource.type === 3
         ? (
             <a
               href={resource.link}
@@ -42,31 +42,26 @@ const ProblemResource = ({ resource }: IProblemResourceProps) => {
             <Button
               type={ButtonType.plain}
               className={styles.resourceLinkButton}
-              onClick={
-                    (e) => {
-                        e.preventDefault();
-                        handleDownloadResourceFile();
-                    }
-                }
+              onClick={() => handleDownloadResourceFile()}
             >
                 {linkContent}
             </Button>
-        ));
+        )), [ handleDownloadResourceFile, resource ]);
 
     const resourceTypeIconClassName = resource.type == null
         ? resourceTypeToIconClassName[1]
         : resourceTypeToIconClassName[resource.type];
 
-    const resourceLinkContent = (
+    const resourceLinkContent = useCallback(() => (
         <>
             <i className={`fal ${resourceTypeIconClassName}`} />
             {resource.name}
         </>
-    );
+    ), [ resource, resourceTypeIconClassName ]);
 
     return (
         <div className={styles.resourceWrapper}>
-            {renderResourceLink(resourceLinkContent)}
+            {renderResourceLink(resourceLinkContent())}
         </div>
     );
 };
