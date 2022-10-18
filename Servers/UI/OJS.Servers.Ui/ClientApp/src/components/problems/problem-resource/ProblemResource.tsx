@@ -52,7 +52,7 @@ const ProblemResource = ({ resource }: IProblemResourceProps) => {
         ? resourceTypeToIconClassName[1]
         : resourceTypeToIconClassName[resource.type];
 
-    const resourceLinkContent = useCallback(() => (
+    const getResourceLinkContent = useCallback(() => (
         <>
             <i className={`fal ${resourceTypeIconClassName}`} />
             {resource.name}
@@ -61,7 +61,7 @@ const ProblemResource = ({ resource }: IProblemResourceProps) => {
 
     return (
         <div className={styles.resourceWrapper}>
-            {renderResourceLink(resourceLinkContent())}
+            {renderResourceLink(getResourceLinkContent())}
         </div>
     );
 };
