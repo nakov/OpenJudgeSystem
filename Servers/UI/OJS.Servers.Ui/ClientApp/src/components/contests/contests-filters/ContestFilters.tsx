@@ -16,6 +16,7 @@ import styles from './ContestFilters.module.scss';
 import ContestSorting from '../contest-sorting/ContestSorting';
 import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 import { DEFAULT_FILTER_TYPE, DEFAULT_STATUS_FILTER_TYPE } from '../../../common/constants';
+import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
 
 interface IContestFiltersProps {
     onFilterClick: (filter: IFilter) => void;
@@ -45,6 +46,8 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         state: { possibleFilters },
         actions: { toggleParam, clearFilters },
     } = useContests();
+
+    const { actions: { clearBreadcrumb } } = useCategoriesBreadcrumbs();
 
     const handleSortClick = useCallback(
         (sorting: ISort) => toggleParam(sorting),
@@ -135,17 +138,25 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
             strategiesAreLoaded && categoriesAreLoaded
                 ? possibleFilters
                     .filter(f => f.type === DEFAULT_FILTER_TYPE)
-                    .filter(sf => sf.name === DEFAULT_STATUS_FILTER_TYPE)[0].id 
+                    .filter(sf => sf.name === DEFAULT_STATUS_FILTER_TYPE)[0]?.id 
                 : null
         ,
         [ possibleFilters, strategiesAreLoaded, categoriesAreLoaded ],
     );
 
+    const clearFiltersAndBreadcrumb = useCallback(
+        () => {
+            clearFilters(DEFAULT_FILTER_TYPE, defaultStatusFilterId);
+            clearBreadcrumb();
+        },
+        [ clearFilters, clearBreadcrumb, defaultStatusFilterId ],
+    );
+    
     return (
         <div className={styles.container}>
             <Button
                 type={ButtonType.secondary}
-                onClick={() => clearFilters(DEFAULT_FILTER_TYPE, defaultStatusFilterId)}
+                onClick={() => clearFiltersAndBreadcrumb()}
                 className={styles.button}
                 text='clear filters'
                 size={ButtonSize.small}

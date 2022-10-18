@@ -23,7 +23,6 @@ import { PageParams } from '../common/pages-types';
 import { generateCategoryFilters, generateStatusFilters, generateStrategyFilters } from './contests/contest-filter-utils';
 import { areStringEqual } from '../utils/compare-utils';
 import generateSortingStrategy from '../common/contest-sorting-utils';
-import { useCategoriesBreadcrumbs } from './use-contest-categories-breadcrumb';
 import {
     DEFAULT_FILTER_TYPE,
     DEFAULT_SORT_FILTER_TYPE,
@@ -35,16 +34,15 @@ interface IContestsContext {
     state: {
         contests: IIndexContestsType[];
         possibleFilters: IFilter[];
-        possibleSorting: ISort[];
+        possibleSortingTypes: ISort[];
         filters: IFilter[];
-        sorting: ISort[];
+        sortingTypes: ISort[];
         pagesInfo: IPagesInfo;
         currentPage: number;
     };
     actions: {
         reload: () => Promise<void>;
         clearFilters: (type: FilterType, defaultId: number | null) => void;
-        clearSorting: () => void;
         toggleParam: (param: IFilter | ISort) => void;
         changePage: (pageNumber: number) => void;
     };
@@ -57,7 +55,7 @@ const defaultState = {
     state: {
         contests: [] as IIndexContestsType[],
         possibleFilters: [] as IFilter[],
-        possibleSorting: [] as ISort[],
+        possibleSortingTypes: [] as ISort[],
         pagesInfo: { pageNumber: 1 },
     },
 };
@@ -113,8 +111,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     const { state: { strategies, isLoaded: strategiesAreLoaded } } = useContestStrategyFilters();
     const { state: { categories, isLoaded: categoriesAreLoaded } } = useContestCategories();
-    
-    const { actions: { clearBreadcrumb } } = useCategoriesBreadcrumbs();
 
     const possibleFilters = useMemo(
         () => strategiesAreLoaded && categoriesAreLoaded
@@ -125,7 +121,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         [ categories, categoriesAreLoaded, strategies, strategiesAreLoaded ],
     );
 
-    const possibleSorting = useMemo(
+    const possibleSortingTypes = useMemo(
         () => generateSortingStrategy() as unknown as ISort[],
         [],
     );
@@ -135,9 +131,9 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         [ params, possibleFilters ],
     );
 
-    const sorting = useMemo(
-        () => collectParams(params, possibleSorting, DEFAULT_SORT_FILTER_TYPE, DEFAULT_SORT_TYPE),
-        [ params, possibleSorting ],
+    const sortingTypes = useMemo(
+        () => collectParams(params, possibleSortingTypes, DEFAULT_SORT_FILTER_TYPE, DEFAULT_SORT_TYPE),
+        [ params, possibleSortingTypes ],
     );
 
     const currentPage = useMemo(
@@ -155,10 +151,9 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
                 unsetParam(FilterType.Strategy);
                 unsetParam(FilterType.Category);
                 setParam(FilterType.Status, defaultId);
-                clearBreadcrumb();
             }
         },
-        [ unsetParam, setParam, clearBreadcrumb ],
+        [ unsetParam, setParam ],
     );
 
     const reload = useCallback(
@@ -200,11 +195,11 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         () => {
             setGetAllContestsUrlParams({ 
                 filters: filters as IFilter[],
-                sorting: sorting as ISort[],
+                sorting: sortingTypes as ISort[],
                 page: currentPage,
             });
         },
-        [ currentPage, filters, sorting ],
+        [ currentPage, filters, sortingTypes ],
     );
 
     useEffect(
@@ -252,10 +247,10 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         state: {
             contests,
             possibleFilters,
-            possibleSorting,
+            possibleSortingTypes,
             pagesInfo,
             filters,
-            sorting,
+            sortingTypes,
             currentPage,
         },
         actions: {
