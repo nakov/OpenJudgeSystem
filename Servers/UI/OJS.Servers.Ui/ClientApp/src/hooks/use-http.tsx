@@ -106,10 +106,6 @@ const useHttp = (
         setResponse(null);
     }, [ getFilenameFromHeaders, response ]);
 
-    useEffect(() => {
-        console.log(`usehttpresponse${ isNil(response)}`);
-    }, [ response ]);
-    
     useEffect(
         () => {
             setActualHeaders({
