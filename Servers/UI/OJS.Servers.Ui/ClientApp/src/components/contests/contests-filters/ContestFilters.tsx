@@ -3,7 +3,7 @@ import { isNil } from 'lodash';
 import { useSearchParams } from 'react-router-dom';
 import List from '../../guidelines/lists/List';
 
-import { ContestStatus, FilterType, IFilter, ISort } from '../../../common/contest-types';
+import { FilterType, IFilter, ISort } from '../../../common/contest-types';
 import ContestCategories from '../contest-categories/ContestCategories';
 
 import { useContests } from '../../../hooks/use-contests';
@@ -15,6 +15,7 @@ import ContestFilter from '../contest-filter/ContestFilter';
 import styles from './ContestFilters.module.scss';
 import ContestSorting from '../contest-sorting/ContestSorting';
 import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
+import { DEFAULT_FILTER_TYPE, DEFAULT_STATUS_FILTER_TYPE } from '../../../common/constants';
 
 interface IContestFiltersProps {
     onFilterClick: (filter: IFilter) => void;
@@ -130,15 +131,13 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     );
 
     const defaultStatusFilterId = useMemo(
-        () => {
-            if (strategiesAreLoaded && categoriesAreLoaded) {
-                const statusFilters = possibleFilters.filter(f => f.type === FilterType.Status);
-                
-                return statusFilters.filter(sf => sf.name === ContestStatus.All)[0].id;
-            } 
-                
-            return null;
-        },
+        () => 
+            strategiesAreLoaded && categoriesAreLoaded
+                ? possibleFilters
+                    .filter(f => f.type === DEFAULT_FILTER_TYPE)
+                    .filter(sf => sf.name === DEFAULT_STATUS_FILTER_TYPE)[0].id 
+                : null
+        ,
         [ possibleFilters, strategiesAreLoaded, categoriesAreLoaded ],
     );
 
@@ -146,7 +145,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         <div className={styles.container}>
             <Button
                 type={ButtonType.secondary}
-                onClick={() => clearFilters(FilterType.Status, defaultStatusFilterId)}
+                onClick={() => clearFilters(DEFAULT_FILTER_TYPE, defaultStatusFilterId)}
                 className={styles.button}
                 text='clear filters'
                 size={ButtonSize.small}

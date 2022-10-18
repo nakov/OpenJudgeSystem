@@ -1,13 +1,14 @@
 ﻿import React, { useCallback, useMemo } from 'react';
 import { isNil } from 'lodash';
 import { useContests } from '../../../hooks/use-contests';
-import { FilterType, ISort, SortType } from '../../../common/contest-types';
+import { ISort } from '../../../common/contest-types';
 import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 import List, { Orientation } from '../../guidelines/lists/List';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import { splitByCapitalLetter } from '../../../utils/string-utils';
 
 import styles from './ContestSorting.module.scss';
+import { DEFAULT_SORT_FILTER_TYPE, DEFAULT_SORT_TYPE } from '../../../common/constants';
 
 interface IContestSortingProps {
     onSortClick: (sorting: ISort) => void;
@@ -55,7 +56,7 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
     
     const defaultSortingId = useMemo(
         () => 
-            possibleSorting.filter(s => s.name === SortType.StartDate)[0].id
+            possibleSorting.filter(s => s.name === DEFAULT_SORT_TYPE)[0].id
         ,
         [ possibleSorting ],
     );
@@ -70,7 +71,7 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
                     Sorting
                     <Button
                             type={ButtonType.secondary}
-                            onClick={() => clearFilters(FilterType.Sort, defaultSortingId)}
+                            onClick={() => clearFilters(DEFAULT_SORT_FILTER_TYPE, defaultSortingId)}
                             className={styles.button}
                             text='clear sorting'
                             size={ButtonSize.small}

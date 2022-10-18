@@ -3,13 +3,11 @@ import { isEmpty, isNil } from 'lodash';
 import { IHaveChildrenProps, IPagesInfo } from '../components/common/Props';
 import { IIndexContestsType, IPagedResultType } from '../common/types';
 import {
-    ContestStatus,
     FilterSortType,
     FilterType,
     IContestParam,
     IFilter,
     ISort,
-    SortType,
     ToggleParam,
 } from '../common/contest-types';
 import { useHttp } from './use-http';
@@ -26,6 +24,12 @@ import { generateCategoryFilters, generateStatusFilters, generateStrategyFilters
 import { areStringEqual } from '../utils/compare-utils';
 import generateSortingStrategy from '../common/contest-sorting-utils';
 import { useCategoriesBreadcrumbs } from './use-contest-categories-breadcrumb';
+import {
+    DEFAULT_FILTER_TYPE,
+    DEFAULT_SORT_FILTER_TYPE,
+    DEFAULT_SORT_TYPE,
+    DEFAULT_STATUS_FILTER_TYPE,
+} from '../common/constants';
 
 interface IContestsContext {
     state: {
@@ -86,12 +90,6 @@ const collectCurrentPage = (params: IUrlParam[]) => {
     return parseInt(value, 10);
 };
 
-const defaultFilterType = FilterType.Status;
-const defaultStatusFilterType = ContestStatus.All;
-
-const defaultSortFilterType = FilterType.Sort;
-const defaultSortType = SortType.StartDate;
-
 const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ contests, setContests ] = useState(defaultState.state.contests);
     const [ getAllContestsUrlParams, setGetAllContestsUrlParams ] = useState<IAllContestsUrlParams | null>();
@@ -133,12 +131,12 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     );
     
     const filters = useMemo(
-        () => collectParams(params, possibleFilters, defaultFilterType, defaultStatusFilterType),
+        () => collectParams(params, possibleFilters, DEFAULT_FILTER_TYPE, DEFAULT_STATUS_FILTER_TYPE),
         [ params, possibleFilters ],
     );
 
     const sorting = useMemo(
-        () => collectParams(params, possibleSorting, defaultSortFilterType, defaultSortType),
+        () => collectParams(params, possibleSorting, DEFAULT_SORT_FILTER_TYPE, DEFAULT_SORT_TYPE),
         [ params, possibleSorting ],
     );
 

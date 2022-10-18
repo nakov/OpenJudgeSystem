@@ -43,7 +43,7 @@ const CategoriesBreadcrumbProvider = ({ children }: ICategoriesBreacrumbProvider
             if (isNil(category) || isNil(categoriesTree)) {
                 return;
             }
-            
+
             const { id, name, parentId } = category;
 
             const allBreadcrumbItems = [] as ICategoriesBreadcrumbItem[];
