@@ -19,7 +19,7 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
         state: { possibleSortingTypes }, 
         actions: { clearFilters }, 
     } = useContests();
-    
+
     const handleOnSortClick = useCallback(
         (sortId: number) => {
             const sorting = possibleSortingTypes.find(({ id }) => sortId === id);
@@ -55,9 +55,7 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
     );
     
     const defaultSortingId = useMemo(
-        () =>
-            possibleSortingTypes.filter(s => s.name === DEFAULT_SORT_TYPE)[0]?.id
-        ,
+        () => possibleSortingTypes.filter(s => s.name === DEFAULT_SORT_TYPE)[0]?.id,
         [ possibleSortingTypes ],
     );
     
@@ -75,7 +73,7 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
                             className={styles.button}
                             text='clear sorting'
                             size={ButtonSize.small}
-                        />
+                    />
                 </div>
             </Heading>
             <List
