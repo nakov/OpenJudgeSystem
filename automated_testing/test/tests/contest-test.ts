@@ -2,6 +2,7 @@ import waitForDisplayed from 'webdriverio/build/commands/element/waitForDisplaye
 import ContestPage from '../pageobjects/contest-page';
 import AuthPage from '../pageobjects/auth-page';
 import IndexPage from '../pageobjects/index-page';
+import { cleanData, cleanupAppAndDb, prepareAppAndDb, restoreData } from '../app';
 
 describe('Testing contest', () => {
     const validUserCredentials = {
@@ -24,12 +25,22 @@ describe('Testing contest', () => {
     };
 
     before(async () => {
+        await prepareAppAndDb();
         await AuthPage.open();
         await loginInWithValidCredentials();
     });
 
     after(async () => {
         await AuthPage.performLogOut();
+        await cleanupAppAndDb();
+    });
+
+    beforeEach(async () => {
+        await restoreData();
+    });
+
+    afterEach(async () => {
+        await cleanData();
     });
 
     describe('Testing compete contest', () => {
