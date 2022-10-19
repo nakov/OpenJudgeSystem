@@ -22,7 +22,7 @@ public class ProblemResourcesController : BaseApiController
     /// </summary>
     /// <param name="id">The problem resource id</param>
     /// <returns>A file with the problem resource</returns>
-    [HttpGet]
+    [HttpGet("{id:int}")]
     [Authorize]
     [Produces(ApplicationOctetStream)]
     [ProducesResponseType(typeof(FileContentResult), Status200OK)]
