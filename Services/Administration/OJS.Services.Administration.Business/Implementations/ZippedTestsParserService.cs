@@ -1,9 +1,8 @@
+namespace OJS.Services.Administration.Business.Implementations;
+
 using FluentExtensions.Extensions;
 using OJS.Data.Models.Tests;
 using OJS.Services.Common.Helpers;
-
-namespace OJS.Services.Administration.Business.Implementations;
-
 using OJS.Common.Extensions;
 using OJS.Data.Models.Problems;
 using OJS.Services.Administration.Models.Tests;
@@ -121,7 +120,7 @@ public class ZippedTestsParserService : IZippedTestsParserService
         return addedTestsCount;
     }
 
-    private static bool ShouldTryOptimizeMysqlQuery(Problem problem)
+    private bool ShouldTryOptimizeMysqlQuery(Problem problem)
     {
         try
         {
@@ -137,7 +136,7 @@ public class ZippedTestsParserService : IZippedTestsParserService
         }
     }
 
-    private static string GetInputData(string input, bool optimizeMysqlQuery)
+    private string GetInputData(string input, bool optimizeMysqlQuery)
     {
         if (!optimizeMysqlQuery)
         {
