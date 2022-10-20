@@ -1,7 +1,7 @@
 ﻿import React, { useCallback } from 'react';
 import isNil from 'lodash/isNil';
 import { useContests } from '../../../hooks/use-contests';
-import { ISort } from '../../../common/contest-types';
+import { FilterType, ISort } from '../../../common/contest-types';
 import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 import List, { Orientation } from '../../guidelines/lists/List';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
@@ -64,7 +64,7 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
                     Sorting
                     <Button
                             type={ButtonType.secondary}
-                            onClick={() => clearFilters(DEFAULT_SORT_FILTER_TYPE)}
+                            onClick={() => clearFilters(DEFAULT_SORT_FILTER_TYPE as unknown as FilterType[])}
                             className={styles.button}
                             text='clear sorting'
                             size={ButtonSize.small}

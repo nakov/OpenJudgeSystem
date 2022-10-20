@@ -35,7 +35,7 @@ interface IContestsContext {
     };
     actions: {
         reload: () => Promise<void>;
-        clearFilters: (type: FilterType, defaultId?: number) => void;
+        clearFilters: (types: FilterType[], filterTypeId?: number) => void;
         toggleParam: (param: IFilter | ISort) => void;
         changePage: (pageNumber: number) => void;
     };
@@ -135,13 +135,18 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     );
 
     const clearFilters = useCallback(
-        (type: FilterType, filterTypeId: number) => {
-            if (type === FilterType.Sort) {
+        (types: FilterType[], filterTypeId: number) => {
+            const filterSortType = types.find(f => f === FilterType.Sort);
+            const filterType = types.find(f => f !== FilterType.Sort);
+
+            if (filterSortType) {
                 const filterSortTypeId = filterTypeId || possibleSortingTypes.filter(s => s.name === DEFAULT_SORT_TYPE)[0]?.id;
                 
-                unsetParam(type);
-                setParam(type, filterSortTypeId);
-            } else {
+                unsetParam(filterSortType);
+                setParam(filterSortType, filterSortTypeId);
+            }
+ 
+            if (filterType) {
                 const filterId = filterTypeId || strategiesAreLoaded && categoriesAreLoaded
                     ? possibleFilters
                         .filter(f => f.type === DEFAULT_FILTER_TYPE)
@@ -151,7 +156,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
                 unsetParam(FilterType.Status);
                 unsetParam(FilterType.Strategy);
                 unsetParam(FilterType.Category);
-                setParam(type, filterId);
+                setParam(filterType, filterId);
             }
         },
         [ unsetParam, setParam, possibleSortingTypes, categoriesAreLoaded, strategiesAreLoaded, possibleFilters ],
