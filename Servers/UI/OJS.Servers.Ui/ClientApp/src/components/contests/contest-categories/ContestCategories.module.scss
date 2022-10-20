@@ -1,7 +1,7 @@
-@import "src/styles/colors";
+@import 'src/styles/colors';
 
 .heading {
-  text-align: left;
-  padding-bottom: 10px;
   border-bottom: 1px solid $bottom-border-color;
+  padding-bottom: 10px;
+  text-align: left;
 }

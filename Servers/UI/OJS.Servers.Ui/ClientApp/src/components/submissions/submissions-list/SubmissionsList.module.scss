@@ -1,25 +1,25 @@
-@import "src/styles/colors";
+@import 'src/styles/colors';
 
 .submissionsList {
   align-items: start;
   padding: 20px;
 
   .submissionListItem {
-    text-align: start;
-    font-size: 18px;
-    font-family: Lato, serif;
     color: $text-dark-gray-color;
+    font-family: Lato, serif;
+    font-size: 18px;
     margin-top: 10px;
+    text-align: start;
   }
 }
 
 .submissionContainer {
+  border-bottom: 1px solid $bottom-border-color;
   display: flex;
+  justify-content: space-between;
+  padding: 45px 0 5px;
   position: relative;
   width: 100%;
-  padding: 45px 0 5px;
-  justify-content: space-between;
-  border-bottom: 1px solid $bottom-border-color;
 
   &.selected {
     color: $color-btn-secondary;
@@ -27,24 +27,24 @@
 }
 
 .actionsContainer {
+  align-items: center;
   display: flex;
   justify-content: space-between;
   width: 100%;
-  align-items: center;
 }
 
 .infoContainer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
+  align-items: center;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
 }
 
 .submissionCreatedOnParagraph {
-  font-size: 12px;
-  font-family: Lato, serif;
   color: $text-light-gray-color;
+  font-family: Lato, serif;
+  font-size: 12px;
 }

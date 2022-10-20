@@ -1,4 +1,4 @@
-@import "src/styles/colors";
+@import 'src/styles/colors';
 
 .submissionResultsContent {
   display: flex;
@@ -6,8 +6,8 @@
 }
 
 .refreshBtn {
-  border: none;
   align-self: end;
+  border: 0;
 
   &:hover {
     background: none;

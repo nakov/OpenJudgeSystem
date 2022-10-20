@@ -1,11 +1,11 @@
-@import "src/styles/colors";
+@import 'src/styles/colors';
 
 .footer {
-  height: 50px;
-  background: $background-color-footer;
-  width: 100%;
-  color: white;
-  display: flex;
-  justify-content: center;
   align-items: center;
+  background: $background-color-footer;
+  color: #fff;
+  display: flex;
+  height: 50px;
+  justify-content: center;
+  width: 100%;
 }

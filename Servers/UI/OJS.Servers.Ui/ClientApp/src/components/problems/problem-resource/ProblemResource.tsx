@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 
 import { IProblemResourceType } from '../../../common/types';
 import { useProblems } from '../../../hooks/use-problems';
+import concatClassNames from '../../../utils/class-names';
 import { Button, ButtonType } from '../../guidelines/buttons/Button';
 
 import styles from './ProblemResource.module.scss';
@@ -53,10 +54,12 @@ const ProblemResource = ({ resource }: IProblemResourceProps) => {
     const resourceTypeIconClassName = resource.type == null
         ? resourceTypeToIconClassName[1]
         : resourceTypeToIconClassName[resource.type];
+    
+    const resourceLinkContentClassName = concatClassNames('fal', styles.icon,resourceTypeIconClassName);
 
     const resourceLinkContent = (
         <>
-            <i className={`fal ${resourceTypeIconClassName}`} />
+            <i className={resourceLinkContentClassName} />
             {resource.name}
         </>
     );

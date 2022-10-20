@@ -14,13 +14,13 @@ const ContestProblemDetails = () => {
 
     return (
         <div className={problemDetailsContainer}>
-            <div>
+            <div className={styles.problemItems}>
                 <Heading type={HeadingType.secondary}>
                     Resources
                 </Heading>
                 <ProblemResources />
             </div>
-            <div>
+            <div className={styles.problemItems}>
                 <Heading type={HeadingType.secondary}>
                     Submissions
                 </Heading>

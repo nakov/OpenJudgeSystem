@@ -1,4 +1,4 @@
-@import "src/styles/colors";
+@import 'src/styles/colors';
 
 .contestMainWrapper {
   // no body
@@ -6,9 +6,9 @@
 
 .contestInnerLayout {
   display: flex;
+  flex: 90% 1;
   flex-direction: row;
   margin-top: 30px;
-  flex: 90% 1;
 }
 
 .heading {
@@ -17,14 +17,14 @@
 
 .editorAndProblemControlsWrapper {
   display: flex;
-  flex-direction: column;
   flex: 3;
+  flex-direction: column;
 }
 
 .executionTypeSelectors {
   display: flex;
-  flex-direction: row;
   flex: 6;
+  flex-direction: row;
 }
 
 .submitButtonContainer {

@@ -7,5 +7,8 @@ module.exports = {
     'rules': {
         'selector-class-pattern': null,
         'scss/percent-placeholder-pattern': null,
+        'max-nesting-depth': [
+            3,
+        ]
     },
 }

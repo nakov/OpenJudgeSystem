@@ -1,32 +1,51 @@
-@import "src/styles/colors";
-@import "src/styles/fonts";
-@import "src/styles/variables";
+@import 'src/styles/colors';
+@import 'src/styles/fonts';
+@import 'src/styles/variables';
 
 .contestCard {
   @extend %font-family-lato;
+
+  align-content: center;
+  border-radius: 8px;
+  box-shadow: $box-shadow-color;
   display: grid;
   flex-flow: wrap;
-  grid-template-rows: auto 1fr auto;
-  align-content: center;
   grid-gap: 10px;
-  min-height: 10vh;
+  grid-template-rows: auto 1fr auto;
   margin: 10px;
+  min-height: 10vh;
   padding: 0.7vw;
-  box-shadow: $box-shadow-color;
-  border-radius: 8px;
+}
+
+.tooltip {
+  max-width: 245px;
+  position: absolute;
+  visibility: hidden;
+  width: 100%;
+
+  .tooltipText {
+    bottom: 100%;
+    font-size: 15px;
+    overflow: hidden;
+    padding: 5px 0;
+    position: absolute;
+    text-align: left;
+    white-space: nowrap;
+  }
 }
 
 .contestCardHeader {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
   @extend %font-family-lato;
-  font-weight: 500;
-  font-size: $f-size-18;
-  min-height: 4vh;
-  margin: 10px;
+
   border-bottom: 1px solid;
   border-bottom-color: $bottom-border-color;
+  display: flex;
+  flex-direction: row;
+  font-size: $f-size-18;
+  font-weight: 500;
+  justify-content: space-between;
+  margin: 10px;
+  min-height: 4vh;
 
   &:hover {
     .tooltip {
@@ -36,48 +55,31 @@
 }
 
 .contestCardControls {
-  display: flex;
   align-items: flex-end;
+  display: flex;
   grid-gap: 10px;
 }
 
 .contestCardCountdown {
-  padding: 10px;
+  color: $text-dark-gray-color;
   font-size: $f-size-12;
   font-weight: bold;
-  color: $text-dark-gray-color;
+  padding: 10px;
 }
 
 .contestCardCategoryLabel {
-  margin-left: 10px;
-  font-size: $f-size-10;
-  text-transform: uppercase;
-  font-weight: bold;
   color: $text-light-gray-color;
+  font-size: $f-size-10;
+  font-weight: bold;
+  margin-left: 10px;
+  text-transform: uppercase;
 }
 
 .contestCardTitle {
-  white-space: nowrap;
-  overflow: hidden;
   display: block;
-  text-overflow: ellipsis;
-  width: 100%;
   max-width: 225px;
-}
-
-.tooltip {
-  position: absolute;
-  visibility: hidden;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   width: 100%;
-  max-width: 245px;
-  
-  .tooltipText {
-    text-align: left;
-    padding: 5px 0;
-    position: absolute;
-    bottom: 100%;
-    font-size:15px;
-    overflow:hidden;
-    white-space: nowrap;
-  }
 }

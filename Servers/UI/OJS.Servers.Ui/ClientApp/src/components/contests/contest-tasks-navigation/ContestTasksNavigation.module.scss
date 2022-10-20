@@ -1,6 +1,6 @@
-@import "src/styles/colors";
-@import "src/styles/fonts";
-@import "src/styles/variables";
+@import 'src/styles/colors';
+@import 'src/styles/fonts';
+@import 'src/styles/variables';
 
 .tasksSideNavigation {
   text-align: center;
@@ -8,15 +8,16 @@
 
 .tasksListSideNavigation {
   align-items: flex-start;
-  padding: 20px;
   display: flex;
+  padding: 20px;
 
   .taskSideNavigationItem {
-    text-align: start;
-    font-size: $f-size-18;
     @extend %font-family-lato;
-    margin-top: 10px;
+
     color: $text-dark-gray-color;
+    font-size: $f-size-18;
+    margin-top: 10px;
+    text-align: start;
 
     &:hover {
       cursor: pointer;
@@ -29,18 +30,18 @@
 }
 
 .taskListItem {
-  width: 100%;
+  align-items: center;
+  border-bottom: 1px solid $bottom-border-color;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  position: relative;
   padding: 35px 0 5px;
-  border-bottom: 1px solid $bottom-border-color;
+  position: relative;
+  width: 100%;
 }
 
 .resultsButton {
-  border: none;
   align-self: end;
+  border: 0;
 
   &:hover {
     background: none;

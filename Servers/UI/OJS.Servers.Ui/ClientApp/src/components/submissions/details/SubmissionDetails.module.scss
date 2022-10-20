@@ -1,6 +1,6 @@
-@import "src/styles/global";
-@import "src/styles/components";
-@import "src/styles/fonts";
+@import 'src/styles/global';
+@import 'src/styles/components';
+@import 'src/styles/fonts';
 
 .detailsWrapper {
   @extend %wrapper;
@@ -16,25 +16,26 @@
 .code {
   @extend %navigation;
 
+  border-left: 0;
   flex: 7;
-  border-left: none;
 }
 
 .taskHeading {
-  text-align: center;
   margin-bottom: 24px;
+  text-align: center;
 }
 
 .submissionsList {
   height: 60vh;
-  
+
   ul {
+    @extend %customScroll;
+
     overflow-x: hidden;
     overflow-y: auto;
-    @extend %customScroll;
   }
 }
 
 .submissionDetails {
-  border-left: none;
+  border-left: 0;
 }

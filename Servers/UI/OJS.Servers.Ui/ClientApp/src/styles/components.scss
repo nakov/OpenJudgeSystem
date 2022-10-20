@@ -1,10 +1,10 @@
-@import "colors";
-@import "variables";
+@import 'colors';
+@import 'variables';
 
 %small {
-  padding: 10px 18px;
   font-size: $f-size-12;
   line-height: 12px;
+  padding: 10px 18px;
 }
 
 .medium,
@@ -16,20 +16,20 @@
 
 .large,
 %large {
-  padding: 16px 48px;
   font-size: $f-size-16;
   line-height: 16px;
+  padding: 16px 48px;
 }
 
 %contentSize {
-  margin: 0 auto;
-  width: 1280px;
-  max-width: 90%;
   box-sizing: border-box;
+  margin: 0 auto;
+  max-width: 90%;
+  width: 1280px;
 
   &%wide {
-    width: 100%;
     max-width: 100%;
+    width: 100%;
   }
 
   @media only screen and (max-width: 1440px) {
@@ -40,25 +40,25 @@
 .customScroll,
 %customScroll {
   &::-webkit-scrollbar {
-    width: 6px;
     height: 6px;
+    width: 6px;
   }
 
   &::-webkit-scrollbar-track {
+    background: rgb(0 0 0 / 10%);
     border-radius: 10px;
-    background: rgba(0,0,0,0.1);
   }
 
-  &::-webkit-scrollbar-thumb{
+  &::-webkit-scrollbar-thumb {
+    background: rgb(0 0 0 / 20%);
     border-radius: 10px;
-    background: rgba(0,0,0,0.2);
   }
 
-  &::-webkit-scrollbar-thumb:hover{
-    background: rgba(0,0,0,0.4);
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgb(0 0 0 / 40%);
   }
 
-  &::-webkit-scrollbar-thumb:active{
-    background: rgba(0,0,0,.9);
+  &::-webkit-scrollbar-thumb:active {
+    background: rgb(0 0 0 / 90%);
   }
 }

@@ -1,19 +1,20 @@
-@import "src/styles/colors";
-@import "src/styles/fonts";
-@import "src/styles/variables";
+@import 'src/styles/colors';
+@import 'src/styles/fonts';
+@import 'src/styles/variables';
 
 .testRun {
+  @extend %font-family-lato;
+
+  border-bottom: 1px solid $bottom-border-color;
+  color: $text-dark-gray-color;
   margin-top: 10px;
   padding: 20px;
-  border-bottom: 1px solid $bottom-border-color;
-  @extend %font-family-lato;
-  color: $text-dark-gray-color;
 }
 
 %heading {
+  display: flex;
   font-size: $f-size-18;
   margin-bottom: 10px;
-  display: flex;
 }
 
 .testRunHeading {
@@ -27,10 +28,10 @@
 }
 
 .collapsibleHeader {
+  align-items: center;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
 }
 
 .correctTestRunHeading {
@@ -40,15 +41,16 @@
 }
 
 .testRunData {
+  align-self: center;
   display: flex;
   flex-direction: row;
-  align-self: center;
-  margin-left: 10px;
   gap: 10px;
+  margin-left: 10px;
 }
 
 .testRunDataParagraph {
-  font-size: $f-size-12;
   @extend %font-family-lato;
+
   color: $text-light-gray-color;
+  font-size: $f-size-12;
 }

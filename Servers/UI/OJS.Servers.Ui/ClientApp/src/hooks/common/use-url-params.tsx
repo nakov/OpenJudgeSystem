@@ -9,6 +9,7 @@ interface IUrlParamsContext {
         params: IUrlParam[];
     };
     actions: {
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         setParam: (key: string, value: any) => void;
         unsetParam: (key: string) => void;
         clearParams: () => void;

@@ -1,5 +1,5 @@
-@import "./common/icon-base";
-@import "src/styles/colors";
+@import './common/icon-base';
+@import 'src/styles/colors';
 
 .iconContainer {
   @extend %iconContainer;
@@ -21,14 +21,14 @@
   }
 }
 
+.helperText {
+  @extend %helperText;
+}
+
 .icon {
   @extend %icon;
 
-  & > * {
+  .helperText {
     width: 45%;
   }
-}
-
-.helperText {
-  @extend %helperText;
 }

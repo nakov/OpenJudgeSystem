@@ -1,15 +1,16 @@
-@import "src/styles/colors";
-@import "src/styles/fonts";
+@import 'src/styles/colors';
+@import 'src/styles/fonts';
 
 .label {
+  @extend %font-family-lato-regular;
+
   border: 2px solid transparent;
   border-radius: 2px;
-  padding: 5px 15px;
-  font-size: 0.8em;
   color: $white-color;
-  @extend %font-family-lato-regular;
-  text-transform: uppercase;
   display: inline-block;
+  font-size: 0.8em;
+  padding: 5px 15px;
+  text-transform: uppercase;
 
   &.success {
     background: rgb(35 190 94);
@@ -24,7 +25,7 @@
   }
 
   &.info {
-    background-color: blue;
+    background-color: #00f;
   }
 
   &.plain {

@@ -75,7 +75,6 @@ const LoginPage = () => {
               id={passwordFieldName.toLowerCase()}
               name={passwordFieldName}
               labelText={passwordFieldName}
-              labelClassName={styles.floatingLabel}
               type={FormControlType.password}
               onChange={handleOnChangeUpdatePassword}
               value=""
@@ -85,8 +84,6 @@ const LoginPage = () => {
                   id="auth-password-checkbox"
                   name="RememberMe"
                   labelText="Remember Me"
-                  containerClassName={styles.flexDirectionRow}
-                  labelClassName={styles.rememberMeLabel}
                   type={FormControlType.checkbox}
                 />
                 <div>

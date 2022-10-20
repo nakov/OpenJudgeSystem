@@ -1,14 +1,14 @@
-@import "src/styles/components";
+@import 'src/styles/components';
 
 .contentWrapper {
   @extend %contentSize;
 
-  max-width: 90%;
   box-sizing: border-box;
-  padding: 40px;
-  flex: 1;
   display: flex;
+  flex: 1;
   flex-direction: column;
+  max-width: 90%;
+  padding: 40px;
 
   &.wideContentWrapper {
     @extend %wide;
