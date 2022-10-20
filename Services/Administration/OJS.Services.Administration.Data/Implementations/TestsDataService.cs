@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentExtensions.Extensions;
+using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Tests;
 using OJS.Services.Common.Data.Implementations;
 using System.Linq;
@@ -19,15 +20,13 @@ namespace OJS.Services.Administration.Data.Implementations
             => this.DbSet
                 .Where(t => t.ProblemId == problemId);
 
-
         public IQueryable<Test> GetAllNonTrialByProblem(int problemId)
             => this.GetAllByProblem(problemId)
                 .Where(t => !t.IsTrialTest);
 
         public async Task DeleteByProblem(int problemId)
         {
-            var entity = await base.DbSet.FirstAsync(t => t.ProblemId == problemId);
-            this.Delete(entity);
+            this.Delete(t => t.ProblemId == problemId);
             await this.SaveChanges();
         }
     }

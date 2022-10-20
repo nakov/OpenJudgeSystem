@@ -1,3 +1,7 @@
+using FluentExtensions.Extensions;
+using OJS.Data.Models.Tests;
+using OJS.Services.Common.Helpers;
+
 namespace OJS.Services.Administration.Business.Implementations;
 
 using OJS.Common.Extensions;
@@ -39,10 +43,122 @@ public class ZippedTestsParserService : IZippedTestsParserService
     }
 
     public int AddTestsToProblem(Problem problem, TestsParseResult tests)
-        => throw new System.NotImplementedException();
+    {
+        var tryOptimizeMysqlQuery = ShouldTryOptimizeMysqlQuery(problem);
+
+        var lastTrialTest = problem.Tests
+            .Where(x => x.IsTrialTest)
+            .OrderByDescending(x => x.OrderBy)
+            .FirstOrDefault();
+
+        var zeroTestsOrder = 1.0;
+
+        if (lastTrialTest != null)
+        {
+            zeroTestsOrder = lastTrialTest.OrderBy + 1;
+        }
+
+        var addedTestsCount = 0;
+
+        tests.ZeroInputs.ForEach((index, zeroInput) =>
+        {
+            problem.Tests.Add(new Test
+            {
+                IsTrialTest = true,
+                OrderBy = zeroTestsOrder,
+                Problem = problem,
+                InputDataAsString = GetInputData(zeroInput, tryOptimizeMysqlQuery),
+                OutputDataAsString = tests.ZeroOutputs[index],
+            });
+
+            zeroTestsOrder++;
+            addedTestsCount++;
+        });
+
+        var lastTest = problem.Tests
+            .Where(x => !x.IsTrialTest)
+            .OrderByDescending(x => x.OrderBy)
+            .FirstOrDefault();
+
+        var orderBy = 1.0;
+
+        if (lastTest != null)
+        {
+            orderBy = lastTest.OrderBy + 1;
+        }
+
+        tests.OpenInputs.ForEach((index, openInput) =>
+        {
+            problem.Tests.Add(new Test
+            {
+                IsTrialTest = false,
+                IsOpenTest = true,
+                OrderBy = orderBy,
+                Problem = problem,
+                InputDataAsString = GetInputData(tests.OpenInputs[index], tryOptimizeMysqlQuery),
+                OutputDataAsString = tests.OpenOutputs[index]
+            });
+
+            orderBy++;
+            addedTestsCount++;
+        });
+
+        tests.Inputs.ForEach((index, input) =>
+        {
+            problem.Tests.Add(new Test
+            {
+                IsTrialTest = false,
+                OrderBy = orderBy,
+                Problem = problem,
+                InputDataAsString = GetInputData(tests.Inputs[index], tryOptimizeMysqlQuery),
+                OutputDataAsString = tests.Outputs[index]
+            });
+
+            orderBy++;
+            addedTestsCount++;
+        });
+
+        return addedTestsCount;
+    }
+
+    private static bool ShouldTryOptimizeMysqlQuery(Problem problem)
+    {
+        try
+        {
+            return problem.SubmissionTypesInProblems
+                .Any(
+                    st => MySqlStrategiesHelper.ExecutionStrategyTypesForOptimization
+                        .Any(x => x == st.SubmissionType.ExecutionStrategyType));
+        }
+        catch (NullReferenceException e)
+        {
+            // new problem
+            return false;
+        }
+    }
+
+    private static string GetInputData(string input, bool optimizeMysqlQuery)
+    {
+        if (!optimizeMysqlQuery)
+        {
+            return input;
+        }
+
+        return MySqlStrategiesHelper.TryOptimizeQuery(input, out var newInput) ? newInput : input;
+    }
 
     public bool AreTestsParsedCorrectly(TestsParseResult tests)
-        => throw new System.NotImplementedException();
+    {
+        var hasInputs = tests.ZeroInputs.Count != 0 ||
+                        tests.Inputs.Count != 0 ||
+                        tests.OpenInputs.Count != 0;
+
+        var hasEqualAmountOfInputsAndOutputs = tests.ZeroInputs.Count == tests.ZeroOutputs.Count &&
+                                               tests.Inputs.Count == tests.Outputs.Count &&
+                                               tests.OpenInputs.Count == tests.OpenOutputs.Count;
+
+        return hasInputs && hasEqualAmountOfInputsAndOutputs;
+    }
 
     private static async Task ExtractTxtFiles(ZipArchive zipFile, TestsParseResult result)
     {
