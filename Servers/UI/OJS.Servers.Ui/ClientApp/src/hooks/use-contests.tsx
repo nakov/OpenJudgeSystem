@@ -2,14 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import { isEmpty, isNil } from 'lodash';
 import { IHaveChildrenProps, IPagesInfo } from '../components/common/Props';
 import { IIndexContestsType, IPagedResultType } from '../common/types';
-import {
-    FilterSortType,
-    FilterType,
-    IContestParam,
-    IFilter,
-    ISort,
-    ToggleParam,
-} from '../common/contest-types';
+import { FilterSortType, FilterType, IContestParam, IFilter, ISort, ToggleParam } from '../common/contest-types';
 import { useHttp } from './use-http';
 import { useUrls } from './use-urls';
 import { filterByType, findFilterByTypeAndName } from '../common/filter-utils';
@@ -42,7 +35,7 @@ interface IContestsContext {
     };
     actions: {
         reload: () => Promise<void>;
-        clearFilters: (type: FilterType, defaultId: number | null) => void;
+        clearFilters: (type: FilterType, defaultId?: number) => void;
         toggleParam: (param: IFilter | ISort) => void;
         changePage: (pageNumber: number) => void;
     };
@@ -142,18 +135,26 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     );
 
     const clearFilters = useCallback(
-        (type: FilterType, defaultId: number) => {
+        (type: FilterType, filterTypeId: number) => {
             if (type === FilterType.Sort) {
+                const filterSortTypeId = filterTypeId || possibleSortingTypes.filter(s => s.name === DEFAULT_SORT_TYPE)[0]?.id;
+                
                 unsetParam(type);
-                setParam(type, defaultId);
+                setParam(type, filterSortTypeId);
             } else {
+                const filterId = filterTypeId || strategiesAreLoaded && categoriesAreLoaded
+                    ? possibleFilters
+                        .filter(f => f.type === DEFAULT_FILTER_TYPE)
+                        .filter(sf => sf.name === DEFAULT_STATUS_FILTER_TYPE)[0]?.id
+                    : null;
+
                 unsetParam(FilterType.Status);
                 unsetParam(FilterType.Strategy);
                 unsetParam(FilterType.Category);
-                setParam(FilterType.Status, defaultId);
+                setParam(type, filterId);
             }
         },
-        [ unsetParam, setParam ],
+        [ unsetParam, setParam, possibleSortingTypes, categoriesAreLoaded, strategiesAreLoaded, possibleFilters ],
     );
 
     const reload = useCallback(

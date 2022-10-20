@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { isNil } from 'lodash';
 import { useSearchParams } from 'react-router-dom';
 import List from '../../guidelines/lists/List';
@@ -15,7 +15,7 @@ import ContestFilter from '../contest-filter/ContestFilter';
 import styles from './ContestFilters.module.scss';
 import ContestSorting from '../contest-sorting/ContestSorting';
 import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
-import { DEFAULT_FILTER_TYPE, DEFAULT_STATUS_FILTER_TYPE } from '../../../common/constants';
+import { DEFAULT_FILTER_TYPE } from '../../../common/constants';
 import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
 
 interface IContestFiltersProps {
@@ -33,14 +33,8 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const [ defaultSelected, setDefaultSelected ] = useState('');
     const [ searchParams ] = useSearchParams();
     const [ isLoaded, setIsLoaded ] = useState(false);
-    const {
-        state: { isLoaded: strategiesAreLoaded }, 
-        actions: { load: loadStrategies }, 
-    } = useContestStrategyFilters();
-    const {
-        state: { isLoaded: categoriesAreLoaded }, 
-        actions: { load: loadCategories }, 
-    } = useContestCategories();
+    const { actions: { load: loadStrategies } } = useContestStrategyFilters();
+    const { actions: { load: loadCategories } } = useContestCategories();
 
     const {
         state: { possibleFilters },
@@ -133,23 +127,12 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         [ loadCategories ],
     );
 
-    const defaultStatusFilterId = useMemo(
-        () => 
-            strategiesAreLoaded && categoriesAreLoaded
-                ? possibleFilters
-                    .filter(f => f.type === DEFAULT_FILTER_TYPE)
-                    .filter(sf => sf.name === DEFAULT_STATUS_FILTER_TYPE)[0]?.id 
-                : null
-        ,
-        [ possibleFilters, strategiesAreLoaded, categoriesAreLoaded ],
-    );
-
     const clearFiltersAndBreadcrumb = useCallback(
         () => {
-            clearFilters(DEFAULT_FILTER_TYPE, defaultStatusFilterId);
+            clearFilters(DEFAULT_FILTER_TYPE);
             clearBreadcrumb();
         },
-        [ clearFilters, clearBreadcrumb, defaultStatusFilterId ],
+        [ clearFilters, clearBreadcrumb ],
     );
     
     return (
