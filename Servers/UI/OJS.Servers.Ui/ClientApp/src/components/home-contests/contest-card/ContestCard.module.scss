@@ -70,14 +70,14 @@
   visibility: hidden;
   width: 100%;
   max-width: 245px;
-
+  
   .tooltipText {
-    background-color: $grey-color;
-    color: $success-font-color;
-    text-align: center;
-    border-radius: 6px;
+    text-align: left;
     padding: 5px 0;
     position: absolute;
     bottom: 100%;
+    font-size:15px;
+    overflow:hidden;
+    white-space: nowrap;
   }
 }
