@@ -15,6 +15,7 @@ interface IContestSortingProps {
 }
 
 const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
+    const defaultSortFilterTypeArray: FilterType[] = [ DEFAULT_SORT_FILTER_TYPE ]; 
     const {
         state: { possibleSortingTypes }, 
         actions: { clearFilters }, 
@@ -64,7 +65,7 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
                     Sorting
                     <Button
                             type={ButtonType.secondary}
-                            onClick={() => clearFilters(DEFAULT_SORT_FILTER_TYPE as unknown as FilterType[])}
+                            onClick={() => clearFilters(defaultSortFilterTypeArray)}
                             className={styles.button}
                             text='clear sorting'
                             size={ButtonSize.small}

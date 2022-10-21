@@ -129,7 +129,9 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
 
     const clearFiltersAndBreadcrumb = useCallback(
         () => {
-            clearFilters(DEFAULT_FILTER_TYPE as unknown as FilterType[]);
+            const defaultFilterTypeArray: FilterType[] = [ DEFAULT_FILTER_TYPE ];
+
+            clearFilters(defaultFilterTypeArray);
             clearBreadcrumb();
         },
         [ clearFilters, clearBreadcrumb ],
