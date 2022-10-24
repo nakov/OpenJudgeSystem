@@ -8,14 +8,16 @@
     {
         public static TransactionScope CreateTransactionScope() => new TransactionScope();
 
-        public static TransactionScope CreateTransactionScope(IsolationLevel isolationLevel)
+        public static TransactionScope CreateTransactionScope(
+            IsolationLevel isolationLevel,
+            TransactionScopeAsyncFlowOption asyncFlowOption)
         {
             var transactionOptions = new TransactionOptions
             {
                 IsolationLevel = isolationLevel
             };
 
-            return new TransactionScope(TransactionScopeOption.Required, transactionOptions);
+            return new TransactionScope(TransactionScopeOption.Required, transactionOptions, asyncFlowOption);
         }
 
         public static TransactionScope CreateLongRunningTransactionScope(
