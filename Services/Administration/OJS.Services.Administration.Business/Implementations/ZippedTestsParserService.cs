@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace OJS.Services.Administration.Business.Implementations;
 
 using FluentExtensions.Extensions;
@@ -57,22 +59,7 @@ public class ZippedTestsParserService : IZippedTestsParserService
             zeroTestsOrder = lastTrialTest.OrderBy + 1;
         }
 
-        var addedTestsCount = 0;
-
-        tests.ZeroInputs.ForEach((index, zeroInput) =>
-        {
-            problem.Tests.Add(new Test
-            {
-                IsTrialTest = true,
-                OrderBy = zeroTestsOrder,
-                Problem = problem,
-                InputDataAsString = GetInputData(zeroInput, tryOptimizeMysqlQuery),
-                OutputDataAsString = tests.ZeroOutputs[index],
-            });
-
-            zeroTestsOrder++;
-            addedTestsCount++;
-        });
+        this.AddTests(problem, tests.ZeroInputs, tests.ZeroOutputs, tryOptimizeMysqlQuery, true, zeroTestsOrder.ToInt());
 
         var lastTest = problem.Tests
             .Where(x => !x.IsTrialTest)
@@ -86,39 +73,31 @@ public class ZippedTestsParserService : IZippedTestsParserService
             orderBy = lastTest.OrderBy + 1;
         }
 
-        tests.OpenInputs.ForEach((index, openInput) =>
-        {
-            problem.Tests.Add(new Test
-            {
-                IsTrialTest = false,
-                IsOpenTest = true,
-                OrderBy = orderBy,
-                Problem = problem,
-                InputDataAsString = GetInputData(tests.OpenInputs[index], tryOptimizeMysqlQuery),
-                OutputDataAsString = tests.OpenOutputs[index]
-            });
+        this.AddTests(problem, tests.OpenInputs, tests.OpenOutputs, tryOptimizeMysqlQuery, false, orderBy.ToInt());
 
-            orderBy++;
-            addedTestsCount++;
-        });
+        this.AddTests(problem, tests.Inputs, tests.Outputs, tryOptimizeMysqlQuery, false, orderBy.ToInt());
 
-        tests.Inputs.ForEach((index, input) =>
-        {
-            problem.Tests.Add(new Test
-            {
-                IsTrialTest = false,
-                OrderBy = orderBy,
-                Problem = problem,
-                InputDataAsString = GetInputData(tests.Inputs[index], tryOptimizeMysqlQuery),
-                OutputDataAsString = tests.Outputs[index]
-            });
-
-            orderBy++;
-            addedTestsCount++;
-        });
-
-        return addedTestsCount;
+        return tests.ZeroInputs.Count + tests.OpenInputs.Count + tests.Inputs.Count;
     }
+
+    private void AddTests(
+        Problem problem,
+        IEnumerable<string> testsInputs,
+        IEnumerable<string> testOutputs,
+        bool tryOptimizeMysqlQuery,
+        bool isTrialTests,
+        int orderBy)
+        =>  testsInputs.ForEach((index, zeroInput) =>
+            {
+                problem.Tests.Add(new Test
+                {
+                    IsTrialTest = isTrialTests,
+                    OrderBy = orderBy++,
+                    Problem = problem,
+                    InputDataAsString = GetInputData(zeroInput, tryOptimizeMysqlQuery),
+                    OutputDataAsString = testOutputs.ElementAt(index),
+                });
+            });
 
     private bool ShouldTryOptimizeMysqlQuery(Problem problem)
     {
