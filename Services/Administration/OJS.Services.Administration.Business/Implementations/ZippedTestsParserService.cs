@@ -86,14 +86,14 @@ public class ZippedTestsParserService : IZippedTestsParserService
         bool tryOptimizeMysqlQuery,
         bool isTrialTests,
         int orderBy)
-        =>  testsInputs.ForEach((index, zeroInput) =>
+        =>  testsInputs.ForEach((index, testInput) =>
             {
                 problem.Tests.Add(new Test
                 {
                     IsTrialTest = isTrialTests,
                     OrderBy = orderBy++,
                     Problem = problem,
-                    InputDataAsString = GetInputData(zeroInput, tryOptimizeMysqlQuery),
+                    InputDataAsString = GetInputData(testInput, tryOptimizeMysqlQuery),
                     OutputDataAsString = testOutputs.ElementAt(index),
                 });
             });
