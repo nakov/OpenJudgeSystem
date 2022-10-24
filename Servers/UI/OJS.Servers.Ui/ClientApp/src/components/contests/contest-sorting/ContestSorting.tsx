@@ -1,12 +1,11 @@
 ﻿import React, { useCallback } from 'react';
 import isNil from 'lodash/isNil';
 import { useContests } from '../../../hooks/use-contests';
-import { FilterType, ISort } from '../../../common/contest-types';
+import { ISort } from '../../../common/contest-types';
 import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 import List, { Orientation } from '../../guidelines/lists/List';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import { splitByCapitalLetter } from '../../../utils/string-utils';
-import { DEFAULT_SORT_FILTER_TYPE } from '../../../common/constants';
 
 import styles from './ContestSorting.module.scss';
 
@@ -15,10 +14,9 @@ interface IContestSortingProps {
 }
 
 const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
-    const defaultSortFilterTypeArray: FilterType[] = [ DEFAULT_SORT_FILTER_TYPE ]; 
     const {
         state: { possibleSortingTypes }, 
-        actions: { clearFilters }, 
+        actions: { clearSorts }, 
     } = useContests();
 
     const handleOnSortClick = useCallback(
@@ -34,7 +32,7 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
         [ possibleSortingTypes, onSortClick ],
     );
 
-    const getRenderSortingItemFunc = useCallback(
+    const renderSortingItemFunc = useCallback(
         (value : ISort) => {
             const { id, name } = value;
             const sortingIsSelected = possibleSortingTypes.some((s) => s.name === name);
@@ -65,7 +63,7 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
                     Sorting
                     <Button
                             type={ButtonType.secondary}
-                            onClick={() => clearFilters(defaultSortFilterTypeArray)}
+                            onClick={() => clearSorts()}
                             className={styles.button}
                             text='clear sorting'
                             size={ButtonSize.small}
@@ -74,10 +72,10 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
             </Heading>
             <List
                 values={possibleSortingTypes}
-                itemFunc={getRenderSortingItemFunc}
+                itemFunc={renderSortingItemFunc}
                 orientation={Orientation.horizontal}
                 className={styles.sortTypesList}
-                itemClassName={styles.listSortingItem}
+                itemClassName={styles.sortTypesListItemItem}
             />
         </div>
     );

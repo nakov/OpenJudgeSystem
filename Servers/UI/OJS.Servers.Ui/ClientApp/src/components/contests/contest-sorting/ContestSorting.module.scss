@@ -18,7 +18,6 @@
 }
 
 .button {
-  font-weight: 500;
   border: none;
 }
 
@@ -28,7 +27,7 @@
   align-items: flex-start;
   justify-content: space-evenly;
 
-  .listSortingItem {
+  .sortTypesListItem {
     margin-top: 5px;
   }
 }

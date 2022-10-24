@@ -15,7 +15,6 @@ import ContestFilter from '../contest-filter/ContestFilter';
 import styles from './ContestFilters.module.scss';
 import ContestSorting from '../contest-sorting/ContestSorting';
 import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
-import { DEFAULT_FILTER_TYPE } from '../../../common/constants';
 import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
 
 interface IContestFiltersProps {
@@ -129,9 +128,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
 
     const clearFiltersAndBreadcrumb = useCallback(
         () => {
-            const defaultFilterTypeArray: FilterType[] = [ DEFAULT_FILTER_TYPE ];
-
-            clearFilters(defaultFilterTypeArray);
+            clearFilters();
             clearBreadcrumb();
         },
         [ clearFilters, clearBreadcrumb ],
