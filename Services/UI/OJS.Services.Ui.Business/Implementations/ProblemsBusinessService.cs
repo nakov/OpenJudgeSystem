@@ -1,10 +1,10 @@
-using OJS.Common;
-using OJS.Data.Models.Contests;
-using OJS.Data.Models.Participants;
-using OJS.Services.Infrastructure.Exceptions;
-
 namespace OJS.Services.Ui.Business.Implementations
 {
+    using OJS.Common;
+    using OJS.Data.Models.Contests;
+    using OJS.Data.Models.Participants;
+    using OJS.Services.Infrastructure.Exceptions;
+    using System.Transactions;
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
     using OJS.Common.Helpers;
@@ -71,7 +71,9 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var submissionIds = submissions.Select(s => s.Id).ToList();
 
-            using (var scope = TransactionsHelper.CreateTransactionScope(IsolationLevel.RepeatableRead))
+            using (var scope = TransactionsHelper.CreateTransactionScope(
+                       IsolationLevel.RepeatableRead,
+                       TransactionScopeAsyncFlowOption.Enabled))
             {
                 await this.participantScoresData.DeleteAllByProblem(id);
 
@@ -106,7 +108,9 @@ namespace OJS.Services.Ui.Business.Implementations
                 return;
             }
 
-            using (var scope = TransactionsHelper.CreateTransactionScope(IsolationLevel.RepeatableRead))
+            using (var scope = TransactionsHelper.CreateTransactionScope(
+                       IsolationLevel.RepeatableRead,
+                       TransactionScopeAsyncFlowOption.Enabled))
             {
                 await this.testRunsData.DeleteByProblem(id);
 

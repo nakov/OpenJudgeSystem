@@ -12,6 +12,7 @@ namespace OJS.Services.Administration.Business.Implementations
     using System;
     using System.Linq;
     using System.Threading.Tasks;
+    using System.Transactions;
     using IsolationLevel = System.Transactions.IsolationLevel;
     using Resource = OJS.Common.Resources.ProblemsBusiness;
     using SharedResource = OJS.Common.Resources.ContestsGeneral;
@@ -67,7 +68,9 @@ namespace OJS.Services.Administration.Business.Implementations
 
             var submissionIds = submissions.Select(s => s.Id).ToList();
 
-            using (var scope = TransactionsHelper.CreateTransactionScope(IsolationLevel.RepeatableRead))
+            using (var scope = TransactionsHelper.CreateTransactionScope(
+                       IsolationLevel.RepeatableRead,
+                       TransactionScopeAsyncFlowOption.Enabled))
             {
                 await this.participantScoresData.DeleteAllByProblem(id);
 
@@ -102,7 +105,9 @@ namespace OJS.Services.Administration.Business.Implementations
                 return;
             }
 
-            using (var scope = TransactionsHelper.CreateTransactionScope(IsolationLevel.RepeatableRead))
+            using (var scope = TransactionsHelper.CreateTransactionScope(
+                       IsolationLevel.RepeatableRead,
+                       TransactionScopeAsyncFlowOption.Enabled))
             {
                 await this.testRunsData.DeleteByProblem(id);
 
