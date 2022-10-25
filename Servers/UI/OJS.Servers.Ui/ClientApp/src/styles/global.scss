@@ -29,6 +29,7 @@ form {
   }
 }
 
+/* stylelint-disable */
 .columnsThree,
 %columnsThree {
   & > * {
@@ -49,3 +50,5 @@ form {
     flex: 7;
   }
 }
+
+/* stylelint-enable */
