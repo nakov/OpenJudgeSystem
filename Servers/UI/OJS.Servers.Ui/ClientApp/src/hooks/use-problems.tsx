@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import first from 'lodash/first';
 import isNil from 'lodash/isNil';
 
-import { IFileResponseType, UrlType } from '../common/common-types';
+import { UrlType } from '../common/common-types';
 import { IProblemType } from '../common/types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
@@ -88,12 +88,11 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     }, []);
 
     useEffect(() => {
-        if (isNil(downloadProblemResourceResponse) && isNil(problemResourceIdToDownload)) {
+        if (isNil(downloadProblemResourceResponse)) {
             return;
         }
 
-        saveAttachment(downloadProblemResourceResponse as IFileResponseType);
-        setProblemResourceIdToDownload(null);
+        saveAttachment();
     }, [ downloadProblemResourceResponse, problemResourceIdToDownload, saveAttachment ]);
 
     useEffect(() => {
@@ -106,6 +105,8 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
             await downloadProblemResource('blob');
             stopLoading();
         })();
+
+        setProblemResourceIdToDownload(null);
     }, [ downloadProblemResource, problemResourceIdToDownload, startLoading, stopLoading ]);
 
     useEffect(

@@ -93,18 +93,20 @@ const useHttp = (
         return filename;
     }, []);
 
-    const saveAttachment = useCallback((responseObj: IFileResponseType) => {
-        if (!responseObj) {
+    const saveAttachment = useCallback(() => {
+        if (!response) {
             return;
         }
 
-        const filename = decodeURIComponent(getFilenameFromHeaders(responseObj));
+        const filename = decodeURIComponent(getFilenameFromHeaders(response as IFileResponseType));
 
         saveAs(
-            responseObj.data,
+            response.data,
             filename,
         );
-    }, [ getFilenameFromHeaders ]);
+        
+        setResponse(null);
+    }, [ getFilenameFromHeaders, response ]);
 
     useEffect(
         () => {
