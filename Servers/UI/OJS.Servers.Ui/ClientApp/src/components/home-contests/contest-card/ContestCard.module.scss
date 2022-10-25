@@ -1,13 +1,13 @@
-@import 'src/styles/colors';
-@import 'src/styles/fonts';
-@import 'src/styles/variables';
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
+@use 'src/styles/variables';
 
 .contestCard {
   @extend %font-family-lato;
 
   align-content: center;
   border-radius: 8px;
-  box-shadow: $box-shadow-color;
+  box-shadow: colors.$box-shadow-color;
   display: grid;
   flex-flow: wrap;
   grid-gap: 10px;
@@ -38,10 +38,10 @@
   @extend %font-family-lato;
 
   border-bottom: 1px solid;
-  border-bottom-color: $bottom-border-color;
+  border-bottom-color: colors.$bottom-border-color;
   display: flex;
   flex-direction: row;
-  font-size: $f-size-18;
+  font-size: variables.$f-size-18;
   font-weight: 500;
   justify-content: space-between;
   margin: 10px;
@@ -61,15 +61,15 @@
 }
 
 .contestCardCountdown {
-  color: $text-dark-gray-color;
-  font-size: $f-size-12;
+  color: colors.$text-dark-gray-color;
+  font-size: variables.$f-size-12;
   font-weight: bold;
   padding: 10px;
 }
 
 .contestCardCategoryLabel {
-  color: $text-light-gray-color;
-  font-size: $f-size-10;
+  color: colors.$text-light-gray-color;
+  font-size: variables.$f-size-10;
   font-weight: bold;
   margin-left: 10px;
   text-transform: uppercase;

@@ -15,7 +15,7 @@ const RegisterPage = () => {
         window.location.href = '';
     }, [ navigate, user ]);
 
-    return <></>;
+    return (<div />);
 };
 
 export default RegisterPage;

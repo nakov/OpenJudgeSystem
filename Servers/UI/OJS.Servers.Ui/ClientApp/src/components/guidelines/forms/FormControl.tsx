@@ -43,9 +43,9 @@ interface ILabelInternalProps extends IHaveChildrenProps, IHaveOptionalClassName
 const LabelInternal = ({ id, text, className, internalContainerClassName, forKey, children, fieldType }: ILabelInternalProps) => {
     if (!text && !className) {
         return (
-            <>
+            <div>
                 {children}
-            </>
+            </div>
         );
     }
 
@@ -97,13 +97,13 @@ const FormControl = ({
     const handleOnChange = (ev: ChangeEvent<TextAreaOrInputElement>) => {
         if (type === FormControlType.checkbox) {
             setIsChecked(!isChecked);
-            
+
             return;
         }
 
         setFormControlValue(ev.target.value);
 
-        if(isNil(onChange)) {
+        if (isNil(onChange)) {
             return;
         }
 
@@ -112,10 +112,10 @@ const FormControl = ({
 
     const handleOnInput = (ev: FormEvent<TextAreaOrInputElement>) => {
         const element = ev.target as TextAreaOrInputElement;
-        
+
         setFormControlValue(element.value);
 
-        if(isNil(onInput)) {
+        if (isNil(onInput)) {
             return;
         }
 

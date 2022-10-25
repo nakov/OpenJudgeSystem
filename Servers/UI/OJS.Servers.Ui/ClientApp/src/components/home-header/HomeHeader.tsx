@@ -66,12 +66,10 @@ const HomeHeader = () => {
             const { key, value } = statisticItem;
 
             return (
-                <>
-                    <StatisticBox
-                        statistic={{ name: keyToNameMap[key], value }}
-                        renderIcon={() => renderIcon(key)}
-                    />
-                </>
+                <StatisticBox
+                  statistic={{ name: keyToNameMap[key], value }}
+                  renderIcon={() => renderIcon(key)}
+                />
             );
         },
         [],
@@ -94,12 +92,12 @@ const HomeHeader = () => {
                 SoftUni Judge Numbers
             </Heading>
             <List
-                values={statisticsList}
-                itemFunc={renderStatistic}
-                className={styles.statisticsList}
-                itemClassName={styles.statisticsListItem}
-                wrap
-                orientation={Orientation.horizontal}
+              values={statisticsList}
+              itemFunc={renderStatistic}
+              className={styles.statisticsList}
+              itemClassName={styles.statisticsListItem}
+              wrap
+              orientation={Orientation.horizontal}
             />
         </>
     );

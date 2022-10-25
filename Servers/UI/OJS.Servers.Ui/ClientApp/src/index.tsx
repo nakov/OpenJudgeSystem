@@ -10,10 +10,13 @@ import register from './registerServiceWorker';
 const container = document.getElementById('root');
 const root = createRoot(container!);
 
-root
-    .render(<Suspense fallback={<Loading isWholePage isLoading/>}>
-        <App/>
-    </Suspense>);
+const comp = (
+    <Suspense fallback={<Loading isWholePage isLoading />}>
+        <App />
+    </Suspense>
+);
 
+root
+    .render(comp);
 
 register();

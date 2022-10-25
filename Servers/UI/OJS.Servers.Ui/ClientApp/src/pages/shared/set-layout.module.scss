@@ -1,4 +1,4 @@
-@import 'src/styles/components';
+@use 'src/styles/components';
 
 .contentWrapper {
   @extend %contentSize;

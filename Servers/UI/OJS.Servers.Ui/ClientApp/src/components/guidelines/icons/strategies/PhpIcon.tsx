@@ -9,17 +9,16 @@ import styles from './StrategyIcon.module.scss';
 
 type IPhpIconProps = IIconProps
 
-
 const PhpIcon = ({
     className = '',
     size = IconSize.Medium,
     helperText = '',
 }: IPhpIconProps) => (
     <Icon
-        className={concatClassNames(styles.icon, className)}
-        size={size}
-        helperText={helperText}
-        Component={FaPhp}
+      className={concatClassNames(styles.icon, className)}
+      size={size}
+      helperText={helperText}
+      Component={FaPhp}
     />
 );
 

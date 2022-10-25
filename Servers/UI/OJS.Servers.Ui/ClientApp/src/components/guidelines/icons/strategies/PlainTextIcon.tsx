@@ -9,17 +9,16 @@ import styles from './StrategyIcon.module.scss';
 
 type IPlainTextIconProps = IIconProps
 
-
 const PlainTextIcon = ({
     className = '',
     size = IconSize.Medium,
     helperText = '',
 }: IPlainTextIconProps) => (
     <Icon
-        className={concatClassNames(styles.icon, className)}
-        size={size}
-        helperText={helperText}
-        Component={AiOutlineFileText}
+      className={concatClassNames(styles.icon, className)}
+      size={size}
+      helperText={helperText}
+      Component={AiOutlineFileText}
     />
 );
 

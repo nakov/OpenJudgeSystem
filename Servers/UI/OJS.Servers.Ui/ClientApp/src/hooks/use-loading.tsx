@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useState } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 
 import { IHaveChildrenProps } from '../components/common/Props';
 import Loading from '../components/guidelines/loading/Loading';
@@ -25,11 +25,6 @@ const LoadingProvider = ({ children }: IHaveChildrenProps) => {
         [],
     );
 
-    const value = {
-        startLoading,
-        stopLoading,
-    };
-
     const showLoading = () => {
         if (isLoading) {
             return (<Loading isLoading />);
@@ -37,6 +32,14 @@ const LoadingProvider = ({ children }: IHaveChildrenProps) => {
 
         return null;
     };
+
+    const value = useMemo(
+        () => ({
+            startLoading,
+            stopLoading,
+        }),
+        [ startLoading, stopLoading ],
+    );
 
     return (
         <LoadingContext.Provider value={value}>

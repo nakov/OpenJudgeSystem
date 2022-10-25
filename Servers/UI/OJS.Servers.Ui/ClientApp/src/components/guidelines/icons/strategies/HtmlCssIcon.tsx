@@ -9,17 +9,16 @@ import styles from './StrategyIcon.module.scss';
 
 type IHtmlCssIconProps = IIconProps
 
-
 const HtmlCssIcon = ({
     className = '',
     size = IconSize.Medium,
     helperText = '',
 }: IHtmlCssIconProps) => (
     <Icon
-        className={concatClassNames(styles.icon, className)}
-        size={size}
-        helperText={helperText}
-        Component={GrHtml5}
+      className={concatClassNames(styles.icon, className)}
+      size={size}
+      helperText={helperText}
+      Component={GrHtml5}
     />
 );
 

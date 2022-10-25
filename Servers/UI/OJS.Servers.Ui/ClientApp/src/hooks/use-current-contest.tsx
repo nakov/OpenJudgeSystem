@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 import sum from 'lodash/sum';
 
@@ -218,25 +218,41 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         [ contest ],
     );
 
-    const value = {
-        state: {
+    const value = useMemo(
+        () => ({
+            state: {
+                contest,
+                contestPassword,
+                score,
+                maxScore,
+                isOfficial,
+                requirePassword,
+                submitContestPasswordErrorMessage,
+                isPasswordValid,
+                remainingTimeInMilliseconds,
+            },
+            actions: {
+                setContestPassword,
+                register,
+                start,
+                submitPassword,
+            },
+        }),
+        [
             contest,
             contestPassword,
-            score,
-            maxScore,
             isOfficial,
-            requirePassword,
-            submitContestPasswordErrorMessage,
             isPasswordValid,
-            remainingTimeInMilliseconds,
-        },
-        actions: {
-            setContestPassword,
+            maxScore,
             register,
+            remainingTimeInMilliseconds,
+            requirePassword,
+            score,
             start,
+            submitContestPasswordErrorMessage,
             submitPassword,
-        },
-    };
+        ],
+    );
 
     return (
         <CurrentContestsContext.Provider value={value}>
@@ -244,6 +260,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         </CurrentContestsContext.Provider>
     );
 };
+
 const useCurrentContest = () => useContext(CurrentContestsContext);
 
 export default CurrentContestsProvider;

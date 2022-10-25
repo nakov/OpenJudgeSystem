@@ -18,7 +18,7 @@ const SubmissionsGrid = () => {
 
     const renderSubmissionRow = useCallback(
         (submission: IPublicSubmission) => (
-            <SubmissionGridRow submission={submission}/>
+            <SubmissionGridRow submission={submission} />
         ),
         [],
     );
@@ -26,13 +26,21 @@ const SubmissionsGrid = () => {
     return (
         <>
             <Heading type={HeadingType.primary}>
-                Latest {submissions.length} submissions out of {format(totalSubmissionsCount)} total
+                Latest
+                {' '}
+                {submissions.length}
+                {' '}
+                submissions out of
+                {' '}
+                {format(totalSubmissionsCount)}
+                {' '}
+                total
             </Heading>
             <List
-                values={submissions}
-                itemFunc={renderSubmissionRow}
-                itemClassName={styles.submissionRow}
-                fullWidth
+              values={submissions}
+              itemFunc={renderSubmissionRow}
+              itemClassName={styles.submissionRow}
+              fullWidth
             />
         </>
     );

@@ -53,7 +53,6 @@ interface IPublicSubmissionsContext {
 
 const defaultState = {};
 
-
 const PublicSubmissionsContext = createContext<IPublicSubmissionsContext>(defaultState as IPublicSubmissionsContext);
 
 type IPublicSubmissionsProviderProps = IHaveChildrenProps
@@ -89,13 +88,16 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         [ getSubmissions, getTotalSubmissionsCount ],
     );
 
-    const value = {
-        state: {
-            submissions,
-            totalSubmissionsCount,
-        },
-        actions: { load },
-    };
+    const value = useMemo(
+        () => ({
+            state: {
+                submissions,
+                totalSubmissionsCount,
+            },
+            actions: { load },
+        }),
+        [ load, submissions, totalSubmissionsCount ],
+    );
 
     return (
         <PublicSubmissionsContext.Provider value={value}>
@@ -103,7 +105,6 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         </PublicSubmissionsContext.Provider>
     );
 };
-
 
 const usePublicSubmissions = () => useContext(PublicSubmissionsContext);
 

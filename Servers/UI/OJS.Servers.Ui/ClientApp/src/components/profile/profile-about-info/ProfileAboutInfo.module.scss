@@ -1,6 +1,6 @@
-@import 'src/styles/colors';
-@import 'src/styles/fonts';
-@import 'src/styles/variables';
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
+@use 'src/styles/variables';
 
 .profileAboutInfo {
   display: flex;
@@ -11,11 +11,11 @@
 .profileAboutInfoGroupControl {
   @extend %font-family-lato;
 
-  color: $text-dark-gray-color;
+  color: colors.$text-dark-gray-color;
   margin-bottom: 10px;
 
   h2 {
-    font-size: $f-size-18;
+    font-size: variables.$f-size-18;
     font-weight: bolder;
     margin-bottom: 10px;
   }

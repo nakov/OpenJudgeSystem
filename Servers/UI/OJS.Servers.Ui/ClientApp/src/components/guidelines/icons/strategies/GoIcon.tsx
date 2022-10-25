@@ -15,10 +15,10 @@ const GoIcon = ({
     helperText = '',
 }: IGoIconProps) => (
     <Icon
-        className={concatClassNames(styles.icon, className)}
-        size={size}
-        helperText={helperText}
-        Component={GrGolang}
+      className={concatClassNames(styles.icon, className)}
+      size={size}
+      helperText={helperText}
+      Component={GrGolang}
     />
 );
 

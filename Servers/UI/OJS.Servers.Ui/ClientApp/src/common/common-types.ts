@@ -50,7 +50,6 @@ interface IUrlParam {
     value: string | string[];
 }
 
-
 type Anything = Record<string | number, unknown>
 
 export type {

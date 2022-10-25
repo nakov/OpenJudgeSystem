@@ -1,4 +1,4 @@
-﻿interface ITreeItemType {
+interface ITreeItemType {
     id: string;
     name: string;
     parentId?: string;

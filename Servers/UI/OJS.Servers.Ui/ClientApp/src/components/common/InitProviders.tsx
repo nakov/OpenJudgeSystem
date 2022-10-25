@@ -20,6 +20,8 @@ const InitProviders = ({
     providers,
     children,
 }: IInitProviderProps) => {
+    // We need this disable for the dynamic providers initialization
+    // eslint-disable-next-line react/jsx-no-useless-fragment
     const initial = (<>{children}</>);
 
     return providers

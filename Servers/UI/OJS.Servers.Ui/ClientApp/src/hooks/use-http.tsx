@@ -109,8 +109,8 @@ const useHttp = (
     useEffect(
         () => {
             setActualHeaders({
-                'content-type': 'application/json',
                 ...headers ?? {},
+                'content-type': 'application/json',
             });
         },
         [ headers ],

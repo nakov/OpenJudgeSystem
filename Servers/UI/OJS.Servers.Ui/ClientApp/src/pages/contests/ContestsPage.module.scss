@@ -1,4 +1,4 @@
-@import 'src/styles/colors';
+@use 'src/styles/colors';
 
 .container {
   display: flex;
@@ -10,15 +10,15 @@
 }
 
 .breadcrumbBtn {
-  color: $text-light-gray-color;
+  color: colors.$text-light-gray-color;
 
   &:hover {
-    color: $text-dark-gray-color;
+    color: colors.$text-dark-gray-color;
   }
 }
 
 .breadcrumbBtnLast {
-  color: $text-dark-gray-color;
+  color: colors.$text-dark-gray-color;
 }
 
 .mainHeader {

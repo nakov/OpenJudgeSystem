@@ -39,7 +39,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         ),
         [ testRun ],
     );
-    
+
     const isOutputDiffAvailable = useMemo(
         () => !isNil(testRun.expectedOutputFragment) && testRun.expectedOutputFragment !== '' &&
             !isNil(testRun.userOutputFragment) && testRun.userOutputFragment !== '',
@@ -64,7 +64,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
                 : result === SubmissionResultType.WrongAnswer
                     ? LabelType.danger
                     : LabelType.warning;
-            
+
             const resultSplit = splitByCapitalLetter(testRun.resultType);
 
             return (
@@ -75,7 +75,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         },
         [ testRun ],
     );
-    
+
     const renderTestRunData = useCallback(() => (
         <span className={styles.testRunData}>
             <span className={styles.testRunDataParagraph}>

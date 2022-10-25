@@ -18,9 +18,15 @@ const ServicesContext = createContext<IServicesContext>(defaultState as IService
 type IServicesProviderProps = IHaveChildrenProps
 
 const ServicesProvider = ({ children }: IServicesProviderProps) => {
-    const localStorageService = useMemo(() => new CacheService(window.localStorage), []);
+    const localStorageService = useMemo(
+        () => new CacheService(window.localStorage),
+        [],
+    );
 
-    const value = { localStorageService };
+    const value = useMemo(
+        () => ({ localStorageService }),
+        [ localStorageService ],
+    );
 
     return (
         <ServicesContext.Provider value={value}>

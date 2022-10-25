@@ -24,10 +24,10 @@ const ContestRegisterPage = () => {
         () => ({
             id: contestIdToNumber,
             isOfficial: isParticipationOfficial,
-        })
-        , [ contestIdToNumber, isParticipationOfficial ],
+        }),
+        [ contestIdToNumber, isParticipationOfficial ],
     );
-    
+
     const {
         state: {
             requirePassword,
@@ -41,8 +41,6 @@ const ContestRegisterPage = () => {
 
     useEffect(() => {
         (async () => {
-            
-            
             await register(internalContest);
         })();
     }, [ internalContest, contestIdToNumber, isParticipationOfficial, participationType, register ]);

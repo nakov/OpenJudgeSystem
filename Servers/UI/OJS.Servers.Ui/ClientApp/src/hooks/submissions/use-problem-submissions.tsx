@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
 import { UrlType } from '../../common/common-types';
@@ -95,10 +95,13 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
         [ startLoading, stopLoading, getProblemSubmissions, submissionResultsToGetParameters ],
     );
 
-    const value = {
-        state: { submissions },
-        actions: { loadSubmissions },
-    };
+    const value = useMemo(
+        () => ({
+            state: { submissions },
+            actions: { loadSubmissions },
+        }),
+        [ loadSubmissions, submissions ],
+    );
 
     return (
         <ProblemSubmissionsContext.Provider value={value}>

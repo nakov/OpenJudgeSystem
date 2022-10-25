@@ -25,7 +25,10 @@ const Diff = ({ expectedStr, actualStr } : ITestsRunDiffProps) => {
         }
 
         return (
-            <></>
+            <>
+                {null}
+                {null}
+            </>
         );
     }, []);
 

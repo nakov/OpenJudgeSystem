@@ -49,7 +49,7 @@ const PageHeader = () => {
             </>
         );
     }, [ getAdministrationNavigation, user.permissions.canAccessAdministration ]);
-        
+
     const headingSecondaryClass = 'headingSeconary';
     const headingSecondaryClassName = concatClassNames(styles.heading, headingSecondaryClass);
 

@@ -52,10 +52,10 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
 
             return (
                 <ContestFilter
-                    values={groupFilters}
-                    type={type}
-                    onSelect={handleFilterClick}
-                    maxDisplayCount={maxFiltersToDisplayCount}
+                  values={groupFilters}
+                  type={type}
+                  onSelect={handleFilterClick}
+                  maxDisplayCount={maxFiltersToDisplayCount}
                 />
             );
         },
@@ -115,14 +115,14 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     return (
         <div className={styles.container}>
             <ContestCategories
-                className={styles.filterTypeContainer}
-                onCategoryClick={onFilterClick}
-                defaultSelected={defaultSelected}
+              className={styles.filterTypeContainer}
+              onCategoryClick={onFilterClick}
+              defaultSelected={defaultSelected}
             />
             <List
-                values={filtersGroups}
-                itemFunc={renderFilter}
-                fullWidth
+              values={filtersGroups}
+              itemFunc={renderFilter}
+              fullWidth
             />
         </div>
     );

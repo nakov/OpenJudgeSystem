@@ -1,10 +1,10 @@
-@import 'src/styles/colors';
+@use 'src/styles/colors';
 
 .loginForm {
   align-content: center;
   border-radius: 8px;
-  box-shadow: $box-shadow-color;
-  color: $text-dark-gray-color;
+  box-shadow: colors.$box-shadow-color;
+  color: colors.$text-dark-gray-color;
   font-family: Lato, serif;
   margin: 20px auto;
   max-width: 768px;
@@ -20,7 +20,7 @@
 }
 
 .loginFormLink {
-  color: $primary-blue;
+  color: colors.$primary-blue;
 
   &:hover {
     text-decoration: underline;
@@ -43,7 +43,7 @@
 }
 
 .errorMessage {
-  color: $primary-red;
+  color: colors.$primary-red;
   margin-top: 10px;
   text-align: center;
 }

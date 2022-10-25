@@ -1,5 +1,3 @@
-import ITreeItemType from './tree-types';
-
 interface ISubmissionTypeType {
     id: number;
     name: string;
@@ -70,10 +68,6 @@ interface IIndexContestsType {
     category: string;
 }
 
-interface IContestCategoryTreeType extends ITreeItemType {
-    nameUrl: string;
-}
-
 interface IGetContestsForIndexResponseType {
     activeContests: IIndexContestsType[];
     pastContests: IIndexContestsType[];
@@ -120,7 +114,6 @@ export type {
     IProblemType,
     IProblemResourceType,
     ISubmissionTypeType,
-    IContestCategoryTreeType,
     IPagedResultType,
     IUserType,
     IUserPermissionsType,

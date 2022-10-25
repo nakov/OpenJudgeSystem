@@ -28,19 +28,17 @@ const defaultRender = (remainingTime: ICountdownRemainingType) => {
     const { hours, minutes, seconds } = convertToTwoDigitValues(remainingTime);
 
     return (
-        <>
-            <p>
-                Remaining time:
-                {' '}
-                <span>
-                    {hours}
-                    :
-                    {minutes}
-                    :
-                    {seconds}
-                </span>
-            </p>
-        </>
+        <p>
+            Remaining time:
+            {' '}
+            <span>
+                {hours}
+                :
+                {minutes}
+                :
+                {seconds}
+            </span>
+        </p>
     );
 };
 

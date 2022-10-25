@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Store } from 'react-notifications-component';
 
 import { INotificationType } from '../common/common-types';
@@ -79,7 +79,10 @@ const NotificationsProvider = ({ children }: INotificationsProviderProps) => {
         }
     }, [ notification, showNotification ]);
 
-    const value = { notification, showNotification, showError, showWarning };
+    const value = useMemo(
+        () => ({ notification, showNotification, showError, showWarning }),
+        [ notification, showError, showNotification, showWarning ],
+    );
 
     return (
         <NotificationsContext.Provider value={value}>

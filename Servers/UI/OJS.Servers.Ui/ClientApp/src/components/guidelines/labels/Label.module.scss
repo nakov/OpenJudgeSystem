@@ -1,12 +1,12 @@
-@import 'src/styles/colors';
-@import 'src/styles/fonts';
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
 
 .label {
   @extend %font-family-lato-regular;
 
   border: 2px solid transparent;
   border-radius: 2px;
-  color: $white-color;
+  color: colors.$white-color;
   display: inline-block;
   font-size: 0.8em;
   padding: 5px 15px;
@@ -17,11 +17,11 @@
   }
 
   &.warning {
-    background-color: $warning-color;
+    background-color: colors.$warning-color;
   }
 
   &.danger {
-    background-color: $primary-red;
+    background-color: colors.$primary-red;
   }
 
   &.info {
@@ -30,6 +30,6 @@
 
   &.plain {
     background-color: #f1f1f1;
-    color: $grey-color;
+    color: colors.$grey-color;
   }
 }

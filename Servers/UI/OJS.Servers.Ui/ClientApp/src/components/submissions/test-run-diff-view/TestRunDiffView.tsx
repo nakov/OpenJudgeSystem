@@ -8,7 +8,10 @@ interface ITestRunDiffViewProps {
 }
 
 const TestRunDiffView = ({ testRun }: ITestRunDiffViewProps) => (
-    <Diff expectedStr={testRun.expectedOutputFragment} actualStr={testRun.userOutputFragment} />
+    <Diff
+      expectedStr={testRun.expectedOutputFragment}
+      actualStr={testRun.userOutputFragment}
+    />
 );
 
 export default TestRunDiffView;

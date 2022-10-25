@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import first from 'lodash/first';
 import isNil from 'lodash/isNil';
 
@@ -115,16 +115,19 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         [ reloadProblems ],
     );
 
-    const value = {
-        state: {
-            problems,
-            currentProblem,
-        },
-        actions: {
-            selectProblemById,
-            downloadProblemResourceFile,
-        },
-    };
+    const value = useMemo(
+        () => ({
+            state: {
+                problems,
+                currentProblem,
+            },
+            actions: {
+                selectProblemById,
+                downloadProblemResourceFile,
+            },
+        }),
+        [ currentProblem, downloadProblemResourceFile, problems, selectProblemById ],
+    );
 
     return (
         <ProblemsContext.Provider value={value}>

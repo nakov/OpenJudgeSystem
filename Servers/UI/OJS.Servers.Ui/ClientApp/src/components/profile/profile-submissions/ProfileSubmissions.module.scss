@@ -1,7 +1,7 @@
-@import 'src/styles/colors';
+@use 'src/styles/colors';
 
 .contestLink {
-  color: $text-dark-gray-color;
+  color: colors.$text-dark-gray-color;
   text-decoration: none;
 
   &:hover {

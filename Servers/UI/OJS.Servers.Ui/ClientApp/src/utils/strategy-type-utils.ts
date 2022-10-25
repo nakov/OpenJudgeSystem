@@ -57,10 +57,10 @@ const fullStrategyNameToStrategyType = (strategyName: string): StrategyType => {
     const strategyNameToLower = strategyName.toLowerCase();
 
     // Sorting here resolves that `java` is `included` in `javascript`:
-    // `['java', 'javascript'].pop()` returns `javascript` 
+    // `['java', 'javascript'].pop()` returns `javascript`
     const strategyKey = Object.keys(shortNameToType)
         .sort()
-        .filter(name => strategyNameToLower.includes(name))
+        .filter((name) => strategyNameToLower.includes(name))
         .pop();
 
     return isNil(strategyKey)
@@ -68,10 +68,9 @@ const fullStrategyNameToStrategyType = (strategyName: string): StrategyType => {
         : shortNameToType[strategyKey];
 };
 
-const strategyTypeToIcon = (type: StrategyType): FC<IIconProps> | null =>
-    isNil(typeToIcon[type])
-        ? null
-        : typeToIcon[type];
+const strategyTypeToIcon = (type: StrategyType): FC<IIconProps> | null => isNil(typeToIcon[type])
+    ? null
+    : typeToIcon[type];
 
 export {
     strategyTypeToIcon,

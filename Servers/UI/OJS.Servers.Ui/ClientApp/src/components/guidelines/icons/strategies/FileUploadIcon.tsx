@@ -9,17 +9,16 @@ import styles from './StrategyIcon.module.scss';
 
 type IFileUploadIconProps = IIconProps
 
-
 const FileUploadIcon = ({
     className = '',
     size = IconSize.Medium,
     helperText = '',
 }: IFileUploadIconProps) => (
     <Icon
-        className={concatClassNames(styles.icon, className)}
-        size={size}
-        helperText={helperText}
-        Component={AiOutlineUpload}
+      className={concatClassNames(styles.icon, className)}
+      size={size}
+      helperText={helperText}
+      Component={AiOutlineUpload}
     />
 );
 

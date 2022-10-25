@@ -35,7 +35,7 @@ interface IListProps<TValue> extends IHaveOptionalClassName {
     scrollable?: boolean;
 }
 
-const List = <TValue extends unknown>({
+const List = <TValue, >({
     values,
     itemFunc,
     keyFunc = defaultKeyFunc,

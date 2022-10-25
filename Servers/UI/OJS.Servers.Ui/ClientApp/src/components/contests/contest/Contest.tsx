@@ -62,19 +62,17 @@ const Contest = () => {
             const { hours, minutes, seconds } = convertToTwoDigitValues(remainingTime);
 
             return (
-                <>
-                    <p className={remainingTimeClassName}>
-                        Remaining time:
-                        {' '}
-                        <Text type={TextType.Bold}>
-                            {hours}
-                            :
-                            {minutes}
-                            :
-                            {seconds}
-                        </Text>
-                    </p>
-                </>
+                <p className={remainingTimeClassName}>
+                    Remaining time:
+                    {' '}
+                    <Text type={TextType.Bold}>
+                        {hours}
+                        :
+                        {minutes}
+                        :
+                        {seconds}
+                    </Text>
+                </p>
             );
         },
         [],
@@ -89,7 +87,7 @@ const Contest = () => {
             const currentSeconds = remainingTimeInMilliseconds / 1000;
 
             return (
-                <Countdown renderRemainingTime={renderCountdown} duration={currentSeconds} metric={Metric.seconds}/>
+                <Countdown renderRemainingTime={renderCountdown} duration={currentSeconds} metric={Metric.seconds} />
             );
         },
         [ remainingTimeInMilliseconds, renderCountdown ],
@@ -104,8 +102,8 @@ const Contest = () => {
         <>
             <div className={styles.headingContest}>
                 <Heading
-                    type={HeadingType.primary}
-                    className={styles.contestHeading}
+                  type={HeadingType.primary}
+                  className={styles.contestHeading}
                 >
                     {contest?.name}
                 </Heading>
@@ -117,13 +115,13 @@ const Contest = () => {
 
             <div className={styles.contestWrapper}>
                 <div className={navigationContestClassName}>
-                    <ContestTasksNavigation/>
+                    <ContestTasksNavigation />
                 </div>
                 <div className={submissionBoxClassName}>
-                    <SubmissionBox/>
+                    <SubmissionBox />
                 </div>
                 <div className={problemInfoClassName}>
-                    <ContestProblemDetails/>
+                    <ContestProblemDetails />
                 </div>
             </div>
         </>

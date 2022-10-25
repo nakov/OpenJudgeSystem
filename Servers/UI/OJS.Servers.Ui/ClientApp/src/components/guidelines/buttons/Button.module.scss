@@ -1,13 +1,13 @@
-@import 'src/styles/components';
-@import 'src/styles/colors';
-@import 'src/styles/fonts';
+@use 'src/styles/components.scss';
+@use 'src/styles/colors.scss';
+@use 'src/styles/fonts.scss';
 
 .btn {
   @extend %font-family-lato;
 
   border: 2px solid transparent;
   border-radius: 8px;
-  color: $white-color;
+  color: colors.$white-color;
   cursor: pointer;
   font-weight: 700;
   margin: 0;
@@ -23,7 +23,7 @@
   }
 
   &.primary {
-    background-color: $background-color-btn-primary;
+    background-color: colors.$background-color-btn-primary;
     box-shadow: 0 4px 5px 0 rgb(0 0 0 / 14%), 0 1px 10px 0 rgb(0 0 0 / 12%), 0 2px 4px -1px rgb(0 0 0 / 20%);
 
     &:hover {
@@ -32,13 +32,13 @@
   }
 
   &.secondary {
-    background-color: $background-color-btn-secondary;
-    border-color: $light-blue-color;
+    background-color: colors.$background-color-btn-secondary;
+    border-color: colors.$light-blue-color;
     box-shadow: none;
-    color: $color-btn-secondary;
+    color: colors.$color-btn-secondary;
 
     &:hover {
-      background-color: $background-color-btn-secondary-hover;
+      background-color: colors.$background-color-btn-secondary-hover;
       box-shadow: none;
     }
   }
@@ -55,10 +55,10 @@
   }
 
   &.disabled {
-    background-color: $background-color-btn-secondary;
-    border-color: $color-btn-disabled;
+    background-color: colors.$background-color-btn-secondary;
+    border-color: colors.$color-btn-disabled;
     box-shadow: none;
-    color: $color-btn-disabled;
+    color: colors.$color-btn-disabled;
     pointer-events: none;
 
     &:hover {
@@ -82,10 +82,10 @@
   &.none {
     @extend %font-family-lato;
 
-    color: $text-dark-gray-color;
+    color: colors.$text-dark-gray-color;
 
     &:hover {
-      color: $background-color-btn-primary;
+      color: colors.$background-color-btn-primary;
     }
   }
 

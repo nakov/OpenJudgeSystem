@@ -17,7 +17,7 @@ const SubmissionsPage = () => {
     );
 
     return (
-        <SubmissionsGrid/>
+        <SubmissionsGrid />
     );
 };
 

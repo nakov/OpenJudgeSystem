@@ -1,5 +1,5 @@
-@import 'src/styles/colors';
-@import 'src/styles/components';
+@use 'src/styles/colors';
+@use 'src/styles/components';
 
 .header {
   display: flex;
@@ -13,7 +13,7 @@
   }
 
   h1 {
-    color: $white-color;
+    color: colors.$white-color;
   }
 
   img {
@@ -25,7 +25,7 @@
   @extend %contentSize;
 
   align-items: center;
-  background-color: $white-color;
+  background-color: colors.$white-color;
   border-radius: 0 0 8px 8px;
   box-shadow: 0 2px 4px rgb(0 0 0 / 14%), 0 3px 4px rgb(0 0 0 / 12%), 0 1px 5px rgb(0 0 0 / 20%);
   display: flex;

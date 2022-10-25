@@ -48,10 +48,9 @@ const defaultState = {
 
 const ContestsContext = createContext<IContestsContext>(defaultState as IContestsContext);
 
-
 const collectFilters = (params: IUrlParam[], possibleFilters: IFilter[]) => {
     const collectedFilters = params.map(({ key, value }) => findFilterByTypeAndName(possibleFilters, key, value))
-        .filter(f => !isNil(f)) as IFilter[];
+        .filter((f) => !isNil(f)) as IFilter[];
 
     if (isEmpty(filterByType(collectedFilters, FilterType.Status))) {
         const defaultStatusFilters = filterByType(possibleFilters, FilterType.Status)
@@ -64,8 +63,8 @@ const collectFilters = (params: IUrlParam[], possibleFilters: IFilter[]) => {
 };
 
 const collectCurrentPage = (params: IUrlParam[]) => {
-    const { value } = params.find(p => p.key === PageParams.page) || { value: '1' };
-    
+    const { value } = params.find((p) => p.key === PageParams.page) || { value: '1' };
+
     const theValue = isArray(value)
         ? value[0]
         : value;
@@ -212,21 +211,24 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         [ data ],
     );
 
-    const value = {
-        state: {
-            contests,
-            possibleFilters,
-            pagesInfo,
-            filters,
-            currentPage,
-        },
-        actions: {
-            reload,
-            clearFilters,
-            toggleFilter,
-            changePage,
-        },
-    } as IContestsContext;
+    const value = useMemo(
+        () => ({
+            state: {
+                contests,
+                possibleFilters,
+                pagesInfo,
+                filters,
+                currentPage,
+            },
+            actions: {
+                reload,
+                clearFilters,
+                toggleFilter,
+                changePage,
+            },
+        }),
+        [ changePage, clearFilters, contests, currentPage, filters, pagesInfo, possibleFilters, reload, toggleFilter ],
+    );
 
     return (
         <ContestsContext.Provider value={value}>

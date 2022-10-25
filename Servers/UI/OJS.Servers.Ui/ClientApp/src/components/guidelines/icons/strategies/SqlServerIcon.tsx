@@ -9,17 +9,16 @@ import styles from './StrategyIcon.module.scss';
 
 type ISqlServerIconProps = IIconProps
 
-
 const SqlServerIcon = ({
     className = '',
     size = IconSize.Medium,
     helperText = '',
 }: ISqlServerIconProps) => (
     <Icon
-        className={concatClassNames(styles.icon, className)}
-        size={size}
-        helperText={helperText}
-        Component={SiMicrosoftsqlserver}
+      className={concatClassNames(styles.icon, className)}
+      size={size}
+      helperText={helperText}
+      Component={SiMicrosoftsqlserver}
     />
 );
 

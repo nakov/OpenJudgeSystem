@@ -6,6 +6,7 @@ import ITreeItemType from '../../../common/tree-types';
 import { useContestCategories } from '../../../hooks/use-contest-categories';
 import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
 import { useContests } from '../../../hooks/use-contests';
+import { flattenWith } from '../../../utils/list-utils';
 import { IHaveOptionalClassName } from '../../common/Props';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import Tree from '../../guidelines/trees/Tree';
@@ -25,21 +26,6 @@ const ContestCategories = ({
     const { state: { categories } } = useContestCategories();
     const { state: { possibleFilters } } = useContests();
     const { actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
-    
-    const flattenTree = useCallback(
-        (treeItems: ITreeItemType[], result: ITreeItemType[]) => {
-            treeItems.forEach(({ children, ...rest }) => {
-                result.push(rest);
-
-                if (!isNil(children)) {
-                    flattenTree(children, result);
-                }
-            });
-
-            return result;
-        },
-        [],
-    );
 
     const getParents = useCallback(
         (result: string[], allItems: ITreeItemType[], searchId?: string) => {
@@ -65,8 +51,8 @@ const ContestCategories = ({
     );
 
     const categoriesFlat = useMemo(
-        () => flattenTree(categories, []),
-        [ categories, flattenTree ],
+        () => flattenWith(categories, (c) => c.children || null),
+        [ categories ],
     );
 
     const defaultExpanded = useMemo(
@@ -85,21 +71,21 @@ const ContestCategories = ({
         onCategoryClick(filter);
         updateBreadcrumb(category, categoriesFlat);
     }, [ possibleFilters, categoriesFlat, onCategoryClick, updateBreadcrumb ]);
-    
+
     return (
         <div className={className as string}>
             <Heading
-                type={HeadingType.small}
-                className={styles.heading}
+              type={HeadingType.small}
+              className={styles.heading}
             >
                 Category
             </Heading>
             <Tree
-                items={categories}
-                onSelect={handleTreeLabelClick}
-                defaultSelected={defaultSelected}
-                defaultExpanded={defaultExpanded}
-                treeItemHasTooltip
+              items={categories}
+              onSelect={handleTreeLabelClick}
+              defaultSelected={defaultSelected}
+              defaultExpanded={defaultExpanded}
+              treeItemHasTooltip
             />
         </div>
     );

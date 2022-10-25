@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
 import { UrlType } from '../../common/common-types';
@@ -156,17 +156,20 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         [ currentSubmissionId, getDetails ],
     );
 
-    const value = {
-        state: {
-            currentSubmission,
-            currentProblemSubmissionResults,
-        },
-        actions: {
-            selectSubmissionById,
-            getDetails,
-            getSubmissionResults,
-        },
-    };
+    const value = useMemo(
+        () => ({
+            state: {
+                currentSubmission,
+                currentProblemSubmissionResults,
+            },
+            actions: {
+                selectSubmissionById,
+                getDetails,
+                getSubmissionResults,
+            },
+        }),
+        [ currentProblemSubmissionResults, currentSubmission, getDetails, getSubmissionResults ],
+    );
 
     return (
         <SubmissionsDetailsContext.Provider value={value}>

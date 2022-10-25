@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { IHaveChildrenProps } from '../components/common/Props';
 
@@ -58,10 +58,13 @@ const HomeStatisticsProvider = ({ children }: IHomeStatisticsProviderProps) => {
         [ data ],
     );
 
-    const value = {
-        state: { statistics },
-        actions: { load },
-    };
+    const value = useMemo(
+        () => ({
+            state: { statistics },
+            actions: { load },
+        }),
+        [ load, statistics ],
+    );
 
     return (
         <HomeStatisticsContext.Provider value={value}>

@@ -9,17 +9,16 @@ import styles from './StrategyIcon.module.scss';
 
 type IJavaScriptIconProps = IIconProps
 
-
 const JavaScriptIcon = ({
     className = '',
     size = IconSize.Medium,
     helperText = '',
 }: IJavaScriptIconProps) => (
     <Icon
-        className={concatClassNames(styles.icon, className)}
-        size={size}
-        helperText={helperText}
-        Component={FaJs}
+      className={concatClassNames(styles.icon, className)}
+      size={size}
+      helperText={helperText}
+      Component={FaJs}
     />
 );
 

@@ -1,4 +1,4 @@
-@import 'src/styles/colors';
+@use 'src/styles/colors';
 
 .statisticsList {
   justify-content: center;
@@ -6,7 +6,7 @@
   padding-top: 20px;
 
   .statisticsListItem {
-    background: $background-color-light-gray;
+    background: colors.$background-color-light-gray;
     flex: 1 1 30%; /* grow | shrink | basis */
     margin: 20px 0;
     padding: 15px;
@@ -14,5 +14,5 @@
 }
 
 .icon {
-  color: $success-background-color;
+  color: colors.$success-background-color;
 }

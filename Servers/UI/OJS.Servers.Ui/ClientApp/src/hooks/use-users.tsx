@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
 import { IHaveChildrenProps } from '../components/common/Props';
@@ -55,7 +55,13 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
         // showError({ message: 'Could not retrieve profile info.' } as INotificationType);
     }, [ profileData, showError ]);
 
-    const value = { profile, getProfile };
+    const value = useMemo(
+        () => ({
+            profile,
+            getProfile,
+        }),
+        [ getProfile, profile ],
+    );
 
     return (
         <UsersContext.Provider value={value}>

@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
 import {
@@ -67,13 +67,16 @@ const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
         setPastContests(past);
     }, [ contestsData ]);
 
-    const value = {
-        state: {
-            activeContests,
-            pastContests,
-        },
-        actions: { getForHome },
-    };
+    const value = useMemo(
+        () => ({
+            state: {
+                activeContests,
+                pastContests,
+            },
+            actions: { getForHome },
+        }),
+        [ activeContests, getForHome, pastContests ],
+    );
 
     return (
         <HomeContestsContext.Provider value={value}>

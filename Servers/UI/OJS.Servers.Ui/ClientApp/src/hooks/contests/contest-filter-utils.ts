@@ -1,26 +1,25 @@
 import { ContestStatus, FilterType, IContestStrategyFilter, IFilter } from '../../common/contest-types';
 import { generateFilterItems } from '../../common/filter-utils';
 import ITreeItemType from '../../common/tree-types';
-import { IContestCategoryTreeType } from '../../common/types';
 
 const addCategoryLeafFilters = ({ id, name, children: treeChildren }: ITreeItemType, arr: IFilter[], cache: Map<string, IFilter>) => {
     treeChildren?.forEach((c) => {
         addCategoryLeafFilters(c, arr, cache);
     });
-    
-    if(!cache.has(id)) {
-        cache.set(id, { name, value: id.toString() } as IFilter); 
+
+    if (!cache.has(id)) {
+        cache.set(id, { name, value: id.toString() } as IFilter);
     }
-    
+
     // We set this value above
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     arr.push(cache.get(id)!);
 };
 
-const generateCategoryFilters =(() => {
+const generateCategoryFilters = (() => {
     const categoriesCache = new Map();
 
-    return (categories: IContestCategoryTreeType[]) => {
+    return (categories: ITreeItemType[]) => {
         const categoryFilters = [] as IFilter[];
 
         categories?.forEach((c) => addCategoryLeafFilters(c, categoryFilters, categoriesCache));
@@ -45,7 +44,7 @@ const generateStrategyFilters = (() => {
 
     return (strategies: IContestStrategyFilter[]) => {
         const strategyFilters = strategies?.map(({ name, id }) => {
-            if(!strategiesCache.has(id)) {
+            if (!strategiesCache.has(id)) {
                 strategiesCache.set(id, { name, value: id.toString() });
             }
 

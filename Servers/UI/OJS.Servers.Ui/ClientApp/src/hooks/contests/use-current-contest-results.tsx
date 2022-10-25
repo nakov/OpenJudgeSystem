@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
 import { UrlType } from '../../common/common-types';
@@ -27,7 +27,6 @@ const ContestResultsContext = createContext<ICurrentContestResultsContext>(defau
 
 const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProviderProps) => {
     const { getContestResultsUrl } = useUrls();
-    const [ contestResults, setContestResults ] = useState(defaultState.state.contestResults);
     const { startLoading, stopLoading } = useLoading();
     const [ getContestResultsParams, setGetContestResultsParams ] = useState<IGetContestResultsParams>();
 
@@ -36,6 +35,17 @@ const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProvi
         data: apiContestResults,
     } = useHttp(getContestResultsUrl as UrlType, getContestResultsParams);
 
+    const contestResults = useMemo(
+        () => {
+            if (isNil(apiContestResults)) {
+                return null;
+            }
+
+            return apiContestResults;
+        },
+        [ apiContestResults ],
+    );
+
     const load = useCallback(async (id: number, official: boolean, full: boolean) => {
         if (isNil(id)) {
             return;
@@ -43,17 +53,6 @@ const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProvi
 
         setGetContestResultsParams({ id, official, full });
     }, []);
-
-    useEffect(
-        () => {
-            if (isNil(apiContestResults)) {
-                return;
-            }
-
-            setContestResults(apiContestResults);
-        },
-        [ apiContestResults ],
-    );
 
     useEffect(
         () => {
@@ -70,10 +69,13 @@ const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProvi
         [ getContestResults, getContestResultsParams, startLoading, stopLoading ],
     );
 
-    const value = {
-        state: { contestResults },
-        actions: { load },
-    };
+    const value = useMemo(
+        () => ({
+            state: { contestResults },
+            actions: { load },
+        }),
+        [ contestResults, load ],
+    );
 
     return (
         <ContestResultsContext.Provider value={value}>

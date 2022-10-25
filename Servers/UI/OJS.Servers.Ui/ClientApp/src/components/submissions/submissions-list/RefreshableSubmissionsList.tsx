@@ -29,19 +29,21 @@ const RefreshableSubmissionsList = ({
 
         await getSubmissionResults(problemId, isOfficial);
     }, [ currentSubmission, getSubmissionResults ]);
-    
+
     return (
         <>
             <SubmissionsList
-                items={items}
-                selectedSubmission={selectedSubmission}
-                className={className} />
-            
+              items={items}
+              selectedSubmission={selectedSubmission}
+              className={className}
+            />
+
             <Button
-                onClick={handleReloadClick}
-                text="Reload"
-                type={ButtonType.secondary}
-                className={submissionsReloadBtnClassName} />
+              onClick={handleReloadClick}
+              text="Reload"
+              type={ButtonType.secondary}
+              className={submissionsReloadBtnClassName}
+            />
         </>
     );
 };

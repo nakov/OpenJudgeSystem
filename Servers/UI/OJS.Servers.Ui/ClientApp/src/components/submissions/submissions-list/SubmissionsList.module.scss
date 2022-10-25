@@ -1,11 +1,11 @@
-@import 'src/styles/colors';
+@use 'src/styles/colors';
 
 .submissionsList {
   align-items: start;
   padding: 20px;
 
   .submissionListItem {
-    color: $text-dark-gray-color;
+    color: colors.$text-dark-gray-color;
     font-family: Lato, serif;
     font-size: 18px;
     margin-top: 10px;
@@ -14,7 +14,7 @@
 }
 
 .submissionContainer {
-  border-bottom: 1px solid $bottom-border-color;
+  border-bottom: 1px solid colors.$bottom-border-color;
   display: flex;
   justify-content: space-between;
   padding: 45px 0 5px;
@@ -22,7 +22,7 @@
   width: 100%;
 
   &.selected {
-    color: $color-btn-secondary;
+    color: colors.$color-btn-secondary;
   }
 }
 
@@ -44,7 +44,7 @@
 }
 
 .submissionCreatedOnParagraph {
-  color: $text-light-gray-color;
+  color: colors.$text-light-gray-color;
   font-family: Lato, serif;
   font-size: 12px;
 }

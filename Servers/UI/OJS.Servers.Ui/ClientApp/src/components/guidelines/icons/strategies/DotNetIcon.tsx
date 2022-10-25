@@ -9,17 +9,16 @@ import styles from './StrategyIcon.module.scss';
 
 type IDotNetIconProps = IIconProps
 
-
 const DotNetIcon = ({
     className = '',
     size = IconSize.Medium,
     helperText = '',
 }: IDotNetIconProps) => (
     <Icon
-        className={concatClassNames(styles.icon, className)}
-        size={size}
-        helperText={helperText}
-        Component={TbCSharp}
+      className={concatClassNames(styles.icon, className)}
+      size={size}
+      helperText={helperText}
+      Component={TbCSharp}
     />
 );
 

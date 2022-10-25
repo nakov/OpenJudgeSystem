@@ -54,8 +54,8 @@ const ProblemResource = ({ resource }: IProblemResourceProps) => {
     const resourceTypeIconClassName = resource.type == null
         ? resourceTypeToIconClassName[1]
         : resourceTypeToIconClassName[resource.type];
-    
-    const resourceLinkContentClassName = concatClassNames('fal', styles.icon,resourceTypeIconClassName);
+
+    const resourceLinkContentClassName = concatClassNames('fal', styles.icon, resourceTypeIconClassName);
 
     const resourceLinkContent = (
         <>

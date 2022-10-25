@@ -1,4 +1,4 @@
-@import 'src/styles/variables';
+@use 'src/styles/variables';
 
 .listNav {
   align-items: center;
@@ -8,6 +8,6 @@
 }
 
 .btn {
-  font-size: $f-size-12;
+  font-size: variables.$f-size-12;
   padding: 12px 8px;
 }

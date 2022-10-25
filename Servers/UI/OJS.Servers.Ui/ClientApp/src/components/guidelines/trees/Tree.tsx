@@ -36,8 +36,8 @@ const Tree = ({
         (node: ITreeItemType) => {
             const id = node.id.toString();
             const newExpanded = expandedIds.includes(id)
-                ? without(expandedIds,id)
-                : [ ...expandedIds,id ];
+                ? without(expandedIds, id)
+                : [ ...expandedIds, id ];
 
             setExpandedIds(newExpanded);
         },
@@ -52,34 +52,36 @@ const Tree = ({
         },
         [ onSelect ],
     );
-    
+
     const renderTreeItem = useCallback((node: ITreeItemType) => (
         <TreeItem
-            className={styles.treeElement}
-            key={node.id}
-            nodeId={node.id.toString()}
-            label={node.name}
-            onClick={() => handleTreeItemClick(node)}
-            onLabelClick={() => handleLabelClick(node)}
+          className={styles.treeElement}
+          key={node.id}
+          nodeId={node.id.toString()}
+          label={node.name}
+          onClick={() => handleTreeItemClick(node)}
+          onLabelClick={() => handleLabelClick(node)}
         >
             {isArray(node.children)
-                ? node.children.map((child) =>
-                    treeItemHasTooltip
-                        ? (<div className={styles.Tree} key={child.id}>
+                ? node.children.map((child) => treeItemHasTooltip
+                    ? (
+                        <div className={styles.Tree} key={child.id}>
                             {renderTreeItem(child)}
-                        </div>)
-                        : renderTreeItem(child))
+                        </div>
+                    )
+                    : renderTreeItem(child))
                 : null}
         </TreeItem>
     ), [ handleLabelClick, handleTreeItemClick, treeItemHasTooltip ]);
-    
+
     const defaultItemFunc = useCallback(
-        (node: ITreeItemType) => 
-            treeItemHasTooltip
-                ? (<div className={styles.Tree} key={node.id}>
+        (node: ITreeItemType) => treeItemHasTooltip
+            ? (
+                <div className={styles.Tree} key={node.id}>
                     {renderTreeItem(node)}
-                </div>)
-                : renderTreeItem(node),
+                </div>
+            )
+            : renderTreeItem(node),
         [ renderTreeItem, treeItemHasTooltip ],
     );
 
@@ -112,11 +114,11 @@ const Tree = ({
 
     return (
         <TreeView
-            aria-label="rich object"
-            defaultCollapseIcon={<ExpandMoreIcon />}
-            defaultExpandIcon={<RightArrowIcon />}
-            selected={selectedId}
-            expanded={expandedIds}
+          aria-label="rich object"
+          defaultCollapseIcon={<ExpandMoreIcon />}
+          defaultExpandIcon={<RightArrowIcon />}
+          selected={selectedId}
+          expanded={expandedIds}
         >
             {renderTreeView(items)}
         </TreeView>

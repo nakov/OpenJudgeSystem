@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import first from 'lodash/first';
 
 import { ISubmissionTypeType } from '../../common/types';
@@ -122,17 +122,20 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         [ loadSubmissions, submitCodeResult ],
     );
 
-    const value = {
-        state: {
-            submissionCode,
-            selectedSubmissionType,
-        },
-        actions: {
-            updateSubmissionCode,
-            selectSubmissionTypeById,
-            submit,
-        },
-    };
+    const value = useMemo(
+        () => ({
+            state: {
+                submissionCode,
+                selectedSubmissionType,
+            },
+            actions: {
+                updateSubmissionCode,
+                selectSubmissionTypeById,
+                submit,
+            },
+        }),
+        [ selectSubmissionTypeById, selectedSubmissionType, submissionCode, submit ],
+    );
 
     return (
         <SubmissionsContext.Provider value={value}>

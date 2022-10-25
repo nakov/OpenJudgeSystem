@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
 import { IHaveChildrenProps } from '../components/common/Props';
@@ -56,11 +56,14 @@ const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
         setAreUserParticipationsRetrieved(true);
     }, [ apiParticipationsForProfile ]);
 
-    const value = {
-        areUserParticipationsRetrieved,
-        userParticipations,
-        getUserParticipations,
-    };
+    const value = useMemo(
+        () => ({
+            areUserParticipationsRetrieved,
+            userParticipations,
+            getUserParticipations,
+        }),
+        [ areUserParticipationsRetrieved, getUserParticipations, userParticipations ],
+    );
 
     return (
         <ParticipationsContext.Provider value={value}>

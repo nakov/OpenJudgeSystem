@@ -1,8 +1,8 @@
-@import 'src/styles/colors';
+@use 'src/styles/colors';
 
 .footer {
   align-items: center;
-  background: $background-color-footer;
+  background: colors.$background-color-footer;
   color: #fff;
   display: flex;
   height: 50px;

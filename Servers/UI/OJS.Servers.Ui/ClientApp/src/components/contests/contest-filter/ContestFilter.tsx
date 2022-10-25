@@ -9,7 +9,6 @@ import List, { Orientation } from '../../guidelines/lists/List';
 
 import styles from './ContestFilter.module.scss';
 
-
 interface IContestFilterProps {
     values: IFilter[];
     type: FilterType;
@@ -32,14 +31,14 @@ const ContestFilter = ({
             : Orientation.vertical,
         [ type ],
     );
-    
+
     const filtersToDisplay = useMemo(
         () => expanded
             ? values
             : values.slice(0, maxDisplayCount),
         [ expanded, values, maxDisplayCount ],
     );
-    
+
     const toggleFiltersExpanded = useCallback(
         (isExpanded: boolean) => {
             setExpanded(isExpanded);
@@ -49,36 +48,36 @@ const ContestFilter = ({
 
     const renderExpandButton = useCallback(
         (allFilters: IFilter[]) => allFilters.length > maxDisplayCount
-            ? <ExpandButton onExpandChanged={toggleFiltersExpanded}/>
+            ? <ExpandButton onExpandChanged={toggleFiltersExpanded} />
             : null,
         [ toggleFiltersExpanded, maxDisplayCount ],
     );
 
     const renderStatusFilterItem = useCallback(
-        (buttonType: ButtonType, btnClassName: string,name: string, id: number) => (
+        (buttonType: ButtonType, btnClassName: string, name: string, id: number) => (
             <Button
-                type={buttonType}
-                onClick={() => onSelect(id)}
-                className={btnClassName}
-                text={name}
-                size={ButtonSize.small}
+              type={buttonType}
+              onClick={() => onSelect(id)}
+              className={btnClassName}
+              text={name}
+              size={ButtonSize.small}
             />
         ),
         [ onSelect ],
     );
 
     const renderStrategyFilterItem = useCallback(
-        (buttonType: ButtonType, btnClassName: string, name: string, id: number)=> (
+        (buttonType: ButtonType, btnClassName: string, name: string, id: number) => (
             <div className={styles.strategyHeader}>
                 <div className={styles.tooltip}>
                     <span className={styles.tooltipElement}>{name}</span>
                 </div>
                 <Button
-                    type={buttonType}
-                    onClick={() => onSelect(id)}
-                    className={styles.strategyElementClassName}
-                    text={name}
-                    size={ButtonSize.small}
+                  type={buttonType}
+                  onClick={() => onSelect(id)}
+                  className={styles.strategyElementClassName}
+                  text={name}
+                  size={ButtonSize.small}
                 />
             </div>
         ),
@@ -97,35 +96,34 @@ const ContestFilter = ({
                 : '';
 
             return type === FilterType.Strategy
-                ? renderStrategyFilterItem(buttonType,btnClassName,name,id)
-                : renderStatusFilterItem(buttonType,btnClassName, name, id);
-            
+                ? renderStrategyFilterItem(buttonType, btnClassName, name, id)
+                : renderStatusFilterItem(buttonType, btnClassName, name, id);
         },
         [ renderStatusFilterItem, renderStrategyFilterItem, type, values ],
     );
-    
+
     const className = concatClassNames(
         styles.listFilters,
         expanded
             ? styles.expanded
             : '',
     );
-    
+
     return (
         <div className={styles.filterTypeContainer}>
             <Heading
-                type={HeadingType.small}
-                className={styles.heading}
+              type={HeadingType.small}
+              className={styles.heading}
             >
                 {type}
             </Heading>
             <List
-                values={filtersToDisplay}
-                itemFunc={getRenderFilterItemFunc(type)}
-                orientation={listOrientation}
-                className={className}
-                itemClassName={styles.listFilterItem}
-                fullWidth
+              values={filtersToDisplay}
+              itemFunc={getRenderFilterItemFunc(type)}
+              orientation={listOrientation}
+              className={className}
+              itemClassName={styles.listFilterItem}
+              fullWidth
             />
             {renderExpandButton(values)}
         </div>
@@ -133,5 +131,3 @@ const ContestFilter = ({
 };
 
 export default ContestFilter;
-
-

@@ -32,7 +32,7 @@ const ContestsPage = () => {
             changePage,
         },
     } = useContests();
-    
+
     const { state: { breadcrumbItems } } = useCategoriesBreadcrumbs();
 
     const handlePageChange = useCallback(
@@ -47,7 +47,7 @@ const ContestsPage = () => {
 
     const renderContest = useCallback(
         (contest: IIndexContestsType) => (
-            <ContestCard contest={contest}/>
+            <ContestCard contest={contest} />
         ),
         [],
     );
@@ -67,16 +67,16 @@ const ContestsPage = () => {
             return (
                 <>
                     <PaginationControls
-                        count={pagesCount}
-                        page={currentPage}
-                        onChange={handlePageChange}
+                      count={pagesCount}
+                      page={currentPage}
+                      onChange={handlePageChange}
                     />
                     <List
-                        values={contests}
-                        itemFunc={renderContest}
-                        itemClassName={styles.contestItem}
-                        orientation={Orientation.horizontal}
-                        wrap
+                      values={contests}
+                      itemFunc={renderContest}
+                      itemClassName={styles.contestItem}
+                      orientation={Orientation.horizontal}
+                      wrap
                     />
                 </>
             );
@@ -102,7 +102,7 @@ const ContestsPage = () => {
         <>
             <Breadcrumb items={breadcrumbItems} itemFunc={renderCategoriesBreadcrumbItem} />
             <div className={styles.container}>
-                <ContestFilters onFilterClick={handleFilterClick}/>
+                <ContestFilters onFilterClick={handleFilterClick} />
                 <div className={styles.mainHeader}>
                     {renderContests()}
                 </div>

@@ -36,8 +36,7 @@ const groupByType = (filters: IFilter[]) => {
 const filterByType = (filters: IFilter[], filterType: FilterType) => filters.filter(({ type }) => filterType === type);
 
 const findFilterByTypeAndName = (filters: IFilter[], type: string, value: string | string[] | number) => filters
-    .find(({ type: filterType, id }) =>
-        areStringEqual(filterType, type, false) && 
+    .find(({ type: filterType, id }) => areStringEqual(filterType, type, false) &&
         areStringEqual(value, id, false));
 
 export {

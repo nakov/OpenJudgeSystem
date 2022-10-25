@@ -9,17 +9,16 @@ import styles from './StrategyIcon.module.scss';
 
 type IPythonIconProps = IIconProps
 
-
 const PythonIcon = ({
     className = '',
     size = IconSize.Medium,
     helperText = '',
 }: IPythonIconProps) => (
     <Icon
-        className={concatClassNames(styles.icon, className)}
-        size={size}
-        helperText={helperText}
-        Component={TbBrandPython}
+      className={concatClassNames(styles.icon, className)}
+      size={size}
+      helperText={helperText}
+      Component={TbBrandPython}
     />
 );
 

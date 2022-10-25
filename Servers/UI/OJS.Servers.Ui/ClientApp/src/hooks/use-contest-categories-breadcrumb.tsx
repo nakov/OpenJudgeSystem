@@ -1,8 +1,7 @@
-﻿import React, { createContext, useCallback, useContext, useState } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
 import ITreeItemType from '../common/tree-types';
-import { IContestCategoryTreeType } from '../common/types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
 interface ICategoriesBreadcrumbContext {
@@ -14,7 +13,7 @@ interface ICategoriesBreadcrumbContext {
     };
 }
 
-type ICategoriesBreacrumbProviderProps = IHaveChildrenProps
+type ICategoriesBreadcrumbProviderProps = IHaveChildrenProps
 
 interface ICategoriesBreadcrumbItem {
     id: string;
@@ -29,11 +28,11 @@ const CategoriesBreadcrumbContext = createContext<ICategoriesBreadcrumbContext>(
 
 const orderByAsc = (x : ICategoriesBreadcrumbItem, y: ICategoriesBreadcrumbItem) => y.orderBy - x.orderBy;
 
-const CategoriesBreadcrumbProvider = ({ children }: ICategoriesBreacrumbProviderProps) => {
+const CategoriesBreadcrumbProvider = ({ children }: ICategoriesBreadcrumbProviderProps) => {
     const [ breadcrumbItems, setBreadcrumbItems ] = useState(defaultState.state.breadcrumbItems);
 
     const updateBreadcrumb = useCallback(
-        (category: IContestCategoryTreeType | undefined, categoriesTree: ITreeItemType[] | []) => {
+        (category: ITreeItemType | undefined, categoriesTree: ITreeItemType[] | []) => {
             if (isNil(category) || isNil(categoriesTree)) {
                 return;
             }
@@ -51,14 +50,14 @@ const CategoriesBreadcrumbProvider = ({ children }: ICategoriesBreacrumbProvider
             } as ICategoriesBreadcrumbItem);
 
             const populateBreadcrumbItemsByParents = (categoryParentId?: string) => {
-                if (isNil(categoryParentId)){
+                if (isNil(categoryParentId)) {
                     return;
                 }
 
                 index += 1;
 
                 const { id: parentCategoryId, name: parentCategoryName, parentId: currentParrentId } = categoriesTree
-                    .find(x => x.id === categoryParentId) as ITreeItemType;
+                    .find((x) => x.id === categoryParentId) as ITreeItemType;
 
                 if (isNil(parentCategoryId)) {
                     return;
@@ -75,7 +74,7 @@ const CategoriesBreadcrumbProvider = ({ children }: ICategoriesBreacrumbProvider
             };
 
             populateBreadcrumbItemsByParents(parentId);
-            
+
             allBreadcrumbItems
                 .sort(orderByAsc);
 
@@ -84,10 +83,13 @@ const CategoriesBreadcrumbProvider = ({ children }: ICategoriesBreacrumbProvider
         [ setBreadcrumbItems ],
     );
 
-    const value = {
-        state: { breadcrumbItems },
-        actions: { updateBreadcrumb },
-    } as ICategoriesBreadcrumbContext;
+    const value = useMemo(
+        () => ({
+            state: { breadcrumbItems },
+            actions: { updateBreadcrumb },
+        }),
+        [ breadcrumbItems, updateBreadcrumb ],
+    );
 
     return (
         <CategoriesBreadcrumbContext.Provider value={value}>
@@ -95,7 +97,6 @@ const CategoriesBreadcrumbProvider = ({ children }: ICategoriesBreacrumbProvider
         </CategoriesBreadcrumbContext.Provider>
     );
 };
-
 
 const useCategoriesBreadcrumbs = () => useContext(CategoriesBreadcrumbContext);
 

@@ -1,7 +1,6 @@
-/* stylelint-ignore */
-@import 'src/styles/resets';
-@import 'src/styles/colors';
-@import 'src/styles/fonts';
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
+@use 'src/styles/resets';
 
 body,
 #root {
@@ -33,7 +32,7 @@ form {
 .columnsThree,
 %columnsThree {
   & > * {
-    border-left: 1px $bottom-border-color solid;
+    border-left: 1px colors.$bottom-border-color solid;
     padding: 0 15px;
 
     &:first-child {

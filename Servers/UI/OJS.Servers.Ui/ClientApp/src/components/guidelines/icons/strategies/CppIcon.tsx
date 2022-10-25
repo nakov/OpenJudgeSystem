@@ -15,10 +15,10 @@ const CppIcon = ({
     helperText = '',
 }: ICppIconProps) => (
     <Icon
-        className={concatClassNames(styles.icon, className)}
-        size={size}
-        helperText={helperText}
-        Component={CgCPlusPlus}
+      className={concatClassNames(styles.icon, className)}
+      size={size}
+      helperText={helperText}
+      Component={CgCPlusPlus}
     />
 );
 

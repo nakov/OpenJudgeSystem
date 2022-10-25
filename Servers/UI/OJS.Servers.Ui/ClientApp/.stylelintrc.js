@@ -9,6 +9,9 @@ module.exports = {
         'scss/percent-placeholder-pattern': null,
         'max-nesting-depth': [
             3,
-        ]
+        ],
+        'selector-max-id': 1,
+        'no-invalid-position-at-import-rule': null,
+        'scss/at-extend-no-missing-placeholder': null,
     },
 }

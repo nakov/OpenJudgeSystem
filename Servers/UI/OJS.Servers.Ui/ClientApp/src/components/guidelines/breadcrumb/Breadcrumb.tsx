@@ -16,14 +16,13 @@ interface IBreadcrumbProps<TValue> extends IHaveOptionalClassName {
     keyFunc?: (value: TValue) => string;
 }
 
-const Breadcrumb = <TValue extends unknown>({
+const Breadcrumb = <TValue, >({
     id = generateId(),
     items = null,
     itemFunc,
     keyFunc = defaultKeyFunc,
     className = '',
 }: IBreadcrumbProps<TValue>) => {
-
     const breadcrumbClassName = concatClassNames(
         styles.breadcrumb,
         className,
@@ -36,7 +35,7 @@ const Breadcrumb = <TValue extends unknown>({
             }
 
             return items.map((value) => (
-                <div key={keyFunc(value)} >
+                <div key={keyFunc(value)}>
                     {itemFunc(value)}
                 </div>
             ));
@@ -44,9 +43,11 @@ const Breadcrumb = <TValue extends unknown>({
         [ itemFunc, keyFunc, items ],
     );
 
-    return <Breadcrumbs id={id} className={breadcrumbClassName}>
-        {renderItems()}
-    </Breadcrumbs>;
+    return (
+        <Breadcrumbs id={id} className={breadcrumbClassName}>
+            {renderItems()}
+        </Breadcrumbs>
+    );
 };
 
 export default Breadcrumb;

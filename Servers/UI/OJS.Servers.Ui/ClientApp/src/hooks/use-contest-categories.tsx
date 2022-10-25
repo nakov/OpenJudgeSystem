@@ -1,7 +1,7 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 
-import { IContestCategoryTreeType } from '../common/types';
+import ITreeItemType from '../common/tree-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
 import { useHttp } from './use-http';
@@ -10,7 +10,7 @@ import { useUrls } from './use-urls';
 
 interface IContestCategoriesContext {
     state: {
-        categories: IContestCategoryTreeType[];
+        categories: ITreeItemType[];
         isLoaded: boolean;
     };
     actions: {
@@ -20,7 +20,7 @@ interface IContestCategoriesContext {
 
 type IContestCategoriesProviderProps = IHaveChildrenProps
 
-const defaultState = { state: { categories: [] as IContestCategoryTreeType[] } };
+const defaultState = { state: { categories: [] as ITreeItemType[] } };
 
 const ContestCategoriesContext = createContext<IContestCategoriesContext>(defaultState as IContestCategoriesContext);
 
@@ -50,18 +50,21 @@ const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps
                 return;
             }
 
-            setCategories(data as IContestCategoryTreeType[]);
+            setCategories(data as ITreeItemType[]);
         },
         [ data ],
     );
 
-    const value = {
-        state: {
-            categories,
-            isLoaded: isSuccess,
-        },
-        actions: { load },
-    };
+    const value = useMemo(
+        () => ({
+            state: {
+                categories,
+                isLoaded: isSuccess,
+            },
+            actions: { load },
+        }),
+        [ categories, isSuccess, load ],
+    );
 
     return (
         <ContestCategoriesContext.Provider value={value}>

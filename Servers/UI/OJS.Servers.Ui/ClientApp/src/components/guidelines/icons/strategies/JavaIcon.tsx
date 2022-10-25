@@ -9,17 +9,16 @@ import styles from './StrategyIcon.module.scss';
 
 type IJavaIconProps = IIconProps
 
-
 const JavaIcon = ({
     className = '',
     size = IconSize.Medium,
     helperText = '',
 }: IJavaIconProps) => (
     <Icon
-        className={concatClassNames(styles.icon, className)}
-        size={size}
-        helperText={helperText}
-        Component={FaJava}
+      className={concatClassNames(styles.icon, className)}
+      size={size}
+      helperText={helperText}
+      Component={FaJava}
     />
 );
 

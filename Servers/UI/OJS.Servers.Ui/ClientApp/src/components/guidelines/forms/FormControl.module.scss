@@ -1,5 +1,5 @@
-@import 'src/styles/colors';
-@import 'src/styles/fonts';
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
@@ -16,10 +16,10 @@ input:-webkit-autofill:active {
 .formControl {
   @extend %font-family-lato;
 
-  border: 1px solid $text-dark-gray-color;
+  border: 1px solid colors.$text-dark-gray-color;
   border-radius: 6px;
   box-sizing: border-box;
-  color: $text-dark-gray-color;
+  color: colors.$text-dark-gray-color;
   font-size: 16px;
   margin-top: 15px;
   min-height: 40px;
@@ -36,9 +36,9 @@ input:-webkit-autofill:active {
 
   &[type='text'],
   &.formControlTextArea {
-    border: 1px solid $grey-color;
+    border: 1px solid colors.$grey-color;
     border-radius: 6px;
-    color: $grey-color;
+    color: colors.$grey-color;
     display: block;
     font-weight: 400;
     max-height: 50px;
@@ -72,10 +72,10 @@ input:-webkit-autofill:active {
     }
 
     &:checked {
-      border-color: $primary-blue;
+      border-color: colors.$primary-blue;
 
       &::after {
-        background-color: $primary-blue;
+        background-color: colors.$primary-blue;
         transform: scale(1);
       }
     }

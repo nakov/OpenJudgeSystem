@@ -75,7 +75,7 @@ const UrlParamsProvider = ({ children }: IUrlParamsProviderProps) => {
         },
         [ searchParams, setSearchParams ],
     );
-    
+
     const clearParams = useCallback(
         () => {
             setSearchParams({});
@@ -83,14 +83,17 @@ const UrlParamsProvider = ({ children }: IUrlParamsProviderProps) => {
         [ setSearchParams ],
     );
 
-    const value = {
-        state: { params },
-        actions: {
-            setParam,
-            unsetParam,
-            clearParams,
-        },
-    };
+    const value = useMemo(
+        () => ({
+            state: { params },
+            actions: {
+                setParam,
+                unsetParam,
+                clearParams,
+            },
+        }),
+        [ clearParams, params, setParam, unsetParam ],
+    );
 
     return (
         <UrlParamsContext.Provider value={value}>
@@ -98,7 +101,6 @@ const UrlParamsProvider = ({ children }: IUrlParamsProviderProps) => {
         </UrlParamsContext.Provider>
     );
 };
-
 
 const useUrlParams = () => useContext(UrlParamsContext);
 

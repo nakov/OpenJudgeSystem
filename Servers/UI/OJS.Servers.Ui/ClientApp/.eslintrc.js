@@ -1,4 +1,4 @@
-// eslint-disable-next-line import/no-unused-modules,no-undef
+/* eslint-disable-next-line import/no-unused-modules,no-undef */
 module.exports = {
     env: {
         browser: true,
@@ -12,7 +12,7 @@ module.exports = {
         'plugin:react/recommended',
         'airbnb',
         'plugin:css-modules/recommended',
-        'stylelint',
+        // 'stylelint',
     ],
     parser: '@typescript-eslint/parser',
     parserOptions: {
@@ -60,6 +60,13 @@ module.exports = {
         ],
         'react-hooks/rules-of-hooks': 'error',
         'react-hooks/exhaustive-deps': 'error',
+
+        'react/function-component-definition': [ 'error',
+            {
+                namedComponents: 'arrow-function',
+                unnamedComponents: 'arrow-function',
+            },
+        ],
 
         'array-bracket-spacing': [ 'error', 'always', { singleValue: true } ],
         // enforces curly brackets for arrow functions only when needed

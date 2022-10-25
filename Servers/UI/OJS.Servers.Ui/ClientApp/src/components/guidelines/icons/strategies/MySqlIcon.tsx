@@ -9,17 +9,16 @@ import styles from './StrategyIcon.module.scss';
 
 type IMySqlIconProps = IIconProps
 
-
 const MySqlIcon = ({
     className = '',
     size = IconSize.Medium,
     helperText = '',
 }: IMySqlIconProps) => (
     <Icon
-        className={concatClassNames(styles.icon, className)}
-        size={size}
-        helperText={helperText}
-        Component={GrMysql}
+      className={concatClassNames(styles.icon, className)}
+      size={size}
+      helperText={helperText}
+      Component={GrMysql}
     />
 );
 

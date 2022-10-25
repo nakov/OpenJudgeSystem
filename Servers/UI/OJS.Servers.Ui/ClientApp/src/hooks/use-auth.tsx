@@ -1,7 +1,7 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { HttpStatus } from '../common/common';
-import { IUserPermissionsType,IUserType } from '../common/types';
+import { IUserPermissionsType, IUserType } from '../common/types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
 import { useHttp } from './use-http';
@@ -84,7 +84,7 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
         if (loginSubmitResponse) {
             if (loginSubmitStatus === HttpStatus.Unauthorized) {
                 setLoginErrorMessage('Invalid username or password.');
-                
+
                 return;
             }
 
@@ -92,19 +92,22 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
         }
     }, [ loginSubmitResponse, loginSubmitStatus, showError, setUserDetails ]);
 
-    const value = {
-        state: {
-            user: internalUser,
-            loginErrorMessage,
-        },
-        actions: {
-            signIn,
-            signOut,
-            getUser,
-            setUsername,
-            setPassword,
-        },
-    };
+    const value = useMemo(
+        () => ({
+            state: {
+                user: internalUser,
+                loginErrorMessage,
+            },
+            actions: {
+                signIn,
+                signOut,
+                getUser,
+                setUsername,
+                setPassword,
+            },
+        }),
+        [ getUser, internalUser, loginErrorMessage, signIn, signOut ],
+    );
 
     return (
         <AuthContext.Provider value={value}>

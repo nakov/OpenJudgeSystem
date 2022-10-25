@@ -44,9 +44,9 @@ const ProblemSubmissions = () => {
 
         return (
             <SubmissionsList
-                items={submissions}
-                selectedSubmission={null}
-                className={styles.submissionsList}
+              items={submissions}
+              selectedSubmission={null}
+              className={styles.submissionsList}
             />
         );
     };
@@ -55,10 +55,10 @@ const ProblemSubmissions = () => {
         <div className={submissionResultsContentClassName}>
             {renderSubmissions()}
             <Button
-                type={ButtonType.secondary}
-                className={refreshButtonClassName}
-                onClick={() => handleReloadClick()}
-                text="Refresh"
+              type={ButtonType.secondary}
+              className={refreshButtonClassName}
+              onClick={() => handleReloadClick()}
+              text="Refresh"
             />
         </div>
     );

@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
 import { IContestStrategyFilter } from '../common/contest-types';
@@ -56,13 +56,16 @@ const ContestStrategyFiltersProvider = ({ children }: IContestStrategyFiltersPro
         [ data ],
     );
 
-    const value = {
-        state: {
-            strategies,
-            isLoaded: isSuccess,
-        },
-        actions: { load },
-    } as IContestStrategyFiltersContext;
+    const value = useMemo(
+        () => ({
+            state: {
+                strategies,
+                isLoaded: isSuccess,
+            },
+            actions: { load },
+        }),
+        [ isSuccess, load, strategies ],
+    );
 
     return (
         <ContestStrategyFiltersContext.Provider value={value}>

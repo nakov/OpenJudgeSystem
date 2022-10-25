@@ -1,6 +1,6 @@
-@import 'src/styles/colors';
-@import 'src/styles/components';
-@import 'src/styles/global';
+@use 'src/styles/colors';
+@use 'src/styles/components';
+@use 'src/styles/global';
 
 .contestWrapper {
   @extend %wrapper;

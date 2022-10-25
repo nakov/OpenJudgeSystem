@@ -1,19 +1,19 @@
-@import 'src/styles/colors';
-@import 'src/styles/fonts';
-@import 'src/styles/variables';
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
+@use 'src/styles/variables';
 
 .testRun {
   @extend %font-family-lato;
 
-  border-bottom: 1px solid $bottom-border-color;
-  color: $text-dark-gray-color;
+  border-bottom: 1px solid colors.$bottom-border-color;
+  color: colors.$text-dark-gray-color;
   margin-top: 10px;
   padding: 20px;
 }
 
 %heading {
   display: flex;
-  font-size: $f-size-18;
+  font-size: variables.$f-size-18;
   margin-bottom: 10px;
 }
 
@@ -24,7 +24,7 @@
 .wrongTestRunHeading {
   @extend %heading;
 
-  color: $primary-red;
+  color: colors.$primary-red;
 }
 
 .collapsibleHeader {
@@ -37,7 +37,7 @@
 .correctTestRunHeading {
   @extend %heading;
 
-  color: $primary-green;
+  color: colors.$primary-green;
 }
 
 .testRunData {
@@ -51,6 +51,6 @@
 .testRunDataParagraph {
   @extend %font-family-lato;
 
-  color: $text-light-gray-color;
-  font-size: $f-size-12;
+  color: colors.$text-light-gray-color;
+  font-size: variables.$f-size-12;
 }

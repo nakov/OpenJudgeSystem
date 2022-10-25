@@ -1,8 +1,8 @@
-@import 'src/styles/colors';
-@import 'src/styles/fonts';
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
 
 .heading {
-  border-bottom: 1px solid $bottom-border-color;
+  border-bottom: 1px solid colors.$bottom-border-color;
   padding-bottom: 10px;
   text-align: left;
 }
@@ -38,7 +38,7 @@
 
   .tooltipElement {
     border-radius: 6px;
-    font-family: $font-family-lato;
+    font-family: fonts.$font-family-lato;
     font-size: 12px;
     font-weight: 700;
     padding: 10px;

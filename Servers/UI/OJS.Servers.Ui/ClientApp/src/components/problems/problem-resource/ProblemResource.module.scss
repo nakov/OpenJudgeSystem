@@ -1,4 +1,4 @@
-@import 'src/styles/colors';
+@use 'src/styles/colors';
 
 .resourceWrapper {
   align-items: center;
@@ -10,7 +10,7 @@
 
 .resourceLink,
 .resourceLinkButton {
-  color: $text-dark-gray-color;
+  color: colors.$text-dark-gray-color;
   text-decoration: none;
 
   .icon {

@@ -9,17 +9,16 @@ import styles from './StrategyIcon.module.scss';
 
 type IRubyIconProps = IIconProps
 
-
 const RubyIcon = ({
     className = '',
     size = IconSize.Medium,
     helperText = '',
 }: IRubyIconProps) => (
     <Icon
-        className={concatClassNames(styles.icon, className)}
-        size={size}
-        helperText={helperText}
-        Component={DiRuby}
+      className={concatClassNames(styles.icon, className)}
+      size={size}
+      helperText={helperText}
+      Component={DiRuby}
     />
 );
 

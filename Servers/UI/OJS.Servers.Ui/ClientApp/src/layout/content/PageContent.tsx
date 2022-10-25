@@ -61,7 +61,7 @@ const routes = [
         path: '/contests/:contestId/:participationType/results/:resultType',
         Element: ContestResultsPage,
     },
-    { 
+    {
         path: '/administration',
         Element: AdministrationPage,
     },

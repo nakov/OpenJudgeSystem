@@ -20,14 +20,14 @@ const LoginPage = () => {
 
     const handleOnChangeUpdateUsername = useCallback((value?: string) => {
         setUsername(isNil(value)
-            ?''
-            :value);
+            ? ''
+            : value);
     }, [ setUsername ]);
 
     const handleOnChangeUpdatePassword = useCallback((value?: string) => {
         setPassword(isNil(value)
-            ?''
-            :value);
+            ? ''
+            : value);
     }, [ setPassword ]);
 
     const handleLoginClick = useCallback(async () => {
@@ -44,9 +44,7 @@ const LoginPage = () => {
     return (
         <Form
           className={styles.loginForm}
-          onSubmit={() => {
-              handleLoginClick();
-          }}
+          onSubmit={() => handleLoginClick()}
           submitText="Login"
         >
             <header className={styles.loginFormHeader}>
