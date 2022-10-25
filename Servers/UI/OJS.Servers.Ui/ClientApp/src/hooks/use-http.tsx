@@ -104,7 +104,7 @@ const useHttp = (
             response.data,
             filename,
         );
-        
+
         setResponse(null);
     }, [ getFilenameFromHeaders, response ]);
 
