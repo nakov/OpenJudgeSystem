@@ -4,6 +4,10 @@ $font-family-montserrat: montserrat, serif;
 $font-family-montserrat-medium: montserrat-medium, serif;
 $font-style-normal: normal;
 
+%font-style-normal {
+  font-style: $font-style-normal;
+}
+
 %font-family-lato {
   @extend %font-style-normal;
 
@@ -26,8 +30,4 @@ $font-style-normal: normal;
   @extend %font-style-normal;
 
   font-family: $font-family-montserrat-medium;
-}
-
-%font-style-normal {
-  font-style: $font-style-normal;
 }
