@@ -153,16 +153,19 @@
         
         private Dictionary<int, ParticipantSummarySubmissionInfoServiceModel> NormalizeProblemGroupIndexesAndEmptyValues(Dictionary<int, ParticipantSummarySubmissionInfoServiceModel> values, IEnumerable<int> problemGroupsOrderBy)
         {
-            var sortedOrderedBy = problemGroupsOrderBy.OrderBy(n => n).ToList();
-            
+            var sortedOrderedBy = problemGroupsOrderBy
+                .OrderBy(n => n)
+                .Distinct()
+                .ToList();
+
             return sortedOrderedBy
                 .Select(n => new
                 {
                     Key = sortedOrderedBy.IndexOf(n) + 1,
-                    Value = values.ContainsKey(n) 
-                        ? values[n] 
+                    Value = values.ContainsKey(n)
+                        ? values[n]
                         : new ParticipantSummarySubmissionInfoServiceModel
-                        { 
+                        {
                             TimeTaken = 0,
                             Length = 0
                         }
@@ -175,35 +178,73 @@
             DateTime userStartTime)
         {
             var maxSubmissionsBySubmissionTimeList = maxSubmissionsBySubmissionTime.ToList();
-            
-            var result = maxSubmissionsBySubmissionTimeList
+
+            var values = maxSubmissionsBySubmissionTimeList
                 .Skip(1)
-                .Select((laterSubmission, index) => {
-                    var earlierSubmission = maxSubmissionsBySubmissionTimeList[index]; 
-                    
-                    return new {
+                .Select((laterSubmission, index) =>
+                {
+                    var earlierSubmission = maxSubmissionsBySubmissionTimeList[index];
+
+                    return new ParticipationStatisticsEarlierAndLaterSubmissionModel
+                    {
                         EarlierSubmission = earlierSubmission,
                         LaterSubmission = laterSubmission,
                     };
-                })
-                .ToDictionary(
-                    submissions => submissions.LaterSubmission.Submission.Problem.ProblemGroup.OrderBy,
-                    submissions => new ParticipantSummarySubmissionInfoServiceModel
-                    {
-                        TimeTaken = Math.Round((submissions.LaterSubmission.Submission.CreatedOn - submissions.EarlierSubmission.Submission.CreatedOn).TotalMinutes, 0),
-                        Length = this.GetSubmissionCodeLength(submissions.LaterSubmission.Submission),
-                    }
-                );
-    
-            var earliestSubmission = maxSubmissionsBySubmissionTimeList.First();
-            result[earliestSubmission.Submission.Problem.ProblemGroup.OrderBy] = new ParticipantSummarySubmissionInfoServiceModel
-            {
-                TimeTaken = Math.Round((earliestSubmission.Submission.CreatedOn - userStartTime).TotalMinutes),
-                Length = this.GetSubmissionCodeLength(earliestSubmission.Submission),
-            };
-    
+                });
+
+            var result = this.GetStatisticsDictionary(values);
+
+            var earliestSubmission = maxSubmissionsBySubmissionTimeList.First().Submission;
+            result[earliestSubmission.Problem.ProblemGroup.OrderBy] = this.GetSubmissionTimeTakenToSolveAndLength(result, earliestSubmission, userStartTime);
+            
             return result;
         }
+
+        private Dictionary<int, ParticipantSummarySubmissionInfoServiceModel> GetStatisticsDictionary(
+            IEnumerable<ParticipationStatisticsEarlierAndLaterSubmissionModel> submissionPairsValues)
+        {
+            var resultDict = new Dictionary<int, ParticipantSummarySubmissionInfoServiceModel>();
+
+             submissionPairsValues.ForEach(v =>
+             {
+                 resultDict[v.LaterSubmission.Submission.Problem.ProblemGroup.OrderBy] =
+                     this.GetSubmissionTimeTakenToSolveAndLength(resultDict, v.LaterSubmission.Submission, v.EarlierSubmission.Submission.CreatedOn);
+             });
+            
+            return resultDict;
+        }
+
+        private ParticipantSummarySubmissionInfoServiceModel GetSubmissionTimeTakenToSolveAndLength(
+            Dictionary<int, ParticipantSummarySubmissionInfoServiceModel> resultDict,
+            Submission submission,
+            DateTime timeToCompareWith)
+        {
+            var timeTaken = Math.Round((submission.CreatedOn - timeToCompareWith).TotalMinutes, 0);
+            
+            var submissionLength = this.GetSubmissionCodeLength(submission);
+
+            var problemIndex = submission.Problem.ProblemGroup.OrderBy;
+                
+            if (resultDict.ContainsKey(problemIndex))
+            {
+                (submissionLength, timeTaken) = this.GetSubmissionTimeTakenAndLengthForExistingProblemGroupIndex(
+                    resultDict[problemIndex],
+                    timeTaken, 
+                    submissionLength);
+            }
+
+            return new ParticipantSummarySubmissionInfoServiceModel
+            {
+                Length = submissionLength,
+                TimeTaken = timeTaken
+            };
+        }
+
+        private Tuple<int, double> GetSubmissionTimeTakenAndLengthForExistingProblemGroupIndex(
+            ParticipantSummarySubmissionInfoServiceModel existingValue, 
+            double timeTaken, 
+            int length)
+            => new Tuple<int, double>(Convert.ToInt32((existingValue.Length + length) / 2), Math.Round((existingValue.TimeTaken + timeTaken) / 2));
 
         private int GetSubmissionCodeLength(Submission submission)
             => submission.IsBinaryFile
