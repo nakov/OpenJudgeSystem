@@ -150,28 +150,6 @@
                 TimeTotal = participantInfo.TimeInContest,
             };
         }
-        
-        private Dictionary<int, ParticipantSummarySubmissionInfoServiceModel> NormalizeProblemGroupIndexesAndEmptyValues(Dictionary<int, ParticipantSummarySubmissionInfoServiceModel> values, IEnumerable<int> problemGroupsOrderBy)
-        {
-            var sortedOrderedBy = problemGroupsOrderBy
-                .OrderBy(n => n)
-                .Distinct()
-                .ToList();
-
-            return sortedOrderedBy
-                .Select(n => new
-                {
-                    Key = sortedOrderedBy.IndexOf(n) + 1,
-                    Value = values.ContainsKey(n)
-                        ? values[n]
-                        : new ParticipantSummarySubmissionInfoServiceModel
-                        {
-                            TimeTaken = 0,
-                            Length = 0
-                        }
-                })
-                .ToDictionary(k => k.Key, v => v.Value);
-        }
 
         private Dictionary<int, ParticipantSummarySubmissionInfoServiceModel> CalculateTimeTakenBetweenBestForProblems(
             IEnumerable<MaximumResultSubmissionByProblemServiceModel> maxSubmissionsBySubmissionTime, 
@@ -192,7 +170,7 @@
                     };
                 });
 
-            var result = this.GetStatisticsDictionary(values);
+            var result = this.GetTimeTakenAndLengthStatistics(values);
 
             var earliestSubmission = maxSubmissionsBySubmissionTimeList.First().Submission;
             result[earliestSubmission.Problem.ProblemGroup.OrderBy] = this.GetSubmissionTimeTakenToSolveAndLength(result, earliestSubmission, userStartTime);
@@ -200,7 +178,7 @@
             return result;
         }
 
-        private Dictionary<int, ParticipantSummarySubmissionInfoServiceModel> GetStatisticsDictionary(
+        private Dictionary<int, ParticipantSummarySubmissionInfoServiceModel> GetTimeTakenAndLengthStatistics(
             IEnumerable<ParticipationStatisticsEarlierAndLaterSubmissionModel> submissionPairsValues)
         {
             var resultDict = new Dictionary<int, ParticipantSummarySubmissionInfoServiceModel>();
@@ -219,7 +197,7 @@
             Submission submission,
             DateTime timeToCompareWith)
         {
-            var timeTaken = Math.Round((submission.CreatedOn - timeToCompareWith).TotalMinutes, 0);
+            var timeTaken = submission.CreatedOn.GetMinutesDifferenceRounded(timeToCompareWith);
             
             var submissionLength = this.GetSubmissionCodeLength(submission);
 
@@ -250,14 +228,36 @@
             => submission.IsBinaryFile
                 ? 0
                 : Regex.Matches(submission.ContentAsString, "\n").Count + 1;
-        
-        private double CalculateTimeInMinutesFromParticipationStartToLastSubmission(Participant participant)
-            => Math.Round((participant.Submissions
-                               .Select(s => s.CreatedOn)
-                               .OrderByDescending(s => s)
-                               .FirstOrDefault()
-                           - (participant.ParticipationStartTime ?? participant.CreatedOn)).TotalMinutes);
 
+        private double CalculateTimeInMinutesFromParticipationStartToLastSubmission(Participant participant)
+            => participant.Submissions
+                .Select(s => s.CreatedOn)
+                .OrderByDescending(s => s)
+                .FirstOrDefault()
+                .GetMinutesDifferenceRounded(participant.ParticipationStartTime ?? participant.CreatedOn);
+
+        private Dictionary<int, ParticipantSummarySubmissionInfoServiceModel> NormalizeProblemGroupIndexesAndEmptyValues(Dictionary<int, ParticipantSummarySubmissionInfoServiceModel> values, IEnumerable<int> problemGroupsOrderBy)
+        {
+            var sortedOrderedBy = problemGroupsOrderBy
+                .OrderBy(n => n)
+                .Distinct()
+                .ToList();
+
+            return sortedOrderedBy
+                .Select(n => new
+                {
+                    Key = sortedOrderedBy.IndexOf(n) + 1,
+                    Value = values.ContainsKey(n)
+                        ? values[n]
+                        : new ParticipantSummarySubmissionInfoServiceModel
+                        {
+                            TimeTaken = 0,
+                            Length = 0
+                        }
+                })
+                .ToDictionary(k => k.Key, v => v.Value);
+        }
+        
         private void NormalizeSubmissionPoints() =>
             this.submissionsData
                 .GetAllHavingPointsExceedingLimit()
