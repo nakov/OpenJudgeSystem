@@ -24,5 +24,9 @@
             int? cacheSeconds = CacheConstants.OneDayInSeconds);
 
         void ClearContestCategory(int categoryId);
+
+        IEnumerable<HomeContestViewModel> GetActiveContests();
+
+        IEnumerable<HomeContestViewModel> GetPastContests();
     }
 }

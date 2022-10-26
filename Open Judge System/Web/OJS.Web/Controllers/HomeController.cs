@@ -3,36 +3,25 @@
     using System.Linq;
     using System.Text;
     using System.Web.Mvc;
-
     using OJS.Data;
+    using OJS.Services.Cache;
     using OJS.Services.Data.Contests;
     using OJS.Web.ViewModels.Home.Index;
 
     public class HomeController : BaseController
     {
-        private const int DefaultPastContestsToTake = 15;
+        private readonly ICacheItemsProviderService cache;
 
-        private readonly IContestsDataService contestsData;
-
-        public HomeController(IOjsData data, IContestsDataService contestsData)
+        public HomeController(IOjsData data, ICacheItemsProviderService cache)
             : base(data) =>
-                this.contestsData = contestsData;
+                this.cache = cache;
 
         public ActionResult Index()
         {
             var indexViewModel = new IndexViewModel
             {
-                ActiveContests = this.contestsData
-                    .GetAllCompetable()
-                    .OrderBy(ac => ac.EndTime)
-                    .Select(HomeContestViewModel.FromContest)
-                    .ToList(),
-                PastContests = this.contestsData
-                    .GetAllPast()
-                    .OrderByDescending(pc => pc.EndTime)
-                    .Select(HomeContestViewModel.FromContest)
-                    .Take(DefaultPastContestsToTake)
-                    .ToList()
+                ActiveContests = this.cache.GetActiveContests(),
+                PastContests = this.cache.GetPastContests()
             };
 
             return this.View(indexViewModel);

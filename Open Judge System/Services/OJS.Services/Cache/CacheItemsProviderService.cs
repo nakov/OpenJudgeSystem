@@ -2,23 +2,28 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Dynamic;
 
     using OJS.Common.Constants;
     using OJS.Services.Cache.Models;
     using OJS.Services.Common.Cache;
     using OJS.Services.Data.ContestCategories;
+    using OJS.Services.Data.Contests;
 
     public class CacheItemsProviderService : ICacheItemsProviderService
     {
         private readonly ICacheService cache;
         private readonly IContestCategoriesDataService contestCategoriesData;
+        private readonly IContestsDataService contestsData;
 
         public CacheItemsProviderService(
             ICacheService cache,
-            IContestCategoriesDataService contestCategoriesData)
+            IContestCategoriesDataService contestCategoriesData,
+            IContestsDataService contestsData)
         {
             this.cache = cache;
             this.contestCategoriesData = contestCategoriesData;
+            this.contestsData = contestsData;
         }
 
         public IEnumerable<ContestCategoryListViewModel> GetContestSubCategoriesList(
@@ -131,5 +136,26 @@
                 this.cache.Remove(parentCategoriesCacheId);
             }
         }
+
+        public IEnumerable<HomeContestViewModel> GetActiveContests() =>
+            this.cache.Get(
+                CacheConstants.ActiveContests,
+                () => this.contestsData
+                    .GetAllCompetable()
+                    .OrderBy(ac => ac.EndTime)
+                    .Select(HomeContestViewModel.FromContest)
+                    .ToList(),
+                CacheConstants.OneHourInSeconds);
+
+        public IEnumerable<HomeContestViewModel> GetPastContests() =>
+            this.cache.Get(
+                CacheConstants.PastContests,
+                () => this.contestsData
+                    .GetAllPast()
+                    .OrderByDescending(pc => pc.EndTime)
+                    .Select(HomeContestViewModel.FromContest)
+                    .Take(CacheConstants.DefaultPastContestsToTake)
+                    .ToList(),
+                CacheConstants.OneHourInSeconds);
     }
 }

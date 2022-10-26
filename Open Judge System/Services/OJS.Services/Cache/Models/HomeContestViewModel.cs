@@ -1,4 +1,4 @@
-﻿namespace OJS.Web.ViewModels.Home.Index
+﻿namespace OJS.Services.Cache.Models
 {
     using System;
     using System.Linq.Expressions;
