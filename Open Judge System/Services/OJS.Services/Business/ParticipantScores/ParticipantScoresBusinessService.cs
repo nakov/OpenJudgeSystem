@@ -173,7 +173,11 @@
             var result = this.GetTimeTakenAndLengthStatistics(values);
 
             var earliestSubmission = maxSubmissionsBySubmissionTimeList.First().Submission;
-            result[earliestSubmission.Problem.ProblemGroup.OrderBy] = this.GetSubmissionTimeTakenToSolveAndLength(result, earliestSubmission, userStartTime);
+            result[earliestSubmission.Problem.ProblemGroup.OrderBy] = 
+                this.GetSubmissionTimeTakenToSolveAndLength(
+                    result, 
+                    earliestSubmission, 
+                    userStartTime);
             
             return result;
         }
@@ -186,7 +190,10 @@
              submissionPairsValues.ForEach(v =>
              {
                  resultDict[v.LaterSubmission.Submission.Problem.ProblemGroup.OrderBy] =
-                     this.GetSubmissionTimeTakenToSolveAndLength(resultDict, v.LaterSubmission.Submission, v.EarlierSubmission.Submission.CreatedOn);
+                     this.GetSubmissionTimeTakenToSolveAndLength(
+                         resultDict, 
+                         v.LaterSubmission.Submission, 
+                         v.EarlierSubmission.Submission.CreatedOn);
              });
             
             return resultDict;
@@ -202,7 +209,7 @@
             var submissionLength = this.GetSubmissionCodeLength(submission);
 
             var problemIndex = submission.Problem.ProblemGroup.OrderBy;
-                
+            
             if (resultDict.ContainsKey(problemIndex))
             {
                 (submissionLength, timeTaken) = this.CalculateSubmissionAverageTimeTakenAndLength(
