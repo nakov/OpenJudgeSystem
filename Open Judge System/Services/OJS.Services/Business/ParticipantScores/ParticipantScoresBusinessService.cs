@@ -205,7 +205,7 @@
                 
             if (resultDict.ContainsKey(problemIndex))
             {
-                (submissionLength, timeTaken) = this.GetSubmissionTimeTakenAndLengthForExistingProblemGroupIndex(
+                (submissionLength, timeTaken) = this.CalculateSubmissionAverageTimeTakenAndLength(
                     resultDict[problemIndex],
                     timeTaken, 
                     submissionLength);
@@ -218,11 +218,13 @@
             };
         }
 
-        private Tuple<int, double> GetSubmissionTimeTakenAndLengthForExistingProblemGroupIndex(
+        private Tuple<int, double> CalculateSubmissionAverageTimeTakenAndLength(
             ParticipantSummarySubmissionInfoServiceModel existingValue, 
             double timeTaken, 
             int length)
-            => new Tuple<int, double>(Convert.ToInt32((existingValue.Length + length) / 2), Math.Round((existingValue.TimeTaken + timeTaken) / 2));
+            => new Tuple<int, double>(
+                Convert.ToInt32((existingValue.Length + length) / 2), 
+                Math.Round((existingValue.TimeTaken + timeTaken) / 2));
 
         private int GetSubmissionCodeLength(Submission submission)
             => submission.IsBinaryFile
