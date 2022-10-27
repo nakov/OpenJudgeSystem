@@ -1,12 +1,16 @@
 import * as React from 'react';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
+
 import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
 import { convertToSecondsRemaining } from '../../../utils/dates';
 import { IIndexContestsType } from '../../../common/types';
 import concatClassNames from '../../../utils/class-names';
-
 import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import LockIcon from '../../guidelines/icons/LockIcon';
+import { useUrls } from '../../../hooks/use-urls';
+import { IRegisterForContestTypeUrlParams } from '../../../common/url-types';
+import { ContestParticipationType } from '../../../common/constants';
+
 import styles from './ContestCard.module.scss';
 
 interface IContestCardProps {
@@ -33,6 +37,8 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const contestCardCounterClassName = concatClassNames(styles.contestCardCountdown, contestCardCounter);
     const contestCardControlBtns = 'card-control-buttons';
     const contestCardControlBtnsClassName = concatClassNames(styles.contestCardControls, contestCardControlBtns);
+    
+    const { getRegisterContestTypeUrl } = useUrls();
 
     const renderCountdown = useCallback(
         () => {
@@ -65,6 +71,13 @@ const ContestCard = ({ contest }: IContestCardProps) => {
         },
         [ canBeCompeted, canBePracticed, contest ],
     );
+    
+    const participationType = useMemo(
+        () => canBeCompeted
+            ? ContestParticipationType.Compete
+            : ContestParticipationType.Practice,
+        [ canBeCompeted ],
+    );
 
     return (
         <div className={contestCardClassName}>
@@ -82,7 +95,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
             <div className={contestCardControlBtnsClassName}>
                 <LinkButton
                     id="button-card-compete"
-                    to={`/contests/${id}/register/compete`}
+                    to={getRegisterContestTypeUrl({ id, participationType } as IRegisterForContestTypeUrlParams)}
                     text="Compete"
                     state={
                         canBeCompeted
@@ -93,7 +106,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                 />
                 <LinkButton
                     id="button-card-practice"
-                    to={`/contests/${id}/register/practice`}
+                    to={getRegisterContestTypeUrl({ id, participationType } as IRegisterForContestTypeUrlParams)}
                     text="Practice"
                     type={LinkButtonType.secondary}
                     state={
