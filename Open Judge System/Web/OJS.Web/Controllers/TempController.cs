@@ -278,7 +278,8 @@
                         pst => MySqlStrategiesHelper
                             .ExecutionStrategyTypesForOptimization
                             .Any(x => x == pst.SubmissionType.ExecutionStrategyType))
-                    .Where(pst => pst.SolutionSkeleton != null && pst.SolutionSkeleton.Any());
+                    .Where(pst => pst.SolutionSkeleton != null && pst.SolutionSkeleton.Any())
+                    .ToList();
 
                 foreach (var skeleton in skeletons)
                 {
