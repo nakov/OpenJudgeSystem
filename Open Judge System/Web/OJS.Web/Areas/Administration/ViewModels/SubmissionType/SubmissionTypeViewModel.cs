@@ -1,13 +1,17 @@
 ﻿namespace OJS.Web.Areas.Administration.ViewModels.SubmissionType
 {
     using System;
+    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using System.Linq.Expressions;
-
+    using System.Web.Mvc;
     using OJS.Common.DataAnnotations;
     using OJS.Data.Models;
     using OJS.Web.Areas.Administration.ViewModels.Problem;
+    using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Models;
+    using Resources.Areas.Administration.Problems.ViewModels;
+    using static OJS.Common.Constants.EditorTemplateConstants;
 
     public class SubmissionTypeViewModel
     {
@@ -32,6 +36,19 @@
         public bool IsChecked { get; set; }
 
         public ExecutionStrategyType ExecutionStrategyType { get; set; }
+        
+        [AllowHtml]
+        [Display(Name = nameof(DetailedProblem.Solution_skeleton), ResourceType = typeof(DetailedProblem))]
+        [UIHint(MultiLineText)]
+        public string SolutionSkeleton
+        {
+            get => this.SolutionSkeletonData.Decompress();
+
+            set => this.SolutionSkeletonData = !string.IsNullOrWhiteSpace(value) ? value.Compress() : null;
+        }
+
+        [AllowHtml]
+        internal byte[] SolutionSkeletonData { get; set; }
 
         public static Action<SubmissionTypeViewModel> ApplySelectedTo(ProblemAdministrationViewModel problem)
         {
@@ -43,6 +60,9 @@
                     Name = st.Name,
                     IsChecked = false,
                     ExecutionStrategyType = st.ExecutionStrategyType,
+                    SolutionSkeleton = problem
+                        .ProblemSubmissionTypesSkeletons
+                        .FirstOrDefault(x => x.SubmissionTypeId == st.Id)?.SolutionSkeleton,
                 };
 
                 var selectedSubmission = problem.SelectedSubmissionTypes.FirstOrDefault(s => s.Id == st.Id);
