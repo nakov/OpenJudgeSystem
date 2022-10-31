@@ -12,8 +12,10 @@ import styles from './ContestFilter.module.scss';
 interface IContestFilterProps {
     values: IFilter[];
     type: FilterType;
-    onSelect: (filterId: number) => void;
+    onSelect: (filterId: number, filterType: FilterType) => void;
     maxDisplayCount: number;
+    statusFilterId: number;
+    strategyFilterId: number;
 }
 
 const ContestFilter = ({
@@ -21,6 +23,8 @@ const ContestFilter = ({
     type,
     onSelect,
     maxDisplayCount,
+    statusFilterId,
+    strategyFilterId,
 }: IContestFilterProps) => {
     const initialExpanded = false;
     const [ expanded, setExpanded ] = useState(initialExpanded);
@@ -57,7 +61,7 @@ const ContestFilter = ({
         (buttonType: ButtonType, btnClassName: string, name: string, id: number) => (
             <Button
               type={buttonType}
-              onClick={() => onSelect(id)}
+                onClick={() => onSelect(id, FilterType.Status)}
               className={btnClassName}
               text={name}
               size={ButtonSize.small}
@@ -74,7 +78,7 @@ const ContestFilter = ({
                 </div>
                 <Button
                   type={buttonType}
-                  onClick={() => onSelect(id)}
+                    onClick={() => onSelect(id, FilterType.Strategy)}
                   className={styles.strategyElementClassName}
                   text={name}
                   size={ButtonSize.small}
@@ -86,8 +90,13 @@ const ContestFilter = ({
 
     const getRenderFilterItemFunc = useCallback(
         (filterType: FilterType) => ({ id, name }: IFilter) => {
-            const filterIsSelected = values.some((f) => f.name === name);
-            const buttonType = filterIsSelected
+            const selectedStatusFilter = statusFilterId === id;
+            const selectedStrategyFilter = strategyFilterId === id;
+            
+            const statusButtonType = selectedStatusFilter
+                ? ButtonType.primary
+                : ButtonType.secondary;
+            const strategyButtonType = selectedStrategyFilter
                 ? ButtonType.primary
                 : ButtonType.secondary;
 
@@ -96,10 +105,11 @@ const ContestFilter = ({
                 : '';
 
             return type === FilterType.Strategy
-                ? renderStrategyFilterItem(buttonType, btnClassName, name, id)
-                : renderStatusFilterItem(buttonType, btnClassName, name, id);
+                ? renderStrategyFilterItem(strategyButtonType, btnClassName, name, id)
+                : renderStatusFilterItem(statusButtonType, btnClassName, name, id);
+
         },
-        [ renderStatusFilterItem, renderStrategyFilterItem, type, values ],
+        [ statusFilterId, strategyFilterId, type, renderStrategyFilterItem, renderStatusFilterItem ],
     );
 
     const className = concatClassNames(
