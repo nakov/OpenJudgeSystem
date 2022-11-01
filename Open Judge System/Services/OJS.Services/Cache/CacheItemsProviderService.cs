@@ -1,8 +1,8 @@
 ﻿namespace OJS.Services.Cache
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Linq.Dynamic;
 
     using OJS.Common.Constants;
     using OJS.Services.Cache.Models;
@@ -137,15 +137,30 @@
             }
         }
 
-        public IEnumerable<HomeContestViewModel> GetActiveContests() =>
-            this.cache.Get(
+        public IEnumerable<HomeContestViewModel> GetActiveContests()
+        {
+            var upcomingMaxTime = DateTime.Now.AddHours(2);
+
+            var cachedResult = this.cache.Get(
                 CacheConstants.ActiveContests,
                 () => this.contestsData
-                    .GetAllCompetable()
-                    .OrderBy(ac => ac.EndTime)
+                    .GetAllUpcoming()
+                    .Where(x => x.StartTime.HasValue && x.StartTime <= upcomingMaxTime)
                     .Select(HomeContestViewModel.FromContest)
+                    .Concat(
+                        this.contestsData.GetAllCompetable()
+                            .OrderBy(ac => ac.EndTime)
+                            .Select(HomeContestViewModel.FromContest))
                     .ToList(),
-                CacheConstants.OneHourInSeconds);
+                DateTime.UtcNow.AddHours(1));
+
+            return cachedResult.Where(
+                    c =>
+                        c.StartTime <= DateTime.Now &&
+                        c.EndTime.HasValue &&
+                        c.EndTime >= DateTime.Now)
+                .OrderBy(ac => ac.EndTime);
+        }
 
         public IEnumerable<HomeContestViewModel> GetPastContests() =>
             this.cache.Get(
@@ -157,5 +172,17 @@
                     .Take(CacheConstants.DefaultPastContestsToTake)
                     .ToList(),
                 CacheConstants.OneHourInSeconds);
+
+        public void ClearContests()
+        {
+            this.ClearActiveContests();
+            this.ClearPastContests();
+        }
+
+        private void ClearActiveContests() =>
+            this.cache.Remove(CacheConstants.ActiveContests);
+
+        private void ClearPastContests() =>
+            this.cache.Remove(CacheConstants.PastContests);
     }
 }

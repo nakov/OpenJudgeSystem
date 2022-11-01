@@ -28,5 +28,7 @@
         IEnumerable<HomeContestViewModel> GetActiveContests();
 
         IEnumerable<HomeContestViewModel> GetPastContests();
+
+        void ClearContests();
     }
 }
