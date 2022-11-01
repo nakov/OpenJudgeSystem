@@ -599,7 +599,9 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             {
                 ProblemId = problem.Id,
                 SubmissionTypeId = int.Parse(x.Value!.ToString()!),
-                SolutionSkeleton = x.Expand.Value?.ToString()?.Compress()
+                SolutionSkeleton = x.Expand is not null && x.Expand.Value is not null ? x.Expand.Value!.ToString()!
+                .Compress() :
+                 Array.Empty<byte>()
             });
 
         problem.SubmissionTypesInProblems.Clear();
