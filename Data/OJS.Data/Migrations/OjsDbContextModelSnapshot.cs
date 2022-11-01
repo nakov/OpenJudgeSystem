@@ -763,9 +763,6 @@ namespace OJS.Data.Migrations
                     b.Property<bool>("ShowResults")
                         .HasColumnType("bit");
 
-                    b.Property<byte[]>("SolutionSkeleton")
-                        .HasColumnType("varbinary(max)");
-
                     b.Property<int?>("SourceCodeSizeLimit")
                         .HasColumnType("int");
 
