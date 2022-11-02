@@ -77,9 +77,9 @@ const SubmissionsList = ({
             <div className={itemClassName}>
                 <div className={styles.infoContainer}>
                     <SubmissionResultPointsLabel
-                        points={points}
-                        maximumPoints={maximumPoints}
-                        isProcessed={isProcessed}
+                      points={points}
+                      maximumPoints={maximumPoints}
+                      isProcessed={isProcessed}
                     />
                     <p className={styles.submissionCreatedOnParagraph}>{formatDate(createdOn)}</p>
                 </div>
@@ -87,14 +87,14 @@ const SubmissionsList = ({
                     <Text>
                         {submissionType}
                     </Text>
-                    <Label type={LabelType.plain} text={typeLabelText} className={submissionsLabelTypeClassName}/>
+                    <Label type={LabelType.plain} text={typeLabelText} className={submissionsLabelTypeClassName} />
                     <LinkButton
-                        size={ButtonSize.small}
-                        to={`/submissions/${id}/details`}
-                        className={submissionBtnClass}
-                        type={LinkButtonType.secondary}
-                        text="Details"
-                        state={buttonState}
+                      size={ButtonSize.small}
+                      to={`/submissions/${id}/details`}
+                      className={submissionBtnClass}
+                      type={LinkButtonType.secondary}
+                      text="Details"
+                      state={buttonState}
                     />
                 </div>
             </div>
@@ -104,14 +104,14 @@ const SubmissionsList = ({
     return (
         <div className={containerClassName}>
             <List
-                values={items}
-                className={submissionsListClassName}
-                itemClassName={submissionListItemClassName}
-                itemFunc={renderSubmissionListItem}
-                type={ListType.normal}
-                orientation={Orientation.vertical}
-                fullWidth
-                scrollable={false}
+              values={items}
+              className={submissionsListClassName}
+              itemClassName={submissionListItemClassName}
+              itemFunc={renderSubmissionListItem}
+              type={ListType.normal}
+              orientation={Orientation.vertical}
+              fullWidth
+              scrollable={false}
             />
         </div>
     );
