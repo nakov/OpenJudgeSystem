@@ -11,7 +11,7 @@ const calculateTimeUntil = (date: Date) => intervalToDuration({
 const formatDate = (
     date: Date,
     formatString = defaultDateTimeFormat,
-) => (moment().diff(new Date(date), 'days') > 3
+) => (moment().diff(date, 'days') > 3
     ? moment(date).format(formatString)
     : moment.utc(date).fromNow());
 
