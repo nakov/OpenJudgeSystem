@@ -68,6 +68,7 @@
                 .Include(c => c.ProblemGroups.Select(pg => pg.Problems))
                 .Where(c => c.Participants.Any(p => p.IsOfficial == official))
                 .OrderByDescending(c => c.CreatedOn)
+                .Where(c => c.Id == 1699)
                 .ToList();
 
             var participants =  this.participantsData.GetAllByContestIdsAndIsOfficial(contests.Select(c => c.Id), official)
@@ -77,12 +78,13 @@
                 .Include(p => p.Problems)
                 .Where(p => p.Scores.Count != 0)
                 .OrderBy(p => p.Contest.OrderBy)
+                .Where(p => p.User.UserName == "desislava.topuzakova")
                 .ToList();
            
             var results = new List<ParticipantScoresSummaryModel>();
             participants
                 .ChunkBy(GlobalConstants.BatchOperationsChunkSize)
-                .ForEach(batch => results.AddRange(this.GetStatisticsForParticipants(batch)));
+                .ForEach(batch => results.AddRange(this.GetStatisticsForParticipants(batch, StatisticsLevel.ProblemGroup)));
 
             var maxProblemsCount = results
                 .Select(ps => ps.ProblemsCount)
@@ -94,11 +96,180 @@
                 Results = results,
             };
         }
+        
+        public ContestParticipationSummary GetContestParticipationSummary(int contestId, bool official = true)
+        {
+            var participants =  this.participantsData.GetAllByContestAndIsOfficial(contestId, official)
+                .Include(p => p.User)
+                .Include(p => p.Submissions)
+                .Include(p => p.Scores)
+                .Include(p => p.Problems)
+                .Where(p => p.Scores.Count != 0)
+                .ToList();
+           
+            var results = new List<ParticipantScoresSummaryModel>();
+            participants
+                .ChunkBy(GlobalConstants.BatchOperationsChunkSize)
+                .ForEach(batch => results.AddRange(this.GetStatisticsForParticipants(batch, StatisticsLevel.ProblemName)));
+
+            return new ContestParticipationSummary
+            {
+                Results = results,
+            };
+        }
 
         private IEnumerable<ParticipantScoresSummaryModel> GetStatisticsForParticipants(
-            IEnumerable<Participant> participants)
+            IEnumerable<Participant> participants,
+            StatisticsLevel level)
         {
-            var participantsTimeAndSubmissionsInfo = participants
+            var participantsTimeAndSubmissionsInfo = this.BuildStatisticsData(participants);
+
+            return participantsTimeAndSubmissionsInfo
+                .Where(i => i.MaximumPointsSubmissionsByProblems.Any())
+                .Select(participantSummary => this.SummarizeParticipationWithMaximumPoints(participantSummary, level))
+                .ToList();
+        }
+
+        private ParticipantScoresSummaryModel SummarizeParticipationWithMaximumPoints(
+            ParticipantSummaryInfoServiceModel participantInfo,
+            StatisticsLevel level)
+        {
+            var topScoreSubmissionsOrderedByCreatedOn = participantInfo
+                .MaximumPointsSubmissionsByProblems
+                .OrderBy(s => s.Submission.CreatedOn);
+
+            var problemNameToTimeTakenBetweenBest = this.CalculateTimeTakenBetweenBestForProblems(
+                topScoreSubmissionsOrderedByCreatedOn,
+                level,
+                participantInfo.UserStartTime);
+
+            if (level == StatisticsLevel.ProblemGroup)
+            {
+                problemNameToTimeTakenBetweenBest = NormalizeProblemGroupIndexesAndEmptyValues(
+                    problemNameToTimeTakenBetweenBest,
+                    participantInfo.ProblemGroups.Select(pg => pg.OrderBy));
+            }
+            else
+            {
+                problemNameToTimeTakenBetweenBest = problemNameToTimeTakenBetweenBest
+                    .OrderBy(v => v.Value.ProblemGroup)
+                    .ToDictionary(k => k.Key, v => v.Value);
+            }
+            
+            
+            return new ParticipantScoresSummaryModel
+            {
+                ParticipantName = participantInfo.Participant.User.UserName,
+                ContestId = participantInfo.Participant.Contest.Id,
+                ContestName = participantInfo.Participant.Contest.Name,
+                ProblemsCount = participantInfo.ProblemGroups.Count,
+                ProblemToMinutesTakenToSolve = problemNameToTimeTakenBetweenBest,
+                PointsTotal = participantInfo.Participant.Scores.Select(s => s.Points).Sum(),
+                TimeTotal = participantInfo.TimeInContest,
+            };
+        }
+
+        private Dictionary<string, ParticipantSummarySubmissionInfoServiceModel> CalculateTimeTakenBetweenBestForProblems(
+            IEnumerable<MaximumResultSubmissionByProblemServiceModel> maxSubmissionsBySubmissionTime,
+            StatisticsLevel level,
+            DateTime userStartTime)
+        {
+            var maxSubmissionsBySubmissionTimeList = maxSubmissionsBySubmissionTime.ToList();
+
+            var values = maxSubmissionsBySubmissionTimeList
+                .Skip(1)
+                .Select((laterSubmission, index) =>
+                {
+                    var earlierSubmission = maxSubmissionsBySubmissionTimeList[index];
+
+                    return new ParticipationStatisticsEarlierAndLaterSubmissionModel
+                    {
+                        EarlierSubmission = earlierSubmission,
+                        LaterSubmission = laterSubmission,
+                    };
+                });
+            
+            var result = this.GetTimeTakenAndLengthStatistics(values, level);
+
+            var earliestSubmission = maxSubmissionsBySubmissionTimeList.First().Submission;
+            result[this.GetSubmissionKey(level, earliestSubmission)] = 
+                this.GetSubmissionTimeTakenToSolveAndLength(
+                    result, 
+                    earliestSubmission,
+                    level,
+                    userStartTime);
+            
+            return result;
+        }
+
+        private Dictionary<string, ParticipantSummarySubmissionInfoServiceModel> GetTimeTakenAndLengthStatistics(
+            IEnumerable<ParticipationStatisticsEarlierAndLaterSubmissionModel> submissionPairsValues,
+            StatisticsLevel level)
+        {
+            var resultDict = new Dictionary<string, ParticipantSummarySubmissionInfoServiceModel>();
+
+            submissionPairsValues.ForEach(v =>
+             {
+                 resultDict[this.GetSubmissionKey(level, v.LaterSubmission.Submission)] =
+                     this.GetSubmissionTimeTakenToSolveAndLength(
+                         resultDict, 
+                         v.LaterSubmission.Submission,
+                         level,
+                         v.EarlierSubmission.Submission.CreatedOn);
+             });
+            
+            return resultDict;
+        }
+        
+        private string GetSubmissionKey(StatisticsLevel level, Submission submission) 
+            => level == StatisticsLevel.ProblemName
+                ? submission.Problem.Name
+                : submission.Problem.ProblemGroup.OrderBy.ToString();
+
+        private ParticipantSummarySubmissionInfoServiceModel GetSubmissionTimeTakenToSolveAndLength(
+            Dictionary<string, ParticipantSummarySubmissionInfoServiceModel> resultDict,
+            Submission submission,
+            StatisticsLevel level,
+            DateTime timeToCompareWith)
+        {
+            var timeTaken = submission.CreatedOn.GetMinutesDifferenceRounded(timeToCompareWith);
+            
+            var submissionLength = this.GetSubmissionCodeLength(submission);
+
+            var problemIndex = this.GetSubmissionKey(level, submission);
+            
+            if (resultDict.ContainsKey(problemIndex) && level == StatisticsLevel.ProblemGroup)
+            {
+                (submissionLength, timeTaken) = this.CalculateSubmissionAverageTimeTakenAndLength(
+                    resultDict[problemIndex],
+                    timeTaken, 
+                    submissionLength);
+            }
+
+            return new ParticipantSummarySubmissionInfoServiceModel
+            {
+                ProblemGroup = submission.Problem.ProblemGroup.OrderBy,
+                Length = submissionLength,
+                TimeTaken = timeTaken
+            };
+        }
+
+        private Tuple<int, double> CalculateSubmissionAverageTimeTakenAndLength(
+            ParticipantSummarySubmissionInfoServiceModel existingValue, 
+            double timeTaken, 
+            int length)
+            => new Tuple<int, double>(
+                Convert.ToInt32((existingValue.Length + length) / 2), 
+                Math.Round((existingValue.TimeTaken + timeTaken) / 2));
+
+        private int GetSubmissionCodeLength(Submission submission)
+            => submission.IsBinaryFile
+                ? 0
+                : Regex.Matches(submission.ContentAsString, "\n").Count + 1;
+
+        private IEnumerable<ParticipantSummaryInfoServiceModel> BuildStatisticsData(IEnumerable<Participant> participants)
+        {
+            return participants
                 .Where(p => p.Submissions.Any())
                 .Select(p => new ParticipantSummaryInfoServiceModel
                 {
@@ -118,126 +289,7 @@
                                 Submission = g.OrderBy(s => s.CreatedOn).FirstOrDefault()
                             })
                 });
-
-            return participantsTimeAndSubmissionsInfo
-                .Where(i => i.MaximumPointsSubmissionsByProblems.Any())
-                .Select(this.SummarizeParticipationWithMaximumPoints)
-                .ToList();;
         }
-
-        private ParticipantScoresSummaryModel SummarizeParticipationWithMaximumPoints(ParticipantSummaryInfoServiceModel participantInfo)
-        {
-            var topScoreSubmissionsOrderedByCreatedOn = participantInfo
-                .MaximumPointsSubmissionsByProblems
-                .OrderBy(s => s.Submission.CreatedOn);
-
-            var problemOrderToTimeTakenBetweenBest = this.CalculateTimeTakenBetweenBestForProblems(
-                topScoreSubmissionsOrderedByCreatedOn,
-                participantInfo.UserStartTime);
-
-            problemOrderToTimeTakenBetweenBest = NormalizeProblemGroupIndexesAndEmptyValues(
-                problemOrderToTimeTakenBetweenBest, 
-                participantInfo.ProblemGroups.Select(pg => pg.OrderBy));
-
-            return new ParticipantScoresSummaryModel
-            {
-                ParticipantName = participantInfo.Participant.User.UserName,
-                ContestId = participantInfo.Participant.Contest.Id,
-                ContestName = participantInfo.Participant.Contest.Name,
-                ProblemsCount = participantInfo.ProblemGroups.Count,
-                ProblemOrderToMinutesTakenToSolve = problemOrderToTimeTakenBetweenBest,
-                PointsTotal = participantInfo.Participant.Scores.Select(s => s.Points).Sum(),
-                TimeTotal = participantInfo.TimeInContest,
-            };
-        }
-
-        private Dictionary<int, ParticipantSummarySubmissionInfoServiceModel> CalculateTimeTakenBetweenBestForProblems(
-            IEnumerable<MaximumResultSubmissionByProblemServiceModel> maxSubmissionsBySubmissionTime, 
-            DateTime userStartTime)
-        {
-            var maxSubmissionsBySubmissionTimeList = maxSubmissionsBySubmissionTime.ToList();
-
-            var values = maxSubmissionsBySubmissionTimeList
-                .Skip(1)
-                .Select((laterSubmission, index) =>
-                {
-                    var earlierSubmission = maxSubmissionsBySubmissionTimeList[index];
-
-                    return new ParticipationStatisticsEarlierAndLaterSubmissionModel
-                    {
-                        EarlierSubmission = earlierSubmission,
-                        LaterSubmission = laterSubmission,
-                    };
-                });
-
-            var result = this.GetTimeTakenAndLengthStatistics(values);
-
-            var earliestSubmission = maxSubmissionsBySubmissionTimeList.First().Submission;
-            result[earliestSubmission.Problem.ProblemGroup.OrderBy] = 
-                this.GetSubmissionTimeTakenToSolveAndLength(
-                    result, 
-                    earliestSubmission, 
-                    userStartTime);
-            
-            return result;
-        }
-
-        private Dictionary<int, ParticipantSummarySubmissionInfoServiceModel> GetTimeTakenAndLengthStatistics(
-            IEnumerable<ParticipationStatisticsEarlierAndLaterSubmissionModel> submissionPairsValues)
-        {
-            var resultDict = new Dictionary<int, ParticipantSummarySubmissionInfoServiceModel>();
-
-             submissionPairsValues.ForEach(v =>
-             {
-                 resultDict[v.LaterSubmission.Submission.Problem.ProblemGroup.OrderBy] =
-                     this.GetSubmissionTimeTakenToSolveAndLength(
-                         resultDict, 
-                         v.LaterSubmission.Submission, 
-                         v.EarlierSubmission.Submission.CreatedOn);
-             });
-            
-            return resultDict;
-        }
-
-        private ParticipantSummarySubmissionInfoServiceModel GetSubmissionTimeTakenToSolveAndLength(
-            Dictionary<int, ParticipantSummarySubmissionInfoServiceModel> resultDict,
-            Submission submission,
-            DateTime timeToCompareWith)
-        {
-            var timeTaken = submission.CreatedOn.GetMinutesDifferenceRounded(timeToCompareWith);
-            
-            var submissionLength = this.GetSubmissionCodeLength(submission);
-
-            var problemIndex = submission.Problem.ProblemGroup.OrderBy;
-            
-            if (resultDict.ContainsKey(problemIndex))
-            {
-                (submissionLength, timeTaken) = this.CalculateSubmissionAverageTimeTakenAndLength(
-                    resultDict[problemIndex],
-                    timeTaken, 
-                    submissionLength);
-            }
-
-            return new ParticipantSummarySubmissionInfoServiceModel
-            {
-                Length = submissionLength,
-                TimeTaken = timeTaken
-            };
-        }
-
-        private Tuple<int, double> CalculateSubmissionAverageTimeTakenAndLength(
-            ParticipantSummarySubmissionInfoServiceModel existingValue, 
-            double timeTaken, 
-            int length)
-            => new Tuple<int, double>(
-                Convert.ToInt32((existingValue.Length + length) / 2), 
-                Math.Round((existingValue.TimeTaken + timeTaken) / 2));
-
-        private int GetSubmissionCodeLength(Submission submission)
-            => submission.IsBinaryFile
-                ? 0
-                : Regex.Matches(submission.ContentAsString, "\n").Count + 1;
-
         private double CalculateTimeInMinutesFromParticipationStartToLastSubmission(Participant participant)
             => participant.Submissions
                 .Select(s => s.CreatedOn)
@@ -245,26 +297,31 @@
                 .FirstOrDefault()
                 .GetMinutesDifferenceRounded(participant.ParticipationStartTime ?? participant.CreatedOn);
 
-        private Dictionary<int, ParticipantSummarySubmissionInfoServiceModel> NormalizeProblemGroupIndexesAndEmptyValues(Dictionary<int, ParticipantSummarySubmissionInfoServiceModel> values, IEnumerable<int> problemGroupsOrderBy)
+        private Dictionary<string, ParticipantSummarySubmissionInfoServiceModel> NormalizeProblemGroupIndexesAndEmptyValues(
+            Dictionary<string, ParticipantSummarySubmissionInfoServiceModel> values,
+            IEnumerable<int> problemGroupsOrderBy)
         {
             var sortedOrderedBy = problemGroupsOrderBy
                 .OrderBy(n => n)
                 .Distinct()
                 .ToList();
 
+            var valuesProblemGroups = values.Select(v => v.Value.ProblemGroup);
+
             return sortedOrderedBy
                 .Select(n => new
                 {
                     Key = sortedOrderedBy.IndexOf(n) + 1,
-                    Value = values.ContainsKey(n)
-                        ? values[n]
+                    Value = valuesProblemGroups.Contains(n)
+                        ? values[n.ToString()]
                         : new ParticipantSummarySubmissionInfoServiceModel
                         {
+                            ProblemGroup = n,
                             TimeTaken = 0,
                             Length = 0
                         }
                 })
-                .ToDictionary(k => k.Key, v => v.Value);
+                .ToDictionary(k => k.Key.ToString(), v => v.Value);
         }
         
         private void NormalizeSubmissionPoints() =>

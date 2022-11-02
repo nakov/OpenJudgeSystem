@@ -65,5 +65,20 @@
                 GlobalConstants.ExcelMimeType,
                 $"Summary_{id}.xls");
         }
+        
+        [HttpGet]
+        [AuthorizeRoles(SystemRole.Administrator)]
+        public ActionResult GetContestParticipantScoreInfo(int id, bool official = true)
+        {
+            var contestParticipationSummary =
+                this.participantScoresBusiness.GetContestParticipationSummary(id, official);
+            
+            var excel = new ContestParticipationSummaryExcel(contestParticipationSummary);
+
+            return this.File(
+                excel.GetAsStream().ToArray(),
+                GlobalConstants.ExcelMimeType,
+                $"Summary_{id}.xls");
+        }
     }
 }
