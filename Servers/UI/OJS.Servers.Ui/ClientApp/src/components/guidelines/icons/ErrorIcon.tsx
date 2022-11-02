@@ -1,12 +1,14 @@
 import React from 'react';
 import { MdError } from 'react-icons/md';
-import IconSize from './common/icon-sizes';
-import Icon, { IIconProps } from './Icon';
-import styles from './ErrorIcon.module.scss';
+
 import concatClassNames from '../../../utils/class-names';
 
-interface IErrorIconProps extends IIconProps {
-}
+import IconSize from './common/icon-sizes';
+import Icon, { IIconProps } from './Icon';
+
+import styles from './ErrorIcon.module.scss';
+
+type IErrorIconProps = IIconProps
 
 const ErrorIcon = ({
     className = '',

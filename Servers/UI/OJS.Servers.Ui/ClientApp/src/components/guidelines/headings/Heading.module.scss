@@ -1,27 +1,29 @@
-@import "src/styles/colors";
-@import "src/styles/fonts";
-@import "src/styles/variables";
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
+@use 'src/styles/variables';
+
 .heading {
   @extend %font-family-montserrat;
+
+  color: colors.$text-dark-gray-color;
   font-weight: 500;
-  color: $text-dark-gray-color;
 
   &.primary {
-    font-size: $f-size-30;
-    line-height: 36px;
     border-bottom: 1px solid;
-    border-bottom-color: $bottom-border-color;
+    border-bottom-color: colors.$bottom-border-color;
+    font-size: variables.$f-size-30;
+    line-height: 36px;
     padding: 10px;
   }
 
   &.secondary {
-    font-size: $f-size-24;
-    line-height: 30px;
+    font-size: variables.$f-size-24;
     font-weight: 400;
+    line-height: 30px;
     padding: 10px;
 
     @media only screen and (max-width: 1024px) {
-      font-size: $f-size-24;
+      font-size: variables.$f-size-24;
       line-height: 34px;
     }
   }

@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import { useEffect, useState } from 'react';
-import { isNil } from 'lodash';
+import isNil from 'lodash/isNil';
+
+import SubmissionDetails from '../../components/submissions/details/SubmissionDetails';
 import { useSubmissionsDetails } from '../../hooks/submissions/use-submissions-details';
 import { setLayout } from '../shared/set-layout';
-import SubmissionDetails from '../../components/submissions/details/SubmissionDetails';
 
 const SubmissionDetailsPage = () => {
     const { submissionId } = useParams();

@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { MdExpandLess, MdExpandMore } from 'react-icons/md';
-import { Button, ButtonSize, ButtonType } from './Button';
 
 import concatClassNames from '../../../utils/class-names';
 import { IHaveOptionalClassName } from '../../common/Props';
+
+import { Button, ButtonSize, ButtonType } from './Button';
+
 import styles from './ExpandButton.module.scss';
 
 interface IExpandButtonProps extends IHaveOptionalClassName {

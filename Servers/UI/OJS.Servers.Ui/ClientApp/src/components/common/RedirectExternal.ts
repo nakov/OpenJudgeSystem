@@ -1,8 +1,8 @@
-﻿import { useEffect } from 'react';
+import { useEffect } from 'react';
 
 export const RedirectExternal = (path: string) => {
     useEffect(() => {
-        window.location.href=path;
+        window.location.href = path;
     });
 
     return null;

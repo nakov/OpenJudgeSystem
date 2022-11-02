@@ -1,13 +1,13 @@
-@import "src/styles/variables";
+@use 'src/styles/variables';
 
 .listNav {
+  align-items: center;
   display: flex;
   gap: 15px;
   justify-content: right;
-  align-items: center;
 }
 
 .btn {
-  font-size: $f-size-12;
+  font-size: variables.$f-size-12;
   padding: 12px 8px;
 }

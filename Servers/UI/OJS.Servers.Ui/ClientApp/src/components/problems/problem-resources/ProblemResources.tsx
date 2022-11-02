@@ -1,14 +1,11 @@
 import React, { useCallback } from 'react';
+import isNil from 'lodash/isNil';
 
-import { isNil } from 'lodash';
-
-import concatClassNames from '../../../utils/class-names';
 import { IProblemResourceType } from '../../../common/types';
-
+import { useProblems } from '../../../hooks/use-problems';
+import concatClassNames from '../../../utils/class-names';
 import List from '../../guidelines/lists/List';
 import ProblemResource from '../problem-resource/ProblemResource';
-
-import { useProblems } from '../../../hooks/use-problems';
 
 import styles from './ProblemResources.module.scss';
 

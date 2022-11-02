@@ -1,14 +1,15 @@
-import * as React from 'react';
-import { useCallback, useMemo } from 'react';
+import React, { FormEvent, useCallback, useMemo } from 'react';
+
+import concatClassNames from '../../../utils/class-names';
+import generateId from '../../../utils/id-generator';
 import { IHaveChildrenProps, IHaveOptionalClassName } from '../../common/Props';
 import { Button, ButtonType } from '../buttons/Button';
-import generateId from '../../../utils/id-generator';
-import concatClassNames from '../../../utils/class-names';
 
 interface IFormProps extends IHaveChildrenProps, IHaveOptionalClassName {
     onSubmit: () => void;
     submitText?: string;
     id?: string;
+    submitButtonClassName?: string;
 }
 
 const Form = ({
@@ -17,9 +18,10 @@ const Form = ({
     submitText = 'Submit',
     id = generateId(),
     className = '',
+    submitButtonClassName = '',
 }: IFormProps) => {
     const handleSubmit = useCallback(
-        async (ev: any) => {
+        async (ev: FormEvent) => {
             ev.preventDefault();
             onSubmit();
 
@@ -34,15 +36,21 @@ const Form = ({
     );
 
     const internalClassName = concatClassNames(className);
+    const internalSubmitButtonClassName = concatClassNames('btnSubmitInForm', submitButtonClassName);
 
     return (
-        <form id={id} onSubmit={(ev) => handleSubmit(ev)} className={internalClassName}>
+        <form
+          id={id}
+          onSubmit={(ev) => handleSubmit(ev)}
+          className={internalClassName}
+        >
             {children}
             <Button
               id={btnId}
               onClick={(ev) => handleSubmit(ev)}
               text={submitText}
               type={ButtonType.submit}
+              className={internalSubmitButtonClassName}
             />
         </form>
     );

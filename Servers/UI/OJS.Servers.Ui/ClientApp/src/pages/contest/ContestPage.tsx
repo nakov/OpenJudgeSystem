@@ -1,11 +1,11 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router';
-import { useEffect } from 'react';
+
+import { ContestParticipationType } from '../../common/constants';
 import Contest from '../../components/contests/contest/Contest';
+import { useCurrentContest } from '../../hooks/use-current-contest';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
-import { useCurrentContest } from '../../hooks/use-current-contest';
-import { ContestParticipationType } from '../../common/constants';
 
 const ContestPage = () => {
     const {

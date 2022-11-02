@@ -1,19 +1,19 @@
-@import "src/styles/colors";
+@use 'src/styles/colors';
 
 .resourceWrapper {
+  align-items: center;
   display: flex;
   flex-direction: row;
   gap: 10px;
   min-height: 50px;
-  align-items: center;
 }
 
 .resourceLink,
 .resourceLinkButton {
+  color: colors.$text-dark-gray-color;
   text-decoration: none;
-  color: $text-dark-gray-color;
 
-  & > i {
+  .icon {
     margin-right: 10px;
   }
 }

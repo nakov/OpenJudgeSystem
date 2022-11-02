@@ -1,34 +1,34 @@
-import * as React from 'react';
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isNil } from 'lodash';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import isNil from 'lodash/isNil';
+
 import { IHaveChildrenProps } from '../components/common/Props';
-import { useLoading } from './use-loading';
+
 import { useHttp } from './use-http';
+import { useLoading } from './use-loading';
 import { useUrls } from './use-urls';
 
 interface IParticipationType {
-    id: number,
-    contestId: number,
-    contestName: string,
-    competeResult?: number,
-    practiceResult?: number,
-    contestCompeteMaximumPoints?: number,
-    contestPracticeMaximumPoints?: number,
-    registrationTime: Date
+    id: number;
+    contestId: number;
+    contestName: string;
+    competeResult?: number;
+    practiceResult?: number;
+    contestCompeteMaximumPoints?: number;
+    contestPracticeMaximumPoints?: number;
+    registrationTime: Date;
 }
 
 interface IParticipationsContext {
-    areUserParticipationsRetrieved: boolean,
-    userParticipations: IParticipationType[]
-    getUserParticipations: () => Promise<void>
+    areUserParticipationsRetrieved: boolean;
+    userParticipations: IParticipationType[];
+    getUserParticipations: () => Promise<void>;
 }
 
 const defaultState = {};
 
 const ParticipationsContext = createContext<IParticipationsContext>(defaultState as IParticipationsContext);
 
-interface IParticipationsProviderProps extends IHaveChildrenProps {
-}
+type IParticipationsProviderProps = IHaveChildrenProps
 
 const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
@@ -56,11 +56,14 @@ const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
         setAreUserParticipationsRetrieved(true);
     }, [ apiParticipationsForProfile ]);
 
-    const value = {
-        areUserParticipationsRetrieved,
-        userParticipations,
-        getUserParticipations,
-    };
+    const value = useMemo(
+        () => ({
+            areUserParticipationsRetrieved,
+            userParticipations,
+            getUserParticipations,
+        }),
+        [ areUserParticipationsRetrieved, getUserParticipations, userParticipations ],
+    );
 
     return (
         <ParticipationsContext.Provider value={value}>
