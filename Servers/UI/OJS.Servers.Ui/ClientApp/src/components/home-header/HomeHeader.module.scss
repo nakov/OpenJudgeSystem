@@ -1,18 +1,18 @@
-﻿@import "src/styles/colors";
+@use 'src/styles/colors';
 
 .statisticsList {
-  padding-top: 20px;
-  padding-left: 8%;
   justify-content: center;
+  padding-left: 8%;
+  padding-top: 20px;
 
   .statisticsListItem {
-    padding: 15px;
-    background: $background-color-light-gray;
-    margin: 20px 0;
+    background: colors.$background-color-light-gray;
     flex: 1 1 30%; /* grow | shrink | basis */
+    margin: 20px 0;
+    padding: 15px;
   }
 }
 
 .icon {
-  color: $success-background-color;
+  color: colors.$success-background-color;
 }

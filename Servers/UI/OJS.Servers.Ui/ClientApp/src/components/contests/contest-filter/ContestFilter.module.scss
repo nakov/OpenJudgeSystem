@@ -1,16 +1,16 @@
-@import "src/styles/colors";
-@import "src/styles/fonts";
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
 
 .heading {
-  text-align: left;
+  border-bottom: 1px solid colors.$bottom-border-color;
   padding-bottom: 10px;
-  border-bottom: 1px solid $bottom-border-color;
+  text-align: left;
 }
 
 .listFilters {
+  align-items: flex-start;
   max-height: 130px;
   overflow: hidden;
-  align-items: flex-start;
 
   .listFilterItem {
     margin-top: 5px;
@@ -30,35 +30,35 @@
   margin-top: 10px;
 }
 
+.tooltip {
+  display: none;
+  left: 14%;
+  margin-top: 12px;
+  position: absolute;
+
+  .tooltipElement {
+    border-radius: 6px;
+    font-family: fonts.$font-family-lato;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 10px;
+    text-transform: uppercase;
+  }
+}
+
 .strategyHeader {
   width: 10px;
-  
+
   &:hover {
     .tooltip {
       display: block;
     }
   }
-  
+
   .strategyElementClassName {
-    white-space: nowrap;
+    max-width: 150px;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 150px;
-  }
-}
-
-.tooltip {
-  position: absolute;
-  left: 14%;
-  margin-top: 12px;
-  display: none;
-  
-  .tooltipElement {
-    border-radius: 6px;
-    padding: 10px;
-    font-family: $font-family-lato;
-    text-transform: uppercase;
-    font-weight: 700;
-    font-size: 12px;
+    white-space: nowrap;
   }
 }

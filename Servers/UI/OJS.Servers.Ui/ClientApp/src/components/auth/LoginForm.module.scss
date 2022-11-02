@@ -1,16 +1,16 @@
-﻿@import "src/styles/colors";
+@use 'src/styles/colors';
 
 .loginForm {
-  text-align: center;
   align-content: center;
+  border-radius: 8px;
+  box-shadow: colors.$box-shadow-color;
+  color: colors.$text-dark-gray-color;
+  font-family: Lato, serif;
   margin: 20px auto;
-  width: 27vw;
   max-width: 768px;
   padding: 3vw;
-  box-shadow: $box-shadow-color;
-  border-radius: 8px;
-  font-family: 'Lato', serif;
-  color: $text-dark-gray-color;
+  text-align: center;
+  width: 27vw;
 }
 
 .loginFormHeader {
@@ -20,21 +20,21 @@
 }
 
 .loginFormLink {
-  color: $primary-blue;
-  
+  color: colors.$primary-blue;
+
   &:hover {
     text-decoration: underline;
   }
 }
 
 .loginFormControls {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
   box-sizing: border-box;
-  width: 100%;
-  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 30px;
+  margin-top: 10px;
+  width: 100%;
 }
 
 .registerHeader {
@@ -43,7 +43,7 @@
 }
 
 .errorMessage {
+  color: colors.$primary-red;
   margin-top: 10px;
-  color: $primary-red;
   text-align: center;
 }

@@ -1,13 +1,15 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isNil } from 'lodash';
-import { useLoading } from '../use-loading';
-import { useHttp } from '../use-http';
-import { useUrls } from '../use-urls';
-import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import isNil from 'lodash/isNil';
+
 import { UrlType } from '../../common/common-types';
+import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
 import { IGetSubmissionDetailsByIdUrlParams, IGetSubmissionResultsByProblemUrlParams } from '../../common/url-types';
-import { ISubmissionDetails, ISubmissionDetailsType, ISubmissionType, ITestRunType } from './types';
 import { IHaveChildrenProps } from '../../components/common/Props';
+import { useHttp } from '../use-http';
+import { useLoading } from '../use-loading';
+import { useUrls } from '../use-urls';
+
+import { ISubmissionDetails, ISubmissionDetailsType, ISubmissionType, ITestRunType } from './types';
 
 interface ISubmissionsDetailsContext {
     state: {
@@ -18,14 +20,14 @@ interface ISubmissionsDetailsContext {
         selectSubmissionById: (submissionId: number) => void;
         getDetails: (submissionId: number) => Promise<void>;
         getSubmissionResults: (problemId: number, isOfficial: boolean) => Promise<void>;
-    }
+    };
 }
 
 const defaultState = { state: { currentProblemSubmissionResults: [] as ISubmissionDetails[] } };
 
 const SubmissionsDetailsContext = createContext<ISubmissionsDetailsContext>(defaultState as ISubmissionsDetailsContext);
 
-interface ISubmissionsDetailsProviderProps extends IHaveChildrenProps {}
+type ISubmissionsDetailsProviderProps = IHaveChildrenProps
 
 const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
@@ -154,17 +156,20 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         [ currentSubmissionId, getDetails ],
     );
 
-    const value = {
-        state: {
-            currentSubmission,
-            currentProblemSubmissionResults,
-        },
-        actions: {
-            selectSubmissionById,
-            getDetails,
-            getSubmissionResults,
-        },
-    };
+    const value = useMemo(
+        () => ({
+            state: {
+                currentSubmission,
+                currentProblemSubmissionResults,
+            },
+            actions: {
+                selectSubmissionById,
+                getDetails,
+                getSubmissionResults,
+            },
+        }),
+        [ currentProblemSubmissionResults, currentSubmission, getDetails, getSubmissionResults ],
+    );
 
     return (
         <SubmissionsDetailsContext.Provider value={value}>

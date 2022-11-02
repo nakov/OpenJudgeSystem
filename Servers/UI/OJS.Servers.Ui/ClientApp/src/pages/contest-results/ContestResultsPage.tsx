@@ -1,15 +1,15 @@
-import * as React from 'react';
-import { useCallback, useEffect } from 'react';
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import React, { useCallback, useEffect } from 'react';
 import { useParams } from 'react-router';
-import { isNil } from 'lodash';
-import { setLayout } from '../shared/set-layout';
-import { makePrivate } from '../shared/make-private';
-import { useCurrentContestResults } from '../../hooks/contests/use-current-contest-results';
+import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import isNil from 'lodash/isNil';
+
 import { ContestParticipationType, ContestResultType } from '../../common/constants';
+import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading from '../../components/guidelines/headings/Heading';
 import { IContestResultsParticipationProblemType, IContestResultsType } from '../../hooks/contests/types';
-import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
+import { useCurrentContestResults } from '../../hooks/contests/use-current-contest-results';
+import { makePrivate } from '../shared/make-private';
+import { setLayout } from '../shared/set-layout';
 
 const participantNamesColumns: GridColDef[] = [
     {

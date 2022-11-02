@@ -1,8 +1,8 @@
-import * as React from 'react';
-import { useEffect, useState } from 'react';
-import { useAuth } from '../../hooks/use-auth';
+import React, { useEffect, useState } from 'react';
+
 import { LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import List, { Orientation } from '../../components/guidelines/lists/List';
+import { useAuth } from '../../hooks/use-auth';
 
 import styles from './PageNav.module.scss';
 

@@ -1,13 +1,13 @@
 import React, { memo } from 'react';
 import { FaJs } from 'react-icons/fa';
+
+import concatClassNames from '../../../../utils/class-names';
 import IconSize from '../common/icon-sizes';
 import Icon, { IIconProps } from '../Icon';
-import concatClassNames from '../../../../utils/class-names';
+
 import styles from './StrategyIcon.module.scss';
 
-interface IJavaScriptIconProps extends IIconProps {
-}
-
+type IJavaScriptIconProps = IIconProps
 
 const JavaScriptIcon = ({
     className = '',
@@ -15,10 +15,10 @@ const JavaScriptIcon = ({
     helperText = '',
 }: IJavaScriptIconProps) => (
     <Icon
-        className={concatClassNames(styles.icon, className)}
-        size={size}
-        helperText={helperText}
-        Component={FaJs}
+      className={concatClassNames(styles.icon, className)}
+      size={size}
+      helperText={helperText}
+      Component={FaJs}
     />
 );
 

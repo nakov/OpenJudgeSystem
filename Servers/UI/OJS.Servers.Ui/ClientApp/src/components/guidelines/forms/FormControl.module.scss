@@ -1,89 +1,87 @@
-@import "src/styles/colors";
-@import "src/styles/fonts";
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
-input:-webkit-autofill:active{
-  -webkit-box-shadow: 0 0 0 30px white inset !important;
+input:-webkit-autofill:active {
+  box-shadow: 0 0 0 30px #fff inset !important;
 }
 
 .formControlContainer {
   margin-top: 10px;
+  position: relative;
 }
 
 .formControl {
-  box-sizing: border-box;
   @extend %font-family-lato;
+
+  border: 1px solid colors.$text-dark-gray-color;
+  border-radius: 6px;
+  box-sizing: border-box;
+  color: colors.$text-dark-gray-color;
   font-size: 16px;
-  width: 100%;
+  margin-top: 15px;
   min-height: 40px;
-  color: $text-dark-gray-color;
   padding: 16px;
   position: relative;
-  margin-top: 15px;
-  border: 1px solid $text-dark-gray-color;
-  border-radius: 6px;
-  
+  width: 100%;
+
   &:focus + label,
   &:not(:placeholder-shown) + label {
-    transform: translateX(-13%) translateY(-130%) scale(0.80);
-    background: white;
+    background: #fff;
     padding: 5px;
+    transform: translateX(-13%) translateY(-130%) scale(0.8);
   }
-  
-  &[type="text"],
-  &.formControlTextArea {
-    display: block;
-    max-height: 50px;
-    width: 100%;
-    padding: 16px;
 
-    font-weight: 400;
-    color: $grey-color;
-    border: 1px solid $grey-color;
-    outline: none;
+  &[type='text'],
+  &.formControlTextArea {
+    border: 1px solid colors.$grey-color;
     border-radius: 6px;
+    color: colors.$grey-color;
+    display: block;
+    font-weight: 400;
+    max-height: 50px;
+    outline: none;
+    padding: 16px;
+    width: 100%;
   }
 
   &[type='checkbox'],
   &[type='radio'] {
-    width: 18px;
-    height: 18px;
-    border-radius: 3px;
-    padding: 0;
-    cursor: pointer;
     appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
+    border-radius: 3px;
+    cursor: pointer;
+    height: 18px;
+    padding: 0;
+    width: 18px;
 
-    &:after {
-      content: '';
-      transition: all .2s ease-in;
-      background-size: 16px;
-      position: absolute;
-      text-align: center;
-      padding: 0;
-      top: 0;
-      left: 0;
-      width: 16px;
-      height: 16px;
-      border-radius: 2px;
+    &::after {
       background: url('./check-white.svg') no-repeat 35%;
       background-size: 70%;
+      border-radius: 2px;
+      content: '';
+      height: 16px;
+      left: 0;
+      padding: 0;
+      position: absolute;
+      text-align: center;
+      top: 0;
+      transition: all 0.2s ease-in;
+      width: 16px;
     }
 
     &:checked {
-      border-color: $primary-blue;
+      border-color: colors.$primary-blue;
 
-      &:after {
-        background-color: $primary-blue;
+      &::after {
+        background-color: colors.$primary-blue;
         transform: scale(1);
       }
     }
 
     &:not(:checked) {
-      &:after {
+      &::after {
         transform: scale(0);
       }
     }
@@ -92,16 +90,12 @@ input:-webkit-autofill:active{
 
 .formLabel {
   display: block;
+  margin-left: 15px;
   position: absolute;
   top: 60%;
-  margin-left: 15px;
   transform: translateY(-50%);
 }
 
-input::placeholder{
+input::placeholder {
   opacity: 0;
-}
-
-.formControlContainer {
-  position: relative;
 }

@@ -4,14 +4,15 @@ import {
     FaJava,
     FaJs, FaPython,
 } from 'react-icons/fa';
+
+import concatClassNames from '../../../utils/class-names';
+
 import IconSize from './common/icon-sizes';
 import Icon, { IIconProps } from './Icon';
-import concatClassNames from '../../../utils/class-names';
 
 import styles from './StrategyIcon.module.scss';
 
-interface IProblemIconProps extends IIconProps {
-}
+type IProblemIconProps = IIconProps
 
 const StrategyIcon = ({
     className = '',

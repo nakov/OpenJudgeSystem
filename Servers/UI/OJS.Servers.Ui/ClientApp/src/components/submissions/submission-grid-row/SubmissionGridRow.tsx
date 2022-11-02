@@ -1,14 +1,12 @@
 import React, { useCallback, useMemo } from 'react';
-import { isNil } from 'lodash';
+import isNil from 'lodash/isNil';
 
+import { ContestParticipationType } from '../../../common/constants';
+import { IPublicSubmission, PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
 import { formatDate } from '../../../utils/dates';
 import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../utils/strategy-type-utils';
-
-import IconSize from '../../guidelines/icons/common/icon-sizes';
-import { IPublicSubmission, PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
-import { ContestParticipationType } from '../../../common/constants';
-
 import { LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import IconSize from '../../guidelines/icons/common/icon-sizes';
 
 import styles from './SubmissionGridRow.module.scss';
 
@@ -42,7 +40,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
                 return null;
             }
 
-            return (<Icon size={IconSize.Large} helperText={strategyName}/>);
+            return (<Icon size={IconSize.Large} helperText={strategyName} />);
         },
         [ strategyName ],
     );
@@ -50,9 +48,14 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
     const renderPoints = useCallback(
         () => {
             if (state === PublicSubmissionState.Ready) {
-                return (<>
-                    {points} / {maxPoints}
-                </>);
+                return (
+                    <>
+                        {points}
+                        {' '}
+                        /
+                        {maxPoints}
+                    </>
+                );
             }
 
             return (
@@ -82,29 +85,35 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
             <div className={styles.detailsContainer}>
                 <div>
                     {/* TODO: Fix this URL once https://github.com/SoftUni-Internal/exam-systems-issues/issues/184 is done */}
-                    <LinkButton text={problemName}
-                                to={`/contests/${contestId}/${participationType}`}
-                                type={LinkButtonType.plain}
-                                className={styles.link}/>
+                    <LinkButton
+                      text={problemName}
+                      to={`/contests/${contestId}/${participationType}`}
+                      type={LinkButtonType.plain}
+                      className={styles.link}
+                    />
                     in
-                    <LinkButton text={contestName}
-                                to={`/contests/${contestId}/${participationType}`}
-                                type={LinkButtonType.plain}
-                                className={styles.link}/>
+                    <LinkButton
+                      text={contestName}
+                      to={`/contests/${contestId}/${participationType}`}
+                      type={LinkButtonType.plain}
+                      className={styles.link}
+                    />
                 </div>
                 <div className={styles.dateAndUsernameContainer}>
                     <span>{formatDate(createdOn)}</span>
-                    <span>by {username}</span>
+                    <span>
+                        by
+                        {username}
+                    </span>
                 </div>
             </div>
 
             <LinkButton
-                to={`/submissions/${submissionId}/details`}
-                text="Details"
+              to={`/submissions/${submissionId}/details`}
+              text="Details"
             />
         </div>
     );
 };
-
 
 export default SubmissionGridRow;

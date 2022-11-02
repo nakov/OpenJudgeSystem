@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router';
-import { useEffect } from 'react';
-import { isNil } from 'lodash';
+import isNil from 'lodash/isNil';
+
 import SubmissionResults from '../../components/submissions/submission-results/SubmissionResults';
-import { useSubmissionsDetails } from '../../hooks/submissions/use-submissions-details';
 import SubmissionDetailsHeading from '../../components/submissions/test-runs/test-run-heading/SubmissionDetailsHeading';
+import { useSubmissionsDetails } from '../../hooks/submissions/use-submissions-details';
 import { setLayout } from '../shared/set-layout';
 
 const SubmissionPage = () => {

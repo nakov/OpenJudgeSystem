@@ -4,7 +4,6 @@ enum PageParams {
     page = 'page'
 }
 
-
 export {
     PageParams,
 };
