@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { FilterType, IFilter } from '../../../common/contest-types';
+import { useContests } from '../../../hooks/use-contests';
 import concatClassNames from '../../../utils/class-names';
 import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 import ExpandButton from '../../guidelines/buttons/ExpandButton';
@@ -12,10 +13,8 @@ import styles from './ContestFilter.module.scss';
 interface IContestFilterProps {
     values: IFilter[];
     type: FilterType;
-    onSelect: (filterId: number, filterType: FilterType) => void;
+    onSelect: (filterId: number) => void;
     maxDisplayCount: number;
-    statusFilterId: number;
-    strategyFilterId: number;
 }
 
 const ContestFilter = ({
@@ -23,11 +22,11 @@ const ContestFilter = ({
     type,
     onSelect,
     maxDisplayCount,
-    statusFilterId,
-    strategyFilterId,
 }: IContestFilterProps) => {
     const initialExpanded = false;
     const [ expanded, setExpanded ] = useState(initialExpanded);
+
+    const { state: { filters } } = useContests();
 
     const listOrientation = useMemo(
         () => type === FilterType.Status
@@ -61,7 +60,7 @@ const ContestFilter = ({
         (buttonType: ButtonType, btnClassName: string, name: string, id: number) => (
             <Button
               type={buttonType}
-                onClick={() => onSelect(id, FilterType.Status)}
+              onClick={() => onSelect(id)}
               className={btnClassName}
               text={name}
               size={ButtonSize.small}
@@ -78,7 +77,7 @@ const ContestFilter = ({
                 </div>
                 <Button
                   type={buttonType}
-                    onClick={() => onSelect(id, FilterType.Strategy)}
+                  onClick={() => onSelect(id)}
                   className={styles.strategyElementClassName}
                   text={name}
                   size={ButtonSize.small}
@@ -90,13 +89,8 @@ const ContestFilter = ({
 
     const getRenderFilterItemFunc = useCallback(
         (filterType: FilterType) => ({ id, name }: IFilter) => {
-            const selectedStatusFilter = statusFilterId === id;
-            const selectedStrategyFilter = strategyFilterId === id;
-            
-            const statusButtonType = selectedStatusFilter
-                ? ButtonType.primary
-                : ButtonType.secondary;
-            const strategyButtonType = selectedStrategyFilter
+            const selectedStatusFilter = filters.find((f) => f.id === id);
+            const selectedButtonType = selectedStatusFilter
                 ? ButtonType.primary
                 : ButtonType.secondary;
 
@@ -105,11 +99,10 @@ const ContestFilter = ({
                 : '';
 
             return type === FilterType.Strategy
-                ? renderStrategyFilterItem(strategyButtonType, btnClassName, name, id)
-                : renderStatusFilterItem(statusButtonType, btnClassName, name, id);
-
+                ? renderStrategyFilterItem(selectedButtonType, btnClassName, name, id)
+                : renderStatusFilterItem(selectedButtonType, btnClassName, name, id);
         },
-        [ statusFilterId, strategyFilterId, type, renderStrategyFilterItem, renderStatusFilterItem ],
+        [ filters, type, renderStrategyFilterItem, renderStatusFilterItem ],
     );
 
     const className = concatClassNames(

@@ -22,16 +22,10 @@ interface IFiltersGroup {
     filters: IFilter[];
 }
 
-const defaultState = { id: 1 };
-
 const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const maxFiltersToDisplayCount = 3;
     const [ filtersGroups, setFiltersGroups ] = useState<IFiltersGroup[]>([]);
     const [ defaultSelected, setDefaultSelected ] = useState('');
-    const [ currentSelectedStatusFilter, setSelectedStatusFilter ] = useState(defaultState.id);
-    const [ currentSelectedStrategyFilter, setSelectedStrategyFilter ] = useState(Number);
-    const [ previousSelectedStatusButton, setPreviousSelectedStatusButton ] = useState(defaultState.id);
-    const [ previousSelectedStrategyButton, setPreviousSelectedStrategyButton ] = useState(0);
     const [ searchParams ] = useSearchParams();
     const [ isLoaded, setIsLoaded ] = useState(false);
     const { actions: { load: loadStrategies } } = useContestStrategyFilters();
@@ -40,7 +34,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const { state: { possibleFilters } } = useContests();
 
     const handleFilterClick = useCallback(
-        (filterId: number, filterType: FilterType) => {
+        (filterId: number) => {
             const filter = possibleFilters.find(({ id }) => filterId === id);
 
             if (isNil(filter)) {
@@ -48,26 +42,8 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
             }
 
             onFilterClick(filter);
-
-            if (FilterType.Status === filterType) {
-                if (previousSelectedStatusButton === filterId) {
-                    setSelectedStatusFilter(defaultState.id);
-                    setPreviousSelectedStatusButton(defaultState.id);
-                } else {
-                    setSelectedStatusFilter(filterId);
-                    setPreviousSelectedStatusButton(filterId);
-                }
-            } else if (FilterType.Strategy === filterType) {
-                if (previousSelectedStrategyButton === filterId) {
-                    setSelectedStrategyFilter(0);
-                    setPreviousSelectedStrategyButton(0);
-                } else {
-                    setSelectedStrategyFilter(filterId);
-                    setPreviousSelectedStrategyButton(filterId);
-                }
-            }
         },
-        [ possibleFilters, onFilterClick, previousSelectedStatusButton, previousSelectedStrategyButton ],
+        [ possibleFilters, onFilterClick ],
     );
 
     const renderFilter = useCallback(
@@ -78,14 +54,12 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
                 <ContestFilter
                   values={groupFilters}
                   type={type}
-                    statusFilterId={currentSelectedStatusFilter}
-                    strategyFilterId={currentSelectedStrategyFilter}
                   onSelect={handleFilterClick}
                   maxDisplayCount={maxFiltersToDisplayCount}
                 />
             );
         },
-        [ currentSelectedStatusFilter, currentSelectedStrategyFilter, handleFilterClick ],
+        [ handleFilterClick ],
     );
 
     useEffect(
