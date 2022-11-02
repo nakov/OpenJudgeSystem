@@ -1,8 +1,8 @@
-import * as React from 'react';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/use-auth';
+
 import LoginForm from '../../components/auth/LoginForm';
+import { useAuth } from '../../hooks/use-auth';
 
 const LoginPage = () => {
     const { state: { user } } = useAuth();
@@ -13,6 +13,8 @@ const LoginPage = () => {
         const { isLoggedIn } = user;
 
         if (isLoggedIn) {
+            // Needed ignore...
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             const origin = location.state?.from?.pathname || '/';
 

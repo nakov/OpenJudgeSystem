@@ -1,12 +1,13 @@
-import * as React from 'react';
-import { useCallback } from 'react';
-import { isNil } from 'lodash';
+import React, { useCallback } from 'react';
+import isNil from 'lodash/isNil';
+
 import { useAuth } from '../../hooks/use-auth';
-import FormControl, { FormControlType } from '../guidelines/forms/FormControl';
-import Form from '../guidelines/forms/Form';
-import Heading, { HeadingType } from '../guidelines/headings/Heading';
-import { LinkButton, LinkButtonType } from '../guidelines/buttons/Button';
 import { IDENTITY_CONFIG } from '../../identity-config';
+import { LinkButton, LinkButtonType } from '../guidelines/buttons/Button';
+import Form from '../guidelines/forms/Form';
+import FormControl, { FormControlType } from '../guidelines/forms/FormControl';
+import Heading, { HeadingType } from '../guidelines/headings/Heading';
+
 import styles from './LoginForm.module.scss';
 
 const LoginPage = () => {
@@ -17,12 +18,16 @@ const LoginPage = () => {
     const usernameFieldName = 'Username';
     const passwordFieldName = 'Password';
 
-    const handleOnChangeUpdateUsername = useCallback((value: any) => {
-        setUsername(value);
+    const handleOnChangeUpdateUsername = useCallback((value?: string) => {
+        setUsername(isNil(value)
+            ? ''
+            : value);
     }, [ setUsername ]);
 
-    const handleOnChangeUpdatePassword = useCallback((value: string) => {
-        setPassword(value);
+    const handleOnChangeUpdatePassword = useCallback((value?: string) => {
+        setPassword(isNil(value)
+            ? ''
+            : value);
     }, [ setPassword ]);
 
     const handleLoginClick = useCallback(async () => {
@@ -39,9 +44,7 @@ const LoginPage = () => {
     return (
         <Form
           className={styles.loginForm}
-          onSubmit={() => {
-              handleLoginClick();
-          }}
+          onSubmit={() => handleLoginClick()}
           submitText="Login"
         >
             <header className={styles.loginFormHeader}>
@@ -63,18 +66,15 @@ const LoginPage = () => {
               name={usernameFieldName}
               labelText={usernameFieldName}
               type={FormControlType.input}
-              onChange={(value) => handleOnChangeUpdateUsername(value)}
+              onChange={handleOnChangeUpdateUsername}
               value=""
             />
             <FormControl
               id={passwordFieldName.toLowerCase()}
               name={passwordFieldName}
               labelText={passwordFieldName}
-              labelClassName={styles.floatingLabel}
               type={FormControlType.password}
-              onChange={(value) => handleOnChangeUpdatePassword(isNil(value)
-                  ? ''
-                  : value.toString())}
+              onChange={handleOnChangeUpdatePassword}
               value=""
             />
             <div className={styles.loginFormControls}>
@@ -82,8 +82,6 @@ const LoginPage = () => {
                   id="auth-password-checkbox"
                   name="RememberMe"
                   labelText="Remember Me"
-                  containerClassName={styles.flexDirectionRow}
-                  labelClassName={styles.rememberMeLabel}
                   type={FormControlType.checkbox}
                 />
                 <div>

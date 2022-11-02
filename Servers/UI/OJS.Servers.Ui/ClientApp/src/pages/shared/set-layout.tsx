@@ -1,9 +1,10 @@
-import * as React from 'react';
-import { FC } from 'react';
+import React, { FC } from 'react';
+
+import { Anything } from '../../common/common-types';
+import { IHaveChildrenProps } from '../../components/common/Props';
+import concatClassNames from '../../utils/class-names';
 
 import styles from './set-layout.module.scss';
-import concatClassNames from '../../utils/class-names';
-import { IHaveChildrenProps } from '../../components/common/Props';
 
 interface ILayoutProps extends IHaveChildrenProps {
     isWide: boolean;
@@ -23,7 +24,7 @@ const Layout = ({ children, isWide }: ILayoutProps) => {
     );
 };
 
-const setLayout = (ComponentToWrap: FC, isWide = false) => (props: any) => (
+const setLayout = (ComponentToWrap: FC, isWide = false) => (props: Anything) => (
     <Layout isWide={isWide}>
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <ComponentToWrap {...props} />

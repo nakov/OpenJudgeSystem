@@ -47,7 +47,7 @@ const secondsToFullTime = (duration: number) => {
 interface IConvertToTwoDigitValuesParamType {
     hours: number;
     minutes: number;
-    seconds: number
+    seconds: number;
 }
 
 const convertToTwoDigitValues = ({

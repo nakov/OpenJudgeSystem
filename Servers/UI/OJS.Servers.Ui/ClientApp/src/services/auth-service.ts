@@ -1,4 +1,5 @@
 import { UserManager, WebStorageStateStore } from 'oidc-client';
+
 import { IDENTITY_CONFIG, METADATA_OIDC } from '../identity-config';
 
 class AuthService {

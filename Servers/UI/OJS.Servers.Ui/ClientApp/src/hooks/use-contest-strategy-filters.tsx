@@ -1,15 +1,17 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isNil } from 'lodash';
-import { IHaveChildrenProps } from '../components/common/Props';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import isNil from 'lodash/isNil';
+
 import { IContestStrategyFilter } from '../common/contest-types';
+import { IHaveChildrenProps } from '../components/common/Props';
+
+import { useHttp } from './use-http';
 import { useLoading } from './use-loading';
 import { useUrls } from './use-urls';
-import { useHttp } from './use-http';
 
 interface IContestStrategyFiltersContext {
     state: {
         strategies: IContestStrategyFilter[];
-        isLoaded: boolean,
+        isLoaded: boolean;
     };
     actions: {
         load: () => Promise<void>;
@@ -18,8 +20,7 @@ interface IContestStrategyFiltersContext {
 
 const defaultState = { state: { strategies: [] as IContestStrategyFilter[] } };
 
-interface IContestStrategyFiltersProviderProps extends IHaveChildrenProps {
-}
+type IContestStrategyFiltersProviderProps = IHaveChildrenProps
 
 const ContestStrategyFiltersContext = createContext<IContestStrategyFiltersContext>(defaultState as IContestStrategyFiltersContext);
 
@@ -55,13 +56,16 @@ const ContestStrategyFiltersProvider = ({ children }: IContestStrategyFiltersPro
         [ data ],
     );
 
-    const value = {
-        state: {
-            strategies,
-            isLoaded: isSuccess,
-        },
-        actions: { load },
-    } as IContestStrategyFiltersContext;
+    const value = useMemo(
+        () => ({
+            state: {
+                strategies,
+                isLoaded: isSuccess,
+            },
+            actions: { load },
+        }),
+        [ isSuccess, load, strategies ],
+    );
 
     return (
         <ContestStrategyFiltersContext.Provider value={value}>
