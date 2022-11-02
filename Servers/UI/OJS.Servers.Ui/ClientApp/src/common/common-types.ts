@@ -4,19 +4,19 @@ declare global {
     interface Window {
         isLoggedIn: boolean;
         username: string;
-        URLS: URLS,
-        Keys: Keys
+        URLS: URLS;
+        Keys: Keys;
     }
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
     interface URLS {
-        UI_URL: string | undefined,
-        ADMINISTRATION_URL: string | undefined,
+        UI_URL: string | undefined;
+        ADMINISTRATION_URL: string | undefined;
     }
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
     interface Keys {
-        YOUTUBE_VIDEO_ID: string,
+        YOUTUBE_VIDEO_ID: string;
     }
 }
 
@@ -32,32 +32,25 @@ interface IKeyValuePair<TValue> {
 type UrlType = string | ((parameters: IDictionary<any> | null) => string);
 
 interface INotificationType {
-    title: string,
-    message: string,
-    type?: 'success' | 'danger' | 'info' | 'default' | 'warning',
-    leaveTimeout: number | null
+    title: string;
+    message: string;
+    type?: 'success' | 'danger' | 'info' | 'default' | 'warning';
+    leaveTimeout: number | null;
 }
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 interface IFileResponseType {
-    data: Blob,
-    headers: IDictionary<any>,
+    data: Blob;
+    headers: IDictionary<any>;
 }
-
-type QuestionTypeType = 'text' | 'single' | 'multiple';
-
-type FilterType = 'all' | 'done' | 'remaining'
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 interface IUrlParam {
     key: string;
-    value: any;
+    value: string | string[];
 }
 
-export const SulsQuestionTypeMapping: { [key: number]: QuestionTypeType } = {
-    1: 'single' as QuestionTypeType,
-    2: 'multiple' as QuestionTypeType,
-    3: 'text' as QuestionTypeType,
-};
-
+type Anything = Record<string | number, unknown>
 
 export type {
     IDictionary,
@@ -65,7 +58,6 @@ export type {
     INotificationType,
     IFileResponseType,
     IUrlParam,
-    QuestionTypeType,
-    FilterType,
     UrlType,
+    Anything,
 };

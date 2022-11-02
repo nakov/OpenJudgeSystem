@@ -1,21 +1,21 @@
-﻿import React from 'react';
+import React from 'react';
 import { MdChevronRight } from 'react-icons/md';
+
 import IconSize from './common/icon-sizes';
 import Icon, { IIconProps } from './Icon';
 
-interface IRightArrowIconProps extends IIconProps{
-}
+type IRightArrowIconProps = IIconProps
 
-const RightArrowIcon=({
-    className='',
+const RightArrowIcon = ({
+    className = '',
     size = IconSize.Medium,
     helperText = '',
 }:IRightArrowIconProps) => (
     <Icon
-        className={className}
-        size={size}
-        helperText={helperText}
-        Component={MdChevronRight}
+      className={className}
+      size={size}
+      helperText={helperText}
+      Component={MdChevronRight}
     />
 );
 

@@ -1,5 +1,5 @@
-@import "src/styles/colors";
-@import "./common/icon-base";
+@use 'src/styles/colors';
+@use './common/icon-base';
 
 .iconContainer {
   @extend %iconContainer;

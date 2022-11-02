@@ -1,15 +1,14 @@
-import * as React from 'react';
-import { FC } from 'react';
+import React, { FC } from 'react';
 import {
     Navigate,
     useLocation,
-
 } from 'react-router';
-import { useAuth } from '../../hooks/use-auth';
-import { IHaveChildrenProps } from '../../components/common/Props';
 
-interface IPrivatePageProps extends IHaveChildrenProps {
-}
+import { Anything } from '../../common/common-types';
+import { IHaveChildrenProps } from '../../components/common/Props';
+import { useAuth } from '../../hooks/use-auth';
+
+type IPrivatePageProps = IHaveChildrenProps
 
 const PrivatePage = ({ children }: IPrivatePageProps) => {
     const { state: { user } } = useAuth();
@@ -18,16 +17,17 @@ const PrivatePage = ({ children }: IPrivatePageProps) => {
 
     const state = { from: location };
 
-    return !isLoggedIn
-        ? <Navigate to="/login" state={state} />
-        : (
-            <>
-                {children}
-            </>
-        );
+    if (isLoggedIn) {
+        // eslint-disable-next-line react/jsx-no-useless-fragment
+        return <>{children}</>;
+    }
+
+    return (
+        <Navigate to="/login" state={state} />
+    );
 };
 
-const makePrivate = (ComponentToWrap: FC) => (props: any) => (
+const makePrivate = (ComponentToWrap: FC) => (props: Anything) => (
     <PrivatePage>
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <ComponentToWrap {...props} />

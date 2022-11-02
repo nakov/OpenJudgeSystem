@@ -1,10 +1,10 @@
 import React from 'react';
 import { FaDeezer } from 'react-icons/fa';
+
 import IconSize from './common/icon-sizes';
 import Icon, { IIconProps } from './Icon';
 
-interface ISubmissionsPerDayIconProps extends IIconProps {
-}
+type ISubmissionsPerDayIconProps = IIconProps
 
 const SubmissionsPerDayIcon = ({
     className = '',

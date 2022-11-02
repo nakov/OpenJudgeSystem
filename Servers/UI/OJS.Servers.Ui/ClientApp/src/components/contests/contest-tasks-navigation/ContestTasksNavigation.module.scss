@@ -1,6 +1,6 @@
-@import "src/styles/colors";
-@import "src/styles/fonts";
-@import "src/styles/variables";
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
+@use 'src/styles/variables';
 
 .tasksSideNavigation {
   text-align: center;
@@ -8,39 +8,40 @@
 
 .tasksListSideNavigation {
   align-items: flex-start;
-  padding: 20px;
   display: flex;
+  padding: 20px;
 
   .taskSideNavigationItem {
-    text-align: start;
-    font-size: $f-size-18;
     @extend %font-family-lato;
+
+    color: colors.$text-dark-gray-color;
+    font-size: variables.$f-size-18;
     margin-top: 10px;
-    color: $text-dark-gray-color;
+    text-align: start;
 
     &:hover {
       cursor: pointer;
     }
 
     &.selected {
-      color: $color-btn-secondary;
+      color: colors.$color-btn-secondary;
     }
   }
 }
 
 .taskListItem {
-  width: 100%;
+  align-items: center;
+  border-bottom: 1px solid colors.$bottom-border-color;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  position: relative;
   padding: 35px 0 5px;
-  border-bottom: 1px solid $bottom-border-color;
+  position: relative;
+  width: 100%;
 }
 
 .resultsButton {
-  border: none;
   align-self: end;
+  border: 0;
 
   &:hover {
     background: none;

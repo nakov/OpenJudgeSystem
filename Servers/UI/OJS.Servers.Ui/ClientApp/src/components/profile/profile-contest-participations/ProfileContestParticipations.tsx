@@ -1,8 +1,8 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import { useEffect } from 'react';
-import { formatDate } from '../../../utils/dates';
+
 import { useParticipations } from '../../../hooks/use-participations';
+import { formatDate } from '../../../utils/dates';
 
 const columns: GridColDef[] = [
     {
