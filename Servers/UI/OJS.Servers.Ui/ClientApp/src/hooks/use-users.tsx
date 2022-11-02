@@ -1,29 +1,31 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isNil } from 'lodash';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import isNil from 'lodash/isNil';
+
 import { IHaveChildrenProps } from '../components/common/Props';
-import { useLoading } from './use-loading';
+
 import { useHttp } from './use-http';
+import { useLoading } from './use-loading';
 import { useNotifications } from './use-notifications';
 import { useUrls } from './use-urls';
 
 interface IUserProfileType {
-    id: string,
-    userName: string,
-    firstName: string,
-    lastName: string,
-    email: string
+    id: string;
+    userName: string;
+    firstName: string;
+    lastName: string;
+    email: string;
 }
 
 interface IUsersContext {
-    profile: IUserProfileType,
-    getProfile: () => Promise<void>
+    profile: IUserProfileType;
+    getProfile: () => Promise<void>;
 }
 
 const defaultState = { profile: { userName: '' } as IUserProfileType };
 
 const UsersContext = createContext<IUsersContext>(defaultState as IUsersContext);
 
-interface IUsersProviderProps extends IHaveChildrenProps {}
+type IUsersProviderProps = IHaveChildrenProps
 
 const UsersProvider = ({ children }: IUsersProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
@@ -53,7 +55,13 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
         // showError({ message: 'Could not retrieve profile info.' } as INotificationType);
     }, [ profileData, showError ]);
 
-    const value = { profile, getProfile };
+    const value = useMemo(
+        () => ({
+            profile,
+            getProfile,
+        }),
+        [ getProfile, profile ],
+    );
 
     return (
         <UsersContext.Provider value={value}>

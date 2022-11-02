@@ -1,11 +1,14 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isNil, sum } from 'lodash';
-import { IContestType, IRegisterForContestResponseType, IStartParticipationResponseType } from '../common/types';
-import { IHaveChildrenProps } from '../components/common/Props';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import isNil from 'lodash/isNil';
+import sum from 'lodash/sum';
+
 import { UrlType } from '../common/common-types';
+import { IContestType, IRegisterForContestResponseType, IStartParticipationResponseType } from '../common/types';
 import { IRegisterForContestUrlParams, ISubmitContestPasswordUrlParams } from '../common/url-types';
-import { useLoading } from './use-loading';
+import { IHaveChildrenProps } from '../components/common/Props';
+
 import { useHttp } from './use-http';
+import { useLoading } from './use-loading';
 import { useUrls } from './use-urls';
 
 interface IStartContestArgs {
@@ -53,8 +56,7 @@ const defaultState = {
 
 const CurrentContestsContext = createContext<ICurrentContestContext>(defaultState as ICurrentContestContext);
 
-interface ICurrentContestsProviderProps extends IHaveChildrenProps {
-}
+type ICurrentContestsProviderProps = IHaveChildrenProps
 
 interface IContestToStartType {
     id: number;
@@ -108,7 +110,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
 
     const register = useCallback((obj: IStartContestArgs) => {
         const { id, isOfficial: official } = obj;
-        
+
         setRegisterForContestParams({ id, isOfficial: official } as IRegisterForContestUrlParams);
     }, []);
 
@@ -138,7 +140,11 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         }
 
         const responseData = startContestData as IStartParticipationResponseType;
-        const { contest: newContest, contestIsCompete, remainingTimeInMilliseconds: newRemainingTimeInMilliseconds } = responseData;
+        const {
+            contest: newContest,
+            contestIsCompete,
+            remainingTimeInMilliseconds: newRemainingTimeInMilliseconds,
+        } = responseData;
 
         setContest(newContest);
         setIsOfficial(contestIsCompete);
@@ -190,7 +196,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         if (!isNil(submitContestPasswordResponse) && submitContestPasswordResponse.status !== 200) {
             setSubmitContestPasswordErrorMessage('Incorrect password');
             setIsPasswordValid(false);
-            
+
             return;
         }
 
@@ -212,25 +218,41 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         [ contest ],
     );
 
-    const value = {
-        state: {
+    const value = useMemo(
+        () => ({
+            state: {
+                contest,
+                contestPassword,
+                score,
+                maxScore,
+                isOfficial,
+                requirePassword,
+                submitContestPasswordErrorMessage,
+                isPasswordValid,
+                remainingTimeInMilliseconds,
+            },
+            actions: {
+                setContestPassword,
+                register,
+                start,
+                submitPassword,
+            },
+        }),
+        [
             contest,
             contestPassword,
-            score,
-            maxScore,
             isOfficial,
-            requirePassword,
-            submitContestPasswordErrorMessage,
             isPasswordValid,
-            remainingTimeInMilliseconds,
-        },
-        actions: {
-            setContestPassword,
+            maxScore,
             register,
+            remainingTimeInMilliseconds,
+            requirePassword,
+            score,
             start,
+            submitContestPasswordErrorMessage,
             submitPassword,
-        },
-    };
+        ],
+    );
 
     return (
         <CurrentContestsContext.Provider value={value}>
@@ -238,6 +260,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         </CurrentContestsContext.Provider>
     );
 };
+
 const useCurrentContest = () => useContext(CurrentContestsContext);
 
 export default CurrentContestsProvider;

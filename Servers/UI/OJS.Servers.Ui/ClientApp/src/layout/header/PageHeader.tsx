@@ -1,12 +1,15 @@
 import React, { useCallback } from 'react';
-import logo from './softuni-logo-horizontal.svg';
-import PageNav from '../nav/PageNav';
+
+import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import { useAuth } from '../../hooks/use-auth';
 import { useUrls } from '../../hooks/use-urls';
-import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
-import styles from './PageHeader.module.scss';
 import concatClassNames from '../../utils/class-names';
+import PageNav from '../nav/PageNav';
+
+import logo from './softuni-logo-horizontal.svg';
+
+import styles from './PageHeader.module.scss';
 
 const PageHeader = () => {
     const { state: { user } } = useAuth();
@@ -46,7 +49,7 @@ const PageHeader = () => {
             </>
         );
     }, [ getAdministrationNavigation, user.permissions.canAccessAdministration ]);
-        
+
     const headingSecondaryClass = 'headingSeconary';
     const headingSecondaryClassName = concatClassNames(styles.heading, headingSecondaryClass);
 

@@ -1,18 +1,15 @@
-import * as React from 'react';
-import { useCallback } from 'react';
-import {
-    isEmpty,
-    isNil,
-} from 'lodash';
-import concatClassNames from '../../../utils/class-names';
+import React, { useCallback } from 'react';
+import isEmpty from 'lodash/isEmpty';
+import isNil from 'lodash/isNil';
 
+import concatClassNames from '../../../utils/class-names';
+import defaultKeyFunc from '../../common/colcollection-key-utils';
 import {
     ClassNameType,
     IHaveOptionalClassName,
 } from '../../common/Props';
 
 import styles from './List.module.scss';
-import defaultKeyFunc from '../../common/colcollection-key-utils';
 
 enum ListType {
     normal = 1,
@@ -29,7 +26,7 @@ enum Orientation {
 interface IListProps<TValue> extends IHaveOptionalClassName {
     values: TValue[];
     itemFunc: (value: TValue) => React.ReactElement;
-    keyFunc?: (value: TValue) => string,
+    keyFunc?: (value: TValue) => string;
     itemClassName?: ClassNameType;
     type?: ListType;
     orientation?: Orientation;
@@ -38,7 +35,7 @@ interface IListProps<TValue> extends IHaveOptionalClassName {
     scrollable?: boolean;
 }
 
-const List = <TValue extends unknown>({
+const List = <TValue, >({
     values,
     itemFunc,
     keyFunc = defaultKeyFunc,

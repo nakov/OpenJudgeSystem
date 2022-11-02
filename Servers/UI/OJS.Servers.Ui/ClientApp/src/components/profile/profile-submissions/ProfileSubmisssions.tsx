@@ -1,5 +1,5 @@
 /* eslint-disable */
-import * as React from 'react';
+import React from 'react';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
