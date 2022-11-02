@@ -19,6 +19,8 @@ namespace OJS.Services.Ui.Models.Contests
 
         public bool ShouldEnterPassword { get; set; }
 
+        public ContestValidationModel Validation { get; set; }
+
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<Participant, ContestParticipationServiceModel>()
                 .ForMember(d => d.Contest, opt => opt.MapFrom(s => s.Contest))

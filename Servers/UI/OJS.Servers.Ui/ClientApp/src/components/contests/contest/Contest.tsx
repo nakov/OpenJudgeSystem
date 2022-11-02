@@ -21,9 +21,10 @@ const Contest = () => {
             score,
             maxScore,
             remainingTimeInMilliseconds,
+            validation,
         },
     } = useCurrentContest();
-
+    
     const navigationContestClass = 'navigationContest';
     const navigationContestClassName = concatClassNames(navigationContestClass);
 
@@ -101,33 +102,58 @@ const Contest = () => {
         () => concatClassNames(styles.contestHeading, styles.contestInfoContainer),
         [],
     );
+    
+    const errorMessage = useMemo(
+        () => !validation.contestIsFound
+            ? `${contest?.name} - Contest not found!`
+            : validation.contestIsExpired
+                ? `${contest?.name} - Contest expired!`
+                : !validation.isParticipantRegistered
+                    ? `${contest?.name} - You are not registered for this contest!` 
+                    : !validation.contestCanBeCompeted || !validation.contestCanBePracticed
+                        ? `${contest?.name} - You can not take part in the contest!`
+                        : null,
+        [ validation, contest ],
+    );
 
     return (
         <>
-            <div className={styles.headingContest}>
-                <Heading
-                    type={HeadingType.primary}
-                    className={styles.contestHeading}
-                >
-                    {contest?.name}
-                </Heading>
-                <Heading type={HeadingType.secondary} className={secondaryHeadingClassName}>
-                    {renderTimeRemaining()}
-                    {renderScore()}
-                </Heading>
-            </div>
+            {errorMessage !== null
+                ? <div className={styles.headingContest}>
+                    <Heading
+                        type={HeadingType.primary}
+                        className={styles.contestHeading}
+                    >
+                        {errorMessage}
+                    </Heading>
+                </div>
+                : <>
+                    <div className={styles.headingContest}>
+                        <Heading
+                        type={HeadingType.primary}
+                        className={styles.contestHeading}
+                    >
+                            {contest?.name}
+                        </Heading>
+                        <Heading type={HeadingType.secondary} className={secondaryHeadingClassName}>
+                            {renderTimeRemaining()}
+                            {renderScore()}
+                        </Heading>
+                    </div>
 
-            <div className={styles.contestWrapper}>
-                <div className={navigationContestClassName}>
-                    <ContestTasksNavigation/>
-                </div>
-                <div className={submissionBoxClassName}>
-                    <SubmissionBox/>
-                </div>
-                <div className={problemInfoClassName}>
-                    <ContestProblemDetails/>
-                </div>
-            </div>
+                    <div className={styles.contestWrapper}>
+                        <div className={navigationContestClassName}>
+                            <ContestTasksNavigation/>
+                        </div>
+                        <div className={submissionBoxClassName}>
+                            <SubmissionBox/>
+                        </div>
+                        <div className={problemInfoClassName}>
+                            <ContestProblemDetails/>
+                        </div>
+                    </div>
+                </>
+                }
         </>
     );
 };
