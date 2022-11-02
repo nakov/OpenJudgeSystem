@@ -1,10 +1,9 @@
-import * as React from 'react';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
-import styles from './Loading.module.scss';
-
 import { ReactComponent } from './Loading.svg';
+
+import styles from './Loading.module.scss';
 
 interface ILoadingProps {
     isLoading: boolean;
@@ -27,8 +26,7 @@ const Loading = ({
 }: ILoadingProps) => {
     useEffect(() => {
         if (isWholePage) {
-            return () => {
-            };
+            return () => null;
         }
 
         document.body.appendChild(loadingRoot);

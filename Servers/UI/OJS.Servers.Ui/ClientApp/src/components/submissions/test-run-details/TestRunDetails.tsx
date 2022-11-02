@@ -1,19 +1,19 @@
-import * as React from 'react';
-import { useCallback, useMemo, useState } from 'react';
-import { isNil } from 'lodash';
-import Heading, { HeadingType } from '../../guidelines/headings/Heading';
+import React, { useCallback, useMemo, useState } from 'react';
+import isNil from 'lodash/isNil';
+
+import { SubmissionResultType } from '../../../common/constants';
 import { ITestRunDetailsType } from '../../../hooks/submissions/types';
-import IconSize from '../../guidelines/icons/common/icon-sizes';
 import { useAuth } from '../../../hooks/use-auth';
 import concatClassNames from '../../../utils/class-names';
-import TimeLimitIcon from '../../guidelines/icons/TimeLimitIcon';
-import MemoryIcon from '../../guidelines/icons/MemoryIcon';
-import Collapsible from '../../guidelines/collapsible/Collapsible';
-import TestRunDiffView from '../test-run-diff-view/TestRunDiffView';
-import ExpandButton from '../../guidelines/buttons/ExpandButton';
-import Label, { LabelType } from '../../guidelines/labels/Label';
 import { splitByCapitalLetter, toLowerCase } from '../../../utils/string-utils';
-import { SubmissionResultType } from '../../../common/constants';
+import ExpandButton from '../../guidelines/buttons/ExpandButton';
+import Collapsible from '../../guidelines/collapsible/Collapsible';
+import Heading, { HeadingType } from '../../guidelines/headings/Heading';
+import IconSize from '../../guidelines/icons/common/icon-sizes';
+import MemoryIcon from '../../guidelines/icons/MemoryIcon';
+import TimeLimitIcon from '../../guidelines/icons/TimeLimitIcon';
+import Label, { LabelType } from '../../guidelines/labels/Label';
+import TestRunDiffView from '../test-run-diff-view/TestRunDiffView';
 
 import styles from './TestRunDetails.module.scss';
 
@@ -39,7 +39,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         ),
         [ testRun ],
     );
-    
+
     const isOutputDiffAvailable = useMemo(
         () => !isNil(testRun.expectedOutputFragment) && testRun.expectedOutputFragment !== '' &&
             !isNil(testRun.userOutputFragment) && testRun.userOutputFragment !== '',
@@ -64,7 +64,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
                 : result === SubmissionResultType.WrongAnswer
                     ? LabelType.danger
                     : LabelType.warning;
-            
+
             const resultSplit = splitByCapitalLetter(testRun.resultType);
 
             return (
@@ -75,7 +75,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         },
         [ testRun ],
     );
-    
+
     const renderTestRunData = useCallback(() => (
         <span className={styles.testRunData}>
             <span className={styles.testRunDataParagraph}>

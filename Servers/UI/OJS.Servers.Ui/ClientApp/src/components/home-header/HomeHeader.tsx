@@ -1,22 +1,19 @@
 import React, { FC, useCallback, useEffect, useMemo } from 'react';
+import isNil from 'lodash/isNil';
 
-import { isNil } from 'lodash';
-
-import { IDictionary, IKeyValuePair } from '../../common/common-types';
+import { Anything, IDictionary, IKeyValuePair } from '../../common/common-types';
+import { useHomeStatistics } from '../../hooks/use-home-statistics';
 import { toList } from '../../utils/object-utils';
-import IconSize from '../guidelines/icons/common/icon-sizes';
-
-import List, { Orientation } from '../guidelines/lists/List';
-import StatisticBox from '../statistic-box/StatisticBox';
-import UsersIcon from '../guidelines/icons/UsersIcon';
+import Heading, { HeadingType } from '../guidelines/headings/Heading';
 import CodeIcon from '../guidelines/icons/CodeIcon';
+import IconSize from '../guidelines/icons/common/icon-sizes';
+import ContestIcon from '../guidelines/icons/ContestIcon';
 import ProblemIcon from '../guidelines/icons/ProblemIcon';
 import StrategyIcon from '../guidelines/icons/StrategyIcon';
-import ContestIcon from '../guidelines/icons/ContestIcon';
 import SubmissionsPerDayIcon from '../guidelines/icons/SubmissionsPerDayIcon';
-import Heading, { HeadingType } from '../guidelines/headings/Heading';
-
-import { useHomeStatistics } from '../../hooks/use-home-statistics';
+import UsersIcon from '../guidelines/icons/UsersIcon';
+import List, { Orientation } from '../guidelines/lists/List';
+import StatisticBox from '../statistic-box/StatisticBox';
 
 import styles from './HomeHeader.module.scss';
 
@@ -33,12 +30,12 @@ const defaultProps = { className: styles.icon };
 
 /* eslint-disable react/jsx-props-no-spreading */
 const keyToIconComponent: IDictionary<FC> = {
-    usersCount: (props: any) => (<UsersIcon {...defaultProps} {...props} />),
-    submissionsCount: (props: any) => (<CodeIcon {...defaultProps} {...props} />),
-    submissionsPerDayCount: (props: any) => (<SubmissionsPerDayIcon {...defaultProps} {...props} />),
-    problemsCount: (props: any) => (<ProblemIcon {...defaultProps} {...props} />),
-    strategiesCount: (props: any) => (<StrategyIcon {...defaultProps} {...props} />),
-    contestsCount: (props: any) => (<ContestIcon {...defaultProps} {...props} />),
+    usersCount: (props: Anything) => (<UsersIcon {...defaultProps} {...props} />),
+    submissionsCount: (props: Anything) => (<CodeIcon {...defaultProps} {...props} />),
+    submissionsPerDayCount: (props: Anything) => (<SubmissionsPerDayIcon {...defaultProps} {...props} />),
+    problemsCount: (props: Anything) => (<ProblemIcon {...defaultProps} {...props} />),
+    strategiesCount: (props: Anything) => (<StrategyIcon {...defaultProps} {...props} />),
+    contestsCount: (props: Anything) => (<ContestIcon {...defaultProps} {...props} />),
 };
 /* eslint-enable react/jsx-props-no-spreading */
 
@@ -69,12 +66,10 @@ const HomeHeader = () => {
             const { key, value } = statisticItem;
 
             return (
-                <>
-                    <StatisticBox
-                        statistic={{ name: keyToNameMap[key], value }}
-                        renderIcon={() => renderIcon(key)}
-                    />
-                </>
+                <StatisticBox
+                  statistic={{ name: keyToNameMap[key], value }}
+                  renderIcon={() => renderIcon(key)}
+                />
             );
         },
         [],
@@ -97,12 +92,12 @@ const HomeHeader = () => {
                 SoftUni Judge Numbers
             </Heading>
             <List
-                values={statisticsList}
-                itemFunc={renderStatistic}
-                className={styles.statisticsList}
-                itemClassName={styles.statisticsListItem}
-                wrap
-                orientation={Orientation.horizontal}
+              values={statisticsList}
+              itemFunc={renderStatistic}
+              className={styles.statisticsList}
+              itemClassName={styles.statisticsListItem}
+              wrap
+              orientation={Orientation.horizontal}
             />
         </>
     );

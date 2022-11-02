@@ -1,8 +1,10 @@
-import * as React from 'react';
-import { useState } from 'react';
+import React, { ChangeEvent, FormEvent, useState } from 'react';
+import isNil from 'lodash/isNil';
+
 import concatClassNames from '../../../utils/class-names';
 import generateId from '../../../utils/id-generator';
 import { ClassNameType, IHaveChildrenProps, IHaveOptionalClassName } from '../../common/Props';
+
 import styles from './FormControl.module.scss';
 
 enum FormControlType {
@@ -14,6 +16,8 @@ enum FormControlType {
     'password' = 'password',
 }
 
+type TextAreaOrInputElement = HTMLTextAreaElement | HTMLInputElement;
+
 interface IFormControlProps extends IHaveOptionalClassName {
     name: string;
     value?: string;
@@ -21,8 +25,8 @@ interface IFormControlProps extends IHaveOptionalClassName {
     labelText?: string;
     labelClassName?: ClassNameType;
     type?: FormControlType;
-    onChange?: (value?: string) => void;
-    onInput?: (value?: string) => void;
+    onChange?: ((value?: string) => void) | null;
+    onInput?: ((value?: string) => void) | null;
     checked?: boolean;
     id?: string;
 }
@@ -39,9 +43,9 @@ interface ILabelInternalProps extends IHaveChildrenProps, IHaveOptionalClassName
 const LabelInternal = ({ id, text, className, internalContainerClassName, forKey, children, fieldType }: ILabelInternalProps) => {
     if (!text && !className) {
         return (
-            <>
+            <div>
                 {children}
-            </>
+            </div>
         );
     }
 
@@ -71,12 +75,10 @@ const LabelInternal = ({ id, text, className, internalContainerClassName, forKey
 const FormControl = ({
     name,
     value = '',
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onChange = (v?: string) => {
-    },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onInput = (v?: string) => {
-    },
+    /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+    onChange = null,
+    /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+    onInput = null,
     className = '',
     containerClassName = '',
     labelText = '',
@@ -92,20 +94,32 @@ const FormControl = ({
         ? styles.formControl
         : null, className);
 
-    const handleOnChange = (ev: any) => {
+    const handleOnChange = (ev: ChangeEvent<TextAreaOrInputElement>) => {
         if (type === FormControlType.checkbox) {
             setIsChecked(!isChecked);
-            
+
             return;
         }
 
         setFormControlValue(ev.target.value);
+
+        if (isNil(onChange)) {
+            return;
+        }
+
         onChange(ev.target.value);
     };
 
-    const handleOnInput = (ev: any) => {
-        setFormControlValue(ev.target.value);
-        onChange(ev.target.value);
+    const handleOnInput = (ev: FormEvent<TextAreaOrInputElement>) => {
+        const element = ev.target as TextAreaOrInputElement;
+
+        setFormControlValue(element.value);
+
+        if (isNil(onInput)) {
+            return;
+        }
+
+        onInput(element.value);
     };
 
     const generateFormControl = () => {

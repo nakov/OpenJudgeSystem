@@ -1,18 +1,21 @@
 import React, { useCallback } from 'react';
-import { isEmpty, isNil } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
+import isNil from 'lodash/isNil';
+
+import { FilterType, IFilter } from '../../common/contest-types';
+import { IIndexContestsType } from '../../common/types';
 import ContestFilters from '../../components/contests/contests-filters/ContestFilters';
-import { useContests } from '../../hooks/use-contests';
-import { setLayout } from '../shared/set-layout';
-import ContestCard from '../../components/home-contests/contest-card/ContestCard';
+import Breadcrumb from '../../components/guidelines/breadcrumb/Breadcrumb';
+import { LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
+import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
-import { FilterType, IFilter } from '../../common/contest-types';
-import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
-import Breadcrumb from '../../components/guidelines/breadcrumb/Breadcrumb';
-import { IIndexContestsType } from '../../common/types';
+import ContestCard from '../../components/home-contests/contest-card/ContestCard';
 import { ICategoriesBreadcrumbItem, useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
-import { LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
+import { useContests } from '../../hooks/use-contests';
 import concatClassNames from '../../utils/class-names';
+import { setLayout } from '../shared/set-layout';
+
 import styles from './ContestsPage.module.scss';
 
 const getBreadcrumbItemPath = (id: string) => `/contests?${FilterType.Category.toString()}=${id}`;
@@ -29,7 +32,7 @@ const ContestsPage = () => {
             changePage,
         },
     } = useContests();
-    
+
     const { state: { breadcrumbItems } } = useCategoriesBreadcrumbs();
 
     const handlePageChange = useCallback(
@@ -44,7 +47,7 @@ const ContestsPage = () => {
 
     const renderContest = useCallback(
         (contest: IIndexContestsType) => (
-            <ContestCard contest={contest}/>
+            <ContestCard contest={contest} />
         ),
         [],
     );
@@ -64,16 +67,16 @@ const ContestsPage = () => {
             return (
                 <>
                     <PaginationControls
-                        count={pagesCount}
-                        page={currentPage}
-                        onChange={handlePageChange}
+                      count={pagesCount}
+                      page={currentPage}
+                      onChange={handlePageChange}
                     />
                     <List
-                        values={contests}
-                        itemFunc={renderContest}
-                        itemClassName={styles.contestItem}
-                        orientation={Orientation.horizontal}
-                        wrap
+                      values={contests}
+                      itemFunc={renderContest}
+                      itemClassName={styles.contestItem}
+                      orientation={Orientation.horizontal}
+                      wrap
                     />
                 </>
             );
@@ -99,7 +102,7 @@ const ContestsPage = () => {
         <>
             <Breadcrumb items={breadcrumbItems} itemFunc={renderCategoriesBreadcrumbItem} />
             <div className={styles.container}>
-                <ContestFilters onFilterClick={handleFilterClick}/>
+                <ContestFilters onFilterClick={handleFilterClick} />
                 <div className={styles.mainHeader}>
                     {renderContests()}
                 </div>

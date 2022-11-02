@@ -1,26 +1,27 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isNil } from 'lodash';
-import { IHaveChildrenProps } from '../../components/common/Props';
-import { useProblems } from '../use-problems';
-import { ISubmissionDetails } from './types';
-import { useLoading } from '../use-loading';
-import { useHttp } from '../use-http';
-import { useUrls } from '../use-urls';
-import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
-import { useCurrentContest } from '../use-current-contest';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import isNil from 'lodash/isNil';
+
 import { UrlType } from '../../common/common-types';
+import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
+import { IHaveChildrenProps } from '../../components/common/Props';
+import { useCurrentContest } from '../use-current-contest';
+import { useHttp } from '../use-http';
+import { useLoading } from '../use-loading';
+import { useProblems } from '../use-problems';
+import { useUrls } from '../use-urls';
+
+import { ISubmissionDetails } from './types';
 
 interface IProblemSubmissionsContext {
     state: {
-        submissions: ISubmissionDetails[],
+        submissions: ISubmissionDetails[];
     };
     actions: {
-        loadSubmissions: () => Promise<void>,
+        loadSubmissions: () => Promise<void>;
     };
 }
 
-interface IProblemSubmissionsProviderProps extends IHaveChildrenProps {
-}
+type IProblemSubmissionsProviderProps = IHaveChildrenProps
 
 interface IProblemSubmissionResultsRequestParametersType {
     id: number;
@@ -94,10 +95,13 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
         [ startLoading, stopLoading, getProblemSubmissions, submissionResultsToGetParameters ],
     );
 
-    const value = {
-        state: { submissions },
-        actions: { loadSubmissions },
-    };
+    const value = useMemo(
+        () => ({
+            state: { submissions },
+            actions: { loadSubmissions },
+        }),
+        [ loadSubmissions, submissions ],
+    );
 
     return (
         <ProblemSubmissionsContext.Provider value={value}>

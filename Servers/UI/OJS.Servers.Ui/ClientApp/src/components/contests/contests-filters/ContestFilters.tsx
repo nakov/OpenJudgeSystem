@@ -1,15 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { isNil } from 'lodash';
 import { useSearchParams } from 'react-router-dom';
-import List from '../../guidelines/lists/List';
+import isNil from 'lodash/isNil';
 
 import { FilterType, IFilter } from '../../../common/contest-types';
-import ContestCategories from '../contest-categories/ContestCategories';
-
-import { useContests } from '../../../hooks/use-contests';
 import { groupByType } from '../../../common/filter-utils';
-import { useContestStrategyFilters } from '../../../hooks/use-contest-strategy-filters';
 import { useContestCategories } from '../../../hooks/use-contest-categories';
+import { useContestStrategyFilters } from '../../../hooks/use-contest-strategy-filters';
+import { useContests } from '../../../hooks/use-contests';
+import List from '../../guidelines/lists/List';
+import ContestCategories from '../contest-categories/ContestCategories';
 import ContestFilter from '../contest-filter/ContestFilter';
 
 import styles from './ContestFilters.module.scss';
@@ -53,10 +52,10 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
 
             return (
                 <ContestFilter
-                    values={groupFilters}
-                    type={type}
-                    onSelect={handleFilterClick}
-                    maxDisplayCount={maxFiltersToDisplayCount}
+                  values={groupFilters}
+                  type={type}
+                  onSelect={handleFilterClick}
+                  maxDisplayCount={maxFiltersToDisplayCount}
                 />
             );
         },
@@ -116,14 +115,14 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     return (
         <div className={styles.container}>
             <ContestCategories
-                className={styles.filterTypeContainer}
-                onCategoryClick={onFilterClick}
-                defaultSelected={defaultSelected}
+              className={styles.filterTypeContainer}
+              onCategoryClick={onFilterClick}
+              defaultSelected={defaultSelected}
             />
             <List
-                values={filtersGroups}
-                itemFunc={renderFilter}
-                fullWidth
+              values={filtersGroups}
+              itemFunc={renderFilter}
+              fullWidth
             />
         </div>
     );

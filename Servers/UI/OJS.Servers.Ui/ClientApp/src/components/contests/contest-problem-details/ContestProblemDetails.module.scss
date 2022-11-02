@@ -1,8 +1,8 @@
-@import "src/styles/colors";
+@use 'src/styles/colors';
 
 .problemDetailsContainer {
-  & > * {
-    border-bottom: 1px solid $bottom-border-color;
+  .problemItems {
+    border-bottom: 1px solid colors.$bottom-border-color;
 
     &:last-of-type {
       border-bottom: 0;
