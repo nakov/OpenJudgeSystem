@@ -1,10 +1,11 @@
+/* eslint-disable */
 const path = require('path');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
 const DeadCodePlugin = require('webpack-deadcode-plugin');
 
 const fixHtmlPlugin = (config) => {
-    const [ htmlPlugin, ...rest ] = config.plugins;
+    const [htmlPlugin, ...rest] = config.plugins;
     const filename = path.join(__dirname, '../Views/Home/Index.cshtml');
     const template = path.join(__dirname, '../Views/Home/Index.template.html');
 
@@ -13,11 +14,11 @@ const fixHtmlPlugin = (config) => {
         filename,
         template,
     };
-    
+
     htmlPlugin.userOptions = {
         ...htmlPlugin.userOptions,
         filename,
-        template,        
+        template,
     };
 
     return {
@@ -56,31 +57,21 @@ const smp = new SpeedMeasurePlugin();
 const decorateWebpack = (config, ...funcs) => funcs
     .reduce((c, func) => func(c), config);
 
-
 module.exports = {
     reactScriptsVersion: 'react-scripts',
-    eslint: { enable: false },
-    optimization: { usedExports: true },
+    eslint: {enable: false},
+    optimization: {usedExports: true},
     webpack: {
         configure: (webpackConfig) => decorateWebpack(
             webpackConfig,
             fixHtmlPlugin,
             addMonacoPlugin,
         ),
-        // This should be manually enabled for testing
-        // It breaks the build when it is always enabled
-        // plugins: [
-        //     new DeadCodePlugin({
-        //         patterns: [
-        //             'src/**/*.(ts|tsx|scss)',
-        //         ],
-        //     }),
-        // ],
     },
     devServer: (config) => {
-        const { historyApiFallback } = config;
+        const {historyApiFallback} = config;
 
-        return {    
+        return {
             ...config,
             devMiddleware: {
                 ...config.devMiddleware,
@@ -92,5 +83,4 @@ module.exports = {
             },
         };
     },
-
 };

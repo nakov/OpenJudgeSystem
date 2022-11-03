@@ -1,21 +1,21 @@
-﻿@import "src/styles/fonts";
+@use 'src/styles/fonts';
 
 .Tree {
+  cursor: pointer;
+  font-family: fonts.$font-family-lato-regular, 'Helvetica', 'Arial', sans-serif;
   font-size: 1rem;
-  font-family: $font-family-lato-regular, "Helvetica", "Arial", sans-serif;
   font-weight: 400;
   line-height: 1.5;
-  cursor: pointer;
-}
-
-.treeElement div:nth-child(2):hover {
-  max-width: none;
 }
 
 .treeElement div:nth-child(2) {
-  white-space: nowrap;
+  max-width: 150px;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 150px;
+  white-space: nowrap;
   width: 100%;
+
+  &:hover {
+    max-width: none;
+  }
 }

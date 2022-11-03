@@ -1,21 +1,22 @@
 import React, { createContext, useCallback, useContext, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { IHaveChildrenProps } from '../../components/common/Props';
+
 import { IDictionary, IUrlParam } from '../../common/common-types';
+import { IHaveChildrenProps } from '../../components/common/Props';
 
 interface IUrlParamsContext {
     state: {
         params: IUrlParam[];
     };
     actions: {
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         setParam: (key: string, value: any) => void;
         unsetParam: (key: string) => void;
         clearParams: () => void;
     };
 }
 
-interface IUrlParamsProviderProps extends IHaveChildrenProps {
-}
+type IUrlParamsProviderProps = IHaveChildrenProps
 
 const defaultState = { state: {} };
 
@@ -74,7 +75,7 @@ const UrlParamsProvider = ({ children }: IUrlParamsProviderProps) => {
         },
         [ searchParams, setSearchParams ],
     );
-    
+
     const clearParams = useCallback(
         () => {
             setSearchParams({});
@@ -82,14 +83,17 @@ const UrlParamsProvider = ({ children }: IUrlParamsProviderProps) => {
         [ setSearchParams ],
     );
 
-    const value = {
-        state: { params },
-        actions: {
-            setParam,
-            unsetParam,
-            clearParams,
-        },
-    };
+    const value = useMemo(
+        () => ({
+            state: { params },
+            actions: {
+                setParam,
+                unsetParam,
+                clearParams,
+            },
+        }),
+        [ clearParams, params, setParam, unsetParam ],
+    );
 
     return (
         <UrlParamsContext.Provider value={value}>
@@ -97,7 +101,6 @@ const UrlParamsProvider = ({ children }: IUrlParamsProviderProps) => {
         </UrlParamsContext.Provider>
     );
 };
-
 
 const useUrlParams = () => useContext(UrlParamsContext);
 

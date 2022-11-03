@@ -1,14 +1,16 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { first } from 'lodash';
-import { useLoading } from '../use-loading';
-import { useHttp } from '../use-http';
-import { useCurrentContest } from '../use-current-contest';
-import { useProblems } from '../use-problems';
-import { useProblemSubmissions } from './use-problem-submissions';
-import { useUrls } from '../use-urls';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import first from 'lodash/first';
+
 import { ISubmissionTypeType } from '../../common/types';
-import { ISubmissionType, ITestRunType } from './types';
 import { IHaveChildrenProps } from '../../components/common/Props';
+import { useCurrentContest } from '../use-current-contest';
+import { useHttp } from '../use-http';
+import { useLoading } from '../use-loading';
+import { useProblems } from '../use-problems';
+import { useUrls } from '../use-urls';
+
+import { ISubmissionType, ITestRunType } from './types';
+import { useProblemSubmissions } from './use-problem-submissions';
 
 interface ISubmissionsContext {
     state: {
@@ -16,7 +18,7 @@ interface ISubmissionsContext {
         selectedSubmissionType: ISubmissionTypeType | null;
     };
     actions: {
-        submit: () => Promise<void>
+        submit: () => Promise<void>;
         updateSubmissionCode: (code: string) => void;
         selectSubmissionTypeById: (id: number) => void;
     };
@@ -35,8 +37,7 @@ function hello() {
 
 const SubmissionsContext = createContext<ISubmissionsContext>(defaultState as ISubmissionsContext);
 
-interface ISubmissionsProviderProps extends IHaveChildrenProps {
-}
+type ISubmissionsProviderProps = IHaveChildrenProps
 
 const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const [ selectedSubmissionType, setSelectedSubmissionType ] =
@@ -121,17 +122,20 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         [ loadSubmissions, submitCodeResult ],
     );
 
-    const value = {
-        state: {
-            submissionCode,
-            selectedSubmissionType,
-        },
-        actions: {
-            updateSubmissionCode,
-            selectSubmissionTypeById,
-            submit,
-        },
-    };
+    const value = useMemo(
+        () => ({
+            state: {
+                submissionCode,
+                selectedSubmissionType,
+            },
+            actions: {
+                updateSubmissionCode,
+                selectSubmissionTypeById,
+                submit,
+            },
+        }),
+        [ selectSubmissionTypeById, selectedSubmissionType, submissionCode, submit ],
+    );
 
     return (
         <SubmissionsContext.Provider value={value}>

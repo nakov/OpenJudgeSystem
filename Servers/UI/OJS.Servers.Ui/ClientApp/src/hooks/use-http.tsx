@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-
 import axios, { ResponseType } from 'axios';
 import { saveAs } from 'file-saver';
-import { isFunction } from 'lodash';
-import { HttpStatus } from '../common/common';
-import { IDictionary, IFileResponseType, UrlType } from '../common/common-types';
+import isFunction from 'lodash/isFunction';
 
-const getUrl = (url: UrlType, params: IDictionary<any> | null) => (
+import { HttpStatus } from '../common/common';
+import { Anything, IDictionary, IFileResponseType, UrlType } from '../common/common-types';
+
+const getUrl = (url: UrlType, params: IDictionary<Anything> | null) => (
     isFunction(url)
         ? url(params)
         : url
@@ -19,7 +19,7 @@ const useHttp = (
 ) => {
     // const [ internalUrl, setInternalUrl ] = useState('');
 
-    const [ response, setResponse ] = useState<any>(null);
+    const [ response, setResponse ] = useState<any | null>(null);
     const [ status, setStatus ] = useState<HttpStatus>(HttpStatus.NotStarted);
     const [ error, setError ] = useState<Error | null>(null);
     const [ actualHeaders, setActualHeaders ] = useState<IDictionary<string>>({});
@@ -29,7 +29,7 @@ const useHttp = (
     const filenameStringPattern = 'filename*=UTF-8\'\'';
     const defaultAttachmentFilename = 'attachment';
 
-    const request = useCallback(async (func: () => Promise<any>) => {
+    const request = useCallback(async (func: () => Promise<Anything>) => {
         try {
             setStatus(HttpStatus.Pending);
             setResponse(null);
@@ -39,6 +39,8 @@ const useHttp = (
             setResponse(await resp);
             setError(null);
             setStatus(HttpStatus.Success);
+            // Exceptions must be `any`
+            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         } catch (err: any) {
             switch (err.response.status) {
             case 401:
@@ -71,7 +73,7 @@ const useHttp = (
     );
 
     const post = useCallback(
-        (requestData: any) => request(() => axios.post(
+        (requestData: Anything) => request(() => axios.post(
             getUrl(url, parameters),
             requestData,
             { headers: actualHeaders },
@@ -102,15 +104,15 @@ const useHttp = (
             response.data,
             filename,
         );
-        
+
         setResponse(null);
     }, [ getFilenameFromHeaders, response ]);
 
     useEffect(
         () => {
             setActualHeaders({
-                'content-type': 'application/json',
                 ...headers ?? {},
+                'content-type': 'application/json',
             });
         },
         [ headers ],

@@ -1,12 +1,14 @@
 import React from 'react';
 import { MdOutlineNetworkWifi } from 'react-icons/md';
-import IconSize from './common/icon-sizes';
-import Icon, { IIconProps } from './Icon';
-import styles from './InProgressIcon.module.scss';
+
 import concatClassNames from '../../../utils/class-names';
 
-interface IInProgressIconProps extends IIconProps {
-}
+import IconSize from './common/icon-sizes';
+import Icon, { IIconProps } from './Icon';
+
+import styles from './InProgressIcon.module.scss';
+
+type IInProgressIconProps = IIconProps
 
 const InProgressIcon = ({
     className = '',

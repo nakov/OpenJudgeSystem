@@ -1,16 +1,14 @@
-import * as React from 'react';
+import React, { useCallback, useMemo } from 'react';
 
-import { useCallback } from 'react';
-
-import { Button, ButtonType } from '../../guidelines/buttons/Button';
 import { IProblemResourceType } from '../../../common/types';
-
 import { useProblems } from '../../../hooks/use-problems';
+import concatClassNames from '../../../utils/class-names';
+import { Button, ButtonType } from '../../guidelines/buttons/Button';
 
 import styles from './ProblemResource.module.scss';
 
 interface IProblemResourceProps {
-    resource: IProblemResourceType
+    resource: IProblemResourceType;
 }
 
 // TODO: These should be extracted into `Icons`
@@ -48,16 +46,24 @@ const ProblemResource = ({ resource }: IProblemResourceProps) => {
             </Button>
         )), [ handleDownloadResourceFile, resource ]);
 
-    const resourceTypeIconClassName = resource.type == null
-        ? resourceTypeToIconClassName[1]
-        : resourceTypeToIconClassName[resource.type];
+    const resourceTypeIconClassName = useMemo(
+        () => resource.type == null
+            ? resourceTypeToIconClassName[1]
+            : resourceTypeToIconClassName[resource.type],
+        [ resource.type ],
+    );
+
+    const resourceIconClassName = useMemo(
+        () => concatClassNames(styles.icon, resourceTypeIconClassName),
+        [ resourceTypeIconClassName ],
+    );
 
     const getResourceLinkContent = useCallback(() => (
         <>
-            <i className={`fal ${resourceTypeIconClassName}`} />
+            <i className={resourceIconClassName} />
             {resource.name}
         </>
-    ), [ resource, resourceTypeIconClassName ]);
+    ), [ resource.name, resourceIconClassName ]);
 
     return (
         <div className={styles.resourceWrapper}>
