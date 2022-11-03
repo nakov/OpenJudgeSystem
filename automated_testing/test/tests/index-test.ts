@@ -1,5 +1,6 @@
 import { beforeEach } from 'mocha';
 import { isClassOrTypeElement } from 'typescript';
+import { cleanData, cleanupAppAndDb, prepareAppAndDb, restoreData } from '../app';
 import IndexPage from '../pageobjects/index-page';
 
 describe('Testing index', () => {
@@ -14,12 +15,27 @@ describe('Testing index', () => {
         competeButtonsActiveCarsCheck: (cards, buttons) => cards.length === buttons.length,
     };
 
+    
+    before(async () => {
+        await prepareAppAndDb();
+    });
+    
+    after(async () => {
+        await cleanupAppAndDb();
+    });
+
     beforeEach(async () => {
+        await restoreData();
         await IndexPage.open();
         activeCards = await IndexPage.allCardsForActiveContests;
         pastCards = await IndexPage.allCardsForPastContests;
     });
 
+    afterEach(async () => {
+        await cleanData();
+    });
+
+    
     it('Expect logInButton to exist', async () => {
         const btn = await IndexPage.logInButton;
         await expect(btn).toExist();

@@ -116,6 +116,7 @@ namespace OJS.Services.Common.Implementations
                 {
                     MaxPoints = submission.Problem.MaximumPoints,
                     CheckerType = checkerType,
+                    CheckerParameter = submission.Problem.Checker?.Parameter,
                     Tests = tests,
                     submission.Problem.SolutionSkeleton
                 },

@@ -7,7 +7,10 @@ IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [object_id] = OBJECT_ID(
 GO
 
 INSERT INTO [dbo].[Participants] ([Id], [ContestId], [UserId], [ParticipationStartTime], [ParticipationEndTime], [IsOfficial], [IsInvalidated], [CreatedOn], [ModifiedOn])
-VALUES (1, 1, N'f88a0975-a888-4bac-84f0-bea59472804a', NULL, NULL, 1, 1, CAST(N'2022-09-05T10:25:37+00:00' AS DateTime2), NULL)
+VALUES (1, 1, N'f88a0975-a888-4bac-84f0-bea59472804a', NULL, NULL, 1, 1, CAST(N'2022-09-05T10:25:37+00:00' AS DateTime2), NULL),
+(2, 4, N'f88a0975-a888-4bac-84f0-bea59472804a', NULL, NULL, 1, 0, CAST(N'2022-09-19T19:58:55+00:00' AS DateTime2), NULL),
+(3, 2, N'f88a0975-a888-4bac-84f0-bea59472804a', NULL, NULL, 0, 0, CAST(N'2022-09-20T09:08:38+00:00' AS DateTime2), NULL),
+(4, 4, N'd88a0975-a888-4bac-84f0-bea59472804a', NULL, NULL, 1, 0, CAST(N'2022-09-27T16:31:09+00:00' AS DateTime2), NULL)
 GO
 
 IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [object_id] = OBJECT_ID(N'[dbo].[Participants]'))

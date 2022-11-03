@@ -95,7 +95,7 @@ class IndexPage extends Page {
         return $(selectors.pageAllActiveCardsSelector).$$(selectors.pagePracticeButtonIdSelector);
     }
 
-    public get firstPracticeCardButtoPastContests() {
+    public get firstPracticeCardButtonPastContests() {
         return this.practiceButtonsInActiveContestsCard[0];
     }
 
@@ -129,6 +129,10 @@ class IndexPage extends Page {
 
     public open(): Promise<string> {
         return super.open(this.pageLocation);
+    }
+
+    public get passwordCheckContest() {
+        return this.competeButtonsInActiveContestCard[1];
     }
 }
 

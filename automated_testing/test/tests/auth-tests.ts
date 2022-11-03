@@ -1,5 +1,6 @@
 import IndexPage from '../pageobjects/index-page';
 import AuthPage from '../pageobjects/auth-page';
+import { cleanData, cleanupAppAndDb, prepareAppAndDb, restoreData } from '../app';
 
 describe('Testing AuthPage', () => {
     const validUserCredentials = {
@@ -26,8 +27,17 @@ describe('Testing AuthPage', () => {
     const loginInWithValidCredentials = () => loginWithCredentials(validUserCredentials);
 
     const loginInWithInvalidCredentials = () => loginWithCredentials(invalidUserCredentials);
-
+    
+    before(async () => {
+        await prepareAppAndDb();
+    });
+    
+    after(async () => {
+        await cleanupAppAndDb();
+    });
+    
     beforeEach(async () => {
+        await restoreData();
         try {
             console.log(' --- Trying to logout ---');
             await AuthPage.performLogOut();
@@ -35,6 +45,10 @@ describe('Testing AuthPage', () => {
         } catch (err) {
             console.log(' --- Failed logout ---');
         }
+    });
+
+    afterEach(async () => {
+        await cleanData();
     });
 
     it('Expect successful LogIn', async () => {

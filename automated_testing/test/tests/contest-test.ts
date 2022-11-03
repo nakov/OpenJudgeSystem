@@ -2,6 +2,7 @@ import waitForDisplayed from 'webdriverio/build/commands/element/waitForDisplaye
 import ContestPage from '../pageobjects/contest-page';
 import AuthPage from '../pageobjects/auth-page';
 import IndexPage from '../pageobjects/index-page';
+import { cleanData, cleanupAppAndDb, prepareAppAndDb, restoreData } from '../app';
 
 describe('Testing contest', () => {
     const validUserCredentials = {
@@ -24,12 +25,22 @@ describe('Testing contest', () => {
     };
 
     before(async () => {
+        await prepareAppAndDb();
         await AuthPage.open();
         await loginInWithValidCredentials();
     });
 
     after(async () => {
         await AuthPage.performLogOut();
+        await cleanupAppAndDb();
+    });
+
+    beforeEach(async () => {
+        await restoreData();
+    });
+
+    afterEach(async () => {
+        await cleanData();
     });
 
     describe('Testing compete contest', () => {
@@ -99,6 +110,7 @@ describe('Testing contest', () => {
             await expect(countStrategies).toEqual(1);
         });
 
+        // test must be changed
         it('Expect to have only one active execution type even if there are more choices', async () => {
             await IndexPage.open();
             await IndexPage.secondPracticeCardButtoPastContests.click();
@@ -109,7 +121,7 @@ describe('Testing contest', () => {
             const total = countActiveStrategies + countInActiveStrategies;
             await expect(countInActiveStrategies).toEqual(total - 1);
         });
-
+        // test must be changed
         it('Expect to be able to change the strategy', async () => {
             await IndexPage.open();
             await IndexPage.secondPracticeCardButtoPastContests.click();
@@ -120,7 +132,7 @@ describe('Testing contest', () => {
             const newActiveStrategy = await activeStrategy.getText();
             await expect(inActiveStrategyToBeActive).toEqual(newActiveStrategy);
         });
-
+        // test must be changed
         it('Expect to have no results paragraph if nothing is submitted', async () => {
             await ContestPage.controlsSubmissionTab.click();
             const submissionsNoResultsParagraph = await ContestPage.submissionsResultsNoResultsParagraph;
@@ -232,13 +244,6 @@ describe('Testing contest', () => {
             await expect(inActiveStrategyToBeActive).toEqual(newActiveStrategy);
         });
 
-        it('Expect to have no results paragraph if nothing is submitted', async () => {
-            await ContestPage.controlsSubmissionTab.click();
-            const submissionsNoResultsParagraph = await ContestPage.submissionsResultsNoResultsParagraph;
-            await expect(submissionsNoResultsParagraph).toExist() &&
-            await expect(await submissionsNoResultsParagraph.getText()).toEqual('No results for this problem yet.');
-        });
-
         it('Expect Results button in left navigation to be enabled and clickable', async () => {
             const button = await ContestPage.contestNavigationResultsButton;
             const buttonHref = (await button.getAttribute('href')).toString();
@@ -251,6 +256,59 @@ describe('Testing contest', () => {
             const urlCheck = await browser.getUrl();
             const result = urlCheck.toString();
             await expect(result).toContain('practice');
+        });
+    });
+
+    describe('Testing password protected contest', () => {
+        const validPassword = 'test123';
+
+        const invalidPassword = {
+            emptyStr: '',
+            invalidStr: 'notValid',
+            validPasswordUpperCase: 'TEST123',
+        };
+
+        before(async () => {
+            await ContestPage.openContest;
+        });
+
+        it('Expect successful enrollment with valid password', async () => {
+            await ContestPage.performeContstEnrollement(validPassword);
+            const expectedURL = 'http://localhost:5002/contests/3/compete';
+            const actualURL = await browser.getUrl();
+
+            await expect(expectedURL).toEqual(actualURL);
+        });
+
+        xit('Expect unsuccessful enrollment with invalid string password', async () => {
+            await ContestPage.performeContstEnrollement(invalidPassword.invalidStr);
+            const contestErrorMsg = await ContestPage.contestPasswordErrorMessage;
+
+            await expect(await contestErrorMsg.getText()).toEqual('Incorrect password');
+        });
+
+        xit('Expect unsuccessful enrollment with empty string password', async () => {
+            await ContestPage.performeContstEnrollement(invalidPassword.emptyStr);
+            const contestErrorMsg = await ContestPage.contestPasswordErrorMessage;
+
+            await expect(contestErrorMsg.getText()).toEqual('Incorrect password');
+        });
+
+        xit('Expect unsuccessful enrollment with the valid password but upperCase', async () => {
+            await ContestPage.performeContstEnrollement(invalidPassword.validPasswordUpperCase);
+            const contestErrorMsg = await ContestPage.contestPasswordErrorMessage;
+
+            await expect(contestErrorMsg.getText()).toEqual('Incorrect password');
+        });
+
+        xit('Expect if URL after successful enrollment is opened by another user to redirect to login', async () => {
+            await ContestPage.performeContstEnrollement(validPassword);
+            const expectedURL = 'http://localhost:5002/login';
+            await AuthPage.performLogOut();
+            await ContestPage.openEnrolledContest;
+            const actualURL = await browser.getUrl();
+
+            await expect(expectedURL).toEqual(actualURL);
         });
     });
 });

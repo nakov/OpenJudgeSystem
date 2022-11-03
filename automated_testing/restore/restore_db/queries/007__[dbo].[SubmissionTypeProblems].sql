@@ -10,7 +10,8 @@ INSERT INTO [dbo].[SubmissionTypeProblems] ([SubmissionTypeId], [ProblemId])
 VALUES (1, 1),
 (11, 1),
 (3, 2),
-(4, 2)
+(4, 2),
+(3, 3)
 GO
 
 IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [object_id] = OBJECT_ID(N'[dbo].[SubmissionTypeProblems]'))
