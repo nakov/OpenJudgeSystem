@@ -1,47 +1,44 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import axios, { ResponseType } from 'axios';
 import { saveAs } from 'file-saver';
-import isFunction from 'lodash/isFunction';
 
 import { HttpStatus } from '../common/common';
 import { Anything, IDictionary, IFileResponseType, UrlType } from '../common/common-types';
-
-const getUrl = (url: UrlType, params: IDictionary<Anything> | null) => (
-    isFunction(url)
-        ? url(params)
-        : url
-);
+import { getUrl, makeHttpCall } from '../utils/http-utils';
 
 const useHttp = (
     url: UrlType,
     parameters: IDictionary<any> | null = null,
     headers: IDictionary<string> | null = null,
 ) => {
-    // const [ internalUrl, setInternalUrl ] = useState('');
-
     const [ response, setResponse ] = useState<any | null>(null);
     const [ status, setStatus ] = useState<HttpStatus>(HttpStatus.NotStarted);
     const [ error, setError ] = useState<Error | null>(null);
-    const [ actualHeaders, setActualHeaders ] = useState<IDictionary<string>>({});
     const [ isSuccess, setIsSuccess ] = useState(false);
 
     const contentDispositionHeaderText = 'content-disposition';
     const filenameStringPattern = 'filename*=UTF-8\'\'';
     const defaultAttachmentFilename = 'attachment';
 
-    const request = useCallback(async (func: () => Promise<Anything>) => {
-        try {
+    const handleBeforeCall = useCallback(
+        async () => {
             setStatus(HttpStatus.Pending);
             setResponse(null);
             setError(null);
-            const resp = await func();
+        },
+        [],
+    );
 
-            setResponse(await resp);
+    const handleSuccess = useCallback(
+        async (successResponse: any) => {
+            setResponse(successResponse);
             setError(null);
             setStatus(HttpStatus.Success);
-            // Exceptions must be `any`
-            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-        } catch (err: any) {
+        },
+        [],
+    );
+
+    const handleError = useCallback(
+        async (err: any) => {
             switch (err.response.status) {
             case 401:
                 setStatus(HttpStatus.Unauthorized);
@@ -53,8 +50,9 @@ const useHttp = (
 
             setError(err);
             setResponse(err.response);
-        }
-    }, []);
+        },
+        [],
+    );
 
     const data = useMemo(() => {
         if (response == null || response.data == null) {
@@ -64,21 +62,39 @@ const useHttp = (
         return response.data;
     }, [ response ]);
 
+    const actualHeaders = useMemo(
+        () => ({
+            ...headers ?? {},
+            'Content-Type': 'application/json',
+        }),
+        [ headers ],
+    );
+
     const get = useCallback(
-        (responseType = 'json') => request(() => axios.get(
-            getUrl(url, parameters),
-            { responseType: responseType as ResponseType, headers: actualHeaders },
-        )),
-        [ request, url, parameters, actualHeaders ],
+        (responseType = 'json') => makeHttpCall({
+            url: getUrl(url, parameters),
+            method: 'get',
+            headers: actualHeaders,
+            responseType,
+            onSuccess: handleSuccess,
+            onError: handleError,
+            onBeforeCall: handleBeforeCall,
+        }),
+        [ url, parameters, actualHeaders, handleSuccess, handleError, handleBeforeCall ],
     );
 
     const post = useCallback(
-        (requestData: Anything) => request(() => axios.post(
-            getUrl(url, parameters),
-            requestData,
-            { headers: actualHeaders },
-        )),
-        [ request, url, parameters, actualHeaders ],
+        (requestData: Anything, responseType = 'json') => makeHttpCall({
+            url: getUrl(url, parameters),
+            method: 'post',
+            body: requestData,
+            headers: actualHeaders,
+            responseType,
+            onSuccess: handleSuccess,
+            onError: handleError,
+            onBeforeCall: handleBeforeCall,
+        }),
+        [ url, parameters, actualHeaders, handleSuccess, handleError, handleBeforeCall ],
     );
 
     const getFilenameFromHeaders = useCallback((responseObj: IFileResponseType) => {
@@ -107,16 +123,6 @@ const useHttp = (
 
         setResponse(null);
     }, [ getFilenameFromHeaders, response ]);
-
-    useEffect(
-        () => {
-            setActualHeaders({
-                ...headers ?? {},
-                'content-type': 'application/json',
-            });
-        },
-        [ headers ],
-    );
 
     useEffect(
         () => {
