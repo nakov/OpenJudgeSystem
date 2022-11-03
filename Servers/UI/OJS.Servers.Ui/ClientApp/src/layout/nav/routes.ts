@@ -1,11 +1,12 @@
 import { FC } from 'react';
-import HomePage from '../../pages/home/HomePage';
+
 import ILooseObject from '../../components/common/LooseObject';
+import HomePage from '../../pages/home/HomePage';
 import LoginPage from '../../pages/login/LoginPage';
 
 type RouteType = {
-    path: string,
-    component: FC,
+    path: string;
+    component: FC;
 };
 
 const routes: RouteType[] = [

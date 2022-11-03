@@ -1,51 +1,85 @@
-@import "src/styles/colors";
-@import "src/styles/fonts";
-@import "src/styles/variables";
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
+@use 'src/styles/variables';
 
 .contestCard {
   @extend %font-family-lato;
+
+  align-content: center;
+  border-radius: 8px;
+  box-shadow: colors.$box-shadow-color;
   display: grid;
   flex-flow: wrap;
-  grid-template-rows: auto 1fr auto;
-  align-content: center;
   grid-gap: 10px;
-  min-height: 10vh;
+  grid-template-rows: auto 1fr auto;
   margin: 10px;
+  min-height: 10vh;
   padding: 0.7vw;
-  box-shadow: $box-shadow-color;
-  border-radius: 8px;
+}
+
+.tooltip {
+  max-width: 245px;
+  position: absolute;
+  visibility: hidden;
+  width: 100%;
+
+  .tooltipText {
+    bottom: 100%;
+    font-size: 15px;
+    overflow: hidden;
+    padding: 5px 0;
+    position: absolute;
+    text-align: left;
+    white-space: nowrap;
+  }
 }
 
 .contestCardHeader {
+  @extend %font-family-lato;
+
+  border-bottom: 1px solid;
+  border-bottom-color: colors.$bottom-border-color;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  @extend %font-family-lato;
+  font-size: variables.$f-size-18;
   font-weight: 500;
-  font-size: $f-size-18;
-  min-height: 4vh;
+  justify-content: space-between;
   margin: 10px;
-  border-bottom: 1px solid;
-  border-bottom-color: $bottom-border-color;
+  min-height: 4vh;
+
+  &:hover {
+    .tooltip {
+      visibility: visible;
+    }
+  }
 }
 
 .contestCardControls {
-  display: flex;
   align-items: flex-end;
+  display: flex;
   grid-gap: 10px;
 }
 
 .contestCardCountdown {
-  padding: 10px;
-  font-size: $f-size-12;
+  color: colors.$text-dark-gray-color;
+  font-size: variables.$f-size-12;
   font-weight: bold;
-  color: $text-dark-gray-color;
+  padding: 10px;
 }
 
 .contestCardCategoryLabel {
-  margin-left: 10px;
-  font-size: $f-size-10;
-  text-transform: uppercase;
+  color: colors.$text-light-gray-color;
+  font-size: variables.$f-size-10;
   font-weight: bold;
-  color: $text-light-gray-color;
+  margin-left: 10px;
+  text-transform: uppercase;
+}
+
+.contestCardTitle {
+  display: block;
+  max-width: 225px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
 }

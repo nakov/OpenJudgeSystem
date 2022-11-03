@@ -1,29 +1,30 @@
-@import "src/styles/components";
-@import "src/styles/colors";
-@import "src/styles/fonts";
+@use 'src/styles/components.scss';
+@use 'src/styles/colors.scss';
+@use 'src/styles/fonts.scss';
 
 .btn {
-  font-weight: 700;
   @extend %font-family-lato;
+
+  border: 2px solid transparent;
   border-radius: 8px;
-  padding: 10px 16px;
+  color: colors.$white-color;
+  cursor: pointer;
+  font-weight: 700;
   margin: 0;
   outline: none;
-  cursor: pointer;
-  text-decoration: none;
+  padding: 10px 16px;
   text-align: center;
+  text-decoration: none;
   text-transform: uppercase;
-  border: 2px solid transparent;
   transition: all 0.28s ease-in-out;
-  color: $white-color;
 
   &:hover {
     cursor: pointer;
   }
 
   &.primary {
+    background-color: colors.$background-color-btn-primary;
     box-shadow: 0 4px 5px 0 rgb(0 0 0 / 14%), 0 1px 10px 0 rgb(0 0 0 / 12%), 0 2px 4px -1px rgb(0 0 0 / 20%);
-    background-color: $background-color-btn-primary;
 
     &:hover {
       box-shadow: 6px 8px 15px 1px rgb(27 139 249 / 20%);
@@ -31,38 +32,38 @@
   }
 
   &.secondary {
-    color: $color-btn-secondary;
+    background-color: colors.$background-color-btn-secondary;
+    border-color: colors.$light-blue-color;
     box-shadow: none;
-    background-color: $background-color-btn-secondary;
-    border-color: $light-blue-color;
+    color: colors.$color-btn-secondary;
 
     &:hover {
-      background-color: $background-color-btn-secondary-hover;
+      background-color: colors.$background-color-btn-secondary-hover;
       box-shadow: none;
     }
   }
 
   &.plain {
     background: none;
-    border: none;
-    font: inherit;
+    border: 0;
     cursor: pointer;
+    font: inherit;
+    margin: 0;
     outline: inherit;
     padding: 0;
-    margin: 0;
     text-transform: none;
   }
 
   &.disabled {
-    color: $color-btn-disabled;
+    background-color: colors.$background-color-btn-secondary;
+    border-color: colors.$color-btn-disabled;
     box-shadow: none;
-    background-color: $background-color-btn-secondary;
-    border-color: $color-btn-disabled;
+    color: colors.$color-btn-disabled;
     pointer-events: none;
 
     &:hover {
-      cursor: not-allowed;
       box-shadow: none;
+      cursor: not-allowed;
     }
   }
 
@@ -80,10 +81,11 @@
 
   &.none {
     @extend %font-family-lato;
-    color: $text-dark-gray-color;
+
+    color: colors.$text-dark-gray-color;
 
     &:hover {
-      color: $background-color-btn-primary;
+      color: colors.$background-color-btn-primary;
     }
   }
 

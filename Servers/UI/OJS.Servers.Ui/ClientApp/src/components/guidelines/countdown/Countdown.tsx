@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+
 import { convertToTwoDigitValues, secondsToFullTime } from '../../../utils/dates';
 
 enum Metric {
@@ -28,19 +28,17 @@ const defaultRender = (remainingTime: ICountdownRemainingType) => {
     const { hours, minutes, seconds } = convertToTwoDigitValues(remainingTime);
 
     return (
-        <>
-            <p>
-                Remaining time:
-                {' '}
-                <span>
-                    {hours}
-                    :
-                    {minutes}
-                    :
-                    {seconds}
-                </span>
-            </p>
-        </>
+        <p>
+            Remaining time:
+            {' '}
+            <span>
+                {hours}
+                :
+                {minutes}
+                :
+                {seconds}
+            </span>
+        </p>
     );
 };
 
@@ -48,7 +46,8 @@ const Countdown = ({
     duration,
     metric,
     renderRemainingTime = defaultRender,
-    handleOnCountdownEnd = () => {}, handleOnCountdownChange = () => {},
+    handleOnCountdownEnd = () => null,
+    handleOnCountdownChange = () => null,
 }: ICountdownProps) => {
     const metricsToSecondsDelta = useMemo(() => ({
         [Metric.seconds]: 1,
@@ -72,7 +71,7 @@ const Countdown = ({
         if (remainingInSeconds < 0) {
             handleOnCountdownEnd();
 
-            return () => {};
+            return () => null;
         }
 
         const timer = setTimeout(decreaseRemainingTime, 1000);

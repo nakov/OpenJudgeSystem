@@ -1,0 +1,9 @@
+@use 'src/styles/colors';
+
+.submissionRow {
+  border-bottom: 1px solid colors.$bottom-border-color;
+
+  &:last-of-type {
+    border-bottom: 0;
+  }
+}

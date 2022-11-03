@@ -1,16 +1,16 @@
-import * as React from 'react';
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Store } from 'react-notifications-component';
-import { INotificationType } from '../common/common-types';
-import 'react-notifications-component/dist/theme.css';
 
+import { INotificationType } from '../common/common-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
+import 'react-notifications-component/dist/theme.css';
+
 interface INotificationsContext {
-    notification: INotificationType,
-    showNotification: boolean,
-    showError(notificationObj: INotificationType): void
-    showWarning(notificationObj: INotificationType): void
+    notification: INotificationType;
+    showNotification: boolean;
+    showError(notificationObj: INotificationType): void;
+    showWarning(notificationObj: INotificationType): void;
 }
 
 const defaultState = {
@@ -23,7 +23,7 @@ const defaultState = {
     showNotification: false,
 };
 
-interface INotificationsProviderProps extends IHaveChildrenProps {}
+type INotificationsProviderProps = IHaveChildrenProps
 
 const NotificationsContext = createContext<INotificationsContext>(defaultState as INotificationsContext);
 
@@ -79,7 +79,10 @@ const NotificationsProvider = ({ children }: INotificationsProviderProps) => {
         }
     }, [ notification, showNotification ]);
 
-    const value = { notification, showNotification, showError, showWarning };
+    const value = useMemo(
+        () => ({ notification, showNotification, showError, showWarning }),
+        [ notification, showError, showNotification, showWarning ],
+    );
 
     return (
         <NotificationsContext.Provider value={value}>

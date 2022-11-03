@@ -1,33 +1,34 @@
 import React, { useMemo } from 'react';
-
 import { BrowserRouter as Router } from 'react-router-dom';
-import AuthProvider from './hooks/use-auth';
-import PageHeader from './layout/header/PageHeader';
-import PageContent from './layout/content/PageContent';
-import PageFooter from './layout/footer/PageFooter';
-import LoadingProvider from './hooks/use-loading';
-import ServicesProvider from './hooks/use-services';
-import NotificationsProvider from './hooks/use-notifications';
-import HomeContestsProvider from './hooks/use-home-contests';
-import UsersProvider from './hooks/use-users';
+
+import InitProviders, { ProviderType } from './components/common/InitProviders';
+import UrlParamsProvider from './hooks/common/use-url-params';
+import CurrentContestResultsProvider from './hooks/contests/use-current-contest-results';
+import ProblemSubmissionsProvider from './hooks/submissions/use-problem-submissions';
+import PublicSubmissionsProvider from './hooks/submissions/use-public-submissions';
 import SubmissionsProvider from './hooks/submissions/use-submissions';
 import SubmissionsDetailsProvider from './hooks/submissions/use-submissions-details';
+import AuthProvider from './hooks/use-auth';
+import ContestCategoriesProvider from './hooks/use-contest-categories';
+import CategoriesBreadcrumbProvider from './hooks/use-contest-categories-breadcrumb';
+import ContestStrategyFiltersProvider from './hooks/use-contest-strategy-filters';
+import ContestsProvider from './hooks/use-contests';
+import CurrentContestsProvider from './hooks/use-current-contest';
+import HomeContestsProvider from './hooks/use-home-contests';
+import HomeStatisticsProvider from './hooks/use-home-statistics';
+import LoadingProvider from './hooks/use-loading';
+import NotificationsProvider from './hooks/use-notifications';
 import ParticipationsProvider from './hooks/use-participations';
+import ProblemsProvider from './hooks/use-problems';
+import ServicesProvider from './hooks/use-services';
+import UrlsProvider from './hooks/use-urls';
+import UsersProvider from './hooks/use-users';
+import PageContent from './layout/content/PageContent';
+import PageFooter from './layout/footer/PageFooter';
+import PageHeader from './layout/header/PageHeader';
+import UserCookiesService from './services/user-cookies-service';
 
 import './styles/global.scss';
-import UrlsProvider from './hooks/use-urls';
-import CurrentContestsProvider from './hooks/use-current-contest';
-import ProblemsProvider from './hooks/use-problems';
-import ProblemSubmissionsProvider from './hooks/submissions/use-problem-submissions';
-import ContestsProvider from './hooks/use-contests';
-import ContestCategoriesProvider from './hooks/use-contest-categories';
-import CurrentContestResultsProvider from './hooks/contests/use-current-contest-results';
-import ContestStrategyFiltersProvider from './hooks/use-contest-strategy-filters';
-import UserCookiesService from './services/user-cookies-service';
-import InitProviders, { ProviderType } from './components/common/InitProviders';
-import HomeStatisticsProvider from './hooks/use-home-statistics';
-import UrlParamsProvider from './hooks/common/use-url-params';
-import CategoriesBreadcrumbProvider from './hooks/use-contest-categories-breadcrumb';
 
 const App = () => {
     const userCookiesService = useMemo(
@@ -56,6 +57,7 @@ const App = () => {
         SubmissionsDetailsProvider,
         HomeStatisticsProvider,
         CategoriesBreadcrumbProvider,
+        PublicSubmissionsProvider,
     ] as ProviderType[];
 
     return (

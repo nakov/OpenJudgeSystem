@@ -1,11 +1,10 @@
 /* eslint-disable */
-import * as React from 'react';
+import React from 'react';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSubmissions } from '../../../hooks/submissions/use-submissions';
 import { formatDate } from '../../../utils/dates';
-import ExecutionResult from '../../submissions/execution-result/ExecutionResult';
 import styles from './ProfileSubmissions.module.scss';
 
 // const columns: GridColDef[] = [

@@ -1,16 +1,16 @@
-import * as React from 'react';
-import { useCallback } from 'react';
-import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
-import { convertToSecondsRemaining } from '../../../utils/dates';
+import React, { useCallback } from 'react';
+
 import { IIndexContestsType } from '../../../common/types';
 import concatClassNames from '../../../utils/class-names';
-
+import { convertToSecondsRemaining } from '../../../utils/dates';
 import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
 import LockIcon from '../../guidelines/icons/LockIcon';
+
 import styles from './ContestCard.module.scss';
 
 interface IContestCardProps {
-    contest: IIndexContestsType
+    contest: IIndexContestsType;
 }
 
 const ContestCard = ({ contest }: IContestCardProps) => {
@@ -58,7 +58,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const renderContestLockIcon = useCallback(
         () => {
             const { hasContestPassword, hasPracticePassword } = contest;
-            
+
             return (canBeCompeted && hasContestPassword) || (canBePracticed && hasPracticePassword)
                 ? <LockIcon />
                 : null;
@@ -69,7 +69,10 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     return (
         <div className={contestCardClassName}>
             <div className={contestCardHeaderClassName}>
-                <span>{name}</span>
+                <div className={styles.tooltip}>
+                    <span className={styles.tooltipText}>{name}</span>
+                </div>
+                <span className={styles.contestCardTitle}>{name}</span>
                 { renderContestLockIcon() }
             </div>
             <div className={contestCardCategoryClassName}>{category}</div>

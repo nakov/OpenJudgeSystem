@@ -1,21 +1,24 @@
+/* eslint-disable */
 const path = require('path');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
+const DeadCodePlugin = require('webpack-deadcode-plugin');
 
 const fixHtmlPlugin = (config) => {
-    const [ htmlPlugin, ...rest ] = config.plugins;
+    const [htmlPlugin, ...rest] = config.plugins;
     const filename = path.join(__dirname, '../Views/Home/Index.cshtml');
     const template = path.join(__dirname, '../Views/Home/Index.template.html');
+
     htmlPlugin.options = {
         ...htmlPlugin.options,
         filename,
         template,
     };
-    
+
     htmlPlugin.userOptions = {
         ...htmlPlugin.userOptions,
         filename,
-        template,        
+        template,
     };
 
     return {
@@ -54,10 +57,10 @@ const smp = new SpeedMeasurePlugin();
 const decorateWebpack = (config, ...funcs) => funcs
     .reduce((c, func) => func(c), config);
 
-
 module.exports = {
     reactScriptsVersion: 'react-scripts',
-    eslint: { enable: false },
+    eslint: {enable: false},
+    optimization: {usedExports: true},
     webpack: {
         configure: (webpackConfig) => decorateWebpack(
             webpackConfig,
@@ -66,7 +69,7 @@ module.exports = {
         ),
     },
     devServer: (config) => {
-        const { historyApiFallback } = config;
+        const {historyApiFallback} = config;
 
         return {
             ...config,
@@ -80,5 +83,4 @@ module.exports = {
             },
         };
     },
-
 };

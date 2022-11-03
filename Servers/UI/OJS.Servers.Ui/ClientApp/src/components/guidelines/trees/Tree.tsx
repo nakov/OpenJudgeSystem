@@ -1,76 +1,61 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { TreeItem, TreeView } from '@material-ui/lab';
-import { MdChevronRight, MdExpandMore } from 'react-icons/md';
-import { isArray, isEmpty } from 'lodash';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import TreeItem from '@material-ui/lab/TreeItem';
+import TreeView from '@material-ui/lab/TreeView';
+import isArray from 'lodash/isArray';
+import isEmpty from 'lodash/isEmpty';
+import isNil from 'lodash/isNil';
+import without from 'lodash/without';
 
-interface ITreeItemType {
-    id: string,
-    name: string,
-    parentId?: string,
-    children?: ITreeItemType[],
-}
+import ITreeItemType from '../../../common/tree-types';
+import ExpandMoreIcon from '../icons/ExpandMoreIcon';
+import RightArrowIcon from '../icons/RightArrowIcon';
+
+import styles from './Tree.module.scss';
 
 interface ITreeProps {
     items: ITreeItemType[];
-    onTreeLabelClick: (node: ITreeItemType) => void;
+    onSelect: (node: ITreeItemType) => void;
     defaultSelected?: string;
     defaultExpanded?: string[];
+    itemFunc?: (item: ITreeItemType) => React.ReactElement;
+    treeItemHasTooltip?: boolean;
 }
 
 const Tree = ({
     items,
-    onTreeLabelClick,
-    defaultSelected,
+    onSelect,
+    defaultSelected = '',
     defaultExpanded = [],
-} : ITreeProps) => {
-    const [ expanded, setExpanded ] = useState([] as string[]);
-    const [ selected, setSelected ] = useState('');
+    itemFunc,
+    treeItemHasTooltip = false,
+}: ITreeProps) => {
+    const [ expandedIds, setExpandedIds ] = useState([] as string[]);
+    const [ selectedId, setSelectedId ] = useState('');
 
     const handleTreeItemClick = useCallback(
         (node: ITreeItemType) => {
             const id = node.id.toString();
-            let newExpanded = Array.from(expanded);
+            const newExpanded = expandedIds.includes(id)
+                ? without(expandedIds, id)
+                : [ ...expandedIds, id ];
 
-            if (expanded.includes(id)) {
-                newExpanded = newExpanded.filter((e) => e !== id);
-            } else {
-                newExpanded.push(id);
-            }
-
-            setExpanded(newExpanded);
+            setExpandedIds(newExpanded);
         },
-        [ expanded, setExpanded ],
+        [ expandedIds, setExpandedIds ],
     );
 
     const handleLabelClick = useCallback(
         (node: ITreeItemType) => {
-            setSelected(node.id.toString());
+            setSelectedId(node.id.toString());
 
-            onTreeLabelClick(node);
+            onSelect(node);
         },
-        [ onTreeLabelClick ],
+        [ onSelect ],
     );
 
-    useEffect(
-        () => {
-            if (isEmpty(selected) && defaultSelected) {
-                setSelected(defaultSelected);
-            }
-        },
-        [ defaultSelected, selected ],
-    );
-
-    useEffect(
-        () => {
-            if (isEmpty(expanded) && !isEmpty(defaultExpanded)) {
-                setExpanded(defaultExpanded);
-            }
-        },
-        [ defaultExpanded, expanded ],
-    );
-
-    const renderTree = useCallback((node: ITreeItemType) => (
+    const renderTreeItem = useCallback((node: ITreeItemType) => (
         <TreeItem
+          className={styles.treeElement}
           key={node.id}
           nodeId={node.id.toString()}
           label={node.name}
@@ -78,20 +63,62 @@ const Tree = ({
           onLabelClick={() => handleLabelClick(node)}
         >
             {isArray(node.children)
-                ? node.children.map((child) => renderTree(child))
+                ? node.children.map((child) => treeItemHasTooltip
+                    ? (
+                        <div className={styles.Tree} key={child.id}>
+                            {renderTreeItem(child)}
+                        </div>
+                    )
+                    : renderTreeItem(child))
                 : null}
         </TreeItem>
-    ), [ handleLabelClick, handleTreeItemClick ]);
+    ), [ handleLabelClick, handleTreeItemClick, treeItemHasTooltip ]);
 
-    const renderTreeView = (treeItems: ITreeItemType[]) => treeItems.map((c) => renderTree(c));
+    const defaultItemFunc = useCallback(
+        (node: ITreeItemType) => treeItemHasTooltip
+            ? (
+                <div className={styles.Tree} key={node.id}>
+                    {renderTreeItem(node)}
+                </div>
+            )
+            : renderTreeItem(node),
+        [ renderTreeItem, treeItemHasTooltip ],
+    );
+
+    const itemFuncInternal = useMemo(
+        () => isNil(itemFunc)
+            ? defaultItemFunc
+            : itemFunc,
+        [ defaultItemFunc, itemFunc ],
+    );
+
+    useEffect(
+        () => {
+            if (isEmpty(selectedId) && defaultSelected) {
+                setSelectedId(defaultSelected);
+            }
+        },
+        [ defaultSelected, selectedId ],
+    );
+
+    useEffect(
+        () => {
+            if (isEmpty(expandedIds) && !isEmpty(defaultExpanded)) {
+                setExpandedIds(defaultExpanded);
+            }
+        },
+        [ defaultExpanded, expandedIds ],
+    );
+
+    const renderTreeView = (treeItems: ITreeItemType[]) => treeItems.map((c) => itemFuncInternal(c));
 
     return (
         <TreeView
           aria-label="rich object"
-          defaultCollapseIcon={<MdExpandMore />}
-          defaultExpandIcon={<MdChevronRight />}
-          selected={selected}
-          expanded={expanded}
+          defaultCollapseIcon={<ExpandMoreIcon />}
+          defaultExpandIcon={<RightArrowIcon />}
+          selected={selectedId}
+          expanded={expandedIds}
         >
             {renderTreeView(items)}
         </TreeView>
@@ -101,5 +128,5 @@ const Tree = ({
 export default Tree;
 
 export type {
-    ITreeItemType,
+    ITreeProps,
 };

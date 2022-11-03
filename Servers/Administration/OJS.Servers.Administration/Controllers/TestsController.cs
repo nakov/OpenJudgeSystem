@@ -134,7 +134,9 @@ public class TestsController : BaseAutoCrudAdminController<Test>
 
         int addedTestsCount;
 
-        using (var scope = TransactionsHelper.CreateTransactionScope(IsolationLevel.RepeatableRead))
+        using (var scope = TransactionsHelper.CreateTransactionScope(
+                   IsolationLevel.RepeatableRead,
+                   TransactionScopeAsyncFlowOption.Enabled))
         {
             this.submissionsData.RemoveTestRunsCacheByProblem(problemId);
 
@@ -147,6 +149,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             addedTestsCount = this.zippedTestsParser.AddTestsToProblem(problem!, parsedTests);
 
             this.problemsData.Update(problem!);
+            await this.problemsData.SaveChanges();
 
             if (model.RetestProblem)
             {

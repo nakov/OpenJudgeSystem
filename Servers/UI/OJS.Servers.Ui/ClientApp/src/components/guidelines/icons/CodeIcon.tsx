@@ -1,10 +1,10 @@
 import React from 'react';
 import { FaCode } from 'react-icons/fa';
+
 import IconSize from './common/icon-sizes';
 import Icon, { IIconProps } from './Icon';
 
-interface ICodeIconProps extends IIconProps {
-}
+type ICodeIconProps = IIconProps
 
 const CodeIcon = ({
     className = '',

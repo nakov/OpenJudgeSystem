@@ -1,16 +1,14 @@
-import { ITreeItemType } from '../components/guidelines/trees/Tree';
-
 interface ISubmissionTypeType {
-    id: number,
-    name: string,
-    isSelectedByDefault: boolean,
+    id: number;
+    name: string;
+    isSelectedByDefault: boolean;
 }
 
 interface IProblemResourceType {
-    id: number,
-    name: string,
-    link: string,
-    type: number,
+    id: number;
+    name: string;
+    link: string;
+    type: number;
 }
 
 interface IProblemType {
@@ -30,53 +28,49 @@ interface IProblemType {
 }
 
 interface IContestType {
-    id: number,
-    name: string,
-    categoryId: number,
-    categoryName: string,
-    startTime: Date,
-    endTime: Date,
-    practiceStartTime: Date,
-    practiceEndTime: Date,
-    limitBetweenSubmissions: number,
-    isDeleted: boolean,
-    isVisible: boolean,
-    isOnline: boolean,
-    allowedSubmissionTypes: ISubmissionTypeType[],
-    problems: IProblemType[],
-    canBeCompeted: boolean,
-    canBePracticed: boolean,
-    resultsArePubliclyVisible: boolean,
-    hasContestPassword: boolean,
-    hasPracticePassword: boolean,
-    remainingTimeInMilliseconds: number,
-    userIsAdminOrLecturerInContest: boolean,
-    userCanCompete: boolean,
-    userIsParticipant: false,
-    isActive: boolean,
+    id: number;
+    name: string;
+    categoryId: number;
+    categoryName: string;
+    startTime: Date;
+    endTime: Date;
+    practiceStartTime: Date;
+    practiceEndTime: Date;
+    limitBetweenSubmissions: number;
+    isDeleted: boolean;
+    isVisible: boolean;
+    isOnline: boolean;
+    allowedSubmissionTypes: ISubmissionTypeType[];
+    problems: IProblemType[];
+    canBeCompeted: boolean;
+    canBePracticed: boolean;
+    resultsArePubliclyVisible: boolean;
+    hasContestPassword: boolean;
+    hasPracticePassword: boolean;
+    remainingTimeInMilliseconds: number;
+    userIsAdminOrLecturerInContest: boolean;
+    userCanCompete: boolean;
+    userIsParticipant: false;
+    isActive: boolean;
 }
 
 interface IIndexContestsType {
-    id: number,
-    name: string,
-    startTime: Date,
-    endTime: Date,
-    practiceStartTime: Date,
-    practiceEndTime: Date,
-    canBePracticed: boolean,
-    canBeCompeted: boolean,
-    hasContestPassword: boolean,
-    hasPracticePassword: boolean,
-    category: string
-}
-
-interface IContestCategoryTreeType extends ITreeItemType {
-    nameUrl: string,
+    id: number;
+    name: string;
+    startTime: Date;
+    endTime: Date;
+    practiceStartTime: Date;
+    practiceEndTime: Date;
+    canBePracticed: boolean;
+    canBeCompeted: boolean;
+    hasContestPassword: boolean;
+    hasPracticePassword: boolean;
+    category: string;
 }
 
 interface IGetContestsForIndexResponseType {
-    activeContests: IIndexContestsType[]
-    pastContests: IIndexContestsType[]
+    activeContests: IIndexContestsType[];
+    pastContests: IIndexContestsType[];
 }
 
 interface IRegisterForContestResponseType {
@@ -88,8 +82,8 @@ interface IRegisterForContestResponseType {
 interface IStartParticipationResponseType {
     contest: IContestType;
     contestIsCompete: boolean;
-    lastSubmissionTime: Date,
-    remainingTimeInMilliseconds: number
+    lastSubmissionTime: Date;
+    remainingTimeInMilliseconds: number;
 }
 
 interface IPagedResultType<TItem> {
@@ -107,7 +101,7 @@ interface IUserType {
 }
 
 interface IUserPermissionsType {
-    canAccessAdministration: boolean,
+    canAccessAdministration: boolean;
 }
 
 // eslint-disable-next-line import/prefer-default-export
@@ -120,7 +114,6 @@ export type {
     IProblemType,
     IProblemResourceType,
     ISubmissionTypeType,
-    IContestCategoryTreeType,
     IPagedResultType,
     IUserType,
     IUserPermissionsType,

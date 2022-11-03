@@ -1,8 +1,11 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { first, isNil } from 'lodash';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import first from 'lodash/first';
+import isNil from 'lodash/isNil';
+
+import { UrlType } from '../common/common-types';
 import { IProblemType } from '../common/types';
-import { IFileResponseType, UrlType } from '../common/common-types';
 import { IHaveChildrenProps } from '../components/common/Props';
+
 import { useCurrentContest } from './use-current-contest';
 import { useHttp } from './use-http';
 import { useLoading } from './use-loading';
@@ -19,8 +22,7 @@ interface IProblemsContext {
     };
 }
 
-interface IProblemsProviderProps extends IHaveChildrenProps {
-}
+type IProblemsProviderProps = IHaveChildrenProps
 
 const defaultState = {
     state: {
@@ -86,12 +88,11 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     }, []);
 
     useEffect(() => {
-        if (isNil(downloadProblemResourceResponse) && isNil(problemResourceIdToDownload)) {
+        if (isNil(downloadProblemResourceResponse)) {
             return;
         }
 
-        saveAttachment(downloadProblemResourceResponse as IFileResponseType);
-        setProblemResourceIdToDownload(null);
+        saveAttachment();
     }, [ downloadProblemResourceResponse, problemResourceIdToDownload, saveAttachment ]);
 
     useEffect(() => {
@@ -104,6 +105,8 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
             await downloadProblemResource('blob');
             stopLoading();
         })();
+
+        setProblemResourceIdToDownload(null);
     }, [ downloadProblemResource, problemResourceIdToDownload, startLoading, stopLoading ]);
 
     useEffect(
@@ -113,16 +116,19 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         [ reloadProblems ],
     );
 
-    const value = {
-        state: {
-            problems,
-            currentProblem,
-        },
-        actions: {
-            selectProblemById,
-            downloadProblemResourceFile,
-        },
-    };
+    const value = useMemo(
+        () => ({
+            state: {
+                problems,
+                currentProblem,
+            },
+            actions: {
+                selectProblemById,
+                downloadProblemResourceFile,
+            },
+        }),
+        [ currentProblem, downloadProblemResourceFile, problems, selectProblemById ],
+    );
 
     return (
         <ProblemsContext.Provider value={value}>

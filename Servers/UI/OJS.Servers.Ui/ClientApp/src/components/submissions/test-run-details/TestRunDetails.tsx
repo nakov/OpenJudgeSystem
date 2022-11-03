@@ -1,23 +1,27 @@
-import * as React from 'react';
-import { useCallback, useMemo, useState } from 'react';
-import { isNil } from 'lodash';
-import Heading, { HeadingType } from '../../guidelines/headings/Heading';
+import React, { useCallback, useMemo, useState } from 'react';
+import isNil from 'lodash/isNil';
+
+import { SubmissionResultType } from '../../../common/constants';
 import { ITestRunDetailsType } from '../../../hooks/submissions/types';
-import IconSize from '../../guidelines/icons/common/icon-sizes';
 import { useAuth } from '../../../hooks/use-auth';
 import concatClassNames from '../../../utils/class-names';
-import TimeLimitIcon from '../../guidelines/icons/TimeLimitIcon';
-import MemoryIcon from '../../guidelines/icons/MemoryIcon';
-import Collapsible from '../../guidelines/collapsible/Collapsible';
-import TestRunDiffView from '../test-run-diff-view/TestRunDiffView';
+import { splitByCapitalLetter, toLowerCase } from '../../../utils/string-utils';
 import ExpandButton from '../../guidelines/buttons/ExpandButton';
+import Collapsible from '../../guidelines/collapsible/Collapsible';
+import Heading, { HeadingType } from '../../guidelines/headings/Heading';
+import IconSize from '../../guidelines/icons/common/icon-sizes';
+import MemoryIcon from '../../guidelines/icons/MemoryIcon';
+import TimeLimitIcon from '../../guidelines/icons/TimeLimitIcon';
+import Label, { LabelType } from '../../guidelines/labels/Label';
+import TestRunDiffView from '../test-run-diff-view/TestRunDiffView';
+
 import styles from './TestRunDetails.module.scss';
 
 interface ITestRunDetailsProps {
     testRun: ITestRunDetailsType;
 }
 
-const getResultIsWrongAnswerResultType = (run: ITestRunDetailsType) => run.resultType.toLowerCase() !== 'correctanswer';
+const getResultIsWrongAnswerResultType = (run: ITestRunDetailsType) => toLowerCase(run.resultType) !== SubmissionResultType.CorrectAnswer;
 
 const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
     const { state: { user } } = useAuth();
@@ -52,7 +56,27 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         return testRunText;
     }, [ testRun ]);
 
-    const renderTimeAndMemoryUsed = useCallback(() => (
+    const renderResultTypeLabel = useCallback(
+        () => {
+            const result = toLowerCase(testRun.resultType);
+            const type = result === SubmissionResultType.CorrectAnswer
+                ? LabelType.success
+                : result === SubmissionResultType.WrongAnswer
+                    ? LabelType.danger
+                    : LabelType.warning;
+
+            const resultSplit = splitByCapitalLetter(testRun.resultType);
+
+            return (
+                <Label type={type}>
+                    {resultSplit}
+                </Label>
+            );
+        },
+        [ testRun ],
+    );
+
+    const renderTestRunData = useCallback(() => (
         <span className={styles.testRunData}>
             <span className={styles.testRunDataParagraph}>
                 <TimeLimitIcon
@@ -69,11 +93,13 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
                 />
                 <span>
                     {testRun.memoryUsed}
-                    MB
                 </span>
             </span>
+            <span className={styles.testRunDataParagraph}>
+                {renderResultTypeLabel()}
+            </span>
         </span>
-    ), [ testRun ]);
+    ), [ testRun, renderResultTypeLabel ]);
 
     const renderHeader = useCallback(
         () => (
@@ -82,13 +108,13 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
               className={testRunHeadingClassName}
             >
                 { testRunHeadingText }
-                { renderTimeAndMemoryUsed() }
+                { renderTestRunData() }
             </Heading>
         ),
         [
             testRunHeadingClassName,
             testRunHeadingText,
-            renderTimeAndMemoryUsed,
+            renderTestRunData,
         ],
     );
 

@@ -1,13 +1,16 @@
-import * as React from 'react';
-import { useCallback } from 'react';
+/* eslint-disable react/no-danger */
+
+import React, { useCallback } from 'react';
 import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer';
 import Prism from 'prismjs';
+
 import 'prismjs/components/prism-javascript';
+
 import 'prismjs/themes/prism-okaidia.css';
 
 interface ITestsRunDiffProps {
-    expectedStr: string,
-    actualStr: string
+    expectedStr: string;
+    actualStr: string;
 }
 
 const Diff = ({ expectedStr, actualStr } : ITestsRunDiffProps) => {
@@ -22,7 +25,10 @@ const Diff = ({ expectedStr, actualStr } : ITestsRunDiffProps) => {
         }
 
         return (
-            <></>
+            <>
+                {null}
+                {null}
+            </>
         );
     }, []);
 

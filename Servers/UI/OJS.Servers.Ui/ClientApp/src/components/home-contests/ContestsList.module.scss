@@ -1,4 +1,4 @@
-@import "src/styles/colors";
+@use 'src/styles/colors';
 
 .contestCardsContainer {
   margin-top: 2vh;
@@ -10,9 +10,9 @@
 }
 
 .contestList {
+  align-items: center;
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
   justify-content: center;
 
   .contestListItem {

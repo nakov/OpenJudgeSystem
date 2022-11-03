@@ -1,10 +1,11 @@
-import * as React from 'react';
-import { useCallback, useState } from 'react';
-import { isNil } from 'lodash';
+import React, { useCallback, useState } from 'react';
+import isNil from 'lodash/isNil';
+
 import { useCurrentContest } from '../../../hooks/use-current-contest';
-import Heading, { HeadingType } from '../../guidelines/headings/Heading';
-import FormControl, { FormControlType } from '../../guidelines/forms/FormControl';
 import Form from '../../guidelines/forms/Form';
+import FormControl, { FormControlType } from '../../guidelines/forms/FormControl';
+import Heading, { HeadingType } from '../../guidelines/headings/Heading';
+
 import styles from './ContestPasswordForm.module.scss';
 import concatClassNames from '../../../utils/class-names';
 
@@ -47,9 +48,9 @@ const ContestPasswordForm = ({ id, isOfficial }: IContestPasswordFormProps) => {
         <Form
           id='form'
           className={styles.contestPasswordForm}
-              onSubmit={() => {
-                  handleOnSubmitPassword();
-              }}
+          onSubmit={() => {
+              handleOnSubmitPassword();
+          }}
         >
             <header className={styles.formHeader}>
                 <Heading type={HeadingType.primary}>Enter contest password</Heading>

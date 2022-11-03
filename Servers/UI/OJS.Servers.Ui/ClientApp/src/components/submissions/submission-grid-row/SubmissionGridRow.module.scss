@@ -1,0 +1,45 @@
+.container {
+  align-items: center;
+  display: flex;
+  justify-content: flex-start;
+  padding: 25px;
+
+  .strategyContainer,
+  .pointsContainer,
+  .detailsContainer {
+    padding: 0 10px;
+  }
+
+  .strategyContainer {
+    flex: 1;
+  }
+
+  .pointsContainer {
+    @extend %larger;
+
+    flex: 2;
+  }
+
+  .detailsContainer {
+    display: flex;
+    flex: 17;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .dateAndUsernameContainer {
+    margin: 0 5px;
+  }
+
+  .link {
+    @extend %larger;
+
+    color: #42abf8;
+    display: inline-block;
+    margin: 0 5px;
+  }
+}
+
+%larger {
+  font-size: 1.4em;
+}
