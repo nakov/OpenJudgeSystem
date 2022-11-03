@@ -22,5 +22,8 @@ const selectors = {
     pageLeftNavgationResultsBtn: '.navigationContest a',
     pageSubmissionResultsNoResultsParagraph: '.submissionResultsContent p',
     pageProblemTabRequirements: '.contestResources li',
+    pageContestPasswordField: '#contestpassword',
+    pageContestPasswordSubmitButton: '#btn-submit-form',
+    pagerContestErrorMessage: '.errorMessage',
 };
 export default selectors;
