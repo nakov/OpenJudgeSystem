@@ -68,7 +68,6 @@
                 .Include(c => c.ProblemGroups.Select(pg => pg.Problems))
                 .Where(c => c.Participants.Any(p => p.IsOfficial == official))
                 .OrderByDescending(c => c.CreatedOn)
-                .Where(c => c.Id == 1699)
                 .ToList();
 
             var participants =  this.participantsData.GetAllByContestIdsAndIsOfficial(contests.Select(c => c.Id), official)
@@ -78,7 +77,6 @@
                 .Include(p => p.Problems)
                 .Where(p => p.Scores.Count != 0)
                 .OrderBy(p => p.Contest.OrderBy)
-                .Where(p => p.User.UserName == "desislava.topuzakova")
                 .ToList();
            
             var results = new List<ParticipantScoresSummaryModel>();
