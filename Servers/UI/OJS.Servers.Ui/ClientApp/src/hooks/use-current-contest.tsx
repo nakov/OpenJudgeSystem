@@ -1,16 +1,14 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isNil, sum } from 'lodash';
-import {
-    IContestType,
-    IRegisterForContestResponseType,
-    IStartParticipationResponseType,
-    IStartParticipationValidationType,
-} from '../common/types';
-import { IHaveChildrenProps } from '../components/common/Props';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import isNil from 'lodash/isNil';
+import sum from 'lodash/sum';
+
 import { UrlType } from '../common/common-types';
+import { IContestType, IRegisterForContestResponseType, IStartParticipationResponseType, IStartParticipationValidationType } from '../common/types';
 import { IRegisterForContestUrlParams, ISubmitContestPasswordUrlParams } from '../common/url-types';
-import { useLoading } from './use-loading';
+import { IHaveChildrenProps } from '../components/common/Props';
+
 import { useHttp } from './use-http';
+import { useLoading } from './use-loading';
 import { useUrls } from './use-urls';
 
 interface IStartContestArgs {
@@ -54,7 +52,7 @@ const defaultState = {
         isOfficial: false,
         requirePassword: false,
         remainingTimeInMilliseconds: 0.0,
-        validation: { 
+        validation: {
             contestIsFound: true,
             contestIsExpired: false,
             isParticipantRegistered: true,
@@ -66,8 +64,7 @@ const defaultState = {
 
 const CurrentContestsContext = createContext<ICurrentContestContext>(defaultState as ICurrentContestContext);
 
-interface ICurrentContestsProviderProps extends IHaveChildrenProps {
-}
+type ICurrentContestsProviderProps = IHaveChildrenProps
 
 interface IContestToStartType {
     id: number;
@@ -88,7 +85,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ isPasswordValid, setIsPasswordValid ] = useState<boolean | null>(null);
     const [ remainingTimeInMilliseconds, setRemainingTimeInMilliseconds ] = useState(defaultState.state.remainingTimeInMilliseconds);
     const [ validation, setValidation ] = useState<IStartParticipationValidationType>(defaultState.state.validation);
-    
+
     const {
         startLoading,
         stopLoading,
@@ -122,7 +119,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
 
     const register = useCallback((obj: IStartContestArgs) => {
         const { id, isOfficial: official } = obj;
-        
+
         setRegisterForContestParams({ id, isOfficial: official } as IRegisterForContestUrlParams);
     }, []);
 
@@ -152,10 +149,9 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         }
 
         const responseData = startContestData as IStartParticipationResponseType;
-
         const {
-            contest: newContest, 
-            contestIsCompete, 
+            contest: newContest,
+            contestIsCompete,
             remainingTimeInMilliseconds: newRemainingTimeInMilliseconds,
             validation: {
                 contestIsFound,
@@ -164,9 +160,9 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 contestCanBeCompeted,
                 isParticipantRegistered,
             },
-        } = 
+        } =
             responseData;
-        
+
         setContest(newContest);
         setIsOfficial(contestIsCompete);
         setRemainingTimeInMilliseconds(newRemainingTimeInMilliseconds);
@@ -224,7 +220,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         if (!isNil(submitContestPasswordResponse) && submitContestPasswordResponse.status !== 200) {
             setSubmitContestPasswordErrorMessage('Incorrect password');
             setIsPasswordValid(false);
-            
+
             return;
         }
 
@@ -246,26 +242,43 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         [ contest ],
     );
 
-    const value = {
-        state: {
+    const value = useMemo(
+        () => ({
+            state: {
+                contest,
+                contestPassword,
+                score,
+                maxScore,
+                isOfficial,
+                requirePassword,
+                submitContestPasswordErrorMessage,
+                isPasswordValid,
+                remainingTimeInMilliseconds,
+                validation,
+            },
+            actions: {
+                setContestPassword,
+                register,
+                start,
+                submitPassword,
+            },
+        }),
+        [
             contest,
             contestPassword,
-            score,
-            maxScore,
             isOfficial,
-            requirePassword,
-            submitContestPasswordErrorMessage,
             isPasswordValid,
-            remainingTimeInMilliseconds,
-            validation,
-        },
-        actions: {
-            setContestPassword,
+            maxScore,
             register,
+            remainingTimeInMilliseconds,
+            requirePassword,
+            score,
             start,
+            submitContestPasswordErrorMessage,
             submitPassword,
-        },
-    };
+            validation,
+        ],
+    );
 
     return (
         <CurrentContestsContext.Provider value={value}>
@@ -273,6 +286,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         </CurrentContestsContext.Provider>
     );
 };
+
 const useCurrentContest = () => useContext(CurrentContestsContext);
 
 export default CurrentContestsProvider;
