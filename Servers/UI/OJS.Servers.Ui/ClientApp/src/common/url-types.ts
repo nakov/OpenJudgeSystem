@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 
-import { IFilter } from './contest-types';
 import { ContestParticipationType } from './constants';
+import { IFilter } from './contest-types';
 
 interface IRegisterForContestTypeUrlParams {
     id: number;
