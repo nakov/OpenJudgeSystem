@@ -2,12 +2,12 @@ import React, { useCallback, useState } from 'react';
 import isNil from 'lodash/isNil';
 
 import { useCurrentContest } from '../../../hooks/use-current-contest';
-import concatClassNames from '../../../utils/class-names';
 import Form from '../../guidelines/forms/Form';
 import FormControl, { FormControlType } from '../../guidelines/forms/FormControl';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 
 import styles from './ContestPasswordForm.module.scss';
+import concatClassNames from '../../../utils/class-names';
 
 interface IContestPasswordFormProps {
     id: number;
@@ -46,7 +46,7 @@ const ContestPasswordForm = ({ id, isOfficial }: IContestPasswordFormProps) => {
 
     return (
         <Form
-          id="form"
+          id='form'
           className={styles.contestPasswordForm}
           onSubmit={() => {
               handleOnSubmitPassword();
