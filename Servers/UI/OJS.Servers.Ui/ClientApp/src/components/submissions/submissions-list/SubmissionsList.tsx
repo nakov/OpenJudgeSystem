@@ -1,19 +1,21 @@
 import React, { useCallback, useMemo } from 'react';
-import { ISubmissionDetails } from '../../../hooks/submissions/types';
-import { IHaveOptionalClassName } from '../../common/Props';
+
+import { ContestParticipationType } from '../../../common/constants';
+import { ISubmissionDetails, ISubmissionDetailsType } from '../../../hooks/submissions/types';
 import concatClassNames from '../../../utils/class-names';
 import { formatDate } from '../../../utils/dates';
+import { IHaveOptionalClassName } from '../../common/Props';
 import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import Label, { LabelType } from '../../guidelines/labels/Label';
 import List, { ListType, Orientation } from '../../guidelines/lists/List';
 import Text from '../../guidelines/text/Text';
 import SubmissionResultPointsLabel from '../submission-result-points-label/SubmissionResultPointsLabel';
-import Label, { LabelType } from '../../guidelines/labels/Label';
-import { ContestParticipationType } from '../../../common/constants';
+
 import styles from './SubmissionsList.module.scss';
 
 interface ISubmissionsListProps extends IHaveOptionalClassName {
-    items: any[];
-    selectedSubmission: any;
+    items: ISubmissionDetails[];
+    selectedSubmission: ISubmissionDetailsType | null;
 }
 
 const SubmissionsList = ({

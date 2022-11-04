@@ -1,13 +1,13 @@
-import * as React from 'react';
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
+
+import { SubmissionResultType } from '../../../common/constants';
 import { ITestRunType } from '../../../hooks/submissions/use-submissions';
 import concatClassNames from '../../../utils/class-names';
-import { SubmissionResultType } from '../../../common/constants';
 
 import styles from './ExecutionResult.module.scss';
 
 interface IExecutionResultDetailsProps {
-    testRuns: ITestRunType[],
+    testRuns: ITestRunType[];
 }
 
 const classnameToTestRunResultType: { [name: string]: string } = {

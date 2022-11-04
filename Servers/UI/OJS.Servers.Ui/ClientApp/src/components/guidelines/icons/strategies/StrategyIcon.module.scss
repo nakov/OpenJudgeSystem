@@ -1,5 +1,5 @@
-@import "src/styles/colors";
+@use 'src/styles/colors';
 
 .icon {
-  color: $text-dark-gray-color
+  color: colors.$text-dark-gray-color;
 }

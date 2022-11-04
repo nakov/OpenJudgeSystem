@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { isNil } from 'lodash';
+import isNil  from 'lodash/isNil';
 import { ReactNode } from 'react';
 import concatClassNames from '../../../utils/class-names';
-import { IHaveOptionalChildrenProps, IHaveOptionalClassName } from '../../common/Props';
 import generateId from '../../../utils/id-generator';
+import { IHaveOptionalChildrenProps, IHaveOptionalClassName } from '../../common/Props';
 
 import styles from './Button.module.scss';
 
@@ -36,7 +36,7 @@ enum ButtonSize {
 interface IButtonBaseProps<TButtonType> extends IHaveOptionalClassName, IHaveOptionalChildrenProps {
     id?: string;
     size?: ButtonSize;
-    text?: string | null,
+    text?: string | null;
     type?: TButtonType;
     state?: ButtonState;
 }

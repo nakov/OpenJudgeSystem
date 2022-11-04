@@ -15,7 +15,7 @@ interface IStartContestUrlParams {
 
 interface IAllContestsUrlParams {
     filters: IFilter[];
-    page?: number,
+    page?: number;
 }
 
 interface IContestCategoriesUrlParams {

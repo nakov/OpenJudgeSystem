@@ -1,10 +1,10 @@
 import React from 'react';
 import { FaUsers } from 'react-icons/fa';
+
 import IconSize from './common/icon-sizes';
 import Icon, { IIconProps } from './Icon';
 
-interface IUsersIconProps extends IIconProps {
-}
+type IUsersIconProps = IIconProps
 
 const UsersIcon = ({
     className = '',

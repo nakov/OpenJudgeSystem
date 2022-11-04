@@ -1,16 +1,14 @@
 import React, { useCallback, useMemo } from 'react';
+
+import { useCurrentContest } from '../../../hooks/use-current-contest';
+import concatClassNames from '../../../utils/class-names';
+import { convertToTwoDigitValues } from '../../../utils/dates';
+import Countdown, { ICountdownRemainingType, Metric } from '../../guidelines/countdown/Countdown';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import Text, { TextType } from '../../guidelines/text/Text';
-import Countdown, { ICountdownRemainingType, Metric } from '../../guidelines/countdown/Countdown';
-
+import ContestProblemDetails from '../contest-problem-details/ContestProblemDetails';
 import ContestTasksNavigation from '../contest-tasks-navigation/ContestTasksNavigation';
 import SubmissionBox from '../submission-box/SubmissionBox';
-import ContestProblemDetails from '../contest-problem-details/ContestProblemDetails';
-
-import concatClassNames from '../../../utils/class-names';
-
-import { convertToTwoDigitValues } from '../../../utils/dates';
-import { useCurrentContest } from '../../../hooks/use-current-contest';
 
 import styles from './Contest.module.scss';
 
@@ -64,19 +62,17 @@ const Contest = () => {
             const { hours, minutes, seconds } = convertToTwoDigitValues(remainingTime);
 
             return (
-                <>
-                    <p className={remainingTimeClassName}>
-                        Remaining time:
-                        {' '}
-                        <Text type={TextType.Bold}>
-                            {hours}
-                            :
-                            {minutes}
-                            :
-                            {seconds}
-                        </Text>
-                    </p>
-                </>
+                <p className={remainingTimeClassName}>
+                    Remaining time:
+                    {' '}
+                    <Text type={TextType.Bold}>
+                        {hours}
+                        :
+                        {minutes}
+                        :
+                        {seconds}
+                    </Text>
+                </p>
             );
         },
         [],
@@ -91,7 +87,7 @@ const Contest = () => {
             const currentSeconds = remainingTimeInMilliseconds / 1000;
 
             return (
-                <Countdown renderRemainingTime={renderCountdown} duration={currentSeconds} metric={Metric.seconds}/>
+                <Countdown renderRemainingTime={renderCountdown} duration={currentSeconds} metric={Metric.seconds} />
             );
         },
         [ remainingTimeInMilliseconds, renderCountdown ],
@@ -106,8 +102,8 @@ const Contest = () => {
         <>
             <div className={styles.headingContest}>
                 <Heading
-                    type={HeadingType.primary}
-                    className={styles.contestHeading}
+                  type={HeadingType.primary}
+                  className={styles.contestHeading}
                 >
                     {contest?.name}
                 </Heading>
@@ -119,13 +115,13 @@ const Contest = () => {
 
             <div className={styles.contestWrapper}>
                 <div className={navigationContestClassName}>
-                    <ContestTasksNavigation/>
+                    <ContestTasksNavigation />
                 </div>
                 <div className={submissionBoxClassName}>
-                    <SubmissionBox/>
+                    <SubmissionBox />
                 </div>
                 <div className={problemInfoClassName}>
-                    <ContestProblemDetails/>
+                    <ContestProblemDetails />
                 </div>
             </div>
         </>

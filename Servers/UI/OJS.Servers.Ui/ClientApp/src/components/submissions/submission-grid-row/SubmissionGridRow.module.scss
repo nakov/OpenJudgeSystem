@@ -1,25 +1,28 @@
 .container {
-  display: flex;
   align-items: center;
+  display: flex;
   justify-content: flex-start;
   padding: 25px;
 
-  & > * {
+  .strategyContainer,
+  .pointsContainer,
+  .detailsContainer {
     padding: 0 10px;
   }
-  
+
   .strategyContainer {
     flex: 1;
   }
 
   .pointsContainer {
-    flex: 2;
     @extend %larger;
+
+    flex: 2;
   }
 
   .detailsContainer {
-    flex: 17;
     display: flex;
+    flex: 17;
     flex-direction: column;
     gap: 10px;
   }

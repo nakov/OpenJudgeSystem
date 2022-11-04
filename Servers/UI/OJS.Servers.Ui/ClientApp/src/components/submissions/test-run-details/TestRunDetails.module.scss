@@ -1,19 +1,20 @@
-@import "src/styles/colors";
-@import "src/styles/fonts";
-@import "src/styles/variables";
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
+@use 'src/styles/variables';
 
 .testRun {
+  @extend %font-family-lato;
+
+  border-bottom: 1px solid colors.$bottom-border-color;
+  color: colors.$text-dark-gray-color;
   margin-top: 10px;
   padding: 20px;
-  border-bottom: 1px solid $bottom-border-color;
-  @extend %font-family-lato;
-  color: $text-dark-gray-color;
 }
 
 %heading {
-  font-size: $f-size-18;
-  margin-bottom: 10px;
   display: flex;
+  font-size: variables.$f-size-18;
+  margin-bottom: 10px;
 }
 
 .testRunHeading {
@@ -23,32 +24,33 @@
 .wrongTestRunHeading {
   @extend %heading;
 
-  color: $primary-red;
+  color: colors.$primary-red;
 }
 
 .collapsibleHeader {
+  align-items: center;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
 }
 
 .correctTestRunHeading {
   @extend %heading;
 
-  color: $primary-green;
+  color: colors.$primary-green;
 }
 
 .testRunData {
+  align-self: center;
   display: flex;
   flex-direction: row;
-  align-self: center;
-  margin-left: 10px;
   gap: 10px;
+  margin-left: 10px;
 }
 
 .testRunDataParagraph {
-  font-size: $f-size-12;
   @extend %font-family-lato;
-  color: $text-light-gray-color;
+
+  color: colors.$text-light-gray-color;
+  font-size: variables.$f-size-12;
 }

@@ -1,20 +1,27 @@
 import React, { FC } from 'react';
+
+import { Anything } from '../../common/common-types';
+
 import { IHaveChildrenProps } from './Props';
 
 interface IProvider {
-    Provider: FC<IHaveChildrenProps>,
-    props?: any,
+    Provider: FC<IHaveChildrenProps>;
+    props: Anything;
 }
 
 // A provider could be FC or IProvider when props are needed
 type ProviderType = IProvider | FC;
 
-interface IInitProviderProps {
-    providers: ProviderType[],
-    children: any,
+interface IInitProviderProps extends IHaveChildrenProps {
+    providers: ProviderType[];
 }
 
-const InitProviders = ({ providers, children }: IInitProviderProps) => {
+const InitProviders = ({
+    providers,
+    children,
+}: IInitProviderProps) => {
+    // We need this disable for the dynamic providers initialization
+    // eslint-disable-next-line react/jsx-no-useless-fragment
     const initial = (<>{children}</>);
 
     return providers

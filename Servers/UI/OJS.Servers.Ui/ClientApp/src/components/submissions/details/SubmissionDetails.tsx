@@ -1,12 +1,13 @@
-import * as React from 'react';
-import { useEffect, useMemo } from 'react';
-import { isNil } from 'lodash';
+import React, { useEffect, useMemo } from 'react';
+import isNil from 'lodash/isNil';
+
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
-import Heading, { HeadingType } from '../../guidelines/headings/Heading';
-import CodeEditor from '../../code-editor/CodeEditor';
-import SubmissionResults from '../submission-results/SubmissionResults';
 import concatClassNames from '../../../utils/class-names';
+import CodeEditor from '../../code-editor/CodeEditor';
+import Heading, { HeadingType } from '../../guidelines/headings/Heading';
+import SubmissionResults from '../submission-results/SubmissionResults';
 import RefreshableSubmissionsList from '../submissions-list/RefreshableSubmissionsList';
+
 import styles from './SubmissionDetails.module.scss';
 
 const SubmissionDetails = () => {

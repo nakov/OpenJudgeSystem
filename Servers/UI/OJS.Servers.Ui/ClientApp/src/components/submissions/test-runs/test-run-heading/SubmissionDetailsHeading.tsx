@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
+
 import { useSubmissionsDetails } from '../../../../hooks/submissions/use-submissions-details';
 import Heading from '../../../guidelines/headings/Heading';
 
