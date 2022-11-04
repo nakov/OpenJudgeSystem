@@ -1,14 +1,15 @@
 import React from 'react';
 import Pagination from '@mui/material/Pagination';
+
+import concatClassNames from '../../../utils/class-names';
 import { IHaveOptionalClassName } from '../../common/Props';
 
 import styles from './PaginationControls.module.scss';
-import concatClassNames from '../../../utils/class-names';
 
 interface IPaginationControlsProps extends IHaveOptionalClassName {
-    count: number,
-    page: number,
-    onChange: (value: number) => void | undefined,
+    count: number;
+    page: number;
+    onChange: (value: number) => void | undefined;
 }
 
 const PaginationControls = ({

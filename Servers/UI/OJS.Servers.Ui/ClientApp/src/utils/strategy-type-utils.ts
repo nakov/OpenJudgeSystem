@@ -1,21 +1,22 @@
 import { FC } from 'react';
-import { isNil } from 'lodash';
-import { IIconProps } from '../components/guidelines/icons/Icon';
-import MySqlIcon from '../components/guidelines/icons/strategies/MySqlIcon';
-import JavaIcon from '../components/guidelines/icons/strategies/JavaIcon';
-import PythonIcon from '../components/guidelines/icons/strategies/PythonIcon';
-import JavaScriptIcon from '../components/guidelines/icons/strategies/JavaScriptIcon';
-import DotNetIcon from '../components/guidelines/icons/strategies/DotNetIcon';
-import CppIcon from '../components/guidelines/icons/strategies/CppIcon';
-import { StrategyType } from '../common/strategy-types';
+import isNil from 'lodash/isNil';
+
 import { IDictionary } from '../common/common-types';
-import GoIcon from '../components/guidelines/icons/strategies/GoIcon';
-import PhpIcon from '../components/guidelines/icons/strategies/PhpIcon';
-import RubyIcon from '../components/guidelines/icons/strategies/RubyIcon';
-import HtmlCssIcon from '../components/guidelines/icons/strategies/HtmlCssIcon';
-import SqlServerIcon from '../components/guidelines/icons/strategies/SqlServerIcon';
-import PlainTextIcon from '../components/guidelines/icons/strategies/PlainTextIcon';
+import { StrategyType } from '../common/strategy-types';
+import { IIconProps } from '../components/guidelines/icons/Icon';
+import CppIcon from '../components/guidelines/icons/strategies/CppIcon';
+import DotNetIcon from '../components/guidelines/icons/strategies/DotNetIcon';
 import FileUploadIcon from '../components/guidelines/icons/strategies/FileUploadIcon';
+import GoIcon from '../components/guidelines/icons/strategies/GoIcon';
+import HtmlCssIcon from '../components/guidelines/icons/strategies/HtmlCssIcon';
+import JavaIcon from '../components/guidelines/icons/strategies/JavaIcon';
+import JavaScriptIcon from '../components/guidelines/icons/strategies/JavaScriptIcon';
+import MySqlIcon from '../components/guidelines/icons/strategies/MySqlIcon';
+import PhpIcon from '../components/guidelines/icons/strategies/PhpIcon';
+import PlainTextIcon from '../components/guidelines/icons/strategies/PlainTextIcon';
+import PythonIcon from '../components/guidelines/icons/strategies/PythonIcon';
+import RubyIcon from '../components/guidelines/icons/strategies/RubyIcon';
+import SqlServerIcon from '../components/guidelines/icons/strategies/SqlServerIcon';
 
 const shortNameToType: IDictionary<StrategyType> = {
     mysql: StrategyType.MySql,
@@ -56,10 +57,10 @@ const fullStrategyNameToStrategyType = (strategyName: string): StrategyType => {
     const strategyNameToLower = strategyName.toLowerCase();
 
     // Sorting here resolves that `java` is `included` in `javascript`:
-    // `['java', 'javascript'].pop()` returns `javascript` 
+    // `['java', 'javascript'].pop()` returns `javascript`
     const strategyKey = Object.keys(shortNameToType)
         .sort()
-        .filter(name => strategyNameToLower.includes(name))
+        .filter((name) => strategyNameToLower.includes(name))
         .pop();
 
     return isNil(strategyKey)
@@ -67,10 +68,9 @@ const fullStrategyNameToStrategyType = (strategyName: string): StrategyType => {
         : shortNameToType[strategyKey];
 };
 
-const strategyTypeToIcon = (type: StrategyType): FC<IIconProps> | null =>
-    isNil(typeToIcon[type])
-        ? null
-        : typeToIcon[type];
+const strategyTypeToIcon = (type: StrategyType): FC<IIconProps> | null => isNil(typeToIcon[type])
+    ? null
+    : typeToIcon[type];
 
 export {
     strategyTypeToIcon,

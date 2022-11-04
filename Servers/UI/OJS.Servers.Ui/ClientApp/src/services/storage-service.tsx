@@ -1,3 +1,5 @@
+import { Anything } from '../common/common-types';
+
 class CacheService {
     storage: Storage;
 
@@ -5,7 +7,7 @@ class CacheService {
         this.storage = storage;
     }
 
-    set(key: string, value: any) {
+    set(key: string, value: Anything) {
         const obj = JSON.stringify({ value });
 
         this.storage.setItem(key, obj);

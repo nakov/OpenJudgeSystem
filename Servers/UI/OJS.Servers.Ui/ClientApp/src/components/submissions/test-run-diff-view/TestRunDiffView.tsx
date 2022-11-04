@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React from 'react';
+
 import { ITestRunDetailsType } from '../../../hooks/submissions/types';
 import Diff from '../../Diff';
 
@@ -7,7 +8,10 @@ interface ITestRunDiffViewProps {
 }
 
 const TestRunDiffView = ({ testRun }: ITestRunDiffViewProps) => (
-    <Diff expectedStr={testRun.expectedOutputFragment} actualStr={testRun.userOutputFragment} />
+    <Diff
+      expectedStr={testRun.expectedOutputFragment}
+      actualStr={testRun.userOutputFragment}
+    />
 );
 
 export default TestRunDiffView;

@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useMemo } from 'react';
+
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useHttp } from '../use-http';
 
@@ -52,11 +53,9 @@ interface IPublicSubmissionsContext {
 
 const defaultState = {};
 
-
 const PublicSubmissionsContext = createContext<IPublicSubmissionsContext>(defaultState as IPublicSubmissionsContext);
 
-interface IPublicSubmissionsProviderProps extends IHaveChildrenProps {
-}
+type IPublicSubmissionsProviderProps = IHaveChildrenProps
 
 const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps) => {
     const {
@@ -89,13 +88,16 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         [ getSubmissions, getTotalSubmissionsCount ],
     );
 
-    const value = {
-        state: {
-            submissions,
-            totalSubmissionsCount,
-        },
-        actions: { load },
-    };
+    const value = useMemo(
+        () => ({
+            state: {
+                submissions,
+                totalSubmissionsCount,
+            },
+            actions: { load },
+        }),
+        [ load, submissions, totalSubmissionsCount ],
+    );
 
     return (
         <PublicSubmissionsContext.Provider value={value}>
@@ -103,7 +105,6 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         </PublicSubmissionsContext.Provider>
     );
 };
-
 
 const usePublicSubmissions = () => useContext(PublicSubmissionsContext);
 

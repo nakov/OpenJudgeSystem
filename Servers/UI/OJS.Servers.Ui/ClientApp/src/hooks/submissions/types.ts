@@ -1,5 +1,5 @@
-import { IUserProfileType } from '../use-users';
 import { ISubmissionTypeType } from '../../common/types';
+import { IUserProfileType } from '../use-users';
 
 interface IProblemType {
     id: number;

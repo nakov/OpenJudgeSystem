@@ -1,4 +1,4 @@
-// eslint-disable-next-line import/no-unused-modules,no-undef
+/* eslint-disable-next-line import/no-unused-modules,no-undef */
 module.exports = {
     env: {
         browser: true,
@@ -6,10 +6,13 @@ module.exports = {
     },
     globals: { Promise: true },
     extends: [
+        'eslint:recommended',
+        'plugin:@typescript-eslint/recommended',
+        'plugin:@typescript-eslint/eslint-recommended',
         'plugin:react/recommended',
         'airbnb',
         'plugin:css-modules/recommended',
-        'stylelint',
+        // 'stylelint',
     ],
     parser: '@typescript-eslint/parser',
     parserOptions: {
@@ -24,10 +27,11 @@ module.exports = {
         'promise',
         'babel',
         'css-modules',
+        'simple-import-sort',
     ],
     settings: { 'import/resolver': { typescript: {} } },
     rules: {
-        
+
         'node/no-missing-import': 0,
         'sort-imports': 0,
         'no-confusing-arrow': 0,
@@ -56,6 +60,13 @@ module.exports = {
         ],
         'react-hooks/rules-of-hooks': 'error',
         'react-hooks/exhaustive-deps': 'error',
+
+        'react/function-component-definition': [ 'error',
+            {
+                namedComponents: 'arrow-function',
+                unnamedComponents: 'arrow-function',
+            },
+        ],
 
         'array-bracket-spacing': [ 'error', 'always', { singleValue: true } ],
         // enforces curly brackets for arrow functions only when needed
@@ -308,5 +319,61 @@ module.exports = {
             'error',
             { required: { some: [ 'nesting', 'id' ] } } ],
         'jsx-a11y/label-has-for': [ 'error', { required: { some: [ 'nesting', 'id' ] } } ],
+        'simple-import-sort/imports': [
+            'error',
+            {
+                groups: [
+                    // Packages `react` related packages come first.
+                    [ '^react', '^@?\\w' ],
+                    // Internal packages.
+                    [ '^(@|components)(/.*|$)' ],
+                    // Side effect imports.
+                    [ '^\\u0000' ],
+                    // Parent imports. Put `..` last.
+                    [ '^\\.\\.(?!/?$)', '^\\.\\./?$' ],
+                    // Other relative imports. Put same-folder imports and `.` last.
+                    [ '^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$' ],
+                    // Style imports.
+                    [ '^.+\\.?(css)$' ],
+                ],
+            },
+        ],
+        'no-restricted-imports': [
+            2,
+            {
+                paths: [
+                    {
+                        name: 'lodash',
+                        message:
+                            'Do not import from `lodash` directly, as we don\'t support tree-shaking for it.' +
+                            ' Instead, import the function you\'re trying to use, e.g. `import debounce from \'lodash/debounce\'`',
+                    },
+                    {
+                        name: 'react-icons/all',
+                        message:
+                            'Do not import from `react-icons/all` directly, but use concrete file:' +
+                            ' i.e. instead of `import {...} from \'react-icons/all\'` use `import { ... } from \'react-icons/md\'`',
+                    },
+                    { name: '@material-ui/core' },
+                    { name: '@material-ui/lab' },
+                    { name: '@mui/material' },
+                    { name: '@mui/styles' },
+                ],
+            },
+        ],
+        '@typescript-eslint/explicit-module-boundary-types': 0,
+        '@typescript-eslint/member-delimiter-style': [
+            'error',
+            {
+                multiline: {
+                    delimiter: 'semi',
+                    requireLast: true,
+                },
+                singleline: {
+                    delimiter: 'semi',
+                    requireLast: false,
+                },
+            },
+        ],
     },
 };

@@ -1,10 +1,12 @@
 import React, { useMemo } from 'react';
 import { MdOutlineExpandLess, MdOutlineExpandMore } from 'react-icons/md';
-import styles from './DetailsIcon.module.scss';
+
+import concatClassNames from '../../../utils/class-names';
 
 import IconSize from './common/icon-sizes';
 import Icon, { IIconProps } from './Icon';
-import concatClassNames from '../../../utils/class-names';
+
+import styles from './DetailsIcon.module.scss';
 
 interface IInProgressIconProps extends IIconProps {
     isOpen?: boolean;
