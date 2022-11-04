@@ -1,11 +1,12 @@
-import React, { createContext, useContext } from 'react';
-import { isNil } from 'lodash';
+import React, { createContext, useContext, useMemo } from 'react';
+import isNil from 'lodash/isNil';
+
 import {
     IAllContestsUrlParams,
     IDownloadProblemResourceUrlParams,
     IGetContestResultsParams,
     IGetSubmissionDetailsByIdUrlParams,
-    IGetSubmissionResultsByProblemUrlParams, 
+    IGetSubmissionResultsByProblemUrlParams,
     IRegisterForContestTypeUrlParams,
     IStartContestParticipationUrlParams,
     ISubmitContestPasswordUrlParams,
@@ -39,8 +40,7 @@ interface IUrlsContext {
 
 const UrlsContext = createContext<IUrlsContext>({} as IUrlsContext);
 
-interface IUrlsProviderProps extends IHaveChildrenProps {
-}
+type IUrlsProviderProps = IHaveChildrenProps
 
 const baseUrl = window.URLS.UI_URL;
 const baseApiUrl = `${baseUrl}/api`;
@@ -71,10 +71,10 @@ const getAllContestsUrl = ({ filters, page }: IAllContestsUrlParams) => {
         .map(({ value, type }) => `${type.toLowerCase()}=${value}`)
         .join('&')
     }`;
-    
+
     const pageQuery = isNil(page)
         ? ''
-        :`page=${page}`;
+        : `page=${page}`;
 
     return `${baseApiUrl}/Contests/GetAll?${filtersQuery}&${pageQuery}`;
 };
@@ -126,30 +126,33 @@ const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams
 const getHomeStatisticsUrl = () => `${baseApiUrl}/StatisticsPreview/GetForHome`;
 
 const UrlsProvider = ({ children }: IUrlsProviderProps) => {
-    const value = {
-        getLoginSubmitUrl,
-        getLogoutUrl,
-        getAdministrationContestsGridUrl,
-        getAdministrationNavigation,
-        getRegisterContestTypeUrl,
-        getAllContestsUrl,
-        getRegisterForContestUrl,
-        getSubmitContestPasswordUrl,
-        getStartContestParticipationUrl,
-        getDownloadProblemResourceUrl,
-        getSubmissionResultsByProblemUrl,
-        getIndexContestsUrl,
-        getProfileInfoUrl,
-        getSubmissionsDetailsUrl,
-        getSubmissionDetailsByIdUrl,
-        getSubmissionsForProfileUrl,
-        getParticipationsForProfileUrl,
-        getSubmitUrl,
-        getCategoriesTreeUrl,
-        getAllContestStrategyFiltersUrl,
-        getContestResultsUrl,
-        getHomeStatisticsUrl,
-    };
+    const value = useMemo(
+        () => ({
+            getLoginSubmitUrl,
+            getLogoutUrl,
+            getAdministrationContestsGridUrl,
+            getAdministrationNavigation,
+            getRegisterContestTypeUrl,
+            getAllContestsUrl,
+            getRegisterForContestUrl,
+            getSubmitContestPasswordUrl,
+            getStartContestParticipationUrl,
+            getDownloadProblemResourceUrl,
+            getSubmissionResultsByProblemUrl,
+            getIndexContestsUrl,
+            getProfileInfoUrl,
+            getSubmissionsDetailsUrl,
+            getSubmissionDetailsByIdUrl,
+            getSubmissionsForProfileUrl,
+            getParticipationsForProfileUrl,
+            getSubmitUrl,
+            getCategoriesTreeUrl,
+            getAllContestStrategyFiltersUrl,
+            getContestResultsUrl,
+            getHomeStatisticsUrl,
+        }),
+        [],
+    );
 
     return (
         <UrlsContext.Provider value={value}>
@@ -157,6 +160,7 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
         </UrlsContext.Provider>
     );
 };
+
 const useUrls = () => useContext(UrlsContext);
 
 export default UrlsProvider;

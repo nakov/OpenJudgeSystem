@@ -1,7 +1,7 @@
-import * as React from 'react';
+import React, { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import isNil  from 'lodash/isNil';
-import { ReactNode } from 'react';
+import isNil from 'lodash/isNil';
+
 import concatClassNames from '../../../utils/class-names';
 import generateId from '../../../utils/id-generator';
 import { IHaveOptionalChildrenProps, IHaveOptionalClassName } from '../../common/Props';
