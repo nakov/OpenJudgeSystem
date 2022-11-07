@@ -306,8 +306,8 @@ else
                             $(function () {
                                 var diffContainer = document.getElementById('diff-@testResult.Id');
                                 var mergeView = CodeMirror.MergeView(diffContainer, {
-                                    origLeft: @Html.Raw(serializer.Serialize(testResult.UserOutputFragment)) || '',
-                                    value: @Html.Raw(serializer.Serialize(testResult.ExpectedOutputFragment)) || '',
+                                    origLeft: @Html.Raw(serializer.Serialize(testResult.ExpectedOutputFragment)) || '',
+                                    value: @Html.Raw(serializer.Serialize(testResult.UserOutputFragment)) || '',
                                     mode: 'text/x-diff',
                                     lineNumbers: true,
                                     lockScroll: true,
