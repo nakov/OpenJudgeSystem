@@ -6,6 +6,7 @@ import { UrlType } from '../common/common-types';
 import { IProblemType } from '../common/types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
+import { useHashUrlParams } from './common/use-hash-url-params';
 import { useCurrentContest } from './use-current-contest';
 import { useHttp } from './use-http';
 import { useLoading } from './use-loading';
@@ -31,10 +32,20 @@ const defaultState = {
     },
 };
 
+const normalizeOrderBy = (problems: IProblemType[]) => {
+    problems.sort((x, y) => x.orderBy - y.orderBy);
+
+    return problems.map((p, i) => ({
+        ...p,
+        orderBy: i + 1,
+    }));
+};
+
 const ProblemsContext = createContext<IProblemsContext>(defaultState as IProblemsContext);
 
 const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     const { state: { contest } } = useCurrentContest();
+    const { actions: { changeHash } } = useHashUrlParams();
 
     const [ problems, setProblems ] = useState(defaultState.state.problems);
     const [ currentProblem, setCurrentProblem ] = useState<IProblemType | null>(defaultState.state.currentProblem);
@@ -52,15 +63,23 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         saveAttachment,
     } = useHttp(getDownloadProblemResourceUrl as UrlType, { id: problemResourceIdToDownload });
 
+    const normalizeProblems = useMemo(
+        () => normalizeOrderBy(problems),
+        [ problems ],
+    );
+
     const selectProblemById = useCallback(
         (problemId: number) => {
-            const newProblem = problems.find((p) => p.id === problemId);
+            const newProblem = normalizeProblems.find((p) => p.id === problemId);
 
             if (newProblem) {
                 setCurrentProblem(newProblem);
+                const { orderBy } = newProblem;
+
+                changeHash(orderBy);
             }
         },
-        [ problems ],
+        [ changeHash, normalizeProblems ],
     );
 
     const reloadProblems = useCallback(
@@ -72,15 +91,15 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
             }
 
             setProblems(newProblems);
-            const { id } = first(newProblems) || {};
+            const { id } = first(normalizeProblems) || {};
 
-            if (!id) {
+            if (isNil(id)) {
                 return;
             }
 
             selectProblemById(id);
         },
-        [ contest, selectProblemById ],
+        [ contest, normalizeProblems, selectProblemById ],
     );
 
     const downloadProblemResourceFile = useCallback(async (resourceId: number) => {
