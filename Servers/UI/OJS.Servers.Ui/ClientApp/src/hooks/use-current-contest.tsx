@@ -33,7 +33,7 @@ interface ICurrentContestContext {
         submitContestPasswordErrorMessage: string | null;
         isPasswordValid: boolean | null;
         remainingTimeInMilliseconds: number;
-        validation: IStartParticipationValidationType;
+        validationError: IStartParticipationValidationType;
     };
     actions: {
         setContestPassword: (password: string) => void;
@@ -52,9 +52,9 @@ const defaultState = {
         isOfficial: false,
         requirePassword: false,
         remainingTimeInMilliseconds: 0.0,
-        validation: {
+        validationError: {
             contestIsFound: true,
-            contestIsExpired: false,
+            contestIsNotExpired: true,
             isParticipantRegistered: true,
             contestCanBeCompeted: true,
             contestCanBePracticed: true,
@@ -84,7 +84,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ submitContestPasswordErrorMessage, setSubmitContestPasswordErrorMessage ] = useState<string | null>(null);
     const [ isPasswordValid, setIsPasswordValid ] = useState<boolean | null>(null);
     const [ remainingTimeInMilliseconds, setRemainingTimeInMilliseconds ] = useState(defaultState.state.remainingTimeInMilliseconds);
-    const [ validation, setValidation ] = useState<IStartParticipationValidationType>(defaultState.state.validation);
+    const [ validationError, setValidationError ] = useState<IStartParticipationValidationType>(defaultState.state.validationError);
 
     const {
         startLoading,
@@ -153,9 +153,9 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             contest: newContest,
             contestIsCompete,
             remainingTimeInMilliseconds: newRemainingTimeInMilliseconds,
-            validation: {
+            validationError: {
                 contestIsFound,
-                contestIsExpired,
+                contestIsNotExpired,
                 contestCanBePracticed,
                 contestCanBeCompeted,
                 isParticipantRegistered,
@@ -166,9 +166,9 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         setContest(newContest);
         setIsOfficial(contestIsCompete);
         setRemainingTimeInMilliseconds(newRemainingTimeInMilliseconds);
-        setValidation({
+        setValidationError({
             contestIsFound,
-            contestIsExpired,
+            contestIsNotExpired,
             contestCanBePracticed,
             contestCanBeCompeted,
             isParticipantRegistered,
@@ -254,7 +254,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 submitContestPasswordErrorMessage,
                 isPasswordValid,
                 remainingTimeInMilliseconds,
-                validation,
+                validationError,
             },
             actions: {
                 setContestPassword,
@@ -276,7 +276,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             start,
             submitContestPasswordErrorMessage,
             submitPassword,
-            validation,
+            validationError,
         ],
     );
 

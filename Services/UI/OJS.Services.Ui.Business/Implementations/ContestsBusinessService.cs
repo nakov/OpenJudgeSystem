@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using OJS.Services.Ui.Business.Validation;
 
 namespace OJS.Services.Ui.Business.Implementations
 {
@@ -31,6 +32,7 @@ namespace OJS.Services.Ui.Business.Implementations
         private readonly IParticipantScoresDataService participantScoresData;
         private readonly IUsersBusinessService usersBusinessService;
         private readonly IUserProviderService userProviderService;
+        private readonly IContestValidationService contestValidationService;
 
         public ContestsBusinessService(
             IContestsDataService contestsData,
@@ -40,7 +42,8 @@ namespace OJS.Services.Ui.Business.Implementations
             IUsersBusinessService usersBusinessService,
             IUserProviderService userProviderService,
             IParticipantsBusinessService participantsBusiness,
-            IContestCategoriesCacheService contestCategoriesCache)
+            IContestCategoriesCacheService contestCategoriesCache,
+            IContestValidationService contestValidationService)
         {
             this.contestsData = contestsData;
             this.examGroupsData = examGroupsData;
@@ -50,6 +53,7 @@ namespace OJS.Services.Ui.Business.Implementations
             this.userProviderService = userProviderService;
             this.participantsBusiness = participantsBusiness;
             this.contestCategoriesCache = contestCategoriesCache;
+            this.contestValidationService = contestValidationService;
         }
 
         public async Task<RegisterUserForContestServiceModel> RegisterUserForContest(int id, bool official)
@@ -112,7 +116,14 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var user = this.userProviderService.GetCurrentUser();
 
-            ContestValidationModel validationModel = await this.ValidateContestNew(contest, user.Id, user.IsAdmin, model.IsOfficial);
+            ValidationModel validationModel = new();
+
+            var validationResult = await this.contestValidationService.GetValidationResult((contest, user.Id, user.IsAdmin, model.IsOfficial));
+            if (!validationResult.IsValid)
+            {
+                var propertyInfo = validationModel.GetType().GetProperty(validationResult.PropertyName);
+                propertyInfo?.SetValue(validationModel, false);
+            }
 
             var userProfile = await this.usersBusinessService.GetUserProfileById(user.Id);
 
@@ -124,7 +135,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (participant == null)
             {
-                participant = await this.AddNewParticipantToContest(contest, model.IsOfficial, user.Id, user.IsAdmin);
+                participant = await this.AddNewParticipantToContestIfNotExists(contest, model.IsOfficial, user.Id, user.IsAdmin);
             }
 
             if (participant == null)
@@ -133,16 +144,10 @@ namespace OJS.Services.Ui.Business.Implementations
                 validationModel.IsParticipantRegistered = false;
             }
 
-            /*if (model.IsOfficial &&
-                !await this.IsContestIpValidByContestAndIp(model.ContestId, model.UserHostAddress))
-            {
-                throw new BusinessServiceException("Invalid ip address.");
-            }*/
-
             var participationModel = participant.Map<ContestParticipationServiceModel>();
 
             participationModel.ContestIsCompete = model.IsOfficial;
-            participationModel.Validation = validationModel;
+            participationModel.ValidationError = validationModel;
 
             var participantsList = new List<int> { participant.Id, };
 
@@ -169,7 +174,7 @@ namespace OJS.Services.Ui.Business.Implementations
                     c.Id == contestId &&
                     (!c.IpsInContests.Any() || c.IpsInContests.Any(ai => ai.Ip.Value == ip)));
 
-        private async Task<Participant?> AddNewParticipantToContest(Contest contest, bool official, string userId,
+        private async Task<Participant?> AddNewParticipantToContestIfNotExists(Contest contest, bool official, string userId,
             bool isUserAdmin)
         {
             if (contest.IsOnline &&
@@ -186,58 +191,6 @@ namespace OJS.Services.Ui.Business.Implementations
                 userId,
                 official,
                 isUserAdmin);
-        }
-
-        public async Task<ContestValidationModel> ValidateContestNew(Contest contest, string userId, bool isUserAdmin,
-            bool official)
-        {
-            var contestValidationModel = new ContestValidationModel()
-            {
-                ContestIsExpired = false,
-                ContestIsFound = true,
-                ContestCanBeCompeted = true,
-                ContestCanBePracticed = true,
-                IsParticipantRegistered = true,
-            };
-
-            var isUserLecturerInContest = this.IsUserLecturerInContest(contest, userId);
-
-            if (contest == null ||
-                contest.IsDeleted ||
-                (!contest.IsVisible && !isUserLecturerInContest))
-            {
-                contestValidationModel.ContestIsFound = false;
-
-                return contestValidationModel;
-            }
-
-            if (await this.IsContestExpired(contest.Id, userId, isUserAdmin, official))
-            {
-                contestValidationModel.ContestIsExpired = true;
-
-                return contestValidationModel;
-            }
-
-            if (official &&
-                !await this.CanUserCompeteByContestByUserAndIsAdmin(
-                    contest,
-                    userId,
-                    isUserAdmin,
-                    allowToAdminAlways: true))
-            {
-                contestValidationModel.ContestCanBeCompeted = false;
-
-                return contestValidationModel;
-            }
-
-            if (!official && !contest.CanBePracticed && !isUserLecturerInContest)
-            {
-                contestValidationModel.ContestCanBePracticed = false;
-
-                return contestValidationModel;
-            }
-
-            return contestValidationModel;
         }
 
         public async Task ValidateContest(Contest contest, string userId, bool isUserAdmin, bool official)
@@ -311,42 +264,6 @@ namespace OJS.Services.Ui.Business.Implementations
                 .GetAllPracticable<ContestForHomeIndexServiceModel>()
                 .OrderByDescendingAsync(ac => ac.PracticeStartTime)
                 .TakeAsync(DefaultContestsToTake);
-
-        public async Task<bool> IsContestExpired(int contestId, string userId, bool isAdmin, bool official)
-        {
-            var contest = await this.contestsData.GetByIdWithParticipants(contestId);
-            if (contest == null)
-            {
-                return false;
-            }
-
-            var isUserAdminOrLecturerInContest = isAdmin || await this.contestsData
-                .IsUserLecturerInByContestAndUser(contestId, userId);
-
-            if (contest.IsOnline && !isUserAdminOrLecturerInContest)
-            {
-                var participant = contest.Participants.FirstOrDefault(p => p.UserId == userId && p.IsOfficial);
-
-                if (participant == null)
-                {
-                    if (!official && contest.PracticeEndTime.HasValue)
-                    {
-                        return DateTime.Now > contest.PracticeEndTime;
-                    }
-
-                    if (official && contest.EndTime.HasValue)
-                    {
-                        return DateTime.Now > contest.EndTime;
-                    }
-
-                    return false;
-                }
-
-                return participant.ParticipationEndTime >= DateTime.Now;
-            }
-
-            return false;
-        }
 
         public async Task<bool> CanUserCompeteByContestByUserAndIsAdmin(
             Contest contest,

@@ -1,5 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
+import isNil from 'lodash/isNil';
 
+import { ContestValidationErrors } from '../../../common/constants';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import concatClassNames from '../../../utils/class-names';
 import { convertToTwoDigitValues } from '../../../utils/dates';
@@ -19,7 +21,7 @@ const Contest = () => {
             score,
             maxScore,
             remainingTimeInMilliseconds,
-            validation,
+            validationError,
         },
     } = useCurrentContest();
 
@@ -97,70 +99,82 @@ const Contest = () => {
         [],
     );
 
-    const errorMessage = useMemo(
-        () => !validation.contestIsFound
-            ? `${contest?.name} - Contest not found!`
-            : validation.contestIsExpired
-                ? `${contest?.name} - Contest expired!`
-                : !validation.isParticipantRegistered
-                    ? `${contest?.name} - You are not registered for this contest!`
-                    : !validation.contestCanBeCompeted || !validation.contestCanBePracticed
-                        ? `${contest?.name} - You can not take part in the contest!`
-                        : null,
-        [ validation, contest ],
-    );
+    const determineErrorMessage = useCallback(() => {
+        if (!validationError.contestIsFound) {
+            return `${contest?.name} - ${ContestValidationErrors.NotFound}`;
+        } if (!validationError.contestIsNotExpired) {
+            return `${contest?.name} - ${ContestValidationErrors.Expired}`;
+        } if (!validationError.isParticipantRegistered) {
+            return `${contest?.name} - ${ContestValidationErrors.NotRegistered}`;
+        } if (!validationError.contestCanBeCompeted || !validationError.contestCanBePracticed) {
+            return `${contest?.name} - ${ContestValidationErrors.NotEligible}`;
+        }
 
-    const renderErrorMessage = useCallback(
-        () => errorMessage !== null
-            ? (
+        return null;
+    }, [ contest, validationError ]);
+
+    const renderErrorMessage = useCallback(() => (
+        <div className={styles.headingContest}>
+            <Heading
+              type={HeadingType.primary}
+              className={styles.contestHeading}
+            >
+                {determineErrorMessage()}
+            </Heading>
+        </div>
+    ), [ determineErrorMessage ]);
+
+    const renderContest = useCallback(
+        () => (
+            <>
                 <div className={styles.headingContest}>
                     <Heading
                       type={HeadingType.primary}
                       className={styles.contestHeading}
                     >
-                        {errorMessage}
+                        {contest?.name}
+                    </Heading>
+                    <Heading type={HeadingType.secondary} className={secondaryHeadingClassName}>
+                        {renderTimeRemaining()}
+                        {renderScore()}
                     </Heading>
                 </div>
-            )
-            : (
-                <>
-                    <div className={styles.headingContest}>
-                        <Heading
-                          type={HeadingType.primary}
-                          className={styles.contestHeading}
-                        >
-                            {contest?.name}
-                        </Heading>
-                        <Heading type={HeadingType.secondary} className={secondaryHeadingClassName}>
-                            {renderTimeRemaining()}
-                            {renderScore()}
-                        </Heading>
-                    </div>
 
-                    <div className={styles.contestWrapper}>
-                        <div className={navigationContestClassName}>
-                            <ContestTasksNavigation />
-                        </div>
-                        <div className={submissionBoxClassName}>
-                            <SubmissionBox />
-                        </div>
-                        <div className={problemInfoClassName}>
-                            <ContestProblemDetails />
-                        </div>
+                <div className={styles.contestWrapper}>
+                    <div className={navigationContestClassName}>
+                        <ContestTasksNavigation />
                     </div>
-                </>
-            ),
-        [ contest,
-            errorMessage,
+                    <div className={submissionBoxClassName}>
+                        <SubmissionBox />
+                    </div>
+                    <div className={problemInfoClassName}>
+                        <ContestProblemDetails />
+                    </div>
+                </div>
+            </>
+        ),
+        [
+            contest,
             navigationContestClassName,
             problemInfoClassName,
             renderScore,
             renderTimeRemaining,
             secondaryHeadingClassName,
-            submissionBoxClassName ],
+            submissionBoxClassName,
+        ],
     );
 
-    return renderErrorMessage();
+    const renderPage = useCallback(
+        () => !isNil(renderErrorMessage())
+            ? renderErrorMessage()
+            : renderContest(),
+        [
+            renderErrorMessage,
+            renderContest,
+        ],
+    );
+
+    return renderPage();
 };
 
 export default Contest;
