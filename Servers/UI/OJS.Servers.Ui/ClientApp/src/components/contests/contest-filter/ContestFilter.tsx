@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { FilterType, IFilter } from '../../../common/contest-types';
+import { useContests } from '../../../hooks/use-contests';
 import concatClassNames from '../../../utils/class-names';
 import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 import ExpandButton from '../../guidelines/buttons/ExpandButton';
@@ -24,6 +25,8 @@ const ContestFilter = ({
 }: IContestFilterProps) => {
     const initialExpanded = false;
     const [ expanded, setExpanded ] = useState(initialExpanded);
+
+    const { state: { filters } } = useContests();
 
     const listOrientation = useMemo(
         () => type === FilterType.Status
@@ -86,8 +89,8 @@ const ContestFilter = ({
 
     const getRenderFilterItemFunc = useCallback(
         (filterType: FilterType) => ({ id, name }: IFilter) => {
-            const filterIsSelected = values.some((f) => f.name === name);
-            const buttonType = filterIsSelected
+            const selectedStatusFilter = filters.find((f) => f.id === id);
+            const selectedButtonType = selectedStatusFilter
                 ? ButtonType.primary
                 : ButtonType.secondary;
 
@@ -96,10 +99,10 @@ const ContestFilter = ({
                 : '';
 
             return type === FilterType.Strategy
-                ? renderStrategyFilterItem(buttonType, btnClassName, name, id)
-                : renderStatusFilterItem(buttonType, btnClassName, name, id);
+                ? renderStrategyFilterItem(selectedButtonType, btnClassName, name, id)
+                : renderStatusFilterItem(selectedButtonType, btnClassName, name, id);
         },
-        [ renderStatusFilterItem, renderStrategyFilterItem, type, values ],
+        [ filters, type, renderStrategyFilterItem, renderStatusFilterItem ],
     );
 
     const className = concatClassNames(
