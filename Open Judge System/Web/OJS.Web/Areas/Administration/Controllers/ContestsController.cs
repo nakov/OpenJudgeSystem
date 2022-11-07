@@ -137,6 +137,7 @@
 
             this.contestsData.Add(contest);
 
+            this.cacheItemsProvider.ClearContests();
             this.TempData.Add(GlobalConstants.InfoMessage, Resource.Contest_added);
             return this.RedirectToAction<ContestsController>(c => c.Index());
         }

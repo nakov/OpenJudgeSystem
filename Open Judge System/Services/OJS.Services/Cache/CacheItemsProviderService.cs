@@ -149,8 +149,8 @@
                     .Select(HomeContestViewModel.FromContest)
                     .Concat(
                         this.contestsData.GetAllCompetable()
-                            .OrderBy(ac => ac.EndTime)
                             .Select(HomeContestViewModel.FromContest))
+                    .OrderBy(c => c.EndTime)
                     .ToList(),
                 DateTime.UtcNow.AddHours(1));
 
@@ -159,7 +159,7 @@
                         c.StartTime <= DateTime.Now &&
                         c.EndTime.HasValue &&
                         c.EndTime >= DateTime.Now)
-                .OrderBy(ac => ac.EndTime);
+                .OrderBy(c => c.EndTime);
         }
 
         public IEnumerable<HomeContestViewModel> GetPastContests() =>
