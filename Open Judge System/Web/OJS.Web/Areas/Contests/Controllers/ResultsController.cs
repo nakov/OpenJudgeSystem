@@ -485,6 +485,7 @@
 
             var participantResults = participants
                 .Select(ParticipantResultViewModel.FromParticipantAsSimpleResultByContest(contest.Id))
+                .ToList()
                 .OrderByDescending(parRes => parRes.ProblemResults
                     .Where(pr => pr.ShowResult)
                     .Sum(pr => pr.BestSubmission.Points));
@@ -493,6 +494,7 @@
             {
                 participantResults = participants
                     .Select(ParticipantResultViewModel.FromParticipantAsFullResultByContest(contest.Id))
+                    .ToList()
                     .OrderByDescending(parRes => parRes.ProblemResults
                         .Sum(pr => pr.BestSubmission.Points));
             }
@@ -500,6 +502,7 @@
             {
                 participantResults = participants
                     .Select(ParticipantResultViewModel.FromParticipantAsExportResultByContest(contest.Id))
+                    .ToList()
                     .OrderByDescending(parRes => parRes.ProblemResults
                         .Where(pr => pr.ShowResult && !pr.IsExcludedFromHomework)
                         .Sum(pr => pr.BestSubmission.Points));
