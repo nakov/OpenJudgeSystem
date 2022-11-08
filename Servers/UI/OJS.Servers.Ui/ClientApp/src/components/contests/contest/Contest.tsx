@@ -19,6 +19,9 @@ const Contest = () => {
             score,
             maxScore,
             remainingTimeInMilliseconds,
+            totalParticipants,
+            activeParticipants,
+            isOfficial,
         },
     } = useCurrentContest();
 
@@ -98,6 +101,23 @@ const Contest = () => {
         [],
     );
 
+    const renderParticipants = useCallback(
+        (participants: number, isActive: boolean) => (
+            <span>
+                {isActive
+                    ? 'Active'
+                    : 'Total'}
+                {' '}
+                Participitants:
+                {' '}
+                <Text type={TextType.Bold}>
+                    {participants.toString()}
+                </Text>
+            </span>
+        ),
+        [],
+    );
+
     return (
         <>
             <div className={styles.headingContest}>
@@ -108,6 +128,9 @@ const Contest = () => {
                     {contest?.name}
                 </Heading>
                 <Heading type={HeadingType.secondary} className={secondaryHeadingClassName}>
+                    {isOfficial
+                        ? renderParticipants(activeParticipants, true)
+                        : renderParticipants(totalParticipants, false)}
                     {renderTimeRemaining()}
                     {renderScore()}
                 </Heading>
