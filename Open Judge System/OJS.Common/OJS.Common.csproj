@@ -86,6 +86,7 @@
     <Compile Include="DataAnnotations\DatabasePropertyAttribute.cs" />
     <Compile Include="ExpressionBuilder.cs" />
     <Compile Include="DataAnnotations\ExcludeFromExcelAttribute.cs" />
+    <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\ExecutionStrategyTypeExtensions.cs" />
     <Compile Include="Extensions\HttpPostedFileBaseExtensions.cs" />

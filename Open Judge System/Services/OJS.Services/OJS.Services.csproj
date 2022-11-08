@@ -54,6 +54,9 @@
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73">
       <HintPath>..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a">
+      <HintPath>..\..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -87,6 +90,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
@@ -108,6 +112,7 @@
     <Compile Include="Business\ParticipantScores\Models\ParticipantScoresSummaryModel.cs" />
     <Compile Include="Business\ParticipantScores\Models\ParticipantSummaryInfoServiceModel.cs" />
     <Compile Include="Business\ParticipantScores\Models\ParticipantSummarySubmissionInfoServiceModel.cs" />
+    <Compile Include="Business\ParticipantScores\Models\ParticipationStatisticsEarlierAndLaterSubmissionModel.cs" />
     <Compile Include="Business\ParticipantScores\ParticipantScoresBusinessService.cs" />
     <Compile Include="Business\Participants\IParticipantsBusinessService.cs" />
     <Compile Include="Business\Participants\ParticipantsBusinessService.cs" />
