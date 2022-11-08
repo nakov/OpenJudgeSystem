@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import isNil from 'lodash/isNil';
 
@@ -28,9 +28,6 @@ const Breadcrumb = <TValue, >({
         className,
     );
 
-    useEffect(() => {
-        console.log(items);
-    });
     const renderItems = useCallback(
         () => {
             if (isNil(items)) {
