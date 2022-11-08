@@ -85,15 +85,16 @@
             Enumerable.Range(1, this.CategorySummary.MaxProblemsCount)
             .ForEach(index =>
             {
-                var participantResults = participantSummary.ProblemOrderToMinutesTakenToSolve;
+                var indexToStr = index.ToString();
+                var participantResults = participantSummary.ProblemToMinutesTakenToSolve;
 
-                var colTimeTakenValue = !participantResults.ContainsKey(index)
+                var colTimeTakenValue = !participantResults.ContainsKey(indexToStr)
                     ? 0
-                    : participantResults[index].TimeTaken;
+                    : participantResults[indexToStr].TimeTaken;
                 
-                var colLengthValue = !participantResults.ContainsKey(index)
+                var colLengthValue = !participantResults.ContainsKey(indexToStr)
                     ? 0
-                    : participantResults[index].Length;
+                    : participantResults[indexToStr].Length;
 
                 row.CreateCell(colNumber++).SetCellValue(colTimeTakenValue);
                 row.CreateCell(colNumber++).SetCellValue(colLengthValue);

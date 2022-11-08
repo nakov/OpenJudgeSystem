@@ -108,11 +108,14 @@
     <Compile Include="Business\ParticipantScores\IParticipantScoresBusinessService.cs" />
     <Compile Include="Business\ParticipantScores\Models\CategoryContestsParticipationSummary.cs" />
     <Compile Include="Business\ParticipantScores\Models\CategoryContestsParticipationSummaryExcel.cs" />
+    <Compile Include="Business\ParticipantScores\Models\ContestParticipationSummaryExcel.cs" />
+    <Compile Include="Business\ParticipantScores\Models\ContestParticipationSummary.cs" />
     <Compile Include="Business\ParticipantScores\Models\MaximumResultSubmissionByProblemServiceModel.cs" />
     <Compile Include="Business\ParticipantScores\Models\ParticipantScoresSummaryModel.cs" />
     <Compile Include="Business\ParticipantScores\Models\ParticipantSummaryInfoServiceModel.cs" />
     <Compile Include="Business\ParticipantScores\Models\ParticipantSummarySubmissionInfoServiceModel.cs" />
     <Compile Include="Business\ParticipantScores\Models\ParticipationStatisticsEarlierAndLaterSubmissionModel.cs" />
+    <Compile Include="Business\ParticipantScores\Models\StatisticsLevel.cs" />
     <Compile Include="Business\ParticipantScores\ParticipantScoresBusinessService.cs" />
     <Compile Include="Business\Participants\IParticipantsBusinessService.cs" />
     <Compile Include="Business\Participants\ParticipantsBusinessService.cs" />

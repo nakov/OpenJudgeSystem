@@ -2,6 +2,7 @@
 {
     public class ParticipantSummarySubmissionInfoServiceModel
     {
+        public int ProblemGroup { get; set; }
         public double TimeTaken { get; set; }
         
         // Submission content rows count
