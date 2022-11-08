@@ -65,7 +65,7 @@ const Tree = ({
             {isArray(node.children)
                 ? node.children.map((child) => treeItemHasTooltip
                     ? (
-                        <div className={styles.Tree} key={child.id}>
+                        <div className={styles.childrenElements} key={child.id}>
                             {renderTreeItem(child)}
                         </div>
                     )
