@@ -131,6 +131,7 @@
     <Compile Include="Cache\CacheItemsProviderService.cs" />
     <Compile Include="Cache\Models\CategoryMenuItemViewModel.cs" />
     <Compile Include="Cache\Models\ContestCategoryListViewModel.cs" />
+    <Compile Include="Cache\Models\HomeContestViewModel.cs" />
     <Compile Include="Cache\Statistics\ISubmissionStatisticsCacheService.cs" />
     <Compile Include="Cache\Statistics\SubmissionStatisticsCacheService.cs" />
     <Compile Include="Data\Checkers\CheckersDataService.cs" />

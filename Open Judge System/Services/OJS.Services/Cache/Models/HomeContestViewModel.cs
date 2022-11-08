@@ -1,4 +1,4 @@
-﻿namespace OJS.Web.ViewModels.Home.Index
+﻿namespace OJS.Services.Cache.Models
 {
     using System;
     using System.Linq.Expressions;
@@ -14,7 +14,8 @@
                 {
                     Id = contest.Id,
                     Name = contest.Name,
-                    EndTime = contest.EndTime
+                    EndTime = contest.EndTime,
+                    StartTime = contest.StartTime
                 };
             }
         }
@@ -24,5 +25,7 @@
         public string Name { get; set; }
 
         public DateTime? EndTime { get; set; }
+
+        public DateTime? StartTime { get; set; }
     }
 }

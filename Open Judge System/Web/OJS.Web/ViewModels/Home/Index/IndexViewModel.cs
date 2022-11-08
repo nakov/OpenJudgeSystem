@@ -1,6 +1,7 @@
 ﻿namespace OJS.Web.ViewModels.Home.Index
 {
     using System.Collections.Generic;
+    using OJS.Services.Cache.Models;
 
     public class IndexViewModel
     {
