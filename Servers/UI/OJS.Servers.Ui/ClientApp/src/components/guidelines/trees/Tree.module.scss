@@ -19,3 +19,9 @@
     max-width: none;
   }
 }
+
+.childrenElements {
+  .treeElement div:nth-child(2) {
+    font-size: 0.90rem;
+  }
+}
