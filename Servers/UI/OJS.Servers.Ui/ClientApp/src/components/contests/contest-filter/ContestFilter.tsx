@@ -1,14 +1,14 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
+import { FilterType, IFilter } from '../../../common/contest-types';
+import { useContests } from '../../../hooks/use-contests';
+import concatClassNames from '../../../utils/class-names';
+import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
+import ExpandButton from '../../guidelines/buttons/ExpandButton';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List, { Orientation } from '../../guidelines/lists/List';
-import { FilterType, IFilter } from '../../../common/contest-types';
-import ExpandButton from '../../guidelines/buttons/ExpandButton';
-import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
-import concatClassNames from '../../../utils/class-names';
 
 import styles from './ContestFilter.module.scss';
-
 
 interface IContestFilterProps {
     values: IFilter[];
@@ -26,20 +26,22 @@ const ContestFilter = ({
     const initialExpanded = false;
     const [ expanded, setExpanded ] = useState(initialExpanded);
 
+    const { state: { filters } } = useContests();
+
     const listOrientation = useMemo(
         () => type === FilterType.Status
             ? Orientation.horizontal
             : Orientation.vertical,
         [ type ],
     );
-    
+
     const filtersToDisplay = useMemo(
         () => expanded
             ? values
             : values.slice(0, maxDisplayCount),
         [ expanded, values, maxDisplayCount ],
     );
-    
+
     const toggleFiltersExpanded = useCallback(
         (isExpanded: boolean) => {
             setExpanded(isExpanded);
@@ -49,36 +51,36 @@ const ContestFilter = ({
 
     const renderExpandButton = useCallback(
         (allFilters: IFilter[]) => allFilters.length > maxDisplayCount
-            ? <ExpandButton onExpandChanged={toggleFiltersExpanded}/>
+            ? <ExpandButton onExpandChanged={toggleFiltersExpanded} />
             : null,
         [ toggleFiltersExpanded, maxDisplayCount ],
     );
 
     const renderStatusFilterItem = useCallback(
-        (buttonType: ButtonType, btnClassName: string,name: string, id: number) => (
+        (buttonType: ButtonType, btnClassName: string, name: string, id: number) => (
             <Button
-                type={buttonType}
-                onClick={() => onSelect(id)}
-                className={btnClassName}
-                text={name}
-                size={ButtonSize.small}
+              type={buttonType}
+              onClick={() => onSelect(id)}
+              className={btnClassName}
+              text={name}
+              size={ButtonSize.small}
             />
         ),
         [ onSelect ],
     );
 
     const renderStrategyFilterItem = useCallback(
-        (buttonType: ButtonType, btnClassName: string, name: string, id: number)=> (
+        (buttonType: ButtonType, btnClassName: string, name: string, id: number) => (
             <div className={styles.strategyHeader}>
                 <div className={styles.tooltip}>
                     <span className={styles.tooltipElement}>{name}</span>
                 </div>
                 <Button
-                    type={buttonType}
-                    onClick={() => onSelect(id)}
-                    className={styles.strategyElementClassName}
-                    text={name}
-                    size={ButtonSize.small}
+                  type={buttonType}
+                  onClick={() => onSelect(id)}
+                  className={styles.strategyElementClassName}
+                  text={name}
+                  size={ButtonSize.small}
                 />
             </div>
         ),
@@ -87,8 +89,8 @@ const ContestFilter = ({
 
     const getRenderFilterItemFunc = useCallback(
         (filterType: FilterType) => ({ id, name }: IFilter) => {
-            const filterIsSelected = values.some((f) => f.name === name);
-            const buttonType = filterIsSelected
+            const selectedStatusFilter = filters.find((f) => f.id === id);
+            const selectedButtonType = selectedStatusFilter
                 ? ButtonType.primary
                 : ButtonType.secondary;
 
@@ -97,35 +99,34 @@ const ContestFilter = ({
                 : '';
 
             return type === FilterType.Strategy
-                ? renderStrategyFilterItem(buttonType,btnClassName,name,id)
-                : renderStatusFilterItem(buttonType,btnClassName, name, id);
-            
+                ? renderStrategyFilterItem(selectedButtonType, btnClassName, name, id)
+                : renderStatusFilterItem(selectedButtonType, btnClassName, name, id);
         },
-        [ renderStatusFilterItem, renderStrategyFilterItem, type, values ],
+        [ filters, type, renderStrategyFilterItem, renderStatusFilterItem ],
     );
-    
+
     const className = concatClassNames(
         styles.listFilters,
         expanded
             ? styles.expanded
             : '',
     );
-    
+
     return (
         <div className={styles.filterTypeContainer}>
             <Heading
-                type={HeadingType.small}
-                className={styles.heading}
+              type={HeadingType.small}
+              className={styles.heading}
             >
                 {type}
             </Heading>
             <List
-                values={filtersToDisplay}
-                itemFunc={getRenderFilterItemFunc(type)}
-                orientation={listOrientation}
-                className={className}
-                itemClassName={styles.listFilterItem}
-                fullWidth
+              values={filtersToDisplay}
+              itemFunc={getRenderFilterItemFunc(type)}
+              orientation={listOrientation}
+              className={className}
+              itemClassName={styles.listFilterItem}
+              fullWidth
             />
             {renderExpandButton(values)}
         </div>
@@ -133,5 +134,3 @@ const ContestFilter = ({
 };
 
 export default ContestFilter;
-
-

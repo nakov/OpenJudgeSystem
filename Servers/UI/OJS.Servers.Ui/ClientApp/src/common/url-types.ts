@@ -10,7 +10,7 @@ interface IStartContestUrlParams {
 interface IAllContestsUrlParams {
     filters: IFilter[];
     sorting: ISort[];
-    page?: number,
+    page?: number;
 }
 
 interface IContestCategoriesUrlParams {

@@ -1,7 +1,7 @@
-import * as React from 'react';
-import { useEffect } from 'react';
-import { wait } from '../../utils/promise-utils';
+import React, { useEffect } from 'react';
+
 import { useAuth } from '../../hooks/use-auth';
+import { wait } from '../../utils/promise-utils';
 
 const LogoutPage = () => {
     const { actions: { signOut } } = useAuth();

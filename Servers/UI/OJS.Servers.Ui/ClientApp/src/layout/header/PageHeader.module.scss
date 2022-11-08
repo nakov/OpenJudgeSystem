@@ -1,11 +1,12 @@
-@import "src/styles/colors";
-@import "src/styles/components";
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
+@use 'src/styles/components';
 
 .header {
-  position: absolute;
   display: flex;
-  justify-content: center;
   height: 75px;
+  justify-content: center;
+  position: absolute;
   width: 100%;
 
   @media only screen and (max-width: 425px) {
@@ -13,7 +14,7 @@
   }
 
   h1 {
-    color: $white-color;
+    color: colors.$white-color;
   }
 
   img {
@@ -24,13 +25,13 @@
 .headerSize {
   @extend %contentSize;
 
+  align-items: center;
+  background-color: colors.$white-color;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 14%), 0 3px 4px rgb(0 0 0 / 12%), 0 1px 5px rgb(0 0 0 / 20%);
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 4px rgb(0 0 0 / 14%), 0 3px 4px rgb(0 0 0 / 12%), 0 1px 5px rgb(0 0 0 / 20%);
-  background-color: $white-color;
   padding: 0 30px;
-  border-radius: 0 0 8px 8px;
 
   @media only screen and (max-width: 425px) {
     box-shadow: none;
@@ -45,8 +46,9 @@
 }
 
 .headerLinks {
-  display: flex;
-  gap: 10px;
   align-items: center;
+  display: flex;
+  font-family: fonts.$font-family-lato;
+  gap: 10px;
   justify-content: center;
 }

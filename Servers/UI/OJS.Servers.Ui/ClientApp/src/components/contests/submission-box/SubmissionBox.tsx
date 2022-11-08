@@ -1,20 +1,17 @@
-import * as React from 'react';
-import { useCallback } from 'react';
-
-import { isNil } from 'lodash';
-import Heading, { HeadingType } from '../../guidelines/headings/Heading';
-import CodeEditor from '../../code-editor/CodeEditor';
-import List, { Orientation } from '../../guidelines/lists/List';
-import { Button } from '../../guidelines/buttons/Button';
-import ExecutionTypeSelector from '../execution-type-selector/ExecutionTypeSelector';
+import React, { useCallback } from 'react';
+import isNil from 'lodash/isNil';
 
 import { ISubmissionTypeType } from '../../../common/types';
-
 import { useSubmissions } from '../../../hooks/submissions/use-submissions';
 import { useProblems } from '../../../hooks/use-problems';
+import concatClassNames from '../../../utils/class-names';
+import CodeEditor from '../../code-editor/CodeEditor';
+import { Button } from '../../guidelines/buttons/Button';
+import Heading, { HeadingType } from '../../guidelines/headings/Heading';
+import List, { Orientation } from '../../guidelines/lists/List';
+import ExecutionTypeSelector from '../execution-type-selector/ExecutionTypeSelector';
 
 import styles from './SubmissionBox.module.scss';
-import concatClassNames from '../../../utils/class-names';
 
 const SubmissionBox = () => {
     const { actions: { selectSubmissionTypeById } } = useSubmissions();
@@ -114,7 +111,7 @@ const SubmissionBox = () => {
             <div className={styles.contestInnerLayout}>
                 <div className={styles.editorAndProblemControlsWrapper}>
                     <CodeEditor
-                      selectedSubmissionType={selectedSubmissionType!}
+                      selectedSubmissionType={selectedSubmissionType}
                       code={submissionCode}
                       onCodeChange={handleCodeChanged}
                     />

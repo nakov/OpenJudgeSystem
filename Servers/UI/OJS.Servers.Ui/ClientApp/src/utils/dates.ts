@@ -13,7 +13,7 @@ const formatDate = (
     formatString = defaultDateTimeFormat,
 ) => (moment().diff(date, 'days') > 3
     ? moment(date).format(formatString)
-    : moment(date).fromNow());
+    : moment.utc(date).fromNow());
 
 const convertToSecondsRemaining = (date: Date) => {
     const { days, hours, minutes, seconds } = intervalToDuration({
@@ -47,7 +47,7 @@ const secondsToFullTime = (duration: number) => {
 interface IConvertToTwoDigitValuesParamType {
     hours: number;
     minutes: number;
-    seconds: number
+    seconds: number;
 }
 
 const convertToTwoDigitValues = ({

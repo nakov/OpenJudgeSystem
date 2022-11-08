@@ -1,25 +1,26 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isEmpty } from 'lodash';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import isEmpty from 'lodash/isEmpty';
+
+import ITreeItemType from '../common/tree-types';
 import { IHaveChildrenProps } from '../components/common/Props';
-import { IContestCategoryTreeType } from '../common/types';
+
 import { useHttp } from './use-http';
-import { useUrls } from './use-urls';
 import { useLoading } from './use-loading';
+import { useUrls } from './use-urls';
 
 interface IContestCategoriesContext {
     state: {
-        categories: IContestCategoryTreeType[];
-        isLoaded: boolean,
+        categories: ITreeItemType[];
+        isLoaded: boolean;
     };
     actions: {
         load: () => Promise<void>;
     };
 }
 
-interface IContestCategoriesProviderProps extends IHaveChildrenProps {
-}
+type IContestCategoriesProviderProps = IHaveChildrenProps
 
-const defaultState = { state: { categories: [] as IContestCategoryTreeType[] } };
+const defaultState = { state: { categories: [] as ITreeItemType[] } };
 
 const ContestCategoriesContext = createContext<IContestCategoriesContext>(defaultState as IContestCategoriesContext);
 
@@ -49,18 +50,21 @@ const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps
                 return;
             }
 
-            setCategories(data as IContestCategoryTreeType[]);
+            setCategories(data as ITreeItemType[]);
         },
         [ data ],
     );
 
-    const value = {
-        state: {
-            categories,
-            isLoaded: isSuccess,
-        },
-        actions: { load },
-    };
+    const value = useMemo(
+        () => ({
+            state: {
+                categories,
+                isLoaded: isSuccess,
+            },
+            actions: { load },
+        }),
+        [ categories, isSuccess, load ],
+    );
 
     return (
         <ContestCategoriesContext.Provider value={value}>

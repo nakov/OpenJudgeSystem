@@ -1,5 +1,5 @@
-﻿import generateSortingTypes from './sorting-utils';
 import { FilterType, SortType } from './contest-types';
+import generateSortingTypes from './sorting-utils';
 
 const generateSortingStrategy = (() => {
     const result = generateSortingTypes(

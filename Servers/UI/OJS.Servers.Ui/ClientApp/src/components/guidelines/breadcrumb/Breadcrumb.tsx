@@ -1,33 +1,36 @@
-import * as React from 'react';
-import { Breadcrumbs } from '@material-ui/core';
-import { useCallback } from 'react';
-import { isNil } from 'lodash';
+import React, { useCallback, useEffect } from 'react';
+import Breadcrumbs from '@material-ui/core/Breadcrumbs';
+import isNil from 'lodash/isNil';
+
 import concatClassNames from '../../../utils/class-names';
-import { IHaveOptionalClassName } from '../../common/Props';
 import generateId from '../../../utils/id-generator';
-import styles from './Breadcrumb.module.scss';
 import defaultKeyFunc from '../../common/colcollection-key-utils';
+import { IHaveOptionalClassName } from '../../common/Props';
+
+import styles from './Breadcrumb.module.scss';
 
 interface IBreadcrumbProps<TValue> extends IHaveOptionalClassName {
     id?: string;
-    items?: TValue[] | null,
+    items?: TValue[] | null;
     itemFunc: (value: TValue) => React.ReactElement;
-    keyFunc?: (value: TValue) => string,
+    keyFunc?: (value: TValue) => string;
 }
 
-const Breadcrumb = <TValue extends unknown>({
+const Breadcrumb = <TValue, >({
     id = generateId(),
     items = null,
     itemFunc,
     keyFunc = defaultKeyFunc,
     className = '',
 }: IBreadcrumbProps<TValue>) => {
-
     const breadcrumbClassName = concatClassNames(
         styles.breadcrumb,
         className,
     );
 
+    useEffect(() => {
+        console.log(items);
+    });
     const renderItems = useCallback(
         () => {
             if (isNil(items)) {
@@ -35,7 +38,7 @@ const Breadcrumb = <TValue extends unknown>({
             }
 
             return items.map((value) => (
-                <div key={keyFunc(value)} >
+                <div key={keyFunc(value)}>
                     {itemFunc(value)}
                 </div>
             ));
@@ -43,9 +46,11 @@ const Breadcrumb = <TValue extends unknown>({
         [ itemFunc, keyFunc, items ],
     );
 
-    return <Breadcrumbs id={id} className={breadcrumbClassName}>
-        {renderItems()}
-    </Breadcrumbs>;
+    return (
+        <Breadcrumbs id={id} className={breadcrumbClassName}>
+            {renderItems()}
+        </Breadcrumbs>
+    );
 };
 
 export default Breadcrumb;

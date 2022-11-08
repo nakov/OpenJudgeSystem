@@ -1,4 +1,4 @@
-﻿import { FilterType, SortInfo } from './contest-types';
+import { FilterType, SortInfo } from './contest-types';
 
 const getNextIdGen = function* () {
     let index = 1;

@@ -1,5 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-
 type ToggleParam = (param: IFilter | ISort) => void;
 
 enum FilterType {
@@ -34,9 +32,9 @@ interface IContestParam<T> {
     type: T;
 }
 
-interface IFilter extends IContestParam<FilterType> {}
+type IFilter = IContestParam<FilterSortType>
 
-interface ISort extends IContestParam<SortType> {}
+type ISort = IContestParam<FilterSortType>
 
 interface IContestStrategyFilter {
     name: string;

@@ -1,7 +1,9 @@
 /* eslint-disable import/prefer-default-export */
-import { groupBy } from 'lodash';
-import { FilterInfo, FilterSortType, FilterType, IContestParam, IFilter } from './contest-types';
+import groupBy from 'lodash/groupBy';
+
 import { areStringEqual } from '../utils/compare-utils';
+
+import { FilterInfo, FilterSortType, FilterType, IContestParam, IFilter } from './contest-types';
 
 const getNextIdGen = function* () {
     let index = 1;
@@ -14,13 +16,12 @@ const getNextIdGen = function* () {
 
 const getId = getNextIdGen();
 
-const generateFilterItems = (type: FilterType, ...filters: FilterInfo[]) =>
-    filters.map(({ name, value }) => ({
-        name,
-        type,
-        value,
-        id: getId.next().value,
-    }));
+const generateFilterItems = (type: FilterType, ...filters: FilterInfo[]) => filters.map(({ name, value }) => ({
+    name,
+    type,
+    value,
+    id: getId.next().value,
+}));
 
 const groupByType = (filters: IFilter[]) => {
     const groupedGroups = groupBy(filters, (f) => f.type);
@@ -32,12 +33,11 @@ const groupByType = (filters: IFilter[]) => {
         }));
 };
 
-const filterByType = (filters: IContestParam<FilterSortType>[], filterType: FilterType) =>
-    filters.filter(({ type }) => filterType === type);
+const filterByType = (filters: IContestParam<FilterSortType>[], filterType: FilterType) => filters
+    .filter(({ type }) => filterType === type);
 
 const findFilterByTypeAndName = <T extends FilterSortType>(filters: IContestParam<T>[], type: string, value: any) => filters
-    .find(({ type: filterType, id }) =>
-        areStringEqual(filterType, type, false) &&
+    .find(({ type: filterType, id }) => areStringEqual(filterType, type, false) &&
         areStringEqual(value, id, false));
 
 export {

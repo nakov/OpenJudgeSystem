@@ -1,21 +1,20 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { isNil } from 'lodash';
 import { useSearchParams } from 'react-router-dom';
-import List from '../../guidelines/lists/List';
+import isNil from 'lodash/isNil';
 
 import { FilterType, IFilter, ISort } from '../../../common/contest-types';
-import ContestCategories from '../contest-categories/ContestCategories';
-
-import { useContests } from '../../../hooks/use-contests';
 import { groupByType } from '../../../common/filter-utils';
-import { useContestStrategyFilters } from '../../../hooks/use-contest-strategy-filters';
 import { useContestCategories } from '../../../hooks/use-contest-categories';
+import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
+import { useContestStrategyFilters } from '../../../hooks/use-contest-strategy-filters';
+import { useContests } from '../../../hooks/use-contests';
+import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
+import List from '../../guidelines/lists/List';
+import ContestCategories from '../contest-categories/ContestCategories';
 import ContestFilter from '../contest-filter/ContestFilter';
+import ContestSorting from '../contest-sorting/ContestSorting';
 
 import styles from './ContestFilters.module.scss';
-import ContestSorting from '../contest-sorting/ContestSorting';
-import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
-import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
 
 interface IContestFiltersProps {
     onFilterClick: (filter: IFilter) => void;
@@ -46,7 +45,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         (sorting: ISort) => toggleParam(sorting),
         [ toggleParam ],
     );
-    
+
     const handleFilterClick = useCallback(
         (filterId: number) => {
             const filter = possibleFilters.find(({ id }) => filterId === id);
@@ -66,10 +65,10 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
 
             return (
                 <ContestFilter
-                    values={groupFilters}
-                    type={type}
-                    onSelect={handleFilterClick}
-                    maxDisplayCount={maxFiltersToDisplayCount}
+                  values={groupFilters}
+                  type={type}
+                  onSelect={handleFilterClick}
+                  maxDisplayCount={maxFiltersToDisplayCount}
                 />
             );
         },
@@ -133,26 +132,26 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         },
         [ clearFilters, clearBreadcrumb ],
     );
-    
+
     return (
         <div className={styles.container}>
             <Button
-                type={ButtonType.secondary}
-                onClick={() => clearFiltersAndBreadcrumb()}
-                className={styles.button}
-                text='clear filters'
-                size={ButtonSize.small}
+              type={ButtonType.secondary}
+              onClick={() => clearFiltersAndBreadcrumb()}
+              className={styles.button}
+              text="clear filters"
+              size={ButtonSize.small}
             />
             <ContestCategories
-                className={styles.filterTypeContainer}
-                onCategoryClick={onFilterClick}
-                defaultSelected={defaultSelected}
+              className={styles.filterTypeContainer}
+              onCategoryClick={onFilterClick}
+              defaultSelected={defaultSelected}
             />
-            <ContestSorting onSortClick={handleSortClick}/>
+            <ContestSorting onSortClick={handleSortClick} />
             <List
-                values={filtersGroups}
-                itemFunc={renderFilter}
-                fullWidth
+              values={filtersGroups}
+              itemFunc={renderFilter}
+              fullWidth
             />
         </div>
     );

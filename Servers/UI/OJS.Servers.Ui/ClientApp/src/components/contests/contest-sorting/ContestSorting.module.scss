@@ -1,10 +1,10 @@
-﻿@import "src/styles/colors";
-@import "src/styles/fonts";
+﻿@use 'src/styles/colors';
+@use 'src/styles/fonts';
 
 .heading {
-  text-align: left;
+  border-bottom: 1px solid colors.$bottom-border-color;
   padding-bottom: 10px;
-  border-bottom: 1px solid $bottom-border-color;
+  text-align: left;
 }
 
 .sortingTypeContainer {
@@ -12,21 +12,21 @@
 }
 
 .buttonContainer {
+  align-items: end;
   display: flex;
   justify-content: space-between;
-  align-items: end;
 }
 
 .button {
+  border: 0;
   font-weight: normal;
-  border: none;
 }
 
 .sortTypesList {
-  max-height: 130px;
-  overflow: hidden;
   align-items: flex-start;
   justify-content: space-evenly;
+  max-height: 130px;
+  overflow: hidden;
 
   .sortTypesListItem {
     margin-top: 5px;

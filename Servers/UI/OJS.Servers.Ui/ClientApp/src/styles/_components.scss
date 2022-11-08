@@ -1,0 +1,64 @@
+@use 'colors.scss';
+@use 'variables.scss';
+
+%small {
+  font-size: variables.$f-size-12;
+  line-height: 12px;
+  padding: 10px 18px;
+}
+
+.medium,
+%medium {
+  font-size: variables.$f-size-16;
+  line-height: 16px;
+  padding: 13px 24px;
+}
+
+.large,
+%large {
+  font-size: variables.$f-size-16;
+  line-height: 16px;
+  padding: 16px 48px;
+}
+
+%contentSize {
+  box-sizing: border-box;
+  margin: 0 auto;
+  max-width: 90%;
+  width: 1280px;
+
+  &%wide {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  @media only screen and (max-width: 1440px) {
+    width: 1280px;
+  }
+}
+
+.customScroll,
+%customScroll {
+  &::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgb(0 0 0 / 10%);
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgb(0 0 0 / 20%);
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgb(0 0 0 / 40%);
+  }
+
+  &::-webkit-scrollbar-thumb:active {
+    background: rgb(0 0 0 / 90%);
+  }
+}
