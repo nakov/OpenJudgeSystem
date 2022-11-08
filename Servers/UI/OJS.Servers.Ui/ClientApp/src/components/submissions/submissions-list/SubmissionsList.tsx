@@ -81,7 +81,7 @@ const SubmissionsList = ({
                       maximumPoints={maximumPoints}
                       isProcessed={isProcessed}
                     />
-                    <p className={styles.submissionCreatedOnParagraph}>{formatDate(new Date(createdOn))}</p>
+                    <p className={styles.submissionCreatedOnParagraph}>{formatDate(createdOn)}</p>
                 </div>
                 <div className={styles.actionsContainer}>
                     <Text>
