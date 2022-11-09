@@ -19,8 +19,8 @@ const Contest = () => {
             score,
             maxScore,
             remainingTimeInMilliseconds,
-            totalParticipants,
-            activeParticipants,
+            totalParticipantsCount,
+            activeParticipantsCount,
             isOfficial,
         },
     } = useCurrentContest();
@@ -101,21 +101,33 @@ const Contest = () => {
         [],
     );
 
+    const participantsStateText = useMemo(
+        () => isOfficial
+            ? 'Active'
+            : 'Total',
+        [ isOfficial ],
+    );
+
+    const participantsValue = useMemo(
+        () => isOfficial
+            ? activeParticipantsCount.toString()
+            : totalParticipantsCount.toString(),
+        [ activeParticipantsCount, isOfficial, totalParticipantsCount ],
+    );
+
     const renderParticipants = useCallback(
-        (participants: number, isActive: boolean) => (
+        () => (
             <span>
-                {isActive
-                    ? 'Active'
-                    : 'Total'}
+                {participantsStateText}
                 {' '}
                 Participitants:
                 {' '}
                 <Text type={TextType.Bold}>
-                    {participants.toString()}
+                    {participantsValue}
                 </Text>
             </span>
         ),
-        [],
+        [ participantsStateText, participantsValue ],
     );
 
     return (
@@ -128,9 +140,7 @@ const Contest = () => {
                     {contest?.name}
                 </Heading>
                 <Heading type={HeadingType.secondary} className={secondaryHeadingClassName}>
-                    {isOfficial
-                        ? renderParticipants(activeParticipants, true)
-                        : renderParticipants(totalParticipants, false)}
+                    {renderParticipants()}
                     {renderTimeRemaining()}
                     {renderScore()}
                 </Heading>
