@@ -7,6 +7,7 @@ import {
     IGetContestResultsParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
+    IRegisterForContestTypeUrlParams,
     IStartContestParticipationUrlParams,
     ISubmitContestPasswordUrlParams,
 } from '../common/url-types';
@@ -20,6 +21,7 @@ interface IUrlsContext {
     getProfileInfoUrl: () => string;
     getSubmissionsForProfileUrl: () => string;
     getParticipationsForProfileUrl: () => string;
+    getRegisterContestTypeUrl: (params: IRegisterForContestTypeUrlParams) => string;
     getIndexContestsUrl: () => string;
     getAllContestsUrl: (params: IAllContestsUrlParams) => string;
     getRegisterForContestUrl: (params: IStartContestParticipationUrlParams) => string;
@@ -58,6 +60,11 @@ const getSubmissionsForProfileUrl = () => `${baseApiUrl}/Submissions/GetForProfi
 const getParticipationsForProfileUrl = () => `${baseApiUrl}/Participations/GetForProfile`;
 
 // contests
+const getRegisterContestTypeUrl = ({
+    id,
+    participationType,
+}: IRegisterForContestTypeUrlParams) => `/Contests/${id}/Register/${participationType}`;
+
 const getIndexContestsUrl = () => `${baseApiUrl}/Contests/GetForHomeIndex`;
 const getAllContestsUrl = ({ filters, page }: IAllContestsUrlParams) => {
     const filtersQuery = `${filters
@@ -125,6 +132,7 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
             getLogoutUrl,
             getAdministrationContestsGridUrl,
             getAdministrationNavigation,
+            getRegisterContestTypeUrl,
             getAllContestsUrl,
             getRegisterForContestUrl,
             getSubmitContestPasswordUrl,
