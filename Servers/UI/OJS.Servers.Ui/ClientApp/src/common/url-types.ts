@@ -42,9 +42,16 @@ interface IDownloadProblemResourceUrlParams {
 }
 
 interface IGetSubmissionResultsByProblemUrlParams {
-    id: number;
+    problemId: number;
     isOfficial: boolean;
     take: number;
+}
+
+interface IGetSubmissionResultsByProblemAndUserUrlParams {
+    problemId: number;
+    isOfficial: boolean;
+    take: number;
+    userId: string;
 }
 
 interface IGetContestResultsParams {
@@ -67,6 +74,7 @@ export type {
     IStartContestParticipationUrlParams,
     IDownloadProblemResourceUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
+    IGetSubmissionResultsByProblemAndUserUrlParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetContestResultsParams,
 };

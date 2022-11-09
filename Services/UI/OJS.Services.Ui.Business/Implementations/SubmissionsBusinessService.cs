@@ -1,3 +1,7 @@
+using Microsoft.EntityFrameworkCore.Query.Internal;
+using OJS.Data.Models.Participants;
+using OJS.Services.Common.Models.Users;
+
 namespace OJS.Services.Ui.Business.Implementations;
 
 using System;
@@ -219,7 +223,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         bool isOfficial, int take = 0)
     {
         var problem = await this.problemsDataService.GetWithProblemGroupById(problemId);
-
         await this.ValidateUserCanViewResults(problem, isOfficial);
 
         var participant =
@@ -227,7 +230,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 this.userProviderService.GetCurrentUser().Id,
                 isOfficial);
 
-        var userSubmissions = this.submissionsData
+       var userSubmissions = this.submissionsData
             .GetAllByProblemAndParticipant(problemId, participant.Id)
             .MapCollection<SubmissionResultsServiceModel>();
 
@@ -239,19 +242,37 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         return await userSubmissions.ToListAsync();
     }
 
+    public async Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblemAndUser(int problemId,
+        bool isOfficial, string userId, int take = 0)
+    {
+        var problem = await this.problemsDataService.GetWithProblemGroupById(problemId);
+
+        await this.ValidateUserCanViewResults(problem, isOfficial);
+
+       var userSubmissions = this.submissionsData
+                .GetAllByProblemAndUser(problemId, userId)
+                .MapCollection<SubmissionResultsServiceModel>();
+
+        if (take != 0)
+        {
+            userSubmissions = userSubmissions.Take(take);
+        }
+
+        return await userSubmissions.ToListAsync();
+    }
+
     private async Task ValidateUserCanViewResults(Problem problem, bool isOfficial)
     {
+        var user = this.userProviderService.GetCurrentUser();
         if (problem == null)
         {
             throw new BusinessServiceException(Resources.ContestsGeneral.Problem_not_found);
         }
 
-        var user = this.userProviderService.GetCurrentUser();
-
         var userHasParticipation = await this.participantsDataService
             .ExistsByContestByUserAndIsOfficial(problem.ProblemGroup.ContestId, user.Id, isOfficial);
 
-        if (!userHasParticipation)
+        if (!userHasParticipation && !user.IsAdminOrLecturer)
         {
             throw new BusinessServiceException(Resources.ContestsGeneral.User_is_not_registered_for_exam);
         }

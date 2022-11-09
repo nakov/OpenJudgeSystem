@@ -44,4 +44,6 @@ public interface ISubmissionsDataService : IDataService<Submission>
     bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId);
 
     Task<int> GetSubmissionsPerDayCount();
+
+    public IQueryable<Submission> GetAllByProblemAndUser(int problemId, string userId);
 }

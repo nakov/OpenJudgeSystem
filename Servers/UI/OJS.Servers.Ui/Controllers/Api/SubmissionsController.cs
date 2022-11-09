@@ -56,20 +56,40 @@ public class SubmissionsController : BaseApiController
             .ToOkResult();
 
     /// <summary>
+    /// Gets a subset of submissions by specific problem and user and given take count.
+    /// </summary>
+    /// <param name="problemId">The id of the problem</param>
+    /// /// <param name="userId">The id of the user that we want to get the submissions for</param>
+    /// <param name="isOfficial">Should the submissions be only from compete mode</param>
+    /// <param name="take">Number of submissions to return</param>
+    /// <returns>A collection of submissions for a specific problem by user</returns>
+    [HttpGet("{problemId:int}/{userId}")]
+    [ProducesResponseType(typeof(IEnumerable<SubmissionResultsResponseModel>), Status200OK)]
+    public async Task<IActionResult> GetSubmissionResultsByProblemAndUser(
+        int problemId,
+        string userId,
+        [FromQuery] bool isOfficial,
+        [FromQuery] int take)
+        => await this.submissionsBusiness
+            .GetSubmissionResultsByProblemAndUser(problemId, isOfficial, userId, take)
+            .MapCollection<SubmissionResultsResponseModel>()
+            .ToOkResult();
+
+    /// <summary>
     /// Gets a subset of submissions by specific problem and given take count.
     /// </summary>
-    /// <param name="id">The id of the problem</param>
+    /// <param name="problemId">The id of the problem</param>
     /// <param name="isOfficial">Should the submissions be only from compete mode</param>
     /// <param name="take">Number of submissions to return</param>
     /// <returns>A collection of submissions for a specific problem</returns>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(IEnumerable<SubmissionResultsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetSubmissionResultsByProblem(
-        int id,
+        int problemId,
         [FromQuery] bool isOfficial,
         [FromQuery] int take)
         => await this.submissionsBusiness
-            .GetSubmissionResultsByProblem(id, isOfficial, take)
+            .GetSubmissionResultsByProblem(problemId, isOfficial, take)
             .MapCollection<SubmissionResultsResponseModel>()
             .ToOkResult();
 

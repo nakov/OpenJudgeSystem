@@ -3,7 +3,11 @@ import isNil from 'lodash/isNil';
 
 import { UrlType } from '../../common/common-types';
 import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
-import { IGetSubmissionDetailsByIdUrlParams, IGetSubmissionResultsByProblemUrlParams } from '../../common/url-types';
+import {
+    IGetSubmissionDetailsByIdUrlParams,
+    IGetSubmissionResultsByProblemAndUserUrlParams,
+    IGetSubmissionResultsByProblemUrlParams,
+} from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useHttp } from '../use-http';
 import { useLoading } from '../use-loading';
@@ -20,6 +24,7 @@ interface ISubmissionsDetailsContext {
         selectSubmissionById: (submissionId: number) => void;
         getDetails: (submissionId: number) => Promise<void>;
         getSubmissionResults: (problemId: number, isOfficial: boolean) => Promise<void>;
+        getSubmissionResultsByProblemAndUser: (problemId: number, isOfficial: boolean, userId: string) => Promise<void>;
     };
 }
 
@@ -45,6 +50,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     const {
         getSubmissionDetailsByIdUrl,
         getSubmissionResultsByProblemUrl,
+        getSubmissionResultsByProblemAndUserUrl,
     } = useUrls();
 
     const [
@@ -67,17 +73,6 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         data: apiProblemResults,
     } = useHttp(getSubmissionResultsByProblemUrl as UrlType, submissionResultsByProblemUrlParams);
 
-    const getDetails = useCallback(
-        async (submissionId: number) => {
-            if (isNil(submissionId)) {
-                return;
-            }
-
-            setGetSubmissionDetailsByIdParams({ submissionId } as IGetSubmissionDetailsByIdUrlParams);
-        },
-        [],
-    );
-
     const getSubmissionResults = useCallback(
         async (problemId: number, isOfficial: boolean) => {
             if (isNil(problemId)) {
@@ -85,7 +80,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             }
 
             setSubmissionResultsByProblemUrlParams({
-                id: problemId,
+                problemId,
                 isOfficial,
                 take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
             });
@@ -117,6 +112,56 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         setCurrentProblemSubmissionResults(apiProblemResults as ISubmissionDetails[]);
     }, [ apiProblemResults ]);
 
+    const [
+        submissionResultsByProblemAndUserUrlParams,
+        setSubmissionResultsByProblemAndUserUrlParams,
+    ] = useState<IGetSubmissionResultsByProblemAndUserUrlParams | null>();
+
+    const {
+        get: getProblemResultsByUserRequest,
+        data: apiProblemResultsByUser,
+    } = useHttp(getSubmissionResultsByProblemAndUserUrl as UrlType, submissionResultsByProblemAndUserUrlParams);
+
+    const getSubmissionResultsByProblemAndUser = useCallback(
+        async (problemId: number, isOfficial: boolean, userId: string) => {
+            if (isNil(problemId) || isNil(userId)) {
+                return;
+            }
+
+            setSubmissionResultsByProblemAndUserUrlParams({
+                problemId,
+                isOfficial,
+                take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
+                userId,
+            });
+        },
+        [],
+    );
+
+    useEffect(
+        () => {
+            if (isNil(submissionResultsByProblemAndUserUrlParams)) {
+                return;
+            }
+
+            (async () => {
+                startLoading();
+                await getProblemResultsByUserRequest();
+                setSubmissionResultsByProblemAndUserUrlParams(null);
+                stopLoading();
+            })();
+        },
+        [ getProblemResultsByUserRequest, startLoading, stopLoading, submissionResultsByProblemAndUserUrlParams ],
+    );
+
+    useEffect(() => {
+        if (isNil(apiProblemResultsByUser)) {
+            return;
+        }
+
+        setCurrentProblemSubmissionResults(apiProblemResultsByUser as ISubmissionDetails[]);
+    }, [ apiProblemResultsByUser ]);
+
     useEffect(
         () => {
             if (isNil(getSubmissionDetailsByIdParams)) {
@@ -130,6 +175,17 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             })();
         },
         [ getSubmissionDetails, getSubmissionDetailsByIdParams, startLoading, stopLoading ],
+    );
+
+    const getDetails = useCallback(
+        async (submissionId: number) => {
+            if (isNil(submissionId)) {
+                return;
+            }
+
+            setGetSubmissionDetailsByIdParams({ submissionId } as IGetSubmissionDetailsByIdUrlParams);
+        },
+        [],
     );
 
     useEffect(
@@ -166,9 +222,16 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
                 selectSubmissionById,
                 getDetails,
                 getSubmissionResults,
+                getSubmissionResultsByProblemAndUser,
             },
         }),
-        [ currentProblemSubmissionResults, currentSubmission, getDetails, getSubmissionResults ],
+        [
+            currentProblemSubmissionResults,
+            currentSubmission,
+            getDetails,
+            getSubmissionResults,
+            getSubmissionResultsByProblemAndUser,
+        ],
     );
 
     return (

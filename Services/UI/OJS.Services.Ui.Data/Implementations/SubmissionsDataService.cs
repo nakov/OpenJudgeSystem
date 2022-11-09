@@ -1,3 +1,5 @@
+using OJS.Services.Ui.Models.Submissions;
+
 namespace OJS.Services.Ui.Data.Implementations;
 
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +46,10 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
                 filter: s => s.ParticipantId == participantId && s.ProblemId == problemId,
                 orderBy: q => q.CreatedOn,
                 descending: true);
+
+        public IQueryable<Submission> GetAllByProblemAndUser(int problemId, string userId)
+            => this.GetQuery(
+                    filter: s => s.ProblemId == problemId && s.Participant.UserId == userId);
 
         public IQueryable<Submission> GetAllFromContestsByLecturer(string lecturerId) =>
             this.DbSet

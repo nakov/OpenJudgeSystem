@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
+import { useAuth } from '../../../hooks/use-auth';
 import concatClassNames from '../../../utils/class-names';
 import CodeEditor from '../../code-editor/CodeEditor';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
@@ -16,8 +17,13 @@ const SubmissionDetails = () => {
             currentSubmission,
             currentProblemSubmissionResults,
         },
-        actions: { getSubmissionResults },
+        actions: {
+            getSubmissionResults,
+            getSubmissionResultsByProblemAndUser,
+        },
     } = useSubmissionsDetails();
+
+    const { state: { user } } = useAuth();
 
     const problemNameHeadingText = useMemo(
         () => `${currentSubmission?.problem.name} - ${currentSubmission?.problem.id}`,
@@ -41,12 +47,18 @@ const SubmissionDetails = () => {
             return;
         }
 
-        const { problem: { id: problemId }, isOfficial } = currentSubmission;
+        const { problem: { id: problemId }, isOfficial, user: { id: userId } } = currentSubmission;
 
-        (async () => {
-            await getSubmissionResults(problemId, isOfficial);
-        })();
-    }, [ currentSubmission, getSubmissionResults ]);
+        if (!user.permissions.canAccessAdministration) {
+            (async () => {
+                await getSubmissionResults(problemId, isOfficial);
+            })();
+        } else {
+            (async () => {
+                await getSubmissionResultsByProblemAndUser(problemId, isOfficial, userId);
+            })();
+        }
+    }, [ currentSubmission, getSubmissionResults, getSubmissionResultsByProblemAndUser, user ]);
 
     if (isNil(currentSubmission)) {
         return <div>No details fetched.</div>;

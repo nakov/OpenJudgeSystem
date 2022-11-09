@@ -6,6 +6,7 @@ import {
     IDownloadProblemResourceUrlParams,
     IGetContestResultsParams,
     IGetSubmissionDetailsByIdUrlParams,
+    IGetSubmissionResultsByProblemAndUserUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
     IRegisterForContestTypeUrlParams,
     IStartContestParticipationUrlParams,
@@ -28,6 +29,7 @@ interface IUrlsContext {
     getSubmitContestPasswordUrl: (params: ISubmitContestPasswordUrlParams) => string;
     getStartContestParticipationUrl: (params: IStartContestParticipationUrlParams) => string;
     getSubmissionResultsByProblemUrl: (params: IGetSubmissionResultsByProblemUrlParams) => string;
+    getSubmissionResultsByProblemAndUserUrl: (params: IGetSubmissionResultsByProblemAndUserUrlParams) => string;
     getSubmissionsDetailsUrl: () => string;
     getSubmissionDetailsByIdUrl: (params: IGetSubmissionDetailsByIdUrlParams) => string;
     getSubmitUrl: () => string;
@@ -105,11 +107,20 @@ const getContestResultsUrl = ({
 
 // submissions
 const getSubmissionResultsByProblemUrl = ({
-    id,
+    problemId,
     isOfficial,
     take,
 }: IGetSubmissionResultsByProblemUrlParams) => `
-    ${baseApiUrl}/Submissions/GetSubmissionResultsByProblem/${id}?isOfficial=${isOfficial}&take=${take}`;
+    ${baseApiUrl}/Submissions/GetSubmissionResultsByProblem/${problemId}?isOfficial=${isOfficial}&take=${take}`;
+
+const getSubmissionResultsByProblemAndUserUrl = ({
+    problemId,
+    isOfficial,
+    take,
+    userId,
+}: IGetSubmissionResultsByProblemAndUserUrlParams) => `
+${baseApiUrl}/Submissions/GetSubmissionResultsByProblemAndUser/${problemId}/${userId}?isOfficial=${isOfficial}&take=${take}`;
+
 const getSubmissionsDetailsUrl = () => `${baseApiUrl}/Submissions/Details`;
 const getSubmissionDetailsByIdUrl =
     ({ submissionId }: IGetSubmissionDetailsByIdUrlParams) => `${getSubmissionsDetailsUrl()}/${submissionId}`;
@@ -139,6 +150,7 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
             getStartContestParticipationUrl,
             getDownloadProblemResourceUrl,
             getSubmissionResultsByProblemUrl,
+            getSubmissionResultsByProblemAndUserUrl,
             getIndexContestsUrl,
             getProfileInfoUrl,
             getSubmissionsDetailsUrl,
