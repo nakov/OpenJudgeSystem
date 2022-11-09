@@ -1,6 +1,12 @@
 /* eslint-disable import/prefer-default-export */
 
+import { ContestParticipationType } from './constants';
 import { IFilter } from './contest-types';
+
+interface IRegisterForContestTypeUrlParams {
+    id: number;
+    participationType: ContestParticipationType;
+}
 
 interface IStartContestUrlParams {
     id: number;
@@ -52,6 +58,7 @@ interface IGetSubmissionDetailsByIdUrlParams {
 }
 
 export type {
+    IRegisterForContestTypeUrlParams,
     IRegisterForContestUrlParams,
     ISubmitContestPasswordUrlParams,
     IStartContestUrlParams,
