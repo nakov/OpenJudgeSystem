@@ -230,7 +230,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 this.userProviderService.GetCurrentUser().Id,
                 isOfficial);
 
-       var userSubmissions = this.submissionsData
+        var userSubmissions = this.submissionsData
             .GetAllByProblemAndParticipant(problemId, participant.Id)
             .MapCollection<SubmissionResultsServiceModel>();
 
@@ -243,22 +243,17 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     }
 
     public async Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblemAndUser(int problemId,
-        bool isOfficial, string userId, int take = 0)
+        bool isOfficial, string userId, int? take)
     {
         var problem = await this.problemsDataService.GetWithProblemGroupById(problemId);
 
         await this.ValidateUserCanViewResults(problem, isOfficial);
 
-       var userSubmissions = this.submissionsData
-                .GetAllByProblemAndUser(problemId, userId)
-                .MapCollection<SubmissionResultsServiceModel>();
+        var userSubmissions = await this.submissionsData
+            .GetAllByProblemAndUser(problemId, userId, take)
+            .MapCollection<SubmissionResultsServiceModel>();
 
-        if (take != 0)
-        {
-            userSubmissions = userSubmissions.Take(take);
-        }
-
-        return await userSubmissions.ToListAsync();
+        return userSubmissions;
     }
 
     private async Task ValidateUserCanViewResults(Problem problem, bool isOfficial)

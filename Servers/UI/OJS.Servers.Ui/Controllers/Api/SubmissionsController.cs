@@ -59,8 +59,8 @@ public class SubmissionsController : BaseApiController
     /// Gets a subset of submissions by specific problem and user and given take count.
     /// </summary>
     /// <param name="problemId">The id of the problem</param>
-    /// /// <param name="userId">The id of the user that we want to get the submissions for</param>
-    /// <param name="isOfficial">Should the submissions be only from compete mode</param>
+    /// <param name="userId">The id of the user that we want to get the problem submissions for</param>
+    /// <param name="isOfficial">Return from compete or practice participation types</param>
     /// <param name="take">Number of submissions to return</param>
     /// <returns>A collection of submissions for a specific problem by user</returns>
     [HttpGet("{problemId:int}/{userId}")]
@@ -69,7 +69,7 @@ public class SubmissionsController : BaseApiController
         int problemId,
         string userId,
         [FromQuery] bool isOfficial,
-        [FromQuery] int take)
+        [FromQuery] int? take)
         => await this.submissionsBusiness
             .GetSubmissionResultsByProblemAndUser(problemId, isOfficial, userId, take)
             .MapCollection<SubmissionResultsResponseModel>()

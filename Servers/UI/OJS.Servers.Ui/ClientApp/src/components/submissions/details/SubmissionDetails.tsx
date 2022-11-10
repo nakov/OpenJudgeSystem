@@ -17,10 +17,7 @@ const SubmissionDetails = () => {
             currentSubmission,
             currentProblemSubmissionResults,
         },
-        actions: {
-            getSubmissionResults,
-            getSubmissionResultsByProblemAndUser,
-        },
+        actions: { getSubmissionResults },
     } = useSubmissionsDetails();
 
     const { state: { user } } = useAuth();
@@ -48,17 +45,10 @@ const SubmissionDetails = () => {
         }
 
         const { problem: { id: problemId }, isOfficial, user: { id: userId } } = currentSubmission;
-
-        if (!user.permissions.canAccessAdministration) {
-            (async () => {
-                await getSubmissionResults(problemId, isOfficial);
-            })();
-        } else {
-            (async () => {
-                await getSubmissionResultsByProblemAndUser(problemId, isOfficial, userId);
-            })();
-        }
-    }, [ currentSubmission, getSubmissionResults, getSubmissionResultsByProblemAndUser, user ]);
+        (async () => {
+            await getSubmissionResults(problemId, isOfficial, userId);
+        })();
+    }, [ currentSubmission, getSubmissionResults, user ]);
 
     if (isNil(currentSubmission)) {
         return <div>No details fetched.</div>;
