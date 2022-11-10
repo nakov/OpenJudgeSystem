@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { IRegisterForContestTypeUrlParams } from '../../../common/app-url-types';
 import { ContestParticipationType } from '../../../common/constants';
 import { IIndexContestsType } from '../../../common/types';
 import { useAppUrls } from '../../../hooks/use-app-urls';
@@ -94,7 +93,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
             <div className={contestCardControlBtnsClassName}>
                 <LinkButton
                   id="button-card-compete"
-                  to={getRegisterContestTypeUrl({ id, participationType } as IRegisterForContestTypeUrlParams)}
+                  to={getRegisterContestTypeUrl({ id, participationType })}
                   text="Compete"
                   state={
                         canBeCompeted
@@ -105,7 +104,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                 />
                 <LinkButton
                   id="button-card-practice"
-                  to={getRegisterContestTypeUrl({ id, participationType } as IRegisterForContestTypeUrlParams)}
+                  to={getRegisterContestTypeUrl({ id, participationType })}
                   text="Practice"
                   type={LinkButtonType.secondary}
                   state={
