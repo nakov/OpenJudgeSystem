@@ -1,9 +1,9 @@
 import React, { useCallback, useMemo } from 'react';
 
+import { IRegisterForContestTypeUrlParams } from '../../../common/app-url-types';
 import { ContestParticipationType } from '../../../common/constants';
 import { IIndexContestsType } from '../../../common/types';
-import { IRegisterForContestTypeUrlParams } from '../../../common/url-types';
-import { useUrls } from '../../../hooks/use-urls';
+import { useAppUrls } from '../../../hooks/use-app-urls';
 import concatClassNames from '../../../utils/class-names';
 import { convertToSecondsRemaining } from '../../../utils/dates';
 import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
@@ -37,7 +37,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const contestCardControlBtns = 'card-control-buttons';
     const contestCardControlBtnsClassName = concatClassNames(styles.contestCardControls, contestCardControlBtns);
 
-    const { getRegisterContestTypeUrl } = useUrls();
+    const { getRegisterContestTypeUrl } = useAppUrls();
 
     const renderCountdown = useCallback(
         () => {
