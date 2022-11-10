@@ -1,4 +1,4 @@
-﻿/* eslint-disable import/prefer-default-export */
+/* eslint-disable import/prefer-default-export */
 
 import { ContestParticipationType } from './constants';
 
