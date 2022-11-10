@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import first from 'lodash/first';
 import isNil from 'lodash/isNil';
+import isUndefined from 'lodash/isUndefined';
 
 import { UrlType } from '../common/common-types';
 import { IProblemType } from '../common/types';
@@ -45,8 +46,10 @@ const ProblemsContext = createContext<IProblemsContext>(defaultState as IProblem
 
 const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     const { state: { contest } } = useCurrentContest();
-    const { actions: { changeHash } } = useHashUrlParams();
-
+    const {
+        state: { params },
+        actions: { changeHash },
+    } = useHashUrlParams();
     const [ problems, setProblems ] = useState(defaultState.state.problems);
     const [ currentProblem, setCurrentProblem ] = useState<IProblemType | null>(defaultState.state.currentProblem);
     const [ problemResourceIdToDownload, setProblemResourceIdToDownload ] = useState<number | null>();
@@ -82,6 +85,19 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         [ changeHash, normalizeProblems ],
     );
 
+    const problemFromHash = useMemo(
+        () => {
+            const hashIndex = Number(params) - 1;
+            return normalizeProblems[hashIndex];
+        },
+        [ normalizeProblems, params ],
+    );
+
+    const loadFromHash = useMemo(
+        () => !isUndefined(problemFromHash),
+        [ problemFromHash ],
+    );
+
     const reloadProblems = useCallback(
         () => {
             const { problems: newProblems } = contest || {};
@@ -97,9 +113,13 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
                 return;
             }
 
-            selectProblemById(id);
+            if (loadFromHash) {
+                setCurrentProblem(problemFromHash);
+            } else {
+                selectProblemById(id);
+            }
         },
-        [ contest, normalizeProblems, selectProblemById ],
+        [ contest, loadFromHash, normalizeProblems, problemFromHash, selectProblemById ],
     );
 
     const downloadProblemResourceFile = useCallback(async (resourceId: number) => {

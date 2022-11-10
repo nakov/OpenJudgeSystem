@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { IHaveChildrenProps } from '../../components/common/Props';
 
 interface IHashUrlParamsContext {
-    state: { params: unknown };
+    state: { params: string };
     actions: {
         changeHash: (hashParameter: number) => void;
     };
@@ -19,7 +19,7 @@ const HashUrlParamProvider = ({ children }: IHashUrlParamProviderProps) => {
     const params = useMemo(() => {
         const { hash } = location;
 
-        return hash;
+        return hash.substring(1);
     }, [ location ]);
 
     const changeHash = useCallback(
