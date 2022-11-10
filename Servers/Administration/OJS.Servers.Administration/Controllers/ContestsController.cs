@@ -5,7 +5,6 @@ namespace OJS.Servers.Administration.Controllers
     using Microsoft.AspNetCore.Mvc;
     using OJS.Data.Models;
     using OJS.Data.Models.Contests;
-    using OJS.Data.Models.Participants;
     using OJS.Data.Models.Problems;
     using OJS.Servers.Administration.Models.Contests;
     using OJS.Services.Administration.Business.Extensions;
@@ -19,6 +18,7 @@ namespace OJS.Servers.Administration.Controllers
     using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
+    using FluentExtensions.Extensions;
     using AdminResource = OJS.Common.Resources.AdministrationGeneral;
     using Resource = OJS.Common.Resources.ContestsControllers;
 
@@ -95,6 +95,18 @@ namespace OJS.Servers.Administration.Controllers
         protected override IEnumerable<Func<Contest, Contest, AdminActionContext, Task<ValidatorResult>>>
             AsyncEntityValidators
             => this.contestValidatorsFactory.GetAsyncValidators();
+
+        protected override async Task<IEnumerable<FormControlViewModel>> GenerateFormControlsAsync(Contest entity,
+            EntityAction action, IDictionary<string, string> entityDict,
+            IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters)
+        {
+            var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters)
+                .ToListAsync();
+
+            this.AddEmptyDefaultCategory(formControls);
+
+            return formControls;
+        }
 
         protected override async Task BeforeGeneratingForm(
             Contest entity,
@@ -238,6 +250,20 @@ namespace OJS.Servers.Administration.Controllers
                 !string.IsNullOrWhiteSpace(contest.PracticePassword))
             {
                 await this.participantsData.InvalidateByContestAndIsOfficial(contest.Id, isOfficial: false);
+            }
+        }
+
+        private void AddEmptyDefaultCategory(List<FormControlViewModel> formControls)
+        {
+            var contestCategory = formControls
+                .FirstOrDefault(x => x.Type == typeof(ContestCategory));
+
+            if (contestCategory?.Options is not null)
+            {
+                var contestCategories = contestCategory.Options.ToList()!;
+
+                contestCategories.Insert(0, new ContestCategory());
+                contestCategory.Options = contestCategories;
             }
         }
     }
