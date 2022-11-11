@@ -1,6 +1,6 @@
 ﻿namespace OJS.Services.Ui.Models.Contests;
 
-public class ValidationModel
+public class ContestValidationModel
 {
     public bool ContestIsFound { get; set; } = true;
 

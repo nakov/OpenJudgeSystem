@@ -153,26 +153,14 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             contest: newContest,
             contestIsCompete,
             remainingTimeInMilliseconds: newRemainingTimeInMilliseconds,
-            validationError: {
-                contestIsFound,
-                contestIsNotExpired,
-                contestCanBePracticed,
-                contestCanBeCompeted,
-                isParticipantRegistered,
-            },
+            validationError: newValidationError,
         } =
             responseData;
 
         setContest(newContest);
         setIsOfficial(contestIsCompete);
         setRemainingTimeInMilliseconds(newRemainingTimeInMilliseconds);
-        setValidationError({
-            contestIsFound,
-            contestIsNotExpired,
-            contestCanBePracticed,
-            contestCanBeCompeted,
-            isParticipantRegistered,
-        });
+        setValidationError(newValidationError);
     }, [ startContestData ]);
 
     useEffect(() => {

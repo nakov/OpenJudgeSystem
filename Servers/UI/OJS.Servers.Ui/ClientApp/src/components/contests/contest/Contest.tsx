@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
-import { ContestValidationErrors } from '../../../common/constants';
+import { ContestErrorMessages, ContestErrors } from '../../../common/constants';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import concatClassNames from '../../../utils/class-names';
 import { convertToTwoDigitValues } from '../../../utils/dates';
@@ -89,7 +89,13 @@ const Contest = () => {
 
             const currentSeconds = remainingTimeInMilliseconds / 1000;
 
-            return <Countdown renderRemainingTime={renderCountdown} duration={currentSeconds} metric={Metric.seconds} />;
+            return (
+                <Countdown
+                  renderRemainingTime={renderCountdown}
+                  duration={currentSeconds}
+                  metric={Metric.seconds}
+                />
+            );
         },
         [ remainingTimeInMilliseconds, renderCountdown ],
     );
@@ -99,15 +105,21 @@ const Contest = () => {
         [],
     );
 
-    const determineErrorMessage = useCallback(() => {
+    const getErrorMessage = useCallback(() => {
         if (!validationError.contestIsFound) {
-            return `${contest?.name} - ${ContestValidationErrors.NotFound}`;
-        } if (!validationError.contestIsNotExpired) {
-            return `${contest?.name} - ${ContestValidationErrors.Expired}`;
-        } if (!validationError.isParticipantRegistered) {
-            return `${contest?.name} - ${ContestValidationErrors.NotRegistered}`;
-        } if (!validationError.contestCanBeCompeted || !validationError.contestCanBePracticed) {
-            return `${contest?.name} - ${ContestValidationErrors.NotEligible}`;
+            return `${contest?.name} - ${ContestErrorMessages[ContestErrors.NotFound]}`;
+        }
+
+        if (!validationError.contestIsNotExpired) {
+            return `${contest?.name} - ${ContestErrorMessages[ContestErrors.Expired]}`;
+        }
+
+        if (!validationError.isParticipantRegistered) {
+            return `${contest?.name} - ${ContestErrorMessages[ContestErrors.NotRegistered]}`;
+        }
+
+        if (!validationError.contestCanBeCompeted || !validationError.contestCanBePracticed) {
+            return `${contest?.name} - ${ContestErrorMessages[ContestErrors.NotEligible]}`;
         }
 
         return null;
@@ -119,10 +131,10 @@ const Contest = () => {
               type={HeadingType.primary}
               className={styles.contestHeading}
             >
-                {determineErrorMessage()}
+                {getErrorMessage()}
             </Heading>
         </div>
-    ), [ determineErrorMessage ]);
+    ), [ getErrorMessage ]);
 
     const renderContest = useCallback(
         () => (
@@ -165,13 +177,10 @@ const Contest = () => {
     );
 
     const renderPage = useCallback(
-        () => !isNil(renderErrorMessage())
-            ? renderErrorMessage()
-            : renderContest(),
-        [
-            renderErrorMessage,
-            renderContest,
-        ],
+        () => isNil(getErrorMessage())
+            ? renderContest()
+            : renderErrorMessage(),
+        [ renderErrorMessage, renderContest, getErrorMessage ],
     );
 
     return renderPage();

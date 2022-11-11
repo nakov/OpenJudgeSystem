@@ -19,7 +19,7 @@ namespace OJS.Services.Ui.Models.Contests
 
         public bool ShouldEnterPassword { get; set; }
 
-        public ValidationModel ValidationError { get; set; }
+        public ContestValidationModel ValidationError { get; set; }
 
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<Participant, ContestParticipationServiceModel>()
