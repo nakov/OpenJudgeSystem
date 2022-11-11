@@ -85,7 +85,9 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
                 return;
             }
 
-            if (user.permissions.canAccessAdministration) {
+            const isUserAdminOrLecturer = user.permissions.canAccessAdministration;
+
+            if (isUserAdminOrLecturer) {
                 setSubmissionResultsByProblemAndUserUrlParams({
                     problemId,
                     isOfficial,
