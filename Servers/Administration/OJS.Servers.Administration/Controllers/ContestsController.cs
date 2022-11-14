@@ -103,8 +103,6 @@ namespace OJS.Servers.Administration.Controllers
             var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters)
                 .ToListAsync();
 
-            this.AddEmptyDefaultCategory(formControls);
-
             return formControls;
         }
 
@@ -250,20 +248,6 @@ namespace OJS.Servers.Administration.Controllers
                 !string.IsNullOrWhiteSpace(contest.PracticePassword))
             {
                 await this.participantsData.InvalidateByContestAndIsOfficial(contest.Id, isOfficial: false);
-            }
-        }
-
-        private void AddEmptyDefaultCategory(List<FormControlViewModel> formControls)
-        {
-            var contestCategory = formControls
-                .FirstOrDefault(x => x.Type == typeof(ContestCategory));
-
-            if (contestCategory?.Options is not null)
-            {
-                var contestCategories = contestCategory.Options.ToList()!;
-
-                contestCategories.Insert(0, new ContestCategory());
-                contestCategory.Options = contestCategories;
             }
         }
     }
