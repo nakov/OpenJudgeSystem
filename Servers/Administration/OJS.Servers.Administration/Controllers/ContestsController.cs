@@ -96,16 +96,6 @@ namespace OJS.Servers.Administration.Controllers
             AsyncEntityValidators
             => this.contestValidatorsFactory.GetAsyncValidators();
 
-        protected override async Task<IEnumerable<FormControlViewModel>> GenerateFormControlsAsync(Contest entity,
-            EntityAction action, IDictionary<string, string> entityDict,
-            IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters)
-        {
-            var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters)
-                .ToListAsync();
-
-            return formControls;
-        }
-
         protected override async Task BeforeGeneratingForm(
             Contest entity,
             EntityAction action,
