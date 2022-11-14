@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
-import { ContestErrorMessages, ContestErrors } from '../../../common/constants';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import concatClassNames from '../../../utils/class-names';
 import { convertToTwoDigitValues } from '../../../utils/dates';
@@ -105,36 +104,18 @@ const Contest = () => {
         [],
     );
 
-    const getErrorMessage = useCallback(() => {
-        if (!validationError.contestIsFound) {
-            return `${contest?.name} - ${ContestErrorMessages[ContestErrors.NotFound]}`;
-        }
-
-        if (!validationError.contestIsNotExpired) {
-            return `${contest?.name} - ${ContestErrorMessages[ContestErrors.Expired]}`;
-        }
-
-        if (!validationError.isParticipantRegistered) {
-            return `${contest?.name} - ${ContestErrorMessages[ContestErrors.NotRegistered]}`;
-        }
-
-        if (!validationError.contestCanBeCompeted || !validationError.contestCanBePracticed) {
-            return `${contest?.name} - ${ContestErrorMessages[ContestErrors.NotEligible]}`;
-        }
-
-        return null;
-    }, [ contest, validationError ]);
-
     const renderErrorMessage = useCallback(() => (
         <div className={styles.headingContest}>
             <Heading
               type={HeadingType.primary}
               className={styles.contestHeading}
             >
-                {getErrorMessage()}
+                {contest?.name}
+                -
+                {validationError.errorMessage}
             </Heading>
         </div>
-    ), [ getErrorMessage ]);
+    ), [ contest, validationError ]);
 
     const renderContest = useCallback(
         () => (
@@ -177,10 +158,10 @@ const Contest = () => {
     );
 
     const renderPage = useCallback(
-        () => isNil(getErrorMessage())
+        () => isNil(validationError.errorMessage)
             ? renderContest()
             : renderErrorMessage(),
-        [ renderErrorMessage, renderContest, getErrorMessage ],
+        [ renderErrorMessage, renderContest, validationError ],
     );
 
     return renderPage();

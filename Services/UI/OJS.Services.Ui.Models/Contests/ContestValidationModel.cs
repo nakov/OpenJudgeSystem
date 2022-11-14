@@ -11,4 +11,6 @@ public class ContestValidationModel
     public bool ContestIsNotExpired { get; set; } = true;
 
     public bool IsParticipantRegistered { get; set; } = true;
+
+    public string ErrorMessage { get; set; }
 }

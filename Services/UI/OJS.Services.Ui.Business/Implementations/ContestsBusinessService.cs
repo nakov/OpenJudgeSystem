@@ -173,6 +173,8 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var propertyInfo = validationModel.GetType().GetProperty(validationResult.PropertyName);
             propertyInfo?.SetValue(validationModel, false);
+
+            validationModel.ErrorMessage = validationResult.Message;
         }
 
         public Task<bool> IsContestIpValidByContestAndIp(int contestId, string ip)
@@ -218,12 +220,12 @@ namespace OJS.Services.Ui.Business.Implementations
                     isUserAdmin,
                     allowToAdminAlways: true))
             {
-                throw new BusinessServiceException($"Contest cannot be competed {contest.Name}");
+                throw new BusinessServiceException($"Contest cannot be competed");
             }
 
             if (!official && !contest.CanBePracticed && !isUserLecturerInContest)
             {
-                throw new BusinessServiceException($"Contest cannot be practiced {contest.Name}");
+                throw new BusinessServiceException($"Contest cannot be practiced");
             }
         }
 

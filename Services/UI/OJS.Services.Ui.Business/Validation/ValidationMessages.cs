@@ -2,11 +2,14 @@
 
 public static class ValidationMessages
 {
-    public const string ContestNotFound = "Contest not found!";
+    public static class Contest
+    {
+        public const string NotFound = "Contest not found!";
 
-    public const string ContestIsExpired = "Contest is expired!";
+        public const string IsExpired = "Contest is expired!";
 
-    public const string ContestCanBeCompeted = "Contest can't be competed!";
+        public const string CanBeCompeted = "Contest can't be competed!";
 
-    public const string ContestCanBePracticed = "Contest can't be practiced!";
+        public const string CanBePracticed = "Contest can't be practiced!";
+    }
 }

@@ -85,6 +85,7 @@ interface IStartParticipationValidationType {
     contestCanBePracticed: boolean | null;
     contestCanBeCompeted: boolean | null;
     isParticipantRegistered: boolean | null;
+    errorMessage: string;
 }
 
 interface IStartParticipationResponseType {

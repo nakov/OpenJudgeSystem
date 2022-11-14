@@ -28,12 +28,12 @@ public class ContestValidationService : IContestValidationService
             contest.IsDeleted ||
             (!contest.IsVisible && !isUserLecturerInContest))
         {
-            return ValidationResult.Invalid(ValidationMessages.ContestNotFound, ContestValidation.ContestIsFound.ToString());
+            return ValidationResult.Invalid(ValidationMessages.Contest.NotFound, ContestValidation.ContestIsFound.ToString());
         }
 
         if (await this.IsContestExpired(contest.Id, userId, isUserAdmin, official))
         {
-            return ValidationResult.Invalid(ValidationMessages.ContestIsExpired, ContestValidation.ContestIsNotExpired.ToString());
+            return ValidationResult.Invalid(ValidationMessages.Contest.IsExpired, ContestValidation.ContestIsNotExpired.ToString());
         }
 
         if (official &&
@@ -43,12 +43,12 @@ public class ContestValidationService : IContestValidationService
                 isUserAdmin,
                 allowToAdminAlways: true))
         {
-            return ValidationResult.Invalid(ValidationMessages.ContestCanBeCompeted, ContestValidation.ContestCanBeCompeted.ToString());
+            return ValidationResult.Invalid(ValidationMessages.Contest.CanBeCompeted, ContestValidation.ContestCanBeCompeted.ToString());
         }
 
         if (!official && !contest.CanBePracticed && !isUserLecturerInContest)
         {
-            return ValidationResult.Invalid(ValidationMessages.ContestCanBePracticed, ContestValidation.ContestCanBePracticed.ToString());
+            return ValidationResult.Invalid(ValidationMessages.Contest.CanBePracticed, ContestValidation.ContestCanBePracticed.ToString());
         }
 
         return ValidationResult.Valid();

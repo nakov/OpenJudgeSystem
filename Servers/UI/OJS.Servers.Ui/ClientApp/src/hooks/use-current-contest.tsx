@@ -58,6 +58,7 @@ const defaultState = {
             isParticipantRegistered: true,
             contestCanBeCompeted: true,
             contestCanBePracticed: true,
+            errorMessage: '',
         },
     },
 };
