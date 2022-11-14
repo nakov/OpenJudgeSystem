@@ -1,7 +1,3 @@
-using Microsoft.EntityFrameworkCore.Query.Internal;
-using OJS.Data.Models.Participants;
-using OJS.Services.Common.Models.Users;
-
 namespace OJS.Services.Ui.Business.Implementations;
 
 using System;
@@ -21,6 +17,9 @@ using SoftUni.Judge.Common.Enumerations;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Services.Common;
 using OJS.Services.Infrastructure.Exceptions;
+using Microsoft.EntityFrameworkCore.Query.Internal;
+using OJS.Data.Models.Participants;
+using OJS.Services.Common.Models.Users;
 using static OJS.Services.Ui.Business.Constants.PublicSubmissions;
 
 public class SubmissionsBusinessService : ISubmissionsBusinessService

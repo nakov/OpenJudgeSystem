@@ -42,7 +42,7 @@ interface IDownloadProblemResourceUrlParams {
 }
 
 interface IGetSubmissionResultsByProblemUrlParams {
-    problemId: number;
+    id: number;
     isOfficial: boolean;
     take: number;
 }

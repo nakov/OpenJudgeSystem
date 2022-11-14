@@ -78,18 +78,18 @@ public class SubmissionsController : BaseApiController
     /// <summary>
     /// Gets a subset of submissions by specific problem and given take count.
     /// </summary>
-    /// <param name="problemId">The id of the problem</param>
+    /// <param name="id">The id of the problem</param>
     /// <param name="isOfficial">Should the submissions be only from compete mode</param>
     /// <param name="take">Number of submissions to return</param>
     /// <returns>A collection of submissions for a specific problem</returns>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(IEnumerable<SubmissionResultsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetSubmissionResultsByProblem(
-        int problemId,
+        int id,
         [FromQuery] bool isOfficial,
         [FromQuery] int take)
         => await this.submissionsBusiness
-            .GetSubmissionResultsByProblem(problemId, isOfficial, take)
+            .GetSubmissionResultsByProblem(id, isOfficial, take)
             .MapCollection<SubmissionResultsResponseModel>()
             .ToOkResult();
 

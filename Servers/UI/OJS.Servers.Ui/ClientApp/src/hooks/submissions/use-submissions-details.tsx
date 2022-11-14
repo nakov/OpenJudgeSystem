@@ -85,7 +85,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
                 return;
             }
 
-            const isUserAdminOrLecturer = user.permissions.canAccessAdministration;
+            const { permissions: { canAccessAdministration: isUserAdminOrLecturer } } = user;
 
             if (isUserAdminOrLecturer) {
                 setSubmissionResultsByProblemAndUserUrlParams({
@@ -96,7 +96,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
                 });
             } else {
                 setSubmissionResultsByProblemUrlParams({
-                    problemId,
+                    id: problemId,
                     isOfficial,
                     take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
                 });
