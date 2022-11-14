@@ -18,7 +18,6 @@ namespace OJS.Servers.Administration.Controllers
     using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
-    using FluentExtensions.Extensions;
     using AdminResource = OJS.Common.Resources.AdministrationGeneral;
     using Resource = OJS.Common.Resources.ContestsControllers;
 
