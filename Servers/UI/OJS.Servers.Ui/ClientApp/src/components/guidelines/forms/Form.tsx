@@ -47,11 +47,10 @@ const Form = ({
             {children}
             <Button
               id={btnId}
-              className={submitBtnClassName}
+              className={internalSubmitButtonClassName}
               onClick={(ev) => handleSubmit(ev)}
               text={submitText}
               type={ButtonType.submit}
-              className={internalSubmitButtonClassName}
             />
         </form>
     );
