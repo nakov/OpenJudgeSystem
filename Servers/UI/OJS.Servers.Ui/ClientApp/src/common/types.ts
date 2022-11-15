@@ -80,12 +80,8 @@ interface IRegisterForContestResponseType {
 }
 
 interface IStartParticipationValidationType {
-    contestIsFound: boolean | null;
-    contestIsNotExpired: boolean | null;
-    contestCanBePracticed: boolean | null;
-    contestCanBeCompeted: boolean | null;
-    isParticipantRegistered: boolean | null;
-    errorMessage: string;
+    message: string;
+    isValid: boolean;
 }
 
 interface IStartParticipationResponseType {
@@ -93,7 +89,7 @@ interface IStartParticipationResponseType {
     contestIsCompete: boolean;
     lastSubmissionTime: Date;
     remainingTimeInMilliseconds: number;
-    validationError: IStartParticipationValidationType;
+    validationResult: IStartParticipationValidationType;
 }
 
 interface IPagedResultType<TItem> {

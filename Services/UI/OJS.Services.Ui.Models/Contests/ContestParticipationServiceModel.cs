@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using OJS.Data.Models.Contests;
 using OJS.Data.Models.Participants;
+using OJS.Services.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System;
 using System.Linq;
@@ -19,7 +19,7 @@ namespace OJS.Services.Ui.Models.Contests
 
         public bool ShouldEnterPassword { get; set; }
 
-        public ContestValidationModel ValidationError { get; set; }
+        public ValidationResult ValidationResult { get; set; }
 
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<Participant, ContestParticipationServiceModel>()

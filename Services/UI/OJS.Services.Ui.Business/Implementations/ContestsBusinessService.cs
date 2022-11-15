@@ -116,15 +116,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var user = this.userProviderService.GetCurrentUser();
 
-            ContestValidationModel validationModel = new();
-
             var validationResult = await this.contestValidationService.GetValidationResult((contest, user.Id, user.IsAdmin, model.IsOfficial));
-
-            // check if there is a validation error and set the property of the validation model that corresponds to the error to false to indicate it
-            if (!validationResult.IsValid)
-            {
-                this.SetValidationError(validationResult, validationModel);
-            }
 
             var userProfile = await this.usersBusinessService.GetUserProfileById(user.Id);
 
@@ -142,13 +134,12 @@ namespace OJS.Services.Ui.Business.Implementations
             if (participant == null)
             {
                 participant = new Participant() { Contest = contest, };
-                validationModel.IsParticipantRegistered = false;
             }
 
             var participationModel = participant.Map<ContestParticipationServiceModel>();
 
+            participationModel.ValidationResult = validationResult;
             participationModel.ContestIsCompete = model.IsOfficial;
-            participationModel.ValidationError = validationModel;
 
             var participantsList = new List<int> { participant.Id, };
 
@@ -167,14 +158,6 @@ namespace OJS.Services.Ui.Business.Implementations
             });
 
             return participationModel;
-        }
-
-        private void SetValidationError(ValidationResult? validationResult, ContestValidationModel validationModel)
-        {
-            var propertyInfo = validationModel.GetType().GetProperty(validationResult.PropertyName);
-            propertyInfo?.SetValue(validationModel, false);
-
-            validationModel.ErrorMessage = validationResult.Message;
         }
 
         public Task<bool> IsContestIpValidByContestAndIp(int contestId, string ip)

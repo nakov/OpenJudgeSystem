@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo } from 'react';
-import isNil from 'lodash/isNil';
 
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import concatClassNames from '../../../utils/class-names';
@@ -20,7 +19,7 @@ const Contest = () => {
             score,
             maxScore,
             remainingTimeInMilliseconds,
-            validationError,
+            validationResult,
         },
     } = useCurrentContest();
 
@@ -112,10 +111,10 @@ const Contest = () => {
             >
                 {contest?.name}
                 -
-                {validationError.errorMessage}
+                {validationResult.message}
             </Heading>
         </div>
-    ), [ contest, validationError ]);
+    ), [ contest, validationResult ]);
 
     const renderContest = useCallback(
         () => (
@@ -158,10 +157,10 @@ const Contest = () => {
     );
 
     const renderPage = useCallback(
-        () => isNil(validationError.errorMessage)
+        () => validationResult.isValid
             ? renderContest()
             : renderErrorMessage(),
-        [ renderErrorMessage, renderContest, validationError ],
+        [ renderErrorMessage, renderContest, validationResult ],
     );
 
     return renderPage();
