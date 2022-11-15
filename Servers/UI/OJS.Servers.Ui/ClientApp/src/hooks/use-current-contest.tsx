@@ -151,8 +151,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             contestIsCompete,
             remainingTimeInMilliseconds: newRemainingTimeInMilliseconds,
             validationResult: newValidationResult,
-        } =
-            responseData;
+        } = responseData;
 
         setContest(newContest);
         setIsOfficial(contestIsCompete);

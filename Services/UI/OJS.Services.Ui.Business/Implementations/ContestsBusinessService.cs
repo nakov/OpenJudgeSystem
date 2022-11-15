@@ -1,6 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using OJS.Services.Ui.Business.Validation;
-
 namespace OJS.Services.Ui.Business.Implementations
 {
     using System;
@@ -18,6 +15,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.Common.Models;
     using OJS.Services.Infrastructure.Constants;
+    using OJS.Services.Ui.Business.Validation;
 
     public class ContestsBusinessService : IContestsBusinessService
     {
