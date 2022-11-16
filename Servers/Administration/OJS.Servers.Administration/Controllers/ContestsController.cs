@@ -5,7 +5,6 @@ namespace OJS.Servers.Administration.Controllers
     using Microsoft.AspNetCore.Mvc;
     using OJS.Data.Models;
     using OJS.Data.Models.Contests;
-    using OJS.Data.Models.Participants;
     using OJS.Data.Models.Problems;
     using OJS.Servers.Administration.Models.Contests;
     using OJS.Services.Administration.Business.Extensions;
