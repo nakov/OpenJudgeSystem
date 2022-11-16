@@ -5,7 +5,6 @@ namespace OJS.Servers.Administration.Controllers
     using Microsoft.AspNetCore.Mvc;
     using OJS.Data.Models;
     using OJS.Data.Models.Contests;
-    using OJS.Data.Models.Participants;
     using OJS.Data.Models.Problems;
     using OJS.Servers.Administration.Models.Contests;
     using OJS.Services.Administration.Business.Extensions;
@@ -130,6 +129,11 @@ namespace OJS.Servers.Administration.Controllers
                 await this.contestsValidationHelper
                     .ValidatePermissionsOfCurrentUser(entity.Id)
                     .VerifyResult();
+            }
+
+            if (!entity.IsOnline && entity.Duration != null)
+            {
+                entity.Duration = null;
             }
         }
 
