@@ -110,8 +110,8 @@ const Contest = () => {
 
     const participantsValue = useMemo(
         () => isOfficial
-            ? activeParticipantsCount.toString()
-            : totalParticipantsCount.toString(),
+            ? activeParticipantsCount
+            : totalParticipantsCount,
         [ activeParticipantsCount, isOfficial, totalParticipantsCount ],
     );
 
