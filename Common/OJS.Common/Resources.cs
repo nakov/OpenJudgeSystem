@@ -105,6 +105,7 @@ namespace OJS.Common
             public const string Select_one_submission_type = "Choose at least one submission type!";
             public const string Subtracted_time_from_participants_online = "Successfully subtracted {0} minutes from the times of all selected active participants in the contest {1}";
             public const string Subtracted_time_from_single_participant_online = "Successfully subtracted {0} minutes from the time of the participant with username: {1}, in the contest {2}";
+            public const string Category_Not_Selected = "Category not selected!";
         }
 
         public static class ExamGroupsController
