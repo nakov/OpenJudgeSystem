@@ -327,7 +327,7 @@
             @(Html.Kendo().AutoCompleteFor(x => Model.AllowedIps)
                 .DataTextField("Value")
                 .Value(Model.RawAllowedIps)
-                .Placeholder("Въведете позволени IP-та (разделени със ',')")
+                .Placeholder("Add allowed IPs (separated by ',')")
                 .Filter(FilterType.Contains)
                 .Separator(",")
                 .DataSource(dataSource => dataSource
@@ -337,7 +337,7 @@
             )
         </div>
         <div class="editor-field col-xs-4">
-            <span class="glyphicon glyphicon-question-sign text-primary" title="Въведете позволените IP-та за състезанието (разделени със ',')" data-tooltip="true"></span>
+            <span class="glyphicon glyphicon-question-sign text-primary" title="Add allowed IPs for the competition (separated by ',')" data-tooltip="true"></span>
             @Html.ValidationMessageFor(m => m.AllowedIps)
         </div>
     </div>
