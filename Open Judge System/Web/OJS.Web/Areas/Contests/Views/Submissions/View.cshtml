@@ -1,4 +1,5 @@
 ﻿@using System.Text.RegularExpressions
+@using System.Web.Script.Serialization
 
 @using OJS.Common.Extensions
 @using OJS.Web.Areas.Contests.Controllers
@@ -298,12 +299,15 @@ else
 
                         <div id="diff-@testResult.Id"></div>
 
+                        JavaScriptSerializer serializer = new JavaScriptSerializer();
+                        serializer.MaxJsonLength = Int32.MaxValue;
+                        
                         <script>
                             $(function () {
                                 var diffContainer = document.getElementById('diff-@testResult.Id');
                                 var mergeView = CodeMirror.MergeView(diffContainer, {
-                                    origLeft: @Html.Raw(Json.Encode(testResult.ExpectedOutputFragment)) || '',
-                                    value: @Html.Raw(Json.Encode(testResult.UserOutputFragment)) || '',
+                                    origLeft: @Html.Raw(serializer.Serialize(testResult.ExpectedOutputFragment)) || '',
+                                    value: @Html.Raw(serializer.Serialize(testResult.UserOutputFragment)) || '',
                                     mode: 'text/x-diff',
                                     lineNumbers: true,
                                     lockScroll: true,
