@@ -131,6 +131,11 @@ namespace OJS.Servers.Administration.Controllers
                     .ValidatePermissionsOfCurrentUser(entity.Id)
                     .VerifyResult();
             }
+
+            if (!entity.IsOnline && entity.Duration != null)
+            {
+                entity.Duration = null;
+            }
         }
 
         protected override async Task BeforeEntitySaveOnCreateAsync(
