@@ -34,6 +34,8 @@ interface ICurrentContestContext {
         isPasswordValid: boolean | null;
         remainingTimeInMilliseconds: number;
         validationResult: IStartParticipationValidationType;
+        totalParticipantsCount: number;
+        activeParticipantsCount: number;
     };
     actions: {
         setContestPassword: (password: string) => void;
@@ -56,6 +58,8 @@ const defaultState = {
             message: '',
             isValid: true,
         },
+        totalParticipantsCount: 0,
+        activeParticipantsCount: 0,
     },
 };
 
@@ -82,6 +86,8 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ isPasswordValid, setIsPasswordValid ] = useState<boolean | null>(null);
     const [ remainingTimeInMilliseconds, setRemainingTimeInMilliseconds ] = useState(defaultState.state.remainingTimeInMilliseconds);
     const [ validationResult, setValidationResult ] = useState<IStartParticipationValidationType>(defaultState.state.validationResult);
+    const [ totalParticipantsCount, setTotalParticipantsCount ] = useState(defaultState.state.totalParticipantsCount);
+    const [ activeParticipantsCount, setActiveParticipantsCount ] = useState(defaultState.state.activeParticipantsCount);
 
     const {
         startLoading,
@@ -151,12 +157,16 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             contestIsCompete,
             remainingTimeInMilliseconds: newRemainingTimeInMilliseconds,
             validationResult: newValidationResult,
+            totalParticipantsCount: newTotalParticipants,
+            activeParticipantsCount: newActiveParticipants,
         } = responseData;
 
         setContest(newContest);
         setIsOfficial(contestIsCompete);
         setRemainingTimeInMilliseconds(newRemainingTimeInMilliseconds);
         setValidationResult(newValidationResult);
+        setTotalParticipantsCount(newTotalParticipants);
+        setActiveParticipantsCount(newActiveParticipants);
     }, [ startContestData ]);
 
     useEffect(() => {
@@ -239,6 +249,8 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 isPasswordValid,
                 remainingTimeInMilliseconds,
                 validationResult,
+                totalParticipantsCount,
+                activeParticipantsCount,
             },
             actions: {
                 setContestPassword,
@@ -261,6 +273,8 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             submitContestPasswordErrorMessage,
             submitPassword,
             validationResult,
+            totalParticipantsCount,
+            activeParticipantsCount,
         ],
     );
 

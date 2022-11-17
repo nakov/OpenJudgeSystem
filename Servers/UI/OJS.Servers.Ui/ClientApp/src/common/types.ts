@@ -90,6 +90,8 @@ interface IStartParticipationResponseType {
     lastSubmissionTime: Date;
     remainingTimeInMilliseconds: number;
     validationResult: IStartParticipationValidationType;
+    totalParticipantsCount: number;
+    activeParticipantsCount: number;
 }
 
 interface IPagedResultType<TItem> {

@@ -63,7 +63,7 @@ public class ContestsController : BaseApiController
     [ProducesResponseType(typeof(PagedResultResponse<ContestForListingResponseModel>), Status200OK)]
     public async Task<IActionResult> GetAll([FromQuery] ContestFiltersRequestModel? model)
         => await this.contestsBusinessService
-            .GetAllByFilters(model?.Map<ContestFiltersServiceModel>())
+            .GetAllByFiltersAndSorting(model?.Map<ContestFiltersServiceModel>())
             .Map<PagedResultResponse<ContestForListingResponseModel>>()
             .ToOkResult();
 }

@@ -20,6 +20,9 @@ const Contest = () => {
             maxScore,
             remainingTimeInMilliseconds,
             validationResult,
+            totalParticipantsCount,
+            activeParticipantsCount,
+            isOfficial,
         },
     } = useCurrentContest();
 
@@ -103,6 +106,35 @@ const Contest = () => {
         [],
     );
 
+    const participantsStateText = useMemo(
+        () => isOfficial
+            ? 'Active'
+            : 'Total',
+        [ isOfficial ],
+    );
+
+    const participantsValue = useMemo(
+        () => isOfficial
+            ? activeParticipantsCount
+            : totalParticipantsCount,
+        [ activeParticipantsCount, isOfficial, totalParticipantsCount ],
+    );
+
+    const renderParticipants = useCallback(
+        () => (
+            <span>
+                {participantsStateText}
+                {' '}
+                Participitants:
+                {' '}
+                <Text type={TextType.Bold}>
+                    {participantsValue}
+                </Text>
+            </span>
+        ),
+        [ participantsStateText, participantsValue ],
+    );
+
     const renderErrorMessage = useCallback(() => (
         <div className={styles.headingContest}>
             <Heading
@@ -127,6 +159,7 @@ const Contest = () => {
                         {contest?.name}
                     </Heading>
                     <Heading type={HeadingType.secondary} className={secondaryHeadingClassName}>
+                        {renderParticipants()}
                         {renderTimeRemaining()}
                         {renderScore()}
                     </Heading>
@@ -153,6 +186,7 @@ const Contest = () => {
             renderTimeRemaining,
             secondaryHeadingClassName,
             submissionBoxClassName,
+            renderParticipants,
         ],
     );
 
