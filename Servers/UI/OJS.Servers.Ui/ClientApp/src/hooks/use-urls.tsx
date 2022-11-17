@@ -7,7 +7,6 @@ import {
     IGetContestResultsParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
-    IRegisterForContestTypeUrlParams,
     IStartContestParticipationUrlParams,
     ISubmitContestPasswordUrlParams,
 } from '../common/url-types';
@@ -21,7 +20,6 @@ interface IUrlsContext {
     getProfileInfoUrl: () => string;
     getSubmissionsForProfileUrl: () => string;
     getParticipationsForProfileUrl: () => string;
-    getRegisterContestTypeUrl: (params: IRegisterForContestTypeUrlParams) => string;
     getIndexContestsUrl: () => string;
     getAllContestsUrl: (params: IAllContestsUrlParams) => string;
     getRegisterForContestUrl: (params: IStartContestParticipationUrlParams) => string;
@@ -60,14 +58,14 @@ const getSubmissionsForProfileUrl = () => `${baseApiUrl}/Submissions/GetForProfi
 const getParticipationsForProfileUrl = () => `${baseApiUrl}/Participations/GetForProfile`;
 
 // contests
-const getRegisterContestTypeUrl = ({
-    id,
-    participationType,
-}: IRegisterForContestTypeUrlParams) => `/Contests/${id}/Register/${participationType}`;
-
 const getIndexContestsUrl = () => `${baseApiUrl}/Contests/GetForHomeIndex`;
-const getAllContestsUrl = ({ filters, page }: IAllContestsUrlParams) => {
+const getAllContestsUrl = ({ filters, sorting, page }: IAllContestsUrlParams) => {
     const filtersQuery = `${filters
+        .map(({ value, type }) => `${type.toLowerCase()}=${value}`)
+        .join('&')
+    }`;
+
+    const sortingQuery = `${sorting
         .map(({ value, type }) => `${type.toLowerCase()}=${value}`)
         .join('&')
     }`;
@@ -76,7 +74,7 @@ const getAllContestsUrl = ({ filters, page }: IAllContestsUrlParams) => {
         ? ''
         : `page=${page}`;
 
-    return `${baseApiUrl}/Contests/GetAll?${filtersQuery}&${pageQuery}`;
+    return `${baseApiUrl}/Contests/GetAll?${filtersQuery}&${sortingQuery}&${pageQuery}`;
 };
 
 const getRegisterForContestUrl = ({
@@ -132,7 +130,6 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
             getLogoutUrl,
             getAdministrationContestsGridUrl,
             getAdministrationNavigation,
-            getRegisterContestTypeUrl,
             getAllContestsUrl,
             getRegisterForContestUrl,
             getSubmitContestPasswordUrl,
