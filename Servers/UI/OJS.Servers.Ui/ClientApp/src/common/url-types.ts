@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 
-import { IFilter } from './contest-types';
+import { IFilter, ISort } from './contest-types';
 
 interface IStartContestUrlParams {
     id: number;
@@ -9,6 +9,7 @@ interface IStartContestUrlParams {
 
 interface IAllContestsUrlParams {
     filters: IFilter[];
+    sorting: ISort[];
     page?: number;
 }
 
