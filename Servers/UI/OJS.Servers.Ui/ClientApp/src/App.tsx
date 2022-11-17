@@ -49,6 +49,7 @@ const App = () => {
         UsersProvider,
         ContestCategoriesProvider,
         ContestStrategyFiltersProvider,
+        CategoriesBreadcrumbProvider,
         ContestsProvider,
         HomeContestsProvider,
         ParticipationsProvider,
@@ -59,7 +60,6 @@ const App = () => {
         SubmissionsProvider,
         SubmissionsDetailsProvider,
         HomeStatisticsProvider,
-        CategoriesBreadcrumbProvider,
         PublicSubmissionsProvider,
         HashUrlParamProvider,
     ] as ProviderType[];
