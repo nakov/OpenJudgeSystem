@@ -1,8 +1,8 @@
 namespace OJS.Data.Models
 {
-    using SoftUni.Data.Infrastructure.Models;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Users;
+    using SoftUni.Data.Infrastructure.Models;
 
     public class LecturerInContest : AuditInfoEntity
     {

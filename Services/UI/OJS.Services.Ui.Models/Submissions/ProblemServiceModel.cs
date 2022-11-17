@@ -1,8 +1,8 @@
-﻿using OJS.Data.Models.Problems;
-using SoftUni.AutoMapper.Infrastructure.Models;
-
-namespace OJS.Services.Ui.Models.Submissions
+﻿namespace OJS.Services.Ui.Models.Submissions
 {
+    using OJS.Data.Models.Problems;
+    using SoftUni.AutoMapper.Infrastructure.Models;
+
     public class ProblemServiceModel : IMapFrom<Problem>
     {
         public int Id { get; set; }

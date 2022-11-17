@@ -1,7 +1,7 @@
-﻿using OJS.Data.Models.Problems;
-using SoftUni.AutoMapper.Infrastructure.Models;
+﻿namespace OJS.Services.Ui.Models.Problems;
 
-namespace OJS.Services.Ui.Models.Problems;
+using OJS.Data.Models.Problems;
+using SoftUni.AutoMapper.Infrastructure.Models;
 
 public class ProblemResourceServiceModel : IMapFrom<ProblemResource>
 {
@@ -9,7 +9,7 @@ public class ProblemResourceServiceModel : IMapFrom<ProblemResource>
 
     public int ProblemId { get; set; }
 
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     public byte[]? File { get; set; }
 

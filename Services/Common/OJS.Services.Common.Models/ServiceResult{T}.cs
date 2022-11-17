@@ -9,8 +9,8 @@
 
         public T? Data { get; private set; }
 
-        public new static ServiceResult<T> Success(T data)
-            => new(null)
+        public static new ServiceResult<T> Success(T data)
+            => new (null)
             {
                 Data = data,
             };

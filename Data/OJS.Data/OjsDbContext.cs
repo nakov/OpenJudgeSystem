@@ -144,7 +144,7 @@ namespace OJS.Data
             builder.Entity<TagInProblem>()
                 .HasKey(x => new { x.TagId, x.ProblemId });
 
-            this.FixMultipleCascadePaths(builder);
+            FixMultipleCascadePaths(builder);
 
             this.TryRegisterMatchingGlobalQueryFiltersForRequiredDeletableEntities(builder);
         }
@@ -152,7 +152,7 @@ namespace OJS.Data
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.ConfigureDbOptions(ApplicationName.Ui);
 
-        private void FixMultipleCascadePaths(ModelBuilder builder)
+        private static void FixMultipleCascadePaths(ModelBuilder builder)
         {
             builder.Entity<ProblemGroup>()
                 .HasMany(p => p.Problems)

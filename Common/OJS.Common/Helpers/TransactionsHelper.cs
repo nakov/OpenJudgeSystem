@@ -4,7 +4,7 @@
 
     using IsolationLevel = System.Transactions.IsolationLevel;
 
-    public class TransactionsHelper
+    public static class TransactionsHelper
     {
         public static TransactionScope CreateTransactionScope() => new TransactionScope();
 
@@ -14,7 +14,7 @@
         {
             var transactionOptions = new TransactionOptions
             {
-                IsolationLevel = isolationLevel
+                IsolationLevel = isolationLevel,
             };
 
             return new TransactionScope(TransactionScopeOption.Required, transactionOptions, asyncFlowOption);

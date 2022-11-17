@@ -1,18 +1,18 @@
 namespace OJS.Data.Models.Submissions
 {
     using FluentExtensions.Extensions;
-    using SoftUni.Data.Infrastructure.Models;
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Problems;
     using OJS.Data.Models.Tests;
     using OJS.Data.Validation;
-    using SoftUni.Judge.Common.Enumerations;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
     using System.Text;
+    using SoftUni.Data.Infrastructure.Models;
+    using SoftUni.Judge.Common.Enumerations;
 
     public class Submission : DeletableAuditInfoEntity<int>
     {
@@ -89,7 +89,7 @@ namespace OJS.Data.Models.Submissions
         /// - Five normal test runs with:
         ///   - Two 1 results (Wrong Answer)
         ///   - Two 0 results (Correct Answer)
-        ///   - One 2 result (Time Limit)
+        ///   - One 2 result (Time Limit).
         /// </summary>
         public string? TestRunsCache { get; set; }
 

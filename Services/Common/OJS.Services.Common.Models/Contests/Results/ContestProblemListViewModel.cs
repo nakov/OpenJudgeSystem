@@ -15,7 +15,7 @@ public class ContestProblemListViewModel
             ShowResults = pr.ShowResults,
             MaximumPoints = pr.MaximumPoints,
             ProblemGroupId = pr.ProblemGroupId,
-            IsExcludedFromHomework = pr.ProblemGroup.Type == ProblemGroupType.ExcludedFromHomework
+            IsExcludedFromHomework = pr.ProblemGroup.Type == ProblemGroupType.ExcludedFromHomework,
         };
 
     public int Id { get; set; }

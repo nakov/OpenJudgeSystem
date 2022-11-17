@@ -60,29 +60,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
             return await responseMessage.Content.ReadAsByteArrayAsync();
         }
 
-        private async Task<HttpResponseMessage> GetResponse(string url)
-        {
-            if (string.IsNullOrEmpty(url))
-            {
-                throw new ArgumentException(UrlCannotBeNull);
-            }
-
-            var responseMessage = await this.Client.GetAsync(url);
-            await this.ValidateResponseMessage(responseMessage);
-
-            return responseMessage;
-        }
-
-        private async Task<TResponse?> Post<TResponse>(HttpContent content, string url)
-        {
-            var responseMessage = await this.Client.PostAsync(url, content);
-            await this.ValidateResponseMessage(responseMessage);
-            var result = await responseMessage.Content.ReadFromJsonAsync<TResponse>();
-
-            return result;
-        }
-
-        private async Task ValidateResponseMessage(HttpResponseMessage responseMessage)
+        private static async Task ValidateResponseMessage(HttpResponseMessage responseMessage)
         {
             if (!responseMessage.IsSuccessStatusCode)
             {
@@ -104,6 +82,28 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
 
                 throw new Exception(errorMessage);
             }
+        }
+
+        private async Task<HttpResponseMessage> GetResponse(string url)
+        {
+            if (string.IsNullOrEmpty(url))
+            {
+                throw new ArgumentException(UrlCannotBeNull);
+            }
+
+            var responseMessage = await this.Client.GetAsync(url);
+            await ValidateResponseMessage(responseMessage);
+
+            return responseMessage;
+        }
+
+        private async Task<TResponse?> Post<TResponse>(HttpContent content, string url)
+        {
+            var responseMessage = await this.Client.PostAsync(url, content);
+            await ValidateResponseMessage(responseMessage);
+            var result = await responseMessage.Content.ReadFromJsonAsync<TResponse>();
+
+            return result;
         }
     }
 }

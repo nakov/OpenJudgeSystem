@@ -2,7 +2,7 @@ namespace OJS.Common.Utils
 {
     using System;
 
-    public class Calculator
+    public static class Calculator
     {
         public static byte? Age(DateTime? date)
         {

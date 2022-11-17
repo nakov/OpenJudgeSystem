@@ -1,15 +1,14 @@
-﻿using AutoMapper;
-using OJS.Data.Models.Contests;
-using OJS.Data.Models.Participants;
-using SoftUni.AutoMapper.Infrastructure.Models;
-using System;
-using System.Linq;
-
-namespace OJS.Services.Ui.Models.Contests
+﻿namespace OJS.Services.Ui.Models.Contests
 {
+    using AutoMapper;
+    using OJS.Data.Models.Participants;
+    using SoftUni.AutoMapper.Infrastructure.Models;
+    using System;
+    using System.Linq;
+
     public class ContestParticipationServiceModel : IMapExplicitly
     {
-        public ContestServiceModel Contest { get; set; }
+        public ContestServiceModel Contest { get; set; } = null!;
 
         public DateTime? LastSubmissionTime { get; set; }
 

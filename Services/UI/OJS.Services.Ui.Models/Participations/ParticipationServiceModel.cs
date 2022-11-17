@@ -7,7 +7,7 @@
         public int Id { get; set; }
         public int ContestId { get; set; }
 
-        public string ContestName { get; set; }
+        public string ContestName { get; set; } = null!;
 
         public int? CompeteResult { get; set; }
 

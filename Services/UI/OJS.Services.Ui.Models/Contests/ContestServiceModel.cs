@@ -1,30 +1,27 @@
-﻿using AutoMapper;
-using FluentExtensions.Extensions;
-using OJS.Common.Enumerations;
-using OJS.Data.Models.Contests;
-using OJS.Data.Models.Problems;
-using OJS.Services.Ui.Models.SubmissionTypes;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
-using SoftUni.AutoMapper.Infrastructure.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace OJS.Services.Ui.Models.Contests
+﻿namespace OJS.Services.Ui.Models.Contests
 {
+    using AutoMapper;
+    using OJS.Common.Enumerations;
+    using OJS.Data.Models.Contests;
+    using OJS.Services.Ui.Models.SubmissionTypes;
+    using SoftUni.AutoMapper.Infrastructure.Models;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class ContestServiceModel : IMapExplicitly
     {
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         public int Type { get; set; }
 
         public int? CategoryId { get; set; }
 
-        public string CategoryName { get; set; }
+        public string CategoryName { get; set; } = null!;
 
-        public string Description { get; set; }
+        public string Description { get; set; } = null!;
 
         public DateTime? StartTime { get; set; }
 
@@ -42,9 +39,9 @@ namespace OJS.Services.Ui.Models.Contests
 
         public bool IsOnline { get; set; }
 
-        public string ContestPassword { private get; set; }
+        public string ContestPassword { private get; set; } = null!;
 
-        public string PracticePassword { private get; set; }
+        public string PracticePassword { private get; set; } = null!;
 
         public bool HasContestQuestions { get; set; }
 
@@ -58,9 +55,9 @@ namespace OJS.Services.Ui.Models.Contests
 
         public ContestType ContestType { get; set; }
 
-        public IEnumerable<SubmissionTypeServiceModel> AllowedSubmissionTypes { get; set; }
+        public IEnumerable<SubmissionTypeServiceModel> AllowedSubmissionTypes { get; set; } = null!;
 
-        public ICollection<ContestProblemServiceModel> Problems { get; set; }
+        public ICollection<ContestProblemServiceModel> Problems { get; set; } = null!;
 
         public IEnumerable<ContestCategoryListViewModel> ParentCategories { get; set; } =
             Enumerable.Empty<ContestCategoryListViewModel>();
@@ -176,18 +173,24 @@ namespace OJS.Services.Ui.Models.Contests
 
         public void RegisterMappings(IProfileExpression configuration) =>
             configuration.CreateMap<Contest, ContestServiceModel>()
-                .ForMember(d => d.HasContestQuestions,
+                .ForMember(
+                    d => d.HasContestQuestions,
                     opt => opt.MapFrom(s => s.Questions.Any(x => x.AskOfficialParticipants)))
-                .ForMember(d => d.HasPracticeQuestions,
+                .ForMember(
+                    d => d.HasPracticeQuestions,
                     opt => opt.MapFrom(s => s.Questions.Any(x => x.AskPracticeParticipants)))
-                .ForMember(d => d.OfficialParticipants,
+                .ForMember(
+                    d => d.OfficialParticipants,
                     opt => opt.MapFrom(s => s.Participants.Count(x => x.IsOfficial)))
-                .ForMember(d => d.PracticeParticipants,
+                .ForMember(
+                    d => d.PracticeParticipants,
                     opt => opt.MapFrom(s => s.Participants.Count(x => !x.IsOfficial)))
-                .ForMember(d => d.ProblemsCount,
+                .ForMember(
+                    d => d.ProblemsCount,
                     opt => opt.MapFrom(s => s.ProblemGroups.SelectMany(pg => pg.Problems).Count(p => !p.IsDeleted)))
                 .ForMember(d => d.ContestType, opt => opt.MapFrom(s => s.Type))
-                .ForMember(d => d.AllowedSubmissionTypes,
+                .ForMember(
+                    d => d.AllowedSubmissionTypes,
                     opt =>
                         opt.MapFrom(s =>
                             s.ProblemGroups
@@ -200,8 +203,7 @@ namespace OJS.Services.Ui.Models.Contests
                     opt => opt.MapFrom(s =>
                         s.ProblemGroups
                             .SelectMany(pg => pg.Problems)
-                            .OrderBy(p => p.OrderBy)
-                        ))
+                            .OrderBy(p => p.OrderBy)))
                 .ForMember(d => d.ParentCategories, opt => opt.Ignore())
                 .ForMember(d => d.UserIsAdminOrLecturerInContest, opt => opt.Ignore())
                 .ForMember(d => d.UserCanCompete, opt => opt.Ignore())

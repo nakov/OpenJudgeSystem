@@ -50,7 +50,6 @@ namespace OJS.Services.Infrastructure.Cache.Implementations
         public T Get<T>(string cacheId, Func<T> getItemCallback, int cacheSeconds)
             => this.Get(cacheId, getItemCallback, this.GetAbsoluteExpirationByCacheSeconds(cacheSeconds));
 
-
         public Task<T> Get<T>(string cacheId, Func<Task<T>> getItemCallback, int cacheSeconds)
             => this.Get(cacheId, getItemCallback, this.GetAbsoluteExpirationByCacheSeconds(cacheSeconds));
 
@@ -62,7 +61,7 @@ namespace OJS.Services.Infrastructure.Cache.Implementations
                 .FromJson<T>();
 
         private static byte[] ParseValue<T>(T obj)
-            => obj
+            => obj!
                 .ToJson()
                 .ToByteArray();
 

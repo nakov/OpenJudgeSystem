@@ -1,11 +1,11 @@
 namespace OJS.Data.Models.Tests
 {
     using FluentExtensions.Extensions;
-    using SoftUni.Data.Infrastructure.Models;
     using OJS.Data.Models.Problems;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations.Schema;
+    using SoftUni.Data.Infrastructure.Models;
 
     public class Test : Entity<int>, IOrderableEntity
     {

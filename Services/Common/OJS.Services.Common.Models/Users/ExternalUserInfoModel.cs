@@ -59,7 +59,7 @@ namespace OJS.Services.Common.Models.Users
                     EducationalInstitution = this.EducationalInstitution,
                     Company = this.Company,
                     JobTitle = this.JobTitle,
-                }
+                },
             };
     }
 }

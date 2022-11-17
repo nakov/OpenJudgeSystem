@@ -8,7 +8,8 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
 
     public class DistributorHttpClientService : SulsPlatformHttpClientService, IDistributorHttpClientService
     {
-        public DistributorHttpClientService(HttpClient client) : base(client)
+        public DistributorHttpClientService(HttpClient client)
+            : base(client)
         {
             var distributorBaseUrl = EnvironmentUtils.GetByKey(DistributorBaseUrlKey);
 

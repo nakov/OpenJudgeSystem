@@ -18,7 +18,7 @@
 
         public string? CheckerComment { get; set; }
 
-        public string ResultType { get; set; }
+        public string ResultType { get; set; } = null!;
 
         public string? ExpectedOutputFragment { get; set; }
 

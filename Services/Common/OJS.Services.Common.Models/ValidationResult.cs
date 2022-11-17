@@ -13,13 +13,13 @@ public class ValidationResult
     public string? PropertyName { get; set; }
 
     public static ValidationResult Valid()
-        => new()
+        => new ()
         {
             IsValid = true,
         };
 
     public static ValidationResult Invalid(string message, string? propertyName = null)
-        => new()
+        => new ()
         {
             Message = message,
             PropertyName = propertyName,

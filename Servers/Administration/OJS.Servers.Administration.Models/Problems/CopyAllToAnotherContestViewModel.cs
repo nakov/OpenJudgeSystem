@@ -15,8 +15,8 @@ public class CopyAllToAnotherContestViewModel : IMapFrom<ContestCopyProblemsVali
     [IgnoreMap]
     public SelectList? ContestsToCopyTo { get; set; }
 
-    [Display(Name = Resource.Bulk_copy_contest_label)]
-    [Required(ErrorMessage = Resource.Contest_required)]
+    [Display(Name = Resource.BulkCopyContestLabel)]
+    [Required(ErrorMessage = Resource.ContestRequired)]
     public int? Id { get; set; }
 
     public string? Name { get; set; }

@@ -1,11 +1,11 @@
 namespace OJS.Data.Models.Participants
 {
-    using SoftUni.Data.Infrastructure.Models;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Submissions;
     using OJS.Data.Models.Users;
     using System;
     using System.Collections.Generic;
+    using SoftUni.Data.Infrastructure.Models;
 
     public class Participant : AuditInfoEntity<int>
     {
