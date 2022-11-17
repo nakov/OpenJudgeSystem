@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 
+import { PageTitles } from '../../common/page-titles';
+import { ChangePageTitle } from '../../components/common/ChangePageTitle';
 import Heading from '../../components/guidelines/headings/Heading';
 import Tabs from '../../components/guidelines/tabs/Tabs';
 import ProfileAboutInfo from '../../components/profile/profile-about-info/ProfileAboutInfo';
@@ -12,6 +14,8 @@ import { setLayout } from '../shared/set-layout';
 
 const ProfilePage = () => {
     const { profile, getProfile } = useUsers();
+
+    ChangePageTitle(PageTitles.myProfile);
 
     useEffect(() => {
         (async () => {

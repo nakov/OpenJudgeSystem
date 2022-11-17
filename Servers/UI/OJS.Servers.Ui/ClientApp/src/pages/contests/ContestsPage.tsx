@@ -3,7 +3,9 @@ import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { FilterType, IFilter } from '../../common/contest-types';
+import { PageTitles } from '../../common/page-titles';
 import { IIndexContestsType } from '../../common/types';
+import { ChangePageTitle } from '../../components/common/ChangePageTitle';
 import ContestFilters from '../../components/contests/contests-filters/ContestFilters';
 import Breadcrumb from '../../components/guidelines/breadcrumb/Breadcrumb';
 import { LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
@@ -34,6 +36,8 @@ const ContestsPage = () => {
     } = useContests();
 
     const { state: { breadcrumbItems } } = useCategoriesBreadcrumbs();
+
+    ChangePageTitle(PageTitles.contests);
 
     const handlePageChange = useCallback(
         (page: number) => changePage(page),

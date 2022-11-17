@@ -3,6 +3,7 @@ import React, { useCallback, useMemo } from 'react';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import concatClassNames from '../../../utils/class-names';
 import { convertToTwoDigitValues } from '../../../utils/dates';
+import { ChangePageTitle } from '../../common/ChangePageTitle';
 import Countdown, { ICountdownRemainingType, Metric } from '../../guidelines/countdown/Countdown';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import Text, { TextType } from '../../guidelines/text/Text';
@@ -33,6 +34,13 @@ const Contest = () => {
 
     const problemInfoClass = 'problemInfo';
     const problemInfoClassName = concatClassNames(problemInfoClass);
+
+    const contestTitle = useMemo(
+        () => `${contest?.name}`,
+        [ contest?.name ],
+    );
+
+    ChangePageTitle(contestTitle);
 
     const scoreText = useMemo(
         () => `${score}/${maxScore}`,
@@ -137,7 +145,7 @@ const Contest = () => {
                   type={HeadingType.primary}
                   className={styles.contestHeading}
                 >
-                    {contest?.name}
+                    {contestTitle}
                 </Heading>
                 <Heading type={HeadingType.secondary} className={secondaryHeadingClassName}>
                     {renderParticipants()}

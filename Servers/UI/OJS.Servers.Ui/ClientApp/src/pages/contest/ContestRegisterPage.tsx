@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../common/constants';
+import { PageTitles } from '../../common/page-titles';
+import { ChangePageTitle } from '../../components/common/ChangePageTitle';
 import ContestPasswordForm from '../../components/contests/contest-password-form/ContestPasswordForm';
 import { useCurrentContest } from '../../hooks/use-current-contest';
 import { makePrivate } from '../shared/make-private';
@@ -17,6 +19,8 @@ const ContestRegisterPage = () => {
         participationType,
     } = useParams();
     const navigate = useNavigate();
+
+    ChangePageTitle(PageTitles.contestRegister);
 
     const contestIdToNumber = useMemo(() => Number(contestId), [ contestId ]);
     const isParticipationOfficial = useMemo(() => participationType === ContestParticipationType.Compete, [ participationType ]);
