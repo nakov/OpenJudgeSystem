@@ -33,6 +33,8 @@ interface ICurrentContestContext {
         submitContestPasswordErrorMessage: string | null;
         isPasswordValid: boolean | null;
         remainingTimeInMilliseconds: number;
+        totalParticipantsCount: number;
+        activeParticipantsCount: number;
     };
     actions: {
         setContestPassword: (password: string) => void;
@@ -51,6 +53,8 @@ const defaultState = {
         isOfficial: false,
         requirePassword: false,
         remainingTimeInMilliseconds: 0.0,
+        totalParticipantsCount: 0,
+        activeParticipantsCount: 0,
     },
 };
 
@@ -76,6 +80,8 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ submitContestPasswordErrorMessage, setSubmitContestPasswordErrorMessage ] = useState<string | null>(null);
     const [ isPasswordValid, setIsPasswordValid ] = useState<boolean | null>(null);
     const [ remainingTimeInMilliseconds, setRemainingTimeInMilliseconds ] = useState(defaultState.state.remainingTimeInMilliseconds);
+    const [ totalParticipantsCount, setTotalParticipantsCount ] = useState(defaultState.state.totalParticipantsCount);
+    const [ activeParticipantsCount, setActiveParticipantsCount ] = useState(defaultState.state.activeParticipantsCount);
 
     const {
         startLoading,
@@ -144,11 +150,15 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             contest: newContest,
             contestIsCompete,
             remainingTimeInMilliseconds: newRemainingTimeInMilliseconds,
+            totalParticipantsCount: newTotalParticipants,
+            activeParticipantsCount: newActiveParticipants,
         } = responseData;
 
         setContest(newContest);
         setIsOfficial(contestIsCompete);
         setRemainingTimeInMilliseconds(newRemainingTimeInMilliseconds);
+        setTotalParticipantsCount(newTotalParticipants);
+        setActiveParticipantsCount(newActiveParticipants);
     }, [ startContestData ]);
 
     useEffect(() => {
@@ -230,6 +240,8 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 submitContestPasswordErrorMessage,
                 isPasswordValid,
                 remainingTimeInMilliseconds,
+                totalParticipantsCount,
+                activeParticipantsCount,
             },
             actions: {
                 setContestPassword,
@@ -251,6 +263,8 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             start,
             submitContestPasswordErrorMessage,
             submitPassword,
+            totalParticipantsCount,
+            activeParticipantsCount,
         ],
     );
 

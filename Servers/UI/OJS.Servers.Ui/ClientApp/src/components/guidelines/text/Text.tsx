@@ -1,4 +1,5 @@
 import React from 'react';
+import isNil from 'lodash/isNil';
 
 import concatClassNames from '../../../utils/class-names';
 import { IHaveOptionalChildrenProps, IHaveOptionalClassName } from '../../common/Props';
@@ -37,7 +38,7 @@ const Text = ({
     type = TextType.Normal,
     className = '',
 }: ITextProps) => {
-    if (!text && !children) {
+    if (isNil(text) && isNil(children)) {
         throw new Error('Texts must have only `text` or `children`');
     }
 
