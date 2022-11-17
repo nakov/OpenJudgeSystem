@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType, ContestResultType } from '../../common/constants';
+import { ChangePageTitle } from '../../components/common/ChangePageTitle';
 import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading from '../../components/guidelines/headings/Heading';
 import { IContestResultsParticipationProblemType, IContestResultsType } from '../../hooks/contests/types';
@@ -73,6 +74,13 @@ const ContestResultsPage = () => {
         state: { contestResults },
         actions: { load },
     } = useCurrentContestResults();
+
+    const contestResultsPageTitle = useMemo(
+        () => `Results for ${contestResults.name}`,
+        [ contestResults.name ],
+    );
+
+    ChangePageTitle(contestResultsPageTitle);
 
     const getColumns = useCallback((results: IContestResultsType) => {
         const problemResultColumns = getProblemResultColumns(results) || [];
