@@ -6,7 +6,7 @@ import { IHaveChildrenProps } from '../../components/common/Props';
 interface IHashUrlParamsContext {
     state: { params: string };
     actions: {
-        changeHash: (hashParameter: number) => void;
+        setHash: (hashParameter: string) => void;
     };
 }
 
@@ -22,9 +22,9 @@ const HashUrlParamProvider = ({ children }: IHashUrlParamProviderProps) => {
         return hash.substring(1);
     }, [ location ]);
 
-    const changeHash = useCallback(
-        (param: number) => {
-            window.location.hash = param.toString();
+    const setHash = useCallback(
+        (param: string) => {
+            window.location.hash = param;
         },
         [],
     );
@@ -32,9 +32,9 @@ const HashUrlParamProvider = ({ children }: IHashUrlParamProviderProps) => {
     const value = useMemo(
         () => ({
             state: { params },
-            actions: { changeHash },
+            actions: { setHash },
         }),
-        [ changeHash, params ],
+        [ setHash, params ],
     );
 
     return (

@@ -45,6 +45,7 @@ const App = () => {
         ServicesProvider,
         LoadingProvider,
         NotificationsProvider,
+        HashUrlParamProvider,
         { Provider: AuthProvider, props: { user } },
         UsersProvider,
         ContestCategoriesProvider,
@@ -61,7 +62,6 @@ const App = () => {
         SubmissionsDetailsProvider,
         HomeStatisticsProvider,
         PublicSubmissionsProvider,
-        HashUrlParamProvider,
     ] as ProviderType[];
 
     return (

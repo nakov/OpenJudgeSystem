@@ -1,7 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import first from 'lodash/first';
 import isNil from 'lodash/isNil';
-import isUndefined from 'lodash/isUndefined';
 
 import { UrlType } from '../common/common-types';
 import { IProblemType } from '../common/types';
@@ -48,7 +47,7 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     const { state: { contest } } = useCurrentContest();
     const {
         state: { params },
-        actions: { changeHash },
+        actions: { setHash },
     } = useHashUrlParams();
     const [ problems, setProblems ] = useState(defaultState.state.problems);
     const [ currentProblem, setCurrentProblem ] = useState<IProblemType | null>(defaultState.state.currentProblem);
@@ -66,35 +65,36 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         saveAttachment,
     } = useHttp(getDownloadProblemResourceUrl as UrlType, { id: problemResourceIdToDownload });
 
-    const normalizeProblems = useMemo(
+    const normalizedProblems = useMemo(
         () => normalizeOrderBy(problems),
         [ problems ],
     );
 
     const selectProblemById = useCallback(
         (problemId: number) => {
-            const newProblem = normalizeProblems.find((p) => p.id === problemId);
+            const newProblem = normalizedProblems.find((p) => p.id === problemId);
 
-            if (newProblem) {
-                setCurrentProblem(newProblem);
-                const { orderBy } = newProblem;
-
-                changeHash(orderBy);
+            if (isNil(newProblem)) {
+                return;
             }
+
+            setCurrentProblem(newProblem);
+            const { orderBy } = newProblem;
+            setHash(orderBy.toString());
         },
-        [ changeHash, normalizeProblems ],
+        [ setHash, normalizedProblems ],
     );
 
     const problemFromHash = useMemo(
         () => {
             const hashIndex = Number(params) - 1;
-            return normalizeProblems[hashIndex];
+            return normalizedProblems[hashIndex];
         },
-        [ normalizeProblems, params ],
+        [ normalizedProblems, params ],
     );
 
-    const loadFromHash = useMemo(
-        () => !isUndefined(problemFromHash),
+    const isLoadedFromHash = useMemo(
+        () => !isNil(problemFromHash),
         [ problemFromHash ],
     );
 
@@ -107,19 +107,19 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
             }
 
             setProblems(newProblems);
-            const { id } = first(normalizeProblems) || {};
+            const { id } = first(normalizedProblems) || {};
 
             if (isNil(id)) {
                 return;
             }
 
-            if (loadFromHash) {
+            if (isLoadedFromHash) {
                 setCurrentProblem(problemFromHash);
             } else {
                 selectProblemById(id);
             }
         },
-        [ contest, loadFromHash, normalizeProblems, problemFromHash, selectProblemById ],
+        [ contest, isLoadedFromHash, normalizedProblems, problemFromHash, selectProblemById ],
     );
 
     const downloadProblemResourceFile = useCallback(async (resourceId: number) => {
