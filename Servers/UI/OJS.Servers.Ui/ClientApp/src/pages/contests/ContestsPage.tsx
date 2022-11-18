@@ -28,7 +28,7 @@ const ContestsPage = () => {
             currentPage,
         },
         actions: {
-            toggleFilter,
+            toggleParam,
             changePage,
         },
     } = useContests();
@@ -41,8 +41,8 @@ const ContestsPage = () => {
     );
 
     const handleFilterClick = useCallback(
-        (filter: IFilter) => toggleFilter(filter),
-        [ toggleFilter ],
+        (filter: IFilter) => toggleParam(filter),
+        [ toggleParam ],
     );
 
     const renderContest = useCallback(

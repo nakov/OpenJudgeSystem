@@ -43,6 +43,6 @@ namespace OJS.Services.Ui.Business
 
         Task ValidateContest(Contest contest, string userId, bool isUserAdmin, bool official);
 
-        Task<PagedResult<ContestForListingServiceModel>> GetAllByFilters(ContestFiltersServiceModel? model);
+        Task<PagedResult<ContestForListingServiceModel>> GetAllByFiltersAndSorting(ContestFiltersServiceModel? model);
     }
 }
