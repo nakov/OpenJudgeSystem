@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useParams } from 'react-router';
+import { Params, useSearchParams } from 'react-router-dom';
 
 import { IDictionary, IUrlParam } from '../../common/common-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
@@ -7,6 +8,7 @@ import { IHaveChildrenProps } from '../../components/common/Props';
 interface IUrlParamsContext {
     state: {
         params: IUrlParam[];
+        getParamsFromUrl: Params;
     };
     actions: {
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -83,16 +85,19 @@ const UrlParamsProvider = ({ children }: IUrlParamsProviderProps) => {
         [ setSearchParams ],
     );
 
+    // does not find any params, because it's out of the scope of ContestRegisterPage or any other page
+    const getParamsFromUrl = useParams();
+
     const value = useMemo(
         () => ({
-            state: { params },
+            state: { params, getParamsFromUrl },
             actions: {
                 setParam,
                 unsetParam,
                 clearParams,
             },
         }),
-        [ clearParams, params, setParam, unsetParam ],
+        [ clearParams, getParamsFromUrl, params, setParam, unsetParam ],
     );
 
     return (
