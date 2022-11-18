@@ -1,3 +1,6 @@
+using FluentExtensions.Extensions;
+using NPOI.SS.Formula.Functions;
+
 namespace OJS.Services.Ui.Data.Implementations;
 
 using Microsoft.EntityFrameworkCore;
@@ -33,9 +36,6 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             .ThenByDescending(s => s.Id)
             .FirstOrDefault();
 
-    public IQueryable<Submission> GetByIdQuery(int id) =>
-        this.DbSet
-            .Where(s => s.Id == id);
 
     public IQueryable<Submission> GetAllByProblem(int problemId)
         => base.DbSet.Where(s => s.ProblemId == problemId);
@@ -46,41 +46,48 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             orderBy: q => q.CreatedOn,
             descending: true);
 
-    public async Task<IEnumerable<Submission>> GetAllByProblemAndUser(int problemId, string userId, int? take = Constants.Submissions.DefaultCount)
-        => await this.GetQuery(
+    public Task<IEnumerable<TServiceModel>> GetAllByProblemAndUser<TServiceModel>(int problemId, string userId,
+        int? take = Constants.Submissions.DefaultCount)
+        => this.GetQuery(
                 filter: s => s.ProblemId == problemId && s.Participant.UserId == userId,
                 take: take)
+            .MapCollection<TServiceModel>()
             .ToEnumerableAsync();
 
-    public IQueryable<Submission> GetAllFromContestsByLecturer(string lecturerId) =>
+    public Task<IEnumerable<TServiceModel>> GetAllFromContestsByLecturer<TServiceModel>(string lecturerId) =>
         this.DbSet
-            .Include(s => s.Problem!.ProblemGroup.Contest.LecturersInContests)
-            .Include(s => s.Problem!.ProblemGroup!.Contest!.Category!.LecturersInContestCategories)
             .Where(s =>
                 (s.IsPublic.HasValue && s.IsPublic.Value) ||
                 s.Problem!.ProblemGroup.Contest.LecturersInContests.Any(l => l.LecturerId == lecturerId) ||
                 s.Problem!.ProblemGroup!.Contest!.Category!.LecturersInContestCategories.Any(l =>
-                    l.LecturerId == lecturerId));
+                    l.LecturerId == lecturerId))
+            .MapCollection<TServiceModel>()
+            .ToEnumerableAsync();
 
-    public IQueryable<Submission> GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate(
+    public Task<IEnumerable<TServiceModel>> GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate<TServiceModel>(
         DateTime createdBeforeDate,
         DateTime nonBestCreatedBeforeDate) =>
         this.DbSet
             .Where(s => s.CreatedOn < createdBeforeDate ||
                         (s.CreatedOn < nonBestCreatedBeforeDate &&
-                         s.Participant!.Scores.All(ps => ps.SubmissionId != s.Id)));
+                         s.Participant!.Scores.All(ps => ps.SubmissionId != s.Id)))
+            .MapCollection<TServiceModel>()
+            .ToEnumerableAsync();
 
     public IQueryable<Submission> GetAllHavingPointsExceedingLimit()
         => this.DbSet
             .Where(s => s.Points > s.Problem!.MaximumPoints);
 
-    public IQueryable<int> GetIdsByProblem(int problemId)
+    public Task<IEnumerable<int>> GetIdsByProblem(int problemId)
         => this.GetAllByProblem(problemId)
-            .Select(s => s.Id);
+            .Select(s => s.Id)
+            .ToEnumerableAsync();
 
-    public IQueryable<Submission> GetAllByIdsQuery(IEnumerable<int> ids)
+    public Task<IEnumerable<TServiceModel>> GetAllByIdsQuery<TServiceModel>(IEnumerable<int> ids)
         => this.GetQuery()
-            .Where(s => ids.Contains(s.Id));
+            .Where(s => ids.Contains(s.Id))
+            .MapCollection<TServiceModel>()
+            .ToEnumerableAsync();
 
     public bool IsOfficialById(int id) =>
         this.GetByIdQuery(id)
@@ -130,4 +137,8 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
                 .AverageAsync()
                 .ToInt()
             : 0;
+
+    private IQueryable<Submission> GetByIdQuery(int id) =>
+        this.DbSet
+            .Where(s => s.Id == id);
 }

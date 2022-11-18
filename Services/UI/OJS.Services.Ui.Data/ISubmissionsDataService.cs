@@ -1,3 +1,5 @@
+using OJS.Services.Ui.Models.Submissions;
+
 namespace OJS.Services.Ui.Data;
 
 using OJS.Data.Models.Submissions;
@@ -13,23 +15,21 @@ public interface ISubmissionsDataService : IDataService<Submission>
 
     Submission? GetBestForParticipantByProblem(int participantId, int problemId);
 
-    IQueryable<Submission> GetByIdQuery(int id);
-
     IQueryable<Submission> GetAllByProblem(int problemId);
 
     IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId);
 
-    IQueryable<Submission> GetAllFromContestsByLecturer(string lecturerId);
+    Task<IEnumerable<TServiceModel>> GetAllFromContestsByLecturer<TServiceModel>(string lecturerId);
 
-    IQueryable<Submission> GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate(
+    Task<IEnumerable<TServiceModel>> GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate<TServiceModel>(
         DateTime createdBeforeDate,
         DateTime nonBestCreatedBeforeDate);
 
     IQueryable<Submission> GetAllHavingPointsExceedingLimit();
 
-    IQueryable<int> GetIdsByProblem(int problemId);
+    Task<IEnumerable<int>> GetIdsByProblem(int problemId);
 
-    IQueryable<Submission> GetAllByIdsQuery(IEnumerable<int> ids);
+    Task<IEnumerable<TServiceModel>> GetAllByIdsQuery<TServiceModel>(IEnumerable<int> ids);
 
     bool IsOfficialById(int id);
 
@@ -45,5 +45,5 @@ public interface ISubmissionsDataService : IDataService<Submission>
 
     Task<int> GetSubmissionsPerDayCount();
 
-    Task<IEnumerable<Submission>> GetAllByProblemAndUser(int problemId, string userId, int? take = Constants.Submissions.DefaultCount);
+    Task<IEnumerable<TServiceModel>> GetAllByProblemAndUser<TServiceModel>(int problemId, string userId, int? take = Constants.Submissions.DefaultCount);
 }

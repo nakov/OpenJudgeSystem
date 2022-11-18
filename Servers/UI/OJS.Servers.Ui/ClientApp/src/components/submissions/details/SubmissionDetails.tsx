@@ -2,7 +2,6 @@ import React, { useEffect, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
-import { useAuth } from '../../../hooks/use-auth';
 import concatClassNames from '../../../utils/class-names';
 import CodeEditor from '../../code-editor/CodeEditor';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
@@ -19,8 +18,6 @@ const SubmissionDetails = () => {
         },
         actions: { getSubmissionResults },
     } = useSubmissionsDetails();
-
-    const { state: { user } } = useAuth();
 
     const problemNameHeadingText = useMemo(
         () => `${currentSubmission?.problem.name} - ${currentSubmission?.problem.id}`,
@@ -48,7 +45,7 @@ const SubmissionDetails = () => {
         (async () => {
             await getSubmissionResults(problemId, isOfficial, userId);
         })();
-    }, [ currentSubmission, getSubmissionResults, user ]);
+    }, [ currentSubmission, getSubmissionResults ]);
 
     if (isNil(currentSubmission)) {
         return <div>No details fetched.</div>;
