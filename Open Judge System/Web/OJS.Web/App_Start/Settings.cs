@@ -40,6 +40,8 @@
 
         public static string[] ThrottleIpWhitelist => GetSetting("ThrottleIpWhitelist").Split(',');
 
+        public static int MaximumResourceFileSizeInMegaBytes => GetIntSetting("MaximumResourceFileSizeInMegaBytes");
+
         private static int GetIntSetting(string settingName) => int.Parse(GetSetting(settingName));
     }
 }

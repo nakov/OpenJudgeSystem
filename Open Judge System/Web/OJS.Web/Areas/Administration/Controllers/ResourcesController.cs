@@ -27,7 +27,10 @@
     public class ResourcesController : LecturerBaseController
     {
         private readonly IProblemsDataService problemsData;
-        private readonly IProblemResourcesDataService problemResourcesData;
+        private readonly IProblemResourcesDataService problemResourcesData; 
+
+        private int MaximumResourceFileSizeInBytes =>
+            Settings.MaximumResourceFileSizeInMegaBytes * 1024 * 1024;
 
         public ResourcesController(
             IOjsData data,
@@ -118,6 +121,11 @@
             {
                 this.ModelState.AddModelError("File", Resource.File_required);
             }
+            else if (resource.Type != ProblemResourceType.Link && resource.File != null && resource.File
+            .ContentLength > this.MaximumResourceFileSizeInBytes)
+            {
+                this.ModelState.AddModelError("File", string.Format(Resource.File_Max_Size, Settings.MaximumResourceFileSizeInMegaBytes));
+            }
 
             if (this.ModelState.IsValid)
             {
@@ -196,6 +204,11 @@
             {
                 this.TempData.AddDangerMessage(Resource.Problem_not_found);
                 return this.RedirectToAction(GlobalConstants.Index, "Problems");
+            }
+            
+            if (resource.Type != ProblemResourceType.Link && resource.File != null && resource.File.ContentLength > this.MaximumResourceFileSizeInBytes)
+            {
+                this.ModelState.AddModelError("File", string.Format(Resource.File_Max_Size, Settings.MaximumResourceFileSizeInMegaBytes));
             }
 
             if (this.ModelState.IsValid)
