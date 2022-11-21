@@ -132,4 +132,7 @@
   <data name="Resource_not_found" xml:space="preserve">
     <value>Ресурса не е намерен</value>
   </data>
+  <data name="File_Max_Size" xml:space="preserve">
+    <value>Файлът е по-голям от позволеното! Максимален разрешен размер в байтове: {0}</value>
+  </data>
 </root>
