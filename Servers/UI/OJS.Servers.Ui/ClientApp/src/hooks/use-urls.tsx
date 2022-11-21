@@ -61,8 +61,13 @@ const getParticipationsForProfileUrl = () => `${baseApiUrl}/Participations/GetFo
 
 // contests
 const getIndexContestsUrl = () => `${baseApiUrl}/Contests/GetForHomeIndex`;
-const getAllContestsUrl = ({ filters, page }: IAllContestsUrlParams) => {
+const getAllContestsUrl = ({ filters, sorting, page }: IAllContestsUrlParams) => {
     const filtersQuery = `${filters
+        .map(({ value, type }) => `${type.toLowerCase()}=${value}`)
+        .join('&')
+    }`;
+
+    const sortingQuery = `${sorting
         .map(({ value, type }) => `${type.toLowerCase()}=${value}`)
         .join('&')
     }`;
@@ -71,7 +76,7 @@ const getAllContestsUrl = ({ filters, page }: IAllContestsUrlParams) => {
         ? ''
         : `page=${page}`;
 
-    return `${baseApiUrl}/Contests/GetAll?${filtersQuery}&${pageQuery}`;
+    return `${baseApiUrl}/Contests/GetAll?${filtersQuery}&${sortingQuery}&${pageQuery}`;
 };
 
 const getRegisterForContestUrl = ({

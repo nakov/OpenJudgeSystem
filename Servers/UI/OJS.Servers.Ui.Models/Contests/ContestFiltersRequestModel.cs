@@ -4,6 +4,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Services.Ui.Models.Contests;
 using SoftUni.AutoMapper.Infrastructure.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -23,6 +24,8 @@ public class ContestFiltersRequestModel : IMapExplicitly
 
     public int? ItemsPerPage { get; set; }
 
+    public string SortType { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration
             .CreateMap<ContestFiltersRequestModel, ContestFiltersServiceModel>()
@@ -31,5 +34,9 @@ public class ContestFiltersRequestModel : IMapExplicitly
                 opt => opt.MapFrom(
                     src => src.CategoryId.HasValue
                         ? new List<int> { src.CategoryId.Value }
-                        : Enumerable.Empty<int>()));
+                        : Enumerable.Empty<int>()))
+            .ForMember(m => m.SortType,
+                opt => opt.MapFrom(
+                    src => Enum.Parse<ContestSortType>(src.SortType)));
+
 }

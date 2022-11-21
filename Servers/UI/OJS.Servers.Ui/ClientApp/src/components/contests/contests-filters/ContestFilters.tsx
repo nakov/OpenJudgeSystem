@@ -2,14 +2,17 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
-import { FilterType, IFilter } from '../../../common/contest-types';
+import { FilterType, IFilter, ISort } from '../../../common/contest-types';
 import { groupByType } from '../../../common/filter-utils';
 import { useContestCategories } from '../../../hooks/use-contest-categories';
+import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
 import { useContestStrategyFilters } from '../../../hooks/use-contest-strategy-filters';
 import { useContests } from '../../../hooks/use-contests';
+import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 import List from '../../guidelines/lists/List';
 import ContestCategories from '../contest-categories/ContestCategories';
 import ContestFilter from '../contest-filter/ContestFilter';
+import ContestSorting from '../contest-sorting/ContestSorting';
 
 import styles from './ContestFilters.module.scss';
 
@@ -31,7 +34,17 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const { actions: { load: loadStrategies } } = useContestStrategyFilters();
     const { actions: { load: loadCategories } } = useContestCategories();
 
-    const { state: { possibleFilters } } = useContests();
+    const {
+        state: { possibleFilters },
+        actions: { toggleParam, clearFilters },
+    } = useContests();
+
+    const { actions: { clearBreadcrumb } } = useCategoriesBreadcrumbs();
+
+    const handleSortClick = useCallback(
+        (sorting: ISort) => toggleParam(sorting),
+        [ toggleParam ],
+    );
 
     const handleFilterClick = useCallback(
         (filterId: number) => {
@@ -112,13 +125,29 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         [ loadCategories ],
     );
 
+    const clearFiltersAndBreadcrumb = useCallback(
+        () => {
+            clearFilters();
+            clearBreadcrumb();
+        },
+        [ clearFilters, clearBreadcrumb ],
+    );
+
     return (
         <div className={styles.container}>
+            <Button
+              type={ButtonType.secondary}
+              onClick={() => clearFiltersAndBreadcrumb()}
+              className={styles.button}
+              text="clear filters"
+              size={ButtonSize.small}
+            />
             <ContestCategories
               className={styles.filterTypeContainer}
               onCategoryClick={onFilterClick}
               defaultSelected={defaultSelected}
             />
+            <ContestSorting onSortClick={handleSortClick} />
             <List
               values={filtersGroups}
               itemFunc={renderFilter}
