@@ -1,15 +1,16 @@
 import React, { useCallback, useEffect } from 'react';
-import { useParams } from 'react-router';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType, ContestResultType } from '../../common/constants';
 import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading from '../../components/guidelines/headings/Heading';
+import { useInternalUrlParams } from '../../hooks/common/use-internal-url-params';
 import { IContestResultsParticipationProblemType, IContestResultsType } from '../../hooks/contests/types';
 import { useCurrentContestResults } from '../../hooks/contests/use-current-contest-results';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
+import { asPage } from '../shared/set-page-params';
 
 const participantNamesColumns: GridColDef[] = [
     {
@@ -65,7 +66,9 @@ const getProblemResultColumns = (results: IContestResultsType) => results.proble
 } as GridColDef));
 
 const ContestResultsPage = () => {
-    const { contestId, participationType, resultType } = useParams();
+    const { state: { params } } = useInternalUrlParams();
+    const { contestId, participationType, resultType } = params;
+
     const official = participationType === ContestParticipationType.Compete;
     const full = resultType === ContestResultType.Full;
 
@@ -106,4 +109,4 @@ const ContestResultsPage = () => {
     );
 };
 
-export default makePrivate(setLayout(ContestResultsPage));
+export default makePrivate(asPage(setLayout(ContestResultsPage)));

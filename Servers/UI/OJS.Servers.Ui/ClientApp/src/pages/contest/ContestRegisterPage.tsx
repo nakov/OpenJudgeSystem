@@ -1,21 +1,25 @@
 import React, { useEffect, useMemo } from 'react';
-import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../common/constants';
 import ContestPasswordForm from '../../components/contests/contest-password-form/ContestPasswordForm';
+import { useInternalUrlParams } from '../../hooks/common/use-internal-url-params';
 import { useCurrentContest } from '../../hooks/use-current-contest';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
+import { asPage } from '../shared/set-page-params';
 
 import styles from './ContestRegisterPage.module.scss';
 
 const ContestRegisterPage = () => {
+    const { state: { params } } = useInternalUrlParams();
+
     const {
         contestId,
         participationType,
-    } = useParams();
+    } = params;
+
     const navigate = useNavigate();
 
     const contestIdToNumber = useMemo(() => Number(contestId), [ contestId ]);
@@ -67,4 +71,4 @@ const ContestRegisterPage = () => {
     );
 };
 
-export default makePrivate(setLayout(ContestRegisterPage));
+export default makePrivate(asPage(setLayout(ContestRegisterPage)));
