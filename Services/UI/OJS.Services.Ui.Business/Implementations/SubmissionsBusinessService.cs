@@ -80,7 +80,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .MapCollection<SubmissionDetailsServiceModel>()
             .FirstOrDefaultAsync();
 
-    public async Task<IEnumerable<SubmissionServiceModel>> GetAllForArchiving()
+    public Task<IQueryable<Submission>> GetAllForArchiving()
     {
         var archiveBestSubmissionsLimit = DateTime.Now.AddYears(
             -GlobalConstants.BestSubmissionEligibleForArchiveAgeInYears);
@@ -88,10 +88,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var archiveNonBestSubmissionsLimit = DateTime.Now.AddYears(
             -GlobalConstants.NonBestSubmissionEligibleForArchiveAgeInYears);
 
-        return await this.submissionsData
-            .GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate<SubmissionServiceModel>(
+        return Task.FromResult(this.submissionsData
+            .GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate(
                 archiveBestSubmissionsLimit,
-                archiveNonBestSubmissionsLimit);
+                archiveNonBestSubmissionsLimit));
     }
 
     public async Task RecalculatePointsByProblem(int problemId)

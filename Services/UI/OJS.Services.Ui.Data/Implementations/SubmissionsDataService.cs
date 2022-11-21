@@ -54,40 +54,35 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             .MapCollection<TServiceModel>()
             .ToEnumerableAsync();
 
-    public Task<IEnumerable<TServiceModel>> GetAllFromContestsByLecturer<TServiceModel>(string lecturerId) =>
+    public IQueryable<Submission> GetAllFromContestsByLecturer(string lecturerId) =>
         this.DbSet
+            .Include(s => s.Problem!.ProblemGroup.Contest.LecturersInContests)
+            .Include(s => s.Problem!.ProblemGroup!.Contest!.Category!.LecturersInContestCategories)
             .Where(s =>
                 (s.IsPublic.HasValue && s.IsPublic.Value) ||
                 s.Problem!.ProblemGroup.Contest.LecturersInContests.Any(l => l.LecturerId == lecturerId) ||
                 s.Problem!.ProblemGroup!.Contest!.Category!.LecturersInContestCategories.Any(l =>
-                    l.LecturerId == lecturerId))
-            .MapCollection<TServiceModel>()
-            .ToEnumerableAsync();
+                    l.LecturerId == lecturerId));
 
-    public Task<IEnumerable<TServiceModel>> GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate<TServiceModel>(
+    public IQueryable<Submission> GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate(
         DateTime createdBeforeDate,
         DateTime nonBestCreatedBeforeDate) =>
         this.DbSet
             .Where(s => s.CreatedOn < createdBeforeDate ||
                         (s.CreatedOn < nonBestCreatedBeforeDate &&
-                         s.Participant!.Scores.All(ps => ps.SubmissionId != s.Id)))
-            .MapCollection<TServiceModel>()
-            .ToEnumerableAsync();
+                         s.Participant!.Scores.All(ps => ps.SubmissionId != s.Id)));
 
     public IQueryable<Submission> GetAllHavingPointsExceedingLimit()
         => this.DbSet
             .Where(s => s.Points > s.Problem!.MaximumPoints);
 
-    public Task<IEnumerable<int>> GetIdsByProblem(int problemId)
+    public IQueryable<int> GetIdsByProblem(int problemId)
         => this.GetAllByProblem(problemId)
-            .Select(s => s.Id)
-            .ToEnumerableAsync();
+            .Select(s => s.Id);
 
-    public Task<IEnumerable<TServiceModel>> GetAllByIdsQuery<TServiceModel>(IEnumerable<int> ids)
+    public IQueryable<Submission> GetAllByIdsQuery(IEnumerable<int> ids)
         => this.GetQuery()
-            .Where(s => ids.Contains(s.Id))
-            .MapCollection<TServiceModel>()
-            .ToEnumerableAsync();
+            .Where(s => ids.Contains(s.Id));
 
     public bool IsOfficialById(int id) =>
         this.GetByIdQuery(id)

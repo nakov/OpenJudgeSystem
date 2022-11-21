@@ -19,17 +19,17 @@ public interface ISubmissionsDataService : IDataService<Submission>
 
     IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId);
 
-    Task<IEnumerable<TServiceModel>> GetAllFromContestsByLecturer<TServiceModel>(string lecturerId);
+    IQueryable<Submission> GetAllFromContestsByLecturer(string lecturerId);
 
-    Task<IEnumerable<TServiceModel>> GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate<TServiceModel>(
+    IQueryable<Submission> GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate(
         DateTime createdBeforeDate,
         DateTime nonBestCreatedBeforeDate);
 
     IQueryable<Submission> GetAllHavingPointsExceedingLimit();
 
-    Task<IEnumerable<int>> GetIdsByProblem(int problemId);
+    IQueryable<int> GetIdsByProblem(int problemId);
 
-    Task<IEnumerable<TServiceModel>> GetAllByIdsQuery<TServiceModel>(IEnumerable<int> ids);
+    IQueryable<Submission> GetAllByIdsQuery(IEnumerable<int> ids);
 
     bool IsOfficialById(int id);
 
