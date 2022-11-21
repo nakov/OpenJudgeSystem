@@ -27,10 +27,7 @@
     public class ResourcesController : LecturerBaseController
     {
         private readonly IProblemsDataService problemsData;
-        private readonly IProblemResourcesDataService problemResourcesData; 
-
-        private int MaximumResourceFileSizeInBytes =>
-            Settings.MaximumResourceFileSizeInMegaBytes * 1024 * 1024;
+        private readonly IProblemResourcesDataService problemResourcesData;
 
         public ResourcesController(
             IOjsData data,
@@ -113,6 +110,8 @@
                 return this.RedirectToContestsAdminPanelWithNoPrivilegesMessage();
             }
 
+            var maxResourceFileSize = this.GetMaxResourceFileSize();
+
             if (resource.Type == ProblemResourceType.Link && string.IsNullOrEmpty(resource.RawLink))
             {
                 this.ModelState.AddModelError("Link", Resource.Link_not_empty);
@@ -122,9 +121,9 @@
                 this.ModelState.AddModelError("File", Resource.File_required);
             }
             else if (resource.Type != ProblemResourceType.Link && resource.File != null && resource.File
-            .ContentLength > this.MaximumResourceFileSizeInBytes)
+            .ContentLength > maxResourceFileSize)
             {
-                this.ModelState.AddModelError("File", string.Format(Resource.File_Max_Size, Settings.MaximumResourceFileSizeInMegaBytes));
+                this.ModelState.AddModelError("File", string.Format(Resource.File_Max_Size, maxResourceFileSize));
             }
 
             if (this.ModelState.IsValid)
@@ -206,9 +205,11 @@
                 return this.RedirectToAction(GlobalConstants.Index, "Problems");
             }
             
-            if (resource.Type != ProblemResourceType.Link && resource.File != null && resource.File.ContentLength > this.MaximumResourceFileSizeInBytes)
+            var maxResourceFileSize = this.GetMaxResourceFileSize();
+
+            if (resource.Type != ProblemResourceType.Link && resource.File != null && resource.File.ContentLength > maxResourceFileSize)
             {
-                this.ModelState.AddModelError("File", string.Format(Resource.File_Max_Size, Settings.MaximumResourceFileSizeInMegaBytes));
+                this.ModelState.AddModelError("File", string.Format(Resource.File_Max_Size, maxResourceFileSize));
             }
 
             if (this.ModelState.IsValid)
@@ -301,6 +302,15 @@
             var fileName = "Resource-" + resource.Id + "-" + problem.Name.Replace(" ", string.Empty) + "." + resource.FileExtension;
 
             return this.File(fileResult, MediaTypeNames.Application.Octet, fileName);
+        }
+
+        private int GetMaxResourceFileSize()
+        {
+            var maxFileSizeSetting = this.Data.Settings
+                .All()
+                .FirstOrDefault(s => s.Name == GlobalConstants.MaximumFileSizeDbName);
+
+            return maxFileSizeSetting != null ? int.Parse(maxFileSizeSetting.Value) : GlobalConstants.OneMegaByteInBytes;
         }
     }
 }
