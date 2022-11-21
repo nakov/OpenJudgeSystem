@@ -133,6 +133,6 @@
     <value>Resource not found</value>
   </data>
   <data name="File_Max_Size" xml:space="preserve">
-    <value>The file is bigger than allowed! Maximum allowed size in megabytes: {0}</value>
+    <value>The file is bigger than allowed! Maximum allowed size in bytes: {0}</value>
   </data>
 </root>

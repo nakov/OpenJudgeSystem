@@ -60,7 +60,7 @@ namespace Resources.Areas.Administration.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The file is bigger than allowed! Maximum allowed size in megabytes: {0}.
+        ///   Looks up a localized string similar to The file is bigger than allowed! Maximum allowed size in bytes: {0}.
         /// </summary>
         public static string File_Max_Size {
             get {

@@ -61,7 +61,7 @@ namespace Resources.Areas.Administration.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Файлът е по-голям от позволеното! Максимален разрешен размер в мегабайтове: {0}.
+        ///   Looks up a localized string similar to Файлът е по-голям от позволеното! Максимален разрешен размер в байтове: {0}.
         /// </summary>
         public static string File_Max_Size {
             get {
