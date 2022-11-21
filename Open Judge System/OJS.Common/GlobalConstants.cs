@@ -73,7 +73,7 @@
 
         public const int BestSubmissionEligibleForArchiveAgeInYears = 2;
         public const int NonBestSubmissionEligibleForArchiveAgeInYears = 1;
-        public const int OneMegaByteInBytes = 1048576;
+        public const int OneMegaByteInBytes = 1 * 1024 * 1024;
 
         // File extensions
         public const string TxtFileExtension = ".txt";
