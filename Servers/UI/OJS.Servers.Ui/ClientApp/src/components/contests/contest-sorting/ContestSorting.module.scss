@@ -1,0 +1,34 @@
+﻿@use 'src/styles/colors';
+@use 'src/styles/fonts';
+
+.heading {
+  border-bottom: 1px solid colors.$bottom-border-color;
+  padding-bottom: 10px;
+  text-align: left;
+}
+
+.sortingTypeContainer {
+  margin-top: 10px;
+}
+
+.buttonContainer {
+  align-items: end;
+  display: flex;
+  justify-content: space-between;
+}
+
+.button {
+  border: 0;
+  font-weight: normal;
+}
+
+.sortTypesList {
+  align-items: flex-start;
+  justify-content: space-evenly;
+  max-height: 130px;
+  overflow: hidden;
+
+  .sortTypesListItem {
+    margin-top: 5px;
+  }
+}

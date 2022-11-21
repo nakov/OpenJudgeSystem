@@ -23,6 +23,7 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
             ValidateOnlineContestProblemGroups,
             ValidateActiveContestCannotEditDurationTypeOnEdit,
             ValidateContestIsNotActiveOnDelete,
+            ValidateCategoryIsSet,
         };
 
     public IEnumerable<Func<Contest, Contest, AdminActionContext, Task<ValidatorResult>>> GetAsyncValidators()
@@ -109,4 +110,9 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
 
             return ValidatorResult.Success();
         }
+
+        private static ValidatorResult ValidateCategoryIsSet(Contest _, Contest newContest, AdminActionContext __) =>
+            newContest.CategoryId.HasValue && newContest.CategoryId == default(int)
+                ? ValidatorResult.Error(Resource.Category_Not_Selected)
+                : ValidatorResult.Success();
 }
