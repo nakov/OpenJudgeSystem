@@ -11,6 +11,7 @@ import LoginPage from '../../pages/login/LoginPage';
 import LogoutPage from '../../pages/logout/LogoutPage';
 import ProfilePage from '../../pages/profile/ProfilePage';
 import RegisterPage from '../../pages/register/RegisterPage';
+import { withTitle } from '../../pages/shared/set-page-title';
 import SubmissionDetailsPage from '../../pages/submission-details/SubmissionDetailsPage';
 import SubmissionsPage from '../../pages/submissions/SubmissionsPage';
 
@@ -19,7 +20,7 @@ import styles from './PageContent.module.scss';
 const routes = [
     {
         path: '/login',
-        Element: LoginPage,
+        Element: withTitle(LoginPage, 'Login'),
     },
     {
         path: '/register',
@@ -31,15 +32,15 @@ const routes = [
     },
     {
         path: '/',
-        Element: HomePage,
+        Element: withTitle(HomePage, 'SoftUni Judge'),
     },
     {
         path: '/profile',
-        Element: ProfilePage,
+        Element: withTitle(ProfilePage, 'My Profile'),
     },
     {
         path: '/submissions',
-        Element: SubmissionsPage,
+        Element: withTitle(SubmissionsPage, 'Submissions'),
     },
     {
         path: '/submissions/:submissionId/details',
@@ -47,11 +48,11 @@ const routes = [
     },
     {
         path: '/contests/:contestId/register/:participationType',
-        Element: ContestRegisterPage,
+        Element: withTitle(ContestRegisterPage, 'Enter Contest Password'),
     },
     {
         path: '/contests',
-        Element: ContestsPage,
+        Element: withTitle(ContestsPage, 'Contests'),
     },
     {
         path: '/contests/:contestId/:participationType',

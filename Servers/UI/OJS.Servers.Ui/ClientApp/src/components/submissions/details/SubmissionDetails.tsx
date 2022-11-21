@@ -2,9 +2,9 @@ import React, { useEffect, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
+import { usePageTitles } from '../../../hooks/use-page-titles';
 import concatClassNames from '../../../utils/class-names';
 import CodeEditor from '../../code-editor/CodeEditor';
-import { ChangePageTitle } from '../../common/ChangePageTitle';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import SubmissionResults from '../submission-results/SubmissionResults';
 import RefreshableSubmissionsList from '../submissions-list/RefreshableSubmissionsList';
@@ -19,13 +19,14 @@ const SubmissionDetails = () => {
         },
         actions: { getSubmissionResults },
     } = useSubmissionsDetails();
+    const { actions: { setPageTitle } } = usePageTitles();
 
     const submissionTitle = useMemo(
         () => `Submission №${currentSubmission?.id}`,
         [ currentSubmission?.id ],
     );
 
-    ChangePageTitle(submissionTitle);
+    setPageTitle(submissionTitle);
 
     const problemNameHeadingText = useMemo(
         () => `${currentSubmission?.problem.name} - ${currentSubmission?.problem.id}`,

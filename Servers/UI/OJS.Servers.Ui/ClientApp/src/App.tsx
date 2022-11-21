@@ -19,6 +19,7 @@ import HomeContestsProvider from './hooks/use-home-contests';
 import HomeStatisticsProvider from './hooks/use-home-statistics';
 import LoadingProvider from './hooks/use-loading';
 import NotificationsProvider from './hooks/use-notifications';
+import PageTitleProvider from './hooks/use-page-titles';
 import ParticipationsProvider from './hooks/use-participations';
 import ProblemsProvider from './hooks/use-problems';
 import ServicesProvider from './hooks/use-services';
@@ -44,6 +45,7 @@ const App = () => {
         ServicesProvider,
         LoadingProvider,
         NotificationsProvider,
+        PageTitleProvider,
         { Provider: AuthProvider, props: { user } },
         UsersProvider,
         ContestCategoriesProvider,

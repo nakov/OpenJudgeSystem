@@ -1,17 +1,13 @@
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { PageTitles } from '../../common/page-titles';
 import LoginForm from '../../components/auth/LoginForm';
-import { ChangePageTitle } from '../../components/common/ChangePageTitle';
 import { useAuth } from '../../hooks/use-auth';
 
 const LoginPage = () => {
     const { state: { user } } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
-
-    ChangePageTitle(PageTitles.login);
 
     useEffect(() => {
         const { isLoggedIn } = user;

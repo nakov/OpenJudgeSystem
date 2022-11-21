@@ -1,9 +1,9 @@
 import React, { useCallback, useMemo } from 'react';
 
 import { useCurrentContest } from '../../../hooks/use-current-contest';
+import { usePageTitles } from '../../../hooks/use-page-titles';
 import concatClassNames from '../../../utils/class-names';
 import { convertToTwoDigitValues } from '../../../utils/dates';
-import { ChangePageTitle } from '../../common/ChangePageTitle';
 import Countdown, { ICountdownRemainingType, Metric } from '../../guidelines/countdown/Countdown';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import Text, { TextType } from '../../guidelines/text/Text';
@@ -25,6 +25,7 @@ const Contest = () => {
             isOfficial,
         },
     } = useCurrentContest();
+    const { actions: { setPageTitle } } = usePageTitles();
 
     const navigationContestClass = 'navigationContest';
     const navigationContestClassName = concatClassNames(navigationContestClass);
@@ -40,7 +41,7 @@ const Contest = () => {
         [ contest?.name ],
     );
 
-    ChangePageTitle(contestTitle);
+    setPageTitle(contestTitle);
 
     const scoreText = useMemo(
         () => `${score}/${maxScore}`,
