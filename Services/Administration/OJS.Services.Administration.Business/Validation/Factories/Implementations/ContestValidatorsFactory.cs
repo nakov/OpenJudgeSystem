@@ -17,11 +17,8 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
     public IEnumerable<Func<Contest, Contest, AdminActionContext, ValidatorResult>> GetValidators()
         => new Func<Contest, Contest, AdminActionContext, ValidatorResult>[]
         {
-            ValidateContestStartTime,
-            ValidateContestPracticeStartTime,
-            ValidateOnlineContestDuration,
-            ValidateOnlineContestProblemGroups,
-            ValidateActiveContestCannotEditDurationTypeOnEdit,
+            ValidateContestStartTime, ValidateContestPracticeStartTime, ValidateOnlineContestDuration,
+            ValidateOnlineContestProblemGroups, ValidateActiveContestCannotEditDurationTypeOnEdit,
             ValidateContestIsNotActiveOnDelete,
         };
 
@@ -32,81 +29,81 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
         Contest existingContest,
         Contest newContest,
         AdminActionContext actionContext)
+    {
+        if (actionContext.Action != EntityAction.Edit)
         {
-            if (actionContext.Action != EntityAction.Edit)
-            {
-                return ValidatorResult.Success();
-            }
-
-            if (existingContest.IsOnline &&
-                existingContest.IsActive &&
-                (existingContest.Duration != newContest.Duration || existingContest.Type != newContest.Type))
-            {
-                return ValidatorResult.Error(Resource.Active_contest_cannot_edit_duration_type);
-            }
-
             return ValidatorResult.Success();
         }
 
-        private static ValidatorResult ValidateContestIsNotActiveOnDelete(Contest contest, Contest _, AdminActionContext actionContext)
+        if (existingContest.IsOnline &&
+            existingContest.IsActive &&
+            (existingContest.Duration != newContest.Duration || existingContest.Type != newContest.Type))
         {
-            if (actionContext.Action != EntityAction.Delete)
-            {
-                return ValidatorResult.Success();
-            }
+            return ValidatorResult.Error(Resource.ActiveContestCannotEditDurationType);
+        }
 
-            if (contest.IsActive)
-            {
-                return ValidatorResult.Error(Resource.Active_contest_forbidden_for_deletion);
-            }
+        return ValidatorResult.Success();
+    }
 
+    private static ValidatorResult ValidateContestIsNotActiveOnDelete(Contest contest, Contest _, AdminActionContext actionContext)
+    {
+        if (actionContext.Action != EntityAction.Delete)
+        {
             return ValidatorResult.Success();
         }
 
-        private static ValidatorResult ValidateContestStartTime(Contest _, Contest newContest, AdminActionContext __)
-            => newContest.StartTime >= newContest.EndTime
-                ? ValidatorResult.Error(Resource.Contest_start_date_before_end)
-                : ValidatorResult.Success();
-
-        private static ValidatorResult ValidateContestPracticeStartTime(Contest _, Contest newContest, AdminActionContext __)
-            => newContest.PracticeStartTime >= newContest.PracticeEndTime
-                ? ValidatorResult.Error(Resource.Practice_start_date_before_end)
-                : ValidatorResult.Success();
-
-        private static ValidatorResult ValidateOnlineContestDuration(Contest _, Contest newContest, AdminActionContext __)
+        if (contest.IsActive)
         {
-            if (newContest.IsOnline)
-            {
-                if (!newContest.Duration.HasValue)
-                {
-                    return ValidatorResult.Error(Resource.Required_field_for_online);
-                }
-
-                if (newContest.Duration.Value.TotalHours >= 24)
-                {
-                    return ValidatorResult.Error(Resource.Duration_invalid_format);
-                }
-            }
-
-            return ValidatorResult.Success();
+            return ValidatorResult.Error(Resource.ActiveContestForbiddenForDeletion);
         }
 
-        private static ValidatorResult ValidateOnlineContestProblemGroups(Contest _, Contest newContest, AdminActionContext __)
-        {
-            if (newContest.IsOnline)
-            {
-                if (newContest.NumberOfProblemGroups <= 0)
-                {
-                    return ValidatorResult.Error(Resource.Required_field_for_online);
-                }
+        return ValidatorResult.Success();
+    }
 
-                if (newContest.NumberOfProblemGroups > ProblemGroupsCountLimit)
-                {
-                    return ValidatorResult.Error(
-                        string.Format(Resource.Problem_groups_count_limit, ProblemGroupsCountLimit));
-                }
+    private static ValidatorResult ValidateContestStartTime(Contest _, Contest newContest, AdminActionContext __)
+        => newContest.StartTime >= newContest.EndTime
+            ? ValidatorResult.Error(Resource.ContestStartDateBeforeEnd)
+            : ValidatorResult.Success();
+
+    private static ValidatorResult ValidateContestPracticeStartTime(Contest _, Contest newContest, AdminActionContext __)
+        => newContest.PracticeStartTime >= newContest.PracticeEndTime
+            ? ValidatorResult.Error(Resource.PracticeStartDateBeforeEnd)
+            : ValidatorResult.Success();
+
+    private static ValidatorResult ValidateOnlineContestDuration(Contest _, Contest newContest, AdminActionContext __)
+    {
+        if (newContest.IsOnline)
+        {
+            if (!newContest.Duration.HasValue)
+            {
+                return ValidatorResult.Error(Resource.RequiredFieldForOnline);
             }
 
-            return ValidatorResult.Success();
+            if (newContest.Duration.Value.TotalHours >= 24)
+            {
+                return ValidatorResult.Error(Resource.DurationInvalidFormat);
+            }
         }
+
+        return ValidatorResult.Success();
+    }
+
+    private static ValidatorResult ValidateOnlineContestProblemGroups(Contest _, Contest newContest, AdminActionContext __)
+    {
+        if (newContest.IsOnline)
+        {
+            if (newContest.NumberOfProblemGroups <= 0)
+            {
+                return ValidatorResult.Error(Resource.RequiredFieldForOnline);
+            }
+
+            if (newContest.NumberOfProblemGroups > ProblemGroupsCountLimit)
+            {
+                return ValidatorResult.Error(
+                    string.Format(Resource.ProblemGroupsCountLimit, ProblemGroupsCountLimit));
+            }
+        }
+
+        return ValidatorResult.Success();
+    }
 }

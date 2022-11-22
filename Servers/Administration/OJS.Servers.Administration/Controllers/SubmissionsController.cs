@@ -53,7 +53,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
     }
 
     protected override Expression<Func<Submission, bool>>? MasterGridFilter
-        => GetMasterGridFilter();
+        => this.GetMasterGridFilter();
 
     protected override IEnumerable<Func<Submission, Submission, AdminActionContext, ValidatorResult>> EntityValidators
         => this.submissionValidatorsFactory.GetValidators();
@@ -65,12 +65,12 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
     protected override IEnumerable<CustomGridColumn<Submission>> CustomColumns
         => new CustomGridColumn<Submission>[]
         {
-            new()
+            new ()
             {
                 Name = "Contest",
                 ValueFunc = s => s.Problem != null ? s.Problem.ProblemGroup.Contest.ToString() : string.Empty,
             },
-            new()
+            new ()
             {
                 Name = "Contest Id",
                 ValueFunc = s => s.Problem != null ? s.Problem!.ProblemGroup.ContestId.ToString() : string.Empty,

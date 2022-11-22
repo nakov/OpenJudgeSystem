@@ -58,19 +58,30 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
             ? this.GetCustomToolbarActions(problemId)
             : base.CustomToolbarActions;
 
+    protected override IEnumerable<Func<ProblemResource, ProblemResource, AdminActionContext, ValidatorResult>>
+        EntityValidators
+        => this.problemResourceValidatorsFactory.GetValidators();
+
+    protected override IEnumerable<Func<ProblemResource, ProblemResource, AdminActionContext, Task<ValidatorResult>>>
+        AsyncEntityValidators
+        => this.problemResourceValidatorsFactory.GetAsyncValidators();
+
+    protected override IEnumerable<GridAction> CustomActions
+        => new[] { new GridAction { Action = nameof(this.Download) }, };
+
     public override Task<IActionResult> Create(IDictionary<string, string> complexId, string postEndpointName)
-        => base.Create(complexId, nameof(Create));
+        => base.Create(complexId, nameof(this.Create));
 
     [HttpPost]
     public Task<IActionResult> Create(IDictionary<string, string> entityDict, IFormFile file)
-        => base.PostCreate(entityDict, new FormFilesContainer(file));
+        => this.PostCreate(entityDict, new FormFilesContainer(file));
 
     public override Task<IActionResult> Edit(IDictionary<string, string> complexId, string postEndpointName)
-        => base.Edit(complexId, nameof(Edit));
+        => base.Edit(complexId, nameof(this.Edit));
 
     [HttpPost]
     public Task<IActionResult> Edit(IDictionary<string, string> entityDict, IFormFile file)
-        => base.PostEdit(entityDict, new FormFilesContainer(file));
+        => this.PostEdit(entityDict, new FormFilesContainer(file));
 
     public async Task<IActionResult> Download([FromQuery] IDictionary<string, string> complexId)
     {
@@ -99,26 +110,9 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         return this.File(file, contentType, fileName);
     }
 
-    protected override IEnumerable<Func<ProblemResource, ProblemResource, AdminActionContext, ValidatorResult>>
-        EntityValidators
-        => this.problemResourceValidatorsFactory.GetValidators();
-
-    protected override IEnumerable<Func<ProblemResource, ProblemResource, AdminActionContext, Task<ValidatorResult>>>
-        AsyncEntityValidators
-        => this.problemResourceValidatorsFactory.GetAsyncValidators();
-
-    protected override IEnumerable<GridAction> CustomActions
-        => new[]
-        {
-            new GridAction { Action = nameof(Download) }
-        };
-
     protected override object GetDefaultRouteValuesForPostEntityFormRedirect(
         ProblemResource newEntity)
-        => new Dictionary<string, string>
-        {
-            { ProblemIdKey, newEntity.ProblemId.ToString() },
-        };
+        => new Dictionary<string, string> { { ProblemIdKey, newEntity.ProblemId.ToString() }, };
 
     protected override async Task<IEnumerable<FormControlViewModel>> GenerateFormControlsAsync(
         ProblemResource entity,
@@ -129,7 +123,7 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters)
             .ToListAsync();
         await this.ModifyFormControls(formControls, entity, action, entityDict);
-        formControls.AddRange(this.GetAdditionalFormControls());
+        formControls.AddRange(GetAdditionalFormControls());
         return formControls;
     }
 
@@ -169,6 +163,18 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         }
     }
 
+    private static IEnumerable<FormControlViewModel> GetAdditionalFormControls()
+        => new List<FormControlViewModel>
+        {
+            new () { Name = AdditionalFormFields.File.ToString(), Type = typeof(IFormFile), },
+        };
+
+    private static string GetResourceFileNameForDownload(ProblemResourceDownloadServiceModel resource)
+    {
+        var problemName = resource.ProblemName.Replace(" ", string.Empty);
+        return $"Resource-{resource.Id}-{problemName}.{resource.FileExtension}";
+    }
+
     private async Task<int> GetNewOrderBy(int problemId)
     {
         var resourcesForProblem = await this.problemResourcesData.GetByProblemQuery(problemId)
@@ -205,37 +211,13 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         orderByInput.Value = await this.GetNewOrderBy(problemId);
     }
 
-    private IEnumerable<FormControlViewModel> GetAdditionalFormControls()
-        => new List<FormControlViewModel>
-        {
-            new()
-            {
-                Name = AdditionalFormFields.File.ToString(),
-                Type = typeof(IFormFile),
-            },
-        };
-
     private IEnumerable<AutoCrudAdminGridToolbarActionViewModel> GetCustomToolbarActions(int problemId)
     {
-        var routeValues = new Dictionary<string, string>
-        {
-            { nameof(problemId), problemId.ToString() },
-        };
+        var routeValues = new Dictionary<string, string> { { nameof(problemId), problemId.ToString() }, };
 
         return new AutoCrudAdminGridToolbarActionViewModel[]
         {
-            new()
-            {
-                Name = "Add new",
-                Action = nameof(this.Create),
-                RouteValues = routeValues,
-            },
+            new () { Name = "Add new", Action = nameof(this.Create), RouteValues = routeValues, },
         };
-    }
-
-    private static string GetResourceFileNameForDownload(ProblemResourceDownloadServiceModel resource)
-    {
-        var problemName = resource.ProblemName.Replace(" ", string.Empty);
-        return $"Resource-{resource.Id}-{problemName}.{resource.FileExtension}";
     }
 }

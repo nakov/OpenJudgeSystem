@@ -99,19 +99,34 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             ? this.GetCustomToolbarActions(problemId)
             : base.CustomToolbarActions;
 
+    protected override IEnumerable<GridAction> CustomActions
+        => new[]
+        {
+            new GridAction { Action = nameof(this.Retest) }, new GridAction { Action = nameof(this.Tests) },
+            new GridAction { Action = nameof(this.Copy) }, new GridAction { Action = nameof(this.Resources) },
+            new GridAction { Action = nameof(this.Submissions) },
+        };
+
+    protected override IEnumerable<Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>>
+        AsyncEntityValidators
+        => this.problemValidatorsFactory.GetAsyncValidators();
+
+    protected override IEnumerable<Func<Problem, Problem, AdminActionContext, ValidatorResult>> EntityValidators
+        => this.problemValidatorsFactory.GetValidators();
+
     public override Task<IActionResult> Create(IDictionary<string, string> complexId, string postEndpointName)
-        => base.Create(complexId, nameof(Create));
+        => base.Create(complexId, nameof(this.Create));
 
     [HttpPost]
     public Task<IActionResult> Create(IDictionary<string, string> entityDict, IFormFile tests, IFormFile additionalFiles)
-        => base.PostCreate(entityDict, new FormFilesContainer(tests, additionalFiles));
+        => this.PostCreate(entityDict, new FormFilesContainer(tests, additionalFiles));
 
     public override Task<IActionResult> Edit(IDictionary<string, string> complexId, string postEndpointName)
-        => base.Edit(complexId, nameof(Edit));
+        => base.Edit(complexId, nameof(this.Edit));
 
     [HttpPost]
     public Task<IActionResult> Edit(IDictionary<string, string> entityDict, IFormFile tests, IFormFile additionalFiles)
-        => base.PostEdit(entityDict, new FormFilesContainer(tests, additionalFiles));
+        => this.PostEdit(entityDict, new FormFilesContainer(tests, additionalFiles));
 
     public IActionResult Tests([FromQuery] IDictionary<string, string> complexId)
         => this.RedirectToActionWithNumberFilter(
@@ -139,7 +154,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         if (problem == null)
         {
-            this.TempData.AddDangerMessage(GlobalResource.Invalid_problem);
+            this.TempData.AddDangerMessage(GlobalResource.InvalidProblem);
             return this.RedirectToAction("Index", "Problems");
         }
 
@@ -148,7 +163,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         if (!await this.contestsBusiness.UserHasContestPermissions(problem.ContestId, userId, userIsAdmin))
         {
-            this.TempData.AddDangerMessage(GeneralResource.No_privileges_message);
+            this.TempData.AddDangerMessage(GeneralResource.NoPrivilegesMessage);
             return this.RedirectToActionWithNumberFilter(nameof(ProblemsController), ContestIdKey, problem.ContestId);
         }
 
@@ -161,7 +176,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     {
         if (model == null || !await this.problemsData.ExistsById(model.Id))
         {
-            this.TempData.AddDangerMessage(GlobalResource.Invalid_problem);
+            this.TempData.AddDangerMessage(GlobalResource.InvalidProblem);
             return this.RedirectToAction("Index", "Problems");
         }
 
@@ -170,13 +185,13 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         if (!await this.contestsBusiness.UserHasContestPermissions(model.ContestId, userId, userIsAdmin))
         {
-            this.TempData.AddDangerMessage(GeneralResource.No_privileges_message);
+            this.TempData.AddDangerMessage(GeneralResource.NoPrivilegesMessage);
             return this.RedirectToAction("Index", "Problems");
         }
 
         await this.problemsBusiness.RetestById(model.Id);
 
-        this.TempData.AddSuccessMessage(GlobalResource.Problem_retested);
+        this.TempData.AddSuccessMessage(GlobalResource.ProblemRetested);
         return this.RedirectToAction("Index");
     }
 
@@ -185,7 +200,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     {
         if (!contestId.HasValue)
         {
-            this.TempData.AddDangerMessage(GlobalResource.Invalid_contest);
+            this.TempData.AddDangerMessage(GlobalResource.InvalidContest);
             return this.RedirectToAction("Index", "Problems");
         }
 
@@ -218,7 +233,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         await this.problemsBusiness.DeleteByContest(contest.Id);
 
-        this.TempData.AddSuccessMessage(GlobalResource.Problems_deleted);
+        this.TempData.AddSuccessMessage(GlobalResource.ProblemsDeleted);
         return this.RedirectToActionWithNumberFilter(nameof(ProblemsController), ContestIdKey, model.Id);
     }
 
@@ -227,7 +242,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     {
         if (!contestId.HasValue)
         {
-            this.TempData.AddDangerMessage(GlobalResource.Invalid_contest);
+            this.TempData.AddDangerMessage(GlobalResource.InvalidContest);
             return this.RedirectToAction("Index", "Problems");
         }
 
@@ -262,7 +277,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         if (!destinationContestId.HasValue ||
             !await this.contestsData.ExistsById(sourceContestId))
         {
-            this.TempData.AddDangerMessage(Resource.Contest_does_not_exist);
+            this.TempData.AddDangerMessage(Resource.ContestDoesNotExist);
             return this.View(model);
         }
 
@@ -288,7 +303,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         }
 
         this.TempData.AddSuccessMessage(string.Format(
-            Resource.Copy_all_problem_groups_success_message,
+            Resource.CopyAllProblemGroupsSuccessMessage,
             await this.contestsData.GetNameById(sourceContestId),
             destinationContest.Name));
         return this.RedirectToActionWithNumberFilter(nameof(ProblemsController), ContestIdKey, sourceContestId);
@@ -302,7 +317,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         if (problem == null)
         {
-            this.TempData.AddDangerMessage(GlobalResource.Invalid_problem);
+            this.TempData.AddDangerMessage(GlobalResource.InvalidProblem);
             return this.RedirectToAction("Index", "Problems");
         }
 
@@ -336,7 +351,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         if (!await this.problemsData.ExistsById(model.FromProblemId))
         {
-            throw new BusinessServiceException(GlobalResource.Invalid_problem);
+            throw new BusinessServiceException(GlobalResource.InvalidProblem);
         }
 
         var validationModel = model.Map<ContestCopyProblemsValidationServiceModel>();
@@ -352,7 +367,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         if (problemGroupId.HasValue &&
             !this.problemGroupsData.IsFromContestByIdAndContest(problemGroupId.Value, contestId!.Value))
         {
-            throw new BusinessServiceException(GlobalResource.Invalid_problem_group);
+            throw new BusinessServiceException(GlobalResource.InvalidProblemGroup);
         }
 
         var result = await this.problemsBusiness.CopyToContestByIdByContestAndProblemGroup(
@@ -368,28 +383,11 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         }
 
         this.TempData.AddSuccessMessage(string.Format(
-            GlobalResource.Copy_problem_success_message,
+            GlobalResource.CopyProblemSuccessMessage,
             this.problemsData.GetNameById(model.FromProblemId),
             this.contestsData.GetNameById(contestId.Value)));
         return this.RedirectToActionWithNumberFilter(nameof(ProblemsController), ContestIdKey, model.FromContestId);
     }
-
-    protected override IEnumerable<GridAction> CustomActions
-        => new []
-        {
-            new GridAction { Action = nameof(this.Retest) },
-            new GridAction { Action = nameof(this.Tests) },
-            new GridAction { Action = nameof(this.Copy) },
-            new GridAction { Action = nameof(this.Resources) },
-            new GridAction { Action = nameof(this.Submissions) },
-        };
-
-    protected override IEnumerable<Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>>
-        AsyncEntityValidators
-        => this.problemValidatorsFactory.GetAsyncValidators();
-
-    protected override IEnumerable<Func<Problem, Problem, AdminActionContext, ValidatorResult>> EntityValidators
-        => this.problemValidatorsFactory.GetValidators();
 
     protected override async Task<IEnumerable<FormControlViewModel>> GenerateFormControlsAsync(
         Problem entity,
@@ -449,14 +447,12 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         formControls.Add(new FormControlViewModel
         {
-            Name = AdditionalFormFields.Tests.ToString(),
-            Type = typeof(IFormFile),
+            Name = AdditionalFormFields.Tests.ToString(), Type = typeof(IFormFile),
         });
 
         formControls.Add(new FormControlViewModel
         {
-            Name = AdditionalFormFields.AdditionalFiles.ToString(),
-            Type = typeof(IFormFile),
+            Name = AdditionalFormFields.AdditionalFiles.ToString(), Type = typeof(IFormFile),
         });
 
         var submissionTypes = entity.SubmissionTypesInProblems.ToList();
@@ -544,7 +540,8 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         => entityDict.GetEntityIdOrDefault<Contest>() ?? problem?.ProblemGroup?.ContestId ?? default;
 
     private static void TryAddSolutionSkeleton(Problem problem, AdminActionContext actionContext)
-        => problem.SolutionSkeleton = actionContext.GetByteArrayFromStringInput(AdditionalFormFields.SolutionSkeletonRaw);
+        => problem.SolutionSkeleton =
+            actionContext.GetByteArrayFromStringInput(AdditionalFormFields.SolutionSkeletonRaw);
 
     private static async Task TryAddAdditionalFiles(Problem problem, AdminActionContext actionContext)
     {
@@ -557,6 +554,22 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         problem.AdditionalFiles = await additionalFiles.ToByteArray();
     }
+
+    private static void AddSubmissionTypes(Problem problem, AdminActionContext actionContext)
+    {
+        var newSubmissionTypes = actionContext.GetSubmissionTypes()
+            .Where(x => x.IsChecked)
+            .Select(x => new SubmissionTypeInProblem
+            {
+                ProblemId = problem.Id, SubmissionTypeId = int.Parse(x.Value!.ToString() !),
+            });
+
+        problem.SubmissionTypesInProblems.Clear();
+        problem.SubmissionTypesInProblems.AddRange(newSubmissionTypes);
+    }
+
+    private static int GetContestId(Problem entity, IDictionary<string, string> entityDict)
+        => entityDict.GetEntityIdOrDefault<Contest>() ?? entity.ProblemGroup?.ContestId ?? default;
 
     private async Task TryAddTestsToProblem(Problem problem, AdminActionContext actionContext)
     {
@@ -573,7 +586,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         }
         catch (Exception ex)
         {
-            throw new Exception(string.Format(GlobalResource.Tests_cannot_be_improrted, ex.Message), ex);
+            throw new Exception(string.Format(GlobalResource.TestsCannotBeImprorted, ex.Message), ex);
         }
     }
 
@@ -587,24 +600,10 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         if (!this.zippedTestsParser.AreTestsParsedCorrectly(parsedTests))
         {
-            throw new ArgumentException(GlobalResource.Invalid_tests);
+            throw new ArgumentException(GlobalResource.InvalidTests);
         }
 
         this.zippedTestsParser.AddTestsToProblem(problem, parsedTests);
-    }
-
-    private static void AddSubmissionTypes(Problem problem, AdminActionContext actionContext)
-    {
-        var newSubmissionTypes = actionContext.GetSubmissionTypes()
-            .Where(x => x.IsChecked)
-            .Select(x => new SubmissionTypeInProblem
-            {
-                ProblemId = problem.Id,
-                SubmissionTypeId = int.Parse(x.Value!.ToString()!),
-            });
-
-        problem.SubmissionTypesInProblems.Clear();
-        problem.SubmissionTypesInProblems.AddRange(newSubmissionTypes);
     }
 
     private async Task PrepareViewModelForCopyAll(CopyAllToAnotherContestViewModel model, int fromContestId)
@@ -626,34 +625,13 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
     private IEnumerable<AutoCrudAdminGridToolbarActionViewModel> GetCustomToolbarActions(int contestId)
     {
-        var routeValues = new Dictionary<string, string>
-        {
-            { nameof(contestId), contestId.ToString() },
-        };
+        var routeValues = new Dictionary<string, string> { { nameof(contestId), contestId.ToString() }, };
 
         return new AutoCrudAdminGridToolbarActionViewModel[]
         {
-            new()
-            {
-                Name = "Add new",
-                Action = nameof(this.Create),
-                RouteValues = routeValues,
-            },
-            new()
-            {
-                Name = "Delete all",
-                Action = nameof(this.DeleteAll),
-                RouteValues = routeValues,
-            },
-            new()
-            {
-                Name = "Copy all",
-                Action = nameof(this.CopyAll),
-                RouteValues = routeValues,
-            },
+            new () { Name = "Add new", Action = nameof(this.Create), RouteValues = routeValues, },
+            new () { Name = "Delete all", Action = nameof(this.DeleteAll), RouteValues = routeValues, },
+            new () { Name = "Copy all", Action = nameof(this.CopyAll), RouteValues = routeValues, },
         };
     }
-
-    private int GetContestId(Problem entity, IDictionary<string, string> entityDict)
-        => entityDict.GetEntityIdOrDefault<Contest>() ?? entity.ProblemGroup?.ContestId ?? default;
 }
