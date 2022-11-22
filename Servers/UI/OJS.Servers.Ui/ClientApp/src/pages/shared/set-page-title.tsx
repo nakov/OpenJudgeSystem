@@ -1,29 +1,31 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 
 import { Anything } from '../../common/common-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { usePageTitles } from '../../hooks/use-page-titles';
 
-type IPageTitleProvider = IHaveChildrenProps;
-
-const PageTitle = ({ children }: IPageTitleProvider) => (
-    <div>
+const PageWithTitle = ({ children }: IHaveChildrenProps) => (
+    <>
         {children}
-    </div>
+        {' '}
+    </>
 );
 
-const withTitle = (ComponentToWrap: FC, title: string) => (props: Anything) => {
+const withTitle = (ComponentToWrap: FC, title: string | undefined) => (props: Anything) => {
     const { actions: { setPageTitle } } = usePageTitles();
-    setPageTitle(title);
+
+    useEffect(() => {
+        setPageTitle(title);
+    }, [ setPageTitle ]);
 
     return (
-        <PageTitle>
+        <PageWithTitle>
             {/* eslint-disable-next-line react/jsx-props-no-spreading */}
             <ComponentToWrap {...props} />
-        </PageTitle>
+        </PageWithTitle>
     );
 };
-export default PageTitle;
+export default PageWithTitle;
 
 export {
     withTitle,

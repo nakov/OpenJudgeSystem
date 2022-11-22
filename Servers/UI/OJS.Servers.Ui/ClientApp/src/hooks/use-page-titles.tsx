@@ -4,7 +4,7 @@ import { IHaveChildrenProps } from '../components/common/Props';
 
 interface IPageTitleParamsContext {
     actions: {
-        setPageTitle: (title: string) => void;
+        setPageTitle: (title: string | undefined) => void;
     };
 }
 
@@ -19,7 +19,7 @@ const PageTitleProvider = ({ children }: IPageTitleProviderProps) => {
     );
 
     const setPageTitle = useCallback(
-        (title: string) => {
+        (title: string | undefined) => {
             if (title === defaultTitlePage) {
                 document.title = defaultTitlePage;
             } else {

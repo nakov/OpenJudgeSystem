@@ -26,7 +26,9 @@ const SubmissionDetails = () => {
         [ currentSubmission?.id ],
     );
 
-    setPageTitle(submissionTitle);
+    useEffect(() => {
+        setPageTitle(submissionTitle);
+    }, [ setPageTitle, submissionTitle ]);
 
     const problemNameHeadingText = useMemo(
         () => `${currentSubmission?.problem.name} - ${currentSubmission?.problem.id}`,

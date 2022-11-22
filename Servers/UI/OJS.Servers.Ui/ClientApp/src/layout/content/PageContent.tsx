@@ -20,7 +20,8 @@ import styles from './PageContent.module.scss';
 const routes = [
     {
         path: '/login',
-        Element: withTitle(LoginPage, 'Login'),
+        Element: LoginPage,
+        title: 'Login',
     },
     {
         path: '/register',
@@ -32,15 +33,18 @@ const routes = [
     },
     {
         path: '/',
-        Element: withTitle(HomePage, 'SoftUni Judge'),
+        Element: HomePage,
+        title: 'SoftUni Judge',
     },
     {
         path: '/profile',
-        Element: withTitle(ProfilePage, 'My Profile'),
+        Element: ProfilePage,
+        title: 'My Profile',
     },
     {
         path: '/submissions',
-        Element: withTitle(SubmissionsPage, 'Submissions'),
+        Element: SubmissionsPage,
+        title: 'Submissions',
     },
     {
         path: '/submissions/:submissionId/details',
@@ -48,11 +52,13 @@ const routes = [
     },
     {
         path: '/contests/:contestId/register/:participationType',
-        Element: withTitle(ContestRegisterPage, 'Enter Contest Password'),
+        Element: ContestRegisterPage,
+        title: 'Enter Contest Password',
     },
     {
+        title: 'Contests',
         path: '/contests',
-        Element: withTitle(ContestsPage, 'Contests'),
+        Element: ContestsPage,
     },
     {
         path: '/contests/:contestId/:participationType',
@@ -71,9 +77,12 @@ const routes = [
 const PageContent = () => (
     <main className={styles.main}>
         <Routes>
-            {routes.map(({ path, Element }) => (
-                <Route key={path} path={path} element={<Element />} />
-            ))}
+            {routes.map(({ path, Element, title }) => {
+                const ElementWithWrappers = withTitle(Element, title);
+                return (
+                    <Route key={path} path={path} element={<ElementWithWrappers />} />
+                );
+            })}
         </Routes>
     </main>
 );

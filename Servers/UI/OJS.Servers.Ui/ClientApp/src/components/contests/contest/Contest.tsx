@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import { usePageTitles } from '../../../hooks/use-page-titles';
@@ -41,7 +41,9 @@ const Contest = () => {
         [ contest?.name ],
     );
 
-    setPageTitle(contestTitle);
+    useEffect(() => {
+        setPageTitle(contestTitle);
+    }, [ contestTitle, setPageTitle ]);
 
     const scoreText = useMemo(
         () => `${score}/${maxScore}`,

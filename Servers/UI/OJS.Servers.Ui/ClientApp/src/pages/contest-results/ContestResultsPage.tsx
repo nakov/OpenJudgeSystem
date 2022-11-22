@@ -81,7 +81,9 @@ const ContestResultsPage = () => {
         [ contestResults.name ],
     );
 
-    setPageTitle(contestResultsPageTitle);
+    useEffect(() => {
+        setPageTitle(contestResultsPageTitle);
+    }, [ contestResultsPageTitle, setPageTitle ]);
 
     const getColumns = useCallback((results: IContestResultsType) => {
         const problemResultColumns = getProblemResultColumns(results) || [];
