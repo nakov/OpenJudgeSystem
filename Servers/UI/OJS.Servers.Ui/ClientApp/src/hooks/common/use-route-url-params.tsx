@@ -1,8 +1,9 @@
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 
+import { Anything } from '../../common/common-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 
-interface IInternalUrlParamsContext {
+interface IRouteUrlParamsContext {
     state: {
         params: any;
     };
@@ -11,13 +12,13 @@ interface IInternalUrlParamsContext {
     };
 }
 
-type IInternalUrlParamsProvider = IHaveChildrenProps
+type IRouteUrlParamsProvider = IHaveChildrenProps
 
-const InternalUrlParamsContext = createContext<IInternalUrlParamsContext>({} as IInternalUrlParamsContext);
+const RouteUrlParamsContext = createContext<IRouteUrlParamsContext>({} as IRouteUrlParamsContext);
 
-const defaultState = { state: { params: {} as Record<string, unknown> } };
+const defaultState = { state: { params: {} as Anything } };
 
-const InternalUrlParamsProvider = ({ children }: IInternalUrlParamsProvider) => {
+const RouteUrlParamsProvider = ({ children }: IRouteUrlParamsProvider) => {
     const [ internalParams, setInternalParams ] = useState(defaultState.state.params);
 
     const setParams = useCallback(
@@ -36,16 +37,16 @@ const InternalUrlParamsProvider = ({ children }: IInternalUrlParamsProvider) => 
     );
 
     return (
-        <InternalUrlParamsContext.Provider value={value}>
+        <RouteUrlParamsContext.Provider value={value}>
             {children}
-        </InternalUrlParamsContext.Provider>
+        </RouteUrlParamsContext.Provider>
     );
 };
 
-const useInternalUrlParams = () => useContext(InternalUrlParamsContext);
+const useRouteUrlParams = () => useContext(RouteUrlParamsContext);
 
-export default InternalUrlParamsProvider;
+export default RouteUrlParamsProvider;
 
 export {
-    useInternalUrlParams,
+    useRouteUrlParams,
 };

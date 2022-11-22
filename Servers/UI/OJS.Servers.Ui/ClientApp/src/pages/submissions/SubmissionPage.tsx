@@ -3,12 +3,12 @@ import isNil from 'lodash/isNil';
 
 import SubmissionResults from '../../components/submissions/submission-results/SubmissionResults';
 import SubmissionDetailsHeading from '../../components/submissions/test-runs/test-run-heading/SubmissionDetailsHeading';
-import { useInternalUrlParams } from '../../hooks/common/use-internal-url-params';
+import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
 import { useSubmissionsDetails } from '../../hooks/submissions/use-submissions-details';
 import { setLayout } from '../shared/set-layout';
 
 const SubmissionPage = () => {
-    const { state: { params } } = useInternalUrlParams();
+    const { state: { params } } = useRouteUrlParams();
     const { submissionId } = params;
 
     const {

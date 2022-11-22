@@ -4,16 +4,15 @@ import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../common/constants';
 import ContestPasswordForm from '../../components/contests/contest-password-form/ContestPasswordForm';
-import { useInternalUrlParams } from '../../hooks/common/use-internal-url-params';
+import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
 import { useCurrentContest } from '../../hooks/use-current-contest';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
-import { asPage } from '../shared/set-page-params';
 
 import styles from './ContestRegisterPage.module.scss';
 
 const ContestRegisterPage = () => {
-    const { state: { params } } = useInternalUrlParams();
+    const { state: { params } } = useRouteUrlParams();
 
     const {
         contestId,
@@ -71,4 +70,4 @@ const ContestRegisterPage = () => {
     );
 };
 
-export default makePrivate(asPage(setLayout(ContestRegisterPage)));
+export default makePrivate(setLayout(ContestRegisterPage));

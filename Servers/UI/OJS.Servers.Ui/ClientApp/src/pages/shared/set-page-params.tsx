@@ -3,13 +3,11 @@ import { useParams } from 'react-router';
 import isNil from 'lodash/isNil';
 
 import { IHaveChildrenProps } from '../../components/common/Props';
-import { useInternalUrlParams } from '../../hooks/common/use-internal-url-params';
+import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
 
-type IPageWithTitleProps = IHaveChildrenProps
-
-const Page = ({ children }: IPageWithTitleProps) => {
+const Page = ({ children }: IHaveChildrenProps) => {
     const params = useParams();
-    const { actions: { setParams } } = useInternalUrlParams();
+    const { actions: { setParams } } = useRouteUrlParams();
 
     useEffect(
         () => {
@@ -23,9 +21,11 @@ const Page = ({ children }: IPageWithTitleProps) => {
     );
 
     return (
-        <div>
+        <>
             {children}
-        </div>
+            {' '}
+        </>
+
     );
 };
 

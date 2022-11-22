@@ -11,6 +11,7 @@ import LoginPage from '../../pages/login/LoginPage';
 import LogoutPage from '../../pages/logout/LogoutPage';
 import ProfilePage from '../../pages/profile/ProfilePage';
 import RegisterPage from '../../pages/register/RegisterPage';
+import { asPage } from '../../pages/shared/set-page-params';
 import SubmissionDetailsPage from '../../pages/submission-details/SubmissionDetailsPage';
 import SubmissionsPage from '../../pages/submissions/SubmissionsPage';
 
@@ -70,9 +71,13 @@ const routes = [
 const PageContent = () => (
     <main className={styles.main}>
         <Routes>
-            {routes.map(({ path, Element }) => (
-                <Route key={path} path={path} element={<Element />} />
-            ))}
+            {routes.map(({ path, Element }) => {
+                const ElementAsPage = asPage(Element);
+                return (
+                    <Route key={path} path={path} element={<ElementAsPage />} />
+                );
+            })}
+            );
         </Routes>
     </main>
 );

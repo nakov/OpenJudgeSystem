@@ -5,12 +5,11 @@ import isNil from 'lodash/isNil';
 import { ContestParticipationType, ContestResultType } from '../../common/constants';
 import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading from '../../components/guidelines/headings/Heading';
-import { useInternalUrlParams } from '../../hooks/common/use-internal-url-params';
+import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
 import { IContestResultsParticipationProblemType, IContestResultsType } from '../../hooks/contests/types';
 import { useCurrentContestResults } from '../../hooks/contests/use-current-contest-results';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
-import { asPage } from '../shared/set-page-params';
 
 const participantNamesColumns: GridColDef[] = [
     {
@@ -66,7 +65,7 @@ const getProblemResultColumns = (results: IContestResultsType) => results.proble
 } as GridColDef));
 
 const ContestResultsPage = () => {
-    const { state: { params } } = useInternalUrlParams();
+    const { state: { params } } = useRouteUrlParams();
     const { contestId, participationType, resultType } = params;
 
     const official = participationType === ContestParticipationType.Compete;
@@ -109,4 +108,4 @@ const ContestResultsPage = () => {
     );
 };
 
-export default makePrivate(asPage(setLayout(ContestResultsPage)));
+export default makePrivate(setLayout(ContestResultsPage));
