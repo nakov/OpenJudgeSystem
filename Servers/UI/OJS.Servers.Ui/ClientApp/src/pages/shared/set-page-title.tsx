@@ -4,7 +4,9 @@ import { Anything } from '../../common/common-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { usePageTitles } from '../../hooks/use-page-titles';
 
-const Layout = ({ children }: IHaveChildrenProps) => (
+type IPageTitleProvider = IHaveChildrenProps;
+
+const PageTitle = ({ children }: IPageTitleProvider) => (
     <div>
         {children}
     </div>
@@ -15,13 +17,13 @@ const withTitle = (ComponentToWrap: FC, title: string) => (props: Anything) => {
     setPageTitle(title);
 
     return (
-        <Layout>
+        <PageTitle>
             {/* eslint-disable-next-line react/jsx-props-no-spreading */}
             <ComponentToWrap {...props} />
-        </Layout>
+        </PageTitle>
     );
 };
-export default Layout;
+export default PageTitle;
 
 export {
     withTitle,
