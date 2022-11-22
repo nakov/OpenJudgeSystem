@@ -16,14 +16,17 @@ namespace OJS.Services.Ui.Business.Implementations
     public class ParticipantsBusinessService : IParticipantsBusinessService
     {
         private readonly IParticipantsDataService participantsData;
+        private readonly ISubmissionsDataService submissionsData;
         private readonly IContestsDataService contestsData;
 
         public ParticipantsBusinessService(
             IParticipantsDataService participantsData,
+            ISubmissionsDataService submissionsData,
             IContestsDataService contestsData)
         {
             this.participantsData = participantsData;
             this.contestsData = contestsData;
+            this.submissionsData = submissionsData;
         }
 
         public async Task<Participant> CreateNewByContestByUserByIsOfficialAndIsAdmin(
@@ -143,6 +146,9 @@ namespace OJS.Services.Ui.Business.Implementations
 
             return ServiceResult<ICollection<string>>.Success(invalidForUpdateParticipantUsernames);
         }
+
+        public Task<int> GetParticipantLimitBetweenSubmissions(int participantId, int contestLimitBetweenSubmissions)
+            => Task.FromResult(this.submissionsData.GetUserSubmissionTimeLimit(participantId, contestLimitBetweenSubmissions));
 
         private void AssignRandomProblemsToParticipant(Participant participant, Contest contest)
         {

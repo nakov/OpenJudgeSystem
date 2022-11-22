@@ -1,4 +1,5 @@
 @use 'src/styles/colors';
+@use 'src/styles/fonts';
 
 .contestMainWrapper {
   // no body
@@ -40,6 +41,13 @@
 
 .submissionTypesList {
   max-width: 100%;
+}
+
+.submitCountdownWrapper {
+  padding: 10px;
+  font-family: fonts.$font-family-lato;
+  font-size: 20px;
+  color: colors.$background-color-btn-primary;
 }
 
 .taskName {

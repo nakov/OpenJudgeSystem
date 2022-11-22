@@ -33,6 +33,7 @@ interface ICurrentContestContext {
         submitContestPasswordErrorMessage: string | null;
         isPasswordValid: boolean | null;
         remainingTimeInMilliseconds: number;
+        userSubmissionsTimeLimit: number;
     };
     actions: {
         setContestPassword: (password: string) => void;
@@ -51,6 +52,7 @@ const defaultState = {
         isOfficial: false,
         requirePassword: false,
         remainingTimeInMilliseconds: 0.0,
+        userSubmissionsTimeLimit: 0,
     },
 };
 
@@ -75,6 +77,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ submitContestPasswordUrlParams, setSubmitContestPasswordUrlParams ] = useState<ISubmitContestPasswordUrlParams | null>(null);
     const [ submitContestPasswordErrorMessage, setSubmitContestPasswordErrorMessage ] = useState<string | null>(null);
     const [ isPasswordValid, setIsPasswordValid ] = useState<boolean | null>(null);
+    const [ userSubmissionsTimeLimit, setUserSubmissionsTimeLimit ] = useState<number>(0);
     const [ remainingTimeInMilliseconds, setRemainingTimeInMilliseconds ] = useState(defaultState.state.remainingTimeInMilliseconds);
 
     const {
@@ -149,6 +152,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         setContest(newContest);
         setIsOfficial(contestIsCompete);
         setRemainingTimeInMilliseconds(newRemainingTimeInMilliseconds);
+        setUserSubmissionsTimeLimit(responseData.userSubmissionsTimeLimit);
     }, [ startContestData ]);
 
     useEffect(() => {
@@ -230,6 +234,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 submitContestPasswordErrorMessage,
                 isPasswordValid,
                 remainingTimeInMilliseconds,
+                userSubmissionsTimeLimit,
             },
             actions: {
                 setContestPassword,
@@ -246,6 +251,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             maxScore,
             register,
             remainingTimeInMilliseconds,
+            userSubmissionsTimeLimit,
             requirePassword,
             score,
             start,

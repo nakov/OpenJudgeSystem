@@ -84,6 +84,7 @@ interface IStartParticipationResponseType {
     contestIsCompete: boolean;
     lastSubmissionTime: Date;
     remainingTimeInMilliseconds: number;
+    userSubmissionsTimeLimit: number;
 }
 
 interface IPagedResultType<TItem> {

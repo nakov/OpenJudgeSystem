@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 
+import { useSubmissions } from '../../../hooks/submissions/use-submissions';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import concatClassNames from '../../../utils/class-names';
 import { convertToTwoDigitValues } from '../../../utils/dates';
@@ -21,6 +22,7 @@ const Contest = () => {
             remainingTimeInMilliseconds,
         },
     } = useCurrentContest();
+    const { state: { submitMessage } } = useSubmissions();
 
     const navigationContestClass = 'navigationContest';
     const navigationContestClassName = concatClassNames(navigationContestClass);
@@ -118,6 +120,7 @@ const Contest = () => {
                     <ContestTasksNavigation />
                 </div>
                 <div className={submissionBoxClassName}>
+                    { submitMessage }
                     <SubmissionBox />
                 </div>
                 <div className={problemInfoClassName}>
