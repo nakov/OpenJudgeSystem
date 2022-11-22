@@ -3,7 +3,7 @@ import groupBy from 'lodash/groupBy';
 
 import { areStringEqual } from '../utils/compare-utils';
 
-import { FilterInfo, FilterType, IFilter } from './contest-types';
+import { FilterInfo, FilterSortType, FilterType, IContestParam, IFilter } from './contest-types';
 
 const getNextIdGen = function* () {
     let index = 1;
@@ -33,9 +33,10 @@ const groupByType = (filters: IFilter[]) => {
         }));
 };
 
-const filterByType = (filters: IFilter[], filterType: FilterType) => filters.filter(({ type }) => filterType === type);
+const filterByType = (filters: IContestParam<FilterSortType>[], filterType: FilterType) => filters
+    .filter(({ type }) => filterType === type);
 
-const findFilterByTypeAndName = (filters: IFilter[], type: string, value: string | string[] | number) => filters
+const findFilterByTypeAndName = <T extends FilterSortType>(filters: IContestParam<T>[], type: string, value: any) => filters
     .find(({ type: filterType, id }) => areStringEqual(filterType, type, false) &&
         areStringEqual(value, id, false));
 

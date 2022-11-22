@@ -1,22 +1,40 @@
-/* eslint-disable import/prefer-default-export */
+type ToggleParam = (param: IFilter | ISort) => void;
 
 enum FilterType {
     Status = 'Status',
     Strategy = 'Strategy',
     Category = 'Category',
+    Sort = 'SortType'
 }
+
+enum SortType {
+    Name = 'Name',
+    StartDate = 'StartDate',
+    EndDate = 'EndDate',
+}
+
+type FilterSortType = FilterType | SortType;
 
 type FilterInfo = {
     name: string;
     value: string;
 }
 
-interface IFilter {
+type SortInfo = {
+    name: string;
+    value: string;
+}
+
+interface IContestParam<T> {
     name: string;
     value: string;
     id: number;
-    type: FilterType;
+    type: T;
 }
+
+type IFilter = IContestParam<FilterSortType>
+
+type ISort = IContestParam<FilterSortType>
 
 interface IContestStrategyFilter {
     name: string;
@@ -35,13 +53,19 @@ enum ContestStatus {
 }
 
 export type {
+    IContestParam,
     IFilter,
+    ISort,
     FilterInfo,
+    SortInfo,
+    FilterSortType,
     IContestStrategyFilter,
+    ToggleParam,
 };
 
 export {
     ContestType,
     ContestStatus,
     FilterType,
+    SortType,
 };

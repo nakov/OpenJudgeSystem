@@ -10,6 +10,7 @@ interface ICategoriesBreadcrumbContext {
     };
     actions: {
         updateBreadcrumb: (category: ITreeItemType | undefined, flattenTree: ITreeItemType[] | []) => void;
+        clearBreadcrumb: () => void;
     };
 }
 
@@ -30,6 +31,11 @@ const orderByAsc = (x : ICategoriesBreadcrumbItem, y: ICategoriesBreadcrumbItem)
 
 const CategoriesBreadcrumbProvider = ({ children }: ICategoriesBreadcrumbProviderProps) => {
     const [ breadcrumbItems, setBreadcrumbItems ] = useState(defaultState.state.breadcrumbItems);
+
+    const clearBreadcrumb = useCallback(
+        () => setBreadcrumbItems([]),
+        [],
+    );
 
     const updateBreadcrumb = useCallback(
         (category: ITreeItemType | undefined, categoriesTree: ITreeItemType[] | []) => {
@@ -86,9 +92,9 @@ const CategoriesBreadcrumbProvider = ({ children }: ICategoriesBreadcrumbProvide
     const value = useMemo(
         () => ({
             state: { breadcrumbItems },
-            actions: { updateBreadcrumb },
+            actions: { updateBreadcrumb, clearBreadcrumb },
         }),
-        [ breadcrumbItems, updateBreadcrumb ],
+        [ breadcrumbItems, updateBreadcrumb, clearBreadcrumb ],
     );
 
     return (

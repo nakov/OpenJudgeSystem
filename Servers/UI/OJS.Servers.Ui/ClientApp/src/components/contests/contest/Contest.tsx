@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { useSubmissions } from '../../../hooks/submissions/use-submissions';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import concatClassNames from '../../../utils/class-names';
 import { convertToTwoDigitValues } from '../../../utils/dates';
@@ -20,9 +19,11 @@ const Contest = () => {
             score,
             maxScore,
             remainingTimeInMilliseconds,
+            totalParticipantsCount,
+            activeParticipantsCount,
+            isOfficial,
         },
     } = useCurrentContest();
-    const { state: { submitMessage } } = useSubmissions();
 
     const navigationContestClass = 'navigationContest';
     const navigationContestClassName = concatClassNames(navigationContestClass);
@@ -100,6 +101,35 @@ const Contest = () => {
         [],
     );
 
+    const participantsStateText = useMemo(
+        () => isOfficial
+            ? 'Active'
+            : 'Total',
+        [ isOfficial ],
+    );
+
+    const participantsValue = useMemo(
+        () => isOfficial
+            ? activeParticipantsCount
+            : totalParticipantsCount,
+        [ activeParticipantsCount, isOfficial, totalParticipantsCount ],
+    );
+
+    const renderParticipants = useCallback(
+        () => (
+            <span>
+                {participantsStateText}
+                {' '}
+                Participitants:
+                {' '}
+                <Text type={TextType.Bold}>
+                    {participantsValue}
+                </Text>
+            </span>
+        ),
+        [ participantsStateText, participantsValue ],
+    );
+
     return (
         <>
             <div className={styles.headingContest}>
@@ -110,6 +140,7 @@ const Contest = () => {
                     {contest?.name}
                 </Heading>
                 <Heading type={HeadingType.secondary} className={secondaryHeadingClassName}>
+                    {renderParticipants()}
                     {renderTimeRemaining()}
                     {renderScore()}
                 </Heading>
