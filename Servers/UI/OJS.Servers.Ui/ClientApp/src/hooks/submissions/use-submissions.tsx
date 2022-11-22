@@ -18,6 +18,7 @@ interface ISubmissionsContext {
         submissionCode: string;
         selectedSubmissionType: ISubmissionTypeType | null;
         submitMessage: string | null;
+        setSubmitMessage: (value: string | null) => void;
         submitSuccessful: boolean | null;
     };
     actions: {
@@ -140,6 +141,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                 submissionCode,
                 selectedSubmissionType,
                 submitMessage,
+                setSubmitMessage,
                 submitSuccessful,
             },
             actions: {
@@ -154,6 +156,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             submissionCode,
             submit,
             submitMessage,
+            setSubmitMessage,
             submitSuccessful,
         ],
     );

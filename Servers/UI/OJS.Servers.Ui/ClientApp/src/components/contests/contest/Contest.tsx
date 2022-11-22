@@ -120,7 +120,6 @@ const Contest = () => {
                     <ContestTasksNavigation />
                 </div>
                 <div className={submissionBoxClassName}>
-                    { submitMessage }
                     <SubmissionBox />
                 </div>
                 <div className={problemInfoClassName}>

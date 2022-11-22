@@ -8,6 +8,7 @@ import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
 import { convertToTwoDigitValues } from '../../../utils/dates';
 import CodeEditor from '../../code-editor/CodeEditor';
+import AlertBox, { AlertBoxType } from '../../guidelines/alert-box/AlertBox';
 import { Button, ButtonState } from '../../guidelines/buttons/Button';
 import Countdown, { ICountdownRemainingType, Metric } from '../../guidelines/countdown/Countdown';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
@@ -29,6 +30,8 @@ const SubmissionBox = () => {
         state: {
             submissionCode,
             selectedSubmissionType,
+            submitMessage,
+            setSubmitMessage,
             submitSuccessful,
         },
         actions: {
@@ -161,6 +164,20 @@ const SubmissionBox = () => {
         );
     }, [ handleOnSubmit, showSubmissionLimitTimer ]);
 
+    const renderSubmitMessage = useCallback(() => {
+        if (isNil(submitMessage)) {
+            return null;
+        }
+
+        return (
+            <AlertBox
+              message={submitMessage}
+              type={AlertBoxType.error}
+              onClose={() => setSubmitMessage(null)}
+            />
+        );
+    }, [ setSubmitMessage, submitMessage ]);
+
     useEffect(() => {
         setShowSubmissionLimitTimer(userSubmissionsTimeLimit !== 0);
         setSubmitLimit(userSubmissionsTimeLimit);
@@ -208,6 +225,7 @@ const SubmissionBox = () => {
                     <div className={styles.submitCountdownWrapper}>
                         { renderCountdown() }
                     </div>
+                    { renderSubmitMessage() }
                 </div>
             </div>
         </div>
