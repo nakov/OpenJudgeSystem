@@ -12,7 +12,7 @@ namespace OJS.Servers.Administration.Controllers
     {
         protected IActionResult RedirectToContestsAdminPanelWithNoPrivilegesMessage()
         {
-            this.TempData.AddDangerMessage(AdminResource.No_privileges_message);
+            this.TempData.AddDangerMessage(AdminResource.NoPrivilegesMessage);
             return this.RedirectToAction("Index", "Contests");
         }
     }

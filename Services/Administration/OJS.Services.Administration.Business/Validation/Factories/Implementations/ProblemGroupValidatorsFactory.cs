@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
-using Resource =  OJS.Common.Resources.ProblemGroupsControllers;
+using Resource = OJS.Common.Resources.ProblemGroupsControllers;
 
 public class ProblemGroupValidatorsFactory : IValidatorsFactory<ProblemGroup>
 {

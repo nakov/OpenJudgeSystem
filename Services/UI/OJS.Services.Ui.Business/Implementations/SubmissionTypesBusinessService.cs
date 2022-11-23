@@ -1,20 +1,19 @@
-﻿using FluentExtensions.Extensions;
+﻿namespace OJS.Services.Ui.Business.Implementations;
+
+using AutoMapper.Internal;
+using OJS.Common.Utils;
+using OJS.Services.Infrastructure.Extensions;
+using OJS.Services.Ui.Models.Submissions;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using FluentExtensions.Extensions;
 using OJS.Common;
 using OJS.Data.Models.Problems;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.SubmissionTypes;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace OJS.Services.Ui.Business.Implementations;
-
-using AutoMapper.Internal;
-using OJS.Common.Utils;
-using OJS.Services.Infrastructure.Extensions;
-using OJS.Services.Ui.Models.Submissions;
 
 public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
 {
@@ -64,17 +63,17 @@ public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
             problem.SubmissionTypesInProblems.FirstOrDefault(st => st.SubmissionTypeId == submissionTypeId);
         if (submissionType == null)
         {
-            throw new BusinessServiceException(Resources.ContestsGeneral.Submission_type_not_found);
+            throw new BusinessServiceException(Resources.ContestsGeneral.SubmissionTypeNotFound);
         }
 
         if (shouldAllowBinaryFiles && !submissionType.SubmissionType.AllowBinaryFilesUpload)
         {
-            throw new BusinessServiceException(Resources.ContestsGeneral.Binary_files_not_allowed);
+            throw new BusinessServiceException(Resources.ContestsGeneral.BinaryFilesNotAllowed);
         }
 
         if (!shouldAllowBinaryFiles && submissionType.SubmissionType.AllowBinaryFilesUpload)
         {
-            throw new BusinessServiceException(Resources.ContestsGeneral.Text_upload_not_allowed);
+            throw new BusinessServiceException(Resources.ContestsGeneral.TextUploadNotAllowed);
         }
     }
 }

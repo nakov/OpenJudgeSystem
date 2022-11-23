@@ -47,7 +47,7 @@ namespace OJS.Services.Ui.Data.Implementations
             if (model.SubmissionTypeIds.Any())
             {
                 contests = contests
-                    .Where(this.ContainsSubmissionTypeIds(model.SubmissionTypeIds));
+                    .Where(ContainsSubmissionTypeIds(model.SubmissionTypeIds));
             }
 
             return await contests
@@ -154,6 +154,13 @@ namespace OJS.Services.Ui.Data.Implementations
                     c.Id == id &&
                     c.ExamGroups.Any(eg => eg.UsersInExamGroups.Any(u => u.UserId == userId)));
 
+        private static Expression<Func<Contest, bool>> ContainsSubmissionTypeIds(IEnumerable<int> submissionTypeIds)
+            => c => c.ProblemGroups
+                .SelectMany(pg => pg.Problems)
+                .SelectMany(p => p.SubmissionTypesInProblems)
+                .Select(x => x.SubmissionTypeId)
+                .Any(x => submissionTypeIds.Contains(x)); // Does not work if converted to method group
+
         private async Task<int> GetMaxPointsByIdAndProblemGroupsFilter(int id, Expression<Func<ProblemGroup, bool>> filter)
             => await this.GetByIdQuery(id)
                 .Select(c => c.ProblemGroups
@@ -190,13 +197,6 @@ namespace OJS.Services.Ui.Data.Implementations
         private Expression<Func<Contest, bool>> CanBePracticed()
             => c => c.PracticeStartTime <= this.dates.GetUtcNow()
                 && (!c.PracticeEndTime.HasValue || c.PracticeEndTime > this.dates.GetUtcNow());
-
-        private Expression<Func<Contest, bool>> ContainsSubmissionTypeIds(IEnumerable<int> submissionTypeIds)
-            => c => c.ProblemGroups
-                .SelectMany(pg => pg.Problems)
-                .SelectMany(p => p.SubmissionTypesInProblems)
-                .Select(x => x.SubmissionTypeId)
-                .Any(x => submissionTypeIds.Contains(x)); // Does not work if converted to method group
 
         private IQueryable<Contest> FilterByStatus(
             IQueryable<Contest> contests,

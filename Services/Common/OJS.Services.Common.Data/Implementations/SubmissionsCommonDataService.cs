@@ -7,7 +7,8 @@ namespace OJS.Services.Common.Data.Implementations
 
     public class SubmissionsCommonDataService : DataService<Submission>, ISubmissionsCommonDataService
     {
-        public SubmissionsCommonDataService(OjsDbContext db) : base(db)
+        public SubmissionsCommonDataService(OjsDbContext db)
+            : base(db)
         {
         }
 

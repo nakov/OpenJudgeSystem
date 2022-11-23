@@ -60,7 +60,7 @@ namespace OJS.Services.Administration.Business.Implementations
                             t.ResultType == TestRunResultType.CorrectAnswer &&
                             !t.Test.IsTrialTest),
                         AllTestRuns = s.TestRuns.Count(t => !t.Test.IsTrialTest),
-                        MaxPoints = s.Problem!.MaximumPoints
+                        MaxPoints = s.Problem!.MaximumPoints,
                     })
                     .ToList();
 
@@ -92,7 +92,7 @@ namespace OJS.Services.Administration.Business.Implementations
                         topResults[participantId] = new ParticipantScoreModel
                         {
                             Points = points,
-                            SubmissionId = submission.Id
+                            SubmissionId = submission.Id,
                         };
                     }
                     else if (topResults[participantId].Points == points)

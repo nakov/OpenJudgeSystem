@@ -34,7 +34,7 @@ namespace OJS.Data.Models.Submissions
         public byte[] Content { get; set; } = Array.Empty<byte>();
 
         /// <remarks>
-        /// If the value of FileExtension is null, then compressed text file is written in Content
+        /// If the value of FileExtension is null, then compressed text file is written in Content.
         /// </remarks>
         public string? FileExtension { get; set; }
 
@@ -80,7 +80,7 @@ namespace OJS.Data.Models.Submissions
         public virtual ICollection<TestRun> TestRuns { get; set; } = new HashSet<TestRun>();
 
         /// <summary>
-        /// Cache field for submission test runs representing each test run result as an integer equal to <see cref="TestRunResultType"/>.
+        /// Gets or sets a cache field for submission test runs representing each test run result as an integer equal to <see cref="TestRunResultType"/>.
         /// The first integer represent the number of trial tests associated with this submissions.
         /// This field optimized database queries.
         ///
@@ -98,7 +98,7 @@ namespace OJS.Data.Models.Submissions
         public string? ProcessingComment { get; set; }
 
         /// <summary>
-        /// Cache field for submissions points (to speed-up some of the database queries)
+        /// Gets or sets a cache field for submissions points (to speed-up some of the database queries).
         /// </summary>
         public int Points { get; set; }
 

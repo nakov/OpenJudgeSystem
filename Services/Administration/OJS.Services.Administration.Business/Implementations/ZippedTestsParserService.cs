@@ -58,7 +58,7 @@ public class ZippedTestsParserService : IZippedTestsParserService
             zeroTestsOrder = lastTrialTest.OrderBy + 1;
         }
 
-        this.AddTests(problem, tests.ZeroInputs, tests.ZeroOutputs, tryOptimizeMysqlQuery, true, zeroTestsOrder.ToInt());
+        AddTests(problem, tests.ZeroInputs, tests.ZeroOutputs, tryOptimizeMysqlQuery, true, zeroTestsOrder.ToInt());
 
         var lastTest = problem.Tests
             .Where(x => !x.IsTrialTest)
@@ -72,56 +72,11 @@ public class ZippedTestsParserService : IZippedTestsParserService
             orderBy = lastTest.OrderBy + 1;
         }
 
-        this.AddTests(problem, tests.OpenInputs, tests.OpenOutputs, tryOptimizeMysqlQuery, false, orderBy.ToInt());
+        AddTests(problem, tests.OpenInputs, tests.OpenOutputs, tryOptimizeMysqlQuery, false, orderBy.ToInt());
 
-        this.AddTests(problem, tests.Inputs, tests.Outputs, tryOptimizeMysqlQuery, false, orderBy.ToInt());
+        AddTests(problem, tests.Inputs, tests.Outputs, tryOptimizeMysqlQuery, false, orderBy.ToInt());
 
         return tests.ZeroInputs.Count + tests.OpenInputs.Count + tests.Inputs.Count;
-    }
-
-    private void AddTests(
-        Problem problem,
-        IEnumerable<string> testsInputs,
-        IEnumerable<string> testOutputs,
-        bool tryOptimizeMysqlQuery,
-        bool isTrialTests,
-        int orderBy)
-        =>  testsInputs.ForEach((index, testInput) =>
-            {
-                problem.Tests.Add(new Test
-                {
-                    IsTrialTest = isTrialTests,
-                    OrderBy = orderBy++,
-                    Problem = problem,
-                    InputDataAsString = GetInputData(testInput, tryOptimizeMysqlQuery),
-                    OutputDataAsString = testOutputs.ElementAt(index),
-                });
-            });
-
-    private bool ShouldTryOptimizeMysqlQuery(Problem problem)
-    {
-        try
-        {
-            return problem.SubmissionTypesInProblems
-                .Any(
-                    st => MySqlStrategiesHelper.ExecutionStrategyTypesForOptimization
-                        .Any(x => x == st.SubmissionType.ExecutionStrategyType));
-        }
-        catch (NullReferenceException e)
-        {
-            // new problem
-            return false;
-        }
-    }
-
-    private string GetInputData(string input, bool optimizeMysqlQuery)
-    {
-        if (!optimizeMysqlQuery)
-        {
-            return input;
-        }
-
-        return MySqlStrategiesHelper.TryOptimizeQuery(input, out var newInput) ? newInput : input;
     }
 
     public bool AreTestsParsedCorrectly(TestsParseResult tests)
@@ -136,6 +91,51 @@ public class ZippedTestsParserService : IZippedTestsParserService
 
         return hasInputs && hasEqualAmountOfInputsAndOutputs;
     }
+
+    private static bool ShouldTryOptimizeMysqlQuery(Problem problem)
+    {
+        try
+        {
+            return problem.SubmissionTypesInProblems
+                .Any(
+                    st => MySqlStrategiesHelper.ExecutionStrategyTypesForOptimization
+                        .Any(x => x == st.SubmissionType.ExecutionStrategyType));
+        }
+        catch (NullReferenceException)
+        {
+            // new problem
+            return false;
+        }
+    }
+
+    private static string GetInputData(string input, bool optimizeMysqlQuery)
+    {
+        if (!optimizeMysqlQuery)
+        {
+            return input;
+        }
+
+        return MySqlStrategiesHelper.TryOptimizeQuery(input, out var newInput) ? newInput : input;
+    }
+
+    private static void AddTests(
+        Problem problem,
+        IEnumerable<string> testsInputs,
+        IEnumerable<string> testOutputs,
+        bool tryOptimizeMysqlQuery,
+        bool isTrialTests,
+        int orderBy)
+        => testsInputs.ForEach((index, testInput) =>
+        {
+            problem.Tests.Add(new Test
+            {
+                IsTrialTest = isTrialTests,
+                OrderBy = orderBy++,
+                Problem = problem,
+                InputDataAsString = GetInputData(testInput, tryOptimizeMysqlQuery),
+                OutputDataAsString = testOutputs.ElementAt(index),
+            });
+        });
 
     private static async Task ExtractTxtFiles(ZipArchive zipFile, TestsParseResult result)
     {
@@ -252,7 +252,7 @@ public class ZippedTestsParserService : IZippedTestsParserService
 
             foreach (var output in outOutputs)
             {
-                var inputFileName = inputFileSignature + output.Name[output.Name.LastIndexOf('.')..];
+                var inputFileName = inputFileSignature + output.Name[output.Name.LastIndexOf('.') ..];
 
                 var input = GetUniqueInputByFileName(zipFile, inputFileName);
 
@@ -261,6 +261,38 @@ public class ZippedTestsParserService : IZippedTestsParserService
             }
         }
     }
+
+    private static ZipArchiveEntry GetInputByOutputAndExtension(
+        ZipArchive zipFile,
+        ZipArchiveEntry output,
+        string extension)
+    {
+        var fileName = output.Name[.. (output.Name.Length - extension.Length - 1)] + extension;
+
+        return GetUniqueInputByFileName(zipFile, fileName);
+    }
+
+    private static ZipArchiveEntry GetUniqueInputByFileName(ZipArchive zipFile, string fileName)
+    {
+        var files = zipFile.Entries
+            .Where(x => x.Name.Equals(fileName, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        return files.Count switch
+        {
+            0 => throw new ArgumentException(InvalidNameForInputTestErrorMessage),
+            > 1 => throw new ArgumentException(InvalidInputTestsCountErrorMessage),
+            _ => files.First(),
+        };
+    }
+
+    private static bool IsStandardZeroTest(ZipArchiveEntry input, ZipArchiveEntry output) =>
+        input.Name.Contains(ZeroTestStandardSignature) &&
+        output.Name.Contains(ZeroTestStandardSignature);
+
+    private static bool IsStandardOpenTest(ZipArchiveEntry input, ZipArchiveEntry output) =>
+        input.Name.Contains(OpenTestStandardSignature) &&
+        output.Name.Contains(OpenTestStandardSignature);
 
     private async Task ExtractZipFiles(ZipArchive zipFile, TestsParseResult result)
     {
@@ -324,36 +356,4 @@ public class ZippedTestsParserService : IZippedTestsParserService
 
         this.fileIo.SafeDeleteDirectory(tempDir, true);
     }
-
-    private static ZipArchiveEntry GetInputByOutputAndExtension(
-        ZipArchive zipFile,
-        ZipArchiveEntry output,
-        string extension)
-    {
-        var fileName = output.Name[..(output.Name.Length - extension.Length - 1)] + extension;
-
-        return GetUniqueInputByFileName(zipFile, fileName);
-    }
-
-    private static ZipArchiveEntry GetUniqueInputByFileName(ZipArchive zipFile, string fileName)
-    {
-        var files = zipFile.Entries
-            .Where(x => x.Name.Equals(fileName, StringComparison.OrdinalIgnoreCase))
-            .ToList();
-
-        return files.Count switch
-        {
-            0 => throw new ArgumentException(InvalidNameForInputTestErrorMessage),
-            > 1 => throw new ArgumentException(InvalidInputTestsCountErrorMessage),
-            _ => files.First(),
-        };
-    }
-
-    private static bool IsStandardZeroTest(ZipArchiveEntry input, ZipArchiveEntry output) =>
-        input.Name.Contains(ZeroTestStandardSignature) &&
-        output.Name.Contains(ZeroTestStandardSignature);
-
-    private static bool IsStandardOpenTest(ZipArchiveEntry input, ZipArchiveEntry output) =>
-        input.Name.Contains(OpenTestStandardSignature) &&
-        output.Name.Contains(OpenTestStandardSignature);
 }

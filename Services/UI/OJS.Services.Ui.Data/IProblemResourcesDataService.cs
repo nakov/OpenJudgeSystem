@@ -1,10 +1,10 @@
-﻿using OJS.Data.Models.Problems;
-using OJS.Services.Common.Data;
-using SoftUni.Services.Infrastructure;
-using System.Linq;
-
-namespace OJS.Services.Ui.Data
+﻿namespace OJS.Services.Ui.Data
 {
+    using System.Linq;
+    using OJS.Data.Models.Problems;
+    using OJS.Services.Common.Data;
+    using SoftUni.Services.Infrastructure;
+
     public interface IProblemResourcesDataService : IDataService<ProblemResource>, IService
     {
         IQueryable<ProblemResource> GetByProblemQuery(int problemId);

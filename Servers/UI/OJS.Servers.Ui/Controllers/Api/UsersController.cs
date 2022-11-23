@@ -20,12 +20,12 @@ public class UsersController : BaseApiController
     /// <summary>
     /// Gets user info for the profile page.
     /// </summary>
-    /// <returns>User profile info model</returns>
+    /// <returns>User profile info model.</returns>
     [HttpGet]
     [ProducesResponseType(typeof(UserProfileResponseModel), Status200OK)]
     public async Task<IActionResult> GetProfileInfo()
         => await this.usersBusiness
-            .GetUserProfileByUsername(HttpContext.User.Identity!.Name)
+            .GetUserProfileByUsername(this.HttpContext.User.Identity!.Name)
             .Map<UserProfileResponseModel>()
             .ToOkResult();
 }

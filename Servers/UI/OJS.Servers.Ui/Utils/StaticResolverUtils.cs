@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-public class StaticResolverUtils
+public static class StaticResolverUtils
 {
     public static IEnumerable<string> ResolveByType(string type)
     {

@@ -55,7 +55,7 @@ namespace OJS.Services.Administration.Data.Implementations
                 .Select(p => new
                 {
                     p.IsOfficial,
-                    p.User.UserName
+                    p.User.UserName,
                 })
                 .FirstOrDefaultAsync();
 
@@ -140,7 +140,7 @@ namespace OJS.Services.Administration.Data.Implementations
                 .UpdateFromQueryAsync(
                     ps => new ParticipantScore
                     {
-                        SubmissionId = null
+                        SubmissionId = null,
                     });
     }
 }

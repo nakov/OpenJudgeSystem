@@ -27,17 +27,11 @@ public class ParticipantsController : BaseAutoCrudAdminController<Participant>
         this.contestsValidationHelper = contestsValidationHelper;
     }
 
-    public IActionResult Submissions([FromQuery] IDictionary<string, string> complexId)
-        => this.RedirectToActionWithNumberFilter(
-            nameof(SubmissionsController),
-            SubmissionsController.ParticipantIdKey,
-            this.GetEntityIdFromQuery<int>(complexId));
-
     protected override IEnumerable<GridAction> DefaultActions
         => new[] { new GridAction { Action = nameof(this.Delete) } };
 
     protected override IEnumerable<GridAction> CustomActions
-        => new []
+        => new[]
         {
             new GridAction { Action = nameof(this.Submissions) },
         };
@@ -52,6 +46,12 @@ public class ParticipantsController : BaseAutoCrudAdminController<Participant>
     protected override IEnumerable<string> ShownFormControlNamesOnCreate
         => base.ShownFormControlNamesOnCreate
             .Concat(new[] { nameof(Participant.Contest), nameof(Participant.User), nameof(Participant.IsOfficial) });
+
+    public IActionResult Submissions([FromQuery] IDictionary<string, string> complexId)
+        => this.RedirectToActionWithNumberFilter(
+            nameof(SubmissionsController),
+            SubmissionsController.ParticipantIdKey,
+            this.GetEntityIdFromQuery<int>(complexId));
 
     protected override Task BeforeGeneratingForm(
         Participant entity,

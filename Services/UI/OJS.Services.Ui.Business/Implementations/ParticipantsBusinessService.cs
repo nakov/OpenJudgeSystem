@@ -44,7 +44,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
                 if (!isAdmin && !isUserLecturerInByContestAndUser)
                 {
-                    this.AssignRandomProblemsToParticipant(participant, contest);
+                    AssignRandomProblemsToParticipant(participant, contest);
                 }
             }
 
@@ -63,18 +63,18 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (participant == null)
             {
-                throw new ArgumentException(Resource.Participant_does_not_exist);
+                throw new ArgumentException(Resource.ParticipantDoesNotExist);
             }
 
             if (!participant.Contest.Duration.HasValue)
             {
-                return new ServiceResult<string>(Resource.Contest_duration_not_set);
+                return new ServiceResult<string>(Resource.ContestDurationNotSet);
             }
 
             if (!participant.ParticipationEndTime.HasValue ||
                 !participant.ParticipationStartTime.HasValue)
             {
-                throw new ArgumentException(Resource.Participant_participation_time_not_set);
+                throw new ArgumentException(Resource.ParticipantParticipationTimeNotSet);
             }
 
             var newEndTime = participant.ParticipationEndTime.Value.AddMinutes(minutes);
@@ -83,7 +83,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (newEndTime < minAllowedEndTime)
             {
-                return new ServiceResult<string>(Resource.Participation_time_reduce_below_duration_warning);
+                return new ServiceResult<string>(Resource.ParticipationTimeReduceBelowDurationWarning);
             }
 
             participant.ParticipationEndTime = newEndTime;
@@ -103,12 +103,12 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (contest == null)
             {
-                return new ServiceResult<ICollection<string>>(SharedResource.Contest_not_found);
+                return new ServiceResult<ICollection<string>>(SharedResource.ContestNotFound);
             }
 
             if (!contest.Duration.HasValue)
             {
-                return new ServiceResult<ICollection<string>>(Resource.Contest_duration_not_set);
+                return new ServiceResult<ICollection<string>>(Resource.ContestDurationNotSet);
             }
 
             var contestTotalDurationInMinutes = contest.Duration.Value.TotalMinutes;
@@ -144,7 +144,7 @@ namespace OJS.Services.Ui.Business.Implementations
             return ServiceResult<ICollection<string>>.Success(invalidForUpdateParticipantUsernames);
         }
 
-        private void AssignRandomProblemsToParticipant(Participant participant, Contest contest)
+        private static void AssignRandomProblemsToParticipant(Participant participant, Contest contest)
         {
             var random = new Random();
 

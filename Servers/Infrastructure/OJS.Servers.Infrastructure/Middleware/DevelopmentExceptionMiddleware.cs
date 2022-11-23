@@ -16,7 +16,9 @@
             problemDetails.Detail = exception.Message;
         }
 
-        protected override void HandleException(HttpContext httpContext, ProblemDetails problemDetails,
+        protected override void HandleException(
+            HttpContext httpContext,
+            ProblemDetails problemDetails,
             Exception exception)
         {
             base.HandleException(
@@ -28,4 +30,3 @@
         }
     }
 }
-

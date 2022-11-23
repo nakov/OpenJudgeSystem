@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 using Resource = OJS.Common.Resources.ProblemResourcesController;
 
-public class ProblemResourceValidatorsFactory :IValidatorsFactory<ProblemResource>
+public class ProblemResourceValidatorsFactory : IValidatorsFactory<ProblemResource>
 {
     public IEnumerable<Func<ProblemResource, ProblemResource, AdminActionContext, ValidatorResult>> GetValidators()
         => new Func<ProblemResource, ProblemResource, AdminActionContext, ValidatorResult>[]
@@ -32,11 +32,12 @@ public class ProblemResourceValidatorsFactory :IValidatorsFactory<ProblemResourc
         {
             if (!ResourceHasLink(newEntity))
             {
-                return ValidatorResult.Error(Resource.Link_not_empty);
+                return ValidatorResult.Error(Resource.LinkNotEmpty);
             }
+
             if (ResourceHasFile(actionContext))
             {
-                return ValidatorResult.Error(Resource.Only_link_allowed);
+                return ValidatorResult.Error(Resource.OnlyLinkAllowed);
             }
         }
 
@@ -47,7 +48,7 @@ public class ProblemResourceValidatorsFactory :IValidatorsFactory<ProblemResourc
 
         if (newEntity.Type != ProblemResourceType.Link && !ResourceHasFile(actionContext))
         {
-            return ValidatorResult.Error(Resource.File_required);
+            return ValidatorResult.Error(Resource.FileRequired);
         }
 
         return ValidatorResult.Success();

@@ -1,11 +1,11 @@
-﻿using SoftUni.Judge.Common.Enumerations;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-
-namespace OJS.Services.Common.Helpers
+﻿namespace OJS.Services.Common.Helpers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Text.RegularExpressions;
+    using SoftUni.Judge.Common.Enumerations;
+
     public static class MySqlStrategiesHelper
     {
         private const string InsertIntoTableRegexPattern = @"insert\s+into\s+([^(]+)\s+\([^(]+\)\s+values\s*";

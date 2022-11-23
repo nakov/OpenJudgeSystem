@@ -44,7 +44,7 @@ namespace OJS.Data.Models.Problems
         public double OrderBy { get; set; }
 
         /// <summary>
-        /// Gets or sets a predefined skeleton for the task
+        /// Gets or sets a predefined skeleton for the task.
         /// </summary>
         public byte[]? SolutionSkeleton { get; set; }
 

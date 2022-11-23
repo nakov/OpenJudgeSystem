@@ -1,11 +1,10 @@
-using OJS.Data.Models.Contests;
-using OJS.Data.Models.Participants;
-
 namespace OJS.Services.Ui.Business
 {
+    using System.Threading.Tasks;
+    using OJS.Data.Models.Contests;
+    using OJS.Data.Models.Participants;
     using OJS.Services.Common.Models;
     using SoftUni.Services.Infrastructure;
-    using System.Threading.Tasks;
 
     public interface IProblemsBusinessService : IService
     {

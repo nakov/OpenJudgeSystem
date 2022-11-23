@@ -4,7 +4,7 @@ using OJS.Services.Administration.Models.ProblemGroups;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Validation;
 using OJS.Services.Common.Validation.Helpers;
-using Resource =  OJS.Common.Resources.ProblemGroupsControllers;
+using Resource = OJS.Common.Resources.ProblemGroupsControllers;
 
 public class ProblemGroupsCreateValidationService : IValidationService<ProblemGroupCreateValidationServiceModel>
 {
@@ -20,11 +20,11 @@ public class ProblemGroupsCreateValidationService : IValidationService<ProblemGr
 
         if (!problemGroup!.ContestIsOnline)
         {
-            return ValidationResult.Invalid(Resource.Can_create_only_in_online_contest);
+            return ValidationResult.Invalid(Resource.CanCreateOnlyInOnlineContest);
         }
 
         return problemGroup.ContestIsActive
-            ? ValidationResult.Invalid(Resource.Active_contest_cannot_add_problem_group)
+            ? ValidationResult.Invalid(Resource.ActiveContestCannotAddProblemGroup)
             : ValidationResult.Valid();
     }
 }

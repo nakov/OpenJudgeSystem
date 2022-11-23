@@ -29,12 +29,11 @@ public class SubmissionsController : BaseApiController
         this.cache = cache;
     }
 
-
     /// <summary>
-    /// Gets submission details by provided submission id
+    /// Gets submission details by provided submission id.
     /// </summary>
-    /// <param name="id">The id of the submission</param>
-    /// <returns>Submission details model</returns>
+    /// <param name="id">The id of the submission.</param>
+    /// <returns>Submission details model.</returns>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(SubmissionDetailsResponseModel), Status200OK)]
     public async Task<IActionResult> Details(int id)
@@ -44,9 +43,9 @@ public class SubmissionsController : BaseApiController
             .ToOkResult();
 
     /// <summary>
-    /// Gets all user submissions. Prepared for the user's profile page
+    /// Gets all user submissions. Prepared for the user's profile page.
     /// </summary>
-    /// <returns>Collection of user submissions</returns>
+    /// <returns>Collection of user submissions.</returns>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<SubmissionForProfileResponseModel>), Status200OK)]
     public async Task<IActionResult> GetForProfile()
@@ -58,10 +57,10 @@ public class SubmissionsController : BaseApiController
     /// <summary>
     /// Gets a subset of submissions by specific problem and given take count.
     /// </summary>
-    /// <param name="id">The id of the problem</param>
-    /// <param name="isOfficial">Should the submissions be only from compete mode</param>
-    /// <param name="take">Number of submissions to return</param>
-    /// <returns>A collection of submissions for a specific problem</returns>
+    /// <param name="id">The id of the problem.</param>
+    /// <param name="isOfficial">Should the submissions be only from compete mode.</param>
+    /// <param name="take">Number of submissions to return.</param>
+    /// <returns>A collection of submissions for a specific problem.</returns>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(IEnumerable<SubmissionResultsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetSubmissionResultsByProblem(
@@ -76,8 +75,8 @@ public class SubmissionsController : BaseApiController
     /// <summary>
     /// Saves/updates the provided execution result for the given submission in the database.
     /// </summary>
-    /// <param name="submissionExecutionResult">The submission execution result</param>
-    /// <returns>Success model</returns>
+    /// <param name="submissionExecutionResult">The submission execution result.</param>
+    /// <returns>Success model.</returns>
     /// <remarks>
     /// The submission comes from the Judge distributor system.
     /// It sends it to here after executing it on a remote worker.
@@ -102,7 +101,6 @@ public class SubmissionsController : BaseApiController
     public async Task<IActionResult> TotalCount()
         => await this.cache.Get(
                 SubmissionsTotalCountCacheKey,
-                this.submissionsBusiness
-                    .GetTotalCount)
+                this.submissionsBusiness.GetTotalCount)
             .ToOkResult();
 }

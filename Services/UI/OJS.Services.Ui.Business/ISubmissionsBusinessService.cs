@@ -1,13 +1,11 @@
-﻿using System.Collections;
-
-namespace OJS.Services.Ui.Business
+﻿namespace OJS.Services.Ui.Business
 {
-    using OJS.Data.Models.Submissions;
-    using SoftUni.Services.Infrastructure;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using OJS.Data.Models.Submissions;
     using OJS.Services.Ui.Models.Submissions;
-    using System.Collections.Generic;
+    using SoftUni.Services.Infrastructure;
 
     public interface ISubmissionsBusinessService : IService
     {
@@ -23,8 +21,7 @@ namespace OJS.Services.Ui.Business
 
         Task<IEnumerable<SubmissionForProfileServiceModel>> GetForProfileByUser(string? username);
 
-        Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(int problemId, bool isOfficial,
-            int take = 0);
+        Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(int problemId, bool isOfficial, int take = 0);
 
         Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult);
 

@@ -1,21 +1,21 @@
 namespace OJS.Services.Ui.Business.Implementations
 {
-    using OJS.Common;
-    using OJS.Data.Models.Contests;
-    using OJS.Data.Models.Participants;
-    using OJS.Services.Infrastructure.Exceptions;
+    using System;
+    using System.Linq;
+    using System.Threading.Tasks;
     using System.Transactions;
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
+    using OJS.Common;
     using OJS.Common.Helpers;
+    using OJS.Data.Models.Contests;
+    using OJS.Data.Models.Participants;
     using OJS.Data.Models.Problems;
     using OJS.Services.Common;
     using OJS.Services.Common.Data;
     using OJS.Services.Common.Models;
+    using OJS.Services.Infrastructure.Exceptions;
     using OJS.Services.Ui.Data;
-    using System;
-    using System.Linq;
-    using System.Threading.Tasks;
     using IsolationLevel = System.Transactions.IsolationLevel;
     using Resource = OJS.Common.Resources.ProblemsBusiness;
     using SharedResource = OJS.Common.Resources.ContestsGeneral;
@@ -99,7 +99,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 .Select(p => new
                 {
                     p.ProblemGroupId,
-                    p.ProblemGroup.ContestId
+                    p.ProblemGroup.ContestId,
                 })
                 .FirstOrDefault();
 
@@ -148,17 +148,17 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (problem?.ProblemGroup.ContestId == contestId)
             {
-                return new ServiceResult(Resource.Cannot_copy_problems_into_same_contest);
+                return new ServiceResult(Resource.CannotCopyProblemsIntoSameContest);
             }
 
             if (!await this.contestsData.ExistsById(contestId))
             {
-                return new ServiceResult(SharedResource.Contest_not_found);
+                return new ServiceResult(SharedResource.ContestNotFound);
             }
 
             if (await this.contestsData.IsActiveById(contestId))
             {
-                return new ServiceResult(Resource.Cannot_copy_problems_into_active_contest);
+                return new ServiceResult(Resource.CannotCopyProblemsIntoActiveContest);
             }
 
             await this.CopyProblemToContest(problem, contestId, problemGroupId);
@@ -173,7 +173,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 !this.lecturersInContestsBusinessService.IsUserAdminOrLecturerInContest(contest) &&
                 participant.ProblemsForParticipants.All(p => p.ProblemId != problemId))
             {
-                throw new BusinessServiceException(Resources.ContestsGeneral.Problem_not_assigned_to_user);
+                throw new BusinessServiceException(Resources.ContestsGeneral.ProblemNotAssignedToUser);
             }
         }
 
@@ -200,7 +200,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 problem.ProblemGroup = new ProblemGroup
                 {
                     ContestId = contestId,
-                    OrderBy = orderBy
+                    OrderBy = orderBy,
                 };
             }
 

@@ -1,10 +1,10 @@
-﻿using FluentExtensions.Extensions;
+﻿namespace OJS.Services.Ui.Business.Implementations;
+
+using System.Threading.Tasks;
+using FluentExtensions.Extensions;
 using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.Problems;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
-using System.Threading.Tasks;
-
-namespace OJS.Services.Ui.Business.Implementations;
 
 public class ProblemResourcesBusinessService : IProblemResourcesBusinessService
 {
@@ -14,7 +14,7 @@ public class ProblemResourcesBusinessService : IProblemResourcesBusinessService
         => this.problemResourcesDataService = problemResourcesDataService;
 
     public async Task<ProblemResourceServiceModel> GetResource(int resourceId)
-        => await problemResourcesDataService
+        => await this.problemResourcesDataService
             .OneById(resourceId)
             .MapCollection<ProblemResourceServiceModel>()
             .FirstOrDefaultAsync();

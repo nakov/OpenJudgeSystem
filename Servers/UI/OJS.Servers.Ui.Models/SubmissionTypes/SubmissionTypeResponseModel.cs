@@ -1,14 +1,14 @@
-﻿using OJS.Services.Ui.Models.SubmissionTypes;
-using SoftUni.AutoMapper.Infrastructure.Models;
-using System.Collections.Generic;
-
-namespace OJS.Servers.Ui.Models.SubmissionTypes
+﻿namespace OJS.Servers.Ui.Models.SubmissionTypes
 {
+    using OJS.Services.Ui.Models.SubmissionTypes;
+    using SoftUni.AutoMapper.Infrastructure.Models;
+    using System.Collections.Generic;
+
     public class SubmissionTypeResponseModel : IMapFrom<SubmissionTypeServiceModel>
     {
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         public bool IsSelectedByDefault { get; set; }
 

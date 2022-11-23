@@ -7,7 +7,8 @@ namespace OJS.Services.Ui.Data.Implementations
 
     public class SubmissionTypesDataService : DataService<SubmissionType>, ISubmissionTypesDataService
     {
-        public SubmissionTypesDataService(OjsDbContext db) : base(db)
+        public SubmissionTypesDataService(OjsDbContext db)
+            : base(db)
         {
         }
 

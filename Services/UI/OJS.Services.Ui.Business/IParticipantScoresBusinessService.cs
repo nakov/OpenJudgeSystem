@@ -1,13 +1,11 @@
-using OJS.Services.Ui.Models.Problems;
-using OJS.Services.Ui.Models.Submissions;
-using System.Collections;
-using System.Collections.Generic;
-
 namespace OJS.Services.Ui.Business
 {
-    using OJS.Data.Models.Submissions;
-    using SoftUni.Services.Infrastructure;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
+    using OJS.Data.Models.Submissions;
+    using OJS.Services.Ui.Models.Problems;
+    using OJS.Services.Ui.Models.Submissions;
+    using SoftUni.Services.Infrastructure;
 
     public interface IParticipantScoresBusinessService : IService
     {
@@ -17,8 +15,7 @@ namespace OJS.Services.Ui.Business
 
         Task SaveForSubmission(Submission submission);
 
-        Task<IEnumerable<ProblemResultServiceModel>> GetParticipantScoresByProblemForUser(int problemId,
-            bool isOfficial);
+        Task<IEnumerable<ProblemResultServiceModel>> GetParticipantScoresByProblemForUser(int problemId, bool isOfficial);
 
         Task<IEnumerable<ParticipantScoreModel>> GetByProblemForParticipants(IEnumerable<int> participantIds, int problemId);
     }

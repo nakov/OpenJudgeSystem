@@ -1,10 +1,9 @@
-﻿using SoftUni.AutoMapper.Infrastructure.Models;
-
-namespace OJS.Servers.Ui.Models.Submissions.Profile
+﻿namespace OJS.Servers.Ui.Models.Submissions.Profile
 {
     using System;
     using System.Collections.Generic;
     using OJS.Services.Ui.Models.Submissions;
+    using SoftUni.AutoMapper.Infrastructure.Models;
 
     public class SubmissionForProfileResponseModel : IMapFrom<SubmissionForProfileServiceModel>
     {
@@ -12,13 +11,13 @@ namespace OJS.Servers.Ui.Models.Submissions.Profile
 
         public DateTime SubmittedOn { get; set; }
 
-        public ProblemResponseModel Problem { get; set; }
+        public ProblemResponseModel Problem { get; set; } = null!;
 
-        public string SubmissionTypeName { get; set; }
+        public string SubmissionTypeName { get; set; } = null!;
 
         public int Points { get; set; }
 
-        public IEnumerable<TestRunResponseModel> TestRuns { get; set; }
+        public IEnumerable<TestRunResponseModel> TestRuns { get; set; } = null!;
 
         public double MaxUsedTime { get; set; }
 

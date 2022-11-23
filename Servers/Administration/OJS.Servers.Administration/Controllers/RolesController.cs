@@ -10,15 +10,12 @@ using static OJS.Common.GlobalConstants.Roles;
 [Authorize(Roles = Administrator)]
 public class RolesController : BaseAutoCrudAdminController<Role>
 {
+    protected override IEnumerable<GridAction> CustomActions
+        => new GridAction[] { new () { Name = "Users", Action = nameof(this.UsersInRole) }, };
+
     public IActionResult UsersInRole(IDictionary<string, string> complexId)
         => this.RedirectToActionWithStringFilter(
             nameof(UserRolesController),
             UserRolesController.RoleIdKey,
             this.GetEntityIdFromQuery<string>(complexId));
-
-    protected override IEnumerable<GridAction> CustomActions
-        => new GridAction[]
-        {
-            new () { Name = "Users", Action = nameof(this.UsersInRole) },
-        };
 }

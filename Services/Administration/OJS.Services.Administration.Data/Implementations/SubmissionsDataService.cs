@@ -1,14 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
-using OJS.Data.Models.Submissions;
-using OJS.Services.Common.Data.Implementations;
-using System;
-using System.Linq;
-
-namespace OJS.Services.Administration.Data.Implementations
+﻿namespace OJS.Services.Administration.Data.Implementations
 {
+    using System;
+    using System.Linq;
+    using Microsoft.EntityFrameworkCore;
+    using OJS.Data.Models.Submissions;
+    using OJS.Services.Common.Data.Implementations;
+
     public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataService
     {
-        public SubmissionsDataService(DbContext submissions) : base(submissions) {}
+        public SubmissionsDataService(DbContext submissions)
+            : base(submissions)
+        {
+        }
 
         public Submission? GetBestForParticipantByProblem(int participantId, int problemId) =>
             this.GetAllByProblemAndParticipant(problemId, participantId)
@@ -22,7 +25,7 @@ namespace OJS.Services.Administration.Data.Implementations
                 .Where(s => s.Id == id);
 
         public IQueryable<Submission> GetAllByProblem(int problemId)
-            => base.DbSet.Where(s => s.ProblemId == problemId);
+            => this.DbSet.Where(s => s.ProblemId == problemId);
 
         public IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId) =>
             this.DbSet
@@ -60,19 +63,13 @@ namespace OJS.Services.Administration.Data.Implementations
 
         public void SetAllToUnprocessedByProblem(int problemId) =>
             this.GetAllByProblem(problemId)
-                .UpdateFromQueryAsync(s => new Submission
-                {
-                    Processed = false
-                });
+                .UpdateFromQueryAsync(s => new Submission { Processed = false });
 
         public void DeleteByProblem(int problemId) =>
             this.DbSet.RemoveRange(this.DbSet.Where(s => s.ProblemId == problemId));
 
         public void RemoveTestRunsCacheByProblem(int problemId) =>
             this.GetAllByProblem(problemId)
-                .UpdateFromQueryAsync(s => new Submission
-                {
-                    TestRunsCache = null
-                });
+                .UpdateFromQueryAsync(s => new Submission { TestRunsCache = null });
     }
 }

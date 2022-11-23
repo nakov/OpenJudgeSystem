@@ -25,7 +25,7 @@ public class ContestDeleteProblemsValidationService : IValidationService<Contest
         }
 
         return contest!.IsActive
-            ? ValidationResult.Invalid(Resource.Active_contest_problems_permitted_for_deletion)
+            ? ValidationResult.Invalid(Resource.ActiveContestProblemsPermittedForDeletion)
             : ValidationResult.Valid();
     }
 }

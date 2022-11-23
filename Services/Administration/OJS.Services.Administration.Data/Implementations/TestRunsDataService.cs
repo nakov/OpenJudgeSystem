@@ -8,7 +8,8 @@ using System.Linq;
 
 public class TestRunsDataService : DataService<TestRun>, ITestRunsDataService
 {
-    public TestRunsDataService(DbContext testRuns) : base(testRuns)
+    public TestRunsDataService(DbContext testRuns)
+        : base(testRuns)
     {
     }
 

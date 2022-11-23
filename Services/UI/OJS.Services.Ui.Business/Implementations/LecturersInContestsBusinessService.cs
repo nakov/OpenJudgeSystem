@@ -1,10 +1,9 @@
-﻿using OJS.Data.Models.Contests;
-using OJS.Data.Models.Participants;
+﻿namespace OJS.Services.Ui.Business.Implementations;
+
+using System.Linq;
+using OJS.Data.Models.Contests;
 using OJS.Services.Common;
 using OJS.Services.Ui.Data;
-using System.Linq;
-
-namespace OJS.Services.Ui.Business.Implementations;
 
 public class LecturersInContestsBusinessService : ILecturersInContestsBusinessService
 {
@@ -24,11 +23,10 @@ public class LecturersInContestsBusinessService : ILecturersInContestsBusinessSe
 
     public bool IsUserAdminOrLecturerInContest(Contest contest)
     {
-        var currentUser = userProviderService.GetCurrentUser();
+        var currentUser = this.userProviderService.GetCurrentUser();
 
-        return userProviderService.GetCurrentUser().IsAdmin ||
+        return this.userProviderService.GetCurrentUser().IsAdmin ||
             contest.LecturersInContests.Any(c => c.LecturerId == currentUser.Id) ||
-            contest.Category.LecturersInContestCategories.Any(cl => cl.LecturerId == currentUser.Id);
+            contest.Category!.LecturersInContestCategories.Any(cl => cl.LecturerId == currentUser.Id);
     }
-
 }

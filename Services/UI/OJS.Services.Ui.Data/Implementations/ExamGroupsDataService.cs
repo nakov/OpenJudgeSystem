@@ -10,7 +10,8 @@ namespace OJS.Services.Ui.Data.Implementations
 
     public class ExamGroupsDataService : DataService<ExamGroup>, IExamGroupsDataService
     {
-        public ExamGroupsDataService(OjsDbContext db) : base(db)
+        public ExamGroupsDataService(OjsDbContext db)
+            : base(db)
         {
         }
 

@@ -41,14 +41,14 @@ public class ResultsController : BaseAdminViewController
 
         if (!userHasContestPermissions)
         {
-            throw new BusinessServiceException(Resource.Contest_results_not_available);
+            throw new BusinessServiceException(Resource.ContestResultsNotAvailable);
         }
 
         var contest = await this.contestsData.GetByIdWithProblems(model.Id);
 
         if (contest == null)
         {
-            throw new BusinessServiceException(Resource.Contest_not_found);
+            throw new BusinessServiceException(Resource.ContestNotFound);
         }
 
         var official = model.Type == ContestExportResultType.Compete;
@@ -62,11 +62,39 @@ public class ResultsController : BaseAdminViewController
 
         // Suggested file name in the "Save as" dialog which will be displayed to the end user
         var fileName = string.Format(
-            Resource.Report_excel_format,
+            Resource.ReportExcelFormat,
             official ? Resource.Contest : Resource.Practice,
             contest.Name);
 
         return this.ExportResultsToExcel(contestResults, fileName);
+    }
+
+    private static void FillSheetWithParticipantResults(ISheet sheet, ContestResultsViewModel contestResults)
+    {
+        var rowNumber = 1;
+        foreach (var result in contestResults.Results)
+        {
+            var colNumber = 0;
+            var row = sheet.CreateRow(rowNumber++);
+            row.CreateCell(colNumber++).SetCellValue(result.ParticipantUsername);
+            row.CreateCell(colNumber++).SetCellValue(result.ParticipantFullName);
+
+            foreach (var problem in contestResults.Problems)
+            {
+                var problemResult = result.ProblemResults.FirstOrDefault(pr => pr.ProblemId == problem.Id);
+
+                if (problemResult != null)
+                {
+                    row.CreateCell(colNumber++).SetCellValue(problemResult.BestSubmission.Points);
+                }
+                else
+                {
+                    row.CreateCell(colNumber++, CellType.Blank);
+                }
+            }
+
+            row.CreateCell(colNumber).SetCellValue(result.ExportTotal);
+        }
     }
 
     private int CreateResultsSheetHeaderRow(ISheet sheet, ContestResultsViewModel contestResults)
@@ -95,34 +123,6 @@ public class ResultsController : BaseAdminViewController
         return columnNumber;
     }
 
-    private void FillSheetWithParticipantResults(ISheet sheet, ContestResultsViewModel contestResults)
-    {
-        var rowNumber = 1;
-        foreach (var result in contestResults.Results)
-        {
-            var colNumber = 0;
-            var row = sheet.CreateRow(rowNumber++);
-            row.CreateCell(colNumber++).SetCellValue(result.ParticipantUsername);
-            row.CreateCell(colNumber++).SetCellValue(result.ParticipantFullName);
-
-            foreach (var problem in contestResults.Problems)
-            {
-                var problemResult = result.ProblemResults.FirstOrDefault(pr => pr.ProblemId == problem.Id);
-
-                if (problemResult != null)
-                {
-                    row.CreateCell(colNumber++).SetCellValue(problemResult.BestSubmission.Points);
-                }
-                else
-                {
-                    row.CreateCell(colNumber++, CellType.Blank);
-                }
-            }
-
-            row.CreateCell(colNumber).SetCellValue(result.ExportTotal);
-        }
-    }
-
     private FileResult ExportResultsToExcel(ContestResultsViewModel contestResults, string fileName)
     {
         var workbook = new HSSFWorkbook();
@@ -130,7 +130,7 @@ public class ResultsController : BaseAdminViewController
 
         var columnsCount = this.CreateResultsSheetHeaderRow(sheet, contestResults);
 
-        this.FillSheetWithParticipantResults(sheet, contestResults);
+        FillSheetWithParticipantResults(sheet, contestResults);
 
         sheet.AutoSizeColumns(columnsCount);
 

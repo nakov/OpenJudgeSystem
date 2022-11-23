@@ -48,12 +48,6 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
         this.contestsValidationHelper = contestsValidationHelper;
     }
 
-    public IActionResult Problems([FromQuery] IDictionary<string, string> complexId)
-        => this.RedirectToActionWithNumberFilter(
-            nameof(ProblemsController),
-            nameof(OJS.Data.Models.Problems.Problem.ProblemGroupId),
-            this.GetEntityIdFromQuery<int>(complexId));
-
     protected override IEnumerable<Func<ProblemGroup, ProblemGroup, AdminActionContext, ValidatorResult>>
         EntityValidators
         => this.problemGroupValidatorsFactory.GetValidators();
@@ -65,8 +59,14 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
     protected override IEnumerable<GridAction> CustomActions
         => new GridAction[]
         {
-            new() { Action = nameof(this.Problems) },
+            new () { Action = nameof(this.Problems) },
         };
+
+    public IActionResult Problems([FromQuery] IDictionary<string, string> complexId)
+        => this.RedirectToActionWithNumberFilter(
+            nameof(ProblemsController),
+            nameof(OJS.Data.Models.Problems.Problem.ProblemGroupId),
+            this.GetEntityIdFromQuery<int>(complexId));
 
     protected override IEnumerable<FormControlViewModel> GenerateFormControls(
         ProblemGroup entity,

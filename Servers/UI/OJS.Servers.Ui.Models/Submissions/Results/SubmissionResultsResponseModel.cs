@@ -1,11 +1,11 @@
-﻿using OJS.Servers.Ui.Models.Submissions.Profile;
+﻿namespace OJS.Servers.Ui.Models.Submissions.Results;
+
+using OJS.Servers.Ui.Models.Submissions.Profile;
 using OJS.Services.Ui.Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
-namespace OJS.Servers.Ui.Models.Submissions.Results;
 
 public class SubmissionResultsResponseModel : IMapFrom<SubmissionResultsServiceModel>
 {
@@ -25,7 +25,7 @@ public class SubmissionResultsResponseModel : IMapFrom<SubmissionResultsServiceM
 
     public short MaximumPoints { get; set; }
 
-    public string SubmissionType { get; set; }
+    public string SubmissionType { get; set; } = null!;
 
     public IEnumerable<TestRunResponseModel> TestRuns { get; set; } = Enumerable.Empty<TestRunResponseModel>();
 }

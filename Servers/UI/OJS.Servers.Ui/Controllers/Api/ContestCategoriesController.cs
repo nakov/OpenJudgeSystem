@@ -19,7 +19,7 @@ public class ContestCategoriesController : BaseApiController
     /// <summary>
     /// Gets contest categories, ordered in a tree.
     /// </summary>
-    /// <returns>All contest categories as a tree</returns>
+    /// <returns>All contest categories as a tree.</returns>
     /// <remarks>
     /// Retrieves the items from cache, that is invalidated every hour.
     /// </remarks>

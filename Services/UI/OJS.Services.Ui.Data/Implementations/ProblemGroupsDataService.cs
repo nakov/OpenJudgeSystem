@@ -8,7 +8,8 @@ namespace OJS.Services.Ui.Data.Implementations
 
     public class ProblemGroupsDataService : DataService<ProblemGroup>, IProblemGroupsDataService
     {
-        public ProblemGroupsDataService(DbContext db) : base(db)
+        public ProblemGroupsDataService(DbContext db)
+            : base(db)
         {
         }
 

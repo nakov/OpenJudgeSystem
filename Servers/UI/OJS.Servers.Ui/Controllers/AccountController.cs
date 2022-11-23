@@ -31,7 +31,7 @@ namespace OJS.Servers.Ui.Controllers
         public IActionResult Login(string returnUrl)
         {
             this.ViewData[ViewDataKeys.ReturnUrl] = returnUrl;
-            return RedirectToAction("Index", "Home");
+            return this.RedirectToAction("Index", "Home");
         }
 
         [HttpPost]
@@ -41,7 +41,7 @@ namespace OJS.Servers.Ui.Controllers
         {
             if (!this.ModelState.IsValid)
             {
-                return RedirectToAction("Index", "Home");
+                return this.RedirectToAction("Index", "Home");
             }
 
             var signInResult = await this.signInManager

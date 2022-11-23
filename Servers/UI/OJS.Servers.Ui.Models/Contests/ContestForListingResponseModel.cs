@@ -8,7 +8,7 @@ public class ContestForListingResponseModel : IMapFrom<ContestForListingServiceM
 {
     public int Id { get; set; }
 
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     public DateTime? StartTime { get; set; }
 
@@ -22,5 +22,5 @@ public class ContestForListingResponseModel : IMapFrom<ContestForListingServiceM
 
     public bool CanBePracticed { get; set; }
 
-    public string Category { get; set; }
+    public string Category { get; set; } = null!;
 }

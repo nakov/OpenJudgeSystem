@@ -1,11 +1,10 @@
-using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-
 namespace OJS.Servers.Ui.Infrastructure.Extensions
 {
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.FileProviders;
+    using Microsoft.Extensions.Hosting;
     using OJS.Servers.Infrastructure.Extensions;
 
     public static class WebApplicationExtensions
@@ -45,7 +44,6 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
                     }
                 });
             }
-
 
             return app;
         }

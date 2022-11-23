@@ -34,7 +34,7 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
                     .Where(p => !p.IsDeleted)
                     .OrderBy(p => p.OrderBy)
                     .ThenBy(p => p.Name)
-                    .Select(ContestProblemListViewModel.FromProblem)
+                    .Select(ContestProblemListViewModel.FromProblem),
             };
 
             var participants = this.participantsCommonData

@@ -6,6 +6,6 @@ namespace OJS.Servers.Ui.Models.Submissions
     {
         [Required]
         [MinLength(5)]
-        public string Content { get; set; }
+        public string Content { get; set; } = null!;
     }
 }

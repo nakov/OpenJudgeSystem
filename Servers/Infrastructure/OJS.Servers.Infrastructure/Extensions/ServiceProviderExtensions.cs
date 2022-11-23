@@ -33,7 +33,7 @@ namespace OJS.Servers.Infrastructure.Extensions
             var userPassword = "1234QwERt)";
             var user = await userManager.FindByEmailAsync(userProfile.Email);
 
-            if(user == null)
+            if (user == null)
             {
                 var createPowerUser = await userManager.CreateAsync(userProfile, userPassword);
                 if (createPowerUser.Succeeded)

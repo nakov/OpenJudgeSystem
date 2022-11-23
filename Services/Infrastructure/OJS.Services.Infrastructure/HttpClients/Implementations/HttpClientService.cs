@@ -11,7 +11,9 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
 
     public class HttpClientService : IHttpClientService
     {
+#pragma warning disable SA1401
         protected readonly HttpClient Client;
+#pragma warning restore SA1401
 
         public HttpClientService(HttpClient client)
             => this.Client = client;

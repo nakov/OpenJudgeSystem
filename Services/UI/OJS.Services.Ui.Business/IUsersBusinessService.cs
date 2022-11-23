@@ -1,9 +1,8 @@
-﻿using OJS.Services.Ui.Models.Users;
-using System.Security.Claims;
-using System.Threading.Tasks;
-
-namespace OJS.Services.Ui.Business
+﻿namespace OJS.Services.Ui.Business
 {
+    using System.Security.Claims;
+    using System.Threading.Tasks;
+    using OJS.Services.Ui.Models.Users;
     using SoftUni.Services.Infrastructure;
 
     public interface IUsersBusinessService : IService

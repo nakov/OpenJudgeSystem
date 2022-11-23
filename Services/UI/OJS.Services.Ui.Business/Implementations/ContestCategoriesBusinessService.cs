@@ -27,7 +27,7 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
             .ToList();
 
         mainCategories.ForEach(category =>
-            AddChildren(category.Children, allCategories));
+            this.AddChildren(category.Children, allCategories));
 
         return mainCategories;
     }

@@ -14,7 +14,7 @@ namespace OJS.Data.Models
         public DateTime StartTime { get; set; }
 
         /// <remarks>
-        /// If EndTime is null, the event happens (and should be displayed) only on the StartTime
+        /// If EndTime is null, the event happens (and should be displayed) only on the StartTime.
         /// </remarks>
         public DateTime? EndTime { get; set; }
 

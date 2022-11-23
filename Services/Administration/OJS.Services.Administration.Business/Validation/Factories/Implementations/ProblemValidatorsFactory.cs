@@ -31,19 +31,19 @@ public class ProblemValidatorsFactory : IValidatorsFactory<Problem>
     public IEnumerable<Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>> GetAsyncValidators()
         => Enumerable.Empty<Func<Problem, Problem, AdminActionContext, Task<ValidatorResult>>>();
 
-    private ValidatorResult ValidateUploadedFiles(
-        Problem existingEntity,
-        Problem newEntity,
-        AdminActionContext actionContext)
-        => actionContext.Files.SingleFiles.Any(f => this.fileSystem.GetFileExtension(f) != GlobalConstants.FileExtensions.Zip)
-            ? ValidatorResult.Error(GlobalResource.Must_be_zip_file)
-            : ValidatorResult.Success();
-
     private static ValidatorResult ValidateSubmissionTypeIsSelected(
         Problem existingEntity,
         Problem newEntity,
         AdminActionContext actionContext)
         => actionContext.GetSubmissionTypes().Any(s => s.IsChecked)
             ? ValidatorResult.Success()
-            : ValidatorResult.Error(GlobalResource.Select_one_submission_type);
+            : ValidatorResult.Error(GlobalResource.SelectOneSubmissionType);
+
+    private ValidatorResult ValidateUploadedFiles(
+        Problem existingEntity,
+        Problem newEntity,
+        AdminActionContext actionContext)
+        => actionContext.Files.SingleFiles.Any(f => this.fileSystem.GetFileExtension(f) != GlobalConstants.FileExtensions.Zip)
+            ? ValidatorResult.Error(GlobalResource.MustBeZipFile)
+            : ValidatorResult.Success();
 }

@@ -1,10 +1,10 @@
-﻿using OJS.Data.Models.Submissions;
-using OJS.Services.Common.Data;
-using System;
-using System.Linq;
-
-namespace OJS.Services.Administration.Data
+﻿namespace OJS.Services.Administration.Data
 {
+    using System;
+    using System.Linq;
+    using OJS.Data.Models.Submissions;
+    using OJS.Services.Common.Data;
+
     public interface ISubmissionsDataService : IDataService<Submission>
     {
         Submission? GetBestForParticipantByProblem(int participantId, int problemId);

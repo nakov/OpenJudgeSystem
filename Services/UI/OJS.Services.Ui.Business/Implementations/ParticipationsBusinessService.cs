@@ -1,14 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using OJS.Services.Ui.Data;
-using OJS.Services.Ui.Models.Participations;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using X.PagedList;
-
-namespace OJS.Services.Ui.Business.Implementations
+﻿namespace OJS.Services.Ui.Business.Implementations
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using OJS.Services.Ui.Data;
+    using OJS.Services.Ui.Models.Participations;
+    using X.PagedList;
+
     public class ParticipationsBusinessService : IParticipationsBusinessService
     {
         private IParticipantsDataService participantsData;
@@ -25,12 +23,12 @@ namespace OJS.Services.Ui.Business.Implementations
                 {
                     Id = c.Key.Id,
                     ContestId = c.Key.Id,
-                    ContestName = c.Key.Name,
+                    ContestName = c.Key.Name!,
                     RegistrationTime = c.Key.CreatedOn,
                     ContestCompeteMaximumPoints = c.Key.ProblemGroups
                         .Where(pg => pg.Problems.Any(p => !p.IsDeleted))
                         .AsEnumerable()
-                        .Sum(pg => pg.Problems.FirstOrDefault().MaximumPoints),
+                        .Sum(pg => pg.Problems.FirstOrDefault() !.MaximumPoints),
                     ContestPracticeMaximumPoints = c.Key.ProblemGroups
                         .SelectMany(pg => pg.Problems)
                         .Where(x => !x.IsDeleted)
@@ -49,7 +47,7 @@ namespace OJS.Services.Ui.Business.Implementations
                             .Where(x => !x.IsDeleted)
                             .GroupBy(s => s.ProblemId)
                             .Sum(x => x.Max(z => z.Points)))
-                        .FirstOrDefault()
+                        .FirstOrDefault(),
                 })
                 .OrderByDescending(x => x.RegistrationTime)
                 .ToListAsync();

@@ -45,7 +45,7 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
         return ValidatorResult.Success();
     }
 
-    private static ValidatorResult ValidateContestIsNotActiveOnDelete(Contest contest, Contest _, AdminActionContext actionContext)
+    private static ValidatorResult ValidateContestIsNotActiveOnDelete(Contest contest, Contest oldContest, AdminActionContext actionContext)
     {
         if (actionContext.Action != EntityAction.Delete)
         {
@@ -60,17 +60,17 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
         return ValidatorResult.Success();
     }
 
-    private static ValidatorResult ValidateContestStartTime(Contest _, Contest newContest, AdminActionContext __)
+    private static ValidatorResult ValidateContestStartTime(Contest oldContest, Contest newContest, AdminActionContext adminActionContext)
         => newContest.StartTime >= newContest.EndTime
             ? ValidatorResult.Error(Resource.ContestStartDateBeforeEnd)
             : ValidatorResult.Success();
 
-    private static ValidatorResult ValidateContestPracticeStartTime(Contest _, Contest newContest, AdminActionContext __)
+    private static ValidatorResult ValidateContestPracticeStartTime(Contest oldContest, Contest newContest, AdminActionContext adminActionContext)
         => newContest.PracticeStartTime >= newContest.PracticeEndTime
             ? ValidatorResult.Error(Resource.PracticeStartDateBeforeEnd)
             : ValidatorResult.Success();
 
-    private static ValidatorResult ValidateOnlineContestDuration(Contest _, Contest newContest, AdminActionContext __)
+    private static ValidatorResult ValidateOnlineContestDuration(Contest oldContest, Contest newContest, AdminActionContext adminActionContext)
     {
         if (newContest.IsOnline)
         {
@@ -88,7 +88,7 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
         return ValidatorResult.Success();
     }
 
-    private static ValidatorResult ValidateOnlineContestProblemGroups(Contest _, Contest newContest, AdminActionContext __)
+    private static ValidatorResult ValidateOnlineContestProblemGroups(Contest oldContest, Contest newContest, AdminActionContext adminActionContext)
     {
         if (newContest.IsOnline)
         {
