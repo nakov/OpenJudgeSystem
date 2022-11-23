@@ -116,7 +116,7 @@ const SubmissionBox = () => {
         updateSubmissionCode('');
     }, [ submit, updateSubmissionCode ]);
 
-    const submissionLimitCountdownRender = useCallback((remainingTime: ICountdownRemainingType) => {
+    const renderSubmissionLimitCountdown = useCallback((remainingTime: ICountdownRemainingType) => {
         const { minutes, seconds } = convertToTwoDigitValues(remainingTime);
 
         return (
@@ -141,13 +141,13 @@ const SubmissionBox = () => {
             <Countdown
               duration={submitLimit}
               metric={Metric.seconds}
-              renderRemainingTime={submissionLimitCountdownRender}
+              renderRemainingTime={renderSubmissionLimitCountdown}
               handleOnCountdownEnd={() => {
                   setSubmitLimit(0);
               }}
             />
         );
-    }, [ showSubmissionLimitTimer, submissionLimitCountdownRender, submitLimit ]);
+    }, [ showSubmissionLimitTimer, renderSubmissionLimitCountdown, submitLimit ]);
 
     const renderSubmitBtn = useCallback(() => {
         const state = showSubmissionLimitTimer
