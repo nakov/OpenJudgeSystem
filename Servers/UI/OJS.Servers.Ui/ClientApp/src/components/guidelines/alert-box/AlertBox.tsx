@@ -28,20 +28,18 @@ const AlertBox = ({
     className,
     onClose,
 }: IAlertBoxProps) => {
-    const [ hide, setHide ] = useState<boolean>(false);
+    const [ isHidden, setIsHidden ] = useState<boolean>(false);
 
     const internalClassName = useMemo(() => {
         const baseClsName = concatClassNames(alertBoxTypeToDefaulClassName[type], styles.alertBox, className);
 
-        if (hide) {
-            return concatClassNames(styles.hidden, baseClsName);
-        }
-
-        return baseClsName;
-    }, [ className, hide, type ]);
+        return isHidden
+            ? concatClassNames(styles.hidden, baseClsName)
+            : baseClsName;
+    }, [ className, isHidden, type ]);
 
     const handleOnClickClose = useCallback(() => {
-        setHide(true);
+        setIsHidden(true);
         onClose();
     }, [ onClose ]);
 

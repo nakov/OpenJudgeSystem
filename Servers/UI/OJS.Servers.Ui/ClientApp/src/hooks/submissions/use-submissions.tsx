@@ -19,7 +19,7 @@ interface ISubmissionsContext {
         selectedSubmissionType: ISubmissionTypeType | null;
         submitMessage: string | null;
         setSubmitMessage: (value: string | null) => void;
-        submitSuccessful: boolean | null;
+        isSubmissionSuccessful: boolean | null;
     };
     actions: {
         submit: () => Promise<void>;
@@ -48,7 +48,6 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         useState<ISubmissionTypeType | null>(defaultState.state.selectedSubmissionType);
     const [ submissionCode, setSubmissionCode ] = useState<string>(defaultState.state.submissionCode);
     const [ submitMessage, setSubmitMessage ] = useState<string | null>(null);
-    const [ submitSuccessful, setSubmitSuccessful ] = useState<boolean | null>(null);
 
     const { getSubmitUrl } = useUrls();
 
@@ -66,6 +65,8 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         data: submitCodeResult,
         isSuccess,
     } = useHttp(getSubmitUrl);
+
+    const isSubmissionSuccessful = useMemo(() => isSuccess, [ isSuccess ]);
 
     const submit = useCallback(async () => {
         startLoading();
@@ -122,7 +123,6 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     useEffect(
         () => {
-            setSubmitSuccessful(isSuccess);
             if (!isNil(submitCodeResult) && submitCodeResult.status !== 200) {
                 setSubmitMessage(submitCodeResult.detail);
                 return;
@@ -142,7 +142,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                 selectedSubmissionType,
                 submitMessage,
                 setSubmitMessage,
-                submitSuccessful,
+                isSubmissionSuccessful,
             },
             actions: {
                 updateSubmissionCode,
@@ -157,7 +157,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             submit,
             submitMessage,
             setSubmitMessage,
-            submitSuccessful,
+            isSubmissionSuccessful,
         ],
     );
 
