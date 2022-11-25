@@ -1,32 +1,28 @@
 import React, { createContext, useCallback, useContext, useMemo } from 'react';
+import isNil from 'lodash/isNil';
 
 import { IHaveChildrenProps } from '../components/common/Props';
 
-interface IPageTitleParamsContext {
+interface IPageWithTitleParamsContext {
     actions: {
         setPageTitle: (title: string | undefined) => void;
     };
 }
 
-type IPageTitleProviderProps = IHaveChildrenProps
+const defaultPageTitle = 'SoftUni Judge';
 
-const PageTitleContext = createContext<IPageTitleParamsContext>({} as IPageTitleParamsContext);
+type IPageWithTitleProviderProps = IHaveChildrenProps
 
-const PageTitleProvider = ({ children }: IPageTitleProviderProps) => {
-    const defaultTitlePage = useMemo(
-        () => 'SoftUni Judge',
-        [],
-    );
+const PageWithTitleContext = createContext<IPageWithTitleParamsContext>({} as IPageWithTitleParamsContext);
 
+const PageWithTitleProvider = ({ children }: IPageWithTitleProviderProps) => {
     const setPageTitle = useCallback(
         (title: string | undefined) => {
-            if (title === defaultTitlePage) {
-                document.title = defaultTitlePage;
-            } else {
-                document.title = `${title} - ${defaultTitlePage}`;
-            }
+            document.title = isNil(title)
+                ? defaultPageTitle
+                : `${title} - ${defaultPageTitle}`;
         },
-        [ defaultTitlePage ],
+        [],
     );
 
     const value = useMemo(
@@ -35,15 +31,15 @@ const PageTitleProvider = ({ children }: IPageTitleProviderProps) => {
     );
 
     return (
-        <PageTitleContext.Provider value={value}>
+        <PageWithTitleContext.Provider value={value}>
             {children}
-        </PageTitleContext.Provider>
+        </PageWithTitleContext.Provider>
     );
 };
 
-const usePageTitles = () => useContext(PageTitleContext);
+const usePageTitles = () => useContext(PageWithTitleContext);
 
-export default PageTitleProvider;
+export default PageWithTitleProvider;
 
 export {
     usePageTitles,

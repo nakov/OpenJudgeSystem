@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 import AdministrationPage from '../../pages/administration/AdministrationPage';
@@ -34,7 +34,6 @@ const routes = [
     {
         path: '/',
         Element: HomePage,
-        title: 'SoftUni Judge',
     },
     {
         path: '/profile',
@@ -74,17 +73,21 @@ const routes = [
     },
 ];
 
-const PageContent = () => (
-    <main className={styles.main}>
-        <Routes>
-            {routes.map(({ path, Element, title }) => {
-                const ElementWithWrappers = withTitle(Element, title);
-                return (
-                    <Route key={path} path={path} element={<ElementWithWrappers />} />
-                );
-            })}
-        </Routes>
-    </main>
-);
+const PageContent = () => {
+    const renderRoute = (path: string, Element: FC, title: string | undefined) => {
+        const WrappedElement = withTitle(Element, title);
+        return (
+            <Route key={path} path={path} element={<WrappedElement />} />
+        );
+    };
+
+    return (
+        <main className={styles.main}>
+            <Routes>
+                {routes.map(({ path, Element, title }) => renderRoute(path, Element, title))}
+            </Routes>
+        </main>
+    );
+};
 
 export default PageContent;
