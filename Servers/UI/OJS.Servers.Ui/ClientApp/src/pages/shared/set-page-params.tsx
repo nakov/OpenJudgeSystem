@@ -20,16 +20,12 @@ const Page = ({ children }: IHaveChildrenProps) => {
         [ params, setParams ],
     );
 
-    return (
-        <>
-            {children}
-            {' '}
-        </>
-
-    );
+    return children;
 };
 
 const asPage = (ComponentToWrap: FC) => (props: any) => (
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
     <Page>
         {/* eslint-disable-next-line react/react-in-jsx-scope,react/jsx-props-no-spreading */}
         <ComponentToWrap {...props} />

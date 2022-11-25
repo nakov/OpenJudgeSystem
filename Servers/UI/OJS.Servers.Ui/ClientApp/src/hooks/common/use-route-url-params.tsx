@@ -21,12 +21,9 @@ const defaultState = { state: { params: {} as Anything } };
 const RouteUrlParamsProvider = ({ children }: IRouteUrlParamsProvider) => {
     const [ internalParams, setInternalParams ] = useState(defaultState.state.params);
 
-    const setParams = useCallback(
-        (newParams: any) => {
-            setInternalParams(newParams);
-        },
-        [],
-    );
+    const setParams = useCallback((newParams: any) => {
+        setInternalParams(newParams);
+    }, []);
 
     const value = useMemo(
         () => ({

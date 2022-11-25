@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 import AdministrationPage from '../../pages/administration/AdministrationPage';
@@ -68,18 +68,20 @@ const routes = [
     },
 ];
 
-const PageContent = () => (
-    <main className={styles.main}>
-        <Routes>
-            {routes.map(({ path, Element }) => {
-                const ElementAsPage = asPage(Element);
-                return (
-                    <Route key={path} path={path} element={<ElementAsPage />} />
-                );
-            })}
-            );
-        </Routes>
-    </main>
-);
+const PageContent = () => {
+    const renderRoute = (path: string, Element: FC) => {
+        const WrappedElement = asPage(Element);
+        return (
+            <Route key={path} path={path} element={<WrappedElement />} />
+        );
+    };
 
+    return (
+        <main className={styles.main}>
+            <Routes>
+                {routes.map(({ path, Element }) => renderRoute(path, Element))}
+            </Routes>
+        </main>
+    );
+};
 export default PageContent;
