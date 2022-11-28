@@ -107,7 +107,12 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const {
         get,
         data,
-    } = useHttp(getAllContestsUrl as UrlType, getAllContestsUrlParams);
+    } = useHttp<
+        IAllContestsUrlParams,
+        IPagedResultType<IIndexContestsType>>({
+            url: getAllContestsUrl,
+            parameters: getAllContestsUrlParams,
+        });
 
     const { state: { strategies, isLoaded: strategiesAreLoaded } } = useContestStrategyFilters();
     const { state: { categories, isLoaded: categoriesAreLoaded } } = useContestCategories();

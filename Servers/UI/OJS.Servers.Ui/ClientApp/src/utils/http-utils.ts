@@ -1,9 +1,9 @@
 import axios, { ResponseType } from 'axios';
 import isFunction from 'lodash/isFunction';
 
-import { Anything, IDictionary, UrlType } from '../common/common-types';
+import { IDictionary, UrlType } from '../common/common-types';
 
-const getUrl = (url: UrlType, params: IDictionary<Anything> | null) => (
+const getUrl = <P>(url: UrlType<P>, params?: IDictionary<P> | null) => (
     isFunction(url)
         ? url(params)
         : url
