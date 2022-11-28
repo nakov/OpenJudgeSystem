@@ -75,6 +75,12 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             => this.GetQuery()
                 .Where(s => ids.Contains(s.Id));
 
+        public Submission? GetLastSubmitForParticipant(int participantId) =>
+            this.DbSet
+                .Where(s => s.ParticipantId == participantId)
+                .OrderByDescending(s => s.CreatedOn)
+                .FirstOrDefault();
+
         public bool IsOfficialById(int id) =>
             this.GetByIdQuery(id)
                 .Any(s => s.Participant!.IsOfficial);
@@ -91,32 +97,24 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
 
         public void RemoveTestRunsCacheByProblem(int problemId) =>
             this.GetAllByProblem(problemId)
-                .UpdateFromQueryAsync(s => new Submission
-                {
-                    TestRunsCache = null
-                });
+                .UpdateFromQueryAsync(s => new Submission {TestRunsCache = null});
 
-        public bool HasSubmissionTimeLimitPassedForParticipant(int participantId, int limitBetweenSubmissions)
+        public int GetUserSubmissionTimeLimit(int participantId, int limitBetweenSubmissions)
         {
-            var lastSubmission =
-                this.DbSet
-                    .Where(s => s.ParticipantId == participantId)
-                    .OrderByDescending(s => s.CreatedOn)
-                    .Select(s => new { s.Id, s.CreatedOn })
-                    .FirstOrDefault();
+            var lastSubmission = this.GetLastSubmitForParticipant(participantId);
 
             if (lastSubmission != null)
             {
                 // check if the submission was sent after the submission time limit has passed
                 var latestSubmissionTime = lastSubmission.CreatedOn;
-                var differenceBetweenSubmissions = DateTime.Now - latestSubmissionTime;
+                var differenceBetweenSubmissions = DateTime.Now.ToUniversalTime() - latestSubmissionTime;
                 if (differenceBetweenSubmissions.TotalSeconds < limitBetweenSubmissions)
                 {
-                    return true;
+                    return limitBetweenSubmissions - differenceBetweenSubmissions.TotalSeconds.ToInt();;
                 }
             }
 
-            return false;
+            return 0;
         }
 
         public bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId) =>

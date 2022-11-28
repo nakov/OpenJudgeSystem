@@ -15,6 +15,8 @@ namespace OJS.Services.Ui.Models.Contests
 
         public bool ContestIsCompete { get; set; }
 
+        public int? UserSubmissionsTimeLimit { get; set; }
+
         public double? RemainingTimeInMilliseconds { get; set; }
 
         public bool ShouldEnterPassword { get; set; }

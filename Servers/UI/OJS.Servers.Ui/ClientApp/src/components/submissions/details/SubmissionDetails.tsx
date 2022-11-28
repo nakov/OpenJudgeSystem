@@ -90,7 +90,11 @@ const SubmissionDetails = () => {
             </div>
             <div className={submissionDetailsClassName}>
                 <Heading type={HeadingType.secondary}>{detailsHeadingText}</Heading>
-                <SubmissionResults testRuns={currentSubmission.testRuns} />
+                <SubmissionResults
+                  testRuns={currentSubmission.testRuns}
+                  compilerComment={currentSubmission?.compilerComment}
+                  isCompiledSuccessfully={currentSubmission?.isCompiledSuccessfully}
+                />
             </div>
         </div>
     );
