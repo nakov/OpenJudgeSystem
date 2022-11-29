@@ -2,8 +2,8 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import first from 'lodash/first';
 import isNil from 'lodash/isNil';
 
-import { UrlType } from '../common/common-types';
 import { IProblemType } from '../common/types';
+import { IDownloadProblemResourceUrlParams } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
 import { useHashUrlParams } from './common/use-hash-url-params';
@@ -51,7 +51,7 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     } = useHashUrlParams();
     const [ problems, setProblems ] = useState(defaultState.state.problems);
     const [ currentProblem, setCurrentProblem ] = useState<IProblemType | null>(defaultState.state.currentProblem);
-    const [ problemResourceIdToDownload, setProblemResourceIdToDownload ] = useState<number | null>();
+    const [ problemResourceIdToDownload, setProblemResourceIdToDownload ] = useState<number | null>(null);
     const { getDownloadProblemResourceUrl } = useUrls();
 
     const {
@@ -63,7 +63,12 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         get: downloadProblemResource,
         response: downloadProblemResourceResponse,
         saveAttachment,
-    } = useHttp(getDownloadProblemResourceUrl as UrlType, { id: problemResourceIdToDownload });
+    } = useHttp<IDownloadProblemResourceUrlParams, Blob>({
+        url: getDownloadProblemResourceUrl,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        parameters: { id: problemResourceIdToDownload },
+    });
 
     const normalizedProblems = useMemo(
         () => normalizeOrderBy(problems),

@@ -37,7 +37,7 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
     const {
         get: getProfileInfo,
         data: profileData,
-    } = useHttp(getProfileInfoUrl);
+    } = useHttp<null, IUserProfileType>({ url: getProfileInfoUrl });
 
     const getProfile = useCallback(async () => {
         startLoading();
@@ -50,7 +50,7 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
             return;
         }
 
-        setProfile(profileData as IUserProfileType);
+        setProfile(profileData);
 
         // showError({ message: 'Could not retrieve profile info.' } as INotificationType);
     }, [ profileData, showError ]);

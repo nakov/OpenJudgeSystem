@@ -34,7 +34,7 @@ const ContestStrategyFiltersProvider = ({ children }: IContestStrategyFiltersPro
         get,
         data,
         isSuccess,
-    } = useHttp(getAllContestStrategyFiltersUrl);
+    } = useHttp<null, IContestStrategyFilter[]>({ url: getAllContestStrategyFiltersUrl });
 
     const load = useCallback(
         async () => {

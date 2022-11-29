@@ -1,11 +1,10 @@
 import React, { useCallback, useEffect } from 'react';
 import { useParams } from 'react-router';
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType, ContestResultType } from '../../common/constants';
 import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
-import Heading from '../../components/guidelines/headings/Heading';
 import { IContestResultsParticipationProblemType, IContestResultsType } from '../../hooks/contests/types';
 import { useCurrentContestResults } from '../../hooks/contests/use-current-contest-results';
 import { makePrivate } from '../shared/make-private';
@@ -70,10 +69,12 @@ const ContestResultsPage = () => {
     const full = resultType === ContestResultType.Full;
 
     const {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         state: { contestResults },
         actions: { load },
     } = useCurrentContestResults();
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const getColumns = useCallback((results: IContestResultsType) => {
         const problemResultColumns = getProblemResultColumns(results) || [];
 
@@ -87,21 +88,23 @@ const ContestResultsPage = () => {
         )();
     }, [ contestId, official, full, load ]);
 
+    // github.com/SoftUni-Internal/exam-systems-issues/issues/228
     return (
         <>
-            <Heading>
-                {participationType}
-                {' '}
-                results for constest -
-                {' '}
-                {contestResults.name}
-            </Heading>
-            <DataGrid
-              rows={contestResults.results}
-              columns={getColumns(contestResults)}
-              disableSelectionOnClick
-              getRowId={(row) => row.participantUsername}
-            />
+            {/* <Heading> */}
+            {/*    {participationType} */}
+            {/*    {' '} */}
+            {/*    results for constest -*/}
+            {/*    {' '} */}
+            {/*    {contestResults.name} */}
+            {/* </Heading> */}
+            {/* <DataGrid */}
+            {/*  rows={contestResults.results} */}
+            {/*  columns={getColumns(contestResults)} */}
+            {/*  disableSelectionOnClick */}
+            {/*  getRowId={(row) => row.participantUsername} */}
+            {/* /> */}
+            <h1>this page should be fixed</h1>
         </>
     );
 };

@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
+import isNil from 'lodash/isNil';
 
 import ITreeItemType from '../common/tree-types';
 import { IHaveChildrenProps } from '../components/common/Props';
@@ -33,7 +34,7 @@ const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps
         get,
         data,
         isSuccess,
-    } = useHttp(getCategoriesTreeUrl);
+    } = useHttp<null, ITreeItemType[]>({ url: getCategoriesTreeUrl });
 
     const load = useCallback(
         async () => {
@@ -46,11 +47,11 @@ const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps
 
     useEffect(
         () => {
-            if (isEmpty(data)) {
+            if (isNil(data) || isEmpty(data)) {
                 return;
             }
 
-            setCategories(data as ITreeItemType[]);
+            setCategories(data);
         },
         [ data ],
     );

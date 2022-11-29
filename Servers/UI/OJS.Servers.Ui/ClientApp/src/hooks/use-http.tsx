@@ -3,7 +3,7 @@ import { saveAs } from 'file-saver';
 import isNil from 'lodash/isNil';
 
 import { HttpStatus } from '../common/common';
-import { Anything, IDictionary } from '../common/common-types';
+import { Anything, IDictionary, UrlType } from '../common/common-types';
 import { getUrl, makeHttpCall } from '../utils/http-utils';
 
 interface IHttpProps<T> {
@@ -26,7 +26,7 @@ const useHttp = <TParametersType, TReturnDataType>({
     url,
     parameters,
     headers,
-}: IHttpProps<TParametersType | null>) => {
+}: IHttpProps<TParametersType>) => {
     const [ response, setResponse ] = useState<IHttpResultType<TReturnDataType> | null>(null);
     const [ status, setStatus ] = useState<HttpStatus>(HttpStatus.NotStarted);
     const [ error, setError ] = useState<Error | null>(null);
@@ -91,7 +91,7 @@ const useHttp = <TParametersType, TReturnDataType>({
 
     const get = useCallback(
         (responseType = 'json') => makeHttpCall({
-            url: getUrl(url, internalParameters),
+            url: getUrl(url as UrlType<TParametersType>, internalParameters),
             method: 'get',
             headers: actualHeaders,
             responseType,
@@ -104,7 +104,7 @@ const useHttp = <TParametersType, TReturnDataType>({
 
     const post = useCallback(
         (requestData: Anything, responseType = 'json') => makeHttpCall({
-            url: getUrl<TParametersType | null>(url, internalParameters),
+            url: getUrl<TParametersType>(url as UrlType<TParametersType>, internalParameters),
             method: 'post',
             body: requestData,
             headers: actualHeaders,

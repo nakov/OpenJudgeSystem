@@ -29,7 +29,7 @@ interface IKeyValuePair<TValue> {
     value: TValue;
 }
 
-type UrlType<T> = string | ((parameters?: T | null) => string);
+type UrlType<T> = string | ((parameters?: IDictionary<T> | null) => string);
 
 interface INotificationType {
     title: string;

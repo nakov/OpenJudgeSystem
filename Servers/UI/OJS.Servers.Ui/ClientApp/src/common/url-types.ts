@@ -2,6 +2,8 @@
 
 import { IFilter, ISort } from './contest-types';
 
+interface IEmptyParametersType {}
+
 interface IStartContestUrlParams {
     id: number;
     official: boolean;

@@ -1,7 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
-import { UrlType } from '../../common/common-types';
 import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
 import { IGetSubmissionDetailsByIdUrlParams, IGetSubmissionResultsByProblemUrlParams } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
@@ -55,7 +54,10 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     const {
         get: getSubmissionDetails,
         data: apiSubmissionDetails,
-    } = useHttp(getSubmissionDetailsByIdUrl as UrlType, getSubmissionDetailsByIdParams);
+    } = useHttp<IGetSubmissionDetailsByIdUrlParams, ISubmissionDetailsType>({
+        url: getSubmissionDetailsByIdUrl,
+        parameters: getSubmissionDetailsByIdParams,
+    });
 
     const [
         submissionResultsByProblemUrlParams,
@@ -65,7 +67,10 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     const {
         get: getProblemResultsRequest,
         data: apiProblemResults,
-    } = useHttp(getSubmissionResultsByProblemUrl as UrlType, submissionResultsByProblemUrlParams);
+    } = useHttp<IGetSubmissionResultsByProblemUrlParams, ISubmissionDetails[]>({
+        url: getSubmissionResultsByProblemUrl,
+        parameters: submissionResultsByProblemUrlParams,
+    });
 
     const getDetails = useCallback(
         async (submissionId: number) => {
@@ -73,7 +78,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
                 return;
             }
 
-            setGetSubmissionDetailsByIdParams({ submissionId } as IGetSubmissionDetailsByIdUrlParams);
+            setGetSubmissionDetailsByIdParams({ submissionId });
         },
         [],
     );
@@ -114,7 +119,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             return;
         }
 
-        setCurrentProblemSubmissionResults(apiProblemResults as ISubmissionDetails[]);
+        setCurrentProblemSubmissionResults(apiProblemResults);
     }, [ apiProblemResults ]);
 
     useEffect(
@@ -138,7 +143,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
                 return;
             }
 
-            setCurrentSubmission(apiSubmissionDetails as ISubmissionDetailsType);
+            setCurrentSubmission(apiSubmissionDetails);
         },
         [ apiSubmissionDetails ],
     );
