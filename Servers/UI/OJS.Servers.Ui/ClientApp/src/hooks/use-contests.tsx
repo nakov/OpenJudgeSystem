@@ -3,7 +3,7 @@ import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { IUrlParam, UrlType } from '../common/common-types';
+import { IUrlParam } from '../common/common-types';
 import {
     DEFAULT_FILTER_TYPE,
     DEFAULT_SORT_FILTER_TYPE,
