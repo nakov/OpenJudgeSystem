@@ -1,3 +1,5 @@
+using X.PagedList;
+
 namespace OJS.Services.Ui.Business.Implementations;
 
 using FluentExtensions.Extensions;
@@ -20,6 +22,11 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
     public async Task<IEnumerable<ContestCategoryTreeViewModel>> GetTree()
     {
         var allCategories = await this.GetAlVisible<ContestCategoryTreeViewModel>().ToListAsync();
+
+        allCategories = await allCategories
+            .DistinctBy(x => x.AllowedStrategyTypes
+                .Select((ast=>ast.Id)))
+            .ToListAsync();
 
         var mainCategories = allCategories
             .Where(c => !c.ParentId.HasValue)
@@ -79,6 +86,8 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
             child.Children = allCategories
                 .OrderBy(x => x.OrderBy)
                 .Where(x => x.ParentId == child.Id)
+                .DistinctBy(x => x.AllowedStrategyTypes
+                    .Select((ast=>ast.Id)))
                 .ToList();
 
             this.AddChildren(child.Children, allCategories);

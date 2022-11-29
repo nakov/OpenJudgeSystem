@@ -1,3 +1,7 @@
+using FluentExtensions.Extensions;
+using OJS.Data.Models.Submissions;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
+
 namespace OJS.Services.Common.Models.Cache;
 
 using AutoMapper;
@@ -22,6 +26,8 @@ public class ContestCategoryTreeViewModel : IMapExplicitly
     public IEnumerable<ContestCategoryTreeViewModel> Children { get; set; }
         = Enumerable.Empty<ContestCategoryTreeViewModel>();
 
+    public IEnumerable<AllowedContestStrategiesViewModel> AllowedStrategyTypes { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration
             .CreateMap<ContestCategory, ContestCategoryTreeViewModel>()
@@ -30,5 +36,15 @@ public class ContestCategoryTreeViewModel : IMapExplicitly
                 opt => opt.MapFrom(src =>
                     src.Children
                         .Where(c => c.IsVisible)
-                        .OrderBy(c=> c.OrderBy)));
+                        .OrderBy(c => c.OrderBy)))
+            .ForMember(
+                m => m.AllowedStrategyTypes,
+                opt => opt.MapFrom(src =>
+                    src.Contests
+                        .SelectMany(c => c.ProblemGroups
+                            .SelectMany(pg => pg.Problems
+                                .SelectMany(p => p.SubmissionTypesInProblems)
+                                .Select(st => st.SubmissionType)
+                                ))));
+
 }
