@@ -1,6 +1,3 @@
-using FluentExtensions.Extensions;
-using NPOI.SS.Formula.Functions;
-
 namespace OJS.Services.Ui.Data.Implementations;
 
 using Microsoft.EntityFrameworkCore;
@@ -35,7 +32,6 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             .OrderByDescending(s => s.Points)
             .ThenByDescending(s => s.Id)
             .FirstOrDefault();
-
 
     public IQueryable<Submission> GetAllByProblem(int problemId)
         => base.DbSet.Where(s => s.ProblemId == problemId);
@@ -87,6 +83,11 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
     public bool IsOfficialById(int id) =>
         this.GetByIdQuery(id)
             .Any(s => s.Participant!.IsOfficial);
+        public Submission? GetLastSubmitForParticipant(int participantId) =>
+            this.DbSet
+                .Where(s => s.ParticipantId == participantId)
+                .OrderByDescending(s => s.CreatedOn)
+                .FirstOrDefault();
 
     public void SetAllToUnprocessedByProblem(int problemId) =>
         this.GetAllByProblem(problemId)
@@ -99,28 +100,23 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
         this.GetAllByProblem(problemId)
             .UpdateFromQueryAsync(s => new Submission { TestRunsCache = null });
 
-    public bool HasSubmissionTimeLimitPassedForParticipant(int participantId, int limitBetweenSubmissions)
-    {
-        var lastSubmission =
-            this.DbSet
-                .Where(s => s.ParticipantId == participantId)
-                .OrderByDescending(s => s.CreatedOn)
-                .Select(s => new { s.Id, s.CreatedOn })
-                .FirstOrDefault();
-
-        if (lastSubmission != null)
+        public int GetUserSubmissionTimeLimit(int participantId, int limitBetweenSubmissions)
         {
-            // check if the submission was sent after the submission time limit has passed
-            var latestSubmissionTime = lastSubmission.CreatedOn;
-            var differenceBetweenSubmissions = DateTime.Now - latestSubmissionTime;
-            if (differenceBetweenSubmissions.TotalSeconds < limitBetweenSubmissions)
-            {
-                return true;
-            }
-        }
+            var lastSubmission = this.GetLastSubmitForParticipant(participantId);
 
-        return false;
-    }
+            if (lastSubmission != null)
+            {
+                // check if the submission was sent after the submission time limit has passed
+                var latestSubmissionTime = lastSubmission.CreatedOn;
+                var differenceBetweenSubmissions = DateTime.Now.ToUniversalTime() - latestSubmissionTime;
+                if (differenceBetweenSubmissions.TotalSeconds < limitBetweenSubmissions)
+                {
+                    return limitBetweenSubmissions - differenceBetweenSubmissions.TotalSeconds.ToInt();;
+                }
+            }
+
+            return 0;
+        }
 
     public bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId) =>
         this.DbSet.Any(s => s.ProblemId == problemId && s.Participant!.UserId == userId && !s.Processed);

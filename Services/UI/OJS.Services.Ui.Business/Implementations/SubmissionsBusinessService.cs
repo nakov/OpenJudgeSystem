@@ -311,8 +311,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         this.submissionTypesBusinessService.ValidateSubmissionType(model.SubmissionTypeId, problem);
 
-        if (this.submissionsData.HasSubmissionTimeLimitPassedForParticipant(participant.Id,
-                participant.Contest.LimitBetweenSubmissions))
+        if (this.submissionsData.GetUserSubmissionTimeLimit(
+                participant.Id,
+                participant.Contest.LimitBetweenSubmissions) != 0)
         {
             throw new BusinessServiceException(Resources.ContestsGeneral.Submission_was_sent_too_soon);
         }

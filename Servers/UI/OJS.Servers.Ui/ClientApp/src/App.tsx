@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
 import InitProviders, { ProviderType } from './components/common/InitProviders';
+import HashUrlParamProvider from './hooks/common/use-hash-url-params';
 import UrlParamsProvider from './hooks/common/use-url-params';
 import CurrentContestResultsProvider from './hooks/contests/use-current-contest-results';
 import ProblemSubmissionsProvider from './hooks/submissions/use-problem-submissions';
@@ -44,6 +45,7 @@ const App = () => {
         ServicesProvider,
         LoadingProvider,
         NotificationsProvider,
+        HashUrlParamProvider,
         { Provider: AuthProvider, props: { user } },
         UsersProvider,
         ContestCategoriesProvider,

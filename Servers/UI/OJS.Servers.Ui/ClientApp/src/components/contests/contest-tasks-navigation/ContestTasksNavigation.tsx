@@ -49,7 +49,7 @@ const ContestTasksNavigation = () => {
             return (
                 <>
                     <Button
-                      onClick={() => selectProblemById(problem.id)}
+                      onClick={() => selectProblemById(id)}
                       className={className}
                       type={ButtonType.plain}
                     >
