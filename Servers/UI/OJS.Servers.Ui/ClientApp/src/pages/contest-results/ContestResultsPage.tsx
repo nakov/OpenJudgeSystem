@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import isNil from 'lodash/isNil';
@@ -8,6 +8,7 @@ import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guideli
 import Heading from '../../components/guidelines/headings/Heading';
 import { IContestResultsParticipationProblemType, IContestResultsType } from '../../hooks/contests/types';
 import { useCurrentContestResults } from '../../hooks/contests/use-current-contest-results';
+import { usePageTitles } from '../../hooks/use-page-titles';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 
@@ -73,6 +74,16 @@ const ContestResultsPage = () => {
         state: { contestResults },
         actions: { load },
     } = useCurrentContestResults();
+    const { actions: { setPageTitle } } = usePageTitles();
+
+    const contestResultsPageTitle = useMemo(
+        () => `Results for ${contestResults.name}`,
+        [ contestResults.name ],
+    );
+
+    useEffect(() => {
+        setPageTitle(contestResultsPageTitle);
+    }, [ contestResultsPageTitle, setPageTitle ]);
 
     const getColumns = useCallback((results: IContestResultsType) => {
         const problemResultColumns = getProblemResultColumns(results) || [];
