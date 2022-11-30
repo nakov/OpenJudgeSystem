@@ -1,18 +1,17 @@
-@use "src/styles/colors";
-@use "src/styles/fonts";
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
 
 .compilerComment {
+  background-color: rgba(255 76 80 / 50%);
+  border: 2px solid colors.$primary-red;
+  border-radius: 10px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  border-radius: 10px;
-  padding: 20px;
   font-family: fonts.$font-family-lato;
   font-size: 18px;
-
-  background-color: rgba(colors.$primary-red, 0.5);
-  border: 2px solid colors.$primary-red;
-  margin: 24px 0 24px 0;
   gap: 12px;
+  justify-content: space-between;
+  margin: 24px 0;
+  padding: 20px;
 }
