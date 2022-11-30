@@ -3,6 +3,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 
 import InitProviders, { ProviderType } from './components/common/InitProviders';
 import HashUrlParamProvider from './hooks/common/use-hash-url-params';
+import RouteUrlParamsProvider from './hooks/common/use-route-url-params';
 import UrlParamsProvider from './hooks/common/use-url-params';
 import CurrentContestResultsProvider from './hooks/contests/use-current-contest-results';
 import ProblemSubmissionsProvider from './hooks/submissions/use-problem-submissions';
@@ -41,6 +42,7 @@ const App = () => {
     const user = userCookiesService.getUser();
     const providers = [
         UrlParamsProvider,
+        RouteUrlParamsProvider,
         AppUrlsProvider,
         UrlsProvider,
         ServicesProvider,
