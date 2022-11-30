@@ -7,6 +7,7 @@ interface IHashUrlParamsContext {
     state: { params: string };
     actions: {
         setHash: (hashParameter: string) => void;
+        clearHash: () => void;
     };
 }
 
@@ -29,12 +30,22 @@ const HashUrlParamProvider = ({ children }: IHashUrlParamProviderProps) => {
         [],
     );
 
+    const clearHash = useCallback(
+        () => {
+            window.history.replaceState('', document.title, location.pathname);
+        },
+        [ location.pathname ],
+    );
+
     const value = useMemo(
         () => ({
             state: { params },
-            actions: { setHash },
+            actions: {
+                setHash,
+                clearHash,
+            },
         }),
-        [ setHash, params ],
+        [ params, setHash, clearHash ],
     );
 
     return (
