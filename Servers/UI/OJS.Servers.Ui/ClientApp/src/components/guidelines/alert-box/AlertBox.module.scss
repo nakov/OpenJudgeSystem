@@ -1,18 +1,18 @@
-@use "src/styles/colors";
-@use "src/styles/fonts";
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
 
 .alertBox {
+  border-radius: 10px;
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  border-radius: 10px;
-  padding: 20px;
   font-family: fonts.$font-family-lato;
   font-size: 18px;
-  
+  justify-content: space-between;
+  padding: 20px;
+
   &.error {
-    background-color:rgba(colors.$primary-red, 0.5);
+    background-color: rgba(255 76 80 / 50%);
     border: 2px solid colors.$primary-red;
     color: colors.$text-dark-red;
 
@@ -20,7 +20,7 @@
       color: colors.$text-dark-red;
     }
   }
-  
+
   &.hidden {
     display: none;
   }
