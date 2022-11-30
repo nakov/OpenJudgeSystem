@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
 import isNil from 'lodash/isNil';
 
 import SubmissionDetails from '../../components/submissions/details/SubmissionDetails';
+import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
 import { useSubmissionsDetails } from '../../hooks/submissions/use-submissions-details';
 import { setLayout } from '../shared/set-layout';
 
 const SubmissionDetailsPage = () => {
-    const { submissionId } = useParams();
+    const { state: { params } } = useRouteUrlParams();
+    const { submissionId } = params;
     const {
         state: { currentSubmission },
         actions: {

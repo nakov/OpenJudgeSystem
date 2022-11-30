@@ -1,6 +1,7 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { useCurrentContest } from '../../../hooks/use-current-contest';
+import { usePageTitles } from '../../../hooks/use-page-titles';
 import concatClassNames from '../../../utils/class-names';
 import { convertToTwoDigitValues } from '../../../utils/dates';
 import Countdown, { ICountdownRemainingType, Metric } from '../../guidelines/countdown/Countdown';
@@ -24,6 +25,7 @@ const Contest = () => {
             isOfficial,
         },
     } = useCurrentContest();
+    const { actions: { setPageTitle } } = usePageTitles();
 
     const navigationContestClass = 'navigationContest';
     const navigationContestClassName = concatClassNames(navigationContestClass);
@@ -33,6 +35,15 @@ const Contest = () => {
 
     const problemInfoClass = 'problemInfo';
     const problemInfoClassName = concatClassNames(problemInfoClass);
+
+    const contestTitle = useMemo(
+        () => `${contest?.name}`,
+        [ contest?.name ],
+    );
+
+    useEffect(() => {
+        setPageTitle(contestTitle);
+    }, [ contestTitle, setPageTitle ]);
 
     const scoreText = useMemo(
         () => `${score}/${maxScore}`,
@@ -137,7 +148,7 @@ const Contest = () => {
                   type={HeadingType.primary}
                   className={styles.contestHeading}
                 >
-                    {contest?.name}
+                    {contestTitle}
                 </Heading>
                 <Heading type={HeadingType.secondary} className={secondaryHeadingClassName}>
                     {renderParticipants()}

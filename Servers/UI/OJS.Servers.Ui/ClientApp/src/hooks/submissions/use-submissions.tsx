@@ -30,11 +30,7 @@ interface ISubmissionsContext {
 
 const defaultState = {
     state: {
-        submissionCode: `
-function hello() {
-    alert('Hello world!');
-}
-`,
+        submissionCode: '',
         selectedSubmissionType: null,
     },
 };
