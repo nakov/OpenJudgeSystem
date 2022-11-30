@@ -18,7 +18,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
     public class ContestsBusinessService : IContestsBusinessService
     {
-        private const int DefaultContestsToTake = 4;
+        private const int DefaultContestsToTake = 3;
         private const int DefaultContestsPerPage = 12;
 
         private readonly IContestsDataService contestsData;
@@ -133,6 +133,10 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var participationModel = participant.Map<ContestParticipationServiceModel>();
             participationModel.ContestIsCompete = model.IsOfficial;
+            participationModel.UserSubmissionsTimeLimit = await this.participantsBusiness.GetParticipantLimitBetweenSubmissions(
+                    participant.Id,
+                    contest.LimitBetweenSubmissions);
+
             var participantsList = new List<int> { participant.Id, };
 
             var maxParticipationScores = await this.participantScoresData
