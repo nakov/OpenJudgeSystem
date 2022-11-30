@@ -24,10 +24,16 @@ const SubmissionPage = () => {
         return <>No details.</>;
     }
 
+    const { testRuns, isCompiledSuccessfully, compilerComment } = currentSubmission;
+
     return (
         <>
             <SubmissionDetailsHeading />
-            <SubmissionResults testRuns={currentSubmission.testRuns} />
+            <SubmissionResults
+              testRuns={testRuns}
+              isCompiledSuccessfully={isCompiledSuccessfully}
+              compilerComment={compilerComment}
+            />
         </>
     );
 };

@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import first from 'lodash/first';
+import isNil from 'lodash/isNil';
 
 import { ISubmissionTypeType } from '../../common/types';
 import { IHaveChildrenProps } from '../../components/common/Props';
@@ -16,6 +17,9 @@ interface ISubmissionsContext {
     state: {
         submissionCode: string;
         selectedSubmissionType: ISubmissionTypeType | null;
+        submitMessage: string | null;
+        setSubmitMessage: (value: string | null) => void;
+        isSubmissionSuccessful: boolean | null;
     };
     actions: {
         submit: () => Promise<void>;
@@ -26,11 +30,7 @@ interface ISubmissionsContext {
 
 const defaultState = {
     state: {
-        submissionCode: `
-function hello() {
-    alert('Hello world!');
-}
-`,
+        submissionCode: '',
         selectedSubmissionType: null,
     },
 };
@@ -43,6 +43,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const [ selectedSubmissionType, setSelectedSubmissionType ] =
         useState<ISubmissionTypeType | null>(defaultState.state.selectedSubmissionType);
     const [ submissionCode, setSubmissionCode ] = useState<string>(defaultState.state.submissionCode);
+    const [ submitMessage, setSubmitMessage ] = useState<string | null>(null);
 
     const { getSubmitUrl } = useUrls();
 
@@ -58,7 +59,10 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const {
         post: submitCode,
         data: submitCodeResult,
+        isSuccess,
     } = useHttp(getSubmitUrl);
+
+    const isSubmissionSuccessful = useMemo(() => isSuccess, [ isSuccess ]);
 
     const submit = useCallback(async () => {
         startLoading();
@@ -115,11 +119,16 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     useEffect(
         () => {
+            if (!isNil(submitCodeResult) && submitCodeResult.status !== 200) {
+                setSubmitMessage(submitCodeResult.detail);
+                return;
+            }
+
             (async () => {
                 await loadSubmissions();
             })();
         },
-        [ loadSubmissions, submitCodeResult ],
+        [ isSuccess, loadSubmissions, submitCodeResult ],
     );
 
     const value = useMemo(
@@ -127,6 +136,9 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             state: {
                 submissionCode,
                 selectedSubmissionType,
+                submitMessage,
+                setSubmitMessage,
+                isSubmissionSuccessful,
             },
             actions: {
                 updateSubmissionCode,
@@ -134,7 +146,15 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                 submit,
             },
         }),
-        [ selectSubmissionTypeById, selectedSubmissionType, submissionCode, submit ],
+        [
+            selectSubmissionTypeById,
+            selectedSubmissionType,
+            submissionCode,
+            submit,
+            submitMessage,
+            setSubmitMessage,
+            isSubmissionSuccessful,
+        ],
     );
 
     return (
