@@ -8,7 +8,7 @@ interface IRouteUrlParamsContext {
         params: any;
     };
     actions: {
-        setParams: (newParams: unknown) => void;
+        setParams: (newParams: Anything) => void;
     };
 }
 
