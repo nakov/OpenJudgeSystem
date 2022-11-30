@@ -39,7 +39,7 @@ public interface ISubmissionsDataService : IDataService<Submission>
 
     void RemoveTestRunsCacheByProblem(int problemId);
 
-    bool HasSubmissionTimeLimitPassedForParticipant(int participantId, int limitBetweenSubmissions);
+    int GetUserSubmissionTimeLimit(int participantId, int limitBetweenSubmissions);
 
     bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId);
 

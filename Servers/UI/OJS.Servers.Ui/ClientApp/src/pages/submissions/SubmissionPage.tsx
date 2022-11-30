@@ -1,14 +1,16 @@
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router';
 import isNil from 'lodash/isNil';
 
 import SubmissionResults from '../../components/submissions/submission-results/SubmissionResults';
 import SubmissionDetailsHeading from '../../components/submissions/test-runs/test-run-heading/SubmissionDetailsHeading';
+import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
 import { useSubmissionsDetails } from '../../hooks/submissions/use-submissions-details';
 import { setLayout } from '../shared/set-layout';
 
 const SubmissionPage = () => {
-    const { submissionId } = useParams();
+    const { state: { params } } = useRouteUrlParams();
+    const { submissionId } = params;
+
     const {
         state: { currentSubmission },
         actions: { getDetails },
@@ -24,10 +26,16 @@ const SubmissionPage = () => {
         return <>No details.</>;
     }
 
+    const { testRuns, isCompiledSuccessfully, compilerComment } = currentSubmission;
+
     return (
         <>
             <SubmissionDetailsHeading />
-            <SubmissionResults testRuns={currentSubmission.testRuns} />
+            <SubmissionResults
+              testRuns={testRuns}
+              isCompiledSuccessfully={isCompiledSuccessfully}
+              compilerComment={compilerComment}
+            />
         </>
     );
 };

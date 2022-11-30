@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo } from 'react';
-import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../common/constants';
 import ContestPasswordForm from '../../components/contests/contest-password-form/ContestPasswordForm';
+import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
 import { useCurrentContest } from '../../hooks/use-current-contest';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
@@ -12,10 +12,13 @@ import { setLayout } from '../shared/set-layout';
 import styles from './ContestRegisterPage.module.scss';
 
 const ContestRegisterPage = () => {
+    const { state: { params } } = useRouteUrlParams();
+
     const {
         contestId,
         participationType,
-    } = useParams();
+    } = params;
+
     const navigate = useNavigate();
 
     const contestIdToNumber = useMemo(() => Number(contestId), [ contestId ]);
