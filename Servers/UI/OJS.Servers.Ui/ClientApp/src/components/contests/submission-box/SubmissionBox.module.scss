@@ -44,11 +44,11 @@
 }
 
 .submitCountdownWrapper {
-  padding: 10px;
+  align-self: flex-end;
+  color: colors.$background-color-btn-primary;
   font-family: fonts.$font-family-lato;
   font-size: 20px;
-  color: colors.$background-color-btn-primary;
-  align-self: flex-end;
+  padding: 10px;
 }
 
 .taskName {
