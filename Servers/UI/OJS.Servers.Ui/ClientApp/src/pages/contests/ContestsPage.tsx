@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -11,6 +11,7 @@ import Heading, { HeadingType } from '../../components/guidelines/headings/Headi
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
+import { useHashUrlParams } from '../../hooks/common/use-hash-url-params';
 import { ICategoriesBreadcrumbItem, useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
 import { useContests } from '../../hooks/use-contests';
 import concatClassNames from '../../utils/class-names';
@@ -34,6 +35,13 @@ const ContestsPage = () => {
     } = useContests();
 
     const { state: { breadcrumbItems } } = useCategoriesBreadcrumbs();
+    const { state: { params }, actions: { clearHash } } = useHashUrlParams();
+
+    useEffect(() => {
+        if (!isEmpty(params)) {
+            clearHash();
+        }
+    }, [ clearHash, params ]);
 
     const handlePageChange = useCallback(
         (page: number) => changePage(page),
@@ -63,7 +71,6 @@ const ContestsPage = () => {
             }
 
             const { pagesCount } = pagesInfo;
-
             return (
                 <>
                     <PaginationControls
