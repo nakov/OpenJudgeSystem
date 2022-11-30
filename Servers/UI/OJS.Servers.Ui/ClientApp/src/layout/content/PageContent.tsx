@@ -11,6 +11,7 @@ import LoginPage from '../../pages/login/LoginPage';
 import LogoutPage from '../../pages/logout/LogoutPage';
 import ProfilePage from '../../pages/profile/ProfilePage';
 import RegisterPage from '../../pages/register/RegisterPage';
+import { asPage } from '../../pages/shared/set-page-params';
 import { withTitle } from '../../pages/shared/set-page-title';
 import SubmissionDetailsPage from '../../pages/submission-details/SubmissionDetailsPage';
 import SubmissionsPage from '../../pages/submissions/SubmissionsPage';
@@ -75,7 +76,7 @@ const routes = [
 
 const PageContent = () => {
     const renderRoute = (path: string, Element: FC, title: string | undefined) => {
-        const WrappedElement = withTitle(Element, title);
+        const WrappedElement = asPage(withTitle(Element, title));
         return (
             <Route key={path} path={path} element={<WrappedElement />} />
         );

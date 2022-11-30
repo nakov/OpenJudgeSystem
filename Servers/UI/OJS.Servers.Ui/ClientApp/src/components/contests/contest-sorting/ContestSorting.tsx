@@ -16,7 +16,11 @@ interface IContestSortingProps {
 
 const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
     const {
-        state: { possibleSortingTypes },
+        state:
+            {
+                possibleSortingTypes,
+                sortingTypes,
+            },
         actions: { clearSorts },
     } = useContests();
 
@@ -36,7 +40,7 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
     const renderSortingItemFunc = useCallback(
         (value : ISort) => {
             const { id, name } = value;
-            const sortingIsSelected = possibleSortingTypes.some((s) => s.name === name);
+            const sortingIsSelected = sortingTypes.some((s) => s.name === name);
             const buttonType = sortingIsSelected
                 ? ButtonType.primary
                 : ButtonType.secondary;
@@ -51,7 +55,7 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
                 />
             );
         },
-        [ handleOnSortClick, possibleSortingTypes ],
+        [ handleOnSortClick, sortingTypes ],
     );
 
     return (
@@ -76,7 +80,7 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
               itemFunc={renderSortingItemFunc}
               orientation={Orientation.horizontal}
               className={styles.sortTypesList}
-              itemClassName={styles.sortTypesListItemItem}
+              fullWidth
             />
         </div>
     );
