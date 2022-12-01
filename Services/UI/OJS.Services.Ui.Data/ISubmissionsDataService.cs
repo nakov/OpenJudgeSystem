@@ -1,5 +1,3 @@
-using OJS.Services.Ui.Models.Submissions;
-
 namespace OJS.Services.Ui.Data;
 
 using OJS.Data.Models.Submissions;
