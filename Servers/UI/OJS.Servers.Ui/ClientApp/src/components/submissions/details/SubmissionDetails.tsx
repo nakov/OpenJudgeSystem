@@ -3,8 +3,10 @@ import isNil from 'lodash/isNil';
 
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import { usePageTitles } from '../../../hooks/use-page-titles';
+import { useUrls } from '../../../hooks/use-urls';
 import concatClassNames from '../../../utils/class-names';
 import CodeEditor from '../../code-editor/CodeEditor';
+import { ButtonSize, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import SubmissionResults from '../submission-results/SubmissionResults';
 import RefreshableSubmissionsList from '../submissions-list/RefreshableSubmissionsList';
@@ -20,6 +22,7 @@ const SubmissionDetails = () => {
         actions: { getSubmissionResults },
     } = useSubmissionsDetails();
     const { actions: { setPageTitle } } = usePageTitles();
+    const { getAdministrationRetestSubmissionBaseUrl } = useUrls();
 
     const submissionTitle = useMemo(
         () => `Submission №${currentSubmission?.id}`,
@@ -73,6 +76,13 @@ const SubmissionDetails = () => {
                   items={currentProblemSubmissionResults}
                   selectedSubmission={currentSubmission}
                   className={styles.submissionsList}
+                />
+                <LinkButton
+                  type={LinkButtonType.secondary}
+                  size={ButtonSize.medium}
+                  to={getAdministrationRetestSubmissionBaseUrl()}
+                  text="Retest"
+                  className={styles.retestButton}
                 />
             </div>
             <div className={styles.code}>
