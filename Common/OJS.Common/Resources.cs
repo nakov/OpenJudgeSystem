@@ -203,5 +203,12 @@ namespace OJS.Common
             public const string Problem_not_found = "Problem not found.";
             public const string Resource_not_found = "Resource not found.";
         }
+
+        public static class SubmissionsController
+        {
+            public const string Submission_is_added_in_queue_for_processing = "The submission is added in the queue for processing!";
+            public const string Submission_can_not_be_processed = "Submission can't be processed!";
+            public const string Submission_is_processing = "Submission is processing, please wait to be processed for retesting!";
+        }
     }
 }
