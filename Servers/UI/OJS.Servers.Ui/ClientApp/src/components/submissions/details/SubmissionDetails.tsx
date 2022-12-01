@@ -2,8 +2,8 @@ import React, { useEffect, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
+import { useAppUrls } from '../../../hooks/use-app-urls';
 import { usePageTitles } from '../../../hooks/use-page-titles';
-import { useUrls } from '../../../hooks/use-urls';
 import concatClassNames from '../../../utils/class-names';
 import CodeEditor from '../../code-editor/CodeEditor';
 import { ButtonSize, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
@@ -22,7 +22,7 @@ const SubmissionDetails = () => {
         actions: { getSubmissionResults },
     } = useSubmissionsDetails();
     const { actions: { setPageTitle } } = usePageTitles();
-    const { getAdministrationRetestSubmissionBaseUrl } = useUrls();
+    const { getAdministrationRetestSubmissionInternalUrl } = useAppUrls();
 
     const submissionTitle = useMemo(
         () => `Submission №${currentSubmission?.id}`,
@@ -80,7 +80,7 @@ const SubmissionDetails = () => {
                 <LinkButton
                   type={LinkButtonType.secondary}
                   size={ButtonSize.medium}
-                  to={getAdministrationRetestSubmissionBaseUrl()}
+                  to={getAdministrationRetestSubmissionInternalUrl()}
                   text="Retest"
                   className={styles.retestButton}
                 />

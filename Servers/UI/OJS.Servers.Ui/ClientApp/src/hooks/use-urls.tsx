@@ -35,7 +35,6 @@ interface IUrlsContext {
     getAllContestStrategyFiltersUrl: () => string;
     getContestResultsUrl: (params: IGetContestResultsParams) => string;
     getHomeStatisticsUrl: () => string;
-    getAdministrationRetestSubmissionBaseUrl: () => string;
     getAdministrationRetestSubmission: (params: IRetestSubmissionUrlParams) => string;
 }
 
@@ -54,7 +53,6 @@ const getLogoutUrl = () => `${baseUrl}/Account/Logout`;
 const administrationBaseUrl = window.URLS.ADMINISTRATION_URL;
 const getAdministrationContestsGridUrl = () => `${administrationBaseUrl}/Contests`;
 const getAdministrationNavigation = () => '/administration';
-const getAdministrationRetestSubmissionBaseUrl = () => '/Submissions/Retest';
 const getAdministrationRetestSubmission = ({ id }: IRetestSubmissionUrlParams) => `${administrationBaseUrl}/Submissions/Retest?PK=${id}`;
 
 // profile
@@ -152,7 +150,6 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
             getAllContestStrategyFiltersUrl,
             getContestResultsUrl,
             getHomeStatisticsUrl,
-            getAdministrationRetestSubmissionBaseUrl,
             getAdministrationRetestSubmission,
         }),
         [],
