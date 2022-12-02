@@ -1,3 +1,5 @@
+using OJS.Common.Enumerations;
+
 namespace OJS.Services.Ui.Business.Implementations
 {
     using System;
@@ -165,7 +167,7 @@ namespace OJS.Services.Ui.Business.Implementations
         private async Task<Participant> AddNewParticipantToContest(Contest contest, bool official, string userId,
             bool isUserAdmin)
         {
-            if (contest.IsOnline &&
+            if ((contest.Type == ContestType.OnlinePracticalExam || contest.Type == ContestType.OnlinePracticalExam) &&
                 official &&
                 !isUserAdmin &&
                 !this.IsUserLecturerInContest(contest, userId) &&
