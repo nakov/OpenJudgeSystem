@@ -51,7 +51,6 @@ const ContestTasksNavigation = () => {
             const maxParticipantScoreLoaded = currentContestParticipantScores
                 .find((ps) => ps.problemId === problem.id);
 
-            console.log(maxParticipantScoreLoaded);
             const problemScore = isNil(maxParticipantScoreLoaded)
                 ? 0
                 : maxParticipantScoreLoaded.points;

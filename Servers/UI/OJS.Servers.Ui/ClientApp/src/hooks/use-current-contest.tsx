@@ -183,7 +183,6 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
 
         setCurrentContestParticipantScores(getParticipantScoresData);
         setGetCurrentParticipantParticipantScoresParams(null);
-        // console.log(getParticipantScoresData);
     }, [
         getParticipantScores,
         getParticipantScoresData,
