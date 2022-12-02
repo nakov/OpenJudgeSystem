@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import isNil from 'lodash/isNil';
 
 import { ContestParticipationType, ContestResultType } from '../../../common/constants';
 import { IProblemType } from '../../../common/types';
@@ -28,6 +29,7 @@ const ContestTasksNavigation = () => {
     const {
         state: {
             contest,
+            currentContestParticipantScores,
             isOfficial,
         },
     } = useCurrentContest();
@@ -46,6 +48,13 @@ const ContestTasksNavigation = () => {
                 selectedClassName,
             );
 
+            const maxParticipantScoreLoaded = currentContestParticipantScores
+                .find((ps) => ps.problemId === problem.id);
+
+            const problemScore = isNil(maxParticipantScoreLoaded)
+                ? null
+                : maxParticipantScoreLoaded.points;
+
             return (
                 <>
                     <Button
@@ -56,15 +65,16 @@ const ContestTasksNavigation = () => {
                         {problem.name}
                     </Button>
                     <SubmissionResultPointsLabel
-                      points={problem.points}
+                      points={problemScore!}
                       maximumPoints={problem.maximumPoints}
-                      isProcessed={false}
+                      isProcessed={!isNil(problemScore)}
                     />
                 </>
             );
         },
-        [ currentProblem, selectProblemById ],
+        [ currentContestParticipantScores, currentProblem, selectProblemById ],
     );
+
     const sideBarTasksList = 'all-tasks-list';
     const sideBarTasksListClassName = concatClassNames(styles.tasksListSideNavigation, sideBarTasksList);
     const renderTasksList = useCallback(

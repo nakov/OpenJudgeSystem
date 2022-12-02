@@ -1,14 +1,9 @@
-using OJS.Services.Ui.Models.Submissions;
-using System.Collections;
-using System.Collections.Generic;
-
 namespace OJS.Services.Ui.Business.Implementations
 {
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
     using OJS.Common.Helpers;
     using OJS.Data.Models.Submissions;
-    using OJS.Services.Common.Data;
     using OJS.Services.Ui.Data;
     using System.Linq;
     using System.Threading.Tasks;
@@ -16,6 +11,9 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Common;
     using OJS.Services.Infrastructure.Exceptions;
     using OJS.Services.Ui.Models.Problems;
+    using OJS.Services.Ui.Models.Participations;
+    using OJS.Services.Ui.Models.Submissions;
+    using System.Collections.Generic;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
 
     public class ParticipantScoresBusinessService : IParticipantScoresBusinessService
@@ -183,6 +181,12 @@ namespace OJS.Services.Ui.Business.Implementations
             => this.participantScoresData
                 .GetByProblemIdAndParticipants(participantIds, problemId)
                 .MapCollection<ParticipantScoreModel>()
+                .ToEnumerableAsync();
+
+        public Task<IEnumerable<ParticipationForProblemMaxScoreServiceModel>> GetAllForParticipant(
+            int participantId)
+            => this.participantScoresData
+                .GetMaxByParticipation(participantId)
                 .ToEnumerableAsync();
     }
 }
