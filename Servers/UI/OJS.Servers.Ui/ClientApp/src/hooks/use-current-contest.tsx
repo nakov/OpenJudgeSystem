@@ -77,7 +77,7 @@ interface IContestToStartType {
 
 type IMaximumParticipantScores = {
     problemId: number;
-    points?: number | null;
+    points: number;
 }
 
 const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) => {

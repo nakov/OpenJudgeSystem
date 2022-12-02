@@ -23,7 +23,7 @@ const SubmissionResultPointsLabel = ({
             ? LabelType.success
             : LabelType.info;
 
-    const currentPoints = !isNil(points) && isProcessed
+    const currentPoints = isProcessed
         ? points
         : '?';
 
