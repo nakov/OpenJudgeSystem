@@ -167,7 +167,7 @@ namespace OJS.Services.Ui.Business.Implementations
         private async Task<Participant> AddNewParticipantToContest(Contest contest, bool official, string userId,
             bool isUserAdmin)
         {
-            if ((contest.Type == ContestType.OnlinePracticalExam || contest.Type == ContestType.OnlinePracticalExam) &&
+            if (contest.Type is not (ContestType.OnlinePracticalExam and ContestType.OnlinePracticalExam) &&
                 official &&
                 !isUserAdmin &&
                 !this.IsUserLecturerInContest(contest, userId) &&
