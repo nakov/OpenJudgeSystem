@@ -22,13 +22,14 @@
   font-weight: normal;
 }
 
+.btnSelectFilter {
+  width: 95%;
+}
+
 .sortTypesList {
   align-items: flex-start;
   justify-content: space-evenly;
+  margin-top: 5px;
   max-height: 130px;
   overflow: hidden;
-
-  .sortTypesListItem {
-    margin-top: 5px;
-  }
 }

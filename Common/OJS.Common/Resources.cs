@@ -101,7 +101,7 @@ namespace OJS.Common
             public const string Practice_start_date_before_end = "Practice start date must be before the practice end date";
             public const string Problem_groups_count_limit = "Problem groups count cannot be more than {0}";
             public const string Report_zip_format = "{1} submissions for {0}.zip";
-            public const string Required_field_for_online = "The field is required for Online Contest";
+            public const string Required_field_for_online = "The field {0} is required for Online Contest";
             public const string Select_one_submission_type = "Choose at least one submission type!";
             public const string Subtracted_time_from_participants_online = "Successfully subtracted {0} minutes from the times of all selected active participants in the contest {1}";
             public const string Subtracted_time_from_single_participant_online = "Successfully subtracted {0} minutes from the time of the participant with username: {1}, in the contest {2}";
