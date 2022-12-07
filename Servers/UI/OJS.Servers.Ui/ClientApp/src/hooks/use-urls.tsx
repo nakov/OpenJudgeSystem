@@ -7,6 +7,7 @@ import {
     IGetContestResultsParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
+    IRetestSubmissionUrlParams,
     IStartContestParticipationUrlParams,
     ISubmitContestPasswordUrlParams,
 } from '../common/url-types';
@@ -34,6 +35,7 @@ interface IUrlsContext {
     getAllContestStrategyFiltersUrl: () => string;
     getContestResultsUrl: (params: IGetContestResultsParams) => string;
     getHomeStatisticsUrl: () => string;
+    getAdministrationRetestSubmission: (params: IRetestSubmissionUrlParams) => string;
 }
 
 const UrlsContext = createContext<IUrlsContext>({} as IUrlsContext);
@@ -51,6 +53,7 @@ const getLogoutUrl = () => `${baseUrl}/Account/Logout`;
 const administrationBaseUrl = window.URLS.ADMINISTRATION_URL;
 const getAdministrationContestsGridUrl = () => `${administrationBaseUrl}/Contests`;
 const getAdministrationNavigation = () => '/administration';
+const getAdministrationRetestSubmission = ({ id }: IRetestSubmissionUrlParams) => `${administrationBaseUrl}/Submissions/Retest?PK=${id}`;
 
 // profile
 const getProfileInfoUrl = () => `${baseApiUrl}/Users/GetProfileInfo`;
@@ -147,6 +150,7 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
             getAllContestStrategyFiltersUrl,
             getContestResultsUrl,
             getHomeStatisticsUrl,
+            getAdministrationRetestSubmission,
         }),
         [],
     );

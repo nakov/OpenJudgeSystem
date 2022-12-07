@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 import AdministrationPage from '../../pages/administration/AdministrationPage';
+import SubmissionRetestPage from '../../pages/administration/SubmissionRetestPage';
 import ContestPage from '../../pages/contest/ContestPage';
 import ContestRegisterPage from '../../pages/contest/ContestRegisterPage';
 import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';
@@ -71,6 +72,10 @@ const routes = [
     {
         path: '/administration',
         Element: AdministrationPage,
+    },
+    {
+        path: '/Submissions/Retest',
+        Element: SubmissionRetestPage,
     },
 ];
 
