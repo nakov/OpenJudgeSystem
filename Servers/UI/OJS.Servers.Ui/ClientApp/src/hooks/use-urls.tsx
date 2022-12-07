@@ -3,7 +3,7 @@ import isNil from 'lodash/isNil';
 
 import {
     IAllContestsUrlParams,
-    IDownloadProblemResourceUrlParams,
+    IDownloadProblemResourceUrlParams, IGetContestParticipationScoresForParticipantUrlParams,
     IGetContestResultsParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
@@ -26,6 +26,7 @@ interface IUrlsContext {
     getRegisterForContestUrl: (params: IStartContestParticipationUrlParams) => string;
     getSubmitContestPasswordUrl: (params: ISubmitContestPasswordUrlParams) => string;
     getStartContestParticipationUrl: (params: IStartContestParticipationUrlParams) => string;
+    getContestParticipantScoresForParticipantUrl: (params: IGetContestParticipationScoresForParticipantUrlParams) => string;
     getSubmissionResultsByProblemUrl: (params: IGetSubmissionResultsByProblemUrlParams) => string;
     getSubmissionsDetailsUrl: () => string;
     getSubmissionDetailsByIdUrl: (params: IGetSubmissionDetailsByIdUrlParams) => string;
@@ -95,6 +96,10 @@ const getStartContestParticipationUrl = ({
     isOfficial,
 }: IStartContestParticipationUrlParams) => `${baseApiUrl}/Compete/Index/${id}?official=${isOfficial}`;
 
+const getContestParticipantScoresForParticipantUrl =
+    ({ participantId }: IGetContestParticipationScoresForParticipantUrlParams) => `
+    ${baseApiUrl}/ParticipantScores/GetScoresForParticipant/${participantId}`;
+
 const getCategoriesTreeUrl =
     () => `${baseApiUrl}/ContestCategories/GetCategoriesTree`;
 
@@ -137,6 +142,7 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
             getRegisterForContestUrl,
             getSubmitContestPasswordUrl,
             getStartContestParticipationUrl,
+            getContestParticipantScoresForParticipantUrl,
             getDownloadProblemResourceUrl,
             getSubmissionResultsByProblemUrl,
             getIndexContestsUrl,

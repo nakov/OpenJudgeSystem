@@ -132,6 +132,7 @@ namespace OJS.Services.Ui.Business.Implementations
             }
 
             var participationModel = participant.Map<ContestParticipationServiceModel>();
+            participationModel.ParticipantId = participant.Id;
             participationModel.ContestIsCompete = model.IsOfficial;
             participationModel.UserSubmissionsTimeLimit = await this.participantsBusiness.GetParticipantLimitBetweenSubmissions(
                     participant.Id,
