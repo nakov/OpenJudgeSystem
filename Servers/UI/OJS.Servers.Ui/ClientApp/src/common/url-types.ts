@@ -56,6 +56,10 @@ interface IGetSubmissionDetailsByIdUrlParams {
     submissionId: number;
 }
 
+interface IRetestSubmissionUrlParams {
+    id: number;
+}
+
 export type {
     IRegisterForContestUrlParams,
     ISubmitContestPasswordUrlParams,
@@ -68,4 +72,5 @@ export type {
     IGetSubmissionResultsByProblemUrlParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetContestResultsParams,
+    IRetestSubmissionUrlParams,
 };
