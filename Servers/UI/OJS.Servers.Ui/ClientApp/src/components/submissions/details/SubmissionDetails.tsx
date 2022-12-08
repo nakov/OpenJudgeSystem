@@ -113,12 +113,15 @@ const SubmissionDetails = () => {
                   type={HeadingType.secondary}
                   className={styles.taskHeading}
                 >
+                    <span className={styles.lessThan}>
+                        &lt;
+                    </span>
                     <LinkButton
                       type={LinkButtonType.secondary}
                       size={ButtonSize.small}
                       to={getRegisterContestTypeUrl({ id: contest.id, participationType })}
-                      className={styles.backBtnClassName}
-                      text="To Contest"
+                      className={styles.backBtn}
+                      text="Back To Contest"
                     />
                     {problemNameHeadingText}
                 </Heading>
