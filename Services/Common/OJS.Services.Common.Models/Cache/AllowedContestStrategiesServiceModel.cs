@@ -3,7 +3,7 @@ using SoftUni.AutoMapper.Infrastructure.Models;
 
 namespace OJS.Services.Common.Models.Cache;
 
-public class AllowedContestStrategiesViewModel: IMapFrom<SubmissionType>
+public class AllowedContestStrategiesServiceModel: IMapFrom<SubmissionType>
 {
     public int Id { get; set; }
 

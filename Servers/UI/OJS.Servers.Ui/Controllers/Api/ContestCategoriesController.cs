@@ -11,15 +11,13 @@ using static Microsoft.AspNetCore.Http.StatusCodes;
 public class ContestCategoriesController : BaseApiController
 {
     private readonly IContestCategoriesCacheService contestCategoriesCache;
-    private readonly IContestCategoriesBusinessService contestCategoriesBusiness;
+  //  private readonly IContestCategoriesBusinessService contestCategoriesBusiness;
 
     public ContestCategoriesController(
-        IContestCategoriesCacheService contestCategoriesCache, IContestCategoriesBusinessService contestCategoriesBusiness)
-    {
+        IContestCategoriesCacheService contestCategoriesCache, IContestCategoriesBusinessService contestCategoriesBusiness) =>
         this.contestCategoriesCache = contestCategoriesCache;
-        this.contestCategoriesBusiness = contestCategoriesBusiness;
-    }
 
+    // this.contestCategoriesBusiness = contestCategoriesBusiness;
     /// <summary>
     /// Gets contest categories, ordered in a tree.
     /// </summary>
@@ -30,9 +28,9 @@ public class ContestCategoriesController : BaseApiController
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<ContestCategoryTreeViewModel>), Status200OK)]
     public async Task<IActionResult> GetCategoriesTree()
-        // => await this.contestCategoriesCache
-        //     .GetAllContestCategoriesTree()
-        //     .ToOkResult();
-        => await contestCategoriesBusiness.GetTree()
+        => await this.contestCategoriesCache
+            .GetAllContestCategoriesTree()
             .ToOkResult();
+        // => await contestCategoriesBusiness.GetTree()
+        //     .ToOkResult();
 }

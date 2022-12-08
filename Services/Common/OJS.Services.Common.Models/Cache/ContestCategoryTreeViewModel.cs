@@ -26,7 +26,8 @@ public class ContestCategoryTreeViewModel : IMapExplicitly
     public IEnumerable<ContestCategoryTreeViewModel> Children { get; set; }
         = Enumerable.Empty<ContestCategoryTreeViewModel>();
 
-    public IEnumerable<AllowedContestStrategiesViewModel> AllowedStrategyTypes { get; set; }
+    public ICollection<AllowedContestStrategiesServiceModel> AllowedStrategyTypes { get; set; }
+
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration

@@ -23,18 +23,20 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
     {
         var allCategories = await this.GetAlVisible<ContestCategoryTreeViewModel>().ToListAsync();
 
-        allCategories = await allCategories
-            .DistinctBy(x => x.AllowedStrategyTypes
-                .Select((ast=>ast.Id)))
-            .ToListAsync();
+        allCategories = await allCategories.ToListAsync();
 
         var mainCategories = allCategories
             .Where(c => !c.ParentId.HasValue)
             .OrderBy(c => c.OrderBy)
             .ToList();
 
-        mainCategories.ForEach(category =>
-            AddChildren(category.Children, allCategories));
+        foreach (var category in allCategories)
+        {
+            AddChildren(category.Children, allCategories,category.AllowedStrategyTypes);
+            category.AllowedStrategyTypes = category.AllowedStrategyTypes
+                                                .DistinctBy(x => x.Id)
+                                                .ToList();
+        }
 
         return mainCategories;
     }
@@ -78,19 +80,19 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
         return categories;
     }
 
-    private void AddChildren(
-        IEnumerable<ContestCategoryTreeViewModel> children,
-        ICollection<ContestCategoryTreeViewModel> allCategories)
-        => children.ForEach(child =>
+    private void AddChildren(IEnumerable<ContestCategoryTreeViewModel> children,
+        ICollection<ContestCategoryTreeViewModel> allCategories,
+        ICollection<AllowedContestStrategiesServiceModel> parentCategoryAllowedStrategyTypes) =>
+        children.ForEach(child =>
         {
+            child.AllowedStrategyTypes = child.AllowedStrategyTypes.DistinctBy(x => x.Id).ToList();
             child.Children = allCategories
                 .OrderBy(x => x.OrderBy)
                 .Where(x => x.ParentId == child.Id)
-                .DistinctBy(x => x.AllowedStrategyTypes
-                    .Select((ast=>ast.Id)))
                 .ToList();
 
-            this.AddChildren(child.Children, allCategories);
+            parentCategoryAllowedStrategyTypes.AddRange(child.AllowedStrategyTypes);
+            this.AddChildren(child.Children, allCategories, parentCategoryAllowedStrategyTypes);
         });
 
     private void GetWithChildren(
