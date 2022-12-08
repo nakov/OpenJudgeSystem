@@ -46,6 +46,13 @@ interface IGetSubmissionResultsByProblemUrlParams {
     take: number;
 }
 
+interface IGetSubmissionResultsByProblemAndUserUrlParams {
+    problemId: number;
+    isOfficial: boolean;
+    take: number;
+    userId: string;
+}
+
 interface IGetContestResultsParams {
     id: number;
     official: boolean;
@@ -73,4 +80,5 @@ export type {
     IGetSubmissionDetailsByIdUrlParams,
     IGetContestResultsParams,
     IRetestSubmissionUrlParams,
+    IGetSubmissionResultsByProblemAndUserUrlParams,
 };
