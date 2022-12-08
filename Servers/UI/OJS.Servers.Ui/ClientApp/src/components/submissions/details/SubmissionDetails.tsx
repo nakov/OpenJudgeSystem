@@ -1,8 +1,10 @@
 import React, { useEffect, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
+import { ContestParticipationType } from '../../../common/constants';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import { useAppUrls } from '../../../hooks/use-app-urls';
+import { useContests } from '../../../hooks/use-contests';
 import { usePageTitles } from '../../../hooks/use-page-titles';
 import concatClassNames from '../../../utils/class-names';
 import CodeEditor from '../../code-editor/CodeEditor';
@@ -23,10 +25,31 @@ const SubmissionDetails = () => {
     } = useSubmissionsDetails();
     const { actions: { setPageTitle } } = usePageTitles();
     const { getAdministrationRetestSubmissionInternalUrl } = useAppUrls();
+    const {
+        state: { contest },
+        actions: { getContestByProblemId },
+    } = useContests();
+
+    const { getRegisterContestTypeUrl } = useAppUrls();
+
+    useEffect(() => {
+        if (isNil(currentSubmission)) {
+            return;
+        }
+
+        getContestByProblemId(currentSubmission?.problem.id);
+    }, [ currentSubmission, getContestByProblemId ]);
 
     const submissionTitle = useMemo(
         () => `Submission №${currentSubmission?.id}`,
         [ currentSubmission?.id ],
+    );
+
+    const participationType = useMemo(
+        () => contest.canBeCompeted
+            ? ContestParticipationType.Compete
+            : ContestParticipationType.Practice,
+        [ contest ],
     );
 
     useEffect(() => {
@@ -90,6 +113,13 @@ const SubmissionDetails = () => {
                   type={HeadingType.secondary}
                   className={styles.taskHeading}
                 >
+                    <LinkButton
+                      type={LinkButtonType.secondary}
+                      size={ButtonSize.small}
+                      to={getRegisterContestTypeUrl({ id: contest.id, participationType })}
+                      className={styles.backBtnClassName}
+                      text="To Contest"
+                    />
                     {problemNameHeadingText}
                 </Heading>
                 <CodeEditor

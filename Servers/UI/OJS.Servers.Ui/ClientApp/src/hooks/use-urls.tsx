@@ -3,7 +3,9 @@ import isNil from 'lodash/isNil';
 
 import {
     IAllContestsUrlParams,
-    IDownloadProblemResourceUrlParams, IGetContestParticipationScoresForParticipantUrlParams,
+    IDownloadProblemResourceUrlParams,
+    IGetContestByProblemParams,
+    IGetContestParticipationScoresForParticipantUrlParams,
     IGetContestResultsParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemAndUserUrlParams,
@@ -39,6 +41,7 @@ interface IUrlsContext {
     getContestResultsUrl: (params: IGetContestResultsParams) => string;
     getHomeStatisticsUrl: () => string;
     getAdministrationRetestSubmission: (params: IRetestSubmissionUrlParams) => string;
+    getContestByProblemUrl: (params: IGetContestByProblemParams) => string;
 }
 
 const UrlsContext = createContext<IUrlsContext>({} as IUrlsContext);
@@ -101,6 +104,8 @@ const getStartContestParticipationUrl = ({
 const getContestParticipantScoresForParticipantUrl =
     ({ participantId }: IGetContestParticipationScoresForParticipantUrlParams) => `
     ${baseApiUrl}/ParticipantScores/GetScoresForParticipant/${participantId}`;
+
+const getContestByProblemUrl = ({ problemId }: IGetContestByProblemParams) => `${baseApiUrl}/Contests/ByProblem/${problemId}`;
 
 const getCategoriesTreeUrl =
     () => `${baseApiUrl}/ContestCategories/GetCategoriesTree`;
@@ -169,6 +174,7 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
             getContestResultsUrl,
             getHomeStatisticsUrl,
             getAdministrationRetestSubmission,
+            getContestByProblemUrl,
         }),
         [],
     );

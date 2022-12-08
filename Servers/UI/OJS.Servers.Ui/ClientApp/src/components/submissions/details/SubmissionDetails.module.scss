@@ -2,6 +2,11 @@
 @use 'src/styles/components';
 @use 'src/styles/fonts';
 
+.backBtnClassName {
+  float:left;
+  margin-right: -50%;
+}
+
 .detailsWrapper {
   @extend %wrapper;
   @extend %columnsThree;

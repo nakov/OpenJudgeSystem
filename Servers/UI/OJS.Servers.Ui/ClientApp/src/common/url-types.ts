@@ -7,6 +7,10 @@ interface IStartContestUrlParams {
     official: boolean;
 }
 
+interface IGetContestByProblemParams {
+    problemId: number;
+}
+
 interface IAllContestsUrlParams {
     filters: IFilter[];
     sorting: ISort[];
@@ -81,4 +85,5 @@ export type {
     IGetContestResultsParams,
     IRetestSubmissionUrlParams,
     IGetSubmissionResultsByProblemAndUserUrlParams,
+    IGetContestByProblemParams,
 };

@@ -71,6 +71,18 @@ namespace OJS.Services.Ui.Business.Implementations
             return registerModel;
         }
 
+        public async Task<ContestServiceModel> GetContestByProblem(int problemId)
+        {
+           var contestServiceModel = await this.contestsData.GetByProblemId<ContestServiceModel>(problemId);
+           if (contestServiceModel == null)
+           {
+               throw new BusinessServiceException("Contest not found");
+           }
+
+           return contestServiceModel;
+        }
+
+
         private bool ShouldRequirePassword(Contest contest, Participant participant, bool official)
         {
             if (participant != null && !participant.IsInvalidated)

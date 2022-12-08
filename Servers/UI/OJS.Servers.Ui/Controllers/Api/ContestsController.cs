@@ -29,6 +29,18 @@ public class ContestsController : BaseApiController
             .ToOkResult();
 
     /// <summary>
+    /// Gets the contest that the problem is part of.
+    /// </summary>
+    /// <param name="problemId">The id of the problem that is used to find the contest.</param>
+    /// <returns>Model containing information about the contest.</returns>
+    [HttpGet("{problemId:int}")]
+    [ProducesResponseType(typeof(ContestServiceModel), Status200OK)]
+    public async Task<IActionResult> ByProblem(int problemId)
+    => await this.contestsBusinessService
+        .GetContestByProblem(problemId)
+        .ToOkResult();
+
+    /// <summary>
     /// Submits a password value from the user and validates it against contest configurations.
     /// </summary>
     /// <returns>Ok result if password is correct and an exception if otherwise</returns>

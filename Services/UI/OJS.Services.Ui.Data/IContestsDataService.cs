@@ -22,6 +22,8 @@ namespace OJS.Services.Ui.Data
 
         Task<Contest?> GetByIdWithParticipants(int id);
 
+        Task<TServiceModel> GetByProblemId<TServiceModel>(int id);
+
         IQueryable<Contest> GetAllActive();
 
         IQueryable<Contest> GetAllInactive();

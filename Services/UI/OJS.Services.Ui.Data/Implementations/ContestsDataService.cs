@@ -25,6 +25,11 @@ namespace OJS.Services.Ui.Data.Implementations
             : base(db)
             => this.dates = dates;
 
+        public Task<TServiceModel> GetByProblemId<TServiceModel>(int id)
+            => this.DbSet
+                .FirstOrDefaultAsync(c => c.ProblemGroups.Any(pg => pg.Problems.Any(p => p.Id == id)))
+                .Map<TServiceModel>();
+
         public async Task<IEnumerable<TServiceModel>> GetAllCompetable<TServiceModel>()
             => await this.GetAllCompetableQuery()
                 .MapCollection<TServiceModel>()
