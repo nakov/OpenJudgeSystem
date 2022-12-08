@@ -69,9 +69,13 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
                 ? groupFilters
                 : filteredStrategyFilters;
 
+            const values = type === FilterType.Status
+                ? groupFilters
+                : strategyFilters;
+
             return (
                 <ContestFilter
-                  values={strategyFilters}
+                  values={values}
                   type={type}
                   onSelect={handleFilterClick}
                   maxDisplayCount={maxFiltersToDisplayCount}
