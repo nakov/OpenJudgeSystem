@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { FilterType, IFilter, ISort } from '../../../common/contest-types';
@@ -29,6 +30,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const maxFiltersToDisplayCount = 3;
     const [ filtersGroups, setFiltersGroups ] = useState<IFiltersGroup[]>([]);
     const [ defaultSelected, setDefaultSelected ] = useState('');
+    const [ filteredStrategyFilters, setFilteredStrategyFilters ] = useState<IFilter[]>([]);
     const [ searchParams ] = useSearchParams();
     const [ isLoaded, setIsLoaded ] = useState(false);
     const { actions: { load: loadStrategies } } = useContestStrategyFilters();
@@ -63,16 +65,20 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         (fg: IFiltersGroup) => {
             const { type, filters: groupFilters } = fg;
 
+            const strategyFilters = isEmpty(filteredStrategyFilters)
+                ? groupFilters
+                : filteredStrategyFilters;
+
             return (
                 <ContestFilter
-                  values={groupFilters}
+                  values={strategyFilters}
                   type={type}
                   onSelect={handleFilterClick}
                   maxDisplayCount={maxFiltersToDisplayCount}
                 />
             );
         },
-        [ handleFilterClick ],
+        [ filteredStrategyFilters, handleFilterClick ],
     );
 
     useEffect(
@@ -146,6 +152,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
               className={styles.filterTypeContainer}
               onCategoryClick={onFilterClick}
               defaultSelected={defaultSelected}
+              setStrategyFilters={setFilteredStrategyFilters}
             />
             <ContestSorting onSortClick={handleSortClick} />
             <List

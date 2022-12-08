@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
 import { IFilter } from '../../../common/contest-types';
@@ -16,12 +16,14 @@ import styles from './ContestCategories.module.scss';
 interface IContestCategoriesProps extends IHaveOptionalClassName {
     onCategoryClick: (filter: IFilter) => void;
     defaultSelected?: string;
+    setStrategyFilters: Dispatch<SetStateAction<IFilter[]>>;
 }
 
 const ContestCategories = ({
     className = '',
     onCategoryClick,
     defaultSelected,
+    setStrategyFilters,
 }: IContestCategoriesProps) => {
     const { state: { categories } } = useContestCategories();
     const { state: { possibleFilters } } = useContests();
@@ -82,6 +84,7 @@ const ContestCategories = ({
             </Heading>
             <Tree
               items={categories}
+              setStrategyFilters={setStrategyFilters}
               onSelect={handleTreeLabelClick}
               defaultSelected={defaultSelected}
               defaultExpanded={defaultExpanded}
