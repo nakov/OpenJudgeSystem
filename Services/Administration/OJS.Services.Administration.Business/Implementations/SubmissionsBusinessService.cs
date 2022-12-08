@@ -6,25 +6,40 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Data.Models.Submissions;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models;
+    using OJS.Services.Common;
+    using OJS.Services.Common.Models;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using SoftUni.Judge.Common.Enumerations;
+    using SoftUni.Data.Infrastructure;
 
     public class SubmissionsBusinessService : ISubmissionsBusinessService
     {
         private readonly ISubmissionsDataService submissionsData;
+        private readonly ISubmissionsForProcessingDataService submissionsForProcessingDataService;
         // private readonly IArchivedSubmissionsDataService archivedSubmissionsData;
         private readonly IParticipantScoresDataService participantScoresData;
+        private readonly ITransactionsProvider transactions;
+        private readonly IParticipantScoresBusinessService participantScoresBusinessService;
+        private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
 
         public SubmissionsBusinessService(
             ISubmissionsDataService submissionsData,
-            IParticipantScoresDataService participantScoresData)
+            IParticipantScoresDataService participantScoresData,
+            ITransactionsProvider transactions,
+            ISubmissionsForProcessingDataService submissionsForProcessingDataService,
+            IParticipantScoresBusinessService participantScoresBusinessService,
+            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication)
         {
             this.submissionsData = submissionsData;
             // this.archivedSubmissionsData = archivedSubmissionsData;
             this.participantScoresData = participantScoresData;
+            this.transactions = transactions;
+            this.submissionsForProcessingDataService = submissionsForProcessingDataService;
+            this.participantScoresBusinessService = participantScoresBusinessService;
+            this.submissionsDistributorCommunication = submissionsDistributorCommunication;
         }
 
         public Task<IQueryable<Submission>> GetAllForArchiving()
@@ -127,6 +142,51 @@ namespace OJS.Services.Administration.Business.Implementations
             }
 
             return Task.CompletedTask;
+        }
+
+        public async Task<ServiceResult> Retest(Submission submission)
+        {
+            var submissionProblemId = submission.ProblemId!.Value;
+            var submissionParticipantId = submission.ParticipantId!.Value;
+
+            var result  = await this.transactions.ExecuteInTransaction(async () =>
+            {
+                submission.Processed = false;
+
+                await this.submissionsForProcessingDataService.AddOrUpdateBySubmission(submission.Id);
+
+                var submissionIsBestSubmission = await this.IsBestSubmission(
+                    submissionProblemId,
+                    submissionParticipantId,
+                    submission.Id);
+
+                if (submissionIsBestSubmission)
+                {
+                    await this.participantScoresBusinessService.RecalculateForParticipantByProblem(
+                        submissionParticipantId,
+                        submissionProblemId);
+                }
+
+                await this.submissionsData.SaveChanges();
+
+                var response = await this.submissionsDistributorCommunication.AddSubmissionForProcessing(submission);
+
+                if (!response.IsSuccess && !string.IsNullOrEmpty(response.ErrorMessage))
+                {
+                    return new ServiceResult(response.ErrorMessage);
+                }
+
+                return ServiceResult.Success;
+            });
+
+            return result;
+        }
+
+        public async Task<bool> IsBestSubmission(int problemId, int participantId, int submissionId)
+        {
+            var bestScore = await this.participantScoresData.GetByParticipantIdAndProblemId(participantId, problemId);
+
+            return bestScore?.SubmissionId == submissionId;
         }
 
         // public async Task HardDeleteAllArchived() =>
