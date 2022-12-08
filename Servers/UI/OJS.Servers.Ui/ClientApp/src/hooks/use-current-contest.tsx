@@ -41,6 +41,7 @@ interface ICurrentContestContext {
         userSubmissionsTimeLimit: number;
         totalParticipantsCount: number;
         activeParticipantsCount: number;
+        isSubmitAllowed: boolean;
     };
     actions: {
         setContestPassword: (password: string) => void;
@@ -48,6 +49,7 @@ interface ICurrentContestContext {
         register: (info: IStartContestArgs) => void;
         submitPassword: (info: ISubmitContestPasswordArgs) => void;
         loadParticipantScores: () => void;
+        setIsSubmitAllowed: (isSubmitAllowed: boolean) => void;
     };
 }
 
@@ -101,6 +103,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ remainingTimeInMilliseconds, setRemainingTimeInMilliseconds ] = useState(defaultState.state.remainingTimeInMilliseconds);
     const [ totalParticipantsCount, setTotalParticipantsCount ] = useState(defaultState.state.totalParticipantsCount);
     const [ activeParticipantsCount, setActiveParticipantsCount ] = useState(defaultState.state.activeParticipantsCount);
+    const [ isSubmitAllowed, setIsSubmitAllowed ] = useState<boolean>(true);
 
     const {
         startLoading,
@@ -318,6 +321,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 userSubmissionsTimeLimit,
                 totalParticipantsCount,
                 activeParticipantsCount,
+                isSubmitAllowed,
             },
             actions: {
                 setContestPassword,
@@ -325,6 +329,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 start,
                 submitPassword,
                 loadParticipantScores,
+                setIsSubmitAllowed,
             },
         }),
         [
@@ -345,6 +350,8 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             loadParticipantScores,
             totalParticipantsCount,
             activeParticipantsCount,
+            isSubmitAllowed,
+            setIsSubmitAllowed,
         ],
     );
 
