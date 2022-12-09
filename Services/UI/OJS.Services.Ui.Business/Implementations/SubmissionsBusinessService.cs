@@ -239,14 +239,14 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     }
 
     public async Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblemAndUser(int problemId,
-        bool isOfficial, string userId, int? take)
+        bool isOfficial, string userId)
     {
         var problem = await this.problemsDataService.GetWithProblemGroupById(problemId);
 
         await this.ValidateUserCanViewResults(problem, isOfficial);
 
         var userSubmissions = await this.submissionsData
-            .GetAllByProblemAndUser<SubmissionResultsServiceModel>(problemId, userId, take);
+            .GetAllByProblemAndUser<SubmissionResultsServiceModel>(problemId, userId);
 
         return userSubmissions;
     }
