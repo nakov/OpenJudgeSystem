@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import { ContestStatus } from '../../common/contest-types';
 import { useHomeContests } from '../../hooks/use-home-contests';
@@ -21,8 +21,12 @@ const HomeContests = () => {
         })();
     }, [ getForHome ]);
 
-    const contestStatusArr = useMemo(
-        () => Object.values(ContestStatus),
+    const getContestStatusIndex = useCallback(
+        (contestStatus: ContestStatus) => {
+            const contestStatusArr = Object.values(ContestStatus);
+
+            return contestStatusArr.indexOf(contestStatus) + 1;
+        },
         [],
     );
 
@@ -31,12 +35,12 @@ const HomeContests = () => {
             <ContestsList
               title="Active"
               contests={activeContests}
-              contestStatus={contestStatusArr.indexOf(ContestStatus.Active) + 1}
+              contestStatus={getContestStatusIndex(ContestStatus.Active)}
             />
             <ContestsList
               title="Past"
               contests={pastContests}
-              contestStatus={contestStatusArr.indexOf(ContestStatus.Past) + 1}
+              contestStatus={getContestStatusIndex(ContestStatus.Past)}
             />
         </>
     );
