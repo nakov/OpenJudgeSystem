@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { ContestStatus } from '../../common/contest-types';
 import { IIndexContestsType } from '../../common/types';
 import concatClassNames from '../../utils/class-names';
 import { ButtonSize, LinkButton, LinkButtonType } from '../guidelines/buttons/Button';
@@ -14,13 +13,13 @@ import styles from './ContestsList.module.scss';
 interface IContestsListProps {
     title: string;
     contests: IIndexContestsType[];
-    contestState?: ContestStatus;
+    contestState?: number;
 }
 
 const ContestsList = ({
     title,
     contests,
-    contestState = ContestStatus.Active,
+    contestState,
 }: IContestsListProps) => {
     const renderContest = useCallback(
         (contest: IIndexContestsType) => (
@@ -50,7 +49,7 @@ const ContestsList = ({
     );
 
     const link = useMemo(
-        () => `/contests?status=${contestState.toString()}`,
+        () => `/contests?status=${contestState}`,
         [ contestState ],
     );
 

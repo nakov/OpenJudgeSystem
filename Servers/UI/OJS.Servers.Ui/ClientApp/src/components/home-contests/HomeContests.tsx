@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import { ContestStatus } from '../../common/contest-types';
 import { useHomeContests } from '../../hooks/use-home-contests';
@@ -21,17 +21,22 @@ const HomeContests = () => {
         })();
     }, [ getForHome ]);
 
+    const contestStatusArr = useMemo(
+        () => Object.values(ContestStatus),
+        [],
+    );
+
     return (
         <>
             <ContestsList
               title="Active"
               contests={activeContests}
-              contestState={ContestStatus.Active}
+              contestState={contestStatusArr.indexOf(ContestStatus.Active) + 1}
             />
             <ContestsList
               title="Past"
               contests={pastContests}
-              contestState={ContestStatus.Past}
+              contestState={contestStatusArr.indexOf(ContestStatus.Past) + 1}
             />
         </>
     );
