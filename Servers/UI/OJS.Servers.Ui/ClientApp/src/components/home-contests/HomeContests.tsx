@@ -31,12 +31,12 @@ const HomeContests = () => {
             <ContestsList
               title="Active"
               contests={activeContests}
-              contestState={contestStatusArr.indexOf(ContestStatus.Active) + 1}
+              contestStatus={contestStatusArr.indexOf(ContestStatus.Active) + 1}
             />
             <ContestsList
               title="Past"
               contests={pastContests}
-              contestState={contestStatusArr.indexOf(ContestStatus.Past) + 1}
+              contestStatus={contestStatusArr.indexOf(ContestStatus.Past) + 1}
             />
         </>
     );
