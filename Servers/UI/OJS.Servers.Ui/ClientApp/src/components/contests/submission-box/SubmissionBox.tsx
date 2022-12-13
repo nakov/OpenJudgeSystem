@@ -23,6 +23,7 @@ const SubmissionBox = () => {
         state: {
             contest,
             userSubmissionsTimeLimit,
+            isSubmitAllowed,
         },
     } = useCurrentContest();
     const {
@@ -150,7 +151,7 @@ const SubmissionBox = () => {
     }, [ showSubmissionLimitTimer, renderSubmissionLimitCountdown, submitLimit ]);
 
     const renderSubmitBtn = useCallback(() => {
-        const state = showSubmissionLimitTimer
+        const state = !isSubmitAllowed || showSubmissionLimitTimer
             ? ButtonState.disabled
             : ButtonState.enabled;
 
@@ -161,7 +162,7 @@ const SubmissionBox = () => {
               onClick={handleOnSubmit}
             />
         );
-    }, [ handleOnSubmit, showSubmissionLimitTimer ]);
+    }, [ handleOnSubmit, showSubmissionLimitTimer, isSubmitAllowed ]);
 
     const renderSubmitMessage = useCallback(() => {
         if (isNil(submitMessage)) {
