@@ -27,8 +27,7 @@
         Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblemAndUser(
             int problemId,
             bool isOfficial,
-            string userId,
-            int? take
+            string userId
         );
 
         Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult);
