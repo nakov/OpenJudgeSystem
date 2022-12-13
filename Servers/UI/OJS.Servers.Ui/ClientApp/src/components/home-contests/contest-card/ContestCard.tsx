@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IIndexContestsType } from '../../../common/types';
@@ -70,13 +70,6 @@ const ContestCard = ({ contest }: IContestCardProps) => {
         [ canBeCompeted, canBePracticed, contest ],
     );
 
-    const participationType = useMemo(
-        () => canBeCompeted
-            ? ContestParticipationType.Compete
-            : ContestParticipationType.Practice,
-        [ canBeCompeted ],
-    );
-
     return (
         <div className={contestCardClassName}>
             <div className={contestCardHeaderClassName}>
@@ -93,7 +86,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
             <div className={contestCardControlBtnsClassName}>
                 <LinkButton
                   id="button-card-compete"
-                  to={getRegisterContestTypeUrl({ id, participationType })}
+                  to={getRegisterContestTypeUrl({ id, participationType: ContestParticipationType.Compete })}
                   text="Compete"
                   state={
                         canBeCompeted
@@ -104,7 +97,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                 />
                 <LinkButton
                   id="button-card-practice"
-                  to={getRegisterContestTypeUrl({ id, participationType })}
+                  to={getRegisterContestTypeUrl({ id, participationType: ContestParticipationType.Practice })}
                   text="Practice"
                   type={LinkButtonType.secondary}
                   state={

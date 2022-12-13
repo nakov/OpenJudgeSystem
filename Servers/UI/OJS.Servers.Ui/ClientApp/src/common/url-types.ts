@@ -27,6 +27,10 @@ interface IStartContestParticipationUrlParams {
     isOfficial: boolean;
 }
 
+interface IGetContestParticipationScoresForParticipantUrlParams {
+    participantId: number;
+}
+
 interface ISubmitContestPasswordUrlParams {
     id: number;
     isOfficial: boolean;
@@ -42,6 +46,13 @@ interface IGetSubmissionResultsByProblemUrlParams {
     take: number;
 }
 
+interface IGetSubmissionResultsByProblemAndUserUrlParams {
+    problemId: number;
+    isOfficial: boolean;
+    take: number;
+    userId: string;
+}
+
 interface IGetContestResultsParams {
     id: number;
     official: boolean;
@@ -52,6 +63,10 @@ interface IGetSubmissionDetailsByIdUrlParams {
     submissionId: number;
 }
 
+interface IRetestSubmissionUrlParams {
+    id: number;
+}
+
 export type {
     IRegisterForContestUrlParams,
     ISubmitContestPasswordUrlParams,
@@ -59,8 +74,11 @@ export type {
     IAllContestsUrlParams,
     IContestCategoriesUrlParams,
     IStartContestParticipationUrlParams,
+    IGetContestParticipationScoresForParticipantUrlParams,
     IDownloadProblemResourceUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetContestResultsParams,
+    IRetestSubmissionUrlParams,
+    IGetSubmissionResultsByProblemAndUserUrlParams,
 };

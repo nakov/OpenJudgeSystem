@@ -80,7 +80,8 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
             {
                 if (!newContest.Duration.HasValue)
                 {
-                    return ValidatorResult.Error(Resource.Required_field_for_online);
+                    return ValidatorResult.Error(string.Format(Resource.Required_field_for_online, nameof(Contest
+                        .Duration)));
                 }
 
                 if (newContest.Duration.Value.TotalHours >= 24)
@@ -98,7 +99,8 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
             {
                 if (newContest.NumberOfProblemGroups <= 0)
                 {
-                    return ValidatorResult.Error(Resource.Required_field_for_online);
+                    return ValidatorResult.Error(string.Format(Resource.Required_field_for_online, nameof(Contest
+                    .NumberOfProblemGroups)));
                 }
 
                 if (newContest.NumberOfProblemGroups > ProblemGroupsCountLimit)

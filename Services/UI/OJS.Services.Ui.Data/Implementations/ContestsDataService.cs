@@ -203,16 +203,16 @@ namespace OJS.Services.Ui.Data.Implementations
             if (sorting == ContestSortType.StartDate)
             {
                 return contests
-                    .OrderByDescending(c => c.StartTime)
-                    .ThenByDescending(c => c.PracticeStartTime)
+                    .OrderBy(c => c.StartTime)
+                    .ThenBy(c => c.PracticeStartTime)
                     .ThenBy(c => c.Name);
             }
 
             if (sorting == ContestSortType.EndDate)
             {
                 return contests
-                    .OrderByDescending(c => c.EndTime)
-                    .ThenByDescending(c => c.PracticeEndTime)
+                    .OrderBy(c => c.EndTime)
+                    .ThenBy(c => c.PracticeEndTime)
                     .ThenBy(c => c.Name);
             }
 
@@ -220,8 +220,8 @@ namespace OJS.Services.Ui.Data.Implementations
             {
                 return contests
                     .OrderBy(c => c.Name)
-                    .ThenByDescending(c => c.StartTime)
-                    .ThenByDescending(c => c.PracticeStartTime);
+                    .ThenBy(c => c.StartTime)
+                    .ThenBy(c => c.PracticeStartTime);
             }
 
             return contests;
