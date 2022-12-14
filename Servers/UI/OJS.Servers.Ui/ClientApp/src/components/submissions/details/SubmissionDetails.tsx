@@ -33,11 +33,21 @@ const SubmissionDetails = () => {
     const { getRegisterContestTypeUrl } = useAppUrls();
 
     useEffect(() => {
+        const reload = sessionStorage.getItem('reload');
+        if (isNil(reload)) {
+            sessionStorage.reload = true;
+            window.location.reload();
+        } else {
+            sessionStorage.removeItem('reload');
+        }
+    }, []);
+
+    useEffect(() => {
         if (isNil(currentSubmission)) {
             return;
         }
 
-        getContestByProblemId(currentSubmission?.problem.id);
+        getContestByProblemId(currentSubmission.problem.id);
     }, [ currentSubmission, getContestByProblemId ]);
 
     const submissionTitle = useMemo(
