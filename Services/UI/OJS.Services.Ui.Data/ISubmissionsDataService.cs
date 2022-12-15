@@ -43,5 +43,5 @@ public interface ISubmissionsDataService : IDataService<Submission>
 
     Task<int> GetSubmissionsPerDayCount();
 
-    Task<IEnumerable<TServiceModel>> GetAllByProblemAndUser<TServiceModel>(int problemId, string userId, int? take = Constants.Submissions.DefaultCount);
+    Task<IEnumerable<TServiceModel>> GetAllByProblemAndUser<TServiceModel>(int problemId, string userId);
 }

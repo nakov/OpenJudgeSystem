@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import { useAppUrls } from '../../../hooks/use-app-urls';
+import { useAuth } from '../../../hooks/use-auth';
 import { usePageTitles } from '../../../hooks/use-page-titles';
 import concatClassNames from '../../../utils/class-names';
 import CodeEditor from '../../code-editor/CodeEditor';
@@ -22,6 +23,7 @@ const SubmissionDetails = () => {
         actions: { getSubmissionResults },
     } = useSubmissionsDetails();
     const { actions: { setPageTitle } } = usePageTitles();
+    const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const { getAdministrationRetestSubmissionInternalUrl } = useAppUrls();
 
     const submissionTitle = useMemo(
@@ -62,6 +64,25 @@ const SubmissionDetails = () => {
         })();
     }, [ currentSubmission, getSubmissionResults ]);
 
+    const renderRetestButton = useCallback(
+        () => {
+            if (!canAccessAdministration) {
+                return null;
+            }
+
+            return (
+                <LinkButton
+                  type={LinkButtonType.secondary}
+                  size={ButtonSize.medium}
+                  to={getAdministrationRetestSubmissionInternalUrl()}
+                  text="Retest"
+                  className={styles.retestButton}
+                />
+            );
+        },
+        [ canAccessAdministration, getAdministrationRetestSubmissionInternalUrl ],
+    );
+
     if (isNil(currentSubmission)) {
         return <div>No details fetched.</div>;
     }
@@ -77,13 +98,7 @@ const SubmissionDetails = () => {
                   selectedSubmission={currentSubmission}
                   className={styles.submissionsList}
                 />
-                <LinkButton
-                  type={LinkButtonType.secondary}
-                  size={ButtonSize.medium}
-                  to={getAdministrationRetestSubmissionInternalUrl()}
-                  text="Retest"
-                  className={styles.retestButton}
-                />
+                { renderRetestButton() }
             </div>
             <div className={styles.code}>
                 <Heading

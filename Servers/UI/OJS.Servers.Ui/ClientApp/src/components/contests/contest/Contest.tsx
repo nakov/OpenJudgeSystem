@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 
+import { useAuth } from '../../../hooks/use-auth';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import { usePageTitles } from '../../../hooks/use-page-titles';
 import concatClassNames from '../../../utils/class-names';
@@ -24,7 +25,9 @@ const Contest = () => {
             activeParticipantsCount,
             isOfficial,
         },
+        actions: { setIsSubmitAllowed },
     } = useCurrentContest();
+    const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const { actions: { setPageTitle } } = usePageTitles();
 
     const navigationContestClass = 'navigationContest';
@@ -92,6 +95,13 @@ const Contest = () => {
         [],
     );
 
+    const handleCountdownEnd = useCallback(
+        () => {
+            setIsSubmitAllowed(canAccessAdministration || false);
+        },
+        [ canAccessAdministration, setIsSubmitAllowed ],
+    );
+
     const renderTimeRemaining = useCallback(
         () => {
             if (!remainingTimeInMilliseconds) {
@@ -101,10 +111,15 @@ const Contest = () => {
             const currentSeconds = remainingTimeInMilliseconds / 1000;
 
             return (
-                <Countdown renderRemainingTime={renderCountdown} duration={currentSeconds} metric={Metric.seconds} />
+                <Countdown
+                  renderRemainingTime={renderCountdown}
+                  duration={currentSeconds}
+                  metric={Metric.seconds}
+                  handleOnCountdownEnd={handleCountdownEnd}
+                />
             );
         },
-        [ remainingTimeInMilliseconds, renderCountdown ],
+        [ handleCountdownEnd, remainingTimeInMilliseconds, renderCountdown ],
     );
 
     const secondaryHeadingClassName = useMemo(

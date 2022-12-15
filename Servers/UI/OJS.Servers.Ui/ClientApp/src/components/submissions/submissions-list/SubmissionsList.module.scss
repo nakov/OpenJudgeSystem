@@ -13,6 +13,10 @@
   }
 }
 
+.submissionsScroll {
+  overflow: auto;
+}
+
 .submissionContainer {
   border-bottom: 1px solid colors.$bottom-border-color;
   display: flex;

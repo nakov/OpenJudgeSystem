@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import { ContestStatus } from '../../common/contest-types';
 import { useHomeContests } from '../../hooks/use-home-contests';
@@ -21,17 +21,26 @@ const HomeContests = () => {
         })();
     }, [ getForHome ]);
 
+    const getContestStatusIndex = useCallback(
+        (contestStatus: ContestStatus) => {
+            const contestStatusArr = Object.values(ContestStatus);
+
+            return contestStatusArr.indexOf(contestStatus) + 1;
+        },
+        [],
+    );
+
     return (
         <>
             <ContestsList
               title="Active"
               contests={activeContests}
-              contestState={ContestStatus.Active}
+              contestStatus={getContestStatusIndex(ContestStatus.Active)}
             />
             <ContestsList
               title="Past"
               contests={pastContests}
-              contestState={ContestStatus.Past}
+              contestStatus={getContestStatusIndex(ContestStatus.Past)}
             />
         </>
     );

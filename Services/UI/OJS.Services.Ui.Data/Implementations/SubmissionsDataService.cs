@@ -41,11 +41,9 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             orderBy: q => q.CreatedOn,
             descending: true);
 
-    public Task<IEnumerable<TServiceModel>> GetAllByProblemAndUser<TServiceModel>(int problemId, string userId,
-        int? take = Constants.Submissions.DefaultCount)
+    public Task<IEnumerable<TServiceModel>> GetAllByProblemAndUser<TServiceModel>(int problemId, string userId)
         => this.GetQuery(
-                filter: s => s.ProblemId == problemId && s.Participant.UserId == userId,
-                take: take)
+                filter: s => s.ProblemId == problemId && s.Participant.UserId == userId)
             .MapCollection<TServiceModel>()
             .ToEnumerableAsync();
 
