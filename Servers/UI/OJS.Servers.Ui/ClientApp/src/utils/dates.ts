@@ -2,6 +2,7 @@ import { intervalToDuration } from 'date-fns';
 import moment from 'moment';
 
 const defaultDateTimeFormat = 'HH:MM, DD/MMM/yyyy';
+const defaultPreciseDateTimeFormat = 'DD/MMM/yyyy, HH:mm:ss';
 
 const calculateTimeUntil = (date: Date) => intervalToDuration({
     start: new Date(),
@@ -14,6 +15,11 @@ const formatDate = (
 ) => (moment().diff(date, 'days') > 3
     ? moment(date).format(formatString)
     : moment.utc(date).fromNow());
+
+const preciseFormatDate = (
+    date: Date,
+    formatString = defaultPreciseDateTimeFormat,
+) => moment(date).format(formatString);
 
 const convertToSecondsRemaining = (date: Date) => {
     const { days, hours, minutes, seconds } = intervalToDuration({
@@ -76,6 +82,7 @@ const convertToTwoDigitValues = ({
 
 export default {
     formatDate,
+    preciseFormatDate,
     secondsToFullTime,
     calculateTimeUntil,
     convertToSecondsRemaining,
@@ -84,6 +91,7 @@ export default {
 
 export {
     formatDate,
+    preciseFormatDate,
     secondsToFullTime,
     calculateTimeUntil,
     convertToSecondsRemaining,
