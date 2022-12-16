@@ -32,10 +32,11 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
 
         foreach (var category in allCategories)
         {
+            category.Children = category.Children.OrderBy(c=>c.OrderBy);
             AddChildren(category.Children, allCategories,category.AllowedStrategyTypes);
             category.AllowedStrategyTypes = category.AllowedStrategyTypes
-                                                .DistinctBy(x => x.Id)
-                                                .ToList();
+                .DistinctBy(c=>c.Id)
+                    .ToList();
         }
 
         return mainCategories;
@@ -85,7 +86,11 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
         ICollection<AllowedContestStrategiesServiceModel> parentCategoryAllowedStrategyTypes) =>
         children.ForEach(child =>
         {
-            child.AllowedStrategyTypes = child.AllowedStrategyTypes.DistinctBy(x => x.Id).ToList();
+            child.AllowedStrategyTypes =
+                this.contestCategoriesData.GetAllAllowedStrategyTypes<AllowedContestStrategiesServiceModel>(child.Id)
+                    .DistinctBy(c=>c.Id)
+                    .ToList();
+
             child.Children = allCategories
                 .OrderBy(x => x.OrderBy)
                 .Where(x => x.ParentId == child.Id)
@@ -103,7 +108,9 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
     {
         result.Add(category);
 
-        children.ForEach(childNode =>
+        children
+             .OrderBy(c=>c.OrderBy)
+             .ForEachAsync(childNode =>
         {
             var grandChildren = allCategories
                 .Where(x => x.ParentId == childNode.Id)

@@ -1,7 +1,7 @@
-import React, { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
+import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
-import { IFilter } from '../../../common/contest-types';
+import { FilterType, IFilter } from '../../../common/contest-types';
 import ITreeItemType from '../../../common/tree-types';
 import { useContestCategories } from '../../../hooks/use-contest-categories';
 import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
@@ -19,6 +19,11 @@ interface IContestCategoriesProps extends IHaveOptionalClassName {
     setStrategyFilters: Dispatch<SetStateAction<IFilter[]>>;
 }
 
+interface IFilterProps {
+    categoryId: string;
+    strategies: IFilter[];
+}
+
 const ContestCategories = ({
     className = '',
     onCategoryClick,
@@ -28,6 +33,7 @@ const ContestCategories = ({
     const { state: { categories } } = useContestCategories();
     const { state: { possibleFilters } } = useContests();
     const { actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
+    const [ currentStrategyFilters, setCurrentCurrentStrategyFilters ] = useState([] as IFilterProps[]);
 
     const getParents = useCallback(
         (result: string[], allItems: ITreeItemType[], searchId?: string) => {
@@ -74,6 +80,47 @@ const ContestCategories = ({
         updateBreadcrumb(category, categoriesFlat);
     }, [ possibleFilters, categoriesFlat, onCategoryClick, updateBreadcrumb ]);
 
+    const strategyFilterGroup = useMemo(
+        () => possibleFilters.filter(({ type }) => type === FilterType.Strategy),
+        [ possibleFilters ],
+    );
+
+    const newStrategyFilters = useCallback(
+        (id: string, node: ITreeItemType) => {
+            const filterProps = [];
+            if (currentStrategyFilters.map((csf) => csf.categoryId).includes(id)) {
+                currentStrategyFilters.filter((csf) => csf.categoryId !== id);
+            } else {
+                const strategyFiltersToAdd : IFilter[] = [];
+                node.allowedStrategyTypes.forEach((value) => {
+                    const currAllowedStrategyId = value.id.toString();
+
+                    const strategyToFind = strategyFilterGroup.find((x) => x.value === currAllowedStrategyId);
+
+                    if (!isNil(strategyToFind)) {
+                        strategyFiltersToAdd.push(strategyToFind);
+                    }
+                });
+
+                filterProps.push({
+                    categoryId: id,
+                    strategies: strategyFiltersToAdd,
+                });
+            }
+
+            const strategyFilters = filterProps.flatMap((s) => s.strategies)
+                .reduce((strategyFilter: IFilter[], currentStrategyFilter) => {
+                    strategyFilter.push(currentStrategyFilter);
+                    return strategyFilter;
+                }, []);
+
+            setCurrentCurrentStrategyFilters(filterProps);
+
+            setStrategyFilters(strategyFilters);
+        },
+        [ currentStrategyFilters, setStrategyFilters, strategyFilterGroup ],
+    );
+
     return (
         <div className={className as string}>
             <Heading
@@ -84,11 +131,11 @@ const ContestCategories = ({
             </Heading>
             <Tree
               items={categories}
-              setStrategyFilters={setStrategyFilters}
               onSelect={handleTreeLabelClick}
               defaultSelected={defaultSelected}
               defaultExpanded={defaultExpanded}
               treeItemHasTooltip
+              onHandleTreeItemClick={newStrategyFilters}
             />
         </div>
     );

@@ -35,9 +35,7 @@ public class ContestCategoryTreeViewModel : IMapExplicitly
             .ForMember(
                 m => m.Children,
                 opt => opt.MapFrom(src =>
-                    src.Children
-                        .Where(c => c.IsVisible)
-                        .OrderBy(c => c.OrderBy)))
+                    src.Children))
             .ForMember(
                 m => m.AllowedStrategyTypes,
                 opt => opt.MapFrom(src =>

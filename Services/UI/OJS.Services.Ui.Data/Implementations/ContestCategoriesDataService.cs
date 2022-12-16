@@ -48,5 +48,17 @@
                 .Where(x => !x.ParentId.HasValue)
                 .MapCollection<TServiceModel>()
                 .ToEnumerableAsync();
+        public IEnumerable<TServiceModel> GetAllAllowedStrategyTypes<TServiceModel>(int categoryId)
+            => DbSet
+                    .Where(cc=>cc.IsVisible && !cc.IsDeleted )
+                .SelectMany(x=>x.Contests
+                    .Where(c=>c.CategoryId==categoryId && c.IsVisible && !c.IsDeleted))
+                .SelectMany(c => c.ProblemGroups
+                    .Where(pg=>!pg.IsDeleted))
+                .SelectMany(pg => pg.Problems
+                    .Where(p=>!p.IsDeleted))
+                .SelectMany(p => p.SubmissionTypesInProblems)
+                .Select(st => st.SubmissionType)
+                .MapCollection<TServiceModel>();
     }
 }

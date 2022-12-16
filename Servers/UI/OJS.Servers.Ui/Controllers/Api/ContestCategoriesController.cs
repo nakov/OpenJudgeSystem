@@ -11,11 +11,9 @@ using static Microsoft.AspNetCore.Http.StatusCodes;
 public class ContestCategoriesController : BaseApiController
 {
     private readonly IContestCategoriesCacheService contestCategoriesCache;
-  //  private readonly IContestCategoriesBusinessService contestCategoriesBusiness;
 
     public ContestCategoriesController(
-        IContestCategoriesCacheService contestCategoriesCache, IContestCategoriesBusinessService contestCategoriesBusiness) =>
-        this.contestCategoriesCache = contestCategoriesCache;
+        IContestCategoriesCacheService contestCategoriesCache) => this.contestCategoriesCache = contestCategoriesCache;
 
     // this.contestCategoriesBusiness = contestCategoriesBusiness;
     /// <summary>
@@ -31,6 +29,4 @@ public class ContestCategoriesController : BaseApiController
         => await this.contestCategoriesCache
             .GetAllContestCategoriesTree()
             .ToOkResult();
-        // => await contestCategoriesBusiness.GetTree()
-        //     .ToOkResult();
 }
