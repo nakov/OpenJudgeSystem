@@ -8,7 +8,7 @@ import ExpandButton from '../../guidelines/buttons/ExpandButton';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List, { Orientation } from '../../guidelines/lists/List';
 
-import styles from './ContestFilter.module.scss';
+import styles from '../contest-filter/ContestFilter.module.scss';
 
 interface IContestStrategyFilterProps {
     values: IFilter[];
