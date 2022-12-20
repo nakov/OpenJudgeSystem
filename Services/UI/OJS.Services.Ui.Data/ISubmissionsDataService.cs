@@ -13,8 +13,6 @@ public interface ISubmissionsDataService : IDataService<Submission>
 
     Submission? GetBestForParticipantByProblem(int participantId, int problemId);
 
-    IQueryable<Submission> GetByIdQuery(int id);
-
     IQueryable<Submission> GetAllByProblem(int problemId);
 
     IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId);
@@ -44,4 +42,6 @@ public interface ISubmissionsDataService : IDataService<Submission>
     bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId);
 
     Task<int> GetSubmissionsPerDayCount();
+
+    Task<IEnumerable<TServiceModel>> GetAllByProblemAndUser<TServiceModel>(int problemId, string userId);
 }

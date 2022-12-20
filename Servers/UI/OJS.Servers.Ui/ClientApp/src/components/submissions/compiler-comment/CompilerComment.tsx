@@ -1,4 +1,5 @@
 import React from 'react';
+import isNil from 'lodash/isNil';
 
 import Text from '../../guidelines/text/Text';
 
@@ -11,6 +12,10 @@ interface ICompilerCommentProps {
 
 const CompilerComment = ({ isCompiledSuccessfully, compilerComment }: ICompilerCommentProps) => {
     if (isCompiledSuccessfully) {
+        return null;
+    }
+
+    if (isNil(compilerComment)) {
         return null;
     }
 
