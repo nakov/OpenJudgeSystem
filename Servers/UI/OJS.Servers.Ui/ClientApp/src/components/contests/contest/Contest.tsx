@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
+import isNil from 'lodash/isNil';
 
 import { useAuth } from '../../../hooks/use-auth';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
@@ -164,7 +165,9 @@ const Contest = () => {
               className={styles.contestHeading}
             >
                 {contestTitle}
+                {' '}
                 -
+                {' '}
                 {validationResult.message}
             </Heading>
         </div>
@@ -213,9 +216,11 @@ const Contest = () => {
     );
 
     const renderPage = useCallback(
-        () => validationResult.isValid
-            ? renderContest()
-            : renderErrorMessage(),
+        () => isNil(validationResult)
+            ? <div>Loading data</div>
+            : validationResult.isValid
+                ? renderContest()
+                : renderErrorMessage(),
         [ renderErrorMessage, renderContest, validationResult ],
     );
 
