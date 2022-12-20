@@ -102,7 +102,9 @@ const ContestResultsPage = () => {
         )();
     }, [ contestId, official, full, load ]);
 
-    if (isNil(contestResults) || (typeof contestResults.results === 'undefined')) {
+    const { results } = contestResults || {};
+
+    if (isNil(results)) {
         return (
             <div>
                 Loading results
