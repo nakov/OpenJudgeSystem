@@ -11,9 +11,13 @@ namespace OJS.Services.Ui.Models.Contests
     {
         public ContestServiceModel Contest { get; set; }
 
+        public int ParticipantId { get; set; }
+
         public DateTime? LastSubmissionTime { get; set; }
 
         public bool ContestIsCompete { get; set; }
+
+        public int? UserSubmissionsTimeLimit { get; set; }
 
         public double? RemainingTimeInMilliseconds { get; set; }
 

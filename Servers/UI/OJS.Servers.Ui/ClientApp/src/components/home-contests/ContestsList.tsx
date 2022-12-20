@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { ContestStatus } from '../../common/contest-types';
 import { IIndexContestsType } from '../../common/types';
 import concatClassNames from '../../utils/class-names';
 import { ButtonSize, LinkButton, LinkButtonType } from '../guidelines/buttons/Button';
@@ -14,13 +13,13 @@ import styles from './ContestsList.module.scss';
 interface IContestsListProps {
     title: string;
     contests: IIndexContestsType[];
-    contestState?: ContestStatus;
+    contestStatus?: number;
 }
 
 const ContestsList = ({
     title,
     contests,
-    contestState = ContestStatus.Active,
+    contestStatus,
 }: IContestsListProps) => {
     const renderContest = useCallback(
         (contest: IIndexContestsType) => (
@@ -30,8 +29,8 @@ const ContestsList = ({
     );
 
     const seeAllButtonClassName = useMemo(
-        () => `btn-see-all-contests-${contestState}`,
-        [ contestState ],
+        () => `btn-see-all-contests-${contestStatus}`,
+        [ contestStatus ],
     );
 
     const contestsSeeAllButtonClassName = useMemo(
@@ -40,8 +39,8 @@ const ContestsList = ({
     );
 
     const allContestCardsContainerClassName = useMemo(
-        () => `${contestState}-contests-cards-list`,
-        [ contestState ],
+        () => `${contestStatus}-contests-cards-list`,
+        [ contestStatus ],
     );
 
     const allContestsCardsContainer = useMemo(
@@ -50,8 +49,8 @@ const ContestsList = ({
     );
 
     const link = useMemo(
-        () => `/contests?status=${contestState.toString()}`,
-        [ contestState ],
+        () => `/contests?status=${contestStatus}`,
+        [ contestStatus ],
     );
 
     return (

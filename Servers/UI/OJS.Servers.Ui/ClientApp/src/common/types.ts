@@ -86,10 +86,12 @@ interface IStartParticipationValidationType {
 
 interface IStartParticipationResponseType {
     contest: IContestType;
+    participantId: number;
     contestIsCompete: boolean;
     lastSubmissionTime: Date;
     remainingTimeInMilliseconds: number;
     validationResult: IStartParticipationValidationType;
+    userSubmissionsTimeLimit: number;
     totalParticipantsCount: number;
     activeParticipantsCount: number;
 }

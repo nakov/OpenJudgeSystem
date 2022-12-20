@@ -24,7 +24,7 @@ const SubmissionsList = ({
     className = '',
 }: ISubmissionsListProps) => {
     const containerClassName = useMemo(
-        () => concatClassNames(className),
+        () => concatClassNames(styles.submissionsScroll, className),
         [ className ],
     );
 

@@ -1,13 +1,14 @@
-import React, { useCallback, useEffect } from 'react';
-import { useParams } from 'react-router';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType, ContestResultType } from '../../common/constants';
 import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading from '../../components/guidelines/headings/Heading';
+import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
 import { IContestResultsParticipationProblemType, IContestResultsType } from '../../hooks/contests/types';
 import { useCurrentContestResults } from '../../hooks/contests/use-current-contest-results';
+import { usePageTitles } from '../../hooks/use-page-titles';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 
@@ -65,7 +66,9 @@ const getProblemResultColumns = (results: IContestResultsType) => results.proble
 } as GridColDef));
 
 const ContestResultsPage = () => {
-    const { contestId, participationType, resultType } = useParams();
+    const { state: { params } } = useRouteUrlParams();
+    const { contestId, participationType, resultType } = params;
+
     const official = participationType === ContestParticipationType.Compete;
     const full = resultType === ContestResultType.Full;
 
@@ -73,6 +76,16 @@ const ContestResultsPage = () => {
         state: { contestResults },
         actions: { load },
     } = useCurrentContestResults();
+    const { actions: { setPageTitle } } = usePageTitles();
+
+    const contestResultsPageTitle = useMemo(
+        () => `Results for ${contestResults.name}`,
+        [ contestResults.name ],
+    );
+
+    useEffect(() => {
+        setPageTitle(contestResultsPageTitle);
+    }, [ contestResultsPageTitle, setPageTitle ]);
 
     const getColumns = useCallback((results: IContestResultsType) => {
         const problemResultColumns = getProblemResultColumns(results) || [];
