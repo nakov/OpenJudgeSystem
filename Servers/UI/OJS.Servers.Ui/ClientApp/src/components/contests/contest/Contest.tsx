@@ -163,12 +163,12 @@ const Contest = () => {
               type={HeadingType.primary}
               className={styles.contestHeading}
             >
-                {contest?.name}
+                {contestTitle}
                 -
                 {validationResult.message}
             </Heading>
         </div>
-    ), [ contest, validationResult ]);
+    ), [ validationResult, contestTitle ]);
 
     const renderContest = useCallback(
         () => (
@@ -201,7 +201,7 @@ const Contest = () => {
             </>
         ),
         [
-            contest,
+            contestTitle,
             navigationContestClassName,
             problemInfoClassName,
             renderScore,

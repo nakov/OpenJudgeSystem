@@ -13,6 +13,7 @@ public class ContestValidationService : IContestValidationService
     private readonly IContestsDataService contestsData;
 
     // TODO: Refactor this to comply with the validation services infrastructure
+    // Issue for it is https://github.com/SoftUni-Internal/exam-systems-issues/issues/365
     public ContestValidationService(IContestsDataService contestsData) => this.contestsData = contestsData;
 
     public async Task<ValidationResult> GetValidationResult((Contest, string, bool, bool) item)
