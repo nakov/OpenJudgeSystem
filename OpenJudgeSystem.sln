@@ -76,8 +76,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Servers.Administration.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Servers.Ui.Infrastructure", "Servers\UI\OJS.Servers.Ui.Infrastructure\OJS.Servers.Ui.Infrastructure.csproj", "{331E1783-7C12-4DFD-BE65-6A7662CFFFB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoCrudAdmin", "AutoCrudAdmin\src\AutoCrudAdmin\AutoCrudAdmin.csproj", "{34D1B441-2944-4F31-96EC-A50B0256F27D}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -223,9 +221,5 @@ Global
 		{331E1783-7C12-4DFD-BE65-6A7662CFFFB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{331E1783-7C12-4DFD-BE65-6A7662CFFFB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{331E1783-7C12-4DFD-BE65-6A7662CFFFB4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{34D1B441-2944-4F31-96EC-A50B0256F27D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{34D1B441-2944-4F31-96EC-A50B0256F27D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{34D1B441-2944-4F31-96EC-A50B0256F27D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{34D1B441-2944-4F31-96EC-A50B0256F27D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
