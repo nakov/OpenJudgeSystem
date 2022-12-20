@@ -1,20 +1,17 @@
 // import { WebStorageStateStore } from 'oidc-client';
-
-const appBaseUrl = window.URLS.UI_URL;
-const authorityBaseUrl = process.env.REACT_APP_PLATFORM_IDENTITY_BASE_URL;
 const authorityUrl = `${process.env.REACT_APP_PLATFORM_IDENTITY_BASE_URL}${process.env.REACT_APP_PLATFORM_IDENTITY_AUTHORITY_URL_POSTFIX}`;
 const authorityRegisterUrl = `${authorityUrl}/register`;
 // eslint-disable-next-line max-len
 
 const IDENTITY_CONFIG = {
-    authority: authorityBaseUrl,
+    authority: process.env.REACT_APP_PLATFORM_IDENTITY_BASE_URL,
     client_id: process.env.REACT_APP_IDENTITY_CLIENT_ID,
-    redirect_uri: `${appBaseUrl}/logincallback`,
+    redirect_uri: `${window.URLS.UI_URL}/logincallback`,
     login: `${authorityUrl}`,
     register: authorityRegisterUrl,
     automaticSilentRenew: false,
     loadUserInfo: true,
-    silent_redirect_uri: `${appBaseUrl}/silentrenew`,
+    silent_redirect_uri: `${window.URLS.UI_URL}/silentrenew`,
     scope: process.env.REACT_APP_IDENTITY_ALLOWED_SCOPES,
     response_type: process.env.REACT_APP_RESPONSE_TYPE,
     // stateStore: new WebStorageStateStore({ store: window.localStorage }),
@@ -23,8 +20,8 @@ const IDENTITY_CONFIG = {
 };
 
 const METADATA_OIDC = {
-    issuer: authorityBaseUrl,
-    jwks_uri: `${authorityBaseUrl}/.well-known/jwks`,
+    issuer: process.env.REACT_APP_PLATFORM_IDENTITY_BASE_URL,
+    jwks_uri: `${process.env.REACT_APP_PLATFORM_IDENTITY_BASE_URL}/.well-known/jwks`,
     authorization_endpoint: `${authorityUrl}/authorize`,
     token_endpoint: `${authorityUrl}/token`,
     userinfo_endpoint: `${authorityUrl}/userinfo`,

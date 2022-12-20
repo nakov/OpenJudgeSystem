@@ -37,8 +37,7 @@ const PageNav = () => {
         const type = isPrimary
             ? LinkButtonType.primary
             : LinkButtonType.secondary;
-
-        const btnClassName = styles.btn;
+        const { btn: btnClassName } = styles;
 
         return (
             <LinkButton to={link} id={id} text={name} type={type} className={btnClassName} />

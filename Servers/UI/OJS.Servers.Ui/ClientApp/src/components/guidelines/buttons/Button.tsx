@@ -84,8 +84,10 @@ const Button = ({
 }: IButtonProps) => {
     validateOnlyChildrenOrText(text, children);
 
+    // eslint-disable-next-line prefer-destructuring
     const typeClassName = classNameToType[type];
 
+    // eslint-disable-next-line prefer-destructuring
     const sizeClassName = sizeToClassName[size];
 
     const stateClassName = state === ButtonState.disabled
@@ -135,8 +137,10 @@ const LinkButton = ({
     validateOnlyChildrenOrText(text, children);
     const isDisabled = state === ButtonState.disabled;
 
+    // eslint-disable-next-line prefer-destructuring
     const typeClassName = classNameToType[type];
 
+    // eslint-disable-next-line prefer-destructuring
     const sizeClassName = sizeToClassName[size];
 
     const stateClassName = isDisabled
