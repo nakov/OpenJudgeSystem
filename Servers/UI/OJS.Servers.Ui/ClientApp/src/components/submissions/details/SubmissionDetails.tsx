@@ -90,24 +90,26 @@ const SubmissionDetails = () => {
                 return null;
             }
 
+            const { createdOn, modifiedOn, user: { userName } } = currentSubmission;
+
             return (
                 <div className={styles.submissionInfo}>
                     <p className={styles.submissionInfoParagraph}>
                         Created on:
                         {' '}
-                        {preciseFormatDate(currentSubmission.createdOn)}
+                        {preciseFormatDate(createdOn)}
                     </p>
                     <p className={styles.submissionInfoParagraph}>
                         Modified on:
                         {' '}
-                        {isNil(currentSubmission.modifiedOn)
+                        {isNil(modifiedOn)
                             ? 'never'
-                            : preciseFormatDate(currentSubmission?.modifiedOn)}
+                            : preciseFormatDate(modifiedOn)}
                     </p>
                     <p className={styles.submissionInfoParagraph}>
                         Username:
                         {' '}
-                        {currentSubmission.user.userName}
+                        {userName}
                     </p>
                 </div>
             );

@@ -9,17 +9,17 @@ const calculateTimeUntil = (date: Date) => intervalToDuration({
     end: date,
 });
 
-const formatDate = (
-    date: Date,
-    formatString = defaultDateTimeFormat,
-) => (moment().diff(date, 'days') > 3
-    ? moment(date).format(formatString)
-    : moment.utc(date).fromNow());
-
 const preciseFormatDate = (
     date: Date,
     formatString = defaultPreciseDateTimeFormat,
 ) => moment(date).format(formatString);
+
+const formatDate = (
+    date: Date,
+    formatString = defaultDateTimeFormat,
+) => (moment().diff(date, 'days') > 3
+    ? preciseFormatDate(date, formatString)
+    : moment.utc(date).fromNow());
 
 const convertToSecondsRemaining = (date: Date) => {
     const { days, hours, minutes, seconds } = intervalToDuration({
