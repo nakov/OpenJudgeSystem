@@ -73,7 +73,10 @@ public class ContestValidationService : IContestValidationService
         var participant = contest.Participants.FirstOrDefault(p => p.UserId == userId && p.IsOfficial);
         if (participant != null)
         {
-            return participant.ParticipationEndTime >= DateTime.Now;
+            if (participant.ParticipationEndTime != null)
+            {
+                return participant.ParticipationEndTime >= DateTime.Now;
+            }
         }
 
         if (!official && contest.PracticeEndTime.HasValue)
