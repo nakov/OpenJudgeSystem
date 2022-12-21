@@ -7,8 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\AutoCrudAdmin\src\AutoCrudAdmin\AutoCrudAdmin.csproj" />
       <ProjectReference Include="..\..\Infrastructure\OJS.Servers.Infrastructure\OJS.Servers.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AutoCrudAdmin" Version="1.1.19" />
     </ItemGroup>
     
 </Project>
