@@ -53,7 +53,6 @@ interface IGetSubmissionResultsByProblemUrlParams {
 interface IGetSubmissionResultsByProblemAndUserUrlParams {
     problemId: number;
     isOfficial: boolean;
-    take: number;
     userId: string;
 }
 
