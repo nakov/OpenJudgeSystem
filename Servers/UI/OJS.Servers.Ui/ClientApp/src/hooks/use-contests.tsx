@@ -44,7 +44,7 @@ interface IContestsContext {
         clearSorts: () => void;
         toggleParam: (param: IFilter | ISort) => void;
         changePage: (pageNumber: number) => void;
-        getContestByProblemId: (problemId: number) => void;
+        loadContestByProblemId: (problemId: number) => void;
     };
 }
 
@@ -222,7 +222,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         [ currentPage, filters, sortingTypes ],
     );
 
-    const getContestByProblemId = useCallback((problemId: number) => {
+    const loadContestByProblemId = useCallback((problemId: number) => {
         if (isNil(problemId)) {
             return;
         }
@@ -319,7 +319,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
                 clearSorts,
                 toggleParam,
                 changePage,
-                getContestByProblemId,
+                loadContestByProblemId,
             },
         }),
         [
@@ -335,7 +335,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             possibleSortingTypes,
             sortingTypes,
             toggleParam,
-            getContestByProblemId,
+            loadContestByProblemId,
             contest,
         ],
     );

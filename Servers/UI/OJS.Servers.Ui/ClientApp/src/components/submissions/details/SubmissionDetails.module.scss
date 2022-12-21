@@ -21,10 +21,12 @@
   @extend %columnsThree;
 }
 
-.lessThan {
+.leftArrow {
+  bottom: -3px;
   color: colors.$light-blue-color;
   float: left;
-  font-size: 1.2em;
+  left: -260px;
+  position: relative;
 }
 
 .navigation,

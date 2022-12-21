@@ -11,6 +11,8 @@ import concatClassNames from '../../../utils/class-names';
 import CodeEditor from '../../code-editor/CodeEditor';
 import { ButtonSize, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
+import IconSize from '../../guidelines/icons/common/icon-sizes';
+import LeftArrowIcon from '../../guidelines/icons/LeftArrowIcon';
 import SubmissionResults from '../submission-results/SubmissionResults';
 import RefreshableSubmissionsList from '../submissions-list/RefreshableSubmissionsList';
 
@@ -29,39 +31,33 @@ const SubmissionDetails = () => {
     const { getAdministrationRetestSubmissionInternalUrl } = useAppUrls();
     const {
         state: { contest },
-        actions: { getContestByProblemId },
+        actions: { loadContestByProblemId },
     } = useContests();
 
     const { getRegisterContestTypeUrl } = useAppUrls();
-
-    useEffect(() => {
-        const reload = sessionStorage.getItem('reload');
-        if (isNil(reload)) {
-            sessionStorage.reload = true;
-            window.location.reload();
-        } else {
-            sessionStorage.removeItem('reload');
-        }
-    }, []);
 
     useEffect(() => {
         if (isNil(currentSubmission)) {
             return;
         }
 
-        getContestByProblemId(currentSubmission.problem.id);
-    }, [ currentSubmission, getContestByProblemId ]);
+        const { problem: { id } } = currentSubmission;
+
+        loadContestByProblemId(id);
+    }, [ currentSubmission, loadContestByProblemId ]);
 
     const submissionTitle = useMemo(
         () => `Submission №${currentSubmission?.id}`,
         [ currentSubmission?.id ],
     );
 
+    const { canBeCompeted } = contest;
+
     const participationType = useMemo(
-        () => contest.canBeCompeted
+        () => canBeCompeted
             ? ContestParticipationType.Compete
             : ContestParticipationType.Practice,
-        [ contest ],
+        [ canBeCompeted ],
     );
 
     useEffect(() => {
@@ -76,6 +72,11 @@ const SubmissionDetails = () => {
     const detailsHeadingText = useMemo(
         () => `Details #${currentSubmission?.id}`,
         [ currentSubmission?.id ],
+    );
+
+    const registerContestTypeUrl = useMemo(
+        () => getRegisterContestTypeUrl({ id: contest.id, participationType }),
+        [ contest.id, participationType, getRegisterContestTypeUrl ],
     );
 
     const { submissionType } = currentSubmission || {};
@@ -138,13 +139,11 @@ const SubmissionDetails = () => {
                   type={HeadingType.secondary}
                   className={styles.taskHeading}
                 >
-                    <span className={styles.lessThan}>
-                        &lt;
-                    </span>
+                    <LeftArrowIcon className={styles.leftArrow} size={IconSize.Large} />
                     <LinkButton
                       type={LinkButtonType.secondary}
                       size={ButtonSize.small}
-                      to={getRegisterContestTypeUrl({ id: contest.id, participationType })}
+                      to={registerContestTypeUrl}
                       className={styles.backBtn}
                       text="Back To Contest"
                     />

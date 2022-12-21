@@ -36,9 +36,9 @@ public class ContestsController : BaseApiController
     [HttpGet("{problemId:int}")]
     [ProducesResponseType(typeof(ContestServiceModel), Status200OK)]
     public async Task<IActionResult> ByProblem(int problemId)
-    => await this.contestsBusinessService
-        .GetContestByProblem(problemId)
-        .ToOkResult();
+        => await this.contestsBusinessService
+            .GetContestByProblem(problemId)
+            .ToOkResult();
 
     /// <summary>
     /// Submits a password value from the user and validates it against contest configurations.

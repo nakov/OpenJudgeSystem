@@ -15,6 +15,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.Common.Models;
     using OJS.Services.Infrastructure.Constants;
+    using OJS.Common;
 
     public class ContestsBusinessService : IContestsBusinessService
     {
@@ -76,7 +77,7 @@ namespace OJS.Services.Ui.Business.Implementations
            var contestServiceModel = await this.contestsData.GetByProblemId<ContestServiceModel>(problemId);
            if (contestServiceModel == null)
            {
-               throw new BusinessServiceException("Contest not found");
+               throw new BusinessServiceException(GlobalConstants.ErrorMessages.ContestNotFound);
            }
 
            return contestServiceModel;
