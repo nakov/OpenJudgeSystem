@@ -56,8 +56,8 @@ const HomeHeader = () => {
 
     const renderIcon = (type: string) => {
         const props = { size: IconSize.ExtraLarge, children: {} };
-        // eslint-disable-next-line prefer-destructuring
-        const func = keyToIconComponent[type];
+
+        const { [type]: func } = keyToIconComponent;
 
         return func(props);
     };

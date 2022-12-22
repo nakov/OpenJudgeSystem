@@ -38,11 +38,8 @@ const PageNav = () => {
             ? LinkButtonType.primary
             : LinkButtonType.secondary;
 
-        // eslint-disable-next-line prefer-destructuring
-        const btnClassName = styles.btn;
-
         return (
-            <LinkButton to={link} id={id} text={name} type={type} className={btnClassName} />
+            <LinkButton to={link} id={id} text={name} type={type} className={styles.btn} />
         );
     };
 
