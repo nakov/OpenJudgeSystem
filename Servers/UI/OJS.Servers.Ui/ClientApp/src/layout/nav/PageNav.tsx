@@ -37,7 +37,9 @@ const PageNav = () => {
         const type = isPrimary
             ? LinkButtonType.primary
             : LinkButtonType.secondary;
-        const { btn: btnClassName } = styles;
+
+        // eslint-disable-next-line prefer-destructuring
+        const btnClassName = styles.btn;
 
         return (
             <LinkButton to={link} id={id} text={name} type={type} className={btnClassName} />
