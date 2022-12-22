@@ -6,6 +6,7 @@ import { useAppUrls } from '../../../hooks/use-app-urls';
 import { useAuth } from '../../../hooks/use-auth';
 import { usePageTitles } from '../../../hooks/use-page-titles';
 import concatClassNames from '../../../utils/class-names';
+import { preciseFormatDate } from '../../../utils/dates';
 import CodeEditor from '../../code-editor/CodeEditor';
 import { ButtonSize, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
@@ -83,6 +84,39 @@ const SubmissionDetails = () => {
         [ canAccessAdministration, getAdministrationRetestSubmissionInternalUrl ],
     );
 
+    const renderSubmissionInfo = useCallback(
+        () => {
+            if (!canAccessAdministration || isNil(currentSubmission)) {
+                return null;
+            }
+
+            const { createdOn, modifiedOn, user: { userName } } = currentSubmission;
+
+            return (
+                <div className={styles.submissionInfo}>
+                    <p className={styles.submissionInfoParagraph}>
+                        Created on:
+                        {' '}
+                        {preciseFormatDate(createdOn)}
+                    </p>
+                    <p className={styles.submissionInfoParagraph}>
+                        Modified on:
+                        {' '}
+                        {isNil(modifiedOn)
+                            ? 'never'
+                            : preciseFormatDate(modifiedOn)}
+                    </p>
+                    <p className={styles.submissionInfoParagraph}>
+                        Username:
+                        {' '}
+                        {userName}
+                    </p>
+                </div>
+            );
+        },
+        [ currentSubmission, canAccessAdministration ],
+    );
+
     if (isNil(currentSubmission)) {
         return <div>No details fetched.</div>;
     }
@@ -99,6 +133,7 @@ const SubmissionDetails = () => {
                   className={styles.submissionsList}
                 />
                 { renderRetestButton() }
+                { renderSubmissionInfo() }
             </div>
             <div className={styles.code}>
                 <Heading
