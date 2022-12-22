@@ -33,6 +33,8 @@ interface ISubmissionType {
     isOfficial: boolean;
     isCompiledSuccessfully: boolean;
     compilerComment: string;
+    createdOn: Date;
+    modifiedOn?: Date;
 }
 
 interface ITestRunDetailsType extends ITestRunType {
