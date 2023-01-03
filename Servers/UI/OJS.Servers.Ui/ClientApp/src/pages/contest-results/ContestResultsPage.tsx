@@ -79,8 +79,10 @@ const ContestResultsPage = () => {
     const { actions: { setPageTitle } } = usePageTitles();
 
     const contestResultsPageTitle = useMemo(
-        () => `Results for ${contestResults.name}`,
-        [ contestResults.name ],
+        () => isNil(contestResults)
+            ? 'Loading'
+            : `Results for ${contestResults.name}`,
+        [ contestResults ],
     );
 
     useEffect(() => {
@@ -100,12 +102,22 @@ const ContestResultsPage = () => {
         )();
     }, [ contestId, official, full, load ]);
 
+    const { results } = contestResults || {};
+
+    if (isNil(results)) {
+        return (
+            <div>
+                Loading results
+            </div>
+        );
+    }
+
     return (
         <>
             <Heading>
                 {participationType}
                 {' '}
-                results for constest -
+                results for contest -
                 {' '}
                 {contestResults.name}
             </Heading>
