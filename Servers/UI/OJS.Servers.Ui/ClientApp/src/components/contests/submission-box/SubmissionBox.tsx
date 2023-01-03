@@ -1,12 +1,16 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
 import { ISubmissionTypeType } from '../../../common/types';
 import { useSubmissions } from '../../../hooks/submissions/use-submissions';
+import { useCurrentContest } from '../../../hooks/use-current-contest';
 import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
+import { convertToTwoDigitValues } from '../../../utils/dates';
 import CodeEditor from '../../code-editor/CodeEditor';
-import { Button } from '../../guidelines/buttons/Button';
+import AlertBox, { AlertBoxType } from '../../guidelines/alert-box/AlertBox';
+import { Button, ButtonState } from '../../guidelines/buttons/Button';
+import Countdown, { ICountdownRemainingType, Metric } from '../../guidelines/countdown/Countdown';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List, { Orientation } from '../../guidelines/lists/List';
 import ExecutionTypeSelector from '../execution-type-selector/ExecutionTypeSelector';
@@ -14,20 +18,33 @@ import ExecutionTypeSelector from '../execution-type-selector/ExecutionTypeSelec
 import styles from './SubmissionBox.module.scss';
 
 const SubmissionBox = () => {
-    const { actions: { selectSubmissionTypeById } } = useSubmissions();
+    const [ submitLimit, setSubmitLimit ] = useState<number>(0);
+    const {
+        state: {
+            contest,
+            userSubmissionsTimeLimit,
+            isSubmitAllowed,
+        },
+    } = useCurrentContest();
     const {
         state: {
             submissionCode,
             selectedSubmissionType,
+            submitMessage,
+            setSubmitMessage,
+            isSubmissionSuccessful,
         },
         actions: {
             submit,
             updateSubmissionCode,
+            selectSubmissionTypeById,
         },
     } = useSubmissions();
 
     const { state: { currentProblem } } = useProblems();
     const { allowedSubmissionTypes } = currentProblem || {};
+
+    const showSubmissionLimitTimer = useMemo(() => submitLimit > 0, [ submitLimit ]);
 
     const handleCodeChanged = useCallback(
         (newValue: string) => {
@@ -85,10 +102,91 @@ const SubmissionBox = () => {
         [ allowedSubmissionTypes, currentProblem, renderSubmissionTypesSelectors ],
     );
 
+    const restartSubmissionTimeLimitCountdown = useCallback((force = false) => {
+        if (!force) {
+            return;
+        }
+
+        if (!isNil(contest) && contest.limitBetweenSubmissions !== 0) {
+            setSubmitLimit(contest.limitBetweenSubmissions as number);
+        }
+    }, [ contest ]);
+
     const handleOnSubmit = useCallback(async () => {
         await submit();
         updateSubmissionCode('');
     }, [ submit, updateSubmissionCode ]);
+
+    const renderSubmissionLimitCountdown = useCallback((remainingTime: ICountdownRemainingType) => {
+        const { minutes, seconds } = convertToTwoDigitValues(remainingTime);
+
+        return (
+            <p>
+                <span>
+                    {minutes}
+                    :
+                    {seconds}
+                </span>
+                {' '}
+                until next submit
+            </p>
+        );
+    }, []);
+
+    const renderCountdown = useCallback(() => {
+        if (!showSubmissionLimitTimer) {
+            return null;
+        }
+
+        return (
+            <Countdown
+              duration={submitLimit}
+              metric={Metric.seconds}
+              renderRemainingTime={renderSubmissionLimitCountdown}
+              handleOnCountdownEnd={() => {
+                  setSubmitLimit(0);
+              }}
+            />
+        );
+    }, [ showSubmissionLimitTimer, renderSubmissionLimitCountdown, submitLimit ]);
+
+    const renderSubmitBtn = useCallback(() => {
+        const state = !isSubmitAllowed || showSubmissionLimitTimer
+            ? ButtonState.disabled
+            : ButtonState.enabled;
+
+        return (
+            <Button
+              text="Submit"
+              state={state}
+              onClick={handleOnSubmit}
+            />
+        );
+    }, [ handleOnSubmit, showSubmissionLimitTimer, isSubmitAllowed ]);
+
+    const renderSubmitMessage = useCallback(() => {
+        if (isNil(submitMessage)) {
+            return null;
+        }
+
+        return (
+            <AlertBox
+              message={submitMessage}
+              type={AlertBoxType.error}
+              onClose={() => setSubmitMessage(null)}
+            />
+        );
+    }, [ setSubmitMessage, submitMessage ]);
+
+    useEffect(() => {
+        setSubmitLimit(userSubmissionsTimeLimit);
+    }, [ userSubmissionsTimeLimit ]);
+
+    useEffect(() => {
+        if (!isNil(isSubmissionSuccessful) && isSubmissionSuccessful) {
+            restartSubmissionTimeLimitCountdown(true);
+        }
+    }, [ restartSubmissionTimeLimitCountdown, isSubmissionSuccessful ]);
 
     const taskText = 'Task: ';
     const executionTypeListClass = 'executionTypeLis';
@@ -120,12 +218,13 @@ const SubmissionBox = () => {
                             {renderSubmissionTypesSelectorsList()}
                         </div>
                         <div className={styles.submitButtonContainer}>
-                            <Button
-                              text="Submit"
-                              onClick={handleOnSubmit}
-                            />
+                            {renderSubmitBtn()}
                         </div>
                     </div>
+                    <div className={styles.submitCountdownWrapper}>
+                        { renderCountdown() }
+                    </div>
+                    { renderSubmitMessage() }
                 </div>
             </div>
         </div>

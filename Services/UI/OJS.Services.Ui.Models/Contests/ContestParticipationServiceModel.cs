@@ -11,13 +11,21 @@ namespace OJS.Services.Ui.Models.Contests
     {
         public ContestServiceModel Contest { get; set; }
 
+        public int ParticipantId { get; set; }
+
         public DateTime? LastSubmissionTime { get; set; }
 
         public bool ContestIsCompete { get; set; }
 
+        public int? UserSubmissionsTimeLimit { get; set; }
+
         public double? RemainingTimeInMilliseconds { get; set; }
 
         public bool ShouldEnterPassword { get; set; }
+
+        public  int TotalParticipantsCount { get; set; }
+
+        public int ActiveParticipantsCount { get; set; }
 
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<Participant, ContestParticipationServiceModel>()
@@ -30,6 +38,10 @@ namespace OJS.Services.Ui.Models.Contests
                     s.ParticipationEndTime.HasValue
                         ? (s.ParticipationEndTime.Value - DateTime.Now).TotalMilliseconds
                         : 0))
+                .ForMember(d => d.TotalParticipantsCount, opt => opt.MapFrom(s =>
+                    s.Contest.Participants.Count))
+                .ForMember(d => d.ActiveParticipantsCount, opt => opt.MapFrom(s =>
+                    s.Contest.Participants.Count(x=> x.ParticipationStartTime <= DateTime.Now && DateTime.Now < x.ParticipationEndTime)))
                 .ForAllOtherMembers(opt => opt.Ignore());
     }
 }

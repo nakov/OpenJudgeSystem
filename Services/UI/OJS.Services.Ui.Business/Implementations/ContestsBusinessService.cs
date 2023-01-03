@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+using OJS.Common.Enumerations;
 
 namespace OJS.Services.Ui.Business.Implementations
 {
@@ -20,7 +20,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
     public class ContestsBusinessService : IContestsBusinessService
     {
-        private const int DefaultContestsToTake = 4;
+        private const int DefaultContestsToTake = 3;
         private const int DefaultContestsPerPage = 12;
 
         private readonly IContestsDataService contestsData;
@@ -134,7 +134,12 @@ namespace OJS.Services.Ui.Business.Implementations
             }
 
             var participationModel = participant.Map<ContestParticipationServiceModel>();
+            participationModel.ParticipantId = participant.Id;
             participationModel.ContestIsCompete = model.IsOfficial;
+            participationModel.UserSubmissionsTimeLimit = await this.participantsBusiness.GetParticipantLimitBetweenSubmissions(
+                    participant.Id,
+                    contest.LimitBetweenSubmissions);
+
             var participantsList = new List<int> { participant.Id, };
 
             var maxParticipationScores = await this.participantScoresData
@@ -163,7 +168,7 @@ namespace OJS.Services.Ui.Business.Implementations
         private async Task<Participant> AddNewParticipantToContest(Contest contest, bool official, string userId,
             bool isUserAdmin)
         {
-            if (contest.IsOnline &&
+            if (contest.Type is not (ContestType.OnlinePracticalExam and ContestType.OnlinePracticalExam) &&
                 official &&
                 !isUserAdmin &&
                 !this.IsUserLecturerInContest(contest, userId) &&
@@ -206,7 +211,7 @@ namespace OJS.Services.Ui.Business.Implementations
             }
         }
 
-        public async Task<PagedResult<ContestForListingServiceModel>> GetAllByFilters(
+        public async Task<PagedResult<ContestForListingServiceModel>> GetAllByFiltersAndSorting(
             ContestFiltersServiceModel? model)
         {
             model ??= new ContestFiltersServiceModel();
@@ -222,7 +227,7 @@ namespace OJS.Services.Ui.Business.Implementations
                     .Concat(subcategories.Select(cc => cc.Id).ToList());
             }
 
-            return await this.contestsData.GetAllAsPageByFilters<ContestForListingServiceModel>(model);
+            return await this.contestsData.GetAllAsPageByFiltersAndSorting<ContestForListingServiceModel>(model);
         }
 
         private bool IsUserLecturerInContest(Contest contest, string userId) =>

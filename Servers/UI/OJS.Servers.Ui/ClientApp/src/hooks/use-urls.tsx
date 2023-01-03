@@ -3,11 +3,12 @@ import isNil from 'lodash/isNil';
 
 import {
     IAllContestsUrlParams,
-    IDownloadProblemResourceUrlParams,
+    IDownloadProblemResourceUrlParams, IGetContestParticipationScoresForParticipantUrlParams,
     IGetContestResultsParams,
     IGetSubmissionDetailsByIdUrlParams,
+    IGetSubmissionResultsByProblemAndUserUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
-    IRegisterForContestTypeUrlParams,
+    IRetestSubmissionUrlParams,
     IStartContestParticipationUrlParams,
     ISubmitContestPasswordUrlParams,
 } from '../common/url-types';
@@ -21,13 +22,14 @@ interface IUrlsContext {
     getProfileInfoUrl: () => string;
     getSubmissionsForProfileUrl: () => string;
     getParticipationsForProfileUrl: () => string;
-    getRegisterContestTypeUrl: (params: IRegisterForContestTypeUrlParams) => string;
     getIndexContestsUrl: () => string;
     getAllContestsUrl: (params: IAllContestsUrlParams) => string;
     getRegisterForContestUrl: (params: IStartContestParticipationUrlParams) => string;
     getSubmitContestPasswordUrl: (params: ISubmitContestPasswordUrlParams) => string;
     getStartContestParticipationUrl: (params: IStartContestParticipationUrlParams) => string;
+    getContestParticipantScoresForParticipantUrl: (params: IGetContestParticipationScoresForParticipantUrlParams) => string;
     getSubmissionResultsByProblemUrl: (params: IGetSubmissionResultsByProblemUrlParams) => string;
+    getSubmissionResultsByProblemAndUserUrl: (params: IGetSubmissionResultsByProblemAndUserUrlParams) => string;
     getSubmissionsDetailsUrl: () => string;
     getSubmissionDetailsByIdUrl: (params: IGetSubmissionDetailsByIdUrlParams) => string;
     getSubmitUrl: () => string;
@@ -36,6 +38,7 @@ interface IUrlsContext {
     getAllContestStrategyFiltersUrl: () => string;
     getContestResultsUrl: (params: IGetContestResultsParams) => string;
     getHomeStatisticsUrl: () => string;
+    getAdministrationRetestSubmission: (params: IRetestSubmissionUrlParams) => string;
 }
 
 const UrlsContext = createContext<IUrlsContext>({} as IUrlsContext);
@@ -53,6 +56,7 @@ const getLogoutUrl = () => `${baseUrl}/Account/Logout`;
 const administrationBaseUrl = window.URLS.ADMINISTRATION_URL;
 const getAdministrationContestsGridUrl = () => `${administrationBaseUrl}/Contests`;
 const getAdministrationNavigation = () => '/administration';
+const getAdministrationRetestSubmission = ({ id }: IRetestSubmissionUrlParams) => `${administrationBaseUrl}/Submissions/Retest?PK=${id}`;
 
 // profile
 const getProfileInfoUrl = () => `${baseApiUrl}/Users/GetProfileInfo`;
@@ -60,14 +64,14 @@ const getSubmissionsForProfileUrl = () => `${baseApiUrl}/Submissions/GetForProfi
 const getParticipationsForProfileUrl = () => `${baseApiUrl}/Participations/GetForProfile`;
 
 // contests
-const getRegisterContestTypeUrl = ({
-    id,
-    participationType,
-}: IRegisterForContestTypeUrlParams) => `/Contests/${id}/Register/${participationType}`;
-
 const getIndexContestsUrl = () => `${baseApiUrl}/Contests/GetForHomeIndex`;
-const getAllContestsUrl = ({ filters, page }: IAllContestsUrlParams) => {
+const getAllContestsUrl = ({ filters, sorting, page }: IAllContestsUrlParams) => {
     const filtersQuery = `${filters
+        .map(({ value, type }) => `${type.toLowerCase()}=${value}`)
+        .join('&')
+    }`;
+
+    const sortingQuery = `${sorting
         .map(({ value, type }) => `${type.toLowerCase()}=${value}`)
         .join('&')
     }`;
@@ -76,7 +80,7 @@ const getAllContestsUrl = ({ filters, page }: IAllContestsUrlParams) => {
         ? ''
         : `page=${page}`;
 
-    return `${baseApiUrl}/Contests/GetAll?${filtersQuery}&${pageQuery}`;
+    return `${baseApiUrl}/Contests/GetAll?${filtersQuery}&${sortingQuery}&${pageQuery}`;
 };
 
 const getRegisterForContestUrl = ({
@@ -94,6 +98,10 @@ const getStartContestParticipationUrl = ({
     isOfficial,
 }: IStartContestParticipationUrlParams) => `${baseApiUrl}/Compete/Index/${id}?official=${isOfficial}`;
 
+const getContestParticipantScoresForParticipantUrl =
+    ({ participantId }: IGetContestParticipationScoresForParticipantUrlParams) => `
+    ${baseApiUrl}/ParticipantScores/GetScoresForParticipant/${participantId}`;
+
 const getCategoriesTreeUrl =
     () => `${baseApiUrl}/ContestCategories/GetCategoriesTree`;
 
@@ -110,6 +118,14 @@ const getSubmissionResultsByProblemUrl = ({
     take,
 }: IGetSubmissionResultsByProblemUrlParams) => `
     ${baseApiUrl}/Submissions/GetSubmissionResultsByProblem/${id}?isOfficial=${isOfficial}&take=${take}`;
+
+const getSubmissionResultsByProblemAndUserUrl = ({
+    problemId,
+    isOfficial,
+    userId,
+}: IGetSubmissionResultsByProblemAndUserUrlParams) => `
+${baseApiUrl}/Submissions/GetSubmissionResultsByProblemAndUser/${problemId}/${userId}?isOfficial=${isOfficial}`;
+
 const getSubmissionsDetailsUrl = () => `${baseApiUrl}/Submissions/Details`;
 const getSubmissionDetailsByIdUrl =
     ({ submissionId }: IGetSubmissionDetailsByIdUrlParams) => `${getSubmissionsDetailsUrl()}/${submissionId}`;
@@ -132,13 +148,14 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
             getLogoutUrl,
             getAdministrationContestsGridUrl,
             getAdministrationNavigation,
-            getRegisterContestTypeUrl,
             getAllContestsUrl,
             getRegisterForContestUrl,
             getSubmitContestPasswordUrl,
             getStartContestParticipationUrl,
+            getContestParticipantScoresForParticipantUrl,
             getDownloadProblemResourceUrl,
             getSubmissionResultsByProblemUrl,
+            getSubmissionResultsByProblemAndUserUrl,
             getIndexContestsUrl,
             getProfileInfoUrl,
             getSubmissionsDetailsUrl,
@@ -150,6 +167,7 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
             getAllContestStrategyFiltersUrl,
             getContestResultsUrl,
             getHomeStatisticsUrl,
+            getAdministrationRetestSubmission,
         }),
         [],
     );

@@ -1,13 +1,12 @@
-﻿using AutoMapper;
-using OJS.Common.Extensions.Strings;
-using OJS.Services.Ui.Models.Users;
-using System.Linq;
+﻿using System;
 
 namespace OJS.Services.Ui.Models.Submissions
 {
+    using AutoMapper;
+    using OJS.Services.Ui.Models.Users;
+    using System.Linq;
     using OJS.Data.Models.Submissions;
     using SoftUni.AutoMapper.Infrastructure.Models;
-    using System;
     using System.Collections.Generic;
 
 
@@ -33,6 +32,14 @@ namespace OJS.Services.Ui.Models.Submissions
         public SubmissionTypeForSubmissionDetailsServiceModel SubmissionType { get; set; }
 
         public bool IsOfficial { get; set; }
+
+        public bool IsCompiledSuccessfully { get; set; }
+
+        public string CompilerComment { get; set; }
+        
+        public DateTime CreatedOn { get; set; }
+
+        public DateTime? ModifiedOn { get; set; }
 
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<Submission, SubmissionDetailsServiceModel>()

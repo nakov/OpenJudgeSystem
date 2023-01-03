@@ -1,13 +1,12 @@
-using OJS.Services.Ui.Models.Problems;
-using OJS.Services.Ui.Models.Submissions;
-using System.Collections;
-using System.Collections.Generic;
-
 namespace OJS.Services.Ui.Business
 {
     using OJS.Data.Models.Submissions;
     using SoftUni.Services.Infrastructure;
     using System.Threading.Tasks;
+    using OJS.Services.Ui.Models.Participations;
+    using OJS.Services.Ui.Models.Problems;
+    using OJS.Services.Ui.Models.Submissions;
+    using System.Collections.Generic;
 
     public interface IParticipantScoresBusinessService : IService
     {
@@ -21,5 +20,7 @@ namespace OJS.Services.Ui.Business
             bool isOfficial);
 
         Task<IEnumerable<ParticipantScoreModel>> GetByProblemForParticipants(IEnumerable<int> participantIds, int problemId);
+
+        Task<IEnumerable<ParticipationForProblemMaxScoreServiceModel>> GetAllForParticipant(int participantId);
     }
 }
