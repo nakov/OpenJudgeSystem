@@ -45,6 +45,11 @@
         public int OrderBy { get; set; }
 
         /// <summary>
+        /// Gets or sets a predefined skeleton for the task
+        /// </summary>
+        public byte[] SolutionSkeleton { get; set; }
+
+        /// <summary>
         /// Gets or sets Problem specific dependencies that will be compiled and executed with the user code
         /// such as Solution skeletons, mocks or data and text files.
         /// </summary>
