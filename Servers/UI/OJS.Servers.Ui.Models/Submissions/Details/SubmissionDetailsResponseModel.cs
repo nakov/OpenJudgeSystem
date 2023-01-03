@@ -2,6 +2,7 @@
 using OJS.Servers.Ui.Models.Users;
 using OJS.Services.Ui.Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Models;
+using System;
 using System.Collections.Generic;
 
 namespace OJS.Servers.Ui.Models.Submissions.Details
@@ -31,6 +32,10 @@ namespace OJS.Servers.Ui.Models.Submissions.Details
         public bool IsCompiledSuccessfully { get; set; }
 
         public string CompilerComment { get; set; }
+
+        public DateTime CreatedOn { get; set; }
+
+        public DateTime? ModifiedOn { get; set; }
     }
 
     public class
