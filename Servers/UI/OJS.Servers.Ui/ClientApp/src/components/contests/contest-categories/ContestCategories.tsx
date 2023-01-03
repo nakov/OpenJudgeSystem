@@ -1,6 +1,8 @@
 import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
+import ICategoryStrategiesTypes from '../../../common/category-strategies-types';
+import { Anything } from '../../../common/common-types';
 import { FilterType, IFilter } from '../../../common/contest-types';
 import ITreeItemType from '../../../common/tree-types';
 import { useContestCategories } from '../../../hooks/use-contest-categories';
@@ -68,7 +70,7 @@ const ContestCategories = ({
         [ defaultSelected, categoriesFlat, getParents ],
     );
 
-    const handleTreeLabelClick = useCallback((node: ITreeItemType) => {
+    const handleTreeLabelClick = useCallback((node: ICategoryStrategiesTypes) => {
         const filter = possibleFilters.find(({ value }) => value.toString() === node.id.toString());
         const category = categoriesFlat.find(({ id }) => id.toString() === node.id.toString());
 
@@ -85,40 +87,61 @@ const ContestCategories = ({
         [ possibleFilters ],
     );
 
-    const newStrategyFilters = useCallback(
-        (id: string, node: ITreeItemType) => {
-            const filterProps = [];
-            if (currentStrategyFilters.map((csf) => csf.categoryId).includes(id)) {
-                currentStrategyFilters.filter((csf) => csf.categoryId !== id);
-            } else {
-                const strategyFiltersToAdd : IFilter[] = [];
-                node.allowedStrategyTypes.forEach((value) => {
-                    const currAllowedStrategyId = value.id.toString();
+    const filterProps = useMemo(
+        () => [] as any,
+        [],
+    );
 
-                    const strategyToFind = strategyFilterGroup.find((x) => x.value === currAllowedStrategyId);
+    const addNewStrategyFilters = useCallback(
+        (id: string, node: ICategoryStrategiesTypes) => {
+            const strategyFiltersToAdd: IFilter[] = [];
+            node.allowedStrategyTypes.forEach((value) => {
+                const currAllowedStrategyId = value.id.toString();
 
-                    if (!isNil(strategyToFind)) {
-                        strategyFiltersToAdd.push(strategyToFind);
-                    }
-                });
+                const strategyToFind = strategyFilterGroup.find((x) => x.value === currAllowedStrategyId);
 
-                filterProps.push({
-                    categoryId: id,
-                    strategies: strategyFiltersToAdd,
-                });
-            }
+                if (!isNil(strategyToFind)) {
+                    strategyFiltersToAdd.push(strategyToFind);
+                }
+            });
 
-            const strategyFilters = filterProps.flatMap((s) => s.strategies)
-                .reduce((strategyFilter: IFilter[], currentStrategyFilter) => {
-                    strategyFilter.push(currentStrategyFilter);
-                    return strategyFilter;
-                }, []);
+            filterProps.push({
+                categoryId: id,
+                strategies: strategyFiltersToAdd,
+            });
+
+            const flatteredStrategyFilters = filterProps.flatMap((s: Anything) => s.strategies);
 
             setCurrentCurrentStrategyFilters(filterProps);
 
-            setStrategyFilters(strategyFilters);
+            setStrategyFilters(Array.from(new Set(flatteredStrategyFilters)));
         },
-        [ currentStrategyFilters, setStrategyFilters, strategyFilterGroup ],
+        [ filterProps, setStrategyFilters, strategyFilterGroup ],
+    );
+
+    const removeOldStrategyFilters = useCallback(
+        (id: string) => {
+            const strategyFilterToFind = filterProps.find((fp : Anything) => fp.categoryId === id);
+
+            filterProps.splice(strategyFilterToFind, 1);
+
+            const flatteredStrategyFilters = filterProps.flatMap((s: Anything) => s.strategies);
+
+            setStrategyFilters(flatteredStrategyFilters);
+        },
+        [ filterProps, setStrategyFilters ],
+    );
+
+    const strategyFilters = useCallback(
+        (id: string, node: ICategoryStrategiesTypes) => {
+            const strategyFilterToFind = currentStrategyFilters.find(({ categoryId }) => categoryId === id);
+            if (isNil(strategyFilterToFind)) {
+                addNewStrategyFilters(id, node);
+            } else {
+                removeOldStrategyFilters(id);
+            }
+        },
+        [ addNewStrategyFilters, currentStrategyFilters, removeOldStrategyFilters ],
     );
 
     return (
@@ -135,7 +158,7 @@ const ContestCategories = ({
               defaultSelected={defaultSelected}
               defaultExpanded={defaultExpanded}
               treeItemHasTooltip
-              onHandleTreeItemClick={newStrategyFilters}
+              onTreeItemClick={strategyFilters}
             />
         </div>
     );

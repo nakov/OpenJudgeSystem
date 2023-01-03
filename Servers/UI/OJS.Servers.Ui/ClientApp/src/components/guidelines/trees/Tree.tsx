@@ -14,12 +14,12 @@ import styles from './Tree.module.scss';
 
 interface ITreeProps {
     items: ITreeItemType[];
-    onSelect: (node: ITreeItemType) => void;
+    onSelect: (node: any) => void;
     defaultSelected?: string;
     defaultExpanded?: string[];
     itemFunc?: (item: ITreeItemType) => React.ReactElement;
     treeItemHasTooltip?: boolean;
-    onHandleTreeItemClick?: (id: string, node: ITreeItemType) => void;
+    onTreeItemClick?: (id: string, node: any) => void;
 }
 
 const Tree = ({
@@ -29,29 +29,29 @@ const Tree = ({
     defaultExpanded = [],
     itemFunc,
     treeItemHasTooltip = false,
-    onHandleTreeItemClick,
+    onTreeItemClick,
 }: ITreeProps) => {
     const [ expandedIds, setExpandedIds ] = useState([] as string[]);
     const [ selectedId, setSelectedId ] = useState('');
 
     const handleTreeItemClick = useCallback(
-        (node: ITreeItemType) => {
+        (node: any) => {
             const id = node.id.toString();
             const newExpanded = expandedIds.includes(id)
                 ? without(expandedIds, id)
                 : [ ...expandedIds, id ];
 
-            if (!isNil(onHandleTreeItemClick)) {
-                onHandleTreeItemClick(id, node);
+            if (!isNil(onTreeItemClick)) {
+                onTreeItemClick(id, node);
             }
 
             setExpandedIds(newExpanded);
         },
-        [ expandedIds, onHandleTreeItemClick ],
+        [ expandedIds, onTreeItemClick ],
     );
 
     const handleLabelClick = useCallback(
-        (node: ITreeItemType) => {
+        (node: any) => {
             setSelectedId(node.id.toString());
             onSelect(node);
         },
