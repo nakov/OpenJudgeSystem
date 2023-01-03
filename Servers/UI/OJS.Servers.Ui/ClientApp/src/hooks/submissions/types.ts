@@ -31,6 +31,10 @@ interface ISubmissionType {
     maxUsedTime: number;
     maxUsedMemory: number;
     isOfficial: boolean;
+    isCompiledSuccessfully: boolean;
+    compilerComment: string;
+    createdOn: Date;
+    modifiedOn?: Date;
 }
 
 interface ITestRunDetailsType extends ITestRunType {
@@ -53,6 +57,7 @@ interface ISubmissionDetails {
     isCompiledSuccessfully: boolean;
     isOfficial: boolean;
     submissionType: string;
+    compilerComment: string;
     testRuns: ITestRunDetailsType[];
 }
 

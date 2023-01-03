@@ -4,7 +4,11 @@ import sum from 'lodash/sum';
 
 import { UrlType } from '../common/common-types';
 import { IContestType, IRegisterForContestResponseType, IStartParticipationResponseType } from '../common/types';
-import { IRegisterForContestUrlParams, ISubmitContestPasswordUrlParams } from '../common/url-types';
+import {
+    IGetContestParticipationScoresForParticipantUrlParams,
+    IRegisterForContestUrlParams,
+    ISubmitContestPasswordUrlParams,
+} from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
 import { useHttp } from './use-http';
@@ -26,6 +30,7 @@ interface ICurrentContestContext {
     state: {
         contest: IContestType | null;
         contestPassword: string | null;
+        currentContestParticipantScores: IMaximumParticipantScores[];
         score: number;
         maxScore: number;
         isOfficial: boolean;
@@ -33,14 +38,18 @@ interface ICurrentContestContext {
         submitContestPasswordErrorMessage: string | null;
         isPasswordValid: boolean | null;
         remainingTimeInMilliseconds: number;
+        userSubmissionsTimeLimit: number;
         totalParticipantsCount: number;
         activeParticipantsCount: number;
+        isSubmitAllowed: boolean;
     };
     actions: {
         setContestPassword: (password: string) => void;
         start: (info: IStartContestArgs) => void;
         register: (info: IStartContestArgs) => void;
         submitPassword: (info: ISubmitContestPasswordArgs) => void;
+        loadParticipantScores: () => void;
+        setIsSubmitAllowed: (isSubmitAllowed: boolean) => void;
     };
 }
 
@@ -53,6 +62,7 @@ const defaultState = {
         isOfficial: false,
         requirePassword: false,
         remainingTimeInMilliseconds: 0.0,
+        userSubmissionsTimeLimit: 0,
         totalParticipantsCount: 0,
         activeParticipantsCount: 0,
     },
@@ -67,21 +77,33 @@ interface IContestToStartType {
     isOfficial: boolean;
 }
 
+type IMaximumParticipantScores = {
+    problemId: number;
+    points: number;
+}
+
 const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) => {
     const [ contest, setContest ] = useState<IContestType | null>(defaultState.state.contest);
     const [ contestPassword, setContestPassword ] = useState<string | null>(defaultState.state.contest);
+    const [ participantId, setParticipantId ] = useState<number | null>(null);
     const [ score, setScore ] = useState(defaultState.state.score);
     const [ maxScore, setMaxScore ] = useState(defaultState.state.maxScore);
     const [ isOfficial, setIsOfficial ] = useState(defaultState.state.isOfficial);
     const [ requirePassword, setRequirePassword ] = useState<boolean | null>(null);
+    const [ currentContestParticipantScores, setCurrentContestParticipantScores ] =
+        useState<IMaximumParticipantScores[]>([]);
     const [ contestToStart, setContestToStart ] = useState<IContestToStartType | null>(null);
     const [ registerForContestParams, setRegisterForContestParams ] = useState<IRegisterForContestUrlParams | null>(null);
+    const [ getCurrentParticipantParticipantScoresParams, setGetCurrentParticipantParticipantScoresParams ] =
+        useState<IGetContestParticipationScoresForParticipantUrlParams | null>(null);
     const [ submitContestPasswordUrlParams, setSubmitContestPasswordUrlParams ] = useState<ISubmitContestPasswordUrlParams | null>(null);
     const [ submitContestPasswordErrorMessage, setSubmitContestPasswordErrorMessage ] = useState<string | null>(null);
     const [ isPasswordValid, setIsPasswordValid ] = useState<boolean | null>(null);
+    const [ userSubmissionsTimeLimit, setUserSubmissionsTimeLimit ] = useState<number>(0);
     const [ remainingTimeInMilliseconds, setRemainingTimeInMilliseconds ] = useState(defaultState.state.remainingTimeInMilliseconds);
     const [ totalParticipantsCount, setTotalParticipantsCount ] = useState(defaultState.state.totalParticipantsCount);
     const [ activeParticipantsCount, setActiveParticipantsCount ] = useState(defaultState.state.activeParticipantsCount);
+    const [ isSubmitAllowed, setIsSubmitAllowed ] = useState<boolean>(true);
 
     const {
         startLoading,
@@ -90,6 +112,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
 
     const {
         getStartContestParticipationUrl,
+        getContestParticipantScoresForParticipantUrl,
         getRegisterForContestUrl,
         getSubmitContestPasswordUrl,
     } = useUrls();
@@ -110,6 +133,11 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         response: submitContestPasswordResponse,
     } = useHttp(getSubmitContestPasswordUrl as UrlType, submitContestPasswordUrlParams);
 
+    const {
+        get: getParticipantScores,
+        data: getParticipantScoresData,
+    } = useHttp(getContestParticipantScoresForParticipantUrl as UrlType, getCurrentParticipantParticipantScoresParams);
+
     const start = useCallback((obj: IContestToStartType) => {
         setContestToStart(obj);
     }, []);
@@ -127,6 +155,42 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         } as ISubmitContestPasswordUrlParams);
         setContestPassword(password);
     }, []);
+
+    const loadParticipantScores = useCallback(async () => {
+        if (isNil(participantId)) {
+            return;
+        }
+
+        setGetCurrentParticipantParticipantScoresParams({ participantId } as IGetContestParticipationScoresForParticipantUrlParams);
+    }, [ participantId ]);
+
+    useEffect(() => {
+        if (isNil(getCurrentParticipantParticipantScoresParams)) {
+            return;
+        }
+
+        (async () => {
+            startLoading();
+            await getParticipantScores();
+            stopLoading();
+        })();
+    }, [
+        getCurrentParticipantParticipantScoresParams,
+        getParticipantScores,
+        startLoading, stopLoading ]);
+
+    useEffect(() => {
+        if (isNil(getParticipantScoresData)) {
+            return;
+        }
+
+        setCurrentContestParticipantScores(getParticipantScoresData);
+        setGetCurrentParticipantParticipantScoresParams(null);
+    }, [
+        getParticipantScores,
+        getParticipantScoresData,
+        startLoading, stopLoading,
+    ]);
 
     useEffect(() => {
         if (isNil(contestToStart)) {
@@ -149,6 +213,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         const {
             contest: newContest,
             contestIsCompete,
+            participantId: currentParticipantId,
             remainingTimeInMilliseconds: newRemainingTimeInMilliseconds,
             totalParticipantsCount: newTotalParticipants,
             activeParticipantsCount: newActiveParticipants,
@@ -156,7 +221,9 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
 
         setContest(newContest);
         setIsOfficial(contestIsCompete);
+        setParticipantId(currentParticipantId);
         setRemainingTimeInMilliseconds(newRemainingTimeInMilliseconds);
+        setUserSubmissionsTimeLimit(responseData.userSubmissionsTimeLimit);
         setTotalParticipantsCount(newTotalParticipants);
         setActiveParticipantsCount(newActiveParticipants);
     }, [ startContestData ]);
@@ -228,10 +295,21 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         [ contest ],
     );
 
+    useEffect(() => {
+        if (isNil(participantId)) {
+            return;
+        }
+
+        (async () => {
+            await loadParticipantScores();
+        })();
+    }, [ loadParticipantScores, participantId ]);
+
     const value = useMemo(
         () => ({
             state: {
                 contest,
+                currentContestParticipantScores,
                 contestPassword,
                 score,
                 maxScore,
@@ -240,31 +318,40 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 submitContestPasswordErrorMessage,
                 isPasswordValid,
                 remainingTimeInMilliseconds,
+                userSubmissionsTimeLimit,
                 totalParticipantsCount,
                 activeParticipantsCount,
+                isSubmitAllowed,
             },
             actions: {
                 setContestPassword,
                 register,
                 start,
                 submitPassword,
+                loadParticipantScores,
+                setIsSubmitAllowed,
             },
         }),
         [
             contest,
             contestPassword,
+            currentContestParticipantScores,
             isOfficial,
             isPasswordValid,
             maxScore,
             register,
             remainingTimeInMilliseconds,
+            userSubmissionsTimeLimit,
             requirePassword,
             score,
             start,
             submitContestPasswordErrorMessage,
             submitPassword,
+            loadParticipantScores,
             totalParticipantsCount,
             activeParticipantsCount,
+            isSubmitAllowed,
+            setIsSubmitAllowed,
         ],
     );
 

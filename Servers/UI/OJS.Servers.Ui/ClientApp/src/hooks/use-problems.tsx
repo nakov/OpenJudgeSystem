@@ -6,6 +6,7 @@ import { UrlType } from '../common/common-types';
 import { IProblemType } from '../common/types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
+import { useHashUrlParams } from './common/use-hash-url-params';
 import { useCurrentContest } from './use-current-contest';
 import { useHttp } from './use-http';
 import { useLoading } from './use-loading';
@@ -31,11 +32,23 @@ const defaultState = {
     },
 };
 
+const normalizeOrderBy = (problems: IProblemType[]) => {
+    problems.sort((x, y) => x.orderBy - y.orderBy);
+
+    return problems.map((p, i) => ({
+        ...p,
+        orderBy: i + 1,
+    }));
+};
+
 const ProblemsContext = createContext<IProblemsContext>(defaultState as IProblemsContext);
 
 const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     const { state: { contest } } = useCurrentContest();
-
+    const {
+        state: { params },
+        actions: { setHash },
+    } = useHashUrlParams();
     const [ problems, setProblems ] = useState(defaultState.state.problems);
     const [ currentProblem, setCurrentProblem ] = useState<IProblemType | null>(defaultState.state.currentProblem);
     const [ problemResourceIdToDownload, setProblemResourceIdToDownload ] = useState<number | null>();
@@ -52,15 +65,37 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         saveAttachment,
     } = useHttp(getDownloadProblemResourceUrl as UrlType, { id: problemResourceIdToDownload });
 
+    const normalizedProblems = useMemo(
+        () => normalizeOrderBy(problems),
+        [ problems ],
+    );
+
     const selectProblemById = useCallback(
         (problemId: number) => {
-            const newProblem = problems.find((p) => p.id === problemId);
+            const newProblem = normalizedProblems.find((p) => p.id === problemId);
 
-            if (newProblem) {
-                setCurrentProblem(newProblem);
+            if (isNil(newProblem)) {
+                return;
             }
+
+            setCurrentProblem(newProblem);
+            const { orderBy } = newProblem;
+            setHash(orderBy.toString());
         },
-        [ problems ],
+        [ setHash, normalizedProblems ],
+    );
+
+    const problemFromHash = useMemo(
+        () => {
+            const hashIndex = Number(params) - 1;
+            return normalizedProblems[hashIndex];
+        },
+        [ normalizedProblems, params ],
+    );
+
+    const isLoadedFromHash = useMemo(
+        () => !isNil(problemFromHash),
+        [ problemFromHash ],
     );
 
     const reloadProblems = useCallback(
@@ -72,15 +107,19 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
             }
 
             setProblems(newProblems);
-            const { id } = first(newProblems) || {};
+            const { id } = first(normalizedProblems) || {};
 
-            if (!id) {
+            if (isNil(id)) {
                 return;
             }
 
-            selectProblemById(id);
+            if (isLoadedFromHash) {
+                setCurrentProblem(problemFromHash);
+            } else {
+                selectProblemById(id);
+            }
         },
-        [ contest, selectProblemById ],
+        [ contest, isLoadedFromHash, normalizedProblems, problemFromHash, selectProblemById ],
     );
 
     const downloadProblemResourceFile = useCallback(async (resourceId: number) => {
