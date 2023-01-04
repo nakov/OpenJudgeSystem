@@ -46,6 +46,12 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             orderBy: q => q.CreatedOn,
             descending: true);
 
+    public Task<IEnumerable<TServiceModel>> GetAllByProblemAndUser<TServiceModel>(int problemId, string userId)
+        => this.GetQuery(
+                filter: s => s.ProblemId == problemId && s.Participant.UserId == userId)
+            .MapCollection<TServiceModel>()
+            .ToEnumerableAsync();
+
     public IQueryable<Submission> GetAllFromContestsByLecturer(string lecturerId) =>
         this.DbSet
             .Include(s => s.Problem!.ProblemGroup.Contest.LecturersInContests)
@@ -80,6 +86,12 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
         this.GetByIdQuery(id)
             .Any(s => s.Participant!.IsOfficial);
 
+    public Submission? GetLastSubmitForParticipant(int participantId) =>
+        this.DbSet
+            .Where(s => s.ParticipantId == participantId)
+            .OrderByDescending(s => s.CreatedOn)
+            .FirstOrDefault();
+
     public void SetAllToUnprocessedByProblem(int problemId) =>
         this.GetAllByProblem(problemId)
             .UpdateFromQueryAsync(s => new Submission { Processed = false });
@@ -91,27 +103,22 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
         this.GetAllByProblem(problemId)
             .UpdateFromQueryAsync(s => new Submission { TestRunsCache = null });
 
-    public bool HasSubmissionTimeLimitPassedForParticipant(int participantId, int limitBetweenSubmissions)
+    public int GetUserSubmissionTimeLimit(int participantId, int limitBetweenSubmissions)
     {
-        var lastSubmission =
-            this.DbSet
-                .Where(s => s.ParticipantId == participantId)
-                .OrderByDescending(s => s.CreatedOn)
-                .Select(s => new { s.Id, s.CreatedOn })
-                .FirstOrDefault();
+        var lastSubmission = this.GetLastSubmitForParticipant(participantId);
 
         if (lastSubmission != null)
         {
             // check if the submission was sent after the submission time limit has passed
             var latestSubmissionTime = lastSubmission.CreatedOn;
-            var differenceBetweenSubmissions = DateTime.Now - latestSubmissionTime;
+            var differenceBetweenSubmissions = DateTime.Now.ToUniversalTime() - latestSubmissionTime;
             if (differenceBetweenSubmissions.TotalSeconds < limitBetweenSubmissions)
             {
-                return true;
+                return limitBetweenSubmissions - differenceBetweenSubmissions.TotalSeconds.ToInt();;
             }
         }
 
-        return false;
+        return 0;
     }
 
     public bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId) =>
@@ -124,4 +131,8 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
                 .AverageAsync()
                 .ToInt()
             : 0;
+
+    private IQueryable<Submission> GetByIdQuery(int id) =>
+        this.DbSet
+            .Where(s => s.Id == id);
 }

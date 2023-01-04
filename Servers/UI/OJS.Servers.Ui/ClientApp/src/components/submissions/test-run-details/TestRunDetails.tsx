@@ -47,7 +47,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
     );
 
     const testRunHeadingText = useMemo(() => {
-        const testRunText = `Test #${testRun.orderBy + 1}`;
+        const testRunText = `Test #${testRun.orderBy}`;
 
         if (testRun.isTrialTest) {
             return `Zero ${testRunText}`;

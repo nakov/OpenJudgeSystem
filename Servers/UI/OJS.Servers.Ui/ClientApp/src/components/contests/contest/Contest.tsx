@@ -1,6 +1,8 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
+import { useAuth } from '../../../hooks/use-auth';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
+import { usePageTitles } from '../../../hooks/use-page-titles';
 import concatClassNames from '../../../utils/class-names';
 import { convertToTwoDigitValues } from '../../../utils/dates';
 import Countdown, { ICountdownRemainingType, Metric } from '../../guidelines/countdown/Countdown';
@@ -19,8 +21,14 @@ const Contest = () => {
             score,
             maxScore,
             remainingTimeInMilliseconds,
+            totalParticipantsCount,
+            activeParticipantsCount,
+            isOfficial,
         },
+        actions: { setIsSubmitAllowed },
     } = useCurrentContest();
+    const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
+    const { actions: { setPageTitle } } = usePageTitles();
 
     const navigationContestClass = 'navigationContest';
     const navigationContestClassName = concatClassNames(navigationContestClass);
@@ -30,6 +38,15 @@ const Contest = () => {
 
     const problemInfoClass = 'problemInfo';
     const problemInfoClassName = concatClassNames(problemInfoClass);
+
+    const contestTitle = useMemo(
+        () => `${contest?.name}`,
+        [ contest?.name ],
+    );
+
+    useEffect(() => {
+        setPageTitle(contestTitle);
+    }, [ contestTitle, setPageTitle ]);
 
     const scoreText = useMemo(
         () => `${score}/${maxScore}`,
@@ -78,6 +95,13 @@ const Contest = () => {
         [],
     );
 
+    const handleCountdownEnd = useCallback(
+        () => {
+            setIsSubmitAllowed(canAccessAdministration || false);
+        },
+        [ canAccessAdministration, setIsSubmitAllowed ],
+    );
+
     const renderTimeRemaining = useCallback(
         () => {
             if (!remainingTimeInMilliseconds) {
@@ -87,15 +111,49 @@ const Contest = () => {
             const currentSeconds = remainingTimeInMilliseconds / 1000;
 
             return (
-                <Countdown renderRemainingTime={renderCountdown} duration={currentSeconds} metric={Metric.seconds} />
+                <Countdown
+                  renderRemainingTime={renderCountdown}
+                  duration={currentSeconds}
+                  metric={Metric.seconds}
+                  handleOnCountdownEnd={handleCountdownEnd}
+                />
             );
         },
-        [ remainingTimeInMilliseconds, renderCountdown ],
+        [ handleCountdownEnd, remainingTimeInMilliseconds, renderCountdown ],
     );
 
     const secondaryHeadingClassName = useMemo(
         () => concatClassNames(styles.contestHeading, styles.contestInfoContainer),
         [],
+    );
+
+    const participantsStateText = useMemo(
+        () => isOfficial
+            ? 'Active'
+            : 'Total',
+        [ isOfficial ],
+    );
+
+    const participantsValue = useMemo(
+        () => isOfficial
+            ? activeParticipantsCount
+            : totalParticipantsCount,
+        [ activeParticipantsCount, isOfficial, totalParticipantsCount ],
+    );
+
+    const renderParticipants = useCallback(
+        () => (
+            <span>
+                {participantsStateText}
+                {' '}
+                Participitants:
+                {' '}
+                <Text type={TextType.Bold}>
+                    {participantsValue}
+                </Text>
+            </span>
+        ),
+        [ participantsStateText, participantsValue ],
     );
 
     return (
@@ -105,9 +163,10 @@ const Contest = () => {
                   type={HeadingType.primary}
                   className={styles.contestHeading}
                 >
-                    {contest?.name}
+                    {contestTitle}
                 </Heading>
                 <Heading type={HeadingType.secondary} className={secondaryHeadingClassName}>
+                    {renderParticipants()}
                     {renderTimeRemaining()}
                     {renderScore()}
                 </Heading>

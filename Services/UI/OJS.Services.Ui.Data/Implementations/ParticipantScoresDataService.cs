@@ -166,5 +166,18 @@ namespace OJS.Services.Ui.Data.Implementations
                             .Max(),
                     })
                 .ToEnumerableAsync();
+
+        public Task<IEnumerable<ParticipationForProblemMaxScoreServiceModel>> GetMaxByParticipation(int participantId)
+            => this.DbSet
+                .Where(ps => ps.ParticipantId == participantId)
+                .GroupBy(ps => ps.ProblemId)
+                .Select(ps =>
+                    new ParticipationForProblemMaxScoreServiceModel
+                    {
+                        ProblemId = ps.Key,
+                        Points = ps.Select(ps => ps.Points)
+                            .Max(),
+                    })
+                .ToEnumerableAsync();
     }
 }

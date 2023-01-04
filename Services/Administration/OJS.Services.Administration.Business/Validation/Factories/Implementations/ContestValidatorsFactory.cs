@@ -20,6 +20,7 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
             ValidateContestStartTime, ValidateContestPracticeStartTime, ValidateOnlineContestDuration,
             ValidateOnlineContestProblemGroups, ValidateActiveContestCannotEditDurationTypeOnEdit,
             ValidateContestIsNotActiveOnDelete,
+            ValidateCategoryIsSet,
         };
 
     public IEnumerable<Func<Contest, Contest, AdminActionContext, Task<ValidatorResult>>> GetAsyncValidators()
@@ -76,7 +77,8 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
         {
             if (!newContest.Duration.HasValue)
             {
-                return ValidatorResult.Error(Resource.RequiredFieldForOnline);
+                return ValidatorResult.Error(string.Format(Resource.RequiredFieldForOnline, nameof(Contest
+                    .Duration))));
             }
 
             if (newContest.Duration.Value.TotalHours >= 24)
@@ -94,7 +96,8 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
         {
             if (newContest.NumberOfProblemGroups <= 0)
             {
-                return ValidatorResult.Error(Resource.RequiredFieldForOnline);
+                return ValidatorResult.Error(string.Format(Resource.RequiredFieldForOnline, nameof(Contest
+                    .NumberOfProblemGroups)));
             }
 
             if (newContest.NumberOfProblemGroups > ProblemGroupsCountLimit)
@@ -106,4 +109,9 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
 
         return ValidatorResult.Success();
     }
+
+    private static ValidatorResult ValidateCategoryIsSet(Contest _, Contest newContest, AdminActionContext __) =>
+        newContest.CategoryId.HasValue && newContest.CategoryId == default(int)
+            ? ValidatorResult.Error(Resource.Category_Not_Selected)
+            : ValidatorResult.Success();
 }

@@ -16,17 +16,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using OJS.Servers.Administration.Infrastructure.Extensions;
+using GlobalResource = OJS.Common.Resources.SubmissionsController;
+
 
 public class SubmissionsController : BaseAutoCrudAdminController<Submission>
 {
     public const string ContestIdKey = nameof(ProblemGroup.ContestId);
     public const string ProblemIdKey = nameof(Submission.ProblemId);
     public const string ParticipantIdKey = nameof(Submission.ParticipantId);
+    public const string SubmissionIdKey = nameof(Submission.Id);
 
     private readonly IProblemsValidationHelper problemsValidationHelper;
     private readonly IParticipantScoresDataService participantScoresData;
     private readonly IParticipantScoresBusinessService participantScoresBusiness;
     private readonly ISubmissionsDataService submissionsData;
+    private readonly ISubmissionsBusinessService submissionsBusinessService;
     private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
     private readonly ITestRunsDataService testRunsData;
     private readonly ITransactionsProvider transactions;
@@ -40,7 +47,8 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         ISubmissionsForProcessingDataService submissionsForProcessingData,
         ITestRunsDataService testRunsData,
         ITransactionsProvider transactions,
-        IValidatorsFactory<Submission> submissionValidatorsFactory)
+        IValidatorsFactory<Submission> submissionValidatorsFactory,
+        ISubmissionsBusinessService submissionsBusinessService)
     {
         this.problemsValidationHelper = problemsValidationHelper;
         this.participantScoresData = participantScoresData;
@@ -50,6 +58,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         this.testRunsData = testRunsData;
         this.transactions = transactions;
         this.submissionValidatorsFactory = submissionValidatorsFactory;
+        this.submissionsBusinessService = submissionsBusinessService;
     }
 
     protected override Expression<Func<Submission, bool>>? MasterGridFilter
@@ -75,6 +84,12 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
                 Name = "Contest Id",
                 ValueFunc = s => s.Problem != null ? s.Problem!.ProblemGroup.ContestId.ToString() : string.Empty,
             },
+        };
+
+    protected override IEnumerable<GridAction> CustomActions
+        => new []
+        {
+            new GridAction { Action = nameof(this.Retest) },
         };
 
     protected override IEnumerable<FormControlViewModel> GenerateFormControls(
@@ -108,7 +123,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
             await this.submissionsData.SaveChanges();
             await this.submissionsForProcessingData.RemoveBySubmission(submission.Id);
 
-            var isBestSubmission = await this.IsBestSubmission(
+            var isBestSubmission = await this.submissionsBusinessService.IsBestSubmission(
                 submissionProblemId,
                 submissionParticipantId,
                 submission.Id);
@@ -120,6 +135,45 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
                     submission.ProblemId.Value);
             }
         });
+    }
+
+    public async Task<IActionResult> Retest([FromQuery] IDictionary<string, string> complexId)
+    {
+        var submissionId = this.GetEntityIdFromQuery<int>(complexId);
+
+        var submission = await this.submissionsData.GetByIdQuery(submissionId).FirstOrDefaultAsync();
+
+        if (submission is null || !submission.ProblemId.HasValue || !submission.ParticipantId.HasValue)
+        {
+            this.TempData.AddDangerMessage(GlobalResource.Submission_can_not_be_processed);
+
+            return this.RedirectToAction(nameof(this.Index));
+        }
+
+        if (!string.IsNullOrEmpty(submission.TestRunsCache) &&
+            !submission.Processed)
+        {
+            this.TempData.AddDangerMessage(GlobalResource.Submission_is_processing);
+
+            return this.RedirectToSubmissionById(submissionId);
+        }
+
+        await this.problemsValidationHelper
+            .ValidatePermissionsOfCurrentUser(submission.ProblemId ?? default)
+            .VerifyResult();
+
+        var retestResult = await this.submissionsBusinessService.Retest(submission);
+
+        if (retestResult.IsError)
+        {
+            this.TempData.AddDangerMessage(retestResult.Error);
+
+            return this.RedirectToSubmissionById(submissionId);
+        }
+
+        this.TempData.AddSuccessMessage(GlobalResource.Submission_is_added_in_queue_for_processing);
+
+        return this.RedirectToSubmissionById(submissionId);
     }
 
     private Expression<Func<Submission, bool>>? GetMasterGridFilter()
@@ -139,13 +193,17 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
             return x => x.ParticipantId == participantId;
         }
 
+        if (this.TryGetEntityIdForNumberColumnFilter(ParticipantIdKey, out var submissionId))
+        {
+            return x => x.Id == submissionId;
+        }
+
         return base.MasterGridFilter;
     }
 
-    private async Task<bool> IsBestSubmission(int problemId, int participantId, int submissionId)
-    {
-        var bestScore = await this.participantScoresData.GetByParticipantIdAndProblemId(participantId, problemId);
-
-        return bestScore?.SubmissionId == submissionId;
-    }
+    private IActionResult RedirectToSubmissionById(int id)
+        => this.RedirectToActionWithNumberFilter(
+            nameof(SubmissionsController),
+            SubmissionsController.SubmissionIdKey,
+            id);
 }

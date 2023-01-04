@@ -6,6 +6,7 @@ namespace OJS.Services.Ui.Business
     using OJS.Services.Ui.Models.Problems;
     using OJS.Services.Ui.Models.Submissions;
     using SoftUni.Services.Infrastructure;
+    using OJS.Services.Ui.Models.Participations;
 
     public interface IParticipantScoresBusinessService : IService
     {
@@ -18,5 +19,7 @@ namespace OJS.Services.Ui.Business
         Task<IEnumerable<ProblemResultServiceModel>> GetParticipantScoresByProblemForUser(int problemId, bool isOfficial);
 
         Task<IEnumerable<ParticipantScoreModel>> GetByProblemForParticipants(IEnumerable<int> participantIds, int problemId);
+
+        Task<IEnumerable<ParticipationForProblemMaxScoreServiceModel>> GetAllForParticipant(int participantId);
     }
 }

@@ -28,7 +28,7 @@
 
         public bool ShowResults { get; set; }
 
-        public int Points { get; set; }
+        public int? Points { get; set; }
 
         public bool IsExcludedFromHomework { get; set; }
 

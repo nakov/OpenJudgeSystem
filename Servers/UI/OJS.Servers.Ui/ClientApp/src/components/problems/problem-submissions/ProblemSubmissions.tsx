@@ -3,6 +3,7 @@ import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { useProblemSubmissions } from '../../../hooks/submissions/use-problem-submissions';
+import { useCurrentContest } from '../../../hooks/use-current-contest';
 import concatClassNames from '../../../utils/class-names';
 import { Button, ButtonType } from '../../guidelines/buttons/Button';
 import SubmissionsList from '../../submissions/submissions-list/SubmissionsList';
@@ -15,11 +16,14 @@ const ProblemSubmissions = () => {
         actions: { loadSubmissions },
     } = useProblemSubmissions();
 
+    const { actions: { loadParticipantScores } } = useCurrentContest();
+
     const reload = useCallback(
         async () => {
             await loadSubmissions();
+            await loadParticipantScores();
         },
-        [ loadSubmissions ],
+        [ loadParticipantScores, loadSubmissions ],
     );
 
     const handleReloadClick = useCallback(async () => {

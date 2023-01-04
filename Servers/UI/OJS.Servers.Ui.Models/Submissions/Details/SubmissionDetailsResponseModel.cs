@@ -5,6 +5,7 @@
     using OJS.Services.Ui.Models.Submissions;
     using SoftUni.AutoMapper.Infrastructure.Models;
     using System.Collections.Generic;
+    using System;
 
     public class SubmissionDetailsResponseModel : IMapFrom<SubmissionDetailsServiceModel>
     {
@@ -27,5 +28,13 @@
         public double MaxUsedMemory { get; set; }
 
         public bool IsOfficial { get; set; }
+
+        public bool IsCompiledSuccessfully { get; set; }
+
+        public string CompilerComment { get; set; }
+
+        public DateTime CreatedOn { get; set; }
+
+        public DateTime? ModifiedOn { get; set; }
     }
 }

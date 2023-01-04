@@ -13,8 +13,9 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Infrastructure.Exceptions;
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Problems;
-    using OJS.Services.Ui.Models.Submissions;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using OJS.Services.Ui.Models.Participations;
+    using OJS.Services.Ui.Models.Submissions;
 
     public class ParticipantScoresBusinessService : IParticipantScoresBusinessService
     {
@@ -150,6 +151,12 @@ namespace OJS.Services.Ui.Business.Implementations
             => this.participantScoresData
                 .GetByProblemIdAndParticipants(participantIds, problemId)
                 .MapCollection<ParticipantScoreModel>()
+                .ToEnumerableAsync();
+
+        public Task<IEnumerable<ParticipationForProblemMaxScoreServiceModel>> GetAllForParticipant(
+            int participantId)
+            => this.participantScoresData
+                .GetMaxByParticipation(participantId)
                 .ToEnumerableAsync();
 
         private async Task NormalizeSubmissionPoints()

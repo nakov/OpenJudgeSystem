@@ -105,6 +105,7 @@ namespace OJS.Common
             public const string SelectOneSubmissionType = "Choose at least one submission type!";
             public const string SubtractedTimeFromParticipantsOnline = "Successfully subtracted {0} minutes from the times of all selected active participants in the contest {1}";
             public const string SubtractedTimeFromSingleParticipantOnline = "Successfully subtracted {0} minutes from the time of the participant with username: {1}, in the contest {2}";
+            public const string Category_Not_Selected = "Category not selected!";
         }
 
         public static class ExamGroupsController
@@ -201,6 +202,13 @@ namespace OJS.Common
             public const string LinkNotEmpty = "The link must not be empty";
             public const string ProblemNotFound = "Problem not found.";
             public const string ResourceNotFound = "Resource not found.";
+        }
+
+        public static class SubmissionsController
+        {
+            public const string Submission_is_added_in_queue_for_processing = "The submission is added in the queue for processing!";
+            public const string Submission_can_not_be_processed = "Submission can't be processed!";
+            public const string Submission_is_processing = "Submission is processing, please wait to be processed for retesting!";
         }
     }
 }

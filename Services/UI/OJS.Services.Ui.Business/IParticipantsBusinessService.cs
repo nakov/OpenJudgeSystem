@@ -33,5 +33,7 @@ namespace OJS.Services.Ui.Business
             int minutes,
             DateTime participationStartTimeRangeStart,
             DateTime participationStartTimeRangeEnd);
+
+        Task<int> GetParticipantLimitBetweenSubmissions(int participantId, int contestLimitBetweenSubmissions);
     }
 }

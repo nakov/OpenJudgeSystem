@@ -2,6 +2,8 @@ import React, { useMemo } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
 import InitProviders, { ProviderType } from './components/common/InitProviders';
+import HashUrlParamProvider from './hooks/common/use-hash-url-params';
+import RouteUrlParamsProvider from './hooks/common/use-route-url-params';
 import UrlParamsProvider from './hooks/common/use-url-params';
 import CurrentContestResultsProvider from './hooks/contests/use-current-contest-results';
 import ProblemSubmissionsProvider from './hooks/submissions/use-problem-submissions';
@@ -19,6 +21,7 @@ import HomeContestsProvider from './hooks/use-home-contests';
 import HomeStatisticsProvider from './hooks/use-home-statistics';
 import LoadingProvider from './hooks/use-loading';
 import NotificationsProvider from './hooks/use-notifications';
+import PageWithTitleProvider from './hooks/use-page-titles';
 import ParticipationsProvider from './hooks/use-participations';
 import ProblemsProvider from './hooks/use-problems';
 import ServicesProvider from './hooks/use-services';
@@ -39,15 +42,19 @@ const App = () => {
     const user = userCookiesService.getUser();
     const providers = [
         UrlParamsProvider,
+        RouteUrlParamsProvider,
         AppUrlsProvider,
         UrlsProvider,
         ServicesProvider,
         LoadingProvider,
         NotificationsProvider,
+        PageWithTitleProvider,
+        HashUrlParamProvider,
         { Provider: AuthProvider, props: { user } },
         UsersProvider,
         ContestCategoriesProvider,
         ContestStrategyFiltersProvider,
+        CategoriesBreadcrumbProvider,
         ContestsProvider,
         HomeContestsProvider,
         ParticipationsProvider,
@@ -58,7 +65,6 @@ const App = () => {
         SubmissionsProvider,
         SubmissionsDetailsProvider,
         HomeStatisticsProvider,
-        CategoriesBreadcrumbProvider,
         PublicSubmissionsProvider,
     ] as ProviderType[];
 

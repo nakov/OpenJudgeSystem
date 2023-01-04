@@ -242,6 +242,41 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         return await userSubmissions.ToListAsync();
     }
 
+    public async Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblemAndUser(int problemId,
+        bool isOfficial, string userId)
+    {
+        var problem = await this.problemsDataService.GetWithProblemGroupById(problemId);
+
+        await this.ValidateUserCanViewResults(problem, isOfficial);
+
+        var userSubmissions = await this.submissionsData
+            .GetAllByProblemAndUser<SubmissionResultsServiceModel>(problemId, userId);
+
+        return userSubmissions;
+    }
+
+    private async Task ValidateUserCanViewResults(Problem problem, bool isOfficial)
+    {
+        var user = this.userProviderService.GetCurrentUser();
+        if (problem == null)
+        {
+            throw new BusinessServiceException(Resources.ContestsGeneral.Problem_not_found);
+        }
+
+        var userHasParticipation = await this.participantsDataService
+            .ExistsByContestByUserAndIsOfficial(problem.ProblemGroup.ContestId, user.Id, isOfficial);
+
+        if (!userHasParticipation && !user.IsAdminOrLecturer)
+        {
+            throw new BusinessServiceException(Resources.ContestsGeneral.User_is_not_registered_for_exam);
+        }
+
+        if (!problem.ShowResults)
+        {
+            throw new BusinessServiceException(Resources.ContestsGeneral.Problem_results_not_available);
+        }
+    }
+
     public async Task Submit(SubmitSubmissionServiceModel model)
     {
         var problem = await this.problemsDataService.GetWithProblemGroupCheckerAndTestsById(model.ProblemId);
@@ -282,9 +317,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         this.submissionTypesBusinessService.ValidateSubmissionType(model.SubmissionTypeId, problem);
 
-        if (this.submissionsData.HasSubmissionTimeLimitPassedForParticipant(
+        if (this.submissionsData.GetUserSubmissionTimeLimit(
                 participant.Id,
-                participant.Contest.LimitBetweenSubmissions))
+                participant.Contest.LimitBetweenSubmissions) != 0)
         {
             throw new BusinessServiceException(Resources.ContestsGeneral.SubmissionWasSentTooSoon);
         }

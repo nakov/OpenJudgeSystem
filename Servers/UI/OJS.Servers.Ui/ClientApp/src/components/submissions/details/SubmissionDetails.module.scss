@@ -2,6 +2,13 @@
 @use 'src/styles/components';
 @use 'src/styles/fonts';
 
+.code {
+  @extend %navigation;
+
+  border-left: 0;
+  flex: 7;
+}
+
 .detailsWrapper {
   @extend %wrapper;
   @extend %columnsThree;
@@ -11,13 +18,6 @@
 %navigation {
   align-content: center;
   flex: 3;
-}
-
-.code {
-  @extend %navigation;
-
-  border-left: 0;
-  flex: 7;
 }
 
 .taskHeading {
@@ -36,6 +36,19 @@
   }
 }
 
+.submissionInfo {
+  font-family: fonts.$font-family-lato-regular;
+  margin-top: 15px;
+}
+
+.submissionInfoParagraph {
+  margin-bottom: 10px;
+}
+
 .submissionDetails {
   border-left: 0;
+}
+
+.retestButton {
+  margin: 0 0 0 24px;
 }

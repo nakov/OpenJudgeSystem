@@ -2,10 +2,11 @@
 {
     using AutoMapper;
     using OJS.Data.Models.Submissions;
-    using OJS.Services.Ui.Models.Users;
     using SoftUni.AutoMapper.Infrastructure.Models;
     using System.Collections.Generic;
+    using OJS.Services.Ui.Models.Users;
     using System.Linq;
+
 
     public class SubmissionDetailsServiceModel : IMapExplicitly
     {
@@ -29,6 +30,14 @@
         public SubmissionTypeForSubmissionDetailsServiceModel SubmissionType { get; set; } = null!;
 
         public bool IsOfficial { get; set; }
+
+        public bool IsCompiledSuccessfully { get; set; }
+
+        public string CompilerComment { get; set; }
+
+        public DateTime CreatedOn { get; set; }
+
+        public DateTime? ModifiedOn { get; set; }
 
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<Submission, SubmissionDetailsServiceModel>()

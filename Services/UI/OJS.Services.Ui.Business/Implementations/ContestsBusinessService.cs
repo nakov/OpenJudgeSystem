@@ -5,6 +5,8 @@ namespace OJS.Services.Ui.Business.Implementations
     using System.Linq;
     using System.Threading.Tasks;
     using FluentExtensions.Extensions;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Participants;
     using OJS.Services.Common;
@@ -18,7 +20,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
     public class ContestsBusinessService : IContestsBusinessService
     {
-        private const int DefaultContestsToTake = 4;
+        private const int DefaultContestsToTake = 3;
         private const int DefaultContestsPerPage = 12;
 
         private readonly IContestsDataService contestsData;
@@ -122,7 +124,12 @@ namespace OJS.Services.Ui.Business.Implementations
             }
 
             var participationModel = participant.Map<ContestParticipationServiceModel>();
+            participationModel.ParticipantId = participant.Id;
             participationModel.ContestIsCompete = model.IsOfficial;
+            participationModel.UserSubmissionsTimeLimit = await this.participantsBusiness.GetParticipantLimitBetweenSubmissions(
+                    participant.Id,
+                    contest.LimitBetweenSubmissions);
+
             var participantsList = new List<int> { participant.Id, };
 
             var maxParticipationScores = await this.participantScoresData
@@ -146,6 +153,25 @@ namespace OJS.Services.Ui.Business.Implementations
                 .Exists(c =>
                     c.Id == contestId &&
                     (!c.IpsInContests.Any() || c.IpsInContests.Any(ai => ai.Ip.Value == ip)));
+
+        private async Task<Participant> AddNewParticipantToContest(Contest contest, bool official, string userId,
+            bool isUserAdmin)
+        {
+            if (contest.Type is not (ContestType.OnlinePracticalExam and ContestType.OnlinePracticalExam) &&
+                official &&
+                !isUserAdmin &&
+                !this.IsUserLecturerInContest(contest, userId) &&
+                !await this.contestsData.IsUserInExamGroupByContestAndUser(contest.Id, userId))
+            {
+                throw new BusinessServiceException("You are not registered for this exam!");
+            }
+
+            return await this.participantsBusiness.CreateNewByContestByUserByIsOfficialAndIsAdmin(
+                contest,
+                userId,
+                official,
+                isUserAdmin);
+        }
 
         public async Task ValidateContest(Contest contest, string userId, bool isUserAdmin, bool official)
         {
@@ -174,7 +200,7 @@ namespace OJS.Services.Ui.Business.Implementations
             }
         }
 
-        public async Task<PagedResult<ContestForListingServiceModel>> GetAllByFilters(
+        public async Task<PagedResult<ContestForListingServiceModel>> GetAllByFiltersAndSorting(
             ContestFiltersServiceModel? model)
         {
             model ??= new ContestFiltersServiceModel();
@@ -190,7 +216,7 @@ namespace OJS.Services.Ui.Business.Implementations
                     .Concat(subcategories.Select(cc => cc.Id).ToList());
             }
 
-            return await this.contestsData.GetAllAsPageByFilters<ContestForListingServiceModel>(model);
+            return await this.contestsData.GetAllAsPageByFiltersAndSorting<ContestForListingServiceModel>(model);
         }
 
         public async Task<ContestsForHomeIndexServiceModel> GetAllForHomeIndex()
