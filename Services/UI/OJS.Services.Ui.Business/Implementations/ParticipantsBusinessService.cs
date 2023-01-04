@@ -76,10 +76,10 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
         }
 
         if (!participant.ParticipationEndTime.HasValue ||
-                !participant.ParticipationStartTime.HasValue)
-            {
-                throw new ArgumentException(Resource.ParticipantParticipationTimeNotSet);
-            }
+            !participant.ParticipationStartTime.HasValue)
+        {
+            throw new ArgumentException(Resource.ParticipantParticipationTimeNotSet);
+        }
 
         var newEndTime = participant.ParticipationEndTime.Value.AddMinutes(minutes);
         var minAllowedEndTime = participant.ParticipationStartTime.Value
@@ -97,11 +97,12 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
         return ServiceResult<string>.Success(participant.User.UserName);
     }
 
-    public async Task<ServiceResult<ICollection<string>>> UpdateParticipationsEndTimeByContestByParticipationStartTimeRangeAndTimeInMinutes(
-        int contestId,
-        int timeInMinutes,
-        DateTime participationStartTimeRangeStart,
-        DateTime participationStartTimeRangeEnd)
+    public async Task<ServiceResult<ICollection<string>>>
+        UpdateParticipationsEndTimeByContestByParticipationStartTimeRangeAndTimeInMinutes(
+            int contestId,
+            int timeInMinutes,
+            DateTime participationStartTimeRangeStart,
+            DateTime participationStartTimeRangeEnd)
     {
         var contest = await this.contestsData.OneById(contestId);
 
@@ -140,10 +141,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
                 .Where(p =>
                     p.ParticipationEndTime!.Value.AddMinutes(timeInMinutes) >=
                     p.ParticipationStartTime!.Value.AddMinutes(contestTotalDurationInMinutes)),
-            p => new Participant
-            {
-                ParticipationEndTime = p.ParticipationEndTime!.Value.AddMinutes(timeInMinutes),
-            });
+            p => new Participant { ParticipationEndTime = p.ParticipationEndTime!.Value.AddMinutes(timeInMinutes), });
 
         return ServiceResult<ICollection<string>>.Success(invalidForUpdateParticipantUsernames);
     }
@@ -154,24 +152,23 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
             .ToTask();
 
     private static void AssignRandomProblemsToParticipant(Participant participant, Contest contest)
-        {
-            var random = new Random();
+    {
+        var random = new Random();
 
-            var problemGroups = contest.ProblemGroups
+        var problemGroups = contest.ProblemGroups
             .Where(pg => !pg.IsDeleted && pg.Problems.Any(p => !p.IsDeleted));
 
-            foreach (var problemGroup in problemGroups)
+        foreach (var problemGroup in problemGroups)
+        {
+            var problemsInGroup = problemGroup.Problems.Where(p => !p.IsDeleted).ToList();
+            if (problemsInGroup.Any())
             {
-                var problemsInGroup = problemGroup.Problems.Where(p => !p.IsDeleted).ToList();
-                if (problemsInGroup.Any())
+                var randomProblem = problemsInGroup[random.Next(0, problemsInGroup.Count)];
+                participant.ProblemsForParticipants.Add(new ProblemForParticipant
                 {
-                    var randomProblem = problemsInGroup[random.Next(0, problemsInGroup.Count)];
-                    participant.ProblemsForParticipants.Add(new ProblemForParticipant
-                    {
-                        Participant = participant,
-                        Problem = randomProblem,
-                    });
-                }
+                    Participant = participant, Problem = randomProblem,
+                });
             }
+        }
     }
 }
