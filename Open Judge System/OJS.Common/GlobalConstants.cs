@@ -125,5 +125,7 @@
 
         // Date and time formats
         public const string DefaultDateTimeFormatString = "{0:dd/MM/yyyy HH:mm}";
+
+        public static readonly string[] ParticipationStatisticsFileSubmissionsAllowedExtensions = { ".java", ".cs", ".py", ".js", ".cpp", ".h" };
     }
 }

@@ -15,6 +15,9 @@
     using OJS.Services.Data.Contests;
     using OJS.Services.Data.Participants;
     using System.Text.RegularExpressions;
+    using System.IO;
+    using System.IO.Compression;
+    using System.Text;
 
     public class ParticipantScoresBusinessService : IParticipantScoresBusinessService
     {
@@ -262,8 +265,34 @@
 
         private int GetSubmissionCodeLength(Submission submission)
             => submission.IsBinaryFile
-                ? 0
-                : Regex.Matches(submission.ContentAsString, "\n").Count + 1;
+                ? this.GetFileSubmissionLength(submission.Content)
+                : this.GetCodeSubmissionLength(submission.ContentAsString);
+
+        private int GetFileSubmissionLength(byte[] submissionFileContent)
+        {
+            var zip = new ZipArchive(new MemoryStream(submissionFileContent), ZipArchiveMode.Read, true);
+            var eligibleFileEntries = zip
+                .Entries
+                .Where(e =>
+                    GlobalConstants.ParticipationStatisticsFileSubmissionsAllowedExtensions
+                        .Any(fe => e.FullName.EndsWith(fe)));
+
+            var sumFileContentsLength = eligibleFileEntries
+                .Select(e =>
+                {
+                    var fileContent = new StreamReader(e.Open(), Encoding.UTF8).ReadToEnd();
+                    
+                    return this.GetCodeSubmissionLength(fileContent);
+                })
+                .Sum();
+            
+            zip.Dispose();
+
+            return sumFileContentsLength;
+        }
+
+        private int GetCodeSubmissionLength(string codeContentAsString)
+            => codeContentAsString.CountNewLines();
 
         private IEnumerable<ParticipantSummaryInfoServiceModel> BuildStatisticsData(IEnumerable<Participant> participants)
         {

@@ -194,5 +194,7 @@
 
             return result.ToString();
         }
+
+        public static int CountNewLines(this string input) => Regex.Matches(input, "\n").Count + 1;
     }
 }
