@@ -6,7 +6,6 @@ namespace OJS.Services.Ui.Business.Implementations
     using System.Threading.Tasks;
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Participants;
     using OJS.Services.Common;
@@ -128,7 +127,7 @@ namespace OJS.Services.Ui.Business.Implementations
             participationModel.ContestIsCompete = model.IsOfficial;
             participationModel.UserSubmissionsTimeLimit = await this.participantsBusiness.GetParticipantLimitBetweenSubmissions(
                     participant.Id,
-                    contest.LimitBetweenSubmissions);
+                    contest!.LimitBetweenSubmissions);
 
             var participantsList = new List<int> { participant.Id, };
 
@@ -153,25 +152,6 @@ namespace OJS.Services.Ui.Business.Implementations
                 .Exists(c =>
                     c.Id == contestId &&
                     (!c.IpsInContests.Any() || c.IpsInContests.Any(ai => ai.Ip.Value == ip)));
-
-        private async Task<Participant> AddNewParticipantToContest(Contest contest, bool official, string userId,
-            bool isUserAdmin)
-        {
-            if (contest.Type is not (ContestType.OnlinePracticalExam and ContestType.OnlinePracticalExam) &&
-                official &&
-                !isUserAdmin &&
-                !this.IsUserLecturerInContest(contest, userId) &&
-                !await this.contestsData.IsUserInExamGroupByContestAndUser(contest.Id, userId))
-            {
-                throw new BusinessServiceException("You are not registered for this exam!");
-            }
-
-            return await this.participantsBusiness.CreateNewByContestByUserByIsOfficialAndIsAdmin(
-                contest,
-                userId,
-                official,
-                isUserAdmin);
-        }
 
         public async Task ValidateContest(Contest contest, string userId, bool isUserAdmin, bool official)
         {

@@ -22,7 +22,7 @@
 
         public bool ShouldEnterPassword { get; set; }
 
-        public  int TotalParticipantsCount { get; set; }
+        public int TotalParticipantsCount { get; set; }
 
         public int ActiveParticipantsCount { get; set; }
 
@@ -40,7 +40,7 @@
                 .ForMember(d => d.TotalParticipantsCount, opt => opt.MapFrom(s =>
                     s.Contest.Participants.Count))
                 .ForMember(d => d.ActiveParticipantsCount, opt => opt.MapFrom(s =>
-                    s.Contest.Participants.Count(x=> x.ParticipationStartTime <= DateTime.Now && DateTime.Now < x.ParticipationEndTime)))
+                    s.Contest.Participants.Count(x => x.ParticipationStartTime <= DateTime.Now && DateTime.Now < x.ParticipationEndTime)))
                 .ForAllOtherMembers(opt => opt.Ignore());
     }
 }

@@ -1,5 +1,9 @@
 namespace OJS.Services.Administration.Business.Implementations
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using OJS.Common;
     using OJS.Common.Helpers;
@@ -8,12 +12,8 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Services.Administration.Models;
     using OJS.Services.Common;
     using OJS.Services.Common.Models;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using SoftUni.Judge.Common.Enumerations;
     using SoftUni.Data.Infrastructure;
+    using SoftUni.Judge.Common.Enumerations;
 
     public class SubmissionsBusinessService : ISubmissionsBusinessService
     {
@@ -149,7 +149,7 @@ namespace OJS.Services.Administration.Business.Implementations
             var submissionProblemId = submission.ProblemId!.Value;
             var submissionParticipantId = submission.ParticipantId!.Value;
 
-            var result  = await this.transactions.ExecuteInTransaction(async () =>
+            var result = await this.transactions.ExecuteInTransaction(async () =>
             {
                 submission.Processed = false;
 

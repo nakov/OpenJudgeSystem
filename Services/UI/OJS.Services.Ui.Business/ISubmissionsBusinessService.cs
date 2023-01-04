@@ -6,7 +6,6 @@
     using OJS.Data.Models.Submissions;
     using OJS.Services.Ui.Models.Submissions;
     using SoftUni.Services.Infrastructure;
-    using Models.Submissions;
 
     public interface ISubmissionsBusinessService : IService
     {
@@ -27,8 +26,7 @@
         Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblemAndUser(
             int problemId,
             bool isOfficial,
-            string userId
-        );
+            string userId);
 
         Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult);
 

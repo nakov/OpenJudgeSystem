@@ -33,10 +33,6 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             .ThenByDescending(s => s.Id)
             .FirstOrDefault();
 
-    public IQueryable<Submission> GetByIdQuery(int id) =>
-        this.DbSet
-            .Where(s => s.Id == id);
-
     public IQueryable<Submission> GetAllByProblem(int problemId)
         => this.DbSet.Where(s => s.ProblemId == problemId);
 
@@ -48,7 +44,7 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
 
     public Task<IEnumerable<TServiceModel>> GetAllByProblemAndUser<TServiceModel>(int problemId, string userId)
         => this.GetQuery(
-                filter: s => s.ProblemId == problemId && s.Participant.UserId == userId)
+                filter: s => s.ProblemId == problemId && s.Participant!.UserId == userId)
             .MapCollection<TServiceModel>()
             .ToEnumerableAsync();
 
@@ -114,7 +110,7 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             var differenceBetweenSubmissions = DateTime.Now.ToUniversalTime() - latestSubmissionTime;
             if (differenceBetweenSubmissions.TotalSeconds < limitBetweenSubmissions)
             {
-                return limitBetweenSubmissions - differenceBetweenSubmissions.TotalSeconds.ToInt();;
+                return limitBetweenSubmissions - differenceBetweenSubmissions.TotalSeconds.ToInt();
             }
         }
 

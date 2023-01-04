@@ -57,10 +57,10 @@ public class SubmissionsController : BaseApiController
     /// <summary>
     /// Gets a subset of submissions by specific problem and user and given take count.
     /// </summary>
-    /// <param name="problemId">The id of the problem</param>
-    /// <param name="userId">The id of the user that we want to get the problem submissions for</param>
-    /// <param name="isOfficial">Return from compete or practice participation types</param>
-    /// <returns>A collection of submissions for a specific problem by user</returns>
+    /// <param name="problemId">The id of the problem.</param>
+    /// <param name="userId">The id of the user that we want to get the problem submissions for.</param>
+    /// <param name="isOfficial">Return from compete or practice participation types.</param>
+    /// <returns>A collection of submissions for a specific problem by user.</returns>
     [HttpGet("{problemId:int}/{userId}")]
     [ProducesResponseType(typeof(IEnumerable<SubmissionResultsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetSubmissionResultsByProblemAndUser(

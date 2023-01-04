@@ -242,39 +242,19 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         return await userSubmissions.ToListAsync();
     }
 
-    public async Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblemAndUser(int problemId,
-        bool isOfficial, string userId)
+    public async Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblemAndUser(
+        int problemId,
+        bool isOfficial,
+        string userId)
     {
         var problem = await this.problemsDataService.GetWithProblemGroupById(problemId);
 
-        await this.ValidateUserCanViewResults(problem, isOfficial);
+        await this.ValidateUserCanViewResults(problem!, isOfficial);
 
         var userSubmissions = await this.submissionsData
             .GetAllByProblemAndUser<SubmissionResultsServiceModel>(problemId, userId);
 
         return userSubmissions;
-    }
-
-    private async Task ValidateUserCanViewResults(Problem problem, bool isOfficial)
-    {
-        var user = this.userProviderService.GetCurrentUser();
-        if (problem == null)
-        {
-            throw new BusinessServiceException(Resources.ContestsGeneral.Problem_not_found);
-        }
-
-        var userHasParticipation = await this.participantsDataService
-            .ExistsByContestByUserAndIsOfficial(problem.ProblemGroup.ContestId, user.Id, isOfficial);
-
-        if (!userHasParticipation && !user.IsAdminOrLecturer)
-        {
-            throw new BusinessServiceException(Resources.ContestsGeneral.User_is_not_registered_for_exam);
-        }
-
-        if (!problem.ShowResults)
-        {
-            throw new BusinessServiceException(Resources.ContestsGeneral.Problem_results_not_available);
-        }
     }
 
     public async Task Submit(SubmitSubmissionServiceModel model)

@@ -10,8 +10,7 @@ using static Microsoft.AspNetCore.Http.StatusCodes;
 
 public class ParticipantScoresController : BaseApiController
 {
-    public IParticipantScoresBusinessService participantScoresBusinessService;
-
+    private IParticipantScoresBusinessService participantScoresBusinessService;
 
     public ParticipantScoresController(IParticipantScoresBusinessService participantScoresBusinessService)
         => this.participantScoresBusinessService = participantScoresBusinessService;

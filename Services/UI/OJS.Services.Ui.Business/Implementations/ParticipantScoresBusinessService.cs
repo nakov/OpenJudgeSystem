@@ -12,10 +12,10 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Common.Data;
     using OJS.Services.Infrastructure.Exceptions;
     using OJS.Services.Ui.Data;
-    using OJS.Services.Ui.Models.Problems;
-    using SoftUni.AutoMapper.Infrastructure.Extensions;
     using OJS.Services.Ui.Models.Participations;
+    using OJS.Services.Ui.Models.Problems;
     using OJS.Services.Ui.Models.Submissions;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
 
     public class ParticipantScoresBusinessService : IParticipantScoresBusinessService
     {

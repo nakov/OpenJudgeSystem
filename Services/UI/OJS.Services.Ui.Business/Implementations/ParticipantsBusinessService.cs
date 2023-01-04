@@ -46,11 +46,11 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
             var isUserLecturerInByContestAndUser =
                 await this.contestsData.IsUserLecturerInByContestAndUser(contest.Id, userId);
 
-                if (!isAdmin && !isUserLecturerInByContestAndUser)
-                {
-                    AssignRandomProblemsToParticipant(participant, contest);
-                }
+            if (!isAdmin && !isUserLecturerInByContestAndUser)
+            {
+                AssignRandomProblemsToParticipant(participant, contest);
             }
+        }
 
         await this.participantsData.Add(participant);
         await this.participantsData.SaveChanges();
@@ -65,17 +65,17 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
             .Include(p => p.User)
             .FirstOrDefaultAsync();
 
-            if (participant == null)
-            {
-                throw new ArgumentException(Resource.ParticipantDoesNotExist);
-            }
+        if (participant == null)
+        {
+            throw new ArgumentException(Resource.ParticipantDoesNotExist);
+        }
 
-            if (!participant.Contest.Duration.HasValue)
-            {
-                return new ServiceResult<string>(Resource.ContestDurationNotSet);
-            }
+        if (!participant.Contest.Duration.HasValue)
+        {
+            return new ServiceResult<string>(Resource.ContestDurationNotSet);
+        }
 
-            if (!participant.ParticipationEndTime.HasValue ||
+        if (!participant.ParticipationEndTime.HasValue ||
                 !participant.ParticipationStartTime.HasValue)
             {
                 throw new ArgumentException(Resource.ParticipantParticipationTimeNotSet);
@@ -85,10 +85,10 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
         var minAllowedEndTime = participant.ParticipationStartTime.Value
             .AddMinutes(participant.Contest.Duration.Value.TotalMinutes);
 
-            if (newEndTime < minAllowedEndTime)
-            {
-                return new ServiceResult<string>(Resource.ParticipationTimeReduceBelowDurationWarning);
-            }
+        if (newEndTime < minAllowedEndTime)
+        {
+            return new ServiceResult<string>(Resource.ParticipationTimeReduceBelowDurationWarning);
+        }
 
         participant.ParticipationEndTime = newEndTime;
 
@@ -105,15 +105,15 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
     {
         var contest = await this.contestsData.OneById(contestId);
 
-            if (contest == null)
-            {
-                return new ServiceResult<ICollection<string>>(SharedResource.ContestNotFound);
-            }
+        if (contest == null)
+        {
+            return new ServiceResult<ICollection<string>>(SharedResource.ContestNotFound);
+        }
 
-            if (!contest.Duration.HasValue)
-            {
-                return new ServiceResult<ICollection<string>>(Resource.ContestDurationNotSet);
-            }
+        if (!contest.Duration.HasValue)
+        {
+            return new ServiceResult<ICollection<string>>(Resource.ContestDurationNotSet);
+        }
 
         var contestTotalDurationInMinutes = contest.Duration.Value.TotalMinutes;
 
@@ -153,25 +153,25 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
             .GetUserSubmissionTimeLimit(participantId, contestLimitBetweenSubmissions)
             .ToTask();
 
-        private static void AssignRandomProblemsToParticipant(Participant participant, Contest contest)
+    private static void AssignRandomProblemsToParticipant(Participant participant, Contest contest)
         {
             var random = new Random();
 
-        var problemGroups = contest.ProblemGroups
+            var problemGroups = contest.ProblemGroups
             .Where(pg => !pg.IsDeleted && pg.Problems.Any(p => !p.IsDeleted));
 
-        foreach (var problemGroup in problemGroups)
-        {
-            var problemsInGroup = problemGroup.Problems.Where(p => !p.IsDeleted).ToList();
-            if (problemsInGroup.Any())
+            foreach (var problemGroup in problemGroups)
             {
-                var randomProblem = problemsInGroup[random.Next(0, problemsInGroup.Count)];
-                participant.ProblemsForParticipants.Add(new ProblemForParticipant
+                var problemsInGroup = problemGroup.Problems.Where(p => !p.IsDeleted).ToList();
+                if (problemsInGroup.Any())
                 {
-                    Participant = participant,
-                    Problem = randomProblem,
-                });
+                    var randomProblem = problemsInGroup[random.Next(0, problemsInGroup.Count)];
+                    participant.ProblemsForParticipants.Add(new ProblemForParticipant
+                    {
+                        Participant = participant,
+                        Problem = randomProblem,
+                    });
+                }
             }
-        }
     }
 }

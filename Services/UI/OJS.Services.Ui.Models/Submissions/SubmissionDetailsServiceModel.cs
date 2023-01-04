@@ -1,12 +1,12 @@
 ﻿namespace OJS.Services.Ui.Models.Submissions
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using AutoMapper;
     using OJS.Data.Models.Submissions;
-    using SoftUni.AutoMapper.Infrastructure.Models;
-    using System.Collections.Generic;
     using OJS.Services.Ui.Models.Users;
-    using System.Linq;
-
+    using SoftUni.AutoMapper.Infrastructure.Models;
 
     public class SubmissionDetailsServiceModel : IMapExplicitly
     {
@@ -33,7 +33,7 @@
 
         public bool IsCompiledSuccessfully { get; set; }
 
-        public string CompilerComment { get; set; }
+        public string CompilerComment { get; set; } = null!;
 
         public DateTime CreatedOn { get; set; }
 

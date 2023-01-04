@@ -1,11 +1,11 @@
 ﻿namespace OJS.Servers.Ui.Models.Submissions.Details
 {
+    using System;
+    using System.Collections.Generic;
     using OJS.Servers.Ui.Models.Submissions.Profile;
     using OJS.Servers.Ui.Models.Users;
     using OJS.Services.Ui.Models.Submissions;
     using SoftUni.AutoMapper.Infrastructure.Models;
-    using System.Collections.Generic;
-    using System;
 
     public class SubmissionDetailsResponseModel : IMapFrom<SubmissionDetailsServiceModel>
     {
@@ -31,7 +31,7 @@
 
         public bool IsCompiledSuccessfully { get; set; }
 
-        public string CompilerComment { get; set; }
+        public string CompilerComment { get; set; } = null!;
 
         public DateTime CreatedOn { get; set; }
 

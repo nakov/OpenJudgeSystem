@@ -77,8 +77,7 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
         {
             if (!newContest.Duration.HasValue)
             {
-                return ValidatorResult.Error(string.Format(Resource.RequiredFieldForOnline, nameof(Contest
-                    .Duration))));
+                return ValidatorResult.Error(string.Format(Resource.RequiredFieldForOnline));
             }
 
             if (newContest.Duration.Value.TotalHours >= 24)
@@ -96,8 +95,7 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
         {
             if (newContest.NumberOfProblemGroups <= 0)
             {
-                return ValidatorResult.Error(string.Format(Resource.RequiredFieldForOnline, nameof(Contest
-                    .NumberOfProblemGroups)));
+                return ValidatorResult.Error(string.Format(Resource.RequiredFieldForOnline));
             }
 
             if (newContest.NumberOfProblemGroups > ProblemGroupsCountLimit)
@@ -110,8 +108,8 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
         return ValidatorResult.Success();
     }
 
-    private static ValidatorResult ValidateCategoryIsSet(Contest _, Contest newContest, AdminActionContext __) =>
+    private static ValidatorResult ValidateCategoryIsSet(Contest oldContest, Contest newContest, AdminActionContext adminActionContext) =>
         newContest.CategoryId.HasValue && newContest.CategoryId == default(int)
-            ? ValidatorResult.Error(Resource.Category_Not_Selected)
+            ? ValidatorResult.Error(Resource.CategoryNotSelected)
             : ValidatorResult.Success();
 }
