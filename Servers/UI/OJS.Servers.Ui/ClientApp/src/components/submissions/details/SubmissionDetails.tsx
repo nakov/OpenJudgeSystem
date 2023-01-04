@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
@@ -151,7 +152,7 @@ const SubmissionDetails = () => {
         [ currentSubmission, canAccessAdministration ],
     );
 
-    if (isNil(currentSubmission)) {
+    if (isNil(currentSubmission) || isEmpty(contest)) {
         return <div>No details fetched.</div>;
     }
 

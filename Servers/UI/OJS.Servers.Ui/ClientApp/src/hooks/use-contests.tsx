@@ -230,14 +230,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         setGetContestByProblemUrlParams({ problemId });
     }, []);
 
-    useEffect(() => {
-        if (isNil(getContestByProblemUrlParams)) {
-            return;
-        }
-
-        setGetContestByProblemUrlParams(getContestByProblemUrlParams);
-    }, [ getContestByProblemUrlParams ]);
-
     useEffect(
         () => {
             if (isNil(getAllContestsUrlParams)) {
