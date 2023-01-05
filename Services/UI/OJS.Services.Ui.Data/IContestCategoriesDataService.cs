@@ -19,7 +19,5 @@
         IQueryable<ContestCategory> GetAllVisibleOrdered();
 
         Task<IEnumerable<TServiceModel>> GetAllVisibleMainOrdered<TServiceModel>();
-
-        IEnumerable<TServiceModel> GetAllAllowedStrategyTypes<TServiceModel>(int categoryId);
     }
 }

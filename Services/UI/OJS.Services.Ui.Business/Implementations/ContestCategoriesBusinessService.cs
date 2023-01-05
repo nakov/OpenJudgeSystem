@@ -23,21 +23,21 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
     {
         var allCategories = await this.GetAlVisible<ContestCategoryTreeViewModel>().ToListAsync();
 
-        allCategories = await allCategories.ToListAsync();
-
         var mainCategories = allCategories
             .Where(c => !c.ParentId.HasValue)
             .OrderBy(c => c.OrderBy)
             .ToList();
 
-        foreach (var category in allCategories)
+        var graph = BuildGraph(allCategories);
+
+        allCategories.ForEach(category =>
         {
-            category.Children = category.Children.OrderBy(c=>c.OrderBy);
-            AddChildren(category.Children, allCategories,category.AllowedStrategyTypes);
+            category.Children = category.Children.OrderBy(c => c.OrderBy);
+            AddChildren(category.Children, allCategories, category.AllowedStrategyTypes, graph);
             category.AllowedStrategyTypes = category.AllowedStrategyTypes
-                .DistinctBy(c=>c.Id)
-                    .ToList();
-        }
+                .DistinctBy(c => c.Id)
+                .ToList();
+        });
 
         return mainCategories;
     }
@@ -83,22 +83,21 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
 
     private void AddChildren(IEnumerable<ContestCategoryTreeViewModel> children,
         ICollection<ContestCategoryTreeViewModel> allCategories,
-        ICollection<AllowedContestStrategiesServiceModel> parentCategoryAllowedStrategyTypes) =>
-        children.ForEach(child =>
-        {
-            child.AllowedStrategyTypes =
-                this.contestCategoriesData.GetAllAllowedStrategyTypes<AllowedContestStrategiesServiceModel>(child.Id)
-                    .DistinctBy(c=>c.Id)
+        ICollection<AllowedContestStrategiesServiceModel> parentCategoryAllowedStrategyTypes,
+        IReadOnlyDictionary<int, List<AllowedContestStrategiesServiceModel>> graph)
+        => children
+            .ForEach(child =>
+            {
+                GetChildrenAllowedStrategyTypes(child, graph);
+
+                child.Children = allCategories
+                    .OrderBy(x => x.OrderBy)
+                    .Where(x => x.ParentId == child.Id)
                     .ToList();
 
-            child.Children = allCategories
-                .OrderBy(x => x.OrderBy)
-                .Where(x => x.ParentId == child.Id)
-                .ToList();
-
-            parentCategoryAllowedStrategyTypes.AddRange(child.AllowedStrategyTypes);
-            this.AddChildren(child.Children, allCategories, parentCategoryAllowedStrategyTypes);
-        });
+                parentCategoryAllowedStrategyTypes.AddRange(child.AllowedStrategyTypes);
+                this.AddChildren(child.Children, allCategories, parentCategoryAllowedStrategyTypes, graph);
+            });
 
     private void GetWithChildren(
         ContestCategoryTreeViewModel category,
@@ -109,17 +108,49 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
         result.Add(category);
 
         children
-             .OrderBy(c=>c.OrderBy)
-             .ForEachAsync(childNode =>
-        {
-            var grandChildren = allCategories
-                .Where(x => x.ParentId == childNode.Id)
-                .ToList();
+            .OrderBy(c => c.OrderBy)
+            .ForEach(childNode =>
+            {
+                var grandChildren = allCategories
+                    .Where(x => x.ParentId == childNode.Id)
+                    .ToList();
 
-            result.AddRange(grandChildren);
+                result.AddRange(grandChildren);
 
-            this.GetWithChildren(childNode, grandChildren, allCategories, result);
-        });
+                this.GetWithChildren(childNode, grandChildren, allCategories, result);
+            });
+    }
+
+    private Dictionary<int, List<AllowedContestStrategiesServiceModel>> BuildGraph(
+        IEnumerable<ContestCategoryTreeViewModel> allCategories)
+    {
+        var graph = new Dictionary<int, List<AllowedContestStrategiesServiceModel>>();
+
+        allCategories
+            .Where(category => category.ParentId.HasValue)
+            .ForEach(category =>
+            {
+                if (!graph.ContainsKey(category.Id))
+                {
+                    graph[category.Id] = new List<AllowedContestStrategiesServiceModel>();
+                }
+
+                graph[category.Id].AddRange(category.AllowedStrategyTypes);
+            });
+
+        return graph;
+    }
+
+    private static void GetChildrenAllowedStrategyTypes(
+        ContestCategoryTreeViewModel category,
+        IReadOnlyDictionary<int, List<AllowedContestStrategiesServiceModel>> graph)
+    {
+        var children = graph[category.Id];
+
+        category.Children
+            .ForEach(c => GetChildrenAllowedStrategyTypes(c, graph));
+
+        category.AllowedStrategyTypes = children.DistinctBy(c => c.Id).ToList();
     }
 
     private Task<IEnumerable<T>> GetAlVisible<T>()

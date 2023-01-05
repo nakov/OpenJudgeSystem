@@ -13,9 +13,9 @@ public class ContestCategoriesController : BaseApiController
     private readonly IContestCategoriesCacheService contestCategoriesCache;
 
     public ContestCategoriesController(
-        IContestCategoriesCacheService contestCategoriesCache) => this.contestCategoriesCache = contestCategoriesCache;
+        IContestCategoriesCacheService contestCategoriesCache)
+        => this.contestCategoriesCache = contestCategoriesCache;
 
-    // this.contestCategoriesBusiness = contestCategoriesBusiness;
     /// <summary>
     /// Gets contest categories, ordered in a tree.
     /// </summary>

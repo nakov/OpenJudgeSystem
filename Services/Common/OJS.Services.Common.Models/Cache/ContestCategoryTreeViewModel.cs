@@ -35,15 +35,19 @@ public class ContestCategoryTreeViewModel : IMapExplicitly
             .ForMember(
                 m => m.Children,
                 opt => opt.MapFrom(src =>
-                    src.Children))
+                    src.Children
+                    .Where(c => c.IsVisible)))
             .ForMember(
                 m => m.AllowedStrategyTypes,
                 opt => opt.MapFrom(src =>
                     src.Contests
-                        .SelectMany(c => c.ProblemGroups
-                            .SelectMany(pg => pg.Problems
-                                .SelectMany(p => p.SubmissionTypesInProblems)
-                                .Select(st => st.SubmissionType)
-                                ))));
+                        .Where(cc => cc.IsVisible && !cc.IsDeleted)
+                        .SelectMany(c => c.ProblemGroups)
+                            .Where(pg => !pg.IsDeleted)
+                        .SelectMany(pg => pg.Problems)
+                            .Where(p => !p.IsDeleted)
+                        .SelectMany(p => p.SubmissionTypesInProblems)
+                        .Select(st => st.SubmissionType)
+                        .Distinct()));
 
 }

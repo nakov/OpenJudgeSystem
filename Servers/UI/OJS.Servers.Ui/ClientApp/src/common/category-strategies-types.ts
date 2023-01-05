@@ -6,7 +6,7 @@ interface IAllowedStrategyTypes {
 }
 
 interface ICategoryStrategiesTypes extends ITreeItemType {
-    allowedStrategyTypes: IAllowedStrategyTypes[];
+    allowedStrategyTypes?: IAllowedStrategyTypes[];
 }
 
 export default ICategoryStrategiesTypes;

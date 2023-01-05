@@ -14,12 +14,12 @@ import styles from './Tree.module.scss';
 
 interface ITreeProps {
     items: ITreeItemType[];
-    onSelect: (node: any) => void;
+    onSelect: (node: ITreeItemType) => void;
     defaultSelected?: string;
     defaultExpanded?: string[];
     itemFunc?: (item: ITreeItemType) => React.ReactElement;
     treeItemHasTooltip?: boolean;
-    onTreeItemClick?: (id: string, node: any) => void;
+
 }
 
 const Tree = ({
@@ -29,29 +29,24 @@ const Tree = ({
     defaultExpanded = [],
     itemFunc,
     treeItemHasTooltip = false,
-    onTreeItemClick,
 }: ITreeProps) => {
     const [ expandedIds, setExpandedIds ] = useState([] as string[]);
     const [ selectedId, setSelectedId ] = useState('');
 
     const handleTreeItemClick = useCallback(
-        (node: any) => {
+        (node: ITreeItemType) => {
             const id = node.id.toString();
             const newExpanded = expandedIds.includes(id)
                 ? without(expandedIds, id)
                 : [ ...expandedIds, id ];
 
-            if (!isNil(onTreeItemClick)) {
-                onTreeItemClick(id, node);
-            }
-
             setExpandedIds(newExpanded);
         },
-        [ expandedIds, onTreeItemClick ],
+        [ expandedIds ],
     );
 
     const handleLabelClick = useCallback(
-        (node: any) => {
+        (node: ITreeItemType) => {
             setSelectedId(node.id.toString());
             onSelect(node);
         },
