@@ -175,14 +175,16 @@ const SubmissionDetails = () => {
                   type={HeadingType.secondary}
                   className={styles.taskHeading}
                 >
-                    <LeftArrowIcon className={styles.leftArrow} size={IconSize.Large} />
-                    <LinkButton
-                      type={LinkButtonType.secondary}
-                      size={ButtonSize.small}
-                      to={registerContestTypeUrl}
-                      className={styles.backBtn}
-                      text="Back To Contest"
-                    />
+                    <div className={styles.backBtnContainer}>
+                        <LeftArrowIcon className={styles.leftArrow} size={IconSize.Large} />
+                        <LinkButton
+                          type={LinkButtonType.secondary}
+                          size={ButtonSize.small}
+                          to={registerContestTypeUrl}
+                          className={styles.backBtn}
+                          text="Back To Contest"
+                        />
+                    </div>
                     {problemNameHeadingText}
                 </Heading>
                 <CodeEditor

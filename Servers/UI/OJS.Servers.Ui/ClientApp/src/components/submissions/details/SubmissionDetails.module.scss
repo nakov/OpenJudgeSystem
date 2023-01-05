@@ -5,8 +5,13 @@
 
 .backBtn {
   border: 0;
+  right: 23px;
+  position: relative;
+}
+
+.backBtnContainer {
+  display: inline;
   float: left;
-  margin-right: -50%;
 }
 
 .code {
@@ -22,11 +27,10 @@
 }
 
 .leftArrow {
-  bottom: -3px;
+  bottom: -8px;
   color: colors.$light-blue-color;
-  float: left;
-  left: -160px;
   position: relative;
+  left: -13px;
 }
 
 .navigation,
