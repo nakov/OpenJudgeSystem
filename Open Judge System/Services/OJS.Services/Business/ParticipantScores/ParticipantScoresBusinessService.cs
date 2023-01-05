@@ -270,25 +270,28 @@
 
         private int GetFileSubmissionLength(byte[] submissionFileContent)
         {
-            var zip = new ZipArchive(new MemoryStream(submissionFileContent), ZipArchiveMode.Read, true);
-            var eligibleFileEntries = zip
-                .Entries
-                .Where(e =>
-                    GlobalConstants.ParticipationStatisticsFileSubmissionsAllowedExtensions
-                        .Any(fe => e.FullName.EndsWith(fe)));
-
-            var sumFileContentsLength = eligibleFileEntries
-                .Select(e =>
-                {
-                    var fileContent = new StreamReader(e.Open(), Encoding.UTF8).ReadToEnd();
-                    
-                    return this.GetCodeSubmissionLength(fileContent);
-                })
-                .Sum();
-            
-            zip.Dispose();
-
-            return sumFileContentsLength;
+            using (var zip = new ZipArchive(new MemoryStream(submissionFileContent), ZipArchiveMode.Read, true))
+            {
+                var eligibleFileEntries = zip
+                    .Entries
+                    .Where(e =>
+                        GlobalConstants.ParticipationStatisticsFileSubmissionsAllowedExtensions
+                            .Any(fe => e.FullName.EndsWith(fe)));
+                
+                var sumFileContentsLength = eligibleFileEntries
+                    .Select(e =>
+                    {
+                        using (var reader = new StreamReader(e.Open(), Encoding.UTF8))
+                        {
+                            var fileContent = reader.ReadToEnd();
+                        
+                            return this.GetCodeSubmissionLength(fileContent);
+                        }
+                    })
+                    .Sum();
+                
+                return sumFileContentsLength;
+            }
         }
 
         private int GetCodeSubmissionLength(string codeContentAsString)
