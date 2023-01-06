@@ -76,12 +76,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Servers.Administration.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Servers.Ui.Infrastructure", "Servers\UI\OJS.Servers.Ui.Infrastructure\OJS.Servers.Ui.Infrastructure.csproj", "{331E1783-7C12-4DFD-BE65-6A7662CFFFB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoCrudAdmin", "AutoCrudAdmin\src\AutoCrudAdmin\AutoCrudAdmin.csproj", "{34D1B441-2944-4F31-96EC-A50B0256F27D}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Analyzers", "Analyzers", "{F64E659D-490D-416E-81B9-B0911C5071A7}"
 	ProjectSection(SolutionItems) = preProject
-		..\..\Interactive\interactive\Analyzers\rulesets.xml = ..\..\Interactive\interactive\Analyzers\rulesets.xml
-		..\..\Interactive\interactive\Analyzers\stylecop.json = ..\..\Interactive\interactive\Analyzers\stylecop.json
+		Analyzers\rulesets.xml = Analyzers\rulesets.xml
+		Analyzers\stylecop.json = Analyzers\stylecop.json
 	EndProjectSection
 EndProject
 Global
