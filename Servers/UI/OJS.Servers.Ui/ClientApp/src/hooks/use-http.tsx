@@ -74,11 +74,9 @@ const useHttp = <TParametersType, TReturnDataType>({
     );
 
     const data = useMemo(() => {
-        if (response == null || response.data == null) {
-            return null;
-        }
+        const { data: responseData } = response || {};
 
-        return response.data as TReturnDataType;
+        return responseData as TReturnDataType || null;
     }, [ response ]);
 
     const actualHeaders = useMemo(

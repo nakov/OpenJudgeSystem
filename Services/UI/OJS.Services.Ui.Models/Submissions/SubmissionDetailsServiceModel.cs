@@ -1,4 +1,6 @@
-﻿namespace OJS.Services.Ui.Models.Submissions
+﻿using System;
+
+namespace OJS.Services.Ui.Models.Submissions
 {
     using AutoMapper;
     using OJS.Services.Ui.Models.Users;
@@ -34,6 +36,10 @@
         public bool IsCompiledSuccessfully { get; set; }
 
         public string CompilerComment { get; set; }
+        
+        public DateTime CreatedOn { get; set; }
+
+        public DateTime? ModifiedOn { get; set; }
 
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<Submission, SubmissionDetailsServiceModel>()

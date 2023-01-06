@@ -101,7 +101,7 @@ namespace OJS.Common
             public const string Practice_start_date_before_end = "Practice start date must be before the practice end date";
             public const string Problem_groups_count_limit = "Problem groups count cannot be more than {0}";
             public const string Report_zip_format = "{1} submissions for {0}.zip";
-            public const string Required_field_for_online = "The field is required for Online Contest";
+            public const string Required_field_for_online = "The field {0} is required for Online Contest";
             public const string Select_one_submission_type = "Choose at least one submission type!";
             public const string Subtracted_time_from_participants_online = "Successfully subtracted {0} minutes from the times of all selected active participants in the contest {1}";
             public const string Subtracted_time_from_single_participant_online = "Successfully subtracted {0} minutes from the time of the participant with username: {1}, in the contest {2}";
@@ -202,6 +202,13 @@ namespace OJS.Common
             public const string Link_not_empty = "The link must not be empty";
             public const string Problem_not_found = "Problem not found.";
             public const string Resource_not_found = "Resource not found.";
+        }
+
+        public static class SubmissionsController
+        {
+            public const string Submission_is_added_in_queue_for_processing = "The submission is added in the queue for processing!";
+            public const string Submission_can_not_be_processed = "Submission can't be processed!";
+            public const string Submission_is_processing = "Submission is processing, please wait to be processed for retesting!";
         }
     }
 }

@@ -1,9 +1,14 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
+import { useAppUrls } from '../../../hooks/use-app-urls';
+import { useAuth } from '../../../hooks/use-auth';
+import { usePageTitles } from '../../../hooks/use-page-titles';
 import concatClassNames from '../../../utils/class-names';
+import { preciseFormatDate } from '../../../utils/dates';
 import CodeEditor from '../../code-editor/CodeEditor';
+import { ButtonSize, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import SubmissionResults from '../submission-results/SubmissionResults';
 import RefreshableSubmissionsList from '../submissions-list/RefreshableSubmissionsList';
@@ -18,6 +23,18 @@ const SubmissionDetails = () => {
         },
         actions: { getSubmissionResults },
     } = useSubmissionsDetails();
+    const { actions: { setPageTitle } } = usePageTitles();
+    const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
+    const { getAdministrationRetestSubmissionInternalUrl } = useAppUrls();
+
+    const submissionTitle = useMemo(
+        () => `Submission №${currentSubmission?.id}`,
+        [ currentSubmission?.id ],
+    );
+
+    useEffect(() => {
+        setPageTitle(submissionTitle);
+    }, [ setPageTitle, submissionTitle ]);
 
     const problemNameHeadingText = useMemo(
         () => `${currentSubmission?.problem.name} - ${currentSubmission?.problem.id}`,
@@ -41,12 +58,64 @@ const SubmissionDetails = () => {
             return;
         }
 
-        const { problem: { id: problemId }, isOfficial } = currentSubmission;
+        const { problem: { id: problemId }, isOfficial, user: { id: userId } } = currentSubmission;
 
         (async () => {
-            await getSubmissionResults(problemId, isOfficial);
+            await getSubmissionResults(problemId, isOfficial, userId);
         })();
     }, [ currentSubmission, getSubmissionResults ]);
+
+    const renderRetestButton = useCallback(
+        () => {
+            if (!canAccessAdministration) {
+                return null;
+            }
+
+            return (
+                <LinkButton
+                  type={LinkButtonType.secondary}
+                  size={ButtonSize.medium}
+                  to={getAdministrationRetestSubmissionInternalUrl()}
+                  text="Retest"
+                  className={styles.retestButton}
+                />
+            );
+        },
+        [ canAccessAdministration, getAdministrationRetestSubmissionInternalUrl ],
+    );
+
+    const renderSubmissionInfo = useCallback(
+        () => {
+            if (!canAccessAdministration || isNil(currentSubmission)) {
+                return null;
+            }
+
+            const { createdOn, modifiedOn, user: { userName } } = currentSubmission;
+
+            return (
+                <div className={styles.submissionInfo}>
+                    <p className={styles.submissionInfoParagraph}>
+                        Created on:
+                        {' '}
+                        {preciseFormatDate(createdOn)}
+                    </p>
+                    <p className={styles.submissionInfoParagraph}>
+                        Modified on:
+                        {' '}
+                        {isNil(modifiedOn)
+                            ? 'never'
+                            : preciseFormatDate(modifiedOn)}
+                    </p>
+                    <p className={styles.submissionInfoParagraph}>
+                        Username:
+                        {' '}
+                        {userName}
+                    </p>
+                </div>
+            );
+        },
+        [ currentSubmission, canAccessAdministration ],
+    );
 
     if (isNil(currentSubmission)) {
         return <div>No details fetched.</div>;
@@ -63,6 +132,8 @@ const SubmissionDetails = () => {
                   selectedSubmission={currentSubmission}
                   className={styles.submissionsList}
                 />
+                { renderRetestButton() }
+                { renderSubmissionInfo() }
             </div>
             <div className={styles.code}>
                 <Heading
