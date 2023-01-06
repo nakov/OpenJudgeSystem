@@ -26,14 +26,14 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
                 .OrderByAsync(x => x.OrderBy)
                 .ToListAsync();
 
-        var mainCategories = allCategories
+        var categoriesWithChildren = FillChildren(allCategories);
+
+        var mainCategories = categoriesWithChildren
             .Where(c => !c.ParentId.HasValue)
             .OrderBy(c => c.OrderBy)
             .ToList();
 
-        var graph = FillChildren(allCategories);
-
-        graph.ForEach(category => FillAllowedStrategyTypes(category,category.AllowedStrategyTypes));
+        mainCategories.ForEach(FillAllowedStrategyTypes);
 
         return mainCategories;
     }
@@ -99,19 +99,14 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
             });
     }
 
-    private static void FillAllowedStrategyTypes(
-        ContestCategoryTreeViewModel category,
-        ICollection<AllowedContestStrategiesServiceModel> parentCategoryAllowedStrategyTypes)
+    private static void FillAllowedStrategyTypes(ContestCategoryTreeViewModel category)
     {
-        category.Children.ForEach(c=>
-        {
-            parentCategoryAllowedStrategyTypes.AddRange(c.AllowedStrategyTypes);
-            FillAllowedStrategyTypes(c, parentCategoryAllowedStrategyTypes);
-        });
+        category.Children.ForEach(FillAllowedStrategyTypes);
 
-        category.AllowedStrategyTypes = category.AllowedStrategyTypes
-            .DistinctBy(x => x.Id)
-            .ToList();
+        category.AllowedStrategyTypes = category.AllowedStrategyTypes.Concat(
+            category.Children.SelectMany(c=>c.AllowedStrategyTypes))
+                .DistinctBy(x => x.Id)
+                .ToList();
     }
 
     private static IEnumerable<ContestCategoryTreeViewModel> FillChildren(
