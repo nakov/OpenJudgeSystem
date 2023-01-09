@@ -1,4 +1,4 @@
-﻿import ITreeItemType from './tree-types';
+import ITreeItemType from './tree-types';
 
 interface IAllowedStrategyTypes {
     id: number;
