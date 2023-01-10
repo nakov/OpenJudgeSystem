@@ -38,8 +38,6 @@ interface INotificationType {
     leaveTimeout: number | null;
 }
 
-/* eslint-enable @typescript-eslint/no-explicit-any */
-
 interface IUrlParam {
     key: string;
     value: string | string[];
