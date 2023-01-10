@@ -119,11 +119,10 @@ const ContestCategories = ({
     const updateStrategyFilters = useCallback(
         (id: string, node: ICategoryStrategiesTypes) => {
             const strategyFilterToFind = currentStrategyFilters.find(({ categoryId }) => categoryId === id);
-            if (isNil(strategyFilterToFind)) {
-                addNewStrategyFilters(id, node);
-            } else {
-                removeOldStrategyFilters(id);
-            }
+
+            (isNil(strategyFilterToFind)
+                ? addNewStrategyFilters
+                : removeOldStrategyFilters)(id, node);
         },
         [ addNewStrategyFilters, currentStrategyFilters, removeOldStrategyFilters ],
     );
