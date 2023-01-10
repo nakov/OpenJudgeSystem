@@ -6,6 +6,12 @@ import { HttpStatus } from '../common/common';
 import { Anything, IDictionary, UrlType } from '../common/common-types';
 import { getUrl, makeHttpCall } from '../utils/http-utils';
 
+interface IErrorDataType {
+    title: string;
+    status: number;
+    detail: string;
+}
+
 interface IHttpProps<T> {
     url: string | ((parameters: T) => string);
     parameters?: T | null;
@@ -13,7 +19,7 @@ interface IHttpProps<T> {
 }
 
 interface IHttpResultType<T> {
-    data: T | null;
+    data: T | IErrorDataType;
     status: number;
     headers: IDictionary<string>;
 }
@@ -29,7 +35,6 @@ const useHttp = <TParametersType, TReturnDataType>({
 }: IHttpProps<TParametersType>) => {
     const [ response, setResponse ] = useState<IHttpResultType<TReturnDataType> | null>(null);
     const [ status, setStatus ] = useState<HttpStatus>(HttpStatus.NotStarted);
-    const [ error, setError ] = useState<Error | null>(null);
     const [ isSuccess, setIsSuccess ] = useState(false);
 
     const internalParameters = useMemo(() => parameters as IDictionary<TParametersType>, [ parameters ]);
@@ -38,11 +43,24 @@ const useHttp = <TParametersType, TReturnDataType>({
     const filenameStringPattern = 'filename*=UTF-8\'\'';
     const defaultAttachmentFilename = 'attachment';
 
+    const error = useMemo(() => {
+        if (isNil(response) || response.status === 200) {
+            return null;
+        }
+
+        if (!isNil(response?.data)) {
+            const errorDataType = response?.data as IErrorDataType;
+
+            return errorDataType.detail;
+        }
+
+        return 'error';
+    }, [ response ]);
+
     const handleBeforeCall = useCallback(
         async () => {
             setStatus(HttpStatus.Pending);
             setResponse(null);
-            setError(null);
         },
         [],
     );
@@ -50,7 +68,6 @@ const useHttp = <TParametersType, TReturnDataType>({
     const handleSuccess = useCallback(
         async (successResponse: any) => {
             setResponse(successResponse);
-            setError(null);
             setStatus(HttpStatus.Success);
         },
         [],
@@ -67,7 +84,6 @@ const useHttp = <TParametersType, TReturnDataType>({
                 break;
             }
 
-            setError(err);
             setResponse(err.response);
         },
         [],

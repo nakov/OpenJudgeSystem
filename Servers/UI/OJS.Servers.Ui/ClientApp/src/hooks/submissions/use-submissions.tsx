@@ -60,6 +60,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         post: submitCode,
         response: submitCodeResponse,
         data: submitCodeResult,
+        error,
         isSuccess,
     } = useHttp({ url: getSubmitUrl });
 
@@ -120,8 +121,8 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     useEffect(
         () => {
-            if (!isNil(submitCodeResult) && submitCodeResponse?.status !== 200) {
-                setSubmitMessage('error');
+            if (submitCodeResponse?.status !== 200 && !isNil(error)) {
+                setSubmitMessage(error);
                 return;
             }
 
@@ -129,7 +130,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                 await loadSubmissions();
             })();
         },
-        [ isSuccess, loadSubmissions, submitCodeResponse, submitCodeResult ],
+        [ error, isSuccess, loadSubmissions, submitCodeResponse, submitCodeResult ],
     );
 
     const value = useMemo(
