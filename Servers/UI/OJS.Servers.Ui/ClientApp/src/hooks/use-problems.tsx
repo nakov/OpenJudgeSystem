@@ -65,8 +65,6 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         saveAttachment,
     } = useHttp<IDownloadProblemResourceUrlParams, Blob>({
         url: getDownloadProblemResourceUrl,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         parameters: { id: problemResourceIdToDownload },
     });
 

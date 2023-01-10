@@ -39,7 +39,7 @@ interface ISubmitContestPasswordUrlParams {
 }
 
 interface IDownloadProblemResourceUrlParams {
-    id: number;
+    id: number | null;
 }
 
 interface IGetSubmissionResultsByProblemUrlParams {
