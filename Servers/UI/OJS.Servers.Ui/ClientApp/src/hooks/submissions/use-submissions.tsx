@@ -121,7 +121,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     useEffect(
         () => {
-            if (submitCodeResponse?.status !== 200 && !isNil(error)) {
+            if (!isNil(error)) {
                 setSubmitMessage(error);
                 return;
             }
