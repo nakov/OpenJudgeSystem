@@ -84,9 +84,9 @@ const Button = ({
 }: IButtonProps) => {
     validateOnlyChildrenOrText(text, children);
 
-    const typeClassName = classNameToType[type];
+    const { [type]: typeClassName } = classNameToType;
 
-    const sizeClassName = sizeToClassName[size];
+    const { [size]: sizeClassName } = sizeToClassName;
 
     const stateClassName = state === ButtonState.disabled
         ? styles.disabled
@@ -135,9 +135,9 @@ const LinkButton = ({
     validateOnlyChildrenOrText(text, children);
     const isDisabled = state === ButtonState.disabled;
 
-    const typeClassName = classNameToType[type];
+    const { [type]: typeClassName } = classNameToType;
 
-    const sizeClassName = sizeToClassName[size];
+    const { [size]: sizeClassName } = sizeToClassName;
 
     const stateClassName = isDisabled
         ? styles.disabled
