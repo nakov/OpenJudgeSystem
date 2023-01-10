@@ -1,5 +1,3 @@
-using X.PagedList;
-
 namespace OJS.Services.Ui.Business.Implementations;
 
 using FluentExtensions.Extensions;
@@ -10,6 +8,7 @@ using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using X.PagedList;
 
 public class ContestCategoriesBusinessService : IContestCategoriesBusinessService
 {
