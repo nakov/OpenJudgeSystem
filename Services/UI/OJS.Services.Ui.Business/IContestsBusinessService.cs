@@ -32,7 +32,7 @@ namespace OJS.Services.Ui.Business
         /// <param name="isAdmin">Is the user administrator in the system</param>
         /// <param name="allowToAdminAlways">If true, and the user is admin he will always be able to compete</param>
         Task<bool> CanUserCompeteByContestByUserAndIsAdmin(
-            int contestId,
+            Contest contest,
             string userId,
             bool isAdmin,
             bool allowToAdminAlways = false);

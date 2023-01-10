@@ -36,7 +36,7 @@ const Heading = ({ children, type = HeadingType.primary, className = '', id = ge
         className,
     );
 
-    const elementType = headingTypeToElementTypeMap[type];
+    const { [type]: elementType } = headingTypeToElementTypeMap;
 
     return createElement(elementType, {
         id: { id },

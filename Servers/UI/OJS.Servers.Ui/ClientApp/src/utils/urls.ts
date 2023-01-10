@@ -1,6 +1,12 @@
 // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/133
-const baseUrl = window.URLS.UI_URL;
-const administrationBaseUrl = window.URLS.ADMINISTRATION_URL;
+const
+    {
+        URLS:
+        {
+            UI_URL: baseUrl,
+            ADMINISTRATION_URL: administrationBaseUrl,
+        },
+    } = window;
 
 const loginSubmitUrl = `${baseUrl}/Account/Login`;
 const logoutUrl = `${baseUrl}/Account/Logout`;

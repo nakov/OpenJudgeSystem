@@ -3,7 +3,7 @@ import isNil from 'lodash/isNil';
 import sum from 'lodash/sum';
 
 import { UrlType } from '../common/common-types';
-import { IContestType, IRegisterForContestResponseType, IStartParticipationResponseType } from '../common/types';
+import { IContestType, IRegisterForContestResponseType, IStartParticipationResponseType, IStartParticipationValidationType } from '../common/types';
 import {
     IGetContestParticipationScoresForParticipantUrlParams,
     IRegisterForContestUrlParams,
@@ -38,6 +38,7 @@ interface ICurrentContestContext {
         submitContestPasswordErrorMessage: string | null;
         isPasswordValid: boolean | null;
         remainingTimeInMilliseconds: number;
+        validationResult: IStartParticipationValidationType;
         userSubmissionsTimeLimit: number;
         totalParticipantsCount: number;
         activeParticipantsCount: number;
@@ -62,6 +63,10 @@ const defaultState = {
         isOfficial: false,
         requirePassword: false,
         remainingTimeInMilliseconds: 0.0,
+        validationResult: {
+            message: '',
+            isValid: true,
+        },
         userSubmissionsTimeLimit: 0,
         totalParticipantsCount: 0,
         activeParticipantsCount: 0,
@@ -101,6 +106,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ isPasswordValid, setIsPasswordValid ] = useState<boolean | null>(null);
     const [ userSubmissionsTimeLimit, setUserSubmissionsTimeLimit ] = useState<number>(0);
     const [ remainingTimeInMilliseconds, setRemainingTimeInMilliseconds ] = useState(defaultState.state.remainingTimeInMilliseconds);
+    const [ validationResult, setValidationResult ] = useState<IStartParticipationValidationType>(defaultState.state.validationResult);
     const [ totalParticipantsCount, setTotalParticipantsCount ] = useState(defaultState.state.totalParticipantsCount);
     const [ activeParticipantsCount, setActiveParticipantsCount ] = useState(defaultState.state.activeParticipantsCount);
     const [ isSubmitAllowed, setIsSubmitAllowed ] = useState<boolean>(true);
@@ -215,6 +221,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             contestIsCompete,
             participantId: currentParticipantId,
             remainingTimeInMilliseconds: newRemainingTimeInMilliseconds,
+            validationResult: newValidationResult,
             totalParticipantsCount: newTotalParticipants,
             activeParticipantsCount: newActiveParticipants,
         } = responseData;
@@ -223,6 +230,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         setIsOfficial(contestIsCompete);
         setParticipantId(currentParticipantId);
         setRemainingTimeInMilliseconds(newRemainingTimeInMilliseconds);
+        setValidationResult(newValidationResult);
         setUserSubmissionsTimeLimit(responseData.userSubmissionsTimeLimit);
         setTotalParticipantsCount(newTotalParticipants);
         setActiveParticipantsCount(newActiveParticipants);
@@ -318,6 +326,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 submitContestPasswordErrorMessage,
                 isPasswordValid,
                 remainingTimeInMilliseconds,
+                validationResult,
                 userSubmissionsTimeLimit,
                 totalParticipantsCount,
                 activeParticipantsCount,
@@ -347,6 +356,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             start,
             submitContestPasswordErrorMessage,
             submitPassword,
+            validationResult,
             loadParticipantScores,
             totalParticipantsCount,
             activeParticipantsCount,
