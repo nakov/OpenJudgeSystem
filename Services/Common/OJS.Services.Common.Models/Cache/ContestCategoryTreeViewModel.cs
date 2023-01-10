@@ -1,7 +1,3 @@
-using FluentExtensions.Extensions;
-using OJS.Data.Models.Submissions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
-
 namespace OJS.Services.Common.Models.Cache;
 
 using AutoMapper;
@@ -47,7 +43,6 @@ public class ContestCategoryTreeViewModel : IMapExplicitly
                         .SelectMany(pg => pg.Problems)
                             .Where(p => !p.IsDeleted)
                         .SelectMany(p => p.SubmissionTypesInProblems)
-                        .Select(st => st.SubmissionType)
-                        .Distinct()));
+                        .Select(st => st.SubmissionType)));
 
 }
