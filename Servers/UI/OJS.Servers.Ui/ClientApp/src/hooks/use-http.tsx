@@ -48,8 +48,8 @@ const useHttp = <TParametersType, TReturnDataType>({
             return null;
         }
 
-        if (!isNil(response?.data)) {
-            const errorDataType = response?.data as IErrorDataType;
+        if (!isNil(response.data)) {
+            const errorDataType = response.data as IErrorDataType;
 
             return errorDataType.detail;
         }
