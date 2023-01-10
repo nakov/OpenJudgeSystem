@@ -116,7 +116,7 @@ const ContestCategories = ({
         [ filterProps, setStrategyFilters ],
     );
 
-    const strategyFilters = useCallback(
+    const updateStrategyFilters = useCallback(
         (id: string, node: ICategoryStrategiesTypes) => {
             const strategyFilterToFind = currentStrategyFilters.find(({ categoryId }) => categoryId === id);
             if (isNil(strategyFilterToFind)) {
@@ -138,8 +138,8 @@ const ContestCategories = ({
 
         onCategoryClick(filter);
         updateBreadcrumb(category, categoriesFlat);
-        strategyFilters(node.id, node);
-    }, [ possibleFilters, categoriesFlat, onCategoryClick, updateBreadcrumb, strategyFilters ]);
+        updateStrategyFilters(node.id, node);
+    }, [ possibleFilters, categoriesFlat, onCategoryClick, updateBreadcrumb, updateStrategyFilters ]);
 
     return (
         <div className={className as string}>

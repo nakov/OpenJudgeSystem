@@ -104,9 +104,9 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
         category.Children.ForEach(FillAllowedStrategyTypes);
 
         category.AllowedStrategyTypes = category.AllowedStrategyTypes.Concat(
-            category.Children.SelectMany(c=>c.AllowedStrategyTypes))
-                .DistinctBy(x => x.Id)
-                .ToList();
+                category.Children.SelectMany(c => c.AllowedStrategyTypes))
+                    .DistinctBy(x => x.Id)
+                    .ToList();
     }
 
     private static IEnumerable<ContestCategoryTreeViewModel> FillChildren(
