@@ -1,7 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
-import { UrlType } from '../../common/common-types';
 import { IGetContestResultsParams } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useHttp } from '../use-http';
@@ -12,7 +11,7 @@ import { IContestResultsParticipationType, IContestResultsType } from './types';
 
 interface ICurrentContestResultsContext {
     state: {
-        contestResults: IContestResultsType;
+        contestResults?: IContestResultsType | null;
     };
     actions: {
         load: (id: number, official: boolean, full: boolean) => Promise<void>;
@@ -33,7 +32,10 @@ const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProvi
     const {
         get: getContestResults,
         data: apiContestResults,
-    } = useHttp(getContestResultsUrl as UrlType, getContestResultsParams);
+    } = useHttp<IGetContestResultsParams, IContestResultsType>({
+        url: getContestResultsUrl,
+        parameters: getContestResultsParams,
+    });
 
     const contestResults = useMemo(
         () => {

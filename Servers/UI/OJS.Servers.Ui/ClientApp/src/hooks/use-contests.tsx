@@ -3,7 +3,7 @@ import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { IUrlParam, UrlType } from '../common/common-types';
+import { IUrlParam } from '../common/common-types';
 import {
     DEFAULT_FILTER_TYPE,
     DEFAULT_SORT_FILTER_TYPE,
@@ -107,7 +107,12 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const {
         get,
         data,
-    } = useHttp(getAllContestsUrl as UrlType, getAllContestsUrlParams);
+    } = useHttp<
+        IAllContestsUrlParams,
+        IPagedResultType<IIndexContestsType>>({
+            url: getAllContestsUrl,
+            parameters: getAllContestsUrlParams,
+        });
 
     const { state: { strategies, isLoaded: strategiesAreLoaded } } = useContestStrategyFilters();
     const { state: { categories, isLoaded: categoriesAreLoaded } } = useContestCategories();

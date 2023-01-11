@@ -29,7 +29,7 @@ interface IKeyValuePair<TValue> {
     value: TValue;
 }
 
-type UrlType = string | ((parameters: IDictionary<any> | null) => string);
+type UrlType<T> = string | ((parameters?: IDictionary<T> | null) => string);
 
 interface INotificationType {
     title: string;
@@ -37,13 +37,6 @@ interface INotificationType {
     type?: 'success' | 'danger' | 'info' | 'default' | 'warning';
     leaveTimeout: number | null;
 }
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
-interface IFileResponseType {
-    data: Blob;
-    headers: IDictionary<any>;
-}
-/* eslint-enable @typescript-eslint/no-explicit-any */
 
 interface IUrlParam {
     key: string;
@@ -56,7 +49,6 @@ export type {
     IDictionary,
     IKeyValuePair,
     INotificationType,
-    IFileResponseType,
     IUrlParam,
     UrlType,
     Anything,

@@ -61,12 +61,12 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
     const {
         get: getSubmissions,
         data: apiSubmissions,
-    } = useHttp('/api/submissions/public');
+    } = useHttp<null, IPublicSubmission[]>({ url: '/api/submissions/public' });
 
     const {
         get: getTotalSubmissionsCount,
         data: apiTotalSubmissionsCount,
-    } = useHttp('/api/submissions/totalCount');
+    } = useHttp({ url: '/api/submissions/totalCount' });
 
     const submissions = useMemo(
         () => (apiSubmissions || []) as IPublicSubmission[],
@@ -96,7 +96,7 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
             },
             actions: { load },
         }),
-        [ load, submissions, totalSubmissionsCount ],
+        [ submissions, totalSubmissionsCount, load ],
     );
 
     return (
