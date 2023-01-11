@@ -4,7 +4,7 @@ import isNil from 'lodash/isNil';
 import {
     IAllContestsUrlParams,
     IDownloadProblemResourceUrlParams,
-    IGetContestByProblemParams,
+    IGetContestByProblemUrlParams,
     IGetContestParticipationScoresForParticipantUrlParams,
     IGetContestResultsParams,
     IGetSubmissionDetailsByIdUrlParams,
@@ -41,7 +41,7 @@ interface IUrlsContext {
     getContestResultsUrl: (params: IGetContestResultsParams) => string;
     getHomeStatisticsUrl: () => string;
     getAdministrationRetestSubmission: (params: IRetestSubmissionUrlParams) => string;
-    getContestByProblemUrl: (params: IGetContestByProblemParams) => string;
+    getContestByProblemUrl: (params: IGetContestByProblemUrlParams) => string;
 }
 
 const UrlsContext = createContext<IUrlsContext>({} as IUrlsContext);
@@ -103,7 +103,7 @@ const getContestParticipantScoresForParticipantUrl =
     ({ participantId }: IGetContestParticipationScoresForParticipantUrlParams) => `
     ${baseApiUrl}/ParticipantScores/GetScoresForParticipant/${participantId}`;
 
-const getContestByProblemUrl = ({ problemId }: IGetContestByProblemParams) => `${baseApiUrl}/Contests/ByProblem/${problemId}`;
+const getContestByProblemUrl = ({ problemId }: IGetContestByProblemUrlParams) => `${baseApiUrl}/Contests/ByProblem/${problemId}`;
 
 const getCategoriesTreeUrl =
     () => `${baseApiUrl}/ContestCategories/GetCategoriesTree`;

@@ -15,7 +15,7 @@ import { FilterSortType, FilterType, IContestParam, IFilter, ISort, ToggleParam 
 import { filterByType, findFilterByTypeAndName } from '../common/filter-utils';
 import { PageParams } from '../common/pages-types';
 import { IIndexContestsType, IPagedResultType } from '../common/types';
-import { IAllContestsUrlParams, IGetContestByProblemParams } from '../common/url-types';
+import { IAllContestsUrlParams, IGetContestByProblemUrlParams } from '../common/url-types';
 import { IHaveChildrenProps, IPagesInfo } from '../components/common/Props';
 import { areStringEqual } from '../utils/compare-utils';
 
@@ -94,7 +94,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ contests, setContests ] = useState(defaultState.state.contests);
     const [ getAllContestsUrlParams, setGetAllContestsUrlParams ] = useState<IAllContestsUrlParams | null>();
     const [ pagesInfo, setPagesInfo ] = useState<IPagesInfo>(defaultState.state.pagesInfo as IPagesInfo);
-    const [ getContestByProblemUrlParams, setGetContestByProblemUrlParams ] = useState<IGetContestByProblemParams | null>();
+    const [ getContestByProblemUrlParams, setGetContestByProblemUrlParams ] = useState<IGetContestByProblemUrlParams | null>();
     const [ contest, setContest ] = useState<IIndexContestsType | null>(null);
 
     const {
@@ -109,8 +109,8 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
 
     const {
-        getContests,
-        contestsData,
+        get: getContests,
+        data: contestsData,
     } = useHttp<
         IAllContestsUrlParams,
         IPagedResultType<IIndexContestsType>>({
@@ -121,7 +121,11 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const {
         get: getContestByProblemId,
         data: contestData,
-    } = useHttp(getContestByProblemUrl as UrlType, getContestByProblemUrlParams);
+    } = useHttp<
+        IGetContestByProblemUrlParams, IIndexContestsType>({
+            url: getContestByProblemUrl,
+            parameters: getContestByProblemUrlParams,
+        });
 
     const { state: { strategies, isLoaded: strategiesAreLoaded } } = useContestStrategyFilters();
     const { state: { categories, isLoaded: categoriesAreLoaded } } = useContestCategories();
