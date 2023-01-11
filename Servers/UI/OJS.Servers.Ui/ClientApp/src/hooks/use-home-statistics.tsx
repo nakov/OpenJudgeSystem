@@ -40,7 +40,7 @@ const HomeStatisticsProvider = ({ children }: IHomeStatisticsProviderProps) => {
     const {
         get,
         data,
-    } = useHttp(getHomeStatisticsUrl);
+    } = useHttp<null, IHomeStatistics>({ url: getHomeStatisticsUrl });
 
     const load = useCallback(
         async () => {
@@ -53,7 +53,7 @@ const HomeStatisticsProvider = ({ children }: IHomeStatisticsProviderProps) => {
 
     useEffect(
         () => {
-            setStatistics(data as IHomeStatistics);
+            setStatistics(data);
         },
         [ data ],
     );
