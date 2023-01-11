@@ -12,12 +12,11 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Common.Models;
     using OJS.Services.Infrastructure.Constants;
     using OJS.Services.Infrastructure.Exceptions;
+    using OJS.Services.Ui.Business.Validation;
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Contests;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.Common.Models;
-    using OJS.Services.Infrastructure.Constants;
-    using OJS.Services.Ui.Business.Validation;
 
     public class ContestsBusinessService : IContestsBusinessService
     {

@@ -1,12 +1,12 @@
-﻿using OJS.Data.Models.Contests;
-using OJS.Services.Common.Models;
-using OJS.Services.Ui.Data;
-using OJS.Services.Ui.Models.Contests;
+﻿namespace OJS.Services.Ui.Business.Validation.Implementations;
+
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-
-namespace OJS.Services.Ui.Business.Validation.Implementations;
+using OJS.Data.Models.Contests;
+using OJS.Services.Common.Models;
+using OJS.Services.Ui.Data;
+using OJS.Services.Ui.Models.Contests;
 
 public class ContestValidationService : IContestValidationService
 {
@@ -20,19 +20,21 @@ public class ContestValidationService : IContestValidationService
     {
         var (contest, userId, isUserAdmin, official) = item;
 
-        var isUserLecturerInContest = contest != null && this.IsUserLecturerInContest(contest, userId);
+        var isUserLecturerInContest = contest != null && IsUserLecturerInContest(contest, userId);
 
         if (contest == null ||
             contest.IsDeleted ||
             (!contest.IsVisible && !isUserLecturerInContest))
         {
-            return ValidationResult.Invalid(ValidationMessages.Contest.NotFound,
+            return ValidationResult.Invalid(
+                ValidationMessages.Contest.NotFound,
                 ContestValidation.ContestIsFound.ToString());
         }
 
-        if (await this.IsContestExpired(contest, userId, isUserAdmin, official, isUserLecturerInContest))
+        if (IsContestExpired(contest, userId, isUserAdmin, official, isUserLecturerInContest))
         {
-            return ValidationResult.Invalid(ValidationMessages.Contest.IsExpired,
+            return ValidationResult.Invalid(
+                ValidationMessages.Contest.IsExpired,
                 ContestValidation.ContestIsNotExpired.ToString());
         }
 
@@ -43,24 +45,30 @@ public class ContestValidationService : IContestValidationService
                 isUserAdmin,
                 allowToAdminAlways: true))
         {
-            return ValidationResult.Invalid(ValidationMessages.Contest.CanBeCompeted,
+            return ValidationResult.Invalid(
+                ValidationMessages.Contest.CanBeCompeted,
                 ContestValidation.ContestCanBeCompeted.ToString());
         }
 
         if (!official && !contest.CanBePracticed && !isUserLecturerInContest)
         {
-            return ValidationResult.Invalid(ValidationMessages.Contest.CanBePracticed,
+            return ValidationResult.Invalid(
+                ValidationMessages.Contest.CanBePracticed,
                 ContestValidation.ContestCanBePracticed.ToString());
         }
 
         return ValidationResult.Valid();
     }
 
-    private bool IsUserLecturerInContest(Contest contest, string userId) =>
+    private static bool IsUserLecturerInContest(Contest contest, string userId) =>
         contest.LecturersInContests.Any(c => c.LecturerId == userId) ||
-        contest.Category.LecturersInContestCategories.Any(cl => cl.LecturerId == userId);
+        contest.Category!.LecturersInContestCategories.Any(cl => cl.LecturerId == userId);
 
-    private async Task<bool> IsContestExpired(Contest contest, string userId, bool isAdmin, bool official,
+    private static bool IsContestExpired(
+        Contest contest,
+        string userId,
+        bool isAdmin,
+        bool official,
         bool isUserLecturerInContest)
     {
         var isUserAdminOrLecturerInContest = isAdmin || isUserLecturerInContest;
@@ -92,6 +100,15 @@ public class ContestValidationService : IContestValidationService
         return false;
     }
 
+    private static bool IsAccessibleToLecturerOrAdmin(
+        bool canBeCompeted,
+        bool isUserAdminOrLecturerInContest,
+        bool allowToAdminAlways) =>
+        canBeCompeted || (isUserAdminOrLecturerInContest && allowToAdminAlways);
+
+    private static bool CanUserCompete(bool isUserAdminOrLecturerInContest, bool isContestActive) =>
+        isUserAdminOrLecturerInContest && isContestActive;
+
     private async Task<bool> CanUserCompeteByContestByUserAndIsAdmin(
         Contest contest,
         string userId,
@@ -101,15 +118,10 @@ public class ContestValidationService : IContestValidationService
         var isUserAdminOrLecturerInContest = isAdmin || await this.contestsData
             .IsUserLecturerInByContestAndUser(contest.Id, userId);
 
-        return this.IsAccessibleToLecturerOrAdmin(contest.CanBeCompeted, isUserAdminOrLecturerInContest,
+        return IsAccessibleToLecturerOrAdmin(
+                   contest.CanBeCompeted,
+                   isUserAdminOrLecturerInContest,
                    allowToAdminAlways)
-               || this.CanUserCompete(isUserAdminOrLecturerInContest, contest.IsActive);
+               || CanUserCompete(isUserAdminOrLecturerInContest, contest.IsActive);
     }
-
-    private bool IsAccessibleToLecturerOrAdmin(bool canBeCompeted, bool isUserAdminOrLecturerInContest,
-        bool allowToAdminAlways) =>
-        canBeCompeted || (isUserAdminOrLecturerInContest && allowToAdminAlways);
-
-    private bool CanUserCompete(bool isUserAdminOrLecturerInContest, bool isContestActive) =>
-        isUserAdminOrLecturerInContest && isContestActive;
 }
