@@ -58,9 +58,9 @@ namespace OJS.Services.Ui.Models.Contests
 
         public ContestType ContestType { get; set; }
 
-        public IEnumerable<SubmissionTypeServiceModel> AllowedSubmissionTypes { get; set; }
+        public IEnumerable<SubmissionTypeServiceModel>? AllowedSubmissionTypes { get; set; }
 
-        public ICollection<ContestProblemServiceModel> Problems { get; set; }
+        public ICollection<ContestProblemServiceModel>? Problems { get; set; }
 
         public IEnumerable<ContestCategoryListViewModel> ParentCategories { get; set; } =
             Enumerable.Empty<ContestCategoryListViewModel>();

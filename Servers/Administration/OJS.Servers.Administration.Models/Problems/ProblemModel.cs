@@ -14,7 +14,7 @@ namespace OJS.Servers.Administration.Models.Problems
                 Name = p.Name,
                 MaximumPoints = p.MaximumPoints,
                 TimeLimit = p.TimeLimit,
-                MemoryLimit = p.MemoryLimit,
+                MemoryLimit = (int)p.MemoryLimit,
             };
 
         public int Id { get; set; }

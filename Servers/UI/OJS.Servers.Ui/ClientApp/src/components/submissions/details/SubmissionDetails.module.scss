@@ -5,20 +5,19 @@
 
 .backBtn {
   border: 0;
-  position: relative;
-  right: 23px;
+  margin-left: -20px;
+  margin-right: -120px;
 }
 
-.backBtnContainer {
-  display: inline;
-  float: left;
+.btnContainer {
+  display: flex;
+  flex-direction: row;
 }
 
 .code {
   @extend %navigation;
 
   border-left: 0;
-  flex: 7;
 }
 
 .detailsWrapper {
@@ -26,11 +25,17 @@
   @extend %columnsThree;
 }
 
+.headingText {
+  align-self: flex-end;
+}
+
 .leftArrow {
-  bottom: -8px;
   color: colors.$light-blue-color;
-  left: -13px;
-  position: relative;
+  margin-bottom: -5px;
+}
+
+.itemInvisible {
+  visibility: hidden;
 }
 
 .navigation,
@@ -68,6 +73,8 @@
 }
 
 .taskHeading {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   margin-bottom: 24px;
-  text-align: center;
 }

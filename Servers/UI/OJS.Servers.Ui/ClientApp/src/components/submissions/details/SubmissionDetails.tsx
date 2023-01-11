@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
@@ -39,6 +38,9 @@ const SubmissionDetails = () => {
     const { getRegisterContestTypeUrl } = useAppUrls();
 
     useEffect(() => {
+        console.log(contest);
+    }, [ contest ]);
+    useEffect(() => {
         if (isNil(currentSubmission)) {
             return;
         }
@@ -53,7 +55,10 @@ const SubmissionDetails = () => {
         [ currentSubmission?.id ],
     );
 
-    const { canBeCompeted } = contest;
+    const canBeCompeted = useMemo(
+        () => contest?.canBeCompeted,
+        [ contest ],
+    );
 
     const participationType = useMemo(
         () => canBeCompeted
@@ -77,8 +82,8 @@ const SubmissionDetails = () => {
     );
 
     const registerContestTypeUrl = useMemo(
-        () => getRegisterContestTypeUrl({ id: contest.id, participationType }),
-        [ contest.id, participationType, getRegisterContestTypeUrl ],
+        () => getRegisterContestTypeUrl({ id: contest?.id, participationType }),
+        [ contest?.id, participationType, getRegisterContestTypeUrl ],
     );
 
     const { submissionType } = currentSubmission || {};
@@ -152,7 +157,7 @@ const SubmissionDetails = () => {
         [ currentSubmission, canAccessAdministration ],
     );
 
-    if (isNil(currentSubmission) || isEmpty(contest)) {
+    if (isNil(currentSubmission) || isNil(contest)) {
         return <div>No details fetched.</div>;
     }
 
@@ -175,7 +180,7 @@ const SubmissionDetails = () => {
                   type={HeadingType.secondary}
                   className={styles.taskHeading}
                 >
-                    <div className={styles.backBtnContainer}>
+                    <div className={styles.btnContainer}>
                         <LeftArrowIcon className={styles.leftArrow} size={IconSize.Large} />
                         <LinkButton
                           type={LinkButtonType.secondary}
@@ -185,7 +190,10 @@ const SubmissionDetails = () => {
                           text="Back To Contest"
                         />
                     </div>
-                    {problemNameHeadingText}
+                    <div className={styles.headingText}>
+                        {problemNameHeadingText}
+                    </div>
+                    <div className={styles.itemInvisible}>Other</div>
                 </Heading>
                 <CodeEditor
                   readOnly

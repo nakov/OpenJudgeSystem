@@ -78,13 +78,18 @@ namespace OJS.Services.Ui.Models.Contests
                 .ForMember(d => d.ContestId, opt => opt.MapFrom(s => s.ProblemGroup.ContestId))
                 .ForMember(d => d.IsExcludedFromHomework,
                     opt => opt.MapFrom(s => s.ProblemGroup.Type == ProblemGroupType.ExcludedFromHomework))
-                .ForMember(d => d.FileSizeLimit, opt => opt.MapFrom(s => s.SourceCodeSizeLimit))
+                .ForMember(d => d.FileSizeLimit, opt => opt.Ignore())
                 .ForMember(d => d.UserHasAdminRights, opt => opt.Ignore())
                 .ForMember(d => d.AllowedSubmissionTypes,
                     opt => opt.MapFrom(s => s.SubmissionTypesInProblems.Select(st => st.SubmissionType)))
                 .ForMember(
                     d => d.Points,
-                    opt => opt.MapFrom(s => 0));
+                    opt => opt.MapFrom(s => 0))
+                .ForMember(d => d.OrderBy, opt
+                    => opt.MapFrom(s => (int)s.OrderBy))
+                .ForMember(d => d.TimeLimit, opt => opt.MapFrom(s => (double)s.TimeLimit))
+                .ForMember(d => d.MaximumPoints, opt => opt.MapFrom(s => (int)s.MaximumPoints))
+                .ForMember(d => d.MemoryLimit, opt => opt.MapFrom(s => (double)s.MemoryLimit));
 
     }
 }

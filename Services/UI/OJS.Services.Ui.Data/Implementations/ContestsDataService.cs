@@ -25,10 +25,22 @@ namespace OJS.Services.Ui.Data.Implementations
             : base(db)
             => this.dates = dates;
 
-        public Task<TServiceModel> GetByProblemId<TServiceModel>(int id)
-            => this.DbSet
-                .FirstOrDefaultAsync(c => c.ProblemGroups.Any(pg => pg.Problems.Any(p => p.Id == id)))
-                .Map<TServiceModel>();
+        public async Task<TServiceModel?> GetByProblemId<TServiceModel>(int id)
+        {
+            var contests = this.DbSet
+                .Where(c => c.ProblemGroups
+                    .Any(pg => pg.Problems.Any(p => p.Id == id)));
+
+            var result = contests.MapCollection<TServiceModel>();
+
+            return await result.FirstOrDefaultAsync();
+        }
+
+
+            /*=> this.DbSet
+                .Where(c => c.ProblemGroups.Any(pg => pg.Problems.Any(p => p.Id == id)))
+                .MapCollection<TServiceModel>()
+                .FirstOrDefaultAsync();*/
 
         public async Task<IEnumerable<TServiceModel>> GetAllCompetable<TServiceModel>()
             => await this.GetAllCompetableQuery()

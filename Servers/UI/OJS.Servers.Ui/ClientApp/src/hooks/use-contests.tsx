@@ -36,7 +36,7 @@ interface IContestsContext {
         sortingTypes: ISort[];
         pagesInfo: IPagesInfo;
         currentPage: number;
-        contest: IIndexContestsType;
+        contest: IIndexContestsType | null;
     };
     actions: {
         reload: () => Promise<void>;
@@ -56,7 +56,6 @@ const defaultState = {
         possibleFilters: [] as IFilter[],
         possibleSortingTypes: [] as ISort[],
         pagesInfo: { pageNumber: 1 },
-        contest: {} as IIndexContestsType,
     },
 };
 
@@ -96,7 +95,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ getAllContestsUrlParams, setGetAllContestsUrlParams ] = useState<IAllContestsUrlParams | null>();
     const [ pagesInfo, setPagesInfo ] = useState<IPagesInfo>(defaultState.state.pagesInfo as IPagesInfo);
     const [ getContestByProblemUrlParams, setGetContestByProblemUrlParams ] = useState<IGetContestByProblemParams | null>();
-    const [ contest, setContest ] = useState(defaultState.state.contest);
+    const [ contest, setContest ] = useState<IIndexContestsType | null>(null);
 
     const {
         state: { params },
@@ -115,7 +114,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     } = useHttp(getAllContestsUrl as UrlType, getAllContestsUrlParams);
 
     const {
-        get: getContest,
+        get: getContestByProblemId,
         data: contestData,
     } = useHttp(getContestByProblemUrl as UrlType, getContestByProblemUrlParams);
 
@@ -250,10 +249,10 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             }
 
             (async () => {
-                await getContest();
+                await getContestByProblemId();
             })();
         },
-        [ getContestByProblemUrlParams, getContest ],
+        [ getContestByProblemUrlParams, getContestByProblemId ],
     );
 
     useEffect(() => {
