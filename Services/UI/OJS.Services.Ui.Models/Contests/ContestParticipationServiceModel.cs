@@ -1,10 +1,12 @@
 ﻿namespace OJS.Services.Ui.Models.Contests
 {
-    using AutoMapper;
-    using OJS.Data.Models.Participants;
-    using SoftUni.AutoMapper.Infrastructure.Models;
-    using System;
-    using System.Linq;
+
+using AutoMapper;
+using OJS.Data.Models.Participants;
+using OJS.Services.Common.Models;
+using SoftUni.AutoMapper.Infrastructure.Models;
+using System;
+using System.Linq;
 
     public class ContestParticipationServiceModel : IMapExplicitly
     {
@@ -23,6 +25,10 @@
         public bool ShouldEnterPassword { get; set; }
 
         public int TotalParticipantsCount { get; set; }
+
+        public ValidationResult ValidationResult { get; set; }
+
+        public  int TotalParticipantsCount { get; set; }
 
         public int ActiveParticipantsCount { get; set; }
 

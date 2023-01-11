@@ -1,7 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
-import { UrlType } from '../../common/common-types';
 import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useCurrentContest } from '../use-current-contest';
@@ -52,7 +51,10 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
     const {
         get: getProblemSubmissions,
         data: apiProblemSubmissions,
-    } = useHttp(getSubmissionResultsByProblemUrl as UrlType, submissionResultsToGetParameters);
+    } = useHttp<IProblemSubmissionResultsRequestParametersType, ISubmissionDetails[]>({
+        url: getSubmissionResultsByProblemUrl,
+        parameters: submissionResultsToGetParameters,
+    });
 
     const loadSubmissions = useCallback(async () => {
         const { id } = currentProblem || {};

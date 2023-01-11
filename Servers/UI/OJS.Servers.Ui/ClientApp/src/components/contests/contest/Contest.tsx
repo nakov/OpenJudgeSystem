@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
+import isNil from 'lodash/isNil';
 
 import { useAuth } from '../../../hooks/use-auth';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
@@ -21,6 +22,7 @@ const Contest = () => {
             score,
             maxScore,
             remainingTimeInMilliseconds,
+            validationResult,
             totalParticipantsCount,
             activeParticipantsCount,
             isOfficial,
@@ -156,35 +158,73 @@ const Contest = () => {
         [ participantsStateText, participantsValue ],
     );
 
-    return (
-        <>
-            <div className={styles.headingContest}>
-                <Heading
-                  type={HeadingType.primary}
-                  className={styles.contestHeading}
-                >
-                    {contestTitle}
-                </Heading>
-                <Heading type={HeadingType.secondary} className={secondaryHeadingClassName}>
-                    {renderParticipants()}
-                    {renderTimeRemaining()}
-                    {renderScore()}
-                </Heading>
-            </div>
+    const renderErrorMessage = useCallback(() => (
+        <div className={styles.headingContest}>
+            <Heading
+              type={HeadingType.primary}
+              className={styles.contestHeading}
+            >
+                {contestTitle}
+                {' '}
+                -
+                {' '}
+                {validationResult.message}
+            </Heading>
+        </div>
+    ), [ validationResult, contestTitle ]);
 
-            <div className={styles.contestWrapper}>
-                <div className={navigationContestClassName}>
-                    <ContestTasksNavigation />
+    const renderContest = useCallback(
+        () => (
+            <>
+                <div className={styles.headingContest}>
+                    <Heading
+                      type={HeadingType.primary}
+                      className={styles.contestHeading}
+                    >
+                        {contestTitle}
+                    </Heading>
+                    <Heading type={HeadingType.secondary} className={secondaryHeadingClassName}>
+                        {renderParticipants()}
+                        {renderTimeRemaining()}
+                        {renderScore()}
+                    </Heading>
                 </div>
-                <div className={submissionBoxClassName}>
-                    <SubmissionBox />
+
+                <div className={styles.contestWrapper}>
+                    <div className={navigationContestClassName}>
+                        <ContestTasksNavigation />
+                    </div>
+                    <div className={submissionBoxClassName}>
+                        <SubmissionBox />
+                    </div>
+                    <div className={problemInfoClassName}>
+                        <ContestProblemDetails />
+                    </div>
                 </div>
-                <div className={problemInfoClassName}>
-                    <ContestProblemDetails />
-                </div>
-            </div>
-        </>
+            </>
+        ),
+        [
+            contestTitle,
+            navigationContestClassName,
+            problemInfoClassName,
+            renderScore,
+            renderTimeRemaining,
+            secondaryHeadingClassName,
+            submissionBoxClassName,
+            renderParticipants,
+        ],
     );
+
+    const renderPage = useCallback(
+        () => isNil(validationResult)
+            ? <div>Loading data</div>
+            : validationResult.isValid
+                ? renderContest()
+                : renderErrorMessage(),
+        [ renderErrorMessage, renderContest, validationResult ],
+    );
+
+    return renderPage();
 };
 
 export default Contest;

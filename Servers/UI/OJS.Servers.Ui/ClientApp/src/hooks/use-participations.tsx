@@ -39,7 +39,7 @@ const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
     const {
         get: getParticipationsForProfile,
         data: apiParticipationsForProfile,
-    } = useHttp(getParticipationsForProfileUrl);
+    } = useHttp<null, IParticipationType[]>({ url: getParticipationsForProfileUrl });
 
     const getUserParticipations = useCallback(async () => {
         startLoading();
@@ -52,7 +52,7 @@ const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
             return;
         }
 
-        setUserParticipations(apiParticipationsForProfile as IParticipationType[]);
+        setUserParticipations(apiParticipationsForProfile);
         setAreUserParticipationsRetrieved(true);
     }, [ apiParticipationsForProfile ]);
 

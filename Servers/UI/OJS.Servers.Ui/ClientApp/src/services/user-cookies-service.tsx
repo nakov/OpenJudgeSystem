@@ -15,6 +15,7 @@ class UserCookiesService {
     getUser() {
         const loggedInUsername = getCookie('logged_in_username');
         const canAccessAdministrationCookie = getCookie('can_access_administration');
+        // eslint-disable-next-line prefer-destructuring
         let { permissions } = this.user;
         let loggedIn = false;
 

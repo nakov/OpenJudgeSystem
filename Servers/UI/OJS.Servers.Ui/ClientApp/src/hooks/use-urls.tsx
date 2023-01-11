@@ -44,19 +44,17 @@ interface IUrlsContext {
 const UrlsContext = createContext<IUrlsContext>({} as IUrlsContext);
 
 type IUrlsProviderProps = IHaveChildrenProps
-
-const baseUrl = window.URLS.UI_URL;
-const baseApiUrl = `${baseUrl}/api`;
+const baseApiUrl = `${window.URLS.UI_URL}/api`;
 
 // auth
-const getLoginSubmitUrl = () => `${baseUrl}/Account/Login`;
-const getLogoutUrl = () => `${baseUrl}/Account/Logout`;
+const getLoginSubmitUrl = () => `${window.URLS.UI_URL}/Account/Login`;
+const getLogoutUrl = () => `${window.URLS.UI_URL}/Account/Logout`;
 
 // admin
-const administrationBaseUrl = window.URLS.ADMINISTRATION_URL;
-const getAdministrationContestsGridUrl = () => `${administrationBaseUrl}/Contests`;
+const getAdministrationContestsGridUrl = () => `${window.URLS.ADMINISTRATION_URL}/Contests`;
 const getAdministrationNavigation = () => '/administration';
-const getAdministrationRetestSubmission = ({ id }: IRetestSubmissionUrlParams) => `${administrationBaseUrl}/Submissions/Retest?PK=${id}`;
+const getAdministrationRetestSubmission = ({ id }: IRetestSubmissionUrlParams) => `
+${window.URLS.ADMINISTRATION_URL}/Submissions/Retest?PK=${id}`;
 
 // profile
 const getProfileInfoUrl = () => `${baseApiUrl}/Users/GetProfileInfo`;

@@ -43,9 +43,9 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
         post: loginSubmit,
         response: loginSubmitResponse,
         status: loginSubmitStatus,
-    } = useHttp(getLoginSubmitUrl);
+    } = useHttp({ url: getLoginSubmitUrl });
 
-    const { post: logout } = useHttp(getLogoutUrl);
+    const { post: logout } = useHttp({ url: getLogoutUrl });
 
     const signIn = useCallback(
         async () => {
