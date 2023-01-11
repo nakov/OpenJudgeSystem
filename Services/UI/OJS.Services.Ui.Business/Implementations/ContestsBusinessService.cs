@@ -6,6 +6,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using System.Threading.Tasks;
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
+    using OJS.Common.Enumerations;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Participants;
     using OJS.Services.Common;
@@ -105,7 +106,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var user = this.userProviderService.GetCurrentUser();
 
-            var validationResult = await this.contestValidationService.GetValidationResult((contest, user.Id, user.IsAdmin, model.IsOfficial));
+            var validationResult = await this.contestValidationService.GetValidationResult((contest, user?.Id, user!.IsAdmin, model.IsOfficial) !);
 
             var userProfile = await this.usersBusinessService.GetUserProfileById(user.Id!);
 
@@ -117,12 +118,8 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (participant == null)
             {
-                participant = await this.AddNewParticipantToContestIfNotExists(contest, model.IsOfficial, user.Id, user.IsAdmin);
-            }
-
-            if (participant == null)
-            {
-                participant = new Participant() { Contest = contest, };
+                participant = await this.AddNewParticipantToContestIfNotExists(contest!, model.IsOfficial, user.Id!, user.IsAdmin) ??
+                              new Participant() { Contest = contest!, };
             }
 
             var participationModel = participant.Map<ContestParticipationServiceModel>();
@@ -157,25 +154,6 @@ namespace OJS.Services.Ui.Business.Implementations
                 .Exists(c =>
                     c.Id == contestId &&
                     (!c.IpsInContests.Any() || c.IpsInContests.Any(ai => ai.Ip.Value == ip)));
-
-        private async Task<Participant?> AddNewParticipantToContestIfNotExists(Contest contest, bool official, string userId,
-            bool isUserAdmin)
-        {
-            if (contest.Type is not (ContestType.OnlinePracticalExam and ContestType.OnlinePracticalExam) &&
-                official &&
-                !isUserAdmin &&
-                !this.IsUserLecturerInContest(contest, userId) &&
-                !await this.contestsData.IsUserInExamGroupByContestAndUser(contest.Id, userId))
-            {
-                return null;
-            }
-
-            return await this.participantsBusiness.CreateNewByContestByUserByIsOfficialAndIsAdmin(
-                contest,
-                userId,
-                official,
-                isUserAdmin);
-        }
 
         public async Task ValidateContest(Contest contest, string userId, bool isUserAdmin, bool official)
         {
@@ -377,6 +355,28 @@ namespace OJS.Services.Ui.Business.Implementations
         private static bool IsUserLecturerInContest(Contest contest, string userId) =>
             contest.LecturersInContests.Any(c => c.LecturerId == userId) ||
             contest.Category!.LecturersInContestCategories.Any(cl => cl.LecturerId == userId);
+
+        private async Task<Participant?> AddNewParticipantToContestIfNotExists(
+            Contest contest,
+            bool official,
+            string userId,
+            bool isUserAdmin)
+        {
+            if (contest.Type is not(ContestType.OnlinePracticalExam and ContestType.OnlinePracticalExam) &&
+                official &&
+                !isUserAdmin &&
+                !IsUserLecturerInContest(contest, userId) &&
+                !await this.contestsData.IsUserInExamGroupByContestAndUser(contest.Id, userId))
+            {
+                return null;
+            }
+
+            return await this.participantsBusiness.CreateNewByContestByUserByIsOfficialAndIsAdmin(
+                contest,
+                userId,
+                official,
+                isUserAdmin);
+        }
 
         private async Task<Participant> AddNewParticipantToContest(
             Contest contest,
