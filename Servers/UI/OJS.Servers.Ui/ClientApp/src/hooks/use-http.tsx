@@ -1,29 +1,66 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { saveAs } from 'file-saver';
+import isNil from 'lodash/isNil';
 
 import { HttpStatus } from '../common/common';
-import { Anything, IDictionary, IFileResponseType, UrlType } from '../common/common-types';
+import { Anything, IDictionary, UrlType } from '../common/common-types';
 import { getUrl, makeHttpCall } from '../utils/http-utils';
 
-const useHttp = (
-    url: UrlType,
-    parameters: IDictionary<any> | null = null,
-    headers: IDictionary<string> | null = null,
-) => {
-    const [ response, setResponse ] = useState<any | null>(null);
+interface IErrorDataType {
+    title: string;
+    status: number;
+    detail: string;
+}
+
+interface IHttpProps<T> {
+    url: string | ((parameters: T) => string);
+    parameters?: T | null;
+    headers?: IDictionary<string> | null;
+}
+
+interface IHttpResultType<T> {
+    data: T | IErrorDataType;
+    status: number;
+    headers: IDictionary<string>;
+}
+
+interface IHttpJsonExceptionResponse {
+    detail: string;
+}
+
+const useHttp = <TParametersType, TReturnDataType>({
+    url,
+    parameters,
+    headers,
+}: IHttpProps<TParametersType>) => {
+    const [ response, setResponse ] = useState<IHttpResultType<TReturnDataType> | null>(null);
     const [ status, setStatus ] = useState<HttpStatus>(HttpStatus.NotStarted);
-    const [ error, setError ] = useState<Error | null>(null);
     const [ isSuccess, setIsSuccess ] = useState(false);
+
+    const internalParameters = useMemo(() => parameters as IDictionary<TParametersType>, [ parameters ]);
 
     const contentDispositionHeaderText = 'content-disposition';
     const filenameStringPattern = 'filename*=UTF-8\'\'';
     const defaultAttachmentFilename = 'attachment';
 
+    const error = useMemo(() => {
+        if (isNil(response) || response.status === 200) {
+            return null;
+        }
+
+        if (!isNil(response.data)) {
+            const errorDataType = response.data as IErrorDataType;
+
+            return errorDataType.detail;
+        }
+
+        return 'error';
+    }, [ response ]);
+
     const handleBeforeCall = useCallback(
         async () => {
             setStatus(HttpStatus.Pending);
             setResponse(null);
-            setError(null);
         },
         [],
     );
@@ -31,7 +68,6 @@ const useHttp = (
     const handleSuccess = useCallback(
         async (successResponse: any) => {
             setResponse(successResponse);
-            setError(null);
             setStatus(HttpStatus.Success);
         },
         [],
@@ -48,18 +84,15 @@ const useHttp = (
                 break;
             }
 
-            setError(err);
             setResponse(err.response);
         },
         [],
     );
 
     const data = useMemo(() => {
-        if (response == null || response.data == null) {
-            return null;
-        }
+        const { data: responseData } = response || {};
 
-        return response.data;
+        return responseData as TReturnDataType || null;
     }, [ response ]);
 
     const actualHeaders = useMemo(
@@ -72,7 +105,7 @@ const useHttp = (
 
     const get = useCallback(
         (responseType = 'json') => makeHttpCall({
-            url: getUrl(url, parameters),
+            url: getUrl(url as UrlType<TParametersType>, internalParameters),
             method: 'get',
             headers: actualHeaders,
             responseType,
@@ -80,12 +113,12 @@ const useHttp = (
             onError: handleError,
             onBeforeCall: handleBeforeCall,
         }),
-        [ url, parameters, actualHeaders, handleSuccess, handleError, handleBeforeCall ],
+        [ url, internalParameters, actualHeaders, handleSuccess, handleError, handleBeforeCall ],
     );
 
     const post = useCallback(
         (requestData: Anything, responseType = 'json') => makeHttpCall({
-            url: getUrl(url, parameters),
+            url: getUrl<TParametersType>(url as UrlType<TParametersType>, internalParameters),
             method: 'post',
             body: requestData,
             headers: actualHeaders,
@@ -94,10 +127,10 @@ const useHttp = (
             onError: handleError,
             onBeforeCall: handleBeforeCall,
         }),
-        [ url, parameters, actualHeaders, handleSuccess, handleError, handleBeforeCall ],
+        [ url, internalParameters, actualHeaders, handleSuccess, handleError, handleBeforeCall ],
     );
 
-    const getFilenameFromHeaders = useCallback((responseObj: IFileResponseType) => {
+    const getFilenameFromHeaders = useCallback((responseObj: IHttpResultType<Blob>) => {
         const filename = responseObj
             .headers[contentDispositionHeaderText]
             .split(filenameStringPattern)[1];
@@ -110,14 +143,16 @@ const useHttp = (
     }, []);
 
     const saveAttachment = useCallback(() => {
-        if (!response) {
+        if (isNil(response)) {
             return;
         }
 
-        const filename = decodeURIComponent(getFilenameFromHeaders(response as IFileResponseType));
+        const responseAsFileResponse = response as IHttpResultType<Blob>;
+
+        const filename = decodeURIComponent(getFilenameFromHeaders(responseAsFileResponse));
 
         saveAs(
-            response.data,
+            response.data as Blob,
             filename,
         );
 
@@ -148,4 +183,9 @@ const useHttp = (
 export {
     // eslint-disable-next-line import/prefer-default-export
     useHttp,
+};
+
+export type {
+    IHttpProps,
+    IHttpJsonExceptionResponse,
 };
