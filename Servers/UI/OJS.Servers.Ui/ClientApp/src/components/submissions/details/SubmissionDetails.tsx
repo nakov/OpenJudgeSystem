@@ -187,7 +187,7 @@ const SubmissionDetails = () => {
                           text="Back To Contest"
                         />
                     </div>
-                    <div className={styles.headingText}>
+                    <div>
                         {problemNameHeadingText}
                     </div>
                     <div className={styles.itemInvisible}>Other</div>

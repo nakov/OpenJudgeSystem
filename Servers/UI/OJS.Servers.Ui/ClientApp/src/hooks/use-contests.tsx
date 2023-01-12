@@ -122,7 +122,8 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         get: getContestByProblemId,
         data: contestData,
     } = useHttp<
-        IGetContestByProblemUrlParams, IIndexContestsType>({
+        IGetContestByProblemUrlParams,
+        IIndexContestsType>({
             url: getContestByProblemUrl,
             parameters: getContestByProblemUrlParams,
         });
