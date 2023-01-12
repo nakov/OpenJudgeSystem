@@ -13,7 +13,8 @@ namespace OJS.Services.Ui.Data.Implementations
 
     public class ParticipantsDataService : DataService<Participant>, IParticipantsDataService
     {
-        public ParticipantsDataService(OjsDbContext db) : base(db)
+        public ParticipantsDataService(OjsDbContext db)
+            : base(db)
         {
         }
 

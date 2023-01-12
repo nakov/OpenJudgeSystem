@@ -34,7 +34,7 @@ namespace OJS.Services.Ui.Business.Implementations
             {
                 if (problemGroup.Problems.Any(p => !p.IsDeleted))
                 {
-                    return new ServiceResult(Resource.Cannot_delete_problem_group_with_problems);
+                    return new ServiceResult(Resource.CannotDeleteProblemGroupWithProblems);
                 }
 
                 this.problemGroupsData.Delete(problemGroup);
@@ -50,17 +50,17 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             if (sourceContestId == destinationContestId)
             {
-                return new ServiceResult(Resource.Cannot_copy_problem_groups_into_same_contest);
+                return new ServiceResult(Resource.CannotCopyProblemGroupsIntoSameContest);
             }
 
             if (!await this.contestsData.ExistsById(destinationContestId))
             {
-                return new ServiceResult(SharedResource.Contest_not_found);
+                return new ServiceResult(SharedResource.ContestNotFound);
             }
 
             if (await this.contestsData.IsActiveById(destinationContestId))
             {
-                return new ServiceResult(Resource.Cannot_copy_problem_groups_into_active_contest);
+                return new ServiceResult(Resource.CannotCopyProblemGroupsIntoActiveContest);
             }
 
             var sourceContestProblemGroups = await this.problemGroupsData

@@ -81,6 +81,21 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             ? this.GetCustomToolbarActions(problemId)
             : base.CustomToolbarActions;
 
+    protected override IEnumerable<CustomGridColumn<Test>> CustomColumns
+        => new CustomGridColumn<Test>[]
+        {
+            new ()
+            {
+                Name = AdditionalFormFields.Input.ToString(),
+                ValueFunc = t => t.InputDataAsString.ToEllipsis(TestInputMaxLengthInGrid) !,
+            },
+            new ()
+            {
+                Name = AdditionalFormFields.Output.ToString(),
+                ValueFunc = t => t.OutputDataAsString.ToEllipsis(TestInputMaxLengthInGrid) !,
+            },
+        };
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Import(TestsImportRequestModel model)
@@ -96,7 +111,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
 
         if (file == null || file.Length == 0)
         {
-            this.TempData.AddDangerMessage(Resource.No_empty_file);
+            this.TempData.AddDangerMessage(Resource.NoEmptyFile);
             return this.RedirectToActionWithNumberFilter(nameof(TestsController), ProblemIdKey, problemId);
         }
 
@@ -104,7 +119,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
 
         if (extension != FileExtensions.Zip)
         {
-            this.TempData.AddDangerMessage(Resource.Must_be_zip);
+            this.TempData.AddDangerMessage(Resource.MustBeZip);
             return this.RedirectToActionWithNumberFilter(nameof(TestsController), ProblemIdKey, problemId);
         }
 
@@ -121,14 +136,14 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             }
             catch
             {
-                this.TempData.AddDangerMessage(Resource.Zip_damaged);
+                this.TempData.AddDangerMessage(Resource.ZipDamaged);
                 return this.RedirectToActionWithNumberFilter(nameof(TestsController), ProblemIdKey, problemId);
             }
         }
 
         if (!this.zippedTestsParser.AreTestsParsedCorrectly(parsedTests))
         {
-            this.TempData.AddDangerMessage(Resource.Invalid_tests);
+            this.TempData.AddDangerMessage(Resource.InvalidTests);
             return this.RedirectToActionWithNumberFilter(nameof(TestsController), ProblemIdKey, problemId);
         }
 
@@ -159,7 +174,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             scope.Complete();
         }
 
-        this.TempData.AddSuccessMessage(string.Format(Resource.Tests_added_to_problem, addedTestsCount));
+        this.TempData.AddSuccessMessage(string.Format(Resource.TestsAddedToProblem, addedTestsCount));
         return this.RedirectToActionWithNumberFilter(nameof(TestsController), ProblemIdKey, model.ProblemId);
     }
 
@@ -211,21 +226,6 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         return this.File(zipFile, MimeTypes.ApplicationZip, zipFileName);
     }
 
-    protected override IEnumerable<CustomGridColumn<Test>> CustomColumns
-        => new CustomGridColumn<Test>[]
-        {
-            new()
-            {
-                Name = AdditionalFormFields.Input.ToString(),
-                ValueFunc = t => t.InputDataAsString.ToEllipsis(TestInputMaxLengthInGrid),
-            },
-            new()
-            {
-                Name = AdditionalFormFields.Output.ToString(),
-                ValueFunc = t => t.OutputDataAsString.ToEllipsis(TestInputMaxLengthInGrid),
-            },
-        };
-
     protected override IEnumerable<FormControlViewModel> GenerateFormControls(
         Test entity,
         EntityAction action,
@@ -264,11 +264,11 @@ public class TestsController : BaseAutoCrudAdminController<Test>
 
     protected override Task BeforeEntitySaveAsync(Test entity, AdminActionContext actionContext)
     {
-        this.UpdateInputAndOutput(entity, actionContext);
+        UpdateInputAndOutput(entity, actionContext);
         return Task.CompletedTask;
     }
 
-    private void UpdateInputAndOutput(Test entity, AdminActionContext actionContext)
+    private static void UpdateInputAndOutput(Test entity, AdminActionContext actionContext)
     {
         var inputData = actionContext.GetByteArrayFromStringInput(AdditionalFormFields.Input);
         var outputData = actionContext.GetByteArrayFromStringInput(AdditionalFormFields.Output);
@@ -277,61 +277,34 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         entity.OutputData = outputData;
     }
 
-    private IEnumerable<FormControlViewModel> GetFormControlsForImportTests(int problemId)
+    private static IEnumerable<FormControlViewModel> GetFormControlsForImportTests(int problemId)
         => new FormControlViewModel[]
         {
-            new()
+            new ()
             {
                 Name = nameof(TestsImportRequestModel.ProblemId),
                 Type = typeof(int),
                 IsHidden = true,
                 Value = problemId,
             },
-            new()
-            {
-                Name = nameof(TestsImportRequestModel.Tests),
-                Type = typeof(IFormFile),
-            },
-            new()
-            {
-                Name = nameof(TestsImportRequestModel.RetestProblem),
-                Type = typeof(bool),
-                Value = false,
-            },
-            new()
-            {
-                Name = nameof(TestsImportRequestModel.DeleteOldTests),
-                Type = typeof(bool),
-                Value = true,
-            },
+            new () { Name = nameof(TestsImportRequestModel.Tests), Type = typeof(IFormFile), },
+            new () { Name = nameof(TestsImportRequestModel.RetestProblem), Type = typeof(bool), Value = false, },
+            new () { Name = nameof(TestsImportRequestModel.DeleteOldTests), Type = typeof(bool), Value = true, },
         };
 
     private IEnumerable<AutoCrudAdminGridToolbarActionViewModel> GetCustomToolbarActions(int problemId)
     {
-        var routeValues = new Dictionary<string, string>
-        {
-            { nameof(problemId), problemId.ToString() },
-        };
+        var routeValues = new Dictionary<string, string> { { nameof(problemId), problemId.ToString() }, };
 
         return new AutoCrudAdminGridToolbarActionViewModel[]
         {
-            new()
-            {
-                Name = "Add new",
-                Action = nameof(this.Create),
-                RouteValues = routeValues,
-            },
-            new()
-            {
-                Name = "Export Zip",
-                Action = nameof(this.ExportZip),
-                RouteValues = routeValues,
-            },
-            new()
+            new () { Name = "Add new", Action = nameof(this.Create), RouteValues = routeValues, },
+            new () { Name = "Export Zip", Action = nameof(this.ExportZip), RouteValues = routeValues, },
+            new ()
             {
                 Name = "Import tests",
                 Action = nameof(this.Import),
-                FormControls = this.GetFormControlsForImportTests(problemId),
+                FormControls = GetFormControlsForImportTests(problemId),
             },
         };
     }

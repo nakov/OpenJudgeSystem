@@ -13,7 +13,8 @@ using System.Threading.Tasks;
 
 public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataService
 {
-    public SubmissionsDataService(DbContext db) : base(db)
+    public SubmissionsDataService(DbContext db)
+        : base(db)
     {
     }
 
@@ -33,7 +34,7 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             .FirstOrDefault();
 
     public IQueryable<Submission> GetAllByProblem(int problemId)
-        => base.DbSet.Where(s => s.ProblemId == problemId);
+        => this.DbSet.Where(s => s.ProblemId == problemId);
 
     public IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId) =>
         this.GetQuery(
@@ -43,7 +44,7 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
 
     public Task<IEnumerable<TServiceModel>> GetAllByProblemAndUser<TServiceModel>(int problemId, string userId)
         => this.GetQuery(
-                filter: s => s.ProblemId == problemId && s.Participant.UserId == userId)
+                filter: s => s.ProblemId == problemId && s.Participant!.UserId == userId)
             .MapCollection<TServiceModel>()
             .ToEnumerableAsync();
 
@@ -80,11 +81,12 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
     public bool IsOfficialById(int id) =>
         this.GetByIdQuery(id)
             .Any(s => s.Participant!.IsOfficial);
-        public Submission? GetLastSubmitForParticipant(int participantId) =>
-            this.DbSet
-                .Where(s => s.ParticipantId == participantId)
-                .OrderByDescending(s => s.CreatedOn)
-                .FirstOrDefault();
+
+    public Submission? GetLastSubmitForParticipant(int participantId) =>
+        this.DbSet
+            .Where(s => s.ParticipantId == participantId)
+            .OrderByDescending(s => s.CreatedOn)
+            .FirstOrDefault();
 
     public void SetAllToUnprocessedByProblem(int problemId) =>
         this.GetAllByProblem(problemId)
@@ -97,23 +99,23 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
         this.GetAllByProblem(problemId)
             .UpdateFromQueryAsync(s => new Submission { TestRunsCache = null });
 
-        public int GetUserSubmissionTimeLimit(int participantId, int limitBetweenSubmissions)
+    public int GetUserSubmissionTimeLimit(int participantId, int limitBetweenSubmissions)
+    {
+        var lastSubmission = this.GetLastSubmitForParticipant(participantId);
+
+        if (lastSubmission != null)
         {
-            var lastSubmission = this.GetLastSubmitForParticipant(participantId);
-
-            if (lastSubmission != null)
+            // check if the submission was sent after the submission time limit has passed
+            var latestSubmissionTime = lastSubmission.CreatedOn;
+            var differenceBetweenSubmissions = DateTime.Now.ToUniversalTime() - latestSubmissionTime;
+            if (differenceBetweenSubmissions.TotalSeconds < limitBetweenSubmissions)
             {
-                // check if the submission was sent after the submission time limit has passed
-                var latestSubmissionTime = lastSubmission.CreatedOn;
-                var differenceBetweenSubmissions = DateTime.Now.ToUniversalTime() - latestSubmissionTime;
-                if (differenceBetweenSubmissions.TotalSeconds < limitBetweenSubmissions)
-                {
-                    return limitBetweenSubmissions - differenceBetweenSubmissions.TotalSeconds.ToInt();;
-                }
+                return limitBetweenSubmissions - differenceBetweenSubmissions.TotalSeconds.ToInt();
             }
-
-            return 0;
         }
+
+        return 0;
+    }
 
     public bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId) =>
         this.DbSet.Any(s => s.ProblemId == problemId && s.Participant!.UserId == userId && !s.Processed);

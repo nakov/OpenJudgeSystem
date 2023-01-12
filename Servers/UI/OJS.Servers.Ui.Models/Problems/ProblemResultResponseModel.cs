@@ -1,7 +1,7 @@
-﻿using OJS.Services.Ui.Models.Problems;
-using SoftUni.AutoMapper.Infrastructure.Models;
+﻿namespace OJS.Servers.Ui.Models.Problems;
 
-namespace OJS.Servers.Ui.Models.Problems;
+using OJS.Services.Ui.Models.Problems;
+using SoftUni.AutoMapper.Infrastructure.Models;
 
 public class ProblemResultResponseModel : IMapFrom<ProblemResultServiceModel>
 {

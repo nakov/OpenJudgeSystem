@@ -67,7 +67,7 @@ public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExa
         IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters)
     {
         var formControls = base.GenerateFormControls(entity, action, entityDict, complexOptionFilters).ToList();
-        this.ModifyFormControls(formControls, entityDict);
+        ModifyFormControls(formControls, entityDict);
         return formControls;
     }
 
@@ -90,14 +90,14 @@ public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExa
             .VerifyResult();
     }
 
-    private void LockExamGroupId(IEnumerable<FormControlViewModel> formControls, int examGroupId)
+    private static void LockExamGroupId(IEnumerable<FormControlViewModel> formControls, int examGroupId)
     {
         var problemInput = formControls.First(fc => fc.Name == nameof(UserInExamGroup.ExamGroup));
         problemInput.Value = examGroupId;
         problemInput.IsReadOnly = true;
     }
 
-    private void ModifyFormControls(
+    private static void ModifyFormControls(
         IEnumerable<FormControlViewModel> formControls,
         IDictionary<string, string> entityDict)
     {
@@ -105,7 +105,7 @@ public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExa
 
         if (predefinedExamGroupId.HasValue)
         {
-            this.LockExamGroupId(formControls, predefinedExamGroupId.Value);
+            LockExamGroupId(formControls, predefinedExamGroupId.Value);
         }
     }
 
@@ -118,7 +118,7 @@ public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExa
 
         return new AutoCrudAdminGridToolbarActionViewModel[]
         {
-            new()
+            new ()
             {
                 Name = "Add new",
                 Action = nameof(this.Create),

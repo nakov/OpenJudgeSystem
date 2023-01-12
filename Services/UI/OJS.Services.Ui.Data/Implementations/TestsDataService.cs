@@ -1,13 +1,17 @@
 ﻿namespace OJS.Services.Ui.Data.Implementations
 {
+    using System.Linq;
+    using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using OJS.Data.Models.Tests;
-    using System.Linq;
     using OJS.Services.Common.Data.Implementations;
 
     public class TestsDataService : DataService<Test>, ITestsDataService
     {
-        public TestsDataService(DbContext tests) : base(tests) {}
+        public TestsDataService(DbContext tests)
+            : base(tests)
+        {
+        }
 
         public IQueryable<Test> GetByIdQuery(int id) =>
             this.DbSet
@@ -25,7 +29,7 @@
         {
             var entity = this.DbSet.First(t => t.ProblemId == problemId);
             this.Delete(entity);
-            this.SaveChanges();
+            Task.FromResult(this.SaveChanges());
         }
     }
 }

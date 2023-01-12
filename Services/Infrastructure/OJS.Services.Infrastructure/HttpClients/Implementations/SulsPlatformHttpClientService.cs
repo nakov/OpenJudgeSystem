@@ -44,7 +44,18 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
                 throw new ArgumentException(string.Format(ValueCannotBeNullOrWhiteSpaceTemplate, nameof(endpoint)));
             }
 
-            return InternalGetAsync<TData>(requestData, endpoint);
+            return this.InternalGetAsync<TData>(requestData, endpoint);
+        }
+
+        private static string GetQueryStringSeparator(string url)
+            => url.Contains('?') ? "&" : "?";
+
+        private static T? DeserializeJson<T>(Stream stream)
+        {
+            using var streamReader = new StreamReader(stream);
+            using var jsonTextReader = new JsonTextReader(streamReader);
+            var jsonSerializer = new JsonSerializer();
+            return jsonSerializer.Deserialize<T>(jsonTextReader);
         }
 
         private async Task<ExternalDataRetrievalResult<TData>> InternalGetAsync<TData>(
@@ -73,23 +84,12 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
                     externalDataResult.ErrorMessage = await response.Content.ReadAsStringAsync();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                externalDataResult.ErrorMessage = ex.InnerException?.Message?? ex.Message;
+                externalDataResult.ErrorMessage = ex.InnerException?.Message ?? ex.Message;
             }
 
             return externalDataResult;
-        }
-
-        private static string GetQueryStringSeparator(string url)
-            => url.Contains('?') ? "&" : "?";
-
-        private static T? DeserializeJson<T>(Stream stream)
-        {
-            using var streamReader = new StreamReader(stream);
-            using var jsonTextReader = new JsonTextReader(streamReader);
-            var jsonSerializer = new JsonSerializer();
-            return jsonSerializer.Deserialize<T>(jsonTextReader);
         }
     }
 }

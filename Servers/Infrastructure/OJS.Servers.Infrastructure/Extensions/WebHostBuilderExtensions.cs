@@ -9,7 +9,6 @@
     using System.IO;
     using System.Linq;
 
-
     public static class WebHostBuilderExtensions
     {
         private const string UrlVariableNotFoundExceptionMessageFormat =

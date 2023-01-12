@@ -1,5 +1,10 @@
 namespace OJS.Servers.Infrastructure.Extensions
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Net.Http;
+    using System.Reflection;
     using Hangfire;
     using Hangfire.SqlServer;
     using Microsoft.AspNetCore.DataProtection;
@@ -21,14 +26,9 @@ namespace OJS.Servers.Infrastructure.Extensions
     using SoftUni.Data.Infrastructure.Enumerations;
     using SoftUni.Data.Infrastructure.Extensions;
     using SoftUni.Services.Infrastructure.Extensions;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Net.Http;
-    using System.Reflection;
-    using static OJS.Common.GlobalConstants.FileExtensions;
     using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.EnvironmentVariables;
+    using static OJS.Common.GlobalConstants.FileExtensions;
     using static OJS.Servers.Infrastructure.ServerConstants;
 
     public static class ServiceCollectionExtensions

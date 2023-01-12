@@ -35,12 +35,6 @@ public class ExamGroupsController : BaseAutoCrudAdminController<ExamGroup>
         this.contestsActivity = contestsActivity;
     }
 
-    public IActionResult Users([FromQuery] IDictionary<string, string> complexId)
-        => this.RedirectToActionWithNumberFilter(
-            nameof(UsersInExamGroupsController),
-            UsersInExamGroupsController.ExamGroupIdKey,
-            this.GetEntityIdFromQuery<int>(complexId));
-
     protected override IEnumerable<Func<ExamGroup, ExamGroup, AdminActionContext, ValidatorResult>> EntityValidators
         => this.examGroupValidatorsFactory.GetValidators();
 
@@ -51,8 +45,14 @@ public class ExamGroupsController : BaseAutoCrudAdminController<ExamGroup>
     protected override IEnumerable<GridAction> CustomActions
         => new GridAction[]
         {
-            new() { Action = nameof(this.Users) },
+            new () { Action = nameof(this.Users) },
         };
+
+    public IActionResult Users([FromQuery] IDictionary<string, string> complexId)
+        => this.RedirectToActionWithNumberFilter(
+            nameof(UsersInExamGroupsController),
+            UsersInExamGroupsController.ExamGroupIdKey,
+            this.GetEntityIdFromQuery<int>(complexId));
 
     protected override Task BeforeGeneratingForm(
         ExamGroup entity,
@@ -62,16 +62,6 @@ public class ExamGroupsController : BaseAutoCrudAdminController<ExamGroup>
 
     protected override Task BeforeEntitySaveAsync(ExamGroup entity, AdminActionContext actionContext)
         => this.ValidateContestPermissions(entity);
-
-    private async Task ValidateContestPermissions(ExamGroup entity)
-    {
-        if (entity.ContestId.HasValue)
-        {
-            await this.contestsValidationHelper
-                .ValidatePermissionsOfCurrentUser(entity.ContestId)
-                .VerifyResult();
-        }
-    }
 
     protected override async Task BeforeEntitySaveOnDeleteAsync(ExamGroup entity, AdminActionContext actionContext)
     {
@@ -89,5 +79,15 @@ public class ExamGroupsController : BaseAutoCrudAdminController<ExamGroup>
         this.examGroupsDeleteValidation
             .GetValidationResult(validationModel)
             .VerifyResult();
+    }
+
+    private async Task ValidateContestPermissions(ExamGroup entity)
+    {
+        if (entity.ContestId.HasValue)
+        {
+            await this.contestsValidationHelper
+                .ValidatePermissionsOfCurrentUser(entity.ContestId)
+                .VerifyResult();
+        }
     }
 }

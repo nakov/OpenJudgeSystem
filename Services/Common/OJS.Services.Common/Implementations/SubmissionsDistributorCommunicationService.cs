@@ -39,8 +39,9 @@ namespace OJS.Services.Common.Implementations
             this.distributorConfig = distributorConfigAccessor.Value;
         }
 
-        public Task<ExternalDataRetrievalResult<SubmissionAddedToDistributorResponseServiceModel>> AddSubmissionForProcessing(
-            Submission submission)
+        public Task<ExternalDataRetrievalResult<SubmissionAddedToDistributorResponseServiceModel>>
+            AddSubmissionForProcessing(
+                Submission submission)
         {
             var requestBody = this.BuildDistributorSubmissionBody(submission);
 
@@ -50,8 +51,9 @@ namespace OJS.Services.Common.Implementations
                     AddSubmissionToDistributorPath);
         }
 
-        public Task<ExternalDataRetrievalResult<SubmissionAddedToDistributorResponseServiceModel>> AddSubmissionsForProcessing(
-            IEnumerable<Submission> submissions)
+        public Task<ExternalDataRetrievalResult<SubmissionAddedToDistributorResponseServiceModel>>
+            AddSubmissionsForProcessing(
+                IEnumerable<Submission> submissions)
             => this.BatchAddSubmissionsForProcessing(
                 submissions.ToList(),
                 this.distributorConfig.SubmissionsToAddBatchSize);
@@ -79,6 +81,23 @@ namespace OJS.Services.Common.Implementations
                 this.distributorConfig.SubmissionsToAddBatchSize);
         }
 
+        private static (byte[]? fileContent, string code) GetSubmissionContent(Submission submission)
+        {
+            byte[]? fileContent = null;
+            var code = string.Empty;
+
+            if (submission.IsBinaryFile)
+            {
+                fileContent = submission.Content;
+            }
+            else
+            {
+                code = submission.ContentAsString;
+            }
+
+            return (fileContent, code);
+        }
+
         private object BuildDistributorSubmissionBody(Submission submission)
         {
             var executionType = ExecutionType.TestsExecution.ToString().ToHyphenSeparatedWords();
@@ -88,10 +107,10 @@ namespace OJS.Services.Common.Implementations
                 ?.Format(submission.SubmissionType!.ExecutionStrategyType);
 
             var checkerType = this.formatterServiceFactory
-               .Get<string>()
-               ?.Format(submission.Problem!.Checker!.ClassName!);
+                .Get<string>()
+                ?.Format(submission.Problem!.Checker!.ClassName!);
 
-           var (fileContent, code) = this.GetSubmissionContent(submission);
+            var (fileContent, code) = GetSubmissionContent(submission);
 
             var tests = submission.Problem!.Tests
                 .Select(t => new
@@ -118,15 +137,16 @@ namespace OJS.Services.Common.Implementations
                     CheckerType = checkerType,
                     CheckerParameter = submission.Problem.Checker?.Parameter,
                     Tests = tests,
-                    submission.Problem.SolutionSkeleton
+                    submission.Problem.SolutionSkeleton,
                 },
             };
 
             return submissionRequestBody;
         }
 
-        private Task<ExternalDataRetrievalResult<SubmissionAddedToDistributorResponseServiceModel>> AddManySubmissionsForProcessing(
-            IEnumerable<Submission> submissions)
+        private Task<ExternalDataRetrievalResult<SubmissionAddedToDistributorResponseServiceModel>>
+            AddManySubmissionsForProcessing(
+                IEnumerable<Submission> submissions)
         {
             var requestBody = submissions.Select(this.BuildDistributorSubmissionBody).ToList();
 
@@ -136,9 +156,10 @@ namespace OJS.Services.Common.Implementations
                     AddManySubmissionsToDistributorPath);
         }
 
-        private async Task<ExternalDataRetrievalResult<SubmissionAddedToDistributorResponseServiceModel>> BatchAddSubmissionsForProcessing(
-            ICollection<Submission> submissions,
-            int batchSize)
+        private async Task<ExternalDataRetrievalResult<SubmissionAddedToDistributorResponseServiceModel>>
+            BatchAddSubmissionsForProcessing(
+                ICollection<Submission> submissions,
+                int batchSize)
         {
             var submissionsAddedCount = 0;
 
@@ -162,23 +183,6 @@ namespace OJS.Services.Common.Implementations
             }
 
             return response;
-        }
-
-        private (byte[]? fileContent, string code) GetSubmissionContent(Submission submission)
-        {
-            byte[]? fileContent = null;
-            var code = string.Empty;
-
-            if (submission.IsBinaryFile)
-            {
-                fileContent = submission.Content;
-            }
-            else
-            {
-                code = submission.ContentAsString;
-            }
-
-            return (fileContent, code);
         }
     }
 }
