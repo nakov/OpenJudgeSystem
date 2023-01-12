@@ -58,7 +58,7 @@ namespace OJS.Services.Ui.Models.Contests
 
         public ContestType ContestType { get; set; }
 
-        public IEnumerable<SubmissionTypeServiceModel>? AllowedSubmissionTypes { get; set; }
+        /*public IEnumerable<SubmissionTypeServiceModel>? AllowedSubmissionTypes { get; set; }*/
 
         public ICollection<ContestProblemServiceModel>? Problems { get; set; }
 
@@ -187,14 +187,14 @@ namespace OJS.Services.Ui.Models.Contests
                 .ForMember(d => d.ProblemsCount,
                     opt => opt.MapFrom(s => s.ProblemGroups.SelectMany(pg => pg.Problems).Count(p => !p.IsDeleted)))
                 .ForMember(d => d.ContestType, opt => opt.MapFrom(s => s.Type))
-                .ForMember(d => d.AllowedSubmissionTypes,
+                /*.ForMember(d => d.AllowedSubmissionTypes,
                     opt =>
                         opt.MapFrom(s =>
                             s.ProblemGroups
                                 .SelectMany(pg => pg.Problems
                                     .SelectMany(p => p.SubmissionTypesInProblems)
                                     .Select(st => st.SubmissionType)
-                                    .DistinctBy(st => st.Id))))
+                                    .DistinctBy(st => st.Id))))*/
                 .ForMember(
                     d => d.Problems,
                     opt => opt.MapFrom(s =>

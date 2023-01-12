@@ -28,6 +28,10 @@ namespace OJS.Services.Ui.Data.Implementations
         public async Task<TServiceModel?> GetByProblemId<TServiceModel>(int id)
         {
             var contests = this.DbSet
+                .Include(c => c.ProblemGroups)
+                .ThenInclude(pg => pg.Problems)
+                .ThenInclude(p => p.SubmissionTypesInProblems)
+                .ThenInclude(stp => stp.SubmissionType)
                 .Where(c => c.ProblemGroups
                     .Any(pg => pg.Problems.Any(p => p.Id == id)));
 

@@ -7,7 +7,7 @@ interface IStartContestUrlParams {
     official: boolean;
 }
 
-interface IGetContestByProblemParams {
+interface IGetContestByProblemUrlParams {
     problemId: number;
 }
 
@@ -84,5 +84,5 @@ export type {
     IGetContestResultsParams,
     IRetestSubmissionUrlParams,
     IGetSubmissionResultsByProblemAndUserUrlParams,
-    IGetContestByProblemParams,
+    IGetContestByProblemUrlParams,
 };
