@@ -77,7 +77,8 @@
                 .ForMember(
                     d => d.IsExcludedFromHomework,
                     opt => opt.MapFrom(s => s.ProblemGroup.Type == ProblemGroupType.ExcludedFromHomework))
-                .ForMember(d => d.FileSizeLimit,
+                .ForMember(
+                    d => d.FileSizeLimit,
                     opt => opt.MapFrom(s => s.SourceCodeSizeLimit.HasValue ? (double)s.SourceCodeSizeLimit : default))
                 .ForMember(d => d.UserHasAdminRights, opt => opt.Ignore())
                 .ForMember(
@@ -95,6 +96,5 @@
                 .ForMember(
                     d => d.TimeLimit,
                     opt => opt.MapFrom(s => (double)s.TimeLimit));
-
     }
 }

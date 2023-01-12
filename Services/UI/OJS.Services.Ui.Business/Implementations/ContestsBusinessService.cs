@@ -1,15 +1,13 @@
 namespace OJS.Services.Ui.Business.Implementations
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using FluentExtensions.Extensions;
-    using Microsoft.EntityFrameworkCore;
+    using OJS.Common;
     using OJS.Common.Enumerations;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Participants;
-    using OJS.Common;
     using OJS.Services.Common;
     using OJS.Services.Common.Models;
     using OJS.Services.Infrastructure.Constants;
@@ -87,17 +85,6 @@ namespace OJS.Services.Ui.Business.Implementations
            }
 
            return contestServiceModel;
-        }
-
-
-        private bool ShouldRequirePassword(Contest contest, Participant participant, bool official)
-        {
-            if (participant != null && !participant.IsInvalidated)
-            {
-                return false;
-            }
-
-            return (official && contest.HasContestPassword) || (!official && contest.HasPracticePassword);
         }
 
         public async Task ValidateContestPassword(int id, bool official, string password)

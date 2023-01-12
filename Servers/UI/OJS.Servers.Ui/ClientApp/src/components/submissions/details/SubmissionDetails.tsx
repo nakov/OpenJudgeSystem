@@ -38,9 +38,6 @@ const SubmissionDetails = () => {
     const { getRegisterContestTypeUrl } = useAppUrls();
 
     useEffect(() => {
-        console.log(contest);
-    }, [ contest ]);
-    useEffect(() => {
         if (isNil(currentSubmission)) {
             return;
         }
