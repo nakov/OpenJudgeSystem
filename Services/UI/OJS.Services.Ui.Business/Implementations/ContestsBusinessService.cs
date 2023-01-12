@@ -160,7 +160,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var participantsList = new List<int> { participant.Id, };
 
-            var maxParticipationScores = await this.participantScoresData
+            /*var maxParticipationScores = await this.participantScoresData
                 .GetMaxByProblemIdsAndParticipation(
                     participationModel.Contest.Problems.Select(x => x.Id),
                     participantsList
@@ -172,7 +172,7 @@ namespace OJS.Services.Ui.Business.Implementations
                     .Where(ps => ps.ProblemId == problem.Id)
                     .Select(x => x.Points)
                     .FirstOrDefault();
-            });
+            });*/
 
             return participationModel;
         }
