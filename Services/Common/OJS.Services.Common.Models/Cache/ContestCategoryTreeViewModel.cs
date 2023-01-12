@@ -30,5 +30,5 @@ public class ContestCategoryTreeViewModel : IMapExplicitly
                 opt => opt.MapFrom(src =>
                     src.Children
                         .Where(c => c.IsVisible)
-                        .OrderBy(c=> c.OrderBy)));
+                        .OrderBy(c => c.OrderBy)));
 }

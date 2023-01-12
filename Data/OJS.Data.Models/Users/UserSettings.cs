@@ -4,9 +4,8 @@ namespace OJS.Data.Models.Users
     using OJS.Common.Utils;
     using System;
     using System.ComponentModel.DataAnnotations;
-    using static OJS.Data.Validation.ConstraintConstants.User;
-
     using System.ComponentModel.DataAnnotations.Schema;
+    using static OJS.Data.Validation.ConstraintConstants.User;
 
     [Owned]
     public class UserSettings

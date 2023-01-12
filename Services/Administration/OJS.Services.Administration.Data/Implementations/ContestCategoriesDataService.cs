@@ -8,7 +8,8 @@ namespace OJS.Services.Administration.Data.Implementations
 
     public class ContestCategoriesDataService : DataService<ContestCategory>, IContestCategoriesDataService
     {
-        public ContestCategoriesDataService(DbContext db) : base(db)
+        public ContestCategoriesDataService(DbContext db)
+            : base(db)
         {
         }
 

@@ -1,11 +1,10 @@
-﻿using System.Threading.Tasks;
-using OJS.Services.Common.Models;
-
-namespace OJS.Services.Administration.Business
+﻿namespace OJS.Services.Administration.Business
 {
-    using OJS.Data.Models.Submissions;
-    using SoftUni.Services.Infrastructure;
     using System.Linq;
+    using System.Threading.Tasks;
+    using OJS.Data.Models.Submissions;
+    using OJS.Services.Common.Models;
+    using SoftUni.Services.Infrastructure;
 
     public interface ISubmissionsBusinessService : IService
     {

@@ -2,26 +2,15 @@
 
 public class ValidationResult
 {
-    protected ValidationResult()
-    {
-    }
-
     public bool IsValid { get; set; } = false;
 
-    public virtual string Message { get; set; }
+    public virtual string Message { get; set; } = null!;
 
-    public string PropertyName { get; set; }
+    public string? PropertyName { get; set; } = null!;
 
     public static ValidationResult Valid()
-        => new ValidationResult()
-        {
-            IsValid = true,
-        };
+        => new () { IsValid = true };
 
-    public static ValidationResult Invalid(string message, string propertyName = null)
-        => new ValidationResult()
-        {
-            Message = message,
-            PropertyName = propertyName,
-        };
+    public static ValidationResult Invalid(string message, string? propertyName = null)
+        => new () { Message = message, PropertyName = propertyName };
 }

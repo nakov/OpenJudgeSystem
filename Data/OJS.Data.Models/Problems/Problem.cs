@@ -1,6 +1,5 @@
 namespace OJS.Data.Models.Problems
 {
-    using SoftUni.Data.Infrastructure.Models;
     using OJS.Data.Models.Checkers;
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Submissions;
@@ -8,6 +7,7 @@ namespace OJS.Data.Models.Problems
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
+    using SoftUni.Data.Infrastructure.Models;
     using static OJS.Data.Validation.ConstraintConstants.Problem;
 
     public class Problem : DeletableAuditInfoEntity<int>, IOrderableEntity
@@ -44,7 +44,7 @@ namespace OJS.Data.Models.Problems
         public double OrderBy { get; set; }
 
         /// <summary>
-        /// Gets or sets a predefined skeleton for the task
+        /// Gets or sets a predefined skeleton for the task.
         /// </summary>
         public byte[]? SolutionSkeleton { get; set; }
 

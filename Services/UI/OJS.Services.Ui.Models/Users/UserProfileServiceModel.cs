@@ -1,8 +1,8 @@
 ﻿namespace OJS.Services.Ui.Models.Users
 {
+    using AutoMapper;
     using OJS.Data.Models.Users;
     using SoftUni.AutoMapper.Infrastructure.Models;
-    using AutoMapper;
 
     public class UserProfileServiceModel : IMapExplicitly
     {
@@ -20,9 +20,9 @@
             => configuration.CreateMap<UserProfile, UserProfileServiceModel>()
                 .ForMember(
                     dest => dest.FirstName,
-                    opt => opt.MapFrom(src => (src.UserSettings.FirstName)))
+                    opt => opt.MapFrom(src => src.UserSettings.FirstName))
                 .ForMember(
                     dest => dest.LastName,
-                    opt => opt.MapFrom(src => (src.UserSettings.LastName)));
+                    opt => opt.MapFrom(src => src.UserSettings.LastName));
     }
 }

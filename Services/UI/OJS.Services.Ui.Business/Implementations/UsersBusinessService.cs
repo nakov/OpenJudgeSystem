@@ -1,13 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
-using System.Security.Claims;
-
-namespace OJS.Services.Ui.Business.Implementations
+﻿namespace OJS.Services.Ui.Business.Implementations
 {
+    using System.Security.Claims;
+    using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
     using OJS.Services.Common;
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Users;
-    using System.Threading.Tasks;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
 
     public class UsersBusinessService : IUsersBusinessService
     {

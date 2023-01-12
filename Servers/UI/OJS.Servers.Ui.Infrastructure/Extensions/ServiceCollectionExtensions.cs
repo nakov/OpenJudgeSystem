@@ -1,13 +1,13 @@
 namespace OJS.Servers.Ui.Infrastructure.Extensions
 {
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
     using OJS.Common.Enumerations;
     using OJS.Data;
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Extensions;
-    using SoftUni.Judge.Common.Extensions;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Configuration;
     using OJS.Services.Common.Models.Configurations;
+    using SoftUni.Judge.Common.Extensions;
     using static OJS.Common.GlobalConstants;
 
     public static class ServiceCollectionExtensions

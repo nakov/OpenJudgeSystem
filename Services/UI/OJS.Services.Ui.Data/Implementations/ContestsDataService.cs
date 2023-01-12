@@ -48,14 +48,14 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             ? this.GetAllVisibleByCategories(model.CategoryIds)
             : this.GetAllVisibleQuery();
 
-        contests = this.FilterByStatus(contests, model.Statuses.ToList());
-        contests = this.Sort(contests, model.SortType);
+            contests = this.FilterByStatus(contests, model.Statuses.ToList());
+            contests = Sort(contests, model.SortType);
 
-        if (model.SubmissionTypeIds.Any())
-        {
-            contests = contests
-                .Where(this.ContainsSubmissionTypeIds(model.SubmissionTypeIds));
-        }
+            if (model.SubmissionTypeIds.Any())
+            {
+                contests = contests
+                    .Where(ContainsSubmissionTypeIds(model.SubmissionTypeIds));
+            }
 
         return await contests
             .MapCollection<TServiceModel>()
@@ -158,14 +158,52 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
                 c.Id == id &&
                 c.ExamGroups.Any(eg => eg.UsersInExamGroups.Any(u => u.UserId == userId)));
 
-    private async Task<int> GetMaxPointsByIdAndProblemGroupsFilter(int id, Expression<Func<ProblemGroup, bool>> filter)
-        => await this.GetByIdQuery(id)
-            .Select(c => c.ProblemGroups
-                .AsQueryable()
-                .Where(pg => pg.Problems.Any(p => !p.IsDeleted))
-                .Where(filter)
-                .Sum(pg => (int?)pg.Problems.First().MaximumPoints))
-            .FirstOrDefaultAsync() ?? default(int);
+        private static IQueryable<Contest> Sort(
+            IQueryable<Contest> contests,
+            ContestSortType? sorting)
+        {
+            if (sorting == ContestSortType.StartDate)
+            {
+                return contests
+                    .OrderBy(c => c.StartTime)
+                    .ThenBy(c => c.PracticeStartTime)
+                    .ThenBy(c => c.Name);
+            }
+
+            if (sorting == ContestSortType.EndDate)
+            {
+                return contests
+                    .OrderBy(c => c.EndTime)
+                    .ThenBy(c => c.PracticeEndTime)
+                    .ThenBy(c => c.Name);
+            }
+
+            if (sorting == ContestSortType.Name)
+            {
+                return contests
+                    .OrderBy(c => c.Name)
+                    .ThenBy(c => c.StartTime)
+                    .ThenBy(c => c.PracticeStartTime);
+            }
+
+            return contests;
+        }
+
+        private static Expression<Func<Contest, bool>> ContainsSubmissionTypeIds(IEnumerable<int> submissionTypeIds)
+            => c => c.ProblemGroups
+                .SelectMany(pg => pg.Problems)
+                .SelectMany(p => p.SubmissionTypesInProblems)
+                .Select(x => x.SubmissionTypeId)
+                .Any(x => submissionTypeIds.Contains(x)); // Does not work if converted to method group
+
+        private async Task<int> GetMaxPointsByIdAndProblemGroupsFilter(int id, Expression<Func<ProblemGroup, bool>> filter)
+            => await this.GetByIdQuery(id)
+                .Select(c => c.ProblemGroups
+                    .AsQueryable()
+                    .Where(pg => pg.Problems.Any(p => !p.IsDeleted))
+                    .Where(filter)
+                    .Sum(pg => (int?)pg.Problems.First().MaximumPoints))
+                .FirstOrDefaultAsync() ?? default(int);
 
     private IQueryable<Contest> GetAllVisibleByCategories(IEnumerable<int> categoryIds)
         => this.GetAllVisibleQuery()
@@ -195,50 +233,12 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
         => c => c.PracticeStartTime <= this.dates.GetUtcNow()
                 && (!c.PracticeEndTime.HasValue || c.PracticeEndTime > this.dates.GetUtcNow());
 
-    private Expression<Func<Contest, bool>> ContainsSubmissionTypeIds(IEnumerable<int> submissionTypeIds)
-        => c => c.ProblemGroups
-            .SelectMany(pg => pg.Problems)
-            .SelectMany(p => p.SubmissionTypesInProblems)
-            .Select(x => x.SubmissionTypeId)
-            .Any(x => submissionTypeIds.Contains(x)); // Does not work if converted to method group
-
-    private IQueryable<Contest> Sort(
-        IQueryable<Contest> contests,
-        ContestSortType? sorting)
-    {
-        if (sorting == ContestSortType.StartDate)
+        private IQueryable<Contest> FilterByStatus(
+            IQueryable<Contest> contests,
+            ICollection<ContestStatus> statuses)
         {
-            return contests
-                .OrderBy(c => c.StartTime)
-                .ThenBy(c => c.PracticeStartTime)
-                .ThenBy(c => c.Name);
-        }
-
-        if (sorting == ContestSortType.EndDate)
-        {
-            return contests
-                .OrderBy(c => c.EndTime)
-                .ThenBy(c => c.PracticeEndTime)
-                .ThenBy(c => c.Name);
-        }
-
-        if (sorting == ContestSortType.Name)
-        {
-            return contests
-                .OrderBy(c => c.Name)
-                .ThenBy(c => c.StartTime)
-                .ThenBy(c => c.PracticeStartTime);
-        }
-
-        return contests;
-    }
-
-    private IQueryable<Contest> FilterByStatus(
-        IQueryable<Contest> contests,
-        ICollection<ContestStatus> statuses)
-    {
-        var competable = statuses.Any(s => s == ContestStatus.Active);
-        var practicable = statuses.Any(s => s == ContestStatus.Past);
+            var competable = statuses.Any(s => s == ContestStatus.Active);
+            var practicable = statuses.Any(s => s == ContestStatus.Past);
 
         if (competable && !practicable)
         {

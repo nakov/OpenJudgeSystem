@@ -1,10 +1,10 @@
-﻿using OJS.Data.Models.Problems;
-using OJS.Services.Ui.Models.SubmissionTypes;
-using SoftUni.Services.Infrastructure;
+﻿namespace OJS.Services.Ui.Business;
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
-namespace OJS.Services.Ui.Business;
+using OJS.Data.Models.Problems;
+using OJS.Services.Ui.Models.SubmissionTypes;
+using SoftUni.Services.Infrastructure;
 
 public interface ISubmissionTypesBusinessService : IService
 {

@@ -22,7 +22,7 @@ public class ExamGroupsDeleteValidationService : IValidationService<ExamGroupDel
             .VerifyResult();
 
         return examGroup!.ContestIsActive
-            ? ValidationResult.Invalid(Resource.Cannot_delete_group_with_active_contest)
+            ? ValidationResult.Invalid(Resource.CannotDeleteGroupWithActiveContest)
             : ValidationResult.Valid();
     }
 }

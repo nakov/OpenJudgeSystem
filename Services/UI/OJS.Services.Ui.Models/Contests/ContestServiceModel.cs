@@ -1,31 +1,27 @@
-﻿using AutoMapper;
-using FluentExtensions.Extensions;
-using OJS.Common.Enumerations;
-using OJS.Data.Models.Contests;
-using OJS.Data.Models.Problems;
-using OJS.Data.Models.Submissions;
-using OJS.Services.Ui.Models.SubmissionTypes;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
-using SoftUni.AutoMapper.Infrastructure.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace OJS.Services.Ui.Models.Contests;
-
-public class ContestServiceModel : IMapExplicitly
+namespace OJS.Services.Ui.Models.Contests
 {
-    public int Id { get; set; }
+    using AutoMapper;
+    using OJS.Common.Enumerations;
+    using OJS.Data.Models.Contests;
+    using OJS.Services.Ui.Models.SubmissionTypes;
+    using SoftUni.AutoMapper.Infrastructure.Models;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
-    public string Name { get; set; }
+    public class ContestServiceModel : IMapExplicitly
+    {
+        public int Id { get; set; }
+
+        public string Name { get; set; } = null!;
 
     public int Type { get; set; }
 
     public int? CategoryId { get; set; }
 
-    public string CategoryName { get; set; }
+        public string CategoryName { get; set; } = null!;
 
-    public string Description { get; set; }
+        public string Description { get; set; } = null!;
 
     public DateTime? StartTime { get; set; }
 
@@ -43,9 +39,9 @@ public class ContestServiceModel : IMapExplicitly
 
     public bool IsOnline { get; set; }
 
-    public string ContestPassword { private get; set; }
+        public string ContestPassword { private get; set; } = null!;
 
-    public string PracticePassword { private get; set; }
+        public string PracticePassword { private get; set; } = null!;
 
     public bool HasContestQuestions { get; set; }
 
@@ -59,9 +55,9 @@ public class ContestServiceModel : IMapExplicitly
 
     public ContestType ContestType { get; set; }
 
-    public IEnumerable<SubmissionTypeServiceModel> AllowedSubmissionTypes { get; set; }
+        public IEnumerable<SubmissionTypeServiceModel> AllowedSubmissionTypes { get; set; } = null!;
 
-    public ICollection<ContestProblemServiceModel> Problems { get; set; }
+        public ICollection<ContestProblemServiceModel> Problems { get; set; } = null!;
 
     public IEnumerable<ContestCategoryListViewModel> ParentCategories { get; set; } =
         Enumerable.Empty<ContestCategoryListViewModel>();

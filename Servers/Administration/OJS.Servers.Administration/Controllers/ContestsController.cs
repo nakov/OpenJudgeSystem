@@ -43,6 +43,24 @@ namespace OJS.Servers.Administration.Controllers
             this.contestsValidationHelper = contestsValidationHelper;
         }
 
+        protected override IEnumerable<Func<Contest, Contest, AdminActionContext, ValidatorResult>> EntityValidators
+            => this.contestValidatorsFactory.GetValidators();
+
+        protected override IEnumerable<Func<Contest, Contest, AdminActionContext, Task<ValidatorResult>>>
+            AsyncEntityValidators
+            => this.contestValidatorsFactory.GetAsyncValidators();
+
+        protected override IEnumerable<GridAction> CustomActions
+            => new[]
+            {
+                new GridAction { Action = nameof(this.DownloadSubmissions) },
+                new GridAction { Action = nameof(this.ExportResults) },
+                new GridAction { Action = nameof(this.Problems) },
+                new GridAction { Action = nameof(this.CreateProblem) },
+                new GridAction { Action = nameof(this.Participants) },
+                new GridAction { Action = nameof(this.Submissions) },
+            };
+
         // TODO: make it as a popup window
         [HttpGet]
         public IActionResult DownloadSubmissions([FromQuery] IDictionary<string, string> complexId)
@@ -87,13 +105,6 @@ namespace OJS.Servers.Administration.Controllers
                 nameof(ProblemsController),
                 ProblemsController.ContestIdKey,
                 this.GetEntityIdFromQuery<int>(complexId));
-
-        protected override IEnumerable<Func<Contest, Contest, AdminActionContext, ValidatorResult>> EntityValidators
-            => this.contestValidatorsFactory.GetValidators();
-
-        protected override IEnumerable<Func<Contest, Contest, AdminActionContext, Task<ValidatorResult>>>
-            AsyncEntityValidators
-            => this.contestValidatorsFactory.GetAsyncValidators();
 
         protected override async Task BeforeGeneratingForm(
             Contest entity,
@@ -141,20 +152,9 @@ namespace OJS.Servers.Administration.Controllers
             Contest contest,
             AdminActionContext actionContext)
         {
-            this.AddProblemGroupsToContest(contest, contest.NumberOfProblemGroups);
+            AddProblemGroupsToContest(contest, contest.NumberOfProblemGroups);
             await this.AddIpsToContest(contest, actionContext.GetFormValue(AdditionalFormFields.AllowedIps));
         }
-
-        protected override IEnumerable<GridAction> CustomActions
-            => new []
-            {
-                new GridAction { Action = nameof(this.DownloadSubmissions) },
-                new GridAction { Action = nameof(this.ExportResults) },
-                new GridAction { Action = nameof(this.Problems) },
-                new GridAction { Action = nameof(this.CreateProblem) },
-                new GridAction { Action = nameof(this.Participants) },
-                new GridAction { Action = nameof(this.Submissions) },
-            };
 
         protected override async Task BeforeEntitySaveOnEditAsync(
             Contest existingContest,
@@ -163,7 +163,7 @@ namespace OJS.Servers.Administration.Controllers
         {
             if (newContest.IsOnline && newContest.ProblemGroups.Count == 0)
             {
-                this.AddProblemGroupsToContest(newContest, newContest.NumberOfProblemGroups);
+                AddProblemGroupsToContest(newContest, newContest.NumberOfProblemGroups);
             }
 
             if (!newContest.IsOnline && newContest.Duration != null)
@@ -192,7 +192,7 @@ namespace OJS.Servers.Administration.Controllers
             IDictionary<string, string> entityDict,
             IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters)
             => base.GenerateFormControls(entity, action, entityDict, complexOptionFilters)
-                .Concat(new []
+                .Concat(new[]
                 {
                     new FormControlViewModel
                     {
@@ -202,7 +202,7 @@ namespace OJS.Servers.Administration.Controllers
                     },
                 });
 
-        private void AddProblemGroupsToContest(Contest contest, int problemGroupsCount)
+        private static void AddProblemGroupsToContest(Contest contest, int problemGroupsCount)
         {
             for (var i = 1; i <= problemGroupsCount; i++)
             {

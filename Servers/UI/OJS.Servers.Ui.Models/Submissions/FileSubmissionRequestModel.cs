@@ -8,6 +8,6 @@ namespace OJS.Servers.Ui.Models.Submissions
     {
         [Required]
         [JsonIgnore]
-        public IFormFile File { get; set; }
+        public IFormFile File { get; set; } = null!;
     }
 }

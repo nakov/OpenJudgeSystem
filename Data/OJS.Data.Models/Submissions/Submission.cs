@@ -1,18 +1,18 @@
 namespace OJS.Data.Models.Submissions
 {
     using FluentExtensions.Extensions;
-    using SoftUni.Data.Infrastructure.Models;
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Problems;
     using OJS.Data.Models.Tests;
     using OJS.Data.Validation;
-    using SoftUni.Judge.Common.Enumerations;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
     using System.Text;
+    using SoftUni.Data.Infrastructure.Models;
+    using SoftUni.Judge.Common.Enumerations;
 
     public class Submission : DeletableAuditInfoEntity<int>
     {
@@ -34,7 +34,7 @@ namespace OJS.Data.Models.Submissions
         public byte[] Content { get; set; } = Array.Empty<byte>();
 
         /// <remarks>
-        /// If the value of FileExtension is null, then compressed text file is written in Content
+        /// If the value of FileExtension is null, then compressed text file is written in Content.
         /// </remarks>
         public string? FileExtension { get; set; }
 
@@ -80,7 +80,7 @@ namespace OJS.Data.Models.Submissions
         public virtual ICollection<TestRun> TestRuns { get; set; } = new HashSet<TestRun>();
 
         /// <summary>
-        /// Cache field for submission test runs representing each test run result as an integer equal to <see cref="TestRunResultType"/>.
+        /// Gets or sets a cache field for submission test runs representing each test run result as an integer equal to <see cref="TestRunResultType"/>.
         /// The first integer represent the number of trial tests associated with this submissions.
         /// This field optimized database queries.
         ///
@@ -89,7 +89,7 @@ namespace OJS.Data.Models.Submissions
         /// - Five normal test runs with:
         ///   - Two 1 results (Wrong Answer)
         ///   - Two 0 results (Correct Answer)
-        ///   - One 2 result (Time Limit)
+        ///   - One 2 result (Time Limit).
         /// </summary>
         public string? TestRunsCache { get; set; }
 
@@ -98,7 +98,7 @@ namespace OJS.Data.Models.Submissions
         public string? ProcessingComment { get; set; }
 
         /// <summary>
-        /// Cache field for submissions points (to speed-up some of the database queries)
+        /// Gets or sets a cache field for submissions points (to speed-up some of the database queries).
         /// </summary>
         public int Points { get; set; }
 

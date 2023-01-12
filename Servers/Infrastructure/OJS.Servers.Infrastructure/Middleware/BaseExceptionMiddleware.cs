@@ -27,13 +27,13 @@
                 switch (exception)
                 {
                     case BadHttpRequestException badHttpRequestException:
-                        HandleBadHttpRequest(httpContext, problemDetails, badHttpRequestException);
+                        this.HandleBadHttpRequest(httpContext, problemDetails, badHttpRequestException);
                         break;
                     case BusinessServiceException businessException:
-                        HandleValidationException(problemDetails, businessException);
+                        this.HandleValidationException(problemDetails, businessException);
                         break;
                     default:
-                        HandleException(httpContext, problemDetails, exception);
+                        this.HandleException(httpContext, problemDetails, exception);
                         break;
                 }
 

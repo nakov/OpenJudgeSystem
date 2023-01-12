@@ -47,38 +47,6 @@ public class ParticipantScoresBusinessService : IParticipantScoresBusinessServic
         scope.Complete();
     }
 
-    private async Task NormalizeSubmissionPoints()
-        => await (await this.submissionsData
-            .GetAllHavingPointsExceedingLimit()
-            .Select(s => new
-            {
-                Submission = s,
-                ProblemMaxPoints = s.Problem!.MaximumPoints,
-            })
-            .ToListAsync())
-            .ForEachSequential(async x =>
-            {
-                x.Submission.Points = x.ProblemMaxPoints;
-
-                this.submissionsData.Update(x.Submission);
-                await this.submissionsData.SaveChanges();
-            });
-
-    private async Task NormalizeParticipantScorePoints()
-        => await (await this.participantScoresData
-            .GetAllHavingPointsExceedingLimit()
-            .Select(ps => new
-            {
-                ParticipantScore = ps,
-                ProblemMaxPoints = ps.Problem.MaximumPoints
-            })
-            .ToListAsync())
-            .ForEachSequential(async x =>
-                await this.participantScoresData.UpdateBySubmissionAndPoints(
-                    x.ParticipantScore,
-                    x.ParticipantScore.SubmissionId,
-                    x.ProblemMaxPoints));
-
     public async Task SaveForSubmission(Submission submission)
     {
         if (submission.ParticipantId == null || submission.ProblemId == null)
@@ -91,7 +59,7 @@ public class ParticipantScoresBusinessService : IParticipantScoresBusinessServic
             .Select(p => new
             {
                 p.IsOfficial,
-                p.User.UserName
+                p.User.UserName,
             })
             .FirstOrDefault();
 
@@ -124,4 +92,36 @@ public class ParticipantScoresBusinessService : IParticipantScoresBusinessServic
                 submission.Points);
         }
     }
+
+    private async Task NormalizeSubmissionPoints()
+        => await (await this.submissionsData
+            .GetAllHavingPointsExceedingLimit()
+            .Select(s => new
+            {
+                Submission = s,
+                ProblemMaxPoints = s.Problem!.MaximumPoints,
+            })
+            .ToListAsync())
+            .ForEachSequential(async x =>
+            {
+                x.Submission.Points = x.ProblemMaxPoints;
+
+                this.submissionsData.Update(x.Submission);
+                await this.submissionsData.SaveChanges();
+            });
+
+    private async Task NormalizeParticipantScorePoints()
+        => await (await this.participantScoresData
+            .GetAllHavingPointsExceedingLimit()
+            .Select(ps => new
+            {
+                ParticipantScore = ps,
+                ProblemMaxPoints = ps.Problem.MaximumPoints,
+            })
+            .ToListAsync())
+            .ForEachSequential(async x =>
+                await this.participantScoresData.UpdateBySubmissionAndPoints(
+                    x.ParticipantScore,
+                    x.ParticipantScore.SubmissionId,
+                    x.ProblemMaxPoints));
 }

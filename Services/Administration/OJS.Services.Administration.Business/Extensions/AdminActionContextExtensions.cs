@@ -40,5 +40,4 @@ public static class AdminActionContextExtensions
                 .Value, out var id)
             ? id
             : null;
-
 }

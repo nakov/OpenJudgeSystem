@@ -1,5 +1,27 @@
 <Project>
+  <PropertyGroup>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>CA1819, SA1011</NoWarn>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <RepoRoot>$(MsBuildThisFileDirectory)</RepoRoot>
+    <LangVersion>latest</LangVersion>
+    <TargetFramework>net6.0</TargetFramework>
+    <CodeAnalysisRuleSet>$(MsBuildThisFileDirectory)Analyzers/rulesets.xml</CodeAnalysisRuleSet>
+  </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="$(MsBuildThisFileDirectory)/Analyzers/stylecop.json" Link="stylecop.json" />
+  </ItemGroup>
+  
   <PropertyGroup>
     <Nullable>enable</Nullable>
   </PropertyGroup>

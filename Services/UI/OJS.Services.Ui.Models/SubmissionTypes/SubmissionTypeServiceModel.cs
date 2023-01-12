@@ -1,12 +1,12 @@
-﻿using AutoMapper;
-using OJS.Data.Models.Submissions;
-using SoftUni.AutoMapper.Infrastructure.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace OJS.Services.Ui.Models.SubmissionTypes
 {
+    using OJS.Data.Models.Submissions;
+    using SoftUni.AutoMapper.Infrastructure.Models;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System;
+    using AutoMapper;
+
     public class SubmissionTypeServiceModel : IMapExplicitly
     {
         private char[] splittingChars = { ',', ';', ' ' };
@@ -19,6 +19,7 @@ namespace OJS.Services.Ui.Models.SubmissionTypes
 
         public bool AllowBinaryFilesUpload { get; set; }
 
+        public IEnumerable<string> AllowedFileExtensions { get; set; } = null!;
         public IEnumerable<string>? AllowedFileExtensions { get; set; }
 
         public void RegisterMappings(IProfileExpression configuration) =>
