@@ -9,6 +9,8 @@ namespace OJS.Services.Ui.Models.SubmissionTypes
 {
     public class SubmissionTypeServiceModel : IMapExplicitly
     {
+        private char[] splittingChars = { ',', ';', ' ' };
+
         public int Id { get; set; }
 
         public string Name { get; set; } = "asd";
@@ -24,10 +26,8 @@ namespace OJS.Services.Ui.Models.SubmissionTypes
                 .ForMember(d => d.AllowedFileExtensions,
                     opt => opt.MapFrom(s =>
                         s.AllowedFileExtensions != null
-                            ? new List<string>(){s.AllowedFileExtensions}
-                            : Enumerable.Empty<string>()))
-                .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name))
-                .ForMember(d => d.IsSelectedByDefault, opt => opt.MapFrom(s => s.IsSelectedByDefault))
-                .ForMember(d => d.AllowBinaryFilesUpload, opt => opt.MapFrom(s => s.AllowBinaryFilesUpload));
+                            ? s.AllowedFileExtensions.Split(splittingChars,
+                                StringSplitOptions.RemoveEmptyEntries)
+                            : Array.Empty<string>()));
     }
 }

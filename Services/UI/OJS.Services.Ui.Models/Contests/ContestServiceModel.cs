@@ -61,7 +61,7 @@ public class ContestServiceModel : IMapExplicitly
 
     public IEnumerable<SubmissionTypeServiceModel> AllowedSubmissionTypes { get; set; }
 
-    /*public ICollection<ContestProblemServiceModel> Problems { get; set; }*/
+    public ICollection<ContestProblemServiceModel> Problems { get; set; }
 
     public IEnumerable<ContestCategoryListViewModel> ParentCategories { get; set; } =
         Enumerable.Empty<ContestCategoryListViewModel>();
@@ -194,13 +194,13 @@ public class ContestServiceModel : IMapExplicitly
                         .SelectMany(pg => pg.Problems
                             .SelectMany(p => p.SubmissionTypesInProblems)
                             .Select(st => st.SubmissionType))))
-            /*.ForMember(
+            .ForMember(
                 d => d.Problems,
                 opt => opt.MapFrom(s =>
                     s.ProblemGroups
                         .SelectMany(pg => pg.Problems)
                         .OrderBy(p => p.OrderBy)
-                    ))*/
+                    ))
             .ForMember(d => d.ParentCategories, opt => opt.Ignore())
             .ForMember(d => d.UserIsAdminOrLecturerInContest, opt => opt.Ignore())
             .ForMember(d => d.UserCanCompete, opt => opt.Ignore())
