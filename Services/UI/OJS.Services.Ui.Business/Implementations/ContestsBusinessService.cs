@@ -84,6 +84,8 @@ namespace OJS.Services.Ui.Business.Implementations
                throw new BusinessServiceException(GlobalConstants.ErrorMessages.ContestNotFound);
            }
 
+           contestServiceModel.AllowedSubmissionTypes = contestServiceModel.AllowedSubmissionTypes.DistinctBy(st => st.Id);
+
            return contestServiceModel;
         }
 
@@ -134,6 +136,8 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var participationModel = participant.Map<ContestParticipationServiceModel>();
 
+            participationModel.Contest.AllowedSubmissionTypes =
+                participationModel.Contest.AllowedSubmissionTypes.DistinctBy(st => st.Id);
             participationModel.ValidationResult = validationResult;
             participationModel.ParticipantId = participant.Id;
             participationModel.ContestIsCompete = model.IsOfficial;
