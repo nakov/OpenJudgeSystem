@@ -110,6 +110,8 @@
                 return this.RedirectToContestsAdminPanelWithNoPrivilegesMessage();
             }
 
+            var maxResourceFileSize = this.GetMaxResourceFileSize();
+
             if (resource.Type == ProblemResourceType.Link && string.IsNullOrEmpty(resource.RawLink))
             {
                 this.ModelState.AddModelError("Link", Resource.Link_not_empty);
@@ -117,6 +119,11 @@
             else if (resource.Type != ProblemResourceType.Link && (resource.File == null || resource.File.ContentLength == 0))
             {
                 this.ModelState.AddModelError("File", Resource.File_required);
+            }
+            else if (resource.Type != ProblemResourceType.Link && resource.File != null && resource.File
+            .ContentLength > maxResourceFileSize)
+            {
+                this.ModelState.AddModelError("File", string.Format(Resource.File_Max_Size, maxResourceFileSize));
             }
 
             if (this.ModelState.IsValid)
@@ -196,6 +203,13 @@
             {
                 this.TempData.AddDangerMessage(Resource.Problem_not_found);
                 return this.RedirectToAction(GlobalConstants.Index, "Problems");
+            }
+            
+            var maxResourceFileSize = this.GetMaxResourceFileSize();
+
+            if (resource.Type != ProblemResourceType.Link && resource.File != null && resource.File.ContentLength > maxResourceFileSize)
+            {
+                this.ModelState.AddModelError("File", string.Format(Resource.File_Max_Size, maxResourceFileSize));
             }
 
             if (this.ModelState.IsValid)
@@ -288,6 +302,15 @@
             var fileName = "Resource-" + resource.Id + "-" + problem.Name.Replace(" ", string.Empty) + "." + resource.FileExtension;
 
             return this.File(fileResult, MediaTypeNames.Application.Octet, fileName);
+        }
+
+        private int GetMaxResourceFileSize()
+        {
+            var maxFileSizeSetting = this.Data.Settings
+                .All()
+                .FirstOrDefault(s => s.Name == GlobalConstants.MaximumFileSizeDbName);
+
+            return maxFileSizeSetting != null ? int.Parse(maxFileSizeSetting.Value) : GlobalConstants.OneMegaByteInBytes;
         }
     }
 }

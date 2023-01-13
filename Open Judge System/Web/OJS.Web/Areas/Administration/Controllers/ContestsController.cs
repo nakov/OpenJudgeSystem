@@ -8,15 +8,14 @@
     using System.Linq;
     using System.Text;
     using System.Web.Mvc;
-
     using Kendo.Mvc.UI;
-
     using OJS.Common;
     using OJS.Common.Models;
     using OJS.Data;
     using OJS.Data.Models;
     using OJS.Services.Business.Contests;
     using OJS.Services.Business.Participants;
+    using OJS.Services.Cache;
     using OJS.Services.Data.ContestCategories;
     using OJS.Services.Data.Contests;
     using OJS.Services.Data.Ips;
@@ -26,7 +25,6 @@
     using OJS.Web.Areas.Contests.Models;
     using OJS.Web.Common.Extensions;
     using OJS.Web.ViewModels.Common;
-
     using ChangeTimeResource = Resources.Areas.Administration.Contests.Views.ChangeTime;
     using GeneralResource = Resources.Areas.Administration.AdministrationGeneral;
     using Resource = Resources.Areas.Administration.Contests.ContestsControllers;
@@ -43,6 +41,7 @@
         private readonly IIpsDataService ipsData;
         private readonly IContestsBusinessService contestsBusiness;
         private readonly IParticipantsBusinessService participantsBusiness;
+        private readonly ICacheItemsProviderService cacheItemsProvider;
 
         public ContestsController(
             IOjsData data,
@@ -51,7 +50,8 @@
             IParticipantsDataService participantsData,
             IIpsDataService ipsData,
             IContestsBusinessService contestsBusiness,
-            IParticipantsBusinessService participantsBusiness)
+            IParticipantsBusinessService participantsBusiness,
+            ICacheItemsProviderService cacheItemsProvider)
                 : base(data)
         {
             this.contestsData = contestsData;
@@ -60,6 +60,7 @@
             this.ipsData = ipsData;
             this.contestsBusiness = contestsBusiness;
             this.participantsBusiness = participantsBusiness;
+            this.cacheItemsProvider = cacheItemsProvider;
         }
 
         public override IEnumerable GetData()
@@ -136,6 +137,7 @@
 
             this.contestsData.Add(contest);
 
+            this.cacheItemsProvider.ClearContests();
             this.TempData.Add(GlobalConstants.InfoMessage, Resource.Contest_added);
             return this.RedirectToAction<ContestsController>(c => c.Index());
         }
@@ -217,6 +219,7 @@
             this.AddIpsToContest(contest, model.AllowedIps);
 
             this.contestsData.Update(contest);
+            this.cacheItemsProvider.ClearContests();
 
             this.InvalidateParticipants(originalContestPassword, originalPracticePassword, contest);
 
@@ -240,6 +243,8 @@
             }
 
             this.contestsBusiness.DeleteById(model.Id.Value);
+
+            this.cacheItemsProvider.ClearContests();
             return this.GridOperation(request, model);
         }
 

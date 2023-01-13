@@ -9,7 +9,6 @@
     using System.Linq.Expressions;
     using System.Web;
     using System.Web.Mvc;
-
     using OJS.Common;
     using OJS.Common.DataAnnotations;
     using OJS.Common.Extensions;
@@ -17,11 +16,10 @@
     using OJS.Data.Models;
     using OJS.Web.Areas.Administration.ViewModels.Common;
     using OJS.Web.Areas.Administration.ViewModels.ProblemResource;
+    using OJS.Web.Areas.Administration.ViewModels.ProblemSubmissionTypesSkeleton;
     using OJS.Web.Areas.Administration.ViewModels.SubmissionType;
     using OJS.Workers.Common.Extensions;
-
     using static OJS.Common.Constants.EditorTemplateConstants;
-
     using Resource = Resources.Areas.Administration.Problems.ViewModels.DetailedProblem;
     using SharedResource = Resources.Areas.Administration.Contests.ViewModels.ContestAdministration;
 
@@ -56,6 +54,9 @@
                     HasAdditionalFiles = problem.AdditionalFiles != null && SqlFunctions.DataLength(problem.AdditionalFiles) > 0,
                     CreatedOn = problem.CreatedOn,
                     ModifiedOn = problem.ModifiedOn,
+                    ProblemSubmissionTypesSkeletons = problem.ProblemSubmissionTypesSkeletons
+                        .AsQueryable()
+                        .Select(ProblemSubmissionTypesSkeletonViewModel.ViewModel),
                 };
             }
         }
@@ -169,6 +170,10 @@
         [Display(Name = nameof(SharedResource.Submision_types), ResourceType = typeof(SharedResource))]
         [ExcludeFromExcel]
         public IList<SubmissionTypeViewModel> SubmissionTypes { get; set; } = new List<SubmissionTypeViewModel>();
+        
+        [ExcludeFromExcel]
+        public IEnumerable<ProblemSubmissionTypesSkeletonViewModel> ProblemSubmissionTypesSkeletons { get; set; } = new 
+        List<ProblemSubmissionTypesSkeletonViewModel>();
 
         [ExcludeFromExcel]
         public IEnumerable<SubmissionTypeViewModel> SelectedSubmissionTypes { get; set; }

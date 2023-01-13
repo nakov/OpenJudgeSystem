@@ -13,5 +13,10 @@
 
         public const string SubmissionsCountByMonthsForPastElevenMonthsKey = "Submissions_count_by_month_for_past_eleven_months";
         public const string SubmissionsCountForLastMonthKey = "Submissions_count_by_month_for_last_month";
+
+        public const string ActiveContests = "ActiveContests";
+        public const string PastContests = "PastContests";
+
+        public const int DefaultPastContestsToTake = 15;
     }
 }

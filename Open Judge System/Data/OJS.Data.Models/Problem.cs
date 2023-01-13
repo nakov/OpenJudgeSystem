@@ -73,6 +73,8 @@
         public virtual ICollection<ParticipantScore> ParticipantScores { get; set; } = new HashSet<ParticipantScore>();
 
         public virtual ICollection<SubmissionType> SubmissionTypes { get; set; } = new HashSet<SubmissionType>();
+        
+        public virtual ICollection<ProblemSubmissionTypeSkeleton> ProblemSubmissionTypesSkeletons { get; set; } = new HashSet<ProblemSubmissionTypeSkeleton>();
 
         public virtual ICollection<Participant> Participants { get; set; } = new HashSet<Participant>();
     }

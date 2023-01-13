@@ -160,7 +160,8 @@
 
             if (languageCookie == null)
             {
-                return;
+                languageCookie = new HttpCookie(GlobalConstants.LanguageCookieName, GlobalConstants.EnglishCultureCookieValue);
+                requestContext.HttpContext.Response.AppendCookie(languageCookie);
             }
 
             switch (languageCookie.Value)
