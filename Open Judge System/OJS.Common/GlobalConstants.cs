@@ -129,5 +129,7 @@
         
         // Settings DB name constants
         public const string MaximumFileSizeDbName = "Maximum_Resource_File_Size";
+
+        public static readonly string[] ParticipationStatisticsFileSubmissionsAllowedExtensions = { ".java", ".cs", ".py", ".js", ".cpp", ".h" };
     }
 }
