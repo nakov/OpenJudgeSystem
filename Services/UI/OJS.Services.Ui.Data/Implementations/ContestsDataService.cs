@@ -1,3 +1,4 @@
+
 namespace OJS.Services.Ui.Data.Implementations
 {
     using Microsoft.EntityFrameworkCore;
@@ -151,6 +152,18 @@ namespace OJS.Services.Ui.Data.Implementations
                 .AnyAsync(c =>
                     c.Id == id &&
                     c.ExamGroups.Any(eg => eg.UsersInExamGroups.Any(u => u.UserId == userId)));
+
+        public IEnumerable<T> GetContestAllowedStrategyTypes<T>(int id)
+            =>  this.DbSet
+                .Where(cc => cc.IsVisible && !cc.IsDeleted)
+                .SelectMany(c => c.ProblemGroups)
+                    .Where(pg => !pg.IsDeleted)
+                .SelectMany(pg => pg.Problems)
+                    .Where(p => !p.IsDeleted)
+                .SelectMany(p => p.SubmissionTypesInProblems)
+                .Select(st => st.SubmissionType)
+                .MapCollection<T>()
+                .ToList();
 
         private async Task<int> GetMaxPointsByIdAndProblemGroupsFilter(int id, Expression<Func<ProblemGroup, bool>> filter)
             => await this.GetByIdQuery(id)

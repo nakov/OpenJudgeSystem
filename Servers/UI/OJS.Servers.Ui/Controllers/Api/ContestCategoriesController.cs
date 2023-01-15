@@ -1,5 +1,3 @@
-namespace OJS.Servers.Ui.Controllers.Api;
-
 using Microsoft.AspNetCore.Mvc;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Common.Models.Cache;
@@ -8,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
+namespace OJS.Servers.Ui.Controllers.Api;
 public class ContestCategoriesController : BaseApiController
 {
     private readonly IContestCategoriesCacheService contestCategoriesCache;

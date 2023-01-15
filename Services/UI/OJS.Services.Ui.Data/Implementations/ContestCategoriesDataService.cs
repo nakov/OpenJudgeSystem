@@ -1,15 +1,15 @@
-﻿namespace OJS.Services.Ui.Data.Implementations
-{
-    using Microsoft.EntityFrameworkCore;
-    using OJS.Data;
-    using OJS.Data.Models.Contests;
-    using OJS.Services.Common.Data.Implementations;
-    using OJS.Services.Infrastructure.Extensions;
-    using SoftUni.AutoMapper.Infrastructure.Extensions;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
+using OJS.Data;
+using OJS.Data.Models.Contests;
+using OJS.Services.Common.Data.Implementations;
+using OJS.Services.Infrastructure.Extensions;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
+namespace OJS.Services.Ui.Data.Implementations
+{
     public class ContestCategoriesDataService : DataService<ContestCategory>, IContestCategoriesDataService
     {
         public ContestCategoriesDataService(OjsDbContext db)
@@ -17,9 +17,29 @@
         {
         }
 
-        public IQueryable<ContestCategory> GetAllVisible() =>
-            this.DbSet
+        public IQueryable<ContestCategory> GetAllVisible()
+            => this.DbSet
                 .Where(cc => cc.IsVisible);
+
+        public Task<IEnumerable<T>> GetAllVisible<T>()
+            => this.DbSet
+                .Where(cc=> cc.IsVisible)
+                .MapCollection<T>()
+                .ToEnumerableAsync();
+
+        public IEnumerable<T> GetAllowedStrategyTypesById<T>(int id)
+            =>  this.DbSet
+                    .Where(cc => cc.Id == id)
+                .SelectMany(c => c.Contests)
+                    .Where(pg => !pg.IsDeleted && pg.IsVisible)
+                .SelectMany(pg => pg.ProblemGroups)
+                    .Where(p => !p.IsDeleted)
+                .SelectMany(pp => pp.Problems)
+                    .Where(pp=>!pp.IsDeleted)
+                .SelectMany(p => p.SubmissionTypesInProblems)
+                .Select(st => st.SubmissionType)
+                .MapCollection<T>()
+                .ToList();
 
         public IQueryable<ContestCategory> GetAllVisibleByLecturer(string lecturerId)
             => this.GetAllVisible()
