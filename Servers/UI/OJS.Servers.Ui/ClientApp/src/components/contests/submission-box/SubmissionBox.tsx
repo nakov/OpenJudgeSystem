@@ -198,11 +198,17 @@ const SubmissionBox = () => {
     const renderSubmissionInput = useCallback(() => {
         if (selectedSubmissionType?.allowBinaryFilesUpload) {
             return (
-                <FormControl
-                  type={FormControlType.file}
-                  name="file"
-                  onChange={(file) => handleCodeChanged(file as Blob)}
-                />
+                <>
+                    <FormControl
+                      type={FormControlType.file}
+                      name="file"
+                      onChange={(file) => handleCodeChanged(file as Blob)}
+                    />
+                    <p className={styles.fileSubmissionDetailsParagraph}>
+                        Allowed file extensions:
+                        {selectedSubmissionType.allowedFileExtensions.join(', ')}
+                    </p>
+                </>
             );
         }
 

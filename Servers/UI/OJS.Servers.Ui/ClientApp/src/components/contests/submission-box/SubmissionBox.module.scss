@@ -1,5 +1,6 @@
 @use 'src/styles/colors';
 @use 'src/styles/fonts';
+@use 'src/styles/variables';
 
 .contestMainWrapper {
   // no body
@@ -53,4 +54,12 @@
 
 .taskName {
   font-weight: bold;
+}
+
+.fileSubmissionDetailsParagraph {
+  @extend %font-family-lato;
+
+  padding: 10px;
+  color: colors.$text-dark-gray-color;
+  font-size: variables.$f-size-16;
 }
