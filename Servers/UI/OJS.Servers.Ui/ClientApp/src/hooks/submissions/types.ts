@@ -35,6 +35,7 @@ interface ISubmissionType {
     compilerComment: string;
     createdOn: Date;
     modifiedOn?: Date;
+    validationResult: IValidationType;
 }
 
 interface ITestRunDetailsType extends ITestRunType {
@@ -44,7 +45,6 @@ interface ITestRunDetailsType extends ITestRunType {
 interface ISubmissionDetailsType extends ISubmissionType {
     testRuns: ITestRunDetailsType[];
     user: IUserProfileType;
-    validationResult: IValidationType;
 }
 
 interface ISubmissionDetails {

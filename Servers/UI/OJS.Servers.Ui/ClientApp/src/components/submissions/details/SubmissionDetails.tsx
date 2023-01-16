@@ -172,7 +172,7 @@ const SubmissionDetails = () => {
     );
 
     const renderErrorMessage = useCallback(() => (
-        <div>
+        <div className={styles.errorMessage}>
             {validationResult.message}
         </div>
     ), [ validationResult ]);

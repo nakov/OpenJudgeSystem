@@ -20,7 +20,7 @@ public class SubmissionDetailsValidationService : ISubmissionDetailsValidationSe
             return ValidationResult.Invalid(ValidationMessages.Submission.NotFound);
         }
 
-        if (!userInfoModel.IsAdminOrLecturer || userInfoModel.Id != submissionDetailsServiceModel.User.Id)
+        if (!userInfoModel.IsAdminOrLecturer && userInfoModel.Id != submissionDetailsServiceModel.User.Id)
         {
             return ValidationResult.Invalid(ValidationMessages.Submission.NotMadeByUser);
         }

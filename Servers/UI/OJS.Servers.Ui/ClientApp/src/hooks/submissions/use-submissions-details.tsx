@@ -210,8 +210,6 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
 
             const { validationResult: newValidationResult } = apiSubmissionDetails;
 
-            console.log(apiSubmissionDetails);
-            console.log(newValidationResult);
             setValidationResult(newValidationResult);
             setCurrentSubmission(apiSubmissionDetails);
         },
