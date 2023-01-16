@@ -60,6 +60,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.participantScoresBusinessService = participantScoresBusinessService;
     }
 
+    public Task SubmitFileSubmission(SubmitFileSubmissionServiceModel model) => Task.CompletedTask;
+
     public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
         => await this.submissionsData
             .GetByIdQuery(submissionId)

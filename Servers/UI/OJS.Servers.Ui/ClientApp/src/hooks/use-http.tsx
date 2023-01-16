@@ -3,7 +3,7 @@ import { saveAs } from 'file-saver';
 import isNil from 'lodash/isNil';
 
 import { HttpStatus } from '../common/common';
-import { Anything, IDictionary, UrlType } from '../common/common-types';
+import { IDictionary, UrlType } from '../common/common-types';
 import { getUrl, makeHttpCall } from '../utils/http-utils';
 
 interface IErrorDataType {
@@ -16,6 +16,7 @@ interface IHttpProps<T> {
     url: string | ((parameters: T) => string);
     parameters?: T | null;
     headers?: IDictionary<string> | null;
+    bodyAsFormData?: boolean;
 }
 
 interface IHttpResultType<T> {
@@ -28,10 +29,11 @@ interface IHttpJsonExceptionResponse {
     detail: string;
 }
 
-const useHttp = <TParametersType, TReturnDataType>({
+const useHttp = <TParametersType, TReturnDataType, TRequestDataType = null, >({
     url,
     parameters,
     headers,
+    bodyAsFormData = false,
 }: IHttpProps<TParametersType>) => {
     const [ response, setResponse ] = useState<IHttpResultType<TReturnDataType> | null>(null);
     const [ status, setStatus ] = useState<HttpStatus>(HttpStatus.NotStarted);
@@ -103,6 +105,47 @@ const useHttp = <TParametersType, TReturnDataType>({
         [ headers ],
     );
 
+    const headersFormData = useMemo(
+        () => ({
+            ...headers ?? {},
+            'Content-Type': 'multipart/form-data',
+        }),
+        [ headers ],
+    );
+
+    type Entries<T> = {
+        [K in keyof T]: [K, T[K]];
+    }[keyof T][];
+
+    const getEntries = useCallback(<T extends object>(obj: T) => Object.entries(obj) as Entries<T>, []);
+
+    const getAsFormData = useCallback(async (requestDatObj: TRequestDataType) => {
+        if (isNil(requestDatObj)) {
+            return null;
+        }
+
+        const bodyFormData = new FormData();
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const entries = getEntries(requestDatObj);
+
+        entries.forEach((key, obj) => {
+            console.log(typeof obj);
+            if ((typeof requestDatObj[key]).toString() === 'blob') {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                await bodyFormData.append(key, requestDatObj[key] as Blob);
+            } else {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                await bodyFormData.append(key, requestDatObj[key] as string);
+            }
+        });
+
+        return bodyFormData;
+    }, [ getEntries ]);
+
     const get = useCallback(
         (responseType = 'json') => makeHttpCall({
             url: getUrl(url as UrlType<TParametersType>, internalParameters),
@@ -117,17 +160,24 @@ const useHttp = <TParametersType, TReturnDataType>({
     );
 
     const post = useCallback(
-        (requestData: Anything, responseType = 'json') => makeHttpCall({
+        (requestData: TRequestDataType, responseType = 'json') => makeHttpCall({
             url: getUrl<TParametersType>(url as UrlType<TParametersType>, internalParameters),
             method: 'post',
-            body: requestData,
-            headers: actualHeaders,
+            body: bodyAsFormData
+                ? getAsFormData(requestData)
+                : requestData,
+            headers: bodyAsFormData
+                ? headersFormData
+                : actualHeaders,
             responseType,
             onSuccess: handleSuccess,
             onError: handleError,
             onBeforeCall: handleBeforeCall,
         }),
-        [ url, internalParameters, actualHeaders, handleSuccess, handleError, handleBeforeCall ],
+        [
+            url, internalParameters, bodyAsFormData, getAsFormData,
+            headersFormData, actualHeaders, handleSuccess,
+            handleError, handleBeforeCall ],
     );
 
     const getFilenameFromHeaders = useCallback((responseObj: IHttpResultType<Blob>) => {

@@ -11,6 +11,7 @@ import CodeEditor from '../../code-editor/CodeEditor';
 import AlertBox, { AlertBoxType } from '../../guidelines/alert-box/AlertBox';
 import { Button, ButtonState } from '../../guidelines/buttons/Button';
 import Countdown, { ICountdownRemainingType, Metric } from '../../guidelines/countdown/Countdown';
+import FormControl, { FormControlType } from '../../guidelines/forms/FormControl';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List, { Orientation } from '../../guidelines/lists/List';
 import ExecutionTypeSelector from '../execution-type-selector/ExecutionTypeSelector';
@@ -47,7 +48,9 @@ const SubmissionBox = () => {
     const showSubmissionLimitTimer = useMemo(() => submitLimit > 0, [ submitLimit ]);
 
     const handleCodeChanged = useCallback(
-        (newValue: string) => {
+        (newValue: string | Blob) => {
+            console.log('handle code changed');
+            console.log(newValue);
             updateSubmissionCode(newValue);
         },
         [ updateSubmissionCode ],
@@ -114,8 +117,9 @@ const SubmissionBox = () => {
 
     const handleOnSubmit = useCallback(async () => {
         await submit();
-        updateSubmissionCode('');
-    }, [ submit, updateSubmissionCode ]);
+
+        // updateSubmissionCode('');
+    }, [ submit ]);
 
     const renderSubmissionLimitCountdown = useCallback((remainingTime: ICountdownRemainingType) => {
         const { minutes, seconds } = convertToTwoDigitValues(remainingTime);
@@ -195,6 +199,26 @@ const SubmissionBox = () => {
         executionTypeListClass,
     );
 
+    const renderSubmissionInput = useCallback(() => {
+        if (selectedSubmissionType?.allowBinaryFilesUpload) {
+            return (
+                <FormControl
+                  type={FormControlType.file}
+                  name="file"
+                  onChange={(file) => handleCodeChanged(file as Blob)}
+                />
+            );
+        }
+
+        return (
+            <CodeEditor
+              selectedSubmissionType={selectedSubmissionType}
+              code={submissionCode.toString()}
+              onCodeChange={handleCodeChanged}
+            />
+        );
+    }, [ handleCodeChanged, selectedSubmissionType, submissionCode ]);
+
     return (
         <div className={styles.contestMainWrapper}>
             <Heading
@@ -208,11 +232,7 @@ const SubmissionBox = () => {
             </Heading>
             <div className={styles.contestInnerLayout}>
                 <div className={styles.editorAndProblemControlsWrapper}>
-                    <CodeEditor
-                      selectedSubmissionType={selectedSubmissionType}
-                      code={submissionCode}
-                      onCodeChange={handleCodeChanged}
-                    />
+                    {renderSubmissionInput()}
                     <div className={styles.contestSubmitControlsWrapper}>
                         <div className={executionTypeListClassName}>
                             {renderSubmissionTypesSelectorsList()}

@@ -40,6 +40,8 @@ const makeHttpCall = async ({
         headers,
     });
 
+    console.log(body);
+
     try {
         await onBeforeCall();
         const resp = await makeCall();

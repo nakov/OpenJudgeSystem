@@ -15,7 +15,7 @@ import { useProblemSubmissions } from './use-problem-submissions';
 
 interface ISubmissionsContext {
     state: {
-        submissionCode: string;
+        submissionCode: string | Blob;
         selectedSubmissionType: ISubmissionTypeType | null;
         submitMessage: string | null;
         setSubmitMessage: (value: string | null) => void;
@@ -23,7 +23,7 @@ interface ISubmissionsContext {
     };
     actions: {
         submit: () => Promise<void>;
-        updateSubmissionCode: (code: string) => void;
+        updateSubmissionCode: (code: string | Blob) => void;
         selectSubmissionTypeById: (id: number) => void;
     };
 }
@@ -35,6 +35,13 @@ const defaultState = {
     },
 };
 
+interface ISubmitCodeTypeParametersType {
+    problemId: number;
+    submissionTypeId: number;
+    content: string | Blob;
+    official: boolean;
+}
+
 const SubmissionsContext = createContext<ISubmissionsContext>(defaultState as ISubmissionsContext);
 
 type ISubmissionsProviderProps = IHaveChildrenProps
@@ -42,10 +49,8 @@ type ISubmissionsProviderProps = IHaveChildrenProps
 const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const [ selectedSubmissionType, setSelectedSubmissionType ] =
         useState<ISubmissionTypeType | null>(defaultState.state.selectedSubmissionType);
-    const [ submissionCode, setSubmissionCode ] = useState<string>(defaultState.state.submissionCode);
+    const [ submissionCode, setSubmissionCode ] = useState<string | Blob>(defaultState.state.submissionCode);
     const [ submitMessage, setSubmitMessage ] = useState<string | null>(null);
-
-    const { getSubmitUrl } = useUrls();
 
     const {
         startLoading,
@@ -56,29 +61,46 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const { actions: { loadSubmissions } } = useProblemSubmissions();
     const { state: { isOfficial } } = useCurrentContest();
 
+    const { getSubmitUrl, getSubmitFileUrl } = useUrls();
+
+    const submitCodeParams = useMemo(() => {
+        const { id: problemId } = currentProblem || {};
+
+        return {
+            problemId,
+            submissionTypeId: selectedSubmissionType?.id,
+            content: submissionCode,
+            official: isOfficial,
+        } as ISubmitCodeTypeParametersType;
+    }, [ currentProblem, isOfficial, selectedSubmissionType, submissionCode ]);
+
     const {
         post: submitCode,
-        response: submitCodeResponse,
-        data: submitCodeResult,
         error,
         isSuccess,
-    } = useHttp({ url: getSubmitUrl });
+    } = useHttp<null, null, ISubmitCodeTypeParametersType>({ url: getSubmitUrl });
+
+    const {
+        post: submitFileCode,
+        error: errorSubmitFile,
+    } = useHttp<null, null, ISubmitCodeTypeParametersType>({
+        url: getSubmitFileUrl,
+        bodyAsFormData: true,
+    });
 
     const isSubmissionSuccessful = useMemo(() => isSuccess, [ isSuccess ]);
 
     const submit = useCallback(async () => {
         startLoading();
-        const { id } = selectedSubmissionType || {};
-        const { id: problemId } = currentProblem || {};
 
-        await submitCode({
-            ProblemId: problemId,
-            SubmissionTypeId: id,
-            Content: submissionCode,
-            Official: isOfficial,
-        });
+        const submitRequest = selectedSubmissionType?.allowBinaryFilesUpload
+            ? submitFileCode
+            : submitCode;
+
+        await submitRequest(submitCodeParams);
         stopLoading();
-    }, [ startLoading, selectedSubmissionType, currentProblem, submitCode, submissionCode, isOfficial, stopLoading ]);
+    }, [ startLoading, selectedSubmissionType?.allowBinaryFilesUpload,
+        submitFileCode, submitCode, submitCodeParams, stopLoading ]);
 
     const selectSubmissionTypeById = useCallback(
         (id: number | null) => {
@@ -99,7 +121,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         [ currentProblem ],
     );
 
-    const updateSubmissionCode = (code: string) => {
+    const updateSubmissionCode = (code: string | Blob) => {
         setSubmissionCode(code);
     };
 
@@ -121,7 +143,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     useEffect(
         () => {
-            if (!isNil(error)) {
+            if (!isNil(error) || !isNil(errorSubmitFile)) {
                 setSubmitMessage(error);
                 return;
             }
@@ -130,8 +152,17 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                 await loadSubmissions();
             })();
         },
-        [ error, isSuccess, loadSubmissions, submitCodeResponse, submitCodeResult ],
+        [
+            error,
+            errorSubmitFile,
+            loadSubmissions,
+        ],
     );
+
+    // useEffect(() => {
+    //     console.log('submission code state');
+    //     console.log(submissionCode);
+    // }, [ submissionCode ]);
 
     const value = useMemo(
         () => ({
