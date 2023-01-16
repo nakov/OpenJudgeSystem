@@ -1,8 +1,8 @@
-﻿using AutoMapper;
+﻿namespace OJS.Services.Ui.Models.Problems;
+
+using AutoMapper;
 using OJS.Data.Models.Participants;
 using SoftUni.AutoMapper.Infrastructure.Models;
-
-namespace OJS.Services.Ui.Models.Problems;
 
 public class ProblemResultServiceModel : IMapExplicitly
 {

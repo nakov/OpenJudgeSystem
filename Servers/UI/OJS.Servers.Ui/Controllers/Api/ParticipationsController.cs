@@ -22,7 +22,7 @@ public class ParticipationsController : BaseApiController
     /// <summary>
     /// Gets all the participations of the current user for all the contests.
     /// </summary>
-    /// <returns>A collection of contest participations</returns>
+    /// <returns>A collection of contest participations.</returns>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<ParticipationsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetForProfile()
@@ -31,7 +31,7 @@ public class ParticipationsController : BaseApiController
             .MapCollection<ParticipationsResponseModel>()
             .ToOkResult();
 
-    private string? GetUserId(HttpContext context)
+    private static string? GetUserId(HttpContext context)
         => context.User.Claims.FirstOrDefault(x => x.Type.Contains("nameidentifier"))
             ?.Value;
 }

@@ -1,9 +1,9 @@
 ﻿namespace OJS.Services.Administration.Data
 {
-    using OJS.Services.Common.Data;
-    using OJS.Data.Models.Problems;
     using System.Linq;
     using System.Threading.Tasks;
+    using OJS.Data.Models.Problems;
+    using OJS.Services.Common.Data;
 
     public interface IProblemsDataService : IDataService<Problem>
     {

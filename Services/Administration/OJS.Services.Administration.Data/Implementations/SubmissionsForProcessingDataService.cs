@@ -12,7 +12,10 @@ using OJS.Common.Helpers;
 
 public class SubmissionsForProcessingDataService : DataService<SubmissionForProcessing>, ISubmissionsForProcessingDataService
 {
-    public SubmissionsForProcessingDataService(DbContext submissionsForProcessing) : base(submissionsForProcessing) {}
+    public SubmissionsForProcessingDataService(DbContext submissionsForProcessing)
+        : base(submissionsForProcessing)
+    {
+    }
 
     public Task<SubmissionForProcessing?> GetBySubmission(int submissionId) =>
         this.DbSet
@@ -29,26 +32,22 @@ public class SubmissionsForProcessingDataService : DataService<SubmissionForProc
             .Select(sfp => sfp.Id)
             .ToListAsync();
 
-    public Task AddOrUpdateBySubmissionIds(ICollection<int> submissionIds)
+    public async Task AddOrUpdateBySubmissionIds(ICollection<int> submissionIds)
     {
         var newSubmissionsForProcessing = submissionIds
             .Select(sId => new SubmissionForProcessing
             {
-                SubmissionId = sId
+                SubmissionId = sId,
             });
 
-        using (var scope = TransactionsHelper.CreateTransactionScope())
-        {
-            submissionIds
-                .Chunk(GlobalConstants.BatchOperationsChunkSize)
-                .ForEach(chunk => base.Delete(sfp => chunk.Contains(sfp.SubmissionId)));
+        using var scope = TransactionsHelper.CreateTransactionScope();
+        submissionIds
+            .Chunk(GlobalConstants.BatchOperationsChunkSize)
+            .ForEach(chunk => this.Delete(sfp => chunk.Contains(sfp.SubmissionId)));
 
-            base.AddMany(newSubmissionsForProcessing);
+        await this.AddMany(newSubmissionsForProcessing);
 
-            scope.Complete();
-        }
-
-        return Task.CompletedTask;
+        scope.Complete();
     }
 
     public async Task AddOrUpdateBySubmission(int submissionId)
@@ -64,11 +63,11 @@ public class SubmissionsForProcessingDataService : DataService<SubmissionForProc
         {
             submissionForProcessing = new SubmissionForProcessing
             {
-                SubmissionId = submissionId
+                SubmissionId = submissionId,
             };
 
-            await base.Add(submissionForProcessing);
-            await base.SaveChanges();
+            await this.Add(submissionForProcessing);
+            await this.SaveChanges();
         }
     }
 
@@ -78,19 +77,19 @@ public class SubmissionsForProcessingDataService : DataService<SubmissionForProc
 
         if (submissionForProcessing != null)
         {
-            await base.DeleteById(submissionId);
-            await base.SaveChanges();
+            await this.DeleteById(submissionId);
+            await this.SaveChanges();
         }
     }
 
     public async Task ResetProcessingStatusById(int id)
     {
-        var submissionForProcessing = await base.OneById(id);
+        var submissionForProcessing = await this.OneById(id);
         if (submissionForProcessing != null)
         {
             submissionForProcessing.Processing = false;
             submissionForProcessing.Processed = false;
-            await base.SaveChanges();
+            await this.SaveChanges();
         }
     }
 
@@ -100,6 +99,6 @@ public class SubmissionsForProcessingDataService : DataService<SubmissionForProc
     public new async Task Update(SubmissionForProcessing submissionForProcessing)
     {
         base.Update(submissionForProcessing);
-        await base.SaveChanges();
+        await this.SaveChanges();
     }
 }

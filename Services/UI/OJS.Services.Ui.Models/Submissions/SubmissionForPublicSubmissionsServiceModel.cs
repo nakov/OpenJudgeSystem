@@ -12,9 +12,9 @@ using System;
 public class UserForPublicSubmissionsServiceModel
     : IMapExplicitly
 {
-    public string Id { get; set; }
+    public string Id { get; set; } = null!;
 
-    public object Username { get; set; }
+    public object Username { get; set; } = null!;
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<UserProfile, UserForPublicSubmissionsServiceModel>()
@@ -28,9 +28,9 @@ public class ProblemForPublicSubmissionsServiceModel
 {
     public int Id { get; set; }
 
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 
-    public ContestForPublicSubmissionsServiceModel Contest { get; set; }
+    public ContestForPublicSubmissionsServiceModel Contest { get; set; } = null!;
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Problem, ProblemForPublicSubmissionsServiceModel>()
@@ -45,7 +45,7 @@ public class ContestForPublicSubmissionsServiceModel
 {
     public int Id { get; set; }
 
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 }
 
 public class ResultForPublicSubmissionsServiceModel
@@ -69,15 +69,15 @@ public class SubmissionForPublicSubmissionsServiceModel
 
     public DateTime CreatedOn { get; set; }
 
-    public string StrategyName { get; set; }
+    public string StrategyName { get; set; } = null!;
 
     public bool IsOfficial { get; set; }
 
-    public UserForPublicSubmissionsServiceModel User { get; set; }
+    public UserForPublicSubmissionsServiceModel User { get; set; } = null!;
 
-    public ProblemForPublicSubmissionsServiceModel Problem { get; set; }
+    public ProblemForPublicSubmissionsServiceModel Problem { get; set; } = null!;
 
-    public ResultForPublicSubmissionsServiceModel Result { get; set; }
+    public ResultForPublicSubmissionsServiceModel Result { get; set; } = null!;
 
     public StateResultForPublicSubmissionsServiceModel State { get; set; }
 
@@ -86,11 +86,11 @@ public class SubmissionForPublicSubmissionsServiceModel
             .ForMember(
                 x => x.StrategyName,
                 opt => opt.MapFrom(
-                    y => y.SubmissionType.Name))
+                    y => y.SubmissionType!.Name))
             .ForMember(
                 x => x.User,
                 opt => opt.MapFrom(
-                    y => y.Participant.User))
+                    y => y.Participant!.User))
             .ForMember(
                 x => x.Problem,
                 opt => opt.MapFrom(
@@ -104,8 +104,7 @@ public class SubmissionForPublicSubmissionsServiceModel
                 opt => opt.MapFrom(
                     y => y.Processed
                         ? StateResultForPublicSubmissionsServiceModel.Ready
-                        : StateResultForPublicSubmissionsServiceModel.Processing
-                ))
+                        : StateResultForPublicSubmissionsServiceModel.Processing))
             .ForMember(
                 x => x.Result,
                 opt => opt.MapFrom(
@@ -115,10 +114,10 @@ public class SubmissionForPublicSubmissionsServiceModel
                         MaxPoints =
                             y.Problem.IsNull()
                                 ? 0
-                                : y.Problem.MaximumPoints,
+                                : y.Problem!.MaximumPoints,
                     }))
             .ForMember(
                 x => x.IsOfficial,
                 opt => opt.MapFrom(
-                    y => y.Participant.IsOfficial));
+                    y => y.Participant!.IsOfficial));
 }

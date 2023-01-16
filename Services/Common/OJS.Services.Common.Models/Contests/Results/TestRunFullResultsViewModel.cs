@@ -25,7 +25,7 @@ public class TestRunFullResultsViewModel
             .Select(s => new TestRunFullResultsViewModel
             {
                 IsZeroTest = true,
-                ResultType = (TestRunResultType)(s - '0')
+                ResultType = (TestRunResultType)(s - '0'),
             });
 
         var tests = testRunsCache
@@ -33,7 +33,7 @@ public class TestRunFullResultsViewModel
             .Select(s => new TestRunFullResultsViewModel
             {
                 IsZeroTest = false,
-                ResultType = (TestRunResultType)(s - '0')
+                ResultType = (TestRunResultType)(s - '0'),
             });
 
         var result = new List<TestRunFullResultsViewModel>();

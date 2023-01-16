@@ -6,7 +6,7 @@ using OJS.Services.Common.Validation;
 using OJS.Services.Common.Validation.Helpers;
 using OJS.Services.Infrastructure.Extensions;
 using System;
-using Resource =  OJS.Common.Resources.ProblemGroupsControllers;
+using Resource = OJS.Common.Resources.ProblemGroupsControllers;
 
 public class ProblemGroupsEditValidationService : IValidationService<ProblemGroupEditValidationServiceModel>
 {
@@ -23,7 +23,7 @@ public class ProblemGroupsEditValidationService : IValidationService<ProblemGrou
 
         if (Math.Abs(problemGroup!.ExistingOrderBy - problemGroup.NewOrderBy) > 0 && !problemGroup.ContestIsOnline)
         {
-            return ValidationResult.Invalid(Resource.Can_edit_orderby_only_in_online_contest);
+            return ValidationResult.Invalid(Resource.CanEditOrderbyOnlyInOnlineContest);
         }
 
         return ValidationResult.Valid();

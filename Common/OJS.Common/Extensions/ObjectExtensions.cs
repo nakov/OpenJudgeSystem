@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 public static class ObjectExtensions
 {
-    public static T[] WrapInArray<T>(this T item)
+    public static T[]? WrapInArray<T>(this T item)
          => item != null
             ? new T[] { item }
             : null;
 
-    public static List<TItem> WrapInList<TItem>(this TItem item)
+    public static List<TItem>? WrapInList<TItem>(this TItem item)
         => item != null
             ? new List<TItem> { item }
             : null;
@@ -26,7 +26,7 @@ public static class ObjectExtensions
 
     public static T DeepCopy<T>(this T obj)
     {
-        var bytes = Encoding.UTF8.GetBytes(obj.ToJson());
+        var bytes = Encoding.UTF8.GetBytes(obj!.ToJson());
         using (var stream = new MemoryStream(bytes))
         using (var reader = new StreamReader(stream))
         {

@@ -33,9 +33,9 @@ public class CompeteController : BaseApiController
     /// <summary>
     /// Starts a contest for the user. Creates participant and starts time counter.
     /// </summary>
-    /// <param name="id">The id of the contest</param>
-    /// <param name="official">Is the contest compete or practice</param>
-    /// <returns>The new participant</returns>
+    /// <param name="id">The id of the contest.</param>
+    /// <param name="official">Is the contest compete or practice.</param>
+    /// <returns>The new participant.</returns>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(ContestParticipationServiceModel), Status200OK)]
     public async Task<IActionResult> Index(int id, [FromQuery] bool official)
@@ -50,8 +50,8 @@ public class CompeteController : BaseApiController
     /// <summary>
     /// Submits user's code for evaluation.
     /// </summary>
-    /// <param name="model">The submission model containing the code and execution context</param>
-    /// <returns>Success status code</returns>
+    /// <param name="model">The submission model containing the code and execution context.</param>
+    /// <returns>Success status code.</returns>
     [HttpPost]
     public async Task<IActionResult> Submit([FromBody] SubmissionRequestModel model)
         => await this.submissionsBusinessService
@@ -61,8 +61,8 @@ public class CompeteController : BaseApiController
     /// <summary>
     /// Gets the best results for the given problem by all participants.
     /// </summary>
-    /// <param name="id">The id of the problem</param>
-    /// <returns>A model with the best scores for the problem from all participants</returns>
+    /// <param name="id">The id of the problem.</param>
+    /// <returns>A model with the best scores for the problem from all participants.</returns>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(IEnumerable<ProblemResultResponseModel>), Status200OK)]
     public async Task<IActionResult> GetResultsByProblem(int id)

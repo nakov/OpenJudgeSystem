@@ -4,9 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Participants;
 using System.Linq;
 
-public class ParticipantsCommonDataService :  DataService<Participant>, IParticipantsCommonDataService
+public class ParticipantsCommonDataService : DataService<Participant>, IParticipantsCommonDataService
 {
-    public ParticipantsCommonDataService(DbContext db) : base(db)
+    public ParticipantsCommonDataService(DbContext db)
+        : base(db)
     {
     }
 

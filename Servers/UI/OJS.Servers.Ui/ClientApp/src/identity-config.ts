@@ -3,15 +3,21 @@ const authorityUrl = `${process.env.REACT_APP_PLATFORM_IDENTITY_BASE_URL}${proce
 const authorityRegisterUrl = `${authorityUrl}/register`;
 // eslint-disable-next-line max-len
 
+const
+    {
+        URLS:
+            { UI_URL: baseUrl },
+    } = window;
+
 const IDENTITY_CONFIG = {
     authority: process.env.REACT_APP_PLATFORM_IDENTITY_BASE_URL,
     client_id: process.env.REACT_APP_IDENTITY_CLIENT_ID,
-    redirect_uri: `${window.URLS.UI_URL}/logincallback`,
+    redirect_uri: `${baseUrl}/logincallback`,
     login: `${authorityUrl}`,
     register: authorityRegisterUrl,
     automaticSilentRenew: false,
     loadUserInfo: true,
-    silent_redirect_uri: `${window.URLS.UI_URL}/silentrenew`,
+    silent_redirect_uri: `${baseUrl}/silentrenew`,
     scope: process.env.REACT_APP_IDENTITY_ALLOWED_SCOPES,
     response_type: process.env.REACT_APP_RESPONSE_TYPE,
     // stateStore: new WebStorageStateStore({ store: window.localStorage }),

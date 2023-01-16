@@ -1,16 +1,17 @@
-﻿using FluentExtensions.Extensions;
-using Microsoft.EntityFrameworkCore;
-using OJS.Data.Models.Tests;
-using OJS.Services.Common.Data.Implementations;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace OJS.Services.Administration.Data.Implementations
+﻿namespace OJS.Services.Administration.Data.Implementations
 {
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
+    using OJS.Data.Models.Tests;
+    using OJS.Services.Common.Data.Implementations;
+
     public class TestsDataService : DataService<Test>, ITestsDataService
     {
-
-        public TestsDataService(DbContext tests) : base(tests) {}
+        public TestsDataService(DbContext tests)
+            : base(tests)
+        {
+        }
 
         public IQueryable<Test> GetByIdQuery(int id)
             => this.DbSet
