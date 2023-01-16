@@ -98,19 +98,18 @@ const useHttp = function<TParametersType, TReturnDataType, TRequestDataType = nu
     }, [ response ]);
 
     const actualHeaders = useMemo(
-        () => ({
-            ...headers ?? {},
-            'Content-Type': 'application/json',
-        }),
-        [ headers ],
-    );
+        () => {
+            const contentType = bodyAsFormData
+                ? 'multipart/form-data'
+                : 'application/json';
 
-    const headersFormData = useMemo(
-        () => ({
-            ...headers ?? {},
-            'Content-Type': 'multipart/form-data',
-        }),
-        [ headers ],
+            return {
+                ...headers ?? {},
+                'Content-Type': contentType
+                ,
+            };
+        },
+        [ bodyAsFormData, headers ],
     );
 
     const get = useCallback(
@@ -127,22 +126,17 @@ const useHttp = function<TParametersType, TReturnDataType, TRequestDataType = nu
     );
 
     const post = useCallback(
-        async (requestData: TRequestDataType, responseType = 'json') => makeHttpCall({
+        async (requestData?: TRequestDataType, responseType = 'json') => makeHttpCall({
             url: getUrl<TParametersType>(url as UrlType<TParametersType>, internalParameters),
             method: 'post',
             body: requestData,
-            headers: bodyAsFormData
-                ? headersFormData
-                : actualHeaders,
+            headers: actualHeaders,
             responseType,
             onSuccess: handleSuccess,
             onError: handleError,
             onBeforeCall: handleBeforeCall,
         }),
-        [
-            url, internalParameters, bodyAsFormData,
-            headersFormData, actualHeaders, handleSuccess,
-            handleError, handleBeforeCall ],
+        [ url, internalParameters, actualHeaders, handleSuccess, handleError, handleBeforeCall ],
     );
 
     const getFilenameFromHeaders = useCallback((responseObj: IHttpResultType<Blob>) => {

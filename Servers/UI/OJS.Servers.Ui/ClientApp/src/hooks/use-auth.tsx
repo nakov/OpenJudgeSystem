@@ -68,7 +68,7 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
 
     const signOut = useCallback(async () => {
         startLoading();
-        await logout({} as any);
+        await logout();
         setInternalUser(user);
         stopLoading();
     }, [ logout, startLoading, stopLoading, user ]);

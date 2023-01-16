@@ -165,8 +165,6 @@ const FormControl = ({
                       }
 
                       const fileBlob = e.target.files?.item(0) as Blob;
-                      console.log('blob');
-                      console.log(fileBlob);
                       onChange(fileBlob);
                   }}
                 />

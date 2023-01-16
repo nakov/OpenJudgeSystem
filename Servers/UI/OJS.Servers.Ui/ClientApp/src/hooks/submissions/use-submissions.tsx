@@ -175,11 +175,6 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         ],
     );
 
-    // useEffect(() => {
-    //     console.log('submission code state');
-    //     console.log(submissionCode);
-    // }, [ submissionCode ]);
-
     const value = useMemo(
         () => ({
             state: {
