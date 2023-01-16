@@ -1,3 +1,5 @@
+namespace OJS.Services.Ui.Business.Implementations;
+
 using FluentExtensions.Extensions;
 using OJS.Services.Common.Models.Cache;
 using OJS.Services.Ui.Data;
@@ -5,8 +7,6 @@ using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
-namespace OJS.Services.Ui.Business.Implementations;
 
 public class ContestCategoriesBusinessService : IContestCategoriesBusinessService
 {
@@ -29,7 +29,7 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
             .OrderBy(c => c.OrderBy)
             .ToList();
 
-        mainCategories.ForEach(FillAllowedStrategyTypes);
+        mainCategories.ForEach(this.FillAllowedStrategyTypes);
 
         return mainCategories;
     }
@@ -75,6 +75,16 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
         return categories;
     }
 
+    private static IEnumerable<ContestCategoryTreeViewModel> FillChildren(
+        IEnumerable<ContestCategoryTreeViewModel> allCategories)
+    {
+        var categoriesList = allCategories.ToList();
+
+        return categoriesList
+            .Mutate(category =>
+                category.Children = categoriesList.Where(x => x.ParentId == category.Id));
+    }
+
     private void GetWithChildren(
         ContestCategoryTreeViewModel category,
         IEnumerable<ContestCategoryTreeViewModel> children,
@@ -99,23 +109,13 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
 
     private void FillAllowedStrategyTypes(ContestCategoryTreeViewModel category)
     {
-        category.Children.ForEach(FillAllowedStrategyTypes);
+        category.Children.ForEach(this.FillAllowedStrategyTypes);
 
-        category.AllowedStrategyTypes = this.contestCategoriesData.GetAllowedStrategyTypesById<AllowedContestStrategiesServiceModel>(category.Id);;
+        category.AllowedStrategyTypes = this.contestCategoriesData.GetAllowedStrategyTypesById<AllowedContestStrategiesServiceModel>(category.Id);
 
         category.AllowedStrategyTypes = category.AllowedStrategyTypes.Concat(
                 category.Children.SelectMany(c => c.AllowedStrategyTypes))
                     .DistinctBy(x => x.Id)
                     .ToList();
-    }
-
-    private static IEnumerable<ContestCategoryTreeViewModel> FillChildren(
-        IEnumerable<ContestCategoryTreeViewModel> allCategories)
-    {
-        var categoriesList = allCategories.ToList();
-
-        return categoriesList
-            .Mutate(category =>
-                category.Children = categoriesList.Where(x => x.ParentId == category.Id));
     }
 }
