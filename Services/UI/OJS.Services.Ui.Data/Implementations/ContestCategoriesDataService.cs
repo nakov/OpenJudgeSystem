@@ -1,15 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
-using OJS.Data;
-using OJS.Data.Models.Contests;
-using OJS.Services.Common.Data.Implementations;
-using OJS.Services.Infrastructure.Extensions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace OJS.Services.Ui.Data.Implementations
+﻿namespace OJS.Services.Ui.Data.Implementations
 {
+    using Microsoft.EntityFrameworkCore;
+    using OJS.Data;
+    using OJS.Data.Models.Contests;
+    using OJS.Services.Common.Data.Implementations;
+    using OJS.Services.Infrastructure.Extensions;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
     public class ContestCategoriesDataService : DataService<ContestCategory>, IContestCategoriesDataService
     {
         public ContestCategoriesDataService(OjsDbContext db)
@@ -23,20 +22,20 @@ namespace OJS.Services.Ui.Data.Implementations
 
         public Task<IEnumerable<T>> GetAllVisible<T>()
             => this.DbSet
-                .Where(cc=> cc.IsVisible)
+                .Where(cc => cc.IsVisible)
                 .MapCollection<T>()
                 .ToEnumerableAsync();
 
         public IEnumerable<T> GetAllowedStrategyTypesById<T>(int id)
-            =>  this.DbSet
+            => this.DbSet
                     .Where(cc => cc.Id == id)
                 .SelectMany(c => c.Contests)
-                    .Where(pg => !pg.IsDeleted && pg.IsVisible)
+                    .Where(c => !c.IsDeleted && c.IsVisible)
                 .SelectMany(pg => pg.ProblemGroups)
+                    .Where(pg => !pg.IsDeleted)
+                .SelectMany(p => p.Problems)
                     .Where(p => !p.IsDeleted)
-                .SelectMany(pp => pp.Problems)
-                    .Where(pp=>!pp.IsDeleted)
-                .SelectMany(p => p.SubmissionTypesInProblems)
+                .SelectMany(stp => stp.SubmissionTypesInProblems)
                 .Select(st => st.SubmissionType)
                 .MapCollection<T>()
                 .ToList();
