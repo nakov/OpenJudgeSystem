@@ -1,5 +1,6 @@
 @use 'src/styles/colors';
 @use 'src/styles/fonts';
+@use 'src/components/guidelines/buttons/Button.module';
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
@@ -101,5 +102,13 @@ input::placeholder {
 }
 
 .fileInput {
+  padding: 5px;
   border: none;
+}
+
+input::file-selector-button {
+  @extend .btn;
+  @extend .secondary;
+  
+  margin-right: 10px;
 }

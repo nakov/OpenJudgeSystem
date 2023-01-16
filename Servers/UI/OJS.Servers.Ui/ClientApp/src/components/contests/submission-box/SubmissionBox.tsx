@@ -49,8 +49,6 @@ const SubmissionBox = () => {
 
     const handleCodeChanged = useCallback(
         (newValue: string | Blob) => {
-            console.log('handle code changed');
-            console.log(newValue);
             updateSubmissionCode(newValue);
         },
         [ updateSubmissionCode ],
@@ -117,8 +115,6 @@ const SubmissionBox = () => {
 
     const handleOnSubmit = useCallback(async () => {
         await submit();
-
-        // updateSubmissionCode('');
     }, [ submit ]);
 
     const renderSubmissionLimitCountdown = useCallback((remainingTime: ICountdownRemainingType) => {
