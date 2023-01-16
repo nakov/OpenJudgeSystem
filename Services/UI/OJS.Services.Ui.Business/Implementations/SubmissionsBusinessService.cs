@@ -66,8 +66,15 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .MapCollection<SubmissionDetailsServiceModel>()
             .FirstOrDefaultAsync();
 
-    public async Task<SubmissionDetailsServiceModel?> GetDetailsById(int submissionId)
-        => await this.submissionsData
+    public async Task<SubmissionDetailsServiceModel> GetDetailsById(int submissionId)
+    {
+        var currentUser = this.userProviderService.GetCurrentUser();
+        if (currentUser.Id == null)
+        {
+            throw new BusinessServiceException(Resources.User.UserNotLoggedIn);
+        }
+
+        var submissionDetailsServiceModel = await this.submissionsData
             .GetByIdQuery(submissionId)
             .Include(s => s.Participant)
             .ThenInclude(p => p!.User)
@@ -76,6 +83,19 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .Include(s => s.SubmissionType)
             .MapCollection<SubmissionDetailsServiceModel>()
             .FirstOrDefaultAsync();
+
+        if (submissionDetailsServiceModel == null)
+        {
+            throw new BusinessServiceException(Resources.ContestsGeneral.SubmissionNotFound);
+        }
+
+        if (!currentUser.IsAdminOrLecturer || submissionDetailsServiceModel.User.Id != currentUser.Id)
+        {
+            throw new BusinessServiceException(Resources.ContestsGeneral.SubmissionNotMadeByUser);
+        }
+
+        return submissionDetailsServiceModel;
+    }
 
     public Task<IQueryable<Submission>> GetAllForArchiving()
     {

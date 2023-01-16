@@ -210,5 +210,10 @@ namespace OJS.Common
             public const string SubmissionCanNotBeProcessed = "Submission can't be processed!";
             public const string SubmissionIsProcessing = "Submission is processing, please wait to be processed for retesting!";
         }
+
+        public static class User
+        {
+            public const string UserNotLoggedIn = "You need to log in first!";
+        }
     }
 }
