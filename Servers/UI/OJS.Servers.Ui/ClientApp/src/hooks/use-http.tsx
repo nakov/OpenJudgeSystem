@@ -29,12 +29,12 @@ interface IHttpJsonExceptionResponse {
     detail: string;
 }
 
-const useHttp = <TParametersType, TReturnDataType, TRequestDataType = null, >({
+const useHttp = function<TParametersType, TReturnDataType, TRequestDataType = null, > ({
     url,
     parameters,
     headers,
     bodyAsFormData = false,
-}: IHttpProps<TParametersType>) => {
+}: IHttpProps<TParametersType>) {
     const [ response, setResponse ] = useState<IHttpResultType<TReturnDataType> | null>(null);
     const [ status, setStatus ] = useState<HttpStatus>(HttpStatus.NotStarted);
     const [ isSuccess, setIsSuccess ] = useState(false);
@@ -113,39 +113,6 @@ const useHttp = <TParametersType, TReturnDataType, TRequestDataType = null, >({
         [ headers ],
     );
 
-    type Entries<T> = {
-        [K in keyof T]: [K, T[K]];
-    }[keyof T][];
-
-    const getEntries = useCallback(<T extends object>(obj: T) => Object.entries(obj) as Entries<T>, []);
-
-    const getAsFormData = useCallback(async (requestDatObj: TRequestDataType) => {
-        if (isNil(requestDatObj)) {
-            return null;
-        }
-
-        const bodyFormData = new FormData();
-
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const entries = getEntries(requestDatObj);
-
-        entries.forEach((key, obj) => {
-            console.log(typeof obj);
-            if ((typeof requestDatObj[key]).toString() === 'blob') {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                await bodyFormData.append(key, requestDatObj[key] as Blob);
-            } else {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                await bodyFormData.append(key, requestDatObj[key] as string);
-            }
-        });
-
-        return bodyFormData;
-    }, [ getEntries ]);
-
     const get = useCallback(
         (responseType = 'json') => makeHttpCall({
             url: getUrl(url as UrlType<TParametersType>, internalParameters),
@@ -160,12 +127,10 @@ const useHttp = <TParametersType, TReturnDataType, TRequestDataType = null, >({
     );
 
     const post = useCallback(
-        (requestData: TRequestDataType, responseType = 'json') => makeHttpCall({
+        async (requestData: TRequestDataType, responseType = 'json') => makeHttpCall({
             url: getUrl<TParametersType>(url as UrlType<TParametersType>, internalParameters),
             method: 'post',
-            body: bodyAsFormData
-                ? getAsFormData(requestData)
-                : requestData,
+            body: requestData,
             headers: bodyAsFormData
                 ? headersFormData
                 : actualHeaders,
@@ -175,7 +140,7 @@ const useHttp = <TParametersType, TReturnDataType, TRequestDataType = null, >({
             onBeforeCall: handleBeforeCall,
         }),
         [
-            url, internalParameters, bodyAsFormData, getAsFormData,
+            url, internalParameters, bodyAsFormData,
             headersFormData, actualHeaders, handleSuccess,
             handleError, handleBeforeCall ],
     );

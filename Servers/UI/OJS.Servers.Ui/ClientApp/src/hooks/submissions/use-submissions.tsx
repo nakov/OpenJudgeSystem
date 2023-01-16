@@ -83,24 +83,35 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const {
         post: submitFileCode,
         error: errorSubmitFile,
-    } = useHttp<null, null, ISubmitCodeTypeParametersType>({
+    } = useHttp<null, null, FormData>({
         url: getSubmitFileUrl,
         bodyAsFormData: true,
     });
 
     const isSubmissionSuccessful = useMemo(() => isSuccess, [ isSuccess ]);
 
+    const getSubmitParamsAsFormData = useCallback(async () => {
+        const bodyFormData = new FormData();
+
+        await bodyFormData.append('content', submitCodeParams.content);
+        await bodyFormData.append('submissionTypeId', submitCodeParams.submissionTypeId.toString());
+        await bodyFormData.append('official', submitCodeParams.official.toString());
+        await bodyFormData.append('problemId', submitCodeParams.problemId.toString());
+
+        return bodyFormData;
+    }, [ submitCodeParams ]);
+
     const submit = useCallback(async () => {
         startLoading();
 
-        const submitRequest = selectedSubmissionType?.allowBinaryFilesUpload
-            ? submitFileCode
-            : submitCode;
+        if (selectedSubmissionType?.allowBinaryFilesUpload) {
+            await submitFileCode(await getSubmitParamsAsFormData());
+        } else {
+            await submitCode(submitCodeParams);
+        }
 
-        await submitRequest(submitCodeParams);
         stopLoading();
-    }, [ startLoading, selectedSubmissionType?.allowBinaryFilesUpload,
-        submitFileCode, submitCode, submitCodeParams, stopLoading ]);
+    }, [ startLoading, selectedSubmissionType, submitFileCode, getSubmitParamsAsFormData, submitCode, submitCodeParams, stopLoading ]);
 
     const selectSubmissionTypeById = useCallback(
         (id: number | null) => {
@@ -143,8 +154,13 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     useEffect(
         () => {
-            if (!isNil(error) || !isNil(errorSubmitFile)) {
+            if (!isNil(error)) {
                 setSubmitMessage(error);
+                return;
+            }
+
+            if (!isNil(errorSubmitFile)) {
+                setSubmitMessage(errorSubmitFile);
                 return;
             }
 

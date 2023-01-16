@@ -30,7 +30,10 @@ public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
         this.submissionsData = submissionsData;
     }
 
-    public Task<SubmissionTypeServiceModel> GetById(int id) => throw new System.NotImplementedException();
+    public Task<SubmissionTypeServiceModel> GetById(int id)
+        => this.submissionTypesData
+            .OneById(id)
+            .Map<SubmissionTypeServiceModel>();
 
     public Task<IEnumerable<SubmissionTypeServiceModel>> GetAllowedSubmissionTypes(int problemId)
         => this.submissionTypesData

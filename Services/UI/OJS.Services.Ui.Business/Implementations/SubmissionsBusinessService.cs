@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace OJS.Services.Ui.Business.Implementations;
 
 using System;
@@ -60,7 +62,87 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.participantScoresBusinessService = participantScoresBusinessService;
     }
 
-    public Task SubmitFileSubmission(SubmitFileSubmissionServiceModel model) => Task.CompletedTask;
+    public async Task SubmitFileSubmission(SubmitFileSubmissionServiceModel participantSubmission)
+    {
+        if (participantSubmission.Content == null)
+        {
+            throw new BusinessServiceException(Resources.ContestsGeneral.Upload_file);
+        }
+
+        var problem = await this.problemsDataService.GetWithProblemGroupById(participantSubmission.ProblemId);
+        if (problem == null)
+        {
+            throw new BusinessServiceException(Resources.ContestsGeneral.Problem_not_found);
+        }
+
+        var currentUser = this.userProviderService.GetCurrentUser();
+
+        var participant = await this.participantsDataService
+            .GetWithContestByContestByUserAndIsOfficial(problem.ProblemGroup.ContestId, currentUser.Id, participantSubmission.Official);
+        if (participant == null)
+        {
+            throw new BusinessServiceException(Resources.ContestsGeneral.User_is_not_registered_for_exam);
+        }
+
+        await this.contestsBusinessService.ValidateContest(participant.Contest, currentUser.Id, currentUser.IsAdmin, participantSubmission.Official);
+
+        this.problemsBusinessService.ValidateProblemForParticipant(
+            participant,
+            participant.Contest,
+            participantSubmission.ProblemId,
+            participantSubmission.Official);
+
+        // if (participantSubmission.Official &&
+        //     !this.contestsBusinessService.IsContestIpValidByContestAndIp(problem.ProblemGroup.ContestId, this.Request.UserHostAddress))
+        // {
+        //     return this.RedirectToAction("NewContestIp", new { id = problem.ProblemGroup.ContestId });
+        // }
+
+        if (this.submissionsData.GetUserSubmissionTimeLimit(
+                participant.Id,
+                participant.Contest.LimitBetweenSubmissions) != 0)
+        {
+            throw new BusinessServiceException(Resources.ContestsGeneral.Submission_was_sent_too_soon);
+        }
+
+        if (problem.SourceCodeSizeLimit < participantSubmission.Content.Length)
+        {
+            throw new BusinessServiceException(Resources.ContestsGeneral.Submission_too_long);
+        }
+
+        this.submissionTypesBusinessService.ValidateSubmissionType(participantSubmission.SubmissionTypeId, problem, true);
+
+        var submissionType = await this.submissionTypesBusinessService
+            .GetById(participantSubmission.SubmissionTypeId);
+
+        // Validate file extension
+        if (!submissionType.AllowedFileExtensions.Contains(
+            participantSubmission.FileExtension))
+        {
+            throw new BusinessServiceException(Resources.ContestsGeneral.Invalid_extention);
+        }
+
+        var newSubmission = new Submission
+        {
+            Content = participantSubmission.Content,
+            FileExtension = participantSubmission.FileExtension,
+            ProblemId = participantSubmission.ProblemId,
+            SubmissionTypeId = participantSubmission.SubmissionTypeId,
+            ParticipantId = participant.Id
+        };
+
+        await this.submissionsData.Add(newSubmission);
+        await this.submissionsData.SaveChanges();
+
+        newSubmission.Problem = problem;
+        newSubmission.SubmissionType =
+            problem.SubmissionTypesInProblems
+                .First(st => st.SubmissionTypeId == participantSubmission.SubmissionTypeId)
+                .SubmissionType;
+
+        var response = await this.submissionsDistributorCommunicationService
+            .AddSubmissionForProcessing(newSubmission);
+    }
 
     public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
         => await this.submissionsData
