@@ -53,9 +53,9 @@ public class CompeteController : BaseApiController
     /// <param name="model">The submission model containing the code and execution context</param>
     /// <returns>Success status code</returns>
     [HttpPost]
-    public async Task<IActionResult> SubmitFileSubmission([FromForm] SubmitFileSubmissionRequestModel model)
+    public async Task<IActionResult> Submit([FromBody] SubmissionRequestModel model)
         => await this.submissionsBusinessService
-            .SubmitFileSubmission(model.Map<SubmitFileSubmissionServiceModel>())
+            .Submit(model.Map<SubmitSubmissionServiceModel>())
             .ToOkResult();
 
     /// <summary>
@@ -64,9 +64,9 @@ public class CompeteController : BaseApiController
     /// <param name="model">The submission model containing the code and execution context</param>
     /// <returns>Success status code</returns>
     [HttpPost]
-    public async Task<IActionResult> Submit([FromBody] SubmissionRequestModel model)
+    public async Task<IActionResult> SubmitFileSubmission([FromForm] SubmitFileSubmissionRequestModel model)
         => await this.submissionsBusinessService
-            .Submit(model.Map<SubmitSubmissionServiceModel>())
+            .SubmitFileSubmission(model.Map<SubmitFileSubmissionServiceModel>())
             .ToOkResult();
 
     /// <summary>
