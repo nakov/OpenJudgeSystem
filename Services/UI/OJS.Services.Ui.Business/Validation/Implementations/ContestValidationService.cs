@@ -2,21 +2,13 @@
 
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using OJS.Data.Models.Contests;
 using OJS.Services.Common.Models;
-using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.Contests;
 
 public class ContestValidationService : IContestValidationService
 {
-    private readonly IContestsDataService contestsData;
-
-    // TODO: Refactor this to comply with the validation services infrastructure
-    // Issue for it is https://github.com/SoftUni-Internal/exam-systems-issues/issues/365
-    public ContestValidationService(IContestsDataService contestsData) => this.contestsData = contestsData;
-
-    public async Task<ValidationResult> GetValidationResult((Contest, string, bool, bool) item)
+    public ValidationResult GetValidationResult((Contest?, string, bool, bool) item)
     {
         var (contest, userId, isUserAdmin, official) = item;
 
@@ -39,10 +31,11 @@ public class ContestValidationService : IContestValidationService
         }
 
         if (official &&
-            !await this.CanUserCompeteByContestByUserAndIsAdmin(
+            !CanUserCompeteByContestByUserAndIsAdmin(
                 contest,
                 userId,
                 isUserAdmin,
+                isUserLecturerInContest,
                 allowToAdminAlways: true))
         {
             return ValidationResult.Invalid(
@@ -109,14 +102,14 @@ public class ContestValidationService : IContestValidationService
     private static bool CanUserCompete(bool isUserAdminOrLecturerInContest, bool isContestActive) =>
         isUserAdminOrLecturerInContest && isContestActive;
 
-    private async Task<bool> CanUserCompeteByContestByUserAndIsAdmin(
+    private static bool CanUserCompeteByContestByUserAndIsAdmin(
         Contest contest,
         string userId,
         bool isAdmin,
+        bool isUserLecturerInContest,
         bool allowToAdminAlways = false)
     {
-        var isUserAdminOrLecturerInContest = isAdmin || await this.contestsData
-            .IsUserLecturerInByContestAndUser(contest.Id, userId);
+        var isUserAdminOrLecturerInContest = isAdmin || isUserLecturerInContest;
 
         return IsAccessibleToLecturerOrAdmin(
                    contest.CanBeCompeted,

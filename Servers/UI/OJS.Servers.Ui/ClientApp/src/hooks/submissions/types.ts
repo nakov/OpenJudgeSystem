@@ -1,4 +1,4 @@
-import { ISubmissionTypeType } from '../../common/types';
+import { ISubmissionTypeType, IValidationType } from '../../common/types';
 import { IUserProfileType } from '../use-users';
 
 interface IProblemType {
@@ -44,6 +44,7 @@ interface ITestRunDetailsType extends ITestRunType {
 interface ISubmissionDetailsType extends ISubmissionType {
     testRuns: ITestRunDetailsType[];
     user: IUserProfileType;
+    validationResult: IValidationType;
 }
 
 interface ISubmissionDetails {

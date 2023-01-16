@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 public interface IValidationServiceAsync<in T> : IService
 {
-    Task<ValidationResult> GetValidationResult(T? item);
+    ValidationResult GetValidationResult(T? item);
 }

@@ -12,4 +12,16 @@ public static class ValidationMessages
 
         public const string CanBePracticed = "Contest can't be practiced!";
     }
+
+    public static class User
+    {
+        public const string NotLoggedIn = "You need to log in first!";
+    }
+
+    public static class Submission
+    {
+        public const string NotFound = "Submission not found!";
+
+        public const string NotMadeByUser = "You can only view your own submissions!";
+    }
 }

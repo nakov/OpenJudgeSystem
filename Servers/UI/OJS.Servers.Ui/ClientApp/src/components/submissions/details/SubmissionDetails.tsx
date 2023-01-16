@@ -20,6 +20,7 @@ const SubmissionDetails = () => {
         state: {
             currentSubmission,
             currentProblemSubmissionResults,
+            validationResult,
         },
         actions: { getSubmissionResults },
     } = useSubmissionsDetails();
@@ -117,47 +118,79 @@ const SubmissionDetails = () => {
         [ currentSubmission, canAccessAdministration ],
     );
 
+    const renderSubmissionDetails = useCallback(
+        () => (
+            <div className={styles.detailsWrapper}>
+                <div className={styles.navigation}>
+                    <div className={submissionsNavigationClassName}>
+                        <Heading type={HeadingType.secondary}>Submissions</Heading>
+                    </div>
+                    <RefreshableSubmissionsList
+                      items={currentProblemSubmissionResults}
+                      selectedSubmission={currentSubmission}
+                      className={styles.submissionsList}
+                    />
+                    { renderRetestButton() }
+                    { renderSubmissionInfo() }
+                </div>
+                <div className={styles.code}>
+                    <Heading
+                      type={HeadingType.secondary}
+                      className={styles.taskHeading}
+                    >
+                        {problemNameHeadingText}
+                    </Heading>
+                    <CodeEditor
+                      readOnly
+                      code={currentSubmission?.content}
+                      selectedSubmissionType={submissionType}
+                    />
+                </div>
+                <div className={submissionDetailsClassName}>
+                    <Heading type={HeadingType.secondary}>{detailsHeadingText}</Heading>
+                    {isNil(currentSubmission)
+                        ? ''
+                        : (
+                            <SubmissionResults
+                              testRuns={currentSubmission.testRuns}
+                              compilerComment={currentSubmission?.compilerComment}
+                              isCompiledSuccessfully={currentSubmission?.isCompiledSuccessfully}
+                            />
+                        )}
+
+                </div>
+            </div>
+        ),
+        [ currentProblemSubmissionResults,
+            currentSubmission,
+            detailsHeadingText,
+            problemNameHeadingText,
+            renderRetestButton,
+            renderSubmissionInfo,
+            submissionDetailsClassName,
+            submissionType ],
+    );
+
+    const renderErrorMessage = useCallback(() => (
+        <div>
+            {validationResult.message}
+        </div>
+    ), [ validationResult ]);
+
+    const renderPage = useCallback(
+        () => isNil(validationResult)
+            ? <div>Loading data</div>
+            : validationResult.isValid
+                ? renderSubmissionDetails()
+                : renderErrorMessage(),
+        [ renderErrorMessage, renderSubmissionDetails, validationResult ],
+    );
+
     if (isNil(currentSubmission)) {
         return <div>No details fetched.</div>;
     }
 
-    return (
-        <div className={styles.detailsWrapper}>
-            <div className={styles.navigation}>
-                <div className={submissionsNavigationClassName}>
-                    <Heading type={HeadingType.secondary}>Submissions</Heading>
-                </div>
-                <RefreshableSubmissionsList
-                  items={currentProblemSubmissionResults}
-                  selectedSubmission={currentSubmission}
-                  className={styles.submissionsList}
-                />
-                { renderRetestButton() }
-                { renderSubmissionInfo() }
-            </div>
-            <div className={styles.code}>
-                <Heading
-                  type={HeadingType.secondary}
-                  className={styles.taskHeading}
-                >
-                    {problemNameHeadingText}
-                </Heading>
-                <CodeEditor
-                  readOnly
-                  code={currentSubmission?.content}
-                  selectedSubmissionType={submissionType}
-                />
-            </div>
-            <div className={submissionDetailsClassName}>
-                <Heading type={HeadingType.secondary}>{detailsHeadingText}</Heading>
-                <SubmissionResults
-                  testRuns={currentSubmission.testRuns}
-                  compilerComment={currentSubmission?.compilerComment}
-                  isCompiledSuccessfully={currentSubmission?.isCompiledSuccessfully}
-                />
-            </div>
-        </div>
-    );
+    return renderPage();
 };
 
 export default SubmissionDetails;

@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import isNil from 'lodash/isNil';
 
 import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
+import { IValidationType } from '../../common/types';
 import {
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemAndUserUrlParams,
@@ -19,6 +20,7 @@ interface ISubmissionsDetailsContext {
     state: {
         currentSubmission: ISubmissionDetailsType | null;
         currentProblemSubmissionResults: ISubmissionDetails[];
+        validationResult: IValidationType;
     };
     actions: {
         selectSubmissionById: (submissionId: number) => void;
@@ -27,7 +29,15 @@ interface ISubmissionsDetailsContext {
     };
 }
 
-const defaultState = { state: { currentProblemSubmissionResults: [] as ISubmissionDetails[] } };
+const defaultState = {
+    state: {
+        currentProblemSubmissionResults: [] as ISubmissionDetails[],
+        validationResult: {
+            message: '',
+            isValid: true,
+        },
+    },
+};
 
 const SubmissionsDetailsContext = createContext<ISubmissionsDetailsContext>(defaultState as ISubmissionsDetailsContext);
 
@@ -37,6 +47,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     const { state: { user } } = useAuth();
     const { startLoading, stopLoading } = useLoading();
     const [ currentSubmissionId, selectSubmissionById ] = useState<number>();
+    const [ validationResult, setValidationResult ] = useState<IValidationType>(defaultState.state.validationResult);
     const [
         currentSubmission,
         setCurrentSubmission,
@@ -197,6 +208,11 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
                 return;
             }
 
+            const { validationResult: newValidationResult } = apiSubmissionDetails;
+
+            console.log(apiSubmissionDetails);
+            console.log(newValidationResult);
+            setValidationResult(newValidationResult);
             setCurrentSubmission(apiSubmissionDetails);
         },
         [ apiSubmissionDetails ],
@@ -220,6 +236,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             state: {
                 currentSubmission,
                 currentProblemSubmissionResults,
+                validationResult,
             },
             actions: {
                 selectSubmissionById,
@@ -232,6 +249,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             currentSubmission,
             getDetails,
             getSubmissionResults,
+            validationResult,
         ],
     );
 

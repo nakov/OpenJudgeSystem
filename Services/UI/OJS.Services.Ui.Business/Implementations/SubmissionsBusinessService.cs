@@ -18,6 +18,7 @@ using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Services.Common;
 using OJS.Services.Infrastructure.Exceptions;
 using static OJS.Services.Ui.Business.Constants.PublicSubmissions;
+using OJS.Services.Ui.Business.Validation;
 
 public class SubmissionsBusinessService : ISubmissionsBusinessService
 {
@@ -33,6 +34,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmissionTypesBusinessService submissionTypesBusinessService;
     private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunicationService;
     private readonly ITestRunsDataService testRunsDataService;
+    private readonly ISubmissionDetailsValidationService submissionDetailsValidationService;
 
     public SubmissionsBusinessService(
         ISubmissionsDataService submissionsData,
@@ -45,7 +47,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ISubmissionTypesBusinessService submissionTypesBusinessService,
         ISubmissionsDistributorCommunicationService submissionsDistributorCommunicationService,
         ITestRunsDataService testRunsDataService,
-        IParticipantScoresBusinessService participantScoresBusinessService)
+        IParticipantScoresBusinessService participantScoresBusinessService,
+        ISubmissionDetailsValidationService submissionDetailsValidationService)
     {
         this.submissionsData = submissionsData;
         this.usersBusiness = usersBusiness;
@@ -58,6 +61,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.submissionsDistributorCommunicationService = submissionsDistributorCommunicationService;
         this.testRunsDataService = testRunsDataService;
         this.participantScoresBusinessService = participantScoresBusinessService;
+        this.submissionDetailsValidationService = submissionDetailsValidationService;
     }
 
     public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
@@ -69,10 +73,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     public async Task<SubmissionDetailsServiceModel> GetDetailsById(int submissionId)
     {
         var currentUser = this.userProviderService.GetCurrentUser();
-        if (currentUser.Id == null)
-        {
-            throw new BusinessServiceException(Resources.User.UserNotLoggedIn);
-        }
 
         var submissionDetailsServiceModel = await this.submissionsData
             .GetByIdQuery(submissionId)
@@ -84,15 +84,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .MapCollection<SubmissionDetailsServiceModel>()
             .FirstOrDefaultAsync();
 
-        if (submissionDetailsServiceModel == null)
-        {
-            throw new BusinessServiceException(Resources.ContestsGeneral.SubmissionNotFound);
-        }
+        var validationResult = this.submissionDetailsValidationService.GetValidationResult((submissionDetailsServiceModel, currentUser) !);
 
-        if (!currentUser.IsAdminOrLecturer || submissionDetailsServiceModel.User.Id != currentUser.Id)
-        {
-            throw new BusinessServiceException(Resources.ContestsGeneral.SubmissionNotMadeByUser);
-        }
+        submissionDetailsServiceModel!.ValidationResult = validationResult;
 
         return submissionDetailsServiceModel;
     }
