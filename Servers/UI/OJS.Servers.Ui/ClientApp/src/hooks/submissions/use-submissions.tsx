@@ -108,21 +108,17 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             const { allowedSubmissionTypes } = currentProblem || {};
             const submissionType = allowedSubmissionTypes?.find((st) => st.id === selectedSubmissionType?.id);
 
-            if (submissionType) {
-                const { id } = submissionType;
-
-                selectSubmissionTypeById(id);
-            } else {
+            if (!submissionType) {
                 const defaultSubmissionType = first(allowedSubmissionTypes);
 
-                if (defaultSubmissionType) {
-                    const { id } = defaultSubmissionType;
-
-                    selectSubmissionTypeById(id);
-                } else {
-                    selectSubmissionTypeById(null);
-                }
+                return isNil(defaultSubmissionType)
+                    ? selectSubmissionTypeById(null)
+                    : selectSubmissionTypeById(defaultSubmissionType.id);
             }
+
+            const { id } = submissionType;
+
+            return selectSubmissionTypeById(id);
         },
         [ currentProblem, selectSubmissionTypeById, selectedSubmissionType ],
     );
