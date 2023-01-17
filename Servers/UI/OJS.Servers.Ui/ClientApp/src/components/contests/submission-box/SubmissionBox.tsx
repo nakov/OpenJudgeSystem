@@ -196,7 +196,13 @@ const SubmissionBox = () => {
     );
 
     const renderSubmissionInput = useCallback(() => {
-        if (selectedSubmissionType?.allowBinaryFilesUpload) {
+        if (isNil(selectedSubmissionType)) {
+            return <p>No submission type selected.</p>;
+        }
+
+        const { allowBinaryFilesUpload, allowedFileExtensions } = selectedSubmissionType;
+
+        if (allowBinaryFilesUpload) {
             return (
                 <>
                     <FormControl
@@ -206,7 +212,7 @@ const SubmissionBox = () => {
                     />
                     <p className={styles.fileSubmissionDetailsParagraph}>
                         Allowed file extensions:
-                        {selectedSubmissionType.allowedFileExtensions.join(', ')}
+                        {allowedFileExtensions.join(', ')}
                     </p>
                 </>
             );

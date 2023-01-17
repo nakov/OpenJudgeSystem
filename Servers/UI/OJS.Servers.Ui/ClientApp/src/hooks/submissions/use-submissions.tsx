@@ -93,10 +93,17 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const getSubmitParamsAsFormData = useCallback(async () => {
         const bodyFormData = new FormData();
 
-        await bodyFormData.append('content', submitCodeParams.content);
-        await bodyFormData.append('submissionTypeId', submitCodeParams.submissionTypeId.toString());
-        await bodyFormData.append('official', submitCodeParams.official.toString());
-        await bodyFormData.append('problemId', submitCodeParams.problemId.toString());
+        const {
+            content,
+            submissionTypeId,
+            official,
+            problemId,
+        } = submitCodeParams;
+
+        await bodyFormData.append('content', content);
+        await bodyFormData.append('submissionTypeId', submissionTypeId.toString());
+        await bodyFormData.append('official', official.toString());
+        await bodyFormData.append('problemId', problemId.toString());
 
         return bodyFormData;
     }, [ submitCodeParams ]);
