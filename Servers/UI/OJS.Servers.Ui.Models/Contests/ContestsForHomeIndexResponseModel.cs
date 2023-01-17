@@ -6,7 +6,7 @@ using OJS.Services.Ui.Models.Contests;
 
 public class ContestsForHomeIndexResponseModel : IMapFrom<ContestsForHomeIndexServiceModel>
 {
-    public IEnumerable<ContestForHomeIndexResponseModel> ActiveContests { get; set; }
+    public IEnumerable<ContestForHomeIndexResponseModel> ActiveContests { get; set; } = null!;
 
-    public IEnumerable<ContestForHomeIndexResponseModel> PastContests { get; set; }
+    public IEnumerable<ContestForHomeIndexResponseModel> PastContests { get; set; } = null!;
 }

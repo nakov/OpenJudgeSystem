@@ -1,7 +1,6 @@
-﻿using System.Threading.Tasks;
-
-namespace OJS.Services.Ui.Business
+﻿namespace OJS.Services.Ui.Business
 {
+    using System.Threading.Tasks;
     using SoftUni.Services.Infrastructure;
 
     public interface ISubmissionsForProcessingBusinessService : IService

@@ -1,10 +1,9 @@
-﻿using SoftUni.Services.Infrastructure;
-
-namespace OJS.Services.Ui.Business
+﻿namespace OJS.Services.Ui.Business
 {
-    using OJS.Services.Ui.Models.Participations;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using OJS.Services.Ui.Models.Participations;
+    using SoftUni.Services.Infrastructure;
 
     public interface IParticipationsBusinessService : IService
     {

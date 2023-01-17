@@ -18,8 +18,10 @@ public class ContestsController : BaseApiController
         => this.contestsBusinessService = contestsBusinessService;
 
     /// <summary>
-    /// Validates if user can participate in contest with or without password
+    /// Validates if user can participate in contest with or without password.
     /// </summary>
+    /// <param name="id">ID of the contest.</param>
+    /// <param name="official">Practice or compete mode of the contest.</param>
     /// <returns>Model containing information about the id and name of the contest and if it requires password to enter.</returns>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(RegisterUserForContestServiceModel), Status200OK)]
@@ -31,7 +33,10 @@ public class ContestsController : BaseApiController
     /// <summary>
     /// Submits a password value from the user and validates it against contest configurations.
     /// </summary>
-    /// <returns>Ok result if password is correct and an exception if otherwise</returns>
+    /// <param name="id">ID of the contest.</param>
+    /// <param name="official">Practice or compete mode of the contest.</param>
+    /// <param name="model">The password the user has submitted.</param>
+    /// <returns>Ok result if password is correct and an exception if otherwise.</returns>
     [HttpPost("{id:int}")]
     public async Task<IActionResult> SubmitContestPassword(
         int id,
@@ -44,7 +49,7 @@ public class ContestsController : BaseApiController
     /// <summary>
     /// Gets contests summary with latest active and past contests for the home page.
     /// </summary>
-    /// <returns>A collection of active and past contests</returns>
+    /// <returns>A collection of active and past contests.</returns>
     [HttpGet]
     [ProducesResponseType(typeof(ContestsForHomeIndexResponseModel), Status200OK)]
     public async Task<IActionResult> GetForHomeIndex()
@@ -57,7 +62,7 @@ public class ContestsController : BaseApiController
     /// Gets a page with visible contests, by applied filters.
     /// If no page options are provided, default values are applied.
     /// </summary>
-    /// <param name="model">The filters by which the contests should be filtered and page options</param>
+    /// <param name="model">The filters by which the contests should be filtered and page options.</param>
     /// <returns>A page with contests, filtered by provided filters.</returns>
     [HttpGet]
     [ProducesResponseType(typeof(PagedResultResponse<ContestForListingResponseModel>), Status200OK)]

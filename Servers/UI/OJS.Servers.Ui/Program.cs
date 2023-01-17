@@ -6,7 +6,7 @@ namespace OJS.Servers.Ui
     using OJS.Servers.Ui.Infrastructure.Extensions;
     using System;
 
-    public class Program
+    internal class Program
     {
         private const string ApiVersion = "v1";
 

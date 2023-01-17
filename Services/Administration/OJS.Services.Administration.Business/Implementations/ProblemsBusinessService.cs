@@ -96,7 +96,7 @@ namespace OJS.Services.Administration.Business.Implementations
                 .Select(p => new
                 {
                     p.ProblemGroupId,
-                    p.ProblemGroup.ContestId
+                    p.ProblemGroup.ContestId,
                 })
                 .FirstOrDefault();
 
@@ -146,17 +146,17 @@ namespace OJS.Services.Administration.Business.Implementations
 
             if (problem?.ProblemGroup.ContestId == contestId)
             {
-                return new ServiceResult(Resource.Cannot_copy_problems_into_same_contest);
+                return new ServiceResult(Resource.CannotCopyProblemsIntoSameContest);
             }
 
             if (!await this.contestsData.ExistsById(contestId))
             {
-                return new ServiceResult(SharedResource.Contest_not_found);
+                return new ServiceResult(SharedResource.ContestNotFound);
             }
 
             if (await this.contestsData.IsActiveById(contestId))
             {
-                return new ServiceResult(Resource.Cannot_copy_problems_into_active_contest);
+                return new ServiceResult(Resource.CannotCopyProblemsIntoActiveContest);
             }
 
             await this.CopyProblemToContest(problem, contestId, problemGroupId);
@@ -199,7 +199,7 @@ namespace OJS.Services.Administration.Business.Implementations
                 problem.ProblemGroup = new ProblemGroup
                 {
                     ContestId = contestId,
-                    OrderBy = orderBy
+                    OrderBy = orderBy,
                 };
             }
 

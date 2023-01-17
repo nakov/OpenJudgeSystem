@@ -1,8 +1,8 @@
-﻿using OJS.Services.Ui.Models.Submissions;
-using SoftUni.AutoMapper.Infrastructure.Models;
-
-namespace OJS.Servers.Ui.Models.Submissions.Profile
+﻿namespace OJS.Servers.Ui.Models.Submissions.Profile
 {
+    using OJS.Services.Ui.Models.Submissions;
+    using SoftUni.AutoMapper.Infrastructure.Models;
+
     public class TestRunResponseModel : IMapFrom<TestRunServiceModel>
     {
         public int Id { get; set; }
@@ -13,11 +13,11 @@ namespace OJS.Servers.Ui.Models.Submissions.Profile
 
         public int SubmissionId { get; set; }
 
-        public string ExecutionComment { get; set; }
+        public string ExecutionComment { get; set; } = null!;
 
-        public string CheckerComment { get; set; }
+        public string CheckerComment { get; set; } = null!;
 
-        public string ResultType { get; set; }
+        public string ResultType { get; set; } = null!;
 
         public string? ExpectedOutputFragment { get; set; }
 

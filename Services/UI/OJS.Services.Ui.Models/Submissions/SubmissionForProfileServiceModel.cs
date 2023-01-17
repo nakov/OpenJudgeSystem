@@ -1,12 +1,11 @@
-﻿using System.Linq;
-
-namespace OJS.Services.Ui.Models.Submissions
+﻿namespace OJS.Services.Ui.Models.Submissions
 {
     using AutoMapper;
     using OJS.Data.Models.Submissions;
     using SoftUni.AutoMapper.Infrastructure.Models;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class SubmissionForProfileServiceModel : IMapExplicitly
     {
@@ -26,7 +25,7 @@ namespace OJS.Services.Ui.Models.Submissions
 
         public double MaxUsedMemory { get; set; }
 
-        public new void RegisterMappings(IProfileExpression configuration)
+        public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<Submission, SubmissionForProfileServiceModel>()
                 .ForMember(d => d.SubmittedOn, opt => opt.MapFrom(s => s.CreatedOn))
                 .ForMember(d => d.SubmissionTypeName, opt => opt.MapFrom(s => s.SubmissionType!.Name))
@@ -38,6 +37,5 @@ namespace OJS.Services.Ui.Models.Submissions
                         source.TestRuns.Any()
                             ? source.TestRuns.Max(tr => tr.TimeUsed)
                             : 0.0));
-
     }
 }

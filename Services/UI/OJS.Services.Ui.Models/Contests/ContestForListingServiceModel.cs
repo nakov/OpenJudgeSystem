@@ -32,6 +32,7 @@ public class ContestForListingServiceModel
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Contest, ContestForListingServiceModel>()
-            .ForMember(dest => dest.Category,
+            .ForMember(
+                dest => dest.Category,
                 opt => opt.MapFrom(src => src.Category!.Name));
 }

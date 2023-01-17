@@ -1,12 +1,12 @@
-﻿using OJS.Common.Extensions.Strings;
-
-namespace OJS.Services.Ui.Models.Contests
+﻿namespace OJS.Services.Ui.Models.Contests
 {
+    using OJS.Common.Extensions.Strings;
+
     public class ContestCategoryListViewModel
     {
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         public string NameUrl => this.Name.ToUrl();
 

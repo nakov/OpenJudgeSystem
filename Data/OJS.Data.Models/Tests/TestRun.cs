@@ -1,7 +1,7 @@
 namespace OJS.Data.Models.Tests
 {
-    using SoftUni.Data.Infrastructure.Models;
     using OJS.Data.Models.Submissions;
+    using SoftUni.Data.Infrastructure.Models;
     using SoftUni.Judge.Common.Enumerations;
 
     public class TestRun : Entity<int>

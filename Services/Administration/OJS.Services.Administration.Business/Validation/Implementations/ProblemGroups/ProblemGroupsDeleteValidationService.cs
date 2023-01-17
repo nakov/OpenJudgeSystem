@@ -5,7 +5,7 @@ using OJS.Services.Common.Models;
 using OJS.Services.Common.Validation;
 using OJS.Services.Common.Validation.Helpers;
 using OJS.Services.Infrastructure.Extensions;
-using Resource =  OJS.Common.Resources.ProblemGroupsControllers;
+using Resource = OJS.Common.Resources.ProblemGroupsControllers;
 
 public class ProblemGroupsDeleteValidationService : IValidationService<ProblemGroupDeleteValidationServiceModel>
 {
@@ -22,7 +22,7 @@ public class ProblemGroupsDeleteValidationService : IValidationService<ProblemGr
             .VerifyResult();
 
         return examGroup!.ContestIsActive
-            ? ValidationResult.Invalid(Resource.Active_contest_cannot_delete_problem_group)
+            ? ValidationResult.Invalid(Resource.ActiveContestCannotDeleteProblemGroup)
             : ValidationResult.Valid();
     }
 }

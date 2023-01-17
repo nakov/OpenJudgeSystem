@@ -48,7 +48,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
 
             if (!isAdmin && !isUserLecturerInByContestAndUser)
             {
-                this.AssignRandomProblemsToParticipant(participant, contest);
+                AssignRandomProblemsToParticipant(participant, contest);
             }
         }
 
@@ -67,18 +67,18 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
 
         if (participant == null)
         {
-            throw new ArgumentException(Resource.Participant_does_not_exist);
+            throw new ArgumentException(Resource.ParticipantDoesNotExist);
         }
 
         if (!participant.Contest.Duration.HasValue)
         {
-            return new ServiceResult<string>(Resource.Contest_duration_not_set);
+            return new ServiceResult<string>(Resource.ContestDurationNotSet);
         }
 
         if (!participant.ParticipationEndTime.HasValue ||
             !participant.ParticipationStartTime.HasValue)
         {
-            throw new ArgumentException(Resource.Participant_participation_time_not_set);
+            throw new ArgumentException(Resource.ParticipantParticipationTimeNotSet);
         }
 
         var newEndTime = participant.ParticipationEndTime.Value.AddMinutes(minutes);
@@ -87,7 +87,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
 
         if (newEndTime < minAllowedEndTime)
         {
-            return new ServiceResult<string>(Resource.Participation_time_reduce_below_duration_warning);
+            return new ServiceResult<string>(Resource.ParticipationTimeReduceBelowDurationWarning);
         }
 
         participant.ParticipationEndTime = newEndTime;
@@ -97,22 +97,23 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
         return ServiceResult<string>.Success(participant.User.UserName);
     }
 
-    public async Task<ServiceResult<ICollection<string>>> UpdateParticipationsEndTimeByContestByParticipationStartTimeRangeAndTimeInMinutes(
-        int contestId,
-        int timeInMinutes,
-        DateTime participationStartTimeRangeStart,
-        DateTime participationStartTimeRangeEnd)
+    public async Task<ServiceResult<ICollection<string>>>
+        UpdateParticipationsEndTimeByContestByParticipationStartTimeRangeAndTimeInMinutes(
+            int contestId,
+            int timeInMinutes,
+            DateTime participationStartTimeRangeStart,
+            DateTime participationStartTimeRangeEnd)
     {
         var contest = await this.contestsData.OneById(contestId);
 
         if (contest == null)
         {
-            return new ServiceResult<ICollection<string>>(SharedResource.Contest_not_found);
+            return new ServiceResult<ICollection<string>>(SharedResource.ContestNotFound);
         }
 
         if (!contest.Duration.HasValue)
         {
-            return new ServiceResult<ICollection<string>>(Resource.Contest_duration_not_set);
+            return new ServiceResult<ICollection<string>>(Resource.ContestDurationNotSet);
         }
 
         var contestTotalDurationInMinutes = contest.Duration.Value.TotalMinutes;
@@ -140,10 +141,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
                 .Where(p =>
                     p.ParticipationEndTime!.Value.AddMinutes(timeInMinutes) >=
                     p.ParticipationStartTime!.Value.AddMinutes(contestTotalDurationInMinutes)),
-            p => new Participant
-            {
-                ParticipationEndTime = p.ParticipationEndTime!.Value.AddMinutes(timeInMinutes),
-            });
+            p => new Participant { ParticipationEndTime = p.ParticipationEndTime!.Value.AddMinutes(timeInMinutes), });
 
         return ServiceResult<ICollection<string>>.Success(invalidForUpdateParticipantUsernames);
     }
@@ -153,7 +151,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
             .GetUserSubmissionTimeLimit(participantId, contestLimitBetweenSubmissions)
             .ToTask();
 
-    private void AssignRandomProblemsToParticipant(Participant participant, Contest contest)
+    private static void AssignRandomProblemsToParticipant(Participant participant, Contest contest)
     {
         var random = new Random();
 
@@ -168,8 +166,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
                 var randomProblem = problemsInGroup[random.Next(0, problemsInGroup.Count)];
                 participant.ProblemsForParticipants.Add(new ProblemForParticipant
                 {
-                    Participant = participant,
-                    Problem = randomProblem,
+                    Participant = participant, Problem = randomProblem,
                 });
             }
         }

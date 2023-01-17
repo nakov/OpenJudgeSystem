@@ -20,7 +20,7 @@ public class SubmissionTypesController : BaseApiController
     /// <summary>
     /// Gets all submission types ordered by most used to least.
     /// </summary>
-    /// <returns>A collection of all submission types</returns>
+    /// <returns>A collection of all submission types.</returns>
     /// <remarks>
     /// Usage is determined by gathering information from latest submissions.
     /// </remarks>
