@@ -6,9 +6,9 @@ using OJS.Services.Ui.Models.Submissions;
 
 public class SubmissionDetailsValidationService : ISubmissionDetailsValidationService
 {
-    public ValidationResult GetValidationResult((SubmissionDetailsServiceModel?, UserInfoModel) item)
+    public ValidationResult GetValidationResult((SubmissionDetailsServiceModel?, UserInfoModel) validationInput)
     {
-        var (submissionDetailsServiceModel, userInfoModel) = item;
+        var (submissionDetailsServiceModel, userInfoModel) = validationInput;
 
         if (userInfoModel.Id == null)
         {

@@ -37,7 +37,9 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
 
     const renderDetailsBtn = useCallback(
         () => {
-            if (username === loggedInUser.user.username || loggedInUser.user.permissions.canAccessAdministration) {
+            const { user: { username: loggedInUsername, permissions: { canAccessAdministration } } } = loggedInUser;
+
+            if (username === loggedInUsername || canAccessAdministration) {
                 return (
                     <LinkButton
                       to={`/submissions/${submissionId}/details`}
