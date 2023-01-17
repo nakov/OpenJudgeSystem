@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace OJS.Services.Ui.Models.Submissions;
+﻿namespace OJS.Services.Ui.Models.Submissions;
 
 public class SubmitFileSubmissionServiceModel
 {

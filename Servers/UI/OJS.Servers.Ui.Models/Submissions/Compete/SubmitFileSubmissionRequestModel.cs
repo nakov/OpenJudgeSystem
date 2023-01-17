@@ -1,10 +1,9 @@
-﻿using AutoMapper;
-using FluentExtensions.Extensions;
+﻿using System;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using OJS.Common.Extensions;
 using OJS.Services.Ui.Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Models;
-using System;
 
 namespace OJS.Servers.Ui.Models.Submissions.Compete;
 
