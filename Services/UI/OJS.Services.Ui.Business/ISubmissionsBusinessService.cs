@@ -1,11 +1,11 @@
 ﻿namespace OJS.Services.Ui.Business
 {
-    using OJS.Data.Models.Submissions;
-    using SoftUni.Services.Infrastructure;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Models.Submissions;
-    using System.Collections.Generic;
+    using OJS.Data.Models.Submissions;
+    using SoftUni.Services.Infrastructure;
 
     public interface ISubmissionsBusinessService : IService
     {
