@@ -413,7 +413,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(Resources.ContestsGeneral.UserIsNotRegisteredForExam);
         }
 
-        if (!problem.ShowResults)
+        if (!problem.ShowResults && !user.IsAdminOrLecturer)
         {
             throw new BusinessServiceException(Resources.ContestsGeneral.ProblemResultsNotAvailable);
         }
