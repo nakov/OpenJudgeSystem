@@ -152,6 +152,7 @@ namespace OJS.Services.Administration.Business.Implementations
             var result = await this.transactions.ExecuteInTransaction(async () =>
             {
                 submission.Processed = false;
+                submission.ModifiedOn = DateTime.UtcNow;
 
                 await this.submissionsForProcessingDataService.AddOrUpdateBySubmission(submission.Id);
 
