@@ -28,6 +28,6 @@ public class ContestCategoriesValidationHelper : IContestCategoriesValidationHel
 
         return userHasPermissionsForCategory
             ? ValidationResult.Valid()
-            : ValidationResult.Invalid(AdminResource.No_privileges_message);
+            : ValidationResult.Invalid(AdminResource.NoPrivilegesMessage);
     }
 }

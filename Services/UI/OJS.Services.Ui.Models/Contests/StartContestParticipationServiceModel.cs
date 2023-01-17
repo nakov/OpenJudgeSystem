@@ -1,7 +1,4 @@
-﻿using OJS.Data.Validation;
-using System.Security.Claims;
-
-namespace OJS.Services.Ui.Models.Contests
+﻿namespace OJS.Services.Ui.Models.Contests
 {
     public class StartContestParticipationServiceModel
     {
@@ -9,6 +6,6 @@ namespace OJS.Services.Ui.Models.Contests
 
         public bool IsOfficial { get; set; }
 
-        public string UserHostAddress { get; set; }
+        public string UserHostAddress { get; set; } = null!;
     }
 }

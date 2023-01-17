@@ -1,9 +1,8 @@
-﻿using OJS.Services.Administration.Data;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace OJS.Services.Administration.Business.Implementations
+﻿namespace OJS.Services.Administration.Business.Implementations
 {
+    using System.Linq;
+    using System.Threading.Tasks;
+    using OJS.Services.Administration.Data;
 
     public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessingBusinessService
     {
@@ -16,7 +15,7 @@ namespace OJS.Services.Administration.Business.Implementations
         /// <summary>
         /// Sets the Processing property to False for all submissions
         /// thus ensuring that the worker will process them eventually instead
-        /// of getting stuck in perpetual "Processing..." state
+        /// of getting stuck in perpetual "Processing..." state.
         /// </summary>
         public async Task ResetAllProcessingSubmissions()
         {

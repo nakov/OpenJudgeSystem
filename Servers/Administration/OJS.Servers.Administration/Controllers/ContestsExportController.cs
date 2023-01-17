@@ -93,17 +93,12 @@ public class ContestsExportController : BaseAdminViewController
             "{1} {2} submissions for {0}.zip",
             contestName,
             compete ? "Contest" : "Practice",
-            exportType switch
-            {
-                SubmissionExportType.BestSubmissions => "best",
-                SubmissionExportType.LastSubmissions => "last",
-                _ => "all"
-            });
+            exportType == SubmissionExportType.BestSubmissions ? "best" : exportType == SubmissionExportType.LastSubmissions ? "last" : "all");
 
         return this.File(zipFile, ApplicationZip, zipFileName);
     }
 
-   private static string GetParticipantName(ParticipantModel participant)
+    private static string GetParticipantName(ParticipantModel participant)
         => $"{participant.UserName} ({participant.FirstName} {participant.LastName})";
 
     private static StringBuilder PrepareSolutionsFileComment(

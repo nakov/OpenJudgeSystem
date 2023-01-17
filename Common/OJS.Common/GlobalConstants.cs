@@ -122,7 +122,6 @@ namespace OJS.Common
             public const string TestOutputTxt = Output + Txt;
             public const string TestInputZip = Input + Zip;
             public const string TestOutputZip = Output + Zip;
-            public static readonly string[] AllowedImageFileExtensions = new string[] { ".jpg", ".jpeg", ".png" };
         }
     }
 }

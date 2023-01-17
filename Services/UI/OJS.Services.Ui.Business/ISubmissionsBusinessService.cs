@@ -3,8 +3,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Models.Submissions;
     using OJS.Data.Models.Submissions;
+    using OJS.Services.Ui.Models.Submissions;
     using SoftUni.Services.Infrastructure;
 
     public interface ISubmissionsBusinessService : IService
@@ -23,14 +23,12 @@
 
         Task<IEnumerable<SubmissionForProfileServiceModel>> GetForProfileByUser(string? username);
 
-        Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(int problemId, bool isOfficial,
-            int take = 0);
+        Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(int problemId, bool isOfficial, int take = 0);
 
         Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblemAndUser(
             int problemId,
             bool isOfficial,
-            string userId
-        );
+            string userId);
 
         Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult);
 

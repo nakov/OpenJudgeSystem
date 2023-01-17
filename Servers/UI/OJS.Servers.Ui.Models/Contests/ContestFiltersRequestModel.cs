@@ -24,7 +24,7 @@ public class ContestFiltersRequestModel : IMapExplicitly
 
     public int? ItemsPerPage { get; set; }
 
-    public string SortType { get; set; }
+    public string SortType { get; set; } = null!;
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration
@@ -35,8 +35,8 @@ public class ContestFiltersRequestModel : IMapExplicitly
                     src => src.CategoryId.HasValue
                         ? new List<int> { src.CategoryId.Value }
                         : Enumerable.Empty<int>()))
-            .ForMember(m => m.SortType,
+            .ForMember(
+                m => m.SortType,
                 opt => opt.MapFrom(
                     src => Enum.Parse<ContestSortType>(src.SortType)));
-
 }

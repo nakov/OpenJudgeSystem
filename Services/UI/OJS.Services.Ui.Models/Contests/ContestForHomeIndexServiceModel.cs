@@ -1,11 +1,9 @@
-using FluentExtensions.Extensions;
-
 namespace OJS.Services.Ui.Models.Contests
 {
     using System;
     using AutoMapper;
-    using SoftUni.AutoMapper.Infrastructure.Models;
     using OJS.Data.Models.Contests;
+    using SoftUni.AutoMapper.Infrastructure.Models;
 
     public class ContestForHomeIndexServiceModel : IMapExplicitly
     {
@@ -33,7 +31,8 @@ namespace OJS.Services.Ui.Models.Contests
 
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<Contest, ContestForHomeIndexServiceModel>()
-                .ForMember(dest => dest.Category,
+                .ForMember(
+                    dest => dest.Category,
                     opt => opt.MapFrom(src => src.Category!.Name));
     }
 }

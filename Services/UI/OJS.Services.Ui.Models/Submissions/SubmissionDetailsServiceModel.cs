@@ -1,14 +1,12 @@
-﻿using System;
-
-namespace OJS.Services.Ui.Models.Submissions
+﻿namespace OJS.Services.Ui.Models.Submissions
 {
-    using AutoMapper;
-    using OJS.Services.Ui.Models.Users;
-    using System.Linq;
-    using OJS.Data.Models.Submissions;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using System;
     using System.Collections.Generic;
-
+    using System.Linq;
+    using AutoMapper;
+    using OJS.Data.Models.Submissions;
+    using OJS.Services.Ui.Models.Users;
+    using SoftUni.AutoMapper.Infrastructure.Models;
 
     public class SubmissionDetailsServiceModel : IMapExplicitly
     {
@@ -23,20 +21,20 @@ namespace OJS.Services.Ui.Models.Submissions
         public IEnumerable<TestRunDetailsServiceModel> TestRuns { get; set; } =
             Enumerable.Empty<TestRunDetailsServiceModel>();
 
-        public UserProfileServiceModel User { get; set; }
+        public UserProfileServiceModel User { get; set; } = null!;
 
         public double MaxUsedTime { get; set; }
 
         public double MaxUsedMemory { get; set; }
 
-        public SubmissionTypeForSubmissionDetailsServiceModel SubmissionType { get; set; }
+        public SubmissionTypeForSubmissionDetailsServiceModel SubmissionType { get; set; } = null!;
 
         public bool IsOfficial { get; set; }
 
         public bool IsCompiledSuccessfully { get; set; }
 
-        public string CompilerComment { get; set; }
-        
+        public string CompilerComment { get; set; } = null!;
+
         public DateTime CreatedOn { get; set; }
 
         public DateTime? ModifiedOn { get; set; }
@@ -57,6 +55,6 @@ namespace OJS.Services.Ui.Models.Submissions
                         ? null
                         : s.ContentAsString))
                 .ForMember(d => d.IsOfficial, opt => opt.MapFrom(s =>
-                    s.Participant.IsOfficial));
+                    s.Participant!.IsOfficial));
     }
 }

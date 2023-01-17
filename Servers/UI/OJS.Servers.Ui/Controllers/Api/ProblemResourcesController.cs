@@ -18,10 +18,10 @@ public class ProblemResourcesController : BaseApiController
         => this.problemResourcesBusinessService = problemResourcesBusinessService;
 
     /// <summary>
-    /// Gets problem resource file, by provided resource id
+    /// Gets problem resource file, by provided resource id.
     /// </summary>
-    /// <param name="id">The problem resource id</param>
-    /// <returns>A file with the problem resource</returns>
+    /// <param name="id">The problem resource id.</param>
+    /// <returns>A file with the problem resource.</returns>
     [HttpGet("{id:int}")]
     [Authorize]
     [Produces(ApplicationOctetStream)]
@@ -30,7 +30,7 @@ public class ProblemResourcesController : BaseApiController
     {
         var resource = await this.problemResourcesBusinessService.GetResource(id);
 
-        Response.Headers.Add(ContentDisposition, $"{ContentDispositionFileNameUtf8}{Uri.EscapeDataString(resource.Name)}.{resource.FileExtension}");
-        return this.File(resource.File, ApplicationOctetStream);
+        this.Response.Headers.Add(ContentDisposition, $"{ContentDispositionFileNameUtf8}{Uri.EscapeDataString(resource.Name)}.{resource.FileExtension}");
+        return this.File(resource.File!, ApplicationOctetStream);
     }
 }

@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.IO;
+﻿namespace OJS.Common.Extensions;
 
-namespace OJS.Common.Extensions;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 public static class FormFileExtensions
 {

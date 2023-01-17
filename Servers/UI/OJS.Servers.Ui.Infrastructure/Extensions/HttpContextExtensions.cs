@@ -1,34 +1,18 @@
-﻿using FluentExtensions.Extensions;
-using Microsoft.AspNetCore.Http;
-using System.Text;
-
-namespace OJS.Servers.Ui.Infrastructure.Extensions
+﻿namespace OJS.Servers.Ui.Infrastructure.Extensions
 {
+    using FluentExtensions.Extensions;
+    using Microsoft.AspNetCore.Http;
+    using System.Text;
+
     public static class HttpContextExtensions
     {
-        private static class Constants
-        {
-            public const string Role = "role";
-            public const string EmailAddress = "email";
-            public const string NameIdentifier = "nameidentifier";
-            public const string Subject = "sub";
-
-            public const string Administrator = "Administrator";
-            public const string Developer = "Developer";
-        }
-
-        public static async Task<string> GetUserId(this HttpContext httpContext)
+        public static string? GetUserId(this HttpContext httpContext)
             => httpContext.User
                 ?.Claims.FirstOrDefault(x => x.Type.Contains(Constants.NameIdentifier))
                 ?.Value;
 
-        public static async Task<string> GetUserEmail(this HttpContext httpContext)
-            => await httpContext.GetClaimByType(Constants.EmailAddress);
-
-        public static async Task<string> GetClaimByType(this HttpContext httpContext, string claimType)
-            => (httpContext.User)
-                ?.Claims.FirstOrDefault(x => x.Type == claimType)
-                ?.Value;
+        public static string? GetUserEmail(this HttpContext httpContext)
+            => httpContext.GetClaimByType(Constants.EmailAddress);
 
         public static bool IsUserAdminOrDeveloper(this HttpContext httpContext)
         {
@@ -67,6 +51,22 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
 
                 return requestModel;
             }
+        }
+
+        private static string? GetClaimByType(this HttpContext httpContext, string claimType)
+            => httpContext.User
+                ?.Claims.FirstOrDefault(x => x.Type == claimType)
+                ?.Value;
+
+        private static class Constants
+        {
+            public const string Role = "role";
+            public const string EmailAddress = "email";
+            public const string NameIdentifier = "nameidentifier";
+            public const string Subject = "sub";
+
+            public const string Administrator = "Administrator";
+            public const string Developer = "Developer";
         }
     }
 }
