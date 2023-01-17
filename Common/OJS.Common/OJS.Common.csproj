@@ -12,8 +12,4 @@
       <PackageReference Include="SoftUni.Judge.Common" Version="1.0.6" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Reference Include="Microsoft.AspNetCore.Http.Features" />
-    </ItemGroup>
-
 </Project>
