@@ -1,3 +1,5 @@
+using OJS.Services.Infrastructure;
+
 namespace OJS.Services.Administration.Business.Implementations
 {
     using System;
@@ -24,6 +26,7 @@ namespace OJS.Services.Administration.Business.Implementations
         private readonly ITransactionsProvider transactions;
         private readonly IParticipantScoresBusinessService participantScoresBusinessService;
         private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
+        private readonly IDatesService dates;
 
         public SubmissionsBusinessService(
             ISubmissionsDataService submissionsData,
@@ -31,7 +34,8 @@ namespace OJS.Services.Administration.Business.Implementations
             ITransactionsProvider transactions,
             ISubmissionsForProcessingDataService submissionsForProcessingDataService,
             IParticipantScoresBusinessService participantScoresBusinessService,
-            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication)
+            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication,
+            IDatesService dates)
         {
             this.submissionsData = submissionsData;
             // this.archivedSubmissionsData = archivedSubmissionsData;
@@ -40,6 +44,7 @@ namespace OJS.Services.Administration.Business.Implementations
             this.submissionsForProcessingDataService = submissionsForProcessingDataService;
             this.participantScoresBusinessService = participantScoresBusinessService;
             this.submissionsDistributorCommunication = submissionsDistributorCommunication;
+            this.dates = dates;
         }
 
         public Task<IQueryable<Submission>> GetAllForArchiving()
@@ -152,7 +157,7 @@ namespace OJS.Services.Administration.Business.Implementations
             var result = await this.transactions.ExecuteInTransaction(async () =>
             {
                 submission.Processed = false;
-                submission.ModifiedOn = DateTime.UtcNow;
+                submission.ModifiedOn = this.dates.GetUtcNow();
 
                 await this.submissionsForProcessingDataService.AddOrUpdateBySubmission(submission.Id);
 
