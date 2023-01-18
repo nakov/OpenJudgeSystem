@@ -108,7 +108,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             const { allowedSubmissionTypes } = currentProblem || {};
             const submissionType = allowedSubmissionTypes?.find((st) => st.id === selectedSubmissionType?.id);
 
-            if (!submissionType) {
+            if (isNil(submissionType)) {
                 const defaultSubmissionType = first(allowedSubmissionTypes);
 
                 return isNil(defaultSubmissionType)
