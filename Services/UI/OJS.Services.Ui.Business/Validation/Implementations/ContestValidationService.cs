@@ -83,18 +83,18 @@ public class ContestValidationService : IContestValidationService
         {
             if (participant.ParticipationEndTime != null)
             {
-                return participant.ParticipationEndTime >= DateTime.Now;
+                return DateTime.Now >= participant.ParticipationEndTime;
             }
         }
 
         if (!official && contest.PracticeEndTime.HasValue)
         {
-            return DateTime.Now > contest.PracticeEndTime;
+            return DateTime.Now >= contest.PracticeEndTime;
         }
 
         if (official && contest.EndTime.HasValue)
         {
-            return DateTime.Now > contest.EndTime;
+            return DateTime.Now >= contest.EndTime;
         }
 
         return false;
