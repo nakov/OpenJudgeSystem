@@ -32,6 +32,11 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
         isOfficial,
     } = submission;
 
+    const getProblemNumber = useMemo(
+        () => problemName.substring(0, 2).substring(1),
+        [ problemName ],
+    );
+
     const renderStrategyIcon = useCallback(
         () => {
             const Icon = strategyTypeToIcon(fullStrategyNameToStrategyType(strategyName));
@@ -84,10 +89,9 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
             </div>
             <div className={styles.detailsContainer}>
                 <div>
-                    {/* TODO: Fix this URL once https://github.com/SoftUni-Internal/exam-systems-issues/issues/184 is done */}
                     <LinkButton
                       text={problemName}
-                      to={`/contests/${contestId}/${participationType}`}
+                      to={`/contests/${contestId}/${participationType}#${getProblemNumber}`}
                       type={LinkButtonType.plain}
                       className={styles.link}
                     />
