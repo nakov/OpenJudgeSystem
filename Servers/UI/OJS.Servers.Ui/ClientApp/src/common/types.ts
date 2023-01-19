@@ -90,10 +90,10 @@ interface IStartParticipationResponseType {
     contestIsCompete: boolean;
     lastSubmissionTime: Date;
     remainingTimeInMilliseconds: number;
-    validationResult: IValidationType;
     userSubmissionsTimeLimit: number;
     totalParticipantsCount: number;
     activeParticipantsCount: number;
+    validationResult: IValidationType;
 }
 
 interface IPagedResultType<TItem> {
