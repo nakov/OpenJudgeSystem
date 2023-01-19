@@ -28,14 +28,10 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
                 id: contestId,
                 name: contestName,
             },
+            orderBy,
         },
         isOfficial,
     } = submission;
-
-    const getProblemNumber = useMemo(
-        () => problemName.substring(0, 2).substring(1),
-        [ problemName ],
-    );
 
     const renderStrategyIcon = useCallback(
         () => {
@@ -91,7 +87,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
                 <div>
                     <LinkButton
                       text={problemName}
-                      to={`/contests/${contestId}/${participationType}#${getProblemNumber}`}
+                      to={`/contests/${contestId}/${participationType}#${orderBy + 1}`}
                       type={LinkButtonType.plain}
                       className={styles.link}
                     />
