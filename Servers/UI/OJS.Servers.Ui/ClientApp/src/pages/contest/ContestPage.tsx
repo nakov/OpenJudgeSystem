@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../common/constants';
 import Contest from '../../components/contests/contest/Contest';
@@ -17,6 +18,10 @@ const ContestPage = () => {
     const { actions: { start } } = useCurrentContest();
 
     useEffect(() => {
+        if (isNil(participationType)) {
+            return;
+        }
+
         (async () => {
             const contest = {
                 id: Number(contestId),
