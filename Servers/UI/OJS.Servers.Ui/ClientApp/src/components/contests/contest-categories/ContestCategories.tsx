@@ -41,35 +41,60 @@ const ContestCategories = ({
     const { state: { categories } } = useContestCategories();
     const { state: { possibleFilters } } = useContests();
     const { actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
-    const [ currentStrategyFilters, setCurrentCurrentStrategyFilters ] = useState(defaultState.state.currentStrategyFilters);
+    const [ currentStrategyFilters, setCurrentStrategyFilters ] = useState(defaultState.state.currentStrategyFilters);
     const [ filterProps, setFilterProps ] = useState(defaultState.state.filterProps);
-
-    const getParents = useCallback(
-        (result: string[], allItems: ITreeItemType[], searchId?: string) => {
-            if (isNil(searchId)) {
-                return result;
-            }
-
-            const node = allItems.find(({ id }) => id.toString() === searchId);
-
-            if (isNil(node)) {
-                return result;
-            }
-
-            if (node.id.toString() === searchId) {
-                result.push(searchId);
-            }
-
-            getParents(result, allItems, node.parentId?.toString());
-
-            return result;
-        },
-        [],
-    );
+    const [ currentCategoryId, selectCurrentCategoryId ] = useState<string>('');
+    const [ prevCategoryId, setPrevCategoryId ] = useState<string>('');
 
     const categoriesFlat = useMemo(
         () => flattenWith(categories, (c) => c.children || null),
         [ categories ],
+    );
+
+    const getCategoryId = useCallback(
+        (searchedId?: string, searchedValue?: string) => {
+            const filterToFind = possibleFilters
+                .find(({ id, value }) => id.toString() === searchedId || value === searchedValue?.toString()) as IFilter;
+
+            if (isNil(filterToFind)) {
+                return '';
+            }
+
+            const { value } = filterToFind;
+
+            return value;
+        },
+        [ possibleFilters ],
+    );
+
+    const getCurrentNode = useCallback(
+        (searchId?: string, searchValue?: string) => {
+            const categoryId = getCategoryId(searchId, searchValue);
+
+            return categoriesFlat.find(({ id }) => id.toString() === categoryId);
+        },
+        [ categoriesFlat, getCategoryId ],
+    );
+
+    const getParents = useCallback(
+        (result: string[], allItems: ITreeItemType[], searchId?: string, searchValue?: string) => {
+            if (isNil(searchId)) {
+                return result;
+            }
+
+            const currentNode = getCurrentNode(searchId, searchValue);
+
+            if (isNil(currentNode)) {
+                return result;
+            }
+
+            result.push(currentNode.id.toString());
+
+            getParents(result, allItems, '', currentNode.parentId?.toString());
+
+            return result;
+        },
+        [ getCurrentNode ],
     );
 
     const defaultExpanded = useMemo(
@@ -82,28 +107,28 @@ const ContestCategories = ({
         [ possibleFilters ],
     );
 
-    const addNewStrategyFilters = useCallback(
-        (id: string, { allowedStrategyTypes }: ICategoryStrategiesTypes) => {
-            const strategyFiltersToAdd = allowedStrategyTypes
-                ?.map((value) => value.id.toString())
-                .map((x) => strategyFilterGroup.find((y) => y.value === x))
-                .filter((x) => !isNil(x)) as IFilter[];
+    const getStrategyFiltersToAdd = useCallback(
+        ({ allowedStrategyTypes }: ICategoryStrategiesTypes) => allowedStrategyTypes
+            ?.map((value) => value.id.toString())
+            .map((x) => strategyFilterGroup.find((y) => y.value === x))
+            .filter((x) => !isNil(x)) as IFilter[],
+        [ strategyFilterGroup ],
+    );
 
-            setFilterProps([
-                ...filterProps,
-                { categoryId: id, strategies: strategyFiltersToAdd },
-            ]);
+    const addNewStrategyFilters = useCallback(
+        (id: string, node: ICategoryStrategiesTypes) => {
+            const strategyFiltersToAdd = getStrategyFiltersToAdd(node);
+
+            setFilterProps([ { categoryId: id, strategies: strategyFiltersToAdd } ]);
         },
-        [ filterProps, strategyFilterGroup ],
+        [ getStrategyFiltersToAdd ],
     );
 
     const removeOldStrategyFilters = useCallback(
-        (id: string) => {
-            const newFilterProps = filterProps.filter((fp) => fp.categoryId !== id);
-
-            setFilterProps(newFilterProps);
+        () => {
+            setFilterProps([]);
         },
-        [ filterProps ],
+        [],
     );
 
     useEffect(
@@ -111,7 +136,7 @@ const ContestCategories = ({
             const flatteredStrategyFilters = filterProps.flatMap((s) => s.strategies);
 
             setStrategyFilters(uniq(flatteredStrategyFilters));
-            setCurrentCurrentStrategyFilters(filterProps);
+            setCurrentStrategyFilters(filterProps);
         },
         [ filterProps, setStrategyFilters ],
     );
@@ -123,6 +148,8 @@ const ContestCategories = ({
             (isNil(strategyFilterToUpdate)
                 ? addNewStrategyFilters
                 : removeOldStrategyFilters)(id, node);
+
+            setPrevCategoryId(id);
         },
         [ addNewStrategyFilters, currentStrategyFilters, removeOldStrategyFilters ],
     );
@@ -134,11 +161,41 @@ const ContestCategories = ({
         if (isNil(filter)) {
             return;
         }
-
-        onCategoryClick(filter);
         updateBreadcrumb(category, categoriesFlat);
         updateStrategyFilters(node.id, node);
-    }, [ possibleFilters, categoriesFlat, onCategoryClick, updateBreadcrumb, updateStrategyFilters ]);
+        selectCurrentCategoryId(node.id);
+        onCategoryClick(filter);
+    }, [ possibleFilters, categoriesFlat, updateBreadcrumb, updateStrategyFilters, onCategoryClick ]);
+
+    useEffect(
+        () => {
+            const currentNode = getCurrentNode(defaultSelected);
+
+            if (isNil(currentNode)) {
+                return;
+            }
+
+            selectCurrentCategoryId(currentNode?.id);
+        },
+        [ defaultSelected, getCurrentNode ],
+    );
+
+    useEffect(
+        () => {
+            if (currentCategoryId && currentCategoryId !== prevCategoryId) {
+                const categoryId = getCategoryId('', currentCategoryId);
+                const category = categoriesFlat.find(({ id }) => id.toString() === categoryId) as ITreeItemType;
+                if (isNil(category)) {
+                    return;
+                }
+
+                handleTreeLabelClick(category);
+
+                setPrevCategoryId(currentCategoryId);
+            }
+        },
+        [ categoriesFlat, currentCategoryId, getCategoryId, handleTreeLabelClick, prevCategoryId ],
+    );
 
     return (
         <div className={className as string}>
@@ -151,7 +208,7 @@ const ContestCategories = ({
             <Tree
               items={categories}
               onSelect={handleTreeLabelClick}
-              defaultSelected={defaultSelected}
+              defaultSelected={getCategoryId(defaultSelected)}
               defaultExpanded={defaultExpanded}
               treeItemHasTooltip
             />

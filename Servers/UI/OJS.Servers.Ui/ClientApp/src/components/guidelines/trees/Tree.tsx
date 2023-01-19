@@ -32,6 +32,7 @@ const Tree = ({
 }: ITreeProps) => {
     const [ expandedIds, setExpandedIds ] = useState([] as string[]);
     const [ selectedId, setSelectedId ] = useState('');
+    const [ selectedFromUrl, setSelectedFromUrl ] = useState(true);
 
     const handleTreeItemClick = useCallback(
         (node: ITreeItemType) => {
@@ -41,6 +42,7 @@ const Tree = ({
                 : [ ...expandedIds, id ];
 
             setExpandedIds(newExpanded);
+            setSelectedFromUrl(false);
         },
         [ expandedIds ],
     );
@@ -94,20 +96,20 @@ const Tree = ({
 
     useEffect(
         () => {
-            if (isEmpty(selectedId) && defaultSelected) {
+            if (isEmpty(selectedId) && selectedFromUrl) {
                 setSelectedId(defaultSelected);
             }
         },
-        [ defaultSelected, selectedId ],
+        [ defaultSelected, selectedFromUrl, selectedId ],
     );
 
     useEffect(
         () => {
-            if (isEmpty(expandedIds) && !isEmpty(defaultExpanded)) {
+            if (isEmpty(expandedIds) && selectedFromUrl) {
                 setExpandedIds(defaultExpanded);
             }
         },
-        [ defaultExpanded, expandedIds ],
+        [ defaultExpanded, expandedIds, selectedFromUrl ],
     );
 
     const renderTreeView = (treeItems: ITreeItemType[]) => treeItems.map((c) => itemFuncInternal(c));
