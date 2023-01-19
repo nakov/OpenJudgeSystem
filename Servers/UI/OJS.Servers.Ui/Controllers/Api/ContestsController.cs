@@ -37,7 +37,7 @@ public class ContestsController : BaseApiController
     /// <returns>Model containing information about the contest.</returns>
     [HttpGet("{problemId:int}")]
     [ProducesResponseType(typeof(ContestServiceModel), Status200OK)]
-    public async Task<IActionResult> ByProblem(int problemId)
+    public async Task<IActionResult> GetByProblem(int problemId)
         => await this.contestsBusinessService
             .GetContestByProblem(problemId)
             .ToOkResult();

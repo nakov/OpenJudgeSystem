@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
+import { IRegisterForContestTypeUrlParams } from '../../../common/app-url-types';
 import { ContestParticipationType } from '../../../common/constants';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import { useAppUrls } from '../../../hooks/use-app-urls';
@@ -79,7 +80,7 @@ const SubmissionDetails = () => {
     );
 
     const registerContestTypeUrl = useMemo(
-        () => getRegisterContestTypeUrl({ id: contest?.id, participationType }),
+        () => getRegisterContestTypeUrl({ id: contest?.id, participationType } as IRegisterForContestTypeUrlParams),
         [ contest?.id, participationType, getRegisterContestTypeUrl ],
     );
 
