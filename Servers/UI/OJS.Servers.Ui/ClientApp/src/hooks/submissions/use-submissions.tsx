@@ -106,17 +106,21 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     useEffect(
         () => {
             const { allowedSubmissionTypes } = currentProblem || {};
-            const submissionType = first(allowedSubmissionTypes);
+            const submissionType = allowedSubmissionTypes?.find((st) => st.id === selectedSubmissionType?.id);
 
-            if (submissionType) {
-                const { id } = submissionType;
+            if (isNil(submissionType)) {
+                const defaultSubmissionType = first(allowedSubmissionTypes);
 
-                selectSubmissionTypeById(id);
-            } else {
-                selectSubmissionTypeById(null);
+                return isNil(defaultSubmissionType)
+                    ? selectSubmissionTypeById(null)
+                    : selectSubmissionTypeById(defaultSubmissionType.id);
             }
+
+            const { id } = submissionType;
+
+            return selectSubmissionTypeById(id);
         },
-        [ currentProblem, selectSubmissionTypeById ],
+        [ currentProblem, selectSubmissionTypeById, selectedSubmissionType ],
     );
 
     useEffect(
