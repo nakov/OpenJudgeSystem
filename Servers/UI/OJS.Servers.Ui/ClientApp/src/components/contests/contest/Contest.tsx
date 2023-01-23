@@ -148,7 +148,7 @@ const Contest = () => {
             <span>
                 {participantsStateText}
                 {' '}
-                Participitants:
+                Participants:
                 {' '}
                 <Text type={TextType.Bold}>
                     {participantsValue}
