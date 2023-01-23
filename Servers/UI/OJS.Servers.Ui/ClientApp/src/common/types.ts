@@ -79,7 +79,7 @@ interface IRegisterForContestResponseType {
     requirePassword: boolean;
 }
 
-interface IStartParticipationValidationType {
+interface IValidationType {
     message: string;
     isValid: boolean;
 }
@@ -90,10 +90,10 @@ interface IStartParticipationResponseType {
     contestIsCompete: boolean;
     lastSubmissionTime: Date;
     remainingTimeInMilliseconds: number;
-    validationResult: IStartParticipationValidationType;
     userSubmissionsTimeLimit: number;
     totalParticipantsCount: number;
     activeParticipantsCount: number;
+    validationResult: IValidationType;
 }
 
 interface IPagedResultType<TItem> {
@@ -119,7 +119,7 @@ export type {
     IIndexContestsType,
     IGetContestsForIndexResponseType,
     IRegisterForContestResponseType,
-    IStartParticipationValidationType,
+    IValidationType,
     IStartParticipationResponseType,
     IContestType,
     IProblemType,

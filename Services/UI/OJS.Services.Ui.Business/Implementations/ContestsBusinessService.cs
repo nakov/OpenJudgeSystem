@@ -118,7 +118,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var user = this.userProviderService.GetCurrentUser();
 
-            var validationResult = await this.contestValidationService.GetValidationResult((contest, user?.Id, user!.IsAdmin, model.IsOfficial) !);
+            var validationResult = this.contestValidationService.GetValidationResult((contest, user?.Id, user!.IsAdmin, model.IsOfficial) !);
 
             var userProfile = await this.usersBusinessService.GetUserProfileById(user.Id!);
 

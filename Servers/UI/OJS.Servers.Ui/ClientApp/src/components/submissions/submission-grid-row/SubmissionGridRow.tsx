@@ -3,6 +3,7 @@ import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IPublicSubmission, PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
+import { useAuth } from '../../../hooks/use-auth';
 import { formatDate } from '../../../utils/dates';
 import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../utils/strategy-type-utils';
 import { LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
@@ -32,6 +33,25 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
         },
         isOfficial,
     } = submission;
+
+    const { state: loggedInUser } = useAuth();
+
+    const renderDetailsBtn = useCallback(
+        () => {
+            const { user: { username: loggedInUsername, permissions: { canAccessAdministration } } } = loggedInUser;
+
+            if (username === loggedInUsername || canAccessAdministration) {
+                return (
+                    <LinkButton
+                      to={`/submissions/${submissionId}/details`}
+                      text="Details"
+                    />
+                );
+            }
+            return '';
+        },
+        [ loggedInUser, username, submissionId ],
+    );
 
     const renderStrategyIcon = useCallback(
         () => {
@@ -107,11 +127,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
                     </span>
                 </div>
             </div>
-
-            <LinkButton
-              to={`/submissions/${submissionId}/details`}
-              text="Details"
-            />
+            {renderDetailsBtn()}
         </div>
     );
 };

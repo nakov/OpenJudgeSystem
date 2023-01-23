@@ -2,7 +2,12 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import isNil from 'lodash/isNil';
 import sum from 'lodash/sum';
 
-import { IContestType, IRegisterForContestResponseType, IStartParticipationResponseType, IStartParticipationValidationType } from '../common/types';
+import {
+    IContestType,
+    IRegisterForContestResponseType,
+    IStartParticipationResponseType,
+    IValidationType,
+} from '../common/types';
 import {
     IGetContestParticipationScoresForParticipantUrlParams,
     IRegisterForContestUrlParams,
@@ -38,7 +43,7 @@ interface ICurrentContestContext {
         submitContestPasswordErrorMessage: string | null;
         isPasswordValid: boolean | null;
         remainingTimeInMilliseconds: number;
-        validationResult: IStartParticipationValidationType;
+        validationResult: IValidationType;
         userSubmissionsTimeLimit: number;
         totalParticipantsCount: number;
         activeParticipantsCount: number;
@@ -108,7 +113,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ isPasswordValid, setIsPasswordValid ] = useState<boolean | null>(null);
     const [ userSubmissionsTimeLimit, setUserSubmissionsTimeLimit ] = useState<number>(0);
     const [ remainingTimeInMilliseconds, setRemainingTimeInMilliseconds ] = useState(defaultState.state.remainingTimeInMilliseconds);
-    const [ validationResult, setValidationResult ] = useState<IStartParticipationValidationType>(defaultState.state.validationResult);
+    const [ validationResult, setValidationResult ] = useState<IValidationType>(defaultState.state.validationResult);
     const [ totalParticipantsCount, setTotalParticipantsCount ] = useState(defaultState.state.totalParticipantsCount);
     const [ activeParticipantsCount, setActiveParticipantsCount ] = useState(defaultState.state.activeParticipantsCount);
     const [ isSubmitAllowed, setIsSubmitAllowed ] = useState<boolean>(true);

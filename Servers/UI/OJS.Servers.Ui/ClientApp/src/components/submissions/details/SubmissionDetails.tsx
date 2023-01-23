@@ -25,6 +25,7 @@ const SubmissionDetails = () => {
         state: {
             currentSubmission,
             currentProblemSubmissionResults,
+            validationResult,
         },
         actions: { getSubmissionResults },
     } = useSubmissionsDetails();
@@ -155,12 +156,8 @@ const SubmissionDetails = () => {
         [ currentSubmission, canAccessAdministration ],
     );
 
-    if (isNil(currentSubmission) || isNil(contest)) {
-        return <div>No details fetched.</div>;
-    }
-
-    return (
-        <div className={styles.detailsWrapper}>
+    const refreshableSubmissionsListRendering = useMemo(
+        () => (
             <div className={styles.navigation}>
                 <div className={submissionsNavigationClassName}>
                     <Heading type={HeadingType.secondary}>Submissions</Heading>
@@ -173,6 +170,12 @@ const SubmissionDetails = () => {
                 { renderRetestButton() }
                 { renderSubmissionInfo() }
             </div>
+        ),
+        [ currentProblemSubmissionResults, currentSubmission, renderRetestButton, renderSubmissionInfo ],
+    );
+
+    const codeEditorRendering = useMemo(
+        () => (
             <div className={styles.code}>
                 <Heading
                   type={HeadingType.secondary}
@@ -199,16 +202,57 @@ const SubmissionDetails = () => {
                   selectedSubmissionType={submissionType}
                 />
             </div>
+        ),
+        [ problemNameHeadingText, currentSubmission?.content, submissionType ],
+    );
+
+    const submissionResultsRendering = useMemo(
+        () => (
             <div className={submissionDetailsClassName}>
                 <Heading type={HeadingType.secondary}>{detailsHeadingText}</Heading>
-                <SubmissionResults
-                  testRuns={currentSubmission.testRuns}
-                  compilerComment={currentSubmission?.compilerComment}
-                  isCompiledSuccessfully={currentSubmission?.isCompiledSuccessfully}
-                />
+                {isNil(currentSubmission)
+                    ? ''
+                    : (
+                        <SubmissionResults
+                          testRuns={currentSubmission.testRuns}
+                          compilerComment={currentSubmission?.compilerComment}
+                          isCompiledSuccessfully={currentSubmission?.isCompiledSuccessfully}
+                        />
+                    )}
             </div>
-        </div>
+        ),
+        [ currentSubmission, detailsHeadingText, submissionDetailsClassName ],
     );
+
+    const renderSubmissionDetails = useCallback(
+        () => (
+            <div className={styles.detailsWrapper}>
+                {refreshableSubmissionsListRendering}
+                {codeEditorRendering}
+                {submissionResultsRendering}
+            </div>
+        ),
+        [ refreshableSubmissionsListRendering, codeEditorRendering, submissionResultsRendering ],
+    );
+
+    const renderErrorMessage = useCallback(() => (
+        <div className={styles.errorMessage}>
+            {validationResult.message}
+        </div>
+    ), [ validationResult ]);
+
+    const renderPage = useCallback(
+        () => validationResult.isValid
+            ? renderSubmissionDetails()
+            : renderErrorMessage(),
+        [ renderErrorMessage, renderSubmissionDetails, validationResult ],
+    );
+
+    if (isNil(currentSubmission) || isNil(validationResult)) {
+        return <div>No details fetched.</div>;
+    }
+
+    return renderPage();
 };
 
 export default SubmissionDetails;

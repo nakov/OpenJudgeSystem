@@ -25,6 +25,10 @@
   @extend %columnsThree;
 }
 
+.errorMessage {
+  font-family: fonts.$font-family-lato;
+}
+
 .leftArrow {
   color: colors.$light-blue-color;
   margin-bottom: -5px;
