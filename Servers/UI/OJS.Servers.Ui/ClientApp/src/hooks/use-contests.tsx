@@ -197,14 +197,12 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             value,
         }) => areStringEqual(key, type, false) && areStringEqual(value, id, false));
 
-        unsetParam(paramName);
-
         if (!shouldRemoveParam) {
             setParam(paramName, id);
         }
 
         changePage(1);
-    }, [ changePage, params, setParam, unsetParam ]);
+    }, [ changePage, params, setParam ]);
 
     useEffect(
         () => {

@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
-import uniq from 'lodash/uniq';
 
 import ICategoryStrategiesTypes from '../../../common/category-strategies-types';
 import { FilterType, IFilter } from '../../../common/contest-types';
@@ -28,8 +28,8 @@ interface IFilterProps {
 
 const defaultState = {
     state: {
-        currentStrategyFilters: [] as IFilterProps[],
-        filterProps: [] as IFilterProps[],
+        openedCategoryFilters: [] as IFilterProps[],
+        openedCategoryFilter: {} as IFilterProps,
     },
 };
 const ContestCategories = ({
@@ -40,9 +40,9 @@ const ContestCategories = ({
 }: IContestCategoriesProps) => {
     const { state: { categories } } = useContestCategories();
     const { state: { possibleFilters } } = useContests();
-    const { actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
-    const [ currentStrategyFilters, setCurrentStrategyFilters ] = useState(defaultState.state.currentStrategyFilters);
-    const [ filterProps, setFilterProps ] = useState(defaultState.state.filterProps);
+    const { actions: { updateBreadcrumb, clearBreadcrumb } } = useCategoriesBreadcrumbs();
+    const [ openedStrategyFilters, setOpenedStrategyFilters ] = useState(defaultState.state.openedCategoryFilters);
+    const [ openedStrategyFilter, setOpenedStrategyFilter ] = useState(defaultState.state.openedCategoryFilter);
     const [ currentCategoryId, selectCurrentCategoryId ] = useState<string>('');
     const [ prevCategoryId, setPrevCategoryId ] = useState<string>('');
 
@@ -119,31 +119,40 @@ const ContestCategories = ({
         (id: string, node: ICategoryStrategiesTypes) => {
             const strategyFiltersToAdd = getStrategyFiltersToAdd(node);
 
-            setFilterProps([ { categoryId: id, strategies: strategyFiltersToAdd } ]);
+            setOpenedStrategyFilters([
+                ...openedStrategyFilters,
+                { categoryId: id, strategies: strategyFiltersToAdd },
+            ]);
+
+            setOpenedStrategyFilter({ categoryId: id, strategies: strategyFiltersToAdd });
         },
-        [ getStrategyFiltersToAdd ],
+        [ getStrategyFiltersToAdd, openedStrategyFilters ],
     );
 
     const removeOldStrategyFilters = useCallback(
-        () => {
-            setFilterProps([]);
+        (id: string) => {
+            const newFilterProps = openedStrategyFilters.filter((osf) => osf.categoryId !== id);
+
+            setOpenedStrategyFilters(newFilterProps);
         },
-        [],
+        [ openedStrategyFilters ],
     );
 
     useEffect(
         () => {
-            const flatteredStrategyFilters = filterProps.flatMap((s) => s.strategies);
-
-            setStrategyFilters(uniq(flatteredStrategyFilters));
-            setCurrentStrategyFilters(filterProps);
+            if (isEmpty(openedStrategyFilters)) {
+                clearBreadcrumb();
+                setStrategyFilters([]);
+            } else {
+                setStrategyFilters(openedStrategyFilter.strategies);
+            }
         },
-        [ filterProps, setStrategyFilters ],
+        [ clearBreadcrumb, openedStrategyFilter.strategies, openedStrategyFilters, setStrategyFilters ],
     );
 
     const updateStrategyFilters = useCallback(
         (id: string, node: ICategoryStrategiesTypes) => {
-            const strategyFilterToUpdate = currentStrategyFilters.find(({ categoryId }) => categoryId === id);
+            const strategyFilterToUpdate = openedStrategyFilters.find(({ categoryId }) => categoryId === id);
 
             (isNil(strategyFilterToUpdate)
                 ? addNewStrategyFilters
@@ -151,21 +160,26 @@ const ContestCategories = ({
 
             setPrevCategoryId(id);
         },
-        [ addNewStrategyFilters, currentStrategyFilters, removeOldStrategyFilters ],
+        [ addNewStrategyFilters, openedStrategyFilters, removeOldStrategyFilters ],
     );
 
-    const handleTreeLabelClick = useCallback((node: ICategoryStrategiesTypes) => {
-        const filter = possibleFilters.find(({ value }) => value.toString() === node.id.toString());
-        const category = categoriesFlat.find(({ id }) => id.toString() === node.id.toString());
+    const handleTreeLabelClick = useCallback(
+        (node: ICategoryStrategiesTypes) => {
+            const filter = possibleFilters.find(({ value }) => value.toString() === node.id.toString());
+            const category = categoriesFlat.find(({ id }) => id.toString() === node.id.toString());
 
-        if (isNil(filter)) {
-            return;
-        }
-        updateBreadcrumb(category, categoriesFlat);
-        updateStrategyFilters(node.id, node);
-        selectCurrentCategoryId(node.id);
-        onCategoryClick(filter);
-    }, [ possibleFilters, categoriesFlat, updateBreadcrumb, updateStrategyFilters, onCategoryClick ]);
+            if (isNil(filter)) {
+                return;
+            }
+
+            updateBreadcrumb(category, categoriesFlat);
+            updateStrategyFilters(node.id, node);
+            selectCurrentCategoryId(node.id);
+
+            onCategoryClick(filter);
+        },
+        [ categoriesFlat, onCategoryClick, possibleFilters, updateBreadcrumb, updateStrategyFilters ],
+    );
 
     useEffect(
         () => {

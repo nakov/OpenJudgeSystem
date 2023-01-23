@@ -43,17 +43,22 @@ const Tree = ({
 
             setExpandedIds(newExpanded);
             setSelectedFromUrl(false);
-        },
-        [ expandedIds ],
-    );
 
-    const handleLabelClick = useCallback(
-        (node: ITreeItemType) => {
+            // logic for handleLabel Click
             setSelectedId(node.id.toString());
             onSelect(node);
         },
-        [ onSelect ],
+        [ expandedIds, onSelect ],
     );
+
+    // TODO: Refactor when we find out how our tree will work based on designer ideas
+    // const handleLabelClick = useCallback(
+    //     (node: ITreeItemType) => {
+    //         setSelectedId(node.id.toString());
+    //         onSelect(node);
+    //     },
+    //     [ onSelect ],
+    // );
 
     const renderTreeItem = useCallback((node: ITreeItemType) => (
         <TreeItem
@@ -62,7 +67,7 @@ const Tree = ({
           nodeId={node.id.toString()}
           label={node.name}
           onClick={() => handleTreeItemClick(node)}
-          onLabelClick={() => handleLabelClick(node)}
+         // onLabelClick={() => handleLabelClick(node)}
         >
             {isArray(node.children)
                 ? node.children.map((child) => treeItemHasTooltip
@@ -74,7 +79,7 @@ const Tree = ({
                     : renderTreeItem(child))
                 : null}
         </TreeItem>
-    ), [ handleLabelClick, handleTreeItemClick, treeItemHasTooltip ]);
+    ), [ handleTreeItemClick, treeItemHasTooltip ]);
 
     const defaultItemFunc = useCallback(
         (node: ITreeItemType) => treeItemHasTooltip
