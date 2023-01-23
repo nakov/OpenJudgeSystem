@@ -1,4 +1,10 @@
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
+
 .container {
+  @extend %font-family-lato;
+  color: colors.$text-dark-gray-color;
+  
   align-items: center;
   display: flex;
   justify-content: flex-start;
@@ -29,6 +35,8 @@
 
   .dateAndUsernameContainer {
     margin: 0 5px;
+    display: flex;
+    gap: 5px;
   }
 
   .link {

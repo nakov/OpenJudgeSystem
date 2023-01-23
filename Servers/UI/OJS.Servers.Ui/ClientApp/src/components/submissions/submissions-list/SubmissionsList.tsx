@@ -42,7 +42,7 @@ const SubmissionsList = ({
         [ submissionListItemClass ],
     );
     const submissionBtnClass = 'submissionBtn';
-    const submissionsLabelTypeClassName = 'submissionTypeLabel';
+    // const submissionsLabelTypeClassName = 'submissionTypeLabel';
 
     const renderSubmissionListItem = useCallback((submission: ISubmissionDetails) => {
         const { id: selectedSubmissionId } = selectedSubmission || {};
@@ -84,10 +84,10 @@ const SubmissionsList = ({
                     <p className={styles.submissionCreatedOnParagraph}>{formatDate(createdOn)}</p>
                 </div>
                 <div className={styles.actionsContainer}>
-                    <Text>
+                    <Text className={styles.submissionTypeText}>
                         {submissionType}
                     </Text>
-                    <Label type={LabelType.plain} text={typeLabelText} className={submissionsLabelTypeClassName} />
+                    <Label type={LabelType.plain} text={typeLabelText} className={styles.submissionTypeLabel} />
                     <LinkButton
                       size={ButtonSize.small}
                       to={`/submissions/${id}/details`}

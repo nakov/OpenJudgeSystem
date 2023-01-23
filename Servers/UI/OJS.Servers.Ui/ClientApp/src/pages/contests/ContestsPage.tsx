@@ -82,6 +82,7 @@ const ContestsPage = () => {
                       values={contests}
                       itemFunc={renderContest}
                       itemClassName={styles.contestItem}
+                      className={styles.contestsList}
                       orientation={Orientation.horizontal}
                       wrap
                     />

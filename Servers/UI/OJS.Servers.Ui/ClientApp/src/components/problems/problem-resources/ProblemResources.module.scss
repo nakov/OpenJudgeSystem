@@ -1,5 +1,18 @@
 @use 'src/styles/colors';
+@use 'src/styles/variables';
+@use 'src/styles/fonts';
 
 .resourcesList {
+  @extend %font-style-normal;
+  
   align-items: start;
+  font-size: variables.$f-size-18;
+  padding: 20px;
+}
+
+@media only screen and (max-width: 1900px) {
+  .resourcesList {
+    font-size: variables.$f-size-16;
+    padding: 10px;
+  }
 }

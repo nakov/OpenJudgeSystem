@@ -1,6 +1,8 @@
 @use 'src/styles/global';
 @use 'src/styles/components';
 @use 'src/styles/fonts';
+@use 'src/styles/variables';
+@use 'src/styles/colors';
 
 .code {
   @extend %navigation;
@@ -42,6 +44,9 @@
 }
 
 .submissionInfoParagraph {
+  @extend %font-family-lato;
+  
+  color: colors.$text-dark-gray-color;
   margin-bottom: 10px;
 }
 
@@ -51,4 +56,19 @@
 
 .retestButton {
   margin: 0 0 0 24px;
+}
+
+@media only screen and (max-width: 1900px) {
+  .code {
+    flex: 3;
+  }
+  
+  .submissionResultsContent {
+    padding: 10px;
+  }
+
+  .submissionsList > ul {
+    font-size: variables.$f-size-30;
+    padding: 0;
+  }
 }

@@ -9,9 +9,10 @@
   border-radius: 8px;
   box-shadow: colors.$box-shadow-color;
   display: grid;
+  flex: 0 0 10em;
   flex-flow: wrap;
   grid-gap: 10px;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 2fr auto;
   margin: 10px;
   min-height: 10vh;
   padding: 0.7vw;
