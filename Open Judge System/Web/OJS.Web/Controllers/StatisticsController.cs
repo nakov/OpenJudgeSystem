@@ -9,7 +9,7 @@
     using OJS.Common.Models;
     using OJS.Data;
     using OJS.Services.Business.ParticipantScores;
-    using OJS.Services.Business.ParticipantScores.Models;
+    using OJS.Services.Business.ParticipantScores.Models.ExcelModels;
     using OJS.Services.Cache.Statistics;
     using OJS.Web.Common.Attributes;
     using OJS.Web.ViewModels.Statistics;
@@ -61,7 +61,7 @@
             var excel = new CategoryContestsParticipationSummaryExcel(categoryParticipationSummary);
 
             return this.File(
-                excel.GetAsStream().ToArray(),
+                excel.GetBytes(),
                 GlobalConstants.ExcelMimeType,
                 $"Summary_{id}.xls");
         }
@@ -73,10 +73,10 @@
             var contestParticipationSummary =
                 this.participantScoresBusiness.GetContestParticipationSummary(id, official);
             
-            var excel = new ContestParticipationSummaryExcel(contestParticipationSummary);
+            var excel = new ContestParticipationSummaryExcelModel(contestParticipationSummary);
 
             return this.File(
-                excel.GetAsStream().ToArray(),
+                excel.GetBytes(),
                 GlobalConstants.ExcelMimeType,
                 $"Summary_{id}.xls");
         }

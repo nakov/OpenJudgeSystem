@@ -1,53 +1,18 @@
-﻿using System;
-
-namespace OJS.Services.Business.ParticipantScores.Models
+﻿namespace OJS.Services.Business.ParticipantScores.Models.ExcelModels
 {
-    using System.IO;
+    using System;
     using System.Linq;
     using MissingFeatures;
-    using NPOI.HSSF.UserModel;
-    using NPOI.SS.UserModel;
-    using System.Collections.Generic;
-    using OJS.Web.Common.Extensions;
     using OJS.Common.Extensions;
     
-    public class ContestParticipationSummaryExcel
+    public class ContestParticipationSummaryExcelModel : ParticipationStatisticsSummaryExcelModel<ContestParticipationSummary>
     {
-        public HSSFWorkbook Workbook { get; set; }
-        
-        public ContestParticipationSummary ContestParticipationSummary { get; set; }
-
-        private int rowNumber = 1;
-        private int preProblemsColumnsCount = 4;
-        private ISheet sheet;
-
-        public ContestParticipationSummaryExcel(ContestParticipationSummary summary)
+        public ContestParticipationSummaryExcelModel(ContestParticipationSummary summary) : base(summary)
         {
-            this.ContestParticipationSummary = summary;
-            this.Create();
-        }
-
-        public MemoryStream GetAsStream()
-        {
-            var outputStream = new MemoryStream();
-            Workbook.Write(outputStream);
             
-            return outputStream;
-        }
-        
-        private void Create()
-        {
-            this.Workbook = new HSSFWorkbook();
-            this.sheet = Workbook.CreateSheet();
-            var columnsCount = CreateResultsSheetHeaderRow();
-
-            
-            FillSheet();
-
-            sheet.AutoSizeColumns(columnsCount);
         }
 
-        private int CreateResultsSheetHeaderRow()
+        protected override int CreateResultsSheetHeaderRow()
         {
             var headerRow = sheet.CreateRow(0);
             var columnNumber = 0;
@@ -55,7 +20,7 @@ namespace OJS.Services.Business.ParticipantScores.Models
             headerRow.CreateCell(columnNumber++).SetCellValue("Username");
             headerRow.CreateCell(columnNumber++).SetCellValue("Tasks");
 
-            Enumerable.Range(1, ContestParticipationSummary.Results.First().ProblemsCount)
+            Enumerable.Range(1, Summary.Results.First().ProblemsCount)
             .ForEach(index =>
             {
                 headerRow.CreateCell(columnNumber++).SetCellValue($"Problem {index}");
@@ -68,9 +33,9 @@ namespace OJS.Services.Business.ParticipantScores.Models
             return columnNumber;
         }
         
-        private void FillSheet()
+        protected override void FillSheet()
         {
-            CreateContestSummaryRows(this.ContestParticipationSummary);
+            CreateContestSummaryRows(this.Summary);
         }
         
         private void CreateContestSummaryRows(ContestParticipationSummary contestSummary)
@@ -120,7 +85,7 @@ namespace OJS.Services.Business.ParticipantScores.Models
                 .Select(kv => kv.Key);
             row.CreateCell(colNumber++).SetCellValue(String.Join("/ ", solvedTasks));
 
-            var problemsCount = this.ContestParticipationSummary.Results.First().ProblemsCount;
+            var problemsCount = this.Summary.Results.First().ProblemsCount;
             
             Enumerable.Range(1, problemsCount)
             .ForEach(index =>
