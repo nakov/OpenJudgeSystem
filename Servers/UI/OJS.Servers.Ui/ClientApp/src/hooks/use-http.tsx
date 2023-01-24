@@ -3,7 +3,7 @@ import { saveAs } from 'file-saver';
 import isNil from 'lodash/isNil';
 
 import { HttpStatus } from '../common/common';
-import { Anything, IDictionary, UrlType } from '../common/common-types';
+import { IDictionary, UrlType } from '../common/common-types';
 import { getUrl, makeHttpCall } from '../utils/http-utils';
 
 interface IErrorDataType {
@@ -16,6 +16,7 @@ interface IHttpProps<T> {
     url: string | ((parameters: T) => string);
     parameters?: T | null;
     headers?: IDictionary<string> | null;
+    bodyAsFormData?: boolean;
 }
 
 interface IHttpResultType<T> {
@@ -28,11 +29,12 @@ interface IHttpJsonExceptionResponse {
     detail: string;
 }
 
-const useHttp = <TParametersType, TReturnDataType>({
+const useHttp = function<TParametersType, TReturnDataType, TRequestDataType = null, > ({
     url,
     parameters,
     headers,
-}: IHttpProps<TParametersType>) => {
+    bodyAsFormData = false,
+}: IHttpProps<TParametersType>) {
     const [ response, setResponse ] = useState<IHttpResultType<TReturnDataType> | null>(null);
     const [ status, setStatus ] = useState<HttpStatus>(HttpStatus.NotStarted);
     const [ isSuccess, setIsSuccess ] = useState(false);
@@ -96,11 +98,18 @@ const useHttp = <TParametersType, TReturnDataType>({
     }, [ response ]);
 
     const actualHeaders = useMemo(
-        () => ({
-            ...headers ?? {},
-            'Content-Type': 'application/json',
-        }),
-        [ headers ],
+        () => {
+            const contentType = bodyAsFormData
+                ? 'multipart/form-data'
+                : 'application/json';
+
+            return {
+                ...headers ?? {},
+                'Content-Type': contentType
+                ,
+            };
+        },
+        [ bodyAsFormData, headers ],
     );
 
     const get = useCallback(
@@ -117,7 +126,7 @@ const useHttp = <TParametersType, TReturnDataType>({
     );
 
     const post = useCallback(
-        (requestData: Anything, responseType = 'json') => makeHttpCall({
+        async (requestData?: TRequestDataType, responseType = 'json') => makeHttpCall({
             url: getUrl<TParametersType>(url as UrlType<TParametersType>, internalParameters),
             method: 'post',
             body: requestData,

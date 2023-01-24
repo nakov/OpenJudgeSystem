@@ -18,7 +18,7 @@ namespace OJS.Services.Ui.Models.SubmissionTypes
 
         public bool AllowBinaryFilesUpload { get; set; }
 
-        public IEnumerable<string> AllowedFileExtensions { get; set; } = null!;
+        public IEnumerable<string> AllowedFileExtensions { get; set; } = new List<string>();
 
         public void RegisterMappings(IProfileExpression configuration) =>
             configuration.CreateMap<SubmissionType, SubmissionTypeServiceModel>()
