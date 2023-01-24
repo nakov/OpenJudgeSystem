@@ -45,7 +45,7 @@ const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
     const {
         get: getContests,
         data: contestsData,
-    } = useHttp<null, IGetContestsForIndexResponseType>({ url: getIndexContestsUrl });
+    } = useHttp<null, IGetContestsForIndexResponseType, null>({ url: getIndexContestsUrl });
 
     const getForHome = useCallback(async () => {
         startLoading();
