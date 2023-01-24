@@ -1,8 +1,11 @@
 @use 'src/styles/fonts';
+@use 'src/styles/colors';
 
 .Tree {
+  @extend %font-family-lato;
+  
+  color: colors.$text-dark-gray-color;
   cursor: pointer;
-  font-family: fonts.$font-family-lato-regular, 'Helvetica', 'Arial', sans-serif;
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
@@ -22,6 +25,6 @@
 
 .childrenElements {
   .treeElement div:nth-child(2) {
-    font-size: 0.9rem;
+    //font-size: 0.9rem;
   }
 }
