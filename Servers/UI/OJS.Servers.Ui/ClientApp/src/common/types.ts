@@ -2,6 +2,8 @@ interface ISubmissionTypeType {
     id: number;
     name: string;
     isSelectedByDefault: boolean;
+    allowBinaryFilesUpload: boolean;
+    allowedFileExtensions: string[];
 }
 
 interface IProblemResourceType {

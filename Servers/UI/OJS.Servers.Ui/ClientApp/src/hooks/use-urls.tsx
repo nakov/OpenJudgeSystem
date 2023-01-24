@@ -35,6 +35,7 @@ interface IUrlsContext {
     getSubmissionsDetailsUrl: () => string;
     getSubmissionDetailsByIdUrl: (params: IGetSubmissionDetailsByIdUrlParams) => string;
     getSubmitUrl: () => string;
+    getSubmitFileUrl: () => string;
     getDownloadProblemResourceUrl: (params: IDownloadProblemResourceUrlParams) => string;
     getCategoriesTreeUrl: () => string;
     getAllContestStrategyFiltersUrl: () => string;
@@ -143,6 +144,7 @@ const getSubmissionsDetailsUrl = () => `${baseApiUrl}/Submissions/Details`;
 const getSubmissionDetailsByIdUrl =
     ({ submissionId }: IGetSubmissionDetailsByIdUrlParams) => `${getSubmissionsDetailsUrl()}/${submissionId}`;
 const getSubmitUrl = () => `${baseApiUrl}/Compete/Submit`;
+const getSubmitFileUrl = () => `${baseApiUrl}/Compete/SubmitFileSubmission`;
 
 // Submission types
 const getAllContestStrategyFiltersUrl =
@@ -176,6 +178,7 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
             getSubmissionsForProfileUrl,
             getParticipationsForProfileUrl,
             getSubmitUrl,
+            getSubmitFileUrl,
             getCategoriesTreeUrl,
             getAllContestStrategyFiltersUrl,
             getContestResultsUrl,
