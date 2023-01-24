@@ -1,5 +1,6 @@
 @use 'src/styles/colors';
 @use 'src/styles/fonts';
+@use 'src/styles/variables';
 
 .container {
   @extend %font-family-lato;
@@ -23,7 +24,8 @@
   .pointsContainer {
     @extend %larger;
 
-    flex: 2;
+    width: 2vw;
+    flex: 2 0 2vw;
   }
 
   .detailsContainer {
