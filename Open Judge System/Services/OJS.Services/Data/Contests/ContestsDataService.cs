@@ -65,11 +65,7 @@
             this.GetAllVisible()
                 .Where(c => c.EndTime < DateTime.Now);
 
-        public IQueryable<Contest> GetAllVisible() =>
-            this.GetAll()
-                .Where(c => (c.IsVisible && c.VisibleFrom < DateTime.Now) 
-                            || (!c.IsVisible && c.VisibleFrom < DateTime.Now)
-                            || c.IsVisible && c.VisibleFrom == null);
+        public IQueryable<Contest> GetAllVisible() => this.FilterVisible(this.contests.All());
 
         public IQueryable<Contest> GetAllVisibleByCategory(int categoryId) =>
             this.GetAllVisible()
@@ -84,7 +80,7 @@
 
             if (!showHidden)
             {
-                contests = contests.Where(c => c.IsVisible);
+                contests = this.FilterVisible(contests);
             }
 
             return contests;
@@ -170,5 +166,11 @@
                     .Where(filter)
                     .Sum(pg => (int?)pg.Problems.FirstOrDefault().MaximumPoints))
                 .FirstOrDefault() ?? default(int);
+        
+        private IQueryable<Contest> FilterVisible(IQueryable<Contest> contestsQuery) =>
+            contestsQuery
+                .Where(c => (c.IsVisible && c.VisibleFrom < DateTime.Now) 
+                            || (!c.IsVisible && c.VisibleFrom < DateTime.Now)
+                            || c.IsVisible && c.VisibleFrom == null);
     }
 }

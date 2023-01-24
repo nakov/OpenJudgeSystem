@@ -16,7 +16,7 @@
         
         public double TimeTotal { get; set; }
         
-        public Dictionary<int, ParticipantSummarySubmissionInfoServiceModel> ProblemOrderToMinutesTakenToSolve { get; set; }
+        public Dictionary<string, ParticipantSummarySubmissionInfoServiceModel> ProblemToMinutesTakenToSolve { get; set; }
         
     }
 }
