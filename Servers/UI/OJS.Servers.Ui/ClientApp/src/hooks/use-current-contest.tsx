@@ -279,7 +279,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
 
         (async () => {
             startLoading();
-            await submitContestPassword({ password: contestPassword });
+            await submitContestPassword({ password: contestPassword } as any);
             stopLoading();
         })();
     }, [ contestPassword, submitContestPassword, submitContestPasswordUrlParams, startLoading, stopLoading ]);

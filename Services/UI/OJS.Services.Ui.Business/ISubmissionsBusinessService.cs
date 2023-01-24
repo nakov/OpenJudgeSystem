@@ -11,6 +11,8 @@
     {
         Task Submit(SubmitSubmissionServiceModel model);
 
+        Task SubmitFileSubmission(SubmitFileSubmissionServiceModel model);
+
         Task<SubmissionDetailsServiceModel?> GetById(int submissionId);
 
         Task<SubmissionDetailsServiceModel?> GetDetailsById(int submissionId);
