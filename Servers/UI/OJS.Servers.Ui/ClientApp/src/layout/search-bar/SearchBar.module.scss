@@ -1,0 +1,37 @@
+@use 'src/styles/colors';
+
+.search {
+  display: flex;
+}
+
+.searchInput {
+    padding: 0 24px;
+    transition: transform 250ms ease-in-out,  250ms ease-in-out;
+    font-size: 14px;
+  
+  &::placeholder {
+    opacity: 1;
+  }
+  
+    &:hover,
+    &:focus {
+      padding: 12px 0;
+      outline: 0;
+      border: 1px solid transparent;
+      border-bottom: 1px solid #575756;
+      border-radius: 0;
+    }
+  }
+
+.searchButton {
+  background-color: colors.$bottom-border-color;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover{
+    background-color: colors.$wrappers-border-color;
+  }
+}
+

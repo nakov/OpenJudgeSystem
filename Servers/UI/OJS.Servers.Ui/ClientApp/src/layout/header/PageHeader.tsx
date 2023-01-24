@@ -6,6 +6,7 @@ import { useAuth } from '../../hooks/use-auth';
 import { useUrls } from '../../hooks/use-urls';
 import concatClassNames from '../../utils/class-names';
 import PageNav from '../nav/PageNav';
+import SearchBar from '../search-bar/SearchBar';
 
 import logo from './softuni-logo-horizontal.svg';
 
@@ -68,6 +69,7 @@ const PageHeader = () => {
                     </Heading>
                     { renderLinks() }
                 </div>
+                <SearchBar />
                 <PageNav />
             </div>
         </header>
