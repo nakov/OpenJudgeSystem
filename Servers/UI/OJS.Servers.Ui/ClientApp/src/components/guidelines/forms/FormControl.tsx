@@ -14,6 +14,7 @@ enum FormControlType {
     'textarea' = 'textarea',
     'input' = 'input',
     'password' = 'password',
+    'search' = 'search',
 }
 
 type TextAreaOrInputElement = HTMLTextAreaElement | HTMLInputElement;
@@ -27,6 +28,7 @@ interface IFormControlProps extends IHaveOptionalClassName {
     type?: FormControlType;
     onChange?: ((value?: string) => void) | null;
     onInput?: ((value?: string) => void) | null;
+    onKeyDown?: (ev:React.KeyboardEvent<HTMLInputElement>) => void;
     checked?: boolean;
     id?: string;
 }
@@ -79,6 +81,7 @@ const FormControl = ({
     onChange = null,
     /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
     onInput = null,
+    onKeyDown,
     className = '',
     containerClassName = '',
     labelText = '',
@@ -121,6 +124,15 @@ const FormControl = ({
 
         onInput(element.value);
     };
+    const handleOnKeyDown = (ev: React.KeyboardEvent<HTMLInputElement>) => {
+        if (ev.key === 'Enter') {
+            ev.preventDefault();
+
+            if (onKeyDown) {
+                onKeyDown(ev);
+            }
+        }
+    };
 
     const generateFormControl = () => {
         if (type === FormControlType.textarea) {
@@ -158,12 +170,17 @@ const FormControl = ({
               id={id}
               onChange={handleOnChange}
               onInput={handleOnInput}
+              onKeyDown={handleOnKeyDown}
               value={formControlValue}
               checked={checked}
               placeholder={labelText}
             />
         );
     };
+
+    if (type === FormControlType.search) {
+        return generateFormControl();
+    }
 
     return (
         <LabelInternal

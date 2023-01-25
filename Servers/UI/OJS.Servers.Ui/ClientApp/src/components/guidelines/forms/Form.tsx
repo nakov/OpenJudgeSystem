@@ -4,12 +4,18 @@ import concatClassNames from '../../../utils/class-names';
 import generateId from '../../../utils/id-generator';
 import { IHaveChildrenProps, IHaveOptionalClassName } from '../../common/Props';
 import { Button, ButtonType } from '../buttons/Button';
+import SearchIcon from '../icons/SearchIcon';
+
+enum FormType {
+    'search' = 'search',
+}
 
 interface IFormProps extends IHaveChildrenProps, IHaveOptionalClassName {
     onSubmit: () => void;
     submitText?: string;
     id?: string;
     submitButtonClassName?: string;
+    type?: string;
 }
 
 const Form = ({
@@ -19,6 +25,7 @@ const Form = ({
     id = generateId(),
     className = '',
     submitButtonClassName = '',
+    type,
 }: IFormProps) => {
     const handleSubmit = useCallback(
         async (ev: FormEvent) => {
@@ -37,6 +44,27 @@ const Form = ({
 
     const internalClassName = concatClassNames(className);
     const internalSubmitButtonClassName = concatClassNames('btnSubmitInForm', submitButtonClassName);
+
+    if (type === FormType.search) {
+        return (
+            <form
+              id={id}
+              onSubmit={(ev) => handleSubmit(ev)}
+              className={internalClassName}
+            >
+                {children}
+                <Button
+                  id={btnId}
+                  onClick={(ev) => handleSubmit(ev)}
+                  type={ButtonType.submit}
+                  className={internalSubmitButtonClassName}
+                  matchOnlyInternalClass
+                >
+                    <SearchIcon />
+                </Button>
+            </form>
+        );
+    }
 
     return (
         <form
@@ -57,3 +85,7 @@ const Form = ({
 };
 
 export default Form;
+
+export {
+    FormType,
+};
