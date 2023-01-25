@@ -15,7 +15,10 @@ enum FormControlType {
     'input' = 'input',
     'password' = 'password',
     'search' = 'search',
+    'file' = 'file'
 }
+
+type IFormControlOnChangeValueType = string | Blob;
 
 type TextAreaOrInputElement = HTMLTextAreaElement | HTMLInputElement;
 
@@ -26,7 +29,7 @@ interface IFormControlProps extends IHaveOptionalClassName {
     labelText?: string;
     labelClassName?: ClassNameType;
     type?: FormControlType;
-    onChange?: ((value?: string) => void) | null;
+    onChange?: ((value?: IFormControlOnChangeValueType) => void) | null;
     onInput?: ((value?: string) => void) | null;
     onKeyDown?: (ev:React.KeyboardEvent<HTMLInputElement>) => void;
     checked?: boolean;
@@ -39,7 +42,6 @@ interface ILabelInternalProps extends IHaveChildrenProps, IHaveOptionalClassName
     text: string;
     fieldType: FormControlType;
     internalContainerClassName?: string;
-
 }
 
 const LabelInternal = ({ id, text, className, internalContainerClassName, forKey, children, fieldType }: ILabelInternalProps) => {
@@ -110,7 +112,7 @@ const FormControl = ({
             return;
         }
 
-        onChange(ev.target.value);
+        onChange(ev.target.value as string);
     };
 
     const handleOnInput = (ev: FormEvent<TextAreaOrInputElement>) => {
@@ -162,6 +164,25 @@ const FormControl = ({
             );
         }
 
+        if (type === FormControlType.file) {
+            return (
+                <input
+                  type={type}
+                  className={concatClassNames(componentClassName, styles.fileInput)}
+                  name={name}
+                  id={id}
+                  onChange={(e) => {
+                      if (isNil(onChange)) {
+                          return;
+                      }
+
+                      const fileBlob = e.target.files?.item(0) as Blob;
+                      onChange(fileBlob);
+                  }}
+                />
+            );
+        }
+
         return (
             <input
               type={type}
@@ -197,6 +218,10 @@ const FormControl = ({
 };
 
 export default FormControl;
+
+export type {
+    IFormControlOnChangeValueType,
+};
 
 export {
     FormControlType,
