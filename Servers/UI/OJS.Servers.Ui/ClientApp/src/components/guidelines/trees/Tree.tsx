@@ -19,6 +19,7 @@ interface ITreeProps {
     defaultExpanded?: string[];
     itemFunc?: (item: ITreeItemType) => React.ReactElement;
     treeItemHasTooltip?: boolean;
+
 }
 
 const Tree = ({
@@ -31,6 +32,7 @@ const Tree = ({
 }: ITreeProps) => {
     const [ expandedIds, setExpandedIds ] = useState([] as string[]);
     const [ selectedId, setSelectedId ] = useState('');
+    const [ selectedFromUrl, setSelectedFromUrl ] = useState(true);
 
     const handleTreeItemClick = useCallback(
         (node: ITreeItemType) => {
@@ -40,18 +42,23 @@ const Tree = ({
                 : [ ...expandedIds, id ];
 
             setExpandedIds(newExpanded);
-        },
-        [ expandedIds, setExpandedIds ],
-    );
+            setSelectedFromUrl(false);
 
-    const handleLabelClick = useCallback(
-        (node: ITreeItemType) => {
+            // logic for handleLabel Click
             setSelectedId(node.id.toString());
-
             onSelect(node);
         },
-        [ onSelect ],
+        [ expandedIds, onSelect ],
     );
+
+    // TODO: Refactor when we find out how our tree will work based on designer ideas
+    // const handleLabelClick = useCallback(
+    //     (node: ITreeItemType) => {
+    //         setSelectedId(node.id.toString());
+    //         onSelect(node);
+    //     },
+    //     [ onSelect ],
+    // );
 
     const renderTreeItem = useCallback((node: ITreeItemType) => (
         <TreeItem
@@ -60,7 +67,7 @@ const Tree = ({
           nodeId={node.id.toString()}
           label={node.name}
           onClick={() => handleTreeItemClick(node)}
-          onLabelClick={() => handleLabelClick(node)}
+         // onLabelClick={() => handleLabelClick(node)}
         >
             {isArray(node.children)
                 ? node.children.map((child) => treeItemHasTooltip
@@ -72,7 +79,7 @@ const Tree = ({
                     : renderTreeItem(child))
                 : null}
         </TreeItem>
-    ), [ handleLabelClick, handleTreeItemClick, treeItemHasTooltip ]);
+    ), [ handleTreeItemClick, treeItemHasTooltip ]);
 
     const defaultItemFunc = useCallback(
         (node: ITreeItemType) => treeItemHasTooltip
@@ -94,20 +101,20 @@ const Tree = ({
 
     useEffect(
         () => {
-            if (isEmpty(selectedId) && defaultSelected) {
+            if (isEmpty(selectedId) && selectedFromUrl) {
                 setSelectedId(defaultSelected);
             }
         },
-        [ defaultSelected, selectedId ],
+        [ defaultSelected, selectedFromUrl, selectedId ],
     );
 
     useEffect(
         () => {
-            if (isEmpty(expandedIds) && !isEmpty(defaultExpanded)) {
+            if (isEmpty(expandedIds) && selectedFromUrl) {
                 setExpandedIds(defaultExpanded);
             }
         },
-        [ defaultExpanded, expandedIds ],
+        [ defaultExpanded, expandedIds, selectedFromUrl ],
     );
 
     const renderTreeView = (treeItems: ITreeItemType[]) => treeItems.map((c) => itemFuncInternal(c));
