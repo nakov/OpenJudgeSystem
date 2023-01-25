@@ -11,7 +11,7 @@ const Page = ({ children }: IHaveChildrenProps) => {
 
     useEffect(
         () => {
-            if (isNil(params)) {
+            if (isNil(params) || isNil(Object.values(params)[0])) {
                 return;
             }
 
