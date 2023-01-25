@@ -504,12 +504,12 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var userHasParticipation = await this.participantsDataService
             .ExistsByContestByUserAndIsOfficial(problem.ProblemGroup.ContestId, user.Id!, isOfficial);
 
-        if (!userHasParticipation && !user.IsAdminOrLecturer)
+        if (!userHasParticipation)
         {
             throw new BusinessServiceException(Resources.ContestsGeneral.UserIsNotRegisteredForExam);
         }
 
-        if (!problem.ShowResults && !user.IsAdminOrLecturer)
+        if (!problem.ShowResults)
         {
             throw new BusinessServiceException(Resources.ContestsGeneral.ProblemResultsNotAvailable);
         }

@@ -193,7 +193,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
 
     const getDetails = useCallback(
         async (submissionId: number) => {
-            if (isNil(submissionId)) {
+            if (isNil(submissionId) || Number.isNaN(submissionId)) {
                 return;
             }
 

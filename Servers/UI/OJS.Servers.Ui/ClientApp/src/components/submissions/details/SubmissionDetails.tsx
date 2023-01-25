@@ -203,7 +203,7 @@ const SubmissionDetails = () => {
                 />
             </div>
         ),
-        [ problemNameHeadingText, currentSubmission?.content, submissionType ],
+        [ problemNameHeadingText, currentSubmission?.content, submissionType, registerContestTypeUrl ],
     );
 
     const submissionResultsRendering = useMemo(
