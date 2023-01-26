@@ -59,6 +59,17 @@ public class CompeteController : BaseApiController
             .ToOkResult();
 
     /// <summary>
+    /// Submits user's code in fle format (zip) for evaluation.
+    /// </summary>
+    /// <param name="model">The submission model containing the code and execution context.</param>
+    /// <returns>Success status code.</returns>
+    [HttpPost]
+    public async Task<IActionResult> SubmitFileSubmission([FromForm] SubmitFileSubmissionRequestModel model)
+        => await this.submissionsBusinessService
+            .SubmitFileSubmission(model.Map<SubmitFileSubmissionServiceModel>())
+            .ToOkResult();
+
+    /// <summary>
     /// Gets the best results for the given problem by all participants.
     /// </summary>
     /// <param name="id">The id of the problem.</param>

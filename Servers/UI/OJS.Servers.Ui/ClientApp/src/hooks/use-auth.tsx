@@ -29,6 +29,12 @@ interface IAuthProviderProps extends IHaveChildrenProps {
     user: IUserType;
 }
 
+interface ILoginDetailsType {
+    Username: string;
+    Password?: string;
+    RememberMe: boolean;
+}
+
 const AuthProvider = ({ user, children }: IAuthProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
     const [ internalUser, setInternalUser ] = useState(user);
@@ -43,7 +49,7 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
         post: loginSubmit,
         response: loginSubmitResponse,
         status: loginSubmitStatus,
-    } = useHttp({ url: getLoginSubmitUrl });
+    } = useHttp<null, null, ILoginDetailsType>({ url: getLoginSubmitUrl });
 
     const { post: logout } = useHttp({ url: getLogoutUrl });
 
@@ -62,7 +68,7 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
 
     const signOut = useCallback(async () => {
         startLoading();
-        await logout({});
+        await logout();
         setInternalUser(user);
         stopLoading();
     }, [ logout, startLoading, stopLoading, user ]);
