@@ -3,9 +3,7 @@ name: Administration dev deploy
 
 
 on:
-  push:
-    branches:
-      - "v2-development"
+  workflow_dispatch:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
@@ -76,7 +74,6 @@ jobs:
         cache-to: type=local,dest=/tmp/.buildx-cache
         secrets: |
           GIT_AUTH_TOKEN=${{ github.token }}
-    - name: Deploy to dev server
     - uses: appleboy/ssh-action@v0.1.7
       with:
         host: ${{ secrets.SSH_HOST }}
