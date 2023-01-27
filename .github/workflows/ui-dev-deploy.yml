@@ -3,7 +3,9 @@ name: UI dev deploy
 
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - "setup-v2-development-gha-workflows"
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
