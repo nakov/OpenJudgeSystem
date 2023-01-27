@@ -3,9 +3,7 @@ name: UI dev deploy
 
 
 on:
-  push:
-    branches:
-      - "v2-development"
+  workflow_dispatch:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
@@ -21,13 +19,6 @@ jobs:
         echo "GIT_SHA=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_ENV
         echo "DOCKERFILE_PATH=Docker/Dockerfile.ui" >> $GITHUB_ENV
         echo "DOCKER_COMPOSE_FILE_PATH=/home/admins/repos/judge-workers-deployment/judge-web/docker-compose.development.yml" >> $GITHUB_ENV
-    - name: Get branch name (merge)
-      shell: bash
-      run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
-    - name: Get branch name (pull request)
-      shell: bash
-      run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
-
     - name: Checkout
       uses: actions/checkout@v3
       with:
