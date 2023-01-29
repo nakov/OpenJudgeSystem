@@ -1,10 +1,13 @@
 ﻿namespace OJS.Services.Ui.Business.Implementations
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using OJS.Services.Common;
     using OJS.Services.Ui.Data;
+    using OJS.Services.Ui.Models.Search;
     using OJS.Services.Ui.Models.Users;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
 
@@ -30,6 +33,13 @@
                 .GetByIdQuery(userId)
                 .MapCollection<UserProfileServiceModel>()
                 .FirstOrDefaultAsync();
+
+        public async Task<IEnumerable<UserSearchServiceModel>> GetSearchUsersByUsername(string username)
+            => await this.usersProfileData
+                .GetAll()
+                .Where(u => u.UserName.Contains(username))
+                .MapCollection<UserSearchServiceModel>()
+                .ToListAsync();
 
         public async Task<bool> IsLoggedInUserAdmin(ClaimsPrincipal userPrincipal)
             => await Task.FromResult(userPrincipal.IsInRole("Administrator"));

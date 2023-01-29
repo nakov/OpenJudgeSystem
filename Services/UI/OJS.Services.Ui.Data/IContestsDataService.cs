@@ -22,6 +22,8 @@ namespace OJS.Services.Ui.Data
 
         Task<Contest?> GetByIdWithParticipants(int id);
 
+        IQueryable<Contest> GetAll();
+
         IQueryable<Contest> GetAllActive();
 
         IQueryable<Contest> GetAllInactive();

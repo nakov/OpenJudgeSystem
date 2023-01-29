@@ -15,6 +15,8 @@ namespace OJS.Services.Ui.Data
 
         IQueryable<Problem> GetAllByContest(int contestId);
 
+        IQueryable<Problem> GetAllProblems();
+
         Task<Problem?> GetWithProblemGroupById(int problemId);
     }
 }

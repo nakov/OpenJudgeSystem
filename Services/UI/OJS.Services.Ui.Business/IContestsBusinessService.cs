@@ -1,12 +1,13 @@
 namespace OJS.Services.Ui.Business
 {
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
     using OJS.Data.Models.Contests;
     using OJS.Services.Common.Models;
     using OJS.Services.Ui.Models.Contests;
+    using OJS.Services.Ui.Models.Search;
     using SoftUni.Common.Models;
     using SoftUni.Services.Infrastructure;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
 
     public interface IContestsBusinessService : IService
     {
@@ -21,6 +22,7 @@ namespace OJS.Services.Ui.Business
         Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllCompetable();
 
         Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPracticable();
+        Task<IEnumerable<ContestSearchServiceModel>> GetSearchContestsByName(string contestName);
 
         Task<bool> IsContestIpValidByContestAndIp(int contestId, string ip);
 

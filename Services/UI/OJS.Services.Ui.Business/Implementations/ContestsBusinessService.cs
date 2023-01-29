@@ -16,6 +16,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Ui.Business.Validation;
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Contests;
+    using OJS.Services.Ui.Models.Search;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.Common.Models;
 
@@ -148,6 +149,12 @@ namespace OJS.Services.Ui.Business.Implementations
 
             return participationModel;
         }
+
+        public async Task<IEnumerable<ContestSearchServiceModel>> GetSearchContestsByName(string contestName)
+            => await this.contestsData.GetAll()
+                .Where(c => c.Name!.Contains(contestName))
+                .MapCollection<ContestSearchServiceModel>()
+                .ToListAsync();
 
         public Task<bool> IsContestIpValidByContestAndIp(int contestId, string ip)
             => this.contestsData
