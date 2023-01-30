@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router';
 import isNil from 'lodash/isNil';
 
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
@@ -26,7 +27,8 @@ const SubmissionDetails = () => {
     } = useSubmissionsDetails();
     const { actions: { setPageTitle } } = usePageTitles();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
-    const { getAdministrationRetestSubmissionInternalUrl } = useAppUrls();
+    const { getAdministrationRetestSubmissionInternalUrl, getHomePageUrl } = useAppUrls();
+    const navigate = useNavigate();
 
     const submissionTitle = useMemo(
         () => `Submission №${currentSubmission?.id}`,
