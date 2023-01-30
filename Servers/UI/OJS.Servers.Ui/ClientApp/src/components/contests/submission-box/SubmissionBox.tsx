@@ -29,7 +29,6 @@ const SubmissionBox = () => {
     } = useCurrentContest();
     const {
         state: {
-            submissionCode,
             selectedSubmissionType,
             submitMessage,
             setSubmitMessage,
@@ -115,7 +114,11 @@ const SubmissionBox = () => {
 
     const handleOnSubmit = useCallback(async () => {
         await submit();
-    }, [ submit ]);
+
+        if (!isNil(currentProblem)) {
+            currentProblem.codeEditorCode = '';
+        }
+    }, [ submit, currentProblem ]);
 
     const renderSubmissionLimitCountdown = useCallback((remainingTime: ICountdownRemainingType) => {
         const { minutes, seconds } = convertToTwoDigitValues(remainingTime);
@@ -195,6 +198,13 @@ const SubmissionBox = () => {
         executionTypeListClass,
     );
 
+    const codeEditorCode = useMemo(
+        () => isNil(currentProblem?.codeEditorCode)
+            ? ''
+            : currentProblem?.codeEditorCode.toString(),
+        [ currentProblem?.codeEditorCode ],
+    );
+
     const renderSubmissionInput = useCallback(() => {
         if (isNil(selectedSubmissionType)) {
             return <p>No submission type selected.</p>;
@@ -221,11 +231,11 @@ const SubmissionBox = () => {
         return (
             <CodeEditor
               selectedSubmissionType={selectedSubmissionType}
-              code={submissionCode.toString()}
+              code={codeEditorCode}
               onCodeChange={handleCodeChanged}
             />
         );
-    }, [ handleCodeChanged, selectedSubmissionType, submissionCode ]);
+    }, [ handleCodeChanged, selectedSubmissionType, codeEditorCode ]);
 
     return (
         <div className={styles.contestMainWrapper}>
