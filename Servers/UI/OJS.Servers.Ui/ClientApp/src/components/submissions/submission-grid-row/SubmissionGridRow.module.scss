@@ -1,6 +1,7 @@
 @use 'src/styles/colors';
 @use 'src/styles/fonts';
 @use 'src/styles/variables';
+@use 'src/styles/responsive';
 
 .container {
   @extend %font-family-lato;
@@ -22,7 +23,7 @@
   }
 
   .pointsContainer {
-    @extend %larger;
+    @extend %r-heading-primary;
 
     width: 2vw;
     flex: 2 0 2vw;
@@ -42,14 +43,10 @@
   }
 
   .link {
-    @extend %larger;
+    @extend %r-heading-primary;
 
     color: #42abf8;
     display: inline-block;
     margin: 0 5px;
   }
-}
-
-%larger {
-  font-size: 1.4em;
 }

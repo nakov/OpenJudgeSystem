@@ -1,6 +1,7 @@
 @use 'src/styles/colors';
 @use 'src/styles/fonts';
 @use 'src/styles/variables';
+@use 'src/styles/responsive';
 
 .contestCard {
   @extend %font-family-lato;
@@ -16,7 +17,14 @@
   grid-template-rows: auto 2fr auto;
   margin: 10px;
   min-height: 10vh;
+  min-width: 240px;
+  width: 13vw;
   padding: 0.7vw;
+
+  @media only screen and (min-width: variables.$r-small-max) and (max-width: 1440px) {
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 .tooltip {
@@ -38,12 +46,12 @@
 
 .contestCardHeader {
   @extend %font-family-lato;
+  @extend %r-contestCardHeader;
 
   border-bottom: 1px solid;
   border-bottom-color: colors.$bottom-border-color;
   display: flex;
   flex-direction: row;
-  font-size: variables.$f-size-18;
   font-weight: 500;
   justify-content: space-between;
   margin: 10px;
@@ -79,9 +87,27 @@
 
 .contestCardTitle {
   display: block;
-  max-width: 225px;
+  max-width: 11vw;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
+}
+
+%r-contestCardHeader {
+  @media only screen and (min-width: variables.$r-small-max) and (max-width: variables.$r-large-max) {
+    font-size: 1.6vw;
+  }
+
+  @media only screen and (min-width: variables.$r-small-desktop-min) and (max-width: variables.$r-small-desktop-max) {
+    font-size: 1.1vw;
+  }
+
+  @media only screen and (min-width: variables.$r-large-desktop-min) and (max-width: variables.$r-large-desktop-max) {
+    font-size: 0.9vw;
+  }
+
+  @media only screen and (min-width: variables.$r-extra-large-desktop-min) {
+    font-size: 1vw;
+  }
 }

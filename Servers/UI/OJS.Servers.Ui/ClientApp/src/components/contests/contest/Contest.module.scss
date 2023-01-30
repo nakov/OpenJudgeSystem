@@ -1,6 +1,7 @@
 @use 'src/styles/colors';
 @use 'src/styles/components';
 @use 'src/styles/global';
+@use 'src/styles/variables';
 
 .contestWrapper {
   @extend %wrapper;
@@ -21,4 +22,24 @@
 .contestInfoContainer {
   display: flex;
   justify-content: space-around;
+}
+
+.navigationContest {
+  @extend %r-contestNavigations;
+}
+
+.problemInfo {
+  @extend %r-contestNavigations;
+}
+
+%r-contestNavigations {
+  @media only screen and (min-width: variables.$r-small-min) and (max-width: variables.$r-small-max) {
+    flex: 3;
+  }
+}
+
+%r-contestSubmissionBox {
+  @media only screen and (min-width: variables.$r-small-min) and (max-width: variables.$r-small-max) {
+    flex: 5;
+  }
 }
