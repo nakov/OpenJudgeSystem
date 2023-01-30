@@ -3,7 +3,9 @@ name: Administration dev deploy
 
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - "v2-development-testing-deploy-workflows"
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
