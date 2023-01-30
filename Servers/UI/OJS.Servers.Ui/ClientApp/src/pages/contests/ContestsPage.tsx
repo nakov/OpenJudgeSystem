@@ -31,6 +31,7 @@ const ContestsPage = () => {
         actions: {
             toggleParam,
             changePage,
+            initiateGetAllContestsQuery,
         },
     } = useContests();
 
@@ -38,10 +39,12 @@ const ContestsPage = () => {
     const { state: { params }, actions: { clearHash } } = useHashUrlParams();
 
     useEffect(() => {
+        initiateGetAllContestsQuery();
+
         if (!isEmpty(params)) {
             clearHash();
         }
-    }, [ clearHash, params ]);
+    }, [ clearHash, params, initiateGetAllContestsQuery ]);
 
     const handlePageChange = useCallback(
         (page: number) => changePage(page),
