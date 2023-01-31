@@ -35,6 +35,7 @@ const defaultState = {
         validationResult: {
             message: '',
             isValid: true,
+            propertyName: '',
         },
     },
 };

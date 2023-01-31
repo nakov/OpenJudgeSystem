@@ -84,6 +84,13 @@ interface IRegisterForContestResponseType {
 interface IValidationType {
     message: string;
     isValid: boolean;
+    propertyName: string;
+}
+
+enum ValidationPropertyType {
+    UserNotLoggedIn = 'UserNotLoggedIn',
+    SubmissionNotFound = 'SubmissionNotFound',
+    NotAuthorOfSubmission = 'NotAuthorOfSubmission',
 }
 
 interface IStartParticipationResponseType {
@@ -131,3 +138,5 @@ export type {
     IUserType,
     IUserPermissionsType,
 };
+
+export { ValidationPropertyType };

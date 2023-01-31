@@ -71,6 +71,7 @@ const defaultState = {
         validationResult: {
             message: '',
             isValid: true,
+            propertyName: '',
         },
         userSubmissionsTimeLimit: 0,
         totalParticipantsCount: 0,

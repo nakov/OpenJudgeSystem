@@ -9,6 +9,7 @@ interface IAppUrlsContext {
     getRegisterContestTypeUrl: (params: IRegisterForContestTypeUrlParams) => string;
     getAdministrationRetestSubmissionInternalUrl: () => string;
     getHomePageUrl: () => string;
+    getLoginUrl: () => string;
 }
 
 const AppUrlsContext = createContext<IAppUrlsContext>({} as IAppUrlsContext);
@@ -25,6 +26,8 @@ const getAdministrationRetestSubmissionInternalUrl = () => '/Submissions/Retest'
 
 const getHomePageUrl = () => '/';
 
+const getLoginUrl = () => '/Login';
+
 const AppUrlsProvider = ({ children }: IAppUrlsProviderProps) => {
     const value = useMemo(
         () => (
@@ -32,6 +35,7 @@ const AppUrlsProvider = ({ children }: IAppUrlsProviderProps) => {
                 getRegisterContestTypeUrl,
                 getAdministrationRetestSubmissionInternalUrl,
                 getHomePageUrl,
+                getLoginUrl,
             }
         ),
         [],

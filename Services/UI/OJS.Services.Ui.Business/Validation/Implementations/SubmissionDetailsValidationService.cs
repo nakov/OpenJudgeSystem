@@ -12,17 +12,17 @@ public class SubmissionDetailsValidationService : ISubmissionDetailsValidationSe
 
         if (userInfoModel.Id == null)
         {
-            return ValidationResult.Invalid(ValidationMessages.User.NotLoggedIn);
+            return ValidationResult.Invalid(ValidationMessages.User.NotLoggedIn, SubmissionDetailsValidation.UserNotLoggedIn.ToString());
         }
 
         if (submissionDetailsServiceModel == null)
         {
-            return ValidationResult.Invalid(ValidationMessages.Submission.NotFound);
+            return ValidationResult.Invalid(ValidationMessages.Submission.NotFound, SubmissionDetailsValidation.SubmissionNotFound.ToString());
         }
 
         if (!userInfoModel.IsAdminOrLecturer && userInfoModel.Id != submissionDetailsServiceModel.User.Id)
         {
-            return ValidationResult.Invalid(ValidationMessages.Submission.NotMadeByUser);
+            return ValidationResult.Invalid(ValidationMessages.Submission.NotMadeByUser, SubmissionDetailsValidation.NotAuthorOfSubmission.ToString());
         }
 
         return ValidationResult.Valid();
