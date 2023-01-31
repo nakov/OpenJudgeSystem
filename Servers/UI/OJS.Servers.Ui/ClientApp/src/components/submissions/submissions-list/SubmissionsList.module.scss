@@ -1,4 +1,5 @@
 @use 'src/styles/colors';
+@use 'src/styles/variables';
 
 .submissionsList {
   align-items: start;
@@ -32,7 +33,8 @@
 
 .actionsContainer {
   align-items: center;
-  display: flex;
+  display: inline-flex;
+  gap: 5px;
   justify-content: space-between;
   width: 100%;
 }
@@ -51,4 +53,26 @@
   color: colors.$text-light-gray-color;
   font-family: Lato, serif;
   font-size: 12px;
+}
+
+.submissionTypeText {
+  // body
+}
+
+.submissionTypeLabel {
+  // body
+}
+
+@media only screen and (max-width: 1900px) {
+  .actionsContainer {
+    
+  }
+  
+  .submissionTypeText {
+    font-size: variables.$f-size-16;
+  }
+
+  .submissionTypeLabel {
+    font-size: variables.$f-size-12;
+  }
 }

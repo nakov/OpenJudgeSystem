@@ -8,7 +8,7 @@ import concatClassNames from '../../../utils/class-names';
 import { Button, ButtonType } from '../../guidelines/buttons/Button';
 import SubmissionsList from '../../submissions/submissions-list/SubmissionsList';
 
-import styles from './SubmissionResults.module.scss';
+import styles from './ProblemSubmissions.module.scss';
 
 const ProblemSubmissions = () => {
     const {
@@ -36,8 +36,7 @@ const ProblemSubmissions = () => {
     // const submissionResultsListItemClass = 'submission results';
     // const submissionResultsListItemClassName =
     // concatClassNames(styles.submissionItem, submissionResultsListItemClass);
-    const submissionResultsContentClass = 'submissionResultsContent';
-    const submissionResultsContentClassName = concatClassNames(styles.submissionResultsContent, submissionResultsContentClass);
+    const submissionResultsContentClassName = concatClassNames(styles.submissionResultsContent);
 
     const renderSubmissions = () => {
         if (isNil(submissions) || isEmpty(submissions)) {

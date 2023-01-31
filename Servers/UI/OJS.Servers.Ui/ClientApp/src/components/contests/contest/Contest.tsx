@@ -32,13 +32,13 @@ const Contest = () => {
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const { actions: { setPageTitle } } = usePageTitles();
 
-    const navigationContestClass = 'navigationContest';
+    const navigationContestClass = styles.navigationContest.toString();
     const navigationContestClassName = concatClassNames(navigationContestClass);
 
     const submissionBoxClass = 'submissionBox';
     const submissionBoxClassName = concatClassNames(submissionBoxClass);
 
-    const problemInfoClass = 'problemInfo';
+    const problemInfoClass = styles.problemInfo.toString();
     const problemInfoClassName = concatClassNames(problemInfoClass);
 
     const contestTitle = useMemo(

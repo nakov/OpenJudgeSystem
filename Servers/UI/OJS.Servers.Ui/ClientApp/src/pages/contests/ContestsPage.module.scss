@@ -2,11 +2,11 @@
 
 .container {
   display: flex;
-  flex: 1 13;
 }
 
 .contestItem {
-  flex: 0 1 calc(100% / 4);
+  width: 20em;
+  flex: 0 0 20em;
 }
 
 .breadcrumbBtn {
@@ -23,4 +23,16 @@
 
 .mainHeader {
   width: 100%;
+  flex: 4;
+}
+
+.contestsListContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.contestsList {
+  display: flex;
+  justify-content: flex-start;
 }

@@ -1,4 +1,5 @@
 @use 'src/styles/colors';
+@use 'src/styles/variables';
 
 .contestCardsContainer {
   margin-top: 2vh;
@@ -10,12 +11,16 @@
 }
 
 .contestList {
-  align-items: center;
   display: flex;
-  flex-wrap: wrap;
+  box-sizing: border-box;
+  flex-flow: row wrap;
   justify-content: center;
+  align-items: center;
+  align-content: center;
+}
 
-  .contestListItem {
-    flex: 1 1 20%; /* grow | shrink | basis */
+.contestListItem {
+  @media only screen and (min-width: variables.$r-small-max) and (max-width: 1440px) {
+    flex-basis: 50%;
   }
 }

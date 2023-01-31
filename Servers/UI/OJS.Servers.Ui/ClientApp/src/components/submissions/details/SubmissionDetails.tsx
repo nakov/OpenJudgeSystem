@@ -90,7 +90,11 @@ const SubmissionDetails = () => {
     const submissionsNavigationClassName = 'submissionsNavigation';
 
     const submissionsDetails = 'submissionDetails';
-    const submissionDetailsClassName = concatClassNames(styles.navigation, styles.submissionDetails, submissionsDetails);
+    const submissionDetailsClassName = concatClassNames(
+        styles.navigation,
+        styles.submissionDetails,
+        submissionsDetails,
+    );
 
     useEffect(() => {
         if (isNil(currentSubmission)) {
