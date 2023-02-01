@@ -8,7 +8,7 @@
 
     public class SubmissionTypeServiceModel : IMapExplicitly
     {
-        private char[] splittingChars = { ',', ';', ' ' };
+        private char[] allowedFileExtensionsDelimiters = { ',', ';', ' ' };
 
         public int Id { get; set; }
 
@@ -27,7 +27,7 @@
                     opt => opt.MapFrom(s =>
                         s.AllowedFileExtensions != null
                             ? s.AllowedFileExtensions.Split(
-                                this.splittingChars,
+                                this.allowedFileExtensionsDelimiters,
                                 StringSplitOptions.RemoveEmptyEntries)
                             : Array.Empty<string>()));
     }
