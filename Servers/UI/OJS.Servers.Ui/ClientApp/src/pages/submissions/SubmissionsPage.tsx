@@ -31,4 +31,4 @@ const SubmissionsPage = () => {
     );
 };
 
-export default setLayout(SubmissionsPage);
+export default setLayout(SubmissionsPage, false);

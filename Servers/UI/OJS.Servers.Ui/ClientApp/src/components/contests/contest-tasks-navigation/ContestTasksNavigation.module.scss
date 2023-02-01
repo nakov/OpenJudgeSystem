@@ -26,6 +26,12 @@
     &.selected {
       color: colors.$color-btn-secondary;
     }
+
+    & > .taskListItem {
+      @media only screen and (max-width: variables.$r-large-desktop-max) {
+        font-size: variables.$f-size-16;
+      }
+    }
   }
 }
 
@@ -46,13 +52,5 @@
   &:hover {
     background: none;
     cursor: pointer;
-  }
-}
-
-@media only screen and (max-width: 1900px) {
-  .tasksListSideNavigation > .taskListItem {
-    .taskSideNavigationItem {
-      font-size: variables.$f-size-16;
-    }
   }
 }

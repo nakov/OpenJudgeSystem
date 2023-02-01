@@ -1,5 +1,5 @@
 @use 'src/styles/colors';
-@use 'src/styles/fonts';
+@use 'src/styles/components';
 
 .submissionRow {  
   border-bottom: 1px solid colors.$bottom-border-color;

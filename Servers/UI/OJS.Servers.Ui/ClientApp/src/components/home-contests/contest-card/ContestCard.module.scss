@@ -21,7 +21,7 @@
   width: 13vw;
   padding: 0.7vw;
 
-  @media only screen and (min-width: variables.$r-small-max) and (max-width: 1440px) {
+  @media only screen and (min-width: variables.$r-small-max) and (max-width: variables.$r-laptop-max) {
     margin-left: auto;
     margin-right: auto;
   }

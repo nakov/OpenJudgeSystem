@@ -14,18 +14,14 @@
     background: none;
     cursor: pointer;
   }
-}
 
-.submissionsList {
-  // body
-}
+  @media only screen and (max-width: variables.$r-large-desktop-max) {
+    .submissionResultsContent {
+      padding: 10px;
+    }
 
-@media only screen and (max-width: 1900px) {
-  .submissionResultsContent {
-    padding: 10px;
-  }
-  
-  .submissionsList > ul {
-    font-size: variables.$f-size-16;
+    .submissionsList > ul {
+      font-size: variables.$f-size-16;
+    }
   }
 }

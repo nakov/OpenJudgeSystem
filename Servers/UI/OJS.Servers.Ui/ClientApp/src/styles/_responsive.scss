@@ -1,19 +1,11 @@
 @use 'src/styles/variables';
 
 %r-heading-primary {
-  @media only screen and (min-width: variables.$r-small-max) and (max-width: variables.$r-large-max) {
-    font-size: 1.8vw;
+  @media only screen and (min-width: variables.$r-small-desktop-max) {
+    font-size: variables.$f-size-20;
   }
 
-  @media only screen and (min-width: variables.$r-small-desktop-min) and (max-width: variables.$r-small-desktop-max) {
-    font-size: 1.4vw;
-  }
-
-  @media only screen and (min-width: variables.$r-large-desktop-min) and (max-width: variables.$r-large-desktop-max) {
-    font-size: 1.2vw;
-  }
-
-  @media only screen and (min-width: variables.$r-extra-large-desktop-min) {
-    font-size: 1vw;
+  @media only screen and (max-width: variables.$r-large-max) {
+    font-size: variables.$f-size-18;
   }
 }
