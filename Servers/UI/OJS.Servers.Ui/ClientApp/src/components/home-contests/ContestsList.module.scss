@@ -20,7 +20,7 @@
 }
 
 .contestListItem {
-  @media only screen and (min-width: variables.$r-small-max) and (max-width: variables.$r-laptop-max) {
+  @media only screen and (max-width: variables.$r-laptop-max) {
     flex-basis: 50%;
   }
 }
