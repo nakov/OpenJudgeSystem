@@ -76,11 +76,8 @@ jobs:
     #     cache-to: type=local,dest=/tmp/.buildx-cache
     #     secrets: |
     #       GIT_AUTH_TOKEN=${{ github.token }}
-    - uses: appleboy/ssh-action@v0.1.7
-      with:
-        host: ${{ secrets.SSH_DEV_UI_HOST }}
-        username: ${{ secrets.SSH_DEV_UI_USERNAME }}
-        password: ${{ secrets.SSH_DEV_UI_PASSWORD }}
-        script: |
-          docker-compose -f ${{ env.DOCKER_COMPOSE_FILE_PATH }} pull administration
-          docker-compose -f ${{ env.DOCKER_COMPOSE_FILE_PATH }} up -d --force-recreate administration nginx
+    - name: Invoke deployment hook
+      uses: distributhor/workflow-webhook@v2
+      env:
+        webhook_url: ${{ secrets.UI_WEBHOOK_URL }}
+        webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
