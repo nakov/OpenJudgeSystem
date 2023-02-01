@@ -24,7 +24,7 @@
 %contentSize {
   box-sizing: border-box;
   margin: 0 auto;
-  max-width: 90%;
+  max-width: 80vw;
   width: 100%;
 
   &%wide {
@@ -33,7 +33,7 @@
   }
 
   @media only screen and (max-width: 1440px) {
-    width: 1280px;
+    width: 70vw;
   }
 }
 
@@ -60,5 +60,11 @@
 
   &::-webkit-scrollbar-thumb:active {
     background: rgb(0 0 0 / 90%);
+  }
+}
+
+%whiteOnHover {
+  &:hover {
+    color: white;
   }
 }

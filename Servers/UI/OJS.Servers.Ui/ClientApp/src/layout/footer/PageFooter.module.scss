@@ -1,11 +1,85 @@
 @use 'src/styles/colors';
+@use 'src/styles/fonts';
+@use 'src/styles/components';
+@use 'src/styles/variables';
 
 .footer {
-  align-items: center;
+  @extend %font-family-lato;
   background: colors.$background-color-footer;
-  color: #fff;
+  color: colors.$text-light-gray-color;
+  min-height: 30vh;
+}
+
+.content {
+  @extend %contentSize;
+  
   display: flex;
-  height: 50px;
-  justify-content: center;
-  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 60px 0;
+  margin: 0 auto;
+}
+
+.footerLearnLinksWrapper,
+%footerLearnLinksWrapper {
+  display: flex;
+  flex-flow: column;
+  align-content: flex-start;
+  justify-content: flex-start;
+  color: colors.$text-light-gray-color;
+
+  .sectionHeading {
+    color: white;
+    font-size: variables.$f-size-18;
+    padding-left: 10px;
+    padding-top: 0;
+  }
+  
+  .link {
+    @extend %whiteOnHover;
+    
+    padding-left: 10px;
+    margin-top: 10px;
+    text-align: start;
+    font-size: variables.$f-size-16;
+    color: colors.$text-light-gray-color;
+  }
+}
+
+.footerLogo {
+  max-width: 7vw;
+}
+
+.footerAboutLinksWrapper {
+  @extend %footerLearnLinksWrapper;
+}
+
+.systemInfoAndLinksContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  align-content: flex-start;
+  gap: 30px;
+}
+
+.systemInfo {
+  // body
+}
+
+.links {
+  display: flex;
+  flex-direction: row;
+  box-sizing: border-box;
+  gap: 15px;
+  
+  svg {
+    height: 1.2vw;
+    width: 1.2vw;
+    color: colors.$text-light-gray-color;
+    
+    &:hover {
+      color: white;
+    }
+  }
 }
