@@ -69,7 +69,7 @@ jobs:
     #     tags: |
     #       ${{ env.IMAGE }}:${{ env.GIT_SHA }}
     #       ${{ env.IMAGE }}:${{ env.BUILD_VER }}
-    #       ${{ env.IMAGE }}:dev-latest
+    #       ${{ env.IMAGE }}:dev-latest 
     #     push: true
     #     platforms: linux/amd64
     #     cache-from: type=local,src=/tmp/.buildx-cache
