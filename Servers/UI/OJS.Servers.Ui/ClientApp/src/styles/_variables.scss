@@ -3,6 +3,33 @@ $f-size-10: 10px;
 $f-size-12: 12px;
 $f-size-16: 16px;
 $f-size-18: 18px;
+$f-size-20: 20px;
 $f-size-24: 24px;
 $f-size-30: 30px;
 $f-size-36: 36px;
+
+$f-size-1vw: 1vw;
+$f-size-2vw: 2vw;
+
+// Responsive width breakpoints
+$r-mobile-min: 320px;
+$r-mobile-max: 480px;
+
+$r-tablet-min: 481px;
+$r-tablet-max: 768px;
+
+$r-small-min: 769px;
+$r-small-max: 1024px;
+
+$r-large-min: 1025px;
+$r-large-max: 1200px;
+
+$r-small-desktop-min: 1201px;
+$r-small-desktop-max: 1680px;
+
+$r-laptop-max: 1440px;
+
+$r-large-desktop-min: 1681px;
+$r-large-desktop-max: 1920px;
+
+$r-extra-large-desktop-min: 1921px;
