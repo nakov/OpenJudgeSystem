@@ -6,10 +6,10 @@
 .contestCard {
   @extend %font-family-lato;
 
-  color: colors.$text-dark-gray-color;
   align-content: center;
   border-radius: 8px;
   box-shadow: colors.$box-shadow-color;
+  color: colors.$text-dark-gray-color;
   display: grid;
   flex: 0 0 10em;
   flex-flow: wrap;
@@ -18,10 +18,10 @@
   margin: 10px;
   min-height: 10vh;
   min-width: 240px;
-  width: 13vw;
   padding: 0.7vw;
+  width: 13vw;
 
-  @media only screen and (min-width: variables.$r-small-max) and (max-width: 1440px) {
+  @media only screen and (max-width: variables.$r-laptop-max) {
     margin-left: auto;
     margin-right: auto;
   }
@@ -46,7 +46,6 @@
 
 .contestCardHeader {
   @extend %font-family-lato;
-  @extend %r-contestCardHeader;
 
   border-bottom: 1px solid;
   border-bottom-color: colors.$bottom-border-color;
@@ -87,27 +86,14 @@
 
 .contestCardTitle {
   display: block;
+  font-size: variables.$f-size-20;
   max-width: 11vw;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
-}
 
-%r-contestCardHeader {
-  @media only screen and (min-width: variables.$r-small-max) and (max-width: variables.$r-large-max) {
-    font-size: 1.6vw;
-  }
-
-  @media only screen and (min-width: variables.$r-small-desktop-min) and (max-width: variables.$r-small-desktop-max) {
-    font-size: 1.1vw;
-  }
-
-  @media only screen and (min-width: variables.$r-large-desktop-min) and (max-width: variables.$r-large-desktop-max) {
-    font-size: 0.9vw;
-  }
-
-  @media only screen and (min-width: variables.$r-extra-large-desktop-min) {
-    font-size: 1vw;
+  @media only screen and (max-width: variables.$r-small-desktop-max) {
+    font-size: variables.$f-size-18;
   }
 }

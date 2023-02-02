@@ -56,23 +56,13 @@
 }
 
 .submissionTypeText {
-  // body
+  @media only screen and (max-width: variables.$r-large-desktop-max) {
+    font-size: variables.$f-size-16;
+  }
 }
 
 .submissionTypeLabel {
-  // body
-}
-
-@media only screen and (max-width: 1900px) {
-  .actionsContainer {
-    
-  }
-  
-  .submissionTypeText {
-    font-size: variables.$f-size-16;
-  }
-
-  .submissionTypeLabel {
+  @media only screen and (max-width: variables.$r-large-desktop-max) {
     font-size: variables.$f-size-12;
   }
 }

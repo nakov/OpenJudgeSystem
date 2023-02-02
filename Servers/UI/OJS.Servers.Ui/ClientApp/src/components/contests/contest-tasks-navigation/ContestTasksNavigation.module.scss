@@ -6,6 +6,20 @@
   text-align: center;
 }
 
+.taskListItem {
+  align-items: center;
+  border-bottom: 1px solid colors.$bottom-border-color;
+  display: flex;
+  justify-content: space-between;
+  padding: 35px 0 5px;
+  position: relative;
+  width: 100%;
+
+  @media only screen and (max-width: variables.$r-large-desktop-max) {
+    font-size: variables.$f-size-16;
+  }
+}
+
 .tasksListSideNavigation {
   align-items: flex-start;
   display: flex;
@@ -29,16 +43,6 @@
   }
 }
 
-.taskListItem {
-  align-items: center;
-  border-bottom: 1px solid colors.$bottom-border-color;
-  display: flex;
-  justify-content: space-between;
-  padding: 35px 0 5px;
-  position: relative;
-  width: 100%;
-}
-
 .resultsButton {
   align-self: end;
   border: 0;
@@ -46,13 +50,5 @@
   &:hover {
     background: none;
     cursor: pointer;
-  }
-}
-
-@media only screen and (max-width: 1900px) {
-  .tasksListSideNavigation > .taskListItem {
-    .taskSideNavigationItem {
-      font-size: variables.$f-size-16;
-    }
   }
 }

@@ -1,5 +1,5 @@
-@use 'colors.scss';
-@use 'variables.scss';
+@use 'src/styles/colors';
+@use 'src/styles/variables';
 
 %small {
   font-size: variables.$f-size-12;
@@ -24,7 +24,7 @@
 %contentSize {
   box-sizing: border-box;
   margin: 0 auto;
-  max-width: 90%;
+  max-width: 80vw;
   width: 100%;
 
   &%wide {
@@ -32,8 +32,8 @@
     width: 100%;
   }
 
-  @media only screen and (max-width: 1440px) {
-    width: 1280px;
+  @media only screen and (max-width: variables.$r-laptop-max) {
+    width: 70vw;
   }
 }
 
@@ -60,5 +60,11 @@
 
   &::-webkit-scrollbar-thumb:active {
     background: rgb(0 0 0 / 90%);
+  }
+}
+
+%whiteOnHover {
+  &:hover {
+    color: colors.$white-color;
   }
 }

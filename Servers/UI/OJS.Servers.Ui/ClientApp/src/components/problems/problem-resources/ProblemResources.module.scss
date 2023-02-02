@@ -4,15 +4,12 @@
 
 .resourcesList {
   @extend %font-style-normal;
-  
+
   align-items: start;
   font-size: variables.$f-size-18;
-  padding: 20px;
-}
+  padding: 10px;
 
-@media only screen and (max-width: 1900px) {
-  .resourcesList {
+  @media only screen and (max-width: variables.$r-large-desktop-max) {
     font-size: variables.$f-size-16;
-    padding: 10px;
   }
 }

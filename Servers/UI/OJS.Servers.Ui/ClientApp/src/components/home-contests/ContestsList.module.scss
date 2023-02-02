@@ -11,16 +11,16 @@
 }
 
 .contestList {
-  display: flex;
+  align-content: center;
+  align-items: center;
   box-sizing: border-box;
+  display: flex;
   flex-flow: row wrap;
   justify-content: center;
-  align-items: center;
-  align-content: center;
 }
 
 .contestListItem {
-  @media only screen and (min-width: variables.$r-small-max) and (max-width: 1440px) {
+  @media only screen and (max-width: variables.$r-laptop-max) {
     flex-basis: 50%;
   }
 }

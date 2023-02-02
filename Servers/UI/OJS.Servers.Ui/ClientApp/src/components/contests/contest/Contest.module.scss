@@ -33,13 +33,7 @@
 }
 
 %r-contestNavigations {
-  @media only screen and (min-width: variables.$r-small-min) and (max-width: variables.$r-small-max) {
+  @media only screen and (max-width: variables.$r-small-max) {
     flex: 3;
-  }
-}
-
-%r-contestSubmissionBox {
-  @media only screen and (min-width: variables.$r-small-min) and (max-width: variables.$r-small-max) {
-    flex: 5;
   }
 }

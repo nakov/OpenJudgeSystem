@@ -3,7 +3,7 @@
 
 .Tree {
   @extend %font-family-lato;
-  
+
   color: colors.$text-dark-gray-color;
   cursor: pointer;
   font-size: 1rem;
@@ -24,7 +24,5 @@
 }
 
 .childrenElements {
-  .treeElement div:nth-child(2) {
-    //font-size: 0.9rem;
-  }
+  // body
 }
