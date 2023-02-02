@@ -29,6 +29,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
                 id: contestId,
                 name: contestName,
             },
+            orderBy,
         },
         isOfficial,
     } = submission;
@@ -104,10 +105,9 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
             </div>
             <div className={styles.detailsContainer}>
                 <div>
-                    {/* TODO: Fix this URL once https://github.com/SoftUni-Internal/exam-systems-issues/issues/184 is done */}
                     <LinkButton
                       text={problemName}
-                      to={`/contests/${contestId}/${participationType}`}
+                      to={`/contests/${contestId}/${participationType}#${orderBy + 1}`}
                       type={LinkButtonType.plain}
                       className={styles.link}
                     />
