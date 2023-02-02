@@ -46,8 +46,7 @@
 
 .contestCardHeader {
   @extend %font-family-lato;
-  @extend %r-contestCardHeader;
-
+  
   border-bottom: 1px solid;
   border-bottom-color: colors.$bottom-border-color;
   display: flex;
@@ -92,14 +91,9 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
-}
+  font-size: variables.$f-size-20;
 
-%r-contestCardHeader {
-  @media only screen and (max-width: variables.$r-large-desktop-max) {
+  @media only screen and (max-width: variables.$r-small-desktop-max) {
     font-size: variables.$f-size-18;
-  }
-
-  @media only screen and (min-width: variables.$r-large-desktop-max) {
-    font-size: variables.$f-size-20;
   }
 }
