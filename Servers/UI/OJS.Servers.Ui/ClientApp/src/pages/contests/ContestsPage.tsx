@@ -75,7 +75,7 @@ const ContestsPage = () => {
 
             const { pagesCount } = pagesInfo;
             return (
-                <>
+                <div className={styles.contestsListContainer}>
                     <PaginationControls
                       count={pagesCount}
                       page={currentPage}
@@ -85,10 +85,11 @@ const ContestsPage = () => {
                       values={contests}
                       itemFunc={renderContest}
                       itemClassName={styles.contestItem}
+                      className={styles.contestsList}
                       orientation={Orientation.horizontal}
                       wrap
                     />
-                </>
+                </div>
             );
         },
         [ contests, currentPage, handlePageChange, pagesInfo, renderContest ],
