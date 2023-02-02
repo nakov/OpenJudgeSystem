@@ -5,7 +5,7 @@ name: UI dev deploy
 on:
   push:
     tags:
-      - redeploy-dev-ui-*
+      - 'redeploy-dev-ui-*'
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
