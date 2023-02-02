@@ -17,6 +17,7 @@ interface IPublicSubmissionProblem {
     id: number;
     name: string;
     contest: IPublicSubmissionContest;
+    orderBy: number;
 }
 
 interface IPublicSubmissionResult {
