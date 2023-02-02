@@ -223,6 +223,11 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             return;
         }
 
+        const { id } = contestToStart;
+        if (Number.isNaN(id)) {
+            return;
+        }
+
         (async () => {
             startLoading();
             await startContest();
@@ -257,6 +262,11 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
 
     useEffect(() => {
         if (isNil(registerForContestParams)) {
+            return;
+        }
+
+        const { id } = registerForContestParams;
+        if (Number.isNaN(id)) {
             return;
         }
 
