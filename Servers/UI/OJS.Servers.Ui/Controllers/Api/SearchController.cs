@@ -18,13 +18,13 @@ public class SearchController : BaseApiController
     /// <summary>
     /// Searches for all contests, problems and users that match the search.
     /// </summary>
-    /// <param name="searchParam">The required search from the user.</param>
+    /// <param name="searchTerm">The required search from the user.</param>
     /// <returns>A collection of all contests, problems and users based on the search.</returns>
-    [HttpGet("{searchParam:string}")]
+    [HttpGet]
     [ProducesResponseType(typeof(SearchResponseModel), Status200OK)]
-    public async Task<IActionResult> GetSearchResults(string searchParam)
+    public async Task<IActionResult> GetSearchResults([FromQuery]string? searchTerm)
         => await this.searchBusinessService
-            .GetSearchResults(searchParam)
+            .GetSearchResults(searchTerm)
             .Map<SearchResponseModel>()
             .ToOkResult();
 }

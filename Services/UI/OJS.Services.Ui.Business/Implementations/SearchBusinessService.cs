@@ -2,44 +2,44 @@
 
 using System.Threading.Tasks;
 using OJS.Services.Ui.Models.Search;
-using OJS.Services.Infrastructure.Exceptions;
+using OJS.Services.Ui.Business.Validation;
 
 public class SearchBusinessService : ISearchBusinessService
 {
-    private const int MinimumTermLength = 3;
-
     private readonly IContestsBusinessService contestsBusinessService;
     private readonly IProblemsBusinessService problemsBusinessService;
     private readonly IUsersBusinessService usersBusinessService;
+    private readonly ISearchValidationService searchValidationService;
 
     public SearchBusinessService(
         IContestsBusinessService contestsBusinessService,
         IProblemsBusinessService problemsBusinessService,
-        IUsersBusinessService usersBusinessService)
+        IUsersBusinessService usersBusinessService,
+        ISearchValidationService searchValidationService)
     {
         this.contestsBusinessService = contestsBusinessService;
         this.problemsBusinessService = problemsBusinessService;
         this.usersBusinessService = usersBusinessService;
+        this.searchValidationService = searchValidationService;
     }
 
-    public async Task<SearchServiceModel> GetSearchResults(string searchTerm)
+    public async Task<SearchServiceModel> GetSearchResults(string? searchTerm)
     {
-        this.ValidateSearchInput(searchTerm);
+        var searchSearchModel = new SearchServiceModel();
 
-        var trimmedSearch = searchTerm.Trim();
+        var trimmedSearch = searchTerm?.Trim();
 
-        var users = await this.usersBusinessService.GetSearchUsersByUsername(trimmedSearch);
-        var contests = await this.contestsBusinessService.GetSearchContestsByName(trimmedSearch);
-        var problems = await this.problemsBusinessService.GetSearchProblemsByName(trimmedSearch);
+        var validationResult = this.searchValidationService.GetValidationResult(trimmedSearch);
 
-        return new SearchServiceModel { Users = users, Contests = contests, Problems = problems };
-    }
+        var users = await this.usersBusinessService.GetSearchUsersByUsername(trimmedSearch!);
+        var contests = await this.contestsBusinessService.GetSearchContestsByName(trimmedSearch!);
+        var problems = await this.problemsBusinessService.GetSearchProblemsByName(trimmedSearch!);
 
-    public void ValidateSearchInput(string searchTerm)
-    {
-        if (string.IsNullOrWhiteSpace(searchTerm) && searchTerm.Length < MinimumTermLength)
-        {
-            throw new BusinessServiceException("The search term must be at least 3 characters.");
-        }
+        searchSearchModel.ValidationResult = validationResult;
+        searchSearchModel.Users = users;
+        searchSearchModel.Contests = contests;
+        searchSearchModel.Problems = problems;
+
+        return searchSearchModel;
     }
 }

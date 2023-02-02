@@ -6,7 +6,5 @@ using OJS.Services.Ui.Models.Search;
 
 public interface ISearchBusinessService : IService
 {
-    Task<SearchServiceModel> GetSearchResults(string searchTerm);
-
-    void ValidateSearchInput(string input);
+    Task<SearchServiceModel> GetSearchResults(string? searchTerm);
 }

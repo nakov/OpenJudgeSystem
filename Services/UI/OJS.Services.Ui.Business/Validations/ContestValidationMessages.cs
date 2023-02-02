@@ -12,4 +12,11 @@ public static class ValidationMessages
 
         public const string CanBePracticed = "Contest can't be practiced!";
     }
+
+    public static class Search
+    {
+        public const string LessThanThreeSymbols = "The search term must be at least 3 characters!";
+
+        public const string IsNull = "The search term cannot be null!";
+    }
 }

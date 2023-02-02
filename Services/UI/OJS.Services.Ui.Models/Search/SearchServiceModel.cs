@@ -1,5 +1,6 @@
 ﻿namespace OJS.Services.Ui.Models.Search;
 
+using OJS.Services.Common.Models;
 using System.Collections.Generic;
 using System.Linq;
 public class SearchServiceModel
@@ -12,4 +13,6 @@ public class SearchServiceModel
 
     public IEnumerable<UserSearchServiceModel> Users { get; set; }
         = Enumerable.Empty<UserSearchServiceModel>();
+
+    public ValidationResult ValidationResult { get; set; } = null!;
 }

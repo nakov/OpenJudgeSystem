@@ -37,7 +37,7 @@ namespace OJS.Services.Ui.Data.Implementations
 
         public IQueryable<Contest> GetAll()
             => this.DbSet
-                .Where(c => c.IsVisible && c.IsDeleted);
+                .Where(c => c.IsVisible && !c.IsDeleted);
 
         public async Task<PagedResult<TServiceModel>> GetAllAsPageByFiltersAndSorting<TServiceModel>(
             ContestFiltersServiceModel model)
