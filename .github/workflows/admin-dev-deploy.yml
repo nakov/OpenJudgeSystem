@@ -5,7 +5,7 @@ name: Administration dev deploy
 on:
   push:
     tags:
-      - 'redeploy-dev-admin-*'
+      - redeploy-dev-admin-**
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
