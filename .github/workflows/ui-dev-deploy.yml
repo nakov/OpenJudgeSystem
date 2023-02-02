@@ -18,7 +18,6 @@ jobs:
         echo "BUILD_DATE=$(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
         echo "GIT_SHA=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_ENV
         echo "DOCKERFILE_PATH=Docker/Dockerfile.ui" >> $GITHUB_ENV
-        echo "DOCKER_COMPOSE_FILE_PATH=/home/admins/repos/judge-workers-deployment/judge-web/docker-compose.development.yml" >> $GITHUB_ENV
     - name: Checkout
       uses: actions/checkout@v3
       with:
@@ -67,12 +66,8 @@ jobs:
         cache-to: type=local,dest=/tmp/.buildx-cache
         secrets: |
           GIT_AUTH_TOKEN=${{ github.token }}
-    - name: Deploy to dev server
-      uses: appleboy/ssh-action@v0.1.7
-      with:
-        host: ${{ secrets.SSH_DEV_UI_HOST }}
-        username: ${{ secrets.SSH_DEV_UI_USERNAME }}
-        password: ${{ secrets.SSH_DEV_UI_PASSWORD }}
-        script: |
-          docker-compose -f ${{ env.DOCKER_COMPOSE_FILE_PATH }} pull ui
-          docker-compose -f ${{ env.DOCKER_COMPOSE_FILE_PATH }} up -d --force-recreate ui nginx
+    - name: Invoke deployment hook
+      uses: distributhor/workflow-webhook@v2
+      env:
+        webhook_url: ${{ secrets.UI_WEBHOOK_URL }}
+        webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
