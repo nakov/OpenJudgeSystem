@@ -106,7 +106,7 @@ public class ContestValidationService : IContestValidationService
         Contest contest,
         string userId,
         bool isAdmin,
-        bool isUserLecturerInContest,
+        bool isUserLecturerInContest = true,
         bool allowToAdminAlways = false)
     {
         var isUserAdminOrLecturerInContest = isAdmin || isUserLecturerInContest;

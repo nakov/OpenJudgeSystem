@@ -174,7 +174,7 @@ const SubmissionDetails = () => {
         [ problemNameHeadingText, currentSubmission?.content, submissionType ],
     );
 
-    const submissionResults = useMemo(
+    const submissionResults = useCallback(
         () => (
             <div className={submissionDetailsClassName}>
                 <Heading type={HeadingType.secondary}>{detailsHeadingText}</Heading>
@@ -200,7 +200,7 @@ const SubmissionDetails = () => {
         <div className={styles.detailsWrapper}>
             {refreshableSubmissionsList}
             {codeEditor}
-            {submissionResults}
+            {submissionResults()}
         </div>
     );
 };
