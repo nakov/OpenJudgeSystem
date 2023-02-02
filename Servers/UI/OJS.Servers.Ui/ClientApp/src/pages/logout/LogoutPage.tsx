@@ -3,6 +3,8 @@ import React, { useEffect } from 'react';
 import { useAuth } from '../../hooks/use-auth';
 import { wait } from '../../utils/promise-utils';
 
+import styles from './LogoutPage.module.scss';
+
 const LogoutPage = () => {
     const { actions: { signOut } } = useAuth();
 
@@ -15,7 +17,9 @@ const LogoutPage = () => {
     }, [ signOut ]);
 
     return (
-        <div>You are logged out. You will be redirected to home shortly.</div>
+        <div className={styles.logout}>
+            You are logged out and will be redirected to home shortly.
+        </div>
     );
 };
 
