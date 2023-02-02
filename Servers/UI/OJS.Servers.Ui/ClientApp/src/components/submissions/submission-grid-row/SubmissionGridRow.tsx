@@ -101,10 +101,8 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
                 </div>
                 <div className={styles.dateAndUsernameContainer}>
                     <span>{formatDate(createdOn)}</span>
-                    <span>
-                        by
-                        {username}
-                    </span>
+                    <span>by</span>
+                    <span>{username}</span>
                 </div>
             </div>
 

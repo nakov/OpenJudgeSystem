@@ -1,5 +1,13 @@
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
+@use 'src/styles/variables';
+@use 'src/styles/responsive';
+
 .container {
+  @extend %font-family-lato;
+
   align-items: center;
+  color: colors.$text-dark-gray-color;
   display: flex;
   justify-content: flex-start;
   padding: 25px;
@@ -15,9 +23,10 @@
   }
 
   .pointsContainer {
-    @extend %larger;
+    @extend %r-heading-primary;
 
-    flex: 2;
+    flex: 2 0 2vw;
+    width: 2vw;
   }
 
   .detailsContainer {
@@ -28,18 +37,16 @@
   }
 
   .dateAndUsernameContainer {
+    display: flex;
+    gap: 5px;
     margin: 0 5px;
   }
 
   .link {
-    @extend %larger;
+    @extend %r-heading-primary;
 
     color: #42abf8;
     display: inline-block;
     margin: 0 5px;
   }
-}
-
-%larger {
-  font-size: 1.4em;
 }

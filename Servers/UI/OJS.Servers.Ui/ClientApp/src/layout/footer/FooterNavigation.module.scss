@@ -1,0 +1,48 @@
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
+@use 'src/styles/components';
+@use 'src/styles/variables';
+
+.content {
+  @extend %contentSize;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 0 auto;
+  padding: 60px 0;
+}
+
+.footerLogo {
+  max-width: 7vw;
+}
+
+.systemInfoAndLinksContainer {
+  align-content: flex-start;
+  align-items: flex-start;
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  justify-content: flex-start;
+}
+
+.systemInfo {
+  // body
+}
+
+.links {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+
+  svg {
+    color: colors.$text-light-gray-color;
+    height: 1.2vw;
+    width: 1.2vw;
+
+    &:hover {
+      color: colors.$white-color;
+    }
+  }
+}
