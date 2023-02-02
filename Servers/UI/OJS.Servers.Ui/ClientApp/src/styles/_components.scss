@@ -1,5 +1,5 @@
-@use 'colors.scss';
-@use 'variables.scss';
+@use 'src/styles/colors';
+@use 'src/styles/variables';
 
 %small {
   font-size: variables.$f-size-12;
@@ -65,6 +65,6 @@
 
 %whiteOnHover {
   &:hover {
-    color: white;
+    color: colors.$white-color;
   }
 }

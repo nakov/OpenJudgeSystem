@@ -5,6 +5,7 @@
 
 .footer {
   @extend %font-family-lato;
+
   background: colors.$background-color-footer;
   color: colors.$text-light-gray-color;
   min-height: 30vh;
@@ -12,37 +13,37 @@
 
 .content {
   @extend %contentSize;
-  
+
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 60px 0;
   margin: 0 auto;
+  padding: 60px 0;
 }
 
 .footerLearnLinksWrapper,
 %footerLearnLinksWrapper {
+  align-content: flex-start;
+  color: colors.$text-light-gray-color;
   display: flex;
   flex-flow: column;
-  align-content: flex-start;
   justify-content: flex-start;
-  color: colors.$text-light-gray-color;
 
   .sectionHeading {
-    color: white;
+    color: colors.$white-color;
     font-size: variables.$f-size-18;
     padding-left: 10px;
     padding-top: 0;
   }
-  
+
   .link {
     @extend %whiteOnHover;
-    
-    padding-left: 10px;
-    margin-top: 10px;
-    text-align: start;
-    font-size: variables.$f-size-16;
+
     color: colors.$text-light-gray-color;
+    font-size: variables.$f-size-16;
+    margin-top: 10px;
+    padding-left: 10px;
+    text-align: start;
   }
 }
 
@@ -55,12 +56,12 @@
 }
 
 .systemInfoAndLinksContainer {
+  align-content: flex-start;
+  align-items: flex-start;
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-start;
-  align-content: flex-start;
   gap: 30px;
+  justify-content: flex-start;
 }
 
 .systemInfo {
@@ -68,18 +69,18 @@
 }
 
 .links {
+  box-sizing: border-box;
   display: flex;
   flex-direction: row;
-  box-sizing: border-box;
   gap: 15px;
-  
+
   svg {
+    color: colors.$text-light-gray-color;
     height: 1.2vw;
     width: 1.2vw;
-    color: colors.$text-light-gray-color;
-    
+
     &:hover {
-      color: white;
+      color: colors.$white-color;
     }
   }
 }

@@ -6,10 +6,10 @@
 .contestCard {
   @extend %font-family-lato;
 
-  color: colors.$text-dark-gray-color;
   align-content: center;
   border-radius: 8px;
   box-shadow: colors.$box-shadow-color;
+  color: colors.$text-dark-gray-color;
   display: grid;
   flex: 0 0 10em;
   flex-flow: wrap;
@@ -18,8 +18,8 @@
   margin: 10px;
   min-height: 10vh;
   min-width: 240px;
-  width: 13vw;
   padding: 0.7vw;
+  width: 13vw;
 
   @media only screen and (max-width: variables.$r-laptop-max) {
     margin-left: auto;
@@ -86,12 +86,12 @@
 
 .contestCardTitle {
   display: block;
+  font-size: variables.$f-size-20;
   max-width: 11vw;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
-  font-size: variables.$f-size-20;
 
   @media only screen and (max-width: variables.$r-small-desktop-max) {
     font-size: variables.$f-size-18;

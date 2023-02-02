@@ -6,6 +6,16 @@
   text-align: center;
 }
 
+.taskListItem {
+  align-items: center;
+  border-bottom: 1px solid colors.$bottom-border-color;
+  display: flex;
+  justify-content: space-between;
+  padding: 35px 0 5px;
+  position: relative;
+  width: 100%;
+}
+
 .tasksListSideNavigation {
   align-items: flex-start;
   display: flex;
@@ -27,22 +37,12 @@
       color: colors.$color-btn-secondary;
     }
 
-    & > .taskListItem {
+    .taskListItem {
       @media only screen and (max-width: variables.$r-large-desktop-max) {
         font-size: variables.$f-size-16;
       }
     }
   }
-}
-
-.taskListItem {
-  align-items: center;
-  border-bottom: 1px solid colors.$bottom-border-color;
-  display: flex;
-  justify-content: space-between;
-  padding: 35px 0 5px;
-  position: relative;
-  width: 100%;
 }
 
 .resultsButton {
