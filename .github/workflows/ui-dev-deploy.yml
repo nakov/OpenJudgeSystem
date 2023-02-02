@@ -3,7 +3,9 @@ name: UI dev deploy
 
 
 on:
-  workflow_dispatch:
+  push:
+    tags:
+      - redeploy-dev-ui-*
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
