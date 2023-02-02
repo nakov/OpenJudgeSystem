@@ -1,28 +1,41 @@
 import React, { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import Form, { FormType } from '../../components/guidelines/forms/Form';
-import FormControl, { FormControlType } from '../../components/guidelines/forms/FormControl';
+import FormControl, {
+    FormControlType,
+    IFormControlOnChangeValueType,
+} from '../../components/guidelines/forms/FormControl';
+import { useSearch } from '../../hooks/use-search';
 
 import styles from './SearchBar.module.scss';
 
+const defaultState = { state: { searchValue: '' } };
+
+const searchFieldName = 'Search';
+
 const SearchBar = () => {
-    const [ searchValue, setSearchValue ] = useState<string>();
+    const [ searchParam, setSearchParam ] = useState<string>(defaultState.state.searchValue);
+    const { actions: { changeSearchValue } } = useSearch();
     const navigate = useNavigate();
-    const searchFieldName = 'Search';
+    const { pathname } = useLocation();
 
     const handleOnChangeUpdateSearch = useCallback(
-        (searchInput?: string) => {
-            setSearchValue(searchInput);
+        (searchInput?: IFormControlOnChangeValueType) => {
+            setSearchParam(searchInput as string);
         },
         [],
     );
 
     const handleSubmit = useCallback(
         () => {
-            navigate('/search', { state: searchValue });
+            if (pathname !== '/search') {
+                navigate('/search');
+            }
+
+            changeSearchValue(searchParam);
         },
-        [ navigate, searchValue ],
+        [ changeSearchValue, navigate, pathname, searchParam ],
     );
 
     const handleOnKeyDown = useCallback(
@@ -47,8 +60,8 @@ const SearchBar = () => {
               type={FormControlType.search}
               labelText={searchFieldName}
               onChange={handleOnChangeUpdateSearch}
-              onKeyDown={(ev:React.KeyboardEvent<HTMLInputElement>) => handleOnKeyDown(ev)}
-              value={searchValue}
+              onKeyDown={handleOnKeyDown}
+              value={searchParam}
             />
         </Form>
     );

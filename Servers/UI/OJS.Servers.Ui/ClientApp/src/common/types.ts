@@ -1,3 +1,5 @@
+import { IContestSearchType, IProblemSearchType, IUserSearchType } from './search-types';
+
 interface ISubmissionTypeType {
     id: number;
     name: string;
@@ -116,6 +118,13 @@ interface IUserPermissionsType {
     canAccessAdministration: boolean;
 }
 
+interface ISearchResponseModel {
+    contests: IContestSearchType[];
+    problems: IProblemSearchType[];
+    users: IUserSearchType[];
+    validationResult: IStartParticipationValidationType;
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -130,4 +139,5 @@ export type {
     IPagedResultType,
     IUserType,
     IUserPermissionsType,
+    ISearchResponseModel,
 };

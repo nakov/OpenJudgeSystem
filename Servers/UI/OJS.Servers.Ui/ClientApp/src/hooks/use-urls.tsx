@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
+import { SearchParams } from '../common/search-types';
 import {
     IAllContestsUrlParams,
     IDownloadProblemResourceUrlParams, IGetContestParticipationScoresForParticipantUrlParams,
-    IGetContestResultsParams,
+    IGetContestResultsParams, IGetSearchResultsUrlParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemAndUserUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
@@ -40,6 +41,7 @@ interface IUrlsContext {
     getContestResultsUrl: (params: IGetContestResultsParams) => string;
     getHomeStatisticsUrl: () => string;
     getAdministrationRetestSubmission: (params: IRetestSubmissionUrlParams) => string;
+    getSearchResults: (searchTerm: IGetSearchResultsUrlParams) => string;
 }
 
 const UrlsContext = createContext<IUrlsContext>({} as IUrlsContext);
@@ -151,6 +153,10 @@ const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams
 // Statistics
 const getHomeStatisticsUrl = () => `${baseApiUrl}/StatisticsPreview/GetForHome`;
 
+// Search
+// eslint-disable-next-line max-len
+const getSearchResults = ({ searchTerm }: IGetSearchResultsUrlParams) => `${baseApiUrl}/Search/GetSearchResults?${SearchParams.search}=${searchTerm}`;
+
 const UrlsProvider = ({ children }: IUrlsProviderProps) => {
     const value = useMemo(
         () => ({
@@ -179,6 +185,7 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
             getContestResultsUrl,
             getHomeStatisticsUrl,
             getAdministrationRetestSubmission,
+            getSearchResults,
         }),
         [],
     );

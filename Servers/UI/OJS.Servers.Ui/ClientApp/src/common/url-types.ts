@@ -66,6 +66,10 @@ interface IRetestSubmissionUrlParams {
     id: number;
 }
 
+interface IGetSearchResultsUrlParams {
+    searchTerm: string;
+}
+
 export type {
     IRegisterForContestUrlParams,
     ISubmitContestPasswordUrlParams,
@@ -80,4 +84,5 @@ export type {
     IGetContestResultsParams,
     IRetestSubmissionUrlParams,
     IGetSubmissionResultsByProblemAndUserUrlParams,
+    IGetSearchResultsUrlParams,
 };
