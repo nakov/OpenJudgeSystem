@@ -19,15 +19,16 @@
   @extend %navigation;
 
   border-left: 0;
+  flex: 7;
+
+  @media only screen and (max-width: variables.$r-large-desktop-max) {
+    flex: 3;
+  }
 }
 
 .detailsWrapper {
   @extend %wrapper;
   @extend %columnsThree;
-}
-
-.errorMessage {
-  font-family: fonts.$font-family-lato;
 }
 
 .leftArrow {
@@ -67,7 +68,7 @@
 
 .submissionInfoParagraph {
   @extend %font-family-lato;
-  
+
   color: colors.$text-dark-gray-color;
   margin-bottom: 10px;
 }

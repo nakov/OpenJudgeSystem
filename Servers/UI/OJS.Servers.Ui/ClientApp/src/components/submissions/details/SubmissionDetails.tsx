@@ -11,7 +11,7 @@ import { usePageTitles } from '../../../hooks/use-page-titles';
 import concatClassNames from '../../../utils/class-names';
 import { preciseFormatDate } from '../../../utils/dates';
 import CodeEditor from '../../code-editor/CodeEditor';
-import { ButtonSize, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import IconSize from '../../guidelines/icons/common/icon-sizes';
 import LeftArrowIcon from '../../guidelines/icons/LeftArrowIcon';
@@ -160,6 +160,19 @@ const SubmissionDetails = () => {
         [ currentSubmission, canAccessAdministration ],
     );
 
+    const backButtonState = useMemo(
+        () => isNil(contest)
+            ? ButtonState.disabled
+            : ButtonState.enabled,
+        [ contest ],
+    );
+
+    if (isNil(currentSubmission)) {
+        return <div>No details fetched.</div>;
+    }
+
+    return (
+        <div className={styles.detailsWrapper}>
     const refreshableSubmissionsListRendering = useMemo(
         () => (
             <div className={styles.navigation}>
@@ -193,6 +206,7 @@ const SubmissionDetails = () => {
                           to={registerContestTypeUrl}
                           className={styles.backBtn}
                           text="Back To Contest"
+                          state={backButtonState}
                         />
                     </div>
                     <div>
