@@ -186,9 +186,6 @@ const SubmissionDetails = () => {
         [ contest ],
     );
 
-    if (isNil(currentSubmission)) {
-        return <div>No details fetched.</div>;
-    }
     const refreshableSubmissionsList = useMemo(
         () => (
             <div className={styles.navigation}>
@@ -211,18 +208,18 @@ const SubmissionDetails = () => {
         () => (
             <div className={styles.code}>
                 <Heading
-                    type={HeadingType.secondary}
-                    className={styles.taskHeading}
+                  type={HeadingType.secondary}
+                  className={styles.taskHeading}
                 >
                     <div className={styles.btnContainer}>
                         <LeftArrowIcon className={styles.leftArrow} size={IconSize.Large} />
                         <LinkButton
-                            type={LinkButtonType.secondary}
-                            size={ButtonSize.small}
-                            to={registerContestTypeUrl}
-                            className={styles.backBtn}
-                            text="Back To Contest"
-                            state={backButtonState}
+                          type={LinkButtonType.secondary}
+                          size={ButtonSize.small}
+                          to={registerContestTypeUrl}
+                          className={styles.backBtn}
+                          text="Back To Contest"
+                          state={backButtonState}
                         />
                     </div>
                     <div>
@@ -231,13 +228,13 @@ const SubmissionDetails = () => {
                     <div className={styles.itemInvisible}>Other</div>
                 </Heading>
                 <CodeEditor
-                    readOnly
-                    code={currentSubmission?.content}
-                    selectedSubmissionType={submissionType}
+                  readOnly
+                  code={currentSubmission?.content}
+                  selectedSubmissionType={submissionType}
                 />
             </div>
         ),
-        [ problemNameHeadingText, currentSubmission?.content, submissionType, registerContestTypeUrl ],
+        [ problemNameHeadingText, currentSubmission?.content, submissionType, registerContestTypeUrl, backButtonState ],
     );
 
     const submissionResults = useCallback(
@@ -258,7 +255,7 @@ const SubmissionDetails = () => {
         [ currentSubmission, detailsHeadingText, submissionDetailsClassName ],
     );
 
-    if (isNil(currentSubmission) || isNil(validationResult)) {
+    if (isNil(currentSubmission)) {
         return <div>No details fetched.</div>;
     }
 
