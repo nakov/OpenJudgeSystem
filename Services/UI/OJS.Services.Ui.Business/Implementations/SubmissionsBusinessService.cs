@@ -1,24 +1,24 @@
 namespace OJS.Services.Ui.Business.Implementations;
 
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using OJS.Data.Models.Problems;
 using FluentExtensions.Extensions;
-using OJS.Data.Models.Tests;
+using Microsoft.EntityFrameworkCore;
 using OJS.Common;
 using OJS.Common.Helpers;
+using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
-using OJS.Services.Ui.Data;
-using OJS.Services.Ui.Models.Submissions;
-using SoftUni.Judge.Common.Enumerations;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Data.Models.Tests;
 using OJS.Services.Common;
 using OJS.Services.Infrastructure.Exceptions;
-using static OJS.Services.Ui.Business.Constants.PublicSubmissions;
 using OJS.Services.Ui.Business.Validation;
+using OJS.Services.Ui.Data;
+using OJS.Services.Ui.Models.Submissions;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
+using SoftUni.Judge.Common.Enumerations;
+using static OJS.Services.Ui.Business.Constants.PublicSubmissions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 public class SubmissionsBusinessService : ISubmissionsBusinessService
 {
@@ -86,7 +86,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var validationResult = this.submissionDetailsValidationService.GetValidationResult((submissionDetailsServiceModel, currentUser) !);
 
-        submissionDetailsServiceModel!.ValidationResult = validationResult;
+        submissionDetailsServiceModel ??= new SubmissionDetailsServiceModel();
+
+        submissionDetailsServiceModel.ValidationResult = validationResult;
 
         return submissionDetailsServiceModel;
     }
@@ -504,12 +506,12 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var userHasParticipation = await this.participantsDataService
             .ExistsByContestByUserAndIsOfficial(problem.ProblemGroup.ContestId, user.Id!, isOfficial);
 
-        if (!userHasParticipation)
+        if (!userHasParticipation && !user.IsAdminOrLecturer)
         {
             throw new BusinessServiceException(Resources.ContestsGeneral.UserIsNotRegisteredForExam);
         }
 
-        if (!problem.ShowResults)
+        if (!problem.ShowResults && !user.IsAdminOrLecturer)
         {
             throw new BusinessServiceException(Resources.ContestsGeneral.ProblemResultsNotAvailable);
         }
