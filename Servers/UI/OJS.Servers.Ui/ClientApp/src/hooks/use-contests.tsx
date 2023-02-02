@@ -45,6 +45,7 @@ interface IContestsContext {
         toggleParam: (param: IFilter | ISort) => void;
         changePage: (pageNumber: number) => void;
         loadContestByProblemId: (problemId: number) => void;
+        initiateGetAllContestsQuery: () => void;
     };
 }
 
@@ -218,7 +219,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         changePage(1);
     }, [ changePage, params, setParam ]);
 
-    useEffect(
+    const initiateGetAllContestsQuery = useCallback(
         () => {
             setGetAllContestsUrlParams({
                 filters: filters as IFilter[],
@@ -319,6 +320,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
                 toggleParam,
                 changePage,
                 loadContestByProblemId,
+                initiateGetAllContestsQuery,
             },
         }),
         [
@@ -336,6 +338,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             toggleParam,
             loadContestByProblemId,
             contest,
+            initiateGetAllContestsQuery,
         ],
     );
 
