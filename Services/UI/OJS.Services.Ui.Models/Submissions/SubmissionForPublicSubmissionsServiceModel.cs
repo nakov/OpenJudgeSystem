@@ -32,6 +32,8 @@ public class ProblemForPublicSubmissionsServiceModel
 
     public ContestForPublicSubmissionsServiceModel Contest { get; set; } = null!;
 
+    public double OrderBy { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Problem, ProblemForPublicSubmissionsServiceModel>()
             .ForMember(
