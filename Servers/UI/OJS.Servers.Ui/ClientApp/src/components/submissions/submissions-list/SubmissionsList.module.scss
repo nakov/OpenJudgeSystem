@@ -29,16 +29,6 @@
   &.selected {
     color: colors.$color-btn-secondary;
   }
-
-  @media only screen and (max-width: variables.$r-large-desktop-max) {
-    .submissionTypeText {
-      font-size: variables.$f-size-16;
-    }
-
-    .submissionTypeLabel {
-      font-size: variables.$f-size-12;
-    }
-  }
 }
 
 .actionsContainer {
@@ -66,9 +56,13 @@
 }
 
 .submissionTypeText {
-  // body
+  @media only screen and (max-width: variables.$r-large-desktop-max) {
+    font-size: variables.$f-size-16;
+  }
 }
 
 .submissionTypeLabel {
-  // body
+  @media only screen and (max-width: variables.$r-large-desktop-max) {
+    font-size: variables.$f-size-12;
+  }
 }
