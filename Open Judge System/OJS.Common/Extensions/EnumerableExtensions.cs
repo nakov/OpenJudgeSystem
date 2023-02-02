@@ -5,7 +5,7 @@
 
     public static class EnumerableExtensions
     {
-        public static IEnumerable<IEnumerable<T>> ChunkBy<T>(this IEnumerable<T> source, int chunkSize) =>
+        public static IEnumerable<IEnumerable<T>> ChunkBy<T>(this IEnumerable<T> source, int chunkSize) =>    
             source
                 .Select((x, i) => new
                 {
@@ -14,5 +14,19 @@
                 })
                 .GroupBy(x => x.Index / chunkSize)
                 .Select(x => x.Select(v => v.Value));
+        
+        public static IEnumerable<IEnumerable<T>> InBatches<T>(this IEnumerable<T> queryable, int size)
+        {
+            var current = queryable.AsQueryable();
+            while (current.Any())
+            {
+                var batch = current.Take(size);
+                yield return batch;
+                current = current.Skip(size);
+            }
+        }
+
+        public static ISet<T> ToSet<T>(this IEnumerable<T> enumerable)
+            => new HashSet<T>(enumerable);
     }
 }
