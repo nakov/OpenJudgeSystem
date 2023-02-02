@@ -1,6 +1,7 @@
 @use 'src/styles/global';
 @use 'src/styles/components';
 @use 'src/styles/fonts';
+@use 'src/styles/variables';
 @use 'src/styles/colors';
 
 .backBtn {
@@ -18,6 +19,11 @@
   @extend %navigation;
 
   border-left: 0;
+  flex: 7;
+
+  @media only screen and (max-width: variables.$r-large-desktop-max) {
+    flex: 3;
+  }
 }
 
 .detailsWrapper {
@@ -61,6 +67,9 @@
 }
 
 .submissionInfoParagraph {
+  @extend %font-family-lato;
+
+  color: colors.$text-dark-gray-color;
   margin-bottom: 10px;
 }
 
