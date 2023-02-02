@@ -11,14 +11,7 @@
   flex: 7;
 
   @media only screen and (max-width: variables.$r-large-desktop-max) {
-    .code {
-      flex: 3;
-    }
-
-    .submissionsList > ul {
-      font-size: variables.$f-size-30;
-      padding: 0;
-    }
+    flex: 3;
   }
 }
 

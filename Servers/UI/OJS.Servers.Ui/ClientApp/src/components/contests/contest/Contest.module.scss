@@ -37,9 +37,3 @@
     flex: 3;
   }
 }
-
-%r-contestSubmissionBox {
-  @media only screen and (max-width: variables.$r-small-max) {
-    flex: 5;
-  }
-}
