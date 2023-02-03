@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -20,10 +21,12 @@ interface ISearchContext {
         validationResult: IStartParticipationValidationType;
         searchValue: string;
         isLoaded: boolean;
+        searchResultUrlParam: IGetSearchResultsUrlParams;
     };
     actions: {
         changeSearchValue: (searchParam: string) => void;
         clearSearchValue: () => void;
+        load: () => Promise<void>;
     };
 }
 
@@ -39,6 +42,7 @@ const defaultState = {
             isValid: true,
         },
         searchValue: '',
+        searchResultUrlParam: { searchTerm: '' },
     },
 };
 
@@ -50,10 +54,12 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
     const [ users, setSearchedUsers ] = useState(defaultState.state.users);
     const [ validationResult, setValidationResult ] = useState<IStartParticipationValidationType>(defaultState.state.validationResult);
     const [ searchValue, setSearchValue ] = useState<string>(defaultState.state.searchValue);
-    const [ getSearchResultsUrlParams, setGetSearchResultsUrlParams ] = useState<IGetSearchResultsUrlParams | null>();
+    const [ getSearchResultsUrlParams, setGetSearchResultsUrlParams ] =
+        useState<IGetSearchResultsUrlParams>(defaultState.state.searchResultUrlParam);
 
     const { getSearchResults } = useUrls();
     const { startLoading, stopLoading } = useLoading();
+    const { search } = useLocation();
 
     const {
         actions: {
@@ -73,14 +79,33 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
             parameters: getSearchResultsUrlParams,
         });
 
-    useEffect(
+    const urlParam = useMemo(
         () => {
-            if (!isEmpty(searchValue)) {
+            const query = new URLSearchParams(search);
+
+            return query.get(SearchParams.search) as string;
+        },
+        [ search ],
+    );
+
+    const setParams = useCallback(
+        () => {
+            if (!isEmpty(urlParam) && isEmpty(searchValue)) {
+                setGetSearchResultsUrlParams({ searchTerm: urlParam });
+                setParam(SearchParams.search, urlParam);
+                setSearchValue(urlParam);
+            } else {
                 setGetSearchResultsUrlParams({ searchTerm: searchValue });
-                setParam(SearchParams.search, searchValue);
             }
         },
-        [ searchValue, setParam ],
+        [ searchValue, setParam, urlParam ],
+    );
+
+    useEffect(
+        () => {
+            setParams();
+        },
+        [ setParams ],
     );
 
     useEffect(
@@ -113,19 +138,6 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
         [ get, startLoading, stopLoading ],
     );
 
-    useEffect(
-        () => {
-            if (isNil(getSearchResultsUrlParams)) {
-                return;
-            }
-
-            (async () => {
-                await load();
-            })();
-        },
-        [ getSearchResultsUrlParams, load ],
-    );
-
     const changeSearchValue = useCallback(
         (searchParam: string) => {
             setSearchValue(searchParam);
@@ -147,13 +159,16 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
                 validationResult,
                 searchValue,
                 isLoaded: isSuccess,
+                searchResultUrlParam: getSearchResultsUrlParams,
             },
             actions: {
                 changeSearchValue,
                 clearSearchValue,
+                load,
             },
         }),
-        [ changeSearchValue, clearSearchValue, contests, isSuccess, problems, searchValue, users, validationResult ],
+        [ changeSearchValue, clearSearchValue, contests,
+            getSearchResultsUrlParams, isSuccess, load, problems, searchValue, users, validationResult ],
     );
 
     return (

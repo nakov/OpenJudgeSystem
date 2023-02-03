@@ -1,5 +1,5 @@
 enum SearchParams {
-    search = 'searchTerm'
+    search = 'searchterm'
 }
 
 interface IContestSearchType{
@@ -7,9 +7,17 @@ interface IContestSearchType{
     name: string;
 }
 
+interface IProblemContest {
+    id: number;
+    name: string;
+    canBeCompeted: boolean;
+    canBePracticed: boolean;
+}
+
 interface IProblemSearchType {
     id: number;
     name: string;
+    contest: IProblemContest;
 }
 
 interface IUserSearchType {

@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
-import SearchPage from '../../components/search/SearchPage';
 import AdministrationPage from '../../pages/administration/AdministrationPage';
 import SubmissionRetestPage from '../../pages/administration/SubmissionRetestPage';
 import ContestPage from '../../pages/contest/ContestPage';
@@ -13,6 +12,7 @@ import LoginPage from '../../pages/login/LoginPage';
 import LogoutPage from '../../pages/logout/LogoutPage';
 import ProfilePage from '../../pages/profile/ProfilePage';
 import RegisterPage from '../../pages/register/RegisterPage';
+import SearchPage from '../../pages/search/SearchPage';
 import { asPage } from '../../pages/shared/set-page-params';
 import { withTitle } from '../../pages/shared/set-page-title';
 import SubmissionDetailsPage from '../../pages/submission-details/SubmissionDetailsPage';

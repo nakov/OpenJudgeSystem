@@ -20,7 +20,6 @@ const SubmissionsPage = () => {
         () => {
             (async () => {
                 await load();
-                clearHash();
             })();
         },
         [ clearHash, load ],

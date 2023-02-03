@@ -170,10 +170,19 @@ namespace OJS.Services.Ui.Business.Implementations
         }
 
         public async Task<IEnumerable<ProblemSearchServiceModel>> GetSearchProblemsByName(string problemName)
-            => await this.problemsData.GetAllProblems()
+        {
+            var allProblems = await this.problemsData.GetAllProblems()
                 .Where(p => p.Name.Contains(problemName))
-                .MapCollection<ProblemSearchServiceModel>()
                 .ToListAsync();
+
+            var searchProblems = allProblems
+                .MapCollection<ProblemSearchServiceModel>()
+                .ToList();
+
+            searchProblems.ForEach(sp => GetContestNames(sp, allProblems));
+
+            return searchProblems;
+        }
 
         public void ValidateProblemForParticipant(Participant participant, Contest contest, int problemId, bool isOfficial)
         {
@@ -185,6 +194,11 @@ namespace OJS.Services.Ui.Business.Implementations
                 throw new BusinessServiceException(Resources.ContestsGeneral.ProblemNotAssignedToUser);
             }
         }
+
+        private static void GetContestNames(ProblemSearchServiceModel model, IEnumerable<Problem> allProblems)
+            => model.Contest = allProblems
+                .First(p => p.Id == model.Id).ProblemGroup.Contest
+                .Map<ProblemContestSearchServiceModel>();
 
         private async Task CopyProblemToContest(Problem? problem, int contestId, int? problemGroupId)
         {

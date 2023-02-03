@@ -1,0 +1,21 @@
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
+@use 'src/styles/components';
+
+.userElement {
+  align-content: center;
+  border-radius: 8px;
+  box-shadow: 0 1px 5px rgb(0 0 0 / 20%), 0 3px 4px rgb(0 0 0 / 12%), 0 2px 4px rgb(0 0 0 / 14%);
+  display: grid;
+  flex-flow: wrap;
+  grid-gap: 10px;
+  margin: 10px;
+  padding: 0.7vw;
+}
+
+.userText {
+  @extend %font-family-lato;
+
+  color: colors.$text-dark-gray-color;
+  justify-self: center;
+}
