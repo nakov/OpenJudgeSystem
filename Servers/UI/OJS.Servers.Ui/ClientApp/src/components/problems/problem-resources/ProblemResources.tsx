@@ -22,8 +22,8 @@ const ProblemResources = () => {
     const contestResourcesClass = 'contestResources';
     const contestResourcesClassName = concatClassNames(styles.resourcesList, contestResourcesClass);
 
-    if (isNil(resources)) {
-        return (<p>No additional resources.</p>);
+    if (isNil(resources) || resources.length === 0) {
+        return (<p className={styles.noResourcesParagraph}>No additional resources.</p>);
     }
 
     return (
