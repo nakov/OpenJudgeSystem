@@ -21,7 +21,6 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
                 possibleSortingTypes,
                 sortingTypes,
             },
-        actions: { clearSorts },
     } = useContests();
 
     const handleOnSortClick = useCallback(
@@ -64,16 +63,7 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
               type={HeadingType.small}
               className={styles.heading}
             >
-                <div className={styles.buttonContainer}>
-                    Sorting
-                    <Button
-                      type={ButtonType.secondary}
-                      onClick={() => clearSorts()}
-                      className={styles.button}
-                      text="clear sorting"
-                      size={ButtonSize.small}
-                    />
-                </div>
+                Sorting
             </Heading>
             <List
               values={possibleSortingTypes}
