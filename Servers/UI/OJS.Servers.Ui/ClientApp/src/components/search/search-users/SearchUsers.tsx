@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { IProblemSearchType, IUserSearchType } from '../../../common/search-types';
+import { IUserSearchType } from '../../../common/search-types';
 import concatClassNames from '../../../utils/class-names';
-import { LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 
 import styles from './SearchUsers.module.scss';
 

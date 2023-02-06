@@ -1,11 +1,13 @@
 import React, { useCallback, useEffect } from 'react';
 import isEmpty from 'lodash/isEmpty';
 
-import { IProblemSearchType, IUserSearchType, SearchParams } from '../../common/search-types';
+import { IContestSearchType, IProblemSearchType, IUserSearchType, SearchParams } from '../../common/search-types';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import List, { Orientation } from '../../components/guidelines/lists/List';
+import ContestCard from '../../components/home-contests/contest-card/ContestCard';
 import SearchProblem from '../../components/search/search-problems/SearchProblems';
 import SearchUser from '../../components/search/search-users/SearchUsers';
+import { useHashUrlParams } from '../../hooks/common/use-hash-url-params';
 import { useUrlParams } from '../../hooks/common/use-url-params';
 import { usePageTitles } from '../../hooks/use-page-titles';
 import { useSearch } from '../../hooks/use-search';
@@ -28,6 +30,13 @@ const SearchPage = () => {
     } = useSearch();
     const { actions: { setPageTitle } } = usePageTitles();
     const { actions: { setParam } } = useUrlParams();
+    const { state: { params }, actions: { clearHash } } = useHashUrlParams();
+
+    useEffect(() => {
+        if (!isEmpty(params)) {
+            clearHash();
+        }
+    }, [ clearHash, params ]);
 
     useEffect(
         () => {
@@ -64,6 +73,35 @@ const SearchPage = () => {
             </div>
         ),
         [ validationResult ],
+    );
+
+    const renderContest = useCallback(
+        (contest: IContestSearchType) => <ContestCard contest={contest} />,
+        [],
+    );
+
+    const renderContests = useCallback(
+        () => isEmpty(contests)
+            ? null
+            : (
+                <>
+                    <Heading
+                      type={HeadingType.small}
+                      className={styles.heading}
+                    >
+                        Contests:
+                    </Heading>
+                    <List
+                      values={contests}
+                      itemFunc={renderContest}
+                      className={styles.items}
+                      itemClassName={styles.contestItem}
+                      orientation={Orientation.horizontal}
+                      wrap
+                    />
+                </>
+            ),
+        [ contests, renderContest ],
     );
 
     const renderProblem = useCallback(
@@ -137,11 +175,12 @@ const SearchPage = () => {
                         {`"${searchValue}"`}
                     </Heading>
                 </div>
+                {renderContests()}
                 {renderProblems()}
                 {renderUsers()}
             </>
         ),
-        [ renderProblems, renderUsers, searchValue ],
+        [ renderContests, renderProblems, renderUsers, searchValue ],
     );
 
     const renderPage = useCallback(

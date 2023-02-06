@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import isEmpty from 'lodash/isEmpty';
 
 import Form, { FormType } from '../../components/guidelines/forms/Form';
 import FormControl, {
@@ -29,7 +30,7 @@ const SearchBar = () => {
 
     const handleSubmit = useCallback(
         () => {
-            if (pathname !== '/search') {
+            if (pathname !== '/search' && !isEmpty(searchParam)) {
                 navigate('/search');
             }
 
