@@ -18,7 +18,7 @@ const LogoutPage = () => {
 
     return (
         <div className={styles.logout}>
-            You are logged out and will be redirected to home shortly.
+            You are now successfully logged out and will be redirected to home page shortly.
         </div>
     );
 };
