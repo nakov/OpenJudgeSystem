@@ -1,4 +1,4 @@
-import { ISubmissionTypeType } from '../../common/types';
+import { ISubmissionTypeType, IValidationType } from '../../common/types';
 import { IUserProfileType } from '../use-users';
 
 interface IProblemType {
@@ -35,6 +35,7 @@ interface ISubmissionType {
     compilerComment: string;
     createdOn: Date;
     modifiedOn?: Date;
+    validationResult: IValidationType;
 }
 
 interface ITestRunDetailsType extends ITestRunType {
