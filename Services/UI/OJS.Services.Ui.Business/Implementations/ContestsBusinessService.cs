@@ -376,7 +376,7 @@ namespace OJS.Services.Ui.Business.Implementations
             string userId,
             bool isUserAdmin)
         {
-            if (contest.Type is not(ContestType.OnlinePracticalExam and ContestType.OnlinePracticalExam) &&
+            if (contest.Type is not(ContestType.OnlinePracticalExam or ContestType.OnsitePracticalExam) &&
                 official &&
                 !isUserAdmin &&
                 !IsUserLecturerInContest(contest, userId) &&
