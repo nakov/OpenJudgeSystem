@@ -1,5 +1,4 @@
-import React, { useMemo } from 'react';
-import isNil from 'lodash/isNil';
+import React, { useEffect, useMemo } from 'react';
 
 import concatClassNames from '../../../utils/class-names';
 import Label, { LabelType } from '../../guidelines/labels/Label';
@@ -17,11 +16,17 @@ const SubmissionResultPointsLabel = ({
     maximumPoints,
     isProcessed,
 }: ISubmissionResultPointsLabelProps) => {
-    const labelType = points === 0 || isNil(points)
-        ? LabelType.warning
-        : points === 100
-            ? LabelType.success
-            : LabelType.info;
+    const labelType = points === 0 && !isProcessed
+        ? LabelType.plain
+        : points === 0 && isProcessed
+            ? LabelType.warning
+            : points === 100
+                ? LabelType.success
+                : LabelType.info;
+
+    useEffect(() => {
+        console.log(`${points} ${labelType}`);
+    });
 
     const currentPoints = isProcessed
         ? points

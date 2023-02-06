@@ -36,8 +36,8 @@ const ProblemSubmissions = () => {
     // const submissionResultsListItemClass = 'submission results';
     // const submissionResultsListItemClassName =
     // concatClassNames(styles.submissionItem, submissionResultsListItemClass);
-    const submissionResultsContentClassName = concatClassNames(styles.submissionResultsContent);
-
+    const submissionResultsContentClass = 'submissionResultsContent';
+    const submissionResultsContentClassName = concatClassNames(styles.submissionResultsContent, submissionResultsContentClass);
     const renderSubmissions = () => {
         if (isNil(submissions) || isEmpty(submissions)) {
             return (
