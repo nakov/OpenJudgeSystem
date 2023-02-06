@@ -8,6 +8,7 @@ import { IHaveChildrenProps } from '../components/common/Props';
 interface IAppUrlsContext {
     getRegisterContestTypeUrl: (params: IRegisterForContestTypeUrlParams) => string;
     getAdministrationRetestSubmissionInternalUrl: () => string;
+    getLoginUrl: () => string;
 }
 
 const AppUrlsContext = createContext<IAppUrlsContext>({} as IAppUrlsContext);
@@ -22,9 +23,17 @@ const getRegisterContestTypeUrl = ({
 
 const getAdministrationRetestSubmissionInternalUrl = () => '/Submissions/Retest';
 
+const getLoginUrl = () => '/Login';
+
 const AppUrlsProvider = ({ children }: IAppUrlsProviderProps) => {
     const value = useMemo(
-        () => ({ getRegisterContestTypeUrl, getAdministrationRetestSubmissionInternalUrl }),
+        () => (
+            {
+                getRegisterContestTypeUrl,
+                getAdministrationRetestSubmissionInternalUrl,
+                getLoginUrl,
+            }
+        ),
         [],
     );
 
