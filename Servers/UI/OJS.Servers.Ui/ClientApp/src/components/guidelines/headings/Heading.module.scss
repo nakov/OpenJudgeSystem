@@ -14,6 +14,10 @@
     font-size: variables.$f-size-30;
     line-height: 36px;
     padding: 10px;
+
+    @media only screen and (max-width: variables.$r-large-desktop-min) {
+      font-size: variables.$f-size-24;
+    }
   }
 
   &.secondary {
@@ -22,9 +26,8 @@
     line-height: 30px;
     padding: 10px;
 
-    @media only screen and (max-width: 1024px) {
-      font-size: variables.$f-size-24;
-      line-height: 34px;
+    @media only screen and (max-width: variables.$r-large-desktop-min) {
+      font-size: variables.$f-size-20;
     }
   }
 
