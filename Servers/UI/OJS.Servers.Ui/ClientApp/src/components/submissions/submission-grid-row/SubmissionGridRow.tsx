@@ -3,6 +3,7 @@ import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IPublicSubmission, PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
+import { useAuth } from '../../../hooks/use-auth';
 import { formatDate } from '../../../utils/dates';
 import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../utils/strategy-type-utils';
 import { LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
@@ -28,9 +29,29 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
                 id: contestId,
                 name: contestName,
             },
+            orderBy,
         },
         isOfficial,
     } = submission;
+
+    const { state: loggedInUser } = useAuth();
+
+    const renderDetailsBtn = useCallback(
+        () => {
+            const { user: { username: loggedInUsername, permissions: { canAccessAdministration } } } = loggedInUser;
+
+            if (username === loggedInUsername || canAccessAdministration) {
+                return (
+                    <LinkButton
+                      to={`/submissions/${submissionId}/details`}
+                      text="Details"
+                    />
+                );
+            }
+            return '';
+        },
+        [ loggedInUser, username, submissionId ],
+    );
 
     const renderStrategyIcon = useCallback(
         () => {
@@ -84,10 +105,9 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
             </div>
             <div className={styles.detailsContainer}>
                 <div>
-                    {/* TODO: Fix this URL once https://github.com/SoftUni-Internal/exam-systems-issues/issues/184 is done */}
                     <LinkButton
                       text={problemName}
-                      to={`/contests/${contestId}/${participationType}`}
+                      to={`/contests/${contestId}/${participationType}#${orderBy + 1}`}
                       type={LinkButtonType.plain}
                       className={styles.link}
                     />
@@ -101,17 +121,11 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
                 </div>
                 <div className={styles.dateAndUsernameContainer}>
                     <span>{formatDate(createdOn)}</span>
-                    <span>
-                        by
-                        {username}
-                    </span>
+                    <span>by</span>
+                    <span>{username}</span>
                 </div>
             </div>
-
-            <LinkButton
-              to={`/submissions/${submissionId}/details`}
-              text="Details"
-            />
+            {renderDetailsBtn()}
         </div>
     );
 };

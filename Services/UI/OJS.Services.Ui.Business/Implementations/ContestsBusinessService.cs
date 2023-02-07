@@ -21,7 +21,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
     public class ContestsBusinessService : IContestsBusinessService
     {
-        private const int DefaultContestsToTake = 3;
+        private const int DefaultContestsToTake = 4;
         private const int DefaultContestsPerPage = 12;
 
         private readonly IContestsDataService contestsData;
@@ -106,7 +106,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var user = this.userProviderService.GetCurrentUser();
 
-            var validationResult = await this.contestValidationService.GetValidationResult((contest, user?.Id, user!.IsAdmin, model.IsOfficial) !);
+            var validationResult = this.contestValidationService.GetValidationResult((contest, user?.Id, user!.IsAdmin, model.IsOfficial) !);
 
             var userProfile = await this.usersBusinessService.GetUserProfileById(user.Id!);
 
