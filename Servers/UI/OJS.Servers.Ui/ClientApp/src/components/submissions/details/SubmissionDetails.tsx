@@ -194,9 +194,9 @@ const SubmissionDetails = () => {
                     <Heading type={HeadingType.secondary}>Submissions</Heading>
                 </div>
                 <RefreshableSubmissionsList
-                    items={currentProblemSubmissionResults}
-                    selectedSubmission={currentSubmission}
-                    className={styles.submissionsList}
+                  items={currentProblemSubmissionResults}
+                  selectedSubmission={currentSubmission}
+                  className={styles.submissionsList}
                 />
                 { renderRetestButton() }
                 { renderSubmissionInfo() }
