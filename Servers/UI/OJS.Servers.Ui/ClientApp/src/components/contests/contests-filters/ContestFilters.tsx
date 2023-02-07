@@ -36,7 +36,11 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
 
     const {
         state: { possibleFilters },
-        actions: { toggleParam, clearFilters },
+        actions: {
+            toggleParam,
+            clearFilters,
+            clearSorts,
+        },
     } = useContests();
 
     const { actions: { clearBreadcrumb } } = useCategoriesBreadcrumbs();
@@ -125,19 +129,20 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         [ loadCategories ],
     );
 
-    const clearFiltersAndBreadcrumb = useCallback(
+    const clearFiltersAndBreadcrumbAndSorting = useCallback(
         () => {
             clearFilters();
             clearBreadcrumb();
+            clearSorts();
         },
-        [ clearFilters, clearBreadcrumb ],
+        [ clearFilters, clearBreadcrumb, clearSorts ],
     );
 
     return (
         <div className={styles.container}>
             <Button
               type={ButtonType.secondary}
-              onClick={() => clearFiltersAndBreadcrumb()}
+              onClick={() => clearFiltersAndBreadcrumbAndSorting()}
               className={styles.button}
               text="clear filters"
               size={ButtonSize.small}

@@ -1,23 +1,24 @@
 namespace OJS.Services.Ui.Business.Implementations;
 
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using OJS.Data.Models.Problems;
 using FluentExtensions.Extensions;
-using OJS.Data.Models.Tests;
+using Microsoft.EntityFrameworkCore;
 using OJS.Common;
 using OJS.Common.Helpers;
+using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
-using OJS.Services.Ui.Data;
-using OJS.Services.Ui.Models.Submissions;
-using SoftUni.Judge.Common.Enumerations;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Data.Models.Tests;
 using OJS.Services.Common;
 using OJS.Services.Infrastructure.Exceptions;
+using OJS.Services.Ui.Business.Validation;
+using OJS.Services.Ui.Data;
+using OJS.Services.Ui.Models.Submissions;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
+using SoftUni.Judge.Common.Enumerations;
 using static OJS.Services.Ui.Business.Constants.PublicSubmissions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 public class SubmissionsBusinessService : ISubmissionsBusinessService
 {
@@ -33,6 +34,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmissionTypesBusinessService submissionTypesBusinessService;
     private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunicationService;
     private readonly ITestRunsDataService testRunsDataService;
+    private readonly ISubmissionDetailsValidationService submissionDetailsValidationService;
 
     public SubmissionsBusinessService(
         ISubmissionsDataService submissionsData,
@@ -45,7 +47,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ISubmissionTypesBusinessService submissionTypesBusinessService,
         ISubmissionsDistributorCommunicationService submissionsDistributorCommunicationService,
         ITestRunsDataService testRunsDataService,
-        IParticipantScoresBusinessService participantScoresBusinessService)
+        IParticipantScoresBusinessService participantScoresBusinessService,
+        ISubmissionDetailsValidationService submissionDetailsValidationService)
     {
         this.submissionsData = submissionsData;
         this.usersBusiness = usersBusiness;
@@ -58,6 +61,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.submissionsDistributorCommunicationService = submissionsDistributorCommunicationService;
         this.testRunsDataService = testRunsDataService;
         this.participantScoresBusinessService = participantScoresBusinessService;
+        this.submissionDetailsValidationService = submissionDetailsValidationService;
     }
 
     public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
@@ -66,8 +70,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .MapCollection<SubmissionDetailsServiceModel>()
             .FirstOrDefaultAsync();
 
-    public async Task<SubmissionDetailsServiceModel?> GetDetailsById(int submissionId)
-        => await this.submissionsData
+    public async Task<SubmissionDetailsServiceModel> GetDetailsById(int submissionId)
+    {
+        var currentUser = this.userProviderService.GetCurrentUser();
+
+        var submissionDetailsServiceModel = await this.submissionsData
             .GetByIdQuery(submissionId)
             .Include(s => s.Participant)
             .ThenInclude(p => p!.User)
@@ -76,6 +83,15 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .Include(s => s.SubmissionType)
             .MapCollection<SubmissionDetailsServiceModel>()
             .FirstOrDefaultAsync();
+
+        var validationResult = this.submissionDetailsValidationService.GetValidationResult((submissionDetailsServiceModel, currentUser) !);
+
+        submissionDetailsServiceModel ??= new SubmissionDetailsServiceModel();
+
+        submissionDetailsServiceModel.ValidationResult = validationResult;
+
+        return submissionDetailsServiceModel;
+    }
 
     public Task<IQueryable<Submission>> GetAllForArchiving()
     {
