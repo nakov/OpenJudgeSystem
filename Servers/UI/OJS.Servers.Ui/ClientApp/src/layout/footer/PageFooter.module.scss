@@ -1,11 +1,12 @@
 @use 'src/styles/colors';
+@use 'src/styles/fonts';
+@use 'src/styles/components';
+@use 'src/styles/variables';
 
 .footer {
-  align-items: center;
+  @extend %font-family-lato;
+
   background: colors.$background-color-footer;
-  color: #fff;
-  display: flex;
-  height: 50px;
-  justify-content: center;
-  width: 100%;
+  color: colors.$text-light-gray-color;
+  min-height: 30vh;
 }
