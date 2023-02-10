@@ -35,6 +35,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunicationService;
     private readonly ITestRunsDataService testRunsDataService;
     private readonly ISubmissionDetailsValidationService submissionDetailsValidationService;
+    private readonly ISubmissionResultsValidationService submissionResultsValidationService;
 
     public SubmissionsBusinessService(
         ISubmissionsDataService submissionsData,
@@ -48,7 +49,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ISubmissionsDistributorCommunicationService submissionsDistributorCommunicationService,
         ITestRunsDataService testRunsDataService,
         IParticipantScoresBusinessService participantScoresBusinessService,
-        ISubmissionDetailsValidationService submissionDetailsValidationService)
+        ISubmissionDetailsValidationService submissionDetailsValidationService,
+        ISubmissionResultsValidationService submissionResultsValidationService)
     {
         this.submissionsData = submissionsData;
         this.usersBusiness = usersBusiness;
@@ -62,6 +64,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.testRunsDataService = testRunsDataService;
         this.participantScoresBusinessService = participantScoresBusinessService;
         this.submissionDetailsValidationService = submissionDetailsValidationService;
+        this.submissionResultsValidationService = submissionResultsValidationService;
     }
 
     public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
@@ -231,20 +234,21 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         return data;
     }
 
-    public async Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(
+    public async Task<SubmissionResultsByProblemServiceModel> GetSubmissionResultsByProblem(
         int problemId,
         bool isOfficial,
         int take = 0)
     {
         var problem = await this.problemsDataService.GetWithProblemGroupById(problemId);
-
-        await this.ValidateUserCanViewResults(problem!, isOfficial);
+        var userInfoModel = this.userProviderService.GetCurrentUser();
 
         var participant =
             await this.participantsDataService.GetByContestByUserAndByIsOfficial(
                 problem!.ProblemGroup.ContestId,
-                this.userProviderService.GetCurrentUser().Id!,
+                userInfoModel.Id!,
                 isOfficial);
+
+        var validationResult = this.submissionResultsValidationService.GetValidationResult((userInfoModel, problem, participant));
 
         var userSubmissions = this.submissionsData
             .GetAllByProblemAndParticipant(problemId, participant!.Id)
@@ -255,7 +259,15 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             userSubmissions = userSubmissions.Take(take);
         }
 
-        return await userSubmissions.ToListAsync();
+        var userSubmissionsMaterialized = await userSubmissions.ToListAsync();
+
+        var submissionResultsByProblemServiceModel = new SubmissionResultsByProblemServiceModel
+        {
+            SubmissionResults = userSubmissionsMaterialized,
+            ValidationResult = validationResult,
+        };
+
+        return submissionResultsByProblemServiceModel;
     }
 
     public async Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblemAndUser(

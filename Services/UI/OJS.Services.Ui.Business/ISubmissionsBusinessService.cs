@@ -23,7 +23,7 @@
 
         Task<IEnumerable<SubmissionForProfileServiceModel>> GetForProfileByUser(string? username);
 
-        Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(int problemId, bool isOfficial, int take = 0);
+        Task<SubmissionResultsByProblemServiceModel> GetSubmissionResultsByProblem(int problemId, bool isOfficial, int take = 0);
 
         Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblemAndUser(
             int problemId,
