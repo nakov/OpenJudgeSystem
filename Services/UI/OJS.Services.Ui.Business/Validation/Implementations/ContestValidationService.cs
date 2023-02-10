@@ -16,7 +16,7 @@ public class ContestValidationService : IContestValidationService
 
         if (contest == null ||
             contest.IsDeleted ||
-            (!contest.IsVisible && !isUserLecturerInContest))
+            (!contest.IsVisible && !isUserLecturerInContest && !isUserAdmin))
         {
             return ValidationResult.Invalid(
                 ValidationMessages.Contest.NotFound,
@@ -43,7 +43,7 @@ public class ContestValidationService : IContestValidationService
                 ContestValidation.ContestCanBeCompeted.ToString());
         }
 
-        if (!official && !contest.CanBePracticed && !isUserLecturerInContest)
+        if (!official && !contest.CanBePracticed && !isUserLecturerInContest && !isUserAdmin)
         {
             return ValidationResult.Invalid(
                 ValidationMessages.Contest.CanBePracticed,

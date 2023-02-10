@@ -79,6 +79,7 @@ interface IRegisterForContestResponseType {
     id: number;
     name: string;
     requirePassword: boolean;
+    validationResult: IValidationType;
 }
 
 interface IValidationType {
