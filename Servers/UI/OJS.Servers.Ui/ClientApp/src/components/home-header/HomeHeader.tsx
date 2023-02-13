@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo } from 'react';
+import React, { FC, useCallback, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
 import { Anything, IDictionary, IKeyValuePair } from '../../common/common-types';
@@ -40,19 +40,7 @@ const keyToIconComponent: IDictionary<FC> = {
 /* eslint-enable react/jsx-props-no-spreading */
 
 const HomeHeader = () => {
-    const {
-        state: { statistics },
-        actions: { load },
-    } = useHomeStatistics();
-
-    useEffect(
-        () => {
-            (async () => {
-                await load();
-            })();
-        },
-        [ load ],
-    );
+    const { state: { statistics } } = useHomeStatistics();
 
     const renderIcon = (type: string) => {
         const props = { size: IconSize.ExtraLarge, children: {} };

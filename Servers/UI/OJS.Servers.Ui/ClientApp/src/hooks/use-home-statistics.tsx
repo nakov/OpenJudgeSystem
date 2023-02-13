@@ -3,7 +3,6 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import { IHaveChildrenProps } from '../components/common/Props';
 
 import { useHttp } from './use-http';
-import { useLoading } from './use-loading';
 import { useUrls } from './use-urls';
 
 interface IHomeStatisticsContext {
@@ -30,10 +29,6 @@ type IHomeStatisticsProviderProps = IHaveChildrenProps
 
 const HomeStatisticsProvider = ({ children }: IHomeStatisticsProviderProps) => {
     const [ statistics, setStatistics ] = useState <IHomeStatistics | null>(null);
-    const {
-        startLoading,
-        stopLoading,
-    } = useLoading();
 
     const { getHomeStatisticsUrl } = useUrls();
 
@@ -44,11 +39,9 @@ const HomeStatisticsProvider = ({ children }: IHomeStatisticsProviderProps) => {
 
     const load = useCallback(
         async () => {
-            await startLoading();
             await get();
-            await stopLoading();
         },
-        [ get, startLoading, stopLoading ],
+        [ get ],
     );
 
     useEffect(

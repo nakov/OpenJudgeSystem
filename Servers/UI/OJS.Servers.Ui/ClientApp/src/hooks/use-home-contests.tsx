@@ -8,7 +8,6 @@ import {
 import { IHaveChildrenProps } from '../components/common/Props';
 
 import { useHttp } from './use-http';
-import { useLoading } from './use-loading';
 import { useUrls } from './use-urls';
 
 interface IHomeContestsContext {
@@ -38,20 +37,16 @@ const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
     const { getIndexContestsUrl } = useUrls();
 
     const {
-        startLoading,
-        stopLoading,
-    } = useLoading();
-
-    const {
         get: getContests,
         data: contestsData,
     } = useHttp<null, IGetContestsForIndexResponseType, null>({ url: getIndexContestsUrl });
 
-    const getForHome = useCallback(async () => {
-        startLoading();
-        await getContests();
-        stopLoading();
-    }, [ getContests, startLoading, stopLoading ]);
+    const getForHome = useCallback(
+        async () => {
+            await getContests();
+        },
+        [ getContests ],
+    );
 
     useEffect(() => {
         if (isNil(contestsData)) {

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 
 import { ContestStatus } from '../../common/contest-types';
 import { useHomeContests } from '../../hooks/use-home-contests';
@@ -12,14 +12,7 @@ const HomeContests = () => {
             activeContests,
             pastContests,
         },
-        actions: { getForHome },
     } = useHomeContests();
-
-    useEffect(() => {
-        (async () => {
-            await getForHome();
-        })();
-    }, [ getForHome ]);
 
     const getContestStatusIndex = useCallback(
         (contestStatus: ContestStatus) => {
