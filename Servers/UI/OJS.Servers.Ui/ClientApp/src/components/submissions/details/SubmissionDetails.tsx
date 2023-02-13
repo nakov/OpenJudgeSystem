@@ -26,8 +26,12 @@ const SubmissionDetails = () => {
     const {
         state: {
             currentSubmission,
-            currentProblemSubmissionResults,
-            validationResult,
+            currentProblemSubmissionResults:
+                {
+                    submissionResults: currentProblemSubmissions,
+                    validationResult: submissionResultsValidation,
+                },
+            submissionDetailsValidationResult,
         },
         actions: { getSubmissionResults },
     } = useSubmissionsDetails();
@@ -64,14 +68,22 @@ const SubmissionDetails = () => {
 
     useEffect(
         () => {
-            if (validationResult.propertyName === ValidationPropertyType.UserNotLoggedIn.toString()) {
+            if (isNil(submissionResultsValidation)) {
+                return;
+            }
+
+            const { propertyName: submissionDetailsErrorPropertyName } = submissionDetailsValidationResult;
+            const { isValid: submissionResultsIsValid } = submissionResultsValidation;
+
+            if (submissionDetailsErrorPropertyName === ValidationPropertyType.UserNotLoggedIn.toString()) {
                 navigate(getLoginUrl());
-            } else if (validationResult.propertyName === ValidationPropertyType.NotAuthorOfSubmission.toString() ||
-                validationResult.propertyName === ValidationPropertyType.SubmissionNotFound.toString()) {
+            } else if (submissionDetailsErrorPropertyName === ValidationPropertyType.NotAuthorOfSubmission.toString() ||
+                submissionDetailsErrorPropertyName === ValidationPropertyType.SubmissionNotFound.toString() ||
+                !submissionResultsIsValid) {
                 navigate(getHomePageUrl());
             }
         },
-        [ validationResult, getHomePageUrl, getLoginUrl, navigate ],
+        [ submissionDetailsValidationResult, getHomePageUrl, getLoginUrl, navigate, submissionResultsValidation ],
     );
 
     const canBeCompeted = useMemo(
@@ -121,10 +133,10 @@ const SubmissionDetails = () => {
             return;
         }
 
-        const { problem: { id: problemId }, isOfficial, user: { id: userId } } = currentSubmission;
+        const { problem: { id: problemId }, isOfficial } = currentSubmission;
 
         (async () => {
-            await getSubmissionResults(problemId, isOfficial, userId);
+            await getSubmissionResults(problemId, isOfficial);
         })();
     }, [ currentSubmission, getSubmissionResults ]);
 
@@ -194,7 +206,7 @@ const SubmissionDetails = () => {
                     <Heading type={HeadingType.secondary}>Submissions</Heading>
                 </div>
                 <RefreshableSubmissionsList
-                  items={currentProblemSubmissionResults}
+                  items={currentProblemSubmissions}
                   selectedSubmission={currentSubmission}
                   className={styles.submissionsList}
                 />
@@ -202,7 +214,7 @@ const SubmissionDetails = () => {
                 { renderSubmissionInfo() }
             </div>
         ),
-        [ currentProblemSubmissionResults, currentSubmission, renderRetestButton, renderSubmissionInfo ],
+        [ currentProblemSubmissions, currentSubmission, renderRetestButton, renderSubmissionInfo ],
     );
 
     const codeEditor = useMemo(

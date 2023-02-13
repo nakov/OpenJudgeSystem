@@ -9,11 +9,11 @@ import { useLoading } from '../use-loading';
 import { useProblems } from '../use-problems';
 import { useUrls } from '../use-urls';
 
-import { ISubmissionDetails } from './types';
+import { ISubmissionResultsByProblemResponse } from './types';
 
 interface IProblemSubmissionsContext {
     state: {
-        submissions: ISubmissionDetails[];
+        submissions: ISubmissionResultsByProblemResponse;
     };
     actions: {
         loadSubmissions: () => Promise<void>;
@@ -28,7 +28,7 @@ interface IProblemSubmissionResultsRequestParametersType {
     take: number;
 }
 
-const defaultState = { state: { submissions: [] as ISubmissionDetails[] } };
+const defaultState = { state: { submissions: {} as ISubmissionResultsByProblemResponse } };
 
 const ProblemSubmissionsContext = createContext<IProblemSubmissionsContext>(defaultState as IProblemSubmissionsContext);
 
@@ -51,7 +51,7 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
     const {
         get: getProblemSubmissions,
         data: apiProblemSubmissions,
-    } = useHttp<IProblemSubmissionResultsRequestParametersType, ISubmissionDetails[]>({
+    } = useHttp<IProblemSubmissionResultsRequestParametersType, ISubmissionResultsByProblemResponse>({
         url: getSubmissionResultsByProblemUrl,
         parameters: submissionResultsToGetParameters,
     });
@@ -76,7 +76,9 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
                 return;
             }
 
-            setSubmissions(apiProblemSubmissions);
+            const { submissionResults, validationResult: newValidationResult } = apiProblemSubmissions;
+
+            setSubmissions({ submissionResults, validationResult: newValidationResult } as ISubmissionResultsByProblemResponse);
             setSubmissionResultsToGetParameters(null);
         },
         [ apiProblemSubmissions ],

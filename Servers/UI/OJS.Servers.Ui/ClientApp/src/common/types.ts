@@ -91,6 +91,9 @@ enum ValidationPropertyType {
     UserNotLoggedIn = 'UserNotLoggedIn',
     SubmissionNotFound = 'SubmissionNotFound',
     NotAuthorOfSubmission = 'NotAuthorOfSubmission',
+    ProblemNotFound = 'ProblemNotFound',
+    NotRegisteredForExam = 'NotRegisteredForExam',
+    ProblemResultsNotAvailable = 'ProblemResultsNotAvailable',
 }
 
 interface IStartParticipationResponseType {

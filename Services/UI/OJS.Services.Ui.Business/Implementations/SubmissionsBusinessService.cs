@@ -23,7 +23,6 @@ using System.Threading.Tasks;
 public class SubmissionsBusinessService : ISubmissionsBusinessService
 {
     private readonly ISubmissionsDataService submissionsData;
-
     private readonly IUsersBusinessService usersBusiness;
     private readonly IParticipantScoresBusinessService participantScoresBusinessService;
     private readonly IParticipantsDataService participantsDataService;
@@ -240,19 +239,23 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         int take = 0)
     {
         var problem = await this.problemsDataService.GetWithProblemGroupById(problemId);
-        var userInfoModel = this.userProviderService.GetCurrentUser();
+        var user = this.userProviderService.GetCurrentUser();
 
         var participant =
             await this.participantsDataService.GetByContestByUserAndByIsOfficial(
                 problem!.ProblemGroup.ContestId,
-                userInfoModel.Id!,
+                user.Id!,
                 isOfficial);
 
-        var validationResult = this.submissionResultsValidationService.GetValidationResult((userInfoModel, problem, participant));
+        var validationResult = this.submissionResultsValidationService.GetValidationResult((user, problem, participant));
 
-        var userSubmissions = this.submissionsData
-            .GetAllByProblemAndParticipant(problemId, participant!.Id)
-            .MapCollection<SubmissionResultsServiceModel>();
+        var userSubmissions = user.IsAdminOrLecturer || participant == null
+            ? this.submissionsData
+                .GetAllByProblem(problemId)
+                .MapCollection<SubmissionResultsServiceModel>()
+            : this.submissionsData
+                .GetAllByProblemAndParticipant(problemId, participant.Id)
+                .MapCollection<SubmissionResultsServiceModel>();
 
         if (take != 0)
         {
@@ -268,21 +271,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         };
 
         return submissionResultsByProblemServiceModel;
-    }
-
-    public async Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblemAndUser(
-        int problemId,
-        bool isOfficial,
-        string userId)
-    {
-        var problem = await this.problemsDataService.GetWithProblemGroupById(problemId);
-
-        await this.ValidateUserCanViewResults(problem!, isOfficial);
-
-        var userSubmissions = await this.submissionsData
-            .GetAllByProblemAndUser<SubmissionResultsServiceModel>(problemId, userId);
-
-        return userSubmissions;
     }
 
     public async Task Submit(SubmitSubmissionServiceModel model)

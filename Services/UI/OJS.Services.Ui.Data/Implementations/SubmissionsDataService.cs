@@ -42,12 +42,6 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             orderBy: q => q.CreatedOn,
             descending: true);
 
-    public Task<IEnumerable<TServiceModel>> GetAllByProblemAndUser<TServiceModel>(int problemId, string userId)
-        => this.GetQuery(
-                filter: s => s.ProblemId == problemId && s.Participant!.UserId == userId)
-            .MapCollection<TServiceModel>()
-            .ToEnumerableAsync();
-
     public IQueryable<Submission> GetAllFromContestsByLecturer(string lecturerId) =>
         this.DbSet
             .Include(s => s.Problem!.ProblemGroup.Contest.LecturersInContests)

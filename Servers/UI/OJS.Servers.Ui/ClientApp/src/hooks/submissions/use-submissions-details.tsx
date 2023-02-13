@@ -5,34 +5,37 @@ import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constan
 import { IValidationType } from '../../common/types';
 import {
     IGetSubmissionDetailsByIdUrlParams,
-    IGetSubmissionResultsByProblemAndUserUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
 } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
-import { useAuth } from '../use-auth';
 import { useHttp } from '../use-http';
 import { useLoading } from '../use-loading';
 import { useUrls } from '../use-urls';
 
-import { ISubmissionDetails, ISubmissionDetailsType, ISubmissionType, ITestRunType } from './types';
+import {
+    ISubmissionDetailsType,
+    ISubmissionResultsByProblemResponse,
+    ISubmissionType,
+    ITestRunType,
+} from './types';
 
 interface ISubmissionsDetailsContext {
     state: {
         currentSubmission: ISubmissionDetailsType | null;
-        currentProblemSubmissionResults: ISubmissionDetails[];
-        validationResult: IValidationType;
+        currentProblemSubmissionResults: ISubmissionResultsByProblemResponse;
+        submissionDetailsValidationResult: IValidationType;
     };
     actions: {
         selectSubmissionById: (submissionId: number) => void;
         getDetails: (submissionId: number) => Promise<void>;
-        getSubmissionResults: (problemId: number, isOfficial: boolean, userId: string) => Promise<void>;
+        getSubmissionResults: (problemId: number, isOfficial: boolean) => Promise<void>;
     };
 }
 
 const defaultState = {
     state: {
-        currentProblemSubmissionResults: [] as ISubmissionDetails[],
-        validationResult: {
+        currentProblemSubmissionResults: {} as ISubmissionResultsByProblemResponse,
+        submissionDetailsValidationResult: {
             message: '',
             isValid: true,
             propertyName: '',
@@ -45,10 +48,10 @@ const SubmissionsDetailsContext = createContext<ISubmissionsDetailsContext>(defa
 type ISubmissionsDetailsProviderProps = IHaveChildrenProps
 
 const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderProps) => {
-    const { state: { user } } = useAuth();
     const { startLoading, stopLoading } = useLoading();
     const [ currentSubmissionId, selectSubmissionById ] = useState<number>();
-    const [ validationResult, setValidationResult ] = useState<IValidationType>(defaultState.state.validationResult);
+    const [ submissionDetailsValidationResult, setSubmissionDetailsValidationResult ] =
+        useState<IValidationType>(defaultState.state.submissionDetailsValidationResult);
     const [
         currentSubmission,
         setCurrentSubmission,
@@ -62,7 +65,6 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     const {
         getSubmissionDetailsByIdUrl,
         getSubmissionResultsByProblemUrl,
-        getSubmissionResultsByProblemAndUserUrl,
     } = useUrls();
 
     const [
@@ -86,39 +88,24 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     const {
         get: getProblemResultsRequest,
         data: apiProblemResults,
-    } = useHttp<IGetSubmissionResultsByProblemUrlParams, ISubmissionDetails[]>({
+    } = useHttp<IGetSubmissionResultsByProblemUrlParams, ISubmissionResultsByProblemResponse>({
         url: getSubmissionResultsByProblemUrl,
         parameters: submissionResultsByProblemUrlParams,
     });
 
-    const [
-        submissionResultsByProblemAndUserUrlParams,
-        setSubmissionResultsByProblemAndUserUrlParams,
-    ] = useState<IGetSubmissionResultsByProblemAndUserUrlParams | null>();
-
     const getSubmissionResults = useCallback(
-        async (problemId: number, isOfficial: boolean, userId: string) => {
-            if (isNil(problemId) || isNil(userId)) {
+        async (problemId: number, isOfficial: boolean) => {
+            if (isNil(problemId)) {
                 return;
             }
 
-            const { permissions: { canAccessAdministration: isUserAdminOrLecturer } } = user;
-
-            if (isUserAdminOrLecturer) {
-                setSubmissionResultsByProblemAndUserUrlParams({
-                    problemId,
-                    isOfficial,
-                    userId,
-                });
-            } else {
-                setSubmissionResultsByProblemUrlParams({
-                    id: problemId,
-                    isOfficial,
-                    take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
-                });
-            }
+            setSubmissionResultsByProblemUrlParams({
+                id: problemId,
+                isOfficial,
+                take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
+            });
         },
-        [ user ],
+        [],
     );
 
     useEffect(
@@ -142,40 +129,13 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             return;
         }
 
-        setCurrentProblemSubmissionResults(apiProblemResults);
+        const { submissionResults, validationResult: newSubmissionResultsValidationResult } = apiProblemResults;
+
+        setCurrentProblemSubmissionResults({
+            submissionResults,
+            validationResult: newSubmissionResultsValidationResult,
+        } as ISubmissionResultsByProblemResponse);
     }, [ apiProblemResults ]);
-
-    const {
-        get: getProblemResultsByUserRequest,
-        data: apiProblemResultsByUser,
-    } = useHttp({
-        url: getSubmissionResultsByProblemAndUserUrl,
-        parameters: submissionResultsByProblemAndUserUrlParams,
-    });
-
-    useEffect(
-        () => {
-            if (isNil(submissionResultsByProblemAndUserUrlParams)) {
-                return;
-            }
-
-            (async () => {
-                startLoading();
-                await getProblemResultsByUserRequest();
-                setSubmissionResultsByProblemAndUserUrlParams(null);
-                stopLoading();
-            })();
-        },
-        [ getProblemResultsByUserRequest, startLoading, stopLoading, submissionResultsByProblemAndUserUrlParams ],
-    );
-
-    useEffect(() => {
-        if (isNil(apiProblemResultsByUser)) {
-            return;
-        }
-
-        setCurrentProblemSubmissionResults(apiProblemResultsByUser as ISubmissionDetails[]);
-    }, [ apiProblemResultsByUser ]);
 
     useEffect(
         () => {
@@ -211,7 +171,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
 
             const { validationResult: newValidationResult } = apiSubmissionDetails;
 
-            setValidationResult(newValidationResult);
+            setSubmissionDetailsValidationResult(newValidationResult);
             setCurrentSubmission(apiSubmissionDetails);
         },
         [ apiSubmissionDetails ],
@@ -235,7 +195,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             state: {
                 currentSubmission,
                 currentProblemSubmissionResults,
-                validationResult,
+                submissionDetailsValidationResult,
             },
             actions: {
                 selectSubmissionById,
@@ -248,7 +208,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             currentSubmission,
             getDetails,
             getSubmissionResults,
-            validationResult,
+            submissionDetailsValidationResult,
         ],
     );
 
