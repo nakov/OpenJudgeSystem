@@ -5,10 +5,10 @@ using OJS.Services.Common.Models;
 using OJS.Services.Common.Validation.Helpers;
 using OJS.Services.Ui.Business.Validation;
 
+using static OJS.Services.Ui.Business.Constants.Search;
+
 public class SearchValidationService : ISearchValidationService
 {
-    private const int MinimumTermLength = 3;
-
     private readonly INotDefaultValueValidationHelper notDefaultValueValidationHelper;
     private readonly IUserProviderService userProvider;
 
@@ -28,7 +28,7 @@ public class SearchValidationService : ISearchValidationService
             return ValidationResult.Invalid(ValidationMessages.Search.IsNull);
         }
 
-        if (item?.Length < MinimumTermLength)
+        if (item?.Length < MinimumSearchTermLength)
         {
             return ValidationResult.Invalid(ValidationMessages.Search.LessThanThreeSymbols);
         }

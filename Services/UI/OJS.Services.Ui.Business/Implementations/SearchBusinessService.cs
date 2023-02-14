@@ -31,14 +31,18 @@ public class SearchBusinessService : ISearchBusinessService
 
         var validationResult = this.searchValidationService.GetValidationResult(trimmedSearch);
 
-        var users = await this.usersBusinessService.GetSearchUsersByUsername(trimmedSearch!);
-        var contests = await this.contestsBusinessService.GetSearchContestsByName(trimmedSearch!);
-        var problems = await this.problemsBusinessService.GetSearchProblemsByName(trimmedSearch!);
+        if (validationResult.IsValid)
+        {
+            var users = await this.usersBusinessService.GetSearchUsersByUsername(trimmedSearch!);
+            var contests = await this.contestsBusinessService.GetSearchContestsByName(trimmedSearch!);
+            var problems = await this.problemsBusinessService.GetSearchProblemsByName(trimmedSearch!);
+
+            searchSearchModel.Users = users;
+            searchSearchModel.Contests = contests;
+            searchSearchModel.Problems = problems;
+        }
 
         searchSearchModel.ValidationResult = validationResult;
-        searchSearchModel.Users = users;
-        searchSearchModel.Contests = contests;
-        searchSearchModel.Problems = problems;
 
         return searchSearchModel;
     }
