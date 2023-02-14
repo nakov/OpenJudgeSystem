@@ -494,29 +494,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
     }
 
-    private async Task ValidateUserCanViewResults(Problem problem, bool isOfficial)
-    {
-        if (problem == null)
-        {
-            throw new BusinessServiceException(Resources.ContestsGeneral.ProblemNotFound);
-        }
-
-        var user = this.userProviderService.GetCurrentUser();
-
-        var userHasParticipation = await this.participantsDataService
-            .ExistsByContestByUserAndIsOfficial(problem.ProblemGroup.ContestId, user.Id!, isOfficial);
-
-        if (!userHasParticipation && !user.IsAdminOrLecturer)
-        {
-            throw new BusinessServiceException(Resources.ContestsGeneral.UserIsNotRegisteredForExam);
-        }
-
-        if (!problem.ShowResults && !user.IsAdminOrLecturer)
-        {
-            throw new BusinessServiceException(Resources.ContestsGeneral.ProblemResultsNotAvailable);
-        }
-    }
-
     private async Task ProcessTestsExecutionResult(
         Submission submission,
         ExecutionResultResponseModel executionResult)
