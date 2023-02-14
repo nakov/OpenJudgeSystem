@@ -4,7 +4,7 @@ import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { IContestSearchType, IProblemSearchType, IUserSearchType, SearchParams } from '../common/search-types';
-import { ISearchResponseModel, IStartParticipationValidationType } from '../common/types';
+import { ISearchResponseModel, IValidationType } from '../common/types';
 import { IGetSearchResultsUrlParams } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
@@ -18,7 +18,7 @@ interface ISearchContext {
         contests: IContestSearchType[];
         problems: IProblemSearchType[];
         users: IUserSearchType[];
-        validationResult: IStartParticipationValidationType;
+        validationResult: IValidationType;
         searchValue: string;
         isLoaded: boolean;
         searchResultUrlParam: IGetSearchResultsUrlParams;
@@ -40,6 +40,7 @@ const defaultState = {
         validationResult: {
             message: '',
             isValid: true,
+            propertyName: '',
         },
         searchValue: '',
         searchResultUrlParam: { searchTerm: '' },
@@ -52,7 +53,7 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
     const [ contests, setSearchedContests ] = useState(defaultState.state.contests);
     const [ problems, setSearchedProblems ] = useState(defaultState.state.problems);
     const [ users, setSearchedUsers ] = useState(defaultState.state.users);
-    const [ validationResult, setValidationResult ] = useState<IStartParticipationValidationType>(defaultState.state.validationResult);
+    const [ validationResult, setValidationResult ] = useState<IValidationType>(defaultState.state.validationResult);
     const [ searchValue, setSearchValue ] = useState<string>(defaultState.state.searchValue);
     const [ getSearchResultsUrlParams, setGetSearchResultsUrlParams ] =
         useState<IGetSearchResultsUrlParams>(defaultState.state.searchResultUrlParam);

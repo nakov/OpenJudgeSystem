@@ -24,6 +24,8 @@ namespace OJS.Services.Ui.Data
 
         IQueryable<Contest> GetAll();
 
+        Task<TServiceModel?> GetByProblemId<TServiceModel>(int id);
+
         IQueryable<Contest> GetAllActive();
 
         IQueryable<Contest> GetAllInactive();
