@@ -37,6 +37,7 @@ interface IContestsContext {
         pagesInfo: IPagesInfo;
         currentPage: number;
         contest: IIndexContestsType | null;
+        isLoaded: boolean;
     };
     actions: {
         reload: () => Promise<void>;
@@ -112,6 +113,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const {
         get: getContests,
         data: contestsData,
+        isSuccess,
     } = useHttp<
         IAllContestsUrlParams,
         IPagedResultType<IIndexContestsType>>({
@@ -186,13 +188,31 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         [ unsetParam, setParam, possibleFilters ],
     );
 
-    const reload = useCallback(
+    const initialLoad = useCallback(
         async () => {
-            startLoading();
+            await startLoading();
             await getContests();
-            stopLoading();
+            await stopLoading();
         },
         [ getContests, startLoading, stopLoading ],
+    );
+
+    const loadData = useCallback(
+        async () => {
+            await getContests();
+        },
+        [ getContests ],
+    );
+
+    const reload = useCallback(
+        async () => {
+            if (isSuccess) {
+                await loadData();
+            } else {
+                await initialLoad();
+            }
+        },
+        [ initialLoad, isSuccess, loadData ],
     );
 
     const changePage = useCallback(
@@ -314,6 +334,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
                 sortingTypes,
                 currentPage,
                 contest,
+                isLoaded: isSuccess,
             },
             actions: {
                 reload,
@@ -341,6 +362,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             loadContestByProblemId,
             contest,
             initiateGetAllContestsQuery,
+            isSuccess,
         ],
     );
 

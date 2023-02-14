@@ -3,11 +3,13 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import { IHaveChildrenProps } from '../components/common/Props';
 
 import { useHttp } from './use-http';
+import { useLoading } from './use-loading';
 import { useUrls } from './use-urls';
 
 interface IHomeStatisticsContext {
     state: {
         statistics: IHomeStatistics | null;
+        isLoaded: boolean;
     };
     actions: {
         load: () => Promise<void>;
@@ -29,19 +31,22 @@ type IHomeStatisticsProviderProps = IHaveChildrenProps
 
 const HomeStatisticsProvider = ({ children }: IHomeStatisticsProviderProps) => {
     const [ statistics, setStatistics ] = useState <IHomeStatistics | null>(null);
-
+    const { startLoading, stopLoading } = useLoading();
     const { getHomeStatisticsUrl } = useUrls();
 
     const {
         get,
         data,
+        isSuccess,
     } = useHttp<null, IHomeStatistics>({ url: getHomeStatisticsUrl });
 
     const load = useCallback(
         async () => {
+            await startLoading();
             await get();
+            await stopLoading();
         },
-        [ get ],
+        [ get, startLoading, stopLoading ],
     );
 
     useEffect(
@@ -53,10 +58,13 @@ const HomeStatisticsProvider = ({ children }: IHomeStatisticsProviderProps) => {
 
     const value = useMemo(
         () => ({
-            state: { statistics },
+            state: {
+                statistics,
+                isLoaded: isSuccess,
+            },
             actions: { load },
         }),
-        [ load, statistics ],
+        [ isSuccess, load, statistics ],
     );
 
     return (

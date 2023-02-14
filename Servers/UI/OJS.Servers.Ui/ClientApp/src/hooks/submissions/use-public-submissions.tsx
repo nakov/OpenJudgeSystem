@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useMemo } from 'react';
 
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useHttp } from '../use-http';
@@ -60,16 +60,17 @@ const PublicSubmissionsContext = createContext<IPublicSubmissionsContext>(defaul
 type IPublicSubmissionsProviderProps = IHaveChildrenProps
 
 const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps) => {
-    const [ isAvailable, setIsAvailable ] = useState<boolean>(false);
     const { getSubmissionsPublicUrl, getSubmissionsTotalCountUrl } = useUrls();
     const {
         get: getSubmissions,
         data: apiSubmissions,
+        isSuccess: loadedPublicSubmissions,
     } = useHttp<null, IPublicSubmission[]>({ url: getSubmissionsPublicUrl });
 
     const {
         get: getTotalSubmissionsCount,
         data: apiTotalSubmissionsCount,
+        isSuccess: loadedTotalSubmissionsCount,
     } = useHttp({ url: getSubmissionsTotalCountUrl });
 
     const submissions = useMemo(
@@ -84,7 +85,7 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
 
     const load = useCallback(
         async () => {
-            if (isAvailable) {
+            if (loadedPublicSubmissions && loadedTotalSubmissionsCount) {
                 return;
             }
 
@@ -92,10 +93,8 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
                 getSubmissions(),
                 getTotalSubmissionsCount(),
             ]);
-
-            setIsAvailable(true);
         },
-        [ getSubmissions, getTotalSubmissionsCount, isAvailable ],
+        [ getSubmissions, getTotalSubmissionsCount, loadedPublicSubmissions, loadedTotalSubmissionsCount ],
     );
 
     const value = useMemo(

@@ -26,6 +26,7 @@ const ContestsPage = () => {
             contests,
             pagesInfo,
             currentPage,
+            isLoaded,
         },
         actions: {
             toggleParam,
@@ -65,6 +66,10 @@ const ContestsPage = () => {
 
     const renderContests = useCallback(
         () => {
+            if (!isLoaded) {
+                return null;
+            }
+
             if (isNil(contests) || isEmpty(contests)) {
                 return (
                     <Heading type={HeadingType.secondary}>
@@ -92,7 +97,7 @@ const ContestsPage = () => {
                 </div>
             );
         },
-        [ contests, currentPage, handlePageChange, pagesInfo, renderContest ],
+        [ contests, currentPage, handlePageChange, isLoaded, pagesInfo, renderContest ],
     );
 
     const renderCategoriesBreadcrumbItem = useCallback(
