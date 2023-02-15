@@ -282,10 +282,11 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             return;
         }
 
-        const { requirePassword: responseRequirePassword } = registerForContestData;
+        const { requirePassword: responseRequirePassword, validationResult: newValidationResult } = registerForContestData;
 
         setContest({ id: registerForContestData.id, name: registerForContestData.name } as IContestType);
         setRequirePassword(responseRequirePassword);
+        setValidationResult(newValidationResult);
     }, [ registerForContestData ]);
 
     useEffect(() => {
