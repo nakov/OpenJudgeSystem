@@ -1,6 +1,6 @@
 @use 'src/styles/colors';
 @use 'src/styles/fonts';
-@use 'src/styles/components';
+@use 'src/styles/variables';
 
 .problemElement {
   align-content: center;
@@ -9,19 +9,76 @@
   display: grid;
   flex-flow: wrap;
   grid-gap: 10px;
+  justify-items: center;
   margin: 10px;
   padding: 0.7vw;
 }
 
-.problemText {
+.tooltip {
+  max-width: 245px;
+  position: absolute;
+  visibility: hidden;
+  width: 100%;
+
+  .tooltipText {
+    bottom: 100%;
+    font-size: 15px;
+    overflow: hidden;
+    padding: 5px 0;
+    position: absolute;
+    text-align: left;
+    white-space: nowrap;
+  }
+}
+
+.problemCardHeader {
+  @extend %font-family-lato;
+
+  border-bottom: 1px solid;
+  border-bottom-color: colors.$bottom-border-color;
+  display: flex;
+  flex-direction: row;
+  font-weight: 500;
+  justify-content: space-between;
+  margin: 10px;
+  min-height: 4vh;
+
+  &:hover {
+    .tooltip {
+      visibility: visible;
+    }
+  }
+}
+
+.problemContest {
   @extend %font-family-lato;
 
   color: colors.$text-dark-gray-color;
-  justify-self: center;
+  font-size: variables.$f-size-16;
+  max-width: 11vw;
+  text-align: center;
   text-decoration: none;
 }
 
-.contestCardControls {
+.problemText {
+  display: block;
+  font-size: variables.$f-size-20;
+  max-width: 11vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.problemCategory {
+  color: colors.$text-light-gray-color;
+  font-size: variables.$f-size-10;
+  font-weight: bold;
+  margin-left: 10px;
+  text-transform: uppercase;
+}
+
+.problemCardControls {
   align-items: flex-end;
   display: flex;
   grid-gap: 10px;

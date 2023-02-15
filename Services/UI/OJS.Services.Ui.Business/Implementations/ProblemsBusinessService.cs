@@ -178,8 +178,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var searchProblems = allProblems
                 .MapCollection<ProblemSearchServiceModel>()
                 .ToList();
-
-            searchProblems.ForEach(sp => GetContestNames(sp, allProblems));
+            searchProblems.ForEach(sp => GetContestByProblemId(sp, allProblems));
 
             return searchProblems;
         }
@@ -195,7 +194,7 @@ namespace OJS.Services.Ui.Business.Implementations
             }
         }
 
-        private static void GetContestNames(ProblemSearchServiceModel model, IEnumerable<Problem> allProblems)
+        private static void GetContestByProblemId(ProblemSearchServiceModel model, IEnumerable<Problem> allProblems)
             => model.Contest = allProblems
                 .First(p => p.Id == model.Id).ProblemGroup.Contest
                 .Map<ProblemContestSearchServiceModel>();

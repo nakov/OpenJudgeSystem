@@ -14,19 +14,28 @@ interface ISearchProblem {
 }
 
 const SearchProblem = ({ problem }: ISearchProblem) => {
+    const searchProblemCardHeader = 'search-header';
+    const searchProblemCardHeaderClassName = concatClassNames(styles.problemCardHeader, searchProblemCardHeader);
     const searchProblemText = 'search-problem-text';
     const searchProblemClassName = concatClassNames(styles.problemText, searchProblemText);
     const searchProblemElement = 'search-problem-element';
     const searchContestElementClassName = concatClassNames(styles.problemElement, searchProblemElement);
-    const contestCardControlBtns = 'card-control-buttons';
-    const contestCardControlBtnsClassName = concatClassNames(styles.contestCardControls, contestCardControlBtns);
+    const searchProblemCategoryCardCategory = 'search-problem-category';
+    const searchProblemCategoryClassName = concatClassNames(styles.problemCategory, searchProblemCategoryCardCategory);
+    const searchProblemContestName = 'search-problem-contest';
+    const searchProblemContestClassName = concatClassNames(styles.problemContest, searchProblemContestName);
+    const contestCardControlBtns = 'search-problem-card-control-buttons';
+    const searchProblemCardControlBtnsClassName = concatClassNames(styles.problemCardControls, contestCardControlBtns);
 
     const { getRegisterContestTypeUrl } = useAppUrls();
 
     const renderPage = useCallback(
         () => isEmpty(problem.contest)
             ? (
-                <div className={searchContestElementClassName}>
+                <div className={searchProblemCardHeaderClassName}>
+                    <div className={styles.tooltip}>
+                        <span className={styles.tooltipText}>{problem.name}</span>
+                    </div>
                     <span
                       className={searchProblemClassName}
                     >
@@ -36,20 +45,30 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
             )
             : (
                 <div className={searchContestElementClassName}>
+                    <div className={searchProblemCardHeaderClassName}>
+                        <div className={styles.tooltip}>
+                            <span className={styles.tooltipText}>{problem.name}</span>
+                        </div>
+                        <span
+                          className={searchProblemClassName}
+                        >
+                            {problem.name}
+                        </span>
+                    </div>
                     <span
-                      className={searchProblemClassName}
+                      className={searchProblemCategoryClassName}
                     >
-                        {problem.name}
+                        {problem.contest.category}
                     </span>
                     <span
-                      className={searchProblemClassName}
+                      className={searchProblemContestClassName}
                     >
                         Contest:
                         {' '}
                         {problem.contest.name}
                         `
                     </span>
-                    <div className={contestCardControlBtnsClassName}>
+                    <div className={searchProblemCardControlBtnsClassName}>
                         <LinkButton
                           id="button-card-compete"
                           to={getRegisterContestTypeUrl({
@@ -82,8 +101,8 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
                     </div>
                 </div>
             ),
-        [ contestCardControlBtnsClassName, getRegisterContestTypeUrl, problem.contest,
-            problem.name, searchContestElementClassName, searchProblemClassName ],
+        [ getRegisterContestTypeUrl, problem.contest, problem.name, searchContestElementClassName, searchProblemCardControlBtnsClassName,
+            searchProblemCardHeaderClassName, searchProblemCategoryClassName, searchProblemClassName, searchProblemContestClassName ],
     );
 
     return (

@@ -21,6 +21,7 @@ interface IProblemContest {
     name: string;
     canBeCompeted: boolean;
     canBePracticed: boolean;
+    category: string;
 }
 
 interface IProblemSearchType {

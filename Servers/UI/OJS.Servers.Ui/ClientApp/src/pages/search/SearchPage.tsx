@@ -86,7 +86,7 @@ const SearchPage = () => {
             : (
                 <>
                     <Heading
-                      type={HeadingType.small}
+                      type={HeadingType.secondary}
                       className={styles.heading}
                     >
                         Contests:
@@ -115,7 +115,7 @@ const SearchPage = () => {
             : (
                 <>
                     <Heading
-                      type={HeadingType.small}
+                      type={HeadingType.secondary}
                       className={styles.heading}
                     >
                         Problems:
@@ -144,7 +144,7 @@ const SearchPage = () => {
             : (
                 <>
                     <Heading
-                      type={HeadingType.small}
+                      type={HeadingType.secondary}
                       className={styles.heading}
                     >
                         Users:
@@ -190,11 +190,6 @@ const SearchPage = () => {
         [ renderElements, renderErrorMessage, validationResult.isValid ],
     );
 
-    console.log(problems);
-    console.log(contests);
-    console.log(users);
-    console.log(validationResult.message);
-    console.log(validationResult.isValid);
     return (
         renderPage()
     );
