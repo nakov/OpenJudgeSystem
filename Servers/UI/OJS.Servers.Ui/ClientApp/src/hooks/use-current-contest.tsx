@@ -325,7 +325,9 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 return;
             }
 
-            setScore(sum(problems.map((p) => !isNil(p.points) || 0)));
+            setScore(sum(problems.map((p) => isNil(p.points)
+                ? 0
+                : p.points)));
             setMaxScore(sum(problems.map((p) => p.maximumPoints)));
         },
         [ contest ],

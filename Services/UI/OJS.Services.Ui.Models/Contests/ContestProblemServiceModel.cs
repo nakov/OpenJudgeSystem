@@ -24,7 +24,7 @@
 
         public int OrderBy { get; set; }
 
-        public int MaximumPoints { get; set; }
+        public short MaximumPoints { get; set; }
 
         public bool ShowResults { get; set; }
 
@@ -77,13 +77,24 @@
                 .ForMember(
                     d => d.IsExcludedFromHomework,
                     opt => opt.MapFrom(s => s.ProblemGroup.Type == ProblemGroupType.ExcludedFromHomework))
-                .ForMember(d => d.FileSizeLimit, opt => opt.MapFrom(s => s.SourceCodeSizeLimit))
+                .ForMember(
+                    d => d.FileSizeLimit,
+                    opt => opt.MapFrom(s => s.SourceCodeSizeLimit.HasValue ? (double)s.SourceCodeSizeLimit : default))
                 .ForMember(d => d.UserHasAdminRights, opt => opt.Ignore())
                 .ForMember(
                     d => d.AllowedSubmissionTypes,
                     opt => opt.MapFrom(s => s.SubmissionTypesInProblems.Select(st => st.SubmissionType)))
                 .ForMember(
                     d => d.Points,
-                    opt => opt.MapFrom(s => 0));
+                    opt => opt.MapFrom(s => 0))
+                .ForMember(
+                    d => d.MemoryLimit,
+                    opt => opt.MapFrom(s => (double)s.MemoryLimit))
+                .ForMember(
+                    d => d.OrderBy,
+                    opt => opt.MapFrom(s => (int)s.OrderBy))
+                .ForMember(
+                    d => d.TimeLimit,
+                    opt => opt.MapFrom(s => (double)s.TimeLimit));
     }
 }
