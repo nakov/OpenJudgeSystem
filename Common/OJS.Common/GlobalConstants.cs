@@ -103,6 +103,7 @@ namespace OJS.Common
             public const string CannotBeTemplate = "{0} cannot be {1}";
             public const string ValueCannotBeLessThanOrEqualToZero = "Value cannot be less than or equal to 0";
             public const string ValueCannotBeNullOrWhiteSpaceTemplate = "{0} cannot be null or white space";
+            public const string ContestNotFound = "Contest not found";
         }
 
         public static class FileExtensions

@@ -33,13 +33,13 @@ const Contest = () => {
     const { actions: { setPageTitle } } = usePageTitles();
 
     const navigationContestClass = 'navigationContest';
-    const navigationContestClassName = concatClassNames(navigationContestClass);
+    const navigationContestClassName = concatClassNames(styles.navigationContest, navigationContestClass);
 
     const submissionBoxClass = 'submissionBox';
     const submissionBoxClassName = concatClassNames(submissionBoxClass);
 
     const problemInfoClass = 'problemInfo';
-    const problemInfoClassName = concatClassNames(problemInfoClass);
+    const problemInfoClassName = concatClassNames(styles.problemInfo, problemInfoClass);
 
     const contestTitle = useMemo(
         () => `${contest?.name}`,

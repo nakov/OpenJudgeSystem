@@ -1,0 +1,25 @@
+@use 'src/styles/colors';
+@use 'src/styles/variables';
+
+.submissionResultsContent {
+  display: flex;
+  flex-direction: column;
+
+  @media only screen and (max-width: variables.$r-large-desktop-max) {
+    padding: 10px;
+
+    .submissionsList > ul {
+      font-size: variables.$f-size-16;
+    }
+  }
+}
+
+.refreshBtn {
+  align-self: end;
+  border: 0;
+
+  &:hover {
+    background: none;
+    cursor: pointer;
+  }
+}
