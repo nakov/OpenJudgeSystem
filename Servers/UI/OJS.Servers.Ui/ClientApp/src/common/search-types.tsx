@@ -27,6 +27,7 @@ interface IProblemContest {
 interface IProblemSearchType {
     id: number;
     name: string;
+    orderBy: number;
     contest: IProblemContest;
 }
 

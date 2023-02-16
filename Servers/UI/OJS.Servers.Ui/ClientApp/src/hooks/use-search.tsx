@@ -80,6 +80,11 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
             parameters: getSearchResultsUrlParams,
         });
 
+    const encodeUrlToURIComponent = useCallback(
+        (url: string) => encodeURIComponent(url),
+        [],
+    );
+
     const urlParam = useMemo(
         () => {
             const query = new URLSearchParams(search);
@@ -96,10 +101,11 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
                 setParam(SearchParams.search, urlParam);
                 setSearchValue(urlParam);
             } else {
-                setGetSearchResultsUrlParams({ searchTerm: searchValue });
+                const encodedUrl = encodeUrlToURIComponent(searchValue);
+                setGetSearchResultsUrlParams({ searchTerm: encodedUrl });
             }
         },
-        [ searchValue, setParam, urlParam ],
+        [ encodeUrlToURIComponent, searchValue, setParam, urlParam ],
     );
 
     useEffect(

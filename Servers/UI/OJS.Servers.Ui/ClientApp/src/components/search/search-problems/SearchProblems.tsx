@@ -4,6 +4,7 @@ import isEmpty from 'lodash/isEmpty';
 import { ContestParticipationType } from '../../../common/constants';
 import { IProblemSearchType } from '../../../common/search-types';
 import { useAppUrls } from '../../../hooks/use-app-urls';
+import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
 import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 
@@ -27,20 +28,25 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
     const contestCardControlBtns = 'search-problem-card-control-buttons';
     const searchProblemCardControlBtnsClassName = concatClassNames(styles.problemCardControls, contestCardControlBtns);
 
-    const { getRegisterContestTypeUrl } = useAppUrls();
+    const { getContestProblemUrl } = useAppUrls();
+
+    const { state: { problems } } = useProblems();
+    console.log(problems);
 
     const renderPage = useCallback(
         () => isEmpty(problem.contest)
             ? (
-                <div className={searchProblemCardHeaderClassName}>
-                    <div className={styles.tooltip}>
-                        <span className={styles.tooltipText}>{problem.name}</span>
+                <div className={searchContestElementClassName}>
+                    <div className={searchProblemCardHeaderClassName}>
+                        <div className={styles.tooltip}>
+                            <span className={styles.tooltipText}>{problem.name}</span>
+                        </div>
+                        <span
+                          className={searchProblemClassName}
+                        >
+                            {problem.name}
+                        </span>
                     </div>
-                    <span
-                      className={searchProblemClassName}
-                    >
-                        {problem.name}
-                    </span>
                 </div>
             )
             : (
@@ -71,9 +77,10 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
                     <div className={searchProblemCardControlBtnsClassName}>
                         <LinkButton
                           id="button-card-compete"
-                          to={getRegisterContestTypeUrl({
+                          to={getContestProblemUrl({
                               id: problem.contest.id,
                               participationType: ContestParticipationType.Compete,
+                              orderBy: problem.orderBy,
                           })}
                           text="Compete"
                           state={
@@ -85,9 +92,10 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
                         />
                         <LinkButton
                           id="button-card-practice"
-                          to={getRegisterContestTypeUrl({
+                          to={getContestProblemUrl({
                               id: problem.contest.id,
                               participationType: ContestParticipationType.Practice,
+                              orderBy: problem.orderBy,
                           })}
                           text="Practice"
                           type={LinkButtonType.secondary}
@@ -101,8 +109,9 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
                     </div>
                 </div>
             ),
-        [ getRegisterContestTypeUrl, problem.contest, problem.name, searchContestElementClassName, searchProblemCardControlBtnsClassName,
-            searchProblemCardHeaderClassName, searchProblemCategoryClassName, searchProblemClassName, searchProblemContestClassName ],
+        [ getContestProblemUrl, problem.contest, problem.name, problem.orderBy, searchContestElementClassName,
+            searchProblemCardControlBtnsClassName, searchProblemCardHeaderClassName, searchProblemCategoryClassName,
+            searchProblemClassName, searchProblemContestClassName ],
     );
 
     return (

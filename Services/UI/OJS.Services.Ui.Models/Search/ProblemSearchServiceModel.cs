@@ -10,6 +10,8 @@ public class ProblemSearchServiceModel : IMapExplicitly
 
     public string Name { get; set; } = null!;
 
+    public double OrderBy { get; set; }
+
     public ProblemContestSearchServiceModel? Contest { get; set; } = null!;
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration.CreateMap<Problem, ProblemSearchServiceModel>()
