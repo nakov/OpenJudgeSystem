@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import first from 'lodash/first';
 import isNil from 'lodash/isNil';
 
-import { ISubmissionTypeType } from '../../common/types';
+import { ISubmissionTypeType, ISubmitSubmissionValidationResponseType } from '../../common/types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useCurrentContest } from '../use-current-contest';
 import { useHttp } from '../use-http';
@@ -76,9 +76,9 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     const {
         post: submitCode,
-        error,
+        data,
         isSuccess,
-    } = useHttp<null, null, ISubmitCodeTypeParametersType>({ url: getSubmitUrl });
+    } = useHttp<null, ISubmitSubmissionValidationResponseType, ISubmitCodeTypeParametersType>({ url: getSubmitUrl });
 
     const {
         post: submitFileCode,
@@ -156,8 +156,9 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     useEffect(
         () => {
-            if (!isNil(error)) {
-                setSubmitMessage(error);
+            if (!isNil(data)) {
+                const { validationResult: submitCodeValidationResult } = data;
+                setSubmitMessage(submitCodeValidationResult.message);
                 return;
             }
 
@@ -171,7 +172,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             })();
         },
         [
-            error,
+            data,
             errorSubmitFile,
             loadSubmissions,
         ],

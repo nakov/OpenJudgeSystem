@@ -123,6 +123,10 @@ interface IUserPermissionsType {
     canAccessAdministration: boolean;
 }
 
+interface ISubmitSubmissionValidationResponseType {
+    validationResult: IValidationType;
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -137,6 +141,7 @@ export type {
     IPagedResultType,
     IUserType,
     IUserPermissionsType,
+    ISubmitSubmissionValidationResponseType,
 };
 
 export { ValidationPropertyType };

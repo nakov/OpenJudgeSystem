@@ -51,11 +51,13 @@ public class CompeteController : BaseApiController
     /// Submits user's code for evaluation.
     /// </summary>
     /// <param name="model">The submission model containing the code and execution context.</param>
-    /// <returns>Success status code.</returns>
+    /// <returns>Validation result.</returns>
     [HttpPost]
+    [ProducesResponseType(typeof(SubmitSubmissionValidationResponseModel), Status200OK)]
     public async Task<IActionResult> Submit([FromBody] SubmissionRequestModel model)
         => await this.submissionsBusinessService
             .Submit(model.Map<SubmitSubmissionServiceModel>())
+            .Map<SubmitSubmissionValidationResponseModel>()
             .ToOkResult();
 
     /// <summary>

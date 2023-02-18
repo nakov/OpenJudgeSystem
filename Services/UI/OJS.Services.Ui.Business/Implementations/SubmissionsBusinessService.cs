@@ -35,6 +35,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunicationService;
     private readonly ITestRunsDataService testRunsDataService;
     private readonly ISubmissionDetailsValidationService submissionDetailsValidationService;
+    private readonly IContestValidationService contestValidationService;
+    private readonly ISubmitSubmissionValidationService submitSubmissionValidationService;
 
     public SubmissionsBusinessService(
         ISubmissionsDataService submissionsData,
@@ -48,7 +50,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ISubmissionsDistributorCommunicationService submissionsDistributorCommunicationService,
         ITestRunsDataService testRunsDataService,
         IParticipantScoresBusinessService participantScoresBusinessService,
-        ISubmissionDetailsValidationService submissionDetailsValidationService)
+        ISubmissionDetailsValidationService submissionDetailsValidationService,
+        IContestValidationService contestValidationService,
+        ISubmitSubmissionValidationService submitSubmissionValidationService)
     {
         this.submissionsData = submissionsData;
         this.usersBusiness = usersBusiness;
@@ -62,6 +66,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.testRunsDataService = testRunsDataService;
         this.participantScoresBusinessService = participantScoresBusinessService;
         this.submissionDetailsValidationService = submissionDetailsValidationService;
+        this.contestValidationService = contestValidationService;
+        this.submitSubmissionValidationService = submitSubmissionValidationService;
     }
 
     public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
@@ -273,63 +279,37 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         return userSubmissions;
     }
 
-    public async Task Submit(SubmitSubmissionServiceModel model)
+    public async Task<SubmitSubmissionValidationServiceModel> Submit(SubmitSubmissionServiceModel model)
     {
         var problem = await this.problemsDataService.GetWithProblemGroupCheckerAndTestsById(model.ProblemId);
-        if (problem == null)
-        {
-            throw new BusinessServiceException(Resources.ContestsGeneral.ProblemNotFound);
-        }
-
         var currentUser = this.userProviderService.GetCurrentUser();
-
         var participant = await this.participantsDataService
             .GetWithContestByContestByUserAndIsOfficial(
-                problem.ProblemGroup.ContestId,
+                problem!.ProblemGroup.ContestId,
                 currentUser.Id!,
                 model.Official);
-        if (participant == null)
-        {
-            throw new BusinessServiceException(Resources.ContestsGeneral.UserIsNotRegisteredForExam);
-        }
+        var contestValidationResult = this.contestValidationService.GetValidationResult(
+            (participant?.Contest,
+            currentUser.Id, currentUser.IsAdminOrLecturer, model.Official) !);
+        var userSubmissionTimeLimit = this.submissionsData.GetUserSubmissionTimeLimit(
+            participant!.Id,
+            participant.Contest.LimitBetweenSubmissions);
+        var hasUserNotProcessedSubmissionForProblem =
+            this.submissionsData.HasUserNotProcessedSubmissionForProblem(problem.Id, currentUser.Id!);
+        var shouldAllowBinaryFiles = false;
 
-        await this.contestsBusinessService.ValidateContest(
-            participant.Contest,
-            currentUser.Id!,
-            currentUser.IsAdmin,
-            model.Official);
+        var submitSubmissionValidationServiceResult = this.submitSubmissionValidationService.GetValidationResult(
+        (problem,
+        currentUser,
+        participant,
+        contestValidationResult,
+        userSubmissionTimeLimit,
+        hasUserNotProcessedSubmissionForProblem,
+        model,
+        shouldAllowBinaryFiles));
 
-        this.problemsBusinessService.ValidateProblemForParticipant(
-            participant,
-            participant.Contest,
-            model.ProblemId,
-            model.Official);
-
-        // if (official &&
-        //     !this.contestsBusinessService.IsContestIpValidByContestAndIp(problem.ProblemGroup.ContestId, this.Request.UserHostAddress))
-        // {
-        //     return this.RedirectToAction("NewContestIp", new { id = problem.ProblemGroup.ContestId });
-        // }
-
-        this.submissionTypesBusinessService.ValidateSubmissionType(model.SubmissionTypeId, problem);
-
-        if (this.submissionsData.GetUserSubmissionTimeLimit(
-                participant.Id,
-                participant.Contest.LimitBetweenSubmissions) != 0)
-        {
-            throw new BusinessServiceException(Resources.ContestsGeneral.SubmissionWasSentTooSoon);
-        }
-
-        if (problem.SourceCodeSizeLimit < model.Content.Length)
-        {
-            throw new BusinessServiceException(Resources.ContestsGeneral.SubmissionTooLong);
-        }
-
-        if (this.submissionsData.HasUserNotProcessedSubmissionForProblem(problem.Id, currentUser.Id!))
-        {
-            throw new BusinessServiceException(Resources.ContestsGeneral
-                .UserHasNotProcessedSubmissionForProblem);
-        }
+        var submitSubmissionValidationServiceModel =
+            new SubmitSubmissionValidationServiceModel() { ValidationResult = submitSubmissionValidationServiceResult };
 
         var contest = participant.Contest;
 
@@ -358,6 +338,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var response = await this.submissionsDistributorCommunicationService
             .AddSubmissionForProcessing(newSubmission);
+
+        return submitSubmissionValidationServiceModel;
     }
 
     public async Task SubmitFileSubmission(SubmitFileSubmissionServiceModel model)
