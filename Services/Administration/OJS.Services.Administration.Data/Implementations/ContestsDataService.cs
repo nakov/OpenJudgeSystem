@@ -5,7 +5,6 @@ namespace OJS.Services.Administration.Data.Implementations
     using OJS.Data;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Problems;
-    using OJS.Services.Common;
     using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Infrastructure;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
@@ -119,6 +118,11 @@ namespace OJS.Services.Administration.Data.Implementations
             => await this.GetByIdQuery(id)
                 .Select(c => c.Type)
                 .FirstOrDefaultAsync() == ContestType.OnlinePracticalExam;
+
+        public async Task<bool> IsExamById(int id)
+            => await this.GetByIdQuery(id)
+                   .Select(c => c.Type)
+                   .AnyAsync(type => type == ContestType.OnlinePracticalExam || type == ContestType.OnsitePracticalExam);
 
         public Task<bool> IsUserLecturerInByContestAndUser(int id, string? userId)
             => this.GetByIdQuery(id)

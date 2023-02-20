@@ -47,6 +47,8 @@ namespace OJS.Services.Administration.Data
 
         Task<bool> IsOnlineById(int id);
 
+        Task<bool> IsExamById(int id);
+
         Task<bool> IsUserLecturerInByContestAndUser(int id, string? userId);
 
         Task<bool> IsUserParticipantInByContestAndUser(int id, string? userId);

@@ -17,8 +17,8 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
     public IEnumerable<Func<Contest, Contest, AdminActionContext, ValidatorResult>> GetValidators()
         => new Func<Contest, Contest, AdminActionContext, ValidatorResult>[]
         {
-            ValidateContestStartTime, ValidateContestPracticeStartTime, ValidateOnlineContestDuration,
-            ValidateOnlineContestProblemGroups, ValidateActiveContestCannotEditDurationTypeOnEdit,
+            ValidateContestStartTime, ValidateContestPracticeStartTime, ValidateExamContestDuration,
+            ValidateExamContestProblemGroups, ValidateActiveContestCannotEditDurationTypeOnEdit,
             ValidateContestIsNotActiveOnDelete,
             ValidateCategoryIsSet,
         };
@@ -36,7 +36,7 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
             return ValidatorResult.Success();
         }
 
-        if (existingContest.IsOnline &&
+        if (existingContest.IsExam &&
             existingContest.IsActive &&
             (existingContest.Duration != newContest.Duration || existingContest.Type != newContest.Type))
         {
@@ -71,9 +71,9 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
             ? ValidatorResult.Error(Resource.PracticeStartDateBeforeEnd)
             : ValidatorResult.Success();
 
-    private static ValidatorResult ValidateOnlineContestDuration(Contest oldContest, Contest newContest, AdminActionContext adminActionContext)
+    private static ValidatorResult ValidateExamContestDuration(Contest oldContest, Contest newContest, AdminActionContext adminActionContext)
     {
-        if (newContest.IsOnline)
+        if (newContest.IsExam)
         {
             if (!newContest.Duration.HasValue)
             {
@@ -89,9 +89,9 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
         return ValidatorResult.Success();
     }
 
-    private static ValidatorResult ValidateOnlineContestProblemGroups(Contest oldContest, Contest newContest, AdminActionContext adminActionContext)
+    private static ValidatorResult ValidateExamContestProblemGroups(Contest oldContest, Contest newContest, AdminActionContext adminActionContext)
     {
-        if (newContest.IsOnline)
+        if (newContest.IsExam)
         {
             if (newContest.NumberOfProblemGroups <= 0)
             {

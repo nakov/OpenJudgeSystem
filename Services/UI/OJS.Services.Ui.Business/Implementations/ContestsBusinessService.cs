@@ -376,7 +376,7 @@ namespace OJS.Services.Ui.Business.Implementations
             string userId,
             bool isUserAdmin)
         {
-            if (contest.Type is not(ContestType.OnlinePracticalExam or ContestType.OnsitePracticalExam) &&
+            if (contest.IsExam &&
                 official &&
                 !isUserAdmin &&
                 !IsUserLecturerInContest(contest, userId) &&
@@ -398,7 +398,7 @@ namespace OJS.Services.Ui.Business.Implementations
             string userId,
             bool isUserAdmin)
         {
-            if (contest.IsOnline &&
+            if (contest.IsExam &&
                 official &&
                 !isUserAdmin &&
                 !IsUserLecturerInContest(contest, userId) &&

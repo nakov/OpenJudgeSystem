@@ -169,7 +169,7 @@ namespace OJS.Services.Ui.Business.Implementations
         public void ValidateProblemForParticipant(Participant participant, Contest contest, int problemId, bool isOfficial)
         {
             if (isOfficial &&
-                contest.IsOnline &&
+                contest.IsExam &&
                 !this.lecturersInContestsBusinessService.IsUserAdminOrLecturerInContest(contest) &&
                 participant.ProblemsForParticipants.All(p => p.ProblemId != problemId))
             {

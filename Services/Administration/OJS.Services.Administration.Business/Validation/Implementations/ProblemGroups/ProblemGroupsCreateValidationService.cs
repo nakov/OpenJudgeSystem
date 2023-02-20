@@ -18,7 +18,7 @@ public class ProblemGroupsCreateValidationService : IValidationService<ProblemGr
         this.notDefaultValueValidationHelper
             .ValidateValueIsNotDefault(problemGroup, nameof(problemGroup));
 
-        if (!problemGroup!.ContestIsOnline)
+        if (!problemGroup!.ContestIsExam)
         {
             return ValidationResult.Invalid(Resource.CanCreateOnlyInOnlineContest);
         }
