@@ -151,9 +151,16 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         [ currentProblem ],
     );
 
-    const updateSubmissionCode = (code: string | Blob) => {
-        setSubmissionCode(code);
-    };
+    const updateSubmissionCode = useCallback(
+        (code: string | Blob) => {
+            setSubmissionCode(code);
+
+            if (!isNil(currentProblem)) {
+                currentProblem.codeEditorCode = code;
+            }
+        },
+        [ currentProblem ],
+    );
 
     useEffect(
         () => {
@@ -212,6 +219,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             submitMessage,
             setSubmitMessage,
             isSubmissionSuccessful,
+            updateSubmissionCode,
         ],
     );
 
