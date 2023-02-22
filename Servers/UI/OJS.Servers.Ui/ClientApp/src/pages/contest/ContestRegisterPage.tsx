@@ -49,6 +49,10 @@ const ContestRegisterPage = () => {
     }, [ internalContest, contestIdToNumber, isParticipationOfficial, participationType, register ]);
 
     useEffect(() => {
+        if (isNil(contestId) || isNil(participationType)) {
+            return;
+        }
+
         if (doesNotRequirePassword || isSubmittedPasswordValid) {
             navigate(`/contests/${contestId}/${participationType}`);
         }
