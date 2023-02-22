@@ -40,15 +40,23 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
 
         if (isOfficial)
         {
-            participant.ParticipationStartTime = DateTime.Now;
-            participant.ParticipationEndTime = DateTime.Now + contest.Duration;
-
-            var isUserLecturerInByContestAndUser =
-                await this.contestsData.IsUserLecturerInByContestAndUser(contest.Id, userId);
-
-            if (!isAdmin && !isUserLecturerInByContestAndUser)
+            if (contest.IsOnline)
             {
-                AssignRandomProblemsToParticipant(participant, contest);
+                participant.ParticipationStartTime = DateTime.Now;
+                participant.ParticipationEndTime = DateTime.Now + contest.Duration;
+
+                var isUserLecturerInByContestAndUser =
+                    await this.contestsData.IsUserLecturerInByContestAndUser(contest.Id, userId);
+
+                if (!isAdmin && !isUserLecturerInByContestAndUser)
+                {
+                    AssignRandomProblemsToParticipant(participant, contest);
+                }
+            }
+            else if (contest.IsOnsite)
+            {
+                participant.ParticipationStartTime = DateTime.Now;
+                participant.ParticipationEndTime = contest.EndTime;
             }
         }
 

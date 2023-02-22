@@ -112,7 +112,7 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
         var validationModel = new ProblemGroupCreateValidationServiceModel
         {
             ContestIsActive = await this.contestsActivity.IsActive(contest!),
-            ContestIsExam = contest!.IsExam,
+            ContestIsOnline = contest!.IsOnline,
         };
 
         this.problemGroupsCreateValidation
@@ -129,7 +129,7 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
         {
             ExistingOrderBy = existingEntity.OrderBy,
             NewOrderBy = newEntity.OrderBy,
-            ContestIsOnline = await this.contestsData.IsExamById(newEntity.ContestId),
+            ContestIsOnline = await this.contestsData.IsOnlineById(newEntity.ContestId),
         };
 
         this.problemGroupsEditValidation

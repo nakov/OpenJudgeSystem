@@ -118,7 +118,7 @@ namespace OJS.Services.Administration.Business.Implementations
                 await this.problemsData.DeleteById(id);
                 await this.problemsData.SaveChanges();
 
-                if (!await this.contestsData.IsExamById(problem.ContestId))
+                if (!await this.contestsData.IsOnlineById(problem.ContestId))
                 {
                     await this.problemGroupsBusiness.DeleteById(problem.ProblemGroupId);
                 }

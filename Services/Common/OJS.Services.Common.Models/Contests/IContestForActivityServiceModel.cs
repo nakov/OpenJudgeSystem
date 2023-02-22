@@ -25,5 +25,5 @@ public interface IContestForActivityServiceModel : IMapFrom<Contest>
     DateTime? PracticeEndTime { get; set; }
 
     [IgnoreMap]
-    bool IsExam { get; }
+    bool IsOnline { get; }
 }

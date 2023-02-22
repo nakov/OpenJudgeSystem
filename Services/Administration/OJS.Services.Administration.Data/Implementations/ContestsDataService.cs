@@ -119,11 +119,6 @@ namespace OJS.Services.Administration.Data.Implementations
                 .Select(c => c.Type)
                 .FirstOrDefaultAsync() == ContestType.OnlinePracticalExam;
 
-        public async Task<bool> IsExamById(int id)
-            => await this.GetByIdQuery(id)
-                   .Select(c => c.Type)
-                   .AnyAsync(type => type == ContestType.OnlinePracticalExam || type == ContestType.OnsitePracticalExam);
-
         public Task<bool> IsUserLecturerInByContestAndUser(int id, string? userId)
             => this.GetByIdQuery(id)
                 .AnyAsync(c =>

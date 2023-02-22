@@ -425,7 +425,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             IsReadOnly = true,
         });
 
-        if (!contest.IsExam)
+        if (!contest.IsOnline)
         {
             formControls.Add(new FormControlViewModel
             {
@@ -519,7 +519,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         Problem newEntity,
         AdminActionContext actionContext)
     {
-        if (!originalEntity.ProblemGroup.Contest.IsExam)
+        if (!originalEntity.ProblemGroup.Contest.IsOnline)
         {
             newEntity.ProblemGroup.OrderBy = newEntity.OrderBy;
         }

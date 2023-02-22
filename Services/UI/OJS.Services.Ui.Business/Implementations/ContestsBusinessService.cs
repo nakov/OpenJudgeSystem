@@ -376,7 +376,7 @@ namespace OJS.Services.Ui.Business.Implementations
             string userId,
             bool isUserAdmin)
         {
-            if (contest.IsExam &&
+            if (!contest.IsExam &&
                 official &&
                 !isUserAdmin &&
                 !IsUserLecturerInContest(contest, userId) &&
