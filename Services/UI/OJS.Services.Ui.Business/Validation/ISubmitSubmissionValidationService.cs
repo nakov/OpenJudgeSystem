@@ -14,7 +14,6 @@ public interface ISubmitSubmissionValidationService : IValidationService
     ValidationResult,
     int,
     bool,
-    SubmitSubmissionServiceModel,
-    bool)>
+    SubmitSubmissionServiceModel)>
 {
 }

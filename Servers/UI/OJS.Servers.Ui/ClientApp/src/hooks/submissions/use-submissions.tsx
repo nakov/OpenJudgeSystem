@@ -76,14 +76,14 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     const {
         post: submitCode,
-        data,
+        data: submitCodeData,
         isSuccess,
     } = useHttp<null, ISubmitSubmissionValidationResponseType, ISubmitCodeTypeParametersType>({ url: getSubmitUrl });
 
     const {
         post: submitFileCode,
-        error: errorSubmitFile,
-    } = useHttp<null, null, FormData>({
+        data: submitFileData,
+    } = useHttp<null, ISubmitSubmissionValidationResponseType, FormData>({
         url: getSubmitFileUrl,
         bodyAsFormData: true,
     });
@@ -156,14 +156,15 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     useEffect(
         () => {
-            if (!isNil(data)) {
-                const { validationResult: submitCodeValidationResult } = data;
+            if (!isNil(submitCodeData)) {
+                const { validationResult: submitCodeValidationResult } = submitCodeData;
                 setSubmitMessage(submitCodeValidationResult.message);
                 return;
             }
 
-            if (!isNil(errorSubmitFile)) {
-                setSubmitMessage(errorSubmitFile);
+            if (!isNil(submitFileData)) {
+                const { validationResult: submitFileValidationResult } = submitFileData;
+                setSubmitMessage(submitFileValidationResult.message);
                 return;
             }
 
@@ -172,8 +173,8 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             })();
         },
         [
-            data,
-            errorSubmitFile,
+            submitCodeData,
+            submitFileData,
             loadSubmissions,
         ],
     );

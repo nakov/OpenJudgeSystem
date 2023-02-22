@@ -13,4 +13,6 @@ public enum SubmitSubmissionValidation
     SubmissionTooLong = 8,
     UserHasNotProcessedSubmissionForProblem = 9,
     SubmissionTooShort = 10,
+    UploadFile = 11,
+    InvalidExtension = 12,
 }

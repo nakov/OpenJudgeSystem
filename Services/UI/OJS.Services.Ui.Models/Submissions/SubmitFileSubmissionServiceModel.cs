@@ -1,6 +1,6 @@
 ﻿namespace OJS.Services.Ui.Models.Submissions;
 
-public class SubmitFileSubmissionServiceModel
+public class SubmitSubmissionServiceModel
 {
     public int ProblemId { get; set; }
 
@@ -8,7 +8,9 @@ public class SubmitFileSubmissionServiceModel
 
     public bool Official { get; set; }
 
-    public byte[]? Content { get; set; }
+    public byte[]? ByteContent { get; set; }
+
+    public string? StringContent { get; set; }
 
     public string? FileExtension { get; set; }
 }

@@ -37,6 +37,10 @@ public static class ValidationMessages
         public const string UserHasNotProcessedSubmissionForProblem = "You have unprocessed submission for this problem. Please wait until the submission is processed.";
 
         public const string SubmissionTooShort = "The submission must be at least 5 characters long";
+
+        public const string UploadFile = "Please upload file.";
+
+        public const string InvalidExtension = "Invalid file extension";
     }
 
     public static class Problem

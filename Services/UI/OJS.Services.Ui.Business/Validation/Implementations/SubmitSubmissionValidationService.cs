@@ -11,12 +11,13 @@ using System.Linq;
 public class SubmitSubmissionValidationService : ISubmitSubmissionValidationService
 {
     public ValidationResult GetValidationResult(
-        (Problem?, UserInfoModel, Participant?, ValidationResult, int, bool, SubmitSubmissionServiceModel, bool)
+        (Problem?, UserInfoModel, Participant?, ValidationResult, int, bool, SubmitSubmissionServiceModel)
             validationInput)
     {
         var (problem, user, participant, contestValidationResult,
-            userSubmissionTimeLimit, hasUserNotProcessedSubmissionForProblem, submitSubmissionServiceModel,
-            shouldAllowBinaryFiles) = validationInput;
+            userSubmissionTimeLimit, hasUserNotProcessedSubmissionForProblem, submitSubmissionServiceModel) = validationInput;
+
+        var shouldAllowBinaryFiles = false;
 
         if (user.Id == null)
         {
@@ -65,6 +66,26 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
                 SubmitSubmissionValidation.SubmissionTypeNotFound.ToString());
         }
 
+        if (submitSubmissionServiceModel.StringContent == null)
+        {
+            shouldAllowBinaryFiles = true;
+
+            if (submitSubmissionServiceModel.ByteContent == null || submitSubmissionServiceModel.ByteContent.Length == 0)
+            {
+                return ValidationResult.Invalid(
+                    ValidationMessages.Submission.UploadFile,
+                    SubmitSubmissionValidation.UploadFile.ToString());
+            }
+
+            if (!submissionType.SubmissionType.AllowedFileExtensions!.Contains(
+                    submitSubmissionServiceModel.FileExtension!))
+            {
+                return ValidationResult.Invalid(
+                    ValidationMessages.Submission.InvalidExtension,
+                    SubmitSubmissionValidation.InvalidExtension.ToString());
+            }
+        }
+
         if (shouldAllowBinaryFiles && !submissionType.SubmissionType.AllowBinaryFilesUpload)
         {
             return ValidationResult.Invalid(
@@ -86,14 +107,14 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
                 SubmitSubmissionValidation.UserHasNotProcessedSubmissionForProblem.ToString());
         }
 
-        if (problem.SourceCodeSizeLimit < submitSubmissionServiceModel.Content.Length)
+        if (submitSubmissionServiceModel.StringContent != null && problem.SourceCodeSizeLimit < submitSubmissionServiceModel.StringContent.Length)
         {
             return ValidationResult.Invalid(
                 ValidationMessages.Submission.SubmissionTooLong,
                 SubmitSubmissionValidation.SubmissionTooLong.ToString());
         }
 
-        if (submitSubmissionServiceModel.Content.Length < 5)
+        if (submitSubmissionServiceModel.StringContent != null && submitSubmissionServiceModel.StringContent.Length < 5)
         {
             return ValidationResult.Invalid(
                 ValidationMessages.Submission.SubmissionTooShort,

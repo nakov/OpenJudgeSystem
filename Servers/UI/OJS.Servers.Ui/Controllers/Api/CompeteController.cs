@@ -64,11 +64,13 @@ public class CompeteController : BaseApiController
     /// Submits user's code in fle format (zip) for evaluation.
     /// </summary>
     /// <param name="model">The submission model containing the code and execution context.</param>
-    /// <returns>Success status code.</returns>
+    /// <returns>Validation result.</returns>
     [HttpPost]
+    [ProducesResponseType(typeof(SubmitSubmissionValidationResponseModel), Status200OK)]
     public async Task<IActionResult> SubmitFileSubmission([FromForm] SubmitFileSubmissionRequestModel model)
         => await this.submissionsBusinessService
-            .SubmitFileSubmission(model.Map<SubmitFileSubmissionServiceModel>())
+            .Submit(model.Map<SubmitSubmissionServiceModel>())
+            .Map<SubmitSubmissionValidationResponseModel>()
             .ToOkResult();
 
     /// <summary>
