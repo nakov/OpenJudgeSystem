@@ -1,4 +1,5 @@
 import React, { FC, useCallback, useEffect, useMemo } from 'react';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { Anything, IDictionary, IKeyValuePair } from '../../common/common-types';
@@ -41,10 +42,7 @@ const keyToIconComponent: IDictionary<FC> = {
 
 const HomeHeader = () => {
     const {
-        state: {
-            statistics,
-            isLoaded,
-        },
+        state: { statistics },
         actions: { load },
     } = useHomeStatistics();
 
@@ -90,7 +88,7 @@ const HomeHeader = () => {
     );
 
     return (
-        isLoaded
+        !isEmpty(statistics)
             ? (
                 <>
                     <Heading type={HeadingType.primary}>

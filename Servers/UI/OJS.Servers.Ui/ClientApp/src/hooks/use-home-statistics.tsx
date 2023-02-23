@@ -9,7 +9,6 @@ import { useUrls } from './use-urls';
 interface IHomeStatisticsContext {
     state: {
         statistics: IHomeStatistics | null;
-        isLoaded: boolean;
     };
     actions: {
         load: () => Promise<void>;
@@ -37,7 +36,6 @@ const HomeStatisticsProvider = ({ children }: IHomeStatisticsProviderProps) => {
     const {
         get,
         data,
-        isSuccess,
     } = useHttp<null, IHomeStatistics>({ url: getHomeStatisticsUrl });
 
     const load = useCallback(
@@ -58,13 +56,10 @@ const HomeStatisticsProvider = ({ children }: IHomeStatisticsProviderProps) => {
 
     const value = useMemo(
         () => ({
-            state: {
-                statistics,
-                isLoaded: isSuccess,
-            },
+            state: { statistics },
             actions: { load },
         }),
-        [ isSuccess, load, statistics ],
+        [ load, statistics ],
     );
 
     return (

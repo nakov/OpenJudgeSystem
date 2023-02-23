@@ -188,31 +188,13 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         [ unsetParam, setParam, possibleFilters ],
     );
 
-    const initialLoad = useCallback(
+    const reload = useCallback(
         async () => {
             await startLoading();
             await getContests();
             await stopLoading();
         },
         [ getContests, startLoading, stopLoading ],
-    );
-
-    const loadData = useCallback(
-        async () => {
-            await getContests();
-        },
-        [ getContests ],
-    );
-
-    const reload = useCallback(
-        async () => {
-            if (isSuccess) {
-                await loadData();
-            } else {
-                await initialLoad();
-            }
-        },
-        [ initialLoad, isSuccess, loadData ],
     );
 
     const changePage = useCallback(

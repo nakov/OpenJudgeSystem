@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { IFilter } from '../../../common/contest-types';
@@ -73,21 +74,25 @@ const ContestCategories = ({
     }, [ possibleFilters, categoriesFlat, onCategoryClick, updateBreadcrumb ]);
 
     return (
-        <div className={className as string}>
-            <Heading
-              type={HeadingType.small}
-              className={styles.heading}
-            >
-                Category
-            </Heading>
-            <Tree
-              items={categories}
-              onSelect={handleTreeLabelClick}
-              defaultSelected={defaultSelected}
-              defaultExpanded={defaultExpanded}
-              treeItemHasTooltip
-            />
-        </div>
+        !isEmpty(categories)
+            ? (
+                <div className={className as string}>
+                    <Heading
+                      type={HeadingType.small}
+                      className={styles.heading}
+                    >
+                        Category
+                    </Heading>
+                    <Tree
+                      items={categories}
+                      onSelect={handleTreeLabelClick}
+                      defaultSelected={defaultSelected}
+                      defaultExpanded={defaultExpanded}
+                      treeItemHasTooltip
+                    />
+                </div>
+            )
+            : null
     );
 };
 
