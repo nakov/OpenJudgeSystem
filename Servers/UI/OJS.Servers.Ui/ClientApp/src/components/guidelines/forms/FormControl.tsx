@@ -32,6 +32,7 @@ interface IFormControlProps extends IHaveOptionalClassName {
     onInput?: ((value?: string) => void) | null;
     checked?: boolean;
     id?: string;
+    problemId?: number;
 }
 
 interface ILabelInternalProps extends IHaveChildrenProps, IHaveOptionalClassName {
@@ -88,6 +89,7 @@ const FormControl = ({
     type = FormControlType.text,
     checked = false,
     id = generateId(),
+    problemId,
 }: IFormControlProps) => {
     const [ formControlValue, setFormControlValue ] = useState(value);
     const [ isChecked, setIsChecked ] = useState<boolean>(checked);
@@ -167,6 +169,7 @@ const FormControl = ({
                       const fileBlob = e.target.files?.item(0) as Blob;
                       onChange(fileBlob);
                   }}
+                  key={problemId}
                 />
             );
         }

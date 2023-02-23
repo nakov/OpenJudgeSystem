@@ -11,6 +11,7 @@ import CodeEditor from '../../code-editor/CodeEditor';
 import AlertBox, { AlertBoxType } from '../../guidelines/alert-box/AlertBox';
 import { Button, ButtonState } from '../../guidelines/buttons/Button';
 import Countdown, { ICountdownRemainingType, Metric } from '../../guidelines/countdown/Countdown';
+import FileUploader from '../../guidelines/file-uploader/FileUploader';
 import FormControl, { FormControlType } from '../../guidelines/forms/FormControl';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List, { Orientation } from '../../guidelines/lists/List';
@@ -46,6 +47,11 @@ const SubmissionBox = () => {
 
     const showSubmissionLimitTimer = useMemo(() => submitLimit > 0, [ submitLimit ]);
 
+    /*   useEffect(
+        () => console.log(currentProblem),
+        [ currentProblem ],
+    );
+*/
     const handleCodeChanged = useCallback(
         (newValue: string | Blob) => {
             updateSubmissionCode(newValue);
@@ -212,14 +218,16 @@ const SubmissionBox = () => {
 
         const { allowBinaryFilesUpload, allowedFileExtensions } = selectedSubmissionType;
 
-        if (allowBinaryFilesUpload) {
+        if (allowBinaryFilesUpload && !isNil(currentProblem)) {
             return (
                 <>
                     <FormControl
                       type={FormControlType.file}
                       name="file"
                       onChange={(file) => handleCodeChanged(file as Blob)}
+                      key={currentProblem?.id}
                     />
+                    <FileUploader />
                     <p className={styles.fileSubmissionDetailsParagraph}>
                         Allowed file extensions:
                         {allowedFileExtensions.join(', ')}
@@ -235,7 +243,7 @@ const SubmissionBox = () => {
               onCodeChange={handleCodeChanged}
             />
         );
-    }, [ handleCodeChanged, selectedSubmissionType, codeEditorCode ]);
+    }, [ handleCodeChanged, selectedSubmissionType, codeEditorCode, currentProblem ]);
 
     return (
         <div className={styles.contestMainWrapper}>
