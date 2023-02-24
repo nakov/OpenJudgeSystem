@@ -13,8 +13,6 @@ public class RegisterUserForContestServiceModel : IMapExplicitly
 
     public bool RequirePassword { get; set; }
 
-    public ValidationResult ValidationResult { get; set; } = null!;
-
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Contest, RegisterUserForContestServiceModel>()
             .ForAllOtherMembers(opt => opt.Ignore());

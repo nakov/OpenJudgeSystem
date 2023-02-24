@@ -48,6 +48,7 @@ interface ICurrentContestContext {
         totalParticipantsCount: number;
         activeParticipantsCount: number;
         isSubmitAllowed: boolean;
+        registerForContestError: string | null;
     };
     actions: {
         setContestPassword: (password: string) => void;
@@ -118,6 +119,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ totalParticipantsCount, setTotalParticipantsCount ] = useState(defaultState.state.totalParticipantsCount);
     const [ activeParticipantsCount, setActiveParticipantsCount ] = useState(defaultState.state.activeParticipantsCount);
     const [ isSubmitAllowed, setIsSubmitAllowed ] = useState<boolean>(true);
+    const [ registerForContestError, setRegisterForContestError ] = useState<string | null>(null);
 
     const {
         startLoading,
@@ -142,6 +144,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const {
         get: registerForContest,
         data: registerForContestData,
+        error: registerContestError,
     } = useHttp<IRegisterForContestUrlParams, IRegisterForContestResponseType>({
         url: getRegisterForContestUrl,
         parameters: registerForContestParams,
@@ -282,12 +285,14 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             return;
         }
 
-        const { requirePassword: responseRequirePassword, validationResult: newValidationResult } = registerForContestData;
+        if (!isNil(registerContestError)) {
+            setRegisterForContestError(registerContestError);
+        }
+        const { requirePassword: responseRequirePassword } = registerForContestData;
 
         setContest({ id: registerForContestData.id, name: registerForContestData.name } as IContestType);
         setRequirePassword(responseRequirePassword);
-        setValidationResult(newValidationResult);
-    }, [ registerForContestData ]);
+    }, [ registerForContestData, registerContestError ]);
 
     useEffect(() => {
         if (isNil(submitContestPasswordUrlParams)) {
@@ -362,6 +367,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 totalParticipantsCount,
                 activeParticipantsCount,
                 isSubmitAllowed,
+                registerForContestError,
             },
             actions: {
                 setContestPassword,
@@ -393,6 +399,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             activeParticipantsCount,
             isSubmitAllowed,
             setIsSubmitAllowed,
+            registerForContestError,
         ],
     );
 

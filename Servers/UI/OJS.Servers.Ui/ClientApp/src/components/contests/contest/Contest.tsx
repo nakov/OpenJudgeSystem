@@ -26,6 +26,7 @@ const Contest = () => {
             totalParticipantsCount,
             activeParticipantsCount,
             isOfficial,
+            registerForContestError,
         },
         actions: { setIsSubmitAllowed },
     } = useCurrentContest();

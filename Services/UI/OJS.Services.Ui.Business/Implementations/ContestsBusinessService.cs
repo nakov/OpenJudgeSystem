@@ -69,14 +69,13 @@ namespace OJS.Services.Ui.Business.Implementations
             var contest = await this.contestsData.OneById(id);
 
             var validationResult = this.contestValidationService.GetValidationResult((contest, user.Id, user.IsAdmin, official) !);
-
-            var registerModel = new RegisterUserForContestServiceModel();
-            if (contest != null)
+            if (!validationResult.IsValid)
             {
-                registerModel = contest.Map<RegisterUserForContestServiceModel>();
+                throw new BusinessServiceException(validationResult.Message, validationResult.PropertyName);
             }
 
-            registerModel.ValidationResult = validationResult;
+            var registerModel = contest!.Map<RegisterUserForContestServiceModel>();
+
             registerModel.RequirePassword = ShouldRequirePassword(contest!, participant!, official);
 
             return registerModel;
