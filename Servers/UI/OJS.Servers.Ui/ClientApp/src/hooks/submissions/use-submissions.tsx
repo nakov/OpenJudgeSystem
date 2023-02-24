@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import first from 'lodash/first';
 import isNil from 'lodash/isNil';
 
+import { IDictionary } from '../../common/common-types';
 import { ISubmissionTypeType } from '../../common/types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useCurrentContest } from '../use-current-contest';
@@ -15,7 +16,7 @@ import { useProblemSubmissions } from './use-problem-submissions';
 
 interface ISubmissionsContext {
     state: {
-        submissionCode: string | Blob;
+        problemSubmissionCode: IDictionary<string | Blob>;
         selectedSubmissionType: ISubmissionTypeType | null;
         submitMessage: string | null;
         setSubmitMessage: (value: string | null) => void;
@@ -30,7 +31,7 @@ interface ISubmissionsContext {
 
 const defaultState = {
     state: {
-        submissionCode: '',
+        problemSubmissionCode: {},
         selectedSubmissionType: null,
     },
 };
@@ -49,7 +50,8 @@ type ISubmissionsProviderProps = IHaveChildrenProps
 const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const [ selectedSubmissionType, setSelectedSubmissionType ] =
         useState<ISubmissionTypeType | null>(defaultState.state.selectedSubmissionType);
-    const [ submissionCode, setSubmissionCode ] = useState<string | Blob>(defaultState.state.submissionCode);
+    const [ problemSubmissionCode, setProblemSubmissionCode ] =
+        useState<IDictionary<string | Blob>>(defaultState.state.problemSubmissionCode);
     const [ submitMessage, setSubmitMessage ] = useState<string | null>(null);
 
     const {
@@ -66,13 +68,17 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const submitCodeParams = useMemo(() => {
         const { id: problemId } = currentProblem || {};
 
+        if (isNil(problemId)) {
+            return null;
+        }
+
         return {
             problemId,
             submissionTypeId: selectedSubmissionType?.id,
-            content: submissionCode,
+            content: problemSubmissionCode[problemId.toString()],
             official: isOfficial,
         } as ISubmitCodeTypeParametersType;
-    }, [ currentProblem, isOfficial, selectedSubmissionType, submissionCode ]);
+    }, [ currentProblem, isOfficial, selectedSubmissionType, problemSubmissionCode ]);
 
     const {
         post: submitCode,
@@ -93,6 +99,10 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const getSubmitParamsAsFormData = useCallback(async () => {
         const bodyFormData = new FormData();
 
+        if (isNil(submitCodeParams)) {
+            return bodyFormData;
+        }
+
         const {
             content,
             submissionTypeId,
@@ -109,6 +119,10 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     }, [ submitCodeParams ]);
 
     const submit = useCallback(async () => {
+        if (isNil(submitCodeParams)) {
+            return;
+        }
+
         startLoading();
 
         if (selectedSubmissionType?.allowBinaryFilesUpload) {
@@ -141,13 +155,14 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     const updateSubmissionCode = useCallback(
         (code: string | Blob) => {
-            setSubmissionCode(code);
-
-            if (!isNil(currentProblem)) {
-                currentProblem.codeEditorCode = code;
+            const { id: problemId } = currentProblem || {};
+            if (isNil(problemId)) {
+                return;
             }
+            problemSubmissionCode[problemId] = code;
+            setProblemSubmissionCode(problemSubmissionCode);
         },
-        [ currentProblem ],
+        [ currentProblem, problemSubmissionCode ],
     );
 
     useEffect(
@@ -187,7 +202,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const value = useMemo(
         () => ({
             state: {
-                submissionCode,
+                problemSubmissionCode,
                 selectedSubmissionType,
                 submitMessage,
                 setSubmitMessage,
@@ -202,7 +217,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         [
             selectSubmissionTypeById,
             selectedSubmissionType,
-            submissionCode,
+            problemSubmissionCode,
             submit,
             submitMessage,
             setSubmitMessage,

@@ -1,4 +1,5 @@
-import React, { ChangeEvent, useRef, useState } from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import isNil from 'lodash/isNil';
 
 import { useSubmissions } from '../../../hooks/submissions/use-submissions';
 import { useProblems } from '../../../hooks/use-problems';
@@ -7,9 +8,9 @@ import Button, { ButtonSize, ButtonType } from '../buttons/Button';
 const FileUploader = () => {
     // Create a reference to the hidden file input element
     const hiddenFileInput = useRef<HTMLInputElement | null>(null);
+    const { state: { problemSubmissionCode }, actions: { updateSubmissionCode } } = useSubmissions();
     const { state: { currentProblem } } = useProblems();
-    const { actions: { updateSubmissionCode } } = useSubmissions();
-    const [ fileName, setFileName ] = useState('');
+    const [ file, setFile ] = useState<Blob>();
 
     // Programatically click the hidden file input element
     // when the Button component is clicked
@@ -19,6 +20,26 @@ const FileUploader = () => {
     };
     // Call a function (passed as a prop from the parent component)
     // to handle the user-selected file
+
+    useEffect(
+        () => {
+            const { id: problemId } = currentProblem || {};
+            if (isNil(problemId)) {
+                return;
+            }
+
+            // eslint-disable-next-line prefer-destructuring
+            const fileTest = problemSubmissionCode[problemId];
+            if (isNil(fileTest) || fileTest instanceof String) {
+                return;
+            }
+
+            setFile(fileTest as Blob);
+            console.log(fileTest);
+            console.log(file);
+        },
+        [ file, currentProblem, problemSubmissionCode ],
+    );
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { target: { files: eventTarget } } = event;
         if (!eventTarget) {
@@ -26,7 +47,6 @@ const FileUploader = () => {
         }
 
         updateSubmissionCode(eventTarget[0]);
-        setFileName(eventTarget[0].name);
     };
     return (
         <>
@@ -34,11 +54,7 @@ const FileUploader = () => {
               onClick={handleClick}
               type={ButtonType.secondary}
               size={ButtonSize.medium}
-            >
-                {currentProblem?.codeEditorCode
-                    ? `${fileName}`
-                    : 'Click to select'}
-            </Button>
+            />
             <input
               type="file"
               ref={hiddenFileInput}

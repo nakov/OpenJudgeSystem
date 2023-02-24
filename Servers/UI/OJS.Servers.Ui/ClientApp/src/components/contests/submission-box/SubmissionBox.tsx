@@ -12,7 +12,6 @@ import AlertBox, { AlertBoxType } from '../../guidelines/alert-box/AlertBox';
 import { Button, ButtonState } from '../../guidelines/buttons/Button';
 import Countdown, { ICountdownRemainingType, Metric } from '../../guidelines/countdown/Countdown';
 import FileUploader from '../../guidelines/file-uploader/FileUploader';
-import FormControl, { FormControlType } from '../../guidelines/forms/FormControl';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List, { Orientation } from '../../guidelines/lists/List';
 import ExecutionTypeSelector from '../execution-type-selector/ExecutionTypeSelector';
@@ -34,6 +33,7 @@ const SubmissionBox = () => {
             submitMessage,
             setSubmitMessage,
             isSubmissionSuccessful,
+            problemSubmissionCode,
         },
         actions: {
             submit,
@@ -205,10 +205,14 @@ const SubmissionBox = () => {
     );
 
     const codeEditorCode = useMemo(
-        () => isNil(currentProblem?.codeEditorCode)
-            ? ''
-            : currentProblem?.codeEditorCode.toString(),
-        [ currentProblem?.codeEditorCode ],
+        () => {
+            const { id: problemId } = currentProblem || {};
+            if (isNil(problemId)) {
+                return null;
+            }
+            return problemSubmissionCode[problemId];
+        },
+        [ currentProblem, problemSubmissionCode ],
     );
 
     const renderSubmissionInput = useCallback(() => {
@@ -221,12 +225,6 @@ const SubmissionBox = () => {
         if (allowBinaryFilesUpload && !isNil(currentProblem)) {
             return (
                 <>
-                    <FormControl
-                      type={FormControlType.file}
-                      name="file"
-                      onChange={(file) => handleCodeChanged(file as Blob)}
-                      key={currentProblem?.id}
-                    />
                     <FileUploader />
                     <p className={styles.fileSubmissionDetailsParagraph}>
                         Allowed file extensions:
@@ -239,7 +237,9 @@ const SubmissionBox = () => {
         return (
             <CodeEditor
               selectedSubmissionType={selectedSubmissionType}
-              code={codeEditorCode}
+              code={isNil(codeEditorCode) || codeEditorCode instanceof Blob
+                  ? ''
+                  : codeEditorCode}
               onCodeChange={handleCodeChanged}
             />
         );
