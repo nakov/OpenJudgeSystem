@@ -40,10 +40,10 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
 
         if (isOfficial)
         {
-            if (contest.IsOnline)
+            if (contest.IsOnlineExam)
             {
                 participant.ParticipationStartTime = DateTime.Now;
-                participant.ParticipationEndTime = DateTime.Now + contest.Duration;
+                participant.ParticipationEndTime = CalculateParticipantParticipationEndTime(contest);
 
                 var isUserLecturerInByContestAndUser =
                     await this.contestsData.IsUserLecturerInByContestAndUser(contest.Id, userId);
@@ -53,7 +53,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
                     AssignRandomProblemsToParticipant(participant, contest);
                 }
             }
-            else if (contest.IsOnsite)
+            else if (contest.IsOnsiteExam)
             {
                 participant.ParticipationStartTime = DateTime.Now;
                 participant.ParticipationEndTime = contest.EndTime;
@@ -158,6 +158,13 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
         => this.submissionsData
             .GetUserSubmissionTimeLimit(participantId, contestLimitBetweenSubmissions)
             .ToTask();
+
+    private static DateTime? CalculateParticipantParticipationEndTime(Contest contest)
+    {
+        var timeWithDuration = DateTime.Now + contest.Duration;
+
+        return timeWithDuration < contest.EndTime ? timeWithDuration : contest.EndTime;
+    }
 
     private static void AssignRandomProblemsToParticipant(Participant participant, Contest contest)
     {
