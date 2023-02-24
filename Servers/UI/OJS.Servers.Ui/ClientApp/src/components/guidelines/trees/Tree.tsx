@@ -15,7 +15,7 @@ import styles from './Tree.module.scss';
 interface ITreeProps {
     items: ITreeItemType[];
     onSelect: (node: ITreeItemType) => void;
-    defaultSelected?: string;
+    defaultSelected: string;
     defaultExpanded?: string[];
     itemFunc?: (item: ITreeItemType) => React.ReactElement;
     treeItemHasTooltip?: boolean;
