@@ -143,7 +143,7 @@ namespace OJS.Servers.Administration.Controllers
                     .VerifyResult();
             }
 
-            if (!entity.IsOnline && entity.Duration != null)
+            if (!entity.IsOnlineExam && entity.Duration != null)
             {
                 entity.Duration = null;
             }
@@ -162,12 +162,12 @@ namespace OJS.Servers.Administration.Controllers
             Contest newContest,
             AdminActionContext actionContext)
         {
-            if (newContest.IsOnline && newContest.ProblemGroups.Count == 0)
+            if (newContest.IsOnlineExam && newContest.ProblemGroups.Count == 0)
             {
                 AddProblemGroupsToContest(newContest, newContest.NumberOfProblemGroups);
             }
 
-            if (!newContest.IsOnline && newContest.Duration != null)
+            if (!newContest.IsOnlineExam && newContest.Duration != null)
             {
                 newContest.Duration = null;
             }
