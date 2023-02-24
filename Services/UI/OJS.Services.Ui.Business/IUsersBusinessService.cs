@@ -2,8 +2,8 @@
 {
     using System.Collections.Generic;
     using System.Security.Claims;
-    using OJS.Services.Ui.Models.Search;
     using System.Threading.Tasks;
+    using OJS.Services.Ui.Models.Search;
     using OJS.Services.Ui.Models.Users;
     using SoftUni.Services.Infrastructure;
 
@@ -13,7 +13,7 @@
 
         public Task<UserProfileServiceModel?> GetUserProfileById(string userId);
 
-        Task<IEnumerable<UserSearchServiceModel>> GetSearchUsersByUsername(string username);
+        Task<(IEnumerable<TServiceModel>, int)> GetSearchUsersByUsername<TServiceModel>(SearchServiceModel model);
 
         Task<bool> IsLoggedInUserAdmin(ClaimsPrincipal userPrincipal);
     }

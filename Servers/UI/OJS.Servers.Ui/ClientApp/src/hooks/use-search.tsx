@@ -1,12 +1,14 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
+import { IUrlParam } from '../common/common-types';
+import { PageParams } from '../common/pages-types';
 import { IContestSearchType, IProblemSearchType, IUserSearchType, SearchParams } from '../common/search-types';
-import { ISearchResponseModel, IValidationType } from '../common/types';
+import { IPagedResultType, ISearchResponseModel, IValidationType } from '../common/types';
 import { IGetSearchResultsUrlParams } from '../common/url-types';
-import { IHaveChildrenProps } from '../components/common/Props';
+import { IHaveChildrenProps, IPagesInfo } from '../components/common/Props';
 
 import { useUrlParams } from './common/use-url-params';
 import { useHttp } from './use-http';
@@ -19,14 +21,17 @@ interface ISearchContext {
         problems: IProblemSearchType[];
         users: IUserSearchType[];
         validationResult: IValidationType;
-        searchValue: string;
         isLoaded: boolean;
-        searchResultUrlParam: IGetSearchResultsUrlParams;
+        searchValue: string;
+        currentPage: number;
+        pagesInfo: IPagesInfo;
     };
     actions: {
         changeSearchValue: (searchParam: string) => void;
         clearSearchValue: () => void;
         load: () => Promise<void>;
+        changePage: (pageNumber: number) => void;
+        encodeUrlToURIComponent: (url: string) => string;
     };
 }
 
@@ -43,7 +48,7 @@ const defaultState = {
             propertyName: '',
         },
         searchValue: '',
-        searchResultUrlParam: { searchTerm: '' },
+        pagesInfo: { pageNumber: 1 },
     },
 };
 
@@ -54,20 +59,34 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
     const [ problems, setSearchedProblems ] = useState(defaultState.state.problems);
     const [ users, setSearchedUsers ] = useState(defaultState.state.users);
     const [ validationResult, setValidationResult ] = useState<IValidationType>(defaultState.state.validationResult);
+    const [ pagesInfo, setPagesInfo ] = useState<IPagesInfo>(defaultState.state.pagesInfo as IPagesInfo);
     const [ searchValue, setSearchValue ] = useState<string>(defaultState.state.searchValue);
-    const [ getSearchResultsUrlParams, setGetSearchResultsUrlParams ] =
-        useState<IGetSearchResultsUrlParams>(defaultState.state.searchResultUrlParam);
+    const [ getSearchResultsUrlParams, setGetSearchResultsUrlParams ] = useState<IGetSearchResultsUrlParams>();
 
     const { getSearchResults } = useUrls();
     const { startLoading, stopLoading } = useLoading();
-    const { search } = useLocation();
+    const collectCurrentPage = (params: IUrlParam[]) => {
+        const { value } = params.find((p) => p.key === PageParams.page) || { value: '1' };
+
+        const theValue = isArray(value)
+            ? value[0]
+            : value;
+
+        return parseInt(theValue, 10);
+    };
 
     const {
+        state: { params },
         actions: {
             setParam,
             unsetParam,
         },
     } = useUrlParams();
+
+    const currentPage = useMemo(
+        () => collectCurrentPage(params),
+        [ params ],
+    );
 
     const {
         get,
@@ -75,7 +94,7 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
         isSuccess,
     } = useHttp<
         IGetSearchResultsUrlParams,
-        ISearchResponseModel>({
+        IPagedResultType<ISearchResponseModel>>({
             url: getSearchResults,
             parameters: getSearchResultsUrlParams,
         });
@@ -87,25 +106,34 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
 
     const urlParam = useMemo(
         () => {
-            const query = new URLSearchParams(search);
+            const { value } = params.find((p) => p.key === SearchParams.search) || { value: '' };
 
-            return query.get(SearchParams.search) as string;
+            return isArray(value)
+                ? value[0]
+                : value;
         },
-        [ search ],
+        [ params ],
+    );
+
+    const changePage = useCallback(
+        (pageNumber: number) => {
+            setParam(PageParams.page, pageNumber);
+        },
+        [ setParam ],
     );
 
     const setParams = useCallback(
         () => {
-            if (!isEmpty(urlParam) && isEmpty(searchValue)) {
-                setGetSearchResultsUrlParams({ searchTerm: urlParam });
-                setParam(SearchParams.search, urlParam);
+            if (isEmpty(searchValue) && !isEmpty(urlParam)) {
                 setSearchValue(urlParam);
-            } else {
+                const encodedUrl = encodeUrlToURIComponent(urlParam);
+                setGetSearchResultsUrlParams({ page: currentPage, searchTerm: encodedUrl });
+            } else if (!isEmpty(searchValue)) {
                 const encodedUrl = encodeUrlToURIComponent(searchValue);
-                setGetSearchResultsUrlParams({ searchTerm: encodedUrl });
+                setGetSearchResultsUrlParams({ page: currentPage, searchTerm: encodedUrl });
             }
         },
-        [ encodeUrlToURIComponent, searchValue, setParam, urlParam ],
+        [ currentPage, encodeUrlToURIComponent, searchValue, urlParam ],
     );
 
     useEffect(
@@ -121,17 +149,34 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
                 return;
             }
 
+            const searchResult = data as IPagedResultType<ISearchResponseModel>;
+            const newData = searchResult.items as ISearchResponseModel[];
             const {
                 contests: searchedContests,
                 problems: searchedProblems,
                 users: searchedUsers,
                 validationResult: newValidationResult,
-            } = data as ISearchResponseModel;
+            } = newData[0];
+
+            const {
+                pageNumber,
+                itemsPerPage,
+                pagesCount,
+                totalItemsCount,
+            } = searchResult || {};
+
+            const newPagesInfo = {
+                pageNumber,
+                itemsPerPage,
+                pagesCount,
+                totalItemsCount,
+            };
 
             setSearchedContests(searchedContests);
             setSearchedProblems(searchedProblems);
             setSearchedUsers(searchedUsers);
             setValidationResult(newValidationResult);
+            setPagesInfo(newPagesInfo);
         },
         [ data ],
     );
@@ -164,18 +209,21 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
                 problems,
                 users,
                 validationResult,
-                searchValue,
                 isLoaded: isSuccess,
-                searchResultUrlParam: getSearchResultsUrlParams,
+                searchValue,
+                pagesInfo,
+                currentPage,
             },
             actions: {
                 changeSearchValue,
                 clearSearchValue,
                 load,
+                changePage,
+                encodeUrlToURIComponent,
             },
         }),
-        [ changeSearchValue, clearSearchValue, contests,
-            getSearchResultsUrlParams, isSuccess, load, problems, searchValue, users, validationResult ],
+        [ changePage, changeSearchValue, clearSearchValue, contests, currentPage, encodeUrlToURIComponent,
+            isSuccess, load, pagesInfo, problems, searchValue, users, validationResult ],
     );
 
     return (

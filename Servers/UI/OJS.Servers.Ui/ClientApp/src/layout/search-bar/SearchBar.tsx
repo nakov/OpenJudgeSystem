@@ -1,7 +1,8 @@
 import React, { useCallback, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 
+import { SearchParams } from '../../common/search-types';
 import Form, { FormType } from '../../components/guidelines/forms/Form';
 import FormControl, {
     FormControlType,
@@ -17,9 +18,13 @@ const searchFieldName = 'Search';
 
 const SearchBar = () => {
     const [ searchParam, setSearchParam ] = useState<string>(defaultState.state.searchValue);
-    const { actions: { changeSearchValue } } = useSearch();
+    const {
+        actions: {
+            changeSearchValue,
+            encodeUrlToURIComponent,
+        },
+    } = useSearch();
     const navigate = useNavigate();
-    const { pathname } = useLocation();
 
     const handleOnChangeUpdateSearch = useCallback(
         (searchInput?: IFormControlOnChangeValueType) => {
@@ -30,13 +35,17 @@ const SearchBar = () => {
 
     const handleSubmit = useCallback(
         () => {
-            if (pathname !== '/search' && !isEmpty(searchParam)) {
-                navigate('/search');
+            if (!isEmpty(searchParam)) {
+                const encodedUrl = encodeUrlToURIComponent(searchParam);
+                navigate({
+                    pathname: '/search',
+                    search: `?${SearchParams.search}=${encodedUrl}`,
+                });
             }
 
             changeSearchValue(searchParam);
         },
-        [ changeSearchValue, navigate, pathname, searchParam ],
+        [ changeSearchValue, encodeUrlToURIComponent, navigate, searchParam ],
     );
 
     const handleOnKeyDown = useCallback(

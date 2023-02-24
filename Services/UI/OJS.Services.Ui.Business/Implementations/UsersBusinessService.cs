@@ -10,6 +10,7 @@
     using OJS.Services.Ui.Models.Search;
     using OJS.Services.Ui.Models.Users;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using X.PagedList;
 
     public class UsersBusinessService : IUsersBusinessService
     {
@@ -34,12 +35,19 @@
                 .MapCollection<UserProfileServiceModel>()
                 .FirstOrDefaultAsync();
 
-        public async Task<IEnumerable<UserSearchServiceModel>> GetSearchUsersByUsername(string username)
-            => await this.usersProfileData
+        public async Task<(IEnumerable<TServiceModel>, int)> GetSearchUsersByUsername<TServiceModel>(SearchServiceModel model)
+        {
+            var allUsers = await this.usersProfileData
                 .GetAll()
-                .Where(u => u.UserName.Contains(username))
-                .MapCollection<UserSearchServiceModel>()
+                .Where(u => u.UserName.Contains(model.SearchTerm!))
                 .ToListAsync();
+
+            var searchUsers = await allUsers
+                .MapCollection<TServiceModel>()
+                .ToPagedListAsync(model.PageNumber!.Value, model.ItemsPerPage!.Value);
+
+            return (searchUsers, allUsers.Count);
+        }
 
         public async Task<bool> IsLoggedInUserAdmin(ClaimsPrincipal userPrincipal)
             => await Task.FromResult(userPrincipal.IsInRole("Administrator"));

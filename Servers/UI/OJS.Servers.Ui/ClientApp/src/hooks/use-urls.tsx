@@ -159,8 +159,17 @@ const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams
 const getHomeStatisticsUrl = () => `${baseApiUrl}/StatisticsPreview/GetForHome`;
 
 // Search
-// eslint-disable-next-line max-len
-const getSearchResults = ({ searchTerm }: IGetSearchResultsUrlParams) => `${baseApiUrl}/Search/GetSearchResults?${SearchParams.search}=${searchTerm}`;
+const getSearchResults = ({ searchTerm, page }: IGetSearchResultsUrlParams) => {
+    const searchQuery = isNil(searchTerm)
+        ? ''
+        : `${SearchParams.search}=${searchTerm}`;
+
+    const pageQuery = isNil(page)
+        ? ''
+        : `page=${page}`;
+
+    return `${baseApiUrl}/Search/GetSearchResults?${searchQuery}&${pageQuery}`;
+};
 
 const UrlsProvider = ({ children }: IUrlsProviderProps) => {
     const value = useMemo(

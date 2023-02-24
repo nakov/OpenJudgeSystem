@@ -1,18 +1,45 @@
 ﻿namespace OJS.Services.Ui.Models.Search;
 
-using OJS.Services.Common.Models;
-using System.Collections.Generic;
-using System.Linq;
-public class SearchServiceModel
+using System;
+using AutoMapper;
+using SoftUni.AutoMapper.Infrastructure.Models;
+using SoftUni.Common.Models;
+public class SearchServiceModel : IMapExplicitly
 {
-    public IEnumerable<ContestSearchServiceModel> Contests { get; set; }
-        = Enumerable.Empty<ContestSearchServiceModel>();
+    public string? SearchTerm { get; set; }
 
-    public IEnumerable<ProblemSearchServiceModel> Problems { get; set; }
-        = Enumerable.Empty<ProblemSearchServiceModel>();
+    public int? PageNumber { get; set; }
 
-    public IEnumerable<UserSearchServiceModel> Users { get; set; }
-        = Enumerable.Empty<UserSearchServiceModel>();
+    public int? ItemsPerPage { get; set; }
 
-    public ValidationResult ValidationResult { get; set; } = null!;
+    public int TotalItemsCount { get; set; }
+
+    public int PagesCount { get; set; }
+
+    public void RegisterMappings(IProfileExpression configuration)
+        => configuration.CreateMap<SearchServiceModel, PagedResult<SearchForListingServiceModel>>()
+            .ForMember(
+                dest => dest.PageNumber,
+                opt => opt.MapFrom(
+                    src => src.PageNumber))
+            .ForMember(
+                dest => dest.TotalItemsCount,
+                opt => opt.MapFrom(
+                    src => src.TotalItemsCount))
+            .ForMember(
+                dest => dest.ItemsPerPage,
+                opt => opt.MapFrom(
+                    src => src.ItemsPerPage))
+            .ForMember(
+                dest => dest.PagesCount,
+                opt => opt.MapFrom(
+                    src => src.PagesCount))
+            .ForMember(
+                dest => dest.PagesCount,
+                opt => opt.MapFrom(
+                    src => src.TotalItemsCount <= src.ItemsPerPage
+                        ? 1
+                        : (int)Math.Ceiling(src.TotalItemsCount / (double)src.ItemsPerPage!.Value)))
+            .ForAllOtherMembers(
+                dest => dest.Ignore());
 }

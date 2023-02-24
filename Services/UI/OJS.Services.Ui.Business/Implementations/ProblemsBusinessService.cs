@@ -19,6 +19,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Search;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using X.PagedList;
     using IsolationLevel = System.Transactions.IsolationLevel;
     using Resource = OJS.Common.Resources.ProblemsBusiness;
     using SharedResource = OJS.Common.Resources.ContestsGeneral;
@@ -169,18 +170,19 @@ namespace OJS.Services.Ui.Business.Implementations
             return ServiceResult.Success;
         }
 
-        public async Task<IEnumerable<ProblemSearchServiceModel>> GetSearchProblemsByName(string problemName)
+        public async Task<(IEnumerable<ProblemSearchServiceModel>, int)> GetSearchProblemsByName(SearchServiceModel model)
         {
             var allProblems = await this.problemsData.GetAllProblems()
-                .Where(p => p.Name.Contains(problemName))
+                .Where(p => p.Name.Contains(model.SearchTerm!))
                 .ToListAsync();
 
-            var searchProblems = allProblems
+            var searchProblems = await allProblems
                 .MapCollection<ProblemSearchServiceModel>()
-                .ToList();
+                .ToPagedListAsync(model.PageNumber!.Value, model.ItemsPerPage!.Value);
+
             searchProblems.ForEach(sp => GetContestByProblemId(sp, allProblems));
 
-            return searchProblems;
+            return (searchProblems, allProblems.Count);
         }
 
         public void ValidateProblemForParticipant(Participant participant, Contest contest, int problemId, bool isOfficial)

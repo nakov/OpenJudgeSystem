@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect } from 'react';
 import isEmpty from 'lodash/isEmpty';
 
-import { IContestSearchType, IProblemSearchType, IUserSearchType, SearchParams } from '../../common/search-types';
+import { IContestSearchType, IProblemSearchType, IUserSearchType } from '../../common/search-types';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import List, { Orientation } from '../../components/guidelines/lists/List';
+import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
 import SearchProblem from '../../components/search/search-problems/SearchProblems';
 import SearchUser from '../../components/search/search-users/SearchUsers';
 import { useHashUrlParams } from '../../hooks/common/use-hash-url-params';
-import { useUrlParams } from '../../hooks/common/use-url-params';
 import { usePageTitles } from '../../hooks/use-page-titles';
 import { useSearch } from '../../hooks/use-search';
 import { setLayout } from '../shared/set-layout';
@@ -18,18 +18,21 @@ import styles from './SearchPage.module.scss';
 const SearchPage = () => {
     const {
         state: {
-            searchValue,
             contests,
             problems,
             users,
             validationResult,
+            searchValue,
+            pagesInfo,
+            currentPage,
             isLoaded,
-            searchResultUrlParam,
         },
-        actions: { load },
+        actions: {
+            load,
+            changePage,
+        },
     } = useSearch();
     const { actions: { setPageTitle } } = usePageTitles();
-    const { actions: { setParam } } = useUrlParams();
     const { state: { params }, actions: { clearHash } } = useHashUrlParams();
 
     useEffect(() => {
@@ -40,25 +43,25 @@ const SearchPage = () => {
 
     useEffect(
         () => {
-            if (isEmpty(searchResultUrlParam.searchTerm)) {
-                return;
+            if (isLoaded) {
+                setPageTitle(`Search results for "${searchValue}"`);
             }
-            (async () => {
-                await load();
-            })();
         },
-        [ load, searchResultUrlParam ],
+        [ isLoaded, searchValue, setPageTitle ],
     );
 
     useEffect(
         () => {
-            if (isLoaded) {
-                setPageTitle(`Search results for "${searchValue}"`);
-
-                setParam(SearchParams.search, searchValue);
-            }
+            (async () => {
+                await load();
+            })();
         },
-        [ isLoaded, searchValue, setPageTitle, setParam ],
+        [ load, searchValue ],
+    );
+
+    const handlePageChange = useCallback(
+        (page: number) => changePage(page),
+        [ changePage ],
     );
 
     const renderErrorMessage = useCallback(
@@ -162,6 +165,7 @@ const SearchPage = () => {
         [ renderUser, users ],
     );
 
+    const { pagesCount } = pagesInfo;
     const renderElements = useCallback(
         () => (
             <>
@@ -175,12 +179,17 @@ const SearchPage = () => {
                         {`"${searchValue}"`}
                     </Heading>
                 </div>
+                <PaginationControls
+                  count={pagesCount}
+                  page={currentPage}
+                  onChange={handlePageChange}
+                />
                 {renderContests()}
                 {renderProblems()}
                 {renderUsers()}
             </>
         ),
-        [ renderContests, renderProblems, renderUsers, searchValue ],
+        [ currentPage, handlePageChange, pagesCount, renderContests, renderProblems, renderUsers, searchValue ],
     );
 
     const renderPage = useCallback(

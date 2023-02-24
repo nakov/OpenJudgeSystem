@@ -4,7 +4,6 @@ import isEmpty from 'lodash/isEmpty';
 import { ContestParticipationType } from '../../../common/constants';
 import { IProblemSearchType } from '../../../common/search-types';
 import { useAppUrls } from '../../../hooks/use-app-urls';
-import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
 import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 
@@ -29,9 +28,6 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
     const searchProblemCardControlBtnsClassName = concatClassNames(styles.problemCardControls, contestCardControlBtns);
 
     const { getContestProblemUrl } = useAppUrls();
-
-    const { state: { problems } } = useProblems();
-    console.log(problems);
 
     const renderPage = useCallback(
         () => isEmpty(problem.contest)

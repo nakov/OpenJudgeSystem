@@ -1,11 +1,10 @@
-﻿namespace OJS.Services.Ui.Models.Search;
+namespace OJS.Services.Ui.Models.Search;
 
+using OJS.Services.Common.Models;
 using System.Collections.Generic;
 using System.Linq;
-using OJS.Services.Common.Models;
-using SoftUni.AutoMapper.Infrastructure.Models;
 
-public class SearchResponseModel : IMapFrom<SearchForListingServiceModel>
+public class SearchForListingServiceModel
 {
     public IEnumerable<ContestSearchServiceModel> Contests { get; set; }
         = Enumerable.Empty<ContestSearchServiceModel>();

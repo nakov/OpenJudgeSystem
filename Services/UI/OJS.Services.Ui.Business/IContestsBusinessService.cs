@@ -22,7 +22,8 @@ namespace OJS.Services.Ui.Business
         Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllCompetable();
 
         Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPracticable();
-        Task<IEnumerable<ContestSearchServiceModel>> GetSearchContestsByName(string contestName);
+
+        Task<(IEnumerable<TServiceModel>, int)> GetSearchContestsByName<TServiceModel>(SearchServiceModel model);
 
         Task<ContestServiceModel> GetContestByProblem(int problemId);
 

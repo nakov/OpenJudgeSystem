@@ -1,11 +1,16 @@
 ﻿namespace OJS.Services.Ui.Business.Implementations;
 
+using System;
 using System.Threading.Tasks;
-using OJS.Services.Ui.Models.Search;
-using OJS.Services.Ui.Business.Validation;
+using Models.Search;
+using SoftUni.Common.Models;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
+using Validation;
 
 public class SearchBusinessService : ISearchBusinessService
 {
+    private const int DefaultItemsPerPage = 8;
+
     private readonly IContestsBusinessService contestsBusinessService;
     private readonly IProblemsBusinessService problemsBusinessService;
     private readonly IUsersBusinessService usersBusinessService;
@@ -23,27 +28,40 @@ public class SearchBusinessService : ISearchBusinessService
         this.searchValidationService = searchValidationService;
     }
 
-    public async Task<SearchServiceModel> GetSearchResults(string? searchTerm)
+    public async Task<PagedResult<SearchForListingServiceModel>> GetSearchResults(
+        SearchServiceModel? model)
     {
-        var searchSearchModel = new SearchServiceModel();
+        model ??= new SearchServiceModel();
+        model.ItemsPerPage ??= DefaultItemsPerPage;
+        model.PageNumber ??= 1;
+        model.SearchTerm = model.SearchTerm?.Trim();
 
-        var trimmedSearch = searchTerm?.Trim();
+        var validationResult = this.searchValidationService.GetValidationResult(model.SearchTerm);
 
-        var validationResult = this.searchValidationService.GetValidationResult(trimmedSearch);
-
+        var searchListingModel = new SearchForListingServiceModel();
         if (validationResult.IsValid)
         {
-            var users = await this.usersBusinessService.GetSearchUsersByUsername(trimmedSearch!);
-            var contests = await this.contestsBusinessService.GetSearchContestsByName(trimmedSearch!);
-            var problems = await this.problemsBusinessService.GetSearchProblemsByName(trimmedSearch!);
+            var (users, usersCount) = await this.usersBusinessService.GetSearchUsersByUsername<UserSearchServiceModel>(model);
+            var (contests, contestsCount) = await this.contestsBusinessService.GetSearchContestsByName<ContestSearchServiceModel>(model);
+            var (problems, problemsCount) = await this.problemsBusinessService.GetSearchProblemsByName(model);
 
-            searchSearchModel.Users = users;
-            searchSearchModel.Contests = contests;
-            searchSearchModel.Problems = problems;
+            searchListingModel.Contests = contests;
+            searchListingModel.Users = users;
+            searchListingModel.Problems = problems;
+
+            model.TotalItemsCount = CalculateMaxCount(usersCount, contestsCount, problemsCount);
         }
 
-        searchSearchModel.ValidationResult = validationResult;
+        searchListingModel.ValidationResult = validationResult;
 
-        return searchSearchModel;
+        var modelResult = model.Map<PagedResult<SearchForListingServiceModel>>();
+        modelResult.Items = new[]
+            {
+                searchListingModel,
+            };
+
+        return modelResult;
     }
+
+    private static int CalculateMaxCount(int usersCount, int contestsCount, int problemsCount) => Math.Max(Math.Max(usersCount, contestsCount), problemsCount);
 }
