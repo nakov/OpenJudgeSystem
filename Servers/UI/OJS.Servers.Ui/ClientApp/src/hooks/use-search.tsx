@@ -3,7 +3,6 @@ import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { IUrlParam } from '../common/common-types';
 import { PageParams } from '../common/pages-types';
 import { IContestSearchType, IProblemSearchType, IUserSearchType, SearchParams } from '../common/search-types';
 import { IPagedResultType, ISearchResponseModel, IValidationType } from '../common/types';
@@ -23,14 +22,12 @@ interface ISearchContext {
         validationResult: IValidationType;
         isLoaded: boolean;
         searchValue: string;
-        currentPage: number;
         pagesInfo: IPagesInfo;
     };
     actions: {
-        changeSearchValue: (searchParam: string) => void;
         clearSearchValue: () => void;
         load: () => Promise<void>;
-        changePage: (pageNumber: number) => void;
+        initiateSearchResultsUrlQuery: () => void;
         encodeUrlToURIComponent: (url: string) => string;
     };
 }
@@ -47,7 +44,6 @@ const defaultState = {
             isValid: true,
             propertyName: '',
         },
-        searchValue: '',
         pagesInfo: { pageNumber: 1 },
     },
 };
@@ -60,33 +56,11 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
     const [ users, setSearchedUsers ] = useState(defaultState.state.users);
     const [ validationResult, setValidationResult ] = useState<IValidationType>(defaultState.state.validationResult);
     const [ pagesInfo, setPagesInfo ] = useState<IPagesInfo>(defaultState.state.pagesInfo as IPagesInfo);
-    const [ searchValue, setSearchValue ] = useState<string>(defaultState.state.searchValue);
-    const [ getSearchResultsUrlParams, setGetSearchResultsUrlParams ] = useState<IGetSearchResultsUrlParams>();
+    const [ getSearchResultsUrlParams, setGetSearchResultsUrlParams ] = useState<IGetSearchResultsUrlParams | null>();
 
     const { getSearchResults } = useUrls();
+    const { state: { params }, actions: { unsetParam } } = useUrlParams();
     const { startLoading, stopLoading } = useLoading();
-    const collectCurrentPage = (params: IUrlParam[]) => {
-        const { value } = params.find((p) => p.key === PageParams.page) || { value: '1' };
-
-        const theValue = isArray(value)
-            ? value[0]
-            : value;
-
-        return parseInt(theValue, 10);
-    };
-
-    const {
-        state: { params },
-        actions: {
-            setParam,
-            unsetParam,
-        },
-    } = useUrlParams();
-
-    const currentPage = useMemo(
-        () => collectCurrentPage(params),
-        [ params ],
-    );
 
     const {
         get,
@@ -113,34 +87,6 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
                 : value;
         },
         [ params ],
-    );
-
-    const changePage = useCallback(
-        (pageNumber: number) => {
-            setParam(PageParams.page, pageNumber);
-        },
-        [ setParam ],
-    );
-
-    const setParams = useCallback(
-        () => {
-            if (isEmpty(searchValue) && !isEmpty(urlParam)) {
-                setSearchValue(urlParam);
-                const encodedUrl = encodeUrlToURIComponent(urlParam);
-                setGetSearchResultsUrlParams({ page: currentPage, searchTerm: encodedUrl });
-            } else if (!isEmpty(searchValue)) {
-                const encodedUrl = encodeUrlToURIComponent(searchValue);
-                setGetSearchResultsUrlParams({ page: currentPage, searchTerm: encodedUrl });
-            }
-        },
-        [ currentPage, encodeUrlToURIComponent, searchValue, urlParam ],
-    );
-
-    useEffect(
-        () => {
-            setParams();
-        },
-        [ setParams ],
     );
 
     useEffect(
@@ -181,6 +127,26 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
         [ data ],
     );
 
+    const collectCurrentPage = useCallback(
+        () => {
+            const { value } = params.find((p) => p.key === PageParams.page) || { value: '1' };
+
+            const theValue = isArray(value)
+                ? value[0]
+                : value;
+
+            return parseInt(theValue, 10);
+        },
+        [ params ],
+    );
+
+    const initiateSearchResultsUrlQuery = useCallback(
+        () => {
+            setGetSearchResultsUrlParams({ searchTerm: encodeUrlToURIComponent(urlParam), page: collectCurrentPage() });
+        },
+        [ collectCurrentPage, encodeUrlToURIComponent, urlParam ],
+    );
+
     const load = useCallback(
         async () => {
             startLoading();
@@ -190,11 +156,17 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
         [ get, startLoading, stopLoading ],
     );
 
-    const changeSearchValue = useCallback(
-        (searchParam: string) => {
-            setSearchValue(searchParam);
+    useEffect(
+        () => {
+            if (isNil(getSearchResults)) {
+                return;
+            }
+
+            (async () => {
+                await load();
+            })();
         },
-        [],
+        [ getSearchResults, load ],
     );
 
     const clearSearchValue = useCallback(
@@ -210,20 +182,18 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
                 users,
                 validationResult,
                 isLoaded: isSuccess,
-                searchValue,
+                searchValue: urlParam,
                 pagesInfo,
-                currentPage,
             },
             actions: {
-                changeSearchValue,
                 clearSearchValue,
                 load,
-                changePage,
                 encodeUrlToURIComponent,
+                initiateSearchResultsUrlQuery,
             },
         }),
-        [ changePage, changeSearchValue, clearSearchValue, contests, currentPage, encodeUrlToURIComponent,
-            isSuccess, load, pagesInfo, problems, searchValue, users, validationResult ],
+        [ clearSearchValue, contests, encodeUrlToURIComponent, isSuccess, load,
+            pagesInfo, problems, urlParam, users, validationResult, initiateSearchResultsUrlQuery ],
     );
 
     return (

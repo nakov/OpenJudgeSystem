@@ -22,6 +22,7 @@ import HomeStatisticsProvider from './hooks/use-home-statistics';
 import LoadingProvider from './hooks/use-loading';
 import NotificationsProvider from './hooks/use-notifications';
 import PageWithTitleProvider from './hooks/use-page-titles';
+import PageProvider from './hooks/use-pages';
 import ParticipationsProvider from './hooks/use-participations';
 import ProblemsProvider from './hooks/use-problems';
 import SearchProvider from './hooks/use-search';
@@ -68,6 +69,7 @@ const App = () => {
         HomeStatisticsProvider,
         PublicSubmissionsProvider,
         SearchProvider,
+        PageProvider,
     ] as ProviderType[];
 
     return (

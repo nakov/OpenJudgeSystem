@@ -14,6 +14,7 @@ import ContestCard from '../../components/home-contests/contest-card/ContestCard
 import { useHashUrlParams } from '../../hooks/common/use-hash-url-params';
 import { ICategoriesBreadcrumbItem, useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
 import { useContests } from '../../hooks/use-contests';
+import { usePages } from '../../hooks/use-pages';
 import concatClassNames from '../../utils/class-names';
 import { setLayout } from '../shared/set-layout';
 
@@ -26,15 +27,16 @@ const ContestsPage = () => {
         state: {
             contests,
             pagesInfo,
-            currentPage,
         },
         actions: {
             toggleParam,
-            changePage,
             initiateGetAllContestsQuery,
         },
     } = useContests();
-
+    const {
+        state: { currentPage },
+        actions: { changePage },
+    } = usePages();
     const { state: { breadcrumbItems } } = useCategoriesBreadcrumbs();
     const { state: { params }, actions: { clearHash } } = useHashUrlParams();
 

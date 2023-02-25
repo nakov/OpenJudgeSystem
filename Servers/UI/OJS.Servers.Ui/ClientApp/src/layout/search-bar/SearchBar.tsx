@@ -18,12 +18,7 @@ const searchFieldName = 'Search';
 
 const SearchBar = () => {
     const [ searchParam, setSearchParam ] = useState<string>(defaultState.state.searchValue);
-    const {
-        actions: {
-            changeSearchValue,
-            encodeUrlToURIComponent,
-        },
-    } = useSearch();
+    const { actions: { encodeUrlToURIComponent } } = useSearch();
     const navigate = useNavigate();
 
     const handleOnChangeUpdateSearch = useCallback(
@@ -42,10 +37,8 @@ const SearchBar = () => {
                     search: `?${SearchParams.search}=${encodedUrl}`,
                 });
             }
-
-            changeSearchValue(searchParam);
         },
-        [ changeSearchValue, encodeUrlToURIComponent, navigate, searchParam ],
+        [ encodeUrlToURIComponent, navigate, searchParam ],
     );
 
     const handleOnKeyDown = useCallback(

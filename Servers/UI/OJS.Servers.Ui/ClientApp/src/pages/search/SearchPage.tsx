@@ -10,6 +10,7 @@ import SearchProblem from '../../components/search/search-problems/SearchProblem
 import SearchUser from '../../components/search/search-users/SearchUsers';
 import { useHashUrlParams } from '../../hooks/common/use-hash-url-params';
 import { usePageTitles } from '../../hooks/use-page-titles';
+import { usePages } from '../../hooks/use-pages';
 import { useSearch } from '../../hooks/use-search';
 import { setLayout } from '../shared/set-layout';
 
@@ -24,14 +25,14 @@ const SearchPage = () => {
             validationResult,
             searchValue,
             pagesInfo,
-            currentPage,
             isLoaded,
         },
-        actions: {
-            load,
-            changePage,
-        },
+        actions: { initiateSearchResultsUrlQuery },
     } = useSearch();
+    const {
+        state: { currentPage },
+        actions: { changePage },
+    } = usePages();
     const { actions: { setPageTitle } } = usePageTitles();
     const { state: { params }, actions: { clearHash } } = useHashUrlParams();
 
@@ -52,11 +53,9 @@ const SearchPage = () => {
 
     useEffect(
         () => {
-            (async () => {
-                await load();
-            })();
+            initiateSearchResultsUrlQuery();
         },
-        [ load, searchValue ],
+        [ initiateSearchResultsUrlQuery ],
     );
 
     const handlePageChange = useCallback(

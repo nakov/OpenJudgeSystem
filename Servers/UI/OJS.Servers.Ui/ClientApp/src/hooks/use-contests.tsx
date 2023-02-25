@@ -25,6 +25,7 @@ import { useContestCategories } from './use-contest-categories';
 import { useContestStrategyFilters } from './use-contest-strategy-filters';
 import { useHttp } from './use-http';
 import { useLoading } from './use-loading';
+import { usePages } from './use-pages';
 import { useUrls } from './use-urls';
 
 interface IContestsContext {
@@ -35,7 +36,6 @@ interface IContestsContext {
         filters: IFilter[];
         sortingTypes: ISort[];
         pagesInfo: IPagesInfo;
-        currentPage: number;
         contest: IIndexContestsType | null;
     };
     actions: {
@@ -43,7 +43,6 @@ interface IContestsContext {
         clearFilters: () => void;
         clearSorts: () => void;
         toggleParam: (param: IFilter | ISort) => void;
-        changePage: (pageNumber: number) => void;
         loadContestByProblemId: (problemId: number) => void;
         initiateGetAllContestsQuery: () => void;
     };
@@ -81,16 +80,6 @@ const collectParams = <T extends FilterSortType>(
     return collectedFilters;
 };
 
-const collectCurrentPage = (params: IUrlParam[]) => {
-    const { value } = params.find((p) => p.key === PageParams.page) || { value: '1' };
-
-    const theValue = isArray(value)
-        ? value[0]
-        : value;
-
-    return parseInt(theValue, 10);
-};
-
 const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ contests, setContests ] = useState(defaultState.state.contests);
     const [ getAllContestsUrlParams, setGetAllContestsUrlParams ] = useState<IAllContestsUrlParams | null>();
@@ -105,7 +94,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             unsetParam,
         },
     } = useUrlParams();
-
+    const { actions: { changePage } } = usePages();
     const { getAllContestsUrl, getContestByProblemUrl } = useUrls();
     const { startLoading, stopLoading } = useLoading();
 
@@ -157,7 +146,15 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     );
 
     const currentPage = useMemo(
-        () => collectCurrentPage(params),
+        () => {
+            const { value } = params.find((p) => p.key === PageParams.page) || { value: '1' };
+
+            const theValue = isArray(value)
+                ? value[0]
+                : value;
+
+            return parseInt(theValue, 10);
+        },
         [ params ],
     );
 
@@ -193,14 +190,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             stopLoading();
         },
         [ getContests, startLoading, stopLoading ],
-    );
-
-    const changePage = useCallback(
-        (pageNumber: number) => {
-            unsetParam(PageParams.page);
-            setParam(PageParams.page, pageNumber);
-        },
-        [ setParam, unsetParam ],
     );
 
     const toggleParam = useCallback<ToggleParam>((param) => {
@@ -312,7 +301,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
                 pagesInfo,
                 filters,
                 sortingTypes,
-                currentPage,
                 contest,
             },
             actions: {
@@ -320,16 +308,13 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
                 clearFilters,
                 clearSorts,
                 toggleParam,
-                changePage,
                 loadContestByProblemId,
                 initiateGetAllContestsQuery,
             },
         }),
         [
-            changePage,
             clearFilters,
             contests,
-            currentPage,
             filters,
             pagesInfo,
             possibleFilters,
