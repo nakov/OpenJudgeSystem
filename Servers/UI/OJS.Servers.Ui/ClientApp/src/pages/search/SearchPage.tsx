@@ -24,14 +24,16 @@ const SearchPage = () => {
             users,
             validationResult,
             searchValue,
-            pagesInfo,
             isLoaded,
         },
         actions: { initiateSearchResultsUrlQuery },
     } = useSearch();
     const {
-        state: { currentPage },
-        actions: { changePage },
+        state: {
+            currentPage,
+            pagesInfo,
+        },
+        changePage,
     } = usePages();
     const { actions: { setPageTitle } } = usePageTitles();
     const { state: { params }, actions: { clearHash } } = useHashUrlParams();

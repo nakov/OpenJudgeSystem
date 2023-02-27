@@ -3,15 +3,15 @@ import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { PageParams } from '../common/pages-types';
 import { IContestSearchType, IProblemSearchType, IUserSearchType, SearchParams } from '../common/search-types';
 import { IPagedResultType, ISearchResponseModel, IValidationType } from '../common/types';
 import { IGetSearchResultsUrlParams } from '../common/url-types';
-import { IHaveChildrenProps, IPagesInfo } from '../components/common/Props';
+import { IHaveChildrenProps } from '../components/common/Props';
 
 import { useUrlParams } from './common/use-url-params';
 import { useHttp } from './use-http';
 import { useLoading } from './use-loading';
+import { usePages } from './use-pages';
 import { useUrls } from './use-urls';
 
 interface ISearchContext {
@@ -22,7 +22,6 @@ interface ISearchContext {
         validationResult: IValidationType;
         isLoaded: boolean;
         searchValue: string;
-        pagesInfo: IPagesInfo;
     };
     actions: {
         clearSearchValue: () => void;
@@ -44,7 +43,6 @@ const defaultState = {
             isValid: true,
             propertyName: '',
         },
-        pagesInfo: { pageNumber: 1 },
     },
 };
 
@@ -55,11 +53,17 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
     const [ problems, setSearchedProblems ] = useState(defaultState.state.problems);
     const [ users, setSearchedUsers ] = useState(defaultState.state.users);
     const [ validationResult, setValidationResult ] = useState<IValidationType>(defaultState.state.validationResult);
-    const [ pagesInfo, setPagesInfo ] = useState<IPagesInfo>(defaultState.state.pagesInfo as IPagesInfo);
     const [ getSearchResultsUrlParams, setGetSearchResultsUrlParams ] = useState<IGetSearchResultsUrlParams | null>();
 
     const { getSearchResults } = useUrls();
-    const { state: { params }, actions: { unsetParam } } = useUrlParams();
+    const {
+        state: { params },
+        actions: { unsetParam },
+    } = useUrlParams();
+    const {
+        state: { currentPage },
+        populatePageInformation,
+    } = usePages();
     const { startLoading, stopLoading } = useLoading();
 
     const {
@@ -122,29 +126,17 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
             setSearchedProblems(searchedProblems);
             setSearchedUsers(searchedUsers);
             setValidationResult(newValidationResult);
-            setPagesInfo(newPagesInfo);
+
+            populatePageInformation(newPagesInfo);
         },
-        [ data ],
-    );
-
-    const collectCurrentPage = useCallback(
-        () => {
-            const { value } = params.find((p) => p.key === PageParams.page) || { value: '1' };
-
-            const theValue = isArray(value)
-                ? value[0]
-                : value;
-
-            return parseInt(theValue, 10);
-        },
-        [ params ],
+        [ data, populatePageInformation ],
     );
 
     const initiateSearchResultsUrlQuery = useCallback(
         () => {
-            setGetSearchResultsUrlParams({ searchTerm: encodeUrlToURIComponent(urlParam), page: collectCurrentPage() });
+            setGetSearchResultsUrlParams({ searchTerm: encodeUrlToURIComponent(urlParam), page: currentPage });
         },
-        [ collectCurrentPage, encodeUrlToURIComponent, urlParam ],
+        [ currentPage, encodeUrlToURIComponent, urlParam ],
     );
 
     const load = useCallback(
@@ -183,7 +175,6 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
                 validationResult,
                 isLoaded: isSuccess,
                 searchValue: urlParam,
-                pagesInfo,
             },
             actions: {
                 clearSearchValue,
@@ -193,7 +184,7 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
             },
         }),
         [ clearSearchValue, contests, encodeUrlToURIComponent, isSuccess, load,
-            pagesInfo, problems, urlParam, users, validationResult, initiateSearchResultsUrlQuery ],
+            problems, urlParam, users, validationResult, initiateSearchResultsUrlQuery ],
     );
 
     return (

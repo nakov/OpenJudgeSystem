@@ -48,6 +48,7 @@ const App = () => {
         AppUrlsProvider,
         UrlsProvider,
         ServicesProvider,
+        PageProvider,
         LoadingProvider,
         NotificationsProvider,
         PageWithTitleProvider,
@@ -69,7 +70,6 @@ const App = () => {
         HomeStatisticsProvider,
         PublicSubmissionsProvider,
         SearchProvider,
-        PageProvider,
     ] as ProviderType[];
 
     return (

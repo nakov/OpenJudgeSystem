@@ -24,18 +24,15 @@ const getBreadcrumbItemPath = (id: string) => `/contests?${FilterType.Category.t
 
 const ContestsPage = () => {
     const {
-        state: {
-            contests,
-            pagesInfo,
-        },
+        state: { contests },
         actions: {
             toggleParam,
             initiateGetAllContestsQuery,
         },
     } = useContests();
     const {
-        state: { currentPage },
-        actions: { changePage },
+        state: { currentPage, pagesInfo },
+        changePage,
     } = usePages();
     const { state: { breadcrumbItems } } = useCategoriesBreadcrumbs();
     const { state: { params }, actions: { clearHash } } = useHashUrlParams();

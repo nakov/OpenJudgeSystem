@@ -1,31 +1,41 @@
-import React, { createContext, useCallback, useContext, useMemo } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import isArray from 'lodash/isArray';
 
 import { PageParams } from '../common/pages-types';
-import { IHaveChildrenProps } from '../components/common/Props';
+import { IHaveChildrenProps, IPagesInfo } from '../components/common/Props';
 
 import { useUrlParams } from './common/use-url-params';
 
 interface IPageContext {
     state: {
         currentPage: number;
+        pagesInfo: IPagesInfo;
     };
-    actions: {
-      changePage: (pageNumber: number | null) => void;
+
+      changePage: (pageNumber: number) => void;
       clearPageValue: () => void;
-    };
+      populatePageInformation: (info: IPagesInfo) => void;
 }
 
 type IPageProviderProps = IHaveChildrenProps
 
 const defaultState = {
-    state: { currentPage: 1 },
-    actions: { },
+    state: {
+        currentPage: 1,
+        pagesInfo: {
+            itemsPerPage: 0,
+            pageNumber: 1,
+            totalItemsCount: 0,
+            pagesCount: 1,
+        },
+    },
 };
 
 const PageContext = createContext<IPageContext>(defaultState as IPageContext);
 
 const PageProvider = ({ children }: IPageProviderProps) => {
+    const [ pagesInfo, setPagesInfo ] = useState<IPagesInfo>(defaultState.state.pagesInfo);
+
     const {
         state: { params },
         actions: {
@@ -33,6 +43,11 @@ const PageProvider = ({ children }: IPageProviderProps) => {
             unsetParam,
         },
     } = useUrlParams();
+
+    const populatePageInformation = useCallback(
+        (obj: IPagesInfo) => setPagesInfo(obj),
+        [],
+    );
 
     const changePage = useCallback(
         (pageNumber: number | null) => {
@@ -61,13 +76,15 @@ const PageProvider = ({ children }: IPageProviderProps) => {
 
     const value = useMemo(
         () => ({
-            state: { currentPage },
-            actions: {
-                changePage,
-                clearPageValue,
+            state: {
+                currentPage,
+                pagesInfo,
             },
+            changePage,
+            clearPageValue,
+            populatePageInformation,
         }),
-        [ changePage, clearPageValue, currentPage ],
+        [ changePage, clearPageValue, currentPage, pagesInfo, populatePageInformation ],
     );
 
     return (

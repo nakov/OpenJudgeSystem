@@ -1,5 +1,4 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -13,10 +12,9 @@ import {
 import generateSortingStrategy from '../common/contest-sorting-utils';
 import { FilterSortType, FilterType, IContestParam, IFilter, ISort, ToggleParam } from '../common/contest-types';
 import { filterByType, findFilterByTypeAndName } from '../common/filter-utils';
-import { PageParams } from '../common/pages-types';
 import { IIndexContestsType, IPagedResultType } from '../common/types';
 import { IAllContestsUrlParams, IGetContestByProblemUrlParams } from '../common/url-types';
-import { IHaveChildrenProps, IPagesInfo } from '../components/common/Props';
+import { IHaveChildrenProps } from '../components/common/Props';
 import { areStringEqual } from '../utils/compare-utils';
 
 import { useUrlParams } from './common/use-url-params';
@@ -35,7 +33,6 @@ interface IContestsContext {
         possibleSortingTypes: ISort[];
         filters: IFilter[];
         sortingTypes: ISort[];
-        pagesInfo: IPagesInfo;
         contest: IIndexContestsType | null;
     };
     actions: {
@@ -55,7 +52,6 @@ const defaultState = {
         contests: [] as IIndexContestsType[],
         possibleFilters: [] as IFilter[],
         possibleSortingTypes: [] as ISort[],
-        pagesInfo: { pageNumber: 1 },
     },
 };
 
@@ -83,7 +79,6 @@ const collectParams = <T extends FilterSortType>(
 const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ contests, setContests ] = useState(defaultState.state.contests);
     const [ getAllContestsUrlParams, setGetAllContestsUrlParams ] = useState<IAllContestsUrlParams | null>();
-    const [ pagesInfo, setPagesInfo ] = useState<IPagesInfo>(defaultState.state.pagesInfo as IPagesInfo);
     const [ getContestByProblemUrlParams, setGetContestByProblemUrlParams ] = useState<IGetContestByProblemUrlParams | null>();
     const [ contest, setContest ] = useState<IIndexContestsType | null>(null);
 
@@ -94,7 +89,11 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             unsetParam,
         },
     } = useUrlParams();
-    const { actions: { changePage } } = usePages();
+    const {
+        state: { currentPage },
+        changePage,
+        populatePageInformation,
+    } = usePages();
     const { getAllContestsUrl, getContestByProblemUrl } = useUrls();
     const { startLoading, stopLoading } = useLoading();
 
@@ -143,19 +142,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const sortingTypes = useMemo(
         () => collectParams(params, possibleSortingTypes, DEFAULT_SORT_FILTER_TYPE, DEFAULT_SORT_TYPE),
         [ params, possibleSortingTypes ],
-    );
-
-    const currentPage = useMemo(
-        () => {
-            const { value } = params.find((p) => p.key === PageParams.page) || { value: '1' };
-
-            const theValue = isArray(value)
-                ? value[0]
-                : value;
-
-            return parseInt(theValue, 10);
-        },
-        [ params ],
     );
 
     const clearSorts = useCallback(
@@ -287,9 +273,9 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             };
 
             setContests(newData);
-            setPagesInfo(newPagesInfo);
+            populatePageInformation(newPagesInfo);
         },
-        [ contestsData ],
+        [ contestsData, populatePageInformation ],
     );
 
     const value = useMemo(
@@ -298,7 +284,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
                 contests,
                 possibleFilters,
                 possibleSortingTypes,
-                pagesInfo,
                 filters,
                 sortingTypes,
                 contest,
@@ -316,7 +301,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             clearFilters,
             contests,
             filters,
-            pagesInfo,
             possibleFilters,
             reload,
             clearSorts,
