@@ -47,13 +47,8 @@ const SubmissionBox = () => {
 
     const showSubmissionLimitTimer = useMemo(() => submitLimit > 0, [ submitLimit ]);
 
-    /*   useEffect(
-        () => console.log(currentProblem),
-        [ currentProblem ],
-    );
-*/
     const handleCodeChanged = useCallback(
-        (newValue: string | Blob) => {
+        (newValue: string | File) => {
             updateSubmissionCode(newValue);
         },
         [ updateSubmissionCode ],
@@ -120,11 +115,13 @@ const SubmissionBox = () => {
 
     const handleOnSubmit = useCallback(async () => {
         await submit();
-
-        if (!isNil(currentProblem)) {
-            currentProblem.codeEditorCode = '';
+        const { id: problemId } = currentProblem || {};
+        if (isNil(problemId)) {
+            return;
         }
-    }, [ submit, currentProblem ]);
+
+        delete problemSubmissionCode[problemId];
+    }, [ submit, currentProblem, problemSubmissionCode ]);
 
     const renderSubmissionLimitCountdown = useCallback((remainingTime: ICountdownRemainingType) => {
         const { minutes, seconds } = convertToTwoDigitValues(remainingTime);
@@ -204,7 +201,7 @@ const SubmissionBox = () => {
         executionTypeListClass,
     );
 
-    const codeEditorCode = useMemo(
+    const submissionCode = useMemo(
         () => {
             const { id: problemId } = currentProblem || {};
             if (isNil(problemId)) {
@@ -221,11 +218,20 @@ const SubmissionBox = () => {
         }
 
         const { allowBinaryFilesUpload, allowedFileExtensions } = selectedSubmissionType;
+        const { id: problemId } = currentProblem || {};
+        if (isNil(problemId)) {
+            return null;
+        }
 
         if (allowBinaryFilesUpload && !isNil(currentProblem)) {
             return (
                 <>
-                    <FileUploader />
+                    <FileUploader
+                      file={isNil(submissionCode) || submissionCode instanceof String
+                          ? null
+                          : submissionCode as File}
+                      problemId={problemId}
+                    />
                     <p className={styles.fileSubmissionDetailsParagraph}>
                         Allowed file extensions:
                         {allowedFileExtensions.join(', ')}
@@ -237,13 +243,13 @@ const SubmissionBox = () => {
         return (
             <CodeEditor
               selectedSubmissionType={selectedSubmissionType}
-              code={isNil(codeEditorCode) || codeEditorCode instanceof Blob
+              code={isNil(submissionCode) || submissionCode instanceof File
                   ? ''
-                  : codeEditorCode}
+                  : submissionCode}
               onCodeChange={handleCodeChanged}
             />
         );
-    }, [ handleCodeChanged, selectedSubmissionType, codeEditorCode, currentProblem ]);
+    }, [ handleCodeChanged, selectedSubmissionType, submissionCode, currentProblem ]);
 
     return (
         <div className={styles.contestMainWrapper}>

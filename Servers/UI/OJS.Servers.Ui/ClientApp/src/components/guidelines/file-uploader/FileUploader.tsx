@@ -1,60 +1,72 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import isNil from 'lodash/isNil';
 
 import { useSubmissions } from '../../../hooks/submissions/use-submissions';
-import { useProblems } from '../../../hooks/use-problems';
 import Button, { ButtonSize, ButtonType } from '../buttons/Button';
 
-const FileUploader = () => {
-    // Create a reference to the hidden file input element
-    const hiddenFileInput = useRef<HTMLInputElement | null>(null);
-    const { state: { problemSubmissionCode }, actions: { updateSubmissionCode } } = useSubmissions();
-    const { state: { currentProblem } } = useProblems();
-    const [ file, setFile ] = useState<Blob>();
+import styles from './FileUploader.module.scss';
 
-    // Programatically click the hidden file input element
-    // when the Button component is clicked
+interface IFileUploaderProps {
+    file?: File | null;
+    problemId?: number;
+}
+
+const FileUploader = ({ file, problemId }: IFileUploaderProps) => {
+    const hiddenFileInput = useRef<HTMLInputElement | null>(null);
+    const { actions: { updateSubmissionCode } } = useSubmissions();
+    const [ internalFile, setInternalFile ] = useState<File | null>(null);
+    const [ internalProblemId, setInternalProblemId ] = useState<number | null>(null);
     const handleClick = () => {
-        // 👇 We redirect the click event onto the hidden input element
         hiddenFileInput.current?.click();
     };
-    // Call a function (passed as a prop from the parent component)
-    // to handle the user-selected file
 
     useEffect(
         () => {
-            const { id: problemId } = currentProblem || {};
-            if (isNil(problemId)) {
+            if (problemId !== internalProblemId && isNil(file)) {
+                setInternalFile(null);
                 return;
             }
 
-            // eslint-disable-next-line prefer-destructuring
-            const fileTest = problemSubmissionCode[problemId];
-            if (isNil(fileTest) || fileTest instanceof String) {
-                return;
+            if (!isNil(file) && !isNil(problemId)) {
+                setInternalFile(file);
+                setInternalProblemId(problemId);
             }
-
-            setFile(fileTest as Blob);
-            console.log(fileTest);
-            console.log(file);
         },
-        [ file, currentProblem, problemSubmissionCode ],
+        [ file, internalFile, internalProblemId, problemId ],
     );
-    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const { target: { files: eventTarget } } = event;
-        if (!eventTarget) {
-            return;
-        }
 
-        updateSubmissionCode(eventTarget[0]);
-    };
+    const handleChange = useCallback(
+        (event: ChangeEvent<HTMLInputElement>) => {
+            const { target: { files: eventTarget } } = event;
+            if (!eventTarget || isNil(problemId)) {
+                return;
+            }
+
+            updateSubmissionCode(eventTarget[0]);
+            setInternalFile(eventTarget[0]);
+            setInternalProblemId(problemId);
+        },
+        [ updateSubmissionCode, problemId ],
+    );
+
     return (
         <>
-            <Button
-              onClick={handleClick}
-              type={ButtonType.secondary}
-              size={ButtonSize.medium}
-            />
+            <div className={styles.fileUploadContainer}>
+                <div>
+                    <Button
+                      onClick={handleClick}
+                      type={ButtonType.submit}
+                      size={ButtonSize.medium}
+                    >
+                        Click to select
+                    </Button>
+                </div>
+                <div className={styles.fileName}>
+                    {isNil(internalFile)
+                        ? ''
+                        : internalFile.name}
+                </div>
+            </div>
             <input
               type="file"
               ref={hiddenFileInput}

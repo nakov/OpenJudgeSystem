@@ -27,7 +27,6 @@ interface IProblemType {
     checkerDescription: string;
     resources: IProblemResourceType[];
     allowedSubmissionTypes: ISubmissionTypeType[];
-    codeEditorCode: string | Blob;
 }
 
 interface IContestType {

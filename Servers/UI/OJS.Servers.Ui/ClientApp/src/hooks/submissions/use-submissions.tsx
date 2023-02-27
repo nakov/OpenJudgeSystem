@@ -16,7 +16,7 @@ import { useProblemSubmissions } from './use-problem-submissions';
 
 interface ISubmissionsContext {
     state: {
-        problemSubmissionCode: IDictionary<string | Blob>;
+        problemSubmissionCode: IDictionary<string | File>;
         selectedSubmissionType: ISubmissionTypeType | null;
         submitMessage: string | null;
         setSubmitMessage: (value: string | null) => void;
@@ -24,7 +24,7 @@ interface ISubmissionsContext {
     };
     actions: {
         submit: () => Promise<void>;
-        updateSubmissionCode: (code: string | Blob) => void;
+        updateSubmissionCode: (code: string | File) => void;
         selectSubmissionTypeById: (id: number) => void;
     };
 }
@@ -39,7 +39,7 @@ const defaultState = {
 interface ISubmitCodeTypeParametersType {
     problemId: number;
     submissionTypeId: number;
-    content: string | Blob;
+    content: string | File;
     official: boolean;
 }
 
@@ -51,7 +51,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const [ selectedSubmissionType, setSelectedSubmissionType ] =
         useState<ISubmissionTypeType | null>(defaultState.state.selectedSubmissionType);
     const [ problemSubmissionCode, setProblemSubmissionCode ] =
-        useState<IDictionary<string | Blob>>(defaultState.state.problemSubmissionCode);
+        useState<IDictionary<string | File>>(defaultState.state.problemSubmissionCode);
     const [ submitMessage, setSubmitMessage ] = useState<string | null>(null);
 
     const {
@@ -154,7 +154,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     );
 
     const updateSubmissionCode = useCallback(
-        (code: string | Blob) => {
+        (code: string | File) => {
             const { id: problemId } = currentProblem || {};
             if (isNil(problemId)) {
                 return;
