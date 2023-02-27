@@ -22,11 +22,10 @@ const Contest = () => {
             score,
             maxScore,
             remainingTimeInMilliseconds,
-            validationResult,
             totalParticipantsCount,
             activeParticipantsCount,
             isOfficial,
-            registerForContestError,
+            contestError,
         },
         actions: { setIsSubmitAllowed },
     } = useCurrentContest();
@@ -165,14 +164,10 @@ const Contest = () => {
               type={HeadingType.primary}
               className={styles.contestHeading}
             >
-                {contestTitle}
-                {' '}
-                -
-                {' '}
-                {validationResult.message}
+                {contestError?.detail}
             </Heading>
         </div>
-    ), [ validationResult, contestTitle ]);
+    ), [ contestError ]);
 
     const renderContest = useCallback(
         () => (
@@ -217,12 +212,10 @@ const Contest = () => {
     );
 
     const renderPage = useCallback(
-        () => isNil(validationResult)
-            ? <div>Loading data</div>
-            : validationResult.isValid
-                ? renderContest()
-                : renderErrorMessage(),
-        [ renderErrorMessage, renderContest, validationResult ],
+        () => isNil(contestError)
+            ? renderContest()
+            : renderErrorMessage(),
+        [ renderErrorMessage, renderContest, contestError ],
     );
 
     return renderPage();

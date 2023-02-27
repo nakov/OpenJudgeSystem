@@ -125,6 +125,11 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var validationResult = this.contestValidationService.GetValidationResult((contest, user?.Id, user!.IsAdmin, model.IsOfficial) !);
 
+            if (!validationResult.IsValid)
+            {
+                throw new BusinessServiceException(validationResult.Message, validationResult.PropertyName);
+            }
+
             var userProfile = await this.usersBusinessService.GetUserProfileById(user.Id!);
 
             var participant = await this.participantsData
@@ -143,7 +148,6 @@ namespace OJS.Services.Ui.Business.Implementations
 
             participationModel.Contest.AllowedSubmissionTypes =
                 participationModel.Contest.AllowedSubmissionTypes.DistinctBy(st => st.Id);
-            participationModel.ValidationResult = validationResult;
             participationModel.ParticipantId = participant.Id;
             participationModel.ContestIsCompete = model.IsOfficial;
             participationModel.UserSubmissionsTimeLimit = await this.participantsBusiness.GetParticipantLimitBetweenSubmissions(
