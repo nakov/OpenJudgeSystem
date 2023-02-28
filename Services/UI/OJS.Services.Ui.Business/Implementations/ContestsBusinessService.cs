@@ -71,7 +71,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var validationResult = this.contestValidationService.GetValidationResult((contest, user.Id, user.IsAdmin, official) !);
             if (!validationResult.IsValid)
             {
-                throw new BusinessServiceException(validationResult.Message, validationResult.PropertyName);
+                throw new BusinessServiceException(validationResult.Message);
             }
 
             var registerModel = contest!.Map<RegisterUserForContestServiceModel>();
@@ -127,7 +127,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (!validationResult.IsValid)
             {
-                throw new BusinessServiceException(validationResult.Message, validationResult.PropertyName);
+                throw new BusinessServiceException(validationResult.Message);
             }
 
             var userProfile = await this.usersBusinessService.GetUserProfileById(user.Id!);

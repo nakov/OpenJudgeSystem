@@ -4,7 +4,6 @@ using System;
 using System.Linq;
 using OJS.Data.Models.Contests;
 using OJS.Services.Common.Models;
-using OJS.Services.Ui.Models.Contests;
 
 public class ContestValidationService : IContestValidationService
 {
@@ -18,14 +17,12 @@ public class ContestValidationService : IContestValidationService
             contest.IsDeleted ||
             (!contest.IsVisible && !isUserLecturerInContest && !isUserAdmin))
         {
-            return ValidationResult.Invalid(
-                string.Format(ValidationMessages.Contest.NotFound, contest?.Name));
+            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.NotFound, contest?.Name));
         }
 
         if (IsContestExpired(contest, userId, isUserAdmin, official, isUserLecturerInContest))
         {
-            return ValidationResult.Invalid(
-                string.Format(ValidationMessages.Contest.IsExpired, contest?.Name));
+            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.IsExpired, contest?.Name));
         }
 
         if (official &&
@@ -34,16 +31,14 @@ public class ContestValidationService : IContestValidationService
                 userId,
                 isUserAdmin,
                 isUserLecturerInContest,
-                allowToAdminAlways: true))
+                true))
         {
-            return ValidationResult.Invalid(
-                string.Format(ValidationMessages.Contest.CanBeCompeted, contest?.Name));
+            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.CanBeCompeted, contest?.Name));
         }
 
         if (!official && !contest.CanBePracticed && !isUserLecturerInContest && !isUserAdmin)
         {
-            return ValidationResult.Invalid(
-                string.Format(ValidationMessages.Contest.CanBePracticed, contest?.Name));
+            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.CanBePracticed, contest?.Name));
         }
 
         return ValidationResult.Valid();
