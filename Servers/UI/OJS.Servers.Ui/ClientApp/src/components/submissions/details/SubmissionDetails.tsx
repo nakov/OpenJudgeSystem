@@ -282,6 +282,10 @@ const SubmissionDetails = () => {
         [ renderErrorMessage, problemResultsError, submissionDetailsError, renderSubmission ],
     );
 
+    if (isNil(currentSubmission) && isNil(problemResultsError) && isNil(submissionDetailsError)) {
+        return <div>No details fetched.</div>;
+    }
+
     return renderPage();
 };
 
