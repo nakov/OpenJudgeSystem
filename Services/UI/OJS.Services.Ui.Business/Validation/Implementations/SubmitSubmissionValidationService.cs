@@ -15,22 +15,19 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             validationInput)
     {
         var (problem, user, participant, contestValidationResult,
-            userSubmissionTimeLimit, hasUserNotProcessedSubmissionForProblem, submitSubmissionServiceModel) = validationInput;
+                userSubmissionTimeLimit, hasUserNotProcessedSubmissionForProblem, submitSubmissionServiceModel) =
+            validationInput;
 
         var shouldAllowBinaryFiles = false;
 
         if (problem == null)
         {
-            return ValidationResult.Invalid(
-                ValidationMessages.Problem.NotFound,
-                SubmitSubmissionValidation.ProblemNotFound.ToString());
+            return ValidationResult.Invalid(ValidationMessages.Problem.NotFound);
         }
 
         if (participant == null && !user.IsAdminOrLecturer)
         {
-            return ValidationResult.Invalid(
-                ValidationMessages.Participant.NotRegisteredForExam,
-                SubmitSubmissionValidation.NotRegisteredForExam.ToString());
+            return ValidationResult.Invalid(ValidationMessages.Participant.NotRegisteredForExam);
         }
 
         if (!contestValidationResult.IsValid)
@@ -43,9 +40,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             !IsUserAdminOrLecturerInContest(participant.Contest, user) &&
             participant.ProblemsForParticipants.All(p => p.ProblemId != problem.Id))
         {
-            return ValidationResult.Invalid(
-                ValidationMessages.Problem.ProblemNotAssignedToUser,
-                SubmitSubmissionValidation.ProblemNotAssignedToUser.ToString());
+            return ValidationResult.Invalid(ValidationMessages.Problem.ProblemNotAssignedToUser);
         }
 
         var submissionType =
@@ -54,78 +49,62 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
 
         if (submissionType == null)
         {
-            return ValidationResult.Invalid(
-                ValidationMessages.Submission.SubmissionTypeNotFound,
-                SubmitSubmissionValidation.SubmissionTypeNotFound.ToString());
+            return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTypeNotFound);
         }
 
         if (submitSubmissionServiceModel.StringContent == null)
         {
             shouldAllowBinaryFiles = true;
 
-            if (submitSubmissionServiceModel.ByteContent == null || submitSubmissionServiceModel.ByteContent.Length == 0)
+            if (submitSubmissionServiceModel.ByteContent == null ||
+                submitSubmissionServiceModel.ByteContent.Length == 0)
             {
-                return ValidationResult.Invalid(
-                    ValidationMessages.Submission.UploadFile,
-                    SubmitSubmissionValidation.UploadFile.ToString());
+                return ValidationResult.Invalid(ValidationMessages.Submission.UploadFile);
             }
 
             if (!submissionType.SubmissionType.AllowedFileExtensions!.Contains(
                     submitSubmissionServiceModel.FileExtension!))
             {
-                return ValidationResult.Invalid(
-                    ValidationMessages.Submission.InvalidExtension,
-                    SubmitSubmissionValidation.InvalidExtension.ToString());
+                return ValidationResult.Invalid(ValidationMessages.Submission.InvalidExtension);
             }
         }
 
         if (shouldAllowBinaryFiles && !submissionType.SubmissionType.AllowBinaryFilesUpload)
         {
-            return ValidationResult.Invalid(
-                ValidationMessages.Submission.BinaryFilesNotAllowed,
-                SubmitSubmissionValidation.BinaryFilesNotAllowed.ToString());
+            return ValidationResult.Invalid(ValidationMessages.Submission.BinaryFilesNotAllowed);
         }
 
         if (!shouldAllowBinaryFiles && submissionType.SubmissionType.AllowBinaryFilesUpload)
         {
-            return ValidationResult.Invalid(
-                ValidationMessages.Submission.TextUploadNotAllowed,
-                SubmitSubmissionValidation.TextUploadNotAllowed.ToString());
+            return ValidationResult.Invalid(ValidationMessages.Submission.TextUploadNotAllowed);
         }
 
         if (hasUserNotProcessedSubmissionForProblem)
         {
-            return ValidationResult.Invalid(
-                ValidationMessages.Submission.UserHasNotProcessedSubmissionForProblem,
-                SubmitSubmissionValidation.UserHasNotProcessedSubmissionForProblem.ToString());
+            return ValidationResult.Invalid(ValidationMessages.Submission.UserHasNotProcessedSubmissionForProblem);
         }
 
-        if (submitSubmissionServiceModel.StringContent != null && problem.SourceCodeSizeLimit < submitSubmissionServiceModel.StringContent.Length)
+        if (submitSubmissionServiceModel.StringContent != null &&
+            problem.SourceCodeSizeLimit < submitSubmissionServiceModel.StringContent.Length)
         {
-            return ValidationResult.Invalid(
-                ValidationMessages.Submission.SubmissionTooLong,
-                SubmitSubmissionValidation.SubmissionTooLong.ToString());
+            return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTooLong);
         }
 
         if (submitSubmissionServiceModel.StringContent != null && submitSubmissionServiceModel.StringContent.Length < 5)
         {
-            return ValidationResult.Invalid(
-                ValidationMessages.Submission.SubmissionTooShort,
-                SubmitSubmissionValidation.SubmissionTooShort.ToString());
+            return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTooShort);
         }
 
         if (userSubmissionTimeLimit != 0)
         {
-            return ValidationResult.Invalid(
-                ValidationMessages.Submission.SubmissionWasSentTooSoon,
-                SubmitSubmissionValidation.SubmissionWasSentTooSoon.ToString());
+            return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionWasSentTooSoon);
         }
 
         return ValidationResult.Valid();
     }
 
     private static bool IsUserAdminOrLecturerInContest(Contest contest, UserInfoModel currentUser)
-    => currentUser.IsAdmin ||
-               contest.LecturersInContests.Any(c => c.LecturerId == currentUser.Id) ||
-               contest.Category!.LecturersInContestCategories.Any(cl => cl.LecturerId == currentUser.Id);
+        => currentUser.IsAdmin ||
+           contest.LecturersInContests.Any(c => c.LecturerId == currentUser.Id) ||
+           contest.Category!.LecturersInContestCategories.Any(cl => cl.LecturerId == currentUser.Id);
 }
