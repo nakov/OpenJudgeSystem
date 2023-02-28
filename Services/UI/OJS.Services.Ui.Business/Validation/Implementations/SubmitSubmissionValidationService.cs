@@ -19,13 +19,6 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
 
         var shouldAllowBinaryFiles = false;
 
-        if (user.Id == null)
-        {
-            return ValidationResult.Invalid(
-                ValidationMessages.User.NotLoggedIn,
-                SubmitSubmissionValidation.UserNotLoggedIn.ToString());
-        }
-
         if (problem == null)
         {
             return ValidationResult.Invalid(

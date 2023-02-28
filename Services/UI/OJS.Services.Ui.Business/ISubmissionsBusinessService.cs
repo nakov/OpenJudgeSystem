@@ -9,7 +9,7 @@
 
     public interface ISubmissionsBusinessService : IService
     {
-        Task<SubmitSubmissionValidationServiceModel> Submit(SubmitSubmissionServiceModel model);
+        Task Submit(SubmitSubmissionServiceModel model);
 
         Task<SubmissionDetailsServiceModel?> GetById(int submissionId);
 

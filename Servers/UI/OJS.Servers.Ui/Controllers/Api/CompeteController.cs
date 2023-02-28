@@ -51,26 +51,22 @@ public class CompeteController : BaseApiController
     /// Submits user's code for evaluation.
     /// </summary>
     /// <param name="model">The submission model containing the code and execution context.</param>
-    /// <returns>Validation result.</returns>
+    /// <returns>Success status code.</returns>
     [HttpPost]
-    [ProducesResponseType(typeof(SubmitSubmissionValidationResponseModel), Status200OK)]
     public async Task<IActionResult> Submit([FromBody] SubmissionRequestModel model)
         => await this.submissionsBusinessService
             .Submit(model.Map<SubmitSubmissionServiceModel>())
-            .Map<SubmitSubmissionValidationResponseModel>()
             .ToOkResult();
 
     /// <summary>
     /// Submits user's code in fle format (zip) for evaluation.
     /// </summary>
     /// <param name="model">The submission model containing the code and execution context.</param>
-    /// <returns>Validation result.</returns>
+    /// <returns>Success status code.</returns>
     [HttpPost]
-    [ProducesResponseType(typeof(SubmitSubmissionValidationResponseModel), Status200OK)]
     public async Task<IActionResult> SubmitFileSubmission([FromForm] SubmitFileSubmissionRequestModel model)
         => await this.submissionsBusinessService
             .Submit(model.Map<SubmitSubmissionServiceModel>())
-            .Map<SubmitSubmissionValidationResponseModel>()
             .ToOkResult();
 
     /// <summary>

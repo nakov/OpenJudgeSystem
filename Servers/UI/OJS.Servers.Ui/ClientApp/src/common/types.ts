@@ -81,6 +81,12 @@ interface IRegisterForContestResponseType {
     requirePassword: boolean;
 }
 
+interface IException {
+    title: string;
+    status: number;
+    detail: string;
+}
+
 interface IValidationType {
     message: string;
     isValid: boolean;
@@ -123,10 +129,6 @@ interface IUserPermissionsType {
     canAccessAdministration: boolean;
 }
 
-interface ISubmitSubmissionValidationResponseType {
-    validationResult: IValidationType;
-}
-
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -141,7 +143,7 @@ export type {
     IPagedResultType,
     IUserType,
     IUserPermissionsType,
-    ISubmitSubmissionValidationResponseType,
+    IException,
 };
 
 export { ValidationPropertyType };

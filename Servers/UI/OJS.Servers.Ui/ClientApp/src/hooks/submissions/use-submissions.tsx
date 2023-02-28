@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import first from 'lodash/first';
 import isNil from 'lodash/isNil';
 
-import { ISubmissionTypeType, ISubmitSubmissionValidationResponseType } from '../../common/types';
+import { IException, ISubmissionTypeType } from '../../common/types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useCurrentContest } from '../use-current-contest';
 import { useHttp } from '../use-http';
@@ -78,12 +78,14 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         post: submitCode,
         data: submitCodeData,
         isSuccess,
-    } = useHttp<null, ISubmitSubmissionValidationResponseType, ISubmitCodeTypeParametersType>({ url: getSubmitUrl });
+        error: errorSubmitCode,
+    } = useHttp<null, IException, ISubmitCodeTypeParametersType>({ url: getSubmitUrl });
 
     const {
         post: submitFileCode,
-        data: submitFileData,
-    } = useHttp<null, ISubmitSubmissionValidationResponseType, FormData>({
+        data: submitFileCodeData,
+        error: errorSubmitFile,
+    } = useHttp<null, IException, FormData>({
         url: getSubmitFileUrl,
         bodyAsFormData: true,
     });
@@ -156,15 +158,13 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     useEffect(
         () => {
-            if (!isNil(submitCodeData)) {
-                const { validationResult: submitCodeValidationResult } = submitCodeData;
-                setSubmitMessage(submitCodeValidationResult.message);
+            if (!isNil(errorSubmitCode) && !isNil(submitCodeData)) {
+                setSubmitMessage(submitCodeData.detail);
                 return;
             }
 
-            if (!isNil(submitFileData)) {
-                const { validationResult: submitFileValidationResult } = submitFileData;
-                setSubmitMessage(submitFileValidationResult.message);
+            if (!isNil(errorSubmitFile) && !isNil(submitFileCodeData)) {
+                setSubmitMessage(submitFileCodeData?.detail);
                 return;
             }
 
@@ -173,9 +173,11 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             })();
         },
         [
-            submitCodeData,
-            submitFileData,
             loadSubmissions,
+            errorSubmitCode,
+            errorSubmitFile,
+            submitFileCodeData,
+            submitCodeData,
         ],
     );
 

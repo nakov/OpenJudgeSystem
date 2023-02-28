@@ -279,7 +279,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         return userSubmissions;
     }
 
-    public async Task<SubmitSubmissionValidationServiceModel> Submit(SubmitSubmissionServiceModel model)
+    public async Task Submit(SubmitSubmissionServiceModel model)
     {
         var problem = await this.problemsDataService.GetWithProblemGroupCheckerAndTestsById(model.ProblemId);
         var currentUser = this.userProviderService.GetCurrentUser();
@@ -306,8 +306,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         hasUserNotProcessedSubmissionForProblem,
         model));
 
-        var submitSubmissionValidationServiceModel =
-            new SubmitSubmissionValidationServiceModel() { ValidationResult = submitSubmissionValidationServiceResult };
+        if (!submitSubmissionValidationServiceResult.IsValid)
+        {
+            throw new BusinessServiceException(submitSubmissionValidationServiceResult.Message);
+        }
 
         Submission newSubmission;
         if (model.StringContent == null)
@@ -349,10 +351,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 .First(st => st.SubmissionTypeId == model.SubmissionTypeId)
                 .SubmissionType;
 
-        var response = await this.submissionsDistributorCommunicationService
-            .AddSubmissionForProcessing(newSubmission);
-
-        return submitSubmissionValidationServiceModel;
+        await this.submissionsDistributorCommunicationService.AddSubmissionForProcessing(newSubmission);
     }
 
     public async Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult)
