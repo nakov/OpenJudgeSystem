@@ -33,7 +33,6 @@ public class SearchBusinessService : ISearchBusinessService
     {
         model ??= new SearchServiceModel();
         model.ItemsPerPage ??= DefaultItemsPerPage;
-        model.PageNumber ??= 1;
         model.SearchTerm = model.SearchTerm?.Trim();
 
         var validationResult = this.searchValidationService.GetValidationResult(model.SearchTerm);
@@ -41,15 +40,7 @@ public class SearchBusinessService : ISearchBusinessService
         var searchListingModel = new SearchForListingServiceModel();
         if (validationResult.IsValid)
         {
-            var (users, usersCount) = await this.usersBusinessService.GetSearchUsersByUsername<UserSearchServiceModel>(model);
-            var (contests, contestsCount) = await this.contestsBusinessService.GetSearchContestsByName<ContestSearchServiceModel>(model);
-            var (problems, problemsCount) = await this.problemsBusinessService.GetSearchProblemsByName(model);
-
-            searchListingModel.Contests = contests;
-            searchListingModel.Users = users;
-            searchListingModel.Problems = problems;
-
-            model.TotalItemsCount = CalculateMaxCount(usersCount, contestsCount, problemsCount);
+            await this.PopulateProperValues(model, searchListingModel);
         }
 
         searchListingModel.ValidationResult = validationResult;
@@ -64,4 +55,44 @@ public class SearchBusinessService : ISearchBusinessService
     }
 
     private static int CalculateMaxCount(int usersCount, int contestsCount, int problemsCount) => Math.Max(Math.Max(usersCount, contestsCount), problemsCount);
+
+    private async Task PopulateProperValues(SearchServiceModel model, SearchForListingServiceModel searchListingModel)
+    {
+        if (model.SelectedTerm == SearchSelectType.All)
+        {
+            var (users, usersCount) = await this.usersBusinessService.GetSearchUsersByUsername<UserSearchServiceModel>(model);
+            var (contests, contestsCount) = await this.contestsBusinessService.GetSearchContestsByName<ContestSearchServiceModel>(model);
+            var (problems, problemsCount) = await this.problemsBusinessService.GetSearchProblemsByName(model);
+
+            searchListingModel.Contests = contests;
+            searchListingModel.Problems = problems;
+            searchListingModel.Users = users;
+
+            model.TotalItemsCount = CalculateMaxCount(usersCount, contestsCount, problemsCount);
+        }
+        else if (model.SelectedTerm == SearchSelectType.Contests)
+        {
+            var (contests, contestsCount) = await this.contestsBusinessService.GetSearchContestsByName<ContestSearchServiceModel>(model);
+
+            searchListingModel.Contests = contests;
+
+            model.TotalItemsCount = contestsCount;
+        }
+        else if (model.SelectedTerm == SearchSelectType.Problems)
+        {
+            var (problems, problemsCount) = await this.problemsBusinessService.GetSearchProblemsByName(model);
+
+            searchListingModel.Problems = problems;
+
+            model.TotalItemsCount = problemsCount;
+        }
+        else if (model.SelectedTerm == SearchSelectType.Users)
+        {
+            var (users, usersCount) = await this.usersBusinessService.GetSearchUsersByUsername<UserSearchServiceModel>(model);
+
+            searchListingModel.Users = users;
+
+            model.TotalItemsCount = usersCount;
+        }
+    }
 }

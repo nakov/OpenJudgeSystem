@@ -1,12 +1,14 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
-import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
+import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
+import SearchIcon from '../../components/guidelines/icons/SearchIcon';
 import { useAuth } from '../../hooks/use-auth';
+import { useSearch } from '../../hooks/use-search';
 import { useUrls } from '../../hooks/use-urls';
 import concatClassNames from '../../utils/class-names';
+import generateId from '../../utils/id-generator';
 import PageNav from '../nav/PageNav';
-import SearchBar from '../search-bar/SearchBar';
 
 import logo from './softuni-logo-horizontal.svg';
 
@@ -16,40 +18,74 @@ const PageHeader = () => {
     const { state: { user } } = useAuth();
 
     const { getAdministrationNavigation } = useUrls();
+    const { actions: { toggleVisibility } } = useSearch();
 
-    const renderLinks = useCallback(() => {
-        const administrationLink = user.permissions.canAccessAdministration
-            ? (
-                <LinkButton
-                  type={LinkButtonType.plain}
-                  size={ButtonSize.none}
-                  to={getAdministrationNavigation()}
-                  isToExternal
-                  text="Administration"
-                />
-            )
-            : null;
+    const renderLinks = useCallback(
+        () => {
+            const administrationLink = user.permissions.canAccessAdministration
+                ? (
+                    <LinkButton
+                      type={LinkButtonType.plain}
+                      size={ButtonSize.none}
+                      to={getAdministrationNavigation()}
+                      isToExternal
+                      text="Administration"
+                    />
+                )
+                : null;
 
-        return (
-            <>
-                <LinkButton
-                  id="nav-contests-link"
-                  type={LinkButtonType.plain}
-                  size={ButtonSize.none}
-                  to="/contests"
-                  text="Contests"
-                />
-                <LinkButton
-                  id="nav-submissions-link"
-                  type={LinkButtonType.plain}
-                  size={ButtonSize.none}
-                  to="/submissions"
-                  text="Submissions"
-                />
-                { administrationLink }
-            </>
-        );
-    }, [ getAdministrationNavigation, user.permissions.canAccessAdministration ]);
+            return (
+                <>
+                    <LinkButton
+                      id="nav-contests-link"
+                      type={LinkButtonType.plain}
+                      size={ButtonSize.none}
+                      to="/contests"
+                      text="Contests"
+                    />
+                    <LinkButton
+                      id="nav-submissions-link"
+                      type={LinkButtonType.plain}
+                      size={ButtonSize.none}
+                      to="/submissions"
+                      text="Submissions"
+                    />
+                    { administrationLink }
+                </>
+            );
+        },
+        [ getAdministrationNavigation, user.permissions.canAccessAdministration ],
+    );
+
+    const btnId = useMemo(
+        () => {
+            const searchIdBtn = generateId();
+            return `btn-submit-${searchIdBtn}`;
+        },
+        [],
+    );
+
+    const handleSearchClick = useCallback(
+        () => toggleVisibility(),
+        [ toggleVisibility ],
+    );
+
+    const searchBtnClassName = concatClassNames('searchButton', styles.searchButton);
+
+    const searchButton = useCallback(
+        () => (
+            <Button
+              id={btnId}
+              onClick={handleSearchClick}
+              type={ButtonType.submit}
+              className={searchBtnClassName}
+              matchOnlyInternalClass
+            >
+                <SearchIcon />
+            </Button>
+        ),
+        [ btnId, handleSearchClick, searchBtnClassName ],
+    );
 
     const headingSecondaryClass = 'headingSeconary';
     const headingSecondaryClassName = concatClassNames(styles.heading, headingSecondaryClass);
@@ -69,8 +105,10 @@ const PageHeader = () => {
                     </Heading>
                     { renderLinks() }
                 </div>
-                <SearchBar />
-                <PageNav />
+                <div className={styles.navbarContainer}>
+                    { searchButton() }
+                    <PageNav />
+                </div>
             </div>
         </header>
     );

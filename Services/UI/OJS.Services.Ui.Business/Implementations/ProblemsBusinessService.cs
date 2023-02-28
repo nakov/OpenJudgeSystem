@@ -178,7 +178,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var searchProblems = await allProblems
                 .MapCollection<ProblemSearchServiceModel>()
-                .ToPagedListAsync(model.PageNumber!.Value, model.ItemsPerPage!.Value);
+                .ToPagedListAsync(model.PageNumber, model.ItemsPerPage!.Value);
 
             searchProblems.ForEach(sp => GetContestByProblemId(sp, allProblems));
 

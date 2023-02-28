@@ -73,6 +73,7 @@ interface IRetestSubmissionUrlParams {
 interface IGetSearchResultsUrlParams {
     searchTerm: string;
     page: number;
+    selectedTerm: string;
 }
 
 export type {

@@ -1,8 +1,7 @@
 import React, { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { createSearchParams, useNavigate } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 
-import { SearchParams } from '../../common/search-types';
 import Form, { FormType } from '../../components/guidelines/forms/Form';
 import FormControl, {
     FormControlType,
@@ -12,13 +11,20 @@ import { useSearch } from '../../hooks/use-search';
 
 import styles from './SearchBar.module.scss';
 
-const defaultState = { state: { searchValue: '' } };
+const defaultState = {
+    state: {
+        searchValue: '',
+        selectedTerm: 'All',
+    },
+};
 
 const searchFieldName = 'Search';
-
+const radioFiledName = 'Radio';
 const SearchBar = () => {
     const [ searchParam, setSearchParam ] = useState<string>(defaultState.state.searchValue);
-    const { actions: { encodeUrlToURIComponent } } = useSearch();
+    const [ selectedTerm, setSelectedTerm ] = useState<string>(defaultState.state.selectedTerm);
+
+    const { state: { isVisible } } = useSearch();
     const navigate = useNavigate();
 
     const handleOnChangeUpdateSearch = useCallback(
@@ -31,14 +37,14 @@ const SearchBar = () => {
     const handleSubmit = useCallback(
         () => {
             if (!isEmpty(searchParam)) {
-                const encodedUrl = encodeUrlToURIComponent(searchParam);
+                const params = { searchTerm: `${searchParam}`, selectedTerm: `${selectedTerm}` };
                 navigate({
                     pathname: '/search',
-                    search: `?${SearchParams.search}=${encodedUrl}`,
+                    search: `?${createSearchParams(params)}`,
                 });
             }
         },
-        [ encodeUrlToURIComponent, navigate, searchParam ],
+        [ navigate, searchParam, selectedTerm ],
     );
 
     const handleOnKeyDown = useCallback(
@@ -50,23 +56,43 @@ const SearchBar = () => {
         [ handleSubmit ],
     );
 
+    const handleSelectedRadioValue = useCallback(
+        (valueSelected?: IFormControlOnChangeValueType) => {
+            setSelectedTerm(valueSelected as string);
+        },
+        [],
+    );
+
     return (
-        <Form
-          className={styles.search}
-          onSubmit={handleSubmit}
-          submitButtonClassName={styles.searchButton}
-          type={FormType.search}
-        >
-            <FormControl
-              className={styles.searchInput}
-              name={searchFieldName}
-              type={FormControlType.search}
-              labelText={searchFieldName}
-              onChange={handleOnChangeUpdateSearch}
-              onKeyDown={handleOnKeyDown}
-              value={searchParam}
-            />
-        </Form>
+        isVisible
+            ? (
+                <div className={styles.searchContainer}>
+                    <Form
+                      className={styles.search}
+                      onSubmit={handleSubmit}
+                      submitButtonClassName={styles.searchButton}
+                      type={FormType.search}
+                    >
+                        <FormControl
+                          className={styles.searchInput}
+                          name={searchFieldName}
+                          type={FormControlType.search}
+                          labelText={searchFieldName}
+                          onChange={handleOnChangeUpdateSearch}
+                          onKeyDown={handleOnKeyDown}
+                          value={searchParam}
+                        />
+                        <FormControl
+                          className={styles.radioContainer}
+                          name={radioFiledName}
+                          type={FormControlType.radio}
+                          onChange={handleSelectedRadioValue}
+                          value={selectedTerm}
+                        />
+                    </Form>
+                </div>
+            )
+            : null
     );
 };
 export default SearchBar;

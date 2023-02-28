@@ -44,7 +44,7 @@
 
             var searchUsers = await allUsers
                 .MapCollection<TServiceModel>()
-                .ToPagedListAsync(model.PageNumber!.Value, model.ItemsPerPage!.Value);
+                .ToPagedListAsync(model.PageNumber, model.ItemsPerPage!.Value);
 
             return (searchUsers, allUsers.Count);
         }

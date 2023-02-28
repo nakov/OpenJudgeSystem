@@ -175,7 +175,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var searchContests = await allContests
                 .MapCollection<TServiceModel>()
-                .ToPagedListAsync(model.PageNumber!.Value, model.ItemsPerPage!.Value);
+                .ToPagedListAsync(model.PageNumber, model.ItemsPerPage!.Value);
 
             return (searchContests, allContests.Count);
         }

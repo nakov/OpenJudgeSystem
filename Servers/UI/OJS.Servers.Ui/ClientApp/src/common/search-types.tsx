@@ -1,5 +1,6 @@
 enum SearchParams {
-    search = 'searchterm'
+    search = 'searchTerm',
+    selectedTerm = 'selectedTerm',
 }
 
 interface IContestSearchType{

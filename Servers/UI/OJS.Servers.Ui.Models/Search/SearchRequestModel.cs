@@ -6,10 +6,12 @@ using SoftUni.AutoMapper.Infrastructure.Models;
 
 public class SearchRequestModel : IMapTo<SearchServiceModel>
 {
-    public string? SearchTerm { get; set; }
+    public string? SearchTerm { get; set; } = null!;
 
     [BindProperty(Name = "page")]
     public int? PageNumber { get; set; }
+
+    public SearchSelectType SelectedTerm { get; set; }
 
     public int? ItemsPerPage { get; set; }
 

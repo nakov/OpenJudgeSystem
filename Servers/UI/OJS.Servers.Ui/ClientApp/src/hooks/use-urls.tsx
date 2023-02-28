@@ -159,7 +159,7 @@ const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams
 const getHomeStatisticsUrl = () => `${baseApiUrl}/StatisticsPreview/GetForHome`;
 
 // Search
-const getSearchResults = ({ searchTerm, page }: IGetSearchResultsUrlParams) => {
+const getSearchResults = ({ searchTerm, page, selectedTerm }: IGetSearchResultsUrlParams) => {
     const searchQuery = isNil(searchTerm)
         ? ''
         : `${SearchParams.search}=${searchTerm}`;
@@ -168,7 +168,11 @@ const getSearchResults = ({ searchTerm, page }: IGetSearchResultsUrlParams) => {
         ? ''
         : `page=${page}`;
 
-    return `${baseApiUrl}/Search/GetSearchResults?${searchQuery}&${pageQuery}`;
+    const selectedTermQuery = isNil(selectedTerm)
+        ? ''
+        : `${SearchParams.selectedTerm}=${selectedTerm}`;
+
+    return `${baseApiUrl}/Search/GetSearchResults?${searchQuery}&${selectedTermQuery}&${pageQuery}`;
 };
 
 const UrlsProvider = ({ children }: IUrlsProviderProps) => {

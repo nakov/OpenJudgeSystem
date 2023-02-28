@@ -93,7 +93,9 @@ const FormControl = ({
     id = generateId(),
 }: IFormControlProps) => {
     const [ formControlValue, setFormControlValue ] = useState(value);
+
     const [ isChecked, setIsChecked ] = useState<boolean>(checked);
+    const [ selectedValue, setSelectedValue ] = useState<string>(value);
 
     const componentClassName = concatClassNames(type !== FormControlType.checkbox
         ? styles.formControl
@@ -104,6 +106,10 @@ const FormControl = ({
             setIsChecked(!isChecked);
 
             return;
+        }
+
+        if (type === FormControlType.radio) {
+            setSelectedValue(ev.target.value);
         }
 
         setFormControlValue(ev.target.value);
@@ -183,6 +189,49 @@ const FormControl = ({
             );
         }
 
+        if (type === FormControlType.radio) {
+            return (
+                <div className={componentClassName}>
+                    <label>
+                        All
+                        <input
+                          type="radio"
+                          value="All"
+                          checked={selectedValue === 'All'}
+                          onChange={handleOnChange}
+                        />
+                    </label>
+                    <label>
+                        Contests
+                        <input
+                          type="radio"
+                          value="Contests"
+                          checked={selectedValue === 'Contests'}
+                          onChange={handleOnChange}
+                        />
+                    </label>
+                    <label>
+                        Problems
+                        <input
+                          type="radio"
+                          value="Problems"
+                          checked={selectedValue === 'Problems'}
+                          onChange={handleOnChange}
+                        />
+                    </label>
+                    <label>
+                        Users
+                        <input
+                          type="radio"
+                          value="Users"
+                          checked={selectedValue === 'Users'}
+                          onChange={handleOnChange}
+                        />
+                    </label>
+                </div>
+            );
+        }
+
         return (
             <input
               type={type}
@@ -199,7 +248,7 @@ const FormControl = ({
         );
     };
 
-    if (type === FormControlType.search) {
+    if (type === FormControlType.search || type === FormControlType.radio) {
         return generateFormControl();
     }
 

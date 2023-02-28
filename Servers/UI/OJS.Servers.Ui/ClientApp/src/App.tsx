@@ -32,6 +32,7 @@ import UsersProvider from './hooks/use-users';
 import PageContent from './layout/content/PageContent';
 import PageFooter from './layout/footer/PageFooter';
 import PageHeader from './layout/header/PageHeader';
+import SearchBar from './layout/search-bar/SearchBar';
 import UserCookiesService from './services/user-cookies-service';
 
 import './styles/global.scss';
@@ -76,6 +77,7 @@ const App = () => {
         <Router>
             <InitProviders providers={providers}>
                 <PageHeader />
+                <SearchBar />
                 <PageContent />
                 <PageFooter />
             </InitProviders>

@@ -22,12 +22,13 @@ interface ISearchContext {
         validationResult: IValidationType;
         isLoaded: boolean;
         searchValue: string;
+        isVisible: boolean;
     };
     actions: {
         clearSearchValue: () => void;
         load: () => Promise<void>;
         initiateSearchResultsUrlQuery: () => void;
-        encodeUrlToURIComponent: (url: string) => string;
+        toggleVisibility: () => void;
     };
 }
 
@@ -43,6 +44,7 @@ const defaultState = {
             isValid: true,
             propertyName: '',
         },
+        isVisible: false,
     },
 };
 
@@ -54,6 +56,7 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
     const [ users, setSearchedUsers ] = useState(defaultState.state.users);
     const [ validationResult, setValidationResult ] = useState<IValidationType>(defaultState.state.validationResult);
     const [ getSearchResultsUrlParams, setGetSearchResultsUrlParams ] = useState<IGetSearchResultsUrlParams | null>();
+    const [ isVisible, setIsVisible ] = useState<boolean>(defaultState.state.isVisible);
 
     const { getSearchResults } = useUrls();
     const {
@@ -85,6 +88,17 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
     const urlParam = useMemo(
         () => {
             const { value } = params.find((p) => p.key === SearchParams.search) || { value: '' };
+
+            return isArray(value)
+                ? value[0]
+                : value;
+        },
+        [ params ],
+    );
+
+    const urlTerm = useMemo(
+        () => {
+            const { value } = params.find((p) => p.key === SearchParams.selectedTerm) || { value: 'All' };
 
             return isArray(value)
                 ? value[0]
@@ -134,9 +148,13 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
 
     const initiateSearchResultsUrlQuery = useCallback(
         () => {
-            setGetSearchResultsUrlParams({ searchTerm: encodeUrlToURIComponent(urlParam), page: currentPage });
+            setGetSearchResultsUrlParams({
+                searchTerm: encodeUrlToURIComponent(urlParam),
+                page: currentPage,
+                selectedTerm: urlTerm,
+            });
         },
-        [ currentPage, encodeUrlToURIComponent, urlParam ],
+        [ currentPage, encodeUrlToURIComponent, urlTerm, urlParam ],
     );
 
     const load = useCallback(
@@ -150,7 +168,7 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
 
     useEffect(
         () => {
-            if (isNil(getSearchResults)) {
+            if (isNil(getSearchResultsUrlParams)) {
                 return;
             }
 
@@ -158,7 +176,14 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
                 await load();
             })();
         },
-        [ getSearchResults, load ],
+        [ getSearchResultsUrlParams, load ],
+    );
+
+    const toggleVisibility = useCallback(
+        () => {
+            setIsVisible(!isVisible);
+        },
+        [ isVisible ],
     );
 
     const clearSearchValue = useCallback(
@@ -175,16 +200,28 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
                 validationResult,
                 isLoaded: isSuccess,
                 searchValue: urlParam,
+                isVisible,
             },
             actions: {
                 clearSearchValue,
                 load,
-                encodeUrlToURIComponent,
                 initiateSearchResultsUrlQuery,
+                toggleVisibility,
             },
         }),
-        [ clearSearchValue, contests, encodeUrlToURIComponent, isSuccess, load,
-            problems, urlParam, users, validationResult, initiateSearchResultsUrlQuery ],
+        [
+            contests,
+            problems,
+            users,
+            validationResult,
+            isSuccess,
+            urlParam,
+            isVisible,
+            clearSearchValue,
+            load,
+            initiateSearchResultsUrlQuery,
+            toggleVisibility,
+        ],
     );
 
     return (
