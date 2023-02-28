@@ -183,10 +183,12 @@ const Contest = () => {
             return renderErrorHeading(contestErrorMessage);
         }
 
-        const { message: submissionResultsErrorMessage } = submissionResultsValidation;
+        if (!isNil(problemSubmissionsError)) {
+            return renderErrorHeading(problemSubmissionsError?.detail);
+        }
 
-        return renderErrorHeading(submissionResultsErrorMessage);
-    }, [ renderErrorHeading, contestValidation, submissionResultsValidation ]);
+        return null;
+    }, [ renderErrorHeading, contestValidation, problemSubmissionsError ]);
 
     const renderContest = useCallback(
         () => (
