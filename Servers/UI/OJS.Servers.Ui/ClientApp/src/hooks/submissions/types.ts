@@ -47,11 +47,6 @@ interface ISubmissionDetailsType extends ISubmissionType {
     user: IUserProfileType;
 }
 
-interface ISubmissionResultsByProblemResponse {
-    submissionResults: ISubmissionDetails[];
-    validationResult: IValidationType;
-}
-
 interface ISubmissionDetails {
     id: number;
     problemId: number;
@@ -74,5 +69,4 @@ export type {
     ITestRunDetailsType,
     ISubmissionDetailsType,
     ISubmissionDetails,
-    ISubmissionResultsByProblemResponse,
 };

@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import isNil from 'lodash/isNil';
 
 import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
+import { IException } from '../../common/types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useCurrentContest } from '../use-current-contest';
 import { useHttp } from '../use-http';
@@ -9,11 +10,12 @@ import { useLoading } from '../use-loading';
 import { useProblems } from '../use-problems';
 import { useUrls } from '../use-urls';
 
-import { ISubmissionResultsByProblemResponse } from './types';
+import { ISubmissionDetails } from './types';
 
 interface IProblemSubmissionsContext {
     state: {
-        submissions: ISubmissionResultsByProblemResponse;
+        submissions: ISubmissionDetails[];
+        problemSubmissionsError: IException | null;
     };
     actions: {
         loadSubmissions: () => Promise<void>;
@@ -28,12 +30,13 @@ interface IProblemSubmissionResultsRequestParametersType {
     take: number;
 }
 
-const defaultState = { state: { submissions: {} as ISubmissionResultsByProblemResponse } };
+const defaultState = { state: { submissions: [] as ISubmissionDetails[] } };
 
 const ProblemSubmissionsContext = createContext<IProblemSubmissionsContext>(defaultState as IProblemSubmissionsContext);
 
 const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderProps) => {
     const [ submissions, setSubmissions ] = useState(defaultState.state.submissions);
+    const [ problemSubmissionsError, setProblemSubmissionsError ] = useState<IException | null>(null);
     const { state: { currentProblem } } = useProblems();
     const [
         submissionResultsToGetParameters,
@@ -51,7 +54,8 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
     const {
         get: getProblemSubmissions,
         data: apiProblemSubmissions,
-    } = useHttp<IProblemSubmissionResultsRequestParametersType, ISubmissionResultsByProblemResponse>({
+        error: submissionsError,
+    } = useHttp<IProblemSubmissionResultsRequestParametersType, ISubmissionDetails[]>({
         url: getSubmissionResultsByProblemUrl,
         parameters: submissionResultsToGetParameters,
     });
@@ -76,12 +80,15 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
                 return;
             }
 
-            const { submissionResults, validationResult: newValidationResult } = apiProblemSubmissions;
+            if (!isNil(submissionsError)) {
+                const errorData = apiProblemSubmissions as unknown as IException;
+                setProblemSubmissionsError(errorData);
+            }
 
-            setSubmissions({ submissionResults, validationResult: newValidationResult } as ISubmissionResultsByProblemResponse);
+            setSubmissions(apiProblemSubmissions);
             setSubmissionResultsToGetParameters(null);
         },
-        [ apiProblemSubmissions ],
+        [ apiProblemSubmissions, submissionsError ],
     );
 
     useEffect(
@@ -101,10 +108,10 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
 
     const value = useMemo(
         () => ({
-            state: { submissions },
+            state: { submissions, problemSubmissionsError },
             actions: { loadSubmissions },
         }),
-        [ loadSubmissions, submissions ],
+        [ loadSubmissions, submissions, problemSubmissionsError ],
     );
 
     return (

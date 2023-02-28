@@ -32,7 +32,7 @@ const Contest = () => {
     } = useCurrentContest();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const { actions: { setPageTitle } } = usePageTitles();
-    const { state: { submissions: { validationResult: submissionResultsValidation } } } = useProblemSubmissions();
+    const { state: { problemSubmissionsError } } = useProblemSubmissions();
 
     const navigationContestClass = 'navigationContest';
     const navigationContestClassName = concatClassNames(styles.navigationContest, navigationContestClass);

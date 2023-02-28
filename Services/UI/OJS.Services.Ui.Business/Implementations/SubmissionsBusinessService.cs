@@ -233,7 +233,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         return data;
     }
 
-    public async Task<SubmissionResultsByProblemServiceModel> GetSubmissionResultsByProblem(
+    public async Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(
         int problemId,
         bool isOfficial,
         int take = 0)
@@ -248,6 +248,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 isOfficial);
 
         var validationResult = this.submissionResultsValidationService.GetValidationResult((user, problem, participant));
+        if (!validationResult.IsValid)
+        {
+            throw new BusinessServiceException(validationResult.Message);
+        }
 
         var userSubmissions = user.IsAdminOrLecturer || participant == null
             ? this.submissionsData
@@ -262,15 +266,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             userSubmissions = userSubmissions.Take(take);
         }
 
-        var userSubmissionsMaterialized = await userSubmissions.ToListAsync();
-
-        var submissionResultsByProblemServiceModel = new SubmissionResultsByProblemServiceModel
-        {
-            SubmissionResults = userSubmissionsMaterialized,
-            ValidationResult = validationResult,
-        };
-
-        return submissionResultsByProblemServiceModel;
+        return await userSubmissions.ToListAsync();
     }
 
     public async Task Submit(SubmitSubmissionServiceModel model)
