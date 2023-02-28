@@ -88,9 +88,12 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var validationResult = this.submissionDetailsValidationService.GetValidationResult((submissionDetailsServiceModel, currentUser) !);
 
-        submissionDetailsServiceModel ??= new SubmissionDetailsServiceModel();
+        if (!validationResult.IsValid)
+        {
+            throw new BusinessServiceException(validationResult.Message);
+        }
 
-        submissionDetailsServiceModel.ValidationResult = validationResult;
+        submissionDetailsServiceModel ??= new SubmissionDetailsServiceModel();
 
         return submissionDetailsServiceModel;
     }

@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import isNil from 'lodash/isNil';
 
 import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
-import { IValidationType } from '../../common/types';
+import { IException } from '../../common/types';
 import {
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
@@ -13,8 +13,8 @@ import { useLoading } from '../use-loading';
 import { useUrls } from '../use-urls';
 
 import {
+    ISubmissionDetails,
     ISubmissionDetailsType,
-    ISubmissionResultsByProblemResponse,
     ISubmissionType,
     ITestRunType,
 } from './types';
@@ -22,8 +22,9 @@ import {
 interface ISubmissionsDetailsContext {
     state: {
         currentSubmission: ISubmissionDetailsType | null;
-        currentProblemSubmissionResults: ISubmissionResultsByProblemResponse;
-        submissionDetailsValidationResult: IValidationType;
+        currentProblemSubmissionResults: ISubmissionDetails[];
+        problemResultsError: IException | null;
+        submissionDetailsError: IException | null;
     };
     actions: {
         selectSubmissionById: (submissionId: number) => void;
@@ -32,16 +33,7 @@ interface ISubmissionsDetailsContext {
     };
 }
 
-const defaultState = {
-    state: {
-        currentProblemSubmissionResults: {} as ISubmissionResultsByProblemResponse,
-        submissionDetailsValidationResult: {
-            message: '',
-            isValid: true,
-            propertyName: '',
-        },
-    },
-};
+const defaultState = { state: { currentProblemSubmissionResults: [] as ISubmissionDetails[] } };
 
 const SubmissionsDetailsContext = createContext<ISubmissionsDetailsContext>(defaultState as ISubmissionsDetailsContext);
 
@@ -50,8 +42,8 @@ type ISubmissionsDetailsProviderProps = IHaveChildrenProps
 const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
     const [ currentSubmissionId, selectSubmissionById ] = useState<number>();
-    const [ submissionDetailsValidationResult, setSubmissionDetailsValidationResult ] =
-        useState<IValidationType>(defaultState.state.submissionDetailsValidationResult);
+    const [ problemResultsError, setProblemResultsError ] = useState<IException | null>(null);
+    const [ submissionDetailsError, setSubmissionDetailsError ] = useState<IException | null>(null);
     const [
         currentSubmission,
         setCurrentSubmission,
@@ -75,6 +67,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     const {
         get: getSubmissionDetails,
         data: apiSubmissionDetails,
+        error: apiSubmissionDetailsError,
     } = useHttp<IGetSubmissionDetailsByIdUrlParams, ISubmissionDetailsType>({
         url: getSubmissionDetailsByIdUrl,
         parameters: getSubmissionDetailsByIdParams,
@@ -88,7 +81,8 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     const {
         get: getProblemResultsRequest,
         data: apiProblemResults,
-    } = useHttp<IGetSubmissionResultsByProblemUrlParams, ISubmissionResultsByProblemResponse>({
+        error: apiProblemResultsError,
+    } = useHttp<IGetSubmissionResultsByProblemUrlParams, ISubmissionDetails[]>({
         url: getSubmissionResultsByProblemUrl,
         parameters: submissionResultsByProblemUrlParams,
     });
@@ -129,13 +123,13 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             return;
         }
 
-        const { submissionResults, validationResult: newSubmissionResultsValidationResult } = apiProblemResults;
+        if (!isNil(apiProblemResultsError)) {
+            setProblemResultsError(apiProblemResults as unknown as IException);
+            return;
+        }
 
-        setCurrentProblemSubmissionResults({
-            submissionResults,
-            validationResult: newSubmissionResultsValidationResult,
-        } as ISubmissionResultsByProblemResponse);
-    }, [ apiProblemResults ]);
+        setCurrentProblemSubmissionResults(apiProblemResults);
+    }, [ apiProblemResults, apiProblemResultsError ]);
 
     useEffect(
         () => {
@@ -169,12 +163,14 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
                 return;
             }
 
-            const { validationResult: newValidationResult } = apiSubmissionDetails;
+            if (!isNil(apiSubmissionDetailsError)) {
+                setSubmissionDetailsError(apiSubmissionDetails as unknown as IException);
+                return;
+            }
 
-            setSubmissionDetailsValidationResult(newValidationResult);
             setCurrentSubmission(apiSubmissionDetails);
         },
-        [ apiSubmissionDetails ],
+        [ apiSubmissionDetails, apiSubmissionDetailsError ],
     );
 
     useEffect(
@@ -195,7 +191,8 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             state: {
                 currentSubmission,
                 currentProblemSubmissionResults,
-                submissionDetailsValidationResult,
+                submissionDetailsError,
+                problemResultsError,
             },
             actions: {
                 selectSubmissionById,
@@ -208,7 +205,8 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             currentSubmission,
             getDetails,
             getSubmissionResults,
-            submissionDetailsValidationResult,
+            submissionDetailsError,
+            problemResultsError,
         ],
     );
 

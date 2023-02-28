@@ -46,11 +46,9 @@ const ProblemSubmissions = () => {
             );
         }
 
-        const { submissionResults } = submissions;
-
         return (
             <SubmissionsList
-              items={submissionResults}
+              items={submissions}
               selectedSubmission={null}
               className={styles.submissionsList}
             />

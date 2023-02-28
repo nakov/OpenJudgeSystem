@@ -1,10 +1,8 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router';
 import isNil from 'lodash/isNil';
 
 import { IRegisterForContestTypeUrlParams } from '../../../common/app-url-types';
 import { ContestParticipationType } from '../../../common/constants';
-import { ValidationPropertyType } from '../../../common/types';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import { useAppUrls } from '../../../hooks/use-app-urls';
 import { useAuth } from '../../../hooks/use-auth';
@@ -26,24 +24,16 @@ const SubmissionDetails = () => {
     const {
         state: {
             currentSubmission,
-            currentProblemSubmissionResults:
-                {
-                    submissionResults: currentProblemSubmissions,
-                    validationResult: submissionResultsValidation,
-                },
-            submissionDetailsValidationResult,
+            currentProblemSubmissionResults,
+            submissionDetailsError,
+            problemResultsError,
         },
         actions: { getSubmissionResults },
     } = useSubmissionsDetails();
     const { actions: { setPageTitle } } = usePageTitles();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
-    const {
-        getAdministrationRetestSubmissionInternalUrl,
-        getHomePageUrl,
-        getLoginUrl,
-    } = useAppUrls();
+    const { getAdministrationRetestSubmissionInternalUrl } = useAppUrls();
 
-    const navigate = useNavigate();
     const {
         state: { contest },
         actions: { loadContestByProblemId },
@@ -64,26 +54,6 @@ const SubmissionDetails = () => {
     const submissionTitle = useMemo(
         () => `Submission №${currentSubmission?.id}`,
         [ currentSubmission?.id ],
-    );
-
-    useEffect(
-        () => {
-            if (isNil(submissionResultsValidation)) {
-                return;
-            }
-
-            const { propertyName: submissionDetailsErrorPropertyName } = submissionDetailsValidationResult;
-            const { isValid: submissionResultsIsValid } = submissionResultsValidation;
-
-            if (submissionDetailsErrorPropertyName === ValidationPropertyType.UserNotLoggedIn.toString()) {
-                navigate(getLoginUrl());
-            } else if (submissionDetailsErrorPropertyName === ValidationPropertyType.NotAuthorOfSubmission.toString() ||
-                submissionDetailsErrorPropertyName === ValidationPropertyType.SubmissionNotFound.toString() ||
-                !submissionResultsIsValid) {
-                navigate(getHomePageUrl());
-            }
-        },
-        [ submissionDetailsValidationResult, getHomePageUrl, getLoginUrl, navigate, submissionResultsValidation ],
     );
 
     const canBeCompeted = useMemo(
@@ -206,7 +176,7 @@ const SubmissionDetails = () => {
                     <Heading type={HeadingType.secondary}>Submissions</Heading>
                 </div>
                 <RefreshableSubmissionsList
-                  items={currentProblemSubmissions}
+                  items={currentProblemSubmissionResults}
                   selectedSubmission={currentSubmission}
                   className={styles.submissionsList}
                 />
@@ -214,7 +184,7 @@ const SubmissionDetails = () => {
                 { renderSubmissionInfo() }
             </div>
         ),
-        [ currentProblemSubmissions, currentSubmission, renderRetestButton, renderSubmissionInfo ],
+        [ currentProblemSubmissionResults, currentSubmission, renderRetestButton, renderSubmissionInfo ],
     );
 
     const codeEditor = useMemo(
@@ -268,17 +238,51 @@ const SubmissionDetails = () => {
         [ currentSubmission, detailsHeadingText, submissionDetailsClassName ],
     );
 
-    if (isNil(currentSubmission)) {
-        return <div>No details fetched.</div>;
-    }
-
-    return (
-        <div className={styles.detailsWrapper}>
-            {refreshableSubmissionsList}
-            {codeEditor}
-            {submissionResults()}
-        </div>
+    const renderErrorHeading = useCallback(
+        (message: string) => (
+            <div className={styles.headingContest}>
+                <Heading
+                  type={HeadingType.primary}
+                  className={styles.contestHeading}
+                >
+                    {message}
+                </Heading>
+            </div>
+        ),
+        [],
     );
+
+    const renderErrorMessage = useCallback(() => {
+        if (!isNil(submissionDetailsError)) {
+            return renderErrorHeading(submissionDetailsError?.detail);
+        }
+
+        if (!isNil(problemResultsError)) {
+            return renderErrorHeading(problemResultsError?.detail);
+        }
+
+        return null;
+    }, [ renderErrorHeading, submissionDetailsError, problemResultsError ]);
+
+    const renderSubmission = useCallback(
+        () => (
+            <div className={styles.detailsWrapper}>
+                {refreshableSubmissionsList}
+                {codeEditor}
+                {submissionResults()}
+            </div>
+        ),
+        [ codeEditor, refreshableSubmissionsList, submissionResults ],
+    );
+
+    const renderPage = useCallback(
+        () => isNil(problemResultsError) && isNil(submissionDetailsError)
+            ? renderSubmission()
+            : renderErrorMessage(),
+        [ renderErrorMessage, problemResultsError, submissionDetailsError, renderSubmission ],
+    );
+
+    return renderPage();
 };
 
 export default SubmissionDetails;

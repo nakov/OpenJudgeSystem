@@ -167,13 +167,11 @@ const Contest = () => {
                   type={HeadingType.primary}
                   className={styles.contestHeading}
                 >
-                    {isNil(contestTitle)
-                        ? ''
-                        : `${contestTitle} - ${message}`}
+                    {message}
                 </Heading>
             </div>
         ),
-        [ contestTitle ],
+        [],
     );
 
     const renderErrorMessage = useCallback(() => {
@@ -234,18 +232,13 @@ const Contest = () => {
 
     const renderPage = useCallback(
         () => {
-            if (isNil(contestValidation) || isNil(submissionResultsValidation)) {
-                return <div>Loading data</div>;
-            }
-
             const { isValid: isContestValid } = contestValidation;
-            const { isValid: isSubmissionResultsValid } = submissionResultsValidation;
 
-            return isContestValid && isSubmissionResultsValid
+            return isContestValid && isNil(problemSubmissionsError)
                 ? renderContest()
                 : renderErrorMessage();
         },
-        [ renderErrorMessage, renderContest, contestValidation, submissionResultsValidation ],
+        [ renderErrorMessage, renderContest, contestValidation, problemSubmissionsError ],
     );
 
     return renderPage();

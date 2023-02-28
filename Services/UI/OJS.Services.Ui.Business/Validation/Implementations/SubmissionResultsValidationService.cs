@@ -1,6 +1,5 @@
 ﻿namespace OJS.Services.Ui.Business.Validation.Implementations;
 
-using Models.Submissions;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Problems;
 using OJS.Services.Common.Models;
@@ -12,24 +11,19 @@ public class SubmissionResultsValidationService : ISubmissionResultsValidationSe
     {
         var (userInfoModel, problem, participant) = validationInput;
 
-        if (userInfoModel.Id == null)
-        {
-            return ValidationResult.Invalid(ValidationMessages.User.NotLoggedIn, SubmissionResultsValidation.UserNotLoggedIn.ToString());
-        }
-
         if (problem == null)
         {
-            return ValidationResult.Invalid(ValidationMessages.Problem.NotFound, SubmissionResultsValidation.ProblemNotFound.ToString());
+            return ValidationResult.Invalid(ValidationMessages.Problem.NotFound);
         }
 
         if (participant == null && !userInfoModel.IsAdminOrLecturer)
         {
-            return ValidationResult.Invalid(ValidationMessages.Participant.NotRegisteredForExam, SubmissionResultsValidation.NotRegisteredForExam.ToString());
+            return ValidationResult.Invalid(ValidationMessages.Participant.NotRegisteredForExam);
         }
 
         if (!problem.ShowResults && !userInfoModel.IsAdminOrLecturer)
         {
-            return ValidationResult.Invalid(ValidationMessages.Problem.ProblemResultsNotAvailable, SubmissionResultsValidation.ProblemResultsNotAvailable.ToString());
+            return ValidationResult.Invalid(ValidationMessages.Problem.ProblemResultsNotAvailable);
         }
 
         return ValidationResult.Valid();

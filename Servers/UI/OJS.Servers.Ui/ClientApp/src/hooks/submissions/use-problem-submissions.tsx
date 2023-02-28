@@ -54,7 +54,7 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
     const {
         get: getProblemSubmissions,
         data: apiProblemSubmissions,
-        error: submissionsError,
+        error: apiProblemSubmissionsError,
     } = useHttp<IProblemSubmissionResultsRequestParametersType, ISubmissionDetails[]>({
         url: getSubmissionResultsByProblemUrl,
         parameters: submissionResultsToGetParameters,
@@ -80,15 +80,15 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
                 return;
             }
 
-            if (!isNil(submissionsError)) {
-                const errorData = apiProblemSubmissions as unknown as IException;
-                setProblemSubmissionsError(errorData);
+            if (!isNil(apiProblemSubmissionsError)) {
+                setProblemSubmissionsError(apiProblemSubmissions as unknown as IException);
+                return;
             }
 
             setSubmissions(apiProblemSubmissions);
             setSubmissionResultsToGetParameters(null);
         },
-        [ apiProblemSubmissions, submissionsError ],
+        [ apiProblemSubmissions, apiProblemSubmissionsError ],
     );
 
     useEffect(
