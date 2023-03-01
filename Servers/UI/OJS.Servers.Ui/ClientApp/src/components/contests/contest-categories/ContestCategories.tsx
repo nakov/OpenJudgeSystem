@@ -96,10 +96,6 @@ const ContestCategories = ({
 
     const getParents = useCallback(
         (result: string[], allItems: ITreeItemType[], searchId: string | null, searchValue?: string) => {
-            // if (isNil(searchId)) {
-            //     return result;
-            // }
-
             const currentNode = getCurrentNode(searchId, searchValue);
 
             if (isNil(currentNode)) {
@@ -189,19 +185,17 @@ const ContestCategories = ({
 
     const applyStrategyFilters = useCallback(
         () => {
-            if (currentCategoryId && currentCategoryId !== prevCategoryId) {
-                const categoryValue = getCategoryByValue(currentCategoryId);
-                const category = categoriesFlat.find(({ id }) => id.toString() === categoryValue) as ITreeItemType;
-                if (isNil(category)) {
-                    return;
-                }
-
-                handleTreeLabelClick(category);
-
-                setPrevCategoryId(currentCategoryId);
+            const categoryValue = getCategoryByValue(currentCategoryId);
+            const category = categoriesFlat.find(({ id }) => id.toString() === categoryValue) as ITreeItemType;
+            if (isNil(category)) {
+                return;
             }
+
+            handleTreeLabelClick(category);
+
+            setPrevCategoryId(currentCategoryId);
         },
-        [ categoriesFlat, currentCategoryId, getCategoryByValue, handleTreeLabelClick, prevCategoryId ],
+        [ categoriesFlat, currentCategoryId, getCategoryByValue, handleTreeLabelClick ],
     );
 
     useEffect(
@@ -231,9 +225,11 @@ const ContestCategories = ({
 
     useEffect(
         () => {
-            applyStrategyFilters();
+            if (currentCategoryId && currentCategoryId !== prevCategoryId) {
+                applyStrategyFilters();
+            }
         },
-        [ applyStrategyFilters ],
+        [ applyStrategyFilters, currentCategoryId, prevCategoryId ],
     );
 
     return (
