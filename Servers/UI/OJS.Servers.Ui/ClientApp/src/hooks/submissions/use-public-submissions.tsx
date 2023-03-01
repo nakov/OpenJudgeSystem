@@ -60,17 +60,17 @@ const PublicSubmissionsContext = createContext<IPublicSubmissionsContext>(defaul
 type IPublicSubmissionsProviderProps = IHaveChildrenProps
 
 const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps) => {
-    const { getSubmissionsPublicUrl, getSubmissionsTotalCountUrl } = useUrls();
+    const { getPublicSubmissionsUrl, getSubmissionsTotalCountUrl } = useUrls();
     const {
         get: getSubmissions,
         data: apiSubmissions,
         isSuccess: loadedPublicSubmissions,
-    } = useHttp<null, IPublicSubmission[]>({ url: getSubmissionsPublicUrl });
+    } = useHttp<null, IPublicSubmission[]>({ url: getPublicSubmissionsUrl });
 
     const {
         get: getTotalSubmissionsCount,
         data: apiTotalSubmissionsCount,
-        isSuccess: loadedTotalSubmissionsCount,
+        isSuccess: loadedTotalSubmissionsQuery,
     } = useHttp({ url: getSubmissionsTotalCountUrl });
 
     const submissions = useMemo(
@@ -85,7 +85,7 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
 
     const load = useCallback(
         async () => {
-            if (loadedPublicSubmissions && loadedTotalSubmissionsCount) {
+            if (loadedPublicSubmissions && loadedTotalSubmissionsQuery) {
                 return;
             }
 
@@ -94,7 +94,7 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
                 getTotalSubmissionsCount(),
             ]);
         },
-        [ getSubmissions, getTotalSubmissionsCount, loadedPublicSubmissions, loadedTotalSubmissionsCount ],
+        [ getSubmissions, getTotalSubmissionsCount, loadedPublicSubmissions, loadedTotalSubmissionsQuery ],
     );
 
     const value = useMemo(

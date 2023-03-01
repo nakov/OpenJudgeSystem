@@ -59,7 +59,7 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
     );
 
     return (
-        isEmpty(possibleSortingTypes)
+        !isEmpty(possibleSortingTypes)
             ? (
                 <div className={styles.sortingTypeContainer}>
                     <Heading
