@@ -1,11 +1,10 @@
 namespace OJS.Services.Ui.Business.Implementations
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using FluentExtensions.Extensions;
-    using Microsoft.EntityFrameworkCore;
+    using OJS.Common;
     using OJS.Common.Enumerations;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Participants;
@@ -77,6 +76,19 @@ namespace OJS.Services.Ui.Business.Implementations
             return registerModel;
         }
 
+        public async Task<ContestServiceModel> GetContestByProblem(int problemId)
+        {
+           var contestServiceModel = await this.contestsData.GetByProblemId<ContestServiceModel>(problemId);
+           if (contestServiceModel == null)
+           {
+               throw new BusinessServiceException(GlobalConstants.ErrorMessages.ContestNotFound);
+           }
+
+           contestServiceModel.AllowedSubmissionTypes = contestServiceModel.AllowedSubmissionTypes.DistinctBy(st => st.Id);
+
+           return contestServiceModel;
+        }
+
         public async Task ValidateContestPassword(int id, bool official, string password)
         {
             if (string.IsNullOrEmpty(password))
@@ -124,6 +136,8 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var participationModel = participant.Map<ContestParticipationServiceModel>();
 
+            participationModel.Contest.AllowedSubmissionTypes =
+                participationModel.Contest.AllowedSubmissionTypes.DistinctBy(st => st.Id);
             participationModel.ValidationResult = validationResult;
             participationModel.ParticipantId = participant.Id;
             participationModel.ContestIsCompete = model.IsOfficial;
