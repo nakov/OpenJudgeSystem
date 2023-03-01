@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo } from 'react';
-import { concatClassnames } from 'react-alice-carousel/lib/utils';
 import isNil from 'lodash/isNil';
 
 import { IFilter } from '../../../common/contest-types';
@@ -7,6 +6,7 @@ import ITreeItemType from '../../../common/tree-types';
 import { useContestCategories } from '../../../hooks/use-contest-categories';
 import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
 import { useContests } from '../../../hooks/use-contests';
+import concatClassNames from '../../../utils/class-names';
 import { flattenWith } from '../../../utils/list-utils';
 import { IHaveOptionalClassName } from '../../common/Props';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
@@ -74,7 +74,7 @@ const ContestCategories = ({
     }, [ possibleFilters, categoriesFlat, onCategoryClick, updateBreadcrumb ]);
 
     return (
-        <div className={concatClassnames(className)}>
+        <div className={concatClassNames(className)}>
             <Heading
               type={HeadingType.small}
               className={styles.heading}
