@@ -93,9 +93,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        submissionDetailsServiceModel ??= new SubmissionDetailsServiceModel();
-
-        return submissionDetailsServiceModel;
+        return submissionDetailsServiceModel!;
     }
 
     public Task<IQueryable<Submission>> GetAllForArchiving()
@@ -256,12 +254,12 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        var userSubmissions = user.IsAdminOrLecturer || participant == null
+        var userSubmissions = user.IsAdminOrLecturer
             ? this.submissionsData
                 .GetAllByProblem(problemId)
                 .MapCollection<SubmissionResultsServiceModel>()
             : this.submissionsData
-                .GetAllByProblemAndParticipant(problemId, participant.Id)
+                .GetAllByProblemAndParticipant(problemId, participant!.Id)
                 .MapCollection<SubmissionResultsServiceModel>();
 
         if (take != 0)

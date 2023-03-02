@@ -2,10 +2,9 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import isNil from 'lodash/isNil';
 
 import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
-import { IException } from '../../common/types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useCurrentContest } from '../use-current-contest';
-import { useHttp } from '../use-http';
+import { IErrorDataType, useHttp } from '../use-http';
 import { useLoading } from '../use-loading';
 import { useProblems } from '../use-problems';
 import { useUrls } from '../use-urls';
@@ -15,7 +14,7 @@ import { ISubmissionDetails } from './types';
 interface IProblemSubmissionsContext {
     state: {
         submissions: ISubmissionDetails[];
-        problemSubmissionsError: IException | null;
+        problemSubmissionsError: IErrorDataType | null;
     };
     actions: {
         loadSubmissions: () => Promise<void>;
@@ -36,7 +35,7 @@ const ProblemSubmissionsContext = createContext<IProblemSubmissionsContext>(defa
 
 const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderProps) => {
     const [ submissions, setSubmissions ] = useState(defaultState.state.submissions);
-    const [ problemSubmissionsError, setProblemSubmissionsError ] = useState<IException | null>(null);
+    const [ problemSubmissionsError, setProblemSubmissionsError ] = useState<IErrorDataType | null>(null);
     const { state: { currentProblem } } = useProblems();
     const [
         submissionResultsToGetParameters,
@@ -81,7 +80,7 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
             }
 
             if (!isNil(apiProblemSubmissionsError)) {
-                setProblemSubmissionsError(apiProblemSubmissions as unknown as IException);
+                setProblemSubmissionsError(apiProblemSubmissions as unknown as IErrorDataType);
                 return;
             }
 

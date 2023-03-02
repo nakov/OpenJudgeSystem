@@ -81,12 +81,6 @@ interface IRegisterForContestResponseType {
     requirePassword: boolean;
 }
 
-interface IException {
-    title: string;
-    status: number;
-    detail: string;
-}
-
 interface IValidationType {
     message: string;
     isValid: boolean;
@@ -146,7 +140,6 @@ export type {
     IPagedResultType,
     IUserType,
     IUserPermissionsType,
-    IException,
 };
 
 export { ValidationPropertyType };

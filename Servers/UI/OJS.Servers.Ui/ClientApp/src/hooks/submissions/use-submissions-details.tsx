@@ -2,13 +2,12 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import isNil from 'lodash/isNil';
 
 import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
-import { IException } from '../../common/types';
 import {
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
 } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
-import { useHttp } from '../use-http';
+import { IErrorDataType, useHttp } from '../use-http';
 import { useLoading } from '../use-loading';
 import { useUrls } from '../use-urls';
 
@@ -23,8 +22,8 @@ interface ISubmissionsDetailsContext {
     state: {
         currentSubmission: ISubmissionDetailsType | null;
         currentProblemSubmissionResults: ISubmissionDetails[];
-        problemResultsError: IException | null;
-        submissionDetailsError: IException | null;
+        problemResultsError: IErrorDataType | null;
+        submissionDetailsError: IErrorDataType | null;
     };
     actions: {
         selectSubmissionById: (submissionId: number) => void;
@@ -42,8 +41,8 @@ type ISubmissionsDetailsProviderProps = IHaveChildrenProps
 const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
     const [ currentSubmissionId, selectSubmissionById ] = useState<number>();
-    const [ problemResultsError, setProblemResultsError ] = useState<IException | null>(null);
-    const [ submissionDetailsError, setSubmissionDetailsError ] = useState<IException | null>(null);
+    const [ problemResultsError, setProblemResultsError ] = useState<IErrorDataType | null>(null);
+    const [ submissionDetailsError, setSubmissionDetailsError ] = useState<IErrorDataType | null>(null);
     const [
         currentSubmission,
         setCurrentSubmission,
@@ -118,18 +117,21 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         [ getProblemResultsRequest, startLoading, stopLoading, submissionResultsByProblemUrlParams ],
     );
 
-    useEffect(() => {
-        if (isNil(apiProblemResults)) {
-            return;
-        }
+    useEffect(
+        () => {
+            if (isNil(apiProblemResults)) {
+                return;
+            }
 
-        if (!isNil(apiProblemResultsError)) {
-            setProblemResultsError(apiProblemResults as unknown as IException);
-            return;
-        }
+            if (!isNil(apiProblemResultsError)) {
+                setProblemResultsError(apiProblemResults as unknown as IErrorDataType);
+                return;
+            }
 
-        setCurrentProblemSubmissionResults(apiProblemResults);
-    }, [ apiProblemResults, apiProblemResultsError ]);
+            setCurrentProblemSubmissionResults(apiProblemResults);
+        },
+        [ apiProblemResults, apiProblemResultsError ],
+    );
 
     useEffect(
         () => {
@@ -164,7 +166,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             }
 
             if (!isNil(apiSubmissionDetailsError)) {
-                setSubmissionDetailsError(apiSubmissionDetails as unknown as IException);
+                setSubmissionDetailsError(apiSubmissionDetails as unknown as IErrorDataType);
                 return;
             }
 

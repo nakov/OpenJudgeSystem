@@ -174,19 +174,22 @@ const Contest = () => {
         [],
     );
 
-    const renderErrorMessage = useCallback(() => {
-        const { isValid, message: contestErrorMessage } = contestValidation;
+    const renderErrorMessage = useCallback(
+        () => {
+            const { isValid, message: contestErrorMessage } = contestValidation;
 
-        if (!isValid) {
-            return renderErrorHeading(contestErrorMessage);
-        }
+            if (!isValid) {
+                return renderErrorHeading(contestErrorMessage);
+            }
 
-        if (!isNil(problemSubmissionsError)) {
-            return renderErrorHeading(problemSubmissionsError?.detail);
-        }
+            if (!isNil(problemSubmissionsError)) {
+                return renderErrorHeading(problemSubmissionsError?.detail);
+            }
 
-        return null;
-    }, [ renderErrorHeading, contestValidation, problemSubmissionsError ]);
+            return null;
+        },
+        [ renderErrorHeading, contestValidation, problemSubmissionsError ],
+    );
 
     const renderContest = useCallback(
         () => (

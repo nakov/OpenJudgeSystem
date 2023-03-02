@@ -252,17 +252,20 @@ const SubmissionDetails = () => {
         [],
     );
 
-    const renderErrorMessage = useCallback(() => {
-        if (!isNil(submissionDetailsError)) {
-            return renderErrorHeading(submissionDetailsError?.detail);
-        }
+    const renderErrorMessage = useCallback(
+        () => {
+            if (!isNil(submissionDetailsError)) {
+                return renderErrorHeading(submissionDetailsError?.detail);
+            }
 
-        if (!isNil(problemResultsError)) {
-            return renderErrorHeading(problemResultsError?.detail);
-        }
+            if (!isNil(problemResultsError)) {
+                return renderErrorHeading(problemResultsError?.detail);
+            }
 
-        return null;
-    }, [ renderErrorHeading, submissionDetailsError, problemResultsError ]);
+            return null;
+        },
+        [ renderErrorHeading, submissionDetailsError, problemResultsError ],
+    );
 
     const renderSubmission = useCallback(
         () => (
