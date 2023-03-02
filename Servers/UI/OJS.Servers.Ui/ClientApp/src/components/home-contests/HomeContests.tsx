@@ -39,12 +39,12 @@ const HomeContests = () => {
             ? (
                 <>
                     <ContestsList
-                      title="Active"
+                      title={ContestStatus.Active}
                       contests={activeContests}
                       contestStatus={getContestStatusIndex(ContestStatus.Active)}
                     />
                     <ContestsList
-                      title="Past"
+                      title={ContestStatus.Past}
                       contests={pastContests}
                       contestStatus={getContestStatusIndex(ContestStatus.Past)}
                     />
