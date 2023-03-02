@@ -68,7 +68,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var contest = await this.contestsData.OneById(id);
 
-            var validationResult = this.contestValidationService.GetValidationResult((contest, user.Id, user.IsAdmin, official) !);
+            var validationResult = this.contestValidationService.GetValidationResult((contest, id, user.Id, user.IsAdmin, official) !);
             if (!validationResult.IsValid)
             {
                 throw new BusinessServiceException(validationResult.Message);
@@ -123,7 +123,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var user = this.userProviderService.GetCurrentUser();
 
-            var validationResult = this.contestValidationService.GetValidationResult((contest, user?.Id, user!.IsAdmin, model.IsOfficial) !);
+            var validationResult = this.contestValidationService.GetValidationResult((contest, model.ContestId, user?.Id, user!.IsAdmin, model.IsOfficial) !);
 
             if (!validationResult.IsValid)
             {

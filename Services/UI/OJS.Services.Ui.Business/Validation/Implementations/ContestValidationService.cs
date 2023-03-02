@@ -7,9 +7,9 @@ using OJS.Services.Common.Models;
 
 public class ContestValidationService : IContestValidationService
 {
-    public ValidationResult GetValidationResult((Contest?, string, bool, bool) item)
+    public ValidationResult GetValidationResult((Contest?, int, string, bool, bool) item)
     {
-        var (contest, userId, isUserAdmin, official) = item;
+        var (contest, contestId, userId, isUserAdmin, official) = item;
 
         var isUserLecturerInContest = contest != null && IsUserLecturerInContest(contest, userId);
 
@@ -17,7 +17,7 @@ public class ContestValidationService : IContestValidationService
             contest.IsDeleted ||
             (!contest.IsVisible && !isUserLecturerInContest && !isUserAdmin))
         {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.NotFound, contest?.Name));
+            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.NotFound, contestId));
         }
 
         if (IsContestExpired(contest, userId, isUserAdmin, official, isUserLecturerInContest))

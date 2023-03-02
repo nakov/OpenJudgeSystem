@@ -4,7 +4,6 @@ import sum from 'lodash/sum';
 
 import {
     IContestType,
-    IException,
     IRegisterForContestResponseType,
     IStartParticipationResponseType,
 } from '../common/types';
@@ -16,7 +15,7 @@ import {
 } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
-import { useHttp } from './use-http';
+import { IErrorDataType, useHttp } from './use-http';
 import { useLoading } from './use-loading';
 import { useUrls } from './use-urls';
 
@@ -47,7 +46,7 @@ interface ICurrentContestContext {
         totalParticipantsCount: number;
         activeParticipantsCount: number;
         isSubmitAllowed: boolean;
-        contestError: IException | null;
+        contestError: IErrorDataType | null;
     };
     actions: {
         setContestPassword: (password: string) => void;
@@ -112,7 +111,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ totalParticipantsCount, setTotalParticipantsCount ] = useState(defaultState.state.totalParticipantsCount);
     const [ activeParticipantsCount, setActiveParticipantsCount ] = useState(defaultState.state.activeParticipantsCount);
     const [ isSubmitAllowed, setIsSubmitAllowed ] = useState<boolean>(true);
-    const [ contestError, setContestError ] = useState<IException | null>(null);
+    const [ contestError, setContestError ] = useState<IErrorDataType | null>(null);
 
     const {
         startLoading,
@@ -238,9 +237,9 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         }
 
         if (!isNil(startContestError)) {
-            const errorData = startContestData as unknown as IException;
-            setContestError(errorData);
+            setContestError(startContestData as unknown as IErrorDataType);
         }
+
         const {
             contest: newContest,
             contestIsCompete,
@@ -282,7 +281,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         }
 
         if (!isNil(registerContestError)) {
-            const errorData = registerForContestData as unknown as IException;
+            const errorData = registerForContestData as unknown as IErrorDataType;
             setContestError(errorData);
         }
 

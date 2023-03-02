@@ -197,4 +197,5 @@ export {
 export type {
     IHttpProps,
     IHttpJsonExceptionResponse,
+    IErrorDataType,
 };
