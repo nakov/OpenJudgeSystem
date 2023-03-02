@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 import { ContestStatus } from '../../common/contest-types';
 import { useHomeContests } from '../../hooks/use-home-contests';
@@ -25,15 +25,6 @@ const HomeContests = () => {
         [ getForHome ],
     );
 
-    const getContestStatusIndex = useCallback(
-        (contestStatus: ContestStatus) => {
-            const contestStatusArr = Object.values(ContestStatus);
-
-            return contestStatusArr.indexOf(contestStatus) + 1;
-        },
-        [],
-    );
-
     return (
         isLoaded
             ? (
@@ -41,12 +32,12 @@ const HomeContests = () => {
                     <ContestsList
                       title={ContestStatus.Active}
                       contests={activeContests}
-                      contestStatus={getContestStatusIndex(ContestStatus.Active)}
+                      contestStatus={ContestStatus.Active}
                     />
                     <ContestsList
                       title={ContestStatus.Past}
                       contests={pastContests}
-                      contestStatus={getContestStatusIndex(ContestStatus.Past)}
+                      contestStatus={ContestStatus.Past}
                     />
                 </>
             )
