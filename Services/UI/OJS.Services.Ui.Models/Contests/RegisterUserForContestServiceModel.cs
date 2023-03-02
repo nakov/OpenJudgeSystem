@@ -2,6 +2,7 @@
 
 using AutoMapper;
 using OJS.Data.Models.Contests;
+using OJS.Services.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
 public class RegisterUserForContestServiceModel : IMapExplicitly
@@ -11,6 +12,8 @@ public class RegisterUserForContestServiceModel : IMapExplicitly
     public string Name { get; set; } = string.Empty;
 
     public bool RequirePassword { get; set; }
+
+    public ValidationResult ValidationResult { get; set; } = null!;
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Contest, RegisterUserForContestServiceModel>()

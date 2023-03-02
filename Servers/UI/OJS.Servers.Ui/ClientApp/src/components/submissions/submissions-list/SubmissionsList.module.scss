@@ -50,9 +50,9 @@
 }
 
 .submissionCreatedOnParagraph {
-  color: colors.$text-light-gray-color;
+  color: colors.$text-dark-gray-color;
   font-family: Lato, serif;
-  font-size: 12px;
+  font-size: variables.$f-size-14;
 }
 
 .submissionTypeText {

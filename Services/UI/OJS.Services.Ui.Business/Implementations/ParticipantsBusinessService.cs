@@ -38,7 +38,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
     {
         var participant = new Participant(contest.Id, userId, isOfficial);
 
-        if (contest.IsOnline && isOfficial)
+        if (isOfficial)
         {
             participant.ParticipationStartTime = DateTime.Now;
             participant.ParticipationEndTime = DateTime.Now + contest.Duration;
