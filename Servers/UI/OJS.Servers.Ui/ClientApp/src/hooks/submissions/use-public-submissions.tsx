@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useMemo } from 'react';
 
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useHttp } from '../use-http';
+import { useUrls } from '../use-urls';
 
 interface IPublicSubmissionContest {
     id: number;
@@ -59,15 +60,18 @@ const PublicSubmissionsContext = createContext<IPublicSubmissionsContext>(defaul
 type IPublicSubmissionsProviderProps = IHaveChildrenProps
 
 const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps) => {
+    const { getPublicSubmissionsUrl, getSubmissionsTotalCountUrl } = useUrls();
     const {
         get: getSubmissions,
         data: apiSubmissions,
-    } = useHttp<null, IPublicSubmission[]>({ url: '/api/submissions/public' });
+        isSuccess: loadedPublicSubmissions,
+    } = useHttp<null, IPublicSubmission[]>({ url: getPublicSubmissionsUrl });
 
     const {
         get: getTotalSubmissionsCount,
         data: apiTotalSubmissionsCount,
-    } = useHttp({ url: '/api/submissions/totalCount' });
+        isSuccess: loadedTotalSubmissionsQuery,
+    } = useHttp({ url: getSubmissionsTotalCountUrl });
 
     const submissions = useMemo(
         () => (apiSubmissions || []) as IPublicSubmission[],
@@ -81,12 +85,16 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
 
     const load = useCallback(
         async () => {
+            if (loadedPublicSubmissions && loadedTotalSubmissionsQuery) {
+                return;
+            }
+
             await Promise.all([
                 getSubmissions(),
                 getTotalSubmissionsCount(),
             ]);
         },
-        [ getSubmissions, getTotalSubmissionsCount ],
+        [ getSubmissions, getTotalSubmissionsCount, loadedPublicSubmissions, loadedTotalSubmissionsQuery ],
     );
 
     const value = useMemo(

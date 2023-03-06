@@ -8,6 +8,7 @@ import ITreeItemType from '../../../common/tree-types';
 import { useContestCategories } from '../../../hooks/use-contest-categories';
 import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
 import { useContests } from '../../../hooks/use-contests';
+import concatClassNames from '../../../utils/class-names';
 import { flattenWith } from '../../../utils/list-utils';
 import { IHaveOptionalClassName } from '../../common/Props';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
@@ -233,7 +234,7 @@ const ContestCategories = ({
     );
 
     return (
-        <div className={className as string}>
+        <div className={concatClassNames(className)}>
             <Heading
               type={HeadingType.small}
               className={styles.heading}

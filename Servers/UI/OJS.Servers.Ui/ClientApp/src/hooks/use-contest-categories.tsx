@@ -6,7 +6,6 @@ import ITreeItemType from '../common/tree-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
 import { useHttp } from './use-http';
-import { useLoading } from './use-loading';
 import { useUrls } from './use-urls';
 
 interface IContestCategoriesContext {
@@ -28,7 +27,6 @@ const ContestCategoriesContext = createContext<IContestCategoriesContext>(defaul
 const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps) => {
     const [ categories, setCategories ] = useState(defaultState.state.categories);
     const { getCategoriesTreeUrl } = useUrls();
-    const { startLoading, stopLoading } = useLoading();
 
     const {
         get,
@@ -38,11 +36,9 @@ const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps
 
     const load = useCallback(
         async () => {
-            startLoading();
             await get();
-            stopLoading();
         },
-        [ get, startLoading, stopLoading ],
+        [ get ],
     );
 
     useEffect(
