@@ -31,7 +31,7 @@ public class ContestValidationService : IContestValidationService
                 userId,
                 isUserAdmin,
                 isUserLecturerInContest,
-                true))
+                allowToAdminAlways: true))
         {
             return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.CanBeCompeted, contest?.Name));
         }
