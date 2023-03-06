@@ -1,4 +1,4 @@
-namespace OJS.Services.Ui.Models.Contests;
+﻿namespace OJS.Services.Ui.Models.Contests;
 
 using AutoMapper;
 using OJS.Common.Enumerations;
@@ -37,7 +37,7 @@ public class ContestServiceModel : IMapExplicitly
 
     public bool IsVisible { get; set; }
 
-    public bool IsOnline { get; set; }
+    public bool IsOnlineExam { get; set; }
 
     public string ContestPassword { private get; set; } = null!;
 

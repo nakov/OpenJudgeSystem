@@ -38,7 +38,12 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
     {
         var participant = new Participant(contest.Id, userId, isOfficial);
 
-        if (isOfficial)
+        if (!isOfficial)
+        {
+            return participant;
+        }
+
+        if (contest.IsOnlineExam)
         {
             participant.ParticipationStartTime = DateTime.Now;
             participant.ParticipationEndTime = DateTime.Now + contest.Duration;
@@ -50,6 +55,11 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
             {
                 AssignRandomProblemsToParticipant(participant, contest);
             }
+        }
+        else if (contest.IsOnsiteExam)
+        {
+            participant.ParticipationStartTime = DateTime.Now;
+            participant.ParticipationEndTime = contest.EndTime;
         }
 
         await this.participantsData.Add(participant);
