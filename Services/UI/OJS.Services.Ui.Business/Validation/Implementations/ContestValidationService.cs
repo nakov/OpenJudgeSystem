@@ -4,30 +4,25 @@ using System;
 using System.Linq;
 using OJS.Data.Models.Contests;
 using OJS.Services.Common.Models;
-using OJS.Services.Ui.Models.Contests;
 
 public class ContestValidationService : IContestValidationService
 {
-    public ValidationResult GetValidationResult((Contest?, string, bool, bool) item)
+    public ValidationResult GetValidationResult((Contest?, int, string, bool, bool) item)
     {
-        var (contest, userId, isUserAdmin, official) = item;
+        var (contest, contestId, userId, isUserAdmin, official) = item;
 
         var isUserLecturerInContest = contest != null && IsUserLecturerInContest(contest, userId);
 
         if (contest == null ||
             contest.IsDeleted ||
-            (!contest.IsVisible && !isUserLecturerInContest))
+            (!contest.IsVisible && !isUserLecturerInContest && !isUserAdmin))
         {
-            return ValidationResult.Invalid(
-                ValidationMessages.Contest.NotFound,
-                ContestValidation.ContestIsFound.ToString());
+            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.NotFound, contestId));
         }
 
         if (IsContestExpired(contest, userId, isUserAdmin, official, isUserLecturerInContest))
         {
-            return ValidationResult.Invalid(
-                ValidationMessages.Contest.IsExpired,
-                ContestValidation.ContestIsNotExpired.ToString());
+            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.IsExpired, contest?.Name));
         }
 
         if (official &&
@@ -38,16 +33,12 @@ public class ContestValidationService : IContestValidationService
                 isUserLecturerInContest,
                 allowToAdminAlways: true))
         {
-            return ValidationResult.Invalid(
-                ValidationMessages.Contest.CanBeCompeted,
-                ContestValidation.ContestCanBeCompeted.ToString());
+            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.CanBeCompeted, contest?.Name));
         }
 
-        if (!official && !contest.CanBePracticed && !isUserLecturerInContest)
+        if (!official && !contest.CanBePracticed && !isUserLecturerInContest && !isUserAdmin)
         {
-            return ValidationResult.Invalid(
-                ValidationMessages.Contest.CanBePracticed,
-                ContestValidation.ContestCanBePracticed.ToString());
+            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.CanBePracticed, contest?.Name));
         }
 
         return ValidationResult.Valid();

@@ -23,10 +23,10 @@ const Contest = () => {
             score,
             maxScore,
             remainingTimeInMilliseconds,
-            validationResult: contestValidation,
             totalParticipantsCount,
             activeParticipantsCount,
             isOfficial,
+            contestError,
         },
         actions: { setIsSubmitAllowed },
     } = useCurrentContest();
@@ -235,13 +235,11 @@ const Contest = () => {
 
     const renderPage = useCallback(
         () => {
-            const { isValid: isContestValid } = contestValidation;
-
-            return isContestValid && isNil(problemSubmissionsError)
+            return isNil(contestError) && isNil(problemSubmissionsError)
                 ? renderContest()
                 : renderErrorMessage();
         },
-        [ renderErrorMessage, renderContest, contestValidation, problemSubmissionsError ],
+        [ renderErrorMessage, renderContest, contestError, problemSubmissionsError ],
     );
 
     return renderPage();
