@@ -41,7 +41,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             .MapCollection<TServiceModel>()
             .ToListAsync();
 
-    public IQueryable<Contest> GetAll()
+    public IQueryable<Contest> GetAllNonDeletedContests()
             => this.DbSet
                 .Where(c => c.IsVisible && !c.IsDeleted);
 

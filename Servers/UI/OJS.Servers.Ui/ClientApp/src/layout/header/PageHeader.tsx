@@ -78,8 +78,7 @@ const PageHeader = () => {
               id={btnId}
               onClick={handleSearchClick}
               type={ButtonType.submit}
-              className={searchBtnClassName}
-              matchOnlyInternalClass
+              internalClassName={searchBtnClassName}
             >
                 <SearchIcon />
             </Button>

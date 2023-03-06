@@ -22,7 +22,7 @@ namespace OJS.Services.Ui.Data
 
         Task<Contest?> GetByIdWithParticipants(int id);
 
-        IQueryable<Contest> GetAll();
+        IQueryable<Contest> GetAllNonDeletedContests();
 
         Task<TServiceModel?> GetByProblemId<TServiceModel>(int id);
 

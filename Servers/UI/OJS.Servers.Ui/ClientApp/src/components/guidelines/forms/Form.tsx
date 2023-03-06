@@ -7,7 +7,7 @@ import { Button, ButtonType } from '../buttons/Button';
 import SearchIcon from '../icons/SearchIcon';
 
 enum FormType {
-    'search' = 'search',
+    search = 'search',
 }
 
 interface IFormProps extends IHaveChildrenProps, IHaveOptionalClassName {
@@ -57,8 +57,7 @@ const Form = ({
                   id={btnId}
                   onClick={(ev) => handleSubmit(ev)}
                   type={ButtonType.submit}
-                  className={internalSubmitButtonClassName}
-                  matchOnlyInternalClass
+                  internalClassName={internalSubmitButtonClassName}
                 >
                     <SearchIcon />
                 </Button>

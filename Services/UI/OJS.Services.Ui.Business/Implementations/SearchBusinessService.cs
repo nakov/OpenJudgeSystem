@@ -54,7 +54,8 @@ public class SearchBusinessService : ISearchBusinessService
         return modelResult;
     }
 
-    private static int CalculateMaxCount(int usersCount, int contestsCount, int problemsCount) => Math.Max(Math.Max(usersCount, contestsCount), problemsCount);
+    private static int CalculateMaxItemsCount(int usersCount, int contestsCount, int problemsCount)
+        => Math.Max(Math.Max(usersCount, contestsCount), problemsCount);
 
     private async Task PopulateProperValues(SearchServiceModel model, SearchForListingServiceModel searchListingModel)
     {
@@ -68,7 +69,7 @@ public class SearchBusinessService : ISearchBusinessService
             searchListingModel.Problems = problems;
             searchListingModel.Users = users;
 
-            model.TotalItemsCount = CalculateMaxCount(usersCount, contestsCount, problemsCount);
+            model.TotalItemsCount = CalculateMaxItemsCount(usersCount, contestsCount, problemsCount);
         }
         else if (model.SelectedTerm == SearchSelectType.Contests)
         {

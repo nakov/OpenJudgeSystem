@@ -44,7 +44,7 @@ namespace OJS.Services.Ui.Data.Implementations
                 .Select(p => new { p.OrderBy })
                 .FirstOrDefaultAsync())
                 ?.OrderBy + 1 ?? GlobalConstants.ProblemDefaultOrderBy;
-        public IQueryable<Problem> GetAllProblems() =>
+        public IQueryable<Problem> GetAllNonDeletedProblems() =>
             this.DbSet
                 .Where(p => !p.IsDeleted);
 

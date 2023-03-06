@@ -169,7 +169,7 @@ namespace OJS.Services.Ui.Business.Implementations
         public async Task<(IEnumerable<TServiceModel>, int)> GetSearchContestsByName<TServiceModel>(
             SearchServiceModel model)
         {
-            var allContests = await this.contestsData.GetAll()
+            var allContests = await this.contestsData.GetAllNonDeletedContests()
                 .Where(c => c.Name!.Contains(model.SearchTerm!))
                 .ToListAsync();
 

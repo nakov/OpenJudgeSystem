@@ -172,7 +172,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
         public async Task<(IEnumerable<ProblemSearchServiceModel>, int)> GetSearchProblemsByName(SearchServiceModel model)
         {
-            var allProblems = await this.problemsData.GetAllProblems()
+            var allProblems = await this.problemsData.GetAllNonDeletedProblems()
                 .Where(p => p.Name.Contains(model.SearchTerm!))
                 .ToListAsync();
 

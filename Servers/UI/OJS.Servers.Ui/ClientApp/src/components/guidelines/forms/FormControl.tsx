@@ -7,6 +7,17 @@ import { ClassNameType, IHaveChildrenProps, IHaveOptionalClassName } from '../..
 
 import styles from './FormControl.module.scss';
 
+enum ButtonKeyControl {
+    enter = 'Enter'
+}
+
+enum RadioSearchValues {
+    all = 'All',
+    contests = 'Contests',
+    problems = 'Problems',
+    users = 'Users',
+}
+
 enum FormControlType {
     'radio' = 'radio',
     'checkbox' = 'checkbox',
@@ -133,7 +144,7 @@ const FormControl = ({
         onInput(element.value);
     };
     const handleOnKeyDown = (ev: React.KeyboardEvent<HTMLInputElement>) => {
-        if (ev.key === 'Enter') {
+        if (ev.key === ButtonKeyControl.enter) {
             ev.preventDefault();
 
             if (onKeyDown) {
@@ -195,36 +206,36 @@ const FormControl = ({
                     <label>
                         All
                         <input
-                          type="radio"
-                          value="All"
-                          checked={selectedValue === 'All'}
+                          type={FormControlType.radio}
+                          value={RadioSearchValues.all}
+                          checked={selectedValue === RadioSearchValues.all}
                           onChange={handleOnChange}
                         />
                     </label>
                     <label>
                         Contests
                         <input
-                          type="radio"
-                          value="Contests"
-                          checked={selectedValue === 'Contests'}
+                          type={FormControlType.radio}
+                          value={RadioSearchValues.contests}
+                          checked={selectedValue === RadioSearchValues.contests}
                           onChange={handleOnChange}
                         />
                     </label>
                     <label>
                         Problems
                         <input
-                          type="radio"
-                          value="Problems"
-                          checked={selectedValue === 'Problems'}
+                          type={FormControlType.radio}
+                          value={RadioSearchValues.problems}
+                          checked={selectedValue === RadioSearchValues.problems}
                           onChange={handleOnChange}
                         />
                     </label>
                     <label>
                         Users
                         <input
-                          type="radio"
-                          value="Users"
-                          checked={selectedValue === 'Users'}
+                          type={FormControlType.radio}
+                          value={RadioSearchValues.users}
+                          checked={selectedValue === RadioSearchValues.users}
                           onChange={handleOnChange}
                         />
                     </label>

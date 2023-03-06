@@ -7,6 +7,8 @@ import { useAppUrls } from '../../../hooks/use-app-urls';
 import concatClassNames from '../../../utils/class-names';
 import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 
+import SearchProblemTooltip from './SearchProblemTooltip';
+
 import styles from './SearchProblems.module.scss';
 
 interface ISearchProblem {
@@ -14,10 +16,10 @@ interface ISearchProblem {
 }
 
 const SearchProblem = ({ problem }: ISearchProblem) => {
-    const searchProblemCardHeader = 'search-header';
-    const searchProblemCardHeaderClassName = concatClassNames(styles.problemCardHeader, searchProblemCardHeader);
-    const searchProblemText = 'search-problem-text';
-    const searchProblemClassName = concatClassNames(styles.problemText, searchProblemText);
+    const {
+        contest,
+        orderBy,
+    } = problem;
     const searchProblemElement = 'search-problem-element';
     const searchContestElementClassName = concatClassNames(styles.problemElement, searchProblemElement);
     const searchProblemCategoryCardCategory = 'search-problem-category';
@@ -30,57 +32,39 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
     const { getContestProblemUrl } = useAppUrls();
 
     const renderPage = useCallback(
-        () => isEmpty(problem.contest)
+        () => isEmpty(contest)
             ? (
                 <div className={searchContestElementClassName}>
-                    <div className={searchProblemCardHeaderClassName}>
-                        <div className={styles.tooltip}>
-                            <span className={styles.tooltipText}>{problem.name}</span>
-                        </div>
-                        <span
-                          className={searchProblemClassName}
-                        >
-                            {problem.name}
-                        </span>
-                    </div>
+                    <SearchProblemTooltip problem={problem} />
                 </div>
             )
             : (
                 <div className={searchContestElementClassName}>
-                    <div className={searchProblemCardHeaderClassName}>
-                        <div className={styles.tooltip}>
-                            <span className={styles.tooltipText}>{problem.name}</span>
-                        </div>
-                        <span
-                          className={searchProblemClassName}
-                        >
-                            {problem.name}
-                        </span>
-                    </div>
+                    <SearchProblemTooltip problem={problem} />
                     <span
                       className={searchProblemCategoryClassName}
                     >
-                        {problem.contest.category}
+                        {contest.category}
                     </span>
                     <span
                       className={searchProblemContestClassName}
                     >
                         Contest:
                         {' '}
-                        {problem.contest.name}
+                        {contest.name}
                         `
                     </span>
                     <div className={searchProblemCardControlBtnsClassName}>
                         <LinkButton
                           id="button-card-compete"
                           to={getContestProblemUrl({
-                              id: problem.contest.id,
+                              id: contest.id,
                               participationType: ContestParticipationType.Compete,
-                              orderBy: problem.orderBy,
+                              orderBy,
                           })}
                           text="Compete"
                           state={
-                            problem.contest.canBeCompeted
+                            contest.canBeCompeted
                                 ? ButtonState.enabled
                                 : ButtonState.disabled
                         }
@@ -89,14 +73,14 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
                         <LinkButton
                           id="button-card-practice"
                           to={getContestProblemUrl({
-                              id: problem.contest.id,
+                              id: contest.id,
                               participationType: ContestParticipationType.Practice,
-                              orderBy: problem.orderBy,
+                              orderBy,
                           })}
                           text="Practice"
                           type={LinkButtonType.secondary}
                           state={
-                            problem.contest.canBePracticed
+                            contest.canBePracticed
                                 ? ButtonState.enabled
                                 : ButtonState.disabled
                         }
@@ -105,9 +89,8 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
                     </div>
                 </div>
             ),
-        [ getContestProblemUrl, problem.contest, problem.name, problem.orderBy, searchContestElementClassName,
-            searchProblemCardControlBtnsClassName, searchProblemCardHeaderClassName, searchProblemCategoryClassName,
-            searchProblemClassName, searchProblemContestClassName ],
+        [ contest, searchContestElementClassName, problem, searchProblemCategoryClassName, searchProblemContestClassName,
+            searchProblemCardControlBtnsClassName, getContestProblemUrl, orderBy ],
     );
 
     return (

@@ -5,49 +5,13 @@
 .problemElement {
   align-content: center;
   border-radius: 8px;
-  box-shadow: 0 1px 5px rgb(0 0 0 / 20%), 0 3px 4px rgb(0 0 0 / 12%), 0 2px 4px rgb(0 0 0 / 14%);
+  box-shadow: colors.$box-shadow-color;
   display: grid;
   flex-flow: wrap;
   grid-gap: 10px;
   justify-items: center;
   margin: 10px;
   padding: 0.7vw;
-}
-
-.tooltip {
-  max-width: 245px;
-  position: absolute;
-  visibility: hidden;
-  width: 100%;
-
-  .tooltipText {
-    bottom: 100%;
-    font-size: 15px;
-    overflow: hidden;
-    padding: 5px 0;
-    position: absolute;
-    text-align: left;
-    white-space: nowrap;
-  }
-}
-
-.problemCardHeader {
-  @extend %font-family-lato;
-
-  border-bottom: 1px solid;
-  border-bottom-color: colors.$bottom-border-color;
-  display: flex;
-  flex-direction: row;
-  font-weight: 500;
-  justify-content: space-between;
-  margin: 10px;
-  min-height: 4vh;
-
-  &:hover {
-    .tooltip {
-      visibility: visible;
-    }
-  }
 }
 
 .problemContest {
@@ -58,16 +22,6 @@
   max-width: 11vw;
   text-align: center;
   text-decoration: none;
-}
-
-.problemText {
-  display: block;
-  font-size: variables.$f-size-20;
-  max-width: 11vw;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
 }
 
 .problemCategory {
