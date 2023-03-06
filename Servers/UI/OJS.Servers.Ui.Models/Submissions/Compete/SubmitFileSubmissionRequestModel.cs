@@ -18,17 +18,18 @@ public class SubmitFileSubmissionRequestModel : IMapExplicitly
     public bool Official { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
-        => configuration.CreateMap<SubmitFileSubmissionRequestModel, SubmitFileSubmissionServiceModel>()
+        => configuration.CreateMap<SubmitFileSubmissionRequestModel, SubmitSubmissionServiceModel>()
             .ForMember(
-                d => d.Content,
+                d => d.ByteContent,
                 opt => opt.MapFrom(s =>
                     s.Content == null
                         ? null
                         : s.Content.GetBytes()))
             .ForMember(
-                        d => d.FileExtension,
-                        opt => opt.MapFrom(s =>
-                            s.Content == null
-                                ? string.Empty
-                                : s.Content.FileName.Split(".", StringSplitOptions.None)[1]));
+                d => d.FileExtension,
+                opt => opt.MapFrom(s =>
+                    s.Content == null
+                        ? string.Empty
+                        : s.Content.FileName.Split(".", StringSplitOptions.None)[1]))
+            .ForMember(d => d.StringContent, opt => opt.Ignore());
 }
