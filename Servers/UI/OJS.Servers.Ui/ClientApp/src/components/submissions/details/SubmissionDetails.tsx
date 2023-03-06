@@ -1,4 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
+import first from 'lodash/first';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { IRegisterForContestTypeUrlParams } from '../../../common/app-url-types';
@@ -25,8 +27,7 @@ const SubmissionDetails = () => {
         state: {
             currentSubmission,
             currentProblemSubmissionResults,
-            submissionDetailsError,
-            problemResultsError,
+            validationErrors,
         },
         actions: { getSubmissionResults },
     } = useSubmissionsDetails();
@@ -254,17 +255,15 @@ const SubmissionDetails = () => {
 
     const renderErrorMessage = useCallback(
         () => {
-            if (!isNil(submissionDetailsError)) {
-                return renderErrorHeading(submissionDetailsError?.detail);
-            }
-
-            if (!isNil(problemResultsError)) {
-                return renderErrorHeading(problemResultsError?.detail);
+            const error = first(validationErrors);
+            if (!isNil(error)) {
+                const { detail } = error;
+                return renderErrorHeading(detail);
             }
 
             return null;
         },
-        [ renderErrorHeading, submissionDetailsError, problemResultsError ],
+        [ renderErrorHeading, validationErrors ],
     );
 
     const renderSubmission = useCallback(
@@ -279,13 +278,13 @@ const SubmissionDetails = () => {
     );
 
     const renderPage = useCallback(
-        () => isNil(problemResultsError) && isNil(submissionDetailsError)
+        () => isEmpty(validationErrors)
             ? renderSubmission()
             : renderErrorMessage(),
-        [ renderErrorMessage, problemResultsError, submissionDetailsError, renderSubmission ],
+        [ renderErrorMessage, validationErrors, renderSubmission ],
     );
 
-    if (isNil(currentSubmission) && isNil(problemResultsError) && isNil(submissionDetailsError)) {
+    if (isNil(currentSubmission) && isEmpty(validationErrors)) {
         return <div>No details fetched.</div>;
     }
 

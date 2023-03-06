@@ -22,8 +22,7 @@ interface ISubmissionsDetailsContext {
     state: {
         currentSubmission: ISubmissionDetailsType | null;
         currentProblemSubmissionResults: ISubmissionDetails[];
-        problemResultsError: IErrorDataType | null;
-        submissionDetailsError: IErrorDataType | null;
+        validationErrors: IErrorDataType[];
     };
     actions: {
         selectSubmissionById: (submissionId: number) => void;
@@ -32,7 +31,12 @@ interface ISubmissionsDetailsContext {
     };
 }
 
-const defaultState = { state: { currentProblemSubmissionResults: [] as ISubmissionDetails[] } };
+const defaultState = {
+    state: {
+        currentProblemSubmissionResults: [] as ISubmissionDetails[],
+        validationErrors: [] as IErrorDataType[],
+    },
+};
 
 const SubmissionsDetailsContext = createContext<ISubmissionsDetailsContext>(defaultState as ISubmissionsDetailsContext);
 
@@ -41,8 +45,7 @@ type ISubmissionsDetailsProviderProps = IHaveChildrenProps
 const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
     const [ currentSubmissionId, selectSubmissionById ] = useState<number>();
-    const [ problemResultsError, setProblemResultsError ] = useState<IErrorDataType | null>(null);
-    const [ submissionDetailsError, setSubmissionDetailsError ] = useState<IErrorDataType | null>(null);
+    const [ validationErrors, setValidationErrors ] = useState<IErrorDataType[]>(defaultState.state.validationErrors);
     const [
         currentSubmission,
         setCurrentSubmission,
@@ -117,21 +120,18 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         [ getProblemResultsRequest, startLoading, stopLoading, submissionResultsByProblemUrlParams ],
     );
 
-    useEffect(
-        () => {
-            if (isNil(apiProblemResults)) {
-                return;
-            }
+    useEffect(() => {
+        if (isNil(apiProblemResults)) {
+            return;
+        }
 
-            if (!isNil(apiProblemResultsError)) {
-                setProblemResultsError(apiProblemResults as unknown as IErrorDataType);
-                return;
-            }
+        if (!isNil(apiProblemResultsError)) {
+            setValidationErrors((validationErrorsArray) => [ ...validationErrorsArray, apiProblemResults as unknown as IErrorDataType ]);
+            return;
+        }
 
-            setCurrentProblemSubmissionResults(apiProblemResults);
-        },
-        [ apiProblemResults, apiProblemResultsError ],
-    );
+        setCurrentProblemSubmissionResults(apiProblemResults);
+    }, [ apiProblemResults, apiProblemResultsError ]);
 
     useEffect(
         () => {
@@ -159,21 +159,18 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         [],
     );
 
-    useEffect(
-        () => {
-            if (isNil(apiSubmissionDetails)) {
-                return;
-            }
+    useEffect(() => {
+        if (isNil(apiSubmissionDetails)) {
+            return;
+        }
 
-            if (!isNil(apiSubmissionDetailsError)) {
-                setSubmissionDetailsError(apiSubmissionDetails as unknown as IErrorDataType);
-                return;
-            }
+        if (!isNil(apiSubmissionDetailsError)) {
+            setValidationErrors((validationErrorsArray) => [ ...validationErrorsArray, apiSubmissionDetails as unknown as IErrorDataType ]);
+            return;
+        }
 
-            setCurrentSubmission(apiSubmissionDetails);
-        },
-        [ apiSubmissionDetails, apiSubmissionDetailsError ],
-    );
+        setCurrentSubmission(apiSubmissionDetails);
+    }, [ apiSubmissionDetails, apiSubmissionDetailsError ]);
 
     useEffect(
         () => {
@@ -193,8 +190,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             state: {
                 currentSubmission,
                 currentProblemSubmissionResults,
-                submissionDetailsError,
-                problemResultsError,
+                validationErrors,
             },
             actions: {
                 selectSubmissionById,
@@ -207,8 +203,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             currentSubmission,
             getDetails,
             getSubmissionResults,
-            submissionDetailsError,
-            problemResultsError,
+            validationErrors,
         ],
     );
 
