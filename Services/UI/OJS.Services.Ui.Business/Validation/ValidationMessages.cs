@@ -48,6 +48,8 @@ public static class ValidationMessages
         public const string NotFound = "Problem not found.";
 
         public const string ProblemNotAssignedToUser = "The problem is not part of your problems for the exam.";
+
+        public const string ProblemResultsNotAvailable = "You cannot view the results for this problem.";
     }
 
     public static class Participant

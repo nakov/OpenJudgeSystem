@@ -7,7 +7,7 @@ using OJS.Services.Common.Models;
 
 public class ContestValidationService : IContestValidationService
 {
-    public ValidationResult GetValidationResult((Contest?, int, string, bool, bool) item)
+    public ValidationResult GetValidationResult((Contest?, int?, string, bool, bool) item)
     {
         var (contest, contestId, userId, isUserAdmin, official) = item;
 
