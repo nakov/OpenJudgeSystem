@@ -2,10 +2,10 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import first from 'lodash/first';
 import isNil from 'lodash/isNil';
 
-import { IException, ISubmissionTypeType } from '../../common/types';
+import { ISubmissionTypeType } from '../../common/types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useCurrentContest } from '../use-current-contest';
-import { useHttp } from '../use-http';
+import { IErrorDataType, useHttp } from '../use-http';
 import { useLoading } from '../use-loading';
 import { useProblems } from '../use-problems';
 import { useUrls } from '../use-urls';
@@ -79,13 +79,13 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         data: submitCodeData,
         isSuccess,
         error: errorSubmitCode,
-    } = useHttp<null, IException, ISubmitCodeTypeParametersType>({ url: getSubmitUrl });
+    } = useHttp<null, null, ISubmitCodeTypeParametersType>({ url: getSubmitUrl });
 
     const {
         post: submitFileCode,
         data: submitFileCodeData,
         error: errorSubmitFile,
-    } = useHttp<null, IException, FormData>({
+    } = useHttp<null, null, FormData>({
         url: getSubmitFileUrl,
         bodyAsFormData: true,
     });
@@ -159,12 +159,14 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     useEffect(
         () => {
             if (!isNil(errorSubmitCode) && !isNil(submitCodeData)) {
-                setSubmitMessage(submitCodeData.detail);
+                const { detail } = submitCodeData as IErrorDataType;
+                setSubmitMessage(detail);
                 return;
             }
 
             if (!isNil(errorSubmitFile) && !isNil(submitFileCodeData)) {
-                setSubmitMessage(submitFileCodeData?.detail);
+                const { detail } = submitFileCodeData as IErrorDataType;
+                setSubmitMessage(detail);
                 return;
             }
 

@@ -282,10 +282,15 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     public async Task Submit(SubmitSubmissionServiceModel model)
     {
         var problem = await this.problemsDataService.GetWithProblemGroupCheckerAndTestsById(model.ProblemId);
+        if (problem == null)
+        {
+            throw new BusinessServiceException(ValidationMessages.Problem.NotFound);
+        }
+
         var currentUser = this.userProviderService.GetCurrentUser();
         var participant = await this.participantsDataService
             .GetWithContestByContestByUserAndIsOfficial(
-                problem!.ProblemGroup.ContestId,
+                problem.ProblemGroup.ContestId,
                 currentUser.Id!,
                 model.Official);
         var contestValidationResult = this.contestValidationService.GetValidationResult(
@@ -311,36 +316,14 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(submitSubmissionValidationServiceResult.Message);
         }
 
-        Submission newSubmission;
-        if (model.StringContent == null)
-        {
-            newSubmission = new Submission
-            {
-                Content = model.ByteContent!,
-                FileExtension = model.FileExtension,
-                ProblemId = model.ProblemId,
-                SubmissionTypeId = model.SubmissionTypeId,
-                ParticipantId = participant.Id,
-            };
-        }
-        else
-        {
-            var contest = participant.Contest;
-
-            newSubmission = new Submission
-            {
-                ContentAsString = model.StringContent!,
-                ProblemId = model.ProblemId,
-                SubmissionTypeId = model.SubmissionTypeId,
-                ParticipantId = participant.Id,
-                IpAddress = "model.UserHostAddress",
-                IsPublic = ((participant.IsOfficial && contest.ContestPassword == null) ||
-                            (!participant.IsOfficial && contest.PracticePassword == null)) &&
-                           contest.IsVisible &&
-                           !contest.IsDeleted &&
-                           problem.ShowResults,
-            };
-        }
+        var newSubmission = model.Map<Submission>();
+        newSubmission.ParticipantId = participant.Id;
+        newSubmission.IpAddress = "model.UserHostAddress";
+        newSubmission.IsPublic = ((participant.IsOfficial && participant.Contest.ContestPassword == null) ||
+                                  (!participant.IsOfficial && participant.Contest.PracticePassword == null)) &&
+                                 participant.Contest.IsVisible &&
+                                 !participant.Contest.IsDeleted &&
+                                 problem.ShowResults;
 
         await this.submissionsData.Add(newSubmission);
         await this.submissionsData.SaveChanges();
