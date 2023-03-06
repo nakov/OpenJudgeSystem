@@ -8,10 +8,10 @@ import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
 import { convertToTwoDigitValues } from '../../../utils/dates';
 import CodeEditor from '../../code-editor/CodeEditor';
+import FileUploader from '../../file-uploader/FileUploader';
 import AlertBox, { AlertBoxType } from '../../guidelines/alert-box/AlertBox';
 import { Button, ButtonState } from '../../guidelines/buttons/Button';
 import Countdown, { ICountdownRemainingType, Metric } from '../../guidelines/countdown/Countdown';
-import FileUploader from '../../guidelines/file-uploader/FileUploader';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List, { Orientation } from '../../guidelines/lists/List';
 import ExecutionTypeSelector from '../execution-type-selector/ExecutionTypeSelector';
@@ -39,6 +39,7 @@ const SubmissionBox = () => {
             submit,
             updateSubmissionCode,
             selectSubmissionTypeById,
+            removeProblemSubmissionCode,
         },
     } = useSubmissions();
 
@@ -120,8 +121,8 @@ const SubmissionBox = () => {
             return;
         }
 
-        delete problemSubmissionCode[problemId];
-    }, [ submit, currentProblem, problemSubmissionCode ]);
+        removeProblemSubmissionCode(problemId);
+    }, [ submit, currentProblem, removeProblemSubmissionCode ]);
 
     const renderSubmissionLimitCountdown = useCallback((remainingTime: ICountdownRemainingType) => {
         const { minutes, seconds } = convertToTwoDigitValues(remainingTime);

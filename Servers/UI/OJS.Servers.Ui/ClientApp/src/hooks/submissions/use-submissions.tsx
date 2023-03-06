@@ -26,6 +26,7 @@ interface ISubmissionsContext {
         submit: () => Promise<void>;
         updateSubmissionCode: (code: string | File) => void;
         selectSubmissionTypeById: (id: number) => void;
+        removeProblemSubmissionCode: (id: number) => void;
     };
 }
 
@@ -159,10 +160,21 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             if (isNil(problemId)) {
                 return;
             }
-            problemSubmissionCode[problemId] = code;
-            setProblemSubmissionCode(problemSubmissionCode);
+            setProblemSubmissionCode({
+                ...problemSubmissionCode,
+                [problemId]: code,
+            });
         },
         [ currentProblem, problemSubmissionCode ],
+    );
+
+    const removeProblemSubmissionCode = useCallback(
+        (problemId: number) => {
+            if (!isNil(problemSubmissionCode[problemId])) {
+                setProblemSubmissionCode({ ...problemSubmissionCode, [problemId]: '' });
+            }
+        },
+        [ problemSubmissionCode ],
     );
 
     useEffect(
@@ -212,6 +224,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                 updateSubmissionCode,
                 selectSubmissionTypeById,
                 submit,
+                removeProblemSubmissionCode,
             },
         }),
         [
@@ -223,6 +236,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             setSubmitMessage,
             isSubmissionSuccessful,
             updateSubmissionCode,
+            removeProblemSubmissionCode,
         ],
     );
 

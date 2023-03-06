@@ -1,8 +1,8 @@
 import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import isNil from 'lodash/isNil';
 
-import { useSubmissions } from '../../../hooks/submissions/use-submissions';
-import Button, { ButtonSize, ButtonType } from '../buttons/Button';
+import { useSubmissions } from '../../hooks/submissions/use-submissions';
+import Button, { ButtonSize, ButtonType } from '../guidelines/buttons/Button';
 
 import styles from './FileUploader.module.scss';
 
@@ -52,15 +52,13 @@ const FileUploader = ({ file, problemId }: IFileUploaderProps) => {
     return (
         <>
             <div className={styles.fileUploadContainer}>
-                <div>
-                    <Button
-                      onClick={handleClick}
-                      type={ButtonType.submit}
-                      size={ButtonSize.medium}
-                    >
-                        Click to select
-                    </Button>
-                </div>
+                <Button
+                  onClick={handleClick}
+                  type={ButtonType.submit}
+                  size={ButtonSize.medium}
+                >
+                    Click to select
+                </Button>
                 <div className={styles.fileName}>
                     {isNil(internalFile)
                         ? ''
