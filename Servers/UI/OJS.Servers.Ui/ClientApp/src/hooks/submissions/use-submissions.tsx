@@ -5,7 +5,7 @@ import isNil from 'lodash/isNil';
 import { ISubmissionTypeType } from '../../common/types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useCurrentContest } from '../use-current-contest';
-import { useHttp } from '../use-http';
+import { IErrorDataType, useHttp } from '../use-http';
 import { useLoading } from '../use-loading';
 import { useProblems } from '../use-problems';
 import { useUrls } from '../use-urls';
@@ -76,12 +76,14 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     const {
         post: submitCode,
-        error,
+        data: submitCodeData,
         isSuccess,
+        error: errorSubmitCode,
     } = useHttp<null, null, ISubmitCodeTypeParametersType>({ url: getSubmitUrl });
 
     const {
         post: submitFileCode,
+        data: submitFileCodeData,
         error: errorSubmitFile,
     } = useHttp<null, null, FormData>({
         url: getSubmitFileUrl,
@@ -156,13 +158,15 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     useEffect(
         () => {
-            if (!isNil(error)) {
-                setSubmitMessage(error);
+            if (!isNil(errorSubmitCode) && !isNil(submitCodeData)) {
+                const { detail } = submitCodeData as IErrorDataType;
+                setSubmitMessage(detail);
                 return;
             }
 
-            if (!isNil(errorSubmitFile)) {
-                setSubmitMessage(errorSubmitFile);
+            if (!isNil(errorSubmitFile) && !isNil(submitFileCodeData)) {
+                const { detail } = submitFileCodeData as IErrorDataType;
+                setSubmitMessage(detail);
                 return;
             }
 
@@ -171,9 +175,11 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             })();
         },
         [
-            error,
-            errorSubmitFile,
             loadSubmissions,
+            errorSubmitCode,
+            errorSubmitFile,
+            submitFileCodeData,
+            submitCodeData,
         ],
     );
 
