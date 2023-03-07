@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using OJS.Common.Extensions;
 using OJS.Services.Ui.Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Models;
+using System.Linq;
 
 public class SubmitFileSubmissionRequestModel : IMapExplicitly
 {
@@ -30,6 +31,6 @@ public class SubmitFileSubmissionRequestModel : IMapExplicitly
                 opt => opt.MapFrom(s =>
                     s.Content == null
                         ? string.Empty
-                        : s.Content.FileName.Split(".", StringSplitOptions.None)[1]))
+                        : s.Content.FileName.Split(".", StringSplitOptions.None).Last()))
             .ForMember(d => d.StringContent, opt => opt.Ignore());
 }
