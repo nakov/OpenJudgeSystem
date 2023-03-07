@@ -18,7 +18,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
                 userSubmissionTimeLimit, hasUserNotProcessedSubmissionForProblem, submitSubmissionServiceModel) =
             validationInput;
 
-        var shouldAllowBinaryFiles = false;
+        var isFileSubmission = submitSubmissionServiceModel.ByteContent != null || submitSubmissionServiceModel.StringContent == null;
 
         if (problem == null)
         {
@@ -54,8 +54,6 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
 
         if (submitSubmissionServiceModel.StringContent == null)
         {
-            shouldAllowBinaryFiles = true;
-
             if (submitSubmissionServiceModel.ByteContent == null ||
                 submitSubmissionServiceModel.ByteContent.Length == 0)
             {
@@ -69,12 +67,12 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             }
         }
 
-        if (shouldAllowBinaryFiles && !submissionType.SubmissionType.AllowBinaryFilesUpload)
+        if (isFileSubmission && !submissionType.SubmissionType.AllowBinaryFilesUpload)
         {
             return ValidationResult.Invalid(ValidationMessages.Submission.BinaryFilesNotAllowed);
         }
 
-        if (!shouldAllowBinaryFiles && submissionType.SubmissionType.AllowBinaryFilesUpload)
+        if (!isFileSubmission && submissionType.SubmissionType.AllowBinaryFilesUpload)
         {
             return ValidationResult.Invalid(ValidationMessages.Submission.TextUploadNotAllowed);
         }
