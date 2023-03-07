@@ -56,4 +56,16 @@ public static class ValidationMessages
     {
         public const string NotRegisteredForExam = "You are not registered for this exam.";
     }
+
+    public static class Problem
+    {
+        public const string NotFound = "Problem not found!";
+
+        public const string ProblemResultsNotAvailable = "You cannot view the results for this problem!";
+    }
+
+    public static class Participant
+    {
+        public const string NotRegisteredForExam = "You are not registered for this exam!";
+    }
 }

@@ -4,7 +4,7 @@ import isNil from 'lodash/isNil';
 import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useCurrentContest } from '../use-current-contest';
-import { useHttp } from '../use-http';
+import { IErrorDataType, useHttp } from '../use-http';
 import { useLoading } from '../use-loading';
 import { useProblems } from '../use-problems';
 import { useUrls } from '../use-urls';
@@ -14,6 +14,7 @@ import { ISubmissionDetails } from './types';
 interface IProblemSubmissionsContext {
     state: {
         submissions: ISubmissionDetails[];
+        problemSubmissionsError: IErrorDataType | null;
     };
     actions: {
         loadSubmissions: () => Promise<void>;
@@ -34,6 +35,7 @@ const ProblemSubmissionsContext = createContext<IProblemSubmissionsContext>(defa
 
 const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderProps) => {
     const [ submissions, setSubmissions ] = useState(defaultState.state.submissions);
+    const [ problemSubmissionsError, setProblemSubmissionsError ] = useState<IErrorDataType | null>(null);
     const { state: { currentProblem } } = useProblems();
     const [
         submissionResultsToGetParameters,
@@ -51,6 +53,7 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
     const {
         get: getProblemSubmissions,
         data: apiProblemSubmissions,
+        error: apiProblemSubmissionsError,
     } = useHttp<IProblemSubmissionResultsRequestParametersType, ISubmissionDetails[]>({
         url: getSubmissionResultsByProblemUrl,
         parameters: submissionResultsToGetParameters,
@@ -76,10 +79,15 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
                 return;
             }
 
+            if (!isNil(apiProblemSubmissionsError)) {
+                setProblemSubmissionsError(apiProblemSubmissions as unknown as IErrorDataType);
+                return;
+            }
+
             setSubmissions(apiProblemSubmissions);
             setSubmissionResultsToGetParameters(null);
         },
-        [ apiProblemSubmissions ],
+        [ apiProblemSubmissions, apiProblemSubmissionsError ],
     );
 
     useEffect(
@@ -99,10 +107,10 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
 
     const value = useMemo(
         () => ({
-            state: { submissions },
+            state: { submissions, problemSubmissionsError },
             actions: { loadSubmissions },
         }),
-        [ loadSubmissions, submissions ],
+        [ loadSubmissions, submissions, problemSubmissionsError ],
     );
 
     return (

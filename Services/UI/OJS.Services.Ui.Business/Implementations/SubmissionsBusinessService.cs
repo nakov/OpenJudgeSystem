@@ -23,7 +23,6 @@ using System.Threading.Tasks;
 public class SubmissionsBusinessService : ISubmissionsBusinessService
 {
     private readonly ISubmissionsDataService submissionsData;
-
     private readonly IUsersBusinessService usersBusiness;
     private readonly IParticipantScoresBusinessService participantScoresBusinessService;
     private readonly IParticipantsDataService participantsDataService;
@@ -37,6 +36,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmissionDetailsValidationService submissionDetailsValidationService;
     private readonly IContestValidationService contestValidationService;
     private readonly ISubmitSubmissionValidationService submitSubmissionValidationService;
+    private readonly ISubmissionResultsValidationService submissionResultsValidationService;
 
     public SubmissionsBusinessService(
         ISubmissionsDataService submissionsData,
@@ -52,7 +52,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         IParticipantScoresBusinessService participantScoresBusinessService,
         ISubmissionDetailsValidationService submissionDetailsValidationService,
         IContestValidationService contestValidationService,
-        ISubmitSubmissionValidationService submitSubmissionValidationService)
+        ISubmitSubmissionValidationService submitSubmissionValidationService,
+        ISubmissionResultsValidationService submissionResultsValidationService)
     {
         this.submissionsData = submissionsData;
         this.usersBusiness = usersBusiness;
@@ -68,6 +69,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.submissionDetailsValidationService = submissionDetailsValidationService;
         this.contestValidationService = contestValidationService;
         this.submitSubmissionValidationService = submitSubmissionValidationService;
+        this.submissionResultsValidationService = submissionResultsValidationService;
     }
 
     public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
@@ -92,11 +94,12 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var validationResult = this.submissionDetailsValidationService.GetValidationResult((submissionDetailsServiceModel, currentUser) !);
 
-        submissionDetailsServiceModel ??= new SubmissionDetailsServiceModel();
+        if (!validationResult.IsValid)
+        {
+            throw new BusinessServiceException(validationResult.Message);
+        }
 
-        submissionDetailsServiceModel.ValidationResult = validationResult;
-
-        return submissionDetailsServiceModel;
+        return submissionDetailsServiceModel!;
     }
 
     public Task<IQueryable<Submission>> GetAllForArchiving()
@@ -243,18 +246,27 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         int take = 0)
     {
         var problem = await this.problemsDataService.GetWithProblemGroupById(problemId);
-
-        await this.ValidateUserCanViewResults(problem!, isOfficial);
+        var user = this.userProviderService.GetCurrentUser();
 
         var participant =
             await this.participantsDataService.GetByContestByUserAndByIsOfficial(
                 problem!.ProblemGroup.ContestId,
-                this.userProviderService.GetCurrentUser().Id!,
+                user.Id!,
                 isOfficial);
 
-        var userSubmissions = this.submissionsData
-            .GetAllByProblemAndParticipant(problemId, participant!.Id)
-            .MapCollection<SubmissionResultsServiceModel>();
+        var validationResult = this.submissionResultsValidationService.GetValidationResult((user, problem, participant));
+        if (!validationResult.IsValid)
+        {
+            throw new BusinessServiceException(validationResult.Message);
+        }
+
+        var userSubmissions = user.IsAdminOrLecturer
+            ? this.submissionsData
+                .GetAllByProblem(problemId)
+                .MapCollection<SubmissionResultsServiceModel>()
+            : this.submissionsData
+                .GetAllByProblemAndParticipant(problemId, participant!.Id)
+                .MapCollection<SubmissionResultsServiceModel>();
 
         if (take != 0)
         {
@@ -262,21 +274,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
 
         return await userSubmissions.ToListAsync();
-    }
-
-    public async Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblemAndUser(
-        int problemId,
-        bool isOfficial,
-        string userId)
-    {
-        var problem = await this.problemsDataService.GetWithProblemGroupById(problemId);
-
-        await this.ValidateUserCanViewResults(problem!, isOfficial);
-
-        var userSubmissions = await this.submissionsData
-            .GetAllByProblemAndUser<SubmissionResultsServiceModel>(problemId, userId);
-
-        return userSubmissions;
     }
 
     public async Task Submit(SubmitSubmissionServiceModel model)
@@ -389,29 +386,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         catch (Exception ex)
         {
             submission.ProcessingComment = $"Exception in CacheTestRuns: {ex.Message}";
-        }
-    }
-
-    private async Task ValidateUserCanViewResults(Problem problem, bool isOfficial)
-    {
-        if (problem == null)
-        {
-            throw new BusinessServiceException(Resources.ContestsGeneral.ProblemNotFound);
-        }
-
-        var user = this.userProviderService.GetCurrentUser();
-
-        var userHasParticipation = await this.participantsDataService
-            .ExistsByContestByUserAndIsOfficial(problem.ProblemGroup.ContestId, user.Id!, isOfficial);
-
-        if (!userHasParticipation && !user.IsAdminOrLecturer)
-        {
-            throw new BusinessServiceException(Resources.ContestsGeneral.UserIsNotRegisteredForExam);
-        }
-
-        if (!problem.ShowResults && !user.IsAdminOrLecturer)
-        {
-            throw new BusinessServiceException(Resources.ContestsGeneral.ProblemResultsNotAvailable);
         }
     }
 
