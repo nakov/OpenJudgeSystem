@@ -40,8 +40,6 @@
 
         public DateTime? ModifiedOn { get; set; }
 
-        public ValidationResult ValidationResult { get; set; } = null!;
-
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<Submission, SubmissionDetailsServiceModel>()
                 .ForMember(s => s.User, opt => opt.MapFrom(s => s.Participant!.User))
@@ -58,7 +56,6 @@
                         ? null
                         : s.ContentAsString))
                 .ForMember(d => d.IsOfficial, opt => opt.MapFrom(s =>
-                    s.Participant!.IsOfficial))
-                .ForMember(d => d.ValidationResult, opt => opt.Ignore());
+                    s.Participant!.IsOfficial));
     }
 }
