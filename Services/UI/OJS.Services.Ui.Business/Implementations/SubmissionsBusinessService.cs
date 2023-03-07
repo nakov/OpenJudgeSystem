@@ -295,7 +295,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 model.Official);
         var contestValidationResult = this.contestValidationService.GetValidationResult(
             (participant?.Contest,
-            currentUser.Id, currentUser.IsAdminOrLecturer, model.Official) !);
+                participant?.ContestId,
+                currentUser.Id,
+                currentUser.IsAdminOrLecturer,
+                model.Official) !);
         var userSubmissionTimeLimit = this.submissionsData.GetUserSubmissionTimeLimit(
             participant!.Id,
             participant.Contest.LimitBetweenSubmissions);
