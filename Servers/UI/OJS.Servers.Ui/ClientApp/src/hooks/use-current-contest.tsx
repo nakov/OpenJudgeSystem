@@ -235,9 +235,9 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         if (isNil(startContestData)) {
             return;
         }
-
         if (!isNil(startContestError)) {
             setContestError(startContestData as unknown as IErrorDataType);
+            return;
         }
 
         const {
@@ -281,8 +281,8 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         }
 
         if (!isNil(registerContestError)) {
-            const errorData = registerForContestData as unknown as IErrorDataType;
-            setContestError(errorData);
+            setContestError(registerForContestData as unknown as IErrorDataType);
+            return;
         }
 
         const { requirePassword: responseRequirePassword } = registerForContestData;

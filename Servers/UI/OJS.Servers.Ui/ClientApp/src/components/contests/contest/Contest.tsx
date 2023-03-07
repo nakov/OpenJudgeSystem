@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { useProblemSubmissions } from '../../../hooks/submissions/use-problem-submissions';
@@ -32,7 +33,7 @@ const Contest = () => {
     } = useCurrentContest();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const { actions: { setPageTitle } } = usePageTitles();
-    const { state: { problemSubmissionsError } } = useProblemSubmissions();
+    const { state: { problemSubmissionsError, submissions } } = useProblemSubmissions();
 
     const navigationContestClass = 'navigationContest';
     const navigationContestClassName = concatClassNames(styles.navigationContest, navigationContestClass);
@@ -116,10 +117,10 @@ const Contest = () => {
 
             return (
                 <Countdown
-                    renderRemainingTime={renderCountdown}
-                    duration={currentSeconds}
-                    metric={Metric.seconds}
-                    handleOnCountdownEnd={handleCountdownEnd}
+                  renderRemainingTime={renderCountdown}
+                  duration={currentSeconds}
+                  metric={Metric.seconds}
+                  handleOnCountdownEnd={handleCountdownEnd}
                 />
             );
         },
@@ -164,8 +165,8 @@ const Contest = () => {
         (message: string) => (
             <div className={styles.headingContest}>
                 <Heading
-                    type={HeadingType.primary}
-                    className={styles.contestHeading}
+                  type={HeadingType.primary}
+                  className={styles.contestHeading}
                 >
                     {message}
                 </Heading>
@@ -196,8 +197,8 @@ const Contest = () => {
             <>
                 <div className={styles.headingContest}>
                     <Heading
-                        type={HeadingType.primary}
-                        className={styles.contestHeading}
+                      type={HeadingType.primary}
+                      className={styles.contestHeading}
                     >
                         {contestTitle}
                     </Heading>
@@ -234,12 +235,12 @@ const Contest = () => {
     );
 
     const renderPage = useCallback(
-        () => isNil(contestError) && isNil(problemSubmissionsError) && isNil(contest)
+        () => (isNil(contestError) && isNil(contest)) || (isNil(problemSubmissionsError) && isEmpty(submissions))
             ? <div>Loading data</div>
             : isNil(contestError) && isNil(problemSubmissionsError)
                 ? renderContest()
                 : renderErrorMessage(),
-        [ renderErrorMessage, renderContest, contestError, problemSubmissionsError, contest ],
+        [ renderErrorMessage, renderContest, contestError, problemSubmissionsError, contest, submissions ],
     );
 
     return renderPage();
