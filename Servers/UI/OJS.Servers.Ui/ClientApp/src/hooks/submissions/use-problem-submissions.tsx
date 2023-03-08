@@ -13,7 +13,7 @@ import { ISubmissionDetails } from './types';
 
 interface IProblemSubmissionsContext {
     state: {
-        submissions: ISubmissionDetails[];
+        submissions: ISubmissionDetails[] | null;
         problemSubmissionsError: IErrorDataType | null;
     };
     actions: {
@@ -29,12 +29,10 @@ interface IProblemSubmissionResultsRequestParametersType {
     take: number;
 }
 
-const defaultState = { state: { submissions: [] as ISubmissionDetails[] } };
-
-const ProblemSubmissionsContext = createContext<IProblemSubmissionsContext>(defaultState as IProblemSubmissionsContext);
+const ProblemSubmissionsContext = createContext<IProblemSubmissionsContext>({} as IProblemSubmissionsContext);
 
 const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderProps) => {
-    const [ submissions, setSubmissions ] = useState(defaultState.state.submissions);
+    const [ submissions, setSubmissions ] = useState<ISubmissionDetails[] | null>(null);
     const [ problemSubmissionsError, setProblemSubmissionsError ] = useState<IErrorDataType | null>(null);
     const { state: { currentProblem } } = useProblems();
     const [

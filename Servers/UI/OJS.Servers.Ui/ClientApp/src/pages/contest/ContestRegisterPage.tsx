@@ -35,11 +35,15 @@ const ContestRegisterPage = () => {
         state: {
             requirePassword,
             isPasswordValid,
+            contestError,
         },
         actions: { register },
     } = useCurrentContest();
 
-    const doesNotRequirePassword = useMemo(() => !isNil(requirePassword) && !requirePassword, [ requirePassword ]);
+    const doesNotRequirePassword = useMemo(
+        () => (!isNil(requirePassword) && !requirePassword) || isNil(contestError),
+        [ requirePassword, contestError ],
+    );
     const isSubmittedPasswordValid = useMemo(() => !isNil(isPasswordValid) && isPasswordValid, [ isPasswordValid ]);
 
     useEffect(() => {
@@ -56,7 +60,7 @@ const ContestRegisterPage = () => {
         if (doesNotRequirePassword || isSubmittedPasswordValid) {
             navigate(`/contests/${contestId}/${participationType}`);
         }
-    }, [ contestId, doesNotRequirePassword, isSubmittedPasswordValid, participationType, navigate ]);
+    }, [ contestId, doesNotRequirePassword, isSubmittedPasswordValid, participationType, navigate, requirePassword ]);
 
     return (
         <div className={styles.container}>

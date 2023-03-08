@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { useProblemSubmissions } from '../../../hooks/submissions/use-problem-submissions';
@@ -235,12 +234,12 @@ const Contest = () => {
     );
 
     const renderPage = useCallback(
-        () => (isNil(contestError) && isNil(contest)) || (isNil(problemSubmissionsError) && isEmpty(submissions))
+        () => isNil(contestError) && isNil(problemSubmissionsError) && isNil(submissions)
             ? <div>Loading data</div>
             : isNil(contestError) && isNil(problemSubmissionsError)
                 ? renderContest()
                 : renderErrorMessage(),
-        [ renderErrorMessage, renderContest, contestError, problemSubmissionsError, contest, submissions ],
+        [ renderErrorMessage, renderContest, contestError, problemSubmissionsError, submissions ],
     );
 
     return renderPage();
