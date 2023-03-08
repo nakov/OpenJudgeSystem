@@ -36,7 +36,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
         }
 
         if (submitSubmissionServiceModel.Official &&
-            participant!.Contest.IsOnline &&
+            participant!.Contest.IsOnlineExam &&
             !IsUserAdminOrLecturerInContest(participant.Contest, user) &&
             participant.ProblemsForParticipants.All(p => p.ProblemId != problem.Id))
         {
