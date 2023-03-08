@@ -317,6 +317,12 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
 
         var newSubmission = model.Map<Submission>();
+        if (!model.IsFileUpload)
+        {
+            var stringContent = model.StringContent ?? string.Empty;
+            newSubmission.ContentAsString = stringContent;
+        }
+
         newSubmission.ParticipantId = participant.Id;
         newSubmission.IpAddress = "model.UserHostAddress";
         newSubmission.IsPublic = ((participant.IsOfficial && participant.Contest.ContestPassword == null) ||

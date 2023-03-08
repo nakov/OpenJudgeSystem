@@ -18,18 +18,16 @@ public class SubmitSubmissionServiceModel : IMapExplicitly
 
     public string? FileExtension { get; set; }
 
+    public bool IsFileUpload { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<SubmitSubmissionServiceModel, Submission>()
             .ForMember(
-                d => d.ContentAsString,
-                opt => opt.MapFrom(s =>
-                    s.StringContent == null
-                        ? null
-                        : s.StringContent))
-            .ForMember(
                 d => d.Content,
                 opt => opt.MapFrom(s =>
-                    s.ByteContent == null ? null : s.ByteContent))
+                    s.ByteContent == null
+                        ? null :
+                        s.ByteContent))
             .ForMember(
                 d => d.ProblemId,
                 opt => opt.MapFrom(s => s.ProblemId))
@@ -41,6 +39,6 @@ public class SubmitSubmissionServiceModel : IMapExplicitly
                 opt => opt.MapFrom(s =>
                     s.FileExtension == null
                         ? null
-                        : s.StringContent))
+                        : s.FileExtension))
             .ForAllOtherMembers(opt => opt.Ignore());
 }
