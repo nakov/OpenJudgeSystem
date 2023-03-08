@@ -171,7 +171,10 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const removeProblemSubmissionCode = useCallback(
         (problemId: number) => {
             if (!isNil(problemSubmissionCode[problemId])) {
-                setProblemSubmissionCode({ ...problemSubmissionCode, [problemId]: '' });
+                setProblemSubmissionCode({
+                    ...problemSubmissionCode,
+                    [problemId]: '',
+                });
             }
         },
         [ problemSubmissionCode ],
