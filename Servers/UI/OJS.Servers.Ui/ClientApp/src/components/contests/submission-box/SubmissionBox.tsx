@@ -8,10 +8,10 @@ import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
 import { convertToTwoDigitValues } from '../../../utils/dates';
 import CodeEditor from '../../code-editor/CodeEditor';
+import FileUploader from '../../file-uploader/FileUploader';
 import AlertBox, { AlertBoxType } from '../../guidelines/alert-box/AlertBox';
 import { Button, ButtonState } from '../../guidelines/buttons/Button';
 import Countdown, { ICountdownRemainingType, Metric } from '../../guidelines/countdown/Countdown';
-import FormControl, { FormControlType } from '../../guidelines/forms/FormControl';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List, { Orientation } from '../../guidelines/lists/List';
 import ExecutionTypeSelector from '../execution-type-selector/ExecutionTypeSelector';
@@ -33,11 +33,13 @@ const SubmissionBox = () => {
             submitMessage,
             setSubmitMessage,
             isSubmissionSuccessful,
+            problemSubmissionCode,
         },
         actions: {
             submit,
             updateSubmissionCode,
             selectSubmissionTypeById,
+            removeProblemSubmissionCode,
         },
     } = useSubmissions();
 
@@ -47,7 +49,7 @@ const SubmissionBox = () => {
     const showSubmissionLimitTimer = useMemo(() => submitLimit > 0, [ submitLimit ]);
 
     const handleCodeChanged = useCallback(
-        (newValue: string | Blob) => {
+        (newValue: string | File) => {
             updateSubmissionCode(newValue);
         },
         [ updateSubmissionCode ],
@@ -114,11 +116,13 @@ const SubmissionBox = () => {
 
     const handleOnSubmit = useCallback(async () => {
         await submit();
-
-        if (!isNil(currentProblem)) {
-            currentProblem.codeEditorCode = '';
+        const { id: problemId } = currentProblem || {};
+        if (isNil(problemId)) {
+            return;
         }
-    }, [ submit, currentProblem ]);
+
+        removeProblemSubmissionCode(problemId);
+    }, [ submit, currentProblem, removeProblemSubmissionCode ]);
 
     const renderSubmissionLimitCountdown = useCallback((remainingTime: ICountdownRemainingType) => {
         const { minutes, seconds } = convertToTwoDigitValues(remainingTime);
@@ -198,11 +202,15 @@ const SubmissionBox = () => {
         executionTypeListClass,
     );
 
-    const codeEditorCode = useMemo(
-        () => isNil(currentProblem?.codeEditorCode)
-            ? ''
-            : currentProblem?.codeEditorCode.toString(),
-        [ currentProblem?.codeEditorCode ],
+    const submissionCode = useMemo(
+        () => {
+            const { id: problemId } = currentProblem || {};
+            if (isNil(problemId)) {
+                return null;
+            }
+            return problemSubmissionCode[problemId];
+        },
+        [ currentProblem, problemSubmissionCode ],
     );
 
     const renderSubmissionInput = useCallback(() => {
@@ -211,14 +219,19 @@ const SubmissionBox = () => {
         }
 
         const { allowBinaryFilesUpload, allowedFileExtensions } = selectedSubmissionType;
+        const { id: problemId } = currentProblem || {};
+        if (isNil(problemId)) {
+            return null;
+        }
 
-        if (allowBinaryFilesUpload) {
+        if (allowBinaryFilesUpload && !isNil(currentProblem)) {
             return (
                 <>
-                    <FormControl
-                      type={FormControlType.file}
-                      name="file"
-                      onChange={(file) => handleCodeChanged(file as Blob)}
+                    <FileUploader
+                      file={isNil(submissionCode) || submissionCode instanceof String
+                          ? null
+                          : submissionCode as File}
+                      problemId={problemId}
                     />
                     <p className={styles.fileSubmissionDetailsParagraph}>
                         Allowed file extensions:
@@ -231,11 +244,13 @@ const SubmissionBox = () => {
         return (
             <CodeEditor
               selectedSubmissionType={selectedSubmissionType}
-              code={codeEditorCode}
+              code={isNil(submissionCode) || submissionCode instanceof File
+                  ? ''
+                  : submissionCode}
               onCodeChange={handleCodeChanged}
             />
         );
-    }, [ handleCodeChanged, selectedSubmissionType, codeEditorCode ]);
+    }, [ handleCodeChanged, selectedSubmissionType, submissionCode, currentProblem ]);
 
     return (
         <div className={styles.contestMainWrapper}>
