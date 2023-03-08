@@ -76,12 +76,13 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     const {
         post: submitCode,
-        error,
+        error: errorSubmitCode,
         isSuccess: isSuccessCodeSubmit,
     } = useHttp<null, null, ISubmitCodeTypeParametersType>({ url: getSubmitUrl });
 
     const {
         post: submitFileCode,
+        data: submitFileCodeData,
         error: errorSubmitFile,
         isSuccess: isSuccessFileSubmit,
     } = useHttp<null, null, FormData>({
@@ -151,16 +152,9 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         [ currentProblem ],
     );
 
-    const updateSubmissionCode = useCallback(
-        (code: string | Blob) => {
-            setSubmissionCode(code);
-
-            if (!isNil(currentProblem)) {
-                currentProblem.codeEditorCode = code;
-            }
-        },
-        [ currentProblem ],
-    );
+    const updateSubmissionCode = (code: string | Blob) => {
+        setSubmissionCode(code);
+    };
 
     useEffect(
         () => {
@@ -175,13 +169,15 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     useEffect(
         () => {
-            if (!isNil(error)) {
-                setSubmitMessage(error);
+            if (!isNil(errorSubmitCode)) {
+                const { detail } = errorSubmitCode;
+                setSubmitMessage(detail);
                 return;
             }
 
             if (!isNil(errorSubmitFile)) {
-                setSubmitMessage(errorSubmitFile);
+                const { detail } = errorSubmitFile;
+                setSubmitMessage(detail);
                 return;
             }
 
@@ -190,9 +186,10 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             })();
         },
         [
-            error,
-            errorSubmitFile,
             loadSubmissions,
+            errorSubmitCode,
+            errorSubmitFile,
+            submitFileCodeData,
         ],
     );
 
@@ -219,7 +216,6 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             submitMessage,
             setSubmitMessage,
             isSubmissionSuccessful,
-            updateSubmissionCode,
         ],
     );
 

@@ -26,9 +26,20 @@
   }
 }
 
+.contestHeading {
+  border: 0;
+  margin-bottom: 30px;
+  padding: 0;
+  text-align: center;
+}
+
 .detailsWrapper {
   @extend %wrapper;
   @extend %columnsThree;
+}
+
+.headingContest {
+  @extend %contentSize;
 }
 
 .leftArrow {

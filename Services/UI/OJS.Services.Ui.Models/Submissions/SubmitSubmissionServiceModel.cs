@@ -1,12 +1,46 @@
 ﻿namespace OJS.Services.Ui.Models.Submissions;
 
-public class SubmitSubmissionServiceModel
+using AutoMapper;
+using OJS.Data.Models.Submissions;
+using SoftUni.AutoMapper.Infrastructure.Models;
+
+public class SubmitSubmissionServiceModel : IMapExplicitly
 {
     public int ProblemId { get; set; }
 
     public int SubmissionTypeId { get; set; }
 
-    public string Content { get; set; } = null!;
-
     public bool Official { get; set; }
+
+    public byte[]? ByteContent { get; set; }
+
+    public string? StringContent { get; set; }
+
+    public string? FileExtension { get; set; }
+
+    public void RegisterMappings(IProfileExpression configuration)
+        => configuration.CreateMap<SubmitSubmissionServiceModel, Submission>()
+            .ForMember(
+                d => d.ContentAsString,
+                opt => opt.MapFrom(s =>
+                    s.StringContent == null
+                        ? null
+                        : s.StringContent))
+            .ForMember(
+                d => d.Content,
+                opt => opt.MapFrom(s =>
+                    s.ByteContent == null ? null : s.ByteContent))
+            .ForMember(
+                d => d.ProblemId,
+                opt => opt.MapFrom(s => s.ProblemId))
+            .ForMember(
+                d => d.SubmissionTypeId,
+                opt => opt.MapFrom(s => s.SubmissionTypeId))
+            .ForMember(
+                d => d.FileExtension,
+                opt => opt.MapFrom(s =>
+                    s.FileExtension == null
+                        ? null
+                        : s.StringContent))
+            .ForAllOtherMembers(opt => opt.Ignore());
 }

@@ -68,15 +68,14 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var contest = await this.contestsData.OneById(id);
 
-            var validationResult = this.contestValidationService.GetValidationResult((contest, user.Id, user.IsAdmin, official) !);
-
-            var registerModel = new RegisterUserForContestServiceModel();
-            if (contest != null)
+            var validationResult = this.contestValidationService.GetValidationResult((contest, id, user.Id, user.IsAdmin, official) !);
+            if (!validationResult.IsValid)
             {
-                registerModel = contest.Map<RegisterUserForContestServiceModel>();
+                throw new BusinessServiceException(validationResult.Message);
             }
 
-            registerModel.ValidationResult = validationResult;
+            var registerModel = contest!.Map<RegisterUserForContestServiceModel>();
+
             registerModel.RequirePassword = ShouldRequirePassword(contest!, participant!, official);
 
             return registerModel;
@@ -124,7 +123,12 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var user = this.userProviderService.GetCurrentUser();
 
-            var validationResult = this.contestValidationService.GetValidationResult((contest, user?.Id, user!.IsAdmin, model.IsOfficial) !);
+            var validationResult = this.contestValidationService.GetValidationResult((contest, model.ContestId, user?.Id, user!.IsAdmin, model.IsOfficial) !);
+
+            if (!validationResult.IsValid)
+            {
+                throw new BusinessServiceException(validationResult.Message);
+            }
 
             var userProfile = await this.usersBusinessService.GetUserProfileById(user.Id!);
 
@@ -144,7 +148,6 @@ namespace OJS.Services.Ui.Business.Implementations
 
             participationModel.Contest.AllowedSubmissionTypes =
                 participationModel.Contest.AllowedSubmissionTypes.DistinctBy(st => st.Id);
-            participationModel.ValidationResult = validationResult;
             participationModel.ParticipantId = participant.Id;
             participationModel.ContestIsCompete = model.IsOfficial;
             participationModel.UserSubmissionsTimeLimit = await this.participantsBusiness.GetParticipantLimitBetweenSubmissions(
