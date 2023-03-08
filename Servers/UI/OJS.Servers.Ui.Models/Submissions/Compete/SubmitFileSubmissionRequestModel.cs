@@ -18,6 +18,8 @@ public class SubmitFileSubmissionRequestModel : IMapExplicitly
 
     public bool Official { get; set; }
 
+    public bool IsFileUpload { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<SubmitFileSubmissionRequestModel, SubmitSubmissionServiceModel>()
             .ForMember(

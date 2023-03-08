@@ -18,8 +18,6 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
                 userSubmissionTimeLimit, hasUserNotProcessedSubmissionForProblem, submitSubmissionServiceModel) =
             validationInput;
 
-        var isFileSubmission = submitSubmissionServiceModel.ByteContent != null || submitSubmissionServiceModel.StringContent == null;
-
         if (problem == null)
         {
             return ValidationResult.Invalid(ValidationMessages.Problem.NotFound);
@@ -52,7 +50,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTypeNotFound);
         }
 
-        if (submitSubmissionServiceModel.StringContent == null)
+        if (submitSubmissionServiceModel.IsFileUpload)
         {
             if (submitSubmissionServiceModel.ByteContent == null ||
                 submitSubmissionServiceModel.ByteContent.Length == 0)
@@ -67,12 +65,12 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             }
         }
 
-        if (isFileSubmission && !submissionType.SubmissionType.AllowBinaryFilesUpload)
+        if (submitSubmissionServiceModel.IsFileUpload && !submissionType.SubmissionType.AllowBinaryFilesUpload)
         {
             return ValidationResult.Invalid(ValidationMessages.Submission.BinaryFilesNotAllowed);
         }
 
-        if (!isFileSubmission && submissionType.SubmissionType.AllowBinaryFilesUpload)
+        if (!submitSubmissionServiceModel.IsFileUpload && submissionType.SubmissionType.AllowBinaryFilesUpload)
         {
             return ValidationResult.Invalid(ValidationMessages.Submission.TextUploadNotAllowed);
         }
@@ -88,7 +86,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTooLong);
         }
 
-        if (submitSubmissionServiceModel.StringContent != null && submitSubmissionServiceModel.StringContent.Length < 5)
+        if (!submitSubmissionServiceModel.IsFileUpload && (submitSubmissionServiceModel.StringContent == null || submitSubmissionServiceModel.StringContent.Length < 5))
         {
             return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTooShort);
         }
