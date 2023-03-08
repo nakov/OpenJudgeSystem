@@ -47,9 +47,10 @@ enum ContestType {
 }
 
 enum ContestStatus {
-    All = 'all',
-    Active = 'active',
-    Past = 'past',
+    All = 'All',
+    Active = 'Active',
+    Past = 'Past',
+
 }
 
 export type {

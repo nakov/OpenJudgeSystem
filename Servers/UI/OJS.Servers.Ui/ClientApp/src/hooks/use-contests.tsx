@@ -37,6 +37,7 @@ interface IContestsContext {
         pagesInfo: IPagesInfo;
         currentPage: number;
         contest: IIndexContestsType | null;
+        isLoaded: boolean;
     };
     actions: {
         reload: () => Promise<void>;
@@ -112,6 +113,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const {
         get: getContests,
         data: contestsData,
+        isSuccess,
     } = useHttp<
         IAllContestsUrlParams,
         IPagedResultType<IIndexContestsType>>({
@@ -188,9 +190,9 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     const reload = useCallback(
         async () => {
-            startLoading();
+            await startLoading();
             await getContests();
-            stopLoading();
+            await stopLoading();
         },
         [ getContests, startLoading, stopLoading ],
     );
@@ -312,6 +314,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
                 sortingTypes,
                 currentPage,
                 contest,
+                isLoaded: isSuccess,
             },
             actions: {
                 reload,
@@ -339,6 +342,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             loadContestByProblemId,
             contest,
             initiateGetAllContestsQuery,
+            isSuccess,
         ],
     );
 
