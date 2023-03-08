@@ -46,21 +46,27 @@ const ContestRegisterPage = () => {
     );
     const isSubmittedPasswordValid = useMemo(() => !isNil(isPasswordValid) && isPasswordValid, [ isPasswordValid ]);
 
-    useEffect(() => {
-        (async () => {
-            await register(internalContest);
-        })();
-    }, [ internalContest, contestIdToNumber, isParticipationOfficial, participationType, register ]);
+    useEffect(
+        () => {
+            (async () => {
+                await register(internalContest);
+            })();
+        },
+        [ internalContest, contestIdToNumber, isParticipationOfficial, participationType, register ],
+    );
 
-    useEffect(() => {
-        if (isNil(contestId) || isNil(participationType)) {
-            return;
-        }
+    useEffect(
+        () => {
+            if (isNil(contestId) || isNil(participationType)) {
+                return;
+            }
 
-        if (doesNotRequirePassword || isSubmittedPasswordValid) {
-            navigate(`/contests/${contestId}/${participationType}`);
-        }
-    }, [ contestId, doesNotRequirePassword, isSubmittedPasswordValid, participationType, navigate, requirePassword ]);
+            if (doesNotRequirePassword || isSubmittedPasswordValid) {
+                navigate(`/contests/${contestId}/${participationType}`);
+            }
+        },
+        [ contestId, doesNotRequirePassword, isSubmittedPasswordValid, participationType, navigate, requirePassword ],
+    );
 
     return (
         <div className={styles.container}>

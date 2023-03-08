@@ -120,18 +120,21 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         [ getProblemResultsRequest, startLoading, stopLoading, submissionResultsByProblemUrlParams ],
     );
 
-    useEffect(() => {
-        if (isNil(apiProblemResults)) {
-            return;
-        }
+    useEffect(
+        () => {
+            if (isNil(apiProblemResults)) {
+                return;
+            }
 
-        if (!isNil(apiProblemResultsError)) {
-            setValidationErrors((validationErrorsArray) => [ ...validationErrorsArray, apiProblemResults as unknown as IErrorDataType ]);
-            return;
-        }
+            if (!isNil(apiProblemResultsError)) {
+                setValidationErrors((validationErrorsArray) => [ ...validationErrorsArray, apiProblemResultsError ]);
+                return;
+            }
 
-        setCurrentProblemSubmissionResults(apiProblemResults);
-    }, [ apiProblemResults, apiProblemResultsError ]);
+            setCurrentProblemSubmissionResults(apiProblemResults);
+        },
+        [ apiProblemResults, apiProblemResultsError ],
+    );
 
     useEffect(
         () => {
@@ -159,18 +162,21 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         [],
     );
 
-    useEffect(() => {
-        if (isNil(apiSubmissionDetails)) {
-            return;
-        }
+    useEffect(
+        () => {
+            if (isNil(apiSubmissionDetails)) {
+                return;
+            }
 
-        if (!isNil(apiSubmissionDetailsError)) {
-            setValidationErrors((validationErrorsArray) => [ ...validationErrorsArray, apiSubmissionDetails as unknown as IErrorDataType ]);
-            return;
-        }
+            if (!isNil(apiSubmissionDetailsError)) {
+                setValidationErrors((validationErrorsArray) => [ ...validationErrorsArray, apiSubmissionDetailsError ]);
+                return;
+            }
 
-        setCurrentSubmission(apiSubmissionDetails);
-    }, [ apiSubmissionDetails, apiSubmissionDetailsError ]);
+            setCurrentSubmission(apiSubmissionDetails);
+        },
+        [ apiSubmissionDetails, apiSubmissionDetailsError ],
+    );
 
     useEffect(
         () => {

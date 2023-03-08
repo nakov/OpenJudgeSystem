@@ -33,7 +33,6 @@ const ProblemSubmissionsContext = createContext<IProblemSubmissionsContext>({} a
 
 const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderProps) => {
     const [ submissions, setSubmissions ] = useState<ISubmissionDetails[] | null>(null);
-    const [ problemSubmissionsError, setProblemSubmissionsError ] = useState<IErrorDataType | null>(null);
     const { state: { currentProblem } } = useProblems();
     const [
         submissionResultsToGetParameters,
@@ -51,7 +50,7 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
     const {
         get: getProblemSubmissions,
         data: apiProblemSubmissions,
-        error: apiProblemSubmissionsError,
+        error: problemSubmissionsError,
     } = useHttp<IProblemSubmissionResultsRequestParametersType, ISubmissionDetails[]>({
         url: getSubmissionResultsByProblemUrl,
         parameters: submissionResultsToGetParameters,
@@ -77,15 +76,14 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
                 return;
             }
 
-            if (!isNil(apiProblemSubmissionsError)) {
-                setProblemSubmissionsError(apiProblemSubmissions as unknown as IErrorDataType);
+            if (!isNil(problemSubmissionsError)) {
                 return;
             }
 
             setSubmissions(apiProblemSubmissions);
             setSubmissionResultsToGetParameters(null);
         },
-        [ apiProblemSubmissions, apiProblemSubmissionsError ],
+        [ apiProblemSubmissions, problemSubmissionsError ],
     );
 
     useEffect(

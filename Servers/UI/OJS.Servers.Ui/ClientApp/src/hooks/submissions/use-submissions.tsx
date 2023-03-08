@@ -5,7 +5,7 @@ import isNil from 'lodash/isNil';
 import { ISubmissionTypeType } from '../../common/types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useCurrentContest } from '../use-current-contest';
-import { IErrorDataType, useHttp } from '../use-http';
+import { useHttp } from '../use-http';
 import { useLoading } from '../use-loading';
 import { useProblems } from '../use-problems';
 import { useUrls } from '../use-urls';
@@ -76,7 +76,6 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     const {
         post: submitCode,
-        data: submitCodeData,
         isSuccess,
         error: errorSubmitCode,
     } = useHttp<null, null, ISubmitCodeTypeParametersType>({ url: getSubmitUrl });
@@ -158,14 +157,14 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     useEffect(
         () => {
-            if (!isNil(errorSubmitCode) && !isNil(submitCodeData)) {
-                const { detail } = submitCodeData as IErrorDataType;
+            if (!isNil(errorSubmitCode)) {
+                const { detail } = errorSubmitCode;
                 setSubmitMessage(detail);
                 return;
             }
 
-            if (!isNil(errorSubmitFile) && !isNil(submitFileCodeData)) {
-                const { detail } = submitFileCodeData as IErrorDataType;
+            if (!isNil(errorSubmitFile)) {
+                const { detail } = errorSubmitFile;
                 setSubmitMessage(detail);
                 return;
             }
@@ -179,7 +178,6 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             errorSubmitCode,
             errorSubmitFile,
             submitFileCodeData,
-            submitCodeData,
         ],
     );
 

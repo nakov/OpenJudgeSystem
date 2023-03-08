@@ -231,32 +231,35 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         })();
     }, [ contestToStart, startContest, startLoading, stopLoading ]);
 
-    useEffect(() => {
-        if (isNil(startContestData)) {
-            return;
-        }
-        if (!isNil(startContestError)) {
-            setContestError(startContestData as unknown as IErrorDataType);
-            return;
-        }
+    useEffect(
+        () => {
+            if (isNil(startContestData)) {
+                return;
+            }
+            if (!isNil(startContestError)) {
+                setContestError(startContestError);
+                return;
+            }
 
-        const {
-            contest: newContest,
-            contestIsCompete,
-            participantId: currentParticipantId,
-            remainingTimeInMilliseconds: newRemainingTimeInMilliseconds,
-            totalParticipantsCount: newTotalParticipants,
-            activeParticipantsCount: newActiveParticipants,
-        } = startContestData;
+            const {
+                contest: newContest,
+                contestIsCompete,
+                participantId: currentParticipantId,
+                remainingTimeInMilliseconds: newRemainingTimeInMilliseconds,
+                totalParticipantsCount: newTotalParticipants,
+                activeParticipantsCount: newActiveParticipants,
+            } = startContestData;
 
-        setContest(newContest);
-        setIsOfficial(contestIsCompete);
-        setParticipantId(currentParticipantId);
-        setRemainingTimeInMilliseconds(newRemainingTimeInMilliseconds);
-        setUserSubmissionsTimeLimit(startContestData.userSubmissionsTimeLimit);
-        setTotalParticipantsCount(newTotalParticipants);
-        setActiveParticipantsCount(newActiveParticipants);
-    }, [ startContestData, startContestError ]);
+            setContest(newContest);
+            setIsOfficial(contestIsCompete);
+            setParticipantId(currentParticipantId);
+            setRemainingTimeInMilliseconds(newRemainingTimeInMilliseconds);
+            setUserSubmissionsTimeLimit(startContestData.userSubmissionsTimeLimit);
+            setTotalParticipantsCount(newTotalParticipants);
+            setActiveParticipantsCount(newActiveParticipants);
+        },
+        [ startContestData, startContestError ],
+    );
 
     useEffect(() => {
         if (isNil(registerForContestParams)) {
@@ -275,21 +278,24 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         })();
     }, [ registerForContest, registerForContestParams, startLoading, stopLoading ]);
 
-    useEffect(() => {
-        if (isNil(registerForContestData)) {
-            return;
-        }
+    useEffect(
+        () => {
+            if (isNil(registerForContestData)) {
+                return;
+            }
 
-        if (!isNil(registerContestError)) {
-            setContestError(registerForContestData as unknown as IErrorDataType);
-            return;
-        }
+            if (!isNil(registerContestError)) {
+                setContestError(registerContestError);
+                return;
+            }
 
-        const { requirePassword: responseRequirePassword } = registerForContestData;
+            const { requirePassword: responseRequirePassword } = registerForContestData;
 
-        setContest({ id: registerForContestData.id, name: registerForContestData.name } as IContestType);
-        setRequirePassword(responseRequirePassword);
-    }, [ registerForContestData, registerContestError ]);
+            setContest({ id: registerForContestData.id, name: registerForContestData.name } as IContestType);
+            setRequirePassword(responseRequirePassword);
+        },
+        [ registerForContestData, registerContestError ],
+    );
 
     useEffect(() => {
         if (isNil(submitContestPasswordUrlParams)) {
