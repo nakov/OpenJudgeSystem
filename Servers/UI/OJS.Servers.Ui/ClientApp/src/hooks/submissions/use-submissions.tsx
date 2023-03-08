@@ -82,7 +82,6 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     const {
         post: submitFileCode,
-        data: submitFileCodeData,
         error: errorSubmitFile,
     } = useHttp<null, null, FormData>({
         url: getSubmitFileUrl,
@@ -177,7 +176,6 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             loadSubmissions,
             errorSubmitCode,
             errorSubmitFile,
-            submitFileCodeData,
         ],
     );
 
