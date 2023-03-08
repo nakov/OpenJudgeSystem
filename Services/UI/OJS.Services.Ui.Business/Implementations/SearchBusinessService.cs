@@ -40,7 +40,7 @@ public class SearchBusinessService : ISearchBusinessService
         var searchListingModel = new SearchForListingServiceModel();
         if (validationResult.IsValid)
         {
-            await this.PopulateProperValues(model, searchListingModel);
+            await this.PopulateSelectedConditionValues(model, searchListingModel);
         }
 
         searchListingModel.ValidationResult = validationResult;
@@ -57,7 +57,7 @@ public class SearchBusinessService : ISearchBusinessService
     private static int CalculateMaxItemsCount(int usersCount, int contestsCount, int problemsCount)
         => Math.Max(Math.Max(usersCount, contestsCount), problemsCount);
 
-    private async Task PopulateProperValues(SearchServiceModel model, SearchForListingServiceModel searchListingModel)
+    private async Task PopulateSelectedConditionValues(SearchServiceModel model, SearchForListingServiceModel searchListingModel)
     {
         if (model.SelectedTerm == SearchSelectType.All)
         {
