@@ -18,8 +18,6 @@ public class SubmitSubmissionServiceModel : IMapExplicitly
 
     public string? FileExtension { get; set; }
 
-    public bool IsFileUpload { get; set; }
-
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<SubmitSubmissionServiceModel, Submission>()
             .ForMember(

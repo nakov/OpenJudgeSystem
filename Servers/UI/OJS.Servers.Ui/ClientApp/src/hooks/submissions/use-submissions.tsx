@@ -40,7 +40,6 @@ interface ISubmitCodeTypeParametersType {
     submissionTypeId: number;
     content: string | Blob;
     official: boolean;
-    isFileUpload: boolean;
 }
 
 const SubmissionsContext = createContext<ISubmissionsContext>(defaultState as ISubmissionsContext);
@@ -72,7 +71,6 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             submissionTypeId: selectedSubmissionType?.id,
             content: submissionCode,
             official: isOfficial,
-            isFileUpload: selectedSubmissionType?.allowBinaryFilesUpload,
         } as ISubmitCodeTypeParametersType;
     }, [ currentProblem, isOfficial, selectedSubmissionType, submissionCode ]);
 
@@ -100,14 +98,12 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             submissionTypeId,
             official,
             problemId,
-            isFileUpload,
         } = submitCodeParams;
 
         await bodyFormData.append('content', content);
         await bodyFormData.append('submissionTypeId', submissionTypeId.toString());
         await bodyFormData.append('official', official.toString());
         await bodyFormData.append('problemId', problemId.toString());
-        await bodyFormData.append('isFileUpload', isFileUpload.toString());
 
         return bodyFormData;
     }, [ submitCodeParams ]);

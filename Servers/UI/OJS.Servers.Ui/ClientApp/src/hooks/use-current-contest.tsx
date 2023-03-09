@@ -286,6 +286,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
 
             if (!isNil(registerContestError)) {
                 setContestError(registerContestError);
+                setRequirePassword(false);
                 return;
             }
 
@@ -310,7 +311,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     }, [ contestPassword, submitContestPassword, submitContestPasswordUrlParams, startLoading, stopLoading ]);
 
     useEffect(() => {
-        if (isNil(submitContestPasswordData)) {
+        if (isNil(submitContestPasswordResponse)) {
             return;
         }
 

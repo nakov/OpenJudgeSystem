@@ -22,7 +22,7 @@ public class ContestValidationService : IContestValidationService
 
         if (IsContestExpired(contest, userId, isUserAdmin, official, isUserLecturerInContest))
         {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.IsExpired, contest?.Name));
+            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.IsExpired, contest.Name));
         }
 
         if (official &&
@@ -33,12 +33,12 @@ public class ContestValidationService : IContestValidationService
                 isUserLecturerInContest,
                 allowToAdminAlways: true))
         {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.CanBeCompeted, contest?.Name));
+            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.CanBeCompeted, contest.Name));
         }
 
         if (!official && !contest.CanBePracticed && !isUserLecturerInContest && !isUserAdmin)
         {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.CanBePracticed, contest?.Name));
+            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.CanBePracticed, contest.Name));
         }
 
         return ValidationResult.Valid();
