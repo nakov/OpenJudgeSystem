@@ -35,14 +35,13 @@ const ContestRegisterPage = () => {
         state: {
             requirePassword,
             isPasswordValid,
-            contestError,
         },
         actions: { register },
     } = useCurrentContest();
 
     const doesNotRequirePassword = useMemo(
-        () => (!isNil(requirePassword) && !requirePassword) || isNil(contestError),
-        [ requirePassword, contestError ],
+        () => !isNil(requirePassword) && !requirePassword,
+        [ requirePassword ],
     );
     const isSubmittedPasswordValid = useMemo(() => !isNil(isPasswordValid) && isPasswordValid, [ isPasswordValid ]);
 
