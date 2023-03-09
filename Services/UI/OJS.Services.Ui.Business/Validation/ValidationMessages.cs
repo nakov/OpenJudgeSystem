@@ -38,7 +38,7 @@ public static class ValidationMessages
 
         public const string SubmissionTooShort = "The submission must be at least 5 characters long.";
 
-        public const string UploadFile = "Please upload file.";
+        public const string SubmissionEmpty = "Solution cannot be empty.";
 
         public const string InvalidExtension = "Invalid file extension.";
     }

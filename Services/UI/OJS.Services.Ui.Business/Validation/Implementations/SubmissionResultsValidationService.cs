@@ -7,16 +7,16 @@ using OJS.Services.Common.Models.Users;
 
 public class SubmissionResultsValidationService : ISubmissionResultsValidationService
 {
-    public ValidationResult GetValidationResult((UserInfoModel, Problem?, Participant?) validationInput)
+    public ValidationResult GetValidationResult((UserInfoModel, Problem?, Participant?, bool) validationInput)
     {
-        var (userInfoModel, problem, participant) = validationInput;
+        var (userInfoModel, problem, participant, isOfficial) = validationInput;
 
         if (problem == null)
         {
             return ValidationResult.Invalid(ValidationMessages.Problem.NotFound);
         }
 
-        if (participant == null && !userInfoModel.IsAdminOrLecturer)
+        if (participant == null && !userInfoModel.IsAdminOrLecturer && isOfficial)
         {
             return ValidationResult.Invalid(ValidationMessages.Participant.NotRegisteredForExam);
         }

@@ -254,7 +254,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 user.Id!,
                 isOfficial);
 
-        var validationResult = this.submissionResultsValidationService.GetValidationResult((user, problem, participant));
+        var validationResult = this.submissionResultsValidationService.GetValidationResult((user, problem, participant, isOfficial));
         if (!validationResult.IsValid)
         {
             throw new BusinessServiceException(validationResult.Message);
@@ -317,9 +317,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
 
         var newSubmission = model.Map<Submission>();
-        if (!model.IsFileUpload)
+        if (model.StringContent != null)
         {
-            newSubmission.ContentAsString = model.StringContent!;
+            newSubmission.ContentAsString = model.StringContent;
         }
         else
         {

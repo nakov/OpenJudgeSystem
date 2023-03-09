@@ -1,5 +1,6 @@
 ﻿namespace OJS.Services.Ui.Business.Validation.Implementations;
 
+using Infrastructure.Exceptions;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Problems;
@@ -18,12 +19,18 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
                 userSubmissionTimeLimit, hasUserNotProcessedSubmissionForProblem, submitSubmissionServiceModel) =
             validationInput;
 
+        if (string.IsNullOrWhiteSpace(submitSubmissionServiceModel.StringContent) &&
+            (submitSubmissionServiceModel.ByteContent == null || submitSubmissionServiceModel.ByteContent.Length == 0))
+        {
+            throw new BusinessServiceException(ValidationMessages.Submission.SubmissionEmpty);
+        }
+
         if (problem == null)
         {
             return ValidationResult.Invalid(ValidationMessages.Problem.NotFound);
         }
 
-        if (participant == null && !user.IsAdminOrLecturer)
+        if (participant == null && !user.IsAdminOrLecturer && submitSubmissionServiceModel.Official)
         {
             return ValidationResult.Invalid(ValidationMessages.Participant.NotRegisteredForExam);
         }
@@ -50,27 +57,21 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTypeNotFound);
         }
 
-        if (submitSubmissionServiceModel.IsFileUpload)
-        {
-            if (submitSubmissionServiceModel.ByteContent == null ||
-                submitSubmissionServiceModel.ByteContent.Length == 0)
-            {
-                return ValidationResult.Invalid(ValidationMessages.Submission.UploadFile);
-            }
+        var isFileUpload = submitSubmissionServiceModel.StringContent == null ||
+                           submitSubmissionServiceModel.ByteContent != null;
 
-            if (!submissionType.SubmissionType.AllowedFileExtensions!.Contains(
-                    submitSubmissionServiceModel.FileExtension!))
-            {
-                return ValidationResult.Invalid(ValidationMessages.Submission.InvalidExtension);
-            }
+        if (isFileUpload && !submissionType.SubmissionType.AllowedFileExtensions!.Contains(
+                submitSubmissionServiceModel.FileExtension!))
+        {
+            return ValidationResult.Invalid(ValidationMessages.Submission.InvalidExtension);
         }
 
-        if (submitSubmissionServiceModel.IsFileUpload && !submissionType.SubmissionType.AllowBinaryFilesUpload)
+        if (isFileUpload && !submissionType.SubmissionType.AllowBinaryFilesUpload)
         {
             return ValidationResult.Invalid(ValidationMessages.Submission.BinaryFilesNotAllowed);
         }
 
-        if (!submitSubmissionServiceModel.IsFileUpload && submissionType.SubmissionType.AllowBinaryFilesUpload)
+        if (!isFileUpload && submissionType.SubmissionType.AllowBinaryFilesUpload)
         {
             return ValidationResult.Invalid(ValidationMessages.Submission.TextUploadNotAllowed);
         }
@@ -86,7 +87,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTooLong);
         }
 
-        if (!submitSubmissionServiceModel.IsFileUpload && (submitSubmissionServiceModel.StringContent == null || submitSubmissionServiceModel.StringContent.Length < 5))
+        if (!isFileUpload && submitSubmissionServiceModel.StringContent!.Length < 5)
         {
             return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTooShort);
         }
