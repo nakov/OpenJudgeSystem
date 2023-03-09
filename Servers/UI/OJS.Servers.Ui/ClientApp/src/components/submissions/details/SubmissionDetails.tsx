@@ -13,7 +13,7 @@ import { usePageTitles } from '../../../hooks/use-page-titles';
 import concatClassNames from '../../../utils/class-names';
 import { preciseFormatDate } from '../../../utils/dates';
 import CodeEditor from '../../code-editor/CodeEditor';
-import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import Button, { ButtonSize, ButtonState, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import IconSize from '../../guidelines/icons/common/icon-sizes';
 import LeftArrowIcon from '../../guidelines/icons/LeftArrowIcon';
@@ -128,7 +128,31 @@ const SubmissionDetails = () => {
         })();
     }, [ currentSubmission, getSubmissionResults ]);
 
-    const renderRetestButton = useCallback(
+    const submissionsReloadBtnClassName = 'submissionReloadBtn';
+
+    const handleReloadClick = useCallback(async () => {
+        if (isNil(currentSubmission)) {
+            return;
+        }
+
+        const { problem: { id: problemId }, isOfficial, user: { id: userId } } = currentSubmission;
+
+        await getSubmissionResults(problemId, isOfficial, userId);
+    }, [ currentSubmission, getSubmissionResults ]);
+
+    const renderReloadButton = useMemo(
+        () => (
+            <Button
+              onClick={handleReloadClick}
+              text="Reload"
+              type={ButtonType.secondary}
+              className={submissionsReloadBtnClassName}
+            />
+        ),
+        [ handleReloadClick ],
+    );
+
+    const renderRetestButton = useMemo(
         () => {
             if (!canAccessAdministration) {
                 return null;
@@ -146,8 +170,17 @@ const SubmissionDetails = () => {
         },
         [ canAccessAdministration, getAdministrationRetestSubmissionInternalUrl ],
     );
+    const buttonsSection = useMemo(
+        () => (
+            <div className={styles.buttonsSection}>
+                { renderReloadButton }
+                { renderRetestButton }
+            </div>
+        ),
+        [ renderReloadButton, renderRetestButton ],
+    );
 
-    const renderSubmissionInfo = useCallback(
+    const renderSubmissionInfo = useMemo(
         () => {
             if (!canAccessAdministration || isNil(currentSubmission)) {
                 return null;
@@ -198,11 +231,11 @@ const SubmissionDetails = () => {
                   selectedSubmission={currentSubmission}
                   className={styles.submissionsList}
                 />
-                { renderRetestButton() }
-                { renderSubmissionInfo() }
+                { buttonsSection }
+                { renderSubmissionInfo }
             </div>
         ),
-        [ currentProblemSubmissionResults, currentSubmission, renderRetestButton, renderSubmissionInfo ],
+        [ buttonsSection, currentProblemSubmissionResults, currentSubmission, renderSubmissionInfo ],
     );
 
     const codeEditor = useMemo(
