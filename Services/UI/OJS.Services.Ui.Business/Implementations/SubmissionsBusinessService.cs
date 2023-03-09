@@ -319,8 +319,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var newSubmission = model.Map<Submission>();
         if (!model.IsFileUpload)
         {
-            var stringContent = model.StringContent ?? string.Empty;
-            newSubmission.ContentAsString = stringContent;
+            newSubmission.ContentAsString = model.StringContent!;
+        }
+        else
+        {
+            newSubmission.Content = model.ByteContent!;
         }
 
         newSubmission.ParticipantId = participant.Id;
