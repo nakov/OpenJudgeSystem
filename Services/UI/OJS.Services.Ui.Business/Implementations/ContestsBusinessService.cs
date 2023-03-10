@@ -140,15 +140,14 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (participant == null)
             {
-                participant = await this.AddNewParticipantToContestIfNotExists(contest!, model.IsOfficial, user.Id!, user.IsAdmin) ??
-                              new Participant() { Contest = contest!, };
+                participant = await this.AddNewParticipantToContestIfNotExists(contest!, model.IsOfficial, user.Id!, user.IsAdmin);
             }
 
-            var participationModel = participant.Map<ContestParticipationServiceModel>();
+            var participationModel = participant!.Map<ContestParticipationServiceModel>();
 
             participationModel.Contest.AllowedSubmissionTypes =
                 participationModel.Contest.AllowedSubmissionTypes.DistinctBy(st => st.Id);
-            participationModel.ParticipantId = participant.Id;
+            participationModel.ParticipantId = participant!.Id;
             participationModel.ContestIsCompete = model.IsOfficial;
             participationModel.UserSubmissionsTimeLimit = await this.participantsBusiness.GetParticipantLimitBetweenSubmissions(
                     participant.Id,
@@ -391,7 +390,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 !IsUserLecturerInContest(contest, userId) &&
                 !await this.contestsData.IsUserInExamGroupByContestAndUser(contest.Id, userId))
             {
-                return null;
+                throw new BusinessServiceException(ValidationMessages.Participant.NotRegisteredForExam);
             }
 
             return await this.participantsBusiness.CreateNewByContestByUserByIsOfficialAndIsAdmin(
