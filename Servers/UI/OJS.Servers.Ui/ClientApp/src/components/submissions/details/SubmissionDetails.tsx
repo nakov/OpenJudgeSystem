@@ -170,7 +170,7 @@ const SubmissionDetails = () => {
         },
         [ canAccessAdministration, getAdministrationRetestSubmissionInternalUrl ],
     );
-    const buttonsSection = useMemo(
+    const buttonsSection = useCallback(
         () => (
             <div className={styles.buttonsSection}>
                 { renderReloadButton }
@@ -230,8 +230,8 @@ const SubmissionDetails = () => {
                   items={currentProblemSubmissionResults}
                   selectedSubmission={currentSubmission}
                   className={styles.submissionsList}
+                  itemFunc={buttonsSection}
                 />
-                { buttonsSection }
                 { renderSubmissionInfo }
             </div>
         ),
