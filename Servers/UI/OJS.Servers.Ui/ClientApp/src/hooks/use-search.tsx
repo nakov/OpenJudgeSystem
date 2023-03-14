@@ -5,12 +5,12 @@ import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { IContestSearchType, IProblemSearchType, IUserSearchType, SearchParams } from '../common/search-types';
-import { IPagedResultType, ISearchResponseModel, IValidationType } from '../common/types';
+import { IPagedResultType, ISearchResponseModel } from '../common/types';
 import { IGetSearchResultsUrlParams } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
 import { useUrlParams } from './common/use-url-params';
-import { useHttp } from './use-http';
+import { IErrorDataType, useHttp } from './use-http';
 import { useLoading } from './use-loading';
 import { usePages } from './use-pages';
 import { useUrls } from './use-urls';
@@ -20,10 +20,10 @@ interface ISearchContext {
         contests: IContestSearchType[];
         problems: IProblemSearchType[];
         users: IUserSearchType[];
-        validationResult: IValidationType;
         isLoaded: boolean;
         searchValue: string;
         isVisible: boolean;
+        searchError: IErrorDataType | null;
     };
     actions: {
         clearSearchValue: () => void;
@@ -40,11 +40,6 @@ const defaultState = {
         contests: [] as IContestSearchType[],
         problems: [] as IProblemSearchType[],
         users: [] as IUserSearchType[],
-        validationResult: {
-            message: '',
-            isValid: true,
-            propertyName: '',
-        },
         isVisible: false,
     },
 };
@@ -55,7 +50,7 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
     const [ contests, setSearchedContests ] = useState(defaultState.state.contests);
     const [ problems, setSearchedProblems ] = useState(defaultState.state.problems);
     const [ users, setSearchedUsers ] = useState(defaultState.state.users);
-    const [ validationResult, setValidationResult ] = useState<IValidationType>(defaultState.state.validationResult);
+    const [ searchError, setSearchError ] = useState<IErrorDataType | null>(null);
     const [ getSearchResultsUrlParams, setGetSearchResultsUrlParams ] = useState<IGetSearchResultsUrlParams | null>();
     const [ isVisible, setIsVisible ] = useState<boolean>(defaultState.state.isVisible);
 
@@ -73,6 +68,7 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
     const {
         get,
         data,
+        error,
         isSuccess,
     } = useHttp<
         IGetSearchResultsUrlParams,
@@ -113,13 +109,18 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
                 return;
             }
 
+            if (!isNil(error)) {
+                setSearchError(error);
+
+                return;
+            }
+
             const searchResult = data as IPagedResultType<ISearchResponseModel>;
             const newData = searchResult.items as ISearchResponseModel[];
             const {
                 contests: searchedContests,
                 problems: searchedProblems,
                 users: searchedUsers,
-                validationResult: newValidationResult,
             } = first(newData) as ISearchResponseModel;
 
             const {
@@ -139,11 +140,10 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
             setSearchedContests(searchedContests);
             setSearchedProblems(searchedProblems);
             setSearchedUsers(searchedUsers);
-            setValidationResult(newValidationResult);
 
             populatePageInformation(newPagesInfo);
         },
-        [ data, populatePageInformation ],
+        [ data, error, populatePageInformation, searchError ],
     );
 
     const initiateSearchResultsUrlQuery = useCallback(
@@ -197,7 +197,7 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
                 contests,
                 problems,
                 users,
-                validationResult,
+                searchError,
                 isLoaded: isSuccess,
                 searchValue: urlParam,
                 isVisible,
@@ -213,7 +213,7 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
             contests,
             problems,
             users,
-            validationResult,
+            searchError,
             isSuccess,
             urlParam,
             isVisible,

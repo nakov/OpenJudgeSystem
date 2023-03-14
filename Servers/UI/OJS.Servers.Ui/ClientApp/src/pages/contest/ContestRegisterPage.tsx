@@ -55,30 +55,29 @@ const ContestRegisterPage = () => {
         [ contestId, navigate, hashParam, participationType ],
     );
 
-            (async () => {
+    useEffect(() => {
+        (async () => {
             if (isEmpty(contestId)) {
                 return;
             }
 
             await register(internalContest);
         })();
-    },
-        [ internalContest, contestIdToNumber, isParticipationOfficial, participationType, register ],
-    );
+    }, [ internalContest, contestIdToNumber, isParticipationOfficial, participationType, register, contestId ]);
 
-    useEffect(() => {
-        if (isNil(contestId) || isNil(participationType)) {
-            return;
-        }
-
-        if (doesNotRequirePassword || isSubmittedPasswordValid) {
-            navigateToPage();
+    useEffect(
+        () => {
+            if (isNil(contestId) || isNil(participationType)) {
+                return;
             }
-    }, 
-    	[ contestId, doesNotRequirePassword, isSubmittedPasswordValid, navigateToPage, participationType ],
+
+            if (doesNotRequirePassword || isSubmittedPasswordValid) {
+                navigateToPage();
+            }
+        },
+        [ contestId, doesNotRequirePassword, isSubmittedPasswordValid, navigateToPage, participationType ],
     );
 
-    
     return (
         <div className={styles.container}>
             {

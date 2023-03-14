@@ -116,7 +116,6 @@ interface ISearchResponseModel {
     contests: IContestSearchType[];
     problems: IProblemSearchType[];
     users: IUserSearchType[];
-    validationResult: IValidationType;
 }
 
 // eslint-disable-next-line import/prefer-default-export

@@ -152,23 +152,16 @@ const getHomeStatisticsUrl = () => `${baseApiUrl}/StatisticsPreview/GetForHome`;
 
 // Search
 const getSearchResults = ({ searchTerm, page, selectedTerms }: IGetSearchResultsUrlParams) => {
-    const searchQuery = isNil(searchTerm)
-        ? ''
-        : `${SearchParams.search}=${searchTerm}`;
+    const searchQuery = `${SearchParams.search}=${searchTerm}`;
 
-    const pageQuery = isNil(page)
-        ? ''
-        : `page=${page}`;
+    const pageQuery = `page=${page}`;
 
-    console.log(selectedTerms);
-    const selectedTermQuery = `${selectedTerms
+    const selectedTermQuery = `&${selectedTerms
         .map(({ key, value }) => `${key}=${value}`)
         .join('&')
     }`;
 
-    console.log(selectedTermQuery);
-
-    return `${baseApiUrl}/Search/GetSearchResults?${searchQuery}&${selectedTermQuery}&${pageQuery}`;
+    return `${baseApiUrl}/Search/GetSearchResults?${searchQuery}${selectedTermQuery}&${pageQuery}`;
 };
 
 const UrlsProvider = ({ children }: IUrlsProviderProps) => {

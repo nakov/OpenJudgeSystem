@@ -1,6 +1,4 @@
 /* eslint-disable import/prefer-default-export */
-
-import { IUrlParam } from './common-types';
 import { IFilter, ISort } from './contest-types';
 
 interface IStartContestUrlParams {

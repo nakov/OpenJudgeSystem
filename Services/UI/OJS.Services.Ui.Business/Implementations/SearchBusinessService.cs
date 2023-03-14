@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Models.Search;
 using SoftUni.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
+using Infrastructure.Exceptions;
 using Validation;
 
 public class SearchBusinessService : ISearchBusinessService
@@ -31,18 +32,19 @@ public class SearchBusinessService : ISearchBusinessService
     public async Task<PagedResult<SearchForListingServiceModel>> GetSearchResults(
         SearchServiceModel model)
     {
-        model.ItemsPerPage = DefaultItemsPerPage;
-        model.SearchTerm = model.SearchTerm.Trim();
+        model.SearchTerm = model.SearchTerm?.Trim();
 
         var validationResult = this.searchValidationService.GetValidationResult(model.SearchTerm);
 
-        var searchListingModel = new SearchForListingServiceModel();
-        if (validationResult.IsValid)
+        if (!validationResult.IsValid)
         {
-            await this.PopulateSelectedConditionValues(model, searchListingModel);
+            throw new BusinessServiceException(validationResult.Message);
         }
 
-        searchListingModel.ValidationResult = validationResult;
+        var searchListingModel = new SearchForListingServiceModel();
+        model.ItemsPerPage = DefaultItemsPerPage;
+
+        await this.PopulateSelectedConditionValues(model, searchListingModel);
 
         var modelResult = model.Map<PagedResult<SearchForListingServiceModel>>();
         modelResult.Items = new[] { searchListingModel, };

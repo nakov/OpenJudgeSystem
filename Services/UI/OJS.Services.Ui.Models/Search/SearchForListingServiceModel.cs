@@ -14,6 +14,4 @@ public class SearchForListingServiceModel
 
     public IEnumerable<UserSearchServiceModel> Users { get; set; }
         = Enumerable.Empty<UserSearchServiceModel>();
-
-    public ValidationResult ValidationResult { get; set; } = null!;
 }

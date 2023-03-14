@@ -6,7 +6,7 @@ using SoftUni.AutoMapper.Infrastructure.Models;
 using SoftUni.Common.Models;
 public class SearchServiceModel : IMapExplicitly
 {
-    public string SearchTerm { get; set; } = null!;
+    public string? SearchTerm { get; set; }
 
     public int PageNumber { get; set; }
 

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import isEmpty from 'lodash/isEmpty';
+import isNil from 'lodash/isNil';
 
 import { IContestSearchType, IProblemSearchType, IUserSearchType } from '../../common/search-types';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
@@ -22,7 +23,7 @@ const SearchPage = () => {
             contests,
             problems,
             users,
-            validationResult,
+            searchError,
             searchValue,
             isLoaded,
         },
@@ -68,18 +69,30 @@ const SearchPage = () => {
         [ changePage ],
     );
 
-    const renderErrorMessage = useCallback(
-        () => (
+    const renderErrorHeading = useCallback(
+        (message: string) => (
             <div className={styles.headingSearch}>
                 <Heading
                   type={HeadingType.primary}
                   className={styles.searchHeading}
                 >
-                    {validationResult.message}
+                    {message}
                 </Heading>
             </div>
         ),
-        [ validationResult ],
+        [],
+    );
+
+    const renderErrorMessage = useCallback(
+        () => {
+            if (!isNil(searchError)) {
+                const { detail } = searchError;
+                return renderErrorHeading(detail);
+            }
+
+            return null;
+        },
+        [ renderErrorHeading, searchError ],
     );
 
     const renderContest = useCallback(
@@ -197,10 +210,10 @@ const SearchPage = () => {
     );
 
     const renderPage = useCallback(
-        () => validationResult.isValid
+        () => isNil(searchError)
             ? renderElements()
             : renderErrorMessage(),
-        [ renderElements, renderErrorMessage, validationResult.isValid ],
+        [ renderElements, renderErrorMessage, searchError ],
     );
 
     return (

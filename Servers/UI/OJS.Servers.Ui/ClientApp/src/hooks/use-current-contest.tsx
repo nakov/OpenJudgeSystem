@@ -214,22 +214,25 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         startLoading, stopLoading,
     ]);
 
-    useEffect(() => {
-        if (isNil(contestToStart)) {
-            return;
-        }
+    useEffect(
+        () => {
+            if (isNil(contestToStart)) {
+                return;
+            }
 
-        const { id } = contestToStart;
-        if (Number.isNaN(id)) {
-            return;
-        }
+            const { id } = contestToStart;
+            if (Number.isNaN(id)) {
+                return;
+            }
 
-        (async () => {
-            startLoading();
-            await startContest();
-            stopLoading();
-        })();
-    }, [ contestToStart, startContest, startLoading, stopLoading ]);
+            (async () => {
+                startLoading();
+                await startContest();
+                stopLoading();
+            })();
+        },
+        [ contestToStart, startContest, startLoading, stopLoading ],
+    );
 
     useEffect(
         () => {
