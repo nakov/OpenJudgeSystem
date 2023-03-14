@@ -118,9 +118,9 @@ const SubmissionDetails = () => {
             return;
         }
 
-        const { problem: { id: problemId }, isOfficial, user: { id: userId } } = currentSubmission;
+        const { problem: { id: problemId }, isOfficial } = currentSubmission;
 
-        await getSubmissionResults(problemId, isOfficial, userId);
+        await getSubmissionResults(problemId, isOfficial);
     }, [ currentSubmission, getSubmissionResults ]);
 
     const renderReloadButton = useMemo(
@@ -153,6 +153,7 @@ const SubmissionDetails = () => {
         },
         [ canAccessAdministration, getAdministrationRetestSubmissionInternalUrl ],
     );
+
     const buttonsSection = useCallback(
         () => (
             <div className={styles.buttonsSection}>
@@ -213,7 +214,7 @@ const SubmissionDetails = () => {
                   items={currentProblemSubmissionResults}
                   selectedSubmission={currentSubmission}
                   className={styles.submissionsList}
-                  itemFunc={buttonsSection}
+                  externalElements={buttonsSection}
                 />
                 { renderSubmissionInfo }
             </div>

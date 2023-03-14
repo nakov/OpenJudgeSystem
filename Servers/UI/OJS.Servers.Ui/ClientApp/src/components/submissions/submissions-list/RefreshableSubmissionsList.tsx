@@ -3,14 +3,14 @@ import React from 'react';
 import SubmissionsList, { ISubmissionsListProps } from './SubmissionsList';
 
 interface IRefreshableSubmissionsListProps extends ISubmissionsListProps{
-    itemFunc?: () => React.ReactElement;
+    externalElements?: () => React.ReactElement;
 }
 
 const RefreshableSubmissionsList = ({
     items,
     selectedSubmission,
     className = '',
-    itemFunc,
+    externalElements,
 }: IRefreshableSubmissionsListProps) => (
     <>
         <SubmissionsList
@@ -18,7 +18,7 @@ const RefreshableSubmissionsList = ({
           selectedSubmission={selectedSubmission}
           className={className}
         />
-        {itemFunc?.()}
+        {externalElements?.()}
     </>
 );
 export default RefreshableSubmissionsList;
