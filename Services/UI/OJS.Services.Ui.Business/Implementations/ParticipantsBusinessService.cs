@@ -36,7 +36,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
         bool isOfficial,
         bool isAdmin)
     {
-        var participant = new Participant(contest.Id, userId, isOfficial);
+        var participant = new Participant(contest.Id, userId, isOfficial) { Contest = contest };
 
         if (contest.IsOnline && isOfficial)
         {

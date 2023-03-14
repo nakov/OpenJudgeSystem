@@ -83,8 +83,8 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     const {
         post: submitCode,
-        error,
         isSuccess,
+        error: errorSubmitCode,
     } = useHttp<null, null, ISubmitCodeTypeParametersType>({ url: getSubmitUrl });
 
     const {
@@ -193,13 +193,15 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     useEffect(
         () => {
-            if (!isNil(error)) {
-                setSubmitMessage(error);
+            if (!isNil(errorSubmitCode)) {
+                const { detail } = errorSubmitCode;
+                setSubmitMessage(detail);
                 return;
             }
 
             if (!isNil(errorSubmitFile)) {
-                setSubmitMessage(errorSubmitFile);
+                const { detail } = errorSubmitFile;
+                setSubmitMessage(detail);
                 return;
             }
 
@@ -208,9 +210,9 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             })();
         },
         [
-            error,
-            errorSubmitFile,
             loadSubmissions,
+            errorSubmitCode,
+            errorSubmitFile,
         ],
     );
 

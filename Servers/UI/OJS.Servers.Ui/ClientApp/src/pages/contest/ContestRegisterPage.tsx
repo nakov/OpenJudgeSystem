@@ -42,7 +42,10 @@ const ContestRegisterPage = () => {
         actions: { register },
     } = useCurrentContest();
 
-    const doesNotRequirePassword = useMemo(() => !isNil(requirePassword) && !requirePassword, [ requirePassword ]);
+    const doesNotRequirePassword = useMemo(
+        () => !isNil(requirePassword) && !requirePassword,
+        [ requirePassword ],
+    );
     const isSubmittedPasswordValid = useMemo(() => !isNil(isPasswordValid) && isPasswordValid, [ isPasswordValid ]);
 
     const navigateToPage = useCallback(
@@ -52,15 +55,16 @@ const ContestRegisterPage = () => {
         [ contestId, navigate, hashParam, participationType ],
     );
 
-    useEffect(() => {
-        (async () => {
+            (async () => {
             if (isEmpty(contestId)) {
                 return;
             }
 
             await register(internalContest);
         })();
-    }, [ internalContest, contestIdToNumber, isParticipationOfficial, participationType, register, contestId ]);
+    },
+        [ internalContest, contestIdToNumber, isParticipationOfficial, participationType, register ],
+    );
 
     useEffect(() => {
         if (isNil(contestId) || isNil(participationType)) {
@@ -69,9 +73,12 @@ const ContestRegisterPage = () => {
 
         if (doesNotRequirePassword || isSubmittedPasswordValid) {
             navigateToPage();
-        }
-    }, [ contestId, doesNotRequirePassword, isSubmittedPasswordValid, navigateToPage, participationType ]);
+            }
+    }, 
+    	[ contestId, doesNotRequirePassword, isSubmittedPasswordValid, navigateToPage, participationType ],
+    );
 
+    
     return (
         <div className={styles.container}>
             {

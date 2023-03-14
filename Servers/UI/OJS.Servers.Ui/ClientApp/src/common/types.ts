@@ -83,18 +83,6 @@ interface IRegisterForContestResponseType {
     requirePassword: boolean;
 }
 
-interface IValidationType {
-    message: string;
-    isValid: boolean;
-    propertyName: string;
-}
-
-enum ValidationPropertyType {
-    UserNotLoggedIn = 'UserNotLoggedIn',
-    SubmissionNotFound = 'SubmissionNotFound',
-    NotAuthorOfSubmission = 'NotAuthorOfSubmission',
-}
-
 interface IStartParticipationResponseType {
     contest: IContestType;
     participantId: number;
@@ -104,7 +92,6 @@ interface IStartParticipationResponseType {
     userSubmissionsTimeLimit: number;
     totalParticipantsCount: number;
     activeParticipantsCount: number;
-    validationResult: IValidationType;
 }
 
 interface IPagedResultType<TItem> {
@@ -137,7 +124,6 @@ export type {
     IIndexContestsType,
     IGetContestsForIndexResponseType,
     IRegisterForContestResponseType,
-    IValidationType,
     IStartParticipationResponseType,
     IContestType,
     IProblemType,
@@ -148,5 +134,3 @@ export type {
     IUserPermissionsType,
     ISearchResponseModel,
 };
-
-export { ValidationPropertyType };
