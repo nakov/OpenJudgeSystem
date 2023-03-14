@@ -24,9 +24,9 @@ public class SearchController : BaseApiController
     /// <returns>A page with contests, problems and users based on the search.</returns>
     [HttpGet]
     [ProducesResponseType(typeof(SearchResponseModel), Status200OK)]
-    public async Task<IActionResult> GetSearchResults([FromQuery] SearchRequestModel? model)
+    public async Task<IActionResult> GetSearchResults([FromQuery] SearchRequestModel model)
         => await this.searchBusinessService
-            .GetSearchResults(model?.Map<SearchServiceModel>())
+            .GetSearchResults(model.Map<SearchServiceModel>())
             .Map<PagedResultResponse<SearchResponseModel>>()
             .ToOkResult();
 }

@@ -6,13 +6,17 @@ using SoftUni.AutoMapper.Infrastructure.Models;
 using SoftUni.Common.Models;
 public class SearchServiceModel : IMapExplicitly
 {
-    public string? SearchTerm { get; set; } = null!;
+    public string SearchTerm { get; set; } = null!;
 
     public int PageNumber { get; set; }
 
-    public SearchSelectType SelectedTerm { get; set; }
+    public bool Contests { get; set; }
 
-    public int? ItemsPerPage { get; set; }
+    public bool Problems { get; set; }
+
+    public bool Users { get; set; }
+
+    public int ItemsPerPage { get; set; }
 
     public int TotalItemsCount { get; set; }
 
@@ -41,7 +45,7 @@ public class SearchServiceModel : IMapExplicitly
                 opt => opt.MapFrom(
                     src => src.TotalItemsCount <= src.ItemsPerPage
                         ? 1
-                        : (int)Math.Ceiling(src.TotalItemsCount / (double)src.ItemsPerPage!.Value)))
+                        : (int)Math.Ceiling(src.TotalItemsCount / (double)src.ItemsPerPage)))
             .ForAllOtherMembers(
                 dest => dest.Ignore());
 }

@@ -9,7 +9,7 @@ import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guide
 
 import SearchProblemTooltip from './SearchProblemTooltip';
 
-import styles from './SearchProblems.module.scss';
+import styles from './SearchProblem.module.scss';
 
 interface ISearchProblem {
     problem: IProblemSearchType;

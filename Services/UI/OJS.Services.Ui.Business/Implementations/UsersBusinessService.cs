@@ -1,6 +1,5 @@
 ﻿namespace OJS.Services.Ui.Business.Implementations
 {
-    using System.Collections.Generic;
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
@@ -35,18 +34,22 @@
                 .MapCollection<UserProfileServiceModel>()
                 .FirstOrDefaultAsync();
 
-        public async Task<(IEnumerable<TServiceModel>, int)> GetSearchUsersByUsername<TServiceModel>(SearchServiceModel model)
+        public async Task<UserSearchServiceResultModel> GetSearchUsersByUsername(SearchServiceModel model)
         {
-            var allUsers = await this.usersProfileData
+            var modelResult = new UserSearchServiceResultModel();
+
+            var allUsersQueryable = this.usersProfileData
                 .GetAll()
-                .Where(u => u.UserName.Contains(model.SearchTerm!))
-                .ToListAsync();
+                .Where(u => u.UserName.Contains(model.SearchTerm!));
 
-            var searchUsers = await allUsers
-                .MapCollection<TServiceModel>()
-                .ToPagedListAsync(model.PageNumber, model.ItemsPerPage!.Value);
+            var searchUsers = await allUsersQueryable
+                .MapCollection<UserSearchServiceModel>()
+                .ToPagedListAsync(model.PageNumber, model.ItemsPerPage);
 
-            return (searchUsers, allUsers.Count);
+            modelResult.Users = searchUsers;
+            modelResult.TotalUsers = allUsersQueryable.Count();
+
+            return modelResult;
         }
 
         public async Task<bool> IsLoggedInUserAdmin(ClaimsPrincipal userPrincipal)

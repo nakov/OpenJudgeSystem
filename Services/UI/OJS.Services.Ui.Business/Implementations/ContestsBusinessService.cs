@@ -166,18 +166,22 @@ namespace OJS.Services.Ui.Business.Implementations
             return participationModel;
         }
 
-        public async Task<(IEnumerable<TServiceModel>, int)> GetSearchContestsByName<TServiceModel>(
+        public async Task<ContestSearchServiceResultModel> GetSearchContestsByName(
             SearchServiceModel model)
         {
-            var allContests = await this.contestsData.GetAllNonDeletedContests()
-                .Where(c => c.Name!.Contains(model.SearchTerm!))
-                .ToListAsync();
+            var modelResult = new ContestSearchServiceResultModel();
 
-            var searchContests = await allContests
-                .MapCollection<TServiceModel>()
-                .ToPagedListAsync(model.PageNumber, model.ItemsPerPage!.Value);
+            var allContestsQueryable = this.contestsData.GetAllNonDeletedContests()
+                .Where(c => c.Name!.Contains(model.SearchTerm!));
 
-            return (searchContests, allContests.Count);
+            var searchContests = await allContestsQueryable
+                .MapCollection<ContestSearchServiceModel>()
+                .ToPagedListAsync(model.PageNumber, model.ItemsPerPage);
+
+            modelResult.Contests = searchContests;
+            modelResult.TotalContestsCount = allContestsQueryable.Count();
+
+            return modelResult;
         }
 
         public Task<bool> IsContestIpValidByContestAndIp(int contestId, string ip)

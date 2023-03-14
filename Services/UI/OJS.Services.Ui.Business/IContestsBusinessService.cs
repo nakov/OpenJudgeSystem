@@ -23,7 +23,7 @@ namespace OJS.Services.Ui.Business
 
         Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPracticable();
 
-        Task<(IEnumerable<TServiceModel>, int)> GetSearchContestsByName<TServiceModel>(SearchServiceModel model);
+        Task<ContestSearchServiceResultModel> GetSearchContestsByName(SearchServiceModel model);
 
         Task<ContestServiceModel> GetContestByProblem(int problemId);
 

@@ -29,11 +29,10 @@ public class SearchBusinessService : ISearchBusinessService
     }
 
     public async Task<PagedResult<SearchForListingServiceModel>> GetSearchResults(
-        SearchServiceModel? model)
+        SearchServiceModel model)
     {
-        model ??= new SearchServiceModel();
-        model.ItemsPerPage ??= DefaultItemsPerPage;
-        model.SearchTerm = model.SearchTerm?.Trim();
+        model.ItemsPerPage = DefaultItemsPerPage;
+        model.SearchTerm = model.SearchTerm.Trim();
 
         var validationResult = this.searchValidationService.GetValidationResult(model.SearchTerm);
 
@@ -46,10 +45,7 @@ public class SearchBusinessService : ISearchBusinessService
         searchListingModel.ValidationResult = validationResult;
 
         var modelResult = model.Map<PagedResult<SearchForListingServiceModel>>();
-        modelResult.Items = new[]
-            {
-                searchListingModel,
-            };
+        modelResult.Items = new[] { searchListingModel, };
 
         return modelResult;
     }
@@ -57,43 +53,38 @@ public class SearchBusinessService : ISearchBusinessService
     private static int CalculateMaxItemsCount(int usersCount, int contestsCount, int problemsCount)
         => Math.Max(Math.Max(usersCount, contestsCount), problemsCount);
 
-    private async Task PopulateSelectedConditionValues(SearchServiceModel model, SearchForListingServiceModel searchListingModel)
+    private async Task PopulateSelectedConditionValues(
+        SearchServiceModel model,
+        SearchForListingServiceModel searchListingModel)
     {
-        if (model.SelectedTerm == SearchSelectType.All)
+        ContestSearchServiceResultModel contestsResult = new ();
+        ProblemSearchServiceResultModel problemsResult = new ();
+        UserSearchServiceResultModel usersResult = new ();
+
+        if (model.Contests)
         {
-            var (users, usersCount) = await this.usersBusinessService.GetSearchUsersByUsername<UserSearchServiceModel>(model);
-            var (contests, contestsCount) = await this.contestsBusinessService.GetSearchContestsByName<ContestSearchServiceModel>(model);
-            var (problems, problemsCount) = await this.problemsBusinessService.GetSearchProblemsByName(model);
+            contestsResult = await this.contestsBusinessService.GetSearchContestsByName(model);
 
-            searchListingModel.Contests = contests;
-            searchListingModel.Problems = problems;
-            searchListingModel.Users = users;
-
-            model.TotalItemsCount = CalculateMaxItemsCount(usersCount, contestsCount, problemsCount);
+            searchListingModel.Contests = contestsResult.Contests;
         }
-        else if (model.SelectedTerm == SearchSelectType.Contests)
+
+        if (model.Problems)
         {
-            var (contests, contestsCount) = await this.contestsBusinessService.GetSearchContestsByName<ContestSearchServiceModel>(model);
+            problemsResult = await this.problemsBusinessService.GetSearchProblemsByName(model);
 
-            searchListingModel.Contests = contests;
-
-            model.TotalItemsCount = contestsCount;
+            searchListingModel.Problems = problemsResult.Problems;
         }
-        else if (model.SelectedTerm == SearchSelectType.Problems)
+
+        if (model.Users)
         {
-            var (problems, problemsCount) = await this.problemsBusinessService.GetSearchProblemsByName(model);
+            usersResult = await this.usersBusinessService.GetSearchUsersByUsername(model);
 
-            searchListingModel.Problems = problems;
-
-            model.TotalItemsCount = problemsCount;
+            searchListingModel.Users = usersResult.Users;
         }
-        else if (model.SelectedTerm == SearchSelectType.Users)
-        {
-            var (users, usersCount) = await this.usersBusinessService.GetSearchUsersByUsername<UserSearchServiceModel>(model);
 
-            searchListingModel.Users = users;
-
-            model.TotalItemsCount = usersCount;
-        }
+        model.TotalItemsCount = CalculateMaxItemsCount(
+            usersResult.TotalUsers,
+            contestsResult.TotalContestsCount,
+            problemsResult.TotalProblemsCount);
     }
 }

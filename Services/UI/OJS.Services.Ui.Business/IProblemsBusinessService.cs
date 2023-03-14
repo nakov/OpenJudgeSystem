@@ -18,7 +18,7 @@ namespace OJS.Services.Ui.Business
 
         Task<ServiceResult> CopyToContestByIdByContestAndProblemGroup(int id, int contestId, int? problemGroupId);
 
-        Task<(IEnumerable<ProblemSearchServiceModel>, int)> GetSearchProblemsByName(SearchServiceModel model);
+        Task<ProblemSearchServiceResultModel> GetSearchProblemsByName(SearchServiceModel model);
 
         void ValidateProblemForParticipant(
             Participant participant,

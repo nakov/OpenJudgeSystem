@@ -1,34 +1,49 @@
-import React, { useCallback, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useCallback, useState } from 'react';
 import { createSearchParams, useNavigate } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 
-import Form, { FormType } from '../../components/guidelines/forms/Form';
+import { Button, ButtonType } from '../../components/guidelines/buttons/Button';
+import Form from '../../components/guidelines/forms/Form';
 import FormControl, {
     FormControlType,
     IFormControlOnChangeValueType,
 } from '../../components/guidelines/forms/FormControl';
+import SearchIcon from '../../components/guidelines/icons/SearchIcon';
 import { useSearch } from '../../hooks/use-search';
 
 import styles from './SearchBar.module.scss';
 
+enum FieldNameType {
+    search = 'Search',
+    checkbox = 'Radio',
+}
+
+enum CheckboxSearchValues {
+    contests = 'Contests',
+    problems = 'Problems',
+    users = 'Users',
+}
+
 const defaultState = {
     state: {
         searchValue: '',
-        selectedTerm: 'All',
+        selectedTerm: [
+            `${CheckboxSearchValues.contests}`,
+            `${CheckboxSearchValues.problems}`,
+            `${CheckboxSearchValues.users}`,
+        ],
     },
 };
 
-const searchFieldName = 'Search';
-const radioFiledName = 'Radio';
 const SearchBar = () => {
     const [ searchParam, setSearchParam ] = useState<string>(defaultState.state.searchValue);
-    const [ selectedTerm, setSelectedTerm ] = useState<string>(defaultState.state.selectedTerm);
+    const [ selectedTerms, setSelectedTerms ] = useState(defaultState.state.selectedTerm);
 
     const { state: { isVisible } } = useSearch();
     const navigate = useNavigate();
 
     const handleOnChangeUpdateSearch = useCallback(
-        (searchInput?: IFormControlOnChangeValueType) => {
+        (searchInput?: IFormControlOnChangeValueType | ChangeEvent<HTMLInputElement>) => {
             setSearchParam(searchInput as string);
         },
         [],
@@ -37,14 +52,20 @@ const SearchBar = () => {
     const handleSubmit = useCallback(
         () => {
             if (!isEmpty(searchParam)) {
-                const params = { searchTerm: `${searchParam}`, selectedTerm: `${selectedTerm}` };
+                const params = {
+                    searchTerm: `${searchParam}`,
+                    ...selectedTerms.reduce(
+                        (obj, term) => ({ ...obj, [term]: 'true' }),
+                        {},
+                    ),
+                };
                 navigate({
                     pathname: '/search',
                     search: `?${createSearchParams(params)}`,
                 });
             }
         },
-        [ navigate, searchParam, selectedTerm ],
+        [ navigate, searchParam, selectedTerms ],
     );
 
     const handleOnKeyDown = useCallback(
@@ -56,11 +77,19 @@ const SearchBar = () => {
         [ handleSubmit ],
     );
 
-    const handleSelectedRadioValue = useCallback(
-        (valueSelected?: IFormControlOnChangeValueType) => {
-            setSelectedTerm(valueSelected as string);
+    const handleSelectedCheckboxValue = useCallback(
+        (event: FormEvent<HTMLInputElement>) => {
+            const { currentTarget: { value: currentValue } } = event;
+
+            if (selectedTerms.includes(currentValue)) {
+                const newSelectedItems = selectedTerms.filter((term) => term !== currentValue);
+
+                setSelectedTerms(newSelectedItems);
+            } else {
+                setSelectedTerms([ ...selectedTerms, currentValue ]);
+            }
         },
-        [],
+        [ selectedTerms ],
     );
 
     return (
@@ -71,24 +100,66 @@ const SearchBar = () => {
                       className={styles.search}
                       onSubmit={handleSubmit}
                       submitButtonClassName={styles.searchButton}
-                      type={FormType.search}
+                      internalButton
                     >
                         <FormControl
                           className={styles.searchInput}
-                          name={searchFieldName}
+                          name={FieldNameType.search}
                           type={FormControlType.search}
-                          labelText={searchFieldName}
+                          labelText={FieldNameType.search}
                           onChange={handleOnChangeUpdateSearch}
                           onKeyDown={handleOnKeyDown}
                           value={searchParam}
                         />
-                        <FormControl
-                          className={styles.radioContainer}
-                          name={radioFiledName}
-                          type={FormControlType.radio}
-                          onChange={handleSelectedRadioValue}
-                          value={selectedTerm}
-                        />
+                        <Button
+                          onClick={handleSubmit}
+                          type={ButtonType.submit}
+                          internalClassName={styles.searchButton}
+                        >
+                            <SearchIcon />
+                        </Button>
+                        <div className={styles.checkboxContainer}>
+                            <FormControl
+                              className={styles.checkbox}
+                              name={FieldNameType.checkbox}
+                              type={FormControlType.checkbox}
+                              value={CheckboxSearchValues.contests}
+                              checked
+                              onClick={handleSelectedCheckboxValue}
+                            />
+                            <span className={styles.checkboxText}>
+                                {/* <input */}
+                                {/*  type={FormControlType.checkbox} */}
+                                {/*  value={CheckboxSearchValues.contests} */}
+                                {/* checked={selectedTerms.includes
+                                (CheckboxSearchValues.contests)} */}
+                                {/*  onChange={handleSelectedCheckboxValues} */}
+                                {/* /> */}
+                                Contests
+                            </span>
+                            <FormControl
+                              className={styles.checkbox}
+                              name={FieldNameType.checkbox}
+                              type={FormControlType.checkbox}
+                              value={CheckboxSearchValues.problems}
+                              checked
+                              onClick={handleSelectedCheckboxValue}
+                            />
+                            <span className={styles.checkboxText}>
+                                Problems
+                            </span>
+                            <FormControl
+                              className={styles.checkbox}
+                              name={FieldNameType.checkbox}
+                              type={FormControlType.checkbox}
+                              value={CheckboxSearchValues.users}
+                              checked
+                              onClick={handleSelectedCheckboxValue}
+                            />
+                            <span className={styles.checkboxText}>
+                                Users
+                            </span>
+                        </div>
                     </Form>
                 </div>
             )

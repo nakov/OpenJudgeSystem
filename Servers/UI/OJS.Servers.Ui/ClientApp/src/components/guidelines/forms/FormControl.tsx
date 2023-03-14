@@ -11,13 +11,6 @@ enum ButtonKeyControl {
     enter = 'Enter'
 }
 
-enum RadioSearchValues {
-    all = 'All',
-    contests = 'Contests',
-    problems = 'Problems',
-    users = 'Users',
-}
-
 enum FormControlType {
     'radio' = 'radio',
     'checkbox' = 'checkbox',
@@ -43,6 +36,7 @@ interface IFormControlProps extends IHaveOptionalClassName {
     onChange?: ((value?: IFormControlOnChangeValueType) => void) | null;
     onInput?: ((value?: string) => void) | null;
     onKeyDown?: (ev:React.KeyboardEvent<HTMLInputElement>) => void;
+    onClick?: (value: FormEvent<HTMLInputElement>) => void;
     checked?: boolean;
     id?: string;
 }
@@ -95,6 +89,7 @@ const FormControl = ({
     /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
     onInput = null,
     onKeyDown,
+    onClick,
     className = '',
     containerClassName = '',
     labelText = '',
@@ -106,7 +101,6 @@ const FormControl = ({
     const [ formControlValue, setFormControlValue ] = useState(value);
 
     const [ isChecked, setIsChecked ] = useState<boolean>(checked);
-    const [ selectedValue, setSelectedValue ] = useState<string>(value);
 
     const componentClassName = concatClassNames(type !== FormControlType.checkbox
         ? styles.formControl
@@ -117,10 +111,6 @@ const FormControl = ({
             setIsChecked(!isChecked);
 
             return;
-        }
-
-        if (type === FormControlType.radio) {
-            setSelectedValue(ev.target.value);
         }
 
         setFormControlValue(ev.target.value);
@@ -175,7 +165,9 @@ const FormControl = ({
                   className={componentClassName}
                   name={name}
                   id={id}
+                  value={value}
                   checked={isChecked}
+                  onClick={onClick}
                   onChange={handleOnChange}
                 />
             );
@@ -200,49 +192,6 @@ const FormControl = ({
             );
         }
 
-        if (type === FormControlType.radio) {
-            return (
-                <div className={componentClassName}>
-                    <label>
-                        All
-                        <input
-                          type={FormControlType.radio}
-                          value={RadioSearchValues.all}
-                          checked={selectedValue === RadioSearchValues.all}
-                          onChange={handleOnChange}
-                        />
-                    </label>
-                    <label>
-                        Contests
-                        <input
-                          type={FormControlType.radio}
-                          value={RadioSearchValues.contests}
-                          checked={selectedValue === RadioSearchValues.contests}
-                          onChange={handleOnChange}
-                        />
-                    </label>
-                    <label>
-                        Problems
-                        <input
-                          type={FormControlType.radio}
-                          value={RadioSearchValues.problems}
-                          checked={selectedValue === RadioSearchValues.problems}
-                          onChange={handleOnChange}
-                        />
-                    </label>
-                    <label>
-                        Users
-                        <input
-                          type={FormControlType.radio}
-                          value={RadioSearchValues.users}
-                          checked={selectedValue === RadioSearchValues.users}
-                          onChange={handleOnChange}
-                        />
-                    </label>
-                </div>
-            );
-        }
-
         return (
             <input
               type={type}
@@ -259,7 +208,7 @@ const FormControl = ({
         );
     };
 
-    if (type === FormControlType.search || type === FormControlType.radio) {
+    if (type === FormControlType.search) {
         return generateFormControl();
     }
 

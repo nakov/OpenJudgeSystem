@@ -6,8 +6,8 @@ import Heading, { HeadingType } from '../../components/guidelines/headings/Headi
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
-import SearchProblem from '../../components/search/search-problems/SearchProblems';
-import SearchUser from '../../components/search/search-users/SearchUsers';
+import SearchProblem from '../../components/search/search-problems/SearchProblem';
+import SearchUser from '../../components/search/search-users/SearchUser';
 import { useHashUrlParams } from '../../hooks/common/use-hash-url-params';
 import { usePageTitles } from '../../hooks/use-page-titles';
 import { usePages } from '../../hooks/use-pages';
@@ -36,7 +36,10 @@ const SearchPage = () => {
         changePage,
     } = usePages();
     const { actions: { setPageTitle } } = usePageTitles();
-    const { state: { params }, actions: { clearHash } } = useHashUrlParams();
+    const {
+        state: { params },
+        actions: { clearHash },
+    } = useHashUrlParams();
 
     useEffect(() => {
         if (!isEmpty(params)) {

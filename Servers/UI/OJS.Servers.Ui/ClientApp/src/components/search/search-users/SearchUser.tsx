@@ -3,7 +3,7 @@ import React from 'react';
 import { IUserSearchType } from '../../../common/search-types';
 import concatClassNames from '../../../utils/class-names';
 
-import styles from './SearchUsers.module.scss';
+import styles from './SearchUser.module.scss';
 
 interface ISearchUser {
     user: IUserSearchType;

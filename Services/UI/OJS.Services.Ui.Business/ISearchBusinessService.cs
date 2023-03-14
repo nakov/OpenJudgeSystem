@@ -7,5 +7,5 @@ using Models.Search;
 
 public interface ISearchBusinessService : IService
 {
-    Task<PagedResult<SearchForListingServiceModel>> GetSearchResults(SearchServiceModel? model);
+    Task<PagedResult<SearchForListingServiceModel>> GetSearchResults(SearchServiceModel model);
 }

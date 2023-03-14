@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import first from 'lodash/first';
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
@@ -80,11 +81,6 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
             parameters: getSearchResultsUrlParams,
         });
 
-    const encodeUrlToURIComponent = useCallback(
-        (url: string) => encodeURIComponent(url),
-        [],
-    );
-
     const urlParam = useMemo(
         () => {
             const { value } = params.find((p) => p.key === SearchParams.search) || { value: '' };
@@ -96,13 +92,17 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
         [ params ],
     );
 
-    const urlTerm = useMemo(
-        () => {
-            const { value } = params.find((p) => p.key === SearchParams.selectedTerm) || { value: 'All' };
+    const encodeUrlToUTF8 = useMemo(
+        () => encodeURIComponent(urlParam),
+        [ urlParam ],
+    );
 
-            return isArray(value)
-                ? value[0]
-                : value;
+    const urlTerms = useMemo(
+        () => {
+            const selectedTerms = [ 'Contests', 'Problems', 'Users' ];
+
+            return params.filter(({ key, value }) => selectedTerms.includes(key) &&
+                value === 'true') as [];
         },
         [ params ],
     );
@@ -120,7 +120,7 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
                 problems: searchedProblems,
                 users: searchedUsers,
                 validationResult: newValidationResult,
-            } = newData[0];
+            } = first(newData) as ISearchResponseModel;
 
             const {
                 pageNumber,
@@ -149,12 +149,12 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
     const initiateSearchResultsUrlQuery = useCallback(
         () => {
             setGetSearchResultsUrlParams({
-                searchTerm: encodeUrlToURIComponent(urlParam),
+                searchTerm: encodeUrlToUTF8,
                 page: currentPage,
-                selectedTerm: urlTerm,
+                selectedTerms: urlTerms,
             });
         },
-        [ currentPage, encodeUrlToURIComponent, urlTerm, urlParam ],
+        [ currentPage, encodeUrlToUTF8, urlTerms ],
     );
 
     const load = useCallback(

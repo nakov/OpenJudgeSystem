@@ -7,7 +7,8 @@ import {
     IDownloadProblemResourceUrlParams,
     IGetContestByProblemUrlParams,
     IGetContestParticipationScoresForParticipantUrlParams,
-    IGetContestResultsParams, IGetSearchResultsUrlParams,
+    IGetContestResultsParams,
+    IGetSearchResultsUrlParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemAndUserUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
@@ -159,7 +160,7 @@ const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams
 const getHomeStatisticsUrl = () => `${baseApiUrl}/StatisticsPreview/GetForHome`;
 
 // Search
-const getSearchResults = ({ searchTerm, page, selectedTerm }: IGetSearchResultsUrlParams) => {
+const getSearchResults = ({ searchTerm, page, selectedTerms }: IGetSearchResultsUrlParams) => {
     const searchQuery = isNil(searchTerm)
         ? ''
         : `${SearchParams.search}=${searchTerm}`;
@@ -168,9 +169,13 @@ const getSearchResults = ({ searchTerm, page, selectedTerm }: IGetSearchResultsU
         ? ''
         : `page=${page}`;
 
-    const selectedTermQuery = isNil(selectedTerm)
-        ? ''
-        : `${SearchParams.selectedTerm}=${selectedTerm}`;
+    console.log(selectedTerms);
+    const selectedTermQuery = `${selectedTerms
+        .map(({ key, value }) => `${key}=${value}`)
+        .join('&')
+    }`;
+
+    console.log(selectedTermQuery);
 
     return `${baseApiUrl}/Search/GetSearchResults?${searchQuery}&${selectedTermQuery}&${pageQuery}`;
 };

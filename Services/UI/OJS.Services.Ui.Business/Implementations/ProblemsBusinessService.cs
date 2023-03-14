@@ -170,19 +170,23 @@ namespace OJS.Services.Ui.Business.Implementations
             return ServiceResult.Success;
         }
 
-        public async Task<(IEnumerable<ProblemSearchServiceModel>, int)> GetSearchProblemsByName(SearchServiceModel model)
+        public async Task<ProblemSearchServiceResultModel> GetSearchProblemsByName(SearchServiceModel model)
         {
-            var allProblems = await this.problemsData.GetAllNonDeletedProblems()
-                .Where(p => p.Name.Contains(model.SearchTerm!))
-                .ToListAsync();
+            var modelResult = new ProblemSearchServiceResultModel();
 
-            var searchProblems = await allProblems
+            var allProblemsQueryable = this.problemsData.GetAllNonDeletedProblems()
+                .Where(p => p.Name.Contains(model.SearchTerm!));
+
+            var searchProblems = await allProblemsQueryable
                 .MapCollection<ProblemSearchServiceModel>()
-                .ToPagedListAsync(model.PageNumber, model.ItemsPerPage!.Value);
+                .ToPagedListAsync(model.PageNumber, model.ItemsPerPage);
 
-            searchProblems.ForEach(sp => GetContestByProblemId(sp, allProblems));
+            searchProblems.ForEach(sp => GetContestByProblemId(sp, allProblemsQueryable));
 
-            return (searchProblems, allProblems.Count);
+            modelResult.Problems = searchProblems;
+            modelResult.TotalProblemsCount = allProblemsQueryable.Count();
+
+            return modelResult;
         }
 
         public void ValidateProblemForParticipant(Participant participant, Contest contest, int problemId, bool isOfficial)

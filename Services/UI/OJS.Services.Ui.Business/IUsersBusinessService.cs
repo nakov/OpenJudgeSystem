@@ -13,7 +13,7 @@
 
         public Task<UserProfileServiceModel?> GetUserProfileById(string userId);
 
-        Task<(IEnumerable<TServiceModel>, int)> GetSearchUsersByUsername<TServiceModel>(SearchServiceModel model);
+        Task<UserSearchServiceResultModel> GetSearchUsersByUsername(SearchServiceModel model);
 
         Task<bool> IsLoggedInUserAdmin(ClaimsPrincipal userPrincipal);
     }

@@ -2,30 +2,25 @@ import React, { FormEvent, useCallback, useMemo } from 'react';
 
 import concatClassNames from '../../../utils/class-names';
 import generateId from '../../../utils/id-generator';
-import { IHaveChildrenProps, IHaveOptionalClassName } from '../../common/Props';
+import { IHaveOptionalChildrenProps, IHaveOptionalClassName } from '../../common/Props';
 import { Button, ButtonType } from '../buttons/Button';
-import SearchIcon from '../icons/SearchIcon';
 
-enum FormType {
-    search = 'search',
-}
-
-interface IFormProps extends IHaveChildrenProps, IHaveOptionalClassName {
+interface IFormProps extends IHaveOptionalChildrenProps, IHaveOptionalClassName {
     onSubmit: () => void;
     submitText?: string;
     id?: string;
     submitButtonClassName?: string;
-    type?: string;
+    internalButton?: boolean;
 }
 
 const Form = ({
     onSubmit,
     children,
-    submitText = 'Submit',
+    submitText = '',
     id = generateId(),
     className = '',
     submitButtonClassName = '',
-    type,
+    internalButton = false,
 }: IFormProps) => {
     const handleSubmit = useCallback(
         async (ev: FormEvent) => {
@@ -45,25 +40,22 @@ const Form = ({
     const internalClassName = concatClassNames(className);
     const internalSubmitButtonClassName = concatClassNames('btnSubmitInForm', submitButtonClassName);
 
-    if (type === FormType.search) {
-        return (
-            <form
-              id={id}
-              onSubmit={(ev) => handleSubmit(ev)}
-              className={internalClassName}
-            >
-                {children}
-                <Button
-                  id={btnId}
-                  onClick={(ev) => handleSubmit(ev)}
-                  type={ButtonType.submit}
-                  internalClassName={internalSubmitButtonClassName}
-                >
-                    <SearchIcon />
-                </Button>
-            </form>
-        );
-    }
+    const renderDefaultButton = useCallback(
+        () => (
+            internalButton === false
+                ? (
+                    <Button
+                      id={btnId}
+                      onClick={(ev) => handleSubmit(ev)}
+                      text={submitText}
+                      type={ButtonType.submit}
+                      className={internalSubmitButtonClassName}
+                    />
+                )
+                : null
+        ),
+        [ btnId, handleSubmit, internalButton, internalSubmitButtonClassName, submitText ],
+    );
 
     return (
         <form
@@ -72,19 +64,9 @@ const Form = ({
           className={internalClassName}
         >
             {children}
-            <Button
-              id={btnId}
-              onClick={(ev) => handleSubmit(ev)}
-              text={submitText}
-              type={ButtonType.submit}
-              className={internalSubmitButtonClassName}
-            />
+            {renderDefaultButton()}
         </form>
     );
 };
 
 export default Form;
-
-export {
-    FormType,
-};
