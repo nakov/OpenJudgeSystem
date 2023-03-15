@@ -68,9 +68,14 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var contest = await this.contestsData.OneById(id);
 
-            await this.ValidateContest(contest!, user.Id!, user.IsAdmin, official);
+            var validationResult = this.contestValidationService.GetValidationResult((contest, id, user.Id, user.IsAdmin, official) !);
+            if (!validationResult.IsValid)
+            {
+                throw new BusinessServiceException(validationResult.Message);
+            }
 
             var registerModel = contest!.Map<RegisterUserForContestServiceModel>();
+
             registerModel.RequirePassword = ShouldRequirePassword(contest!, participant!, official);
 
             return registerModel;
@@ -118,7 +123,12 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var user = this.userProviderService.GetCurrentUser();
 
-            var validationResult = this.contestValidationService.GetValidationResult((contest, user?.Id, user!.IsAdmin, model.IsOfficial) !);
+            var validationResult = this.contestValidationService.GetValidationResult((contest, model.ContestId, user?.Id, user!.IsAdmin, model.IsOfficial) !);
+
+            if (!validationResult.IsValid)
+            {
+                throw new BusinessServiceException(validationResult.Message);
+            }
 
             var userProfile = await this.usersBusinessService.GetUserProfileById(user.Id!);
 
@@ -130,16 +140,14 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (participant == null)
             {
-                participant = await this.AddNewParticipantToContestIfNotExists(contest!, model.IsOfficial, user.Id!, user.IsAdmin) ??
-                              new Participant() { Contest = contest!, };
+                participant = await this.AddNewParticipantToContestIfNotExists(contest!, model.IsOfficial, user.Id!, user.IsAdmin);
             }
 
-            var participationModel = participant.Map<ContestParticipationServiceModel>();
+            var participationModel = participant!.Map<ContestParticipationServiceModel>();
 
             participationModel.Contest.AllowedSubmissionTypes =
                 participationModel.Contest.AllowedSubmissionTypes.DistinctBy(st => st.Id);
-            participationModel.ValidationResult = validationResult;
-            participationModel.ParticipantId = participant.Id;
+            participationModel.ParticipantId = participant!.Id;
             participationModel.ContestIsCompete = model.IsOfficial;
             participationModel.UserSubmissionsTimeLimit = await this.participantsBusiness.GetParticipantLimitBetweenSubmissions(
                     participant.Id,
@@ -382,7 +390,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 !IsUserLecturerInContest(contest, userId) &&
                 !await this.contestsData.IsUserInExamGroupByContestAndUser(contest.Id, userId))
             {
-                return null;
+                throw new BusinessServiceException(ValidationMessages.Participant.NotRegisteredForExam);
             }
 
             return await this.participantsBusiness.CreateNewByContestByUserByIsOfficialAndIsAdmin(

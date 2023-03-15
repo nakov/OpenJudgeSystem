@@ -6,7 +6,6 @@ import {
     IContestType,
     IRegisterForContestResponseType,
     IStartParticipationResponseType,
-    IValidationType,
 } from '../common/types';
 import {
     IGetContestParticipationScoresForParticipantUrlParams,
@@ -16,7 +15,7 @@ import {
 } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
-import { useHttp } from './use-http';
+import { IErrorDataType, useHttp } from './use-http';
 import { useLoading } from './use-loading';
 import { useUrls } from './use-urls';
 
@@ -43,11 +42,11 @@ interface ICurrentContestContext {
         submitContestPasswordErrorMessage: string | null;
         isPasswordValid: boolean | null;
         remainingTimeInMilliseconds: number;
-        validationResult: IValidationType;
         userSubmissionsTimeLimit: number;
         totalParticipantsCount: number;
         activeParticipantsCount: number;
         isSubmitAllowed: boolean;
+        contestError: IErrorDataType | null;
     };
     actions: {
         setContestPassword: (password: string) => void;
@@ -68,11 +67,6 @@ const defaultState = {
         isOfficial: false,
         requirePassword: false,
         remainingTimeInMilliseconds: 0.0,
-        validationResult: {
-            message: '',
-            isValid: true,
-            propertyName: '',
-        },
         userSubmissionsTimeLimit: 0,
         totalParticipantsCount: 0,
         activeParticipantsCount: 0,
@@ -114,10 +108,10 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ isPasswordValid, setIsPasswordValid ] = useState<boolean | null>(null);
     const [ userSubmissionsTimeLimit, setUserSubmissionsTimeLimit ] = useState<number>(0);
     const [ remainingTimeInMilliseconds, setRemainingTimeInMilliseconds ] = useState(defaultState.state.remainingTimeInMilliseconds);
-    const [ validationResult, setValidationResult ] = useState<IValidationType>(defaultState.state.validationResult);
     const [ totalParticipantsCount, setTotalParticipantsCount ] = useState(defaultState.state.totalParticipantsCount);
     const [ activeParticipantsCount, setActiveParticipantsCount ] = useState(defaultState.state.activeParticipantsCount);
     const [ isSubmitAllowed, setIsSubmitAllowed ] = useState<boolean>(true);
+    const [ contestError, setContestError ] = useState<IErrorDataType | null>(null);
 
     const {
         startLoading,
@@ -134,6 +128,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const {
         get: startContest,
         data: startContestData,
+        error: startContestError,
     } = useHttp<IStartContestParticipationUrlParams, IStartParticipationResponseType>({
         url: getStartContestParticipationUrl,
         parameters: contestToStart,
@@ -142,6 +137,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const {
         get: registerForContest,
         data: registerForContestData,
+        error: registerContestError,
     } = useHttp<IRegisterForContestUrlParams, IRegisterForContestResponseType>({
         url: getRegisterForContestUrl,
         parameters: registerForContestParams,
@@ -235,30 +231,35 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         })();
     }, [ contestToStart, startContest, startLoading, stopLoading ]);
 
-    useEffect(() => {
-        if (isNil(startContestData)) {
-            return;
-        }
+    useEffect(
+        () => {
+            if (isNil(startContestData)) {
+                return;
+            }
+            if (!isNil(startContestError)) {
+                setContestError(startContestError);
+                return;
+            }
 
-        const {
-            contest: newContest,
-            contestIsCompete,
-            participantId: currentParticipantId,
-            remainingTimeInMilliseconds: newRemainingTimeInMilliseconds,
-            validationResult: newValidationResult,
-            totalParticipantsCount: newTotalParticipants,
-            activeParticipantsCount: newActiveParticipants,
-        } = startContestData;
+            const {
+                contest: newContest,
+                contestIsCompete,
+                participantId: currentParticipantId,
+                remainingTimeInMilliseconds: newRemainingTimeInMilliseconds,
+                totalParticipantsCount: newTotalParticipants,
+                activeParticipantsCount: newActiveParticipants,
+            } = startContestData;
 
-        setContest(newContest);
-        setIsOfficial(contestIsCompete);
-        setParticipantId(currentParticipantId);
-        setRemainingTimeInMilliseconds(newRemainingTimeInMilliseconds);
-        setUserSubmissionsTimeLimit(startContestData.userSubmissionsTimeLimit);
-        setValidationResult(newValidationResult);
-        setTotalParticipantsCount(newTotalParticipants);
-        setActiveParticipantsCount(newActiveParticipants);
-    }, [ startContestData ]);
+            setContest(newContest);
+            setIsOfficial(contestIsCompete);
+            setParticipantId(currentParticipantId);
+            setRemainingTimeInMilliseconds(newRemainingTimeInMilliseconds);
+            setUserSubmissionsTimeLimit(startContestData.userSubmissionsTimeLimit);
+            setTotalParticipantsCount(newTotalParticipants);
+            setActiveParticipantsCount(newActiveParticipants);
+        },
+        [ startContestData, startContestError ],
+    );
 
     useEffect(() => {
         if (isNil(registerForContestParams)) {
@@ -277,16 +278,25 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         })();
     }, [ registerForContest, registerForContestParams, startLoading, stopLoading ]);
 
-    useEffect(() => {
-        if (isNil(registerForContestData)) {
-            return;
-        }
+    useEffect(
+        () => {
+            if (isNil(registerForContestData)) {
+                return;
+            }
 
-        const { requirePassword: responseRequirePassword } = registerForContestData;
+            if (!isNil(registerContestError)) {
+                setContestError(registerContestError);
+                setRequirePassword(false);
+                return;
+            }
 
-        setContest({ id: registerForContestData.id, name: registerForContestData.name } as IContestType);
-        setRequirePassword(responseRequirePassword);
-    }, [ registerForContestData ]);
+            const { requirePassword: responseRequirePassword } = registerForContestData;
+
+            setContest({ id: registerForContestData.id, name: registerForContestData.name } as IContestType);
+            setRequirePassword(responseRequirePassword);
+        },
+        [ registerForContestData, registerContestError ],
+    );
 
     useEffect(() => {
         if (isNil(submitContestPasswordUrlParams)) {
@@ -301,7 +311,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     }, [ contestPassword, submitContestPassword, submitContestPasswordUrlParams, startLoading, stopLoading ]);
 
     useEffect(() => {
-        if (isNil(submitContestPasswordData)) {
+        if (isNil(submitContestPasswordResponse)) {
             return;
         }
 
@@ -356,11 +366,11 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 submitContestPasswordErrorMessage,
                 isPasswordValid,
                 remainingTimeInMilliseconds,
-                validationResult,
                 userSubmissionsTimeLimit,
                 totalParticipantsCount,
                 activeParticipantsCount,
                 isSubmitAllowed,
+                contestError,
             },
             actions: {
                 setContestPassword,
@@ -386,12 +396,12 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             start,
             submitContestPasswordErrorMessage,
             submitPassword,
-            validationResult,
             loadParticipantScores,
             totalParticipantsCount,
             activeParticipantsCount,
             isSubmitAllowed,
             setIsSubmitAllowed,
+            contestError,
         ],
     );
 
