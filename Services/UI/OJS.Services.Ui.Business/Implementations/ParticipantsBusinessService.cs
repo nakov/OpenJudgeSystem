@@ -38,11 +38,6 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
     {
         var participant = new Participant(contest.Id, userId, isOfficial) { Contest = contest };
 
-        if (!isOfficial)
-        {
-            return participant;
-        }
-
         if (contest.IsOnlineExam)
         {
             participant.ParticipationStartTime = DateTime.Now;
