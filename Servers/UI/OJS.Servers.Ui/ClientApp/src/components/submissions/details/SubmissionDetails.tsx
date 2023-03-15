@@ -123,7 +123,7 @@ const SubmissionDetails = () => {
         await getSubmissionResults(problemId, isOfficial);
     }, [ currentSubmission, getSubmissionResults ]);
 
-    const renderReloadButton = useMemo(
+    const renderReloadButton = useCallback(
         () => (
             <Button
               onClick={handleReloadClick}
@@ -135,7 +135,7 @@ const SubmissionDetails = () => {
         [ handleReloadClick ],
     );
 
-    const renderRetestButton = useMemo(
+    const renderRetestButton = useCallback(
         () => {
             if (!canAccessAdministration) {
                 return null;
@@ -157,14 +157,14 @@ const SubmissionDetails = () => {
     const buttonsSection = useCallback(
         () => (
             <div className={styles.buttonsSection}>
-                { renderReloadButton }
-                { renderRetestButton }
+                { renderReloadButton() }
+                { renderRetestButton() }
             </div>
         ),
         [ renderReloadButton, renderRetestButton ],
     );
 
-    const renderSubmissionInfo = useMemo(
+    const renderSubmissionInfo = useCallback(
         () => {
             if (!canAccessAdministration || isNil(currentSubmission)) {
                 return null;
@@ -204,7 +204,7 @@ const SubmissionDetails = () => {
         [ contest ],
     );
 
-    const refreshableSubmissionsList = useMemo(
+    const refreshableSubmissionsList = useCallback(
         () => (
             <div className={styles.navigation}>
                 <div className={submissionsNavigationClassName}>
@@ -214,15 +214,15 @@ const SubmissionDetails = () => {
                   items={currentProblemSubmissionResults}
                   selectedSubmission={currentSubmission}
                   className={styles.submissionsList}
-                  externalElements={buttonsSection}
+                  renderExternalElements={buttonsSection}
                 />
-                { renderSubmissionInfo }
+                { renderSubmissionInfo() }
             </div>
         ),
         [ buttonsSection, currentProblemSubmissionResults, currentSubmission, renderSubmissionInfo ],
     );
 
-    const codeEditor = useMemo(
+    const codeEditor = useCallback(
         () => (
             <div className={styles.code}>
                 <Heading
@@ -303,9 +303,9 @@ const SubmissionDetails = () => {
     const renderSubmission = useCallback(
         () => (
             <div className={styles.detailsWrapper}>
-                {refreshableSubmissionsList}
-                {codeEditor}
-                {submissionResults()}
+                <div>{refreshableSubmissionsList()}</div>
+                <div>{codeEditor()}</div>
+                <div>{submissionResults()}</div>
             </div>
         ),
         [ codeEditor, refreshableSubmissionsList, submissionResults ],
