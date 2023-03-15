@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
+import { useProblemSubmissions } from '../../../hooks/submissions/use-problem-submissions';
 import { useAuth } from '../../../hooks/use-auth';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import { usePageTitles } from '../../../hooks/use-page-titles';
@@ -22,15 +23,16 @@ const Contest = () => {
             score,
             maxScore,
             remainingTimeInMilliseconds,
-            validationResult,
             totalParticipantsCount,
             activeParticipantsCount,
             isOfficial,
+            contestError,
         },
         actions: { setIsSubmitAllowed },
     } = useCurrentContest();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const { actions: { setPageTitle } } = usePageTitles();
+    const { state: { problemSubmissionsError, submissions } } = useProblemSubmissions();
 
     const navigationContestClass = 'navigationContest';
     const navigationContestClassName = concatClassNames(styles.navigationContest, navigationContestClass);
@@ -158,20 +160,36 @@ const Contest = () => {
         [ participantsStateText, participantsValue ],
     );
 
-    const renderErrorMessage = useCallback(() => (
-        <div className={styles.headingContest}>
-            <Heading
-              type={HeadingType.primary}
-              className={styles.contestHeading}
-            >
-                {contestTitle}
-                {' '}
-                -
-                {' '}
-                {validationResult.message}
-            </Heading>
-        </div>
-    ), [ validationResult, contestTitle ]);
+    const renderErrorHeading = useCallback(
+        (message: string) => (
+            <div className={styles.headingContest}>
+                <Heading
+                  type={HeadingType.primary}
+                  className={styles.contestHeading}
+                >
+                    {message}
+                </Heading>
+            </div>
+        ),
+        [],
+    );
+
+    const renderErrorMessage = useCallback(
+        () => {
+            if (!isNil(contestError)) {
+                const { detail } = contestError;
+                return renderErrorHeading(detail);
+            }
+
+            if (!isNil(problemSubmissionsError)) {
+                const { detail } = problemSubmissionsError;
+                return renderErrorHeading(detail);
+            }
+
+            return null;
+        },
+        [ renderErrorHeading, problemSubmissionsError, contestError ],
+    );
 
     const renderContest = useCallback(
         () => (
@@ -216,12 +234,12 @@ const Contest = () => {
     );
 
     const renderPage = useCallback(
-        () => isNil(validationResult)
+        () => isNil(contestError) && isNil(problemSubmissionsError) && isNil(submissions)
             ? <div>Loading data</div>
-            : validationResult.isValid
+            : isNil(contestError) && isNil(problemSubmissionsError)
                 ? renderContest()
                 : renderErrorMessage(),
-        [ renderErrorMessage, renderContest, validationResult ],
+        [ renderErrorMessage, renderContest, contestError, problemSubmissionsError, submissions ],
     );
 
     return renderPage();
