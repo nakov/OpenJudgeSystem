@@ -42,6 +42,4 @@ public interface ISubmissionsDataService : IDataService<Submission>
     bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId);
 
     Task<int> GetSubmissionsPerDayCount();
-
-    Task<IEnumerable<TServiceModel>> GetAllByProblemAndUser<TServiceModel>(int problemId, string userId);
 }
