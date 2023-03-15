@@ -51,12 +51,10 @@ const useHttp = function<TParametersType, TReturnDataType, TRequestDataType = nu
         }
 
         if (!isNil(response.data)) {
-            const errorDataType = response.data as IErrorDataType;
-
-            return errorDataType.detail;
+            return response.data as IErrorDataType;
         }
 
-        return 'error';
+        return { detail: 'error' } as IErrorDataType;
     }, [ response ]);
 
     const handleBeforeCall = useCallback(
@@ -197,4 +195,5 @@ export {
 export type {
     IHttpProps,
     IHttpJsonExceptionResponse,
+    IErrorDataType,
 };

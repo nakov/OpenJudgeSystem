@@ -81,18 +81,12 @@ interface IRegisterForContestResponseType {
     requirePassword: boolean;
 }
 
-interface IStartParticipationValidationType {
-    message: string;
-    isValid: boolean;
-}
-
 interface IStartParticipationResponseType {
     contest: IContestType;
     participantId: number;
     contestIsCompete: boolean;
     lastSubmissionTime: Date;
     remainingTimeInMilliseconds: number;
-    validationResult: IStartParticipationValidationType;
     userSubmissionsTimeLimit: number;
     totalParticipantsCount: number;
     activeParticipantsCount: number;
@@ -121,7 +115,6 @@ export type {
     IIndexContestsType,
     IGetContestsForIndexResponseType,
     IRegisterForContestResponseType,
-    IStartParticipationValidationType,
     IStartParticipationResponseType,
     IContestType,
     IProblemType,

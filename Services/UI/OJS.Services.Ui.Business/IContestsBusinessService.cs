@@ -22,6 +22,8 @@ namespace OJS.Services.Ui.Business
 
         Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPracticable();
 
+        Task<ContestServiceModel> GetContestByProblem(int problemId);
+
         Task<bool> IsContestIpValidByContestAndIp(int contestId, string ip);
 
         /// <summary>

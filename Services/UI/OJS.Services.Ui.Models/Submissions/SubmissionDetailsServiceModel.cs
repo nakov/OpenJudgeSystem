@@ -5,6 +5,7 @@
     using System.Linq;
     using AutoMapper;
     using OJS.Data.Models.Submissions;
+    using OJS.Services.Common.Models;
     using OJS.Services.Ui.Models.Users;
     using SoftUni.AutoMapper.Infrastructure.Models;
 
