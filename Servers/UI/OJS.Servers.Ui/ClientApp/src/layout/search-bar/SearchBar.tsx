@@ -128,13 +128,6 @@ const SearchBar = () => {
                               onClick={handleSelectedCheckboxValue}
                             />
                             <span className={styles.checkboxText}>
-                                {/* <input */}
-                                {/*  type={FormControlType.checkbox} */}
-                                {/*  value={CheckboxSearchValues.contests} */}
-                                {/* checked={selectedTerms.includes
-                                (CheckboxSearchValues.contests)} */}
-                                {/*  onChange={handleSelectedCheckboxValues} */}
-                                {/* /> */}
                                 Contests
                             </span>
                             <FormControl
