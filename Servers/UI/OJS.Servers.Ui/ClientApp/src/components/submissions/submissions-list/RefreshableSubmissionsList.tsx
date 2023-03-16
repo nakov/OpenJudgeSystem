@@ -25,9 +25,9 @@ const RefreshableSubmissionsList = ({
             return;
         }
 
-        const { problem: { id: problemId }, isOfficial, user: { id: userId } } = currentSubmission;
+        const { problem: { id: problemId }, isOfficial } = currentSubmission;
 
-        await getSubmissionResults(problemId, isOfficial, userId);
+        await getSubmissionResults(problemId, isOfficial);
     }, [ currentSubmission, getSubmissionResults ]);
 
     return (

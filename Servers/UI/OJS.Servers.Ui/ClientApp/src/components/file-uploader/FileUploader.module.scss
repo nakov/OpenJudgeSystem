@@ -1,0 +1,12 @@
+﻿@use 'src/styles/colors';
+
+.fileName {
+  margin-top: auto;
+}
+
+.fileUploadContainer {
+  align-content: space-evenly;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}

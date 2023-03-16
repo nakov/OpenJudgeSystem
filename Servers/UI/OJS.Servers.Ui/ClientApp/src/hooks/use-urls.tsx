@@ -8,7 +8,6 @@ import {
     IGetContestParticipationScoresForParticipantUrlParams,
     IGetContestResultsParams,
     IGetSubmissionDetailsByIdUrlParams,
-    IGetSubmissionResultsByProblemAndUserUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
     IRetestSubmissionUrlParams,
     IStartContestParticipationUrlParams,
@@ -31,7 +30,6 @@ interface IUrlsContext {
     getStartContestParticipationUrl: (params: IStartContestParticipationUrlParams) => string;
     getContestParticipantScoresForParticipantUrl: (params: IGetContestParticipationScoresForParticipantUrlParams) => string;
     getSubmissionResultsByProblemUrl: (params: IGetSubmissionResultsByProblemUrlParams) => string;
-    getSubmissionResultsByProblemAndUserUrl: (params: IGetSubmissionResultsByProblemAndUserUrlParams) => string;
     getPublicSubmissionsUrl: () => string;
     getSubmissionsTotalCountUrl: () => string;
     getSubmissionsDetailsUrl: () => string;
@@ -175,7 +173,6 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
             getSubmissionResultsByProblemUrl,
             getPublicSubmissionsUrl,
             getSubmissionsTotalCountUrl,
-            getSubmissionResultsByProblemAndUserUrl,
             getIndexContestsUrl,
             getProfileInfoUrl,
             getSubmissionsDetailsUrl,
