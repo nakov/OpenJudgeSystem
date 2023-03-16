@@ -190,9 +190,9 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     const reload = useCallback(
         async () => {
-            await startLoading();
+            startLoading();
             await getContests();
-            await stopLoading();
+            stopLoading();
         },
         [ getContests, startLoading, stopLoading ],
     );
@@ -225,13 +225,17 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     const initiateGetAllContestsQuery = useCallback(
         () => {
+            if (isEmpty(possibleFilters)) {
+                return;
+            }
+
             setGetAllContestsUrlParams({
                 filters: filters as IFilter[],
                 sorting: sortingTypes as ISort[],
                 page: currentPage,
             });
         },
-        [ currentPage, filters, sortingTypes ],
+        [ currentPage, filters, possibleFilters, sortingTypes ],
     );
 
     const loadContestByProblemId = useCallback((problemId: number) => {
