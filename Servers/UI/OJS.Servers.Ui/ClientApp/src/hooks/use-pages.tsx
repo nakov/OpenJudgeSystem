@@ -45,7 +45,7 @@ const PageProvider = ({ children }: IPageProviderProps) => {
     } = useUrlParams();
 
     const populatePageInformation = useCallback(
-        (obj: IPagesInfo) => setPagesInfo(obj),
+        (pageInformation: IPagesInfo) => setPagesInfo(pageInformation),
         [],
     );
 

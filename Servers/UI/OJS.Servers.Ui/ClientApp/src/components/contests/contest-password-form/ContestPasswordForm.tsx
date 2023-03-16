@@ -47,7 +47,6 @@ const ContestPasswordForm = ({ id, isOfficial }: IContestPasswordFormProps) => {
               handleOnSubmitPassword();
           }}
           submitButtonClassName={styles.submitBtn}
-          submitText="Submit"
         >
             <header className={styles.formHeader}>
                 <Heading type={HeadingType.primary}>Enter contest password</Heading>

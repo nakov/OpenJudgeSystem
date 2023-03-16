@@ -68,7 +68,7 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
     const {
         get,
         data,
-        error,
+        error: getSearchResultError,
         isSuccess,
     } = useHttp<
         IGetSearchResultsUrlParams,
@@ -109,19 +109,19 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
                 return;
             }
 
-            if (!isNil(error)) {
-                setSearchError(error);
+            if (!isNil(getSearchResultError)) {
+                setSearchError(getSearchResultError);
 
                 return;
             }
 
             const searchResult = data as IPagedResultType<ISearchResponseModel>;
-            const newData = searchResult.items as ISearchResponseModel[];
+            const { items: searchResponseData } = searchResult;
             const {
                 contests: searchedContests,
                 problems: searchedProblems,
                 users: searchedUsers,
-            } = first(newData) as ISearchResponseModel;
+            } = first(searchResponseData) as ISearchResponseModel;
 
             const {
                 pageNumber,
@@ -143,7 +143,7 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
 
             populatePageInformation(newPagesInfo);
         },
-        [ data, error, populatePageInformation, searchError ],
+        [ data, getSearchResultError, populatePageInformation, searchError ],
     );
 
     const initiateSearchResultsUrlQuery = useCallback(

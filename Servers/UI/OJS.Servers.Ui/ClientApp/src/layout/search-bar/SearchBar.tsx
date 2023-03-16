@@ -27,7 +27,7 @@ enum CheckboxSearchValues {
 const defaultState = {
     state: {
         searchValue: '',
-        selectedTerm: [
+        selectedTerms: [
             `${CheckboxSearchValues.contests}`,
             `${CheckboxSearchValues.problems}`,
             `${CheckboxSearchValues.users}`,
@@ -37,7 +37,7 @@ const defaultState = {
 
 const SearchBar = () => {
     const [ searchParam, setSearchParam ] = useState<string>(defaultState.state.searchValue);
-    const [ selectedTerms, setSelectedTerms ] = useState(defaultState.state.selectedTerm);
+    const [ selectedTerms, setSelectedTerms ] = useState(defaultState.state.selectedTerms);
 
     const { state: { isVisible } } = useSearch();
     const navigate = useNavigate();

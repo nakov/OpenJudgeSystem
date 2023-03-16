@@ -20,42 +20,39 @@ const PageHeader = () => {
     const { getAdministrationNavigation } = useUrls();
     const { actions: { toggleVisibility } } = useSearch();
 
-    const renderLinks = useCallback(
-        () => {
-            const administrationLink = user.permissions.canAccessAdministration
-                ? (
-                    <LinkButton
-                      type={LinkButtonType.plain}
-                      size={ButtonSize.none}
-                      to={getAdministrationNavigation()}
-                      isToExternal
-                      text="Administration"
-                    />
-                )
-                : null;
+    const renderLinks = useCallback(() => {
+        const administrationLink = user.permissions.canAccessAdministration
+            ? (
+                <LinkButton
+                  type={LinkButtonType.plain}
+                  size={ButtonSize.none}
+                  to={getAdministrationNavigation()}
+                  isToExternal
+                  text="Administration"
+                />
+            )
+            : null;
 
-            return (
-                <>
-                    <LinkButton
-                      id="nav-contests-link"
-                      type={LinkButtonType.plain}
-                      size={ButtonSize.none}
-                      to="/contests"
-                      text="Contests"
-                    />
-                    <LinkButton
-                      id="nav-submissions-link"
-                      type={LinkButtonType.plain}
-                      size={ButtonSize.none}
-                      to="/submissions"
-                      text="Submissions"
-                    />
-                    { administrationLink }
-                </>
-            );
-        },
-        [ getAdministrationNavigation, user.permissions.canAccessAdministration ],
-    );
+        return (
+            <>
+                <LinkButton
+                  id="nav-contests-link"
+                  type={LinkButtonType.plain}
+                  size={ButtonSize.none}
+                  to="/contests"
+                  text="Contests"
+                />
+                <LinkButton
+                  id="nav-submissions-link"
+                  type={LinkButtonType.plain}
+                  size={ButtonSize.none}
+                  to="/submissions"
+                  text="Submissions"
+                />
+                { administrationLink }
+            </>
+        );
+    }, [ getAdministrationNavigation, user.permissions.canAccessAdministration ]);
 
     const btnId = useMemo(
         () => {
