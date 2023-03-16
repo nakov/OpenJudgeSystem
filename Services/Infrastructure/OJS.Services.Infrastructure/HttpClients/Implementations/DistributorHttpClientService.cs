@@ -19,6 +19,8 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
                     string.Format(ValueCannotBeNullOrWhiteSpaceTemplate, SulsPlatformBaseUrlKey));
             }
 
+            this.ApiKey = EnvironmentUtils.GetByKey(DistributorApiKeyKey);
+
             client.BaseAddress = new Uri(distributorBaseUrl);
         }
     }
