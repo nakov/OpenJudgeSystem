@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { IUserProfileType } from '../../../hooks/use-users';
-import { LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 
 import styles from './ProfileAboutInfo.module.scss';
 
@@ -27,11 +26,6 @@ const ProfileAboutInfo = ({ value } : IProfileAboutInfoProps) => (
             <h2>Email:</h2>
             <p>{value.email}</p>
         </div>
-        <LinkButton
-          text="Update"
-          to="/"
-          type={LinkButtonType.secondary}
-        />
     </div>
 );
 
