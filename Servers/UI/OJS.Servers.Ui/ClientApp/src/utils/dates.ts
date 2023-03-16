@@ -12,14 +12,14 @@ const calculateTimeUntil = (date: Date) => intervalToDuration({
 const preciseFormatDate = (
     date: Date,
     formatString = defaultPreciseDateTimeFormat,
-) => moment(date).utc(true).local().format(formatString);
+) => moment(date).format(formatString);
 
 const formatDate = (
     date: Date,
     formatString = defaultDateTimeFormat,
 ) => (moment().diff(date, 'days') > 3
     ? preciseFormatDate(date, formatString)
-    : moment(date).utc(true).local().fromNow());
+    : moment.utc(date).fromNow());
 
 const convertToSecondsRemaining = (date: Date) => {
     const { days, hours, minutes, seconds } = intervalToDuration({
