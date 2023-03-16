@@ -1,14 +1,8 @@
 namespace OJS.Servers.Administration.Controllers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Linq.Expressions;
-    using System.Threading.Tasks;
     using AutoCrudAdmin.Models;
     using AutoCrudAdmin.ViewModels;
     using Microsoft.AspNetCore.Mvc;
-    using OJS.Common.Enumerations;
     using OJS.Data.Models;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Problems;
@@ -19,6 +13,11 @@ namespace OJS.Servers.Administration.Controllers
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models;
     using OJS.Services.Infrastructure.Extensions;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using System.Threading.Tasks;
     using AdminResource = OJS.Common.Resources.AdministrationGeneral;
     using Resource = OJS.Common.Resources.ContestsControllers;
 
@@ -153,8 +152,9 @@ namespace OJS.Servers.Administration.Controllers
             Contest contest,
             AdminActionContext actionContext)
         {
-            AddProblemGroupsToContest(contest, contest.NumberOfProblemGroups);
-            await this.AddIpsToContest(contest, actionContext.GetFormValue(AdditionalFormFields.AllowedIps));
+            var contestUtc = ConvertContestStartAndEndTimeToUtc(contest);
+            AddProblemGroupsToContest(contestUtc, contestUtc.NumberOfProblemGroups);
+            await this.AddIpsToContest(contestUtc, actionContext.GetFormValue(AdditionalFormFields.AllowedIps));
         }
 
         protected override async Task BeforeEntitySaveOnEditAsync(
@@ -162,18 +162,19 @@ namespace OJS.Servers.Administration.Controllers
             Contest newContest,
             AdminActionContext actionContext)
         {
-            if (newContest.IsOnlineExam && newContest.ProblemGroups.Count == 0)
+            var newContestUtc = ConvertContestStartAndEndTimeToUtc(newContest);
+            if (newContestUtc.IsOnlineExam && newContestUtc.ProblemGroups.Count == 0)
             {
-                AddProblemGroupsToContest(newContest, newContest.NumberOfProblemGroups);
+                AddProblemGroupsToContest(newContestUtc, newContestUtc.NumberOfProblemGroups);
             }
 
-            if (!newContest.IsOnlineExam && newContest.Duration != null)
+            if (!newContestUtc.IsOnlineExam && newContestUtc.Duration != null)
             {
-                newContest.Duration = null;
+                newContestUtc.Duration = null;
             }
 
-            newContest.IpsInContests.Clear();
-            await this.AddIpsToContest(newContest, actionContext.GetFormValue(AdditionalFormFields.AllowedIps));
+            newContestUtc.IpsInContests.Clear();
+            await this.AddIpsToContest(newContestUtc, actionContext.GetFormValue(AdditionalFormFields.AllowedIps));
         }
 
         protected override async Task AfterEntitySaveOnEditAsync(
@@ -212,6 +213,16 @@ namespace OJS.Servers.Administration.Controllers
                     OrderBy = i,
                 });
             }
+        }
+
+        private static Contest ConvertContestStartAndEndTimeToUtc(Contest contest)
+        {
+            contest.StartTime = contest.StartTime == null ? contest.StartTime : TimeZoneInfo.ConvertTimeToUtc((DateTime)contest.StartTime);
+            contest.EndTime = contest.EndTime == null ? contest.EndTime : TimeZoneInfo.ConvertTimeToUtc((DateTime)contest.EndTime);
+            contest.PracticeStartTime = contest.PracticeStartTime == null ? contest.PracticeStartTime : TimeZoneInfo.ConvertTimeToUtc((DateTime)contest.PracticeStartTime);
+            contest.PracticeEndTime = contest.PracticeEndTime == null ? contest.PracticeEndTime : TimeZoneInfo.ConvertTimeToUtc((DateTime)contest.PracticeEndTime);
+
+            return contest;
         }
 
         private async Task AddIpsToContest(Contest contest, string mergedIps)
