@@ -10,6 +10,7 @@
     using EntityFramework.Extensions;
     using Hangfire;
     using MissingFeatures;
+    using NPOI.HSSF.Model;
     using OJS.Common;
     using OJS.Common.Helpers;
     using OJS.Common.Models;
@@ -33,6 +34,7 @@
     [AuthorizeRoles(SystemRole.Administrator)]
     public class TempController : BaseController
     {
+        private const int ArchiveCountLimit = 750000;
         private readonly IHangfireBackgroundJobService backgroundJobs;
         private readonly IProblemGroupsDataService problemGroupsData;
         private readonly IProblemsDataService problemsDataService;
@@ -85,25 +87,52 @@
             return null;
         }
 
-        public ActionResult RegisterJobForHardDeletingArchivedSubmissions()
+        //public ActionResult RegisterJobForHardDeletingArchivedSubmissions()
+        //{
+        //    this.backgroundJobs.AddOrUpdateRecurringJob<IArchivedSubmissionsBusinessService>(
+        //        "HardDeleteArchivedSubmissions",
+        //        s => s.HardDeleteCurrentArchived(null),
+        //        Cron.Weekly(DayOfWeek.Monday, 1, 30));
+
+        //    return null;
+        //}
+
+        public ActionResult RegisterJobForArchiveOldSubmissionsWithLimit()
         {
             this.backgroundJobs.AddOrUpdateRecurringJob<IArchivedSubmissionsBusinessService>(
-                "HardDeleteArchivedSubmissions",
-                s => s.HardDeleteCurrentArchived(null),
-                Cron.Weekly(DayOfWeek.Monday, 1, 30));
+                "ArchiveOldSubmissionsWithLimit",
+                s => s.ArchiveOldSubmissionsWithLimit(null, ArchiveCountLimit),
+                Cron.Daily(1, 30));
 
             return null;
         }
 
-        public ActionResult RegisterCleanUpJobsForArchiving()
+        public ActionResult RegisterJobForHardDeleteArchivedByLimit()
         {
             this.backgroundJobs.AddOrUpdateRecurringJob<IArchivedSubmissionsBusinessService>(
-                "CleanUpArchivedOldSubmissions",
-                s => s.ArchiveCleanOldSubmissions(null),
-                Cron.Weekly(DayOfWeek.Monday, 1, 30));
+                "HardDeleteArchivedByLimit",
+                s => s.HardDeleteArchivedByLimit(null, ArchiveCountLimit),
+                Cron.Yearly(1, 1, 1, 30));
 
             return null;
         }
+
+        //public ActionResult Test()
+        //{
+
+        //    this.archivedSubmissionsBusinessService.HardDeleteCurrentArchived(null);
+        //    return null;
+        //}
+
+        //public ActionResult RegisterCleanUpJobsForArchiving()
+        //{
+        //    this.backgroundJobs.AddOrUpdateRecurringJob<IArchivedSubmissionsBusinessService>(
+        //        "CleanUpArchivedOldSubmissions",
+        //        s => s.ArchiveCleanOldSubmissions(null),
+        //        Cron.Weekly(DayOfWeek.Monday, 1, 30));
+
+        //    return null;
+        //}
 
         public ActionResult RegisterJobForNormalizingSubmissionAndParticipantScorePoints()
         {

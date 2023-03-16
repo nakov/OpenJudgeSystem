@@ -29,6 +29,9 @@
         public IQueryable<Submission> GetAll() =>
             this.submissions.All();
 
+        public IQueryable<Submission> GetAllWithDeleted() =>
+            this.submissions.AllWithDeleted();
+
         public IQueryable<Submission> GetByIdQuery(int id) =>
             this.GetAll()
                 .Where(s => s.Id == id);

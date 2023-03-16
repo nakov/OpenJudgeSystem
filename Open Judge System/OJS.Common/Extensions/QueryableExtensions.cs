@@ -15,5 +15,16 @@
                 current = current.Skip(size);
             }
         }
+
+        public static IEnumerable<IQueryable<T>> InBatches<T>(this IQueryable<T> queryable, int size)
+        {
+            IQueryable<T> current = queryable;
+            while (current.Any())
+            {
+                var batch = current.Take(size);
+                yield return batch;
+                current = current.Skip(size);
+            }
+        }
     }
 }

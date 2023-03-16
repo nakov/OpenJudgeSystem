@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
     using Hangfire.Server;
+    using NPOI.SS.Formula.Functions;
     using OJS.Common;
     using OJS.Common.Extensions;
     using OJS.Data.Models;
@@ -28,6 +29,31 @@
             this.submissionsData = submissionsData;
             this.backgroundJobs = backgroundJobs;
         }
+
+        public void ArchiveOldSubmissionsWithLimit(PerformContext context, int limit)
+        {
+            this.archivedSubmissionsData.CreateDatabaseIfNotExists();
+
+            var allSubmissionsForArchive = this.submissionsBusiness
+                .GetAllForArchiving()
+                .OrderBy(x => x.Id)
+                .Take(limit)
+                .InBatches(GlobalConstants.BatchOperationsChunkSize);
+
+            foreach (var submissionsForArchiveBatch in allSubmissionsForArchive)
+            {
+                var submissionsForArchives = submissionsForArchiveBatch
+                    .Select(ArchivedSubmission.FromSubmission)
+                    .ToList();
+
+                this.archivedSubmissionsData.Add(submissionsForArchives);
+            }
+
+            this.backgroundJobs.AddFireAndForgetJob<IArchivedSubmissionsBusinessService>(
+                s => s.HardDeleteArchivedByLimit(context, limit));
+        }
+
+
 
         public void ArchiveOldSubmissions(PerformContext context)
         {
@@ -62,14 +88,17 @@
             }
         }
 
-        public void ArchiveCleanOldSubmissions(PerformContext context)
-        {
-            var deleteLimit = DateTime.Now.AddYears(
-                -GlobalConstants.BestSubmissionEligibleForArchiveAgeInYears);
+        public void HardDeleteArchivedByLimit(PerformContext context, int limit)
+            => this.submissionsBusiness.HardDeleteArchived(limit);
 
-            var allSubmissionsForArchive = this.submissionsData
-                .GetAll()
-                .Where(x => x.CreatedOn < deleteLimit);
-        }
+        //public void ArchiveCleanOldSubmissions(PerformContext context)
+        //{
+        //    var deleteLimit = DateTime.Now.AddYears(
+        //        -GlobalConstants.BestSubmissionEligibleForArchiveAgeInYears);
+
+        //    var allSubmissionsForArchive = this.submissionsData
+        //        .GetAll()
+        //        .Where(x => x.CreatedOn < deleteLimit);
+        //}
     }
 }

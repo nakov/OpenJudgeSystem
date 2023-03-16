@@ -141,73 +141,98 @@
                 })
                 .ToList();
 
-        public int HardDeleteAllArchived2()
-        {
-            var hardDeletedCount = 0;
+        //public int HardDeleteAllArchived2()
+        //{
+        //    var hardDeletedCount = 0;
 
-            var submissionBatches = this.archivedSubmissionsData
-                .GetAllUndeletedFromMainDatabase()
-                .OrderBy(x => x.IsHardDeletedFromMainDatabase)
-                .InBatches(GlobalConstants.BatchOperationsChunkSize);
-            
-            foreach (var submissionIdsBatch in submissionBatches)
-            {
-                var idsSet = submissionIdsBatch
-                    .Select(s => s.Id)
-                    .ToSet();
+        //    var submissionBatches = this.archivedSubmissionsData
+        //        .GetAllUndeletedFromMainDatabase()
+        //        .OrderBy(x => x.IsHardDeletedFromMainDatabase)
+        //        .InBatches(GlobalConstants.BatchOperationsChunkSize);
 
-                using (var scope = TransactionsHelper.CreateTransactionScope(IsolationLevel.ReadCommitted))
-                {
-                    this.participantScoresData.RemoveSubmissionIdsBySubmissionIds(idsSet);
+        //    foreach (var submissionIdsBatch in submissionBatches)
+        //    {
+        //        var idsSet = submissionIdsBatch
+        //            .Select(s => s.Id)
+        //            .ToSet();
 
-                    testRuns.Delete(
-                        tr => idsSet.Contains(tr.SubmissionId), 
-                        batchSize: GlobalConstants.BatchOperationsChunkSize);
+        //        using (var scope = TransactionsHelper.CreateTransactionScope(IsolationLevel.ReadCommitted))
+        //        {
+        //            this.participantScoresData.RemoveSubmissionIdsBySubmissionIds(idsSet);
 
-                    try
-                    {
-                        this.submissions.HardDelete(
-                            s => idsSet.Contains(s.Id),
-                            batchSize: GlobalConstants.BatchOperationsChunkSize);
-                    }
-                    catch (AggregateException ex)
-                    {
-                        Console.WriteLine(ex);
-                        scope.Dispose();
-                        continue;
-                    }
+        //            testRuns.Delete(
+        //                tr => idsSet.Contains(tr.SubmissionId),
+        //                batchSize: GlobalConstants.BatchOperationsChunkSize);
 
-                    
-                    this.archivedSubmissionsData.SetToHardDeletedFromMainDatabaseByIds(idsSet);
+        //            try
+        //            {
+        //                this.submissions.HardDelete(
+        //                    s => idsSet.Contains(s.Id),
+        //                    batchSize: GlobalConstants.BatchOperationsChunkSize);
+        //            }
+        //            catch (AggregateException ex)
+        //            {
+        //                Console.WriteLine(ex);
+        //                scope.Dispose();
+        //                continue;
+        //            }
 
-                    scope.Complete();
-                }
 
-                hardDeletedCount += idsSet.Count;
-            }
+        //            this.archivedSubmissionsData.SetToHardDeletedFromMainDatabaseByIds(idsSet);
 
-            return hardDeletedCount;
-        }
-        
-        
+        //            scope.Complete();
+        //        }
+
+        //        hardDeletedCount += idsSet.Count;
+        //    }
+
+        //    return hardDeletedCount;
+        //}
+
+
         public int HardDeleteAllArchived()
         {
+            return HardDeleteArchived();
+        }
+
+        /// <summary>
+        /// Deletes archived submissions from OnlineJudgeSystem Db and marks them as Hard Deleted in OnlineJudgeSystemArchives.
+        /// </summary>
+        /// <param name="deleteCountLimit">Specifies a limit to the number of submissions deleted, if omitted or 0 is passed, delete all available, without limits.</param>
+        /// <returns></returns>
+        public int HardDeleteArchived(int deleteCountLimit = 0)
+        {
             var hardDeletedCount = 0;
 
-            var submissionBatches = this.archivedSubmissionsData
+            IEnumerable<IQueryable<ArchivedSubmission>> submissionBatches = null;
+
+            if (deleteCountLimit > 0)
+            {
+                submissionBatches = this.archivedSubmissionsData
+                 .GetAllUndeletedFromMainDatabase()
+                 .Distinct()
+                 .OrderBy(x => x.Id)
+                 .Take(deleteCountLimit)
+                 .InBatches(GlobalConstants.BatchOperationsChunkSize);
+            }
+            else
+            {
+                submissionBatches = this.archivedSubmissionsData
                 .GetAllUndeletedFromMainDatabase()
                 .Distinct()
-                .OrderBy(x => x.IsHardDeletedFromMainDatabase)
+                .OrderBy(x => x.Id)
                 .InBatches(GlobalConstants.BatchOperationsChunkSize);
-            
+            }
+
             foreach (var submissionIdsBatch in submissionBatches)
             {
+                //var deleted = submissionBatches.Where(b => b.Any(x => x.IsDeleted)).First().Where(x => x.IsDeleted).ToList();
                 var archivedIds = submissionIdsBatch
                     .Select(s => s.Id)
                     .ToSet();
 
                 // Some submissions are present in the Archives, but are not marked as `deleted from the main db`
-                var idsSet = this.submissionsData.GetAll()
+                var idsSet = this.submissionsData.GetAllWithDeleted()
                     .Where(s => archivedIds.Contains(s.Id))
                     .Select(x => x.Id)
                     .ToSet();
@@ -217,7 +242,7 @@
                     this.participantScoresData.RemoveSubmissionIdsBySubmissionIds(idsSet);
 
                     testRuns.Delete(
-                        tr => idsSet.Contains(tr.SubmissionId), 
+                        tr => idsSet.Contains(tr.SubmissionId),
                         batchSize: GlobalConstants.BatchOperationsChunkSize);
 
                     try
