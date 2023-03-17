@@ -30,6 +30,8 @@ interface IUrlsContext {
     getStartContestParticipationUrl: (params: IStartContestParticipationUrlParams) => string;
     getContestParticipantScoresForParticipantUrl: (params: IGetContestParticipationScoresForParticipantUrlParams) => string;
     getSubmissionResultsByProblemUrl: (params: IGetSubmissionResultsByProblemUrlParams) => string;
+    getPublicSubmissionsUrl: () => string;
+    getSubmissionsTotalCountUrl: () => string;
     getSubmissionsDetailsUrl: () => string;
     getSubmissionDetailsByIdUrl: (params: IGetSubmissionDetailsByIdUrlParams) => string;
     getSubmitUrl: () => string;
@@ -130,7 +132,8 @@ const getSubmissionResultsByProblemUrl = ({
     take,
 }: IGetSubmissionResultsByProblemUrlParams) => `
     ${baseApiUrl}/Submissions/GetSubmissionResultsByProblem/${id}?isOfficial=${isOfficial}&take=${take}`;
-
+const getPublicSubmissionsUrl = () => `${baseApiUrl}/Submissions/Public`;
+const getSubmissionsTotalCountUrl = () => `${baseApiUrl}/Submissions/TotalCount`;
 const getSubmissionsDetailsUrl = () => `${baseApiUrl}/Submissions/Details`;
 const getSubmissionDetailsByIdUrl =
     ({ submissionId }: IGetSubmissionDetailsByIdUrlParams) => `${getSubmissionsDetailsUrl()}/${submissionId}`;
@@ -161,6 +164,8 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
             getContestParticipantScoresForParticipantUrl,
             getDownloadProblemResourceUrl,
             getSubmissionResultsByProblemUrl,
+            getPublicSubmissionsUrl,
+            getSubmissionsTotalCountUrl,
             getIndexContestsUrl,
             getProfileInfoUrl,
             getSubmissionsDetailsUrl,
