@@ -15,6 +15,7 @@ interface IHomeContestsContext {
     state: {
         activeContests: IIndexContestsType[];
         pastContests: IIndexContestsType[];
+        isLoaded: boolean;
     };
     actions: {
         getForHome: () => Promise<void>;
@@ -36,22 +37,22 @@ const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
     const [ activeContests, setActiveContests ] = useState<IIndexContestsType[]>([]);
     const [ pastContests, setPastContests ] = useState<IIndexContestsType[]>([]);
     const { getIndexContestsUrl } = useUrls();
-
-    const {
-        startLoading,
-        stopLoading,
-    } = useLoading();
+    const { startLoading, stopLoading } = useLoading();
 
     const {
         get: getContests,
         data: contestsData,
+        isSuccess,
     } = useHttp<null, IGetContestsForIndexResponseType, null>({ url: getIndexContestsUrl });
 
-    const getForHome = useCallback(async () => {
-        startLoading();
-        await getContests();
-        stopLoading();
-    }, [ getContests, startLoading, stopLoading ]);
+    const getForHome = useCallback(
+        async () => {
+            startLoading();
+            await getContests();
+            stopLoading();
+        },
+        [ getContests, startLoading, stopLoading ],
+    );
 
     useEffect(() => {
         if (isNil(contestsData)) {
@@ -72,10 +73,11 @@ const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
             state: {
                 activeContests,
                 pastContests,
+                isLoaded: isSuccess,
             },
             actions: { getForHome },
         }),
-        [ activeContests, getForHome, pastContests ],
+        [ activeContests, getForHome, isSuccess, pastContests ],
     );
 
     return (
