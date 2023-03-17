@@ -64,13 +64,11 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
     const {
         get: getSubmissions,
         data: apiSubmissions,
-        isSuccess: loadedPublicSubmissions,
     } = useHttp<null, IPublicSubmission[]>({ url: getPublicSubmissionsUrl });
 
     const {
         get: getTotalSubmissionsCount,
         data: apiTotalSubmissionsCount,
-        isSuccess: loadedTotalSubmissionsQuery,
     } = useHttp({ url: getSubmissionsTotalCountUrl });
 
     const submissions = useMemo(
@@ -85,16 +83,12 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
 
     const load = useCallback(
         async () => {
-            if (loadedPublicSubmissions && loadedTotalSubmissionsQuery) {
-                return;
-            }
-
             await Promise.all([
                 getSubmissions(),
                 getTotalSubmissionsCount(),
             ]);
         },
-        [ getSubmissions, getTotalSubmissionsCount, loadedPublicSubmissions, loadedTotalSubmissionsQuery ],
+        [ getSubmissions, getTotalSubmissionsCount ],
     );
 
     const value = useMemo(
