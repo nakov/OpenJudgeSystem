@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { FilterType, IFilter } from '../../common/contest-types';
+import { IFilter } from '../../common/contest-types';
 import { IIndexContestsType } from '../../common/types';
 import ContestFilters from '../../components/contests/contests-filters/ContestFilters';
 import Breadcrumb from '../../components/guidelines/breadcrumb/Breadcrumb';
@@ -12,6 +12,7 @@ import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
 import { useHashUrlParams } from '../../hooks/common/use-hash-url-params';
+import { useAppUrls } from '../../hooks/use-app-urls';
 import { ICategoriesBreadcrumbItem, useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
 import { useContests } from '../../hooks/use-contests';
 import concatClassNames from '../../utils/class-names';
@@ -19,14 +20,13 @@ import { setLayout } from '../shared/set-layout';
 
 import styles from './ContestsPage.module.scss';
 
-const getBreadcrumbItemPath = (id: string) => `/contests?${FilterType.Category.toString()}=${id}`;
-
 const ContestsPage = () => {
     const {
         state: {
             contests,
             pagesInfo,
             currentPage,
+            isLoaded,
         },
         actions: {
             toggleParam,
@@ -37,6 +37,7 @@ const ContestsPage = () => {
 
     const { state: { breadcrumbItems } } = useCategoriesBreadcrumbs();
     const { state: { params }, actions: { clearHash } } = useHashUrlParams();
+    const { getContestCategoryBreadcrumbItemPath } = useAppUrls();
 
     useEffect(() => {
         initiateGetAllContestsQuery();
@@ -65,6 +66,10 @@ const ContestsPage = () => {
 
     const renderContests = useCallback(
         () => {
+            if (!isLoaded) {
+                return null;
+            }
+
             if (isNil(contests) || isEmpty(contests)) {
                 return (
                     <Heading type={HeadingType.secondary}>
@@ -92,7 +97,7 @@ const ContestsPage = () => {
                 </div>
             );
         },
-        [ contests, currentPage, handlePageChange, pagesInfo, renderContest ],
+        [ contests, currentPage, handlePageChange, isLoaded, pagesInfo, renderContest ],
     );
 
     const renderCategoriesBreadcrumbItem = useCallback(
@@ -103,10 +108,10 @@ const ContestsPage = () => {
                 : '');
 
             return (
-                <LinkButton type={LinkButtonType.plain} className={classNames} to={getBreadcrumbItemPath(id)} text={value} />
+                <LinkButton type={LinkButtonType.plain} className={classNames} to={getContestCategoryBreadcrumbItemPath(id)} text={value} />
             );
         },
-        [ ],
+        [ getContestCategoryBreadcrumbItemPath ],
     );
 
     return (

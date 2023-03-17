@@ -37,6 +37,7 @@ interface IContestsContext {
         pagesInfo: IPagesInfo;
         currentPage: number;
         contest: IIndexContestsType | null;
+        isLoaded: boolean;
     };
     actions: {
         reload: () => Promise<void>;
@@ -112,6 +113,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const {
         get: getContests,
         data: contestsData,
+        isSuccess,
     } = useHttp<
         IAllContestsUrlParams,
         IPagedResultType<IIndexContestsType>>({
@@ -223,13 +225,17 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     const initiateGetAllContestsQuery = useCallback(
         () => {
+            if (isEmpty(possibleFilters)) {
+                return;
+            }
+
             setGetAllContestsUrlParams({
                 filters: filters as IFilter[],
                 sorting: sortingTypes as ISort[],
                 page: currentPage,
             });
         },
-        [ currentPage, filters, sortingTypes ],
+        [ currentPage, filters, possibleFilters, sortingTypes ],
     );
 
     const loadContestByProblemId = useCallback((problemId: number) => {
@@ -314,6 +320,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
                 sortingTypes,
                 currentPage,
                 contest,
+                isLoaded: isSuccess,
             },
             actions: {
                 reload,
@@ -341,6 +348,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             loadContestByProblemId,
             contest,
             initiateGetAllContestsQuery,
+            isSuccess,
         ],
     );
 

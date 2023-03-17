@@ -236,6 +236,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             if (isNil(startContestData)) {
                 return;
             }
+
             if (!isNil(startContestError)) {
                 setContestError(startContestError);
                 return;
