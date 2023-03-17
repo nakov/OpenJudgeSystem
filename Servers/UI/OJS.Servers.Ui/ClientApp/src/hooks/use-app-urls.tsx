@@ -4,11 +4,13 @@ import {
     IContestProblemUrl,
     IRegisterForContestTypeUrlParams,
 } from '../common/app-url-types';
+import { FilterType } from '../common/contest-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
 interface IAppUrlsContext {
     getRegisterContestTypeUrl: (params: IRegisterForContestTypeUrlParams) => string;
     getContestProblemUrl:(params: IContestProblemUrl) => string;
+    getContestCategoryBreadcrumbItemPath: (id: string) => string;
     getAdministrationRetestSubmissionInternalUrl: () => string;
     getHomePageUrl: () => string;
     getLoginUrl: () => string;
@@ -23,6 +25,8 @@ const getRegisterContestTypeUrl = ({
     id,
     participationType,
 }: IRegisterForContestTypeUrlParams) => `/Contests/${id}/Register/${participationType}`;
+
+const getContestCategoryBreadcrumbItemPath = (id: string) => `/Contests?${FilterType.Category.toString()}=${id}`;
 
 const getContestProblemUrl = ({
     id,
@@ -42,6 +46,7 @@ const AppUrlsProvider = ({ children }: IAppUrlsProviderProps) => {
             {
                 getRegisterContestTypeUrl,
                 getContestProblemUrl,
+                getContestCategoryBreadcrumbItemPath,
                 getAdministrationRetestSubmissionInternalUrl,
                 getHomePageUrl,
                 getLoginUrl,

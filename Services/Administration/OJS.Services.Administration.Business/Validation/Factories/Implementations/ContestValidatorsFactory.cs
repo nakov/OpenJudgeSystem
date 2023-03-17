@@ -18,7 +18,7 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
         => new Func<Contest, Contest, AdminActionContext, ValidatorResult>[]
         {
             ValidateContestStartTime, ValidateContestPracticeStartTime, ValidateOnlineContestDuration,
-            ValidateOnlineContestProblemGroups, ValidateActiveContestCannotEditDurationTypeOnEdit,
+            ValidateOnlineContestDuration, ValidateActiveContestCannotEditDurationTypeOnEdit,
             ValidateContestIsNotActiveOnDelete,
             ValidateCategoryIsSet,
         };
@@ -36,7 +36,7 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
             return ValidatorResult.Success();
         }
 
-        if (existingContest.IsOnline &&
+        if (existingContest.IsOnlineExam &&
             existingContest.IsActive &&
             (existingContest.Duration != newContest.Duration || existingContest.Type != newContest.Type))
         {
@@ -73,7 +73,7 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
 
     private static ValidatorResult ValidateOnlineContestDuration(Contest oldContest, Contest newContest, AdminActionContext adminActionContext)
     {
-        if (newContest.IsOnline)
+        if (newContest.IsOnlineExam)
         {
             if (!newContest.Duration.HasValue)
             {
@@ -91,7 +91,7 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
 
     private static ValidatorResult ValidateOnlineContestProblemGroups(Contest oldContest, Contest newContest, AdminActionContext adminActionContext)
     {
-        if (newContest.IsOnline)
+        if (newContest.IsOnlineExam)
         {
             if (newContest.NumberOfProblemGroups <= 0)
             {

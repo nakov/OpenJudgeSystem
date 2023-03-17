@@ -201,7 +201,13 @@ namespace OJS.Data.Models.Contests
         public bool HasPracticePassword => this.PracticePassword != null;
 
         [NotMapped]
-        public bool IsOnline => this.Type == ContestType.OnlinePracticalExam;
+        public bool IsOnlineExam => this.Type == ContestType.OnlinePracticalExam;
+
+        [NotMapped]
+        public bool IsOnsiteExam => this.Type == ContestType.OnsitePracticalExam;
+
+        [NotMapped]
+        public bool IsExam => this.IsOnlineExam || this.IsOnsiteExam;
 
         public static IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

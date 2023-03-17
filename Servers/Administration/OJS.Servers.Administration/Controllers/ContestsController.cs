@@ -1,8 +1,14 @@
 namespace OJS.Servers.Administration.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using System.Threading.Tasks;
     using AutoCrudAdmin.Models;
     using AutoCrudAdmin.ViewModels;
     using Microsoft.AspNetCore.Mvc;
+    using OJS.Common.Enumerations;
     using OJS.Data.Models;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Problems;
@@ -13,11 +19,6 @@ namespace OJS.Servers.Administration.Controllers
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models;
     using OJS.Services.Infrastructure.Extensions;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Linq.Expressions;
-    using System.Threading.Tasks;
     using AdminResource = OJS.Common.Resources.AdministrationGeneral;
     using Resource = OJS.Common.Resources.ContestsControllers;
 
@@ -142,7 +143,7 @@ namespace OJS.Servers.Administration.Controllers
                     .VerifyResult();
             }
 
-            if (!entity.IsOnline && entity.Duration != null)
+            if (!entity.IsOnlineExam && entity.Duration != null)
             {
                 entity.Duration = null;
             }
@@ -163,12 +164,12 @@ namespace OJS.Servers.Administration.Controllers
             AdminActionContext actionContext)
         {
             var newContestUtc = ConvertContestStartAndEndTimeToUtc(newContest);
-            if (newContestUtc.IsOnline && newContestUtc.ProblemGroups.Count == 0)
+            if (newContestUtc.IsOnlineExam && newContestUtc.ProblemGroups.Count == 0)
             {
                 AddProblemGroupsToContest(newContestUtc, newContestUtc.NumberOfProblemGroups);
             }
 
-            if (!newContestUtc.IsOnline && newContestUtc.Duration != null)
+            if (!newContestUtc.IsOnlineExam && newContestUtc.Duration != null)
             {
                 newContestUtc.Duration = null;
             }

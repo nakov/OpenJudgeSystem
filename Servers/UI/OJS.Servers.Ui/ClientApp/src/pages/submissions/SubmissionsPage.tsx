@@ -7,7 +7,13 @@ import { usePublicSubmissions } from '../../hooks/submissions/use-public-submiss
 import { setLayout } from '../shared/set-layout';
 
 const SubmissionsPage = () => {
-    const { actions: { load } } = usePublicSubmissions();
+    const {
+        state: {
+            submissions,
+            totalSubmissionsCount,
+        },
+        actions: { load },
+    } = usePublicSubmissions();
     const { state: { params }, actions: { clearHash } } = useHashUrlParams();
 
     useEffect(() => {
@@ -18,11 +24,15 @@ const SubmissionsPage = () => {
 
     useEffect(
         () => {
+            if (!isEmpty(submissions) || totalSubmissionsCount !== 0) {
+                return;
+            }
+
             (async () => {
                 await load();
             })();
         },
-        [ clearHash, load ],
+        [ clearHash, load, submissions, totalSubmissionsCount ],
     );
 
     return (
