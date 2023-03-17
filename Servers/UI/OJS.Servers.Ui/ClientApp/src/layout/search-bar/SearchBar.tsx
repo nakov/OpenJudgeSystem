@@ -100,7 +100,7 @@ const SearchBar = () => {
                       className={styles.search}
                       onSubmit={handleSubmit}
                       submitButtonClassName={styles.searchButton}
-                      internalButton
+                      disableButton
                     >
                         <FormControl
                           className={styles.searchInput}

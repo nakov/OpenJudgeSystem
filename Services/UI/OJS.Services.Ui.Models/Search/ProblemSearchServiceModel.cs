@@ -16,5 +16,7 @@ public class ProblemSearchServiceModel : IMapExplicitly
 
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration.CreateMap<Problem, ProblemSearchServiceModel>()
-            .ForMember(d => d.Contest, opt => opt.Ignore());
+            .ForMember(
+                m => m.Contest,
+                opt => opt.MapFrom(src => src.ProblemGroup.Contest));
 }

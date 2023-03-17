@@ -181,8 +181,6 @@ namespace OJS.Services.Ui.Business.Implementations
                 .MapCollection<ProblemSearchServiceModel>()
                 .ToPagedListAsync(model.PageNumber, model.ItemsPerPage);
 
-            searchProblems.ForEach(sp => GetContestByProblemId(sp, allProblemsQueryable));
-
             modelResult.Problems = searchProblems;
             modelResult.TotalProblemsCount = allProblemsQueryable.Count();
 
@@ -199,11 +197,6 @@ namespace OJS.Services.Ui.Business.Implementations
                 throw new BusinessServiceException(Resources.ContestsGeneral.ProblemNotAssignedToUser);
             }
         }
-
-        private static void GetContestByProblemId(ProblemSearchServiceModel model, IEnumerable<Problem> allProblems)
-            => model.Contest = allProblems
-                .First(p => p.Id == model.Id).ProblemGroup.Contest
-                .Map<ProblemContestSearchServiceModel>();
 
         private async Task CopyProblemToContest(Problem? problem, int contestId, int? problemGroupId)
         {
