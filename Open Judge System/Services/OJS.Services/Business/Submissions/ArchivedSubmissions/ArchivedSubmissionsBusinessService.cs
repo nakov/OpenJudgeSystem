@@ -30,8 +30,42 @@
             this.backgroundJobs = backgroundJobs;
         }
 
-        public void ArchiveOldSubmissionsWithLimit(PerformContext context, int limit)
+        public int ArchiveOldSubmissionsDailyBatch(PerformContext context, int limit)
         {
+            var maxSubBatchSize = 50000;
+            var leftover = limit % maxSubBatchSize;
+            var iterations = limit / maxSubBatchSize + (leftover > 0 ? 1 : 0);
+            var archived = 0;
+            var deletedCount = 0;
+            this.archivedSubmissionsData.CreateDatabaseIfNotExists();
+
+            for (var i = 0; i < iterations; i++)
+            {
+                var curBatchSize = (i == iterations - 1 && leftover > 0) ? leftover : maxSubBatchSize;
+                var allSubmissionsForArchive = this.submissionsBusiness
+                                .GetAllForArchiving()
+                                .OrderBy(x => x.Id)
+                                .Take(curBatchSize)
+                                .InBatches(GlobalConstants.BatchOperationsChunkSize);
+
+                foreach (var submissionsForArchiveBatch in allSubmissionsForArchive)
+                {
+                    var submissionsForArchives = submissionsForArchiveBatch
+                        .Select(ArchivedSubmission.FromSubmission)
+                        .ToList();
+
+                    archived += this.archivedSubmissionsData.Add(submissionsForArchives);
+                }
+
+                deletedCount += this.submissionsBusiness.HardDeleteArchived(curBatchSize);
+            }
+
+            return deletedCount;
+        }
+
+        public int ArchiveOldSubmissionsWithLimit(PerformContext context, int limit)
+        {
+            var archived = 0;
             this.archivedSubmissionsData.CreateDatabaseIfNotExists();
 
             var allSubmissionsForArchive = this.submissionsBusiness
@@ -46,14 +80,15 @@
                     .Select(ArchivedSubmission.FromSubmission)
                     .ToList();
 
-                this.archivedSubmissionsData.Add(submissionsForArchives);
+                archived += this.archivedSubmissionsData.Add(submissionsForArchives);
             }
 
-            this.backgroundJobs.AddFireAndForgetJob<IArchivedSubmissionsBusinessService>(
-                s => s.HardDeleteArchivedByLimit(context, limit));
+            this.backgroundJobs.OnSucceededStateContinueWith<IArchivedSubmissionsBusinessService>(
+               context.BackgroundJob.Id,
+               s => s.HardDeleteArchivedByLimit(context, limit));
+
+            return archived;
         }
-
-
 
         public void ArchiveOldSubmissions(PerformContext context)
         {
@@ -88,17 +123,7 @@
             }
         }
 
-        public void HardDeleteArchivedByLimit(PerformContext context, int limit)
+        public int HardDeleteArchivedByLimit(PerformContext context, int limit)
             => this.submissionsBusiness.HardDeleteArchived(limit);
-
-        //public void ArchiveCleanOldSubmissions(PerformContext context)
-        //{
-        //    var deleteLimit = DateTime.Now.AddYears(
-        //        -GlobalConstants.BestSubmissionEligibleForArchiveAgeInYears);
-
-        //    var allSubmissionsForArchive = this.submissionsData
-        //        .GetAll()
-        //        .Where(x => x.CreatedOn < deleteLimit);
-        //}
     }
 }

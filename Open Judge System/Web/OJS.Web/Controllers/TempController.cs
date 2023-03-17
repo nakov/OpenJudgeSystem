@@ -34,7 +34,7 @@
     [AuthorizeRoles(SystemRole.Administrator)]
     public class TempController : BaseController
     {
-        private const int ArchiveCountLimit = 750000;
+        private const int ArchiveCountLimit = 50000;
         private readonly IHangfireBackgroundJobService backgroundJobs;
         private readonly IProblemGroupsDataService problemGroupsData;
         private readonly IProblemsDataService problemsDataService;
@@ -87,16 +87,6 @@
             return null;
         }
 
-        //public ActionResult RegisterJobForHardDeletingArchivedSubmissions()
-        //{
-        //    this.backgroundJobs.AddOrUpdateRecurringJob<IArchivedSubmissionsBusinessService>(
-        //        "HardDeleteArchivedSubmissions",
-        //        s => s.HardDeleteCurrentArchived(null),
-        //        Cron.Weekly(DayOfWeek.Monday, 1, 30));
-
-        //    return null;
-        //}
-
         public ActionResult RegisterJobForArchiveOldSubmissionsWithLimit()
         {
             this.backgroundJobs.AddOrUpdateRecurringJob<IArchivedSubmissionsBusinessService>(
@@ -117,22 +107,15 @@
             return null;
         }
 
-        //public ActionResult Test()
-        //{
+        public ActionResult RegisterJobForArchiveOldSubmissionsDailyBatch()
+        {
+            this.backgroundJobs.AddOrUpdateRecurringJob<IArchivedSubmissionsBusinessService>(
+                "ArchiveOldSubmissionsDailyBatch",
+                s => s.ArchiveOldSubmissionsDailyBatch(null, 750000),
+                Cron.Daily(1, 30));
 
-        //    this.archivedSubmissionsBusinessService.HardDeleteCurrentArchived(null);
-        //    return null;
-        //}
-
-        //public ActionResult RegisterCleanUpJobsForArchiving()
-        //{
-        //    this.backgroundJobs.AddOrUpdateRecurringJob<IArchivedSubmissionsBusinessService>(
-        //        "CleanUpArchivedOldSubmissions",
-        //        s => s.ArchiveCleanOldSubmissions(null),
-        //        Cron.Weekly(DayOfWeek.Monday, 1, 30));
-
-        //    return null;
-        //}
+            return null;
+        }
 
         public ActionResult RegisterJobForNormalizingSubmissionAndParticipantScorePoints()
         {

@@ -141,54 +141,6 @@
                 })
                 .ToList();
 
-        //public int HardDeleteAllArchived2()
-        //{
-        //    var hardDeletedCount = 0;
-
-        //    var submissionBatches = this.archivedSubmissionsData
-        //        .GetAllUndeletedFromMainDatabase()
-        //        .OrderBy(x => x.IsHardDeletedFromMainDatabase)
-        //        .InBatches(GlobalConstants.BatchOperationsChunkSize);
-
-        //    foreach (var submissionIdsBatch in submissionBatches)
-        //    {
-        //        var idsSet = submissionIdsBatch
-        //            .Select(s => s.Id)
-        //            .ToSet();
-
-        //        using (var scope = TransactionsHelper.CreateTransactionScope(IsolationLevel.ReadCommitted))
-        //        {
-        //            this.participantScoresData.RemoveSubmissionIdsBySubmissionIds(idsSet);
-
-        //            testRuns.Delete(
-        //                tr => idsSet.Contains(tr.SubmissionId),
-        //                batchSize: GlobalConstants.BatchOperationsChunkSize);
-
-        //            try
-        //            {
-        //                this.submissions.HardDelete(
-        //                    s => idsSet.Contains(s.Id),
-        //                    batchSize: GlobalConstants.BatchOperationsChunkSize);
-        //            }
-        //            catch (AggregateException ex)
-        //            {
-        //                Console.WriteLine(ex);
-        //                scope.Dispose();
-        //                continue;
-        //            }
-
-
-        //            this.archivedSubmissionsData.SetToHardDeletedFromMainDatabaseByIds(idsSet);
-
-        //            scope.Complete();
-        //        }
-
-        //        hardDeletedCount += idsSet.Count;
-        //    }
-
-        //    return hardDeletedCount;
-        //}
-
 
         public int HardDeleteAllArchived()
         {
@@ -213,7 +165,7 @@
                  .Distinct()
                  .OrderBy(x => x.Id)
                  .Take(deleteCountLimit)
-                 .InBatches(GlobalConstants.BatchOperationsChunkSize);
+                 .InSelfModifyingBatches(GlobalConstants.BatchOperationsChunkSize);
             }
             else
             {
@@ -221,7 +173,7 @@
                 .GetAllUndeletedFromMainDatabase()
                 .Distinct()
                 .OrderBy(x => x.Id)
-                .InBatches(GlobalConstants.BatchOperationsChunkSize);
+                .InSelfModifyingBatches(GlobalConstants.BatchOperationsChunkSize);
             }
 
             foreach (var submissionIdsBatch in submissionBatches)

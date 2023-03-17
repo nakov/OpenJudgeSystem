@@ -6,12 +6,14 @@
 
     public interface IArchivedSubmissionsBusinessService : IService
     {
-        void ArchiveOldSubmissionsWithLimit(PerformContext context, int limit);
+        int ArchiveOldSubmissionsDailyBatch(PerformContext context, int limit);
+
+        int ArchiveOldSubmissionsWithLimit(PerformContext context, int limit);
 
         void ArchiveOldSubmissions(PerformContext context);
 
         void HardDeleteCurrentArchived(PerformContext context);
 
-        void HardDeleteArchivedByLimit(PerformContext context, int limit);
+        int HardDeleteArchivedByLimit(PerformContext context, int limit);
     }
 }
