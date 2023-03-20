@@ -164,12 +164,12 @@ namespace OJS.Servers.Administration.Controllers
             AdminActionContext actionContext)
         {
             var newContestUtc = ConvertContestStartAndEndTimeToUtc(newContest);
-            if (newContestUtc.IsOnline && newContestUtc.ProblemGroups.Count == 0)
+            if (newContestUtc.IsOnlineExam && newContestUtc.ProblemGroups.Count == 0)
             {
                 AddProblemGroupsToContest(newContestUtc, newContestUtc.NumberOfProblemGroups);
             }
 
-            if (!newContestUtc.IsOnline && newContestUtc.Duration != null)
+            if (!newContestUtc.IsOnlineExam && newContestUtc.Duration != null)
             {
                 newContestUtc.Duration = null;
             }
