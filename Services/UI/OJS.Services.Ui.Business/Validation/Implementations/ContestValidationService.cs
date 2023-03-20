@@ -57,7 +57,7 @@ public class ContestValidationService : IContestValidationService
     {
         var isUserAdminOrLecturerInContest = isAdmin || isUserLecturerInContest;
 
-        if (!contest.IsOnline || isUserAdminOrLecturerInContest)
+        if (!contest.IsExam || isUserAdminOrLecturerInContest)
         {
             return false;
         }

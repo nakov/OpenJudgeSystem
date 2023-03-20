@@ -31,8 +31,14 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const [ defaultSelected, setDefaultSelected ] = useState('');
     const [ searchParams ] = useSearchParams();
     const [ isLoaded, setIsLoaded ] = useState(false);
-    const { actions: { load: loadStrategies } } = useContestStrategyFilters();
-    const { actions: { load: loadCategories } } = useContestCategories();
+    const {
+        state: { isLoaded: isLoadedStrategies },
+        actions: { load: loadStrategies },
+    } = useContestStrategyFilters();
+    const {
+        state: { isLoaded: isLoadedCategories },
+        actions: { load: loadCategories },
+    } = useContestCategories();
 
     const {
         state: { possibleFilters },
@@ -113,20 +119,28 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
 
     useEffect(
         () => {
+            if (isLoadedCategories) {
+                return;
+            }
+
             (async () => {
                 await loadStrategies();
             })();
         },
-        [ loadStrategies ],
+        [ isLoadedCategories, loadStrategies ],
     );
 
     useEffect(
         () => {
+            if (isLoadedStrategies) {
+                return;
+            }
+
             (async () => {
                 await loadCategories();
             })();
         },
-        [ loadCategories ],
+        [ isLoadedStrategies, loadCategories ],
     );
 
     const clearFiltersAndBreadcrumbAndSorting = useCallback(
