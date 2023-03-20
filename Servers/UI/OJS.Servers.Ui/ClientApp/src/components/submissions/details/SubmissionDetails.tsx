@@ -154,7 +154,7 @@ const SubmissionDetails = () => {
         [ canAccessAdministration, getAdministrationRetestSubmissionInternalUrl ],
     );
 
-    const buttonsSection = useCallback(
+    const renderButtonsSection = useCallback(
         () => (
             <div className={styles.buttonsSection}>
                 { renderReloadButton() }
@@ -214,12 +214,12 @@ const SubmissionDetails = () => {
                   items={currentProblemSubmissionResults}
                   selectedSubmission={currentSubmission}
                   className={styles.submissionsList}
-                  renderExternalElements={buttonsSection}
                 />
+                { renderButtonsSection() }
                 { renderSubmissionInfo() }
             </div>
         ),
-        [ buttonsSection, currentProblemSubmissionResults, currentSubmission, renderSubmissionInfo ],
+        [ currentProblemSubmissionResults, currentSubmission, renderButtonsSection, renderSubmissionInfo ],
     );
 
     const codeEditor = useCallback(
@@ -303,9 +303,9 @@ const SubmissionDetails = () => {
     const renderSubmission = useCallback(
         () => (
             <div className={styles.detailsWrapper}>
-                <div>{refreshableSubmissionsList()}</div>
-                <div>{codeEditor()}</div>
-                <div>{submissionResults()}</div>
+                {refreshableSubmissionsList()}
+                {codeEditor()}
+                {submissionResults()}
             </div>
         ),
         [ codeEditor, refreshableSubmissionsList, submissionResults ],
