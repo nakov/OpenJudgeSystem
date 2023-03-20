@@ -110,7 +110,7 @@ const SearchBar = () => {
                           onChange={handleOnChangeUpdateSearch}
                           onKeyDown={handleOnKeyDown}
                           value={searchParam}
-                          disableLabel
+                          shouldDisableLabel
                         />
                         <Button
                           onClick={handleSubmit}

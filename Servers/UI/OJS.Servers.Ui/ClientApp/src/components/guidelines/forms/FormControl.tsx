@@ -35,11 +35,11 @@ interface IFormControlProps extends IHaveOptionalClassName {
     type?: FormControlType;
     onChange?: ((value?: IFormControlOnChangeValueType) => void) | null;
     onInput?: ((value?: string) => void) | null;
-    onKeyDown?: (ev:React.KeyboardEvent<HTMLInputElement>) => void;
+    onKeyDown?: (ev: React.KeyboardEvent<HTMLInputElement>) => void;
     onClick?: (value: FormEvent<HTMLInputElement>) => void;
     checked?: boolean;
     id?: string;
-    disableLabel?: boolean;
+    shouldDisableLabel?: boolean;
 }
 
 interface ILabelInternalProps extends IHaveChildrenProps, IHaveOptionalClassName {
@@ -50,7 +50,15 @@ interface ILabelInternalProps extends IHaveChildrenProps, IHaveOptionalClassName
     internalContainerClassName?: string;
 }
 
-const LabelInternal = ({ id, text, className, internalContainerClassName, forKey, children, fieldType }: ILabelInternalProps) => {
+const LabelInternal = ({
+    id,
+    text,
+    className,
+    internalContainerClassName,
+    forKey,
+    children,
+    fieldType,
+}: ILabelInternalProps) => {
     if (!text && !className) {
         return (
             <div>
@@ -98,7 +106,7 @@ const FormControl = ({
     type = FormControlType.text,
     checked = false,
     id = generateId(),
-    disableLabel = false,
+    shouldDisableLabel = false,
 }: IFormControlProps) => {
     const [ formControlValue, setFormControlValue ] = useState(value);
 
@@ -223,7 +231,7 @@ const FormControl = ({
             id, isChecked, labelText, name, onChange, onClick, type, value ],
     );
 
-    const formControlWithLabel = useCallback(
+    const generateFormControlWithLabel = useCallback(
         () => (
             <LabelInternal
               id={`${id}-label`}
@@ -240,13 +248,10 @@ const FormControl = ({
     );
 
     const renderFormControl = useCallback(
-        () => {
-            if (disableLabel) {
-                return generateFormControl();
-            }
-            return formControlWithLabel();
-        },
-        [ disableLabel, formControlWithLabel, generateFormControl ],
+        () => shouldDisableLabel
+            ? generateFormControl()
+            : generateFormControlWithLabel(),
+        [ shouldDisableLabel, generateFormControlWithLabel, generateFormControl ],
     );
 
     return (
