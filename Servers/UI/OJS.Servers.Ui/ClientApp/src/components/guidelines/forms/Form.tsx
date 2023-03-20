@@ -2,14 +2,15 @@ import React, { FormEvent, useCallback, useMemo } from 'react';
 
 import concatClassNames from '../../../utils/class-names';
 import generateId from '../../../utils/id-generator';
-import { IHaveChildrenProps, IHaveOptionalClassName } from '../../common/Props';
+import { IHaveOptionalChildrenProps, IHaveOptionalClassName } from '../../common/Props';
 import { Button, ButtonType } from '../buttons/Button';
 
-interface IFormProps extends IHaveChildrenProps, IHaveOptionalClassName {
+interface IFormProps extends IHaveOptionalChildrenProps, IHaveOptionalClassName {
     onSubmit: () => void;
     submitText?: string;
     id?: string;
     submitButtonClassName?: string;
+    disableButton?: boolean;
 }
 
 const Form = ({
@@ -19,6 +20,7 @@ const Form = ({
     id = generateId(),
     className = '',
     submitButtonClassName = '',
+    disableButton,
 }: IFormProps) => {
     const handleSubmit = useCallback(
         async (ev: FormEvent) => {
@@ -38,6 +40,23 @@ const Form = ({
     const internalClassName = concatClassNames(className);
     const internalSubmitButtonClassName = concatClassNames('btnSubmitInForm', submitButtonClassName);
 
+    const renderButton = useCallback(
+        () => (
+            disableButton === false
+                ? (
+                    <Button
+                      id={btnId}
+                      onClick={(ev) => handleSubmit(ev)}
+                      text={submitText}
+                      type={ButtonType.submit}
+                      className={internalSubmitButtonClassName}
+                    />
+                )
+                : null
+        ),
+        [ btnId, handleSubmit, disableButton, internalSubmitButtonClassName, submitText ],
+    );
+
     return (
         <form
           id={id}
@@ -45,13 +64,7 @@ const Form = ({
           className={internalClassName}
         >
             {children}
-            <Button
-              id={btnId}
-              onClick={(ev) => handleSubmit(ev)}
-              text={submitText}
-              type={ButtonType.submit}
-              className={internalSubmitButtonClassName}
-            />
+            {renderButton()}
         </form>
     );
 };

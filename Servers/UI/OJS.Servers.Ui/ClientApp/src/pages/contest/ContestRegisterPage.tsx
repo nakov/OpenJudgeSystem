@@ -1,9 +1,11 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../common/constants';
 import ContestPasswordForm from '../../components/contests/contest-password-form/ContestPasswordForm';
+import { useHashUrlParams } from '../../hooks/common/use-hash-url-params';
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
 import { useCurrentContest } from '../../hooks/use-current-contest';
 import { makePrivate } from '../shared/make-private';
@@ -13,6 +15,7 @@ import styles from './ContestRegisterPage.module.scss';
 
 const ContestRegisterPage = () => {
     const { state: { params } } = useRouteUrlParams();
+    const { state: { params: hashParam } } = useHashUrlParams();
 
     const {
         contestId,
@@ -45,14 +48,22 @@ const ContestRegisterPage = () => {
     );
     const isSubmittedPasswordValid = useMemo(() => !isNil(isPasswordValid) && isPasswordValid, [ isPasswordValid ]);
 
-    useEffect(
-        () => {
-            (async () => {
-                await register(internalContest);
-            })();
-        },
-        [ internalContest, contestIdToNumber, isParticipationOfficial, participationType, register ],
+    const navigateToPage = useCallback(
+        () => isEmpty(hashParam)
+            ? navigate(`/contests/${contestId}/${participationType}`)
+            : navigate(`/contests/${contestId}/${participationType}#${hashParam}`),
+        [ contestId, navigate, hashParam, participationType ],
     );
+
+    useEffect(() => {
+        (async () => {
+            if (isEmpty(contestId)) {
+                return;
+            }
+
+            await register(internalContest);
+        })();
+    }, [ internalContest, contestIdToNumber, isParticipationOfficial, participationType, register, contestId ]);
 
     useEffect(
         () => {
@@ -61,10 +72,10 @@ const ContestRegisterPage = () => {
             }
 
             if (doesNotRequirePassword || isSubmittedPasswordValid) {
-                navigate(`/contests/${contestId}/${participationType}`);
+                navigateToPage();
             }
         },
-        [ contestId, doesNotRequirePassword, isSubmittedPasswordValid, participationType, navigate, requirePassword ],
+        [ contestId, doesNotRequirePassword, isSubmittedPasswordValid, navigateToPage, participationType ],
     );
 
     return (

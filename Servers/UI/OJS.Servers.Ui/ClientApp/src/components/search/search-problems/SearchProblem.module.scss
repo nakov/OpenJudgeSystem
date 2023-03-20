@@ -1,0 +1,41 @@
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
+@use 'src/styles/variables';
+
+.problemElement {
+  align-content: center;
+  border-radius: 8px;
+  box-shadow: colors.$box-shadow-color;
+  color: colors.$text-dark-gray-color;
+  display: grid;
+  flex-flow: wrap;
+  grid-gap: 10px;
+  justify-items: center;
+  margin: 10px;
+  padding: 0.7vw;
+}
+
+.problemContest {
+  @extend %font-family-lato;
+
+  color: colors.$text-dark-gray-color;
+  font-size: variables.$f-size-16;
+  max-width: 11vw;
+  text-align: center;
+  text-decoration: none;
+}
+
+.problemCategory {
+  color: colors.$text-light-gray-color;
+  font-size: variables.$f-size-10;
+  font-weight: bold;
+  margin-left: 10px;
+  text-transform: uppercase;
+}
+
+.problemCardControls {
+  align-items: flex-end;
+  display: flex;
+  grid-gap: 10px;
+  justify-content: center;
+}

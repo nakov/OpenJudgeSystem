@@ -1,0 +1,70 @@
+@use 'src/styles/colors';
+@use 'src/styles/variables';
+@use 'src/styles/components';
+@use 'src/styles/fonts';
+
+.searchContainer {
+  @extend %contentSize;
+
+  background-color: colors.$white-color;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 14%), 0 3px 4px rgb(0 0 0 / 12%), 0 1px 5px rgb(0 0 0 / 20%);
+  display: flex;
+  margin-top: 80px;
+  width: 100%;
+}
+
+.search {
+  display: flex;
+  padding: 0 30px;
+}
+
+.searchButton {
+  background-color: colors.$white-color;
+  border: 0;
+  cursor: pointer;
+  margin: 10px;
+  padding: 0;
+}
+
+.searchInput {
+  font-size: variables.$f-size-16;
+  margin-bottom: 15px;
+  margin-right: 10px;
+  margin-top: 10px;
+  transition: transform 250ms ease-in-out, 250ms ease-in-out;
+  width: 250px;
+
+  &::placeholder {
+    opacity: 1;
+  }
+
+  &:focus {
+    border: 1px transparent;
+    border-bottom: 1px solid colors.$background-color-btn-primary;
+    border-radius: 0;
+    outline: 0;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+.checkboxContainer {
+  display: flex;
+  margin: auto;
+}
+
+.checkboxText {
+  @extend %font-family-lato;
+
+  color: colors.$text-dark-gray-color;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.checkbox {
+  height: 20px;
+  width: 20px;
+}
