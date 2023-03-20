@@ -92,7 +92,7 @@
             this.backgroundJobs.AddOrUpdateRecurringJob<IArchivedSubmissionsBusinessService>(
                 "ArchiveOldSubmissionsWithLimit",
                 s => s.ArchiveOldSubmissionsWithLimit(null, ArchiveCountLimit),
-                Cron.Daily(1, 30));
+                Cron.Yearly(1, 1, 2, 30));
 
             return null;
         }
@@ -102,7 +102,7 @@
             this.backgroundJobs.AddOrUpdateRecurringJob<IArchivedSubmissionsBusinessService>(
                 "HardDeleteArchivedByLimit",
                 s => s.HardDeleteArchivedByLimit(null, ArchiveCountLimit),
-                Cron.Yearly(1, 1, 1, 30));
+                Cron.Yearly(1, 1, 2, 30));
 
             return null;
         }
