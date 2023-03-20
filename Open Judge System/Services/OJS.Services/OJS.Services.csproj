@@ -92,6 +92,9 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.IO.Compression.4.3.0\lib\net46\System.IO.Compression.dll</HintPath>
+    </Reference>
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
@@ -107,12 +110,16 @@
     <Compile Include="Business\ExamGroups\IExamGroupsBusinessService.cs" />
     <Compile Include="Business\ParticipantScores\IParticipantScoresBusinessService.cs" />
     <Compile Include="Business\ParticipantScores\Models\CategoryContestsParticipationSummary.cs" />
-    <Compile Include="Business\ParticipantScores\Models\CategoryContestsParticipationSummaryExcel.cs" />
+    <Compile Include="Business\ParticipantScores\Models\ContestParticipationSummary.cs" />
+    <Compile Include="Business\ParticipantScores\Models\ExcelModels\CategoryContestsParticipationSummaryExcel.cs" />
+    <Compile Include="Business\ParticipantScores\Models\ExcelModels\ContestParticipationSummaryExcelModel.cs" />
+    <Compile Include="Business\ParticipantScores\Models\ExcelModels\BaseParticipationStatisticsSummaryExcelModel.cs" />
     <Compile Include="Business\ParticipantScores\Models\MaximumResultSubmissionByProblemServiceModel.cs" />
     <Compile Include="Business\ParticipantScores\Models\ParticipantScoresSummaryModel.cs" />
     <Compile Include="Business\ParticipantScores\Models\ParticipantSummaryInfoServiceModel.cs" />
     <Compile Include="Business\ParticipantScores\Models\ParticipantSummarySubmissionInfoServiceModel.cs" />
     <Compile Include="Business\ParticipantScores\Models\ParticipationStatisticsEarlierAndLaterSubmissionModel.cs" />
+    <Compile Include="Business\ParticipantScores\Models\StatisticsLevel.cs" />
     <Compile Include="Business\ParticipantScores\ParticipantScoresBusinessService.cs" />
     <Compile Include="Business\Participants\IParticipantsBusinessService.cs" />
     <Compile Include="Business\Participants\ParticipantsBusinessService.cs" />

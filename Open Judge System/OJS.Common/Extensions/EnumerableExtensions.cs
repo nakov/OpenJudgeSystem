@@ -14,6 +14,12 @@
                 })
                 .GroupBy(x => x.Index / chunkSize)
                 .Select(x => x.Select(v => v.Value));
+
+        public static IEnumerable<IEnumerable<T>> CrossProduct<T>(
+            this IEnumerable<IEnumerable<T>> source) =>
+            source.Aggregate(
+                (IEnumerable<IEnumerable<T>>) new[] { Enumerable.Empty<T>() },
+                (acc, src) => src.SelectMany(x => acc.Select(a => a.Concat(new[] { x }))));
         
         public static IEnumerable<IEnumerable<T>> InBatches<T>(this IEnumerable<T> queryable, int size)
         {
