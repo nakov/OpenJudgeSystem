@@ -7,10 +7,6 @@ import { ClassNameType, IHaveChildrenProps, IHaveOptionalClassName } from '../..
 
 import styles from './FormControl.module.scss';
 
-enum ButtonKeyControl {
-    enter = 'Enter'
-}
-
 enum FormControlType {
     'radio' = 'radio',
     'checkbox' = 'checkbox',
@@ -35,7 +31,6 @@ interface IFormControlProps extends IHaveOptionalClassName {
     type?: FormControlType;
     onChange?: ((value?: IFormControlOnChangeValueType) => void) | null;
     onInput?: ((value?: string) => void) | null;
-    onKeyDown?: (ev: React.KeyboardEvent<HTMLInputElement>) => void;
     onClick?: (value: FormEvent<HTMLInputElement>) => void;
     checked?: boolean;
     id?: string;
@@ -97,7 +92,6 @@ const FormControl = ({
     onChange = null,
     /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
     onInput = null,
-    onKeyDown,
     onClick,
     className = '',
     containerClassName = '',
@@ -148,18 +142,6 @@ const FormControl = ({
             onInput(element.value);
         },
         [ onInput ],
-    );
-    const handleOnKeyDown = useCallback(
-        (ev: React.KeyboardEvent<HTMLInputElement>) => {
-            if (ev.key === ButtonKeyControl.enter) {
-                ev.preventDefault();
-
-                if (onKeyDown) {
-                    onKeyDown(ev);
-                }
-            }
-        },
-        [ onKeyDown ],
     );
 
     const generateFormControl = useCallback(
@@ -220,14 +202,13 @@ const FormControl = ({
                   id={id}
                   onChange={handleOnChange}
                   onInput={handleOnInput}
-                  onKeyDown={handleOnKeyDown}
                   value={formControlValue}
                   checked={checked}
                   placeholder={labelText}
                 />
             );
         },
-        [ checked, componentClassName, formControlValue, handleOnChange, handleOnInput, handleOnKeyDown,
+        [ checked, componentClassName, formControlValue, handleOnChange, handleOnInput,
             id, isChecked, labelText, name, onChange, onClick, type, value ],
     );
 
