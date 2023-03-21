@@ -20,7 +20,7 @@ const Form = ({
     id = generateId(),
     className = '',
     submitButtonClassName = '',
-    disableButton,
+    disableButton = false,
 }: IFormProps) => {
     const handleSubmit = useCallback(
         async (ev: FormEvent) => {
