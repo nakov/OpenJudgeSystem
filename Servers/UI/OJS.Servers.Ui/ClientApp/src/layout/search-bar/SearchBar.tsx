@@ -68,15 +68,6 @@ const SearchBar = () => {
         [ navigate, searchParam, selectedTerms ],
     );
 
-    const handleOnKeyDown = useCallback(
-        (event: React.KeyboardEvent<HTMLInputElement>) => {
-            if (event.key === 'Enter') {
-                handleSubmit();
-            }
-        },
-        [ handleSubmit ],
-    );
-
     const handleSelectedCheckboxValue = useCallback(
         (event: FormEvent<HTMLInputElement>) => {
             const { currentTarget: { value: currentValue } } = event;
@@ -108,7 +99,6 @@ const SearchBar = () => {
                           type={FormControlType.search}
                           labelText={FieldNameType.search}
                           onChange={handleOnChangeUpdateSearch}
-                          onKeyDown={handleOnKeyDown}
                           value={searchParam}
                           shouldDisableLabel
                         />
