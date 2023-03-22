@@ -52,7 +52,6 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
                         Contest:
                         {' '}
                         {contest.name}
-                        `
                     </span>
                     <div className={searchProblemCardControlBtnsClassName}>
                         <LinkButton

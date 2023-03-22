@@ -182,31 +182,48 @@ const SearchPage = () => {
         [ renderUser, users ],
     );
 
+    const renderNoResultsFound = useCallback(
+        () => (
+            <div className={styles.headingSearch}>
+                <Heading
+                  type={HeadingType.primary}
+                  className={styles.searchHeading}
+                >
+                    No results found
+                </Heading>
+            </div>
+        ),
+        [],
+    );
+
     const { pagesCount } = pagesInfo;
     const renderElements = useCallback(
-        () => (
-            <>
-                <div className={styles.headingSearch}>
-                    <Heading
-                      type={HeadingType.primary}
-                      className={styles.searchHeading}
-                    >
-                        Search results for
-                        {' '}
-                        {`"${searchValue}"`}
-                    </Heading>
-                </div>
-                <PaginationControls
-                  count={pagesCount}
-                  page={currentPage}
-                  onChange={handlePageChange}
-                />
-                {renderContests()}
-                {renderProblems()}
-                {renderUsers()}
-            </>
-        ),
-        [ currentPage, handlePageChange, pagesCount, renderContests, renderProblems, renderUsers, searchValue ],
+        () => isEmpty(contests) && isEmpty(problems) && isEmpty(users)
+            ? renderNoResultsFound()
+            : (
+                <>
+                    <div className={styles.headingSearch}>
+                        <Heading
+                          type={HeadingType.primary}
+                          className={styles.searchHeading}
+                        >
+                            Search results for
+                            {' '}
+                            {`"${searchValue}"`}
+                        </Heading>
+                    </div>
+                    <PaginationControls
+                      count={pagesCount}
+                      page={currentPage}
+                      onChange={handlePageChange}
+                    />
+                    {renderContests()}
+                    {renderProblems()}
+                    {renderUsers()}
+                </>
+            ),
+        [ contests, currentPage, handlePageChange, pagesCount, problems, renderContests,
+            renderNoResultsFound, renderProblems, renderUsers, searchValue, users ],
     );
 
     const renderPage = useCallback(
