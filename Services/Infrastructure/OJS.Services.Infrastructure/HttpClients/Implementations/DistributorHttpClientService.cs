@@ -1,8 +1,9 @@
 namespace OJS.Services.Infrastructure.HttpClients.Implementations
 {
-    using OJS.Common.Utils;
     using System;
     using System.Net.Http;
+    using OJS.Common;
+    using OJS.Common.Utils;
     using static OJS.Common.GlobalConstants.EnvironmentVariables;
     using static OJS.Common.GlobalConstants.ErrorMessages;
 
@@ -19,6 +20,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
                     string.Format(ValueCannotBeNullOrWhiteSpaceTemplate, SulsPlatformBaseUrlKey));
             }
 
+            client.DefaultRequestHeaders.Add(GlobalConstants.HeaderKeys.HostOrigin, EnvironmentUtils.GetByKey(ApplicationUrl));
             client.BaseAddress = new Uri(distributorBaseUrl);
         }
     }

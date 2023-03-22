@@ -36,6 +36,7 @@ namespace OJS.Common
             public const string DistributorBaseUrlKey = "DISTRIBUTOR_BASE_URL";
             public const string LoggerFilesFolderPath = "LOGGER_FILES_FOLDER_PATH";
             public const string SharedAuthCookieDomain = "SHARED_AUTH_COOKIE_DOMAIN";
+            public const string ApplicationUrl = "UI_URL";
 
             public const string RedisConnectionString = "REDIS_CONNECTION_STRING";
 
@@ -84,6 +85,7 @@ namespace OJS.Common
         public static class HeaderKeys
         {
             public const string ContentDisposition = "Content-Disposition";
+            public const string HostOrigin = "Host-Origin";
         }
 
         public static class HeaderValues
