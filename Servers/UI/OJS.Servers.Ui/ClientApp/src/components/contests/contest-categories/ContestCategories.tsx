@@ -144,13 +144,46 @@ const ContestCategories = ({
         [ getStrategyFiltersToAdd, openedCategoryFilters ],
     );
 
-    const removeOldStrategyFilters = useCallback(
-        (id: string) => {
-            const newFilterProps = openedCategoryFilters.filter((osf) => osf.categoryId !== id);
-
-            setOpenedCategoryFilters(newFilterProps);
+    const removeChild = useCallback(
+        (child: ICategoryStrategiesTypes, elementsToRemove: IFilterProps[]) => {
+            const childToRemove = openedCategoryFilters.find((osf) => osf.categoryId === child.id);
+            if (!isNil(childToRemove)) {
+                elementsToRemove.push(childToRemove);
+            }
         },
         [ openedCategoryFilters ],
+    );
+
+    const findAllChildren = useCallback(
+        (node: ICategoryStrategiesTypes, elementsToRemove: IFilterProps[]) => {
+            node.children?.forEach((child) => {
+                findAllChildren(child, elementsToRemove);
+
+                removeChild(child, elementsToRemove);
+            });
+        },
+        [ removeChild ],
+    );
+
+    const removeOldStrategyFilters = useCallback(
+        (id: string, node: ICategoryStrategiesTypes) => {
+            const elementsToRemove: IFilterProps[] = [];
+
+            const nodeToRemove = openedCategoryFilters.find((osf) => osf.categoryId === id) as IFilterProps;
+
+            elementsToRemove.push(nodeToRemove);
+
+            findAllChildren(node, elementsToRemove);
+
+            const strategyFiltersToAdd = getStrategyFiltersToAdd(node);
+
+            const newFilterProps = openedCategoryFilters.filter((categoryId) => !elementsToRemove.includes(categoryId));
+
+            setOpenedCategoryFilters(newFilterProps);
+
+            setOpenedCategoryFilter({ categoryId: id, strategies: strategyFiltersToAdd });
+        },
+        [ findAllChildren, getStrategyFiltersToAdd, openedCategoryFilters ],
     );
 
     const updateStrategyFilters = useCallback(
