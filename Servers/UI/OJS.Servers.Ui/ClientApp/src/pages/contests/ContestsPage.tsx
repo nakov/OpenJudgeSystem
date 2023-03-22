@@ -15,6 +15,7 @@ import { useHashUrlParams } from '../../hooks/common/use-hash-url-params';
 import { useAppUrls } from '../../hooks/use-app-urls';
 import { ICategoriesBreadcrumbItem, useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
 import { useContests } from '../../hooks/use-contests';
+import { usePages } from '../../hooks/use-pages';
 import concatClassNames from '../../utils/class-names';
 import { setLayout } from '../shared/set-layout';
 
@@ -24,17 +25,17 @@ const ContestsPage = () => {
     const {
         state: {
             contests,
-            pagesInfo,
-            currentPage,
             isLoaded,
         },
         actions: {
             toggleParam,
-            changePage,
             initiateGetAllContestsQuery,
         },
     } = useContests();
-
+    const {
+        state: { currentPage, pagesInfo },
+        changePage,
+    } = usePages();
     const { state: { breadcrumbItems } } = useCategoriesBreadcrumbs();
     const { state: { params }, actions: { clearHash } } = useHashUrlParams();
     const { getContestCategoryBreadcrumbItemPath } = useAppUrls();

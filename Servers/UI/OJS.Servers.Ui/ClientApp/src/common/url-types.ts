@@ -1,5 +1,4 @@
 /* eslint-disable import/prefer-default-export */
-
 import { IFilter, ISort } from './contest-types';
 
 interface IStartContestUrlParams {
@@ -64,6 +63,12 @@ interface IRetestSubmissionUrlParams {
     id: number;
 }
 
+interface IGetSearchResultsUrlParams {
+    searchTerm: string;
+    page: number;
+    selectedTerms: [];
+}
+
 export type {
     IRegisterForContestUrlParams,
     ISubmitContestPasswordUrlParams,
@@ -77,5 +82,6 @@ export type {
     IGetSubmissionDetailsByIdUrlParams,
     IGetContestResultsParams,
     IRetestSubmissionUrlParams,
+    IGetSearchResultsUrlParams,
     IGetContestByProblemUrlParams,
 };
