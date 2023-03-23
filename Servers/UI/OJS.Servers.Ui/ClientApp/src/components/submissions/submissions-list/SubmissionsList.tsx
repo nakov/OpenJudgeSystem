@@ -73,6 +73,9 @@ const SubmissionsList = ({
             ? ContestParticipationType.Compete
             : ContestParticipationType.Practice;
 
+        console.log(`With format ${formatDate(createdOn)}`);
+        console.log(`Without format ${createdOn}`);
+
         return (
             <div className={itemClassName}>
                 <div className={styles.infoContainer}>
