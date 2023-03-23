@@ -34,7 +34,8 @@
     [AuthorizeRoles(SystemRole.Administrator)]
     public class TempController : BaseController
     {
-        private const int ArchiveCountLimit = 50000;
+        private const int ArchiveSingleBatchLimit = 50000;
+        private const int ArchiveDailyBatchSize = 750000;
         private readonly IHangfireBackgroundJobService backgroundJobs;
         private readonly IProblemGroupsDataService problemGroupsData;
         private readonly IProblemsDataService problemsDataService;
@@ -91,7 +92,7 @@
         {
             this.backgroundJobs.AddOrUpdateRecurringJob<IArchivedSubmissionsBusinessService>(
                 "ArchiveOldSubmissionsWithLimit",
-                s => s.ArchiveOldSubmissionsWithLimit(null, ArchiveCountLimit),
+                s => s.ArchiveOldSubmissionsWithLimit(null, ArchiveSingleBatchLimit),
                 Cron.Yearly(1, 1, 2, 30));
 
             return null;
@@ -101,7 +102,7 @@
         {
             this.backgroundJobs.AddOrUpdateRecurringJob<IArchivedSubmissionsBusinessService>(
                 "HardDeleteArchivedByLimit",
-                s => s.HardDeleteArchivedByLimit(null, ArchiveCountLimit),
+                s => s.HardDeleteArchivedByLimit(null, ArchiveSingleBatchLimit),
                 Cron.Yearly(1, 1, 2, 30));
 
             return null;
@@ -111,7 +112,7 @@
         {
             this.backgroundJobs.AddOrUpdateRecurringJob<IArchivedSubmissionsBusinessService>(
                 "ArchiveOldSubmissionsDailyBatch",
-                s => s.ArchiveOldSubmissionsDailyBatch(null, 750000),
+                s => s.ArchiveOldSubmissionsDailyBatch(null, ArchiveDailyBatchSize),
                 Cron.Daily(1, 30));
 
             return null;
