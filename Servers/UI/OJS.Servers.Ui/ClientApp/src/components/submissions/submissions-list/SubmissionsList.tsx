@@ -76,12 +76,11 @@ const SubmissionsList = ({
 
         console.log(`Without format ${createdOn}`);
         console.log(`With format ${formatDate(createdOn)}`);
-        console.log(`With format with suffix ${moment.utc(createdOn).local().fromNow(true)}`);
         console.log(`Current Time ${moment()}`);
         console.log(`Current Time UTC ${moment().utc()}`);
         console.log(`Current Time UTC ${moment().local()}`);
-        console.log(`Date Time utc ${moment.utc(createdOn)}`);
-        console.log(`Date Time UTC local ${moment.utc(createdOn).local()}`);
+        console.log(`Current DateTime Time  ${new Date().toLocaleTimeString()}`);
+        console.log(`Current DateTime UTC Time  ${new Date().toLocaleTimeString()}`);
         console.log(`Date Time local ${moment(createdOn).local(true)}`);
         console.log('--------------------');
 
