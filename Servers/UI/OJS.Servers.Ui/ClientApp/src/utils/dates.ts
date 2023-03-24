@@ -19,7 +19,7 @@ const formatDate = (
     formatString = defaultDateTimeFormat,
 ) => (moment().diff(date, 'days') > 3
     ? preciseFormatDate(date, formatString)
-    : moment.utc(date).fromNow());
+    : moment(date).utc(true).local().fromNow());
 
 const convertToSecondsRemaining = (date: Date) => {
     const { days, hours, minutes, seconds } = intervalToDuration({
