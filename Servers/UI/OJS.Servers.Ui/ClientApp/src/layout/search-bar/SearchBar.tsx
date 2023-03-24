@@ -102,7 +102,7 @@ const SearchBar = () => {
                         <FormControl
                           className={styles.searchInput}
                           name={FieldNameType.search}
-                          type={FormControlType.search}
+                          type={FormControlType.input}
                           labelText={FieldNameType.search}
                           onChange={handleOnChangeUpdateSearch}
                           value={searchParam}

@@ -14,7 +14,6 @@ enum FormControlType {
     'textarea' = 'textarea',
     'input' = 'input',
     'password' = 'password',
-    'search' = 'search',
     'file' = 'file'
 }
 
