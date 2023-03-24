@@ -9,7 +9,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-
     public class ContestCategoriesDataService : DataService<ContestCategory>, IContestCategoriesDataService
     {
         public ContestCategoriesDataService(OjsDbContext db)
@@ -17,9 +16,29 @@
         {
         }
 
-        public IQueryable<ContestCategory> GetAllVisible() =>
-            this.DbSet
+        public IQueryable<ContestCategory> GetAllVisible()
+            => this.DbSet
                 .Where(cc => cc.IsVisible);
+
+        public Task<IEnumerable<T>> GetAllVisible<T>()
+            => this.DbSet
+                .Where(cc => cc.IsVisible)
+                .MapCollection<T>()
+                .ToEnumerableAsync();
+
+        public IEnumerable<T> GetAllowedStrategyTypesById<T>(int id)
+            => this.DbSet
+                    .Where(cc => cc.Id == id)
+                .SelectMany(c => c.Contests)
+                    .Where(c => !c.IsDeleted && c.IsVisible)
+                .SelectMany(pg => pg.ProblemGroups)
+                    .Where(pg => !pg.IsDeleted)
+                .SelectMany(p => p.Problems)
+                    .Where(p => !p.IsDeleted)
+                .SelectMany(stp => stp.SubmissionTypesInProblems)
+                .Select(st => st.SubmissionType)
+                .MapCollection<T>()
+                .ToList();
 
         public IQueryable<ContestCategory> GetAllVisibleByLecturer(string lecturerId)
             => this.GetAllVisible()
