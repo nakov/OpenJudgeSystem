@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo } from 'react';
-import moment from 'moment/moment';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { ISubmissionDetails, ISubmissionDetailsType } from '../../../hooks/submissions/types';
@@ -73,16 +72,6 @@ const SubmissionsList = ({
         const typeLabelText = isOfficial
             ? ContestParticipationType.Compete
             : ContestParticipationType.Practice;
-
-        console.log(`Without format ${createdOn}`);
-        console.log(`With format ${formatDate(createdOn)}`);
-        console.log(`Current Time ${moment()}`);
-        console.log(`Current Time UTC ${moment().utc()}`);
-        console.log(`Current Time UTC ${moment().local()}`);
-        console.log(`Current DateTime Time  ${new Date().toLocaleTimeString()}`);
-        console.log(`Current DateTime UTC Time  ${new Date().toLocaleTimeString()}`);
-        console.log(`Date Time local ${moment(createdOn).local(true)}`);
-        console.log('--------------------');
 
         return (
             <div className={itemClassName}>
