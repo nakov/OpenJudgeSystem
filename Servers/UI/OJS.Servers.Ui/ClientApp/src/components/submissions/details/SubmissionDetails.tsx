@@ -18,7 +18,7 @@ import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import IconSize from '../../guidelines/icons/common/icon-sizes';
 import LeftArrowIcon from '../../guidelines/icons/LeftArrowIcon';
 import SubmissionResults from '../submission-results/SubmissionResults';
-import RefreshableSubmissionsList from '../submissions-list/RefreshableSubmissionsList';
+import SubmissionsList from '../submissions-list/SubmissionsList';
 
 import styles from './SubmissionDetails.module.scss';
 
@@ -210,7 +210,7 @@ const SubmissionDetails = () => {
                 <div className={submissionsNavigationClassName}>
                     <Heading type={HeadingType.secondary}>Submissions</Heading>
                 </div>
-                <RefreshableSubmissionsList
+                <SubmissionsList
                   items={currentProblemSubmissionResults}
                   selectedSubmission={currentSubmission}
                   className={styles.submissionsList}
