@@ -6,7 +6,7 @@ import { IDictionary } from '../../common/common-types';
 import { ISubmissionTypeType } from '../../common/types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useCurrentContest } from '../use-current-contest';
-import { useHttp } from '../use-http';
+import { IErrorDataType, useHttp } from '../use-http';
 import { useLoading } from '../use-loading';
 import { useProblems } from '../use-problems';
 import { useUrls } from '../use-urls';
@@ -191,17 +191,34 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         [ currentProblem, selectSubmissionTypeById, selectedSubmissionType ],
     );
 
+    const getProblemSubmissionError = useCallback(
+        (error: IErrorDataType) => {
+            const { detail } = error;
+            const splitError = detail.split(' - ');
+            const problemErrorId = parseInt(splitError[0], 10);
+            if (isNil(currentProblem)) {
+                return null;
+            }
+
+            if (problemErrorId === currentProblem.id) {
+                return splitError[1];
+            }
+            return null;
+        },
+        [ currentProblem ],
+    );
+
     useEffect(
         () => {
             if (!isNil(errorSubmitCode)) {
-                const { detail } = errorSubmitCode;
-                setSubmitMessage(detail);
+                const error = getProblemSubmissionError(errorSubmitCode);
+                setSubmitMessage(error);
                 return;
             }
 
             if (!isNil(errorSubmitFile)) {
-                const { detail } = errorSubmitFile;
-                setSubmitMessage(detail);
+                const error = getProblemSubmissionError(errorSubmitFile);
+                setSubmitMessage(error);
                 return;
             }
 
@@ -213,6 +230,8 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             loadSubmissions,
             errorSubmitCode,
             errorSubmitFile,
+            currentProblem,
+            getProblemSubmissionError,
         ],
     );
 
