@@ -13,8 +13,6 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
 
     public class SulsPlatformHttpClientService : HttpClientService, ISulsPlatformHttpClientService
     {
-        private readonly string? apiKey;
-
         public SulsPlatformHttpClientService(HttpClient client)
             : base(client)
         {
@@ -28,14 +26,16 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
 
             client.BaseAddress = new Uri(sulsPlatformBaseUrl);
 
-            this.apiKey = EnvironmentUtils.GetByKey(SulsPlatformApiKeyKey);
+            this.ApiKey = EnvironmentUtils.GetByKey(SulsPlatformApiKeyKey);
 
-            if (string.IsNullOrWhiteSpace(this.apiKey))
+            if (string.IsNullOrWhiteSpace(this.ApiKey))
             {
                 throw new ArgumentException(
                     string.Format(ValueCannotBeNullOrWhiteSpaceTemplate, SulsPlatformApiKeyKey));
             }
         }
+
+        protected string? ApiKey { get; set; }
 
         public Task<ExternalDataRetrievalResult<TData>> GetAsync<TData>(object requestData, string endpoint)
         {
@@ -65,7 +65,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
             var externalDataResult = new ExternalDataRetrievalResult<TData>();
 
             var queryStringSeparator = GetQueryStringSeparator(endpoint);
-            var requestUrl = $"{endpoint}{queryStringSeparator}apiKey={this.apiKey}";
+            var requestUrl = $"{endpoint}{queryStringSeparator}apiKey={this.ApiKey}";
 
             try
             {

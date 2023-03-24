@@ -47,9 +47,9 @@ const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
 
     const getForHome = useCallback(
         async () => {
-            await startLoading();
+            startLoading();
             await getContests();
-            await stopLoading();
+            stopLoading();
         },
         [ getContests, startLoading, stopLoading ],
     );
