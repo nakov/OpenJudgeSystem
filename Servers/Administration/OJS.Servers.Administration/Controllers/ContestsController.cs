@@ -8,7 +8,6 @@ namespace OJS.Servers.Administration.Controllers
     using AutoCrudAdmin.Models;
     using AutoCrudAdmin.ViewModels;
     using Microsoft.AspNetCore.Mvc;
-    using OJS.Common.Enumerations;
     using OJS.Data.Models;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Problems;
