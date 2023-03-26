@@ -164,8 +164,7 @@
                  .GetAllUndeletedFromMainDatabase()
                  .Distinct()
                  .OrderBy(x => x.Id)
-                 .Take(deleteCountLimit)
-                 .InSelfModifyingBatches(GlobalConstants.BatchOperationsChunkSize);
+                 .InSelfModifyingBatches(GlobalConstants.BatchOperationsChunkSize, deleteCountLimit);
             }
             else
             {
@@ -182,6 +181,11 @@
                 var archivedIds = submissionIdsBatch
                     .Select(s => s.Id)
                     .ToSet();
+
+                if(archivedIds.Count == 0)
+                {
+                    break;
+                }
 
                 // Some submissions are present in the Archives, but are not marked as `deleted from the main db`
                 var idsSet = this.submissionsData.GetAllWithDeleted()

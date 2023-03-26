@@ -13,9 +13,15 @@
     public class SubmissionsDataService : ISubmissionsDataService
     {
         private readonly IEfDeletableEntityRepository<Submission> submissions;
+        private readonly IEfGenericRepository<ParticipantScore> participantScores;
 
-        public SubmissionsDataService(IEfDeletableEntityRepository<Submission> submissions) =>
+        public SubmissionsDataService(
+            IEfDeletableEntityRepository<Submission> submissions,
+            IEfGenericRepository<ParticipantScore> participantScores)
+        {
             this.submissions = submissions;
+            this.participantScores = participantScores;
+        }
 
         public Submission GetById(int id) => this.submissions.GetById(id);
 
@@ -74,11 +80,13 @@
         public IQueryable<Submission> GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate(
             DateTime createdBeforeDate,
             DateTime nonBestCreatedBeforeDate) =>
-            this.submissions
-                .AllWithDeleted()
-                .Where(s => s.CreatedOn < createdBeforeDate ||
-                    (s.CreatedOn < nonBestCreatedBeforeDate &&
-                        s.Participant.Scores.All(ps => ps.SubmissionId != s.Id)));
+            //Optimized for SQL
+            from s in this.submissions.AllWithDeleted()
+            join ps in this.participantScores.All() on s.Id equals ps.SubmissionId
+            into participanWithScores
+            from ps in participanWithScores.DefaultIfEmpty()
+            where (s.CreatedOn < createdBeforeDate || (s.CreatedOn < nonBestCreatedBeforeDate && ps == null))
+            select s;
 
         public IQueryable<Submission> GetAllHavingPointsExceedingLimit() =>
             this.GetAll()

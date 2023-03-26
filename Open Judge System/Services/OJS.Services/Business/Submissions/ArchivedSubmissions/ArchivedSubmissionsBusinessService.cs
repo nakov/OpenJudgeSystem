@@ -13,7 +13,6 @@
 
     public class ArchivedSubmissionsBusinessService : IArchivedSubmissionsBusinessService
     {
-        private const int MaxSubBatchSize = 50000;
         private readonly IArchivedSubmissionsDataService archivedSubmissionsData;
         private readonly ISubmissionsBusinessService submissionsBusiness;
         private readonly ISubmissionsDataService submissionsData;
@@ -31,9 +30,8 @@
             this.backgroundJobs = backgroundJobs;
         }
 
-        public int ArchiveOldSubmissionsDailyBatch(PerformContext context, int limit)
+        public int ArchiveOldSubmissionsDailyBatch(PerformContext context, int limit, int maxSubBatchSize)
         {
-            var maxSubBatchSize = MaxSubBatchSize;
             var leftover = limit % maxSubBatchSize;
             var iterations = limit / maxSubBatchSize + (leftover > 0 ? 1 : 0);
             var archived = 0;
@@ -46,14 +44,18 @@
                 var allSubmissionsForArchive = this.submissionsBusiness
                                 .GetAllForArchiving()
                                 .OrderBy(x => x.Id)
-                                .Take(curBatchSize)
-                                .InBatches(GlobalConstants.BatchOperationsChunkSize);
+                                .InBatches(GlobalConstants.BatchOperationsChunkSize, curBatchSize);
 
                 foreach (var submissionsForArchiveBatch in allSubmissionsForArchive)
                 {
                     var submissionsForArchives = submissionsForArchiveBatch
                         .Select(ArchivedSubmission.FromSubmission)
                         .ToList();
+
+                    if(submissionsForArchives.Count == 0)
+                    {
+                        break;
+                    }
 
                     archived += this.archivedSubmissionsData.Add(submissionsForArchives);
                 }
@@ -72,14 +74,18 @@
             var allSubmissionsForArchive = this.submissionsBusiness
                 .GetAllForArchiving()
                 .OrderBy(x => x.Id)
-                .Take(limit)
-                .InBatches(GlobalConstants.BatchOperationsChunkSize);
+                .InBatches(GlobalConstants.BatchOperationsChunkSize, limit);
 
             foreach (var submissionsForArchiveBatch in allSubmissionsForArchive)
             {
                 var submissionsForArchives = submissionsForArchiveBatch
                     .Select(ArchivedSubmission.FromSubmission)
                     .ToList();
+
+                if(submissionsForArchives.Count == 0)
+                {
+                    break;
+                }
 
                 archived += this.archivedSubmissionsData.Add(submissionsForArchives);
             }

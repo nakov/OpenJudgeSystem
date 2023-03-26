@@ -15,21 +15,38 @@
         /// after executing on the first batch, a new select is ran with OFFSET equal to batch size, 
         /// but it will get a modified version of the data 
         /// (where the original batch is missing since it was already modified) leading to skipping OFFSET amount
-        /// of entries each exection which leads to half the entries being skipped.
+        /// of entries each execution which leads to half the entries being skipped.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="queryable"></param>
-        /// <param name="size"></param>
+        /// <param name="size">Size of a single batch</param>
+        /// <param name="limit">Limits the query to a max amount, the sub queries will execute (limit / size) number of times,
+        /// regardless of amount of entries returned. Consumer should decide whether to cancel early, based on number of elements returned.</param>
         /// <returns></returns>
-        public static IEnumerable<IQueryable<T>> InBatches<T>(this IOrderedQueryable<T> queryable, int size)
+        public static IEnumerable<IQueryable<T>> InBatches<T>(this IOrderedQueryable<T> queryable, int size, int limit = 0)
         {
             IQueryable<T> current = queryable;
-            while (current.Any())
+
+            if (limit > 0)
             {
-                var batch = current.Take(size);
-                yield return batch;
-                current = current.Skip(size);
-            }
+                var currentAmount = 0;
+                while (currentAmount < limit)
+                {
+                    var batch = current.Take(size);
+                    currentAmount += size;
+                    yield return batch;
+                    current = current.Skip(size);
+                }
+            } 
+            else
+            {
+                while (current.Any())
+                {
+                    var batch = current.Take(size);
+                    yield return batch;
+                    current = current.Skip(size);
+                }
+            }  
         }
 
         /// <summary>
@@ -42,20 +59,37 @@
         /// after executing on the first batch, a new select is ran with OFFSET equal to batch size, 
         /// but it will get a modified version of the data 
         /// (where the original batch is missing since it was already modified) leading to skipping OFFSET amount
-        /// of entries each exection which leads to half the entries being skipped.
+        /// of entries each execution which leads to half the entries being skipped.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="queryable"></param>
-        /// <param name="size"></param>
+        /// <param name="size">Size of a single batch</param>
+        /// <param name="limit">Limits the query to a max amount, the sub queries will execute (limit / size) number of times,
+        /// regardless of amount of entries returned. Consumer should decide whether to cancel early, based on number of elements returned.</param>
         /// <returns></returns>
-        public static IEnumerable<IQueryable<T>> InBatches<T>(this IQueryable<T> queryable, int size)
+        public static IEnumerable<IQueryable<T>> InBatches<T>(this IQueryable<T> queryable, int size, int limit = 0)
         {
             IQueryable<T> current = queryable;
-            while (current.Any())
+
+            if (limit > 0)
             {
-                var batch = current.Take(size);
-                yield return batch;
-                current = current.Skip(size);
+                var currentAmount = 0;
+                while (currentAmount < limit)
+                {
+                    var batch = current.Take(size);
+                    currentAmount += size;
+                    yield return batch;
+                    current = current.Skip(size);
+                }
+            }
+            else
+            {
+                while (current.Any())
+                {
+                    var batch = current.Take(size);
+                    yield return batch;
+                    current = current.Skip(size);
+                }
             }
         }
 
@@ -65,15 +99,31 @@
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="queryable"></param>
-        /// <param name="size"></param>
+        /// <param name="size">Size of a single batch</param>
+        /// <param name="limit">Limits the query to a max amount, the sub queries will execute (limit / size) number of times,
+        /// regardless of amount of entries returned. Consumer should decide whether to cancel early, based on number of elements returned.</param>
         /// <returns></returns>
-        public static IEnumerable<IQueryable<T>> InSelfModifyingBatches<T>(this IOrderedQueryable<T> queryable, int size)
+        public static IEnumerable<IQueryable<T>> InSelfModifyingBatches<T>(this IOrderedQueryable<T> queryable, int size, int limit = 0)
         {
             IQueryable<T> current = queryable;
-            while (current.Any())
+
+            if (limit > 0)
             {
-                var batch = current.Take(size);
-                yield return batch;
+                var currentAmount = 0;
+                while (currentAmount < limit)
+                {
+                    var batch = current.Take(size);
+                    currentAmount += size;
+                    yield return batch;
+                }
+            }
+            else
+            {
+                while (current.Any())
+                {
+                    var batch = current.Take(size);
+                    yield return batch;
+                }
             }
         }
 
@@ -83,15 +133,31 @@
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="queryable"></param>
-        /// <param name="size"></param>
+        /// <param name="size">Size of a single batch</param>
+        /// <param name="limit">Limits the query to a max amount, the sub queries will execute (limit / size) number of times,
+        /// regardless of amount of entries returned. Consumer should decide whether to cancel early, based on number of elements returned.</param>
         /// <returns></returns>
-        public static IEnumerable<IQueryable<T>> InSelfModifyingBatches<T>(this IQueryable<T> queryable, int size)
+        public static IEnumerable<IQueryable<T>> InSelfModifyingBatches<T>(this IQueryable<T> queryable, int size, int limit = 0)
         {
             IQueryable<T> current = queryable;
-            while (current.Any())
+
+            if (limit > 0)
             {
-                var batch = current.Take(size);
-                yield return batch;
+                var currentAmount = 0;
+                while (currentAmount < limit)
+                {
+                    var batch = current.Take(size);
+                    currentAmount += size;
+                    yield return batch;
+                }
+            }
+            else
+            {
+                while (current.Any())
+                {
+                    var batch = current.Take(size);
+                    yield return batch;
+                }
             }
         }
     }
