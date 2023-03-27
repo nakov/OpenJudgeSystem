@@ -5,7 +5,6 @@ import { IContestStrategyFilter } from '../common/contest-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
 import { useHttp } from './use-http';
-import { useLoading } from './use-loading';
 import { useUrls } from './use-urls';
 
 interface IContestStrategyFiltersContext {
@@ -26,8 +25,6 @@ const ContestStrategyFiltersContext = createContext<IContestStrategyFiltersConte
 
 const ContestStrategyFiltersProvider = ({ children }: IContestStrategyFiltersProviderProps) => {
     const [ strategies, setStrategies ] = useState(defaultState.state.strategies);
-
-    const { startLoading, stopLoading } = useLoading();
     const { getAllContestStrategyFiltersUrl } = useUrls();
 
     const {
@@ -38,11 +35,9 @@ const ContestStrategyFiltersProvider = ({ children }: IContestStrategyFiltersPro
 
     const load = useCallback(
         async () => {
-            startLoading();
             await get();
-            stopLoading();
         },
-        [ get, startLoading, stopLoading ],
+        [ get ],
     );
 
     useEffect(
