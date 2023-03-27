@@ -1,22 +1,28 @@
 namespace OJS.Services.Infrastructure.HttpClients.Implementations
 {
-    using Newtonsoft.Json;
-    using OJS.Common.Utils;
-    using OJS.Services.Common.Models;
     using System;
     using System.IO;
     using System.Net.Http;
     using System.Net.Http.Json;
     using System.Threading.Tasks;
+    using Microsoft.Extensions.Logging;
+    using Newtonsoft.Json;
+    using OJS.Common.Utils;
+    using OJS.Services.Common.Models;
     using static OJS.Common.GlobalConstants.EnvironmentVariables;
     using static OJS.Common.GlobalConstants.ErrorMessages;
 
     public class SulsPlatformHttpClientService : HttpClientService, ISulsPlatformHttpClientService
     {
-        public SulsPlatformHttpClientService(HttpClient client)
+        private readonly ILogger<HttpClientService> logger;
+
+        public SulsPlatformHttpClientService(
+            HttpClient client,
+            ILogger<HttpClientService> logger)
             : base(client)
         {
             var sulsPlatformBaseUrl = EnvironmentUtils.GetByKey(SulsPlatformBaseUrlKey);
+            this.logger = logger;
 
             if (string.IsNullOrWhiteSpace(sulsPlatformBaseUrl))
             {
@@ -82,11 +88,13 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
                 else
                 {
                     externalDataResult.ErrorMessage = await response.Content.ReadAsStringAsync();
+                    this.logger.LogError(externalDataResult.ErrorMessage);
                 }
             }
             catch (Exception ex)
             {
                 externalDataResult.ErrorMessage = ex.InnerException?.Message ?? ex.Message;
+                this.logger.LogError(externalDataResult.ErrorMessage);
             }
 
             return externalDataResult;

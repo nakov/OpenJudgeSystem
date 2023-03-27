@@ -1,15 +1,18 @@
 namespace OJS.Services.Infrastructure.HttpClients.Implementations
 {
-    using OJS.Common.Utils;
     using System;
     using System.Net.Http;
+    using Microsoft.Extensions.Logging;
+    using OJS.Common.Utils;
     using static OJS.Common.GlobalConstants.EnvironmentVariables;
     using static OJS.Common.GlobalConstants.ErrorMessages;
 
     public class DistributorHttpClientService : SulsPlatformHttpClientService, IDistributorHttpClientService
     {
-        public DistributorHttpClientService(HttpClient client)
-            : base(client)
+        public DistributorHttpClientService(
+            HttpClient client,
+            ILogger<DistributorHttpClientService> logger)
+            : base(client, logger)
         {
             var distributorBaseUrl = EnvironmentUtils.GetByKey(DistributorBaseUrlKey);
 
