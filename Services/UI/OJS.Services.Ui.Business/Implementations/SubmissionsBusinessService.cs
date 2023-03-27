@@ -260,11 +260,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        var userSubmissions = user.IsAdminOrLecturer
-            ? this.submissionsData
-                .GetAllByProblem(problemId)
-                .MapCollection<SubmissionResultsServiceModel>()
-            : this.submissionsData
+        var userSubmissions = this.submissionsData
                 .GetAllByProblemAndParticipant(problemId, participant!.Id)
                 .MapCollection<SubmissionResultsServiceModel>();
 
