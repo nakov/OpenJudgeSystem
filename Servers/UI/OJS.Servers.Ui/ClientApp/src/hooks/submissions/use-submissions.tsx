@@ -220,9 +220,14 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                 setSubmitMessage(error);
                 return;
             }
+            const { id: problemId } = currentProblem || {};
+
+            if (isNil(problemId)) {
+                return;
+            }
 
             (async () => {
-                await loadSubmissions();
+                await loadSubmissions(problemId);
             })();
         },
         [

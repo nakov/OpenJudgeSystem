@@ -27,10 +27,6 @@ const ContestTasksNavigation = () => {
     } = useProblems();
     const { actions: { loadSubmissions } } = useProblemSubmissions();
 
-    useEffect(
-        () => console.log(currentProblem),
-        [ currentProblem ],
-    );
     const {
         state: {
             contest,
@@ -42,7 +38,7 @@ const ContestTasksNavigation = () => {
     const selectProblemAndLoadSubmissions = useCallback(
         async (id: number) => {
             selectProblemById(id);
-            await loadSubmissions();
+            await loadSubmissions(id);
         },
         [ loadSubmissions, selectProblemById ],
     );
