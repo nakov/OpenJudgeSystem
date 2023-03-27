@@ -24,15 +24,16 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return ValidationResult.Invalid(ValidationMessages.Problem.NotFound);
         }
 
+        var problemId = problem.Id.ToString();
         if (string.IsNullOrWhiteSpace(submitSubmissionServiceModel.StringContent) &&
             (submitSubmissionServiceModel.ByteContent == null || submitSubmissionServiceModel.ByteContent.Length == 0))
         {
-            throw new BusinessServiceException(string.Format(ValidationMessages.Submission.SubmissionEmpty, problem.Id));
+            throw new BusinessServiceException(ValidationMessages.Submission.SubmissionEmpty, problemId);
         }
 
         if (participant == null && !user.IsAdminOrLecturer && submitSubmissionServiceModel.Official)
         {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Submission.NotRegisteredForExam, problem.Id));
+            return ValidationResult.Invalid(ValidationMessages.Participant.NotRegisteredForExam, problemId);
         }
 
         if (!contestValidationResult.IsValid)
@@ -45,7 +46,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             !IsUserAdminOrLecturerInContest(participant.Contest, user) &&
             participant.ProblemsForParticipants.All(p => p.ProblemId != problem.Id))
         {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Submission.ProblemNotAssignedToUser, problem.Id));
+            return ValidationResult.Invalid(ValidationMessages.Problem.ProblemNotAssignedToUser, problemId);
         }
 
         var submissionType =
@@ -54,7 +55,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
 
         if (submissionType == null)
         {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Submission.SubmissionTypeNotFound, problem.Id));
+            return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTypeNotFound, problemId);
         }
 
         var isFileUpload = submitSubmissionServiceModel.StringContent == null ||
@@ -63,38 +64,38 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
         if (isFileUpload && !submissionType.SubmissionType.AllowedFileExtensions!.Contains(
                 submitSubmissionServiceModel.FileExtension!))
         {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Submission.InvalidExtension, problem.Id));
+            return ValidationResult.Invalid(ValidationMessages.Submission.InvalidExtension, problemId);
         }
 
         if (isFileUpload && !submissionType.SubmissionType.AllowBinaryFilesUpload)
         {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Submission.BinaryFilesNotAllowed, problem.Id));
+            return ValidationResult.Invalid(ValidationMessages.Submission.BinaryFilesNotAllowed, problemId);
         }
 
         if (!isFileUpload && submissionType.SubmissionType.AllowBinaryFilesUpload)
         {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Submission.TextUploadNotAllowed, problem.Id));
+            return ValidationResult.Invalid(ValidationMessages.Submission.TextUploadNotAllowed, problemId);
         }
 
         if (hasUserNotProcessedSubmissionForProblem)
         {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Submission.UserHasNotProcessedSubmissionForProblem, problem.Id));
+            return ValidationResult.Invalid(ValidationMessages.Submission.UserHasNotProcessedSubmissionForProblem, problemId);
         }
 
         if (submitSubmissionServiceModel.StringContent != null &&
             problem.SourceCodeSizeLimit < submitSubmissionServiceModel.StringContent.Length)
         {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Submission.SubmissionTooLong, problem.Id));
+            return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTooLong, problemId);
         }
 
         if (!isFileUpload && submitSubmissionServiceModel.StringContent!.Length < 5)
         {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Submission.SubmissionTooShort, problem.Id));
+            return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTooShort, problemId);
         }
 
         if (userSubmissionTimeLimit != 0)
         {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Submission.SubmissionWasSentTooSoon, problem.Id));
+            return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionWasSentTooSoon, problemId);
         }
 
         return ValidationResult.Valid();

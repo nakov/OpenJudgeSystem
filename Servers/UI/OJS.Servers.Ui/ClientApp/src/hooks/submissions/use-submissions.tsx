@@ -193,15 +193,14 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     const getProblemSubmissionError = useCallback(
         (error: IErrorDataType) => {
-            const { detail } = error;
-            const splitError = detail.split(' - ');
-            const problemErrorId = parseInt(splitError[0], 10);
+            const { detail, instance: problemId } = error;
+            const problemErrorId = parseInt(problemId, 10);
             if (isNil(currentProblem)) {
                 return null;
             }
 
             if (problemErrorId === currentProblem.id) {
-                return splitError[1];
+                return detail;
             }
             return null;
         },

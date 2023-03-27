@@ -20,31 +20,27 @@ public static class ValidationMessages
 
     public static class Submission
     {
-        public const string NotFound = "{0} - Submission not found.";
+        public const string NotFound = "Submission not found.";
 
-        public const string NotMadeByUser = "{0} - You can only view your own submissions.";
+        public const string NotMadeByUser = "You can only view your own submissions.";
 
-        public const string SubmissionTypeNotFound = "{0} - Wrong submission type.";
+        public const string SubmissionTypeNotFound = "Wrong submission type.";
 
-        public const string BinaryFilesNotAllowed = "{0} - This submission type does not allow sending binary files.";
+        public const string BinaryFilesNotAllowed = "This submission type does not allow sending binary files.";
 
-        public const string TextUploadNotAllowed = "{0} - This submission type does not allow sending text.";
+        public const string TextUploadNotAllowed = "This submission type does not allow sending text.";
 
-        public const string SubmissionWasSentTooSoon = "{0} - Submission was sent too soon.";
+        public const string SubmissionWasSentTooSoon = "Submission was sent too soon.";
 
-        public const string SubmissionTooLong = "{0} - The submitted code is too long.";
+        public const string SubmissionTooLong = "The submitted code is too long.";
 
-        public const string UserHasNotProcessedSubmissionForProblem = "{0} - You have unprocessed submission for this problem. Please wait until the submission is processed.";
+        public const string UserHasNotProcessedSubmissionForProblem = "You have unprocessed submission for this problem. Please wait until the submission is processed.";
 
-        public const string SubmissionTooShort = "{0} - The submission must be at least 5 characters long.";
+        public const string SubmissionTooShort = "The submission must be at least 5 characters long.";
 
-        public const string SubmissionEmpty = "{0} - Solution cannot be empty.";
+        public const string SubmissionEmpty = "Solution cannot be empty.";
 
-        public const string InvalidExtension = "{0} - Invalid file extension.";
-
-        public const string NotRegisteredForExam = "{0} - You are not registered for this exam.";
-
-        public const string ProblemNotAssignedToUser = "{0} - The problem is not part of your problems for the exam.";
+        public const string InvalidExtension = "Invalid file extension.";
     }
 
     public static class Problem
