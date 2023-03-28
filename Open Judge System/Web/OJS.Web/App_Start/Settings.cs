@@ -40,7 +40,7 @@
 
         public static string[] ThrottleIpWhitelist => GetSetting("ThrottleIpWhitelist").Split(',');
 
-        public static int DatabaseCommandTimeoutInSeconds => GetSettingOrDefault("DatabaseCommandTimeoutInSeconds", 240);
+        public static int DatabaseCommandTimeoutInSeconds => GetSettingOrDefault("DatabaseCommandTimeoutInSeconds", 120);
 
         private static int GetIntSetting(string settingName) => int.Parse(GetSetting(settingName));
     }
