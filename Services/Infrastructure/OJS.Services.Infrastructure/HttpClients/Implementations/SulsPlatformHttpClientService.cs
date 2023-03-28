@@ -5,6 +5,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
     using System.Net.Http;
     using System.Net.Http.Json;
     using System.Threading.Tasks;
+    using FluentExtensions.Extensions;
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
     using OJS.Common.Utils;
@@ -80,6 +81,8 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
                     .PostAsJsonAsync(requestUrl, requestData)
                     .ConfigureAwait(continueOnCapturedContext: false);
 
+                this.logger.LogInformation(response.ToJson());
+
                 if (response.IsSuccessStatusCode)
                 {
                     await using var responseContentStream = await response.Content.ReadAsStreamAsync();
@@ -88,7 +91,6 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
                 else
                 {
                     externalDataResult.ErrorMessage = await response.Content.ReadAsStringAsync();
-                    this.logger.LogError(externalDataResult.ErrorMessage);
                 }
             }
             catch (Exception ex)
