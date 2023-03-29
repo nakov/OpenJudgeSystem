@@ -142,6 +142,8 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
             setSearchedUsers(searchedUsers);
 
             populatePageInformation(newPagesInfo);
+
+            setSearchError(null);
         },
         [ data, getSearchResultError, populatePageInformation, searchError ],
     );

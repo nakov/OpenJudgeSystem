@@ -39,7 +39,7 @@ const SearchBar = () => {
     const [ searchParam, setSearchParam ] = useState<string>(defaultState.state.searchValue);
     const [ selectedTerms, setSelectedTerms ] = useState(defaultState.state.selectedTerms);
 
-    const { state: { isVisible } } = useSearch();
+    const { state: { isVisible }, actions: { toggleVisibility } } = useSearch();
     const navigate = useNavigate();
 
     const handleOnChangeUpdateSearch = useCallback(
@@ -53,7 +53,7 @@ const SearchBar = () => {
         () => {
             if (!isEmpty(searchParam)) {
                 const params = {
-                    searchTerm: `${searchParam}`,
+                    searchTerm: `${searchParam.trim()}`,
                     ...selectedTerms.reduce(
                         (obj, term) => ({ ...obj, [term]: 'true' }),
                         {},
@@ -63,9 +63,15 @@ const SearchBar = () => {
                     pathname: '/search',
                     search: `?${createSearchParams(params)}`,
                 });
+
+                setSearchParam('');
+
+                setSelectedTerms(defaultState.state.selectedTerms);
+
+                toggleVisibility();
             }
         },
-        [ navigate, searchParam, selectedTerms ],
+        [ navigate, searchParam, selectedTerms, toggleVisibility ],
     );
 
     const handleSelectedCheckboxValue = useCallback(
@@ -96,7 +102,7 @@ const SearchBar = () => {
                         <FormControl
                           className={styles.searchInput}
                           name={FieldNameType.search}
-                          type={FormControlType.search}
+                          type={FormControlType.input}
                           labelText={FieldNameType.search}
                           onChange={handleOnChangeUpdateSearch}
                           value={searchParam}
