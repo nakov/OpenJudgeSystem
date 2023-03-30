@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OJS.Servers.Administration.Infrastructure.Extensions;
 using GlobalResource = OJS.Common.Resources.SubmissionsController;
+using OJS.Common;
 
 public class SubmissionsController : BaseAutoCrudAdminController<Submission>
 {
@@ -89,7 +90,33 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         => new[]
         {
             new GridAction { Action = nameof(this.Retest) },
+            new GridAction { Action = nameof(this.DownloadAttachment) },
         };
+
+    public async Task<IActionResult> DownloadAttachment([FromQuery] IDictionary<string, string> complexId)
+    {
+        var submissionId = this.GetEntityIdFromQuery<int>(complexId);
+
+        var submission = await this.submissionsData.GetByIdQuery(submissionId).FirstOrDefaultAsync();
+        if (submission == null)
+        {
+            this.TempData.AddDangerMessage(GlobalResource.SubmissionNotFound);
+
+            return this.RedirectToAction(nameof(this.Index));
+        }
+
+        if (!submission.IsBinaryFile)
+        {
+            this.TempData.AddDangerMessage(GlobalResource.SubmissionNotFileUpload);
+
+            return this.Redirect(this.Request.Headers.Referer);
+        }
+
+        return this.File(
+            submission.Content,
+            GlobalConstants.MimeTypes.ApplicationOctetStream,
+            string.Format(GlobalConstants.Submissions.SubmissionDownloadFileName, submissionId, submission.FileExtension));
+    }
 
     public async Task<IActionResult> Retest([FromQuery] IDictionary<string, string> complexId)
     {
