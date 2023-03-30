@@ -28,7 +28,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
         if (string.IsNullOrWhiteSpace(submitSubmissionServiceModel.StringContent) &&
             (submitSubmissionServiceModel.ByteContent == null || submitSubmissionServiceModel.ByteContent.Length == 0))
         {
-            throw new BusinessServiceException(ValidationMessages.Submission.SubmissionEmpty, problemId);
+            return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionEmpty, problemId);
         }
 
         if (participant == null && !user.IsAdminOrLecturer && submitSubmissionServiceModel.Official)
