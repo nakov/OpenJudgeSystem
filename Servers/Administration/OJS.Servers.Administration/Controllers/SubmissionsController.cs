@@ -19,8 +19,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OJS.Servers.Administration.Infrastructure.Extensions;
-using GlobalResource = OJS.Common.Resources.SubmissionsController;
 using OJS.Common;
+using GlobalResource = OJS.Common.Resources.SubmissionsController;
 
 public class SubmissionsController : BaseAutoCrudAdminController<Submission>
 {

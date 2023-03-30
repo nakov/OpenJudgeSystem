@@ -13,6 +13,7 @@ import { usePageTitles } from '../../../hooks/use-page-titles';
 import concatClassNames from '../../../utils/class-names';
 import { preciseFormatDate } from '../../../utils/dates';
 import CodeEditor from '../../code-editor/CodeEditor';
+import AlertBox, { AlertBoxType } from '../../guidelines/alert-box/AlertBox';
 import { Button, ButtonSize, ButtonState, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import IconSize from '../../guidelines/icons/common/icon-sizes';
@@ -33,7 +34,16 @@ const SubmissionDetails = () => {
     } = useSubmissionsDetails();
     const { actions: { setPageTitle } } = usePageTitles();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
-    const { actions: { downloadProblemSubmissionFile } } = useSubmissionsDetails();
+    const {
+        state:
+            { downloadErrorMessage },
+        actions:
+            {
+                downloadProblemSubmissionFile,
+                setDownloadErrorMessage,
+            },
+    } =
+        useSubmissionsDetails();
     const { getAdministrationRetestSubmissionInternalUrl } = useAppUrls();
 
     const {
@@ -57,6 +67,20 @@ const SubmissionDetails = () => {
         () => `Submission №${currentSubmission?.id}`,
         [ currentSubmission?.id ],
     );
+
+    const renderDownloadErrorMessage = useCallback(() => {
+        if (isNil(downloadErrorMessage)) {
+            return null;
+        }
+
+        return (
+            <AlertBox
+              message={downloadErrorMessage}
+              type={AlertBoxType.error}
+              onClose={() => setDownloadErrorMessage(null)}
+            />
+        );
+    }, [ downloadErrorMessage, setDownloadErrorMessage ]);
 
     const handleDownloadSubmissionFile = useCallback(
         async () => {
@@ -257,10 +281,19 @@ const SubmissionDetails = () => {
                 />
                 <div className={styles.resourceWrapper}>
                     {renderResourceLink()}
+                    {renderDownloadErrorMessage()}
                 </div>
             </div>
         ),
-        [ problemNameHeadingText, currentSubmission?.content, submissionType, backButtonState, registerContestTypeUrl, renderResourceLink ],
+        [
+            problemNameHeadingText,
+            currentSubmission?.content,
+            submissionType,
+            backButtonState,
+            registerContestTypeUrl,
+            renderResourceLink,
+            renderDownloadErrorMessage,
+        ],
     );
 
     const submissionResults = useCallback(
