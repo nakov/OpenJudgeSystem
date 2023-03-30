@@ -30,11 +30,7 @@ type IHomeStatisticsProviderProps = IHaveChildrenProps
 
 const HomeStatisticsProvider = ({ children }: IHomeStatisticsProviderProps) => {
     const [ statistics, setStatistics ] = useState <IHomeStatistics | null>(null);
-    const {
-        startLoading,
-        stopLoading,
-    } = useLoading();
-
+    const { startLoading, stopLoading } = useLoading();
     const { getHomeStatisticsUrl } = useUrls();
 
     const {
