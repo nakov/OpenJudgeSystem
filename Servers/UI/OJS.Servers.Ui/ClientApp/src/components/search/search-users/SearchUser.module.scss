@@ -7,10 +7,14 @@
   border-radius: 8px;
   box-shadow: colors.$box-shadow-color;
   display: grid;
+  flex: 0 0 10em;
   flex-flow: wrap;
   grid-gap: 10px;
   margin: 10px;
+  min-height: 5vh;
+  min-width: 240px;
   padding: 0.7vw;
+  width: 13vw;
 }
 
 .userText {
