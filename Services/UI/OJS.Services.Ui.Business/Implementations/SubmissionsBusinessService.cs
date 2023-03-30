@@ -290,14 +290,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        if (user.IsAdminOrLecturer && participant == null)
-        {
-            participant = await this.participantsBusinessService.CreateNewByContestByUserByIsOfficialAndIsAdmin(
-                problem!.ProblemGroup.Contest,
-                user.Id!,
-                isOfficial,
-                user.IsAdmin);
-        }
+        participant ??= await this.participantsBusinessService.CreateNewByContestByUserByIsOfficialAndIsAdmin(
+            problem!.ProblemGroup.Contest,
+            user.Id!,
+            isOfficial,
+            user.IsAdmin);
 
         var userSubmissions = this.submissionsData
                 .GetAllByProblemAndParticipant(problemId, participant!.Id)
