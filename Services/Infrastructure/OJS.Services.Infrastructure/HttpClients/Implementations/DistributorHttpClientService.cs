@@ -20,6 +20,12 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
                     string.Format(ValueCannotBeNullOrWhiteSpaceTemplate, SulsPlatformBaseUrlKey));
             }
 
+            var hostOriginHeaderValue = EnvironmentUtils.GetByKey(ApplicationUrl);
+            if (string.IsNullOrWhiteSpace(hostOriginHeaderValue))
+            {
+                throw new ArgumentException(string.Format(ValueCannotBeNullOrWhiteSpaceTemplate, ApplicationUrl));
+            }
+
             client.DefaultRequestHeaders.Add(GlobalConstants.HeaderKeys.HostOrigin, EnvironmentUtils.GetByKey(ApplicationUrl));
             client.BaseAddress = new Uri(distributorBaseUrl);
         }
