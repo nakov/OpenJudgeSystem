@@ -16,6 +16,8 @@ public static class ValidationMessages
     public static class User
     {
         public const string NotLoggedIn = "You need to log in first.";
+
+        public const string NotAdminOrLecturer = "You do not have permissions to download the file.";
     }
 
     public static class Submission
@@ -41,6 +43,8 @@ public static class ValidationMessages
         public const string SubmissionEmpty = "Solution cannot be empty.";
 
         public const string InvalidExtension = "Invalid file extension.";
+
+        public const string NoContentToDownload = "There is no content to download.";
     }
 
     public static class Problem

@@ -102,6 +102,33 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         return submissionDetailsServiceModel!;
     }
 
+    public SubmissionFileDownloadServiceModel GetFileDownloadInfo(int submissionId)
+    {
+        var submissionDetailsServiceModel = this.submissionsData
+            .GetSubmissionById<SubmissionDetailsServiceModel>(submissionId);
+        var currentUser = this.userProviderService.GetCurrentUser();
+        var validationResult = this.submissionDetailsValidationService.GetValidationResult((submissionDetailsServiceModel!, currentUser));
+        if (!validationResult.IsValid)
+        {
+            throw new BusinessServiceException(validationResult.Message);
+        }
+
+        if (submissionDetailsServiceModel!.ByteContent == null || submissionDetailsServiceModel.ByteContent.Length == 0)
+        {
+            throw new BusinessServiceException(ValidationMessages.Submission.NoContentToDownload);
+        }
+
+        return new SubmissionFileDownloadServiceModel
+        {
+            Content = submissionDetailsServiceModel.ByteContent,
+            MimeType = GlobalConstants.MimeTypes.ApplicationOctetStream,
+            FileName = string.Format(
+                GlobalConstants.Submissions.SubmissionDownloadFileName,
+                submissionDetailsServiceModel.Id,
+                submissionDetailsServiceModel.FileExtension),
+        };
+    }
+
     public Task<IQueryable<Submission>> GetAllForArchiving()
     {
         var archiveBestSubmissionsLimit = DateTime.Now.AddYears(
@@ -338,8 +365,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             problem.SubmissionTypesInProblems
                 .First(st => st.SubmissionTypeId == model.SubmissionTypeId)
                 .SubmissionType;
-
-        await this.submissionsDistributorCommunicationService.AddSubmissionForProcessing(newSubmission);
+        if (model.ByteContent == null)
+        {
+            await this.submissionsDistributorCommunicationService.AddSubmissionForProcessing(newSubmission);
+        }
     }
 
     public async Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult)

@@ -3,6 +3,7 @@ import isNil from 'lodash/isNil';
 
 import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
 import {
+    IDownloadSubmissionFileUrlParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
 } from '../../common/url-types';
@@ -28,6 +29,7 @@ interface ISubmissionsDetailsContext {
         selectSubmissionById: (submissionId: number) => void;
         getDetails: (submissionId: number) => Promise<void>;
         getSubmissionResults: (problemId: number, isOfficial: boolean) => Promise<void>;
+        downloadProblemSubmissionFile: (submissionId: number) => Promise<void>;
     };
 }
 
@@ -50,6 +52,8 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         currentSubmission,
         setCurrentSubmission,
     ] = useState<ISubmissionDetailsType | null>(null);
+    const [ problemSubmissionFileIdToDownload, setProblemSubmissionFileIdToDownload ] = useState<number | null>(null);
+    const { getSubmissionFileDownloadUrl } = useUrls();
 
     const [
         currentProblemSubmissionResults,
@@ -88,6 +92,44 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         url: getSubmissionResultsByProblemUrl,
         parameters: submissionResultsByProblemUrlParams,
     });
+
+    const {
+        get: downloadSubmissionFile,
+        response: downloadSubmissionFileResponse,
+        saveAttachment,
+    } = useHttp<IDownloadSubmissionFileUrlParams, Blob>({
+        url: getSubmissionFileDownloadUrl,
+        parameters: { id: problemSubmissionFileIdToDownload },
+    });
+
+    const downloadProblemSubmissionFile = useCallback(
+        async (submissionId: number) => {
+            setProblemSubmissionFileIdToDownload(submissionId);
+        },
+        [],
+    );
+
+    useEffect(() => {
+        if (isNil(downloadSubmissionFileResponse)) {
+            return;
+        }
+
+        saveAttachment();
+    }, [ downloadSubmissionFileResponse, saveAttachment ]);
+
+    useEffect(() => {
+        if (isNil(problemSubmissionFileIdToDownload)) {
+            return;
+        }
+
+        (async () => {
+            startLoading();
+            await downloadSubmissionFile('blob');
+            stopLoading();
+        })();
+
+        setProblemSubmissionFileIdToDownload(null);
+    }, [ problemSubmissionFileIdToDownload, downloadSubmissionFile, startLoading, stopLoading ]);
 
     const getSubmissionResults = useCallback(
         async (problemId: number, isOfficial: boolean) => {
@@ -202,6 +244,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
                 selectSubmissionById,
                 getDetails,
                 getSubmissionResults,
+                downloadProblemSubmissionFile,
             },
         }),
         [
@@ -210,6 +253,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             getDetails,
             getSubmissionResults,
             validationErrors,
+            downloadProblemSubmissionFile,
         ],
     );
 

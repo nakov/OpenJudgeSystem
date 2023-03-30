@@ -4,6 +4,7 @@ import isNil from 'lodash/isNil';
 import {
     IAllContestsUrlParams,
     IDownloadProblemResourceUrlParams,
+    IDownloadSubmissionFileUrlParams,
     IGetContestByProblemUrlParams,
     IGetContestParticipationScoresForParticipantUrlParams,
     IGetContestResultsParams,
@@ -43,6 +44,7 @@ interface IUrlsContext {
     getHomeStatisticsUrl: () => string;
     getAdministrationRetestSubmission: (params: IRetestSubmissionUrlParams) => string;
     getContestByProblemUrl: (params: IGetContestByProblemUrlParams) => string;
+    getSubmissionFileDownloadUrl: (params: IDownloadSubmissionFileUrlParams) => string;
 }
 
 const UrlsContext = createContext<IUrlsContext>({} as IUrlsContext);
@@ -139,6 +141,8 @@ const getSubmissionDetailsByIdUrl =
     ({ submissionId }: IGetSubmissionDetailsByIdUrlParams) => `${getSubmissionsDetailsUrl()}/${submissionId}`;
 const getSubmitUrl = () => `${baseApiUrl}/Compete/Submit`;
 const getSubmitFileUrl = () => `${baseApiUrl}/Compete/SubmitFileSubmission`;
+const getSubmissionFileDownloadUrl =
+    ({ id }: IDownloadSubmissionFileUrlParams) => `${baseApiUrl}/Submissions/Download/${id}`;
 
 // Submission types
 const getAllContestStrategyFiltersUrl =
@@ -180,6 +184,7 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
             getHomeStatisticsUrl,
             getAdministrationRetestSubmission,
             getContestByProblemUrl,
+            getSubmissionFileDownloadUrl,
         }),
         [],
     );

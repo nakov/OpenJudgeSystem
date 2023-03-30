@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 
 public interface ISubmissionsDataService : IDataService<Submission>
 {
+    TServiceModel? GetSubmissionById<TServiceModel>(int id);
+
     Task<IEnumerable<TServiceModel>> GetLatestSubmissions<TServiceModel>(int count);
 
     Submission? GetBestForParticipantByProblem(int participantId, int problemId);

@@ -30,5 +30,7 @@
         Task<IEnumerable<SubmissionForPublicSubmissionsServiceModel>> GetPublicSubmissions();
 
         Task<int> GetTotalCount();
+
+        SubmissionFileDownloadServiceModel GetFileDownloadInfo(int submissionId);
     }
 }
