@@ -21,14 +21,9 @@ public class SearchValidationService : ISearchValidationService
     public ValidationResult GetValidationResult(string? item)
     {
         var contestNullValidationResult = this.notDefaultValueValidationHelper
-            .ValidateValueIsNotDefault(item, nameof(item), ValidationMessages.Search.IsNull);
+            .ValidateValueIsNotDefault(item, nameof(item));
 
-        if (!contestNullValidationResult.IsValid)
-        {
-            return ValidationResult.Invalid(ValidationMessages.Search.IsNull);
-        }
-
-        if (item?.Length < MinimumSearchTermLength)
+        if (item == null || item?.Length < MinimumSearchTermLength)
         {
             return ValidationResult.Invalid(ValidationMessages.Search.LessThanThreeSymbols);
         }
