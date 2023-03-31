@@ -21,9 +21,9 @@ public class SubmissionResultsValidationService : ISubmissionResultsValidationSe
             return ValidationResult.Invalid(ValidationMessages.Participant.NotRegisteredForExam);
         }
 
-        if (!problem.ShowResults && !userInfoModel.IsAdminOrLecturer)
+        if (!problem.ShowResults)
         {
-            return ValidationResult.Invalid(ValidationMessages.Problem.ProblemResultsNotAvailable);
+            return ValidationResult.Invalid(ValidationMessages.Problem.ProblemSubmissionsNotAvailable);
         }
 
         return ValidationResult.Valid();

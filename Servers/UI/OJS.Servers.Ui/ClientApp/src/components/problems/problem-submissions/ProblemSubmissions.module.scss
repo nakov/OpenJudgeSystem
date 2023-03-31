@@ -1,5 +1,6 @@
 @use 'src/styles/colors';
 @use 'src/styles/variables';
+@use 'src/styles/components';
 
 .submissionResultsContent {
   display: flex;
@@ -12,6 +13,17 @@
       font-size: variables.$f-size-16;
     }
   }
+}
+
+.headingProblemSubmissions {
+  @extend %contentSize;
+}
+
+.problemSubmissionsHeading {
+  border: 0;
+  margin-bottom: 30px;
+  padding: 0;
+  text-align: center;
 }
 
 .refreshBtn {
