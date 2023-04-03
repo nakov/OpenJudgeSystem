@@ -44,13 +44,12 @@ const PageNav = () => {
     };
 
     return (
-        <nav>
+        <nav className={styles.navigation}>
             <List
               values={routes}
               itemFunc={itemFunc}
               orientation={Orientation.horizontal}
               className={styles.listNav}
-
             />
         </nav>
     );

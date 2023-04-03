@@ -32,9 +32,9 @@ const HashUrlParamProvider = ({ children }: IHashUrlParamProviderProps) => {
 
     const clearHash = useCallback(
         () => {
-            window.history.replaceState('', document.title, location.pathname);
+            window.history.replaceState('', document.title, location.pathname + location.search);
         },
-        [ location.pathname ],
+        [ location.pathname, location.search ],
     );
 
     const value = useMemo(
