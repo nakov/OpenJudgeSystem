@@ -37,6 +37,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly IContestValidationService contestValidationService;
     private readonly ISubmitSubmissionValidationService submitSubmissionValidationService;
     private readonly ISubmissionResultsValidationService submissionResultsValidationService;
+    private readonly IParticipantsBusinessService participantsBusinessService;
 
     public SubmissionsBusinessService(
         ISubmissionsDataService submissionsData,
@@ -53,7 +54,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ISubmissionDetailsValidationService submissionDetailsValidationService,
         IContestValidationService contestValidationService,
         ISubmitSubmissionValidationService submitSubmissionValidationService,
-        ISubmissionResultsValidationService submissionResultsValidationService)
+        ISubmissionResultsValidationService submissionResultsValidationService,
+        IParticipantsBusinessService participantsBusinessService)
     {
         this.submissionsData = submissionsData;
         this.usersBusiness = usersBusiness;
@@ -70,6 +72,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.contestValidationService = contestValidationService;
         this.submitSubmissionValidationService = submitSubmissionValidationService;
         this.submissionResultsValidationService = submissionResultsValidationService;
+        this.participantsBusinessService = participantsBusinessService;
     }
 
     public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
@@ -258,6 +261,15 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         if (!validationResult.IsValid)
         {
             throw new BusinessServiceException(validationResult.Message);
+        }
+
+        if (user.IsAdminOrLecturer && participant == null)
+        {
+            participant = await this.participantsBusinessService.CreateNewByContestByUserByIsOfficialAndIsAdmin(
+                problem!.ProblemGroup.Contest,
+                user.Id!,
+                isOfficial,
+                user.IsAdmin);
         }
 
         var userSubmissions = this.submissionsData
