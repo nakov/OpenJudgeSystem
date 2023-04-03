@@ -18,6 +18,11 @@ public static class ValidationMessages
         public const string NotLoggedIn = "You need to log in first.";
     }
 
+    public static class Search
+    {
+        public const string LessThanThreeSymbols = "The search term must be at least 3 characters!";
+    }
+
     public static class Submission
     {
         public const string NotFound = "Submission not found.";

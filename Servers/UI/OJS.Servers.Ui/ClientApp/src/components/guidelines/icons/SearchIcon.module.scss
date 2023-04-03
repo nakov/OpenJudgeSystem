@@ -1,0 +1,9 @@
+@use './src/styles/colors';
+
+.searchIcon {
+  color: colors.$text-dark-gray-color;
+
+  &:hover {
+    color: colors.$background-color-btn-primary;
+  }
+}
