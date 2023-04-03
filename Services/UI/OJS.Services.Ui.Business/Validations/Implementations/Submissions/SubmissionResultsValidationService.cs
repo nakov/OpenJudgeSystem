@@ -1,9 +1,10 @@
-﻿namespace OJS.Services.Ui.Business.Validation.Implementations;
+﻿namespace OJS.Services.Ui.Business.Validations.Implementations.Contests;
 
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Problems;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Users;
+using Validation;
 
 public class SubmissionResultsValidationService : ISubmissionResultsValidationService
 {
