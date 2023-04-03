@@ -5,8 +5,7 @@ using OJS.Data.Models.Contests;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System;
 
-public class ContestForListingServiceModel
-    : IMapExplicitly
+public class ContestForListingServiceModel : IMapExplicitly
 {
     public int Id { get; set; }
 

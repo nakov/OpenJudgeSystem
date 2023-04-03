@@ -1,5 +1,9 @@
 @use 'src/styles/variables';
 
+.navigation {
+  display: flex;
+}
+
 .listNav {
   align-items: center;
   display: flex;
