@@ -15,14 +15,13 @@
   }
 }
 
-.headingProblemSubmissions {
+.problemSubmissionsError {
   @extend %contentSize;
-}
 
-.problemSubmissionsHeading {
-  border: 0;
-  margin-bottom: 30px;
-  padding: 0;
+  color: colors.$text-dark-gray-color;
+  font-family: Lato, serif;
+  font-size: variables.$f-size-18;
+  margin-top: 30px;
   text-align: center;
 }
 

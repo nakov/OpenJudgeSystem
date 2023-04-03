@@ -45,14 +45,11 @@ const ProblemSubmissions = () => {
 
     const renderErrorHeading = useCallback(
         (message: string) => (
-            <div className={styles.headingProblemSubmissions}>
-                <Heading
-                  type={HeadingType.secondary}
-                  className={styles.problemSubmissionsHeading}
-                >
-                    {message}
-                </Heading>
-            </div>
+            <p
+              className={styles.problemSubmissionsError}
+            >
+                {message}
+            </p>
         ),
         [],
     );
