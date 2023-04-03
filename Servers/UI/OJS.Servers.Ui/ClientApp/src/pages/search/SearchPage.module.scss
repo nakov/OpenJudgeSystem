@@ -1,0 +1,24 @@
+@use 'src/styles/colors';
+@use 'src/styles/components';
+@use 'src/styles/global';
+
+.heading {
+  padding: 30px 10px;
+}
+
+.searchHeading {
+  border: 0;
+  margin-bottom: 30px;
+  padding: 0;
+  text-align: center;
+}
+
+.headingSearch,
+.heading,
+.items {
+  @extend %contentSize;
+}
+
+.contestItem {
+  flex: 0 1 calc(100% / 4);
+}
