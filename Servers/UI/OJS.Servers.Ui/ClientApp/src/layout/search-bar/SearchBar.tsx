@@ -1,6 +1,5 @@
 import React, { ChangeEvent, FormEvent, useCallback, useState } from 'react';
 import { createSearchParams, useNavigate } from 'react-router-dom';
-import isEmpty from 'lodash/isEmpty';
 
 import { Button, ButtonType } from '../../components/guidelines/buttons/Button';
 import Form from '../../components/guidelines/forms/Form';
@@ -51,25 +50,23 @@ const SearchBar = () => {
 
     const handleSubmit = useCallback(
         () => {
-            if (!isEmpty(searchParam)) {
-                const params = {
-                    searchTerm: `${searchParam.trim()}`,
-                    ...selectedTerms.reduce(
-                        (obj, term) => ({ ...obj, [term]: 'true' }),
-                        {},
-                    ),
-                };
-                navigate({
-                    pathname: '/search',
-                    search: `?${createSearchParams(params)}`,
-                });
+            const params = {
+                searchTerm: `${searchParam.trim()}`,
+                ...selectedTerms.reduce(
+                    (obj, term) => ({ ...obj, [term]: 'true' }),
+                    {},
+                ),
+            };
+            navigate({
+                pathname: '/search',
+                search: `?${createSearchParams(params)}`,
+            });
 
-                setSearchParam('');
+            setSearchParam('');
 
-                setSelectedTerms(defaultState.state.selectedTerms);
+            setSelectedTerms(defaultState.state.selectedTerms);
 
-                toggleVisibility();
-            }
+            toggleVisibility();
         },
         [ navigate, searchParam, selectedTerms, toggleVisibility ],
     );
