@@ -20,6 +20,11 @@ public static class ValidationMessages
         public const string NotAdminOrLecturer = "You do not have permissions for this action.";
     }
 
+    public static class Search
+    {
+        public const string LessThanThreeSymbols = "The search term must be at least 3 characters!";
+    }
+
     public static class Submission
     {
         public const string NotFound = "Submission not found.";

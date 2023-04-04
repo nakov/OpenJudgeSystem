@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
+import { SearchParams } from '../common/search-types';
 import {
     IAllContestsUrlParams,
     IDownloadProblemResourceUrlParams,
@@ -8,6 +9,7 @@ import {
     IGetContestByProblemUrlParams,
     IGetContestParticipationScoresForParticipantUrlParams,
     IGetContestResultsParams,
+    IGetSearchResultsUrlParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
     IRetestSubmissionUrlParams,
@@ -43,6 +45,7 @@ interface IUrlsContext {
     getContestResultsUrl: (params: IGetContestResultsParams) => string;
     getHomeStatisticsUrl: () => string;
     getAdministrationRetestSubmission: (params: IRetestSubmissionUrlParams) => string;
+    getSearchResults: (searchTerm: IGetSearchResultsUrlParams) => string;
     getContestByProblemUrl: (params: IGetContestByProblemUrlParams) => string;
     getSubmissionFileDownloadUrl: (params: IDownloadSubmissionFileUrlParams) => string;
 }
@@ -154,6 +157,20 @@ const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams
 // Statistics
 const getHomeStatisticsUrl = () => `${baseApiUrl}/StatisticsPreview/GetForHome`;
 
+// Search
+const getSearchResults = ({ searchTerm, page, selectedTerms }: IGetSearchResultsUrlParams) => {
+    const searchQuery = `${SearchParams.search}=${searchTerm}`;
+
+    const pageQuery = `page=${page}`;
+
+    const selectedTermQuery = `&${selectedTerms
+        .map(({ key, value }) => `${key}=${value}`)
+        .join('&')
+    }`;
+
+    return `${baseApiUrl}/Search/GetSearchResults?${searchQuery}${selectedTermQuery}&${pageQuery}`;
+};
+
 const UrlsProvider = ({ children }: IUrlsProviderProps) => {
     const value = useMemo(
         () => ({
@@ -183,6 +200,7 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
             getContestResultsUrl,
             getHomeStatisticsUrl,
             getAdministrationRetestSubmission,
+            getSearchResults,
             getContestByProblemUrl,
             getSubmissionFileDownloadUrl,
         }),
