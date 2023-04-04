@@ -101,7 +101,7 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
         {
             // check if the submission was sent after the submission time limit has passed
             var latestSubmissionTime = lastSubmission.CreatedOn;
-            var differenceBetweenSubmissions = DateTime.Now.ToUniversalTime() - latestSubmissionTime;
+            var differenceBetweenSubmissions = DateTime.Now.ToLocalTime() - latestSubmissionTime;
             if (differenceBetweenSubmissions.TotalSeconds < limitBetweenSubmissions)
             {
                 return limitBetweenSubmissions - differenceBetweenSubmissions.TotalSeconds.ToInt();
