@@ -21,8 +21,6 @@ public static class ValidationMessages
     public static class Search
     {
         public const string LessThanThreeSymbols = "The search term must be at least 3 characters!";
-
-        public const string IsNull = "The search term cannot be null!";
     }
 
     public static class Submission
