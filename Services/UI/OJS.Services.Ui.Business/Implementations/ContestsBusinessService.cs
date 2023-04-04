@@ -1,5 +1,6 @@
 namespace OJS.Services.Ui.Business.Implementations
 {
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -15,8 +16,10 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Ui.Business.Validation;
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Contests;
+    using OJS.Services.Ui.Models.Search;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.Common.Models;
+    using X.PagedList;
 
     public class ContestsBusinessService : IContestsBusinessService
     {
@@ -169,6 +172,24 @@ namespace OJS.Services.Ui.Business.Implementations
             });
 
             return participationModel;
+        }
+
+        public async Task<ContestSearchServiceResultModel> GetSearchContestsByName(
+            SearchServiceModel model)
+        {
+            var modelResult = new ContestSearchServiceResultModel();
+
+            var allContestsQueryable = this.contestsData.GetAllNonDeletedContests()
+                .Where(c => c.Name!.Contains(model.SearchTerm!));
+
+            var searchContests = await allContestsQueryable
+                .MapCollection<ContestSearchServiceModel>()
+                .ToPagedListAsync(model.PageNumber, model.ItemsPerPage);
+
+            modelResult.Contests = searchContests;
+            modelResult.TotalContestsCount = allContestsQueryable.Count();
+
+            return modelResult;
         }
 
         public Task<bool> IsContestIpValidByContestAndIp(int contestId, string ip)

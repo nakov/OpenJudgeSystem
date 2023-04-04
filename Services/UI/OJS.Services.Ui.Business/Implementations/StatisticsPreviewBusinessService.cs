@@ -4,8 +4,7 @@ using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.Statistics;
 using System.Threading.Tasks;
 
-public class StatisticsPreviewBusinessService
-    : IStatisticsPreviewBusinessService
+public class StatisticsPreviewBusinessService : IStatisticsPreviewBusinessService
 {
     private readonly IContestsDataService contestsData;
     private readonly IUsersProfileDataService usersProfileData;
