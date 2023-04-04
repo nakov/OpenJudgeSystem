@@ -1,9 +1,10 @@
-namespace OJS.Services.Ui.Business.Validation.Implementations;
+namespace OJS.Services.Ui.Business.Validations.Implementations.Contests;
 
 using OJS.Services.Common.Models;
-using OJS.Services.Infrastructure.Exceptions;
-using OJS.Services.Ui.Models.Submissions;
 using OJS.Services.Common.Models.Users;
+using OJS.Services.Infrastructure.Exceptions;
+using OJS.Services.Ui.Business.Validation;
+using OJS.Services.Ui.Models.Submissions;
 
 public class SubmissionFileDownloadValidationService : ISubmissionFileDownloadValidationService
 {
