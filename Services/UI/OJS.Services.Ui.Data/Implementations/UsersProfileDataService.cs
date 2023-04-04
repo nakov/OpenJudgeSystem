@@ -1,5 +1,6 @@
 ﻿namespace OJS.Services.Ui.Data.Implementations
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,10 @@
             : base(db)
         {
         }
+
+        public IQueryable<UserProfile> GetAll()
+            => this.DbSet
+                .Where(u => !u.IsDeleted);
 
         public Task<TServiceModel?> GetByUsername<TServiceModel>(string? username)
             => this.DbSet

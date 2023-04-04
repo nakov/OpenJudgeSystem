@@ -7,4 +7,10 @@ interface IRegisterForContestTypeUrlParams {
     participationType: ContestParticipationType;
 }
 
-export type { IRegisterForContestTypeUrlParams };
+interface IContestProblemUrl {
+    id: number;
+    participationType: ContestParticipationType;
+    orderBy: number;
+}
+
+export type { IRegisterForContestTypeUrlParams, IContestProblemUrl };
