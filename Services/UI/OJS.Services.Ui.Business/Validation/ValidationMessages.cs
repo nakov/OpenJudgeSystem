@@ -17,7 +17,7 @@ public static class ValidationMessages
     {
         public const string NotLoggedIn = "You need to log in first.";
 
-        public const string NotAdminOrLecturer = "You do not have permissions to download the file.";
+        public const string NotAdminOrLecturer = "You do not have permissions for this action.";
     }
 
     public static class Submission

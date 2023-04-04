@@ -38,6 +38,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmitSubmissionValidationService submitSubmissionValidationService;
     private readonly ISubmissionResultsValidationService submissionResultsValidationService;
     private readonly IParticipantsBusinessService participantsBusinessService;
+    private readonly ISubmissionFileDownloadValidationService submissionFileDownloadValidationService;
 
     public SubmissionsBusinessService(
         ISubmissionsDataService submissionsData,
@@ -55,7 +56,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         IContestValidationService contestValidationService,
         ISubmitSubmissionValidationService submitSubmissionValidationService,
         ISubmissionResultsValidationService submissionResultsValidationService,
-        IParticipantsBusinessService participantsBusinessService)
+        IParticipantsBusinessService participantsBusinessService,
+        ISubmissionFileDownloadValidationService submissionFileDownloadValidationService)
     {
         this.submissionsData = submissionsData;
         this.usersBusiness = usersBusiness;
@@ -73,6 +75,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.submitSubmissionValidationService = submitSubmissionValidationService;
         this.submissionResultsValidationService = submissionResultsValidationService;
         this.participantsBusinessService = participantsBusinessService;
+        this.submissionFileDownloadValidationService = submissionFileDownloadValidationService;
     }
 
     public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
@@ -110,20 +113,15 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var submissionDetailsServiceModel = this.submissionsData
             .GetSubmissionById<SubmissionDetailsServiceModel>(submissionId);
         var currentUser = this.userProviderService.GetCurrentUser();
-        var validationResult = this.submissionDetailsValidationService.GetValidationResult((submissionDetailsServiceModel!, currentUser));
+        var validationResult = this.submissionFileDownloadValidationService.GetValidationResult((submissionDetailsServiceModel!, currentUser));
         if (!validationResult.IsValid)
         {
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        if (submissionDetailsServiceModel!.ByteContent == null || submissionDetailsServiceModel.ByteContent.Length == 0)
-        {
-            throw new BusinessServiceException(ValidationMessages.Submission.NoContentToDownload);
-        }
-
         return new SubmissionFileDownloadServiceModel
         {
-            Content = submissionDetailsServiceModel.ByteContent,
+            Content = submissionDetailsServiceModel!.ByteContent,
             MimeType = GlobalConstants.MimeTypes.ApplicationOctetStream,
             FileName = string.Format(
                 GlobalConstants.Submissions.SubmissionDownloadFileName,

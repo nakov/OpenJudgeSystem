@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
-import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
+import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE, FileType } from '../../common/constants';
 import {
     IDownloadSubmissionFileUrlParams,
     IGetSubmissionDetailsByIdUrlParams,
@@ -133,7 +133,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
 
         (async () => {
             startLoading();
-            await downloadSubmissionFile('blob');
+            await downloadSubmissionFile(FileType.Blob);
             stopLoading();
         })();
 
