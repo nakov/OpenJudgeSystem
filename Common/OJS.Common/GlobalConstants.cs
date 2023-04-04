@@ -85,7 +85,7 @@ namespace OJS.Common
         public static class HeaderKeys
         {
             public const string ContentDisposition = "Content-Disposition";
-            public const string HostOrigin = "Host-Origin";
+            public const string Origin = "Origin";
         }
 
         public static class HeaderValues

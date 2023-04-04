@@ -26,7 +26,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
                 throw new ArgumentException(string.Format(ValueCannotBeNullOrWhiteSpaceTemplate, ApplicationUrl));
             }
 
-            client.DefaultRequestHeaders.Add(GlobalConstants.HeaderKeys.HostOrigin, EnvironmentUtils.GetByKey(ApplicationUrl));
+            client.DefaultRequestHeaders.Add(GlobalConstants.HeaderKeys.Origin, EnvironmentUtils.GetByKey(ApplicationUrl));
             client.BaseAddress = new Uri(distributorBaseUrl);
         }
     }
