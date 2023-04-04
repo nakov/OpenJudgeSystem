@@ -309,7 +309,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         if (!submitSubmissionValidationServiceResult.IsValid)
         {
-            throw new BusinessServiceException(submitSubmissionValidationServiceResult.Message);
+            throw new BusinessServiceException(submitSubmissionValidationServiceResult.Message, submitSubmissionValidationServiceResult.PropertyName);
         }
 
         var newSubmission = model.Map<Submission>();
