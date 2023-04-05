@@ -97,39 +97,6 @@
             return archived;
         }
 
-        public void ArchiveOldSubmissions(PerformContext context)
-        {
-            this.archivedSubmissionsData.CreateDatabaseIfNotExists();
-
-            var allSubmissionsForArchive = this.submissionsBusiness
-                .GetAllForArchiving()
-                .OrderBy(x => x.Id)
-                .InBatches(GlobalConstants.BatchOperationsChunkSize);
-
-            foreach (var submissionsForArchiveBatch in allSubmissionsForArchive)
-            {
-                var submissionsForArchives = submissionsForArchiveBatch
-                    .Select(ArchivedSubmission.FromSubmission)
-                    .ToList();
-
-                this.archivedSubmissionsData.Add(submissionsForArchives);
-            }
-
-            this.backgroundJobs.OnSucceededStateContinueWith<IArchivedSubmissionsBusinessService>(
-                context.BackgroundJob.Id,
-                s => s.HardDeleteCurrentArchived(context));
-        }
-
-        public void HardDeleteCurrentArchived(PerformContext context)
-        {
-            var deletedCount = this.submissionsBusiness.HardDeleteAllArchived();
-            if (deletedCount > 0)
-            {
-                this.backgroundJobs.AddFireAndForgetJob<IArchivedSubmissionsBusinessService>(
-                    s => s.ArchiveOldSubmissions(context));
-            }
-        }
-
         public int HardDeleteArchivedByLimit(PerformContext context, int limit)
             => this.submissionsBusiness.HardDeleteArchived(limit);
     }

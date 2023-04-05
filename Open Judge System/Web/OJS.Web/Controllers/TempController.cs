@@ -34,9 +34,6 @@
     [AuthorizeRoles(SystemRole.Administrator)]
     public class TempController : BaseController
     {
-        private const int ArchiveSingleBatchLimit = 25000;
-        private const int MaxSubBatchSize = 10000;
-        private const int ArchiveDailyBatchSize = 500000;
         private readonly IHangfireBackgroundJobService backgroundJobs;
         private readonly IProblemGroupsDataService problemGroupsData;
         private readonly IProblemsDataService problemsDataService;
@@ -79,21 +76,11 @@
             return null;
         }
 
-        public ActionResult RegisterJobForArchivingOldSubmissions()
-        {
-            this.backgroundJobs.AddOrUpdateRecurringJob<IArchivedSubmissionsBusinessService>(
-                "ArchiveOldSubmissions",
-                s => s.ArchiveOldSubmissions(null),
-                Cron.Weekly(DayOfWeek.Monday, 1, 30));
-
-            return null;
-        }
-
         public ActionResult RegisterJobForArchiveOldSubmissionsWithLimit()
         {
             this.backgroundJobs.AddOrUpdateRecurringJob<IArchivedSubmissionsBusinessService>(
                 "ArchiveOldSubmissionsWithLimit",
-                s => s.ArchiveOldSubmissionsWithLimit(null, ArchiveSingleBatchLimit),
+                s => s.ArchiveOldSubmissionsWithLimit(null, Settings.ArchiveSingleBatchLimit),
                 Cron.Yearly(1, 1, 2, 30));
 
             return null;
@@ -103,7 +90,7 @@
         {
             this.backgroundJobs.AddOrUpdateRecurringJob<IArchivedSubmissionsBusinessService>(
                 "HardDeleteArchivedByLimit",
-                s => s.HardDeleteArchivedByLimit(null, ArchiveSingleBatchLimit),
+                s => s.HardDeleteArchivedByLimit(null, Settings.ArchiveSingleBatchLimit),
                 Cron.Yearly(1, 1, 2, 30));
 
             return null;
@@ -113,7 +100,7 @@
         {
             this.backgroundJobs.AddOrUpdateRecurringJob<IArchivedSubmissionsBusinessService>(
                 "ArchiveOldSubmissionsDailyBatch",
-                s => s.ArchiveOldSubmissionsDailyBatch(null, ArchiveDailyBatchSize, MaxSubBatchSize),
+                s => s.ArchiveOldSubmissionsDailyBatch(null, Settings.ArchiveDailyBatchSize, Settings.ArchiveMaxSubBatchSize),
                 Cron.Daily(1, 30));
 
             return null;
