@@ -263,7 +263,7 @@ namespace OJS.Services.Ui.Business.Implementations
         public async Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPracticable()
             => await this.contestsData
                 .GetAllPracticable<ContestForHomeIndexServiceModel>()
-                .OrderByDescendingAsync(ac => ac.PracticeStartTime)
+                .OrderByDescendingAsync(ac => ac.PracticeEndTime)
                 .TakeAsync(DefaultContestsToTake);
 
         public async Task<bool> CanUserCompeteByContestByUserAndIsAdmin(
