@@ -6,4 +6,9 @@ public static class Constants
     {
         public const int DefaultCount = 15;
     }
+
+    public static class Search
+    {
+        public const int MinimumSearchTermLength = 3;
+    }
 }

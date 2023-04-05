@@ -52,3 +52,18 @@
   gap: 10px;
   justify-content: center;
 }
+
+.searchButton {
+  background-color: colors.$white-color;
+  border: 0;
+  box-shadow: none;
+  cursor: pointer;
+  margin-bottom: 15px;
+  margin-right: 15px;
+  margin-top: 10px;
+  padding: 10px;
+}
+
+.navbarContainer {
+  display: flex;
+}
