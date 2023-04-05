@@ -43,7 +43,7 @@ const ProblemSubmissions = () => {
     const submissionResultsContentClass = 'submissionResultsContent';
     const submissionResultsContentClassName = concatClassNames(styles.submissionResultsContent, submissionResultsContentClass);
 
-    const renderErrorHeading = useCallback(
+    const renderErrorParagraph = useCallback(
         (message: string) => (
             <p
               className={styles.problemSubmissionsError}
@@ -58,12 +58,12 @@ const ProblemSubmissions = () => {
         () => {
             if (!isNil(problemSubmissionsError)) {
                 const { detail } = problemSubmissionsError;
-                return renderErrorHeading(detail);
+                return renderErrorParagraph(detail);
             }
 
             return null;
         },
-        [ renderErrorHeading, problemSubmissionsError ],
+        [ renderErrorParagraph, problemSubmissionsError ],
     );
 
     const renderSubmissions = useCallback(
