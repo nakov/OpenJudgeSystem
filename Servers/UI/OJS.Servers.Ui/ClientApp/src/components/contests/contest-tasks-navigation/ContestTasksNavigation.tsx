@@ -3,6 +3,7 @@ import isNil from 'lodash/isNil';
 
 import { ContestParticipationType, ContestResultType } from '../../../common/constants';
 import { IProblemType } from '../../../common/types';
+import { useProblemSubmissions } from '../../../hooks/submissions/use-problem-submissions';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
@@ -17,7 +18,6 @@ const compareByOrderBy = (p1: IProblemType, p2: IProblemType) => p1.orderBy - p2
 
 const ContestTasksNavigation = () => {
     const [ resultsLink, setResultsLink ] = useState('');
-
     const {
         state: {
             currentProblem,
@@ -25,6 +25,7 @@ const ContestTasksNavigation = () => {
         },
         actions: { selectProblemById },
     } = useProblems();
+    const { actions: { loadSubmissions } } = useProblemSubmissions();
 
     const {
         state: {
@@ -33,6 +34,14 @@ const ContestTasksNavigation = () => {
             isOfficial,
         },
     } = useCurrentContest();
+
+    const selectProblemAndLoadSubmissions = useCallback(
+        async (id: number) => {
+            selectProblemById(id);
+            await loadSubmissions(id);
+        },
+        [ loadSubmissions, selectProblemById ],
+    );
 
     const renderTask = useCallback(
         (problem: IProblemType) => {
@@ -58,7 +67,7 @@ const ContestTasksNavigation = () => {
             return (
                 <>
                     <Button
-                      onClick={() => selectProblemById(id)}
+                      onClick={() => selectProblemAndLoadSubmissions(id)}
                       className={className}
                       type={ButtonType.plain}
                     >
@@ -72,7 +81,7 @@ const ContestTasksNavigation = () => {
                 </>
             );
         },
-        [ currentContestParticipantScores, currentProblem, selectProblemById ],
+        [ currentContestParticipantScores, currentProblem, selectProblemAndLoadSubmissions ],
     );
 
     const sideBarTasksList = 'all-tasks-list';
