@@ -73,6 +73,26 @@ public class SubmissionsController : BaseApiController
             .ToOkResult();
 
     /// <summary>
+    /// Gets a subset of submission results for the selected user by specific problem and given take count.
+    /// </summary>
+    /// <param name="submissionId">The id of the submission.</param>
+    /// <param name="problemId">The id of the problem.</param>
+    /// <param name="isOfficial">Should the submissions be only from compete mode.</param>
+    /// <param name="take">Number of submissions to return.</param>
+    /// <returns>A collection of submissions for a specific problem.</returns>
+    [HttpGet("{submissionId:int}/{problemId:int}")]
+    [ProducesResponseType(typeof(IEnumerable<SubmissionResultsResponseModel>), Status200OK)]
+    public async Task<IActionResult> GetSubmissionDetailsResults(
+        int submissionId,
+        int problemId,
+        [FromQuery] bool isOfficial,
+        [FromQuery] int take)
+        => await this.submissionsBusiness
+            .GetSubmissionDetailsResults(submissionId, problemId, isOfficial, take)
+            .MapCollection<SubmissionResultsResponseModel>()
+            .ToOkResult();
+
+    /// <summary>
     /// Saves/updates the provided execution result for the given submission in the database.
     /// </summary>
     /// <param name="submissionExecutionResult">The submission execution result.</param>
