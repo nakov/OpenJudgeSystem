@@ -12,6 +12,7 @@ import LoginPage from '../../pages/login/LoginPage';
 import LogoutPage from '../../pages/logout/LogoutPage';
 import ProfilePage from '../../pages/profile/ProfilePage';
 import RegisterPage from '../../pages/register/RegisterPage';
+import SearchPage from '../../pages/search/SearchPage';
 import { asPage } from '../../pages/shared/set-page-params';
 import { withTitle } from '../../pages/shared/set-page-title';
 import SubmissionDetailsPage from '../../pages/submission-details/SubmissionDetailsPage';
@@ -76,6 +77,10 @@ const routes = [
     {
         path: '/Submissions/Retest',
         Element: SubmissionRetestPage,
+    },
+    {
+        path: '/search',
+        Element: SearchPage,
     },
 ];
 
