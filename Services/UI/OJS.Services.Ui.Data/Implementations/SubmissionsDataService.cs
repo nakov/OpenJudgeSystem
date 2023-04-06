@@ -1,10 +1,11 @@
 namespace OJS.Services.Ui.Data.Implementations;
 
 using Microsoft.EntityFrameworkCore;
+using Infrastructure.Extensions;
 using OJS.Common.Extensions;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Data.Implementations;
-using OJS.Services.Infrastructure.Extensions;
+using OJS.Data.Models.Participants;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
@@ -121,6 +122,11 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
                 .AverageAsync()
                 .ToInt()
             : 0;
+
+    public async Task<Participant?> GetParticipantBySubmission(int submissionId)
+        => await this.GetByIdQuery(submissionId)
+            .Select(p => p.Participant)
+            .FirstOrDefaultAsync();
 
     private IQueryable<Submission> GetByIdQuery(int id) =>
         this.DbSet

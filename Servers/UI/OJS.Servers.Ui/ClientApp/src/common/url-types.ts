@@ -44,7 +44,7 @@ interface IDownloadProblemResourceUrlParams {
 }
 
 interface IGetSubmissionResultsByProblemUrlParams {
-    id: number;
+    problemId: number;
     isOfficial: boolean;
     take: number;
 }
@@ -55,7 +55,8 @@ interface IGetContestResultsParams {
     full: boolean;
 }
 
-interface IGetSubmissionDetailsByIdUrlParams {
+interface IGetSubmissionDetailsByIdUrlParams
+    extends IGetSubmissionResultsByProblemUrlParams {
     submissionId: number;
 }
 

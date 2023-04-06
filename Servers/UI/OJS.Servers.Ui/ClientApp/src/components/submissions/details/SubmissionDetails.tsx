@@ -18,7 +18,7 @@ import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import IconSize from '../../guidelines/icons/common/icon-sizes';
 import LeftArrowIcon from '../../guidelines/icons/LeftArrowIcon';
 import SubmissionResults from '../submission-results/SubmissionResults';
-import RefreshableSubmissionsList from '../submissions-list/RefreshableSubmissionsList';
+import SubmissionsList from '../submissions-list/SubmissionsList';
 
 import styles from './SubmissionDetails.module.scss';
 
@@ -26,10 +26,10 @@ const SubmissionDetails = () => {
     const {
         state: {
             currentSubmission,
-            currentProblemSubmissionResults,
+            currentSubmissionDetailsResults,
             validationErrors,
         },
-        actions: { getSubmissionResults },
+        actions: { getSubmissionDetailsResults },
     } = useSubmissionsDetails();
     const { actions: { setPageTitle } } = usePageTitles();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
@@ -99,17 +99,20 @@ const SubmissionDetails = () => {
         submissionsDetails,
     );
 
-    useEffect(() => {
-        if (isNil(currentSubmission)) {
-            return;
-        }
+    useEffect(
+        () => {
+            if (isNil(currentSubmission)) {
+                return;
+            }
 
-        const { problem: { id: problemId }, isOfficial } = currentSubmission;
+            const { id: submissionId, problem: { id: problemId }, isOfficial } = currentSubmission;
 
-        (async () => {
-            await getSubmissionResults(problemId, isOfficial);
-        })();
-    }, [ currentSubmission, getSubmissionResults ]);
+            (async () => {
+                await getSubmissionDetailsResults(submissionId, problemId, isOfficial);
+            })();
+        },
+        [ currentSubmission, getSubmissionDetailsResults ],
+    );
 
     const submissionsReloadBtnClassName = 'submissionReloadBtn';
 
@@ -118,10 +121,10 @@ const SubmissionDetails = () => {
             return;
         }
 
-        const { problem: { id: problemId }, isOfficial } = currentSubmission;
+        const { id: submissionId, problem: { id: problemId }, isOfficial } = currentSubmission;
 
-        await getSubmissionResults(problemId, isOfficial);
-    }, [ currentSubmission, getSubmissionResults ]);
+        await getSubmissionDetailsResults(submissionId, problemId, isOfficial);
+    }, [ currentSubmission, getSubmissionDetailsResults ]);
 
     const renderReloadButton = useCallback(
         () => (
@@ -210,8 +213,8 @@ const SubmissionDetails = () => {
                 <div className={submissionsNavigationClassName}>
                     <Heading type={HeadingType.secondary}>Submissions</Heading>
                 </div>
-                <RefreshableSubmissionsList
-                  items={currentProblemSubmissionResults}
+                <SubmissionsList
+                  items={currentSubmissionDetailsResults}
                   selectedSubmission={currentSubmission}
                   className={styles.submissionsList}
                 />
@@ -219,7 +222,7 @@ const SubmissionDetails = () => {
                 { renderSubmissionInfo() }
             </div>
         ),
-        [ currentProblemSubmissionResults, currentSubmission, renderButtonsSection, renderSubmissionInfo ],
+        [ currentSubmissionDetailsResults, currentSubmission, renderButtonsSection, renderSubmissionInfo ],
     );
 
     const codeEditor = useCallback(

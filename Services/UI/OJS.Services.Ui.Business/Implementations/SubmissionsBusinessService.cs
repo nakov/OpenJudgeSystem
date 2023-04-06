@@ -7,6 +7,8 @@ using OJS.Common.Helpers;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
+using OJS.Data.Models.Participants;
+using OJS.Services.Common.Models.Users;
 using OJS.Services.Common;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Ui.Business.Validation;
@@ -254,22 +256,21 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 user.Id!,
                 isOfficial);
 
-        var validationResult = this.submissionResultsValidationService.GetValidationResult((user, problem, participant, isOfficial));
-        if (!validationResult.IsValid)
-        {
-            throw new BusinessServiceException(validationResult.Message);
-        }
+        return await this.GetUserSubmissions(problemId, isOfficial, take, user, problem, participant);
+    }
 
-        var userSubmissions = this.submissionsData
-                .GetAllByProblemAndParticipant(problemId, participant!.Id)
-                .MapCollection<SubmissionResultsServiceModel>();
+    public async Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionDetailsResults(
+        int submissionId,
+        int problemId,
+        bool isOfficial,
+        int take = 0)
+    {
+        var problem = await this.problemsDataService.GetWithProblemGroupById(problemId);
+        var user = this.userProviderService.GetCurrentUser();
 
-        if (take != 0)
-        {
-            userSubmissions = userSubmissions.Take(take);
-        }
+        var participant = await this.submissionsData.GetParticipantBySubmission(submissionId);
 
-        return await userSubmissions.ToListAsync();
+        return await this.GetUserSubmissions(problemId, isOfficial, take, user, problem, participant);
     }
 
     public async Task Submit(SubmitSubmissionServiceModel model)
@@ -449,5 +450,31 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         {
             submission.ProcessingComment = $"Exception in SaveParticipantScore: {ex.Message}";
         }
+    }
+
+    private async Task<IEnumerable<SubmissionResultsServiceModel>> GetUserSubmissions(
+        int problemId,
+        bool isOfficial,
+        int take,
+        UserInfoModel user,
+        Problem? problem,
+        Participant? participant)
+    {
+        var validationResult = this.submissionResultsValidationService.GetValidationResult((user, problem, participant, isOfficial));
+        if (!validationResult.IsValid)
+        {
+            throw new BusinessServiceException(validationResult.Message);
+        }
+
+        var userSubmissions = this.submissionsData
+            .GetAllByProblemAndParticipant(problemId, participant!.Id)
+            .MapCollection<SubmissionResultsServiceModel>();
+
+        if (take != 0)
+        {
+            userSubmissions = userSubmissions.Take(take);
+        }
+
+        return await userSubmissions.ToListAsync();
     }
 }
