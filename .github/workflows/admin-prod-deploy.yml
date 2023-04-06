@@ -21,7 +21,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.SOFTUNIBUILD_PAT }}
   build-push-and-deploy-image:
     runs-on: ubuntu-latest
-    if: ${{ needs.check-user-access.outputs.isTeamMember == 'false' }}
+    if: ${{ needs.check-user-access.outputs.isTeamMember == 'true' }}
     steps:
     - name: Configure Environment Variables
       run: |
