@@ -19,6 +19,12 @@ jobs:
         username: ${{ github.triggering_actor }}
         team: 'Judge Administrators'
         GITHUB_TOKEN: ${{ secrets.SOFTUNIBUILD_PAT }}
+    - name: echo output
+      run: echo ${{ steps.checkUserMember.outputs.isTeamMember }}
+    - name: echo output 2
+      run: echo ${{ steps.checkUserMember.outputs }}
+    - name: echo output 3
+      run: echo ${{ steps.checkUserMember.outputs.isTeamMember == 'true' }}
   build-push-and-deploy-image:
     runs-on: ubuntu-latest
     if: ${{ needs.check-user-access.outputs.isTeamMember == 'true' }}
