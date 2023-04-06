@@ -7,9 +7,19 @@ on:
     tags:
       - redeploy-prod-admin-**
 jobs:
-  build-and-push-image:
+  check-user-access:
     runs-on: ubuntu-latest
-    if: contains(github.team_members['Judge Administrators'], github.actor)
+    steps:
+    - name: Get User Teams Membership
+      id: checkUserMember
+      uses: tspascoal/get-user-teams-membership@v1.0.0
+      with:
+        username: ${{ github.triggering_actor }}
+        team: 'Judge Administrators'
+        GITHUB_TOKEN: ${{ secrets.SOFTUNIBUILD_PAT }}
+  build-push-and-deploy-image:
+    runs-on: ubuntu-latest
+    if: ${{ steps.checkUserMember.outputs.isTeamMember == 'false' }}
     steps:
     - name: Configure Environment Variables
       run: |
