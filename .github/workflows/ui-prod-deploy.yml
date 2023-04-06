@@ -9,8 +9,10 @@ on:
 jobs:
   check-user-access:
     runs-on: ubuntu-latest
+    outputs:
+      isTeamMember: ${{ steps.checkUserMember.outputs.isTeamMember }}
     steps:
-    - name: Get User Teams Membership
+    - name: Check if user is in team 'Judge Administrators'
       id: checkUserMember
       uses: tspascoal/get-user-teams-membership@v1.0.0
       with:
@@ -19,7 +21,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.SOFTUNIBUILD_PAT }}
   build-push-and-deploy-image:
     runs-on: ubuntu-latest
-    if: ${{ steps.checkUserMember.outputs.isTeamMember == 'false' }}
+    if: ${{ needs.check-user-access.outputs.isTeamMember == 'false' }}
     steps:
     - name: Configure Environment Variables
       run: |
