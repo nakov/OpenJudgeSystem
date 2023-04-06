@@ -22,7 +22,7 @@ jobs:
     - name: echo output
       run: echo ${{ steps.checkUserMember.outputs.isTeamMember }}
     - name: echo output 2
-      run: echo ${{ steps.checkUserMember.outputs }}
+      run: echo ${{ steps.checkUserMember.outputs.teams }}
     - name: echo output 3
       run: echo ${{ steps.checkUserMember.outputs.isTeamMember == 'true' }}
   build-push-and-deploy-image:
