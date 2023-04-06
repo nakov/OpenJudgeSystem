@@ -1,14 +1,13 @@
 namespace OJS.Services.Infrastructure.HttpClients.Implementations
 {
     using System;
-    using System.IO;
     using System.Net.Http;
     using System.Net.Http.Json;
     using System.Text;
     using System.Threading.Tasks;
     using FluentExtensions.Extensions;
     using Microsoft.Extensions.Logging;
-    using Newtonsoft.Json;
+    using OJS.Common.Extensions;
     using OJS.Services.Common.Models;
     using static OJS.Common.GlobalConstants.ErrorMessages;
     using static OJS.Common.GlobalConstants.MimeTypes;
@@ -90,14 +89,6 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
         private static string GetQueryStringSeparator(string url)
             => url.Contains('?') ? "&" : "?";
 
-        private static T? DeserializeJson<T>(Stream stream)
-        {
-            using var streamReader = new StreamReader(stream);
-            using var jsonTextReader = new JsonTextReader(streamReader);
-            var jsonSerializer = new JsonSerializer();
-            return jsonSerializer.Deserialize<T>(jsonTextReader);
-        }
-
         private static async Task ValidateResponseMessage(HttpResponseMessage responseMessage)
         {
             if (!responseMessage.IsSuccessStatusCode)
@@ -141,7 +132,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
                 if (response.IsSuccessStatusCode)
                 {
                     await using var responseContentStream = await response.Content.ReadAsStreamAsync();
-                    externalDataResult.Data = DeserializeJson<TData>(responseContentStream);
+                    externalDataResult.Data = responseContentStream.DeserializeJson<TData>();
                 }
                 else
                 {
