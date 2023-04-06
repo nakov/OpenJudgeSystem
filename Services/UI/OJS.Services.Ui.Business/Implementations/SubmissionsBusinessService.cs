@@ -4,7 +4,6 @@ using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using OJS.Common;
 using OJS.Common.Helpers;
-using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
 using OJS.Data.Models.Participants;
@@ -27,12 +26,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmissionsDataService submissionsData;
     private readonly IUsersBusinessService usersBusiness;
     private readonly IParticipantScoresBusinessService participantScoresBusinessService;
+    private readonly IParticipantsBusinessService participantsBusinessService;
+    // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/624
     private readonly IParticipantsDataService participantsDataService;
     private readonly IProblemsDataService problemsDataService;
     private readonly IUserProviderService userProviderService;
-    private readonly IContestsBusinessService contestsBusinessService;
-    private readonly IProblemsBusinessService problemsBusinessService;
-    private readonly ISubmissionTypesBusinessService submissionTypesBusinessService;
     private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunicationService;
     private readonly ITestRunsDataService testRunsDataService;
     private readonly ISubmissionDetailsValidationService submissionDetailsValidationService;
@@ -44,11 +42,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ISubmissionsDataService submissionsData,
         IUsersBusinessService usersBusiness,
         IProblemsDataService problemsDataService,
+        IParticipantsBusinessService participantsBusinessService,
         IParticipantsDataService participantsDataService,
         IUserProviderService userProviderService,
-        IContestsBusinessService contestsBusinessService,
-        IProblemsBusinessService problemsBusinessService,
-        ISubmissionTypesBusinessService submissionTypesBusinessService,
         ISubmissionsDistributorCommunicationService submissionsDistributorCommunicationService,
         ITestRunsDataService testRunsDataService,
         IParticipantScoresBusinessService participantScoresBusinessService,
@@ -60,11 +56,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.submissionsData = submissionsData;
         this.usersBusiness = usersBusiness;
         this.problemsDataService = problemsDataService;
+        this.participantsBusinessService = participantsBusinessService;
         this.participantsDataService = participantsDataService;
         this.userProviderService = userProviderService;
-        this.contestsBusinessService = contestsBusinessService;
-        this.problemsBusinessService = problemsBusinessService;
-        this.submissionTypesBusinessService = submissionTypesBusinessService;
         this.submissionsDistributorCommunicationService = submissionsDistributorCommunicationService;
         this.testRunsDataService = testRunsDataService;
         this.participantScoresBusinessService = participantScoresBusinessService;
@@ -287,15 +281,18 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 problem.ProblemGroup.ContestId,
                 currentUser.Id!,
                 model.Official);
+
         var contestValidationResult = this.contestValidationService.GetValidationResult(
             (participant?.Contest,
                 participant?.ContestId,
                 currentUser.Id,
                 currentUser.IsAdminOrLecturer,
                 model.Official) !);
-        var userSubmissionTimeLimit = this.submissionsData.GetUserSubmissionTimeLimit(
+
+        var userSubmissionTimeLimit = await this.participantsBusinessService.GetParticipantLimitBetweenSubmissions(
             participant!.Id,
             participant.Contest.LimitBetweenSubmissions);
+
         var hasUserNotProcessedSubmissionForProblem =
             this.submissionsData.HasUserNotProcessedSubmissionForProblem(problem.Id, currentUser.Id!);
 
