@@ -1,16 +1,15 @@
 namespace OJS.Common.Extensions;
 
 using System.IO;
-using Newtonsoft.Json;
+using FluentExtensions.Extensions;
 
 public static class StreamExtensions
 {
-    public static T? DeserializeJson<T>(this Stream stream)
+    public static T FromJson<T>(this Stream stream)
     {
         using var streamReader = new StreamReader(stream);
-        using var jsonTextReader = new JsonTextReader(streamReader);
-        var jsonSerializer = new JsonSerializer();
+        var json = streamReader.ReadToEnd();
 
-        return jsonSerializer.Deserialize<T>(jsonTextReader);
+        return json.FromJson<T>();
     }
 }

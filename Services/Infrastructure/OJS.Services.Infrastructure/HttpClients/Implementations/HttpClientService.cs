@@ -132,7 +132,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
                 if (response.IsSuccessStatusCode)
                 {
                     await using var responseContentStream = await response.Content.ReadAsStreamAsync();
-                    externalDataResult.Data = responseContentStream.DeserializeJson<TData>();
+                    externalDataResult.Data = responseContentStream.FromJson<TData>();
                 }
                 else
                 {
