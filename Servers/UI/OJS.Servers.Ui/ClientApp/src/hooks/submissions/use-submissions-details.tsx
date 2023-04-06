@@ -2,7 +2,10 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import isNil from 'lodash/isNil';
 
 import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
-import { IGetSubmissionDetailsByIdUrlParams } from '../../common/url-types';
+import {
+    IGetSubmissionDetailsByIdUrlParams,
+    IGetSubmissionResultsByProblemUrlParams,
+} from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { IErrorDataType, useHttp } from '../use-http';
 import { useLoading } from '../use-loading';
@@ -18,19 +21,19 @@ import {
 interface ISubmissionsDetailsContext {
     state: {
         currentSubmission: ISubmissionDetailsType | null;
-        currentSubmissionDetailsResults: ISubmissionDetails[];
+        currentProblemSubmissionResults: ISubmissionDetails[];
         validationErrors: IErrorDataType[];
     };
     actions: {
         selectSubmissionById: (submissionId: number) => void;
         getDetails: (submissionId: number) => Promise<void>;
-        getSubmissionDetailsResults: (submissionId: number, problemId: number, isOfficial: boolean) => Promise<void>;
+        getSubmissionResults: (problemId: number, isOfficial: boolean) => Promise<void>;
     };
 }
 
 const defaultState = {
     state: {
-        currentSubmissionDetailsResults: [] as ISubmissionDetails[],
+        currentProblemSubmissionResults: [] as ISubmissionDetails[],
         validationErrors: [] as IErrorDataType[],
     },
 };
@@ -49,13 +52,13 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     ] = useState<ISubmissionDetailsType | null>(null);
 
     const [
-        currentSubmissionDetailsResults,
+        currentProblemSubmissionResults,
         setCurrentProblemSubmissionResults,
-    ] = useState(defaultState.state.currentSubmissionDetailsResults);
+    ] = useState(defaultState.state.currentProblemSubmissionResults);
 
     const {
         getSubmissionDetailsByIdUrl,
-        getSubmissionDetailsResultsUrl,
+        getSubmissionResultsByProblemUrl,
     } = useUrls();
 
     const [
@@ -73,28 +76,27 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     });
 
     const [
-        submissionDetailsResultsUrlParams,
-        setSubmissionDetailsResultsUrlParams,
-    ] = useState<IGetSubmissionDetailsByIdUrlParams | null>();
+        submissionResultsByProblemUrlParams,
+        setSubmissionResultsByProblemUrlParams,
+    ] = useState<IGetSubmissionResultsByProblemUrlParams | null>();
 
     const {
-        get: getSubmissionDetailsResultsRequest,
-        data: apiSubmissionDetailsResults,
-        error: apiSubmissionDetailsResultsError,
-    } = useHttp<IGetSubmissionDetailsByIdUrlParams, ISubmissionDetails[]>({
-        url: getSubmissionDetailsResultsUrl,
-        parameters: submissionDetailsResultsUrlParams,
+        get: getProblemResultsRequest,
+        data: apiProblemResults,
+        error: apiProblemResultsError,
+    } = useHttp<IGetSubmissionResultsByProblemUrlParams, ISubmissionDetails[]>({
+        url: getSubmissionResultsByProblemUrl,
+        parameters: submissionResultsByProblemUrlParams,
     });
 
-    const getSubmissionDetailsResults = useCallback(
-        async (submissionId: number, problemId: number, isOfficial: boolean) => {
-            if (isNil(submissionId) || isNil(problemId)) {
+    const getSubmissionResults = useCallback(
+        async (problemId: number, isOfficial: boolean) => {
+            if (isNil(problemId)) {
                 return;
             }
 
-            setSubmissionDetailsResultsUrlParams({
-                submissionId,
-                problemId,
+            setSubmissionResultsByProblemUrlParams({
+                id: problemId,
                 isOfficial,
                 take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
             });
@@ -104,34 +106,34 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
 
     useEffect(
         () => {
-            if (isNil(submissionDetailsResultsUrlParams)) {
+            if (isNil(submissionResultsByProblemUrlParams)) {
                 return;
             }
 
             (async () => {
                 startLoading();
-                await getSubmissionDetailsResultsRequest();
-                setSubmissionDetailsResultsUrlParams(null);
+                await getProblemResultsRequest();
+                setSubmissionResultsByProblemUrlParams(null);
                 stopLoading();
             })();
         },
-        [ getSubmissionDetailsResultsRequest, startLoading, stopLoading, submissionDetailsResultsUrlParams ],
+        [ getProblemResultsRequest, startLoading, stopLoading, submissionResultsByProblemUrlParams ],
     );
 
     useEffect(
         () => {
-            if (isNil(apiSubmissionDetailsResults)) {
+            if (isNil(apiProblemResults)) {
                 return;
             }
 
-            if (!isNil(apiSubmissionDetailsResultsError)) {
-                setValidationErrors((validationErrorsArray) => [ ...validationErrorsArray, apiSubmissionDetailsResultsError ]);
+            if (!isNil(apiProblemResultsError)) {
+                setValidationErrors((validationErrorsArray) => [ ...validationErrorsArray, apiProblemResultsError ]);
                 return;
             }
 
-            setCurrentProblemSubmissionResults(apiSubmissionDetailsResults);
+            setCurrentProblemSubmissionResults(apiProblemResults);
         },
-        [ apiSubmissionDetailsResults, apiSubmissionDetailsResultsError ],
+        [ apiProblemResults, apiProblemResultsError ],
     );
 
     useEffect(
@@ -193,20 +195,20 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         () => ({
             state: {
                 currentSubmission,
-                currentSubmissionDetailsResults,
+                currentProblemSubmissionResults,
                 validationErrors,
             },
             actions: {
                 selectSubmissionById,
                 getDetails,
-                getSubmissionDetailsResults,
+                getSubmissionResults,
             },
         }),
         [
-            currentSubmissionDetailsResults,
+            currentProblemSubmissionResults,
             currentSubmission,
             getDetails,
-            getSubmissionDetailsResults,
+            getSubmissionResults,
             validationErrors,
         ],
     );

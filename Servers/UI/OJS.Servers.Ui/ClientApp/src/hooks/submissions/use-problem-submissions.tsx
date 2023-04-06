@@ -24,7 +24,7 @@ interface IProblemSubmissionsContext {
 type IProblemSubmissionsProviderProps = IHaveChildrenProps
 
 interface IProblemSubmissionResultsRequestParametersType {
-    problemId: number;
+    id: number;
     isOfficial: boolean;
     take: number;
 }
@@ -56,22 +56,19 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
         parameters: submissionResultsToGetParameters,
     });
 
-    const loadSubmissions = useCallback(
-        async () => {
-            const { id: problemId } = currentProblem || {};
+    const loadSubmissions = useCallback(async () => {
+        const { id } = currentProblem || {};
 
-            if (isNil(problemId) || isNil(isOfficial)) {
-                return;
-            }
+        if (isNil(id) || isNil(isOfficial)) {
+            return;
+        }
 
-            setSubmissionResultsToGetParameters({
-                problemId,
-                isOfficial,
-                take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
-            } as IProblemSubmissionResultsRequestParametersType);
-        },
-        [ currentProblem, isOfficial ],
-    );
+        setSubmissionResultsToGetParameters({
+            id,
+            isOfficial,
+            take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
+        } as IProblemSubmissionResultsRequestParametersType);
+    }, [ currentProblem, isOfficial ]);
 
     useEffect(
         () => {

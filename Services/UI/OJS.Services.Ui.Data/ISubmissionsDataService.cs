@@ -1,6 +1,5 @@
 namespace OJS.Services.Ui.Data;
 
-using OJS.Data.Models.Participants;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Data;
 using System;
@@ -43,6 +42,4 @@ public interface ISubmissionsDataService : IDataService<Submission>
     bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId);
 
     Task<int> GetSubmissionsPerDayCount();
-
-    Task<Participant?> GetParticipantBySubmission(int submissionId);
 }
