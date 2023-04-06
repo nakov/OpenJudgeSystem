@@ -32,15 +32,25 @@
 
         public int ArchiveOldSubmissionsDailyBatch(PerformContext context, int limit, int maxSubBatchSize)
         {
-            var leftover = limit % maxSubBatchSize;
-            var iterations = limit / maxSubBatchSize + (leftover > 0 ? 1 : 0);
+            var leftoverSubmissionsFromBatchSplitting = limit % maxSubBatchSize;
+            var numberOfIterations = limit / maxSubBatchSize;
+            if(leftoverSubmissionsFromBatchSplitting > 0)
+            {
+                numberOfIterations++;
+            }
+            
             var archived = 0;
             var deletedCount = 0;
-            this.archivedSubmissionsData.CreateDatabaseIfNotExists();
 
-            for (var i = 0; i < iterations; i++)
+            for (var i = 0; i < numberOfIterations; i++)
             {
-                var curBatchSize = (i == (iterations - 1) && leftover > 0) ? leftover : maxSubBatchSize;
+                var curBatchSize = maxSubBatchSize;
+                var isLastIteration = (i == (numberOfIterations - 1));
+                if(leftoverSubmissionsFromBatchSplitting > 0 && isLastIteration)
+                {
+                    curBatchSize = leftoverSubmissionsFromBatchSplitting;
+                }
+
                 var allSubmissionsForArchive = this.submissionsBusiness
                                 .GetAllForArchiving()
                                 .OrderBy(x => x.Id)
