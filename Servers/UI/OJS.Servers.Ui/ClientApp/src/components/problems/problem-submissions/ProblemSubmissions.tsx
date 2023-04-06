@@ -4,6 +4,7 @@ import isNil from 'lodash/isNil';
 
 import { useProblemSubmissions } from '../../../hooks/submissions/use-problem-submissions';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
+import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
 import { Button, ButtonType } from '../../guidelines/buttons/Button';
 import SubmissionsList from '../../submissions/submissions-list/SubmissionsList';
@@ -17,13 +18,16 @@ const ProblemSubmissions = () => {
     } = useProblemSubmissions();
 
     const { actions: { loadParticipantScores } } = useCurrentContest();
+    const { state: { currentProblem } } = useProblems();
 
     const reload = useCallback(
         async () => {
-            await loadSubmissions();
-            await loadParticipantScores();
+            if (!isNil(currentProblem)) {
+                await loadSubmissions();
+                await loadParticipantScores();
+            }
         },
-        [ loadParticipantScores, loadSubmissions ],
+        [ loadParticipantScores, loadSubmissions, currentProblem ],
     );
 
     const handleReloadClick = useCallback(async () => {
