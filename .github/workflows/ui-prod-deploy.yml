@@ -9,7 +9,7 @@ on:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
-    if: github.actor in (team.members('Judge Administrators'))
+    if: contains(team.members('Judge Administrators'), github.actor)
     steps:
     - name: Configure Environment Variables
       run: |
