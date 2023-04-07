@@ -5,7 +5,6 @@ using Infrastructure.Extensions;
 using OJS.Common.Extensions;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Data.Implementations;
-using OJS.Data.Models.Participants;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
@@ -115,6 +114,12 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
     public bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId) =>
         this.DbSet.Any(s => s.ProblemId == problemId && s.Participant!.UserId == userId && !s.Processed);
 
+    public async Task<TServiceModel> GetProblemBySubmission<TServiceModel>(int submissionId)
+        => await this.GetByIdQuery(submissionId)
+            .Select(p => p.Problem)
+            .FirstOrDefaultAsync()
+            .Map<TServiceModel>();
+
     public async Task<int> GetSubmissionsPerDayCount()
         => await this.DbSet.AnyAsync()
             ? await this.DbSet.GroupBy(x => new { x.CreatedOn.Year, x.CreatedOn.DayOfYear })
@@ -123,10 +128,11 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
                 .ToInt()
             : 0;
 
-    public async Task<Participant?> GetParticipantBySubmission(int submissionId)
+    public async Task<TServiceModel> GetParticipantBySubmission<TServiceModel>(int submissionId)
         => await this.GetByIdQuery(submissionId)
             .Select(p => p.Participant)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync()
+            .Map<TServiceModel>();
 
     private IQueryable<Submission> GetByIdQuery(int id) =>
         this.DbSet

@@ -139,11 +139,10 @@ const getSubmissionResultsByProblemUrl = ({
 
 const getSubmissionDetailsResultsUrl = ({
     submissionId,
-    problemId,
     isOfficial,
     take,
 }: IGetSubmissionDetailsByIdUrlParams) => `
-    ${baseApiUrl}/Submissions/GetSubmissionDetailsResults/${submissionId}/${problemId}?isOfficial=${isOfficial}&take=${take}`;
+    ${baseApiUrl}/Submissions/GetSubmissionDetailsResults/${submissionId}?isOfficial=${isOfficial}&take=${take}`;
 const getPublicSubmissionsUrl = () => `${baseApiUrl}/Submissions/Public`;
 const getSubmissionsTotalCountUrl = () => `${baseApiUrl}/Submissions/TotalCount`;
 const getSubmissionsDetailsUrl = () => `${baseApiUrl}/Submissions/Details`;

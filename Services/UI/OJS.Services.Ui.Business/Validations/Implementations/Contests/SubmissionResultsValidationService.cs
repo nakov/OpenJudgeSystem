@@ -1,13 +1,12 @@
 ﻿namespace OJS.Services.Ui.Business.Validation.Implementations;
 
-using OJS.Data.Models.Participants;
-using OJS.Data.Models.Problems;
+using Models.Submissions;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Users;
 
 public class SubmissionResultsValidationService : ISubmissionResultsValidationService
 {
-    public ValidationResult GetValidationResult((UserInfoModel, Problem?, Participant?, bool) validationInput)
+    public ValidationResult GetValidationResult((UserInfoModel, ProblemForSubmissionDetailsServiceModel?, ParticipantSubmissionResultsServiceModel?, bool) validationInput)
     {
         var (userInfoModel, problem, participant, isOfficial) = validationInput;
 

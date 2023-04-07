@@ -23,7 +23,7 @@
 
         Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(int problemId, bool isOfficial, int take = 0);
 
-        Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionDetailsResults(int submissionId, int problemId, bool isOfficial, int take = 0);
+        Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionDetailsResults(int submissionId, bool isOfficial, int take = 0);
 
         Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult);
 

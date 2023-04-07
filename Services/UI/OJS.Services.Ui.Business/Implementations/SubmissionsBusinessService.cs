@@ -6,20 +6,20 @@ using OJS.Common;
 using OJS.Common.Helpers;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
-using OJS.Data.Models.Participants;
 using OJS.Services.Common.Models.Users;
-using OJS.Services.Common;
-using OJS.Services.Infrastructure.Exceptions;
-using OJS.Services.Ui.Business.Validation;
-using OJS.Services.Ui.Data;
-using OJS.Services.Ui.Models.Submissions;
+using Common;
+using Infrastructure.Exceptions;
+using Validation;
+using Data;
+using Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using SoftUni.Judge.Common.Enumerations;
-using static OJS.Services.Ui.Business.Constants.PublicSubmissions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+using static Constants.PublicSubmissions;
 
 public class SubmissionsBusinessService : ISubmissionsBusinessService
 {
@@ -241,30 +241,34 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         bool isOfficial,
         int take = 0)
     {
-        var problem = await this.problemsDataService.GetWithProblemGroupById(problemId);
+        var problem =
+            await this.problemsDataService.GetWithProblemGroupById(problemId)
+                .Map<ProblemForSubmissionDetailsServiceModel>();
         var user = this.userProviderService.GetCurrentUser();
 
         var participant =
             await this.participantsDataService.GetByContestByUserAndByIsOfficial(
-                problem!.ProblemGroup.ContestId,
-                user.Id!,
-                isOfficial);
+                problem!.ProblemGroup.ContestId, user.Id!, isOfficial)
+                .Map<ParticipantSubmissionResultsServiceModel>();
 
-        return await this.GetUserSubmissions(problemId, isOfficial, take, user, problem, participant);
+        this.ValidateSubmissionResults(isOfficial, user, problem, participant);
+
+        return await this.GetUserSubmissions(problem.Id, participant, take);
     }
 
     public async Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionDetailsResults(
         int submissionId,
-        int problemId,
         bool isOfficial,
         int take = 0)
     {
-        var problem = await this.problemsDataService.GetWithProblemGroupById(problemId);
+        var problem = await this.submissionsData.GetProblemBySubmission<ProblemForSubmissionDetailsServiceModel>(submissionId);
         var user = this.userProviderService.GetCurrentUser();
 
-        var participant = await this.submissionsData.GetParticipantBySubmission(submissionId);
+        var participant = await this.submissionsData.GetParticipantBySubmission<ParticipantSubmissionResultsServiceModel>(submissionId);
 
-        return await this.GetUserSubmissions(problemId, isOfficial, take, user, problem, participant);
+        this.ValidateSubmissionResults(isOfficial, user, problem, participant);
+
+        return await this.GetUserSubmissions(problem.Id, participant, take);
     }
 
     public async Task Submit(SubmitSubmissionServiceModel model)
@@ -451,27 +455,30 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
     private async Task<IEnumerable<SubmissionResultsServiceModel>> GetUserSubmissions(
         int problemId,
-        bool isOfficial,
-        int take,
-        UserInfoModel user,
-        Problem? problem,
-        Participant? participant)
+        ParticipantSubmissionResultsServiceModel? participant,
+        int take)
     {
-        var validationResult = this.submissionResultsValidationService.GetValidationResult((user, problem, participant, isOfficial));
+        var userSubmissions = this.submissionsData
+            .GetAllByProblemAndParticipant(problemId, participant!.Id)
+            .Take(take);
+
+        return await userSubmissions
+            .MapCollection<SubmissionResultsServiceModel>()
+            .ToListAsync();
+    }
+
+    private void ValidateSubmissionResults(
+        bool isOfficial,
+        UserInfoModel user,
+        ProblemForSubmissionDetailsServiceModel? problem,
+        ParticipantSubmissionResultsServiceModel? participant)
+    {
+        var validationResult =
+            this.submissionResultsValidationService.GetValidationResult((user, problem, participant, isOfficial));
+
         if (!validationResult.IsValid)
         {
             throw new BusinessServiceException(validationResult.Message);
         }
-
-        var userSubmissions = this.submissionsData
-            .GetAllByProblemAndParticipant(problemId, participant!.Id)
-            .MapCollection<SubmissionResultsServiceModel>();
-
-        if (take != 0)
-        {
-            userSubmissions = userSubmissions.Take(take);
-        }
-
-        return await userSubmissions.ToListAsync();
     }
 }

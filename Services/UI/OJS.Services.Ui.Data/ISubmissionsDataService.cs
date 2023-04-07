@@ -12,6 +12,12 @@ public interface ISubmissionsDataService : IDataService<Submission>
 {
     Task<IEnumerable<TServiceModel>> GetLatestSubmissions<TServiceModel>(int count);
 
+    Task<TServiceModel> GetParticipantBySubmission<TServiceModel>(int submissionId);
+
+    Task<TServiceModel> GetProblemBySubmission<TServiceModel>(int submissionId);
+
+    Task<int> GetSubmissionsPerDayCount();
+
     Submission? GetBestForParticipantByProblem(int participantId, int problemId);
 
     IQueryable<Submission> GetAllByProblem(int problemId);
@@ -25,10 +31,9 @@ public interface ISubmissionsDataService : IDataService<Submission>
         DateTime nonBestCreatedBeforeDate);
 
     IQueryable<Submission> GetAllHavingPointsExceedingLimit();
+    IQueryable<Submission> GetAllByIdsQuery(IEnumerable<int> ids);
 
     IQueryable<int> GetIdsByProblem(int problemId);
-
-    IQueryable<Submission> GetAllByIdsQuery(IEnumerable<int> ids);
 
     bool IsOfficialById(int id);
 
@@ -41,8 +46,4 @@ public interface ISubmissionsDataService : IDataService<Submission>
     int GetUserSubmissionTimeLimit(int participantId, int limitBetweenSubmissions);
 
     bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId);
-
-    Task<int> GetSubmissionsPerDayCount();
-
-    Task<Participant?> GetParticipantBySubmission(int submissionId);
 }
