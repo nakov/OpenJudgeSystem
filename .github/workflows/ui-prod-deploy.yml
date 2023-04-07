@@ -12,21 +12,16 @@ jobs:
     outputs:
       isTeamMember: ${{ steps.checkUserMember.outputs.isTeamMember }}
     steps:
-    - name: Check if user is in team 'Judge Administrators'
+    - name: Check if user is in team 'Alpha Judge Prod deploy'
       id: checkUserMember
       uses: tspascoal/get-user-teams-membership@v1.0.0
       with:
         username: ${{ github.triggering_actor }}
         team: 'Alpha Judge Prod deploy'
         GITHUB_TOKEN: ${{ secrets.SOFTUNIBUILD_PAT }}
-    - name: echo output
-      run: echo ${{ steps.checkUserMember.outputs.isTeamMember }}
-    - name: echo output 2
-      run: echo ${{ steps.checkUserMember.outputs.teams }}
-    - name: echo output 3
-      run: echo ${{ steps.checkUserMember.outputs.isTeamMember == 'true' }}
   build-push-and-deploy-image:
     runs-on: ubuntu-latest
+    needs: check-user-access
     if: ${{ needs.check-user-access.outputs.isTeamMember == 'true' }}
     steps:
     - name: Configure Environment Variables
