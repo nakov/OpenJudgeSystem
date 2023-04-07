@@ -17,7 +17,7 @@ jobs:
       uses: tspascoal/get-user-teams-membership@v1.0.0
       with:
         username: ${{ github.triggering_actor }}
-        team: 'Judge Administrators'
+        team: 'Alpha Judge Prod deploy'
         GITHUB_TOKEN: ${{ secrets.SOFTUNIBUILD_PAT }}
   build-push-and-deploy-image:
     runs-on: ubuntu-latest
