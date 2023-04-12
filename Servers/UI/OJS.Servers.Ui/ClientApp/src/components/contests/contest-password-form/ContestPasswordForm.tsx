@@ -1,9 +1,10 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import isNil from 'lodash/isNil';
 
 import { useCurrentContest } from '../../../hooks/use-current-contest';
+import { usePageTitles } from '../../../hooks/use-page-titles';
 import Form from '../../guidelines/forms/Form';
-import FormControl, { FormControlType } from '../../guidelines/forms/FormControl';
+import FormControl, { FormControlType, IFormControlOnChangeValueType } from '../../guidelines/forms/FormControl';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 
 import styles from './ContestPasswordForm.module.scss';
@@ -17,11 +18,22 @@ const ContestPasswordForm = ({ id, isOfficial }: IContestPasswordFormProps) => {
     const {
         state: {
             contest,
-            submitContestPasswordErrorMessage,
+            contestPasswordError,
         },
         actions: { submitPassword },
     } = useCurrentContest();
     const [ passwordValue, setPasswordValue ] = useState<string>('');
+
+    const { actions: { setPageTitle } } = usePageTitles();
+
+    useEffect(
+        () => {
+            if (!isNil(contest)) {
+                setPageTitle('Enter Contest Password');
+            }
+        },
+        [ contest, setPageTitle ],
+    );
 
     const passwordFieldName = 'contestPassword';
 
@@ -29,23 +41,38 @@ const ContestPasswordForm = ({ id, isOfficial }: IContestPasswordFormProps) => {
         await submitPassword({ id, isOfficial, password: passwordValue });
     }, [ id, isOfficial, passwordValue, submitPassword ]);
 
-    const handleOnChangeUpdatePassword = useCallback((value: string) => {
-        setPasswordValue(value);
-    }, [ setPasswordValue ]);
+    const handleOnChangeUpdatePassword = useCallback(
+        (value?: IFormControlOnChangeValueType) => {
+            setPasswordValue(isNil(value)
+                ? ''
+                : value.toString());
+        },
+        [ setPasswordValue ],
+    );
+
+    const renderErrorSpan = useCallback(
+        (message: string) => (
+            <span className={styles.errorMessage}>{message}</span>
+        ),
+        [],
+    );
 
     const renderErrorMessage = useCallback(
-        () => (!isNil(submitContestPasswordErrorMessage)
-            ? <span className={styles.errorMessage}>{submitContestPasswordErrorMessage}</span>
-            : null),
-        [ submitContestPasswordErrorMessage ],
+        () => {
+            if (!isNil(contestPasswordError)) {
+                const { detail } = contestPasswordError;
+                return renderErrorSpan(detail);
+            }
+
+            return null;
+        },
+        [ contestPasswordError, renderErrorSpan ],
     );
 
     return (
         <Form
           className={styles.contestPasswordForm}
-          onSubmit={() => {
-              handleOnSubmitPassword();
-          }}
+          onSubmit={() => handleOnSubmitPassword()}
           submitButtonClassName={styles.submitBtn}
         >
             <header className={styles.formHeader}>
@@ -58,9 +85,7 @@ const ContestPasswordForm = ({ id, isOfficial }: IContestPasswordFormProps) => {
               name={passwordFieldName}
               labelText="Password"
               type={FormControlType.password}
-              onChange={(value) => handleOnChangeUpdatePassword(isNil(value)
-                  ? ''
-                  : value.toString())}
+              onChange={handleOnChangeUpdatePassword}
               value=""
             />
         </Form>

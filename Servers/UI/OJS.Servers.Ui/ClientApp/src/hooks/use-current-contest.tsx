@@ -39,7 +39,7 @@ interface ICurrentContestContext {
         maxScore: number;
         isOfficial: boolean;
         requirePassword: boolean | null;
-        submitContestPasswordErrorMessage: string | null;
+        contestPasswordError: IErrorDataType | null;
         isPasswordValid: boolean | null;
         remainingTimeInMilliseconds: number;
         userSubmissionsTimeLimit: number;
@@ -51,7 +51,7 @@ interface ICurrentContestContext {
     actions: {
         setContestPassword: (password: string) => void;
         start: (info: IStartContestArgs) => void;
-        register: (info: IStartContestArgs) => void;
+        registerParticipant: (info: IStartContestArgs) => void;
         submitPassword: (info: ISubmitContestPasswordArgs) => void;
         loadParticipantScores: () => void;
         setIsSubmitAllowed: (isSubmitAllowed: boolean) => void;
@@ -65,7 +65,7 @@ const defaultState = {
         score: 0,
         maxScore: 0,
         isOfficial: false,
-        requirePassword: false,
+        isPasswordValid: false,
         remainingTimeInMilliseconds: 0.0,
         userSubmissionsTimeLimit: 0,
         totalParticipantsCount: 0,
@@ -104,8 +104,8 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         setGetCurrentParticipantParticipantScoresParams,
     ] = useState<IGetContestParticipationScoresForParticipantUrlParams | null>(null);
     const [ submitContestPasswordUrlParams, setSubmitContestPasswordUrlParams ] = useState<ISubmitContestPasswordUrlParams | null>(null);
-    const [ submitContestPasswordErrorMessage, setSubmitContestPasswordErrorMessage ] = useState<string | null>(null);
-    const [ isPasswordValid, setIsPasswordValid ] = useState<boolean | null>(null);
+    const [ contestPasswordError, setContestPasswordError ] = useState<IErrorDataType | null>(null);
+    const [ isPasswordValid, setIsPasswordValid ] = useState<boolean>(defaultState.state.isPasswordValid);
     const [ userSubmissionsTimeLimit, setUserSubmissionsTimeLimit ] = useState<number>(0);
     const [ remainingTimeInMilliseconds, setRemainingTimeInMilliseconds ] = useState(defaultState.state.remainingTimeInMilliseconds);
     const [ totalParticipantsCount, setTotalParticipantsCount ] = useState(defaultState.state.totalParticipantsCount);
@@ -145,8 +145,8 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
 
     const {
         post: submitContestPassword,
-        data: submitContestPasswordData,
         response: submitContestPasswordResponse,
+        error: submitContestPasswordError,
     } = useHttp<ISubmitContestPasswordUrlParams, null>({
         url: getSubmitContestPasswordUrl,
         parameters: submitContestPasswordUrlParams,
@@ -164,7 +164,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         setContestToStart(obj);
     }, []);
 
-    const register = useCallback((obj: IStartContestArgs) => {
+    const registerParticipant = useCallback((obj: IStartContestArgs) => {
         const { id, isOfficial: official } = obj;
 
         setRegisterForContestParams({ id, isOfficial: official } as IRegisterForContestUrlParams);
@@ -215,54 +215,6 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     ]);
 
     useEffect(() => {
-        if (isNil(contestToStart)) {
-            return;
-        }
-
-        const { id } = contestToStart;
-        if (Number.isNaN(id)) {
-            return;
-        }
-
-        (async () => {
-            startLoading();
-            await startContest();
-            stopLoading();
-        })();
-    }, [ contestToStart, startContest, startLoading, stopLoading ]);
-
-    useEffect(
-        () => {
-            if (isNil(startContestData)) {
-                return;
-            }
-
-            if (!isNil(startContestError)) {
-                setContestError(startContestError);
-                return;
-            }
-
-            const {
-                contest: newContest,
-                contestIsCompete,
-                participantId: currentParticipantId,
-                remainingTimeInMilliseconds: newRemainingTimeInMilliseconds,
-                totalParticipantsCount: newTotalParticipants,
-                activeParticipantsCount: newActiveParticipants,
-            } = startContestData;
-
-            setContest(newContest);
-            setIsOfficial(contestIsCompete);
-            setParticipantId(currentParticipantId);
-            setRemainingTimeInMilliseconds(newRemainingTimeInMilliseconds);
-            setUserSubmissionsTimeLimit(startContestData.userSubmissionsTimeLimit);
-            setTotalParticipantsCount(newTotalParticipants);
-            setActiveParticipantsCount(newActiveParticipants);
-        },
-        [ startContestData, startContestError ],
-    );
-
-    useEffect(() => {
         if (isNil(registerForContestParams)) {
             return;
         }
@@ -311,22 +263,75 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         })();
     }, [ contestPassword, submitContestPassword, submitContestPasswordUrlParams, startLoading, stopLoading ]);
 
+    useEffect(
+        () => {
+            if (isNil(submitContestPasswordResponse)) {
+                return;
+            }
+
+            if (!isNil(submitContestPasswordError)) {
+                setContestPasswordError(submitContestPasswordError);
+                setIsPasswordValid(false);
+
+                return;
+            }
+
+            setIsPasswordValid(true);
+            setContestPasswordError(null);
+        },
+        [ registerForContestData, submitContestPasswordError, submitContestPasswordResponse ],
+    );
+
     useEffect(() => {
-        if (isNil(submitContestPasswordResponse)) {
+        if (isNil(contestToStart)) {
             return;
         }
 
-        // TODO: fix this https://github.com/SoftUni-Internal/exam-systems-issues/issues/224
-        if (!isNil(submitContestPasswordResponse) && submitContestPasswordResponse.status !== 200) {
-            setSubmitContestPasswordErrorMessage('Incorrect password');
-            setIsPasswordValid(false);
-
+        const { id } = contestToStart;
+        if (Number.isNaN(id)) {
             return;
         }
 
-        setIsPasswordValid(true);
-        setSubmitContestPasswordErrorMessage(null);
-    }, [ registerForContestData, submitContestPasswordData, submitContestPasswordResponse ]);
+        (async () => {
+            startLoading();
+            await startContest();
+            stopLoading();
+        })();
+    }, [ contestToStart, startContest, startLoading, stopLoading ]);
+
+    useEffect(
+        () => {
+            if (isNil(startContestData)) {
+                return;
+            }
+
+            if (!isNil(startContestError)) {
+                setContestError(startContestError);
+                return;
+            }
+
+            const {
+                contest: newContest,
+                contestIsCompete,
+                participantId: currentParticipantId,
+                remainingTimeInMilliseconds: newRemainingTimeInMilliseconds,
+                totalParticipantsCount: newTotalParticipants,
+                activeParticipantsCount: newActiveParticipants,
+            } = startContestData;
+
+            setContest(newContest);
+            setIsOfficial(contestIsCompete);
+            setParticipantId(currentParticipantId);
+            setRemainingTimeInMilliseconds(newRemainingTimeInMilliseconds);
+            setUserSubmissionsTimeLimit(startContestData.userSubmissionsTimeLimit);
+            setTotalParticipantsCount(newTotalParticipants);
+            setActiveParticipantsCount(newActiveParticipants);
+
+            setRequirePassword(null);
+            setIsPasswordValid(defaultState.state.isPasswordValid);
+        },
+        [ startContestData, startContestError ],
+    );
 
     useEffect(
         () => {
@@ -364,7 +369,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 maxScore,
                 isOfficial,
                 requirePassword,
-                submitContestPasswordErrorMessage,
+                contestPasswordError,
                 isPasswordValid,
                 remainingTimeInMilliseconds,
                 userSubmissionsTimeLimit,
@@ -375,7 +380,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             },
             actions: {
                 setContestPassword,
-                register,
+                registerParticipant,
                 start,
                 submitPassword,
                 loadParticipantScores,
@@ -389,13 +394,13 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             isOfficial,
             isPasswordValid,
             maxScore,
-            register,
+            registerParticipant,
             remainingTimeInMilliseconds,
             userSubmissionsTimeLimit,
             requirePassword,
             score,
             start,
-            submitContestPasswordErrorMessage,
+            contestPasswordError,
             submitPassword,
             loadParticipantScores,
             totalParticipantsCount,
