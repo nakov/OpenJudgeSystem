@@ -34,6 +34,7 @@ namespace OJS.Common
             public const string SulsPlatformBaseUrlKey = "SULS_PLATFORM_BASE_URL";
             public const string SulsPlatformApiKeyKey = "SULS_PLATFORM_API_KEY";
             public const string DistributorBaseUrlKey = "DISTRIBUTOR_BASE_URL";
+            public const string DistributorApiKeyKey = "DISTRIBUTOR_API_KEY";
             public const string LoggerFilesFolderPath = "LOGGER_FILES_FOLDER_PATH";
             public const string SharedAuthCookieDomain = "SHARED_AUTH_COOKIE_DOMAIN";
 
