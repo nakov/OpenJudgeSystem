@@ -40,7 +40,7 @@
 
         public static string[] ThrottleIpWhitelist => GetSetting("ThrottleIpWhitelist").Split(',');
 
-        public static int DatabaseCommandTimeoutInSeconds => GetSettingOrDefault("DatabaseCommandTimeoutInSeconds", 120);
+        public static int DatabaseCommandTimeoutInSeconds => GetSettingOrDefault("DatabaseCommandTimeoutInSeconds", 30);
 
         public static int ArchiveSingleBatchLimit => GetSettingOrDefault("ArchiveSingleBatchLimit", 25000);
 
