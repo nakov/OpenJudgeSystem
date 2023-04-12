@@ -36,7 +36,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly IContestValidationService contestValidationService;
     private readonly ISubmitSubmissionValidationService submitSubmissionValidationService;
     private readonly ISubmissionResultsValidationService submissionResultsValidationService;
-    private readonly IParticipantsBusinessService participantsBusinessService;
     private readonly ISubmissionFileDownloadValidationService submissionFileDownloadValidationService;
 
     public SubmissionsBusinessService(
@@ -53,7 +52,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         IContestValidationService contestValidationService,
         ISubmitSubmissionValidationService submitSubmissionValidationService,
         ISubmissionResultsValidationService submissionResultsValidationService,
-        IParticipantsBusinessService participantsBusinessService,
         ISubmissionFileDownloadValidationService submissionFileDownloadValidationService)
     {
         this.submissionsData = submissionsData;
@@ -69,7 +67,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.contestValidationService = contestValidationService;
         this.submitSubmissionValidationService = submitSubmissionValidationService;
         this.submissionResultsValidationService = submissionResultsValidationService;
-        this.participantsBusinessService = participantsBusinessService;
         this.submissionFileDownloadValidationService = submissionFileDownloadValidationService;
     }
 
@@ -103,11 +100,13 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         return submissionDetailsServiceModel!;
     }
 
-    public SubmissionFileDownloadServiceModel GetFileDownloadInfo(int submissionId)
+    public SubmissionFileDownloadServiceModel GetSubmissionFile(int submissionId)
     {
         var submissionDetailsServiceModel = this.submissionsData
             .GetSubmissionById<SubmissionDetailsServiceModel>(submissionId);
+
         var currentUser = this.userProviderService.GetCurrentUser();
+
         var validationResult = this.submissionFileDownloadValidationService.GetValidationResult((submissionDetailsServiceModel!, currentUser));
         if (!validationResult.IsValid)
         {

@@ -31,6 +31,6 @@
 
         Task<int> GetTotalCount();
 
-        SubmissionFileDownloadServiceModel GetFileDownloadInfo(int submissionId);
+        SubmissionFileDownloadServiceModel GetSubmissionFile(int submissionId);
     }
 }

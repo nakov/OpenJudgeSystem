@@ -42,8 +42,7 @@ const SubmissionDetails = () => {
                 downloadProblemSubmissionFile,
                 setDownloadErrorMessage,
             },
-    } =
-        useSubmissionsDetails();
+    } = useSubmissionsDetails();
     const { getAdministrationRetestSubmissionInternalUrl } = useAppUrls();
 
     const {
@@ -108,7 +107,7 @@ const SubmissionDetails = () => {
             return (
                 <div className={styles.resourceWrapper}>
                     <Button
-                      type={ButtonType.plain}
+                      type={ButtonType.primary}
                       className={styles.resourceLinkButton}
                       onClick={() => handleDownloadSubmissionFile()}
                     >
@@ -274,25 +273,30 @@ const SubmissionDetails = () => {
                     </div>
                     <div className={styles.itemInvisible}>Other</div>
                 </Heading>
-                <CodeEditor
-                  readOnly
-                  code={currentSubmission?.content}
-                  selectedSubmissionType={submissionType}
-                />
-                <div className={styles.resourceWrapper}>
-                    {renderResourceLink()}
-                    {renderDownloadErrorMessage()}
-                </div>
+                {currentSubmission?.submissionType.allowBinaryFilesUpload
+                    ? (
+                        <div className={styles.resourceWrapper}>
+                            {renderResourceLink()}
+                            {renderDownloadErrorMessage()}
+                        </div>
+                    )
+                    : (
+                        <CodeEditor
+                          readOnly
+                          code={currentSubmission?.content}
+                          selectedSubmissionType={submissionType}
+                        />
+                    )}
             </div>
         ),
         [
             problemNameHeadingText,
-            currentSubmission?.content,
             submissionType,
             backButtonState,
             registerContestTypeUrl,
             renderResourceLink,
             renderDownloadErrorMessage,
+            currentSubmission,
         ],
     );
 

@@ -63,7 +63,7 @@ public class SubmissionsController : BaseApiController
     [ProducesResponseType(typeof(FileContentResult), Status200OK)]
     public IActionResult Download(int id)
     {
-        var submissionDownloadServiceModel = this.submissionsBusiness.GetFileDownloadInfo(id);
+        var submissionDownloadServiceModel = this.submissionsBusiness.GetSubmissionFile(id);
 
         return this.File(submissionDownloadServiceModel.Content!, submissionDownloadServiceModel.MimeType!, submissionDownloadServiceModel.FileName);
     }
