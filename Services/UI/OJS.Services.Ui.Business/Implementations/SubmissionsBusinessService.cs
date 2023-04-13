@@ -248,10 +248,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var participant =
             await this.participantsDataService.GetByContestByUserAndByIsOfficial(
-                problem!.ProblemGroup.ContestId, user.Id!, isOfficial)
+                problem.ProblemGroup.ContestId, user.Id!, isOfficial)
                 .Map<ParticipantSubmissionResultsServiceModel>();
 
-        this.ValidateSubmissionResults(isOfficial, user, problem, participant);
+        this.ValidateCanViewSubmissionResults(isOfficial, user, problem, participant);
 
         return await this.GetUserSubmissions(problem.Id, participant, take);
     }
@@ -266,7 +266,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var participant = await this.submissionsData.GetParticipantBySubmission<ParticipantSubmissionResultsServiceModel>(submissionId);
 
-        this.ValidateSubmissionResults(isOfficial, user, problem, participant);
+        this.ValidateCanViewSubmissionResults(isOfficial, user, problem, participant);
 
         return await this.GetUserSubmissions(problem.Id, participant, take);
     }
@@ -467,7 +467,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .ToListAsync();
     }
 
-    private void ValidateSubmissionResults(
+    private void ValidateCanViewSubmissionResults(
         bool isOfficial,
         UserInfoModel user,
         ProblemForSubmissionDetailsServiceModel? problem,
