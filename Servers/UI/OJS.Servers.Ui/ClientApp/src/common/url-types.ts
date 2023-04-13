@@ -55,9 +55,10 @@ interface IGetContestResultsParams {
     full: boolean;
 }
 
-interface IGetSubmissionDetailsByIdUrlParams
-    extends IGetSubmissionResultsByProblemUrlParams {
+interface IGetSubmissionDetailsByIdUrlParams {
     submissionId: number;
+    isOfficial: boolean;
+    take: number;
 }
 
 interface IRetestSubmissionUrlParams {
