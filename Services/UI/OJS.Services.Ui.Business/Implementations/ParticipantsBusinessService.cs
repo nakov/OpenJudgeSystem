@@ -152,9 +152,11 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
     }
 
     public Task<int> GetParticipantLimitBetweenSubmissions(int participantId, int contestLimitBetweenSubmissions)
-        => this.submissionsData
-            .GetUserSubmissionTimeLimit(participantId, contestLimitBetweenSubmissions)
-            .ToTask();
+        => contestLimitBetweenSubmissions != 0
+            ? this.submissionsData
+                .GetUserSubmissionTimeLimit(participantId, contestLimitBetweenSubmissions)
+                .ToTask()
+            : Task.FromResult(0);
 
     private static void AssignRandomProblemsToParticipant(Participant participant, Contest contest)
     {
