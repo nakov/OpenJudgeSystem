@@ -2,9 +2,8 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
 {
     using System;
     using System.Net.Http;
-    using OJS.Common;
-    using OJS.Common.Utils;
     using Microsoft.Extensions.Logging;
+    using OJS.Common;
     using OJS.Common.Utils;
     using static OJS.Common.GlobalConstants.EnvironmentVariables;
     using static OJS.Common.GlobalConstants.ErrorMessages;
