@@ -3,6 +3,7 @@ import first from 'lodash/first';
 import isNil from 'lodash/isNil';
 
 import { IDictionary } from '../../common/common-types';
+import { CLOSED_ALERT_BOX_SUBMIT_MESSAGE } from '../../common/constants';
 import { ISubmissionTypeType } from '../../common/types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useCurrentContest } from '../use-current-contest';
@@ -27,6 +28,7 @@ interface ISubmissionsContext {
         updateSubmissionCode: (code: string | File) => void;
         selectSubmissionTypeById: (id: number) => void;
         removeProblemSubmissionCode: (id: number) => void;
+        setAlertBoxSubmitMessage: (value: string | null) => void;
     };
 }
 
@@ -54,6 +56,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const [ problemSubmissionCode, setProblemSubmissionCode ] =
         useState<IDictionary<string | File>>(defaultState.state.problemSubmissionCode);
     const [ submitMessage, setSubmitMessage ] = useState<string | null>(null);
+    const [ alertBoxSubmitMessage, setAlertBoxSubmitMessage ] = useState<string | null>(null);
 
     const {
         startLoading,
@@ -132,6 +135,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             await submitCode(submitCodeParams);
         }
 
+        setAlertBoxSubmitMessage(null);
         stopLoading();
     }, [ startLoading, selectedSubmissionType, submitFileCode, getSubmitParamsAsFormData, submitCode, submitCodeParams, stopLoading ]);
 
@@ -211,14 +215,20 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         () => {
             if (!isNil(errorSubmitCode)) {
                 const error = getProblemSubmissionError(errorSubmitCode);
-                setSubmitMessage(error);
-                return;
+                if (alertBoxSubmitMessage === CLOSED_ALERT_BOX_SUBMIT_MESSAGE) {
+                    setSubmitMessage(null);
+                } else {
+                    setSubmitMessage(error);
+                }
             }
 
             if (!isNil(errorSubmitFile)) {
                 const error = getProblemSubmissionError(errorSubmitFile);
-                setSubmitMessage(error);
-                return;
+                if (alertBoxSubmitMessage === CLOSED_ALERT_BOX_SUBMIT_MESSAGE) {
+                    setSubmitMessage(null);
+                } else {
+                    setSubmitMessage(error);
+                }
             }
             const { id: problemId } = currentProblem || {};
 
@@ -236,6 +246,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             errorSubmitFile,
             currentProblem,
             getProblemSubmissionError,
+            alertBoxSubmitMessage,
         ],
     );
 
@@ -253,6 +264,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                 selectSubmissionTypeById,
                 submit,
                 removeProblemSubmissionCode,
+                setAlertBoxSubmitMessage,
             },
         }),
         [
@@ -265,6 +277,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             isSubmissionSuccessful,
             updateSubmissionCode,
             removeProblemSubmissionCode,
+            setAlertBoxSubmitMessage,
         ],
     );
 
