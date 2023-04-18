@@ -12,6 +12,7 @@
 
     <ItemGroup>
       <PackageReference Include="SoftUni.Common" Version="1.0.6" />
+      <PackageReference Include="SoftUni.Judge.Common" Version="1.0.8" />
     </ItemGroup>
 
 </Project>
