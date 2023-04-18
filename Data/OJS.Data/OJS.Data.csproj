@@ -9,4 +9,8 @@
       <ProjectReference Include="..\OJS.Data.Models\OJS.Data.Models.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="SoftUni.Judge.Common" Version="1.0.8" />
+    </ItemGroup>
+
 </Project>

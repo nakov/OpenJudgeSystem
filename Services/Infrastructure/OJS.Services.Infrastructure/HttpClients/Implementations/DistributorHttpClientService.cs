@@ -7,12 +7,10 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
     using static OJS.Common.GlobalConstants.EnvironmentVariables;
     using static OJS.Common.GlobalConstants.ErrorMessages;
 
-    public class DistributorHttpClientService : SulsPlatformHttpClientService, IDistributorHttpClientService
+    public class DistributorHttpClientService : HttpClientService, IDistributorHttpClientService
     {
-        public DistributorHttpClientService(
-            HttpClient client,
-            ILogger<DistributorHttpClientService> logger)
-            : base(client, logger)
+        public DistributorHttpClientService(HttpClient client, ILogger<HttpClientService> logger)
+            : base(client, logger, EnvironmentUtils.GetByKey(DistributorApiKeyKey))
         {
             var distributorBaseUrl = EnvironmentUtils.GetByKey(DistributorBaseUrlKey);
 
@@ -21,8 +19,6 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
                 throw new ArgumentException(
                     string.Format(ValueCannotBeNullOrWhiteSpaceTemplate, SulsPlatformBaseUrlKey));
             }
-
-            this.ApiKey = EnvironmentUtils.GetByKey(DistributorApiKeyKey);
 
             client.BaseAddress = new Uri(distributorBaseUrl);
         }

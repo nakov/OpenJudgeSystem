@@ -14,6 +14,7 @@
       <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
       <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
       <PackageReference Include="SoftUni.Common" Version="1.0.6" />
+      <PackageReference Include="SoftUni.Judge.Common" Version="1.0.8" />
     </ItemGroup>
 
 </Project>
