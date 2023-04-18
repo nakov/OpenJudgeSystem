@@ -115,10 +115,10 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
         this.DbSet.Any(s => s.ProblemId == problemId && s.Participant!.UserId == userId && !s.Processed);
 
     public async Task<TServiceModel> GetProblemBySubmission<TServiceModel>(int submissionId)
-        => await this.GetByIdQuery(submissionId)
+        => (await this.GetByIdQuery(submissionId)
             .Select(p => p.Problem)
-            .FirstOrDefaultAsync()
-            .Map<TServiceModel>();
+            .MapCollection<TServiceModel>()
+            .FirstOrDefaultAsync()) !;
 
     public async Task<int> GetSubmissionsPerDayCount()
         => await this.DbSet.AnyAsync()
@@ -129,10 +129,10 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             : 0;
 
     public async Task<TServiceModel> GetParticipantBySubmission<TServiceModel>(int submissionId)
-        => await this.GetByIdQuery(submissionId)
+        => (await this.GetByIdQuery(submissionId)
             .Select(p => p.Participant)
-            .FirstOrDefaultAsync()
-            .Map<TServiceModel>();
+            .MapCollection<TServiceModel>()
+            .FirstOrDefaultAsync()) !;
 
     private IQueryable<Submission> GetByIdQuery(int id) =>
         this.DbSet
