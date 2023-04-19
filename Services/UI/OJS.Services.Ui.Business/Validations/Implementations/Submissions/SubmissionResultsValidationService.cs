@@ -1,9 +1,10 @@
-﻿namespace OJS.Services.Ui.Business.Validation.Implementations;
+﻿namespace OJS.Services.Ui.Business.Validations.Implementations.Contests;
 
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Problems;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Users;
+using Validation;
 
 public class SubmissionResultsValidationService : ISubmissionResultsValidationService
 {
@@ -21,9 +22,9 @@ public class SubmissionResultsValidationService : ISubmissionResultsValidationSe
             return ValidationResult.Invalid(ValidationMessages.Participant.NotRegisteredForExam);
         }
 
-        if (!problem.ShowResults && !userInfoModel.IsAdminOrLecturer)
+        if (!problem.ShowResults)
         {
-            return ValidationResult.Invalid(ValidationMessages.Problem.ProblemResultsNotAvailable);
+            return ValidationResult.Invalid(ValidationMessages.Problem.ProblemSubmissionsNotAvailable);
         }
 
         return ValidationResult.Valid();
