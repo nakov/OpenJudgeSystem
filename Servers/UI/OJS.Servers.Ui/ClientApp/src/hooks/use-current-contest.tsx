@@ -87,9 +87,13 @@ type IMaximumParticipantScores = {
     points: number;
 }
 
+type ISubmitContestPasswordType = {
+    Password?: string | null;
+}
+
 const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) => {
     const [ contest, setContest ] = useState<IContestType | null>(defaultState.state.contest);
-    const [ contestPassword, setContestPassword ] = useState<string | null>(defaultState.state.contest);
+    const [ contestPassword, setContestPassword ] = useState<string | null>(defaultState.state.contestPassword);
     const [ participantId, setParticipantId ] = useState<number | null>(null);
     const [ score, setScore ] = useState(defaultState.state.score);
     const [ maxScore, setMaxScore ] = useState(defaultState.state.maxScore);
@@ -147,7 +151,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         post: submitContestPassword,
         response: submitContestPasswordResponse,
         error: submitContestPasswordError,
-    } = useHttp<ISubmitContestPasswordUrlParams, null>({
+    } = useHttp<ISubmitContestPasswordUrlParams, null, ISubmitContestPasswordType>({
         url: getSubmitContestPasswordUrl,
         parameters: submitContestPasswordUrlParams,
     });
@@ -258,7 +262,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
 
         (async () => {
             startLoading();
-            await submitContestPassword({ password: contestPassword } as any);
+            await submitContestPassword({ Password: contestPassword });
             stopLoading();
         })();
     }, [ contestPassword, submitContestPassword, submitContestPasswordUrlParams, startLoading, stopLoading ]);
