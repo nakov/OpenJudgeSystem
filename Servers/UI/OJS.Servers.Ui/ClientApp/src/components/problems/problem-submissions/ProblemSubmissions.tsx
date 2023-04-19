@@ -46,27 +46,23 @@ const ProblemSubmissions = () => {
     // concatClassNames(styles.submissionItem, submissionResultsListItemClass);
     const submissionResultsContentClass = 'submissionResultsContent';
     const submissionResultsContentClassName = concatClassNames(styles.submissionResultsContent, submissionResultsContentClass);
-    const renderErrorParagraph = useCallback(
-        (message: string) => (
-            <p
-              className={styles.problemSubmissionsError}
-            >
-                {message}
-            </p>
-        ),
-        [],
-    );
-
     const renderErrorMessage = useCallback(
         () => {
             if (!isNil(problemSubmissionsError)) {
                 const { detail } = problemSubmissionsError;
-                return renderErrorParagraph(detail);
+
+                return (
+                    <p
+                      className={styles.problemSubmissionsError}
+                    >
+                        {detail}
+                    </p>
+                );
             }
 
             return null;
         },
-        [ renderErrorParagraph, problemSubmissionsError ],
+        [ problemSubmissionsError ],
     );
 
     const renderSubmissions = useCallback(
