@@ -1,9 +1,9 @@
-﻿namespace OJS.Services.Ui.Business.Validation.Implementations;
+﻿namespace OJS.Services.Ui.Business.Validations.Implementations.Submissions;
 
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Users;
+using Validation;
 using OJS.Services.Ui.Models.Submissions;
-
 public class SubmissionDetailsValidationService : ISubmissionDetailsValidationService
 {
     public ValidationResult GetValidationResult((SubmissionDetailsServiceModel?, UserInfoModel) validationInput)
