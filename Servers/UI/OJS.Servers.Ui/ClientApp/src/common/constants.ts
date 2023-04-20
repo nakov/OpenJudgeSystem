@@ -22,6 +22,10 @@ enum ContestResultType {
     Full = 'full',
 }
 
+enum FileType {
+    Blob = 'blob',
+}
+
 export {
     DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
     DEFAULT_FILTER_TYPE,
@@ -32,4 +36,5 @@ export {
     SubmissionResultType,
     ContestParticipationType,
     ContestResultType,
+    FileType,
 };

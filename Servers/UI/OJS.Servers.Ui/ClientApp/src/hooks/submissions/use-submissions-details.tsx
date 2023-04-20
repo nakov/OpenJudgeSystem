@@ -1,8 +1,9 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
-import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
+import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE, FileType } from '../../common/constants';
 import {
+    IDownloadSubmissionFileUrlParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
 } from '../../common/url-types';
@@ -23,11 +24,14 @@ interface ISubmissionsDetailsContext {
         currentSubmission: ISubmissionDetailsType | null;
         currentProblemSubmissionResults: ISubmissionDetails[];
         validationErrors: IErrorDataType[];
+        downloadErrorMessage: string | null;
     };
     actions: {
         selectSubmissionById: (submissionId: number) => void;
         getDetails: (submissionId: number) => Promise<void>;
         getSubmissionResults: (problemId: number, isOfficial: boolean) => Promise<void>;
+        downloadProblemSubmissionFile: (submissionId: number) => Promise<void>;
+        setDownloadErrorMessage: (message: string | null) => void;
     };
 }
 
@@ -50,6 +54,9 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         currentSubmission,
         setCurrentSubmission,
     ] = useState<ISubmissionDetailsType | null>(null);
+    const [ downloadErrorMessage, setDownloadErrorMessage ] = useState<string | null>(null);
+    const [ problemSubmissionFileIdToDownload, setProblemSubmissionFileIdToDownload ] = useState<number | null>(null);
+    const { getSubmissionFileDownloadUrl } = useUrls();
 
     const [
         currentProblemSubmissionResults,
@@ -88,6 +95,50 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         url: getSubmissionResultsByProblemUrl,
         parameters: submissionResultsByProblemUrlParams,
     });
+
+    const {
+        get: downloadSubmissionFile,
+        response: downloadSubmissionFileResponse,
+        error: downloadSubmissionFileError,
+        saveAttachment,
+    } = useHttp<IDownloadSubmissionFileUrlParams, Blob>({
+        url: getSubmissionFileDownloadUrl,
+        parameters: { id: problemSubmissionFileIdToDownload },
+    });
+
+    const downloadProblemSubmissionFile = useCallback(
+        async (submissionId: number) => {
+            setProblemSubmissionFileIdToDownload(submissionId);
+        },
+        [],
+    );
+
+    useEffect(() => {
+        if (isNil(downloadSubmissionFileResponse)) {
+            return;
+        }
+
+        if (!isNil(downloadSubmissionFileError)) {
+            setDownloadErrorMessage(downloadSubmissionFileError?.detail);
+            return;
+        }
+
+        saveAttachment();
+    }, [ downloadSubmissionFileResponse, saveAttachment, downloadSubmissionFileError ]);
+
+    useEffect(() => {
+        if (isNil(problemSubmissionFileIdToDownload)) {
+            return;
+        }
+
+        (async () => {
+            startLoading();
+            await downloadSubmissionFile(FileType.Blob);
+            stopLoading();
+        })();
+
+        setProblemSubmissionFileIdToDownload(null);
+    }, [ problemSubmissionFileIdToDownload, downloadSubmissionFile, startLoading, stopLoading ]);
 
     const getSubmissionResults = useCallback(
         async (problemId: number, isOfficial: boolean) => {
@@ -197,11 +248,14 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
                 currentSubmission,
                 currentProblemSubmissionResults,
                 validationErrors,
+                downloadErrorMessage,
             },
             actions: {
                 selectSubmissionById,
                 getDetails,
                 getSubmissionResults,
+                downloadProblemSubmissionFile,
+                setDownloadErrorMessage,
             },
         }),
         [
@@ -210,6 +264,9 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             getDetails,
             getSubmissionResults,
             validationErrors,
+            downloadProblemSubmissionFile,
+            downloadErrorMessage,
+            setDownloadErrorMessage,
         ],
     );
 

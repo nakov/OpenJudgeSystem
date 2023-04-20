@@ -43,6 +43,10 @@ interface IDownloadProblemResourceUrlParams {
     id: number | null;
 }
 
+interface IDownloadSubmissionFileUrlParams {
+    id: number | null;
+}
+
 interface IGetSubmissionResultsByProblemUrlParams {
     id: number;
     isOfficial: boolean;
@@ -84,4 +88,5 @@ export type {
     IRetestSubmissionUrlParams,
     IGetSearchResultsUrlParams,
     IGetContestByProblemUrlParams,
+    IDownloadSubmissionFileUrlParams,
 };

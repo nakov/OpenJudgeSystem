@@ -18,6 +18,11 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
     {
     }
 
+    public TServiceModel? GetSubmissionById<TServiceModel>(int id)
+        => this.GetByIdQuery(id)
+            .MapCollection<TServiceModel>()
+            .FirstOrDefault();
+
     public Task<IEnumerable<TServiceModel>> GetLatestSubmissions<TServiceModel>(int count)
         => this.GetQuery(
                 orderBy: s => s.Id,
