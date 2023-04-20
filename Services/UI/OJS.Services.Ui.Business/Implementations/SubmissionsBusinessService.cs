@@ -4,6 +4,7 @@ using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using OJS.Common;
 using OJS.Common.Helpers;
+using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
 using OJS.Services.Common;
@@ -397,8 +398,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         if (exception != null)
         {
-            submission.ProcessingComment = exception.Message + Environment.NewLine + exception.StackTrace;
-            return;
+            submission.ProcessingComment = exception.Message;
         }
 
         if (executionResult == null)

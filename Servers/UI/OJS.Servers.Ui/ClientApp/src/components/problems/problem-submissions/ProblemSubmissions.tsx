@@ -27,8 +27,7 @@ const ProblemSubmissions = () => {
     const reload = useCallback(
         async () => {
             if (!isNil(currentProblem)) {
-                const { id } = currentProblem;
-                await loadSubmissions(id);
+                await loadSubmissions();
                 await loadParticipantScores();
             }
         },
@@ -47,13 +46,6 @@ const ProblemSubmissions = () => {
     // concatClassNames(styles.submissionItem, submissionResultsListItemClass);
     const submissionResultsContentClass = 'submissionResultsContent';
     const submissionResultsContentClassName = concatClassNames(styles.submissionResultsContent, submissionResultsContentClass);
-    const renderSubmissions = () => {
-        if (isNil(submissions) || isEmpty(submissions)) {
-            return (
-                <p> No results for this problem yet.</p>
-            );
-        }
-
     const renderErrorMessage = useCallback(
         () => {
             if (!isNil(problemSubmissionsError)) {
