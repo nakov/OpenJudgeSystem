@@ -11,9 +11,5 @@
       <ProjectReference Include="..\OJS.Servers.Administration.Infrastructure\OJS.Servers.Administration.Infrastructure.csproj" />
       <ProjectReference Include="..\OJS.Servers.Administration.Models\OJS.Servers.Administration.Models.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="SoftUni.Judge.Common" Version="1.0.8" />
-    </ItemGroup>
     
 </Project>
