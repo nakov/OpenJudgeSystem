@@ -12,7 +12,6 @@
 
     <ItemGroup>
       <PackageReference Include="SoftUni.Data.Infrastructure" Version="1.0.4" />
-      <PackageReference Include="SoftUni.Judge.Common" Version="1.0.8" />
     </ItemGroup>
 
 </Project>

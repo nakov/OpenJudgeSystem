@@ -12,7 +12,6 @@
 
     <ItemGroup>
       <PackageReference Include="AutoCrudAdmin" Version="1.1.19" />
-      <PackageReference Include="SoftUni.Judge.Common" Version="1.0.8" />
     </ItemGroup>
     
 </Project>

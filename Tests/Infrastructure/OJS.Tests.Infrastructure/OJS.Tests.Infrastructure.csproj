@@ -4,8 +4,4 @@
         <TargetFramework>net6.0</TargetFramework>
     </PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="SoftUni.Judge.Common" Version="1.0.8" />
-    </ItemGroup>
-
 </Project>
