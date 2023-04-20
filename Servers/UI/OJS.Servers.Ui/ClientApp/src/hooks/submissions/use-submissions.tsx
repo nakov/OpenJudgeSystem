@@ -199,14 +199,11 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         (error: IErrorDataType) => {
             const { detail, instance: problemId } = error;
             const problemErrorId = parseInt(problemId, 10);
-            if (isNil(currentProblem)) {
+            if (isNil(currentProblem) || problemErrorId !== currentProblem.id) {
                 return null;
             }
 
-            if (problemErrorId === currentProblem.id) {
-                return detail;
-            }
-            return null;
+            return detail;
         },
         [ currentProblem ],
     );
