@@ -369,6 +369,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             problem.SubmissionTypesInProblems
                 .First(st => st.SubmissionTypeId == model.SubmissionTypeId)
                 .SubmissionType;
+
         if (model.ByteContent == null)
         {
             await this.submissionsDistributorCommunicationService.AddSubmissionForProcessing(newSubmission);
