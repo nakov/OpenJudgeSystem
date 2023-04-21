@@ -10,7 +10,6 @@
     using EntityFramework.Extensions;
     using Hangfire;
     using MissingFeatures;
-    using NPOI.HSSF.Model;
     using OJS.Common;
     using OJS.Common.Helpers;
     using OJS.Common.Models;

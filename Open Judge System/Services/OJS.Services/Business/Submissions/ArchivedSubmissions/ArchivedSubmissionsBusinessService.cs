@@ -1,32 +1,26 @@
 ﻿namespace OJS.Services.Business.Submissions.ArchivedSubmissions
 {
-    using System;
     using System.Linq;
     using Hangfire.Server;
-    using NPOI.SS.Formula.Functions;
     using OJS.Common;
     using OJS.Common.Extensions;
     using OJS.Data.Models;
     using OJS.Services.Common.BackgroundJobs;
-    using OJS.Services.Data.Submissions;
     using OJS.Services.Data.Submissions.ArchivedSubmissions;
 
     public class ArchivedSubmissionsBusinessService : IArchivedSubmissionsBusinessService
     {
         private readonly IArchivedSubmissionsDataService archivedSubmissionsData;
         private readonly ISubmissionsBusinessService submissionsBusiness;
-        private readonly ISubmissionsDataService submissionsData;
         private readonly IHangfireBackgroundJobService backgroundJobs;
 
         public ArchivedSubmissionsBusinessService(
             IArchivedSubmissionsDataService archivedSubmissionsData,
             ISubmissionsBusinessService submissionsBusiness,
-            ISubmissionsDataService submissionsData,
             IHangfireBackgroundJobService backgroundJobs)
         {
             this.archivedSubmissionsData = archivedSubmissionsData;
             this.submissionsBusiness = submissionsBusiness;
-            this.submissionsData = submissionsData;
             this.backgroundJobs = backgroundJobs;
         }
 
