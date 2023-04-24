@@ -365,8 +365,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         if (exception != null)
         {
-            submission.ProcessingComment = exception.Message + Environment.NewLine + exception.StackTrace;
-            return;
+            submission.ProcessingComment = exception.Message;
         }
 
         if (executionResult == null)
