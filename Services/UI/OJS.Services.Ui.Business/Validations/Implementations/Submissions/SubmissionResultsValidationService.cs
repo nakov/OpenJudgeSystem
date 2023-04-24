@@ -1,6 +1,7 @@
 ﻿namespace OJS.Services.Ui.Business.Validations.Implementations.Contests;
 
 using Models.Submissions;
+using Submissions;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Users;
 using Validation;
