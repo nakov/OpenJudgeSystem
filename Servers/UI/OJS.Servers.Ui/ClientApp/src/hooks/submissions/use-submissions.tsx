@@ -122,22 +122,34 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         return bodyFormData;
     }, [ submitCodeParams ]);
 
-    const submit = useCallback(async () => {
-        if (isNil(submitCodeParams)) {
-            return;
-        }
+    const submit = useCallback(
+        async () => {
+            if (isNil(submitCodeParams)) {
+                return;
+            }
 
-        startLoading();
+            startLoading();
 
-        if (selectedSubmissionType?.allowBinaryFilesUpload) {
-            await submitFileCode(await getSubmitParamsAsFormData());
-        } else {
-            await submitCode(submitCodeParams);
-        }
+            if (selectedSubmissionType?.allowBinaryFilesUpload) {
+                await submitFileCode(await getSubmitParamsAsFormData());
+            } else {
+                await submitCode(submitCodeParams);
+            }
 
-        setAlertBoxSubmitMessage(null);
-        stopLoading();
-    }, [ startLoading, selectedSubmissionType, submitFileCode, getSubmitParamsAsFormData, submitCode, submitCodeParams, stopLoading ]);
+            stopLoading();
+            setAlertBoxSubmitMessage(null);
+        },
+        [
+            startLoading,
+            selectedSubmissionType,
+            submitFileCode,
+            getSubmitParamsAsFormData,
+            submitCode,
+            submitCodeParams,
+            stopLoading,
+            setAlertBoxSubmitMessage,
+        ],
+    );
 
     const selectSubmissionTypeById = useCallback(
         (id: number | null) => {
@@ -208,29 +220,36 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         [ currentProblem ],
     );
 
+    const setSubmitMessageAlertBox = useCallback(
+        (error: string | null) => {
+            if (alertBoxSubmitMessage === CLOSED_ALERT_BOX_SUBMIT_MESSAGE) {
+                setSubmitMessage(null);
+            } else {
+                setSubmitMessage(error);
+            }
+        },
+        [ alertBoxSubmitMessage ],
+    );
+
     useEffect(
         () => {
             if (!isNil(errorSubmitCode)) {
-                const error = getProblemSubmissionError(errorSubmitCode);
-                if (alertBoxSubmitMessage === CLOSED_ALERT_BOX_SUBMIT_MESSAGE) {
-                    setSubmitMessage(null);
-                } else {
-                    setSubmitMessage(error);
-                }
+                setSubmitMessageAlertBox(getProblemSubmissionError(errorSubmitCode));
             }
 
             if (!isNil(errorSubmitFile)) {
-                const error = getProblemSubmissionError(errorSubmitFile);
-                if (alertBoxSubmitMessage === CLOSED_ALERT_BOX_SUBMIT_MESSAGE) {
-                    setSubmitMessage(null);
-                } else {
-                    setSubmitMessage(error);
-                }
+                setSubmitMessageAlertBox(getProblemSubmissionError(errorSubmitFile));
             }
+
             const { id: problemId } = currentProblem || {};
 
             if (isNil(problemId)) {
                 return;
+            }
+
+            if (isNil(errorSubmitCode) && isNil(errorSubmitFile)) {
+                setSubmitMessageAlertBox(null);
+                setSubmitMessage(null);
             }
 
             (async () => {
@@ -244,6 +263,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             currentProblem,
             getProblemSubmissionError,
             alertBoxSubmitMessage,
+            setSubmitMessageAlertBox,
         ],
     );
 
