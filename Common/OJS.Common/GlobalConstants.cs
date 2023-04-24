@@ -125,5 +125,10 @@ namespace OJS.Common
             public const string TestInputZip = Input + Zip;
             public const string TestOutputZip = Output + Zip;
         }
+
+        public static class AutocompleteSearchProperties
+        {
+            public const string UserName = "UserName";
+        }
     }
 }

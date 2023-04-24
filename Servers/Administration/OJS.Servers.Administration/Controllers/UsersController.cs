@@ -2,6 +2,9 @@ namespace OJS.Servers.Administration.Controllers;
 
 using OJS.Data.Models.Users;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
+using AutoCrudAdmin.ViewModels;
+using Common;
 
 public class UsersController : BaseAutoCrudAdminController<UserProfile>
 {
@@ -14,4 +17,7 @@ public class UsersController : BaseAutoCrudAdminController<UserProfile>
             nameof(UserProfile.IsDeleted),
             nameof(UserProfile.CreatedOn),
         };
+
+    public override IEnumerable<DropDownViewModel> Autocomplete([FromQuery] string searchTerm, string searchProperty)
+        => base.Autocomplete(searchTerm, GlobalConstants.AutocompleteSearchProperties.UserName);
 }
