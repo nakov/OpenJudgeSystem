@@ -23,7 +23,7 @@ interface IProblemSubmissionsContext {
 type IProblemSubmissionsProviderProps = IHaveChildrenProps
 
 interface IProblemSubmissionResultsRequestParametersType {
-    id: number;
+    problemId: number;
     isOfficial: boolean;
     take: number;
 }
