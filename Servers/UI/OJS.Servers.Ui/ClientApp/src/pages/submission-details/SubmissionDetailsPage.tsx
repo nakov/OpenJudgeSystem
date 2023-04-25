@@ -52,10 +52,6 @@ const SubmissionDetailsPage = () => {
             }
 
             selectSubmissionById(selectedSubmissionId);
-
-            (async () => {
-                await getDetails(selectedSubmissionId);
-            })();
         },
         [ getDetails, selectedSubmissionId, selectSubmissionById ],
     );
