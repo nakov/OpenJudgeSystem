@@ -3,6 +3,7 @@ import first from 'lodash/first';
 import isNil from 'lodash/isNil';
 
 import { IDictionary } from '../../common/common-types';
+import { CLOSED_ALERT_BOX_SUBMIT_MESSAGE } from '../../common/constants';
 import { ISubmissionTypeType } from '../../common/types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useCurrentContest } from '../use-current-contest';
@@ -27,6 +28,7 @@ interface ISubmissionsContext {
         updateSubmissionCode: (code: string | File) => void;
         selectSubmissionTypeById: (id: number) => void;
         removeProblemSubmissionCode: (id: number) => void;
+        setAlertBoxSubmitMessage: (value: string | null) => void;
     };
 }
 
@@ -54,6 +56,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const [ problemSubmissionCode, setProblemSubmissionCode ] =
         useState<IDictionary<string | File>>(defaultState.state.problemSubmissionCode);
     const [ submitMessage, setSubmitMessage ] = useState<string | null>(null);
+    const [ alertBoxSubmitMessage, setAlertBoxSubmitMessage ] = useState<string | null>(null);
 
     const {
         startLoading,
@@ -131,21 +134,34 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         return bodyFormData;
     }, [ submitCodeParams ]);
 
-    const submit = useCallback(async () => {
-        if (isNil(submitCodeParams)) {
-            return;
-        }
+    const submit = useCallback(
+        async () => {
+            if (isNil(submitCodeParams)) {
+                return;
+            }
 
-        startLoading();
+            startLoading();
 
-        if (selectedSubmissionType?.allowBinaryFilesUpload) {
-            await submitFileCode(await getSubmitParamsAsFormData());
-        } else {
-            await submitCode(submitCodeParams);
-        }
+            if (selectedSubmissionType?.allowBinaryFilesUpload) {
+                await submitFileCode(await getSubmitParamsAsFormData());
+            } else {
+                await submitCode(submitCodeParams);
+            }
 
-        stopLoading();
-    }, [ startLoading, selectedSubmissionType, submitFileCode, getSubmitParamsAsFormData, submitCode, submitCodeParams, stopLoading ]);
+            stopLoading();
+            setAlertBoxSubmitMessage(null);
+        },
+        [
+            startLoading,
+            selectedSubmissionType,
+            submitFileCode,
+            getSubmitParamsAsFormData,
+            submitCode,
+            submitCodeParams,
+            stopLoading,
+            setAlertBoxSubmitMessage,
+        ],
+    );
 
     const selectSubmissionTypeById = useCallback(
         (id: number | null) => {
@@ -207,35 +223,45 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         (error: IErrorDataType) => {
             const { detail, instance: problemId } = error;
             const problemErrorId = parseInt(problemId, 10);
-            if (isNil(currentProblem)) {
+            if (isNil(currentProblem) || problemErrorId !== currentProblem.id) {
                 return null;
             }
 
-            if (problemErrorId === currentProblem.id) {
-                return detail;
-            }
-            return null;
+            return detail;
         },
         [ currentProblem ],
+    );
+
+    const setSubmitMessageAlertBox = useCallback(
+        (error: string | null) => {
+            if (alertBoxSubmitMessage === CLOSED_ALERT_BOX_SUBMIT_MESSAGE) {
+                setSubmitMessage(null);
+            } else {
+                setSubmitMessage(error);
+            }
+        },
+        [ alertBoxSubmitMessage ],
     );
 
     useEffect(
         () => {
             if (!isNil(errorSubmitCode)) {
-                const error = getProblemSubmissionError(errorSubmitCode);
-                setSubmitMessage(error);
-                return;
+                setSubmitMessageAlertBox(getProblemSubmissionError(errorSubmitCode));
             }
 
             if (!isNil(errorSubmitFile)) {
-                const error = getProblemSubmissionError(errorSubmitFile);
-                setSubmitMessage(error);
-                return;
+                setSubmitMessageAlertBox(getProblemSubmissionError(errorSubmitFile));
             }
+
             const { id: problemId } = currentProblem || {};
 
             if (isNil(problemId)) {
                 return;
+            }
+
+            if (isNil(errorSubmitCode) && isNil(errorSubmitFile)) {
+                setSubmitMessageAlertBox(null);
+                setSubmitMessage(null);
             }
 
             (async () => {
@@ -248,6 +274,8 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             errorSubmitFile,
             currentProblem,
             getProblemSubmissionError,
+            alertBoxSubmitMessage,
+            setSubmitMessageAlertBox,
         ],
     );
 
@@ -265,6 +293,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                 selectSubmissionTypeById,
                 submit,
                 removeProblemSubmissionCode,
+                setAlertBoxSubmitMessage,
             },
         }),
         [
@@ -277,6 +306,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             isSubmissionSuccessful,
             updateSubmissionCode,
             removeProblemSubmissionCode,
+            setAlertBoxSubmitMessage,
         ],
     );
 

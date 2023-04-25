@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
+import { CLOSED_ALERT_BOX_SUBMIT_MESSAGE } from '../../../common/constants';
 import { ISubmissionTypeType } from '../../../common/types';
 import { useSubmissions } from '../../../hooks/submissions/use-submissions';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
@@ -31,7 +32,6 @@ const SubmissionBox = () => {
         state: {
             selectedSubmissionType,
             submitMessage,
-            setSubmitMessage,
             isSubmissionSuccessful,
             problemSubmissionCode,
         },
@@ -40,6 +40,7 @@ const SubmissionBox = () => {
             updateSubmissionCode,
             selectSubmissionTypeById,
             removeProblemSubmissionCode,
+            setAlertBoxSubmitMessage,
         },
     } = useSubmissions();
 
@@ -188,10 +189,10 @@ const SubmissionBox = () => {
             <AlertBox
               message={submitMessage}
               type={AlertBoxType.error}
-              onClose={() => setSubmitMessage(null)}
+              onClose={() => setAlertBoxSubmitMessage(CLOSED_ALERT_BOX_SUBMIT_MESSAGE)}
             />
         );
-    }, [ setSubmitMessage, submitMessage ]);
+    }, [ setAlertBoxSubmitMessage, submitMessage ]);
 
     useEffect(() => {
         setSubmitLimit(userSubmissionsTimeLimit);

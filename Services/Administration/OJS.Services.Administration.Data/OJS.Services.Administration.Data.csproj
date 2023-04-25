@@ -12,7 +12,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="SoftUni.Judge.Common" Version="1.0.8" />
       <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="6.13.0" />
     </ItemGroup>
 

@@ -13,6 +13,7 @@ using Common;
 using Infrastructure.Exceptions;
 using Validation;
 using Data;
+using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 using Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using SoftUni.Judge.Common.Enumerations;
@@ -39,6 +40,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly IContestValidationService contestValidationService;
     private readonly ISubmitSubmissionValidationService submitSubmissionValidationService;
     private readonly ISubmissionResultsValidationService submissionResultsValidationService;
+    private readonly ISubmissionFileDownloadValidationService submissionFileDownloadValidationService;
 
     public SubmissionsBusinessService(
         ISubmissionsDataService submissionsData,
@@ -53,7 +55,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ISubmissionDetailsValidationService submissionDetailsValidationService,
         IContestValidationService contestValidationService,
         ISubmitSubmissionValidationService submitSubmissionValidationService,
-        ISubmissionResultsValidationService submissionResultsValidationService)
+        ISubmissionResultsValidationService submissionResultsValidationService,
+        ISubmissionFileDownloadValidationService submissionFileDownloadValidationService)
     {
         this.submissionsData = submissionsData;
         this.usersBusiness = usersBusiness;
@@ -68,6 +71,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.contestValidationService = contestValidationService;
         this.submitSubmissionValidationService = submitSubmissionValidationService;
         this.submissionResultsValidationService = submissionResultsValidationService;
+        this.submissionFileDownloadValidationService = submissionFileDownloadValidationService;
     }
 
     public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
@@ -98,6 +102,30 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
 
         return submissionDetailsServiceModel!;
+    }
+
+    public SubmissionFileDownloadServiceModel GetSubmissionFile(int submissionId)
+    {
+        var submissionDetailsServiceModel = this.submissionsData
+            .GetSubmissionById<SubmissionDetailsServiceModel>(submissionId);
+
+        var currentUser = this.userProviderService.GetCurrentUser();
+
+        var validationResult = this.submissionFileDownloadValidationService.GetValidationResult((submissionDetailsServiceModel!, currentUser));
+        if (!validationResult.IsValid)
+        {
+            throw new BusinessServiceException(validationResult.Message);
+        }
+
+        return new SubmissionFileDownloadServiceModel
+        {
+            Content = submissionDetailsServiceModel!.ByteContent,
+            MimeType = GlobalConstants.MimeTypes.ApplicationOctetStream,
+            FileName = string.Format(
+                GlobalConstants.Submissions.SubmissionDownloadFileName,
+                submissionDetailsServiceModel.Id,
+                submissionDetailsServiceModel.FileExtension),
+        };
     }
 
     public Task<IQueryable<Submission>> GetAllForArchiving()
@@ -250,7 +278,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var participant =
             await this.participantsDataService.GetByContestByUserAndByIsOfficial(
-                problem.ProblemGroup.ContestId, user.Id!, isOfficial)
+                    problem.ProblemGroup.ContestId, user.Id!, isOfficial)
                 .Map<ParticipantSubmissionResultsServiceModel>();
 
         this.ValidateCanViewSubmissionResults(isOfficial, user, problem, participant);
@@ -343,7 +371,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 .First(st => st.SubmissionTypeId == model.SubmissionTypeId)
                 .SubmissionType;
 
-        await this.submissionsDistributorCommunicationService.AddSubmissionForProcessing(newSubmission);
+        if (model.ByteContent == null)
+        {
+            await this.submissionsDistributorCommunicationService.AddSubmissionForProcessing(newSubmission);
+        }
     }
 
     public async Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult)

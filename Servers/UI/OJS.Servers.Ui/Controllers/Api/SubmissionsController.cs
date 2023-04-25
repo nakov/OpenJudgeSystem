@@ -55,6 +55,20 @@ public class SubmissionsController : BaseApiController
             .ToOkResult();
 
     /// <summary>
+    /// Gets the submitted file.
+    /// </summary>
+    /// <param name="id">Id of the submission.</param>
+    /// <returns>The file to download.</returns>
+    [HttpGet("{id:int}")]
+    [ProducesResponseType(typeof(FileContentResult), Status200OK)]
+    public IActionResult Download(int id)
+    {
+        var submissionDownloadServiceModel = this.submissionsBusiness.GetSubmissionFile(id);
+
+        return this.File(submissionDownloadServiceModel.Content!, submissionDownloadServiceModel.MimeType!, submissionDownloadServiceModel.FileName);
+    }
+
+    /// <summary>
     /// Gets a subset of submissions by specific problem and given take count.
     /// </summary>
     /// <param name="id">The id of the problem.</param>

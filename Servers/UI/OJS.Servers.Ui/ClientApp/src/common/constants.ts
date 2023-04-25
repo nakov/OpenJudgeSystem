@@ -5,6 +5,7 @@ const { Status: DEFAULT_FILTER_TYPE } = FilterType;
 const { All: DEFAULT_STATUS_FILTER_TYPE } = ContestStatus;
 const { Sort: DEFAULT_SORT_FILTER_TYPE } = FilterType;
 const { StartDate: DEFAULT_SORT_TYPE } = SortType;
+const CLOSED_ALERT_BOX_SUBMIT_MESSAGE = 'closed';
 
 enum SubmissionResultType {
     CorrectAnswer = 'correctanswer',
@@ -21,13 +22,19 @@ enum ContestResultType {
     Full = 'full',
 }
 
+enum FileType {
+    Blob = 'blob',
+}
+
 export {
     DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
     DEFAULT_FILTER_TYPE,
     DEFAULT_STATUS_FILTER_TYPE,
     DEFAULT_SORT_FILTER_TYPE,
     DEFAULT_SORT_TYPE,
+    CLOSED_ALERT_BOX_SUBMIT_MESSAGE,
     SubmissionResultType,
     ContestParticipationType,
     ContestResultType,
+    FileType,
 };

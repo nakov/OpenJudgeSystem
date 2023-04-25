@@ -13,7 +13,8 @@ import { usePageTitles } from '../../../hooks/use-page-titles';
 import concatClassNames from '../../../utils/class-names';
 import { preciseFormatDate } from '../../../utils/dates';
 import CodeEditor from '../../code-editor/CodeEditor';
-import Button, { ButtonSize, ButtonState, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import AlertBox, { AlertBoxType } from '../../guidelines/alert-box/AlertBox';
+import { Button, ButtonSize, ButtonState, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import IconSize from '../../guidelines/icons/common/icon-sizes';
 import LeftArrowIcon from '../../guidelines/icons/LeftArrowIcon';
@@ -33,6 +34,15 @@ const SubmissionDetails = () => {
     } = useSubmissionsDetails();
     const { actions: { setPageTitle } } = usePageTitles();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
+    const {
+        state:
+            { downloadErrorMessage },
+        actions:
+            {
+                downloadProblemSubmissionFile,
+                setDownloadErrorMessage,
+            },
+    } = useSubmissionsDetails();
     const { getAdministrationRetestSubmissionInternalUrl } = useAppUrls();
 
     const {
@@ -55,6 +65,58 @@ const SubmissionDetails = () => {
     const submissionTitle = useMemo(
         () => `Submission №${currentSubmission?.id}`,
         [ currentSubmission?.id ],
+    );
+
+    const renderDownloadErrorMessage = useCallback(() => {
+        if (isNil(downloadErrorMessage)) {
+            return null;
+        }
+
+        return (
+            <AlertBox
+              message={downloadErrorMessage}
+              type={AlertBoxType.error}
+              onClose={() => setDownloadErrorMessage(null)}
+            />
+        );
+    }, [ downloadErrorMessage, setDownloadErrorMessage ]);
+
+    const handleDownloadSubmissionFile = useCallback(
+        async () => {
+            if (isNil(currentSubmission)) {
+                return;
+            }
+
+            const { id } = currentSubmission;
+            await downloadProblemSubmissionFile(id);
+        },
+        [ downloadProblemSubmissionFile, currentSubmission ],
+    );
+
+    const renderResourceLink = useCallback(
+        () => {
+            if (isNil(currentSubmission)) {
+                return null;
+            }
+
+            const { submissionType: { allowBinaryFilesUpload } } = currentSubmission;
+            if (!canAccessAdministration || !allowBinaryFilesUpload) {
+                return null;
+            }
+
+            return (
+                <div className={styles.resourceWrapper}>
+                    <Button
+                      type={ButtonType.primary}
+                      className={styles.resourceLinkButton}
+                      onClick={() => handleDownloadSubmissionFile()}
+                    >
+                        Download file
+                    </Button>
+                </div>
+            );
+        },
+        [ handleDownloadSubmissionFile, canAccessAdministration, currentSubmission ],
     );
 
     const canBeCompeted = useMemo(
@@ -251,14 +313,31 @@ const SubmissionDetails = () => {
                     </div>
                     <div className={styles.itemInvisible}>Other</div>
                 </Heading>
-                <CodeEditor
-                  readOnly
-                  code={currentSubmission?.content}
-                  selectedSubmissionType={submissionType}
-                />
+                {currentSubmission?.submissionType.allowBinaryFilesUpload
+                    ? (
+                        <div className={styles.resourceWrapper}>
+                            {renderResourceLink()}
+                            {renderDownloadErrorMessage()}
+                        </div>
+                    )
+                    : (
+                        <CodeEditor
+                          readOnly
+                          code={currentSubmission?.content}
+                          selectedSubmissionType={submissionType}
+                        />
+                    )}
             </div>
         ),
-        [ problemNameHeadingText, currentSubmission?.content, submissionType, backButtonState, registerContestTypeUrl ],
+        [
+            problemNameHeadingText,
+            submissionType,
+            backButtonState,
+            registerContestTypeUrl,
+            renderResourceLink,
+            renderDownloadErrorMessage,
+            currentSubmission,
+        ],
     );
 
     const submissionResults = useCallback(
