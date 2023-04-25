@@ -61,6 +61,7 @@ const useHttp = function<TParametersType, TReturnDataType, TRequestDataType = nu
         async () => {
             setStatus(HttpStatus.Pending);
             setResponse(null);
+            setIsSuccess(false);
         },
         [],
     );

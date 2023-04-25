@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
-import { useProblemSubmissions } from '../../../hooks/submissions/use-problem-submissions';
 import { useAuth } from '../../../hooks/use-auth';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import { usePageTitles } from '../../../hooks/use-page-titles';
@@ -32,7 +31,6 @@ const Contest = () => {
     } = useCurrentContest();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const { actions: { setPageTitle } } = usePageTitles();
-    const { state: { problemSubmissionsError, submissions } } = useProblemSubmissions();
 
     const navigationContestClass = 'navigationContest';
     const navigationContestClassName = concatClassNames(styles.navigationContest, navigationContestClass);
@@ -181,14 +179,9 @@ const Contest = () => {
                 return renderErrorHeading(detail);
             }
 
-            if (!isNil(problemSubmissionsError)) {
-                const { detail } = problemSubmissionsError;
-                return renderErrorHeading(detail);
-            }
-
             return null;
         },
-        [ renderErrorHeading, problemSubmissionsError, contestError ],
+        [ renderErrorHeading, contestError ],
     );
 
     const renderContest = useCallback(
@@ -234,12 +227,10 @@ const Contest = () => {
     );
 
     const renderPage = useCallback(
-        () => isNil(contestError) && isNil(problemSubmissionsError) && isNil(submissions)
-            ? <div>Loading data</div>
-            : isNil(contestError) && isNil(problemSubmissionsError)
-                ? renderContest()
-                : renderErrorMessage(),
-        [ renderErrorMessage, renderContest, contestError, problemSubmissionsError, submissions ],
+        () => isNil(contestError)
+            ? renderContest()
+            : renderErrorMessage(),
+        [ renderErrorMessage, renderContest, contestError ],
     );
 
     return renderPage();
