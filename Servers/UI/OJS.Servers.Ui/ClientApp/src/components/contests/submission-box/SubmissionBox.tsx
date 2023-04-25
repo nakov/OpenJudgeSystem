@@ -140,22 +140,30 @@ const SubmissionBox = () => {
         );
     }, []);
 
-    const renderCountdown = useCallback(() => {
-        if (!showSubmissionLimitTimer) {
-            return null;
-        }
+    const handleOnCountdownEnd = useCallback(
+        () => {
+            setSubmitLimit(0);
+        },
+        [],
+    );
 
-        return (
-            <Countdown
-              duration={submitLimit}
-              metric={Metric.seconds}
-              renderRemainingTime={renderSubmissionLimitCountdown}
-              handleOnCountdownEnd={() => {
-                  setSubmitLimit(0);
-              }}
-            />
-        );
-    }, [ showSubmissionLimitTimer, renderSubmissionLimitCountdown, submitLimit ]);
+    const renderCountdown = useCallback(
+        () => {
+            if (!showSubmissionLimitTimer) {
+                return null;
+            }
+
+            return (
+                <Countdown
+                  duration={submitLimit}
+                  metric={Metric.seconds}
+                  renderRemainingTime={renderSubmissionLimitCountdown}
+                  handleOnCountdownEnd={handleOnCountdownEnd}
+                />
+            );
+        },
+        [ handleOnCountdownEnd, renderSubmissionLimitCountdown, showSubmissionLimitTimer, submitLimit ],
+    );
 
     const renderSubmitBtn = useCallback(() => {
         const state = !isSubmitAllowed || showSubmissionLimitTimer
@@ -252,36 +260,49 @@ const SubmissionBox = () => {
         );
     }, [ handleCodeChanged, selectedSubmissionType, submissionCode, currentProblem ]);
 
-    return (
-        <div className={styles.contestMainWrapper}>
-            <Heading
-              type={HeadingType.secondary}
-              className={styles.heading}
-            >
-                {taskText}
-                <span className={styles.taskName}>
-                    {currentProblem?.name}
-                </span>
-            </Heading>
-            <div className={styles.contestInnerLayout}>
-                <div className={styles.editorAndProblemControlsWrapper}>
-                    {renderSubmissionInput()}
-                    <div className={styles.contestSubmitControlsWrapper}>
-                        <div className={executionTypeListClassName}>
-                            {renderSubmissionTypesSelectorsList()}
+    const renderSubmissionBox = useCallback(
+        () => (
+            <div className={styles.contestMainWrapper}>
+                <Heading
+                  type={HeadingType.secondary}
+                  className={styles.heading}
+                >
+                    {taskText}
+                    <span className={styles.taskName}>
+                        {currentProblem?.name}
+                    </span>
+                </Heading>
+                <div className={styles.contestInnerLayout}>
+                    <div className={styles.editorAndProblemControlsWrapper}>
+                        {renderSubmissionInput()}
+                        <div className={styles.contestSubmitControlsWrapper}>
+                            <div className={executionTypeListClassName}>
+                                {renderSubmissionTypesSelectorsList()}
+                            </div>
+                            <div className={styles.submitButtonContainer}>
+                                {renderSubmitBtn()}
+                            </div>
                         </div>
-                        <div className={styles.submitButtonContainer}>
-                            {renderSubmitBtn()}
+                        <div className={styles.submitCountdownWrapper}>
+                            { renderCountdown() }
                         </div>
+                        { renderSubmitMessage() }
                     </div>
-                    <div className={styles.submitCountdownWrapper}>
-                        { renderCountdown() }
-                    </div>
-                    { renderSubmitMessage() }
                 </div>
             </div>
-        </div>
+        ),
+        [
+            currentProblem?.name,
+            executionTypeListClassName,
+            renderCountdown,
+            renderSubmissionInput,
+            renderSubmissionTypesSelectorsList,
+            renderSubmitBtn,
+            renderSubmitMessage,
+        ],
     );
+
+    return renderSubmissionBox();
 };
 
 export default SubmissionBox;

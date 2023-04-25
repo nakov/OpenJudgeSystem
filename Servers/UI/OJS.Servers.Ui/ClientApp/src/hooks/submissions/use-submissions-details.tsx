@@ -22,14 +22,14 @@ import {
 interface ISubmissionsDetailsContext {
     state: {
         currentSubmission: ISubmissionDetailsType | null;
-        currentProblemSubmissionResults: ISubmissionDetails[];
+        currentSubmissionDetailsResults: ISubmissionDetails[];
         validationErrors: IErrorDataType[];
         downloadErrorMessage: string | null;
     };
     actions: {
         selectSubmissionById: (submissionId: number) => void;
         getDetails: (submissionId: number) => Promise<void>;
-        getSubmissionResults: (problemId: number, isOfficial: boolean) => Promise<void>;
+        getSubmissionDetailsResults: (submissionId: number, isOfficial: boolean) => Promise<void>;
         downloadProblemSubmissionFile: (submissionId: number) => Promise<void>;
         setDownloadErrorMessage: (message: string | null) => void;
     };
@@ -37,7 +37,7 @@ interface ISubmissionsDetailsContext {
 
 const defaultState = {
     state: {
-        currentProblemSubmissionResults: [] as ISubmissionDetails[],
+        currentSubmissionDetailsResults: [] as ISubmissionDetails[],
         validationErrors: [] as IErrorDataType[],
     },
 };
@@ -59,13 +59,13 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     const { getSubmissionFileDownloadUrl } = useUrls();
 
     const [
-        currentProblemSubmissionResults,
+        currentSubmissionDetailsResults,
         setCurrentProblemSubmissionResults,
-    ] = useState(defaultState.state.currentProblemSubmissionResults);
+    ] = useState(defaultState.state.currentSubmissionDetailsResults);
 
     const {
         getSubmissionDetailsByIdUrl,
-        getSubmissionResultsByProblemUrl,
+        getSubmissionDetailsResultsUrl,
     } = useUrls();
 
     const [
@@ -83,19 +83,22 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     });
 
     const [
-        submissionResultsByProblemUrlParams,
-        setSubmissionResultsByProblemUrlParams,
-    ] = useState<IGetSubmissionResultsByProblemUrlParams | null>();
+        submissionDetailsResultsUrlParams,
+        setSubmissionDetailsResultsUrlParams,
+    ] = useState<IGetSubmissionDetailsByIdUrlParams | null>();
 
     const {
-        get: getProblemResultsRequest,
-        data: apiProblemResults,
-        error: apiProblemResultsError,
-    } = useHttp<IGetSubmissionResultsByProblemUrlParams, ISubmissionDetails[]>({
-        url: getSubmissionResultsByProblemUrl,
-        parameters: submissionResultsByProblemUrlParams,
+        get: getSubmissionDetailsResultsRequest,
+        data: apiSubmissionDetailsResults,
+        error: apiSubmissionDetailsResultsError,
+    } = useHttp<IGetSubmissionDetailsByIdUrlParams, ISubmissionDetails[]>({
+        url: getSubmissionDetailsResultsUrl,
+        parameters: submissionDetailsResultsUrlParams,
     });
 
+    const getSubmissionDetailsResults = useCallback(
+        async (submissionId: number, isOfficial: boolean) => {
+            if (isNil(submissionId)) {
     const {
         get: downloadSubmissionFile,
         response: downloadSubmissionFileResponse,
@@ -146,8 +149,8 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
                 return;
             }
 
-            setSubmissionResultsByProblemUrlParams({
-                id: problemId,
+            setSubmissionDetailsResultsUrlParams({
+                submissionId,
                 isOfficial,
                 take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
             });
@@ -157,34 +160,34 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
 
     useEffect(
         () => {
-            if (isNil(submissionResultsByProblemUrlParams)) {
+            if (isNil(submissionDetailsResultsUrlParams)) {
                 return;
             }
 
             (async () => {
                 startLoading();
-                await getProblemResultsRequest();
-                setSubmissionResultsByProblemUrlParams(null);
+                await getSubmissionDetailsResultsRequest();
+                setSubmissionDetailsResultsUrlParams(null);
                 stopLoading();
             })();
         },
-        [ getProblemResultsRequest, startLoading, stopLoading, submissionResultsByProblemUrlParams ],
+        [ getSubmissionDetailsResultsRequest, startLoading, stopLoading, submissionDetailsResultsUrlParams ],
     );
 
     useEffect(
         () => {
-            if (isNil(apiProblemResults)) {
+            if (isNil(apiSubmissionDetailsResults)) {
                 return;
             }
 
-            if (!isNil(apiProblemResultsError)) {
-                setValidationErrors((validationErrorsArray) => [ ...validationErrorsArray, apiProblemResultsError ]);
+            if (!isNil(apiSubmissionDetailsResultsError)) {
+                setValidationErrors((validationErrorsArray) => [ ...validationErrorsArray, apiSubmissionDetailsResultsError ]);
                 return;
             }
 
-            setCurrentProblemSubmissionResults(apiProblemResults);
+            setCurrentProblemSubmissionResults(apiSubmissionDetailsResults);
         },
-        [ apiProblemResults, apiProblemResultsError ],
+        [ apiSubmissionDetailsResults, apiSubmissionDetailsResultsError ],
     );
 
     useEffect(
@@ -246,23 +249,23 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         () => ({
             state: {
                 currentSubmission,
-                currentProblemSubmissionResults,
+                currentSubmissionDetailsResults,
                 validationErrors,
                 downloadErrorMessage,
             },
             actions: {
                 selectSubmissionById,
                 getDetails,
-                getSubmissionResults,
+                getSubmissionDetailsResults,
                 downloadProblemSubmissionFile,
                 setDownloadErrorMessage,
             },
         }),
         [
-            currentProblemSubmissionResults,
+            currentSubmissionDetailsResults,
             currentSubmission,
             getDetails,
-            getSubmissionResults,
+            getSubmissionDetailsResults,
             validationErrors,
             downloadProblemSubmissionFile,
             downloadErrorMessage,
