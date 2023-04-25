@@ -13,12 +13,12 @@ import { usePageTitles } from '../../../hooks/use-page-titles';
 import concatClassNames from '../../../utils/class-names';
 import { preciseFormatDate } from '../../../utils/dates';
 import CodeEditor from '../../code-editor/CodeEditor';
-import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import Button, { ButtonSize, ButtonState, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import IconSize from '../../guidelines/icons/common/icon-sizes';
 import LeftArrowIcon from '../../guidelines/icons/LeftArrowIcon';
 import SubmissionResults from '../submission-results/SubmissionResults';
-import RefreshableSubmissionsList from '../submissions-list/RefreshableSubmissionsList';
+import SubmissionsList from '../submissions-list/SubmissionsList';
 
 import styles from './SubmissionDetails.module.scss';
 
@@ -26,10 +26,10 @@ const SubmissionDetails = () => {
     const {
         state: {
             currentSubmission,
-            currentProblemSubmissionResults,
+            currentSubmissionDetailsResults,
             validationErrors,
         },
-        actions: { getSubmissionResults },
+        actions: { getSubmissionDetailsResults },
     } = useSubmissionsDetails();
     const { actions: { setPageTitle } } = usePageTitles();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
@@ -99,17 +99,47 @@ const SubmissionDetails = () => {
         submissionsDetails,
     );
 
-    useEffect(() => {
-        if (isNil(currentSubmission)) {
-            return;
-        }
+    useEffect(
+        () => {
+            if (isNil(currentSubmission)) {
+                return;
+            }
 
-        const { problem: { id: problemId }, isOfficial } = currentSubmission;
+            const { id: submissionId, isOfficial } = currentSubmission;
 
-        (async () => {
-            await getSubmissionResults(problemId, isOfficial);
-        })();
-    }, [ currentSubmission, getSubmissionResults ]);
+            (async () => {
+                await getSubmissionDetailsResults(submissionId, isOfficial);
+            })();
+        },
+        [ currentSubmission, getSubmissionDetailsResults ],
+    );
+
+    const submissionsReloadBtnClassName = 'submissionReloadBtn';
+
+    const handleReloadClick = useCallback(
+        async () => {
+            if (isNil(currentSubmission)) {
+                return;
+            }
+
+            const { id: submissionId, isOfficial } = currentSubmission;
+
+            await getSubmissionDetailsResults(submissionId, isOfficial);
+        },
+        [ currentSubmission, getSubmissionDetailsResults ],
+    );
+
+    const renderReloadButton = useCallback(
+        () => (
+            <Button
+              onClick={handleReloadClick}
+              text="Reload"
+              type={ButtonType.secondary}
+              className={submissionsReloadBtnClassName}
+            />
+        ),
+        [ handleReloadClick ],
+    );
 
     const renderRetestButton = useCallback(
         () => {
@@ -128,6 +158,16 @@ const SubmissionDetails = () => {
             );
         },
         [ canAccessAdministration, getAdministrationRetestSubmissionInternalUrl ],
+    );
+
+    const renderButtonsSection = useCallback(
+        () => (
+            <div className={styles.buttonsSection}>
+                { renderReloadButton() }
+                { renderRetestButton() }
+            </div>
+        ),
+        [ renderReloadButton, renderRetestButton ],
     );
 
     const renderSubmissionInfo = useCallback(
@@ -170,25 +210,25 @@ const SubmissionDetails = () => {
         [ contest ],
     );
 
-    const refreshableSubmissionsList = useMemo(
+    const refreshableSubmissionsList = useCallback(
         () => (
             <div className={styles.navigation}>
                 <div className={submissionsNavigationClassName}>
                     <Heading type={HeadingType.secondary}>Submissions</Heading>
                 </div>
-                <RefreshableSubmissionsList
-                  items={currentProblemSubmissionResults}
+                <SubmissionsList
+                  items={currentSubmissionDetailsResults}
                   selectedSubmission={currentSubmission}
                   className={styles.submissionsList}
                 />
-                { renderRetestButton() }
+                { renderButtonsSection() }
                 { renderSubmissionInfo() }
             </div>
         ),
-        [ currentProblemSubmissionResults, currentSubmission, renderRetestButton, renderSubmissionInfo ],
+        [ currentSubmissionDetailsResults, currentSubmission, renderButtonsSection, renderSubmissionInfo ],
     );
 
-    const codeEditor = useMemo(
+    const codeEditor = useCallback(
         () => (
             <div className={styles.code}>
                 <Heading
@@ -269,8 +309,8 @@ const SubmissionDetails = () => {
     const renderSubmission = useCallback(
         () => (
             <div className={styles.detailsWrapper}>
-                {refreshableSubmissionsList}
-                {codeEditor}
+                {refreshableSubmissionsList()}
+                {codeEditor()}
                 {submissionResults()}
             </div>
         ),
