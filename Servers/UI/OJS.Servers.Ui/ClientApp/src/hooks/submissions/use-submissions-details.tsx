@@ -5,7 +5,6 @@ import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE, FileType } from '../../comm
 import {
     IDownloadSubmissionFileUrlParams,
     IGetSubmissionDetailsByIdUrlParams,
-    IGetSubmissionResultsByProblemUrlParams,
 } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { IErrorDataType, useHttp } from '../use-http';
@@ -96,9 +95,6 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         parameters: submissionDetailsResultsUrlParams,
     });
 
-    const getSubmissionDetailsResults = useCallback(
-        async (submissionId: number, isOfficial: boolean) => {
-            if (isNil(submissionId)) {
     const {
         get: downloadSubmissionFile,
         response: downloadSubmissionFileResponse,
@@ -112,6 +108,21 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     const downloadProblemSubmissionFile = useCallback(
         async (submissionId: number) => {
             setProblemSubmissionFileIdToDownload(submissionId);
+        },
+        [],
+    );
+
+    const getSubmissionDetailsResults = useCallback(
+        async (submissionId: number, isOfficial: boolean) => {
+            if (isNil(submissionId)) {
+                return;
+            }
+
+            setSubmissionDetailsResultsUrlParams({
+                submissionId,
+                isOfficial,
+                take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
+            });
         },
         [],
     );
@@ -142,21 +153,6 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
 
         setProblemSubmissionFileIdToDownload(null);
     }, [ problemSubmissionFileIdToDownload, downloadSubmissionFile, startLoading, stopLoading ]);
-
-    const getSubmissionResults = useCallback(
-        async (problemId: number, isOfficial: boolean) => {
-            if (isNil(problemId)) {
-                return;
-            }
-
-            setSubmissionDetailsResultsUrlParams({
-                submissionId,
-                isOfficial,
-                take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
-            });
-        },
-        [],
-    );
 
     useEffect(
         () => {
