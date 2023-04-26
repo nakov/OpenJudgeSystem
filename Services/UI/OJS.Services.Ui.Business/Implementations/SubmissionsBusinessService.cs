@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 
 using static Constants.PublicSubmissions;
 
