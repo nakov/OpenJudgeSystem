@@ -52,6 +52,8 @@ const SubmissionDetails = () => {
 
     const { getRegisterContestTypeUrl } = useAppUrls();
 
+    const { state: { user } } = useAuth();
+
     useEffect(() => {
         if (isNil(currentSubmission)) {
             return;
@@ -99,8 +101,9 @@ const SubmissionDetails = () => {
                 return null;
             }
 
-            const { submissionType: { allowBinaryFilesUpload } } = currentSubmission;
-            if (!canAccessAdministration || !allowBinaryFilesUpload) {
+            const { submissionType: { allowBinaryFilesUpload }, user: { userName: submissionUserName } } = currentSubmission;
+            const { username: loggedInUserName } = user;
+            if ((!canAccessAdministration && submissionUserName !== loggedInUserName) || !allowBinaryFilesUpload) {
                 return null;
             }
 
@@ -116,7 +119,7 @@ const SubmissionDetails = () => {
                 </div>
             );
         },
-        [ handleDownloadSubmissionFile, canAccessAdministration, currentSubmission ],
+        [ handleDownloadSubmissionFile, canAccessAdministration, currentSubmission, user ],
     );
 
     const canBeCompeted = useMemo(
