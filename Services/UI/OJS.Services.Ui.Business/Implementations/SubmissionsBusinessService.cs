@@ -362,19 +362,27 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                                  !participant.Contest.IsDeleted &&
                                  problem.ShowResults;
 
-        await this.submissionsData.Add(newSubmission);
-        await this.submissionsData.SaveChanges();
+        var submissionType = problem.SubmissionTypesInProblems
+            .First(st => st.SubmissionTypeId == model.SubmissionTypeId)
+            .SubmissionType;
 
-        newSubmission.Problem = problem;
-        newSubmission.SubmissionType =
-            problem.SubmissionTypesInProblems
-                .First(st => st.SubmissionTypeId == model.SubmissionTypeId)
-                .SubmissionType;
-
-        if (newSubmission.SubmissionType.ExecutionStrategyType != ExecutionStrategyType.NotFound &&
-            newSubmission.SubmissionType.ExecutionStrategyType != ExecutionStrategyType.DoNothing)
+        if (submissionType.ExecutionStrategyType != ExecutionStrategyType.NotFound &&
+            submissionType.ExecutionStrategyType != ExecutionStrategyType.DoNothing)
         {
+            await this.submissionsData.Add(newSubmission);
+            await this.submissionsData.SaveChanges();
+
+            newSubmission.Problem = problem;
+            newSubmission.SubmissionType = submissionType;
+
             await this.submissionsDistributorCommunicationService.AddSubmissionForProcessing(newSubmission);
+        }
+        else
+        {
+            newSubmission.Processed = true;
+
+            await this.submissionsData.Add(newSubmission);
+            await this.submissionsData.SaveChanges();
         }
     }
 
