@@ -61,7 +61,7 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
             }
 
             setSubmissionResultsToGetParameters({
-                id,
+                problemId: id,
                 isOfficial,
                 take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
             } as IProblemSubmissionResultsRequestParametersType);
