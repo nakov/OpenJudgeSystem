@@ -94,10 +94,6 @@
                 archived += this.archivedSubmissionsData.Add(submissionsForArchives);
             }
 
-            this.backgroundJobs.OnSucceededStateContinueWith<IArchivedSubmissionsBusinessService>(
-               context.BackgroundJob.Id,
-               s => s.HardDeleteArchivedByLimit(context, limit));
-
             return archived;
         }
 
