@@ -88,7 +88,7 @@ type IMaximumParticipantScores = {
 }
 
 type ISubmitContestPasswordType = {
-    Password?: string | null;
+    password?: string | null;
 }
 
 const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) => {
@@ -262,7 +262,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
 
         (async () => {
             startLoading();
-            await submitContestPassword({ Password: contestPassword });
+            await submitContestPassword({ password: contestPassword });
             stopLoading();
         })();
     }, [ contestPassword, submitContestPassword, submitContestPasswordUrlParams, startLoading, stopLoading ]);

@@ -26,15 +26,6 @@ const ContestPasswordForm = ({ id, isOfficial }: IContestPasswordFormProps) => {
 
     const { actions: { setPageTitle } } = usePageTitles();
 
-    useEffect(
-        () => {
-            if (!isNil(contest)) {
-                setPageTitle('Enter Contest Password');
-            }
-        },
-        [ contest, setPageTitle ],
-    );
-
     const passwordFieldName = 'contestPassword';
 
     const handleOnSubmitPassword = useCallback(async () => {
@@ -67,6 +58,15 @@ const ContestPasswordForm = ({ id, isOfficial }: IContestPasswordFormProps) => {
             return null;
         },
         [ contestPasswordError, renderErrorSpan ],
+    );
+
+    useEffect(
+        () => {
+            if (!isNil(contest)) {
+                setPageTitle('Enter Contest Password');
+            }
+        },
+        [ contest, setPageTitle ],
     );
 
     return (
