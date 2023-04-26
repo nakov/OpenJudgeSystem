@@ -53,11 +53,16 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
 
         private static IServiceCollection ValidateLaunchSettings(this IServiceCollection services)
         {
-            var uiUrl = EnvironmentUtils.GetByKey(EnvironmentVariables.ApplicationUrl);
-            if (string.IsNullOrEmpty(uiUrl))
+            var requiredConfigValues = new[]
             {
-                throw new ApplicationException(string.Format(ErrorMessages.ValueCannotBeNullOrWhiteSpaceTemplate, EnvironmentVariables.ApplicationUrl));
-            }
+                EnvironmentVariables.DistributorBaseUrlKey,
+                EnvironmentVariables.ApplicationUrl,
+                EnvironmentVariables.PathToCommonKeyRingFolderKey,
+                EnvironmentVariables.RedisConnectionString,
+                EnvironmentVariables.SharedAuthCookieDomain,
+            };
+
+            EnvironmentUtils.ValidateEnvironmentVariableExists(requiredConfigValues);
 
             return services;
         }
