@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 
 using static Constants.PublicSubmissions;
 
@@ -371,7 +372,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 .First(st => st.SubmissionTypeId == model.SubmissionTypeId)
                 .SubmissionType;
 
-        if (model.ByteContent == null)
+        if (newSubmission.SubmissionType.ExecutionStrategyType != ExecutionStrategyType.NotFound &&
+            newSubmission.SubmissionType.ExecutionStrategyType != ExecutionStrategyType.DoNothing)
         {
             await this.submissionsDistributorCommunicationService.AddSubmissionForProcessing(newSubmission);
         }
