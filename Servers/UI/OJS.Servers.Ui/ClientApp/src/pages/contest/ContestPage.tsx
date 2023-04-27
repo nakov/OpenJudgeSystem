@@ -26,6 +26,7 @@ const ContestPage = () => {
             requirePassword,
             isPasswordValid,
             contestError,
+            isRegisterForContestSuccessful,
         },
         actions: {
             registerParticipant,
@@ -59,36 +60,6 @@ const ContestPage = () => {
             isOfficial: isParticipationOfficial,
         }),
         [ contestIdToNumber, isParticipationOfficial ],
-    );
-
-    useEffect(
-        () => {
-            if (isEmpty(contestId)) {
-                return;
-            }
-
-            (async () => {
-                await registerParticipant(internalContest);
-            })();
-        },
-        [ internalContest, contestId, registerParticipant ],
-    );
-
-    useEffect(
-        () => {
-            if (isNil(requirePassword) && isNil(contestError)) {
-                return;
-            }
-
-            if (!isPasswordFormValid) {
-                return;
-            }
-
-            (async () => {
-                await start(internalContest);
-            })();
-        },
-        [ contestError, internalContest, isPasswordFormValid, requirePassword, start ],
     );
 
     const isValidParticipationType = useMemo(
@@ -134,6 +105,40 @@ const ContestPage = () => {
             ? renderContestPage
             : <div>Invalid URL</div>,
         [ isValidParticipationType, renderContestPage ],
+    );
+
+    useEffect(
+        () => {
+            if (isEmpty(contestId)) {
+                return;
+            }
+
+            (async () => {
+                await registerParticipant(internalContest);
+            })();
+        },
+        [ internalContest, contestId, registerParticipant ],
+    );
+
+    useEffect(
+        () => {
+            if (!isRegisterForContestSuccessful) {
+                return;
+            }
+
+            if (isNil(requirePassword)) {
+                return;
+            }
+
+            if (!isPasswordFormValid) {
+                return;
+            }
+
+            (async () => {
+                await start(internalContest);
+            })();
+        },
+        [ internalContest, isPasswordFormValid, isRegisterForContestSuccessful, requirePassword, start ],
     );
 
     return (

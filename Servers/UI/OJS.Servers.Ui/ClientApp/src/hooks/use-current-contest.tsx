@@ -47,6 +47,7 @@ interface ICurrentContestContext {
         activeParticipantsCount: number;
         isSubmitAllowed: boolean;
         contestError: IErrorDataType | null;
+        isRegisterForContestSuccessful: boolean;
     };
     actions: {
         setContestPassword: (password: string) => void;
@@ -142,6 +143,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         get: registerForContest,
         data: registerForContestData,
         error: registerContestError,
+        isSuccess: isRegisterForContestSuccessful,
     } = useHttp<IRegisterForContestUrlParams, IRegisterForContestResponseType>({
         url: getRegisterForContestUrl,
         parameters: registerForContestParams,
@@ -243,7 +245,6 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
 
             if (!isNil(registerContestError)) {
                 setContestError(registerContestError);
-                setRequirePassword(false);
                 return;
             }
 
@@ -251,6 +252,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
 
             setContest({ id: registerForContestData.id, name: registerForContestData.name } as IContestType);
             setRequirePassword(responseRequirePassword);
+            setContestError(null);
         },
         [ registerForContestData, registerContestError ],
     );
@@ -381,6 +383,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 activeParticipantsCount,
                 isSubmitAllowed,
                 contestError,
+                isRegisterForContestSuccessful,
             },
             actions: {
                 setContestPassword,
@@ -412,6 +415,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             isSubmitAllowed,
             setIsSubmitAllowed,
             contestError,
+            isRegisterForContestSuccessful,
         ],
     );
 
