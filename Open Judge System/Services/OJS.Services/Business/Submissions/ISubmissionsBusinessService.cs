@@ -11,6 +11,8 @@
 
         void RecalculatePointsByProblem(int problemId);
 
-        void HardDeleteAllArchived();
+        int HardDeleteAllArchived();
+
+        int HardDeleteArchived(int deleteCountLimit = 0);
     }
 }

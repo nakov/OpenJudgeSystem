@@ -40,6 +40,14 @@
 
         public static string[] ThrottleIpWhitelist => GetSetting("ThrottleIpWhitelist").Split(',');
 
+        public static int DatabaseCommandTimeoutInSeconds => GetSettingOrDefault("DatabaseCommandTimeoutInSeconds", 30);
+
+        public static int ArchiveSingleBatchLimit => GetSettingOrDefault("ArchiveSingleBatchLimit", 25000);
+
+        public static int ArchiveMaxSubBatchSize => GetSettingOrDefault("ArchiveMaxSubBatchSize", 10000);
+
+        public static int ArchiveDailyBatchSize => GetSettingOrDefault("ArchiveDailyBatchSize", 500000);
+
         private static int GetIntSetting(string settingName) => int.Parse(GetSetting(settingName));
     }
 }
