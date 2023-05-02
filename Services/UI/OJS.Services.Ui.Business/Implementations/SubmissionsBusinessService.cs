@@ -379,9 +379,12 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         else
         {
             newSubmission.Processed = true;
+            newSubmission.Points = 0;
 
             await this.submissionsData.Add(newSubmission);
             await this.submissionsData.SaveChanges();
+
+            await this.participantScoresBusinessService.SaveForSubmission(newSubmission);
         }
     }
 
