@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import isNil from 'lodash/isNil';
 
 import { useSubmissions } from '../../hooks/submissions/use-submissions';
@@ -36,7 +36,7 @@ const FileUploader = ({ file, problemId }: IFileUploaderProps) => {
     );
 
     const handleChange = useCallback(
-        (event: ChangeEvent<HTMLInputElement>) => {
+        (event: any) => {
             const { target: { files: eventTarget } } = event;
             if (!eventTarget || isNil(problemId)) {
                 return;
@@ -45,6 +45,9 @@ const FileUploader = ({ file, problemId }: IFileUploaderProps) => {
             updateSubmissionCode(eventTarget[0]);
             setInternalFile(eventTarget[0]);
             setInternalProblemId(problemId);
+
+            // eslint-disable-next-line no-param-reassign
+            event.target.value = null;
         },
         [ updateSubmissionCode, problemId ],
     );
