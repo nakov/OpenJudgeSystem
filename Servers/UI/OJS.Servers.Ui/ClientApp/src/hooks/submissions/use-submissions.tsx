@@ -97,11 +97,6 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         bodyAsFormData: true,
     });
 
-    useEffect(
-        () => console.log(problemSubmissionErrors),
-        [ problemSubmissionErrors ],
-    );
-
     const isSubmissionSuccessful = useMemo(() => isSuccess, [ isSuccess ]);
 
     const getSubmitParamsAsFormData = useCallback(async () => {
@@ -126,6 +121,36 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         return bodyFormData;
     }, [ submitCodeParams ]);
 
+    const resetProblemSubmissionError = useCallback(
+        () => {
+            const { id: problemId } = currentProblem || {};
+            if (isNil(problemId)) {
+                return;
+            }
+
+            const problemSubmissionErrorsArrayValues = Object.values(problemSubmissionErrors).filter((x) => {
+                if (isNil(x)) {
+                    return false;
+                }
+                const { extensions: { Data: id } } = x;
+                return problemId.toString() !== id;
+            });
+
+            const newProblemSubmissionErrors =
+                Object.assign({}, ...problemSubmissionErrorsArrayValues.map((x) => {
+                    if (isNil(x)) {
+                        return null;
+                    }
+
+                    const { extensions: { Data: id } } = x;
+
+                    return { [id]: x };
+                }));
+            setProblemSubmissionErrors(newProblemSubmissionErrors);
+        },
+        [ currentProblem, problemSubmissionErrors ],
+    );
+
     const submit = useCallback(
         async () => {
             if (isNil(submitCodeParams)) {
@@ -142,31 +167,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
             stopLoading();
 
-            const { id: problemId } = currentProblem || {};
-            if (isNil(problemId)) {
-                return;
-            }
-
-            const problemSubmissionErrorsArrayValues = Object.values(problemSubmissionErrors).filter((x) => {
-                if (isNil(x)) {
-                    return false;
-                }
-                const { extensions: { Data: id } } = x;
-                return problemId.toString() !== id;
-            });
-
-            console.log(problemSubmissionErrorsArrayValues);
-            const newProblemSubmissionErrors =
-                Object.assign({}, ...problemSubmissionErrorsArrayValues.map((x) => {
-                    if (isNil(x)) {
-                        return null;
-                    }
-
-                    const { extensions: { Data: id } } = x;
-
-                    return { [id]: x };
-                }));
-            setProblemSubmissionErrors(newProblemSubmissionErrors);
+            resetProblemSubmissionError();
         },
         [
             startLoading,
@@ -176,8 +177,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             submitCode,
             submitCodeParams,
             stopLoading,
-            currentProblem,
-            problemSubmissionErrors,
+            resetProblemSubmissionError,
         ],
     );
 
@@ -254,8 +254,8 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const setProblemSubmissionError = useCallback(
         (error: IErrorDataType) => {
             const { extensions: { Data: problemId } } = error;
-            console.log(problemSubmissionErrors);
-            if (problemSubmissionErrors[problemId] !== error && isNil(Object.keys(problemSubmissionErrors).find((x) => x === problemId))) {
+            const closedErrorMessageSubmissionProblemId = Object.keys(problemSubmissionErrors).find((x) => x === problemId);
+            if (problemSubmissionErrors[problemId] !== error && isNil(closedErrorMessageSubmissionProblemId)) {
                 setProblemSubmissionErrors({
                     ...problemSubmissionErrors,
                     [problemId]: error,
