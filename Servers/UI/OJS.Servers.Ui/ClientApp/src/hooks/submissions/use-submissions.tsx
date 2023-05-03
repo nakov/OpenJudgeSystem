@@ -136,16 +136,15 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                 return problemId.toString() !== id;
             });
 
-            const newProblemSubmissionErrors =
-                Object.assign({}, ...problemSubmissionErrorsArrayValues.map((x) => {
-                    if (isNil(x)) {
-                        return null;
-                    }
+            const newProblemSubmissionErrors = Object.assign({}, ...problemSubmissionErrorsArrayValues.map((x) => {
+                if (isNil(x)) {
+                    return null;
+                }
 
-                    const { extensions: { Data: id } } = x;
+                const { extensions: { Data: id } } = x;
 
-                    return { [id]: x };
-                }));
+                return { [id]: x };
+            }));
             setProblemSubmissionErrors(newProblemSubmissionErrors);
         },
         [ currentProblem, problemSubmissionErrors ],
@@ -166,7 +165,6 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             }
 
             stopLoading();
-
             resetProblemSubmissionError();
         },
         [
@@ -255,6 +253,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         (error: IErrorDataType) => {
             const { extensions: { Data: problemId } } = error;
             const closedErrorMessageSubmissionProblemId = Object.keys(problemSubmissionErrors).find((x) => x === problemId);
+
             if (problemSubmissionErrors[problemId] !== error && isNil(closedErrorMessageSubmissionProblemId)) {
                 setProblemSubmissionErrors({
                     ...problemSubmissionErrors,
