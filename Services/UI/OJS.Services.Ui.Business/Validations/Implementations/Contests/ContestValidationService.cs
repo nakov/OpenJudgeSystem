@@ -67,7 +67,7 @@ public class ContestValidationService : IContestValidationService
         {
             if (participant.ParticipationEndTime != null)
             {
-                return DateTime.Now >= participant.ParticipationEndTime.Value.ToUniversalTime();
+                return DateTime.Now >= participant.ParticipationEndTime.Value;
             }
         }
 
