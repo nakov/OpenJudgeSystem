@@ -112,6 +112,21 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         [],
     );
 
+    const getSubmissionDetailsResults = useCallback(
+        async (submissionId: number, isOfficial: boolean) => {
+            if (isNil(submissionId)) {
+                return;
+            }
+
+            setSubmissionDetailsResultsUrlParams({
+                submissionId,
+                isOfficial,
+                take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
+            });
+        },
+        [],
+    );
+
     useEffect(() => {
         if (isNil(downloadSubmissionFileResponse)) {
             return;
@@ -138,21 +153,6 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
 
         setProblemSubmissionFileIdToDownload(null);
     }, [ problemSubmissionFileIdToDownload, downloadSubmissionFile, startLoading, stopLoading ]);
-
-    const getSubmissionDetailsResults = useCallback(
-        async (submissionId: number, isOfficial: boolean) => {
-            if (isNil(submissionId)) {
-                return;
-            }
-
-            setSubmissionDetailsResultsUrlParams({
-                submissionId,
-                isOfficial,
-                take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
-            });
-        },
-        [],
-    );
 
     useEffect(
         () => {
