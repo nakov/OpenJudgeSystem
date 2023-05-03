@@ -14,8 +14,6 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
             var sulsPlatformBaseUrl = EnvironmentUtils.GetRequiredByKey(SulsPlatformBaseUrlKey);
 
             client.BaseAddress = new Uri(sulsPlatformBaseUrl);
-
-            EnvironmentUtils.GetRequiredByKey(this.ApiKey!);
         }
     }
 }
