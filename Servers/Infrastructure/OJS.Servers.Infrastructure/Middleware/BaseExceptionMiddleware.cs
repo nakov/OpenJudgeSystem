@@ -63,7 +63,7 @@
             problemDetails.Title = ValidationExceptionTitle;
             problemDetails.Detail = exception.Message;
             problemDetails.Status = 422;
-            problemDetails.Instance = exception.ParameterName;
+            problemDetails.Extensions["Data"] = exception.ParameterName;
         }
 
         protected virtual void HandleException(
