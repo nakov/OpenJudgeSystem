@@ -40,13 +40,21 @@ const ContestsPage = () => {
     const { state: { params }, actions: { clearHash } } = useHashUrlParams();
     const { getContestCategoryBreadcrumbItemPath } = useAppUrls();
 
-    useEffect(() => {
-        initiateGetAllContestsQuery();
+    useEffect(
+        () => {
+            if (!isEmpty(params)) {
+                clearHash();
+            }
+        },
+        [ clearHash, params ],
+    );
 
-        if (!isEmpty(params)) {
-            clearHash();
-        }
-    }, [ clearHash, params, initiateGetAllContestsQuery ]);
+    useEffect(
+        () => {
+            initiateGetAllContestsQuery();
+        },
+        [ initiateGetAllContestsQuery ],
+    );
 
     const handlePageChange = useCallback(
         (page: number) => changePage(page),
