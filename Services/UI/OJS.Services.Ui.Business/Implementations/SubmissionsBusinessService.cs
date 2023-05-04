@@ -2,6 +2,7 @@ namespace OJS.Services.Ui.Business.Implementations;
 
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using OJS.Common;
 using OJS.Common.Helpers;
 using OJS.Data.Models.Submissions;
@@ -312,7 +313,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         if (!submitSubmissionValidationServiceResult.IsValid)
         {
-            throw new BusinessServiceException(submitSubmissionValidationServiceResult.Message, submitSubmissionValidationServiceResult.PropertyName);
+            throw new BusinessServiceException(
+                submitSubmissionValidationServiceResult.Message,
+                JsonConvert.SerializeObject(new { ProblemId = submitSubmissionValidationServiceResult.PropertyName }));
         }
 
         var newSubmission = model.Map<Submission>();

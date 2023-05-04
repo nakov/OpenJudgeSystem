@@ -121,10 +121,20 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         return bodyFormData;
     }, [ submitCodeParams ]);
 
+    const getErrorProblemId = useCallback(
+        (error: IErrorDataType) => {
+            const { extensions: { Data: problemId } } = error;
+            const problemIdObject = JSON.parse(problemId as unknown as string);
+
+            return Object.values(problemIdObject)[0];
+        },
+        [],
+    );
+
     const resetProblemSubmissionError = useCallback(
         () => {
-            const { id: problemId } = currentProblem || {};
-            if (isNil(problemId)) {
+            const { id: currentProblemId } = currentProblem || {};
+            if (isNil(currentProblemId)) {
                 return;
             }
 
@@ -133,9 +143,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                     return false;
                 }
 
-                const { extensions: { Data: id } } = x;
-
-                return problemId.toString() !== id as unknown as string;
+                return currentProblemId.toString() !== getErrorProblemId(x);
             });
 
             const newProblemSubmissionErrors = Object.assign({}, ...problemSubmissionErrorsArrayValues.map((x) => {
@@ -143,14 +151,12 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                     return null;
                 }
 
-                const { extensions: { Data: id } } = x;
-
-                return { [id as unknown as string]: x };
+                return { [getErrorProblemId(x) as unknown as string]: x };
             }));
 
             setProblemSubmissionErrors(newProblemSubmissionErrors);
         },
-        [ currentProblem, problemSubmissionErrors ],
+        [ currentProblem, problemSubmissionErrors, getErrorProblemId ],
     );
 
     const submit = useCallback(
@@ -254,7 +260,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     const setProblemSubmissionError = useCallback(
         (error: IErrorDataType) => {
-            const { extensions: { Data: problemId } } = error;
+            const problemId = getErrorProblemId(error);
             const closedErrorMessageSubmissionProblemId = Object.keys(problemSubmissionErrors)
                 .find((x) => x === problemId as unknown as string);
 
@@ -265,7 +271,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                 });
             }
         },
-        [ problemSubmissionErrors ],
+        [ problemSubmissionErrors, getErrorProblemId ],
     );
 
     useEffect(
