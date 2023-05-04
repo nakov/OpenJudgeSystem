@@ -3,13 +3,11 @@ import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../common/constants';
-import { registerContest } from '../../common/register-contest';
 import Contest from '../../components/contests/contest/Contest';
 import ContestPasswordForm from '../../components/contests/contest-password-form/ContestPasswordForm';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
 import { useCurrentContest } from '../../hooks/use-current-contest';
-import HomePage from '../home/HomePage';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 
@@ -56,6 +54,14 @@ const ContestPage = () => {
         [ isPasswordValid, requirePassword ],
     );
 
+    const internalContest = useMemo(
+        () => ({
+            id: contestIdToNumber,
+            isOfficial: isParticipationOfficial,
+        }),
+        [ contestIdToNumber, isParticipationOfficial ],
+    );
+
     const isValidParticipationType = useMemo(
         () => participationType === ContestParticipationType.Compete || participationType === ContestParticipationType.Practice,
         [ participationType ],
@@ -97,7 +103,7 @@ const ContestPage = () => {
     const renderPage = useMemo(
         () => isValidParticipationType
             ? renderContestPage
-            : <HomePage />,
+            : <div>Invalid URL</div>,
         [ isValidParticipationType, renderContestPage ],
     );
 
@@ -108,10 +114,10 @@ const ContestPage = () => {
             }
 
             (async () => {
-                await registerParticipant(registerContest(contestIdToNumber, isParticipationOfficial));
+                await registerParticipant(internalContest);
             })();
         },
-        [ contestId, contestIdToNumber, isParticipationOfficial, registerParticipant ],
+        [ internalContest, contestId, registerParticipant ],
     );
 
     useEffect(
@@ -129,10 +135,10 @@ const ContestPage = () => {
             }
 
             (async () => {
-                await start(registerContest(contestIdToNumber, isParticipationOfficial));
+                await start(internalContest);
             })();
         },
-        [ contestIdToNumber, isParticipationOfficial, isPasswordFormValid, isRegisterForContestSuccessful, requirePassword, start ],
+        [ internalContest, isPasswordFormValid, isRegisterForContestSuccessful, requirePassword, start ],
     );
 
     return (
