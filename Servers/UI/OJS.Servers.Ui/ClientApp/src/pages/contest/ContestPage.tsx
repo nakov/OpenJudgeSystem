@@ -28,7 +28,6 @@ const ContestPage = () => {
             requirePassword,
             isPasswordValid,
             contestError,
-            isRegisterForContestSuccessful,
         },
         actions: {
             registerParticipant,
@@ -54,6 +53,36 @@ const ContestPage = () => {
     const isPasswordFormValid = useMemo(
         () => !requirePassword || isPasswordValid,
         [ isPasswordValid, requirePassword ],
+    );
+
+    useEffect(
+        () => {
+            if (isEmpty(contestId)) {
+                return;
+            }
+
+            (async () => {
+                await registerParticipant(internalContest);
+            })();
+        },
+        [ internalContest, contestId, registerParticipant ],
+    );
+
+    useEffect(
+        () => {
+            if (isNil(requirePassword) && isNil(contestError)) {
+                return;
+            }
+
+            if (!isPasswordFormValid) {
+                return;
+            }
+
+            (async () => {
+                await start(internalContest);
+            })();
+        },
+        [ contestError, internalContest, isPasswordFormValid, requirePassword, start ],
     );
 
     const isValidParticipationType = useMemo(
@@ -100,39 +129,10 @@ const ContestPage = () => {
             : <HomePage />,
         [ isValidParticipationType, renderContestPage ],
     );
-
-    useEffect(
-        () => {
-            if (isEmpty(contestId)) {
-                return;
-            }
-
-            (async () => {
-                await registerParticipant(registerContest(contestIdToNumber, isParticipationOfficial));
-            })();
-        },
-        [ contestId, contestIdToNumber, isParticipationOfficial, registerParticipant ],
-    );
-
-    useEffect(
-        () => {
-            if (!isRegisterForContestSuccessful) {
-                return;
-            }
-
-            if (isNil(requirePassword)) {
-                return;
-            }
-
-            if (!isPasswordFormValid) {
-                return;
-            }
-
-            (async () => {
-                await start(registerContest(contestIdToNumber, isParticipationOfficial));
-            })();
-        },
-        [ contestIdToNumber, isParticipationOfficial, isPasswordFormValid, isRegisterForContestSuccessful, requirePassword, start ],
+                await registerParticipant(internalContest);
+        [ internalContest, contestId, registerParticipant ],
+                await start(internalContest);
+        [ internalContest, isPasswordFormValid, isRegisterForContestSuccessful, requirePassword, start ],
     );
 
     return (
