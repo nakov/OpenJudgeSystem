@@ -26,7 +26,7 @@ interface ISubmissionsContext {
         updateSubmissionCode: (code: string | File) => void;
         selectSubmissionTypeById: (id: number) => void;
         removeProblemSubmissionCode: (id: number) => void;
-        closeAlertBoxErrorMessage: (value: string) => void;
+        closeErrorMessage: (value: string) => void;
     };
 }
 
@@ -132,8 +132,10 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                 if (isNil(x)) {
                     return false;
                 }
+
                 const { extensions: { Data: id } } = x;
-                return problemId.toString() !== id;
+
+                return problemId.toString() !== id as unknown as string;
             });
 
             const newProblemSubmissionErrors = Object.assign({}, ...problemSubmissionErrorsArrayValues.map((x) => {
@@ -143,8 +145,9 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
                 const { extensions: { Data: id } } = x;
 
-                return { [id]: x };
+                return { [id as unknown as string]: x };
             }));
+
             setProblemSubmissionErrors(newProblemSubmissionErrors);
         },
         [ currentProblem, problemSubmissionErrors ],
@@ -235,7 +238,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         [ currentProblem, selectSubmissionTypeById, selectedSubmissionType ],
     );
 
-    const closeAlertBoxErrorMessage = useCallback(
+    const closeErrorMessage = useCallback(
         (problemId: string) => {
             if (isNil(problemSubmissionErrors[problemId])) {
                 return;
@@ -252,12 +255,13 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const setProblemSubmissionError = useCallback(
         (error: IErrorDataType) => {
             const { extensions: { Data: problemId } } = error;
-            const closedErrorMessageSubmissionProblemId = Object.keys(problemSubmissionErrors).find((x) => x === problemId);
+            const closedErrorMessageSubmissionProblemId = Object.keys(problemSubmissionErrors)
+                .find((x) => x === problemId as unknown as string);
 
-            if (problemSubmissionErrors[problemId] !== error && isNil(closedErrorMessageSubmissionProblemId)) {
+            if (problemSubmissionErrors[problemId as unknown as string] !== error && isNil(closedErrorMessageSubmissionProblemId)) {
                 setProblemSubmissionErrors({
                     ...problemSubmissionErrors,
-                    [problemId]: error,
+                    [problemId as unknown as string]: error,
                 });
             }
         },
@@ -307,7 +311,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                 selectSubmissionTypeById,
                 submit,
                 removeProblemSubmissionCode,
-                closeAlertBoxErrorMessage,
+                closeErrorMessage,
             },
         }),
         [
@@ -318,7 +322,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             isSubmissionSuccessful,
             updateSubmissionCode,
             removeProblemSubmissionCode,
-            closeAlertBoxErrorMessage,
+            closeErrorMessage,
             problemSubmissionErrors,
         ],
     );

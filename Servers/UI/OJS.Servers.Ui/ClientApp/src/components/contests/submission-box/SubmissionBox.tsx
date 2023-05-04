@@ -39,7 +39,7 @@ const SubmissionBox = () => {
             updateSubmissionCode,
             selectSubmissionTypeById,
             removeProblemSubmissionCode,
-            closeAlertBoxErrorMessage,
+            closeErrorMessage,
         },
     } = useSubmissions();
 
@@ -197,10 +197,10 @@ const SubmissionBox = () => {
             <AlertBox
               message={detail}
               type={AlertBoxType.error}
-              onClose={() => closeAlertBoxErrorMessage(problemId.toString())}
+              onClose={() => closeErrorMessage(problemId.toString())}
             />
         );
-    }, [ closeAlertBoxErrorMessage, currentProblem, problemSubmissionErrors ]);
+    }, [ closeErrorMessage, currentProblem, problemSubmissionErrors ]);
 
     useEffect(() => {
         setSubmitLimit(userSubmissionsTimeLimit);
