@@ -20,7 +20,6 @@ interface ISubmissionsContext {
         selectedSubmissionType: ISubmissionTypeType | null;
         submitMessage: string | null;
         setSubmitMessage: (value: string | null) => void;
-        isSubmissionSuccessful: boolean | null;
     };
     actions: {
         submit: () => Promise<void>;
@@ -83,7 +82,6 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     const {
         post: submitCode,
-        isSuccess,
         error: errorSubmitCode,
     } = useHttp<null, null, ISubmitCodeTypeParametersType>({ url: getSubmitUrl });
 
@@ -94,8 +92,6 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         url: getSubmitFileUrl,
         bodyAsFormData: true,
     });
-
-    const isSubmissionSuccessful = useMemo(() => isSuccess, [ isSuccess ]);
 
     const getSubmitParamsAsFormData = useCallback(async () => {
         const bodyFormData = new FormData();
@@ -223,7 +219,6 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                 selectedSubmissionType,
                 submitMessage,
                 setSubmitMessage,
-                isSubmissionSuccessful,
             },
             actions: {
                 updateSubmissionCode,
@@ -239,7 +234,6 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             submit,
             submitMessage,
             setSubmitMessage,
-            isSubmissionSuccessful,
             updateSubmissionCode,
             removeProblemSubmissionCode,
         ],
