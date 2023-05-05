@@ -57,7 +57,7 @@ public class ContestValidationService : IContestValidationService
     {
         var isUserAdminOrLecturerInContest = isAdmin || isUserLecturerInContest;
 
-        if (!contest.IsExam || isUserAdminOrLecturerInContest)
+        if (isUserAdminOrLecturerInContest)
         {
             return false;
         }
@@ -67,7 +67,7 @@ public class ContestValidationService : IContestValidationService
         {
             if (participant.ParticipationEndTime != null)
             {
-                return DateTime.Now >= participant.ParticipationEndTime;
+                return DateTime.Now >= participant.ParticipationEndTime.Value;
             }
         }
 
