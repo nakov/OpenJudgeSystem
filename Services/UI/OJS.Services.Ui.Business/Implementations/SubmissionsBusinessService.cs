@@ -380,9 +380,13 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         else
         {
             newSubmission.Processed = true;
+            newSubmission.Points = 0;
+            newSubmission.Problem = problem;
 
             await this.submissionsData.Add(newSubmission);
             await this.submissionsData.SaveChanges();
+
+            await this.participantScoresBusinessService.SaveForSubmission(newSubmission);
         }
     }
 
