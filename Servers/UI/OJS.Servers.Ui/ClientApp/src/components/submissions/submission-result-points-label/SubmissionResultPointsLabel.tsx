@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import concatClassNames from '../../../utils/class-names';
 import Label, { LabelType } from '../../guidelines/labels/Label';
@@ -23,10 +23,6 @@ const SubmissionResultPointsLabel = ({
             : points === 100
                 ? LabelType.success
                 : LabelType.info;
-
-    useEffect(() => {
-        console.log(`${points} ${labelType}`);
-    });
 
     const currentPoints = isProcessed
         ? points
