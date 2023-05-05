@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import concatClassNames from '../../../utils/class-names';
@@ -44,6 +45,7 @@ interface IButtonBaseProps<TButtonType> extends IHaveOptionalClassName, IHaveOpt
 interface IButtonProps extends IButtonBaseProps<ButtonType> {
     onClick: React.MouseEventHandler<HTMLButtonElement>;
     isWide?: boolean;
+    internalClassName?: string;
 }
 
 interface ILinkButtonProps extends IButtonBaseProps<LinkButtonType> {
@@ -81,6 +83,7 @@ const Button = ({
     id = generateId(),
     state = ButtonState.enabled,
     isWide = false,
+    internalClassName = '',
 }: IButtonProps) => {
     validateOnlyChildrenOrText(text, children);
 
@@ -96,14 +99,17 @@ const Button = ({
         ? styles.wide
         : '';
 
-    const buttonClassName = concatClassNames(
-        styles.btn,
-        typeClassName,
-        sizeClassName,
-        stateClassName,
-        wideClassName,
-        className,
-    );
+    const buttonClassName =
+        isEmpty(internalClassName)
+            ? concatClassNames(
+                styles.btn,
+                typeClassName,
+                sizeClassName,
+                stateClassName,
+                wideClassName,
+                className,
+            )
+            : internalClassName;
 
     const content = children ?? text;
 

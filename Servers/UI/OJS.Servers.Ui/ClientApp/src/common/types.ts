@@ -1,3 +1,5 @@
+import { IContestSearchType, IProblemSearchType, IUserSearchType } from './search-types';
+
 interface ISubmissionTypeType {
     id: number;
     name: string;
@@ -81,18 +83,12 @@ interface IRegisterForContestResponseType {
     requirePassword: boolean;
 }
 
-interface IStartParticipationValidationType {
-    message: string;
-    isValid: boolean;
-}
-
 interface IStartParticipationResponseType {
     contest: IContestType;
     participantId: number;
     contestIsCompete: boolean;
     lastSubmissionTime: Date;
     remainingTimeInMilliseconds: number;
-    validationResult: IStartParticipationValidationType;
     userSubmissionsTimeLimit: number;
     totalParticipantsCount: number;
     activeParticipantsCount: number;
@@ -116,12 +112,17 @@ interface IUserPermissionsType {
     canAccessAdministration: boolean;
 }
 
+interface ISearchResponseModel {
+    contests: IContestSearchType[];
+    problems: IProblemSearchType[];
+    users: IUserSearchType[];
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
     IGetContestsForIndexResponseType,
     IRegisterForContestResponseType,
-    IStartParticipationValidationType,
     IStartParticipationResponseType,
     IContestType,
     IProblemType,
@@ -130,4 +131,5 @@ export type {
     IPagedResultType,
     IUserType,
     IUserPermissionsType,
+    ISearchResponseModel,
 };

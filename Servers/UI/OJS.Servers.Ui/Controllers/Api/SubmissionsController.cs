@@ -55,24 +55,6 @@ public class SubmissionsController : BaseApiController
             .ToOkResult();
 
     /// <summary>
-    /// Gets a subset of submissions by specific problem and user and given take count.
-    /// </summary>
-    /// <param name="problemId">The id of the problem.</param>
-    /// <param name="userId">The id of the user that we want to get the problem submissions for.</param>
-    /// <param name="isOfficial">Return from compete or practice participation types.</param>
-    /// <returns>A collection of submissions for a specific problem by user.</returns>
-    [HttpGet("{problemId:int}/{userId}")]
-    [ProducesResponseType(typeof(IEnumerable<SubmissionResultsResponseModel>), Status200OK)]
-    public async Task<IActionResult> GetSubmissionResultsByProblemAndUser(
-        int problemId,
-        string userId,
-        [FromQuery] bool isOfficial)
-        => await this.submissionsBusiness
-            .GetSubmissionResultsByProblemAndUser(problemId, isOfficial, userId)
-            .MapCollection<SubmissionResultsResponseModel>()
-            .ToOkResult();
-
-    /// <summary>
     /// Gets a subset of submissions by specific problem and given take count.
     /// </summary>
     /// <param name="id">The id of the problem.</param>
@@ -87,6 +69,24 @@ public class SubmissionsController : BaseApiController
         [FromQuery] int take)
         => await this.submissionsBusiness
             .GetSubmissionResultsByProblem(id, isOfficial, take)
+            .MapCollection<SubmissionResultsResponseModel>()
+            .ToOkResult();
+
+    /// <summary>
+    /// Gets a subset of submission results for the selected user by specific problem and given take count.
+    /// </summary>
+    /// <param name="submissionId">The id of the submission.</param>
+    /// <param name="isOfficial">Should the submissions be only from compete mode.</param>
+    /// <param name="take">Number of submissions to return.</param>
+    /// <returns>A collection of submissions for a specific problem.</returns>
+    [HttpGet("{submissionId:int}")]
+    [ProducesResponseType(typeof(IEnumerable<SubmissionResultsResponseModel>), Status200OK)]
+    public async Task<IActionResult> GetSubmissionDetailsResults(
+        int submissionId,
+        [FromQuery] bool isOfficial,
+        [FromQuery] int take)
+        => await this.submissionsBusiness
+            .GetSubmissionDetailsResults(submissionId, isOfficial, take)
             .MapCollection<SubmissionResultsResponseModel>()
             .ToOkResult();
 

@@ -80,7 +80,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         <span className={styles.testRunData}>
             <span className={styles.testRunDataParagraph}>
                 <TimeLimitIcon
-                  size={IconSize.Small}
+                  size={IconSize.Medium}
                 />
                 <span>
                     {testRun.timeUsed}
@@ -89,7 +89,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
             </span>
             <span className={styles.testRunDataParagraph}>
                 <MemoryIcon
-                  size={IconSize.Small}
+                  size={IconSize.Medium}
                 />
                 <span>
                     {testRun.memoryUsed}
@@ -103,13 +103,15 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
 
     const renderHeader = useCallback(
         () => (
-            <Heading
-              type={HeadingType.small}
-              className={testRunHeadingClassName}
-            >
-                { testRunHeadingText }
+            <>
+                <Heading
+                  type={HeadingType.small}
+                  className={testRunHeadingClassName}
+                >
+                    { testRunHeadingText }
+                </Heading>
                 { renderTestRunData() }
-            </Heading>
+            </>
         ),
         [
             testRunHeadingClassName,

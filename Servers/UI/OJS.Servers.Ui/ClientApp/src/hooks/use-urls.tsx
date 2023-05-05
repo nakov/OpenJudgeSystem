@@ -1,12 +1,15 @@
 import React, { createContext, useContext, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
+import { SearchParams } from '../common/search-types';
 import {
     IAllContestsUrlParams,
-    IDownloadProblemResourceUrlParams, IGetContestParticipationScoresForParticipantUrlParams,
+    IDownloadProblemResourceUrlParams,
+    IGetContestByProblemUrlParams,
+    IGetContestParticipationScoresForParticipantUrlParams,
     IGetContestResultsParams,
+    IGetSearchResultsUrlParams,
     IGetSubmissionDetailsByIdUrlParams,
-    IGetSubmissionResultsByProblemAndUserUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
     IRetestSubmissionUrlParams,
     IStartContestParticipationUrlParams,
@@ -29,7 +32,9 @@ interface IUrlsContext {
     getStartContestParticipationUrl: (params: IStartContestParticipationUrlParams) => string;
     getContestParticipantScoresForParticipantUrl: (params: IGetContestParticipationScoresForParticipantUrlParams) => string;
     getSubmissionResultsByProblemUrl: (params: IGetSubmissionResultsByProblemUrlParams) => string;
-    getSubmissionResultsByProblemAndUserUrl: (params: IGetSubmissionResultsByProblemAndUserUrlParams) => string;
+    getSubmissionDetailsResultsUrl: (params: IGetSubmissionDetailsByIdUrlParams) => string;
+    getPublicSubmissionsUrl: () => string;
+    getSubmissionsTotalCountUrl: () => string;
     getSubmissionsDetailsUrl: () => string;
     getSubmissionDetailsByIdUrl: (params: IGetSubmissionDetailsByIdUrlParams) => string;
     getSubmitUrl: () => string;
@@ -40,6 +45,8 @@ interface IUrlsContext {
     getContestResultsUrl: (params: IGetContestResultsParams) => string;
     getHomeStatisticsUrl: () => string;
     getAdministrationRetestSubmission: (params: IRetestSubmissionUrlParams) => string;
+    getSearchResults: (searchTerm: IGetSearchResultsUrlParams) => string;
+    getContestByProblemUrl: (params: IGetContestByProblemUrlParams) => string;
 }
 
 const UrlsContext = createContext<IUrlsContext>({} as IUrlsContext);
@@ -111,6 +118,8 @@ const getContestParticipantScoresForParticipantUrl =
     ({ participantId }: IGetContestParticipationScoresForParticipantUrlParams) => `
     ${baseApiUrl}/ParticipantScores/GetScoresForParticipant/${participantId}`;
 
+const getContestByProblemUrl = ({ problemId }: IGetContestByProblemUrlParams) => `${baseApiUrl}/Contests/GetByProblem/${problemId}`;
+
 const getCategoriesTreeUrl =
     () => `${baseApiUrl}/ContestCategories/GetCategoriesTree`;
 
@@ -122,19 +131,20 @@ const getContestResultsUrl = ({
 
 // submissions
 const getSubmissionResultsByProblemUrl = ({
-    id,
+    problemId,
     isOfficial,
     take,
 }: IGetSubmissionResultsByProblemUrlParams) => `
-    ${baseApiUrl}/Submissions/GetSubmissionResultsByProblem/${id}?isOfficial=${isOfficial}&take=${take}`;
+    ${baseApiUrl}/Submissions/GetSubmissionResultsByProblem/${problemId}?isOfficial=${isOfficial}&take=${take}`;
 
-const getSubmissionResultsByProblemAndUserUrl = ({
-    problemId,
+const getSubmissionDetailsResultsUrl = ({
+    submissionId,
     isOfficial,
-    userId,
-}: IGetSubmissionResultsByProblemAndUserUrlParams) => `
-${baseApiUrl}/Submissions/GetSubmissionResultsByProblemAndUser/${problemId}/${userId}?isOfficial=${isOfficial}`;
-
+    take,
+}: IGetSubmissionDetailsByIdUrlParams) => `
+    ${baseApiUrl}/Submissions/GetSubmissionDetailsResults/${submissionId}?isOfficial=${isOfficial}&take=${take}`;
+const getPublicSubmissionsUrl = () => `${baseApiUrl}/Submissions/Public`;
+const getSubmissionsTotalCountUrl = () => `${baseApiUrl}/Submissions/TotalCount`;
 const getSubmissionsDetailsUrl = () => `${baseApiUrl}/Submissions/Details`;
 const getSubmissionDetailsByIdUrl =
     ({ submissionId }: IGetSubmissionDetailsByIdUrlParams) => `${getSubmissionsDetailsUrl()}/${submissionId}`;
@@ -151,6 +161,20 @@ const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams
 // Statistics
 const getHomeStatisticsUrl = () => `${baseApiUrl}/StatisticsPreview/GetForHome`;
 
+// Search
+const getSearchResults = ({ searchTerm, page, selectedTerms }: IGetSearchResultsUrlParams) => {
+    const searchQuery = `${SearchParams.search}=${searchTerm}`;
+
+    const pageQuery = `page=${page}`;
+
+    const selectedTermQuery = `&${selectedTerms
+        .map(({ key, value }) => `${key}=${value}`)
+        .join('&')
+    }`;
+
+    return `${baseApiUrl}/Search/GetSearchResults?${searchQuery}${selectedTermQuery}&${pageQuery}`;
+};
+
 const UrlsProvider = ({ children }: IUrlsProviderProps) => {
     const value = useMemo(
         () => ({
@@ -165,7 +189,9 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
             getContestParticipantScoresForParticipantUrl,
             getDownloadProblemResourceUrl,
             getSubmissionResultsByProblemUrl,
-            getSubmissionResultsByProblemAndUserUrl,
+            getSubmissionDetailsResultsUrl,
+            getPublicSubmissionsUrl,
+            getSubmissionsTotalCountUrl,
             getIndexContestsUrl,
             getProfileInfoUrl,
             getSubmissionsDetailsUrl,
@@ -179,6 +205,8 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
             getContestResultsUrl,
             getHomeStatisticsUrl,
             getAdministrationRetestSubmission,
+            getSearchResults,
+            getContestByProblemUrl,
         }),
         [],
     );

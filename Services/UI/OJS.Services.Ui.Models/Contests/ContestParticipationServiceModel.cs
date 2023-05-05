@@ -25,8 +25,6 @@ public class ContestParticipationServiceModel : IMapExplicitly
 
     public int TotalParticipantsCount { get; set; }
 
-    public ValidationResult ValidationResult { get; set; } = null!;
-
     public int ActiveParticipantsCount { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)

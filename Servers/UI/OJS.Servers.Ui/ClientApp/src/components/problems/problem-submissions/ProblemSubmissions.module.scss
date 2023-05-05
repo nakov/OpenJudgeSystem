@@ -1,5 +1,6 @@
 @use 'src/styles/colors';
 @use 'src/styles/variables';
+@use 'src/styles/components';
 @use 'src/styles/fonts';
 
 .submissionResultsContent {
@@ -13,6 +14,16 @@
       font-size: variables.$f-size-16;
     }
   }
+}
+
+.problemSubmissionsError {
+  @extend %contentSize;
+
+  color: colors.$text-dark-gray-color;
+  font-family: fonts.$font-family-lato;
+  font-size: variables.$f-size-18;
+  margin-top: 30px;
+  text-align: center;
 }
 
 .refreshBtn {

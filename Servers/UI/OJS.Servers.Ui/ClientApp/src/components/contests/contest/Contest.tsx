@@ -22,10 +22,10 @@ const Contest = () => {
             score,
             maxScore,
             remainingTimeInMilliseconds,
-            validationResult,
             totalParticipantsCount,
             activeParticipantsCount,
             isOfficial,
+            contestError,
         },
         actions: { setIsSubmitAllowed },
     } = useCurrentContest();
@@ -148,7 +148,7 @@ const Contest = () => {
             <span>
                 {participantsStateText}
                 {' '}
-                Participitants:
+                Participants:
                 {' '}
                 <Text type={TextType.Bold}>
                     {participantsValue}
@@ -158,20 +158,31 @@ const Contest = () => {
         [ participantsStateText, participantsValue ],
     );
 
-    const renderErrorMessage = useCallback(() => (
-        <div className={styles.headingContest}>
-            <Heading
-              type={HeadingType.primary}
-              className={styles.contestHeading}
-            >
-                {contestTitle}
-                {' '}
-                -
-                {' '}
-                {validationResult.message}
-            </Heading>
-        </div>
-    ), [ validationResult, contestTitle ]);
+    const renderErrorHeading = useCallback(
+        (message: string) => (
+            <div className={styles.headingContest}>
+                <Heading
+                  type={HeadingType.primary}
+                  className={styles.contestHeading}
+                >
+                    {message}
+                </Heading>
+            </div>
+        ),
+        [],
+    );
+
+    const renderErrorMessage = useCallback(
+        () => {
+            if (!isNil(contestError)) {
+                const { detail } = contestError;
+                return renderErrorHeading(detail);
+            }
+
+            return null;
+        },
+        [ renderErrorHeading, contestError ],
+    );
 
     const renderContest = useCallback(
         () => (
@@ -216,12 +227,10 @@ const Contest = () => {
     );
 
     const renderPage = useCallback(
-        () => isNil(validationResult)
-            ? <div>Loading data</div>
-            : validationResult.isValid
-                ? renderContest()
-                : renderErrorMessage(),
-        [ renderErrorMessage, renderContest, validationResult ],
+        () => isNil(contestError)
+            ? renderContest()
+            : renderErrorMessage(),
+        [ renderErrorMessage, renderContest, contestError ],
     );
 
     return renderPage();
