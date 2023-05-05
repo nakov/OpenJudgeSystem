@@ -40,6 +40,10 @@
 
         public DateTime? ModifiedOn { get; set; }
 
+        public byte[]? ByteContent { get; set; }
+
+        public string? FileExtension { get; set; }
+
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<Submission, SubmissionDetailsServiceModel>()
                 .ForMember(s => s.User, opt => opt.MapFrom(s => s.Participant!.User))
@@ -56,6 +60,8 @@
                         ? null
                         : s.ContentAsString))
                 .ForMember(d => d.IsOfficial, opt => opt.MapFrom(s =>
-                    s.Participant!.IsOfficial));
+                    s.Participant!.IsOfficial))
+                .ForMember(d => d.ByteContent, opt => opt.MapFrom(s =>
+                    s.Content));
     }
 }
