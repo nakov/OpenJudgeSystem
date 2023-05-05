@@ -17,6 +17,17 @@ namespace OJS.Common.Utils
         public static string? GetByKey(string key)
             => Environment.GetEnvironmentVariable(key);
 
+        public static string GetRequiredByKey(string key)
+        {
+            var value = GetByKey(key);
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentException(string.Format(EnvironmentVariableMustBeSetMessageFormat, key));
+            }
+
+            return value;
+        }
+
         public static string? GetApplicationConnectionString(
             ApplicationName appName,
             bool appUsesMultipleDatabases = false)
