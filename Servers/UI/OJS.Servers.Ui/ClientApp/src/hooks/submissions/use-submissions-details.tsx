@@ -1,8 +1,11 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
-import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
-import { IGetSubmissionDetailsByIdUrlParams } from '../../common/url-types';
+import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE, FileType } from '../../common/constants';
+import {
+    IDownloadSubmissionFileUrlParams,
+    IGetSubmissionDetailsByIdUrlParams,
+} from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { IErrorDataType, useHttp } from '../use-http';
 import { useLoading } from '../use-loading';
@@ -20,11 +23,14 @@ interface ISubmissionsDetailsContext {
         currentSubmission: ISubmissionDetailsType | null;
         currentSubmissionDetailsResults: ISubmissionDetails[];
         validationErrors: IErrorDataType[];
+        downloadErrorMessage: string | null;
     };
     actions: {
         selectSubmissionById: (submissionId: number) => void;
         getDetails: (submissionId: number) => Promise<void>;
         getSubmissionDetailsResults: (submissionId: number, isOfficial: boolean) => Promise<void>;
+        downloadProblemSubmissionFile: (submissionId: number) => Promise<void>;
+        setDownloadErrorMessage: (message: string | null) => void;
     };
 }
 
@@ -47,6 +53,9 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         currentSubmission,
         setCurrentSubmission,
     ] = useState<ISubmissionDetailsType | null>(null);
+    const [ downloadErrorMessage, setDownloadErrorMessage ] = useState<string | null>(null);
+    const [ problemSubmissionFileIdToDownload, setProblemSubmissionFileIdToDownload ] = useState<number | null>(null);
+    const { getSubmissionFileDownloadUrl } = useUrls();
 
     const [
         currentSubmissionDetailsResults,
@@ -86,6 +95,23 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         parameters: submissionDetailsResultsUrlParams,
     });
 
+    const {
+        get: downloadSubmissionFile,
+        response: downloadSubmissionFileResponse,
+        error: downloadSubmissionFileError,
+        saveAttachment,
+    } = useHttp<IDownloadSubmissionFileUrlParams, Blob>({
+        url: getSubmissionFileDownloadUrl,
+        parameters: { id: problemSubmissionFileIdToDownload },
+    });
+
+    const downloadProblemSubmissionFile = useCallback(
+        async (submissionId: number) => {
+            setProblemSubmissionFileIdToDownload(submissionId);
+        },
+        [],
+    );
+
     const getSubmissionDetailsResults = useCallback(
         async (submissionId: number, isOfficial: boolean) => {
             if (isNil(submissionId)) {
@@ -100,6 +126,33 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         },
         [],
     );
+
+    useEffect(() => {
+        if (isNil(downloadSubmissionFileResponse)) {
+            return;
+        }
+
+        if (!isNil(downloadSubmissionFileError)) {
+            setDownloadErrorMessage(downloadSubmissionFileError?.detail);
+            return;
+        }
+
+        saveAttachment();
+    }, [ downloadSubmissionFileResponse, saveAttachment, downloadSubmissionFileError ]);
+
+    useEffect(() => {
+        if (isNil(problemSubmissionFileIdToDownload)) {
+            return;
+        }
+
+        (async () => {
+            startLoading();
+            await downloadSubmissionFile(FileType.Blob);
+            stopLoading();
+        })();
+
+        setProblemSubmissionFileIdToDownload(null);
+    }, [ problemSubmissionFileIdToDownload, downloadSubmissionFile, startLoading, stopLoading ]);
 
     useEffect(
         () => {
@@ -194,11 +247,14 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
                 currentSubmission,
                 currentSubmissionDetailsResults,
                 validationErrors,
+                downloadErrorMessage,
             },
             actions: {
                 selectSubmissionById,
                 getDetails,
                 getSubmissionDetailsResults,
+                downloadProblemSubmissionFile,
+                setDownloadErrorMessage,
             },
         }),
         [
@@ -207,6 +263,9 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             getDetails,
             getSubmissionDetailsResults,
             validationErrors,
+            downloadProblemSubmissionFile,
+            downloadErrorMessage,
+            setDownloadErrorMessage,
         ],
     );
 
