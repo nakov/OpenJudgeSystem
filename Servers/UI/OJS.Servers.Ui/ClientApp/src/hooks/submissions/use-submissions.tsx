@@ -303,7 +303,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             }
 
             (async () => {
-                await loadSubmissions();
+                await loadSubmissions(problemId);
             })();
         },
         [

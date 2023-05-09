@@ -27,7 +27,8 @@ const ProblemSubmissions = () => {
     const reload = useCallback(
         async () => {
             if (!isNil(currentProblem)) {
-                await loadSubmissions();
+                const { id } = currentProblem;
+                await loadSubmissions(id);
                 await loadParticipantScores();
             }
         },
