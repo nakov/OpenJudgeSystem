@@ -209,6 +209,8 @@ namespace OJS.Common
             public const string SubmissionIsAddedInQueueForProcessing = "The submission is added in the queue for processing!";
             public const string SubmissionCanNotBeProcessed = "Submission can't be processed!";
             public const string SubmissionIsProcessing = "Submission is processing, please wait to be processed for retesting!";
+            public const string SubmissionNotFound = "Submission was not found!";
+            public const string SubmissionNotFileUpload = "The submission does not have an attachment!";
         }
     }
 }
