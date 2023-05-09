@@ -54,7 +54,10 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
         else if (contest.IsOnsiteExam)
         {
             participant.ParticipationStartTime = DateTime.UtcNow;
-            participant.ParticipationEndTime = contest.EndTime!.Value.ToUniversalTime();
+            if (contest.EndTime != null)
+            {
+                participant.ParticipationEndTime = contest.EndTime.Value.ToUniversalTime();
+            }
         }
 
         await this.participantsData.Add(participant);
