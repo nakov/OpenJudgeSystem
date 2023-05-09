@@ -3,7 +3,7 @@
 @use 'src/styles/fonts';
 
 .resourcesList {
-  @extend %font-style-normal;
+  @extend %font-family-lato;
 
   align-items: start;
   font-size: variables.$f-size-18;
@@ -12,4 +12,11 @@
   @media only screen and (max-width: variables.$r-large-desktop-max) {
     font-size: variables.$f-size-16;
   }
+}
+
+.noResourcesParagraph {
+  @extend %font-family-lato;
+
+  font-size: variables.$f-size-16;
+  padding: 10px;
 }
