@@ -42,6 +42,7 @@ public class ContestParticipationServiceModel : IMapExplicitly
                 s.Contest.Participants.Count))
             .ForMember(d => d.ActiveParticipantsCount, opt => opt.MapFrom(s =>
                 s.Contest.Participants.Count(x =>
-                    x.ParticipationStartTime != null && x.ParticipationStartTime.Value.ToUniversalTime() <= DateTime.UtcNow && DateTime.UtcNow < x.ParticipationEndTime!.Value.ToUniversalTime())))
+                    x.ParticipationStartTime != null && x.ParticipationEndTime != null &&
+                    x.ParticipationStartTime.Value.ToUniversalTime() <= DateTime.UtcNow && DateTime.UtcNow < x.ParticipationEndTime!.Value.ToUniversalTime())))
             .ForAllOtherMembers(opt => opt.Ignore());
 }
