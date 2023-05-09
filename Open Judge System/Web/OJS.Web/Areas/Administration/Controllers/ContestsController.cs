@@ -6,7 +6,6 @@
     using System.Data.Entity;
     using System.Globalization;
     using System.Linq;
-    using System.Text;
     using System.Web.Mvc;
     using Kendo.Mvc.UI;
     using OJS.Common;
@@ -150,8 +149,8 @@
                 return this.RedirectToContestsAdminPanelWithNoPrivilegesMessage();
             }
 
-            var contest = this.contestsData
-                .GetByIdQuery(id)
+            var contestModel = this.contestsData.GetByIdQuery(id);
+            var contest = contestModel
                 .Select(ContestAdministrationViewModel.ViewModel)
                 .FirstOrDefault();
 
@@ -159,6 +158,17 @@
             {
                 this.TempData.Add(GlobalConstants.DangerMessage, Resource.Contest_not_found);
                 return this.RedirectToAction<ContestsController>(c => c.Index());
+            }
+
+            if (contest.EnsureValidAuthorSubmisions)
+            {
+                var submissionTypesForProblem = this.contestsData.GetSumbissionTypesForProblemsWithCurrentAuthorSolution(contest.Id.Value);
+                var typesWithoutAuthorSolutions = submissionTypesForProblem.Where(stp => stp.HasAuthorSubmission == false);
+                var text = "Missing currently passing Author submissions on: <br>" + string.Join("<br>", typesWithoutAuthorSolutions.Select(stp => $"Problem Name: {stp.ProblemName}, SubmissionType: {stp.SubmissionTypeName}"));
+                
+                this.TempData.AddDangerMessage(text);
+                var systemMessages = this.PrepareSystemMessages();
+                this.ViewBag.SystemMessages = systemMessages;
             }
 
             this.PrepareViewBagData(contest.Id);
@@ -228,7 +238,7 @@
         }
 
         [HttpPost]
-        public ActionResult Destroy([DataSourceRequest]DataSourceRequest request, ContestAdministrationViewModel model)
+        public ActionResult Destroy([DataSourceRequest] DataSourceRequest request, ContestAdministrationViewModel model)
         {
             if (model.Id == null || !this.CheckIfUserHasContestPermissions(model.Id.Value))
             {
@@ -248,7 +258,7 @@
             return this.GridOperation(request, model);
         }
 
-        public ActionResult GetFutureContests([DataSourceRequest]DataSourceRequest request)
+        public ActionResult GetFutureContests([DataSourceRequest] DataSourceRequest request)
         {
             var futureContests = this.contestsData
                 .GetAllUpcoming()
@@ -264,7 +274,7 @@
             return this.PartialView(GlobalConstants.QuickContestsGrid, futureContests);
         }
 
-        public ActionResult GetActiveContests([DataSourceRequest]DataSourceRequest request)
+        public ActionResult GetActiveContests([DataSourceRequest] DataSourceRequest request)
         {
             var activeContests = this.contestsData
                 .GetAllActive()
@@ -280,7 +290,7 @@
             return this.PartialView(GlobalConstants.QuickContestsGrid, activeContests);
         }
 
-        public ActionResult GetLatestContests([DataSourceRequest]DataSourceRequest request)
+        public ActionResult GetLatestContests([DataSourceRequest] DataSourceRequest request)
         {
             var latestContests = this.contestsData
                 .GetAllVisible()

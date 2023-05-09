@@ -172,7 +172,7 @@
             }
         }
 
-        private SystemMessageCollection PrepareSystemMessages()
+        protected SystemMessageCollection PrepareSystemMessages()
         {
             // Warning: always escape data to prevent XSS
             var messages = new SystemMessageCollection();
