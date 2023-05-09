@@ -28,7 +28,6 @@ const ProblemSubmissions = () => {
         async () => {
             if (!isNil(currentProblem)) {
                 const { id } = currentProblem;
-                await loadSubmissions(id);
                 await loadParticipantScores();
             }
         },
