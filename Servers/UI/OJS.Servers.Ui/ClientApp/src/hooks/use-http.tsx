@@ -10,7 +10,7 @@ interface IErrorDataType {
     title: string;
     status: number;
     detail: string;
-    instance: string;
+    extensions: IDictionary<object>;
 }
 
 interface IHttpProps<T> {

@@ -13,6 +13,7 @@
     public abstract class BaseExceptionMiddleware
     {
         private const string StatusCodePropertyName = "StatusCode";
+        private const string ExtensionDictionaryKey = "Data";
 
         public RequestDelegate Get =>
             async httpContext =>
@@ -63,7 +64,7 @@
             problemDetails.Title = ValidationExceptionTitle;
             problemDetails.Detail = exception.Message;
             problemDetails.Status = 422;
-            problemDetails.Instance = exception.ParameterName;
+            problemDetails.Extensions[ExtensionDictionaryKey] = exception.ParameterName;
         }
 
         protected virtual void HandleException(
