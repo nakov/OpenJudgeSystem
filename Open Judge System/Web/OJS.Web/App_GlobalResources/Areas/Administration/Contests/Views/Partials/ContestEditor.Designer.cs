@@ -19,7 +19,7 @@ namespace Resources.Areas.Administration.Contests.Views.Partials {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class ContestEditor {
@@ -148,6 +148,15 @@ namespace Resources.Areas.Administration.Contests.Views.Partials {
         public static string Duration_info {
             get {
                 return ResourceManager.GetString("Duration_info", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose whether to show notifications for strategies that don&apos;t have a currently passing author submission.
+        /// </summary>
+        public static string Ensure_valid_author_submisions {
+            get {
+                return ResourceManager.GetString("Ensure_valid_author_submisions", resourceCulture);
             }
         }
         

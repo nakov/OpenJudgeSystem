@@ -19,7 +19,7 @@ namespace Resources.Areas.Administration.Contests.ViewModels {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class ContestAdministration {
@@ -130,6 +130,15 @@ namespace Resources.Areas.Administration.Contests.ViewModels {
         public static string End_time {
             get {
                 return ResourceManager.GetString("End_time", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warn on missing author submit.
+        /// </summary>
+        public static string EnsureValidAuthorSubmisions {
+            get {
+                return ResourceManager.GetString("EnsureValidAuthorSubmisions", resourceCulture);
             }
         }
         
