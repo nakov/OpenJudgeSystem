@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
-import { CLOSED_ALERT_BOX_SUBMIT_MESSAGE } from '../../../common/constants';
 import { ISubmissionTypeType } from '../../../common/types';
 import { useSubmissions } from '../../../hooks/submissions/use-submissions';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
@@ -31,16 +30,16 @@ const SubmissionBox = () => {
     const {
         state: {
             selectedSubmissionType,
-            submitMessage,
             isSubmissionSuccessful,
             problemSubmissionCode,
+            problemSubmissionErrors,
         },
         actions: {
             submit,
             updateSubmissionCode,
             selectSubmissionTypeById,
             removeProblemSubmissionCode,
-            setAlertBoxSubmitMessage,
+            closeErrorMessage,
         },
     } = useSubmissions();
 
@@ -181,18 +180,27 @@ const SubmissionBox = () => {
     }, [ handleOnSubmit, showSubmissionLimitTimer, isSubmitAllowed ]);
 
     const renderSubmitMessage = useCallback(() => {
-        if (isNil(submitMessage)) {
+        const { id: problemId } = currentProblem || {};
+        if (isNil(problemId)) {
             return null;
         }
 
+        const { [problemId.toString()]: error } = problemSubmissionErrors;
+
+        if (isNil(error)) {
+            return null;
+        }
+
+        const { detail } = error;
+
         return (
             <AlertBox
-              message={submitMessage}
+              message={detail}
               type={AlertBoxType.error}
-              onClose={() => setAlertBoxSubmitMessage(CLOSED_ALERT_BOX_SUBMIT_MESSAGE)}
+              onClose={() => closeErrorMessage(problemId.toString())}
             />
         );
-    }, [ setAlertBoxSubmitMessage, submitMessage ]);
+    }, [ closeErrorMessage, currentProblem, problemSubmissionErrors ]);
 
     useEffect(() => {
         setSubmitLimit(userSubmissionsTimeLimit);
