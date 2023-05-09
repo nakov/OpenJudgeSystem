@@ -145,17 +145,11 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         private static IServiceCollection AddAuthenticationServices(this IServiceCollection services)
         {
-            EnvironmentUtils.ValidateEnvironmentVariableExists(
-                new[] { PathToCommonKeyRingFolderKey, SharedAuthCookieDomain });
-
-            var keysDirectoryPath = EnvironmentUtils.GetByKey(PathToCommonKeyRingFolderKey);
-
-            if (string.IsNullOrWhiteSpace(keysDirectoryPath))
-            {
-                throw new Exception($"{PathToCommonKeyRingFolderKey} is not provided in env variables.");
-            }
+            var keysDirectoryPath = EnvironmentUtils.GetRequiredByKey(PathToCommonKeyRingFolderKey);
 
             var keysDirectory = new DirectoryInfo(keysDirectoryPath);
+
+            var sharedAuthCookieDomain = EnvironmentUtils.GetRequiredByKey(SharedAuthCookieDomain);
 
             services
                 .AddDataProtection()
@@ -170,7 +164,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                 .ConfigureApplicationCookie(opt =>
                 {
                     opt.Cookie.Name = Authentication.SharedCookieName;
-                    opt.Cookie.Domain = EnvironmentUtils.GetByKey(SharedAuthCookieDomain);
+                    opt.Cookie.Domain = sharedAuthCookieDomain;
                 });
 
             return services;
