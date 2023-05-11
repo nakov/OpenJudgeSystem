@@ -1,19 +1,20 @@
 @use 'src/styles/colors';
 @use 'src/styles/fonts';
+@use 'src/styles/variables';
 
 .label {
-  @extend %font-family-lato-regular;
+  @extend %font-family-lato;
 
   border: 2px solid transparent;
   border-radius: 2px;
   color: colors.$white-color;
   display: inline-block;
-  font-size: 0.8em;
+  font-size: variables.$f-size-12;
   padding: 5px 15px;
   text-transform: uppercase;
 
   &.success {
-    background: rgb(35 190 94);
+    background: colors.$primary-green;
   }
 
   &.warning {
@@ -25,11 +26,11 @@
   }
 
   &.info {
-    background-color: #00f;
+    background-color: colors.$label-purple;
   }
 
   &.plain {
-    background-color: #f1f1f1;
+    background-color: colors.$label-gray;
     color: colors.$grey-color;
   }
 }

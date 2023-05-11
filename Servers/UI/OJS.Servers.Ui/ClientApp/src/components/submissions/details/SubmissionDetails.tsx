@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router';
+import first from 'lodash/first';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { IRegisterForContestTypeUrlParams } from '../../../common/app-url-types';
 import { ContestParticipationType } from '../../../common/constants';
-import { ValidationPropertyType } from '../../../common/types';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import { useAppUrls } from '../../../hooks/use-app-urls';
 import { useAuth } from '../../../hooks/use-auth';
@@ -13,12 +13,13 @@ import { usePageTitles } from '../../../hooks/use-page-titles';
 import concatClassNames from '../../../utils/class-names';
 import { preciseFormatDate } from '../../../utils/dates';
 import CodeEditor from '../../code-editor/CodeEditor';
-import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import AlertBox, { AlertBoxType } from '../../guidelines/alert-box/AlertBox';
+import { Button, ButtonSize, ButtonState, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import IconSize from '../../guidelines/icons/common/icon-sizes';
 import LeftArrowIcon from '../../guidelines/icons/LeftArrowIcon';
 import SubmissionResults from '../submission-results/SubmissionResults';
-import RefreshableSubmissionsList from '../submissions-list/RefreshableSubmissionsList';
+import SubmissionsList from '../submissions-list/SubmissionsList';
 
 import styles from './SubmissionDetails.module.scss';
 
@@ -26,26 +27,32 @@ const SubmissionDetails = () => {
     const {
         state: {
             currentSubmission,
-            currentProblemSubmissionResults,
-            validationResult,
+            currentSubmissionDetailsResults,
+            validationErrors,
         },
-        actions: { getSubmissionResults },
+        actions: { getSubmissionDetailsResults },
     } = useSubmissionsDetails();
     const { actions: { setPageTitle } } = usePageTitles();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const {
-        getAdministrationRetestSubmissionInternalUrl,
-        getHomePageUrl,
-        getLoginUrl,
-    } = useAppUrls();
+        state:
+            { downloadErrorMessage },
+        actions:
+            {
+                downloadProblemSubmissionFile,
+                setDownloadErrorMessage,
+            },
+    } = useSubmissionsDetails();
+    const { getAdministrationRetestSubmissionInternalUrl } = useAppUrls();
 
-    const navigate = useNavigate();
     const {
         state: { contest },
         actions: { loadContestByProblemId },
     } = useContests();
 
     const { getRegisterContestTypeUrl } = useAppUrls();
+
+    const { state: { user } } = useAuth();
 
     useEffect(() => {
         if (isNil(currentSubmission)) {
@@ -62,16 +69,57 @@ const SubmissionDetails = () => {
         [ currentSubmission?.id ],
     );
 
-    useEffect(
-        () => {
-            if (validationResult.propertyName === ValidationPropertyType.UserNotLoggedIn.toString()) {
-                navigate(getLoginUrl());
-            } else if (validationResult.propertyName === ValidationPropertyType.NotAuthorOfSubmission.toString() ||
-                validationResult.propertyName === ValidationPropertyType.SubmissionNotFound.toString()) {
-                navigate(getHomePageUrl());
+    const renderDownloadErrorMessage = useCallback(() => {
+        if (isNil(downloadErrorMessage)) {
+            return null;
+        }
+
+        return (
+            <AlertBox
+              message={downloadErrorMessage}
+              type={AlertBoxType.error}
+              onClose={() => setDownloadErrorMessage(null)}
+            />
+        );
+    }, [ downloadErrorMessage, setDownloadErrorMessage ]);
+
+    const handleDownloadSubmissionFile = useCallback(
+        async () => {
+            if (isNil(currentSubmission)) {
+                return;
             }
+
+            const { id } = currentSubmission;
+            await downloadProblemSubmissionFile(id);
         },
-        [ validationResult, getHomePageUrl, getLoginUrl, navigate ],
+        [ downloadProblemSubmissionFile, currentSubmission ],
+    );
+
+    const renderResourceLink = useCallback(
+        () => {
+            if (isNil(currentSubmission)) {
+                return null;
+            }
+
+            const { submissionType: { allowBinaryFilesUpload }, user: { userName: submissionUserName } } = currentSubmission;
+            const { username: loggedInUserName } = user;
+            if ((!canAccessAdministration && submissionUserName !== loggedInUserName) || !allowBinaryFilesUpload) {
+                return null;
+            }
+
+            return (
+                <div className={styles.resourceWrapper}>
+                    <Button
+                      type={ButtonType.primary}
+                      className={styles.resourceLinkButton}
+                      onClick={() => handleDownloadSubmissionFile()}
+                    >
+                        Download file
+                    </Button>
+                </div>
+            );
+        },
+        [ handleDownloadSubmissionFile, canAccessAdministration, currentSubmission, user ],
     );
 
     const canBeCompeted = useMemo(
@@ -116,17 +164,47 @@ const SubmissionDetails = () => {
         submissionsDetails,
     );
 
-    useEffect(() => {
-        if (isNil(currentSubmission)) {
-            return;
-        }
+    useEffect(
+        () => {
+            if (isNil(currentSubmission)) {
+                return;
+            }
 
-        const { problem: { id: problemId }, isOfficial, user: { id: userId } } = currentSubmission;
+            const { id: submissionId, isOfficial } = currentSubmission;
 
-        (async () => {
-            await getSubmissionResults(problemId, isOfficial, userId);
-        })();
-    }, [ currentSubmission, getSubmissionResults ]);
+            (async () => {
+                await getSubmissionDetailsResults(submissionId, isOfficial);
+            })();
+        },
+        [ currentSubmission, getSubmissionDetailsResults ],
+    );
+
+    const submissionsReloadBtnClassName = 'submissionReloadBtn';
+
+    const handleReloadClick = useCallback(
+        async () => {
+            if (isNil(currentSubmission)) {
+                return;
+            }
+
+            const { id: submissionId, isOfficial } = currentSubmission;
+
+            await getSubmissionDetailsResults(submissionId, isOfficial);
+        },
+        [ currentSubmission, getSubmissionDetailsResults ],
+    );
+
+    const renderReloadButton = useCallback(
+        () => (
+            <Button
+              onClick={handleReloadClick}
+              text="Reload"
+              type={ButtonType.secondary}
+              className={submissionsReloadBtnClassName}
+            />
+        ),
+        [ handleReloadClick ],
+    );
 
     const renderRetestButton = useCallback(
         () => {
@@ -145,6 +223,16 @@ const SubmissionDetails = () => {
             );
         },
         [ canAccessAdministration, getAdministrationRetestSubmissionInternalUrl ],
+    );
+
+    const renderButtonsSection = useCallback(
+        () => (
+            <div className={styles.buttonsSection}>
+                { renderReloadButton() }
+                { renderRetestButton() }
+            </div>
+        ),
+        [ renderReloadButton, renderRetestButton ],
     );
 
     const renderSubmissionInfo = useCallback(
@@ -187,25 +275,25 @@ const SubmissionDetails = () => {
         [ contest ],
     );
 
-    const refreshableSubmissionsList = useMemo(
+    const refreshableSubmissionsList = useCallback(
         () => (
             <div className={styles.navigation}>
                 <div className={submissionsNavigationClassName}>
                     <Heading type={HeadingType.secondary}>Submissions</Heading>
                 </div>
-                <RefreshableSubmissionsList
-                  items={currentProblemSubmissionResults}
+                <SubmissionsList
+                  items={currentSubmissionDetailsResults}
                   selectedSubmission={currentSubmission}
                   className={styles.submissionsList}
                 />
-                { renderRetestButton() }
+                { renderButtonsSection() }
                 { renderSubmissionInfo() }
             </div>
         ),
-        [ currentProblemSubmissionResults, currentSubmission, renderRetestButton, renderSubmissionInfo ],
+        [ currentSubmissionDetailsResults, currentSubmission, renderButtonsSection, renderSubmissionInfo ],
     );
 
-    const codeEditor = useMemo(
+    const codeEditor = useCallback(
         () => (
             <div className={styles.code}>
                 <Heading
@@ -228,14 +316,31 @@ const SubmissionDetails = () => {
                     </div>
                     <div className={styles.itemInvisible}>Other</div>
                 </Heading>
-                <CodeEditor
-                  readOnly
-                  code={currentSubmission?.content}
-                  selectedSubmissionType={submissionType}
-                />
+                {currentSubmission?.submissionType.allowBinaryFilesUpload
+                    ? (
+                        <div className={styles.resourceWrapper}>
+                            {renderResourceLink()}
+                            {renderDownloadErrorMessage()}
+                        </div>
+                    )
+                    : (
+                        <CodeEditor
+                          readOnly
+                          code={currentSubmission?.content}
+                          selectedSubmissionType={submissionType}
+                        />
+                    )}
             </div>
         ),
-        [ problemNameHeadingText, currentSubmission?.content, submissionType, backButtonState, registerContestTypeUrl ],
+        [
+            problemNameHeadingText,
+            submissionType,
+            backButtonState,
+            registerContestTypeUrl,
+            renderResourceLink,
+            renderDownloadErrorMessage,
+            currentSubmission,
+        ],
     );
 
     const submissionResults = useCallback(
@@ -256,17 +361,56 @@ const SubmissionDetails = () => {
         [ currentSubmission, detailsHeadingText, submissionDetailsClassName ],
     );
 
-    if (isNil(currentSubmission)) {
+    const renderErrorHeading = useCallback(
+        (message: string) => (
+            <div className={styles.headingContest}>
+                <Heading
+                  type={HeadingType.primary}
+                  className={styles.contestHeading}
+                >
+                    {message}
+                </Heading>
+            </div>
+        ),
+        [],
+    );
+
+    const renderErrorMessage = useCallback(
+        () => {
+            const error = first(validationErrors);
+            if (!isNil(error)) {
+                const { detail } = error;
+                return renderErrorHeading(detail);
+            }
+
+            return null;
+        },
+        [ renderErrorHeading, validationErrors ],
+    );
+
+    const renderSubmission = useCallback(
+        () => (
+            <div className={styles.detailsWrapper}>
+                {refreshableSubmissionsList()}
+                {codeEditor()}
+                {submissionResults()}
+            </div>
+        ),
+        [ codeEditor, refreshableSubmissionsList, submissionResults ],
+    );
+
+    const renderPage = useCallback(
+        () => isEmpty(validationErrors)
+            ? renderSubmission()
+            : renderErrorMessage(),
+        [ renderErrorMessage, validationErrors, renderSubmission ],
+    );
+
+    if (isNil(currentSubmission) && isEmpty(validationErrors)) {
         return <div>No details fetched.</div>;
     }
 
-    return (
-        <div className={styles.detailsWrapper}>
-            {refreshableSubmissionsList}
-            {codeEditor}
-            {submissionResults()}
-        </div>
-    );
+    return renderPage();
 };
 
 export default SubmissionDetails;

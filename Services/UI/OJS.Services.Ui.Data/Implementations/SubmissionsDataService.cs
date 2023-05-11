@@ -1,10 +1,10 @@
 namespace OJS.Services.Ui.Data.Implementations;
 
 using Microsoft.EntityFrameworkCore;
+using Infrastructure.Extensions;
 using OJS.Common.Extensions;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Data.Implementations;
-using OJS.Services.Infrastructure.Extensions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
@@ -17,6 +17,11 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
         : base(db)
     {
     }
+
+    public TServiceModel? GetSubmissionById<TServiceModel>(int id)
+        => this.GetByIdQuery(id)
+            .MapCollection<TServiceModel>()
+            .FirstOrDefault();
 
     public Task<IEnumerable<TServiceModel>> GetLatestSubmissions<TServiceModel>(int count)
         => this.GetQuery(
@@ -41,12 +46,6 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             filter: s => s.ParticipantId == participantId && s.ProblemId == problemId,
             orderBy: q => q.CreatedOn,
             descending: true);
-
-    public Task<IEnumerable<TServiceModel>> GetAllByProblemAndUser<TServiceModel>(int problemId, string userId)
-        => this.GetQuery(
-                filter: s => s.ProblemId == problemId && s.Participant!.UserId == userId)
-            .MapCollection<TServiceModel>()
-            .ToEnumerableAsync();
 
     public IQueryable<Submission> GetAllFromContestsByLecturer(string lecturerId) =>
         this.DbSet
@@ -107,7 +106,7 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
         {
             // check if the submission was sent after the submission time limit has passed
             var latestSubmissionTime = lastSubmission.CreatedOn;
-            var differenceBetweenSubmissions = DateTime.Now.ToUniversalTime() - latestSubmissionTime;
+            var differenceBetweenSubmissions = DateTime.Now - latestSubmissionTime;
             if (differenceBetweenSubmissions.TotalSeconds < limitBetweenSubmissions)
             {
                 return limitBetweenSubmissions - differenceBetweenSubmissions.TotalSeconds.ToInt();
@@ -120,6 +119,12 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
     public bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId) =>
         this.DbSet.Any(s => s.ProblemId == problemId && s.Participant!.UserId == userId && !s.Processed);
 
+    public async Task<TServiceModel> GetProblemBySubmission<TServiceModel>(int submissionId)
+        => (await this.GetByIdQuery(submissionId)
+            .Select(p => p.Problem)
+            .MapCollection<TServiceModel>()
+            .FirstOrDefaultAsync()) !;
+
     public async Task<int> GetSubmissionsPerDayCount()
         => await this.DbSet.AnyAsync()
             ? await this.DbSet.GroupBy(x => new { x.CreatedOn.Year, x.CreatedOn.DayOfYear })
@@ -127,6 +132,12 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
                 .AverageAsync()
                 .ToInt()
             : 0;
+
+    public async Task<TServiceModel> GetParticipantBySubmission<TServiceModel>(int submissionId)
+        => (await this.GetByIdQuery(submissionId)
+            .Select(p => p.Participant)
+            .MapCollection<TServiceModel>()
+            .FirstOrDefaultAsync()) !;
 
     private IQueryable<Submission> GetByIdQuery(int id) =>
         this.DbSet

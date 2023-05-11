@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../common/constants';
@@ -32,8 +32,15 @@ const ContestPage = () => {
         })();
     }, [ contestId, participationType, start ]);
 
+    const isValidParticipationType = useMemo(
+        () => participationType === ContestParticipationType.Compete || participationType === ContestParticipationType.Practice,
+        [ participationType ],
+    );
+
     return (
-        <Contest />
+        isValidParticipationType
+            ? <Contest />
+            : <div>Invalid URL</div>
     );
 };
 

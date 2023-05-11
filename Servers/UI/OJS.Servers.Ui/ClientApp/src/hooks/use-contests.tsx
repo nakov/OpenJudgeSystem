@@ -1,5 +1,4 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -13,10 +12,9 @@ import {
 import generateSortingStrategy from '../common/contest-sorting-utils';
 import { FilterSortType, FilterType, IContestParam, IFilter, ISort, ToggleParam } from '../common/contest-types';
 import { filterByType, findFilterByTypeAndName } from '../common/filter-utils';
-import { PageParams } from '../common/pages-types';
 import { IIndexContestsType, IPagedResultType } from '../common/types';
 import { IAllContestsUrlParams, IGetContestByProblemUrlParams } from '../common/url-types';
-import { IHaveChildrenProps, IPagesInfo } from '../components/common/Props';
+import { IHaveChildrenProps } from '../components/common/Props';
 import { areStringEqual } from '../utils/compare-utils';
 
 import { useUrlParams } from './common/use-url-params';
@@ -25,6 +23,7 @@ import { useContestCategories } from './use-contest-categories';
 import { useContestStrategyFilters } from './use-contest-strategy-filters';
 import { useHttp } from './use-http';
 import { useLoading } from './use-loading';
+import { usePages } from './use-pages';
 import { useUrls } from './use-urls';
 
 interface IContestsContext {
@@ -34,16 +33,14 @@ interface IContestsContext {
         possibleSortingTypes: ISort[];
         filters: IFilter[];
         sortingTypes: ISort[];
-        pagesInfo: IPagesInfo;
-        currentPage: number;
         contest: IIndexContestsType | null;
+        isLoaded: boolean;
     };
     actions: {
         reload: () => Promise<void>;
         clearFilters: () => void;
         clearSorts: () => void;
         toggleParam: (param: IFilter | ISort) => void;
-        changePage: (pageNumber: number) => void;
         loadContestByProblemId: (problemId: number) => void;
         initiateGetAllContestsQuery: () => void;
     };
@@ -56,7 +53,6 @@ const defaultState = {
         contests: [] as IIndexContestsType[],
         possibleFilters: [] as IFilter[],
         possibleSortingTypes: [] as ISort[],
-        pagesInfo: { pageNumber: 1 },
     },
 };
 
@@ -81,20 +77,9 @@ const collectParams = <T extends FilterSortType>(
     return collectedFilters;
 };
 
-const collectCurrentPage = (params: IUrlParam[]) => {
-    const { value } = params.find((p) => p.key === PageParams.page) || { value: '1' };
-
-    const theValue = isArray(value)
-        ? value[0]
-        : value;
-
-    return parseInt(theValue, 10);
-};
-
 const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const [ contests, setContests ] = useState(defaultState.state.contests);
     const [ getAllContestsUrlParams, setGetAllContestsUrlParams ] = useState<IAllContestsUrlParams | null>();
-    const [ pagesInfo, setPagesInfo ] = useState<IPagesInfo>(defaultState.state.pagesInfo as IPagesInfo);
     const [ getContestByProblemUrlParams, setGetContestByProblemUrlParams ] = useState<IGetContestByProblemUrlParams | null>();
     const [ contest, setContest ] = useState<IIndexContestsType | null>(null);
 
@@ -105,13 +90,18 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             unsetParam,
         },
     } = useUrlParams();
-
+    const {
+        state: { currentPage },
+        changePage,
+        populatePageInformation,
+    } = usePages();
     const { getAllContestsUrl, getContestByProblemUrl } = useUrls();
     const { startLoading, stopLoading } = useLoading();
 
     const {
         get: getContests,
         data: contestsData,
+        isSuccess,
     } = useHttp<
         IAllContestsUrlParams,
         IPagedResultType<IIndexContestsType>>({
@@ -156,11 +146,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         [ params, possibleSortingTypes ],
     );
 
-    const currentPage = useMemo(
-        () => collectCurrentPage(params),
-        [ params ],
-    );
-
     const clearSorts = useCallback(
         () => {
             const defaultSortFilterTypeId = possibleSortingTypes.filter((s) => s.name === DEFAULT_SORT_TYPE)[0]?.id;
@@ -195,14 +180,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         [ getContests, startLoading, stopLoading ],
     );
 
-    const changePage = useCallback(
-        (pageNumber: number) => {
-            unsetParam(PageParams.page);
-            setParam(PageParams.page, pageNumber);
-        },
-        [ setParam, unsetParam ],
-    );
-
     const toggleParam = useCallback<ToggleParam>((param) => {
         const { type, id } = param;
         const paramName = type.toString();
@@ -212,24 +189,26 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             value,
         }) => areStringEqual(key, type, false) && areStringEqual(value, id, false));
 
-        unsetParam(paramName);
-
         if (!shouldRemoveParam) {
             setParam(paramName, id);
         }
 
         changePage(1);
-    }, [ changePage, params, setParam, unsetParam ]);
+    }, [ changePage, params, setParam ]);
 
     const initiateGetAllContestsQuery = useCallback(
         () => {
+            if (isEmpty(possibleFilters)) {
+                return;
+            }
+
             setGetAllContestsUrlParams({
                 filters: filters as IFilter[],
                 sorting: sortingTypes as ISort[],
                 page: currentPage,
             });
         },
-        [ currentPage, filters, sortingTypes ],
+        [ currentPage, filters, possibleFilters, sortingTypes ],
     );
 
     const loadContestByProblemId = useCallback((problemId: number) => {
@@ -298,9 +277,9 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             };
 
             setContests(newData);
-            setPagesInfo(newPagesInfo);
+            populatePageInformation(newPagesInfo);
         },
-        [ contestsData ],
+        [ contestsData, populatePageInformation ],
     );
 
     const value = useMemo(
@@ -309,29 +288,24 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
                 contests,
                 possibleFilters,
                 possibleSortingTypes,
-                pagesInfo,
                 filters,
                 sortingTypes,
-                currentPage,
                 contest,
+                isLoaded: isSuccess,
             },
             actions: {
                 reload,
                 clearFilters,
                 clearSorts,
                 toggleParam,
-                changePage,
                 loadContestByProblemId,
                 initiateGetAllContestsQuery,
             },
         }),
         [
-            changePage,
             clearFilters,
             contests,
-            currentPage,
             filters,
-            pagesInfo,
             possibleFilters,
             reload,
             clearSorts,
@@ -341,6 +315,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             loadContestByProblemId,
             contest,
             initiateGetAllContestsQuery,
+            isSuccess,
         ],
     );
 

@@ -34,8 +34,10 @@ namespace OJS.Common
             public const string SulsPlatformBaseUrlKey = "SULS_PLATFORM_BASE_URL";
             public const string SulsPlatformApiKeyKey = "SULS_PLATFORM_API_KEY";
             public const string DistributorBaseUrlKey = "DISTRIBUTOR_BASE_URL";
+            public const string DistributorApiKeyKey = "DISTRIBUTOR_API_KEY";
             public const string LoggerFilesFolderPath = "LOGGER_FILES_FOLDER_PATH";
             public const string SharedAuthCookieDomain = "SHARED_AUTH_COOKIE_DOMAIN";
+            public const string ApplicationUrl = "UI_URL";
 
             public const string RedisConnectionString = "REDIS_CONNECTION_STRING";
 
@@ -84,6 +86,7 @@ namespace OJS.Common
         public static class HeaderKeys
         {
             public const string ContentDisposition = "Content-Disposition";
+            public const string Origin = "Origin";
         }
 
         public static class HeaderValues
@@ -123,6 +126,11 @@ namespace OJS.Common
             public const string TestOutputTxt = Output + Txt;
             public const string TestInputZip = Input + Zip;
             public const string TestOutputZip = Output + Zip;
+        }
+
+        public static class Submissions
+        {
+            public const string SubmissionDownloadFileName = "Submission_{0}.{1}";
         }
     }
 }

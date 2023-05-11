@@ -40,7 +40,9 @@
 
         public DateTime? ModifiedOn { get; set; }
 
-        public ValidationResult ValidationResult { get; set; } = null!;
+        public byte[]? ByteContent { get; set; }
+
+        public string? FileExtension { get; set; }
 
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<Submission, SubmissionDetailsServiceModel>()
@@ -59,6 +61,7 @@
                         : s.ContentAsString))
                 .ForMember(d => d.IsOfficial, opt => opt.MapFrom(s =>
                     s.Participant!.IsOfficial))
-                .ForMember(d => d.ValidationResult, opt => opt.Ignore());
+                .ForMember(d => d.ByteContent, opt => opt.MapFrom(s =>
+                    s.Content));
     }
 }
