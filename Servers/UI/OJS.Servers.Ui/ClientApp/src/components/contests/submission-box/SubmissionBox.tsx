@@ -30,15 +30,15 @@ const SubmissionBox = () => {
     const {
         state: {
             selectedSubmissionType,
-            submitMessage,
-            setSubmitMessage,
             problemSubmissionCode,
+            problemSubmissionErrors,
         },
         actions: {
             submit,
             updateSubmissionCode,
             selectSubmissionTypeById,
             removeProblemSubmissionCode,
+            closeErrorMessage,
         },
     } = useSubmissions();
 
@@ -168,38 +168,44 @@ const SubmissionBox = () => {
         [ handleOnCountdownEnd, renderSubmissionLimitCountdown, showSubmissionLimitTimer, submitLimit ],
     );
 
-    const renderSubmitBtn = useCallback(
-        () => {
-            const state = !isSubmitAllowed || showSubmissionLimitTimer
-                ? ButtonState.disabled
-                : ButtonState.enabled;
+    const renderSubmitBtn = useCallback(() => {
+        const state = !isSubmitAllowed || showSubmissionLimitTimer
+            ? ButtonState.disabled
+            : ButtonState.enabled;
 
-            return (
-                <Button
-                  text="Submit"
-                  state={state}
-                  onClick={handleOnSubmit}
-                />
-            );
-        },
-        [ handleOnSubmit, showSubmissionLimitTimer, isSubmitAllowed ],
-    );
+        return (
+            <Button
+              text="Submit"
+              state={state}
+              onClick={handleOnSubmit}
+            />
+        );
+    }, [ handleOnSubmit, showSubmissionLimitTimer, isSubmitAllowed ]);
 
     const renderSubmitMessage = useCallback(
         () => {
-            if (isNil(submitMessage)) {
+            const { id: problemId } = currentProblem || {};
+            if (isNil(problemId)) {
                 return null;
             }
 
+            const { [problemId.toString()]: error } = problemSubmissionErrors;
+
+            if (isNil(error)) {
+                return null;
+            }
+
+            const { detail } = error;
+
             return (
                 <AlertBox
-                  message={submitMessage}
+                  message={detail}
                   type={AlertBoxType.error}
-                  onClose={() => setSubmitMessage(null)}
+                  onClose={() => closeErrorMessage(problemId.toString())}
                 />
             );
         },
-        [ setSubmitMessage, submitMessage ],
+        [ closeErrorMessage, currentProblem, problemSubmissionErrors ],
     );
 
     useEffect(

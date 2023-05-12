@@ -6,7 +6,7 @@ import { IDictionary } from '../../common/common-types';
 import { ISubmissionTypeType } from '../../common/types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useCurrentContest } from '../use-current-contest';
-import { useHttp } from '../use-http';
+import { IErrorDataType, useHttp } from '../use-http';
 import { useLoading } from '../use-loading';
 import { useProblems } from '../use-problems';
 import { useUrls } from '../use-urls';
@@ -18,14 +18,14 @@ interface ISubmissionsContext {
     state: {
         problemSubmissionCode: IDictionary<string | File>;
         selectedSubmissionType: ISubmissionTypeType | null;
-        submitMessage: string | null;
-        setSubmitMessage: (value: string | null) => void;
+        problemSubmissionErrors: IDictionary<IErrorDataType | null>;
     };
     actions: {
         submit: () => Promise<void>;
         updateSubmissionCode: (code: string | File) => void;
         selectSubmissionTypeById: (id: number) => void;
         removeProblemSubmissionCode: (id: number) => void;
+        closeErrorMessage: (value: string) => void;
     };
 }
 
@@ -33,6 +33,7 @@ const defaultState = {
     state: {
         problemSubmissionCode: {},
         selectedSubmissionType: null,
+        problemSubmissionErrors: {},
     },
 };
 
@@ -52,7 +53,8 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         useState<ISubmissionTypeType | null>(defaultState.state.selectedSubmissionType);
     const [ problemSubmissionCode, setProblemSubmissionCode ] =
         useState<IDictionary<string | File>>(defaultState.state.problemSubmissionCode);
-    const [ submitMessage, setSubmitMessage ] = useState<string | null>(null);
+    const [ problemSubmissionErrors, setProblemSubmissionErrors ] =
+        useState<IDictionary<IErrorDataType | null>>(defaultState.state.problemSubmissionErrors);
 
     const {
         startLoading,
@@ -115,21 +117,72 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         return bodyFormData;
     }, [ submitCodeParams ]);
 
-    const submit = useCallback(async () => {
-        if (isNil(submitCodeParams)) {
-            return;
-        }
+    const getErrorProblemId = useCallback(
+        (error: IErrorDataType) => {
+            const { extensions: { Data: problemId } } = error;
+            const problemIdObject = JSON.parse(problemId as unknown as string);
 
-        startLoading();
+            return Object.values(problemIdObject)[0];
+        },
+        [],
+    );
 
-        if (selectedSubmissionType?.allowBinaryFilesUpload) {
-            await submitFileCode(await getSubmitParamsAsFormData());
-        } else {
-            await submitCode(submitCodeParams);
-        }
+    const resetProblemSubmissionError = useCallback(
+        () => {
+            const { id: currentProblemId } = currentProblem || {};
+            if (isNil(currentProblemId)) {
+                return;
+            }
 
-        stopLoading();
-    }, [ startLoading, selectedSubmissionType, submitFileCode, getSubmitParamsAsFormData, submitCode, submitCodeParams, stopLoading ]);
+            const problemSubmissionErrorsArrayValues = Object.values(problemSubmissionErrors).filter((x) => {
+                if (isNil(x)) {
+                    return false;
+                }
+
+                return currentProblemId.toString() !== getErrorProblemId(x);
+            });
+
+            const newProblemSubmissionErrors = Object.assign({}, ...problemSubmissionErrorsArrayValues.map((x) => {
+                if (isNil(x)) {
+                    return null;
+                }
+
+                return { [getErrorProblemId(x) as unknown as string]: x };
+            }));
+
+            setProblemSubmissionErrors(newProblemSubmissionErrors);
+        },
+        [ currentProblem, problemSubmissionErrors, getErrorProblemId ],
+    );
+
+    const submit = useCallback(
+        async () => {
+            if (isNil(submitCodeParams)) {
+                return;
+            }
+
+            startLoading();
+
+            if (selectedSubmissionType?.allowBinaryFilesUpload) {
+                await submitFileCode(await getSubmitParamsAsFormData());
+            } else {
+                await submitCode(submitCodeParams);
+            }
+
+            stopLoading();
+            resetProblemSubmissionError();
+        },
+        [
+            startLoading,
+            selectedSubmissionType,
+            submitFileCode,
+            getSubmitParamsAsFormData,
+            submitCode,
+            submitCodeParams,
+            stopLoading,
+            resetProblemSubmissionError,
+        ],
+    );
 
     const selectSubmissionTypeById = useCallback(
         (id: number | null) => {
@@ -187,28 +240,63 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         [ currentProblem, selectSubmissionTypeById, selectedSubmissionType ],
     );
 
-    useEffect(
-        () => {
-            if (!isNil(errorSubmitCode)) {
-                const { detail } = errorSubmitCode;
-                setSubmitMessage(detail);
+    const closeErrorMessage = useCallback(
+        (problemId: string) => {
+            if (isNil(problemSubmissionErrors[problemId])) {
                 return;
             }
 
+            setProblemSubmissionErrors({
+                ...problemSubmissionErrors,
+                [problemId]: null,
+            });
+        },
+        [ problemSubmissionErrors ],
+    );
+
+    const setProblemSubmissionError = useCallback(
+        (error: IErrorDataType) => {
+            const problemId = getErrorProblemId(error);
+            const closedErrorMessageSubmissionProblemId = Object.keys(problemSubmissionErrors)
+                .find((x) => x === problemId as unknown as string);
+
+            if (problemSubmissionErrors[problemId as unknown as string] !== error && isNil(closedErrorMessageSubmissionProblemId)) {
+                setProblemSubmissionErrors({
+                    ...problemSubmissionErrors,
+                    [problemId as unknown as string]: error,
+                });
+            }
+        },
+        [ problemSubmissionErrors, getErrorProblemId ],
+    );
+
+    useEffect(
+        () => {
+            if (!isNil(errorSubmitCode)) {
+                setProblemSubmissionError(errorSubmitCode);
+            }
+
             if (!isNil(errorSubmitFile)) {
-                const { detail } = errorSubmitFile;
-                setSubmitMessage(detail);
+                setProblemSubmissionError(errorSubmitFile);
+            }
+
+            const { id: problemId } = currentProblem || {};
+
+            if (isNil(problemId)) {
                 return;
             }
 
             (async () => {
-                await loadSubmissions();
+                await loadSubmissions(problemId);
             })();
         },
         [
             loadSubmissions,
             errorSubmitCode,
             errorSubmitFile,
+            currentProblem,
+            setProblemSubmissionError,
+            problemSubmissionErrors,
         ],
     );
 
@@ -217,14 +305,14 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             state: {
                 problemSubmissionCode,
                 selectedSubmissionType,
-                submitMessage,
-                setSubmitMessage,
+                problemSubmissionErrors,
             },
             actions: {
                 updateSubmissionCode,
                 selectSubmissionTypeById,
                 submit,
                 removeProblemSubmissionCode,
+                closeErrorMessage,
             },
         }),
         [
@@ -232,10 +320,10 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             selectedSubmissionType,
             problemSubmissionCode,
             submit,
-            submitMessage,
-            setSubmitMessage,
             updateSubmissionCode,
             removeProblemSubmissionCode,
+            closeErrorMessage,
+            problemSubmissionErrors,
         ],
     );
 
