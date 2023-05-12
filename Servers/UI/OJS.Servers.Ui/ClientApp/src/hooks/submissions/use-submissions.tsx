@@ -18,7 +18,6 @@ interface ISubmissionsContext {
     state: {
         problemSubmissionCode: IDictionary<string | File>;
         selectedSubmissionType: ISubmissionTypeType | null;
-        isSubmissionSuccessful: boolean | null;
         problemSubmissionErrors: IDictionary<IErrorDataType | null>;
     };
     actions: {
@@ -86,30 +85,15 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const {
         post: submitCode,
         error: errorSubmitCode,
-        isSuccess: isSuccessCodeSubmit,
     } = useHttp<null, null, ISubmitCodeTypeParametersType>({ url: getSubmitUrl });
 
     const {
         post: submitFileCode,
         error: errorSubmitFile,
-        isSuccess: isSuccessFileSubmit,
     } = useHttp<null, null, FormData>({
         url: getSubmitFileUrl,
         bodyAsFormData: true,
     });
-
-    const isSubmissionSuccessful = useMemo(
-        () => isSuccessCodeSubmit || isSuccessFileSubmit,
-        [ isSuccessCodeSubmit, isSuccessFileSubmit ],
-    );
-
-    useEffect(() => {
-        console.log(`isSubmissionSuccessful ${isSubmissionSuccessful}`);
-    }, [ isSubmissionSuccessful ]);
-
-    useEffect(() => {
-        console.log(`isSuccessFileSubmit ${isSuccessFileSubmit}`);
-    }, [ isSuccessFileSubmit ]);
 
     const getSubmitParamsAsFormData = useCallback(async () => {
         const bodyFormData = new FormData();
@@ -321,7 +305,6 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             state: {
                 problemSubmissionCode,
                 selectedSubmissionType,
-                isSubmissionSuccessful,
                 problemSubmissionErrors,
             },
             actions: {
@@ -337,7 +320,6 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             selectedSubmissionType,
             problemSubmissionCode,
             submit,
-            isSubmissionSuccessful,
             updateSubmissionCode,
             removeProblemSubmissionCode,
             closeErrorMessage,

@@ -30,7 +30,6 @@ const SubmissionBox = () => {
     const {
         state: {
             selectedSubmissionType,
-            isSubmissionSuccessful,
             problemSubmissionCode,
             problemSubmissionErrors,
         },
@@ -104,25 +103,29 @@ const SubmissionBox = () => {
         [ allowedSubmissionTypes, currentProblem, renderSubmissionTypesSelectors ],
     );
 
-    const restartSubmissionTimeLimitCountdown = useCallback((force = false) => {
-        if (!force) {
-            return;
-        }
+    const restartSubmissionTimeLimitCountdown = useCallback(
+        () => {
+            if (!isNil(contest) && contest.limitBetweenSubmissions !== 0) {
+                setSubmitLimit(contest.limitBetweenSubmissions);
+            }
+        },
+        [ contest ],
+    );
 
-        if (!isNil(contest) && contest.limitBetweenSubmissions !== 0) {
-            setSubmitLimit(contest.limitBetweenSubmissions as number);
-        }
-    }, [ contest ]);
+    const handleOnSubmit = useCallback(
+        async () => {
+            await submit();
+            const { id: problemId } = currentProblem || {};
+            if (isNil(problemId)) {
+                return;
+            }
 
-    const handleOnSubmit = useCallback(async () => {
-        await submit();
-        const { id: problemId } = currentProblem || {};
-        if (isNil(problemId)) {
-            return;
-        }
+            removeProblemSubmissionCode(problemId);
 
-        removeProblemSubmissionCode(problemId);
-    }, [ submit, currentProblem, removeProblemSubmissionCode ]);
+            restartSubmissionTimeLimitCountdown();
+        },
+        [ submit, currentProblem, removeProblemSubmissionCode, restartSubmissionTimeLimitCountdown ],
+    );
 
     const renderSubmissionLimitCountdown = useCallback((remainingTime: ICountdownRemainingType) => {
         const { minutes, seconds } = convertToTwoDigitValues(remainingTime);
@@ -179,38 +182,38 @@ const SubmissionBox = () => {
         );
     }, [ handleOnSubmit, showSubmissionLimitTimer, isSubmitAllowed ]);
 
-    const renderSubmitMessage = useCallback(() => {
-        const { id: problemId } = currentProblem || {};
-        if (isNil(problemId)) {
-            return null;
-        }
+    const renderSubmitMessage = useCallback(
+        () => {
+            const { id: problemId } = currentProblem || {};
+            if (isNil(problemId)) {
+                return null;
+            }
 
-        const { [problemId.toString()]: error } = problemSubmissionErrors;
+            const { [problemId.toString()]: error } = problemSubmissionErrors;
 
-        if (isNil(error)) {
-            return null;
-        }
+            if (isNil(error)) {
+                return null;
+            }
 
-        const { detail } = error;
+            const { detail } = error;
 
-        return (
-            <AlertBox
-              message={detail}
-              type={AlertBoxType.error}
-              onClose={() => closeErrorMessage(problemId.toString())}
-            />
-        );
-    }, [ closeErrorMessage, currentProblem, problemSubmissionErrors ]);
+            return (
+                <AlertBox
+                  message={detail}
+                  type={AlertBoxType.error}
+                  onClose={() => closeErrorMessage(problemId.toString())}
+                />
+            );
+        },
+        [ closeErrorMessage, currentProblem, problemSubmissionErrors ],
+    );
 
-    useEffect(() => {
-        setSubmitLimit(userSubmissionsTimeLimit);
-    }, [ userSubmissionsTimeLimit ]);
-
-    useEffect(() => {
-        if (!isNil(isSubmissionSuccessful) && isSubmissionSuccessful) {
-            restartSubmissionTimeLimitCountdown(true);
-        }
-    }, [ restartSubmissionTimeLimitCountdown, isSubmissionSuccessful ]);
+    useEffect(
+        () => {
+            setSubmitLimit(userSubmissionsTimeLimit);
+        },
+        [ userSubmissionsTimeLimit ],
+    );
 
     const taskText = 'Task: ';
     const executionTypeListClass = 'executionTypeLis';
@@ -230,44 +233,47 @@ const SubmissionBox = () => {
         [ currentProblem, problemSubmissionCode ],
     );
 
-    const renderSubmissionInput = useCallback(() => {
-        if (isNil(selectedSubmissionType)) {
-            return <p>No submission type selected.</p>;
-        }
+    const renderSubmissionInput = useCallback(
+        () => {
+            if (isNil(selectedSubmissionType)) {
+                return <p>No submission type selected.</p>;
+            }
 
-        const { allowBinaryFilesUpload, allowedFileExtensions } = selectedSubmissionType;
-        const { id: problemId } = currentProblem || {};
-        if (isNil(problemId)) {
-            return null;
-        }
+            const { allowBinaryFilesUpload, allowedFileExtensions } = selectedSubmissionType;
+            const { id: problemId } = currentProblem || {};
+            if (isNil(problemId)) {
+                return null;
+            }
 
-        if (allowBinaryFilesUpload && !isNil(currentProblem)) {
+            if (allowBinaryFilesUpload && !isNil(currentProblem)) {
+                return (
+                    <>
+                        <FileUploader
+                          file={isNil(submissionCode) || submissionCode instanceof String
+                              ? null
+                              : submissionCode as File}
+                          problemId={problemId}
+                        />
+                        <p className={styles.fileSubmissionDetailsParagraph}>
+                            Allowed file extensions:
+                            {allowedFileExtensions.join(', ')}
+                        </p>
+                    </>
+                );
+            }
+
             return (
-                <>
-                    <FileUploader
-                      file={isNil(submissionCode) || submissionCode instanceof String
-                          ? null
-                          : submissionCode as File}
-                      problemId={problemId}
-                    />
-                    <p className={styles.fileSubmissionDetailsParagraph}>
-                        Allowed file extensions:
-                        {allowedFileExtensions.join(', ')}
-                    </p>
-                </>
+                <CodeEditor
+                  selectedSubmissionType={selectedSubmissionType}
+                  code={isNil(submissionCode) || submissionCode instanceof File
+                      ? ''
+                      : submissionCode}
+                  onCodeChange={handleCodeChanged}
+                />
             );
-        }
-
-        return (
-            <CodeEditor
-              selectedSubmissionType={selectedSubmissionType}
-              code={isNil(submissionCode) || submissionCode instanceof File
-                  ? ''
-                  : submissionCode}
-              onCodeChange={handleCodeChanged}
-            />
-        );
-    }, [ handleCodeChanged, selectedSubmissionType, submissionCode, currentProblem ]);
+        },
+        [ handleCodeChanged, selectedSubmissionType, submissionCode, currentProblem ],
+    );
 
     const renderSubmissionBox = useCallback(
         () => (
