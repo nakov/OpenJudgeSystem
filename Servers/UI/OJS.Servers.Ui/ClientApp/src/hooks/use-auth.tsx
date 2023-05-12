@@ -50,7 +50,7 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
         response: loginSubmitResponse,
         status: loginSubmitStatus,
         error: loginSubmitError,
-    } = useHttp<null, string | null, ILoginDetailsType>({ url: getLoginSubmitUrl });
+    } = useHttp<null, string, ILoginDetailsType>({ url: getLoginSubmitUrl });
 
     const { post: logout } = useHttp({ url: getLogoutUrl });
 
@@ -90,7 +90,7 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
     useEffect(() => {
         if (loginSubmitResponse) {
             if (loginSubmitStatus === HttpStatus.Unauthorized) {
-                setLoginErrorMessage(loginSubmitResponse.data as string ?? 'Invalid username or password.');
+                setLoginErrorMessage(loginSubmitResponse.data.toString() ?? 'Invalid username or password.');
 
                 return;
             }

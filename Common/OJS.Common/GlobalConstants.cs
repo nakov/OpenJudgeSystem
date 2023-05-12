@@ -108,7 +108,11 @@ namespace OJS.Common
             public const string ValueCannotBeNullOrWhiteSpaceTemplate = "{0} cannot be null or white space";
 
             public const string InactiveLoginSystem =
-                "We are sorry for the inconvenience, but the login system is currently unavailable.";
+                "We are sorry for the inconvenience, but the login system is currently unavailable";
+            public const string NonExistentUser =
+                "User with this username does not exist";
+            public const string InvalidUsernameOrPassword =
+                "Invalid username or password.";
             public const string ContestNotFound = "Contest not found";
         }
 

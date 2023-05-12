@@ -71,13 +71,19 @@ namespace OJS.Servers.Ui.Controllers
                 return this.Unauthorized(GlobalConstants.ErrorMessages.InactiveLoginSystem);
             }
 
-            if (externalUser != null)
+            if (externalUser == null)
             {
-                var userEntity = externalUser.Entity;
-                await this.usersBusinessService.AddOrUpdateUser(userEntity);
+                return this.Unauthorized(GlobalConstants.ErrorMessages.NonExistentUser);
             }
 
+            await this.usersBusinessService.AddOrUpdateUser(externalUser.Entity);
+
             var user = await this.userManager.FindByNameAsync(model.UserName);
+
+            if (!(await this.userManager.CheckPasswordAsync(user, model.Password)))
+            {
+                return this.Unauthorized(GlobalConstants.ErrorMessages.InvalidUsernameOrPassword);
+            }
 
             var roles = await this.userManager.GetRolesAsync(user);
 
