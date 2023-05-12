@@ -49,7 +49,8 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
         post: loginSubmit,
         response: loginSubmitResponse,
         status: loginSubmitStatus,
-    } = useHttp<null, null, ILoginDetailsType>({ url: getLoginSubmitUrl });
+        error: loginSubmitError,
+    } = useHttp<null, string | null, ILoginDetailsType>({ url: getLoginSubmitUrl });
 
     const { post: logout } = useHttp({ url: getLogoutUrl });
 
@@ -89,14 +90,14 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
     useEffect(() => {
         if (loginSubmitResponse) {
             if (loginSubmitStatus === HttpStatus.Unauthorized) {
-                setLoginErrorMessage('Invalid username or password.');
+                setLoginErrorMessage(loginSubmitResponse.data as string ?? 'Invalid username or password.');
 
                 return;
             }
 
             window.location.reload();
         }
-    }, [ loginSubmitResponse, loginSubmitStatus, showError, setUserDetails ]);
+    }, [ loginSubmitResponse, loginSubmitStatus, showError, setUserDetails, loginSubmitError ]);
 
     const value = useMemo(
         () => ({

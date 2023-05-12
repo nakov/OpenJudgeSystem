@@ -13,6 +13,7 @@ namespace OJS.Servers.Ui.Controllers
     using OJS.Servers.Infrastructure.Extensions;
     using OJS.Servers.Ui.Models;
     using OJS.Services.Common.Models.Users;
+    using OJS.Services.Infrastructure.Exceptions;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Ui.Business;
     using static OJS.Common.GlobalConstants.Urls;
@@ -67,11 +68,7 @@ namespace OJS.Servers.Ui.Controllers
             }
             else
             {
-                this.ModelState.AddModelError(
-                    string.Empty,
-                    GlobalConstants.ErrorMessages.InactiveLoginSystem);
-
-                return this.Unauthorized(model);
+                return this.Unauthorized(GlobalConstants.ErrorMessages.InactiveLoginSystem);
             }
 
             if (externalUser != null)
