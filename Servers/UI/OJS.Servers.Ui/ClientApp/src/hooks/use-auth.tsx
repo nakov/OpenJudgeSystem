@@ -49,7 +49,6 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
         post: loginSubmit,
         response: loginSubmitResponse,
         status: loginSubmitStatus,
-        error: loginSubmitError,
     } = useHttp<null, string, ILoginDetailsType>({ url: getLoginSubmitUrl });
 
     const { post: logout } = useHttp({ url: getLogoutUrl });
@@ -97,7 +96,7 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
 
             window.location.reload();
         }
-    }, [ loginSubmitResponse, loginSubmitStatus, showError, setUserDetails, loginSubmitError ]);
+    }, [ loginSubmitResponse, loginSubmitStatus, showError, setUserDetails ]);
 
     const value = useMemo(
         () => ({
