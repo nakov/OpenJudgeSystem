@@ -1,30 +1,42 @@
 namespace OJS.Servers.Ui.Controllers
 {
+    using System.Linq;
+    using System.Security.Claims;
+    using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
+    using OJS.Common;
+    using OJS.Common.Utils;
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Controllers;
     using OJS.Servers.Infrastructure.Extensions;
     using OJS.Servers.Ui.Models;
-    using System.Linq;
-    using System.Security.Claims;
-    using System.Threading.Tasks;
+    using OJS.Services.Common.Models.Users;
+    using OJS.Services.Infrastructure.HttpClients;
+    using OJS.Services.Ui.Business;
+    using static OJS.Common.GlobalConstants.Urls;
     using static OJS.Servers.Infrastructure.ServerConstants;
 
     [Authorize]
     public class AccountController : BaseViewController
     {
         private readonly UserManager<UserProfile> userManager;
+        private readonly IUsersBusinessService usersBusinessService;
         private readonly SignInManager<UserProfile> signInManager;
+        private readonly ISulsPlatformHttpClientService sulsPlatformHttpClient;
 
         public AccountController(
             UserManager<UserProfile> userManager,
-            SignInManager<UserProfile> signInManager)
+            IUsersBusinessService usersBusinessService,
+            SignInManager<UserProfile> signInManager,
+            ISulsPlatformHttpClientService sulsPlatformHttpClient)
         {
             this.userManager = userManager;
+            this.usersBusinessService = usersBusinessService;
             this.signInManager = signInManager;
+            this.sulsPlatformHttpClient = sulsPlatformHttpClient;
         }
 
         [AllowAnonymous]
@@ -44,19 +56,34 @@ namespace OJS.Servers.Ui.Controllers
                 return this.RedirectToAction("Index", "Home");
             }
 
-            var signInResult = await this.signInManager
-                .PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
+            ExternalUserInfoModel? externalUser;
 
-            if (!signInResult.Succeeded)
+            var platformCallResult = await this.sulsPlatformHttpClient.GetAsync<ExternalUserInfoModel>(
+                new { model.UserName },
+                string.Format(GetUserInfoByUsernamePath));
+
+            if (platformCallResult.IsSuccess)
             {
-                this.ModelState.AddModelError(
-                    string.Empty,
-                    "Invalid username or password");
+                externalUser = platformCallResult.Data;
 
-                return this.Unauthorized(model);
+                if (externalUser == null)
+                {
+                    return this.Unauthorized(GlobalConstants.ErrorMessages.NonExistentUser);
+                }
+
+                await this.usersBusinessService.AddOrUpdateUser(externalUser.Entity);
+            }
+            else if (EnvironmentUtils.IsProduction())
+            {
+                return this.Unauthorized(GlobalConstants.ErrorMessages.InactiveLoginSystem);
             }
 
             var user = await this.userManager.FindByNameAsync(model.UserName);
+
+            if (!(await this.userManager.CheckPasswordAsync(user, model.Password)))
+            {
+                return this.Unauthorized(GlobalConstants.ErrorMessages.InvalidUsernameOrPassword);
+            }
 
             var roles = await this.userManager.GetRolesAsync(user);
 
