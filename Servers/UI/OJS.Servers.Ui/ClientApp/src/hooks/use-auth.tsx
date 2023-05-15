@@ -1,4 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import isEmpty from 'lodash/isEmpty';
+import isNil from 'lodash/isNil';
 
 import { HttpStatus } from '../common/common';
 import { IUserPermissionsType, IUserType } from '../common/types';
@@ -42,6 +44,7 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
     const [ password, setPassword ] = useState<string>();
     const [ loginErrorMessage, setLoginErrorMessage ] = useState<string>('');
     const { showError } = useNotifications();
+    const defaultLoginErrorMessage = useMemo(() => 'Invalid username or password', []);
 
     const { getLogoutUrl, getLoginSubmitUrl } = useUrls();
 
@@ -87,16 +90,28 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
     );
 
     useEffect(() => {
-        if (loginSubmitResponse) {
-            if (loginSubmitStatus === HttpStatus.Unauthorized) {
-                setLoginErrorMessage(loginSubmitResponse.data.toString() ?? 'Invalid username or password.');
-
-                return;
-            }
-
-            window.location.reload();
+        if (isNil(loginSubmitResponse)) {
+            return;
         }
-    }, [ loginSubmitResponse, loginSubmitStatus, showError, setUserDetails ]);
+
+        if (loginSubmitStatus === HttpStatus.Unauthorized) {
+            const { data } = loginSubmitResponse;
+
+            setLoginErrorMessage(isNil(data) || isEmpty(data)
+                ? defaultLoginErrorMessage
+                : data.toString());
+
+            return;
+        }
+
+        window.location.reload();
+    }, [
+        loginSubmitResponse,
+        loginSubmitStatus,
+        showError,
+        setUserDetails,
+        defaultLoginErrorMessage,
+    ]);
 
     const value = useMemo(
         () => ({

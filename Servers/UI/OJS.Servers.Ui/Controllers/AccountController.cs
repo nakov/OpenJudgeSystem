@@ -8,12 +8,12 @@ namespace OJS.Servers.Ui.Controllers
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using OJS.Common;
+    using OJS.Common.Utils;
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Controllers;
     using OJS.Servers.Infrastructure.Extensions;
     using OJS.Servers.Ui.Models;
     using OJS.Services.Common.Models.Users;
-    using OJS.Services.Infrastructure.Exceptions;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Ui.Business;
     using static OJS.Common.GlobalConstants.Urls;
@@ -58,25 +58,25 @@ namespace OJS.Servers.Ui.Controllers
 
             ExternalUserInfoModel? externalUser;
 
-            var result = await this.sulsPlatformHttpClient.GetAsync<ExternalUserInfoModel>(
+            var platformCallResult = await this.sulsPlatformHttpClient.GetAsync<ExternalUserInfoModel>(
                 new { model.UserName },
                 string.Format(GetUserInfoByUsernamePath));
 
-            if (result.IsSuccess)
+            if (platformCallResult.IsSuccess)
             {
-                externalUser = result.Data;
+                externalUser = platformCallResult.Data;
+
+                if (externalUser == null)
+                {
+                    return this.Unauthorized(GlobalConstants.ErrorMessages.NonExistentUser);
+                }
+
+                await this.usersBusinessService.AddOrUpdateUser(externalUser.Entity);
             }
-            else
+            else if (EnvironmentUtils.IsProduction())
             {
                 return this.Unauthorized(GlobalConstants.ErrorMessages.InactiveLoginSystem);
             }
-
-            if (externalUser == null)
-            {
-                return this.Unauthorized(GlobalConstants.ErrorMessages.NonExistentUser);
-            }
-
-            await this.usersBusinessService.AddOrUpdateUser(externalUser.Entity);
 
             var user = await this.userManager.FindByNameAsync(model.UserName);
 
