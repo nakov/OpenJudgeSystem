@@ -134,7 +134,7 @@ namespace Resources.Areas.Administration.Contests.ViewModels {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Warn on missing author submit.
+        ///   Looks up a localized string similar to Warn on missing author solutions.
         /// </summary>
         public static string EnsureValidAuthorSubmisions {
             get {

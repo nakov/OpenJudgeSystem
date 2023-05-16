@@ -190,6 +190,6 @@
     <value>Users cant submit concurrently</value>
   </data>
   <data name="EnsureValidAuthorSubmisions" xml:space="preserve">
-    <value>Warn on missing author submit</value>
+    <value>Warn on missing author solutions</value>
   </data>
 </root>

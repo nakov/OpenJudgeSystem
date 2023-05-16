@@ -152,7 +152,7 @@ namespace Resources.Areas.Administration.Contests.Views.Partials {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Choose whether to show notifications for strategies that don&apos;t have a currently passing author submission.
+        ///   Looks up a localized string similar to Show/Hide warnings for strategies that don&apos;t have a currently passing submission with max points.
         /// </summary>
         public static string Ensure_valid_author_submisions {
             get {

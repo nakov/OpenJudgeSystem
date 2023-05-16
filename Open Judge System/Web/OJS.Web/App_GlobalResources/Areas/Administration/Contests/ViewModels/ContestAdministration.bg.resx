@@ -190,6 +190,6 @@
     <value>Потребителите не могат да решават задачи едновременно</value>
   </data>
   <data name="EnsureValidAuthorSubmisions" xml:space="preserve">
-    <value>Предупреди за липсващ авторски събмит</value>
+    <value>Предупреди за липсващи авторски решения</value>
   </data>
 </root>

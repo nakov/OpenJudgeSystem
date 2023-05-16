@@ -96,6 +96,7 @@
             this.PrepareViewBagData();
 
             var viewModel = new ViewModelType();
+            viewModel.EnsureValidAuthorSubmisions = true;
 
             if (categoryId.HasValue)
             {
@@ -164,11 +165,13 @@
             {
                 var submissionTypesForProblem = this.contestsData.GetSumbissionTypesForProblemsWithCurrentAuthorSolution(contest.Id.Value);
                 var typesWithoutAuthorSolutions = submissionTypesForProblem.Where(stp => stp.HasAuthorSubmission == false);
-                var text = "Missing currently passing Author submissions on: <br>" + string.Join("<br>", typesWithoutAuthorSolutions.Select(stp => $"Problem Name: {stp.ProblemName}, SubmissionType: {stp.SubmissionTypeName}"));
-                
-                this.TempData.AddDangerMessage(text);
-                var systemMessages = this.PrepareSystemMessages();
-                this.ViewBag.SystemMessages = systemMessages;
+                if (typesWithoutAuthorSolutions.Any())
+                {
+                    var text = "Missing currently passing Author submissions on: <br>" + string.Join("<br>", typesWithoutAuthorSolutions.Select(stp => $"Problem Name: {stp.ProblemName}, SubmissionType: {stp.SubmissionTypeName}"));
+                    this.TempData.AddDangerMessage(text);
+                    var systemMessages = this.PrepareSystemMessages();
+                    this.ViewBag.SystemMessages = systemMessages;
+                }
             }
 
             this.PrepareViewBagData(contest.Id);
