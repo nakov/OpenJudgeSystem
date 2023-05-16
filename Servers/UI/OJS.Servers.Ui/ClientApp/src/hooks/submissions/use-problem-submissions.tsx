@@ -6,7 +6,6 @@ import { IHaveChildrenProps } from '../../components/common/Props';
 import { useCurrentContest } from '../use-current-contest';
 import { IErrorDataType, useHttp } from '../use-http';
 import { useLoading } from '../use-loading';
-import { useProblems } from '../use-problems';
 import { useUrls } from '../use-urls';
 
 import { ISubmissionDetails } from './types';
@@ -17,7 +16,7 @@ interface IProblemSubmissionsContext {
         problemSubmissionsError: IErrorDataType | null;
     };
     actions: {
-        loadSubmissions: () => Promise<void>;
+        loadSubmissions: (problemId: number) => Promise<void>;
     };
 }
 
@@ -33,7 +32,6 @@ const ProblemSubmissionsContext = createContext<IProblemSubmissionsContext>({} a
 
 const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderProps) => {
     const [ submissions, setSubmissions ] = useState<ISubmissionDetails[] | null>(null);
-    const { state: { currentProblem } } = useProblems();
     const [
         submissionResultsToGetParameters,
         setSubmissionResultsToGetParameters,
@@ -57,20 +55,18 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
     });
 
     const loadSubmissions = useCallback(
-        async () => {
-            const { id: problemId } = currentProblem || {};
-
-            if (isNil(problemId) || isNil(isOfficial)) {
+        async (id: number) => {
+            if (isNil(id) || isNil(isOfficial)) {
                 return;
             }
 
             setSubmissionResultsToGetParameters({
-                problemId,
+                problemId: id,
                 isOfficial,
                 take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
             } as IProblemSubmissionResultsRequestParametersType);
         },
-        [ currentProblem, isOfficial ],
+        [ isOfficial ],
     );
 
     useEffect(
