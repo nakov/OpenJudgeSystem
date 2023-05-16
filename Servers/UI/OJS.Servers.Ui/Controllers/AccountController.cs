@@ -80,7 +80,10 @@ namespace OJS.Servers.Ui.Controllers
 
             var user = await this.userManager.FindByNameAsync(model.UserName);
 
-            if (!(await this.userManager.CheckPasswordAsync(user, model.Password)))
+            var signInResult = await this.signInManager
+                .PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
+
+            if (!signInResult.Succeeded)
             {
                 return this.Unauthorized(GlobalConstants.ErrorMessages.InvalidUsernameOrPassword);
             }
