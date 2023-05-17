@@ -3,7 +3,7 @@ import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../common/constants';
-import { canCompeteContest } from '../../common/register-contest-helper';
+import { isParticipationTypeValid } from '../../common/contest-helpers';
 import Contest from '../../components/contests/contest/Contest';
 import ContestPasswordForm from '../../components/contests/contest-password-form/ContestPasswordForm';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
@@ -98,7 +98,7 @@ const ContestPage = () => {
     );
 
     const renderPage = useMemo(
-        () => canCompeteContest(participationType)
+        () => isParticipationTypeValid(participationType)
             ? renderContestPage
             : <HomePage />,
         [ participationType, renderContestPage ],
