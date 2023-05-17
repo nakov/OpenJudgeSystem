@@ -56,7 +56,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
             participant.ParticipationStartTime = DateTime.UtcNow;
             if (contest.EndTime != null)
             {
-                participant.ParticipationEndTime = contest.EndTime.Value.ToUniversalTime();
+                participant.ParticipationEndTime = contest.EndTime;
             }
         }
 

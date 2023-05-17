@@ -2,7 +2,6 @@ namespace OJS.Data
 {
     using Microsoft.EntityFrameworkCore;
     using OJS.Common.Enumerations;
-    using OJS.Data.Infrastructure.DateTimeConverters.UtcToLocalDateTimeConverter;
     using OJS.Data.Infrastructure.Extensions;
     using OJS.Data.Models;
     using OJS.Data.Models.Checkers;
@@ -152,8 +151,7 @@ namespace OJS.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options
-                .ConfigureDbOptions(ApplicationName.Ui)
-                .AddInterceptors(new UtcToLocalDateTimeConvertingDbCommandInterceptor());
+                .ConfigureDbOptions(ApplicationName.Ui);
 
         private static void FixMultipleCascadePaths(ModelBuilder builder)
         {

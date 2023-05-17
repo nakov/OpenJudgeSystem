@@ -6,11 +6,11 @@ namespace OJS.Services.Ui.Business.Implementations
     using System.Threading.Tasks;
     using FluentExtensions.Extensions;
     using OJS.Common;
-    using OJS.Common.Enumerations;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Participants;
     using OJS.Services.Common;
     using OJS.Services.Common.Models;
+    using OJS.Services.Infrastructure;
     using OJS.Services.Infrastructure.Constants;
     using OJS.Services.Infrastructure.Exceptions;
     using OJS.Services.Ui.Business.Validation;
@@ -35,6 +35,7 @@ namespace OJS.Services.Ui.Business.Implementations
         private readonly IUsersBusinessService usersBusinessService;
         private readonly IUserProviderService userProviderService;
         private readonly IContestValidationService contestValidationService;
+        private readonly IDatesService datesService;
 
         public ContestsBusinessService(
             IContestsDataService contestsData,
@@ -45,7 +46,8 @@ namespace OJS.Services.Ui.Business.Implementations
             IUserProviderService userProviderService,
             IParticipantsBusinessService participantsBusiness,
             IContestCategoriesCacheService contestCategoriesCache,
-            IContestValidationService contestValidationService)
+            IContestValidationService contestValidationService,
+            IDatesService datesService)
         {
             this.contestsData = contestsData;
             this.examGroupsData = examGroupsData;
@@ -56,6 +58,7 @@ namespace OJS.Services.Ui.Business.Implementations
             this.participantsBusiness = participantsBusiness;
             this.contestCategoriesCache = contestCategoriesCache;
             this.contestValidationService = contestValidationService;
+            this.datesService = datesService;
         }
 
         public async Task<RegisterUserForContestServiceModel> RegisterUserForContest(int id, bool official)
@@ -71,7 +74,14 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var contest = await this.contestsData.OneById(id);
 
-            var validationResult = this.contestValidationService.GetValidationResult((contest, id, user.Id, user.IsAdmin, official) !);
+            var validationResult = this.contestValidationService.GetValidationResult((
+                contest,
+                id,
+                user.Id,
+                user.IsAdmin,
+                official,
+                this.datesService.GetUtcNow()) !);
+
             if (!validationResult.IsValid)
             {
                 throw new BusinessServiceException(validationResult.Message);
@@ -126,7 +136,13 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var user = this.userProviderService.GetCurrentUser();
 
-            var validationResult = this.contestValidationService.GetValidationResult((contest, model.ContestId, user?.Id, user!.IsAdmin, model.IsOfficial) !);
+            var validationResult = this.contestValidationService.GetValidationResult((
+                contest,
+                model.ContestId,
+                user.Id,
+                user!.IsAdmin,
+                model.IsOfficial,
+                this.datesService.GetUtcNow()) !);
 
             if (!validationResult.IsValid)
             {

@@ -7,9 +7,9 @@ using OJS.Services.Common.Models;
 
 public class ContestValidationService : IContestValidationService
 {
-    public ValidationResult GetValidationResult((Contest?, int?, string, bool, bool) item)
+    public ValidationResult GetValidationResult((Contest?, int?, string, bool, bool, DateTime) item)
     {
-        var (contest, contestId, userId, isUserAdmin, official) = item;
+        var (contest, contestId, userId, isUserAdmin, official, utcDate) = item;
 
         var isUserLecturerInContest = contest != null && IsUserLecturerInContest(contest, userId);
 
@@ -20,7 +20,7 @@ public class ContestValidationService : IContestValidationService
             return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.NotFound, contestId));
         }
 
-        if (IsContestExpired(contest, userId, isUserAdmin, official, isUserLecturerInContest))
+        if (IsContestExpired(contest, userId, isUserAdmin, official, isUserLecturerInContest, utcDate))
         {
             return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.IsExpired, contest.Name));
         }
@@ -28,7 +28,6 @@ public class ContestValidationService : IContestValidationService
         if (official &&
             !CanUserCompeteByContestByUserAndIsAdmin(
                 contest,
-                userId,
                 isUserAdmin,
                 isUserLecturerInContest,
                 allowToAdminAlways: true))
@@ -53,7 +52,8 @@ public class ContestValidationService : IContestValidationService
         string userId,
         bool isAdmin,
         bool official,
-        bool isUserLecturerInContest)
+        bool isUserLecturerInContest,
+        DateTime utcDate)
     {
         var isUserAdminOrLecturerInContest = isAdmin || isUserLecturerInContest;
 
@@ -67,18 +67,18 @@ public class ContestValidationService : IContestValidationService
         {
             if (participant.ParticipationEndTime != null)
             {
-                return DateTime.Now >= participant.ParticipationEndTime.Value;
+                return utcDate >= participant.ParticipationEndTime;
             }
         }
 
         if (!official && contest.PracticeEndTime.HasValue)
         {
-            return DateTime.Now >= contest.PracticeEndTime;
+            return utcDate >= contest.PracticeEndTime;
         }
 
         if (official && contest.EndTime.HasValue)
         {
-            return DateTime.Now >= contest.EndTime;
+            return utcDate >= contest.EndTime;
         }
 
         return false;
@@ -95,7 +95,6 @@ public class ContestValidationService : IContestValidationService
 
     private static bool CanUserCompeteByContestByUserAndIsAdmin(
         Contest contest,
-        string userId,
         bool isAdmin,
         bool isUserLecturerInContest = true,
         bool allowToAdminAlways = false)
