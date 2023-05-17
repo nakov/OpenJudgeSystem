@@ -105,9 +105,11 @@ const SubmissionBox = () => {
 
     const restartSubmissionTimeLimitCountdown = useCallback(
         () => {
-            if (!isNil(contest) && contest.limitBetweenSubmissions !== 0) {
-                setSubmitLimit(contest.limitBetweenSubmissions);
+            if (isNil(contest) || contest.limitBetweenSubmissions === 0) {
+                return;
             }
+
+            setSubmitLimit(contest.limitBetweenSubmissions);
         },
         [ contest ],
     );
