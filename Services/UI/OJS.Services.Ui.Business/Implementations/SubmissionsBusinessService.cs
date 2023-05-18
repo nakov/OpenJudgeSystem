@@ -42,7 +42,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmitSubmissionValidationService submitSubmissionValidationService;
     private readonly ISubmissionResultsValidationService submissionResultsValidationService;
     private readonly ISubmissionFileDownloadValidationService submissionFileDownloadValidationService;
-    private readonly IDatesService datesService;
 
     public SubmissionsBusinessService(
         ISubmissionsDataService submissionsData,
@@ -58,8 +57,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         IContestValidationService contestValidationService,
         ISubmitSubmissionValidationService submitSubmissionValidationService,
         ISubmissionResultsValidationService submissionResultsValidationService,
-        ISubmissionFileDownloadValidationService submissionFileDownloadValidationService,
-        IDatesService datesService)
+        ISubmissionFileDownloadValidationService submissionFileDownloadValidationService)
     {
         this.submissionsData = submissionsData;
         this.usersBusiness = usersBusiness;
@@ -75,7 +73,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.submitSubmissionValidationService = submitSubmissionValidationService;
         this.submissionResultsValidationService = submissionResultsValidationService;
         this.submissionFileDownloadValidationService = submissionFileDownloadValidationService;
-        this.datesService = datesService;
     }
 
     public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
@@ -325,8 +322,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 participant?.ContestId,
                 currentUser.Id,
                 currentUser.IsAdminOrLecturer,
-                model.Official,
-                this.datesService.GetUtcNow()) !);
+                model.Official) !);
 
         var userSubmissionTimeLimit = await this.participantsBusinessService.GetParticipantLimitBetweenSubmissions(
             participant!.Id,

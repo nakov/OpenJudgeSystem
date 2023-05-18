@@ -2,14 +2,19 @@
 
 using System;
 using System.Linq;
+using Infrastructure;
 using OJS.Data.Models.Contests;
 using OJS.Services.Common.Models;
 
 public class ContestValidationService : IContestValidationService
 {
-    public ValidationResult GetValidationResult((Contest?, int?, string, bool, bool, DateTime) item)
+    private readonly IDatesService datesService;
+
+    public ContestValidationService(IDatesService datesService) => this.datesService = datesService;
+
+    public ValidationResult GetValidationResult((Contest?, int?, string, bool, bool) item)
     {
-        var (contest, contestId, userId, isUserAdmin, official, utcDate) = item;
+        var (contest, contestId, userId, isUserAdmin, official) = item;
 
         var isUserLecturerInContest = contest != null && IsUserLecturerInContest(contest, userId);
 
@@ -20,7 +25,13 @@ public class ContestValidationService : IContestValidationService
             return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.NotFound, contestId));
         }
 
-        if (IsContestExpired(contest, userId, isUserAdmin, official, isUserLecturerInContest, utcDate))
+        if (IsContestExpired(
+                contest,
+                userId,
+                isUserAdmin,
+                official,
+                isUserLecturerInContest,
+                this.datesService.GetUtcNow()))
         {
             return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.IsExpired, contest.Name));
         }
@@ -53,7 +64,7 @@ public class ContestValidationService : IContestValidationService
         bool isAdmin,
         bool official,
         bool isUserLecturerInContest,
-        DateTime utcDate)
+        DateTime getUtcNow)
     {
         var isUserAdminOrLecturerInContest = isAdmin || isUserLecturerInContest;
 
@@ -67,18 +78,18 @@ public class ContestValidationService : IContestValidationService
         {
             if (participant.ParticipationEndTime != null)
             {
-                return utcDate >= participant.ParticipationEndTime;
+                return getUtcNow >= participant.ParticipationEndTime;
             }
         }
 
         if (!official && contest.PracticeEndTime.HasValue)
         {
-            return utcDate >= contest.PracticeEndTime;
+            return getUtcNow >= contest.PracticeEndTime;
         }
 
         if (official && contest.EndTime.HasValue)
         {
-            return utcDate >= contest.EndTime;
+            return getUtcNow >= contest.EndTime;
         }
 
         return false;

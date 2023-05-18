@@ -1,6 +1,5 @@
 namespace OJS.Services.Ui.Business.Implementations
 {
-    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -10,7 +9,6 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Data.Models.Participants;
     using OJS.Services.Common;
     using OJS.Services.Common.Models;
-    using OJS.Services.Infrastructure;
     using OJS.Services.Infrastructure.Constants;
     using OJS.Services.Infrastructure.Exceptions;
     using OJS.Services.Ui.Business.Validation;
@@ -35,7 +33,6 @@ namespace OJS.Services.Ui.Business.Implementations
         private readonly IUsersBusinessService usersBusinessService;
         private readonly IUserProviderService userProviderService;
         private readonly IContestValidationService contestValidationService;
-        private readonly IDatesService datesService;
 
         public ContestsBusinessService(
             IContestsDataService contestsData,
@@ -46,8 +43,7 @@ namespace OJS.Services.Ui.Business.Implementations
             IUserProviderService userProviderService,
             IParticipantsBusinessService participantsBusiness,
             IContestCategoriesCacheService contestCategoriesCache,
-            IContestValidationService contestValidationService,
-            IDatesService datesService)
+            IContestValidationService contestValidationService)
         {
             this.contestsData = contestsData;
             this.examGroupsData = examGroupsData;
@@ -58,7 +54,6 @@ namespace OJS.Services.Ui.Business.Implementations
             this.participantsBusiness = participantsBusiness;
             this.contestCategoriesCache = contestCategoriesCache;
             this.contestValidationService = contestValidationService;
-            this.datesService = datesService;
         }
 
         public async Task<RegisterUserForContestServiceModel> RegisterUserForContest(int id, bool official)
@@ -79,8 +74,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 id,
                 user.Id,
                 user.IsAdmin,
-                official,
-                this.datesService.GetUtcNow()) !);
+                official) !);
 
             if (!validationResult.IsValid)
             {
@@ -141,8 +135,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 model.ContestId,
                 user.Id,
                 user!.IsAdmin,
-                model.IsOfficial,
-                this.datesService.GetUtcNow()) !);
+                model.IsOfficial) !);
 
             if (!validationResult.IsValid)
             {
