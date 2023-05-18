@@ -42,13 +42,13 @@ namespace OJS.Servers.Infrastructure.Extensions
         /// </summary>
         /// <param name="services">The service collection.</param>
         /// <param name="globalQueryFilterTypes">
-        /// If null, adds all default global query filters,
+        /// The global query filter types to add to the context.
+        /// <br/> If null, adds all default global query filters,
         /// whereas if explicitly providing an empty collection, will not add any global query filters to the context.
         /// </param>
         /// <remarks>
-        /// globalQueryFilterTypes can be null, in which case all default global query filters are added.
-        /// <br/>
-        /// globalQueryFilterTypes can be explicitly empty, in which case no global query filters are added.
+        /// <see cref="globalQueryFilterTypes"/> can be null, in which case all default global query filters are added. (i.e DeletableEntityFilter)
+        /// <br/><see cref="globalQueryFilterTypes"/> can be explicitly empty, in which case no global query filters are added.
         /// </remarks>
         public static IServiceCollection AddIdentityDatabase<TDbContext, TIdentityUser, TIdentityRole,
             TIdentityUserRole>(
