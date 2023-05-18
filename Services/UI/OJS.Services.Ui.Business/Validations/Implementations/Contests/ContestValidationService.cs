@@ -1,10 +1,11 @@
-﻿namespace OJS.Services.Ui.Business.Validation.Implementations;
+﻿namespace OJS.Services.Ui.Business.Validations.Implementations.Contests;
 
 using System;
 using System.Linq;
-using Infrastructure;
 using OJS.Data.Models.Contests;
 using OJS.Services.Common.Models;
+using Infrastructure;
+using Validation;
 
 public class ContestValidationService : IContestValidationService
 {
