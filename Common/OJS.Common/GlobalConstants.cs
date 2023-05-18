@@ -38,6 +38,7 @@ namespace OJS.Common
             public const string LoggerFilesFolderPath = "LOGGER_FILES_FOLDER_PATH";
             public const string SharedAuthCookieDomain = "SHARED_AUTH_COOKIE_DOMAIN";
             public const string ApplicationUrl = "UI_URL";
+            public const string LocalTimeZone = "LOCAL_TIME_ZONE";
 
             public const string RedisConnectionString = "REDIS_CONNECTION_STRING";
 
