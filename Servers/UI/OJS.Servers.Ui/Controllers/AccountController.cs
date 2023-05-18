@@ -64,8 +64,7 @@ namespace OJS.Servers.Ui.Controllers
 
             claims.Add(new Claim(ClaimTypes.Name, user.UserName));
 
-            var claimsIdentity = new ClaimsIdentity(
-                claims, Authentication.SharedCookiesScheme);
+            var claimsIdentity = new ClaimsIdentity(claims, IdentityConstants.ApplicationScheme);
 
             var authProperties = new AuthenticationProperties
             {
@@ -73,7 +72,7 @@ namespace OJS.Servers.Ui.Controllers
             };
 
             await this.HttpContext.SignInAsync(
-                Authentication.SharedCookiesScheme,
+                IdentityConstants.ApplicationScheme,
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
 

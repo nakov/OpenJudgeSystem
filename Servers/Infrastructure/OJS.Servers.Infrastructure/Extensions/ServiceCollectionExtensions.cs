@@ -29,7 +29,6 @@ namespace OJS.Servers.Infrastructure.Extensions
     using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.EnvironmentVariables;
     using static OJS.Common.GlobalConstants.FileExtensions;
-    using static OJS.Servers.Infrastructure.ServerConstants;
 
     public static class ServiceCollectionExtensions
     {
@@ -157,13 +156,8 @@ namespace OJS.Servers.Infrastructure.Extensions
                 .SetApplicationName(ApplicationFullName);
 
             services
-                .AddAuthentication(Authentication.SharedCookiesScheme)
-                .AddCookie();
-
-            services
                 .ConfigureApplicationCookie(opt =>
                 {
-                    opt.Cookie.Name = Authentication.SharedCookieName;
                     opt.Cookie.Domain = sharedAuthCookieDomain;
                 });
 
