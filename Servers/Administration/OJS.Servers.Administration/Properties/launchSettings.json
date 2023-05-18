@@ -31,6 +31,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DbContext": "Server=217.174.159.217;Database=OpenJudgeSystem;User Id=sa;Password=1234;",
+        "LOCAL_TIME_ZONE": "FLE Standard Time",
         "PATH_TO_COMMON_KEY_RING_FOLDER": "../../../Keys",
         "UI_URL": "http://localhost:5002",
         "SULS_PLATFORM_BASE_URL": "https://localhost:44304",
