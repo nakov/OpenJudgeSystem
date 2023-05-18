@@ -7,7 +7,6 @@ namespace OJS.Servers.Infrastructure.Extensions
     using System.Reflection;
     using Hangfire;
     using Hangfire.SqlServer;
-    using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -36,9 +35,21 @@ namespace OJS.Servers.Infrastructure.Extensions
             => services
                 .AddAutoMapperConfigurations<TStartup>()
                 .AddWebServerServices<TStartup>()
-                .AddAuthenticationServices()
                 .AddCaching<TStartup>();
 
+        /// <summary>
+        /// Adds identity database and authentication services to the service collection.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        /// <param name="globalQueryFilterTypes">
+        /// If null, adds all default global query filters,
+        /// whereas if explicitly providing an empty collection, will not add any global query filters to the context.
+        /// </param>
+        /// <remarks>
+        /// globalQueryFilterTypes can be null, in which case all default global query filters are added.
+        /// <br/>
+        /// globalQueryFilterTypes can be explicitly empty, in which case no global query filters are added.
+        /// </remarks>
         public static IServiceCollection AddIdentityDatabase<TDbContext, TIdentityUser, TIdentityRole,
             TIdentityUserRole>(
             this IServiceCollection services,
@@ -65,6 +76,12 @@ namespace OJS.Servers.Infrastructure.Extensions
                     IdentityUserLogin<string>,
                     IdentityUserToken<string>,
                     IdentityRoleClaim<string>>>();
+
+            services
+                .ConfigureApplicationCookie(opt =>
+                {
+                    opt.Cookie.Domain = EnvironmentUtils.GetRequiredByKey(SharedAuthCookieDomain);
+                });
 
             return services;
         }
@@ -141,28 +158,6 @@ namespace OJS.Servers.Infrastructure.Extensions
             => services
                 .AddHttpContextAccessor()
                 .AddTransient(s => s.GetRequiredService<IHttpContextAccessor>().HttpContext!.User);
-
-        private static IServiceCollection AddAuthenticationServices(this IServiceCollection services)
-        {
-            var keysDirectoryPath = EnvironmentUtils.GetRequiredByKey(PathToCommonKeyRingFolderKey);
-
-            var keysDirectory = new DirectoryInfo(keysDirectoryPath);
-
-            var sharedAuthCookieDomain = EnvironmentUtils.GetRequiredByKey(SharedAuthCookieDomain);
-
-            services
-                .AddDataProtection()
-                .PersistKeysToFileSystem(keysDirectory)
-                .SetApplicationName(ApplicationFullName);
-
-            services
-                .ConfigureApplicationCookie(opt =>
-                {
-                    opt.Cookie.Domain = sharedAuthCookieDomain;
-                });
-
-            return services;
-        }
 
         private static void ConfigureHttpClient(HttpClient client)
             => client.DefaultRequestHeaders.Add(HeaderNames.Accept, MimeTypes.ApplicationJson);
