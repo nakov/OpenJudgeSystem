@@ -42,10 +42,12 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
     {
         var participant = new Participant(contest.Id, userId, isOfficial) { Contest = contest };
 
+        var utcNow = this.datesService.GetUtcNow();
+
         if (contest.IsOnlineExam)
         {
-            participant.ParticipationStartTime = this.datesService.GetUtcNow();
-            participant.ParticipationEndTime = this.datesService.GetUtcNow() + contest.Duration;
+            participant.ParticipationStartTime = utcNow;
+            participant.ParticipationEndTime = utcNow + contest.Duration;
 
             var isUserLecturerInByContestAndUser =
                 await this.contestsData.IsUserLecturerInByContestAndUser(contest.Id, userId);
@@ -57,7 +59,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
         }
         else if (contest.IsOnsiteExam)
         {
-            participant.ParticipationStartTime = this.datesService.GetUtcNow();
+            participant.ParticipationStartTime = utcNow;
             participant.ParticipationEndTime = contest.EndTime;
         }
 

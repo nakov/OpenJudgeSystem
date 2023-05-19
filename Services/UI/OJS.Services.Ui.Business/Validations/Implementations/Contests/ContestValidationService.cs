@@ -65,7 +65,7 @@ public class ContestValidationService : IContestValidationService
         bool isAdmin,
         bool official,
         bool isUserLecturerInContest,
-        DateTime getUtcNow)
+        DateTime utcNow)
     {
         var isUserAdminOrLecturerInContest = isAdmin || isUserLecturerInContest;
 
@@ -79,18 +79,18 @@ public class ContestValidationService : IContestValidationService
         {
             if (participant.ParticipationEndTime != null)
             {
-                return getUtcNow >= participant.ParticipationEndTime;
+                return utcNow >= participant.ParticipationEndTime;
             }
         }
 
         if (!official && contest.PracticeEndTime.HasValue)
         {
-            return getUtcNow >= contest.PracticeEndTime;
+            return utcNow >= contest.PracticeEndTime;
         }
 
         if (official && contest.EndTime.HasValue)
         {
-            return getUtcNow >= contest.EndTime;
+            return utcNow >= contest.EndTime;
         }
 
         return false;

@@ -8,6 +8,8 @@ using static Common.GlobalConstants.EnvironmentVariables;
 
 public class DateTimeValueConverter : ValueConverter<DateTime?, DateTime?>
 {
+   private static readonly TimeZoneInfo TimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(EnvironmentUtils.GetRequiredByKey(LocalTimeZone));
+
    private static readonly Expression<Func<DateTime?, DateTime?>> Serialize = date => ConvertToUtc(date);
 
    private static readonly Expression<Func<DateTime?, DateTime?>> Deserialize = date => ConvertToLocal(date);
@@ -24,7 +26,7 @@ public class DateTimeValueConverter : ValueConverter<DateTime?, DateTime?>
          return null;
       }
 
-      return DateTime.SpecifyKind(dateTime.Value, DateTimeKind.Utc);
+      return TimeZoneInfo.ConvertTimeToUtc(dateTime.Value);
    }
 
    private static DateTime? ConvertToLocal(DateTime? dateTime)
@@ -34,8 +36,6 @@ public class DateTimeValueConverter : ValueConverter<DateTime?, DateTime?>
          return null;
       }
 
-      var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(EnvironmentUtils.GetRequiredByKey(LocalTimeZone));
-
-      return TimeZoneInfo.ConvertTimeFromUtc(dateTime.Value, timeZoneInfo);
+      return TimeZoneInfo.ConvertTimeFromUtc(dateTime.Value, TimeZoneInfo);
    }
 }
