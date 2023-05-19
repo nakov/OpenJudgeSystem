@@ -443,6 +443,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             Name = AdditionalFormFields.SolutionSkeletonRaw.ToString(),
             Value = entity.SolutionSkeleton?.Decompress(),
             Type = typeof(string),
+            FormControlType = FormControlType.TextArea,
         });
 
         formControls.Add(new FormControlViewModel
