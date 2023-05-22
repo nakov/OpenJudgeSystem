@@ -15,5 +15,7 @@ public class RegisterUserForContestServiceModel : IMapExplicitly
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Contest, RegisterUserForContestServiceModel>()
-            .ForAllOtherMembers(opt => opt.Ignore());
+            .ForMember(
+                opt => opt.RequirePassword,
+                src => src.Ignore());
 }
