@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -6,17 +7,19 @@ import { IFilter } from '../../common/contest-types';
 import { IIndexContestsType } from '../../common/types';
 import ContestFilters from '../../components/contests/contests-filters/ContestFilters';
 import Breadcrumb from '../../components/guidelines/breadcrumb/Breadcrumb';
-import { LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
+import { Button, ButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
 import { useHashUrlParams } from '../../hooks/common/use-hash-url-params';
 import { useAppUrls } from '../../hooks/use-app-urls';
+import { useContestCategories } from '../../hooks/use-contest-categories';
 import { ICategoriesBreadcrumbItem, useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
 import { useContests } from '../../hooks/use-contests';
 import { usePages } from '../../hooks/use-pages';
 import concatClassNames from '../../utils/class-names';
+import { flattenWith } from '../../utils/list-utils';
 import { setLayout } from '../shared/set-layout';
 
 import styles from './ContestsPage.module.scss';
@@ -36,17 +39,25 @@ const ContestsPage = () => {
         state: { currentPage, pagesInfo },
         changePage,
     } = usePages();
-    const { state: { breadcrumbItems } } = useCategoriesBreadcrumbs();
+    const { state: { breadcrumbItems }, actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
     const { state: { params }, actions: { clearHash } } = useHashUrlParams();
     const { getContestCategoryBreadcrumbItemPath } = useAppUrls();
+    const { state: { categories } } = useContestCategories();
+    const navigate = useNavigate();
+
+    const categoriesFlat = useMemo(
+        () => flattenWith(categories, (c) => c.children || null),
+        [ categories ],
+    );
 
     useEffect(
         () => {
+            console.log(breadcrumbItems);
             if (!isEmpty(params)) {
                 clearHash();
             }
         },
-        [ clearHash, params ],
+        [ clearHash, params, breadcrumbItems ],
     );
 
     useEffect(
@@ -109,18 +120,30 @@ const ContestsPage = () => {
         [ contests, currentPage, handlePageChange, isLoaded, pagesInfo, renderContest ],
     );
 
+    const test = useCallback(
+        (breadCrumb: ICategoriesBreadcrumbItem) => {
+            const category = categoriesFlat.find(({ id }) => id.toString() === breadCrumb.id);
+            console.log(category);
+
+            updateBreadcrumb(category, categoriesFlat);
+            navigate(getContestCategoryBreadcrumbItemPath(breadCrumb.id));
+        },
+        [ categoriesFlat, navigate, updateBreadcrumb, getContestCategoryBreadcrumbItemPath ],
+    );
+
     const renderCategoriesBreadcrumbItem = useCallback(
         (categoryBreadcrumbItem: ICategoriesBreadcrumbItem) => {
-            const { value, isLast, id } = categoryBreadcrumbItem;
+            console.log(categoryBreadcrumbItem);
+            const { value, isLast } = categoryBreadcrumbItem;
             const classNames = concatClassNames(styles.breadcrumbBtn, isLast
                 ? styles.breadcrumbBtnLast
                 : '');
 
             return (
-                <LinkButton type={LinkButtonType.plain} className={classNames} to={getContestCategoryBreadcrumbItemPath(id)} text={value} />
+                <Button type={ButtonType.plain} className={classNames} onClick={() => test(categoryBreadcrumbItem)} text={value} />
             );
         },
-        [ getContestCategoryBreadcrumbItemPath ],
+        [ test ],
     );
 
     return (
