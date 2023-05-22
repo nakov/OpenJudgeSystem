@@ -26,7 +26,9 @@ public class DateTimeValueConverter : ValueConverter<DateTime?, DateTime?>
          return null;
       }
 
-      return TimeZoneInfo.ConvertTimeToUtc(dateTime.Value);
+      var convertToUnspecifiedDate = DateTime.SpecifyKind(dateTime.Value, DateTimeKind.Unspecified);
+
+      return TimeZoneInfo.ConvertTimeToUtc(convertToUnspecifiedDate, LocalTimeZoneInfo);
    }
 
    private static DateTime? ConvertToLocal(DateTime? dateTime)
