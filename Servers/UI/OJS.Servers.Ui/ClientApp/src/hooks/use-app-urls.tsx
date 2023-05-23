@@ -24,7 +24,7 @@ type IAppUrlsProviderProps = IHaveChildrenProps
 const getRegisterContestTypeUrl = ({
     id,
     participationType,
-}: IRegisterForContestTypeUrlParams) => `/Contests/${id}/Register/${participationType}`;
+}: IRegisterForContestTypeUrlParams) => `/Contests/${id}/${participationType}`;
 
 const getContestCategoryBreadcrumbItemPath = (id: string) => `/Contests?${FilterType.Category.toString()}=${id}`;
 
@@ -32,7 +32,7 @@ const getContestProblemUrl = ({
     id,
     participationType,
     orderBy,
-}: IContestProblemUrl) => `/Contests/${id}/Register/${participationType}#${orderBy}`;
+}: IContestProblemUrl) => `/Contests/${id}/${participationType}#${orderBy}`;
 
 const getAdministrationRetestSubmissionInternalUrl = () => '/Submissions/Retest';
 
