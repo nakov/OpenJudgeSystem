@@ -4,7 +4,6 @@ import { Route, Routes } from 'react-router-dom';
 import AdministrationPage from '../../pages/administration/AdministrationPage';
 import SubmissionRetestPage from '../../pages/administration/SubmissionRetestPage';
 import ContestPage from '../../pages/contest/ContestPage';
-import ContestRegisterPage from '../../pages/contest/ContestRegisterPage';
 import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';
 import ContestsPage from '../../pages/contests/ContestsPage';
 import HomePage from '../../pages/home/HomePage';
@@ -51,11 +50,6 @@ const routes = [
     {
         path: '/submissions/:submissionId/details',
         Element: SubmissionDetailsPage,
-    },
-    {
-        path: '/contests/:contestId/register/:participationType',
-        Element: ContestRegisterPage,
-        title: 'Enter Contest Password',
     },
     {
         title: 'Contests',
