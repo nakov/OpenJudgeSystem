@@ -31,6 +31,13 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             .MapCollection<TServiceModel>()
             .ToEnumerableAsync();
 
+    public async Task<int> GetTotalSubmissionsCount()
+        => await this.GetQuery(
+                orderBy: s => s.Id,
+                descending: true)
+            .Select(s => s.Id)
+            .FirstAsync();
+
     public Submission? GetBestForParticipantByProblem(int participantId, int problemId) =>
         this.GetAllByProblemAndParticipant(problemId, participantId)
             .Where(s => s.Processed)
