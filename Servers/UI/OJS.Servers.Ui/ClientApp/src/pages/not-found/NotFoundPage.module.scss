@@ -32,6 +32,12 @@
   color: colors.$text-dark-gray-color;
   font-size: 100px;
   font-weight: bold;
-  margin-top: 10px;
   text-align: center;
+}
+
+.paragraphAndBtnContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 10vh;
 }

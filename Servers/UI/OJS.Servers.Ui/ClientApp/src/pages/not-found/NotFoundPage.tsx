@@ -16,13 +16,15 @@ const NotFoundPage = () => (
           src={image}
           alt="Not Found"
         />
-        <p className={styles.httpCodeParagraph}>404</p>
-        <Heading type={HeadingType.secondary}>Page Not Found</Heading>
-        <LinkButton
-          to="/"
-          text="Back to Home"
-          className={styles.backBtn}
-        />
+        <div className={styles.paragraphAndBtnContainer}>
+            <p className={styles.httpCodeParagraph}>404</p>
+            <Heading type={HeadingType.secondary}>Page Not Found</Heading>
+            <LinkButton
+              to="/"
+              text="Back to Home"
+              className={styles.backBtn}
+            />
+        </div>
     </div>
 );
 
