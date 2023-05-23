@@ -7,6 +7,8 @@ namespace OJS.Servers.Infrastructure.Extensions
     using System.Reflection;
     using Hangfire;
     using Hangfire.SqlServer;
+    using Microsoft.AspNetCore.DataProtection;
+    using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -54,7 +56,7 @@ namespace OJS.Servers.Infrastructure.Extensions
             TIdentityUserRole>(
             this IServiceCollection services,
             IEnumerable<GlobalQueryFilterType>? globalQueryFilterTypes = null)
-            where TDbContext : DbContext
+            where TDbContext : DbContext, IDataProtectionKeyContext
             where TIdentityUser : IdentityUser
             where TIdentityRole : IdentityRole
             where TIdentityUserRole : IdentityUserRole<string>, new()
@@ -82,6 +84,14 @@ namespace OJS.Servers.Infrastructure.Extensions
                 {
                     opt.Cookie.Domain = EnvironmentUtils.GetRequiredByKey(SharedAuthCookieDomain);
                 });
+
+            // By default the data protection API that encrypts the authentication cookie generates a unique key for each application,
+            // but in order to use/decrypt the same cookie across multiple servers, we need to use the same encryption key.
+            // By setting custom data protection, we can use the same key in each server configured with the same application name.
+            services
+                .AddDataProtection()
+                .PersistKeysToDbContext<TDbContext>()
+                .SetApplicationName(ApplicationFullName);
 
             return services;
         }
