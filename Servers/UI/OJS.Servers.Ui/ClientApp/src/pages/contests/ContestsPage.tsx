@@ -52,7 +52,6 @@ const ContestsPage = () => {
 
     useEffect(
         () => {
-            console.log(breadcrumbItems);
             if (!isEmpty(params)) {
                 clearHash();
             }
@@ -120,30 +119,33 @@ const ContestsPage = () => {
         [ contests, currentPage, handlePageChange, isLoaded, pagesInfo, renderContest ],
     );
 
-    const test = useCallback(
-        (breadCrumb: ICategoriesBreadcrumbItem) => {
-            const category = categoriesFlat.find(({ id }) => id.toString() === breadCrumb.id);
-            console.log(category);
+    const updateBreadcrumbAndNavigateToCategory = useCallback(
+        (breadcrumb: ICategoriesBreadcrumbItem) => {
+            const category = categoriesFlat.find(({ id }) => id.toString() === breadcrumb.id.toString());
 
             updateBreadcrumb(category, categoriesFlat);
-            navigate(getContestCategoryBreadcrumbItemPath(breadCrumb.id));
+            navigate(getContestCategoryBreadcrumbItemPath(breadcrumb.id));
         },
         [ categoriesFlat, navigate, updateBreadcrumb, getContestCategoryBreadcrumbItemPath ],
     );
 
     const renderCategoriesBreadcrumbItem = useCallback(
         (categoryBreadcrumbItem: ICategoriesBreadcrumbItem) => {
-            console.log(categoryBreadcrumbItem);
             const { value, isLast } = categoryBreadcrumbItem;
             const classNames = concatClassNames(styles.breadcrumbBtn, isLast
                 ? styles.breadcrumbBtnLast
                 : '');
 
             return (
-                <Button type={ButtonType.plain} className={classNames} onClick={() => test(categoryBreadcrumbItem)} text={value} />
+                <Button
+                  type={ButtonType.plain}
+                  className={classNames}
+                  onClick={() => updateBreadcrumbAndNavigateToCategory(categoryBreadcrumbItem)}
+                  text={value}
+                />
             );
         },
-        [ test ],
+        [ updateBreadcrumbAndNavigateToCategory ],
     );
 
     return (
