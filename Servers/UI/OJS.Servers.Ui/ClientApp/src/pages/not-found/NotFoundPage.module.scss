@@ -1,0 +1,37 @@
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
+
+.container {
+  align-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  justify-content: center;
+  width: auto;
+
+  h2 {
+    text-align: center;
+  }
+}
+
+.backBtn {
+  align-self: center;
+  max-width: 10em;
+}
+
+.image {
+  align-self: center;
+  max-width: 50em;
+  width: 100%;
+}
+
+.httpCodeParagraph {
+  @extend %font-family-montserrat;
+
+  color: colors.$background-color-footer;
+  font-size: 100px;
+  font-weight: bold;
+  margin-top: 10px;
+  text-align: center;
+}
