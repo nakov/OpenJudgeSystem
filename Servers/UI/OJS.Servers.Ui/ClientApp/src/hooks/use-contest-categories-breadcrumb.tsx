@@ -7,6 +7,7 @@ import { IHaveChildrenProps } from '../components/common/Props';
 interface ICategoriesBreadcrumbContext {
     state: {
         breadcrumbItems: ICategoriesBreadcrumbItem[];
+        selectedBreadcrumbCategoryId: string;
     };
     actions: {
         updateBreadcrumb: (category: ITreeItemType | undefined, flattenTree: ITreeItemType[] | []) => void;
@@ -31,6 +32,7 @@ const orderByAsc = (x : ICategoriesBreadcrumbItem, y: ICategoriesBreadcrumbItem)
 
 const CategoriesBreadcrumbProvider = ({ children }: ICategoriesBreadcrumbProviderProps) => {
     const [ breadcrumbItems, setBreadcrumbItems ] = useState(defaultState.state.breadcrumbItems);
+    const [ selectedBreadcrumbCategoryId, setSelectedBreadcrumbCategoryId ] = useState<string>('');
 
     const clearBreadcrumb = useCallback(
         () => setBreadcrumbItems([]),
@@ -44,6 +46,7 @@ const CategoriesBreadcrumbProvider = ({ children }: ICategoriesBreadcrumbProvide
             }
 
             const { id, name, parentId } = category;
+            setSelectedBreadcrumbCategoryId(id);
 
             const allBreadcrumbItems = [] as ICategoriesBreadcrumbItem[];
             let index = 0;
@@ -91,10 +94,10 @@ const CategoriesBreadcrumbProvider = ({ children }: ICategoriesBreadcrumbProvide
 
     const value = useMemo(
         () => ({
-            state: { breadcrumbItems },
+            state: { breadcrumbItems, selectedBreadcrumbCategoryId },
             actions: { updateBreadcrumb, clearBreadcrumb },
         }),
-        [ breadcrumbItems, updateBreadcrumb, clearBreadcrumb ],
+        [ breadcrumbItems, updateBreadcrumb, clearBreadcrumb, selectedBreadcrumbCategoryId ],
     );
 
     return (
