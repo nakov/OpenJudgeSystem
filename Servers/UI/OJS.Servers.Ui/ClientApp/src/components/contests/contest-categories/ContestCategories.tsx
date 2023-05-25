@@ -9,7 +9,6 @@ import { useContestCategories } from '../../../hooks/use-contest-categories';
 import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
 import { useContests } from '../../../hooks/use-contests';
 import concatClassNames from '../../../utils/class-names';
-import { flattenWith } from '../../../utils/list-utils';
 import { IHaveOptionalClassName } from '../../common/Props';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import Tree from '../../guidelines/trees/Tree';
@@ -39,18 +38,13 @@ const ContestCategories = ({
     defaultSelected,
     setStrategyFilters,
 }: IContestCategoriesProps) => {
-    const { state: { categories } } = useContestCategories();
+    const { state: { categories, categoriesFlat } } = useContestCategories();
     const { state: { possibleFilters } } = useContests();
     const { actions: { updateBreadcrumb, clearBreadcrumb } } = useCategoriesBreadcrumbs();
     const [ openedCategoryFilters, setOpenedCategoryFilters ] = useState(defaultState.state.openedCategoryFilters);
     const [ openedCategoryFilter, setOpenedCategoryFilter ] = useState(defaultState.state.openedCategoryFilter);
     const [ currentCategoryId, selectCurrentCategoryId ] = useState<string>('');
     const [ prevCategoryId, setPrevCategoryId ] = useState<string>('');
-
-    const categoriesFlat = useMemo(
-        () => flattenWith(categories, (c) => c.children || null),
-        [ categories ],
-    );
 
     const getCategoryByValue = useCallback(
         (searchedValue?: string) => {
