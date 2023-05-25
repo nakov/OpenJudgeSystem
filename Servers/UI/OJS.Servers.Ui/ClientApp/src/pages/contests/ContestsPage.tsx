@@ -12,7 +12,6 @@ import Heading, { HeadingType } from '../../components/guidelines/headings/Headi
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
-import { useHashUrlParams } from '../../hooks/common/use-hash-url-params';
 import { useAppUrls } from '../../hooks/use-app-urls';
 import { useContestCategories } from '../../hooks/use-contest-categories';
 import { ICategoriesBreadcrumbItem, useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
@@ -40,7 +39,6 @@ const ContestsPage = () => {
         changePage,
     } = usePages();
     const { state: { breadcrumbItems }, actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
-    const { state: { params }, actions: { clearHash } } = useHashUrlParams();
     const { getContestCategoryBreadcrumbItemPath } = useAppUrls();
     const { state: { categories } } = useContestCategories();
     const navigate = useNavigate();
@@ -48,15 +46,6 @@ const ContestsPage = () => {
     const categoriesFlat = useMemo(
         () => flattenWith(categories, (c) => c.children || null),
         [ categories ],
-    );
-
-    useEffect(
-        () => {
-            if (!isEmpty(params)) {
-                clearHash();
-            }
-        },
-        [ clearHash, params ],
     );
 
     useEffect(
