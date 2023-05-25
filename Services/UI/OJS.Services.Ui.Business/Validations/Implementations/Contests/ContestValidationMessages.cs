@@ -39,7 +39,9 @@ public static class ValidationMessages
 
         public const string SubmissionWasSentTooSoon = "Submission was sent too soon.";
 
-        public const string SubmissionTooLong = "The submitted code is too long.";
+        public const string SubmissionFileTooBig = "The chosen file is too big. Please choose a smaller file.";
+
+        public const string SubmissionTooLong = "The submitted code is too long. Please submit a shorter solution.";
 
         public const string UserHasNotProcessedSubmissionForProblem = "You have unprocessed submission for this problem. Please wait until the submission is processed.";
 
