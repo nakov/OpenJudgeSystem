@@ -89,7 +89,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
         }
 
         if (submitSubmissionServiceModel.StringContent != null &&
-            problem.SourceCodeSizeLimit < Encoding.ASCII.GetBytes(submitSubmissionServiceModel.StringContent).Length)
+            problem.SourceCodeSizeLimit < Encoding.UTF8.GetBytes(submitSubmissionServiceModel.StringContent).Length)
         {
             return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTooLong, problemId);
         }
