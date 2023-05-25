@@ -3,7 +3,7 @@ import first from 'lodash/first';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { IRegisterForContestTypeUrlParams } from '../../../common/app-url-types';
+import { IParticipateInContestTypeUrlParams } from '../../../common/app-url-types';
 import { ContestParticipationType } from '../../../common/constants';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import { useAppUrls } from '../../../hooks/use-app-urls';
@@ -50,7 +50,7 @@ const SubmissionDetails = () => {
         actions: { loadContestByProblemId },
     } = useContests();
 
-    const { getRegisterContestTypeUrl } = useAppUrls();
+    const { getParticipateInContestUrl } = useAppUrls();
 
     const { state: { user } } = useAuth();
 
@@ -122,16 +122,11 @@ const SubmissionDetails = () => {
         [ handleDownloadSubmissionFile, canAccessAdministration, currentSubmission, user ],
     );
 
-    const canBeCompeted = useMemo(
-        () => contest?.canBeCompeted,
-        [ contest ],
-    );
-
     const participationType = useMemo(
-        () => canBeCompeted
+        () => currentSubmission?.isOfficial
             ? ContestParticipationType.Compete
             : ContestParticipationType.Practice,
-        [ canBeCompeted ],
+        [ currentSubmission ],
     );
 
     useEffect(() => {
@@ -149,8 +144,18 @@ const SubmissionDetails = () => {
     );
 
     const registerContestTypeUrl = useMemo(
-        () => getRegisterContestTypeUrl({ id: contest?.id, participationType } as IRegisterForContestTypeUrlParams),
-        [ contest?.id, participationType, getRegisterContestTypeUrl ],
+        () => {
+            const problemIndex = isNil(currentSubmission?.problem.orderBy)
+                ? 1
+                : currentSubmission!.problem.orderBy! + 1;
+
+            return getParticipateInContestUrl({
+                id: contest?.id,
+                participationType,
+                problemIndex,
+            } as IParticipateInContestTypeUrlParams);
+        },
+        [ getParticipateInContestUrl, contest, participationType, currentSubmission ],
     );
 
     const { submissionType } = currentSubmission || {};
