@@ -36,7 +36,7 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
                 orderBy: s => s.Id,
                 descending: true)
             .Select(s => s.Id)
-            .FirstAsync();
+            .FirstOrDefaultAsync();
 
     public Submission? GetBestForParticipantByProblem(int participantId, int problemId) =>
         this.GetAllByProblemAndParticipant(problemId, participantId)
