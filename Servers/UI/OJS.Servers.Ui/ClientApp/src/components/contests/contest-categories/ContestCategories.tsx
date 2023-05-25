@@ -246,19 +246,6 @@ const ContestCategories = ({
 
     useEffect(
         () => {
-            const currentNode = getCurrentNode(defaultSelected);
-
-            if (isNil(currentNode)) {
-                return;
-            }
-
-            selectCurrentCategoryId(currentNode?.id);
-        },
-        [ defaultSelected, getCurrentNode ],
-    );
-
-    useEffect(
-        () => {
             if (currentCategoryId && currentCategoryId !== prevCategoryId) {
                 applyStrategyFilters();
             }
