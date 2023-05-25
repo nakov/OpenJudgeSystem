@@ -56,7 +56,7 @@ const ContestsPage = () => {
                 clearHash();
             }
         },
-        [ clearHash, params, breadcrumbItems ],
+        [ clearHash, params ],
     );
 
     useEffect(
