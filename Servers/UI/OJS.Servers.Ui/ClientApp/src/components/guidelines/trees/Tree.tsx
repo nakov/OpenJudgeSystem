@@ -115,7 +115,7 @@ const Tree = ({
 
     const renderTree = useCallback(
         () => {
-            if (selectedBreadcrumbCategoryId !== selectedId) {
+            if (selectedBreadcrumbCategoryId !== selectedId && !selectedFromUrl) {
                 setSelectedId(selectedBreadcrumbCategoryId);
             }
 
@@ -131,7 +131,7 @@ const Tree = ({
                 </TreeView>
             );
         },
-        [ expandedIds, renderTreeView, items, selectedBreadcrumbCategoryId, selectedId ],
+        [ expandedIds, renderTreeView, items, selectedBreadcrumbCategoryId, selectedId, selectedFromUrl ],
     );
 
     return renderTree();

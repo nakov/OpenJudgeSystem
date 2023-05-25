@@ -69,9 +69,9 @@ const ContestCategories = ({
     );
 
     const getCategoryById = useCallback(
-        (searchedId: string) => {
+        (searchedValue: string) => {
             const filterToFind = possibleFilters
-                .find(({ id }) => id.toString() === searchedId) as IFilter;
+                .find(({ value }) => value.toString() === searchedValue) as IFilter;
 
             if (isNil(filterToFind)) {
                 return '';
