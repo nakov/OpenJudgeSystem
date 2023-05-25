@@ -69,9 +69,9 @@ const ContestCategories = ({
     );
 
     const getCategoryById = useCallback(
-        (searchedId: string) => {
+        (searchedValue: string) => {
             const filterToFind = possibleFilters
-                .find(({ id }) => id.toString() === searchedId) as IFilter;
+                .find(({ value }) => value.toString() === searchedValue) as IFilter;
 
             if (isNil(filterToFind)) {
                 return '';
@@ -242,19 +242,6 @@ const ContestCategories = ({
             }
         },
         [ clearBreadcrumb, openedCategoryFilter.strategies, openedCategoryFilters, setStrategyFilters ],
-    );
-
-    useEffect(
-        () => {
-            const currentNode = getCurrentNode(defaultSelected);
-
-            if (isNil(currentNode)) {
-                return;
-            }
-
-            selectCurrentCategoryId(currentNode?.id);
-        },
-        [ defaultSelected, getCurrentNode ],
     );
 
     useEffect(
