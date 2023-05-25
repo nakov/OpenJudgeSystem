@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { TbCake } from 'react-icons/tb';
+import { TbBrandCSharp } from 'react-icons/tb';
 
 import concatClassNames from '../../../../utils/class-names';
 import IconSize from '../common/icon-sizes';
@@ -18,7 +18,7 @@ const DotNetIcon = ({
       className={concatClassNames(styles.icon, className)}
       size={size}
       helperText={helperText}
-      Component={TbCake}
+      Component={TbBrandCSharp}
     />
 );
 
