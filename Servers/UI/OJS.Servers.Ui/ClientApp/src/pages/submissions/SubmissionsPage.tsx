@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import isEmpty from 'lodash/isEmpty';
 
 import SubmissionsGrid from '../../components/submissions/submissions-grid/SubmissionsGrid';
-import { useHashUrlParams } from '../../hooks/common/use-hash-url-params';
 import { usePublicSubmissions } from '../../hooks/submissions/use-public-submissions';
 import { setLayout } from '../shared/set-layout';
 
@@ -14,13 +13,6 @@ const SubmissionsPage = () => {
         },
         actions: { load },
     } = usePublicSubmissions();
-    const { state: { params }, actions: { clearHash } } = useHashUrlParams();
-
-    useEffect(() => {
-        if (!isEmpty(params)) {
-            clearHash();
-        }
-    }, [ clearHash, params ]);
 
     useEffect(
         () => {
@@ -32,7 +24,7 @@ const SubmissionsPage = () => {
                 await load();
             })();
         },
-        [ clearHash, load, submissions, totalSubmissionsCount ],
+        [ load, submissions, totalSubmissionsCount ],
     );
 
     return (
