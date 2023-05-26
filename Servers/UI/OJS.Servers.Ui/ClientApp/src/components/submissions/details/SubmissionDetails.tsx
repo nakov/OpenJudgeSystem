@@ -143,7 +143,7 @@ const SubmissionDetails = () => {
         [ currentSubmission?.id ],
     );
 
-    const registerContestTypeUrl = useMemo(
+    const participateInContestUrl = useMemo(
         () => {
             const problemIndex = isNil(currentSubmission?.problem.orderBy)
                 ? 1
@@ -310,7 +310,7 @@ const SubmissionDetails = () => {
                         <LinkButton
                           type={LinkButtonType.secondary}
                           size={ButtonSize.small}
-                          to={registerContestTypeUrl}
+                          to={participateInContestUrl}
                           className={styles.backBtn}
                           text="Back To Contest"
                           state={backButtonState}
@@ -341,7 +341,7 @@ const SubmissionDetails = () => {
             problemNameHeadingText,
             submissionType,
             backButtonState,
-            registerContestTypeUrl,
+            participateInContestUrl,
             renderResourceLink,
             renderDownloadErrorMessage,
             currentSubmission,
