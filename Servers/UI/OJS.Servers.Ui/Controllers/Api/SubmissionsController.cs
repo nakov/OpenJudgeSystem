@@ -125,11 +125,21 @@ public class SubmissionsController : BaseApiController
         return this.Ok(result);
     }
 
+    /// <summary>
+    /// Gets latest submissions (default number of submissions).
+    /// </summary>
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<SubmissionForPublicSubmissionsServiceModel>), Status200OK)]
     public async Task<IActionResult> Public()
         => await this.submissionsBusiness
             .GetPublicSubmissions()
             .ToOkResult();
 
+    /// <summary>
+    /// Gets the count of all submissions.
+    /// </summary>
+    [HttpGet]
+    [ProducesResponseType(typeof(int), Status200OK)]
     public async Task<IActionResult> TotalCount()
         => await this.cache.Get(
                 SubmissionsTotalCountCacheKey,
