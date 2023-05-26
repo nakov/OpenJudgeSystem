@@ -1,10 +1,11 @@
 import React, { createContext, useCallback, useContext, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
+import isEmpty from 'lodash/isEmpty';
 
 import { IHaveChildrenProps } from '../../components/common/Props';
 
 interface IHashUrlParamsContext {
-    state: { params: string };
+    state: { hashParam: string };
     actions: {
         setHash: (hashParameter: string) => void;
         clearHash: () => void;
@@ -17,17 +18,27 @@ const HashUrlParamContext = createContext<IHashUrlParamsContext>({} as IHashUrlP
 
 const HashUrlParamProvider = ({ children }: IHashUrlParamProviderProps) => {
     const location = useLocation();
-    const params = useMemo(() => {
-        const { hash } = location;
 
-        return hash.substring(1);
-    }, [ location ]);
+    const hashParam = useMemo(
+        () => {
+            const { hash } = location;
+
+            return hash.substring(1);
+        },
+        [ location ],
+    );
 
     const setHash = useCallback(
         (param: string) => {
-            window.location.hash = param;
+            if (isEmpty(location.hash)) {
+                const url = `${location.pathname}${location.search}#${param}`;
+                window.history.replaceState('', document.title, `${url}`);
+                location.hash = param;
+            } else {
+                window.location.hash = param;
+            }
         },
-        [],
+        [ location ],
     );
 
     const clearHash = useCallback(
@@ -39,13 +50,13 @@ const HashUrlParamProvider = ({ children }: IHashUrlParamProviderProps) => {
 
     const value = useMemo(
         () => ({
-            state: { params },
+            state: { hashParam },
             actions: {
                 setHash,
                 clearHash,
             },
         }),
-        [ params, setHash, clearHash ],
+        [ hashParam, setHash, clearHash ],
     );
 
     return (
