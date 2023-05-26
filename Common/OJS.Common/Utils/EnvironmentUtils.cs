@@ -43,11 +43,19 @@ namespace OJS.Common.Utils
 
         public static void ValidateEnvironmentVariableExists(
             IEnumerable<string> configurationValues)
-            => ValidateEnvironmentVariableExists(configurationValues, GetByKey);
+        {
+            var requiredGlobalConfigValues = new List<string>
+            {
+                DistributorBaseUrlKey,
+                ApplicationUrl,
+                RedisConnectionString,
+                SharedAuthCookieDomain,
+            };
 
-        public static void ValidateApplicationUrlsExist(
-            IEnumerable<ApplicationName> appNames)
-            => ValidateEnvironmentVariableExists(appNames, GetApplicationUrl);
+            requiredGlobalConfigValues.AddRange(configurationValues);
+
+            ValidateEnvironmentVariableExists(requiredGlobalConfigValues, GetByKey);
+        }
 
         private static string GetConnectionStringName(ApplicationName appName, bool appUsesMultipleDatabases)
             => appUsesMultipleDatabases

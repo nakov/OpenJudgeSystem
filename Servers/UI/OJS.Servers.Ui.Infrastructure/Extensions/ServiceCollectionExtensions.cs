@@ -17,6 +17,11 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
 
         private static readonly string ApiDocsTitle = $"{ApplicationFullName} {AppName} Api";
 
+        private static readonly string[] RequiredConfigValues =
+        {
+            EnvironmentVariables.UiHomeYouTubeVideoId,
+        };
+
         public static void ConfigureServices<TProgram>(
             this IServiceCollection services,
             IConfiguration configuration,
@@ -44,24 +49,10 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
             this IServiceCollection services,
             IConfiguration configuration)
         {
+            EnvironmentUtils.ValidateEnvironmentVariableExists(RequiredConfigValues);
+
             services
-                .Configure<DistributorConfig>(configuration.GetSection(nameof(DistributorConfig)))
-                .ValidateLaunchSettings();
-
-            return services;
-        }
-
-        private static IServiceCollection ValidateLaunchSettings(this IServiceCollection services)
-        {
-            var requiredConfigValues = new[]
-            {
-                EnvironmentVariables.DistributorBaseUrlKey,
-                EnvironmentVariables.ApplicationUrl,
-                EnvironmentVariables.RedisConnectionString,
-                EnvironmentVariables.SharedAuthCookieDomain,
-            };
-
-            EnvironmentUtils.ValidateEnvironmentVariableExists(requiredConfigValues);
+                .Configure<DistributorConfig>(configuration.GetSection(nameof(DistributorConfig)));
 
             return services;
         }

@@ -16,32 +16,23 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
     {
         private const ApplicationName AppName = ApplicationName.Administration;
 
+        private static readonly string[] RequiredConfigValues =
+        {
+            EnvironmentVariables.LocalTimeZone,
+        };
+
         public static void ConfigureServices<TProgram>(this IServiceCollection services)
-            => services
+        {
+            EnvironmentUtils.ValidateEnvironmentVariableExists(RequiredConfigValues);
+
+            services
                 .AddWebServer<TProgram>()
                 .AddHangfireServer(AppName)
-                .ValidateLaunchSettings()
                 .AddIdentityDatabase<AdminDbContext, UserProfile, Role, UserInRole>(Enumerable.Empty<GlobalQueryFilterType>())
                 .AddScoped<OjsDbContext, AdminDbContext>()
                 .AddSoftUniJudgeCommonServices()
                 .UseAutoCrudAdmin()
                 .AddControllersWithViews();
-
-        private static IServiceCollection ValidateLaunchSettings(this IServiceCollection services)
-        {
-            var requiredConfigValues = new[]
-            {
-                EnvironmentVariables.DistributorBaseUrlKey,
-                EnvironmentVariables.ApplicationUrl,
-                EnvironmentVariables.PathToCommonKeyRingFolderKey,
-                EnvironmentVariables.RedisConnectionString,
-                EnvironmentVariables.SharedAuthCookieDomain,
-                EnvironmentVariables.LocalTimeZone,
-            };
-
-            EnvironmentUtils.ValidateEnvironmentVariableExists(requiredConfigValues);
-
-            return services;
         }
     }
 }
