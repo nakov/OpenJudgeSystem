@@ -24,7 +24,7 @@ interface ICategoriesBreadcrumbItem {
     orderBy: number;
 }
 
-const defaultState = { state: { breadcrumbItems: [] as ICategoriesBreadcrumbItem[] } };
+const defaultState = { state: { breadcrumbItems: [] as ICategoriesBreadcrumbItem[], selectedBreadcrumbCategoryId: '' } };
 
 const CategoriesBreadcrumbContext = createContext<ICategoriesBreadcrumbContext>(defaultState as ICategoriesBreadcrumbContext);
 
@@ -32,7 +32,8 @@ const orderByAsc = (x : ICategoriesBreadcrumbItem, y: ICategoriesBreadcrumbItem)
 
 const CategoriesBreadcrumbProvider = ({ children }: ICategoriesBreadcrumbProviderProps) => {
     const [ breadcrumbItems, setBreadcrumbItems ] = useState(defaultState.state.breadcrumbItems);
-    const [ selectedBreadcrumbCategoryId, setSelectedBreadcrumbCategoryId ] = useState<string>('');
+    const [ selectedBreadcrumbCategoryId, setSelectedBreadcrumbCategoryId ] =
+        useState<string>(defaultState.state.selectedBreadcrumbCategoryId);
 
     const clearBreadcrumb = useCallback(
         () => setBreadcrumbItems([]),
