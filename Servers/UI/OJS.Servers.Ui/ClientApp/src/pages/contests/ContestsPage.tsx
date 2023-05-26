@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
@@ -19,7 +19,6 @@ import { ICategoriesBreadcrumbItem, useCategoriesBreadcrumbs } from '../../hooks
 import { useContests } from '../../hooks/use-contests';
 import { usePages } from '../../hooks/use-pages';
 import concatClassNames from '../../utils/class-names';
-import { flattenWith } from '../../utils/list-utils';
 import { setLayout } from '../shared/set-layout';
 
 import styles from './ContestsPage.module.scss';
@@ -42,13 +41,8 @@ const ContestsPage = () => {
     const { state: { breadcrumbItems }, actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
     const { state: { params }, actions: { clearHash } } = useHashUrlParams();
     const { getContestCategoryBreadcrumbItemPath } = useAppUrls();
-    const { state: { categories } } = useContestCategories();
+    const { state: { categoriesFlat } } = useContestCategories();
     const navigate = useNavigate();
-
-    const categoriesFlat = useMemo(
-        () => flattenWith(categories, (c) => c.children || null),
-        [ categories ],
-    );
 
     useEffect(
         () => {
