@@ -1,6 +1,5 @@
 namespace OJS.Servers.Ui.Controllers
 {
-    using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
@@ -8,8 +7,6 @@ namespace OJS.Servers.Ui.Controllers
     using OJS.Servers.Infrastructure.Controllers;
     using OJS.Servers.Infrastructure.Extensions;
     using OJS.Servers.Ui.Models;
-    using System.Linq;
-    using System.Security.Claims;
     using System.Threading.Tasks;
     using static OJS.Servers.Infrastructure.ServerConstants;
 
@@ -57,25 +54,7 @@ namespace OJS.Servers.Ui.Controllers
             }
 
             var user = await this.userManager.FindByNameAsync(model.UserName);
-
             var roles = await this.userManager.GetRolesAsync(user);
-
-            var claims = roles.Select(r => new Claim(ClaimTypes.Role, r)).ToList();
-
-            claims.Add(new Claim(ClaimTypes.Name, user.UserName));
-
-            var claimsIdentity = new ClaimsIdentity(
-                claims, Authentication.SharedCookiesScheme);
-
-            var authProperties = new AuthenticationProperties
-            {
-                // ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
-            };
-
-            await this.HttpContext.SignInAsync(
-                Authentication.SharedCookiesScheme,
-                new ClaimsPrincipal(claimsIdentity),
-                authProperties);
 
             this.HttpContext.AppendAuthInfoCookies(roles, user.UserName);
             return this.RedirectToAction("Index", "Home");
