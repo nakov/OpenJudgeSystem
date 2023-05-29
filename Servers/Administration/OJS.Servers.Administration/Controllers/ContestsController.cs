@@ -178,6 +178,14 @@ namespace OJS.Servers.Administration.Controllers
             await this.AddIpsToContest(newContestUtc, actionContext.GetFormValue(AdditionalFormFields.AllowedIps));
         }
 
+        protected override async Task DeleteEntityAndSaveAsync(Contest entity, AdminActionContext actionContext)
+        {
+            entity.IsDeleted = true;
+            entity.DeletedOn = DateTime.UtcNow;
+
+            await this.EditEntityAndSaveAsync(entity, actionContext);
+        }
+
         protected override async Task AfterEntitySaveOnEditAsync(
             Contest oldContest,
             Contest contest,
