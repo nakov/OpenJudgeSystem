@@ -57,7 +57,6 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
             {
                 EnvironmentVariables.DistributorBaseUrlKey,
                 EnvironmentVariables.ApplicationUrl,
-                EnvironmentVariables.PathToCommonKeyRingFolderKey,
                 EnvironmentVariables.RedisConnectionString,
                 EnvironmentVariables.SharedAuthCookieDomain,
             };

@@ -37,8 +37,8 @@ const filterByType = (filters: IContestParam<FilterSortType>[], filterType: Filt
     .filter(({ type }) => filterType === type);
 
 const findFilterByTypeAndName = <T extends FilterSortType>(filters: IContestParam<T>[], type: string, value: any) => filters
-    .find(({ type: filterType, id }) => areStringEqual(filterType, type, false) &&
-        areStringEqual(value, id, false));
+    .find(({ type: filterType, value: filterValue }) => areStringEqual(filterType, type, false) &&
+            areStringEqual(value, filterValue, false));
 
 export {
     generateFilterItems,
