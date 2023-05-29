@@ -12,6 +12,7 @@ declare global {
     interface URLS {
         UI_URL: string | undefined;
         ADMINISTRATION_URL: string | undefined;
+        PLATFORM_URL: string | undefined;
     }
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
