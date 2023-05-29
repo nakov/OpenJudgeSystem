@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using OJS.Common;
 using OJS.Common.Helpers;
+using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
 using OJS.Services.Common.Models.Users;
@@ -13,6 +14,7 @@ using Common;
 using Infrastructure.Exceptions;
 using Validation;
 using Data;
+using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 using Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using SoftUni.Judge.Common.Enumerations;
@@ -20,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 
 using static Constants.PublicSubmissions;
 
@@ -278,7 +279,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var participant =
             await this.participantsDataService.GetByContestByUserAndByIsOfficial(
-                problem.ProblemGroup.ContestId, user.Id!, isOfficial)
+                    problem.ProblemGroup.ContestId, user.Id!, isOfficial)
                 .Map<ParticipantSubmissionResultsServiceModel>();
 
         this.ValidateCanViewSubmissionResults(isOfficial, user, problem, participant);
@@ -430,7 +431,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         => this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(DefaultCount);
 
     public Task<int> GetTotalCount()
-        => this.submissionsData.Count();
+        => this.submissionsData.GetTotalSubmissionsCount();
 
     private static void CacheTestRuns(Submission submission)
     {

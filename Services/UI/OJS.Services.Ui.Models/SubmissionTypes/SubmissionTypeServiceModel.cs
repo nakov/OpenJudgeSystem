@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Ui.Models.SubmissionTypes
+namespace OJS.Services.Ui.Models.SubmissionTypes
 {
     using System;
     using System.Collections.Generic;

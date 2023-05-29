@@ -10,5 +10,7 @@
         public string Name { get; set; } = string.Empty;
 
         public short MaximumPoints { get; set; }
+
+        public double OrderBy { get; set; }
     }
 }

@@ -1,0 +1,43 @@
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
+
+.container {
+  align-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  justify-content: center;
+  width: auto;
+
+  h2 {
+    text-align: center;
+  }
+}
+
+.backBtn {
+  align-self: center;
+  max-width: 10em;
+}
+
+.image {
+  align-self: center;
+  max-width: 50em;
+  width: 100%;
+}
+
+.httpCodeParagraph {
+  @extend %font-family-montserrat;
+
+  color: colors.$text-dark-gray-color;
+  font-size: 100px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.paragraphAndBtnContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 10vh;
+}

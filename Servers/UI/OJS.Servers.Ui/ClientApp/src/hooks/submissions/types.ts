@@ -5,6 +5,7 @@ interface IProblemType {
     id: number;
     name: string;
     maximumPoints: number;
+    orderBy: number;
 }
 
 interface ITestRunType {

@@ -1,8 +1,8 @@
 @use 'src/styles/global';
 @use 'src/styles/components';
 @use 'src/styles/fonts';
-@use 'src/styles/variables';
 @use 'src/styles/colors';
+@use 'src/styles/variables';
 
 .backBtn {
   border: 0;
@@ -105,6 +105,17 @@
   flex-direction: row;
   justify-content: space-between;
   margin-bottom: 24px;
+}
+
+@media only screen and (max-width: 1900px) {
+  .code {
+    flex: 3;
+  }
+
+  .submissionsList > ul {
+    font-size: variables.$f-size-30;
+    padding: 0;
+  }
 }
 
 .buttonsSection {

@@ -40,8 +40,8 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
 
         if (contest.IsOnlineExam)
         {
-            participant.ParticipationStartTime = DateTime.Now;
-            participant.ParticipationEndTime = DateTime.Now + contest.Duration;
+            participant.ParticipationStartTime = DateTime.UtcNow;
+            participant.ParticipationEndTime = DateTime.UtcNow + contest.Duration;
 
             var isUserLecturerInByContestAndUser =
                 await this.contestsData.IsUserLecturerInByContestAndUser(contest.Id, userId);
@@ -53,8 +53,11 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
         }
         else if (contest.IsOnsiteExam)
         {
-            participant.ParticipationStartTime = DateTime.Now;
-            participant.ParticipationEndTime = contest.EndTime;
+            participant.ParticipationStartTime = DateTime.UtcNow;
+            if (contest.EndTime != null)
+            {
+                participant.ParticipationEndTime = contest.EndTime.Value.ToUniversalTime();
+            }
         }
 
         await this.participantsData.Add(participant);

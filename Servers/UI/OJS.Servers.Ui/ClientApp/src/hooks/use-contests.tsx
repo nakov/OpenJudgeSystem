@@ -181,16 +181,16 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     );
 
     const toggleParam = useCallback<ToggleParam>((param) => {
-        const { type, id } = param;
+        const { type, value } = param;
         const paramName = type.toString();
 
         const shouldRemoveParam = params.some(({
             key,
-            value,
-        }) => areStringEqual(key, type, false) && areStringEqual(value, id, false));
+            value: paramValue,
+        }) => areStringEqual(key, type, false) && areStringEqual(paramValue, value, false));
 
         if (!shouldRemoveParam) {
-            setParam(paramName, id);
+            setParam(paramName, value);
         }
 
         changePage(1);

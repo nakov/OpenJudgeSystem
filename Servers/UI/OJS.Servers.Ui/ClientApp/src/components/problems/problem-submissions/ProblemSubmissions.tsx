@@ -47,7 +47,6 @@ const ProblemSubmissions = () => {
     // concatClassNames(styles.submissionItem, submissionResultsListItemClass);
     const submissionResultsContentClass = 'submissionResultsContent';
     const submissionResultsContentClassName = concatClassNames(styles.submissionResultsContent, submissionResultsContentClass);
-
     const renderErrorMessage = useCallback(
         () => {
             if (!isNil(problemSubmissionsError)) {
