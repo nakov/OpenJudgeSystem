@@ -57,6 +57,9 @@ namespace OJS.Common.Utils
             ValidateEnvironmentVariableExists(requiredGlobalConfigValues, GetByKey);
         }
 
+        public static bool IsProduction()
+            => Environment.GetEnvironmentVariable(EnvironmentKey) == ProductionValue;
+
         private static string GetConnectionStringName(ApplicationName appName, bool appUsesMultipleDatabases)
             => appUsesMultipleDatabases
                 ? $"{appName}DbContext"
@@ -123,9 +126,6 @@ namespace OJS.Common.Utils
 
         private static string GetApplicationEnvironmentPrefix(ApplicationName appName)
             => string.Join("_", Regex.Split(appName.ToString(), UpperCaseGroupsRegex)).ToUpper();
-
-        private static bool IsProduction()
-            => Environment.GetEnvironmentVariable(EnvironmentKey) == ProductionValue;
 
         private static bool IsDocker()
             => Environment.GetEnvironmentVariable(EnvironmentKey) == DockerValue;

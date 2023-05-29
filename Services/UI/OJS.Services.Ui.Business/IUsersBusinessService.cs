@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using OJS.Data.Models.Users;
     using OJS.Services.Ui.Models.Search;
     using OJS.Services.Ui.Models.Users;
     using SoftUni.Services.Infrastructure;
@@ -16,5 +17,7 @@
         Task<UserSearchServiceResultModel> GetSearchUsersByUsername(SearchServiceModel model);
 
         Task<bool> IsLoggedInUserAdmin(ClaimsPrincipal userPrincipal);
+
+        Task AddOrUpdateUser(UserProfile userEntity);
     }
 }
