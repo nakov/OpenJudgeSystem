@@ -42,6 +42,7 @@
         window.URLS = {
             UI_URL: '@applicationUrls.GetUrl(ApplicationName.Ui)',
             ADMINISTRATION_URL: '@applicationUrls.GetUrl(ApplicationName.Administration)',
+            PLATFORM_URL: '@environmentVariables.GetValue(GlobalConstants.EnvironmentVariables.SulsPlatformBaseUrlKey)',
         }
         window.Keys = {
             YOUTUBE_VIDEO_ID: '@environmentVariables.GetValue(GlobalConstants.EnvironmentVariables.UiHomeYouTubeVideoId)',
