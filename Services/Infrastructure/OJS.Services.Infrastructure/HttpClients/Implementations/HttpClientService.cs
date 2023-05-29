@@ -4,6 +4,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
     using System.Net.Http;
     using System.Net.Http.Json;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
     using FluentExtensions.Extensions;
     using Microsoft.Extensions.Logging;
@@ -119,14 +120,13 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
         {
             var externalDataResult = new ExternalDataRetrievalResult<TData>();
 
-            var queryStringSeparator = GetQueryStringSeparator(endpoint);
-            var requestUrl = $"{endpoint}{queryStringSeparator}apiKey={this.ApiKey}";
+            var requestUrl = this.InternalGetEndpoint(endpoint);
 
             try
             {
                 this.Logger.LogInformation($"Sending {HttpMethod.Post} {requestUrl} to {this.Client.BaseAddress}");
                 var response = await this.Client
-                    .PostAsJsonAsync(requestUrl, requestData)
+                    .PostAsJsonAsync(requestUrl, requestData, cancellationToken: CancellationToken.None)
                     .ConfigureAwait(continueOnCapturedContext: false);
 
                 if (response.IsSuccessStatusCode)
@@ -170,5 +170,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
 
             return result;
         }
+
+        private string InternalGetEndpoint(string endpoint) => $"{endpoint}{GetQueryStringSeparator(endpoint)}apiKey={this.ApiKey}";
     }
 }
