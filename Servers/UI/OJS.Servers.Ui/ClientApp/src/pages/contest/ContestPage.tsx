@@ -100,7 +100,7 @@ const ContestPage = () => {
 
     useEffect(
         () => {
-            if (!isNil(participationType) && !isParticipationTypeValid(participationType)) {
+            if (!isNil(participationType) && isParticipationTypeValid(participationType)) {
                 navigate('/');
             }
         },
