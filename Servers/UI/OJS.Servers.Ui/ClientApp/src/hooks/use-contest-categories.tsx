@@ -4,6 +4,7 @@ import isNil from 'lodash/isNil';
 
 import ITreeItemType from '../common/tree-types';
 import { IHaveChildrenProps } from '../components/common/Props';
+import { flattenWith } from '../utils/list-utils';
 
 import { useHttp } from './use-http';
 import { useUrls } from './use-urls';
@@ -12,6 +13,7 @@ interface IContestCategoriesContext {
     state: {
         categories: ITreeItemType[];
         isLoaded: boolean;
+        categoriesFlat: ITreeItemType[];
     };
     actions: {
         load: () => Promise<void>;
@@ -20,7 +22,7 @@ interface IContestCategoriesContext {
 
 type IContestCategoriesProviderProps = IHaveChildrenProps
 
-const defaultState = { state: { categories: [] as ITreeItemType[] } };
+const defaultState = { state: { categories: [] as ITreeItemType[], categoriesFlat: [] as ITreeItemType[] } };
 
 const ContestCategoriesContext = createContext<IContestCategoriesContext>(defaultState as IContestCategoriesContext);
 
@@ -52,15 +54,21 @@ const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps
         [ data ],
     );
 
+    const categoriesFlat = useMemo(
+        () => flattenWith(categories, (c) => c.children || null),
+        [ categories ],
+    );
+
     const value = useMemo(
         () => ({
             state: {
                 categories,
                 isLoaded: isSuccess,
+                categoriesFlat,
             },
             actions: { load },
         }),
-        [ categories, isSuccess, load ],
+        [ categories, isSuccess, load, categoriesFlat ],
     );
 
     return (
