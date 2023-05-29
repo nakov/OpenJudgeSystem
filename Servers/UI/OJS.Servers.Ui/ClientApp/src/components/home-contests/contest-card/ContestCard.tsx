@@ -36,7 +36,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const contestCardControlBtns = 'card-control-buttons';
     const contestCardControlBtnsClassName = concatClassNames(styles.contestCardControls, contestCardControlBtns);
 
-    const { getRegisterContestTypeUrl } = useAppUrls();
+    const { getParticipateInContestUrl } = useAppUrls();
 
     const renderCountdown = useCallback(
         () => {
@@ -86,7 +86,11 @@ const ContestCard = ({ contest }: IContestCardProps) => {
             <div className={contestCardControlBtnsClassName}>
                 <LinkButton
                   id="button-card-compete"
-                  to={getRegisterContestTypeUrl({ id, participationType: ContestParticipationType.Compete })}
+                  to={getParticipateInContestUrl({
+                      id,
+                      participationType: ContestParticipationType.Compete,
+                      problemIndex: 1,
+                  })}
                   text="Compete"
                   state={
                         canBeCompeted
@@ -97,7 +101,11 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                 />
                 <LinkButton
                   id="button-card-practice"
-                  to={getRegisterContestTypeUrl({ id, participationType: ContestParticipationType.Practice })}
+                  to={getParticipateInContestUrl({
+                      id,
+                      participationType: ContestParticipationType.Practice,
+                      problemIndex: 1,
+                  })}
                   text="Practice"
                   type={LinkButtonType.secondary}
                   state={
