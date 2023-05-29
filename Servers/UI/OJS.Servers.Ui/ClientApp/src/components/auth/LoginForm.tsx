@@ -2,7 +2,6 @@ import React, { useCallback } from 'react';
 import isNil from 'lodash/isNil';
 
 import { useAuth } from '../../hooks/use-auth';
-import { IDENTITY_CONFIG } from '../../identity-config';
 import { LinkButton, LinkButtonType } from '../guidelines/buttons/Button';
 import Form from '../guidelines/forms/Form';
 import FormControl, { FormControlType, IFormControlOnChangeValueType } from '../guidelines/forms/FormControl';
@@ -56,7 +55,7 @@ const LoginPage = () => {
                 <span className={styles.registerHeader}>
                     { 'You don\'t have an account yet? '}
                     <LinkButton
-                      to={IDENTITY_CONFIG.register}
+                      to="/register"
                       type={LinkButtonType.plain}
                       className={styles.loginFormLink}
                     >
