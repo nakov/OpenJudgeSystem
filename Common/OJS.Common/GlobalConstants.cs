@@ -105,6 +105,13 @@ namespace OJS.Common
             public const string CannotBeTemplate = "{0} cannot be {1}";
             public const string ValueCannotBeLessThanOrEqualToZero = "Value cannot be less than or equal to 0";
             public const string ValueCannotBeNullOrWhiteSpaceTemplate = "{0} cannot be null or white space";
+
+            public const string InactiveLoginSystem =
+                "We are sorry for the inconvenience, but the login system is currently unavailable";
+            public const string NonExistentUser =
+                "User with this username does not exist";
+            public const string InvalidUsernameOrPassword =
+                "Invalid username or password.";
             public const string ContestNotFound = "Contest not found";
         }
 
