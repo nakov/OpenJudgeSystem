@@ -14,6 +14,8 @@ public interface ISubmissionsDataService : IDataService<Submission>
 
     Task<IEnumerable<TServiceModel>> GetLatestSubmissions<TServiceModel>(int count);
 
+    Task<int> GetTotalSubmissionsCount();
+
     Task<TServiceModel> GetParticipantBySubmission<TServiceModel>(int submissionId);
 
     Task<TServiceModel> GetProblemBySubmission<TServiceModel>(int submissionId);
