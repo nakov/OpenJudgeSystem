@@ -177,8 +177,9 @@
 
         public IEnumerable<SubmissionTypeForProblem> GetSumbissionTypesForProblemsWithCurrentAuthorSolution(int id) =>
             this.GetByIdQuery(id)
-                .SelectMany(c => c.ProblemGroups, (c, pg) =>
+                .SelectMany(c => c.ProblemGroups.Where(pg => pg.IsDeleted == false), (c, pg) =>
                     pg.Problems
+                        .Where(p => p.IsDeleted == false)
                         .SelectMany(p => p.SubmissionTypes, (p2, st) => new SubmissionTypeForProblem()
                         {
                             ProblemId = p2.Id,
