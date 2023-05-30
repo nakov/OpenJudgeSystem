@@ -17,11 +17,6 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
 
         private static readonly string ApiDocsTitle = $"{ApplicationFullName} {AppName} Api";
 
-        private static readonly string[] RequiredConfigValues =
-        {
-            EnvironmentVariables.UiHomeYouTubeVideoId,
-        };
-
         public static void ConfigureServices<TProgram>(
             this IServiceCollection services,
             IConfiguration configuration,
@@ -49,8 +44,6 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
             this IServiceCollection services,
             IConfiguration configuration)
         {
-            EnvironmentUtils.ValidateEnvironmentVariableExists(RequiredConfigValues);
-
             services
                 .Configure<DistributorConfig>(configuration.GetSection(nameof(DistributorConfig)));
 
