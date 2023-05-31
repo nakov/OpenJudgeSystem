@@ -2,10 +2,12 @@ namespace OJS.Servers.Administration.Controllers;
 
 using AutoCrudAdmin;
 using AutoCrudAdmin.Controllers;
+using AutoCrudAdmin.Models;
 using OJS.Services.Infrastructure.Exceptions;
 using SoftUni.Data.Infrastructure.Models;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEntity>
     where TEntity : class
@@ -47,6 +49,17 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
         }
 
         return (TEntityId)Convert.ChangeType(id, typeof(TEntityId));
+    }
+
+    protected override async Task DeleteEntityAndSaveAsync(TEntity entity, AdminActionContext actionContext)
+    {
+        if (entity is IDeletableEntity deletableEntity)
+        {
+            deletableEntity.IsDeleted = true;
+            deletableEntity.DeletedOn = DateTime.UtcNow;
+
+            await this.EditEntityAndSaveAsync(entity, actionContext);
+        }
     }
 
     private static string GetPrimaryKeyValueFromQuery(IDictionary<string, string> complexId)
