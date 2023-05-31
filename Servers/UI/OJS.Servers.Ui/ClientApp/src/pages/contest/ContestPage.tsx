@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -9,7 +10,6 @@ import ContestPasswordForm from '../../components/contests/contest-password-form
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
 import { useCurrentContest } from '../../hooks/use-current-contest';
-import HomePage from '../home/HomePage';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 
@@ -17,6 +17,7 @@ import styles from './ContestPage.module.scss';
 
 const ContestPage = () => {
     const { state: { params } } = useRouteUrlParams();
+    const navigate = useNavigate();
 
     const {
         contestId,
@@ -97,11 +98,13 @@ const ContestPage = () => {
         [ contestError, renderErrorMessage ],
     );
 
-    const renderPage = useMemo(
-        () => isParticipationTypeValid(participationType)
-            ? renderContestPage
-            : <HomePage />,
-        [ participationType, renderContestPage ],
+    useEffect(
+        () => {
+            if (!isNil(participationType) && !isParticipationTypeValid(participationType)) {
+                navigate('/');
+            }
+        },
+        [ navigate, participationType ],
     );
 
     useEffect(
@@ -146,7 +149,7 @@ const ContestPage = () => {
                   isOfficial={isParticipationOfficial}
                 />
             )
-            : renderPage
+            : renderContestPage
     );
 };
 
