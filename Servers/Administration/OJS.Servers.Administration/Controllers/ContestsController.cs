@@ -152,9 +152,8 @@ namespace OJS.Servers.Administration.Controllers
             Contest contest,
             AdminActionContext actionContext)
         {
-            var contestUtc = ConvertContestStartAndEndTimeToUtc(contest);
-            AddProblemGroupsToContest(contestUtc, contestUtc.NumberOfProblemGroups);
-            await this.AddIpsToContest(contestUtc, actionContext.GetFormValue(AdditionalFormFields.AllowedIps));
+            AddProblemGroupsToContest(contest, contest.NumberOfProblemGroups);
+            await this.AddIpsToContest(contest, actionContext.GetFormValue(AdditionalFormFields.AllowedIps));
         }
 
         protected override async Task BeforeEntitySaveOnEditAsync(
@@ -162,19 +161,18 @@ namespace OJS.Servers.Administration.Controllers
             Contest newContest,
             AdminActionContext actionContext)
         {
-            var newContestUtc = ConvertContestStartAndEndTimeToUtc(newContest);
-            if (newContestUtc.IsOnlineExam && newContestUtc.ProblemGroups.Count == 0)
+            if (newContest.IsOnlineExam && newContest.ProblemGroups.Count == 0)
             {
-                AddProblemGroupsToContest(newContestUtc, newContestUtc.NumberOfProblemGroups);
+                AddProblemGroupsToContest(newContest, newContest.NumberOfProblemGroups);
             }
 
-            if (!newContestUtc.IsOnlineExam && newContestUtc.Duration != null)
+            if (!newContest.IsOnlineExam && newContest.Duration != null)
             {
-                newContestUtc.Duration = null;
+                newContest.Duration = null;
             }
 
-            newContestUtc.IpsInContests.Clear();
-            await this.AddIpsToContest(newContestUtc, actionContext.GetFormValue(AdditionalFormFields.AllowedIps));
+            newContest.IpsInContests.Clear();
+            await this.AddIpsToContest(newContest, actionContext.GetFormValue(AdditionalFormFields.AllowedIps));
         }
 
         protected override async Task AfterEntitySaveOnEditAsync(
@@ -213,16 +211,6 @@ namespace OJS.Servers.Administration.Controllers
                     OrderBy = i,
                 });
             }
-        }
-
-        private static Contest ConvertContestStartAndEndTimeToUtc(Contest contest)
-        {
-            contest.StartTime = contest.StartTime == null ? contest.StartTime : TimeZoneInfo.ConvertTimeToUtc((DateTime)contest.StartTime);
-            contest.EndTime = contest.EndTime == null ? contest.EndTime : TimeZoneInfo.ConvertTimeToUtc((DateTime)contest.EndTime);
-            contest.PracticeStartTime = contest.PracticeStartTime == null ? contest.PracticeStartTime : TimeZoneInfo.ConvertTimeToUtc((DateTime)contest.PracticeStartTime);
-            contest.PracticeEndTime = contest.PracticeEndTime == null ? contest.PracticeEndTime : TimeZoneInfo.ConvertTimeToUtc((DateTime)contest.PracticeEndTime);
-
-            return contest;
         }
 
         private async Task AddIpsToContest(Contest contest, string mergedIps)

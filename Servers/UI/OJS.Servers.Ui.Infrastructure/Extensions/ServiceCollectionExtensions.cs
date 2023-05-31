@@ -43,27 +43,8 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
         private static IServiceCollection ConfigureSettings(
             this IServiceCollection services,
             IConfiguration configuration)
-        {
-            services
-                .Configure<DistributorConfig>(configuration.GetSection(nameof(DistributorConfig)))
-                .ValidateLaunchSettings();
-
-            return services;
-        }
-
-        private static IServiceCollection ValidateLaunchSettings(this IServiceCollection services)
-        {
-            var requiredConfigValues = new[]
-            {
-                EnvironmentVariables.DistributorBaseUrlKey,
-                EnvironmentVariables.ApplicationUrl,
-                EnvironmentVariables.RedisConnectionString,
-                EnvironmentVariables.SharedAuthCookieDomain,
-            };
-
-            EnvironmentUtils.ValidateEnvironmentVariableExists(requiredConfigValues);
-
-            return services;
-        }
+            => services
+                .ValidateLaunchSettings()
+                .Configure<DistributorConfig>(configuration.GetSection(nameof(DistributorConfig)));
     }
 }
