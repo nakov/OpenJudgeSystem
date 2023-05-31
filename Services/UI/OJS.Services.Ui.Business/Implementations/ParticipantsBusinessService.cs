@@ -43,8 +43,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
         var participant = new Participant(contest.Id, userId, isOfficial) { Contest = contest };
 
         var utcNow = this.datesService.GetUtcNow();
-
-        if (contest.IsOnlineExam)
+        if (isOfficial && contest.IsOnlineExam)
         {
             participant.ParticipationStartTime = utcNow;
             participant.ParticipationEndTime = utcNow + contest.Duration;
@@ -57,7 +56,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
                 AssignRandomProblemsToParticipant(participant, contest);
             }
         }
-        else if (contest.IsOnsiteExam)
+        else if (isOfficial && contest.IsOnsiteExam)
         {
             participant.ParticipationStartTime = utcNow;
             participant.ParticipationEndTime = contest.EndTime;
