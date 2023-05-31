@@ -173,6 +173,12 @@ namespace OJS.Services.Ui.Business.Implementations
                     participationModel.Contest.Problems.Select(x => x.Id),
                     participantsList);
 
+            if (!IsUserLecturerInContest(contest, user.Id!) && !user.IsAdmin && participationModel.ContestIsCompete)
+            {
+                var problemsForParticipant = participant.ProblemsForParticipants.Select(x => x.Problem);
+                participationModel.Contest.Problems = problemsForParticipant.MapCollection<ContestProblemServiceModel>().ToList();
+            }
+
             await participationModel.Contest.Problems.ForEachAsync(problem =>
             {
                 problem.Points = maxParticipationScores
