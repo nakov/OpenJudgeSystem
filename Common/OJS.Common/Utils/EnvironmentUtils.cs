@@ -43,19 +43,7 @@ namespace OJS.Common.Utils
 
         public static void ValidateEnvironmentVariableExists(
             IEnumerable<string> configurationValues)
-        {
-            var requiredGlobalConfigValues = new List<string>
-            {
-                DistributorBaseUrlKey,
-                ApplicationUrl,
-                RedisConnectionString,
-                SharedAuthCookieDomain,
-            };
-
-            requiredGlobalConfigValues.AddRange(configurationValues);
-
-            ValidateEnvironmentVariableExists(requiredGlobalConfigValues, GetByKey);
-        }
+            => ValidateEnvironmentVariableExists(configurationValues, GetByKey);
 
         public static bool IsProduction()
             => Environment.GetEnvironmentVariable(EnvironmentKey) == ProductionValue;

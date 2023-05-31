@@ -43,13 +43,8 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
         private static IServiceCollection ConfigureSettings(
             this IServiceCollection services,
             IConfiguration configuration)
-        {
-            EnvironmentUtils.ValidateEnvironmentVariableExists(new List<string>());
-
-            services
+            => services
+                .ValidateLaunchSettings()
                 .Configure<DistributorConfig>(configuration.GetSection(nameof(DistributorConfig)));
-
-            return services;
-        }
     }
 }

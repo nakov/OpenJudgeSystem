@@ -21,18 +21,15 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
             EnvironmentVariables.LocalTimeZone,
         };
 
-        public static void ConfigureServices<TProgram>(this IServiceCollection services)
-        {
-            EnvironmentUtils.ValidateEnvironmentVariableExists(RequiredConfigValues);
-
+        public static void ConfigureServices<TProgram>(this IServiceCollection services) =>
             services
                 .AddWebServer<TProgram>()
                 .AddHangfireServer(AppName)
+                .ValidateLaunchSettings(RequiredConfigValues)
                 .AddIdentityDatabase<AdminDbContext, UserProfile, Role, UserInRole>(Enumerable.Empty<GlobalQueryFilterType>())
                 .AddScoped<OjsDbContext, AdminDbContext>()
                 .AddSoftUniJudgeCommonServices()
                 .UseAutoCrudAdmin()
                 .AddControllersWithViews();
-        }
     }
 }
