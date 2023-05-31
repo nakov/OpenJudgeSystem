@@ -20,7 +20,7 @@ const SubmissionResultPointsLabel = ({
         ? LabelType.plain
         : points === 0 && isProcessed
             ? LabelType.warning
-            : points === 100
+            : points === maximumPoints
                 ? LabelType.success
                 : LabelType.info;
 
