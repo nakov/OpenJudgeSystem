@@ -9,6 +9,7 @@ import ContestsPage from '../../pages/contests/ContestsPage';
 import HomePage from '../../pages/home/HomePage';
 import LoginPage from '../../pages/login/LoginPage';
 import LogoutPage from '../../pages/logout/LogoutPage';
+import NotFoundPage from '../../pages/not-found/NotFoundPage';
 import ProfilePage from '../../pages/profile/ProfilePage';
 import RegisterPage from '../../pages/register/RegisterPage';
 import SearchPage from '../../pages/search/SearchPage';
@@ -75,6 +76,10 @@ const routes = [
     {
         path: '/search',
         Element: SearchPage,
+    },
+    {
+        path: '*',
+        Element: NotFoundPage,
     },
 ];
 

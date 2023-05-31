@@ -7,6 +7,8 @@ import isNil from 'lodash/isNil';
 import without from 'lodash/without';
 
 import ITreeItemType from '../../../common/tree-types';
+import { useContestCategories } from '../../../hooks/use-contest-categories';
+import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
 import ExpandMoreIcon from '../icons/ExpandMoreIcon';
 import RightArrowIcon from '../icons/RightArrowIcon';
 
@@ -33,6 +35,8 @@ const Tree = ({
     const [ expandedIds, setExpandedIds ] = useState([] as string[]);
     const [ selectedId, setSelectedId ] = useState('');
     const [ selectedFromUrl, setSelectedFromUrl ] = useState(true);
+    const { state: { selectedBreadcrumbCategoryId }, actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
+    const { state: { categoriesFlat } } = useContestCategories();
 
     const handleTreeItemClick = useCallback(
         (node: ITreeItemType) => {
@@ -92,9 +96,12 @@ const Tree = ({
         () => {
             if (isEmpty(selectedId) && selectedFromUrl) {
                 setSelectedId(defaultSelected);
+
+                const category = categoriesFlat.find(({ id }) => id.toString() === defaultSelected) as ITreeItemType;
+                updateBreadcrumb(category, categoriesFlat);
             }
         },
-        [ defaultSelected, selectedFromUrl, selectedId ],
+        [ defaultSelected, selectedFromUrl, selectedId, updateBreadcrumb, categoriesFlat ],
     );
 
     useEffect(
@@ -106,19 +113,33 @@ const Tree = ({
         [ defaultExpanded, expandedIds, selectedFromUrl ],
     );
 
-    const renderTreeView = (treeItems: ITreeItemType[]) => treeItems.map((c) => itemFuncInternal(c));
-
-    return (
-        <TreeView
-          aria-label="rich object"
-          defaultCollapseIcon={<ExpandMoreIcon />}
-          defaultExpandIcon={<RightArrowIcon />}
-          selected={selectedId}
-          expanded={expandedIds}
-        >
-            {renderTreeView(items)}
-        </TreeView>
+    const renderTreeView = useCallback(
+        (treeItems: ITreeItemType[]) => treeItems.map((c) => itemFuncInternal(c)),
+        [ itemFuncInternal ],
     );
+
+    const renderTree = useCallback(
+        () => {
+            if (selectedBreadcrumbCategoryId !== selectedId && !selectedFromUrl) {
+                setSelectedId(selectedBreadcrumbCategoryId);
+            }
+
+            return (
+                <TreeView
+                  aria-label="rich object"
+                  defaultCollapseIcon={<ExpandMoreIcon />}
+                  defaultExpandIcon={<RightArrowIcon />}
+                  selected={selectedId.toString()}
+                  expanded={expandedIds}
+                >
+                    {renderTreeView(items)}
+                </TreeView>
+            );
+        },
+        [ expandedIds, renderTreeView, items, selectedBreadcrumbCategoryId, selectedId, selectedFromUrl ],
+    );
+
+    return renderTree();
 };
 
 export default Tree;
