@@ -18,7 +18,6 @@ interface ISubmissionsContext {
     state: {
         problemSubmissionCode: IDictionary<string | File>;
         selectedSubmissionType: ISubmissionTypeType | null;
-        isSubmissionSuccessful: boolean | null;
         problemSubmissionErrors: IDictionary<IErrorDataType | null>;
     };
     actions: {
@@ -85,7 +84,6 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
 
     const {
         post: submitCode,
-        isSuccess,
         error: errorSubmitCode,
     } = useHttp<null, null, ISubmitCodeTypeParametersType>({ url: getSubmitUrl });
 
@@ -96,8 +94,6 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         url: getSubmitFileUrl,
         bodyAsFormData: true,
     });
-
-    const isSubmissionSuccessful = useMemo(() => isSuccess, [ isSuccess ]);
 
     const getSubmitParamsAsFormData = useCallback(async () => {
         const bodyFormData = new FormData();
@@ -309,7 +305,6 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             state: {
                 problemSubmissionCode,
                 selectedSubmissionType,
-                isSubmissionSuccessful,
                 problemSubmissionErrors,
             },
             actions: {
@@ -325,7 +320,6 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             selectedSubmissionType,
             problemSubmissionCode,
             submit,
-            isSubmissionSuccessful,
             updateSubmissionCode,
             removeProblemSubmissionCode,
             closeErrorMessage,

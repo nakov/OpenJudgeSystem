@@ -10,5 +10,7 @@
         Task<TServiceModel?> GetByUsername<TServiceModel>(string? username);
 
         IQueryable<UserProfile> GetAll();
+
+        Task<TServiceModel> AddOrUpdate<TServiceModel>(UserProfile userProfile);
     }
 }
