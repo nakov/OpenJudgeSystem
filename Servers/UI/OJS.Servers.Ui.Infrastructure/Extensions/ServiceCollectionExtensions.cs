@@ -44,6 +44,8 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
             this IServiceCollection services,
             IConfiguration configuration)
         {
+            EnvironmentUtils.ValidateEnvironmentVariableExists(new List<string>());
+
             services
                 .Configure<DistributorConfig>(configuration.GetSection(nameof(DistributorConfig)));
 
