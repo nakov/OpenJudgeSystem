@@ -1,13 +1,14 @@
 namespace OJS.Servers.Ui.Infrastructure.Extensions
 {
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
     using OJS.Common.Enumerations;
+    using OJS.Common.Utils;
     using OJS.Data;
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Extensions;
-    using SoftUni.Judge.Common.Extensions;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Configuration;
     using OJS.Services.Common.Models.Configurations;
+    using SoftUni.Judge.Common.Extensions;
     using static OJS.Common.GlobalConstants;
 
     public static class ServiceCollectionExtensions
@@ -44,7 +45,23 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
             IConfiguration configuration)
         {
             services
-                .Configure<DistributorConfig>(configuration.GetSection(nameof(DistributorConfig)));
+                .Configure<DistributorConfig>(configuration.GetSection(nameof(DistributorConfig)))
+                .ValidateLaunchSettings();
+
+            return services;
+        }
+
+        private static IServiceCollection ValidateLaunchSettings(this IServiceCollection services)
+        {
+            var requiredConfigValues = new[]
+            {
+                EnvironmentVariables.DistributorBaseUrlKey,
+                EnvironmentVariables.ApplicationUrl,
+                EnvironmentVariables.RedisConnectionString,
+                EnvironmentVariables.SharedAuthCookieDomain,
+            };
+
+            EnvironmentUtils.ValidateEnvironmentVariableExists(requiredConfigValues);
 
             return services;
         }

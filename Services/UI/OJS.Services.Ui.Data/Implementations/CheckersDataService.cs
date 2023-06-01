@@ -9,7 +9,8 @@
 
     public class CheckersDataService : DataService<Checker>, ICheckersDataService
     {
-        public CheckersDataService(OjsDbContext db) : base(db)
+        public CheckersDataService(OjsDbContext db)
+            : base(db)
         {
         }
 

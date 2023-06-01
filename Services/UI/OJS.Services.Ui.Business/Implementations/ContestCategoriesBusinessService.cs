@@ -2,7 +2,6 @@ namespace OJS.Services.Ui.Business.Implementations;
 
 using FluentExtensions.Extensions;
 using OJS.Services.Common.Models.Cache;
-using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Data;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
@@ -13,21 +12,24 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
 {
     private readonly IContestCategoriesDataService contestCategoriesData;
 
-    public ContestCategoriesBusinessService(
-        IContestCategoriesDataService contestCategoriesData)
-        => this.contestCategoriesData = contestCategoriesData;
+    public ContestCategoriesBusinessService(IContestCategoriesDataService contestCategoriesData)
+       => this.contestCategoriesData = contestCategoriesData;
 
     public async Task<IEnumerable<ContestCategoryTreeViewModel>> GetTree()
     {
-        var allCategories = await this.GetAlVisible<ContestCategoryTreeViewModel>().ToListAsync();
+        var allCategories =
+            await this.contestCategoriesData.GetAllVisible<ContestCategoryTreeViewModel>()
+                .OrderByAsync(x => x.OrderBy)
+                .ToListAsync();
 
-        var mainCategories = allCategories
+        var categoriesWithChildren = FillChildren(allCategories);
+
+        var mainCategories = categoriesWithChildren
             .Where(c => !c.ParentId.HasValue)
             .OrderBy(c => c.OrderBy)
             .ToList();
 
-        mainCategories.ForEach(category =>
-            AddChildren(category.Children, allCategories));
+        mainCategories.ForEach(this.FillAllowedStrategyTypes);
 
         return mainCategories;
     }
@@ -39,7 +41,9 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
 
     public async Task<IEnumerable<ContestCategoryTreeViewModel>> GetAllSubcategories(int categoryId)
     {
-        var allCategories = await this.GetAlVisible<ContestCategoryTreeViewModel>().ToListAsync();
+        var allCategories = await this.contestCategoriesData
+            .GetAllVisible<ContestCategoryTreeViewModel>()
+            .ToListAsync();
 
         var result = new List<ContestCategoryTreeViewModel>();
 
@@ -71,18 +75,15 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
         return categories;
     }
 
-    private void AddChildren(
-        IEnumerable<ContestCategoryTreeViewModel> children,
-        ICollection<ContestCategoryTreeViewModel> allCategories)
-        => children.ForEach(child =>
-        {
-            child.Children = allCategories
-                .OrderBy(x => x.OrderBy)
-                .Where(x => x.ParentId == child.Id)
-                .ToList();
+    private static IEnumerable<ContestCategoryTreeViewModel> FillChildren(
+        IEnumerable<ContestCategoryTreeViewModel> allCategories)
+    {
+        var categoriesList = allCategories.ToList();
 
-            this.AddChildren(child.Children, allCategories);
-        });
+        return categoriesList
+            .Mutate(category =>
+                category.Children = categoriesList.Where(x => x.ParentId == category.Id));
+    }
 
     private void GetWithChildren(
         ContestCategoryTreeViewModel category,
@@ -92,21 +93,29 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
     {
         result.Add(category);
 
-        children.ForEach(childNode =>
-        {
-            var grandChildren = allCategories
-                .Where(x => x.ParentId == childNode.Id)
-                .ToList();
+        children
+            .OrderBy(c => c.OrderBy)
+            .ForEach(childNode =>
+            {
+                var grandChildren = allCategories
+                    .Where(x => x.ParentId == childNode.Id)
+                    .ToList();
 
-            result.AddRange(grandChildren);
+                result.AddRange(grandChildren);
 
-            this.GetWithChildren(childNode, grandChildren, allCategories, result);
-        });
+                this.GetWithChildren(childNode, grandChildren, allCategories, result);
+            });
     }
 
-    private Task<IEnumerable<T>> GetAlVisible<T>()
-        => this.contestCategoriesData
-            .GetAllVisible()
-            .MapCollection<T>()
-            .ToEnumerableAsync();
+    private void FillAllowedStrategyTypes(ContestCategoryTreeViewModel category)
+    {
+        category.Children.ForEach(this.FillAllowedStrategyTypes);
+
+        category.AllowedStrategyTypes = this.contestCategoriesData.GetAllowedStrategyTypesById<AllowedContestStrategiesServiceModel>(category.Id);
+
+        category.AllowedStrategyTypes = category.AllowedStrategyTypes.Concat(
+                category.Children.SelectMany(c => c.AllowedStrategyTypes))
+                    .DistinctBy(x => x.Id)
+                    .ToList();
+    }
 }

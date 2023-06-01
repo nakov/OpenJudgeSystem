@@ -1,10 +1,13 @@
 /* eslint-disable import/prefer-default-export */
-
 import { IFilter, ISort } from './contest-types';
 
 interface IStartContestUrlParams {
     id: number;
     official: boolean;
+}
+
+interface IGetContestByProblemUrlParams {
+    problemId: number;
 }
 
 interface IAllContestsUrlParams {
@@ -37,19 +40,17 @@ interface ISubmitContestPasswordUrlParams {
 }
 
 interface IDownloadProblemResourceUrlParams {
-    id: number;
+    id: number | null;
+}
+
+interface IDownloadSubmissionFileUrlParams {
+    id: number | null;
 }
 
 interface IGetSubmissionResultsByProblemUrlParams {
-    id: number;
-    isOfficial: boolean;
-    take: number;
-}
-
-interface IGetSubmissionResultsByProblemAndUserUrlParams {
     problemId: number;
     isOfficial: boolean;
-    userId: string;
+    take: number;
 }
 
 interface IGetContestResultsParams {
@@ -60,10 +61,18 @@ interface IGetContestResultsParams {
 
 interface IGetSubmissionDetailsByIdUrlParams {
     submissionId: number;
+    isOfficial: boolean;
+    take: number;
 }
 
 interface IRetestSubmissionUrlParams {
     id: number;
+}
+
+interface IGetSearchResultsUrlParams {
+    searchTerm: string;
+    page: number;
+    selectedTerms: [];
 }
 
 export type {
@@ -79,5 +88,7 @@ export type {
     IGetSubmissionDetailsByIdUrlParams,
     IGetContestResultsParams,
     IRetestSubmissionUrlParams,
-    IGetSubmissionResultsByProblemAndUserUrlParams,
+    IGetSearchResultsUrlParams,
+    IGetContestByProblemUrlParams,
+    IDownloadSubmissionFileUrlParams,
 };

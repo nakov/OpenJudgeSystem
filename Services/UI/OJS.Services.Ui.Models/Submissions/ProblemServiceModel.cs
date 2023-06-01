@@ -1,8 +1,8 @@
-﻿using OJS.Data.Models.Problems;
-using SoftUni.AutoMapper.Infrastructure.Models;
-
-namespace OJS.Services.Ui.Models.Submissions
+﻿namespace OJS.Services.Ui.Models.Submissions
 {
+    using OJS.Data.Models.Problems;
+    using SoftUni.AutoMapper.Infrastructure.Models;
+
     public class ProblemServiceModel : IMapFrom<Problem>
     {
         public int Id { get; set; }
@@ -10,5 +10,7 @@ namespace OJS.Services.Ui.Models.Submissions
         public string Name { get; set; } = string.Empty;
 
         public short MaximumPoints { get; set; }
+
+        public double OrderBy { get; set; }
     }
 }

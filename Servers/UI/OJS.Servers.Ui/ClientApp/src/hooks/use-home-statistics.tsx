@@ -30,17 +30,13 @@ type IHomeStatisticsProviderProps = IHaveChildrenProps
 
 const HomeStatisticsProvider = ({ children }: IHomeStatisticsProviderProps) => {
     const [ statistics, setStatistics ] = useState <IHomeStatistics | null>(null);
-    const {
-        startLoading,
-        stopLoading,
-    } = useLoading();
-
+    const { startLoading, stopLoading } = useLoading();
     const { getHomeStatisticsUrl } = useUrls();
 
     const {
         get,
         data,
-    } = useHttp(getHomeStatisticsUrl);
+    } = useHttp<null, IHomeStatistics>({ url: getHomeStatisticsUrl });
 
     const load = useCallback(
         async () => {
@@ -53,7 +49,7 @@ const HomeStatisticsProvider = ({ children }: IHomeStatisticsProviderProps) => {
 
     useEffect(
         () => {
-            setStatistics(data as IHomeStatistics);
+            setStatistics(data);
         },
         [ data ],
     );

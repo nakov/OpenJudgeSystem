@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useCallback, useState } from 'react';
 import isNil from 'lodash/isNil';
 
 import concatClassNames from '../../../utils/class-names';
@@ -14,7 +14,10 @@ enum FormControlType {
     'textarea' = 'textarea',
     'input' = 'input',
     'password' = 'password',
+    'file' = 'file'
 }
+
+type IFormControlOnChangeValueType = string | Blob;
 
 type TextAreaOrInputElement = HTMLTextAreaElement | HTMLInputElement;
 
@@ -25,10 +28,12 @@ interface IFormControlProps extends IHaveOptionalClassName {
     labelText?: string;
     labelClassName?: ClassNameType;
     type?: FormControlType;
-    onChange?: ((value?: string) => void) | null;
+    onChange?: ((value?: IFormControlOnChangeValueType) => void) | null;
     onInput?: ((value?: string) => void) | null;
+    onClick?: (value: FormEvent<HTMLInputElement>) => void;
     checked?: boolean;
     id?: string;
+    shouldDisableLabel?: boolean;
 }
 
 interface ILabelInternalProps extends IHaveChildrenProps, IHaveOptionalClassName {
@@ -37,10 +42,17 @@ interface ILabelInternalProps extends IHaveChildrenProps, IHaveOptionalClassName
     text: string;
     fieldType: FormControlType;
     internalContainerClassName?: string;
-
 }
 
-const LabelInternal = ({ id, text, className, internalContainerClassName, forKey, children, fieldType }: ILabelInternalProps) => {
+const LabelInternal = ({
+    id,
+    text,
+    className,
+    internalContainerClassName,
+    forKey,
+    children,
+    fieldType,
+}: ILabelInternalProps) => {
     if (!text && !className) {
         return (
             <div>
@@ -79,6 +91,7 @@ const FormControl = ({
     onChange = null,
     /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
     onInput = null,
+    onClick,
     className = '',
     containerClassName = '',
     labelText = '',
@@ -86,100 +99,151 @@ const FormControl = ({
     type = FormControlType.text,
     checked = false,
     id = generateId(),
+    shouldDisableLabel = false,
 }: IFormControlProps) => {
     const [ formControlValue, setFormControlValue ] = useState(value);
+
     const [ isChecked, setIsChecked ] = useState<boolean>(checked);
 
     const componentClassName = concatClassNames(type !== FormControlType.checkbox
         ? styles.formControl
         : null, className);
 
-    const handleOnChange = (ev: ChangeEvent<TextAreaOrInputElement>) => {
-        if (type === FormControlType.checkbox) {
-            setIsChecked(!isChecked);
+    const handleOnChange = useCallback(
+        (ev: ChangeEvent<TextAreaOrInputElement>) => {
+            if (type === FormControlType.checkbox) {
+                setIsChecked(!isChecked);
 
-            return;
-        }
+                return;
+            }
 
-        setFormControlValue(ev.target.value);
+            setFormControlValue(ev.target.value);
 
-        if (isNil(onChange)) {
-            return;
-        }
+            if (isNil(onChange)) {
+                return;
+            }
 
-        onChange(ev.target.value);
-    };
+            onChange(ev.target.value as string);
+        },
+        [ isChecked, onChange, type ],
+    );
 
-    const handleOnInput = (ev: FormEvent<TextAreaOrInputElement>) => {
-        const element = ev.target as TextAreaOrInputElement;
+    const handleOnInput = useCallback(
+        (ev: FormEvent<TextAreaOrInputElement>) => {
+            const element = ev.target as TextAreaOrInputElement;
 
-        setFormControlValue(element.value);
+            setFormControlValue(element.value);
 
-        if (isNil(onInput)) {
-            return;
-        }
+            if (isNil(onInput)) {
+                return;
+            }
 
-        onInput(element.value);
-    };
+            onInput(element.value);
+        },
+        [ onInput ],
+    );
 
-    const generateFormControl = () => {
-        if (type === FormControlType.textarea) {
-            return (
-                <textarea
-                  className={concatClassNames(componentClassName, styles.formControlTextArea)}
-                  name={name}
-                  id={id}
-                  onChange={handleOnChange}
-                  onInput={handleOnInput}
-                  value={formControlValue}
-                  placeholder={labelText}
-                />
-            );
-        }
+    const generateFormControl = useCallback(
+        () => {
+            if (type === FormControlType.textarea) {
+                return (
+                    <textarea
+                      className={concatClassNames(componentClassName, styles.formControlTextArea)}
+                      name={name}
+                      id={id}
+                      onChange={handleOnChange}
+                      onInput={handleOnInput}
+                      value={formControlValue}
+                      placeholder={labelText}
+                    />
+                );
+            }
 
-        if (type === FormControlType.checkbox) {
+            if (type === FormControlType.checkbox) {
+                return (
+                    <input
+                      type={type}
+                      className={componentClassName}
+                      name={name}
+                      id={id}
+                      value={value}
+                      checked={isChecked}
+                      onClick={onClick}
+                      onChange={handleOnChange}
+                    />
+                );
+            }
+
+            if (type === FormControlType.file) {
+                return (
+                    <input
+                      type={type}
+                      className={concatClassNames(componentClassName, styles.fileInput)}
+                      name={name}
+                      id={id}
+                      onChange={(e) => {
+                          if (isNil(onChange)) {
+                              return;
+                          }
+
+                          const fileBlob = e.target.files?.item(0) as Blob;
+                          onChange(fileBlob);
+                      }}
+                    />
+                );
+            }
+
             return (
                 <input
                   type={type}
                   className={componentClassName}
                   name={name}
                   id={id}
-                  checked={isChecked}
                   onChange={handleOnChange}
+                  onInput={handleOnInput}
+                  value={formControlValue}
+                  checked={checked}
+                  placeholder={labelText}
                 />
             );
-        }
+        },
+        [ checked, componentClassName, formControlValue, handleOnChange, handleOnInput,
+            id, isChecked, labelText, name, onChange, onClick, type, value ],
+    );
 
-        return (
-            <input
-              type={type}
-              className={componentClassName}
-              name={name}
-              id={id}
-              onChange={handleOnChange}
-              onInput={handleOnInput}
-              value={formControlValue}
-              checked={checked}
-              placeholder={labelText}
-            />
-        );
-    };
+    const generateFormControlWithLabel = useCallback(
+        () => (
+            <LabelInternal
+              id={`${id}-label`}
+              text={labelText}
+              fieldType={type}
+              internalContainerClassName={containerClassName}
+              className={labelClassName}
+              forKey={id}
+            >
+                {generateFormControl()}
+            </LabelInternal>
+        ),
+        [ containerClassName, generateFormControl, id, labelClassName, labelText, type ],
+    );
+
+    const renderFormControl = useCallback(
+        () => shouldDisableLabel
+            ? generateFormControl()
+            : generateFormControlWithLabel(),
+        [ shouldDisableLabel, generateFormControlWithLabel, generateFormControl ],
+    );
 
     return (
-        <LabelInternal
-          id={`${id}-label`}
-          text={labelText}
-          fieldType={type}
-          internalContainerClassName={containerClassName}
-          className={labelClassName}
-          forKey={id}
-        >
-            {generateFormControl()}
-        </LabelInternal>
+        renderFormControl()
     );
 };
 
 export default FormControl;
+
+export type {
+    IFormControlOnChangeValueType,
+};
 
 export {
     FormControlType,

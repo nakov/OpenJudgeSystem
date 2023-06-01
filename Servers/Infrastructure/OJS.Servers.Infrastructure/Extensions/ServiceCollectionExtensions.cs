@@ -1,8 +1,14 @@
 namespace OJS.Servers.Infrastructure.Extensions
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Net.Http;
+    using System.Reflection;
     using Hangfire;
     using Hangfire.SqlServer;
     using Microsoft.AspNetCore.DataProtection;
+    using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -21,15 +27,9 @@ namespace OJS.Servers.Infrastructure.Extensions
     using SoftUni.Data.Infrastructure.Enumerations;
     using SoftUni.Data.Infrastructure.Extensions;
     using SoftUni.Services.Infrastructure.Extensions;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Net.Http;
-    using System.Reflection;
-    using static OJS.Common.GlobalConstants.FileExtensions;
     using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.EnvironmentVariables;
-    using static OJS.Servers.Infrastructure.ServerConstants;
+    using static OJS.Common.GlobalConstants.FileExtensions;
 
     public static class ServiceCollectionExtensions
     {
@@ -37,14 +37,26 @@ namespace OJS.Servers.Infrastructure.Extensions
             => services
                 .AddAutoMapperConfigurations<TStartup>()
                 .AddWebServerServices<TStartup>()
-                .AddAuthenticationServices()
                 .AddCaching<TStartup>();
 
+        /// <summary>
+        /// Adds identity database and authentication services to the service collection.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        /// <param name="globalQueryFilterTypes">
+        /// The global query filter types to add to the context.
+        /// <br/> If null, adds all default global query filters,
+        /// whereas if explicitly providing an empty collection, will not add any global query filters to the context.
+        /// </param>
+        /// <remarks>
+        /// <see cref="globalQueryFilterTypes"/> can be null, in which case all default global query filters are added. (i.e DeletableEntityFilter)
+        /// <br/><see cref="globalQueryFilterTypes"/> can be explicitly empty, in which case no global query filters are added.
+        /// </remarks>
         public static IServiceCollection AddIdentityDatabase<TDbContext, TIdentityUser, TIdentityRole,
             TIdentityUserRole>(
             this IServiceCollection services,
             IEnumerable<GlobalQueryFilterType>? globalQueryFilterTypes = null)
-            where TDbContext : DbContext
+            where TDbContext : DbContext, IDataProtectionKeyContext
             where TIdentityUser : IdentityUser
             where TIdentityRole : IdentityRole
             where TIdentityUserRole : IdentityUserRole<string>, new()
@@ -66,6 +78,20 @@ namespace OJS.Servers.Infrastructure.Extensions
                     IdentityUserLogin<string>,
                     IdentityUserToken<string>,
                     IdentityRoleClaim<string>>>();
+
+            services
+                .ConfigureApplicationCookie(opt =>
+                {
+                    opt.Cookie.Domain = EnvironmentUtils.GetRequiredByKey(SharedAuthCookieDomain);
+                });
+
+            // By default the data protection API that encrypts the authentication cookie generates a unique key for each application,
+            // but in order to use/decrypt the same cookie across multiple servers, we need to use the same encryption key.
+            // By setting custom data protection, we can use the same key in each server configured with the same application name.
+            services
+                .AddDataProtection()
+                .PersistKeysToDbContext<TDbContext>()
+                .SetApplicationName(ApplicationFullName);
 
             return services;
         }
@@ -142,39 +168,6 @@ namespace OJS.Servers.Infrastructure.Extensions
             => services
                 .AddHttpContextAccessor()
                 .AddTransient(s => s.GetRequiredService<IHttpContextAccessor>().HttpContext!.User);
-
-        private static IServiceCollection AddAuthenticationServices(this IServiceCollection services)
-        {
-            EnvironmentUtils.ValidateEnvironmentVariableExists(
-                new[] { PathToCommonKeyRingFolderKey, SharedAuthCookieDomain });
-
-            var keysDirectoryPath = EnvironmentUtils.GetByKey(PathToCommonKeyRingFolderKey);
-
-            if (string.IsNullOrWhiteSpace(keysDirectoryPath))
-            {
-                throw new Exception($"{PathToCommonKeyRingFolderKey} is not provided in env variables.");
-            }
-
-            var keysDirectory = new DirectoryInfo(keysDirectoryPath);
-
-            services
-                .AddDataProtection()
-                .PersistKeysToFileSystem(keysDirectory)
-                .SetApplicationName(ApplicationFullName);
-
-            services
-                .AddAuthentication(Authentication.SharedCookiesScheme)
-                .AddCookie();
-
-            services
-                .ConfigureApplicationCookie(opt =>
-                {
-                    opt.Cookie.Name = Authentication.SharedCookieName;
-                    opt.Cookie.Domain = EnvironmentUtils.GetByKey(SharedAuthCookieDomain);
-                });
-
-            return services;
-        }
 
         private static void ConfigureHttpClient(HttpClient client)
             => client.DefaultRequestHeaders.Add(HeaderNames.Accept, MimeTypes.ApplicationJson);

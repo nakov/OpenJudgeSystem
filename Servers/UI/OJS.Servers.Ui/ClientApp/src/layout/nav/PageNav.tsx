@@ -38,21 +38,18 @@ const PageNav = () => {
             ? LinkButtonType.primary
             : LinkButtonType.secondary;
 
-        const btnClassName = styles.btn;
-
         return (
-            <LinkButton to={link} id={id} text={name} type={type} className={btnClassName} />
+            <LinkButton to={link} id={id} text={name} type={type} className={styles.btn} />
         );
     };
 
     return (
-        <nav>
+        <nav className={styles.navigation}>
             <List
               values={routes}
               itemFunc={itemFunc}
               orientation={Orientation.horizontal}
               className={styles.listNav}
-
             />
         </nav>
     );

@@ -1,7 +1,6 @@
 namespace OJS.Data.Models.Contests
 {
     using OJS.Common.Enumerations;
-    using SoftUni.Data.Infrastructure.Models;
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Problems;
     using System;
@@ -9,6 +8,7 @@ namespace OJS.Data.Models.Contests
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
+    using SoftUni.Data.Infrastructure.Models;
     using static OJS.Data.Validation.ConstraintConstants.Contest;
 
     public class Contest : DeletableAuditInfoEntity<int>, IOrderableEntity
@@ -28,11 +28,11 @@ namespace OJS.Data.Models.Contests
         public ContestType Type { get; set; }
 
         /// <summary>
-        /// Gets or sets the duration of online contest in which a participant can compete
+        /// Gets or sets the duration of online contest in which a participant can compete.
         /// </summary>
         /// <remarks>
         /// If duration is null the actual duration is the difference between
-        /// start and end time of the contest
+        /// start and end time of the contest.
         /// </remarks>
         public TimeSpan? Duration { get; set; }
 
@@ -201,9 +201,15 @@ namespace OJS.Data.Models.Contests
         public bool HasPracticePassword => this.PracticePassword != null;
 
         [NotMapped]
-        public bool IsOnline => this.Type == ContestType.OnlinePracticalExam;
+        public bool IsOnlineExam => this.Type == ContestType.OnlinePracticalExam;
 
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        [NotMapped]
+        public bool IsOnsiteExam => this.Type == ContestType.OnsitePracticalExam;
+
+        [NotMapped]
+        public bool IsExam => this.IsOnlineExam || this.IsOnsiteExam;
+
+        public static IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var validationResults = new List<ValidationResult>();
 

@@ -18,8 +18,8 @@ public class CopyToAnotherContestViewModel : IMapExplicitly
     public SelectList? ContestsToCopyTo { get; set; }
 
     [IgnoreMap]
-    [Display(Name = Resource.Contest_label)]
-    [Required(ErrorMessage = Resource.Contest_required)]
+    [Display(Name = Resource.ContestLabel)]
+    [Required(ErrorMessage = Resource.ContestRequired)]
     public int? ToContestId { get; set; }
 
     [IgnoreMap]
@@ -30,7 +30,7 @@ public class CopyToAnotherContestViewModel : IMapExplicitly
     public string? FromProblemName { get; set; }
 
     [IgnoreMap]
-    [Display(Name = Resource.Problem_group_label)]
+    [Display(Name = Resource.ProblemGroupLabel)]
     public int ToProblemGroupId { get; set; }
 
     [IgnoreMap]

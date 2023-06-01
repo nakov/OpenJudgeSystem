@@ -13,7 +13,8 @@ namespace OJS.Services.Ui.Data.Implementations
 
     public class ParticipantsDataService : DataService<Participant>, IParticipantsDataService
     {
-        public ParticipantsDataService(OjsDbContext db) : base(db)
+        public ParticipantsDataService(OjsDbContext db)
+            : base(db)
         {
         }
 
@@ -24,8 +25,8 @@ namespace OJS.Services.Ui.Data.Implementations
             => this.GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
                 .FirstOrDefaultAsync();
 
-        public Task<Participant?> GetWithContestByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial) =>
-            this.GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
+        public Task<Participant?> GetWithContestByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial)
+            => this.GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
                 .Include(p => p.Contest)
                 .ThenInclude(c => c.ProblemGroups)
                 .ThenInclude(pg => pg.Problems)

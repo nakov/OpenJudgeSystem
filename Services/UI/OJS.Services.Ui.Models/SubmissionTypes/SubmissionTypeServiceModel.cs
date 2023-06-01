@@ -1,19 +1,34 @@
-﻿using OJS.Data.Models.Submissions;
-using SoftUni.AutoMapper.Infrastructure.Models;
-using System.Collections.Generic;
-
-namespace OJS.Services.Ui.Models.SubmissionTypes
+﻿namespace OJS.Services.Ui.Models.SubmissionTypes
 {
-    public class SubmissionTypeServiceModel : IMapFrom<SubmissionType>
+    using System;
+    using System.Collections.Generic;
+    using AutoMapper;
+    using OJS.Data.Models.Submissions;
+    using SoftUni.AutoMapper.Infrastructure.Models;
+
+    public class SubmissionTypeServiceModel : IMapExplicitly
     {
+        private char[] allowedFileExtensionsDelimiters = { ',', ';', ' ' };
+
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         public bool IsSelectedByDefault { get; set; }
 
         public bool AllowBinaryFilesUpload { get; set; }
 
-        public IEnumerable<string> AllowedFileExtensions { get; set; }
+        public IEnumerable<string> AllowedFileExtensions { get; set; } = new List<string>();
+
+        public void RegisterMappings(IProfileExpression configuration) =>
+            configuration.CreateMap<SubmissionType, SubmissionTypeServiceModel>()
+                .ForMember(
+                    d => d.AllowedFileExtensions,
+                    opt => opt.MapFrom(s =>
+                        s.AllowedFileExtensions != null
+                            ? s.AllowedFileExtensions.Split(
+                                this.allowedFileExtensionsDelimiters,
+                                StringSplitOptions.RemoveEmptyEntries)
+                            : Array.Empty<string>()));
     }
 }

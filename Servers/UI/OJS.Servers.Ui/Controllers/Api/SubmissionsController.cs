@@ -29,12 +29,11 @@ public class SubmissionsController : BaseApiController
         this.cache = cache;
     }
 
-
     /// <summary>
-    /// Gets submission details by provided submission id
+    /// Gets submission details by provided submission id.
     /// </summary>
-    /// <param name="id">The id of the submission</param>
-    /// <returns>Submission details model</returns>
+    /// <param name="id">The id of the submission.</param>
+    /// <returns>Submission details model.</returns>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(SubmissionDetailsResponseModel), Status200OK)]
     public async Task<IActionResult> Details(int id)
@@ -44,9 +43,9 @@ public class SubmissionsController : BaseApiController
             .ToOkResult();
 
     /// <summary>
-    /// Gets all user submissions. Prepared for the user's profile page
+    /// Gets all user submissions. Prepared for the user's profile page.
     /// </summary>
-    /// <returns>Collection of user submissions</returns>
+    /// <returns>Collection of user submissions.</returns>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<SubmissionForProfileResponseModel>), Status200OK)]
     public async Task<IActionResult> GetForProfile()
@@ -56,30 +55,26 @@ public class SubmissionsController : BaseApiController
             .ToOkResult();
 
     /// <summary>
-    /// Gets a subset of submissions by specific problem and user and given take count.
+    /// Gets the submitted file.
     /// </summary>
-    /// <param name="problemId">The id of the problem</param>
-    /// <param name="userId">The id of the user that we want to get the problem submissions for</param>
-    /// <param name="isOfficial">Return from compete or practice participation types</param>
-    /// <returns>A collection of submissions for a specific problem by user</returns>
-    [HttpGet("{problemId:int}/{userId}")]
-    [ProducesResponseType(typeof(IEnumerable<SubmissionResultsResponseModel>), Status200OK)]
-    public async Task<IActionResult> GetSubmissionResultsByProblemAndUser(
-        int problemId,
-        string userId,
-        [FromQuery] bool isOfficial)
-        => await this.submissionsBusiness
-            .GetSubmissionResultsByProblemAndUser(problemId, isOfficial, userId)
-            .MapCollection<SubmissionResultsResponseModel>()
-            .ToOkResult();
+    /// <param name="id">Id of the submission.</param>
+    /// <returns>The file to download.</returns>
+    [HttpGet("{id:int}")]
+    [ProducesResponseType(typeof(FileContentResult), Status200OK)]
+    public IActionResult Download(int id)
+    {
+        var submissionDownloadServiceModel = this.submissionsBusiness.GetSubmissionFile(id);
+
+        return this.File(submissionDownloadServiceModel.Content!, submissionDownloadServiceModel.MimeType!, submissionDownloadServiceModel.FileName);
+    }
 
     /// <summary>
     /// Gets a subset of submissions by specific problem and given take count.
     /// </summary>
-    /// <param name="id">The id of the problem</param>
-    /// <param name="isOfficial">Should the submissions be only from compete mode</param>
-    /// <param name="take">Number of submissions to return</param>
-    /// <returns>A collection of submissions for a specific problem</returns>
+    /// <param name="id">The id of the problem.</param>
+    /// <param name="isOfficial">Should the submissions be only from compete mode.</param>
+    /// <param name="take">Number of submissions to return.</param>
+    /// <returns>A collection of submissions for a specific problem.</returns>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(IEnumerable<SubmissionResultsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetSubmissionResultsByProblem(
@@ -92,10 +87,28 @@ public class SubmissionsController : BaseApiController
             .ToOkResult();
 
     /// <summary>
+    /// Gets a subset of submission results for the selected user by specific problem and given take count.
+    /// </summary>
+    /// <param name="submissionId">The id of the submission.</param>
+    /// <param name="isOfficial">Should the submissions be only from compete mode.</param>
+    /// <param name="take">Number of submissions to return.</param>
+    /// <returns>A collection of submissions for a specific problem.</returns>
+    [HttpGet("{submissionId:int}")]
+    [ProducesResponseType(typeof(IEnumerable<SubmissionResultsResponseModel>), Status200OK)]
+    public async Task<IActionResult> GetSubmissionDetailsResults(
+        int submissionId,
+        [FromQuery] bool isOfficial,
+        [FromQuery] int take)
+        => await this.submissionsBusiness
+            .GetSubmissionDetailsResults(submissionId, isOfficial, take)
+            .MapCollection<SubmissionResultsResponseModel>()
+            .ToOkResult();
+
+    /// <summary>
     /// Saves/updates the provided execution result for the given submission in the database.
     /// </summary>
-    /// <param name="submissionExecutionResult">The submission execution result</param>
-    /// <returns>Success model</returns>
+    /// <param name="submissionExecutionResult">The submission execution result.</param>
+    /// <returns>Success model.</returns>
     /// <remarks>
     /// The submission comes from the Judge distributor system.
     /// It sends it to here after executing it on a remote worker.
@@ -112,15 +125,24 @@ public class SubmissionsController : BaseApiController
         return this.Ok(result);
     }
 
+    /// <summary>
+    /// Gets latest submissions (default number of submissions).
+    /// </summary>
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<SubmissionForPublicSubmissionsServiceModel>), Status200OK)]
     public async Task<IActionResult> Public()
         => await this.submissionsBusiness
             .GetPublicSubmissions()
             .ToOkResult();
 
+    /// <summary>
+    /// Gets the count of all submissions.
+    /// </summary>
+    [HttpGet]
+    [ProducesResponseType(typeof(int), Status200OK)]
     public async Task<IActionResult> TotalCount()
         => await this.cache.Get(
                 SubmissionsTotalCountCacheKey,
-                this.submissionsBusiness
-                    .GetTotalCount)
+                this.submissionsBusiness.GetTotalCount)
             .ToOkResult();
 }

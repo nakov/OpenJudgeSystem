@@ -1,5 +1,9 @@
 namespace OJS.Services.Administration.Business.Implementations
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using OJS.Common;
     using OJS.Common.Helpers;
@@ -8,12 +12,9 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Services.Administration.Models;
     using OJS.Services.Common;
     using OJS.Services.Common.Models;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using SoftUni.Judge.Common.Enumerations;
+    using OJS.Services.Infrastructure;
     using SoftUni.Data.Infrastructure;
+    using SoftUni.Judge.Common.Enumerations;
 
     public class SubmissionsBusinessService : ISubmissionsBusinessService
     {
@@ -24,6 +25,7 @@ namespace OJS.Services.Administration.Business.Implementations
         private readonly ITransactionsProvider transactions;
         private readonly IParticipantScoresBusinessService participantScoresBusinessService;
         private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
+        private readonly IDatesService dates;
 
         public SubmissionsBusinessService(
             ISubmissionsDataService submissionsData,
@@ -31,7 +33,8 @@ namespace OJS.Services.Administration.Business.Implementations
             ITransactionsProvider transactions,
             ISubmissionsForProcessingDataService submissionsForProcessingDataService,
             IParticipantScoresBusinessService participantScoresBusinessService,
-            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication)
+            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication,
+            IDatesService dates)
         {
             this.submissionsData = submissionsData;
             // this.archivedSubmissionsData = archivedSubmissionsData;
@@ -40,6 +43,7 @@ namespace OJS.Services.Administration.Business.Implementations
             this.submissionsForProcessingDataService = submissionsForProcessingDataService;
             this.participantScoresBusinessService = participantScoresBusinessService;
             this.submissionsDistributorCommunication = submissionsDistributorCommunication;
+            this.dates = dates;
         }
 
         public Task<IQueryable<Submission>> GetAllForArchiving()
@@ -75,7 +79,7 @@ namespace OJS.Services.Administration.Business.Implementations
                             t.ResultType == TestRunResultType.CorrectAnswer &&
                             !t.Test.IsTrialTest),
                         AllTestRuns = s.TestRuns.Count(t => !t.Test.IsTrialTest),
-                        MaxPoints = s.Problem!.MaximumPoints
+                        MaxPoints = s.Problem!.MaximumPoints,
                     })
                     .ToList();
 
@@ -107,7 +111,7 @@ namespace OJS.Services.Administration.Business.Implementations
                         topResults[participantId] = new ParticipantScoreModel
                         {
                             Points = points,
-                            SubmissionId = submission.Id
+                            SubmissionId = submission.Id,
                         };
                     }
                     else if (topResults[participantId].Points == points)
@@ -149,9 +153,10 @@ namespace OJS.Services.Administration.Business.Implementations
             var submissionProblemId = submission.ProblemId!.Value;
             var submissionParticipantId = submission.ParticipantId!.Value;
 
-            var result  = await this.transactions.ExecuteInTransaction(async () =>
+            var result = await this.transactions.ExecuteInTransaction(async () =>
             {
                 submission.Processed = false;
+                submission.ModifiedOn = this.dates.GetUtcNow();
 
                 await this.submissionsForProcessingDataService.AddOrUpdateBySubmission(submission.Id);
 

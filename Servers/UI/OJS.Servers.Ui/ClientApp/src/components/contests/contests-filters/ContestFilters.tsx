@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { FilterType, IFilter, ISort } from '../../../common/contest-types';
@@ -29,14 +30,25 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const maxFiltersToDisplayCount = 3;
     const [ filtersGroups, setFiltersGroups ] = useState<IFiltersGroup[]>([]);
     const [ defaultSelected, setDefaultSelected ] = useState('');
+    const [ filteredStrategyFilters, setFilteredStrategyFilters ] = useState<IFilter[]>([]);
     const [ searchParams ] = useSearchParams();
     const [ isLoaded, setIsLoaded ] = useState(false);
-    const { actions: { load: loadStrategies } } = useContestStrategyFilters();
-    const { actions: { load: loadCategories } } = useContestCategories();
+    const {
+        state: { isLoaded: isLoadedStrategies },
+        actions: { load: loadStrategies },
+    } = useContestStrategyFilters();
+    const {
+        state: { isLoaded: isLoadedCategories },
+        actions: { load: loadCategories },
+    } = useContestCategories();
 
     const {
         state: { possibleFilters },
-        actions: { toggleParam, clearFilters },
+        actions: {
+            toggleParam,
+            clearFilters,
+            clearSorts,
+        },
     } = useContests();
 
     const { actions: { clearBreadcrumb } } = useCategoriesBreadcrumbs();
@@ -63,16 +75,24 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         (fg: IFiltersGroup) => {
             const { type, filters: groupFilters } = fg;
 
+            const strategyFilters = isEmpty(filteredStrategyFilters)
+                ? groupFilters
+                : filteredStrategyFilters;
+
+            const values = type === FilterType.Status
+                ? groupFilters
+                : strategyFilters;
+
             return (
                 <ContestFilter
-                  values={groupFilters}
+                  values={values}
                   type={type}
                   onSelect={handleFilterClick}
                   maxDisplayCount={maxFiltersToDisplayCount}
                 />
             );
         },
-        [ handleFilterClick ],
+        [ filteredStrategyFilters, handleFilterClick ],
     );
 
     useEffect(
@@ -109,35 +129,44 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
 
     useEffect(
         () => {
+            if (isLoadedCategories) {
+                return;
+            }
+
             (async () => {
                 await loadStrategies();
             })();
         },
-        [ loadStrategies ],
+        [ isLoadedCategories, loadStrategies ],
     );
 
     useEffect(
         () => {
+            if (isLoadedStrategies) {
+                return;
+            }
+
             (async () => {
                 await loadCategories();
             })();
         },
-        [ loadCategories ],
+        [ isLoadedStrategies, loadCategories ],
     );
 
-    const clearFiltersAndBreadcrumb = useCallback(
+    const clearFiltersAndBreadcrumbAndSorting = useCallback(
         () => {
             clearFilters();
             clearBreadcrumb();
+            clearSorts();
         },
-        [ clearFilters, clearBreadcrumb ],
+        [ clearFilters, clearBreadcrumb, clearSorts ],
     );
 
     return (
         <div className={styles.container}>
             <Button
               type={ButtonType.secondary}
-              onClick={() => clearFiltersAndBreadcrumb()}
+              onClick={() => clearFiltersAndBreadcrumbAndSorting()}
               className={styles.button}
               text="clear filters"
               size={ButtonSize.small}
@@ -146,6 +175,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
               className={styles.filterTypeContainer}
               onCategoryClick={onFilterClick}
               defaultSelected={defaultSelected}
+              setStrategyFilters={setFilteredStrategyFilters}
             />
             <ContestSorting onSortClick={handleSortClick} />
             <List

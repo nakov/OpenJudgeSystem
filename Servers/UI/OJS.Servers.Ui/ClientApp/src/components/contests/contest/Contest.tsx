@@ -1,8 +1,10 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
+import isNil from 'lodash/isNil';
 
 import { useAuth } from '../../../hooks/use-auth';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import { usePageTitles } from '../../../hooks/use-page-titles';
+import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
 import { convertToTwoDigitValues } from '../../../utils/dates';
 import Countdown, { ICountdownRemainingType, Metric } from '../../guidelines/countdown/Countdown';
@@ -24,20 +26,22 @@ const Contest = () => {
             totalParticipantsCount,
             activeParticipantsCount,
             isOfficial,
+            contestError,
         },
         actions: { setIsSubmitAllowed },
     } = useCurrentContest();
+    const { actions: { initiateProblems } } = useProblems();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const { actions: { setPageTitle } } = usePageTitles();
 
     const navigationContestClass = 'navigationContest';
-    const navigationContestClassName = concatClassNames(navigationContestClass);
+    const navigationContestClassName = concatClassNames(styles.navigationContest, navigationContestClass);
 
     const submissionBoxClass = 'submissionBox';
     const submissionBoxClassName = concatClassNames(submissionBoxClass);
 
     const problemInfoClass = 'problemInfo';
-    const problemInfoClassName = concatClassNames(problemInfoClass);
+    const problemInfoClassName = concatClassNames(styles.problemInfo, problemInfoClass);
 
     const contestTitle = useMemo(
         () => `${contest?.name}`,
@@ -146,7 +150,7 @@ const Contest = () => {
             <span>
                 {participantsStateText}
                 {' '}
-                Participitants:
+                Participants:
                 {' '}
                 <Text type={TextType.Bold}>
                     {participantsValue}
@@ -156,35 +160,89 @@ const Contest = () => {
         [ participantsStateText, participantsValue ],
     );
 
-    return (
-        <>
+    useEffect(
+        () => {
+            initiateProblems();
+        },
+        [ initiateProblems ],
+    );
+
+    const renderErrorHeading = useCallback(
+        (message: string) => (
             <div className={styles.headingContest}>
                 <Heading
                   type={HeadingType.primary}
                   className={styles.contestHeading}
                 >
-                    {contestTitle}
-                </Heading>
-                <Heading type={HeadingType.secondary} className={secondaryHeadingClassName}>
-                    {renderParticipants()}
-                    {renderTimeRemaining()}
-                    {renderScore()}
+                    {message}
                 </Heading>
             </div>
-
-            <div className={styles.contestWrapper}>
-                <div className={navigationContestClassName}>
-                    <ContestTasksNavigation />
-                </div>
-                <div className={submissionBoxClassName}>
-                    <SubmissionBox />
-                </div>
-                <div className={problemInfoClassName}>
-                    <ContestProblemDetails />
-                </div>
-            </div>
-        </>
+        ),
+        [],
     );
+
+    const renderErrorMessage = useCallback(
+        () => {
+            if (!isNil(contestError)) {
+                const { detail } = contestError;
+                return renderErrorHeading(detail);
+            }
+
+            return null;
+        },
+        [ renderErrorHeading, contestError ],
+    );
+
+    const renderContest = useCallback(
+        () => (
+            <>
+                <div className={styles.headingContest}>
+                    <Heading
+                      type={HeadingType.primary}
+                      className={styles.contestHeading}
+                    >
+                        {contestTitle}
+                    </Heading>
+                    <Heading type={HeadingType.secondary} className={secondaryHeadingClassName}>
+                        {renderParticipants()}
+                        {renderTimeRemaining()}
+                        {renderScore()}
+                    </Heading>
+                </div>
+
+                <div className={styles.contestWrapper}>
+                    <div className={navigationContestClassName}>
+                        <ContestTasksNavigation />
+                    </div>
+                    <div className={submissionBoxClassName}>
+                        <SubmissionBox />
+                    </div>
+                    <div className={problemInfoClassName}>
+                        <ContestProblemDetails />
+                    </div>
+                </div>
+            </>
+        ),
+        [
+            contestTitle,
+            navigationContestClassName,
+            problemInfoClassName,
+            renderScore,
+            renderTimeRemaining,
+            secondaryHeadingClassName,
+            submissionBoxClassName,
+            renderParticipants,
+        ],
+    );
+
+    const renderPage = useCallback(
+        () => isNil(contestError)
+            ? renderContest()
+            : renderErrorMessage(),
+        [ renderErrorMessage, renderContest, contestError ],
+    );
+
+    return renderPage();
 };
 
 export default Contest;

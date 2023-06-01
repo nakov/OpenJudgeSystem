@@ -1,11 +1,12 @@
-using OJS.Data.Models.Contests;
-using OJS.Data.Models.Participants;
-
 namespace OJS.Services.Ui.Business
 {
-    using OJS.Services.Common.Models;
-    using SoftUni.Services.Infrastructure;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
+    using OJS.Data.Models.Contests;
+    using OJS.Data.Models.Participants;
+    using OJS.Services.Common.Models;
+    using OJS.Services.Ui.Models.Search;
+    using SoftUni.Services.Infrastructure;
 
     public interface IProblemsBusinessService : IService
     {
@@ -16,6 +17,8 @@ namespace OJS.Services.Ui.Business
         Task DeleteByContest(int contestId);
 
         Task<ServiceResult> CopyToContestByIdByContestAndProblemGroup(int id, int contestId, int? problemGroupId);
+
+        Task<ProblemSearchServiceResultModel> GetSearchProblemsByName(SearchServiceModel model);
 
         void ValidateProblemForParticipant(
             Participant participant,

@@ -5,8 +5,7 @@ using OJS.Data.Models.Contests;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System;
 
-public class ContestForListingServiceModel
-    : IMapExplicitly
+public class ContestForListingServiceModel : IMapExplicitly
 {
     public int Id { get; set; }
 
@@ -32,6 +31,7 @@ public class ContestForListingServiceModel
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Contest, ContestForListingServiceModel>()
-            .ForMember(dest => dest.Category,
+            .ForMember(
+                dest => dest.Category,
                 opt => opt.MapFrom(src => src.Category!.Name));
 }

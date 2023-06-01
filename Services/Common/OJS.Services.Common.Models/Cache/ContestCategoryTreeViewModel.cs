@@ -22,13 +22,12 @@ public class ContestCategoryTreeViewModel : IMapExplicitly
     public IEnumerable<ContestCategoryTreeViewModel> Children { get; set; }
         = Enumerable.Empty<ContestCategoryTreeViewModel>();
 
+    public IEnumerable<AllowedContestStrategiesServiceModel> AllowedStrategyTypes { get; set; }
+        = Enumerable.Empty<AllowedContestStrategiesServiceModel>();
     public void RegisterMappings(IProfileExpression configuration)
         => configuration
             .CreateMap<ContestCategory, ContestCategoryTreeViewModel>()
             .ForMember(
-                m => m.Children,
-                opt => opt.MapFrom(src =>
-                    src.Children
-                        .Where(c => c.IsVisible)
-                        .OrderBy(c=> c.OrderBy)));
+                m => m.AllowedStrategyTypes,
+                opt => opt.Ignore());
 }

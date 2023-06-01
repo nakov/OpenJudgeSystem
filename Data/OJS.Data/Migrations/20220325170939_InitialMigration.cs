@@ -1,10 +1,9 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
-
-#nullable disable
+﻿#nullable disable
 
 namespace OJS.Data.Migrations
 {
+    using System;
+    using Microsoft.EntityFrameworkCore.Migrations;
     public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +15,7 @@ namespace OJS.Data.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -53,7 +52,7 @@ namespace OJS.Data.Migrations
                     TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -74,7 +73,7 @@ namespace OJS.Data.Migrations
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -94,7 +93,7 @@ namespace OJS.Data.Migrations
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -120,7 +119,7 @@ namespace OJS.Data.Migrations
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -136,7 +135,7 @@ namespace OJS.Data.Migrations
                     Value = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -148,7 +147,7 @@ namespace OJS.Data.Migrations
                 columns: table => new
                 {
                     Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -163,7 +162,7 @@ namespace OJS.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SubmissionId = table.Column<int>(type: "int", nullable: false),
                     Processing = table.Column<bool>(type: "bit", nullable: false),
-                    Processed = table.Column<bool>(type: "bit", nullable: false)
+                    Processed = table.Column<bool>(type: "bit", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -183,7 +182,7 @@ namespace OJS.Data.Migrations
                     AdditionalCompilerArguments = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AllowBinaryFilesUpload = table.Column<bool>(type: "bit", nullable: false),
-                    AllowedFileExtensions = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    AllowedFileExtensions = table.Column<string>(type: "nvarchar(max)", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -203,7 +202,7 @@ namespace OJS.Data.Migrations
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -218,7 +217,7 @@ namespace OJS.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -243,7 +242,7 @@ namespace OJS.Data.Migrations
                     Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PostParams = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -264,7 +263,7 @@ namespace OJS.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -284,7 +283,7 @@ namespace OJS.Data.Migrations
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -302,7 +301,7 @@ namespace OJS.Data.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -328,7 +327,7 @@ namespace OJS.Data.Migrations
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -355,7 +354,7 @@ namespace OJS.Data.Migrations
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -394,7 +393,7 @@ namespace OJS.Data.Migrations
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -413,7 +412,7 @@ namespace OJS.Data.Migrations
                     LecturerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ContestCategoryId = table.Column<int>(type: "int", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -438,7 +437,7 @@ namespace OJS.Data.Migrations
                 {
                     ContestId = table.Column<int>(type: "int", nullable: false),
                     IpId = table.Column<int>(type: "int", nullable: false),
-                    IsOriginallyAllowed = table.Column<bool>(type: "bit", nullable: false)
+                    IsOriginallyAllowed = table.Column<bool>(type: "bit", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -472,7 +471,7 @@ namespace OJS.Data.Migrations
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -494,7 +493,7 @@ namespace OJS.Data.Migrations
                     ExternalExamGroupId = table.Column<int>(type: "int", nullable: true),
                     ExternalAppId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(600)", maxLength: 600, nullable: false),
-                    ContestId = table.Column<int>(type: "int", nullable: true)
+                    ContestId = table.Column<int>(type: "int", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -513,7 +512,7 @@ namespace OJS.Data.Migrations
                     LecturerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ContestId = table.Column<int>(type: "int", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -545,7 +544,7 @@ namespace OJS.Data.Migrations
                     IsOfficial = table.Column<bool>(type: "bit", nullable: false),
                     IsInvalidated = table.Column<bool>(type: "bit", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -576,7 +575,7 @@ namespace OJS.Data.Migrations
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -600,7 +599,7 @@ namespace OJS.Data.Migrations
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -618,7 +617,7 @@ namespace OJS.Data.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ExamGroupId = table.Column<int>(type: "int", nullable: false)
+                    ExamGroupId = table.Column<int>(type: "int", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -643,7 +642,7 @@ namespace OJS.Data.Migrations
                 {
                     ParticipantId = table.Column<int>(type: "int", nullable: false),
                     ContestQuestionId = table.Column<int>(type: "int", nullable: false),
-                    Answer = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Answer = table.Column<string>(type: "nvarchar(max)", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -683,7 +682,7 @@ namespace OJS.Data.Migrations
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -717,7 +716,7 @@ namespace OJS.Data.Migrations
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -735,7 +734,7 @@ namespace OJS.Data.Migrations
                 columns: table => new
                 {
                     ProblemId = table.Column<int>(type: "int", nullable: false),
-                    ParticipantId = table.Column<int>(type: "int", nullable: false)
+                    ParticipantId = table.Column<int>(type: "int", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -767,7 +766,7 @@ namespace OJS.Data.Migrations
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -808,7 +807,7 @@ namespace OJS.Data.Migrations
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -835,7 +834,7 @@ namespace OJS.Data.Migrations
                 columns: table => new
                 {
                     SubmissionTypeId = table.Column<int>(type: "int", nullable: false),
-                    ProblemId = table.Column<int>(type: "int", nullable: false)
+                    ProblemId = table.Column<int>(type: "int", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -859,7 +858,7 @@ namespace OJS.Data.Migrations
                 columns: table => new
                 {
                     TagId = table.Column<int>(type: "int", nullable: false),
-                    ProblemId = table.Column<int>(type: "int", nullable: false)
+                    ProblemId = table.Column<int>(type: "int", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -890,7 +889,7 @@ namespace OJS.Data.Migrations
                     IsTrialTest = table.Column<bool>(type: "bit", nullable: false),
                     IsOpenTest = table.Column<bool>(type: "bit", nullable: false),
                     HideInput = table.Column<bool>(type: "bit", nullable: false),
-                    OrderBy = table.Column<double>(type: "float", nullable: false)
+                    OrderBy = table.Column<double>(type: "float", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -914,7 +913,7 @@ namespace OJS.Data.Migrations
                     SubmissionId = table.Column<int>(type: "int", nullable: true),
                     ParticipantName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Points = table.Column<int>(type: "int", nullable: false),
-                    IsOfficial = table.Column<bool>(type: "bit", nullable: false)
+                    IsOfficial = table.Column<bool>(type: "bit", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -952,7 +951,7 @@ namespace OJS.Data.Migrations
                     ExecutionComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CheckerComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ExpectedOutputFragment = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserOutputFragment = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    UserOutputFragment = table.Column<string>(type: "nvarchar(max)", nullable: true),
                 },
                 constraints: table =>
                 {

@@ -1,11 +1,9 @@
-﻿using System.Linq;
-
-namespace OJS.Services.Ui.Models.Submissions
+﻿namespace OJS.Services.Ui.Models.Submissions
 {
-    using System;
     using OJS.Data.Models.Submissions;
     using SoftUni.AutoMapper.Infrastructure.Models;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class SubmissionServiceModel : IMapFrom<Submission>
     {

@@ -1,10 +1,10 @@
 namespace OJS.Services.Ui.Data.Implementations;
 
 using Microsoft.EntityFrameworkCore;
+using Infrastructure.Extensions;
 using OJS.Common.Extensions;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Data.Implementations;
-using OJS.Services.Infrastructure.Extensions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
@@ -13,9 +13,15 @@ using System.Threading.Tasks;
 
 public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataService
 {
-    public SubmissionsDataService(DbContext db) : base(db)
+    public SubmissionsDataService(DbContext db)
+        : base(db)
     {
     }
+
+    public TServiceModel? GetSubmissionById<TServiceModel>(int id)
+        => this.GetByIdQuery(id)
+            .MapCollection<TServiceModel>()
+            .FirstOrDefault();
 
     public Task<IEnumerable<TServiceModel>> GetLatestSubmissions<TServiceModel>(int count)
         => this.GetQuery(
@@ -25,6 +31,13 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             .MapCollection<TServiceModel>()
             .ToEnumerableAsync();
 
+    public async Task<int> GetTotalSubmissionsCount()
+        => await this.GetQuery(
+                orderBy: s => s.Id,
+                descending: true)
+            .Select(s => s.Id)
+            .FirstOrDefaultAsync();
+
     public Submission? GetBestForParticipantByProblem(int participantId, int problemId) =>
         this.GetAllByProblemAndParticipant(problemId, participantId)
             .Where(s => s.Processed)
@@ -33,19 +46,13 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             .FirstOrDefault();
 
     public IQueryable<Submission> GetAllByProblem(int problemId)
-        => base.DbSet.Where(s => s.ProblemId == problemId);
+        => this.DbSet.Where(s => s.ProblemId == problemId);
 
     public IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId) =>
         this.GetQuery(
             filter: s => s.ParticipantId == participantId && s.ProblemId == problemId,
             orderBy: q => q.CreatedOn,
             descending: true);
-
-    public Task<IEnumerable<TServiceModel>> GetAllByProblemAndUser<TServiceModel>(int problemId, string userId)
-        => this.GetQuery(
-                filter: s => s.ProblemId == problemId && s.Participant.UserId == userId)
-            .MapCollection<TServiceModel>()
-            .ToEnumerableAsync();
 
     public IQueryable<Submission> GetAllFromContestsByLecturer(string lecturerId) =>
         this.DbSet
@@ -80,11 +87,12 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
     public bool IsOfficialById(int id) =>
         this.GetByIdQuery(id)
             .Any(s => s.Participant!.IsOfficial);
-        public Submission? GetLastSubmitForParticipant(int participantId) =>
-            this.DbSet
-                .Where(s => s.ParticipantId == participantId)
-                .OrderByDescending(s => s.CreatedOn)
-                .FirstOrDefault();
+
+    public Submission? GetLastSubmitForParticipant(int participantId) =>
+        this.DbSet
+            .Where(s => s.ParticipantId == participantId)
+            .OrderByDescending(s => s.CreatedOn)
+            .FirstOrDefault();
 
     public void SetAllToUnprocessedByProblem(int problemId) =>
         this.GetAllByProblem(problemId)
@@ -97,26 +105,32 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
         this.GetAllByProblem(problemId)
             .UpdateFromQueryAsync(s => new Submission { TestRunsCache = null });
 
-        public int GetUserSubmissionTimeLimit(int participantId, int limitBetweenSubmissions)
+    public int GetUserSubmissionTimeLimit(int participantId, int limitBetweenSubmissions)
+    {
+        var lastSubmission = this.GetLastSubmitForParticipant(participantId);
+
+        if (lastSubmission != null)
         {
-            var lastSubmission = this.GetLastSubmitForParticipant(participantId);
-
-            if (lastSubmission != null)
+            // check if the submission was sent after the submission time limit has passed
+            var latestSubmissionTime = lastSubmission.CreatedOn;
+            var differenceBetweenSubmissions = DateTime.Now - latestSubmissionTime;
+            if (differenceBetweenSubmissions.TotalSeconds < limitBetweenSubmissions)
             {
-                // check if the submission was sent after the submission time limit has passed
-                var latestSubmissionTime = lastSubmission.CreatedOn;
-                var differenceBetweenSubmissions = DateTime.Now.ToUniversalTime() - latestSubmissionTime;
-                if (differenceBetweenSubmissions.TotalSeconds < limitBetweenSubmissions)
-                {
-                    return limitBetweenSubmissions - differenceBetweenSubmissions.TotalSeconds.ToInt();;
-                }
+                return limitBetweenSubmissions - differenceBetweenSubmissions.TotalSeconds.ToInt();
             }
-
-            return 0;
         }
+
+        return 0;
+    }
 
     public bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId) =>
         this.DbSet.Any(s => s.ProblemId == problemId && s.Participant!.UserId == userId && !s.Processed);
+
+    public async Task<TServiceModel> GetProblemBySubmission<TServiceModel>(int submissionId)
+        => (await this.GetByIdQuery(submissionId)
+            .Select(p => p.Problem)
+            .MapCollection<TServiceModel>()
+            .FirstOrDefaultAsync()) !;
 
     public async Task<int> GetSubmissionsPerDayCount()
         => await this.DbSet.AnyAsync()
@@ -125,6 +139,12 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
                 .AverageAsync()
                 .ToInt()
             : 0;
+
+    public async Task<TServiceModel> GetParticipantBySubmission<TServiceModel>(int submissionId)
+        => (await this.GetByIdQuery(submissionId)
+            .Select(p => p.Participant)
+            .MapCollection<TServiceModel>()
+            .FirstOrDefaultAsync()) !;
 
     private IQueryable<Submission> GetByIdQuery(int id) =>
         this.DbSet

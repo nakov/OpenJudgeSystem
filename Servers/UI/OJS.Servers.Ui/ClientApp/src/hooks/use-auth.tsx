@@ -1,4 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import isEmpty from 'lodash/isEmpty';
+import isNil from 'lodash/isNil';
 
 import { HttpStatus } from '../common/common';
 import { IUserPermissionsType, IUserType } from '../common/types';
@@ -29,6 +31,12 @@ interface IAuthProviderProps extends IHaveChildrenProps {
     user: IUserType;
 }
 
+interface ILoginDetailsType {
+    Username: string;
+    Password?: string;
+    RememberMe: boolean;
+}
+
 const AuthProvider = ({ user, children }: IAuthProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
     const [ internalUser, setInternalUser ] = useState(user);
@@ -36,6 +44,7 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
     const [ password, setPassword ] = useState<string>();
     const [ loginErrorMessage, setLoginErrorMessage ] = useState<string>('');
     const { showError } = useNotifications();
+    const defaultLoginErrorMessage = useMemo(() => 'Invalid username or password', []);
 
     const { getLogoutUrl, getLoginSubmitUrl } = useUrls();
 
@@ -43,9 +52,9 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
         post: loginSubmit,
         response: loginSubmitResponse,
         status: loginSubmitStatus,
-    } = useHttp(getLoginSubmitUrl);
+    } = useHttp<null, string, ILoginDetailsType>({ url: getLoginSubmitUrl });
 
-    const { post: logout } = useHttp(getLogoutUrl);
+    const { post: logout } = useHttp({ url: getLogoutUrl });
 
     const signIn = useCallback(
         async () => {
@@ -62,7 +71,7 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
 
     const signOut = useCallback(async () => {
         startLoading();
-        await logout({});
+        await logout();
         setInternalUser(user);
         stopLoading();
     }, [ logout, startLoading, stopLoading, user ]);
@@ -81,16 +90,28 @@ const AuthProvider = ({ user, children }: IAuthProviderProps) => {
     );
 
     useEffect(() => {
-        if (loginSubmitResponse) {
-            if (loginSubmitStatus === HttpStatus.Unauthorized) {
-                setLoginErrorMessage('Invalid username or password.');
-
-                return;
-            }
-
-            window.location.reload();
+        if (isNil(loginSubmitResponse)) {
+            return;
         }
-    }, [ loginSubmitResponse, loginSubmitStatus, showError, setUserDetails ]);
+
+        if (loginSubmitStatus === HttpStatus.Unauthorized) {
+            const { data } = loginSubmitResponse;
+
+            setLoginErrorMessage(isNil(data) || isEmpty(data)
+                ? defaultLoginErrorMessage
+                : data.toString());
+
+            return;
+        }
+
+        window.location.reload();
+    }, [
+        loginSubmitResponse,
+        loginSubmitStatus,
+        showError,
+        setUserDetails,
+        defaultLoginErrorMessage,
+    ]);
 
     const value = useMemo(
         () => ({

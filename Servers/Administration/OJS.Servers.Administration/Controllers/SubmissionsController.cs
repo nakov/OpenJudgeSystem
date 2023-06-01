@@ -19,8 +19,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OJS.Servers.Administration.Infrastructure.Extensions;
+using OJS.Common;
 using GlobalResource = OJS.Common.Resources.SubmissionsController;
-
 
 public class SubmissionsController : BaseAutoCrudAdminController<Submission>
 {
@@ -62,7 +62,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
     }
 
     protected override Expression<Func<Submission, bool>>? MasterGridFilter
-        => GetMasterGridFilter();
+        => this.GetMasterGridFilter();
 
     protected override IEnumerable<Func<Submission, Submission, AdminActionContext, ValidatorResult>> EntityValidators
         => this.submissionValidatorsFactory.GetValidators();
@@ -74,12 +74,12 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
     protected override IEnumerable<CustomGridColumn<Submission>> CustomColumns
         => new CustomGridColumn<Submission>[]
         {
-            new()
+            new ()
             {
                 Name = "Contest",
                 ValueFunc = s => s.Problem != null ? s.Problem.ProblemGroup.Contest.ToString() : string.Empty,
             },
-            new()
+            new ()
             {
                 Name = "Contest Id",
                 ValueFunc = s => s.Problem != null ? s.Problem!.ProblemGroup.ContestId.ToString() : string.Empty,
@@ -87,10 +87,75 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         };
 
     protected override IEnumerable<GridAction> CustomActions
-        => new []
+        => new[]
         {
             new GridAction { Action = nameof(this.Retest) },
+            new GridAction { Action = nameof(this.DownloadAttachment) },
         };
+
+    public async Task<IActionResult> DownloadAttachment([FromQuery] IDictionary<string, string> complexId)
+    {
+        var submissionId = this.GetEntityIdFromQuery<int>(complexId);
+
+        var submission = await this.submissionsData.GetByIdQuery(submissionId).FirstOrDefaultAsync();
+        if (submission == null)
+        {
+            this.TempData.AddDangerMessage(GlobalResource.SubmissionNotFound);
+
+            return this.RedirectToAction(nameof(this.Index));
+        }
+
+        if (!submission.IsBinaryFile)
+        {
+            this.TempData.AddDangerMessage(GlobalResource.SubmissionNotFileUpload);
+
+            return this.Redirect(this.Request.Headers.Referer);
+        }
+
+        return this.File(
+            submission.Content,
+            GlobalConstants.MimeTypes.ApplicationOctetStream,
+            string.Format(GlobalConstants.Submissions.SubmissionDownloadFileName, submissionId, submission.FileExtension));
+    }
+
+    public async Task<IActionResult> Retest([FromQuery] IDictionary<string, string> complexId)
+    {
+        var submissionId = this.GetEntityIdFromQuery<int>(complexId);
+
+        var submission = await this.submissionsData.GetByIdQuery(submissionId).FirstOrDefaultAsync();
+
+        if (submission is null || !submission.ProblemId.HasValue || !submission.ParticipantId.HasValue)
+        {
+            this.TempData.AddDangerMessage(GlobalResource.SubmissionCanNotBeProcessed);
+
+            return this.RedirectToAction(nameof(this.Index));
+        }
+
+        if (!string.IsNullOrEmpty(submission.TestRunsCache) &&
+            !submission.Processed)
+        {
+            this.TempData.AddDangerMessage(GlobalResource.SubmissionIsProcessing);
+
+            return this.RedirectToSubmissionById(submissionId);
+        }
+
+        await this.problemsValidationHelper
+            .ValidatePermissionsOfCurrentUser(submission.ProblemId ?? default)
+            .VerifyResult();
+
+        var retestResult = await this.submissionsBusinessService.Retest(submission);
+
+        if (retestResult.IsError)
+        {
+            this.TempData.AddDangerMessage(retestResult.Error);
+
+            return this.RedirectToSubmissionById(submissionId);
+        }
+
+        this.TempData.AddSuccessMessage(GlobalResource.SubmissionIsAddedInQueueForProcessing);
+
+        return this.RedirectToSubmissionById(submissionId);
+    }
 
     protected override IEnumerable<FormControlViewModel> GenerateFormControls(
         Submission entity,
@@ -135,45 +200,6 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
                     submission.ProblemId.Value);
             }
         });
-    }
-
-    public async Task<IActionResult> Retest([FromQuery] IDictionary<string, string> complexId)
-    {
-        var submissionId = this.GetEntityIdFromQuery<int>(complexId);
-
-        var submission = await this.submissionsData.GetByIdQuery(submissionId).FirstOrDefaultAsync();
-
-        if (submission is null || !submission.ProblemId.HasValue || !submission.ParticipantId.HasValue)
-        {
-            this.TempData.AddDangerMessage(GlobalResource.Submission_can_not_be_processed);
-
-            return this.RedirectToAction(nameof(this.Index));
-        }
-
-        if (!string.IsNullOrEmpty(submission.TestRunsCache) &&
-            !submission.Processed)
-        {
-            this.TempData.AddDangerMessage(GlobalResource.Submission_is_processing);
-
-            return this.RedirectToSubmissionById(submissionId);
-        }
-
-        await this.problemsValidationHelper
-            .ValidatePermissionsOfCurrentUser(submission.ProblemId ?? default)
-            .VerifyResult();
-
-        var retestResult = await this.submissionsBusinessService.Retest(submission);
-
-        if (retestResult.IsError)
-        {
-            this.TempData.AddDangerMessage(retestResult.Error);
-
-            return this.RedirectToSubmissionById(submissionId);
-        }
-
-        this.TempData.AddSuccessMessage(GlobalResource.Submission_is_added_in_queue_for_processing);
-
-        return this.RedirectToSubmissionById(submissionId);
     }
 
     private Expression<Func<Submission, bool>>? GetMasterGridFilter()

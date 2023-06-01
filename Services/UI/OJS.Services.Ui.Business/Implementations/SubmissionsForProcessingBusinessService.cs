@@ -16,7 +16,7 @@
         /// <summary>
         /// Sets the Processing property to False for all submissions
         /// thus ensuring that the worker will process them eventually instead
-        /// of getting stuck in perpetual "Processing..." state
+        /// of getting stuck in perpetual "Processing..." state.
         /// </summary>
         public async Task ResetAllProcessingSubmissions()
         {

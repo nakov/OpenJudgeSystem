@@ -1,4 +1,5 @@
 import React, { FC, useCallback, useEffect, useMemo } from 'react';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { Anything, IDictionary, IKeyValuePair } from '../../common/common-types';
@@ -53,10 +54,10 @@ const HomeHeader = () => {
         },
         [ load ],
     );
-
     const renderIcon = (type: string) => {
         const props = { size: IconSize.ExtraLarge, children: {} };
-        const func = keyToIconComponent[type];
+
+        const { [type]: func } = keyToIconComponent;
 
         return func(props);
     };
@@ -87,19 +88,23 @@ const HomeHeader = () => {
     );
 
     return (
-        <>
-            <Heading type={HeadingType.primary}>
-                SoftUni Judge Numbers
-            </Heading>
-            <List
-              values={statisticsList}
-              itemFunc={renderStatistic}
-              className={styles.statisticsList}
-              itemClassName={styles.statisticsListItem}
-              wrap
-              orientation={Orientation.horizontal}
-            />
-        </>
+        !isEmpty(statistics)
+            ? (
+                <>
+                    <Heading type={HeadingType.primary}>
+                        SoftUni Judge Numbers
+                    </Heading>
+                    <List
+                      values={statisticsList}
+                      itemFunc={renderStatistic}
+                      className={styles.statisticsList}
+                      itemClassName={styles.statisticsListItem}
+                      wrap
+                      orientation={Orientation.horizontal}
+                    />
+                </>
+            )
+            : null
     );
 };
 

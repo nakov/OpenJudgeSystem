@@ -2,8 +2,8 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import first from 'lodash/first';
 import isNil from 'lodash/isNil';
 
-import { UrlType } from '../common/common-types';
 import { IProblemType } from '../common/types';
+import { IDownloadProblemResourceUrlParams } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
 import { useHashUrlParams } from './common/use-hash-url-params';
@@ -20,6 +20,7 @@ interface IProblemsContext {
     actions: {
         selectProblemById: (id: number) => void;
         downloadProblemResourceFile: (resourceId: number) => Promise<void>;
+        initiateProblems: () => void;
     };
 }
 
@@ -46,12 +47,12 @@ const ProblemsContext = createContext<IProblemsContext>(defaultState as IProblem
 const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     const { state: { contest } } = useCurrentContest();
     const {
-        state: { params },
+        state: { hashParam },
         actions: { setHash },
     } = useHashUrlParams();
     const [ problems, setProblems ] = useState(defaultState.state.problems);
     const [ currentProblem, setCurrentProblem ] = useState<IProblemType | null>(defaultState.state.currentProblem);
-    const [ problemResourceIdToDownload, setProblemResourceIdToDownload ] = useState<number | null>();
+    const [ problemResourceIdToDownload, setProblemResourceIdToDownload ] = useState<number | null>(null);
     const { getDownloadProblemResourceUrl } = useUrls();
 
     const {
@@ -63,7 +64,10 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         get: downloadProblemResource,
         response: downloadProblemResourceResponse,
         saveAttachment,
-    } = useHttp(getDownloadProblemResourceUrl as UrlType, { id: problemResourceIdToDownload });
+    } = useHttp<IDownloadProblemResourceUrlParams, Blob>({
+        url: getDownloadProblemResourceUrl,
+        parameters: { id: problemResourceIdToDownload },
+    });
 
     const normalizedProblems = useMemo(
         () => normalizeOrderBy(problems),
@@ -87,10 +91,10 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
 
     const problemFromHash = useMemo(
         () => {
-            const hashIndex = Number(params) - 1;
+            const hashIndex = Number(hashParam) - 1;
             return normalizedProblems[hashIndex];
         },
-        [ normalizedProblems, params ],
+        [ normalizedProblems, hashParam ],
     );
 
     const isLoadedFromHash = useMemo(
@@ -98,7 +102,7 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         [ problemFromHash ],
     );
 
-    const reloadProblems = useCallback(
+    const initiateProblems = useCallback(
         () => {
             const { problems: newProblems } = contest || {};
 
@@ -134,25 +138,21 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         saveAttachment();
     }, [ downloadProblemResourceResponse, problemResourceIdToDownload, saveAttachment ]);
 
-    useEffect(() => {
-        if (isNil(problemResourceIdToDownload)) {
-            return;
-        }
-
-        (async () => {
-            startLoading();
-            await downloadProblemResource('blob');
-            stopLoading();
-        })();
-
-        setProblemResourceIdToDownload(null);
-    }, [ downloadProblemResource, problemResourceIdToDownload, startLoading, stopLoading ]);
-
     useEffect(
         () => {
-            reloadProblems();
+            if (isNil(problemResourceIdToDownload)) {
+                return;
+            }
+
+            (async () => {
+                startLoading();
+                await downloadProblemResource('blob');
+                stopLoading();
+            })();
+
+            setProblemResourceIdToDownload(null);
         },
-        [ reloadProblems ],
+        [ downloadProblemResource, problemResourceIdToDownload, startLoading, stopLoading ],
     );
 
     const value = useMemo(
@@ -164,9 +164,10 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
             actions: {
                 selectProblemById,
                 downloadProblemResourceFile,
+                initiateProblems,
             },
         }),
-        [ currentProblem, downloadProblemResourceFile, problems, selectProblemById ],
+        [ currentProblem, downloadProblemResourceFile, initiateProblems, problems, selectProblemById ],
     );
 
     return (

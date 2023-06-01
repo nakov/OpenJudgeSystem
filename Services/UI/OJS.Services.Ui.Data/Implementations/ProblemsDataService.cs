@@ -10,12 +10,13 @@ namespace OJS.Services.Ui.Data.Implementations
 
     public class ProblemsDataService : DataService<Problem>, IProblemsDataService
     {
-        public ProblemsDataService(OjsDbContext db) : base(db)
+        public ProblemsDataService(OjsDbContext db)
+            : base(db)
         {
         }
 
         public IQueryable<Problem> GetAllByContest(int contestId) =>
-            base.DbSet
+            this.DbSet
                 .Where(p => p.ProblemGroup.ContestId == contestId);
 
         public Task<Problem?> GetWithProblemGroupById(int problemId)
@@ -43,9 +44,12 @@ namespace OJS.Services.Ui.Data.Implementations
                 .Select(p => new { p.OrderBy })
                 .FirstOrDefaultAsync())
                 ?.OrderBy + 1 ?? GlobalConstants.ProblemDefaultOrderBy;
+        public IQueryable<Problem> GetAllNonDeletedProblems() =>
+            this.DbSet
+                .Where(p => !p.IsDeleted);
 
         private IQueryable<Problem> GetAllByProblemGroup(int problemGroupId) =>
-            base.DbSet
+            this.DbSet
                 .Where(p => p.ProblemGroupId == problemGroupId);
     }
 }

@@ -1,8 +1,14 @@
 namespace OJS.Servers.Administration.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using System.Threading.Tasks;
     using AutoCrudAdmin.Models;
     using AutoCrudAdmin.ViewModels;
     using Microsoft.AspNetCore.Mvc;
+    using OJS.Common.Enumerations;
     using OJS.Data.Models;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Problems;
@@ -13,11 +19,6 @@ namespace OJS.Servers.Administration.Controllers
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models;
     using OJS.Services.Infrastructure.Extensions;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Linq.Expressions;
-    using System.Threading.Tasks;
     using AdminResource = OJS.Common.Resources.AdministrationGeneral;
     using Resource = OJS.Common.Resources.ContestsControllers;
 
@@ -42,6 +43,24 @@ namespace OJS.Servers.Administration.Controllers
             this.contestCategoriesValidationHelper = contestCategoriesValidationHelper;
             this.contestsValidationHelper = contestsValidationHelper;
         }
+
+        protected override IEnumerable<Func<Contest, Contest, AdminActionContext, ValidatorResult>> EntityValidators
+            => this.contestValidatorsFactory.GetValidators();
+
+        protected override IEnumerable<Func<Contest, Contest, AdminActionContext, Task<ValidatorResult>>>
+            AsyncEntityValidators
+            => this.contestValidatorsFactory.GetAsyncValidators();
+
+        protected override IEnumerable<GridAction> CustomActions
+            => new[]
+            {
+                new GridAction { Action = nameof(this.DownloadSubmissions) },
+                new GridAction { Action = nameof(this.ExportResults) },
+                new GridAction { Action = nameof(this.Problems) },
+                new GridAction { Action = nameof(this.CreateProblem) },
+                new GridAction { Action = nameof(this.Participants) },
+                new GridAction { Action = nameof(this.Submissions) },
+            };
 
         // TODO: make it as a popup window
         [HttpGet]
@@ -88,13 +107,6 @@ namespace OJS.Servers.Administration.Controllers
                 ProblemsController.ContestIdKey,
                 this.GetEntityIdFromQuery<int>(complexId));
 
-        protected override IEnumerable<Func<Contest, Contest, AdminActionContext, ValidatorResult>> EntityValidators
-            => this.contestValidatorsFactory.GetValidators();
-
-        protected override IEnumerable<Func<Contest, Contest, AdminActionContext, Task<ValidatorResult>>>
-            AsyncEntityValidators
-            => this.contestValidatorsFactory.GetAsyncValidators();
-
         protected override async Task BeforeGeneratingForm(
             Contest entity,
             EntityAction action,
@@ -131,7 +143,7 @@ namespace OJS.Servers.Administration.Controllers
                     .VerifyResult();
             }
 
-            if (!entity.IsOnline && entity.Duration != null)
+            if (!entity.IsOnlineExam && entity.Duration != null)
             {
                 entity.Duration = null;
             }
@@ -141,38 +153,29 @@ namespace OJS.Servers.Administration.Controllers
             Contest contest,
             AdminActionContext actionContext)
         {
-            this.AddProblemGroupsToContest(contest, contest.NumberOfProblemGroups);
-            await this.AddIpsToContest(contest, actionContext.GetFormValue(AdditionalFormFields.AllowedIps));
+            var contestUtc = ConvertContestStartAndEndTimeToUtc(contest);
+            AddProblemGroupsToContest(contestUtc, contestUtc.NumberOfProblemGroups);
+            await this.AddIpsToContest(contestUtc, actionContext.GetFormValue(AdditionalFormFields.AllowedIps));
         }
-
-        protected override IEnumerable<GridAction> CustomActions
-            => new []
-            {
-                new GridAction { Action = nameof(this.DownloadSubmissions) },
-                new GridAction { Action = nameof(this.ExportResults) },
-                new GridAction { Action = nameof(this.Problems) },
-                new GridAction { Action = nameof(this.CreateProblem) },
-                new GridAction { Action = nameof(this.Participants) },
-                new GridAction { Action = nameof(this.Submissions) },
-            };
 
         protected override async Task BeforeEntitySaveOnEditAsync(
             Contest existingContest,
             Contest newContest,
             AdminActionContext actionContext)
         {
-            if (newContest.IsOnline && newContest.ProblemGroups.Count == 0)
+            var newContestUtc = ConvertContestStartAndEndTimeToUtc(newContest);
+            if (newContestUtc.IsOnlineExam && newContestUtc.ProblemGroups.Count == 0)
             {
-                this.AddProblemGroupsToContest(newContest, newContest.NumberOfProblemGroups);
+                AddProblemGroupsToContest(newContestUtc, newContestUtc.NumberOfProblemGroups);
             }
 
-            if (!newContest.IsOnline && newContest.Duration != null)
+            if (!newContestUtc.IsOnlineExam && newContestUtc.Duration != null)
             {
-                newContest.Duration = null;
+                newContestUtc.Duration = null;
             }
 
-            newContest.IpsInContests.Clear();
-            await this.AddIpsToContest(newContest, actionContext.GetFormValue(AdditionalFormFields.AllowedIps));
+            newContestUtc.IpsInContests.Clear();
+            await this.AddIpsToContest(newContestUtc, actionContext.GetFormValue(AdditionalFormFields.AllowedIps));
         }
 
         protected override async Task AfterEntitySaveOnEditAsync(
@@ -192,7 +195,7 @@ namespace OJS.Servers.Administration.Controllers
             IDictionary<string, string> entityDict,
             IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters)
             => base.GenerateFormControls(entity, action, entityDict, complexOptionFilters)
-                .Concat(new []
+                .Concat(new[]
                 {
                     new FormControlViewModel
                     {
@@ -202,7 +205,7 @@ namespace OJS.Servers.Administration.Controllers
                     },
                 });
 
-        private void AddProblemGroupsToContest(Contest contest, int problemGroupsCount)
+        private static void AddProblemGroupsToContest(Contest contest, int problemGroupsCount)
         {
             for (var i = 1; i <= problemGroupsCount; i++)
             {
@@ -211,6 +214,16 @@ namespace OJS.Servers.Administration.Controllers
                     OrderBy = i,
                 });
             }
+        }
+
+        private static Contest ConvertContestStartAndEndTimeToUtc(Contest contest)
+        {
+            contest.StartTime = contest.StartTime == null ? contest.StartTime : TimeZoneInfo.ConvertTimeToUtc((DateTime)contest.StartTime);
+            contest.EndTime = contest.EndTime == null ? contest.EndTime : TimeZoneInfo.ConvertTimeToUtc((DateTime)contest.EndTime);
+            contest.PracticeStartTime = contest.PracticeStartTime == null ? contest.PracticeStartTime : TimeZoneInfo.ConvertTimeToUtc((DateTime)contest.PracticeStartTime);
+            contest.PracticeEndTime = contest.PracticeEndTime == null ? contest.PracticeEndTime : TimeZoneInfo.ConvertTimeToUtc((DateTime)contest.PracticeEndTime);
+
+            return contest;
         }
 
         private async Task AddIpsToContest(Contest contest, string mergedIps)

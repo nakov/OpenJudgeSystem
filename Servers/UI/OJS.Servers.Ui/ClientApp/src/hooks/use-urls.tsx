@@ -1,12 +1,16 @@
 import React, { createContext, useContext, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
+import { SearchParams } from '../common/search-types';
 import {
     IAllContestsUrlParams,
-    IDownloadProblemResourceUrlParams, IGetContestParticipationScoresForParticipantUrlParams,
+    IDownloadProblemResourceUrlParams,
+    IDownloadSubmissionFileUrlParams,
+    IGetContestByProblemUrlParams,
+    IGetContestParticipationScoresForParticipantUrlParams,
     IGetContestResultsParams,
+    IGetSearchResultsUrlParams,
     IGetSubmissionDetailsByIdUrlParams,
-    IGetSubmissionResultsByProblemAndUserUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
     IRetestSubmissionUrlParams,
     IStartContestParticipationUrlParams,
@@ -17,6 +21,7 @@ import { IHaveChildrenProps } from '../components/common/Props';
 interface IUrlsContext {
     getLoginSubmitUrl: () => string;
     getLogoutUrl: () => string;
+    getPlatformRegisterUrl: () => string;
     getAdministrationContestsGridUrl: () => string;
     getAdministrationNavigation: () => string;
     getProfileInfoUrl: () => string;
@@ -29,34 +34,51 @@ interface IUrlsContext {
     getStartContestParticipationUrl: (params: IStartContestParticipationUrlParams) => string;
     getContestParticipantScoresForParticipantUrl: (params: IGetContestParticipationScoresForParticipantUrlParams) => string;
     getSubmissionResultsByProblemUrl: (params: IGetSubmissionResultsByProblemUrlParams) => string;
-    getSubmissionResultsByProblemAndUserUrl: (params: IGetSubmissionResultsByProblemAndUserUrlParams) => string;
+    getSubmissionDetailsResultsUrl: (params: IGetSubmissionDetailsByIdUrlParams) => string;
+    getPublicSubmissionsUrl: () => string;
+    getSubmissionsTotalCountUrl: () => string;
     getSubmissionsDetailsUrl: () => string;
     getSubmissionDetailsByIdUrl: (params: IGetSubmissionDetailsByIdUrlParams) => string;
     getSubmitUrl: () => string;
+    getSubmitFileUrl: () => string;
     getDownloadProblemResourceUrl: (params: IDownloadProblemResourceUrlParams) => string;
     getCategoriesTreeUrl: () => string;
     getAllContestStrategyFiltersUrl: () => string;
     getContestResultsUrl: (params: IGetContestResultsParams) => string;
     getHomeStatisticsUrl: () => string;
     getAdministrationRetestSubmission: (params: IRetestSubmissionUrlParams) => string;
+    getSearchResults: (searchTerm: IGetSearchResultsUrlParams) => string;
+    getContestByProblemUrl: (params: IGetContestByProblemUrlParams) => string;
+    getSubmissionFileDownloadUrl: (params: IDownloadSubmissionFileUrlParams) => string;
 }
 
 const UrlsContext = createContext<IUrlsContext>({} as IUrlsContext);
 
 type IUrlsProviderProps = IHaveChildrenProps
 
-const baseUrl = window.URLS.UI_URL;
+const
+    {
+        URLS:
+            {
+                UI_URL: baseUrl,
+                ADMINISTRATION_URL: administrationBaseUrl,
+                PLATFORM_URL: platformBaseUrl,
+            },
+    } = window;
+
 const baseApiUrl = `${baseUrl}/api`;
 
 // auth
 const getLoginSubmitUrl = () => `${baseUrl}/Account/Login`;
 const getLogoutUrl = () => `${baseUrl}/Account/Logout`;
 
+const getPlatformRegisterUrl = () => `${platformBaseUrl}/identity/register`;
+
 // admin
-const administrationBaseUrl = window.URLS.ADMINISTRATION_URL;
 const getAdministrationContestsGridUrl = () => `${administrationBaseUrl}/Contests`;
 const getAdministrationNavigation = () => '/administration';
-const getAdministrationRetestSubmission = ({ id }: IRetestSubmissionUrlParams) => `${administrationBaseUrl}/Submissions/Retest?PK=${id}`;
+const getAdministrationRetestSubmission = ({ id }: IRetestSubmissionUrlParams) => `
+${administrationBaseUrl}/Submissions/Retest?PK=${id}`;
 
 // profile
 const getProfileInfoUrl = () => `${baseApiUrl}/Users/GetProfileInfo`;
@@ -102,6 +124,8 @@ const getContestParticipantScoresForParticipantUrl =
     ({ participantId }: IGetContestParticipationScoresForParticipantUrlParams) => `
     ${baseApiUrl}/ParticipantScores/GetScoresForParticipant/${participantId}`;
 
+const getContestByProblemUrl = ({ problemId }: IGetContestByProblemUrlParams) => `${baseApiUrl}/Contests/GetByProblem/${problemId}`;
+
 const getCategoriesTreeUrl =
     () => `${baseApiUrl}/ContestCategories/GetCategoriesTree`;
 
@@ -113,23 +137,27 @@ const getContestResultsUrl = ({
 
 // submissions
 const getSubmissionResultsByProblemUrl = ({
-    id,
+    problemId,
     isOfficial,
     take,
 }: IGetSubmissionResultsByProblemUrlParams) => `
-    ${baseApiUrl}/Submissions/GetSubmissionResultsByProblem/${id}?isOfficial=${isOfficial}&take=${take}`;
+    ${baseApiUrl}/Submissions/GetSubmissionResultsByProblem/${problemId}?isOfficial=${isOfficial}&take=${take}`;
 
-const getSubmissionResultsByProblemAndUserUrl = ({
-    problemId,
+const getSubmissionDetailsResultsUrl = ({
+    submissionId,
     isOfficial,
-    userId,
-}: IGetSubmissionResultsByProblemAndUserUrlParams) => `
-${baseApiUrl}/Submissions/GetSubmissionResultsByProblemAndUser/${problemId}/${userId}?isOfficial=${isOfficial}`;
-
+    take,
+}: IGetSubmissionDetailsByIdUrlParams) => `
+    ${baseApiUrl}/Submissions/GetSubmissionDetailsResults/${submissionId}?isOfficial=${isOfficial}&take=${take}`;
+const getPublicSubmissionsUrl = () => `${baseApiUrl}/Submissions/Public`;
+const getSubmissionsTotalCountUrl = () => `${baseApiUrl}/Submissions/TotalCount`;
 const getSubmissionsDetailsUrl = () => `${baseApiUrl}/Submissions/Details`;
 const getSubmissionDetailsByIdUrl =
     ({ submissionId }: IGetSubmissionDetailsByIdUrlParams) => `${getSubmissionsDetailsUrl()}/${submissionId}`;
 const getSubmitUrl = () => `${baseApiUrl}/Compete/Submit`;
+const getSubmitFileUrl = () => `${baseApiUrl}/Compete/SubmitFileSubmission`;
+const getSubmissionFileDownloadUrl =
+    ({ id }: IDownloadSubmissionFileUrlParams) => `${baseApiUrl}/Submissions/Download/${id}`;
 
 // Submission types
 const getAllContestStrategyFiltersUrl =
@@ -141,11 +169,26 @@ const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams
 // Statistics
 const getHomeStatisticsUrl = () => `${baseApiUrl}/StatisticsPreview/GetForHome`;
 
+// Search
+const getSearchResults = ({ searchTerm, page, selectedTerms }: IGetSearchResultsUrlParams) => {
+    const searchQuery = `${SearchParams.search}=${searchTerm}`;
+
+    const pageQuery = `page=${page}`;
+
+    const selectedTermQuery = `&${selectedTerms
+        .map(({ key, value }) => `${key}=${value}`)
+        .join('&')
+    }`;
+
+    return `${baseApiUrl}/Search/GetSearchResults?${searchQuery}${selectedTermQuery}&${pageQuery}`;
+};
+
 const UrlsProvider = ({ children }: IUrlsProviderProps) => {
     const value = useMemo(
         () => ({
             getLoginSubmitUrl,
             getLogoutUrl,
+            getPlatformRegisterUrl,
             getAdministrationContestsGridUrl,
             getAdministrationNavigation,
             getAllContestsUrl,
@@ -155,7 +198,9 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
             getContestParticipantScoresForParticipantUrl,
             getDownloadProblemResourceUrl,
             getSubmissionResultsByProblemUrl,
-            getSubmissionResultsByProblemAndUserUrl,
+            getSubmissionDetailsResultsUrl,
+            getPublicSubmissionsUrl,
+            getSubmissionsTotalCountUrl,
             getIndexContestsUrl,
             getProfileInfoUrl,
             getSubmissionsDetailsUrl,
@@ -163,11 +208,15 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
             getSubmissionsForProfileUrl,
             getParticipationsForProfileUrl,
             getSubmitUrl,
+            getSubmitFileUrl,
             getCategoriesTreeUrl,
             getAllContestStrategyFiltersUrl,
             getContestResultsUrl,
             getHomeStatisticsUrl,
             getAdministrationRetestSubmission,
+            getSearchResults,
+            getContestByProblemUrl,
+            getSubmissionFileDownloadUrl,
         }),
         [],
     );

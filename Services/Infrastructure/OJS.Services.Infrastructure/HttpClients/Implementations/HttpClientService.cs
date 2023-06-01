@@ -1,20 +1,37 @@
 namespace OJS.Services.Infrastructure.HttpClients.Implementations
 {
-    using FluentExtensions.Extensions;
     using System;
     using System.Net.Http;
     using System.Net.Http.Json;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
+    using FluentExtensions.Extensions;
+    using Microsoft.Extensions.Logging;
+    using OJS.Common.Extensions;
+    using OJS.Services.Common.Models;
     using static OJS.Common.GlobalConstants.ErrorMessages;
     using static OJS.Common.GlobalConstants.MimeTypes;
 
     public class HttpClientService : IHttpClientService
     {
+#pragma warning disable SA1401
         protected readonly HttpClient Client;
+#pragma warning restore SA1401
 
-        public HttpClientService(HttpClient client)
-            => this.Client = client;
+        protected HttpClientService(
+            HttpClient client,
+            ILogger<HttpClientService> logger,
+            string? apiKey)
+        {
+            this.Client = client;
+            this.Logger = logger;
+            this.ApiKey = apiKey;
+        }
+
+        protected string? ApiKey { get; set; }
+
+        private ILogger<HttpClientService> Logger { get; set; }
 
         public async Task<TResponse?> Post<TResponse>(object model, string url)
         {
@@ -60,29 +77,20 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
             return await responseMessage.Content.ReadAsByteArrayAsync();
         }
 
-        private async Task<HttpResponseMessage> GetResponse(string url)
+        public Task<ExternalDataRetrievalResult<TData>> GetAsync<TData>(object requestData, string endpoint)
         {
-            if (string.IsNullOrEmpty(url))
+            if (string.IsNullOrWhiteSpace(endpoint))
             {
-                throw new ArgumentException(UrlCannotBeNull);
+                throw new ArgumentException(string.Format(ValueCannotBeNullOrWhiteSpaceTemplate, nameof(endpoint)));
             }
 
-            var responseMessage = await this.Client.GetAsync(url);
-            await this.ValidateResponseMessage(responseMessage);
-
-            return responseMessage;
+            return this.InternalPostAsync<TData>(requestData, endpoint);
         }
 
-        private async Task<TResponse?> Post<TResponse>(HttpContent content, string url)
-        {
-            var responseMessage = await this.Client.PostAsync(url, content);
-            await this.ValidateResponseMessage(responseMessage);
-            var result = await responseMessage.Content.ReadFromJsonAsync<TResponse>();
+        private static string GetQueryStringSeparator(string url)
+            => url.Contains('?') ? "&" : "?";
 
-            return result;
-        }
-
-        private async Task ValidateResponseMessage(HttpResponseMessage responseMessage)
+        private static async Task ValidateResponseMessage(HttpResponseMessage responseMessage)
         {
             if (!responseMessage.IsSuccessStatusCode)
             {
@@ -105,5 +113,64 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
                 throw new Exception(errorMessage);
             }
         }
+
+        private async Task<ExternalDataRetrievalResult<TData>> InternalPostAsync<TData>(
+            object requestData,
+            string endpoint)
+        {
+            var externalDataResult = new ExternalDataRetrievalResult<TData>();
+
+            var requestUrl = this.InternalGetEndpoint(endpoint);
+
+            try
+            {
+                this.Logger.LogInformation($"Sending {HttpMethod.Post} {requestUrl} to {this.Client.BaseAddress}");
+                var response = await this.Client
+                    .PostAsJsonAsync(requestUrl, requestData, cancellationToken: CancellationToken.None)
+                    .ConfigureAwait(continueOnCapturedContext: false);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    await using var responseContentStream = await response.Content.ReadAsStreamAsync();
+                    externalDataResult.Data = responseContentStream.FromJson<TData>();
+                }
+                else
+                {
+                    externalDataResult.ErrorMessage = await response.Content.ReadAsStringAsync();
+                    this.Logger.LogError(externalDataResult.ErrorMessage);
+                }
+            }
+            catch (Exception ex)
+            {
+                externalDataResult.ErrorMessage = ex.InnerException?.Message ?? ex.Message;
+                this.Logger.LogError(externalDataResult.ErrorMessage);
+            }
+
+            return externalDataResult;
+        }
+
+        private async Task<HttpResponseMessage> GetResponse(string url)
+        {
+            if (string.IsNullOrEmpty(url))
+            {
+                throw new ArgumentException(UrlCannotBeNull);
+            }
+
+            var responseMessage = await this.Client.GetAsync(url);
+            await ValidateResponseMessage(responseMessage);
+
+            return responseMessage;
+        }
+
+        private async Task<TResponse?> Post<TResponse>(HttpContent content, string url)
+        {
+            var responseMessage = await this.Client.PostAsync(url, content);
+            await ValidateResponseMessage(responseMessage);
+            var result = await responseMessage.Content.ReadFromJsonAsync<TResponse>();
+
+            return result;
+        }
+
+        private string InternalGetEndpoint(string endpoint) => $"{endpoint}{GetQueryStringSeparator(endpoint)}apiKey={this.ApiKey}";
     }
 }

@@ -2,10 +2,12 @@ namespace OJS.Servers.Administration.Controllers;
 
 using AutoCrudAdmin;
 using AutoCrudAdmin.Controllers;
+using AutoCrudAdmin.Models;
 using OJS.Services.Infrastructure.Exceptions;
 using SoftUni.Data.Infrastructure.Models;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEntity>
     where TEntity : class
@@ -26,9 +28,9 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
             nameof(IEntity<object>.Id),
         };
 
-    protected TEntityId GetEntityIdFromQuery<TEntityId >(IDictionary<string, string> complexId)
+    protected TEntityId GetEntityIdFromQuery<TEntityId>(IDictionary<string, string> complexId)
     {
-        var idString = this.GetPrimaryKeyValueFromQuery(complexId);
+        var idString = GetPrimaryKeyValueFromQuery(complexId);
         object id;
         var idType = typeof(TEntityId);
 
@@ -49,7 +51,18 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
         return (TEntityId)Convert.ChangeType(id, typeof(TEntityId));
     }
 
-    private string GetPrimaryKeyValueFromQuery(IDictionary<string, string> complexId)
+    protected override async Task DeleteEntityAndSaveAsync(TEntity entity, AdminActionContext actionContext)
+    {
+        if (entity is IDeletableEntity deletableEntity)
+        {
+            deletableEntity.IsDeleted = true;
+            deletableEntity.DeletedOn = DateTime.UtcNow;
+
+            await this.EditEntityAndSaveAsync(entity, actionContext);
+        }
+    }
+
+    private static string GetPrimaryKeyValueFromQuery(IDictionary<string, string> complexId)
     {
         const string key = Constants.Entity.SinglePrimaryKeyName;
         if (!complexId.TryGetValue(key, out var idString))

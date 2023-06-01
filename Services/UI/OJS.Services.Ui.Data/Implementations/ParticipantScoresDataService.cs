@@ -1,21 +1,15 @@
-using FluentExtensions.Extensions;
-using OJS.Services.Infrastructure.Extensions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
-using System.Collections;
-using X.PagedList;
-
 namespace OJS.Services.Ui.Data.Implementations
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
-    using OJS.Common.Extensions;
     using OJS.Data;
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Data.Implementations;
+    using OJS.Services.Infrastructure.Extensions;
     using OJS.Services.Ui.Models.Participations;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
 
     public class ParticipantScoresDataService : DataService<ParticipantScore>, IParticipantScoresDataService
     {
@@ -33,8 +27,7 @@ namespace OJS.Services.Ui.Data.Implementations
                     ps.ParticipantId == participantId &&
                     ps.ProblemId == problemId);
 
-        public Task<IEnumerable<ParticipantScore>> GetByProblemIdAndParticipants(IEnumerable<int> participantIds,
-            int problemId)
+        public Task<IEnumerable<ParticipantScore>> GetByProblemIdAndParticipants(IEnumerable<int> participantIds, int problemId)
             => this.DbSet
                 .Where(ps => ps.ProblemId == problemId)
                 .Where(p => participantIds.Contains(p.ParticipantId))
@@ -70,7 +63,7 @@ namespace OJS.Services.Ui.Data.Implementations
                 .Select(p => new
                 {
                     p.IsOfficial,
-                    p.User.UserName
+                    p.User.UserName,
                 })
                 .FirstOrDefaultAsync();
 
@@ -155,7 +148,7 @@ namespace OJS.Services.Ui.Data.Implementations
                 .UpdateFromQueryAsync(
                     ps => new ParticipantScore
                     {
-                        SubmissionId = null
+                        SubmissionId = null,
                     });
 
         public Task<IEnumerable<ParticipationForProblemMaxScoreServiceModel>> GetMaxByProblemIdsAndParticipation(

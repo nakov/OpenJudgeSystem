@@ -33,7 +33,7 @@ namespace OJS.Data.Models.Submissions
         public bool AllowBinaryFilesUpload { get; set; }
 
         /// <summary>
-        /// Comma-separated list of allowed file extensions.
+        /// Gets or sets a comma-separated list of allowed file extensions.
         /// If the value is null or whitespace then only text values are allowed.
         /// If any extension is specified then no text input is allowed.
         /// </summary>

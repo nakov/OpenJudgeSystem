@@ -18,8 +18,8 @@ public class UsersInExamGroupsCreateDeleteValidationService
         }
 
         var message = item.IsCreate
-            ? Resource.Cannot_add_users
-            : Resource.Cannot_remove_users;
+            ? Resource.CannotAddUsers
+            : Resource.CannotRemoveUsers;
 
         return ValidationResult.Invalid(message);
     }

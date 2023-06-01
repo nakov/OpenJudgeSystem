@@ -2,10 +2,9 @@ import React, { useCallback } from 'react';
 import isNil from 'lodash/isNil';
 
 import { useAuth } from '../../hooks/use-auth';
-import { IDENTITY_CONFIG } from '../../identity-config';
 import { LinkButton, LinkButtonType } from '../guidelines/buttons/Button';
 import Form from '../guidelines/forms/Form';
-import FormControl, { FormControlType } from '../guidelines/forms/FormControl';
+import FormControl, { FormControlType, IFormControlOnChangeValueType } from '../guidelines/forms/FormControl';
 import Heading, { HeadingType } from '../guidelines/headings/Heading';
 
 import styles from './LoginForm.module.scss';
@@ -22,16 +21,16 @@ const LoginPage = () => {
     const usernameFieldName = 'Username';
     const passwordFieldName = 'Password';
 
-    const handleOnChangeUpdateUsername = useCallback((value?: string) => {
+    const handleOnChangeUpdateUsername = useCallback((value?: IFormControlOnChangeValueType) => {
         setUsername(isNil(value)
             ? ''
-            : value);
+            : value as string);
     }, [ setUsername ]);
 
-    const handleOnChangeUpdatePassword = useCallback((value?: string) => {
+    const handleOnChangeUpdatePassword = useCallback((value?: IFormControlOnChangeValueType) => {
         setPassword(isNil(value)
             ? ''
-            : value);
+            : value as string);
     }, [ setPassword ]);
 
     const handleLoginClick = useCallback(async () => {
@@ -56,7 +55,7 @@ const LoginPage = () => {
                 <span className={styles.registerHeader}>
                     { 'You don\'t have an account yet? '}
                     <LinkButton
-                      to={IDENTITY_CONFIG.register}
+                      to="/register"
                       type={LinkButtonType.plain}
                       className={styles.loginFormLink}
                     >
