@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 import isNil from 'lodash/isNil';
 
 import SubmissionDetails from '../../components/submissions/details/SubmissionDetails';
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
 import { useSubmissionsDetails } from '../../hooks/submissions/use-submissions-details';
+import { useAppUrls } from '../../hooks/use-app-urls';
+import { useAuth } from '../../hooks/use-auth';
 import { setLayout } from '../shared/set-layout';
 
 const SubmissionDetailsPage = () => {
@@ -16,6 +19,18 @@ const SubmissionDetailsPage = () => {
             selectSubmissionById,
         },
     } = useSubmissionsDetails();
+    const { state: { user: { isLoggedIn } } } = useAuth();
+    const navigate = useNavigate();
+    const { getLoginUrl } = useAppUrls();
+
+    useEffect(
+        () => {
+            if (!isLoggedIn) {
+                navigate(getLoginUrl());
+            }
+        },
+        [ isLoggedIn, navigate, getLoginUrl ],
+    );
 
     const [ selectedSubmissionId, setSelectedSubmissionId ] = useState(currentSubmission?.id);
 
@@ -37,10 +52,6 @@ const SubmissionDetailsPage = () => {
             }
 
             selectSubmissionById(selectedSubmissionId);
-
-            (async () => {
-                await getDetails(selectedSubmissionId);
-            })();
         },
         [ getDetails, selectedSubmissionId, selectSubmissionById ],
     );

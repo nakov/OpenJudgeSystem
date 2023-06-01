@@ -4,37 +4,34 @@ import isNil from 'lodash/isNil';
 import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useCurrentContest } from '../use-current-contest';
-import { useHttp } from '../use-http';
+import { IErrorDataType, useHttp } from '../use-http';
 import { useLoading } from '../use-loading';
-import { useProblems } from '../use-problems';
 import { useUrls } from '../use-urls';
 
 import { ISubmissionDetails } from './types';
 
 interface IProblemSubmissionsContext {
     state: {
-        submissions: ISubmissionDetails[];
+        submissions: ISubmissionDetails[] | null;
+        problemSubmissionsError: IErrorDataType | null;
     };
     actions: {
-        loadSubmissions: () => Promise<void>;
+        loadSubmissions: (problemId: number) => Promise<void>;
     };
 }
 
 type IProblemSubmissionsProviderProps = IHaveChildrenProps
 
 interface IProblemSubmissionResultsRequestParametersType {
-    id: number;
+    problemId: number;
     isOfficial: boolean;
     take: number;
 }
 
-const defaultState = { state: { submissions: [] as ISubmissionDetails[] } };
-
-const ProblemSubmissionsContext = createContext<IProblemSubmissionsContext>(defaultState as IProblemSubmissionsContext);
+const ProblemSubmissionsContext = createContext<IProblemSubmissionsContext>({} as IProblemSubmissionsContext);
 
 const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderProps) => {
-    const [ submissions, setSubmissions ] = useState(defaultState.state.submissions);
-    const { state: { currentProblem } } = useProblems();
+    const [ submissions, setSubmissions ] = useState<ISubmissionDetails[] | null>(null);
     const [
         submissionResultsToGetParameters,
         setSubmissionResultsToGetParameters,
@@ -51,24 +48,26 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
     const {
         get: getProblemSubmissions,
         data: apiProblemSubmissions,
+        error: problemSubmissionsError,
     } = useHttp<IProblemSubmissionResultsRequestParametersType, ISubmissionDetails[]>({
         url: getSubmissionResultsByProblemUrl,
         parameters: submissionResultsToGetParameters,
     });
 
-    const loadSubmissions = useCallback(async () => {
-        const { id } = currentProblem || {};
+    const loadSubmissions = useCallback(
+        async (id: number) => {
+            if (isNil(id) || isNil(isOfficial)) {
+                return;
+            }
 
-        if (isNil(id)) {
-            return;
-        }
-
-        setSubmissionResultsToGetParameters({
-            id,
-            isOfficial,
-            take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
-        } as IProblemSubmissionResultsRequestParametersType);
-    }, [ currentProblem, isOfficial ]);
+            setSubmissionResultsToGetParameters({
+                problemId: id,
+                isOfficial,
+                take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
+            } as IProblemSubmissionResultsRequestParametersType);
+        },
+        [ isOfficial ],
+    );
 
     useEffect(
         () => {
@@ -76,10 +75,14 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
                 return;
             }
 
+            if (!isNil(problemSubmissionsError)) {
+                return;
+            }
+
             setSubmissions(apiProblemSubmissions);
             setSubmissionResultsToGetParameters(null);
         },
-        [ apiProblemSubmissions ],
+        [ apiProblemSubmissions, problemSubmissionsError ],
     );
 
     useEffect(
@@ -99,10 +102,10 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
 
     const value = useMemo(
         () => ({
-            state: { submissions },
+            state: { submissions, problemSubmissionsError },
             actions: { loadSubmissions },
         }),
-        [ loadSubmissions, submissions ],
+        [ loadSubmissions, submissions, problemSubmissionsError ],
     );
 
     return (

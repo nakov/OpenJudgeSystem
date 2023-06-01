@@ -36,9 +36,9 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
         bool isOfficial,
         bool isAdmin)
     {
-        var participant = new Participant(contest.Id, userId, isOfficial);
+        var participant = new Participant(contest.Id, userId, isOfficial) { Contest = contest };
 
-        if (contest.IsOnline && isOfficial)
+        if (isOfficial && contest.IsOnlineExam)
         {
             participant.ParticipationStartTime = DateTime.Now;
             participant.ParticipationEndTime = DateTime.Now + contest.Duration;
@@ -50,6 +50,11 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
             {
                 AssignRandomProblemsToParticipant(participant, contest);
             }
+        }
+        else if (isOfficial && contest.IsOnsiteExam)
+        {
+            participant.ParticipationStartTime = DateTime.Now;
+            participant.ParticipationEndTime = contest.EndTime;
         }
 
         await this.participantsData.Add(participant);
@@ -147,9 +152,11 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
     }
 
     public Task<int> GetParticipantLimitBetweenSubmissions(int participantId, int contestLimitBetweenSubmissions)
-        => this.submissionsData
-            .GetUserSubmissionTimeLimit(participantId, contestLimitBetweenSubmissions)
-            .ToTask();
+        => contestLimitBetweenSubmissions != 0
+            ? this.submissionsData
+                .GetUserSubmissionTimeLimit(participantId, contestLimitBetweenSubmissions)
+                .ToTask()
+            : Task.FromResult(0);
 
     private static void AssignRandomProblemsToParticipant(Participant participant, Contest contest)
     {

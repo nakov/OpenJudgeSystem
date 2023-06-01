@@ -1,6 +1,7 @@
 @use 'src/styles/colors';
 @use 'src/styles/fonts';
 @use 'src/styles/variables';
+@use 'src/styles/responsive';
 
 .contestCard {
   @extend %font-family-lato;
@@ -8,13 +9,22 @@
   align-content: center;
   border-radius: 8px;
   box-shadow: colors.$box-shadow-color;
+  color: colors.$text-dark-gray-color;
   display: grid;
+  flex: 0 0 10em;
   flex-flow: wrap;
   grid-gap: 10px;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 2fr auto;
   margin: 10px;
   min-height: 10vh;
+  min-width: 240px;
   padding: 0.7vw;
+  width: 13vw;
+
+  @media only screen and (max-width: variables.$r-laptop-max) {
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 .tooltip {
@@ -41,7 +51,6 @@
   border-bottom-color: colors.$bottom-border-color;
   display: flex;
   flex-direction: row;
-  font-size: variables.$f-size-18;
   font-weight: 500;
   justify-content: space-between;
   margin: 10px;
@@ -58,6 +67,7 @@
   align-items: flex-end;
   display: flex;
   grid-gap: 10px;
+  justify-content: center;
 }
 
 .contestCardCountdown {
@@ -77,9 +87,14 @@
 
 .contestCardTitle {
   display: block;
-  max-width: 225px;
+  font-size: variables.$f-size-20;
+  max-width: 11vw;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
+
+  @media only screen and (max-width: variables.$r-small-desktop-max) {
+    font-size: variables.$f-size-18;
+  }
 }

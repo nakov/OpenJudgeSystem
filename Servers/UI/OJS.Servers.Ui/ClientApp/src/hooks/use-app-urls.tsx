@@ -1,13 +1,19 @@
 import React, { createContext, useContext, useMemo } from 'react';
 
 import {
-    IRegisterForContestTypeUrlParams,
+    IContestProblemUrl,
+    IParticipateInContestTypeUrlParams,
 } from '../common/app-url-types';
+import { FilterType } from '../common/contest-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
 interface IAppUrlsContext {
-    getRegisterContestTypeUrl: (params: IRegisterForContestTypeUrlParams) => string;
+    getParticipateInContestUrl: (params: IParticipateInContestTypeUrlParams) => string;
+    getContestProblemUrl:(params: IContestProblemUrl) => string;
+    getContestCategoryBreadcrumbItemPath: (id: string) => string;
     getAdministrationRetestSubmissionInternalUrl: () => string;
+    getHomePageUrl: () => string;
+    getLoginUrl: () => string;
 }
 
 const AppUrlsContext = createContext<IAppUrlsContext>({} as IAppUrlsContext);
@@ -15,16 +21,38 @@ const AppUrlsContext = createContext<IAppUrlsContext>({} as IAppUrlsContext);
 type IAppUrlsProviderProps = IHaveChildrenProps
 
 // contests
-const getRegisterContestTypeUrl = ({
+const getParticipateInContestUrl = ({
     id,
     participationType,
-}: IRegisterForContestTypeUrlParams) => `/Contests/${id}/Register/${participationType}`;
+    problemIndex,
+}: IParticipateInContestTypeUrlParams) => `/contests/${id}/${participationType}#${problemIndex}`;
+
+const getContestCategoryBreadcrumbItemPath = (id: string) => `/Contests?${FilterType.Category.toString()}=${id}`;
+
+const getContestProblemUrl = ({
+    id,
+    participationType,
+    orderBy,
+}: IContestProblemUrl) => `/Contests/${id}/${participationType}#${orderBy}`;
 
 const getAdministrationRetestSubmissionInternalUrl = () => '/Submissions/Retest';
 
+const getHomePageUrl = () => '/';
+
+const getLoginUrl = () => '/Login';
+
 const AppUrlsProvider = ({ children }: IAppUrlsProviderProps) => {
     const value = useMemo(
-        () => ({ getRegisterContestTypeUrl, getAdministrationRetestSubmissionInternalUrl }),
+        () => (
+            {
+                getParticipateInContestUrl,
+                getContestProblemUrl,
+                getContestCategoryBreadcrumbItemPath,
+                getAdministrationRetestSubmissionInternalUrl,
+                getHomePageUrl,
+                getLoginUrl,
+            }
+        ),
         [],
     );
 

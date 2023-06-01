@@ -1,6 +1,7 @@
 namespace OJS.Services.Ui.Business.Implementations
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Transactions;
@@ -16,6 +17,9 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Common.Models;
     using OJS.Services.Infrastructure.Exceptions;
     using OJS.Services.Ui.Data;
+    using OJS.Services.Ui.Models.Search;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using X.PagedList;
     using IsolationLevel = System.Transactions.IsolationLevel;
     using Resource = OJS.Common.Resources.ProblemsBusiness;
     using SharedResource = OJS.Common.Resources.ContestsGeneral;
@@ -166,10 +170,27 @@ namespace OJS.Services.Ui.Business.Implementations
             return ServiceResult.Success;
         }
 
+        public async Task<ProblemSearchServiceResultModel> GetSearchProblemsByName(SearchServiceModel model)
+        {
+            var modelResult = new ProblemSearchServiceResultModel();
+
+            var allProblemsQueryable = this.problemsData.GetAllNonDeletedProblems()
+                .Where(p => p.Name.Contains(model.SearchTerm!));
+
+            var searchProblems = await allProblemsQueryable
+                .MapCollection<ProblemSearchServiceModel>()
+                .ToPagedListAsync(model.PageNumber, model.ItemsPerPage);
+
+            modelResult.Problems = searchProblems;
+            modelResult.TotalProblemsCount = allProblemsQueryable.Count();
+
+            return modelResult;
+        }
+
         public void ValidateProblemForParticipant(Participant participant, Contest contest, int problemId, bool isOfficial)
         {
             if (isOfficial &&
-                contest.IsOnline &&
+                contest.IsExam &&
                 !this.lecturersInContestsBusinessService.IsUserAdminOrLecturerInContest(contest) &&
                 participant.ProblemsForParticipants.All(p => p.ProblemId != problemId))
             {

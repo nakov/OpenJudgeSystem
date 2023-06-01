@@ -1,7 +1,9 @@
 namespace OJS.Data
 {
+    using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
     using OJS.Common.Enumerations;
+    using OJS.Data.Infrastructure.DateTimeConverters.UtcToLocalDateTimeConverter;
     using OJS.Data.Infrastructure.Extensions;
     using OJS.Data.Models;
     using OJS.Data.Models.Checkers;
@@ -15,7 +17,7 @@ namespace OJS.Data
     using SoftUni.Data.Infrastructure;
     using SoftUni.Data.Infrastructure.Enumerations;
 
-    public class OjsDbContext : BaseAuthDbContext<OjsDbContext, UserProfile, Role, UserInRole>
+    public class OjsDbContext : BaseAuthDbContext<OjsDbContext, UserProfile, Role, UserInRole>, IDataProtectionKeyContext
     {
         private readonly IGlobalQueryFilterTypesCache? globalQueryFilterTypesCache;
 
@@ -28,6 +30,8 @@ namespace OJS.Data
             IGlobalQueryFilterTypesCache? globalQueryFilterTypesCache)
             : base(options, globalQueryFilterTypesCache)
             => this.globalQueryFilterTypesCache = globalQueryFilterTypesCache;
+
+        public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
 
         public DbSet<Setting> Settings { get; set; } = null!;
 
@@ -150,7 +154,9 @@ namespace OJS.Data
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.ConfigureDbOptions(ApplicationName.Ui);
+            => options
+                .ConfigureDbOptions(ApplicationName.Ui)
+                .AddInterceptors(new UtcToLocalDateTimeConvertingDbCommandInterceptor());
 
         private static void FixMultipleCascadePaths(ModelBuilder builder)
         {

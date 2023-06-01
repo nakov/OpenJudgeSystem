@@ -11,12 +11,6 @@
   margin-top: 10px;
 }
 
-.buttonContainer {
-  align-items: end;
-  display: flex;
-  justify-content: space-between;
-}
-
 .button {
   border: 0;
   font-weight: normal;
@@ -32,4 +26,5 @@
   margin-top: 5px;
   max-height: 130px;
   overflow: hidden;
+  white-space: nowrap;
 }

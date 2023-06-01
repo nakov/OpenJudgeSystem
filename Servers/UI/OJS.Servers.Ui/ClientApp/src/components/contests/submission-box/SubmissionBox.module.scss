@@ -1,5 +1,6 @@
 @use 'src/styles/colors';
 @use 'src/styles/fonts';
+@use 'src/styles/variables';
 
 .contestMainWrapper {
   // no body
@@ -17,6 +18,8 @@
 }
 
 .editorAndProblemControlsWrapper {
+  @extend %font-family-lato;
+
   display: flex;
   flex: 3;
   flex-direction: column;
@@ -53,4 +56,12 @@
 
 .taskName {
   font-weight: bold;
+}
+
+.fileSubmissionDetailsParagraph {
+  @extend %font-family-lato;
+
+  color: colors.$text-dark-gray-color;
+  font-size: variables.$f-size-16;
+  padding: 10px;
 }

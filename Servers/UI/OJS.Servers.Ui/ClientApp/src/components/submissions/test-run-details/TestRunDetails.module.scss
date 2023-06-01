@@ -7,8 +7,11 @@
 
   border-bottom: 1px solid colors.$bottom-border-color;
   color: colors.$text-dark-gray-color;
+  display: flex;
+  justify-content: space-between;
   margin-top: 10px;
   padding: 20px;
+  width: 100%;
 }
 
 %heading {
@@ -43,7 +46,6 @@
 .testRunData {
   align-self: center;
   display: flex;
-  flex-direction: row;
   gap: 10px;
   margin-left: 10px;
 }
@@ -51,6 +53,6 @@
 .testRunDataParagraph {
   @extend %font-family-lato;
 
-  color: colors.$text-light-gray-color;
-  font-size: variables.$f-size-12;
+  color: colors.$text-dark-gray-color;
+  font-size: variables.$f-size-14;
 }

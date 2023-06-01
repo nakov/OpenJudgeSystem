@@ -1,17 +1,54 @@
 @use 'src/styles/global';
 @use 'src/styles/components';
 @use 'src/styles/fonts';
+@use 'src/styles/variables';
+@use 'src/styles/colors';
+
+.backBtn {
+  border: 0;
+  margin-left: -20px;
+  margin-right: -30px;
+}
+
+.btnContainer {
+  display: flex;
+  flex-direction: row;
+}
 
 .code {
   @extend %navigation;
 
   border-left: 0;
   flex: 7;
+
+  @media only screen and (max-width: variables.$r-large-desktop-max) {
+    flex: 3;
+  }
+}
+
+.contestHeading {
+  border: 0;
+  margin-bottom: 30px;
+  padding: 0;
+  text-align: center;
 }
 
 .detailsWrapper {
   @extend %wrapper;
   @extend %columnsThree;
+}
+
+.headingContest {
+  @extend %contentSize;
+}
+
+.leftArrow {
+  color: colors.$light-blue-color;
+  margin-bottom: -5px;
+}
+
+.itemInvisible {
+  visibility: hidden;
 }
 
 .navigation,
@@ -20,9 +57,20 @@
   flex: 3;
 }
 
-.taskHeading {
-  margin-bottom: 24px;
-  text-align: center;
+.resourceWrapper {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  min-height: 50px;
+}
+
+.resourceLinkButton {
+  text-decoration: none;
+}
+
+.retestButton {
+  margin: 0 0 0 24px;
 }
 
 .submissionsList {
@@ -42,6 +90,9 @@
 }
 
 .submissionInfoParagraph {
+  @extend %font-family-lato;
+
+  color: colors.$text-dark-gray-color;
   margin-bottom: 10px;
 }
 
@@ -49,6 +100,13 @@
   border-left: 0;
 }
 
-.retestButton {
-  margin: 0 0 0 24px;
+.taskHeading {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.buttonsSection {
+  margin-top: 20px;
 }

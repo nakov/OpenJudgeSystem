@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useMemo } from 'react';
 
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useHttp } from '../use-http';
+import { useUrls } from '../use-urls';
 
 interface IPublicSubmissionContest {
     id: number;
@@ -17,6 +18,7 @@ interface IPublicSubmissionProblem {
     id: number;
     name: string;
     contest: IPublicSubmissionContest;
+    orderBy: number;
 }
 
 interface IPublicSubmissionResult {
@@ -58,15 +60,16 @@ const PublicSubmissionsContext = createContext<IPublicSubmissionsContext>(defaul
 type IPublicSubmissionsProviderProps = IHaveChildrenProps
 
 const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps) => {
+    const { getPublicSubmissionsUrl, getSubmissionsTotalCountUrl } = useUrls();
     const {
         get: getSubmissions,
         data: apiSubmissions,
-    } = useHttp<null, IPublicSubmission[]>({ url: '/api/submissions/public' });
+    } = useHttp<null, IPublicSubmission[]>({ url: getPublicSubmissionsUrl });
 
     const {
         get: getTotalSubmissionsCount,
         data: apiTotalSubmissionsCount,
-    } = useHttp({ url: '/api/submissions/totalCount' });
+    } = useHttp({ url: getSubmissionsTotalCountUrl });
 
     const submissions = useMemo(
         () => (apiSubmissions || []) as IPublicSubmission[],

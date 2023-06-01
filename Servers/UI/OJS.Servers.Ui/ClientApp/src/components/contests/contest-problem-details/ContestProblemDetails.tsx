@@ -21,9 +21,6 @@ const ContestProblemDetails = () => {
                 <ProblemResources />
             </div>
             <div className={styles.problemItems}>
-                <Heading type={HeadingType.secondary}>
-                    Submissions
-                </Heading>
                 <ProblemSubmissions />
             </div>
         </div>

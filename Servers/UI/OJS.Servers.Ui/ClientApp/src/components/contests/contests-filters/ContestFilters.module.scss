@@ -1,11 +1,13 @@
 @use 'src/styles/colors';
 
 .container {
-  min-width: 375px;
+  flex: 1;
 }
 
 .filterTypeContainer {
   margin-top: 10px;
+  padding-right: 25px;
+  width: 390px;
 }
 
 .button {

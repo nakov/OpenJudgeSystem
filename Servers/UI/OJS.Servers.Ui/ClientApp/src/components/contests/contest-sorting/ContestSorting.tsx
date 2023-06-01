@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { ISort } from '../../../common/contest-types';
@@ -21,7 +22,6 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
                 possibleSortingTypes,
                 sortingTypes,
             },
-        actions: { clearSorts },
     } = useContests();
 
     const handleOnSortClick = useCallback(
@@ -59,30 +59,25 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
     );
 
     return (
-        <div className={styles.sortingTypeContainer}>
-            <Heading
-              type={HeadingType.small}
-              className={styles.heading}
-            >
-                <div className={styles.buttonContainer}>
-                    Sorting
-                    <Button
-                      type={ButtonType.secondary}
-                      onClick={() => clearSorts()}
-                      className={styles.button}
-                      text="clear sorting"
-                      size={ButtonSize.small}
+        !isEmpty(possibleSortingTypes)
+            ? (
+                <div className={styles.sortingTypeContainer}>
+                    <Heading
+                      type={HeadingType.small}
+                      className={styles.heading}
+                    >
+                        Sorting
+                    </Heading>
+                    <List
+                      values={possibleSortingTypes}
+                      itemFunc={renderSortingItemFunc}
+                      orientation={Orientation.horizontal}
+                      className={styles.sortTypesList}
+                      fullWidth
                     />
                 </div>
-            </Heading>
-            <List
-              values={possibleSortingTypes}
-              itemFunc={renderSortingItemFunc}
-              orientation={Orientation.horizontal}
-              className={styles.sortTypesList}
-              fullWidth
-            />
-        </div>
+            )
+            : null
     );
 };
 

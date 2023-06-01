@@ -17,7 +17,6 @@ const compareByOrderBy = (p1: IProblemType, p2: IProblemType) => p1.orderBy - p2
 
 const ContestTasksNavigation = () => {
     const [ resultsLink, setResultsLink ] = useState('');
-
     const {
         state: {
             currentProblem,
