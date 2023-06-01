@@ -469,7 +469,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                     Name = st.Name,
                     Value = st.Id,
                     IsChecked = submissionTypesInProblem.Any(x => x.SubmissionTypeId == st.Id),
-                    Expand =  new FormControlViewModel
+                    Expand = new FormControlViewModel
                     {
                         Name = st.Name + " " + AdditionalFormFields.SolutionSkeletonRaw.ToString(),
                         Value = submissionTypesInProblem
@@ -477,7 +477,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                             .Select(x => x.SolutionSkeleton)
                             .FirstOrDefault()?.Decompress(),
                         Type = typeof(string),
-                    }
+                    },
                 }),
             FormControlType = FormControlType.ExpandableMultiChoiceCheckBox,
             Type = typeof(object),
@@ -574,8 +574,8 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                 ProblemId = problem.Id,
                 SubmissionTypeId = int.Parse(x.Value!.ToString() !),
                 SolutionSkeleton = x.Expand?.Value != null
-                    ? x.Expand.Value!.ToString()!.Compress()
-                    : Array.Empty<byte>()
+                    ? x.Expand.Value!.ToString() !.Compress()
+                    : Array.Empty<byte>(),
             });
 
         problem.SubmissionTypesInProblems.Clear();
