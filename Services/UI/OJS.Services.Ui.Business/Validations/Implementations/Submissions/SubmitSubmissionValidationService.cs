@@ -1,12 +1,12 @@
 ﻿namespace OJS.Services.Ui.Business.Validation.Implementations;
 
-using Infrastructure.Exceptions;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Problems;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Users;
 using Models.Submissions;
+using System.Text;
 using System.Linq;
 
 public class SubmitSubmissionValidationService : ISubmitSubmissionValidationService
@@ -82,8 +82,14 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return ValidationResult.Invalid(ValidationMessages.Submission.UserHasNotProcessedSubmissionForProblem, problemId);
         }
 
+        if (submitSubmissionServiceModel.ByteContent != null &&
+            problem.SourceCodeSizeLimit < submitSubmissionServiceModel.ByteContent.Length)
+        {
+            return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionFileTooBig, problemId);
+        }
+
         if (submitSubmissionServiceModel.StringContent != null &&
-            problem.SourceCodeSizeLimit < submitSubmissionServiceModel.StringContent.Length)
+            problem.SourceCodeSizeLimit < Encoding.UTF8.GetBytes(submitSubmissionServiceModel.StringContent).Length)
         {
             return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTooLong, problemId);
         }
