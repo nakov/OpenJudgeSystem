@@ -2,13 +2,13 @@ import React, { createContext, useContext, useMemo } from 'react';
 
 import {
     IContestProblemUrl,
-    IRegisterForContestTypeUrlParams,
+    IParticipateInContestTypeUrlParams,
 } from '../common/app-url-types';
 import { FilterType } from '../common/contest-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
 interface IAppUrlsContext {
-    getRegisterContestTypeUrl: (params: IRegisterForContestTypeUrlParams) => string;
+    getParticipateInContestUrl: (params: IParticipateInContestTypeUrlParams) => string;
     getContestProblemUrl:(params: IContestProblemUrl) => string;
     getContestCategoryBreadcrumbItemPath: (id: string) => string;
     getAdministrationRetestSubmissionInternalUrl: () => string;
@@ -21,10 +21,11 @@ const AppUrlsContext = createContext<IAppUrlsContext>({} as IAppUrlsContext);
 type IAppUrlsProviderProps = IHaveChildrenProps
 
 // contests
-const getRegisterContestTypeUrl = ({
+const getParticipateInContestUrl = ({
     id,
     participationType,
-}: IRegisterForContestTypeUrlParams) => `/Contests/${id}/Register/${participationType}`;
+    problemIndex,
+}: IParticipateInContestTypeUrlParams) => `/contests/${id}/${participationType}#${problemIndex}`;
 
 const getContestCategoryBreadcrumbItemPath = (id: string) => `/Contests?${FilterType.Category.toString()}=${id}`;
 
@@ -32,7 +33,7 @@ const getContestProblemUrl = ({
     id,
     participationType,
     orderBy,
-}: IContestProblemUrl) => `/Contests/${id}/Register/${participationType}#${orderBy}`;
+}: IContestProblemUrl) => `/Contests/${id}/${participationType}#${orderBy}`;
 
 const getAdministrationRetestSubmissionInternalUrl = () => '/Submissions/Retest';
 
@@ -44,7 +45,7 @@ const AppUrlsProvider = ({ children }: IAppUrlsProviderProps) => {
     const value = useMemo(
         () => (
             {
-                getRegisterContestTypeUrl,
+                getParticipateInContestUrl,
                 getContestProblemUrl,
                 getContestCategoryBreadcrumbItemPath,
                 getAdministrationRetestSubmissionInternalUrl,

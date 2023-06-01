@@ -32,7 +32,7 @@ public class StatisticsPreviewBusinessService : IStatisticsPreviewBusinessServic
             ContestsCount = await this.contestsData.GetCount(),
             UsersCount = await this.usersProfileData.GetCount(),
             ProblemsCount = await this.problemsData.GetCount(),
-            SubmissionsCount = await this.submissionsData.GetCount(),
+            SubmissionsCount = await this.submissionsData.GetTotalSubmissionsCount(),
             StrategiesCount = await this.submissionTypesData.GetCount(),
             SubmissionsPerDayCount = await this.submissionsData.GetSubmissionsPerDayCount(),
         };

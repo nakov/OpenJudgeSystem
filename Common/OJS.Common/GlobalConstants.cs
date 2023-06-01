@@ -30,7 +30,6 @@ namespace OJS.Common
         {
             // Keys
             public const string EnvironmentKey = "ASPNETCORE_ENVIRONMENT";
-            public const string PathToCommonKeyRingFolderKey = "PATH_TO_COMMON_KEY_RING_FOLDER";
             public const string SulsPlatformBaseUrlKey = "SULS_PLATFORM_BASE_URL";
             public const string SulsPlatformApiKeyKey = "SULS_PLATFORM_API_KEY";
             public const string DistributorBaseUrlKey = "DISTRIBUTOR_BASE_URL";
@@ -106,6 +105,13 @@ namespace OJS.Common
             public const string CannotBeTemplate = "{0} cannot be {1}";
             public const string ValueCannotBeLessThanOrEqualToZero = "Value cannot be less than or equal to 0";
             public const string ValueCannotBeNullOrWhiteSpaceTemplate = "{0} cannot be null or white space";
+
+            public const string InactiveLoginSystem =
+                "We are sorry for the inconvenience, but the login system is currently unavailable";
+            public const string NonExistentUser =
+                "User with this username does not exist";
+            public const string InvalidUsernameOrPassword =
+                "Invalid username or password.";
             public const string ContestNotFound = "Contest not found";
         }
 
