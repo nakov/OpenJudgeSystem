@@ -20,7 +20,7 @@ jobs:
         echo "BUILD_DATE=$(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
         echo "GIT_SHA=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_ENV
         echo "DOCKERFILE_PATH=Docker/Dockerfile.ui" >> $GITHUB_ENV
-        echo "NODE_OPTIONS=--max_old_space_size=4096" >> $GITHUB_ENV
+        echo "NODE_OPTIONS=--max_old_space_size=6000" >> $GITHUB_ENV
     - name: Checkout
       uses: actions/checkout@v3
       with:
