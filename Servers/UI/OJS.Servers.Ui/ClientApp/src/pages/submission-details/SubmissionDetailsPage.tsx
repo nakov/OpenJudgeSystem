@@ -36,7 +36,7 @@ const SubmissionDetailsPage = () => {
 
     useEffect(
         () => {
-            if (selectedSubmissionId === submissionId) {
+            if (selectedSubmissionId === submissionId || isNil(submissionId)) {
                 return;
             }
 
