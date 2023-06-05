@@ -25,7 +25,7 @@ jobs:
         echo "BUILD_DATE=$(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
         echo "GIT_SHA=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_ENV
         echo "DOCKERFILE_PATH=Docker/Dockerfile.ui" >> $GITHUB_ENV
-        echo "NODE_OPTIONS=--max_old_space_size=8192" >> $GITHUB_ENV
+        echo "NODE_OPTIONS=--max_old_space_size=6000" >> $GITHUB_ENV
     - name: Get branch name (merge)
       if: github.event_name != 'pull_request'
       shell: bash
@@ -83,5 +83,3 @@ jobs:
         cache-to: type=local,dest=/tmp/.buildx-cache
         secrets: |
           GIT_AUTH_TOKEN=${{ github.token }}
-      env:
-          NODE_OPTIONS: "--max_old_space_size=8192"
