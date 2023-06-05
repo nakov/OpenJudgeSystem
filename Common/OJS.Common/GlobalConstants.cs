@@ -138,10 +138,5 @@ namespace OJS.Common
         {
             public const string SubmissionDownloadFileName = "Submission_{0}.{1}";
         }
-
-        public static class AutocompleteSearchProperties
-        {
-            public const string UserName = "UserName";
-        }
     }
 }
