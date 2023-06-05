@@ -19,5 +19,5 @@ public class UsersController : BaseAutoCrudAdminController<UserProfile>
         };
 
     public override IEnumerable<DropDownViewModel> Autocomplete([FromQuery] string searchTerm, string searchProperty)
-        => base.Autocomplete(searchTerm, GlobalConstants.AutocompleteSearchProperties.UserName);
+        => base.Autocomplete(searchTerm, nameof(UserProfile.UserName));
 }

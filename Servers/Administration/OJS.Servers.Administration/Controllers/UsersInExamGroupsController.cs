@@ -4,7 +4,6 @@ using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
-using OJS.Common;
 using OJS.Data.Models;
 using OJS.Services.Administration.Business.Validation.Factories;
 using OJS.Services.Administration.Business.Validation.Helpers;
@@ -19,6 +18,7 @@ using System.Linq.Expressions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using OJS.Data.Models.Users;
 
 public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExamGroup>
 {
@@ -76,7 +76,7 @@ public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExa
 
         formControls.Add(new FormControlViewModel()
         {
-            Name = GlobalConstants.AutocompleteSearchProperties.UserName,
+            Name = nameof(UserProfile.UserName),
             Options = this.usersDataService.GetQuery().ToList(),
             FormControlType = FormControlType.Autocomplete,
             DisplayName = "User",
