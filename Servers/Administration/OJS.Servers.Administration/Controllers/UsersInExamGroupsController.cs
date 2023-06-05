@@ -1,5 +1,6 @@
 namespace OJS.Servers.Administration.Controllers;
 
+using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
@@ -17,6 +18,7 @@ using System.Linq.Expressions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using OJS.Data.Models.Users;
 
 public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExamGroup>
 {
@@ -26,17 +28,20 @@ public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExa
     private readonly IValidationService<UserInExamGroupCreateDeleteValidationServiceModel> usersInExamGroupsCreateDeleteValidation;
     private readonly IContestsValidationHelper contestsValidationHelper;
     private readonly IExamGroupsDataService examGroupsData;
+    private readonly IUsersDataService usersDataService;
 
     public UsersInExamGroupsController(
         IValidatorsFactory<UserInExamGroup> userInExamGroupValidatorsFactory,
         IValidationService<UserInExamGroupCreateDeleteValidationServiceModel> usersInExamGroupsCreateDeleteValidation,
         IContestsValidationHelper contestsValidationHelper,
-        IExamGroupsDataService examGroupsData)
+        IExamGroupsDataService examGroupsData,
+        IUsersDataService usersDataService)
     {
         this.userInExamGroupValidatorsFactory = userInExamGroupValidatorsFactory;
         this.usersInExamGroupsCreateDeleteValidation = usersInExamGroupsCreateDeleteValidation;
         this.contestsValidationHelper = contestsValidationHelper;
         this.examGroupsData = examGroupsData;
+        this.usersDataService = usersDataService;
     }
 
     protected override Expression<Func<UserInExamGroup, bool>>? MasterGridFilter
@@ -68,6 +73,17 @@ public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExa
     {
         var formControls = base.GenerateFormControls(entity, action, entityDict, complexOptionFilters).ToList();
         ModifyFormControls(formControls, entityDict);
+
+        formControls.Add(new FormControlViewModel()
+        {
+            Name = nameof(UserProfile.UserName),
+            Options = this.usersDataService.GetQuery().ToList(),
+            FormControlType = FormControlType.Autocomplete,
+            DisplayName = "User",
+            FormControlAutocompleteController = "Users",
+            FormControlAutocompleteEntityId = "UserId",
+        });
+
         return formControls;
     }
 
