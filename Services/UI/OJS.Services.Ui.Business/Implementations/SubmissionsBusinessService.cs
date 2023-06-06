@@ -430,7 +430,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         => this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(DefaultCount);
 
     public Task<int> GetTotalCount()
-        => this.submissionsData.Count();
+        => this.submissionsData.GetTotalSubmissionsCount();
 
     private static void CacheTestRuns(Submission submission)
     {
