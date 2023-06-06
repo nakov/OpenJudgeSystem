@@ -2,9 +2,10 @@
 
 import { ContestParticipationType } from './constants';
 
-interface IRegisterForContestTypeUrlParams {
+interface IParticipateInContestTypeUrlParams {
     id: number;
     participationType: ContestParticipationType;
+    problemIndex: number;
 }
 
 interface IContestProblemUrl {
@@ -13,4 +14,4 @@ interface IContestProblemUrl {
     orderBy: number;
 }
 
-export type { IRegisterForContestTypeUrlParams, IContestProblemUrl };
+export type { IParticipateInContestTypeUrlParams, IContestProblemUrl };

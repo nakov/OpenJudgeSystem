@@ -4,6 +4,7 @@
     using System.Security.Claims;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
+    using OJS.Data.Models.Users;
     using OJS.Services.Common;
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Search;
@@ -54,5 +55,8 @@
 
         public async Task<bool> IsLoggedInUserAdmin(ClaimsPrincipal userPrincipal)
             => await Task.FromResult(userPrincipal.IsInRole("Administrator"));
+
+        public async Task AddOrUpdateUser(UserProfile user)
+            => await this.usersProfileData.AddOrUpdate<UserProfileServiceModel>(user);
     }
 }
