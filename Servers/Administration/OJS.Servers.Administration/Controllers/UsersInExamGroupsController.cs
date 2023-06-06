@@ -72,17 +72,21 @@ public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExa
         IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters)
     {
         var formControls = base.GenerateFormControls(entity, action, entityDict, complexOptionFilters).ToList();
-        ModifyFormControls(formControls, entityDict);
-
         formControls.Add(new FormControlViewModel()
         {
             Name = nameof(UserProfile.UserName),
             Options = this.usersDataService.GetQuery().ToList(),
             FormControlType = FormControlType.Autocomplete,
             DisplayName = nameof(UserInExamGroup.User),
-            FormControlAutocompleteController = nameof(UsersController),
+            FormControlAutocompleteController = nameof(UsersController).ToControllerBaseUri(),
             FormControlAutocompleteEntityId = nameof(UserInExamGroup.UserId),
         });
+
+        var formControlToRemove = formControls.First(x =>
+            x.DisplayName == nameof(UserInExamGroup.User) && x.FormControlType != FormControlType.Autocomplete);
+        formControls.Remove(formControlToRemove);
+
+        ModifyFormControls(formControls, entityDict);
 
         return formControls;
     }
