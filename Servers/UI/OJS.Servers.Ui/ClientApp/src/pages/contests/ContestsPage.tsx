@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { IFilter } from '../../common/contest-types';
+import { ContestStatus, IFilter } from '../../common/contest-types';
 import { IIndexContestsType } from '../../common/types';
 import ContestFilters from '../../components/contests/contests-filters/ContestFilters';
 import Breadcrumb from '../../components/guidelines/breadcrumb/Breadcrumb';
@@ -12,15 +12,20 @@ import Heading, { HeadingType } from '../../components/guidelines/headings/Headi
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
+import { useUrlParams } from '../../hooks/common/use-url-params';
 import { useAppUrls } from '../../hooks/use-app-urls';
 import { useContestCategories } from '../../hooks/use-contest-categories';
 import { ICategoriesBreadcrumbItem, useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
 import { useContests } from '../../hooks/use-contests';
 import { usePages } from '../../hooks/use-pages';
 import concatClassNames from '../../utils/class-names';
+import { toLowerCase } from '../../utils/string-utils';
+import NotFoundPage from '../not-found/NotFoundPage';
 import { setLayout } from '../shared/set-layout';
 
 import styles from './ContestsPage.module.scss';
+
+type ContestStatusStrings = keyof typeof ContestStatus;
 
 const ContestsPage = () => {
     const {
@@ -41,7 +46,35 @@ const ContestsPage = () => {
     const { getContestCategoryBreadcrumbItemPath } = useAppUrls();
     const { state: { categoriesFlat } } = useContestCategories();
     const navigate = useNavigate();
+    const { state: params } = useUrlParams();
 
+    const filtersArray = useMemo(
+        () => [ 'status', 'category', 'strategy', 'page', 'sorttype' ],
+        [],
+    );
+
+    const validateQueryParams = useCallback(
+        () => {
+            const paramsArray = Object.values(params).flat();
+            paramsArray.map((y) => {
+                const test = filtersArray.find((x) => x === toLowerCase(y.key.toString()));
+
+                switch (test) {
+                case filtersArray[0]: {
+                    
+                    if (toLowerCase(y.value.toString()) === ContestStatus[])) {
+
+                    }
+                    break;
+                }
+                default: {
+                    return <NotFoundPage />;
+                }
+                }
+            });
+        },
+        [ filtersArray, params ],
+    );
     useEffect(
         () => {
             initiateGetAllContestsQuery();
