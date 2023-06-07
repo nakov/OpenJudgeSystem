@@ -2,8 +2,9 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
+import parseInt from 'lodash/parseInt';
 
-import { ContestStatus, IFilter } from '../../common/contest-types';
+import { ContestStatus, FilterType, IFilter, SortType } from '../../common/contest-types';
 import { IIndexContestsType } from '../../common/types';
 import ContestFilters from '../../components/contests/contests-filters/ContestFilters';
 import Breadcrumb from '../../components/guidelines/breadcrumb/Breadcrumb';
@@ -16,6 +17,7 @@ import { useUrlParams } from '../../hooks/common/use-url-params';
 import { useAppUrls } from '../../hooks/use-app-urls';
 import { useContestCategories } from '../../hooks/use-contest-categories';
 import { ICategoriesBreadcrumbItem, useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
+import { useContestStrategyFilters } from '../../hooks/use-contest-strategy-filters';
 import { useContests } from '../../hooks/use-contests';
 import { usePages } from '../../hooks/use-pages';
 import concatClassNames from '../../utils/class-names';
@@ -24,8 +26,6 @@ import NotFoundPage from '../not-found/NotFoundPage';
 import { setLayout } from '../shared/set-layout';
 
 import styles from './ContestsPage.module.scss';
-
-type ContestStatusStrings = keyof typeof ContestStatus;
 
 const ContestsPage = () => {
     const {
@@ -47,34 +47,45 @@ const ContestsPage = () => {
     const { state: { categoriesFlat } } = useContestCategories();
     const navigate = useNavigate();
     const { state: params } = useUrlParams();
+    const { state: { strategies } } = useContestStrategyFilters();
 
     const filtersArray = useMemo(
-        () => [ 'status', 'category', 'strategy', 'page', 'sorttype' ],
+        () => [ FilterType.Status, FilterType.Category, FilterType.Strategy, 'page', FilterType.Sort ],
         [],
     );
 
-    const validateQueryParams = useCallback(
+    const areQueryParamsValid = useCallback(
         () => {
-            const paramsArray = Object.values(params).flat();
-            paramsArray.map((y) => {
-                const test = filtersArray.find((x) => x === toLowerCase(y.key.toString()));
+            const queryParamsArray = Object.values(params).flat();
+            const { length: initialQueryParamsCount } = Object.values(params).flat();
 
-                switch (test) {
-                case filtersArray[0]: {
-                    
-                    if (toLowerCase(y.value.toString()) === ContestStatus[])) {
+            const resultQueryParamsArray = queryParamsArray.filter((y) => {
+                const filter = filtersArray.find((x) => toLowerCase(x) === toLowerCase(y.key.toString()));
+                const filterValue = toLowerCase(y.value.toString());
 
-                    }
-                    break;
+                if (isNil(filter) ||
+                    (filter === filtersArray[0] &&
+                        (filterValue !== toLowerCase(ContestStatus.All) && filterValue !== toLowerCase(ContestStatus.Active) &&
+                            filterValue !== toLowerCase(ContestStatus.Past)))) {
+                    return false;
                 }
-                default: {
-                    return <NotFoundPage />;
-                }
-                }
+                if (filter === filtersArray[1]) {
+                    return !isNil(categoriesFlat.find(({ id }) => id.toString() === filterValue));
+                } if (filter === filtersArray[2]) {
+                    return !isNil(strategies.find(({ id }) => id.toString() === filterValue));
+                } if (filter === filtersArray[3]) {
+                    return !Number.isNaN(parseInt(filterValue));
+                } return !(filter === filtersArray[4] &&
+                    (filterValue !== toLowerCase(SortType.Name) &&
+                        filterValue !== toLowerCase(SortType.StartDate) &&
+                        filterValue !== toLowerCase(SortType.EndDate)));
             });
+
+            return initialQueryParamsCount === resultQueryParamsArray.length;
         },
-        [ filtersArray, params ],
+        [ filtersArray, params, categoriesFlat, strategies ],
     );
+
     useEffect(
         () => {
             initiateGetAllContestsQuery();
@@ -164,17 +175,28 @@ const ContestsPage = () => {
         [ updateBreadcrumbAndNavigateToCategory ],
     );
 
-    return (
-        <>
-            <Breadcrumb items={breadcrumbItems} itemFunc={renderCategoriesBreadcrumbItem} />
-            <div className={styles.container}>
-                <ContestFilters onFilterClick={handleFilterClick} />
-                <div className={styles.mainHeader}>
-                    {renderContests()}
-                </div>
-            </div>
-        </>
+    const renderPage = useCallback(
+        () => {
+            if (!areQueryParamsValid()) {
+                return <NotFoundPage />;
+            }
+
+            return (
+                <>
+                    <Breadcrumb items={breadcrumbItems} itemFunc={renderCategoriesBreadcrumbItem} />
+                    <div className={styles.container}>
+                        <ContestFilters onFilterClick={handleFilterClick} />
+                        <div className={styles.mainHeader}>
+                            {renderContests()}
+                        </div>
+                    </div>
+                </>
+            );
+        },
+        [ areQueryParamsValid, breadcrumbItems, handleFilterClick, renderCategoriesBreadcrumbItem, renderContests ],
     );
+
+    return renderPage();
 };
 
 export default setLayout(ContestsPage, true);
