@@ -477,6 +477,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                             .Select(x => x.SolutionSkeleton)
                             .FirstOrDefault()?.Decompress(),
                         Type = typeof(string),
+                        FormControlType = FormControlType.TextArea,
                     },
                 }),
             FormControlType = FormControlType.ExpandableMultiChoiceCheckBox,
