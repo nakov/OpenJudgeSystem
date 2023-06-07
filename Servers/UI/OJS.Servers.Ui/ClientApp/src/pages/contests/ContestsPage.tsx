@@ -5,6 +5,7 @@ import isNil from 'lodash/isNil';
 import parseInt from 'lodash/parseInt';
 
 import { ContestStatus, FilterType, IFilter, SortType } from '../../common/contest-types';
+import { PageParams } from '../../common/pages-types';
 import { IIndexContestsType } from '../../common/types';
 import ContestFilters from '../../components/contests/contests-filters/ContestFilters';
 import Breadcrumb from '../../components/guidelines/breadcrumb/Breadcrumb';
@@ -50,7 +51,7 @@ const ContestsPage = () => {
     const { state: { strategies } } = useContestStrategyFilters();
 
     const filtersArray = useMemo(
-        () => [ FilterType.Status, FilterType.Category, FilterType.Strategy, 'page', FilterType.Sort ],
+        () => [ FilterType.Status, FilterType.Category, FilterType.Strategy, PageParams.page, FilterType.Sort ],
         [],
     );
 
@@ -64,18 +65,18 @@ const ContestsPage = () => {
                 const filterValue = toLowerCase(y.value.toString());
 
                 if (isNil(filter) ||
-                    (filter === filtersArray[0] &&
+                    (filter === FilterType.Status &&
                         (filterValue !== toLowerCase(ContestStatus.All) && filterValue !== toLowerCase(ContestStatus.Active) &&
                             filterValue !== toLowerCase(ContestStatus.Past)))) {
                     return false;
                 }
-                if (filter === filtersArray[1]) {
+                if (filter === FilterType.Category) {
                     return !isNil(categoriesFlat.find(({ id }) => id.toString() === filterValue));
-                } if (filter === filtersArray[2]) {
+                } if (filter === FilterType.Strategy) {
                     return !isNil(strategies.find(({ id }) => id.toString() === filterValue));
-                } if (filter === filtersArray[3]) {
+                } if (filter === PageParams.page) {
                     return !Number.isNaN(parseInt(filterValue));
-                } return !(filter === filtersArray[4] &&
+                } return !(toLowerCase(filter) === FilterType.Sort &&
                     (filterValue !== toLowerCase(SortType.Name) &&
                         filterValue !== toLowerCase(SortType.StartDate) &&
                         filterValue !== toLowerCase(SortType.EndDate)));
