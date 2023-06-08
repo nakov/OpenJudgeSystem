@@ -83,10 +83,10 @@
         public override void BeforeExecute()
         {
             this.submission.ProcessingComment = null;
-            this.submission.CompilerComment = null;
-            this.submission.ExecutionComment = null;
             this.submission.ExceptionType = ExceptionType.None;
             this.submission.StartedExecutionOn = DateTime.Now;
+            this.submission.CompilerComment = null;
+            this.submission.ExecutionComment = null;
             this.testRunsData.DeleteBySubmission(this.submission.Id);
         }
 
