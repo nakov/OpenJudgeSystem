@@ -79,6 +79,13 @@
     {
         <h2>@Resource.Execution_result:</h2>
         <pre>@Model.ProcessingComment</pre>
+        if (Model.UserHasAdminPermission)
+        {
+            <pre>@Resource.Exception_type: @Model.ExceptionType  
+            @Model.ExecutionComment
+        </pre>
+        }
+
     }
 }
 
@@ -301,7 +308,7 @@ else
 
                         JavaScriptSerializer serializer = new JavaScriptSerializer();
                         serializer.MaxJsonLength = Int32.MaxValue;
-                        
+
                         <script>
                             $(function () {
                                 var diffContainer = document.getElementById('diff-@testResult.Id');
