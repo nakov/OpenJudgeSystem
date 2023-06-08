@@ -10,14 +10,15 @@ public class DateTimeValueConverter : ValueConverter<DateTime?, DateTime?>
 {
    private static readonly TimeZoneInfo LocalTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(EnvironmentUtils.GetRequiredByKey(LocalTimeZone));
 
-   private static readonly Expression<Func<DateTime?, DateTime?>> Serialize = date => ConvertToUtc(date);
-
    private static readonly Expression<Func<DateTime?, DateTime?>> Deserialize = date => ConvertToLocal(date);
 
-   public DateTimeValueConverter()
-      : base(Serialize, Deserialize)
+   public DateTimeValueConverter(string propertyName)
+      : base(Serialize(propertyName), Deserialize)
    {
    }
+
+   private static Expression<Func<DateTime?, DateTime?>> Serialize(string propertyName) =>
+      date => ShouldConvertToUtc(propertyName) ? ConvertToUtc(date) : date;
 
    private static DateTime? ConvertToUtc(DateTime? dateTime)
    {
@@ -40,4 +41,7 @@ public class DateTimeValueConverter : ValueConverter<DateTime?, DateTime?>
 
       return TimeZoneInfo.ConvertTimeFromUtc(dateTime.Value, LocalTimeZoneInfo);
    }
+
+   private static bool ShouldConvertToUtc(string propertyName)
+      => propertyName != "CreatedOn" && propertyName != "ModifiedOn" && propertyName != "DeletedOn";
 }
