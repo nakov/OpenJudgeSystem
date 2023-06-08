@@ -122,8 +122,7 @@ const SubmissionBox = () => {
                 return;
             }
 
-            const submittedCode = problemSubmissionCode[problemId];
-            if (isNil(submittedCode)) {
+            if (isNil(problemSubmissionCode[problemId])) {
                 return;
             }
 
