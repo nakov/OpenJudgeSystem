@@ -122,11 +122,14 @@ const SubmissionBox = () => {
                 return;
             }
 
-            removeProblemSubmissionCode(problemId);
+            if (isNil(problemSubmissionCode[problemId])) {
+                return;
+            }
 
+            removeProblemSubmissionCode(problemId);
             restartSubmissionTimeLimitCountdown();
         },
-        [ submit, currentProblem, removeProblemSubmissionCode, restartSubmissionTimeLimitCountdown ],
+        [ submit, problemSubmissionCode, currentProblem, removeProblemSubmissionCode, restartSubmissionTimeLimitCountdown ],
     );
 
     const renderSubmissionLimitCountdown = useCallback((remainingTime: ICountdownRemainingType) => {
