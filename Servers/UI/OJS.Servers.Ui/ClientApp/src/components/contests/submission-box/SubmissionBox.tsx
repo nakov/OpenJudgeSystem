@@ -122,7 +122,8 @@ const SubmissionBox = () => {
                 return;
             }
 
-            if (isNil(problemSubmissionCode[problemId])) {
+            if (isNil(problemSubmissionCode[problemId]) ||
+                problemSubmissionCode[problemId] === '') {
                 return;
             }
 
