@@ -23,4 +23,6 @@ public class ContestForListingResponseModel : IMapFrom<ContestForListingServiceM
     public bool CanBePracticed { get; set; }
 
     public string Category { get; set; } = null!;
+
+    public TimeSpan? Duration { get; set; }
 }

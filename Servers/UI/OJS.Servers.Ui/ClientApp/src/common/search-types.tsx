@@ -14,6 +14,7 @@ interface IContestSearchType{
     hasContestPassword: boolean;
     hasPracticePassword: boolean;
     category: string;
+    duration: number;
 }
 
 interface IProblemContest {

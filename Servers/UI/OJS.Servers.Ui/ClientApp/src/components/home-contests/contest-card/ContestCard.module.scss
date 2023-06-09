@@ -100,13 +100,20 @@
 }
 
 .modal {
-  position: fixed;
-  z-index: 1;
-  left: 100px;
-  top: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   width: 50%;
   height: 50%;
   overflow: auto;
-  background-color: rgb(0,0,0);
-  background-color: rgba(0,0,0,0.4);
+  background-color: colors.$white-color;
+}
+
+.modalHeading {
+  align-self: self-start;
+  background-color: colors.$light-blue-color;
 }

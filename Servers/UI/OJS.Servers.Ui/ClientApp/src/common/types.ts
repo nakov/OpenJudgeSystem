@@ -70,6 +70,7 @@ interface IIndexContestsType {
     hasContestPassword: boolean;
     hasPracticePassword: boolean;
     category: string;
+    duration: number;
 }
 
 interface IGetContestsForIndexResponseType {

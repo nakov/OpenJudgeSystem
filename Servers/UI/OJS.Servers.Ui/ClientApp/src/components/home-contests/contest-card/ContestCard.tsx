@@ -8,7 +8,7 @@ import { IIndexContestsType } from '../../../common/types';
 import { useAppUrls } from '../../../hooks/use-app-urls';
 import concatClassNames from '../../../utils/class-names';
 import { convertToSecondsRemaining } from '../../../utils/dates';
-import Button, { ButtonSize, ButtonState, ButtonType, LinkButton } from '../../guidelines/buttons/Button';
+import Button, { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
 import LockIcon from '../../guidelines/icons/LockIcon';
 
@@ -27,6 +27,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
         practiceEndTime,
         canBeCompeted,
         endTime,
+        duration,
     } = contest;
     const contestCard = 'card-contests';
     const contestCardClassName = concatClassNames(styles.contestCard, contestCard);
@@ -83,37 +84,39 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   aria-describedby="modal-modal-description"
                 >
                     <Box className={styles.modal}>
-                        <Typography id="modal-modal-title" variant="h6" component="h2">
-                            Starting now you will have 4 hours to complete the contest
-                            {' '}
-                            {name}
-                            .
-                            {' '}
-                            {}
+                        <Typography id="modal-modal-title" variant="h6" className={styles.modalHeading}>
+                            <>
+                                Starting now you will have
+                                {' '}
+                                {duration}
+                                {' '}
+                                hours to complete the contest
+                                {' '}
+                                {name}
+                                .
+                            </>
                         </Typography>
                         <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                             Duis mollis, est non commodo luctus, nisi erat porttitor ligula?
                         </Typography>
-                        <LinkButton
-                          id="button-card-compete"
-                          to={getParticipateInContestUrl({
-                              id,
-                              participationType: canBeCompeted
-                                  ? ContestParticipationType.Compete
-                                  : ContestParticipationType.Practice,
-                              problemIndex: 1,
-                          })}
-                          text={canBeCompeted
-                              ? 'Compete'
-                              : 'Practice'}
-                          size={ButtonSize.small}
-                        />
-                        <Button onClick={() => setOpen(false)} size={ButtonSize.small}>Cancel</Button>
+                        <div>
+                            <LinkButton
+                              id="button-card-compete"
+                              to={getParticipateInContestUrl({
+                                  id,
+                                  participationType: ContestParticipationType.Compete,
+                                  problemIndex: 1,
+                              })}
+                              text="Compete"
+                              size={ButtonSize.small}
+                            />
+                            <Button onClick={() => setOpen(false)} size={ButtonSize.small}>Cancel</Button>
+                        </div>
                     </Box>
                 </Modal>
             </div>
         ),
-        [ canBeCompeted, getParticipateInContestUrl, id, name, open ],
+        [ getParticipateInContestUrl, id, name, open, duration ],
     );
 
     return (
@@ -141,11 +144,15 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                     }
                   size={ButtonSize.small}
                 />
-                <Button
+                <LinkButton
                   id="button-card-practice"
-                  onClick={() => setOpen(true)}
+                  to={getParticipateInContestUrl({
+                      id,
+                      participationType: ContestParticipationType.Practice,
+                      problemIndex: 1,
+                  })}
                   text="Practice"
-                  type={ButtonType.secondary}
+                  type={LinkButtonType.secondary}
                   state={
                         canBePracticed
                             ? ButtonState.enabled

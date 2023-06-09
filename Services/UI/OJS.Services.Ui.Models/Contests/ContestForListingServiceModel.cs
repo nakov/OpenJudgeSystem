@@ -29,6 +29,8 @@ public class ContestForListingServiceModel : IMapExplicitly
 
     public double OrderBy { get; set; }
 
+    public TimeSpan? Duration { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Contest, ContestForListingServiceModel>()
             .ForMember(
