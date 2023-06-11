@@ -163,7 +163,8 @@ namespace OJS.Services.Ui.Business.Implementations
                     participationModel.Contest.Problems.Select(x => x.Id),
                     participantsList);
 
-            if (!IsUserLecturerInContest(contest, user.Id!) && !user.IsAdmin && participationModel.ContestIsCompete)
+            if (!IsUserLecturerInContest(contest, user.Id!)
+                && isUserInOnlineExam(user.IsAdmin,participationModel.ContestIsCompete,contest.IsOnlineExam))
             {
                 var problemsForParticipant = participant.ProblemsForParticipants.Select(x => x.Problem);
                 participationModel.Contest.Problems = problemsForParticipant.MapCollection<ContestProblemServiceModel>().ToList();
@@ -404,6 +405,9 @@ namespace OJS.Services.Ui.Business.Implementations
         private static bool IsUserLecturerInContest(Contest contest, string userId) =>
             contest.LecturersInContests.Any(c => c.LecturerId == userId) ||
             contest.Category!.LecturersInContestCategories.Any(cl => cl.LecturerId == userId);
+
+        private static bool isUserInOnlineExam(bool isAdmin, bool isOfficial, bool isContestOnline)
+            => !isAdmin && isOfficial && isContestOnline;
 
         private async Task<Participant?> AddNewParticipantToContestIfNotExists(
             Contest contest,
