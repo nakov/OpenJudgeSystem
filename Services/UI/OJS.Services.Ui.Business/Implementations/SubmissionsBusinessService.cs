@@ -406,6 +406,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 $"Submission with Id: \"{submissionExecutionResult.SubmissionId}\" not found.");
         }
 
+        submission.LastExecutionOn = submissionExecutionResult.ExecutionResult?.LastExecutionOn;
+
         var exception = submissionExecutionResult.Exception;
         var executionResult = submissionExecutionResult.ExecutionResult;
 

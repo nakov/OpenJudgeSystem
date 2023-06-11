@@ -1,6 +1,7 @@
 ﻿namespace OJS.Services.Ui.Models.Submissions
 {
     using OJS.Services.Busines.Submissions.Models;
+    using System;
 
     public class ExecutionResultResponseModel
     {
@@ -13,5 +14,7 @@
         public OutputResultResponseModel? OutputResult { get; set; }
 
         public TaskResultResponseModel TaskResult { get; set; } = null!;
+
+        public DateTime? LastExecutionOn { get; set; }
     }
 }
