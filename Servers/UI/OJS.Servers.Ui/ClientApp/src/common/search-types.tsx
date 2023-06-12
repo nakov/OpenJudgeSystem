@@ -15,6 +15,7 @@ interface IContestSearchType{
     hasPracticePassword: boolean;
     category: string;
     duration: number;
+    numberOfProblems: number;
 }
 
 interface IProblemContest {

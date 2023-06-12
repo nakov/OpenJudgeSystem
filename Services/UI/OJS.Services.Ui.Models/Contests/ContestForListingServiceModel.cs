@@ -1,6 +1,7 @@
 namespace OJS.Services.Ui.Models.Contests;
 
 using AutoMapper;
+using System.Linq;
 using OJS.Data.Models.Contests;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System;
@@ -31,9 +32,14 @@ public class ContestForListingServiceModel : IMapExplicitly
 
     public TimeSpan? Duration { get; set; }
 
+    public int NumberOfProblems { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Contest, ContestForListingServiceModel>()
             .ForMember(
                 dest => dest.Category,
-                opt => opt.MapFrom(src => src.Category!.Name));
+                opt => opt.MapFrom(src => src.Category!.Name))
+            .ForMember(
+                dest => dest.NumberOfProblems,
+                opt => opt.MapFrom(src => src.ProblemGroups.First().Problems.Count));
 }

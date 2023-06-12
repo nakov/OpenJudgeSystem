@@ -56,8 +56,6 @@ interface IContestType {
     userCanCompete: boolean;
     userIsParticipant: false;
     isActive: boolean;
-    duration: number;
-    numberOfProblems: number;
 }
 
 interface IIndexContestsType {
@@ -72,6 +70,8 @@ interface IIndexContestsType {
     hasContestPassword: boolean;
     hasPracticePassword: boolean;
     category: string;
+    duration: number;
+    numberOfProblems: number;
 }
 
 interface IGetContestsForIndexResponseType {

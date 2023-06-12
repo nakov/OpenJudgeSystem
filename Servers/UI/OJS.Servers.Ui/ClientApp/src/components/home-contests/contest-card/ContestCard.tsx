@@ -1,13 +1,15 @@
 import React, { useCallback } from 'react';
+import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IIndexContestsType } from '../../../common/types';
 import { useAppUrls } from '../../../hooks/use-app-urls';
 import concatClassNames from '../../../utils/class-names';
 import { convertToSecondsRemaining } from '../../../utils/dates';
-import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import { Button, ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
 import LockIcon from '../../guidelines/icons/LockIcon';
+import ContestModal from '../../modal/ContestModal';
 
 import styles from './ContestCard.module.scss';
 
@@ -69,6 +71,19 @@ const ContestCard = ({ contest }: IContestCardProps) => {
         [ canBeCompeted, canBePracticed, contest ],
     );
 
+    const renderModal = useCallback(
+        () => {
+            if (isNil(contest)) {
+                return null;
+            }
+
+            return (
+                <ContestModal contest={contest} openModal />
+            );
+        },
+        [ contest ],
+    );
+
     return (
         <div className={contestCardClassName}>
             <div className={contestCardHeaderClassName}>
@@ -83,13 +98,9 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                 {renderCountdown()}
             </div>
             <div className={contestCardControlBtnsClassName}>
-                <LinkButton
+                <Button
                   id="button-card-compete"
-                  to={getParticipateInContestUrl({
-                      id,
-                      participationType: ContestParticipationType.Compete,
-                      problemIndex: 1,
-                  })}
+                  onClick={() => renderModal()}
                   text="Compete"
                   state={
                         canBeCompeted

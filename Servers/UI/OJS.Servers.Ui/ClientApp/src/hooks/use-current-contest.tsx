@@ -253,8 +253,6 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             setContest({
                 id: registerForContestData.id,
                 name: registerForContestData.name,
-                duration: registerForContestData?.duration,
-                numberOfProblems: registerForContestData?.numberOfProblems,
             } as IContestType);
             setRequirePassword(responseRequirePassword);
             setContestError(null);
