@@ -45,6 +45,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
 
             var isUserLecturerInByContestAndUser =
                 await this.contestsData.IsUserLecturerInByContestAndUser(contest.Id, userId);
+
             if (!isAdmin && !isUserLecturerInByContestAndUser)
             {
                 AssignRandomProblemsToParticipant(participant, contest);
