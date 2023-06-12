@@ -88,7 +88,7 @@ const ContestsPage = () => {
                 } if (filter === FilterType.Strategy) {
                     return !isNil(strategies.find(({ id }) => id.toString() === filterValue));
                 } if (filter === PageParams.page) {
-                    return !Number.isNaN(Number(filterValue));
+                    return !Number.isNaN(Number(filterValue)) && Number(filterValue) > 0;
                 } return !(toLowerCase(filter) === FilterType.Sort &&
                     (filterValue !== toLowerCase(SortType.Name) &&
                         filterValue !== toLowerCase(SortType.StartDate) &&
