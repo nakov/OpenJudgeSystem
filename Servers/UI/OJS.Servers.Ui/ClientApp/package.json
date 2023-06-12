@@ -93,7 +93,7 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "craco build",
+    "build": "craco --max_old_space_size=8192 build",
     "eject": "react-scripts eject",
     "lint:eslint": "./node_modules/.bin/eslint ./src --ext .tsx --ext .ts",
     "lint:stylelint": "./node_modules/.bin/stylelint ./src/**/*.scss",
