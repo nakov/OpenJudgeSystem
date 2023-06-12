@@ -19,7 +19,7 @@ const SubmissionDetailsPage = () => {
             selectSubmissionById,
         },
     } = useSubmissionsDetails();
-    const { state: { user: { isLoggedIn } } } = useAuth();
+    const { state: { isLoggedIn } } = useAuth();
     const navigate = useNavigate();
     const { getLoginUrl } = useAppUrls();
 

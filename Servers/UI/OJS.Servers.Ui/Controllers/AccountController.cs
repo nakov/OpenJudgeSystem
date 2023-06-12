@@ -87,7 +87,7 @@ namespace OJS.Servers.Ui.Controllers
 
             var roles = await this.userManager.GetRolesAsync(user);
 
-            this.HttpContext.AppendAuthInfoCookies(roles, user.UserName);
+            // this.HttpContext.AppendAuthInfoCookies(roles, user.UserName);
             return this.RedirectToAction("Index", "Home");
         }
 

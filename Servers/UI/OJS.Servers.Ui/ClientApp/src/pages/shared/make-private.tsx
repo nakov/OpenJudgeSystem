@@ -1,8 +1,9 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import {
     Navigate,
     useLocation,
 } from 'react-router';
+import isNil from 'lodash/isNil';
 
 import { Anything } from '../../common/common-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
@@ -13,7 +14,7 @@ type IPrivatePageProps = IHaveChildrenProps
 const PrivatePage = ({ children }: IPrivatePageProps) => {
     const { state: { user } } = useAuth();
     const location = useLocation();
-    const { isLoggedIn } = user;
+    const isLoggedIn = useMemo(() => isNil(user), [ user ]);
 
     const state = { from: location };
 

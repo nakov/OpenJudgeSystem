@@ -103,9 +103,22 @@ interface IPagedResultType<TItem> {
 }
 
 interface IUserType {
+    id: string;
     username: string;
+    email: string;
     permissions: IUserPermissionsType;
-    isLoggedIn: boolean;
+}
+
+interface IUserRoleType {
+    id: string;
+    name: string;
+}
+
+interface IUserResponseType {
+    id: string;
+    username: string;
+    email: string;
+    roles: IUserRoleType[];
 }
 
 interface IUserPermissionsType {
@@ -130,6 +143,7 @@ export type {
     ISubmissionTypeType,
     IPagedResultType,
     IUserType,
+    IUserResponseType,
     IUserPermissionsType,
     ISearchResponseModel,
 };

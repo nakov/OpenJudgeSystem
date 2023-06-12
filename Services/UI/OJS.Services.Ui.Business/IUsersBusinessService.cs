@@ -19,5 +19,7 @@
         Task<bool> IsLoggedInUserAdmin(ClaimsPrincipal userPrincipal);
 
         Task AddOrUpdateUser(UserProfile userEntity);
+
+        Task<UserAuthInfoServiceModel> GetAuthInfo();
     }
 }

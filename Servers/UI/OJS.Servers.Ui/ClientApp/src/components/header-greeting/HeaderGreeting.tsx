@@ -3,7 +3,10 @@ import React from 'react';
 import { useAuth } from '../../hooks/use-auth';
 
 const HeaderGreeting = () => {
-    const { actions: { getUser } } = useAuth();
+    const {
+        state: { isLoggedIn },
+        actions: { getUser },
+    } = useAuth();
     const user = getUser();
 
     // const className = user.isLoggedIn
@@ -11,7 +14,7 @@ const HeaderGreeting = () => {
     //     : styles.hidden;
     const className = '';
 
-    const text = user.isLoggedIn
+    const text = isLoggedIn
         ? `Hello, ${user.username}`
         : '';
 
