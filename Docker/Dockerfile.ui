@@ -20,9 +20,8 @@ COPY Servers/UI/OJS.Servers.Ui/ClientApp /src/Servers/UI/OJS.Servers.Ui/ClientAp
 
 WORKDIR /src/Servers/UI/OJS.Servers.Ui/ClientApp
 
-RUN NODE_OPTIONS="--max-old-space-size=8192"
 RUN yarn run lint
-RUN yarn build --max_old_space_size=8192
+RUN yarn build
 
 
 # .Net build
