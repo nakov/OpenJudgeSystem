@@ -60,6 +60,10 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
 
             await this.EditEntityAndSaveAsync(entity, actionContext);
         }
+        else
+        {
+            await base.DeleteEntityAndSaveAsync(entity, actionContext);
+        }
     }
 
     private static string GetPrimaryKeyValueFromQuery(IDictionary<string, string> complexId)
