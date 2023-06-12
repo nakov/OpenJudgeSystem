@@ -70,6 +70,8 @@ jobs:
         cache-to: type=local,dest=/tmp/.buildx-cache
         secrets: |
           GIT_AUTH_TOKEN=${{ github.token }}
+      env:
+        NODE_OPTIONS: "--max_old_space_size=8192"
     - name: Invoke deployment hook
       uses: distributhor/workflow-webhook@v2
       env:
