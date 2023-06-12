@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
-import parseInt from 'lodash/parseInt';
 
 import { ContestStatus, FilterType, IFilter, SortType } from '../../common/contest-types';
 import { PageParams } from '../../common/pages-types';
@@ -45,10 +44,24 @@ const ContestsPage = () => {
     } = usePages();
     const { state: { breadcrumbItems }, actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
     const { getContestCategoryBreadcrumbItemPath } = useAppUrls();
-    const { state: { categoriesFlat } } = useContestCategories();
+    const { state: { categoriesFlat }, actions: { load: loadCategories } } = useContestCategories();
     const navigate = useNavigate();
     const { state: params } = useUrlParams();
     const { state: { strategies } } = useContestStrategyFilters();
+
+    useEffect(
+        () => {
+            initiateGetAllContestsQuery();
+            if (!isEmpty(categoriesFlat)) {
+                return;
+            }
+
+            (async () => {
+                await loadCategories();
+            })();
+        },
+        [ initiateGetAllContestsQuery, categoriesFlat, loadCategories ],
+    );
 
     const filtersArray = useMemo(
         () => [ FilterType.Status, FilterType.Category, FilterType.Strategy, PageParams.page, FilterType.Sort ],
@@ -75,7 +88,7 @@ const ContestsPage = () => {
                 } if (filter === FilterType.Strategy) {
                     return !isNil(strategies.find(({ id }) => id.toString() === filterValue));
                 } if (filter === PageParams.page) {
-                    return !Number.isNaN(parseInt(filterValue));
+                    return !Number.isNaN(Number(filterValue));
                 } return !(toLowerCase(filter) === FilterType.Sort &&
                     (filterValue !== toLowerCase(SortType.Name) &&
                         filterValue !== toLowerCase(SortType.StartDate) &&
@@ -85,13 +98,6 @@ const ContestsPage = () => {
             return initialQueryParamsCount === resultQueryParamsArray.length;
         },
         [ filtersArray, params, categoriesFlat, strategies ],
-    );
-
-    useEffect(
-        () => {
-            initiateGetAllContestsQuery();
-        },
-        [ initiateGetAllContestsQuery ],
     );
 
     const handlePageChange = useCallback(
@@ -178,6 +184,9 @@ const ContestsPage = () => {
 
     const renderPage = useCallback(
         () => {
+            if (isNil(categoriesFlat) || isEmpty(categoriesFlat)) {
+                return <div>Loading data</div>;
+            }
             if (!areQueryParamsValid()) {
                 return <NotFoundPage />;
             }
@@ -194,7 +203,7 @@ const ContestsPage = () => {
                 </>
             );
         },
-        [ areQueryParamsValid, breadcrumbItems, handleFilterClick, renderCategoriesBreadcrumbItem, renderContests ],
+        [ areQueryParamsValid, breadcrumbItems, handleFilterClick, renderCategoriesBreadcrumbItem, renderContests, categoriesFlat ],
     );
 
     return renderPage();
