@@ -77,7 +77,7 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
     );
 
     const isLoggedIn = useMemo(
-        () => isGetAuthInfoSuccess && internalUser.id !== defaultState.user.id,
+        () => isGetAuthInfoSuccess && !isEmpty(internalUser.id),
         [ internalUser, isGetAuthInfoSuccess ],
     );
 
@@ -92,8 +92,10 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
             return defaultState.user;
         }
 
-        const isAdmin = isNil(authInfoResponse?.roles
-            .find((role) => role.name.toLowerCase() === 'administrator'));
+        const isAdmin = isEmpty(authInfoResponse.roles)
+            ? false
+            : isNil(authInfoResponse?.roles
+                .find((role) => role.name.toLowerCase() === 'administrator'));
 
         return {
             id: authInfoResponse.id,
@@ -159,8 +161,12 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
             return;
         }
 
+        if (!isGetAuthInfoSuccess) {
+            return;
+        }
+
         setUserDetails(getUserFromResponse(authInfo));
-    }, [ authInfo, getUserFromResponse, setUserDetails ]);
+    }, [ authInfo, getUserFromResponse, isGetAuthInfoSuccess, setUserDetails ]);
 
     useEffect(() => {
         console.log(internalUser);
