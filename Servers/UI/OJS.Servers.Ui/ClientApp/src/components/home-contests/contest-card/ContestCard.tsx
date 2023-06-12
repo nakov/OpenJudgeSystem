@@ -1,14 +1,11 @@
-import React, { useCallback, useState } from 'react';
-import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
-import Typography from '@mui/material/Typography';
+import React, { useCallback } from 'react';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IIndexContestsType } from '../../../common/types';
 import { useAppUrls } from '../../../hooks/use-app-urls';
 import concatClassNames from '../../../utils/class-names';
 import { convertToSecondsRemaining } from '../../../utils/dates';
-import Button, { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
 import LockIcon from '../../guidelines/icons/LockIcon';
 
@@ -27,8 +24,8 @@ const ContestCard = ({ contest }: IContestCardProps) => {
         practiceEndTime,
         canBeCompeted,
         endTime,
-        duration,
     } = contest;
+    const { getParticipateInContestUrl } = useAppUrls();
     const contestCard = 'card-contests';
     const contestCardClassName = concatClassNames(styles.contestCard, contestCard);
     const contestCardHeader = 'card-header';
@@ -39,8 +36,6 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const contestCardCounterClassName = concatClassNames(styles.contestCardCountdown, contestCardCounter);
     const contestCardControlBtns = 'card-control-buttons';
     const contestCardControlBtnsClassName = concatClassNames(styles.contestCardControls, contestCardControlBtns);
-    const [ open, setOpen ] = useState(false);
-    const { getParticipateInContestUrl } = useAppUrls();
 
     const renderCountdown = useCallback(
         () => {
@@ -74,51 +69,6 @@ const ContestCard = ({ contest }: IContestCardProps) => {
         [ canBeCompeted, canBePracticed, contest ],
     );
 
-    const renderModal = useCallback(
-        () => (
-            <div>
-                <Modal
-                  open={open}
-                  onClose={() => setOpen(false)}
-                  aria-labelledby="modal-modal-title"
-                  aria-describedby="modal-modal-description"
-                >
-                    <Box className={styles.modal}>
-                        <Typography id="modal-modal-title" variant="h6" className={styles.modalHeading}>
-                            <>
-                                Starting now you will have
-                                {' '}
-                                {duration}
-                                {' '}
-                                hours to complete the contest
-                                {' '}
-                                {name}
-                                .
-                            </>
-                        </Typography>
-                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                            Duis mollis, est non commodo luctus, nisi erat porttitor ligula?
-                        </Typography>
-                        <div>
-                            <LinkButton
-                              id="button-card-compete"
-                              to={getParticipateInContestUrl({
-                                  id,
-                                  participationType: ContestParticipationType.Compete,
-                                  problemIndex: 1,
-                              })}
-                              text="Compete"
-                              size={ButtonSize.small}
-                            />
-                            <Button onClick={() => setOpen(false)} size={ButtonSize.small}>Cancel</Button>
-                        </div>
-                    </Box>
-                </Modal>
-            </div>
-        ),
-        [ getParticipateInContestUrl, id, name, open, duration ],
-    );
-
     return (
         <div className={contestCardClassName}>
             <div className={contestCardHeaderClassName}>
@@ -133,9 +83,13 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                 {renderCountdown()}
             </div>
             <div className={contestCardControlBtnsClassName}>
-                <Button
+                <LinkButton
                   id="button-card-compete"
-                  onClick={() => setOpen(true)}
+                  to={getParticipateInContestUrl({
+                      id,
+                      participationType: ContestParticipationType.Compete,
+                      problemIndex: 1,
+                  })}
                   text="Compete"
                   state={
                         canBeCompeted
@@ -160,7 +114,6 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                     }
                   size={ButtonSize.small}
                 />
-                {renderModal()}
             </div>
         </div>
     );

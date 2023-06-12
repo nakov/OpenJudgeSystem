@@ -1,4 +1,5 @@
 @use 'src/styles/components';
+@use 'src/styles/colors';
 
 .contestHeading {
   border: 0;
@@ -10,3 +11,22 @@
 .headingContest {
   @extend %contentSize;
 }
+.modal {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  height: 50%;
+  overflow: auto;
+  background-color: colors.$white-color;
+}
+
+.modalHeading {
+  align-self: self-start;
+  background-color: colors.$light-blue-color;
+}
+
