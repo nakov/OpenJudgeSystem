@@ -3,6 +3,7 @@ namespace OJS.Data.Models.Contests
     using OJS.Common.Enumerations;
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Problems;
+    using OJS.Data.Validation.Attributes;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -39,11 +40,13 @@ namespace OJS.Data.Models.Contests
         /// <remarks>
         /// If StartTime is null the contest cannot be competed.
         /// </remarks>
+        [UtcConvertable]
         public DateTime? StartTime { get; set; }
 
         /// <remarks>
         /// If EndTime is null the contest can be competed forever.
         /// </remarks>
+        [UtcConvertable]
         public DateTime? EndTime { get; set; }
 
         /// <remarks>
@@ -69,11 +72,13 @@ namespace OJS.Data.Models.Contests
         /// <remarks>
         /// If PracticeStartTime is null the contest cannot be practiced.
         /// </remarks>
+        [UtcConvertable]
         public DateTime? PracticeStartTime { get; set; }
 
         /// <remarks>
         /// If PracticeEndTime is null the contest can be practiced forever.
         /// </remarks>
+        [UtcConvertable]
         public DateTime? PracticeEndTime { get; set; }
 
         public int LimitBetweenSubmissions { get; set; }
