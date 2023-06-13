@@ -31,6 +31,7 @@ interface ISubmissionsDetailsContext {
         getSubmissionDetailsResults: (submissionId: number, isOfficial: boolean) => Promise<void>;
         downloadProblemSubmissionFile: (submissionId: number) => Promise<void>;
         setDownloadErrorMessage: (message: string | null) => void;
+        setCurrentSubmission: (submission: ISubmissionDetailsType | null) => void;
     };
 }
 
@@ -255,6 +256,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
                 getSubmissionDetailsResults,
                 downloadProblemSubmissionFile,
                 setDownloadErrorMessage,
+                setCurrentSubmission,
             },
         }),
         [
