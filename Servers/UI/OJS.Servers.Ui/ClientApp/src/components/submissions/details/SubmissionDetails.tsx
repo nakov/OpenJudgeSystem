@@ -34,6 +34,7 @@ const SubmissionDetails = () => {
         actions: {
             getSubmissionDetailsResults,
             setCurrentSubmission,
+            selectSubmissionById,
         },
     } = useSubmissionsDetails();
     const { actions: { setPageTitle } } = usePageTitles();
@@ -306,10 +307,11 @@ const SubmissionDetails = () => {
 
     const setSubmissionAndStartParticipation = useCallback(
         () => {
-            setCurrentSubmission(null);
             navigate(participateInContestUrl);
+            setCurrentSubmission(null);
+            selectSubmissionById(null);
         },
-        [ setCurrentSubmission, navigate, participateInContestUrl ],
+        [ setCurrentSubmission, navigate, participateInContestUrl, selectSubmissionById ],
     );
 
     const codeEditor = useCallback(
