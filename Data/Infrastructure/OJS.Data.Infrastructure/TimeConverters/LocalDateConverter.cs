@@ -7,6 +7,11 @@ using System.Linq.Expressions;
 
 using static Common.GlobalConstants.EnvironmentVariables;
 
+/// <summary>
+/// When serializes DateTime input, this converter interprets it and returns a normal date.
+/// On the other way around when deserializing the DateTime, interprets it as UTC and
+/// returns it converted to Local time (Local time zone is specified in the app config).
+/// </summary>
 public class LocalDateConverter : ValueConverter<DateTime?, DateTime?>
 {
     private static readonly TimeZoneInfo LocalTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(EnvironmentUtils.GetRequiredByKey(LocalTimeZone));
