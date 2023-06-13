@@ -56,51 +56,103 @@
             var checkers = new[]
             {
                 new Checker
-                    {
-                        Name = "Exact",
-                        DllFile = "OJS.Workers.Checkers.dll",
-                        ClassName = "OJS.Workers.Checkers.ExactChecker",
-                    },
+                {
+                    Name = "Exact",
+                    Description =
+                        "Compares exactly (char by char) the user output with the excepted output. Whitespace differences may cause incorrect output.",
+                    DllFile = "OJS.Workers.Checkers",
+                    ClassName = "OJS.Workers.Checkers.ExactChecker",
+                },
                 new Checker
-                    {
-                        Name = "Trim",
-                        DllFile = "OJS.Workers.Checkers.dll",
-                        ClassName = "OJS.Workers.Checkers.TrimChecker",
-                    },
+                {
+                    Name = "Trim",
+                    Description = "Trims the user output and compares it with the expected output.",
+                    DllFile = "OJS.Workers.Checkers",
+                    ClassName = "OJS.Workers.Checkers.TrimChecker",
+                },
                 new Checker
-                    {
-                        Name = "Sort lines",
-                        DllFile = "OJS.Workers.Checkers.dll",
-                        ClassName = "OJS.Workers.Checkers.SortChecker",
-                    },
+                {
+                    Name = "Sort lines",
+                    Description =
+                        "Sorts alphabetically all lines from the user output, then compares them with the expected output.",
+                    DllFile = "OJS.Workers.Checkers",
+                    ClassName = "OJS.Workers.Checkers.SortChecker",
+                },
                 new Checker
-                    {
-                        Name = "Case-insensitive",
-                        DllFile = "OJS.Workers.Checkers.dll",
-                        ClassName = "OJS.Workers.Checkers.CaseInsensitiveChecker",
-                    },
+                {
+                    Name = "Case-insensitive",
+                    Description = "Compares case-insensitively the user output with expected output.",
+                    DllFile = "OJS.Workers.Checkers",
+                    ClassName = "OJS.Workers.Checkers.CaseInsensitiveChecker",
+                },
                 new Checker
-                    {
-                        Name = "Precision checker - 14",
-                        DllFile = "OJS.Workers.Checkers.dll",
-                        ClassName = "OJS.Workers.Checkers.PrecisionChecker",
-                        Parameter = "14",
-                    },
+                {
+                    Name = "Precision checker - 14",
+                    Description =
+                        "Compares floating-point numbers with precision of 14 digits after the decimal separator.",
+                    DllFile = "OJS.Workers.Checkers",
+                    ClassName = "OJS.Workers.Checkers.PrecisionChecker",
+                    Parameter = "14",
+                },
                 new Checker
-                    {
-                        Name = "Precision checker - 7",
-                        DllFile = "OJS.Workers.Checkers.dll",
-                        ClassName = "OJS.Workers.Checkers.PrecisionChecker",
-                        Parameter = "7",
-                    },
+                {
+                    Name = "Precision checker - 7",
+                    Description =
+                        "Compares floating-point numbers with precision of 7 digits after the decimal separator.",
+                    DllFile = "OJS.Workers.Checkers",
+                    ClassName = "OJS.Workers.Checkers.PrecisionChecker",
+                    Parameter = "7",
+                },
                 new Checker
-                    {
-                        Name = "Precision checker - 3",
-                        DllFile = "OJS.Workers.Checkers.dll",
-                        ClassName = "OJS.Workers.Checkers.PrecisionChecker",
-                        Parameter = "3",
-                    }
+                {
+                    Name = "Precision checker - 3",
+                    Description =
+                        "Compares floating-point numbers with precision of 3 digits after the decimal separator.",
+                    DllFile = "OJS.Workers.Checkers",
+                    ClassName = "OJS.Workers.Checkers.PrecisionChecker",
+                    Parameter = "3",
+                },
+                new Checker
+                {
+                    Name = "Last Number Checker",
+                    Description =
+                        "Checks if the last number in the user output matches the expected output. Intelligently skips the unneeded messages in the user output like \"Please enter a number n:\". Works for integer and floating-point numbers. Compares with precision of 2 digits after the decimal point. If the expected output is text like \"error\", checks for its existence as substring intelligently (lowercase, skipping whitespace and punctuation).",
+                    DllFile = "OJS.Workers.Checkers",
+                    ClassName = "CSharpCodeChecker",
+                },
+                new Checker
+                {
+                    Name = "Text Snippet Checker",
+                    Description =
+                        "Checks whether the expected words and decimal numbers are present in the user output as a subsequence (after ignoring the punctuation, whitespace, and character casing). For example, \"sum = 500\" matches \"Enter 2 numbers: Num1 = Num2 = Result sum:500 USD\".",
+                    DllFile = "OJS.Workers.Checkers",
+                    ClassName = "CSharpCodeChecker",
+                },
+                new Checker
+                {
+                    Name = "Numbers Checker",
+                    Description =
+                        "Checks if the numbers in the user output match the expected output. Intelligently skips the unneeded messages in the user output like \"Please enter a number n:\". Works for integer and floating-point numbers. Compares with precision of 2 digits after the decimal point. If the expected output is text like \"error\", compares the texts intelligently (lowercase, skipping whitespace and punctuation).",
+                    DllFile = "OJS.Workers.Checkers",
+                    ClassName = "CSharpCodeChecker",
+                },
+                new Checker
+                {
+                    Name = "Accept Everything",
+                    Description = "Always accepts the solution as correct, disregarding its output.",
+                    DllFile = "OJS.Workers.Checkers",
+                    ClassName = "CSharpCodeChecker",
+                },
+                new Checker
+                {
+                    Name = "TrimEnd",
+                    Description =
+                        "Trims the end of each line (removes the trailing whitespace), then compares the user output with the expected output.",
+                    DllFile = "OJS.Workers.Checkers",
+                    ClassName = "TrimEndChecker",
+                }
             };
+            
             context.Checkers.AddOrUpdate(x => x.Name, checkers);
             context.SaveChanges();
         }
