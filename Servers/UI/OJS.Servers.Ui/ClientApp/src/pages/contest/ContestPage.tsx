@@ -30,6 +30,7 @@ const ContestPage = () => {
             isPasswordValid,
             contestError,
             isRegisterForContestSuccessful,
+            contest,
         },
         actions: {
             registerParticipant,
@@ -93,9 +94,11 @@ const ContestPage = () => {
 
     const renderContestPage = useMemo(
         () => isNil(contestError)
-            ? <Contest />
+            ? isNil(contest)
+                ? <div>Loading data</div>
+                : <Contest />
             : renderErrorMessage(),
-        [ contestError, renderErrorMessage ],
+        [ contestError, renderErrorMessage, contest ],
     );
 
     useEffect(
