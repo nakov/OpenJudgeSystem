@@ -26,7 +26,7 @@ interface ISubmissionsDetailsContext {
         downloadErrorMessage: string | null;
     };
     actions: {
-        selectSubmissionById: (submissionId: number) => void;
+        selectSubmissionById: (submissionId: number | null) => void;
         getDetails: (submissionId: number) => Promise<void>;
         getSubmissionDetailsResults: (submissionId: number, isOfficial: boolean) => Promise<void>;
         downloadProblemSubmissionFile: (submissionId: number) => Promise<void>;
@@ -48,7 +48,7 @@ type ISubmissionsDetailsProviderProps = IHaveChildrenProps
 
 const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
-    const [ currentSubmissionId, selectSubmissionById ] = useState<number>();
+    const [ currentSubmissionId, selectSubmissionById ] = useState<number | null>();
     const [ validationErrors, setValidationErrors ] = useState<IErrorDataType[]>(defaultState.state.validationErrors);
     const [
         currentSubmission,
@@ -268,6 +268,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             downloadProblemSubmissionFile,
             downloadErrorMessage,
             setDownloadErrorMessage,
+            setCurrentSubmission,
         ],
     );
 
