@@ -17,16 +17,6 @@ public class AdminDbContext : OjsDbContext
     {
         base.OnModelCreating(builder);
 
-        builder.Model.GetEntityTypes()
-            .SelectMany(entityType => entityType.ClrType.GetProperties())
-            .Where(property => property.GetCustomAttributes<UtcConvertableAttribute>().Any())
-            .ForEach(p =>
-            {
-                builder.Entity(p.ReflectedType!)
-                    .Property(p.Name)
-                    .HasConversion<DualDateTimeValueConverter>();
-            });
-
         ConfigureDateModels(builder);
     }
 
