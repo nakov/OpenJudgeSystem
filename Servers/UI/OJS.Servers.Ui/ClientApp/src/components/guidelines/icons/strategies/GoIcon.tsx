@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { GoCode } from 'react-icons/go';
+import GoLogo from './GoLogo';
 
 import concatClassNames from '../../../../utils/class-names';
 import IconSize from '../common/icon-sizes';
@@ -18,7 +18,7 @@ const GoIcon = ({
       className={concatClassNames(styles.icon, className)}
       size={size}
       helperText={helperText}
-      Component={GoCode}
+      Component={GoLogo}
     />
 );
 
