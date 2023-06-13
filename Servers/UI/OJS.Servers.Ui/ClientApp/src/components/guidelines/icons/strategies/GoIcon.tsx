@@ -1,9 +1,10 @@
 import React, { memo } from 'react';
-import GoLogo from './GoLogo';
 
 import concatClassNames from '../../../../utils/class-names';
 import IconSize from '../common/icon-sizes';
 import Icon, { IIconProps } from '../Icon';
+
+import GoLogo from './GoLogo';
 
 import styles from './StrategyIcon.module.scss';
 
