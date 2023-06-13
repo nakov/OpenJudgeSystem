@@ -99,6 +99,8 @@
 
         public bool Processed { get; set; }
 
+        public DateTime? StartedExecutionOn { get; set; }
+
         public string ProcessingComment { get; set; }
 
         /// <summary>
