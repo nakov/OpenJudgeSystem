@@ -107,9 +107,7 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
             return;
         }
 
-        // startLoading();
         await getAuthInfo();
-        // stopLoading();
     }, [ getAuthInfo, isLoggedIn, loginOrGetAuthInitiated ]);
 
     const getUserFromResponse = useCallback((authInfoResponse: IUserResponseType) => {
