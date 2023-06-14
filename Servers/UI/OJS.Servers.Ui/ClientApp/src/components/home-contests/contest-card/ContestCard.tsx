@@ -50,7 +50,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
             }
 
             if ((!canBePracticed && !canBeCompeted) || isNil(endDate)) {
-                return <p>No available remaining time.</p>;
+                return <p />;
             }
 
             return (
