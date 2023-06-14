@@ -35,6 +35,8 @@
 
         public bool IsChecked { get; set; }
 
+        public int? TimeLimit { get; set; }
+
         public ExecutionStrategyType ExecutionStrategyType { get; set; }
         
         [AllowHtml]
@@ -70,6 +72,10 @@
                 if (selectedSubmission != null)
                 {
                     submissionViewModel.IsChecked = true;
+                    submissionViewModel.TimeLimit = problem
+                        .ProblemSubmissionTypesSkeletons
+                        .FirstOrDefault(x => x.SubmissionTypeId == selectedSubmission.Id)?
+                        .TimeLimit;
                 }
 
                 problem.SubmissionTypes.Add(submissionViewModel);

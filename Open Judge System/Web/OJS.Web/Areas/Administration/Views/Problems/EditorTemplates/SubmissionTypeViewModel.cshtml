@@ -12,13 +12,19 @@
             @Html.LabelFor(m => m.IsChecked, Model.Name)
         </div>
     </div>
-    <div class="editor-field col-xs-4">
+    <div class="editor-field col-xs-2">
         @Html.EditorFor(m => m.IsChecked, new { @class = "form-control pull-left full-editor" })
     </div>
-    <div class="editor-field col-xs-4">
-        <span class="glyphicon glyphicon-question-sign text-primary" title="@string.Format("{0} {1}", Resource.Allow_submission, Model.Name)" data-tooltip="true"></span>
+        <div class="editor-field col-xs-2">
+            @Html.LabelFor(m => m.TimeLimit) (в ms)
+        </div>
+        <div class="editor-field col-xs-2">
+            @Html.TextBoxFor(m => m.TimeLimit, new { @class = "pull-right" })
+        </div>
+        <div class="editor-field col-xs-1">
+            <span class="glyphicon glyphicon-question-sign text-primary" title="@string.Format("{0} {1}", Resource.Allow_submission, Model.Name)" data-tooltip="true"></span>
+        </div>
     </div>
-</div>
 @if (Model.IsChecked)
 {
     <div class="row">

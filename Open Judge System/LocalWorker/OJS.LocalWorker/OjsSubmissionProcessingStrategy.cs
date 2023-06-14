@@ -303,29 +303,45 @@
             }
         }
 
-        private IOjsSubmission GetSubmissionModel() => new OjsSubmission<TestsInputModel>()
+        private IOjsSubmission GetSubmissionModel()
         {
-            Id = this.submission.Id,
-            AdditionalCompilerArguments = this.submission.SubmissionType.AdditionalCompilerArguments,
-            AllowedFileExtensions = this.submission.SubmissionType.AllowedFileExtensions,
-            FileContent = this.submission.Content,
-            CompilerType = this.submission.SubmissionType.CompilerType,
-            TimeLimit = this.submission.Problem.TimeLimit,
-            MemoryLimit = this.submission.Problem.MemoryLimit,
-            ExecutionStrategyType = this.submission.SubmissionType.ExecutionStrategyType,
-            ExecutionType = ExecutionType.TestsExecution,
-            MaxPoints = this.submission.Problem.MaximumPoints,
-            Input = new TestsInputModel
+            int timeLimit = this.submission.Problem.TimeLimit;
+            var skeleton =
+                this.submission
+                .Problem
+                .ProblemSubmissionTypesSkeletons
+                .FirstOrDefault(s => s.SubmissionTypeId == this.submission.SubmissionTypeId);
+
+            if (skeleton != null && 
+                skeleton.TimeLimit.HasValue &&
+                skeleton.TimeLimit > 0)
             {
-                TaskSkeleton = this.submission.Problem
+                timeLimit = skeleton.TimeLimit.Value;
+            }
+
+            return new OjsSubmission<TestsInputModel>()
+            {
+                Id = this.submission.Id,
+                AdditionalCompilerArguments = this.submission.SubmissionType.AdditionalCompilerArguments,
+                AllowedFileExtensions = this.submission.SubmissionType.AllowedFileExtensions,
+                FileContent = this.submission.Content,
+                CompilerType = this.submission.SubmissionType.CompilerType,
+                TimeLimit = timeLimit,
+                MemoryLimit = this.submission.Problem.MemoryLimit,
+                ExecutionStrategyType = this.submission.SubmissionType.ExecutionStrategyType,
+                ExecutionType = ExecutionType.TestsExecution,
+                MaxPoints = this.submission.Problem.MaximumPoints,
+                Input = new TestsInputModel
+                {
+                    TaskSkeleton = this.submission.Problem
                     .ProblemSubmissionTypesSkeletons
                     .Where(x => x.SubmissionTypeId == this.submission.SubmissionTypeId)
                     .Select(x => x.SolutionSkeleton)
                     .FirstOrDefault(),
-                CheckerParameter = this.submission.Problem.Checker.Parameter,
-                CheckerAssemblyName = this.submission.Problem.Checker.DllFile,
-                CheckerTypeName = this.submission.Problem.Checker.ClassName,
-                Tests = this.submission.Problem.Tests
+                    CheckerParameter = this.submission.Problem.Checker.Parameter,
+                    CheckerAssemblyName = this.submission.Problem.Checker.DllFile,
+                    CheckerTypeName = this.submission.Problem.Checker.ClassName,
+                    Tests = this.submission.Problem.Tests
                     .AsQueryable()
                     .Select(t => new TestContext
                     {
@@ -336,7 +352,8 @@
                         OrderBy = t.OrderBy
                     })
                     .ToList()
-            }
-        };
+                }
+            };
+        }
     }
 }

@@ -208,19 +208,27 @@
                 .Where(s => s.IsChecked && s.Id.HasValue)
                 .ForEach(s =>
             {
-                    var submission = this.submissionTypesData.GetById(s.Id.Value);
-                    newProblem.SubmissionTypes.Add(submission);
-                    
+                var submission = this.submissionTypesData.GetById(s.Id.Value);
+                newProblem.SubmissionTypes.Add(submission);
+
+                if (!s.SolutionSkeletonData.IsNullOrEmpty() || s.TimeLimit >= 0)
+                {
+                    var problemSubmissionSkeleton = new ProblemSubmissionTypeSkeleton()
+                    {
+                        ProblemId = problem.Id,
+                        SubmissionTypeId = submission.Id,
+                    };
+
                     if (!s.SolutionSkeletonData.IsNullOrEmpty())
                     {
-                        newProblem.ProblemSubmissionTypesSkeletons.Add(
-                            new ProblemSubmissionTypeSkeleton
-                            {
-                                ProblemId = problem.Id,
-                                SubmissionTypeId = submission.Id,
-                                SolutionSkeleton = this.GetOptimizedSolutionSkeleton(problem, s.SolutionSkeleton)?.Compress()
-                            });
+                        problemSubmissionSkeleton.SolutionSkeleton = this.GetOptimizedSolutionSkeleton(problem, s.SolutionSkeleton)?.Compress();
                     }
+                    if (s.TimeLimit >= 0)
+                    {
+                        problemSubmissionSkeleton.TimeLimit = s.TimeLimit;
+                    }
+                    newProblem.ProblemSubmissionTypesSkeletons.Add(problemSubmissionSkeleton);
+                }
             });
 
             if (problem.SolutionSkeletonData != null && problem.SolutionSkeletonData.Any())
@@ -375,19 +383,19 @@
                     existingProblem.AdditionalFiles = archiveStream.ToArray();
                 }
             }
-            
+
             var currentSubmissionTypes = problem
                 .SubmissionTypes
                 .Where(x => x.IsChecked && x.Id.HasValue)
                 .ToList();
-            
+
             currentSubmissionTypes.ForEach(
                     s =>
                     {
                         var submission = this.submissionTypesData.GetById(s.Id.Value);
                         existingProblem.SubmissionTypes.Add(submission);
                     });
-            
+
             this.ProcessProblemSubmissionTypesSkeletons(problem, currentSubmissionTypes, existingProblem);
 
             this.problemsData.Update(existingProblem);
@@ -659,7 +667,7 @@
         }
 
         [HttpPost]
-        public JsonResult ReadSubmissions([DataSourceRequest]DataSourceRequest request, int id)
+        public JsonResult ReadSubmissions([DataSourceRequest] DataSourceRequest request, int id)
         {
             if (!this.CheckIfUserHasProblemPermissions(id))
             {
@@ -685,7 +693,7 @@
         }
 
         [HttpPost]
-        public ActionResult ReadResources([DataSourceRequest]DataSourceRequest request, int id)
+        public ActionResult ReadResources([DataSourceRequest] DataSourceRequest request, int id)
         {
             if (!this.CheckIfUserHasProblemPermissions(id))
             {
@@ -988,38 +996,59 @@
 
             return skeleton;
         }
-        
+
         private void ProcessProblemSubmissionTypesSkeletons(
             ProblemAdministrationViewModel problem,
             List<SubmissionTypeViewModel> currentSubmissionTypes,
             Problem existingProblem)
         {
             currentSubmissionTypes?
-                .Where(x => !x.SolutionSkeletonData.IsNullOrEmpty())
                 .ForEach(
                     s =>
                     {
                         var currentPst = existingProblem
-                            .ProblemSubmissionTypesSkeletons
-                            .FirstOrDefault(pst => s.Id.HasValue && pst.SubmissionTypeId == s.Id.Value);
-
-                        if (currentPst != null)
+                                .ProblemSubmissionTypesSkeletons
+                                .FirstOrDefault(pst => s.Id.HasValue && pst.SubmissionTypeId == s.Id.Value);
+                        if (!s.SolutionSkeletonData.IsNullOrEmpty())
                         {
-                            currentPst.SolutionSkeleton =
-                                this.GetOptimizedSolutionSkeleton(problem, s.SolutionSkeleton)?.Compress();
+                            if (currentPst != null)
+                            {
+                                currentPst.TimeLimit = s.TimeLimit;
+                                currentPst.SolutionSkeleton =
+                                    this.GetOptimizedSolutionSkeleton(problem, s.SolutionSkeleton)?.Compress();
+                            }
+                            else
+                            {
+                                existingProblem.ProblemSubmissionTypesSkeletons.Add(
+                                    new ProblemSubmissionTypeSkeleton
+                                    {
+                                        ProblemId = problem.Id,
+                                        SubmissionTypeId = s.Id.Value,
+                                        SolutionSkeleton = this.GetOptimizedSolutionSkeleton(problem, s.SolutionSkeleton)
+                                            ?.Compress(),
+                                        TimeLimit = s.TimeLimit
+                                    });
+                            }
                         }
                         else
                         {
-                            existingProblem.ProblemSubmissionTypesSkeletons.Add(
-                                new ProblemSubmissionTypeSkeleton
-                                {
-                                    ProblemId = problem.Id,
-                                    SubmissionTypeId = s.Id.Value,
-                                    SolutionSkeleton = this.GetOptimizedSolutionSkeleton(problem, s.SolutionSkeleton)
-                                        ?.Compress()
-                                });
+                            if (currentPst != null)
+                            {
+                                currentPst.TimeLimit = s.TimeLimit;
+                            }
+                            else
+                            {
+                                existingProblem.ProblemSubmissionTypesSkeletons.Add(
+                                  new ProblemSubmissionTypeSkeleton
+                                  {
+                                      ProblemId = problem.Id,
+                                      SubmissionTypeId = s.Id.Value,
+                                      TimeLimit = s.TimeLimit
+                                  });
+                            }
                         }
                     });
+
 
             problem.SubmissionTypes
                 .Where(
