@@ -18,7 +18,7 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
         => new Func<Contest, Contest, AdminActionContext, ValidatorResult>[]
         {
             ValidateContestStartTime, ValidateContestPracticeStartTime, ValidateOnlineContestDuration,
-            ValidateOnlineContestDuration, ValidateOnsiteContestEndTime, ValidateActiveContestCannotEditDurationTypeOnEdit,
+            ValidateOnlineContestDuration, ValidateActiveContestCannotEditDurationTypeOnEdit,
             ValidateContestIsNotActiveOnDelete,
             ValidateCategoryIsSet,
         };
@@ -83,19 +83,6 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
             if (newContest.Duration.Value.TotalHours >= 24)
             {
                 return ValidatorResult.Error(Resource.DurationInvalidFormat);
-            }
-        }
-
-        return ValidatorResult.Success();
-    }
-
-    private static ValidatorResult ValidateOnsiteContestEndTime(Contest oldContest, Contest newContest, AdminActionContext adminActionContext)
-    {
-        if (newContest.IsOnsiteExam)
-        {
-            if (!newContest.EndTime.HasValue)
-            {
-                return ValidatorResult.Error(string.Format(Resource.RequiredContestEndTimeField));
             }
         }
 
