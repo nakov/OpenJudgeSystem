@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import isNil from 'lodash/isNil';
 
@@ -13,7 +13,6 @@ const SubmissionDetailsPage = () => {
     const { state: { params } } = useRouteUrlParams();
     const { submissionId } = params;
     const {
-        state: { currentSubmission },
         actions: {
             getDetails,
             selectSubmissionById,
@@ -32,28 +31,16 @@ const SubmissionDetailsPage = () => {
         [ isLoggedIn, navigate, getLoginUrl ],
     );
 
-    const [ selectedSubmissionId, setSelectedSubmissionId ] = useState(currentSubmission?.id);
-
-    useEffect(
-        () => {
             if (selectedSubmissionId === submissionId || isNil(submissionId)) {
-                return;
-            }
-
-            setSelectedSubmissionId(Number(submissionId));
-        },
-        [ selectedSubmissionId, submissionId ],
-    );
-
     useEffect(
         () => {
-            if (isNil(selectedSubmissionId)) {
+            if (isNil(submissionId)) {
                 return;
             }
 
-            selectSubmissionById(selectedSubmissionId);
+            selectSubmissionById(submissionId);
         },
-        [ getDetails, selectedSubmissionId, selectSubmissionById ],
+        [ getDetails, selectSubmissionById, submissionId ],
     );
 
     return (
