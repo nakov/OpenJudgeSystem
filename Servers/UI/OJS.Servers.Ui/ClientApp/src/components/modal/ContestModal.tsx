@@ -20,7 +20,7 @@ const ContestModal = ({ contest, openModal }: IContestModalProps) => {
     const [ open, setOpen ] = useState<boolean>(false);
     const { getParticipateInContestUrl } = useAppUrls();
 
-    useEffect(() => setOpen(openModal), [ openModal ]);
+    useEffect(() => console.log('test'));
 
     console.log(openModal);
     console.log(contest);
