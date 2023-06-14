@@ -14,6 +14,9 @@ import { useUrls } from './use-urls';
 interface IAuthContext {
     state: {
         user: IUserType;
+        loginOrGetAuthInitiated: boolean;
+        isGetAuthInfoUnauthorized: boolean;
+        hasCompletedGetAuthInfo: boolean;
         isLoggedIn: boolean;
         loginErrorMessage: string;
     };
@@ -21,6 +24,7 @@ interface IAuthContext {
         signIn: () => void;
         signOut: () => Promise<void>;
         getUser: () => IUserType;
+        loadAuthInfo: () => Promise<void>;
         setUsername: (value: string) => void;
         setPassword: (value: string) => void;
     };
@@ -71,6 +75,23 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
 
     const { post: logout } = useHttp({ url: getLogoutUrl });
 
+    const loginOrGetAuthInitiated = useMemo(
+        () => getAuthInfoStatus !== HttpStatus.NotStarted ||
+        loginSubmitStatus !== HttpStatus.NotStarted,
+        [ getAuthInfoStatus, loginSubmitStatus ],
+    );
+
+    const hasCompletedGetAuthInfo = useMemo(
+        () => getAuthInfoStatus !== HttpStatus.NotStarted &&
+            getAuthInfoStatus !== HttpStatus.Pending,
+        [ getAuthInfoStatus ],
+    );
+
+    const isGetAuthInfoUnauthorized = useMemo(
+        () => getAuthInfoStatus === HttpStatus.Unauthorized,
+        [ getAuthInfoStatus ],
+    );
+
     const getUser = useCallback(
         () => internalUser,
         [ internalUser ],
@@ -82,10 +103,14 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
     );
 
     const getAuth = useCallback(async () => {
-        startLoading();
+        if (loginOrGetAuthInitiated || isLoggedIn) {
+            return;
+        }
+
+        // startLoading();
         await getAuthInfo();
-        stopLoading();
-    }, [ getAuthInfo, startLoading, stopLoading ]);
+        // stopLoading();
+    }, [ getAuthInfo, isLoggedIn, loginOrGetAuthInitiated ]);
 
     const getUserFromResponse = useCallback((authInfoResponse: IUserResponseType) => {
         if (isNil(authInfoResponse)) {
@@ -94,12 +119,12 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
 
         const isAdmin = isEmpty(authInfoResponse.roles)
             ? false
-            : isNil(authInfoResponse?.roles
+            : !isNil(authInfoResponse?.roles
                 .find((role) => role.name.toLowerCase() === 'administrator'));
 
         return {
             id: authInfoResponse.id,
-            username: authInfoResponse.username,
+            username: authInfoResponse.userName,
             email: authInfoResponse.email,
             permissions: { canAccessAdministration: isAdmin } as IUserPermissionsType,
         } as IUserType;
@@ -147,6 +172,8 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
         (async () => {
             await getAuth();
         })();
+
+        window.location.reload();
     }, [
         loginSubmitResponse,
         loginSubmitStatus,
@@ -161,34 +188,29 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
             return;
         }
 
-        if (!isGetAuthInfoSuccess) {
-            return;
-        }
-
         setUserDetails(getUserFromResponse(authInfo));
     }, [ authInfo, getUserFromResponse, isGetAuthInfoSuccess, setUserDetails ]);
 
     useEffect(() => {
-        console.log(internalUser);
-        console.log(isLoggedIn);
-    }, [ internalUser, isLoggedIn ]);
-
-    useEffect(() => {
-        if (getAuthInfoStatus !== HttpStatus.NotStarted ||
-            loginSubmitStatus !== HttpStatus.NotStarted ||
-            isLoggedIn) {
+        // If we are already logged in,
+        // initiated getAuth or login request,
+        // don't try to get auth info again
+        if (loginOrGetAuthInitiated || isLoggedIn) {
             return;
         }
 
         (async () => {
             await getAuth();
         })();
-    }, [ getAuth, getAuthInfoStatus, isLoggedIn, loginSubmitStatus ]);
+    }, [ getAuth, isLoggedIn, loginOrGetAuthInitiated ]);
 
     const value = useMemo(
         () => ({
             state: {
                 user: internalUser,
+                loginOrGetAuthInitiated,
+                hasCompletedGetAuthInfo,
+                isGetAuthInfoUnauthorized,
                 isLoggedIn,
                 loginErrorMessage,
             },
@@ -196,11 +218,13 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
                 signIn,
                 signOut,
                 getUser,
+                loadAuthInfo: getAuth,
                 setUsername,
                 setPassword,
             },
         }),
-        [ getUser, internalUser, isLoggedIn, loginErrorMessage, signIn, signOut ],
+        [ getAuth, getUser, hasCompletedGetAuthInfo, internalUser, isLoggedIn,
+            loginErrorMessage, loginOrGetAuthInitiated, isGetAuthInfoUnauthorized, signIn, signOut ],
     );
 
     return (

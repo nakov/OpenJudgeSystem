@@ -1,9 +1,8 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, useCallback } from 'react';
 import {
     Navigate,
     useLocation,
 } from 'react-router';
-import isNil from 'lodash/isNil';
 
 import { Anything } from '../../common/common-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
@@ -12,20 +11,33 @@ import { useAuth } from '../../hooks/use-auth';
 type IPrivatePageProps = IHaveChildrenProps
 
 const PrivatePage = ({ children }: IPrivatePageProps) => {
-    const { state: { user } } = useAuth();
+    const {
+        state: {
+            isLoggedIn,
+            isGetAuthInfoUnauthorized,
+            hasCompletedGetAuthInfo,
+        },
+    } = useAuth();
     const location = useLocation();
-    const isLoggedIn = useMemo(() => isNil(user), [ user ]);
 
-    const state = { from: location };
+    const render = useCallback(() => {
+        // Do not render if has not attempted to load user or not logged in
+        if ((!hasCompletedGetAuthInfo || !isGetAuthInfoUnauthorized) && !isLoggedIn) {
+            // User still not loaded in state
+            return null;
+        }
 
-    if (isLoggedIn) {
+        if (isGetAuthInfoUnauthorized) {
+            const state = { from: location };
+
+            return <Navigate to="/login" state={state} />;
+        }
+
         // eslint-disable-next-line react/jsx-no-useless-fragment
         return <>{children}</>;
-    }
+    }, [ hasCompletedGetAuthInfo, isGetAuthInfoUnauthorized, location, isLoggedIn, children ]);
 
-    return (
-        <Navigate to="/login" state={state} />
-    );
+    return render();
 };
 
 const makePrivate = (ComponentToWrap: FC) => (props: Anything) => (

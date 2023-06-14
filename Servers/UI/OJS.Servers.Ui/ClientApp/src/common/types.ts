@@ -116,7 +116,7 @@ interface IUserRoleType {
 
 interface IUserResponseType {
     id: string;
-    username: string;
+    userName: string;
     email: string;
     roles: IUserRoleType[];
 }
