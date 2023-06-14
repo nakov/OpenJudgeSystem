@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IIndexContestsType } from '../../../common/types';
@@ -40,13 +41,17 @@ const ContestCard = ({ contest }: IContestCardProps) => {
 
     const renderCountdown = useCallback(
         () => {
-            if (canBePracticed && practiceEndTime == null) {
+            const endDate = canBeCompeted
+                ? endTime
+                : practiceEndTime;
+
+            if (canBePracticed && isNil(practiceEndTime) && isNil(endDate)) {
                 return <p>No practice end time.</p>;
             }
 
-            const endDate = canBeCompeted && !canBePracticed
-                ? endTime
-                : practiceEndTime;
+            if ((!canBePracticed && !canBeCompeted) || isNil(endDate)) {
+                return <p>No available remaining time.</p>;
+            }
 
             return (
                 <Countdown
