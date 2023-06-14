@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import first from 'lodash/first';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
@@ -30,7 +31,11 @@ const SubmissionDetails = () => {
             currentSubmissionDetailsResults,
             validationErrors,
         },
-        actions: { getSubmissionDetailsResults },
+        actions: {
+            getSubmissionDetailsResults,
+            setCurrentSubmission,
+            selectSubmissionById,
+        },
     } = useSubmissionsDetails();
     const { actions: { setPageTitle } } = usePageTitles();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
@@ -53,6 +58,8 @@ const SubmissionDetails = () => {
     const { getParticipateInContestUrl } = useAppUrls();
 
     const { state: { user } } = useAuth();
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (isNil(currentSubmission)) {
@@ -298,6 +305,15 @@ const SubmissionDetails = () => {
         [ currentSubmissionDetailsResults, currentSubmission, renderButtonsSection, renderSubmissionInfo ],
     );
 
+    const setSubmissionAndStartParticipation = useCallback(
+        () => {
+            navigate(participateInContestUrl);
+            setCurrentSubmission(null);
+            selectSubmissionById(null);
+        },
+        [ setCurrentSubmission, navigate, participateInContestUrl, selectSubmissionById ],
+    );
+
     const codeEditor = useCallback(
         () => (
             <div className={styles.code}>
@@ -307,10 +323,10 @@ const SubmissionDetails = () => {
                 >
                     <div className={styles.btnContainer}>
                         <LeftArrowIcon className={styles.leftArrow} size={IconSize.Large} />
-                        <LinkButton
-                          type={LinkButtonType.secondary}
+                        <Button
+                          type={ButtonType.secondary}
                           size={ButtonSize.small}
-                          to={participateInContestUrl}
+                          onClick={() => setSubmissionAndStartParticipation()}
                           className={styles.backBtn}
                           text="Back To Contest"
                           state={backButtonState}
@@ -341,10 +357,10 @@ const SubmissionDetails = () => {
             problemNameHeadingText,
             submissionType,
             backButtonState,
-            participateInContestUrl,
             renderResourceLink,
             renderDownloadErrorMessage,
             currentSubmission,
+            setSubmissionAndStartParticipation,
         ],
     );
 
