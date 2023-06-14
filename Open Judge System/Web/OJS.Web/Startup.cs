@@ -14,6 +14,7 @@ namespace OJS.Web
         {
             this.ConfigureAuth(app);
             this.ConfigureHangfire(app);
+            this.RunSeeders(app);
         }
 
         private void ConfigureHangfire(IAppBuilder app)

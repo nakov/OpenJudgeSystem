@@ -43,12 +43,10 @@
         //// TODO: Add seed with .Any()
         protected void SeedRoles(OjsDbContext context)
         {
-            foreach (var entity in context.Roles)
-            {
-                context.Roles.Remove(entity);
-            }
-
             context.Roles.AddOrUpdate(new IdentityRole(GlobalConstants.AdministratorRoleName));
+            context.Roles.AddOrUpdate(new IdentityRole(GlobalConstants.LecturerRoleName));
+
+            context.SaveChanges();
         }
 
         protected void SeedCheckers(OjsDbContext context)

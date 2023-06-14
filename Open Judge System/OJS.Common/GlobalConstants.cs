@@ -48,6 +48,9 @@
         public const string AdministratorRoleName = "Administrator";
 
         public const string AdministrationAreaName = "Administration";
+        
+        public const string AdministratorUserName = "judgeadmin";
+        public const string AdministratorEmail = "judgeadmin@softuni.bg";
 
         public const int FileExtentionMaxLength = 4;
 

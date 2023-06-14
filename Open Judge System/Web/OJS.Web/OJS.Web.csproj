@@ -1718,6 +1718,7 @@
     <Compile Include="App_Start\Settings.cs" />
     <Compile Include="App_Start\SimpleInjectorConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="App_Start\Startup.Seeder.cs" />
     <Compile Include="App_Start\ViewEngineConfig.cs" />
     <Compile Include="Areas\Administration\AdministrationAreaRegistration.cs" />
     <Compile Include="Areas\Administration\Controllers\AccessLogsController.cs" />
@@ -1875,8 +1876,11 @@
     <Compile Include="Infrastructure\Filters\LogAccessFilter.cs" />
     <Compile Include="Infrastructure\Filters\PopulateMainContestCategoriesIntoViewBagFilter.cs" />
     <Compile Include="Infrastructure\Filters\ValidateRemoteDataApiKeyFilter.cs" />
+    <Compile Include="Infrastructure\Seeders\AdministratorSeeder.cs" />
+    <Compile Include="Infrastructure\Seeders\ISeeder.cs" />
     <Compile Include="Infrastructure\SimpleInjectorPackages\ActionFiltersPackage.cs" />
     <Compile Include="Infrastructure\SimpleInjectorPackages\DataPackage.cs" />
+    <Compile Include="Infrastructure\SimpleInjectorPackages\SeederPackage.cs" />
     <Compile Include="Infrastructure\SimpleInjectorPackages\ServicesPackage.cs" />
     <Compile Include="Infrastructure\SimpleInjectorPackages\ToolsPackage.cs" />
     <Compile Include="ViewModels\Account\ChangeUsernameViewModel.cs" />
