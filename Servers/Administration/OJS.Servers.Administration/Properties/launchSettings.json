@@ -29,7 +29,7 @@
       "applicationUrl": "http://localhost:5001",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "DbContext": "Server=217.174.159.217;Database=OpenJudgeSystem;User Id=sa;Password=jQ39xXfSAKC8C6yQQFrPtyhKUBhdK4L7;",
+        "DbContext": "Server=217.174.159.217;Database=OpenJudgeSystem;User Id=sa;Password=1234;",
         "UI_URL": "http://localhost:5002",
         "SULS_PLATFORM_BASE_URL": "https://localhost:44304",
         "SULS_PLATFORM_API_KEY": "1234",
