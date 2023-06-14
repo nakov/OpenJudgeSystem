@@ -31,7 +31,6 @@ const SubmissionDetailsPage = () => {
         [ isLoggedIn, navigate, getLoginUrl ],
     );
 
-            if (selectedSubmissionId === submissionId || isNil(submissionId)) {
     useEffect(
         () => {
             if (isNil(submissionId)) {
