@@ -23,7 +23,7 @@ const PrivatePage = ({ children }: IPrivatePageProps) => {
         // Do not render if has not attempted to load user
         if (!hasCompletedGetAuthInfo) {
             // User still not loaded in state
-            return null;
+            return <p>Loading user data...</p>;
         }
 
         if (!isLoggedIn) {
