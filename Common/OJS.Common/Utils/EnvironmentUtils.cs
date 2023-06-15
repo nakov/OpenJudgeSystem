@@ -45,10 +45,6 @@ namespace OJS.Common.Utils
             IEnumerable<string> configurationValues)
             => ValidateEnvironmentVariableExists(configurationValues, GetByKey);
 
-        public static void ValidateApplicationUrlsExist(
-            IEnumerable<ApplicationName> appNames)
-            => ValidateEnvironmentVariableExists(appNames, GetApplicationUrl);
-
         public static bool IsProduction()
             => Environment.GetEnvironmentVariable(EnvironmentKey) == ProductionValue;
 

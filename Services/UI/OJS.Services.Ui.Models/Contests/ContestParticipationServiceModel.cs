@@ -2,7 +2,6 @@
 
 using AutoMapper;
 using OJS.Data.Models.Participants;
-using OJS.Services.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System;
 using System.Linq;
@@ -36,12 +35,13 @@ public class ContestParticipationServiceModel : IMapExplicitly
                     : null))
             .ForMember(d => d.RemainingTimeInMilliseconds, opt => opt.MapFrom(s =>
                 s.ParticipationEndTime.HasValue
-                    ? (s.ParticipationEndTime.Value - DateTime.Now).TotalMilliseconds
+                    ? (s.ParticipationEndTime.Value - DateTime.UtcNow).TotalMilliseconds
                     : 0))
             .ForMember(d => d.TotalParticipantsCount, opt => opt.MapFrom(s =>
                 s.Contest.Participants.Count))
             .ForMember(d => d.ActiveParticipantsCount, opt => opt.MapFrom(s =>
                 s.Contest.Participants.Count(x =>
-                    x.ParticipationStartTime <= DateTime.Now && DateTime.Now < x.ParticipationEndTime)))
+                    x.ParticipationStartTime != null && x.ParticipationEndTime != null &&
+                    x.ParticipationStartTime <= DateTime.UtcNow && DateTime.UtcNow < x.ParticipationEndTime)))
             .ForAllOtherMembers(opt => opt.Ignore());
 }
