@@ -1,12 +1,10 @@
 namespace OJS.Services.Ui.Business.Implementations
 {
-    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using FluentExtensions.Extensions;
     using OJS.Common;
-    using OJS.Common.Enumerations;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Participants;
     using OJS.Services.Common;
@@ -14,6 +12,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Infrastructure.Constants;
     using OJS.Services.Infrastructure.Exceptions;
     using OJS.Services.Ui.Business.Validation;
+    using OJS.Services.Ui.Business.Validations.Implementations.Contests;
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Contests;
     using OJS.Services.Ui.Models.Search;
@@ -71,7 +70,13 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var contest = await this.contestsData.OneById(id);
 
-            var validationResult = this.contestValidationService.GetValidationResult((contest, id, user.Id, user.IsAdmin, official) !);
+            var validationResult = this.contestValidationService.GetValidationResult((
+                contest,
+                id,
+                user.Id,
+                user.IsAdmin,
+                official) !);
+
             if (!validationResult.IsValid)
             {
                 throw new BusinessServiceException(validationResult.Message);
@@ -126,7 +131,12 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var user = this.userProviderService.GetCurrentUser();
 
-            var validationResult = this.contestValidationService.GetValidationResult((contest, model.ContestId, user?.Id, user!.IsAdmin, model.IsOfficial) !);
+            var validationResult = this.contestValidationService.GetValidationResult((
+                contest,
+                model.ContestId,
+                user.Id,
+                user!.IsAdmin,
+                model.IsOfficial) !);
 
             if (!validationResult.IsValid)
             {
