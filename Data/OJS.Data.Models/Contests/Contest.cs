@@ -126,10 +126,10 @@ namespace OJS.Data.Models.Contests
                 if (!this.EndTime.HasValue)
                 {
                     // Compete forever
-                    return this.StartTime <= DateTime.Now;
+                    return this.StartTime <= DateTime.UtcNow;
                 }
 
-                return this.StartTime <= DateTime.Now && DateTime.Now <= this.EndTime;
+                return this.StartTime <= DateTime.UtcNow && DateTime.UtcNow <= this.EndTime;
             }
         }
 
@@ -158,10 +158,10 @@ namespace OJS.Data.Models.Contests
                 if (!this.PracticeEndTime.HasValue)
                 {
                     // Practice forever
-                    return this.PracticeStartTime <= DateTime.Now;
+                    return this.PracticeStartTime <= DateTime.UtcNow;
                 }
 
-                return this.PracticeStartTime <= DateTime.Now && DateTime.Now <= this.PracticeEndTime;
+                return this.PracticeStartTime <= DateTime.UtcNow && DateTime.UtcNow <= this.PracticeEndTime;
             }
         }
 
@@ -172,7 +172,7 @@ namespace OJS.Data.Models.Contests
                 this.Participants.Any(p =>
                     p.IsOfficial &&
                     p.ParticipationEndTime.HasValue &&
-                    p.ParticipationEndTime.Value >= DateTime.Now));
+                    p.ParticipationEndTime.Value >= DateTime.UtcNow));
 
         [NotMapped]
         public bool ResultsArePubliclyVisible
@@ -195,7 +195,7 @@ namespace OJS.Data.Models.Contests
                     return false;
                 }
 
-                return this.EndTime.HasValue && this.EndTime.Value <= DateTime.Now;
+                return this.EndTime.HasValue && this.EndTime.Value <= DateTime.UtcNow;
             }
         }
 
