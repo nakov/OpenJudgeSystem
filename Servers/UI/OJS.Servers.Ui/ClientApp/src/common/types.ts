@@ -44,6 +44,7 @@ interface IContestType {
     isDeleted: boolean;
     isVisible: boolean;
     isOnline: boolean;
+    isExam: boolean;
     allowedSubmissionTypes: ISubmissionTypeType[];
     problems: IProblemType[];
     canBeCompeted: boolean;
