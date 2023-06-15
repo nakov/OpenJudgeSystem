@@ -184,7 +184,7 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
         (async () => {
             await getAuth();
         })();
-    }, [ getAuth, isLoggedIn, loginOrGetAuthInitiated ]);
+    }, [ getAuth ]);
 
     const value = useMemo(
         () => ({
