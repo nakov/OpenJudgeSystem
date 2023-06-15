@@ -102,6 +102,7 @@ namespace OJS.Common
             public const string ProblemGroupsCountLimit = "Problem groups count cannot be more than {0}";
             public const string ReportZipFormat = "{1} submissions for {0}.zip";
             public const string RequiredFieldForOnline = "The field is required for Online Contest";
+            public const string RequiredContestEndTimeField = "Contest EndTime cannot be null!";
             public const string SelectOneSubmissionType = "Choose at least one submission type!";
             public const string SubtractedTimeFromParticipantsOnline = "Successfully subtracted {0} minutes from the times of all selected active participants in the contest {1}";
             public const string SubtractedTimeFromSingleParticipantOnline = "Successfully subtracted {0} minutes from the time of the participant with username: {1}, in the contest {2}";
