@@ -15,7 +15,6 @@ interface IAuthContext {
     state: {
         user: IUserType;
         loginOrGetAuthInitiated: boolean;
-        isGetAuthInfoUnauthorized: boolean;
         hasCompletedGetAuthInfo: boolean;
         isLoggedIn: boolean;
         loginErrorMessage: string;
@@ -23,7 +22,6 @@ interface IAuthContext {
     actions: {
         signIn: () => void;
         signOut: () => Promise<void>;
-        getUser: () => IUserType;
         loadAuthInfo: () => Promise<void>;
         setUsername: (value: string) => void;
         setPassword: (value: string) => void;
@@ -87,22 +85,15 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
         [ getAuthInfoStatus ],
     );
 
-    const isGetAuthInfoUnauthorized = useMemo(
-        () => getAuthInfoStatus === HttpStatus.Unauthorized,
-        [ getAuthInfoStatus ],
-    );
-
-    const getUser = useCallback(
-        () => internalUser,
-        [ internalUser ],
-    );
-
     const isLoggedIn = useMemo(
         () => isGetAuthInfoSuccess && !isEmpty(internalUser.id),
         [ internalUser, isGetAuthInfoSuccess ],
     );
 
     const getAuth = useCallback(async () => {
+        // If we are already logged in,
+        // initiated getAuth or login request,
+        // don't try to get auth info again
         if (loginOrGetAuthInitiated || isLoggedIn) {
             return;
         }
@@ -190,13 +181,6 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
     }, [ authInfo, getUserFromResponse, isGetAuthInfoSuccess, setUserDetails ]);
 
     useEffect(() => {
-        // If we are already logged in,
-        // initiated getAuth or login request,
-        // don't try to get auth info again
-        if (loginOrGetAuthInitiated || isLoggedIn) {
-            return;
-        }
-
         (async () => {
             await getAuth();
         })();
@@ -208,21 +192,27 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
                 user: internalUser,
                 loginOrGetAuthInitiated,
                 hasCompletedGetAuthInfo,
-                isGetAuthInfoUnauthorized,
                 isLoggedIn,
                 loginErrorMessage,
             },
             actions: {
                 signIn,
                 signOut,
-                getUser,
                 loadAuthInfo: getAuth,
                 setUsername,
                 setPassword,
             },
         }),
-        [ getAuth, getUser, hasCompletedGetAuthInfo, internalUser, isLoggedIn,
-            loginErrorMessage, loginOrGetAuthInitiated, isGetAuthInfoUnauthorized, signIn, signOut ],
+        [
+            getAuth,
+            hasCompletedGetAuthInfo,
+            internalUser,
+            isLoggedIn,
+            loginErrorMessage,
+            loginOrGetAuthInitiated,
+            signIn,
+            signOut,
+        ],
     );
 
     return (

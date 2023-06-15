@@ -3,10 +3,10 @@
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
     using OJS.Data.Models.Users;
     using OJS.Services.Common;
-    using OJS.Services.Infrastructure.Exceptions;
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Search;
     using OJS.Services.Ui.Models.Users;
@@ -60,25 +60,20 @@
         public async Task AddOrUpdateUser(UserProfile user)
             => await this.usersProfileData.AddOrUpdate<UserProfileServiceModel>(user);
 
-        public async Task<UserAuthInfoServiceModel> GetAuthInfo()
+        public async Task<UserAuthInfoServiceModel?> GetAuthInfo()
         {
             var currentUser = this.userProvider.GetCurrentUser();
 
-            if (currentUser == null)
+            if (currentUser.IsNull())
             {
-                throw new BusinessServiceException("No user is currently in logged in session.");
+                return null;
             }
 
             var profile = await this.usersProfileData
                 .GetByIdQuery(currentUser.Id!)
                 .FirstOrDefaultAsync();
 
-            if (profile == null)
-            {
-                throw new BusinessServiceException("No profile found for user");
-            }
-
-            return profile.Map<UserAuthInfoServiceModel>();
+            return profile?.Map<UserAuthInfoServiceModel>();
         }
     }
 }

@@ -20,6 +20,6 @@
 
         Task AddOrUpdateUser(UserProfile userEntity);
 
-        Task<UserAuthInfoServiceModel> GetAuthInfo();
+        Task<UserAuthInfoServiceModel?> GetAuthInfo();
     }
 }

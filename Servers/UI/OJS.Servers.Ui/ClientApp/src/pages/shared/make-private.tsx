@@ -14,20 +14,19 @@ const PrivatePage = ({ children }: IPrivatePageProps) => {
     const {
         state: {
             isLoggedIn,
-            isGetAuthInfoUnauthorized,
             hasCompletedGetAuthInfo,
         },
     } = useAuth();
     const location = useLocation();
 
-    const render = useCallback(() => {
-        // Do not render if has not attempted to load user or not logged in
-        if ((!hasCompletedGetAuthInfo || !isGetAuthInfoUnauthorized) && !isLoggedIn) {
+    const renderPageOrRedirectToLogin = useCallback(() => {
+        // Do not render if has not attempted to load user
+        if (!hasCompletedGetAuthInfo) {
             // User still not loaded in state
             return null;
         }
 
-        if (isGetAuthInfoUnauthorized) {
+        if (!isLoggedIn) {
             const state = { from: location };
 
             return <Navigate to="/login" state={state} />;
@@ -35,9 +34,9 @@ const PrivatePage = ({ children }: IPrivatePageProps) => {
 
         // eslint-disable-next-line react/jsx-no-useless-fragment
         return <>{children}</>;
-    }, [ hasCompletedGetAuthInfo, isGetAuthInfoUnauthorized, location, isLoggedIn, children ]);
+    }, [ hasCompletedGetAuthInfo, location, isLoggedIn, children ]);
 
-    return render();
+    return renderPageOrRedirectToLogin();
 };
 
 const makePrivate = (ComponentToWrap: FC) => (props: Anything) => (

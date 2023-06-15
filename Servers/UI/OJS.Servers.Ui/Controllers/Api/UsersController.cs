@@ -31,6 +31,7 @@ public class UsersController : BaseApiController
             .ToOkResult();
 
     [HttpGet]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(UserAuthInfoServiceModel), Status200OK)]
     public async Task<IActionResult> GetUserAuthInfo()
         => await this.usersBusiness
