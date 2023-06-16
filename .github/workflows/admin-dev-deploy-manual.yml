@@ -1,9 +1,11 @@
-name: Administration dev deploy
+name: Administration dev manual deploy
 
 on:
   workflow_dispatch:
-    branches:
-      - v2-development
+    inputs:
+      branch:
+        description: 'v2-development'
+        required: true
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
