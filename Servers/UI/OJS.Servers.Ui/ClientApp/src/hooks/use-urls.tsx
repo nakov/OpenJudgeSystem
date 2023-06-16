@@ -21,6 +21,7 @@ import { IHaveChildrenProps } from '../components/common/Props';
 interface IUrlsContext {
     getLoginSubmitUrl: () => string;
     getLogoutUrl: () => string;
+    getUserAuthInfoUrl: () => string;
     getPlatformRegisterUrl: () => string;
     getAdministrationContestsGridUrl: () => string;
     getAdministrationNavigation: () => string;
@@ -72,6 +73,7 @@ const baseApiUrl = `${baseUrl}/api`;
 const getLoginSubmitUrl = () => `${baseUrl}/Account/Login`;
 const getLogoutUrl = () => `${baseUrl}/Account/Logout`;
 
+const getUserAuthInfoUrl = () => `${baseApiUrl}/Users/GetUserAuthInfo`;
 const getPlatformRegisterUrl = () => `${platformBaseUrl}/identity/register`;
 
 // admin
@@ -188,6 +190,7 @@ const UrlsProvider = ({ children }: IUrlsProviderProps) => {
         () => ({
             getLoginSubmitUrl,
             getLogoutUrl,
+            getUserAuthInfoUrl,
             getPlatformRegisterUrl,
             getAdministrationContestsGridUrl,
             getAdministrationNavigation,
