@@ -4,12 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Data;
 using Microsoft.EntityFrameworkCore;
+using Infrastructure;
 using OJS.Data.Models;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Participants;
 using OJS.Services.Common.Models;
-using OJS.Services.Ui.Data;
 using OJS.Common.Extensions;
 using SharedResource = OJS.Common.Resources.ContestsGeneral;
 using Resource = OJS.Common.Resources.ParticipantsBusiness;
@@ -19,15 +20,18 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
     private readonly IParticipantsDataService participantsData;
     private readonly ISubmissionsDataService submissionsData;
     private readonly IContestsDataService contestsData;
+    private readonly IDatesService datesService;
 
     public ParticipantsBusinessService(
         IParticipantsDataService participantsData,
         ISubmissionsDataService submissionsData,
-        IContestsDataService contestsData)
+        IContestsDataService contestsData,
+        IDatesService datesService)
     {
         this.participantsData = participantsData;
         this.contestsData = contestsData;
         this.submissionsData = submissionsData;
+        this.datesService = datesService;
     }
 
     public async Task<Participant> CreateNewByContestByUserByIsOfficialAndIsAdmin(
@@ -38,10 +42,11 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
     {
         var participant = new Participant(contest.Id, userId, isOfficial) { Contest = contest };
 
+        var utcNow = this.datesService.GetUtcNow();
         if (isOfficial && contest.IsOnlineExam)
         {
-            participant.ParticipationStartTime = DateTime.Now;
-            participant.ParticipationEndTime = DateTime.Now + contest.Duration;
+            participant.ParticipationStartTime = utcNow;
+            participant.ParticipationEndTime = utcNow + contest.Duration;
 
             var isUserLecturerInByContestAndUser =
                 await this.contestsData.IsUserLecturerInByContestAndUser(contest.Id, userId);
@@ -53,7 +58,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
         }
         else if (isOfficial && contest.IsOnsiteExam)
         {
-            participant.ParticipationStartTime = DateTime.Now;
+            participant.ParticipationStartTime = utcNow;
             participant.ParticipationEndTime = contest.EndTime;
         }
 
