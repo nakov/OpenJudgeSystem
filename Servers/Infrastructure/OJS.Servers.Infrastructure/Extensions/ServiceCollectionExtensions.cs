@@ -113,7 +113,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                     DisableGlobalLocks = true,
                 }));
 
-            services.AddHangfireServer();
+            services.AddHangfireServer(options => options.ServerName = app.ToString());
 
             return services;
         }
