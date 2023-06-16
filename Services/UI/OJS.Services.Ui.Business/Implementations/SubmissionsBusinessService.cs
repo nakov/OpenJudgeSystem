@@ -3,13 +3,14 @@ namespace OJS.Services.Ui.Business.Implementations;
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Common;
 using OJS.Common;
 using OJS.Common.Helpers;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
 using OJS.Services.Common.Models.Users;
 using OJS.Services.Ui.Business.Validations.Implementations.Submissions;
-using Common;
+using Infrastructure;
 using Infrastructure.Exceptions;
 using Validation;
 using Data;
@@ -430,7 +431,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         => this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(DefaultCount);
 
     public Task<int> GetTotalCount()
-        => this.submissionsData.Count();
+        => this.submissionsData.GetTotalSubmissionsCount();
 
     private static void CacheTestRuns(Submission submission)
     {

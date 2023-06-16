@@ -20,6 +20,8 @@ jobs:
         echo "BUILD_DATE=$(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
         echo "GIT_SHA=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_ENV
         echo "DOCKERFILE_PATH=Docker/Dockerfile.ui" >> $GITHUB_ENV
+        echo "NODE_OPTIONS=--max_old_space_size=8192" >> $GITHUB_ENV
+        export NODE_OPTIONS=--max-old-space-size=8192
     - name: Checkout
       uses: actions/checkout@v3
       with:
@@ -68,6 +70,8 @@ jobs:
         cache-to: type=local,dest=/tmp/.buildx-cache
         secrets: |
           GIT_AUTH_TOKEN=${{ github.token }}
+      env:
+        NODE_OPTIONS: "--max_old_space_size=8192"
     - name: Invoke deployment hook
       uses: distributhor/workflow-webhook@v2
       env:
