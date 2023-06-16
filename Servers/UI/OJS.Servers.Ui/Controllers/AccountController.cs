@@ -84,7 +84,6 @@ namespace OJS.Servers.Ui.Controllers
         public async Task<IActionResult> Logout()
         {
             await this.signInManager.SignOutAsync();
-            this.HttpContext.ClearAuthInfoCookies();
             return this.RedirectToAction("Index", "Home");
         }
     }
