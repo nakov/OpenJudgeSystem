@@ -981,6 +981,9 @@ namespace OJS.Data.Migrations
                     b.Property<bool?>("IsPublic")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime?>("LastExecutionOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("datetime2");
 
