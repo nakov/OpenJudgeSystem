@@ -3,7 +3,6 @@ namespace OJS.Servers.Administration.Controllers
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using OJS.Data.Models.Users;
-    using OJS.Servers.Infrastructure.Extensions;
     using OJS.Services.Common;
     using System.Threading.Tasks;
 
@@ -23,7 +22,6 @@ namespace OJS.Servers.Administration.Controllers
         public async Task<IActionResult> Logout()
         {
             await this.signInManager.SignOutAsync();
-            this.HttpContext.ClearAuthInfoCookies();
             return this.Redirect(this.applicationUrls.GetUiUrlOrDefault());
         }
     }
