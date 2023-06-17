@@ -13,7 +13,6 @@ jobs:
             docker_tag: dev-latest
             branch_name: v2-development
         secrets:
-            github_user_PAT: ${{ secrets.SOFTUNIBUILD_PAT }}
             webhook_url: ${{ secrets.ADMIN_WEBHOOK_URL }}
             webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
         
