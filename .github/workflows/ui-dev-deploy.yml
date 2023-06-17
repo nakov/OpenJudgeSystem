@@ -19,5 +19,5 @@ jobs:
     needs: [build-and-push]
     uses: ./.github/workflows/deploy.yml
     secrets:
-      webhook_url: ${{ secrets.ADMIN_WEBHOOK_URL }}
+      webhook_url: ${{ secrets.UI_WEBHOOK_URL }}
       webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
