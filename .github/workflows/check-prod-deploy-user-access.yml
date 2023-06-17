@@ -1,3 +1,5 @@
+name: Z. Check user deploy permissions (called)
+
 on:
   workflow_call:
 jobs:

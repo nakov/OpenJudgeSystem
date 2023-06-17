@@ -1,3 +1,5 @@
+name: Z. Deploy (called)
+
 on:
   workflow_call:
     secrets:
