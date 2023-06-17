@@ -8,7 +8,7 @@ jobs:
     steps:
     - name: Check if user is in team 'Alpha Judge Prod deploy'
       id: checkUserMember
-      uses: tspascoal/get-user-teams-membership@v1.0.0
+      uses: tspascoal/get-user-teams-membership@v2
       with:
         username: ${{ github.triggering_actor }}
         team: 'Alpha Judge Prod deploy'
