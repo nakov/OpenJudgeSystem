@@ -4,16 +4,18 @@ on:
   workflow_dispatch:
   workflow_call:
 jobs:
-    build-push-and-deploy:
-        uses: ./.github/workflows/build-push-deploy.yml
-        with:
-            deploy: true
-            docker_image_name: judge_web_administration
-            dockerfile_name: Dockerfile.administration
-            docker_tag: dev-latest
-            branch_name: v2-development
-        secrets:
-            github_user_PAT: ${{ secrets.SOFTUNIBUILD_PAT }}
-            webhook_url: ${{ secrets.ADMIN_WEBHOOK_URL }}
-            webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
+  build-and-push:
+    uses: ./.github/workflows/build-and-push.yml
+    with:
+      docker_image_name: judge_web_administration
+      dockerfile_name: Dockerfile.administration
+      docker_tag: dev-latest
+      branch_name: v2-development
+    secrets: inherit
+  deploy:
+    needs: [build-and-push]
+    uses: ./.github/workflows/deploy.yml
+    secrets:
+      webhook_url: ${{ secrets.ADMIN_WEBHOOK_URL }}
+      webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
         
