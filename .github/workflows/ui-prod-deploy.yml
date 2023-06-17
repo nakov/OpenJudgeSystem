@@ -13,6 +13,7 @@ jobs:
     secrets: inherit
   build-and-push:
     needs: [check-user-access]
+    if: ${{ needs.check-user-access.outputs.isTeamMember == 'true' }}
     uses: ./.github/workflows/build-and-push.yml
     with:
       docker_image_name: judge_web_ui
