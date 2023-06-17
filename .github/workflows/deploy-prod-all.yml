@@ -2,10 +2,20 @@ name: Deploy PROD All
 
 on:
   workflow_dispatch:
+    inputs:
+      docker_image_tag:
+        description: 'The docker tag that will be pushed when the selected Branch is build'
+        required: true
+        default: "latest"
+        type: string
 jobs:
-    build-and-deploy-admin:
-        uses: ./.github/workflows/admin-prod-deploy.yml
-        secrets: inherit
-    build-and-deploy-ui:
-        uses: ./.github/workflows/ui-prod-deploy.yml
-        secrets: inherit
+  build-and-deploy-admin:
+    uses: ./.github/workflows/admin-prod-deploy.yml
+    with:
+      docker_image_tag: ${{ inputs.docker_image_tag }}
+    secrets: inherit
+  build-and-deploy-ui:
+    uses: ./.github/workflows/ui-prod-deploy.yml
+    with:
+      docker_image_tag: ${{ inputs.docker_image_tag }}
+    secrets: inherit
