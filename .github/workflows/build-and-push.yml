@@ -49,13 +49,13 @@ jobs:
       run: echo "BRANCH_NAME=${{ inputs.docker_tag }}" >> $GITHUB_ENV
 
     - name: Checkout
-      if: ${{ inputs.branch_name }} == ''
+      if: inputs.branch_name == ''
       uses: actions/checkout@v3
       with:
         submodules: recursive
         token: ${{ secrets.SOFTUNIBUILD_PAT }}
     - name: Checkout predefined branch
-      if: ${{ inputs.branch_name }} != ''
+      if: inputs.branch_name != ''
       uses: actions/checkout@v3
       with:
         ref: ${{ inputs.branch_name }}
