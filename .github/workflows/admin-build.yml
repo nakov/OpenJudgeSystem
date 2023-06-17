@@ -10,13 +10,8 @@ on:
     branches:
       - "*"
 jobs:
-<<<<<<< HEAD
     build-and-push-admin:
         uses: ./.github/workflows/build-push-deploy.yml
-=======
-    call-build-for-admin:
-        uses: ./.github/workflows/build.yml
->>>>>>> 4eef556b7e2ed79dfa116289864f51b633b35560
         with:
             deploy: false
             docker_image_name: judge_web_administration

@@ -2,35 +2,18 @@ name: Administration dev deploy
 
 on:
   workflow_dispatch:
-<<<<<<< HEAD
   workflow_call:
 jobs:
     build-push-and-deploy:
         uses: ./.github/workflows/build.yml
         with:
             deploy: true
-=======
-jobs:
-    build:
-        uses: ./.github/workflows/build.yml
-        with:
->>>>>>> 4eef556b7e2ed79dfa116289864f51b633b35560
             docker_image_name: judge_web_administration
             dockerfile_name: Dockerfile.administration
             docker_tag: dev-latest
             branch_name: v2-development
-<<<<<<< HEAD
         secrets:
             github_user_PAT: ${{ secrets.SOFTUNIBUILD_PAT }}
             webhook_url: ${{ secrets.ADMIN_WEBHOOK_URL }}
             webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
         
-=======
-        secrets: inherit
-    deploy:
-        needs: [build]
-        uses: ./.github/workflows/deploy.yml
-        secrets:
-            webhook_url: ${{ secrets.ADMIN_WEBHOOK_URL }}
-            webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
->>>>>>> 4eef556b7e2ed79dfa116289864f51b633b35560
