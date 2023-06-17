@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       docker_image_tag:
+        description: 'The docker tag that will be pushed when the selected Branch is build'
         required: true
         default: "latest"
         type: string
