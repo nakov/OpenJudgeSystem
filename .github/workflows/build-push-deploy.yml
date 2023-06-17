@@ -19,6 +19,8 @@ on:
           required: false
           type: string
       secrets:
+        github_user_PAT:
+          required: true
         webhook_url:
           required: false
         webhook_secret:
@@ -58,7 +60,7 @@ jobs:
       uses: actions/checkout@v3
       with:
         submodules: recursive
-        token: ${{ secrets.SOFTUNIBUILD_PAT }}
+        token: ${{ secrets.github_user_PAT }}
     - name: Set up Docker Buildx
       id: buildx
       uses: docker/setup-buildx-action@v2
@@ -77,7 +79,7 @@ jobs:
       with:
         registry: ghcr.io
         username: softuni-build
-        password: ${{ secrets.SOFTUNIBUILD_PAT }} # - must be in GitHub Secrets!
+        password: ${{ secrets.github_user_PAT }} # - must be in GitHub Secrets!
     - uses: docker/build-push-action@v4
       with:
         context: .

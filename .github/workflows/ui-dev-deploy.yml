@@ -16,5 +16,6 @@ jobs:
                 echo "NODE_OPTIONS=--max_old_space_size=8192" >> $GITHUB_ENV
                 export NODE_OPTIONS=--max-old-space-size=8192
         secrets:
+            github_user_PAT: ${{ secrets.SOFTUNIBUILD_PAT }}
             webhook_url: ${{ secrets.ADMIN_WEBHOOK_URL }}
             webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
