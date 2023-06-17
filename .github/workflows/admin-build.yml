@@ -10,9 +10,10 @@ on:
     branches:
       - "*"
 jobs:
-    call-build-for-admin:
-        uses: ./.github/workflows/build.yml
+    build-and-push-admin:
+        uses: ./.github/workflows/build-push-deploy.yml
         with:
+            deploy: false
             docker_image_name: judge_web_administration
             dockerfile_name: Dockerfile.administration
         secrets: inherit

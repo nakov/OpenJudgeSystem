@@ -3,6 +3,8 @@ name: Build
 on:
     workflow_call:
       inputs:
+        deploy:
+          type: boolean
         docker_image_name:
           required: true
           type: string
@@ -18,6 +20,11 @@ on:
         additional_run_commands:
           required: false
           type: string
+      secrets:
+        webhook_url:
+          required: false
+        webhook_secret:
+          required: false
 
 env:
     IMG: ${{ inputs.docker_image_name }}
@@ -97,3 +104,9 @@ jobs:
         cache-to: type=local,dest=/tmp/.buildx-cache
         secrets: |
           GIT_AUTH_TOKEN=${{ github.token }}
+    - name: Invoke deployment hook
+      if: ${{ inputs.deploy }}
+      uses: distributhor/workflow-webhook@v3
+      env:
+        webhook_url: ${{ secrets.webhook_url }}
+        webhook_secret: ${{ secrets.webhook_secret }}
