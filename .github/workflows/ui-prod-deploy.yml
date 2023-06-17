@@ -1,4 +1,4 @@
-name: Deploy PROD - UI
+name: Deploy PROD UI
 
 on:
   workflow_dispatch:

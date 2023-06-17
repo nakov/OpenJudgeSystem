@@ -1,4 +1,4 @@
-name: Deploy Development - All
+name: 01. Deploy All (Development)
 
 on:
   workflow_dispatch:

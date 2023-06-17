@@ -1,4 +1,4 @@
-name: Deploy Development - UI
+name: 02. Deploy UI (Development)
 
 on:
   workflow_dispatch:
