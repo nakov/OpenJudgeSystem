@@ -6,21 +6,15 @@ jobs:
     call-build-workflow-passing-data:
         uses: ./.github/workflows/build.yml
         with:
-            branch_name: v2-development
             docker_image_name: judge_web_ui
             dockerfile_name: Dockerfile.ui
+            branch_name: v2-development
             additional_run_commands: |
                 echo "NODE_OPTIONS=--max_old_space_size=8192" >> $GITHUB_ENV
                 export NODE_OPTIONS=--max-old-space-size=8192
         secrets: inherit
     call-deploy-workflow-passing-data:
         uses: ./.github/workflows/deploy.yml
-        with:
-            docker_image_name: judge_web_ui
-            dockerfile_name: Dockerfile.ui
-            additional_run_commands: |
-                echo "NODE_OPTIONS=--max_old_space_size=8192" >> $GITHUB_ENV
-                export NODE_OPTIONS=--max-old-space-size=8192
         secrets:
             webhook_url: ${{ secrets.UI_WEBHOOK_URL }}
             webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
