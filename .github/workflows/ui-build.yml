@@ -10,7 +10,7 @@ on:
     branches:
       - "*"
 jobs:
-    call-workflow-passing-data:
+    call-build-for-ui:
         uses: ./.github/workflows/build.yml
         with:
             docker_image_name: judge_web_ui
