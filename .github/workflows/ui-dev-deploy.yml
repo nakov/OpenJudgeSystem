@@ -2,12 +2,19 @@ name: UI dev deploy
 
 on:
   workflow_dispatch:
+<<<<<<< HEAD
   workflow_call:
 jobs:
     build-push-and-deploy-ui:
         uses: ./.github/workflows/build.yml
         with:
             deploy: false
+=======
+jobs:
+    build:
+        uses: ./.github/workflows/build.yml
+        with:
+>>>>>>> 4eef556b7e2ed79dfa116289864f51b633b35560
             docker_image_name: judge_web_ui
             dockerfile_name: Dockerfile.ui
             docker_tag: dev-latest
@@ -15,7 +22,16 @@ jobs:
             additional_run_commands: |
                 echo "NODE_OPTIONS=--max_old_space_size=8192" >> $GITHUB_ENV
                 export NODE_OPTIONS=--max-old-space-size=8192
+<<<<<<< HEAD
         secrets:
             github_user_PAT: ${{ secrets.SOFTUNIBUILD_PAT }}
             webhook_url: ${{ secrets.ADMIN_WEBHOOK_URL }}
+=======
+        secrets: inherit
+    deploy:
+        needs: [build]
+        uses: ./.github/workflows/deploy.yml
+        secrets:
+            webhook_url: ${{ secrets.UI_WEBHOOK_URL }}
+>>>>>>> 4eef556b7e2ed79dfa116289864f51b633b35560
             webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
