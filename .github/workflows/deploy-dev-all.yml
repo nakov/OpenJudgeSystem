@@ -1,0 +1,9 @@
+name: All dev deploy
+
+on:
+  workflow_dispatch:
+jobs:
+    build-and-deploy-admin:
+        uses: ./.github/workflows/admin-dev-deploy.yml
+    build-and-deploy-ui:
+        uses: ./.github/workflows/ui-dev-deploy.yml
