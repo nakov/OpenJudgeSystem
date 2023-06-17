@@ -2,16 +2,22 @@ name: Deploy PROD - UI
 
 on:
   workflow_dispatch:
-    permissions:
-      teams:
-        - Alpha Judge Prod deploy
+    inputs:
+      docker_image_tag:
+        required: true
+        default: "latest"
+        type: string
 jobs:
+  check-user-access:
+    uses: ./.github/workflows/check-prod-deploy-user-access.yml
+    secrets: inherit
   build-and-push:
+    needs: [check-user-access]
     uses: ./.github/workflows/build-and-push.yml
     with:
       docker_image_name: judge_web_ui
       dockerfile_name: Dockerfile.ui
-      docker_tag: latest
+      docker_tag: ${{ inputs.docker_image_tag }}
       additional_run_commands: |
         echo "NODE_OPTIONS=--max_old_space_size=8192" >> $GITHUB_ENV
         export NODE_OPTIONS=--max-old-space-size=8192
