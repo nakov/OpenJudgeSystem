@@ -1,11 +1,5 @@
 on:
   workflow_call:
-    secrets:
-      webhook_url:
-        required: true
-      webhook_secret:
-        required: true
-
 jobs:
   check-user-access:
     runs-on: ubuntu-latest
