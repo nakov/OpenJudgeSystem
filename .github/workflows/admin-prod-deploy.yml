@@ -1,7 +1,5 @@
 name: Administration PROD deploy
 
-
-
 on:
   push:
     tags:
