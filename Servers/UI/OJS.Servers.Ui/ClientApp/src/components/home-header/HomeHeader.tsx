@@ -20,7 +20,7 @@ import styles from './HomeHeader.module.scss';
 
 const keyToNameMap: IDictionary<string> = {
     usersCount: 'Users',
-    submissionsCount: 'Submissions',
+    submissionsCount: 'Total submissions',
     submissionsPerDayCount: 'Submissions per day',
     problemsCount: 'Problems',
     strategiesCount: 'Test strategies',
