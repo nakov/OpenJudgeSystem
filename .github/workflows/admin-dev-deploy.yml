@@ -1,4 +1,4 @@
-name: Administration dev deploy
+name: Deploy Development - Admin
 
 on:
   workflow_dispatch:

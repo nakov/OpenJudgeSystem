@@ -1,4 +1,4 @@
-name: Administration PROD deploy
+name: Deploy PROD - Admin
 
 on:
   push:

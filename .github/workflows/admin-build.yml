@@ -1,4 +1,4 @@
-name: Administration Build
+name: Build Administration
 
 on:
   push:
