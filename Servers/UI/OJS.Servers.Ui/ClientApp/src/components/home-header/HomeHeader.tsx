@@ -23,7 +23,7 @@ const keyToNameMap: IDictionary<string> = {
     submissionsCount: 'Submissions',
     submissionsPerDayCount: 'Submissions per day',
     problemsCount: 'Problems',
-    strategiesCount: 'Test strategies',
+    strategiesCount: 'Submission strategies',
     contestsCount: 'Contests',
 };
 
