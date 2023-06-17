@@ -37,7 +37,7 @@ jobs:
         echo "GIT_SHA=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_ENV
         ${{ inputs.additional_run_commands }}
     - name: Get branch name (merge)
-      if: github.event_name != 'pull_request' && ${{ !inputs.branch_name }} == ''
+      if: github.event_name != 'pull_request' && ${{ inputs.branch_name }} == ''
       shell: bash
       run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
     - name: Get branch name (pull request)
