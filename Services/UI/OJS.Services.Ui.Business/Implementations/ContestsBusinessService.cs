@@ -190,8 +190,6 @@ namespace OJS.Services.Ui.Business.Implementations
             return participationModel;
         }
 
-        public Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPracticable() => throw new System.NotImplementedException();
-
         public async Task<ContestSearchServiceResultModel> GetSearchContestsByName(
             SearchServiceModel model)
         {
