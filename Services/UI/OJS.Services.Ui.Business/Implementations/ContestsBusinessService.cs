@@ -173,7 +173,10 @@ namespace OJS.Services.Ui.Business.Implementations
                     participationModel.Contest.Problems.Select(x => x.Id),
                     participantsList);
 
-            if (!IsUserLecturerInContest(contest, user.Id!) && !user.IsAdmin && participationModel.ContestIsCompete)
+            var userIsAdminInContest = user.IsAdmin || IsUserLecturerInContest(contest, user.Id!);
+            var isOfficialOnlineContest = participationModel.ContestIsCompete && contest.IsOnlineExam;
+
+            if (!userIsAdminInContest && isOfficialOnlineContest)
             {
                 var problemsForParticipant = participant.ProblemsForParticipants.Select(x => x.Problem);
                 participationModel.Contest.Problems = problemsForParticipant.MapCollection<ContestProblemServiceModel>().ToList();
@@ -421,7 +424,7 @@ namespace OJS.Services.Ui.Business.Implementations
             string userId,
             bool isUserAdmin)
         {
-            if (!contest.IsExam &&
+            if (contest.IsOnlineExam &&
                 official &&
                 !isUserAdmin &&
                 !IsUserLecturerInContest(contest, userId) &&
