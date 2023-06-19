@@ -3,7 +3,7 @@
     using System.Data.Entity.ModelConfiguration;
     using OJS.Data.Models;
 
-    public class ProblemSubmissionTypeSkeletonConfiguration : EntityTypeConfiguration<ProblemSubmissionTypeSkeleton>
+    public class ProblemSubmissionTypeSkeletonConfiguration : EntityTypeConfiguration<ProblemSubmissionTypeExecutionDetails>
     {
         public ProblemSubmissionTypeSkeletonConfiguration()
         {

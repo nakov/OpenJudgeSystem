@@ -213,7 +213,7 @@
 
                 if (!s.SolutionSkeletonData.IsNullOrEmpty() || s.TimeLimit >= 0)
                 {
-                    var problemSubmissionSkeleton = new ProblemSubmissionTypeSkeleton()
+                    var problemSubmissionSkeleton = new ProblemSubmissionTypeExecutionDetails()
                     {
                         ProblemId = problem.Id,
                         SubmissionTypeId = submission.Id,
@@ -1020,7 +1020,7 @@
                             else
                             {
                                 existingProblem.ProblemSubmissionTypesSkeletons.Add(
-                                    new ProblemSubmissionTypeSkeleton
+                                    new ProblemSubmissionTypeExecutionDetails
                                     {
                                         ProblemId = problem.Id,
                                         SubmissionTypeId = s.Id.Value,
@@ -1039,7 +1039,7 @@
                             else
                             {
                                 existingProblem.ProblemSubmissionTypesSkeletons.Add(
-                                  new ProblemSubmissionTypeSkeleton
+                                  new ProblemSubmissionTypeExecutionDetails
                                   {
                                       ProblemId = problem.Id,
                                       SubmissionTypeId = s.Id.Value,

@@ -12,7 +12,7 @@
 
     public class ProblemSubmissionTypesSkeletonViewModel
     {
-        public static Expression<Func<ProblemSubmissionTypeSkeleton, ProblemSubmissionTypesSkeletonViewModel>> ViewModel
+        public static Expression<Func<ProblemSubmissionTypeExecutionDetails, ProblemSubmissionTypesSkeletonViewModel>> ViewModel
         {
             get
             {

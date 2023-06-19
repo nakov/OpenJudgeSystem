@@ -345,7 +345,7 @@
                                 .AddRange(
                                     p.SubmissionTypes
                                         .Select(
-                                            st => new ProblemSubmissionTypeSkeleton
+                                            st => new ProblemSubmissionTypeExecutionDetails
                                             {
                                                 Problem = p,
                                                 SubmissionType = st,
