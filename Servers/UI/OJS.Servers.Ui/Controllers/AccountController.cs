@@ -36,13 +36,6 @@ namespace OJS.Servers.Ui.Controllers
             this.sulsPlatformHttpClient = sulsPlatformHttpClient;
         }
 
-        [AllowAnonymous]
-        public IActionResult Login(string returnUrl)
-        {
-            this.ViewData[ViewDataKeys.ReturnUrl] = returnUrl;
-            return this.RedirectToAction("Index", "Home");
-        }
-
         [HttpPost]
         [AllowAnonymous]
         // [ValidateAntiForgeryToken]
@@ -85,16 +78,12 @@ namespace OJS.Servers.Ui.Controllers
                 return this.Unauthorized(GlobalConstants.ErrorMessages.InvalidUsernameOrPassword);
             }
 
-            var roles = await this.userManager.GetRolesAsync(user);
-
-            this.HttpContext.AppendAuthInfoCookies(roles, user.UserName);
             return this.RedirectToAction("Index", "Home");
         }
 
         public async Task<IActionResult> Logout()
         {
             await this.signInManager.SignOutAsync();
-            this.HttpContext.ClearAuthInfoCookies();
             return this.RedirectToAction("Index", "Home");
         }
     }
