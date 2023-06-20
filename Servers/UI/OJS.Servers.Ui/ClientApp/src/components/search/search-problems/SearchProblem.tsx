@@ -3,9 +3,9 @@ import isEmpty from 'lodash/isEmpty';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IProblemSearchType } from '../../../common/search-types';
-import { useAppUrls } from '../../../hooks/use-app-urls';
+import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
-import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import { Button, ButtonSize, ButtonState, ButtonType } from '../../guidelines/buttons/Button';
 
 import SearchProblemTooltip from './SearchProblemTooltip';
 
@@ -17,8 +17,8 @@ interface ISearchProblem {
 
 const SearchProblem = ({ problem }: ISearchProblem) => {
     const {
+        id,
         contest,
-        orderBy,
     } = problem;
     const searchProblemElement = 'search-problem-element';
     const searchContestElementClassName = concatClassNames(styles.problemElement, searchProblemElement);
@@ -29,7 +29,7 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
     const contestCardControlBtns = 'search-problem-card-control-buttons';
     const searchProblemCardControlBtnsClassName = concatClassNames(styles.problemCardControls, contestCardControlBtns);
 
-    const { getContestProblemUrl } = useAppUrls();
+    const { actions: { initiateInternalProblem } } = useProblems();
 
     const renderPage = useCallback(
         () => isEmpty(contest)
@@ -54,42 +54,35 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
                         {contest.name}
                     </span>
                     <div className={searchProblemCardControlBtnsClassName}>
-                        <LinkButton
+                        <Button
                           id="button-card-compete"
-                          to={getContestProblemUrl({
-                              id: contest.id,
-                              participationType: ContestParticipationType.Compete,
-                              orderBy,
-                          })}
-                          text="Compete"
+                          type={ButtonType.secondary}
                           state={
-                            contest.canBeCompeted
-                                ? ButtonState.enabled
-                                : ButtonState.disabled
-                        }
+                              contest.canBeCompeted
+                                  ? ButtonState.enabled
+                                  : ButtonState.disabled
+                          }
+                          onClick={() => initiateInternalProblem(id, contest.id, ContestParticipationType.Compete)}
+                          text="Compete"
                           size={ButtonSize.small}
                         />
-                        <LinkButton
+                        <Button
                           id="button-card-practice"
-                          to={getContestProblemUrl({
-                              id: contest.id,
-                              participationType: ContestParticipationType.Practice,
-                              orderBy,
-                          })}
-                          text="Practice"
-                          type={LinkButtonType.secondary}
+                          type={ButtonType.secondary}
                           state={
-                            contest.canBePracticed
-                                ? ButtonState.enabled
-                                : ButtonState.disabled
-                        }
+                                contest.canBePracticed
+                                    ? ButtonState.enabled
+                                    : ButtonState.disabled
+                            }
+                          onClick={() => initiateInternalProblem(id, contest.id, ContestParticipationType.Practice)}
+                          text="Practice"
                           size={ButtonSize.small}
                         />
                     </div>
                 </div>
             ),
-        [ contest, searchContestElementClassName, problem, searchProblemCategoryClassName, searchProblemContestClassName,
-            searchProblemCardControlBtnsClassName, getContestProblemUrl, orderBy ],
+        [ contest, searchContestElementClassName, problem, searchProblemCategoryClassName,
+            searchProblemContestClassName, searchProblemCardControlBtnsClassName, initiateInternalProblem, id ],
     );
 
     return (

@@ -1,16 +1,16 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import first from 'lodash/first';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { IParticipateInContestTypeUrlParams } from '../../../common/app-url-types';
 import { ContestParticipationType } from '../../../common/constants';
+import { ISubmissionDetailsType } from '../../../hooks/submissions/types';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import { useAppUrls } from '../../../hooks/use-app-urls';
 import { useAuth } from '../../../hooks/use-auth';
 import { useContests } from '../../../hooks/use-contests';
 import { usePageTitles } from '../../../hooks/use-page-titles';
+import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
 import { preciseFormatDate } from '../../../utils/dates';
 import CodeEditor from '../../code-editor/CodeEditor';
@@ -48,18 +48,14 @@ const SubmissionDetails = () => {
                 setDownloadErrorMessage,
             },
     } = useSubmissionsDetails();
-    const { getAdministrationRetestSubmissionInternalUrl } = useAppUrls();
-
     const {
         state: { contest },
         actions: { loadContestByProblemId },
     } = useContests();
+    const { actions: { initiateInternalProblem } } = useProblems();
 
-    const { getParticipateInContestUrl } = useAppUrls();
-
+    const { getAdministrationRetestSubmissionInternalUrl } = useAppUrls();
     const { state: { user } } = useAuth();
-
-    const navigate = useNavigate();
 
     useEffect(() => {
         if (isNil(currentSubmission)) {
@@ -148,21 +144,6 @@ const SubmissionDetails = () => {
     const detailsHeadingText = useMemo(
         () => `Details #${currentSubmission?.id}`,
         [ currentSubmission?.id ],
-    );
-
-    const participateInContestUrl = useMemo(
-        () => {
-            const problemIndex = isNil(currentSubmission?.problem.orderBy)
-                ? 1
-                : currentSubmission!.problem.orderBy! + 1;
-
-            return getParticipateInContestUrl({
-                id: contest?.id,
-                participationType,
-                problemIndex,
-            } as IParticipateInContestTypeUrlParams);
-        },
-        [ getParticipateInContestUrl, contest, participationType, currentSubmission ],
     );
 
     const { submissionType } = currentSubmission || {};
@@ -307,11 +288,14 @@ const SubmissionDetails = () => {
 
     const setSubmissionAndStartParticipation = useCallback(
         () => {
-            navigate(participateInContestUrl);
+            const { problem } = currentSubmission as ISubmissionDetailsType;
+
+            initiateInternalProblem(problem.id, contest!.id, participationType);
+
             setCurrentSubmission(null);
             selectSubmissionById(null);
         },
-        [ setCurrentSubmission, navigate, participateInContestUrl, selectSubmissionById ],
+        [ currentSubmission, initiateInternalProblem, contest, participationType, setCurrentSubmission, selectSubmissionById ],
     );
 
     const codeEditor = useCallback(
