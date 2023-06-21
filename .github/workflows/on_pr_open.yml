@@ -1,3 +1,5 @@
+name: PR opened
+
 on:
   pull_request:
     types:

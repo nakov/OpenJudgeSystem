@@ -3,10 +3,14 @@ namespace OJS.Servers.Infrastructure.Extensions
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Net;
     using System.Net.Http;
     using System.Reflection;
+    using System.Threading.Tasks;
     using Hangfire;
     using Hangfire.SqlServer;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
     using Microsoft.AspNetCore.Http;
@@ -83,6 +87,8 @@ namespace OJS.Servers.Infrastructure.Extensions
                 .ConfigureApplicationCookie(opt =>
                 {
                     opt.Cookie.Domain = EnvironmentUtils.GetRequiredByKey(SharedAuthCookieDomain);
+                    opt.Events.OnRedirectToAccessDenied = UnAuthorizedResponse;
+                    opt.Events.OnRedirectToLogin = UnAuthorizedResponse;
                 });
 
             // By default the data protection API that encrypts the authentication cookie generates a unique key for each application,
@@ -171,5 +177,11 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         private static void ConfigureHttpClient(HttpClient client)
             => client.DefaultRequestHeaders.Add(HeaderNames.Accept, MimeTypes.ApplicationJson);
+
+        private static Task UnAuthorizedResponse(RedirectContext<CookieAuthenticationOptions> context)
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            return Task.CompletedTask;
+        }
     }
 }
