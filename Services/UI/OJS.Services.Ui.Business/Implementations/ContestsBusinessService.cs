@@ -267,7 +267,7 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var active = await this.GetAllCompetable()
                 .ToListAsync();
-            var past = await this.GetAllPracticable()
+            var past = await this.GetAllPastContests()
                 .ToListAsync();
 
             return new ContestsForHomeIndexServiceModel { ActiveContests = active, PastContests = past, };
@@ -279,10 +279,10 @@ namespace OJS.Services.Ui.Business.Implementations
                 .OrderByDescendingAsync(ac => ac.EndTime)
                 .TakeAsync(DefaultContestsToTake);
 
-        public async Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPracticable()
+        public async Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPastContests()
             => await this.contestsData
-                .GetAllPracticable<ContestForHomeIndexServiceModel>()
-                .OrderByDescendingAsync(ac => ac.PracticeStartTime)
+                .GetAllExpired<ContestForHomeIndexServiceModel>()
+                .OrderByDescendingAsync(ac => ac.EndTime)
                 .TakeAsync(DefaultContestsToTake);
 
         public async Task<bool> CanUserCompeteByContestByUserAndIsAdmin(
