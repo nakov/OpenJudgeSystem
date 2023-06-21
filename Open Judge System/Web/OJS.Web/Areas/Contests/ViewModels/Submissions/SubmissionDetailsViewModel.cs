@@ -34,7 +34,8 @@
                 ShowResults = submission.Problem.ShowResults,
                 ShowDetailedFeedback = submission.Problem.ShowDetailedFeedback,
                 TotalTests = submission.Problem.Tests.Count,
-                TestRuns = submission.TestRuns.AsQueryable().Select(TestRunDetailsViewModel.FromTestRun)
+                TestRuns = submission.TestRuns.AsQueryable().Select(TestRunDetailsViewModel.FromTestRun),
+                StartedExecutionOn = submission.StartedExecutionOn
             };
 
         public int Id { get; set; }
@@ -92,5 +93,7 @@
         public string ContentAsString => this.IsBinaryFile ? "Binary file." : this.Content.Decompress();
 
         public bool HasTestRuns => this.TestRuns.Any();
+
+        public DateTime? StartedExecutionOn { get; set; }
     }
 }
