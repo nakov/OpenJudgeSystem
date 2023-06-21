@@ -95,12 +95,9 @@ const PageHeader = () => {
                       type={HeadingType.secondary}
                       className={headingSecondaryClassName}
                     >
-                        <LinkButton
-                          to="/"
-                          type={LinkButtonType.image}
-                          altText="Softuni logo"
-                          imgSrc={logo}
-                        />
+                        <a href="/">
+                            <img src={logo} alt="softuni logo" />
+                        </a>
                     </Heading>
                     { renderLinks() }
                 </div>
