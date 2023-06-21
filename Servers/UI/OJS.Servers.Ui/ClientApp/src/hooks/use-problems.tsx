@@ -83,7 +83,7 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     );
 
     const selectProblemById = useCallback(
-        (problemId: number) => {
+        (problemId: number, isDefaultHashParam = false) => {
             const newProblem = normalizedProblems.find((p) => p.id === problemId);
 
             if (isNil(newProblem)) {
@@ -92,7 +92,7 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
 
             setCurrentProblem(newProblem);
             const { orderBy } = newProblem;
-            setHash(orderBy.toString());
+            setHash(orderBy.toString(), isDefaultHashParam);
         },
         [ setHash, normalizedProblems ],
     );
@@ -153,7 +153,7 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
             } else if (isLoadedFromHash) {
                 setCurrentProblem(problemFromHash);
             } else {
-                selectProblemById(id);
+                selectProblemById(id, true);
             }
         },
         [ contest, internalProblemId, isLoadedFromHash, normalizedProblems, problemFromHash, selectProblemById ],

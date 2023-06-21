@@ -1,13 +1,12 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import isEmpty from 'lodash/isEmpty';
 
 import { IHaveChildrenProps } from '../../components/common/Props';
 
 interface IHashUrlParamsContext {
     state: { hashParam: string };
     actions: {
-        setHash: (hashParameter: string) => void;
+        setHash: (hashParameter: string, isDefaultHashParam: boolean) => void;
         clearHash: () => void;
     };
 }
@@ -31,8 +30,8 @@ const HashUrlParamProvider = ({ children }: IHashUrlParamProviderProps) => {
     );
 
     const setHash = useCallback(
-        (param: string) => {
-            if (isEmpty(location.hash)) {
+        (param: string, isDefaultHashParam: boolean) => {
+            if (isDefaultHashParam) {
                 const url = `${location.pathname}${location.search}#${param}`;
                 window.history.replaceState('', document.title, `${url}`);
                 location.hash = param;
