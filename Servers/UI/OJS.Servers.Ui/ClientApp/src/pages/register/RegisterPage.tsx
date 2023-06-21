@@ -5,17 +5,17 @@ import { useAuth } from '../../hooks/use-auth';
 import { useUrls } from '../../hooks/use-urls';
 
 const RegisterPage = () => {
-    const { state: { user } } = useAuth();
+    const { state: { isLoggedIn } } = useAuth();
     const navigate = useNavigate();
     const { getPlatformRegisterUrl } = useUrls();
 
     useEffect(() => {
-        if (user.isLoggedIn) {
+        if (isLoggedIn) {
             navigate('/');
         }
 
         window.location.href = getPlatformRegisterUrl();
-    }, [ getPlatformRegisterUrl, navigate, user ]);
+    }, [ getPlatformRegisterUrl, isLoggedIn, navigate ]);
 
     return (<div />);
 };

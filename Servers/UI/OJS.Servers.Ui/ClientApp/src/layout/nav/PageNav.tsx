@@ -24,14 +24,14 @@ const anonymousRoutes = [
 ];
 
 const PageNav = () => {
-    const { state: { user } } = useAuth();
+    const { state: { isLoggedIn } } = useAuth();
     const [ routes, setRoutes ] = useState(anonymousRoutes);
 
     useEffect(() => {
-        setRoutes(user.isLoggedIn
+        setRoutes(isLoggedIn
             ? userRoutes
             : anonymousRoutes);
-    }, [ user.isLoggedIn ]);
+    }, [ isLoggedIn ]);
 
     const itemFunc = ({ name, link, isPrimary, id }: IRouteType) => {
         const type = isPrimary

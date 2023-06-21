@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
 import InitProviders, { ProviderType } from './components/common/InitProviders';
@@ -33,16 +33,10 @@ import PageContent from './layout/content/PageContent';
 import PageFooter from './layout/footer/PageFooter';
 import PageHeader from './layout/header/PageHeader';
 import SearchBar from './layout/search-bar/SearchBar';
-import UserCookiesService from './services/user-cookies-service';
 
 import './styles/global.scss';
 
 const App = () => {
-    const userCookiesService = useMemo(
-        () => new UserCookiesService(),
-        [],
-    );
-    const user = userCookiesService.getUser();
     const providers = [
         UrlParamsProvider,
         RouteUrlParamsProvider,
@@ -54,7 +48,7 @@ const App = () => {
         NotificationsProvider,
         PageWithTitleProvider,
         HashUrlParamProvider,
-        { Provider: AuthProvider, props: { user } },
+        AuthProvider,
         UsersProvider,
         ContestCategoriesProvider,
         ContestStrategyFiltersProvider,
