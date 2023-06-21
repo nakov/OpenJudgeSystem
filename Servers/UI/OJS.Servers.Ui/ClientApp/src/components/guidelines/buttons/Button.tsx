@@ -25,6 +25,7 @@ enum LinkButtonType {
     primary = 1,
     secondary = 2,
     plain = 3,
+    image = 4,
 }
 
 enum ButtonSize {
@@ -51,6 +52,8 @@ interface IButtonProps extends IButtonBaseProps<ButtonType> {
 interface ILinkButtonProps extends IButtonBaseProps<LinkButtonType> {
     to: string;
     isToExternal?: boolean;
+    imgSrc?: string;
+    altText?: string;
 }
 
 const classNameToType = {
@@ -58,6 +61,7 @@ const classNameToType = {
     [ButtonType.submit]: styles.primary,
     [ButtonType.secondary]: styles.secondary,
     [ButtonType.plain]: styles.plain,
+    [LinkButtonType.image]: styles.image,
 };
 
 const sizeToClassName = {
@@ -137,6 +141,8 @@ const LinkButton = ({
     id = generateId(),
     state = ButtonState.enabled,
     isToExternal = false,
+    imgSrc = '',
+    altText = '',
 }: ILinkButtonProps) => {
     validateOnlyChildrenOrText(text, children);
     const isDisabled = state === ButtonState.disabled;
@@ -157,7 +163,10 @@ const LinkButton = ({
         className,
     );
 
-    const content = children ?? text;
+    const content = type === LinkButtonType.image
+        ? <img src={imgSrc} alt={altText} />
+        : children ?? text;
+
     const toHref = isToExternal
         ? { pathname: to }
         : to;
