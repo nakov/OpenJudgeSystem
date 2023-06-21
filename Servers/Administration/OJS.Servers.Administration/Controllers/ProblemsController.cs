@@ -515,6 +515,15 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         await this.TryAddTestsToProblem(entity, actionContext);
     }
 
+    protected override async Task AfterEntitySaveOnCreateAsync(Problem entity, AdminActionContext actionContext)
+    {
+        var contestId = GetContestId(actionContext.EntityDict, entity);
+
+        await this.problemsBusiness.ReevaluateProblemsByOrderBy(contestId);
+
+        await base.AfterEntitySaveOnCreateAsync(entity, actionContext);
+    }
+
     protected override async Task BeforeEntitySaveOnEditAsync(
         Problem originalEntity,
         Problem newEntity,
@@ -528,6 +537,15 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         await base.BeforeEntitySaveOnEditAsync(originalEntity, newEntity, actionContext);
     }
 
+    protected override async Task AfterEntitySaveOnEditAsync(Problem oldEntity, Problem entity, AdminActionContext actionContext)
+    {
+        var contestId = GetContestId(actionContext.EntityDict, entity);
+
+        await this.problemsBusiness.ReevaluateProblemsByOrderBy(contestId);
+
+        await base.AfterEntitySaveOnEditAsync(oldEntity, entity, actionContext);
+    }
+
     protected override async Task BeforeEntitySaveOnDeleteAsync(Problem entity, AdminActionContext actionContext)
     {
         var contest = await this.contestsActivity.GetContestActivity(entity.ProblemGroup.ContestId);
@@ -535,6 +553,15 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         this.contestDeleteProblemsValidation
             .GetValidationResult(contest.Map<ContestDeleteProblemsValidationServiceModel>())
             .VerifyResult();
+    }
+
+    protected override async Task AfterEntitySaveOnDeleteAsync(Problem entity, AdminActionContext actionContext)
+    {
+        var contestId = GetContestId(actionContext.EntityDict, entity);
+
+        await this.problemsBusiness.ReevaluateProblemsByOrderBy(contestId);
+
+        await base.AfterEntitySaveOnDeleteAsync(entity, actionContext);
     }
 
     private static int GetContestId(IDictionary<string, string> entityDict, Problem? problem)

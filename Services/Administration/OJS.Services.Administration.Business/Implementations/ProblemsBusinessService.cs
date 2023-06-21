@@ -1,5 +1,9 @@
 namespace OJS.Services.Administration.Business.Implementations
 {
+    using System;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using System.Transactions;
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
     using OJS.Common.Helpers;
@@ -9,10 +13,6 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Services.Common;
     using OJS.Services.Common.Models;
     using OJS.Services.Infrastructure.Exceptions;
-    using System;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using System.Transactions;
     using IsolationLevel = System.Transactions.IsolationLevel;
     using Resource = OJS.Common.Resources.ProblemsBusiness;
     using SharedResource = OJS.Common.Resources.ContestsGeneral;
@@ -174,6 +174,21 @@ namespace OJS.Services.Administration.Business.Implementations
             }
 
             return await this.contestsBusiness.UserHasContestPermissions(problem.ContestId, userId, isUserAdmin);
+        }
+
+        public async Task ReevaluateProblemsByOrderBy(int contestId)
+        {
+            var orderByIndex = 0;
+
+            await this.contestsData.GetProblemsById(contestId)
+                                    .OrderBy(p => p.OrderBy)
+                                    .ForEachAsync(p =>
+                                    {
+                                        p.OrderBy = ++orderByIndex;
+                                        this.problemsData.Update(p);
+                                    });
+
+            await this.problemsData.SaveChanges();
         }
 
         private async Task CopyProblemToContest(Problem? problem, int contestId, int? problemGroupId)
