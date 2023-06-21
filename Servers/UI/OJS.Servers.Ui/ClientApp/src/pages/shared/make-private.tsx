@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useCallback } from 'react';
 import {
     Navigate,
     useLocation,
@@ -11,20 +11,32 @@ import { useAuth } from '../../hooks/use-auth';
 type IPrivatePageProps = IHaveChildrenProps
 
 const PrivatePage = ({ children }: IPrivatePageProps) => {
-    const { state: { user } } = useAuth();
+    const {
+        state: {
+            isLoggedIn,
+            hasCompletedGetAuthInfo,
+        },
+    } = useAuth();
     const location = useLocation();
-    const { isLoggedIn } = user;
 
-    const state = { from: location };
+    const renderPageOrRedirectToLogin = useCallback(() => {
+        // Do not render if has not attempted to load user
+        if (!hasCompletedGetAuthInfo) {
+            // User still not loaded in state
+            return <p>Loading user data...</p>;
+        }
 
-    if (isLoggedIn) {
+        if (!isLoggedIn) {
+            const state = { from: location };
+
+            return <Navigate to="/login" state={state} />;
+        }
+
         // eslint-disable-next-line react/jsx-no-useless-fragment
         return <>{children}</>;
-    }
+    }, [ hasCompletedGetAuthInfo, location, isLoggedIn, children ]);
 
-    return (
-        <Navigate to="/login" state={state} />
-    );
+    return renderPageOrRedirectToLogin();
 };
 
 const makePrivate = (ComponentToWrap: FC) => (props: Anything) => (

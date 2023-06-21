@@ -39,6 +39,8 @@ public class ContestServiceModel : IMapExplicitly
 
     public bool IsOnlineExam { get; set; }
 
+    public bool IsExam { get; set; }
+
     public string ContestPassword { private get; set; } = null!;
 
     public string PracticePassword { private get; set; } = null!;
