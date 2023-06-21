@@ -537,6 +537,65 @@
             return this.Redirect(returnUrl);
         }
 
+        [HttpGet]
+        public ActionResult CalculateContestLoad(int categoryId, int currentContestId)
+        {
+            if (!this.CheckIfUserHasContestPermissions(currentContestId))
+            {
+                return this.RedirectToContestsAdminPanelWithNoPrivilegesMessage();
+            }
+
+            var contests = this.contestsData
+                .GetAll()
+                .Where(c => c.CategoryId == categoryId && c.StartTime.HasValue && c.EndTime.HasValue)
+                .OrderByDescending(x => x.StartTime.Value)
+                .ToList();
+
+            var model = new ContestLoadCalculationViewModel();
+            foreach (var contest in contests)
+            {
+                if (contest.Id == currentContestId)
+                {
+                    model.ExamLengthInHours = (contest.EndTime.Value - contest.StartTime.Value).Hours;
+                    model.ExpectedExamProblemsCount = contest.ProblemGroups.Count();
+                    model.ExpectedStudentsCount = contest.Participants.Count();
+                    model.ContestName = contest.Name;
+                    model.AverageProblemRunTimeInSeconds = this.GetContestSubmissionsAverageRunTimeSeconds(contest);
+                    model.CurrentContestId = contest.Id;
+                }
+                else
+                {
+                    var dropDownModel = new PreviousContestLoadData(contest);
+                    dropDownModel.OldAverageProblemRunTimeInSeconds = this.GetContestSubmissionsAverageRunTimeSeconds(contest);
+                    model.ContestsDropdownData.Add(dropDownModel);
+                }
+            }
+
+            var lastExam = model.ContestsDropdownData.FirstOrDefault();
+            if (lastExam != null)
+            {
+                model.PreviousContestSubmissions = lastExam.PreviousContestSubmissions;
+                model.PreviousContestStudents = lastExam.PreviousContestStudents;
+                model.PreviousContestProblems = lastExam.ProblemsCount;
+                model.PreviousAverageProblemRunTimeInSeconds = lastExam.OldAverageProblemRunTimeInSeconds;
+            }
+
+            return this.View(model);
+        }
+
+        [HttpPost]
+        public ActionResult CalculateContestLoad(ContestLoadCalculationViewModel model)
+        {
+            if (!this.CheckIfUserHasContestPermissions(model.CurrentContestId))
+            {
+                return this.RedirectToContestsAdminPanelWithNoPrivilegesMessage();
+            }
+
+            var calculatedLoad = this.contestsBusiness.CalculateLoadForContest(model);
+
+            return this.Json(calculatedLoad);
+        }
+
         private void PrepareViewBagData(int? contestId = null)
         {
             this.ViewBag.TypeData = DropdownViewModel.GetEnumValues<ContestType>();
@@ -674,6 +733,30 @@
             var message = string.Format(formatString, minutesForDisplay, username, contestName);
 
             return message;
+        }
+
+        private int GetContestSubmissionsAverageRunTimeSeconds(Contest contest)
+        {
+            List<Submission> contestSubmissions = contest.ProblemGroups
+                                    .SelectMany(pg => pg.Problems)
+                                    .SelectMany(p => p.Submissions)
+                                    .ToList();
+
+            if (contestSubmissions.Any(s => s.StartedExecutionOn.HasValue))
+            {
+                return (int)contestSubmissions.Where(s => s.StartedExecutionOn.HasValue).Average(s => (s.ModifiedOn.Value - s.StartedExecutionOn.Value).TotalSeconds);
+            }
+            else
+            {
+                var contestSubmissionForCalc = contestSubmissions
+                    .Where(s => s.ModifiedOn.HasValue).ToList();
+
+                int countOfAllSubmissionTime = contestSubmissionForCalc
+                     .Sum(s => (int)s.ModifiedOn.Value.TimeOfDay.TotalSeconds);
+
+                return countOfAllSubmissionTime > 0 ?
+                    countOfAllSubmissionTime / contestSubmissionForCalc.Count() : 0;
+            }
         }
     }
 }
