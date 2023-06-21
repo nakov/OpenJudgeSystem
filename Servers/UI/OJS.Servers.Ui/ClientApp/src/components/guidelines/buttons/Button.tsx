@@ -19,6 +19,7 @@ enum ButtonType {
     secondary = 2,
     plain = 3,
     submit = 4,
+    image = 5,
 }
 
 enum LinkButtonType {
@@ -41,6 +42,8 @@ interface IButtonBaseProps<TButtonType> extends IHaveOptionalClassName, IHaveOpt
     text?: string | null;
     type?: TButtonType;
     state?: ButtonState;
+    imgSrc?: string;
+    altText?: string;
 }
 
 interface IButtonProps extends IButtonBaseProps<ButtonType> {
@@ -52,8 +55,6 @@ interface IButtonProps extends IButtonBaseProps<ButtonType> {
 interface ILinkButtonProps extends IButtonBaseProps<LinkButtonType> {
     to: string;
     isToExternal?: boolean;
-    imgSrc?: string;
-    altText?: string;
 }
 
 const classNameToType = {
@@ -61,6 +62,7 @@ const classNameToType = {
     [ButtonType.submit]: styles.primary,
     [ButtonType.secondary]: styles.secondary,
     [ButtonType.plain]: styles.plain,
+    [ButtonType.image]: styles.image,
     [LinkButtonType.image]: styles.image,
 };
 
@@ -88,6 +90,8 @@ const Button = ({
     state = ButtonState.enabled,
     isWide = false,
     internalClassName = '',
+    imgSrc = '',
+    altText = '',
 }: IButtonProps) => {
     validateOnlyChildrenOrText(text, children);
 
@@ -115,7 +119,9 @@ const Button = ({
             )
             : internalClassName;
 
-    const content = children ?? text;
+    const content = type === ButtonType.image
+        ? <img src={imgSrc} alt={altText} />
+        : children ?? text;
 
     return (
         <button
