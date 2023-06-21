@@ -309,7 +309,7 @@
             var skeleton =
                 this.submission
                 .Problem
-                .ProblemSubmissionTypesSkeletons
+                .ProblemSubmissionTypeExecutionDetails
                 .FirstOrDefault(s => s.SubmissionTypeId == this.submission.SubmissionTypeId);
 
             if (skeleton != null && 
@@ -334,7 +334,7 @@
                 Input = new TestsInputModel
                 {
                     TaskSkeleton = this.submission.Problem
-                    .ProblemSubmissionTypesSkeletons
+                    .ProblemSubmissionTypeExecutionDetails
                     .Where(x => x.SubmissionTypeId == this.submission.SubmissionTypeId)
                     .Select(x => x.SolutionSkeleton)
                     .FirstOrDefault(),

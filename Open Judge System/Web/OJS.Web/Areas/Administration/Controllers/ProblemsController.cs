@@ -213,7 +213,7 @@
 
                 if (!s.SolutionSkeletonData.IsNullOrEmpty() || s.TimeLimit >= 0)
                 {
-                    var problemSubmissionSkeleton = new ProblemSubmissionTypeExecutionDetails()
+                    var problemSubmissionExectuionDetails = new ProblemSubmissionTypeExecutionDetails()
                     {
                         ProblemId = problem.Id,
                         SubmissionTypeId = submission.Id,
@@ -221,13 +221,13 @@
 
                     if (!s.SolutionSkeletonData.IsNullOrEmpty())
                     {
-                        problemSubmissionSkeleton.SolutionSkeleton = this.GetOptimizedSolutionSkeleton(problem, s.SolutionSkeleton)?.Compress();
+                        problemSubmissionExectuionDetails.SolutionSkeleton = this.GetOptimizedSolutionSkeleton(problem, s.SolutionSkeleton)?.Compress();
                     }
                     if (s.TimeLimit >= 0)
                     {
-                        problemSubmissionSkeleton.TimeLimit = s.TimeLimit;
+                        problemSubmissionExectuionDetails.TimeLimit = s.TimeLimit;
                     }
-                    newProblem.ProblemSubmissionTypesSkeletons.Add(problemSubmissionSkeleton);
+                    newProblem.ProblemSubmissionTypeExecutionDetails.Add(problemSubmissionExectuionDetails);
                 }
             });
 
@@ -1007,7 +1007,7 @@
                     s =>
                     {
                         var currentPst = existingProblem
-                                .ProblemSubmissionTypesSkeletons
+                                .ProblemSubmissionTypeExecutionDetails
                                 .FirstOrDefault(pst => s.Id.HasValue && pst.SubmissionTypeId == s.Id.Value);
                         if (!s.SolutionSkeletonData.IsNullOrEmpty())
                         {
@@ -1019,7 +1019,7 @@
                             }
                             else
                             {
-                                existingProblem.ProblemSubmissionTypesSkeletons.Add(
+                                existingProblem.ProblemSubmissionTypeExecutionDetails.Add(
                                     new ProblemSubmissionTypeExecutionDetails
                                     {
                                         ProblemId = problem.Id,
@@ -1038,7 +1038,7 @@
                             }
                             else
                             {
-                                existingProblem.ProblemSubmissionTypesSkeletons.Add(
+                                existingProblem.ProblemSubmissionTypeExecutionDetails.Add(
                                   new ProblemSubmissionTypeExecutionDetails
                                   {
                                       ProblemId = problem.Id,
@@ -1054,14 +1054,14 @@
                 .Where(
                     st => !st.IsChecked &&
                          st.Id.HasValue &&
-                         existingProblem.ProblemSubmissionTypesSkeletons
+                         existingProblem.ProblemSubmissionTypeExecutionDetails
                              .Any(y => y.SubmissionTypeId == st.Id.Value))
                 .ForEach(
                     st =>
                     {
-                        existingProblem.ProblemSubmissionTypesSkeletons.Remove(
+                        existingProblem.ProblemSubmissionTypeExecutionDetails.Remove(
                             existingProblem
-                                .ProblemSubmissionTypesSkeletons.FirstOrDefault(y => y.SubmissionTypeId == st.Id.Value));
+                                .ProblemSubmissionTypeExecutionDetails.FirstOrDefault(y => y.SubmissionTypeId == st.Id.Value));
                     });
         }
     }

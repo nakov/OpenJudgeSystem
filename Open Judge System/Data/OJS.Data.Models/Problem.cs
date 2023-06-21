@@ -74,7 +74,7 @@
 
         public virtual ICollection<SubmissionType> SubmissionTypes { get; set; } = new HashSet<SubmissionType>();
         
-        public virtual ICollection<ProblemSubmissionTypeExecutionDetails> ProblemSubmissionTypesSkeletons { get; set; } = new HashSet<ProblemSubmissionTypeExecutionDetails>();
+        public virtual ICollection<ProblemSubmissionTypeExecutionDetails> ProblemSubmissionTypeExecutionDetails { get; set; } = new HashSet<ProblemSubmissionTypeExecutionDetails>();
 
         public virtual ICollection<Participant> Participants { get; set; } = new HashSet<Participant>();
     }

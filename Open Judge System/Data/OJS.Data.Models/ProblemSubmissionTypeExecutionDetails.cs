@@ -2,7 +2,7 @@
 {
     using System.ComponentModel.DataAnnotations.Schema;
 
-    [Table("ProblemSubmissionTypesSkeletons")]
+    [Table("ProblemSubmissionTypeExecutionDetails")]
     public class ProblemSubmissionTypeExecutionDetails
     {
         public int ProblemId { get; set; }

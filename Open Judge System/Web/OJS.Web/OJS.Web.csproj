@@ -1780,7 +1780,7 @@
     <Compile Include="Areas\Administration\ViewModels\Participant\UserViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\ProblemGroup\ProblemGroupAdministrationViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\ProblemGroup\CopyAllProblemGroupsViewModel.cs" />
-    <Compile Include="Areas\Administration\ViewModels\ProblemSubmissionTypesSkeleton\ProblemSubmissionTypesSkeletonViewModel.cs" />
+    <Compile Include="Areas\Administration\ViewModels\ProblemSubmissionTypesSkeleton\ProblemSubmissionTypeExecutionDetailsViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\Problem\CopyProblemViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\Problem\DeleteProblemViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\Problem\ProblemAdministrationViewModel.cs" />
