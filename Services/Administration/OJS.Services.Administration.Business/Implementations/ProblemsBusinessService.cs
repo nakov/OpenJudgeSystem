@@ -27,6 +27,7 @@ namespace OJS.Services.Administration.Business.Implementations
         private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
         private readonly ITestRunsDataService testRunsData;
         private readonly ISubmissionTypesDataService submissionTypesData;
+        private readonly IProblemGroupsDataService problemGroupData;
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
         private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
         private readonly IContestsBusinessService contestsBusiness;
@@ -42,7 +43,8 @@ namespace OJS.Services.Administration.Business.Implementations
             ISubmissionTypesDataService submissionTypesData,
             IProblemGroupsBusinessService problemGroupsBusiness,
             ISubmissionsDistributorCommunicationService submissionsDistributorCommunication,
-            IContestsBusinessService contestsBusiness)
+            IContestsBusinessService contestsBusiness,
+            IProblemGroupsDataService problemGroupData)
         {
             this.contestsData = contestsData;
             this.participantScoresData = participantScoresData;
@@ -55,6 +57,7 @@ namespace OJS.Services.Administration.Business.Implementations
             this.problemGroupsBusiness = problemGroupsBusiness;
             this.submissionsDistributorCommunication = submissionsDistributorCommunication;
             this.contestsBusiness = contestsBusiness;
+            this.problemGroupData = problemGroupData;
         }
 
         public async Task RetestById(int id)
@@ -176,19 +179,30 @@ namespace OJS.Services.Administration.Business.Implementations
             return await this.contestsBusiness.UserHasContestPermissions(problem.ContestId, userId, isUserAdmin);
         }
 
-        public async Task ReevaluateProblemsByOrderBy(int contestId)
+        public async Task ReevaluateProblemsByOrderBy(int contestId, int problemId)
         {
-            var orderByIndex = 0;
+            var problemsGroups = this.problemGroupData.GetAllNonDeletedByContest(contestId);
 
-            await this.contestsData.GetProblemsById(contestId)
-                                    .OrderBy(p => p.OrderBy)
-                                    .ForEachAsync(p =>
-                                    {
-                                        p.OrderBy = ++orderByIndex;
-                                        this.problemsData.Update(p);
-                                    });
+            if (problemsGroups.All(pg => pg.Problems.Count == 1
+                                         && !pg.Problems.Single().IsDeleted))
+            {
+               await this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsByOrderBy(contestId);
+            }
+            else
+            {
+                var problemGroup = this.problemGroupData.GetByProblem(problemId);
 
-            await this.problemsData.SaveChanges();
+                var orderByIndex = 0;
+                problemGroup!.Problems
+                        .OrderBy(p => p.OrderBy)
+                        .ForEach(p =>
+                        {
+                            p.OrderBy = ++orderByIndex;
+                            this.problemsData.Update(p);
+                        });
+
+                await this.problemsData.SaveChanges();
+            }
         }
 
         private async Task CopyProblemToContest(Problem? problem, int contestId, int? problemGroupId)

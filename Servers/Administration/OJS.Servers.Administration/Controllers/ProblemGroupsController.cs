@@ -165,8 +165,6 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
     {
         this.problemGroupData.Detach(entity);
 
-        await this.problemGroupsBusiness.ReevaluateProblemGroupsByOrderBy(entity.ContestId);
-
-        await this.problemsBusiness.ReevaluateProblemsByOrderBy(entity.ContestId);
+        await this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsByOrderBy(entity.ContestId);
     }
 }

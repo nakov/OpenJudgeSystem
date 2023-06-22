@@ -14,16 +14,19 @@ namespace OJS.Services.Administration.Business.Implementations
     {
         private readonly IProblemGroupsDataService problemGroupsData;
         private readonly IContestsDataService contestsData;
+        private readonly IProblemsDataService problemsData;
         private readonly ISubmissionTypesDataService submissionTypesData;
 
         public ProblemGroupsBusinessService(
             IProblemGroupsDataService problemGroupsData,
             IContestsDataService contestsData,
-            ISubmissionTypesDataService submissionTypesData)
+            ISubmissionTypesDataService submissionTypesData,
+            IProblemsDataService problemsData)
         {
             this.problemGroupsData = problemGroupsData;
             this.contestsData = contestsData;
             this.submissionTypesData = submissionTypesData;
+            this.problemsData = problemsData;
         }
 
         public async Task<ServiceResult> DeleteById(int id)
@@ -76,12 +79,11 @@ namespace OJS.Services.Administration.Business.Implementations
             return ServiceResult.Success;
         }
 
-        public async Task ReevaluateProblemGroupsByOrderBy(int contestId)
+        public async Task ReevaluateProblemsAndProblemGroupsByOrderBy(int contestId)
         {
             var orderByIndex = 0;
 
-            this.problemGroupsData.GetAllByContest(contestId)
-                .Where(pg => !pg.IsDeleted)
+            this.problemGroupsData.GetAllNonDeletedByContest(contestId)
                 .OrderBy(pg => pg.OrderBy)
                 .ForEach(pg =>
                 {
@@ -90,6 +92,18 @@ namespace OJS.Services.Administration.Business.Implementations
                 });
 
             await this.problemGroupsData.SaveChanges();
+
+            orderByIndex = 0;
+
+            this.contestsData.GetProblemsById(contestId)
+                                .OrderBy(p => p.OrderBy)
+                                .ForEach(p =>
+                                {
+                                    p.OrderBy = ++orderByIndex;
+                                    this.problemsData.Update(p);
+                                });
+
+            await this.problemsData.SaveChanges();
         }
 
         private async Task CopyProblemGroupToContest(ProblemGroup problemGroup, int contestId)

@@ -16,6 +16,6 @@ namespace OJS.Services.Administration.Business
 
         Task<bool> UserHasProblemPermissions(int problemId, string? userId, bool isUserAdmin);
 
-        Task ReevaluateProblemsByOrderBy(int contestId);
+        Task ReevaluateProblemsByOrderBy(int contestId, int problemId);
     }
 }

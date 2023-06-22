@@ -11,5 +11,7 @@ namespace OJS.Services.Administration.Business
         Task<ServiceResult> CopyAllToContestBySourceAndDestinationContest(
             int sourceContestId,
             int destinationContestId);
+
+        Task ReevaluateProblemsAndProblemGroupsByOrderBy(int contestId);
     }
 }

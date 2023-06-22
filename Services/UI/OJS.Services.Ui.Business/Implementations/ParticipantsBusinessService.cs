@@ -168,7 +168,8 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
         var random = new Random();
 
         var problemGroups = contest.ProblemGroups
-            .Where(pg => !pg.IsDeleted && pg.Problems.Any(p => !p.IsDeleted));
+            .Where(pg => !pg.IsDeleted && pg.Problems.Any(p => !p.IsDeleted))
+            .OrderBy(pg => pg.OrderBy);
 
         foreach (var problemGroup in problemGroups)
         {
