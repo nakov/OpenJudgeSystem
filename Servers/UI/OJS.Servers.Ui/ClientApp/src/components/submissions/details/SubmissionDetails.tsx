@@ -1,17 +1,17 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import first from 'lodash/first';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IIndexContestsType } from '../../../common/types';
-import { ISubmissionDetailsType } from '../../../hooks/submissions/types';
+import { useHashUrlParams } from '../../../hooks/common/use-hash-url-params';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import { useAppUrls } from '../../../hooks/use-app-urls';
 import { useAuth } from '../../../hooks/use-auth';
 import { useContests } from '../../../hooks/use-contests';
 import { usePageTitles } from '../../../hooks/use-page-titles';
-import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
 import { preciseFormatDate } from '../../../utils/dates';
 import CodeEditor from '../../code-editor/CodeEditor';
@@ -53,10 +53,11 @@ const SubmissionDetails = () => {
         state: { contest },
         actions: { loadContestByProblemId },
     } = useContests();
-    const { actions: { initiateRedirectionToProblem } } = useProblems();
 
-    const { getAdministrationRetestSubmissionInternalUrl } = useAppUrls();
+    const { getAdministrationRetestSubmissionInternalUrl, getParticipateInContestUrl } = useAppUrls();
     const { state: { user } } = useAuth();
+    const { state: { hashParam } } = useHashUrlParams();
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (isNil(currentSubmission)) {
@@ -289,15 +290,17 @@ const SubmissionDetails = () => {
 
     const setSubmissionAndStartParticipation = useCallback(
         () => {
-            const { problem } = currentSubmission as ISubmissionDetailsType;
             const { id: contestId } = contest as IIndexContestsType;
 
-            initiateRedirectionToProblem(problem.id, contestId, participationType);
+            navigate({
+                pathname: getParticipateInContestUrl({ id: contestId, participationType }),
+                hash: hashParam,
+            });
 
             setCurrentSubmission(null);
             selectSubmissionById(null);
         },
-        [ currentSubmission, initiateRedirectionToProblem, contest, participationType, setCurrentSubmission, selectSubmissionById ],
+        [ contest, navigate, getParticipateInContestUrl, participationType, hashParam, setCurrentSubmission, selectSubmissionById ],
     );
 
     const codeEditor = useCallback(
