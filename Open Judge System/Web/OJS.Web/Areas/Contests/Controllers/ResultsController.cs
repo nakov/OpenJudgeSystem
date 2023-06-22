@@ -354,11 +354,13 @@
             var maxResult = this.contestsData.GetMaxPointsById(contest.Id);
 
             var participantsCount = contestResults.Results.Count();
+            var resultsData = contestResults.Results.ToList();
+
             var statsModel = new ContestStatsViewModel
             {
-                MinResultsCount = contestResults.Results.Count(r => r.Total == 0),
-                MaxResultsCount = contestResults.Results.Count(r => r.Total == maxResult),
-                AverageResult = (double)contestResults.Results.Sum(r => r.Total) / participantsCount
+                MinResultsCount = resultsData.Count(r => r.Total == 0),
+                MaxResultsCount = resultsData.Count(r => r.Total == maxResult),
+                AverageResult = (double)resultsData.Sum(r => r.Total) / participantsCount
             };
 
             statsModel.MinResultsPercent = (double)statsModel.MinResultsCount / participantsCount;
@@ -373,7 +375,7 @@
 
                 foreach (var problems in contestResults.Problems.GroupBy(p => p.ProblemGroupId))
                 {
-                    var maxResultsForProblemGroupCount = contestResults.Results.ToList()
+                    var maxResultsForProblemGroupCount = resultsData
                         .Count(r => r.ProblemResults?
                             .Any(pr => problems
                                 .Any(p =>
@@ -384,21 +386,21 @@
                     var problemGroupName = string.Join("<br/>", problems.Select(p => p.Name));
 
                     AddStatsByProblem(problemGroupName, maxPointsForProblemGroup, maxResultsForProblemGroupCount);
-                    AddStatsByPointsRange(maxPointsForProblemGroup, contestResults.Results);
+                    AddStatsByPointsRange(maxPointsForProblemGroup, resultsData);
                 }
             }
             else
             {
                 foreach (var problem in contestResults.Problems)
                 {
-                    var maxResultForProblemCount = contestResults.Results.ToList()
+                    var maxResultForProblemCount = resultsData
                         .Count(r => r.ProblemResults?
                             .Any(pr =>
                                 pr.ProblemId == problem.Id &&
                                 pr.BestSubmission.Points == problem.MaximumPoints) ?? false);
 
                     AddStatsByProblem(problem.Name, problem.MaximumPoints, maxResultForProblemCount);
-                    AddStatsByPointsRange(problem.MaximumPoints, contestResults.Results);
+                    AddStatsByPointsRange(problem.MaximumPoints, resultsData);
                 }
             }
 
