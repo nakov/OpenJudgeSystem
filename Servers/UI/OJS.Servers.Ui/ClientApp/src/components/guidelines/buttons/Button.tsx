@@ -26,7 +26,7 @@ enum LinkButtonType {
     primary = 1,
     secondary = 2,
     plain = 3,
-    image = 4,
+    image = 5,
 }
 
 enum ButtonSize {
