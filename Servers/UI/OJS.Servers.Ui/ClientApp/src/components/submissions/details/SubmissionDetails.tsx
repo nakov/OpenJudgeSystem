@@ -4,6 +4,7 @@ import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
+import { IIndexContestsType } from '../../../common/types';
 import { ISubmissionDetailsType } from '../../../hooks/submissions/types';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import { useAppUrls } from '../../../hooks/use-app-urls';
@@ -52,7 +53,7 @@ const SubmissionDetails = () => {
         state: { contest },
         actions: { loadContestByProblemId },
     } = useContests();
-    const { actions: { initiateInternalProblem } } = useProblems();
+    const { actions: { initiateRedirectionToProblem } } = useProblems();
 
     const { getAdministrationRetestSubmissionInternalUrl } = useAppUrls();
     const { state: { user } } = useAuth();
@@ -289,13 +290,14 @@ const SubmissionDetails = () => {
     const setSubmissionAndStartParticipation = useCallback(
         () => {
             const { problem } = currentSubmission as ISubmissionDetailsType;
+            const { id: contestId } = contest as IIndexContestsType;
 
-            initiateInternalProblem(problem.id, contest!.id, participationType);
+            initiateRedirectionToProblem(problem.id, contestId, participationType);
 
             setCurrentSubmission(null);
             selectSubmissionById(null);
         },
-        [ currentSubmission, initiateInternalProblem, contest, participationType, setCurrentSubmission, selectSubmissionById ],
+        [ currentSubmission, initiateRedirectionToProblem, contest, participationType, setCurrentSubmission, selectSubmissionById ],
     );
 
     const codeEditor = useCallback(

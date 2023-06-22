@@ -76,6 +76,22 @@ namespace OJS.Services.Administration.Business.Implementations
             return ServiceResult.Success;
         }
 
+        public async Task ReevaluateProblemGroupsByOrderBy(int contestId)
+        {
+            var orderByIndex = 0;
+
+            this.problemGroupsData.GetAllByContest(contestId)
+                .Where(pg => !pg.IsDeleted)
+                .OrderBy(pg => pg.OrderBy)
+                .ForEach(pg =>
+                {
+                    pg.OrderBy = ++orderByIndex;
+                    this.problemGroupsData.Update(pg);
+                });
+
+            await this.problemGroupsData.SaveChanges();
+        }
+
         private async Task CopyProblemGroupToContest(ProblemGroup problemGroup, int contestId)
         {
             problemGroup.Contest = null!;

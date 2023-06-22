@@ -24,7 +24,7 @@ interface IProblemsContext {
         downloadProblemResourceFile: (resourceId: number) => Promise<void>;
         initiateProblems: () => void;
         selectCurrentProblem: (id: number) => void;
-        initiateInternalProblem: (problemId: number, contestId: number, participationType: ContestParticipationType) => void;
+        initiateRedirectionToProblem: (problemId: number, contestId: number, participationType: ContestParticipationType) => void;
     };
 }
 
@@ -119,14 +119,14 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         [ selectProblemById ],
     );
 
-    const initiateInternalProblem = useCallback(
+    const initiateRedirectionToProblem = useCallback(
         (problemId: number, contestId: number, participationType: ContestParticipationType) => {
             const participateInContestUrl = getParticipateInContestUrl({
                 id: contestId,
                 participationType,
             });
 
-            navigate({ pathname: participateInContestUrl });
+            navigate(participateInContestUrl);
 
             setInternalProblemId(problemId);
         },
@@ -198,10 +198,10 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
                 selectCurrentProblem,
                 downloadProblemResourceFile,
                 initiateProblems,
-                initiateInternalProblem,
+                initiateRedirectionToProblem,
             },
         }),
-        [ currentProblem, downloadProblemResourceFile, initiateInternalProblem, initiateProblems, problems, selectCurrentProblem ],
+        [ currentProblem, downloadProblemResourceFile, initiateRedirectionToProblem, initiateProblems, problems, selectCurrentProblem ],
     );
 
     return (

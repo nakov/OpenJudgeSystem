@@ -29,7 +29,7 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
     const contestCardControlBtns = 'search-problem-card-control-buttons';
     const searchProblemCardControlBtnsClassName = concatClassNames(styles.problemCardControls, contestCardControlBtns);
 
-    const { actions: { initiateInternalProblem } } = useProblems();
+    const { actions: { initiateRedirectionToProblem } } = useProblems();
 
     const renderPage = useCallback(
         () => isEmpty(contest)
@@ -62,7 +62,7 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
                                   ? ButtonState.enabled
                                   : ButtonState.disabled
                           }
-                          onClick={() => initiateInternalProblem(id, contest.id, ContestParticipationType.Compete)}
+                          onClick={() => initiateRedirectionToProblem(id, contest.id, ContestParticipationType.Compete)}
                           text="Compete"
                           size={ButtonSize.small}
                         />
@@ -74,7 +74,7 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
                                     ? ButtonState.enabled
                                     : ButtonState.disabled
                             }
-                          onClick={() => initiateInternalProblem(id, contest.id, ContestParticipationType.Practice)}
+                          onClick={() => initiateRedirectionToProblem(id, contest.id, ContestParticipationType.Practice)}
                           text="Practice"
                           size={ButtonSize.small}
                         />
@@ -82,7 +82,7 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
                 </div>
             ),
         [ contest, searchContestElementClassName, problem, searchProblemCategoryClassName,
-            searchProblemContestClassName, searchProblemCardControlBtnsClassName, initiateInternalProblem, id ],
+            searchProblemContestClassName, searchProblemCardControlBtnsClassName, initiateRedirectionToProblem, id ],
     );
 
     return (

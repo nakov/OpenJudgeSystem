@@ -29,7 +29,9 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
     private readonly IValidationService<ProblemGroupCreateValidationServiceModel> problemGroupsCreateValidation;
     private readonly IContestsActivityService contestsActivity;
     private readonly IContestsDataService contestsData;
+    private readonly IProblemGroupsDataService problemGroupData;
     private readonly IProblemsBusinessService problemsBusiness;
+    private readonly IProblemGroupsBusinessService problemGroupsBusiness;
     private readonly IContestsValidationHelper contestsValidationHelper;
 
     public ProblemGroupsController(
@@ -40,7 +42,9 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
         IContestsActivityService contestsActivity,
         IContestsDataService contestsData,
         IContestsValidationHelper contestsValidationHelper,
-        IProblemsBusinessService problemsBusiness)
+        IProblemsBusinessService problemsBusiness,
+        IProblemGroupsBusinessService problemGroupsBusiness,
+        IProblemGroupsDataService problemGroupData)
     {
         this.problemGroupValidatorsFactory = problemGroupValidatorsFactory;
         this.problemGroupsDeleteValidation = problemGroupsDeleteValidation;
@@ -50,6 +54,8 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
         this.contestsData = contestsData;
         this.contestsValidationHelper = contestsValidationHelper;
         this.problemsBusiness = problemsBusiness;
+        this.problemGroupsBusiness = problemGroupsBusiness;
+        this.problemGroupData = problemGroupData;
     }
 
     protected override IEnumerable<Func<ProblemGroup, ProblemGroup, AdminActionContext, ValidatorResult>>
@@ -124,13 +130,6 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
             .VerifyResult();
     }
 
-    protected override async Task AfterEntitySaveOnCreateAsync(ProblemGroup entity, AdminActionContext actionContext)
-    {
-        await this.problemsBusiness.ReevaluateProblemsByOrderBy(entity.Id);
-
-        await base.AfterEntitySaveOnCreateAsync(entity, actionContext);
-    }
-
     protected override async Task BeforeEntitySaveOnEditAsync(
         ProblemGroup existingEntity,
         ProblemGroup newEntity,
@@ -148,13 +147,6 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
             .VerifyResult();
     }
 
-    protected override async Task AfterEntitySaveOnEditAsync(ProblemGroup oldEntity, ProblemGroup entity, AdminActionContext actionContext)
-    {
-        await this.problemsBusiness.ReevaluateProblemsByOrderBy(entity.Id);
-
-        await base.AfterEntitySaveOnEditAsync(oldEntity, entity, actionContext);
-    }
-
     protected override async Task BeforeEntitySaveOnDeleteAsync(ProblemGroup entity, AdminActionContext actionContext)
     {
         var contest = await this.contestsActivity.GetContestActivity(entity.ContestId);
@@ -169,10 +161,12 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
             .VerifyResult();
     }
 
-    protected override async Task AfterEntitySaveOnDeleteAsync(ProblemGroup entity, AdminActionContext actionContext)
+    protected override async Task AfterEntitySaveAsync(ProblemGroup entity, AdminActionContext actionContext)
     {
-        await this.problemsBusiness.ReevaluateProblemsByOrderBy(entity.Id);
+        this.problemGroupData.Detach(entity);
 
-        await base.BeforeEntitySaveOnDeleteAsync(entity, actionContext);
+        await this.problemGroupsBusiness.ReevaluateProblemGroupsByOrderBy(entity.ContestId);
+
+        await this.problemsBusiness.ReevaluateProblemsByOrderBy(entity.ContestId);
     }
 }
