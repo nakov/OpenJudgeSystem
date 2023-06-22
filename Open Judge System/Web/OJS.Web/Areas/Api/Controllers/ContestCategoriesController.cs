@@ -67,16 +67,22 @@ namespace OJS.Web.Areas.Api.Controllers
                         x.Name,
                         x.IsVisible,
                         x.OrderBy,
+                        x.IsDeleted,
+                        x.DeletedOn,
                         Children = x.Children.Select(child => new
                         {
                             child.Name,
-                            x.IsVisible,
-                            x.OrderBy,
+                            child.IsVisible,
+                            child.OrderBy,
+                            child.IsDeleted,
+                            child.DeletedOn,
                             Children = child.Children.Select(recursiveChild => new
                             {
                                 recursiveChild.Name,
                                 recursiveChild.IsVisible,
                                 recursiveChild.OrderBy,
+                                recursiveChild.IsDeleted,
+                                recursiveChild.DeletedOn,
                                 Contests = recursiveChild.Contests.Select(contest => new
                                 {
                                     contest.Name,
@@ -99,11 +105,15 @@ namespace OJS.Web.Areas.Api.Controllers
                                     contest.UsersCantSubmitConcurrently,
                                     contest.EnsureValidAuthorSubmisions,
                                     contest.AllowedIps,
+                                    contest.IsDeleted,
+                                    contest.DeletedOn,
                                     ProblemGroups = contest.ProblemGroups.Select(group => new
                                     {
                                         group.Id,
                                         group.OrderBy,
                                         group.Type,
+                                        group.IsDeleted,
+                                        group.DeletedOn,
                                         Problems = group.Problems.Select(problem => new
                                         {
                                             problem.Id,
@@ -117,6 +127,8 @@ namespace OJS.Web.Areas.Api.Controllers
                                             problem.AdditionalFiles,
                                             problem.ShowResults,
                                             problem.ShowDetailedFeedback,
+                                            problem.IsDeleted,
+                                            problem.DeletedOn,
                                             Checker = new
                                             {
                                                 problem.Checker.Id,
@@ -156,7 +168,9 @@ namespace OJS.Web.Areas.Api.Controllers
                                                 resource.File,
                                                 resource.FileExtension,
                                                 resource.Link,
-                                                resource.OrderBy
+                                                resource.OrderBy,
+                                                resource.IsDeleted,
+                                                resource.DeletedOn,
                                             })
                                         })
                                     })
