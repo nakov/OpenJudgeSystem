@@ -1803,6 +1803,7 @@
     <Compile Include="Areas\Administration\ViewModels\User\UserProfileSimpleAdministrationViewModel.cs" />
     <Compile Include="Areas\Api\ApiAreaRegistration.cs" />
     <Compile Include="Areas\Api\Controllers\ApiController.cs" />
+    <Compile Include="Areas\Api\Controllers\ContestCategoriesController.cs" />
     <Compile Include="Areas\Api\Controllers\ExamGroupsController.cs" />
     <Compile Include="Areas\Api\Controllers\ResultsController.cs" />
     <Compile Include="Areas\Api\Controllers\SubmissionsController.cs" />

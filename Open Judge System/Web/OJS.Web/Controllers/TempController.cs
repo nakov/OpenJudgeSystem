@@ -368,5 +368,76 @@
                 newLine +
                 $"{string.Join(newLine, exceptions.Select(ex => ex.ToString()).Distinct())}");
         }
+
+        public async Task<ActionResult> MigrateContestCategoryFromRemoteJudge(string id)
+        {
+            try
+            {
+                var contestCategoryResponse = await this.httpRequester.GetAsync<ContestCategory>(
+                    new { id },
+                    string.Format(UrlConstants.GetContestCategoryExportDataApiFormat, Settings.JudgeBaseUrl),
+                    Settings.ApiKey);
+
+                if (!contestCategoryResponse.IsSuccess || contestCategoryResponse.Data == null)
+                {
+                    return this.Content(
+                        $"Contest category is not found or something is wrong. ContestCategoryResponse.ErrorMessage: {contestCategoryResponse.ErrorMessage}");
+                }
+
+                this.AssignCheckerAndSubmissionTypes(contestCategoryResponse.Data);
+                
+                using (var scope = TransactionsHelper.CreateTransactionScope())
+                {
+                    this.Data.ContestCategories.Add(contestCategoryResponse.Data);
+                    this.Data.SaveChanges();
+                    scope.Complete();
+                    return this.Content($"The contest category is added!");
+                }
+            }
+            catch (Exception e)
+            {
+                return this.Content(
+                    $"Contest categories can't be migrated and exception {e}");
+            }
+        }
+
+        private void AssignCheckerAndSubmissionTypes(ContestCategory contestCategory)
+        {
+            if (contestCategory == null)
+            {
+                return;
+            }
+
+            foreach (var contest in contestCategory.Contests)
+            {
+                foreach (var problemGroup in contest.ProblemGroups)
+                {
+                    this.AssignCheckerAndSubmissionTypes(problemGroup.Problems);
+                }
+            }
+
+            foreach (var childCategory in contestCategory.Children)
+            {
+                this.AssignCheckerAndSubmissionTypes(childCategory);
+            }
+        }
+
+        private void AssignCheckerAndSubmissionTypes(IEnumerable<Problem> problems)
+        {
+            foreach (var problem in problems)
+            {
+                var checker = this.Data.Checkers.All().FirstOrDefault(x => x.Name == problem.Checker.Name);
+
+                problem.Checker = checker;
+                problem.SubmissionTypes = new List<SubmissionType>();
+
+                foreach (var problemSubmissionType in problem.ProblemSubmissionTypesSkeletons)
+                {
+                    var submissionType = this.Data.SubmissionTypes.All().FirstOrDefault(x => x.Name == problemSubmissionType.SubmissionType.Name);
+                    problemSubmissionType.SubmissionType = submissionType;
+                    problem.SubmissionTypes.Add(submissionType);
+                }
+            }
+        }
     }
 }

@@ -49,6 +49,8 @@
         public static int ArchiveDailyBatchSize => GetSettingOrDefault("ArchiveDailyBatchSize", 500000);
         
         public static string AdministratorPassword => GetSetting("AdministratorPassword");
+        
+        public static string JudgeBaseUrl => GetSetting("JudgeBaseUrl");
 
         private static int GetIntSetting(string settingName) => int.Parse(GetSetting(settingName));
     }
