@@ -142,7 +142,11 @@ namespace OJS.Web.Areas.Api.Controllers
                                                     skeleton => new
                                                     {
                                                         skeleton.SolutionSkeleton,
-                                                        skeleton.SubmissionType,
+                                                        SubmissionType = new
+                                                        {
+                                                            skeleton.SubmissionType.Name,
+                                                            skeleton.SubmissionType.Id
+                                                        },
                                                     }),
                                             Resources = problem.Resources.Select(resource => new
                                             {
