@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Globalization;
 using static Common.GlobalConstants;
 
-
 public static class GlobalDateFormatExtensions
 {
     public static IServiceCollection ConfigureGlobalDateFormat(this IServiceCollection services)
