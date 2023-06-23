@@ -3,6 +3,7 @@
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
     using OJS.Data.Models.Users;
     using OJS.Services.Common;
@@ -58,5 +59,21 @@
 
         public async Task AddOrUpdateUser(UserProfile user)
             => await this.usersProfileData.AddOrUpdate<UserProfileServiceModel>(user);
+
+        public async Task<UserAuthInfoServiceModel?> GetAuthInfo()
+        {
+            var currentUser = this.userProvider.GetCurrentUser();
+
+            if (currentUser.IsNull())
+            {
+                return null;
+            }
+
+            var profile = await this.usersProfileData
+                .GetByIdQuery(currentUser.Id!)
+                .FirstOrDefaultAsync();
+
+            return profile?.Map<UserAuthInfoServiceModel>();
+        }
     }
 }
