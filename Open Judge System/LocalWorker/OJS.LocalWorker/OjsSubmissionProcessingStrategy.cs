@@ -306,17 +306,17 @@
         private IOjsSubmission GetSubmissionModel()
         {
             int timeLimit = this.submission.Problem.TimeLimit;
-            var skeleton =
+            var submissionTypeDetails =
                 this.submission
-                .Problem
-                .ProblemSubmissionTypeExecutionDetails
-                .FirstOrDefault(s => s.SubmissionTypeId == this.submission.SubmissionTypeId);
+                    .Problem
+                    .ProblemSubmissionTypeExecutionDetails
+                    .FirstOrDefault(s => s.SubmissionTypeId == this.submission.SubmissionTypeId);
 
-            if (skeleton != null && 
-                skeleton.TimeLimit.HasValue &&
-                skeleton.TimeLimit > 0)
+            if (submissionTypeDetails != null && 
+                submissionTypeDetails.TimeLimit.HasValue &&
+                submissionTypeDetails.TimeLimit > 0)
             {
-                timeLimit = skeleton.TimeLimit.Value;
+                timeLimit = submissionTypeDetails.TimeLimit.Value;
             }
 
             return new OjsSubmission<TestsInputModel>()

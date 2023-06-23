@@ -223,6 +223,7 @@
                     {
                         problemSubmissionExectuionDetails.SolutionSkeleton = this.GetOptimizedSolutionSkeleton(problem, s.SolutionSkeleton)?.Compress();
                     }
+
                     if (s.TimeLimit >= 0)
                     {
                         problemSubmissionExectuionDetails.TimeLimit = s.TimeLimit;
@@ -1048,7 +1049,6 @@
                             }
                         }
                     });
-
 
             problem.SubmissionTypes
                 .Where(
