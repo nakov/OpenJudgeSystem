@@ -132,17 +132,17 @@ const Contest = () => {
     );
 
     const participantsStateText = useMemo(
-        () => isOfficial
+        () => isOfficial && contest?.isExam
             ? 'Active'
             : 'Total',
-        [ isOfficial ],
+        [ contest?.isExam, isOfficial ],
     );
 
     const participantsValue = useMemo(
-        () => isOfficial
+        () => isOfficial && contest?.isExam
             ? activeParticipantsCount
             : totalParticipantsCount,
-        [ activeParticipantsCount, isOfficial, totalParticipantsCount ],
+        [ activeParticipantsCount, contest?.isExam, isOfficial, totalParticipantsCount ],
     );
 
     const renderParticipants = useCallback(

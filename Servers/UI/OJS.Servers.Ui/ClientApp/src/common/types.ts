@@ -44,6 +44,7 @@ interface IContestType {
     isDeleted: boolean;
     isVisible: boolean;
     isOnline: boolean;
+    isExam: boolean;
     allowedSubmissionTypes: ISubmissionTypeType[];
     problems: IProblemType[];
     canBeCompeted: boolean;
@@ -103,9 +104,22 @@ interface IPagedResultType<TItem> {
 }
 
 interface IUserType {
+    id: string;
     username: string;
+    email: string;
     permissions: IUserPermissionsType;
-    isLoggedIn: boolean;
+}
+
+interface IUserRoleType {
+    id: string;
+    name: string;
+}
+
+interface IUserResponseType {
+    id: string;
+    userName: string;
+    email: string;
+    roles: IUserRoleType[];
 }
 
 interface IUserPermissionsType {
@@ -130,6 +144,7 @@ export type {
     ISubmissionTypeType,
     IPagedResultType,
     IUserType,
+    IUserResponseType,
     IUserPermissionsType,
     ISearchResponseModel,
 };
