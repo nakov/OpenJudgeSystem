@@ -59,14 +59,14 @@
                     Description =
                         "Compares exactly (char by char) the user output with the excepted output. Whitespace differences may cause incorrect output.",
                     DllFile = "OJS.Workers.Checkers",
-                    ClassName = "OJS.Workers.Checkers.ExactChecker",
+                    ClassName = "ExactChecker",
                 },
                 new Checker
                 {
                     Name = "Trim",
                     Description = "Trims the user output and compares it with the expected output.",
                     DllFile = "OJS.Workers.Checkers",
-                    ClassName = "OJS.Workers.Checkers.TrimChecker",
+                    ClassName = "TrimChecker",
                 },
                 new Checker
                 {
@@ -74,14 +74,14 @@
                     Description =
                         "Sorts alphabetically all lines from the user output, then compares them with the expected output.",
                     DllFile = "OJS.Workers.Checkers",
-                    ClassName = "OJS.Workers.Checkers.SortChecker",
+                    ClassName = "SortChecker",
                 },
                 new Checker
                 {
                     Name = "Case-insensitive",
                     Description = "Compares case-insensitively the user output with expected output.",
                     DllFile = "OJS.Workers.Checkers",
-                    ClassName = "OJS.Workers.Checkers.CaseInsensitiveChecker",
+                    ClassName = "CaseInsensitiveChecker",
                 },
                 new Checker
                 {
@@ -89,7 +89,7 @@
                     Description =
                         "Compares floating-point numbers with precision of 14 digits after the decimal separator.",
                     DllFile = "OJS.Workers.Checkers",
-                    ClassName = "OJS.Workers.Checkers.PrecisionChecker",
+                    ClassName = "PrecisionChecker",
                     Parameter = "14",
                 },
                 new Checker
@@ -98,7 +98,7 @@
                     Description =
                         "Compares floating-point numbers with precision of 7 digits after the decimal separator.",
                     DllFile = "OJS.Workers.Checkers",
-                    ClassName = "OJS.Workers.Checkers.PrecisionChecker",
+                    ClassName = "PrecisionChecker",
                     Parameter = "7",
                 },
                 new Checker
@@ -107,7 +107,7 @@
                     Description =
                         "Compares floating-point numbers with precision of 3 digits after the decimal separator.",
                     DllFile = "OJS.Workers.Checkers",
-                    ClassName = "OJS.Workers.Checkers.PrecisionChecker",
+                    ClassName = "PrecisionChecker",
                     Parameter = "3",
                 },
                 new Checker
