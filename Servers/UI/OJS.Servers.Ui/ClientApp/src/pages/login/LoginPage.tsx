@@ -5,13 +5,11 @@ import LoginForm from '../../components/auth/LoginForm';
 import { useAuth } from '../../hooks/use-auth';
 
 const LoginPage = () => {
-    const { state: { user } } = useAuth();
+    const { state: { user, isLoggedIn } } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 
     useEffect(() => {
-        const { isLoggedIn } = user;
-
         if (isLoggedIn) {
             // Needed ignore...
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -20,7 +18,7 @@ const LoginPage = () => {
 
             navigate(origin);
         }
-    }, [ location, navigate, user ]);
+    }, [ isLoggedIn, location, navigate, user ]);
 
     return (
         <LoginForm />

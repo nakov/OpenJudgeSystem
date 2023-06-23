@@ -1,12 +1,10 @@
 namespace OJS.Services.Ui.Business.Implementations
 {
-    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using FluentExtensions.Extensions;
     using OJS.Common;
-    using OJS.Common.Enumerations;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Participants;
     using OJS.Services.Common;
@@ -14,6 +12,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Infrastructure.Constants;
     using OJS.Services.Infrastructure.Exceptions;
     using OJS.Services.Ui.Business.Validation;
+    using OJS.Services.Ui.Business.Validations.Implementations.Contests;
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Contests;
     using OJS.Services.Ui.Models.Search;
@@ -71,7 +70,13 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var contest = await this.contestsData.OneById(id);
 
-            var validationResult = this.contestValidationService.GetValidationResult((contest, id, user.Id, user.IsAdmin, official) !);
+            var validationResult = this.contestValidationService.GetValidationResult((
+                contest,
+                id,
+                user.Id,
+                user.IsAdmin,
+                official) !);
+
             if (!validationResult.IsValid)
             {
                 throw new BusinessServiceException(validationResult.Message);
@@ -126,7 +131,12 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var user = this.userProviderService.GetCurrentUser();
 
-            var validationResult = this.contestValidationService.GetValidationResult((contest, model.ContestId, user?.Id, user!.IsAdmin, model.IsOfficial) !);
+            var validationResult = this.contestValidationService.GetValidationResult((
+                contest,
+                model.ContestId,
+                user.Id,
+                user!.IsAdmin,
+                model.IsOfficial) !);
 
             if (!validationResult.IsValid)
             {
@@ -163,7 +173,10 @@ namespace OJS.Services.Ui.Business.Implementations
                     participationModel.Contest.Problems.Select(x => x.Id),
                     participantsList);
 
-            if (!IsUserLecturerInContest(contest, user.Id!) && !user.IsAdmin && participationModel.ContestIsCompete)
+            var userIsAdminInContest = user.IsAdmin || IsUserLecturerInContest(contest, user.Id!);
+            var isOfficialOnlineContest = participationModel.ContestIsCompete && contest.IsOnlineExam;
+
+            if (!userIsAdminInContest && isOfficialOnlineContest)
             {
                 var problemsForParticipant = participant.ProblemsForParticipants.Select(x => x.Problem);
                 participationModel.Contest.Problems = problemsForParticipant.MapCollection<ContestProblemServiceModel>().ToList();
@@ -254,7 +267,7 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var active = await this.GetAllCompetable()
                 .ToListAsync();
-            var past = await this.GetAllPracticable()
+            var past = await this.GetAllPastContests()
                 .ToListAsync();
 
             return new ContestsForHomeIndexServiceModel { ActiveContests = active, PastContests = past, };
@@ -266,10 +279,10 @@ namespace OJS.Services.Ui.Business.Implementations
                 .OrderByDescendingAsync(ac => ac.EndTime)
                 .TakeAsync(DefaultContestsToTake);
 
-        public async Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPracticable()
+        public async Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPastContests()
             => await this.contestsData
-                .GetAllPracticable<ContestForHomeIndexServiceModel>()
-                .OrderByDescendingAsync(ac => ac.PracticeEndTime)
+                .GetAllExpired<ContestForHomeIndexServiceModel>()
+                .OrderByDescendingAsync(ac => ac.EndTime)
                 .TakeAsync(DefaultContestsToTake);
 
         public async Task<bool> CanUserCompeteByContestByUserAndIsAdmin(
@@ -411,7 +424,7 @@ namespace OJS.Services.Ui.Business.Implementations
             string userId,
             bool isUserAdmin)
         {
-            if (!contest.IsExam &&
+            if (contest.IsOnlineExam &&
                 official &&
                 !isUserAdmin &&
                 !IsUserLecturerInContest(contest, userId) &&

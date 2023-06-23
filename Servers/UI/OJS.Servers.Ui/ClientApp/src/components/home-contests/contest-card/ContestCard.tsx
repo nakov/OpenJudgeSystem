@@ -41,13 +41,17 @@ const ContestCard = ({ contest }: IContestCardProps) => {
 
     const renderCountdown = useCallback(
         () => {
-            if (canBePracticed && practiceEndTime == null) {
+            const endDate = canBeCompeted
+                ? endTime
+                : practiceEndTime;
+
+            if (canBePracticed && isNil(practiceEndTime) && isNil(endDate)) {
                 return <p>No practice end time.</p>;
             }
 
-            const endDate = canBeCompeted && !canBePracticed
-                ? endTime
-                : practiceEndTime;
+            if ((!canBePracticed && !canBeCompeted) || isNil(endDate)) {
+                return null;
+            }
 
             return (
                 <Countdown
