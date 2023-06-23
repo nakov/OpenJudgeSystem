@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
@@ -18,7 +18,6 @@ import styles from './ContestPage.module.scss';
 const ContestPage = () => {
     const { state: { params } } = useRouteUrlParams();
     const navigate = useNavigate();
-    const [ open, setOpen ] = useState(true);
 
     const {
         contestId,
@@ -120,8 +119,6 @@ const ContestPage = () => {
             (async () => {
                 await registerParticipant(internalContest);
             })();
-
-            setOpen(true);
         },
         [ contestId, internalContest, registerParticipant ],
     );
@@ -140,15 +137,11 @@ const ContestPage = () => {
                 return;
             }
 
-            if (open) {
-                return;
-            }
-
             (async () => {
                 await start(internalContest);
             })();
         },
-        [ internalContest, isPasswordFormValid, isRegisterForContestSuccessful, requirePassword, start, open ],
+        [ internalContest, isPasswordFormValid, isRegisterForContestSuccessful, requirePassword, start ],
     );
 
     return (

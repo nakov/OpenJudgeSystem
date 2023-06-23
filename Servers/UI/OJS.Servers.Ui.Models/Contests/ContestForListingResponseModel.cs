@@ -25,4 +25,6 @@ public class ContestForListingResponseModel : IMapFrom<ContestForListingServiceM
     public string Category { get; set; } = null!;
 
     public TimeSpan? Duration { get; set; }
+
+    public int NumberOfProblems { get; set; }
 }

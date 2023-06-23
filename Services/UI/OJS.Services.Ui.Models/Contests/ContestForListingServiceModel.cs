@@ -40,6 +40,10 @@ public class ContestForListingServiceModel : IMapExplicitly
                 dest => dest.Category,
                 opt => opt.MapFrom(src => src.Category!.Name))
             .ForMember(
-                dest => dest.NumberOfProblems,
-                opt => opt.MapFrom(src => src.ProblemGroups.First().Problems.Count));
+                d => d.NumberOfProblems,
+                opt => opt.MapFrom(src => src.ProblemGroups.Count(pg => pg.Problems.Count > 0)))
+            .ForMember(
+                d => d.Duration,
+                opt => opt.MapFrom(src =>
+                    src.Duration ?? ((src.StartTime.HasValue && src.EndTime.HasValue) ? (src.EndTime - src.StartTime) : null)));
 }

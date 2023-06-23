@@ -1,9 +1,10 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IIndexContestsType } from '../../../common/types';
 import { useAppUrls } from '../../../hooks/use-app-urls';
+import { useModal } from '../../../hooks/use-modal';
 import concatClassNames from '../../../utils/class-names';
 import { convertToSecondsRemaining } from '../../../utils/dates';
 import { Button, ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
@@ -27,6 +28,12 @@ const ContestCard = ({ contest }: IContestCardProps) => {
         canBeCompeted,
         endTime,
     } = contest;
+
+    useEffect(
+        () => console.log(contest),
+        [ contest ],
+    );
+
     const { getParticipateInContestUrl } = useAppUrls();
     const contestCard = 'card-contests';
     const contestCardClassName = concatClassNames(styles.contestCard, contestCard);
@@ -38,7 +45,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const contestCardCounterClassName = concatClassNames(styles.contestCardCountdown, contestCardCounter);
     const contestCardControlBtns = 'card-control-buttons';
     const contestCardControlBtnsClassName = concatClassNames(styles.contestCardControls, contestCardControlBtns);
-
+    const { state: { isShowing, modalContest }, actions: { toggle, setModalContest } } = useModal();
     const renderCountdown = useCallback(
         () => {
             const endDate = canBeCompeted
@@ -75,17 +82,12 @@ const ContestCard = ({ contest }: IContestCardProps) => {
         [ canBeCompeted, canBePracticed, contest ],
     );
 
-    const renderModal = useCallback(
+    const toggleAndSetContestModal = useCallback(
         () => {
-            if (isNil(contest)) {
-                return null;
-            }
-
-            return (
-                <ContestModal contest={contest} openModal />
-            );
+            toggle();
+            setModalContest(contest);
         },
-        [ contest ],
+        [ toggle, setModalContest, contest ],
     );
 
     return (
@@ -104,7 +106,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
             <div className={contestCardControlBtnsClassName}>
                 <Button
                   id="button-card-compete"
-                  onClick={() => renderModal()}
+                  onClick={() => toggleAndSetContestModal()}
                   text="Compete"
                   state={
                         canBeCompeted
@@ -113,6 +115,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                     }
                   size={ButtonSize.small}
                 />
+                <ContestModal contest={modalContest} isShowing={isShowing} toggle={toggle} />
                 <LinkButton
                   id="button-card-practice"
                   to={getParticipateInContestUrl({
