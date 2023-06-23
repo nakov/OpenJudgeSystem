@@ -1,10 +1,8 @@
 ﻿namespace OJS.Services.Ui.Models.Contests;
 
 using AutoMapper;
-using System.Linq;
 using OJS.Data.Models.Contests;
 using SoftUni.AutoMapper.Infrastructure.Models;
-using System;
 
 public class RegisterUserForContestServiceModel : IMapExplicitly
 {
