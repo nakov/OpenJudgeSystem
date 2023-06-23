@@ -250,10 +250,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
 
             const { requirePassword: responseRequirePassword } = registerForContestData;
 
-            setContest({
-                id: registerForContestData.id,
-                name: registerForContestData.name,
-            } as IContestType);
+            setContest({ id: registerForContestData.id, name: registerForContestData.name } as IContestType);
             setRequirePassword(responseRequirePassword);
             setContestError(null);
         },

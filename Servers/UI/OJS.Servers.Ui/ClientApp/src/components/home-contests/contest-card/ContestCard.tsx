@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
@@ -28,11 +28,6 @@ const ContestCard = ({ contest }: IContestCardProps) => {
         canBeCompeted,
         endTime,
     } = contest;
-
-    useEffect(
-        () => console.log(contest),
-        [ contest ],
-    );
 
     const { getParticipateInContestUrl } = useAppUrls();
     const contestCard = 'card-contests';

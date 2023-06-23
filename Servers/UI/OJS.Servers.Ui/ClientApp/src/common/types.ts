@@ -84,8 +84,6 @@ interface IRegisterForContestResponseType {
     id: number;
     name: string;
     requirePassword: boolean;
-    duration: number;
-    numberOfProblems: number;
 }
 
 interface IStartParticipationResponseType {
