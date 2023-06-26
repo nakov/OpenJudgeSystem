@@ -3,6 +3,7 @@ namespace OJS.Web.Areas.Api.Controllers
     using System.Data.Entity;
     using System.Linq;
     using System.Web.Mvc;
+    using Newtonsoft.Json;
     using OJS.Data;
     using OJS.Web.Common.Extensions;
     using OJS.Web.Infrastructure.Filters.Attributes;
@@ -154,7 +155,7 @@ namespace OJS.Web.Areas.Api.Controllers
                 return this.JsonError($"Contest Category with id: {id} is not found!");
             }
 
-            return this.Json(contestCategory);
+            return this.Content(JsonConvert.SerializeObject(contestCategory));
         }
     }
 }
