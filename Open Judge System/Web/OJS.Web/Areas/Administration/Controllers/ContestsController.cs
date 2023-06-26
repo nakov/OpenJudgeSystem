@@ -561,14 +561,14 @@
                     model.ExpectedExamProblemsCount = contest.ProblemGroups.Count();
                     model.ExpectedStudentsCount = contest.Participants.Count();
                     model.ContestName = contest.Name;
-                    model.AverageProblemRunTimeInSeconds = this.GetContestSubmissionsAverageRunTimeSeconds(contest);
                     model.CurrentContestId = contest.Id;
+
+                    model.AverageProblemRunTimeInSeconds = 
+                        this.contestsBusiness.GetContestSubmissionsAverageRunTimeSeconds(contest);
                 }
                 else
                 {
-                    var dropDownModel = new PreviousContestLoadData(contest);
-
-                    model.ContestsDropdownData.Add(dropDownModel);
+                    model.ContestsDropdownData.Add(new PreviousContestLoadData(contest));
                 }
             }
 
@@ -596,7 +596,8 @@
                 model.PreviousContestParticipants = contest.Participants
                     .Where(x => x.IsOfficial == true)
                     .Count();
-                model.PreviousAverageProblemRunTimeInSeconds = this.GetContestSubmissionsAverageRunTimeSeconds(contest);
+                model.PreviousAverageProblemRunTimeInSeconds = 
+                    this.contestsBusiness.GetContestSubmissionsAverageRunTimeSeconds(contest);
             }
 
             var calculatedLoad = this.contestsBusiness.CalculateLoadForContest(model);
@@ -741,37 +742,6 @@
             var message = string.Format(formatString, minutesForDisplay, username, contestName);
 
             return message;
-        }
-
-        private int GetContestSubmissionsAverageRunTimeSeconds(Contest contest)
-        {
-            List<SubmissionRunTimeCalculationModel> contestSubmissions = contest.ProblemGroups
-                                    .SelectMany(pg => pg.Problems)
-                                    .SelectMany(p => p.Submissions
-                                        .Select(s => new SubmissionRunTimeCalculationModel()
-                                        {
-                                            StartedExecutionOn = s.StartedExecutionOn,
-                                            ModifiedOn = s.ModifiedOn,
-                                            CreatedOn = s.CreatedOn,
-                                        }))
-                                    .ToList();
-
-            if (contestSubmissions.Any(s => s.StartedExecutionOn.HasValue))
-            {
-                return (int)contestSubmissions.Where(s => s.StartedExecutionOn.HasValue).Average(s => (s.ModifiedOn.Value - s.StartedExecutionOn.Value).TotalSeconds);
-            }
-            else
-            {
-                var contestSubmissionForCalc = contestSubmissions
-                    .Where(s => s.ModifiedOn.HasValue).ToList();
-
-                int countOfAllSubmissionTime = contestSubmissionForCalc
-                     .Sum(s => 
-                        (int)(s.ModifiedOn.Value.TimeOfDay.TotalSeconds - s.CreatedOn.Value.TimeOfDay.TotalSeconds));
-
-                return countOfAllSubmissionTime > 0 ?
-                    countOfAllSubmissionTime / contestSubmissionForCalc.Count() : 0;
-            }
         }
 
         private int GetOfficialSubmissionsByContest(int id)

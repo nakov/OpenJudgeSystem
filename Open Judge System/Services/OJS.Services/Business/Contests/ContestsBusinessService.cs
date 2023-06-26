@@ -184,6 +184,37 @@
             return responseModel;
         }
 
+        public int GetContestSubmissionsAverageRunTimeSeconds(Contest contest)
+        {
+            List<SubmissionRunTimeCalculationModel> contestSubmissions = contest.ProblemGroups
+                                    .SelectMany(pg => pg.Problems)
+                                    .SelectMany(p => p.Submissions
+                                        .Select(s => new SubmissionRunTimeCalculationModel()
+                                        {
+                                            StartedExecutionOn = s.StartedExecutionOn,
+                                            ModifiedOn = s.ModifiedOn,
+                                            CreatedOn = s.CreatedOn,
+                                        }))
+                                    .ToList();
+
+            if (contestSubmissions.Any(s => s.StartedExecutionOn.HasValue))
+            {
+                return (int)contestSubmissions.Where(s => s.StartedExecutionOn.HasValue).Average(s => (s.ModifiedOn.Value - s.StartedExecutionOn.Value).TotalSeconds);
+            }
+            else
+            {
+                var contestSubmissionForCalc = contestSubmissions
+                    .Where(s => s.ModifiedOn.HasValue).ToList();
+
+                int countOfAllSubmissionTime = contestSubmissionForCalc
+                     .Sum(s =>
+                        (int)(s.ModifiedOn.Value.TimeOfDay.TotalSeconds - s.CreatedOn.Value.TimeOfDay.TotalSeconds));
+
+                return countOfAllSubmissionTime > 0 ?
+                    countOfAllSubmissionTime / contestSubmissionForCalc.Count() : 0;
+            }
+        }
+
         private static void GetDistributionResults(BaseContestBusinessModel model, JudgeLoadResults responseModel)
         {
             var gaussianDistributionPeak = 0.341;
