@@ -30,7 +30,6 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
     private readonly IContestsActivityService contestsActivity;
     private readonly IContestsDataService contestsData;
     private readonly IProblemGroupsDataService problemGroupData;
-    private readonly IProblemsBusinessService problemsBusiness;
     private readonly IProblemGroupsBusinessService problemGroupsBusiness;
     private readonly IContestsValidationHelper contestsValidationHelper;
 
@@ -42,7 +41,6 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
         IContestsActivityService contestsActivity,
         IContestsDataService contestsData,
         IContestsValidationHelper contestsValidationHelper,
-        IProblemsBusinessService problemsBusiness,
         IProblemGroupsBusinessService problemGroupsBusiness,
         IProblemGroupsDataService problemGroupData)
     {
@@ -53,7 +51,6 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
         this.contestsActivity = contestsActivity;
         this.contestsData = contestsData;
         this.contestsValidationHelper = contestsValidationHelper;
-        this.problemsBusiness = problemsBusiness;
         this.problemGroupsBusiness = problemGroupsBusiness;
         this.problemGroupData = problemGroupData;
     }
@@ -161,6 +158,11 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
             .VerifyResult();
     }
 
+    /// <summary>
+    /// We detach the existing entity, in order to avoid tracking exception on Update.
+    /// After that we reevaluate all problemGroups and problems "orderBy" properties associated
+    /// with the corresponding contest.
+    /// </summary>
     protected override async Task AfterEntitySaveAsync(ProblemGroup entity, AdminActionContext actionContext)
     {
         this.problemGroupData.Detach(entity);

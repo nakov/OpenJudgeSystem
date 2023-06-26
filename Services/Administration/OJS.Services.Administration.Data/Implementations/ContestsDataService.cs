@@ -97,14 +97,6 @@ namespace OJS.Services.Administration.Data.Implementations
 
         public IQueryable<Contest> GetAllWithDeleted() => this.DbSet.IgnoreQueryFilters();
 
-        public IQueryable<Problem> GetProblemsById(int contestId)
-            => this.GetByIdQuery(contestId)
-                .SelectMany(pg => pg.ProblemGroups)
-                .Where(pg => !pg.IsDeleted)
-                .OrderBy(pg => pg.OrderBy)
-                .SelectMany(p => p.Problems)
-                .Where(p => !p.IsDeleted);
-
         public Task<int> GetMaxPointsById(int id)
             => this.GetMaxPointsByIdAndProblemGroupsFilter(id, pg => true);
 

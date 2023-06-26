@@ -528,6 +528,11 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         await base.BeforeEntitySaveOnEditAsync(originalEntity, newEntity, actionContext);
     }
 
+    /// <summary>
+    /// We detach the existing entity, in order to avoid tracking exception on Update.
+    /// After that we reevaluate all 'orderBy' properties of the current problemGroup/problemGroups
+    /// and problems associated with the corresponding contest.
+    /// </summary>
     protected override async Task AfterEntitySaveAsync(Problem entity, AdminActionContext actionContext)
     {
         this.problemsData.Detach(entity);

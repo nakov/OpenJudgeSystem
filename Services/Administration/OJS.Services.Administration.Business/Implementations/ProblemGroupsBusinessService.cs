@@ -14,19 +14,22 @@ namespace OJS.Services.Administration.Business.Implementations
     {
         private readonly IProblemGroupsDataService problemGroupsData;
         private readonly IContestsDataService contestsData;
-        private readonly IProblemsDataService problemsData;
         private readonly ISubmissionTypesDataService submissionTypesData;
+        private readonly IOrderableService<ProblemGroup> problemGroupsOrderableService;
+        private readonly IOrderableService<Problem> problemsOrderableService;
 
         public ProblemGroupsBusinessService(
             IProblemGroupsDataService problemGroupsData,
             IContestsDataService contestsData,
             ISubmissionTypesDataService submissionTypesData,
-            IProblemsDataService problemsData)
+            IOrderableService<Problem> problemsOrderableService,
+            IOrderableService<ProblemGroup> problemGroupsOrderableService)
         {
             this.problemGroupsData = problemGroupsData;
             this.contestsData = contestsData;
             this.submissionTypesData = submissionTypesData;
-            this.problemsData = problemsData;
+            this.problemsOrderableService = problemsOrderableService;
+            this.problemGroupsOrderableService = problemGroupsOrderableService;
         }
 
         public async Task<ServiceResult> DeleteById(int id)
@@ -81,29 +84,14 @@ namespace OJS.Services.Administration.Business.Implementations
 
         public async Task ReevaluateProblemsAndProblemGroupsByOrderBy(int contestId)
         {
-            var orderByIndex = 0;
+            var problemGroups = this.problemGroupsData.GetAllNonDeletedByContest(contestId);
 
-            this.problemGroupsData.GetAllNonDeletedByContest(contestId)
-                .OrderBy(pg => pg.OrderBy)
-                .ForEach(pg =>
-                {
-                    pg.OrderBy = ++orderByIndex;
-                    this.problemGroupsData.Update(pg);
-                });
+            await this.problemGroupsOrderableService.ReevaluateOrderBy(problemGroups);
 
-            await this.problemGroupsData.SaveChanges();
+            var problems = problemGroups.SelectMany(p => p.Problems);
 
-            orderByIndex = 0;
+            await this.problemsOrderableService.ReevaluateOrderBy(problems);
 
-            this.contestsData.GetProblemsById(contestId)
-                                .OrderBy(p => p.OrderBy)
-                                .ForEach(p =>
-                                {
-                                    p.OrderBy = ++orderByIndex;
-                                    this.problemsData.Update(p);
-                                });
-
-            await this.problemsData.SaveChanges();
         }
 
         private async Task CopyProblemGroupToContest(ProblemGroup problemGroup, int contestId)

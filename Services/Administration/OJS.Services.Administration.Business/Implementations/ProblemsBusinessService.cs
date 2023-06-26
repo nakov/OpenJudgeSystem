@@ -31,6 +31,7 @@ namespace OJS.Services.Administration.Business.Implementations
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
         private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
         private readonly IContestsBusinessService contestsBusiness;
+        private readonly IOrderableService<Problem> problemsOrderableService;
 
         public ProblemsBusinessService(
             IContestsDataService contestsData,
@@ -44,7 +45,8 @@ namespace OJS.Services.Administration.Business.Implementations
             IProblemGroupsBusinessService problemGroupsBusiness,
             ISubmissionsDistributorCommunicationService submissionsDistributorCommunication,
             IContestsBusinessService contestsBusiness,
-            IProblemGroupsDataService problemGroupData)
+            IProblemGroupsDataService problemGroupData,
+            IOrderableService<Problem> problemsOrderableService)
         {
             this.contestsData = contestsData;
             this.participantScoresData = participantScoresData;
@@ -58,6 +60,7 @@ namespace OJS.Services.Administration.Business.Implementations
             this.submissionsDistributorCommunication = submissionsDistributorCommunication;
             this.contestsBusiness = contestsBusiness;
             this.problemGroupData = problemGroupData;
+            this.problemsOrderableService = problemsOrderableService;
         }
 
         public async Task RetestById(int id)
@@ -190,18 +193,10 @@ namespace OJS.Services.Administration.Business.Implementations
             }
             else
             {
-                var problemGroup = this.problemGroupData.GetByProblem(problemId);
+                var problemGroup = problemsGroups.FirstOrDefault(pg => pg.Problems
+                                        .Any(p => p.Id == problemId));
 
-                var orderByIndex = 0;
-                problemGroup!.Problems
-                        .OrderBy(p => p.OrderBy)
-                        .ForEach(p =>
-                        {
-                            p.OrderBy = ++orderByIndex;
-                            this.problemsData.Update(p);
-                        });
-
-                await this.problemsData.SaveChanges();
+                await problemsOrderableService.ReevaluateOrderBy(problemGroup!.Problems);
             }
         }
 

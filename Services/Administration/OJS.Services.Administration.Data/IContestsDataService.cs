@@ -4,7 +4,6 @@ namespace OJS.Services.Administration.Data
     using System.Linq;
     using System.Threading.Tasks;
     using OJS.Data.Models.Contests;
-    using OJS.Data.Models.Problems;
     using OJS.Services.Common.Data;
     using SoftUni.AutoMapper.Infrastructure.Models;
 
@@ -37,8 +36,6 @@ namespace OJS.Services.Administration.Data
         IQueryable<Contest> GetAllVisibleByCategoryAndLecturer(int categoryId, string? lecturerId);
 
         IQueryable<Contest> GetAllWithDeleted();
-
-        IQueryable<Problem> GetProblemsById(int contestId);
 
         Task<int> GetMaxPointsById(int id);
 
