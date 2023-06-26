@@ -1,4 +1,8 @@
-﻿namespace OJS.Web.Controllers
+﻿using Newtonsoft.Json;
+using OJS.Services.Common.HttpRequester.Models;
+using OJS.Web.Areas.Api.Models;
+
+namespace OJS.Web.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -373,19 +377,10 @@
         {
             try
             {
-                var contestCategoryResponse = await this.httpRequester.GetAsync<ContestCategory>(
-                    new { id },
-                    string.Format(UrlConstants.GetContestCategoryExportDataApiFormat, Settings.JudgeBaseUrl),
-                    Settings.ApiKey);
+                var contestCategoryResponse = await this.FetchContestCategory(int.Parse(id));
 
-                if (!contestCategoryResponse.IsSuccess || contestCategoryResponse.Data == null)
-                {
-                    return this.Content(
-                        $"Contest category is not found or something is wrong. ContestCategoryResponse.ErrorMessage: {contestCategoryResponse.ErrorMessage}");
-                }
+                await this.LoadContestCategoryAndAssignCheckerAndSubmissionTypes(contestCategoryResponse.Data);
 
-                this.AssignCheckerAndSubmissionTypes(contestCategoryResponse.Data);
-                
                 using (var scope = TransactionsHelper.CreateTransactionScope())
                 {
                     this.Data.ContestCategories.Add(contestCategoryResponse.Data);
@@ -401,7 +396,7 @@
             }
         }
 
-        private void AssignCheckerAndSubmissionTypes(ContestCategory contestCategory)
+        private async Task LoadContestCategoryAndAssignCheckerAndSubmissionTypes(ContestCategory contestCategory)
         {
             if (contestCategory == null)
             {
@@ -412,17 +407,38 @@
             {
                 foreach (var problemGroup in contest.ProblemGroups)
                 {
-                    this.AssignCheckerAndSubmissionTypes(problemGroup.Problems);
+                    this.LoadContestCategoryAndAssignCheckerAndSubmissionTypes(problemGroup.Problems);
                 }
             }
 
-            foreach (var childCategory in contestCategory.Children)
+            var ids = contestCategory.Children.Select(x => x.Id).ToList();
+            contestCategory.Children.Clear();
+
+            foreach (var id in ids)
             {
-                this.AssignCheckerAndSubmissionTypes(childCategory);
+                var contestCategoryResponse = await this.FetchContestCategory(id);
+
+                contestCategory.Children.Add(contestCategoryResponse.Data);
+                await this.LoadContestCategoryAndAssignCheckerAndSubmissionTypes(contestCategoryResponse.Data);
             }
         }
 
-        private void AssignCheckerAndSubmissionTypes(IEnumerable<Problem> problems)
+        private async Task<ExternalDataRetrievalResult<ContestCategory>> FetchContestCategory(int id)
+        {
+            var contestCategoryResponse = await this.httpRequester.GetAsync<ContestCategory>(
+                new { id },
+                string.Format(UrlConstants.GetContestCategoryExportDataApiFormat, Settings.JudgeBaseUrl),
+                Settings.ApiKey);
+
+            if (!contestCategoryResponse.IsSuccess || contestCategoryResponse.Data == null)
+            {
+                throw new InvalidOperationException(contestCategoryResponse.ErrorMessage);
+            }
+
+            return contestCategoryResponse;
+        }
+
+        private void LoadContestCategoryAndAssignCheckerAndSubmissionTypes(IEnumerable<Problem> problems)
         {
             foreach (var problem in problems)
             {
