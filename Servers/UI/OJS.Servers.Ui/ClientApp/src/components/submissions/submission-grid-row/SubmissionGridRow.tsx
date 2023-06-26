@@ -48,7 +48,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
                     />
                 );
             }
-            return null;
+            return '';
         },
         [ loggedInUser, username, submissionId ],
     );
@@ -129,9 +129,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
                     </span>
                 </div>
             </div>
-            <div className={styles.detailsButtonContainer}>
-                {renderDetailsBtn()}
-            </div>
+            {renderDetailsBtn()}
         </div>
     );
 };
