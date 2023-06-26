@@ -4,9 +4,9 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
-
     using OJS.Data.Models;
     using OJS.Workers.Common.Extensions;
+    using OJS.Workers.Common.Models;
 
     public class SubmissionDetailsViewModel
     {
@@ -35,6 +35,8 @@
                 ShowDetailedFeedback = submission.Problem.ShowDetailedFeedback,
                 TotalTests = submission.Problem.Tests.Count,
                 TestRuns = submission.TestRuns.AsQueryable().Select(TestRunDetailsViewModel.FromTestRun),
+                ExecutionComment = submission.ExecutionComment,
+                ExceptionType = submission.ExceptionType,
                 StartedExecutionOn = submission.StartedExecutionOn
             };
 
@@ -94,6 +96,11 @@
 
         public bool HasTestRuns => this.TestRuns.Any();
 
+        public string ExecutionComment { get; set; }
+
+        public ExceptionType ExceptionType { get; set; }
+
         public DateTime? StartedExecutionOn { get; set; }
+
     }
 }
