@@ -395,7 +395,7 @@
                         existingProblem.SubmissionTypes.Add(submission);
                     });
 
-            this.ProcessProblemSubmissionTypesSkeletons(problem, currentSubmissionTypes, existingProblem);
+            this.ProcessProblemSubmissionTypesDetails(problem, currentSubmissionTypes, existingProblem);
 
             this.problemsData.Update(existingProblem);
 
@@ -996,7 +996,7 @@
             return skeleton;
         }
 
-        private void ProcessProblemSubmissionTypesSkeletons(
+        private void ProcessProblemSubmissionTypesDetails(
             ProblemAdministrationViewModel problem,
             List<SubmissionTypeViewModel> currentSubmissionTypes,
             Problem existingProblem)

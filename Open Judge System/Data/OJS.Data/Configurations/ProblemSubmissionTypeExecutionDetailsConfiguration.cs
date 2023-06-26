@@ -21,7 +21,7 @@
 
             this
                 .HasRequired(pst => pst.SubmissionType)
-                .WithMany(st => st.ProblemSubmissionTypesSkeletons)
+                .WithMany(st => st.ProblemSubmissionTypeExecutionDetails)
                 .HasForeignKey(pst => pst.SubmissionTypeId);
         }
     }
