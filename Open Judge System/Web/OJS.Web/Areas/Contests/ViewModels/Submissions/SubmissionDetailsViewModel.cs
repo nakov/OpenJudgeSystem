@@ -37,6 +37,7 @@
                 TestRuns = submission.TestRuns.AsQueryable().Select(TestRunDetailsViewModel.FromTestRun),
                 ExecutionComment = submission.ExecutionComment,
                 ExceptionType = submission.ExceptionType,
+                StartedExecutionOn = submission.StartedExecutionOn
             };
 
         public int Id { get; set; }
@@ -98,5 +99,8 @@
         public string ExecutionComment { get; set; }
 
         public ExceptionType ExceptionType { get; set; }
+
+        public DateTime? StartedExecutionOn { get; set; }
+
     }
 }

@@ -165,4 +165,7 @@
   <data name="Remove" xml:space="preserve">
     <value>Remove</value>
   </data>
+  <data name="Started_execution_on" xml:space="preserve">
+    <value>Started execution on</value>
+  </data>
 </root>

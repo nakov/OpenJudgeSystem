@@ -1,7 +1,8 @@
 ﻿namespace OJS.Web.Areas.Contests.ViewModels.Results
 {
     using System.Collections.Generic;
-
+    using System.Linq;
+    using System.Threading.Tasks;
     using OJS.Common.Models;
     using OJS.Web.Areas.Contests.ViewModels.Contests;
 
@@ -15,7 +16,7 @@
 
         public IEnumerable<ContestProblemListViewModel> Problems { get; set; }
 
-        public IEnumerable<ParticipantResultViewModel> Results { get; set; }
+        public IOrderedQueryable<ParticipantResultViewModel> Results { get; set; }
 
         public IPagedList<ParticipantResultViewModel> PagedResults { get; private set; }
 
@@ -29,9 +30,9 @@
 
         public bool IsCompete { get; set; }
 
-        public ContestResultsViewModel ToPagedResults(int page, int pageSize)
+        public async Task<ContestResultsViewModel> ToPagedResults(int page, int pageSize)
         {
-            this.PagedResults = this.Results.ToPagedList(page, pageSize);
+            this.PagedResults = await this.Results.ToPagedListAsync(page, pageSize);
 
             return this;
         }
