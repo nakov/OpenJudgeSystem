@@ -35,6 +35,7 @@
 
         public bool IsChecked { get; set; }
 
+        [Range(1, 10000)]
         public int? TimeLimit { get; set; }
 
         public ExecutionStrategyType ExecutionStrategyType { get; set; }

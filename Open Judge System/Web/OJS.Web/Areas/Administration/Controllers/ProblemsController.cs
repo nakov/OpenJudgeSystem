@@ -211,25 +211,23 @@
                 var submission = this.submissionTypesData.GetById(s.Id.Value);
                 newProblem.SubmissionTypes.Add(submission);
 
-                if (!s.SolutionSkeletonData.IsNullOrEmpty() || s.TimeLimit >= 0)
+                if (s.SolutionSkeletonData.IsNullOrEmpty() && (s.TimeLimit is null || s.TimeLimit.Value <= 0))
                 {
-                    var problemSubmissionExectuionDetails = new ProblemSubmissionTypeExecutionDetails()
-                    {
-                        ProblemId = problem.Id,
-                        SubmissionTypeId = submission.Id,
-                    };
-
-                    if (!s.SolutionSkeletonData.IsNullOrEmpty())
-                    {
-                        problemSubmissionExectuionDetails.SolutionSkeleton = this.GetOptimizedSolutionSkeleton(problem, s.SolutionSkeleton)?.Compress();
-                    }
-
-                    if (s.TimeLimit >= 0)
-                    {
-                        problemSubmissionExectuionDetails.TimeLimit = s.TimeLimit;
-                    }
-                    newProblem.ProblemSubmissionTypeExecutionDetails.Add(problemSubmissionExectuionDetails);
+                    return;
                 }
+                var problemSubmissionExectuionDetails = new ProblemSubmissionTypeExecutionDetails()
+                {
+                    ProblemId = problem.Id,
+                    SubmissionTypeId = submission.Id,
+                    TimeLimit = s.TimeLimit,
+                };
+
+                if (!s.SolutionSkeletonData.IsNullOrEmpty())
+                {
+                    problemSubmissionExectuionDetails.SolutionSkeleton = this.GetOptimizedSolutionSkeleton(problem, s.SolutionSkeleton)?.Compress();
+                }
+
+                newProblem.ProblemSubmissionTypeExecutionDetails.Add(problemSubmissionExectuionDetails);
             });
 
             if (problem.SolutionSkeletonData != null && problem.SolutionSkeletonData.Any())
@@ -1007,46 +1005,29 @@
                 .ForEach(
                     s =>
                     {
-                        var currentPst = existingProblem
+                        var currentSubmissionDetails = existingProblem
                                 .ProblemSubmissionTypeExecutionDetails
                                 .FirstOrDefault(pst => s.Id.HasValue && pst.SubmissionTypeId == s.Id.Value);
-                        if (!s.SolutionSkeletonData.IsNullOrEmpty())
+
+                        var solutionSekeltonData = s.SolutionSkeletonData.IsNullOrEmpty()
+                                ? null
+                                : this.GetOptimizedSolutionSkeleton(problem, s.SolutionSkeleton)?.Compress();
+
+                        if (currentSubmissionDetails != null)
                         {
-                            if (currentPst != null)
-                            {
-                                currentPst.TimeLimit = s.TimeLimit;
-                                currentPst.SolutionSkeleton =
-                                    this.GetOptimizedSolutionSkeleton(problem, s.SolutionSkeleton)?.Compress();
-                            }
-                            else
-                            {
-                                existingProblem.ProblemSubmissionTypeExecutionDetails.Add(
-                                    new ProblemSubmissionTypeExecutionDetails
-                                    {
-                                        ProblemId = problem.Id,
-                                        SubmissionTypeId = s.Id.Value,
-                                        SolutionSkeleton = this.GetOptimizedSolutionSkeleton(problem, s.SolutionSkeleton)
-                                            ?.Compress(),
-                                        TimeLimit = s.TimeLimit
-                                    });
-                            }
+                            currentSubmissionDetails.TimeLimit = s.TimeLimit;
+                            currentSubmissionDetails.SolutionSkeleton = solutionSekeltonData;
                         }
                         else
                         {
-                            if (currentPst != null)
-                            {
-                                currentPst.TimeLimit = s.TimeLimit;
-                            }
-                            else
-                            {
-                                existingProblem.ProblemSubmissionTypeExecutionDetails.Add(
-                                  new ProblemSubmissionTypeExecutionDetails
-                                  {
-                                      ProblemId = problem.Id,
-                                      SubmissionTypeId = s.Id.Value,
-                                      TimeLimit = s.TimeLimit
-                                  });
-                            }
+                            existingProblem.ProblemSubmissionTypeExecutionDetails.Add(
+                                new ProblemSubmissionTypeExecutionDetails
+                                {
+                                    ProblemId = problem.Id,
+                                    SubmissionTypeId = s.Id.Value,
+                                    SolutionSkeleton = solutionSekeltonData,
+                                    TimeLimit = s.TimeLimit
+                                });
                         }
                     });
 
