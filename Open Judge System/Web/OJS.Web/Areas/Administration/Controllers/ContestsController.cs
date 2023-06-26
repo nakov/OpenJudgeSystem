@@ -13,6 +13,7 @@
     using OJS.Data;
     using OJS.Data.Models;
     using OJS.Services.Business.Contests;
+    using OJS.Services.Business.Contests.Models;
     using OJS.Services.Business.Participants;
     using OJS.Services.Cache;
     using OJS.Services.Data.ContestCategories;
@@ -566,18 +567,14 @@
                 else
                 {
                     var dropDownModel = new PreviousContestLoadData(contest);
-                    dropDownModel.OldAverageProblemRunTimeInSeconds = this.GetContestSubmissionsAverageRunTimeSeconds(contest);
+
                     model.ContestsDropdownData.Add(dropDownModel);
                 }
             }
 
-            var lastExam = model.ContestsDropdownData.FirstOrDefault();
-            if (lastExam != null)
+            if (model.ContestsDropdownData.Any())
             {
-                model.PreviousContestSubmissions = lastExam.PreviousContestSubmissions;
-                model.PreviousContestStudents = lastExam.PreviousContestStudents;
-                model.PreviousContestProblems = lastExam.ProblemsCount;
-                model.PreviousAverageProblemRunTimeInSeconds = lastExam.OldAverageProblemRunTimeInSeconds;
+                model.PreviousContestId = model.ContestsDropdownData.First().Id;
             }
 
             return this.View(model);
@@ -589,6 +586,17 @@
             if (!this.CheckIfUserHasContestPermissions(model.CurrentContestId))
             {
                 return this.RedirectToContestsAdminPanelWithNoPrivilegesMessage();
+            }
+
+            if (model.PreviousContestId != null)
+            {
+                var contest = this.contestsData.GetById(model.PreviousContestId.Value);
+                model.PreviousContestId = this.GetOfficialSubmissionsByContest(contest.Id);
+                model.PreviousContestExpectedProblems = contest.ProblemGroups.SelectMany(x => x.Problems).Count();
+                model.PreviousContestParticipants = contest.Participants
+                    .Where(x => x.IsOfficial == true)
+                    .Count();
+                model.PreviousAverageProblemRunTimeInSeconds = this.GetContestSubmissionsAverageRunTimeSeconds(contest);
             }
 
             var calculatedLoad = this.contestsBusiness.CalculateLoadForContest(model);
@@ -737,9 +745,15 @@
 
         private int GetContestSubmissionsAverageRunTimeSeconds(Contest contest)
         {
-            List<Submission> contestSubmissions = contest.ProblemGroups
+            List<SubmissionRunTimeCalculationModel> contestSubmissions = contest.ProblemGroups
                                     .SelectMany(pg => pg.Problems)
-                                    .SelectMany(p => p.Submissions)
+                                    .SelectMany(p => p.Submissions
+                                        .Select(s => new SubmissionRunTimeCalculationModel()
+                                        {
+                                            StartedExecutionOn = s.StartedExecutionOn,
+                                            ModifiedOn = s.ModifiedOn,
+                                            CreatedOn = s.CreatedOn,
+                                        }))
                                     .ToList();
 
             if (contestSubmissions.Any(s => s.StartedExecutionOn.HasValue))
@@ -752,11 +766,20 @@
                     .Where(s => s.ModifiedOn.HasValue).ToList();
 
                 int countOfAllSubmissionTime = contestSubmissionForCalc
-                     .Sum(s => (int)s.ModifiedOn.Value.TimeOfDay.TotalSeconds);
+                     .Sum(s => 
+                        (int)(s.ModifiedOn.Value.TimeOfDay.TotalSeconds - s.CreatedOn.Value.TimeOfDay.TotalSeconds));
 
                 return countOfAllSubmissionTime > 0 ?
                     countOfAllSubmissionTime / contestSubmissionForCalc.Count() : 0;
             }
+        }
+
+        private int GetOfficialSubmissionsByContest(int id)
+        {
+            var participants = this.participantsData
+               .GetAllByContestAndIsOfficial(id, true);
+
+            return participants.SelectMany(p => p.Submissions).Count();
         }
     }
 }

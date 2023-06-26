@@ -14,7 +14,7 @@ namespace OJS.Services.Business.Contests.Models
         public int ExpectedStudentsCount { get; set; }
 
         [Range(1, 100000)]
-        public int PreviousContestStudents { get; set; }
+        public int PreviousContestParticipants { get; set; }
 
         [Range(1, 10000000)]
         public int PreviousContestSubmissions { get; set; }
@@ -35,9 +35,14 @@ namespace OJS.Services.Business.Contests.Models
         public int ActualWorkers { get; set; }
 
         [Range(1, 100)]
-        public int PreviousContestProblems { get; set; }
+        public int PreviousContestExpectedProblems { get; set; }
+
         [Range(1, int.MaxValue)]
         public int CurrentContestId { get; set; }
+
+        public int? PreviousContestId { get; set; }
+
+        public int PreviousAverageProblemRunTimeInSeconds { get; set; }
 
     }
 }

@@ -7,8 +7,6 @@
     {
         public string ContestName { get; set; }
 
-        public int PreviousAverageProblemRunTimeInSeconds { get; set; }
-
         public ICollection<PreviousContestLoadData> ContestsDropdownData { get; set; } = new List<PreviousContestLoadData>();
     }
 }
