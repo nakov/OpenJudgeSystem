@@ -41,6 +41,11 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             .MapCollection<TServiceModel>()
             .ToListAsync();
 
+    public async Task<IEnumerable<TServiceModel>> GetAllExpired<TServiceModel>()
+        => await this.GetAllExpiredQuery()
+            .MapCollection<TServiceModel>()
+            .ToListAsync();
+
     public IQueryable<Contest> GetAllNonDeletedContests()
             => this.DbSet
                 .Where(c => c.IsVisible && !c.IsDeleted);
@@ -217,6 +222,10 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
         => this.GetAllVisibleQuery()
             .Where(this.CanBeCompeted());
 
+    private IQueryable<Contest> GetAllExpiredQuery()
+        => this.GetAllVisibleQuery()
+            .Where(this.IsExpired());
+
     private IQueryable<Contest> GetAllPracticableQuery()
         => this.GetAllVisibleQuery()
             .Where(this.CanBePracticed());
@@ -231,7 +240,11 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
 
     private Expression<Func<Contest, bool>> CanBeCompeted()
         => c => c.StartTime <= this.dates.GetUtcNow()
-                && (!c.EndTime.HasValue || c.EndTime > this.dates.GetUtcNow());
+                && (!c.EndTime.HasValue || c.EndTime >= this.dates.GetUtcNow());
+
+    private Expression<Func<Contest, bool>> IsExpired()
+        => c => c.StartTime <= this.dates.GetUtcNow()
+                && c.EndTime < this.dates.GetUtcNow();
 
     private Expression<Func<Contest, bool>> CanBePracticed()
         => c => c.PracticeStartTime <= this.dates.GetUtcNow()
@@ -241,24 +254,24 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
         IQueryable<Contest> contests,
         ICollection<ContestStatus> statuses)
     {
-        var competable = statuses.Any(s => s == ContestStatus.Active);
-        var practicable = statuses.Any(s => s == ContestStatus.Past);
+        var active = statuses.Any(s => s == ContestStatus.Active);
+        var past = statuses.Any(s => s == ContestStatus.Past);
 
-        if (competable && !practicable)
+        if (active && !past)
         {
             return contests.Where(this.CanBeCompeted());
         }
 
-        if (!competable && practicable)
+        if (!active && past)
         {
-            return contests.Where(this.CanBePracticed());
+            return contests.Where(this.IsExpired());
         }
 
-        if (competable && practicable)
+        if (active && past)
         {
             return contests
                 .Where(this.CanBeCompeted())
-                .Concat(contests.Where(this.CanBePracticed()));
+                .Concat(contests.Where(this.IsExpired()));
         }
 
         return contests;

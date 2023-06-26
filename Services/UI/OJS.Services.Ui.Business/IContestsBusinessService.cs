@@ -21,7 +21,7 @@ namespace OJS.Services.Ui.Business
 
         Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllCompetable();
 
-        Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPracticable();
+        Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPastContests();
 
         Task<ContestSearchServiceResultModel> GetSearchContestsByName(SearchServiceModel model);
 
