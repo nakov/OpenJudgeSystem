@@ -15,6 +15,6 @@
 
         public TaskResultResponseModel TaskResult { get; set; } = null!;
 
-        public DateTime? LastExecutionOn { get; set; }
+        public DateTime? StartedExecutionOn { get; set; }
     }
 }

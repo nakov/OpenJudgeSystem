@@ -981,9 +981,6 @@ namespace OJS.Data.Migrations
                     b.Property<bool?>("IsPublic")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("LastExecutionOn")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("datetime2");
 
@@ -1004,6 +1001,9 @@ namespace OJS.Data.Migrations
 
                     b.Property<byte[]>("SolutionSkeleton")
                         .HasColumnType("varbinary(max)");
+
+                    b.Property<DateTime?>("StartedExecutionOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("SubmissionTypeId")
                         .HasColumnType("int");
