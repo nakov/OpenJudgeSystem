@@ -119,6 +119,8 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         [ selectProblemById ],
     );
 
+    // use it to redirect to contest from externalPage (such as SearchPage) which will search for
+    // his the problemId in the normalized problems and set it in the hash.
     const initiateRedirectionToProblem = useCallback(
         (problemId: number, contestId: number, participationType: ContestParticipationType) => {
             const participateInContestUrl = getParticipateInContestUrl({

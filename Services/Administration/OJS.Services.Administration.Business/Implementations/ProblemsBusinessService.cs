@@ -184,19 +184,19 @@ namespace OJS.Services.Administration.Business.Implementations
 
         public async Task ReevaluateProblemsByOrderBy(int contestId, int problemId)
         {
-            var problemsGroups = this.problemGroupData.GetAllNonDeletedByContest(contestId);
+            var problemsGroups = this.problemGroupData.GetAllVisibleByContest(contestId);
 
-            if (problemsGroups.All(pg => pg.Problems.Count == 1
-                                         && !pg.Problems.Single().IsDeleted))
+            if (problemsGroups.All(pg => pg.Problems.Count(p => !p.IsDeleted) == 1))
             {
                await this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsByOrderBy(contestId);
             }
             else
             {
-                var problemGroup = problemsGroups.FirstOrDefault(pg => pg.Problems
-                                        .Any(p => p.Id == problemId));
+                var problems = problemsGroups.FirstOrDefault(pg => pg.Problems
+                                                    .Any(p => p.Id == problemId))?.Problems
+                                                    .Where(p => !p.IsDeleted);
 
-                await problemsOrderableService.ReevaluateOrderBy(problemGroup!.Problems);
+                await problemsOrderableService.ReevaluateOrderBy(problems);
             }
         }
 

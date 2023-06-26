@@ -84,11 +84,12 @@ namespace OJS.Services.Administration.Business.Implementations
 
         public async Task ReevaluateProblemsAndProblemGroupsByOrderBy(int contestId)
         {
-            var problemGroups = this.problemGroupsData.GetAllNonDeletedByContest(contestId);
+            var problemGroups = this.problemGroupsData.GetAllVisibleByContest(contestId);
 
             await this.problemGroupsOrderableService.ReevaluateOrderBy(problemGroups);
 
-            var problems = problemGroups.SelectMany(p => p.Problems);
+            var problems = problemGroups.SelectMany(p => p.Problems)
+                                                            .Where(p => !p.IsDeleted);
 
             await this.problemsOrderableService.ReevaluateOrderBy(problems);
 
