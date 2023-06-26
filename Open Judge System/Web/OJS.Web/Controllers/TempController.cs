@@ -445,13 +445,34 @@ namespace OJS.Web.Controllers
                 var checker = this.Data.Checkers.All().FirstOrDefault(x => x.Name == problem.Checker.Name);
 
                 problem.Checker = checker;
-                problem.SubmissionTypes = new List<SubmissionType>();
 
-                foreach (var problemSubmissionType in problem.ProblemSubmissionTypesSkeletons)
+                if (problem.ProblemSubmissionTypesSkeletons.Any())
                 {
-                    var submissionType = this.Data.SubmissionTypes.All().FirstOrDefault(x => x.Name == problemSubmissionType.SubmissionType.Name);
-                    problemSubmissionType.SubmissionType = submissionType;
-                    problem.SubmissionTypes.Add(submissionType);
+                    problem.SubmissionTypes = new List<SubmissionType>();
+
+                    foreach (var problemSubmissionType in problem.ProblemSubmissionTypesSkeletons)
+                    {
+                        var submissionType = this.Data.SubmissionTypes.All().FirstOrDefault(x => x.Name == problemSubmissionType.SubmissionType.Name);
+                    
+                        if (submissionType != null)
+                        {
+                            problemSubmissionType.SubmissionType = submissionType;
+                            problemSubmissionType.SubmissionTypeId = submissionType.Id;
+                            problem.SubmissionTypes.Add(submissionType);
+                        }
+                    }
+                }
+                else
+                {
+                    var submissionTypes = new List<SubmissionType>();
+
+                    foreach (var problemSubmissionType in problem.SubmissionTypes)
+                    {
+                        var submissionType = this.Data.SubmissionTypes.All().FirstOrDefault(x => x.Name == problemSubmissionType.Name);
+                        submissionTypes.Add(submissionType);
+                    }
+
+                    problem.SubmissionTypes = submissionTypes;
                 }
             }
         }
