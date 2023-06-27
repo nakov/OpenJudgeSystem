@@ -1,5 +1,6 @@
 namespace OJS.Servers.Administration.Controllers;
 
+using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -7,11 +8,17 @@ using OJS.Data.Models.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using static OJS.Common.GlobalConstants.Roles;
+using static Common.GlobalConstants.Roles;
+using OJS.Services.Administration.Data;
+using System.Linq;
 
 [Authorize(Roles = Administrator)]
 public class UserRolesController : BaseAutoCrudAdminController<UserInRole>
 {
+    private readonly IUsersDataService usersDataService;
+
+    public UserRolesController(IUsersDataService usersDataService) => this.usersDataService = usersDataService;
+
     public const string RoleIdKey = nameof(UserInRole.RoleId);
 
     protected override Expression<Func<UserInRole, bool>>? MasterGridFilter
@@ -21,4 +28,28 @@ public class UserRolesController : BaseAutoCrudAdminController<UserInRole>
 
     protected override IEnumerable<GridAction> DefaultActions
         => new[] { new GridAction { Action = nameof(this.Delete) } };
+
+    protected override IEnumerable<FormControlViewModel> GenerateFormControls(
+        UserInRole entity,
+        EntityAction action,
+        IDictionary<string, string> entityDict,
+        IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters)
+    {
+        var formControls = base.GenerateFormControls(entity, action, entityDict, complexOptionFilters).ToList();
+        formControls.Add(new FormControlViewModel()
+        {
+            Name = nameof(UserProfile.UserName),
+            Options = this.usersDataService.GetQuery(take:20).ToList(),
+            FormControlType = FormControlType.Autocomplete,
+            DisplayName = nameof(UserInRole.User),
+            FormControlAutocompleteController = nameof(UsersController).ToControllerBaseUri(),
+            FormControlAutocompleteEntityId = nameof(UserInRole.UserId),
+        });
+
+        var formControlToRemove = formControls.First(x =>
+            x.DisplayName == nameof(UserInRole.User) && x.FormControlType != FormControlType.Autocomplete);
+        formControls.Remove(formControlToRemove);
+
+        return formControls;
+    }
 }
