@@ -165,4 +165,7 @@
   <data name="Remove" xml:space="preserve">
     <value>Премахни</value>
   </data>
+  <data name="Started_execution_on" xml:space="preserve">
+    <value>Последно стартиране на изпълнение</value>
+  </data>
 </root>
