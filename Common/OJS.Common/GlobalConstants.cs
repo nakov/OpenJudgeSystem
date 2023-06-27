@@ -48,6 +48,11 @@ namespace OJS.Common
             public const string ProductionValue = "Production";
         }
 
+        public static class ApplicationDateFormats
+        {
+            public const string GlobalShortDatePatternFormat = "dd/MM/yyyy";
+        }
+
         public static class Roles
         {
             public const string Administrator = "Administrator";
