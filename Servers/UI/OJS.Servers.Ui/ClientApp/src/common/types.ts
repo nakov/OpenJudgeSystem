@@ -57,6 +57,8 @@ interface IContestType {
     userCanCompete: boolean;
     userIsParticipant: false;
     isActive: boolean;
+    duration: number;
+    numberOfProblems: number;
 }
 
 interface IIndexContestsType {
@@ -75,6 +77,13 @@ interface IIndexContestsType {
     numberOfProblems: number;
 }
 
+interface IContestModal {
+    id: number;
+    name: string;
+    duration: number;
+    numberOfProblems: number;
+}
+
 interface IGetContestsForIndexResponseType {
     activeContests: IIndexContestsType[];
     pastContests: IIndexContestsType[];
@@ -84,6 +93,7 @@ interface IRegisterForContestResponseType {
     id: number;
     name: string;
     requirePassword: boolean;
+    participantId: number| null;
 }
 
 interface IStartParticipationResponseType {
@@ -149,4 +159,5 @@ export type {
     IUserResponseType,
     IUserPermissionsType,
     ISearchResponseModel,
+    IContestModal,
 };

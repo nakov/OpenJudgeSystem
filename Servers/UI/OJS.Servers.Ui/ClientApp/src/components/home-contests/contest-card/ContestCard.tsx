@@ -30,6 +30,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     } = contest;
 
     const { getParticipateInContestUrl } = useAppUrls();
+    const { state: { isShowing, modalContest }, actions: { toggle, setModalContest } } = useModal();
     const contestCard = 'card-contests';
     const contestCardClassName = concatClassNames(styles.contestCard, contestCard);
     const contestCardHeader = 'card-header';
@@ -40,7 +41,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const contestCardCounterClassName = concatClassNames(styles.contestCardCountdown, contestCardCounter);
     const contestCardControlBtns = 'card-control-buttons';
     const contestCardControlBtnsClassName = concatClassNames(styles.contestCardControls, contestCardControlBtns);
-    const { state: { isShowing, modalContest }, actions: { toggle, setModalContest } } = useModal();
+
     const renderCountdown = useCallback(
         () => {
             const endDate = canBeCompeted
@@ -80,7 +81,12 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const toggleAndSetContestModal = useCallback(
         () => {
             toggle();
-            setModalContest(contest);
+            setModalContest({
+                id: contest.id,
+                name: contest.name,
+                duration: contest.duration,
+                numberOfProblems: contest.numberOfProblems,
+            });
         },
         [ toggle, setModalContest, contest ],
     );

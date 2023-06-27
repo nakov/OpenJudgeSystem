@@ -1,5 +1,19 @@
 @use 'src/styles/colors';
 
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.bolded {
+  font-weight: bold;
+}
+
+.italicized {
+  font-style: italic;
+}
+
 .modal {
   display: flex;
   flex-direction: column;
@@ -15,6 +29,6 @@
 }
 
 .modalHeading {
-  align-self: self-start;
+  align-self: stretch;
   background-color: colors.$light-blue-color;
 }

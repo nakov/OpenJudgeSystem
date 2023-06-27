@@ -1,22 +1,22 @@
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 
-import { IIndexContestsType } from '../common/types';
+import { IContestModal } from '../common/types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
 interface IContestModalContext {
     state: {
         isShowing: boolean;
-        modalContest: IIndexContestsType;
+        modalContest: IContestModal;
     };
     actions: {
         toggle: () => void;
-        setModalContest: (contest: IIndexContestsType) => void;
+        setModalContest: (contest: IContestModal) => void;
     };
 }
 
 type IContestModalProviderProps = IHaveChildrenProps
 
-const defaultState = { state: { isShowing: false, modalContest: {} as IIndexContestsType } };
+const defaultState = { state: { isShowing: false, modalContest: {} as IContestModal } };
 
 const ContestModalContext = createContext<IContestModalContext>(defaultState as IContestModalContext);
 
