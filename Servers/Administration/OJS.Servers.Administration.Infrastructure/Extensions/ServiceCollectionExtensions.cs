@@ -3,7 +3,6 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
     using AutoCrudAdmin.Extensions;
     using Microsoft.Extensions.DependencyInjection;
     using OJS.Common.Enumerations;
-    using OJS.Common.Utils;
     using OJS.Data;
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Extensions;
@@ -25,6 +24,7 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
             services
                 .AddWebServer<TProgram>()
                 .AddHangfireServer(AppName)
+                .ConfigureGlobalDateFormat()
                 .ValidateLaunchSettings(RequiredConfigValues)
                 .AddIdentityDatabase<AdminDbContext, UserProfile, Role, UserInRole>(Enumerable.Empty<GlobalQueryFilterType>())
                 .AddScoped<OjsDbContext, AdminDbContext>()
