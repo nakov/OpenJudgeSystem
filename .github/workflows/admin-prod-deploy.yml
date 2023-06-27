@@ -9,6 +9,11 @@ on:
         default: "latest"
         type: string
   workflow_call:
+    inputs:
+      docker_image_tag:
+        required: true
+        default: "latest"
+        type: string
 jobs:
   check-user-access:
     uses: ./.github/workflows/check-prod-deploy-user-access.yml
