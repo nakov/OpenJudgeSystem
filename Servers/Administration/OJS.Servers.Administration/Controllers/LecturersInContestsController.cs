@@ -1,17 +1,16 @@
-using AutoCrudAdmin.Enumerations;
-using AutoCrudAdmin.Extensions;
-using AutoCrudAdmin.ViewModels;
-using OJS.Data.Models.Users;
-using OJS.Services.Administration.Data;
+namespace OJS.Servers.Administration.Controllers;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-
-namespace OJS.Servers.Administration.Controllers;
-
+using AutoCrudAdmin.Enumerations;
+using AutoCrudAdmin.Extensions;
+using AutoCrudAdmin.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using OJS.Data.Models;
+using OJS.Data.Models.Users;
+using OJS.Services.Administration.Data;
 using static OJS.Common.GlobalConstants.Roles;
 
 [Authorize(Roles = Administrator)]
@@ -31,7 +30,7 @@ public class LecturersInContestsController : BaseAutoCrudAdminController<Lecture
         formControls.Add(new FormControlViewModel()
         {
             Name = nameof(UserProfile.UserName),
-            Options = this.usersDataService.GetQuery(take:20).ToList(),
+            Options = this.usersDataService.GetQuery(take: 20).ToList(),
             FormControlType = FormControlType.Autocomplete,
             DisplayName = nameof(LecturerInContest.Lecturer),
             FormControlAutocompleteController = nameof(UsersController).ToControllerBaseUri(),

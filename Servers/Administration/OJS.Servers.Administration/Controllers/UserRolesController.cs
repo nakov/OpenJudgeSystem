@@ -39,7 +39,7 @@ public class UserRolesController : BaseAutoCrudAdminController<UserInRole>
         formControls.Add(new FormControlViewModel()
         {
             Name = nameof(UserProfile.UserName),
-            Options = this.usersDataService.GetQuery(take:20).ToList(),
+            Options = this.usersDataService.GetQuery(take: 20).ToList(),
             FormControlType = FormControlType.Autocomplete,
             DisplayName = nameof(UserInRole.User),
             FormControlAutocompleteController = nameof(UsersController).ToControllerBaseUri(),

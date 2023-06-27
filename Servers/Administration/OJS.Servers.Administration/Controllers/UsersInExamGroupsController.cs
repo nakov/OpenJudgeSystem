@@ -75,7 +75,7 @@ public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExa
         formControls.Add(new FormControlViewModel()
         {
             Name = nameof(UserProfile.UserName),
-            Options = this.usersDataService.GetQuery(take:20).ToList(),
+            Options = this.usersDataService.GetQuery(take: 20).ToList(),
             FormControlType = FormControlType.Autocomplete,
             DisplayName = nameof(UserInExamGroup.User),
             FormControlAutocompleteController = nameof(UsersController).ToControllerBaseUri(),
