@@ -29,7 +29,6 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
     private readonly IValidationService<ProblemGroupCreateValidationServiceModel> problemGroupsCreateValidation;
     private readonly IContestsActivityService contestsActivity;
     private readonly IContestsDataService contestsData;
-    private readonly IProblemGroupsDataService problemGroupData;
     private readonly IProblemGroupsBusinessService problemGroupsBusiness;
     private readonly IContestsValidationHelper contestsValidationHelper;
 
@@ -41,8 +40,7 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
         IContestsActivityService contestsActivity,
         IContestsDataService contestsData,
         IContestsValidationHelper contestsValidationHelper,
-        IProblemGroupsBusinessService problemGroupsBusiness,
-        IProblemGroupsDataService problemGroupData)
+        IProblemGroupsBusinessService problemGroupsBusiness)
     {
         this.problemGroupValidatorsFactory = problemGroupValidatorsFactory;
         this.problemGroupsDeleteValidation = problemGroupsDeleteValidation;
@@ -52,7 +50,6 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
         this.contestsData = contestsData;
         this.contestsValidationHelper = contestsValidationHelper;
         this.problemGroupsBusiness = problemGroupsBusiness;
-        this.problemGroupData = problemGroupData;
     }
 
     protected override IEnumerable<Func<ProblemGroup, ProblemGroup, AdminActionContext, ValidatorResult>>
@@ -158,15 +155,6 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
             .VerifyResult();
     }
 
-    /// <summary>
-    /// We detach the existing entity, in order to avoid tracking exception on Update.
-    /// After that we reevaluate all problemGroups and problems "orderBy" properties associated
-    /// with the corresponding contest.
-    /// </summary>
     protected override async Task AfterEntitySaveAsync(ProblemGroup entity, AdminActionContext actionContext)
-    {
-        this.problemGroupData.Detach(entity);
-
-        await this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsByOrderBy(entity.ContestId);
-    }
+        => await this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsByOrderBy(entity.ContestId, entity);
 }

@@ -1,8 +1,9 @@
 namespace OJS.Services.Administration.Business
 {
+    using System.Threading.Tasks;
+    using OJS.Data.Models.Problems;
     using OJS.Services.Common.Models;
     using SoftUni.Services.Infrastructure;
-    using System.Threading.Tasks;
 
     public interface IProblemGroupsBusinessService : IService
     {
@@ -12,6 +13,6 @@ namespace OJS.Services.Administration.Business
             int sourceContestId,
             int destinationContestId);
 
-        Task ReevaluateProblemsAndProblemGroupsByOrderBy(int contestId);
+        Task ReevaluateProblemsAndProblemGroupsByOrderBy(int contestId, ProblemGroup problemGroup);
     }
 }

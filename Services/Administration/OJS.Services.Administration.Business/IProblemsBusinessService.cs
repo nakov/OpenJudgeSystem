@@ -1,6 +1,7 @@
 namespace OJS.Services.Administration.Business
 {
     using System.Threading.Tasks;
+    using OJS.Data.Models.Problems;
     using OJS.Services.Common.Models;
     using SoftUni.Services.Infrastructure;
 
@@ -16,6 +17,6 @@ namespace OJS.Services.Administration.Business
 
         Task<bool> UserHasProblemPermissions(int problemId, string? userId, bool isUserAdmin);
 
-        Task ReevaluateProblemsByOrderBy(int contestId, int problemId);
+        Task ReevaluateProblemsByOrderBy(int contestId, Problem problem);
     }
 }

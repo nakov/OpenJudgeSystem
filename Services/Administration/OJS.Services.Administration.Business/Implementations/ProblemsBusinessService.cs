@@ -182,21 +182,24 @@ namespace OJS.Services.Administration.Business.Implementations
             return await this.contestsBusiness.UserHasContestPermissions(problem.ContestId, userId, isUserAdmin);
         }
 
-        public async Task ReevaluateProblemsByOrderBy(int contestId, int problemId)
+        public async Task ReevaluateProblemsByOrderBy(int contestId, Problem problem)
         {
             var problemsGroups = this.problemGroupData.GetAllVisibleByContest(contestId);
 
             if (problemsGroups.All(pg => pg.Problems.Count(p => !p.IsDeleted) == 1))
             {
-               await this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsByOrderBy(contestId);
+               await this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsByOrderBy(contestId, problem.ProblemGroup);
             }
             else
             {
+                // We detach the existing entity, in order to avoid tracking exception on Update.
+                this.problemGroupData.Detach(problem.ProblemGroup);
+
                 var problems = problemsGroups.FirstOrDefault(pg => pg.Problems
-                                                    .Any(p => p.Id == problemId))?.Problems
+                                                    .Any(p => p.Id == problem.Id))?.Problems
                                                     .Where(p => !p.IsDeleted);
 
-                await problemsOrderableService.ReevaluateOrderBy(problems);
+                await this.problemsOrderableService.ReevaluateOrderBy(problems!);
             }
         }
 

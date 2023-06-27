@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 public interface IOrderableService<TEntity> : IService
-
 {
     Task ReevaluateOrderBy(IEnumerable<TEntity> entities);
 }
