@@ -591,7 +591,7 @@
             if (model.PreviousContestId != null)
             {
                 var contest = this.contestsData.GetById(model.PreviousContestId.Value);
-                model.PreviousContestId = this.GetOfficialSubmissionsByContest(contest.Id);
+                model.PreviousContestSubmissions = this.GetOfficialSubmissionsByContest(contest.Id);
                 model.PreviousContestExpectedProblems = contest.ProblemGroups.SelectMany(x => x.Problems).Count();
                 model.PreviousContestParticipants = contest.Participants
                     .Where(x => x.IsOfficial == true)
