@@ -4,6 +4,7 @@ using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Common;
 using OJS.Data.Models.Users;
 using System;
 using System.Collections.Generic;
@@ -40,7 +41,7 @@ public class UserRolesController : BaseAutoCrudAdminController<UserInRole>
         formControls.Add(new FormControlViewModel()
         {
             Name = nameof(UserProfile.UserName),
-            Options = this.usersDataService.GetQuery(take: 20).ToList(),
+            Options = this.usersDataService.GetQuery(take: GlobalConstants.NumberOfAutocompleteItemsShown).ToList(),
             FormControlType = FormControlType.Autocomplete,
             DisplayName = nameof(UserInRole.User),
             FormControlAutocompleteController = nameof(UsersController).ToControllerBaseUri(),

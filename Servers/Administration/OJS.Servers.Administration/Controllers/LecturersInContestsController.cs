@@ -8,10 +8,11 @@ using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Common;
 using OJS.Data.Models;
 using OJS.Data.Models.Users;
 using OJS.Services.Administration.Data;
-using static OJS.Common.GlobalConstants.Roles;
+using static Common.GlobalConstants.Roles;
 
 [Authorize(Roles = Administrator)]
 public class LecturersInContestsController : BaseAutoCrudAdminController<LecturerInContest>
@@ -30,7 +31,7 @@ public class LecturersInContestsController : BaseAutoCrudAdminController<Lecture
         formControls.Add(new FormControlViewModel()
         {
             Name = nameof(UserProfile.UserName),
-            Options = this.usersDataService.GetQuery(take: 20).ToList(),
+            Options = this.usersDataService.GetQuery(take: GlobalConstants.NumberOfAutocompleteItemsShown).ToList(),
             FormControlType = FormControlType.Autocomplete,
             DisplayName = nameof(LecturerInContest.Lecturer),
             FormControlAutocompleteController = nameof(UsersController).ToControllerBaseUri(),
