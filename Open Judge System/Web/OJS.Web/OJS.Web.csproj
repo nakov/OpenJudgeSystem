@@ -2555,6 +2555,7 @@
     <Content Include="Areas\Administration\Views\Shared\_CopyAllProblemGroupsToAnotherContest.cshtml" />
     <None Include="Properties\PublishProfiles\Dev Suls Judge System.pubxml" />
     <None Include="Properties\PublishProfiles\File System.pubxml" />
+    <None Include="Properties\PublishProfiles\Judge Global.pubxml" />
     <None Include="Properties\PublishProfiles\Suls Judge System.pubxml" />
     <Content Include="Scripts\Helpers\kendo-helper.js" />
     <Content Include="Scripts\Helpers\validations.js" />
