@@ -209,16 +209,6 @@
                 },
                 new SubmissionType
                 {
-                    Name = ".NET Core Test Runner",
-                    CompilerType = CompilerType.DotNetCompiler,
-                    AdditionalCompilerArguments = string.Empty,
-                    ExecutionStrategyType = ExecutionStrategyType.DotNetCoreTestRunner,
-                    IsSelectedByDefault = false,
-                    AllowedFileExtensions = "zip",
-                    AllowBinaryFilesUpload = true,
-                },
-                new SubmissionType
-                {
                     Name = "Java code",
                     CompilerType = CompilerType.Java,
                     AdditionalCompilerArguments = "-encoding utf8",
@@ -424,26 +414,6 @@
                 },
                 new SubmissionType
                 {
-                    Name = "C# ASP Project Tests",
-                    CompilerType = CompilerType.MsBuildLibrary,
-                    AdditionalCompilerArguments = "/t:rebuild /p:Configuration=Release,Optimize=true /verbosity:quiet /nologo",
-                    ExecutionStrategyType = ExecutionStrategyType.CSharpAspProjectTestsExecutionStrategy,
-                    IsSelectedByDefault = false,
-                    AllowedFileExtensions = "zip",
-                    AllowBinaryFilesUpload = true,
-                },
-                new SubmissionType
-                {
-                    Name = "C# Performance Project Tests",
-                    CompilerType = CompilerType.MsBuildLibrary,
-                    AdditionalCompilerArguments = "/t:rebuild /p:Configuration=Release,Optimize=true /verbosity:quiet /nologo",
-                    ExecutionStrategyType = ExecutionStrategyType.CSharpPerformanceProjectTestsExecutionStrategy,
-                    IsSelectedByDefault = false,
-                    AllowedFileExtensions = "zip",
-                    AllowBinaryFilesUpload = true,
-                },
-                new SubmissionType
-                {
                     Name = "Java Project (Spring + Hibernate)",
                     CompilerType = CompilerType.JavaZip,
                     AdditionalCompilerArguments = "-encoding utf8",
@@ -474,58 +444,12 @@
                 },
                 new SubmissionType
                 {
-                    Name = "PHP Project",
-                    CompilerType = CompilerType.None,
-                    AdditionalCompilerArguments = string.Empty,
-                    ExecutionStrategyType = ExecutionStrategyType.PhpProjectExecutionStrategy,
-                    IsSelectedByDefault = false,
-                    AllowedFileExtensions = "zip",
-                    AllowBinaryFilesUpload = true,
-                },
-                new SubmissionType
-                {
                     Name = ".NET Core Project Tests",
                     CompilerType = CompilerType.DotNetCompiler,
                     AdditionalCompilerArguments = string.Empty,
                     ExecutionStrategyType = ExecutionStrategyType.DotNetCoreProjectTestsExecutionStrategy,
                     IsSelectedByDefault = false,
                     AllowBinaryFilesUpload = true
-                },
-                new SubmissionType
-                {
-                    Name = "PHP Project with DB",
-                    CompilerType = CompilerType.None,
-                    AdditionalCompilerArguments = string.Empty,
-                    ExecutionStrategyType = ExecutionStrategyType.PhpProjectWithDbExecutionStrategy,
-                    IsSelectedByDefault = false,
-                    AllowBinaryFilesUpload = true
-                },
-                new SubmissionType
-                {
-                    Name = "SQL Server prepare DB & run queries",
-                    CompilerType = CompilerType.None,
-                    AdditionalCompilerArguments = string.Empty,
-                    ExecutionStrategyType = ExecutionStrategyType.SqlServerLocalDbPrepareDatabaseAndRunQueries,
-                    IsSelectedByDefault = false,
-                    AllowBinaryFilesUpload = false
-                },
-                new SubmissionType
-                {
-                    Name = "SQL Server run queries & check DB",
-                    CompilerType = CompilerType.None,
-                    AdditionalCompilerArguments = string.Empty,
-                    ExecutionStrategyType = ExecutionStrategyType.SqlServerLocalDbRunQueriesAndCheckDatabase,
-                    IsSelectedByDefault = false,
-                    AllowBinaryFilesUpload = false
-                },
-                new SubmissionType
-                {
-                    Name = "SQL Server run skeleton, run queries & check DB",
-                    CompilerType = CompilerType.None,
-                    AdditionalCompilerArguments = string.Empty,
-                    ExecutionStrategyType = ExecutionStrategyType.SqlServerLocalDbRunSkeletonRunQueriesAndCheckDatabase,
-                    IsSelectedByDefault = false,
-                    AllowBinaryFilesUpload = false
                 },
                 new SubmissionType
                 {
