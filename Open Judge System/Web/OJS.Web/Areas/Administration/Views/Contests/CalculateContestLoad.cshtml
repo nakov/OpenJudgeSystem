@@ -494,14 +494,14 @@ on high performance scale with actual workers" data-tooltip="true"></span>
 
              $.post('@Url.Action("CalculateContestLoad", "Contests")', formData)
                  .done(function (response) {
-                     $('#Submissions').val(response.Submissions);
-                     $('#TotalWork').val(response.TotalWork);
+                     $('#ExpectedExamSubmissions').val(response.ExpectedExamSubmissions);
+                     $('#TotalWork').val(response.ExpectedTotalJudgeWorkInMinutes);
                      $('#SuggestedWorkers').val(response.SuggestedWorkers);
                      $('#ProcessedSubmissionsPerWorkerPerMinute').val(response.ProcessedSubmissionsPerWorkerPerMinute);
                      $('#MinimumWorkersRequired').val(response.MinimumWorkersRequired);
 
-                     $('#JudgeWork').val(response.JudgeWork);
-                     $('#JudgeWorkInMinute').val(response.JudgeWorkInMinute);
+                     $('#JudgeWork').val(response.JudgeWorkInMnutes);
+                     $('#JudgeWorkInMinute').val(response.JudgeWorkPerWorkerInMinutes);
                      $('#SecondsBetweenSubmissionsBase').val(response.SecondsBetweenSubmissionsBase);
                      $('#SecondsBetweenSubmissionsHigh').val(response.SecondsBetweenSubmissionsHigh);
 
@@ -513,12 +513,18 @@ on high performance scale with actual workers" data-tooltip="true"></span>
                      $('#MaxSecondsBetweenSubmissions').val(response.MaxSecondsBetweenSubmissions);
                      $('#MaxUsersAtSameTime').val(response.MaxUsersAtSameTime.toFixed(3));
 
+                     $('#PreviousContestParticipants').val(response.PreviousContestParticipants)
+                     $('#PreviousContestSubmissions').val(response.PreviousContestSubmissions)
+                     $('#PreviousContestExpectedProblems').val(response.PreviousContestExpectedProblems)
+                     $('#PreviousAverageProblemRunTimeInSeconds').val(response.PreviousAverageProblemRunTimeInSeconds)
 
                      let responseDataWrapper = document.getElementById('judge-work-wrapper');
                      responseDataWrapper.removeAttribute("hidden");
 
                      var previousExamBox = document.getElementById("previous-contests-data")
+                     if(previousExamBox){
                      previousExamBox.setAttribute("hidden","hidden");
+                     }
 
                      var previousExamBox = document.getElementById("previous-contests-data-results")
                      previousExamBox.removeAttribute("hidden");
