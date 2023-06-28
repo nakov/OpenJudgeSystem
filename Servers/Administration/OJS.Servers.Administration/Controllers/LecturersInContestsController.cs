@@ -25,9 +25,10 @@ public class LecturersInContestsController : BaseAutoCrudAdminController<Lecture
         LecturerInContest entity,
         EntityAction action,
         IDictionary<string, string> entityDict,
-        IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters)
+        IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters,
+        Type autocompleteType)
     {
-        var formControls = base.GenerateFormControls(entity, action, entityDict, complexOptionFilters).ToList();
+        var formControls = base.GenerateFormControls(entity, action, entityDict, complexOptionFilters, typeof(UserProfile)).ToList();
         formControls.Add(new FormControlViewModel()
         {
             Name = nameof(UserProfile.UserName),
