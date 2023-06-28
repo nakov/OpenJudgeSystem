@@ -25,6 +25,7 @@
     using OJS.Services.Data.ProblemGroups;
     using OJS.Services.Data.Problems;
     using OJS.Services.Data.SubmissionsForProcessing;
+    using OJS.Services.Data.SubmissionTypes;
     using OJS.Web.Common.Attributes;
     using OJS.Web.Common.Helpers;
     using OJS.Workers.Common.Extensions;
@@ -36,6 +37,7 @@
         private readonly IHangfireBackgroundJobService backgroundJobs;
         private readonly IProblemGroupsDataService problemGroupsData;
         private readonly IProblemsDataService problemsDataService;
+        private readonly ISubmissionTypesDataService submissionTypesDataService;
         private readonly IParticipantsDataService participantsData;
         private readonly IHttpRequesterService httpRequester;
 
@@ -45,7 +47,8 @@
             IProblemGroupsDataService problemGroupsData,
             IParticipantsDataService participantsData,
             IHttpRequesterService httpRequester,
-            IProblemsDataService problemsDataService)
+            IProblemsDataService problemsDataService,
+            ISubmissionTypesDataService submissionTypesDataService)
             : base(data)
         {
             this.backgroundJobs = backgroundJobs;
@@ -53,6 +56,7 @@
             this.participantsData = participantsData;
             this.httpRequester = httpRequester;
             this.problemsDataService = problemsDataService;
+            this.submissionTypesDataService = submissionTypesDataService;
         }
 
         public ActionResult RegisterJobForCleaningSubmissionsForProcessingTable()
@@ -324,7 +328,7 @@
                 $"Updated {changedSkeletonsCount} solution skeletons. <br/>" +
                 $"Updated {changedTestsCount} test inputs.");
         }
-        
+
         public ActionResult MigrateSolutionSkeletons()
         {
             var updatedProblemsCount = 0;
@@ -367,6 +371,40 @@
                 $"Updated problems count = {updatedProblemsCount} and exceptions count {exceptions.Count}" +
                 newLine +
                 $"{string.Join(newLine, exceptions.Select(ex => ex.ToString()).Distinct())}");
+        }
+
+        public ActionResult RemoveUnusedSubmissionTypes()
+        {
+            var submissionTypesToRemove = new List<int>() { 
+
+                // PhpProjectWithDbExecutionStrategy
+                38,
+
+                // PhpProjectExecutionStrategy
+                36,
+
+                // CSharpAspProjectTestsExecutionStrategy
+                31,
+
+                // DotNetCoreTestRunner
+                21,
+
+                // CSharpPerformanceProjectTestsExecutionStrategy
+                33,
+            };
+
+            try
+            {
+                this.submissionTypesDataService.GetAll().Where(pt => submissionTypesToRemove.Contains(pt.Id)).Delete();
+
+                return this.Content($"Done! Submission Types set to deleted: {submissionTypesToRemove.Count()}");
+            }
+            catch (Exception ex)
+            {
+
+                return this.Content($"Something failed, {ex.Message}");
+            }
+
         }
     }
 }
