@@ -11,6 +11,7 @@
     using EntityFramework.Extensions;
     using Hangfire;
     using MissingFeatures;
+    using NPOI.SS.Formula.Functions;
     using OJS.Common;
     using OJS.Common.Helpers;
     using OJS.Common.Models;
@@ -380,59 +381,65 @@
 
         public ActionResult RemoveUnusedSubmissionTypes()
         {
-            var submissionTypesToRemove = new List<int>() { 
+            var submissionTypesToRemove = new Dictionary<int, string>() {
 
                 // PhpProjectWithDbExecutionStrategy
-                38,
+                { 38, "PHP Project with DB" },
 
                 // PhpProjectExecutionStrategy
-                36,
+                { 36, "PHP Project" },
 
                 // CSharpAspProjectTestsExecutionStrategy
-                31,
+                { 31, "C# ASP Project Tests" },
 
                 // DotNetCoreTestRunner
-                21,
+                { 21 ,"C# test runner" },
 
                 // CSharpPerformanceProjectTestsExecutionStrategy
-                33,
+
+                { 33, "C# Performance Project Tests" },
 
                 // RubyExecutionStrategy
-                34,
+                { 34, "Ruby Code" },
 
                 // CSharpProjectTestsExecutionStrategy
-                27,
-                
+                { 27, "C# Project Tests" },
+
                 // SolidityCompileDeployAndRunUnitTestsExecutionStrategy
-                445,
+                { 445, "Solidity code" },
 
                 // CSharpUnitTestsExecutionStrategy 
-                26,
+                { 26, "C# Unit Tests" },
 
                 // C# project/solution
-                4,
+                { 4, "C# project/solution" },
             };
 
             var sb = new StringBuilder();
             try
             {
-                foreach (var stToRemove in submissionTypesToRemove)
+                foreach (var stToRemove in submissionTypesToRemove.Keys)
                 {
                     var contests = this.contestsDataService
                         .GetAll()
                         .Where(c => c.IsVisible && c.ProblemGroups
                             .Any(pg => pg.Problems
-                                .Any(p => p.SubmissionTypes.Count == 1 
+                                .Any(p => p.SubmissionTypes.Count == 1
                                     && p.SubmissionTypes.Any(st => st.Id == stToRemove))))
                         .ToList();
-
+                   
+                    var iteration = 0;
+                    sb.AppendLine($" Deleted {submissionTypesToRemove.First(st => st.Key == stToRemove).Value}");
                     foreach (var contest in contests)
                     {
+                        iteration += 1;
+                        sb.AppendLine($"  {iteration}. Contest: {contest.Name} (#{contest.Id})");
+
                         if (contest.ProblemGroups
                             .All(x => x.Problems
                                 .All(p => p.SubmissionTypes.Count == 1 && p.SubmissionTypes.First().Id == stToRemove)))
                         {
-                            sb.AppendLine($"    All task for contest with Id: {contest.Id} have only one SubmissionType and it is marked for removing");
+                            sb.AppendLine($"   -All tasks");
                         }
                         else
                         {
@@ -443,19 +450,20 @@
 
                             if (problems.Any())
                             {
-                                sb.AppendLine($"        For contest with Id {contest.Id} the following tasks have only one SubmissionType and it is marked for removing");
                                 foreach (var problem in problems)
                                 {
-                                    sb.AppendLine($"            ProblemName: {problem.Name} - ProblemId: {problem.Id}");
+                                    sb.AppendLine($"   - Problem: {problem.Name} (#{problem.Id})");
                                 }
                             }
                         }
 
                         sb.AppendLine();
                     }
+
+                    sb.AppendLine();
                 }
 
-                this.submissionTypesDataService.GetAll().Where(st => submissionTypesToRemove.Contains(st.Id)).Delete();
+                this.submissionTypesDataService.GetAll().Where(st => submissionTypesToRemove.ContainsKey(st.Id)).Delete();
 
                 var formattedString = string.Format(sb.ToString());
 
