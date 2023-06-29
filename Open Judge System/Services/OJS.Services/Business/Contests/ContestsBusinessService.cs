@@ -221,9 +221,20 @@
 
             responseModel.MaxSubmissionsPerMinute = (int)Math.Round(responseModel.ExpectedExamSubmissions * gaussianDistributionPeak / ((double)model.ExamLengthInHours / 8.0 * 60));
 
+            if (responseModel.MaxSubmissionsPerMinute < 1)
+            {
+                responseModel.MaxSubmissionsPerMinute = 1;
+            }
+
             responseModel.MaxDistributedWorkersRequired = responseModel.MaxSubmissionsPerMinute / responseModel.ProcessedSubmissionsPerWorkerPerMinute * model.SafetyFactor;
+
+            if (responseModel.MaxDistributedWorkersRequired < 1)
+            {
+                responseModel.MaxDistributedWorkersRequired = 1;
+            }
+
             responseModel.JudgeWorkRequiredInMinutes = (int)Math.Round(responseModel.MaxSubmissionsPerMinute * model.AverageProblemRunTimeInSeconds * (1 + (model.WorkerIdleTimeInPercentage / 100.0)) / 60);
-            responseModel.JudgeWorkRequiredPerWorkerInSeconds = (int) Math.Round((double)responseModel.JudgeWorkRequiredInMinutes / (double)responseModel.MaxDistributedWorkersRequired * 60);
+            responseModel.JudgeWorkRequiredPerWorkerInSeconds = (int)Math.Round((double)responseModel.JudgeWorkRequiredInMinutes / (double)responseModel.MaxDistributedWorkersRequired * 60);
             responseModel.SecondsBetweenSubmission = (int)Math.Round((double)responseModel.JudgeWorkRequiredInMinutes / responseModel.MaxDistributedWorkersRequired * (1 - 1.0 / model.SafetyFactor) * 60);
             responseModel.MaxSecondsBetweenSubmissions = (int)Math.Round((double)responseModel.JudgeWorkRequiredInMinutes / model.ActualWorkers * (1 - 1.0 / model.SafetyFactor) * 60);
             responseModel.MaxUsersAtSameTime = model.ExpectedStudentsCount * gaussianDistributionPeak;
@@ -239,7 +250,6 @@
 
         private void GetJudgeLoadData(BaseContestBusinessModel model, JudgeLoadResults responseModel)
         {
-
             double previousExamSubmissions = model.PreviousContestSubmissions;
             double previousExamStudents = model.PreviousContestParticipants;
             int previousExamProblems = model.PreviousContestExpectedProblems;
@@ -248,10 +258,20 @@
 
             responseModel.ExpectedExamSubmissions = (int)Math.Round(previousExamSubmissions / previousExamStudents / previousExamProblems * currentContestData);
 
+            if (responseModel.ExpectedExamSubmissions < 1)
+            {
+                responseModel.ExpectedExamSubmissions = 1;
+            }
+
             responseModel.ProcessedSubmissionsPerWorkerPerMinute = (int)Math.Round(60 / (1 + (model.WorkerIdleTimeInPercentage / 100.0)) / model.AverageProblemRunTimeInSeconds);
 
             var judgeParallelWorkInPercentage = model.MaxJudgeParalelWork / 100.0;
             responseModel.MinimumWorkersRequired = (int)Math.Ceiling((responseModel.ExpectedExamSubmissions / (model.ExamLengthInHours * judgeParallelWorkInPercentage * 60 * responseModel.ProcessedSubmissionsPerWorkerPerMinute)) * model.SafetyFactor);
+
+            if (responseModel.MinimumWorkersRequired < 1)
+            {
+                responseModel.MinimumWorkersRequired = 1;
+            }
         }
     }
 }

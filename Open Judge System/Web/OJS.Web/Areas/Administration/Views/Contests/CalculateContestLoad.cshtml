@@ -7,10 +7,12 @@
     ViewBag.Title = "Calculate contest load";
     JudgeLoadResults responseModel = new JudgeLoadResults();
 }
-
-
+@section Styles {
+    <link href="@Url.Content("~/Content/kendo/kendo.common.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/kendo.default.min.css")" rel="stylesheet" type="text/css" />
+}
 <h2>Calculate Load For Contest: @Model.ContestName </h2>
-<div class="container">
+<div id="create-form" class="online-contest-editor-container">
     @using (Html.BeginForm("CalculateContestLoad", "Contests", FormMethod.Post))
     {
         <fieldset>
@@ -39,7 +41,7 @@
                     @Html.EditorFor(m => m.ExpectedExamProblemsCount, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
                 </div>
                 <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Expected next exam number of problems" data-tooltip="true"></span>
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Expected next exam number of problems. NOTE: If you have multiple exams at the same time, you need to sum their number of problems." data-tooltip="true"></span>
                 </div>
             </div>
             <div class="row k-upload-cancel">
@@ -52,7 +54,7 @@
                     @Html.EditorFor(m => m.ExpectedStudentsCount, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
                 </div>
                 <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Expected next exam students" data-tooltip="true"></span>
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Expected next exam students. NOTE: Your projection of total students or current enrollments. If you have multiple exams at the same time, you need to sum their number of students." data-tooltip="true"></span>
                 </div>
             </div>
             <div class="row k-upload-cancel">
@@ -65,7 +67,9 @@
                     @Html.EditorFor(m => m.AverageProblemRunTimeInSeconds, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
                 </div>
                 <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Average problem run time in seconds" data-tooltip="true"></span>
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Average problem run time in seconds.NOTE: You can calculate it for each problem by the multiplying the number of tests and the problem time limit * 120% (for additional work required to process a task).
+You can also see the difference between the Modified On and the Created On properties for a solution submited on a 'calm' judge.
+Try not to design a task which takes more than 5 seconds. If you need such a problem - discuss with the dev team." data-tooltip="true"></span>
                 </div>
             </div>
         </fieldset>
@@ -152,7 +156,7 @@
                     @Html.EditorFor(m => m.SafetyFactor, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
                 </div>
                 <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="" Safety factor" data-tooltip="true"></span>
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Safety factor. NOTE: We want to play it extra safe because we do not pause judge for exercises during exams so we multiply important calculations with this safety factor." data-tooltip="true"></span>
                 </div>
             </div>
             <div class="row k-upload-cancel">
@@ -165,7 +169,7 @@
                     @Html.EditorFor(m => m.WorkerIdleTimeInPercentage, new { htmlAttributes = new { @class = "form-control pull-left", min = 1 } })
                 </div>
                 <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Worker idle time in percentage" data-tooltip="true"></span>
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Worker idle time in percentage. NOTE: We do not want workers to be busy all the time. Such situation may lead to overloading, exceptions and wrong results." data-tooltip="true"></span>
                 </div>
             </div>
             <div class="row k-upload-cancel">
@@ -178,7 +182,7 @@
                     @Html.EditorFor(m => m.MaxJudgeParalelWork, new { htmlAttributes = new { @class = "form-control pull-left", min = 1 } })
                 </div>
                 <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Maximum parallel judge work compared to exam length in percentage" data-tooltip="true"></span>
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Maximum parallel judge work compared to exam length in percentage. NOTE: We should aim for total parallel judge work to be maximum 25% of the total exam length for safety reasons." data-tooltip="true"></span>
                 </div>
             </div>
             <div class="row k-upload-cancel">
@@ -201,7 +205,7 @@
                 <button type="submit" class="btn btn-primary pull-right">Calculate</button>
             </div>
             <div class="editor-label col-xs-6">
-                <a href="/Administration/Contests/" class="btn btn-primary">Back</a>
+                <a href="/Contests/@Model.CurrentContestId" class="btn btn-primary">Back</a>
             </div>
         </div>
     }
@@ -271,7 +275,9 @@
                     <input class="form-control" id="SuggestedWorkers" value="@responseModel.SuggestedWorkers" />
                 </div>
                 <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Suggested workers" data-tooltip="true"></span>
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Suggested workers. NOTE: If you have more than 50 workers suggested here - discuss with dev team. Workers do not scale proportionally.
+                    For example, 100 workers will not have twice the performance of 50 workers.
+                    " data-tooltip="true"></span>
                 </div>
             </div>
         </fieldset>
@@ -288,7 +294,11 @@
                     <input class=" form-control" id="JudgeWork" value="@responseModel.JudgeWorkInMnutes" />
                 </div>
                 <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Judge work required for the doomsday scenario in minutes" data-tooltip="true"></span>
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Judge work required for the doomsday scenario in minutes. NOTE: Doomsday scenario happens if all exam participants submit a solution at the same time.
+If a solution is not processed until the student can submit again, the system will be overloaded.
+Such case is highly unlikely to occur but we should desing our exams with a protection in mind.
+Natural disasters like earthquakes are highly unlikely but each building is engineered against them.
+" data-tooltip="true"></span>
                 </div>
             </div>
             <div class="row k-upload-cancel">
@@ -301,7 +311,9 @@
                     <input class="form-control" id="JudgeWorkInMinute" value="@responseModel.JudgeWorkPerWorkerInMinutes" />
                 </div>
                 <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Judge work required for the doomsday scenario per worker in minutes" data-tooltip="true"></span>
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Judge work required for the doomsday scenario per worker in minutes. NOTE: We can introduce automation to prevent doomsday scenarios.
+For example, we can forbid the user to submit a solution for the a task, if she already has a one for it in the queue.
+" data-tooltip="true"></span>
                 </div>
             </div>
             <div class="row k-upload-cancel">
@@ -315,7 +327,9 @@
                 </div>
                 <div class="editor-field col-xs-4">
                     <span class="glyphicon glyphicon-question-sign text-primary" title="Seconds between submissions for doomsday scenario
-on base performance scale without additional workers" data-tooltip="true"></span>
+on base performance scale without additional workers. NOTE: Less than 30 seconds and more than 5 minutes are not desirable for various reasons. We should tweek the exam itself, and not judge.
+Suggestion is based on the safety factor below and 20 workers.
+" data-tooltip="true"></span>
                 </div>
             </div>
             <div class="row k-upload-cancel">
@@ -329,7 +343,9 @@ on base performance scale without additional workers" data-tooltip="true"></span
                 </div>
                 <div class="editor-field col-xs-4">
                     <span class="glyphicon glyphicon-question-sign text-primary" title="Seconds between submissions for doomsday scenario
-on high performance scale with actual workers" data-tooltip="true"></span>
+on high performance scale with actual workers. NOTE: Less than 30 seconds and more than 5 minutes are not desirable for various reasons. We should tweek the exam itself, and not judge.
+Suggestion is based on the safety factor below and actual workers.
+" data-tooltip="true"></span>
                 </div>
             </div>
         </fieldset>
@@ -346,7 +362,7 @@ on high performance scale with actual workers" data-tooltip="true"></span>
                     <input class="form-control" id="MaxSubmissionsPerMinute" value="@responseModel.MaxSubmissionsPerMinute" />
                 </div>
                 <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Maximum submissions per minute on a distributed environment" data-tooltip="true"></span>
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Maximum submissions per minute on a distributed environment. NOTE: Calculation based on Gaussian Distribution peak - 34.1% submissions will be during 1/8 of the total exam time." data-tooltip="true"></span>
                 </div>
             </div>
             <div class="row k-upload-cancel">
@@ -359,7 +375,7 @@ on high performance scale with actual workers" data-tooltip="true"></span>
                     <input class="form-control" id="MaxDistributedWorkersRequired" value="@responseModel.MaxDistributedWorkersRequired" />
                 </div>
                 <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Minimum workers required for distributed maximum" data-tooltip="true"></span>
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Minimum workers required for distributed maximum. NOTE: Safety factor calculated here." data-tooltip="true"></span>
                 </div>
             </div>
             <div class="row k-upload-cancel">
@@ -372,7 +388,7 @@ on high performance scale with actual workers" data-tooltip="true"></span>
                     <input class="form-control" id="JudgeWorkRequiredInMinutes" value="@responseModel.JudgeWorkRequiredInMinutes" />
                 </div>
                 <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Judge work required for the distributed maximum in minutes" data-tooltip="true"></span>
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Judge work required for the distributed maximum in minutes." data-tooltip="true"></span>
                 </div>
             </div>
             <div class="row k-upload-cancel">
@@ -398,7 +414,7 @@ on high performance scale with actual workers" data-tooltip="true"></span>
                     <input class="form-control" id="SecondsBetweenSubmission" value="@responseModel.SecondsBetweenSubmission" />
                 </div>
                 <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Seconds between submissions for the distributed maximum" data-tooltip="true"></span>
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Seconds between submissions for the distributed maximum. NOTE: Safety factor calculated here. " data-tooltip="true"></span>
                 </div>
             </div>
             <div class="row k-upload-cancel">
@@ -411,7 +427,7 @@ on high performance scale with actual workers" data-tooltip="true"></span>
                     <input class="form-control" id="MaxSecondsBetweenSubmissions" value="@responseModel.MaxSecondsBetweenSubmissions" />
                 </div>
                 <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Seconds between submissions for the distributed maximum on high performance scale with actual workers" data-tooltip="true"></span>
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Seconds between submissions for the distributed maximum on high performance scale with actual workers. NOTE: Safety factor calculated here. " data-tooltip="true"></span>
                 </div>
             </div>
             <div class="row k-upload-cancel">
@@ -424,15 +440,14 @@ on high performance scale with actual workers" data-tooltip="true"></span>
                     <input class="form-control" id="MaxUsersAtSameTime" value="@responseModel.MaxUsersAtSameTime" />
                 </div>
                 <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Maximum users at the same time on a distributed environment" data-tooltip="true"></span>
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Maximum users at the same time on a distributed environment.NOTE: Calculation based on Gaussian Distribution peak - 34.1% ot the total users." data-tooltip="true"></span>
                 </div>
             </div>
         </fieldset>
     </div>
-
-    <fieldset>
-        <legend>Previous exam data</legend>
-        <div id="previous-contests-data-results" hidden="hidden">
+    <div id="previous-contests-data-results" hidden="hidden">
+        <fieldset>
+            <legend>Previous exam data</legend>
             <div class="row k-upload-cancel">
                 <div class="editor-label col-xs-4 k-upload-cancel">
                     <label>Previous contest students</label>
@@ -477,9 +492,11 @@ on high performance scale with actual workers" data-tooltip="true"></span>
                     <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam number of average problem run time in seconds" data-tooltip="true"></span>
                 </div>
             </div>
-        </div>
-    </fieldset>
-    <script>
+        </fieldset>
+    </div>
+</div>
+
+<script>
 
     function changePreviousExam(e) {
         var receivedModel = e.sender.dataItem()
@@ -494,7 +511,7 @@ on high performance scale with actual workers" data-tooltip="true"></span>
 
              $.post('@Url.Action("CalculateContestLoad", "Contests")', formData)
                  .done(function (response) {
-                     $('#ExpectedExamSubmissions').val(response.ExpectedExamSubmissions);
+                     $('#Submissions').val(response.ExpectedExamSubmissions);
                      $('#TotalWork').val(response.ExpectedTotalJudgeWorkInMinutes);
                      $('#SuggestedWorkers').val(response.SuggestedWorkers);
                      $('#ProcessedSubmissionsPerWorkerPerMinute').val(response.ProcessedSubmissionsPerWorkerPerMinute);
@@ -534,5 +551,5 @@ on high performance scale with actual workers" data-tooltip="true"></span>
                  });
         });
     });
-    </script>
-
+</script>
+@(Html.Kendo().Tooltip().For("#create-form").Filter("[data-tooltip='true']").Position(TooltipPosition.Bottom).Width(400))
