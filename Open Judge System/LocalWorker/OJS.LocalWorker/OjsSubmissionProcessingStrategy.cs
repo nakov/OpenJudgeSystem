@@ -306,6 +306,7 @@
         private IOjsSubmission GetSubmissionModel()
         {
             int timeLimit = this.submission.Problem.TimeLimit;
+            int memoryLimit = this.submission.Problem.MemoryLimit;
             var submissionTypeDetails =
                 this.submission
                     .Problem
@@ -319,6 +320,13 @@
                 timeLimit = submissionTypeDetails.TimeLimit.Value;
             }
 
+            if (submissionTypeDetails != null &&
+                submissionTypeDetails.MemoryLimit.HasValue &&
+                submissionTypeDetails.MemoryLimit > 0)
+            {
+                memoryLimit = submissionTypeDetails.MemoryLimit.Value;
+            }
+
             return new OjsSubmission<TestsInputModel>()
             {
                 Id = this.submission.Id,
@@ -327,7 +335,7 @@
                 FileContent = this.submission.Content,
                 CompilerType = this.submission.SubmissionType.CompilerType,
                 TimeLimit = timeLimit,
-                MemoryLimit = this.submission.Problem.MemoryLimit,
+                MemoryLimit = memoryLimit,
                 ExecutionStrategyType = this.submission.SubmissionType.ExecutionStrategyType,
                 ExecutionType = ExecutionType.TestsExecution,
                 MaxPoints = this.submission.Problem.MaximumPoints,

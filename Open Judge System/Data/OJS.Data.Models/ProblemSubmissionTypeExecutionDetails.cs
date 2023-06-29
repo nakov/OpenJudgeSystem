@@ -22,5 +22,10 @@
         /// Gets or sets a time limit for the task and strategy
         /// </summary>
         public int? TimeLimit { get; set; }
+
+        /// <summary>
+        /// Gets or sets a memory limit for the task and strategy
+        /// </summary>
+        public int? MemoryLimit { get; set; }
     }
 }

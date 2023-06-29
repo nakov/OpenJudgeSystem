@@ -38,6 +38,9 @@
         [Range(1, 10000)]
         public int? TimeLimit { get; set; }
 
+        [Range(1, 1000000)]
+        public int? MemoryLimit { get; set; }
+
         public ExecutionStrategyType ExecutionStrategyType { get; set; }
         
         [AllowHtml]
@@ -77,6 +80,9 @@
                         .ProblemSubmissionTypesSkeletons
                         .FirstOrDefault(x => x.SubmissionTypeId == selectedSubmission.Id)?
                         .TimeLimit;
+
+                    submissionViewModel.MemoryLimit = problem.ProblemSubmissionTypesSkeletons.FirstOrDefault(x => x.SubmissionTypeId == selectedSubmission.Id)?
+                        .MemoryLimit;
                 }
 
                 problem.SubmissionTypes.Add(submissionViewModel);

@@ -22,6 +22,7 @@
                     ProblemId = pst.ProblemId,
                     SubmissionTypeId = pst.SubmissionTypeId,
                     TimeLimit = pst.TimeLimit.Value,
+                    MemoryLimit = pst.MemoryLimit.Value,
                 };
             }
         }
@@ -31,6 +32,8 @@
         public int SubmissionTypeId { get; set; }
 
         public int? TimeLimit { get; set; }
+
+        public int? MemoryLimit { get; set; }
 
         [AllowHtml]
         [Display(Name = nameof(Resource.Solution_skeleton), ResourceType = typeof(Resource))]

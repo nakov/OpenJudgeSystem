@@ -220,6 +220,7 @@
                     ProblemId = problem.Id,
                     SubmissionTypeId = submission.Id,
                     TimeLimit = s.TimeLimit,
+                    MemoryLimit= s.MemoryLimit,
                 };
 
                 if (!s.SolutionSkeletonData.IsNullOrEmpty())
@@ -1017,6 +1018,7 @@
                         {
                             currentSubmissionDetails.TimeLimit = s.TimeLimit;
                             currentSubmissionDetails.SolutionSkeleton = solutionSekeltonData;
+                            currentSubmissionDetails.MemoryLimit = s.MemoryLimit;
                         }
                         else
                         {
@@ -1026,7 +1028,8 @@
                                     ProblemId = problem.Id,
                                     SubmissionTypeId = s.Id.Value,
                                     SolutionSkeleton = solutionSekeltonData,
-                                    TimeLimit = s.TimeLimit
+                                    TimeLimit = s.TimeLimit,
+                                    MemoryLimit = s.MemoryLimit,
                                 });
                         }
                     });
