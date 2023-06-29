@@ -11,11 +11,7 @@ const ProblemConstraints = () => {
     const { state: { currentProblem } } = useProblems();
 
     const getConstraints = useCallback(() => {
-        if (isNil(currentProblem) ||
-            isNil(currentProblem.memoryLimit) ||
-            isNil(currentProblem.fileSizeLimit) ||
-            isNil(currentProblem.timeLimit) ||
-            isNil(currentProblem.checkerName)) {
+        if (isNil(currentProblem)) {
             return [];
         }
 
