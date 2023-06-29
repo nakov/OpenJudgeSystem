@@ -96,13 +96,12 @@
   }
 
   &.image {
+    display: inline-block;
     background: none;
     border: 0;
     cursor: pointer;
     font: inherit;
     margin: 0;
-    outline: inherit;
     padding: 0;
-    text-transform: none;
   }
 }

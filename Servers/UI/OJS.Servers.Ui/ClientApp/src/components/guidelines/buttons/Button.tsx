@@ -63,7 +63,6 @@ const classNameToButonType = {
     [ButtonType.secondary]: styles.secondary,
     [ButtonType.plain]: styles.plain,
     [ButtonType.image]: styles.image,
-    [LinkButtonType.image]: styles.image,
 };
 
 const classNameToLinkButonType = {
