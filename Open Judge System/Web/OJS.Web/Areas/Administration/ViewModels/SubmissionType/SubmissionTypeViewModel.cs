@@ -38,7 +38,7 @@
         [Range(1, 10000)]
         public int? TimeLimit { get; set; }
 
-        [Range(1, 1000000)]
+        [Range(1, int.MaxValue)]
         public int? MemoryLimit { get; set; }
 
         public ExecutionStrategyType ExecutionStrategyType { get; set; }
