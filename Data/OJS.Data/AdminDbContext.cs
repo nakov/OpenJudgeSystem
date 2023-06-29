@@ -1,5 +1,6 @@
 namespace OJS.Data;
 
+using Common;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -23,7 +24,8 @@ public class AdminDbContext : OjsDbContext
     private static void ConfigureDateModels(ModelBuilder builder) =>
         builder.Model.GetEntityTypes()
             .SelectMany(entityType => entityType.ClrType.GetProperties())
-            .Where(property => property.GetCustomAttributes<UtcConvertableAttribute>().Any())
+            .Where(property => property.Name is GlobalConstants.Properties.CreatedOn or GlobalConstants.Properties.DeletedOn
+                               || property.GetCustomAttributes<UtcConvertableAttribute>().Any())
             .ForEach(p =>
             {
                 builder.Entity(p.ReflectedType!)
