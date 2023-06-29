@@ -1,0 +1,18 @@
+﻿@use 'src/styles/colors';
+@use 'src/styles/variables';
+@use 'src/styles/fonts';
+
+.constraintsList {
+  @extend %font-family-lato;
+
+  align-items: start;
+  color: colors.$text-dark-gray-color;
+  font-size: variables.$f-size-16;
+  padding: 10px;
+
+  @media only screen and (max-width: variables.$r-large-desktop-max) {
+    font-size: variables.$f-size-16;
+  }
+}
+
+
