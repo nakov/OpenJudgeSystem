@@ -7,6 +7,7 @@
     using System.Text;
     using System.Threading.Tasks;
     using System.Web.Mvc;
+    using System.Web.Services.Protocols;
     using EntityFramework.Extensions;
     using Hangfire;
     using MissingFeatures;
@@ -21,6 +22,7 @@
     using OJS.Services.Common.BackgroundJobs;
     using OJS.Services.Common.HttpRequester;
     using OJS.Services.Common.HttpRequester.Models.Users;
+    using OJS.Services.Data.Contests;
     using OJS.Services.Data.Participants;
     using OJS.Services.Data.ProblemGroups;
     using OJS.Services.Data.Problems;
@@ -38,6 +40,7 @@
         private readonly IProblemGroupsDataService problemGroupsData;
         private readonly IProblemsDataService problemsDataService;
         private readonly ISubmissionTypesDataService submissionTypesDataService;
+        private readonly IContestsDataService contestsDataService;
         private readonly IParticipantsDataService participantsData;
         private readonly IHttpRequesterService httpRequester;
 
@@ -48,7 +51,8 @@
             IParticipantsDataService participantsData,
             IHttpRequesterService httpRequester,
             IProblemsDataService problemsDataService,
-            ISubmissionTypesDataService submissionTypesDataService)
+            ISubmissionTypesDataService submissionTypesDataService,
+            IContestsDataService contestsDataService)
             : base(data)
         {
             this.backgroundJobs = backgroundJobs;
@@ -57,6 +61,7 @@
             this.httpRequester = httpRequester;
             this.problemsDataService = problemsDataService;
             this.submissionTypesDataService = submissionTypesDataService;
+            this.contestsDataService = contestsDataService;
         }
 
         public ActionResult RegisterJobForCleaningSubmissionsForProcessingTable()
@@ -391,17 +396,73 @@
 
                 // CSharpPerformanceProjectTestsExecutionStrategy
                 33,
+
+                // RubyExecutionStrategy
+                34,
+
+                // CSharpProjectTestsExecutionStrategy
+                27,
+                
+                // SolidityCompileDeployAndRunUnitTestsExecutionStrategy
+                445,
+
+                // CSharpUnitTestsExecutionStrategy 
+                26,
+
+                // C# project/solution
+                4,
             };
 
+            var sb = new StringBuilder();
             try
             {
-                this.submissionTypesDataService.GetAll().Where(pt => submissionTypesToRemove.Contains(pt.Id)).Delete();
+                foreach (var stToRemove in submissionTypesToRemove)
+                {
+                    var contests = this.contestsDataService
+                        .GetAll()
+                        .Where(c => c.IsVisible && c.ProblemGroups
+                            .Any(pg => pg.Problems
+                                .Any(p => p.SubmissionTypes.Count == 1 
+                                    && p.SubmissionTypes.Any(st => st.Id == stToRemove))))
+                        .ToList();
 
-                return this.Content($"Done! Submission Types set to deleted: {submissionTypesToRemove.Count()}");
+                    foreach (var contest in contests)
+                    {
+                        if (contest.ProblemGroups
+                            .All(x => x.Problems
+                                .All(p => p.SubmissionTypes.Count == 1 && p.SubmissionTypes.First().Id == stToRemove)))
+                        {
+                            sb.AppendLine($"    All task for contest with Id: {contest.Id} have only one SubmissionType and it is marked for removing");
+                        }
+                        else
+                        {
+                            var problems = contest.ProblemGroups
+                                .SelectMany(x => x.Problems
+                                    .Where(p => p.SubmissionTypes.Count == 1 && p.SubmissionTypes.First().Id == stToRemove))
+                                .ToList();
+
+                            if (problems.Any())
+                            {
+                                sb.AppendLine($"        For contest with Id {contest.Id} the following tasks have only one SubmissionType and it is marked for removing");
+                                foreach (var problem in problems)
+                                {
+                                    sb.AppendLine($"            ProblemName: {problem.Name} - ProblemId: {problem.Id}");
+                                }
+                            }
+                        }
+
+                        sb.AppendLine();
+                    }
+                }
+
+                this.submissionTypesDataService.GetAll().Where(st => submissionTypesToRemove.Contains(st.Id)).Delete();
+
+                var formattedString = string.Format(sb.ToString());
+
+                return this.Content($"<pre>{formattedString}<pre>");
             }
             catch (Exception ex)
             {
-
                 return this.Content($"Something failed, {ex.Message}");
             }
 
