@@ -4,6 +4,7 @@ namespace OJS.Web.Infrastructure.SimpleInjectorPackages
     using Microsoft.AspNet.Identity.EntityFramework;
     using OJS.Data;
     using OJS.Data.Models;
+    using OJS.Services.Common.HttpRequester;
     using OJS.Web.Common;
     using OJS.Web.Infrastructure.Seeders;
     using SimpleInjector;
@@ -18,7 +19,7 @@ namespace OJS.Web.Infrastructure.SimpleInjectorPackages
                 {
                     var seeders = new List<ISeeder>();
                     var userManager = new OjsUserManager<UserProfile>(new UserStore<UserProfile>(container.GetInstance<OjsDbContext>()));
-                    seeders.Add(new AdministratorSeeder(userManager, Settings.AdministratorPassword));
+                    seeders.Add(new AdministratorSeeder(userManager, container.GetInstance<IHttpRequesterService>()));
 
                     return seeders;
                 }, Lifestyle.Transient);

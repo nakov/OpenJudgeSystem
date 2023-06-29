@@ -4,16 +4,18 @@ namespace OJS.Web.Infrastructure.Seeders
     using Microsoft.AspNet.Identity;
     using OJS.Common;
     using OJS.Data.Models;
+    using OJS.Services.Common.HttpRequester;
+    using OJS.Services.Common.HttpRequester.Models.Users;
 
     public class AdministratorSeeder : ISeeder
     {
         private readonly UserManager<UserProfile> userManager;
-        private readonly string password;
+        private readonly IHttpRequesterService httpRequester;
 
-        public AdministratorSeeder(UserManager<UserProfile> userManager, string password)
+        public AdministratorSeeder(UserManager<UserProfile> userManager, IHttpRequesterService httpRequester)
         {
             this.userManager = userManager;
-            this.password = password;
+            this.httpRequester = httpRequester;
         }
 
         public void SeedData()
@@ -23,15 +25,21 @@ namespace OJS.Web.Infrastructure.Seeders
                 return;
             }
 
-            var user = new UserProfile
+            var result = this.httpRequester.GetAsync<ExternalUserInfoModel>(
+                new { UserName = GlobalConstants.AdministratorUserName },
+                string.Format(UrlConstants.GetUserInfoByUsernameApiFormat, Settings.SulsPlatformBaseUrl),
+                Settings.SulsApiKey).GetAwaiter().GetResult();
+
+            if (!result.IsSuccess)
             {
-                Email = GlobalConstants.AdministratorEmail,
-                UserName = GlobalConstants.AdministratorUserName
-            };
+                return;
+            }
 
-            var result = this.userManager.Create(user, this.password);
+            var user = result.Data.Entity;
 
-            if (result.Succeeded)
+            var createResult = this.userManager.Create(user);
+
+            if (createResult.Succeeded)
             {
                 this.userManager.AddToRoleAsync(user.Id, GlobalConstants.AdministratorRoleName);
             }
