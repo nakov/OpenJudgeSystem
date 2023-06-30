@@ -1,6 +1,5 @@
 namespace OJS.Data;
 
-using Common;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -8,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Infrastructure.TimeConverters;
 using Validation.Attributes;
 using FluentExtensions.Extensions;
+using SoftUni.Data.Infrastructure.Models;
 
 public class AdminDbContext : OjsDbContext
 {
@@ -24,7 +24,7 @@ public class AdminDbContext : OjsDbContext
     private static void ConfigureDateModels(ModelBuilder builder) =>
         builder.Model.GetEntityTypes()
             .SelectMany(entityType => entityType.ClrType.GetProperties())
-            .Where(property => property.Name is GlobalConstants.Properties.CreatedOn or GlobalConstants.Properties.DeletedOn
+            .Where(property => property.Name is nameof(IAuditInfoEntity.CreatedOn) or nameof(IDeletableEntity.DeletedOn)
                                || property.GetCustomAttributes<UtcConvertableAttribute>().Any())
             .ForEach(p =>
             {
