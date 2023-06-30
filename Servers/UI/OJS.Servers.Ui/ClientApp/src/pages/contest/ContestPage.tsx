@@ -159,7 +159,7 @@ const ContestPage = () => {
                 return;
             }
 
-            if (isUserParticipant || isPasswordValid) {
+            if (isUserParticipant) {
                 (async () => {
                     await start(internalContest);
                 })();
@@ -186,7 +186,7 @@ const ContestPage = () => {
     );
 
     return (
-        doesRequirePassword
+        doesRequirePassword && !isPasswordValid
             ? (
                 <ContestPasswordForm
                   id={contestIdToNumber}
