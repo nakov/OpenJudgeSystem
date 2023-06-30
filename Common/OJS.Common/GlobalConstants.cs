@@ -144,11 +144,5 @@ namespace OJS.Common
         {
             public const string SubmissionDownloadFileName = "Submission_{0}.{1}";
         }
-
-        public static class Properties
-        {
-            public const string CreatedOn = "CreatedOn";
-            public const string DeletedOn = "DeletedOn";
-        }
     }
 }
