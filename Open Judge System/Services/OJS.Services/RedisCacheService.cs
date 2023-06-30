@@ -22,6 +22,7 @@ namespace OJS.Services
             if (valueAsString.IsNull)
             {
                 return default(T);
+
             }
 
             return JsonConvert.DeserializeObject<T>(valueAsString);
@@ -34,6 +35,7 @@ namespace OJS.Services
             if (valueAsString.IsNull)
             {
                 return default(T);
+
             }
 
             return JsonConvert.DeserializeObject<T>(valueAsString);
