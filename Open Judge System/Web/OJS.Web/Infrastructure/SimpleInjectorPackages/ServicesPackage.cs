@@ -1,12 +1,15 @@
 ﻿namespace OJS.Web.Infrastructure.SimpleInjectorPackages
 {
+    using System;
     using System.Linq;
 
     using MissingFeatures;
-
+    using OJS.Services;
     using OJS.Services.Business.ExamGroups;
+    using OJS.Services.Cache;
     using OJS.Services.Common;
     using OJS.Services.Common.BackgroundJobs;
+    using OJS.Services.Common.Cache;
     using OJS.Services.Common.HttpRequester;
     using OJS.Services.Data.ExamGroups;
     using OJS.Services.Data.SubmissionsForProcessing;
@@ -14,6 +17,7 @@
 
     using SimpleInjector;
     using SimpleInjector.Packaging;
+    using StackExchange.Redis;
 
     public class ServicesPackage : IPackage
     {
@@ -22,6 +26,19 @@
             this.RegisterCustomTypes(container);
 
             this.RegisterNonGenericTypes(container);
+
+            this.RegisterRedisCache(container);
+        }
+
+        private void RegisterRedisCache(Container container)
+        {
+            var redisConfig = ConfigurationOptions.Parse(Settings.RedisConnectionString);
+            redisConfig.AbortOnConnectFail = false;
+
+            var redisConnection = ConnectionMultiplexer.Connect(redisConfig);
+            var redisCache = redisConnection.GetDatabase();
+
+            container.Register<IDatabase>(() => redisCache, Lifestyle.Singleton);
         }
 
         private void RegisterCustomTypes(Container container)

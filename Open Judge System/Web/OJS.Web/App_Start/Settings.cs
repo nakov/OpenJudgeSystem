@@ -48,6 +48,8 @@
 
         public static int ArchiveDailyBatchSize => GetSettingOrDefault("ArchiveDailyBatchSize", 500000);
 
+        public static string RedisConnectionString => GetSetting("RedisConnectionString");
+
         private static int GetIntSetting(string settingName) => int.Parse(GetSetting(settingName));
     }
 }
