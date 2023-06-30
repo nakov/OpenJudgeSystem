@@ -94,6 +94,7 @@ interface IRegisterForContestResponseType {
     name: string;
     requirePassword: boolean;
     participantId: number| null;
+    isOnlineExam: boolean;
 }
 
 interface IStartParticipationResponseType {

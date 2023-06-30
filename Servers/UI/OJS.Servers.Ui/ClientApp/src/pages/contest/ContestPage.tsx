@@ -41,7 +41,7 @@ const ContestPage = () => {
         },
     } = useCurrentContest();
 
-    const { state: { modalContest }, actions: { toggle, setModalContest } } = useModal();
+    const { state: { modalContest, isShowing }, actions: { toggle, setModalContest } } = useModal();
 
     const contestIdToNumber = useMemo(
         () => Number(contestId),
@@ -97,15 +97,26 @@ const ContestPage = () => {
         [ renderErrorHeading, contestError ],
     );
 
-    const renderContestPage = useMemo(
+    const renderContestPage = useCallback(
         () => isNil(contestError)
             ? isNil(contest)
                 ? <div>Loading data</div>
-                : isUserParticipant
-                    ? <Contest />
-                    : <ContestModal contest={modalContest} isShowing toggle={toggle} />
+                : isParticipationOfficial && contest?.isOnline
+                    ? isUserParticipant
+                        ? <Contest />
+                        : <ContestModal contest={modalContest} isShowing={isShowing} toggle={toggle} />
+                    : <Contest />
             : renderErrorMessage(),
-        [ contestError, renderErrorMessage, contest, isUserParticipant, toggle, modalContest ],
+        [
+            contestError,
+            renderErrorMessage,
+            contest,
+            isUserParticipant,
+            isParticipationOfficial,
+            modalContest,
+            toggle,
+            isShowing,
+        ],
     );
 
     useEffect(
@@ -144,20 +155,22 @@ const ContestPage = () => {
                 return;
             }
 
-            if (isUserParticipant) {
+            if (isNil(contest)) {
+                return;
+            }
+
+            if (isUserParticipant || isPasswordValid) {
                 (async () => {
                     await start(internalContest);
                 })();
             }
 
-            if (!isNil(contest)) {
-                setModalContest({
-                    id: contest.id,
-                    name: contest.name,
-                    duration: contest.duration,
-                    numberOfProblems: contest.numberOfProblems,
-                });
-            }
+            setModalContest({
+                id: contest.id,
+                name: contest.name,
+                duration: contest.duration,
+                numberOfProblems: contest.numberOfProblems,
+            });
         },
         [
             internalContest,
@@ -168,6 +181,7 @@ const ContestPage = () => {
             contest,
             setModalContest,
             isUserParticipant,
+            isPasswordValid,
         ],
     );
 
@@ -179,7 +193,7 @@ const ContestPage = () => {
                   isOfficial={isParticipationOfficial}
                 />
             )
-            : renderContestPage
+            : renderContestPage()
     );
 };
 

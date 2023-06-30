@@ -16,7 +16,7 @@ interface IContestModalContext {
 
 type IContestModalProviderProps = IHaveChildrenProps
 
-const defaultState = { state: { isShowing: false, modalContest: {} as IContestModal } };
+const defaultState = { state: { isShowing: true, modalContest: {} as IContestModal } };
 
 const ContestModalContext = createContext<IContestModalContext>(defaultState as IContestModalContext);
 

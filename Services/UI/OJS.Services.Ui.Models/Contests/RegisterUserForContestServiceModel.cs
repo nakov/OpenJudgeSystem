@@ -20,6 +20,8 @@ public class RegisterUserForContestServiceModel : IMapExplicitly
 
     public int? ParticipantId { get; set; }
 
+    public bool IsOnlineExam { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Contest, RegisterUserForContestServiceModel>()
             .ForMember(
