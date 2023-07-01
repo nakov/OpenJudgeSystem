@@ -36,6 +36,7 @@ interface ISubmissionType {
     compilerComment: string;
     createdOn: Date;
     modifiedOn?: Date;
+    startedExecutionOn?: Date;
 }
 
 interface ITestRunDetailsType extends ITestRunType {
