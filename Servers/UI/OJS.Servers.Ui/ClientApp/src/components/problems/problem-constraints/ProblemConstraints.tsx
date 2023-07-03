@@ -3,6 +3,8 @@ import isNil from 'lodash/isNil';
 
 import { useProblems } from '../../../hooks/use-problems';
 import { format } from '../../../utils/number-utils';
+import IconSize from '../../guidelines/icons/common/icon-sizes';
+import QuestionIcon from '../../guidelines/icons/QuestionIcon';
 import List from '../../guidelines/lists/List';
 
 import styles from './ProblemConstraints.module.scss';
@@ -25,12 +27,20 @@ const ProblemConstraints = () => {
 
     const renderConstraint = (constraint: string) => <span>{constraint}</span>;
 
+    const getCheckerDescription = () => {
+        const { checkerDescription = '' } = currentProblem || {};
+        return checkerDescription;
+    };
+
     return (
-        <List
-          values={getConstraints()}
-          itemFunc={renderConstraint}
-          className={styles.constraintsList}
-        />
+        <div className={styles.constraints}>
+            <List
+              values={getConstraints()}
+              itemFunc={renderConstraint}
+              className={styles.constraintsList}
+            />
+            <QuestionIcon size={IconSize.Medium} className={styles.questionIcon} helperText={getCheckerDescription()} />
+        </div>
     );
 };
 

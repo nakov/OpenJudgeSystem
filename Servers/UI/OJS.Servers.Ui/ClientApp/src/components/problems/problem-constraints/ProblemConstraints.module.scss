@@ -1,18 +1,27 @@
 ﻿@use 'src/styles/colors';
 @use 'src/styles/variables';
 @use 'src/styles/fonts';
+@use 'src/components/guidelines/icons/common/icon-base.scss';
 
-.constraintsList {
+.constraints{
   @extend %font-family-lato;
-
-  align-items: start;
+  padding: 10px;
   color: colors.$text-dark-gray-color;
   font-size: variables.$f-size-16;
-  padding: 10px;
 
   @media only screen and (max-width: variables.$r-large-desktop-max) {
     font-size: variables.$f-size-16;
   }
 }
+.constraintsList {
+  align-items: start;
+}
+
+.questionIcon {
+  @extend %iconContainer;
+  padding-top: 1px;
+}
+
+
 
 
