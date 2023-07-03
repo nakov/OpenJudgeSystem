@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>OJS.Servers.Worker.Controllers</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Infrastructure\OJS.Servers.Infrastructure\OJS.Servers.Infrastructure.csproj" />
+    <ProjectReference Include="..\OJS.Servers.Worker.Models\OJS.Servers.Worker.Models.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -8,6 +8,7 @@ using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Business.Validation;
 using OJS.Services.Ui.Data;
 using System.Threading.Tasks;
+using OJS.Servers.Infrastructure.Controllers;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 public class ContestResultsController : BaseApiController

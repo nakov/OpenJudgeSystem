@@ -1,0 +1,234 @@
+﻿namespace OJS.Services.Worker.Business.Implementations;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using OJS.Workers.Common;
+using OJS.Workers.ExecutionStrategies.Models;
+using OJS.Services.Worker.Business.Validation;
+using OJS.Services.Worker.Models.Configuration;
+using OJS.Services.Worker.Models.ExecutionContext;
+using OJS.Workers.Common.Extensions;
+using FluentExtensions.Extensions;
+using OJS.Services.Worker.Models.ExecutionResult;
+using OJS.Services.Worker.Models.ExecutionResult.Output;
+using OJS.Workers.ExecutionStrategies.Extensions;
+
+public class SubmissionsBusinessService : ISubmissionsBusinessService
+{
+    private readonly IRandomProvider random;
+    private readonly IExecutionContextBuilderService executionContextBuilder;
+    private readonly ISubmissionsValidationService submissionsValidation;
+    private readonly ISubmissionExecutor submissionExecutor;
+    private readonly IPublisherService publisher;
+    private readonly IMapper mapper;
+    private readonly SubmissionExecutionConfig executionConfig;
+
+    public SubmissionsBusinessService(
+        IRandomProvider random,
+        IOptions<SubmissionExecutionConfig> submissionExecutionConfigAccessor,
+        IExecutionContextBuilderService executionContextBuilder,
+        ISubmissionsValidationService submissionsValidation,
+        ISubmissionExecutor submissionExecutor,
+        IPublisherService publisher,
+        IMapper mapper)
+    {
+        this.executionConfig = submissionExecutionConfigAccessor.Value;
+        this.random = random;
+        this.executionContextBuilder = executionContextBuilder;
+        this.submissionsValidation = submissionsValidation;
+        this.submissionExecutor = submissionExecutor;
+        this.publisher = publisher;
+        this.mapper = mapper;
+    }
+
+    public ExecutionResultServiceModel ExecuteSubmission(
+        SubmissionServiceModel submission,
+        string userId)
+    {
+        this.submissionsValidation
+            .GetValidationResult(submission)
+            .VerifyResult();
+
+        switch (submission.ExecutionType)
+        {
+            case ExecutionType.SimpleExecution:
+            case ExecutionType.SimpleTemplateExecution:
+                return this.InternalExecuteSubmission<SimpleInputModel, OutputResult>(
+                    submission,
+                    userId);
+
+            case ExecutionType.TestsExecution:
+            case ExecutionType.TestsTemplateExecution:
+                return this.InternalExecuteSubmission<TestsInputModel, TestResult>(
+                    submission,
+                    userId);
+
+            default:
+                throw new ArgumentException("Submission execution type not valid");
+        }
+    }
+
+    private ExecutionResultServiceModel InternalExecuteSubmission<TInput, TResult>(
+        SubmissionServiceModel submission,
+        string userId)
+        where TResult : ISingleCodeRunResult, new()
+    {
+        this.PreprocessSubmission(submission);
+        this.PreprocessLineEndings(submission);
+
+        var ojsSubmission = this.executionContextBuilder.BuildOjsSubmission<TInput>(submission);
+
+        var ojsWorkerExecutionResult = this.submissionExecutor.Execute<TInput, TResult>(ojsSubmission);
+
+        var executionResult = this.mapper.Map<ExecutionResultServiceModel>(ojsWorkerExecutionResult);
+        executionResult.StartedExecutionOn = ojsSubmission.StartedExecutionOn;
+
+        var taskMaxPoints = submission.TestsExecutionDetails?.MaxPoints ?? TaskDefaultMaxPoints;
+
+        if (executionResult.TaskResult == null)
+        {
+            this.ProcessSimpleExecutionResult(executionResult);
+        }
+        else
+        {
+            this.ProcessTaskResult(submission, executionResult, taskMaxPoints, userId);
+        }
+
+        return executionResult;
+    }
+
+    private void PreprocessSubmission(SubmissionServiceModel submission)
+    {
+        switch (submission.ExecutionType)
+        {
+            case ExecutionType.SimpleTemplateExecution:
+            case ExecutionType.TestsTemplateExecution:
+                submission.Code = this.executionContextBuilder.BuildCodeFromTemplate(submission);
+                break;
+        }
+
+        if (submission.TestsExecutionDetails != null && submission.ExecutionOptions.EscapeTests)
+        {
+            submission.TestsExecutionDetails.Tests = submission.TestsExecutionDetails.Tests
+                .Mutate(x => x.Input = x.Input
+                    .Replace("\\[", "[")
+                    .Replace("\\]", "]")
+                    .Replace("\\<", "<")
+                    .Replace("\\>", ">")
+                    .Replace("\\{", "{")
+                    .Replace("\\}", "}")
+                    .Replace("\\\\$", "$")
+                    .Replace("\\$", "$")
+                    .Replace("\\`", "`")
+                    .Replace("\\#", "#")
+                    .Replace("\\|", "|"))
+                .ToList();
+        }
+    }
+
+    private void PreprocessLineEndings(SubmissionServiceModel submission)
+    {
+        if (submission.TestsExecutionDetails != null && submission.ExecutionOptions.EscapeLineEndings)
+        {
+            submission.TestsExecutionDetails.Tests = submission.TestsExecutionDetails.Tests
+                .Mutate(x => x.Input = x.Input
+                    .Replace("\r\n", "\n")
+                    .Replace("\\r\\n", "\\n"))
+                .ToList();
+        }
+    }
+
+    private void ProcessSimpleExecutionResult(ExecutionResultServiceModel executionResult)
+        => executionResult.OutputResult
+            ?.LimitLength(this.executionConfig.OutputResultMaxLength);
+
+    private void ProcessTaskResult(
+        SubmissionServiceModel submission,
+        ExecutionResultServiceModel executionResult,
+        int taskMaxPoints,
+        string userId)
+    {
+        executionResult.Id = this.BuildUniqueId(submission.TestsExecutionDetails.TaskId);
+
+        if (submission.ExecutionOptions.KeepCheckerFragmentsForCorrectAnswers)
+        {
+            this.FillForCorrectAnswers(
+                Enumerable.ToList<TestResult>(executionResult.TaskResult.TestResults),
+                Enumerable.ToList<TestContext>(submission.TestsExecutionDetails.Tests));
+        }
+
+        executionResult.TaskResult.CalculatePoints(taskMaxPoints);
+
+        if (!submission.ExecutionOptions.KeepDetails)
+        {
+            this.RemoveDetailsForHiddenTests(executionResult.TaskResult);
+        }
+
+        this.PublishTaskResult(
+            executionResult,
+            submission,
+            taskMaxPoints,
+            userId);
+    }
+
+    private void PublishTaskResult(
+        ExecutionResultServiceModel executionResult,
+        SubmissionServiceModel submission,
+        int taskMaxPoints,
+        string userId)
+    {
+        var pubSubModel = executionResult.TaskResult.Map<TaskResultPubSubModel>();
+        pubSubModel.ExecutionId = executionResult.Id;
+        pubSubModel.IsCompiledSuccessfully = executionResult.IsCompiledSuccessfully;
+        pubSubModel.CompilerComment = executionResult.CompilerComment;
+        pubSubModel.MaxPoints = taskMaxPoints;
+        pubSubModel.TaskId = submission.TestsExecutionDetails.TaskId;
+        pubSubModel.ExamParticipantId = submission.TestsExecutionDetails.ExamParticipantId;
+        pubSubModel.UserId = userId;
+        pubSubModel.ExecutionStrategyName = submission.ExecutionStrategyType.ToString();
+        pubSubModel.Content = submission.Code.Compress();
+        pubSubModel.TestResults = executionResult.TaskResult.TestResults.MapCollection<TestResultPubSubModel>();
+
+        this.publisher.Publish(pubSubModel);
+    }
+
+    // This method fills in the user output fragment on correct answers,
+    // as the OJS worker does not return output on correct answers
+    // this method can be safely discarded after https://github.com/SoftUni-Internal/suls-issues/issues/5811
+    // has been closed.
+    private void FillForCorrectAnswers(IList<TestResult> testResults, IList<TestContext> testContexts)
+    {
+        if (testContexts.Count != testResults.Count)
+        {
+            return;
+        }
+
+        testResults.ForEach((index, testResult) =>
+        {
+            var isResultCorrectAnswerAndTrialTest =
+                testResult.ResultType ==
+                OJS.Workers.Common.Models.TestRunResultType.CorrectAnswer;
+
+            if (isResultCorrectAnswerAndTrialTest)
+            {
+                var output = testContexts[index].Output;
+
+                testResult.CheckerDetails =
+                    new CheckerDetails
+                    {
+                        UserOutputFragment = output,
+                        ExpectedOutputFragment = output,
+                    };
+            }
+        });
+    }
+
+    // This is done to assure no information can be extracted from the networks tab when returning hidden tests in the response
+    private void RemoveDetailsForHiddenTests(TaskResultServiceModel taskResult)
+        => Enumerable.Where<TestResult>(taskResult.TestResults, t => !t.IsTrialTest)
+            .ForEach(t => t.CheckerDetails = new CheckerDetails());
+
+    private string BuildUniqueId(string prefix)
+        => $"{prefix}_{this.random.GetRandomString()}";
+}

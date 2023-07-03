@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Servers.Ui.Models.Submissions.Profile;
 using OJS.Services.Infrastructure.Cache;
+using OJS.Servers.Infrastructure.Controllers;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 public class SubmissionsController : BaseApiController

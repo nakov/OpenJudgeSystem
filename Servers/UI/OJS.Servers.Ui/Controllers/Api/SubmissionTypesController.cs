@@ -7,6 +7,7 @@ using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using OJS.Services.Ui.Business.Cache;
+using OJS.Servers.Infrastructure.Controllers;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 public class SubmissionTypesController : BaseApiController

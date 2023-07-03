@@ -1,7 +1,7 @@
-namespace OJS.Servers.Ui.Controllers.Api;
+namespace OJS.Servers.Infrastructure.Controllers;
 
 using Microsoft.AspNetCore.Mvc;
-using static OJS.Common.GlobalConstants.MimeTypes;
+using static Common.GlobalConstants.MimeTypes;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
