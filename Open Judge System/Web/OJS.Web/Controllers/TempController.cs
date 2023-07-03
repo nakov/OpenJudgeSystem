@@ -1,8 +1,4 @@
-﻿using Newtonsoft.Json;
-using OJS.Services.Common.HttpRequester.Models;
-using OJS.Web.Areas.Api.Models;
-
-namespace OJS.Web.Controllers
+﻿namespace OJS.Web.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -24,6 +20,7 @@ namespace OJS.Web.Controllers
     using OJS.Services.Business.Submissions.ArchivedSubmissions;
     using OJS.Services.Common.BackgroundJobs;
     using OJS.Services.Common.HttpRequester;
+    using OJS.Services.Common.HttpRequester.Models;
     using OJS.Services.Common.HttpRequester.Models.Users;
     using OJS.Services.Data.Participants;
     using OJS.Services.Data.ProblemGroups;
