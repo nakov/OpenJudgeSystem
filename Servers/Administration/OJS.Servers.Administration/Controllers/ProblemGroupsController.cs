@@ -156,5 +156,5 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
     }
 
     protected override async Task AfterEntitySaveAsync(ProblemGroup entity, AdminActionContext actionContext)
-        => await this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsByOrderBy(entity.ContestId, entity);
+        => await this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsOrder(entity.ContestId, entity);
 }

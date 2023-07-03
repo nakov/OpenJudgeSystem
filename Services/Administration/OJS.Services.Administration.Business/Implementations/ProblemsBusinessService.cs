@@ -182,13 +182,13 @@ namespace OJS.Services.Administration.Business.Implementations
             return await this.contestsBusiness.UserHasContestPermissions(problem.ContestId, userId, isUserAdmin);
         }
 
-        public async Task ReevaluateProblemsByOrderBy(int contestId, Problem problem)
+        public async Task ReevaluateProblemsOrder(int contestId, Problem problem)
         {
-            var problemsGroups = this.problemGroupData.GetAllVisibleByContest(contestId);
+            var problemsGroups = this.problemGroupData.GetAllByContestId(contestId);
 
             if (problemsGroups.All(pg => pg.Problems.Count(p => !p.IsDeleted) == 1))
             {
-               await this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsByOrderBy(contestId, problem.ProblemGroup);
+               await this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsOrder(contestId, problem.ProblemGroup);
             }
             else
             {
@@ -199,7 +199,7 @@ namespace OJS.Services.Administration.Business.Implementations
                                                     .Any(p => p.Id == problem.Id))?.Problems
                                                     .Where(p => !p.IsDeleted);
 
-                await this.problemsOrderableService.ReevaluateOrderBy(problems!);
+                await this.problemsOrderableService.ReevaluateOrder(problems!);
             }
         }
 

@@ -82,11 +82,11 @@ namespace OJS.Services.Administration.Business.Implementations
             return ServiceResult.Success;
         }
 
-        public async Task ReevaluateProblemsAndProblemGroupsByOrderBy(int contestId, ProblemGroup problemGroup)
+        public async Task ReevaluateProblemsAndProblemGroupsOrder(int contestId, ProblemGroup problemGroup)
         {
-            var problemGroups = this.problemGroupsData.GetAllVisibleByContest(contestId);
+            var problemGroups = this.problemGroupsData.GetAllByContestId(contestId);
 
-            await this.problemGroupsOrderableService.ReevaluateOrderBy(problemGroups);
+            await this.problemGroupsOrderableService.ReevaluateOrder(problemGroups);
 
             // We detach the existing entity, in order to avoid tracking exception on Update.
             this.problemGroupsData.Detach(problemGroup);
@@ -94,7 +94,7 @@ namespace OJS.Services.Administration.Business.Implementations
             var problems = problemGroups.SelectMany(p => p.Problems)
                                                             .Where(p => !p.IsDeleted);
 
-            await this.problemsOrderableService.ReevaluateOrderBy(problems);
+            await this.problemsOrderableService.ReevaluateOrder(problems);
         }
 
         private async Task CopyProblemGroupToContest(ProblemGroup problemGroup, int contestId)

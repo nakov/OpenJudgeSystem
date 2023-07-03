@@ -13,6 +13,6 @@ namespace OJS.Services.Administration.Business
             int sourceContestId,
             int destinationContestId);
 
-        Task ReevaluateProblemsAndProblemGroupsByOrderBy(int contestId, ProblemGroup problemGroup);
+        Task ReevaluateProblemsAndProblemGroupsOrder(int contestId, ProblemGroup problemGroup);
     }
 }

@@ -24,7 +24,7 @@
             this.DbSet
                 .Where(pg => pg.ContestId == contestId);
 
-        public IQueryable<ProblemGroup> GetAllVisibleByContest(int contestId)
+        public IQueryable<ProblemGroup> GetAllByContestId(int contestId)
             => this.GetAllByContest(contestId)
                 .Where(pg => !pg.IsDeleted);
 

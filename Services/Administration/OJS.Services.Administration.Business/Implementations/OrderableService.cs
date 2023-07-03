@@ -15,7 +15,7 @@ public class OrderableService<TEntity> : IOrderableService<TEntity>
     public OrderableService(IDataService<TEntity> dataService)
         => this.dataService = dataService;
 
-    public async Task ReevaluateOrderBy(IEnumerable<TEntity> entities)
+    public async Task ReevaluateOrder(IEnumerable<TEntity> entities)
     {
         var orderByIndex = 0;
 
