@@ -1,20 +1,15 @@
 ﻿namespace OJS.Web.Infrastructure.SimpleInjectorPackages
 {
-    using System;
     using System.Linq;
-
     using MissingFeatures;
-    using OJS.Services;
     using OJS.Services.Business.ExamGroups;
-    using OJS.Services.Cache;
     using OJS.Services.Common;
     using OJS.Services.Common.BackgroundJobs;
-    using OJS.Services.Common.Cache;
+    using OJS.Services.Common.Emails;
     using OJS.Services.Common.HttpRequester;
     using OJS.Services.Data.ExamGroups;
     using OJS.Services.Data.SubmissionsForProcessing;
     using OJS.Services.Data.Users;
-
     using SimpleInjector;
     using SimpleInjector.Packaging;
     using StackExchange.Redis;
@@ -52,6 +47,16 @@
                     Settings.SulsPlatformBaseUrl,
                     Settings.SulsApiKey),
                 Lifestyle.Scoped);
+
+            container.Register<IEmailSenderService>(
+            () => new EmailSenderService(
+                Settings.EmailServerHost,
+                Settings.EmailServerPort,
+                Settings.EmailServerUsername,
+                Settings.EmailServerPassword,
+                Settings.EmailSenderEmail,
+                Settings.EmailSenderDisplayName),
+            Lifestyle.Scoped);
         }
 
         private void RegisterNonGenericTypes(Container container)

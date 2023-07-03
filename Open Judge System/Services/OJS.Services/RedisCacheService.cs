@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using OJS.Services.Cache;
+using OJS.Services.Common.Emails;
 using StackExchange.Redis;
 using System;
 using System.Threading.Tasks;
@@ -9,85 +10,153 @@ namespace OJS.Services
     public class RedisCacheService : IRedisCacheService
     {
         private readonly IDatabase redisCache;
+        private readonly IEmailSenderService emailSenderService;
+        private readonly string exceptionReceiver = "mihailtsatsarov92@gmail.com";
 
-        public RedisCacheService(IDatabase redisCache)
+        public RedisCacheService(IDatabase redisCache, IEmailSenderService emailSenderService)
         {
             this.redisCache = redisCache;
+            this.emailSenderService = emailSenderService;
         }
 
-        public T Get<T>(string cacheId)
+        public T Get<T>(string cacheId, Func<T> getItemCallback)
         {
-            var valueAsString = this.redisCache.StringGet(cacheId);
-
-            if (valueAsString.IsNull)
+            try
             {
-                return default(T);
+                var valueAsString = this.redisCache.StringGet(cacheId);
 
+                if (valueAsString.IsNull)
+                {
+                    return default(T);
+                }
+
+                return JsonConvert.DeserializeObject<T>(valueAsString);
+            }
+            catch (RedisConnectionException ex)
+            {
+                this.emailSenderService.SendEmail(this.exceptionReceiver,nameof(ex),ex.Message);
+                return getItemCallback();
+            }
+        }
+
+        public async Task<T> GetAsync<T>(string cacheId, Func<Task<T>> getItemCallback)
+        {
+            try
+            {
+                var valueAsString = await this.redisCache.StringGetAsync(cacheId);
+
+                if (valueAsString.IsNull)
+                {
+                    return default(T);
+                }
+
+                return JsonConvert.DeserializeObject<T>(valueAsString);
+            }
+            catch (RedisConnectionException ex)
+            {
+                await this.emailSenderService.SendEmailAsync(this.exceptionReceiver, nameof(ex), ex.Message);
+                return await getItemCallback();
             }
 
-            return JsonConvert.DeserializeObject<T>(valueAsString);
         }
 
-        public async Task<T> GetAsync<T>(string cacheId)
+        public T GetOrSet<T>(string cacheId, Func<T> getItemCallback, TimeSpan? expiration)
         {
-            var valueAsString = await this.redisCache.StringGetAsync(cacheId);
-
-            if (valueAsString.IsNull)
+            try
             {
-                return default(T);
-
+                this.VerifyValueInCache<T>(cacheId, getItemCallback, expiration);
+                return this.Get<T>(cacheId,getItemCallback);
             }
-
-            return JsonConvert.DeserializeObject<T>(valueAsString);
-        }
-
-        public T GetOrSet<T>(string cacheId, Func<Task<T>> getItemCallback, TimeSpan? expiration)
-        {
-            this.VerifyValueInCache<T>(cacheId, getItemCallback, expiration).Wait();
-
-            return this.Get<T>(cacheId);
+            catch (RedisConnectionException ex)
+            {
+                this.emailSenderService.SendEmail(this.exceptionReceiver, nameof(ex), ex.Message);
+                return default(T);
+            }
         }
 
         public async Task<T> GetOrSetAsync<T>(string cacheId, Func<Task<T>> getItemCallback, TimeSpan? expiration)
         {
-            await this.VerifyValueInCache<T>(cacheId, getItemCallback, expiration);
+            try
+            {
+                await this.VerifyValueInCacheAsync<T>(cacheId, getItemCallback, expiration);
 
-            return await this.GetAsync<T>(cacheId);
+                return await this.GetAsync<T>(cacheId, getItemCallback);
+            }
+            catch (RedisConnectionException ex)
+            {
+                await this.emailSenderService.SendEmailAsync(this.exceptionReceiver, nameof(ex), ex.Message);
+                return default(T);
+            }
         }
 
         public void Set<T>(string cacheId, T value, TimeSpan? expiration)
         {
-            string serializedObject = JsonConvert.SerializeObject(value);
+            try
+            {
+                string serializedObject = JsonConvert.SerializeObject(value);
 
-            if (expiration.HasValue)
-            {
+                if (expiration.HasValue)
+                {
                     this.redisCache.StringSet(cacheId, serializedObject, expiration);
+                }
+                else
+                {
+                    this.redisCache.StringSet(cacheId, serializedObject);
+                }
             }
-            else
+            catch (RedisConnectionException ex)
             {
-                this.redisCache.StringSet(cacheId, serializedObject);
+                this.emailSenderService.SendEmail(this.exceptionReceiver, nameof(ex), ex.Message);
             }
         }
 
         public async Task SetAsync<T>(string cacheId, T value, TimeSpan? expiration)
         {
-            string serializedObject = JsonConvert.SerializeObject(value);
+            try
+            {
+                string serializedObject = JsonConvert.SerializeObject(value);
 
-            if (expiration.HasValue)
-            {
-                await this.redisCache.StringSetAsync(cacheId, serializedObject, expiration);
+                if (expiration.HasValue)
+                {
+                    await this.redisCache.StringSetAsync(cacheId, serializedObject, expiration);
+                }
+                else
+                {
+                    await this.redisCache.StringSetAsync(cacheId, serializedObject);
+                }
             }
-            else
+            catch (RedisConnectionException ex)
             {
-                await this.redisCache.StringSetAsync(cacheId, serializedObject);
+                await this.emailSenderService.SendEmailAsync(this.exceptionReceiver, nameof(ex), ex.Message);
+            }
+
+        }
+
+        public void Remove(string cacheId)
+        {
+            try
+            {
+                this.redisCache.KeyDelete(cacheId);
+            }
+            catch (RedisConnectionException ex)
+            {
+                this.emailSenderService.SendEmail(this.exceptionReceiver, nameof(ex), ex.Message);
             }
         }
 
-        public void Remove(string cacheId) => this.redisCache.KeyDelete(cacheId);
+        public async Task RemoveAsync(string cacheId)
+        {
+            try
+            {
+                await this.redisCache.KeyDeleteAsync(cacheId);
+            }
+            catch (RedisConnectionException ex)
+            {
+                await this.emailSenderService.SendEmailAsync(this.exceptionReceiver, nameof(ex), ex.Message);
+            }
+        }
 
-        public Task RemoveAsync(string cacheId) => this.redisCache.KeyDeleteAsync(cacheId);
-
-        private async Task VerifyValueInCache<T>(
+        private async Task VerifyValueInCacheAsync<T>(
             string cacheId,
             Func<Task<T>> getItemCallback,
             TimeSpan? expiration)
@@ -99,6 +168,24 @@ namespace OJS.Services
 
                 var parsedValue = JsonConvert.SerializeObject(result);
                 await this.redisCache.StringSetAsync(
+                    cacheId,
+                    parsedValue,
+                    expiration);
+            }
+        }
+
+        private void VerifyValueInCache<T>(
+            string cacheId,
+            Func<T> getItemCallback,
+            TimeSpan? expiration)
+        {
+            var value =  this.redisCache.StringGet(cacheId);
+            if (value.IsNull)
+            {
+                var result =  getItemCallback();
+
+                var parsedValue = JsonConvert.SerializeObject(result);
+                 this.redisCache.StringSet(
                     cacheId,
                     parsedValue,
                     expiration);

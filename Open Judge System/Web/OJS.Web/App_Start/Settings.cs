@@ -5,7 +5,7 @@
     public static class Settings
     {
         public static string SulsApiKey => GetSetting("SulsApiKey");
-        
+
         public static string ApiKey => GetSetting("ApiKey");
 
         public static string CSharpCompilerPath => GetSetting("CSharpCompilerPath");
@@ -49,6 +49,20 @@
         public static int ArchiveDailyBatchSize => GetSettingOrDefault("ArchiveDailyBatchSize", 500000);
 
         public static string RedisConnectionString => GetSetting("RedisConnectionString");
+
+        public static string EmailServerHost => GetSetting("EmailServerHost");
+
+        public static int EmailServerPort => GetSettingOrDefault("EmailServerPort", 25);
+
+        public static string EmailServerUsername => GetSetting("EmailServerUsername");
+
+        public static string EmailServerPassword => GetSetting("EmailServerPassword");
+
+        public static string EmailSenderEmail => GetSetting("EmailSenderEmail");
+
+        public static string EmailSenderDisplayName => GetSetting("EmailSenderDisplayName");
+
+        public static string DevEmail => GetSetting("DevEmail");
 
         private static int GetIntSetting(string settingName) => int.Parse(GetSetting(settingName));
     }
