@@ -67,15 +67,15 @@ const FooterNavigation = () => {
         </div>
     ), []);
 
-    const renderLogo = useCallback(() => (
-        <div className={styles.footerLogo}>
-            <img src={logo} alt="softuni logo" />
-        </div>
-    ), []);
-
     return (
         <div className={styles.content}>
-            {renderLogo()}
+            <LinkButton
+              to="/"
+              type={LinkButtonType.image}
+              className={styles.footerLogo}
+              altText="Softuni logo"
+              imgSrc={logo}
+            />
             <FooterListSection
               links={learnLinks}
               sectionHeadingText="Learn"
