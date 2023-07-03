@@ -40,6 +40,8 @@ namespace OJS.Data.Models.Submissions
 
         public byte[]? SolutionSkeleton { get; set; }
 
+        public DateTime? StartedExecutionOn { get; set; }
+
         [StringLength(ConstraintConstants.IpAddressMaxLength)]
         [Column(TypeName = "varchar")]
         public string? IpAddress { get; set; }

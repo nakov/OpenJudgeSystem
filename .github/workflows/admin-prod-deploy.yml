@@ -8,10 +8,25 @@ on:
         required: true
         default: "latest"
         type: string
+  workflow_call:
+    inputs:
+      docker_image_tag:
+        required: true
+        default: "latest"
+        type: string
 jobs:
   check-user-access:
-    uses: ./.github/workflows/check-prod-deploy-user-access.yml
-    secrets: inherit
+    runs-on: ubuntu-latest
+    outputs:
+      isTeamMember: ${{ steps.checkUserMember.outputs.isTeamMember }}
+    steps:
+    - name: Check if user is in team 'Alpha Judge Prod deploy'
+      id: checkUserMember
+      uses: tspascoal/get-user-teams-membership@v2
+      with:
+        username: ${{ github.triggering_actor }}
+        team: 'Alpha Judge Prod deploy'
+        GITHUB_TOKEN: ${{ secrets.SOFTUNIBUILD_PAT }}
   build-and-push:
     needs: [check-user-access]
     if: ${{ needs.check-user-access.outputs.isTeamMember == 'true' }}
