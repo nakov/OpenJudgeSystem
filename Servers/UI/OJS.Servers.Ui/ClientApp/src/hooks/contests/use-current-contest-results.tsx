@@ -1,9 +1,10 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import isNaN from 'lodash/isNaN';
 import isNil from 'lodash/isNil';
 
 import { IGetContestResultsParams } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
-import { useHttp } from '../use-http';
+import { IErrorDataType, useHttp } from '../use-http';
 import { useLoading } from '../use-loading';
 import { useUrls } from '../use-urls';
 
@@ -12,6 +13,8 @@ import { IContestResultsParticipationType, IContestResultsType } from './types';
 interface ICurrentContestResultsContext {
     state: {
         contestResults?: IContestResultsType | null;
+        getContestResultsParams: IGetContestResultsParams | undefined;
+        contestResultsError: IErrorDataType | null;
     };
     actions: {
         load: (id: number, official: boolean, full: boolean) => Promise<void>;
@@ -28,33 +31,28 @@ const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProvi
     const { getContestResultsUrl } = useUrls();
     const { startLoading, stopLoading } = useLoading();
     const [ getContestResultsParams, setGetContestResultsParams ] = useState<IGetContestResultsParams>();
+    const [ contestResultsError, setContestResultsError ] = useState<IErrorDataType | null>(null);
 
+    const [ contestResults, setContestsResults ] = useState<IContestResultsType>(defaultState.state.contestResults);
     const {
         get: getContestResults,
-        data: apiContestResults,
+        data: apiContestResultsData,
+        error: getContestResultsError,
     } = useHttp<IGetContestResultsParams, IContestResultsType>({
         url: getContestResultsUrl,
         parameters: getContestResultsParams,
     });
 
-    const contestResults = useMemo(
-        () => {
-            if (isNil(apiContestResults)) {
-                return null;
+    const load = useCallback(
+        async (id: number, official: boolean, full: boolean) => {
+            if (isNil(id) || isNaN(id)) {
+                return;
             }
 
-            return apiContestResults;
+            setGetContestResultsParams({ id, official, full });
         },
-        [ apiContestResults ],
+        [],
     );
-
-    const load = useCallback(async (id: number, official: boolean, full: boolean) => {
-        if (isNil(id)) {
-            return;
-        }
-
-        setGetContestResultsParams({ id, official, full });
-    }, []);
 
     useEffect(
         () => {
@@ -71,12 +69,33 @@ const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProvi
         [ getContestResults, getContestResultsParams, startLoading, stopLoading ],
     );
 
+    useEffect(
+        () => {
+            if (isNil(apiContestResultsData)) {
+                return;
+            }
+
+            if (!isNil(getContestResultsError)) {
+                setContestResultsError(getContestResultsError);
+                return;
+            }
+
+            setContestsResults(apiContestResultsData);
+            setContestResultsError(null);
+        },
+        [ apiContestResultsData, getContestResultsError ],
+    );
+
     const value = useMemo(
         () => ({
-            state: { contestResults },
+            state: {
+                contestResults,
+                getContestResultsParams,
+                contestResultsError,
+            },
             actions: { load },
         }),
-        [ contestResults, load ],
+        [ contestResults, contestResultsError, getContestResultsParams, load ],
     );
 
     return (
