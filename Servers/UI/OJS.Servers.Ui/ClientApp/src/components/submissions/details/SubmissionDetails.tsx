@@ -253,7 +253,7 @@ const SubmissionDetails = () => {
                 return null;
             }
 
-            const { createdOn, modifiedOn, user: { userName } } = currentSubmission;
+            const { createdOn, modifiedOn, startedExecutionOn, user: { userName } } = currentSubmission;
 
             return (
                 <div className={styles.submissionInfo}>
@@ -268,6 +268,13 @@ const SubmissionDetails = () => {
                         {isNil(modifiedOn)
                             ? 'never'
                             : preciseFormatDate(modifiedOn)}
+                    </p>
+                    <p className={styles.submissionInfoParagraph}>
+                        Started execution on:
+                        {' '}
+                        {isNil(startedExecutionOn)
+                            ? 'never'
+                            : preciseFormatDate(startedExecutionOn)}
                     </p>
                     <p className={styles.submissionInfoParagraph}>
                         Username:
