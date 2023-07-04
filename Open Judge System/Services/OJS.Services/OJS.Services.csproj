@@ -106,6 +106,9 @@
   <ItemGroup>
     <Compile Include="Business\Contests\ContestsBusinessService.cs" />
     <Compile Include="Business\Contests\IContestsBusinessService.cs" />
+    <Compile Include="Business\Contests\Models\BaseContestBusinessModel.cs" />
+    <Compile Include="Business\Contests\Models\JudgeWorkLoadResults.cs" />
+    <Compile Include="Business\Contests\Models\SubmissionRunTimeCalculationModel.cs" />
     <Compile Include="Business\ExamGroups\ExamGroupsBusinessService.cs" />
     <Compile Include="Business\ExamGroups\IExamGroupsBusinessService.cs" />
     <Compile Include="Business\ParticipantScores\IParticipantScoresBusinessService.cs" />
