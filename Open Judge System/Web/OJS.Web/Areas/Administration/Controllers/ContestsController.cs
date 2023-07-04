@@ -13,6 +13,7 @@
     using OJS.Data;
     using OJS.Data.Models;
     using OJS.Services.Business.Contests;
+    using OJS.Services.Business.Contests.Models;
     using OJS.Services.Business.Participants;
     using OJS.Services.Cache;
     using OJS.Services.Data.ContestCategories;
@@ -537,6 +538,73 @@
             return this.Redirect(returnUrl);
         }
 
+        [HttpGet]
+        public ActionResult CalculateContestLoad(int categoryId, int currentContestId)
+        {
+            if (!this.CheckIfUserHasContestPermissions(currentContestId))
+            {
+                return this.RedirectToContestsAdminPanelWithNoPrivilegesMessage();
+            }
+
+            var contests = this.contestsData
+                .GetAll()
+                .Where(c => c.CategoryId == categoryId && c.StartTime.HasValue && c.EndTime.HasValue)
+                .OrderByDescending(x => x.StartTime.Value)
+                .ToList();
+
+            var model = new ContestLoadCalculationViewModel();
+            foreach (var contest in contests)
+            {
+                if (contest.Id == currentContestId)
+                {
+                    model.ExamLengthInHours = (contest.EndTime.Value - contest.StartTime.Value).Hours;
+                    model.ExpectedExamProblemsCount = contest.ProblemGroups.Count();
+                    model.ExpectedStudentsCount = contest.Participants.Count();
+                    model.ContestName = contest.Name;
+                    model.CurrentContestId = contest.Id;
+
+                    model.AverageProblemRunTimeInSeconds = 
+                        this.contestsBusiness.GetContestSubmissionsAverageRunTimeSeconds(contest);
+                }
+                else
+                {
+                    model.ContestsDropdownData.Add(new PreviousContestLoadData(contest));
+                }
+            }
+
+            if (model.ContestsDropdownData.Any())
+            {
+                model.PreviousContestId = model.ContestsDropdownData.First().Id;
+            }
+
+            return this.View(model);
+        }
+
+        [HttpPost]
+        public ActionResult CalculateContestLoad(ContestLoadCalculationViewModel model)
+        {
+            if (!this.CheckIfUserHasContestPermissions(model.CurrentContestId))
+            {
+                return this.RedirectToContestsAdminPanelWithNoPrivilegesMessage();
+            }
+
+            if (model.PreviousContestId != null)
+            {
+                var contest = this.contestsData.GetById(model.PreviousContestId.Value);
+                model.PreviousContestSubmissions = this.GetOfficialSubmissionsByContest(contest.Id);
+                model.PreviousContestExpectedProblems = contest.ProblemGroups.SelectMany(x => x.Problems).Count();
+                model.PreviousContestParticipants = contest.Participants
+                    .Where(x => x.IsOfficial == true)
+                    .Count();
+                model.PreviousAverageProblemRunTimeInSeconds = 
+                    this.contestsBusiness.GetContestSubmissionsAverageRunTimeSeconds(contest);
+            }
+
+            var calculatedLoad = this.contestsBusiness.CalculateLoadForContest(model);
+
+            return this.Json(calculatedLoad);
+        }
+
         private void PrepareViewBagData(int? contestId = null)
         {
             this.ViewBag.TypeData = DropdownViewModel.GetEnumValues<ContestType>();
@@ -674,6 +742,14 @@
             var message = string.Format(formatString, minutesForDisplay, username, contestName);
 
             return message;
+        }
+
+        private int GetOfficialSubmissionsByContest(int id)
+        {
+            var participants = this.participantsData
+               .GetAllByContestAndIsOfficial(id, true);
+
+            return participants.SelectMany(p => p.Submissions).Count();
         }
     }
 }
