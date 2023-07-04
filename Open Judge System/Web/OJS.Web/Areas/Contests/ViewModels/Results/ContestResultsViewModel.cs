@@ -16,7 +16,7 @@
 
         public IEnumerable<ContestProblemListViewModel> Problems { get; set; }
 
-        public IOrderedQueryable<ParticipantResultViewModel> Results { get; set; }
+        public List<ParticipantResultViewModel> Results { get; set; }
 
         public IPagedList<ParticipantResultViewModel> PagedResults { get; private set; }
 

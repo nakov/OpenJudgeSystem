@@ -59,7 +59,7 @@ namespace OJS.Services
 
         }
 
-        public T GetOrSet<T>(string cacheId, Func<T> getItemCallback, TimeSpan? expiration)
+        public T GetOrSet<T>(string cacheId, Func<T> getItemCallback, TimeSpan? expiration = null)
         {
             try
             {
