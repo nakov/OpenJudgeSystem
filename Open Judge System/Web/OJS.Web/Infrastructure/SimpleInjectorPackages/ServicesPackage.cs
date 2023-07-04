@@ -55,7 +55,8 @@
                 Settings.EmailServerUsername,
                 Settings.EmailServerPassword,
                 Settings.EmailSenderEmail,
-                Settings.EmailSenderDisplayName),
+                Settings.EmailSenderDisplayName,
+                Settings.DevEmail),
             Lifestyle.Scoped);
         }
 

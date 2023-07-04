@@ -26,7 +26,8 @@
             string username,
             string password,
             string senderEmail,
-            string senderDisplayName) : base()
+            string senderDisplayName,
+            string devEmail = null) : base()
         {
             this.mailClient = new SmtpClient
             {
@@ -37,7 +38,10 @@
 
             this.senderEmail = senderEmail;
             this.senderDisplayName = senderDisplayName;
+            this.DevEmail = devEmail;
         }
+
+        public string DevEmail { get; private set; }
 
         public void SendEmail(
             string recipient,
@@ -99,5 +103,7 @@
 
             return message;
         }
+
+        public string GetDevEmail() => this.DevEmail;
     }
 }

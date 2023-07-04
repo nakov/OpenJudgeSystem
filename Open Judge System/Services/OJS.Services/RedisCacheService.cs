@@ -11,7 +11,6 @@ namespace OJS.Services
     {
         private readonly IDatabase redisCache;
         private readonly IEmailSenderService emailSenderService;
-        private readonly string exceptionReceiver = "mihailtsatsarov92@gmail.com";
 
         public RedisCacheService(IDatabase redisCache, IEmailSenderService emailSenderService)
         {
@@ -34,7 +33,7 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-                this.emailSenderService.SendEmail(this.exceptionReceiver,nameof(ex),ex.Message);
+                this.emailSenderService.SendEmail(this.emailSenderService.GetDevEmail(),nameof(ex),ex.Message);
                 return getItemCallback();
             }
         }
@@ -54,7 +53,7 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-                await this.emailSenderService.SendEmailAsync(this.exceptionReceiver, nameof(ex), ex.Message);
+                await this.emailSenderService.SendEmailAsync(this.emailSenderService.GetDevEmail(), nameof(ex), ex.Message);
                 return await getItemCallback();
             }
 
@@ -69,7 +68,7 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-                this.emailSenderService.SendEmail(this.exceptionReceiver, nameof(ex), ex.Message);
+                this.emailSenderService.SendEmail(this.emailSenderService.GetDevEmail(), nameof(ex), ex.Message);
                 return default(T);
             }
         }
@@ -84,7 +83,7 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-                await this.emailSenderService.SendEmailAsync(this.exceptionReceiver, nameof(ex), ex.Message);
+                await this.emailSenderService.SendEmailAsync(this.emailSenderService.GetDevEmail(), nameof(ex), ex.Message);
                 return default(T);
             }
         }
@@ -106,7 +105,7 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-                this.emailSenderService.SendEmail(this.exceptionReceiver, nameof(ex), ex.Message);
+                this.emailSenderService.SendEmail(this.emailSenderService.GetDevEmail(), nameof(ex), ex.Message);
             }
         }
 
@@ -127,7 +126,7 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-                await this.emailSenderService.SendEmailAsync(this.exceptionReceiver, nameof(ex), ex.Message);
+                await this.emailSenderService.SendEmailAsync(this.emailSenderService.GetDevEmail(), nameof(ex), ex.Message);
             }
 
         }
@@ -140,7 +139,7 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-                this.emailSenderService.SendEmail(this.exceptionReceiver, nameof(ex), ex.Message);
+                this.emailSenderService.SendEmail(this.emailSenderService.GetDevEmail(), nameof(ex), ex.Message);
             }
         }
 
@@ -152,7 +151,7 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-                await this.emailSenderService.SendEmailAsync(this.exceptionReceiver, nameof(ex), ex.Message);
+                await this.emailSenderService.SendEmailAsync(this.emailSenderService.GetDevEmail(), nameof(ex), ex.Message);
             }
         }
 
