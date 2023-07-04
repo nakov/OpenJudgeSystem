@@ -61,6 +61,7 @@
                     ModifiedOn = contest.ModifiedOn,
                     AutoChangeTestsFeedbackVisibility = contest.AutoChangeTestsFeedbackVisibility,
                     UsersCantSubmitConcurrently = contest.UsersCantSubmitConcurrently,
+                    EnsureValidAuthorSubmisions = contest.EnsureValidAuthorSubmisions
                 };
             }
         }
@@ -176,6 +177,10 @@
         [DatabaseProperty]
         [Display(Name = nameof(Resource.UsersCantSubmitConcurrently), ResourceType = typeof(Resource))]
         public bool UsersCantSubmitConcurrently { get; set; }
+
+        [DatabaseProperty]
+        [Display(Name = nameof(Resource.EnsureValidAuthorSubmisions), ResourceType = typeof(Resource))]
+        public bool EnsureValidAuthorSubmisions { get; set; }
 
         [DatabaseProperty]
         [Display(

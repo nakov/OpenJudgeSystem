@@ -159,6 +159,7 @@
     <Compile Include="Data\Submissions\ArchivedSubmissions\ArchivedSubmissionsDataService.cs" />
     <Compile Include="Data\Submissions\ArchivedSubmissions\IArchivedSubmissionsDataService.cs" />
     <Compile Include="Data\Submissions\ISubmissionsDataService.cs" />
+    <Compile Include="Data\Submissions\Models\SubmissionTypeForProblem.cs" />
     <Compile Include="Data\Submissions\SubmissionsDataService.cs" />
     <Compile Include="Data\ProblemGroups\IProblemGroupsDataService.cs" />
     <Compile Include="Data\ProblemGroups\ProblemGroupsDataService.cs" />

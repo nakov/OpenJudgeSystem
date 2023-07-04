@@ -91,6 +91,8 @@
         public string Description { get; set; }
 
         public bool UsersCantSubmitConcurrently { get; set; }
+
+        public bool EnsureValidAuthorSubmisions { get; set; }
         
         public virtual ICollection<LecturerInContest> Lecturers { get; set; } = new HashSet<LecturerInContest>();
 
