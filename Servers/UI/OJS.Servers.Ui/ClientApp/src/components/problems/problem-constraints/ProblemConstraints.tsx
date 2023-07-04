@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
 import { useProblems } from '../../../hooks/use-problems';
@@ -12,7 +12,7 @@ import styles from './ProblemConstraints.module.scss';
 const ProblemConstraints = () => {
     const { state: { currentProblem } } = useProblems();
 
-    const getConstraints = useCallback(() => {
+    const constraints = useMemo(() => {
         if (isNil(currentProblem)) {
             return [];
         }
@@ -25,21 +25,24 @@ const ProblemConstraints = () => {
             `Checker: ${checkerName}` ];
     }, [ currentProblem ]);
 
-    const renderConstraint = (constraint: string) => <span>{constraint}</span>;
+    const renderConstraint = useCallback(
+        (constraint: string) => <span>{constraint}</span>,
+        [],
+    );
 
-    const getCheckerDescription = () => {
+    const getCheckerDescription = useMemo(() => {
         const { checkerDescription = '' } = currentProblem || {};
         return checkerDescription;
-    };
+    }, [ currentProblem ]);
 
     return (
         <div className={styles.constraints}>
             <List
-              values={getConstraints()}
+              values={constraints}
               itemFunc={renderConstraint}
               className={styles.constraintsList}
             />
-            <QuestionIcon size={IconSize.Medium} className={styles.questionIcon} helperText={getCheckerDescription()} />
+            <QuestionIcon size={IconSize.Medium} className={styles.questionIcon} helperText={getCheckerDescription} />
         </div>
     );
 };

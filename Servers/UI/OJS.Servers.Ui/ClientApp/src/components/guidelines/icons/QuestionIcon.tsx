@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { RiQuestionFill } from 'react-icons/ri';
 
 import IconSize from './common/icon-sizes';
@@ -19,4 +19,4 @@ const QuestionIcon = ({
     />
 );
 
-export default QuestionIcon;
+export default memo(QuestionIcon);
