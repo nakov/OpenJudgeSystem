@@ -2,7 +2,7 @@
 {
     using System;
     using System.Linq;
-
+    using OJS.Common.Models;
     using OJS.Data.Models;
     using OJS.Services.Data.Participants;
     using OJS.Services.Data.ParticipantScores;
@@ -14,6 +14,7 @@
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.SubmissionProcessors;
     using OJS.Workers.SubmissionProcessors.Models;
+    using ExceptionType = Workers.Common.Models.ExceptionType;
 
     public class OjsSubmissionProcessingStrategy : SubmissionProcessingStrategy<int>
     {
@@ -82,13 +83,18 @@
         public override void BeforeExecute()
         {
             this.submission.ProcessingComment = null;
+            this.submission.ExceptionType = ExceptionType.None;
             this.submission.StartedExecutionOn = DateTime.Now;
+            this.submission.CompilerComment = null;
+            this.submission.ExecutionComment = null;
             this.testRunsData.DeleteBySubmission(this.submission.Id);
         }
 
-        public override void OnError(IOjsSubmission submissionModel)
+        public override void OnError(IOjsSubmission submissionModel, Exception ex)
         {
             this.submission.ProcessingComment = submissionModel.ProcessingComment;
+            this.submission.ExecutionComment = $"{ex.Message} {ex.InnerException} \n" + $"{ex.StackTrace}";
+            this.submission.ExceptionType = submissionModel.ExceptionType;
 
             this.UpdateResults();
         }
