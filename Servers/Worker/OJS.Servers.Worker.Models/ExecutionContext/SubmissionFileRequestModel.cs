@@ -1,5 +1,8 @@
 ﻿namespace OJS.Servers.Worker.Models.ExecutionContext;
 
+using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using OJS.Common.Extensions;
 using System.ComponentModel.DataAnnotations;
 using OJS.Services.Worker.Models.ExecutionContext;
 
@@ -13,5 +16,5 @@ public class SubmissionFileRequestModel : SubmissionBaseRequestModel<SubmissionF
         => mapping
             .ForMember(
                 m => m.FileContent,
-                opt => opt.MapFrom(src => src.File?.GetBytes().Result));
+                opt => opt.MapFrom(src => src.File!.GetBytes()));
 }

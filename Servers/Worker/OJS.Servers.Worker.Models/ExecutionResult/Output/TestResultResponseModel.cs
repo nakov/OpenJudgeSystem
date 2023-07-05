@@ -8,17 +8,17 @@ public class TestResultResponseModel : IMapFrom<TestResult>, IMapExplicitly
 {
     public int Id { get; set; }
 
-    public string ResultType { get; set; }
+    public string? ResultType { get; set; }
 
-    public string ExecutionComment { get; set; }
+    public string? ExecutionComment { get; set; }
 
-    public string Output { get; set; }
+    public string? Output { get; set; }
 
     public int TimeUsed { get; set; }
 
     public int MemoryUsed { get; set; }
 
-    public CheckerDetailsResponseModel CheckerDetails { get; set; }
+    public CheckerDetailsResponseModel? CheckerDetails { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration
@@ -30,4 +30,3 @@ public class TestResultResponseModel : IMapFrom<TestResult>, IMapExplicitly
                 m => m.Output,
                 opt => opt.MapFrom(src => src.CheckerDetails.UserOutputFragment));
 }
-

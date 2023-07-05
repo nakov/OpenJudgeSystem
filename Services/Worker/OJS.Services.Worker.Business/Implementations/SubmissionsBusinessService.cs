@@ -45,9 +45,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.mapper = mapper;
     }
 
-    public ExecutionResultServiceModel ExecuteSubmission(
-        SubmissionServiceModel submission,
-        string userId)
+    public ExecutionResultServiceModel ExecuteSubmission(SubmissionServiceModel submission)
     {
         this.submissionsValidation
             .GetValidationResult(submission)
@@ -58,14 +56,12 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             case ExecutionType.SimpleExecution:
             case ExecutionType.SimpleTemplateExecution:
                 return this.InternalExecuteSubmission<SimpleInputModel, OutputResult>(
-                    submission,
-                    userId);
+                    submission);
 
             case ExecutionType.TestsExecution:
             case ExecutionType.TestsTemplateExecution:
                 return this.InternalExecuteSubmission<TestsInputModel, TestResult>(
-                    submission,
-                    userId);
+                    submission);
 
             default:
                 throw new ArgumentException("Submission execution type not valid");
@@ -121,8 +117,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .ForEach(t => t.CheckerDetails = new CheckerDetails());
 
     private ExecutionResultServiceModel InternalExecuteSubmission<TInput, TResult>(
-        SubmissionServiceModel submission,
-        string userId)
+        SubmissionServiceModel submission)
         where TResult : ISingleCodeRunResult, new()
     {
         this.PreprocessSubmission(submission);
@@ -143,7 +138,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
         else
         {
-            this.ProcessTaskResult(submission, executionResult, taskMaxPoints, userId);
+            this.ProcessTaskResult(submission, executionResult, taskMaxPoints);
         }
 
         return executionResult;
@@ -185,8 +180,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private void ProcessTaskResult(
         SubmissionServiceModel submission,
         ExecutionResultServiceModel executionResult,
-        int taskMaxPoints,
-        string userId)
+        int taskMaxPoints)
     {
         executionResult.Id = this.BuildUniqueId(submission.TestsExecutionDetails!.TaskId!);
 

@@ -10,9 +10,8 @@ using OJS.Servers.Worker.Models.ExecutionContext;
 using OJS.Servers.Worker.Models.ExecutionResult;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Services.Infrastructure.Exceptions;
-using OJS.Services.Ui.Models.Submissions;
 using OJS.Services.Worker.Business;
-using OJS.Servers.Worker.Infrastructure.ModelBinders;
+using OJS.Services.Worker.Models.ExecutionContext;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 public class SubmissionsController : BaseApiController
@@ -51,15 +50,16 @@ public class SubmissionsController : BaseApiController
                 submissionFileRequestModel.WithExceptionStackTrace)
             .ToOkResult();
 
-    [HttpPost]
-    [ProducesResponseType(typeof(FullExecutionResultResponseModel), Status200OK)]
-    public async Task<IActionResult> ExecuteFileSubmissionWithJson(
-        [ModelBinder(typeof(JsonWithFilesFormDataModelBinder), Name = "executionContextJson")]
-        SubmissionFileRequestModel submissionFileRequestModel)
-        => await this.ExecuteSubmission(
-                submissionFileRequestModel.Map<SubmissionServiceModel>(),
-                submissionFileRequestModel.WithExceptionStackTrace)
-            .ToOkResult();
+    // Dont think thats used anymore
+    // [HttpPost]
+    // [ProducesResponseType(typeof(FullExecutionResultResponseModel), Status200OK)]
+    // public async Task<IActionResult> ExecuteFileSubmissionWithJson(
+    //     [ModelBinder(typeof(JsonWithFilesFormDataModelBinder), Name = "executionContextJson")]
+    //     SubmissionFileRequestModel submissionFileRequestModel)
+    //     => await this.ExecuteSubmission(
+    //             submissionFileRequestModel.Map<SubmissionServiceModel>(),
+    //             submissionFileRequestModel.WithExceptionStackTrace)
+    //         .ToOkResult();
 
     private async Task<FullExecutionResultResponseModel> ExecuteSubmission(
         SubmissionServiceModel submission,
@@ -67,13 +67,9 @@ public class SubmissionsController : BaseApiController
     {
         var result = new FullExecutionResultResponseModel();
 
-        var userId = await this.GetUserId();
-
         try
         {
-            var executionResult = this.submissionsBusiness.ExecuteSubmission(
-                submission,
-                userId);
+            var executionResult = this.submissionsBusiness.ExecuteSubmission(submission);
 
             var executionResultResponseModel = executionResult.Map<ExecutionResultResponseModel>();
 
@@ -90,7 +86,6 @@ public class SubmissionsController : BaseApiController
             result.SetException(ex, withStackTrace);
         }
 
-        return result;
+        return await Task.FromResult(result);
     }
 }
-

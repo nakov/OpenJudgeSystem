@@ -5,7 +5,7 @@
     public class SubmissionCodeRequestModel : SubmissionBaseRequestModel<SubmissionCodeRequestModel, object>
     {
         // [Required]
-        public string Code { get; set; }
+        public string? Code { get; set; }
 
         public DateTime? StartedExecutionOn { get; set; }
     }

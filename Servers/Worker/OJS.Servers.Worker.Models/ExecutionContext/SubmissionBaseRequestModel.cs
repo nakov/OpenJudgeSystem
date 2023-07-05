@@ -1,9 +1,12 @@
 ﻿namespace OJS.Servers.Worker.Models.ExecutionContext
 {
     using System.ComponentModel.DataAnnotations;
+    using AutoMapper;
+    using FluentExtensions.Extensions;
     using OJS.Servers.Worker.Models.ExecutionContext.ExecutionDetails;
     using OJS.Services.Worker.Models.ExecutionContext;
     using OJS.Services.Worker.Models.ExecutionContext.Mapping;
+    using SoftUni.AutoMapper.Infrastructure.Models;
 
     public abstract class SubmissionBaseRequestModel<TSubmissionRequestModel, TExecutionDetails>
         : IMapTo<SubmissionServiceModel>,
@@ -16,7 +19,8 @@
         [Required]
         public string? ExecutionStrategy { get; set; }
 
-        [Required] public TExecutionDetails? ExecutionDetails { get; set; }
+        [Required]
+        public TExecutionDetails ExecutionDetails { get; set; } = default!;
 
         public ExecutionOptionsRequestModel ExecutionOptions { get; set; } = new ExecutionOptionsRequestModel();
 
@@ -43,11 +47,11 @@
                 .ForMember(
                     m => m.SimpleExecutionDetails,
                     opt => opt.MapFrom(src =>
-                        src.ExecutionDetails.ToString().FromJson<SimpleExecutionDetailsRequestModel>()))
+                        (src.ExecutionDetails!.ToString() ?? string.Empty).FromJson<SimpleExecutionDetailsRequestModel>()))
                 .ForMember(
                     m => m.TestsExecutionDetails,
                     opt => opt.MapFrom(src =>
-                        src.ExecutionDetails.ToString().FromJson<TestsExecutionDetailsRequestModel>()));
+                        (src.ExecutionDetails!.ToString() ?? string.Empty).FromJson<TestsExecutionDetailsRequestModel>()));
 
             this.MapAdditionalMembers(mapping);
         }

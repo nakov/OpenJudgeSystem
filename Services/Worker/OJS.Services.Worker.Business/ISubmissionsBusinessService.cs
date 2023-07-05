@@ -7,6 +7,5 @@ using SoftUni.Services.Infrastructure;
 public interface ISubmissionsBusinessService : IService
 {
     ExecutionResultServiceModel ExecuteSubmission(
-        SubmissionServiceModel submission,
-        string userId);
+        SubmissionServiceModel submission);
 }

@@ -10,9 +10,9 @@ public class OutputResultResponseModel : IMapFrom<OutputResult>, IMapExplicitly
 
     public int MemoryUsedInBytes { get; set; }
 
-    public string ResultType { get; set; }
+    public string? ResultType { get; set; }
 
-    public string Output { get; set; }
+    public string? Output { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration

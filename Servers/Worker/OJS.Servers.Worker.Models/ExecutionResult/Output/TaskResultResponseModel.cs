@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using OJS.Services.Worker.Models.ExecutionResult.Output;
     using SoftUni.AutoMapper.Infrastructure.Models;
+    using System.Linq;
 
     public class TaskResultResponseModel : IMapFrom<TaskResultServiceModel>
     {
@@ -10,8 +11,8 @@
 
         public int Points { get; set; }
 
-        public string TimeElapsedFormatted => ExecutionTimeValue;
+        // public static string TimeElapsedFormatted => ExecutionTimeValue;
 
-        public IEnumerable<TestResultResponseModel> TestResults { get; set; }
+        public IEnumerable<TestResultResponseModel> TestResults { get; set; } = Enumerable.Empty<TestResultResponseModel>();
     }
 }

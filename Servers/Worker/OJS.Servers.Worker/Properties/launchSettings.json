@@ -35,7 +35,7 @@
         "SUBMISSIONS_PROCESSOR_IDENTIFIER_NUMBER": "1"
       }
     },
-    "Judge": {
+    "Worker": {
       "commandName": "Project",
       "launchBrowser": false,
       "environmentVariables": {

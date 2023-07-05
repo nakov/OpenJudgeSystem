@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿namespace OJS.Servers.Worker.Infrastructure.Extensions;
+
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
-
-namespace OJS.Servers.Worker.Infrastructure.Extensions;
-
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OJS.Common.Utils;
@@ -49,7 +48,7 @@ public static class ServiceCollectionExtensions
             .AddMemoryCache()
             .AddSoftUniJudgeCommonServices()
             .AddLogging()
-            .AddSubmissionExecutor()
+            .AddSubmissionExecutor();
             // .AddHealthMonitoring();
             // .ConfigureSettings(configuration);
 
@@ -65,4 +64,3 @@ public static class ServiceCollectionExtensions
         => services
             .Configure<SubmissionExecutionConfig>(configuration.GetSection(nameof(SubmissionExecutionConfig)));
 }
-

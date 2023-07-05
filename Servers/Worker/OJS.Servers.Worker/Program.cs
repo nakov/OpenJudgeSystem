@@ -3,7 +3,7 @@
     using Microsoft.AspNetCore.Builder;
     using OJS.Servers.Worker.Infrastructure.Extensions;
 
-    public class Program
+    internal class Program
     {
         private const string ApiVersion = "v1";
 
