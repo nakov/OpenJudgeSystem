@@ -476,6 +476,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 ResultType = (TestRunResultType)Enum.Parse(typeof(TestRunResultType), testResult.ResultType),
                 TestId = testResult.Id,
                 TimeUsed = testResult.TimeUsed,
+                IsTrialTest = testResult.IsTrialTest,
+                Input = testResult.Input,
             }));
 
         submission.Processed = true;

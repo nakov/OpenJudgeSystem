@@ -23,7 +23,9 @@
 
         public string? UserOutputFragment { get; set; }
 
-        public bool IsTrialTest { get; set; }
+        public bool? IsTrialTest { get; set; }
+
+        public string? Input { get; set; }
 
         public double OrderBy { get; set; }
     }

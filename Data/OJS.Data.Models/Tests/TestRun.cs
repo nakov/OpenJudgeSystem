@@ -27,5 +27,9 @@ namespace OJS.Data.Models.Tests
         public string? ExpectedOutputFragment { get; set; }
 
         public string? UserOutputFragment { get; set; }
+
+        public bool? IsTrialTest { get; set; }
+
+        public string? Input { get; set; }
     }
 }

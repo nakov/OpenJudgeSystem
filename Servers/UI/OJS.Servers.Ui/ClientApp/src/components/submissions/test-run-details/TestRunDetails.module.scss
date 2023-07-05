@@ -24,6 +24,10 @@
   @extend %heading;
 }
 
+.testRunDetailsCollapsible {
+  margin-top: -10px;
+}
+
 .wrongTestRunHeading {
   @extend %heading;
 

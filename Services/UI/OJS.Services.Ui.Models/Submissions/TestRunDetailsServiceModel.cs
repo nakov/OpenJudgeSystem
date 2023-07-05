@@ -24,14 +24,15 @@
 
         public string? UserOutputFragment { get; set; }
 
-        public bool IsTrialTest { get; set; }
+        public bool? IsTrialTest { get; set; }
+
+        public string? Input { get; set; }
 
         public double OrderBy { get; set; }
 
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<TestRun, TestRunDetailsServiceModel>()
                 .ForMember(d => d.ResultType, opt => opt.MapFrom(s => s.ResultType.ToString()))
-                .ForMember(d => d.IsTrialTest, opt => opt.MapFrom(s => s.Test.IsTrialTest))
                 .ForMember(d => d.OrderBy, opt => opt.MapFrom(s => s.Test.OrderBy));
     }
 }

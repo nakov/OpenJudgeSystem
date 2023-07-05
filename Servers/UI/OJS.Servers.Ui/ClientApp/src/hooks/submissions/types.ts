@@ -41,6 +41,7 @@ interface ISubmissionType {
 
 interface ITestRunDetailsType extends ITestRunType {
     isTrialTest: boolean;
+    input: string;
 }
 
 interface ISubmissionDetailsType extends ISubmissionType {
