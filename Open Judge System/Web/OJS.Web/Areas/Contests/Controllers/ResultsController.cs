@@ -17,9 +17,11 @@
     using NPOI.SS.UserModel;
 
     using OJS.Common;
+    using OJS.Common.Constants;
     using OJS.Common.Models;
     using OJS.Data;
     using OJS.Data.Models;
+    using OJS.Services.Cache;
     using OJS.Services.Data.Contests;
     using OJS.Services.Data.Participants;
     using OJS.Services.Data.ParticipantScores;
@@ -35,21 +37,25 @@
     {
         public const int OfficialResultsPageSize = 100;
         public const int NotOfficialResultsPageSize = 50;
+        private const double CacheExpirationTimeInMinutes = 2;
 
         private readonly IContestsDataService contestsData;
         private readonly IParticipantsDataService participantsData;
         private readonly IParticipantScoresDataService participantScoresData;
+        private readonly IRedisCacheService redisCacheService;
 
         public ResultsController(
             IOjsData data,
             IContestsDataService contestsData,
             IParticipantsDataService participantsData,
-            IParticipantScoresDataService participantScoresData)
+            IParticipantScoresDataService participantScoresData,
+            IRedisCacheService redisCacheService)
             : base(data)
         {
             this.contestsData = contestsData;
             this.participantsData = participantsData;
             this.participantScoresData = participantScoresData;
+            this.redisCacheService = redisCacheService;
         }
 
         /// <summary>
@@ -465,59 +471,70 @@
             bool isFullResults,
             bool isExportResults = false)
         {
-            var contestResults = new ContestResultsViewModel
-            {
-                Id = contest.Id,
-                Name = contest.Name,
-                IsCompete = official,
-                ContestCanBeCompeted = contest.CanBeCompeted,
-                ContestCanBePracticed = contest.CanBePracticed,
-                UserHasContestRights = isUserAdminOrLecturer,
-                ContestType = contest.Type,
-                Problems = contest.ProblemGroups
-                    .SelectMany(pg => pg.Problems)
-                    .AsQueryable()
-                    .Where(p => !p.IsDeleted)
-                    .OrderBy(p => p.OrderBy)
-                    .ThenBy(p => p.Name)
-                    .Select(ContestProblemListViewModel.FromProblem)
-            };
+            return this.redisCacheService.GetOrSet<ContestResultsViewModel>(
+                string.Format(
+                    CacheConstants.ContestResultsFormat,
+                    contest.Id,
+                    official,
+                    isFullResults, 
+                    isExportResults),
+                () =>
+                {
+                    var contestResults = new ContestResultsViewModel
+                    {
+                        Id = contest.Id,
+                        Name = contest.Name,
+                        IsCompete = official,
+                        ContestCanBeCompeted = contest.CanBeCompeted,
+                        ContestCanBePracticed = contest.CanBePracticed,
+                        UserHasContestRights = isUserAdminOrLecturer,
+                        ContestType = contest.Type,
+                        Problems = contest.ProblemGroups
+                            .SelectMany(pg => pg.Problems)
+                            .AsQueryable()
+                            .Where(p => !p.IsDeleted)
+                            .OrderBy(p => p.OrderBy)
+                            .ThenBy(p => p.Name)
+                            .Select(ContestProblemListViewModel.FromProblem)
+                    };
 
-            var participants = this.participantsData
-                .GetAllByContestAndIsOfficial(contest.Id, official);
+                    var participants = this.participantsData
+                        .GetAllByContestAndIsOfficial(contest.Id, official);
 
-            if (!isFullResults)
-            {
-                var participantResults = participants
-                   .Select(ParticipantResultViewModel.FromParticipantAsSimpleResultByContest(contest.Id))
-                   .OrderByDescending(parRes => parRes.ProblemResults
-                       .Where(pr => pr.ShowResult)
-                       .Sum(pr => pr.BestSubmission.Points));
+                    if (!isFullResults)
+                    {
+                        var participantResults = participants
+                           .Select(ParticipantResultViewModel.FromParticipantAsSimpleResultByContest(contest.Id))
+                           .OrderByDescending(parRes => parRes.ProblemResults
+                               .Where(pr => pr.ShowResult)
+                               .Sum(pr => pr.BestSubmission.Points));
 
-                SetContestResults(contestResults, participantResults);
-            }
-            else
-            {
-                var participantFullResults = participants
-                     .Select(ParticipantResultViewModel.FromParticipantAsFullResultByContest(contest.Id))
-                     .OrderByDescending(parRes => parRes.ProblemResults
-                         .Sum(pr => pr.BestSubmission.Points));
+                        SetContestResults(contestResults, participantResults);
+                    }
+                    else
+                    {
+                        var participantFullResults = participants
+                             .Select(ParticipantResultViewModel.FromParticipantAsFullResultByContest(contest.Id))
+                             .OrderByDescending(parRes => parRes.ProblemResults
+                                 .Sum(pr => pr.BestSubmission.Points));
 
-                SetContestResults(contestResults, participantFullResults);
-            }
+                        SetContestResults(contestResults, participantFullResults);
+                    }
 
-            if (isExportResults)
-            {
-                var participantExportResults = participants
-                     .Select(ParticipantResultViewModel.FromParticipantAsExportResultByContest(contest.Id))
-                     .OrderByDescending(parRes => parRes.ProblemResults
-                         .Where(pr => pr.ShowResult && !pr.IsExcludedFromHomework)
-                         .Sum(pr => pr.BestSubmission.Points));
+                    if (isExportResults)
+                    {
+                        var participantExportResults = participants
+                             .Select(ParticipantResultViewModel.FromParticipantAsExportResultByContest(contest.Id))
+                             .OrderByDescending(parRes => parRes.ProblemResults
+                                 .Where(pr => pr.ShowResult && !pr.IsExcludedFromHomework)
+                                 .Sum(pr => pr.BestSubmission.Points));
 
-                SetContestResults(contestResults, participantExportResults);
-            }
+                        SetContestResults(contestResults, participantExportResults);
+                    }
 
-            return contestResults;
+                    return contestResults;
+                },
+                TimeSpan.FromMinutes(CacheExpirationTimeInMinutes));
         }
 
         private int CreateResultsSheetHeaderRow(ISheet sheet, ContestResultsViewModel contestResults)
@@ -602,7 +619,8 @@
                             .ThenBy(parResult => parResult.ProblemResults
                                 .OrderByDescending(pr => pr.BestSubmission.Id)
                                 .Select(pr => pr.BestSubmission.Id)
-                                .FirstOrDefault());
+                                .FirstOrDefault())
+                            .ToList();
         }
     }
 }

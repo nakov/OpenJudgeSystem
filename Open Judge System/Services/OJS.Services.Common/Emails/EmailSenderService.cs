@@ -29,12 +29,16 @@
             string senderDisplayName,
             string devEmail = null) : base()
         {
+
             this.mailClient = new SmtpClient
             {
-                Credentials = new NetworkCredential(username, password),
-                Port = emailServerPort,
-                Host = emailServerHost
+                UseDefaultCredentials = false,
+
             };
+            mailClient.Credentials = new NetworkCredential(username, password);
+            mailClient.Port = emailServerPort;
+            mailClient.Host = emailServerHost;
+            mailClient.EnableSsl = true;
 
             this.senderEmail = senderEmail;
             this.senderDisplayName = senderDisplayName;

@@ -17,6 +17,10 @@
         public const string ActiveContests = "ActiveContests";
         public const string PastContests = "PastContests";
 
+        public const string ContestResultsFormat = "Contest_id_{0}_official_{1}_full_{2}_export{3}";
+
+        public const string ProblemsByContestId = "Problems_contest_id_{0}";
+
         public const int DefaultPastContestsToTake = 15;
     }
 }
