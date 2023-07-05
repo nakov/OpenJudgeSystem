@@ -1,5 +1,6 @@
 ﻿namespace OJS.Services.Worker.Models.ExecutionContext.Mapping;
 
+using AutoMapper;
 using Common;
 using System.Collections.Generic;
 using OJS.Workers.Checkers;
@@ -21,7 +22,7 @@ public class CheckerTypeNameValueResolver : IValueResolver<TestsExecutionDetails
         { ServiceConstants.CheckerTypes.CSharpCode, CheckerConstants.TypeNames.CSharpCoreCode },
     };
 
-    private readonly string defaultValue = null;
+    private readonly string defaultValue = string.Empty;
 
     public string Resolve(
         TestsExecutionDetailsServiceModel source,

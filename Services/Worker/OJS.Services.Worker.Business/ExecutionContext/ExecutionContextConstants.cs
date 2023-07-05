@@ -2,7 +2,7 @@
 
 using static OJS.Common.GlobalConstants.FileExtensions;
 
-public class ExecutionContextConstants
+public static class ExecutionContextConstants
 {
     public const string DefaultAllowedFileExtension = Zip;
 

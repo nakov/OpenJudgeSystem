@@ -1,5 +1,7 @@
 ﻿namespace OJS.Services.Worker.Models.ExecutionContext.Mapping;
 
+using AutoMapper;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Workers.Common;
 using OJS.Workers.ExecutionStrategies.Models;
 
@@ -15,12 +17,12 @@ public class SubmissionInputValueResolver : IValueResolver<SubmissionServiceMode
         {
             case ExecutionType.SimpleExecution:
             case ExecutionType.SimpleTemplateExecution:
-                return source.SimpleExecutionDetails.Map<SimpleInputModel>();
+                return source.SimpleExecutionDetails!.Map<SimpleInputModel>();
             case ExecutionType.TestsExecution:
             case ExecutionType.TestsTemplateExecution:
-                return source.TestsExecutionDetails.Map<TestsInputModel>();
+                return source.TestsExecutionDetails!.Map<TestsInputModel>();
             default:
-                return default;
+                return default!;
         }
     }
 }

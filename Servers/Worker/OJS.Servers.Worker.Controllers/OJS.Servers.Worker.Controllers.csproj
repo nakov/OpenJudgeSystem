@@ -6,7 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Services\Worker\OJS.Services.Worker.Business\OJS.Services.Worker.Business.csproj" />
     <ProjectReference Include="..\..\Infrastructure\OJS.Servers.Infrastructure\OJS.Servers.Infrastructure.csproj" />
+    <ProjectReference Include="..\OJS.Servers.Worker.Infrastructure\OJS.Servers.Worker.Infrastructure.csproj" />
     <ProjectReference Include="..\OJS.Servers.Worker.Models\OJS.Servers.Worker.Models.csproj" />
   </ItemGroup>
 

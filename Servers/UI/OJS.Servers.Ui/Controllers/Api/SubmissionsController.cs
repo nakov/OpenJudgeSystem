@@ -3,7 +3,6 @@
 using OJS.Servers.Ui.Models.Submissions.Details;
 using OJS.Servers.Ui.Models.Submissions.Results;
 using OJS.Services.Ui.Models.Submissions;
-using OJS.Web.Models.Submissions;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Ui.Business;

@@ -1,30 +1,35 @@
 ﻿namespace OJS.Services.Worker.Business.Validation.Implementations;
 
+using System.Linq;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using OJS.Services.Worker.Models.ExecutionContext;
 using OJS.Services.Worker.Models.ExecutionContext.ExecutionDetails;
 using OJS.Workers.Common.Models;
+using OJS.Services.Common;
+using OJS.Services.Common.Models;
+using ExecutionType = Models.ExecutionContext.ExecutionType;
+using ValidationResult = OJS.Services.Common.Models.ValidationResult;
+using static ValidationConstants;
 
 public class SubmissionsValidationService : ISubmissionsValidationService
 {
-    public ValidationResult GetValidationResult(SubmissionServiceModel submission)
+    public ValidationResult GetValidationResult(SubmissionServiceModel? submission)
     {
         var validationResults = new List<ValidationResult>
         {
-            this.IsExecutionTypeValid(submission.ExecutionType),
-            this.IsExecutionStrategyTypeNameValid(submission.ExecutionStrategyType),
+            IsExecutionTypeValid(submission!.ExecutionType),
+            IsExecutionStrategyTypeNameValid(submission.ExecutionStrategyType),
         };
 
         if (submission.ExecutionType == ExecutionType.TestsExecution)
         {
-            this.ValidateTestsExecution(submission.TestsExecutionDetails, validationResults);
+            ValidateTestsExecution(submission.TestsExecutionDetails!, validationResults);
         }
 
         return CompositeValidationResult.Compose(validationResults);
     }
 
-    private void ValidateTestsExecution(
+    private static void ValidateTestsExecution(
         TestsExecutionDetailsServiceModel testsExecutionDetails,
         ICollection<ValidationResult> validationResults)
     {
@@ -34,29 +39,28 @@ public class SubmissionsValidationService : ISubmissionsValidationService
         }
         else
         {
-            validationResults.Add(this.AreTaskMaxPointsValid(testsExecutionDetails.MaxPoints));
-            validationResults.Add(this.IsCheckerTypeValid(testsExecutionDetails.CheckerType));
+            validationResults.Add(AreTaskMaxPointsValid(testsExecutionDetails.MaxPoints));
+            validationResults.Add(IsCheckerTypeValid(testsExecutionDetails.CheckerType!));
         }
     }
 
-    private ValidationResult IsExecutionTypeValid(ExecutionType executionType)
+    private static ValidationResult IsExecutionTypeValid(ExecutionType executionType)
         => executionType == ExecutionType.NotFound
             ? ValidationResult.Invalid(ExecutionTypeNotFound)
             : ValidationResult.Valid();
 
-    private ValidationResult IsExecutionStrategyTypeNameValid(ExecutionStrategyType executionStrategy)
+    private static ValidationResult IsExecutionStrategyTypeNameValid(ExecutionStrategyType executionStrategy)
         => executionStrategy == ExecutionStrategyType.NotFound
             ? ValidationResult.Invalid(ExecutionStrategyNotFound)
             : ValidationResult.Valid();
 
-    private ValidationResult AreTaskMaxPointsValid(int? maxPoints)
+    private static ValidationResult AreTaskMaxPointsValid(int? maxPoints)
         => maxPoints.HasValue && maxPoints.Value <= 0
             ? ValidationResult.Invalid(TaskMaxPointsMustBeMoreThanZero)
             : ValidationResult.Valid();
 
-    private ValidationResult IsCheckerTypeValid(string checkerType)
-        => CheckerTypes.All.Contains(checkerType)
+    private static ValidationResult IsCheckerTypeValid(string checkerType)
+        => ServiceConstants.CheckerTypes.All.Contains(checkerType)
             ? ValidationResult.Valid()
             : ValidationResult.Invalid(string.Format(CheckerTypeNotValidTemplate, checkerType));
 }
-

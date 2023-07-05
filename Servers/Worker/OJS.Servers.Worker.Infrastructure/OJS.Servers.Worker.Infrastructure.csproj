@@ -15,12 +15,14 @@
     </Reference>
     <Reference Include="Microsoft.Extensions.Configuration" />
     <Reference Include="Microsoft.Extensions.Configuration.Abstractions">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\6.0.13\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Services\Worker\OJS.Services.Worker.Models\OJS.Services.Worker.Models.csproj" />
+    <ProjectReference Include="..\..\..\Services\Worker\OJS.Workers\OJS.Workers.Common\OJS.Workers.Common.csproj" />
+    <ProjectReference Include="..\..\..\Services\Worker\OJS.Workers\OJS.Workers.SubmissionProcessors\OJS.Workers.SubmissionProcessors.csproj" />
     <ProjectReference Include="..\..\Infrastructure\OJS.Servers.Infrastructure\OJS.Servers.Infrastructure.csproj" />
   </ItemGroup>
 

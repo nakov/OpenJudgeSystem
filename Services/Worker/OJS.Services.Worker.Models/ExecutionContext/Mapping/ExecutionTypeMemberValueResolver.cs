@@ -18,4 +18,3 @@ public class ExecutionTypeMemberValueResolver : ValuesMapOrDefaultMemberValueRes
     protected override ExecutionType DefaultValue
         => ExecutionType.NotFound;
 }
-

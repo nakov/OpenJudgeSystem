@@ -1,6 +1,7 @@
 ﻿namespace OJS.Services.Worker.Business.ExecutionContext.Implementations;
 
 using OJS.Workers.Common.Models;
+using static OJS.Services.Worker.Business.ExecutionContext.ExecutionContextConstants.TemplatePlaceholders;
 
 public class CodeTemplatesProviderService : ICodeTemplatesProviderService
 {
@@ -10,23 +11,23 @@ public class CodeTemplatesProviderService : ICodeTemplatesProviderService
         {
             case ExecutionStrategyType.CompileExecuteAndCheck:
             case ExecutionStrategyType.DotNetCoreCompileExecuteAndCheck:
-                return this.GetDefaultCSharpCodeTemplate();
+                return GetDefaultCSharpCodeTemplate();
 
             case ExecutionStrategyType.JavaPreprocessCompileExecuteAndCheck:
-                return this.GetDefaultJavaCodeTemplate();
+                return GetDefaultJavaCodeTemplate();
 
             case ExecutionStrategyType.NodeJsPreprocessExecuteAndCheck:
-                return this.GetDefaultJavaScriptCodeTemplate();
+                return GetDefaultJavaScriptCodeTemplate();
 
             case ExecutionStrategyType.PythonExecuteAndCheck:
-                return this.GetDefaultPythonCodeTemplate();
+                return GetDefaultPythonCodeTemplate();
 
             default:
-                return null;
+                return null!;
         }
     }
 
-    private string GetDefaultCSharpCodeTemplate() => $@"
+    private static string GetDefaultCSharpCodeTemplate() => $@"
         using System;
         using System.Collections.Generic;
         using System.Linq;
@@ -41,7 +42,7 @@ public class CodeTemplatesProviderService : ICodeTemplatesProviderService
 	        }}
         }}";
 
-    private string GetDefaultJavaCodeTemplate() => $@"
+    private static string GetDefaultJavaCodeTemplate() => $@"
         import java.util.*;
         import java.math.BigInteger;
         import java.math.BigDecimal;
@@ -52,14 +53,13 @@ public class CodeTemplatesProviderService : ICodeTemplatesProviderService
             }}
         }}";
 
-    private string GetDefaultJavaScriptCodeTemplate() => $@"
+    private static string GetDefaultJavaScriptCodeTemplate() => $@"
         function liveExample() {{
             {CodePlaceholder}
         }}";
 
-    private string GetDefaultPythonCodeTemplate() => $@"
+    private static string GetDefaultPythonCodeTemplate() => $@"
 import math
 
 {CodePlaceholder}";
 }
-

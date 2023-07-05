@@ -1,7 +1,5 @@
 ﻿namespace OJS.Services.Ui.Models.Submissions
 {
-    using OJS.Services.Busines.Submissions.Models;
-
     public class ExecutionResultResponseModel
     {
         public string Id { get; set; } = null!;

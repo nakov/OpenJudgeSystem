@@ -1,6 +1,6 @@
 ﻿namespace OJS.Services.Worker.Business.Validation;
 
-public class ValidationConstants
+public static class ValidationConstants
 {
     public const string ExecutionTypeNotFound = "Execution type not found.";
     public const string ExecutionStrategyNotFound = "Execution strategy not found.";

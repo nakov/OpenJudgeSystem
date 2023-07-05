@@ -12,7 +12,6 @@ using OJS.Services.Common.Models.Users;
 using OJS.Services.Ui.Business.Validations.Implementations.Submissions;
 using Infrastructure;
 using Infrastructure.Exceptions;
-using Validation;
 using Data;
 using Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;

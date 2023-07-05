@@ -1,13 +1,13 @@
 ﻿namespace OJS.Servers.Worker.Models.ExecutionResult;
 
 using System;
-using OJS.Services.Busines.Submissions.Models;
+using OJS.Services.Common.Models;
 
 public class FullExecutionResultResponseModel
 {
-    public ExceptionModel Exception { get; set; }
+    public ExceptionModel? Exception { get; set; }
 
-    public ExecutionResultResponseModel ExecutionResult { get; set; }
+    public ExecutionResultResponseModel? ExecutionResult { get; set; }
 
     public void SetExecutionResult(ExecutionResultResponseModel executionResult)
     {

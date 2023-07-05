@@ -10,6 +10,7 @@ public static class WebApplicationBuilderExtensions
         string apiVersion)
     {
         builder.Services.ConfigureServices<TProgram>(builder.Configuration, apiVersion);
+        builder.Services.AddSubmissionExecutor();
         builder.Host.UseFileLogger<TProgram>();
 
         return builder;

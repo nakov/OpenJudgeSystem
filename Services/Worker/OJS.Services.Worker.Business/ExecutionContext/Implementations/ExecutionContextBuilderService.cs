@@ -3,6 +3,8 @@
 using OJS.Services.Common;
 using OJS.Workers.SubmissionProcessors.Models;
 using OJS.Services.Worker.Models.ExecutionContext;
+using OJS.Services.Infrastructure.Extensions;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
 using static OJS.Services.Worker.Business.ExecutionContext.ExecutionContextConstants;
 using static OJS.Services.Worker.Business.Validation.ValidationConstants;
 
@@ -29,7 +31,7 @@ public class ExecutionContextBuilderService : IExecutionContextBuilderService
         this.notDefaultValueValidationService
             .GetValidationResult(
                 template,
-                null,
+                null!,
                 string.Format(CodeTemplateNotFoundTemplate, submission.ExecutionStrategyType))
             .VerifyResult();
 
@@ -65,9 +67,8 @@ public class ExecutionContextBuilderService : IExecutionContextBuilderService
 
         submission.AllowedFileExtensions = submissionServiceModel.FileContent?.Length > 0
             ? DefaultAllowedFileExtension
-            : default;
+            : default!;
 
         return submission;
     }
 }
-

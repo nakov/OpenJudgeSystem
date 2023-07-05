@@ -1,12 +1,9 @@
 ﻿namespace OJS.Servers.Worker.Models.ExecutionContext
 {
     using System.ComponentModel.DataAnnotations;
-    using AutoMapper;
-    using FluentExtensions.Extensions;
     using OJS.Servers.Worker.Models.ExecutionContext.ExecutionDetails;
     using OJS.Services.Worker.Models.ExecutionContext;
     using OJS.Services.Worker.Models.ExecutionContext.Mapping;
-    using SoftUni.AutoMapper.Infrastructure.Models;
 
     public abstract class SubmissionBaseRequestModel<TSubmissionRequestModel, TExecutionDetails>
         : IMapTo<SubmissionServiceModel>,
@@ -14,13 +11,12 @@
         where TSubmissionRequestModel : SubmissionBaseRequestModel<TSubmissionRequestModel, TExecutionDetails>
     {
         [Required]
-        public string ExecutionType { get; set; }
+        public string? ExecutionType { get; set; }
 
         [Required]
-        public string ExecutionStrategy { get; set; }
+        public string? ExecutionStrategy { get; set; }
 
-        [Required]
-        public TExecutionDetails ExecutionDetails { get; set; }
+        [Required] public TExecutionDetails? ExecutionDetails { get; set; }
 
         public ExecutionOptionsRequestModel ExecutionOptions { get; set; } = new ExecutionOptionsRequestModel();
 
@@ -28,7 +24,7 @@
 
         public int MemoryLimit { get; set; }
 
-        public byte[] FileContent { get; set; }
+        public byte[]? FileContent { get; set; }
 
         public bool WithExceptionStackTrace { get; set; }
 
@@ -38,12 +34,12 @@
                 .CreateMap<TSubmissionRequestModel, SubmissionServiceModel>()
                 .ForMember(
                     m => m.ExecutionType,
-                    opt => opt.ResolveUsing<ExecutionTypeMemberValueResolver, string>(src =>
-                        src.ExecutionType))
+                    opt => opt.MapFrom<ExecutionTypeMemberValueResolver, string>(src =>
+                        src.ExecutionType!))
                 .ForMember(
                     m => m.ExecutionStrategyType,
-                    opt => opt.ResolveUsing<ExecutionStrategyMemberValueResolver, string>(src =>
-                        src.ExecutionStrategy))
+                    opt => opt.MapFrom<ExecutionStrategyMemberValueResolver, string>(src =>
+                        src.ExecutionStrategy!))
                 .ForMember(
                     m => m.SimpleExecutionDetails,
                     opt => opt.MapFrom(src =>

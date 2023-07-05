@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
-
-namespace Interactive.Servers.Judge
+﻿namespace OJS.Servers.Worker
 {
-    using Microsoft.AspNetCore;
-    using System;
-    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Builder;
+    using OJS.Servers.Worker.Infrastructure.Extensions;
 
     public class Program
     {
