@@ -10,6 +10,7 @@ using OJS.Services.Administration.Business.Validation.Factories;
 using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ProblemGroups;
+using OJS.Services.Administration.Business;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Validation;
@@ -28,6 +29,7 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
     private readonly IValidationService<ProblemGroupCreateValidationServiceModel> problemGroupsCreateValidation;
     private readonly IContestsActivityService contestsActivity;
     private readonly IContestsDataService contestsData;
+    private readonly IProblemGroupsBusinessService problemGroupsBusiness;
     private readonly IContestsValidationHelper contestsValidationHelper;
 
     public ProblemGroupsController(
@@ -37,7 +39,8 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
         IValidationService<ProblemGroupCreateValidationServiceModel> problemGroupsCreateValidation,
         IContestsActivityService contestsActivity,
         IContestsDataService contestsData,
-        IContestsValidationHelper contestsValidationHelper)
+        IContestsValidationHelper contestsValidationHelper,
+        IProblemGroupsBusinessService problemGroupsBusiness)
     {
         this.problemGroupValidatorsFactory = problemGroupValidatorsFactory;
         this.problemGroupsDeleteValidation = problemGroupsDeleteValidation;
@@ -46,6 +49,7 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
         this.contestsActivity = contestsActivity;
         this.contestsData = contestsData;
         this.contestsValidationHelper = contestsValidationHelper;
+        this.problemGroupsBusiness = problemGroupsBusiness;
     }
 
     protected override IEnumerable<Func<ProblemGroup, ProblemGroup, AdminActionContext, ValidatorResult>>
@@ -150,4 +154,7 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
             .GetValidationResult(validationModel)
             .VerifyResult();
     }
+
+    protected override async Task AfterEntitySaveAsync(ProblemGroup entity, AdminActionContext actionContext)
+        => await this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsOrder(entity.ContestId, entity);
 }

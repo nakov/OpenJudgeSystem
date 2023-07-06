@@ -1,15 +1,12 @@
 import React, { createContext, useContext, useMemo } from 'react';
 
-import {
-    IContestProblemUrl,
-    IParticipateInContestTypeUrlParams,
-} from '../common/app-url-types';
+import { IParticipateInContestTypeUrlParams, IProblemSubmissionDetailsUrlParams } from '../common/app-url-types';
 import { FilterType } from '../common/contest-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
 interface IAppUrlsContext {
     getParticipateInContestUrl: (params: IParticipateInContestTypeUrlParams) => string;
-    getContestProblemUrl:(params: IContestProblemUrl) => string;
+    getProblemSubmissionDetailsUrl: (params: IProblemSubmissionDetailsUrlParams) => string;
     getContestCategoryBreadcrumbItemPath: (id: string) => string;
     getAdministrationRetestSubmissionInternalUrl: () => string;
     getHomePageUrl: () => string;
@@ -24,16 +21,14 @@ type IAppUrlsProviderProps = IHaveChildrenProps
 const getParticipateInContestUrl = ({
     id,
     participationType,
-    problemIndex,
-}: IParticipateInContestTypeUrlParams) => `/contests/${id}/${participationType}#${problemIndex}`;
+}: IParticipateInContestTypeUrlParams) => `/contests/${id}/${participationType}`;
+
+const getProblemSubmissionDetailsUrl = ({
+    submissionId,
+    hashParam,
+}: IProblemSubmissionDetailsUrlParams) => `/submissions/${submissionId}/details#${hashParam}`;
 
 const getContestCategoryBreadcrumbItemPath = (id: string) => `/Contests?${FilterType.Category.toString()}=${id}`;
-
-const getContestProblemUrl = ({
-    id,
-    participationType,
-    orderBy,
-}: IContestProblemUrl) => `/Contests/${id}/${participationType}#${orderBy}`;
 
 const getAdministrationRetestSubmissionInternalUrl = () => '/Submissions/Retest';
 
@@ -46,7 +41,7 @@ const AppUrlsProvider = ({ children }: IAppUrlsProviderProps) => {
         () => (
             {
                 getParticipateInContestUrl,
-                getContestProblemUrl,
+                getProblemSubmissionDetailsUrl,
                 getContestCategoryBreadcrumbItemPath,
                 getAdministrationRetestSubmissionInternalUrl,
                 getHomePageUrl,
