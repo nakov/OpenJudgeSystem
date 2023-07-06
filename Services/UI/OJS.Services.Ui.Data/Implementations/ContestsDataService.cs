@@ -58,7 +58,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             : this.GetAllVisibleQuery();
 
         contests = this.FilterByStatus(contests, model.Statuses.ToList());
-        contests = Sort(contests, model.SortType);
+        contests = Sort(contests, model.SortType, model.CategoryIds.Count());
 
         if (model.SubmissionTypeIds.Any())
         {
@@ -169,7 +169,8 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
 
     private static IQueryable<Contest> Sort(
         IQueryable<Contest> contests,
-        ContestSortType? sorting)
+        ContestSortType? sorting,
+        int categoriesCount)
     {
         if (sorting == ContestSortType.StartDate)
         {
@@ -193,6 +194,27 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
                 .OrderBy(c => c.Name)
                 .ThenBy(c => c.StartTime)
                 .ThenBy(c => c.PracticeStartTime);
+        }
+
+        if (sorting == ContestSortType.OrderBy)
+        {
+            switch (categoriesCount)
+            {
+                case 0:
+                    return contests
+                        .OrderByDescending(c => c.StartTime)
+                        .ThenBy(c => c.EndTime);
+                case 1:
+                    return contests
+                            .OrderBy(c => c.OrderBy)
+                            .ThenByDescending(c => c.StartTime)
+                            .ThenBy(c => c.EndTime);
+                default:
+                    return contests
+                            .OrderBy(c => c.Category == null ? int.MaxValue : c.Category.OrderBy)
+                            .ThenByDescending(c => c.StartTime)
+                            .ThenBy(c => c.EndTime);
+            }
         }
 
         return contests;
