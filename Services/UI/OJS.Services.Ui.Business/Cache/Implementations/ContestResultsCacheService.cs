@@ -25,10 +25,10 @@ public class ContestResultsCacheService : IContestResultsCacheService
         int? cacheSeconds = CacheConstants.TwoMinutesInSeconds)
         => cacheSeconds.HasValue
             ? this.cache.Get(
-                CacheConstants.ContestResultsSimple,
+                string.Format(CacheConstants.ContestResults, contestId),
                 () => this.contestResultsBusiness.GetContestResults(contestId, official, full),
                 cacheSeconds.Value)
             : this.cache.Get(
-                CacheConstants.ContestResultsSimple,
+                string.Format(CacheConstants.ContestResults, contestId),
                 () => this.contestResultsBusiness.GetContestResults(contestId, official, full));
 }
