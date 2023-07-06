@@ -23,6 +23,7 @@ import {
 
 import { useAuth } from './use-auth';
 import { IErrorDataType, useHttp } from './use-http';
+import { useUrls } from './use-urls';
 import { useLoading } from './use-loading';
 
 interface IStartContestArgs {
@@ -134,9 +135,11 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const { state: { user } } = useAuth();
 
     const {
-        startLoading,
-        stopLoading,
-    } = useLoading();
+        getStartContestParticipationUrl,
+        getContestParticipantScoresForParticipantUrl,
+        getRegisterForContestUrl,
+        getSubmitContestPasswordUrl,
+    } = useUrls();
 
     const {
         isLoading: contestIsLoading,
@@ -223,8 +226,8 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         })();
     }, [
         getCurrentParticipantParticipantScoresParams,
-        getParticipantScores,
-        startLoading, stopLoading ]);
+        getParticipantScores
+    ]);
 
     useEffect(() => {
         if (isNil(getParticipantScoresData)) {
@@ -235,8 +238,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         setGetCurrentParticipantParticipantScoresParams(null);
     }, [
         getParticipantScores,
-        getParticipantScoresData,
-        startLoading, stopLoading,
+        getParticipantScoresData
     ]);
 
     useEffect(() => {
@@ -252,7 +254,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         (async () => {
             await registerForContest();
         })();
-    }, [ registerForContest, registerForContestParams, startLoading, stopLoading ]);
+    }, [ registerForContest, registerForContestParams ]);
 
     useEffect(
         () => {
@@ -294,7 +296,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         (async () => {
             await submitContestPassword({ password: contestPassword });
         })();
-    }, [ contestPassword, submitContestPassword, submitContestPasswordUrlParams, startLoading, stopLoading ]);
+    }, [ contestPassword, submitContestPassword, submitContestPasswordUrlParams ]);
 
     useEffect(
         () => {
@@ -328,7 +330,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         (async () => {
             await startContest();
         })();
-    }, [ contestToStart, startContest, startLoading, stopLoading ]);
+    }, [ contestToStart, startContest ]);
 
     useEffect(
         () => {
