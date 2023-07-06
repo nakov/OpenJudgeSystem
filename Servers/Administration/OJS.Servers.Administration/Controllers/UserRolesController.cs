@@ -16,8 +16,9 @@ using System.Linq;
 [Authorize(Roles = Administrator)]
 public class UserRolesController : BaseAutoCrudAdminController<UserInRole>
 {
-    private readonly IUsersDataService usersDataService;
     public const string RoleIdKey = nameof(UserInRole.RoleId);
+
+    private readonly IUsersDataService usersDataService;
 
     public UserRolesController(IUsersDataService usersDataService)
         => this.usersDataService = usersDataService;
