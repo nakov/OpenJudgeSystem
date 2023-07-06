@@ -15,9 +15,5 @@
         public int TimeUsed { get; set; }
 
         public int MemoryUsed { get; set; }
-
-        public bool IsTrialTest { get; set; }
-
-        public string Input { get; set; } = null!;
     }
 }

@@ -17,7 +17,7 @@ namespace OJS.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.19")
+                .HasAnnotation("ProductVersion", "6.0.16")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -1205,12 +1205,6 @@ namespace OJS.Data.Migrations
 
                     b.Property<string>("ExpectedOutputFragment")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Input")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("IsTrialTest")
-                        .HasColumnType("bit");
 
                     b.Property<long>("MemoryUsed")
                         .HasColumnType("bigint");

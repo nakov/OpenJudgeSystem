@@ -33,6 +33,8 @@
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<TestRun, TestRunDetailsServiceModel>()
                 .ForMember(d => d.ResultType, opt => opt.MapFrom(s => s.ResultType.ToString()))
+                .ForMember(d => d.IsTrialTest, opt => opt.MapFrom(s => s.Test.IsTrialTest))
+                .ForMember(d => d.Input, opt => opt.MapFrom(s => s.Test.InputDataAsString))
                 .ForMember(d => d.OrderBy, opt => opt.MapFrom(s => s.Test.OrderBy));
     }
 }
