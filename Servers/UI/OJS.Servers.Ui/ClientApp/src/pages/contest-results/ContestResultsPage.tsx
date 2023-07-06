@@ -85,7 +85,6 @@ const ContestResultsPage = () => {
     const {
         state: {
             contestResults,
-            getContestResultsParams,
             contestResultsError,
             areContestResultsLoaded,
         },
@@ -120,13 +119,9 @@ const ContestResultsPage = () => {
 
     useEffect(
         () => {
-            if (isNil(getContestResultsParams)) {
-                (async () => {
-                    await load(Number(contestId), official, full);
-                })();
-            }
+            load(Number(contestId), official, full);
         },
-        [ contestId, official, full, load, getContestResultsParams ],
+        [ contestId, official, full, load ],
     );
 
     // github.com/SoftUni-Internal/exam-systems-issues/issues/228

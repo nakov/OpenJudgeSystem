@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import isEmpty from 'lodash/isEmpty';
 import isNaN from 'lodash/isNaN';
 import isNil from 'lodash/isNil';
 
@@ -12,13 +13,12 @@ import { IContestResultsParticipationType, IContestResultsType } from './types';
 
 interface ICurrentContestResultsContext {
     state: {
-        contestResults?: IContestResultsType | null;
-        getContestResultsParams: IGetContestResultsParams | undefined;
+        contestResults?: IContestResultsType;
         contestResultsError: IErrorDataType | null;
         areContestResultsLoaded: boolean;
     };
     actions: {
-        load: (id: number, official: boolean, full: boolean) => Promise<void>;
+        load: (id: number, official: boolean, full: boolean) => void;
     };
 }
 
@@ -46,7 +46,7 @@ const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProvi
     });
 
     const load = useCallback(
-        async (id: number, official: boolean, full: boolean) => {
+        (id: number, official: boolean, full: boolean) => {
             if (isNil(id) || isNaN(id)) {
                 return;
             }
@@ -58,7 +58,7 @@ const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProvi
 
     useEffect(
         () => {
-            if (isNil(getContestResultsParams)) {
+            if (isEmpty(getContestResultsParams)) {
                 return;
             }
 
@@ -92,13 +92,12 @@ const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProvi
         () => ({
             state: {
                 contestResults,
-                getContestResultsParams,
                 contestResultsError,
                 areContestResultsLoaded,
             },
             actions: { load },
         }),
-        [ areContestResultsLoaded, contestResults, contestResultsError, getContestResultsParams, load ],
+        [ areContestResultsLoaded, contestResults, contestResultsError, load ],
     );
 
     return (
