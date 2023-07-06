@@ -27,7 +27,6 @@ const ContestCard = ({ contest }: IContestCardProps) => {
         endTime,
     } = contest;
 
-    const { getParticipateInContestUrl } = useAppUrls();
     const contestCard = 'card-contests';
     const contestCardClassName = concatClassNames(styles.contestCard, contestCard);
     const contestCardHeader = 'card-header';
@@ -38,6 +37,8 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const contestCardCounterClassName = concatClassNames(styles.contestCardCountdown, contestCardCounter);
     const contestCardControlBtns = 'card-control-buttons';
     const contestCardControlBtnsClassName = concatClassNames(styles.contestCardControls, contestCardControlBtns);
+
+    const { getParticipateInContestUrl } = useAppUrls();
 
     const renderCountdown = useCallback(
         () => {

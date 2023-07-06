@@ -159,7 +159,8 @@ const ContestPage = () => {
                 return;
             }
 
-            if (isUserParticipant) {
+            const { isOnline } = contest;
+            if (isUserParticipant || !isOnline) {
                 (async () => {
                     await start(internalContest);
                 })();
@@ -186,14 +187,16 @@ const ContestPage = () => {
     );
 
     return (
-        doesRequirePassword && !isPasswordValid
-            ? (
-                <ContestPasswordForm
-                  id={contestIdToNumber}
-                  isOfficial={isParticipationOfficial}
-                />
-            )
-            : renderContestPage()
+        !isNil(contest)
+            ? doesRequirePassword && !isPasswordValid
+                ? (
+                    <ContestPasswordForm
+                      id={contestIdToNumber}
+                      isOfficial={isParticipationOfficial}
+                    />
+                )
+                : renderContestPage()
+            : <div>Loading user data...</div>
     );
 };
 

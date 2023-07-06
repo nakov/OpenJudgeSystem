@@ -73,8 +73,6 @@ interface IIndexContestsType {
     hasContestPassword: boolean;
     hasPracticePassword: boolean;
     category: string;
-    duration: number;
-    numberOfProblems: number;
 }
 
 interface IContestModal {
