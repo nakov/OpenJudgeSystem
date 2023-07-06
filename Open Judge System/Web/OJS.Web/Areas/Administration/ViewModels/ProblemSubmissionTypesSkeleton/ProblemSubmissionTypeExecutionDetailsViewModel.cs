@@ -31,8 +31,12 @@
         
         public int SubmissionTypeId { get; set; }
 
+        [Display(Name = nameof(Resource.Time_limit), ResourceType = typeof(Resource))]
+        [UIHint(SingleLineText)]
         public int? TimeLimit { get; set; }
 
+        [Display(Name = nameof(Resource.Memory_limit), ResourceType = typeof(Resource))]
+        [UIHint(SingleLineText)]
         public int? MemoryLimit { get; set; }
 
         [AllowHtml]
