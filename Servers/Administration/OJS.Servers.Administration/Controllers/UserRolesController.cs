@@ -16,12 +16,12 @@ using System.Linq;
 [Authorize(Roles = Administrator)]
 public class UserRolesController : BaseAutoCrudAdminController<UserInRole>
 {
+    public const string RoleIdKey = nameof(UserInRole.RoleId);
+
     private readonly IUsersDataService usersDataService;
 
     public UserRolesController(IUsersDataService usersDataService)
         => this.usersDataService = usersDataService;
-
-    public const string RoleIdKey = nameof(UserInRole.RoleId);
 
     protected override Expression<Func<UserInRole, bool>>? MasterGridFilter
         => this.TryGetEntityIdForStringColumnFilter(RoleIdKey, out var roleId)
