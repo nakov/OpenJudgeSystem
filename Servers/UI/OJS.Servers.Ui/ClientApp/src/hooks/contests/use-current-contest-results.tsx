@@ -15,6 +15,7 @@ interface ICurrentContestResultsContext {
         contestResults?: IContestResultsType | null;
         getContestResultsParams: IGetContestResultsParams | undefined;
         contestResultsError: IErrorDataType | null;
+        areContestResultsLoaded: boolean;
     };
     actions: {
         load: (id: number, official: boolean, full: boolean) => Promise<void>;
@@ -38,6 +39,7 @@ const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProvi
         get: getContestResults,
         data: apiContestResultsData,
         error: getContestResultsError,
+        isSuccess: areContestResultsLoaded,
     } = useHttp<IGetContestResultsParams, IContestResultsType>({
         url: getContestResultsUrl,
         parameters: getContestResultsParams,
@@ -92,10 +94,11 @@ const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProvi
                 contestResults,
                 getContestResultsParams,
                 contestResultsError,
+                areContestResultsLoaded,
             },
             actions: { load },
         }),
-        [ contestResults, contestResultsError, getContestResultsParams, load ],
+        [ areContestResultsLoaded, contestResults, contestResultsError, getContestResultsParams, load ],
     );
 
     return (
