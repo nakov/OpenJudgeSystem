@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType, ContestResultType } from '../../common/constants';
@@ -88,6 +87,7 @@ const ContestResultsPage = () => {
             contestResults,
             getContestResultsParams,
             contestResultsError,
+            areContestResultsLoaded,
         },
         actions: { load },
     } = useCurrentContestResults();
@@ -182,9 +182,9 @@ const ContestResultsPage = () => {
 
     return (
         isNil(contestResultsError)
-            ? isEmpty(contestResults?.results)
-                ? <div>Loading data</div>
-                : renderElements
+            ? areContestResultsLoaded
+                ? renderElements
+                : <div>Loading data</div>
             : renderErrorMessage()
     );
 };
