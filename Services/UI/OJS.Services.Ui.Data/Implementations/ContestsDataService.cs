@@ -202,18 +202,17 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             {
                 case 0:
                     return contests
-                        .OrderByDescending(c => c.StartTime)
-                        .ThenBy(c => c.EndTime);
+                        .OrderByDescending(c => c.EndTime);
                 case 1:
                     return contests
                             .OrderBy(c => c.OrderBy)
-                            .ThenByDescending(c => c.StartTime)
-                            .ThenBy(c => c.EndTime);
+                            .ThenByDescending(c => c.EndTime)
+                            .ThenByDescending(c => c.StartTime);
                 default:
                     return contests
                             .OrderBy(c => c.Category == null ? int.MaxValue : c.Category.OrderBy)
-                            .ThenByDescending(c => c.StartTime)
-                            .ThenBy(c => c.EndTime);
+                            .ThenByDescending(c => c.EndTime)
+                            .ThenByDescending(c => c.StartTime);
             }
         }
 
