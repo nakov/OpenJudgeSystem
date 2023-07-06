@@ -15,6 +15,8 @@ import { useCurrentContest } from '../../hooks/use-current-contest';
 import { useModal } from '../../hooks/use-modal';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
+import SpinningLoader from "../../components/guidelines/spinning-loader/SpinningLoader";
+import { flexCenterObjectStyles } from "../../utils/object-utils";
 
 import styles from './ContestPage.module.scss';
 
@@ -33,7 +35,7 @@ const ContestPage = () => {
             isPasswordValid,
             contestError,
             isRegisterForContestSuccessful,
-            contest,
+            contestIsLoading,
             isUserParticipant,
         },
         actions: {
@@ -110,24 +112,26 @@ const ContestPage = () => {
 
     const renderContestPage = useCallback(
         () => isNil(contestError)
-            ? isNil(contest)
-                ? <div>Loading data</div>
+            ? contestIsLoading ? 
+                <div style={{...flexCenterObjectStyles}}>
+                    <SpinningLoader/>
+                </div>
                 : isParticipationOfficial && contest?.isOnline && !isUserAdmin
-                    ? isUserParticipant
-                        ? <Contest />
+                    ? isUserParticipant ? 
+                        <Contest />
                         : <ContestModal contest={modalContest} isShowing={isShowing} toggle={toggle} />
                     : <Contest />
             : renderErrorMessage(),
         [
             contestError,
             renderErrorMessage,
-            contest,
+            contestIsLoading,
             isUserParticipant,
             isParticipationOfficial,
             modalContest,
             toggle,
             isShowing,
-            isUserAdmin,
+            isUserAdmin
         ],
     );
 

@@ -38,6 +38,7 @@ interface IContestsContext {
         sortingTypes: ISort[];
         contest: IIndexContestsType | null;
         isLoaded: boolean;
+        contestsAreLoading: boolean;
     };
     actions: {
         reload: () => Promise<void>;
@@ -101,6 +102,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
 
     const {
+        isLoading: contestsAreLoading,
         get: getContests,
         data: contestsData,
         isSuccess,
@@ -294,6 +296,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
                 sortingTypes,
                 contest,
                 isLoaded: isSuccess,
+                contestsAreLoading
             },
             actions: {
                 reload,
@@ -318,6 +321,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             contest,
             initiateGetAllContestsQuery,
             isSuccess,
+            contestsAreLoading
         ],
     );
 

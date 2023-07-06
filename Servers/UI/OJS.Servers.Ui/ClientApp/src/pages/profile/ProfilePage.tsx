@@ -18,6 +18,7 @@ const ProfilePage = () => {
             await getProfile();
         })();
     }, [ getProfile ]);
+    
     return (
         <>
             <Heading>Profile</Heading>

@@ -54,6 +54,10 @@ interface ICurrentContestContext {
         isSubmitAllowed: boolean;
         contestError: IErrorDataType | null;
         isRegisterForContestSuccessful: boolean;
+        contestIsLoading: boolean;
+        registerForContestLoading: boolean;
+        submitContestPasswordIsLoading: boolean;
+        getParticipantScoresIsLoading: boolean;
         isUserParticipant: boolean;
     };
     actions: {
@@ -135,6 +139,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     } = useLoading();
 
     const {
+        isLoading: contestIsLoading,
         get: startContest,
         data: startContestData,
         error: startContestError,
@@ -144,6 +149,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     });
 
     const {
+        isLoading: registerForContestLoading,
         get: registerForContest,
         data: registerForContestData,
         error: registerContestError,
@@ -154,6 +160,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     });
 
     const {
+        isLoading: submitContestPasswordIsLoading,
         post: submitContestPassword,
         response: submitContestPasswordResponse,
         error: submitContestPasswordError,
@@ -163,6 +170,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     });
 
     const {
+        isLoading: getParticipantScoresIsLoading,
         get: getParticipantScores,
         data: getParticipantScoresData,
     } = useHttp<IGetContestParticipationScoresForParticipantUrlParams, null>({
@@ -211,9 +219,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         }
 
         (async () => {
-            startLoading();
             await getParticipantScores();
-            stopLoading();
         })();
     }, [
         getCurrentParticipantParticipantScoresParams,
@@ -244,9 +250,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         }
 
         (async () => {
-            startLoading();
             await registerForContest();
-            stopLoading();
         })();
     }, [ registerForContest, registerForContestParams, startLoading, stopLoading ]);
 
@@ -288,9 +292,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         }
 
         (async () => {
-            startLoading();
             await submitContestPassword({ password: contestPassword });
-            stopLoading();
         })();
     }, [ contestPassword, submitContestPassword, submitContestPasswordUrlParams, startLoading, stopLoading ]);
 
@@ -324,9 +326,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         }
 
         (async () => {
-            startLoading();
             await startContest();
-            stopLoading();
         })();
     }, [ contestToStart, startContest, startLoading, stopLoading ]);
 
@@ -410,6 +410,10 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 contestError,
                 isRegisterForContestSuccessful,
                 isUserParticipant,
+                contestIsLoading,
+                registerForContestLoading,
+                submitContestPasswordIsLoading,
+                getParticipantScoresIsLoading
             },
             actions: {
                 setContestPassword,
@@ -445,6 +449,10 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             isRegisterForContestSuccessful,
             isUserParticipant,
             setIsUserParticipant,
+            contestIsLoading,
+            registerForContestLoading,
+            submitContestPasswordIsLoading,
+            getParticipantScoresIsLoading
         ],
     );
 

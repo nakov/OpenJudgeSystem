@@ -14,6 +14,7 @@ interface IUserProfileType {
     firstName: string;
     lastName: string;
     email: string;
+    isGetUserLoading: boolean;
 }
 
 interface IUsersContext {
@@ -33,15 +34,12 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
     const { showError } = useNotifications();
 
     const {
+        isLoading: isGetUserLoading,
         get: getProfileInfo,
         data: profileData,
     } = useHttp<null, IUserProfileType>({ url: getProfileInfoUrl });
 
-    const getProfile = useCallback(async () => {
-        startLoading();
-        await getProfileInfo();
-        stopLoading();
-    }, [ getProfileInfo, startLoading, stopLoading ]);
+    const getProfile = useCallback(async () => await getProfileInfo(), [ getProfileInfo, startLoading, stopLoading ]);
 
     useEffect(() => {
         if (isNil(profileData)) {
@@ -57,8 +55,9 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
         () => ({
             profile,
             getProfile,
+            isGetUserLoading
         }),
-        [ getProfile, profile ],
+        [ getProfile, profile, isGetUserLoading ],
     );
 
     return (

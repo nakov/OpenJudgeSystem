@@ -13,6 +13,8 @@ import Text, { TextType } from '../../guidelines/text/Text';
 import ContestProblemDetails from '../contest-problem-details/ContestProblemDetails';
 import ContestTasksNavigation from '../contest-tasks-navigation/ContestTasksNavigation';
 import SubmissionBox from '../submission-box/SubmissionBox';
+import SpinningLoader from "../../guidelines/spinning-loader/SpinningLoader";
+import {flexCenterObjectStyles} from "../../../utils/object-utils";
 
 import styles from './Contest.module.scss';
 
@@ -27,6 +29,7 @@ const Contest = () => {
             activeParticipantsCount,
             isOfficial,
             contestError,
+            contestIsLoading,
         },
         actions: { setIsSubmitAllowed },
     } = useCurrentContest();
@@ -196,31 +199,35 @@ const Contest = () => {
     const renderContest = useCallback(
         () => (
             <>
-                <div className={styles.headingContest}>
-                    <Heading
-                      type={HeadingType.primary}
-                      className={styles.contestHeading}
-                    >
-                        {contestTitle}
-                    </Heading>
-                    <Heading type={HeadingType.secondary} className={secondaryHeadingClassName}>
-                        {renderParticipants()}
-                        {renderTimeRemaining()}
-                        {renderScore()}
-                    </Heading>
-                </div>
+                {contestIsLoading ? <div style={{...flexCenterObjectStyles, height: '500px'}}>
+                    <SpinningLoader />
+                </div> : <>
+                    <div className={styles.headingContest}>
+                        <Heading
+                            type={HeadingType.primary}
+                            className={styles.contestHeading}
+                        >
+                            {contestTitle}
+                        </Heading>
+                        <Heading type={HeadingType.secondary} className={secondaryHeadingClassName}>
+                            {renderParticipants()}
+                            {renderTimeRemaining()}
+                            {renderScore()}
+                        </Heading>
+                    </div>
 
-                <div className={styles.contestWrapper}>
-                    <div className={navigationContestClassName}>
-                        <ContestTasksNavigation />
+                    <div className={styles.contestWrapper}>
+                        <div className={navigationContestClassName}>
+                            <ContestTasksNavigation />
+                        </div>
+                        <div className={submissionBoxClassName}>
+                            <SubmissionBox />
+                        </div>
+                        <div className={problemInfoClassName}>
+                            <ContestProblemDetails />
+                        </div>
                     </div>
-                    <div className={submissionBoxClassName}>
-                        <SubmissionBox />
-                    </div>
-                    <div className={problemInfoClassName}>
-                        <ContestProblemDetails />
-                    </div>
-                </div>
+                </>}
             </>
         ),
         [
@@ -232,6 +239,7 @@ const Contest = () => {
             secondaryHeadingClassName,
             submissionBoxClassName,
             renderParticipants,
+            contestIsLoading
         ],
     );
 
@@ -239,7 +247,7 @@ const Contest = () => {
         () => isNil(contestError)
             ? renderContest()
             : renderErrorMessage(),
-        [ renderErrorMessage, renderContest, contestError ],
+        [ renderErrorMessage, renderContest, contestError, contestIsLoading ],
     );
 
     return renderPage();

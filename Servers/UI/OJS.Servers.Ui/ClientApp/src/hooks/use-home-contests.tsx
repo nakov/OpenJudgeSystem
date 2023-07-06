@@ -39,6 +39,7 @@ const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
 
     const {
+        isLoading: contestsAreLoading,
         get: getContests,
         data: contestsData,
         isSuccess,
@@ -46,9 +47,7 @@ const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
 
     const getForHome = useCallback(
         async () => {
-            startLoading();
             await getContests();
-            stopLoading();
         },
         [ getContests, startLoading, stopLoading ],
     );
@@ -73,6 +72,7 @@ const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
                 activeContests,
                 pastContests,
                 isLoaded: isSuccess,
+                contestsAreLoading
             },
             actions: { getForHome },
         }),

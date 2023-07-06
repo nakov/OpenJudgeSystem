@@ -24,6 +24,8 @@ import concatClassNames from '../../utils/class-names';
 import { toLowerCase } from '../../utils/string-utils';
 import NotFoundPage from '../not-found/NotFoundPage';
 import { setLayout } from '../shared/set-layout';
+import SpinningLoader from "../../components/guidelines/spinning-loader/SpinningLoader";
+import {flexCenterObjectStyles} from "../../utils/object-utils";
 
 import styles from './ContestsPage.module.scss';
 
@@ -32,6 +34,7 @@ const ContestsPage = () => {
         state: {
             contests,
             isLoaded,
+            contestsAreLoading
         },
         actions: {
             toggleParam,
@@ -198,8 +201,8 @@ const ContestsPage = () => {
 
     const renderPage = useCallback(
         () => {
-            if (isNil(categoriesFlat) || isEmpty(categoriesFlat)) {
-                return <div>Loading data</div>;
+            if (contestsAreLoading) {
+                return <div style={{...flexCenterObjectStyles}}><SpinningLoader/></div>;
             }
             if (!areQueryParamsValid()) {
                 return <NotFoundPage />;
@@ -217,7 +220,7 @@ const ContestsPage = () => {
                 </>
             );
         },
-        [ areQueryParamsValid, breadcrumbItems, handleFilterClick, renderCategoriesBreadcrumbItem, renderContests, categoriesFlat ],
+        [ areQueryParamsValid, breadcrumbItems, handleFilterClick, renderCategoriesBreadcrumbItem, renderContests, contestsAreLoading ],
     );
 
     return renderPage();
