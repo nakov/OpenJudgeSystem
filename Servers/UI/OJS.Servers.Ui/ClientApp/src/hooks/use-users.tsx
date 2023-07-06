@@ -5,7 +5,6 @@ import { IHaveChildrenProps } from '../components/common/Props';
 import { getProfileInfoUrl } from '../utils/urls';
 
 import { useHttp } from './use-http';
-import { useLoading } from './use-loading';
 import { useNotifications } from './use-notifications';
 
 interface IUserProfileType {
@@ -29,7 +28,6 @@ const UsersContext = createContext<IUsersContext>(defaultState as IUsersContext)
 type IUsersProviderProps = IHaveChildrenProps
 
 const UsersProvider = ({ children }: IUsersProviderProps) => {
-    const { startLoading, stopLoading } = useLoading();
     const [ profile, setProfile ] = useState(defaultState.profile);
     const { showError } = useNotifications();
 
@@ -39,7 +37,7 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
         data: profileData,
     } = useHttp<null, IUserProfileType>({ url: getProfileInfoUrl });
 
-    const getProfile = useCallback(async () => await getProfileInfo(), [ getProfileInfo, startLoading, stopLoading ]);
+    const getProfile = useCallback(async () => await getProfileInfo(), [ getProfileInfo ]);
 
     useEffect(() => {
         if (isNil(profileData)) {

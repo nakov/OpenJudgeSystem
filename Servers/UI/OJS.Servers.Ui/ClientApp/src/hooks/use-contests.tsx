@@ -26,7 +26,6 @@ import { generateCategoryFilters, generateStatusFilters, generateStrategyFilters
 import { useContestCategories } from './use-contest-categories';
 import { useContestStrategyFilters } from './use-contest-strategy-filters';
 import { useHttp } from './use-http';
-import { useLoading } from './use-loading';
 import { usePages } from './use-pages';
 
 interface IContestsContext {
@@ -99,7 +98,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         changePage,
         populatePageInformation,
     } = usePages();
-    const { startLoading, stopLoading } = useLoading();
 
     const {
         isLoading: contestsAreLoading,
@@ -177,11 +175,9 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     const reload = useCallback(
         async () => {
-            startLoading();
             await getContests();
-            stopLoading();
         },
-        [ getContests, startLoading, stopLoading ],
+        [ getContests ],
     );
 
     const toggleParam = useCallback<ToggleParam>((param) => {
