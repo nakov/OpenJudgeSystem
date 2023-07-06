@@ -26,6 +26,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
         canBeCompeted,
         endTime,
     } = contest;
+
     const contestCard = 'card-contests';
     const contestCardClassName = concatClassNames(styles.contestCard, contestCard);
     const contestCardHeader = 'card-header';

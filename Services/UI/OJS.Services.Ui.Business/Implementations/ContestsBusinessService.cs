@@ -85,6 +85,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var registerModel = contest!.Map<RegisterUserForContestServiceModel>();
 
             registerModel.RequirePassword = ShouldRequirePassword(contest!, participant!, official);
+            registerModel.ParticipantId = participant?.Id;
 
             return registerModel;
         }
