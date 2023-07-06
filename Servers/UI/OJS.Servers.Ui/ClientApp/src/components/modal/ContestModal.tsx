@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 
+import { IParticipateInContestTypeUrlParams } from '../../common/app-url-types';
 import { ContestParticipationType } from '../../common/constants';
 import { IContestModal } from '../../common/types';
 import { useAppUrls } from '../../hooks/use-app-urls';
@@ -31,7 +32,7 @@ const ContestModal = ({ contest, isShowing, toggle }: IContestModalProps) => {
                 id: contest.id,
                 participationType: ContestParticipationType.Compete,
                 problemIndex: 1,
-            }));
+            } as IParticipateInContestTypeUrlParams));
 
             toggle();
         },
