@@ -2,8 +2,8 @@
 
 .buttons {
   display: flex;
-  justify-content: center;
   gap: 10px;
+  justify-content: center;
 }
 
 .bolded {
@@ -15,17 +15,17 @@
 }
 
 .modal {
+  background-color: colors.$white-color;
   display: flex;
   flex-direction: column;
+  height: 50%;
   justify-content: space-around;
-  position: absolute;
   left: 50%;
+  overflow: auto;
+  position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
   width: 50%;
-  height: 50%;
-  overflow: auto;
-  background-color: colors.$white-color;
 }
 
 .modalHeading {
