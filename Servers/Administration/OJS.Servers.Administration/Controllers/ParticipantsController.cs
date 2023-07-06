@@ -36,31 +36,6 @@ public class ParticipantsController : BaseAutoCrudAdminController<Participant>
         this.usersDataService = usersDataService;
     }
 
-    protected override IEnumerable<FormControlViewModel> GenerateFormControls(
-        Participant entity,
-        EntityAction action,
-        IDictionary<string, string> entityDict,
-        IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters,
-        Type autocompleteType)
-    {
-        var formControls = base.GenerateFormControls(entity, action, entityDict, complexOptionFilters, typeof(UserProfile)).ToList();
-        formControls.Add(new FormControlViewModel()
-        {
-            Name = nameof(UserProfile.UserName),
-            Options = this.usersDataService.GetQuery(take: GlobalConstants.NumberOfAutocompleteItemsShown).ToList(),
-            FormControlType = FormControlType.Autocomplete,
-            DisplayName = nameof(Participant.User),
-            FormControlAutocompleteController = nameof(UsersController).ToControllerBaseUri(),
-            FormControlAutocompleteEntityId = nameof(Participant.UserId),
-        });
-
-        var formControlToRemove = formControls.First(x =>
-            x.DisplayName == nameof(Participant.User) && x.FormControlType != FormControlType.Autocomplete);
-        formControls.Remove(formControlToRemove);
-
-        return formControls;
-    }
-
     protected override IEnumerable<GridAction> DefaultActions
         => new[] { new GridAction { Action = nameof(this.Delete) } };
 
@@ -86,6 +61,31 @@ public class ParticipantsController : BaseAutoCrudAdminController<Participant>
             nameof(SubmissionsController),
             SubmissionsController.ParticipantIdKey,
             this.GetEntityIdFromQuery<int>(complexId));
+
+    protected override IEnumerable<FormControlViewModel> GenerateFormControls(
+        Participant entity,
+        EntityAction action,
+        IDictionary<string, string> entityDict,
+        IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters,
+        Type autocompleteType)
+    {
+        var formControls = base.GenerateFormControls(entity, action, entityDict, complexOptionFilters, typeof(UserProfile)).ToList();
+        formControls.Add(new FormControlViewModel()
+        {
+            Name = nameof(UserProfile.UserName),
+            Options = this.usersDataService.GetQuery(take: GlobalConstants.NumberOfAutocompleteItemsShown).ToList(),
+            FormControlType = FormControlType.Autocomplete,
+            DisplayName = nameof(Participant.User),
+            FormControlAutocompleteController = nameof(UsersController).ToControllerBaseUri(),
+            FormControlAutocompleteEntityId = nameof(Participant.UserId),
+        });
+
+        var formControlToRemove = formControls.First(x =>
+            x.DisplayName == nameof(Participant.User) && x.FormControlType != FormControlType.Autocomplete);
+        formControls.Remove(formControlToRemove);
+
+        return formControls;
+    }
 
     protected override Task BeforeGeneratingForm(
         Participant entity,
