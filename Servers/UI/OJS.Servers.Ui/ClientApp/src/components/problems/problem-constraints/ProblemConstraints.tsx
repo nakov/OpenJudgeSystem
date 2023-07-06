@@ -30,7 +30,7 @@ const ProblemConstraints = () => {
         [],
     );
 
-    const getCheckerDescription = useMemo(() => {
+    const description = useMemo(() => {
         const { checkerDescription = '' } = currentProblem || {};
         return checkerDescription;
     }, [ currentProblem ]);
@@ -42,7 +42,7 @@ const ProblemConstraints = () => {
               itemFunc={renderConstraint}
               className={styles.constraintsList}
             />
-            <QuestionIcon size={IconSize.Medium} className={styles.questionIcon} helperText={getCheckerDescription} />
+            <QuestionIcon size={IconSize.Medium} className={styles.questionIcon} helperText={description} />
         </div>
     );
 };
