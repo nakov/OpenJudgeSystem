@@ -13,3 +13,8 @@ interface IProblemSubmissionDetailsUrlParams {
 }
 
 export type { IParticipateInContestTypeUrlParams, IProblemSubmissionDetailsUrlParams };
+    id: number;
+    participationType: ContestParticipationType;
+}
+
+export type { IParticipateInContestTypeUrlParams, IContestProblemUrl, IContestResultsUrl };
