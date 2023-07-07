@@ -193,7 +193,10 @@ namespace OJS.Services.Administration.Business.Implementations
             else
             {
                 // We detach the existing entity, in order to avoid tracking exception on Update.
-                this.problemGroupData.Detach(problem.ProblemGroup);
+                if (problem.ProblemGroup != null)
+                {
+                     this.problemGroupData.Detach(problem.ProblemGroup);
+                }
 
                 var problems = problemsGroups.FirstOrDefault(pg => pg.Problems
                                                     .Any(p => p.Id == problem.Id))?.Problems
