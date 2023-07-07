@@ -149,7 +149,6 @@ namespace OJS.Common
         {
             public const string ActiveContestCannotAddProblemGroup = "The contest is аctive and you cannot add problem groups";
             public const string ActiveContestCannotDeleteProblemGroup = "The contest is аctive and you cannot delete problem groups";
-            public const string CanCreateOnlyInOnlineContest = "You can create problem groups only in a contest which is of type {0}";
             public const string CanEditOrderbyOnlyInOnlineContest = "You can edit problem groups order only in a contest which is of type {0}.";
             public const string ContestDoesNotExist = "The selected contest does not exist";
             public const string ContestRequired = "Contest is required";
