@@ -14,7 +14,7 @@ namespace OJS.Data.Models
         public virtual Problem Problem { get; set; } = null!;
 
         /// <summary>
-        /// Gets or sets a predefined skeleton for the task and strategy
+        /// Gets or sets a predefined skeleton for the task and strategy.
         /// </summary>
         public byte[] SolutionSkeleton { get; set; } = default!;
     }

@@ -1,10 +1,10 @@
 namespace OJS.Servers.Ui.Controllers.Api;
 
 using Microsoft.AspNetCore.Mvc;
-using OJS.Common.Extensions;
+using Common.Extensions;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests.Results;
-using OJS.Services.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Ui.Business.Validation;
 using OJS.Services.Ui.Data;
 using System.Threading.Tasks;
@@ -39,9 +39,12 @@ public class ContestResultsController : BaseApiController
     {
         var contest = await this.contestsData.GetByIdWithProblems(id);
 
-        this.contestResultsValidation
-            .GetValidationResult((contest, full))
-            .VerifyResult();
+        var validationResult = this.contestResultsValidation.GetValidationResult((contest, full));
+
+        if (!validationResult.IsValid)
+        {
+            throw new BusinessServiceException(validationResult.Message);
+        }
 
         var results = this.contestResultsAggregator.GetContestResults(
             contest!,
