@@ -1,3 +1,5 @@
+/* eslint-disable */
+/*
 import React, { useCallback } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
@@ -81,4 +83,6 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
     );
 };
 
-export default ContestSorting;
+export default ContestSorting; */
+
+export {};
