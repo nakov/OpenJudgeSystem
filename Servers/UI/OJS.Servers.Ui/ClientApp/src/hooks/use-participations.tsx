@@ -5,7 +5,6 @@ import { IHaveChildrenProps } from '../components/common/Props';
 import { getParticipationsForProfileUrl } from '../utils/urls';
 
 import { useHttp } from './use-http';
-import { useLoading } from './use-loading';
 
 interface IParticipationType {
     id: number;
@@ -31,7 +30,7 @@ const ParticipationsContext = createContext<IParticipationsContext>(defaultState
 type IParticipationsProviderProps = IHaveChildrenProps
 
 const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
-    const { startLoading, stopLoading } = useLoading();
+    const [ isLoading, setIsLoading ] = useState(false);
     const [ areUserParticipationsRetrieved, setAreUserParticipationsRetrieved ] = useState<boolean>(false);
     const [ userParticipations, setUserParticipations ] = useState<IParticipationType[]>([]);
 
@@ -41,10 +40,10 @@ const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
     } = useHttp<null, IParticipationType[]>({ url: getParticipationsForProfileUrl });
 
     const getUserParticipations = useCallback(async () => {
-        startLoading();
+        setIsLoading(true);
         await getParticipationsForProfile();
-        stopLoading();
-    }, [ getParticipationsForProfile, startLoading, stopLoading ]);
+        setIsLoading(false);
+    }, [ getParticipationsForProfile ]);
 
     useEffect(() => {
         if (isNil(apiParticipationsForProfile)) {
@@ -60,8 +59,9 @@ const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
             areUserParticipationsRetrieved,
             userParticipations,
             getUserParticipations,
+            isLoading
         }),
-        [ areUserParticipationsRetrieved, getUserParticipations, userParticipations ],
+        [ areUserParticipationsRetrieved, getUserParticipations, userParticipations, isLoading ],
     );
 
     return (

@@ -19,6 +19,7 @@ interface IUserProfileType {
 interface IUsersContext {
     profile: IUserProfileType;
     getProfile: () => Promise<void>;
+    isLoading: boolean;
 }
 
 const defaultState = { profile: { userName: '' } as IUserProfileType };
@@ -28,16 +29,20 @@ const UsersContext = createContext<IUsersContext>(defaultState as IUsersContext)
 type IUsersProviderProps = IHaveChildrenProps
 
 const UsersProvider = ({ children }: IUsersProviderProps) => {
+    const [ isLoading, setIsLoading ] = useState(false);
     const [ profile, setProfile ] = useState(defaultState.profile);
     const { showError } = useNotifications();
 
     const {
-        isLoading: isGetUserLoading,
         get: getProfileInfo,
         data: profileData,
     } = useHttp<null, IUserProfileType>({ url: getProfileInfoUrl });
 
-    const getProfile = useCallback(async () => await getProfileInfo(), [ getProfileInfo ]);
+    const getProfile = useCallback(async () => {
+        setIsLoading(true);
+        await getProfileInfo();
+        setIsLoading(false);
+    }, [ getProfileInfo ]);
 
     useEffect(() => {
         if (isNil(profileData)) {
@@ -53,9 +58,9 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
         () => ({
             profile,
             getProfile,
-            isGetUserLoading
+            isLoading
         }),
-        [ getProfile, profile, isGetUserLoading ],
+        [ getProfile, profile, isLoading ],
     );
 
     return (

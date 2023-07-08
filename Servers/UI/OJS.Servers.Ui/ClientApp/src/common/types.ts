@@ -77,6 +77,7 @@ interface IIndexContestsType {
     hasContestPassword: boolean;
     hasPracticePassword: boolean;
     category: string;
+    isLoading: boolean;
 }
 
 interface IContestModal {

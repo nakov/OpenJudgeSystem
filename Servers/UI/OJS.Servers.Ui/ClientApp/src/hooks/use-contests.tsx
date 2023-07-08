@@ -81,6 +81,7 @@ const collectParams = <T extends FilterSortType>(
 };
 
 const ContestsProvider = ({ children }: IContestsProviderProps) => {
+    const [ isLoading, setIsLoading ] = useState(false);
     const [ contests, setContests ] = useState(defaultState.state.contests);
     const [ getAllContestsUrlParams, setGetAllContestsUrlParams ] = useState<IAllContestsUrlParams | null>();
     const [ getContestByProblemUrlParams, setGetContestByProblemUrlParams ] = useState<IGetContestByProblemUrlParams | null>();
@@ -175,7 +176,9 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     const reload = useCallback(
         async () => {
+            setIsLoading(true);
             await getContests();
+            setIsLoading(false);
         },
         [ getContests ],
     );
@@ -291,7 +294,8 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
                 filters,
                 sortingTypes,
                 contest,
-                isLoaded: isSuccess,
+                isLoaded: isSuccess, // should be removed, its incorrect logic, since isError is not taken into consideration
+                isLoading,
                 contestsAreLoading
             },
             actions: {
@@ -317,7 +321,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             contest,
             initiateGetAllContestsQuery,
             isSuccess,
-            contestsAreLoading
+            isLoading,
         ],
     );
 
