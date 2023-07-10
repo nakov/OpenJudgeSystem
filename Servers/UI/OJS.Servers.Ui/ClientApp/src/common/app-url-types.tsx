@@ -12,7 +12,6 @@ interface IProblemSubmissionDetailsUrlParams {
     hashParam: string;
 }
 
-interface IContestResultsUrl {
     id: number;
     participationType: ContestParticipationType;
 }
