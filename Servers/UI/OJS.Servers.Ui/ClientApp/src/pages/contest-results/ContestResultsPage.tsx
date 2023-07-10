@@ -69,7 +69,7 @@ const getProblemResultColumns = (results: IContestResultsType) => results.proble
 
 const ContestResultsPage = () => {
     const { state: { params } } = useRouteUrlParams();
-    const { contestId, participationUrlType, resultType } = params;
+    const { contestId, participationType: participationUrlType, resultType } = params;
 
     const official = participationUrlType === ContestParticipationType.Compete;
     const full = resultType === ContestResultType.Full;
