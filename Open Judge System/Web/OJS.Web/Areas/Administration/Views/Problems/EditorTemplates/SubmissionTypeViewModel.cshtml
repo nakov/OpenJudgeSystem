@@ -28,13 +28,13 @@
                 @Html.LabelFor(m => m.SolutionSkeleton)
             </div>
         </div>
-        <div class="editor-field col-xs-2">
+        <div class="editor-field col-xs-6">
             @Html.EditorFor(m => m.SolutionSkeleton, new { @class = "form-control pull-left full-editor" })
         </div>
-        <div class="editor-field col-xs-2">
+        <div class="editor-field col-xs-3">
             @Html.LabelFor(m => m.TimeLimit)
         </div>
-        <div class="editor-field col-xs-1">
+        <div class="editor-field col-xs-1" style="margin-bottom: 5px">
             @Html.TextBoxFor(m => m.TimeLimit, new { @class = "pull-right" })
         </div>
         <div class="editor-field col-xs-3">
@@ -44,9 +44,15 @@
             @Html.TextBoxFor(m => m.MemoryLimit, new { @class = "pull-right" })
         </div>
 
-        <div class="editor-field col-xs-1">
+        <div class="editor-field col-xs-5">
             <span class="glyphicon glyphicon-question-sign text-primary" title="@SharedResource.Enter_solution_skeleton" data-tooltip="true"></span>
             @Html.ValidationMessageFor(m => m.SolutionSkeleton)
+        </div>
+        <div class="editor-field col-xs-5">
+            @Html.ValidationMessageFor(m => m.TimeLimit)
+        </div>
+        <div class="editor-field col-xs-5">
+            @Html.ValidationMessageFor(m => m.MemoryLimit)
         </div>
     </div>
 }

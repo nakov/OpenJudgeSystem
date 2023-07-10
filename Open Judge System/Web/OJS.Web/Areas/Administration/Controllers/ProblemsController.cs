@@ -220,7 +220,7 @@
                     ProblemId = problem.Id,
                     SubmissionTypeId = submission.Id,
                     TimeLimit = s.TimeLimit,
-                    MemoryLimit= s.MemoryLimit,
+                    MemoryLimit = s.MemoryLimit,
                 };
 
                 if (!s.SolutionSkeletonData.IsNullOrEmpty())
