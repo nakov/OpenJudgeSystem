@@ -12,5 +12,7 @@
         public short MaximumPoints { get; set; }
 
         public double OrderBy { get; set; }
+
+        public bool ShowDetailedFeedback { get; set; }
     }
 }

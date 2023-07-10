@@ -91,7 +91,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
               className="testRunDetailsExpandBtn"
             />
             <Collapsible collapsed={isTestInputCollapsed}>
-                <span>{testRun.input}</span>
+                {testRun.input}
             </Collapsible>
         </span>
     ), [ handleCollapsibleTestInput, isTestInputCollapsed, testRun ]);
@@ -115,7 +115,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
                     {testRun.memoryUsed}
                 </span>
             </span>
-            {testRun.isTrialTest
+            {testRun.showInput
                 ? renderCollapsibleTestInput()
                 : null}
             <span className={styles.testRunDataParagraph}>

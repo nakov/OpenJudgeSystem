@@ -28,5 +28,7 @@
         public string? Input { get; set; }
 
         public double OrderBy { get; set; }
+
+        public bool ShowInput { get; set; }
     }
 }
