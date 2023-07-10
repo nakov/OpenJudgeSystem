@@ -80,12 +80,12 @@
                     submission.Points = points;
                     submission.CacheTestRuns();
 
-                    if (!submissionResult.ParticipantId.HasValue)
+                    if (submissionResult.ParticipantId == null || submissionResult.ParticipantId == 0)
                     {
                         continue;
                     }
 
-                    var participantId = submissionResult.ParticipantId.Value;
+                    var participantId = submissionResult.ParticipantId;
 
                     if (!topResults.ContainsKey(participantId) || topResults[participantId].Points < points)
                     {
