@@ -81,13 +81,13 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
 
     const hasCompletedGetAuthInfo = useMemo(
         () => getAuthInfoStatus !== HttpStatus.NotStarted &&
-            getAuthInfoStatus !== HttpStatus.Pending,
-        [ getAuthInfoStatus ],
+            getAuthInfoStatus !== HttpStatus.Pending && isGetAuthInfoSuccess,
+        [ getAuthInfoStatus, isGetAuthInfoSuccess ],
     );
 
     const isLoggedIn = useMemo(
         () => isGetAuthInfoSuccess && !isEmpty(internalUser.id),
-        [ internalUser, isGetAuthInfoSuccess ],
+        [ internalUser.id, isGetAuthInfoSuccess ],
     );
 
     const getAuth = useCallback(async () => {

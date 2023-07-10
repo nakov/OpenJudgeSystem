@@ -14,4 +14,9 @@ interface IContestProblemUrl {
     orderBy: number;
 }
 
-export type { IParticipateInContestTypeUrlParams, IContestProblemUrl };
+interface IContestResultsUrl {
+    id: number;
+    participationType: ContestParticipationType;
+}
+
+export type { IParticipateInContestTypeUrlParams, IContestProblemUrl, IContestResultsUrl };
