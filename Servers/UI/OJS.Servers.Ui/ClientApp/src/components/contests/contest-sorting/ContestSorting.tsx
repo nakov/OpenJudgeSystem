@@ -71,7 +71,7 @@ const ContestSorting = ({ onSortClick }: IContestSortingProps) => {
                         Sorting
                     </Heading>
                     <List
-                      values={possibleSortingTypes.filter((sort) => sort.name !== 'OrderBy')}
+                      values={possibleSortingTypes)}
                       itemFunc={renderSortingItemFunc}
                       orientation={Orientation.horizontal}
                       className={styles.sortTypesList}
