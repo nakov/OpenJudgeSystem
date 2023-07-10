@@ -5,9 +5,9 @@ import Heading, { HeadingType } from '../../components/guidelines/headings/Headi
 import SearchIcon from '../../components/guidelines/icons/SearchIcon';
 import { useAuth } from '../../hooks/use-auth';
 import { useSearch } from '../../hooks/use-search';
-import { useUrls } from '../../hooks/use-urls';
 import concatClassNames from '../../utils/class-names';
 import generateId from '../../utils/id-generator';
+import { getAdministrationNavigation } from '../../utils/urls';
 import PageNav from '../nav/PageNav';
 
 import logo from './softuni-logo-horizontal.svg';
@@ -17,7 +17,6 @@ import styles from './PageHeader.module.scss';
 const PageHeader = () => {
     const { state: { user } } = useAuth();
 
-    const { getAdministrationNavigation } = useUrls();
     const { actions: { toggleVisibility } } = useSearch();
 
     const renderLinks = useCallback(() => {

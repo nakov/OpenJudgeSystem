@@ -5,12 +5,12 @@ import isNil from 'lodash/isNil';
 import { IProblemType } from '../common/types';
 import { IDownloadProblemResourceUrlParams } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
+import { getDownloadProblemResourceUrl } from '../utils/urls';
 
 import { useHashUrlParams } from './common/use-hash-url-params';
 import { useCurrentContest } from './use-current-contest';
 import { useHttp } from './use-http';
 import { useLoading } from './use-loading';
-import { useUrls } from './use-urls';
 
 interface IProblemsContext {
     state: {
@@ -53,7 +53,6 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     const [ problems, setProblems ] = useState(defaultState.state.problems);
     const [ currentProblem, setCurrentProblem ] = useState<IProblemType | null>(defaultState.state.currentProblem);
     const [ problemResourceIdToDownload, setProblemResourceIdToDownload ] = useState<number | null>(null);
-    const { getDownloadProblemResourceUrl } = useUrls();
 
     const {
         startLoading,

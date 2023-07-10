@@ -3,10 +3,10 @@ import isNil from 'lodash/isNil';
 
 import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
 import { IHaveChildrenProps } from '../../components/common/Props';
+import { getSubmissionResultsByProblemUrl } from '../../utils/urls';
 import { useCurrentContest } from '../use-current-contest';
 import { IErrorDataType, useHttp } from '../use-http';
 import { useLoading } from '../use-loading';
-import { useUrls } from '../use-urls';
 
 import { ISubmissionDetails } from './types';
 
@@ -44,7 +44,6 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
         stopLoading,
     } = useLoading();
 
-    const { getSubmissionResultsByProblemUrl } = useUrls();
     const {
         get: getProblemSubmissions,
         data: apiProblemSubmissions,

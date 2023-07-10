@@ -2,10 +2,9 @@ import isNil from 'lodash/isNil';
 
 import { RedirectExternal } from '../../components/common/RedirectExternal';
 import { useSubmissionsDetails } from '../../hooks/submissions/use-submissions-details';
-import { useUrls } from '../../hooks/use-urls';
+import { getAdministrationRetestSubmission } from '../../utils/urls';
 
 const SubmissionRetestPage = () => {
-    const { getAdministrationRetestSubmission } = useUrls();
     const { state: { currentSubmission } } = useSubmissionsDetails();
 
     if (isNil(currentSubmission)) {
