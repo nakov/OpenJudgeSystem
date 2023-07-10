@@ -190,8 +190,9 @@ namespace OJS.Servers.Administration.Controllers
             Contest entity,
             EntityAction action,
             IDictionary<string, string> entityDict,
-            IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters)
-            => base.GenerateFormControls(entity, action, entityDict, complexOptionFilters)
+            IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters,
+            Type autocompleteType)
+            => base.GenerateFormControls(entity, action, entityDict, complexOptionFilters, autocompleteType)
                 .Concat(new[]
                 {
                     new FormControlViewModel

@@ -1,15 +1,18 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType, ContestResultType } from '../../common/constants';
 import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
+import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
 import { IContestResultsParticipationProblemType, IContestResultsType } from '../../hooks/contests/types';
 import { useCurrentContestResults } from '../../hooks/contests/use-current-contest-results';
 import { usePageTitles } from '../../hooks/use-page-titles';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
+
+import styles from './ContestResultPage.module.scss';
 
 const participantNamesColumns: GridColDef[] = [
     {
@@ -66,14 +69,25 @@ const getProblemResultColumns = (results: IContestResultsType) => results.proble
 
 const ContestResultsPage = () => {
     const { state: { params } } = useRouteUrlParams();
-    const { contestId, participationType, resultType } = params;
+    const { contestId, participationUrlType, resultType } = params;
 
-    const official = participationType === ContestParticipationType.Compete;
+    const official = participationUrlType === ContestParticipationType.Compete;
     const full = resultType === ContestResultType.Full;
 
+    const participationType = useMemo(
+        () => (official
+            ? 'Compete'
+            : 'Practice'
+        ),
+        [ official ],
+    );
+
     const {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        state: { contestResults },
+        state: {
+            contestResults,
+            areContestResultsLoaded,
+            contestResultsError,
+        },
         actions: { load },
     } = useCurrentContestResults();
     const { actions: { setPageTitle } } = usePageTitles();
@@ -85,42 +99,88 @@ const ContestResultsPage = () => {
         [ contestResults ],
     );
 
-    useEffect(() => {
-        setPageTitle(contestResultsPageTitle);
-    }, [ contestResultsPageTitle, setPageTitle ]);
+    useEffect(
+        () => {
+            setPageTitle(contestResultsPageTitle);
+        },
+        [ contestResultsPageTitle, setPageTitle ],
+    );
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const getColumns = useCallback((results: IContestResultsType) => {
-        const problemResultColumns = getProblemResultColumns(results) || [];
+    const getColumns = useCallback(
+        (results: IContestResultsType) => {
+            const problemResultColumns = getProblemResultColumns(results) || [];
 
-        return participantNamesColumns
-            .concat(problemResultColumns)
-            .concat(totalResultColumn);
-    }, []);
+            return participantNamesColumns
+                .concat(problemResultColumns)
+                .concat(totalResultColumn);
+        },
+        [],
+    );
 
-    useEffect(() => {
-        (() => load(Number(contestId), official, full)
-        )();
-    }, [ contestId, official, full, load ]);
+    useEffect(
+        () => {
+            load(Number(contestId), official, full);
+        },
+        [ contestId, full, load, official ],
+    );
 
     // github.com/SoftUni-Internal/exam-systems-issues/issues/228
+    const renderElements = useMemo(
+        () => (
+            <>
+                <Heading
+                  type={HeadingType.primary}
+                  className={styles.contestResultsHeading}
+                >
+                    {participationType}
+                    {' '}
+                    results for contests -
+                    {' '}
+                    {contestResults?.name}
+                </Heading>
+                <DataGrid
+                  rows={contestResults!.results}
+                  columns={getColumns(contestResults!)}
+                  disableSelectionOnClick
+                  getRowId={(row) => row.participantUsername}
+                />
+            </>
+        ),
+        [ contestResults, getColumns, participationType ],
+    );
+
+    const renderErrorHeading = useCallback(
+        (message: string) => (
+            <div className={styles.headingResults}>
+                <Heading
+                  type={HeadingType.primary}
+                  className={styles.contestResultsHeading}
+                >
+                    {message}
+                </Heading>
+            </div>
+        ),
+        [],
+    );
+
+    const renderErrorMessage = useCallback(
+        () => {
+            if (!isNil(contestResultsError)) {
+                const { detail } = contestResultsError;
+                return renderErrorHeading(detail);
+            }
+
+            return null;
+        },
+        [ contestResultsError, renderErrorHeading ],
+    );
+
     return (
-        <>
-            {/* <Heading> */}
-            {/*    {participationType} */}
-            {/*    {' '} */}
-            {/*    results for constest -*/}
-            {/*    {' '} */}
-            {/*    {contestResults.name} */}
-            {/* </Heading> */}
-            {/* <DataGrid */}
-            {/*  rows={contestResults.results} */}
-            {/*  columns={getColumns(contestResults)} */}
-            {/*  disableSelectionOnClick */}
-            {/*  getRowId={(row) => row.participantUsername} */}
-            {/* /> */}
-            <h1>this page should be fixed</h1>
-        </>
+        isNil(contestResultsError)
+            ? areContestResultsLoaded
+                ? renderElements
+                : <div>Loading data</div>
+            : renderErrorMessage()
     );
 };
 
