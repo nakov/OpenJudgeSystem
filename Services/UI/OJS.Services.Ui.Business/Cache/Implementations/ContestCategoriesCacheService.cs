@@ -1,4 +1,4 @@
-namespace OJS.Services.Ui.Business.Implementations;
+namespace OJS.Services.Ui.Business.Cache.Implementations;
 
 using OJS.Services.Common.Models.Cache;
 using OJS.Services.Infrastructure.Cache;
@@ -7,8 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-public class ContestCategoriesCacheService
-    : IContestCategoriesCacheService
+public class ContestCategoriesCacheService : IContestCategoriesCacheService
 {
     private readonly ICacheService cache;
     private readonly IContestCategoriesBusinessService contestCategoriesBusiness;

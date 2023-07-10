@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useMemo } from 'react';
 
-import { IParticipateInContestTypeUrlParams, IProblemSubmissionDetailsUrlParams } from '../common/app-url-types';
+import { IContestResultsUrl, IParticipateInContestTypeUrlParams, IProblemSubmissionDetailsUrlParams }
+    from '../common/app-url-types';
+import { ContestResultType } from '../common/constants';
 import { FilterType } from '../common/contest-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
@@ -8,6 +10,7 @@ interface IAppUrlsContext {
     getParticipateInContestUrl: (params: IParticipateInContestTypeUrlParams) => string;
     getProblemSubmissionDetailsUrl: (params: IProblemSubmissionDetailsUrlParams) => string;
     getContestCategoryBreadcrumbItemPath: (id: string) => string;
+    getContestResultsUrl: (params: IContestResultsUrl) => string;
     getAdministrationRetestSubmissionInternalUrl: () => string;
     getHomePageUrl: () => string;
     getLoginUrl: () => string;
@@ -30,6 +33,11 @@ const getProblemSubmissionDetailsUrl = ({
 
 const getContestCategoryBreadcrumbItemPath = (id: string) => `/Contests?${FilterType.Category.toString()}=${id}`;
 
+const getContestResultsUrl = ({
+    id,
+    participationType,
+}: IContestResultsUrl) => `/contests/${id}/${participationType}/results/${ContestResultType.Simple}`;
+
 const getAdministrationRetestSubmissionInternalUrl = () => '/Submissions/Retest';
 
 const getHomePageUrl = () => '/';
@@ -42,6 +50,7 @@ const AppUrlsProvider = ({ children }: IAppUrlsProviderProps) => {
             {
                 getParticipateInContestUrl,
                 getProblemSubmissionDetailsUrl,
+                getContestResultsUrl,
                 getContestCategoryBreadcrumbItemPath,
                 getAdministrationRetestSubmissionInternalUrl,
                 getHomePageUrl,

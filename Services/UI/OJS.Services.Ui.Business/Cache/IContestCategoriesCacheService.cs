@@ -1,4 +1,4 @@
-namespace OJS.Services.Ui.Business;
+namespace OJS.Services.Ui.Business.Cache;
 
 using OJS.Services.Common.Models.Cache;
 using OJS.Services.Infrastructure.Constants;
@@ -6,8 +6,7 @@ using SoftUni.Services.Infrastructure;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-public interface IContestCategoriesCacheService
-    : IService
+public interface IContestCategoriesCacheService : IService
 {
     Task<IEnumerable<ContestCategoryTreeViewModel>> GetContestSubCategoriesList(
         int categoryId,
