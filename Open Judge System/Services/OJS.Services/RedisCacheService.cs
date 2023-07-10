@@ -154,10 +154,7 @@ namespace OJS.Services
             }
         }
 
-        public bool ContainsKey(string cacheId)
-        {
-            return this.redisCache.KeyExists(cacheId);
-        }
+        public bool ContainsKey(string cacheId) => this.redisCache.KeyExists(cacheId);
 
         public async Task<bool> ContainsKeyAsync(string cacheId)
         {

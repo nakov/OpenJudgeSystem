@@ -81,22 +81,23 @@
                 throw new HttpException((int)HttpStatusCode.Forbidden, Resource.Problem_results_not_available);
             }
 
-            if (this.redisCacheService.ContainsKey())
+            var results = this.redisCacheService.GetOrSet<List<ProblemResultViewModel>>(
+              string.Format(CacheConstants.ResultsByProblem, problem.Id, official),
+                () =>
             {
-
-            }
-
-            var results = this.participantScoresData
-                .GetAll()
-                .Where(ps => ps.ProblemId == problem.Id && ps.IsOfficial == official)
-                .Select(ps => new ProblemResultViewModel
-                {
-                    SubmissionId = ps.SubmissionId,
-                    ParticipantName = ps.ParticipantName,
-                    MaximumPoints = problem.MaximumPoints,
-                    Result = ps.Points
-                })
-                .ToList();
+                return this.participantScoresData
+                                .GetAll()
+                                .Where(ps => ps.ProblemId == problem.Id && ps.IsOfficial == official)
+                                .Select(ps => new ProblemResultViewModel
+                                {
+                                    SubmissionId = ps.SubmissionId,
+                                    ParticipantName = ps.ParticipantName,
+                                    MaximumPoints = problem.MaximumPoints,
+                                    Result = ps.Points
+                                })
+                                .ToList();
+            },
+             TimeSpan.FromMinutes(CacheExpirationTimeInMinutes));
 
             return this.Json(results.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         }
@@ -481,7 +482,7 @@
                     CacheConstants.ContestResultsFormat,
                     contest.Id,
                     official,
-                    isFullResults, 
+                    isFullResults,
                     isExportResults),
                 () =>
                 {

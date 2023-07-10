@@ -23,6 +23,8 @@
 
         public const string ContestView = "Contest_{0}";
 
+        public const string ResultsByProblem = "Results_By_Problem__id_{0}_official_{1}";
+
         public const int DefaultPastContestsToTake = 15;
     }
 }
