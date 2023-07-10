@@ -1,0 +1,10 @@
+@use 'src/styles/components';
+
+.contestResultsHeading {
+  padding: 0;
+  text-align: center;
+}
+
+.headingResults {
+  @extend %contentSize;
+}

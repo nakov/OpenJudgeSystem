@@ -1,30 +1,19 @@
 namespace OJS.Servers.Ui.Controllers.Api;
 
 using Microsoft.AspNetCore.Mvc;
-using OJS.Common.Extensions;
-using OJS.Services.Common;
+using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Common.Models.Contests.Results;
-using OJS.Services.Infrastructure.Extensions;
-using OJS.Services.Ui.Business.Validation;
-using OJS.Services.Ui.Data;
+using OJS.Services.Ui.Business.Cache;
 using System.Threading.Tasks;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 public class ContestResultsController : BaseApiController
 {
-    private readonly IContestResultsAggregatorService contestResultsAggregator;
-    private readonly IContestsDataService contestsData;
-    private readonly IContestResultsValidationService contestResultsValidation;
+    private readonly IContestResultsCacheService contestResultsCache;
 
     public ContestResultsController(
-        IContestResultsAggregatorService contestResultsAggregator,
-        IContestsDataService contestsData,
-        IContestResultsValidationService contestResultsValidation)
-    {
-        this.contestResultsAggregator = contestResultsAggregator;
-        this.contestsData = contestsData;
-        this.contestResultsValidation = contestResultsValidation;
-    }
+        IContestResultsCacheService contestResultsCache)
+        => this.contestResultsCache = contestResultsCache;
 
     /// <summary>
     /// Gets the results of all the participants in a given contest.
@@ -36,19 +25,7 @@ public class ContestResultsController : BaseApiController
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(ContestResultsViewModel), Status200OK)]
     public async Task<IActionResult> GetResults(int id, bool official, bool full)
-    {
-        var contest = await this.contestsData.GetByIdWithProblems(id);
-
-        this.contestResultsValidation
-            .GetValidationResult((contest, full))
-            .VerifyResult();
-
-        var results = this.contestResultsAggregator.GetContestResults(
-            contest!,
-            official,
-            this.User.IsAdminOrLecturer(),
-            full);
-
-        return this.Ok(results);
-    }
+        => await this.contestResultsCache
+            .GetContestResults(id, official, full)
+            .ToOkResult();
 }
