@@ -64,7 +64,7 @@ namespace OJS.Services
             try
             {
                 this.VerifyValueInCache<T>(cacheId, getItemCallback, expiration);
-                return this.Get<T>(cacheId,getItemCallback);
+                return this.Get<T>(cacheId, getItemCallback);
             }
             catch (RedisConnectionException ex)
             {
@@ -160,8 +160,7 @@ namespace OJS.Services
             Func<Task<T>> getItemCallback,
             TimeSpan? expiration)
         {
-            var value = await this.redisCache.StringGetAsync(cacheId);
-            if (value.IsNull)
+            if (!await this.redisCache.KeyExistsAsync(cacheId))
             {
                 var result = await getItemCallback();
 
@@ -178,16 +177,15 @@ namespace OJS.Services
             Func<T> getItemCallback,
             TimeSpan? expiration)
         {
-            var value =  this.redisCache.StringGet(cacheId);
-            if (value.IsNull)
+            if (!this.redisCache.KeyExists(cacheId))
             {
-                var result =  getItemCallback();
+                var result = getItemCallback();
 
                 var parsedValue = JsonConvert.SerializeObject(result);
-                 this.redisCache.StringSet(
-                    cacheId,
-                    parsedValue,
-                    expiration);
+                this.redisCache.StringSet(
+                   cacheId,
+                   parsedValue,
+                   expiration);
             }
         }
     }
