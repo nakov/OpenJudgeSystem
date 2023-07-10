@@ -43,7 +43,6 @@ namespace OJS.Services
             try
             {
                 var valueAsString = await this.redisCache.StringGetAsync(cacheId);
-
                 if (valueAsString.IsNull)
                 {
                     return await getItemCallback();
@@ -64,7 +63,7 @@ namespace OJS.Services
             try
             {
                 this.VerifyValueInCache<T>(cacheId, getItemCallback, expiration);
-                return this.Get<T>(cacheId,getItemCallback);
+                return this.Get<T>(cacheId, getItemCallback);
             }
             catch (RedisConnectionException ex)
             {
@@ -155,6 +154,17 @@ namespace OJS.Services
             }
         }
 
+        public bool ContainsKey(string cacheId)
+        {
+            return this.redisCache.KeyExists(cacheId);
+        }
+
+        public async Task<bool> ContainsKeyAsync(string cacheId)
+        {
+            return await this.redisCache.KeyExistsAsync(cacheId);
+        }
+
+        #region private
         private async Task VerifyValueInCacheAsync<T>(
             string cacheId,
             Func<Task<T>> getItemCallback,
@@ -178,17 +188,18 @@ namespace OJS.Services
             Func<T> getItemCallback,
             TimeSpan? expiration)
         {
-            var value =  this.redisCache.StringGet(cacheId);
+            var value = this.redisCache.StringGet(cacheId);
             if (value.IsNull)
             {
-                var result =  getItemCallback();
+                var result = getItemCallback();
 
                 var parsedValue = JsonConvert.SerializeObject(result);
-                 this.redisCache.StringSet(
-                    cacheId,
-                    parsedValue,
-                    expiration);
+                this.redisCache.StringSet(
+                   cacheId,
+                   parsedValue,
+                   expiration);
             }
         }
+        #endregion
     }
 }

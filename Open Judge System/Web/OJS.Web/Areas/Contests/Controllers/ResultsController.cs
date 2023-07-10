@@ -81,6 +81,11 @@
                 throw new HttpException((int)HttpStatusCode.Forbidden, Resource.Problem_results_not_available);
             }
 
+            if (this.redisCacheService.ContainsKey())
+            {
+
+            }
+
             var results = this.participantScoresData
                 .GetAll()
                 .Where(ps => ps.ProblemId == problem.Id && ps.IsOfficial == official)

@@ -47,6 +47,13 @@
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
+            var user = await this.UserManager.FindAsync(model.UserName, model.Password);
+            if (user != null)
+            {
+                await this.SignInAsync(user, model.RememberMe);
+                return this.RedirectToLocal(returnUrl);
+            }
+
             if (!this.ModelState.IsValid)
             {
                 return this.View(model);
@@ -74,12 +81,7 @@
                 var userEntity = externalUser.Entity;
                 this.AddOrUpdateUser(userEntity);
 
-                var user = await this.UserManager.FindAsync(model.UserName, model.Password);
-                if (user != null)
-                {
-                    await this.SignInAsync(userEntity, model.RememberMe);
-                    return this.RedirectToLocal(returnUrl);
-                }
+              
             }
 
             this.ModelState.AddModelError(

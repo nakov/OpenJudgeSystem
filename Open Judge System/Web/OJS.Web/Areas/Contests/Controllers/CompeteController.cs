@@ -17,11 +17,13 @@
     using MissingFeatures;
 
     using OJS.Common;
+    using OJS.Common.Constants;
     using OJS.Common.Models;
     using OJS.Data;
     using OJS.Data.Models;
     using OJS.Services.Business.Contests;
     using OJS.Services.Business.Participants;
+    using OJS.Services.Cache;
     using OJS.Services.Data.Contests;
     using OJS.Services.Data.Ips;
     using OJS.Services.Data.Participants;
@@ -54,6 +56,7 @@
         private readonly ISubmissionsDataService submissionsData;
         private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
         private readonly IIpsDataService ipsData;
+        private readonly IRedisCacheService redisCacheService;
 
         public CompeteController(
             IOjsData data,
@@ -64,7 +67,8 @@
             IProblemsDataService problemsData,
             ISubmissionsDataService submissionsData,
             ISubmissionsForProcessingDataService submissionsForProcessingData,
-            IIpsDataService ipsData)
+            IIpsDataService ipsData,
+             IRedisCacheService redisCacheService)
             : base(data)
         {
             this.participantsBusiness = participantsBusiness;
@@ -75,6 +79,7 @@
             this.submissionsData = submissionsData;
             this.submissionsForProcessingData = submissionsForProcessingData;
             this.ipsData = ipsData;
+            this.redisCacheService = redisCacheService;
         }
 
         protected CompeteController(
@@ -216,7 +221,13 @@
             var participantViewModel = new ParticipantViewModel(
                 participant,
                 official,
-                isUserAdminOrLecturerInContest);
+                isUserAdminOrLecturerInContest)
+            {
+                Contest = this.redisCacheService.GetOrSet<ContestViewModel>(
+                    string.Format(CacheConstants.ContestView, participant.ContestId),
+                     () => { return ContestViewModel.FromContest.Compile()(participant.Contest); },
+                     null)
+            };
 
             this.ViewBag.CompeteType = official ? CompeteActionName : PracticeActionName;
             this.ViewBag.IsUserAdminOrLecturer = isUserAdminOrLecturerInContest;
@@ -452,12 +463,12 @@
             {
                 throw new HttpException((int)HttpStatusCode.BadRequest, Resource.ContestsGeneral.Submission_too_long);
             }
-            
+
             if (this.Data.Submissions.HasUserNotProcessedSubmissionForProblem(problem.Id, this.UserProfile.Id))
             {
                 throw new HttpException((int)HttpStatusCode.BadRequest, Resource.ContestsGeneral.User_has_not_processed_submission_for_problem);
             }
-            
+
             if (participant.Contest.UsersCantSubmitConcurrently && this.Data.Submissions.UserHasUnprocessedSubmissionInContest(participant.ContestId, this.UserProfile.Id))
             {
                 return this.JsonError(Resource.ContestsGeneral.User_has_not_processed_submission_for_contest);
@@ -616,7 +627,7 @@
         /// <param name="official">A check whether the problem is practiced or competed.</param>
         /// <returns>Returns the submissions results for a participant's problem.</returns>
         [Authorize]
-        public ActionResult ReadSubmissionResults([DataSourceRequest]DataSourceRequest request, int id, bool official)
+        public ActionResult ReadSubmissionResults([DataSourceRequest] DataSourceRequest request, int id, bool official)
         {
             var problem = this.problemsData.GetWithProblemGroupById(id);
 
@@ -643,7 +654,7 @@
         }
 
         [Authorize]
-        public ActionResult ReadSubmissionResultsAreCompiled([DataSourceRequest]DataSourceRequest request, int id, bool official)
+        public ActionResult ReadSubmissionResultsAreCompiled([DataSourceRequest] DataSourceRequest request, int id, bool official)
         {
             var problem = this.problemsData.GetWithProblemGroupById(id);
 

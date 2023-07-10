@@ -21,6 +21,8 @@
 
         public const string ProblemsByContestId = "Problems_contest_id_{0}";
 
+        public const string ContestView = "Contest_{0}";
+
         public const int DefaultPastContestsToTake = 15;
     }
 }
