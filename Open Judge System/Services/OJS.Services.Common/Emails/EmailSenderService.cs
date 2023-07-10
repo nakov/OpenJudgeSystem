@@ -16,10 +16,6 @@
         private readonly string senderEmail;
         private readonly string senderDisplayName;
 
-        public EmailSenderService()
-        {
-
-        }
         public EmailSenderService(
             string emailServerHost,
             int emailServerPort,
@@ -27,7 +23,7 @@
             string password,
             string senderEmail,
             string senderDisplayName,
-            string devEmail = null) : base()
+            string devEmail = null)
         {
 
             this.mailClient = new SmtpClient

@@ -170,8 +170,7 @@ namespace OJS.Services
             Func<Task<T>> getItemCallback,
             TimeSpan? expiration)
         {
-            var value = await this.redisCache.StringGetAsync(cacheId);
-            if (value.IsNull)
+            if (!await this.redisCache.KeyExistsAsync(cacheId))
             {
                 var result = await getItemCallback();
 
@@ -188,8 +187,7 @@ namespace OJS.Services
             Func<T> getItemCallback,
             TimeSpan? expiration)
         {
-            var value = this.redisCache.StringGet(cacheId);
-            if (value.IsNull)
+            if (!this.redisCache.KeyExists(cacheId))
             {
                 var result = getItemCallback();
 
