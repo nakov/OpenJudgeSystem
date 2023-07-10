@@ -19,7 +19,7 @@
     });
 
     const getSolutionSkeletonElement = (index) => {
-        return `<div class="row">
+        return `<div class="row" style="margin-bottom: 2rem">
         <div class="editor-label col-xs-1">
             <div class="pull-right">
                 <label for="SubmissionTypes_${index}__SolutionSkeleton">Solution skeleton</label>
@@ -41,7 +41,7 @@
             <input class = "pull-right" id="SubmissionTypes_${index}__MemoryLimit" name="SubmissionTypes[${index}].MemoryLimit" type = 'number' min=1></input>
         </div>
         <div class="editor-field col-xs-5">
-            <span class="glyphicon glyphicon-question-sign text-primary" title="Enter solution skeleton" data-tooltip="true"></span>
+            <span class="glyphicon glyphicon-question-sign text-primary" title="Enter solution details" data-tooltip="true"></span>
             <span class="field-validation-valid" data-valmsg-for="SubmissionTypes[${index}].SolutionSkeleton" data-valmsg-replace="true"></span>
         </div>
         <div class="editor-field col-xs-5">

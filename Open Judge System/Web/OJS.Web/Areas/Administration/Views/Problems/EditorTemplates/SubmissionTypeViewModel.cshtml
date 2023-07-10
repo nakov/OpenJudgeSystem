@@ -22,7 +22,7 @@
 </div>
 @if (Model.IsChecked)
 {
-    <div class="row">
+    <div class="row" style="margin-bottom: 2rem">
         <div class="editor-label col-xs-1">
             <div class="pull-right">
                 @Html.LabelFor(m => m.SolutionSkeleton)
@@ -45,7 +45,7 @@
         </div>
 
         <div class="editor-field col-xs-5">
-            <span class="glyphicon glyphicon-question-sign text-primary" title="@SharedResource.Enter_solution_skeleton" data-tooltip="true"></span>
+            <span class="glyphicon glyphicon-question-sign text-primary" title="@SharedResource.Enter_solution_details" data-tooltip="true"></span>
             @Html.ValidationMessageFor(m => m.SolutionSkeleton)
         </div>
         <div class="editor-field col-xs-5">
