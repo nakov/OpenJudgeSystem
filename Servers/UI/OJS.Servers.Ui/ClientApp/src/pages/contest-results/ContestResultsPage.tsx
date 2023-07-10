@@ -85,8 +85,8 @@ const ContestResultsPage = () => {
     const {
         state: {
             contestResults,
-            contestResultsError,
             areContestResultsLoaded,
+            contestResultsError,
         },
         actions: { load },
     } = useCurrentContestResults();
@@ -121,7 +121,7 @@ const ContestResultsPage = () => {
         () => {
             load(Number(contestId), official, full);
         },
-        [ contestId, official, full, load ],
+        [ contestId, full, load, official ],
     );
 
     // github.com/SoftUni-Internal/exam-systems-issues/issues/228
