@@ -7,8 +7,7 @@ using System.Collections.Generic;
 using OJS.Workers.ExecutionStrategies.Models;
 
 public class TaskResultServiceModel
-    : IMapFrom<ExecutionResult<TestResult>>,
-        IMapExplicitly
+    : IMapExplicitly
 {
     public int Points { get; set; }
 
@@ -17,5 +16,6 @@ public class TaskResultServiceModel
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration
             .CreateMap<ExecutionResult<TestResult>, TaskResultServiceModel>()
-            .ForMember(m => m.TestResults, opt => opt.MapFrom(src => src.Results));
+            .ForMember(m => m.TestResults, opt => opt.MapFrom(src => src.Results))
+            .ForAllOtherMembers(opt => opt.Ignore());
 }

@@ -1,7 +1,8 @@
-namespace OJS.Services.Common.Data.Implementations
+namespace OJS.Services.Administration.Data.Implementations
 {
     using OJS.Data;
     using OJS.Data.Models.Submissions;
+    using OJS.Services.Common.Data.Implementations;
     using System.Collections.Generic;
     using System.Linq;
 

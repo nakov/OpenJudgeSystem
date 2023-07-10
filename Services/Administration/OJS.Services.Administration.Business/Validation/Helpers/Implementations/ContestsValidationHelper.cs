@@ -10,12 +10,12 @@ public class ContestsValidationHelper : IContestsValidationHelper
 {
     private readonly IContestsBusinessService contestsBusiness;
     private readonly INotDefaultValueValidationHelper notDefaultValueValidationHelper;
-    private readonly IUserProviderService userProvider;
+    private readonly Business.IUserProviderService userProvider;
 
     public ContestsValidationHelper(
         IContestsBusinessService contestsBusiness,
         INotDefaultValueValidationHelper notDefaultValueValidationHelper,
-        IUserProviderService userProvider)
+        Business.IUserProviderService userProvider)
     {
         this.contestsBusiness = contestsBusiness;
         this.notDefaultValueValidationHelper = notDefaultValueValidationHelper;

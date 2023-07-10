@@ -3,7 +3,6 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using OJS.Common.Enumerations;
-    using OJS.Common.Utils;
     using OJS.Data;
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Extensions;
@@ -33,6 +32,7 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
                 .AddSwaggerDocs(apiVersion.ToApiName(), ApiDocsTitle, apiVersion)
                 .AddHangfireServer(AppName)
                 .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>()
+                .AddScoped<OjsDbContext>()
                 .AddMemoryCache()
                 .AddSoftUniJudgeCommonServices()
                 .AddLogging()

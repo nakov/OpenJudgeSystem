@@ -1,7 +1,7 @@
-namespace OJS.Services.Common.Implementations;
+namespace OJS.Services.Administration.Business.Implementations;
 
 using OJS.Data.Models.Contests;
-using OJS.Services.Common.Data;
+using OJS.Services.Administration.Data;
 using OJS.Services.Common.Models.Contests.Results;
 using System.Linq;
 

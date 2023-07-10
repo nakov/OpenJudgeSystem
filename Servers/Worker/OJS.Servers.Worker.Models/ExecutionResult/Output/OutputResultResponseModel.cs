@@ -4,7 +4,7 @@ using AutoMapper;
 using OJS.Workers.ExecutionStrategies.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
-public class OutputResultResponseModel : IMapFrom<OutputResult>, IMapExplicitly
+public class OutputResultResponseModel : IMapExplicitly
 {
     public int TimeUsedInMs { get; set; }
 

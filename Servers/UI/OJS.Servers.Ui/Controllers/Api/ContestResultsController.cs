@@ -2,7 +2,7 @@ namespace OJS.Servers.Ui.Controllers.Api;
 
 using Microsoft.AspNetCore.Mvc;
 using OJS.Common.Extensions;
-using OJS.Services.Common;
+using OJS.Services.Ui.Business;
 using OJS.Services.Common.Models.Contests.Results;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Data;

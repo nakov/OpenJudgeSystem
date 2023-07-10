@@ -1,4 +1,4 @@
-namespace OJS.Services.Common.Implementations;
+namespace OJS.Services.Administration.Business.Implementations;
 
 using static OJS.Common.GlobalConstants;
 

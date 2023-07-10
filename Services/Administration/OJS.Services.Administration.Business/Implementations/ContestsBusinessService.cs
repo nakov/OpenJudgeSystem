@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 public class ContestsBusinessService : IContestsBusinessService
 {
     private readonly IContestsDataService contestsData;
-    private readonly IUserProviderService userProvider;
+    private readonly Business.IUserProviderService userProvider;
 
     public ContestsBusinessService(
         IContestsDataService contestsData,
-        IUserProviderService userProvider)
+        Business.IUserProviderService userProvider)
     {
         this.contestsData = contestsData;
         this.userProvider = userProvider;

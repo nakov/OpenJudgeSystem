@@ -1,10 +1,11 @@
-﻿namespace OJS.Services.Common.Data.Implementations
+﻿namespace OJS.Services.Ui.Data.Implementations
 {
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
     using OJS.Common;
     using OJS.Common.Helpers;
     using OJS.Data.Models.Submissions;
+    using OJS.Services.Common.Data.Implementations;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;

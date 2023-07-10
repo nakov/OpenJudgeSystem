@@ -9,11 +9,11 @@ using AdminResource = OJS.Common.Resources.AdministrationGeneral;
 public class ContestCategoriesValidationHelper : IContestCategoriesValidationHelper
 {
     private readonly IContestCategoriesDataService contestCategoriesData;
-    private readonly IUserProviderService userProvider;
+    private readonly Business.IUserProviderService userProvider;
 
     public ContestCategoriesValidationHelper(
         IContestCategoriesDataService contestCategoriesData,
-        IUserProviderService userProvider)
+        Business.IUserProviderService userProvider)
     {
         this.contestCategoriesData = contestCategoriesData;
         this.userProvider = userProvider;

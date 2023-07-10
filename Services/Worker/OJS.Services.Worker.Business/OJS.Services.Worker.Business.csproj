@@ -8,6 +8,7 @@
     <ProjectReference Include="..\..\..\Common\OJS.Common\OJS.Common.csproj" />
     <ProjectReference Include="..\..\Common\OJS.Services.Common\OJS.Services.Common.csproj" />
     <ProjectReference Include="..\OJS.Services.Worker.Models\OJS.Services.Worker.Models.csproj" />
+    <ProjectReference Include="..\OJS.Workers\OJS.Workers.Compilers\OJS.Workers.Compilers.csproj" />
   </ItemGroup>
 
   <ItemGroup>

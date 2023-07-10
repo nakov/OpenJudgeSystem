@@ -9,7 +9,6 @@
 
     public class TestsExecutionDetailsServiceModel
         : BaseExecutionDetailsServiceModel,
-            IMapTo<TestsInputModel>,
             IMapExplicitly
     {
         public int? MaxPoints { get; set; }
@@ -35,6 +34,7 @@
                     opt => opt.MapFrom(y => y.CheckerParameter))
                 .ForMember(
                     m => m.TaskSkeleton,
-                    opt => opt.MapFrom<TaskSkeletonValueResolver<TestsExecutionDetailsServiceModel>>());
+                    opt => opt.MapFrom<TaskSkeletonValueResolver<TestsExecutionDetailsServiceModel>>())
+                .ForAllOtherMembers(opt => opt.Ignore());
     }
 }

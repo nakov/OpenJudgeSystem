@@ -29,5 +29,6 @@ public class ExecutionResultServiceModel : IMapExplicitly
                 opt => opt.MapFrom(src => ((src as ExecutionResult<OutputResult>) !).Results.FirstOrDefault()))
             .ForMember(
                 nameof(this.TaskResult),
-                opt => opt.MapFrom(src => src as ExecutionResult<TestResult>));
+                opt => opt.MapFrom(src => src as ExecutionResult<TestResult>))
+            .ForAllOtherMembers(opt => opt.Ignore());
 }

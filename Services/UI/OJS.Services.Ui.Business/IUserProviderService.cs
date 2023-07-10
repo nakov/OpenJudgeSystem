@@ -1,4 +1,4 @@
-namespace OJS.Services.Common;
+namespace OJS.Services.Ui.Business;
 
 using OJS.Services.Common.Models.Users;
 using SoftUni.Services.Infrastructure;

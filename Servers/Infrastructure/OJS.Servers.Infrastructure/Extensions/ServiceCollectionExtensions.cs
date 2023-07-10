@@ -156,6 +156,13 @@ namespace OJS.Servers.Infrastructure.Extensions
             });
         }
 
+        // public static IServiceCollection AddUserProvider(this IServiceCollection services)
+        // {
+        //     services.AddTransient<IUserProviderService>();
+        //
+        //     return services;
+        // }
+
         private static IServiceCollection AddWebServerServices<TStartUp>(this IServiceCollection services)
         {
             services

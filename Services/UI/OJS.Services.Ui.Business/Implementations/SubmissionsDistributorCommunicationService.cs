@@ -1,20 +1,20 @@
-namespace OJS.Services.Common.Implementations
+namespace OJS.Services.Ui.Business.Implementations
 {
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Options;
-    using OJS.Data.Models.Submissions;
-    using OJS.Services.Common.Data;
-    using OJS.Services.Common.Models;
-    using OJS.Services.Common.Models.Configurations;
-    using OJS.Services.Common.Models.Submissions;
-    using OJS.Services.Infrastructure.HttpClients;
-    using SoftUni.Judge.Common.Enumerations;
-    using SoftUni.Judge.Common.Extensions;
-    using SoftUni.Judge.Common.Formatters;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Options;
+    using OJS.Data.Models.Submissions;
+    using OJS.Services.Common.Models;
+    using OJS.Services.Common.Models.Configurations;
+    using OJS.Services.Common.Models.Submissions;
+    using OJS.Services.Infrastructure.HttpClients;
+    using OJS.Services.Ui.Data;
+    using SoftUni.Judge.Common.Enumerations;
+    using SoftUni.Judge.Common.Extensions;
+    using SoftUni.Judge.Common.Formatters;
     using static OJS.Common.GlobalConstants.Urls;
 
     public class SubmissionsDistributorCommunicationService : ISubmissionsDistributorCommunicationService

@@ -7,7 +7,6 @@
 
     public class SimpleExecutionDetailsServiceModel
         : BaseExecutionDetailsServiceModel,
-            IMapTo<SimpleInputModel>,
             IMapExplicitly
     {
         public string? Input { get; set; }

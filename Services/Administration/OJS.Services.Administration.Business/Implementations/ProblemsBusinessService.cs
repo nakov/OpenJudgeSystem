@@ -28,7 +28,7 @@ namespace OJS.Services.Administration.Business.Implementations
         private readonly ITestRunsDataService testRunsData;
         private readonly ISubmissionTypesDataService submissionTypesData;
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
-        private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
+        private readonly Business.ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
         private readonly IContestsBusinessService contestsBusiness;
 
         public ProblemsBusinessService(
@@ -41,7 +41,7 @@ namespace OJS.Services.Administration.Business.Implementations
             ITestRunsDataService testRunsData,
             ISubmissionTypesDataService submissionTypesData,
             IProblemGroupsBusinessService problemGroupsBusiness,
-            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication,
+            Business.ISubmissionsDistributorCommunicationService submissionsDistributorCommunication,
             IContestsBusinessService contestsBusiness)
         {
             this.contestsData = contestsData;

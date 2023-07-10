@@ -9,8 +9,7 @@
     using SoftUni.AutoMapper.Infrastructure.Models;
 
     public abstract class SubmissionBaseRequestModel<TSubmissionRequestModel, TExecutionDetails>
-        : IMapTo<SubmissionServiceModel>,
-        IMapExplicitly
+        : IMapExplicitly
         where TSubmissionRequestModel : SubmissionBaseRequestModel<TSubmissionRequestModel, TExecutionDetails>
     {
         [Required]

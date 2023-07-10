@@ -16,5 +16,7 @@ public class SubmissionFileRequestModel : SubmissionBaseRequestModel<SubmissionF
         => mapping
             .ForMember(
                 m => m.FileContent,
-                opt => opt.MapFrom(src => src.File!.GetBytes()));
+                opt => opt.MapFrom(src => src.File!.GetBytes()))
+            .ForMember(s => s.Code, opt => opt.Ignore())
+            .ForMember(s => s.StartedExecutionOn, opt => opt.Ignore());
 }

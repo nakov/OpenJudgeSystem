@@ -38,6 +38,7 @@
                     opt => opt.MapFrom(typeof(ExecutionTypeValueResolver)))
                 .ForMember(
                     nameof(OjsSubmission<object>.Input),
-                    opt => opt.MapFrom(typeof(SubmissionInputValueResolver)));
+                    opt => opt.MapFrom(typeof(SubmissionInputValueResolver)))
+                .ForAllOtherMembers(opt => opt.Ignore());
     }
 }

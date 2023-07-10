@@ -4,7 +4,7 @@ using AutoMapper;
 using OJS.Workers.ExecutionStrategies.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
-public class TestResultResponseModel : IMapFrom<TestResult>, IMapExplicitly
+public class TestResultResponseModel : IMapExplicitly
 {
     public int Id { get; set; }
 

@@ -1,7 +1,6 @@
 namespace OJS.Services.Ui.Business.Implementations
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Transactions;
@@ -13,7 +12,6 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Problems;
     using OJS.Services.Common;
-    using OJS.Services.Common.Data;
     using OJS.Services.Common.Models;
     using OJS.Services.Infrastructure.Exceptions;
     using OJS.Services.Ui.Data;
