@@ -89,13 +89,13 @@ namespace OJS.Services.Administration.Business.Implementations
             await this.problemGroupsOrderableService.ReevaluateOrder(problemGroups);
 
             // We detach the existing entity, in order to avoid tracking exception on Update.
-            // if (problemGroup != null)
-            // {
-            this.problemGroupsData.Detach(problemGroup);
-          //  }
+            if (problemGroup != null)
+            {
+                this.problemGroupsData.Detach(problemGroup);
+            }
 
             var problems = problemGroups.SelectMany(p => p.Problems)
-                                                            .Where(p => !p.IsDeleted);
+                .Where(p => !p.IsDeleted);
 
             await this.problemsOrderableService.ReevaluateOrder(problems);
         }
