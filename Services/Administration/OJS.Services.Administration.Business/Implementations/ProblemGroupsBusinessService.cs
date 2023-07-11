@@ -15,15 +15,21 @@ namespace OJS.Services.Administration.Business.Implementations
         private readonly IProblemGroupsDataService problemGroupsData;
         private readonly IContestsDataService contestsData;
         private readonly ISubmissionTypesDataService submissionTypesData;
+        private readonly IOrderableService<ProblemGroup> problemGroupsOrderableService;
+        private readonly IOrderableService<Problem> problemsOrderableService;
 
         public ProblemGroupsBusinessService(
             IProblemGroupsDataService problemGroupsData,
             IContestsDataService contestsData,
-            ISubmissionTypesDataService submissionTypesData)
+            ISubmissionTypesDataService submissionTypesData,
+            IOrderableService<Problem> problemsOrderableService,
+            IOrderableService<ProblemGroup> problemGroupsOrderableService)
         {
             this.problemGroupsData = problemGroupsData;
             this.contestsData = contestsData;
             this.submissionTypesData = submissionTypesData;
+            this.problemsOrderableService = problemsOrderableService;
+            this.problemGroupsOrderableService = problemGroupsOrderableService;
         }
 
         public async Task<ServiceResult> DeleteById(int id)
@@ -74,6 +80,24 @@ namespace OJS.Services.Administration.Business.Implementations
                 .ForEachSequential(async pg => await this.CopyProblemGroupToContest(pg, destinationContestId));
 
             return ServiceResult.Success;
+        }
+
+        public async Task ReevaluateProblemsAndProblemGroupsOrder(int contestId, ProblemGroup problemGroup)
+        {
+            var problemGroups = this.problemGroupsData.GetAllByContestId(contestId);
+
+            await this.problemGroupsOrderableService.ReevaluateOrder(problemGroups);
+
+            // We detach the existing entity, in order to avoid tracking exception on Update.
+            if (problemGroup != null)
+            {
+                this.problemGroupsData.Detach(problemGroup);
+            }
+
+            var problems = problemGroups.SelectMany(p => p.Problems)
+                .Where(p => !p.IsDeleted);
+
+            await this.problemsOrderableService.ReevaluateOrder(problems);
         }
 
         private async Task CopyProblemGroupToContest(ProblemGroup problemGroup, int contestId)

@@ -528,6 +528,13 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         await base.BeforeEntitySaveOnEditAsync(originalEntity, newEntity, actionContext);
     }
 
+    protected override async Task AfterEntitySaveAsync(Problem entity, AdminActionContext actionContext)
+    {
+        var contestId = GetContestId(actionContext.EntityDict, entity);
+
+        await this.problemsBusiness.ReevaluateProblemsOrder(contestId, entity);
+    }
+
     protected override async Task BeforeEntitySaveOnDeleteAsync(Problem entity, AdminActionContext actionContext)
     {
         var contest = await this.contestsActivity.GetContestActivity(entity.ProblemGroup.ContestId);

@@ -5,13 +5,16 @@ import { ContestParticipationType } from './constants';
 interface IParticipateInContestTypeUrlParams {
     id: number;
     participationType: ContestParticipationType;
-    problemIndex: number;
 }
 
-interface IContestProblemUrl {
+interface IProblemSubmissionDetailsUrlParams {
+    submissionId: number;
+    hashParam: string;
+}
+
+interface IContestResultsUrl {
     id: number;
     participationType: ContestParticipationType;
-    orderBy: number;
 }
 
-export type { IParticipateInContestTypeUrlParams, IContestProblemUrl };
+export type { IParticipateInContestTypeUrlParams, IProblemSubmissionDetailsUrlParams, IContestResultsUrl };

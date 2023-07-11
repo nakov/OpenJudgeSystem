@@ -95,7 +95,6 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   to={getParticipateInContestUrl({
                       id,
                       participationType: ContestParticipationType.Compete,
-                      problemIndex: 1,
                   })}
                   text="Compete"
                   state={
@@ -110,7 +109,6 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   to={getParticipateInContestUrl({
                       id,
                       participationType: ContestParticipationType.Practice,
-                      problemIndex: 1,
                   })}
                   text="Practice"
                   type={LinkButtonType.secondary}
