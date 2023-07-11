@@ -15,6 +15,8 @@
 
         IQueryable<Submission> GetAll();
 
+        IQueryable<Submission> GetAllWithDeleted();
+
         IQueryable<Submission> GetByIdQuery(int id);
 
         IQueryable<Submission> GetAllByProblem(int problemId);

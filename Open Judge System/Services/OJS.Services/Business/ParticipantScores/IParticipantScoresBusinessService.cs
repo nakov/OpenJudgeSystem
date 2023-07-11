@@ -10,5 +10,7 @@
         void NormalizeAllPointsThatExceedAllowedLimit();
 
         CategoryContestsParticipationSummary GetCategoryParticipationSummary(int categoryId, bool showHidden, bool official);
+
+        ContestParticipationSummary GetContestParticipationSummary(int contestId, bool official = true);
     }
 }

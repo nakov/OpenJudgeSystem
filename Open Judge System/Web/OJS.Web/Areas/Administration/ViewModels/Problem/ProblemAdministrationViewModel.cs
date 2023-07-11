@@ -53,9 +53,9 @@
                     HasAdditionalFiles = problem.AdditionalFiles != null && SqlFunctions.DataLength(problem.AdditionalFiles) > 0,
                     CreatedOn = problem.CreatedOn,
                     ModifiedOn = problem.ModifiedOn,
-                    ProblemSubmissionTypesSkeletons = problem.ProblemSubmissionTypesSkeletons
+                    ProblemSubmissionTypesSkeletons = problem.ProblemSubmissionTypeExecutionDetails
                         .AsQueryable()
-                        .Select(ProblemSubmissionTypesSkeletonViewModel.ViewModel),
+                        .Select(ProblemSubmissionTypeExecutionDetailsViewModel.ViewModel),
                 };
             }
         }
@@ -171,8 +171,8 @@
         public IList<SubmissionTypeViewModel> SubmissionTypes { get; set; } = new List<SubmissionTypeViewModel>();
         
         [ExcludeFromExcel]
-        public IEnumerable<ProblemSubmissionTypesSkeletonViewModel> ProblemSubmissionTypesSkeletons { get; set; } = new 
-        List<ProblemSubmissionTypesSkeletonViewModel>();
+        public IEnumerable<ProblemSubmissionTypeExecutionDetailsViewModel> ProblemSubmissionTypesSkeletons { get; set; } = new 
+        List<ProblemSubmissionTypeExecutionDetailsViewModel>();
 
         [ExcludeFromExcel]
         public IEnumerable<SubmissionTypeViewModel> SelectedSubmissionTypes { get; set; }

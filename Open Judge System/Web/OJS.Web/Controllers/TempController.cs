@@ -75,12 +75,32 @@
             return null;
         }
 
-        public ActionResult RegisterJobForArchivingOldSubmissions()
+        public ActionResult RegisterJobForArchiveOldSubmissionsWithLimit()
         {
             this.backgroundJobs.AddOrUpdateRecurringJob<IArchivedSubmissionsBusinessService>(
-                "ArchiveOldSubmissions",
-                s => s.ArchiveOldSubmissions(null),
-                Cron.Weekly(DayOfWeek.Monday, 1, 30));
+                "ArchiveOldSubmissionsWithLimit",
+                s => s.ArchiveOldSubmissionsWithLimit(null, Settings.ArchiveSingleBatchLimit),
+                Cron.Yearly(1, 1, 2, 30));
+
+            return null;
+        }
+
+        public ActionResult RegisterJobForHardDeleteArchivedByLimit()
+        {
+            this.backgroundJobs.AddOrUpdateRecurringJob<IArchivedSubmissionsBusinessService>(
+                "HardDeleteArchivedByLimit",
+                s => s.HardDeleteArchivedByLimit(null, Settings.ArchiveSingleBatchLimit),
+                Cron.Yearly(1, 1, 2, 30));
+
+            return null;
+        }
+
+        public ActionResult RegisterJobForArchiveOldSubmissionsDailyBatch()
+        {
+            this.backgroundJobs.AddOrUpdateRecurringJob<IArchivedSubmissionsBusinessService>(
+                "ArchiveOldSubmissionsDailyBatch",
+                s => s.ArchiveOldSubmissionsDailyBatch(null, Settings.ArchiveDailyBatchSize, Settings.ArchiveMaxSubBatchSize),
+                Cron.Daily(1, 30));
 
             return null;
         }

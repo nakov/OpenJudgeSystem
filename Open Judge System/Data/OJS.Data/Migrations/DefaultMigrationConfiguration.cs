@@ -21,6 +21,8 @@
 
         protected override void Seed(OjsDbContext context)
         {
+            this.SeedSettings(context);
+
             if (context.Roles.Any())
             {
                 return;
@@ -1017,6 +1019,22 @@
                     EndTime = DateTime.Now.AddHours(18),
                     Category = category,
                 });
+        }
+
+        private void SeedSettings(OjsDbContext context)
+        {
+            if (context.Settings.Any(s => s.Name == GlobalConstants.MaximumFileSizeDbName))
+            {
+                return;
+            }
+
+            context.Settings.Add(new Setting
+            {
+                Name = GlobalConstants.MaximumFileSizeDbName,
+                Value = GlobalConstants.OneMegaByteInBytes.ToString()
+            });
+
+            context.SaveChanges();
         }
     }
 }

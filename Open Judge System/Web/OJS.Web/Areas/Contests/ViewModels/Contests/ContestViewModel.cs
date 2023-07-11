@@ -136,7 +136,7 @@
         {
             get
             {
-                if (!this.IsVisible)
+                if (!this.Visible)
                 {
                     return false;
                 }
@@ -166,7 +166,7 @@
         {
             get
             {
-                if (!this.IsVisible)
+                if (!this.Visible)
                 {
                     return false;
                 }

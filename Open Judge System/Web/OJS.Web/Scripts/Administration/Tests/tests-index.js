@@ -153,29 +153,29 @@ function initializeGrid(problemId, contestId) {
             scrollable: false,
             toolbar: [{
                 template: '<a href="/Administration/Tests/Create/' + problemId +
-                '" class="btn btn-sm btn-primary">Добавяне</a>' +
+                '" class="btn btn-sm btn-primary">Create</a>' +
                 ' <a href="/Administration/Tests/DeleteAll/' + problemId +
-                '" class="btn btn-sm btn-primary">Изтриване на всички</a>' +
+                '" class="btn btn-sm btn-primary">Delete all</a>' +
                 ' <a href="/Administration/Problems/Contest/' + contestId +
-                '" class="btn btn-sm btn-primary">Към задачите</a>' +
+                '" class="btn btn-sm btn-primary">Problems</a>' +
                 ' <a href="/Administration/Tests/ExportToExcel?id=' + problemId +
-                '" id="export" class="btn btn-sm btn-primary"><span></span>Експорт към Excel</a>' +
+                '" id="export" class="btn btn-sm btn-primary"><span></span>Export as excel</a>' +
                 ' <a href="/Administration/Tests/Export/' + problemId +
-                '" class="btn btn-sm btn-primary" id="exportFile">Експортиране към ZIP файл</a>' +
+                '" class="btn btn-sm btn-primary" id="exportFile">Export as zip</a>' +
                 ' <a href="/Contests/Practice/Index/' + contestId +
-                '" class="btn btn-sm btn-primary">Изпрати решение/я</a>'
+                '" class="btn btn-sm btn-primary">Submit solution/s</a>'
             }],
             columns: [
-                { field: 'Input', title: 'Вход' },
-                { field: 'Output', title: 'Изход' },
-                { field: 'TypeName', title: 'Вид тест', template: '#= getTestTypeString(Type) #', sortable: false },
-                { field: 'OrderBy', title: 'Подредба' },
-                { field: 'TestRunsCount', title: 'Изпълнения' },
+                { field: 'Input', title: 'Input' },
+                { field: 'Output', title: 'Output' },
+                { field: 'TypeName', title: 'Test type', template: '#= getTestTypeString(Type) #', sortable: false },
+                { field: 'OrderBy', title: 'Order by' },
+                { field: 'TestRunsCount', title: 'Test runs count' },
                 {
                     title: 'Операции', width: '25%', template: '<a href="/Administration/Tests/Details/#= Id #" ' +
-                        'class="btn btn-sm btn-primary">Детайли</a>&nbsp;' +
-                        '<a href="/Administration/Tests/Edit/#= Id #" class="btn btn-sm btn-primary">Промяна</a>&nbsp;' +
-                        '<a href="/Administration/Tests/Delete/#= Id #" class="btn btn-sm btn-primary">Изтриване</a>'
+                        'class="btn btn-sm btn-primary">Details</a>&nbsp;' +
+                        '<a href="/Administration/Tests/Edit/#= Id #" class="btn btn-sm btn-primary">Edit</a>&nbsp;' +
+                        '<a href="/Administration/Tests/Delete/#= Id #" class="btn btn-sm btn-primary">Delete</a>'
                 }
             ],
             sortable: true

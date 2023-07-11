@@ -69,10 +69,12 @@
 
         public const int DefaultProblemGroupsCountForOnlineContest = 2;
 
-        public const int BatchOperationsChunkSize = 3000;
+        public const int BatchOperationsChunkSize = 1000;
+        public const int BulkInsertTimeoutInSeconds = 300;
 
         public const int BestSubmissionEligibleForArchiveAgeInYears = 2;
         public const int NonBestSubmissionEligibleForArchiveAgeInYears = 1;
+        public const int OneMegaByteInBytes = 1 * 1024 * 1024;
 
         // File extensions
         public const string TxtFileExtension = ".txt";
@@ -125,5 +127,10 @@
 
         // Date and time formats
         public const string DefaultDateTimeFormatString = "{0:dd/MM/yyyy HH:mm}";
+        
+        // Settings DB name constants
+        public const string MaximumFileSizeDbName = "Maximum_Resource_File_Size";
+
+        public static readonly string[] ParticipationStatisticsFileSubmissionsAllowedExtensions = { ".java", ".cs", ".py", ".js", ".cpp", ".h" };
     }
 }

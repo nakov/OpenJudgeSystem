@@ -6,17 +6,16 @@
     using System.Data.Entity;
     using System.Globalization;
     using System.Linq;
-    using System.Text;
     using System.Web.Mvc;
-
     using Kendo.Mvc.UI;
-
     using OJS.Common;
     using OJS.Common.Models;
     using OJS.Data;
     using OJS.Data.Models;
     using OJS.Services.Business.Contests;
+    using OJS.Services.Business.Contests.Models;
     using OJS.Services.Business.Participants;
+    using OJS.Services.Cache;
     using OJS.Services.Data.ContestCategories;
     using OJS.Services.Data.Contests;
     using OJS.Services.Data.Ips;
@@ -26,7 +25,6 @@
     using OJS.Web.Areas.Contests.Models;
     using OJS.Web.Common.Extensions;
     using OJS.Web.ViewModels.Common;
-
     using ChangeTimeResource = Resources.Areas.Administration.Contests.Views.ChangeTime;
     using GeneralResource = Resources.Areas.Administration.AdministrationGeneral;
     using Resource = Resources.Areas.Administration.Contests.ContestsControllers;
@@ -43,6 +41,7 @@
         private readonly IIpsDataService ipsData;
         private readonly IContestsBusinessService contestsBusiness;
         private readonly IParticipantsBusinessService participantsBusiness;
+        private readonly ICacheItemsProviderService cacheItemsProvider;
 
         public ContestsController(
             IOjsData data,
@@ -51,7 +50,8 @@
             IParticipantsDataService participantsData,
             IIpsDataService ipsData,
             IContestsBusinessService contestsBusiness,
-            IParticipantsBusinessService participantsBusiness)
+            IParticipantsBusinessService participantsBusiness,
+            ICacheItemsProviderService cacheItemsProvider)
                 : base(data)
         {
             this.contestsData = contestsData;
@@ -60,6 +60,7 @@
             this.ipsData = ipsData;
             this.contestsBusiness = contestsBusiness;
             this.participantsBusiness = participantsBusiness;
+            this.cacheItemsProvider = cacheItemsProvider;
         }
 
         public override IEnumerable GetData()
@@ -96,6 +97,7 @@
             this.PrepareViewBagData();
 
             var viewModel = new ViewModelType();
+            viewModel.EnsureValidAuthorSubmisions = true;
 
             if (categoryId.HasValue)
             {
@@ -136,6 +138,7 @@
 
             this.contestsData.Add(contest);
 
+            this.cacheItemsProvider.ClearContests();
             this.TempData.Add(GlobalConstants.InfoMessage, Resource.Contest_added);
             return this.RedirectToAction<ContestsController>(c => c.Index());
         }
@@ -148,8 +151,8 @@
                 return this.RedirectToContestsAdminPanelWithNoPrivilegesMessage();
             }
 
-            var contest = this.contestsData
-                .GetByIdQuery(id)
+            var contestModel = this.contestsData.GetByIdQuery(id);
+            var contest = contestModel
                 .Select(ContestAdministrationViewModel.ViewModel)
                 .FirstOrDefault();
 
@@ -157,6 +160,19 @@
             {
                 this.TempData.Add(GlobalConstants.DangerMessage, Resource.Contest_not_found);
                 return this.RedirectToAction<ContestsController>(c => c.Index());
+            }
+
+            if (contest.EnsureValidAuthorSubmisions)
+            {
+                var submissionTypesForProblem = this.contestsData.GetSumbissionTypesForProblemsWithCurrentAuthorSolution(contest.Id.Value);
+                var typesWithoutAuthorSolutions = submissionTypesForProblem.Where(stp => stp.HasAuthorSubmission == false);
+                if (typesWithoutAuthorSolutions.Any())
+                {
+                    var text = "Missing currently passing Author submissions on: <br>" + string.Join("<br>", typesWithoutAuthorSolutions.Select(stp => $"Problem Name: {stp.ProblemName}, SubmissionType: {stp.SubmissionTypeName}"));
+                    this.TempData.AddDangerMessage(text);
+                    var systemMessages = this.PrepareSystemMessages();
+                    this.ViewBag.SystemMessages = systemMessages;
+                }
             }
 
             this.PrepareViewBagData(contest.Id);
@@ -217,6 +233,7 @@
             this.AddIpsToContest(contest, model.AllowedIps);
 
             this.contestsData.Update(contest);
+            this.cacheItemsProvider.ClearContests();
 
             this.InvalidateParticipants(originalContestPassword, originalPracticePassword, contest);
 
@@ -225,7 +242,7 @@
         }
 
         [HttpPost]
-        public ActionResult Destroy([DataSourceRequest]DataSourceRequest request, ContestAdministrationViewModel model)
+        public ActionResult Destroy([DataSourceRequest] DataSourceRequest request, ContestAdministrationViewModel model)
         {
             if (model.Id == null || !this.CheckIfUserHasContestPermissions(model.Id.Value))
             {
@@ -240,10 +257,12 @@
             }
 
             this.contestsBusiness.DeleteById(model.Id.Value);
+
+            this.cacheItemsProvider.ClearContests();
             return this.GridOperation(request, model);
         }
 
-        public ActionResult GetFutureContests([DataSourceRequest]DataSourceRequest request)
+        public ActionResult GetFutureContests([DataSourceRequest] DataSourceRequest request)
         {
             var futureContests = this.contestsData
                 .GetAllUpcoming()
@@ -259,7 +278,7 @@
             return this.PartialView(GlobalConstants.QuickContestsGrid, futureContests);
         }
 
-        public ActionResult GetActiveContests([DataSourceRequest]DataSourceRequest request)
+        public ActionResult GetActiveContests([DataSourceRequest] DataSourceRequest request)
         {
             var activeContests = this.contestsData
                 .GetAllActive()
@@ -275,7 +294,7 @@
             return this.PartialView(GlobalConstants.QuickContestsGrid, activeContests);
         }
 
-        public ActionResult GetLatestContests([DataSourceRequest]DataSourceRequest request)
+        public ActionResult GetLatestContests([DataSourceRequest] DataSourceRequest request)
         {
             var latestContests = this.contestsData
                 .GetAllVisible()
@@ -519,6 +538,73 @@
             return this.Redirect(returnUrl);
         }
 
+        [HttpGet]
+        public ActionResult CalculateContestLoad(int categoryId, int currentContestId)
+        {
+            if (!this.CheckIfUserHasContestPermissions(currentContestId))
+            {
+                return this.RedirectToContestsAdminPanelWithNoPrivilegesMessage();
+            }
+
+            var contests = this.contestsData
+                .GetAll()
+                .Where(c => c.CategoryId == categoryId && c.StartTime.HasValue && c.EndTime.HasValue)
+                .OrderByDescending(x => x.StartTime.Value)
+                .ToList();
+
+            var model = new ContestLoadCalculationViewModel();
+            foreach (var contest in contests)
+            {
+                if (contest.Id == currentContestId)
+                {
+                    model.ExamLengthInHours = (contest.EndTime.Value - contest.StartTime.Value).Hours;
+                    model.ExpectedExamProblemsCount = contest.ProblemGroups.Count();
+                    model.ExpectedStudentsCount = contest.Participants.Count();
+                    model.ContestName = contest.Name;
+                    model.CurrentContestId = contest.Id;
+
+                    model.AverageProblemRunTimeInSeconds = 
+                        this.contestsBusiness.GetContestSubmissionsAverageRunTimeSeconds(contest);
+                }
+                else
+                {
+                    model.ContestsDropdownData.Add(new PreviousContestLoadData(contest));
+                }
+            }
+
+            if (model.ContestsDropdownData.Any())
+            {
+                model.PreviousContestId = model.ContestsDropdownData.First().Id;
+            }
+
+            return this.View(model);
+        }
+
+        [HttpPost]
+        public ActionResult CalculateContestLoad(ContestLoadCalculationViewModel model)
+        {
+            if (!this.CheckIfUserHasContestPermissions(model.CurrentContestId))
+            {
+                return this.RedirectToContestsAdminPanelWithNoPrivilegesMessage();
+            }
+
+            if (model.PreviousContestId != null)
+            {
+                var contest = this.contestsData.GetById(model.PreviousContestId.Value);
+                model.PreviousContestSubmissions = this.GetOfficialSubmissionsByContest(contest.Id);
+                model.PreviousContestExpectedProblems = contest.ProblemGroups.SelectMany(x => x.Problems).Count();
+                model.PreviousContestParticipants = contest.Participants
+                    .Where(x => x.IsOfficial == true)
+                    .Count();
+                model.PreviousAverageProblemRunTimeInSeconds = 
+                    this.contestsBusiness.GetContestSubmissionsAverageRunTimeSeconds(contest);
+            }
+
+            var calculatedLoad = this.contestsBusiness.CalculateLoadForContest(model);
+
+            return this.Json(calculatedLoad);
+        }
+
         private void PrepareViewBagData(int? contestId = null)
         {
             this.ViewBag.TypeData = DropdownViewModel.GetEnumValues<ContestType>();
@@ -656,6 +742,14 @@
             var message = string.Format(formatString, minutesForDisplay, username, contestName);
 
             return message;
+        }
+
+        private int GetOfficialSubmissionsByContest(int id)
+        {
+            var participants = this.participantsData
+               .GetAllByContestAndIsOfficial(id, true);
+
+            return participants.SelectMany(p => p.Submissions).Count();
         }
     }
 }

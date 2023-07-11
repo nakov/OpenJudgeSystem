@@ -160,7 +160,8 @@
 
             if (languageCookie == null)
             {
-                return;
+                languageCookie = new HttpCookie(GlobalConstants.LanguageCookieName, GlobalConstants.EnglishCultureCookieValue);
+                requestContext.HttpContext.Response.AppendCookie(languageCookie);
             }
 
             switch (languageCookie.Value)
@@ -171,7 +172,7 @@
             }
         }
 
-        private SystemMessageCollection PrepareSystemMessages()
+        protected SystemMessageCollection PrepareSystemMessages()
         {
             // Warning: always escape data to prevent XSS
             var messages = new SystemMessageCollection();
