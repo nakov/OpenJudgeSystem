@@ -1,4 +1,5 @@
 @use 'src/styles/colors';
+@use 'src/styles/fonts';
 
 .buttons {
   display: flex;
@@ -6,20 +7,14 @@
   justify-content: center;
 }
 
-.bolded {
-  font-weight: bold;
-}
-
-.italicized {
-  font-style: italic;
-}
-
 .modal {
   background-color: colors.$white-color;
+  border-style: solid;
+  border-width: thin;
   display: flex;
   flex-direction: column;
   height: 50%;
-  justify-content: space-around;
+  justify-content: space-evenly;
   left: 50%;
   overflow: auto;
   position: absolute;
@@ -31,4 +26,20 @@
 .modalHeading {
   align-self: stretch;
   background-color: colors.$light-blue-color;
+}
+
+.text {
+  @extend %font-family-lato;
+
+  color: colors.$text-dark-gray-color;
+  display: inline-block;
+  padding: 15px;
+
+  .bolded {
+    font-weight: bold;
+  }
+
+  .italicized {
+    font-style: italic;
+  }
 }
