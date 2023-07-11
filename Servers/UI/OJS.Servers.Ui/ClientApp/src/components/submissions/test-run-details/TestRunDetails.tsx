@@ -26,7 +26,8 @@ const getResultIsWrongAnswerResultType = (run: ITestRunDetailsType) => toLowerCa
 const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
     const { state: { user } } = useAuth();
     const initialIsCollapsed = testRun.isTrialTest && getResultIsWrongAnswerResultType(testRun);
-    const [ isCollapsed, setIsCollapsed ] = useState<boolean>(initialIsCollapsed);
+    const [ isTestRunDetailCollapsed, setIsTestRunDetailCollapsed ] = useState<boolean>(initialIsCollapsed);
+    const [ isTestInputCollapsed, setIsTestInputCollapsed ] = useState<boolean>(false);
 
     const testRunHeadingClass = 'testRunHeading';
     const testRunHeadingClassName = useMemo(
@@ -76,84 +77,106 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         [ testRun ],
     );
 
-    const renderTestRunData = useCallback(() => (
-        <span className={styles.testRunData}>
-            <span className={styles.testRunDataParagraph}>
-                <TimeLimitIcon
-                  size={IconSize.Medium}
-                />
-                <span>
-                    {testRun.timeUsed}
-                    s.
-                </span>
-            </span>
-            <span className={styles.testRunDataParagraph}>
-                <MemoryIcon
-                  size={IconSize.Medium}
-                />
-                <span>
-                    {testRun.memoryUsed}
-                </span>
-            </span>
-            <span className={styles.testRunDataParagraph}>
-                {renderResultTypeLabel()}
-            </span>
-        </span>
-    ), [ testRun, renderResultTypeLabel ]);
+    const handleCollapsibleTestInput = useCallback((collapsed: boolean) => {
+        setIsTestInputCollapsed(collapsed);
+    }, []);
 
-    const renderHeader = useCallback(
-        () => (
-            <>
+    const executionComment = useMemo(
+        () => testRun.showInput
+            ? <span className={styles.executionComment}>{testRun.executionComment}</span>
+            : null,
+        [ testRun ],
+    );
+
+    const renderCollapsibleTestInput = useCallback(() => (
+        <span className={styles.testRunDetailsCollapsible}>
+            <ExpandButton
+              collapsedText="Show input"
+              expandedText="Hide input"
+              expanded={isTestInputCollapsed}
+              onExpandChanged={handleCollapsibleTestInput}
+              className="testRunDetailsExpandBtn"
+            />
+            <br />
+            <Collapsible collapsed={isTestInputCollapsed}>
+                {testRun.input}
+            </Collapsible>
+        </span>
+    ), [ handleCollapsibleTestInput, isTestInputCollapsed, testRun ]);
+
+    const renderTestRunData = useCallback(() => (
+        <div className={styles.testRunContainer}>
+            <span className={styles.testRunData}>
                 <Heading
                   type={HeadingType.small}
                   className={testRunHeadingClassName}
                 >
                     { testRunHeadingText }
                 </Heading>
-                { renderTestRunData() }
-            </>
-        ),
-        [
-            testRunHeadingClassName,
-            testRunHeadingText,
-            renderTestRunData,
-        ],
-    );
+                <span className={styles.testRunDataParagraph}>
+                    <TimeLimitIcon
+                      size={IconSize.Medium}
+                    />
+                    <span>
+                        {testRun.timeUsed}
+                        s.
+                    </span>
+                </span>
+                <span className={styles.testRunDataParagraph}>
+                    <MemoryIcon
+                      size={IconSize.Medium}
+                    />
+                    <span>
+                        {testRun.memoryUsed}
+                    </span>
+                </span>
+                {testRun.showInput
+                    ? renderCollapsibleTestInput()
+                    : null}
+                <span className={styles.testRunDataParagraph}>
+                    {renderResultTypeLabel()}
+                </span>
+            </span>
+            {executionComment}
+        </div>
+    ), [ testRun, renderResultTypeLabel, renderCollapsibleTestInput, executionComment, testRunHeadingClassName, testRunHeadingText ]);
 
-    const handleToggleCollapsible = useCallback((collapsed: boolean) => {
-        setIsCollapsed(collapsed);
+    const handleTestRunDetailsToggleCollapsible = useCallback((collapsed: boolean) => {
+        setIsTestRunDetailCollapsed(collapsed);
     }, []);
 
-    const renderCollapsible = useCallback(() => (
-        <>
+    const renderTestRunDetailsCollapsible = useCallback(() => (
+        <span className={styles.testRunDetailsCollapsible}>
             <span className={styles.collapsibleHeader}>
-                {renderHeader()}
-                <ExpandButton
-                  collapsedText="Details"
-                  expandedText="Hide"
-                  expanded={isCollapsed}
-                  onExpandChanged={handleToggleCollapsible}
-                  className="testRunDetailsExpandBtn"
-                />
+                {renderTestRunData()}
+                <div className={styles.detailsCollapsibleButton}>
+                    <ExpandButton
+                      collapsedText="Details"
+                      expandedText="Hide"
+                      expanded={isTestRunDetailCollapsed}
+                      onExpandChanged={handleTestRunDetailsToggleCollapsible}
+                      className="testRunDetailsExpandBtn"
+                    />
+                </div>
             </span>
-            <Collapsible collapsed={isCollapsed}>
+            <Collapsible collapsed={isTestRunDetailCollapsed}>
                 <TestRunDiffView testRun={testRun} />
             </Collapsible>
-        </>
-    ), [ renderHeader, handleToggleCollapsible, isCollapsed, testRun ]);
+        </span>
+    ), [ renderTestRunData, handleTestRunDetailsToggleCollapsible, isTestRunDetailCollapsed, testRun ]);
 
     const render = useCallback(() => {
         if (getResultIsWrongAnswerResultType(testRun) &&
             (user.permissions.canAccessAdministration || testRun.isTrialTest) &&
             isOutputDiffAvailable) {
-            return renderCollapsible();
+            return renderTestRunDetailsCollapsible();
         }
 
-        return renderHeader();
+        return renderTestRunData();
     }, [
-        renderHeader,
+        renderTestRunData,
         isOutputDiffAvailable,
-        renderCollapsible,
+        renderTestRunDetailsCollapsible,
         testRun,
         user.permissions.canAccessAdministration,
     ]);
