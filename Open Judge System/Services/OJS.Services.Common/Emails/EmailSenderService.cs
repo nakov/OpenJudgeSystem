@@ -46,7 +46,16 @@
             AttachmentCollection attachments = null)
         {
             var message = this.PrepareMessage(recipient, subject, body, bccRecipients, attachments);
-            this.mailClient.Send(message);
+            try
+            {
+                this.mailClient.Send(message);
+
+            }
+            catch (Exception)
+            {
+                //TODO log error
+                return ;
+            }
         }
 
         public async Task SendEmailAsync(
@@ -56,7 +65,17 @@
             IEnumerable<string> bccRecipients = null)
         {
             var message = this.PrepareMessage(recipient, subject, body, bccRecipients, null);
-            await this.mailClient.SendMailAsync(message);
+
+            try
+            {
+                await this.mailClient.SendMailAsync(message);
+
+            }
+            catch (Exception)
+            {
+                //TODO log error
+                return;
+            }
         }
 
         public void Dispose()
