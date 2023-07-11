@@ -285,7 +285,7 @@
             var problems = this.Data.Problems.All()
                 .Include(p => p.Tests)
                 .Where(
-                    p => p.ProblemSubmissionTypesSkeletons.Any(
+                    p => p.ProblemSubmissionTypeExecutionDetails.Any(
                         st => MySqlStrategiesHelper.ExecutionStrategyTypesForOptimization
                             .Any(x => x == st.SubmissionType.ExecutionStrategyType)))
                 .ToList();
@@ -293,7 +293,7 @@
             foreach (var problem in problems)
             {
                 var skeletons = problem
-                    .ProblemSubmissionTypesSkeletons
+                    .ProblemSubmissionTypeExecutionDetails
                     .Where(
                         pst => MySqlStrategiesHelper
                             .ExecutionStrategyTypesForOptimization
