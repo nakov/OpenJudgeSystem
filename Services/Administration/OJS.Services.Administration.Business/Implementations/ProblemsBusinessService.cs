@@ -202,7 +202,10 @@ namespace OJS.Services.Administration.Business.Implementations
                                                     .Any(p => p.Id == problem.Id))?.Problems
                                                     .Where(p => !p.IsDeleted);
 
-                await this.problemsOrderableService.ReevaluateOrder(problems!);
+                if (problems != null)
+                {
+                    await this.problemsOrderableService.ReevaluateOrder(problems);
+                }
             }
         }
 
