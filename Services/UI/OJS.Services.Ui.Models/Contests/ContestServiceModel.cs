@@ -203,7 +203,8 @@ public class ContestServiceModel : IMapExplicitly
                 opt => opt.MapFrom(s =>
                     s.ProblemGroups
                         .SelectMany(pg => pg.Problems)
-                        .OrderBy(p => p.OrderBy)))
+                        .OrderBy(p => p.ProblemGroup.OrderBy)
+                        .ThenBy(p => p.OrderBy)))
             .ForMember(d => d.ParentCategories, opt => opt.Ignore())
             .ForMember(d => d.UserIsAdminOrLecturerInContest, opt => opt.Ignore())
             .ForMember(d => d.UserCanCompete, opt => opt.Ignore())
