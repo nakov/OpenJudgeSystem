@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 using Common;
 using OJS.Common;
 using OJS.Common.Helpers;
-using OJS.Data.Models.Problems;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
@@ -23,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 using OJS.Services.Ui.Models.Contests;
 
 using static Constants.PublicSubmissions;
