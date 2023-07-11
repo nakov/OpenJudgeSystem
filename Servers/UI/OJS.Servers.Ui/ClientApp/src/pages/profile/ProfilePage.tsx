@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 
 import Heading from '../../components/guidelines/headings/Heading';
-import Tabs from '../../components/guidelines/tabs/Tabs';
 import ProfileAboutInfo from '../../components/profile/profile-about-info/ProfileAboutInfo';
-import ProfileContestParticipations
-    from '../../components/profile/profile-contest-participations/ProfileContestParticipations';
-import ProfileSubmissions from '../../components/profile/profile-submissions/ProfileSubmisssions';
 import { useUsers } from '../../hooks/use-users';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
+// import Tabs from '../../components/guidelines/tabs/Tabs';
+// import ProfileContestParticipations
+//     from '../../components/profile/profile-contest-participations/ProfileContestParticipations';
+// import ProfileSubmissions from '../../components/profile/profile-submissions/ProfileSubmisssions'
 
 const ProfilePage = () => {
     const { profile, getProfile } = useUsers();
@@ -22,10 +22,10 @@ const ProfilePage = () => {
         <>
             <Heading>Profile</Heading>
             <ProfileAboutInfo value={profile} />
-            <Tabs
-              labels={[ 'Submissions', 'Contest Participations' ]}
-              contents={[ <ProfileSubmissions />, <ProfileContestParticipations /> ]}
-            />
+            {/* <Tabs */}
+            {/*    labels={['Submissions', 'Contest Participations']} */}
+            {/*    contents={[<ProfileSubmissions/>, <ProfileContestParticipations/>]} */}
+            {/* /> */}
         </>
     );
 };
