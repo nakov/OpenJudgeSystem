@@ -38,6 +38,6 @@
                 .ForMember(d => d.IsTrialTest, opt => opt.MapFrom(s => s.Test.IsTrialTest))
                 .ForMember(d => d.Input, opt => opt.MapFrom(s => s.Test.InputDataAsString))
                 .ForMember(d => d.OrderBy, opt => opt.MapFrom(s => s.Test.OrderBy))
-                .ForAllOtherMembers(x => x.Ignore());
+                .ForMember(d => d.ShowInput, opt => opt.Ignore());
     }
 }

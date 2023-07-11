@@ -116,6 +116,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 if ((bool)!x.IsTrialTest!)
                 {
                     x.ShowInput = false;
+                    x.Input = string.Empty;
+                    x.ExecutionComment = string.Empty;
                 }
 
                 return x;

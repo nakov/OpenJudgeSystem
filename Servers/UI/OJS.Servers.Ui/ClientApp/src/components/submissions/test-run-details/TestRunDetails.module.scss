@@ -2,6 +2,21 @@
 @use 'src/styles/fonts';
 @use 'src/styles/variables';
 
+.detailsCollapsibleButton {
+  margin-top: -60px;
+}
+
+.executionComment {
+  @extend %font-family-lato;
+  padding-top: 30px;
+}
+
+.testRunContainer {
+  display: flex;
+  flex-direction: column;
+  align-content: space-around;
+}
+
 .testRun {
   @extend %font-family-lato;
 
@@ -25,10 +40,12 @@
 }
 
 .testRunDetailsCollapsible {
+  @extend %font-family-lato;
   margin-top: -10px;
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  width: 150px;
+  flex-grow: 1;
 }
 
 .wrongTestRunHeading {

@@ -3,7 +3,7 @@
   transition: max-height 0.55s ease-out;
 
   &.visible {
-    max-height: 100px;
+    max-height: max-content;
   }
 
   &.hidden {

@@ -81,6 +81,13 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         setIsTestInputCollapsed(collapsed);
     }, []);
 
+    const executionComment = useMemo(
+        () => testRun.showInput
+            ? <span className={styles.executionComment}>{testRun.executionComment}</span>
+            : null,
+        [ testRun ],
+    );
+
     const renderCollapsibleTestInput = useCallback(() => (
         <span className={styles.testRunDetailsCollapsible}>
             <ExpandButton
@@ -90,6 +97,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
               onExpandChanged={handleCollapsibleTestInput}
               className="testRunDetailsExpandBtn"
             />
+            <br />
             <Collapsible collapsed={isTestInputCollapsed}>
                 {testRun.input}
             </Collapsible>
@@ -97,73 +105,65 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
     ), [ handleCollapsibleTestInput, isTestInputCollapsed, testRun ]);
 
     const renderTestRunData = useCallback(() => (
-        <span className={styles.testRunData}>
-            <span className={styles.testRunDataParagraph}>
-                <TimeLimitIcon
-                  size={IconSize.Medium}
-                />
-                <span>
-                    {testRun.timeUsed}
-                    s.
-                </span>
-            </span>
-            <span className={styles.testRunDataParagraph}>
-                <MemoryIcon
-                  size={IconSize.Medium}
-                />
-                <span>
-                    {testRun.memoryUsed}
-                </span>
-            </span>
-            {testRun.showInput
-                ? renderCollapsibleTestInput()
-                : null}
-            <span className={styles.testRunDataParagraph}>
-                {renderResultTypeLabel()}
-            </span>
-        </span>
-    ), [ testRun, renderResultTypeLabel, renderCollapsibleTestInput ]);
-
-    const renderHeader = useCallback(
-        () => (
-            <>
+        <div className={styles.testRunContainer}>
+            <span className={styles.testRunData}>
                 <Heading
                   type={HeadingType.small}
                   className={testRunHeadingClassName}
                 >
                     { testRunHeadingText }
                 </Heading>
-                { renderTestRunData() }
-            </>
-        ),
-        [
-            testRunHeadingClassName,
-            testRunHeadingText,
-            renderTestRunData,
-        ],
-    );
+                <span className={styles.testRunDataParagraph}>
+                    <TimeLimitIcon
+                      size={IconSize.Medium}
+                    />
+                    <span>
+                        {testRun.timeUsed}
+                        s.
+                    </span>
+                </span>
+                <span className={styles.testRunDataParagraph}>
+                    <MemoryIcon
+                      size={IconSize.Medium}
+                    />
+                    <span>
+                        {testRun.memoryUsed}
+                    </span>
+                </span>
+                {testRun.showInput
+                    ? renderCollapsibleTestInput()
+                    : null}
+                <span className={styles.testRunDataParagraph}>
+                    {renderResultTypeLabel()}
+                </span>
+            </span>
+            {executionComment}
+        </div>
+    ), [ testRun, renderResultTypeLabel, renderCollapsibleTestInput, executionComment, testRunHeadingClassName, testRunHeadingText ]);
 
     const handleTestRunDetailsToggleCollapsible = useCallback((collapsed: boolean) => {
         setIsTestRunDetailCollapsed(collapsed);
     }, []);
 
     const renderTestRunDetailsCollapsible = useCallback(() => (
-        <>
+        <span className={styles.testRunDetailsCollapsible}>
             <span className={styles.collapsibleHeader}>
-                {renderHeader()}
-                <ExpandButton
-                  collapsedText="Details"
-                  expandedText="Hide"
-                  expanded={isTestRunDetailCollapsed}
-                  onExpandChanged={handleTestRunDetailsToggleCollapsible}
-                  className="testRunDetailsExpandBtn"
-                />
+                {renderTestRunData()}
+                <div className={styles.detailsCollapsibleButton}>
+                    <ExpandButton
+                      collapsedText="Details"
+                      expandedText="Hide"
+                      expanded={isTestRunDetailCollapsed}
+                      onExpandChanged={handleTestRunDetailsToggleCollapsible}
+                      className="testRunDetailsExpandBtn"
+                    />
+                </div>
             </span>
             <Collapsible collapsed={isTestRunDetailCollapsed}>
                 <TestRunDiffView testRun={testRun} />
             </Collapsible>
-        </>
-    ), [ renderHeader, handleTestRunDetailsToggleCollapsible, isTestRunDetailCollapsed, testRun ]);
+        </span>
+    ), [ renderTestRunData, handleTestRunDetailsToggleCollapsible, isTestRunDetailCollapsed, testRun ]);
 
     const render = useCallback(() => {
         if (getResultIsWrongAnswerResultType(testRun) &&
@@ -172,9 +172,9 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
             return renderTestRunDetailsCollapsible();
         }
 
-        return renderHeader();
+        return renderTestRunData();
     }, [
-        renderHeader,
+        renderTestRunData,
         isOutputDiffAvailable,
         renderTestRunDetailsCollapsible,
         testRun,
