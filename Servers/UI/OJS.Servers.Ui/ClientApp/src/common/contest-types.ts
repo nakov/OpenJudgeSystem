@@ -11,6 +11,7 @@ enum SortType {
     Name = 'Name',
     StartDate = 'StartDate',
     EndDate = 'EndDate',
+    OrderBy = 'OrderBy',
 }
 
 type FilterSortType = FilterType | SortType;

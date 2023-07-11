@@ -58,7 +58,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             : this.GetAllVisibleQuery();
 
         contests = this.FilterByStatus(contests, model.Statuses.ToList());
-        contests = Sort(contests, model.SortType);
+        contests = Sort(contests, model.SortType, model.CategoryIds.Count());
 
         if (model.SubmissionTypeIds.Any())
         {
@@ -167,32 +167,61 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
                 c.Id == id &&
                 c.ExamGroups.Any(eg => eg.UsersInExamGroups.Any(u => u.UserId == userId)));
 
+    // After removing the sorting menu for the user, we are using OrderBy as default sorting value
+    //Logic for Name, StartDate and EndDate is not used anymore therefore it is commented out
     private static IQueryable<Contest> Sort(
         IQueryable<Contest> contests,
-        ContestSortType? sorting)
+        ContestSortType? sorting,
+        int categoriesCount)
     {
-        if (sorting == ContestSortType.StartDate)
-        {
-            return contests
-                .OrderBy(c => c.StartTime)
-                .ThenBy(c => c.PracticeStartTime)
-                .ThenBy(c => c.Name);
-        }
+        // if (sorting == ContestSortType.StartDate)
+        // {
+        //     return contests
+        //         .OrderBy(c => c.StartTime)
+        //         .ThenBy(c => c.PracticeStartTime)
+        //         .ThenBy(c => c.Name);
+        // }
+        //
+        // if (sorting == ContestSortType.EndDate)
+        // {
+        //     return contests
+        //         .OrderBy(c => c.EndTime)
+        //         .ThenBy(c => c.PracticeEndTime)
+        //         .ThenBy(c => c.Name);
+        // }
+        //
+        // if (sorting == ContestSortType.Name)
+        // {
+        //     return contests
+        //         .OrderBy(c => c.Name)
+        //         .ThenBy(c => c.StartTime)
+        //         .ThenBy(c => c.PracticeStartTime);
+        // }
 
-        if (sorting == ContestSortType.EndDate)
-        {
-            return contests
-                .OrderBy(c => c.EndTime)
-                .ThenBy(c => c.PracticeEndTime)
-                .ThenBy(c => c.Name);
-        }
+        // By checking the number of categories we can determine if the contest is a parent or a child contest
+        //based on this we display the contests differently
+        // 0 categories - main contest page display the contest which have the LEAST time left
+        // 1 category - child contest and we order the by the order by property of the category
+        // > 1 categories - we first order them by the Contest.Category's OrderBy and then by the Contest's OrderBy
 
-        if (sorting == ContestSortType.Name)
+        if (sorting == ContestSortType.OrderBy)
         {
-            return contests
-                .OrderBy(c => c.Name)
-                .ThenBy(c => c.StartTime)
-                .ThenBy(c => c.PracticeStartTime);
+            switch (categoriesCount)
+            {
+                case 0:
+                    return contests
+                        .OrderByDescending(c => c.EndTime);
+                case 1:
+                    return contests
+                            .OrderBy(c => c.OrderBy)
+                            .ThenByDescending(c => c.EndTime)
+                            .ThenByDescending(c => c.StartTime);
+                default:
+                    return contests
+                            .OrderBy(c => c.Category == null ? int.MaxValue : c.Category.OrderBy)
+                            .ThenBy(c => c.OrderBy)
+                            .ThenByDescending(c => c.EndTime);
+            }
         }
 
         return contests;
