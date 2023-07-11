@@ -25,6 +25,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using OJS.Common.Utils;
     using OJS.Services.Common.Data;
     using OJS.Services.Common.Data.Implementations;
+    using OJS.Services.Infrastructure.Cache;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Infrastructure.HttpClients.Implementations;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
@@ -148,6 +149,8 @@ namespace OJS.Servers.Infrastructure.Extensions
         {
             EnvironmentUtils.ValidateEnvironmentVariableExists(
                 new[] { RedisConnectionString });
+
+            services.AddTransient<ICacheService>();
 
             return services.AddStackExchangeRedisCache(options =>
             {

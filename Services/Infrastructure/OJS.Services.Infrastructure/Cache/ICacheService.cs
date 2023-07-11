@@ -4,7 +4,7 @@
     using System;
     using System.Threading.Tasks;
 
-    public interface ICacheService : IService
+    public interface ICacheService
     {
         T Get<T>(string cacheId, Func<T> getItemCallback);
 
