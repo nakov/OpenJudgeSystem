@@ -93,6 +93,7 @@ const ContestModal = ({ contest, isShowing, toggle }: IContestModalProps) => {
                                 <span className={styles.italicized}>Are you sure you want to start the contest now?</span>
                             </span>
                         </Typography>
+                        <div className={styles.horizontalLine} />
                         <span className={styles.buttons}>
                             <Button
                               id="button-card-compete"

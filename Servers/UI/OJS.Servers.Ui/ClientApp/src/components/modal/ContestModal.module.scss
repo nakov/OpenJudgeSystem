@@ -7,10 +7,18 @@
   justify-content: center;
 }
 
+.horizontalLine {
+  align-self: center;
+  background-color: grey;
+  height: 1px;
+  width: 90%;
+}
+
 .modal {
   background-color: colors.$white-color;
   border-style: solid;
   border-width: thin;
+  box-shadow: colors.$box-shadow-color;
   display: flex;
   flex-direction: column;
   height: 50%;
