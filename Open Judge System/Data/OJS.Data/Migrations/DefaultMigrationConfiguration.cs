@@ -478,15 +478,6 @@
                     IsSelectedByDefault = false,
                     AllowBinaryFilesUpload = false
                 },
-                new SubmissionType
-                {
-                    Name = "Solidity code",
-                    CompilerType = CompilerType.SolidityCompiler,
-                    AdditionalCompilerArguments = string.Empty,
-                    ExecutionStrategyType = ExecutionStrategyType.SolidityCompileDeployAndRunUnitTestsExecutionStrategy,
-                    IsSelectedByDefault = false,
-                    AllowBinaryFilesUpload = false
-                }
             };
 
             context.SubmissionTypes.AddOrUpdate(x => x.Name, submissionTypes);
