@@ -11,6 +11,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoCrudAdmin.Enumerations;
+using AutoCrudAdmin.Extensions;
+using OJS.Common;
+using OJS.Data.Models.Users;
+using OJS.Services.Administration.Data;
+using System.Linq.Expressions;
 
 public class ParticipantsController : BaseAutoCrudAdminController<Participant>
 {
@@ -18,13 +24,16 @@ public class ParticipantsController : BaseAutoCrudAdminController<Participant>
 
     private readonly IValidatorsFactory<Participant> participantValidatorsFactory;
     private readonly IContestsValidationHelper contestsValidationHelper;
+    private readonly IUsersDataService usersDataService;
 
     public ParticipantsController(
         IValidatorsFactory<Participant> participantValidatorsFactory,
-        IContestsValidationHelper contestsValidationHelper)
+        IContestsValidationHelper contestsValidationHelper,
+        IUsersDataService usersDataService)
     {
         this.participantValidatorsFactory = participantValidatorsFactory;
         this.contestsValidationHelper = contestsValidationHelper;
+        this.usersDataService = usersDataService;
     }
 
     protected override IEnumerable<GridAction> DefaultActions
@@ -45,13 +54,38 @@ public class ParticipantsController : BaseAutoCrudAdminController<Participant>
 
     protected override IEnumerable<string> ShownFormControlNamesOnCreate
         => base.ShownFormControlNamesOnCreate
-            .Concat(new[] { nameof(Participant.Contest), nameof(Participant.User), nameof(Participant.IsOfficial) });
+            .Concat(new[] { nameof(Participant.Contest), nameof(UserProfile.UserName), nameof(Participant.IsOfficial) });
 
     public IActionResult Submissions([FromQuery] IDictionary<string, string> complexId)
         => this.RedirectToActionWithNumberFilter(
             nameof(SubmissionsController),
             SubmissionsController.ParticipantIdKey,
             this.GetEntityIdFromQuery<int>(complexId));
+
+    protected override IEnumerable<FormControlViewModel> GenerateFormControls(
+        Participant entity,
+        EntityAction action,
+        IDictionary<string, string> entityDict,
+        IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters,
+        Type autocompleteType)
+    {
+        var formControls = base.GenerateFormControls(entity, action, entityDict, complexOptionFilters, typeof(UserProfile)).ToList();
+        formControls.Add(new FormControlViewModel()
+        {
+            Name = nameof(UserProfile.UserName),
+            Options = this.usersDataService.GetQuery(take: GlobalConstants.NumberOfAutocompleteItemsShown).ToList(),
+            FormControlType = FormControlType.Autocomplete,
+            DisplayName = nameof(Participant.User),
+            FormControlAutocompleteController = nameof(UsersController).ToControllerBaseUri(),
+            FormControlAutocompleteEntityId = nameof(Participant.UserId),
+        });
+
+        var formControlToRemove = formControls.First(x =>
+            x.DisplayName == nameof(Participant.User) && x.FormControlType != FormControlType.Autocomplete);
+        formControls.Remove(formControlToRemove);
+
+        return formControls;
+    }
 
     protected override Task BeforeGeneratingForm(
         Participant entity,

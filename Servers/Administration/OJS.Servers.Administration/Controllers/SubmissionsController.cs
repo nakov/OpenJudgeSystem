@@ -161,14 +161,15 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         Submission entity,
         EntityAction action,
         IDictionary<string, string> entityDict,
-        IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters)
+        IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters,
+        Type autocompleteType)
     {
         complexOptionFilters.Add(
             new KeyValuePair<string, Expression<Func<object, bool>>>(
                 nameof(entity.Participant),
                 p => ((Participant)p).Id == entity.ParticipantId));
 
-        return base.GenerateFormControls(entity, action, entityDict, complexOptionFilters);
+        return base.GenerateFormControls(entity, action, entityDict, complexOptionFilters, autocompleteType);
     }
 
     protected override async Task BeforeEntitySaveAsync(Submission submission, AdminActionContext actionContext)

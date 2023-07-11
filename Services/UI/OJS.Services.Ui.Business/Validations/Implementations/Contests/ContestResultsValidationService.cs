@@ -1,9 +1,10 @@
-namespace OJS.Services.Ui.Business.Validation.Implementations;
+namespace OJS.Services.Ui.Business.Validations.Implementations.Contests;
 
 using OJS.Data.Models.Contests;
-using OJS.Services.Common;
+using Common;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Validation.Helpers;
+using Validation;
 
 public class ContestResultsValidationService : IContestResultsValidationService
 {
@@ -34,7 +35,7 @@ public class ContestResultsValidationService : IContestResultsValidationService
 
         if (fullResults && !user.IsAdminOrLecturer)
         {
-            return ValidationResult.Invalid("You don't have privileges to view contest's full results.");
+            return ValidationResult.Invalid(ValidationMessages.Participant.NoPrivilegesForContestResults);
         }
 
         return ValidationResult.Valid();
