@@ -39,6 +39,9 @@
                 .ForMember(
                     nameof(OjsSubmission<object>.Input),
                     opt => opt.MapFrom(typeof(SubmissionInputValueResolver)))
+                .ForMember(
+                    nameof(OjsSubmission<object>.ExecutionStrategyType),
+                    opt => opt.MapFrom(nameof(SubmissionServiceModel.ExecutionStrategyType)))
                 .ForAllOtherMembers(opt => opt.Ignore());
     }
 }
