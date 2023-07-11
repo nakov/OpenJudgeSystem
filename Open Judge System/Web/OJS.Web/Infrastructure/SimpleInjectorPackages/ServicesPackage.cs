@@ -2,7 +2,9 @@
 {
     using System.Linq;
     using MissingFeatures;
+    using OJS.Services;
     using OJS.Services.Business.ExamGroups;
+    using OJS.Services.Cache;
     using OJS.Services.Common;
     using OJS.Services.Common.BackgroundJobs;
     using OJS.Services.Common.Emails;
@@ -55,9 +57,15 @@
                 Settings.EmailServerUsername,
                 Settings.EmailServerPassword,
                 Settings.EmailSenderEmail,
-                Settings.EmailSenderDisplayName,
-                Settings.DevEmail),
+                Settings.EmailSenderDisplayName),
             Lifestyle.Scoped);
+
+            container.Register<IRedisCacheService>(
+                () => new RedisCacheService(
+                    container.GetInstance<IDatabase>(),
+                    container.GetInstance<IEmailSenderService>(),
+                    Settings.DevEmail),
+                Lifestyle.Scoped);
         }
 
         private void RegisterNonGenericTypes(Container container)

@@ -18,10 +18,5 @@
             string subject,
             string body,
             IEnumerable<string> bccRecipients = null);
-
-        /// <summary>
-        /// A method that will return softuni dev email
-        /// </summary>
-        string GetDevEmail();
     }
 }

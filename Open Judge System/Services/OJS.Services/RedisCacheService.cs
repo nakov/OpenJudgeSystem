@@ -4,18 +4,23 @@ using OJS.Services.Common.Emails;
 using StackExchange.Redis;
 using System;
 using System.Threading.Tasks;
+using System.Web;
+using System.Web.Caching;
 
 namespace OJS.Services
 {
     public class RedisCacheService : IRedisCacheService
     {
         private readonly IDatabase redisCache;
+        private readonly double memmoryCacheExpirationInMinutes = 5;
         private readonly IEmailSenderService emailSenderService;
+        private readonly string devEmail;
 
-        public RedisCacheService(IDatabase redisCache, IEmailSenderService emailSenderService)
+        public RedisCacheService(IDatabase redisCache, IEmailSenderService emailSenderService, string devEmail)
         {
             this.redisCache = redisCache;
             this.emailSenderService = emailSenderService;
+            this.devEmail = devEmail;
         }
 
         public T Get<T>(string cacheId, Func<T> getItemCallback)
@@ -33,7 +38,10 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-                this.emailSenderService.SendEmail(this.emailSenderService.GetDevEmail(), ex.GetType().ToString(), ex.Message);
+                if (!this.MemoryCacheHasKey(ex.GetType().ToString(), ex.Message))
+                {
+                    this.emailSenderService.SendEmail(this.devEmail, ex.GetType().ToString(), ex.Message);
+                }
                 return getItemCallback();
             }
         }
@@ -53,10 +61,13 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-                await this.emailSenderService.SendEmailAsync(this.emailSenderService.GetDevEmail(), ex.GetType().ToString(), ex.Message);
+                if (!this.MemoryCacheHasKey(ex.GetType().ToString(), ex.Message))
+                {
+                    await this.emailSenderService.SendEmailAsync(this.devEmail, ex.GetType().ToString(), ex.Message);
+                }
+
                 return await getItemCallback();
             }
-
         }
 
         public T GetOrSet<T>(string cacheId, Func<T> getItemCallback, TimeSpan? expiration = null)
@@ -68,7 +79,11 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-                this.emailSenderService.SendEmail(this.emailSenderService.GetDevEmail(), ex.GetType().ToString(), ex.Message);
+                if (!this.MemoryCacheHasKey(ex.GetType().ToString(), ex.Message))
+                {
+                    this.emailSenderService.SendEmail(this.devEmail, ex.GetType().ToString(), ex.Message);
+                }
+
                 return getItemCallback();
             }
         }
@@ -83,7 +98,11 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-                await this.emailSenderService.SendEmailAsync(this.emailSenderService.GetDevEmail(), ex.GetType().ToString(), ex.Message);
+                if (!this.MemoryCacheHasKey(ex.GetType().ToString(), ex.Message))
+                {
+                    await this.emailSenderService.SendEmailAsync(this.devEmail, ex.GetType().ToString(), ex.Message);
+                }
+
                 return await getItemCallback();
             }
         }
@@ -105,7 +124,10 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-                this.emailSenderService.SendEmail(this.emailSenderService.GetDevEmail(), ex.GetType().ToString(), ex.Message);
+                if (!this.MemoryCacheHasKey(ex.GetType().ToString(), ex.Message))
+                {
+                    this.emailSenderService.SendEmail(this.devEmail, ex.GetType().ToString(), ex.Message);
+                }
             }
         }
 
@@ -126,9 +148,11 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-                await this.emailSenderService.SendEmailAsync(this.emailSenderService.GetDevEmail(), ex.GetType().ToString(), ex.Message);
+                if (!this.MemoryCacheHasKey(ex.GetType().ToString(), ex.Message))
+                {
+                    await this.emailSenderService.SendEmailAsync(this.devEmail, ex.GetType().ToString(), ex.Message);
+                }
             }
-
         }
 
         public void Remove(string cacheId)
@@ -139,7 +163,10 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-                this.emailSenderService.SendEmail(this.emailSenderService.GetDevEmail(), ex.GetType().ToString(), ex.Message);
+                if (!this.MemoryCacheHasKey(ex.GetType().ToString(), ex.Message))
+                {
+                    this.emailSenderService.SendEmail(this.devEmail, ex.GetType().ToString(), ex.Message);
+                }
             }
         }
 
@@ -151,7 +178,10 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-                await this.emailSenderService.SendEmailAsync(this.emailSenderService.GetDevEmail(), ex.GetType().ToString(), ex.Message);
+                if (!this.MemoryCacheHasKey(ex.GetType().ToString(), ex.Message))
+                {
+                    await this.emailSenderService.SendEmailAsync(this.devEmail, ex.GetType().ToString(), ex.Message);
+                }
             }
         }
 
@@ -187,6 +217,23 @@ namespace OJS.Services
                    parsedValue,
                    expiration);
             }
+        }
+
+        private bool MemoryCacheHasKey(string key, string value)
+        {
+            if (HttpRuntime.Cache.Get(key) == null)
+            {
+                HttpContext.Current.Cache.Add(
+                   key,
+                   value,
+                   null,
+                   DateTime.Now.AddMinutes(this.memmoryCacheExpirationInMinutes),
+                   TimeSpan.Zero,
+                   CacheItemPriority.Default,
+                   null);
+                return false;
+            }
+            return true;
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace OJS.Services.Cache
 {
-    public interface IRedisCacheService : IService
+    public interface IRedisCacheService
     {
         T Get<T>(string cacheId, Func<T> getItemCallback);
 

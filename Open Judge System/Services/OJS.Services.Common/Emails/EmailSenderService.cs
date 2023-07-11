@@ -22,8 +22,7 @@
             string username,
             string password,
             string senderEmail,
-            string senderDisplayName,
-            string devEmail = null)
+            string senderDisplayName)
         {
 
             this.mailClient = new SmtpClient
@@ -38,11 +37,7 @@
 
             this.senderEmail = senderEmail;
             this.senderDisplayName = senderDisplayName;
-            this.DevEmail = devEmail;
         }
-
-        public string DevEmail { get; private set; }
-
         public void SendEmail(
             string recipient,
             string subject,
@@ -103,7 +98,5 @@
 
             return message;
         }
-
-        public string GetDevEmail() => this.DevEmail;
     }
 }
