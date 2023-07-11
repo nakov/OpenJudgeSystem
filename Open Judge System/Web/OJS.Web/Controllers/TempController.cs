@@ -334,18 +334,18 @@
             this.problemsDataService.GetAll()
                 .Where(
                     p => p.SolutionSkeleton != null && p.SubmissionTypes.Any() &&
-                         !p.ProblemSubmissionTypesSkeletons.Any())
+                         !p.ProblemSubmissionTypeExecutionDetails.Any())
                 .ToList()
                 .ForEach(
                     p =>
                     {
                         try
                         {
-                            p.ProblemSubmissionTypesSkeletons
+                            p.ProblemSubmissionTypeExecutionDetails
                                 .AddRange(
                                     p.SubmissionTypes
                                         .Select(
-                                            st => new ProblemSubmissionTypeSkeleton
+                                            st => new ProblemSubmissionTypeExecutionDetails
                                             {
                                                 Problem = p,
                                                 SubmissionType = st,
