@@ -113,7 +113,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         {
             submissionDetailsServiceModel.TestRuns = submissionDetailsServiceModel.TestRuns.Select(x =>
             {
-                if ((bool)!x.IsTrialTest!)
+                if (!x.IsTrialTest!)
                 {
                     x.ShowInput = false;
                     x.Input = string.Empty;

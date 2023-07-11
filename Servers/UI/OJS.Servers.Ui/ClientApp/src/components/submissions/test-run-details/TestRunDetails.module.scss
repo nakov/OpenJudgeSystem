@@ -8,13 +8,14 @@
 
 .executionComment {
   @extend %font-family-lato;
+
   padding-top: 30px;
 }
 
 .testRunContainer {
+  align-content: space-around;
   display: flex;
   flex-direction: column;
-  align-content: space-around;
 }
 
 .testRun {
@@ -41,11 +42,12 @@
 
 .testRunDetailsCollapsible {
   @extend %font-family-lato;
-  margin-top: -10px;
+
   display: flex;
   flex-direction: column;
-  width: 150px;
   flex-grow: 1;
+  margin-top: -10px;
+  width: 150px;
 }
 
 .wrongTestRunHeading {
