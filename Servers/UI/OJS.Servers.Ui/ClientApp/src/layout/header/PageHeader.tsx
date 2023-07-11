@@ -51,7 +51,7 @@ const PageHeader = () => {
                 { administrationLink }
             </>
         );
-    }, [ getAdministrationNavigation, user.permissions.canAccessAdministration ]);
+    }, [ user.permissions.canAccessAdministration ]);
 
     const btnId = useMemo(
         () => {
