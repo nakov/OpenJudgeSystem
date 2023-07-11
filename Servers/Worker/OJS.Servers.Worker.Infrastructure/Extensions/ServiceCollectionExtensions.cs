@@ -37,19 +37,12 @@ public static class ServiceCollectionExtensions
         // {
         //     app.UseSwaggerDocs(apiVersion.ToApiName());
         // }
-
         app.UseCustomExceptionHandling();
         app.UseAutoMapper();
-        app.UseRouting();
+        app.MapControllers();
 
         return app;
     }
-
-    public static IServiceCollection AddWebServer<TStartup>(this IServiceCollection services)
-        => services
-            .AddWebServerServices<TStartup>()
-            .AddAutoMapperConfigurations<TStartup>()
-            .AddCaching<TStartup>();
 
     public static IServiceCollection AddSubmissionExecutor(
         this IServiceCollection services)

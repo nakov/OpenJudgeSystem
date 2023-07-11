@@ -3,69 +3,33 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://softuniorg.com:81/api/judge/",
-      "sslPort": 0
+      "applicationUrl": "http://localhost:8003",
+      "sslPort": 44333
     }
   },
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
-      "launchBrowser": false,
+      "launchBrowser": true,
       "environmentVariables": {
-        "AUTH_URL": "http://auth.softuniorg.com:81",
-        "USER_PROFILES_URL": "http://softuniorg.com:81/api/user-profiles",
         "ASPNETCORE_ENVIRONMENT": "Development",
         "LOGGER_FILES_FOLDER_PATH": "../../../../Logs",
-        "MESSAGE_QUEUE_HOST": "localhost",
-        "MESSAGE_QUEUE_VIRTUAL_HOST": "/",
-        "MESSAGE_QUEUE_PREFETCH_COUNT": "16",
-        "MESSAGE_QUEUE_RETRY_COUNT": "5",
-        "MESSAGE_QUEUE_RETRY_TIMEOUT": "100",
-        "MESSAGE_QUEUE_USER": "rabbitmq",
-        "MESSAGE_QUEUE_PASSWORD": "rabbitmq",
-        "REDIS_CACHE_CONNECTION_STRING": "localhost:6379,password=redisPass123,ConnectTimeout=10000,abortConnect=false",
-        "ServiceConfig__serviceDiscoveryAddress": "http://localhost:8500",
-        "ServiceConfig__serviceAddress": "http://localhost:8003",
-        "ServiceConfig__serviceName": "judge",
-        "ServiceConfig__serviceId": "judge-v1",
-        "InternalAuthenticationConfig__Key": "24055a19-bdf0-4f49-b619-3f34dfaf3d83",
-        "InternalAuthenticationConfig__Issuer": "Interactive_Issuer",
-        "InternalAuthenticationConfig__Audience": "Interactive_Audience",
+        "SHARED_AUTH_COOKIE_DOMAIN": "localhost"
+      }
+    },
+    "OJS.Servers.Worker": {
+      "commandName": "Project",
+      "dotnetRunMessages": "true",
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:8003",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "LOGGER_FILES_FOLDER_PATH": "../../../Logs",
+        "SHARED_AUTH_COOKIE_DOMAIN": "localhost",
+        "REDIS_CONNECTION_STRING": "localhost,password=redisPass123,ConnectTimeout=10000,abortConnect=false",
         "RUNS_IN_DOCKER": "false",
         "SUBMISSIONS_PROCESSOR_IDENTIFIER_NUMBER": "1"
       }
-    },
-    "Worker": {
-      "commandName": "Project",
-      "launchBrowser": false,
-      "environmentVariables": {
-        "AUTH_URL": "http://auth.softuniorg.com:81",
-        "USER_PROFILES_URL": "http://softuniorg.com:81/api/user-profiles",
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "LOGGER_FILES_FOLDER_PATH": "../../../../Logs",
-        "MESSAGE_QUEUE_HOST": "localhost",
-        "MESSAGE_QUEUE_VIRTUAL_HOST": "/",
-        "MESSAGE_QUEUE_PREFETCH_COUNT": "16",
-        "MESSAGE_QUEUE_RETRY_COUNT": "5",
-        "MESSAGE_QUEUE_RETRY_TIMEOUT": "100",
-        "MESSAGE_QUEUE_USER": "rabbitmq",
-        "MESSAGE_QUEUE_PASSWORD": "rabbitmq",
-        "REDIS_CACHE_CONNECTION_STRING": "localhost:6379,password=redisPass123,ConnectTimeout=10000,abortConnect=false",
-        "ServiceConfig__serviceDiscoveryAddress": "http://localhost:8500",
-        "ServiceConfig__serviceAddress": "http://localhost:8003",
-        "ServiceConfig__serviceName": "judge",
-        "ServiceConfig__serviceId": "judge-v1",
-        "InternalAuthenticationConfig__Key": "24055a19-bdf0-4f49-b619-3f34dfaf3d83",
-        "InternalAuthenticationConfig__Issuer": "Interactive_Issuer",
-        "InternalAuthenticationConfig__Audience": "Interactive_Audience",
-        "RUNS_IN_DOCKER": "false",
-        "SUBMISSIONS_PROCESSOR_IDENTIFIER_NUMBER": "1"
-      },
-      "applicationUrl": "http://softuniorg.com:81/api/judge/"
-    },
-    "Docker": {
-      "commandName": "Docker",
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}"
     }
   }
 }

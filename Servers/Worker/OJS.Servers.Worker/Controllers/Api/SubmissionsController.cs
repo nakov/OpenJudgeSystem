@@ -1,30 +1,37 @@
-﻿namespace OJS.Servers.Worker.Controllers;
+﻿namespace OJS.Servers.Worker.Controllers.Api;
 
-using System;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OJS.Servers.Infrastructure.Controllers;
 using OJS.Servers.Infrastructure.Extensions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Servers.Worker.Models.ExecutionContext;
 using OJS.Servers.Worker.Models.ExecutionResult;
-using Microsoft.AspNetCore.Mvc;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Worker.Business;
 using OJS.Services.Worker.Models.ExecutionContext;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
+using System;
+using System.Threading.Tasks;
+
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 public class SubmissionsController : BaseApiController
 {
     private readonly ISubmissionsBusinessService submissionsBusiness;
-    private readonly ILogger<SubmissionsController> logger;
+    // private readonly ILogger<SubmissionsController> logger;
 
     public SubmissionsController(
         ISubmissionsBusinessService submissionsBusiness,
-        ILogger<SubmissionsController> logger)
-    {
+        ILogger<SubmissionsController> logger) =>
         this.submissionsBusiness = submissionsBusiness;
-        this.logger = logger;
+
+    // this.logger = logger;
+    [HttpGet]
+    public IActionResult TempAction()
+    {
+        Console.WriteLine("temp2");
+
+        return this.Ok();
     }
 
     [HttpPost]
@@ -81,7 +88,7 @@ public class SubmissionsController : BaseApiController
         }
         catch (Exception ex)
         {
-            this.logger.LogError(ex, "Error in executing submission");
+            // this.logger.LogError(ex, "Error in executing submission");
 
             result.SetException(ex, withStackTrace);
         }

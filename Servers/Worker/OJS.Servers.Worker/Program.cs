@@ -9,7 +9,7 @@
 
         public static void Main(string[] args)
             => WebApplication.CreateBuilder(args)
-                .ConfigureBuilder<Program>(ApiVersion)
+                .ConfigureBuilder<Program>()
                 .Build()
                 .ConfigureWebApplication(ApiVersion)
                 .Run();

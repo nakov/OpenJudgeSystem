@@ -26,6 +26,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using OJS.Services.Common.Data;
     using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Infrastructure.Cache;
+    using OJS.Services.Infrastructure.Cache.Implementations;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Infrastructure.HttpClients.Implementations;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
@@ -41,8 +42,7 @@ namespace OJS.Servers.Infrastructure.Extensions
         public static IServiceCollection AddWebServer<TStartup>(this IServiceCollection services)
             => services
                 .AddAutoMapperConfigurations<TStartup>()
-                .AddWebServerServices<TStartup>()
-                .AddCaching<TStartup>();
+                .AddWebServerServices<TStartup>();
 
         /// <summary>
         /// Adds identity database and authentication services to the service collection.
@@ -145,12 +145,12 @@ namespace OJS.Servers.Infrastructure.Extensions
                     }
                 });
 
-        public static IServiceCollection AddCaching<TStartup>(this IServiceCollection services)
+        public static IServiceCollection AddDistributedCaching<TStartup>(this IServiceCollection services)
         {
             EnvironmentUtils.ValidateEnvironmentVariableExists(
                 new[] { RedisConnectionString });
 
-            services.AddTransient<ICacheService>();
+            services.AddSingleton<ICacheService, CacheService>();
 
             return services.AddStackExchangeRedisCache(options =>
             {

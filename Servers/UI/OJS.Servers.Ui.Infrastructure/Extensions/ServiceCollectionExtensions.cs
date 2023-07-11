@@ -35,6 +35,7 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
                 .AddScoped<OjsDbContext>()
                 .AddMemoryCache()
                 .AddSoftUniJudgeCommonServices()
+                .AddDistributedCaching<TProgram>()
                 .AddLogging()
                 .ConfigureSettings(configuration)
                 .AddControllersWithViews();
