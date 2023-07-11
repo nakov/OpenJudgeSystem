@@ -285,23 +285,35 @@
             var problems = this.Data.Problems.All()
                 .Include(p => p.Tests)
                 .Where(
-                    p => p.SubmissionTypes.Any(
+                    p => p.ProblemSubmissionTypeExecutionDetails.Any(
                         st => MySqlStrategiesHelper.ExecutionStrategyTypesForOptimization
-                            .Any(x => x == st.ExecutionStrategyType)))
+                            .Any(x => x == st.SubmissionType.ExecutionStrategyType)))
                 .ToList();
 
             foreach (var problem in problems)
             {
-                var skeleton = problem.SolutionSkeleton.Decompress();
+                var skeletons = problem
+                    .ProblemSubmissionTypeExecutionDetails
+                    .Where(
+                        pst => MySqlStrategiesHelper
+                            .ExecutionStrategyTypesForOptimization
+                            .Any(x => x == pst.SubmissionType.ExecutionStrategyType))
+                    .Where(pst => pst.SolutionSkeleton != null && pst.SolutionSkeleton.Any())
+                    .ToList();
 
-                if (!string.IsNullOrWhiteSpace(skeleton))
+                foreach (var skeleton in skeletons)
                 {
-                    if (MySqlStrategiesHelper.TryOptimizeQuery(skeleton, out var newSkeleton))
+                    var skeletonAsString = skeleton.SolutionSkeleton.Decompress();
+                    
+                    if (!string.IsNullOrWhiteSpace(skeletonAsString))
                     {
-                        problem.SolutionSkeleton = newSkeleton.Compress();
+                        if (MySqlStrategiesHelper.TryOptimizeQuery(skeletonAsString, out var newSkeleton))
+                        {
+                            skeleton.SolutionSkeleton = newSkeleton.Compress();
 
-                        this.Data.Problems.Update(problem);
-                        changedSkeletonsCount++;
+                            this.Data.Problems.Update(problem);
+                            changedSkeletonsCount++;
+                        }
                     }
                 }
 
@@ -323,50 +335,6 @@
                 $"Done. Processed {problems.Count} Problems. <br/>" +
                 $"Updated {changedSkeletonsCount} solution skeletons. <br/>" +
                 $"Updated {changedTestsCount} test inputs.");
-        }
-        
-        public ActionResult MigrateSolutionSkeletons()
-        {
-            var updatedProblemsCount = 0;
-
-            var exceptions = new List<Exception>();
-
-            this.problemsDataService.GetAll()
-                .Where(
-                    p => p.SolutionSkeleton != null && p.SubmissionTypes.Any() &&
-                         !p.ProblemSubmissionTypeExecutionDetails.Any())
-                .ToList()
-                .ForEach(
-                    p =>
-                    {
-                        try
-                        {
-                            p.ProblemSubmissionTypeExecutionDetails
-                                .AddRange(
-                                    p.SubmissionTypes
-                                        .Select(
-                                            st => new ProblemSubmissionTypeExecutionDetails
-                                            {
-                                                Problem = p,
-                                                SubmissionType = st,
-                                                SolutionSkeleton = p.SolutionSkeleton
-                                            }));
-
-                            this.problemsDataService.Update(p);
-                            updatedProblemsCount++;
-                        }
-                        catch (Exception ex)
-                        {
-                            exceptions.Add(ex);
-                        }
-                    });
-
-            var newLine = "<br />";
-
-            return this.Content(
-                $"Updated problems count = {updatedProblemsCount} and exceptions count {exceptions.Count}" +
-                newLine +
-                $"{string.Join(newLine, exceptions.Select(ex => ex.ToString()).Distinct())}");
         }
     }
 }

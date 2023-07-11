@@ -231,11 +231,6 @@
                 newProblem.ProblemSubmissionTypeExecutionDetails.Add(problemSubmissionExectuionDetails);
             });
 
-            if (problem.SolutionSkeletonData != null && problem.SolutionSkeletonData.Any())
-            {
-                newProblem.SolutionSkeleton = problem.SolutionSkeletonData;
-            }
-
             if (problem.Resources != null && problem.Resources.Any())
             {
                 this.AddResourcesToProblem(newProblem, problem.Resources);
@@ -366,7 +361,6 @@
 
             existingProblem = problem.GetEntityModel(existingProblem);
             existingProblem.Checker = this.checkersData.GetByName(problem.Checker);
-            existingProblem.SolutionSkeleton = problem.SolutionSkeletonData;
             existingProblem.SubmissionTypes.Clear();
             existingProblem.ProblemGroup.Type = ((ProblemGroupType?)problem.ProblemGroupType).GetValidTypeOrNull();
 
@@ -741,21 +735,6 @@
             };
 
             return this.PartialView("_ProblemResourceForm", resourceViewModel);
-        }
-
-        public ActionResult FullSolutionSkeleton(int id)
-        {
-            if (!this.CheckIfUserHasProblemPermissions(id))
-            {
-                return this.Json(GeneralResource.No_privileges_message);
-            }
-
-            var solutionSkeleton = this.problemsData
-                .GetByIdQuery(id)
-                .Select(p => p.SolutionSkeleton)
-                .FirstOrDefault();
-
-            return this.Content(solutionSkeleton.Decompress());
         }
 
         [AjaxOnly]
