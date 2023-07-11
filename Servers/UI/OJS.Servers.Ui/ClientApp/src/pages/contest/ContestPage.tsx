@@ -155,23 +155,25 @@ const ContestPage = () => {
                 return;
             }
 
-            if (isNil(contest)) {
+            if (isNil(contest) && isNil(contestError)) {
                 return;
             }
 
-            const { isOnline } = contest;
-            if (isUserParticipant || !isOnline) {
-                (async () => {
-                    await start(internalContest);
-                })();
-            }
+            if (!isNil(contest)) {
+                const { isOnline } = contest;
+                if (isUserParticipant || !isOnline) {
+                    (async () => {
+                        await start(internalContest);
+                    })();
+                }
 
-            setModalContest({
-                id: contest.id,
-                name: contest.name,
-                duration: contest.duration,
-                numberOfProblems: contest.numberOfProblems,
-            });
+                setModalContest({
+                    id: contest.id,
+                    name: contest.name,
+                    duration: contest.duration,
+                    numberOfProblems: contest.numberOfProblems,
+                });
+            }
         },
         [
             internalContest,
@@ -183,20 +185,19 @@ const ContestPage = () => {
             setModalContest,
             isUserParticipant,
             isPasswordValid,
+            contestError,
         ],
     );
 
     return (
-        !isNil(contest)
-            ? doesRequirePassword && !isPasswordValid
-                ? (
-                    <ContestPasswordForm
-                      id={contestIdToNumber}
-                      isOfficial={isParticipationOfficial}
-                    />
-                )
-                : renderContestPage()
-            : <div>Loading user data...</div>
+        doesRequirePassword && !isPasswordValid
+            ? (
+                <ContestPasswordForm
+                  id={contestIdToNumber}
+                  isOfficial={isParticipationOfficial}
+                />
+            )
+            : renderContestPage()
     );
 };
 

@@ -51,7 +51,7 @@ const ContestModal = ({ contest, isShowing, toggle }: IContestModalProps) => {
                 >
                     <Box className={styles.modal}>
                         <Typography id="modal-modal-title" variant="h6" className={styles.modalHeading}>
-                            <>
+                            <p className={styles.text}>
                                 Starting now you will have
                                 {' '}
                                 {contest.duration}
@@ -60,46 +60,48 @@ const ContestModal = ({ contest, isShowing, toggle }: IContestModalProps) => {
                                 {' '}
                                 <span className={styles.bolded}>{contest.name}</span>
                                 .
-                            </>
+                            </p>
                         </Typography>
                         <Typography id="modal-modal-description">
-                            Your time will start counting down when you press the &quot;Compete&quot; button.
-                            <br />
-                            <br />
-                            In the case of unexpected problems (turning off your computer, exiting the page/system,
-                            internet connection failure),
-                            {' '}
-                            <span className={styles.bolded}>the time lost will not be restored</span>
-                            . When time runs out,
-                            you
-                            {' '}
-                            <span className={styles.bolded}>will not</span>
-                            {' '}
-                            be able to compete in this competition again.
-                            <br />
-                            <br />
-                            When you click the &quot;Compete&quot; button,
-                            {' '}
-                            <span className={styles.bolded}>
-                                {contest.numberOfProblems}
+                            <span className={styles.text}>
+                                Your time will start counting down when you press the &quot;Compete&quot; button.
+                                <br />
+                                <br />
+                                In the case of unexpected problems (turning off your computer, exiting the page/system,
+                                internet connection failure),
                                 {' '}
-                                random problems, one of each type, will be generated
+                                <span className={styles.bolded}>the time lost will not be restored</span>
+                                . When time runs out,
+                                you
+                                {' '}
+                                <span className={styles.bolded}>will not</span>
+                                {' '}
+                                be able to compete in this competition again.
+                                <br />
+                                <br />
+                                When you click the &quot;Compete&quot; button,
+                                {' '}
+                                <span className={styles.bolded}>
+                                    {contest.numberOfProblems}
+                                    {' '}
+                                    random problems, one of each type, will be generated
+                                </span>
+                                {' '}
+                                for you.
+                                <br />
+                                <br />
+                                <span className={styles.italicized}>Are you sure you want to start the contest now?</span>
                             </span>
-                            {' '}
-                            for you.
-                            <br />
-                            <br />
-                            <span className={styles.italicized}>Are you sure you want to start the contest now?</span>
                         </Typography>
-                        <div className={styles.buttons}>
+                        <span className={styles.buttons}>
                             <Button
                               id="button-card-compete"
                               onClick={() => startContestAndHideModal()}
                               text="Compete"
-                              size={ButtonSize.small}
+                              size={ButtonSize.medium}
                             />
-                            <Button onClick={() => toggle()} size={ButtonSize.small} type={ButtonType.secondary}>Cancel</Button>
-                        </div>
+                            <Button onClick={() => toggle()} size={ButtonSize.medium} type={ButtonType.secondary}>Cancel</Button>
+                        </span>
                     </Box>
                 </Modal>
             </div>
