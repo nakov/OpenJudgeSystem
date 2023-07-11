@@ -41,6 +41,8 @@
   &:hover {
     + %helperText {
       display: inline-block;
+      background-color: colors.$background-color-light-gray;
+      padding: 5px;
     }
   }
 }
