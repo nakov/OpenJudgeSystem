@@ -1,0 +1,18 @@
+﻿@use 'src/styles/colors';
+@use 'src/styles/variables';
+@use 'src/styles/fonts';
+
+.constraints {
+  @extend %font-family-lato;
+  padding: 10px;
+  color: colors.$text-dark-gray-color;
+  font-size: variables.$f-size-16;
+}
+
+.constraintsList {
+  align-items: start;
+}
+
+.questionIcon {
+  padding-top: 1px;
+}

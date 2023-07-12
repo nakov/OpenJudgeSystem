@@ -4,8 +4,9 @@ import first from 'lodash/first';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { IParticipateInContestTypeUrlParams } from '../../../common/app-url-types';
 import { ContestParticipationType } from '../../../common/constants';
+import { IIndexContestsType } from '../../../common/types';
+import { useHashUrlParams } from '../../../hooks/common/use-hash-url-params';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import { useAppUrls } from '../../../hooks/use-app-urls';
 import { useAuth } from '../../../hooks/use-auth';
@@ -48,17 +49,14 @@ const SubmissionDetails = () => {
                 setDownloadErrorMessage,
             },
     } = useSubmissionsDetails();
-    const { getAdministrationRetestSubmissionInternalUrl } = useAppUrls();
-
     const {
         state: { contest },
         actions: { loadContestByProblemId },
     } = useContests();
 
-    const { getParticipateInContestUrl } = useAppUrls();
-
+    const { getAdministrationRetestSubmissionInternalUrl, getParticipateInContestUrl } = useAppUrls();
     const { state: { user } } = useAuth();
-
+    const { state: { hashParam } } = useHashUrlParams();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -148,21 +146,6 @@ const SubmissionDetails = () => {
     const detailsHeadingText = useMemo(
         () => `Details #${currentSubmission?.id}`,
         [ currentSubmission?.id ],
-    );
-
-    const participateInContestUrl = useMemo(
-        () => {
-            const problemIndex = isNil(currentSubmission?.problem.orderBy)
-                ? 1
-                : currentSubmission!.problem.orderBy! + 1;
-
-            return getParticipateInContestUrl({
-                id: contest?.id,
-                participationType,
-                problemIndex,
-            } as IParticipateInContestTypeUrlParams);
-        },
-        [ getParticipateInContestUrl, contest, participationType, currentSubmission ],
     );
 
     const { submissionType } = currentSubmission || {};
@@ -314,11 +297,17 @@ const SubmissionDetails = () => {
 
     const setSubmissionAndStartParticipation = useCallback(
         () => {
-            navigate(participateInContestUrl);
+            const { id: contestId } = contest as IIndexContestsType;
+
+            navigate({
+                pathname: getParticipateInContestUrl({ id: contestId, participationType }),
+                hash: hashParam,
+            });
+
             setCurrentSubmission(null);
             selectSubmissionById(null);
         },
-        [ setCurrentSubmission, navigate, participateInContestUrl, selectSubmissionById ],
+        [ contest, navigate, getParticipateInContestUrl, participationType, hashParam, setCurrentSubmission, selectSubmissionById ],
     );
 
     const codeEditor = useCallback(

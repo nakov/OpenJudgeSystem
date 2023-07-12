@@ -23,6 +23,8 @@ namespace OJS.Services.Common.Data
 
         Task DeleteById(object id);
 
+        void Detach(TEntity entity);
+
         void DeleteMany(IEnumerable<TEntity> entities);
 
         Task<int> GetCount();
