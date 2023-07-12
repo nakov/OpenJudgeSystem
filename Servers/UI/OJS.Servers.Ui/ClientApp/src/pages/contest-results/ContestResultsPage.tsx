@@ -21,6 +21,14 @@ const participantNamesColumns: GridColDef[] = [
         minWidth: 160,
         flex: 1,
         sortable: true,
+        headerClassName: styles.headerContent,
+        headerAlign: 'center',
+        align: 'center',
+        renderCell: (params) => (
+            <div className={styles.columnContent}>
+                {params.value}
+            </div>
+        ),
     },
     {
         field: 'participantFullName',
@@ -29,6 +37,14 @@ const participantNamesColumns: GridColDef[] = [
         minWidth: 100,
         flex: 1,
         sortable: false,
+        headerClassName: styles.headerContent,
+        headerAlign: 'center',
+        align: 'center',
+        renderCell: (params) => (
+            <div className={styles.columnContent}>
+                {params.value}
+            </div>
+        ),
     },
 ];
 
@@ -39,6 +55,9 @@ const totalResultColumn: GridColDef = {
     minWidth: 70,
     flex: 1,
     sortable: true,
+    headerAlign: 'center',
+    headerClassName: styles.headerContent,
+    align: 'center',
 };
 
 const getProblemResultColumns = (results: IContestResultsType) => results.problems?.map((p) => ({
@@ -46,9 +65,12 @@ const getProblemResultColumns = (results: IContestResultsType) => results.proble
     headerName: p.name,
     description: p.name,
     type: 'number',
-    minWidth: 70,
+    minWidth: 120,
     flex: 1,
     sortable: true,
+    headerAlign: 'center',
+    headerClassName: styles.headerContent,
+    align: 'center',
     renderCell: (params: GridRenderCellParams<number>) => {
         const problemResult = params.row.problemResults
             .find((pr: IContestResultsParticipationProblemType) => pr.problemId === p.id) as IContestResultsParticipationProblemType;
@@ -57,8 +79,9 @@ const getProblemResultColumns = (results: IContestResultsType) => results.proble
         return results.userHasContestRights && !isNil(bestSubmission)
             ? (
                 <LinkButton
+                  className={styles.pointsResult}
                   type={LinkButtonType.plain}
-                  size={ButtonSize.none}
+                  size={ButtonSize.small}
                   text={`${bestSubmission.points}`}
                   to={`/submissions/${bestSubmission.id}/details`}
                 />
@@ -141,6 +164,13 @@ const ContestResultsPage = () => {
                 <DataGrid
                   rows={contestResults!.results}
                   columns={getColumns(contestResults!)}
+                  sx={{
+                      '& .MuiDataGrid-columnHeaderTitle': {
+                          whiteSpace: 'break-spaces',
+                          lineHeight: 1,
+                          textAlign: 'center',
+                      },
+                  }}
                   disableSelectionOnClick
                   getRowId={(row) => row.participantUsername}
                 />
