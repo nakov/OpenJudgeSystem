@@ -42,6 +42,18 @@
                 .ForMember(
                     nameof(OjsSubmission<object>.ExecutionStrategyType),
                     opt => opt.MapFrom(nameof(SubmissionServiceModel.ExecutionStrategyType)))
+                .ForMember(
+                    nameof(OjsSubmission<object>.Code),
+                    opt => opt.MapFrom(nameof(SubmissionServiceModel.Code)))
+                .ForMember(
+                    nameof(OjsSubmission<object>.FileContent),
+                    opt => opt.MapFrom(nameof(SubmissionServiceModel.FileContent)))
+                .ForMember(
+                    nameof(OjsSubmission<object>.MemoryLimit),
+                    opt => opt.MapFrom(nameof(SubmissionServiceModel.MemoryLimit)))
+                .ForMember(
+                    nameof(OjsSubmission<object>.TimeLimit),
+                    opt => opt.MapFrom(nameof(SubmissionServiceModel.TimeLimit)))
                 .ForAllOtherMembers(opt => opt.Ignore());
     }
 }

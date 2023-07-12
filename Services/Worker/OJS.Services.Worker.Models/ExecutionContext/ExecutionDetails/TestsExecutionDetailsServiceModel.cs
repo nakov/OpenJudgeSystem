@@ -26,6 +26,7 @@
         public void RegisterMappings(IProfileExpression configuration)
             => configuration
                 .CreateMap<TestsExecutionDetailsServiceModel, TestsInputModel>()
+                .ForMember(m => m.Tests, opt => opt.MapFrom(s => s.Tests))
                 .ForMember(
                     m => m.CheckerTypeName,
                     opt => opt.MapFrom<CheckerTypeNameValueResolver>())

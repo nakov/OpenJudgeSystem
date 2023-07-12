@@ -1,4 +1,4 @@
-FROM ghcr.io/softuni-internal/interactive_linux:latest
+FROM ghcr.io/softuni-internal/linux_base:latest
 
 ENV TZ=Etc/UTC
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
