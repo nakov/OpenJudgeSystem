@@ -2,7 +2,7 @@ import { ContestStatus, FilterType, SortType } from './contest-types';
 
 const DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE = 4;
 const { Status: DEFAULT_FILTER_TYPE } = FilterType;
-const { Active: DEFAULT_STATUS_FILTER_TYPE } = ContestStatus;
+const { All: DEFAULT_STATUS_FILTER_TYPE } = ContestStatus;
 const { Sort: DEFAULT_SORT_FILTER_TYPE } = FilterType;
 const { OrderBy: DEFAULT_SORT_TYPE } = SortType;
 
