@@ -3,6 +3,7 @@ namespace OJS.Data.Models.Contests
     using OJS.Common.Enumerations;
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Problems;
+    using OJS.Data.Validation.Attributes;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -39,11 +40,13 @@ namespace OJS.Data.Models.Contests
         /// <remarks>
         /// If StartTime is null the contest cannot be competed.
         /// </remarks>
+        [UtcConvertable]
         public DateTime? StartTime { get; set; }
 
         /// <remarks>
         /// If EndTime is null the contest can be competed forever.
         /// </remarks>
+        [UtcConvertable]
         public DateTime? EndTime { get; set; }
 
         /// <remarks>
@@ -69,11 +72,13 @@ namespace OJS.Data.Models.Contests
         /// <remarks>
         /// If PracticeStartTime is null the contest cannot be practiced.
         /// </remarks>
+        [UtcConvertable]
         public DateTime? PracticeStartTime { get; set; }
 
         /// <remarks>
         /// If PracticeEndTime is null the contest can be practiced forever.
         /// </remarks>
+        [UtcConvertable]
         public DateTime? PracticeEndTime { get; set; }
 
         public int LimitBetweenSubmissions { get; set; }
@@ -121,10 +126,10 @@ namespace OJS.Data.Models.Contests
                 if (!this.EndTime.HasValue)
                 {
                     // Compete forever
-                    return this.StartTime <= DateTime.Now;
+                    return this.StartTime <= DateTime.UtcNow;
                 }
 
-                return this.StartTime <= DateTime.Now && DateTime.Now <= this.EndTime;
+                return this.StartTime <= DateTime.UtcNow && DateTime.UtcNow <= this.EndTime;
             }
         }
 
@@ -153,10 +158,10 @@ namespace OJS.Data.Models.Contests
                 if (!this.PracticeEndTime.HasValue)
                 {
                     // Practice forever
-                    return this.PracticeStartTime <= DateTime.Now;
+                    return this.PracticeStartTime <= DateTime.UtcNow;
                 }
 
-                return this.PracticeStartTime <= DateTime.Now && DateTime.Now <= this.PracticeEndTime;
+                return this.PracticeStartTime <= DateTime.UtcNow && DateTime.UtcNow <= this.PracticeEndTime;
             }
         }
 
@@ -167,7 +172,7 @@ namespace OJS.Data.Models.Contests
                 this.Participants.Any(p =>
                     p.IsOfficial &&
                     p.ParticipationEndTime.HasValue &&
-                    p.ParticipationEndTime.Value >= DateTime.Now));
+                    p.ParticipationEndTime.Value >= DateTime.UtcNow));
 
         [NotMapped]
         public bool ResultsArePubliclyVisible
@@ -190,7 +195,7 @@ namespace OJS.Data.Models.Contests
                     return false;
                 }
 
-                return this.EndTime.HasValue && this.EndTime.Value <= DateTime.Now;
+                return this.EndTime.HasValue && this.EndTime.Value <= DateTime.UtcNow;
             }
         }
 
@@ -201,7 +206,13 @@ namespace OJS.Data.Models.Contests
         public bool HasPracticePassword => this.PracticePassword != null;
 
         [NotMapped]
-        public bool IsOnline => this.Type == ContestType.OnlinePracticalExam;
+        public bool IsOnlineExam => this.Type == ContestType.OnlinePracticalExam;
+
+        [NotMapped]
+        public bool IsOnsiteExam => this.Type == ContestType.OnsitePracticalExam;
+
+        [NotMapped]
+        public bool IsExam => this.IsOnlineExam || this.IsOnsiteExam;
 
         public static IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

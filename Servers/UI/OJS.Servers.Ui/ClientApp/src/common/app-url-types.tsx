@@ -2,9 +2,19 @@
 
 import { ContestParticipationType } from './constants';
 
-interface IRegisterForContestTypeUrlParams {
+interface IParticipateInContestTypeUrlParams {
     id: number;
     participationType: ContestParticipationType;
 }
 
-export type { IRegisterForContestTypeUrlParams };
+interface IProblemSubmissionDetailsUrlParams {
+    submissionId: number;
+    hashParam: string;
+}
+
+interface IContestResultsUrl {
+    id: number;
+    participationType: ContestParticipationType;
+}
+
+export type { IParticipateInContestTypeUrlParams, IProblemSubmissionDetailsUrlParams, IContestResultsUrl };

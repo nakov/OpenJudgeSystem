@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IIndexContestsType } from '../../../common/types';
@@ -36,17 +37,21 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const contestCardControlBtns = 'card-control-buttons';
     const contestCardControlBtnsClassName = concatClassNames(styles.contestCardControls, contestCardControlBtns);
 
-    const { getRegisterContestTypeUrl } = useAppUrls();
+    const { getParticipateInContestUrl } = useAppUrls();
 
     const renderCountdown = useCallback(
         () => {
-            if (canBePracticed && practiceEndTime == null) {
+            const endDate = canBeCompeted
+                ? endTime
+                : practiceEndTime;
+
+            if (canBePracticed && isNil(practiceEndTime) && isNil(endDate)) {
                 return <p>No practice end time.</p>;
             }
 
-            const endDate = canBeCompeted && !canBePracticed
-                ? endTime
-                : practiceEndTime;
+            if ((!canBePracticed && !canBeCompeted) || isNil(endDate)) {
+                return null;
+            }
 
             return (
                 <Countdown
@@ -86,7 +91,10 @@ const ContestCard = ({ contest }: IContestCardProps) => {
             <div className={contestCardControlBtnsClassName}>
                 <LinkButton
                   id="button-card-compete"
-                  to={getRegisterContestTypeUrl({ id, participationType: ContestParticipationType.Compete })}
+                  to={getParticipateInContestUrl({
+                      id,
+                      participationType: ContestParticipationType.Compete,
+                  })}
                   text="Compete"
                   state={
                         canBeCompeted
@@ -97,7 +105,10 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                 />
                 <LinkButton
                   id="button-card-practice"
-                  to={getRegisterContestTypeUrl({ id, participationType: ContestParticipationType.Practice })}
+                  to={getParticipateInContestUrl({
+                      id,
+                      participationType: ContestParticipationType.Practice,
+                  })}
                   text="Practice"
                   type={LinkButtonType.secondary}
                   state={

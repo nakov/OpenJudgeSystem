@@ -1,27 +1,29 @@
 namespace OJS.Services.Ui.Business.Implementations
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using FluentExtensions.Extensions;
-    using Microsoft.EntityFrameworkCore;
-    using OJS.Common.Enumerations;
+    using OJS.Common;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Participants;
     using OJS.Services.Common;
     using OJS.Services.Common.Models;
     using OJS.Services.Infrastructure.Constants;
     using OJS.Services.Infrastructure.Exceptions;
+    using OJS.Services.Ui.Business.Cache;
     using OJS.Services.Ui.Business.Validation;
+    using OJS.Services.Ui.Business.Validations.Implementations.Contests;
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Contests;
+    using OJS.Services.Ui.Models.Search;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.Common.Models;
+    using X.PagedList;
 
     public class ContestsBusinessService : IContestsBusinessService
     {
-        private const int DefaultContestsToTake = 3;
+        private const int DefaultContestsToTake = 4;
         private const int DefaultContestsPerPage = 12;
 
         private readonly IContestsDataService contestsData;
@@ -69,12 +71,36 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var contest = await this.contestsData.OneById(id);
 
-            await this.ValidateContest(contest!, user.Id!, user.IsAdmin, official);
+            var validationResult = this.contestValidationService.GetValidationResult((
+                contest,
+                id,
+                user.Id,
+                user.IsAdmin,
+                official) !);
+
+            if (!validationResult.IsValid)
+            {
+                throw new BusinessServiceException(validationResult.Message);
+            }
 
             var registerModel = contest!.Map<RegisterUserForContestServiceModel>();
+
             registerModel.RequirePassword = ShouldRequirePassword(contest!, participant!, official);
 
             return registerModel;
+        }
+
+        public async Task<ContestServiceModel> GetContestByProblem(int problemId)
+        {
+           var contestServiceModel = await this.contestsData.GetByProblemId<ContestServiceModel>(problemId);
+           if (contestServiceModel == null)
+           {
+               throw new BusinessServiceException(GlobalConstants.ErrorMessages.ContestNotFound);
+           }
+
+           contestServiceModel.AllowedSubmissionTypes = contestServiceModel.AllowedSubmissionTypes.DistinctBy(st => st.Id);
+
+           return contestServiceModel;
         }
 
         public async Task ValidateContestPassword(int id, bool official, string password)
@@ -106,7 +132,17 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var user = this.userProviderService.GetCurrentUser();
 
-            var validationResult = await this.contestValidationService.GetValidationResult((contest, user?.Id, user!.IsAdmin, model.IsOfficial) !);
+            var validationResult = this.contestValidationService.GetValidationResult((
+                contest,
+                model.ContestId,
+                user.Id,
+                user!.IsAdmin,
+                model.IsOfficial) !);
+
+            if (!validationResult.IsValid)
+            {
+                throw new BusinessServiceException(validationResult.Message);
+            }
 
             var userProfile = await this.usersBusinessService.GetUserProfileById(user.Id!);
 
@@ -118,14 +154,14 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (participant == null)
             {
-                participant = await this.AddNewParticipantToContestIfNotExists(contest!, model.IsOfficial, user.Id!, user.IsAdmin) ??
-                              new Participant() { Contest = contest!, };
+                participant = await this.AddNewParticipantToContestIfNotExists(contest!, model.IsOfficial, user.Id!, user.IsAdmin);
             }
 
-            var participationModel = participant.Map<ContestParticipationServiceModel>();
+            var participationModel = participant!.Map<ContestParticipationServiceModel>();
 
-            participationModel.ValidationResult = validationResult;
-            participationModel.ParticipantId = participant.Id;
+            participationModel.Contest.AllowedSubmissionTypes =
+                participationModel.Contest.AllowedSubmissionTypes.DistinctBy(st => st.Id);
+            participationModel.ParticipantId = participant!.Id;
             participationModel.ContestIsCompete = model.IsOfficial;
             participationModel.UserSubmissionsTimeLimit = await this.participantsBusiness.GetParticipantLimitBetweenSubmissions(
                     participant.Id,
@@ -138,6 +174,15 @@ namespace OJS.Services.Ui.Business.Implementations
                     participationModel.Contest.Problems.Select(x => x.Id),
                     participantsList);
 
+            var userIsAdminInContest = user.IsAdmin || IsUserLecturerInContest(contest, user.Id!);
+            var isOfficialOnlineContest = participationModel.ContestIsCompete && contest.IsOnlineExam;
+
+            if (!userIsAdminInContest && isOfficialOnlineContest)
+            {
+                var problemsForParticipant = participant.ProblemsForParticipants.Select(x => x.Problem);
+                participationModel.Contest.Problems = problemsForParticipant.MapCollection<ContestProblemServiceModel>().ToList();
+            }
+
             await participationModel.Contest.Problems.ForEachAsync(problem =>
             {
                 problem.Points = maxParticipationScores
@@ -147,6 +192,24 @@ namespace OJS.Services.Ui.Business.Implementations
             });
 
             return participationModel;
+        }
+
+        public async Task<ContestSearchServiceResultModel> GetSearchContestsByName(
+            SearchServiceModel model)
+        {
+            var modelResult = new ContestSearchServiceResultModel();
+
+            var allContestsQueryable = this.contestsData.GetAllNonDeletedContests()
+                .Where(c => c.Name!.Contains(model.SearchTerm!));
+
+            var searchContests = await allContestsQueryable
+                .MapCollection<ContestSearchServiceModel>()
+                .ToPagedListAsync(model.PageNumber, model.ItemsPerPage);
+
+            modelResult.Contests = searchContests;
+            modelResult.TotalContestsCount = allContestsQueryable.Count();
+
+            return modelResult;
         }
 
         public Task<bool> IsContestIpValidByContestAndIp(int contestId, string ip)
@@ -205,7 +268,7 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var active = await this.GetAllCompetable()
                 .ToListAsync();
-            var past = await this.GetAllPracticable()
+            var past = await this.GetAllPastContests()
                 .ToListAsync();
 
             return new ContestsForHomeIndexServiceModel { ActiveContests = active, PastContests = past, };
@@ -217,10 +280,10 @@ namespace OJS.Services.Ui.Business.Implementations
                 .OrderByDescendingAsync(ac => ac.EndTime)
                 .TakeAsync(DefaultContestsToTake);
 
-        public async Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPracticable()
+        public async Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPastContests()
             => await this.contestsData
-                .GetAllPracticable<ContestForHomeIndexServiceModel>()
-                .OrderByDescendingAsync(ac => ac.PracticeStartTime)
+                .GetAllExpired<ContestForHomeIndexServiceModel>()
+                .OrderByDescendingAsync(ac => ac.EndTime)
                 .TakeAsync(DefaultContestsToTake);
 
         public async Task<bool> CanUserCompeteByContestByUserAndIsAdmin(
@@ -362,13 +425,13 @@ namespace OJS.Services.Ui.Business.Implementations
             string userId,
             bool isUserAdmin)
         {
-            if (contest.Type is not(ContestType.OnlinePracticalExam and ContestType.OnlinePracticalExam) &&
+            if (contest.IsOnlineExam &&
                 official &&
                 !isUserAdmin &&
                 !IsUserLecturerInContest(contest, userId) &&
                 !await this.contestsData.IsUserInExamGroupByContestAndUser(contest.Id, userId))
             {
-                return null;
+                throw new BusinessServiceException(ValidationMessages.Participant.NotRegisteredForExam);
             }
 
             return await this.participantsBusiness.CreateNewByContestByUserByIsOfficialAndIsAdmin(
@@ -384,7 +447,7 @@ namespace OJS.Services.Ui.Business.Implementations
             string userId,
             bool isUserAdmin)
         {
-            if (contest.IsOnline &&
+            if (contest.IsExam &&
                 official &&
                 !isUserAdmin &&
                 !IsUserLecturerInContest(contest, userId) &&

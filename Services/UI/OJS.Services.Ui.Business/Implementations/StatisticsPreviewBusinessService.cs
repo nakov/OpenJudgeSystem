@@ -4,8 +4,7 @@ using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.Statistics;
 using System.Threading.Tasks;
 
-public class StatisticsPreviewBusinessService
-    : IStatisticsPreviewBusinessService
+public class StatisticsPreviewBusinessService : IStatisticsPreviewBusinessService
 {
     private readonly IContestsDataService contestsData;
     private readonly IUsersProfileDataService usersProfileData;
@@ -33,7 +32,7 @@ public class StatisticsPreviewBusinessService
             ContestsCount = await this.contestsData.GetCount(),
             UsersCount = await this.usersProfileData.GetCount(),
             ProblemsCount = await this.problemsData.GetCount(),
-            SubmissionsCount = await this.submissionsData.GetCount(),
+            SubmissionsCount = await this.submissionsData.GetTotalSubmissionsCount(),
             StrategiesCount = await this.submissionTypesData.GetCount(),
             SubmissionsPerDayCount = await this.submissionsData.GetSubmissionsPerDayCount(),
         };

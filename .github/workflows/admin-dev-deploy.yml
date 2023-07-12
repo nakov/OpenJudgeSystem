@@ -1,0 +1,21 @@
+name: 03. Deploy Admin (Development)
+
+on:
+  workflow_dispatch:
+  workflow_call:
+jobs:
+  build-and-push:
+    uses: ./.github/workflows/build-and-push.yml
+    with:
+      docker_image_name: judge_web_administration
+      dockerfile_name: Dockerfile.administration
+      docker_tag: dev-latest
+      branch_name: v2-development
+    secrets: inherit
+  deploy:
+    needs: [build-and-push]
+    uses: ./.github/workflows/deploy.yml
+    secrets:
+      webhook_url: ${{ secrets.ADMIN_WEBHOOK_URL }}
+      webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
+        

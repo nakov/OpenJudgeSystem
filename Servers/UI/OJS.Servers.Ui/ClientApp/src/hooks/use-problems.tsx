@@ -1,12 +1,15 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import first from 'lodash/first';
 import isNil from 'lodash/isNil';
 
+import { ContestParticipationType } from '../common/constants';
 import { IProblemType } from '../common/types';
 import { IDownloadProblemResourceUrlParams } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
 import { useHashUrlParams } from './common/use-hash-url-params';
+import { useAppUrls } from './use-app-urls';
 import { useCurrentContest } from './use-current-contest';
 import { useHttp } from './use-http';
 import { useLoading } from './use-loading';
@@ -18,8 +21,10 @@ interface IProblemsContext {
         currentProblem: IProblemType | null;
     };
     actions: {
-        selectProblemById: (id: number) => void;
         downloadProblemResourceFile: (resourceId: number) => Promise<void>;
+        initiateProblems: () => void;
+        selectCurrentProblem: (id: number) => void;
+        initiateRedirectionToProblem: (problemId: number, contestId: number, participationType: ContestParticipationType) => void;
     };
 }
 
@@ -46,11 +51,12 @@ const ProblemsContext = createContext<IProblemsContext>(defaultState as IProblem
 const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     const { state: { contest } } = useCurrentContest();
     const {
-        state: { params },
+        state: { hashParam },
         actions: { setHash },
     } = useHashUrlParams();
     const [ problems, setProblems ] = useState(defaultState.state.problems);
     const [ currentProblem, setCurrentProblem ] = useState<IProblemType | null>(defaultState.state.currentProblem);
+    const [ internalProblemId, setInternalProblemId ] = useState<number | null>();
     const [ problemResourceIdToDownload, setProblemResourceIdToDownload ] = useState<number | null>(null);
     const { getDownloadProblemResourceUrl } = useUrls();
 
@@ -58,6 +64,9 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         startLoading,
         stopLoading,
     } = useLoading();
+
+    const { getParticipateInContestUrl } = useAppUrls();
+    const navigate = useNavigate();
 
     const {
         get: downloadProblemResource,
@@ -74,7 +83,7 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     );
 
     const selectProblemById = useCallback(
-        (problemId: number) => {
+        (problemId: number, isDefaultHashParam = false) => {
             const newProblem = normalizedProblems.find((p) => p.id === problemId);
 
             if (isNil(newProblem)) {
@@ -83,17 +92,17 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
 
             setCurrentProblem(newProblem);
             const { orderBy } = newProblem;
-            setHash(orderBy.toString());
+            setHash(orderBy.toString(), isDefaultHashParam);
         },
         [ setHash, normalizedProblems ],
     );
 
     const problemFromHash = useMemo(
         () => {
-            const hashIndex = Number(params) - 1;
+            const hashIndex = Number(hashParam) - 1;
             return normalizedProblems[hashIndex];
         },
-        [ normalizedProblems, params ],
+        [ hashParam, normalizedProblems ],
     );
 
     const isLoadedFromHash = useMemo(
@@ -101,7 +110,32 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         [ problemFromHash ],
     );
 
-    const reloadProblems = useCallback(
+    const selectCurrentProblem = useCallback(
+        (problemId: number) => {
+            selectProblemById(problemId);
+
+            setInternalProblemId(null);
+        },
+        [ selectProblemById ],
+    );
+
+    // use it to redirect to contest from externalPage (such as SearchPage) which will search for
+    // his the problemId in the normalized problems and set it in the hash.
+    const initiateRedirectionToProblem = useCallback(
+        (problemId: number, contestId: number, participationType: ContestParticipationType) => {
+            const participateInContestUrl = getParticipateInContestUrl({
+                id: contestId,
+                participationType,
+            });
+
+            navigate(participateInContestUrl);
+
+            setInternalProblemId(problemId);
+        },
+        [ getParticipateInContestUrl, navigate ],
+    );
+
+    const initiateProblems = useCallback(
         () => {
             const { problems: newProblems } = contest || {};
 
@@ -116,13 +150,15 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
                 return;
             }
 
-            if (isLoadedFromHash) {
+            if (!isNil(internalProblemId)) {
+                selectProblemById(internalProblemId);
+            } else if (isLoadedFromHash) {
                 setCurrentProblem(problemFromHash);
             } else {
-                selectProblemById(id);
+                selectProblemById(id, true);
             }
         },
-        [ contest, isLoadedFromHash, normalizedProblems, problemFromHash, selectProblemById ],
+        [ contest, internalProblemId, isLoadedFromHash, normalizedProblems, problemFromHash, selectProblemById ],
     );
 
     const downloadProblemResourceFile = useCallback(async (resourceId: number) => {
@@ -137,25 +173,21 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         saveAttachment();
     }, [ downloadProblemResourceResponse, problemResourceIdToDownload, saveAttachment ]);
 
-    useEffect(() => {
-        if (isNil(problemResourceIdToDownload)) {
-            return;
-        }
-
-        (async () => {
-            startLoading();
-            await downloadProblemResource('blob');
-            stopLoading();
-        })();
-
-        setProblemResourceIdToDownload(null);
-    }, [ downloadProblemResource, problemResourceIdToDownload, startLoading, stopLoading ]);
-
     useEffect(
         () => {
-            reloadProblems();
+            if (isNil(problemResourceIdToDownload)) {
+                return;
+            }
+
+            (async () => {
+                startLoading();
+                await downloadProblemResource('blob');
+                stopLoading();
+            })();
+
+            setProblemResourceIdToDownload(null);
         },
-        [ reloadProblems ],
+        [ downloadProblemResource, problemResourceIdToDownload, startLoading, stopLoading ],
     );
 
     const value = useMemo(
@@ -165,11 +197,13 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
                 currentProblem,
             },
             actions: {
-                selectProblemById,
+                selectCurrentProblem,
                 downloadProblemResourceFile,
+                initiateProblems,
+                initiateRedirectionToProblem,
             },
         }),
-        [ currentProblem, downloadProblemResourceFile, problems, selectProblemById ],
+        [ currentProblem, downloadProblemResourceFile, initiateRedirectionToProblem, initiateProblems, problems, selectCurrentProblem ],
     );
 
     return (

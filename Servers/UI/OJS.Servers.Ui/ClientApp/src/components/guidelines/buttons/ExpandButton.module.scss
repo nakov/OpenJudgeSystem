@@ -1,4 +1,8 @@
+@use 'src/styles/fonts';
+
 .container {
+  @extend %font-family-lato;
+
   margin-top: 10px;
 }
 

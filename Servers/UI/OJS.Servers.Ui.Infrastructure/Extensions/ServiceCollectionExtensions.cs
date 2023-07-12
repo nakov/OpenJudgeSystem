@@ -3,6 +3,7 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using OJS.Common.Enumerations;
+    using OJS.Common.Utils;
     using OJS.Data;
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Extensions;
@@ -42,11 +43,8 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
         private static IServiceCollection ConfigureSettings(
             this IServiceCollection services,
             IConfiguration configuration)
-        {
-            services
+            => services
+                .ValidateLaunchSettings()
                 .Configure<DistributorConfig>(configuration.GetSection(nameof(DistributorConfig)));
-
-            return services;
-        }
     }
 }

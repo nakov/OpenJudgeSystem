@@ -8,6 +8,7 @@ import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
 import { convertToTwoDigitValues } from '../../../utils/dates';
 import CodeEditor from '../../code-editor/CodeEditor';
+import FileUploader from '../../file-uploader/FileUploader';
 import AlertBox, { AlertBoxType } from '../../guidelines/alert-box/AlertBox';
 import { Button, ButtonState } from '../../guidelines/buttons/Button';
 import Countdown, { ICountdownRemainingType, Metric } from '../../guidelines/countdown/Countdown';
@@ -28,16 +29,16 @@ const SubmissionBox = () => {
     } = useCurrentContest();
     const {
         state: {
-            submissionCode,
             selectedSubmissionType,
-            submitMessage,
-            setSubmitMessage,
-            isSubmissionSuccessful,
+            problemSubmissionCode,
+            problemSubmissionErrors,
         },
         actions: {
             submit,
             updateSubmissionCode,
             selectSubmissionTypeById,
+            removeProblemSubmissionCode,
+            closeErrorMessage,
         },
     } = useSubmissions();
 
@@ -47,7 +48,7 @@ const SubmissionBox = () => {
     const showSubmissionLimitTimer = useMemo(() => submitLimit > 0, [ submitLimit ]);
 
     const handleCodeChanged = useCallback(
-        (newValue: string) => {
+        (newValue: string | File) => {
             updateSubmissionCode(newValue);
         },
         [ updateSubmissionCode ],
@@ -102,20 +103,36 @@ const SubmissionBox = () => {
         [ allowedSubmissionTypes, currentProblem, renderSubmissionTypesSelectors ],
     );
 
-    const restartSubmissionTimeLimitCountdown = useCallback((force = false) => {
-        if (!force) {
-            return;
-        }
+    const restartSubmissionTimeLimitCountdown = useCallback(
+        () => {
+            if (isNil(contest) || contest.limitBetweenSubmissions === 0) {
+                return;
+            }
 
-        if (!isNil(contest) && contest.limitBetweenSubmissions !== 0) {
-            setSubmitLimit(contest.limitBetweenSubmissions as number);
-        }
-    }, [ contest ]);
+            setSubmitLimit(contest.limitBetweenSubmissions);
+        },
+        [ contest ],
+    );
 
-    const handleOnSubmit = useCallback(async () => {
-        await submit();
-        updateSubmissionCode('');
-    }, [ submit, updateSubmissionCode ]);
+    const handleOnSubmit = useCallback(
+        async () => {
+            await submit();
+            const { id: problemId } = currentProblem || {};
+            if (isNil(problemId)) {
+                return;
+            }
+
+            if (isNil(problemSubmissionCode[problemId]) ||
+                problemSubmissionCode[problemId] === '') {
+                return;
+            }
+
+            removeProblemSubmissionCode(problemId);
+
+            restartSubmissionTimeLimitCountdown();
+        },
+        [ submit, currentProblem, problemSubmissionCode, removeProblemSubmissionCode, restartSubmissionTimeLimitCountdown ],
+    );
 
     const renderSubmissionLimitCountdown = useCallback((remainingTime: ICountdownRemainingType) => {
         const { minutes, seconds } = convertToTwoDigitValues(remainingTime);
@@ -133,22 +150,30 @@ const SubmissionBox = () => {
         );
     }, []);
 
-    const renderCountdown = useCallback(() => {
-        if (!showSubmissionLimitTimer) {
-            return null;
-        }
+    const handleOnCountdownEnd = useCallback(
+        () => {
+            setSubmitLimit(0);
+        },
+        [],
+    );
 
-        return (
-            <Countdown
-              duration={submitLimit}
-              metric={Metric.seconds}
-              renderRemainingTime={renderSubmissionLimitCountdown}
-              handleOnCountdownEnd={() => {
-                  setSubmitLimit(0);
-              }}
-            />
-        );
-    }, [ showSubmissionLimitTimer, renderSubmissionLimitCountdown, submitLimit ]);
+    const renderCountdown = useCallback(
+        () => {
+            if (!showSubmissionLimitTimer) {
+                return null;
+            }
+
+            return (
+                <Countdown
+                  duration={submitLimit}
+                  metric={Metric.seconds}
+                  renderRemainingTime={renderSubmissionLimitCountdown}
+                  handleOnCountdownEnd={handleOnCountdownEnd}
+                />
+            );
+        },
+        [ handleOnCountdownEnd, renderSubmissionLimitCountdown, showSubmissionLimitTimer, submitLimit ],
+    );
 
     const renderSubmitBtn = useCallback(() => {
         const state = !isSubmitAllowed || showSubmissionLimitTimer
@@ -164,29 +189,38 @@ const SubmissionBox = () => {
         );
     }, [ handleOnSubmit, showSubmissionLimitTimer, isSubmitAllowed ]);
 
-    const renderSubmitMessage = useCallback(() => {
-        if (isNil(submitMessage)) {
-            return null;
-        }
+    const renderSubmitMessage = useCallback(
+        () => {
+            const { id: problemId } = currentProblem || {};
+            if (isNil(problemId)) {
+                return null;
+            }
 
-        return (
-            <AlertBox
-              message={submitMessage}
-              type={AlertBoxType.error}
-              onClose={() => setSubmitMessage(null)}
-            />
-        );
-    }, [ setSubmitMessage, submitMessage ]);
+            const { [problemId.toString()]: error } = problemSubmissionErrors;
 
-    useEffect(() => {
-        setSubmitLimit(userSubmissionsTimeLimit);
-    }, [ userSubmissionsTimeLimit ]);
+            if (isNil(error)) {
+                return null;
+            }
 
-    useEffect(() => {
-        if (!isNil(isSubmissionSuccessful) && isSubmissionSuccessful) {
-            restartSubmissionTimeLimitCountdown(true);
-        }
-    }, [ restartSubmissionTimeLimitCountdown, isSubmissionSuccessful ]);
+            const { detail } = error;
+
+            return (
+                <AlertBox
+                  message={detail}
+                  type={AlertBoxType.error}
+                  onClose={() => closeErrorMessage(problemId.toString())}
+                />
+            );
+        },
+        [ closeErrorMessage, currentProblem, problemSubmissionErrors ],
+    );
+
+    useEffect(
+        () => {
+            setSubmitLimit(userSubmissionsTimeLimit);
+        },
+        [ userSubmissionsTimeLimit ],
+    );
 
     const taskText = 'Task: ';
     const executionTypeListClass = 'executionTypeLis';
@@ -195,40 +229,102 @@ const SubmissionBox = () => {
         executionTypeListClass,
     );
 
-    return (
-        <div className={styles.contestMainWrapper}>
-            <Heading
-              type={HeadingType.secondary}
-              className={styles.heading}
-            >
-                {taskText}
-                <span className={styles.taskName}>
-                    {currentProblem?.name}
-                </span>
-            </Heading>
-            <div className={styles.contestInnerLayout}>
-                <div className={styles.editorAndProblemControlsWrapper}>
-                    <CodeEditor
-                      selectedSubmissionType={selectedSubmissionType}
-                      code={submissionCode}
-                      onCodeChange={handleCodeChanged}
-                    />
-                    <div className={styles.contestSubmitControlsWrapper}>
-                        <div className={executionTypeListClassName}>
-                            {renderSubmissionTypesSelectorsList()}
+    const submissionCode = useMemo(
+        () => {
+            const { id: problemId } = currentProblem || {};
+            if (isNil(problemId)) {
+                return null;
+            }
+            return problemSubmissionCode[problemId];
+        },
+        [ currentProblem, problemSubmissionCode ],
+    );
+
+    const renderSubmissionInput = useCallback(
+        () => {
+            if (isNil(selectedSubmissionType)) {
+                return <p>No submission type selected.</p>;
+            }
+
+            const { allowBinaryFilesUpload, allowedFileExtensions } = selectedSubmissionType;
+            const { id: problemId } = currentProblem || {};
+            if (isNil(problemId)) {
+                return null;
+            }
+
+            if (allowBinaryFilesUpload && !isNil(currentProblem)) {
+                return (
+                    <>
+                        <FileUploader
+                          file={isNil(submissionCode) || submissionCode instanceof String
+                              ? null
+                              : submissionCode as File}
+                          problemId={problemId}
+                        />
+                        <p className={styles.fileSubmissionDetailsParagraph}>
+                            Allowed file extensions:
+                            {allowedFileExtensions.join(', ')}
+                        </p>
+                    </>
+                );
+            }
+
+            return (
+                <CodeEditor
+                  selectedSubmissionType={selectedSubmissionType}
+                  code={isNil(submissionCode) || submissionCode instanceof File
+                      ? ''
+                      : submissionCode}
+                  onCodeChange={handleCodeChanged}
+                />
+            );
+        },
+        [ handleCodeChanged, selectedSubmissionType, submissionCode, currentProblem ],
+    );
+
+    const renderSubmissionBox = useCallback(
+        () => (
+            <div className={styles.contestMainWrapper}>
+                <Heading
+                  type={HeadingType.secondary}
+                  className={styles.heading}
+                >
+                    {taskText}
+                    <span className={styles.taskName}>
+                        {currentProblem?.name}
+                    </span>
+                </Heading>
+                <div className={styles.contestInnerLayout}>
+                    <div className={styles.editorAndProblemControlsWrapper}>
+                        {renderSubmissionInput()}
+                        <div className={styles.contestSubmitControlsWrapper}>
+                            <div className={executionTypeListClassName}>
+                                {renderSubmissionTypesSelectorsList()}
+                            </div>
+                            <div className={styles.submitButtonContainer}>
+                                {renderSubmitBtn()}
+                            </div>
                         </div>
-                        <div className={styles.submitButtonContainer}>
-                            {renderSubmitBtn()}
+                        <div className={styles.submitCountdownWrapper}>
+                            { renderCountdown() }
                         </div>
+                        { renderSubmitMessage() }
                     </div>
-                    <div className={styles.submitCountdownWrapper}>
-                        { renderCountdown() }
-                    </div>
-                    { renderSubmitMessage() }
                 </div>
             </div>
-        </div>
+        ),
+        [
+            currentProblem?.name,
+            executionTypeListClassName,
+            renderCountdown,
+            renderSubmissionInput,
+            renderSubmissionTypesSelectorsList,
+            renderSubmitBtn,
+            renderSubmitMessage,
+        ],
     );
+
+    return renderSubmissionBox();
 };
 
 export default SubmissionBox;

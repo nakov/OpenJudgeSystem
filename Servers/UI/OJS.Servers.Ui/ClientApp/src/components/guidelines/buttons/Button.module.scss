@@ -2,7 +2,8 @@
 @use 'src/styles/colors.scss';
 @use 'src/styles/fonts.scss';
 
-.btn {
+.btn,
+%btn {
   @extend %font-family-lato;
 
   border: 2px solid transparent;
@@ -31,7 +32,8 @@
     }
   }
 
-  &.secondary {
+  &.secondary,
+  %secondary {
     background-color: colors.$background-color-btn-secondary;
     border-color: colors.$light-blue-color;
     box-shadow: none;
@@ -91,5 +93,15 @@
 
   &.wide {
     width: 100%;
+  }
+
+  &.image {
+    display: inline-block;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    font: inherit;
+    margin: 0;
+    padding: 0;
   }
 }

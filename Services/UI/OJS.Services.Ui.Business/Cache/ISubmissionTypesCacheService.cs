@@ -1,6 +1,6 @@
 namespace OJS.Services.Ui.Business.Cache;
 
-using OJS.Services.Ui.Models.SubmissionTypes;
+using Models.SubmissionTypes;
 using SoftUni.Services.Infrastructure;
 using System.Collections.Generic;
 using System.Threading.Tasks;

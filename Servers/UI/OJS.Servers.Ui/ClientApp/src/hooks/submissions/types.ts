@@ -5,6 +5,7 @@ interface IProblemType {
     id: number;
     name: string;
     maximumPoints: number;
+    orderBy: number;
 }
 
 interface ITestRunType {
@@ -35,6 +36,7 @@ interface ISubmissionType {
     compilerComment: string;
     createdOn: Date;
     modifiedOn?: Date;
+    startedExecutionOn?: Date;
 }
 
 interface ITestRunDetailsType extends ITestRunType {

@@ -1,48 +1,31 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import isNil from 'lodash/isNil';
 
 import SubmissionDetails from '../../components/submissions/details/SubmissionDetails';
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
 import { useSubmissionsDetails } from '../../hooks/submissions/use-submissions-details';
+import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 
 const SubmissionDetailsPage = () => {
     const { state: { params } } = useRouteUrlParams();
     const { submissionId } = params;
     const {
-        state: { currentSubmission },
         actions: {
             getDetails,
             selectSubmissionById,
         },
     } = useSubmissionsDetails();
 
-    const [ selectedSubmissionId, setSelectedSubmissionId ] = useState(currentSubmission?.id);
-
     useEffect(
         () => {
-            if (selectedSubmissionId === submissionId) {
+            if (isNil(submissionId)) {
                 return;
             }
 
-            setSelectedSubmissionId(Number(submissionId));
+            selectSubmissionById(submissionId);
         },
-        [ selectedSubmissionId, submissionId ],
-    );
-
-    useEffect(
-        () => {
-            if (isNil(selectedSubmissionId)) {
-                return;
-            }
-
-            selectSubmissionById(selectedSubmissionId);
-
-            (async () => {
-                await getDetails(selectedSubmissionId);
-            })();
-        },
-        [ getDetails, selectedSubmissionId, selectSubmissionById ],
+        [ getDetails, selectSubmissionById, submissionId ],
     );
 
     return (
@@ -50,4 +33,4 @@ const SubmissionDetailsPage = () => {
     );
 };
 
-export default setLayout(SubmissionDetailsPage, true);
+export default makePrivate(setLayout(SubmissionDetailsPage, true));

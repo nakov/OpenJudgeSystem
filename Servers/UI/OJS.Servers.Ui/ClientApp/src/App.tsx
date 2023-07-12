@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 
 import InitProviders, { ProviderType } from './components/common/InitProviders';
@@ -22,35 +22,33 @@ import HomeStatisticsProvider from './hooks/use-home-statistics';
 import LoadingProvider from './hooks/use-loading';
 import NotificationsProvider from './hooks/use-notifications';
 import PageWithTitleProvider from './hooks/use-page-titles';
+import PageProvider from './hooks/use-pages';
 import ParticipationsProvider from './hooks/use-participations';
 import ProblemsProvider from './hooks/use-problems';
+import SearchProvider from './hooks/use-search';
 import ServicesProvider from './hooks/use-services';
 import UrlsProvider from './hooks/use-urls';
 import UsersProvider from './hooks/use-users';
 import PageContent from './layout/content/PageContent';
 import PageFooter from './layout/footer/PageFooter';
 import PageHeader from './layout/header/PageHeader';
-import UserCookiesService from './services/user-cookies-service';
+import SearchBar from './layout/search-bar/SearchBar';
 
 import './styles/global.scss';
 
 const App = () => {
-    const userCookiesService = useMemo(
-        () => new UserCookiesService(),
-        [],
-    );
-    const user = userCookiesService.getUser();
     const providers = [
         UrlParamsProvider,
         RouteUrlParamsProvider,
         AppUrlsProvider,
         UrlsProvider,
         ServicesProvider,
+        PageProvider,
         LoadingProvider,
         NotificationsProvider,
         PageWithTitleProvider,
         HashUrlParamProvider,
-        { Provider: AuthProvider, props: { user } },
+        AuthProvider,
         UsersProvider,
         ContestCategoriesProvider,
         ContestStrategyFiltersProvider,
@@ -66,12 +64,14 @@ const App = () => {
         SubmissionsDetailsProvider,
         HomeStatisticsProvider,
         PublicSubmissionsProvider,
+        SearchProvider,
     ] as ProviderType[];
 
     return (
         <Router>
             <InitProviders providers={providers}>
                 <PageHeader />
+                <SearchBar />
                 <PageContent />
                 <PageFooter />
             </InitProviders>

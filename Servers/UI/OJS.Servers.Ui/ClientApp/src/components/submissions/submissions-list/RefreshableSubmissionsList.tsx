@@ -15,20 +15,23 @@ const RefreshableSubmissionsList = ({
 }: IRefreshableSubmissionsListProps) => {
     const {
         state: { currentSubmission },
-        actions: { getSubmissionResults },
+        actions: { getSubmissionDetailsResults },
     } = useSubmissionsDetails();
 
     const submissionsReloadBtnClassName = 'submissionReloadBtn';
 
-    const handleReloadClick = useCallback(async () => {
-        if (isNil(currentSubmission)) {
-            return;
-        }
+    const handleReloadClick = useCallback(
+        async () => {
+            if (isNil(currentSubmission)) {
+                return;
+            }
 
-        const { problem: { id: problemId }, isOfficial, user: { id: userId } } = currentSubmission;
+            const { id: submissionId, isOfficial } = currentSubmission;
 
-        await getSubmissionResults(problemId, isOfficial, userId);
-    }, [ currentSubmission, getSubmissionResults ]);
+            await getSubmissionDetailsResults(submissionId, isOfficial);
+        },
+        [ currentSubmission, getSubmissionDetailsResults ],
+    );
 
     return (
         <>

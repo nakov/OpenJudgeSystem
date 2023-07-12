@@ -8,6 +8,7 @@ using OJS.Servers.Ui.Models.Users;
 using OJS.Services.Ui.Business;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using static Microsoft.AspNetCore.Http.StatusCodes;
+using OJS.Services.Ui.Models.Users;
 
 [Authorize]
 public class UsersController : BaseApiController
@@ -27,5 +28,13 @@ public class UsersController : BaseApiController
         => await this.usersBusiness
             .GetUserProfileByUsername(this.HttpContext.User.Identity!.Name)
             .Map<UserProfileResponseModel>()
+            .ToOkResult();
+
+    [HttpGet]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(UserAuthInfoServiceModel), Status200OK)]
+    public async Task<IActionResult> GetUserAuthInfo()
+        => await this.usersBusiness
+            .GetAuthInfo()
             .ToOkResult();
 }

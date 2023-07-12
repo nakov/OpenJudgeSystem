@@ -1,7 +1,9 @@
 import React, { useCallback, useMemo } from 'react';
 
 import { ContestParticipationType } from '../../../common/constants';
+import { useHashUrlParams } from '../../../hooks/common/use-hash-url-params';
 import { ISubmissionDetails, ISubmissionDetailsType } from '../../../hooks/submissions/types';
+import { useAppUrls } from '../../../hooks/use-app-urls';
 import concatClassNames from '../../../utils/class-names';
 import { formatDate } from '../../../utils/dates';
 import { IHaveOptionalClassName } from '../../common/Props';
@@ -23,6 +25,9 @@ const SubmissionsList = ({
     selectedSubmission,
     className = '',
 }: ISubmissionsListProps) => {
+    const { getProblemSubmissionDetailsUrl } = useAppUrls();
+    const { state: { hashParam } } = useHashUrlParams();
+
     const containerClassName = useMemo(
         () => concatClassNames(styles.submissionsScroll, className),
         [ className ],
@@ -42,7 +47,7 @@ const SubmissionsList = ({
         [ submissionListItemClass ],
     );
     const submissionBtnClass = 'submissionBtn';
-    const submissionsLabelTypeClassName = 'submissionTypeLabel';
+    const submissionsTypeLabelClassName = concatClassNames(styles.submissionTypeLabel);
 
     const renderSubmissionListItem = useCallback((submission: ISubmissionDetails) => {
         const { id: selectedSubmissionId } = selectedSubmission || {};
@@ -84,13 +89,16 @@ const SubmissionsList = ({
                     <p className={styles.submissionCreatedOnParagraph}>{formatDate(createdOn)}</p>
                 </div>
                 <div className={styles.actionsContainer}>
-                    <Text>
+                    <Text className={styles.submissionTypeText}>
                         {submissionType}
                     </Text>
-                    <Label type={LabelType.plain} text={typeLabelText} className={submissionsLabelTypeClassName} />
+                    <Label type={LabelType.plain} text={typeLabelText} className={submissionsTypeLabelClassName} />
                     <LinkButton
                       size={ButtonSize.small}
-                      to={`/submissions/${id}/details`}
+                      to={getProblemSubmissionDetailsUrl({
+                          submissionId: id,
+                          hashParam,
+                      })}
                       className={submissionBtnClass}
                       type={LinkButtonType.secondary}
                       text="Details"
@@ -99,7 +107,7 @@ const SubmissionsList = ({
                 </div>
             </div>
         );
-    }, [ selectedSubmission ]);
+    }, [ getProblemSubmissionDetailsUrl, hashParam, selectedSubmission, submissionsTypeLabelClassName ]);
 
     return (
         <div className={containerClassName}>

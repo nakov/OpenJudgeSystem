@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OJS.Servers.Administration.Infrastructure.Extensions;
+using OJS.Common;
 using GlobalResource = OJS.Common.Resources.SubmissionsController;
 
 public class SubmissionsController : BaseAutoCrudAdminController<Submission>
@@ -89,7 +90,33 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         => new[]
         {
             new GridAction { Action = nameof(this.Retest) },
+            new GridAction { Action = nameof(this.DownloadAttachment) },
         };
+
+    public async Task<IActionResult> DownloadAttachment([FromQuery] IDictionary<string, string> complexId)
+    {
+        var submissionId = this.GetEntityIdFromQuery<int>(complexId);
+
+        var submission = await this.submissionsData.GetByIdQuery(submissionId).FirstOrDefaultAsync();
+        if (submission == null)
+        {
+            this.TempData.AddDangerMessage(GlobalResource.SubmissionNotFound);
+
+            return this.RedirectToAction(nameof(this.Index));
+        }
+
+        if (!submission.IsBinaryFile)
+        {
+            this.TempData.AddDangerMessage(GlobalResource.SubmissionNotFileUpload);
+
+            return this.Redirect(this.Request.Headers.Referer);
+        }
+
+        return this.File(
+            submission.Content,
+            GlobalConstants.MimeTypes.ApplicationOctetStream,
+            string.Format(GlobalConstants.Submissions.SubmissionDownloadFileName, submissionId, submission.FileExtension));
+    }
 
     public async Task<IActionResult> Retest([FromQuery] IDictionary<string, string> complexId)
     {
@@ -134,14 +161,15 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         Submission entity,
         EntityAction action,
         IDictionary<string, string> entityDict,
-        IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters)
+        IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters,
+        Type autocompleteType)
     {
         complexOptionFilters.Add(
             new KeyValuePair<string, Expression<Func<object, bool>>>(
                 nameof(entity.Participant),
                 p => ((Participant)p).Id == entity.ParticipantId));
 
-        return base.GenerateFormControls(entity, action, entityDict, complexOptionFilters);
+        return base.GenerateFormControls(entity, action, entityDict, complexOptionFilters, autocompleteType);
     }
 
     protected override async Task BeforeEntitySaveAsync(Submission submission, AdminActionContext actionContext)

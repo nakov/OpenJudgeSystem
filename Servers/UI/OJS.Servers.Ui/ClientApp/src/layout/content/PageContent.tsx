@@ -4,14 +4,15 @@ import { Route, Routes } from 'react-router-dom';
 import AdministrationPage from '../../pages/administration/AdministrationPage';
 import SubmissionRetestPage from '../../pages/administration/SubmissionRetestPage';
 import ContestPage from '../../pages/contest/ContestPage';
-import ContestRegisterPage from '../../pages/contest/ContestRegisterPage';
 import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';
 import ContestsPage from '../../pages/contests/ContestsPage';
 import HomePage from '../../pages/home/HomePage';
 import LoginPage from '../../pages/login/LoginPage';
 import LogoutPage from '../../pages/logout/LogoutPage';
+import NotFoundPage from '../../pages/not-found/NotFoundPage';
 import ProfilePage from '../../pages/profile/ProfilePage';
 import RegisterPage from '../../pages/register/RegisterPage';
+import SearchPage from '../../pages/search/SearchPage';
 import { asPage } from '../../pages/shared/set-page-params';
 import { withTitle } from '../../pages/shared/set-page-title';
 import SubmissionDetailsPage from '../../pages/submission-details/SubmissionDetailsPage';
@@ -52,11 +53,6 @@ const routes = [
         Element: SubmissionDetailsPage,
     },
     {
-        path: '/contests/:contestId/register/:participationType',
-        Element: ContestRegisterPage,
-        title: 'Enter Contest Password',
-    },
-    {
         title: 'Contests',
         path: '/contests',
         Element: ContestsPage,
@@ -76,6 +72,14 @@ const routes = [
     {
         path: '/Submissions/Retest',
         Element: SubmissionRetestPage,
+    },
+    {
+        path: '/search',
+        Element: SearchPage,
+    },
+    {
+        path: '*',
+        Element: NotFoundPage,
     },
 ];
 

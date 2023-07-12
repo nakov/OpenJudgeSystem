@@ -14,6 +14,8 @@ namespace OJS.Services.Ui.Data
 
         Task<IEnumerable<TServiceModel>> GetAllPracticable<TServiceModel>();
 
+        Task<IEnumerable<TServiceModel>> GetAllExpired<TServiceModel>();
+
         Task<PagedResult<TServiceModel>> GetAllAsPageByFiltersAndSorting<TServiceModel>(ContestFiltersServiceModel model);
 
         Task<Contest?> GetByIdWithProblems(int id);
@@ -21,6 +23,10 @@ namespace OJS.Services.Ui.Data
         Task<Contest?> GetByIdWithProblemsAndSubmissionTypes(int id);
 
         Task<Contest?> GetByIdWithParticipants(int id);
+
+        IQueryable<Contest> GetAllNonDeletedContests();
+
+        Task<TServiceModel?> GetByProblemId<TServiceModel>(int id);
 
         IQueryable<Contest> GetAllActive();
 

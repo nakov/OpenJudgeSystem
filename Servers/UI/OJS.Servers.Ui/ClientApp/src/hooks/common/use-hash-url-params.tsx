@@ -1,51 +1,67 @@
-import React, { createContext, useCallback, useContext, useMemo } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { IHaveChildrenProps } from '../../components/common/Props';
 
 interface IHashUrlParamsContext {
-    state: { params: string };
+    state: { hashParam: string };
     actions: {
-        setHash: (hashParameter: string) => void;
+        setHash: (hashParameter: string, isDefaultHashParam: boolean) => void;
         clearHash: () => void;
     };
 }
 
 type IHashUrlParamProviderProps = IHaveChildrenProps
 
+const defaultState = { state: { hashParam: '' } };
+
 const HashUrlParamContext = createContext<IHashUrlParamsContext>({} as IHashUrlParamsContext);
 
 const HashUrlParamProvider = ({ children }: IHashUrlParamProviderProps) => {
     const location = useLocation();
-    const params = useMemo(() => {
-        const { hash } = location;
+    const [ hashParam, setHashParam ] = useState<string>(defaultState.state.hashParam);
 
-        return hash.substring(1);
-    }, [ location ]);
+    useEffect(
+        () => {
+            const { hash } = location;
+            setHashParam(hash.substring(1));
+        },
+        [ location ],
+    );
 
     const setHash = useCallback(
-        (param: string) => {
-            window.location.hash = param;
+        (param: string, isDefaultHashParam: boolean) => {
+            if (isDefaultHashParam) {
+                const url = `${location.pathname}${location.search}#${param}`;
+                window.history.replaceState('', document.title, `${url}`);
+                location.hash = param;
+
+                setHashParam(param);
+            } else {
+                window.location.hash = param;
+
+                setHashParam(param);
+            }
         },
-        [],
+        [ location ],
     );
 
     const clearHash = useCallback(
         () => {
-            window.history.replaceState('', document.title, location.pathname);
+            window.history.replaceState('', document.title, location.pathname + location.search);
         },
-        [ location.pathname ],
+        [ location.pathname, location.search ],
     );
 
     const value = useMemo(
         () => ({
-            state: { params },
+            state: { hashParam },
             actions: {
                 setHash,
                 clearHash,
             },
         }),
-        [ params, setHash, clearHash ],
+        [ hashParam, setHash, clearHash ],
     );
 
     return (

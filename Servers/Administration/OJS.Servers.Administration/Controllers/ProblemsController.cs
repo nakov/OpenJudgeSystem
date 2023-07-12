@@ -425,7 +425,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             IsReadOnly = true,
         });
 
-        if (!contest.IsOnline)
+        if (!contest.IsOnlineExam)
         {
             formControls.Add(new FormControlViewModel
             {
@@ -443,6 +443,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             Name = AdditionalFormFields.SolutionSkeletonRaw.ToString(),
             Value = entity.SolutionSkeleton?.Decompress(),
             Type = typeof(string),
+            FormControlType = FormControlType.TextArea,
         });
 
         formControls.Add(new FormControlViewModel
@@ -528,12 +529,19 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         Problem newEntity,
         AdminActionContext actionContext)
     {
-        if (!originalEntity.ProblemGroup.Contest.IsOnline)
+        if (!originalEntity.ProblemGroup.Contest.IsOnlineExam)
         {
             newEntity.ProblemGroup.OrderBy = newEntity.OrderBy;
         }
 
         await base.BeforeEntitySaveOnEditAsync(originalEntity, newEntity, actionContext);
+    }
+
+    protected override async Task AfterEntitySaveAsync(Problem entity, AdminActionContext actionContext)
+    {
+        var contestId = GetContestId(actionContext.EntityDict, entity);
+
+        await this.problemsBusiness.ReevaluateProblemsOrder(contestId, entity);
     }
 
     protected override async Task BeforeEntitySaveOnDeleteAsync(Problem entity, AdminActionContext actionContext)

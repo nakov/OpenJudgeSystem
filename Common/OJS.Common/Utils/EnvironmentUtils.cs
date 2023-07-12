@@ -17,6 +17,17 @@ namespace OJS.Common.Utils
         public static string? GetByKey(string key)
             => Environment.GetEnvironmentVariable(key);
 
+        public static string GetRequiredByKey(string key)
+        {
+            var value = GetByKey(key);
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentException(string.Format(EnvironmentVariableMustBeSetMessageFormat, key));
+            }
+
+            return value;
+        }
+
         public static string? GetApplicationConnectionString(
             ApplicationName appName,
             bool appUsesMultipleDatabases = false)
@@ -34,9 +45,8 @@ namespace OJS.Common.Utils
             IEnumerable<string> configurationValues)
             => ValidateEnvironmentVariableExists(configurationValues, GetByKey);
 
-        public static void ValidateApplicationUrlsExist(
-            IEnumerable<ApplicationName> appNames)
-            => ValidateEnvironmentVariableExists(appNames, GetApplicationUrl);
+        public static bool IsProduction()
+            => Environment.GetEnvironmentVariable(EnvironmentKey) == ProductionValue;
 
         private static string GetConnectionStringName(ApplicationName appName, bool appUsesMultipleDatabases)
             => appUsesMultipleDatabases
@@ -104,9 +114,6 @@ namespace OJS.Common.Utils
 
         private static string GetApplicationEnvironmentPrefix(ApplicationName appName)
             => string.Join("_", Regex.Split(appName.ToString(), UpperCaseGroupsRegex)).ToUpper();
-
-        private static bool IsProduction()
-            => Environment.GetEnvironmentVariable(EnvironmentKey) == ProductionValue;
 
         private static bool IsDocker()
             => Environment.GetEnvironmentVariable(EnvironmentKey) == DockerValue;

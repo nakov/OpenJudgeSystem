@@ -1,10 +1,13 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
-import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
+import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
+import SearchIcon from '../../components/guidelines/icons/SearchIcon';
 import { useAuth } from '../../hooks/use-auth';
+import { useSearch } from '../../hooks/use-search';
 import { useUrls } from '../../hooks/use-urls';
 import concatClassNames from '../../utils/class-names';
+import generateId from '../../utils/id-generator';
 import PageNav from '../nav/PageNav';
 
 import logo from './softuni-logo-horizontal.svg';
@@ -15,6 +18,7 @@ const PageHeader = () => {
     const { state: { user } } = useAuth();
 
     const { getAdministrationNavigation } = useUrls();
+    const { actions: { toggleVisibility } } = useSearch();
 
     const renderLinks = useCallback(() => {
         const administrationLink = user.permissions.canAccessAdministration
@@ -50,6 +54,35 @@ const PageHeader = () => {
         );
     }, [ getAdministrationNavigation, user.permissions.canAccessAdministration ]);
 
+    const btnId = useMemo(
+        () => {
+            const searchIdBtn = generateId();
+            return `btn-submit-${searchIdBtn}`;
+        },
+        [],
+    );
+
+    const handleSearchClick = useCallback(
+        () => toggleVisibility(),
+        [ toggleVisibility ],
+    );
+
+    const searchBtnClassName = concatClassNames('searchButton', styles.searchButton);
+
+    const searchButton = useCallback(
+        () => (
+            <Button
+              id={btnId}
+              onClick={handleSearchClick}
+              type={ButtonType.submit}
+              internalClassName={searchBtnClassName}
+            >
+                <SearchIcon />
+            </Button>
+        ),
+        [ btnId, handleSearchClick, searchBtnClassName ],
+    );
+
     const headingSecondaryClass = 'headingSeconary';
     const headingSecondaryClassName = concatClassNames(styles.heading, headingSecondaryClass);
 
@@ -62,13 +95,19 @@ const PageHeader = () => {
                       type={HeadingType.secondary}
                       className={headingSecondaryClassName}
                     >
-                        <a href="/">
-                            <img src={logo} alt="softuni logo" />
-                        </a>
+                        <LinkButton
+                          to="/"
+                          type={LinkButtonType.image}
+                          altText="Softuni logo"
+                          imgSrc={logo}
+                        />
                     </Heading>
                     { renderLinks() }
                 </div>
-                <PageNav />
+                <div className={styles.navbarContainer}>
+                    { searchButton() }
+                    <PageNav />
+                </div>
             </div>
         </header>
     );

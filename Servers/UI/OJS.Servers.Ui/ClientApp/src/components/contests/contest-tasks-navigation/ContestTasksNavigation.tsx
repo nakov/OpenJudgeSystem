@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
-import { ContestParticipationType, ContestResultType } from '../../../common/constants';
+import { ContestParticipationType } from '../../../common/constants';
 import { IProblemType } from '../../../common/types';
+import { useAppUrls } from '../../../hooks/use-app-urls';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
@@ -16,14 +17,12 @@ import styles from './ContestTasksNavigation.module.scss';
 const compareByOrderBy = (p1: IProblemType, p2: IProblemType) => p1.orderBy - p2.orderBy;
 
 const ContestTasksNavigation = () => {
-    const [ resultsLink, setResultsLink ] = useState('');
-
     const {
         state: {
             currentProblem,
             problems,
         },
-        actions: { selectProblemById },
+        actions: { selectCurrentProblem },
     } = useProblems();
 
     const {
@@ -33,6 +32,14 @@ const ContestTasksNavigation = () => {
             isOfficial,
         },
     } = useCurrentContest();
+    const { getContestResultsUrl } = useAppUrls();
+
+    const participationType = useMemo(
+        () => isOfficial
+            ? ContestParticipationType.Compete
+            : ContestParticipationType.Practice,
+        [ isOfficial ],
+    );
 
     const renderTask = useCallback(
         (problem: IProblemType) => {
@@ -58,7 +65,7 @@ const ContestTasksNavigation = () => {
             return (
                 <>
                     <Button
-                      onClick={() => selectProblemById(id)}
+                      onClick={() => selectCurrentProblem(id)}
                       className={className}
                       type={ButtonType.plain}
                     >
@@ -72,7 +79,7 @@ const ContestTasksNavigation = () => {
                 </>
             );
         },
-        [ currentContestParticipantScores, currentProblem, selectProblemById ],
+        [ currentContestParticipantScores, currentProblem, selectCurrentProblem ],
     );
 
     const sideBarTasksList = 'all-tasks-list';
@@ -90,15 +97,6 @@ const ContestTasksNavigation = () => {
         [ problems, renderTask, sideBarTasksListClassName ],
     );
 
-    useEffect(() => {
-        const participationType = isOfficial
-            ? ContestParticipationType.Compete
-            : ContestParticipationType.Practice;
-        const newResultsLink = `/contests/${contest?.id}/${participationType}/results/${ContestResultType.Simple}`;
-
-        setResultsLink(newResultsLink);
-    }, [ isOfficial, contest ]);
-
     const resultsButtonClass = 'resultsButton';
     const refreshButtonClassName = concatClassNames(styles.resultsButton, resultsButtonClass);
 
@@ -108,7 +106,7 @@ const ContestTasksNavigation = () => {
             {renderTasksList()}
             <LinkButton
               type={LinkButtonType.secondary}
-              to={resultsLink}
+              to={getContestResultsUrl({ id: contest!.id, participationType })}
               text="Results"
               className={refreshButtonClassName}
             />

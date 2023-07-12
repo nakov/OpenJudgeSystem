@@ -1,7 +1,11 @@
+import { IContestSearchType, IProblemSearchType, IUserSearchType } from './search-types';
+
 interface ISubmissionTypeType {
     id: number;
     name: string;
     isSelectedByDefault: boolean;
+    allowBinaryFilesUpload: boolean;
+    allowedFileExtensions: string[];
 }
 
 interface IProblemResourceType {
@@ -40,6 +44,7 @@ interface IContestType {
     isDeleted: boolean;
     isVisible: boolean;
     isOnline: boolean;
+    isExam: boolean;
     allowedSubmissionTypes: ISubmissionTypeType[];
     problems: IProblemType[];
     canBeCompeted: boolean;
@@ -79,18 +84,12 @@ interface IRegisterForContestResponseType {
     requirePassword: boolean;
 }
 
-interface IStartParticipationValidationType {
-    message: string;
-    isValid: boolean;
-}
-
 interface IStartParticipationResponseType {
     contest: IContestType;
     participantId: number;
     contestIsCompete: boolean;
     lastSubmissionTime: Date;
     remainingTimeInMilliseconds: number;
-    validationResult: IStartParticipationValidationType;
     userSubmissionsTimeLimit: number;
     totalParticipantsCount: number;
     activeParticipantsCount: number;
@@ -105,13 +104,32 @@ interface IPagedResultType<TItem> {
 }
 
 interface IUserType {
+    id: string;
     username: string;
+    email: string;
     permissions: IUserPermissionsType;
-    isLoggedIn: boolean;
+}
+
+interface IUserRoleType {
+    id: string;
+    name: string;
+}
+
+interface IUserResponseType {
+    id: string;
+    userName: string;
+    email: string;
+    roles: IUserRoleType[];
 }
 
 interface IUserPermissionsType {
     canAccessAdministration: boolean;
+}
+
+interface ISearchResponseModel {
+    contests: IContestSearchType[];
+    problems: IProblemSearchType[];
+    users: IUserSearchType[];
 }
 
 // eslint-disable-next-line import/prefer-default-export
@@ -119,7 +137,6 @@ export type {
     IIndexContestsType,
     IGetContestsForIndexResponseType,
     IRegisterForContestResponseType,
-    IStartParticipationValidationType,
     IStartParticipationResponseType,
     IContestType,
     IProblemType,
@@ -127,5 +144,7 @@ export type {
     ISubmissionTypeType,
     IPagedResultType,
     IUserType,
+    IUserResponseType,
     IUserPermissionsType,
+    ISearchResponseModel,
 };

@@ -17,7 +17,7 @@ namespace OJS.Services.Administration.Data.Implementations
         private readonly IParticipantsCommonDataService participantsCommonData;
 
         public ParticipantsDataService(
-            OjsDbContext db,
+            AdminDbContext db,
             IParticipantsCommonDataService participantsCommonData)
             : base(db)
             => this.participantsCommonData = participantsCommonData;
