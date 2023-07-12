@@ -6,6 +6,10 @@
   flex-direction: row;
   gap: 10px;
   min-height: 50px;
+  
+  > a {
+    padding: 0;
+  }
 }
 
 .resourceLink,
