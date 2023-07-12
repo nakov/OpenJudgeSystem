@@ -21,9 +21,9 @@ public static class AdminActionContextExtensions
     public static ProblemGroupType? GetProblemGroupType(this AdminActionContext actionContext)
         => actionContext.EntityDict[AdditionalFormFields.ProblemGroupType.ToString()].ToEnum<ProblemGroupType>();
 
-    public static IEnumerable<CheckboxFormControlViewModel> GetSubmissionTypes(this AdminActionContext actionContext)
+    public static IEnumerable<ExpandableMultiChoiceCheckBoxFormControlViewModel> GetSubmissionTypes(this AdminActionContext actionContext)
         => actionContext.EntityDict[AdditionalFormFields.SubmissionTypes.ToString()]
-            .FromJson<IEnumerable<CheckboxFormControlViewModel>>();
+            .FromJson<IEnumerable<ExpandableMultiChoiceCheckBoxFormControlViewModel>>();
 
     public static int? GetEntityIdOrDefault<TEntity>(this AdminActionContext actionContext)
         where TEntity : class

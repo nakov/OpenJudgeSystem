@@ -440,14 +440,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         formControls.Add(new FormControlViewModel
         {
-            Name = AdditionalFormFields.SolutionSkeletonRaw.ToString(),
-            Value = entity.SolutionSkeleton?.Decompress(),
-            Type = typeof(string),
-            FormControlType = FormControlType.TextArea,
-        });
-
-        formControls.Add(new FormControlViewModel
-        {
             Name = AdditionalFormFields.Tests.ToString(), Type = typeof(IFormFile),
         });
 
@@ -456,7 +448,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             Name = AdditionalFormFields.AdditionalFiles.ToString(), Type = typeof(IFormFile),
         });
 
-        var submissionTypes = entity.SubmissionTypesInProblems.ToList();
+        var submissionTypesInProblem = entity.SubmissionTypesInProblems.ToList();
 
         formControls.Add(new FormControlViewModel
         {
@@ -464,13 +456,22 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             Options = this.submissionTypesData
                 .GetQuery()
                 .ToList()
-                .Select(st => new CheckboxFormControlViewModel
+                .Select(st => new ExpandableMultiChoiceCheckBoxFormControlViewModel
                 {
                     Name = st.Name,
                     Value = st.Id,
-                    IsChecked = submissionTypes.Any(x => x.SubmissionTypeId == st.Id),
+                    IsChecked = submissionTypesInProblem.Any(x => x.SubmissionTypeId == st.Id),
+                    Expand = new FormControlViewModel
+                    {
+                        Name = st.Name + " " + AdditionalFormFields.SolutionSkeletonRaw,
+                        Value = submissionTypesInProblem
+                            .Where(x => x.SubmissionTypeId == st.Id)
+                            .Select(x => x.SolutionSkeleton)
+                            .FirstOrDefault()?.Decompress(),
+                        Type = typeof(string),
+                    },
                 }),
-            FormControlType = FormControlType.MultiChoiceCheckbox,
+            FormControlType = FormControlType.ExpandableMultiChoiceCheckBox,
             Type = typeof(object),
         });
 
@@ -493,7 +494,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             .ValidatePermissionsOfCurrentUser(contestId)
             .VerifyResult();
 
-        TryAddSolutionSkeleton(entity, actionContext);
         await TryAddAdditionalFiles(entity, actionContext);
         AddSubmissionTypes(entity, actionContext);
     }
@@ -547,10 +547,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     private static int GetContestId(IDictionary<string, string> entityDict, Problem? problem)
         => entityDict.GetEntityIdOrDefault<Contest>() ?? problem?.ProblemGroup?.ContestId ?? default;
 
-    private static void TryAddSolutionSkeleton(Problem problem, AdminActionContext actionContext)
-        => problem.SolutionSkeleton =
-            actionContext.GetByteArrayFromStringInput(AdditionalFormFields.SolutionSkeletonRaw);
-
     private static async Task TryAddAdditionalFiles(Problem problem, AdminActionContext actionContext)
     {
         var additionalFiles = actionContext.GetFormFile(AdditionalFormFields.AdditionalFiles);
@@ -569,7 +565,11 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             .Where(x => x.IsChecked)
             .Select(x => new SubmissionTypeInProblem
             {
-                ProblemId = problem.Id, SubmissionTypeId = int.Parse(x.Value!.ToString() !),
+                ProblemId = problem.Id,
+                SubmissionTypeId = int.Parse(x.Value!.ToString() !),
+                SolutionSkeleton = x.Expand is not null && x.Expand.Value is not null ? x.Expand.Value!.ToString() !
+                        .Compress() :
+                    Array.Empty<byte>(),
             });
 
         problem.SubmissionTypesInProblems.Clear();
