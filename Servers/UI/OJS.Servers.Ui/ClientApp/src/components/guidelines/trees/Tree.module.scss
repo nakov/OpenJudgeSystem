@@ -12,8 +12,9 @@
 }
 
 .treeElement div:nth-child(2) {
-  white-space: nowrap;
+  // white-space: nowrap;
   width: 100%;
+  word-wrap: break-word;
 
   &:hover {
     max-width: none;

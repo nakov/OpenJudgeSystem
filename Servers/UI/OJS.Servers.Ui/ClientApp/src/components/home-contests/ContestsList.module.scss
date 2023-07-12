@@ -7,7 +7,7 @@
 
 .contestsSeeAllButton {
   align-self: flex-end;
-  margin-right: 10px;
+  margin-top: 15px;
 }
 
 .contestList {
@@ -16,7 +16,7 @@
   box-sizing: border-box;
   display: flex;
   flex-flow: row wrap;
-  justify-content: center;
+  justify-content: space-between;
 }
 
 .contestListItem {

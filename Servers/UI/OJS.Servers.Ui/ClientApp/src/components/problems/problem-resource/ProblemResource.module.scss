@@ -17,3 +17,15 @@
     margin-right: 10px;
   }
 }
+
+.resourceLink {
+  padding: 10px 20px;
+  border-radius: 4px;
+  transition: all .2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:hover {
+    background-color: #e3f3fd;
+  }
+}
