@@ -1,17 +1,14 @@
 import React, { createContext, useContext, useMemo } from 'react';
 
-import {
-    IContestProblemUrl,
-    IContestResultsUrl,
-    IParticipateInContestTypeUrlParams,
-} from '../common/app-url-types';
+import { IContestResultsUrl, IParticipateInContestTypeUrlParams, IProblemSubmissionDetailsUrlParams }
+    from '../common/app-url-types';
 import { ContestResultType } from '../common/constants';
 import { FilterType } from '../common/contest-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
 interface IAppUrlsContext {
     getParticipateInContestUrl: (params: IParticipateInContestTypeUrlParams) => string;
-    getContestProblemUrl:(params: IContestProblemUrl) => string;
+    getProblemSubmissionDetailsUrl: (params: IProblemSubmissionDetailsUrlParams) => string;
     getContestCategoryBreadcrumbItemPath: (id: string) => string;
     getContestResultsUrl: (params: IContestResultsUrl) => string;
     getAdministrationRetestSubmissionInternalUrl: () => string;
@@ -27,16 +24,14 @@ type IAppUrlsProviderProps = IHaveChildrenProps
 const getParticipateInContestUrl = ({
     id,
     participationType,
-    problemIndex,
-}: IParticipateInContestTypeUrlParams) => `/contests/${id}/${participationType}#${problemIndex}`;
+}: IParticipateInContestTypeUrlParams) => `/contests/${id}/${participationType}`;
+
+const getProblemSubmissionDetailsUrl = ({
+    submissionId,
+    hashParam,
+}: IProblemSubmissionDetailsUrlParams) => `/submissions/${submissionId}/details#${hashParam}`;
 
 const getContestCategoryBreadcrumbItemPath = (id: string) => `/Contests?${FilterType.Category.toString()}=${id}`;
-
-const getContestProblemUrl = ({
-    id,
-    participationType,
-    orderBy,
-}: IContestProblemUrl) => `/Contests/${id}/${participationType}#${orderBy}`;
 
 const getContestResultsUrl = ({
     id,
@@ -54,7 +49,7 @@ const AppUrlsProvider = ({ children }: IAppUrlsProviderProps) => {
         () => (
             {
                 getParticipateInContestUrl,
-                getContestProblemUrl,
+                getProblemSubmissionDetailsUrl,
                 getContestResultsUrl,
                 getContestCategoryBreadcrumbItemPath,
                 getAdministrationRetestSubmissionInternalUrl,
