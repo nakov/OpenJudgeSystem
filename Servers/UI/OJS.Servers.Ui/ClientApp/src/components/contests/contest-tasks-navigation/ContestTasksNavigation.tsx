@@ -22,7 +22,7 @@ const ContestTasksNavigation = () => {
             currentProblem,
             problems,
         },
-        actions: { selectProblemById },
+        actions: { selectCurrentProblem },
     } = useProblems();
 
     const {
@@ -65,7 +65,7 @@ const ContestTasksNavigation = () => {
             return (
                 <>
                     <Button
-                      onClick={() => selectProblemById(id)}
+                      onClick={() => selectCurrentProblem(id)}
                       className={className}
                       type={ButtonType.plain}
                     >
@@ -79,7 +79,7 @@ const ContestTasksNavigation = () => {
                 </>
             );
         },
-        [ currentContestParticipantScores, currentProblem, selectProblemById ],
+        [ currentContestParticipantScores, currentProblem, selectCurrentProblem ],
     );
 
     const sideBarTasksList = 'all-tasks-list';
