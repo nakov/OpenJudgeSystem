@@ -22,6 +22,7 @@ const ProfilePage = () => {
         <>
             <Heading>Profile</Heading>
             <ProfileAboutInfo value={profile} />
+            {/* Tabs will be hidden for alpha version, as it is not production ready yet */}
             {/* <Tabs */}
             {/*    labels={['Submissions', 'Contest Participations']} */}
             {/*    contents={[<ProfileSubmissions/>, <ProfileContestParticipations/>]} */}
