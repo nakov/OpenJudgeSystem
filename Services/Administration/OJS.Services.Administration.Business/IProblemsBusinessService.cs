@@ -1,8 +1,9 @@
 namespace OJS.Services.Administration.Business
 {
+    using System.Threading.Tasks;
+    using OJS.Data.Models.Problems;
     using OJS.Services.Common.Models;
     using SoftUni.Services.Infrastructure;
-    using System.Threading.Tasks;
 
     public interface IProblemsBusinessService : IService
     {
@@ -15,5 +16,7 @@ namespace OJS.Services.Administration.Business
         Task<ServiceResult> CopyToContestByIdByContestAndProblemGroup(int id, int contestId, int? problemGroupId);
 
         Task<bool> UserHasProblemPermissions(int problemId, string? userId, bool isUserAdmin);
+
+        Task ReevaluateProblemsOrder(int contestId, Problem problem);
     }
 }

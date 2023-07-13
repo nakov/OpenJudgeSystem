@@ -1,12 +1,10 @@
 @use 'src/styles/components';
 
-.contestHeading {
-  border: 0;
-  margin-bottom: 30px;
+.contestResultsHeading {
   padding: 0;
   text-align: center;
 }
 
-.headingContest {
+.headingResults {
   @extend %contentSize;
 }

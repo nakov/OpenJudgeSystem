@@ -2,6 +2,7 @@ import React from 'react';
 
 import concatClassNames from '../../../utils/class-names';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
+import ProblemConstraints from '../../problems/problem-constraints/ProblemConstraints';
 import ProblemResources from '../../problems/problem-resources/ProblemResources';
 import ProblemSubmissions from '../../problems/problem-submissions/ProblemSubmissions';
 
@@ -19,6 +20,12 @@ const ContestProblemDetails = () => {
                     Resources
                 </Heading>
                 <ProblemResources />
+            </div>
+            <div className={styles.problemItems}>
+                <Heading type={HeadingType.secondary}>
+                    Constraints
+                </Heading>
+                <ProblemConstraints />
             </div>
             <div className={styles.problemItems}>
                 <ProblemSubmissions />
