@@ -40,7 +40,9 @@
 
   &:hover {
     + %helperText {
+      background-color: colors.$background-color-light-gray;
       display: inline-block;
+      padding: 5px;
     }
   }
 }
