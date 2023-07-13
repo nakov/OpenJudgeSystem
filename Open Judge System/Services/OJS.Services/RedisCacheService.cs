@@ -38,10 +38,12 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-                if (!this.MemoryCacheHasKey(ex.GetType().ToString(), ex.Message))
+                var exTypeAsString = ex.GetType().ToString();
+                if (!this.MemoryCacheHasKey(exTypeAsString, ex.Message))
                 {
-                    this.emailSenderService.SendEmail(this.devEmail, ex.GetType().ToString(), ex.Message);
+                    this.emailSenderService.SendEmail(this.devEmail, exTypeAsString, ex.Message);
                 }
+
                 return getItemCallback();
             }
         }
@@ -61,9 +63,10 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-                if (!this.MemoryCacheHasKey(ex.GetType().ToString(), ex.Message))
+                var exTypeAsString = ex.GetType().ToString();
+                if (!this.MemoryCacheHasKey(exTypeAsString, ex.Message))
                 {
-                    await this.emailSenderService.SendEmailAsync(this.devEmail, ex.GetType().ToString(), ex.Message);
+                    await this.emailSenderService.SendEmailAsync(this.devEmail, exTypeAsString, ex.Message);
                 }
 
                 return await getItemCallback();
@@ -79,9 +82,10 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-                if (!this.MemoryCacheHasKey(ex.GetType().ToString(), ex.Message))
+                var exTypeAsString = ex.GetType().ToString();
+                if (!this.MemoryCacheHasKey(exTypeAsString, ex.Message))
                 {
-                    this.emailSenderService.SendEmail(this.devEmail, ex.GetType().ToString(), ex.Message);
+                    this.emailSenderService.SendEmail(this.devEmail, exTypeAsString, ex.Message);
                 }
 
                 return getItemCallback();
@@ -98,9 +102,10 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-                if (!this.MemoryCacheHasKey(ex.GetType().ToString(), ex.Message))
+                var exTypeAsString = ex.GetType().ToString();
+                if (!this.MemoryCacheHasKey(exTypeAsString, ex.Message))
                 {
-                    await this.emailSenderService.SendEmailAsync(this.devEmail, ex.GetType().ToString(), ex.Message);
+                    await this.emailSenderService.SendEmailAsync(this.devEmail, exTypeAsString, ex.Message);
                 }
 
                 return await getItemCallback();
@@ -124,9 +129,10 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-                if (!this.MemoryCacheHasKey(ex.GetType().ToString(), ex.Message))
+                var exTypeAsString = ex.GetType().ToString();
+                if (!this.MemoryCacheHasKey(exTypeAsString, ex.Message))
                 {
-                    this.emailSenderService.SendEmail(this.devEmail, ex.GetType().ToString(), ex.Message);
+                    this.emailSenderService.SendEmail(this.devEmail, exTypeAsString, ex.Message);
                 }
             }
         }
@@ -148,9 +154,10 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-                if (!this.MemoryCacheHasKey(ex.GetType().ToString(), ex.Message))
+                var exTypeAsString = ex.GetType().ToString();
+                if (!this.MemoryCacheHasKey(exTypeAsString, ex.Message))
                 {
-                    await this.emailSenderService.SendEmailAsync(this.devEmail, ex.GetType().ToString(), ex.Message);
+                    await this.emailSenderService.SendEmailAsync(this.devEmail, exTypeAsString, ex.Message);
                 }
             }
         }
@@ -163,9 +170,10 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-                if (!this.MemoryCacheHasKey(ex.GetType().ToString(), ex.Message))
+                var exTypeAsString = ex.GetType().ToString();
+                if (!this.MemoryCacheHasKey(exTypeAsString, ex.Message))
                 {
-                    this.emailSenderService.SendEmail(this.devEmail, ex.GetType().ToString(), ex.Message);
+                    this.emailSenderService.SendEmail(this.devEmail, exTypeAsString, ex.Message);
                 }
             }
         }
@@ -178,9 +186,10 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-                if (!this.MemoryCacheHasKey(ex.GetType().ToString(), ex.Message))
+                var exTypeAsString = ex.GetType().ToString();
+                if (!this.MemoryCacheHasKey(exTypeAsString, ex.Message))
                 {
-                    await this.emailSenderService.SendEmailAsync(this.devEmail, ex.GetType().ToString(), ex.Message);
+                    await this.emailSenderService.SendEmailAsync(this.devEmail, exTypeAsString, ex.Message);
                 }
             }
         }
