@@ -12,7 +12,6 @@ services:
     restart: on-failure
     volumes:
       - ./Logs:/Logs
-      - ./Keys:/Keys
     env_file:
       - Docker/common/common.env
       - Docker/common/db.env
@@ -32,7 +31,6 @@ services:
     restart: on-failure
     volumes:
       - ./Logs:/Logs
-      - ./Keys:/Keys
     env_file:
       - Docker/common/common.env
       - Docker/common/db.env
