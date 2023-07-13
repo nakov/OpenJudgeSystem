@@ -25,7 +25,11 @@ const ProfilePage = () => {
         })();
     }, [ getProfile ]);
     
-    if(isLoading) return <div style={{...flexCenterObjectStyles}}><SpinningLoader/></div>
+    if(isLoading) {
+        return (<div style={{...flexCenterObjectStyles}}>
+            <SpinningLoader/>
+        </div>)
+    }
     
     return (
         <>
