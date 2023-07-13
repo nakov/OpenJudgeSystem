@@ -51,37 +51,45 @@ const ContestModal = ({ contest, isShowing, toggle }: IContestModalProps) => {
                 >
                     <Box className={styles.modal}>
                         <Typography id="modal-modal-title" variant="h6" className={styles.modalHeading}>
-                            <p className={styles.text}>
-                                Starting now you will have
+                            <p className={styles.headingText}>
+                                Starting now
                                 {' '}
-                                {contest.duration}
+                                <span className={styles.boldedText}>
+                                    {' '}
+                                    you will have
+                                    {' '}
+                                    {contest.duration?.toString().substring(0, 5)}
+                                    {' '}
+                                    hours
+                                    {' '}
+                                </span>
                                 {' '}
-                                hours to complete the contest
+                                to complete the contest
                                 {' '}
-                                <span className={styles.bolded}>{contest.name}</span>
+                                <span className={styles.boldedText}>{contest.name}</span>
                                 .
                             </p>
                         </Typography>
                         <Typography id="modal-modal-description">
-                            <span className={styles.text}>
+                            <span className={styles.bodyText}>
                                 Your time will start counting down when you press the &quot;Compete&quot; button.
                                 <br />
                                 <br />
                                 In the case of unexpected problems (turning off your computer, exiting the page/system,
                                 internet connection failure),
                                 {' '}
-                                <span className={styles.bolded}>the time lost will not be restored</span>
+                                <span className={styles.boldedText}>the time lost will not be restored</span>
                                 . When time runs out,
                                 you
                                 {' '}
-                                <span className={styles.bolded}>will not</span>
+                                <span className={styles.boldedText}>will not</span>
                                 {' '}
                                 be able to compete in this competition again.
                                 <br />
                                 <br />
                                 When you click the &quot;Compete&quot; button,
                                 {' '}
-                                <span className={styles.bolded}>
+                                <span className={styles.boldedText}>
                                     {contest.numberOfProblems}
                                     {' '}
                                     random problems, one of each type, will be generated
@@ -90,7 +98,7 @@ const ContestModal = ({ contest, isShowing, toggle }: IContestModalProps) => {
                                 for you.
                                 <br />
                                 <br />
-                                <span className={styles.italicized}>Are you sure you want to start the contest now?</span>
+                                <span className={styles.questionText}>Are you sure you want to start the contest now?</span>
                             </span>
                         </Typography>
                         <div className={styles.horizontalLine} />
@@ -99,9 +107,9 @@ const ContestModal = ({ contest, isShowing, toggle }: IContestModalProps) => {
                               id="button-card-compete"
                               onClick={() => startContestAndHideModal()}
                               text="Compete"
-                              size={ButtonSize.medium}
+                              size={ButtonSize.large}
                             />
-                            <Button onClick={() => toggle()} size={ButtonSize.medium} type={ButtonType.secondary}>Cancel</Button>
+                            <Button onClick={() => toggle()} size={ButtonSize.large} type={ButtonType.secondary}>Cancel</Button>
                         </span>
                     </Box>
                 </Modal>
