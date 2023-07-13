@@ -113,11 +113,13 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         {
             submissionDetailsServiceModel.TestRuns = submissionDetailsServiceModel.TestRuns.Select(x =>
             {
-                if (!x.IsTrialTest!)
+                if (!x.IsTrialTest)
                 {
                     x.ShowInput = false;
                     x.Input = string.Empty;
                     x.ExecutionComment = string.Empty;
+                    x.ExpectedOutputFragment = string.Empty;
+                    x.UserOutputFragment = string.Empty;
                 }
 
                 return x;
