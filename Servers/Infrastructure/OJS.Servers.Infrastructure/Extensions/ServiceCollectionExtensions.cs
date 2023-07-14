@@ -1,6 +1,7 @@
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using OJS.Services.Common.Models.Configurations;
+using System.Linq;
 
 namespace OJS.Servers.Infrastructure.Extensions
 {
@@ -167,21 +168,37 @@ namespace OJS.Servers.Infrastructure.Extensions
             this IServiceCollection services,
             IConfiguration configuration)
         {
+            var consumers = typeof(TStartup).Assembly
+                .GetExportedTypes()
+                .Where(t => typeof(IConsumer).IsAssignableFrom(t))
+                .ToList();
+
             var messageQueueConfig = configuration.GetSection(nameof(MessageQueueConfig)).Get<MessageQueueConfig>();
 
             services.AddMassTransit(config =>
             {
-                config.AddConsumers(typeof(TStartup).Assembly);
+                consumers.ForEach(consumer => config.AddConsumer(consumer));
 
-                config.UsingRabbitMq((context, cfg) =>
+                config.UsingRabbitMq((context, rmq) =>
                 {
-                    cfg.Host(messageQueueConfig.Host, messageQueueConfig.VirtualHost, h =>
+                    rmq.Host(messageQueueConfig.Host, messageQueueConfig.VirtualHost, h =>
                     {
                         h.Username(messageQueueConfig.User);
                         h.Password(messageQueueConfig.Password);
                     });
 
-                    cfg.ConfigureEndpoints(context);
+                    consumers.ForEach(consumer => rmq.ReceiveEndpoint(consumer.FullName!, endpoint =>
+                    {
+                        if (messageQueueConfig.PrefetchCount.HasValue)
+                        {
+                            endpoint.PrefetchCount = messageQueueConfig.PrefetchCount.Value;
+                        }
+
+                        endpoint.UseMessageRetry(retry =>
+                            retry.Interval(messageQueueConfig.RetryCount, messageQueueConfig.RetryInterval));
+
+                        endpoint.ConfigureConsumer(context, consumer);
+                    }));
                 });
             });
 
