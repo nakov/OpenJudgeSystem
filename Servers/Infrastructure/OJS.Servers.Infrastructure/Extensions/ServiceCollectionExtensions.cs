@@ -1,5 +1,7 @@
 using MassTransit;
 using Microsoft.Extensions.Configuration;
+using OJS.Services.Common;
+using OJS.Services.Common.Implementations;
 using OJS.Services.Common.Models.Configurations;
 using System.Linq;
 
@@ -168,6 +170,8 @@ namespace OJS.Servers.Infrastructure.Extensions
             this IServiceCollection services,
             IConfiguration configuration)
         {
+            services.AddTransient<IPublisherService, PublisherService>();
+
             var consumers = typeof(TStartup).Assembly
                 .GetExportedTypes()
                 .Where(t => typeof(IConsumer).IsAssignableFrom(t))

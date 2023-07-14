@@ -10,4 +10,8 @@
         <ProjectReference Include="..\OJS.Services.Common.Models\OJS.Services.Common.Models.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="MassTransit.Abstractions" Version="8.0.16" />
+    </ItemGroup>
+
 </Project>
