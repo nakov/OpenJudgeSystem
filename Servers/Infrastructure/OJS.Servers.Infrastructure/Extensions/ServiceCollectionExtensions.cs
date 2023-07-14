@@ -163,19 +163,15 @@ namespace OJS.Servers.Infrastructure.Extensions
             });
         }
 
-        public static IServiceCollection AddMessageQueue(
+        public static IServiceCollection AddMessageQueue<TStartup>(
             this IServiceCollection services,
-            IConfiguration configuration,
-            params Action<IBusRegistrationConfigurator>[] actions)
+            IConfiguration configuration)
         {
             var messageQueueConfig = configuration.GetSection(nameof(MessageQueueConfig)).Get<MessageQueueConfig>();
 
             services.AddMassTransit(config =>
             {
-                foreach (var action in actions)
-                {
-                    action(config);
-                }
+                config.AddConsumers(typeof(TStartup).Assembly);
 
                 config.UsingRabbitMq((context, cfg) =>
                 {

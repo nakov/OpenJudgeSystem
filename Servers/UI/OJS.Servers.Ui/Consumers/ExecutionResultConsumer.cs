@@ -3,8 +3,9 @@ using OJS.PubSubContracts.ExecutionResults;
 using OJS.Services.Ui.Business;
 using OJS.Services.Ui.Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
+using System.Threading.Tasks;
 
-namespace OJS.Servers.Ui.Infrastructure.Consumers;
+namespace OJS.Servers.Ui.Consumers;
 
 public class ExecutionResultConsumer : IConsumer<FullExecutionResult>
 {

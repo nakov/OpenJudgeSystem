@@ -22,6 +22,7 @@ public static class ServiceCollectionExtensions
             .AddWebServer<TProgram>()
             .AddSubmissionExecutor()
             .AddMemoryCache()
+            .AddMessageQueue<TProgram>(configuration)
             .AddLogging()
             .AddConfiguration(configuration)
             .AddControllers();

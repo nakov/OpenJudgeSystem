@@ -1,5 +1,3 @@
-using OJS.Servers.Ui.Infrastructure.Consumers;
-
 namespace OJS.Servers.Ui.Infrastructure.Extensions
 {
     using Microsoft.Extensions.Configuration;
@@ -33,8 +31,7 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
                 .AddWebServer<TProgram>()
                 .AddSwaggerDocs(apiVersion.ToApiName(), ApiDocsTitle, apiVersion)
                 .AddHangfireServer(AppName)
-                .AddMessageQueue(configuration, cfg =>
-                    cfg.AddConsumer<ExecutionResultConsumer>())
+                .AddMessageQueue<TProgram>(configuration)
                 .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>()
                 .AddScoped<OjsDbContext>()
                 .AddMemoryCache()
