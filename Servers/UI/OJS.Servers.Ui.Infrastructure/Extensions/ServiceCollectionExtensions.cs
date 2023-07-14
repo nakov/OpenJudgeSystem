@@ -32,7 +32,6 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
                 .AddSwaggerDocs(apiVersion.ToApiName(), ApiDocsTitle, apiVersion)
                 .AddHangfireServer(AppName)
                 .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>()
-                .AddScoped<OjsDbContext>()
                 .AddMemoryCache()
                 .AddSoftUniJudgeCommonServices()
                 .AddDistributedCaching<TProgram>()

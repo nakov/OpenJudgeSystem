@@ -44,7 +44,7 @@ services:
       dockerfile: ./Docker/Dockerfile.worker
     ports:
       - "8003:80"
-    container_name: judge_service_instance
+    container_name: judge_worker_instance
     restart: on-failure
     env_file:
       - Docker/common/common.env
