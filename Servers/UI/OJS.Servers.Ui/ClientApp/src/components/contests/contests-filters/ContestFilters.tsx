@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import {InputLabel, MenuItem, Select} from "@mui/material";
 import { useSearchParams } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
@@ -69,6 +70,10 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         },
         [ possibleFilters, onFilterClick ],
     );
+    
+    const handleStrategySelect = useCallback((param: IFilter) => {
+        toggleParam(param);
+    }, []);
 
     const renderFilter = useCallback(
         (fg: IFiltersGroup) => {
@@ -82,6 +87,34 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
                 ? groupFilters
                 : strategyFilters;
 
+            // render select dropdown for strategies
+            if(type === FilterType.Strategy) {
+                const menuItems = strategyFilters.map((item, idx) => (
+                    <MenuItem
+                        key={`strategy-item-${idx}`} 
+                        value={item.value} 
+                        onClick={() => handleStrategySelect(item)}>
+                            {item.name}
+                    </MenuItem>
+                ));
+                
+                return (<div style={{marginTop: 15}}>
+                    <InputLabel id="strategy-label">Strategy</InputLabel>
+                        <Select
+                            sx={{
+                                width: 350,
+                                height: 40
+                            }}
+                            defaultValue=""
+                            labelId="strategy-label"
+                            autoWidth
+                            displayEmpty
+                            children={[<MenuItem key="strategy-item-default" value="" selected>Select strategy</MenuItem>, ...menuItems]}
+                        />
+                    </div>
+                )
+            }
+            
             return (
                 <ContestFilter
                   values={values}
