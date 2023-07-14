@@ -1,6 +1,5 @@
 ﻿namespace OJS.Services.Infrastructure.Cache
 {
-    using SoftUni.Services.Infrastructure;
     using System;
     using System.Threading.Tasks;
 

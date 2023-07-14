@@ -5,7 +5,6 @@
     using System.Linq;
     using AutoMapper;
     using OJS.Data.Models.Submissions;
-    using OJS.Services.Common.Models;
     using OJS.Services.Ui.Models.Users;
     using SoftUni.AutoMapper.Infrastructure.Models;
 
@@ -43,6 +42,8 @@
         public byte[]? ByteContent { get; set; }
 
         public string? FileExtension { get; set; }
+
+        public DateTime? StartedExecutionOn { get; set; }
 
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<Submission, SubmissionDetailsServiceModel>()

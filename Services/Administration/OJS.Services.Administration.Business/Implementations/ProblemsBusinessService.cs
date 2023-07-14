@@ -1,18 +1,17 @@
 namespace OJS.Services.Administration.Business.Implementations
 {
+    using System;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using System.Transactions;
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
     using OJS.Common.Helpers;
     using OJS.Data.Models.Problems;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models.Contests.Problems;
-    using OJS.Services.Common;
     using OJS.Services.Common.Models;
     using OJS.Services.Infrastructure.Exceptions;
-    using System;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using System.Transactions;
     using IsolationLevel = System.Transactions.IsolationLevel;
     using Resource = OJS.Common.Resources.ProblemsBusiness;
     using SharedResource = OJS.Common.Resources.ContestsGeneral;
@@ -27,9 +26,11 @@ namespace OJS.Services.Administration.Business.Implementations
         private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
         private readonly ITestRunsDataService testRunsData;
         private readonly ISubmissionTypesDataService submissionTypesData;
+        private readonly IProblemGroupsDataService problemGroupData;
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
-        private readonly Business.ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
+        private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
         private readonly IContestsBusinessService contestsBusiness;
+        private readonly IOrderableService<Problem> problemsOrderableService;
 
         public ProblemsBusinessService(
             IContestsDataService contestsData,
@@ -41,8 +42,10 @@ namespace OJS.Services.Administration.Business.Implementations
             ITestRunsDataService testRunsData,
             ISubmissionTypesDataService submissionTypesData,
             IProblemGroupsBusinessService problemGroupsBusiness,
-            Business.ISubmissionsDistributorCommunicationService submissionsDistributorCommunication,
-            IContestsBusinessService contestsBusiness)
+            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication,
+            IContestsBusinessService contestsBusiness,
+            IProblemGroupsDataService problemGroupData,
+            IOrderableService<Problem> problemsOrderableService)
         {
             this.contestsData = contestsData;
             this.participantScoresData = participantScoresData;
@@ -55,6 +58,8 @@ namespace OJS.Services.Administration.Business.Implementations
             this.problemGroupsBusiness = problemGroupsBusiness;
             this.submissionsDistributorCommunication = submissionsDistributorCommunication;
             this.contestsBusiness = contestsBusiness;
+            this.problemGroupData = problemGroupData;
+            this.problemsOrderableService = problemsOrderableService;
         }
 
         public async Task RetestById(int id)
@@ -174,6 +179,33 @@ namespace OJS.Services.Administration.Business.Implementations
             }
 
             return await this.contestsBusiness.UserHasContestPermissions(problem.ContestId, userId, isUserAdmin);
+        }
+
+        public async Task ReevaluateProblemsOrder(int contestId, Problem problem)
+        {
+            var problemsGroups = this.problemGroupData.GetAllByContestId(contestId);
+
+            if (problemsGroups.All(pg => pg.Problems.Count(p => !p.IsDeleted) == 1))
+            {
+               await this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsOrder(contestId, problem.ProblemGroup);
+            }
+            else
+            {
+                // We detach the existing entity, in order to avoid tracking exception on Update.
+                if (problem.ProblemGroup != null)
+                {
+                     this.problemGroupData.Detach(problem.ProblemGroup);
+                }
+
+                var problems = problemsGroups.FirstOrDefault(pg => pg.Problems
+                                                    .Any(p => p.Id == problem.Id))?.Problems
+                                                    .Where(p => !p.IsDeleted);
+
+                if (problems != null)
+                {
+                    await this.problemsOrderableService.ReevaluateOrder(problems);
+                }
+            }
         }
 
         private async Task CopyProblemToContest(Problem? problem, int contestId, int? problemGroupId)

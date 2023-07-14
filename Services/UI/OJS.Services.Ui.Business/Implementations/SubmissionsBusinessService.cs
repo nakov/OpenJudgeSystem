@@ -3,14 +3,12 @@ namespace OJS.Services.Ui.Business.Implementations;
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Common;
 using OJS.Common;
 using OJS.Common.Helpers;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
 using OJS.Services.Common.Models.Users;
 using OJS.Services.Ui.Business.Validations.Implementations.Submissions;
-using Infrastructure;
 using Infrastructure.Exceptions;
 using Data;
 using Models.Submissions;
@@ -406,6 +404,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(
                 $"Submission with Id: \"{submissionExecutionResult.SubmissionId}\" not found.");
         }
+
+        submission.StartedExecutionOn = submissionExecutionResult.ExecutionResult?.StartedExecutionOn;
 
         var exception = submissionExecutionResult.Exception;
         var executionResult = submissionExecutionResult.ExecutionResult;

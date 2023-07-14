@@ -1,6 +1,5 @@
 namespace OJS.Services.Ui.Models.Search;
 
-using OJS.Services.Common.Models;
 using System.Collections.Generic;
 using System.Linq;
 

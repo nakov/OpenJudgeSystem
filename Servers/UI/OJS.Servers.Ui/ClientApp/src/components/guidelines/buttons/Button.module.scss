@@ -94,4 +94,14 @@
   &.wide {
     width: 100%;
   }
+
+  &.image {
+    background: none;
+    border: 0;
+    cursor: pointer;
+    display: inline-block;
+    font: inherit;
+    margin: 0;
+    padding: 0;
+  }
 }

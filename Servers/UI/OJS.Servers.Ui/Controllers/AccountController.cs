@@ -8,13 +8,11 @@ namespace OJS.Servers.Ui.Controllers
     using OJS.Common.Utils;
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Controllers;
-    using OJS.Servers.Infrastructure.Extensions;
     using OJS.Servers.Ui.Models;
     using OJS.Services.Common.Models.Users;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Ui.Business;
     using static OJS.Common.GlobalConstants.Urls;
-    using static OJS.Servers.Infrastructure.ServerConstants;
 
     [Authorize]
     public class AccountController : BaseViewController

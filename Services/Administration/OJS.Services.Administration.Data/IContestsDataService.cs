@@ -1,11 +1,11 @@
 namespace OJS.Services.Administration.Data
 {
-    using OJS.Data.Models.Contests;
-    using OJS.Services.Common.Data;
-    using SoftUni.AutoMapper.Infrastructure.Models;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using OJS.Data.Models.Contests;
+    using OJS.Services.Common.Data;
+    using SoftUni.AutoMapper.Infrastructure.Models;
 
     public interface IContestsDataService : IDataService<Contest>
     {

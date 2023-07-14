@@ -10,7 +10,6 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Data.Models.Submissions;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models;
-    using OJS.Services.Common;
     using OJS.Services.Common.Models;
     using OJS.Services.Infrastructure;
     using SoftUni.Data.Infrastructure;
