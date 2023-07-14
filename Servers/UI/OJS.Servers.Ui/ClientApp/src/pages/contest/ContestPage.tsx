@@ -34,6 +34,7 @@ const ContestPage = () => {
             isRegisterForContestSuccessful,
             contest,
             isUserParticipant,
+            isOfficial,
         },
         actions: {
             registerParticipant,
@@ -158,10 +159,10 @@ const ContestPage = () => {
             if (isNil(contest) && isNil(contestError)) {
                 return;
             }
-
             if (!isNil(contest)) {
                 const { isOnline } = contest;
-                if (isUserParticipant || !isOnline) {
+
+                if (isUserParticipant || !isOnline || !isOfficial) {
                     (async () => {
                         await start(internalContest);
                     })();
@@ -186,6 +187,7 @@ const ContestPage = () => {
             isUserParticipant,
             isPasswordValid,
             contestError,
+            isOfficial,
         ],
     );
 
