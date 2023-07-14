@@ -1,3 +1,7 @@
+using MassTransit;
+using Microsoft.Extensions.Configuration;
+using OJS.Services.Common.Models.Configurations;
+
 namespace OJS.Servers.Infrastructure.Extensions
 {
     using System;
@@ -159,12 +163,34 @@ namespace OJS.Servers.Infrastructure.Extensions
             });
         }
 
-        // public static IServiceCollection AddUserProvider(this IServiceCollection services)
-        // {
-        //     services.AddTransient<IUserProviderService>();
-        //
-        //     return services;
-        // }
+        public static IServiceCollection AddMessageQueue(
+            this IServiceCollection services,
+            IConfiguration configuration,
+            params Action<IBusRegistrationConfigurator>[] actions)
+        {
+            var messageQueueConfig = configuration.GetSection(nameof(MessageQueueConfig)).Get<MessageQueueConfig>();
+
+            services.AddMassTransit(config =>
+            {
+                foreach (var action in actions)
+                {
+                    action(config);
+                }
+
+                config.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.Host(messageQueueConfig.Host, messageQueueConfig.VirtualHost, h =>
+                    {
+                        h.Username(messageQueueConfig.User);
+                        h.Password(messageQueueConfig.Password);
+                    });
+
+                    cfg.ConfigureEndpoints(context);
+                });
+            });
+
+            return services;
+        }
 
         private static IServiceCollection AddWebServerServices<TStartUp>(this IServiceCollection services)
         {

@@ -1,3 +1,6 @@
+using Microsoft.Extensions.Configuration;
+using OJS.Services.Common.Models.Configurations;
+
 namespace OJS.Servers.Ui.Infrastructure.Extensions;
 
 using Microsoft.AspNetCore.Builder;
@@ -9,6 +12,7 @@ public static class WebApplicationBuilderExtensions
         this WebApplicationBuilder builder,
         string apiVersion)
     {
+        builder.Configuration.AddEnvironmentVariables($"{nameof(MessageQueueConfig)}_");
         builder.Services.ConfigureServices<TProgram>(builder.Configuration, apiVersion);
         builder.Host.UseFileLogger<TProgram>();
 
