@@ -26,6 +26,7 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
             IConfiguration configuration)
             => services
                 .AddWebServer<TProgram>()
+                .AddHttpContextServices()
                 .AddHangfireServer(AppName)
                 .AddMessageQueue<TProgram>(configuration)
                 .ConfigureGlobalDateFormat()

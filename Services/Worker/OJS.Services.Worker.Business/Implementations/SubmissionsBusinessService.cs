@@ -72,7 +72,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
     private static void PreprocessLineEndings(SubmissionServiceModel submission)
     {
-        if (submission.TestsExecutionDetails != null && submission.ExecutionOptions!.EscapeLineEndings)
+        if (submission.TestsExecutionDetails != null && submission.ExecutionOptions.EscapeLineEndings)
         {
             submission.TestsExecutionDetails.Tests = submission.TestsExecutionDetails.Tests
                 .Mutate(x => x.Input = x.Input
@@ -156,7 +156,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 break;
         }
 
-        if (submission.TestsExecutionDetails != null && submission.ExecutionOptions!.EscapeTests)
+        if (submission.TestsExecutionDetails != null && submission.ExecutionOptions.EscapeTests)
         {
             submission.TestsExecutionDetails.Tests = submission.TestsExecutionDetails.Tests
                 .Mutate(x => x.Input = x.Input
@@ -186,7 +186,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     {
         executionResult.Id = this.BuildUniqueId(submission.TestsExecutionDetails!.TaskId!);
 
-        if (submission.ExecutionOptions!.KeepCheckerFragmentsForCorrectAnswers)
+        if (submission.ExecutionOptions.KeepCheckerFragmentsForCorrectAnswers)
         {
             FillForCorrectAnswers(
                 Enumerable.ToList<TestResult>(executionResult.TaskResult!.TestResults),

@@ -7,7 +7,8 @@ using SoftUni.AutoMapper.Infrastructure.Models;
 using OJS.Services.Worker.Models.ExecutionResult.Output;
 using OJS.Workers.ExecutionStrategies.Models;
 
-public class ExecutionResultServiceModel : IMapExplicitly
+public class ExecutionResultServiceModel
+    : IMapExplicitly, IMapTo<Common.Models.PubSubContracts.ExecutionResult.ExecutionResult>
 {
     public string? Id { get; set; }
 

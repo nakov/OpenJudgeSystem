@@ -28,6 +28,7 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
 
             services
                 .AddWebServer<TProgram>()
+                .AddHttpContextServices()
                 .AddSwaggerDocs(apiVersion.ToApiName(), ApiDocsTitle, apiVersion)
                 .AddHangfireServer(AppName)
                 .AddMessageQueue<TProgram>(configuration)

@@ -24,6 +24,7 @@ public static class ServiceCollectionExtensions
             .AddMemoryCache()
             .AddMessageQueue<TProgram>(configuration)
             .AddLogging()
+            .AddSoftUniJudgeCommonServices()
             .AddConfiguration(configuration)
             .AddControllers();
 

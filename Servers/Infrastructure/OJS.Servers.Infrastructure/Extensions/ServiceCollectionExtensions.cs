@@ -5,6 +5,7 @@ using OJS.Services.Common.Implementations;
 using OJS.Services.Common.Models.Configurations;
 using OJS.Workers.SubmissionProcessors.Formatters;
 using System.Linq;
+using System.Security.Claims;
 
 namespace OJS.Servers.Infrastructure.Extensions
 {
@@ -217,12 +218,16 @@ namespace OJS.Servers.Infrastructure.Extensions
             return services;
         }
 
+        public static IServiceCollection AddHttpContextServices(this IServiceCollection services)
+            => services
+                .AddHttpContextAccessor()
+                .AddTransient(s => s.GetRequiredService<IHttpContextAccessor>().HttpContext?.User ?? new ClaimsPrincipal());
+
         private static IServiceCollection AddWebServerServices<TStartUp>(this IServiceCollection services)
         {
             services
                 .AddConventionServices<TStartUp>()
-                .AddTransient(typeof(IDataService<>), typeof(DataService<>))
-                .AddHttpContextServices();
+                .AddTransient(typeof(IDataService<>), typeof(DataService<>));
 
             services.AddHttpClient<IHttpClientService, HttpClientService>(ConfigureHttpClient);
             services.AddHttpClient<ISulsPlatformHttpClientService, SulsPlatformHttpClientService>(ConfigureHttpClient);
@@ -230,11 +235,6 @@ namespace OJS.Servers.Infrastructure.Extensions
 
             return services;
         }
-
-        private static IServiceCollection AddHttpContextServices(this IServiceCollection services)
-            => services
-                .AddHttpContextAccessor()
-                .AddTransient(s => s.GetRequiredService<IHttpContextAccessor>().HttpContext!.User);
 
         private static void ConfigureHttpClient(HttpClient client)
             => client.DefaultRequestHeaders.Add(HeaderNames.Accept, MimeTypes.ApplicationJson);

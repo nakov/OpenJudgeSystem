@@ -415,21 +415,28 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var exception = submissionExecutionResult.Exception;
         var executionResult = submissionExecutionResult.ExecutionResult;
 
-        submission.ProcessingComment = null;
         await this.testRunsDataService.DeleteBySubmission(submission.Id);
 
-        if (exception != null)
-        {
-            submission.ProcessingComment = exception.Message;
-        }
+        submission.Processed = true;
+        submission.ProcessingComment = null;
 
-        if (executionResult == null)
+        if (executionResult != null)
         {
-            submission.ProcessingComment = "Invalid execution result received. Please contact an administrator.";
-            return;
+            ProcessTestsExecutionResult(submission, executionResult);
+            this.submissionsData.Update(submission);
+            await this.submissionsData.SaveChanges();
+            await this.UpdateResults(submission);
         }
-
-        await this.ProcessTestsExecutionResult(submission, executionResult);
+        else
+        {
+            submission.IsCompiledSuccessfully = false;
+            var errorMessage = exception?.Message
+                ?? "Invalid execution result received. Please contact an administrator.";
+            submission.ProcessingComment = errorMessage;
+            submission.CompilerComment = errorMessage;
+            this.submissionsData.Update(submission);
+            await this.submissionsData.SaveChanges();
+        }
     }
 
     public Task<IEnumerable<SubmissionForPublicSubmissionsServiceModel>> GetPublicSubmissions()
@@ -450,7 +457,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
     }
 
-    private async Task ProcessTestsExecutionResult(
+    private static void ProcessTestsExecutionResult(
         Submission submission,
         ExecutionResultResponseModel executionResult)
     {
@@ -460,7 +467,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         if (!executionResult.IsCompiledSuccessfully)
         {
-            await this.UpdateResults(submission);
+            submission.TestRuns.Clear();
+            return;
         }
 
         var testResults = executionResult
@@ -480,12 +488,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 TestId = testResult.Id,
                 TimeUsed = testResult.TimeUsed,
             }));
-
-        submission.Processed = true;
-        this.submissionsData.Update(submission);
-        await this.submissionsData.SaveChanges();
-
-        await this.UpdateResults(submission);
     }
 
     private async Task UpdateResults(Submission submission)

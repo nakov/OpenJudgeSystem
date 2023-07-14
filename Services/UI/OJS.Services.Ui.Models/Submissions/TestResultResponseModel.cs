@@ -1,9 +1,10 @@
-﻿using OJS.Services.Common.Models.PubSubContracts.ExecutionResult;
+﻿using AutoMapper;
+using OJS.Workers.ExecutionStrategies.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
 namespace OJS.Services.Ui.Models.Submissions
 {
-    public class TestResultResponseModel : IMapFrom<TestResult>
+    public class TestResultResponseModel : IMapExplicitly
     {
         public int Id { get; set; }
 
@@ -18,5 +19,10 @@ namespace OJS.Services.Ui.Models.Submissions
         public int TimeUsed { get; set; }
 
         public int MemoryUsed { get; set; }
+
+        public void RegisterMappings(IProfileExpression configuration)
+            => configuration
+                .CreateMap<TestResult, TestResultResponseModel>()
+                .ForMember(m => m.Output, opt => opt.Ignore());
     }
 }

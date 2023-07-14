@@ -1,4 +1,6 @@
-﻿namespace OJS.Services.Worker.Models.ExecutionContext.ExecutionDetails
+﻿using OJS.Services.Common.Models.PubSubContracts.Submissions;
+
+namespace OJS.Services.Worker.Models.ExecutionContext.ExecutionDetails
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -24,7 +26,8 @@
         public IEnumerable<TestContext> Tests { get; set; } = Enumerable.Empty<TestContext>();
 
         public void RegisterMappings(IProfileExpression configuration)
-            => configuration
+        {
+            configuration
                 .CreateMap<TestsExecutionDetailsServiceModel, TestsInputModel>()
                 .ForMember(m => m.Tests, opt => opt.MapFrom(s => s.Tests))
                 .ForMember(
@@ -37,5 +40,14 @@
                     m => m.TaskSkeleton,
                     opt => opt.MapFrom<TaskSkeletonValueResolver<TestsExecutionDetailsServiceModel>>())
                 .ForAllOtherMembers(opt => opt.Ignore());
+
+            configuration
+                .CreateMap<TestsExecutionDetails, TestsExecutionDetailsServiceModel>()
+                .ForMember(m => m.TaskSkeleton, opt => opt.MapFrom(src => src.SolutionSkeleton))
+                .ForMember(m => m.TaskSkeletonAsString, opt => opt.Ignore())
+                .ForMember(m => m.CheckerType, opt => opt.MapFrom(src => src.CheckerTypeName))
+                .ForMember(m => m.ExamParticipantId, opt => opt.Ignore())
+                .ForMember(m => m.TaskId, opt => opt.Ignore());
+        }
     }
 }

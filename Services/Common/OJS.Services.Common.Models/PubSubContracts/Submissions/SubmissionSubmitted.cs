@@ -1,5 +1,4 @@
 using OJS.Workers.Common.Models;
-using System;
 
 namespace OJS.Services.Common.Models.PubSubContracts.Submissions;
 
@@ -9,9 +8,11 @@ public class SubmissionSubmitted
 
     public ExecutionType ExecutionType { get; set; }
 
-    public ExecutionStrategyType? ExecutionStrategy { get; set; }
+    public ExecutionStrategyType ExecutionStrategy { get; set; }
 
-    public byte[] Content { get; set; } = Array.Empty<byte>();
+    public byte[]? FileContent { get; set; }
+
+    public string? Code { get; set; }
 
     public int TimeLimit { get; set; }
 

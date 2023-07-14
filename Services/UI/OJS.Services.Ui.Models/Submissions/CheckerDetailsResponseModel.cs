@@ -1,4 +1,4 @@
-﻿using OJS.Services.Common.Models.PubSubContracts.ExecutionResult;
+﻿using OJS.Workers.Common;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
 namespace OJS.Services.Ui.Models.Submissions
