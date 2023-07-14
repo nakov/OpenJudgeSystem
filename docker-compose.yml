@@ -56,17 +56,17 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
   mq:
-    image: "rabbitmq:3.8-management"
+    image: rabbitmq:3.12-management
     ports:
-      - "15672:15672"
       - "5672:5672"
+      - "15672:15672"
     container_name: mq_instance
     hostname: "judge-mq"
     environment:
-      RABBITMQ_ERLANG_COOKIE: SWQOKODSQALRPCLNMEQG
-      RABBITMQ_DEFAULT_USER: rabbitmq
-      RABBITMQ_DEFAULT_PASS: rabbitmq
-      RABBITMQ_DEFAULT_VHOST: /
+      DEFAULT_USER_PASSWORD: myS3cretPass2
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmqvolumes:rw
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
   redis:
     image: "redis:5.0"
     ports:
@@ -74,3 +74,6 @@ services:
     container_name: redis_instance
     hostname: "judge-rd"
     command: "redis-server --requirepass redisPass123"
+    
+volumes:
+  rabbitmq_data:
