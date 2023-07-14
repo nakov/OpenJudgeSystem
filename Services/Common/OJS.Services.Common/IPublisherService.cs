@@ -1,7 +1,9 @@
 namespace OJS.Services.Common;
 
+using System.Threading.Tasks;
+
 public interface IPublisherService
 {
-    void Publish<T>(T obj)
+    Task Publish<T>(T obj)
         where T : class;
 }

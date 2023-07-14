@@ -12,6 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="OJS.PubSubContracts" Version="1.0.1" />
       <PackageReference Include="SoftUni.Common" Version="1.0.6" />
     </ItemGroup>
 

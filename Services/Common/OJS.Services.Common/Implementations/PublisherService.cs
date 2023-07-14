@@ -1,5 +1,6 @@
 namespace OJS.Services.Common.Implementations;
 
+using System.Threading.Tasks;
 using MassTransit;
 
 public class PublisherService : IPublisherService
@@ -9,7 +10,7 @@ public class PublisherService : IPublisherService
     public PublisherService(IBus bus)
         => this.bus = bus;
 
-    public void Publish<T>(T obj)
+    public Task Publish<T>(T obj)
         where T : class
         => this.bus.Publish(obj);
 }
