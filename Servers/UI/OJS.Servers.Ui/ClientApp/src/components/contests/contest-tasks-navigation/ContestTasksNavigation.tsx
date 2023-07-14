@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, {useCallback, useEffect, useMemo} from 'react';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
@@ -106,7 +106,7 @@ const ContestTasksNavigation = () => {
             {renderTasksList()}
             <LinkButton
               type={LinkButtonType.secondary}
-              to={getContestResultsUrl({ id: contest!.id, participationType })}
+              to={getContestResultsUrl({ id: contest?.id, participationType })}
               text="Results"
               className={refreshButtonClassName}
             />
