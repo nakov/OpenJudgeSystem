@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Services.Ui.Business;
+using OJS.Servers.Infrastructure.Controllers;
 using static OJS.Common.GlobalConstants.HeaderValues;
 using static OJS.Common.GlobalConstants.HeaderKeys;
 using static OJS.Common.GlobalConstants.MimeTypes;

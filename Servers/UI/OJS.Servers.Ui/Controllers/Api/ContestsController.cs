@@ -8,6 +8,7 @@ using OJS.Services.Ui.Business;
 using OJS.Services.Ui.Models.Contests;
 using System.Threading.Tasks;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Servers.Infrastructure.Controllers;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 public class ContestsController : BaseApiController

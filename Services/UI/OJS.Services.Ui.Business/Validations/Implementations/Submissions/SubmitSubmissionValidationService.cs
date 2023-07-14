@@ -1,13 +1,14 @@
-﻿namespace OJS.Services.Ui.Business.Validation.Implementations;
+﻿namespace OJS.Services.Ui.Business.Validations.Implementations.Submissions;
 
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Problems;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Users;
-using Models.Submissions;
-using System.Text;
+using OJS.Services.Ui.Business.Validations.Implementations.Contests;
+using OJS.Services.Ui.Models.Submissions;
 using System.Linq;
+using System.Text;
 
 public class SubmitSubmissionValidationService : ISubmitSubmissionValidationService
 {

@@ -2,8 +2,8 @@
 
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Users;
-using Validation;
 using OJS.Services.Ui.Models.Submissions;
+using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 public class SubmissionDetailsValidationService : ISubmissionDetailsValidationService
 {
     public ValidationResult GetValidationResult((SubmissionDetailsServiceModel?, UserInfoModel) validationInput)

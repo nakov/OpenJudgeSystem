@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Busines.Submissions.Models
+﻿namespace OJS.Services.Ui.Models.Submissions
 {
     public class OutputResultResponseModel
     {

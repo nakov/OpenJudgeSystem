@@ -1,10 +1,9 @@
 ﻿namespace OJS.Services.Infrastructure.Cache
 {
-    using SoftUni.Services.Infrastructure;
     using System;
     using System.Threading.Tasks;
 
-    public interface ICacheService : IService
+    public interface ICacheService
     {
         T Get<T>(string cacheId, Func<T> getItemCallback);
 

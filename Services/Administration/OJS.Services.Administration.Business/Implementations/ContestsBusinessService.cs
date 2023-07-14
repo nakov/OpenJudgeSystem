@@ -2,7 +2,6 @@ namespace OJS.Services.Administration.Business.Implementations;
 
 using Microsoft.EntityFrameworkCore;
 using OJS.Services.Administration.Data;
-using OJS.Services.Common;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,11 +9,11 @@ using System.Threading.Tasks;
 public class ContestsBusinessService : IContestsBusinessService
 {
     private readonly IContestsDataService contestsData;
-    private readonly IUserProviderService userProvider;
+    private readonly Business.IUserProviderService userProvider;
 
     public ContestsBusinessService(
         IContestsDataService contestsData,
-        IUserProviderService userProvider)
+        Business.IUserProviderService userProvider)
     {
         this.contestsData = contestsData;
         this.userProvider = userProvider;
