@@ -182,7 +182,6 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
                 return;
             }
 
-            console.log(apiSubmissionDetailsResults);
             setCurrentProblemSubmissionResults(apiSubmissionDetailsResults);
         },
         [ apiSubmissionDetailsResults, apiSubmissionDetailsResultsError ],

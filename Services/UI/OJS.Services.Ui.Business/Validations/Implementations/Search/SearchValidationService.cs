@@ -1,6 +1,5 @@
 ﻿namespace OJS.Services.Ui.Business.Validations.Implementations.Search;
 
-using OJS.Services.Common;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Validation.Helpers;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;

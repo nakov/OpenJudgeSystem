@@ -392,6 +392,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             await this.submissionsData.SaveChanges();
 
             newSubmission.Problem = problem;
+            newSubmission.Problem = problem;
 
             await this.participantScoresBusinessService.SaveForSubmission(newSubmission);
         }

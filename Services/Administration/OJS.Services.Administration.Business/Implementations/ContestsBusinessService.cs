@@ -2,7 +2,6 @@ namespace OJS.Services.Administration.Business.Implementations;
 
 using Microsoft.EntityFrameworkCore;
 using OJS.Services.Administration.Data;
-using OJS.Services.Common;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;

@@ -2,7 +2,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using OJS.Services.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
 public class SearchResponseModel : IMapFrom<SearchForListingServiceModel>

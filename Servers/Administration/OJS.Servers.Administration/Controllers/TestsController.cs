@@ -6,7 +6,6 @@ using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OJS.Common.Extensions.Strings;
 using OJS.Common.Helpers;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Tests;
@@ -230,9 +229,10 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         Test entity,
         EntityAction action,
         IDictionary<string, string> entityDict,
-        IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters)
+        IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters,
+        Type autocompleteType)
     {
-        var formControls = base.GenerateFormControls(entity, action, entityDict, complexOptionFilters).ToList();
+        var formControls = base.GenerateFormControls(entity, action, entityDict, complexOptionFilters, autocompleteType).ToList();
 
         var problemId = entityDict.GetEntityIdOrDefault<Problem>();
 

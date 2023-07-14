@@ -33,7 +33,6 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
                 .AddHangfireServer(AppName)
                 .AddMessageQueue<TProgram>(configuration)
                 .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>()
-                .AddScoped<OjsDbContext>()
                 .AddMemoryCache()
                 .AddSoftUniJudgeCommonServices()
                 .AddDistributedCaching<TProgram>()

@@ -9,12 +9,13 @@
       <ProjectReference Include="..\..\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj" />
       <ProjectReference Include="..\..\UI\OJS.Services.Ui.Data\OJS.Services.Ui.Data.csproj" />
       <ProjectReference Include="..\..\Worker\OJS.Workers\OJS.Workers.SubmissionProcessors\OJS.Workers.SubmissionProcessors.csproj" />
+      <ProjectReference Include="..\..\Worker\OJS.Workers\OJS.Workers.SubmissionProcessors\OJS.Workers.SubmissionProcessors.csproj" />
       <ProjectReference Include="..\OJS.Services.Administration.Data\OJS.Services.Administration.Data.csproj" />
       <ProjectReference Include="..\OJS.Services.Administration.Models\OJS.Services.Administration.Models.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="AutoCrudAdmin" Version="1.1.25" />
+      <PackageReference Include="AutoCrudAdmin" Version="1.1.26" />
     </ItemGroup>
 
 </Project>
