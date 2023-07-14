@@ -161,7 +161,7 @@ const ContestPage = () => {
 
             if (!isNil(contest)) {
                 const { isOnline } = contest;
-                if (isUserParticipant || !isOnline) {
+                if (isUserParticipant || !isOnline || !isParticipationOfficial) {
                     (async () => {
                         await start(internalContest);
                     })();
