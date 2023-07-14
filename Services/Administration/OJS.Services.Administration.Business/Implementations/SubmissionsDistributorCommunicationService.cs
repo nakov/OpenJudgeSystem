@@ -1,3 +1,7 @@
+using OJS.Workers.Common.Extensions;
+using OJS.Workers.Common.Models;
+using OJS.Workers.SubmissionProcessors.Formatters;
+
 namespace OJS.Services.Administration.Business.Implementations
 {
     using System;
@@ -12,9 +16,6 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Services.Common.Models.Submissions;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Ui.Data;
-    using SoftUni.Judge.Common.Enumerations;
-    using SoftUni.Judge.Common.Extensions;
-    using SoftUni.Judge.Common.Formatters;
     using static OJS.Common.GlobalConstants.Urls;
 
     public class SubmissionsDistributorCommunicationService : ISubmissionsDistributorCommunicationService

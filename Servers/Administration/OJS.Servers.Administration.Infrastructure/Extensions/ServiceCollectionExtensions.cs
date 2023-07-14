@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Configuration;
+
 namespace OJS.Servers.Administration.Infrastructure.Extensions
 {
     using AutoCrudAdmin.Extensions;
@@ -7,7 +9,6 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Extensions;
     using SoftUni.Data.Infrastructure.Enumerations;
-    using SoftUni.Judge.Common.Extensions;
     using System.Linq;
     using static OJS.Common.GlobalConstants;
 
@@ -20,10 +21,13 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
             EnvironmentVariables.LocalTimeZone,
         };
 
-        public static void ConfigureServices<TProgram>(this IServiceCollection services) =>
-            services
+        public static void ConfigureServices<TProgram>(
+            this IServiceCollection services,
+            IConfiguration configuration)
+            => services
                 .AddWebServer<TProgram>()
                 .AddHangfireServer(AppName)
+                .AddMessageQueue<TProgram>(configuration)
                 .ConfigureGlobalDateFormat()
                 .ValidateLaunchSettings(RequiredConfigValues)
                 .AddIdentityDatabase<AdminDbContext, UserProfile, Role, UserInRole>(Enumerable.Empty<GlobalQueryFilterType>())

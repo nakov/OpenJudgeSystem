@@ -1,21 +1,21 @@
+using OJS.Services.Common;
+using OJS.Workers.Common.Models;
+
 namespace OJS.Services.Ui.Business.Implementations;
 
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Common;
 using OJS.Common;
 using OJS.Common.Helpers;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
 using OJS.Services.Common.Models.Users;
 using OJS.Services.Ui.Business.Validations.Implementations.Submissions;
-using Infrastructure;
 using Infrastructure.Exceptions;
 using Data;
 using Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
-using SoftUni.Judge.Common.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +41,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmitSubmissionValidationService submitSubmissionValidationService;
     private readonly ISubmissionResultsValidationService submissionResultsValidationService;
     private readonly ISubmissionFileDownloadValidationService submissionFileDownloadValidationService;
+    private readonly ISubmissionPublisherService submissionPublisher;
 
     public SubmissionsBusinessService(
         ISubmissionsDataService submissionsData,
@@ -56,7 +57,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         IContestValidationService contestValidationService,
         ISubmitSubmissionValidationService submitSubmissionValidationService,
         ISubmissionResultsValidationService submissionResultsValidationService,
-        ISubmissionFileDownloadValidationService submissionFileDownloadValidationService)
+        ISubmissionFileDownloadValidationService submissionFileDownloadValidationService,
+        ISubmissionPublisherService submissionPublisher)
     {
         this.submissionsData = submissionsData;
         this.usersBusiness = usersBusiness;
@@ -72,6 +74,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.submitSubmissionValidationService = submitSubmissionValidationService;
         this.submissionResultsValidationService = submissionResultsValidationService;
         this.submissionFileDownloadValidationService = submissionFileDownloadValidationService;
+        this.submissionPublisher = submissionPublisher;
     }
 
     public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
@@ -377,7 +380,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             newSubmission.Problem = problem;
             newSubmission.SubmissionType = submissionType;
 
-            await this.submissionsDistributorCommunicationService.AddSubmissionForProcessing(newSubmission);
+            // await this.submissionsDistributorCommunicationService.AddSubmissionForProcessing(newSubmission);
+            await this.submissionPublisher.Publish(newSubmission);
         }
         else
         {

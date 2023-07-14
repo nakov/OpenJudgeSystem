@@ -1,16 +1,17 @@
-﻿namespace OJS.Services.Ui.Models.Submissions
+﻿using OJS.Services.Common.Models.PubSubContracts.ExecutionResult;
+using SoftUni.AutoMapper.Infrastructure.Models;
+
+namespace OJS.Services.Ui.Models.Submissions
 {
     using System;
 
-    public class ExecutionResultResponseModel
+    public class ExecutionResultResponseModel : IMapFrom<ExecutionResult>
     {
         public string Id { get; set; } = null!;
 
         public bool IsCompiledSuccessfully { get; set; }
 
         public string CompilerComment { get; set; } = null!;
-
-        public OutputResultResponseModel? OutputResult { get; set; }
 
         public TaskResultResponseModel TaskResult { get; set; } = null!;
 

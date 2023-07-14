@@ -1,4 +1,6 @@
-﻿namespace OJS.Services.Worker.Models.ExecutionContext.Mapping;
+﻿using OJS.Workers.Common.Models;
+
+namespace OJS.Services.Worker.Models.ExecutionContext.Mapping;
 
 using AutoMapper;
 using SoftUni.AutoMapper.Infrastructure.Extensions;

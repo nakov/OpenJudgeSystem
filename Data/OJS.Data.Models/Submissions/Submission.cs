@@ -1,3 +1,5 @@
+using OJS.Workers.Common.Models;
+
 namespace OJS.Data.Models.Submissions
 {
     using FluentExtensions.Extensions;
@@ -12,7 +14,6 @@ namespace OJS.Data.Models.Submissions
     using System.Linq;
     using System.Text;
     using SoftUni.Data.Infrastructure.Models;
-    using SoftUni.Judge.Common.Enumerations;
 
     public class Submission : DeletableAuditInfoEntity<int>
     {

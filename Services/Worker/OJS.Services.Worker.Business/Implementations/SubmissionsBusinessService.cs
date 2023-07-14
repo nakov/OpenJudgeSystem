@@ -1,4 +1,6 @@
-﻿namespace OJS.Services.Worker.Business.Implementations;
+﻿using OJS.Workers.Common.Models;
+
+namespace OJS.Services.Worker.Business.Implementations;
 
 using System;
 using System.Collections.Generic;

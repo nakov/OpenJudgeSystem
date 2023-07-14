@@ -1,4 +1,6 @@
-﻿namespace OJS.Services.Worker.Models.ExecutionContext.Mapping;
+﻿using OJS.Workers.Common.Models;
+
+namespace OJS.Services.Worker.Models.ExecutionContext.Mapping;
 
 using AutoMapper;
 using OjsExecutionType = Workers.Common.Models.ExecutionType;
@@ -13,7 +15,7 @@ public class ExecutionTypeValueResolver : IValueResolver<SubmissionServiceModel,
     {
         switch (source.ExecutionType)
         {
-            case ExecutionType.SimpleExecution:
+            case OjsExecutionType.SimpleExecution:
             case ExecutionType.SimpleTemplateExecution:
                 return OjsExecutionType.SimpleExecution;
 

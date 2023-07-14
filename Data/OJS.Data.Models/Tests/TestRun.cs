@@ -1,8 +1,9 @@
+using OJS.Workers.Common.Models;
+
 namespace OJS.Data.Models.Tests
 {
     using OJS.Data.Models.Submissions;
     using SoftUni.Data.Infrastructure.Models;
-    using SoftUni.Judge.Common.Enumerations;
 
     public class TestRun : Entity<int>
     {

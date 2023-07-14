@@ -10,6 +10,7 @@
       <ProjectReference Include="..\..\..\Services\Common\OJS.Services.Common.Data\OJS.Services.Common.Data.csproj" />
       <ProjectReference Include="..\..\..\Services\Common\OJS.Services.Common\OJS.Services.Common.csproj" />
       <ProjectReference Include="..\..\..\Services\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\..\Services\Worker\OJS.Workers\OJS.Workers.SubmissionProcessors\OJS.Workers.SubmissionProcessors.csproj" />
     </ItemGroup>
 
     <ItemGroup>

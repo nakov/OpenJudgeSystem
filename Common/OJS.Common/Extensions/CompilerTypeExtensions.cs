@@ -1,7 +1,7 @@
+using OJS.Workers.Common.Models;
+
 namespace OJS.Common.Extensions
 {
-    using SoftUni.Judge.Common.Enumerations;
-
     public static class CompilerTypeExtensions
     {
         public static string? GetFileExtension(this CompilerType compilerType)

@@ -7,7 +7,6 @@ using OJS.Services.Worker.Models.ExecutionContext.ExecutionDetails;
 using OJS.Workers.Common.Models;
 using OJS.Services.Common;
 using OJS.Services.Common.Models;
-using ExecutionType = Models.ExecutionContext.ExecutionType;
 using ValidationResult = OJS.Services.Common.Models.ValidationResult;
 using static ValidationConstants;
 

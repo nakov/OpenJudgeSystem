@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using OJS.Services.Common;
 using OJS.Services.Common.Implementations;
 using OJS.Services.Common.Models.Configurations;
+using OJS.Workers.SubmissionProcessors.Formatters;
 using System.Linq;
 
 namespace OJS.Servers.Infrastructure.Extensions
@@ -205,6 +206,13 @@ namespace OJS.Servers.Infrastructure.Extensions
                     }));
                 });
             });
+
+            return services;
+        }
+
+        public static IServiceCollection AddSoftUniJudgeCommonServices(this IServiceCollection services)
+        {
+            services.AddFrom(typeof(IFormatterServiceFactory).Assembly);
 
             return services;
         }

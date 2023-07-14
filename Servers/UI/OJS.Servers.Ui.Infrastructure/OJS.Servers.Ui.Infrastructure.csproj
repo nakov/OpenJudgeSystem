@@ -15,7 +15,6 @@
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="5.0.0-preview.8.20414.8" />
       <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.0" />
-      <PackageReference Include="OJS.PubSubContracts" Version="1.0.1" />
     </ItemGroup>
 
 </Project>

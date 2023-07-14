@@ -7,7 +7,6 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Extensions;
     using OJS.Services.Common.Models.Configurations;
-    using SoftUni.Judge.Common.Extensions;
     using static OJS.Common.GlobalConstants;
 
     public static class ServiceCollectionExtensions

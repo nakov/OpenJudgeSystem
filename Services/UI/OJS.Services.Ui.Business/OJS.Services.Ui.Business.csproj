@@ -7,12 +7,12 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Common\OJS.Services.Common.Models\OJS.Services.Common.Models.csproj" />
       <ProjectReference Include="..\..\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\Worker\OJS.Workers\OJS.Workers.SubmissionProcessors\OJS.Workers.SubmissionProcessors.csproj" />
       <ProjectReference Include="..\OJS.Services.Ui.Data\OJS.Services.Ui.Data.csproj" />
       <ProjectReference Include="..\OJS.Services.Ui.Models\OJS.Services.Ui.Models.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="OJS.PubSubContracts" Version="1.0.1" />
       <PackageReference Include="SoftUni.Common" Version="1.0.6" />
     </ItemGroup>
 

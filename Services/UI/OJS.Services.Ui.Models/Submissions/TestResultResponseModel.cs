@@ -1,6 +1,9 @@
-﻿namespace OJS.Services.Ui.Models.Submissions
+﻿using OJS.Services.Common.Models.PubSubContracts.ExecutionResult;
+using SoftUni.AutoMapper.Infrastructure.Models;
+
+namespace OJS.Services.Ui.Models.Submissions
 {
-    public class TestResultResponseModel
+    public class TestResultResponseModel : IMapFrom<TestResult>
     {
         public int Id { get; set; }
 

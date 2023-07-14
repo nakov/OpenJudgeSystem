@@ -1,3 +1,5 @@
+using OJS.Workers.Common.Models;
+
 namespace OJS.Services.Administration.Business.Implementations
 {
     using System;
@@ -10,11 +12,9 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Data.Models.Submissions;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models;
-    using OJS.Services.Common;
     using OJS.Services.Common.Models;
     using OJS.Services.Infrastructure;
     using SoftUni.Data.Infrastructure;
-    using SoftUni.Judge.Common.Enumerations;
 
     public class SubmissionsBusinessService : ISubmissionsBusinessService
     {

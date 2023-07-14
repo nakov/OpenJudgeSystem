@@ -1,10 +1,11 @@
-﻿namespace OJS.Services.Common.Helpers
+﻿using OJS.Workers.Common.Models;
+
+namespace OJS.Services.Common.Helpers
 {
     using System;
     using System.Collections.Generic;
     using System.Text;
     using System.Text.RegularExpressions;
-    using SoftUni.Judge.Common.Enumerations;
 
     public static class MySqlStrategiesHelper
     {
