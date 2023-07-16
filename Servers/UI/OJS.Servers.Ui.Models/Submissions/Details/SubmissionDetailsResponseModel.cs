@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using OJS.Servers.Ui.Models.Submissions.Profile;
     using OJS.Servers.Ui.Models.Users;
-    using OJS.Services.Common.Models;
     using OJS.Services.Ui.Models.Submissions;
     using SoftUni.AutoMapper.Infrastructure.Models;
 

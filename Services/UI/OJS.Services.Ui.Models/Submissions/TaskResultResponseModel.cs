@@ -1,12 +1,10 @@
-﻿namespace OJS.Services.Busines.Submissions.Models
+﻿namespace OJS.Services.Ui.Models.Submissions;
+
+using System.Collections.Generic;
+
+public class TaskResultResponseModel
 {
-    using OJS.Services.Ui.Models.Submissions;
-    using System.Collections.Generic;
+    public int Points { get; set; }
 
-    public class TaskResultResponseModel
-    {
-        public int Points { get; set; }
-
-        public IEnumerable<TestResultResponseModel> TestResults { get; set; } = null!;
-    }
+    public IEnumerable<TestResultResponseModel> TestResults { get; set; } = null!;
 }

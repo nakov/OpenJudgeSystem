@@ -1,10 +1,8 @@
 namespace OJS.Services.Ui.Business.Validations.Implementations.Contests;
 
 using OJS.Data.Models.Contests;
-using Common;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Validation.Helpers;
-using Validation;
 
 public class ContestResultsValidationService : IContestResultsValidationService
 {

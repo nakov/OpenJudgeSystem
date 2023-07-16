@@ -1,0 +1,31 @@
+﻿namespace OJS.Services.Worker.Business.Extensions;
+
+using OJS.Workers.Common.Models;
+using OJS.Services.Worker.Models.ExecutionResult.Output;
+using System.Linq;
+
+public static class TaskResultServiceModelExtensions
+{
+    public static void CalculatePoints(this TaskResultServiceModel taskResult, int taskMaxPoints)
+    {
+        if (taskResult == null)
+        {
+            return;
+        }
+
+        var points = 0;
+
+        var testResults = taskResult.TestResults?.Where(x => !x.IsTrialTest).ToList();
+
+        if (testResults?.Count > 0)
+        {
+            var correctAnswersCount = testResults.Count(x => x.ResultType == TestRunResultType.CorrectAnswer);
+
+            var coefficient = (double)correctAnswersCount / testResults.Count;
+
+            points = (int)(coefficient * taskMaxPoints);
+        }
+
+        taskResult.Points = points;
+    }
+}
