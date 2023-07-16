@@ -7,6 +7,7 @@ const generateSortingStrategy = (() => {
         { name: SortType.Name, value: SortType.Name },
         { name: SortType.StartDate, value: SortType.StartDate },
         { name: SortType.EndDate, value: SortType.EndDate },
+        { name: SortType.OrderBy, value: SortType.OrderBy },
     );
 
     return () => result;

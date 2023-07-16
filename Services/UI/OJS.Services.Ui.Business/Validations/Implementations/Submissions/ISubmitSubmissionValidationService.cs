@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Ui.Business.Validation;
+﻿namespace OJS.Services.Ui.Business.Validations.Implementations.Submissions;
 
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Problems;
@@ -8,12 +8,6 @@ using OJS.Services.Common.Validation;
 using OJS.Services.Ui.Models.Submissions;
 
 public interface ISubmitSubmissionValidationService : IValidationService
-   <(Problem?,
-    UserInfoModel,
-    Participant?,
-    ValidationResult,
-    int,
-    bool,
-    SubmitSubmissionServiceModel)>
+   <(Problem?, UserInfoModel, Participant?, ValidationResult, int, bool, SubmitSubmissionServiceModel)>
 {
 }
