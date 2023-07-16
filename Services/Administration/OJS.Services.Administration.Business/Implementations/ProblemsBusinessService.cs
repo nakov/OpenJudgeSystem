@@ -10,7 +10,6 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Data.Models.Problems;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models.Contests.Problems;
-    using OJS.Services.Common;
     using OJS.Services.Common.Models;
     using OJS.Services.Infrastructure.Exceptions;
     using IsolationLevel = System.Transactions.IsolationLevel;

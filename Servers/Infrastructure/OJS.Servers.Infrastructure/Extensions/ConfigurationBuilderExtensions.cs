@@ -3,7 +3,6 @@
     using Microsoft.Extensions.Configuration;
     using System;
     using OJS.Common;
-    using static OJS.Common.GlobalConstants;
 
     public static class ConfigurationBuilderExtensions
     {

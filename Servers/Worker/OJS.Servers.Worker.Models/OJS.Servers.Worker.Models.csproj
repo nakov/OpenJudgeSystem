@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>OJS.Servers.Worker.Models</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SoftUni.AutoMapper.Infrastructure" Version="1.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Services\Common\OJS.Services.Common.Models\OJS.Services.Common.Models.csproj" />
+    <ProjectReference Include="..\..\..\Services\Worker\OJS.Services.Worker.Models\OJS.Services.Worker.Models.csproj" />
+    <ProjectReference Include="..\..\..\Services\Worker\OJS.Workers\OJS.Workers.Common\OJS.Workers.Common.csproj" />
+    <ProjectReference Include="..\..\..\Services\Worker\OJS.Workers\OJS.Workers.ExecutionStrategies\OJS.Workers.ExecutionStrategies.csproj" />
+    <ProjectReference Include="..\..\..\Services\Worker\OJS.Workers\OJS.Workers.SubmissionProcessors\OJS.Workers.SubmissionProcessors.csproj" />
+  </ItemGroup>
+
+</Project>

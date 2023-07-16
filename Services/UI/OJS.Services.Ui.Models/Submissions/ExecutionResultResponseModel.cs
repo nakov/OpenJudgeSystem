@@ -1,6 +1,5 @@
 ﻿namespace OJS.Services.Ui.Models.Submissions
 {
-    using OJS.Services.Busines.Submissions.Models;
     using System;
 
     public class ExecutionResultResponseModel

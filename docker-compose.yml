@@ -12,7 +12,6 @@ services:
     restart: on-failure
     volumes:
       - ./Logs:/Logs
-      - ./Keys:/Keys
     env_file:
       - Docker/common/common.env
       - Docker/common/db.env
@@ -32,7 +31,6 @@ services:
     restart: on-failure
     volumes:
       - ./Logs:/Logs
-      - ./Keys:/Keys
     env_file:
       - Docker/common/common.env
       - Docker/common/db.env
@@ -40,13 +38,23 @@ services:
     extra_hosts:
       - "db:host-gateway"
       - "localhost:host-gateway"
-  redis:
-    image: "redis:5.0"
+  worker:
+    build:
+      context: .
+      dockerfile: ./Docker/Dockerfile.worker
     ports:
-      - "6379:6379"
-    container_name: redis_instance
-    hostname: "judge-rd"
-    command: "redis-server --requirepass redisPass123"
+      - "8003:80"
+    container_name: judge_worker_instance
+    restart: on-failure
+    env_file:
+      - Docker/common/common.env
+      - Docker/applications/worker/worker.env
+    volumes:
+      - ./Logs:/Logs
+      - /tmp/ExecutionStrategies:/tmp/ExecutionStrategies
+      - /var/run/docker.sock:/var/run/docker.sock
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   mq:
     image: "rabbitmq:3.8-management"
     ports:
@@ -59,3 +67,10 @@ services:
       RABBITMQ_DEFAULT_USER: rabbitmq
       RABBITMQ_DEFAULT_PASS: rabbitmq
       RABBITMQ_DEFAULT_VHOST: /
+  redis:
+    image: "redis:5.0"
+    ports:
+      - "6379:6379"
+    container_name: redis_instance
+    hostname: "judge-rd"
+    command: "redis-server --requirepass redisPass123"

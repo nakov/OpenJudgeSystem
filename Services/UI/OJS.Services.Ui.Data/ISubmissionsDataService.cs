@@ -1,6 +1,5 @@
 namespace OJS.Services.Ui.Data;
 
-using OJS.Data.Models.Participants;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Data;
 using System;

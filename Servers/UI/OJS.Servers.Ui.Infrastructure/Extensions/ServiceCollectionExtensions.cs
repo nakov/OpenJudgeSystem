@@ -3,7 +3,6 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using OJS.Common.Enumerations;
-    using OJS.Common.Utils;
     using OJS.Data;
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Extensions;
@@ -35,6 +34,7 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
                 .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>()
                 .AddMemoryCache()
                 .AddSoftUniJudgeCommonServices()
+                .AddDistributedCaching<TProgram>()
                 .AddLogging()
                 .ConfigureSettings(configuration)
                 .AddControllersWithViews();

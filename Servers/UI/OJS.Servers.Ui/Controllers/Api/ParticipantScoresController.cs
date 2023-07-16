@@ -6,6 +6,7 @@ using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Ui.Models.Participations;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using OJS.Servers.Infrastructure.Controllers;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 public class ParticipantScoresController : BaseApiController

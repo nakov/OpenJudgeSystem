@@ -1,10 +1,7 @@
 namespace OJS.Servers.Ui
 {
     using Microsoft.AspNetCore.Builder;
-    using Microsoft.Extensions.Caching.Distributed;
-    using Microsoft.Extensions.DependencyInjection;
     using OJS.Servers.Ui.Infrastructure.Extensions;
-    using System;
 
     internal class Program
     {

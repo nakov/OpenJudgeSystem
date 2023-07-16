@@ -1,7 +1,6 @@
 namespace OJS.Services.Administration.Business.Validation.Helpers.Implementations;
 
 using OJS.Services.Administration.Data;
-using OJS.Services.Common;
 using OJS.Services.Common.Models;
 using System.Threading.Tasks;
 using AdminResource = OJS.Common.Resources.AdministrationGeneral;
@@ -9,11 +8,11 @@ using AdminResource = OJS.Common.Resources.AdministrationGeneral;
 public class ContestCategoriesValidationHelper : IContestCategoriesValidationHelper
 {
     private readonly IContestCategoriesDataService contestCategoriesData;
-    private readonly IUserProviderService userProvider;
+    private readonly Business.IUserProviderService userProvider;
 
     public ContestCategoriesValidationHelper(
         IContestCategoriesDataService contestCategoriesData,
-        IUserProviderService userProvider)
+        Business.IUserProviderService userProvider)
     {
         this.contestCategoriesData = contestCategoriesData;
         this.userProvider = userProvider;
