@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Ui.Business.Validation;
+﻿namespace OJS.Services.Ui.Business.Validations.Implementations.Submissions;
 
 using OJS.Services.Common.Models.Users;
 using OJS.Services.Common.Validation;

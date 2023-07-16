@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using OJS.Services.Ui.Business.Cache;
 using OJS.Servers.Infrastructure.Extensions;
 using static Microsoft.AspNetCore.Http.StatusCodes;
+using OJS.Servers.Infrastructure.Controllers;
 
 public class SubmissionTypesController : BaseApiController
 {

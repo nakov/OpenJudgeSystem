@@ -1,11 +1,10 @@
 namespace OJS.Services.Ui.Business.Implementations;
 
-using Common;
 using Data;
 using Infrastructure.Exceptions;
 using OJS.Services.Common.Models.Contests.Results;
-using Validation;
 using System.Threading.Tasks;
+using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 
 public class ContestResultsBusinessService : IContestResultsBusinessService
 {

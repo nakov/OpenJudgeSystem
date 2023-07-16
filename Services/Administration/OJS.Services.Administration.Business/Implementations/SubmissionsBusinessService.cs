@@ -10,7 +10,6 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Data.Models.Submissions;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models;
-    using OJS.Services.Common;
     using OJS.Services.Common.Models;
     using OJS.Services.Infrastructure;
     using SoftUni.Data.Infrastructure;
@@ -24,7 +23,7 @@ namespace OJS.Services.Administration.Business.Implementations
         private readonly IParticipantScoresDataService participantScoresData;
         private readonly ITransactionsProvider transactions;
         private readonly IParticipantScoresBusinessService participantScoresBusinessService;
-        private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
+        private readonly Business.ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
         private readonly IDatesService dates;
 
         public SubmissionsBusinessService(
@@ -33,7 +32,7 @@ namespace OJS.Services.Administration.Business.Implementations
             ITransactionsProvider transactions,
             ISubmissionsForProcessingDataService submissionsForProcessingDataService,
             IParticipantScoresBusinessService participantScoresBusinessService,
-            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication,
+            Business.ISubmissionsDistributorCommunicationService submissionsDistributorCommunication,
             IDatesService dates)
         {
             this.submissionsData = submissionsData;

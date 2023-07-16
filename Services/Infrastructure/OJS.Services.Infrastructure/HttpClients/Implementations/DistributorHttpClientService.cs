@@ -15,7 +15,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
             var distributorBaseUrl = EnvironmentUtils.GetRequiredByKey(DistributorBaseUrlKey);
             var hostOriginHeaderValue = EnvironmentUtils.GetRequiredByKey(ApplicationUrl);
 
-            client.DefaultRequestHeaders.Add(GlobalConstants.HeaderKeys.Origin, hostOriginHeaderValue);
+            client.DefaultRequestHeaders.Add(GlobalConstants.HeaderKeys.Origin, "https://a694-82-118-224-229.ngrok-free.app");
             client.BaseAddress = new Uri(distributorBaseUrl);
         }
     }
