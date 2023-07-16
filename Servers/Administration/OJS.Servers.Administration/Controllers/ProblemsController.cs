@@ -14,8 +14,6 @@ using OJS.Common.Utils;
 using OJS.Data.Models;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
-using OJS.Data.Models.Submissions;
-using OJS.Data.Models.Tests;
 using OJS.Servers.Administration.Infrastructure.Extensions;
 using OJS.Servers.Administration.Models.Problems;
 using OJS.Servers.Infrastructure.Extensions;
@@ -26,7 +24,6 @@ using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.Contests.Problems;
-using OJS.Services.Common;
 using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
@@ -456,7 +453,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             Name = AdditionalFormFields.AdditionalFiles.ToString(), Type = typeof(IFormFile),
         });
 
-        var submissionTypes = entity.SubmissionTypesInProblems.ToList();
+        var submissionTypesInProblem = entity.SubmissionTypesInProblems.ToList();
 
         formControls.Add(new FormControlViewModel
         {
@@ -464,13 +461,23 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             Options = this.submissionTypesData
                 .GetQuery()
                 .ToList()
-                .Select(st => new CheckboxFormControlViewModel
+                .Select(st => new ExpandableMultiChoiceCheckBoxFormControlViewModel
                 {
                     Name = st.Name,
                     Value = st.Id,
-                    IsChecked = submissionTypes.Any(x => x.SubmissionTypeId == st.Id),
+                    IsChecked = submissionTypesInProblem.Any(x => x.SubmissionTypeId == st.Id),
+                    Expand = new FormControlViewModel
+                    {
+                        Name = st.Name + " " + AdditionalFormFields.SolutionSkeletonRaw.ToString(),
+                        Value = submissionTypesInProblem
+                            .Where(x => x.SubmissionTypeId == st.Id)
+                            .Select(x => x.SolutionSkeleton)
+                            .FirstOrDefault()?.Decompress(),
+                        Type = typeof(string),
+                        FormControlType = FormControlType.TextArea,
+                    },
                 }),
-            FormControlType = FormControlType.MultiChoiceCheckbox,
+            FormControlType = FormControlType.ExpandableMultiChoiceCheckBox,
             Type = typeof(object),
         });
 
@@ -528,6 +535,13 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         await base.BeforeEntitySaveOnEditAsync(originalEntity, newEntity, actionContext);
     }
 
+    protected override async Task AfterEntitySaveAsync(Problem entity, AdminActionContext actionContext)
+    {
+        var contestId = GetContestId(actionContext.EntityDict, entity);
+
+        await this.problemsBusiness.ReevaluateProblemsOrder(contestId, entity);
+    }
+
     protected override async Task BeforeEntitySaveOnDeleteAsync(Problem entity, AdminActionContext actionContext)
     {
         var contest = await this.contestsActivity.GetContestActivity(entity.ProblemGroup.ContestId);
@@ -562,7 +576,11 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             .Where(x => x.IsChecked)
             .Select(x => new SubmissionTypeInProblem
             {
-                ProblemId = problem.Id, SubmissionTypeId = int.Parse(x.Value!.ToString() !),
+                ProblemId = problem.Id,
+                SubmissionTypeId = int.Parse(x.Value!.ToString() !),
+                SolutionSkeleton = x.Expand.Value != null
+                    ? x.Expand.Value!.ToString() !.Compress()
+                    : Array.Empty<byte>(),
             });
 
         problem.SubmissionTypesInProblems.Clear();

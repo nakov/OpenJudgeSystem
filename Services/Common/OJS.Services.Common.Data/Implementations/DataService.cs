@@ -43,6 +43,9 @@ namespace OJS.Services.Common.Data.Implementations
             this.Delete(entity!);
         }
 
+        public void Detach(TEntity entity)
+            => this.db.Entry(entity).State = EntityState.Detached;
+
         public async Task<int> GetCount()
             => await this.DbSet.AnyAsync()
                 ? await this.DbSet.CountAsync()

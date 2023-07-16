@@ -1,0 +1,35 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:8003",
+      "sslPort": 44333
+    }
+  },
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "LOGGER_FILES_FOLDER_PATH": "../../../../Logs",
+        "SHARED_AUTH_COOKIE_DOMAIN": "localhost"
+      }
+    },
+    "OJS.Servers.Worker": {
+      "commandName": "Project",
+      "dotnetRunMessages": "true",
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:8003",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "LOGGER_FILES_FOLDER_PATH": "../../../Logs",
+        "SHARED_AUTH_COOKIE_DOMAIN": "localhost",
+        "REDIS_CONNECTION_STRING": "localhost,password=redisPass123,ConnectTimeout=10000,abortConnect=false",
+        "RUNS_IN_DOCKER": "false",
+        "SUBMISSIONS_PROCESSOR_IDENTIFIER_NUMBER": "1"
+      }
+    }
+  }
+}

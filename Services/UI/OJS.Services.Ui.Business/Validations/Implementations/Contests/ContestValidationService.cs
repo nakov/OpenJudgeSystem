@@ -5,7 +5,6 @@ using System.Linq;
 using OJS.Data.Models.Contests;
 using OJS.Services.Common.Models;
 using Infrastructure;
-using Validation;
 
 public class ContestValidationService : IContestValidationService
 {
