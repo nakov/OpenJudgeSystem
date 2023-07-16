@@ -57,7 +57,7 @@ namespace OJS.Servers.Infrastructure.Extensions
             return app;
         }
 
-        private static WebApplication UseCustomExceptionHandling(this WebApplication app)
+        public static WebApplication UseCustomExceptionHandling(this WebApplication app)
         {
             if (app.Environment.IsDevelopment())
             {

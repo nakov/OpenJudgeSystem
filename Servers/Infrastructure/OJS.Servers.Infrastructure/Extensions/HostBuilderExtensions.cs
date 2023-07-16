@@ -13,8 +13,11 @@ public static class HostBuilderExtensions
     {
         EnvironmentUtils.ValidateEnvironmentVariableExists(new List<string> { LoggerFilesFolderPath });
 
-        return builder.UseSerilog((hostingContext, configuration)
-            => configuration
+        return builder.UseSerilog((hostingContext, configuration) =>
+        {
+            var filePath = Path.Combine(EnvironmentUtils.GetLoggerFilePath<TStartup>(), "log.txt");
+
+            configuration
                 .ReadFrom
                 .Configuration(hostingContext.Configuration)
                 .Enrich
@@ -23,9 +26,10 @@ public static class HostBuilderExtensions
                 .Console()
                 .WriteTo
                 .File(
-                    Path.Combine(EnvironmentUtils.GetLoggerFilePath<TStartup>(), "log.txt"),
+                    filePath,
                     rollingInterval: RollingInterval.Day,
                     rollOnFileSizeLimit: true,
-                    retainedFileCountLimit: null));
+                    retainedFileCountLimit: null);
+        });
     }
 }
