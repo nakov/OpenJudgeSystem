@@ -259,7 +259,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 name: registerForContestData.name,
                 isOnline: registerForContestData.isOnlineExam,
                 duration: registerForContestData.duration,
-                numberOfProblems: registerForContestData?.numberOfProblems,
+                numberOfProblems: registerForContestData.numberOfProblems,
             } as IContestType);
 
             const { participantId: registerParticipantId } = registerForContestData;

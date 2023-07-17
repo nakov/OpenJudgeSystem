@@ -23,6 +23,7 @@ const ContestModal = ({ contest, isShowing, toggle }: IContestModalProps) => {
     const { getParticipateInContestUrl } = useAppUrls();
     const navigate = useNavigate();
     const { actions: { setIsUserParticipant } } = useCurrentContest();
+    const { getHomePageUrl } = useAppUrls();
 
     const startContestAndHideModal = useCallback(
         () => {
@@ -39,13 +40,21 @@ const ContestModal = ({ contest, isShowing, toggle }: IContestModalProps) => {
         [ contest, getParticipateInContestUrl, navigate, toggle, setIsUserParticipant ],
     );
 
+    const toggleAndRedirectToHomePage = useCallback(
+        () => {
+            toggle();
+            navigate(getHomePageUrl());
+        },
+        [ toggle, navigate, getHomePageUrl ],
+    );
+
     return isShowing
         ? (
             <div>
                 <Modal
                   open={isShowing}
                   sx={{ '& .MuiBackdrop-root': { backgroundColor: 'transparent' }, backdropFilter: 'blur(5px)' }}
-                  onClose={() => toggle()}
+                  onClose={() => toggleAndRedirectToHomePage()}
                   aria-labelledby="modal-modal-title"
                   aria-describedby="modal-modal-description"
                 >
@@ -109,7 +118,13 @@ const ContestModal = ({ contest, isShowing, toggle }: IContestModalProps) => {
                               text="Compete"
                               size={ButtonSize.large}
                             />
-                            <Button onClick={() => toggle()} size={ButtonSize.large} type={ButtonType.secondary}>Cancel</Button>
+                            <Button
+                              onClick={() => toggleAndRedirectToHomePage()}
+                              size={ButtonSize.large}
+                              type={ButtonType.secondary}
+                            >
+                                Cancel
+                            </Button>
                         </span>
                     </Box>
                 </Modal>
