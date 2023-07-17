@@ -186,6 +186,7 @@ const ContestPage = () => {
             isUserParticipant,
             isPasswordValid,
             contestError,
+            isParticipationOfficial,
         ],
     );
 

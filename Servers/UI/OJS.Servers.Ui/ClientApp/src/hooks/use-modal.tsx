@@ -11,6 +11,7 @@ interface IContestModalContext {
     actions: {
         toggle: () => void;
         setModalContest: (contest: IContestModal) => void;
+        setIsShowing: (isShowing: boolean) => void;
     };
 }
 
@@ -32,7 +33,7 @@ const ContestModalProvider = ({ children }: IContestModalProviderProps) => {
     const value = useMemo(
         () => ({
             state: { isShowing, modalContest },
-            actions: { toggle, setModalContest },
+            actions: { toggle, setModalContest, setIsShowing },
         }),
         [ isShowing, toggle, modalContest ],
     );

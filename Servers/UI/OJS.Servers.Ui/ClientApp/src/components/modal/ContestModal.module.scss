@@ -27,6 +27,7 @@
 .headingText {
   @extend %font-family-lato;
 
+  align-self: center;
   color: colors.$white-color;
   display: inline-block;
   font-size: variables.$f-size-24;
@@ -42,6 +43,7 @@
 
 .modal {
   background-color: colors.$white-color;
+  border-radius: 10px;
   box-shadow: 1px 8px 8px 8px colors.$horizontal-line-gray;
   display: flex;
   flex-direction: column;
@@ -59,6 +61,7 @@
 .modalHeading {
   align-self: stretch;
   background-color: colors.$light-blue-color;
+  display: flex;
   flex-basis: 20%;
 }
 
