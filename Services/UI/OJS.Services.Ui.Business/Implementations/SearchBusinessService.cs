@@ -6,7 +6,7 @@ using Models.Search;
 using SoftUni.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using Infrastructure.Exceptions;
-using Validation;
+using OJS.Services.Ui.Business.Validations.Implementations.Search;
 
 public class SearchBusinessService : ISearchBusinessService
 {

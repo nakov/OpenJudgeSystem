@@ -8,6 +8,7 @@ using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Ui.Models.Search;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using OJS.Servers.Infrastructure.Controllers;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 public class SearchController : BaseApiController

@@ -1,0 +1,3 @@
+[submodule "Services/Worker/OJS.Workers"]
+	path = Services/Worker/OJS.Workers
+	url = https://github.com/SoftUni-Internal/judge-worker.git

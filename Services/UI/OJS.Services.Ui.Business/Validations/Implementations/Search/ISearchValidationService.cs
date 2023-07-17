@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Ui.Business.Validation;
+﻿namespace OJS.Services.Ui.Business.Validations.Implementations.Search;
 
 using OJS.Services.Common.Validation;
 
