@@ -376,7 +376,10 @@
             {
                 var contestCategoryResponse = await this.FetchContestCategory(int.Parse(id));
 
-                await this.LoadContestCategoryAndAssignCheckerAndSubmissionTypes(contestCategoryResponse.Data);
+                var checkers = this.Data.Checkers.All().ToList();
+                var submissionTypes = this.Data.SubmissionTypes.All().ToList();
+
+                await this.LoadContestCategoryAndAssignCheckerAndSubmissionTypes(contestCategoryResponse.Data, checkers, submissionTypes);
 
                 using (var scope = TransactionsHelper.CreateTransactionScope())
                 {
@@ -393,7 +396,10 @@
             }
         }
 
-        private async Task LoadContestCategoryAndAssignCheckerAndSubmissionTypes(ContestCategory contestCategory)
+        private async Task LoadContestCategoryAndAssignCheckerAndSubmissionTypes(
+            ContestCategory contestCategory,
+            IEnumerable<Checker> checkers,
+            IEnumerable<SubmissionType> submissionTypes)
         {
             if (contestCategory == null)
             {
@@ -404,7 +410,7 @@
             {
                 foreach (var problemGroup in contest.ProblemGroups)
                 {
-                    this.LoadContestCategoryAndAssignCheckerAndSubmissionTypes(problemGroup.Problems);
+                    this.AssignCheckerAndSubmissionTypes(problemGroup.Problems, checkers, submissionTypes);
                 }
             }
 
@@ -416,7 +422,7 @@
                 var contestCategoryResponse = await this.FetchContestCategory(id);
 
                 contestCategory.Children.Add(contestCategoryResponse.Data);
-                await this.LoadContestCategoryAndAssignCheckerAndSubmissionTypes(contestCategoryResponse.Data);
+                await this.LoadContestCategoryAndAssignCheckerAndSubmissionTypes(contestCategoryResponse.Data, checkers, submissionTypes);
             }
         }
 
@@ -435,11 +441,14 @@
             return contestCategoryResponse;
         }
 
-        private void LoadContestCategoryAndAssignCheckerAndSubmissionTypes(IEnumerable<Problem> problems)
+        private void AssignCheckerAndSubmissionTypes(
+            IEnumerable<Problem> problems,
+            IEnumerable<Checker> checkersFromDb,
+            IEnumerable<SubmissionType> submissionTypesFromDb)
         {
             foreach (var problem in problems)
             {
-                var checker = this.Data.Checkers.All().FirstOrDefault(x => x.Name == problem.Checker.Name);
+                var checker = checkersFromDb?.FirstOrDefault(x => x.Name == problem.Checker.Name);
 
                 problem.Checker = checker;
 
@@ -449,7 +458,7 @@
 
                     foreach (var problemSubmissionType in problem.ProblemSubmissionTypesSkeletons)
                     {
-                        var submissionType = this.Data.SubmissionTypes.All().FirstOrDefault(x => x.Name == problemSubmissionType.SubmissionType.Name);
+                        var submissionType = submissionTypesFromDb.FirstOrDefault(x => x.Name == problemSubmissionType.SubmissionType.Name);
                     
                         if (submissionType != null)
                         {
@@ -465,7 +474,7 @@
 
                     foreach (var problemSubmissionType in problem.SubmissionTypes)
                     {
-                        var submissionType = this.Data.SubmissionTypes.All().FirstOrDefault(x => x.Name == problemSubmissionType.Name);
+                        var submissionType = submissionTypesFromDb.FirstOrDefault(x => x.Name == problemSubmissionType.Name);
                         submissionTypes.Add(submissionType);
                     }
 
