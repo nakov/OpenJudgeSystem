@@ -28,6 +28,7 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
                 .ValidateLaunchSettings(RequiredConfigValues)
                 .AddIdentityDatabase<AdminDbContext, UserProfile, Role, UserInRole>(Enumerable.Empty<GlobalQueryFilterType>())
                 .AddScoped<OjsDbContext, AdminDbContext>()
+                .AddDistributedCaching<TProgram>()
                 .AddSoftUniJudgeCommonServices()
                 .UseAutoCrudAdmin()
                 .AddControllersWithViews();

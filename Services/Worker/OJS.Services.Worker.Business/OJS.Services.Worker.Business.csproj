@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\OJS.Common\OJS.Common.csproj" />
+    <ProjectReference Include="..\..\Common\OJS.Services.Common\OJS.Services.Common.csproj" />
+    <ProjectReference Include="..\OJS.Services.Worker.Models\OJS.Services.Worker.Models.csproj" />
+    <ProjectReference Include="..\OJS.Workers\OJS.Workers.Compilers\OJS.Workers.Compilers.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SoftUni.Services.Infrastructure" Version="1.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.Extensions.Options">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\6.0.13\Microsoft.Extensions.Options.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

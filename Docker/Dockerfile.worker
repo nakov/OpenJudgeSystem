@@ -1,0 +1,24 @@
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
+WORKDIR /src
+
+COPY Servers/Worker/ ./Servers/Worker/
+COPY Services/Worker ./Services/Worker
+
+COPY Directory.Build.props ./Directory.Build.props
+COPY Analyzers ./Analyzers
+COPY Common ./Common
+COPY Data/ ./Data/
+COPY Servers/Infrastructure ./Servers/Infrastructure
+COPY Services/Common ./Services/Common
+COPY Services/Infrastructure ./Services/Infrastructure
+
+WORKDIR Servers/Worker/OJS.Servers.Worker
+RUN dotnet publish OJS.Servers.Worker.csproj -c Release --verbosity q -o /app
+
+FROM ghcr.io/softuni-internal/judge_linux_v2:latest
+WORKDIR /app
+COPY --from=build-env /app .
+
+ENV IS_IN_DOCKER=TRUE
+
+CMD dotnet OJS.Servers.Worker.dll

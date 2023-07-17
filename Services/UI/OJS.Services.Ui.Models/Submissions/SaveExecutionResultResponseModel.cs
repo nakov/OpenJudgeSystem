@@ -1,4 +1,4 @@
-﻿namespace OJS.Web.Models.Submissions
+﻿namespace OJS.Services.Ui.Models.Submissions
 {
     public class SaveExecutionResultResponseModel
     {

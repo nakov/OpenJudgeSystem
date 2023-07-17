@@ -5,6 +5,7 @@ using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Common.Models.Contests.Results;
 using OJS.Services.Ui.Business.Cache;
 using System.Threading.Tasks;
+using OJS.Servers.Infrastructure.Controllers;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 public class ContestResultsController : BaseApiController

@@ -59,8 +59,8 @@ const ContestsList = ({
     );
 
     const link = useMemo(
-        () => `/contests?status=${contestStatusIndex}`,
-        [ contestStatusIndex ],
+        () => `/contests?status=${contestStatus}`,
+        [ contestStatus ],
     );
 
     return (

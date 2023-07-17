@@ -1,16 +1,14 @@
 ﻿namespace OJS.Services.Ui.Business.Implementations
 {
-    using OJS.Services.Common.Data;
-    using OJS.Services.Ui.Data;
     using System.Linq;
     using System.Threading.Tasks;
 
     public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessingBusinessService
     {
-        private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
+        private readonly Data.ISubmissionsForProcessingDataService submissionsForProcessingData;
 
         public SubmissionsForProcessingBusinessService(
-            ISubmissionsForProcessingDataService submissionsForProcessingData) =>
+            Data.ISubmissionsForProcessingDataService submissionsForProcessingData) =>
             this.submissionsForProcessingData = submissionsForProcessingData;
 
         /// <summary>

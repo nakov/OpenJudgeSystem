@@ -1,0 +1,6 @@
+java/.gradle
+java/javaLibs
+js/node_modules
+js/package-lock.json
+js-run-spa-in-docker-and-execute-mocha-tests/node_modules
+js-run-spa-in-docker-and-execute-mocha-tests/package-lock.json
