@@ -43,7 +43,7 @@ namespace OJS.Web.Areas.Api.Controllers
                         group => group.Problems.Select(problem => problem.SubmissionTypes))))
                 .Include(x => x.Contests.Select(
                     contest => contest.ProblemGroups.Select(
-                        group => group.Problems.Select(problem => problem.ProblemSubmissionTypesSkeletons))))
+                        group => group.Problems.Select(problem => problem.ProblemSubmissionTypeExecutionDetails))))
                 .Where(x => x.Id == id)
                 .Select(x => new
                     {
@@ -121,7 +121,7 @@ namespace OJS.Web.Areas.Api.Controllers
                                         submissionType.Name,
                                     }),
                                     ProblemSubmissionTypesSkeletons =
-                                        problem.ProblemSubmissionTypesSkeletons.Select(
+                                        problem.ProblemSubmissionTypeExecutionDetails.Select(
                                             skeleton => new
                                             {
                                                 skeleton.SolutionSkeleton,

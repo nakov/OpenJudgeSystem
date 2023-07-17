@@ -337,7 +337,6 @@
                 $"Updated {changedSkeletonsCount} solution skeletons. <br/>" +
                 $"Updated {changedTestsCount} test inputs.");
         }
-        }
 
         public async Task<ActionResult> MigrateContestCategoryFromRemoteJudge(string id)
         {
@@ -421,14 +420,16 @@
 
                 problem.Checker = checker;
 
-                if (problem.ProblemSubmissionTypesSkeletons.Any())
+                if (problem.ProblemSubmissionTypeExecutionDetails.Any())
                 {
                     problem.SubmissionTypes = new List<SubmissionType>();
 
-                    foreach (var problemSubmissionType in problem.ProblemSubmissionTypesSkeletons)
+                    foreach (var problemSubmissionType in problem.ProblemSubmissionTypeExecutionDetails)
                     {
-                        var submissionType = submissionTypesFromDb.FirstOrDefault(x => x.Name == problemSubmissionType.SubmissionType.Name);
-                    
+                        var submissionType =
+                            submissionTypesFromDb.FirstOrDefault(x =>
+                                x.Name == problemSubmissionType.SubmissionType.Name);
+
                         if (submissionType != null)
                         {
                             problemSubmissionType.SubmissionType = submissionType;
@@ -443,12 +444,14 @@
 
                     foreach (var problemSubmissionType in problem.SubmissionTypes)
                     {
-                        var submissionType = submissionTypesFromDb.FirstOrDefault(x => x.Name == problemSubmissionType.Name);
+                        var submissionType =
+                            submissionTypesFromDb.FirstOrDefault(x => x.Name == problemSubmissionType.Name);
                         submissionTypes.Add(submissionType);
                     }
 
                     problem.SubmissionTypes = submissionTypes;
                 }
             }
+        }
     }
 }
