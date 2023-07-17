@@ -146,23 +146,27 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
     }, []);
 
     const renderTestRunDetailsCollapsible = useCallback(() => (
-        <span className={styles.testRunDetailsCollapsible}>
-            <span className={styles.collapsibleHeader}>
-                {renderTestRunData()}
-                <div className={styles.detailsCollapsibleButton}>
-                    <ExpandButton
-                      collapsedText="Details"
-                      expandedText="Hide"
-                      expanded={isTestRunDetailCollapsed}
-                      onExpandChanged={handleTestRunDetailsToggleCollapsible}
-                      className="testRunDetailsExpandBtn"
-                    />
+        <div className={styles.zeroTestWrapper}>
+            <span className={styles.testRunDetailsCollapsible}>
+                <span className={styles.collapsibleHeader}>
+                    {renderTestRunData()}
+                    <div className={styles.detailsCollapsibleButton}>
+                        <ExpandButton
+                          collapsedText=" "
+                          expandedText=" "
+                          expanded={isTestRunDetailCollapsed}
+                          onExpandChanged={handleTestRunDetailsToggleCollapsible}
+                          className="testRunDetailsExpandBtn"
+                        />
+                    </div>
+                </span>
+                <div className={styles.collapsibleContainer}>
+                    <Collapsible collapsed={isTestRunDetailCollapsed}>
+                        <TestRunDiffView testRun={testRun} />
+                    </Collapsible>
                 </div>
             </span>
-            <Collapsible collapsed={isTestRunDetailCollapsed}>
-                <TestRunDiffView testRun={testRun} />
-            </Collapsible>
-        </span>
+        </div>
     ), [ renderTestRunData, handleTestRunDetailsToggleCollapsible, isTestRunDetailCollapsed, testRun ]);
 
     const render = useCallback(() => {

@@ -40,6 +40,7 @@ const Diff = ({ expectedStr, actualStr } : ITestsRunDiffProps) => {
           splitView
           showDiffOnly
           renderContent={highlightSyntax}
+          styles={{gutter: {minWidth: 'unset'}}}
         />
     );
 };
