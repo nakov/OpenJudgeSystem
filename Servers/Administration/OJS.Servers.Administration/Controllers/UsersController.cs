@@ -4,7 +4,6 @@ using OJS.Data.Models.Users;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using AutoCrudAdmin.ViewModels;
-using Common;
 
 public class UsersController : BaseAutoCrudAdminController<UserProfile>
 {

@@ -5,6 +5,7 @@ using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Ui.Business;
 using System.Threading.Tasks;
+using OJS.Servers.Infrastructure.Controllers;
 
 public class StatisticsPreviewController : BaseApiController
 {

@@ -1,6 +1,5 @@
 namespace OJS.Servers.Ui.Models.Search;
 
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Services.Ui.Models.Search;
 using SoftUni.AutoMapper.Infrastructure.Models;

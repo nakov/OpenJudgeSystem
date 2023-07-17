@@ -1,6 +1,5 @@
 namespace OJS.Services.Ui.Business
 {
-    using System.Collections.Generic;
     using System.Threading.Tasks;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Participants;
