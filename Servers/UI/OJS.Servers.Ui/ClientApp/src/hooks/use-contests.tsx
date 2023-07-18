@@ -162,11 +162,11 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             unsetParam(FilterType.Strategy);
             unsetParam(FilterType.Category);
 
-            const defaultFilterTypeId = possibleFilters
+            const defaultFilterTypeValue = possibleFilters
                 .filter((f) => f.type === DEFAULT_FILTER_TYPE)
-                .filter((sf) => sf.name === DEFAULT_STATUS_FILTER_TYPE)[0]?.id;
+                .filter((sf) => sf.name === DEFAULT_STATUS_FILTER_TYPE)[0]?.value;
 
-            setParam(DEFAULT_FILTER_TYPE, defaultFilterTypeId);
+            setParam(DEFAULT_FILTER_TYPE, defaultFilterTypeValue);
         },
         [ unsetParam, setParam, possibleFilters ],
     );
