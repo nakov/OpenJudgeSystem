@@ -466,31 +466,42 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                     Name = st.Name,
                     Value = st.Id,
                     IsChecked = problemSubmissionTypeExecutionDetails.Any(x => x.SubmissionTypeId == st.Id),
-                    Expand = new FormControlViewModel
+                    Expand = new List<FormControlViewModel>
                     {
-                        Name = st.Name + " " + AdditionalFormFields.SolutionSkeletonRaw.ToString(),
-                        Value = problemSubmissionTypeExecutionDetails
-                            .Where(x => x.SubmissionTypeId == st.Id)
-                            .Select(x => x.SolutionSkeleton)
-                            .FirstOrDefault()?.Decompress(),
-                        Type = typeof(string),
-                        FormControlType = FormControlType.TextArea,
+                        new()
+                        {
+                            Name = st.Name + " " + AdditionalFormFields.SolutionSkeletonRaw.ToString(),
+                            Value = problemSubmissionTypeExecutionDetails
+                                .Where(x => x.SubmissionTypeId == st.Id)
+                                .Select(x => x.SolutionSkeleton)
+                                .FirstOrDefault()?.Decompress(),
+                            Type = typeof(string),
+                            FormControlType = FormControlType.TextArea,
+                        },
+                        new()
+                        {
+                            Name = AdditionalFormFields.TimeLimit.ToString(),
+                            Value = problemSubmissionTypeExecutionDetails
+                                .Where(x => x.SubmissionTypeId == st.Id)
+                                .Select(x => x.TimeLimit)
+                                .FirstOrDefault(),
+                            Type = typeof(int),
+                            FormControlType = FormControlType.TextArea,
+                        },
+                        new()
+                        {
+                            Name = AdditionalFormFields.MemoryLimit.ToString(),
+                            Value = problemSubmissionTypeExecutionDetails
+                                .Where(x => x.SubmissionTypeId == st.Id)
+                                .Select(x => x.MemoryLimit)
+                                .FirstOrDefault(),
+                            Type = typeof(int),
+                            FormControlType = FormControlType.TextArea,
+                        },
                     },
                 }),
             FormControlType = FormControlType.ExpandableMultiChoiceCheckBox,
             Type = typeof(object),
-        });
-
-        formControls.Add(new FormControlViewModel
-        {
-            Name = AdditionalFormFields.TimeLimit.ToString(),
-            Type = typeof(int),
-        });
-
-        formControls.Add(new FormControlViewModel
-        {
-            Name = AdditionalFormFields.MemoryLimit.ToString(),
-            Type = typeof(int),
         });
 
         return formControls;
@@ -590,9 +601,11 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             {
                 ProblemId = problem.Id,
                 SubmissionTypeId = int.Parse(x.Value!.ToString() !),
-                SolutionSkeleton = x.Expand.Value != null
-                    ? x.Expand.Value!.ToString() !.Compress()
+                SolutionSkeleton = x.Expand.ToList()[0].Value != null
+                    ? x.Expand.ToList()[0].Value!.ToString() !.Compress()
                     : Array.Empty<byte>(),
+                TimeLimit = (int)x.Expand.ToList()[1].Value,
+                MemoryLimit = (int)x.Expand.ToList()[2].Value,
             });
 
         problem.ProblemSubmissionTypeExecutionDetails.Clear();
