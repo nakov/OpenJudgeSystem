@@ -72,7 +72,7 @@ namespace OJS.Data
 
         public DbSet<SubmissionType> SubmissionTypes { get; set; } = null!;
 
-        public DbSet<SubmissionTypeInProblem> SubmissionTypeProblems { get; set; } = null!;
+        public DbSet<ProblemSubmissionTypeExecutionDetails> ProblemSubmissionTypeExecutionDetails { get; set; } = null!;
 
         public DbSet<SourceCode> SourceCodes { get; set; } = null!;
 
@@ -135,7 +135,7 @@ namespace OJS.Data
             builder.Entity<ProblemForParticipant>()
                 .HasKey(x => new { x.ProblemId, x.ParticipantId });
 
-            builder.Entity<SubmissionTypeInProblem>()
+            builder.Entity<ProblemSubmissionTypeExecutionDetails>()
                 .HasKey(x => new { x.SubmissionTypeId, x.ProblemId });
 
             builder.Entity<IpInContest>()
@@ -217,7 +217,7 @@ namespace OJS.Data
             builder.Entity<Test>()
                 .HasQueryFilter(x => !x.Problem.IsDeleted);
 
-            builder.Entity<SubmissionTypeInProblem>()
+            builder.Entity<ProblemSubmissionTypeExecutionDetails>()
                 .HasQueryFilter(x => !x.Problem.IsDeleted);
 
             builder.Entity<TagInProblem>()

@@ -82,10 +82,10 @@ namespace OJS.Services.Ui.Business.Implementations
             problemGroup.ContestId = contestId;
 
             await problemGroup.Problems
-                .ForEachAsync(async p => p.SubmissionTypesInProblems = await this.submissionTypesData
+                .ForEachAsync(async p => p.ProblemSubmissionTypeExecutionDetails = await this.submissionTypesData
                     .GetAllByProblem(p.Id)
-                    .Include(x => x.SubmissionTypesInProblems)
-                    .SelectMany(x => x.SubmissionTypesInProblems)
+                    .Include(x => x.ProblemSubmissionTypeExecutionDetails)
+                    .SelectMany(x => x.ProblemSubmissionTypeExecutionDetails)
                     .ToListAsync());
 
             await this.problemGroupsData.Add(problemGroup);

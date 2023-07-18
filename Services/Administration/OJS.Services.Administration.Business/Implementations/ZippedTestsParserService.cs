@@ -96,7 +96,7 @@ public class ZippedTestsParserService : IZippedTestsParserService
     {
         try
         {
-            return problem.SubmissionTypesInProblems
+            return problem.ProblemSubmissionTypeExecutionDetails
                 .Any(
                     st => MySqlStrategiesHelper.ExecutionStrategyTypesForOptimization
                         .Any(x => x == st.SubmissionType.ExecutionStrategyType));

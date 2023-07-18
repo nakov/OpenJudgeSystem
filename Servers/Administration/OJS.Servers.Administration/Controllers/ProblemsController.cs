@@ -453,7 +453,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             Name = AdditionalFormFields.AdditionalFiles.ToString(), Type = typeof(IFormFile),
         });
 
-        var submissionTypesInProblem = entity.SubmissionTypesInProblems.ToList();
+        var problemSubmissionTypeExecutionDetails = entity.ProblemSubmissionTypeExecutionDetails.ToList();
 
         formControls.Add(new FormControlViewModel
         {
@@ -465,11 +465,11 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                 {
                     Name = st.Name,
                     Value = st.Id,
-                    IsChecked = submissionTypesInProblem.Any(x => x.SubmissionTypeId == st.Id),
+                    IsChecked = problemSubmissionTypeExecutionDetails.Any(x => x.SubmissionTypeId == st.Id),
                     Expand = new FormControlViewModel
                     {
                         Name = st.Name + " " + AdditionalFormFields.SolutionSkeletonRaw.ToString(),
-                        Value = submissionTypesInProblem
+                        Value = problemSubmissionTypeExecutionDetails
                             .Where(x => x.SubmissionTypeId == st.Id)
                             .Select(x => x.SolutionSkeleton)
                             .FirstOrDefault()?.Decompress(),
@@ -479,6 +479,18 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                 }),
             FormControlType = FormControlType.ExpandableMultiChoiceCheckBox,
             Type = typeof(object),
+        });
+
+        formControls.Add(new FormControlViewModel
+        {
+            Name = AdditionalFormFields.TimeLimit.ToString(),
+            Type = typeof(int),
+        });
+
+        formControls.Add(new FormControlViewModel
+        {
+            Name = AdditionalFormFields.MemoryLimit.ToString(),
+            Type = typeof(int),
         });
 
         return formControls;
@@ -574,7 +586,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     {
         var newSubmissionTypes = actionContext.GetSubmissionTypes()
             .Where(x => x.IsChecked)
-            .Select(x => new SubmissionTypeInProblem
+            .Select(x => new ProblemSubmissionTypeExecutionDetails
             {
                 ProblemId = problem.Id,
                 SubmissionTypeId = int.Parse(x.Value!.ToString() !),
@@ -583,8 +595,8 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                     : Array.Empty<byte>(),
             });
 
-        problem.SubmissionTypesInProblems.Clear();
-        problem.SubmissionTypesInProblems.AddRange(newSubmissionTypes);
+        problem.ProblemSubmissionTypeExecutionDetails.Clear();
+        problem.ProblemSubmissionTypeExecutionDetails.AddRange(newSubmissionTypes);
     }
 
     private static int GetContestId(Problem entity, IDictionary<string, string> entityDict)

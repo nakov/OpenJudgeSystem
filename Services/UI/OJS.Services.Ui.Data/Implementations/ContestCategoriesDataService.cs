@@ -35,7 +35,7 @@
                     .Where(pg => !pg.IsDeleted)
                 .SelectMany(p => p.Problems)
                     .Where(p => !p.IsDeleted)
-                .SelectMany(stp => stp.SubmissionTypesInProblems)
+                .SelectMany(stp => stp.ProblemSubmissionTypeExecutionDetails)
                 .Select(st => st.SubmissionType)
                 .MapCollection<T>()
                 .ToList();

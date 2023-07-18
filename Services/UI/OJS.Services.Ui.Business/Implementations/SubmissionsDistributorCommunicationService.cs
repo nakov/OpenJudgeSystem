@@ -138,10 +138,18 @@ namespace OJS.Services.Ui.Business.Implementations
                     CheckerParameter = submission.Problem.Checker?.Parameter,
                     Tests = tests,
                     TaskSkeleton = submission.Problem
-                        .SubmissionTypesInProblems
+                        .ProblemSubmissionTypeExecutionDetails
                         .Where(x => x.SubmissionTypeId == submission.SubmissionTypeId)
                         .Select(x => x.SolutionSkeleton)
                         .FirstOrDefault(),
+                    TimeLimit = submission.Problem
+                        .ProblemSubmissionTypeExecutionDetails
+                        .Where(x => x.SubmissionTypeId == submission.SubmissionTypeId)
+                        .Select(x => x.TimeLimit),
+                    MemoryLimit = submission.Problem
+                        .ProblemSubmissionTypeExecutionDetails
+                        .Where(x => x.SubmissionTypeId == submission.SubmissionTypeId)
+                        .Select(x => x.MemoryLimit),
                 },
             };
 

@@ -25,6 +25,14 @@ public static class AdminActionContextExtensions
         => actionContext.EntityDict[AdditionalFormFields.SubmissionTypes.ToString()]
             .FromJson<IEnumerable<ExpandableMultiChoiceCheckBoxFormControlViewModel>>();
 
+    public static IEnumerable<int> GetTimeLimits(this AdminActionContext actionContext)
+        => actionContext.EntityDict[AdditionalFormFields.TimeLimit.ToString()]
+            .FromJson<IEnumerable<int>>();
+
+    public static IEnumerable<int> GetMemoryLimits(this AdminActionContext actionContext)
+        => actionContext.EntityDict[AdditionalFormFields.MemoryLimit.ToString()]
+            .FromJson<IEnumerable<int>>();
+
     public static int? GetEntityIdOrDefault<TEntity>(this AdminActionContext actionContext)
         where TEntity : class
         => actionContext.EntityDict.GetEntityIdOrDefault<TEntity>();

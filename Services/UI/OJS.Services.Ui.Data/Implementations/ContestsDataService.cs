@@ -81,7 +81,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
         => this.DbSet
             .Include(c => c.ProblemGroups)
             .ThenInclude(pg => pg.Problems)
-            .ThenInclude(p => p.SubmissionTypesInProblems)
+            .ThenInclude(p => p.ProblemSubmissionTypeExecutionDetails)
             .FirstOrDefaultAsync(c => c.Id == id);
 
     public Task<Contest?> GetByIdWithParticipants(int id)
@@ -113,7 +113,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
         => this.GetAllVisibleQuery()
             .Where(c => c.ProblemGroups
                 .SelectMany(pg => pg.Problems)
-                .Any(p => p.SubmissionTypesInProblems.Any(s => s.SubmissionTypeId == submissionTypeId)));
+                .Any(p => p.ProblemSubmissionTypeExecutionDetails.Any(s => s.SubmissionTypeId == submissionTypeId)));
 
     public IQueryable<Contest> GetAllByLecturer(string lecturerId)
         => this.DbSet
@@ -233,7 +233,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
     private static Expression<Func<Contest, bool>> ContainsSubmissionTypeIds(IEnumerable<int> submissionTypeIds)
         => c => c.ProblemGroups
             .SelectMany(pg => pg.Problems)
-            .SelectMany(p => p.SubmissionTypesInProblems)
+            .SelectMany(p => p.ProblemSubmissionTypeExecutionDetails)
             .Select(x => x.SubmissionTypeId)
             .Any(x => submissionTypeIds.Contains(x)); // Does not work if converted to method group
 

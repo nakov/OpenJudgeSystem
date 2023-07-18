@@ -362,7 +362,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                                  !participant.Contest.IsDeleted &&
                                  problem.ShowResults;
 
-        var submissionType = problem.SubmissionTypesInProblems
+        var submissionType = problem.ProblemSubmissionTypeExecutionDetails
             .First(st => st.SubmissionTypeId == model.SubmissionTypeId)
             .SubmissionType;
 

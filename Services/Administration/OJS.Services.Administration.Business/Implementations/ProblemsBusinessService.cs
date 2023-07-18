@@ -236,10 +236,10 @@ namespace OJS.Services.Administration.Business.Implementations
             }
 
             problem.OrderBy = orderBy;
-            problem.SubmissionTypesInProblems = await this.submissionTypesData
+            problem.ProblemSubmissionTypeExecutionDetails = await this.submissionTypesData
                 .GetAllByProblem(problem.Id)
-                .Include(x => x.SubmissionTypesInProblems)
-                .SelectMany(x => x.SubmissionTypesInProblems)
+                .Include(x => x.ProblemSubmissionTypeExecutionDetails)
+                .SelectMany(x => x.ProblemSubmissionTypeExecutionDetails)
                 .ToListAsync();
 
             await this.problemsData.Add(problem);

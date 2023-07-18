@@ -63,7 +63,7 @@ public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
     public void ValidateSubmissionType(int submissionTypeId, Problem problem, bool shouldAllowBinaryFiles = false)
     {
         var submissionType =
-            problem.SubmissionTypesInProblems.FirstOrDefault(st => st.SubmissionTypeId == submissionTypeId);
+            problem.ProblemSubmissionTypeExecutionDetails.FirstOrDefault(st => st.SubmissionTypeId == submissionTypeId);
         if (submissionType == null)
         {
             throw new BusinessServiceException(Resources.ContestsGeneral.SubmissionTypeNotFound);
