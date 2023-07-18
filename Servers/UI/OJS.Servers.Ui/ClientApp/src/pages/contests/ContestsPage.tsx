@@ -47,7 +47,8 @@ const ContestsPage = () => {
     const { state: { categoriesFlat }, actions: { load: loadCategories } } = useContestCategories();
     const navigate = useNavigate();
     const { state: params } = useUrlParams();
-    const { state: { strategies } } = useContestStrategyFilters();
+    const { state: { strategies, isLoaded: strategiesAreLoaded } } = useContestStrategyFilters();
+    const { actions: { load: loadStrategies } } = useContestStrategyFilters();
 
     useEffect(
         () => {
@@ -58,9 +59,10 @@ const ContestsPage = () => {
 
             (async () => {
                 await loadCategories();
+                await loadStrategies();
             })();
         },
-        [ initiateGetAllContestsQuery, categoriesFlat, loadCategories ],
+        [ initiateGetAllContestsQuery, categoriesFlat, loadCategories, loadStrategies ],
     );
 
     const filtersArray = useMemo(
@@ -191,7 +193,7 @@ const ContestsPage = () => {
 
     const renderPage = useCallback(
         () => {
-            if (isNil(categoriesFlat) || isEmpty(categoriesFlat)) {
+            if (!strategiesAreLoaded) {
                 return <div>Loading data</div>;
             }
             if (!areQueryParamsValid()) {
@@ -210,7 +212,7 @@ const ContestsPage = () => {
                 </>
             );
         },
-        [ areQueryParamsValid, breadcrumbItems, handleFilterClick, renderCategoriesBreadcrumbItem, renderContests, categoriesFlat ],
+        [ areQueryParamsValid, breadcrumbItems, handleFilterClick, renderCategoriesBreadcrumbItem, renderContests, strategiesAreLoaded ],
     );
 
     return renderPage();
