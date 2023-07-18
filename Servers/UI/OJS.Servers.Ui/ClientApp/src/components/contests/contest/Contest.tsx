@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
 import { useAuth } from '../../../hooks/use-auth';
@@ -160,7 +160,7 @@ const Contest = () => {
         [ participantsStateText, participantsValue ],
     );
 
-    useEffect(
+    useLayoutEffect(
         () => {
             initiateProblems();
         },
