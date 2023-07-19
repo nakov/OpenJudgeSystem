@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import first from 'lodash/first';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../common/constants';
@@ -22,9 +23,11 @@ interface IProblemsContext {
     };
     actions: {
         downloadProblemResourceFile: (resourceId: number) => Promise<void>;
-        initiateProblems: () => void;
+        changeCurrentHash: () => void;
         selectCurrentProblem: (id: number) => void;
         initiateRedirectionToProblem: (problemId: number, contestId: number, participationType: ContestParticipationType) => void;
+        removeCurrentProblem: () => void;
+        removeCurrentProblems: () => void;
     };
 }
 
@@ -77,14 +80,9 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         parameters: { id: problemResourceIdToDownload },
     });
 
-    const normalizedProblems = useMemo(
-        () => normalizeOrderBy(problems),
-        [ problems ],
-    );
-
     const selectProblemById = useCallback(
         (problemId: number, isDefaultHashParam = false) => {
-            const newProblem = normalizedProblems.find((p) => p.id === problemId);
+            const newProblem = problems.find((p) => p.id === problemId);
 
             if (isNil(newProblem)) {
                 return;
@@ -94,15 +92,15 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
             const { orderBy } = newProblem;
             setHash(orderBy.toString(), isDefaultHashParam);
         },
-        [ setHash, normalizedProblems ],
+        [ setHash, problems ],
     );
 
     const problemFromHash = useMemo(
         () => {
             const hashIndex = Number(hashParam) - 1;
-            return normalizedProblems[hashIndex];
+            return problems[hashIndex];
         },
-        [ hashParam, normalizedProblems ],
+        [ hashParam, problems ],
     );
 
     const isLoadedFromHash = useMemo(
@@ -117,6 +115,13 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
             setInternalProblemId(null);
         },
         [ selectProblemById ],
+    );
+
+    const removeCurrentProblems = useCallback(
+        () => {
+            setProblems(defaultState.state.problems);
+        },
+        [],
     );
 
     // use it to redirect to contest from externalPage (such as SearchPage) which will search for
@@ -135,16 +140,9 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         [ getParticipateInContestUrl, navigate ],
     );
 
-    const initiateProblems = useCallback(
+    const changeCurrentHash = useCallback(
         () => {
-            const { problems: newProblems } = contest || {};
-
-            if (!newProblems) {
-                return;
-            }
-
-            setProblems(newProblems);
-            const { id } = first(normalizedProblems) || {};
+            const { id } = first(problems) || {};
 
             if (isNil(id)) {
                 return;
@@ -158,12 +156,33 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
                 selectProblemById(id, true);
             }
         },
-        [ contest, internalProblemId, isLoadedFromHash, normalizedProblems, problemFromHash, selectProblemById ],
+        [ internalProblemId, isLoadedFromHash, problems, problemFromHash, selectProblemById ],
+    );
+
+    useEffect(
+        () => {
+            const { problems: newProblems } = contest || {};
+
+            if (!newProblems || !isEmpty(problems)) {
+                return;
+            }
+
+            const normalizedProblems = normalizeOrderBy(newProblems);
+            setProblems(normalizedProblems);
+        },
+        [ contest, problems ],
     );
 
     const downloadProblemResourceFile = useCallback(async (resourceId: number) => {
         setProblemResourceIdToDownload(resourceId);
     }, []);
+
+    const removeCurrentProblem = useCallback(
+        () => {
+            setCurrentProblem(defaultState.state.currentProblem);
+        },
+        [],
+    );
 
     useEffect(() => {
         if (isNil(downloadProblemResourceResponse)) {
@@ -199,11 +218,14 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
             actions: {
                 selectCurrentProblem,
                 downloadProblemResourceFile,
-                initiateProblems,
+                changeCurrentHash,
                 initiateRedirectionToProblem,
+                removeCurrentProblem,
+                removeCurrentProblems,
             },
         }),
-        [ currentProblem, downloadProblemResourceFile, initiateRedirectionToProblem, initiateProblems, problems, selectCurrentProblem ],
+        [ currentProblem, downloadProblemResourceFile, initiateRedirectionToProblem, changeCurrentHash,
+            problems, selectCurrentProblem, removeCurrentProblem, removeCurrentProblems ],
     );
 
     return (

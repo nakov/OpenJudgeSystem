@@ -56,6 +56,7 @@ interface ICurrentContestContext {
         submitPassword: (info: ISubmitContestPasswordArgs) => void;
         loadParticipantScores: () => void;
         setIsSubmitAllowed: (isSubmitAllowed: boolean) => void;
+        removeCurrentContest: () => void;
     };
 }
 
@@ -191,6 +192,13 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
 
         setGetCurrentParticipantParticipantScoresParams({ participantId } as IGetContestParticipationScoresForParticipantUrlParams);
     }, [ participantId ]);
+
+    const removeCurrentContest = useCallback(
+        () => {
+            setContest(defaultState.state.contest);
+        },
+        [],
+    );
 
     useEffect(() => {
         if (isNil(getCurrentParticipantParticipantScoresParams)) {
@@ -392,6 +400,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 submitPassword,
                 loadParticipantScores,
                 setIsSubmitAllowed,
+                removeCurrentContest,
             },
         }),
         [
@@ -416,6 +425,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             setIsSubmitAllowed,
             contestError,
             isRegisterForContestSuccessful,
+            removeCurrentContest,
         ],
     );
 
