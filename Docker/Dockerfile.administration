@@ -13,6 +13,7 @@ COPY Common ./Common
 COPY Data ./Data
 COPY Services/Common ./Services/Common
 COPY Services/Infrastructure ./Services/Infrastructure
+COPY Services/UI ./Services/UI
 COPY Directory.Build.props ./Directory.Build.props
 
 FROM build AS publish
