@@ -218,22 +218,25 @@
                 var submission = this.submissionTypesData.GetById(s.Id.Value);
                 newProblem.SubmissionTypes.Add(submission);
 
+                if (s.SolutionSkeletonData.IsNullOrEmpty() && (s.TimeLimit is null || s.TimeLimit.Value <= 0))
+                {
+                    return;
+                }
+                var problemSubmissionExectuionDetails = new ProblemSubmissionTypeExecutionDetails()
+                {
+                    ProblemId = problem.Id,
+                    SubmissionTypeId = submission.Id,
+                    TimeLimit = s.TimeLimit,
+                    MemoryLimit = s.MemoryLimit,
+                };
+
                 if (!s.SolutionSkeletonData.IsNullOrEmpty())
                 {
-                    newProblem.ProblemSubmissionTypesSkeletons.Add(
-                        new ProblemSubmissionTypeSkeleton
-                        {
-                            ProblemId = problem.Id,
-                            SubmissionTypeId = submission.Id,
-                            SolutionSkeleton = this.GetOptimizedSolutionSkeleton(problem, s.SolutionSkeleton)?.Compress()
-                        });
+                    problemSubmissionExectuionDetails.SolutionSkeleton = this.GetOptimizedSolutionSkeleton(problem, s.SolutionSkeleton)?.Compress();
                 }
-            });
 
-            if (problem.SolutionSkeletonData != null && problem.SolutionSkeletonData.Any())
-            {
-                newProblem.SolutionSkeleton = problem.SolutionSkeletonData;
-            }
+                newProblem.ProblemSubmissionTypeExecutionDetails.Add(problemSubmissionExectuionDetails);
+            });
 
             if (problem.Resources != null && problem.Resources.Any())
             {
@@ -366,7 +369,6 @@
 
             existingProblem = problem.GetEntityModel(existingProblem);
             existingProblem.Checker = this.checkersData.GetByName(problem.Checker);
-            existingProblem.SolutionSkeleton = problem.SolutionSkeletonData;
             existingProblem.SubmissionTypes.Clear();
             existingProblem.ProblemGroup.Type = ((ProblemGroupType?)problem.ProblemGroupType).GetValidTypeOrNull();
 
@@ -396,7 +398,7 @@
                         existingProblem.SubmissionTypes.Add(submission);
                     });
 
-            this.ProcessProblemSubmissionTypesSkeletons(problem, currentSubmissionTypes, existingProblem);
+            this.ProcessProblemSubmissionTypesDetails(problem, currentSubmissionTypes, existingProblem);
 
             this.problemsData.Update(existingProblem);
 
@@ -745,21 +747,6 @@
             return this.PartialView("_ProblemResourceForm", resourceViewModel);
         }
 
-        public ActionResult FullSolutionSkeleton(int id)
-        {
-            if (!this.CheckIfUserHasProblemPermissions(id))
-            {
-                return this.Json(GeneralResource.No_privileges_message);
-            }
-
-            var solutionSkeleton = this.problemsData
-                .GetByIdQuery(id)
-                .Select(p => p.SolutionSkeleton)
-                .FirstOrDefault();
-
-            return this.Content(solutionSkeleton.Decompress());
-        }
-
         [AjaxOnly]
         public ActionResult CopyPartial(int id) =>
             this.PartialView("_CopyProblemToAnotherContest", new CopyProblemViewModel(id));
@@ -999,34 +986,39 @@
             return skeleton;
         }
 
-        private void ProcessProblemSubmissionTypesSkeletons(
+        private void ProcessProblemSubmissionTypesDetails(
             ProblemAdministrationViewModel problem,
             List<SubmissionTypeViewModel> currentSubmissionTypes,
             Problem existingProblem)
         {
             currentSubmissionTypes?
-                .Where(x => !x.SolutionSkeletonData.IsNullOrEmpty())
                 .ForEach(
                     s =>
                     {
-                        var currentPst = existingProblem
-                            .ProblemSubmissionTypesSkeletons
-                            .FirstOrDefault(pst => s.Id.HasValue && pst.SubmissionTypeId == s.Id.Value);
+                        var currentSubmissionDetails = existingProblem
+                                .ProblemSubmissionTypeExecutionDetails
+                                .FirstOrDefault(pst => s.Id.HasValue && pst.SubmissionTypeId == s.Id.Value);
 
-                        if (currentPst != null)
+                        var solutionSekeltonData = s.SolutionSkeletonData.IsNullOrEmpty()
+                                ? null
+                                : this.GetOptimizedSolutionSkeleton(problem, s.SolutionSkeleton)?.Compress();
+
+                        if (currentSubmissionDetails != null)
                         {
-                            currentPst.SolutionSkeleton =
-                                this.GetOptimizedSolutionSkeleton(problem, s.SolutionSkeleton)?.Compress();
+                            currentSubmissionDetails.TimeLimit = s.TimeLimit;
+                            currentSubmissionDetails.SolutionSkeleton = solutionSekeltonData;
+                            currentSubmissionDetails.MemoryLimit = s.MemoryLimit;
                         }
                         else
                         {
-                            existingProblem.ProblemSubmissionTypesSkeletons.Add(
-                                new ProblemSubmissionTypeSkeleton
+                            existingProblem.ProblemSubmissionTypeExecutionDetails.Add(
+                                new ProblemSubmissionTypeExecutionDetails
                                 {
                                     ProblemId = problem.Id,
                                     SubmissionTypeId = s.Id.Value,
-                                    SolutionSkeleton = this.GetOptimizedSolutionSkeleton(problem, s.SolutionSkeleton)
-                                        ?.Compress()
+                                    SolutionSkeleton = solutionSekeltonData,
+                                    TimeLimit = s.TimeLimit,
+                                    MemoryLimit = s.MemoryLimit,
                                 });
                         }
                     });
@@ -1035,14 +1027,14 @@
                 .Where(
                     st => !st.IsChecked &&
                          st.Id.HasValue &&
-                         existingProblem.ProblemSubmissionTypesSkeletons
+                         existingProblem.ProblemSubmissionTypeExecutionDetails
                              .Any(y => y.SubmissionTypeId == st.Id.Value))
                 .ForEach(
                     st =>
                     {
-                        existingProblem.ProblemSubmissionTypesSkeletons.Remove(
+                        existingProblem.ProblemSubmissionTypeExecutionDetails.Remove(
                             existingProblem
-                                .ProblemSubmissionTypesSkeletons.FirstOrDefault(y => y.SubmissionTypeId == st.Id.Value));
+                                .ProblemSubmissionTypeExecutionDetails.FirstOrDefault(y => y.SubmissionTypeId == st.Id.Value));
                     });
         }
     }

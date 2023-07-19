@@ -684,16 +684,20 @@
         {
             var submissionTypesSelectListItems =
                 this.Data.Problems.All()
-                    .Where(x => x.Id == id)
-                    .SelectMany(x => x.SubmissionTypes)
+                    .Where(p => p.Id == id)
+                    .SelectMany(st => st.SubmissionTypes)
                     .ToList()
-                    .Select(x => new
+                    .Select(st => new
                     {
-                        Text = x.Name,
-                        Value = x.Id.ToString(CultureInfo.InvariantCulture),
-                        Selected = x.IsSelectedByDefault,
-                        x.AllowBinaryFilesUpload,
-                        x.AllowedFileExtensions
+                        Text = st.Name,
+                        Value = st.Id.ToString(CultureInfo.InvariantCulture),
+                        Selected = st.IsSelectedByDefault,
+                        st.AllowBinaryFilesUpload,
+                        st.AllowedFileExtensions,
+                        st.ProblemSubmissionTypeExecutionDetails
+                            .FirstOrDefault(pstd => pstd.ProblemId == id && pstd.SubmissionTypeId == st.Id)?.TimeLimit,
+                        st.ProblemSubmissionTypeExecutionDetails
+                            .FirstOrDefault(pstd => pstd.ProblemId == id && pstd.SubmissionTypeId == st.Id)?.MemoryLimit,
                     });
 
             return this.Json(submissionTypesSelectListItems, JsonRequestBehavior.AllowGet);

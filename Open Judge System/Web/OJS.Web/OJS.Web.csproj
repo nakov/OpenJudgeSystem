@@ -1796,6 +1796,8 @@
     <Compile Include="Areas\Administration\ViewModels\ContestQuestionAnswer\ContestQuestionAnswerViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\ContestQuestion\ContestQuestionViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\Contest\ContestAdministrationViewModel.cs" />
+    <Compile Include="Areas\Administration\ViewModels\Contest\ContestLoadCalculationViewModel.cs" />
+    <Compile Include="Areas\Administration\ViewModels\Contest\PreviousContestLoadData.cs" />
     <Compile Include="Areas\Administration\ViewModels\Contest\DeleteProblemsFromContestViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\Contest\IpAdministrationViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\Contest\TransferParticipantsViewModel.cs" />
@@ -1810,7 +1812,7 @@
     <Compile Include="Areas\Administration\ViewModels\Participant\UserViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\ProblemGroup\ProblemGroupAdministrationViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\ProblemGroup\CopyAllProblemGroupsViewModel.cs" />
-    <Compile Include="Areas\Administration\ViewModels\ProblemSubmissionTypesSkeleton\ProblemSubmissionTypesSkeletonViewModel.cs" />
+    <Compile Include="Areas\Administration\ViewModels\ProblemSubmissionTypesSkeleton\ProblemSubmissionTypeExecutionDetailsViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\Problem\CopyProblemViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\Problem\DeleteProblemViewModel.cs" />
     <Compile Include="Areas\Administration\ViewModels\Problem\ProblemAdministrationViewModel.cs" />
@@ -2582,6 +2584,7 @@
     <Content Include="Areas\Administration\Views\Contests\_ChangeParticipationEndTimeByUser.cshtml" />
     <Content Include="Areas\Administration\Views\Contests\_ChangeParticipationEndTimeByTimeInterval.cshtml" />
     <Content Include="Areas\Administration\Views\Shared\_CopyAllProblemGroupsToAnotherContest.cshtml" />
+    <Content Include="Areas\Administration\Views\Contests\CalculateContestLoad.cshtml" />
     <None Include="Properties\PublishProfiles\Dev Suls Judge System.pubxml" />
     <None Include="Properties\PublishProfiles\File System.pubxml" />
     <None Include="Properties\PublishProfiles\Suls Judge System.pubxml" />
@@ -3031,6 +3034,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ProblemsPartials.bg.designer.cs</LastGenOutput>
       <CustomToolNamespace>Resources.Areas.Administration.Problems.Views.Partials</CustomToolNamespace>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="App_GlobalResources\Areas\Administration\Problems\Views\Partials\ProblemsPartials.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

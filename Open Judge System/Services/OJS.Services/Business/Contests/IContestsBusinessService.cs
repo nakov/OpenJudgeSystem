@@ -1,5 +1,7 @@
 ﻿namespace OJS.Services.Business.Contests
 {
+    using OJS.Data.Models;
+    using OJS.Services.Business.Contests.Models;
     using OJS.Services.Common;
 
     public interface IContestsBusinessService : IService
@@ -22,5 +24,18 @@
         ServiceResult TransferParticipantsToPracticeById(int contestId);
 
         void DeleteById(int id);
+
+        /// <summary>
+        /// Calculates the required workers for a given contest based on different parameters.
+        /// </summary>
+        /// <param name="model">The model received from the view, that holds all the parameters needed to calculate required workers.</param>
+        JudgeLoadResults CalculateLoadForContest(BaseContestBusinessModel model);
+
+
+        /// <summary>
+        /// Calculates the the average runtime in seconds for specific contest
+        /// </summary>
+        /// <param name="contest">The contest for which the calculation will be done.</param>
+        int GetContestSubmissionsAverageRunTimeSeconds(Contest contest);
     }
 }
