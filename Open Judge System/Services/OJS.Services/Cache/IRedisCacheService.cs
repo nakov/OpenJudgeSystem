@@ -21,5 +21,9 @@ namespace OJS.Services.Cache
         void Remove(string cacheId);
 
         Task RemoveAsync(string cacheId);
+
+        bool ContainsKey(string cacheId);
+
+        Task<bool> ContainsKeyAsync(string cacheId);
     }
 }
