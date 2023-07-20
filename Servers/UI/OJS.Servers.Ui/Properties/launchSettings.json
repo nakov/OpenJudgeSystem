@@ -42,13 +42,13 @@
         "ADMINISTRATION_URL": "http://localhost:5001",
         "UI_HOME_YOUTUBE_VIDEO_ID": "IwLET8SDBE4",
         "REDIS_CONNECTION_STRING": "localhost,password=redisPass123,ConnectTimeout=10000,abortConnect=false",
-        "EmailServiceConfig_ServerHost": "YOUR_HOST",
-        "EmailServiceConfig_ServerPort": "YOUR_PORT",
-        "EmailServiceConfig_ServerUsername": "YOUR_USERNAME",
-        "EmailServiceConfig_ServerPassword": "YOUR_PASSWORD",
-        "EmailServiceConfig_SenderEmail": "YOUR_SENDER",
-        "EmailServiceConfig_SenderDisplayValue": "TEST VALUE",
-        "EmailServiceConfig_DevEmail": "test@email.com"
+        "EmailServiceConfig_ServerHost": "email-smtp.eu-west-1.amazonaws.com",
+        "EmailServiceConfig_ServerPort": "587",
+        "EmailServiceConfig_ServerUsername": "AKIAJSQ5QLPOJC456POQ",
+        "EmailServiceConfig_ServerPassword": "BHQfVmulbHrnpabHic7ibjYIYTEz1zMzmpv6FAYBdOCq",
+        "EmailServiceConfig_SenderEmail": "no-reply@softuni.org",
+        "EmailServiceConfig_SenderDisplayValue": "Software University",
+        "EmailServiceConfig_DevEmail": "YOUR_EMAIL"
       }
     }
   }
