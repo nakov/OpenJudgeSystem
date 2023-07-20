@@ -203,15 +203,19 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         var contest = await this.contestsActivity.GetContestActivity(contestId.Value);
 
+        var validationModel = contest.Map<ContestDeleteProblemsValidationServiceModel>();
+
         this.contestDeleteProblemsValidation
-            .GetValidationResult(contest.Map<ContestDeleteProblemsValidationServiceModel>())
+            .GetValidationResult(validationModel)
             .VerifyResult();
 
         await this.contestsValidationHelper
             .ValidatePermissionsOfCurrentUser(contest.Id)
             .VerifyResult();
 
-        return this.View(contest.Map<DeleteAllProblemsInContestViewModel>());
+        var modelResult = contest.Map<DeleteAllProblemsInContestViewModel>();
+
+        return this.View(modelResult);
     }
 
     [HttpPost]
@@ -220,8 +224,10 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     {
         var contest = await this.contestsActivity.GetContestActivity(model.Id);
 
+        var validationModel = contest.Map<ContestDeleteProblemsValidationServiceModel>();
+
         this.contestDeleteProblemsValidation
-            .GetValidationResult(contest.Map<ContestDeleteProblemsValidationServiceModel>())
+            .GetValidationResult(validationModel)
             .VerifyResult();
 
         await this.contestsValidationHelper

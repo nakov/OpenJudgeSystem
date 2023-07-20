@@ -114,6 +114,11 @@ namespace OJS.Services.Administration.Business.Implementations
                        IsolationLevel.RepeatableRead,
                        TransactionScopeAsyncFlowOption.Enabled))
             {
+                if (!await this.contestsData.IsOnlineById(problem.ContestId))
+                {
+                    await this.problemGroupsBusiness.DeleteById(problem.ProblemGroupId);
+                }
+
                 await this.testRunsData.DeleteByProblem(id);
 
                 this.problemResourcesData.DeleteByProblem(id);
@@ -122,11 +127,6 @@ namespace OJS.Services.Administration.Business.Implementations
 
                 await this.problemsData.DeleteById(id);
                 await this.problemsData.SaveChanges();
-
-                if (!await this.contestsData.IsOnlineById(problem.ContestId))
-                {
-                    await this.problemGroupsBusiness.DeleteById(problem.ProblemGroupId);
-                }
 
                 scope.Complete();
             }
