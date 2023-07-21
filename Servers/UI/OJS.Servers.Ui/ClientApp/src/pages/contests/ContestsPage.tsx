@@ -47,11 +47,18 @@ const ContestsPage = () => {
     const { state: { categoriesFlat }, actions: { load: loadCategories } } = useContestCategories();
     const navigate = useNavigate();
     const { state: params } = useUrlParams();
-    const { state: { strategies } } = useContestStrategyFilters();
+    const { state: { strategies }, actions: { load } } = useContestStrategyFilters();
 
     useEffect(
         () => {
             initiateGetAllContestsQuery();
+
+            if (isEmpty(strategies)) {
+                (async () => {
+                    await load();
+                })();
+            }
+
             if (!isEmpty(categoriesFlat)) {
                 return;
             }
@@ -60,7 +67,7 @@ const ContestsPage = () => {
                 await loadCategories();
             })();
         },
-        [ initiateGetAllContestsQuery, categoriesFlat, loadCategories ],
+        [ initiateGetAllContestsQuery, categoriesFlat, loadCategories, load, strategies ],
     );
 
     const filtersArray = useMemo(
