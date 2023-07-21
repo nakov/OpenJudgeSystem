@@ -223,11 +223,6 @@ const SubmissionBox = () => {
             const { detail } = error;
 
             return (
-                // <AlertBox
-                //   message={detail}
-                //   type={AlertBoxType.error}
-                //   onClose={() => closeErrorMessage(problemId.toString())}
-                // />
                 renderAlertBox(detail, AlertBoxType.error, () => closeErrorMessage(problemId.toString()))
             );
         },
