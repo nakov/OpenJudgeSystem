@@ -13,7 +13,7 @@ interface IFileUploaderProps {
     onInvalidFileExtension: (error: string | null) => void;
 }
 
-const invalidExtentionErrorMessage = 'Invalid file extension.';
+const invalidExtensionErrorMessage = 'Invalid file extension.';
 
 const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExtension }: IFileUploaderProps) => {
     const hiddenFileInput = useRef<HTMLInputElement | null>(null);
@@ -50,7 +50,7 @@ const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExt
             const extension = uploadedFile.name.split('.').pop();
 
             if (allowedFileExtensions && !allowedFileExtensions.includes(extension) && !isNil(onInvalidFileExtension)) {
-                onInvalidFileExtension(invalidExtentionErrorMessage);
+                onInvalidFileExtension(invalidExtensionErrorMessage);
             } else {
                 onInvalidFileExtension(null);
             }
