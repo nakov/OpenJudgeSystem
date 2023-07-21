@@ -25,6 +25,10 @@ enum FileType {
     Blob = 'blob',
 }
 
+enum FileValidationError {
+    InvalidFileExtensionError = 'Invalid file extension.',
+}
+
 export {
     DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
     DEFAULT_FILTER_TYPE,
@@ -35,4 +39,5 @@ export {
     ContestParticipationType,
     ContestResultType,
     FileType,
+    FileValidationError,
 };

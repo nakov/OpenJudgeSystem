@@ -190,6 +190,17 @@ const SubmissionBox = () => {
         );
     }, [ handleOnSubmit, showSubmissionLimitTimer, isSubmitAllowed, invalidExtensionError ]);
 
+    const renderAlertBox = useCallback(
+        (messageText : string, errorType: AlertBoxType, onCloseFunc : () => void) => (
+            <AlertBox
+              message={messageText}
+              type={errorType}
+              onClose={() => onCloseFunc()}
+            />
+        ),
+        [],
+    );
+
     const renderSubmitMessage = useCallback(
         () => {
             const { id: problemId } = currentProblem || {};
@@ -199,11 +210,7 @@ const SubmissionBox = () => {
 
             if (invalidExtensionError) {
                 return (
-                    <AlertBox
-                      message={invalidExtensionError}
-                      type={AlertBoxType.error}
-                      onClose={() => closeErrorMessage(problemId.toString())}
-                    />
+                    renderAlertBox(invalidExtensionError, AlertBoxType.error, () => closeErrorMessage(problemId.toString()))
                 );
             }
 
@@ -216,14 +223,15 @@ const SubmissionBox = () => {
             const { detail } = error;
 
             return (
-                <AlertBox
-                  message={detail}
-                  type={AlertBoxType.error}
-                  onClose={() => closeErrorMessage(problemId.toString())}
-                />
+                // <AlertBox
+                //   message={detail}
+                //   type={AlertBoxType.error}
+                //   onClose={() => closeErrorMessage(problemId.toString())}
+                // />
+                renderAlertBox(detail, AlertBoxType.error, () => closeErrorMessage(problemId.toString()))
             );
         },
-        [ closeErrorMessage, currentProblem, problemSubmissionErrors, invalidExtensionError ],
+        [ closeErrorMessage, currentProblem, problemSubmissionErrors, invalidExtensionError, renderAlertBox ],
     );
 
     useEffect(

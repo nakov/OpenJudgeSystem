@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import isNil from 'lodash/isNil';
 
+import { FileValidationError } from '../../common/constants';
 import { useSubmissions } from '../../hooks/submissions/use-submissions';
 import Button, { ButtonSize, ButtonType } from '../guidelines/buttons/Button';
 
@@ -12,8 +13,6 @@ interface IFileUploaderProps {
     allowedFileExtensions: string[];
     onInvalidFileExtension: (error: string | null) => void;
 }
-
-const invalidExtensionErrorMessage = 'Invalid file extension.';
 
 const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExtension }: IFileUploaderProps) => {
     const hiddenFileInput = useRef<HTMLInputElement | null>(null);
@@ -50,7 +49,7 @@ const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExt
             const extension = uploadedFile.name.split('.').pop();
 
             if (allowedFileExtensions && !allowedFileExtensions.includes(extension) && !isNil(onInvalidFileExtension)) {
-                onInvalidFileExtension(invalidExtensionErrorMessage);
+                onInvalidFileExtension(FileValidationError.InvalidFileExtensionError);
             } else {
                 onInvalidFileExtension(null);
             }
