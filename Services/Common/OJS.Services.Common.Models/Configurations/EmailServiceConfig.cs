@@ -4,7 +4,7 @@
     {
         public string ServerHost { get; set; } = string.Empty;
 
-        public int ServerPort { get; set; } = 0;
+        public int ServerPort { get; set; }
 
         public string ServerUsername { get; set; } = string.Empty;
 

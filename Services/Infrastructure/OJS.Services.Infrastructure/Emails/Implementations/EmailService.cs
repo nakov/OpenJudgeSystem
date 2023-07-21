@@ -32,6 +32,16 @@
         public void SendEmail(
             string recipient,
             string subject,
+            string body)
+        {
+            var message = this.PrepareMessage(recipient, subject, body, null, null);
+
+            this.mailClient.Send(message);
+        }
+
+        public void SendEmail(
+            string recipient,
+            string subject,
             string body,
             IEnumerable<string>? bccRecipients = null,
             AttachmentCollection? attachments = null)
@@ -39,6 +49,15 @@
             var message = this.PrepareMessage(recipient, subject, body, bccRecipients, attachments);
 
             this.mailClient.Send(message);
+        }
+
+        public async Task SendEmailAsync(
+            string recipient,
+            string subject,
+            string body)
+        {
+            var message = this.PrepareMessage(recipient, subject, body, null, null);
+            await this.mailClient.SendMailAsync(message);
         }
 
         public async Task SendEmailAsync(
