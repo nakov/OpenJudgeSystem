@@ -364,7 +364,6 @@
                 { 21 ,"C# test runner" },
 
                 // CSharpPerformanceProjectTestsExecutionStrategy
-
                 { 33, "C# Performance Project Tests" },
 
                 // RubyExecutionStrategy
