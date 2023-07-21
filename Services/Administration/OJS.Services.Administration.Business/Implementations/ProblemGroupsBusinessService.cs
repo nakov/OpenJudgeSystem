@@ -14,20 +14,20 @@ namespace OJS.Services.Administration.Business.Implementations
     {
         private readonly IProblemGroupsDataService problemGroupsData;
         private readonly IContestsDataService contestsData;
-        private readonly ISubmissionTypesDataService submissionTypesData;
+        private readonly ISubmissionTypesInProblemsDataService submissionTypesInProblemsData;
         private readonly IOrderableService<ProblemGroup> problemGroupsOrderableService;
         private readonly IOrderableService<Problem> problemsOrderableService;
 
         public ProblemGroupsBusinessService(
             IProblemGroupsDataService problemGroupsData,
             IContestsDataService contestsData,
-            ISubmissionTypesDataService submissionTypesData,
+            ISubmissionTypesInProblemsDataService submissionTypesInProblemsData,
             IOrderableService<Problem> problemsOrderableService,
             IOrderableService<ProblemGroup> problemGroupsOrderableService)
         {
             this.problemGroupsData = problemGroupsData;
             this.contestsData = contestsData;
-            this.submissionTypesData = submissionTypesData;
+            this.submissionTypesInProblemsData = submissionTypesInProblemsData;
             this.problemsOrderableService = problemsOrderableService;
             this.problemGroupsOrderableService = problemGroupsOrderableService;
         }
@@ -72,8 +72,10 @@ namespace OJS.Services.Administration.Business.Implementations
             var sourceContestProblemGroups = await this.problemGroupsData
                 .GetAllByContest(sourceContestId)
                 .AsNoTracking()
-                .Include(pg => pg.Problems.Select(p => p.Tests))
-                .Include(pg => pg.Problems.Select(p => p.Resources))
+                .Include(pg => pg.Problems)
+                    .ThenInclude(p => p.Tests)
+                .Include(pg => pg.Problems)
+                    .ThenInclude(p => p.Resources)
                 .ToListAsync();
 
             await sourceContestProblemGroups
@@ -102,18 +104,48 @@ namespace OJS.Services.Administration.Business.Implementations
 
         private async Task CopyProblemGroupToContest(ProblemGroup problemGroup, int contestId)
         {
-            problemGroup.Contest = null!;
-            problemGroup.ContestId = contestId;
+            var currentNewProblemGroup = new ProblemGroup
+            {
+                ContestId = contestId,
+                OrderBy = problemGroup.OrderBy,
+                Type = problemGroup.Type,
+            };
 
-            await problemGroup.Problems
-                .ForEachAsync(async p => p.SubmissionTypesInProblems = await this.submissionTypesData
-                    .GetAllByProblem(p.Id)
-                    .Include(x => x.SubmissionTypesInProblems)
-                    .SelectMany(x => x.SubmissionTypesInProblems)
-                    .ToListAsync());
+            problemGroup.Problems
+                .ForEach(problem =>
+                {
+                    var submissionTypeInProblems = this.submissionTypesInProblemsData
+                        .GetAllByProblem(problem.Id)
+                        .AsNoTracking()
+                        .ToList();
 
-            await this.problemGroupsData.Add(problemGroup);
+                    var currentNewProblem = new Problem
+                    {
+                        Name = problem.Name,
+                        MaximumPoints = problem.MaximumPoints,
+                        TimeLimit = problem.TimeLimit,
+                        MemoryLimit = problem.MemoryLimit,
+                        SourceCodeSizeLimit = problem.SourceCodeSizeLimit,
+                        CheckerId = problem.CheckerId,
+                        SolutionSkeleton = problem.SolutionSkeleton,
+                        AdditionalFiles = problem.AdditionalFiles,
+                        ShowResults = problem.ShowResults,
+                        ShowDetailedFeedback = problem.ShowDetailedFeedback,
+                        Tests = problem.Tests,
+                        Resources = problem.Resources,
+                        Submissions = problem.Submissions,
+                        TagsInProblems = problem.TagsInProblems,
+                        ParticipantScores = problem.ParticipantScores,
+                    };
+
+                    currentNewProblem.SubmissionTypesInProblems.AddRange(submissionTypeInProblems);
+                    currentNewProblemGroup.Problems.Add(currentNewProblem);
+                });
+
+            await this.problemGroupsData.Add(currentNewProblemGroup);
             await this.problemGroupsData.SaveChanges();
+
+            await this.ReevaluateProblemsAndProblemGroupsOrder(contestId, currentNewProblemGroup);
         }
     }
 }
