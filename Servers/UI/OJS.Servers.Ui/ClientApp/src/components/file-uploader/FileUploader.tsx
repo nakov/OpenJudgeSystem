@@ -49,7 +49,7 @@ const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExt
             const extension = uploadedFile.name.split('.').pop();
 
             if (allowedFileExtensions && !allowedFileExtensions.includes(extension) && !isNil(onInvalidFileExtension)) {
-                onInvalidFileExtension(FileValidationError.InvalidFileExtensionError);
+                onInvalidFileExtension(FileValidationError);
             } else {
                 onInvalidFileExtension(null);
             }
