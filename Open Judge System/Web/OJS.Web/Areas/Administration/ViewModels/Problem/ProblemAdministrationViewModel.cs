@@ -50,13 +50,12 @@
                     OrderBy = problem.OrderBy,
                     ProblemGroupId = problem.ProblemGroupId,
                     ProblemGroupOrderBy = problem.ProblemGroup.OrderBy,
-                    SolutionSkeletonData = problem.SolutionSkeleton,
                     HasAdditionalFiles = problem.AdditionalFiles != null && SqlFunctions.DataLength(problem.AdditionalFiles) > 0,
                     CreatedOn = problem.CreatedOn,
                     ModifiedOn = problem.ModifiedOn,
-                    ProblemSubmissionTypesSkeletons = problem.ProblemSubmissionTypesSkeletons
+                    ProblemSubmissionTypesSkeletons = problem.ProblemSubmissionTypeExecutionDetails
                         .AsQueryable()
-                        .Select(ProblemSubmissionTypesSkeletonViewModel.ViewModel),
+                        .Select(ProblemSubmissionTypeExecutionDetailsViewModel.ViewModel),
                 };
             }
         }
@@ -172,8 +171,8 @@
         public IList<SubmissionTypeViewModel> SubmissionTypes { get; set; } = new List<SubmissionTypeViewModel>();
         
         [ExcludeFromExcel]
-        public IEnumerable<ProblemSubmissionTypesSkeletonViewModel> ProblemSubmissionTypesSkeletons { get; set; } = new 
-        List<ProblemSubmissionTypesSkeletonViewModel>();
+        public IEnumerable<ProblemSubmissionTypeExecutionDetailsViewModel> ProblemSubmissionTypesSkeletons { get; set; } = new 
+        List<ProblemSubmissionTypeExecutionDetailsViewModel>();
 
         [ExcludeFromExcel]
         public IEnumerable<SubmissionTypeViewModel> SelectedSubmissionTypes { get; set; }
@@ -181,37 +180,8 @@
         [ExcludeFromExcel]
         public IEnumerable<ProblemResourceViewModel> Resources { get; set; }
 
-        [AllowHtml]
-        [Display(Name = nameof(Resource.Solution_skeleton), ResourceType = typeof(Resource))]
-        [UIHint(MultiLineText)]
-        public string SolutionSkeleton
-        {
-            get => this.SolutionSkeletonData.Decompress();
-
-            set => this.SolutionSkeletonData = !string.IsNullOrWhiteSpace(value) ? value.Compress() : null;
-        }
-
-        [AllowHtml]
-        public string SolutionSkeletonShort
-        {
-            get
-            {
-                if (string.IsNullOrWhiteSpace(this.SolutionSkeleton))
-                {
-                    return null;
-                }
-
-                return this.SolutionSkeleton.Length > 200
-                    ? this.SolutionSkeleton.Substring(0, 200)
-                    : this.SolutionSkeleton;
-            }
-        }
-
         [ExcludeFromExcel]
         [UIHint(FileUpload)]
         public HttpPostedFileBase Tests { get; set; }
-
-        [AllowHtml]
-        internal byte[] SolutionSkeletonData { get; set; }
     }
 }
