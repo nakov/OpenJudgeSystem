@@ -20,6 +20,7 @@ import styles from './SubmissionBox.module.scss';
 
 const SubmissionBox = () => {
     const [ submitLimit, setSubmitLimit ] = useState<number>(0);
+    const [ invalidExtensionError, setInvalidExtensionError ] = useState<string | null>(null);
     const {
         state: {
             contest,
@@ -176,7 +177,7 @@ const SubmissionBox = () => {
     );
 
     const renderSubmitBtn = useCallback(() => {
-        const state = !isSubmitAllowed || showSubmissionLimitTimer
+        const state = !isSubmitAllowed || showSubmissionLimitTimer || invalidExtensionError
             ? ButtonState.disabled
             : ButtonState.enabled;
 
@@ -187,13 +188,23 @@ const SubmissionBox = () => {
               onClick={handleOnSubmit}
             />
         );
-    }, [ handleOnSubmit, showSubmissionLimitTimer, isSubmitAllowed ]);
+    }, [ handleOnSubmit, showSubmissionLimitTimer, isSubmitAllowed, invalidExtensionError ]);
 
     const renderSubmitMessage = useCallback(
         () => {
             const { id: problemId } = currentProblem || {};
             if (isNil(problemId)) {
                 return null;
+            }
+
+            if (invalidExtensionError) {
+                return (
+                    <AlertBox
+                      message={invalidExtensionError}
+                      type={AlertBoxType.error}
+                      onClose={() => closeErrorMessage(problemId.toString())}
+                    />
+                );
             }
 
             const { [problemId.toString()]: error } = problemSubmissionErrors;
@@ -212,7 +223,7 @@ const SubmissionBox = () => {
                 />
             );
         },
-        [ closeErrorMessage, currentProblem, problemSubmissionErrors ],
+        [ closeErrorMessage, currentProblem, problemSubmissionErrors, invalidExtensionError ],
     );
 
     useEffect(
@@ -260,6 +271,8 @@ const SubmissionBox = () => {
                               ? null
                               : submissionCode as File}
                           problemId={problemId}
+                          allowedFileExtensions={allowedFileExtensions}
+                          onInvalidFileExtension={setInvalidExtensionError}
                         />
                         <p className={styles.fileSubmissionDetailsParagraph}>
                             Allowed file extensions:
@@ -279,7 +292,7 @@ const SubmissionBox = () => {
                 />
             );
         },
-        [ handleCodeChanged, selectedSubmissionType, submissionCode, currentProblem ],
+        [ handleCodeChanged, selectedSubmissionType, submissionCode, currentProblem, setInvalidExtensionError ],
     );
 
     const renderSubmissionBox = useCallback(

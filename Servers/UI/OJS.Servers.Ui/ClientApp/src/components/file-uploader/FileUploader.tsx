@@ -9,9 +9,13 @@ import styles from './FileUploader.module.scss';
 interface IFileUploaderProps {
     file?: File | null;
     problemId?: number;
+    allowedFileExtensions: string[];
+    onInvalidFileExtension: (error: string | null) => void;
 }
 
-const FileUploader = ({ file, problemId }: IFileUploaderProps) => {
+const invalidExtentionErrorMessage = 'Invalid file extension.';
+
+const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExtension }: IFileUploaderProps) => {
     const hiddenFileInput = useRef<HTMLInputElement | null>(null);
     const { actions: { updateSubmissionCode } } = useSubmissions();
     const [ internalFile, setInternalFile ] = useState<File | null>(null);
@@ -42,6 +46,15 @@ const FileUploader = ({ file, problemId }: IFileUploaderProps) => {
                 return;
             }
 
+            const uploadedFile = eventTarget[0];
+            const extension = uploadedFile.name.split('.').pop();
+
+            if (allowedFileExtensions && !allowedFileExtensions.includes(extension) && !isNil(onInvalidFileExtension)) {
+                onInvalidFileExtension(invalidExtentionErrorMessage);
+            } else {
+                onInvalidFileExtension(null);
+            }
+
             updateSubmissionCode(eventTarget[0]);
             setInternalFile(eventTarget[0]);
             setInternalProblemId(problemId);
@@ -49,7 +62,7 @@ const FileUploader = ({ file, problemId }: IFileUploaderProps) => {
             // eslint-disable-next-line no-param-reassign
             event.target.value = null;
         },
-        [ updateSubmissionCode, problemId ],
+        [ updateSubmissionCode, problemId, allowedFileExtensions, onInvalidFileExtension ],
     );
 
     return (
