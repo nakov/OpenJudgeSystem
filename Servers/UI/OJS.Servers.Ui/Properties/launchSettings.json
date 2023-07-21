@@ -48,7 +48,7 @@
         "EmailServiceConfig_ServerPassword": "BHQfVmulbHrnpabHic7ibjYIYTEz1zMzmpv6FAYBdOCq",
         "EmailServiceConfig_SenderEmail": "no-reply@softuni.org",
         "EmailServiceConfig_SenderDisplayValue": "Software University",
-        "EmailServiceConfig_DevEmail": "YOUR_EMAIL"
+        "EmailServiceConfig_DevEmail": "dev@softuni.bg"
       }
     }
   }
