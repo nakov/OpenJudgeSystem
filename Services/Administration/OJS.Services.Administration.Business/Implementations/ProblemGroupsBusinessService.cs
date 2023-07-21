@@ -71,7 +71,6 @@ namespace OJS.Services.Administration.Business.Implementations
 
             var sourceContestProblemGroups = await this.problemGroupsData
                 .GetAllByContest(sourceContestId)
-                .AsNoTracking()
                 .Include(pg => pg.Problems)
                     .ThenInclude(p => p.Tests)
                 .Include(pg => pg.Problems)
