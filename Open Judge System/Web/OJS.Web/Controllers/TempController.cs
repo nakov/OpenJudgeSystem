@@ -381,8 +381,8 @@
 
         public ActionResult RemoveUnusedSubmissionTypes()
         {
-            var submissionTypesToRemove = new Dictionary<int, string>() {
-
+            var submissionTypesToRemove = new Dictionary<int, string>()
+            {
                 // PhpProjectWithDbExecutionStrategy
                 { 38, "PHP Project with DB" },
 
@@ -427,7 +427,7 @@
                                 .Any(p => p.SubmissionTypes.Count == 1
                                     && p.SubmissionTypes.Any(st => st.Id == stToRemove))))
                         .ToList();
-                   
+
                     var iteration = 0;
                     sb.AppendLine($" Deleted {submissionTypesToRemove.First(st => st.Key == stToRemove).Value}");
                     foreach (var contest in contests)
