@@ -10,6 +10,7 @@ import ContestPasswordForm from '../../components/contests/contest-password-form
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import ContestModal from '../../components/modal/ContestModal';
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
+import { useAuth } from '../../hooks/use-auth';
 import { useCurrentContest } from '../../hooks/use-current-contest';
 import { useModal } from '../../hooks/use-modal';
 import { makePrivate } from '../shared/make-private';
@@ -42,6 +43,16 @@ const ContestPage = () => {
     } = useCurrentContest();
 
     const { state: { modalContest, isShowing }, actions: { toggle, setModalContest } } = useModal();
+    const { state: { user } } = useAuth();
+
+    const isUserAdmin = useMemo(
+        () => {
+            const { permissions: { canAccessAdministration } } = user;
+
+            return canAccessAdministration;
+        },
+        [ user ],
+    );
 
     const contestIdToNumber = useMemo(
         () => Number(contestId),
@@ -101,7 +112,7 @@ const ContestPage = () => {
         () => isNil(contestError)
             ? isNil(contest)
                 ? <div>Loading data</div>
-                : isParticipationOfficial && contest?.isOnline
+                : isParticipationOfficial && contest?.isOnline && !isUserAdmin
                     ? isUserParticipant
                         ? <Contest />
                         : <ContestModal contest={modalContest} isShowing={isShowing} toggle={toggle} />
@@ -116,6 +127,7 @@ const ContestPage = () => {
             modalContest,
             toggle,
             isShowing,
+            isUserAdmin,
         ],
     );
 
