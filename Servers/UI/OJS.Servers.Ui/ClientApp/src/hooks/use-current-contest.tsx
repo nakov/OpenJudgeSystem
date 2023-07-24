@@ -15,6 +15,7 @@ import {
 } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
+import { useAuth } from './use-auth';
 import { IErrorDataType, useHttp } from './use-http';
 import { useLoading } from './use-loading';
 import { useUrls } from './use-urls';
@@ -121,6 +122,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ isSubmitAllowed, setIsSubmitAllowed ] = useState<boolean>(true);
     const [ contestError, setContestError ] = useState<IErrorDataType | null>(null);
     const [ isUserParticipant, setIsUserParticipant ] = useState<boolean>(defaultState.state.isUserParticipant);
+    const { state: { user } } = useAuth();
 
     const {
         startLoading,
@@ -169,6 +171,15 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         url: getContestParticipantScoresForParticipantUrl,
         parameters: getCurrentParticipantParticipantScoresParams,
     });
+
+    const isUserAdmin = useMemo(
+        () => {
+            const { permissions: { canAccessAdministration } } = user;
+
+            return canAccessAdministration;
+        },
+        [ user ],
+    );
 
     const start = useCallback((obj: IContestToStartType) => {
         setContestToStart(obj);
@@ -263,14 +274,14 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             } as IContestType);
 
             const { participantId: registerParticipantId } = registerForContestData;
-            if (!isNil(registerParticipantId)) {
+            if (!isNil(registerParticipantId) || isUserAdmin) {
                 setIsUserParticipant(true);
             }
 
             setRequirePassword(responseRequirePassword);
             setContestError(null);
         },
-        [ registerForContestData, registerContestError ],
+        [ registerForContestData, registerContestError, isUserAdmin ],
     );
 
     useEffect(() => {
