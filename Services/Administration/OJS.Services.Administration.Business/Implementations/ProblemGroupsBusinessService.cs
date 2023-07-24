@@ -4,6 +4,7 @@ namespace OJS.Services.Administration.Business.Implementations
     using Microsoft.EntityFrameworkCore;
     using OJS.Data.Models.Problems;
     using OJS.Services.Administration.Data;
+    using System.Collections.Generic;
     using OJS.Services.Common.Models;
     using System.Linq;
     using System.Threading.Tasks;
@@ -14,6 +15,7 @@ namespace OJS.Services.Administration.Business.Implementations
     {
         private readonly IProblemGroupsDataService problemGroupsData;
         private readonly IContestsDataService contestsData;
+        private readonly IProblemsDataService problemsData;
         private readonly ISubmissionTypesInProblemsDataService submissionTypesInProblemsData;
         private readonly IOrderableService<ProblemGroup> problemGroupsOrderableService;
         private readonly IOrderableService<Problem> problemsOrderableService;
@@ -21,6 +23,7 @@ namespace OJS.Services.Administration.Business.Implementations
         public ProblemGroupsBusinessService(
             IProblemGroupsDataService problemGroupsData,
             IContestsDataService contestsData,
+            IProblemsDataService problemsData,
             ISubmissionTypesInProblemsDataService submissionTypesInProblemsData,
             IOrderableService<Problem> problemsOrderableService,
             IOrderableService<ProblemGroup> problemGroupsOrderableService)
@@ -28,6 +31,7 @@ namespace OJS.Services.Administration.Business.Implementations
             this.problemGroupsData = problemGroupsData;
             this.contestsData = contestsData;
             this.submissionTypesInProblemsData = submissionTypesInProblemsData;
+            this.problemsData = problemsData;
             this.problemsOrderableService = problemsOrderableService;
             this.problemGroupsOrderableService = problemGroupsOrderableService;
         }
@@ -72,9 +76,9 @@ namespace OJS.Services.Administration.Business.Implementations
             var sourceContestProblemGroups = await this.problemGroupsData
                 .GetAllByContest(sourceContestId)
                 .Include(pg => pg.Problems)
-                    .ThenInclude(p => p.Tests)
+                .ThenInclude(p => p.Tests)
                 .Include(pg => pg.Problems)
-                    .ThenInclude(p => p.Resources)
+                .ThenInclude(p => p.Resources)
                 .ToListAsync();
 
             await sourceContestProblemGroups
@@ -103,48 +107,61 @@ namespace OJS.Services.Administration.Business.Implementations
 
         private async Task CopyProblemGroupToContest(ProblemGroup problemGroup, int contestId)
         {
+            var newProblemsToAdd = new List<Problem>();
             var currentNewProblemGroup = new ProblemGroup
             {
-                ContestId = contestId,
-                OrderBy = problemGroup.OrderBy,
-                Type = problemGroup.Type,
+                ContestId = contestId, OrderBy = problemGroup.OrderBy, Type = problemGroup.Type,
             };
 
-            problemGroup.Problems
-                .ForEach(problem =>
-                {
-                    var submissionTypeInProblems = this.submissionTypesInProblemsData
-                        .GetAllByProblem(problem.Id)
-                        .AsNoTracking()
-                        .ToList();
-
-                    var currentNewProblem = new Problem
+            if (problemGroup.Problems.Count > 0)
+            {
+                problemGroup.Problems
+                    .ForEach(problem =>
                     {
-                        Name = problem.Name,
-                        MaximumPoints = problem.MaximumPoints,
-                        TimeLimit = problem.TimeLimit,
-                        MemoryLimit = problem.MemoryLimit,
-                        SourceCodeSizeLimit = problem.SourceCodeSizeLimit,
-                        CheckerId = problem.CheckerId,
-                        SolutionSkeleton = problem.SolutionSkeleton,
-                        AdditionalFiles = problem.AdditionalFiles,
-                        ShowResults = problem.ShowResults,
-                        ShowDetailedFeedback = problem.ShowDetailedFeedback,
-                        Tests = problem.Tests,
-                        Resources = problem.Resources,
-                        Submissions = problem.Submissions,
-                        TagsInProblems = problem.TagsInProblems,
-                        ParticipantScores = problem.ParticipantScores,
-                    };
+                        var submissionTypeInProblems = this.submissionTypesInProblemsData
+                            .GetAllByProblem(problem.Id)
+                            .AsNoTracking()
+                            .ToList();
 
-                    currentNewProblem.SubmissionTypesInProblems.AddRange(submissionTypeInProblems);
-                    currentNewProblemGroup.Problems.Add(currentNewProblem);
-                });
+                        var currentNewProblem = new Problem
+                        {
+                            Name = problem.Name,
+                            ProblemGroupId = currentNewProblemGroup.Id,
+                            ProblemGroup = problemGroup,
+                            MaximumPoints = problem.MaximumPoints,
+                            TimeLimit = problem.TimeLimit,
+                            MemoryLimit = problem.MemoryLimit,
+                            SourceCodeSizeLimit = problem.SourceCodeSizeLimit,
+                            CheckerId = problem.CheckerId,
+                            Checker = problem.Checker,
+                            OrderBy = problem.OrderBy,
+                            SolutionSkeleton = problem.SolutionSkeleton,
+                            AdditionalFiles = problem.AdditionalFiles,
+                            ShowResults = problem.ShowResults,
+                            ShowDetailedFeedback = problem.ShowDetailedFeedback,
+                            Tests = problem.Tests,
+                            Resources = problem.Resources,
+                            Submissions = problem.Submissions,
+                            TagsInProblems = problem.TagsInProblems,
+                            ParticipantScores = problem.ParticipantScores,
+                            SubmissionTypesInProblems = submissionTypeInProblems,
+                        };
 
-            await this.problemGroupsData.Add(currentNewProblemGroup);
-            await this.problemGroupsData.SaveChanges();
+                        currentNewProblemGroup.Problems.Add(currentNewProblem);
+                        newProblemsToAdd.Add(problem);
+                    });
 
-            await this.ReevaluateProblemsAndProblemGroupsOrder(contestId, currentNewProblemGroup);
+                await this.problemGroupsData.Add(currentNewProblemGroup);
+                await this.problemGroupsData.SaveChanges();
+
+                // Set the ID to 0 to treat it as a new entity
+                newProblemsToAdd.ForEach(p => p.Id = 0);
+
+                await this.problemsData.AddMany(newProblemsToAdd);
+                await this.problemsData.SaveChanges();
+
+                await this.ReevaluateProblemsAndProblemGroupsOrder(contestId, currentNewProblemGroup);
+            }
         }
     }
 }
