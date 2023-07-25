@@ -1,0 +1,74 @@
+﻿namespace OJS.Services.Worker.Business.ExecutionContext.Implementations;
+
+using OJS.Services.Common;
+using OJS.Workers.SubmissionProcessors.Models;
+using OJS.Services.Worker.Models.ExecutionContext;
+using OJS.Services.Infrastructure.Extensions;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
+using static OJS.Services.Worker.Business.ExecutionContext.ExecutionContextConstants;
+using static OJS.Services.Worker.Business.Validation.ValidationConstants;
+
+public class ExecutionContextBuilderService : IExecutionContextBuilderService
+{
+    private readonly IExecutionContextValuesProviderService executionContextValuesProvider;
+    private readonly ICodeTemplatesProviderService codeTemplatesProvider;
+    private readonly INotDefaultValueValidationService notDefaultValueValidationService;
+
+    public ExecutionContextBuilderService(
+        IExecutionContextValuesProviderService executionContextValuesProvider,
+        ICodeTemplatesProviderService codeTemplatesProvider,
+        INotDefaultValueValidationService notDefaultValueValidationService)
+    {
+        this.executionContextValuesProvider = executionContextValuesProvider;
+        this.codeTemplatesProvider = codeTemplatesProvider;
+        this.notDefaultValueValidationService = notDefaultValueValidationService;
+    }
+
+    public string BuildCodeFromTemplate(SubmissionServiceModel submission)
+    {
+        var template = this.codeTemplatesProvider.GetDefaultCodeTemplate(submission.ExecutionStrategyType);
+
+        this.notDefaultValueValidationService
+            .GetValidationResult(
+                template,
+                null!,
+                string.Format(CodeTemplateNotFoundTemplate, submission.ExecutionStrategyType))
+            .VerifyResult();
+
+        return template.Replace(TemplatePlaceholders.CodePlaceholder, submission.Code);
+    }
+
+    public OjsSubmission<TInput> BuildOjsSubmission<TInput>(SubmissionServiceModel submissionServiceModel)
+    {
+        var submission = submissionServiceModel.Map<OjsSubmission<TInput>>();
+
+        this.notDefaultValueValidationService
+            .GetValidationResult(
+                submission.Input,
+                nameof(submission.Input),
+                string.Format(CannotCreateInputTemplate, submissionServiceModel.ExecutionType))
+            .VerifyResult();
+
+        submission.CompilerType = this.executionContextValuesProvider
+            .GetDefaultCompilerTypeByExecutionStrategyType(submission.ExecutionStrategyType);
+
+        submission.AdditionalCompilerArguments = this.executionContextValuesProvider
+            .GetDefaultAdditionalCompilerArgumentsByCompilerType(submission.CompilerType);
+
+        submission.TimeLimit = submission.TimeLimit == default
+            ? this.executionContextValuesProvider
+                .GetDefaultTimeLimitByExecutionStrategyType(submission.ExecutionStrategyType)
+            : submission.TimeLimit;
+
+        submission.MemoryLimit = submission.MemoryLimit == default
+            ? this.executionContextValuesProvider
+                .GetDefaultMemoryLimitByExecutionStrategyType(submission.ExecutionStrategyType)
+            : submission.MemoryLimit;
+
+        submission.AllowedFileExtensions = submissionServiceModel.FileContent?.Length > 0
+            ? DefaultAllowedFileExtension
+            : default!;
+
+        return submission;
+    }
+}

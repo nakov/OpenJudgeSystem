@@ -1,6 +1,5 @@
 namespace OJS.Services.Administration.Business.Validation.Helpers.Implementations;
 
-using OJS.Services.Common;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Validation.Helpers;
 using OJS.Services.Infrastructure.Extensions;
@@ -10,12 +9,12 @@ public class ContestsValidationHelper : IContestsValidationHelper
 {
     private readonly IContestsBusinessService contestsBusiness;
     private readonly INotDefaultValueValidationHelper notDefaultValueValidationHelper;
-    private readonly IUserProviderService userProvider;
+    private readonly Business.IUserProviderService userProvider;
 
     public ContestsValidationHelper(
         IContestsBusinessService contestsBusiness,
         INotDefaultValueValidationHelper notDefaultValueValidationHelper,
-        IUserProviderService userProvider)
+        Business.IUserProviderService userProvider)
     {
         this.contestsBusiness = contestsBusiness;
         this.notDefaultValueValidationHelper = notDefaultValueValidationHelper;

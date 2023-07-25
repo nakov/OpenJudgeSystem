@@ -3,16 +3,13 @@ namespace OJS.Services.Ui.Business.Implementations;
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Common;
 using OJS.Common;
 using OJS.Common.Helpers;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
 using OJS.Services.Common.Models.Users;
 using OJS.Services.Ui.Business.Validations.Implementations.Submissions;
-using Infrastructure;
 using Infrastructure.Exceptions;
-using Validation;
 using Data;
 using Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
@@ -388,6 +385,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             await this.submissionsData.Add(newSubmission);
             await this.submissionsData.SaveChanges();
 
+            newSubmission.Problem = problem;
             newSubmission.Problem = problem;
 
             await this.participantScoresBusinessService.SaveForSubmission(newSubmission);

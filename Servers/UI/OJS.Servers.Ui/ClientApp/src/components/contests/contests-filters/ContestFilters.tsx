@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { FilterType, IFilter, ISort } from '../../../common/contest-types';
+import { FilterType, IFilter /* ISort */ } from '../../../common/contest-types';
 import { groupByType } from '../../../common/filter-utils';
 import { useContestCategories } from '../../../hooks/use-contest-categories';
 import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
@@ -13,7 +13,6 @@ import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button'
 import List from '../../guidelines/lists/List';
 import ContestCategories from '../contest-categories/ContestCategories';
 import ContestFilter from '../contest-filter/ContestFilter';
-import ContestSorting from '../contest-sorting/ContestSorting';
 
 import styles from './ContestFilters.module.scss';
 
@@ -45,7 +44,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const {
         state: { possibleFilters },
         actions: {
-            toggleParam,
+            // toggleParam,
             clearFilters,
             clearSorts,
         },
@@ -53,10 +52,10 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
 
     const { actions: { clearBreadcrumb } } = useCategoriesBreadcrumbs();
 
-    const handleSortClick = useCallback(
-        (sorting: ISort) => toggleParam(sorting),
-        [ toggleParam ],
-    );
+    // const handleSortClick = useCallback(
+    //     (sorting: ISort) => toggleParam(sorting),
+    //     [ toggleParam ],
+    // );
 
     const handleFilterClick = useCallback(
         (filterId: number) => {
@@ -177,7 +176,9 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
               defaultSelected={defaultSelected}
               setStrategyFilters={setFilteredStrategyFilters}
             />
-            <ContestSorting onSortClick={handleSortClick} />
+            {/* Commented out because displaying sorting menu to
+            the user is no longer a wanted feature
+            <ContestSorting onSortClick={handleSortClick} /> */}
             <List
               values={filtersGroups}
               itemFunc={renderFilter}

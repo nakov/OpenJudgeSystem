@@ -2,7 +2,6 @@
 
 using AutoMapper;
 using OJS.Data.Models.Submissions;
-using OJS.Services.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System;
 using System.Collections.Generic;
