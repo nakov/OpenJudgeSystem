@@ -2,6 +2,7 @@ namespace OJS.Servers.Administration.Controllers;
 
 using AutoCrudAdmin;
 using AutoCrudAdmin.Controllers;
+using AutoCrudAdmin.ViewModels;
 using AutoCrudAdmin.Models;
 using OJS.Services.Infrastructure.Exceptions;
 using SoftUni.Data.Infrastructure.Models;
@@ -50,6 +51,13 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
 
         return (TEntityId)Convert.ChangeType(id, typeof(TEntityId));
     }
+
+    protected virtual Task ModifyFormControls(
+        ICollection<FormControlViewModel> formControls,
+        TEntity entity,
+        EntityAction action,
+        IDictionary<string, string> entityDict)
+        => Task.CompletedTask;
 
     protected override async Task DeleteEntityAndSaveAsync(TEntity entity, AdminActionContext actionContext)
     {
