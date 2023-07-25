@@ -37,6 +37,7 @@ const ContestPage = () => {
             isRegisterForContestSuccessful,
             contestIsLoading,
             isUserParticipant,
+            contest
         },
         actions: {
             registerParticipant,
