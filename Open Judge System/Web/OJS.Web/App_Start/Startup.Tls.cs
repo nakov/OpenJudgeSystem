@@ -2,7 +2,7 @@
 {
     using System.Net;
 
-    public partial class Startup
+    public sealed partial class Startup
     {
         public void ConfigureTls()
         {
