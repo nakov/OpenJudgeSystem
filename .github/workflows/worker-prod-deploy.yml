@@ -1,0 +1,44 @@
+name: Deploy PROD Worker
+
+on:
+  workflow_dispatch:
+    inputs:
+      docker_image_tag:
+        description: 'The docker tag that will be pushed when the selected Branch is build'
+        required: true
+        default: "latest"
+        type: string
+  workflow_call:
+    inputs:
+      docker_image_tag:
+        required: true
+        default: "latest"
+        type: string
+jobs:
+  check-user-access:
+    runs-on: ubuntu-latest
+    outputs:
+      isTeamMember: ${{ steps.checkUserMember.outputs.isTeamMember }}
+    steps:
+    - name: Check if user is in team 'Alpha Judge Prod deploy'
+      id: checkUserMember
+      uses: tspascoal/get-user-teams-membership@v2
+      with:
+        username: ${{ github.triggering_actor }}
+        team: 'Alpha Judge Prod deploy'
+        GITHUB_TOKEN: ${{ secrets.SOFTUNIBUILD_PAT }}
+  build-and-push:
+    needs: [check-user-access]
+    if: ${{ needs.check-user-access.outputs.isTeamMember == 'true' }}
+    uses: ./.github/workflows/build-and-push.yml
+    with:
+      docker_image_name: judge_worker_v2
+      dockerfile_name: Dockerfile.worker
+      docker_tag: ${{ inputs.docker_image_tag }}
+    secrets: inherit
+  deploy:
+    needs: [build-and-push]
+    uses: ./.github/workflows/deploy.yml
+    secrets:
+      webhook_url: ${{ secrets.WORKER_PROD_WEBHOOK_URL }}
+      webhook_secret: ${{ secrets.WEBHOOK_PROD_SECRET }}
