@@ -7,13 +7,13 @@ import { ContestParticipationType } from '../common/constants';
 import { IProblemType } from '../common/types';
 import { IDownloadProblemResourceUrlParams } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
+import { getDownloadProblemResourceUrl } from '../utils/urls';
 
 import { useHashUrlParams } from './common/use-hash-url-params';
 import { useAppUrls } from './use-app-urls';
 import { useCurrentContest } from './use-current-contest';
 import { useHttp } from './use-http';
 import { useLoading } from './use-loading';
-import { useUrls } from './use-urls';
 
 interface IProblemsContext {
     state: {
@@ -58,7 +58,6 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     const [ currentProblem, setCurrentProblem ] = useState<IProblemType | null>(defaultState.state.currentProblem);
     const [ internalProblemId, setInternalProblemId ] = useState<number | null>();
     const [ problemResourceIdToDownload, setProblemResourceIdToDownload ] = useState<number | null>(null);
-    const { getDownloadProblemResourceUrl } = useUrls();
 
     const {
         startLoading,

@@ -1,10 +1,10 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { IHaveChildrenProps } from '../components/common/Props';
+import { getHomeStatisticsUrl } from '../utils/urls';
 
 import { useHttp } from './use-http';
 import { useLoading } from './use-loading';
-import { useUrls } from './use-urls';
 
 interface IHomeStatisticsContext {
     state: {
@@ -31,7 +31,6 @@ type IHomeStatisticsProviderProps = IHaveChildrenProps
 const HomeStatisticsProvider = ({ children }: IHomeStatisticsProviderProps) => {
     const [ statistics, setStatistics ] = useState <IHomeStatistics | null>(null);
     const { startLoading, stopLoading } = useLoading();
-    const { getHomeStatisticsUrl } = useUrls();
 
     const {
         get,
