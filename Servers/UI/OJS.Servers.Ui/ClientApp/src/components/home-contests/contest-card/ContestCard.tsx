@@ -1,12 +1,14 @@
 import React, { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IIndexContestsType } from '../../../common/types';
 import { useAppUrls } from '../../../hooks/use-app-urls';
+import { useModal } from '../../../hooks/use-modal';
 import concatClassNames from '../../../utils/class-names';
 import { convertToSecondsRemaining } from '../../../utils/dates';
-import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import { Button, ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
 import LockIcon from '../../guidelines/icons/LockIcon';
 
@@ -26,6 +28,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
         canBeCompeted,
         endTime,
     } = contest;
+
     const contestCard = 'card-contests';
     const contestCardClassName = concatClassNames(styles.contestCard, contestCard);
     const contestCardHeader = 'card-header';
@@ -38,6 +41,8 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const contestCardControlBtnsClassName = concatClassNames(styles.contestCardControls, contestCardControlBtns);
 
     const { getParticipateInContestUrl } = useAppUrls();
+    const { actions: { setIsShowing } } = useModal();
+    const navigate = useNavigate();
 
     const renderCountdown = useCallback(
         () => {
@@ -75,6 +80,22 @@ const ContestCard = ({ contest }: IContestCardProps) => {
         [ canBeCompeted, canBePracticed, contest ],
     );
 
+    const setIsShowingAndNavigateToContest = useCallback(
+        () => {
+            setIsShowing(true);
+            navigate(getParticipateInContestUrl({
+                id,
+                participationType: ContestParticipationType.Compete,
+            }));
+        },
+        [
+            setIsShowing,
+            navigate,
+            getParticipateInContestUrl,
+            id,
+        ],
+    );
+
     return (
         <div className={contestCardClassName}>
             <div className={contestCardHeaderClassName}>
@@ -89,12 +110,9 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                 {renderCountdown()}
             </div>
             <div className={contestCardControlBtnsClassName}>
-                <LinkButton
+                <Button
                   id="button-card-compete"
-                  to={getParticipateInContestUrl({
-                      id,
-                      participationType: ContestParticipationType.Compete,
-                  })}
+                  onClick={() => setIsShowingAndNavigateToContest()}
                   text="Compete"
                   state={
                         canBeCompeted
