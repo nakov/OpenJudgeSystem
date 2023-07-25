@@ -1,4 +1,4 @@
-name: 03. Deploy Worker (Development)
+name: 04. Deploy Worker (Development)
 
 on:
   workflow_dispatch:
