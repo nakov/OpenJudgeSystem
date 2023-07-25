@@ -137,7 +137,9 @@ namespace OJS.Services.Administration.Business.Implementations
                     CheckerType = checkerType,
                     CheckerParameter = submission.Problem.Checker?.Parameter,
                     Tests = tests,
-                    TaskSkeleton = submission.Problem.SolutionSkeleton,
+                    TaskSkeleton = submission.SubmissionType?.SubmissionTypesInProblems
+                        .Where(x => x.SubmissionTypeId == submission.SubmissionTypeId)
+                        .Select(x => x.SolutionSkeleton),
                 },
             };
 
