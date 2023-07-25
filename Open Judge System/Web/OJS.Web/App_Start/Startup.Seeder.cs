@@ -3,7 +3,8 @@ namespace OJS.Web
     using OJS.Web.Infrastructure.Seeders;
     using Owin;
 
-    public sealed partial class Startup
+    // NOSONAR
+    public partial class Startup
     {
         public void RunSeeders(IAppBuilder app)
         {

@@ -2,7 +2,8 @@
 {
     using System.Net;
 
-    public sealed partial class Startup
+    // NOSONAR
+    public partial class Startup
     {
         public void ConfigureTls()
         {
