@@ -163,6 +163,27 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         }
     }
 
+    protected override async Task ModifyFormControls(
+        ICollection<FormControlViewModel> formControls,
+        ProblemResource entity,
+        EntityAction action,
+        IDictionary<string, string> entityDict)
+    {
+        var problemId = entityDict.GetEntityIdOrDefault<Problem>() ?? entity.ProblemId;
+
+        if (problemId == default)
+        {
+            throw new Exception($"A valid ProblemId must be provided to be able to {action} a Problem Resource.");
+        }
+
+        var problemInput = formControls.First(fc => fc.Name == nameof(ProblemResource.Problem));
+        problemInput.Value = problemId;
+        problemInput.IsReadOnly = true;
+
+        var orderByInput = formControls.First(fc => fc.Name == nameof(ProblemResource.OrderBy));
+        orderByInput.Value = await this.GetNewOrderBy(problemId);
+    }
+
     private static IEnumerable<FormControlViewModel> GetAdditionalFormControls()
         => new List<FormControlViewModel>
         {
@@ -188,27 +209,6 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         }
 
         return (int)Math.Ceiling(resourcesForProblem.Max()) + 1;
-    }
-
-    private async Task ModifyFormControls(
-        ICollection<FormControlViewModel> formControls,
-        ProblemResource entity,
-        EntityAction action,
-        IDictionary<string, string> entityDict)
-    {
-        var problemId = entityDict.GetEntityIdOrDefault<Problem>() ?? entity.ProblemId;
-
-        if (problemId == default)
-        {
-            throw new Exception($"A valid ProblemId must be provided to be able to {action} a Problem Resource.");
-        }
-
-        var problemInput = formControls.First(fc => fc.Name == nameof(ProblemResource.Problem));
-        problemInput.Value = problemId;
-        problemInput.IsReadOnly = true;
-
-        var orderByInput = formControls.First(fc => fc.Name == nameof(ProblemResource.OrderBy));
-        orderByInput.Value = await this.GetNewOrderBy(problemId);
     }
 
     private IEnumerable<AutoCrudAdminGridToolbarActionViewModel> GetCustomToolbarActions(int problemId)
