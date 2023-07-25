@@ -50,25 +50,30 @@ public class SubmissionsForProcessingDataService : DataService<SubmissionForProc
         scope.Complete();
     }
 
-    public async Task AddOrUpdateBySubmission(int submissionId)
+    public async Task AddOrUpdateReprocessingBySubmission(int submissionId)
     {
         var submissionForProcessing = await this.GetBySubmission(submissionId);
 
         if (submissionForProcessing != null)
         {
-            submissionForProcessing.Processing = false;
+            submissionForProcessing.Processing = true;
             submissionForProcessing.Processed = false;
+
+            await this.Update(submissionForProcessing);
         }
         else
         {
             submissionForProcessing = new SubmissionForProcessing
             {
                 SubmissionId = submissionId,
+                Processed = false,
+                Processing = true,
             };
 
             await this.Add(submissionForProcessing);
-            await this.SaveChanges();
         }
+
+        await this.SaveChanges();
     }
 
     public async Task RemoveBySubmission(int submissionId)

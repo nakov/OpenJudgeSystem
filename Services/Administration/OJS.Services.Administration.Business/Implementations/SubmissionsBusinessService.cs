@@ -157,7 +157,7 @@ namespace OJS.Services.Administration.Business.Implementations
                 submission.Processed = false;
                 submission.ModifiedOn = this.dates.GetUtcNow();
 
-                await this.submissionsForProcessingDataService.AddOrUpdateBySubmission(submission.Id);
+                await this.submissionsForProcessingDataService.AddOrUpdateReprocessingBySubmission(submission.Id);
 
                 var submissionIsBestSubmission = await this.IsBestSubmission(
                     submissionProblemId,

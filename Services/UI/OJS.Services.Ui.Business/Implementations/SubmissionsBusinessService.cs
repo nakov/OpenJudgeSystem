@@ -25,6 +25,7 @@ using static Constants.PublicSubmissions;
 public class SubmissionsBusinessService : ISubmissionsBusinessService
 {
     private readonly ISubmissionsDataService submissionsData;
+    private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
     private readonly IUsersBusinessService usersBusiness;
     private readonly IParticipantScoresBusinessService participantScoresBusinessService;
     private readonly IParticipantsBusinessService participantsBusinessService;
@@ -54,7 +55,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         IContestValidationService contestValidationService,
         ISubmitSubmissionValidationService submitSubmissionValidationService,
         ISubmissionResultsValidationService submissionResultsValidationService,
-        ISubmissionFileDownloadValidationService submissionFileDownloadValidationService)
+        ISubmissionFileDownloadValidationService submissionFileDownloadValidationService,
+        ISubmissionsForProcessingDataService submissionsForProcessingData)
     {
         this.submissionsData = submissionsData;
         this.usersBusiness = usersBusiness;
@@ -70,6 +72,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.submitSubmissionValidationService = submitSubmissionValidationService;
         this.submissionResultsValidationService = submissionResultsValidationService;
         this.submissionFileDownloadValidationService = submissionFileDownloadValidationService;
+        this.submissionsForProcessingData = submissionsForProcessingData;
     }
 
     public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
@@ -366,6 +369,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .First(st => st.SubmissionTypeId == model.SubmissionTypeId)
             .SubmissionType;
 
+        await this.submissionsForProcessingData.AddOrUpdateReprocessingBySubmission(newSubmission.Id);
+
         if (submissionType.ExecutionStrategyType != ExecutionStrategyType.NotFound &&
             submissionType.ExecutionStrategyType != ExecutionStrategyType.DoNothing)
         {
@@ -479,6 +484,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         submission.Processed = true;
         this.submissionsData.Update(submission);
         await this.submissionsData.SaveChanges();
+
+        await this.submissionsForProcessingData.EndProcessingBySubmission(submission.Id);
 
         await this.UpdateResults(submission);
     }

@@ -16,7 +16,9 @@
 
         Task AddOrUpdateBySubmissionIds(ICollection<int> submissionIds);
 
-        Task AddOrUpdateBySubmission(int submissionId);
+        Task AddOrUpdateReprocessingBySubmission(int submissionId);
+
+        Task EndProcessingBySubmission(int submissionId);
 
         Task RemoveBySubmission(int submissionId);
 
