@@ -15,6 +15,7 @@ import {
 } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
+import { useAuth } from './use-auth';
 import { IErrorDataType, useHttp } from './use-http';
 import { useLoading } from './use-loading';
 import { useUrls } from './use-urls';
@@ -48,6 +49,7 @@ interface ICurrentContestContext {
         isSubmitAllowed: boolean;
         contestError: IErrorDataType | null;
         isRegisterForContestSuccessful: boolean;
+        isUserParticipant: boolean;
     };
     actions: {
         setContestPassword: (password: string) => void;
@@ -57,6 +59,7 @@ interface ICurrentContestContext {
         loadParticipantScores: () => void;
         setIsSubmitAllowed: (isSubmitAllowed: boolean) => void;
         removeCurrentContest: () => void;
+        setIsUserParticipant: (isUserParticipant: boolean) => void;
     };
 }
 
@@ -72,6 +75,7 @@ const defaultState = {
         userSubmissionsTimeLimit: 0,
         totalParticipantsCount: 0,
         activeParticipantsCount: 0,
+        isUserParticipant: false,
     },
 };
 
@@ -118,6 +122,8 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ activeParticipantsCount, setActiveParticipantsCount ] = useState(defaultState.state.activeParticipantsCount);
     const [ isSubmitAllowed, setIsSubmitAllowed ] = useState<boolean>(true);
     const [ contestError, setContestError ] = useState<IErrorDataType | null>(null);
+    const [ isUserParticipant, setIsUserParticipant ] = useState<boolean>(defaultState.state.isUserParticipant);
+    const { state: { user } } = useAuth();
 
     const {
         startLoading,
@@ -166,6 +172,15 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         url: getContestParticipantScoresForParticipantUrl,
         parameters: getCurrentParticipantParticipantScoresParams,
     });
+
+    const isUserAdmin = useMemo(
+        () => {
+            const { permissions: { canAccessAdministration } } = user;
+
+            return canAccessAdministration;
+        },
+        [ user ],
+    );
 
     const start = useCallback((obj: IContestToStartType) => {
         setContestToStart(obj);
@@ -258,11 +273,23 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
 
             const { requirePassword: responseRequirePassword } = registerForContestData;
 
-            setContest({ id: registerForContestData.id, name: registerForContestData.name } as IContestType);
+            setContest({
+                id: registerForContestData.id,
+                name: registerForContestData.name,
+                isOnline: registerForContestData.isOnlineExam,
+                duration: registerForContestData.duration,
+                numberOfProblems: registerForContestData.numberOfProblems,
+            } as IContestType);
+
+            const { participantId: registerParticipantId } = registerForContestData;
+            if (!isNil(registerParticipantId) || isUserAdmin) {
+                setIsUserParticipant(true);
+            }
+
             setRequirePassword(responseRequirePassword);
             setContestError(null);
         },
-        [ registerForContestData, registerContestError ],
+        [ registerForContestData, registerContestError, isUserAdmin ],
     );
 
     useEffect(() => {
@@ -392,6 +419,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 isSubmitAllowed,
                 contestError,
                 isRegisterForContestSuccessful,
+                isUserParticipant,
             },
             actions: {
                 setContestPassword,
@@ -400,6 +428,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 submitPassword,
                 loadParticipantScores,
                 setIsSubmitAllowed,
+                setIsUserParticipant,
                 removeCurrentContest,
             },
         }),
@@ -425,7 +454,9 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             setIsSubmitAllowed,
             contestError,
             isRegisterForContestSuccessful,
+            isUserParticipant,
             removeCurrentContest,
+            setIsUserParticipant,
         ],
     );
 
