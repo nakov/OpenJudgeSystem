@@ -2,7 +2,6 @@ import React, { useCallback, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
 import { useProblems } from '../../../hooks/use-problems';
-import { format } from '../../../utils/number-utils';
 import IconSize from '../../guidelines/icons/common/icon-sizes';
 import QuestionIcon from '../../guidelines/icons/QuestionIcon';
 import List from '../../guidelines/lists/List';
@@ -19,10 +18,19 @@ const ProblemConstraints = () => {
 
         const { memoryLimit, fileSizeLimit, timeLimit, checkerName } = currentProblem;
 
-        return [ `Allowed working time: ${format(timeLimit).toString()} sec.`,
-            `Allowed memory: ${format(memoryLimit).toString()} MB`,
-            `Size limit: ${format(fileSizeLimit).toString()} MB`,
-            `Checker: ${checkerName}` ];
+        return [
+            !isNil(timeLimit)
+                ? `Allowed working time: ${timeLimit.toFixed(3).toString()} sec.`
+                : '',
+            !isNil(memoryLimit)
+                ? `Allowed memory: ${memoryLimit.toFixed(2).toString()} MB`
+                : '',
+            !isNil(fileSizeLimit)
+                ? `Size limit: ${fileSizeLimit.toFixed(2).toString()} KB`
+                : '',
+            !isNil(checkerName)
+                ? `Checker: ${checkerName}`
+                : '' ];
     }, [ currentProblem ]);
 
     const renderConstraint = useCallback(

@@ -1,6 +1,7 @@
 import { ContestStatus, FilterType, SortType } from './contest-types';
 
 const DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE = 4;
+const FileValidationError = 'Invalid file extension.';
 const { Status: DEFAULT_FILTER_TYPE } = FilterType;
 const { All: DEFAULT_STATUS_FILTER_TYPE } = ContestStatus;
 const { Sort: DEFAULT_SORT_FILTER_TYPE } = FilterType;
@@ -35,4 +36,5 @@ export {
     ContestParticipationType,
     ContestResultType,
     FileType,
+    FileValidationError,
 };
