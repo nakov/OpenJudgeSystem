@@ -9,7 +9,6 @@ import { IHaveChildrenProps } from '../components/common/Props';
 import { getIndexContestsUrl } from '../utils/urls';
 
 import { useHttp } from './use-http';
-import { useUrls } from './use-urls';
 
 interface IHomeContestsContext {
     state: {
@@ -36,7 +35,6 @@ type IHomeContestsProviderProps = IHaveChildrenProps
 const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
     const [ activeContests, setActiveContests ] = useState<IIndexContestsType[]>([]);
     const [ pastContests, setPastContests ] = useState<IIndexContestsType[]>([]);
-    const { getIndexContestsUrl } = useUrls();
 
     const {
         isLoading: contestsAreLoading,

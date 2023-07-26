@@ -23,9 +23,6 @@ import {
 
 import { useAuth } from './use-auth';
 import { IErrorDataType, useHttp } from './use-http';
-import { useUrls } from './use-urls';
-import { useLoading } from './use-loading';
-
 interface IStartContestArgs {
     id: number;
     isOfficial: boolean;
@@ -133,13 +130,6 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ contestError, setContestError ] = useState<IErrorDataType | null>(null);
     const [ isUserParticipant, setIsUserParticipant ] = useState<boolean>(defaultState.state.isUserParticipant);
     const { state: { user } } = useAuth();
-
-    const {
-        getStartContestParticipationUrl,
-        getContestParticipantScoresForParticipantUrl,
-        getRegisterForContestUrl,
-        getSubmitContestPasswordUrl,
-    } = useUrls();
 
     const {
         isLoading: contestIsLoading,
