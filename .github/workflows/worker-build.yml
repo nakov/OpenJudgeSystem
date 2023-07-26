@@ -10,7 +10,7 @@ on:
     branches:
       - "*"
 jobs:
-  build-and-push-admin:
+  build-and-push-worker:
     uses: ./.github/workflows/build-and-push.yml
     with:
       docker_image_name: judge_worker_v2
