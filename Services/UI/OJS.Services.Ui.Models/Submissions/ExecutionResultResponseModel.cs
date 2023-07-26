@@ -12,7 +12,7 @@
 
         public OutputResultResponseModel? OutputResult { get; set; }
 
-        public TaskResultResponseModel? TaskResult { get; set; }
+        public TaskResultResponseModel TaskResult { get; set; } = null!;
 
         public DateTime? StartedExecutionOn { get; set; }
     }
