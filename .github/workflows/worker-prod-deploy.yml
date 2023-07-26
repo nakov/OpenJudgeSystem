@@ -32,7 +32,7 @@ jobs:
     if: ${{ needs.check-user-access.outputs.isTeamMember == 'true' }}
     uses: ./.github/workflows/build-and-push.yml
     with:
-      docker_image_name: judge_worker_v2
+      docker_image_name: judge_worker
       dockerfile_name: Dockerfile.worker
       docker_tag: ${{ inputs.docker_image_tag }}
     secrets: inherit
