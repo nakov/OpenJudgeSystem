@@ -8,11 +8,11 @@
 
         public bool IsCompiledSuccessfully { get; set; }
 
-        public string CompilerComment { get; set; } = null!;
+        public string? CompilerComment { get; set; }
 
         public OutputResultResponseModel? OutputResult { get; set; }
 
-        public TaskResultResponseModel TaskResult { get; set; } = null!;
+        public TaskResultResponseModel? TaskResult { get; set; }
 
         public DateTime? StartedExecutionOn { get; set; }
     }
