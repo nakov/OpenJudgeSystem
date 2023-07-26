@@ -6,7 +6,7 @@
 
         public string ResultType { get; set; } = null!;
 
-        public string ExecutionComment { get; set; } = null!;
+        public string? ExecutionComment { get; set; }
 
         public string Output { get; set; } = null!;
 
