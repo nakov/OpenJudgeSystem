@@ -2,11 +2,11 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import isNil from 'lodash/isNil';
 
 import { IHaveChildrenProps } from '../components/common/Props';
+import { getProfileInfoUrl } from '../utils/urls';
 
 import { useHttp } from './use-http';
 import { useLoading } from './use-loading';
 import { useNotifications } from './use-notifications';
-import { useUrls } from './use-urls';
 
 interface IUserProfileType {
     id: string;
@@ -31,8 +31,6 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
     const { startLoading, stopLoading } = useLoading();
     const [ profile, setProfile ] = useState(defaultState.profile);
     const { showError } = useNotifications();
-
-    const { getProfileInfoUrl } = useUrls();
 
     const {
         get: getProfileInfo,

@@ -5,9 +5,9 @@ import isNil from 'lodash/isNil';
 
 import { IGetContestResultsParams } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
+import { getContestResultsUrl } from '../../utils/urls';
 import { IErrorDataType, useHttp } from '../use-http';
 import { useLoading } from '../use-loading';
-import { useUrls } from '../use-urls';
 
 import { IContestResultsParticipationType, IContestResultsType } from './types';
 
@@ -29,7 +29,6 @@ const defaultState = { state: { contestResults: { results: [] as IContestResults
 const ContestResultsContext = createContext<ICurrentContestResultsContext>(defaultState as ICurrentContestResultsContext);
 
 const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProviderProps) => {
-    const { getContestResultsUrl } = useUrls();
     const { startLoading, stopLoading } = useLoading();
     const [ getContestResultsParams, setGetContestResultsParams ] = useState<IGetContestResultsParams>();
     const [ contestResultsError, setContestResultsError ] = useState<IErrorDataType | null>(null);
