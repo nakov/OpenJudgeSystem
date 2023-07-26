@@ -28,7 +28,6 @@ import ParticipationsProvider from './hooks/use-participations';
 import ProblemsProvider from './hooks/use-problems';
 import SearchProvider from './hooks/use-search';
 import ServicesProvider from './hooks/use-services';
-import UrlsProvider from './hooks/use-urls';
 import UsersProvider from './hooks/use-users';
 import PageContent from './layout/content/PageContent';
 import PageFooter from './layout/footer/PageFooter';
@@ -42,7 +41,6 @@ const App = () => {
         UrlParamsProvider,
         RouteUrlParamsProvider,
         AppUrlsProvider,
-        UrlsProvider,
         ServicesProvider,
         PageProvider,
         LoadingProvider,

@@ -16,6 +16,10 @@ import { IIndexContestsType, IPagedResultType } from '../common/types';
 import { IAllContestsUrlParams, IGetContestByProblemUrlParams } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 import { areStringEqual } from '../utils/compare-utils';
+import {
+    getAllContestsUrl,
+    getContestByProblemUrl,
+} from '../utils/urls';
 
 import { useUrlParams } from './common/use-url-params';
 import { generateCategoryFilters, generateStatusFilters, generateStrategyFilters } from './contests/contest-filter-utils';
@@ -24,7 +28,6 @@ import { useContestStrategyFilters } from './use-contest-strategy-filters';
 import { useHttp } from './use-http';
 import { useLoading } from './use-loading';
 import { usePages } from './use-pages';
-import { useUrls } from './use-urls';
 
 interface IContestsContext {
     state: {
@@ -95,7 +98,6 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         changePage,
         populatePageInformation,
     } = usePages();
-    const { getAllContestsUrl, getContestByProblemUrl } = useUrls();
     const { startLoading, stopLoading } = useLoading();
 
     const {
