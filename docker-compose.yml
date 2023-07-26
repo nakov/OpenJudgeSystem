@@ -42,7 +42,7 @@ services:
     build:
       context: .
       dockerfile: ./Docker/Dockerfile.worker
-    image: judge_worker_v2
+    image: judge_worker
     ports:
       - "8003:80"
     container_name: judge_worker_instance
