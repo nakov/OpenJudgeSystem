@@ -1,9 +1,14 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { FC, useCallback } from 'react';
+import isNil from 'lodash/isNil';
 
 import { IProblemResourceType } from '../../../common/types';
 import { useProblems } from '../../../hooks/use-problems';
-import concatClassNames from '../../../utils/class-names';
 import { Button, ButtonType } from '../../guidelines/buttons/Button';
+import IconSize from '../../guidelines/icons/common/icon-sizes';
+import FileIcon from '../../guidelines/icons/FileIcon';
+import { IIconProps } from '../../guidelines/icons/Icon';
+import LightbulbIcon from '../../guidelines/icons/LightbulbIcon';
+import LinkIcon from '../../guidelines/icons/LinkIcon';
 
 import styles from './ProblemResource.module.scss';
 
@@ -11,13 +16,11 @@ interface IProblemResourceProps {
     resource: IProblemResourceType;
 }
 
-// TODO: These should be extracted into `Icons`
-const resourceTypeToIconClassName : { [name: number]: string } = {
-    1: 'fa-file-alt',
-    2: 'fa-lightbulb',
-    3: 'fa-link',
+const resourceTypeToIcon : { [name: number]: FC<IIconProps> } = {
+    1: FileIcon,
+    2: LightbulbIcon,
+    3: LinkIcon,
 };
-
 const ProblemResource = ({ resource }: IProblemResourceProps) => {
     const { actions: { downloadProblemResourceFile } } = useProblems();
 
@@ -46,24 +49,25 @@ const ProblemResource = ({ resource }: IProblemResourceProps) => {
             </Button>
         )), [ handleDownloadResourceFile, resource ]);
 
-    const resourceTypeIconClassName = useMemo(
-        () => resource.type == null
-            ? resourceTypeToIconClassName[1]
-            : resourceTypeToIconClassName[resource.type],
+    const renderResourceIcon = useCallback(
+        () => {
+            const Icon = resourceTypeToIcon[resource.type] || null;
+
+            if (isNil(Icon)) {
+                return null;
+            }
+
+            return (<Icon size={IconSize.Medium} />);
+        },
         [ resource.type ],
     );
 
-    const resourceIconClassName = useMemo(
-        () => concatClassNames(styles.icon, resourceTypeIconClassName),
-        [ resourceTypeIconClassName ],
-    );
-
     const getResourceLinkContent = useCallback(() => (
-        <>
-            <i className={resourceIconClassName} />
-            {resource.name}
-        </>
-    ), [ resource.name, resourceIconClassName ]);
+        <div className={styles.resourceWrapper}>
+            {renderResourceIcon()}
+            <span>{resource.name}</span>
+        </div>
+    ), [ resource.name, renderResourceIcon ]);
 
     return (
         <div className={styles.resourceWrapper}>
