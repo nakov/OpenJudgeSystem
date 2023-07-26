@@ -439,14 +439,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         formControls.Add(new FormControlViewModel
         {
-            Name = AdditionalFormFields.SolutionSkeletonRaw.ToString(),
-            Value = entity.SolutionSkeleton?.Decompress(),
-            Type = typeof(string),
-            FormControlType = FormControlType.TextArea,
-        });
-
-        formControls.Add(new FormControlViewModel
-        {
             Name = AdditionalFormFields.Tests.ToString(), Type = typeof(IFormFile),
         });
 
@@ -502,7 +494,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             .ValidatePermissionsOfCurrentUser(contestId)
             .VerifyResult();
 
-        TryAddSolutionSkeleton(entity, actionContext);
         await TryAddAdditionalFiles(entity, actionContext);
         AddSubmissionTypes(entity, actionContext);
     }
@@ -577,10 +568,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
     private static int GetContestId(IDictionary<string, string> entityDict, Problem? problem)
         => entityDict.GetEntityIdOrDefault<Contest>() ?? problem?.ProblemGroup?.ContestId ?? default;
-
-    private static void TryAddSolutionSkeleton(Problem problem, AdminActionContext actionContext)
-        => problem.SolutionSkeleton =
-            actionContext.GetByteArrayFromStringInput(AdditionalFormFields.SolutionSkeletonRaw);
 
     private static async Task TryAddAdditionalFiles(Problem problem, AdminActionContext actionContext)
     {
