@@ -7,9 +7,13 @@ import {
     IGetSubmissionDetailsByIdUrlParams,
 } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
+import {
+    getSubmissionDetailsByIdUrl,
+    getSubmissionDetailsResultsUrl,
+    getSubmissionFileDownloadUrl,
+} from '../../utils/urls';
 import { IErrorDataType, useHttp } from '../use-http';
 import { useLoading } from '../use-loading';
-import { useUrls } from '../use-urls';
 
 import {
     ISubmissionDetails,
@@ -56,17 +60,11 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     ] = useState<ISubmissionDetailsType | null>(null);
     const [ downloadErrorMessage, setDownloadErrorMessage ] = useState<string | null>(null);
     const [ problemSubmissionFileIdToDownload, setProblemSubmissionFileIdToDownload ] = useState<number | null>(null);
-    const { getSubmissionFileDownloadUrl } = useUrls();
 
     const [
         currentSubmissionDetailsResults,
         setCurrentProblemSubmissionResults,
     ] = useState(defaultState.state.currentSubmissionDetailsResults);
-
-    const {
-        getSubmissionDetailsByIdUrl,
-        getSubmissionDetailsResultsUrl,
-    } = useUrls();
 
     const [
         getSubmissionDetailsByIdParams,

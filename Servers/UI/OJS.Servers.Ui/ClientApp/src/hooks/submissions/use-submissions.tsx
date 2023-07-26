@@ -5,11 +5,14 @@ import isNil from 'lodash/isNil';
 import { IDictionary } from '../../common/common-types';
 import { ISubmissionTypeType } from '../../common/types';
 import { IHaveChildrenProps } from '../../components/common/Props';
+import {
+    getSubmitFileUrl,
+    getSubmitUrl,
+} from '../../utils/urls';
 import { useCurrentContest } from '../use-current-contest';
 import { IErrorDataType, useHttp } from '../use-http';
 import { useLoading } from '../use-loading';
 import { useProblems } from '../use-problems';
-import { useUrls } from '../use-urls';
 
 import { ISubmissionType, ITestRunType } from './types';
 import { useProblemSubmissions } from './use-problem-submissions';
@@ -64,8 +67,6 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const { state: { currentProblem } } = useProblems();
     const { actions: { loadSubmissions } } = useProblemSubmissions();
     const { state: { isOfficial } } = useCurrentContest();
-
-    const { getSubmitUrl, getSubmitFileUrl } = useUrls();
 
     const submitCodeParams = useMemo(() => {
         const { id: problemId } = currentProblem || {};
