@@ -414,6 +414,8 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters)
             .ToListAsync();
 
+        await this.ModifyFormControls(formControls, entity, action, entityDict).ConfigureAwait(false);
+
         formControls.Add(new FormControlViewModel
         {
             Name = this.GetComplexFormControlNameFor<Contest>(),
@@ -524,6 +526,28 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         }
 
         await base.BeforeEntitySaveOnEditAsync(originalEntity, newEntity, actionContext);
+    }
+
+    protected override Task ModifyFormControls(
+        ICollection<FormControlViewModel> formControls,
+        Problem entity,
+        EntityAction action,
+        IDictionary<string, string> entityDict)
+    {
+        var contestId = GetContestId(entityDict, entity);
+
+        if (contestId == default)
+        {
+            throw new Exception($"A valid ContestId must be provided to be able to {action} a Problem.");
+        }
+
+        var problemGroupInput = formControls.First(fc => fc.Name == nameof(ProblemGroup));
+
+        var orderedProblemGroupsQuery = this.problemGroupsData.GetAllByContestId(contestId)
+                                                                    .OrderBy(pg => pg.OrderBy);
+        problemGroupInput.Options = orderedProblemGroupsQuery;
+
+        return base.ModifyFormControls(formControls, entity, action, entityDict);
     }
 
     protected override async Task AfterEntitySaveAsync(Problem entity, AdminActionContext actionContext)

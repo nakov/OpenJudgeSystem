@@ -1,10 +1,6 @@
 import { RedirectExternal } from '../../components/common/RedirectExternal';
-import { useUrls } from '../../hooks/use-urls';
+import { getAdministrationContestsGridUrl } from '../../utils/urls';
 
-const AdministrationPage = () => {
-    const { getAdministrationContestsGridUrl } = useUrls();
-
-    return RedirectExternal(getAdministrationContestsGridUrl());
-};
+const AdministrationPage = () => RedirectExternal(getAdministrationContestsGridUrl());
 
 export default AdministrationPage;
