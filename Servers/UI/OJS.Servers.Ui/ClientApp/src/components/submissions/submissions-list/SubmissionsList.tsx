@@ -95,15 +95,15 @@ const SubmissionsList = ({
                     <div className={styles.submissionDetailsButtonsWrapper}>
                         <Label type={LabelType.plain} text={typeLabelText} className={submissionsTypeLabelClassName} />
                         <LinkButton
-                            size={ButtonSize.small}
-                            to={getProblemSubmissionDetailsUrl({
-                                submissionId: id,
-                                hashParam,
-                            })}
-                            className={submissionBtnClass}
-                            type={LinkButtonType.secondary}
-                            text="Details"
-                            state={buttonState}
+                          size={ButtonSize.small}
+                          to={getProblemSubmissionDetailsUrl({
+                              submissionId: id,
+                              hashParam,
+                          })}
+                          className={submissionBtnClass}
+                          type={LinkButtonType.secondary}
+                          text="Details"
+                          state={buttonState}
                         />
                     </div>
                 </div>

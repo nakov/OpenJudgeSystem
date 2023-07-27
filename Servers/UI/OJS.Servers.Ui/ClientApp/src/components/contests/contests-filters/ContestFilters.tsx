@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import {InputLabel, MenuItem, Select} from "@mui/material";
 import { useSearchParams } from 'react-router-dom';
+import { InputLabel, MenuItem, Select } from '@mui/material';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -48,6 +48,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
             // toggleParam,
             clearFilters,
             clearSorts,
+            toggleParam,
         },
     } = useContests();
 
@@ -70,10 +71,10 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         },
         [ possibleFilters, onFilterClick ],
     );
-    
+
     const handleStrategySelect = useCallback((param: IFilter) => {
         toggleParam(param);
-    }, []);
+    }, [ toggleParam ]);
 
     const renderFilter = useCallback(
         (fg: IFiltersGroup) => {
@@ -88,33 +89,35 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
                 : strategyFilters;
 
             // render select dropdown for strategies
-            if(type === FilterType.Strategy) {
+            if (type === FilterType.Strategy) {
                 const menuItems = strategyFilters.map((item, idx) => (
                     <MenuItem
-                        key={`strategy-item-${idx}`} 
-                        value={item.value} 
-                        onClick={() => handleStrategySelect(item)}>
-                            {item.name}
+                      key={`strategy-item-${idx}`}
+                      value={item.value}
+                      onClick={() => handleStrategySelect(item)}
+                    >
+                        {item.name}
                     </MenuItem>
                 ));
-                
-                return (<div style={{marginTop: 15}}>
-                    <InputLabel id="strategy-label">Strategy</InputLabel>
+
+                return (
+                    <div style={{ marginTop: 15 }}>
+                        <InputLabel id="strategy-label">Strategy</InputLabel>
                         <Select
-                            sx={{
-                                width: 350,
-                                height: 40
-                            }}
-                            defaultValue=""
-                            labelId="strategy-label"
-                            autoWidth
-                            displayEmpty
-                            children={[<MenuItem key="strategy-item-default" value="" selected>Select strategy</MenuItem>, ...menuItems]}
+                          sx={{
+                              width: 350,
+                              height: 40,
+                          }}
+                          defaultValue=""
+                          labelId="strategy-label"
+                          autoWidth
+                          displayEmpty
+                          children={[ <MenuItem key="strategy-item-default" value="" selected>Select strategy</MenuItem>, ...menuItems ]}
                         />
                     </div>
-                )
+                );
             }
-            
+
             return (
                 <ContestFilter
                   values={values}
@@ -124,7 +127,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
                 />
             );
         },
-        [ filteredStrategyFilters, handleFilterClick ],
+        [ filteredStrategyFilters, handleFilterClick, handleStrategySelect ],
     );
 
     useEffect(

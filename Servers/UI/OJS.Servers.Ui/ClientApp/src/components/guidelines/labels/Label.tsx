@@ -53,7 +53,7 @@ const Label = ({
     );
 
     return (
-        <div className={labelClassName} style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        <div className={labelClassName} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {content}
         </div>
     );
