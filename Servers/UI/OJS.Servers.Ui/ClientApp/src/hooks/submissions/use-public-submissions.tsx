@@ -1,8 +1,11 @@
 import React, { createContext, useCallback, useContext, useMemo } from 'react';
 
 import { IHaveChildrenProps } from '../../components/common/Props';
+import {
+    getPublicSubmissionsUrl,
+    getSubmissionsTotalCountUrl,
+} from '../../utils/urls';
 import { useHttp } from '../use-http';
-import { useUrls } from '../use-urls';
 
 interface IPublicSubmissionContest {
     id: number;
@@ -60,7 +63,6 @@ const PublicSubmissionsContext = createContext<IPublicSubmissionsContext>(defaul
 type IPublicSubmissionsProviderProps = IHaveChildrenProps
 
 const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps) => {
-    const { getPublicSubmissionsUrl, getSubmissionsTotalCountUrl } = useUrls();
     const {
         get: getSubmissions,
         data: apiSubmissions,

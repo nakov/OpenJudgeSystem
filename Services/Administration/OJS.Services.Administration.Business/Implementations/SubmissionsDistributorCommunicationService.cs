@@ -7,11 +7,11 @@ namespace OJS.Services.Administration.Business.Implementations
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Options;
     using OJS.Data.Models.Submissions;
+    using OJS.Services.Administration.Data;
     using OJS.Services.Common.Models;
     using OJS.Services.Common.Models.Configurations;
     using OJS.Services.Common.Models.Submissions;
     using OJS.Services.Infrastructure.HttpClients;
-    using OJS.Services.Ui.Data;
     using SoftUni.Judge.Common.Enumerations;
     using SoftUni.Judge.Common.Extensions;
     using SoftUni.Judge.Common.Formatters;
@@ -62,7 +62,7 @@ namespace OJS.Services.Administration.Business.Implementations
         {
             var unprocessedSubmissionIds = await this.submissionsForProcessingData
                 .GetAllUnprocessed()
-                .Select(s => s.SubmissionId)
+                .Select(s => s!.SubmissionId)
                 .ToListAsync();
 
             if (!unprocessedSubmissionIds.Any())
@@ -137,7 +137,10 @@ namespace OJS.Services.Administration.Business.Implementations
                     CheckerType = checkerType,
                     CheckerParameter = submission.Problem.Checker?.Parameter,
                     Tests = tests,
-                    TaskSkeleton = submission.Problem.SolutionSkeleton,
+                    TaskSkeleton = submission.Problem?.SubmissionTypesInProblems
+                        .Where(x => x.SubmissionTypeId == submission.SubmissionTypeId)
+                        .Select(x => x.SolutionSkeleton)
+                        .FirstOrDefault(),
                 },
             };
 

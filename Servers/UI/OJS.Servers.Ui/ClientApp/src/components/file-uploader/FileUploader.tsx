@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import isNil from 'lodash/isNil';
 
+import { FileValidationError } from '../../common/constants';
 import { useSubmissions } from '../../hooks/submissions/use-submissions';
 import Button, { ButtonSize, ButtonType } from '../guidelines/buttons/Button';
 
@@ -9,9 +10,11 @@ import styles from './FileUploader.module.scss';
 interface IFileUploaderProps {
     file?: File | null;
     problemId?: number;
+    allowedFileExtensions: string[];
+    onInvalidFileExtension: (error: string | null) => void;
 }
 
-const FileUploader = ({ file, problemId }: IFileUploaderProps) => {
+const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExtension }: IFileUploaderProps) => {
     const hiddenFileInput = useRef<HTMLInputElement | null>(null);
     const { actions: { updateSubmissionCode } } = useSubmissions();
     const [ internalFile, setInternalFile ] = useState<File | null>(null);
@@ -42,6 +45,15 @@ const FileUploader = ({ file, problemId }: IFileUploaderProps) => {
                 return;
             }
 
+            const uploadedFile = eventTarget[0];
+            const extension = uploadedFile.name.split('.').pop();
+
+            if (allowedFileExtensions && !allowedFileExtensions.includes(extension)) {
+                onInvalidFileExtension(FileValidationError);
+            } else {
+                onInvalidFileExtension(null);
+            }
+
             updateSubmissionCode(eventTarget[0]);
             setInternalFile(eventTarget[0]);
             setInternalProblemId(problemId);
@@ -49,7 +61,7 @@ const FileUploader = ({ file, problemId }: IFileUploaderProps) => {
             // eslint-disable-next-line no-param-reassign
             event.target.value = null;
         },
-        [ updateSubmissionCode, problemId ],
+        [ updateSubmissionCode, problemId, allowedFileExtensions, onInvalidFileExtension ],
     );
 
     return (

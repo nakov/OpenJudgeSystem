@@ -5,9 +5,9 @@ import isNil from 'lodash/isNil';
 import ITreeItemType from '../common/tree-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 import { flattenWith } from '../utils/list-utils';
+import { getCategoriesTreeUrl } from '../utils/urls';
 
 import { useHttp } from './use-http';
-import { useUrls } from './use-urls';
 
 interface IContestCategoriesContext {
     state: {
@@ -28,7 +28,6 @@ const ContestCategoriesContext = createContext<IContestCategoriesContext>(defaul
 
 const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps) => {
     const [ categories, setCategories ] = useState(defaultState.state.categories);
-    const { getCategoriesTreeUrl } = useUrls();
 
     const {
         get,
