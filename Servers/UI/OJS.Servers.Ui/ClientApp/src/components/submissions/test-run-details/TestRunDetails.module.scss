@@ -45,6 +45,7 @@
   flex-direction: column;
   flex-grow: 1;
   margin-top: -10px;
+  width: 130px;
 }
 
 .wrongTestRunHeading {
@@ -63,6 +64,7 @@
 
 .collapsibleContainer {
   margin-top: 10px;
+  width: 400px;
 }
 
 .correctTestRunHeading {
@@ -93,5 +95,6 @@
 }
 
 .testRunDetailsExpandBtn {
-  margin-top: -17px !important;
+  margin-bottom: 40px !important;
+  margin-left: 20px !important;
 }
