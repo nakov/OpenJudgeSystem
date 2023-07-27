@@ -1,5 +1,6 @@
 ﻿using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
+using System;
 
 namespace OJS.Services.Worker.Business.ExecutionContext.Implementations;
 
@@ -69,6 +70,8 @@ public class ExecutionContextBuilderService : IExecutionContextBuilderService
         submission.AllowedFileExtensions = submissionServiceModel.FileContent?.Length > 0
             ? DefaultAllowedFileExtension
             : default!;
+
+        submission.StartedExecutionOn = DateTime.UtcNow;
 
         return submission;
     }

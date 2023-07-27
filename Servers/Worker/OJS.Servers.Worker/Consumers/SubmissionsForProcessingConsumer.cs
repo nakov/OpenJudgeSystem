@@ -63,6 +63,7 @@ public class SubmissionsForProcessingConsumer : IConsumer<SubmissionForProcessin
             {
                 Id = executionResult.Id!,
                 IsCompiledSuccessfully = executionResult.IsCompiledSuccessfully,
+                StartedExecutionOn = executionResult.StartedExecutionOn,
             };
 
             if (executionResult.CompilerComment != null)

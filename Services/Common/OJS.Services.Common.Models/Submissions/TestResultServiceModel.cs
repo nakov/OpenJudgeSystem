@@ -9,13 +9,13 @@ namespace OJS.Services.Common.Models.Submissions
     {
         public int Id { get; set; }
 
-        public string ResultType { get; set; } = null!;
+        public string ResultType { get; set; } = string.Empty;
 
-        public string ExecutionComment { get; set; } = null!;
+        public string ExecutionComment { get; set; } = string.Empty;
 
-        public string Output { get; set; } = null!;
+        public string Output { get; set; } = string.Empty;
 
-        public CheckerDetails CheckerDetails { get; set; } = null!;
+        public CheckerDetails CheckerDetails { get; set; } = new CheckerDetails();
 
         public int TimeUsed { get; set; }
 

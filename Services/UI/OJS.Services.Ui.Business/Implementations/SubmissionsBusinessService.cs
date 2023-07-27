@@ -464,7 +464,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     {
         submission.IsCompiledSuccessfully = executionResult.IsCompiledSuccessfully;
         submission.CompilerComment = executionResult.CompilerComment;
-        submission.Points = executionResult.TaskResult.Points;
+        submission.Points = executionResult.TaskResult!.Points;
 
         if (!executionResult.IsCompiledSuccessfully)
         {

@@ -10,11 +10,11 @@ namespace OJS.Services.Common.Models.Submissions
 
         public bool IsCompiledSuccessfully { get; set; }
 
-        public string CompilerComment { get; set; } = null!;
+        public string CompilerComment { get; set; } = string.Empty;
 
-        public TaskResultServiceModel TaskResult { get; set; } = null!;
+        public TaskResultServiceModel? TaskResult { get; set; }
 
-        public OutputResultServiceModel OutputResult { get; set; } = null!;
+        public OutputResultServiceModel? OutputResult { get; set; }
 
         public DateTime? StartedExecutionOn { get; set; }
     }
