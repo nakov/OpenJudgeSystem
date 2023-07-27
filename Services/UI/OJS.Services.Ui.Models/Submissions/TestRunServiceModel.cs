@@ -1,9 +1,9 @@
-﻿namespace OJS.Services.Ui.Models.Submissions
-{
-    using AutoMapper;
-    using OJS.Data.Models.Tests;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+﻿using AutoMapper;
+using OJS.Data.Models.Tests;
+using SoftUni.AutoMapper.Infrastructure.Models;
 
+namespace OJS.Services.Common.Models.Submissions
+{
     public class TestRunServiceModel : IMapExplicitly
     {
         public int Id { get; set; }

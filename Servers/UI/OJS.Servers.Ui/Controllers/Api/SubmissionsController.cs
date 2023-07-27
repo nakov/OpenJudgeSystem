@@ -1,4 +1,6 @@
-﻿namespace OJS.Servers.Ui.Controllers.Api;
+﻿using OJS.Services.Common.Models.Submissions;
+
+namespace OJS.Servers.Ui.Controllers.Api;
 
 using OJS.Servers.Ui.Models.Submissions.Details;
 using OJS.Servers.Ui.Models.Submissions.Results;

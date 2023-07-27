@@ -1,4 +1,6 @@
-﻿namespace OJS.Servers.Worker.Models.ExecutionResult;
+﻿using OJS.Workers.SubmissionProcessors.Models;
+
+namespace OJS.Servers.Worker.Models.ExecutionResult;
 
 using System;
 using OJS.Services.Common.Models;

@@ -29,7 +29,7 @@
         "REDIS_CONNECTION_STRING": "localhost,password=redisPass123,ConnectTimeout=10000,abortConnect=false",
         "RUNS_IN_DOCKER": "false",
         "SUBMISSIONS_PROCESSOR_IDENTIFIER_NUMBER": "1",
-        "MessageQueueConfig__Host": "localhost",
+        "MessageQueueConfig__Host": "192.168.0.105",
         "MessageQueueConfig__VirtualHost": "/ojs",
         "MessageQueueConfig__User": "ojsuser",
         "MessageQueueConfig__Password": "myS3cretPass2",

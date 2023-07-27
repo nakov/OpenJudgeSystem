@@ -1,4 +1,6 @@
-﻿namespace OJS.Servers.Ui.Models.Submissions.Details
+﻿using OJS.Services.Common.Models.Submissions;
+
+namespace OJS.Servers.Ui.Models.Submissions.Details
 {
     using OJS.Services.Ui.Models.Submissions;
     using SoftUni.AutoMapper.Infrastructure.Models;

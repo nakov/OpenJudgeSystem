@@ -1,6 +1,6 @@
-﻿namespace OJS.Services.Ui.Models.Submissions
+﻿namespace OJS.Services.Common.Models.Submissions
 {
-    public class OutputResultResponseModel
+    public class OutputResultServiceModel
     {
         public int TimeUsedInMs { get; set; }
 

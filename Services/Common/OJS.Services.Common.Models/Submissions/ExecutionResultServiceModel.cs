@@ -1,11 +1,10 @@
-﻿using OJS.Services.Common.Models.PubSubContracts.ExecutionResult;
+﻿using AutoMapper;
 using SoftUni.AutoMapper.Infrastructure.Models;
+using System;
 
-namespace OJS.Services.Ui.Models.Submissions
+namespace OJS.Services.Common.Models.Submissions
 {
-    using System;
-
-    public class ExecutionResultResponseModel : IMapFrom<ExecutionResult>
+    public class ExecutionResultServiceModel
     {
         public string Id { get; set; } = null!;
 
@@ -13,7 +12,9 @@ namespace OJS.Services.Ui.Models.Submissions
 
         public string CompilerComment { get; set; } = null!;
 
-        public TaskResultResponseModel TaskResult { get; set; } = null!;
+        public TaskResultServiceModel TaskResult { get; set; } = null!;
+
+        public OutputResultServiceModel OutputResult { get; set; } = null!;
 
         public DateTime? StartedExecutionOn { get; set; }
     }

@@ -1,4 +1,6 @@
-﻿namespace OJS.Servers.Worker.Controllers.Api;
+﻿using OJS.Services.Common.Models.Submissions.ExecutionContext;
+
+namespace OJS.Servers.Worker.Controllers.Api;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

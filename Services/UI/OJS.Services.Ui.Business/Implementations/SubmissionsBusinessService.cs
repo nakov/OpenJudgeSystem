@@ -1,4 +1,5 @@
 using OJS.Services.Common;
+using OJS.Services.Common.Models.Submissions;
 using OJS.Workers.Common.Models;
 
 namespace OJS.Services.Ui.Business.Implementations;
@@ -392,7 +393,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             await this.submissionsData.SaveChanges();
 
             newSubmission.Problem = problem;
-            newSubmission.Problem = problem;
 
             await this.participantScoresBusinessService.SaveForSubmission(newSubmission);
         }
@@ -460,7 +460,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
     private static void ProcessTestsExecutionResult(
         Submission submission,
-        ExecutionResultResponseModel executionResult)
+        ExecutionResultServiceModel executionResult)
     {
         submission.IsCompiledSuccessfully = executionResult.IsCompiledSuccessfully;
         submission.CompilerComment = executionResult.CompilerComment;
@@ -475,7 +475,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var testResults = executionResult
                               .TaskResult
                               ?.TestResults
-                          ?? Enumerable.Empty<TestResultResponseModel>();
+                          ?? Enumerable.Empty<TestResultServiceModel>();
 
         submission.TestRuns.AddRange(testResults.Select(testResult =>
             new TestRun

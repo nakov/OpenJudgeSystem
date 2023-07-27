@@ -1,4 +1,6 @@
-﻿namespace OJS.Services.Ui.Business
+﻿using OJS.Services.Common.Models.Submissions;
+
+namespace OJS.Services.Ui.Business
 {
     using System.Collections.Generic;
     using System.Linq;

@@ -1,4 +1,6 @@
-﻿namespace OJS.Servers.Worker.Models.ExecutionContext;
+﻿using OJS.Services.Common.Models.Submissions.ExecutionContext;
+
+namespace OJS.Servers.Worker.Models.ExecutionContext;
 
 using AutoMapper;
 using Microsoft.AspNetCore.Http;

@@ -1,10 +1,11 @@
-﻿namespace OJS.Services.Worker.Business.ExecutionContext.Implementations;
+﻿using OJS.Services.Common.Models.Submissions.ExecutionContext;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
+
+namespace OJS.Services.Worker.Business.ExecutionContext.Implementations;
 
 using OJS.Services.Common;
 using OJS.Workers.SubmissionProcessors.Models;
-using OJS.Services.Worker.Models.ExecutionContext;
 using OJS.Services.Infrastructure.Extensions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
 using static OJS.Services.Worker.Business.ExecutionContext.ExecutionContextConstants;
 using static OJS.Services.Worker.Business.Validation.ValidationConstants;
 
@@ -26,13 +27,13 @@ public class ExecutionContextBuilderService : IExecutionContextBuilderService
 
     public string BuildCodeFromTemplate(SubmissionServiceModel submission)
     {
-        var template = this.codeTemplatesProvider.GetDefaultCodeTemplate(submission.ExecutionStrategyType);
+        var template = this.codeTemplatesProvider.GetDefaultCodeTemplate(submission.ExecutionStrategy);
 
         this.notDefaultValueValidationService
             .GetValidationResult(
                 template,
                 null!,
-                string.Format(CodeTemplateNotFoundTemplate, submission.ExecutionStrategyType))
+                string.Format(CodeTemplateNotFoundTemplate, submission.ExecutionStrategy))
             .VerifyResult();
 
         return template.Replace(TemplatePlaceholders.CodePlaceholder, submission.Code);

@@ -1,6 +1,7 @@
-﻿namespace OJS.Services.Worker.Business.Validation;
+﻿using OJS.Services.Common.Models.Submissions.ExecutionContext;
 
-using OJS.Services.Worker.Models.ExecutionContext;
+namespace OJS.Services.Worker.Business.Validation;
+
 using OJS.Services.Common.Validation;
 
 public interface ISubmissionsValidationService : IValidationService<SubmissionServiceModel>

@@ -1,4 +1,5 @@
-﻿using OJS.Workers.Common.Models;
+﻿using OJS.Services.Common.Models.Submissions.ExecutionContext;
+using OJS.Workers.Common.Models;
 
 namespace OJS.Services.Worker.Business.Implementations;
 
@@ -9,7 +10,6 @@ using OJS.Workers.Common;
 using OJS.Workers.ExecutionStrategies.Models;
 using OJS.Services.Worker.Business.Validation;
 using OJS.Services.Worker.Models.Configuration;
-using OJS.Services.Worker.Models.ExecutionContext;
 using FluentExtensions.Extensions;
 using OJS.Services.Worker.Models.ExecutionResult;
 using OJS.Services.Worker.Models.ExecutionResult.Output;
@@ -56,12 +56,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         switch (submission.ExecutionType)
         {
             case ExecutionType.SimpleExecution:
-            case ExecutionType.SimpleTemplateExecution:
                 return this.InternalExecuteSubmission<SimpleInputModel, OutputResult>(
                     submission);
 
             case ExecutionType.TestsExecution:
-            case ExecutionType.TestsTemplateExecution:
                 return this.InternalExecuteSubmission<TestsInputModel, TestResult>(
                     submission);
 
@@ -118,11 +116,40 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         => Enumerable.Where<TestResult>(taskResult.TestResults, t => !t.IsTrialTest)
             .ForEach(t => t.CheckerDetails = new CheckerDetails());
 
+    private static void PreprocessSubmission(SubmissionServiceModel submission)
+    {
+        // switch (submission.ExecutionType)
+        // {
+        //     case ExecutionType.SimpleTemplateExecution:
+        //     case ExecutionType.TestsTemplateExecution:
+        //         submission.Code = this.executionContextBuilder.BuildCodeFromTemplate(submission);
+        //         break;
+        // }
+
+        if (submission.TestsExecutionDetails != null && submission.ExecutionOptions.EscapeTests)
+        {
+            submission.TestsExecutionDetails.Tests = submission.TestsExecutionDetails.Tests
+                .Mutate(x => x.Input = x.Input
+                    .Replace("\\[", "[")
+                    .Replace("\\]", "]")
+                    .Replace("\\<", "<")
+                    .Replace("\\>", ">")
+                    .Replace("\\{", "{")
+                    .Replace("\\}", "}")
+                    .Replace("\\\\$", "$")
+                    .Replace("\\$", "$")
+                    .Replace("\\`", "`")
+                    .Replace("\\#", "#")
+                    .Replace("\\|", "|"))
+                .ToList();
+        }
+    }
+
     private ExecutionResultServiceModel InternalExecuteSubmission<TInput, TResult>(
         SubmissionServiceModel submission)
         where TResult : ISingleCodeRunResult, new()
     {
-        this.PreprocessSubmission(submission);
+        PreprocessSubmission(submission);
         PreprocessLineEndings(submission);
 
         var ojsSubmission = this.executionContextBuilder.BuildOjsSubmission<TInput>(submission);
@@ -144,35 +171,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
 
         return executionResult;
-    }
-
-    private void PreprocessSubmission(SubmissionServiceModel submission)
-    {
-        switch (submission.ExecutionType)
-        {
-            case ExecutionType.SimpleTemplateExecution:
-            case ExecutionType.TestsTemplateExecution:
-                submission.Code = this.executionContextBuilder.BuildCodeFromTemplate(submission);
-                break;
-        }
-
-        if (submission.TestsExecutionDetails != null && submission.ExecutionOptions.EscapeTests)
-        {
-            submission.TestsExecutionDetails.Tests = submission.TestsExecutionDetails.Tests
-                .Mutate(x => x.Input = x.Input
-                    .Replace("\\[", "[")
-                    .Replace("\\]", "]")
-                    .Replace("\\<", "<")
-                    .Replace("\\>", ">")
-                    .Replace("\\{", "{")
-                    .Replace("\\}", "}")
-                    .Replace("\\\\$", "$")
-                    .Replace("\\$", "$")
-                    .Replace("\\`", "`")
-                    .Replace("\\#", "#")
-                    .Replace("\\|", "|"))
-                .ToList();
-        }
     }
 
     private void ProcessSimpleExecutionResult(ExecutionResultServiceModel executionResult)

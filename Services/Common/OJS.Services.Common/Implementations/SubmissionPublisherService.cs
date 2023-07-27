@@ -1,23 +1,22 @@
-using OJS.Data.Models.Submissions;
-using OJS.Services.Common.Models.PubSubContracts.Submissions;
+using OJS.Services.Common.Models.Submissions.ExecutionDetails;
 using OJS.Workers.Common.Models;
-using OJS.Workers.ExecutionStrategies.Models;
-using OJS.Workers.SubmissionProcessors.Formatters;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace OJS.Services.Common.Implementations;
+
+using OJS.PubSub.Worker.Submissions;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Data.Models.Submissions;
+using OJS.Workers.ExecutionStrategies.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
 public class SubmissionPublisherService : ISubmissionPublisherService
 {
     private readonly IPublisherService publisher;
-    private readonly IFormatterServiceFactory formatterServiceFactory;
 
-    public SubmissionPublisherService(IPublisherService publisher, IFormatterServiceFactory formatterServiceFactory)
-    {
-        this.publisher = publisher;
-        this.formatterServiceFactory = formatterServiceFactory;
-    }
+    public SubmissionPublisherService(
+        IPublisherService publisher)
+        => this.publisher = publisher;
 
     public Task Publish(Submission submission)
     {
@@ -31,32 +30,28 @@ public class SubmissionPublisherService : ISubmissionPublisherService
                 OrderBy = (int)t.OrderBy,
             });
 
-        var checkerTypeName = this.formatterServiceFactory
-            .Get<string>()
-            ?.Format(submission.Problem!.Checker!.ClassName!);
-
         var (fileContent, code) = GetSubmissionContent(submission);
 
-        var model = new SubmissionSubmitted
+        var pubSubModel = new SubmissionForProcessingPubSubModel
         {
             Id = submission.Id,
-            FileContent = fileContent,
-            Code = code,
             ExecutionType = ExecutionType.TestsExecution,
             ExecutionStrategy = submission.SubmissionType!.ExecutionStrategyType,
-            MemoryLimit = submission.Problem.MemoryLimit,
+            Code = code,
+            FileContent = fileContent,
             TimeLimit = submission.Problem.TimeLimit,
-            TestsExecutionDetails = new TestsExecutionDetails
+            MemoryLimit = submission.Problem.MemoryLimit,
+            TestsExecutionDetails = new TestsExecutionDetailsServiceModel
             {
-                CheckerTypeName = checkerTypeName,
+                CheckerType = submission.Problem.Checker?.ClassName,
                 CheckerParameter = submission.Problem.Checker?.Parameter,
-                SolutionSkeleton = submission.SolutionSkeleton,
+                TaskSkeleton = submission.SolutionSkeleton,
                 MaxPoints = submission.Problem.MaximumPoints,
                 Tests = tests,
             },
         };
 
-        return this.publisher.Publish(model);
+        return this.publisher.Publish(pubSubModel);
     }
 
     private static (byte[]? fileContent, string code) GetSubmissionContent(Submission submission)

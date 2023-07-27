@@ -1,6 +1,4 @@
-﻿using OJS.Services.Common.Models.PubSubContracts.ExecutionResult;
-
-namespace OJS.Services.Worker.Models.ExecutionResult.Output;
+﻿namespace OJS.Services.Worker.Models.ExecutionResult.Output;
 
 using AutoMapper;
 using System.Linq;
@@ -8,7 +6,7 @@ using SoftUni.AutoMapper.Infrastructure.Models;
 using System.Collections.Generic;
 using OJS.Workers.ExecutionStrategies.Models;
 
-public class TaskResultServiceModel : IMapExplicitly, IMapTo<TaskResult>
+public class TaskResultServiceModel : IMapExplicitly
 {
     public int Points { get; set; }
 

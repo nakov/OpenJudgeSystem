@@ -1,4 +1,6 @@
-﻿namespace OJS.Servers.Worker.Models.ExecutionContext
+﻿using OJS.Services.Common.Models.Submissions.ExecutionContext;
+
+namespace OJS.Servers.Worker.Models.ExecutionContext
 {
     using System.ComponentModel.DataAnnotations;
     using AutoMapper;
@@ -12,6 +14,8 @@
         : IMapExplicitly
         where TSubmissionRequestModel : SubmissionBaseRequestModel<TSubmissionRequestModel, TExecutionDetails>
     {
+        public int Id { get; set; }
+
         [Required]
         public string? ExecutionType { get; set; }
 
@@ -36,21 +40,21 @@
             var mapping = configuration
                 .CreateMap<TSubmissionRequestModel, SubmissionServiceModel>()
                 .ForMember(
-                    m => m.ExecutionType,
-                    opt => opt.MapFrom<ExecutionTypeMemberValueResolver, string>(src =>
-                        src.ExecutionType!))
-                .ForMember(
-                    m => m.ExecutionStrategyType,
-                    opt => opt.MapFrom<ExecutionStrategyMemberValueResolver, string>(src =>
-                        src.ExecutionStrategy!))
+                    m => m.ExecutionStrategy,
+                    opt => opt.MapFrom(src => src.ExecutionStrategy))
                 .ForMember(
                     m => m.SimpleExecutionDetails,
                     opt => opt.MapFrom(src =>
-                        (src.ExecutionDetails!.ToString() ?? string.Empty).FromJson<SimpleExecutionDetailsRequestModel>()))
+                        (src.ExecutionDetails!.ToString() ?? string.Empty)
+                        .FromJson<SimpleExecutionDetailsRequestModel>()))
                 .ForMember(
                     m => m.TestsExecutionDetails,
                     opt => opt.MapFrom(src =>
-                        (src.ExecutionDetails!.ToString() ?? string.Empty).FromJson<TestsExecutionDetailsRequestModel>()));
+                        (src.ExecutionDetails!.ToString() ?? string.Empty)
+                        .FromJson<TestsExecutionDetailsRequestModel>()))
+                .ForMember(
+                    m => m.ExecutionOptions,
+                    opt => opt.Ignore());
 
             this.MapAdditionalMembers(mapping);
         }

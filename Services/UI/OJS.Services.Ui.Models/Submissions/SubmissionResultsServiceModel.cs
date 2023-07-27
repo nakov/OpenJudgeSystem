@@ -1,4 +1,6 @@
-﻿namespace OJS.Services.Ui.Models.Submissions;
+﻿using OJS.Services.Common.Models.Submissions;
+
+namespace OJS.Services.Ui.Models.Submissions;
 
 using AutoMapper;
 using OJS.Data.Models.Submissions;

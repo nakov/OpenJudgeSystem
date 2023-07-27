@@ -5,6 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\..\PubSub\OJS.PubSub.Worker\OJS.PubSub.Worker.csproj" />
         <ProjectReference Include="..\..\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj" />
         <ProjectReference Include="..\..\Worker\OJS.Workers\OJS.Workers.SubmissionProcessors\OJS.Workers.SubmissionProcessors.csproj" />
         <ProjectReference Include="..\OJS.Services.Common.Data\OJS.Services.Common.Data.csproj" />
@@ -13,6 +14,7 @@
 
     <ItemGroup>
       <PackageReference Include="MassTransit.Abstractions" Version="8.0.16" />
+      <PackageReference Include="SoftUni.AutoMapper.Infrastructure" Version="1.0.4" />
     </ItemGroup>
 
 </Project>

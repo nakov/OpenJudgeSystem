@@ -1,9 +1,11 @@
-﻿namespace OJS.Services.Worker.Business.Validation.Implementations;
+﻿using OJS.Services.Common.Models.Submissions.ExecutionContext;
+using OJS.Services.Common.Models.Submissions.ExecutionDetails;
+using OJS.Workers.Checkers;
+
+namespace OJS.Services.Worker.Business.Validation.Implementations;
 
 using System.Linq;
 using System.Collections.Generic;
-using OJS.Services.Worker.Models.ExecutionContext;
-using OJS.Services.Worker.Models.ExecutionContext.ExecutionDetails;
 using OJS.Workers.Common.Models;
 using OJS.Services.Common;
 using OJS.Services.Common.Models;
@@ -17,7 +19,7 @@ public class SubmissionsValidationService : ISubmissionsValidationService
         var validationResults = new List<ValidationResult>
         {
             IsExecutionTypeValid(submission!.ExecutionType),
-            IsExecutionStrategyTypeNameValid(submission.ExecutionStrategyType),
+            IsExecutionStrategyTypeNameValid(submission.ExecutionStrategy),
         };
 
         if (submission.ExecutionType == ExecutionType.TestsExecution)
@@ -59,7 +61,7 @@ public class SubmissionsValidationService : ISubmissionsValidationService
             : ValidationResult.Valid();
 
     private static ValidationResult IsCheckerTypeValid(string checkerType)
-        => ServiceConstants.CheckerTypes.All.Contains(checkerType)
+        => CheckerConstants.TypeNames.All.Contains(checkerType)
             ? ValidationResult.Valid()
             : ValidationResult.Invalid(string.Format(CheckerTypeNotValidTemplate, checkerType));
 }

@@ -1,10 +1,9 @@
-using OJS.Services.Common.Models.Submissions.ExecutionDetails;
-
-namespace OJS.Services.Worker.Models.ExecutionContext.Mapping;
-
 using AutoMapper;
+using OJS.Services.Common.Models.Submissions.ExecutionDetails;
 using OJS.Workers.Common.Extensions;
 using OJS.Workers.ExecutionStrategies.Models;
+
+namespace OJS.Services.Common.Models.Submissions.ExecutionContext.Mapping;
 
 public class TaskSkeletonValueResolver<TExecutionDetailsServiceModel>
     : IValueResolver<TExecutionDetailsServiceModel, BaseInputModel, byte[]>

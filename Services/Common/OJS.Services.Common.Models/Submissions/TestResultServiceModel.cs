@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
+using OJS.Workers.Common;
 using OJS.Workers.ExecutionStrategies.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
-namespace OJS.Services.Ui.Models.Submissions
+namespace OJS.Services.Common.Models.Submissions
 {
-    public class TestResultResponseModel : IMapExplicitly
+    public class TestResultServiceModel : IMapExplicitly
     {
         public int Id { get; set; }
 
@@ -14,7 +15,7 @@ namespace OJS.Services.Ui.Models.Submissions
 
         public string Output { get; set; } = null!;
 
-        public CheckerDetailsResponseModel CheckerDetails { get; set; } = null!;
+        public CheckerDetails CheckerDetails { get; set; } = null!;
 
         public int TimeUsed { get; set; }
 
@@ -22,7 +23,9 @@ namespace OJS.Services.Ui.Models.Submissions
 
         public void RegisterMappings(IProfileExpression configuration)
             => configuration
-                .CreateMap<TestResult, TestResultResponseModel>()
-                .ForMember(m => m.Output, opt => opt.Ignore());
+                .CreateMap<TestResult, TestResultServiceModel>()
+                .ForMember(
+                    d => d.Output,
+                    opt => opt.Ignore());
     }
 }

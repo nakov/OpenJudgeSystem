@@ -54,6 +54,7 @@ services:
       - /tmp/ExecutionStrategies:/tmp/ExecutionStrategies
       - /var/run/docker.sock:/var/run/docker.sock
     extra_hosts:
+      - "localhost:192.168.0.105"
       - "host.docker.internal:host-gateway"
   mq:
     image: rabbitmq:3.12-management
