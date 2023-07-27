@@ -5,11 +5,10 @@ import { usePublicSubmissions } from '../../hooks/submissions/use-public-submiss
 import { setLayout } from '../shared/set-layout';
 
 const SubmissionsPage = () => {
-    const {
-        actions: { load },
-    } = usePublicSubmissions();
+    const { actions: { load } } = usePublicSubmissions();
 
-    useEffect(() => {
+    useEffect(
+        () => {
             load();
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
