@@ -64,8 +64,7 @@ public enum StateResultForPublicSubmissionsServiceModel
     Queued = 3,
 }
 
-public class SubmissionForPublicSubmissionsServiceModel
-    : IMapExplicitly
+public class SubmissionForPublicSubmissionsServiceModel : IMapExplicitly
 {
     public int Id { get; set; }
 
@@ -82,6 +81,8 @@ public class SubmissionForPublicSubmissionsServiceModel
     public ResultForPublicSubmissionsServiceModel Result { get; set; } = null!;
 
     public StateResultForPublicSubmissionsServiceModel State { get; set; }
+
+    public int PageNumber { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Submission, SubmissionForPublicSubmissionsServiceModel>()
@@ -121,5 +122,8 @@ public class SubmissionForPublicSubmissionsServiceModel
             .ForMember(
                 x => x.IsOfficial,
                 opt => opt.MapFrom(
-                    y => y.Participant!.IsOfficial));
+                    y => y.Participant!.IsOfficial))
+            .ForMember(
+                x => x.PageNumber,
+                opt => opt.Ignore());
 }

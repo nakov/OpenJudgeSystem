@@ -12,6 +12,7 @@ using OJS.Services.Ui.Business.Validations.Implementations.Submissions;
 using Infrastructure.Exceptions;
 using Data;
 using Models.Submissions;
+using SoftUni.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using SoftUni.Judge.Common.Enumerations;
 using System;
@@ -432,8 +433,25 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         await this.ProcessTestsExecutionResult(submission, executionResult);
     }
 
-    public Task<IEnumerable<SubmissionForPublicSubmissionsServiceModel>> GetPublicSubmissions()
-        => this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(DefaultCount);
+    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPublicSubmissions(
+        SubmissionForPublicSubmissionsServiceModel model)
+    {
+        var user = this.userProviderService.GetCurrentUser();
+
+        if (user.IsAdminOrLecturer)
+        {
+            var b = await this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
+                DefaultSubmissionsPerPage, model.PageNumber);
+            return b;
+        }
+
+        var modelResult = new PagedResult<SubmissionForPublicSubmissionsServiceModel>();
+
+        modelResult.Items = await this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
+            DefaultSubmissionsPerPage);
+
+        return modelResult;
+    }
 
     public Task<int> GetTotalCount()
         => this.submissionsData.GetTotalSubmissionsCount();

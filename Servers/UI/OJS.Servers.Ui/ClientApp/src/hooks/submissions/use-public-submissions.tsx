@@ -1,30 +1,13 @@
-import React, { createContext, useCallback, useContext, useMemo } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import isEmpty from 'lodash/isEmpty';
+import isNil from 'lodash/isNil';
 
+import { IPagedResultType, IPublicSubmissionResponseModel } from '../../common/types';
+import { IGetPublicSubmissionsUrlParams } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useHttp } from '../use-http';
+import { usePages } from '../use-pages';
 import { useUrls } from '../use-urls';
-
-interface IPublicSubmissionContest {
-    id: number;
-    name: string;
-}
-
-interface IPublicSubmissionUser {
-    id: string;
-    username: string;
-}
-
-interface IPublicSubmissionProblem {
-    id: number;
-    name: string;
-    contest: IPublicSubmissionContest;
-    orderBy: number;
-}
-
-interface IPublicSubmissionResult {
-    points: number;
-    maxPoints: number;
-}
 
 enum PublicSubmissionState {
     Ready = 1,
@@ -32,74 +15,126 @@ enum PublicSubmissionState {
     Queued = 3,
 }
 
-interface IPublicSubmission {
-    id: number;
-    createdOn: Date;
-    strategyName: string;
-    user: IPublicSubmissionUser;
-    problem: IPublicSubmissionProblem;
-    result: IPublicSubmissionResult;
-    state: PublicSubmissionState;
-    isOfficial: boolean;
-}
-
 interface IPublicSubmissionsContext {
     state: {
         totalSubmissionsCount: number;
-        submissions: IPublicSubmission[];
+        publicSubmissions: IPublicSubmissionResponseModel[];
     };
-    actions: {
-        load: () => Promise<void>;
+    actions : {
+        loadTotalSubmissionsCount: () => Promise<void>;
+        initiatePublicSubmissionsQuery: () => void;
     };
 }
 
-const defaultState = {};
+const defaultState = { state: { publicSubmissions: [] as IPublicSubmissionResponseModel[] } };
 
 const PublicSubmissionsContext = createContext<IPublicSubmissionsContext>(defaultState as IPublicSubmissionsContext);
 
 type IPublicSubmissionsProviderProps = IHaveChildrenProps
 
 const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps) => {
+    const [ getPublicSubmissionsUrlParams, setPublicSubmissionsUrlParams ] = useState<IGetPublicSubmissionsUrlParams | null>();
+    const [ publicSubmissions, setPublicSubmissions ] = useState<IPublicSubmissionResponseModel[]>(defaultState.state.publicSubmissions);
+    const {
+        state: { currentPage },
+        populatePageInformation,
+    } = usePages();
     const { getPublicSubmissionsUrl, getSubmissionsTotalCountUrl } = useUrls();
+
     const {
         get: getSubmissions,
-        data: apiSubmissions,
-    } = useHttp<null, IPublicSubmission[]>({ url: getPublicSubmissionsUrl });
+        data: publicSubmissionsData,
+    } = useHttp<
+        IGetPublicSubmissionsUrlParams,
+        IPagedResultType<IPublicSubmissionResponseModel>>({
+            url: getPublicSubmissionsUrl,
+            parameters: getPublicSubmissionsUrlParams,
+        });
 
     const {
         get: getTotalSubmissionsCount,
         data: apiTotalSubmissionsCount,
     } = useHttp({ url: getSubmissionsTotalCountUrl });
 
-    const submissions = useMemo(
-        () => (apiSubmissions || []) as IPublicSubmission[],
-        [ apiSubmissions ],
-    );
-
     const totalSubmissionsCount = useMemo(
         () => (apiTotalSubmissionsCount || 0) as number,
         [ apiTotalSubmissionsCount ],
     );
 
-    const load = useCallback(
+    const loadPublicSubmissions = useCallback(
         async () => {
-            await Promise.all([
-                getSubmissions(),
-                getTotalSubmissionsCount(),
-            ]);
+            await getSubmissions();
         },
-        [ getSubmissions, getTotalSubmissionsCount ],
+        [ getSubmissions ],
+    );
+
+    const loadTotalSubmissionsCount = useCallback(
+        async () => {
+            await getTotalSubmissionsCount();
+        },
+        [ getTotalSubmissionsCount ],
+    );
+
+    const initiatePublicSubmissionsQuery = useCallback(
+        () => {
+            setPublicSubmissionsUrlParams({ page: currentPage });
+        },
+        [ currentPage ],
+    );
+
+    useEffect(
+        () => {
+            if (isNil(publicSubmissionsData) || isEmpty(publicSubmissionsData)) {
+                return;
+            }
+
+            const publicSubmissionsResult = publicSubmissionsData as IPagedResultType<IPublicSubmissionResponseModel>;
+            const newPublicSubmissionsData = publicSubmissionsResult.items as IPublicSubmissionResponseModel[];
+            const {
+                pageNumber,
+                itemsPerPage,
+                pagesCount,
+                totalItemsCount,
+            } = publicSubmissionsResult;
+
+            const newPagesInfo = {
+                pageNumber,
+                itemsPerPage,
+                pagesCount,
+                totalItemsCount,
+            };
+
+            setPublicSubmissions(newPublicSubmissionsData);
+            populatePageInformation(newPagesInfo);
+        },
+        [ populatePageInformation, publicSubmissionsData ],
+    );
+
+    useEffect(
+        () => {
+            if (isNil(getPublicSubmissionsUrlParams)) {
+                return;
+            }
+
+            (async () => {
+                await loadPublicSubmissions();
+            })();
+        },
+        [ getPublicSubmissionsUrlParams, loadPublicSubmissions ],
     );
 
     const value = useMemo(
         () => ({
             state: {
-                submissions,
+                publicSubmissions,
                 totalSubmissionsCount,
             },
-            actions: { load },
+            actions: {
+                loadTotalSubmissionsCount,
+                initiatePublicSubmissionsQuery,
+            },
         }),
-        [ submissions, totalSubmissionsCount, load ],
+        [ publicSubmissions, totalSubmissionsCount, loadTotalSubmissionsCount, initiatePublicSubmissionsQuery ],
     );
 
     return (
@@ -119,5 +154,5 @@ export {
 };
 
 export type {
-    IPublicSubmission,
+    IPublicSubmissionResponseModel,
 };

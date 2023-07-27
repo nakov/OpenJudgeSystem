@@ -34,6 +34,7 @@ const defaultState = {
         username: '',
         email: '',
         permissions: { canAccessAdministration: false } as IUserPermissionsType,
+        isInRole: false,
     },
 };
 
@@ -111,11 +112,14 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
             : !isNil(authInfoResponse?.roles
                 .find((role) => role.name.toLowerCase() === 'administrator'));
 
+        const isInRole = !isEmpty(authInfoResponse.roles);
+
         return {
             id: authInfoResponse.id,
             username: authInfoResponse.userName,
             email: authInfoResponse.email,
             permissions: { canAccessAdministration: isAdmin } as IUserPermissionsType,
+            isInRole,
         } as IUserType;
     }, []);
 

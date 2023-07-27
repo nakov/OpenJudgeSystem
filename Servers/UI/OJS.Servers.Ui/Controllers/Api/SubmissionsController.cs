@@ -1,7 +1,10 @@
 ﻿namespace OJS.Servers.Ui.Controllers.Api;
 
+using OJS.Servers.Ui.Models.Submissions;
+using OJS.Servers.Ui.Models;
 using OJS.Servers.Ui.Models.Submissions.Details;
 using OJS.Servers.Ui.Models.Submissions.Results;
+using OJS.Services.Ui.Business.Cache;
 using OJS.Services.Ui.Models.Submissions;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Servers.Infrastructure.Extensions;
@@ -10,23 +13,20 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Servers.Ui.Models.Submissions.Profile;
-using OJS.Services.Infrastructure.Cache;
 using OJS.Servers.Infrastructure.Controllers;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 public class SubmissionsController : BaseApiController
 {
-    private const string SubmissionsTotalCountCacheKey = "SUBMISSIONS-COUNT";
-
     private readonly ISubmissionsBusinessService submissionsBusiness;
-    private readonly ICacheService cache;
+    private readonly ISubmissionCacheService submissionCache;
 
     public SubmissionsController(
         ISubmissionsBusinessService submissionsBusiness,
-        ICacheService cache)
+        ISubmissionCacheService submissionCache)
     {
         this.submissionsBusiness = submissionsBusiness;
-        this.cache = cache;
+        this.submissionCache = submissionCache;
     }
 
     /// <summary>
@@ -128,11 +128,17 @@ public class SubmissionsController : BaseApiController
     /// <summary>
     /// Gets latest submissions (default number of submissions).
     /// </summary>
+    /// <param name="page">The current page number.</param>
+    /// <returns>A page with submissions containing information about their score and user.</returns>
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<SubmissionForPublicSubmissionsServiceModel>), Status200OK)]
-    public async Task<IActionResult> Public()
+    [ProducesResponseType(typeof(PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>), Status200OK)]
+    public async Task<IActionResult> Public([FromQuery]int page)
         => await this.submissionsBusiness
-            .GetPublicSubmissions()
+            .GetPublicSubmissions(new SubmissionForPublicSubmissionsServiceModel
+            {
+                PageNumber = page,
+            })
+            .Map<PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>>()
             .ToOkResult();
 
     /// <summary>
@@ -141,8 +147,7 @@ public class SubmissionsController : BaseApiController
     [HttpGet]
     [ProducesResponseType(typeof(int), Status200OK)]
     public async Task<IActionResult> TotalCount()
-        => await this.cache.Get(
-                SubmissionsTotalCountCacheKey,
-                this.submissionsBusiness.GetTotalCount)
+        => await this.submissionCache
+            .GetTotalCount()
             .ToOkResult();
 }

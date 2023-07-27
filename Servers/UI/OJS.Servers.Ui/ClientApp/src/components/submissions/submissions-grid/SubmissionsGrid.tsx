@@ -1,9 +1,12 @@
 import React, { useCallback } from 'react';
 
-import { IPublicSubmission, usePublicSubmissions } from '../../../hooks/submissions/use-public-submissions';
+import { IPublicSubmissionResponseModel, usePublicSubmissions } from '../../../hooks/submissions/use-public-submissions';
+import { useAuth } from '../../../hooks/use-auth';
+import { usePages } from '../../../hooks/use-pages';
 import { format } from '../../../utils/number-utils';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List from '../../guidelines/lists/List';
+import PaginationControls from '../../guidelines/pagination/PaginationControls';
 import SubmissionGridRow from '../submission-grid-row/SubmissionGridRow';
 
 import styles from './SubmissionsGrid.module.scss';
@@ -11,16 +14,46 @@ import styles from './SubmissionsGrid.module.scss';
 const SubmissionsGrid = () => {
     const {
         state: {
-            submissions,
+            publicSubmissions,
             totalSubmissionsCount,
         },
     } = usePublicSubmissions();
+    const { state: { user } } = useAuth();
+
+    const {
+        state: { currentPage, pagesInfo },
+        changePage,
+    } = usePages();
+
+    const handlePageChange = useCallback(
+        (page: number) => changePage(page),
+        [ changePage ],
+    );
 
     const renderSubmissionRow = useCallback(
-        (submission: IPublicSubmission) => (
+        (submission: IPublicSubmissionResponseModel) => (
             <SubmissionGridRow submission={submission} />
         ),
         [],
+    );
+
+    const { pagesCount } = pagesInfo;
+    const renderPrivilegedComponent = useCallback(
+        () => {
+            const { isInRole } = user;
+            if (isInRole) {
+                return (
+                    <PaginationControls
+                      count={pagesCount}
+                      page={currentPage}
+                      onChange={handlePageChange}
+                    />
+                );
+            }
+
+            return null;
+        },
+        [ currentPage, handlePageChange, pagesCount, user ],
     );
 
     return (
@@ -28,7 +61,7 @@ const SubmissionsGrid = () => {
             <Heading type={HeadingType.primary}>
                 Latest
                 {' '}
-                {submissions.length}
+                {publicSubmissions.length}
                 {' '}
                 submissions out of
                 {' '}
@@ -36,8 +69,9 @@ const SubmissionsGrid = () => {
                 {' '}
                 total
             </Heading>
+            {renderPrivilegedComponent()}
             <List
-              values={submissions}
+              values={publicSubmissions}
               itemFunc={renderSubmissionRow}
               itemClassName={styles.submissionRow}
               fullWidth
