@@ -109,18 +109,18 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var showTestInputForAllTests = submissionDetailsServiceModel.Problem.ShowDetailedFeedback;
         if (!userIsAdminOrLecturerInContest && !showTestInputForAllTests)
         {
-            submissionDetailsServiceModel.TestRuns = submissionDetailsServiceModel.TestRuns.Select(x =>
+            submissionDetailsServiceModel.TestRuns = submissionDetailsServiceModel.TestRuns.Select(tr =>
             {
-                if (!x.IsTrialTest)
+                if (!tr.IsTrialTest)
                 {
-                    x.ShowInput = false;
-                    x.Input = string.Empty;
-                    x.ExecutionComment = string.Empty;
-                    x.ExpectedOutputFragment = string.Empty;
-                    x.UserOutputFragment = string.Empty;
+                    tr.ShowInput = false;
+                    tr.Input = string.Empty;
+                    tr.ExecutionComment = string.Empty;
+                    tr.ExpectedOutputFragment = string.Empty;
+                    tr.UserOutputFragment = string.Empty;
                 }
 
-                return x;
+                return tr;
             });
         }
 
