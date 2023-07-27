@@ -70,7 +70,7 @@
 }
 
 .retestButton {
-  margin: 0 0 0 24px;
+  margin-top: 10px;
 }
 
 .submissionsList {
@@ -120,4 +120,6 @@
 
 .buttonsSection {
   margin-top: 20px;
+  display: flex;
+  flex-direction: column;
 }
