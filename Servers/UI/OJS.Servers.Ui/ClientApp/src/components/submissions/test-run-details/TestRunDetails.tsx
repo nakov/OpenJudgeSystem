@@ -150,15 +150,13 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
             <span className={styles.testRunDetailsCollapsible}>
                 <span className={styles.collapsibleHeader}>
                     {renderTestRunData()}
-                    <div className={styles.detailsCollapsibleButton}>
-                        <ExpandButton
-                          collapsedText=" "
-                          expandedText=" "
-                          expanded={isTestRunDetailCollapsed}
-                          onExpandChanged={handleTestRunDetailsToggleCollapsible}
-                          className="testRunDetailsExpandBtn"
-                        />
-                    </div>
+                    <ExpandButton
+                      collapsedText=" "
+                      expandedText=" "
+                      expanded={isTestRunDetailCollapsed}
+                      onExpandChanged={handleTestRunDetailsToggleCollapsible}
+                      className={styles.testRunDetailsExpandBtn}
+                    />
                 </span>
                 <div className={styles.collapsibleContainer}>
                     <Collapsible collapsed={isTestRunDetailCollapsed}>

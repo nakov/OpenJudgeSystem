@@ -2,10 +2,6 @@
 @use 'src/styles/fonts';
 @use 'src/styles/variables';
 
-.detailsCollapsibleButton {
-  margin-top: -60px;
-}
-
 .executionComment {
   @extend %font-family-lato;
 
@@ -49,7 +45,6 @@
   flex-direction: column;
   flex-grow: 1;
   margin-top: -10px;
-  width: 235px;
 }
 
 .wrongTestRunHeading {
