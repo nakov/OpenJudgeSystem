@@ -135,6 +135,7 @@ const ContestPage = () => {
             toggle,
             isShowing,
             isUserAdmin,
+            contest?.isOnline,
         ],
     );
 

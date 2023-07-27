@@ -13,9 +13,16 @@ import styles from './ContestProblemDetails.module.scss';
 const ContestProblemDetails = () => {
     const { state: { getParticipantScoresIsLoading } } = useCurrentContest();
 
-    const parentClassNames = React.useMemo(() => concatClassNames(styles.problemDetailsContainer, 'contestTabControls', getParticipantScoresIsLoading
-        ? styles.centeredFlex
-        : ''), [ getParticipantScoresIsLoading ]);
+    const parentClassNames = React.useMemo(
+        () => concatClassNames(
+            styles.problemDetailsContainer,
+            'contestTabControls',
+            getParticipantScoresIsLoading
+                ? styles.centeredFlex
+                : '',
+        ),
+        [ getParticipantScoresIsLoading ],
+    );
 
     return (
         <div className={parentClassNames}>

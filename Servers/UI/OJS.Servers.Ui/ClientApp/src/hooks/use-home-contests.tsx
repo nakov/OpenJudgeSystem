@@ -74,7 +74,7 @@ const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
             },
             actions: { getForHome },
         }),
-        [ activeContests, getForHome, isSuccess, pastContests ],
+        [ activeContests, getForHome, isSuccess, pastContests, contestsAreLoading ],
     );
 
     return (

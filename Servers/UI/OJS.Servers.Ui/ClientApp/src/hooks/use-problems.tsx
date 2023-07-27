@@ -198,7 +198,15 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
                 initiateRedirectionToProblem,
             },
         }),
-        [ currentProblem, downloadProblemResourceFile, initiateRedirectionToProblem, initiateProblems, problems, selectCurrentProblem, isLoading ],
+        [
+            currentProblem,
+            downloadProblemResourceFile,
+            initiateRedirectionToProblem,
+            initiateProblems,
+            problems,
+            selectCurrentProblem,
+            isLoading,
+        ],
     );
 
     return (
