@@ -195,7 +195,7 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
                 hasCompletedGetAuthInfo,
                 isLoggedIn,
                 loginErrorMessage,
-                isLoading
+                isLoading,
             },
             actions: {
                 signIn,
@@ -214,7 +214,7 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
             loginOrGetAuthInitiated,
             signIn,
             signOut,
-            isLoading
+            isLoading,
         ],
     );
 

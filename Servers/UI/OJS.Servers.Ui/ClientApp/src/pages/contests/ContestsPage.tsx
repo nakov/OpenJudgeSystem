@@ -12,6 +12,7 @@ import { Button, ButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
+import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
 import { useUrlParams } from '../../hooks/common/use-url-params';
 import { useAppUrls } from '../../hooks/use-app-urls';
@@ -21,11 +22,10 @@ import { useContestStrategyFilters } from '../../hooks/use-contest-strategy-filt
 import { useContests } from '../../hooks/use-contests';
 import { usePages } from '../../hooks/use-pages';
 import concatClassNames from '../../utils/class-names';
+import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { toLowerCase } from '../../utils/string-utils';
 import NotFoundPage from '../not-found/NotFoundPage';
 import { setLayout } from '../shared/set-layout';
-import SpinningLoader from "../../components/guidelines/spinning-loader/SpinningLoader";
-import {flexCenterObjectStyles} from "../../utils/object-utils";
 
 import styles from './ContestsPage.module.scss';
 
@@ -34,7 +34,7 @@ const ContestsPage = () => {
         state: {
             contests,
             isLoaded,
-            contestsAreLoading
+            contestsAreLoading,
         },
         actions: {
             toggleParam,
@@ -202,7 +202,7 @@ const ContestsPage = () => {
     const renderPage = useCallback(
         () => {
             if (contestsAreLoading) {
-                return <div style={{...flexCenterObjectStyles}}><SpinningLoader/></div>;
+                return <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>;
             }
             if (!areQueryParamsValid()) {
                 return <NotFoundPage />;

@@ -296,7 +296,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
                 contest,
                 isLoaded: isSuccess, // should be removed, its incorrect logic, since isError is not taken into consideration
                 isLoading,
-                contestsAreLoading
+                contestsAreLoading,
             },
             actions: {
                 reload,
@@ -322,6 +322,7 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             initiateGetAllContestsQuery,
             isSuccess,
             isLoading,
+            contestsAreLoading,
         ],
     );
 

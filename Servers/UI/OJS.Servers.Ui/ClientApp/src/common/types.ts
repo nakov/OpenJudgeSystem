@@ -57,10 +57,10 @@ interface IContestType {
     userCanCompete: boolean;
     userIsParticipant: false;
     isActive: boolean;
-    contestIsLoading: boolean,
-    registerForContestLoading: boolean,
-    submitContestPasswordIsLoading: boolean,
-    getParticipantScoresIsLoading: boolean
+    contestIsLoading: boolean;
+    registerForContestLoading: boolean;
+    submitContestPasswordIsLoading: boolean;
+    getParticipantScoresIsLoading: boolean;
     duration: number;
     numberOfProblems: number;
 }

@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo} from 'react';
+import React, { useCallback, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';

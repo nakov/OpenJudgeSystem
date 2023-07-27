@@ -58,7 +58,7 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
         () => ({
             profile,
             getProfile,
-            isLoading
+            isLoading,
         }),
         [ getProfile, profile, isLoading ],
     );

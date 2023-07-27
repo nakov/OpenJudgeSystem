@@ -246,7 +246,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
                 currentSubmissionDetailsResults,
                 validationErrors,
                 downloadErrorMessage,
-                isLoading
+                isLoading,
             },
             actions: {
                 selectSubmissionById,
@@ -267,7 +267,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             downloadErrorMessage,
             setDownloadErrorMessage,
             setCurrentSubmission,
-            isLoading
+            isLoading,
         ],
     );
 

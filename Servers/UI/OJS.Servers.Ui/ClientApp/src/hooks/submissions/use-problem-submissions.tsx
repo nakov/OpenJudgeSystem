@@ -38,7 +38,7 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
     ] = useState<IProblemSubmissionResultsRequestParametersType | null>(null);
 
     const { state: { isOfficial } } = useCurrentContest();
-    
+
     const {
         get: getProblemSubmissions,
         data: apiProblemSubmissions,

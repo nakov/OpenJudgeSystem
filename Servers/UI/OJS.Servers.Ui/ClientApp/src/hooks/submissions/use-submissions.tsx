@@ -300,7 +300,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                 problemSubmissionCode,
                 selectedSubmissionType,
                 problemSubmissionErrors,
-                isLoading
+                isLoading,
             },
             actions: {
                 updateSubmissionCode,
@@ -319,7 +319,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             removeProblemSubmissionCode,
             closeErrorMessage,
             problemSubmissionErrors,
-            isLoading
+            isLoading,
         ],
     );
 

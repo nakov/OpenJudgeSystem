@@ -189,7 +189,7 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
             state: {
                 problems,
                 currentProblem,
-                isLoading
+                isLoading,
             },
             actions: {
                 selectCurrentProblem,

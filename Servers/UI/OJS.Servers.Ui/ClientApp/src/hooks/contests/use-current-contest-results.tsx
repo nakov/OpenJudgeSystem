@@ -63,7 +63,7 @@ const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProvi
             (async () => {
                 setIsLoading(true);
                 await getContestResults();
-                setIsLoading(false)
+                setIsLoading(false);
             })();
         },
         [ getContestResults, getContestResultsParams ],
@@ -92,11 +92,11 @@ const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProvi
                 contestResults,
                 contestResultsError,
                 areContestResultsLoaded,
-                isLoading
+                isLoading,
             },
             actions: { load },
         }),
-        [ areContestResultsLoaded, contestResults, contestResultsError, load ],
+        [ areContestResultsLoaded, contestResults, contestResultsError, load, isLoading ],
     );
 
     return (

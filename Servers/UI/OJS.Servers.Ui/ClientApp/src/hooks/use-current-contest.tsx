@@ -23,6 +23,7 @@ import {
 
 import { useAuth } from './use-auth';
 import { IErrorDataType, useHttp } from './use-http';
+
 interface IStartContestArgs {
     id: number;
     isOfficial: boolean;
@@ -216,7 +217,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         })();
     }, [
         getCurrentParticipantParticipantScoresParams,
-        getParticipantScores
+        getParticipantScores,
     ]);
 
     useEffect(() => {
@@ -228,7 +229,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         setGetCurrentParticipantParticipantScoresParams(null);
     }, [
         getParticipantScores,
-        getParticipantScoresData
+        getParticipantScoresData,
     ]);
 
     useEffect(() => {
@@ -405,7 +406,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 contestIsLoading,
                 registerForContestLoading,
                 submitContestPasswordIsLoading,
-                getParticipantScoresIsLoading
+                getParticipantScoresIsLoading,
             },
             actions: {
                 setContestPassword,
@@ -444,7 +445,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             contestIsLoading,
             registerForContestLoading,
             submitContestPasswordIsLoading,
-            getParticipantScoresIsLoading
+            getParticipantScoresIsLoading,
         ],
     );
 

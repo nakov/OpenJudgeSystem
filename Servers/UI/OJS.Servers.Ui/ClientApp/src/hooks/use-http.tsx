@@ -190,7 +190,7 @@ const useHttp = function<TParametersType, TReturnDataType, TRequestDataType = nu
         error,
         saveAttachment,
         isSuccess,
-        isLoading
+        isLoading,
     };
 };
 

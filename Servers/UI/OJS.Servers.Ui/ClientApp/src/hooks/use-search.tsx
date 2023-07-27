@@ -201,7 +201,7 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
                 isLoaded: isSuccess,
                 searchValue: urlParam,
                 isVisible,
-                isLoading
+                isLoading,
             },
             actions: {
                 clearSearchValue,
@@ -222,7 +222,7 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
             load,
             initiateSearchResultsUrlQuery,
             toggleVisibility,
-            isLoading
+            isLoading,
         ],
     );
 

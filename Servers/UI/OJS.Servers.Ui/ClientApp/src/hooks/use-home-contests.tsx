@@ -70,7 +70,7 @@ const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
                 activeContests,
                 pastContests,
                 isLoaded: isSuccess,
-                contestsAreLoading
+                contestsAreLoading,
             },
             actions: { getForHome },
         }),

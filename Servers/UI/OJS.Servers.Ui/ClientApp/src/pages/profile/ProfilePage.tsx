@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 
 import Heading from '../../components/guidelines/headings/Heading';
+import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import ProfileAboutInfo from '../../components/profile/profile-about-info/ProfileAboutInfo';
 import { useUsers } from '../../hooks/use-users';
+import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
-import SpinningLoader from "../../components/guidelines/spinning-loader/SpinningLoader";
-import {flexCenterObjectStyles} from "../../utils/object-utils"
 // import Tabs from '../../components/guidelines/tabs/Tabs';
 // import ProfileContestParticipations
 //     from '../../components/profile/profile-contest-participations/ProfileContestParticipations';
@@ -20,13 +20,15 @@ const ProfilePage = () => {
             await getProfile();
         })();
     }, [ getProfile ]);
-    
-    if(isLoading) {
-        return (<div style={{...flexCenterObjectStyles}}>
-            <SpinningLoader/>
-        </div>)
+
+    if (isLoading) {
+        return (
+            <div style={{ ...flexCenterObjectStyles }}>
+                <SpinningLoader />
+            </div>
+        );
     }
-    
+
     return (
         <>
             <Heading>Profile</Heading>

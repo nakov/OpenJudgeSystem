@@ -59,7 +59,7 @@ const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
             areUserParticipationsRetrieved,
             userParticipations,
             getUserParticipations,
-            isLoading
+            isLoading,
         }),
         [ areUserParticipationsRetrieved, getUserParticipations, userParticipations, isLoading ],
     );
