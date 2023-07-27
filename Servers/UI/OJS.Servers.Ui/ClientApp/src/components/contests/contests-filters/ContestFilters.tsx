@@ -90,16 +90,6 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
 
             // render select dropdown for strategies
             if (type === FilterType.Strategy) {
-                const menuItems = strategyFilters.map((item, idx) => (
-                    <MenuItem
-                      key={`strategy-item-${idx}`}
-                      value={item.value}
-                      onClick={() => handleStrategySelect(item)}
-                    >
-                        {item.name}
-                    </MenuItem>
-                ));
-
                 return (
                     <div style={{ marginTop: 15 }}>
                         <InputLabel id="strategy-label">Strategy</InputLabel>
@@ -112,8 +102,18 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
                           labelId="strategy-label"
                           autoWidth
                           displayEmpty
-                          children={[ <MenuItem key="strategy-item-default" value="" selected>Select strategy</MenuItem>, ...menuItems ]}
-                        />
+                        >
+                            <MenuItem key="strategy-item-default" value="" selected>Select strategy</MenuItem>
+                            {strategyFilters.map((item) => (
+                                <MenuItem
+                                  key={`strategy-item-${item.value}`}
+                                  value={item.value}
+                                  onClick={() => handleStrategySelect(item)}
+                                >
+                                    {item.name}
+                                </MenuItem>
+                            ))}
+                        </Select>
                     </div>
                 );
             }

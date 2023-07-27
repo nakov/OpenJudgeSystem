@@ -356,7 +356,7 @@ module.exports = {
                     },
                     { name: '@material-ui/core' },
                     { name: '@material-ui/lab' },
-                    { name: '@mui/material' },
+                    // { name: '@mui/material' },
                     { name: '@mui/styles' },
                 ],
             },
