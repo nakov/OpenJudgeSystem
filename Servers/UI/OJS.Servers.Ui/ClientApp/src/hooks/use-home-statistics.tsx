@@ -4,7 +4,6 @@ import { IHaveChildrenProps } from '../components/common/Props';
 import { getHomeStatisticsUrl } from '../utils/urls';
 
 import { useHttp } from './use-http';
-import { useLoading } from './use-loading';
 
 interface IHomeStatisticsContext {
     state: {
@@ -29,8 +28,8 @@ interface IHomeStatistics {
 type IHomeStatisticsProviderProps = IHaveChildrenProps
 
 const HomeStatisticsProvider = ({ children }: IHomeStatisticsProviderProps) => {
+    const [ isLoading, setIsLoading ] = useState(false);
     const [ statistics, setStatistics ] = useState <IHomeStatistics | null>(null);
-    const { startLoading, stopLoading } = useLoading();
 
     const {
         get,
@@ -39,11 +38,11 @@ const HomeStatisticsProvider = ({ children }: IHomeStatisticsProviderProps) => {
 
     const load = useCallback(
         async () => {
-            await startLoading();
+            setIsLoading(true);
             await get();
-            await stopLoading();
+            setIsLoading(false);
         },
-        [ get, startLoading, stopLoading ],
+        [ get ],
     );
 
     useEffect(
@@ -55,10 +54,10 @@ const HomeStatisticsProvider = ({ children }: IHomeStatisticsProviderProps) => {
 
     const value = useMemo(
         () => ({
-            state: { statistics },
+            state: { statistics, isLoading },
             actions: { load },
         }),
-        [ load, statistics ],
+        [ load, statistics, isLoading ],
     );
 
     return (
