@@ -5,8 +5,9 @@
 }
 
 .contestItem {
-  flex: 0 0 20em;
-  width: 20em;
+  // flex: 0 0 21em;
+  // width: 20em;
+  // height: 13em;
 }
 
 .breadcrumbBtn {
@@ -34,5 +35,6 @@
 
 .contestsList {
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-evenly;
+  margin-left: 10px;
 }
