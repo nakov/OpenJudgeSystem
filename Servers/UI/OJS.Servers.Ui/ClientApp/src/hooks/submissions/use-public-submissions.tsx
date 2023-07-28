@@ -5,9 +5,12 @@ import isNil from 'lodash/isNil';
 import { IPagedResultType, IPublicSubmissionResponseModel } from '../../common/types';
 import { IGetPublicSubmissionsUrlParams } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
+import {
+    getPublicSubmissionsUrl,
+    getSubmissionsTotalCountUrl,
+} from '../../utils/urls';
 import { useHttp } from '../use-http';
 import { usePages } from '../use-pages';
-import { useUrls } from '../use-urls';
 
 enum PublicSubmissionState {
     Ready = 1,
@@ -39,7 +42,6 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         state: { currentPage },
         populatePageInformation,
     } = usePages();
-    const { getPublicSubmissionsUrl, getSubmissionsTotalCountUrl } = useUrls();
 
     const {
         get: getSubmissions,

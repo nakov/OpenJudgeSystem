@@ -3,9 +3,9 @@ import isNil from 'lodash/isNil';
 
 import { IContestStrategyFilter } from '../common/contest-types';
 import { IHaveChildrenProps } from '../components/common/Props';
+import { getAllContestStrategyFiltersUrl } from '../utils/urls';
 
 import { useHttp } from './use-http';
-import { useUrls } from './use-urls';
 
 interface IContestStrategyFiltersContext {
     state: {
@@ -25,7 +25,6 @@ const ContestStrategyFiltersContext = createContext<IContestStrategyFiltersConte
 
 const ContestStrategyFiltersProvider = ({ children }: IContestStrategyFiltersProviderProps) => {
     const [ strategies, setStrategies ] = useState(defaultState.state.strategies);
-    const { getAllContestStrategyFiltersUrl } = useUrls();
 
     const {
         get,

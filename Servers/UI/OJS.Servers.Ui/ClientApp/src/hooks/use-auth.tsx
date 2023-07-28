@@ -5,11 +5,15 @@ import isNil from 'lodash/isNil';
 import { HttpStatus } from '../common/common';
 import { IUserPermissionsType, IUserResponseType, IUserType } from '../common/types';
 import { IHaveChildrenProps } from '../components/common/Props';
+import {
+    getLoginSubmitUrl,
+    getLogoutUrl,
+    getUserAuthInfoUrl,
+} from '../utils/urls';
 
 import { useHttp } from './use-http';
 import { useLoading } from './use-loading';
 import { useNotifications } from './use-notifications';
-import { useUrls } from './use-urls';
 
 interface IAuthContext {
     state: {
@@ -56,8 +60,6 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
     const [ loginErrorMessage, setLoginErrorMessage ] = useState<string>('');
     const { showError } = useNotifications();
     const defaultLoginErrorMessage = useMemo(() => 'Invalid username or password', []);
-
-    const { getLogoutUrl, getLoginSubmitUrl, getUserAuthInfoUrl } = useUrls();
 
     const {
         post: loginSubmit,

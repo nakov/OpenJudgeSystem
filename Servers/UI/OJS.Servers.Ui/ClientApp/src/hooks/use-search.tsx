@@ -8,12 +8,12 @@ import { IContestSearchType, IProblemSearchType, IUserSearchType, SearchParams }
 import { IPagedResultType, ISearchResponseModel } from '../common/types';
 import { IGetSearchResultsUrlParams } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
+import { getSearchResults } from '../utils/urls';
 
 import { useUrlParams } from './common/use-url-params';
 import { IErrorDataType, useHttp } from './use-http';
 import { useLoading } from './use-loading';
 import { usePages } from './use-pages';
-import { useUrls } from './use-urls';
 
 interface ISearchContext {
     state: {
@@ -53,7 +53,6 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
     const [ getSearchResultsUrlParams, setGetSearchResultsUrlParams ] = useState<IGetSearchResultsUrlParams | null>();
     const [ isVisible, setIsVisible ] = useState<boolean>(defaultState.state.isVisible);
 
-    const { getSearchResults } = useUrls();
     const {
         state: { params },
         actions: { unsetParam },
