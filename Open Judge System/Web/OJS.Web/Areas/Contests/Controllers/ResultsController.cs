@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Data.Entity;
     using System.IO;
     using System.Linq;
     using System.Net;
@@ -353,8 +354,8 @@
 
             var maxResult = this.contestsData.GetMaxPointsById(contest.Id);
 
-            var participantsCount = contestResults.Results.Count();
             var resultsData = contestResults.Results.ToList();
+            var participantsCount = resultsData.Count;
 
             var statsModel = new ContestStatsViewModel
             {
@@ -477,44 +478,48 @@
                 Problems = contest.ProblemGroups
                     .SelectMany(pg => pg.Problems)
                     .AsQueryable()
+                    .AsNoTracking()
                     .Where(p => !p.IsDeleted)
                     .OrderBy(p => p.OrderBy)
                     .ThenBy(p => p.Name)
-                    .Select(ContestProblemListViewModel.FromProblem)
+                    .Select(ContestProblemListViewModel.FromProblem),
             };
 
             var participants = this.participantsData
-                .GetAllByContestAndIsOfficial(contest.Id, official);
+                .GetAllByContestAndIsOfficial(contest.Id, official)
+                .AsNoTracking();
 
-            if (!isFullResults)
-            {
-                var participantResults = participants
-                   .Select(ParticipantResultViewModel.FromParticipantAsSimpleResultByContest(contest.Id))
-                   .OrderByDescending(parRes => parRes.ProblemResults
-                       .Where(pr => pr.ShowResult)
-                       .Sum(pr => pr.BestSubmission.Points));
-
-                SetContestResults(contestResults, participantResults);
-            }
-            else
+            if (isFullResults)
             {
                 var participantFullResults = participants
-                     .Select(ParticipantResultViewModel.FromParticipantAsFullResultByContest(contest.Id))
-                     .OrderByDescending(parRes => parRes.ProblemResults
-                         .Sum(pr => pr.BestSubmission.Points));
+                    .Select(ParticipantResultViewModel.FromParticipantAsFullResultByContest(contest.Id))
+                    .ToList()
+                    .OrderByDescending(parRes => parRes.ProblemResults
+                        .Sum(pr => pr.BestSubmission.Points));
 
                 SetContestResults(contestResults, participantFullResults);
             }
-
-            if (isExportResults)
+            else if (isExportResults)
             {
                 var participantExportResults = participants
                      .Select(ParticipantResultViewModel.FromParticipantAsExportResultByContest(contest.Id))
+                     .ToList()
                      .OrderByDescending(parRes => parRes.ProblemResults
                          .Where(pr => pr.ShowResult && !pr.IsExcludedFromHomework)
                          .Sum(pr => pr.BestSubmission.Points));
 
                 SetContestResults(contestResults, participantExportResults);
+            }
+            else
+            {
+                var participantResults = participants
+                   .Select(ParticipantResultViewModel.FromParticipantAsSimpleResultByContest(contest.Id))
+                   .ToList()
+                   .OrderByDescending(parRes => parRes.ProblemResults
+                       .Where(pr => pr.ShowResult)
+                       .Sum(pr => pr.BestSubmission.Points));
+
+                SetContestResults(contestResults, participantResults);
             }
 
             return contestResults;
@@ -596,7 +601,7 @@
                 fileName);
         }
 
-        private static void SetContestResults(ContestResultsViewModel contestResults, IOrderedQueryable<ParticipantResultViewModel> participantResults)
+        private static void SetContestResults(ContestResultsViewModel contestResults, IOrderedEnumerable<ParticipantResultViewModel> participantResults)
         {
             contestResults.Results = participantResults
                             .ThenBy(parResult => parResult.ProblemResults
