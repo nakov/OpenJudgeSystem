@@ -2,10 +2,10 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Data.Entity;
     using System.IO;
     using System.Linq;
     using System.Net;
-    using System.Threading.Tasks;
     using System.Web;
     using System.Web.Caching;
     using System.Web.Mvc;
@@ -99,7 +99,7 @@
         /// <param name="page">The page on which to open the results table</param>
         /// <returns>Returns a view with the results of the contest.</returns>
         [Authorize]
-        public async Task<ActionResult> Simple(int id, bool official, int? page)
+        public ActionResult Simple(int id, bool official, int? page)
         {
             var contest = this.contestsData.GetByIdWithProblems(id);
 
@@ -133,7 +133,7 @@
                 resultsInPage = OfficialResultsPageSize;
             }
 
-            var contestResults = await this
+            var contestResults = this
                 .GetContestResults(contest, official, isUserAdminOrLecturerInContest, isFullResults: false)
                 .ToPagedResults(page.Value, resultsInPage);
 
@@ -141,7 +141,7 @@
         }
 
         [AjaxOnly]
-        public async Task<ActionResult> SimplePartial(
+        public ActionResult SimplePartial(
             int contestId,
             bool official,
             bool isUserAdminOrLecturerInContest,
@@ -165,7 +165,7 @@
                     throw new HttpException((int)HttpStatusCode.NotFound, Resource.Contest_not_found);
                 }
 
-                contestResults = await this
+                contestResults = this
                     .GetContestResults(contest, official, isUserAdminOrLecturerInContest, isFullResults: false)
                     .ToPagedResults(page, resultsInPage);
 
@@ -187,7 +187,7 @@
 
         // TODO: Unit test
         [Authorize]
-        public async Task<ActionResult> Full(int id, bool official, int? page)
+        public ActionResult Full(int id, bool official, int? page)
         {
             if (!this.CheckIfUserHasContestPermissions(id))
             {
@@ -203,7 +203,7 @@
                 throw new HttpException((int)HttpStatusCode.NotFound, Resource.Contest_not_found);
             }
 
-            var contestResults = await this
+            var contestResults = this
                 .GetContestResults(contest, official, isUserAdminOrLecturer: true, isFullResults: true)
                 .ToPagedResults(page.Value, NotOfficialResultsPageSize);
 
@@ -211,7 +211,7 @@
         }
 
         [AjaxOnly]
-        public async Task<ActionResult> FullPartial(
+        public ActionResult FullPartial(
             int contestId,
             bool official,
             int page,
@@ -224,7 +224,7 @@
                 throw new HttpException((int)HttpStatusCode.NotFound, Resource.Contest_not_found);
             }
 
-            var contestResults = await this
+            var contestResults = this
                 .GetContestResults(contest, official, isUserAdminOrLecturer: true, isFullResults: true)
                 .ToPagedResults(page, resultsInPage);
 
@@ -354,13 +354,12 @@
             var maxResult = this.contestsData.GetMaxPointsById(contest.Id);
 
             var participantsCount = contestResults.Results.Count();
-            var resultsData = contestResults.Results.ToList();
 
             var statsModel = new ContestStatsViewModel
             {
-                MinResultsCount = resultsData.Count(r => r.Total == 0),
-                MaxResultsCount = resultsData.Count(r => r.Total == maxResult),
-                AverageResult = (double)resultsData.Sum(r => r.Total) / participantsCount
+                MinResultsCount = contestResults.Results.Count(r => r.Total == 0),
+                MaxResultsCount = contestResults.Results.Count(r => r.Total == maxResult),
+                AverageResult = (double)contestResults.Results.Sum(r => r.Total) / participantsCount
             };
 
             statsModel.MinResultsPercent = (double)statsModel.MinResultsCount / participantsCount;
@@ -375,7 +374,7 @@
 
                 foreach (var problems in contestResults.Problems.GroupBy(p => p.ProblemGroupId))
                 {
-                    var maxResultsForProblemGroupCount = resultsData
+                    var maxResultsForProblemGroupCount = contestResults.Results
                         .Count(r => r.ProblemResults?
                             .Any(pr => problems
                                 .Any(p =>
@@ -386,21 +385,21 @@
                     var problemGroupName = string.Join("<br/>", problems.Select(p => p.Name));
 
                     AddStatsByProblem(problemGroupName, maxPointsForProblemGroup, maxResultsForProblemGroupCount);
-                    AddStatsByPointsRange(maxPointsForProblemGroup, resultsData);
+                    AddStatsByPointsRange(maxPointsForProblemGroup, contestResults.Results);
                 }
             }
             else
             {
                 foreach (var problem in contestResults.Problems)
                 {
-                    var maxResultForProblemCount = resultsData
+                    var maxResultForProblemCount = contestResults.Results
                         .Count(r => r.ProblemResults?
                             .Any(pr =>
                                 pr.ProblemId == problem.Id &&
                                 pr.BestSubmission.Points == problem.MaximumPoints) ?? false);
 
                     AddStatsByProblem(problem.Name, problem.MaximumPoints, maxResultForProblemCount);
-                    AddStatsByPointsRange(problem.MaximumPoints, resultsData);
+                    AddStatsByPointsRange(problem.MaximumPoints, contestResults.Results);
                 }
             }
 
@@ -477,44 +476,48 @@
                 Problems = contest.ProblemGroups
                     .SelectMany(pg => pg.Problems)
                     .AsQueryable()
+                    .AsNoTracking()
                     .Where(p => !p.IsDeleted)
                     .OrderBy(p => p.OrderBy)
                     .ThenBy(p => p.Name)
-                    .Select(ContestProblemListViewModel.FromProblem)
+                    .Select(ContestProblemListViewModel.FromProblem),
             };
 
             var participants = this.participantsData
-                .GetAllByContestAndIsOfficial(contest.Id, official);
+                .GetAllByContestAndIsOfficial(contest.Id, official)
+                .AsNoTracking();
 
-            if (!isFullResults)
-            {
-                var participantResults = participants
-                   .Select(ParticipantResultViewModel.FromParticipantAsSimpleResultByContest(contest.Id))
-                   .OrderByDescending(parRes => parRes.ProblemResults
-                       .Where(pr => pr.ShowResult)
-                       .Sum(pr => pr.BestSubmission.Points));
-
-                SetContestResults(contestResults, participantResults);
-            }
-            else
+            if (isFullResults)
             {
                 var participantFullResults = participants
-                     .Select(ParticipantResultViewModel.FromParticipantAsFullResultByContest(contest.Id))
-                     .OrderByDescending(parRes => parRes.ProblemResults
-                         .Sum(pr => pr.BestSubmission.Points));
+                    .Select(ParticipantResultViewModel.FromParticipantAsFullResultByContest(contest.Id))
+                    .ToList()
+                    .OrderByDescending(parRes => parRes.ProblemResults
+                        .Sum(pr => pr.BestSubmission.Points));
 
                 SetContestResults(contestResults, participantFullResults);
             }
-
-            if (isExportResults)
+            else if (isExportResults)
             {
                 var participantExportResults = participants
                      .Select(ParticipantResultViewModel.FromParticipantAsExportResultByContest(contest.Id))
+                     .ToList()
                      .OrderByDescending(parRes => parRes.ProblemResults
                          .Where(pr => pr.ShowResult && !pr.IsExcludedFromHomework)
                          .Sum(pr => pr.BestSubmission.Points));
 
                 SetContestResults(contestResults, participantExportResults);
+            }
+            else
+            {
+                var participantResults = participants
+                   .Select(ParticipantResultViewModel.FromParticipantAsSimpleResultByContest(contest.Id))
+                   .ToList()
+                   .OrderByDescending(parRes => parRes.ProblemResults
+                       .Where(pr => pr.ShowResult)
+                       .Sum(pr => pr.BestSubmission.Points));
+
+                SetContestResults(contestResults, participantResults);
             }
 
             return contestResults;
@@ -596,7 +599,7 @@
                 fileName);
         }
 
-        private static void SetContestResults(ContestResultsViewModel contestResults, IOrderedQueryable<ParticipantResultViewModel> participantResults)
+        private static void SetContestResults(ContestResultsViewModel contestResults, IOrderedEnumerable<ParticipantResultViewModel> participantResults)
         {
             contestResults.Results = participantResults
                             .ThenBy(parResult => parResult.ProblemResults
