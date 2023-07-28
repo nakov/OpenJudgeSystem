@@ -1,4 +1,5 @@
 @use 'src/styles/colors';
+@use 'src/styles/variables';
 
 .submissionRow {
   border-bottom: 1px solid colors.$bottom-border-color;
@@ -6,4 +7,24 @@
   &:last-of-type {
     border-bottom: 0;
   }
+}
+
+.privilegedButtonClassName {
+  background-color: colors.$white-color;
+  border: 0;
+  color: colors.$light-blue-color;
+  cursor: pointer;
+  font-size: variables.$f-size-24;
+  font-weight: 400;
+  line-height: 30px;
+  padding: 10px;
+
+  &:hover {
+    text-decoration-line: underline;
+  }
+}
+
+.active {
+  font-weight: bold;
+  text-decoration: underline;
 }
