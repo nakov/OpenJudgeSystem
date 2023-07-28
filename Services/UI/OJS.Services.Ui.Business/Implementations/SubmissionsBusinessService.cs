@@ -370,13 +370,13 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .First(st => st.SubmissionTypeId == model.SubmissionTypeId)
             .SubmissionType;
 
-        await this.submissionsForProcessingData.AddOrUpdateReprocessingBySubmission(newSubmission.Id);
-
         if (submissionType.ExecutionStrategyType != ExecutionStrategyType.NotFound &&
             submissionType.ExecutionStrategyType != ExecutionStrategyType.DoNothing)
         {
             await this.submissionsData.Add(newSubmission);
             await this.submissionsData.SaveChanges();
+
+            await this.submissionsForProcessingData.AddOrUpdateReprocessingBySubmission(newSubmission.Id);
 
             newSubmission.Problem = problem;
             newSubmission.SubmissionType = submissionType;

@@ -8,6 +8,7 @@ import { IHaveChildrenProps } from '../../components/common/Props';
 import {
     getPublicSubmissionsUrl,
     getSubmissionsTotalCountUrl,
+    getSubmissionsUnprocessedTotalCountUrl,
 } from '../../utils/urls';
 import { useHttp } from '../use-http';
 import { usePages } from '../use-pages';
@@ -21,10 +22,12 @@ enum PublicSubmissionState {
 interface IPublicSubmissionsContext {
     state: {
         totalSubmissionsCount: number;
+        totalUnprocessedSubmissionsCount: number;
         publicSubmissions: IPublicSubmissionResponseModel[];
     };
     actions : {
         loadTotalSubmissionsCount: () => Promise<void>;
+        loadTotalUnprocessedSubmissionsCount: () => Promise<void>;
         initiatePublicSubmissionsQuery: () => void;
     };
 }
@@ -63,6 +66,16 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         [ apiTotalSubmissionsCount ],
     );
 
+    const {
+        get: getTotalUnprocessedSubmissionsCount,
+        data: apiTotalUnprocessedSubmissionsCount,
+    } = useHttp({ url: getSubmissionsUnprocessedTotalCountUrl });
+
+    const totalUnprocessedSubmissionsCount = useMemo(
+        () => (apiTotalUnprocessedSubmissionsCount || 0) as number,
+        [ apiTotalUnprocessedSubmissionsCount ],
+    );
+
     const loadPublicSubmissions = useCallback(
         async () => {
             await getSubmissions();
@@ -75,6 +88,13 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
             await getTotalSubmissionsCount();
         },
         [ getTotalSubmissionsCount ],
+    );
+
+    const loadTotalUnprocessedSubmissionsCount = useCallback(
+        async () => {
+            await getTotalUnprocessedSubmissionsCount();
+        },
+        [ getTotalUnprocessedSubmissionsCount ],
     );
 
     const initiatePublicSubmissionsQuery = useCallback(
@@ -130,13 +150,16 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
             state: {
                 publicSubmissions,
                 totalSubmissionsCount,
+                totalUnprocessedSubmissionsCount,
             },
             actions: {
                 loadTotalSubmissionsCount,
+                loadTotalUnprocessedSubmissionsCount,
                 initiatePublicSubmissionsQuery,
             },
         }),
-        [ publicSubmissions, totalSubmissionsCount, loadTotalSubmissionsCount, initiatePublicSubmissionsQuery ],
+        [ publicSubmissions, totalSubmissionsCount, totalUnprocessedSubmissionsCount, loadTotalSubmissionsCount,
+            loadTotalUnprocessedSubmissionsCount, initiatePublicSubmissionsQuery ],
     );
 
     return (

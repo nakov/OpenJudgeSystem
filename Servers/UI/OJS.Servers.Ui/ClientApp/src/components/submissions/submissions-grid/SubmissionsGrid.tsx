@@ -20,7 +20,9 @@ const SubmissionsGrid = () => {
         state: {
             publicSubmissions,
             totalSubmissionsCount,
+            totalUnprocessedSubmissionsCount,
         },
+        actions: { initiatePublicSubmissionsQuery },
     } = usePublicSubmissions();
     const { state: { user } } = useAuth();
 
@@ -51,8 +53,8 @@ const SubmissionsGrid = () => {
 
     const handleShowSubmissionsInQueue = useCallback(
         () => {
-            if (!selectedActive) {
-                setSelectedActive(true);
+            if (selectedActive) {
+                setSelectedActive(false);
             }
         },
         [ selectedActive ],
@@ -60,11 +62,13 @@ const SubmissionsGrid = () => {
 
     const handlePublicSubmissions = useCallback(
         () => {
-            if (selectedActive) {
-                setSelectedActive(false);
+            if (!selectedActive) {
+                setSelectedActive(true);
+
+                initiatePublicSubmissionsQuery();
             }
         },
-        [ selectedActive ],
+        [ selectedActive, initiatePublicSubmissionsQuery ],
     );
 
     const { pagesCount } = pagesInfo;
@@ -76,30 +80,31 @@ const SubmissionsGrid = () => {
                     <>
                         <Heading type={HeadingType.secondary}>
                             Submissions in queue:
-                            0
+                            {' '}
+                            {totalUnprocessedSubmissionsCount}
                             {' '}
                             (
                             <Button
                               id={btnId}
-                              onClick={handleShowSubmissionsInQueue}
-                              type={ButtonType.submit}
+                              onClick={handlePublicSubmissions}
                               internalClassName={`${styles.privilegedButtonClassName} 
                               ${selectedActive
                                   ? `${styles.active}`
                                   : ''}
                              `}
-                              text="Show submissions in queue"
+                              text="Show all solutions"
                             />
                             /
                             <Button
                               id={btnId}
-                              onClick={handlePublicSubmissions}
+                              onClick={handleShowSubmissionsInQueue}
+                              type={ButtonType.submit}
                               internalClassName={`${styles.privilegedButtonClassName} 
                               ${!selectedActive
                                   ? `${styles.active}`
                                   : ''}
                              `}
-                              text="Show all solutions"
+                              text="Show submissions in queue"
                             />
                             )
                         </Heading>
@@ -114,7 +119,8 @@ const SubmissionsGrid = () => {
 
             return null;
         },
-        [ btnId, currentPage, handlePageChange, handlePublicSubmissions, handleShowSubmissionsInQueue, pagesCount, selectedActive, user ],
+        [ btnId, currentPage, handlePageChange, handlePublicSubmissions, handleShowSubmissionsInQueue, pagesCount,
+            selectedActive, totalUnprocessedSubmissionsCount, user ],
     );
 
     return (

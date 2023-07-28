@@ -1,34 +1,36 @@
-﻿namespace OJS.Services.Ui.Business.Implementations
+﻿namespace OJS.Services.Ui.Business.Implementations;
+
+using System.Linq;
+using System.Threading.Tasks;
+
+public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessingBusinessService
 {
-    using System.Linq;
-    using System.Threading.Tasks;
+    private readonly Data.ISubmissionsForProcessingDataService submissionsForProcessingData;
 
-    public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessingBusinessService
+    public SubmissionsForProcessingBusinessService(
+        Data.ISubmissionsForProcessingDataService submissionsForProcessingData) =>
+        this.submissionsForProcessingData = submissionsForProcessingData;
+
+    /// <summary>
+    /// Sets the Processing property to False for all submissions
+    /// thus ensuring that the worker will process them eventually instead
+    /// of getting stuck in perpetual "Processing..." state.
+    /// </summary>
+    public async Task ResetAllProcessingSubmissions()
     {
-        private readonly Data.ISubmissionsForProcessingDataService submissionsForProcessingData;
+        var allProcessingSubmissionIds = await this.submissionsForProcessingData.GetIdsOfAllProcessing();
 
-        public SubmissionsForProcessingBusinessService(
-            Data.ISubmissionsForProcessingDataService submissionsForProcessingData) =>
-            this.submissionsForProcessingData = submissionsForProcessingData;
-
-        /// <summary>
-        /// Sets the Processing property to False for all submissions
-        /// thus ensuring that the worker will process them eventually instead
-        /// of getting stuck in perpetual "Processing..." state.
-        /// </summary>
-        public async Task ResetAllProcessingSubmissions()
+        if (allProcessingSubmissionIds.Count() <= 0)
         {
-            var allProcessingSubmissionIds = await this.submissionsForProcessingData.GetIdsOfAllProcessing();
+            return;
+        }
 
-            if (allProcessingSubmissionIds.Count() <= 0)
-            {
-                return;
-            }
-
-            foreach (var submissionForProcessingId in allProcessingSubmissionIds)
-            {
-                await this.submissionsForProcessingData.ResetProcessingStatusById(submissionForProcessingId);
-            }
+        foreach (var submissionForProcessingId in allProcessingSubmissionIds)
+        {
+            await this.submissionsForProcessingData.ResetProcessingStatusById(submissionForProcessingId);
         }
     }
+
+    public Task<int> GetUnprocessedTotalCount()
+        => this.submissionsForProcessingData.GetAllUnprocessedCount();
 }

@@ -7,8 +7,7 @@ import {
     IDownloadSubmissionFileUrlParams,
     IGetContestByProblemUrlParams,
     IGetContestParticipationScoresForParticipantUrlParams,
-    IGetContestResultsParams, IGetPublicSubmissionsUrlParams,
-    IGetSearchResultsUrlParams,
+    IGetContestResultsParams, IGetPublicSubmissionsUrlParams, IGetSearchResultsUrlParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
     IRetestSubmissionUrlParams,
@@ -118,6 +117,7 @@ const getPublicSubmissionsUrl = ({ page }: IGetPublicSubmissionsUrlParams) => {
     return `${baseApiUrl}/Submissions/Public?${pageQuery}`;
 };
 const getSubmissionsTotalCountUrl = () => `${baseApiUrl}/Submissions/TotalCount`;
+const getSubmissionsUnprocessedTotalCountUrl = () => `${baseApiUrl}/Submissions/UnprocessedTotalCount`;
 const getSubmissionsDetailsUrl = () => `${baseApiUrl}/Submissions/Details`;
 const getSubmissionDetailsByIdUrl =
     ({ submissionId }: IGetSubmissionDetailsByIdUrlParams) => `${getSubmissionsDetailsUrl()}/${submissionId}`;
@@ -174,6 +174,7 @@ export {
     getSubmissionDetailsResultsUrl,
     getPublicSubmissionsUrl,
     getSubmissionsTotalCountUrl,
+    getSubmissionsUnprocessedTotalCountUrl,
     getSubmissionsDetailsUrl,
     getSubmissionDetailsByIdUrl,
     getSubmitUrl,

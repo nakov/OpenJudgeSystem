@@ -1,6 +1,5 @@
 ﻿namespace OJS.Servers.Ui.Controllers.Api;
 
-using OJS.Servers.Ui.Models.Submissions;
 using OJS.Servers.Ui.Models;
 using OJS.Servers.Ui.Models.Submissions.Details;
 using OJS.Servers.Ui.Models.Submissions.Results;
@@ -19,13 +18,16 @@ using static Microsoft.AspNetCore.Http.StatusCodes;
 public class SubmissionsController : BaseApiController
 {
     private readonly ISubmissionsBusinessService submissionsBusiness;
+    private readonly ISubmissionsForProcessingBusinessService submissionsForProcessingBusiness;
     private readonly ISubmissionCacheService submissionCache;
 
     public SubmissionsController(
         ISubmissionsBusinessService submissionsBusiness,
+        ISubmissionsForProcessingBusinessService submissionsForProcessingBusiness,
         ISubmissionCacheService submissionCache)
     {
         this.submissionsBusiness = submissionsBusiness;
+        this.submissionsForProcessingBusiness = submissionsForProcessingBusiness;
         this.submissionCache = submissionCache;
     }
 
@@ -149,5 +151,15 @@ public class SubmissionsController : BaseApiController
     public async Task<IActionResult> TotalCount()
         => await this.submissionCache
             .GetTotalCount()
+            .ToOkResult();
+
+    /// <summary>
+    /// Gets the count of all unprocessed submissions.
+    /// </summary>
+    [HttpGet]
+    [ProducesResponseType(typeof(int), Status200OK)]
+    public async Task<IActionResult> UnprocessedTotalCount()
+        => await this.submissionsForProcessingBusiness
+            .GetUnprocessedTotalCount()
             .ToOkResult();
 }
