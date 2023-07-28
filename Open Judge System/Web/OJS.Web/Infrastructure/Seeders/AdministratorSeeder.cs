@@ -20,7 +20,7 @@ namespace OJS.Web.Infrastructure.Seeders
 
         public void SeedData()
         {
-            if (this.userManager.Users.Any(x => x.UserName == GlobalConstants.AdministratorUserName))
+            if (this.userManager.Users.Any())
             {
                 return;
             }
