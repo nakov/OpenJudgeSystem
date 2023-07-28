@@ -6,6 +6,7 @@
     using System.IO;
     using System.Linq;
     using System.Net;
+    using System.Threading.Tasks;
     using System.Web;
     using System.Web.Caching;
     using System.Web.Mvc;
@@ -99,7 +100,7 @@
         /// <param name="page">The page on which to open the results table</param>
         /// <returns>Returns a view with the results of the contest.</returns>
         [Authorize]
-        public ActionResult Simple(int id, bool official, int? page)
+        public async Task<ActionResult> Simple(int id, bool official, int? page)
         {
             var contest = this.contestsData.GetByIdWithProblems(id);
 
@@ -133,7 +134,7 @@
                 resultsInPage = OfficialResultsPageSize;
             }
 
-            var contestResults = this
+            var contestResults = await this
                 .GetContestResults(contest, official, isUserAdminOrLecturerInContest, isFullResults: false)
                 .ToPagedResults(page.Value, resultsInPage);
 
@@ -141,7 +142,7 @@
         }
 
         [AjaxOnly]
-        public ActionResult SimplePartial(
+        public async Task<ActionResult> SimplePartial(
             int contestId,
             bool official,
             bool isUserAdminOrLecturerInContest,
@@ -165,7 +166,7 @@
                     throw new HttpException((int)HttpStatusCode.NotFound, Resource.Contest_not_found);
                 }
 
-                contestResults = this
+                contestResults = await this
                     .GetContestResults(contest, official, isUserAdminOrLecturerInContest, isFullResults: false)
                     .ToPagedResults(page, resultsInPage);
 
@@ -187,7 +188,7 @@
 
         // TODO: Unit test
         [Authorize]
-        public ActionResult Full(int id, bool official, int? page)
+        public async Task<ActionResult> Full(int id, bool official, int? page)
         {
             if (!this.CheckIfUserHasContestPermissions(id))
             {
@@ -203,7 +204,7 @@
                 throw new HttpException((int)HttpStatusCode.NotFound, Resource.Contest_not_found);
             }
 
-            var contestResults = this
+            var contestResults = await this
                 .GetContestResults(contest, official, isUserAdminOrLecturer: true, isFullResults: true)
                 .ToPagedResults(page.Value, NotOfficialResultsPageSize);
 
@@ -211,7 +212,7 @@
         }
 
         [AjaxOnly]
-        public ActionResult FullPartial(
+        public async Task<ActionResult> FullPartial(
             int contestId,
             bool official,
             int page,
@@ -224,7 +225,7 @@
                 throw new HttpException((int)HttpStatusCode.NotFound, Resource.Contest_not_found);
             }
 
-            var contestResults = this
+            var contestResults = await this
                 .GetContestResults(contest, official, isUserAdminOrLecturer: true, isFullResults: true)
                 .ToPagedResults(page, resultsInPage);
 
