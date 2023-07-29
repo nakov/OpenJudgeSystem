@@ -49,25 +49,24 @@ const ProblemResource = ({ resource }: IProblemResourceProps) => {
             </Button>
         )), [ handleDownloadResourceFile, resource ]);
 
-    const renderResourceIcon = useCallback(
-        () => {
-            const Icon = resourceTypeToIcon[resource.type] || null;
+    const getResourceLinkContent = useCallback(() => {
+        const Icon = resourceTypeToIcon[resource.type] || null;
 
-            if (isNil(Icon)) {
-                return null;
-            }
+        if (isNil(Icon)) {
+            return null;
+        }
 
-            return (<Icon size={IconSize.Medium} />);
-        },
-        [ resource.type ],
-    );
-
-    const getResourceLinkContent = useCallback(() => (
-        <div className={styles.resourceWrapper}>
-            {renderResourceIcon()}
-            <span>{resource.name}</span>
-        </div>
-    ), [ resource.name, renderResourceIcon ]);
+        return (
+            <div className={styles.iconAndNameContainer}>
+                <div className={styles.icon}>
+                    <Icon size={IconSize.Medium} />
+                </div>
+                <div>
+                    <span>{resource.name}</span>
+                </div>
+            </div>
+        );
+    }, [ resource.name, resource.type ]);
 
     return (
         <div className={styles.resourceWrapper}>
