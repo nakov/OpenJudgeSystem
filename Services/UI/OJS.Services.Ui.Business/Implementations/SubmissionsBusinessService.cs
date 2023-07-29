@@ -440,9 +440,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         if (user.IsAdminOrLecturer)
         {
-            var b = await this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
+            return await this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
                 DefaultSubmissionsPerPage, model.PageNumber);
-            return b;
         }
 
         var modelResult = new PagedResult<SubmissionForPublicSubmissionsServiceModel>();
@@ -451,6 +450,13 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             DefaultSubmissionsPerPage);
 
         return modelResult;
+    }
+
+    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetUnprocessedSubmissions(SubmissionForPublicSubmissionsServiceModel model)
+    {
+        var user = this.userProviderService.GetCurrentUser();
+
+        return await this.submissionsData.GetAllUnprocessedByUser<SubmissionForPublicSubmissionsServiceModel>(user, DefaultSubmissionsPerPage, model.PageNumber);
     }
 
     public Task<int> GetTotalCount()

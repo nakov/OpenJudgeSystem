@@ -32,6 +32,8 @@
 
         Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPublicSubmissions(SubmissionForPublicSubmissionsServiceModel model);
 
+        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetUnprocessedSubmissions(SubmissionForPublicSubmissionsServiceModel model);
+
         Task<int> GetTotalCount();
 
         SubmissionFileDownloadServiceModel GetSubmissionFile(int submissionId);

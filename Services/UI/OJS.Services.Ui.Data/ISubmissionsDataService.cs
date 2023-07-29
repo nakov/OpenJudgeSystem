@@ -1,6 +1,7 @@
 namespace OJS.Services.Ui.Data;
 
 using OJS.Data.Models.Submissions;
+using OJS.Services.Common.Models.Users;
 using OJS.Services.Common.Data;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,8 @@ public interface ISubmissionsDataService : IDataService<Submission>
     Task<IEnumerable<TServiceModel>> GetLatestSubmissions<TServiceModel>(int submissionsPerPage);
 
     Task<PagedResult<TServiceModel>> GetLatestSubmissions<TServiceModel>(int submissionsPerPage, int pageNumber);
+
+    Task<PagedResult<TServiceModel>> GetAllUnprocessedByUser<TServiceModel>(UserInfoModel user, int submissionsPerPage, int pageNumber);
 
     Task<int> GetTotalSubmissionsCount();
 

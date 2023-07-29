@@ -32,7 +32,7 @@ interface IPublicSubmissionResult {
     maxPoints: number;
 }
 
-interface IPublicSubmissionResponseModel {
+interface ISubmissionResponseModel {
     id: number;
     createdOn: Date;
     strategyName: string;
@@ -190,7 +190,7 @@ export type {
     IContestType,
     IProblemType,
     IProblemResourceType,
-    IPublicSubmissionResponseModel,
+    ISubmissionResponseModel,
     ISubmissionTypeType,
     IPagedResultType,
     IUserType,

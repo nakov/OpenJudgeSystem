@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Infrastructure.Extensions;
 using OJS.Common.Extensions;
 using OJS.Data.Models.Submissions;
+using OJS.Services.Common.Models.Users;
 using OJS.Services.Common.Data.Implementations;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
@@ -35,10 +36,31 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
 
     public async Task<PagedResult<TServiceModel>> GetLatestSubmissions<TServiceModel>(int submissionsPerPage, int pageNumber)
             => await this.GetQuery(
+                    filter: s => !s.IsDeleted,
                     orderBy: s => s.Id,
                     descending: true)
                 .MapCollection<TServiceModel>()
                 .ToPagedResultAsync(submissionsPerPage, pageNumber);
+
+    public async Task<PagedResult<TServiceModel>> GetAllUnprocessedByUser<TServiceModel>(
+        UserInfoModel user,
+        int submissionsPerPage,
+        int pageNumber)
+    {
+        var submissionsQuery = this.GetQuery(
+                filter: s => !s.Processed && !s.IsDeleted,
+                orderBy: s => s.Id,
+                descending: true);
+
+        if (user.IsLecturer)
+        {
+            submissionsQuery = submissionsQuery.Where(s => s.Participant!.UserId == user.Id);
+        }
+
+        return await submissionsQuery
+            .MapCollection<TServiceModel>()
+            .ToPagedResultAsync(submissionsPerPage, pageNumber);
+    }
 
     public async Task<int> GetTotalSubmissionsCount()
         => await this.DbSet

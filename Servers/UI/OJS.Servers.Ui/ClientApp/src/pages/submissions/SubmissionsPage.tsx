@@ -11,7 +11,6 @@ const SubmissionsPage = () => {
         actions: {
             loadTotalSubmissionsCount,
             loadTotalUnprocessedSubmissionsCount,
-            initiatePublicSubmissionsQuery,
         },
     } = usePublicSubmissions();
     const { state: { user } } = useAuth();
@@ -40,17 +39,6 @@ const SubmissionsPage = () => {
             })();
         },
         [ loadTotalUnprocessedSubmissionsCount, user.isInRole ],
-    );
-
-    useEffect(
-        () => {
-            if (totalSubmissionsCount === 0) {
-                return;
-            }
-
-            initiatePublicSubmissionsQuery();
-        },
-        [ initiatePublicSubmissionsQuery, totalSubmissionsCount ],
     );
 
     return (

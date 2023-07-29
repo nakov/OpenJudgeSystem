@@ -1,6 +1,6 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
-import { IPublicSubmissionResponseModel, usePublicSubmissions } from '../../../hooks/submissions/use-public-submissions';
+import { ISubmissionResponseModel, usePublicSubmissions } from '../../../hooks/submissions/use-public-submissions';
 import { useAuth } from '../../../hooks/use-auth';
 import { usePages } from '../../../hooks/use-pages';
 import generateId from '../../../utils/id-generator';
@@ -14,21 +14,26 @@ import SubmissionGridRow from '../submission-grid-row/SubmissionGridRow';
 import styles from './SubmissionsGrid.module.scss';
 
 const SubmissionsGrid = () => {
-    const [ selectedActive, setSelectedActive ] = useState<boolean>(true);
+    const selectedActive = useRef(true);
 
     const {
         state: {
             publicSubmissions,
+            unprocessedSubmissions,
             totalSubmissionsCount,
             totalUnprocessedSubmissionsCount,
         },
-        actions: { initiatePublicSubmissionsQuery },
+        actions: {
+            initiatePublicSubmissionsQuery,
+            initiateUnprocessedSubmissionsQuery,
+        },
     } = usePublicSubmissions();
     const { state: { user } } = useAuth();
 
     const {
         state: { currentPage, pagesInfo },
         changePage,
+        clearPageValue,
     } = usePages();
 
     const handlePageChange = useCallback(
@@ -37,7 +42,7 @@ const SubmissionsGrid = () => {
     );
 
     const renderSubmissionRow = useCallback(
-        (submission: IPublicSubmissionResponseModel) => (
+        (submission: ISubmissionResponseModel) => (
             <SubmissionGridRow submission={submission} />
         ),
         [],
@@ -53,22 +58,39 @@ const SubmissionsGrid = () => {
 
     const handleShowSubmissionsInQueue = useCallback(
         () => {
-            if (selectedActive) {
-                setSelectedActive(false);
+            if (selectedActive.current) {
+                selectedActive.current = false;
+
+                clearPageValue();
             }
         },
-        [ selectedActive ],
+        [ clearPageValue ],
     );
 
     const handlePublicSubmissions = useCallback(
         () => {
-            if (!selectedActive) {
-                setSelectedActive(true);
+            if (!selectedActive.current) {
+                clearPageValue();
 
-                initiatePublicSubmissionsQuery();
+                selectedActive.current = true;
             }
         },
-        [ selectedActive, initiatePublicSubmissionsQuery ],
+        [ clearPageValue ],
+    );
+
+    useEffect(
+        () => {
+            if (totalSubmissionsCount === 0) {
+                return;
+            }
+
+            if (selectedActive.current) {
+                initiatePublicSubmissionsQuery();
+            } else {
+                initiateUnprocessedSubmissionsQuery();
+            }
+        },
+        [ initiatePublicSubmissionsQuery, initiateUnprocessedSubmissionsQuery, totalSubmissionsCount ],
     );
 
     const { pagesCount } = pagesInfo;
@@ -88,7 +110,7 @@ const SubmissionsGrid = () => {
                               id={btnId}
                               onClick={handlePublicSubmissions}
                               internalClassName={`${styles.privilegedButtonClassName} 
-                              ${selectedActive
+                              ${selectedActive.current
                                   ? `${styles.active}`
                                   : ''}
                              `}
@@ -100,7 +122,7 @@ const SubmissionsGrid = () => {
                               onClick={handleShowSubmissionsInQueue}
                               type={ButtonType.submit}
                               internalClassName={`${styles.privilegedButtonClassName} 
-                              ${!selectedActive
+                              ${!selectedActive.current
                                   ? `${styles.active}`
                                   : ''}
                              `}
@@ -120,7 +142,25 @@ const SubmissionsGrid = () => {
             return null;
         },
         [ btnId, currentPage, handlePageChange, handlePublicSubmissions, handleShowSubmissionsInQueue, pagesCount,
-            selectedActive, totalUnprocessedSubmissionsCount, user ],
+            totalUnprocessedSubmissionsCount, user ],
+    );
+
+    const renderSubmissionsList = useCallback(
+        () => {
+            const submissions = selectedActive.current
+                ? publicSubmissions
+                : unprocessedSubmissions;
+
+            return (
+                <List
+                  values={submissions}
+                  itemFunc={renderSubmissionRow}
+                  itemClassName={styles.submissionRow}
+                  fullWidth
+                />
+            );
+        },
+        [ publicSubmissions, renderSubmissionRow, unprocessedSubmissions ],
     );
 
     return (
@@ -137,12 +177,7 @@ const SubmissionsGrid = () => {
                 total
             </Heading>
             {renderPrivilegedComponent()}
-            <List
-              values={publicSubmissions}
-              itemFunc={renderSubmissionRow}
-              itemClassName={styles.submissionRow}
-              fullWidth
-            />
+            {renderSubmissionsList()}
         </>
     );
 };
