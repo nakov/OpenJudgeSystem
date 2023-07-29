@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using OJS.Common;
 using OJS.Common.Helpers;
+using OJS.Data.Models.Contests;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
 using OJS.Services.Common.Models.Users;
@@ -20,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
+using OJS.Services.Ui.Models.Contests;
 
 using static Constants.PublicSubmissions;
 
@@ -41,6 +43,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmitSubmissionValidationService submitSubmissionValidationService;
     private readonly ISubmissionResultsValidationService submissionResultsValidationService;
     private readonly ISubmissionFileDownloadValidationService submissionFileDownloadValidationService;
+    private readonly IContestsDataService contestsDataService;
 
     public SubmissionsBusinessService(
         ISubmissionsDataService submissionsData,
@@ -57,7 +60,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ISubmitSubmissionValidationService submitSubmissionValidationService,
         ISubmissionResultsValidationService submissionResultsValidationService,
         ISubmissionFileDownloadValidationService submissionFileDownloadValidationService,
-        ISubmissionsForProcessingDataService submissionsForProcessingData)
+        ISubmissionsForProcessingDataService submissionsForProcessingData,
+        IContestsDataService contestsDataService)
     {
         this.submissionsData = submissionsData;
         this.usersBusiness = usersBusiness;
@@ -74,6 +78,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.submissionResultsValidationService = submissionResultsValidationService;
         this.submissionFileDownloadValidationService = submissionFileDownloadValidationService;
         this.submissionsForProcessingData = submissionsForProcessingData;
+        this.contestsDataService = contestsDataService;
     }
 
     public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
@@ -101,6 +106,26 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         if (!validationResult.IsValid)
         {
             throw new BusinessServiceException(validationResult.Message);
+        }
+
+        var contest = await this.contestsDataService.GetByProblemId<ContestServiceModel>(submissionDetailsServiceModel!.Problem.Id).Map<Contest>();
+        var userIsAdminOrLecturerInContest = currentUser.IsAdmin || IsUserLecturerInContest(contest, currentUser.Id!);
+        var showTestInputForAllTests = submissionDetailsServiceModel.Problem.ShowDetailedFeedback;
+        if (!userIsAdminOrLecturerInContest && !showTestInputForAllTests)
+        {
+            submissionDetailsServiceModel.TestRuns = submissionDetailsServiceModel.TestRuns.Select(tr =>
+            {
+                if (!tr.IsTrialTest)
+                {
+                    tr.ShowInput = false;
+                    tr.Input = string.Empty;
+                    tr.ExecutionComment = string.Empty;
+                    tr.ExpectedOutputFragment = string.Empty;
+                    tr.UserOutputFragment = string.Empty;
+                }
+
+                return tr;
+            });
         }
 
         return submissionDetailsServiceModel!;
@@ -461,6 +486,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
     public Task<int> GetTotalCount()
         => this.submissionsData.GetTotalSubmissionsCount();
+
+    private static bool IsUserLecturerInContest(Contest contest, string userId) =>
+        contest.LecturersInContests.Any(c => c.LecturerId == userId) ||
+        contest.Category!.LecturersInContestCategories.Any(cl => cl.LecturerId == userId);
 
     private static void CacheTestRuns(Submission submission)
     {
