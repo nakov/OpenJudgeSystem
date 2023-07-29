@@ -46,6 +46,7 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
     const [ publicSubmissions, setPublicSubmissions ] = useState<ISubmissionResponseModel[]>(defaultState.state.publicSubmissions);
     const [ unprocessedSubmissions, setUnprocessedSubmissions ] =
         useState<ISubmissionResponseModel[]>(defaultState.state.publicSubmissions);
+    const [ previousPage, setPreviousPage ] = useState(0);
 
     const {
         state: { currentPage },
@@ -122,16 +123,24 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
 
     const initiatePublicSubmissionsQuery = useCallback(
         () => {
+            if (currentPage === previousPage) {
+                return;
+            }
+
             setPublicSubmissionsUrlParams({ page: currentPage });
         },
-        [ currentPage ],
+        [ currentPage, previousPage ],
     );
 
     const initiateUnprocessedSubmissionsQuery = useCallback(
         () => {
+            if (currentPage === previousPage) {
+                return;
+            }
+
             setUnprocessedSubmissionsUrlParams({ page: currentPage });
         },
-        [ currentPage ],
+        [ currentPage, previousPage ],
     );
 
     useEffect(
@@ -155,6 +164,8 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
                 pagesCount,
                 totalItemsCount,
             };
+
+            setPreviousPage(pageNumber);
 
             setPublicSubmissions(newPublicSubmissionsData);
             populatePageInformation(newPagesInfo);
@@ -183,6 +194,8 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
                 pagesCount,
                 totalItemsCount,
             };
+
+            setPreviousPage(pageNumber);
 
             setUnprocessedSubmissions(newUnprocessedSubmissionsData);
             populatePageInformation(newPagesInfo);
