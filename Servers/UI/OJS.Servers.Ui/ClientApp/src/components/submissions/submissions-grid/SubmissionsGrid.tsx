@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ISubmissionResponseModel, usePublicSubmissions } from '../../../hooks/submissions/use-public-submissions';
 import { useAuth } from '../../../hooks/use-auth';
@@ -14,7 +14,7 @@ import SubmissionGridRow from '../submission-grid-row/SubmissionGridRow';
 import styles from './SubmissionsGrid.module.scss';
 
 const SubmissionsGrid = () => {
-    const selectedActive = useRef(true);
+    const [ selectedActive, setSelectedActive ] = useState<boolean>(true);
 
     const {
         state: {
@@ -28,6 +28,7 @@ const SubmissionsGrid = () => {
             initiateUnprocessedSubmissionsQuery,
         },
     } = usePublicSubmissions();
+
     const { state: { user } } = useAuth();
 
     const {
@@ -58,24 +59,24 @@ const SubmissionsGrid = () => {
 
     const handleShowSubmissionsInQueue = useCallback(
         () => {
-            if (selectedActive.current) {
-                selectedActive.current = false;
-
+            if (selectedActive) {
                 clearPageValue();
+
+                setSelectedActive(false);
             }
         },
-        [ clearPageValue ],
+        [ selectedActive, clearPageValue ],
     );
 
     const handlePublicSubmissions = useCallback(
         () => {
-            if (!selectedActive.current) {
+            if (!selectedActive) {
                 clearPageValue();
 
-                selectedActive.current = true;
+                setSelectedActive(true);
             }
         },
-        [ clearPageValue ],
+        [ clearPageValue, selectedActive ],
     );
 
     useEffect(
@@ -84,13 +85,24 @@ const SubmissionsGrid = () => {
                 return;
             }
 
-            if (selectedActive.current) {
+            if (selectedActive) {
                 initiatePublicSubmissionsQuery();
-            } else {
+            }
+        },
+        [ initiatePublicSubmissionsQuery, selectedActive, totalSubmissionsCount ],
+    );
+
+    useEffect(
+        () => {
+            if (totalSubmissionsCount === 0) {
+                return;
+            }
+
+            if (!selectedActive) {
                 initiateUnprocessedSubmissionsQuery();
             }
         },
-        [ initiatePublicSubmissionsQuery, initiateUnprocessedSubmissionsQuery, totalSubmissionsCount ],
+        [ initiateUnprocessedSubmissionsQuery, selectedActive, totalSubmissionsCount ],
     );
 
     const { pagesCount } = pagesInfo;
@@ -110,7 +122,7 @@ const SubmissionsGrid = () => {
                               id={btnId}
                               onClick={handlePublicSubmissions}
                               internalClassName={`${styles.privilegedButtonClassName} 
-                              ${selectedActive.current
+                              ${selectedActive
                                   ? `${styles.active}`
                                   : ''}
                              `}
@@ -122,7 +134,7 @@ const SubmissionsGrid = () => {
                               onClick={handleShowSubmissionsInQueue}
                               type={ButtonType.submit}
                               internalClassName={`${styles.privilegedButtonClassName} 
-                              ${!selectedActive.current
+                              ${!selectedActive
                                   ? `${styles.active}`
                                   : ''}
                              `}
@@ -141,13 +153,13 @@ const SubmissionsGrid = () => {
 
             return null;
         },
-        [ btnId, currentPage, handlePageChange, handlePublicSubmissions, handleShowSubmissionsInQueue, pagesCount,
-            totalUnprocessedSubmissionsCount, user ],
+        [ btnId, currentPage, handlePageChange, handlePublicSubmissions,
+            handleShowSubmissionsInQueue, pagesCount, selectedActive, totalUnprocessedSubmissionsCount, user ],
     );
 
     const renderSubmissionsList = useCallback(
         () => {
-            const submissions = selectedActive.current
+            const submissions = selectedActive
                 ? publicSubmissions
                 : unprocessedSubmissions;
 
@@ -160,7 +172,7 @@ const SubmissionsGrid = () => {
                 />
             );
         },
-        [ publicSubmissions, renderSubmissionRow, unprocessedSubmissions ],
+        [ publicSubmissions, renderSubmissionRow, selectedActive, unprocessedSubmissions ],
     );
 
     return (
