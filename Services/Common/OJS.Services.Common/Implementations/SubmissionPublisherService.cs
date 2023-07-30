@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace OJS.Services.Common.Implementations;
 
 using OJS.PubSub.Worker.Models.Submissions;
@@ -16,6 +18,11 @@ public class SubmissionPublisherService : ISubmissionPublisherService
     public Task Publish(Submission submission)
     {
         var pubSubModel = submission.Map<SubmissionForProcessingPubSubModel>();
+
+        pubSubModel.TestsExecutionDetails!.TaskSkeleton = submission.Problem!.SubmissionTypesInProblems
+            .Where(x => x.SubmissionTypeId == submission.SubmissionTypeId)
+            .Select(x => x.SolutionSkeleton)
+            .FirstOrDefault();
 
         return this.publisher.Publish(pubSubModel);
     }

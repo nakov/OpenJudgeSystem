@@ -27,6 +27,10 @@ namespace OJS.Servers.Ui.Models.Submissions.Details
 
         public bool IsTrialTest { get; set; }
 
+        public string? Input { get; set; }
+
         public double OrderBy { get; set; }
+
+        public bool ShowInput { get; set; }
     }
 }

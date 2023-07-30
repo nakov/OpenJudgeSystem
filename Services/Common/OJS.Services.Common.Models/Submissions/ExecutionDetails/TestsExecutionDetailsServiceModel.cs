@@ -27,22 +27,26 @@ namespace OJS.Services.Common.Models.Submissions.ExecutionDetails
             configuration.CreateMap<Problem, TestsExecutionDetailsServiceModel>()
                 .ForMember(
                     d => d.CheckerType,
-                    opt => opt.MapFrom(d => d.Checker!.ClassName))
+                    opt => opt.MapFrom(s => s.Checker!.ClassName))
                 .ForMember(
                     d => d.CheckerParameter,
-                    opt => opt.MapFrom(d => d.Checker!.Parameter))
+                    opt => opt.MapFrom(s => s.Checker!.Parameter))
                 .ForMember(
                     d => d.TaskSkeleton,
-                    opt => opt.MapFrom(d => d.SolutionSkeleton))
+                    opt => opt.MapFrom(s => s.SolutionSkeleton))
                 .ForMember(
                     d => d.MaxPoints,
-                    opt => opt.MapFrom(d => d.MaximumPoints))
+                    opt => opt.MapFrom(s => s.MaximumPoints))
                 .ForMember(
                     d => d.Tests,
-                    opt => opt.MapFrom(d => d.Tests))
+                    opt => opt.MapFrom(s => s.Tests))
+                // Ignoring as TaskSkeleton should be mapped based on selected submission type
+                .ForMember(
+                    d => d.TaskSkeleton,
+                    opt => opt.Ignore())
                 .ForMember(
                     d => d.TaskSkeletonAsString,
-                    opt => opt.MapFrom(d => d.SolutionSkeleton))
+                    opt => opt.Ignore())
                 .ForMember(
                     d => d.TaskId,
                     opt => opt.Ignore());

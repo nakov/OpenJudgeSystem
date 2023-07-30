@@ -19,3 +19,8 @@ jobs:
     with:
       docker_image_tag: ${{ inputs.docker_image_tag }}
     secrets: inherit
+  build-and-deploy-worker:
+    uses: ./.github/workflows/worker-prod-deploy.yml
+    with:
+      docker_image_tag: ${{ inputs.docker_image_tag }}
+    secrets: inherit

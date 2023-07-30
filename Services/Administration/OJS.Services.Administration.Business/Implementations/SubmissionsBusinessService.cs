@@ -188,29 +188,5 @@ namespace OJS.Services.Administration.Business.Implementations
 
             return bestScore?.SubmissionId == submissionId;
         }
-
-        // public async Task HardDeleteAllArchived() =>
-        //     (await this.archivedSubmissionsData
-        //         .GetAllUndeletedFromMainDatabase())
-        //         .Select(s => s.Id)
-        //         .AsEnumerable()
-        //         .ChunkBy(GlobalConstants.BatchOperationsChunkSize)
-        //         .ForEach(submissionIds =>
-        //             this.HardDeleteByArchivedIds(new HashSet<int>(submissionIds)));
-
-        // private Task HardDeleteByArchivedIds(ICollection<int> ids)
-        // {
-        //     using (var scope = TransactionsHelper.CreateTransactionScope(IsolationLevel.ReadCommitted))
-        //     {
-        //         this.participantScoresData.RemoveSubmissionIdsBySubmissionIds(ids);
-        //         this.submissionsData.Delete(s => ids.Contains(s.Id));
-        //
-        //         this.archivedSubmissionsData.SetToHardDeletedFromMainDatabaseByIds(ids);
-        //
-        //         scope.Complete();
-        //     }
-        //
-        //     return Task.CompletedTask;
-        // }
     }
 }

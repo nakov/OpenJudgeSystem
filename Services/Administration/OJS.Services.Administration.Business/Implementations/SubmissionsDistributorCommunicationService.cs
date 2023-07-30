@@ -1,6 +1,3 @@
-using OJS.Workers.Common.Extensions;
-using OJS.Workers.Common.Models;
-
 namespace OJS.Services.Administration.Business.Implementations
 {
     using System;
@@ -10,11 +7,13 @@ namespace OJS.Services.Administration.Business.Implementations
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Options;
     using OJS.Data.Models.Submissions;
+    using OJS.Services.Administration.Data;
     using OJS.Services.Common.Models;
     using OJS.Services.Common.Models.Configurations;
     using OJS.Services.Common.Models.Submissions;
     using OJS.Services.Infrastructure.HttpClients;
-    using OJS.Services.Ui.Data;
+    using OJS.Workers.Common.Extensions;
+    using OJS.Workers.Common.Models;
     using static OJS.Common.GlobalConstants.Urls;
 
     public class SubmissionsDistributorCommunicationService : ISubmissionsDistributorCommunicationService
@@ -59,7 +58,7 @@ namespace OJS.Services.Administration.Business.Implementations
         {
             var unprocessedSubmissionIds = await this.submissionsForProcessingData
                 .GetAllUnprocessed()
-                .Select(s => s.SubmissionId)
+                .Select(s => s!.SubmissionId)
                 .ToListAsync();
 
             if (!unprocessedSubmissionIds.Any())
@@ -99,14 +98,6 @@ namespace OJS.Services.Administration.Business.Implementations
         {
             var executionType = ExecutionType.TestsExecution.ToString().ToHyphenSeparatedWords();
 
-            // var executionStrategy = this.formatterServiceFactory
-            //     .Get<ExecutionStrategyType>()
-            //     ?.Format(submission.SubmissionType!.ExecutionStrategyType);
-
-            // var checkerType = this.formatterServiceFactory
-            //     .Get<string>()
-            //     ?.Format(submission.Problem!.Checker!.ClassName!);
-
             var (fileContent, code) = GetSubmissionContent(submission);
 
             var tests = submission.Problem!.Tests
@@ -134,7 +125,10 @@ namespace OJS.Services.Administration.Business.Implementations
                     CheckerType = submission.Problem.Checker!.ClassName,
                     CheckerParameter = submission.Problem.Checker?.Parameter,
                     Tests = tests,
-                    TaskSkeleton = submission.Problem.SolutionSkeleton,
+                    TaskSkeleton = submission.Problem?.SubmissionTypesInProblems
+                        .Where(x => x.SubmissionTypeId == submission.SubmissionTypeId)
+                        .Select(x => x.SolutionSkeleton)
+                        .FirstOrDefault(),
                 },
             };
 
