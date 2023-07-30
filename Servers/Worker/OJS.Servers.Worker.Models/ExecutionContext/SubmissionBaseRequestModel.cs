@@ -6,8 +6,6 @@ namespace OJS.Servers.Worker.Models.ExecutionContext
     using AutoMapper;
     using FluentExtensions.Extensions;
     using OJS.Servers.Worker.Models.ExecutionContext.ExecutionDetails;
-    using OJS.Services.Worker.Models.ExecutionContext;
-    using OJS.Services.Worker.Models.ExecutionContext.Mapping;
     using SoftUni.AutoMapper.Infrastructure.Models;
 
     public abstract class SubmissionBaseRequestModel<TSubmissionRequestModel, TExecutionDetails>

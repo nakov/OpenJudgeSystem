@@ -1,9 +1,9 @@
-namespace OJS.PubSub.Worker.Submissions;
-
 using AutoMapper;
 using OJS.Services.Common.Models.Submissions;
-using SoftUni.AutoMapper.Infrastructure.Models;
 using OJS.Workers.SubmissionProcessors.Models;
+using SoftUni.AutoMapper.Infrastructure.Models;
+
+namespace OJS.PubSub.Worker.Models.Submissions;
 
 public class ProcessedSubmissionPubSubModel : IMapExplicitly
 {
@@ -20,9 +20,9 @@ public class ProcessedSubmissionPubSubModel : IMapExplicitly
 
     public ExecutionResultServiceModel? ExecutionResult { get; set; }
 
-    public void SetExecutionResult(ExecutionResultServiceModel executionResultPubSubModel)
+    public void SetExecutionResult(ExecutionResultServiceModel executionResultModel)
     {
-        this.ExecutionResult = executionResultPubSubModel;
+        this.ExecutionResult = executionResultModel;
         this.Exception = null;
     }
 
@@ -37,5 +37,8 @@ public class ProcessedSubmissionPubSubModel : IMapExplicitly
             .ForMember(
                 d => d.ExecutionResult,
                 opt => opt.MapFrom(s => s.ExecutionResult))
+            .ForMember(
+                d => d.SubmissionId,
+                opt => opt.MapFrom(s => s.Id))
             .ReverseMap();
 }

@@ -2,9 +2,9 @@
 {
     public class OutputResultServiceModel
     {
-        public int TimeUsedInMs { get; set; }
+        public int TimeUsed { get; set; }
 
-        public int MemoryUsedInBytes { get; set; }
+        public int MemoryUsed { get; set; }
 
         public string ResultType { get; set; } = null!;
 

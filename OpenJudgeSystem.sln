@@ -114,7 +114,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Workers.SubmissionProce
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PubSub", "PubSub", "{CCACAFEF-FB33-4272-B398-DF3C3FB1A106}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.PubSub.Worker", "PubSub\OJS.PubSub.Worker\OJS.PubSub.Worker.csproj", "{0B863CB4-E9DB-4972-8354-643481C472F7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.PubSub.Worker.Models", "PubSub\OJS.PubSub.Worker.Models\OJS.PubSub.Worker.Models.csproj", "{0B863CB4-E9DB-4972-8354-643481C472F7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

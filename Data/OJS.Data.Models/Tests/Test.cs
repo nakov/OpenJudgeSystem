@@ -1,3 +1,7 @@
+using AutoMapper;
+using OJS.Workers.ExecutionStrategies.Models;
+using SoftUni.AutoMapper.Infrastructure.Models;
+
 namespace OJS.Data.Models.Tests
 {
     using FluentExtensions.Extensions;
@@ -7,7 +11,7 @@ namespace OJS.Data.Models.Tests
     using System.ComponentModel.DataAnnotations.Schema;
     using SoftUni.Data.Infrastructure.Models;
 
-    public class Test : Entity<int>, IOrderableEntity
+    public class Test : Entity<int>, IOrderableEntity, IMapExplicitly
     {
         public int ProblemId { get; set; }
 
@@ -48,5 +52,17 @@ namespace OJS.Data.Models.Tests
         public double OrderBy { get; set; }
 
         public virtual ICollection<TestRun> TestRuns { get; set; } = new HashSet<TestRun>();
+
+        public void RegisterMappings(IProfileExpression configuration)
+            => configuration.CreateMap<Test, TestContext>()
+                .ForMember(
+                    d => d.Input,
+                    opt => opt.MapFrom(d => d.InputDataAsString))
+                .ForMember(
+                    d => d.Output,
+                    opt => opt.MapFrom(d => d.OutputDataAsString))
+                .ForMember(
+                    d => d.OrderBy,
+                    opt => opt.MapFrom(d => (int)d.OrderBy));
     }
 }

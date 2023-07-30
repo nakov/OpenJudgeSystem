@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using OJS.Data.Models.Problems;
 using OJS.Services.Common.Models.Submissions.ExecutionContext.Mapping;
 using OJS.Workers.ExecutionStrategies.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
@@ -15,8 +16,6 @@ namespace OJS.Services.Common.Models.Submissions.ExecutionDetails
 
         public string? TaskId { get; set; }
 
-        public int? ExamParticipantId { get; set; }
-
         public string? CheckerType { get; set; }
 
         public string? CheckerParameter { get; set; }
@@ -24,7 +23,31 @@ namespace OJS.Services.Common.Models.Submissions.ExecutionDetails
         public IEnumerable<TestContext> Tests { get; set; } = Enumerable.Empty<TestContext>();
 
         public void RegisterMappings(IProfileExpression configuration)
-            => configuration
+        {
+            configuration.CreateMap<Problem, TestsExecutionDetailsServiceModel>()
+                .ForMember(
+                    d => d.CheckerType,
+                    opt => opt.MapFrom(d => d.Checker!.ClassName))
+                .ForMember(
+                    d => d.CheckerParameter,
+                    opt => opt.MapFrom(d => d.Checker!.Parameter))
+                .ForMember(
+                    d => d.TaskSkeleton,
+                    opt => opt.MapFrom(d => d.SolutionSkeleton))
+                .ForMember(
+                    d => d.MaxPoints,
+                    opt => opt.MapFrom(d => d.MaximumPoints))
+                .ForMember(
+                    d => d.Tests,
+                    opt => opt.MapFrom(d => d.Tests))
+                .ForMember(
+                    d => d.TaskSkeletonAsString,
+                    opt => opt.MapFrom(d => d.SolutionSkeleton))
+                .ForMember(
+                    d => d.TaskId,
+                    opt => opt.Ignore());
+
+            configuration
                 .CreateMap<TestsExecutionDetailsServiceModel, TestsInputModel>()
                 .ForMember(m => m.Tests, opt => opt.MapFrom(s => s.Tests))
                 .ForMember(
@@ -37,5 +60,6 @@ namespace OJS.Services.Common.Models.Submissions.ExecutionDetails
                     m => m.TaskSkeleton,
                     opt => opt.MapFrom<TaskSkeletonValueResolver<TestsExecutionDetailsServiceModel>>())
                 .ForAllOtherMembers(opt => opt.Ignore());
+        }
     }
 }

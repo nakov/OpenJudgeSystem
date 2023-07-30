@@ -1,5 +1,7 @@
-﻿using OJS.Services.Common.Models.Submissions.ExecutionContext;
+﻿using OJS.Services.Common.Models.Submissions;
+using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Workers.Common.Models;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
 
 namespace OJS.Services.Worker.Business.Implementations;
 
@@ -11,8 +13,6 @@ using OJS.Workers.ExecutionStrategies.Models;
 using OJS.Services.Worker.Business.Validation;
 using OJS.Services.Worker.Models.Configuration;
 using FluentExtensions.Extensions;
-using OJS.Services.Worker.Models.ExecutionResult;
-using OJS.Services.Worker.Models.ExecutionResult.Output;
 using OJS.Workers.ExecutionStrategies.Extensions;
 using AutoMapper;
 using Microsoft.Extensions.Options;
@@ -113,7 +113,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
     // This is done to assure no information can be extracted from the networks tab when returning hidden tests in the response
     private static void RemoveDetailsForHiddenTests(TaskResultServiceModel taskResult)
-        => Enumerable.Where<TestResult>(taskResult.TestResults, t => !t.IsTrialTest)
+        => Enumerable.Where<TestResult>(taskResult.TestResults.MapCollection<TestResult>(), t => !t.IsTrialTest)
             .ForEach(t => t.CheckerDetails = new CheckerDetails());
 
     private static void PreprocessSubmission(SubmissionServiceModel submission)
@@ -187,7 +187,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         if (submission.ExecutionOptions.KeepCheckerFragmentsForCorrectAnswers)
         {
             FillForCorrectAnswers(
-                Enumerable.ToList<TestResult>(executionResult.TaskResult!.TestResults),
+                Enumerable.ToList<TestResult>(executionResult.TaskResult!.TestResults.MapCollection<TestResult>()),
                 Enumerable.ToList<TestContext>(submission.TestsExecutionDetails.Tests));
         }
 

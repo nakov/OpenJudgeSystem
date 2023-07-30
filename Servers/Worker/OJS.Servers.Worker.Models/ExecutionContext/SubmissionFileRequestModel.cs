@@ -6,7 +6,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using OJS.Common.Extensions;
 using System.ComponentModel.DataAnnotations;
-using OJS.Services.Worker.Models.ExecutionContext;
 
 public class SubmissionFileRequestModel : SubmissionBaseRequestModel<SubmissionFileRequestModel, string>
 {

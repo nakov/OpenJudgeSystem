@@ -1,7 +1,8 @@
-﻿namespace OJS.Servers.Worker.Models.ExecutionResult.Output;
+﻿using OJS.Services.Common.Models.Submissions;
+
+namespace OJS.Servers.Worker.Models.ExecutionResult.Output;
 
 using AutoMapper;
-using OJS.Workers.ExecutionStrategies.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
 public class TestResultResponseModel : IMapExplicitly
@@ -22,7 +23,7 @@ public class TestResultResponseModel : IMapExplicitly
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration
-            .CreateMap<TestResult, TestResultResponseModel>()
+            .CreateMap<TestResultServiceModel, TestResultResponseModel>()
             .ForMember(
                 m => m.ResultType,
                 opt => opt.MapFrom(src => src.ResultType.ToString()))

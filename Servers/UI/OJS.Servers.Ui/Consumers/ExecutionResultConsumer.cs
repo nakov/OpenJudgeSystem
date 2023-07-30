@@ -1,8 +1,7 @@
 using MassTransit;
-using OJS.PubSub.Worker.Submissions;
+using OJS.PubSub.Worker.Models.Submissions;
 using OJS.Services.Common.Models.Submissions;
 using OJS.Services.Ui.Business;
-using OJS.Services.Ui.Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Threading.Tasks;
 
@@ -17,14 +16,7 @@ public class ExecutionResultConsumer : IConsumer<ProcessedSubmissionPubSubModel>
 
     public async Task Consume(ConsumeContext<ProcessedSubmissionPubSubModel> context)
     {
-        // var executionResult = context.Message.Map<SubmissionExecutionResult>();
-
-        var executionResult = new SubmissionExecutionResult
-        {
-            SubmissionId = context.Message.Id,
-            ExecutionResult = context.Message.ExecutionResult,
-            Exception = context.Message.Exception,
-        };
+        var executionResult = context.Message.Map<SubmissionExecutionResult>();
 
         await this.submissionsBusinessService.ProcessExecutionResult(executionResult);
     }

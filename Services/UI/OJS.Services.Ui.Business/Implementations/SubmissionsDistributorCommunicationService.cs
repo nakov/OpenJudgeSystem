@@ -1,6 +1,5 @@
 using OJS.Workers.Common.Extensions;
 using OJS.Workers.Common.Models;
-using OJS.Workers.SubmissionProcessors.Formatters;
 
 namespace OJS.Services.Ui.Business.Implementations
 {

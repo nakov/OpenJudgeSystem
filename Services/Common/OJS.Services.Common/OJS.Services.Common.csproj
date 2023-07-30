@@ -5,7 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\..\PubSub\OJS.PubSub.Worker\OJS.PubSub.Worker.csproj" />
+        <ProjectReference Include="..\..\..\PubSub\OJS.PubSub.Worker.Models\OJS.PubSub.Worker.Models.csproj" />
         <ProjectReference Include="..\..\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj" />
         <ProjectReference Include="..\..\Worker\OJS.Workers\OJS.Workers.SubmissionProcessors\OJS.Workers.SubmissionProcessors.csproj" />
         <ProjectReference Include="..\OJS.Services.Common.Data\OJS.Services.Common.Data.csproj" />

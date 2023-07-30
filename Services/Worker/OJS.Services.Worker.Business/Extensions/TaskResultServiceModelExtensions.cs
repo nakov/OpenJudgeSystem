@@ -1,7 +1,8 @@
 ﻿namespace OJS.Services.Worker.Business.Extensions;
 
+using OJS.Services.Common.Models.Submissions;
+using System;
 using OJS.Workers.Common.Models;
-using OJS.Services.Worker.Models.ExecutionResult.Output;
 using System.Linq;
 
 public static class TaskResultServiceModelExtensions
@@ -19,7 +20,7 @@ public static class TaskResultServiceModelExtensions
 
         if (testResults?.Count > 0)
         {
-            var correctAnswersCount = testResults.Count(x => x.ResultType == TestRunResultType.CorrectAnswer);
+            var correctAnswersCount = testResults.Count(x => Enum.Parse<TestRunResultType>(x.ResultType) == TestRunResultType.CorrectAnswer);
 
             var coefficient = (double)correctAnswersCount / testResults.Count;
 

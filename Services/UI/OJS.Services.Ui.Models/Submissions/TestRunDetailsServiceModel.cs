@@ -2,7 +2,7 @@
 using OJS.Data.Models.Tests;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
-namespace OJS.Services.Common.Models.Submissions
+namespace OJS.Services.Ui.Models.Submissions
 {
     public class TestRunDetailsServiceModel : IMapExplicitly
     {

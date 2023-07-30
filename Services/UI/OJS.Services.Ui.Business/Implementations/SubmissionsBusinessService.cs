@@ -472,23 +472,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             return;
         }
 
-        var testResults = executionResult
-                              .TaskResult
-                              ?.TestResults
-                          ?? Enumerable.Empty<TestResultServiceModel>();
+        var testResults =
+            executionResult.TaskResult?.TestResults ?? Enumerable.Empty<TestResultServiceModel>();
 
-        submission.TestRuns.AddRange(testResults.Select(testResult =>
-            new TestRun
-            {
-                CheckerComment = testResult.CheckerDetails.Comment,
-                ExpectedOutputFragment = testResult.CheckerDetails.ExpectedOutputFragment,
-                UserOutputFragment = testResult.CheckerDetails.UserOutputFragment,
-                ExecutionComment = testResult.ExecutionComment,
-                MemoryUsed = testResult.MemoryUsed,
-                ResultType = (TestRunResultType)Enum.Parse(typeof(TestRunResultType), testResult.ResultType),
-                TestId = testResult.Id,
-                TimeUsed = testResult.TimeUsed,
-            }));
+        submission.TestRuns.AddRange(
+            testResults.Select(testResult => testResult.Map<TestRun>()));
     }
 
     private async Task UpdateResults(Submission submission)

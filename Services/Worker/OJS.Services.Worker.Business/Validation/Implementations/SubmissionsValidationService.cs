@@ -7,7 +7,6 @@ namespace OJS.Services.Worker.Business.Validation.Implementations;
 using System.Linq;
 using System.Collections.Generic;
 using OJS.Workers.Common.Models;
-using OJS.Services.Common;
 using OJS.Services.Common.Models;
 using ValidationResult = OJS.Services.Common.Models.ValidationResult;
 using static ValidationConstants;

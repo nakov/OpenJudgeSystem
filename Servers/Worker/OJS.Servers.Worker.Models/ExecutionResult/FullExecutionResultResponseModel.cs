@@ -3,7 +3,6 @@
 namespace OJS.Servers.Worker.Models.ExecutionResult;
 
 using System;
-using OJS.Services.Common.Models;
 
 public class FullExecutionResultResponseModel
 {
