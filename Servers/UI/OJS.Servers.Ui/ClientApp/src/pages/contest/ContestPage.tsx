@@ -8,11 +8,13 @@ import { isParticipationTypeValid } from '../../common/contest-helpers';
 import Contest from '../../components/contests/contest/Contest';
 import ContestPasswordForm from '../../components/contests/contest-password-form/ContestPasswordForm';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
+import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import ContestModal from '../../components/modal/ContestModal';
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
 import { useAuth } from '../../hooks/use-auth';
 import { useCurrentContest } from '../../hooks/use-current-contest';
 import { useModal } from '../../hooks/use-modal';
+import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 
@@ -33,8 +35,9 @@ const ContestPage = () => {
             isPasswordValid,
             contestError,
             isRegisterForContestSuccessful,
-            contest,
+            contestIsLoading,
             isUserParticipant,
+            contest,
         },
         actions: {
             registerParticipant,
@@ -110,8 +113,12 @@ const ContestPage = () => {
 
     const renderContestPage = useCallback(
         () => isNil(contestError)
-            ? isNil(contest)
-                ? <div>Loading data</div>
+            ? contestIsLoading
+                ? (
+                    <div style={{ ...flexCenterObjectStyles }}>
+                        <SpinningLoader />
+                    </div>
+                )
                 : isParticipationOfficial && contest?.isOnline && !isUserAdmin
                     ? isUserParticipant
                         ? <Contest />
@@ -121,13 +128,14 @@ const ContestPage = () => {
         [
             contestError,
             renderErrorMessage,
-            contest,
+            contestIsLoading,
             isUserParticipant,
             isParticipationOfficial,
             modalContest,
             toggle,
             isShowing,
             isUserAdmin,
+            contest?.isOnline,
         ],
     );
 

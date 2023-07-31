@@ -13,7 +13,6 @@ import {
     getSubmissionFileDownloadUrl,
 } from '../../utils/urls';
 import { IErrorDataType, useHttp } from '../use-http';
-import { useLoading } from '../use-loading';
 
 import {
     ISubmissionDetails,
@@ -51,7 +50,7 @@ const SubmissionsDetailsContext = createContext<ISubmissionsDetailsContext>(defa
 type ISubmissionsDetailsProviderProps = IHaveChildrenProps
 
 const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderProps) => {
-    const { startLoading, stopLoading } = useLoading();
+    const [ isLoading, setIsLoading ] = useState(false);
     const [ currentSubmissionId, selectSubmissionById ] = useState<number | null>();
     const [ validationErrors, setValidationErrors ] = useState<IErrorDataType[]>(defaultState.state.validationErrors);
     const [
@@ -145,13 +144,13 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         }
 
         (async () => {
-            startLoading();
+            setIsLoading(true);
             await downloadSubmissionFile(FileType.Blob);
-            stopLoading();
+            setIsLoading(false);
         })();
 
         setProblemSubmissionFileIdToDownload(null);
-    }, [ problemSubmissionFileIdToDownload, downloadSubmissionFile, startLoading, stopLoading ]);
+    }, [ problemSubmissionFileIdToDownload, downloadSubmissionFile ]);
 
     useEffect(
         () => {
@@ -160,13 +159,13 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             }
 
             (async () => {
-                startLoading();
+                setIsLoading(true);
                 await getSubmissionDetailsResultsRequest();
                 setSubmissionDetailsResultsUrlParams(null);
-                stopLoading();
+                setIsLoading(false);
             })();
         },
-        [ getSubmissionDetailsResultsRequest, startLoading, stopLoading, submissionDetailsResultsUrlParams ],
+        [ getSubmissionDetailsResultsRequest, submissionDetailsResultsUrlParams ],
     );
 
     useEffect(
@@ -192,12 +191,12 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             }
 
             (async () => {
-                startLoading();
+                setIsLoading(true);
                 await getSubmissionDetails();
-                stopLoading();
+                setIsLoading(false);
             })();
         },
-        [ getSubmissionDetails, getSubmissionDetailsByIdParams, startLoading, stopLoading ],
+        [ getSubmissionDetails, getSubmissionDetailsByIdParams ],
     );
 
     const getDetails = useCallback(
@@ -247,6 +246,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
                 currentSubmissionDetailsResults,
                 validationErrors,
                 downloadErrorMessage,
+                isLoading,
             },
             actions: {
                 selectSubmissionById,
@@ -267,6 +267,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             downloadErrorMessage,
             setDownloadErrorMessage,
             setCurrentSubmission,
+            isLoading,
         ],
     );
 
