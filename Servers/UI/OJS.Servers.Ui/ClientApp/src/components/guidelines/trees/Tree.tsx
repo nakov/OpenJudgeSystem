@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import TreeItem from '@material-ui/lab/TreeItem';
 import TreeView from '@material-ui/lab/TreeView';
 import isArray from 'lodash/isArray';
@@ -21,22 +22,61 @@ interface ITreeProps {
     defaultExpanded?: string[];
     itemFunc?: (item: ITreeItemType) => React.ReactElement;
     treeItemHasTooltip?: boolean;
-
 }
 
-const Tree = ({
+const Tree = forwardRef(({
     items,
     onSelect,
     defaultSelected = '',
     defaultExpanded = [],
     itemFunc,
     treeItemHasTooltip = false,
-}: ITreeProps) => {
+}: ITreeProps, ref: any) => {
+    const { search } = useLocation();
     const [ expandedIds, setExpandedIds ] = useState([] as string[]);
     const [ selectedId, setSelectedId ] = useState('');
     const [ selectedFromUrl, setSelectedFromUrl ] = useState(true);
-    const { state: { selectedBreadcrumbCategoryId }, actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
+    const { state: { selectedBreadcrumbCategoryId }, actions: { updateBreadcrumb, clearBreadcrumb } } = useCategoriesBreadcrumbs();
     const { state: { categoriesFlat } } = useContestCategories();
+
+    useImperativeHandle(ref, () => ({
+        clearTreeIds() {
+            setExpandedIds([]);
+        },
+    }));
+
+    useEffect(() => {
+        if (!search) {
+            setExpandedIds([]);
+            clearBreadcrumb();
+        }
+    }, [ search, clearBreadcrumb ]);
+
+    useEffect(() => {
+        setExpandedIds([]);
+        clearBreadcrumb();
+    }, [ clearBreadcrumb ]);
+
+    useEffect(
+        () => {
+            if (isEmpty(selectedId) && selectedFromUrl) {
+                setSelectedId(defaultSelected);
+
+                const category = categoriesFlat.find(({ id }) => id.toString() === defaultSelected) as ITreeItemType;
+                updateBreadcrumb(category, categoriesFlat);
+            }
+        },
+        [ defaultSelected, selectedFromUrl, selectedId, updateBreadcrumb, categoriesFlat ],
+    );
+
+    useEffect(
+        () => {
+            if (isEmpty(expandedIds) && selectedFromUrl) {
+                setExpandedIds(defaultExpanded);
+            }
+        },
+        [ defaultExpanded, expandedIds, selectedFromUrl ],
+    );
 
     const handleTreeItemClick = useCallback(
         (node: ITreeItemType) => {
@@ -92,27 +132,6 @@ const Tree = ({
         [ defaultItemFunc, itemFunc ],
     );
 
-    useEffect(
-        () => {
-            if (isEmpty(selectedId) && selectedFromUrl) {
-                setSelectedId(defaultSelected);
-
-                const category = categoriesFlat.find(({ id }) => id.toString() === defaultSelected) as ITreeItemType;
-                updateBreadcrumb(category, categoriesFlat);
-            }
-        },
-        [ defaultSelected, selectedFromUrl, selectedId, updateBreadcrumb, categoriesFlat ],
-    );
-
-    useEffect(
-        () => {
-            if (isEmpty(expandedIds) && selectedFromUrl) {
-                setExpandedIds(defaultExpanded);
-            }
-        },
-        [ defaultExpanded, expandedIds, selectedFromUrl ],
-    );
-
     const renderTreeView = useCallback(
         (treeItems: ITreeItemType[]) => treeItems.map((c) => itemFuncInternal(c)),
         [ itemFuncInternal ],
@@ -140,7 +159,7 @@ const Tree = ({
     );
 
     return renderTree();
-};
+});
 
 export default Tree;
 
