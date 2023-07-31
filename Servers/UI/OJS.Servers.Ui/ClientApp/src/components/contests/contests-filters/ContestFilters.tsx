@@ -9,6 +9,7 @@ import { useContestCategories } from '../../../hooks/use-contest-categories';
 import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
 import { useContestStrategyFilters } from '../../../hooks/use-contest-strategy-filters';
 import { useContests } from '../../../hooks/use-contests';
+import { usePages } from '../../../hooks/use-pages';
 import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 import List from '../../guidelines/lists/List';
 import ContestCategories from '../contest-categories/ContestCategories';
@@ -30,6 +31,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const [ filtersGroups, setFiltersGroups ] = useState<IFiltersGroup[]>([]);
     const [ defaultSelected, setDefaultSelected ] = useState('');
     const [ filteredStrategyFilters, setFilteredStrategyFilters ] = useState<IFilter[]>([]);
+    const [ isClearFiltersButtonClicked, setIsClearFiltersButtonClicked ] = useState(false);
     const [ searchParams ] = useSearchParams();
     const [ isLoaded, setIsLoaded ] = useState(false);
     const {
@@ -51,6 +53,8 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     } = useContests();
 
     const { actions: { clearBreadcrumb } } = useCategoriesBreadcrumbs();
+
+    const { clearPageValue } = usePages();
 
     // const handleSortClick = useCallback(
     //     (sorting: ISort) => toggleParam(sorting),
@@ -152,20 +156,22 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         [ isLoadedStrategies, loadCategories ],
     );
 
-    const clearFiltersAndBreadcrumbAndSorting = useCallback(
+    const clearFiltersAndBreadcrumbAndSortingAndPages = useCallback(
         () => {
             clearFilters();
             clearBreadcrumb();
             clearSorts();
+            clearPageValue();
+            setIsClearFiltersButtonClicked(!isClearFiltersButtonClicked);
         },
-        [ clearFilters, clearBreadcrumb, clearSorts ],
+        [ clearFilters, clearBreadcrumb, clearSorts, clearPageValue, isClearFiltersButtonClicked ],
     );
 
     return (
         <div className={styles.container}>
             <Button
               type={ButtonType.secondary}
-              onClick={() => clearFiltersAndBreadcrumbAndSorting()}
+              onClick={() => clearFiltersAndBreadcrumbAndSortingAndPages()}
               className={styles.button}
               text="clear filters"
               size={ButtonSize.small}
@@ -175,6 +181,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
               onCategoryClick={onFilterClick}
               defaultSelected={defaultSelected}
               setStrategyFilters={setFilteredStrategyFilters}
+              isClearFiltersButtonClicked={isClearFiltersButtonClicked}
             />
             {/* Commented out because displaying sorting menu to
             the user is no longer a wanted feature

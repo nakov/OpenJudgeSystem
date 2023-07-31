@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -19,6 +19,7 @@ interface IContestCategoriesProps extends IHaveOptionalClassName {
     onCategoryClick: (filter: IFilter) => void;
     defaultSelected: string;
     setStrategyFilters: Dispatch<SetStateAction<IFilter[]>>;
+    isClearFiltersButtonClicked: boolean;
 }
 
 interface IFilterProps {
@@ -37,6 +38,7 @@ const ContestCategories = ({
     onCategoryClick,
     defaultSelected,
     setStrategyFilters,
+    isClearFiltersButtonClicked,
 }: IContestCategoriesProps) => {
     const { state: { categories, categoriesFlat } } = useContestCategories();
     const { state: { possibleFilters } } = useContests();
@@ -45,6 +47,13 @@ const ContestCategories = ({
     const [ openedCategoryFilter, setOpenedCategoryFilter ] = useState(defaultState.state.openedCategoryFilter);
     const [ currentCategoryId, selectCurrentCategoryId ] = useState<string>('');
     const [ prevCategoryId, setPrevCategoryId ] = useState<string>('');
+    const ref = useRef<any>();
+
+    useEffect(() => {
+        if (ref.current) {
+            ref.current.clearTreeIds();
+        }
+    }, [ isClearFiltersButtonClicked ]);
 
     const getCategoryByValue = useCallback(
         (searchedValue?: string) => {
@@ -261,6 +270,7 @@ const ContestCategories = ({
               defaultSelected={getCategoryById(defaultSelected)}
               defaultExpanded={defaultExpanded}
               treeItemHasTooltip
+              ref={ref}
             />
         </div>
     );
