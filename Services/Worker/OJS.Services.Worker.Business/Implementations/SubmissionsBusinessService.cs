@@ -117,14 +117,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
     private static void PreprocessSubmission(SubmissionServiceModel submission)
     {
-        // switch (submission.ExecutionType)
-        // {
-        //     case ExecutionType.SimpleTemplateExecution:
-        //     case ExecutionType.TestsTemplateExecution:
-        //         submission.Code = this.executionContextBuilder.BuildCodeFromTemplate(submission);
-        //         break;
-        // }
-
         if (submission.TestsExecutionDetails != null && submission.ExecutionOptions.EscapeTests)
         {
             submission.TestsExecutionDetails.Tests = submission.TestsExecutionDetails.Tests

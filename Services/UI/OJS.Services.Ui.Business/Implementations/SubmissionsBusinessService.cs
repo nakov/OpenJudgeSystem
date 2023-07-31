@@ -402,7 +402,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             newSubmission.Problem = problem;
             newSubmission.SubmissionType = submissionType;
 
-            // await this.submissionsDistributorCommunicationService.AddSubmissionForProcessing(newSubmission);
             await this.submissionPublisher.Publish(newSubmission);
         }
         else

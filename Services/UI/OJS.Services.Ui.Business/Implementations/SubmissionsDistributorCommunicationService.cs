@@ -98,14 +98,6 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var executionType = ExecutionType.TestsExecution.ToString().ToHyphenSeparatedWords();
 
-            // var executionStrategy = this.formatterServiceFactory
-            //     .Get<ExecutionStrategyType>()
-            //     ?.Format(submission.SubmissionType!.ExecutionStrategyType);
-
-            // var checkerType = this.formatterServiceFactory
-            //     .Get<string>()
-            //     ?.Format(submission.Problem!.Checker!.ClassName!);
-
             var (fileContent, code) = GetSubmissionContent(submission);
 
             var tests = submission.Problem!.Tests
