@@ -18,6 +18,7 @@ services:
       - Docker/applications/ui/ui.env
     extra_hosts:
       - "db:host-gateway"
+      - "mq:host-gateway"
       - "localhost:host-gateway"
       - "redis:host-gateway"
   administration:
@@ -37,6 +38,7 @@ services:
       - Docker/applications/administration/administration.env
     extra_hosts:
       - "db:host-gateway"
+      - "mq:host-gateway"
       - "localhost:host-gateway"
   worker:
     build:
@@ -55,7 +57,8 @@ services:
       - /tmp/ExecutionStrategies:/tmp/ExecutionStrategies
       - /var/run/docker.sock:/var/run/docker.sock
     extra_hosts:
-      - "localhost:192.168.0.105"
+      - "mq:host-gateway"
+      - "localhost:host-gateway"
       - "host.docker.internal:host-gateway"
   mq:
     image: rabbitmq:3.12-management
