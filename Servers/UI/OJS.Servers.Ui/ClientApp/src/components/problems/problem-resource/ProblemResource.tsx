@@ -52,14 +52,10 @@ const ProblemResource = ({ resource }: IProblemResourceProps) => {
     const getResourceLinkContent = useCallback(() => {
         const Icon = resourceTypeToIcon[resource.type] || null;
 
-        if (isNil(Icon)) {
-            return null;
-        }
-
         return (
             <div className={styles.iconAndNameContainer}>
                 <div className={styles.icon}>
-                    <Icon size={IconSize.Medium} />
+                    {Icon && <Icon size={IconSize.Medium} />}
                 </div>
                 <div>
                     <span>{resource.name}</span>
