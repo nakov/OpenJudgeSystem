@@ -7,7 +7,7 @@ using System.Linq;
 
 public static class TaskResultServiceModelExtensions
 {
-    public static void CalculatePoints(this TaskResultServiceModel taskResult, int taskMaxPoints)
+    public static void CalculatePoints(this TaskResultServiceModel? taskResult, int taskMaxPoints)
     {
         if (taskResult == null)
         {
