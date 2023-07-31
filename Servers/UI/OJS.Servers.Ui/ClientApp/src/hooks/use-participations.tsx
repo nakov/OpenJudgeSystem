@@ -2,10 +2,10 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import isNil from 'lodash/isNil';
 
 import { IHaveChildrenProps } from '../components/common/Props';
+import { getParticipationsForProfileUrl } from '../utils/urls';
 
 import { useHttp } from './use-http';
 import { useLoading } from './use-loading';
-import { useUrls } from './use-urls';
 
 interface IParticipationType {
     id: number;
@@ -35,7 +35,6 @@ const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
     const [ areUserParticipationsRetrieved, setAreUserParticipationsRetrieved ] = useState<boolean>(false);
     const [ userParticipations, setUserParticipations ] = useState<IParticipationType[]>([]);
 
-    const { getParticipationsForProfileUrl } = useUrls();
     const {
         get: getParticipationsForProfile,
         data: apiParticipationsForProfile,

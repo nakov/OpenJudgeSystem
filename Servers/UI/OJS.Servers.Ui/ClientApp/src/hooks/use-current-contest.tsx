@@ -14,11 +14,16 @@ import {
     ISubmitContestPasswordUrlParams,
 } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
+import {
+    getContestParticipantScoresForParticipantUrl,
+    getRegisterForContestUrl,
+    getStartContestParticipationUrl,
+    getSubmitContestPasswordUrl,
+} from '../utils/urls';
 
 import { useAuth } from './use-auth';
 import { IErrorDataType, useHttp } from './use-http';
 import { useLoading } from './use-loading';
-import { useUrls } from './use-urls';
 
 interface IStartContestArgs {
     id: number;
@@ -129,13 +134,6 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         startLoading,
         stopLoading,
     } = useLoading();
-
-    const {
-        getStartContestParticipationUrl,
-        getContestParticipantScoresForParticipantUrl,
-        getRegisterForContestUrl,
-        getSubmitContestPasswordUrl,
-    } = useUrls();
 
     const {
         get: startContest,
