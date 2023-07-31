@@ -22,6 +22,7 @@
     using OJS.Services.Business.Submissions.ArchivedSubmissions;
     using OJS.Services.Common.BackgroundJobs;
     using OJS.Services.Common.HttpRequester;
+    using OJS.Services.Common.HttpRequester.Models;
     using OJS.Services.Common.HttpRequester.Models.Users;
     using OJS.Services.Data.Contests;
     using OJS.Services.Data.Participants;
@@ -314,7 +315,7 @@
                 foreach (var skeleton in skeletons)
                 {
                     var skeletonAsString = skeleton.SolutionSkeleton.Decompress();
-                    
+
                     if (!string.IsNullOrWhiteSpace(skeletonAsString))
                     {
                         if (MySqlStrategiesHelper.TryOptimizeQuery(skeletonAsString, out var newSkeleton))
@@ -349,7 +350,7 @@
 
         public ActionResult RemoveUnusedSubmissionTypes()
         {
-            var submissionTypesToRemove = new Dictionary<int, string>()
+            var submissionTypesToRemove = new Dictionary<int, string>
             {
                 // PhpProjectWithDbExecutionStrategy
                 { 38, "PHP Project with DB" },
@@ -440,7 +441,122 @@
             {
                 return this.Content($"Something failed, {ex.Message}");
             }
+        }
 
+        public async Task<ActionResult> MigrateContestCategoryFromRemoteJudge(string id)
+        {
+            try
+            {
+                var contestCategoryResponse = await this.FetchContestCategory(int.Parse(id));
+
+                var checkers = this.Data.Checkers.All().ToList();
+                var submissionTypes = this.Data.SubmissionTypes.All().ToList();
+
+                await this.LoadContestCategoryAndAssignCheckerAndSubmissionTypes(contestCategoryResponse.Data, checkers, submissionTypes);
+
+                using (var scope = TransactionsHelper.CreateTransactionScope())
+                {
+                    this.Data.ContestCategories.Add(contestCategoryResponse.Data);
+                    this.Data.SaveChanges();
+                    scope.Complete();
+                    return this.Content($"The contest category is added!");
+                }
+            }
+            catch (Exception e)
+            {
+                return this.Content(
+                    $"Contest categories can't be migrated and exception {e}");
+            }
+        }
+
+        private async Task LoadContestCategoryAndAssignCheckerAndSubmissionTypes(
+            ContestCategory contestCategory,
+            IEnumerable<Checker> checkers,
+            IEnumerable<SubmissionType> submissionTypes)
+        {
+            if (contestCategory == null)
+            {
+                return;
+            }
+
+            foreach (var contest in contestCategory.Contests)
+            {
+                foreach (var problemGroup in contest.ProblemGroups)
+                {
+                    this.AssignCheckerAndSubmissionTypes(problemGroup.Problems, checkers, submissionTypes);
+                }
+            }
+
+            var ids = contestCategory.Children.Select(x => x.Id).ToList();
+            contestCategory.Children.Clear();
+
+            foreach (var id in ids)
+            {
+                var contestCategoryResponse = await this.FetchContestCategory(id);
+
+                contestCategory.Children.Add(contestCategoryResponse.Data);
+                await this.LoadContestCategoryAndAssignCheckerAndSubmissionTypes(contestCategoryResponse.Data, checkers, submissionTypes);
+            }
+        }
+
+        private async Task<ExternalDataRetrievalResult<ContestCategory>> FetchContestCategory(int id)
+        {
+            var contestCategoryResponse = await this.httpRequester.GetAsync<ContestCategory>(
+                new { id },
+                string.Format(UrlConstants.GetContestCategoryExportDataApiFormat, Settings.JudgeBaseUrl),
+                Settings.ApiKey);
+
+            if (!contestCategoryResponse.IsSuccess || contestCategoryResponse.Data == null)
+            {
+                throw new InvalidOperationException(contestCategoryResponse.ErrorMessage);
+            }
+
+            return contestCategoryResponse;
+        }
+
+        private void AssignCheckerAndSubmissionTypes(
+            IEnumerable<Problem> problems,
+            IEnumerable<Checker> checkersFromDb,
+            IEnumerable<SubmissionType> submissionTypesFromDb)
+        {
+            foreach (var problem in problems)
+            {
+                var checker = checkersFromDb?.FirstOrDefault(x => x.Name == problem.Checker.Name);
+
+                problem.Checker = checker;
+
+                if (problem.ProblemSubmissionTypeExecutionDetails.Any())
+                {
+                    problem.SubmissionTypes = new List<SubmissionType>();
+
+                    foreach (var problemSubmissionType in problem.ProblemSubmissionTypeExecutionDetails)
+                    {
+                        var submissionType =
+                            submissionTypesFromDb.FirstOrDefault(x =>
+                                x.Name == problemSubmissionType.SubmissionType.Name);
+
+                        if (submissionType != null)
+                        {
+                            problemSubmissionType.SubmissionType = submissionType;
+                            problemSubmissionType.SubmissionTypeId = submissionType.Id;
+                            problem.SubmissionTypes.Add(submissionType);
+                        }
+                    }
+                }
+                else
+                {
+                    var submissionTypes = new List<SubmissionType>();
+
+                    foreach (var problemSubmissionType in problem.SubmissionTypes)
+                    {
+                        var submissionType =
+                            submissionTypesFromDb.FirstOrDefault(x => x.Name == problemSubmissionType.Name);
+                        submissionTypes.Add(submissionType);
+                    }
+
+                    problem.SubmissionTypes = submissionTypes;
+                }
+            }
         }
     }
 }
