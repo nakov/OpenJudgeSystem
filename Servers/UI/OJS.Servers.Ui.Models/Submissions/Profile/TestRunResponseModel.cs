@@ -1,8 +1,6 @@
-﻿using OJS.Services.Common.Models.Submissions;
-using OJS.Services.Ui.Models.Submissions;
-
-namespace OJS.Servers.Ui.Models.Submissions.Profile
+﻿namespace OJS.Servers.Ui.Models.Submissions.Profile
 {
+    using OJS.Services.Ui.Models.Submissions;
     using SoftUni.AutoMapper.Infrastructure.Models;
 
     public class TestRunResponseModel : IMapFrom<TestRunServiceModel>

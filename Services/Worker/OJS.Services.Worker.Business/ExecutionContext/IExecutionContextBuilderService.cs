@@ -1,9 +1,8 @@
-﻿using OJS.Services.Common.Models.Submissions.ExecutionContext;
+﻿namespace OJS.Services.Worker.Business.ExecutionContext;
 
-namespace OJS.Services.Worker.Business.ExecutionContext;
-
-using OJS.Workers.SubmissionProcessors.Models;
 using SoftUni.Services.Infrastructure;
+using OJS.Services.Common.Models.Submissions.ExecutionContext;
+using OJS.Workers.SubmissionProcessors.Models;
 
 public interface IExecutionContextBuilderService : IService
 {

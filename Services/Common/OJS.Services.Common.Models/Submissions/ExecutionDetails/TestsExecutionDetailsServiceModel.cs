@@ -1,13 +1,13 @@
-﻿using AutoMapper;
-using OJS.Data.Models.Problems;
-using OJS.Services.Common.Models.Submissions.ExecutionContext.Mapping;
-using OJS.Workers.ExecutionStrategies.Models;
-using SoftUni.AutoMapper.Infrastructure.Models;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace OJS.Services.Common.Models.Submissions.ExecutionDetails
+﻿namespace OJS.Services.Common.Models.Submissions.ExecutionDetails
 {
+    using AutoMapper;
+    using OJS.Data.Models.Problems;
+    using OJS.Services.Common.Models.Submissions.ExecutionContext.Mapping;
+    using OJS.Workers.ExecutionStrategies.Models;
+    using SoftUni.AutoMapper.Infrastructure.Models;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class TestsExecutionDetailsServiceModel
         : BaseExecutionDetailsServiceModel,
             IMapExplicitly

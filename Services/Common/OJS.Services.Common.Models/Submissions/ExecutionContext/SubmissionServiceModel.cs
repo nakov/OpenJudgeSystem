@@ -1,13 +1,13 @@
-﻿using AutoMapper;
-using OJS.Services.Common.Models.Submissions.ExecutionContext.Mapping;
-using OJS.Services.Common.Models.Submissions.ExecutionDetails;
-using OJS.Workers.Common.Models;
-using OJS.Workers.SubmissionProcessors.Models;
-using SoftUni.AutoMapper.Infrastructure.Models;
-using System;
-
-namespace OJS.Services.Common.Models.Submissions.ExecutionContext
+﻿namespace OJS.Services.Common.Models.Submissions.ExecutionContext
 {
+    using System;
+    using AutoMapper;
+    using OJS.Services.Common.Models.Submissions.ExecutionContext.Mapping;
+    using OJS.Services.Common.Models.Submissions.ExecutionDetails;
+    using OJS.Workers.Common.Models;
+    using OJS.Workers.SubmissionProcessors.Models;
+    using SoftUni.AutoMapper.Infrastructure.Models;
+
     public class SubmissionServiceModel : IMapExplicitly
     {
         public int Id { get; set; }

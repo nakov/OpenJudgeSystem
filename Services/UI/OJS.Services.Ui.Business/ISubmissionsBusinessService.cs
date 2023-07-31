@@ -1,11 +1,10 @@
-﻿using OJS.Services.Common.Models.Submissions;
-
-namespace OJS.Services.Ui.Business
+﻿namespace OJS.Services.Ui.Business
 {
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using OJS.Data.Models.Submissions;
+    using OJS.Services.Common.Models.Submissions;
     using OJS.Services.Ui.Models.Submissions;
     using SoftUni.Services.Infrastructure;
 

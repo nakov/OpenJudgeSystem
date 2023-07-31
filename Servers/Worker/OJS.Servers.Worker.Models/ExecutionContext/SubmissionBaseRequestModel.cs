@@ -1,11 +1,10 @@
-﻿using OJS.Services.Common.Models.Submissions.ExecutionContext;
-
-namespace OJS.Servers.Worker.Models.ExecutionContext
+﻿namespace OJS.Servers.Worker.Models.ExecutionContext
 {
     using System.ComponentModel.DataAnnotations;
     using AutoMapper;
     using FluentExtensions.Extensions;
     using OJS.Servers.Worker.Models.ExecutionContext.ExecutionDetails;
+    using OJS.Services.Common.Models.Submissions.ExecutionContext;
     using SoftUni.AutoMapper.Infrastructure.Models;
 
     public abstract class SubmissionBaseRequestModel<TSubmissionRequestModel, TExecutionDetails>

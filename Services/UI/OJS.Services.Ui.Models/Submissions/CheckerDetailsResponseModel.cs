@@ -1,8 +1,8 @@
-﻿using OJS.Workers.Common;
-using SoftUni.AutoMapper.Infrastructure.Models;
-
-namespace OJS.Services.Ui.Models.Submissions
+﻿namespace OJS.Services.Ui.Models.Submissions
 {
+    using OJS.Workers.Common;
+    using SoftUni.AutoMapper.Infrastructure.Models;
+
     public class CheckerDetailsResponseModel : IMapFrom<CheckerDetails>
     {
         public string? Comment { get; set; }

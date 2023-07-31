@@ -1,6 +1,4 @@
-﻿using OJS.Services.Common.Models.Submissions.ExecutionContext;
-
-namespace OJS.Servers.Worker.Controllers.Api;
+﻿namespace OJS.Servers.Worker.Controllers.Api;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -10,6 +8,7 @@ using OJS.Servers.Worker.Models.ExecutionContext;
 using OJS.Servers.Worker.Models.ExecutionResult;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Worker.Business;
+using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
 using System.Threading.Tasks;

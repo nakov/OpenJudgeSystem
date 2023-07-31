@@ -1,9 +1,8 @@
-﻿using OJS.Services.Common.Models.Submissions;
-
-namespace OJS.Servers.Worker.Models.ExecutionResult.Output;
+﻿namespace OJS.Servers.Worker.Models.ExecutionResult.Output;
 
 using AutoMapper;
 using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Common.Models.Submissions;
 
 public class TestResultResponseModel : IMapExplicitly
 {

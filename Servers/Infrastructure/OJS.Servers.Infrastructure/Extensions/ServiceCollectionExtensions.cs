@@ -1,23 +1,17 @@
-using MassTransit;
-using Microsoft.Extensions.Configuration;
-using OJS.Services.Common;
-using OJS.Services.Common.Implementations;
-using OJS.Services.Common.Models.Configurations;
-using OJS.Workers.SubmissionProcessors.Formatters;
-using System.Linq;
-using System.Security.Claims;
-
 namespace OJS.Servers.Infrastructure.Extensions
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Net;
     using System.Net.Http;
     using System.Reflection;
+    using System.Security.Claims;
     using System.Threading.Tasks;
     using Hangfire;
     using Hangfire.SqlServer;
+    using MassTransit;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.DataProtection;
@@ -27,17 +21,22 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Net.Http.Headers;
     using Microsoft.OpenApi.Models;
     using OJS.Common.Enumerations;
     using OJS.Common.Utils;
+    using OJS.Services.Common;
     using OJS.Services.Common.Data;
     using OJS.Services.Common.Data.Implementations;
+    using OJS.Services.Common.Implementations;
+    using OJS.Services.Common.Models.Configurations;
     using OJS.Services.Infrastructure.Cache;
     using OJS.Services.Infrastructure.Cache.Implementations;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Infrastructure.HttpClients.Implementations;
+    using OJS.Workers.SubmissionProcessors.Formatters;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.Data.Infrastructure.Enumerations;
     using SoftUni.Data.Infrastructure.Extensions;

@@ -1,11 +1,10 @@
-﻿using OJS.Services.Common.Models.Submissions.ExecutionContext;
+﻿namespace OJS.Servers.Worker.Models.ExecutionContext;
 
-namespace OJS.Servers.Worker.Models.ExecutionContext;
-
+using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using OJS.Common.Extensions;
-using System.ComponentModel.DataAnnotations;
+using OJS.Services.Common.Models.Submissions.ExecutionContext;
 
 public class SubmissionFileRequestModel : SubmissionBaseRequestModel<SubmissionFileRequestModel, string>
 {

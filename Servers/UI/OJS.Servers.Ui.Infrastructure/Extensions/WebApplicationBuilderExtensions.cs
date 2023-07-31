@@ -1,10 +1,9 @@
-using Microsoft.Extensions.Configuration;
-using OJS.Services.Common.Models.Configurations;
-
 namespace OJS.Servers.Ui.Infrastructure.Extensions;
 
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using OJS.Servers.Infrastructure.Extensions;
+using OJS.Services.Common.Models.Configurations;
 
 public static class WebApplicationBuilderExtensions
 {

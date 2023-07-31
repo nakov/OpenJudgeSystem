@@ -1,11 +1,11 @@
-﻿using AutoMapper;
-using OJS.Workers.ExecutionStrategies.Models;
-using SoftUni.AutoMapper.Infrastructure.Models;
-using System;
-using System.Linq;
-
-namespace OJS.Services.Common.Models.Submissions
+﻿namespace OJS.Services.Common.Models.Submissions
 {
+    using AutoMapper;
+    using OJS.Workers.ExecutionStrategies.Models;
+    using SoftUni.AutoMapper.Infrastructure.Models;
+    using System;
+    using System.Linq;
+
     public class ExecutionResultServiceModel : IMapExplicitly
     {
         public string Id { get; set; } = null!;

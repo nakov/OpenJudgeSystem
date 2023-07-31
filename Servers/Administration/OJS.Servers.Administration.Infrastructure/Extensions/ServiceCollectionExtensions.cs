@@ -1,15 +1,14 @@
-using Microsoft.Extensions.Configuration;
-
 namespace OJS.Servers.Administration.Infrastructure.Extensions
 {
+    using System.Linq;
     using AutoCrudAdmin.Extensions;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using OJS.Common.Enumerations;
     using OJS.Data;
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Extensions;
     using SoftUni.Data.Infrastructure.Enumerations;
-    using System.Linq;
     using static OJS.Common.GlobalConstants;
 
     public static class ServiceCollectionExtensions

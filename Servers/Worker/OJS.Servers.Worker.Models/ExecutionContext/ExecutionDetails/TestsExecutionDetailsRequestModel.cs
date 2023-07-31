@@ -1,9 +1,8 @@
-﻿using OJS.Services.Common.Models.Submissions.ExecutionDetails;
-
-namespace OJS.Servers.Worker.Models.ExecutionContext.ExecutionDetails
+﻿namespace OJS.Servers.Worker.Models.ExecutionContext.ExecutionDetails
 {
     using System.Collections.Generic;
     using System.Linq;
+    using OJS.Services.Common.Models.Submissions.ExecutionDetails;
     using OJS.Workers.ExecutionStrategies.Models;
     using SoftUni.AutoMapper.Infrastructure.Models;
 

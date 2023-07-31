@@ -1,11 +1,10 @@
-﻿using OJS.Workers.Common.Models;
-
-namespace OJS.Services.Common.Helpers
+﻿namespace OJS.Services.Common.Helpers
 {
     using System;
     using System.Collections.Generic;
     using System.Text;
     using System.Text.RegularExpressions;
+    using OJS.Workers.Common.Models;
 
     public static class MySqlStrategiesHelper
     {

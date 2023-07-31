@@ -1,7 +1,3 @@
-using OJS.PubSub.Worker.Models.Submissions;
-using OJS.Services.Common.Models.Submissions;
-using OJS.Services.Common.Models.Submissions.ExecutionContext;
-
 namespace OJS.Servers.Worker.Consumers;
 
 using MassTransit;
@@ -10,6 +6,9 @@ using OJS.Services.Worker.Business;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
 using System.Threading.Tasks;
+using OJS.PubSub.Worker.Models.Submissions;
+using OJS.Services.Common.Models.Submissions;
+using OJS.Services.Common.Models.Submissions.ExecutionContext;
 
 public class SubmissionsForProcessingConsumer : IConsumer<SubmissionForProcessingPubSubModel>
 {

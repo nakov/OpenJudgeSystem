@@ -1,10 +1,10 @@
-﻿using AutoMapper;
-using OJS.Services.Common.Models.Submissions.ExecutionContext.Mapping;
-using OJS.Workers.ExecutionStrategies.Models;
-using SoftUni.AutoMapper.Infrastructure.Models;
-
-namespace OJS.Services.Common.Models.Submissions.ExecutionDetails
+﻿namespace OJS.Services.Common.Models.Submissions.ExecutionDetails
 {
+    using AutoMapper;
+    using OJS.Services.Common.Models.Submissions.ExecutionContext.Mapping;
+    using OJS.Workers.ExecutionStrategies.Models;
+    using SoftUni.AutoMapper.Infrastructure.Models;
+
     public class SimpleExecutionDetailsServiceModel
         : BaseExecutionDetailsServiceModel,
             IMapExplicitly

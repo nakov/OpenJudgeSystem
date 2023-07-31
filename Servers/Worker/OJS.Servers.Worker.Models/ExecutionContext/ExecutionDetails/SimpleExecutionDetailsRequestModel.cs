@@ -1,7 +1,6 @@
-﻿using OJS.Services.Common.Models.Submissions.ExecutionDetails;
+﻿namespace OJS.Servers.Worker.Models.ExecutionContext.ExecutionDetails;
 
-namespace OJS.Servers.Worker.Models.ExecutionContext.ExecutionDetails;
-
+using OJS.Services.Common.Models.Submissions.ExecutionDetails;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
 public class SimpleExecutionDetailsRequestModel : IMapTo<SimpleExecutionDetailsServiceModel>

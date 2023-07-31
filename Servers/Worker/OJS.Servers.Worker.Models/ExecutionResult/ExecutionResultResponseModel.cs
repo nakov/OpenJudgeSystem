@@ -1,10 +1,9 @@
-﻿using OJS.Services.Common.Models.Submissions;
-
-namespace OJS.Servers.Worker.Models.ExecutionResult;
+﻿namespace OJS.Servers.Worker.Models.ExecutionResult;
 
 using System;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using OJS.Servers.Worker.Models.ExecutionResult.Output;
+using OJS.Services.Common.Models.Submissions;
 
 public class ExecutionResultResponseModel : IMapFrom<ExecutionResultServiceModel>
 {

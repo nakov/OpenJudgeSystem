@@ -1,6 +1,3 @@
-using OJS.Workers.Common.Extensions;
-using OJS.Workers.Common.Models;
-
 namespace OJS.Services.Ui.Business.Implementations
 {
     using System;
@@ -15,6 +12,8 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Common.Models.Submissions;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Ui.Data;
+    using OJS.Workers.Common.Extensions;
+    using OJS.Workers.Common.Models;
     using static OJS.Common.GlobalConstants.Urls;
 
     public class SubmissionsDistributorCommunicationService : ISubmissionsDistributorCommunicationService

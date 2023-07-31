@@ -1,6 +1,4 @@
-﻿using OJS.Services.Common.Models.Submissions;
-
-namespace OJS.Services.Ui.Models.Submissions
+﻿namespace OJS.Services.Ui.Models.Submissions
 {
     using System;
     using System.Collections.Generic;

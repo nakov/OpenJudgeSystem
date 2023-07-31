@@ -1,12 +1,11 @@
-﻿using OJS.Services.Common.Models.Submissions.ExecutionContext;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+﻿namespace OJS.Services.Worker.Business.ExecutionContext.Implementations;
+
 using System;
-
-namespace OJS.Services.Worker.Business.ExecutionContext.Implementations;
-
+using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Services.Common;
 using OJS.Workers.SubmissionProcessors.Models;
 using OJS.Services.Infrastructure.Extensions;
+using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using static OJS.Services.Worker.Business.ExecutionContext.ExecutionContextConstants;
 using static OJS.Services.Worker.Business.Validation.ValidationConstants;
 

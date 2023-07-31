@@ -1,10 +1,10 @@
-﻿using AutoMapper;
-using OJS.Workers.ExecutionStrategies.Models;
+﻿namespace OJS.Services.Common.Models.Submissions;
+
+using AutoMapper;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System.Collections.Generic;
 using System.Linq;
-
-namespace OJS.Services.Common.Models.Submissions;
+using OJS.Workers.ExecutionStrategies.Models;
 
 public class TaskResultServiceModel : IMapExplicitly
 {

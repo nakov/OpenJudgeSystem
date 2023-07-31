@@ -1,11 +1,10 @@
-using System.Linq;
-
 namespace OJS.Services.Common.Implementations;
 
-using OJS.PubSub.Worker.Models.Submissions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
-using OJS.Data.Models.Submissions;
+using System.Linq;
 using System.Threading.Tasks;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.PubSub.Worker.Models.Submissions;
+using OJS.Data.Models.Submissions;
 
 public class SubmissionPublisherService : ISubmissionPublisherService
 {

@@ -1,13 +1,13 @@
-﻿using AutoMapper;
-using OJS.Data.Models.Tests;
-using OJS.Workers.Common;
-using OJS.Workers.Common.Models;
-using OJS.Workers.ExecutionStrategies.Models;
-using SoftUni.AutoMapper.Infrastructure.Models;
-using System;
-
-namespace OJS.Services.Common.Models.Submissions
+﻿namespace OJS.Services.Common.Models.Submissions
 {
+    using AutoMapper;
+    using OJS.Data.Models.Tests;
+    using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
+    using OJS.Workers.ExecutionStrategies.Models;
+    using SoftUni.AutoMapper.Infrastructure.Models;
+    using System;
+
     public class TestResultServiceModel : IMapExplicitly
     {
         public TestResultServiceModel() => this.CheckerDetails = new CheckerDetails();

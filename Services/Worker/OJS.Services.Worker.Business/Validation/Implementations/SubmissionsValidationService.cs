@@ -1,13 +1,12 @@
-﻿using OJS.Services.Common.Models.Submissions.ExecutionContext;
-using OJS.Services.Common.Models.Submissions.ExecutionDetails;
-using OJS.Workers.Checkers;
-
-namespace OJS.Services.Worker.Business.Validation.Implementations;
+﻿namespace OJS.Services.Worker.Business.Validation.Implementations;
 
 using System.Linq;
 using System.Collections.Generic;
 using OJS.Workers.Common.Models;
 using OJS.Services.Common.Models;
+using OJS.Services.Common.Models.Submissions.ExecutionContext;
+using OJS.Services.Common.Models.Submissions.ExecutionDetails;
+using OJS.Workers.Checkers;
 using ValidationResult = OJS.Services.Common.Models.ValidationResult;
 using static ValidationConstants;
 
