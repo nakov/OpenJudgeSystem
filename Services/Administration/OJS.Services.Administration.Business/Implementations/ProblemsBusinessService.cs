@@ -102,10 +102,11 @@ namespace OJS.Services.Administration.Business.Implementations
                 {
                     p.ProblemGroupId,
                     p.ProblemGroup.ContestId,
+                    p.IsDeleted,
                 })
                 .FirstOrDefault();
 
-            if (problem == null)
+            if (problem == null || problem.IsDeleted)
             {
                 return;
             }
