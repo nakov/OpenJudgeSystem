@@ -21,7 +21,19 @@
 
         protected override void Seed(OjsDbContext context)
         {
-            this.SeedSettings(context);
+            this.SeedSettings(context, new HashSet<Setting>
+            {
+                new Setting
+                {
+                    Name = GlobalConstants.MaximumFileSizeDbName,
+                    Value = GlobalConstants.OneMegaByteInBytes.ToString()
+                },
+                new Setting
+                {
+                    Name = GlobalConstants.RemoteWorkers,
+                    Value = GlobalConstants.RemoteWorkersCount.ToString()
+                }
+            });
 
             if (context.Roles.Any())
             {
@@ -1170,18 +1182,17 @@
                 });
         }
 
-        private void SeedSettings(OjsDbContext context)
+        private void SeedSettings(OjsDbContext context, IEnumerable<Setting> settings)
         {
-            if (context.Settings.Any(s => s.Name == GlobalConstants.MaximumFileSizeDbName))
+            foreach (var setting in settings)
             {
-                return;
-            }
+                if (context.Settings.Any(s => s.Name == setting.Name))
+                {
+                    continue;
+                }
 
-            context.Settings.Add(new Setting
-            {
-                Name = GlobalConstants.MaximumFileSizeDbName,
-                Value = GlobalConstants.OneMegaByteInBytes.ToString()
-            });
+                context.Settings.Add(setting);
+            }
 
             context.SaveChanges();
         }

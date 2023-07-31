@@ -277,6 +277,7 @@
             try
             {
                 this.submission.Processed = true;
+                this.submission.CompletedExecutionOn = DateTime.Now;
                 this.submissionForProcessing.Processed = true;
                 this.submissionForProcessing.Processing = false;
 

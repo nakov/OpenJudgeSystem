@@ -539,7 +539,7 @@
         }
 
         [HttpGet]
-        public ActionResult CalculateContestLoad(int categoryId, int currentContestId)
+        public ActionResult CalculateContestLoad(int currentContestId)
         {
             if (!this.CheckIfUserHasContestPermissions(currentContestId))
             {
@@ -548,7 +548,7 @@
 
             var contests = this.contestsData
                 .GetAll()
-                .Where(c => c.CategoryId == categoryId && c.StartTime.HasValue && c.EndTime.HasValue)
+                .Where(c => c.StartTime.HasValue && c.EndTime.HasValue)
                 .OrderByDescending(x => x.StartTime.Value)
                 .ToList();
 
@@ -559,12 +559,13 @@
                 {
                     model.ExamLengthInHours = (contest.EndTime.Value - contest.StartTime.Value).Hours;
                     model.ExpectedExamProblemsCount = contest.ProblemGroups.Count();
-                    model.ExpectedStudentsCount = contest.Participants.Count();
                     model.ContestName = contest.Name;
                     model.CurrentContestId = contest.Id;
-
-                    model.AverageProblemRunTimeInSeconds = 
+                    model.AverageProblemRunTimeInSeconds =
                         this.contestsBusiness.GetContestSubmissionsAverageRunTimeSeconds(contest);
+
+                    // Currently is setted to 0 because it is not fetched from the SULS
+                    model.ExpectedStudentsCount = 0;
                 }
                 else
                 {
@@ -572,10 +573,7 @@
                 }
             }
 
-            if (model.ContestsDropdownData.Any())
-            {
-                model.PreviousContestId = model.ContestsDropdownData.First().Id;
-            }
+            model.ActualWorkers = int.Parse(this.Data.Settings.All().First(x => x.Name == GlobalConstants.RemoteWorkers).Value);
 
             return this.View(model);
         }
@@ -592,11 +590,11 @@
             {
                 var contest = this.contestsData.GetById(model.PreviousContestId.Value);
                 model.PreviousContestSubmissions = this.GetOfficialSubmissionsByContest(contest.Id);
-                model.PreviousContestExpectedProblems = contest.ProblemGroups.SelectMany(x => x.Problems).Count();
+                model.PreviousContestExpectedProblems = contest.ProblemGroups.Where(pg => !pg.IsDeleted).Count();
                 model.PreviousContestParticipants = contest.Participants
                     .Where(x => x.IsOfficial == true)
                     .Count();
-                model.PreviousAverageProblemRunTimeInSeconds = 
+                model.PreviousAverageProblemRunTimeInSeconds =
                     this.contestsBusiness.GetContestSubmissionsAverageRunTimeSeconds(contest);
             }
 

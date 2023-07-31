@@ -4,7 +4,7 @@ namespace OJS.Services.Business.Contests.Models
 {
     public abstract class BaseContestBusinessModel
     {
-        [Range(1,1000)]
+        [Range(1, 1000)]
         public int ExamLengthInHours { get; set; }
 
         [Range(1, 100)]
@@ -14,10 +14,10 @@ namespace OJS.Services.Business.Contests.Models
         public int ExpectedStudentsCount { get; set; }
 
         [Range(1, 100000)]
-        public int PreviousContestParticipants { get; set; }
+        public int PreviousContestParticipants { get; set; } = 1;
 
         [Range(1, 10000000)]
-        public int PreviousContestSubmissions { get; set; }
+        public int PreviousContestSubmissions { get; set; } = 1;
 
         [Range(1, 1000)]
         public int AverageProblemRunTimeInSeconds { get; set; }
@@ -35,14 +35,14 @@ namespace OJS.Services.Business.Contests.Models
         public int ActualWorkers { get; set; }
 
         [Range(1, 100)]
-        public int PreviousContestExpectedProblems { get; set; }
+        public int PreviousContestExpectedProblems { get; set; } = 1;
 
         [Range(1, int.MaxValue)]
         public int CurrentContestId { get; set; }
 
         public int? PreviousContestId { get; set; }
 
-        public int PreviousAverageProblemRunTimeInSeconds { get; set; }
+        public int PreviousAverageProblemRunTimeInSeconds { get; set; } = 1;
 
     }
 }

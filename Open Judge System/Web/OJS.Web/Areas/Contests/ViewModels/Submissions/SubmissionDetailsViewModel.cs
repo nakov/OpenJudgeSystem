@@ -37,7 +37,8 @@
                 TestRuns = submission.TestRuns.AsQueryable().Select(TestRunDetailsViewModel.FromTestRun),
                 ExecutionComment = submission.ExecutionComment,
                 ExceptionType = submission.ExceptionType,
-                StartedExecutionOn = submission.StartedExecutionOn
+                StartedExecutionOn = submission.StartedExecutionOn,
+                CompletedExecutionOn = submission.CompletedExecutionOn,
             };
 
         public int Id { get; set; }
@@ -102,5 +103,6 @@
 
         public DateTime? StartedExecutionOn { get; set; }
 
+        public DateTime? CompletedExecutionOn { get; set; }
     }
 }

@@ -194,12 +194,15 @@
                                             StartedExecutionOn = s.StartedExecutionOn,
                                             ModifiedOn = s.ModifiedOn,
                                             CreatedOn = s.CreatedOn,
+                                            CompletedExecutionOn = s.CompletedExecutionOn,
                                         }))
                                     .ToList();
 
             if (contestSubmissions.Any(s => s.StartedExecutionOn.HasValue))
             {
-                return (int)contestSubmissions.Where(s => s.StartedExecutionOn.HasValue).Average(s => (s.ModifiedOn.Value - s.StartedExecutionOn.Value).TotalSeconds);
+                return contestSubmissions.Any(s => s.CompletedExecutionOn.HasValue)
+                    ? (int)contestSubmissions.Where(s => s.StartedExecutionOn.HasValue).Average(s => (s.CompletedExecutionOn.Value - s.StartedExecutionOn.Value).TotalSeconds)
+                    : (int)contestSubmissions.Where(s => s.StartedExecutionOn.HasValue).Average(s => (s.ModifiedOn.Value - s.StartedExecutionOn.Value).TotalSeconds);
             }
             else
             {

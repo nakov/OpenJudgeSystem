@@ -106,6 +106,15 @@ namespace Resources.Areas.Administration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Completed execution on.
+        /// </summary>
+        public static string Completed_execution_on {
+            get {
+                return ResourceManager.GetString("Completed_execution_on", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Create.
         /// </summary>
         public static string Create {

@@ -75,73 +75,78 @@ Try not to design a task which takes more than 5 seconds. If you need such a pro
         </fieldset>
         <fieldset>
             <legend>Previous exam info</legend>
+            <div class="row" style="margin-bottom:2rem">
+                <div class="editor-field col-xs-4">
+                    <strong>Fill previous contest data manually</strong>
+                </div>
+                <div class="editor-field col-xs-2">
+                    <input type="checkbox" id="toggle-previos-exams" onchange="togglePreviouseExamInputs(this)" />
+                </div>
+            </div>
 
-            @if (@Model.ContestsDropdownData.Any())
-            {
+            <div id="previous-contests-wrapper">
                 <div class="row k-upload-cancel">
                     <div class="col-xs-8">
-                        @(Html.Kendo().DropDownListFor(m => m.ContestsDropdownData)
+                        @(Html.Kendo().ComboBoxFor(m => m.ContestsDropdownData)
                          .Name("dropdownlist")
                          .DataValueField("Value")
                          .DataTextField("Name")
                          .BindTo((System.Collections.IEnumerable)Model.ContestsDropdownData)
                          .HtmlAttributes(new { @class = "full-editor pull-right" })
-                         .Events(e => e.Open("changePreviousExam").Change("changePreviousExam")))
+                         .Placeholder("Please select contest...")
+                         .Events(e => e.Change("changePreviousExam")))
 
                         @Html.HiddenFor(m => m.PreviousContestId)
                     </div>
                 </div>
-            }
-            else
-            {
-                <div id="previous-contests-data">
-                    <div class="row k-upload-cancel">
-                        <div class="editor-label col-xs-4 k-upload-cancel">
-                            <label>Previous contest students</label>
-                        </div>
-                        <div class="editor-label col-xs-4 k-upload-cancel">
-                            @Html.EditorFor(m => m.PreviousContestParticipants, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
-                        </div>
-                        <div class="editor-field col-xs-4">
-                            <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam students" data-tooltip="true"></span>
-                        </div>
+            </div>
+
+            <div id="previous-contests-data" style="display:none">
+                <div class="row k-upload-cancel">
+                    <div class="editor-label col-xs-4 k-upload-cancel">
+                        <label>Previous contest students</label>
                     </div>
-                    <div class="row k-upload-cancel">
-                        <div class="editor-label col-xs-4 k-upload-cancel">
-                            <label>Previous contest submissions</label>
-                        </div>
-                        <div class="editor-label col-xs-4 k-upload-cancel">
-                            @Html.EditorFor(m => m.PreviousContestSubmissions, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
-                        </div>
-                        <div class="editor-field col-xs-4">
-                            <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam total submissions" data-tooltip="true"></span>
-                        </div>
+                    <div class="editor-label col-xs-4 k-upload-cancel">
+                        @Html.EditorFor(m => m.PreviousContestParticipants, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
                     </div>
-                    <div class="row k-upload-cancel">
-                        <div class="editor-label col-xs-4 k-upload-cancel">
-                            <label>Previous contest problems</label>
-                        </div>
-                        <div class="editor-label col-xs-4 k-upload-cancel">
-                            @Html.EditorFor(m => m.PreviousContestExpectedProblems, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
-                        </div>
-                        <div class="editor-field col-xs-4">
-                            <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam number of problems" data-tooltip="true"></span>
-                        </div>
-                    </div>
-                    <div class="row k-upload-cancel">
-                        <div class="editor-label col-xs-4 k-upload-cancel">
-                            <label>Average contest problems runtime in (s)</label>
-                        </div>
-                        <div class="editor-label col-xs-4 k-upload-cancel">
-                            @Html.EditorFor(m => m.PreviousAverageProblemRunTimeInSeconds, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
-                        </div>
-                        <div class="editor-field col-xs-4">
-                            <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam number of average problem run time in seconds" data-tooltip="true"></span>
-                        </div>
+                    <div class="editor-field col-xs-4">
+                        <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam students" data-tooltip="true"></span>
                     </div>
                 </div>
-            }
-
+                <div class="row k-upload-cancel">
+                    <div class="editor-label col-xs-4 k-upload-cancel">
+                        <label>Previous contest submissions</label>
+                    </div>
+                    <div class="editor-label col-xs-4 k-upload-cancel">
+                        @Html.EditorFor(m => m.PreviousContestSubmissions, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
+                    </div>
+                    <div class="editor-field col-xs-4">
+                        <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam total submissions" data-tooltip="true"></span>
+                    </div>
+                </div>
+                <div class="row k-upload-cancel">
+                    <div class="editor-label col-xs-4 k-upload-cancel">
+                        <label>Previous contest problems</label>
+                    </div>
+                    <div class="editor-label col-xs-4 k-upload-cancel">
+                        @Html.EditorFor(m => m.PreviousContestExpectedProblems, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
+                    </div>
+                    <div class="editor-field col-xs-4">
+                        <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam number of problems" data-tooltip="true"></span>
+                    </div>
+                </div>
+                <div class="row k-upload-cancel">
+                    <div class="editor-label col-xs-4 k-upload-cancel">
+                        <label>Average contest problems runtime in (s)</label>
+                    </div>
+                    <div class="editor-label col-xs-4 k-upload-cancel">
+                        @Html.EditorFor(m => m.PreviousAverageProblemRunTimeInSeconds, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
+                    </div>
+                    <div class="editor-field col-xs-4">
+                        <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam number of average problem run time in seconds" data-tooltip="true"></span>
+                    </div>
+                </div>
+            </div>
         </fieldset>
 
         <fieldset>
@@ -195,7 +200,7 @@ Try not to design a task which takes more than 5 seconds. If you need such a pro
                     @Html.EditorFor(m => m.ActualWorkers, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
                 </div>
                 <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Actual workers" data-tooltip="true"></span>
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Number of currently running workers. NOTE: Can be taken from the LocalWorker configuration." data-tooltip="true"></span>
                 </div>
             </div>
         </fieldset>
@@ -209,15 +214,12 @@ Try not to design a task which takes more than 5 seconds. If you need such a pro
             </div>
         </div>
     }
-
-    <div id="judge-work-wrapper" hidden>
+    <div id="previous-contests-data-results" hidden="hidden">
         <fieldset>
             <legend>Judge Work Results</legend>
             <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4">
-                    <div class="pull-right">
-                        <label>Submissions</label>
-                    </div>
+                <div class="editor-label col-xs-4 k-upload-cancel">
+                    <label>Submissions</label>
                 </div>
                 <div class="editor-field col-xs-4">
                     <input class="form-control" id="Submissions" value="@responseModel.ExpectedExamSubmissions" />
@@ -226,6 +228,105 @@ Try not to design a task which takes more than 5 seconds. If you need such a pro
                     <span class="glyphicon glyphicon-question-sign text-primary" title="Expected exam submissions" data-tooltip="true"></span>
                 </div>
             </div>
+            <div class="row k-upload-cancel">
+                <div class="editor-label col-xs-4 k-upload-cancel">
+                    <label class="editor-label">Minimum workers required</label>
+                </div>
+                <div class="editor-field col-xs-4">
+                    <input class="form-control " id="MinimumWorkersRequired" value="@responseModel.MinimumWorkersRequired" />
+                </div>
+                <div class="editor-field col-xs-4">
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Minimum workers required" data-tooltip="true"></span>
+                </div>
+            </div>
+            <div class="row k-upload-cancel">
+                <div class="editor-label col-xs-4 k-upload-cancel">
+                    <label>Suggested workers</label>
+                </div>
+                <div class="editor-field col-xs-4">
+                    <input class="form-control" id="SuggestedWorkers" value="@responseModel.SuggestedWorkers" />
+                </div>
+                <div class="editor-field col-xs-4">
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Suggested workers. NOTE: If you have more than 50 workers suggested here - discuss with dev team. Workers do not scale proportionally.
+                    For example, 100 workers will not have twice the performance of 50 workers.
+                    " data-tooltip="true"></span>
+                </div>
+            </div>
+            <div class="row k-upload-cancel">
+                <div class="editor-label col-xs-4 k-upload-cancel">
+                    <label>Previous contest students</label>
+                </div>
+                <div class="editor-label col-xs-4 k-upload-cancel">
+                    <input class="form-control" id="PreviousContestParticipantsResult" value="@responseModel.PreviousContestParticipants" />
+                    @*@Html.EditorFor(m => m.PreviousContestParticipantsResult, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })*@
+                </div>
+                <div class="editor-field col-xs-4">
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam students" data-tooltip="true"></span>
+                </div>
+            </div>
+            <div class="row k-upload-cancel">
+                <div class="editor-label col-xs-4 k-upload-cancel">
+                    <label>Previous contest submissions</label>
+                </div>
+                <div class="editor-label col-xs-4 k-upload-cancel">
+                    <input class="form-control" id="PreviousContestSubmissionsResult" value="@responseModel.PreviousContestSubmissions" />
+                    @*@Html.EditorFor(m => m.PreviousContestSubmissionsResult, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })*@
+                </div>
+                <div class="editor-field col-xs-4">
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam total submissions" data-tooltip="true"></span>
+                </div>
+            </div>
+            <div class="row k-upload-cancel">
+                <div class="editor-label col-xs-4 k-upload-cancel">
+                    <label>Previous contest problems</label>
+                </div>
+                <div class="editor-label col-xs-4 k-upload-cancel">
+                    <input class="form-control" id="PreviousContestExpectedProblemsResult" value="@responseModel.PreviousContestExpectedProblems" />
+                    @*@Html.EditorFor(m => m.PreviousContestExpectedProblemsResult, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })*@
+                </div>
+                <div class="editor-field col-xs-4">
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam number of problems" data-tooltip="true"></span>
+                </div>
+            </div>
+            <div class="row k-upload-cancel">
+                <div class="editor-label col-xs-4 k-upload-cancel">
+                    <label>Average contest problems runtime in (s)</label>
+                </div>
+                <div class="editor-label col-xs-4 k-upload-cancel">
+                    <input class="form-control" id="PreviousAverageProblemRunTimeInSecondsResult" value="@responseModel.PreviousAverageProblemRunTimeInSeconds" />
+                    @*@Html.EditorFor(m => m.PreviousAverageProblemRunTimeInSecondsResult, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })*@
+                </div>
+                <div class="editor-field col-xs-4">
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam number of average problem run time in seconds" data-tooltip="true"></span>
+                </div>
+            </div>
+            <div class="row k-upload-cancel">
+                <div class="editor-label col-xs-4 k-upload-cancel">
+                    <label>Time between submissions base (in s)</label>
+                </div>
+                <div class="editor-field col-xs-4">
+                    <input class="form-control" id="SecondsBetweenSubmission" value="@responseModel.SecondsBetweenSubmission" />
+                </div>
+                <div class="editor-field col-xs-4">
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Seconds between submissions for the distributed maximum. NOTE: Safety factor calculated here. " data-tooltip="true"></span>
+                </div>
+            </div>
+            <div class="row k-upload-cancel">
+                <div class="editor-label col-xs-4 k-upload-cancel">
+                    <label>Time between submissions high (in s)</label>
+                </div>
+                <div class="editor-field col-xs-4">
+                    <input class="form-control" id="MaxSecondsBetweenSubmissions" value="@responseModel.MaxSecondsBetweenSubmissions" />
+                </div>
+                <div class="editor-field col-xs-4">
+                    <span class="glyphicon glyphicon-question-sign text-primary" title="Seconds between submissions for the distributed maximum on high performance scale with actual workers. NOTE: Safety factor calculated here. " data-tooltip="true"></span>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    <div id="judge-work-wrapper" hidden class="mt-4">
+        <fieldset>
+            <legend>Judge Work Results (additional)</legend>
             <div class="row k-upload-cancel">
                 <div class="editor-label col-xs-4">
                     <div class="pull-right">
@@ -250,34 +351,6 @@ Try not to design a task which takes more than 5 seconds. If you need such a pro
                 </div>
                 <div class="editor-field col-xs-4">
                     <span class="glyphicon glyphicon-question-sign text-primary" title="Processed submissions per worker for a minute" data-tooltip="true"></span>
-                </div>
-            </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4">
-                    <div class="pull-right">
-                        <label class="editor-label">Minimum workers required</label>
-                    </div>
-                </div>
-                <div class="editor-field col-xs-4">
-                    <input class="form-control " id="MinimumWorkersRequired" value="@responseModel.MinimumWorkersRequired" />
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Minimum workers required" data-tooltip="true"></span>
-                </div>
-            </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4">
-                    <div class="pull-right">
-                        <label>Suggested workers</label>
-                    </div>
-                </div>
-                <div class="editor-field col-xs-4">
-                    <input class="form-control" id="SuggestedWorkers" value="@responseModel.SuggestedWorkers" />
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Suggested workers. NOTE: If you have more than 50 workers suggested here - discuss with dev team. Workers do not scale proportionally.
-                    For example, 100 workers will not have twice the performance of 50 workers.
-                    " data-tooltip="true"></span>
                 </div>
             </div>
         </fieldset>
@@ -407,32 +480,6 @@ Suggestion is based on the safety factor below and actual workers.
             <div class="row k-upload-cancel">
                 <div class="editor-label col-xs-4">
                     <div class="pull-right">
-                        <label>Seconds between submissions base</label>
-                    </div>
-                </div>
-                <div class="editor-field col-xs-4">
-                    <input class="form-control" id="SecondsBetweenSubmission" value="@responseModel.SecondsBetweenSubmission" />
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Seconds between submissions for the distributed maximum. NOTE: Safety factor calculated here. " data-tooltip="true"></span>
-                </div>
-            </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4">
-                    <div class="pull-right">
-                        <label>Seconds between submissions high</label>
-                    </div>
-                </div>
-                <div class="editor-field col-xs-4">
-                    <input class="form-control" id="MaxSecondsBetweenSubmissions" value="@responseModel.MaxSecondsBetweenSubmissions" />
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Seconds between submissions for the distributed maximum on high performance scale with actual workers. NOTE: Safety factor calculated here. " data-tooltip="true"></span>
-                </div>
-            </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4">
-                    <div class="pull-right">
                         <label>Max users at same time</label>
                     </div>
                 </div>
@@ -445,55 +492,7 @@ Suggestion is based on the safety factor below and actual workers.
             </div>
         </fieldset>
     </div>
-    <div id="previous-contests-data-results" hidden="hidden">
-        <fieldset>
-            <legend>Previous exam data</legend>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4 k-upload-cancel">
-                    <label>Previous contest students</label>
-                </div>
-                <div class="editor-label col-xs-4 k-upload-cancel">
-                    @Html.EditorFor(m => m.PreviousContestParticipants, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam students" data-tooltip="true"></span>
-                </div>
-            </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4 k-upload-cancel">
-                    <label>Previous contest submissions</label>
-                </div>
-                <div class="editor-label col-xs-4 k-upload-cancel">
-                    @Html.EditorFor(m => m.PreviousContestSubmissions, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam total submissions" data-tooltip="true"></span>
-                </div>
-            </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4 k-upload-cancel">
-                    <label>Previous contest problems</label>
-                </div>
-                <div class="editor-label col-xs-4 k-upload-cancel">
-                    @Html.EditorFor(m => m.PreviousContestExpectedProblems, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam number of problems" data-tooltip="true"></span>
-                </div>
-            </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4 k-upload-cancel">
-                    <label>Average contest problems runtime in (s)</label>
-                </div>
-                <div class="editor-label col-xs-4 k-upload-cancel">
-                    @Html.EditorFor(m => m.PreviousAverageProblemRunTimeInSeconds, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam number of average problem run time in seconds" data-tooltip="true"></span>
-                </div>
-            </div>
-        </fieldset>
-    </div>
+
 </div>
 
 <script>
@@ -503,11 +502,33 @@ Suggestion is based on the safety factor below and actual workers.
         $("#PreviousContestId").val(receivedModel.Id);
     }
 
+    function togglePreviouseExamInputs(e) {
+        var previouseContestDropdown = document.getElementById("previous-contests-wrapper");
+        var previousContestData = document.getElementById("previous-contests-data")
+
+        if (e.checked) {
+            previouseContestDropdown.style.display = "none";
+            previousContestData.style.display = "block"
+        }
+        else {
+            previouseContestDropdown.style.display = "block";
+            previousContestData.style.display = "none"
+        }
+    }
+
      $(function () {
          $('form').submit(function (event) {
 
-            event.preventDefault();
+             event.preventDefault();
+
              var formData = $(this).serialize();
+             var params = new URLSearchParams(formData);
+             var previousContestId = params.get("PreviousContestId");
+
+             if (!document.getElementById("toggle-previos-exams").checked && !previousContestId)
+             {
+                 alert("Please select previous exam.")
+             }
 
              $.post('@Url.Action("CalculateContestLoad", "Contests")', formData)
                  .done(function (response) {
@@ -530,10 +551,10 @@ Suggestion is based on the safety factor below and actual workers.
                      $('#MaxSecondsBetweenSubmissions').val(response.MaxSecondsBetweenSubmissions);
                      $('#MaxUsersAtSameTime').val(response.MaxUsersAtSameTime.toFixed(3));
 
-                     $('#PreviousContestParticipants').val(response.PreviousContestParticipants)
-                     $('#PreviousContestSubmissions').val(response.PreviousContestSubmissions)
-                     $('#PreviousContestExpectedProblems').val(response.PreviousContestExpectedProblems)
-                     $('#PreviousAverageProblemRunTimeInSeconds').val(response.PreviousAverageProblemRunTimeInSeconds)
+                     $('#PreviousContestParticipantsResult').val(response.PreviousContestParticipants)
+                     $('#PreviousContestSubmissionsResult').val(response.PreviousContestSubmissions)
+                     $('#PreviousContestExpectedProblemsResult').val(response.PreviousContestExpectedProblems)
+                     $('#PreviousAverageProblemRunTimeInSecondsResult').val(response.PreviousAverageProblemRunTimeInSeconds)
 
                      let responseDataWrapper = document.getElementById('judge-work-wrapper');
                      responseDataWrapper.removeAttribute("hidden");
