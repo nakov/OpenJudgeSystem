@@ -19,7 +19,6 @@ import ContestsProvider from './hooks/use-contests';
 import CurrentContestsProvider from './hooks/use-current-contest';
 import HomeContestsProvider from './hooks/use-home-contests';
 import HomeStatisticsProvider from './hooks/use-home-statistics';
-import LoadingProvider from './hooks/use-loading';
 import ContestModalProvider from './hooks/use-modal';
 import NotificationsProvider from './hooks/use-notifications';
 import PageWithTitleProvider from './hooks/use-page-titles';
@@ -43,7 +42,6 @@ const App = () => {
         AppUrlsProvider,
         ServicesProvider,
         PageProvider,
-        LoadingProvider,
         NotificationsProvider,
         PageWithTitleProvider,
         HashUrlParamProvider,

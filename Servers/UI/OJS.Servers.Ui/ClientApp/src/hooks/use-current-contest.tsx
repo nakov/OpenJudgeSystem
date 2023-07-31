@@ -23,7 +23,6 @@ import {
 
 import { useAuth } from './use-auth';
 import { IErrorDataType, useHttp } from './use-http';
-import { useLoading } from './use-loading';
 
 interface IStartContestArgs {
     id: number;
@@ -54,6 +53,10 @@ interface ICurrentContestContext {
         isSubmitAllowed: boolean;
         contestError: IErrorDataType | null;
         isRegisterForContestSuccessful: boolean;
+        contestIsLoading: boolean;
+        registerForContestLoading: boolean;
+        submitContestPasswordIsLoading: boolean;
+        getParticipantScoresIsLoading: boolean;
         isUserParticipant: boolean;
     };
     actions: {
@@ -131,11 +134,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const { state: { user } } = useAuth();
 
     const {
-        startLoading,
-        stopLoading,
-    } = useLoading();
-
-    const {
+        isLoading: contestIsLoading,
         get: startContest,
         data: startContestData,
         error: startContestError,
@@ -145,6 +144,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     });
 
     const {
+        isLoading: registerForContestLoading,
         get: registerForContest,
         data: registerForContestData,
         error: registerContestError,
@@ -155,6 +155,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     });
 
     const {
+        isLoading: submitContestPasswordIsLoading,
         post: submitContestPassword,
         response: submitContestPasswordResponse,
         error: submitContestPasswordError,
@@ -164,6 +165,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     });
 
     const {
+        isLoading: getParticipantScoresIsLoading,
         get: getParticipantScores,
         data: getParticipantScoresData,
     } = useHttp<IGetContestParticipationScoresForParticipantUrlParams, null>({
@@ -219,14 +221,12 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         }
 
         (async () => {
-            startLoading();
             await getParticipantScores();
-            stopLoading();
         })();
     }, [
         getCurrentParticipantParticipantScoresParams,
         getParticipantScores,
-        startLoading, stopLoading ]);
+    ]);
 
     useEffect(() => {
         if (isNil(getParticipantScoresData)) {
@@ -238,7 +238,6 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     }, [
         getParticipantScores,
         getParticipantScoresData,
-        startLoading, stopLoading,
     ]);
 
     useEffect(() => {
@@ -252,11 +251,9 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         }
 
         (async () => {
-            startLoading();
             await registerForContest();
-            stopLoading();
         })();
-    }, [ registerForContest, registerForContestParams, startLoading, stopLoading ]);
+    }, [ registerForContest, registerForContestParams ]);
 
     useEffect(
         () => {
@@ -296,11 +293,9 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         }
 
         (async () => {
-            startLoading();
             await submitContestPassword({ password: contestPassword });
-            stopLoading();
         })();
-    }, [ contestPassword, submitContestPassword, submitContestPasswordUrlParams, startLoading, stopLoading ]);
+    }, [ contestPassword, submitContestPassword, submitContestPasswordUrlParams ]);
 
     useEffect(
         () => {
@@ -332,11 +327,9 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         }
 
         (async () => {
-            startLoading();
             await startContest();
-            stopLoading();
         })();
-    }, [ contestToStart, startContest, startLoading, stopLoading ]);
+    }, [ contestToStart, startContest ]);
 
     useEffect(
         () => {
@@ -418,6 +411,10 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 contestError,
                 isRegisterForContestSuccessful,
                 isUserParticipant,
+                contestIsLoading,
+                registerForContestLoading,
+                submitContestPasswordIsLoading,
+                getParticipantScoresIsLoading,
             },
             actions: {
                 setContestPassword,
@@ -455,6 +452,10 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             isUserParticipant,
             removeCurrentContest,
             setIsUserParticipant,
+            contestIsLoading,
+            registerForContestLoading,
+            submitContestPasswordIsLoading,
+            getParticipantScoresIsLoading,
         ],
     );
 
