@@ -432,6 +432,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
 
         submission.StartedExecutionOn = submissionExecutionResult.ExecutionResult?.StartedExecutionOn;
+        submission.CompletedExecutionOn = submissionExecutionResult.ExecutionResult?.CompletedExecutionOn;
 
         var exception = submissionExecutionResult.Exception;
         var executionResult = submissionExecutionResult.ExecutionResult;

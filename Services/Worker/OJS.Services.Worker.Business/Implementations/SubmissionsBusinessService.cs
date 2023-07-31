@@ -161,6 +161,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             this.ProcessTaskResult(submission, executionResult, taskMaxPoints);
         }
 
+        executionResult.CompletedExecutionOn = DateTime.UtcNow;
+
         return executionResult;
     }
 
