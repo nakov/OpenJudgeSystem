@@ -420,6 +420,8 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters)
             .ToListAsync();
 
+        await this.ModifyFormControls(formControls, entity, action, entityDict).ConfigureAwait(false);
+
         formControls.Add(new FormControlViewModel
         {
             Name = this.GetComplexFormControlNameFor<Contest>(),
@@ -440,14 +442,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
             formControls.First(x => x.Name == nameof(Data.Models.Problems.Problem.ProblemGroup)).IsHidden = true;
         }
-
-        formControls.Add(new FormControlViewModel
-        {
-            Name = AdditionalFormFields.SolutionSkeletonRaw.ToString(),
-            Value = entity.SolutionSkeleton?.Decompress(),
-            Type = typeof(string),
-            FormControlType = FormControlType.TextArea,
-        });
 
         formControls.Add(new FormControlViewModel
         {
@@ -506,7 +500,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             .ValidatePermissionsOfCurrentUser(contestId)
             .VerifyResult();
 
-        TryAddSolutionSkeleton(entity, actionContext);
         await TryAddAdditionalFiles(entity, actionContext);
         AddSubmissionTypes(entity, actionContext);
     }
@@ -541,6 +534,28 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         await base.BeforeEntitySaveOnEditAsync(originalEntity, newEntity, actionContext);
     }
 
+    protected override Task ModifyFormControls(
+        ICollection<FormControlViewModel> formControls,
+        Problem entity,
+        EntityAction action,
+        IDictionary<string, string> entityDict)
+    {
+        var contestId = GetContestId(entityDict, entity);
+
+        if (contestId == default)
+        {
+            throw new Exception($"A valid ContestId must be provided to be able to {action} a Problem.");
+        }
+
+        var problemGroupInput = formControls.First(fc => fc.Name == nameof(ProblemGroup));
+
+        var orderedProblemGroupsQuery = this.problemGroupsData.GetAllByContestId(contestId)
+                                                                    .OrderBy(pg => pg.OrderBy);
+        problemGroupInput.Options = orderedProblemGroupsQuery;
+
+        return base.ModifyFormControls(formControls, entity, action, entityDict);
+    }
+
     protected override async Task AfterEntitySaveAsync(Problem entity, AdminActionContext actionContext)
     {
         var contestId = GetContestId(actionContext.EntityDict, entity);
@@ -559,10 +574,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
     private static int GetContestId(IDictionary<string, string> entityDict, Problem? problem)
         => entityDict.GetEntityIdOrDefault<Contest>() ?? problem?.ProblemGroup?.ContestId ?? default;
-
-    private static void TryAddSolutionSkeleton(Problem problem, AdminActionContext actionContext)
-        => problem.SolutionSkeleton =
-            actionContext.GetByteArrayFromStringInput(AdditionalFormFields.SolutionSkeletonRaw);
 
     private static async Task TryAddAdditionalFiles(Problem problem, AdminActionContext actionContext)
     {
@@ -584,7 +595,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             {
                 ProblemId = problem.Id,
                 SubmissionTypeId = int.Parse(x.Value!.ToString() !),
-                SolutionSkeleton = x.Expand.Value != null
+                SolutionSkeleton = x.Expand != null && x.Expand.Value != null
                     ? x.Expand.Value!.ToString() !.Compress()
                     : Array.Empty<byte>(),
             });
