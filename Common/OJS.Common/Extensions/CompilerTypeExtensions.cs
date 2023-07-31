@@ -1,7 +1,7 @@
-using OJS.Workers.Common.Models;
-
 namespace OJS.Common.Extensions
 {
+    using OJS.Workers.Common.Models;
+
     public static class CompilerTypeExtensions
     {
         public static string? GetFileExtension(this CompilerType compilerType)

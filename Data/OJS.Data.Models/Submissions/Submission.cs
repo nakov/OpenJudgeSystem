@@ -1,18 +1,17 @@
-using OJS.Workers.Common.Models;
-
 namespace OJS.Data.Models.Submissions
 {
-    using FluentExtensions.Extensions;
-    using OJS.Data.Models.Participants;
-    using OJS.Data.Models.Problems;
-    using OJS.Data.Models.Tests;
-    using OJS.Data.Validation;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
     using System.Text;
+    using FluentExtensions.Extensions;
+    using OJS.Data.Models.Participants;
+    using OJS.Data.Models.Problems;
+    using OJS.Data.Models.Tests;
+    using OJS.Data.Validation;
+    using OJS.Workers.Common.Models;
     using SoftUni.Data.Infrastructure.Models;
 
     public class Submission : DeletableAuditInfoEntity<int>

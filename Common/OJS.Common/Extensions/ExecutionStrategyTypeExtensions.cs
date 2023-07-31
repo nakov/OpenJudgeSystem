@@ -1,7 +1,7 @@
-using OJS.Workers.Common.Models;
-
 namespace OJS.Common.Extensions
 {
+    using OJS.Workers.Common.Models;
+
     public static class ExecutionStrategyTypeExtensions
     {
         public static string? GetFileExtension(this ExecutionStrategyType executionStrategyType)

@@ -1,8 +1,7 @@
-using OJS.Workers.Common.Models;
-
 namespace OJS.Data.Models.Tests
 {
     using OJS.Data.Models.Submissions;
+    using OJS.Workers.Common.Models;
     using SoftUni.Data.Infrastructure.Models;
 
     public class TestRun : Entity<int>
