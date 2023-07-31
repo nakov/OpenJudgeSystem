@@ -7,7 +7,6 @@ import { IGetContestResultsParams } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { getContestResultsUrl } from '../../utils/urls';
 import { IErrorDataType, useHttp } from '../use-http';
-import { useLoading } from '../use-loading';
 
 import { IContestResultsParticipationType, IContestResultsType } from './types';
 
@@ -29,7 +28,7 @@ const defaultState = { state: { contestResults: { results: [] as IContestResults
 const ContestResultsContext = createContext<ICurrentContestResultsContext>(defaultState as ICurrentContestResultsContext);
 
 const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProviderProps) => {
-    const { startLoading, stopLoading } = useLoading();
+    const [ isLoading, setIsLoading ] = useState(false);
     const [ getContestResultsParams, setGetContestResultsParams ] = useState<IGetContestResultsParams>();
     const [ contestResultsError, setContestResultsError ] = useState<IErrorDataType | null>(null);
 
@@ -62,12 +61,12 @@ const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProvi
             }
 
             (async () => {
-                startLoading();
+                setIsLoading(true);
                 await getContestResults();
-                stopLoading();
+                setIsLoading(false);
             })();
         },
-        [ getContestResults, getContestResultsParams, startLoading, stopLoading ],
+        [ getContestResults, getContestResultsParams ],
     );
 
     useEffect(
@@ -93,10 +92,11 @@ const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProvi
                 contestResults,
                 contestResultsError,
                 areContestResultsLoaded,
+                isLoading,
             },
             actions: { load },
         }),
-        [ areContestResultsLoaded, contestResults, contestResultsError, load ],
+        [ areContestResultsLoaded, contestResults, contestResultsError, load, isLoading ],
     );
 
     return (
