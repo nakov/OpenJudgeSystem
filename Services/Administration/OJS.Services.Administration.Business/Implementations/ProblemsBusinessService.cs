@@ -120,14 +120,13 @@ namespace OJS.Services.Administration.Business.Implementations
                     await this.problemGroupsBusiness.DeleteById(problem.ProblemGroupId);
                 }
 
+                await this.problemsData.DeleteById(id);
+                await this.problemsData.SaveChanges();
                 await this.testRunsData.DeleteByProblem(id);
 
                 this.problemResourcesData.DeleteByProblem(id);
 
                 this.submissionsData.DeleteByProblem(id);
-
-                await this.problemsData.DeleteById(id);
-                await this.problemsData.SaveChanges();
 
                 scope.Complete();
             }
