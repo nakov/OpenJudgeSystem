@@ -159,7 +159,7 @@
                             .Select(HomeContestViewModel.FromContest))
                     .OrderBy(c => c.EndTime)
                     .ToList(),
-                TimeSpan.FromHours((int)DateTime.UtcNow.AddHours(1).Hour));
+                TimeSpan.FromHours(DateTime.UtcNow.AddHours(1).Hour));
 
             return cachedResult.Where(
                     c =>

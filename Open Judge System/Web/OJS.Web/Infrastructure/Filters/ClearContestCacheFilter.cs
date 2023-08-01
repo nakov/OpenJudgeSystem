@@ -23,7 +23,7 @@
             var model = filterContext.ActionParameters["model"] as ContestAdministrationViewModel;
             var contestId = model?.Id;
 
-            if (string.IsNullOrEmpty(contestId.ToString()))
+            if (contestId == null || string.IsNullOrEmpty(contestId.ToString()))
             {
                 throw new ArgumentNullException("The id is not presenting in the model");
             }

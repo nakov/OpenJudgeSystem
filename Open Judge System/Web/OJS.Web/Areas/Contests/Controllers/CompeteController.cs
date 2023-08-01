@@ -225,8 +225,7 @@
             {
                 Contest = this.redisCacheService.GetOrSet<ContestViewModel>(
                     string.Format(CacheConstants.ContestView, participant.ContestId),
-                     () => { return ContestViewModel.FromContest.Compile()(participant.Contest); },
-                     null)
+                     () => { return ContestViewModel.FromContest.Compile()(participant.Contest); })
             };
 
             this.ViewBag.CompeteType = official ? CompeteActionName : PracticeActionName;

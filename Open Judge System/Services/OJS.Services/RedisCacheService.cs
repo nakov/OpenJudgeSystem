@@ -64,11 +64,26 @@ namespace OJS.Services
             }
         }
 
-        public T GetOrSet<T>(string cacheId, Func<T> getItemCallback, TimeSpan? expiration = null)
+        public T GetOrSet<T>(string cacheId, Func<T> getItemCallback, TimeSpan expiration)
         {
             try
             {
                 this.VerifyValueInCache<T>(cacheId, getItemCallback, expiration);
+                return this.Get<T>(cacheId, getItemCallback);
+            }
+            catch (RedisConnectionException ex)
+            {
+                this.SendEmail(ex.GetType().ToString(), ex.Message);
+
+                return getItemCallback();
+            }
+        }
+
+        public T GetOrSet<T>(string cacheId, Func<T> getItemCallback)
+        {
+            try
+            {
+                this.VerifyValueInCache<T>(cacheId, getItemCallback, null);
                 return this.Get<T>(cacheId, getItemCallback);
             }
             catch (RedisConnectionException ex)
@@ -111,20 +126,12 @@ namespace OJS.Services
             }
         }
 
-        public void Set<T>(string cacheId, T value, TimeSpan? expiration)
+        public void Set<T>(string cacheId, T value, TimeSpan expiration)
         {
             try
             {
                 string serializedObject = JsonConvert.SerializeObject(value);
-
-                if (expiration.HasValue)
-                {
-                    this.redisCache.StringSet(cacheId, serializedObject, expiration);
-                }
-                else
-                {
-                    this.redisCache.StringSet(cacheId, serializedObject);
-                }
+                this.redisCache.StringSet(cacheId, serializedObject, expiration);
             }
             catch (RedisConnectionException ex)
             {
@@ -132,20 +139,38 @@ namespace OJS.Services
             }
         }
 
-        public async Task SetAsync<T>(string cacheId, T value, TimeSpan? expiration)
+        public void Set<T>(string cacheId, T value)
         {
             try
             {
                 string serializedObject = JsonConvert.SerializeObject(value);
+                this.redisCache.StringSet(cacheId, serializedObject);
+            }
+            catch (RedisConnectionException ex)
+            {
+                this.SendEmail(ex.GetType().ToString(), ex.Message);
+            }
+        }
 
-                if (expiration.HasValue)
-                {
-                    await this.redisCache.StringSetAsync(cacheId, serializedObject, expiration);
-                }
-                else
-                {
-                    await this.redisCache.StringSetAsync(cacheId, serializedObject);
-                }
+        public async Task SetAsync<T>(string cacheId, T value, TimeSpan expiration)
+        {
+            try
+            {
+                string serializedObject = JsonConvert.SerializeObject(value);
+                await this.redisCache.StringSetAsync(cacheId, serializedObject, expiration);
+            }
+            catch (RedisConnectionException ex)
+            {
+                await this.SendEmailAsync(ex.GetType().ToString(), ex.Message);
+            }
+        }
+
+        public async Task SetAsync<T>(string cacheId, T value)
+        {
+            try
+            {
+                string serializedObject = JsonConvert.SerializeObject(value);
+                await this.redisCache.StringSetAsync(cacheId, serializedObject);
             }
             catch (RedisConnectionException ex)
             {
@@ -161,7 +186,7 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-               this.SendEmail(ex.GetType().ToString(), ex.Message);
+                this.SendEmail(ex.GetType().ToString(), ex.Message);
             }
         }
 
@@ -173,8 +198,8 @@ namespace OJS.Services
             }
             catch (RedisConnectionException ex)
             {
-               await this.SendEmailAsync(ex.GetType().ToString(), ex.Message);
-               
+                await this.SendEmailAsync(ex.GetType().ToString(), ex.Message);
+
             }
         }
 
@@ -241,11 +266,11 @@ namespace OJS.Services
         {
             if (!this.ShouldSendEmail(exTypeAsString, exMessage))
             {
-                 this.emailSenderService.SendEmail(this.devEmail, exTypeAsString, exMessage);
+                this.emailSenderService.SendEmail(this.devEmail, exTypeAsString, exMessage);
             }
         }
 
-        private async Task SendEmailAsync(string exTypeAsString,string exMessage)
+        private async Task SendEmailAsync(string exTypeAsString, string exMessage)
         {
             if (!this.ShouldSendEmail(exTypeAsString, exMessage))
             {
