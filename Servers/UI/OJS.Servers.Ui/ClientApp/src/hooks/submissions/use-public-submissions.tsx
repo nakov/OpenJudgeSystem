@@ -123,7 +123,7 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
 
     const initiatePublicSubmissionsQuery = useCallback(
         () => {
-            if (currentPage === previousPage) {
+            if (currentPage === previousPage && currentPage !== 1) {
                 return;
             }
 
@@ -134,7 +134,7 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
 
     const initiateUnprocessedSubmissionsQuery = useCallback(
         () => {
-            if (currentPage === previousPage) {
+            if (currentPage === previousPage && currentPage !== 1) {
                 return;
             }
 
