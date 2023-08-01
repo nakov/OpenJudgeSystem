@@ -172,7 +172,6 @@ namespace OJS.Services.Administration.Business.Implementations
         {
             var newSubmissionTypeInProblem = submissionTypeInProblem.Map<SubmissionTypeInProblem>();
             newSubmissionTypeInProblem.ProblemId = currentNewProblem.Id;
-           // newSubmissionTypeInProblem.Problem = currentNewProblem;
 
             submissionTypeInSourceProblems.Add(newSubmissionTypeInProblem);
 
