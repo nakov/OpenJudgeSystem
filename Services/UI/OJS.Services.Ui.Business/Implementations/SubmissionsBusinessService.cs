@@ -449,7 +449,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         if (executionResult != null)
         {
-            await ProcessTestsExecutionResult(submission, executionResult);
+            await this.ProcessTestsExecutionResult(submission, executionResult);
             this.submissionsData.Update(submission);
             await this.submissionsData.SaveChanges();
             await this.UpdateResults(submission);
