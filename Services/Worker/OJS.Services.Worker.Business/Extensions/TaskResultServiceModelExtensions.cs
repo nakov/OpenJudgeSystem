@@ -16,11 +16,16 @@ public static class TaskResultServiceModelExtensions
 
         var points = 0;
 
-        var testResults = taskResult.TestResults?.Where(x => !x.IsTrialTest).ToList();
+        var testResults = taskResult
+            .TestResults
+            .Where(x => !x.IsTrialTest)
+            .ToList();
 
-        if (testResults?.Count > 0)
+        if (testResults.Count > 0)
         {
-            var correctAnswersCount = testResults.Count(x => Enum.Parse<TestRunResultType>(x.ResultType) == TestRunResultType.CorrectAnswer);
+            var correctAnswersCount = testResults
+                .Count(x =>
+                    Enum.Parse<TestRunResultType>(x.ResultType) == TestRunResultType.CorrectAnswer);
 
             var coefficient = (double)correctAnswersCount / testResults.Count;
 

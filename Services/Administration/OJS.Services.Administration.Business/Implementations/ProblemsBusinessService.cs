@@ -30,7 +30,7 @@ namespace OJS.Services.Administration.Business.Implementations
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
         private readonly IContestsBusinessService contestsBusiness;
         private readonly IOrderableService<Problem> problemsOrderableService;
-        private ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
+        private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
 
         public ProblemsBusinessService(
             IContestsDataService contestsData,

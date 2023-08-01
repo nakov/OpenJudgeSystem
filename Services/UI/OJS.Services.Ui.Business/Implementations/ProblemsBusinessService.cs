@@ -33,7 +33,7 @@ namespace OJS.Services.Ui.Business.Implementations
         private readonly ISubmissionTypesDataService submissionTypesData;
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
         private readonly ILecturersInContestsBusinessService lecturersInContestsBusinessService;
-        private ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
+        private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
 
         public ProblemsBusinessService(
             IContestsDataService contestsData,
