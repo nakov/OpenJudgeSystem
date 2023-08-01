@@ -61,7 +61,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     // );
     React.useEffect(() => {
         const allSearches = search.split('&');
-        const strategySearch = allSearches.filter((search) => search.includes('strategy'))[0];
+        const strategySearch = allSearches.filter((s) => s.includes('strategy'))[0];
         if (!allSearches || !strategySearch) {
             setSelectValue('');
             return;
