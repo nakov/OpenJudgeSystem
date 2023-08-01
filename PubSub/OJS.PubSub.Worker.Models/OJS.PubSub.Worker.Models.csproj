@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Data\OJS.Data.Models\OJS.Data.Models.csproj" />
+      <ProjectReference Include="..\..\Services\Common\OJS.Services.Common.Models\OJS.Services.Common.Models.csproj" />
+      <ProjectReference Include="..\..\Services\Common\OJS.Workers\OJS.Workers.Common\OJS.Workers.Common.csproj" />
+      <ProjectReference Include="..\..\Services\Common\OJS.Workers\OJS.Workers.SubmissionProcessors\OJS.Workers.SubmissionProcessors.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="SoftUni.AutoMapper.Infrastructure" Version="1.0.4" />
+    </ItemGroup>
+
+</Project>

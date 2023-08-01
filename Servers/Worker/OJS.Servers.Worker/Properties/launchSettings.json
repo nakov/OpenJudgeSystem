@@ -28,7 +28,12 @@
         "SHARED_AUTH_COOKIE_DOMAIN": "localhost",
         "REDIS_CONNECTION_STRING": "localhost,password=redisPass123,ConnectTimeout=10000,abortConnect=false",
         "RUNS_IN_DOCKER": "false",
-        "SUBMISSIONS_PROCESSOR_IDENTIFIER_NUMBER": "1"
+        "SUBMISSIONS_PROCESSOR_IDENTIFIER_NUMBER": "1",
+        "MessageQueueConfig__Host": "localhost",
+        "MessageQueueConfig__VirtualHost": "/ojs",
+        "MessageQueueConfig__User": "ojsuser",
+        "MessageQueueConfig__Password": "myS3cretPass2",
+        "MessageQueueConfig__PrefetchCount": "1"
       }
     }
   }
