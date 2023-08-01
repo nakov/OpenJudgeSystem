@@ -92,6 +92,10 @@ interface IContestType {
     userCanCompete: boolean;
     userIsParticipant: false;
     isActive: boolean;
+    contestIsLoading: boolean;
+    registerForContestLoading: boolean;
+    submitContestPasswordIsLoading: boolean;
+    getParticipantScoresIsLoading: boolean;
     duration: number;
     numberOfProblems: number;
 }
@@ -108,6 +112,7 @@ interface IIndexContestsType {
     hasContestPassword: boolean;
     hasPracticePassword: boolean;
     category: string;
+    isLoading: boolean;
 }
 
 interface IContestModal {

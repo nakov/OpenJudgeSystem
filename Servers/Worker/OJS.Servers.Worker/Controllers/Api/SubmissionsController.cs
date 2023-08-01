@@ -8,7 +8,7 @@ using OJS.Servers.Worker.Models.ExecutionContext;
 using OJS.Servers.Worker.Models.ExecutionResult;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Worker.Business;
-using OJS.Services.Worker.Models.ExecutionContext;
+using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
 using System.Threading.Tasks;

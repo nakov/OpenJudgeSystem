@@ -9,7 +9,6 @@ import { IHaveChildrenProps } from '../components/common/Props';
 import { getIndexContestsUrl } from '../utils/urls';
 
 import { useHttp } from './use-http';
-import { useLoading } from './use-loading';
 
 interface IHomeContestsContext {
     state: {
@@ -36,9 +35,9 @@ type IHomeContestsProviderProps = IHaveChildrenProps
 const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
     const [ activeContests, setActiveContests ] = useState<IIndexContestsType[]>([]);
     const [ pastContests, setPastContests ] = useState<IIndexContestsType[]>([]);
-    const { startLoading, stopLoading } = useLoading();
 
     const {
+        isLoading: contestsAreLoading,
         get: getContests,
         data: contestsData,
         isSuccess,
@@ -46,11 +45,9 @@ const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
 
     const getForHome = useCallback(
         async () => {
-            startLoading();
             await getContests();
-            stopLoading();
         },
-        [ getContests, startLoading, stopLoading ],
+        [ getContests ],
     );
 
     useEffect(() => {
@@ -73,10 +70,11 @@ const HomeContestsProvider = ({ children }: IHomeContestsProviderProps) => {
                 activeContests,
                 pastContests,
                 isLoaded: isSuccess,
+                contestsAreLoading,
             },
             actions: { getForHome },
         }),
-        [ activeContests, getForHome, isSuccess, pastContests ],
+        [ activeContests, getForHome, isSuccess, pastContests, contestsAreLoading ],
     );
 
     return (

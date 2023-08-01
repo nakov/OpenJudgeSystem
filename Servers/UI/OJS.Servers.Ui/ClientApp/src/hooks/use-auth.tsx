@@ -12,7 +12,6 @@ import {
 } from '../utils/urls';
 
 import { useHttp } from './use-http';
-import { useLoading } from './use-loading';
 import { useNotifications } from './use-notifications';
 
 interface IAuthContext {
@@ -53,7 +52,7 @@ interface ILoginDetailsType {
 }
 
 const AuthProvider = ({ children }: IAuthProviderProps) => {
-    const { startLoading, stopLoading } = useLoading();
+    const [ isLoading, setIsLoading ] = useState(false);
     const [ internalUser, setInternalUser ] = useState<IUserType>(defaultState.user);
     const [ username, setUsername ] = useState<string>('');
     const [ password, setPassword ] = useState<string>();
@@ -131,23 +130,23 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
 
     const signIn = useCallback(
         async () => {
-            startLoading();
+            setIsLoading(true);
             await loginSubmit({
                 Username: username,
                 Password: password,
                 RememberMe: true,
             });
-            stopLoading();
+            setIsLoading(false);
         },
-        [ loginSubmit, password, startLoading, stopLoading, username ],
+        [ loginSubmit, password, username ],
     );
 
     const signOut = useCallback(async () => {
-        startLoading();
+        setIsLoading(true);
         await logout();
         setUserDetails(defaultState.user);
-        stopLoading();
-    }, [ logout, setUserDetails, startLoading, stopLoading ]);
+        setIsLoading(false);
+    }, [ logout, setUserDetails ]);
 
     useEffect(() => {
         if (isNil(loginSubmitResponse)) {
@@ -200,6 +199,7 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
                 hasCompletedGetAuthInfo,
                 isLoggedIn,
                 loginErrorMessage,
+                isLoading,
             },
             actions: {
                 signIn,
@@ -218,6 +218,7 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
             loginOrGetAuthInitiated,
             signIn,
             signOut,
+            isLoading,
         ],
     );
 

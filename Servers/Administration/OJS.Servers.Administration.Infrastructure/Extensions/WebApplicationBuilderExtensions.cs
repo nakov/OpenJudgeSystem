@@ -8,7 +8,7 @@ public static class WebApplicationBuilderExtensions
     public static WebApplicationBuilder ConfigureBuilder<TProgram>(
         this WebApplicationBuilder builder)
     {
-        builder.Services.ConfigureServices<TProgram>();
+        builder.Services.ConfigureServices<TProgram>(builder.Configuration);
         builder.Host.UseFileLogger<TProgram>();
 
         return builder;
