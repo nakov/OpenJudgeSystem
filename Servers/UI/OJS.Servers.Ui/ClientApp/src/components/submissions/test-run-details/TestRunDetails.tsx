@@ -130,13 +130,13 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
                         {testRun.memoryUsed}
                     </span>
                 </span>
-                {testRun.showInput
-                    ? renderCollapsibleTestInput()
-                    : null}
                 <span className={styles.testRunDataParagraph}>
                     {renderResultTypeLabel()}
                 </span>
             </span>
+            {testRun.showInput
+                ? renderCollapsibleTestInput()
+                : null}
             {executionComment}
         </div>
     ), [ testRun, renderResultTypeLabel, renderCollapsibleTestInput, executionComment, testRunHeadingClassName, testRunHeadingText ]);
@@ -150,14 +150,14 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
             <span className={styles.testRunDetailsCollapsible}>
                 <span className={styles.collapsibleHeader}>
                     {renderTestRunData()}
-                    <ExpandButton
-                      collapsedText=" "
-                      expandedText=" "
-                      expanded={isTestRunDetailCollapsed}
-                      onExpandChanged={handleTestRunDetailsToggleCollapsible}
-                      className={styles.testRunDetailsExpandBtn}
-                    />
                 </span>
+                <ExpandButton
+                  collapsedText="Show Details"
+                  expandedText="Hide Details"
+                  expanded={isTestRunDetailCollapsed}
+                  onExpandChanged={handleTestRunDetailsToggleCollapsible}
+                  className={styles.testRunDetailsExpandBtn}
+                />
                 <div className={styles.collapsibleContainer}>
                     <Collapsible collapsed={isTestRunDetailCollapsed}>
                         <TestRunDiffView testRun={testRun} />

@@ -12,7 +12,6 @@ using OJS.Services.Common.Models.Users;
 using OJS.Services.Ui.Business.Validations.Implementations.Submissions;
 using Infrastructure.Exceptions;
 using Data;
-using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 using Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using SoftUni.Judge.Common.Enumerations;
@@ -20,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 using OJS.Services.Ui.Models.Contests;
 
 using static Constants.PublicSubmissions;
@@ -301,7 +301,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var participant =
             await this.participantsDataService.GetByContestByUserAndByIsOfficial(
-                    problem.ProblemGroup.ContestId, user.Id!, isOfficial)
+                problem.ProblemGroup.ContestId, user.Id!, isOfficial)
                 .Map<ParticipantSubmissionResultsServiceModel>();
 
         this.ValidateCanViewSubmissionResults(isOfficial, user, problem, participant);

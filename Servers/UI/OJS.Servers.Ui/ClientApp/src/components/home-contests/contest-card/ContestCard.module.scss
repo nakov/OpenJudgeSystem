@@ -7,6 +7,7 @@
   @extend %font-family-lato;
 
   align-content: center;
+  justify-content: center;
   border-radius: 8px;
   box-shadow: colors.$box-shadow-color;
   color: colors.$text-dark-gray-color;
@@ -15,16 +16,11 @@
   flex-flow: wrap;
   grid-gap: 10px;
   grid-template-rows: auto 2fr auto;
-  margin: 10px 0;
-  height: 250px;
+  margin: 15px;
+  height: 180px;
   min-width: 240px;
-  padding: 0.7vw;
-  width: 16vw;
-
-  @media only screen and (max-width: variables.$r-laptop-max) {
-    margin-left: auto;
-    margin-right: auto;
-  }
+  padding: 10px;
+  width: 220px;
 }
 
 .tooltip {
@@ -32,22 +28,22 @@
   position: absolute;
   opacity: 0;
   width: 100%;
-
   transition: all .2s ease-in-out;
-
+  
   .tooltipText {
     font-size: 20px;
+    bottom: 100%;
     overflow: hidden;
     padding: 10px;
     margin: -10px;
     text-align: left;
-    background-color: white;
+    background-color: #fff;
     border: 2px solid colors.$light-blue-color;
     border-radius: 4px;
     display: block;
     height: auto;
+    width: 80%;
     white-space: normal;
-    
     transition: all .2s ease-in-out;
   }
 }
@@ -62,16 +58,19 @@
   font-weight: 500;
   justify-content: space-between;
   margin: 10px;
-  min-height: 4vh;
+}
 
+.contestTitleHoverable {
   &:hover {
     .tooltip {
       opacity: 1;
       cursor: auto;
     }
+    
     .tooltipText {
       display: block;
     }
+    
     .contestCardTitle {
       visibility: hidden;
     }
@@ -104,11 +103,11 @@
 .contestCardTitle {
   display: block;
   font-size: variables.$f-size-20;
-  max-width: 14vw;
+  max-width: 200px;
   padding-bottom: 10px;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: normal;
+  white-space: nowrap;
   width: 100%;
   max-height: 40px;
 
