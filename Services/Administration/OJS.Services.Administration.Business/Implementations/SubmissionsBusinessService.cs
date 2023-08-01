@@ -10,10 +10,11 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Data.Models.Submissions;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models;
+    using OJS.Services.Common;
     using OJS.Services.Common.Models;
     using OJS.Services.Infrastructure;
+    using OJS.Workers.Common.Models;
     using SoftUni.Data.Infrastructure;
-    using SoftUni.Judge.Common.Enumerations;
 
     public class SubmissionsBusinessService : ISubmissionsBusinessService
     {
@@ -23,7 +24,7 @@ namespace OJS.Services.Administration.Business.Implementations
         private readonly IParticipantScoresDataService participantScoresData;
         private readonly ITransactionsProvider transactions;
         private readonly IParticipantScoresBusinessService participantScoresBusinessService;
-        private readonly Business.ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
+        private readonly ISubmissionPublisherService submissionPublisherService;
         private readonly IDatesService dates;
 
         public SubmissionsBusinessService(
@@ -32,7 +33,7 @@ namespace OJS.Services.Administration.Business.Implementations
             ITransactionsProvider transactions,
             ISubmissionsForProcessingDataService submissionsForProcessingDataService,
             IParticipantScoresBusinessService participantScoresBusinessService,
-            Business.ISubmissionsDistributorCommunicationService submissionsDistributorCommunication,
+            ISubmissionPublisherService submissionPublisherService,
             IDatesService dates)
         {
             this.submissionsData = submissionsData;
@@ -41,7 +42,7 @@ namespace OJS.Services.Administration.Business.Implementations
             this.transactions = transactions;
             this.submissionsForProcessingDataService = submissionsForProcessingDataService;
             this.participantScoresBusinessService = participantScoresBusinessService;
-            this.submissionsDistributorCommunication = submissionsDistributorCommunication;
+            this.submissionPublisherService = submissionPublisherService;
             this.dates = dates;
         }
 
@@ -173,12 +174,7 @@ namespace OJS.Services.Administration.Business.Implementations
 
                 await this.submissionsData.SaveChanges();
 
-                var response = await this.submissionsDistributorCommunication.AddSubmissionForProcessing(submission);
-
-                if (!response.IsSuccess && !string.IsNullOrEmpty(response.ErrorMessage))
-                {
-                    return new ServiceResult(response.ErrorMessage);
-                }
+                await this.submissionPublisherService.Publish(submission);
 
                 return ServiceResult.Success;
             });
@@ -192,29 +188,5 @@ namespace OJS.Services.Administration.Business.Implementations
 
             return bestScore?.SubmissionId == submissionId;
         }
-
-        // public async Task HardDeleteAllArchived() =>
-        //     (await this.archivedSubmissionsData
-        //         .GetAllUndeletedFromMainDatabase())
-        //         .Select(s => s.Id)
-        //         .AsEnumerable()
-        //         .ChunkBy(GlobalConstants.BatchOperationsChunkSize)
-        //         .ForEach(submissionIds =>
-        //             this.HardDeleteByArchivedIds(new HashSet<int>(submissionIds)));
-
-        // private Task HardDeleteByArchivedIds(ICollection<int> ids)
-        // {
-        //     using (var scope = TransactionsHelper.CreateTransactionScope(IsolationLevel.ReadCommitted))
-        //     {
-        //         this.participantScoresData.RemoveSubmissionIdsBySubmissionIds(ids);
-        //         this.submissionsData.Delete(s => ids.Contains(s.Id));
-        //
-        //         this.archivedSubmissionsData.SetToHardDeletedFromMainDatabaseByIds(ids);
-        //
-        //         scope.Complete();
-        //     }
-        //
-        //     return Task.CompletedTask;
-        // }
     }
 }

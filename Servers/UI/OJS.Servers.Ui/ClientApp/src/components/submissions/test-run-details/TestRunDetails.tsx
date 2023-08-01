@@ -146,24 +146,26 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
     }, []);
 
     const renderTestRunDetailsCollapsible = useCallback(() => (
-        <div className={styles.zeroTestWrapper}>
+        <span className={styles.testRunDetailsCollapsible}>
             <span className={styles.testRunDetailsCollapsible}>
                 <span className={styles.collapsibleHeader}>
-                    {renderTestRunData()}
+                {renderTestRunData()}
+                <div className={styles.detailsCollapsibleButton}>
                     <ExpandButton
-                      collapsedText=" "
-                      expandedText=" "
+                      collapsedText="Details"
+                      expandedText="Hide"
                       expanded={isTestRunDetailCollapsed}
                       onExpandChanged={handleTestRunDetailsToggleCollapsible}
-                      className={styles.testRunDetailsExpandBtn}
+                      className="testRunDetailsExpandBtn"
                     />
+                </div>
                 </span>
-                <div className={styles.collapsibleContainer}>
+            <Collapsible collapsed={isTestRunDetailCollapsed}>
                     <Collapsible collapsed={isTestRunDetailCollapsed}>
                         <TestRunDiffView testRun={testRun} />
                     </Collapsible>
-                </div>
-            </span>
+        </span>
+    ), [ renderTestRunData, handleTestRunDetailsToggleCollapsible, isTestRunDetailCollapsed, testRun ]);
         </div>
     ), [ renderTestRunData, handleTestRunDetailsToggleCollapsible, isTestRunDetailCollapsed, testRun ]);
 
