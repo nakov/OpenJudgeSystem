@@ -33,6 +33,7 @@ namespace OJS.Services.Ui.Business.Implementations
         private readonly ISubmissionTypesDataService submissionTypesData;
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
         private readonly ILecturersInContestsBusinessService lecturersInContestsBusinessService;
+        private ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
 
         public ProblemsBusinessService(
             IContestsDataService contestsData,
@@ -44,7 +45,8 @@ namespace OJS.Services.Ui.Business.Implementations
             ITestRunsDataService testRunsData,
             ISubmissionTypesDataService submissionTypesData,
             IProblemGroupsBusinessService problemGroupsBusiness,
-            ILecturersInContestsBusinessService lecturersInContestsBusinessService)
+            ILecturersInContestsBusinessService lecturersInContestsBusinessService,
+            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication)
         {
             this.contestsData = contestsData;
             this.participantScoresData = participantScoresData;
@@ -56,6 +58,7 @@ namespace OJS.Services.Ui.Business.Implementations
             this.submissionTypesData = submissionTypesData;
             this.problemGroupsBusiness = problemGroupsBusiness;
             this.lecturersInContestsBusinessService = lecturersInContestsBusinessService;
+            this.submissionsDistributorCommunication = submissionsDistributorCommunication;
         }
 
         public async Task RetestById(int id)
@@ -82,7 +85,12 @@ namespace OJS.Services.Ui.Business.Implementations
                 scope.Complete();
             }
 
-            // TODO: Implement publishing of submissions
+            var response = await this.submissionsDistributorCommunication.AddSubmissionsForProcessing(submissions);
+            if (!response.IsSuccess)
+            {
+                throw new Exception(
+                    "An error has occured while sending submissions for processing: " + response.ErrorMessage);
+            }
         }
 
         public async Task DeleteById(int id)

@@ -30,6 +30,7 @@ namespace OJS.Services.Administration.Business.Implementations
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
         private readonly IContestsBusinessService contestsBusiness;
         private readonly IOrderableService<Problem> problemsOrderableService;
+        private ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
 
         public ProblemsBusinessService(
             IContestsDataService contestsData,
@@ -43,7 +44,8 @@ namespace OJS.Services.Administration.Business.Implementations
             IProblemGroupsBusinessService problemGroupsBusiness,
             IContestsBusinessService contestsBusiness,
             IProblemGroupsDataService problemGroupData,
-            IOrderableService<Problem> problemsOrderableService)
+            IOrderableService<Problem> problemsOrderableService,
+            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication)
         {
             this.contestsData = contestsData;
             this.participantScoresData = participantScoresData;
@@ -57,6 +59,7 @@ namespace OJS.Services.Administration.Business.Implementations
             this.contestsBusiness = contestsBusiness;
             this.problemGroupData = problemGroupData;
             this.problemsOrderableService = problemsOrderableService;
+            this.submissionsDistributorCommunication = submissionsDistributorCommunication;
         }
 
         public async Task RetestById(int id)
@@ -85,11 +88,12 @@ namespace OJS.Services.Administration.Business.Implementations
                 scope.Complete();
             }
 
-            // if (!response.IsSuccess)
-            // {
-            //     throw new Exception(
-            //         "An error has occured while sending submissions for processing: " + response.ErrorMessage);
-            // }
+            var response = await this.submissionsDistributorCommunication.AddSubmissionsForProcessing(submissions);
+            if (!response.IsSuccess)
+            {
+                throw new Exception(
+                    "An error has occured while sending submissions for processing: " + response.ErrorMessage);
+            }
         }
 
         public async Task DeleteById(int id)
