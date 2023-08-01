@@ -2,14 +2,10 @@
 @use 'src/styles/fonts';
 @use 'src/styles/variables';
 
-.detailsCollapsibleButton {
-  margin-top: -60px;
-}
-
 .executionComment {
   @extend %font-family-lato;
 
-  padding-top: 30px;
+  padding-top: 10px;
 }
 
 .testRunContainer {
@@ -25,6 +21,7 @@
   color: colors.$text-dark-gray-color;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-top: 10px;
   padding: 20px;
   width: 100%;
@@ -38,6 +35,8 @@
 
 .testRunHeading {
   @extend %heading;
+  width: 120px;
+  margin-bottom: 0 !important;
 }
 
 .testRunDetailsCollapsible {
@@ -47,7 +46,6 @@
   flex-direction: column;
   flex-grow: 1;
   margin-top: -10px;
-  width: 235px;
 }
 
 .wrongTestRunHeading {
@@ -61,6 +59,11 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  width: 100%;
+}
+
+.collapsibleContainer {
+  margin-top: 10px;  
 }
 
 .correctTestRunHeading {
@@ -70,10 +73,9 @@
 }
 
 .testRunData {
-  align-self: center;
+  align-items: center;
   display: flex;
   gap: 10px;
-  margin-left: 10px;
 }
 
 .testRunDataParagraph {
@@ -81,4 +83,15 @@
 
   color: colors.$text-dark-gray-color;
   font-size: variables.$f-size-14;
+}
+
+.zeroTestWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.testRunDetailsExpandBtn {
+  margin-top: -17px !important;
 }

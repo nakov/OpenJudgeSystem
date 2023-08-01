@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
+import { InputLabel, MenuItem, Select } from '@mui/material';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { FilterType, IFilter /* ISort */ } from '../../../common/contest-types';
+import { FilterType, IFilter } from '../../../common/contest-types';
 import { groupByType } from '../../../common/filter-utils';
 import { useContestCategories } from '../../../hooks/use-contest-categories';
 import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
@@ -27,6 +28,8 @@ interface IFiltersGroup {
 
 const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const maxFiltersToDisplayCount = 3;
+    const { search } = useLocation();
+    const [ selectValue, setSelectValue ] = useState('');
     const [ filtersGroups, setFiltersGroups ] = useState<IFiltersGroup[]>([]);
     const [ defaultSelected, setDefaultSelected ] = useState('');
     const [ filteredStrategyFilters, setFilteredStrategyFilters ] = useState<IFilter[]>([]);
@@ -44,7 +47,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const {
         state: { possibleFilters },
         actions: {
-            // toggleParam,
+            toggleParam,
             clearFilters,
             clearSorts,
         },
@@ -56,6 +59,17 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     //     (sorting: ISort) => toggleParam(sorting),
     //     [ toggleParam ],
     // );
+    React.useEffect(() => {
+        const allSearches = search.split('&');
+        const strategySearch = allSearches.filter((search) => search.includes('strategy'))[0];
+        if (!allSearches || !strategySearch) {
+            setSelectValue('');
+            return;
+        }
+
+        const strategyId = strategySearch.split('=')[1];
+        setSelectValue(strategyId);
+    }, [ search ]);
 
     const handleFilterClick = useCallback(
         (filterId: number) => {
@@ -70,6 +84,10 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         [ possibleFilters, onFilterClick ],
     );
 
+    const handleStrategySelect = useCallback((param: IFilter) => {
+        toggleParam(param);
+    }, [ toggleParam ]);
+
     const renderFilter = useCallback(
         (fg: IFiltersGroup) => {
             const { type, filters: groupFilters } = fg;
@@ -77,6 +95,37 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
             const strategyFilters = isEmpty(filteredStrategyFilters)
                 ? groupFilters
                 : filteredStrategyFilters;
+
+            if (type === FilterType.Strategy) {
+                return (
+                    <div style={{ marginTop: 15 }}>
+                        <InputLabel id="strategy-label">Strategy</InputLabel>
+                        <Select
+                          sx={{
+                              width: 350,
+                              height: 40,
+                              borderColor: '#bebebe',
+                          }}
+                          defaultValue=""
+                          labelId="strategy-label"
+                          autoWidth
+                          displayEmpty
+                          value={selectValue}
+                        >
+                            <MenuItem key="strategy-item-default" value="">Select strategy</MenuItem>
+                            {strategyFilters.map((item) => (
+                                <MenuItem
+                                  key={`strategy-item-${item.value}`}
+                                  value={item.value}
+                                  onClick={() => handleStrategySelect(item)}
+                                >
+                                    {item.name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </div>
+                );
+            }
 
             const values = type === FilterType.Status
                 ? groupFilters
@@ -91,7 +140,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
                 />
             );
         },
-        [ filteredStrategyFilters, handleFilterClick ],
+        [ filteredStrategyFilters, handleFilterClick, handleStrategySelect, selectValue ],
     );
 
     useEffect(

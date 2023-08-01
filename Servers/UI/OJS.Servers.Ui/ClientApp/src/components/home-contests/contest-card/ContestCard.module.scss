@@ -7,6 +7,7 @@
   @extend %font-family-lato;
 
   align-content: center;
+  justify-content: center;
   border-radius: 8px;
   box-shadow: colors.$box-shadow-color;
   color: colors.$text-dark-gray-color;
@@ -15,32 +16,37 @@
   flex-flow: wrap;
   grid-gap: 10px;
   grid-template-rows: auto 2fr auto;
-  margin: 10px;
-  min-height: 10vh;
+  margin: 15px;
+  height: 180px;
   min-width: 240px;
-  padding: 0.7vw;
-  width: 13vw;
-
-  @media only screen and (max-width: variables.$r-laptop-max) {
-    margin-left: auto;
-    margin-right: auto;
-  }
+  padding: 10px;
+  width: 220px;
 }
 
 .tooltip {
-  max-width: 245px;
+  max-width: 255px;
   position: absolute;
-  visibility: hidden;
+  opacity: 0;
   width: 100%;
 
+  transition: all .2s ease-in-out;
+  
   .tooltipText {
+    font-size: 20px;
     bottom: 100%;
-    font-size: 15px;
     overflow: hidden;
-    padding: 5px 0;
-    position: absolute;
+    padding: 10px;
+    margin: -10px;
     text-align: left;
-    white-space: nowrap;
+    background-color: white;
+    border: 2px solid colors.$light-blue-color;
+    border-radius: 4px;
+    display: block;
+    height: auto;
+    width: 80%;
+    white-space: normal;
+
+    transition: all .2s ease-in-out;
   }
 }
 
@@ -54,11 +60,19 @@
   font-weight: 500;
   justify-content: space-between;
   margin: 10px;
-  min-height: 4vh;
+}
 
+.contestTitleHoverable {
   &:hover {
     .tooltip {
-      visibility: visible;
+      opacity: 1;
+      cursor: auto;
+    }
+    .tooltipText {
+      display: block;
+    }
+    .contestCardTitle {
+      visibility: hidden;
     }
   }
 }
@@ -67,7 +81,8 @@
   align-items: flex-end;
   display: flex;
   grid-gap: 10px;
-  justify-content: center;
+  justify-content: space-between;
+  padding: 0 10px;
 }
 
 .contestCardCountdown {
@@ -79,7 +94,7 @@
 
 .contestCardCategoryLabel {
   color: colors.$text-light-gray-color;
-  font-size: variables.$f-size-10;
+  font-size: variables.$f-size-14;
   font-weight: bold;
   margin-left: 10px;
   text-transform: uppercase;
@@ -88,11 +103,13 @@
 .contestCardTitle {
   display: block;
   font-size: variables.$f-size-20;
-  max-width: 11vw;
+  max-width: 200px;
+  padding-bottom: 10px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
+  max-height: 40px;
 
   @media only screen and (max-width: variables.$r-small-desktop-max) {
     font-size: variables.$f-size-18;

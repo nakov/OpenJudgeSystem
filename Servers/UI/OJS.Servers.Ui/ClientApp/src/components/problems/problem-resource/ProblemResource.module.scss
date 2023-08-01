@@ -6,9 +6,28 @@
   flex-direction: row;
   gap: 10px;
   min-height: 50px;
+  
+  > a {
+    padding: 0;
+    text-decoration: none;
+  }
 }
 
-.resourceLink,
+.resourceLink {
+  padding: 10px 20px;
+  border-radius: 4px;
+  transition: all .2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:hover {
+    background-color: #e3f3fd;
+  }
+  > i {
+    margin-right: 10px;
+  }
+}
+
 .resourceLinkButton {
   color: colors.$text-dark-gray-color;
   text-decoration: none;
