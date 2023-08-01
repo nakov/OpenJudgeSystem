@@ -110,10 +110,10 @@ namespace OJS.Services.Administration.Business.Implementations
         private async Task CopyProblemGroupToContest(ProblemGroup problemGroup, int contestId)
         {
             var currentNewProblemGroup = problemGroup.Map<ProblemGroup>();
-            currentNewProblemGroup.Id = 0;
             currentNewProblemGroup.ContestId = contestId;
 
             await this.problemGroupsData.Add(currentNewProblemGroup);
+            await this.problemGroupsData.SaveChanges();
 
             var problemsToAdd = new List<Problem>();
 
@@ -130,6 +130,7 @@ namespace OJS.Services.Administration.Business.Implementations
                await this.submissionTypesInProblemsData.SaveChanges();
                await this.problemsData.SaveChanges();
 
+               this.problemGroupsData.Update(currentNewProblemGroup);
                await this.problemGroupsData.SaveChanges();
 
                await this.ReevaluateProblemsAndProblemGroupsOrder(contestId, currentNewProblemGroup);
@@ -145,9 +146,8 @@ namespace OJS.Services.Administration.Business.Implementations
 
             var currentNewProblem = problem.Map<Problem>();
 
-            currentNewProblem.Id = 0;
             currentNewProblem.ProblemGroupId = currentNewProblemGroup.Id;
-            currentNewProblem.ModifiedOn = null;
+            currentNewProblem.ProblemGroup = currentNewProblemGroup;
 
             await this.problemsData.Add(currentNewProblem);
             await this.problemsData.SaveChanges();
