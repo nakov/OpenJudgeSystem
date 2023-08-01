@@ -1,6 +1,6 @@
 namespace OJS.Common.Extensions
 {
-    using SoftUni.Judge.Common.Enumerations;
+    using OJS.Workers.Common.Models;
 
     public static class ExecutionStrategyTypeExtensions
     {

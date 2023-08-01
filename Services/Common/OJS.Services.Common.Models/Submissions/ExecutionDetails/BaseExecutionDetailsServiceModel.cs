@@ -1,4 +1,4 @@
-namespace OJS.Services.Worker.Models.ExecutionContext.ExecutionDetails
+namespace OJS.Services.Common.Models.Submissions.ExecutionDetails
 {
     public class BaseExecutionDetailsServiceModel
     {

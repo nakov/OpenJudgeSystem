@@ -28,9 +28,9 @@ namespace OJS.Services.Administration.Business.Implementations
         private readonly ISubmissionTypesDataService submissionTypesData;
         private readonly IProblemGroupsDataService problemGroupData;
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
-        private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
         private readonly IContestsBusinessService contestsBusiness;
         private readonly IOrderableService<Problem> problemsOrderableService;
+        private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
 
         public ProblemsBusinessService(
             IContestsDataService contestsData,
@@ -42,10 +42,10 @@ namespace OJS.Services.Administration.Business.Implementations
             ITestRunsDataService testRunsData,
             ISubmissionTypesDataService submissionTypesData,
             IProblemGroupsBusinessService problemGroupsBusiness,
-            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication,
             IContestsBusinessService contestsBusiness,
             IProblemGroupsDataService problemGroupData,
-            IOrderableService<Problem> problemsOrderableService)
+            IOrderableService<Problem> problemsOrderableService,
+            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication)
         {
             this.contestsData = contestsData;
             this.participantScoresData = participantScoresData;
@@ -56,10 +56,10 @@ namespace OJS.Services.Administration.Business.Implementations
             this.testRunsData = testRunsData;
             this.submissionTypesData = submissionTypesData;
             this.problemGroupsBusiness = problemGroupsBusiness;
-            this.submissionsDistributorCommunication = submissionsDistributorCommunication;
             this.contestsBusiness = contestsBusiness;
             this.problemGroupData = problemGroupData;
             this.problemsOrderableService = problemsOrderableService;
+            this.submissionsDistributorCommunication = submissionsDistributorCommunication;
         }
 
         public async Task RetestById(int id)
@@ -82,6 +82,8 @@ namespace OJS.Services.Administration.Business.Implementations
                 this.submissionsData.SetAllToUnprocessedByProblem(id);
 
                 await this.submissionsForProcessingData.AddOrUpdateBySubmissionIds(submissionIds);
+
+                // TODO: Publish submissions for processing
 
                 scope.Complete();
             }

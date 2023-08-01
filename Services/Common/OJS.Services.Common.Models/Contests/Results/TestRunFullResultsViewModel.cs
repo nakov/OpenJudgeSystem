@@ -1,8 +1,8 @@
 namespace OJS.Services.Common.Models.Contests.Results;
 
-using SoftUni.Judge.Common.Enumerations;
 using System.Collections.Generic;
 using System.Linq;
+using OJS.Workers.Common.Models;
 
 public class TestRunFullResultsViewModel
 {
