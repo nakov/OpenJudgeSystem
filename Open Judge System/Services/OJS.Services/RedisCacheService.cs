@@ -79,11 +79,27 @@ namespace OJS.Services
             }
         }
 
-        public async Task<T> GetOrSetAsync<T>(string cacheId, Func<Task<T>> getItemCallback, TimeSpan? expiration)
+        public async Task<T> GetOrSetAsync<T>(string cacheId, Func<Task<T>> getItemCallback, TimeSpan expiration)
         {
             try
             {
                 await this.VerifyValueInCacheAsync<T>(cacheId, getItemCallback, expiration);
+
+                return await this.GetAsync<T>(cacheId, getItemCallback);
+            }
+            catch (RedisConnectionException ex)
+            {
+                await this.SendEmailAsync(ex.GetType().ToString(), ex.Message);
+
+                return await getItemCallback();
+            }
+        }
+
+        public async Task<T> GetOrSetAsync<T>(string cacheId, Func<Task<T>> getItemCallback)
+        {
+            try
+            {
+                await this.VerifyValueInCacheAsync<T>(cacheId, getItemCallback, null);
 
                 return await this.GetAsync<T>(cacheId, getItemCallback);
             }
@@ -235,8 +251,7 @@ namespace OJS.Services
             {
                 await this.emailSenderService.SendEmailAsync(this.devEmail, exTypeAsString, exMessage);
             }
-        } 
-
+        }
         #endregion
     }
 }

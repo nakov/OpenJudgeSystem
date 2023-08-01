@@ -33,6 +33,7 @@
 
         public void OnActionExecuted(ClearContestAttribute attribute, ActionExecutedContext filterContext)
         {
+            // Not used
         }
     }
 }

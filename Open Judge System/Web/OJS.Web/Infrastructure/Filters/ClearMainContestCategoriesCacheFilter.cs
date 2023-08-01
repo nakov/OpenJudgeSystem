@@ -9,7 +9,7 @@
 
     public class ClearMainContestCategoriesCacheFilter : IActionFilter<ClearMainContestCategoriesCacheAttribute>
     {
-        private IRedisCacheService redisCacheService;
+        private readonly IRedisCacheService redisCacheService;
 
         public ClearMainContestCategoriesCacheFilter(IRedisCacheService redisCacheService)
         {

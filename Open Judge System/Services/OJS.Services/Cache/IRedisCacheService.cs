@@ -16,7 +16,9 @@ namespace OJS.Services.Cache
 
         T GetOrSet<T>(string cacheId, Func<T> getItemCallback, TimeSpan? expiration = null);
 
-        Task<T> GetOrSetAsync<T>(string cacheId, Func<Task<T>> getItemCallback, TimeSpan? expiration);
+        Task<T> GetOrSetAsync<T>(string cacheId, Func<Task<T>> getItemCallback);
+
+        Task<T> GetOrSetAsync<T>(string cacheId, Func<Task<T>> getItemCallback, TimeSpan expiration);
 
         void Remove(string cacheId);
 

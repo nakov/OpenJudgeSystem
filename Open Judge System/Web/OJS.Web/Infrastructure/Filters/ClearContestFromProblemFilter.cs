@@ -19,6 +19,7 @@
 
         public void OnActionExecuted(ClearContestFromProblemAttribute attribute, ActionExecutedContext filterContext)
         {
+            // Not used
         }
 
         public void OnActionExecuting(ClearContestFromProblemAttribute attribute, ActionExecutingContext filterContext)
