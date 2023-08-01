@@ -28,7 +28,6 @@
   position: absolute;
   opacity: 0;
   width: 100%;
-
   transition: all .2s ease-in-out;
   
   .tooltipText {
@@ -38,7 +37,7 @@
     padding: 10px;
     margin: -10px;
     text-align: left;
-    background-color: white;
+    background-color: #ffffff;
     border: 2px solid colors.$light-blue-color;
     border-radius: 4px;
     display: block;
@@ -68,9 +67,11 @@
       opacity: 1;
       cursor: auto;
     }
+    
     .tooltipText {
       display: block;
     }
+    
     .contestCardTitle {
       visibility: hidden;
     }

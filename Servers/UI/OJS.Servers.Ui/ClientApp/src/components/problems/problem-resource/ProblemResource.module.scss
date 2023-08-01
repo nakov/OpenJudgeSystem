@@ -20,9 +20,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  
   &:hover {
     background-color: #e3f3fd;
   }
+  
   > i {
     margin-right: 10px;
   }
