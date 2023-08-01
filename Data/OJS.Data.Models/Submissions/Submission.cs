@@ -28,6 +28,8 @@ namespace OJS.Data.Models.Submissions
 
         public virtual SubmissionType? SubmissionType { get; set; }
 
+        public virtual SubmissionForProcessing? SubmissionForProcessing { get; set; }
+
         /// <remarks>
         /// Using byte[] (compressed with deflate) to save database space for text inputs. For other file types the actual file content is saved in the field.
         /// </remarks>

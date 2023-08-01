@@ -1,10 +1,10 @@
 ﻿namespace OJS.Services.Ui.Data
 {
-    using OJS.Data.Models.Submissions;
-    using SoftUni.Services.Infrastructure;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using OJS.Data.Models.Submissions;
+    using SoftUni.Services.Infrastructure;
 
     public interface ISubmissionsForProcessingDataService : IService
     {

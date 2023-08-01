@@ -30,7 +30,7 @@
 
         public IQueryable<SubmissionForProcessing> GetAllUnprocessed() =>
             this.DbSet
-                .Where(sfp => !sfp.Processed && !sfp.Processing);
+                .Where(sfp => !sfp.Processed && sfp.Processing);
 
         public async Task<IEnumerable<int>> GetIdsOfAllProcessing() =>
             await this.DbSet
