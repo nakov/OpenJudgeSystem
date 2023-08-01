@@ -1748,6 +1748,8 @@
     <Compile Include="App_Start\Settings.cs" />
     <Compile Include="App_Start\SimpleInjectorConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="App_Start\Startup.Seeder.cs" />
+    <Compile Include="App_Start\Startup.Tls.cs" />
     <Compile Include="App_Start\ViewEngineConfig.cs" />
     <Compile Include="Areas\Administration\AdministrationAreaRegistration.cs" />
     <Compile Include="Areas\Administration\Controllers\AccessLogsController.cs" />
@@ -1834,6 +1836,7 @@
     <Compile Include="Areas\Administration\ViewModels\User\UserProfileSimpleAdministrationViewModel.cs" />
     <Compile Include="Areas\Api\ApiAreaRegistration.cs" />
     <Compile Include="Areas\Api\Controllers\ApiController.cs" />
+    <Compile Include="Areas\Api\Controllers\ContestCategoriesController.cs" />
     <Compile Include="Areas\Api\Controllers\ExamGroupsController.cs" />
     <Compile Include="Areas\Api\Controllers\ResultsController.cs" />
     <Compile Include="Areas\Api\Controllers\SubmissionsController.cs" />
@@ -1911,8 +1914,11 @@
     <Compile Include="Infrastructure\Filters\LogAccessFilter.cs" />
     <Compile Include="Infrastructure\Filters\PopulateMainContestCategoriesIntoViewBagFilter.cs" />
     <Compile Include="Infrastructure\Filters\ValidateRemoteDataApiKeyFilter.cs" />
+    <Compile Include="Infrastructure\Seeders\AdministratorSeeder.cs" />
+    <Compile Include="Infrastructure\Seeders\ISeeder.cs" />
     <Compile Include="Infrastructure\SimpleInjectorPackages\ActionFiltersPackage.cs" />
     <Compile Include="Infrastructure\SimpleInjectorPackages\DataPackage.cs" />
+    <Compile Include="Infrastructure\SimpleInjectorPackages\SeederPackage.cs" />
     <Compile Include="Infrastructure\SimpleInjectorPackages\ServicesPackage.cs" />
     <Compile Include="Infrastructure\SimpleInjectorPackages\ToolsPackage.cs" />
     <Compile Include="ViewModels\Account\ChangeUsernameViewModel.cs" />
@@ -2587,6 +2593,7 @@
     <Content Include="Areas\Administration\Views\Contests\CalculateContestLoad.cshtml" />
     <None Include="Properties\PublishProfiles\Dev Suls Judge System.pubxml" />
     <None Include="Properties\PublishProfiles\File System.pubxml" />
+    <None Include="Properties\PublishProfiles\Judge Global.pubxml" />
     <None Include="Properties\PublishProfiles\Suls Judge System.pubxml" />
     <Content Include="Scripts\Helpers\kendo-helper.js" />
     <Content Include="Scripts\Helpers\validations.js" />
