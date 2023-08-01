@@ -1,7 +1,7 @@
-﻿namespace OJS.Services.Worker.Models.ExecutionContext.ExecutionDetails
+﻿namespace OJS.Services.Common.Models.Submissions.ExecutionDetails
 {
     using AutoMapper;
-    using OJS.Services.Worker.Models.ExecutionContext.Mapping;
+    using OJS.Services.Common.Models.Submissions.ExecutionContext.Mapping;
     using OJS.Workers.ExecutionStrategies.Models;
     using SoftUni.AutoMapper.Infrastructure.Models;
 

@@ -2,11 +2,11 @@
 {
     public class ExecutionOptionsServiceModel
     {
-        public bool KeepDetails { get; set; }
+        public bool KeepDetails { get; set; } = true;
 
-        public bool EscapeTests { get; set; }
+        public bool EscapeTests { get; set; } = true;
 
-        public bool EscapeLineEndings { get; set; }
+        public bool EscapeLineEndings { get; set; } = true;
 
         public bool KeepCheckerFragmentsForCorrectAnswers { get; set; }
     }

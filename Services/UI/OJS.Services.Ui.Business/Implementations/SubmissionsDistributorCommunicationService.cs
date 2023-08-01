@@ -12,27 +12,23 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Common.Models.Submissions;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Ui.Data;
-    using SoftUni.Judge.Common.Enumerations;
-    using SoftUni.Judge.Common.Extensions;
-    using SoftUni.Judge.Common.Formatters;
+    using OJS.Workers.Common.Extensions;
+    using OJS.Workers.Common.Models;
     using static OJS.Common.GlobalConstants.Urls;
 
     public class SubmissionsDistributorCommunicationService : ISubmissionsDistributorCommunicationService
     {
-        private readonly IFormatterServiceFactory formatterServiceFactory;
         private readonly IDistributorHttpClientService distributorHttpClient;
         private readonly ISubmissionsCommonDataService submissionsData;
         private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
         private readonly DistributorConfig distributorConfig;
 
         public SubmissionsDistributorCommunicationService(
-            IFormatterServiceFactory formatterServiceFactory,
             IDistributorHttpClientService distributorHttpClient,
             ISubmissionsCommonDataService submissionsData,
             ISubmissionsForProcessingDataService submissionsForProcessingData,
             IOptions<DistributorConfig> distributorConfigAccessor)
         {
-            this.formatterServiceFactory = formatterServiceFactory;
             this.distributorHttpClient = distributorHttpClient;
             this.submissionsData = submissionsData;
             this.submissionsForProcessingData = submissionsForProcessingData;
@@ -62,7 +58,7 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var unprocessedSubmissionIds = await this.submissionsForProcessingData
                 .GetAllUnprocessed()
-                .Select(s => s.SubmissionId)
+                .Select(s => s!.SubmissionId)
                 .ToListAsync();
 
             if (!unprocessedSubmissionIds.Any())
@@ -102,14 +98,6 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var executionType = ExecutionType.TestsExecution.ToString().ToHyphenSeparatedWords();
 
-            var executionStrategy = this.formatterServiceFactory
-                .Get<ExecutionStrategyType>()
-                ?.Format(submission.SubmissionType!.ExecutionStrategyType);
-
-            var checkerType = this.formatterServiceFactory
-                .Get<string>()
-                ?.Format(submission.Problem!.Checker!.ClassName!);
-
             var (fileContent, code) = GetSubmissionContent(submission);
 
             var tests = submission.Problem!.Tests
@@ -125,8 +113,8 @@ namespace OJS.Services.Ui.Business.Implementations
             var submissionRequestBody = new
             {
                 submission.Id,
-                ExecutionType = executionType,
-                ExecutionStrategy = executionStrategy,
+                ExecutionType = ExecutionType.TestsExecution.ToString(),
+                ExecutionStrategy = submission.SubmissionType!.ExecutionStrategyType.ToString(),
                 FileContent = fileContent,
                 Code = code,
                 submission.Problem.TimeLimit,
@@ -134,7 +122,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 ExecutionDetails = new
                 {
                     MaxPoints = submission.Problem.MaximumPoints,
-                    CheckerType = checkerType,
+                    CheckerType = submission.Problem.Checker!.ClassName,
                     CheckerParameter = submission.Problem.Checker?.Parameter,
                     Tests = tests,
                     TaskSkeleton = submission.Problem
