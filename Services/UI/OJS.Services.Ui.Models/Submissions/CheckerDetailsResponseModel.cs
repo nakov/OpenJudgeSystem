@@ -1,6 +1,9 @@
 ﻿namespace OJS.Services.Ui.Models.Submissions
 {
-    public class CheckerDetailsResponseModel
+    using OJS.Workers.Common;
+    using SoftUni.AutoMapper.Infrastructure.Models;
+
+    public class CheckerDetailsResponseModel : IMapFrom<CheckerDetails>
     {
         public string? Comment { get; set; }
 

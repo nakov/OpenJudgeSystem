@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Text;
     using System.Text.RegularExpressions;
-    using SoftUni.Judge.Common.Enumerations;
+    using OJS.Workers.Common.Models;
 
     public static class MySqlStrategiesHelper
     {

@@ -14,13 +14,15 @@ using Infrastructure.Exceptions;
 using Data;
 using Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
-using SoftUni.Judge.Common.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 using OJS.Services.Ui.Models.Contests;
+using OJS.Services.Common;
+using OJS.Services.Common.Models.Submissions;
+using OJS.Workers.Common.Models;
 
 using static Constants.PublicSubmissions;
 
@@ -33,15 +35,15 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/624
     private readonly IParticipantsDataService participantsDataService;
     private readonly IProblemsDataService problemsDataService;
+    private readonly IContestsDataService contestsDataService;
     private readonly IUserProviderService userProviderService;
-    private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunicationService;
     private readonly ITestRunsDataService testRunsDataService;
     private readonly ISubmissionDetailsValidationService submissionDetailsValidationService;
     private readonly IContestValidationService contestValidationService;
     private readonly ISubmitSubmissionValidationService submitSubmissionValidationService;
     private readonly ISubmissionResultsValidationService submissionResultsValidationService;
     private readonly ISubmissionFileDownloadValidationService submissionFileDownloadValidationService;
-    private readonly IContestsDataService contestsDataService;
+    private readonly ISubmissionPublisherService submissionPublisher;
 
     public SubmissionsBusinessService(
         ISubmissionsDataService submissionsData,
@@ -50,7 +52,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         IParticipantsBusinessService participantsBusinessService,
         IParticipantsDataService participantsDataService,
         IUserProviderService userProviderService,
-        ISubmissionsDistributorCommunicationService submissionsDistributorCommunicationService,
         ITestRunsDataService testRunsDataService,
         IParticipantScoresBusinessService participantScoresBusinessService,
         ISubmissionDetailsValidationService submissionDetailsValidationService,
@@ -58,6 +59,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ISubmitSubmissionValidationService submitSubmissionValidationService,
         ISubmissionResultsValidationService submissionResultsValidationService,
         ISubmissionFileDownloadValidationService submissionFileDownloadValidationService,
+        ISubmissionPublisherService submissionPublisher,
         IContestsDataService contestsDataService)
     {
         this.submissionsData = submissionsData;
@@ -66,7 +68,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.participantsBusinessService = participantsBusinessService;
         this.participantsDataService = participantsDataService;
         this.userProviderService = userProviderService;
-        this.submissionsDistributorCommunicationService = submissionsDistributorCommunicationService;
         this.testRunsDataService = testRunsDataService;
         this.participantScoresBusinessService = participantScoresBusinessService;
         this.submissionDetailsValidationService = submissionDetailsValidationService;
@@ -74,6 +75,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.submitSubmissionValidationService = submitSubmissionValidationService;
         this.submissionResultsValidationService = submissionResultsValidationService;
         this.submissionFileDownloadValidationService = submissionFileDownloadValidationService;
+        this.submissionPublisher = submissionPublisher;
         this.contestsDataService = contestsDataService;
     }
 
@@ -400,7 +402,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             newSubmission.Problem = problem;
             newSubmission.SubmissionType = submissionType;
 
-            await this.submissionsDistributorCommunicationService.AddSubmissionForProcessing(newSubmission);
+            await this.submissionPublisher.Publish(newSubmission);
         }
         else
         {
@@ -410,7 +412,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             await this.submissionsData.Add(newSubmission);
             await this.submissionsData.SaveChanges();
 
-            newSubmission.Problem = problem;
             newSubmission.Problem = problem;
 
             await this.participantScoresBusinessService.SaveForSubmission(newSubmission);
@@ -435,21 +436,28 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var exception = submissionExecutionResult.Exception;
         var executionResult = submissionExecutionResult.ExecutionResult;
 
-        submission.ProcessingComment = null;
         await this.testRunsDataService.DeleteBySubmission(submission.Id);
 
-        if (exception != null)
-        {
-            submission.ProcessingComment = exception.Message;
-        }
+        submission.Processed = true;
+        submission.ProcessingComment = null;
 
-        if (executionResult == null)
+        if (executionResult != null)
         {
-            submission.ProcessingComment = "Invalid execution result received. Please contact an administrator.";
-            return;
+            ProcessTestsExecutionResult(submission, executionResult);
+            this.submissionsData.Update(submission);
+            await this.submissionsData.SaveChanges();
+            await this.UpdateResults(submission);
         }
-
-        await this.ProcessTestsExecutionResult(submission, executionResult);
+        else
+        {
+            submission.IsCompiledSuccessfully = false;
+            var errorMessage = exception?.Message
+                ?? "Invalid execution result received. Please contact an administrator.";
+            submission.ProcessingComment = errorMessage;
+            submission.CompilerComment = errorMessage;
+            this.submissionsData.Update(submission);
+            await this.submissionsData.SaveChanges();
+        }
     }
 
     public Task<IEnumerable<SubmissionForPublicSubmissionsServiceModel>> GetPublicSubmissions()
@@ -474,42 +482,25 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
     }
 
-    private async Task ProcessTestsExecutionResult(
+    private static void ProcessTestsExecutionResult(
         Submission submission,
-        ExecutionResultResponseModel executionResult)
+        ExecutionResultServiceModel executionResult)
     {
         submission.IsCompiledSuccessfully = executionResult.IsCompiledSuccessfully;
         submission.CompilerComment = executionResult.CompilerComment;
-        submission.Points = executionResult.TaskResult.Points;
+        submission.Points = executionResult.TaskResult!.Points;
 
         if (!executionResult.IsCompiledSuccessfully)
         {
-            await this.UpdateResults(submission);
+            submission.TestRuns.Clear();
+            return;
         }
 
-        var testResults = executionResult
-                              .TaskResult
-                              ?.TestResults
-                          ?? Enumerable.Empty<TestResultResponseModel>();
+        var testResults =
+            executionResult.TaskResult?.TestResults ?? Enumerable.Empty<TestResultServiceModel>();
 
-        submission.TestRuns.AddRange(testResults.Select(testResult =>
-            new TestRun
-            {
-                CheckerComment = testResult.CheckerDetails.Comment,
-                ExpectedOutputFragment = testResult.CheckerDetails.ExpectedOutputFragment,
-                UserOutputFragment = testResult.CheckerDetails.UserOutputFragment,
-                ExecutionComment = testResult.ExecutionComment,
-                MemoryUsed = testResult.MemoryUsed,
-                ResultType = (TestRunResultType)Enum.Parse(typeof(TestRunResultType), testResult.ResultType),
-                TestId = testResult.Id,
-                TimeUsed = testResult.TimeUsed,
-            }));
-
-        submission.Processed = true;
-        this.submissionsData.Update(submission);
-        await this.submissionsData.SaveChanges();
-
-        await this.UpdateResults(submission);
+        submission.TestRuns.AddRange(
+            testResults.Select(testResult => testResult.Map<TestRun>()));
     }
 
     private async Task UpdateResults(Submission submission)
