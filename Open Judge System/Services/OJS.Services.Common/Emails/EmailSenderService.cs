@@ -73,7 +73,6 @@
             catch (Exception)
             {
                 //TODO log error
-                return;
             }
         }
 
