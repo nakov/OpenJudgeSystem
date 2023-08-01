@@ -32,7 +32,6 @@ namespace OJS.Services.Ui.Business.Implementations
         private readonly ITestRunsDataService testRunsData;
         private readonly ISubmissionTypesDataService submissionTypesData;
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
-        private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
         private readonly ILecturersInContestsBusinessService lecturersInContestsBusinessService;
 
         public ProblemsBusinessService(
@@ -45,7 +44,6 @@ namespace OJS.Services.Ui.Business.Implementations
             ITestRunsDataService testRunsData,
             ISubmissionTypesDataService submissionTypesData,
             IProblemGroupsBusinessService problemGroupsBusiness,
-            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication,
             ILecturersInContestsBusinessService lecturersInContestsBusinessService)
         {
             this.contestsData = contestsData;
@@ -57,7 +55,6 @@ namespace OJS.Services.Ui.Business.Implementations
             this.testRunsData = testRunsData;
             this.submissionTypesData = submissionTypesData;
             this.problemGroupsBusiness = problemGroupsBusiness;
-            this.submissionsDistributorCommunication = submissionsDistributorCommunication;
             this.lecturersInContestsBusinessService = lecturersInContestsBusinessService;
         }
 
@@ -85,12 +82,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 scope.Complete();
             }
 
-            var response = await this.submissionsDistributorCommunication.AddSubmissionsForProcessing(submissions);
-            if (!response.IsSuccess)
-            {
-                throw new Exception(
-                    "An error has occured while sending submissions for processing: " + response.ErrorMessage);
-            }
+            // TODO: Implement publishing of submissions
         }
 
         public async Task DeleteById(int id)
