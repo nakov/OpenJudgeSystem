@@ -34,6 +34,7 @@
     public class ContestsController : LecturerBaseGridController
     {
         private const int ProblemGroupsCountLimit = 40;
+        private const int actualWorkersDefaultValue = 36;
 
         private readonly IContestsDataService contestsData;
         private readonly IContestCategoriesDataService contestCategoriesData;
@@ -548,8 +549,6 @@
 
             var contests = this.contestsData
                 .GetAll()
-                .Where(c => c.StartTime.HasValue && c.EndTime.HasValue)
-                .OrderByDescending(x => x.StartTime.Value)
                 .ToList();
 
             var model = new ContestLoadCalculationViewModel();
@@ -557,12 +556,23 @@
             {
                 if (contest.Id == currentContestId)
                 {
-                    model.ExamLengthInHours = (contest.EndTime.Value - contest.StartTime.Value).Hours;
+                    if (contest.StartTime.HasValue && contest.EndTime.HasValue)
+                    {
+                        model.ExamLengthInHours = (contest.EndTime.Value - contest.StartTime.Value).Hours;
+                    }
+
                     model.ExpectedExamProblemsCount = contest.ProblemGroups.Count();
                     model.ContestName = contest.Name;
                     model.CurrentContestId = contest.Id;
                     model.AverageProblemRunTimeInSeconds =
                         this.contestsBusiness.GetContestSubmissionsAverageRunTimeSeconds(contest);
+                    model.ActualWorkers = actualWorkersDefaultValue;
+
+                    var actualWorkersDbValue = this.Data.Settings.All().FirstOrDefault(x => x.Name == GlobalConstants.RemoteWorkers);
+                    if (actualWorkersDbValue != null)
+                    {
+                        model.ActualWorkers = int.Parse(actualWorkersDbValue.Value);
+                    }
 
                     // Currently is setted to 0 because it is not fetched from the SULS
                     model.ExpectedStudentsCount = 0;
@@ -572,8 +582,6 @@
                     model.ContestsDropdownData.Add(new PreviousContestLoadData(contest));
                 }
             }
-
-            model.ActualWorkers = int.Parse(this.Data.Settings.All().First(x => x.Name == GlobalConstants.RemoteWorkers).Value);
 
             return this.View(model);
         }
@@ -596,6 +604,16 @@
                     .Count();
                 model.PreviousAverageProblemRunTimeInSeconds =
                     this.contestsBusiness.GetContestSubmissionsAverageRunTimeSeconds(contest);
+            }
+            else
+            {
+                if (model.PreviousAverageProblemRunTimeInSeconds == null
+                    || model.PreviousContestParticipants == null
+                    || model.PreviousContestExpectedProblems == null
+                    || model.PreviousContestSubmissions == null)
+                {
+                    return this.View(model);
+                }
             }
 
             var calculatedLoad = this.contestsBusiness.CalculateLoadForContest(model);

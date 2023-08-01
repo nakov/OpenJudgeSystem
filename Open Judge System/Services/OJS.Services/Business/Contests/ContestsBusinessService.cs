@@ -172,10 +172,10 @@
         {
             var responseModel = new JudgeLoadResults();
 
-            responseModel.PreviousAverageProblemRunTimeInSeconds = model.PreviousAverageProblemRunTimeInSeconds;
-            responseModel.PreviousContestExpectedProblems = model.PreviousContestExpectedProblems;
-            responseModel.PreviousContestSubmissions = model.PreviousContestSubmissions;
-            responseModel.PreviousContestParticipants = model.PreviousContestParticipants;
+            responseModel.PreviousAverageProblemRunTimeInSeconds = model.PreviousAverageProblemRunTimeInSeconds.Value;
+            responseModel.PreviousContestExpectedProblems = model.PreviousContestExpectedProblems.Value;
+            responseModel.PreviousContestSubmissions = model.PreviousContestSubmissions.Value;
+            responseModel.PreviousContestParticipants = model.PreviousContestParticipants.Value;
 
             this.GetJudgeLoadData(model, responseModel);
             GetDoomsDayScenario(model, responseModel);
@@ -198,24 +198,26 @@
                                         }))
                                     .ToList();
 
-            if (contestSubmissions.Any(s => s.StartedExecutionOn.HasValue))
+            if (contestSubmissions.Count == 0)
             {
-                return contestSubmissions.Any(s => s.CompletedExecutionOn.HasValue)
-                    ? (int)contestSubmissions.Where(s => s.StartedExecutionOn.HasValue).Average(s => (s.CompletedExecutionOn.Value - s.StartedExecutionOn.Value).TotalSeconds)
-                    : (int)contestSubmissions.Where(s => s.StartedExecutionOn.HasValue).Average(s => (s.ModifiedOn.Value - s.StartedExecutionOn.Value).TotalSeconds);
+                return 0;
             }
-            else
+
+            return (int)contestSubmissions.Average(s =>
             {
-                var contestSubmissionForCalc = contestSubmissions
-                    .Where(s => s.ModifiedOn.HasValue).ToList();
-
-                int countOfAllSubmissionTime = contestSubmissionForCalc
-                     .Sum(s =>
-                        (int)(s.ModifiedOn.Value.TimeOfDay.TotalSeconds - s.CreatedOn.Value.TimeOfDay.TotalSeconds));
-
-                return countOfAllSubmissionTime > 0 ?
-                    countOfAllSubmissionTime / contestSubmissionForCalc.Count() : 0;
-            }
+                if (s.StartedExecutionOn.HasValue)
+                {
+                    return s.CompletedExecutionOn.HasValue
+                     ? (s.CompletedExecutionOn.Value - s.StartedExecutionOn.Value).TotalSeconds
+                     : (s.ModifiedOn.Value - s.StartedExecutionOn.Value).TotalSeconds;
+                }
+                else
+                {
+                    return s.CompletedExecutionOn.HasValue
+                     ? (s.CompletedExecutionOn.Value - s.CreatedOn.Value).TotalSeconds
+                     : (s.ModifiedOn.Value - s.CreatedOn.Value).TotalSeconds;
+                }
+            });
         }
 
         private static void GetDistributionResults(BaseContestBusinessModel model, JudgeLoadResults responseModel)
@@ -253,9 +255,9 @@
 
         private void GetJudgeLoadData(BaseContestBusinessModel model, JudgeLoadResults responseModel)
         {
-            double previousExamSubmissions = model.PreviousContestSubmissions;
-            double previousExamStudents = model.PreviousContestParticipants;
-            int previousExamProblems = model.PreviousContestExpectedProblems;
+            double previousExamSubmissions = model.PreviousContestSubmissions.Value;
+            double previousExamStudents = model.PreviousContestParticipants.Value;
+            int previousExamProblems = model.PreviousContestExpectedProblems.Value;
 
             var currentContestData = (double)model.ExpectedExamProblemsCount * model.ExpectedStudentsCount;
 

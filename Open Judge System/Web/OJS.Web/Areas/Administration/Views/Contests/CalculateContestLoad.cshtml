@@ -258,7 +258,6 @@ Try not to design a task which takes more than 5 seconds. If you need such a pro
                 </div>
                 <div class="editor-label col-xs-4 k-upload-cancel">
                     <input class="form-control" id="PreviousContestParticipantsResult" value="@responseModel.PreviousContestParticipants" />
-                    @*@Html.EditorFor(m => m.PreviousContestParticipantsResult, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })*@
                 </div>
                 <div class="editor-field col-xs-4">
                     <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam students" data-tooltip="true"></span>
@@ -270,7 +269,6 @@ Try not to design a task which takes more than 5 seconds. If you need such a pro
                 </div>
                 <div class="editor-label col-xs-4 k-upload-cancel">
                     <input class="form-control" id="PreviousContestSubmissionsResult" value="@responseModel.PreviousContestSubmissions" />
-                    @*@Html.EditorFor(m => m.PreviousContestSubmissionsResult, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })*@
                 </div>
                 <div class="editor-field col-xs-4">
                     <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam total submissions" data-tooltip="true"></span>
@@ -282,7 +280,6 @@ Try not to design a task which takes more than 5 seconds. If you need such a pro
                 </div>
                 <div class="editor-label col-xs-4 k-upload-cancel">
                     <input class="form-control" id="PreviousContestExpectedProblemsResult" value="@responseModel.PreviousContestExpectedProblems" />
-                    @*@Html.EditorFor(m => m.PreviousContestExpectedProblemsResult, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })*@
                 </div>
                 <div class="editor-field col-xs-4">
                     <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam number of problems" data-tooltip="true"></span>
@@ -294,7 +291,6 @@ Try not to design a task which takes more than 5 seconds. If you need such a pro
                 </div>
                 <div class="editor-label col-xs-4 k-upload-cancel">
                     <input class="form-control" id="PreviousAverageProblemRunTimeInSecondsResult" value="@responseModel.PreviousAverageProblemRunTimeInSeconds" />
-                    @*@Html.EditorFor(m => m.PreviousAverageProblemRunTimeInSecondsResult, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })*@
                 </div>
                 <div class="editor-field col-xs-4">
                     <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam number of average problem run time in seconds" data-tooltip="true"></span>
@@ -506,29 +502,55 @@ Suggestion is based on the safety factor below and actual workers.
         var previouseContestDropdown = document.getElementById("previous-contests-wrapper");
         var previousContestData = document.getElementById("previous-contests-data")
 
+        var previousContestParticipants =  document.getElementById("PreviousContestParticipants")
+        var previousContestSubmissions =  document.getElementById("PreviousContestSubmissions")
+        var previousContestExpectedProblems = document.getElementById("PreviousContestExpectedProblems")
+        var previousAverageProblemRunTimeInSeconds = document.getElementById("PreviousAverageProblemRunTimeInSeconds")
+
         if (e.checked) {
             previouseContestDropdown.style.display = "none";
             previousContestData.style.display = "block"
+            previousContestParticipants.value = 0
+            previousContestSubmissions.value = 0
+            previousContestExpectedProblems.value = 0
+            previousAverageProblemRunTimeInSeconds.value = 0
         }
         else {
             previouseContestDropdown.style.display = "block";
             previousContestData.style.display = "none"
+            previousContestParticipants.value = null
+            previousContestSubmissions.value = null
+            previousContestExpectedProblems.value = null
+            previousAverageProblemRunTimeInSeconds.value = null
         }
     }
 
      $(function () {
          $('form').submit(function (event) {
 
+             var isPreviousExamDataManuallyAdded = document.getElementById("toggle-previos-exams").checked;
              event.preventDefault();
 
              var formData = $(this).serialize();
+
              var params = new URLSearchParams(formData);
+
              var previousContestId = params.get("PreviousContestId");
 
-             if (!document.getElementById("toggle-previos-exams").checked && !previousContestId)
+             if (!isPreviousExamDataManuallyAdded && !previousContestId)
              {
                  alert("Please select previous exam.")
+                 return;
              }
+             if (isPreviousExamDataManuallyAdded) {
+                 params.delete("PreviousContestId")
+                 params.append("PreviousContestParticipants", document.getElementById("PreviousContestParticipants").value)
+                 params.append("PreviousContestSubmissions", document.getElementById("PreviousContestSubmissions").value)
+                 params.append("PreviousContestExpectedProblems", document.getElementById("PreviousContestExpectedProblems").value)
+                 params.append("PreviousAverageProblemRunTimeInSeconds", document.getElementById("PreviousAverageProblemRunTimeInSeconds").value)
+             }
+
+             formData = params.toString()
 
              $.post('@Url.Action("CalculateContestLoad", "Contests")', formData)
                  .done(function (response) {
@@ -568,7 +590,7 @@ Suggestion is based on the safety factor below and actual workers.
                      previousExamBox.removeAttribute("hidden");
                  })
                  .fail(function (error) {
-                     console.log(error)
+                     alert(error)
                  });
         });
     });
