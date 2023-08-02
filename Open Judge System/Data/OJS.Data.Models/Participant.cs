@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-
     using OJS.Data.Contracts;
 
     public class Participant : AuditInfo
@@ -20,8 +19,7 @@
             this.IsOfficial = isOfficial;
         }
 
-        [Key]
-        public int Id { get; set; }
+        [Key] public int Id { get; set; }
 
         public int ContestId { get; set; }
 
@@ -31,7 +29,7 @@
 
         public DateTime? ParticipationEndTime { get; set; }
 
-        [Index]
+        [Index] 
         public bool IsOfficial { get; set; }
 
         public bool IsInvalidated { get; set; }
@@ -39,6 +37,10 @@
         public virtual Contest Contest { get; set; }
 
         public virtual UserProfile User { get; set; }
+
+        public int TotalScoreSnapshot { get; set; }
+
+        public DateTime? TotalScoreSnapshotModifiedOn { get; set; }
 
         public virtual ICollection<Submission> Submissions { get; set; } = new HashSet<Submission>();
 
