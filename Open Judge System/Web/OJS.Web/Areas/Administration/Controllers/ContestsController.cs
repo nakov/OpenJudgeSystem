@@ -116,7 +116,6 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [ClearContestAttribute(queryKeyForContestId: nameof(ContestAdministrationViewModel.Id))]
         public ActionResult Create(ContestAdministrationViewModel model)
         {
             if (model?.CategoryId == null || !this.CheckIfUserHasContestCategoryPermissions(model.CategoryId.Value))
