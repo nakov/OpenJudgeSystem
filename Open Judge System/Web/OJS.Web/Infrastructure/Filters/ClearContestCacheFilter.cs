@@ -9,7 +9,9 @@
     using OJS.Web.Infrastructure.Filters.Attributes;
     using OJS.Web.Infrastructure.Filters.Contracts;
 
-    // A filter that will remove contest from the cache if it is changed or deleted.
+    // <summary>
+    //   Filter that will remove contest from the cache if it is changed or deleted.
+    // </summary> 
     public class ClearContestCacheFilter : IActionFilter<ClearContestAttribute>
     {
         private readonly IRedisCacheService redisCacheService;
