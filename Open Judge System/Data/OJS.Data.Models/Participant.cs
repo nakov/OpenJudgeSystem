@@ -19,7 +19,8 @@
             this.IsOfficial = isOfficial;
         }
 
-        [Key] public int Id { get; set; }
+        [Key]
+        public int Id { get; set; }
 
         public int ContestId { get; set; }
 
@@ -29,7 +30,7 @@
 
         public DateTime? ParticipationEndTime { get; set; }
 
-        [Index] 
+        [Index]
         public bool IsOfficial { get; set; }
 
         public bool IsInvalidated { get; set; }
