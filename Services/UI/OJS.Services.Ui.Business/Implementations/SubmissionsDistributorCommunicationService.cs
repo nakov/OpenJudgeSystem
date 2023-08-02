@@ -58,7 +58,7 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var unprocessedSubmissionIds = await this.submissionsForProcessingData
                 .GetAllUnprocessed()
-                .Select(s => s.SubmissionId)
+                .Select(s => s!.SubmissionId)
                 .ToListAsync();
 
             if (!unprocessedSubmissionIds.Any())
@@ -113,7 +113,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var submissionRequestBody = new
             {
                 submission.Id,
-                ExecutionType = executionType,
+                ExecutionType = ExecutionType.TestsExecution.ToString(),
                 ExecutionStrategy = submission.SubmissionType!.ExecutionStrategyType.ToString(),
                 FileContent = fileContent,
                 Code = code,
@@ -122,7 +122,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 ExecutionDetails = new
                 {
                     MaxPoints = submission.Problem.MaximumPoints,
-                    CheckerType = submission.Problem.Checker?.ClassName,
+                    CheckerType = submission.Problem.Checker!.ClassName,
                     CheckerParameter = submission.Problem.Checker?.Parameter,
                     Tests = tests,
                     TaskSkeleton = submission.Problem

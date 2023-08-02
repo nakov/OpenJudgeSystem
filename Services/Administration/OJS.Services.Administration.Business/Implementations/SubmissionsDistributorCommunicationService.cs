@@ -14,6 +14,7 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Models;
+    using OJS.Workers.SubmissionProcessors.Formatters;
     using static OJS.Common.GlobalConstants.Urls;
 
     public class SubmissionsDistributorCommunicationService : ISubmissionsDistributorCommunicationService
@@ -113,7 +114,7 @@ namespace OJS.Services.Administration.Business.Implementations
             var submissionRequestBody = new
             {
                 submission.Id,
-                ExecutionType = executionType,
+                ExecutionType = ExecutionType.TestsExecution.ToString(),
                 ExecutionStrategy = submission.SubmissionType!.ExecutionStrategyType.ToString(),
                 FileContent = fileContent,
                 Code = code,
@@ -125,7 +126,8 @@ namespace OJS.Services.Administration.Business.Implementations
                     CheckerType = submission.Problem.Checker!.ClassName,
                     CheckerParameter = submission.Problem.Checker?.Parameter,
                     Tests = tests,
-                    TaskSkeleton = submission.Problem?.SubmissionTypesInProblems
+                    TaskSkeleton = submission.Problem
+                        .SubmissionTypesInProblems
                         .Where(x => x.SubmissionTypeId == submission.SubmissionTypeId)
                         .Select(x => x.SolutionSkeleton)
                         .FirstOrDefault(),
