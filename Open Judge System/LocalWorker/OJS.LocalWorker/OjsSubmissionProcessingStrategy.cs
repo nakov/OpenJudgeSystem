@@ -169,8 +169,7 @@
         private static void UpdateParticipantTotalScore(Participant participant)
         {
             participant.TotalScoreSnapshot =
-                participant.Scores.Where(ps => !ps.Problem.IsDeleted
-                                               && ps.Problem.ProblemGroup.ContestId == participant.ContestId)
+                participant.Scores.Where(ps => !ps.Problem.IsDeleted)
                     .Select(ps => ps.Points)
                     .Sum();
             participant.TotalScoreSnapshotModifiedOn = DateTime.Now;
