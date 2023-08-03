@@ -148,7 +148,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var ojsWorkerExecutionResult = this.submissionExecutor.Execute<TInput, TResult>(ojsSubmission);
 
         var executionResult = this.mapper.Map<ExecutionResultServiceModel>(ojsWorkerExecutionResult);
+
         executionResult.StartedExecutionOn = ojsSubmission.StartedExecutionOn;
+        executionResult.CompletedExecutionOn = DateTime.UtcNow;
 
         var taskMaxPoints = submission.TestsExecutionDetails?.MaxPoints ?? TaskDefaultMaxPoints;
 
@@ -160,8 +162,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         {
             this.ProcessTaskResult(submission, executionResult, taskMaxPoints);
         }
-
-        executionResult.CompletedExecutionOn = DateTime.UtcNow;
 
         return executionResult;
     }
