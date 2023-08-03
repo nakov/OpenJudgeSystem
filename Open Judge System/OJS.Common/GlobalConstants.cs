@@ -138,5 +138,8 @@
 
         public static readonly string RemoteWorkers = "Remote_Workers_Count";
         public static readonly int RemoteWorkersCount = 36;
+
+        public const string MaxAllowedTimeForSubmissionCompletion = "Max_allowed_time_for_submission_completion_InSecs";
+        public static readonly int MaxAllowedTimeForSubmissionCompletionInSecs = 200;
     }
 }

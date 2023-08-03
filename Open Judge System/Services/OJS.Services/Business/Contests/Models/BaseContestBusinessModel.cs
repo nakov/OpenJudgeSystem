@@ -44,5 +44,7 @@ namespace OJS.Services.Business.Contests.Models
 
         public int? PreviousAverageProblemRunTimeInSeconds { get; set; }
 
+        public int MaxAllowedTimeForSubmissionCompletion { get; set; }
+
     }
 }

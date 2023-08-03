@@ -32,6 +32,11 @@
                 {
                     Name = GlobalConstants.RemoteWorkers,
                     Value = GlobalConstants.RemoteWorkersCount.ToString()
+                },
+                new Setting
+                {
+                    Name = GlobalConstants.MaxAllowedTimeForSubmissionCompletion,
+                    Value = GlobalConstants.MaxAllowedTimeForSubmissionCompletionInSecs.ToString()
                 }
             });
 

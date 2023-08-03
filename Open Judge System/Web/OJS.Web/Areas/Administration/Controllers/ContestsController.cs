@@ -35,6 +35,7 @@
     {
         private const int ProblemGroupsCountLimit = 40;
         private const int actualWorkersDefaultValue = 36;
+        private const int maxAllowedTimeForSubmissionCompletionInSecs = 200;
 
         private readonly IContestsDataService contestsData;
         private readonly IContestCategoriesDataService contestCategoriesData;
@@ -53,7 +54,7 @@
             IContestsBusinessService contestsBusiness,
             IParticipantsBusinessService participantsBusiness,
             ICacheItemsProviderService cacheItemsProvider)
-                : base(data)
+            : base(data)
         {
             this.contestsData = contestsData;
             this.contestCategoriesData = contestCategoriesData;
@@ -165,11 +166,15 @@
 
             if (contest.EnsureValidAuthorSubmisions)
             {
-                var submissionTypesForProblem = this.contestsData.GetSumbissionTypesForProblemsWithCurrentAuthorSolution(contest.Id.Value);
-                var typesWithoutAuthorSolutions = submissionTypesForProblem.Where(stp => stp.HasAuthorSubmission == false);
+                var submissionTypesForProblem =
+                    this.contestsData.GetSumbissionTypesForProblemsWithCurrentAuthorSolution(contest.Id.Value);
+                var typesWithoutAuthorSolutions =
+                    submissionTypesForProblem.Where(stp => stp.HasAuthorSubmission == false);
                 if (typesWithoutAuthorSolutions.Any())
                 {
-                    var text = "Missing currently passing Author submissions on: <br>" + string.Join("<br>", typesWithoutAuthorSolutions.Select(stp => $"Problem Name: {stp.ProblemName}, SubmissionType: {stp.SubmissionTypeName}"));
+                    var text = "Missing currently passing Author submissions on: <br>" + string.Join("<br>",
+                        typesWithoutAuthorSolutions.Select(stp =>
+                            $"Problem Name: {stp.ProblemName}, SubmissionType: {stp.SubmissionTypeName}"));
                     this.TempData.AddDangerMessage(text);
                     var systemMessages = this.PrepareSystemMessages();
                     this.ViewBag.SystemMessages = systemMessages;
@@ -212,7 +217,7 @@
             if (contest.IsOnline &&
                 contest.IsActive &&
                 (contest.Duration != model.Duration ||
-                    (int)contest.Type != model.Type))
+                 (int)contest.Type != model.Type))
             {
                 this.TempData.AddDangerMessage(Resource.Active_contest_cannot_edit_duration_type);
                 this.RedirectToAction<ContestsController>(c => c.Index());
@@ -486,9 +491,9 @@
         [HttpGet]
         public ActionResult TransferParticipants(int id, string returnUrl)
         {
-            returnUrl = string.IsNullOrWhiteSpace(returnUrl) ?
-                this.Request.UrlReferrer?.AbsolutePath :
-                UrlHelpers.ExtractFullContestsTreeUrlFromPath(returnUrl);
+            returnUrl = string.IsNullOrWhiteSpace(returnUrl)
+                ? this.Request.UrlReferrer?.AbsolutePath
+                : UrlHelpers.ExtractFullContestsTreeUrlFromPath(returnUrl);
 
             if (!this.User.IsAdmin())
             {
@@ -551,7 +556,21 @@
                 .GetAll()
                 .ToList();
 
+            var dbSettings = this.Data.Settings.All().ToList();
+
             var model = new ContestLoadCalculationViewModel();
+            model.MaxAllowedTimeForSubmissionCompletion = this.ApplyDbSettingValue<int>(
+                dbSettings,
+                GlobalConstants.MaxAllowedTimeForSubmissionCompletion,
+                maxAllowedTimeForSubmissionCompletionInSecs);
+
+            var dbMaxSubmissionTime =
+                dbSettings.FirstOrDefault(s => s.Name == GlobalConstants.MaxAllowedTimeForSubmissionCompletion);
+            if (dbMaxSubmissionTime != null)
+            {
+                model.MaxAllowedTimeForSubmissionCompletion = int.Parse(dbMaxSubmissionTime.Value);
+            }
+
             foreach (var contest in contests)
             {
                 if (contest.Id == currentContestId)
@@ -565,14 +584,11 @@
                     model.ContestName = contest.Name;
                     model.CurrentContestId = contest.Id;
                     model.AverageProblemRunTimeInSeconds =
-                        this.contestsBusiness.GetContestSubmissionsAverageRunTimeSeconds(contest);
-                    model.ActualWorkers = actualWorkersDefaultValue;
-
-                    var actualWorkersDbValue = this.Data.Settings.All().FirstOrDefault(x => x.Name == GlobalConstants.RemoteWorkers);
-                    if (actualWorkersDbValue != null)
-                    {
-                        model.ActualWorkers = int.Parse(actualWorkersDbValue.Value);
-                    }
+                        this.contestsBusiness.GetContestSubmissionsAverageRunTimeSeconds(contest, false, null);
+                    model.ActualWorkers = this.ApplyDbSettingValue(
+                        dbSettings,
+                        GlobalConstants.RemoteWorkers,
+                        actualWorkersDefaultValue);
 
                     // Currently is setted to 0 because it is not fetched from the SULS
                     model.ExpectedStudentsCount = 0;
@@ -598,12 +614,14 @@
             {
                 var contest = this.contestsData.GetById(model.PreviousContestId.Value);
                 model.PreviousContestSubmissions = this.GetOfficialSubmissionsByContest(contest.Id);
-                model.PreviousContestExpectedProblems = contest.ProblemGroups.Where(pg => !pg.IsDeleted).Count();
+                model.PreviousContestExpectedProblems = contest.ProblemGroups.Count(pg => !pg.IsDeleted);
                 model.PreviousContestParticipants = contest.Participants
-                    .Where(x => x.IsOfficial == true)
-                    .Count();
+                    .Count(x => x.IsOfficial == true);
                 model.PreviousAverageProblemRunTimeInSeconds =
-                    this.contestsBusiness.GetContestSubmissionsAverageRunTimeSeconds(contest);
+                    this.contestsBusiness.GetContestSubmissionsAverageRunTimeSeconds(
+                        contest,
+                        true,
+                        model.MaxAllowedTimeForSubmissionCompletion);
             }
             else
             {
@@ -619,6 +637,24 @@
             var calculatedLoad = this.contestsBusiness.CalculateLoadForContest(model);
 
             return this.Json(calculatedLoad);
+        }
+        
+        private T ApplyDbSettingValue<T>(IEnumerable<Setting> dbSettings, string propertyName, T alternativeValue)
+        {
+            var setting = dbSettings.FirstOrDefault(s => s.Name == propertyName);
+            if (setting == null)
+            {
+                return alternativeValue;
+            }
+
+            try
+            {
+                return (T)Convert.ChangeType(setting.Value, typeof(T));
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidCastException($"Unable to cast object of type {typeof(T)}");
+            }
         }
 
         private void PrepareViewBagData(int? contestId = null)
@@ -763,7 +799,7 @@
         private int GetOfficialSubmissionsByContest(int id)
         {
             var participants = this.participantsData
-               .GetAllByContestAndIsOfficial(id, true);
+                .GetAllByContestAndIsOfficial(id, true);
 
             return participants.SelectMany(p => p.Submissions).Count();
         }

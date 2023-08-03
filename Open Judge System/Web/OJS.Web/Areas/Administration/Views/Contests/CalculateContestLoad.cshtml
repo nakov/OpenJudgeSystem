@@ -7,257 +7,109 @@
     ViewBag.Title = "Calculate contest load";
     JudgeLoadResults responseModel = new JudgeLoadResults();
 }
+
 @section Styles {
-    <link href="@Url.Content("~/Content/kendo/kendo.common.min.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Content/kendo/kendo.default.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo/kendo.common.min.css")" rel="stylesheet" type="text/css"/>
+    <link href="@Url.Content("~/Content/kendo/kendo.default.min.css")" rel="stylesheet" type="text/css"/>
 }
+
 <h2>Calculate Load For Contest: @Model.ContestName </h2>
 <div id="create-form" class="online-contest-editor-container">
-    @using (Html.BeginForm("CalculateContestLoad", "Contests", FormMethod.Post))
-    {
-        <fieldset>
-            <legend>Current exam info</legend>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4 k-upload-cancel">
-                    <div class="pull-right">
-                        <label>Exam length</label>
-                    </div>
-                </div>
-                <div class="editor-field col-xs-4">
-                    @Html.EditorFor(m => m.ExamLengthInHours, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
-                    @Html.HiddenFor(m => m.CurrentContestId)
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Exam length in hours" data-tooltip="true"></span>
-                </div>
-            </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4 k-upload-cancel">
-                    <div class="pull-right">
-                        <label>Expected exam problems</label>
-                    </div>
-                </div>
-                <div class="editor-field col-xs-4">
-                    @Html.EditorFor(m => m.ExpectedExamProblemsCount, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Expected next exam number of problems. NOTE: If you have multiple exams at the same time, you need to sum their number of problems." data-tooltip="true"></span>
-                </div>
-            </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4 k-upload-cancel">
-                    <div class="pull-right">
-                        <label>Expected students</label>
-                    </div>
-                </div>
-                <div class="editor-field col-xs-4">
-                    @Html.EditorFor(m => m.ExpectedStudentsCount, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Expected next exam students. NOTE: Your projection of total students or current enrollments. If you have multiple exams at the same time, you need to sum their number of students." data-tooltip="true"></span>
-                </div>
-            </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4 k-upload-cancel">
-                    <div class="pull-right">
-                        <label>Average problem runtime in (s)</label>
-                    </div>
-                </div>
-                <div class="editor-field col-xs-4">
-                    @Html.EditorFor(m => m.AverageProblemRunTimeInSeconds, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Average problem run time in seconds.NOTE: You can calculate it for each problem by the multiplying the number of tests and the problem time limit * 120% (for additional work required to process a task).
-You can also see the difference between the Modified On and the Created On properties for a solution submited on a 'calm' judge.
-Try not to design a task which takes more than 5 seconds. If you need such a problem - discuss with the dev team." data-tooltip="true"></span>
-                </div>
-            </div>
-        </fieldset>
-        <fieldset>
-            <legend>Previous exam info</legend>
-            <div class="row" style="margin-bottom:2rem">
-                <div class="editor-field col-xs-4">
-                    <strong>Fill previous contest data manually</strong>
-                </div>
-                <div class="editor-field col-xs-2">
-                    <input type="checkbox" id="toggle-previos-exams" onchange="togglePreviouseExamInputs(this)" />
-                </div>
-            </div>
-
-            <div id="previous-contests-wrapper">
-                <div class="row k-upload-cancel">
-                    <div class="col-xs-8">
-                        @(Html.Kendo().ComboBoxFor(m => m.ContestsDropdownData)
-                         .Name("dropdownlist")
-                         .DataValueField("Value")
-                         .DataTextField("Name")
-                         .BindTo((System.Collections.IEnumerable)Model.ContestsDropdownData)
-                         .HtmlAttributes(new { @class = "full-editor pull-right" })
-                         .Placeholder("Please select contest...")
-                         .Events(e => e.Change("changePreviousExam")))
-
-                        @Html.HiddenFor(m => m.PreviousContestId)
-                    </div>
-                </div>
-            </div>
-
-            <div id="previous-contests-data" style="display:none">
-                <div class="row k-upload-cancel">
-                    <div class="editor-label col-xs-4 k-upload-cancel">
-                        <label>Previous contest students</label>
-                    </div>
-                    <div class="editor-label col-xs-4 k-upload-cancel">
-                        @Html.EditorFor(m => m.PreviousContestParticipants, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
-                    </div>
-                    <div class="editor-field col-xs-4">
-                        <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam students" data-tooltip="true"></span>
-                    </div>
-                </div>
-                <div class="row k-upload-cancel">
-                    <div class="editor-label col-xs-4 k-upload-cancel">
-                        <label>Previous contest submissions</label>
-                    </div>
-                    <div class="editor-label col-xs-4 k-upload-cancel">
-                        @Html.EditorFor(m => m.PreviousContestSubmissions, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
-                    </div>
-                    <div class="editor-field col-xs-4">
-                        <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam total submissions" data-tooltip="true"></span>
-                    </div>
-                </div>
-                <div class="row k-upload-cancel">
-                    <div class="editor-label col-xs-4 k-upload-cancel">
-                        <label>Previous contest problems</label>
-                    </div>
-                    <div class="editor-label col-xs-4 k-upload-cancel">
-                        @Html.EditorFor(m => m.PreviousContestExpectedProblems, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
-                    </div>
-                    <div class="editor-field col-xs-4">
-                        <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam number of problems" data-tooltip="true"></span>
-                    </div>
-                </div>
-                <div class="row k-upload-cancel">
-                    <div class="editor-label col-xs-4 k-upload-cancel">
-                        <label>Average contest problems runtime in (s)</label>
-                    </div>
-                    <div class="editor-label col-xs-4 k-upload-cancel">
-                        @Html.EditorFor(m => m.PreviousAverageProblemRunTimeInSeconds, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
-                    </div>
-                    <div class="editor-field col-xs-4">
-                        <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam number of average problem run time in seconds" data-tooltip="true"></span>
-                    </div>
-                </div>
-            </div>
-        </fieldset>
-
-        <fieldset>
-            <legend>Judge Settings</legend>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4 k-upload-cancel">
-                    <div class="pull-right">
-                        <label>Safety factor</label>
-                    </div>
-                </div>
-                <div class="editor-field col-xs-4">
-                    @Html.EditorFor(m => m.SafetyFactor, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Safety factor. NOTE: We want to play it extra safe because we do not pause judge for exercises during exams so we multiply important calculations with this safety factor." data-tooltip="true"></span>
-                </div>
-            </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4 k-upload-cancel">
-                    <div class="pull-right">
-                        <label>Work idle time in percentage</label>
-                    </div>
-                </div>
-                <div class="editor-field col-xs-4">
-                    @Html.EditorFor(m => m.WorkerIdleTimeInPercentage, new { htmlAttributes = new { @class = "form-control pull-left", min = 1 } })
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Worker idle time in percentage. NOTE: We do not want workers to be busy all the time. Such situation may lead to overloading, exceptions and wrong results." data-tooltip="true"></span>
-                </div>
-            </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4">
-                    <div class="pull-right">
-                        <label>Max judge parallel work</label>
-                    </div>
-                </div>
-                <div class="editor-field col-xs-4">
-                    @Html.EditorFor(m => m.MaxJudgeParalelWork, new { htmlAttributes = new { @class = "form-control pull-left", min = 1 } })
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Maximum parallel judge work compared to exam length in percentage. NOTE: We should aim for total parallel judge work to be maximum 25% of the total exam length for safety reasons." data-tooltip="true"></span>
-                </div>
-            </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4">
-                    <div class="pull-right">
-                        <label>Actual workers</label>
-                    </div>
-                </div>
-                <div class="editor-field col-xs-4">
-                    @Html.EditorFor(m => m.ActualWorkers, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Number of currently running workers. NOTE: Can be taken from the LocalWorker configuration." data-tooltip="true"></span>
-                </div>
-            </div>
-        </fieldset>
-        <hr />
+@using (Html.BeginForm("CalculateContestLoad", "Contests", FormMethod.Post))
+{
+    <fieldset>
+        <legend>Current exam info</legend>
         <div class="row k-upload-cancel">
-            <div class="editor-label col-xs-6">
-                <button type="submit" class="btn btn-primary pull-right">Calculate</button>
+            <div class="editor-label col-xs-4 k-upload-cancel">
+                <div class="pull-right">
+                    <label>Exam length</label>
+                </div>
             </div>
-            <div class="editor-label col-xs-6">
-                <a href="/Contests/@Model.CurrentContestId" class="btn btn-primary">Back</a>
+            <div class="editor-field col-xs-4">
+                @Html.EditorFor(m => m.ExamLengthInHours, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
+                @Html.HiddenFor(m => m.CurrentContestId)
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Exam length in hours" data-tooltip="true"></span>
             </div>
         </div>
-    }
-    <div id="previous-contests-data-results" hidden="hidden">
-        <fieldset>
-            <legend>Judge Work Results</legend>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4 k-upload-cancel">
-                    <label>Submissions</label>
-                </div>
-                <div class="editor-field col-xs-4">
-                    <input class="form-control" id="Submissions" value="@responseModel.ExpectedExamSubmissions" />
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Expected exam submissions" data-tooltip="true"></span>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4 k-upload-cancel">
+                <div class="pull-right">
+                    <label>Expected exam problems</label>
                 </div>
             </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4 k-upload-cancel">
-                    <label class="editor-label">Minimum workers required</label>
-                </div>
-                <div class="editor-field col-xs-4">
-                    <input class="form-control " id="MinimumWorkersRequired" value="@responseModel.MinimumWorkersRequired" />
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Minimum workers required" data-tooltip="true"></span>
+            <div class="editor-field col-xs-4">
+                @Html.EditorFor(m => m.ExpectedExamProblemsCount, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Expected next exam number of problems. NOTE: If you have multiple exams at the same time, you need to sum their number of problems." data-tooltip="true"></span>
+            </div>
+        </div>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4 k-upload-cancel">
+                <div class="pull-right">
+                    <label>Expected students</label>
                 </div>
             </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4 k-upload-cancel">
-                    <label>Suggested workers</label>
-                </div>
-                <div class="editor-field col-xs-4">
-                    <input class="form-control" id="SuggestedWorkers" value="@responseModel.SuggestedWorkers" />
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Suggested workers. NOTE: If you have more than 50 workers suggested here - discuss with dev team. Workers do not scale proportionally.
-                    For example, 100 workers will not have twice the performance of 50 workers.
-                    " data-tooltip="true"></span>
+            <div class="editor-field col-xs-4">
+                @Html.EditorFor(m => m.ExpectedStudentsCount, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Expected next exam students. NOTE: Your projection of total students or current enrollments. If you have multiple exams at the same time, you need to sum their number of students." data-tooltip="true"></span>
+            </div>
+        </div>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4 k-upload-cancel">
+                <div class="pull-right">
+                    <label>Average problem runtime in (s)</label>
                 </div>
             </div>
+            <div class="editor-field col-xs-4">
+                @Html.EditorFor(m => m.AverageProblemRunTimeInSeconds, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Average problem run time in seconds.NOTE: You can calculate it for each problem by the multiplying the number of tests and the problem time limit * 120% (for additional work required to process a task).
+You can also see the difference between the Modified On and the Created On properties for a solution submitted on a 'calm' judge.
+Try not to design a task which takes more than 5 seconds. If you need such a problem - discuss with the dev team." data-tooltip="true"></span>
+            </div>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>Previous exam info</legend>
+        <div class="row" style="margin-bottom:2rem">
+            <div class="editor-field col-xs-4">
+                <strong>Fill previous contest data manually</strong>
+            </div>
+            <div class="editor-field col-xs-2">
+                <input type="checkbox" id="toggle-previous-exams" onchange="togglePreviouseExamInputs(this)"/>
+            </div>
+        </div>
+
+        <div id="previous-contests-wrapper">
+            <div class="row k-upload-cancel">
+                <div class="col-xs-8">
+                    @(Html.Kendo().ComboBoxFor(m => m.ContestsDropdownData)
+                        .Name("dropdownlist")
+                        .DataValueField("Value")
+                        .DataTextField("Name")
+                        .BindTo((System.Collections.IEnumerable)Model.ContestsDropdownData)
+                        .HtmlAttributes(new { @class = "full-editor pull-right" })
+                        .Placeholder("Please select contest...")
+                        .Events(e => e.Change("changePreviousExam")))
+
+                    @Html.HiddenFor(m => m.PreviousContestId)
+                </div>
+            </div>
+        </div>
+
+        <div id="previous-contests-data" style="display:none">
             <div class="row k-upload-cancel">
                 <div class="editor-label col-xs-4 k-upload-cancel">
                     <label>Previous contest students</label>
                 </div>
                 <div class="editor-label col-xs-4 k-upload-cancel">
-                    <input class="form-control" id="PreviousContestParticipantsResult" value="@responseModel.PreviousContestParticipants" />
+                    @Html.EditorFor(m => m.PreviousContestParticipants, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
                 </div>
                 <div class="editor-field col-xs-4">
                     <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam students" data-tooltip="true"></span>
@@ -268,7 +120,7 @@ Try not to design a task which takes more than 5 seconds. If you need such a pro
                     <label>Previous contest submissions</label>
                 </div>
                 <div class="editor-label col-xs-4 k-upload-cancel">
-                    <input class="form-control" id="PreviousContestSubmissionsResult" value="@responseModel.PreviousContestSubmissions" />
+                    @Html.EditorFor(m => m.PreviousContestSubmissions, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
                 </div>
                 <div class="editor-field col-xs-4">
                     <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam total submissions" data-tooltip="true"></span>
@@ -279,7 +131,7 @@ Try not to design a task which takes more than 5 seconds. If you need such a pro
                     <label>Previous contest problems</label>
                 </div>
                 <div class="editor-label col-xs-4 k-upload-cancel">
-                    <input class="form-control" id="PreviousContestExpectedProblemsResult" value="@responseModel.PreviousContestExpectedProblems" />
+                    @Html.EditorFor(m => m.PreviousContestExpectedProblems, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
                 </div>
                 <div class="editor-field col-xs-4">
                     <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam number of problems" data-tooltip="true"></span>
@@ -290,222 +142,383 @@ Try not to design a task which takes more than 5 seconds. If you need such a pro
                     <label>Average contest problems runtime in (s)</label>
                 </div>
                 <div class="editor-label col-xs-4 k-upload-cancel">
-                    <input class="form-control" id="PreviousAverageProblemRunTimeInSecondsResult" value="@responseModel.PreviousAverageProblemRunTimeInSeconds" />
+                    @Html.EditorFor(m => m.PreviousAverageProblemRunTimeInSeconds, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
                 </div>
                 <div class="editor-field col-xs-4">
                     <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam number of average problem run time in seconds" data-tooltip="true"></span>
                 </div>
             </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4 k-upload-cancel">
-                    <label>Time between submissions base (in s)</label>
-                </div>
-                <div class="editor-field col-xs-4">
-                    <input class="form-control" id="SecondsBetweenSubmission" value="@responseModel.SecondsBetweenSubmission" />
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Seconds between submissions for the distributed maximum. NOTE: Safety factor calculated here. " data-tooltip="true"></span>
-                </div>
+        </div>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4 k-upload-cancel">
+                <label>Maximum Submission Completion Time(secs)</label>
             </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4 k-upload-cancel">
-                    <label>Time between submissions high (in s)</label>
-                </div>
-                <div class="editor-field col-xs-4">
-                    <input class="form-control" id="MaxSecondsBetweenSubmissions" value="@responseModel.MaxSecondsBetweenSubmissions" />
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Seconds between submissions for the distributed maximum on high performance scale with actual workers. NOTE: Safety factor calculated here. " data-tooltip="true"></span>
-                </div>
+            <div class="editor-label col-xs-4 k-upload-cancel">
+                @Html.EditorFor(m => m.MaxAllowedTimeForSubmissionCompletion, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
             </div>
-        </fieldset>
-    </div>
-    <div id="judge-work-wrapper" hidden class="mt-4">
-        <fieldset>
-            <legend>Judge Work Results (additional)</legend>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4">
-                    <div class="pull-right">
-                        <label>Expected judge work</label>
-                    </div>
-                </div>
-                <div class="editor-field col-xs-4">
-                    <input class="form-control" id="TotalWork" value="@responseModel.ExpectedTotalJudgeWorkInMinutes" />
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Expected total judge work in minutes" data-tooltip="true"></span>
-                </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Calculation of the average runtime for the previous contest will be done based on submissions, which average runtime is lower or equal to this parameter." data-tooltip="true"></span>
             </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4">
-                    <div class="pull-right">
-                        <label>Processed submissions per worker</label>
-                    </div>
-                </div>
-                <div class="editor-field col-xs-4">
-                    <input class="form-control" id="ProcessedSubmissionsPerWorkerPerMinute" value="@responseModel.ProcessedSubmissionsPerWorkerPerMinute" />
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Processed submissions per worker for a minute" data-tooltip="true"></span>
-                </div>
-            </div>
-        </fieldset>
+        </div>
+    </fieldset>
 
-        <fieldset>
-            <legend>Doomsday Scenario Results</legend>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4">
-                    <div class="pull-right">
-                        <label>Judge work required</label>
-                    </div>
+    <fieldset>
+        <legend>Judge Settings</legend>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4 k-upload-cancel">
+                <div class="pull-right">
+                    <label>Safety factor</label>
                 </div>
-                <div class="editor-field col-xs-4">
-                    <input class=" form-control" id="JudgeWork" value="@responseModel.JudgeWorkInMnutes" />
+            </div>
+            <div class="editor-field col-xs-4">
+                @Html.EditorFor(m => m.SafetyFactor, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Safety factor. NOTE: We want to play it extra safe because we do not pause judge for exercises during exams so we multiply important calculations with this safety factor." data-tooltip="true"></span>
+            </div>
+        </div>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4 k-upload-cancel">
+                <div class="pull-right">
+                    <label>Work idle time in percentage</label>
                 </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Judge work required for the doomsday scenario in minutes. NOTE: Doomsday scenario happens if all exam participants submit a solution at the same time.
+            </div>
+            <div class="editor-field col-xs-4">
+                @Html.EditorFor(m => m.WorkerIdleTimeInPercentage, new { htmlAttributes = new { @class = "form-control pull-left", min = 1 } })
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Worker idle time in percentage. NOTE: We do not want workers to be busy all the time. Such situation may lead to overloading, exceptions and wrong results." data-tooltip="true"></span>
+            </div>
+        </div>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4">
+                <div class="pull-right">
+                    <label>Max judge parallel work</label>
+                </div>
+            </div>
+            <div class="editor-field col-xs-4">
+                @Html.EditorFor(m => m.MaxJudgeParalelWork, new { htmlAttributes = new { @class = "form-control pull-left", min = 1 } })
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Maximum parallel judge work compared to exam length in percentage. NOTE: We should aim for total parallel judge work to be maximum 25% of the total exam length for safety reasons." data-tooltip="true"></span>
+            </div>
+        </div>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4">
+                <div class="pull-right">
+                    <label>Actual workers</label>
+                </div>
+            </div>
+            <div class="editor-field col-xs-4">
+                @Html.EditorFor(m => m.ActualWorkers, new { htmlAttributes = new { @class = "form-control full-editor pull-left", min = 1 } })
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Number of currently running workers. NOTE: Can be taken from the LocalWorker configuration." data-tooltip="true"></span>
+            </div>
+        </div>
+    </fieldset>
+    <hr/>
+    <div class="row k-upload-cancel">
+        <div class="editor-label col-xs-6">
+            <button type="submit" class="btn btn-primary pull-right">Calculate</button>
+        </div>
+        <div class="editor-label col-xs-6">
+            <a href="/Contests/@Model.CurrentContestId" class="btn btn-primary">Back</a>
+        </div>
+    </div>
+}
+<div id="previous-contests-data-results" hidden="hidden">
+    <fieldset>
+        <legend>Judge Work Results</legend>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4 k-upload-cancel">
+                <label>Expected Submissions</label>
+            </div>
+            <div class="editor-field col-xs-4">
+                <input class="form-control" id="Submissions" value="@responseModel.ExpectedExamSubmissions"/>
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Expected exam submissions" data-tooltip="true"></span>
+            </div>
+        </div>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4 k-upload-cancel">
+                <label class="editor-label">Minimum workers required</label>
+            </div>
+            <div class="editor-field col-xs-4">
+                <input class="form-control " id="MinimumWorkersRequired" value="@responseModel.MinimumWorkersRequired"/>
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Minimum workers required" data-tooltip="true"></span>
+            </div>
+        </div>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4 k-upload-cancel">
+                <label>Suggested workers</label>
+            </div>
+            <div class="editor-field col-xs-4">
+                <input class="form-control" id="SuggestedWorkers" value="@responseModel.SuggestedWorkers"/>
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Suggested workers. NOTE: If you have more than 50 workers suggested here - discuss with dev team. Workers do not scale proportionally.
+                    For example, 100 workers will not have twice the performance of 50 workers.
+                    " data-tooltip="true"></span>
+            </div>
+        </div>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4 k-upload-cancel">
+                <label>Previous contest students</label>
+            </div>
+            <div class="editor-label col-xs-4 k-upload-cancel">
+                <input class="form-control" id="PreviousContestParticipantsResult" value="@responseModel.PreviousContestParticipants"/>
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam students" data-tooltip="true"></span>
+            </div>
+        </div>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4 k-upload-cancel">
+                <label>Previous contest submissions</label>
+            </div>
+            <div class="editor-label col-xs-4 k-upload-cancel">
+                <input class="form-control" id="PreviousContestSubmissionsResult" value="@responseModel.PreviousContestSubmissions"/>
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam total submissions" data-tooltip="true"></span>
+            </div>
+        </div>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4 k-upload-cancel">
+                <label>Previous contest problems</label>
+            </div>
+            <div class="editor-label col-xs-4 k-upload-cancel">
+                <input class="form-control" id="PreviousContestExpectedProblemsResult" value="@responseModel.PreviousContestExpectedProblems"/>
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam number of problems" data-tooltip="true"></span>
+            </div>
+        </div>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4 k-upload-cancel">
+                <label>Average contest problems runtime in (s)</label>
+            </div>
+            <div class="editor-label col-xs-4 k-upload-cancel">
+                <input class="form-control" id="PreviousAverageProblemRunTimeInSecondsResult" value="@responseModel.PreviousAverageProblemRunTimeInSeconds"/>
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Previous exam number of average problem run time in seconds" data-tooltip="true"></span>
+            </div>
+        </div>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4 k-upload-cancel">
+                <label>Time between submissions base (in s)</label>
+            </div>
+            <div class="editor-field col-xs-4">
+                <input class="form-control" id="SecondsBetweenSubmission" value="@responseModel.SecondsBetweenSubmission"/>
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Seconds between submissions for the distributed maximum. NOTE: Safety factor calculated here. " data-tooltip="true"></span>
+            </div>
+        </div>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4 k-upload-cancel">
+                <label>Time between submissions high (in s)</label>
+            </div>
+            <div class="editor-field col-xs-4">
+                <input class="form-control" id="MaxSecondsBetweenSubmissions" value="@responseModel.MaxSecondsBetweenSubmissions"/>
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Seconds between submissions for the distributed maximum on high performance scale with actual workers. NOTE: Safety factor calculated here. " data-tooltip="true"></span>
+            </div>
+        </div>
+    </fieldset>
+</div>
+<div id="judge-work-wrapper" hidden class="mt-4">
+    <fieldset>
+        <legend>Judge Work Results (additional)</legend>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4">
+                <div class="pull-right">
+                    <label>Expected judge work</label>
+                </div>
+            </div>
+            <div class="editor-field col-xs-4">
+                <input class="form-control" id="TotalWork" value="@responseModel.ExpectedTotalJudgeWorkInMinutes"/>
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Expected total judge work in minutes" data-tooltip="true"></span>
+            </div>
+        </div>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4">
+                <div class="pull-right">
+                    <label>Processed submissions per worker</label>
+                </div>
+            </div>
+            <div class="editor-field col-xs-4">
+                <input class="form-control" id="ProcessedSubmissionsPerWorkerPerMinute" value="@responseModel.ProcessedSubmissionsPerWorkerPerMinute"/>
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Processed submissions per worker for a minute" data-tooltip="true"></span>
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Doomsday Scenario Results</legend>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4">
+                <div class="pull-right">
+                    <label>Judge work required</label>
+                </div>
+            </div>
+            <div class="editor-field col-xs-4">
+                <input class=" form-control" id="JudgeWork" value="@responseModel.JudgeWorkInMnutes"/>
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Judge work required for the doomsday scenario in minutes. NOTE: Doomsday scenario happens if all exam participants submit a solution at the same time.
 If a solution is not processed until the student can submit again, the system will be overloaded.
-Such case is highly unlikely to occur but we should desing our exams with a protection in mind.
+Such case is highly unlikely to occur but we should design our exams with a protection in mind.
 Natural disasters like earthquakes are highly unlikely but each building is engineered against them.
 " data-tooltip="true"></span>
+            </div>
+        </div>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4">
+                <div class="pull-right">
+                    <label>Judge work per worker (in min's)</label>
                 </div>
             </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4">
-                    <div class="pull-right">
-                        <label>Judge work per worker (in mins)</label>
-                    </div>
-                </div>
-                <div class="editor-field col-xs-4">
-                    <input class="form-control" id="JudgeWorkInMinute" value="@responseModel.JudgeWorkPerWorkerInMinutes" />
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Judge work required for the doomsday scenario per worker in minutes. NOTE: We can introduce automation to prevent doomsday scenarios.
+            <div class="editor-field col-xs-4">
+                <input class="form-control" id="JudgeWorkInMinute" value="@responseModel.JudgeWorkPerWorkerInMinutes"/>
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Judge work required for the doomsday scenario per worker in minutes. NOTE: We can introduce automation to prevent doomsday scenarios.
 For example, we can forbid the user to submit a solution for the a task, if she already has a one for it in the queue.
 " data-tooltip="true"></span>
+            </div>
+        </div>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4">
+                <div class="pull-right">
+                    <label>Submissions on base performance (in s)</label>
                 </div>
             </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4">
-                    <div class="pull-right">
-                        <label>Submissions on base performance (in s)</label>
-                    </div>
-                </div>
-                <div class="editor-field col-xs-4">
-                    <input class="form-control" id="SecondsBetweenSubmissionsBase" value="@responseModel.SecondsBetweenSubmissionsBase" />
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Seconds between submissions for doomsday scenario
-on base performance scale without additional workers. NOTE: Less than 30 seconds and more than 5 minutes are not desirable for various reasons. We should tweek the exam itself, and not judge.
+            <div class="editor-field col-xs-4">
+                <input class="form-control" id="SecondsBetweenSubmissionsBase" value="@responseModel.SecondsBetweenSubmissionsBase"/>
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Seconds between submissions for doomsday scenario
+on base performance scale without additional workers. NOTE: Less than 30 seconds and more than 5 minutes are not desirable for various reasons. We should tweak the exam itself, and not judge.
 Suggestion is based on the safety factor below and 20 workers.
 " data-tooltip="true"></span>
+            </div>
+        </div>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4">
+                <div class="pull-right">
+                    <label>Submissions on high performance (in s)</label>
                 </div>
             </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4">
-                    <div class="pull-right">
-                        <label>Submissions on high performance (in s)</label>
-                    </div>
-                </div>
-                <div class="editor-field col-xs-4">
-                    <input class="form-control" id="SecondsBetweenSubmissionsHigh" value="@responseModel.SecondsBetweenSubmissionsHigh" />
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Seconds between submissions for doomsday scenario
-on high performance scale with actual workers. NOTE: Less than 30 seconds and more than 5 minutes are not desirable for various reasons. We should tweek the exam itself, and not judge.
+            <div class="editor-field col-xs-4">
+                <input class="form-control" id="SecondsBetweenSubmissionsHigh" value="@responseModel.SecondsBetweenSubmissionsHigh"/>
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Seconds between submissions for doomsday scenario
+on high performance scale with actual workers. NOTE: Less than 30 seconds and more than 5 minutes are not desirable for various reasons. We should tweak the exam itself, and not judge.
 Suggestion is based on the safety factor below and actual workers.
 " data-tooltip="true"></span>
-                </div>
             </div>
-        </fieldset>
+        </div>
+    </fieldset>
 
-        <fieldset>
-            <legend>Distribution Results</legend>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4">
-                    <div class="pull-right">
-                        <label>Max submissions per minute</label>
-                    </div>
-                </div>
-                <div class="editor-field col-xs-4">
-                    <input class="form-control" id="MaxSubmissionsPerMinute" value="@responseModel.MaxSubmissionsPerMinute" />
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Maximum submissions per minute on a distributed environment. NOTE: Calculation based on Gaussian Distribution peak - 34.1% submissions will be during 1/8 of the total exam time." data-tooltip="true"></span>
+    <fieldset>
+        <legend>Distribution Results</legend>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4">
+                <div class="pull-right">
+                    <label>Max submissions per minute</label>
                 </div>
             </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4">
-                    <div class="pull-right">
-                        <label>Min workers required</label>
-                    </div>
-                </div>
-                <div class="editor-field col-xs-4">
-                    <input class="form-control" id="MaxDistributedWorkersRequired" value="@responseModel.MaxDistributedWorkersRequired" />
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Minimum workers required for distributed maximum. NOTE: Safety factor calculated here." data-tooltip="true"></span>
+            <div class="editor-field col-xs-4">
+                <input class="form-control" id="MaxSubmissionsPerMinute" value="@responseModel.MaxSubmissionsPerMinute"/>
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Maximum submissions per minute on a distributed environment. NOTE: Calculation based on Gaussian Distribution peak - 34.1% submissions will be during 1/8 of the total exam time." data-tooltip="true"></span>
+            </div>
+        </div>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4">
+                <div class="pull-right">
+                    <label>Min workers required</label>
                 </div>
             </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4">
-                    <div class="pull-right">
-                        <label>Judge work required (in mins)</label>
-                    </div>
-                </div>
-                <div class="editor-field col-xs-4">
-                    <input class="form-control" id="JudgeWorkRequiredInMinutes" value="@responseModel.JudgeWorkRequiredInMinutes" />
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Judge work required for the distributed maximum in minutes." data-tooltip="true"></span>
+            <div class="editor-field col-xs-4">
+                <input class="form-control" id="MaxDistributedWorkersRequired" value="@responseModel.MaxDistributedWorkersRequired"/>
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Minimum workers required for distributed maximum. NOTE: Safety factor calculated here." data-tooltip="true"></span>
+            </div>
+        </div>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4">
+                <div class="pull-right">
+                    <label>Judge work required (in min's)</label>
                 </div>
             </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4">
-                    <div class="pull-right">
-                        <label>Minimum workers required (in s)</label>
-                    </div>
-                </div>
-                <div class="editor-field col-xs-4">
-                    <input class="form-control" id="JudgeWorkRequiredPerWorkerInSeconds" value="@responseModel.JudgeWorkRequiredPerWorkerInSeconds" />
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Judge work required for the distributed maximum per worker in seconds" data-tooltip="true"></span>
+            <div class="editor-field col-xs-4">
+                <input class="form-control" id="JudgeWorkRequiredInMinutes" value="@responseModel.JudgeWorkRequiredInMinutes"/>
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Judge work required for the distributed maximum in minutes." data-tooltip="true"></span>
+            </div>
+        </div>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4">
+                <div class="pull-right">
+                    <label>Minimum workers required (in s)</label>
                 </div>
             </div>
-            <div class="row k-upload-cancel">
-                <div class="editor-label col-xs-4">
-                    <div class="pull-right">
-                        <label>Max users at same time</label>
-                    </div>
-                </div>
-                <div class="editor-field col-xs-4">
-                    <input class="form-control" id="MaxUsersAtSameTime" value="@responseModel.MaxUsersAtSameTime" />
-                </div>
-                <div class="editor-field col-xs-4">
-                    <span class="glyphicon glyphicon-question-sign text-primary" title="Maximum users at the same time on a distributed environment.NOTE: Calculation based on Gaussian Distribution peak - 34.1% ot the total users." data-tooltip="true"></span>
+            <div class="editor-field col-xs-4">
+                <input class="form-control" id="JudgeWorkRequiredPerWorkerInSeconds" value="@responseModel.JudgeWorkRequiredPerWorkerInSeconds"/>
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Judge work required for the distributed maximum per worker in seconds" data-tooltip="true"></span>
+            </div>
+        </div>
+        <div class="row k-upload-cancel">
+            <div class="editor-label col-xs-4">
+                <div class="pull-right">
+                    <label>Max users at same time</label>
                 </div>
             </div>
-        </fieldset>
-    </div>
+            <div class="editor-field col-xs-4">
+                <input class="form-control" id="MaxUsersAtSameTime" value="@responseModel.MaxUsersAtSameTime"/>
+            </div>
+            <div class="editor-field col-xs-4">
+                <span class="glyphicon glyphicon-question-sign text-primary" title="Maximum users at the same time on a distributed environment.NOTE: Calculation based on Gaussian Distribution peak - 34.1% ot the total users." data-tooltip="true"></span>
+            </div>
+        </div>
+    </fieldset>
+</div>
 
 </div>
 
 <script>
 
     function changePreviousExam(e) {
-        var receivedModel = e.sender.dataItem()
+        let receivedModel = e.sender.dataItem()
         $("#PreviousContestId").val(receivedModel.Id);
     }
 
     function togglePreviouseExamInputs(e) {
-        var previouseContestDropdown = document.getElementById("previous-contests-wrapper");
-        var previousContestData = document.getElementById("previous-contests-data")
+        let previouseContestDropdown = document.getElementById("previous-contests-wrapper");
+        let previousContestData = document.getElementById("previous-contests-data")
 
-        var previousContestParticipants =  document.getElementById("PreviousContestParticipants")
-        var previousContestSubmissions =  document.getElementById("PreviousContestSubmissions")
-        var previousContestExpectedProblems = document.getElementById("PreviousContestExpectedProblems")
-        var previousAverageProblemRunTimeInSeconds = document.getElementById("PreviousAverageProblemRunTimeInSeconds")
+        let previousContestParticipants =  document.getElementById("PreviousContestParticipants")
+        let previousContestSubmissions =  document.getElementById("PreviousContestSubmissions")
+        let previousContestExpectedProblems = document.getElementById("PreviousContestExpectedProblems")
+        let previousAverageProblemRunTimeInSeconds = document.getElementById("PreviousAverageProblemRunTimeInSeconds")
 
         if (e.checked) {
             previouseContestDropdown.style.display = "none";
@@ -528,14 +541,14 @@ Suggestion is based on the safety factor below and actual workers.
      $(function () {
          $('form').submit(function (event) {
 
-             var isPreviousExamDataManuallyAdded = document.getElementById("toggle-previos-exams").checked;
+             let isPreviousExamDataManuallyAdded = document.getElementById("toggle-previous-exams").checked;
              event.preventDefault();
 
-             var formData = $(this).serialize();
+             let formData = $(this).serialize();
 
-             var params = new URLSearchParams(formData);
+             let params = new URLSearchParams(formData);
 
-             var previousContestId = params.get("PreviousContestId");
+             let previousContestId = params.get("PreviousContestId");
 
              if (!isPreviousExamDataManuallyAdded && !previousContestId)
              {
