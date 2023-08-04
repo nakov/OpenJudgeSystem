@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import Slider from 'react-slick';
 
 import { ContestStatus } from '../../common/contest-types';
@@ -24,7 +24,7 @@ const ContestsList = ({
     contests,
     contestStatus,
 }: IContestsListProps) => {
-    const [ contestItemsToShow, setContestItemsToShow ] = React.useState(4);
+    const [ contestItemsToShow, setContestItemsToShow ] = useState(4);
 
     const handleResize = () => {
         if (window.innerWidth <= 950) {
@@ -38,11 +38,11 @@ const ContestsList = ({
         }
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         handleResize();
     });
 
-    React.useEffect(() => {
+    useEffect(() => {
         handleResize();
         window.addEventListener('resize', handleResize);
 
