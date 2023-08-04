@@ -55,10 +55,6 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
 
     const { actions: { clearBreadcrumb } } = useCategoriesBreadcrumbs();
 
-    // const handleSortClick = useCallback(
-    //     (sorting: ISort) => toggleParam(sorting),
-    //     [ toggleParam ],
-    // );
     React.useEffect(() => {
         const allSearches = search.split('&');
         const strategySearch = allSearches.filter((s) => s.includes('strategy'))[0];
@@ -104,7 +100,11 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
                           sx={{
                               width: 350,
                               height: 40,
-                              borderColor: '#bebebe',
+                              border: '2px solid #42abf8',
+                              borderRadius: 2,
+                              transition: 'all .2s ease-in-out',
+                              '&& fieldset': { border: 'none' },
+                              '&:hover': { backgroundColor: '#e3f3fd' },
                           }}
                           defaultValue=""
                           labelId="strategy-label"

@@ -1,14 +1,16 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
+import Slider from 'react-slick';
 
 import { ContestStatus } from '../../common/contest-types';
 import { IIndexContestsType } from '../../common/types';
 import concatClassNames from '../../utils/class-names';
 import { ButtonSize, LinkButton, LinkButtonType } from '../guidelines/buttons/Button';
 import Heading from '../guidelines/headings/Heading';
-import List, { Orientation } from '../guidelines/lists/List';
 
 import ContestCard from './contest-card/ContestCard';
 
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 import styles from './ContestsList.module.scss';
 
 interface IContestsListProps {
@@ -22,12 +24,32 @@ const ContestsList = ({
     contests,
     contestStatus,
 }: IContestsListProps) => {
-    const renderContest = useCallback(
-        (contest: IIndexContestsType) => (
-            <ContestCard contest={contest} />
-        ),
-        [],
-    );
+    const [ contestItemsToShow, setContestItemsToShow ] = React.useState(4);
+
+    const handleResize = () => {
+        if (window.innerWidth <= 950) {
+            setContestItemsToShow(1);
+        } else if (window.innerWidth <= 1350) {
+            setContestItemsToShow(2);
+        } else if (window.innerWidth <= 1540) {
+            setContestItemsToShow(3);
+        } else {
+            setContestItemsToShow(4);
+        }
+    };
+
+    React.useEffect(() => {
+        handleResize();
+    });
+
+    React.useEffect(() => {
+        handleResize();
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     const contestStatusIndex = useMemo(
         () => {
@@ -71,22 +93,25 @@ const ContestsList = ({
                 Contests
             </Heading>
             <div id="index-contests-list" className={allContestsCardsContainer}>
-                <List
-                  className={styles.contestList}
-                  itemClassName={styles.contestListItem}
-                  values={contests}
-                  itemFunc={renderContest}
-                  orientation={Orientation.horizontal}
+                <Slider
+                  className={styles.customSlider}
+                  infinite
+                  speed={500}
+                  slidesToShow={contestItemsToShow}
+                  slidesToScroll={1}
+                  dots
+                >
+                    {contests.map((contest) => <ContestCard key={contest.id} contest={contest} />) }
+                </Slider>
+                <LinkButton
+                  id="button-see-all-contests"
+                  to={link}
+                  text="See All"
+                  type={LinkButtonType.secondary}
+                  size={ButtonSize.small}
+                  className={contestsSeeAllButtonClassName}
                 />
             </div>
-            <LinkButton
-              id="button-see-all-contests"
-              to={link}
-              text="See All"
-              type={LinkButtonType.secondary}
-              size={ButtonSize.small}
-              className={contestsSeeAllButtonClassName}
-            />
         </>
     );
 };
