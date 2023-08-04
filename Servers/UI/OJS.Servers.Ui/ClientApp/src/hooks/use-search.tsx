@@ -8,12 +8,11 @@ import { IContestSearchType, IProblemSearchType, IUserSearchType, SearchParams }
 import { IPagedResultType, ISearchResponseModel } from '../common/types';
 import { IGetSearchResultsUrlParams } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
+import { getSearchResults } from '../utils/urls';
 
 import { useUrlParams } from './common/use-url-params';
 import { IErrorDataType, useHttp } from './use-http';
-import { useLoading } from './use-loading';
 import { usePages } from './use-pages';
-import { useUrls } from './use-urls';
 
 interface ISearchContext {
     state: {
@@ -47,6 +46,7 @@ const defaultState = {
 const SearchContext = createContext<ISearchContext>(defaultState as ISearchContext);
 
 const SearchProvider = ({ children }: ISearchProviderProps) => {
+    const [ isLoading, setIsLoading ] = useState(false);
     const [ contests, setSearchedContests ] = useState(defaultState.state.contests);
     const [ problems, setSearchedProblems ] = useState(defaultState.state.problems);
     const [ users, setSearchedUsers ] = useState(defaultState.state.users);
@@ -54,7 +54,6 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
     const [ getSearchResultsUrlParams, setGetSearchResultsUrlParams ] = useState<IGetSearchResultsUrlParams | null>();
     const [ isVisible, setIsVisible ] = useState<boolean>(defaultState.state.isVisible);
 
-    const { getSearchResults } = useUrls();
     const {
         state: { params },
         actions: { unsetParam },
@@ -63,7 +62,6 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
         state: { currentPage },
         populatePageInformation,
     } = usePages();
-    const { startLoading, stopLoading } = useLoading();
 
     const {
         get,
@@ -161,11 +159,11 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
 
     const load = useCallback(
         async () => {
-            startLoading();
+            setIsLoading(true);
             await get();
-            stopLoading();
+            setIsLoading(false);
         },
-        [ get, startLoading, stopLoading ],
+        [ get ],
     );
 
     useEffect(
@@ -203,6 +201,7 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
                 isLoaded: isSuccess,
                 searchValue: urlParam,
                 isVisible,
+                isLoading,
             },
             actions: {
                 clearSearchValue,
@@ -223,6 +222,7 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
             load,
             initiateSearchResultsUrlQuery,
             toggleVisibility,
+            isLoading,
         ],
     );
 

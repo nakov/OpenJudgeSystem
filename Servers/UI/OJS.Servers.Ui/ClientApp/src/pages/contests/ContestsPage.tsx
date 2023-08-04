@@ -12,6 +12,7 @@ import { Button, ButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
+import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
 import { useUrlParams } from '../../hooks/common/use-url-params';
 import { useAppUrls } from '../../hooks/use-app-urls';
@@ -21,6 +22,7 @@ import { useContestStrategyFilters } from '../../hooks/use-contest-strategy-filt
 import { useContests } from '../../hooks/use-contests';
 import { usePages } from '../../hooks/use-pages';
 import concatClassNames from '../../utils/class-names';
+import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { toLowerCase } from '../../utils/string-utils';
 import NotFoundPage from '../not-found/NotFoundPage';
 import { setLayout } from '../shared/set-layout';
@@ -32,6 +34,7 @@ const ContestsPage = () => {
         state: {
             contests,
             isLoaded,
+            contestsAreLoading,
         },
         actions: {
             toggleParam,
@@ -47,11 +50,18 @@ const ContestsPage = () => {
     const { state: { categoriesFlat }, actions: { load: loadCategories } } = useContestCategories();
     const navigate = useNavigate();
     const { state: params } = useUrlParams();
-    const { state: { strategies } } = useContestStrategyFilters();
+    const { state: { strategies }, actions: { load } } = useContestStrategyFilters();
 
     useEffect(
         () => {
             initiateGetAllContestsQuery();
+
+            if (isEmpty(strategies)) {
+                (async () => {
+                    await load();
+                })();
+            }
+
             if (!isEmpty(categoriesFlat)) {
                 return;
             }
@@ -60,7 +70,7 @@ const ContestsPage = () => {
                 await loadCategories();
             })();
         },
-        [ initiateGetAllContestsQuery, categoriesFlat, loadCategories ],
+        [ initiateGetAllContestsQuery, categoriesFlat, loadCategories, load, strategies ],
     );
 
     const filtersArray = useMemo(
@@ -191,8 +201,8 @@ const ContestsPage = () => {
 
     const renderPage = useCallback(
         () => {
-            if (isNil(categoriesFlat) || isEmpty(categoriesFlat)) {
-                return <div>Loading data</div>;
+            if (contestsAreLoading) {
+                return <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>;
             }
             if (!areQueryParamsValid()) {
                 return <NotFoundPage />;
@@ -210,7 +220,7 @@ const ContestsPage = () => {
                 </>
             );
         },
-        [ areQueryParamsValid, breadcrumbItems, handleFilterClick, renderCategoriesBreadcrumbItem, renderContests, categoriesFlat ],
+        [ areQueryParamsValid, breadcrumbItems, handleFilterClick, renderCategoriesBreadcrumbItem, renderContests, contestsAreLoading ],
     );
 
     return renderPage();

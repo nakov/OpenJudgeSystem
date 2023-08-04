@@ -36,6 +36,7 @@ const useHttp = function<TParametersType, TReturnDataType, TRequestDataType = nu
     headers,
     bodyAsFormData = false,
 }: IHttpProps<TParametersType>) {
+    const [ isLoading, setIsLoading ] = useState(false);
     const [ response, setResponse ] = useState<IHttpResultType<TReturnDataType> | null>(null);
     const [ status, setStatus ] = useState<HttpStatus>(HttpStatus.NotStarted);
     const [ isSuccess, setIsSuccess ] = useState(false);
@@ -60,6 +61,7 @@ const useHttp = function<TParametersType, TReturnDataType, TRequestDataType = nu
 
     const handleBeforeCall = useCallback(
         async () => {
+            setIsLoading(true);
             setStatus(HttpStatus.Pending);
             setResponse(null);
             setIsSuccess(false);
@@ -71,12 +73,14 @@ const useHttp = function<TParametersType, TReturnDataType, TRequestDataType = nu
         async (successResponse: any) => {
             setResponse(successResponse);
             setStatus(HttpStatus.Success);
+            setIsLoading(false);
         },
         [],
     );
 
     const handleError = useCallback(
         async (err: any) => {
+            setIsLoading(false);
             switch (err.response.status) {
             case 401:
                 setStatus(HttpStatus.Unauthorized);
@@ -186,6 +190,7 @@ const useHttp = function<TParametersType, TReturnDataType, TRequestDataType = nu
         error,
         saveAttachment,
         isSuccess,
+        isLoading,
     };
 };
 

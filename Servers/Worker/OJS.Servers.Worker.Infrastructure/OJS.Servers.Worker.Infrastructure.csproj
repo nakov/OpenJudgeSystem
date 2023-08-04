@@ -20,9 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    
+    <ProjectReference Include="..\..\..\Services\Common\OJS.Workers\OJS.Workers.Common\OJS.Workers.Common.csproj" />
+    <ProjectReference Include="..\..\..\Services\Common\OJS.Workers\OJS.Workers.SubmissionProcessors\OJS.Workers.SubmissionProcessors.csproj" />
     <ProjectReference Include="..\..\..\Services\Worker\OJS.Services.Worker.Models\OJS.Services.Worker.Models.csproj" />
-    <ProjectReference Include="..\..\..\Services\Worker\OJS.Workers\OJS.Workers.Common\OJS.Workers.Common.csproj" />
-    <ProjectReference Include="..\..\..\Services\Worker\OJS.Workers\OJS.Workers.SubmissionProcessors\OJS.Workers.SubmissionProcessors.csproj" />
     <ProjectReference Include="..\..\Infrastructure\OJS.Servers.Infrastructure\OJS.Servers.Infrastructure.csproj" />
   </ItemGroup>
 

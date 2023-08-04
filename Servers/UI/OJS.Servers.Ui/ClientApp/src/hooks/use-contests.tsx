@@ -16,15 +16,17 @@ import { IIndexContestsType, IPagedResultType } from '../common/types';
 import { IAllContestsUrlParams, IGetContestByProblemUrlParams } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 import { areStringEqual } from '../utils/compare-utils';
+import {
+    getAllContestsUrl,
+    getContestByProblemUrl,
+} from '../utils/urls';
 
 import { useUrlParams } from './common/use-url-params';
 import { generateCategoryFilters, generateStatusFilters, generateStrategyFilters } from './contests/contest-filter-utils';
 import { useContestCategories } from './use-contest-categories';
 import { useContestStrategyFilters } from './use-contest-strategy-filters';
 import { useHttp } from './use-http';
-import { useLoading } from './use-loading';
 import { usePages } from './use-pages';
-import { useUrls } from './use-urls';
 
 interface IContestsContext {
     state: {
@@ -35,6 +37,7 @@ interface IContestsContext {
         sortingTypes: ISort[];
         contest: IIndexContestsType | null;
         isLoaded: boolean;
+        contestsAreLoading: boolean;
     };
     actions: {
         reload: () => Promise<void>;
@@ -78,6 +81,7 @@ const collectParams = <T extends FilterSortType>(
 };
 
 const ContestsProvider = ({ children }: IContestsProviderProps) => {
+    const [ isLoading, setIsLoading ] = useState(false);
     const [ contests, setContests ] = useState(defaultState.state.contests);
     const [ getAllContestsUrlParams, setGetAllContestsUrlParams ] = useState<IAllContestsUrlParams | null>();
     const [ getContestByProblemUrlParams, setGetContestByProblemUrlParams ] = useState<IGetContestByProblemUrlParams | null>();
@@ -95,10 +99,9 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
         changePage,
         populatePageInformation,
     } = usePages();
-    const { getAllContestsUrl, getContestByProblemUrl } = useUrls();
-    const { startLoading, stopLoading } = useLoading();
 
     const {
+        isLoading: contestsAreLoading,
         get: getContests,
         data: contestsData,
         isSuccess,
@@ -173,11 +176,11 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
 
     const reload = useCallback(
         async () => {
-            startLoading();
+            setIsLoading(true);
             await getContests();
-            stopLoading();
+            setIsLoading(false);
         },
-        [ getContests, startLoading, stopLoading ],
+        [ getContests ],
     );
 
     const toggleParam = useCallback<ToggleParam>((param) => {
@@ -291,7 +294,9 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
                 filters,
                 sortingTypes,
                 contest,
-                isLoaded: isSuccess,
+                isLoaded: isSuccess, // should be removed, its incorrect logic, since isError is not taken into consideration
+                isLoading,
+                contestsAreLoading,
             },
             actions: {
                 reload,
@@ -316,6 +321,8 @@ const ContestsProvider = ({ children }: IContestsProviderProps) => {
             contest,
             initiateGetAllContestsQuery,
             isSuccess,
+            isLoading,
+            contestsAreLoading,
         ],
     );
 

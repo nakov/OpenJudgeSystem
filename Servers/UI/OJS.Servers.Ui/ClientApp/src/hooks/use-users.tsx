@@ -2,11 +2,10 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import isNil from 'lodash/isNil';
 
 import { IHaveChildrenProps } from '../components/common/Props';
+import { getProfileInfoUrl } from '../utils/urls';
 
 import { useHttp } from './use-http';
-import { useLoading } from './use-loading';
 import { useNotifications } from './use-notifications';
-import { useUrls } from './use-urls';
 
 interface IUserProfileType {
     id: string;
@@ -14,11 +13,13 @@ interface IUserProfileType {
     firstName: string;
     lastName: string;
     email: string;
+    isGetUserLoading: boolean;
 }
 
 interface IUsersContext {
     profile: IUserProfileType;
     getProfile: () => Promise<void>;
+    isLoading: boolean;
 }
 
 const defaultState = { profile: { userName: '' } as IUserProfileType };
@@ -28,11 +29,9 @@ const UsersContext = createContext<IUsersContext>(defaultState as IUsersContext)
 type IUsersProviderProps = IHaveChildrenProps
 
 const UsersProvider = ({ children }: IUsersProviderProps) => {
-    const { startLoading, stopLoading } = useLoading();
+    const [ isLoading, setIsLoading ] = useState(false);
     const [ profile, setProfile ] = useState(defaultState.profile);
     const { showError } = useNotifications();
-
-    const { getProfileInfoUrl } = useUrls();
 
     const {
         get: getProfileInfo,
@@ -40,10 +39,10 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
     } = useHttp<null, IUserProfileType>({ url: getProfileInfoUrl });
 
     const getProfile = useCallback(async () => {
-        startLoading();
+        setIsLoading(true);
         await getProfileInfo();
-        stopLoading();
-    }, [ getProfileInfo, startLoading, stopLoading ]);
+        setIsLoading(false);
+    }, [ getProfileInfo ]);
 
     useEffect(() => {
         if (isNil(profileData)) {
@@ -59,8 +58,9 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
         () => ({
             profile,
             getProfile,
+            isLoading,
         }),
-        [ getProfile, profile ],
+        [ getProfile, profile, isLoading ],
     );
 
     return (

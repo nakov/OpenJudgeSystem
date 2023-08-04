@@ -5,11 +5,13 @@ import isNil from 'lodash/isNil';
 import { IDictionary } from '../../common/common-types';
 import { ISubmissionTypeType } from '../../common/types';
 import { IHaveChildrenProps } from '../../components/common/Props';
+import {
+    getSubmitFileUrl,
+    getSubmitUrl,
+} from '../../utils/urls';
 import { useCurrentContest } from '../use-current-contest';
 import { IErrorDataType, useHttp } from '../use-http';
-import { useLoading } from '../use-loading';
 import { useProblems } from '../use-problems';
-import { useUrls } from '../use-urls';
 
 import { ISubmissionType, ITestRunType } from './types';
 import { useProblemSubmissions } from './use-problem-submissions';
@@ -49,6 +51,7 @@ const SubmissionsContext = createContext<ISubmissionsContext>(defaultState as IS
 type ISubmissionsProviderProps = IHaveChildrenProps
 
 const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
+    const [ isLoading, setIsLoading ] = useState(false);
     const [ selectedSubmissionType, setSelectedSubmissionType ] =
         useState<ISubmissionTypeType | null>(defaultState.state.selectedSubmissionType);
     const [ problemSubmissionCode, setProblemSubmissionCode ] =
@@ -56,16 +59,9 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const [ problemSubmissionErrors, setProblemSubmissionErrors ] =
         useState<IDictionary<IErrorDataType | null>>(defaultState.state.problemSubmissionErrors);
 
-    const {
-        startLoading,
-        stopLoading,
-    } = useLoading();
-
     const { state: { currentProblem } } = useProblems();
     const { actions: { loadSubmissions } } = useProblemSubmissions();
     const { state: { isOfficial } } = useCurrentContest();
-
-    const { getSubmitUrl, getSubmitFileUrl } = useUrls();
 
     const submitCodeParams = useMemo(() => {
         const { id: problemId } = currentProblem || {};
@@ -161,7 +157,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                 return;
             }
 
-            startLoading();
+            setIsLoading(true);
 
             if (selectedSubmissionType?.allowBinaryFilesUpload) {
                 await submitFileCode(await getSubmitParamsAsFormData());
@@ -169,17 +165,15 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                 await submitCode(submitCodeParams);
             }
 
-            stopLoading();
+            setIsLoading(false);
             resetProblemSubmissionError();
         },
         [
-            startLoading,
             selectedSubmissionType,
             submitFileCode,
             getSubmitParamsAsFormData,
             submitCode,
             submitCodeParams,
-            stopLoading,
             resetProblemSubmissionError,
         ],
     );
@@ -306,6 +300,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                 problemSubmissionCode,
                 selectedSubmissionType,
                 problemSubmissionErrors,
+                isLoading,
             },
             actions: {
                 updateSubmissionCode,
@@ -324,6 +319,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             removeProblemSubmissionCode,
             closeErrorMessage,
             problemSubmissionErrors,
+            isLoading,
         ],
     );
 

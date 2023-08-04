@@ -106,7 +106,7 @@ const ContestTasksNavigation = () => {
             {renderTasksList()}
             <LinkButton
               type={LinkButtonType.secondary}
-              to={getContestResultsUrl({ id: contest!.id, participationType })}
+              to={getContestResultsUrl({ id: contest?.id, participationType })}
               text="Results"
               className={refreshButtonClassName}
             />

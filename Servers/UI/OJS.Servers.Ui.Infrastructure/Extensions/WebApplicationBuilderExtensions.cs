@@ -12,6 +12,7 @@ public static class WebApplicationBuilderExtensions
         string apiVersion)
     {
         builder.Configuration.AddEnvironmentVariables($"{nameof(EmailServiceConfig)}_");
+        builder.Configuration.AddEnvironmentVariables($"{nameof(MessageQueueConfig)}_");
         builder.Services.ConfigureServices<TProgram>(builder.Configuration, apiVersion);
         builder.Host.UseFileLogger<TProgram>();
 

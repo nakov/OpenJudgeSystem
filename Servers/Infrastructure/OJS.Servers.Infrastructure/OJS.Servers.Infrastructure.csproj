@@ -8,12 +8,15 @@
       <ProjectReference Include="..\..\..\Common\OJS.Common\OJS.Common.csproj" />
       <ProjectReference Include="..\..\..\Data\Infrastructure\OJS.Data.Infrastructure\OJS.Data.Infrastructure.csproj" />
       <ProjectReference Include="..\..\..\Services\Common\OJS.Services.Common.Data\OJS.Services.Common.Data.csproj" />
+      <ProjectReference Include="..\..\..\Services\Common\OJS.Services.Common\OJS.Services.Common.csproj" />
+      <ProjectReference Include="..\..\..\Services\Common\OJS.Workers\OJS.Workers.SubmissionProcessors\OJS.Workers.SubmissionProcessors.csproj" />
       <ProjectReference Include="..\..\..\Services\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Hangfire.AspNetCore" Version="1.7.26" />
       <PackageReference Include="Hangfire.SqlServer" Version="1.7.26" />
+      <PackageReference Include="MassTransit.RabbitMQ" Version="8.0.16" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.0" />

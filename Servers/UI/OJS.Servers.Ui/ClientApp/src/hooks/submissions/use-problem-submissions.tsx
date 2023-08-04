@@ -3,10 +3,9 @@ import isNil from 'lodash/isNil';
 
 import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
 import { IHaveChildrenProps } from '../../components/common/Props';
+import { getSubmissionResultsByProblemUrl } from '../../utils/urls';
 import { useCurrentContest } from '../use-current-contest';
 import { IErrorDataType, useHttp } from '../use-http';
-import { useLoading } from '../use-loading';
-import { useUrls } from '../use-urls';
 
 import { ISubmissionDetails } from './types';
 
@@ -31,6 +30,7 @@ interface IProblemSubmissionResultsRequestParametersType {
 const ProblemSubmissionsContext = createContext<IProblemSubmissionsContext>({} as IProblemSubmissionsContext);
 
 const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderProps) => {
+    const [ isLoading, setIsLoading ] = useState(false);
     const [ submissions, setSubmissions ] = useState<ISubmissionDetails[] | null>(null);
     const [
         submissionResultsToGetParameters,
@@ -39,12 +39,6 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
 
     const { state: { isOfficial } } = useCurrentContest();
 
-    const {
-        startLoading,
-        stopLoading,
-    } = useLoading();
-
-    const { getSubmissionResultsByProblemUrl } = useUrls();
     const {
         get: getProblemSubmissions,
         data: apiProblemSubmissions,
@@ -92,20 +86,20 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
             }
 
             (async () => {
-                startLoading();
+                setIsLoading(true);
                 await getProblemSubmissions();
-                stopLoading();
+                setIsLoading(false);
             })();
         },
-        [ startLoading, stopLoading, getProblemSubmissions, submissionResultsToGetParameters ],
+        [ getProblemSubmissions, submissionResultsToGetParameters ],
     );
 
     const value = useMemo(
         () => ({
-            state: { submissions, problemSubmissionsError },
+            state: { submissions, problemSubmissionsError, isLoading },
             actions: { loadSubmissions },
         }),
-        [ loadSubmissions, submissions, problemSubmissionsError ],
+        [ loadSubmissions, submissions, problemSubmissionsError, isLoading ],
     );
 
     return (

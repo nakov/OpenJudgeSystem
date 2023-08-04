@@ -13,7 +13,7 @@ interface IProblemSubmissionDetailsUrlParams {
 }
 
 interface IContestResultsUrl {
-    id: number;
+    id: number | undefined;
     participationType: ContestParticipationType;
 }
 

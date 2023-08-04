@@ -7,13 +7,12 @@ import { ContestParticipationType } from '../common/constants';
 import { IProblemType } from '../common/types';
 import { IDownloadProblemResourceUrlParams } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
+import { getDownloadProblemResourceUrl } from '../utils/urls';
 
 import { useHashUrlParams } from './common/use-hash-url-params';
 import { useAppUrls } from './use-app-urls';
 import { useCurrentContest } from './use-current-contest';
 import { useHttp } from './use-http';
-import { useLoading } from './use-loading';
-import { useUrls } from './use-urls';
 
 interface IProblemsContext {
     state: {
@@ -54,16 +53,11 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         state: { hashParam },
         actions: { setHash },
     } = useHashUrlParams();
+    const [ isLoading, setIsLoading ] = useState(false);
     const [ problems, setProblems ] = useState(defaultState.state.problems);
     const [ currentProblem, setCurrentProblem ] = useState<IProblemType | null>(defaultState.state.currentProblem);
     const [ internalProblemId, setInternalProblemId ] = useState<number | null>();
     const [ problemResourceIdToDownload, setProblemResourceIdToDownload ] = useState<number | null>(null);
-    const { getDownloadProblemResourceUrl } = useUrls();
-
-    const {
-        startLoading,
-        stopLoading,
-    } = useLoading();
 
     const { getParticipateInContestUrl } = useAppUrls();
     const navigate = useNavigate();
@@ -180,14 +174,14 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
             }
 
             (async () => {
-                startLoading();
+                setIsLoading(true);
                 await downloadProblemResource('blob');
-                stopLoading();
+                setIsLoading(false);
             })();
 
             setProblemResourceIdToDownload(null);
         },
-        [ downloadProblemResource, problemResourceIdToDownload, startLoading, stopLoading ],
+        [ downloadProblemResource, problemResourceIdToDownload ],
     );
 
     const value = useMemo(
@@ -195,6 +189,7 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
             state: {
                 problems,
                 currentProblem,
+                isLoading,
             },
             actions: {
                 selectCurrentProblem,
@@ -203,7 +198,15 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
                 initiateRedirectionToProblem,
             },
         }),
-        [ currentProblem, downloadProblemResourceFile, initiateRedirectionToProblem, initiateProblems, problems, selectCurrentProblem ],
+        [
+            currentProblem,
+            downloadProblemResourceFile,
+            initiateRedirectionToProblem,
+            initiateProblems,
+            problems,
+            selectCurrentProblem,
+            isLoading,
+        ],
     );
 
     return (
