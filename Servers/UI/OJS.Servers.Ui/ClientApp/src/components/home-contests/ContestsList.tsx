@@ -40,10 +40,6 @@ const ContestsList = ({
 
     useEffect(() => {
         handleResize();
-    });
-
-    useEffect(() => {
-        handleResize();
         window.addEventListener('resize', handleResize);
 
         return () => {
