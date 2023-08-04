@@ -1,5 +1,4 @@
 import React, { FC, useCallback } from 'react';
-import isNil from 'lodash/isNil';
 
 import { IProblemResourceType } from '../../../common/types';
 import { useProblems } from '../../../hooks/use-problems';
