@@ -165,16 +165,13 @@
 
             this.UpdateResults();
         }
-        
-        private static void UpdateParticipantTotalScore(Participant participant)
+
+        private static void UpdateParticipantTotalScore(Participant participant, int totalScore)
         {
-            participant.TotalScoreSnapshot =
-                participant.Scores.Where(ps => !ps.Problem.IsDeleted)
-                    .Select(ps => ps.Points)
-                    .Sum();
+            participant.TotalScoreSnapshot = totalScore;
             participant.TotalScoreSnapshotModifiedOn = DateTime.Now;
         }
-        
+
         private void UpdateResults()
         {
             this.CalculatePointsForSubmission();
@@ -228,11 +225,22 @@
                     return;
                 }
 
-                var participant = this.participantsData
+                var participantObject = this.participantsData
                     .GetByIdQuery(this.submission.ParticipantId.Value)
+                    .Select(p =>
+                        new
+                        {
+                            Participant = p,
+                            IsOfficial = p.IsOfficial,
+                            UserName = p.User.UserName,
+                            TotalScore = p.Scores
+                                .Where(ps => !ps.Problem.IsDeleted)
+                                .Select(ps => ps.Points)
+                                .Sum()
+                        })
                     .FirstOrDefault();
 
-                if (participant == null)
+                if (participantObject == null)
                 {
                     return;
                 }
@@ -244,16 +252,16 @@
                     existingScore = this.participantScoresData.GetByParticipantIdProblemIdAndIsOfficial(
                         this.submission.ParticipantId.Value,
                         this.submission.ProblemId.Value,
-                        participant.IsOfficial);
+                        participantObject.IsOfficial);
 
                     if (existingScore == null)
                     {
                         this.participantScoresData.AddBySubmissionByUsernameAndIsOfficial(
                             this.submission,
-                            participant.User.UserName,
-                            participant.IsOfficial);
-                        
-                        UpdateParticipantTotalScore(participant);
+                            participantObject.UserName,
+                            participantObject.IsOfficial);
+
+                        UpdateParticipantTotalScore(participantObject.Participant, participantObject.TotalScore);
                         return;
                     }
                 }
@@ -267,7 +275,7 @@
                         this.submission.Points);
                 }
 
-                UpdateParticipantTotalScore(participant);
+                UpdateParticipantTotalScore(participantObject.Participant,participantObject.TotalScore);
             }
             catch (Exception ex)
             {
