@@ -33,7 +33,7 @@ const renderTimeOut = () => (
         {' '}
         <Text type={TextType.Bold}>
             {' '}
-            00:00:00
+            00, 00, 00
         </Text>
     </p>
 );
@@ -50,15 +50,15 @@ const defaultRender = (remainingTime: ICountdownRemainingType) => {
                     {' '}
                     {hours}
                     {' '}
-                    hours,
+                    h,
                     {' '}
                     {minutes}
                     {' '}
-                    minutes,
+                    m,
                     {' '}
                     {seconds}
                     {' '}
-                    seconds
+                    s
                 </Text>
             </p>
         );
@@ -72,15 +72,15 @@ const defaultRender = (remainingTime: ICountdownRemainingType) => {
                 {' '}
                 {days}
                 {' '}
-                days,
+                d,
                 {' '}
                 {hours}
                 {' '}
-                hours,
+                h,
                 {' '}
                 {minutes}
                 {' '}
-                minutes
+                m
             </Text>
         </p>
     );
