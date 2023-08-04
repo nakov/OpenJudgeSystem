@@ -1,7 +1,7 @@
 ﻿namespace OJS.Servers.Worker.Models.ExecutionResult;
 
 using System;
-using OJS.Services.Common.Models;
+using OJS.Workers.SubmissionProcessors.Models;
 
 public class FullExecutionResultResponseModel
 {

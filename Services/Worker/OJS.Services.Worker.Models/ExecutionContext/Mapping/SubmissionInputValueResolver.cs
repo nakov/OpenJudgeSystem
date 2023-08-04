@@ -4,6 +4,8 @@ using AutoMapper;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Workers.Common;
 using OJS.Workers.ExecutionStrategies.Models;
+using OJS.Services.Common.Models.Submissions.ExecutionContext;
+using OJS.Workers.Common.Models;
 
 public class SubmissionInputValueResolver : IValueResolver<SubmissionServiceModel, IOjsSubmission, object>
 {
@@ -16,10 +18,8 @@ public class SubmissionInputValueResolver : IValueResolver<SubmissionServiceMode
         switch (source.ExecutionType)
         {
             case ExecutionType.SimpleExecution:
-            case ExecutionType.SimpleTemplateExecution:
                 return source.SimpleExecutionDetails!.Map<SimpleInputModel>();
             case ExecutionType.TestsExecution:
-            case ExecutionType.TestsTemplateExecution:
                 return source.TestsExecutionDetails!.Map<TestsInputModel>();
             default:
                 return default!;
