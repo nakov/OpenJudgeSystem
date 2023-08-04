@@ -34,8 +34,8 @@
     public class ContestsController : LecturerBaseGridController
     {
         private const int ProblemGroupsCountLimit = 40;
-        private const int actualWorkersDefaultValue = 36;
-        private const int maxAllowedTimeForSubmissionCompletionInSecs = 200;
+        private const int ActualWorkersDefaultValue = 36;
+        private const int MaxAllowedTimeForSubmissionCompletionInSecs = 200;
 
         private readonly IContestsDataService contestsData;
         private readonly IContestCategoriesDataService contestCategoriesData;
@@ -172,7 +172,8 @@
                     submissionTypesForProblem.Where(stp => stp.HasAuthorSubmission == false);
                 if (typesWithoutAuthorSolutions.Any())
                 {
-                    var text = "Missing currently passing Author submissions on: <br>" + string.Join("<br>",
+                    var text = "Missing currently passing Author submissions on: <br>" + string.Join(
+                        "<br>",
                         typesWithoutAuthorSolutions.Select(stp =>
                             $"Problem Name: {stp.ProblemName}, SubmissionType: {stp.SubmissionTypeName}"));
                     this.TempData.AddDangerMessage(text);
@@ -562,14 +563,7 @@
             model.MaxAllowedTimeForSubmissionCompletion = this.ApplyDbSettingValue<int>(
                 dbSettings,
                 GlobalConstants.MaxAllowedTimeForSubmissionCompletion,
-                maxAllowedTimeForSubmissionCompletionInSecs);
-
-            var dbMaxSubmissionTime =
-                dbSettings.FirstOrDefault(s => s.Name == GlobalConstants.MaxAllowedTimeForSubmissionCompletion);
-            if (dbMaxSubmissionTime != null)
-            {
-                model.MaxAllowedTimeForSubmissionCompletion = int.Parse(dbMaxSubmissionTime.Value);
-            }
+                MaxAllowedTimeForSubmissionCompletionInSecs);
 
             foreach (var contest in contests)
             {
@@ -580,15 +574,19 @@
                         model.ExamLengthInHours = (contest.EndTime.Value - contest.StartTime.Value).Hours;
                     }
 
-                    model.ExpectedExamProblemsCount = contest.ProblemGroups.Count();
+                    model.ExpectedExamProblemsCount = contest.ProblemGroups.Count(pg => !pg.IsDeleted);
                     model.ContestName = contest.Name;
                     model.CurrentContestId = contest.Id;
                     model.AverageProblemRunTimeInSeconds =
-                        this.contestsBusiness.GetContestSubmissionsAverageRunTimeSeconds(contest, false, null);
+                        this.contestsBusiness.GetContestSubmissionsAverageRunTimeSeconds(
+                            contest,
+                            false,
+                            model.MaxAllowedTimeForSubmissionCompletion);
+
                     model.ActualWorkers = this.ApplyDbSettingValue(
                         dbSettings,
                         GlobalConstants.RemoteWorkers,
-                        actualWorkersDefaultValue);
+                        ActualWorkersDefaultValue);
 
                     // Currently is setted to 0 because it is not fetched from the SULS
                     model.ExpectedStudentsCount = 0;
@@ -638,10 +636,10 @@
 
             return this.Json(calculatedLoad);
         }
-        
-        private T ApplyDbSettingValue<T>(IEnumerable<Setting> dbSettings, string propertyName, T alternativeValue)
+
+        private T ApplyDbSettingValue<T>(IEnumerable<Setting> dbSettings, string settingName, T alternativeValue)
         {
-            var setting = dbSettings.FirstOrDefault(s => s.Name == propertyName);
+            var setting = dbSettings.FirstOrDefault(s => s.Name == settingName);
             if (setting == null)
             {
                 return alternativeValue;
@@ -651,7 +649,7 @@
             {
                 return (T)Convert.ChangeType(setting.Value, typeof(T));
             }
-            catch (Exception ex)
+            catch
             {
                 throw new InvalidCastException($"Unable to cast object of type {typeof(T)}");
             }

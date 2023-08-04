@@ -216,7 +216,8 @@
 
             if (maxAllowedSubmissionCompletionTime.HasValue)
             {
-                submissionsRunTimeSecondsList.Where(s => s <= maxAllowedSubmissionCompletionTime.Value).ToList();
+                submissionsRunTimeSecondsList =
+                    submissionsRunTimeSecondsList.Where(s => s <= maxAllowedSubmissionCompletionTime.Value).ToList();
             }
 
             if (submissionsRunTimeSecondsList.Count == 0)
