@@ -290,7 +290,7 @@
                 responseModel.ExpectedExamSubmissions = 1;
             }
 
-            responseModel.ProcessedSubmissionsPerWorkerPerMinute = (int)Math.Round(
+            responseModel.ProcessedSubmissionsPerWorkerPerMinute = (int)Math.Ceiling(
                 60 / (1 + (model.WorkerIdleTimeInPercentage / 100.0)) / model.AverageProblemRunTimeInSeconds);
 
             var judgeParallelWorkInPercentage = model.MaxJudgeParalelWork / 100.0;
