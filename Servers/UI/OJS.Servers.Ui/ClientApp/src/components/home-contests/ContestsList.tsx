@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Slider from 'react-slick';
 
 import { ContestStatus } from '../../common/contest-types';
