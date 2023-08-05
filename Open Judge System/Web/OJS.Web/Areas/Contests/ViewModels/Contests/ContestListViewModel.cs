@@ -1,13 +1,11 @@
 ﻿namespace OJS.Web.Areas.Contests.ViewModels.Contests
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
 
     using OJS.Common.Models;
     using OJS.Data.Models;
-    using OJS.Web.Areas.Contests.Models;
 
     public class ContestListViewModel
     {
@@ -35,9 +33,7 @@
 
         public bool UserIsAdminOrLecturerInContest { get; set; }
 
-        internal ContestType Type { get; set; }
-
-        internal IList<ParticipantStatusModel> Participants { get; set; }
+        public ContestType Type { get; set; }
 
         public static Expression<Func<Contest, ContestListViewModel>> FromContest(string userId, bool isUserAdmin) =>
             contest => new ContestListViewModel
@@ -45,7 +41,6 @@
                 Id = contest.Id,
                 Name = contest.Name,
                 ProblemsCount = contest.ProblemGroups.Count(pg => !pg.IsDeleted),
-                Participants = contest.Participants.AsQueryable().Select(ParticipantStatusModel.FromParticipant).ToList(),
                 Type = contest.Type,
                 HasContestPassword = contest.ContestPassword != null,
                 HasPracticePassword = contest.PracticePassword != null,

@@ -10,11 +10,14 @@
             participant => new ParticipantStatusModel
             {
                 UserId = participant.UserId,
+                ContestId = participant.ContestId,
                 IsOfficial = participant.IsOfficial,
                 ParticipationEndTime = participant.ParticipationEndTime,
             };
 
         public string UserId { get; set; }
+        
+        public int ContestId { get; set; }
 
         public bool IsOfficial { get; set; }
 

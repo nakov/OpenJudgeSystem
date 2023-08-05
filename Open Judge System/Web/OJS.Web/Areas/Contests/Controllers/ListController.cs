@@ -6,11 +6,13 @@
     using System.Net;
     using System.Web;
     using System.Web.Mvc;
+    using OJS.Common.Extensions;
     using OJS.Common.Models;
     using OJS.Data;
     using OJS.Services.Cache;
     using OJS.Services.Data.ContestCategories;
     using OJS.Services.Data.Contests;
+    using OJS.Services.Data.Participants;
     using OJS.Web.Areas.Contests.Models;
     using OJS.Web.Areas.Contests.ViewModels.Contests;
     using OJS.Web.Areas.Contests.ViewModels.Submissions;
@@ -27,18 +29,24 @@
 
         private readonly IContestsDataService contestsData;
         private readonly IContestCategoriesDataService contestCategoriesData;
+        private readonly IParticipantsDataService participantsData;
         private readonly ICacheItemsProviderService cacheItems;
+        private readonly IRedisCacheService redisCache;
 
         public ListController(
             IOjsData data,
             IContestsDataService contestsData,
             IContestCategoriesDataService contestCategoriesData,
-            ICacheItemsProviderService cacheItems)
+            IParticipantsDataService participantsData,
+            ICacheItemsProviderService cacheItems,
+            IRedisCacheService redisCache)
             : base(data)
         {
             this.contestsData = contestsData;
             this.contestCategoriesData = contestCategoriesData;
+            this.participantsData = participantsData;
             this.cacheItems = cacheItems;
+            this.redisCache = redisCache;
         }
 
         public ActionResult Index() => this.View();
@@ -51,6 +59,7 @@
 
         public ActionResult ByCategory(int? id, int? page)
         {
+            var userId = this.UserProfile?.Id;
             var contestCategory = this.GetContestCategoryFromCache(id);
 
             if (contestCategory == null)
@@ -61,22 +70,29 @@
             if (id.HasValue && this.contestCategoriesData.HasContestsById(id.Value))
             {
                 page = page ?? 1;
-                var userId = this.UserProfile?.Id;
 
                 contestCategory.IsUserLecturerInContestCategory =
                     this.CheckIfUserHasContestCategoryPermissions(contestCategory.Id);
 
-                var contests = this.contestsData
-                    .GetAllVisibleByCategory(id.Value)
-                    .OrderBy(c => c.OrderBy)
-                    .ThenByDescending(c => c.EndTime ?? c.PracticeEndTime ?? c.PracticeStartTime)
-                    .Select(ContestListViewModel.FromContest(userId, this.User.IsAdmin()))
-                    .ToPagedList(page.Value, DefaultContestsPerPage);
-
+                var contests = this.GetContestsListPage(contestCategory.Id, userId, page.Value, DefaultContestsPerPage);
+                var contestIds = contests.Select(c => c.Id).ToArray();
+                var participantsCount = this.redisCache.GetOrSet(
+                    $"ParticipantsCountByCategoryAndPage:{contestCategory.Id}:{page.Value}",
+                    () => this.GetCategoryParticipantsCount(contestIds),
+                    TimeSpan.FromMinutes(2));
+                
+                var userParticipants = this.participantsData.GetAllByManyContestsAndUserId(contestIds, userId)
+                    .Select(ParticipantStatusModel.FromParticipant)
+                    .ToList();
+                
                 // Operations in memory to speed up db query
                 foreach (var contest in contests)
                 {
-                    this.FillParticipantsInfo(contest, userId);
+                    var participantsCountForContest = participantsCount.GetValuerOrDefault(contest.Id, (0, 0));
+                    contest.OfficialParticipants = participantsCountForContest.Item1;
+                    contest.PracticeParticipants = participantsCountForContest.Item2;
+                    var contestUserParticipants = userParticipants.Where(p => p.ContestId == contest.Id).ToList();
+                    this.FillCurrentParticipantInfo(contest, contestUserParticipants);
 
                     contest.UserIsAdminOrLecturerInContest =
                         contest.UserIsAdminOrLecturerInContest || contestCategory.IsUserLecturerInContestCategory;
@@ -155,15 +171,11 @@
             return contestCategory;
         }
 
-        private void FillParticipantsInfo(ContestListViewModel contest, string userId)
+        private void FillCurrentParticipantInfo(
+            ContestListViewModel contest,
+            ICollection<ParticipantStatusModel> participantsForUser)
         {
-            var partcipantsForUser = string.IsNullOrWhiteSpace(userId)
-                ? new List<ParticipantStatusModel>()
-                : contest.Participants.Where(p => p.UserId == userId).ToList();
-
-            contest.UserIsParticipant = partcipantsForUser.Any();
-            contest.OfficialParticipants = contest.Participants.Count(p => p.IsOfficial);
-            contest.PracticeParticipants = contest.Participants.Count - contest.OfficialParticipants;
+            contest.UserIsParticipant = participantsForUser.Any();
 
             // Contest entry time can be reached, but a participant may still have individual time left for an Online Contest
             var shouldCheckParticipantIndividualEndTime = !contest.CanBeCompeted &&
@@ -171,9 +183,38 @@
 
             if (contest.UserIsParticipant && shouldCheckParticipantIndividualEndTime)
             {
-                var participant = partcipantsForUser.FirstOrDefault(p => p.IsOfficial);
+                var participant = participantsForUser.FirstOrDefault(p => p.IsOfficial);
                 contest.CanBeCompeted = participant?.ParticipationEndTime >= DateTime.Now;
             }
         }
+
+        private IPagedList<ContestListViewModel> GetContestsListPage(int categoryId, string userId, int page, int pageSize) =>
+            this.contestsData
+                .GetAllVisibleByCategory(categoryId)
+                .OrderBy(c => c.OrderBy)
+                .ThenByDescending(c => c.EndTime ?? c.PracticeEndTime ?? c.PracticeStartTime)
+                .Select(ContestListViewModel.FromContest(userId, this.User.IsAdmin()))
+                .ToPagedList(page, pageSize);
+        
+        private IDictionary<int, (
+            int officialParticipantsCount, int practiceParticipantsCount)
+            > GetCategoryParticipantsCount(IReadOnlyCollection<int> contestIds)
+        {
+            var officialParticipants = this.GetContestParticipantsCount(contestIds, true);
+            var practiceParticipants = this.GetContestParticipantsCount(contestIds, false);
+            
+            return contestIds.ToDictionary(
+                id => id,
+                id => (
+                    officialParticipants.GetValuerOrDefault(id),
+                    practiceParticipants.GetValuerOrDefault(id)));
+        }
+
+        private IDictionary<int, int> GetContestParticipantsCount(IEnumerable<int> contestIds, bool isOfficial)
+            => // Not doing .ToDictionary directly after .GroupBy as it will generate slower query
+                this.participantsData.GetAllByContestIdsAndIsOfficial(contestIds, isOfficial)
+                .GroupBy(p => p.ContestId)
+                .Select(g => new { ContestId = g.Key, ParticipantsCount = g.Count() })
+                .ToDictionary(p => p.ContestId, p => p.ParticipantsCount);
     }
 }
