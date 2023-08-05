@@ -1,14 +1,17 @@
 ﻿namespace OJS.Web.Areas.Contests.Controllers
 {
+    using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Net;
     using System.Web;
     using System.Web.Mvc;
-
+    using OJS.Common.Models;
     using OJS.Data;
     using OJS.Services.Cache;
     using OJS.Services.Data.ContestCategories;
     using OJS.Services.Data.Contests;
+    using OJS.Web.Areas.Contests.Models;
     using OJS.Web.Areas.Contests.ViewModels.Contests;
     using OJS.Web.Areas.Contests.ViewModels.Submissions;
     using OJS.Web.Common.Extensions;
@@ -58,17 +61,29 @@
             if (id.HasValue && this.contestCategoriesData.HasContestsById(id.Value))
             {
                 page = page ?? 1;
+                var userId = this.UserProfile?.Id;
 
-                contestCategory.Contests = this.contestsData
+                contestCategory.IsUserLecturerInContestCategory =
+                    this.CheckIfUserHasContestCategoryPermissions(contestCategory.Id);
+
+                var contests = this.contestsData
                     .GetAllVisibleByCategory(id.Value)
                     .OrderBy(c => c.OrderBy)
                     .ThenByDescending(c => c.EndTime ?? c.PracticeEndTime ?? c.PracticeStartTime)
-                    .Select(ContestListViewModel.FromContest(this.UserProfile?.Id, this.User.IsAdmin()))
+                    .Select(ContestListViewModel.FromContest(userId, this.User.IsAdmin()))
                     .ToPagedList(page.Value, DefaultContestsPerPage);
-            }
 
-            contestCategory.IsUserLecturerInContestCategory =
-                this.CheckIfUserHasContestCategoryPermissions(contestCategory.Id);
+                // Operations in memory to speed up db query
+                foreach (var contest in contests)
+                {
+                    this.FillParticipantsInfo(contest, userId);
+
+                    contest.UserIsAdminOrLecturerInContest =
+                        contest.UserIsAdminOrLecturerInContest || contestCategory.IsUserLecturerInContestCategory;
+                }
+
+                contestCategory.Contests = contests;
+            }
 
             var isAjaxRequest = this.Request.IsAjaxRequest();
 
@@ -138,6 +153,27 @@
             }
 
             return contestCategory;
+        }
+
+        private void FillParticipantsInfo(ContestListViewModel contest, string userId)
+        {
+            var partcipantsForUser = string.IsNullOrWhiteSpace(userId)
+                ? new List<ParticipantStatusModel>()
+                : contest.Participants.Where(p => p.UserId == userId).ToList();
+
+            contest.UserIsParticipant = partcipantsForUser.Any();
+            contest.OfficialParticipants = contest.Participants.Count(p => p.IsOfficial);
+            contest.PracticeParticipants = contest.Participants.Count - contest.OfficialParticipants;
+
+            // Contest entry time can be reached, but a participant may still have individual time left for an Online Contest
+            var shouldCheckParticipantIndividualEndTime = !contest.CanBeCompeted &&
+                contest.Type == ContestType.OnlinePracticalExam;
+
+            if (contest.UserIsParticipant && shouldCheckParticipantIndividualEndTime)
+            {
+                var participant = partcipantsForUser.FirstOrDefault(p => p.IsOfficial);
+                contest.CanBeCompeted = participant?.ParticipationEndTime >= DateTime.Now;
+            }
         }
     }
 }
