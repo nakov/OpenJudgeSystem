@@ -17,11 +17,13 @@
     using MissingFeatures;
 
     using OJS.Common;
+    using OJS.Common.Constants;
     using OJS.Common.Models;
     using OJS.Data;
     using OJS.Data.Models;
     using OJS.Services.Business.Contests;
     using OJS.Services.Business.Participants;
+    using OJS.Services.Cache;
     using OJS.Services.Data.Contests;
     using OJS.Services.Data.Ips;
     using OJS.Services.Data.Participants;
@@ -54,6 +56,7 @@
         private readonly ISubmissionsDataService submissionsData;
         private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
         private readonly IIpsDataService ipsData;
+        private readonly IRedisCacheService redisCacheService;
 
         public CompeteController(
             IOjsData data,
@@ -64,7 +67,8 @@
             IProblemsDataService problemsData,
             ISubmissionsDataService submissionsData,
             ISubmissionsForProcessingDataService submissionsForProcessingData,
-            IIpsDataService ipsData)
+            IIpsDataService ipsData,
+             IRedisCacheService redisCacheService)
             : base(data)
         {
             this.participantsBusiness = participantsBusiness;
@@ -75,6 +79,7 @@
             this.submissionsData = submissionsData;
             this.submissionsForProcessingData = submissionsForProcessingData;
             this.ipsData = ipsData;
+            this.redisCacheService = redisCacheService;
         }
 
         protected CompeteController(
@@ -216,7 +221,12 @@
             var participantViewModel = new ParticipantViewModel(
                 participant,
                 official,
-                isUserAdminOrLecturerInContest);
+                isUserAdminOrLecturerInContest)
+            {
+                Contest = this.redisCacheService.GetOrSet<ContestViewModel>(
+                    string.Format(CacheConstants.ContestView, participant.ContestId),
+                     () => { return ContestViewModel.FromContest.Compile()(participant.Contest); })
+            };
 
             this.ViewBag.CompeteType = official ? CompeteActionName : PracticeActionName;
             this.ViewBag.IsUserAdminOrLecturer = isUserAdminOrLecturerInContest;

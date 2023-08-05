@@ -6,24 +6,23 @@
 
     using OJS.Common.Constants;
     using OJS.Services.Cache.Models;
-    using OJS.Services.Common.Cache;
     using OJS.Services.Data.ContestCategories;
     using OJS.Services.Data.Contests;
 
     public class CacheItemsProviderService : ICacheItemsProviderService
     {
-        private readonly ICacheService cache;
         private readonly IContestCategoriesDataService contestCategoriesData;
         private readonly IContestsDataService contestsData;
+        private readonly IRedisCacheService redisCacheService;
 
         public CacheItemsProviderService(
-            ICacheService cache,
             IContestCategoriesDataService contestCategoriesData,
-            IContestsDataService contestsData)
+            IContestsDataService contestsData,
+            IRedisCacheService redisCacheService)
         {
-            this.cache = cache;
             this.contestCategoriesData = contestCategoriesData;
             this.contestsData = contestsData;
+            this.redisCacheService = redisCacheService;
         }
 
         public IEnumerable<ContestCategoryListViewModel> GetContestSubCategoriesList(
@@ -34,7 +33,13 @@
                 ? string.Format(CacheConstants.ContestSubCategoriesFormat, categoryId.Value)
                 : CacheConstants.ContestCategoriesTree;
 
-            return this.cache.Get(cacheId, GetSubCategories, cacheSeconds);
+            if (cacheSeconds.HasValue)
+            {
+                return this.redisCacheService.GetOrSet(cacheId, GetSubCategories, TimeSpan.FromSeconds(cacheSeconds.Value));
+            }
+
+            return this.redisCacheService.GetOrSet(cacheId, GetSubCategories);
+
 
             IEnumerable<ContestCategoryListViewModel> GetSubCategories() =>
                 this.contestCategoriesData
@@ -51,7 +56,9 @@
         {
             var cacheId = string.Format(CacheConstants.ContestParentCategoriesFormat, categoryId);
 
-            var contestCategories = this.cache.Get(cacheId, GetParentCategories, cacheSeconds);
+
+            var contestCategories = 
+                this.redisCacheService.GetOrSet(cacheId, GetParentCategories, TimeSpan.FromSeconds(cacheSeconds.Value));
 
             IEnumerable<ContestCategoryListViewModel> GetParentCategories()
             {
@@ -78,7 +85,7 @@
         }
 
         public IEnumerable<CategoryMenuItemViewModel> GetMainContestCategories(int? cacheSeconds) =>
-            this.cache.Get(
+            this.redisCacheService.GetOrSet(
                 CacheConstants.MainContestCategoriesDropDown,
                 () =>
                      this.contestCategoriesData
@@ -87,14 +94,14 @@
                         .OrderBy(x => x.OrderBy)
                         .Select(CategoryMenuItemViewModel.FromCategory)
                         .ToList(),
-                cacheSeconds);
-            
+                TimeSpan.FromSeconds(cacheSeconds.Value));
+
 
         public string GetContestCategoryName(int categoryId, int? cacheSeconds) =>
-            this.cache.Get(
+            this.redisCacheService.GetOrSet(
                 string.Format(CacheConstants.ContestCategoryNameFormat, categoryId),
                 () => this.contestCategoriesData.GetNameById(categoryId),
-                cacheSeconds);
+                TimeSpan.FromSeconds(cacheSeconds.Value));
 
         public void ClearContestCategory(int categoryId)
         {
@@ -131,9 +138,9 @@
                     CacheConstants.ContestParentCategoriesFormat,
                     contestCategoryId);
 
-                this.cache.Remove(categoryNameCacheId);
-                this.cache.Remove(subCategoriesCacheId);
-                this.cache.Remove(parentCategoriesCacheId);
+                this.redisCacheService.Remove(categoryNameCacheId);
+                this.redisCacheService.Remove(subCategoriesCacheId);
+                this.redisCacheService.Remove(parentCategoriesCacheId);
             }
         }
 
@@ -141,7 +148,7 @@
         {
             var upcomingMaxTime = DateTime.Now.AddHours(2);
 
-            var cachedResult = this.cache.Get(
+            var cachedResult = this.redisCacheService.GetOrSet(
                 CacheConstants.ActiveContests,
                 () => this.contestsData
                     .GetAllUpcoming()
@@ -152,7 +159,7 @@
                             .Select(HomeContestViewModel.FromContest))
                     .OrderBy(c => c.EndTime)
                     .ToList(),
-                DateTime.UtcNow.AddHours(1));
+                TimeSpan.FromHours(DateTime.UtcNow.AddHours(1).Hour));
 
             return cachedResult.Where(
                     c =>
@@ -163,7 +170,7 @@
         }
 
         public IEnumerable<HomeContestViewModel> GetPastContests() =>
-            this.cache.Get(
+            this.redisCacheService.GetOrSet(
                 CacheConstants.PastContests,
                 () => this.contestsData
                     .GetAllPast()
@@ -171,7 +178,7 @@
                     .Select(HomeContestViewModel.FromContest)
                     .Take(CacheConstants.DefaultPastContestsToTake)
                     .ToList(),
-                CacheConstants.OneHourInSeconds);
+                TimeSpan.FromSeconds(CacheConstants.OneHourInSeconds));
 
         public void ClearContests()
         {
@@ -180,9 +187,9 @@
         }
 
         private void ClearActiveContests() =>
-            this.cache.Remove(CacheConstants.ActiveContests);
+            this.redisCacheService.Remove(CacheConstants.ActiveContests);
 
         private void ClearPastContests() =>
-            this.cache.Remove(CacheConstants.PastContests);
+            this.redisCacheService.Remove(CacheConstants.PastContests);
     }
 }
