@@ -231,8 +231,8 @@
                 id => id,
                 id => new ParticipantsCountCacheModel
                 {
-                    OfficialParticipantsCount = officialParticipants.GetValuerOrDefault(id),
-                    PracticeParticipantsCount = practiceParticipants.GetValuerOrDefault(id),
+                    Official = officialParticipants.GetValuerOrDefault(id),
+                    Practice = practiceParticipants.GetValuerOrDefault(id),
                 });
         }
     }

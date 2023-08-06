@@ -72,8 +72,8 @@
                 .ToList();
             
             var participantsCount = this.cacheItems.GetParticipantsCountForContest(id);
-            contestViewModel.OfficialParticipants = participantsCount.OfficialParticipantsCount;
-            contestViewModel.PracticeParticipants = participantsCount.PracticeParticipantsCount;
+            contestViewModel.OfficialParticipants = participantsCount.Official;
+            contestViewModel.PracticeParticipants = participantsCount.Practice;
 
             contestViewModel.UserIsAdminOrLecturerInContest = userHasContestRights;
 

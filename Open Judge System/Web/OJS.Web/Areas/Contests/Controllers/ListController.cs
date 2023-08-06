@@ -85,8 +85,8 @@
                 foreach (var contest in contests)
                 {
                     var participantsCountForContest = participantsCount.GetValuerOrDefault(contest.Id, new ParticipantsCountCacheModel());
-                    contest.OfficialParticipants = participantsCountForContest.OfficialParticipantsCount;
-                    contest.PracticeParticipants = participantsCountForContest.PracticeParticipantsCount;
+                    contest.OfficialParticipants = participantsCountForContest.Official;
+                    contest.PracticeParticipants = participantsCountForContest.Practice;
                     var contestUserParticipants = userParticipants.Where(p => p.ContestId == contest.Id).ToList();
                     this.FillCurrentParticipantInfo(contest, contestUserParticipants);
 

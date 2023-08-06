@@ -2,8 +2,8 @@ namespace OJS.Services.Cache.Models
 {
     public class ParticipantsCountCacheModel
     {
-        public int OfficialParticipantsCount { get; set; }
+        public int Official { get; set; }
         
-        public int PracticeParticipantsCount { get; set; }
+        public int Practice { get; set; }
     }
 }
