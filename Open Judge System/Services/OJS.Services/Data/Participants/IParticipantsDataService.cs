@@ -37,6 +37,9 @@
             DateTime participationStartTimeRangeStart,
             DateTime participationStartTimeRangeEnd);
 
+        /// <summary>
+        /// Gets a dictionary with contest id as key and participants count (official or practice) as value.
+        /// </summary>
         IDictionary<int, int> GetContestParticipantsCount(IEnumerable<int> contestIds, bool isOfficial);
 
         bool ExistsByIdAndContest(int id, int contestId);
