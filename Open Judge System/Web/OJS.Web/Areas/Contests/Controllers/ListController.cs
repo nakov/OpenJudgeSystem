@@ -133,7 +133,7 @@
             var contests = this.contestsData
                 .GetAllVisibleBySubmissionType(submissionType.Id)
                 .OrderBy(c => c.OrderBy)
-                .Select(ContestViewModel.FromContest);
+                .Select(ContestSimpleViewModel.FromContest);
 
             this.ViewBag.SubmissionType = submissionType.Name;
             return this.View(contests);
