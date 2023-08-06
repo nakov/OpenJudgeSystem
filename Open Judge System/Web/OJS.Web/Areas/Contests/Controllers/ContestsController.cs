@@ -70,6 +70,10 @@
                 .GetAllByContest(id)
                 .Select(ProblemListItemViewModel.FromProblem)
                 .ToList();
+            
+            var participantsCount = this.cacheItems.GetParticipantsCountForContest(id);
+            contestViewModel.OfficialParticipants = participantsCount.OfficialParticipantsCount;
+            contestViewModel.PracticeParticipants = participantsCount.PracticeParticipantsCount;
 
             contestViewModel.UserIsAdminOrLecturerInContest = userHasContestRights;
 

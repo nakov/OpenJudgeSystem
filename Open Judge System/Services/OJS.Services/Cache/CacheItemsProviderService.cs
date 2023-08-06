@@ -189,14 +189,15 @@
             int contestCategoryId,
             int? page) =>
             this.redisCache.GetOrSet(
-                $"ParticipantsCountByCategoryAndPage:{contestCategoryId}:{page}",
+                $"ParticipantsCountByContestCategoryAndPage:{contestCategoryId}:{page}",
                 () => this.GetContestsParticipantsCount(contestIds),
-                TimeSpan.FromMinutes(2));
+                TimeSpan.FromMinutes(5));
 
         public ParticipantsCountCacheModel GetParticipantsCountForContest(int contestId)
-        {
-            throw new NotImplementedException();
-        }
+            => this.redisCache.GetOrSet(
+                $"ParticipantsCountByContest:{contestId}",
+                () => this.GetContestsParticipantsCount(new []{ contestId })[contestId],
+                TimeSpan.FromMinutes(5));
 
         public void ClearContests()
         {
@@ -210,6 +211,16 @@
         private void ClearPastContests() =>
             this.redisCache.Remove(CacheConstants.PastContests);
         
+        /// <summary>
+        /// Gets a dictionary with all provided contests (Id as Key) and their corresponding
+        /// participants count, separated by Compete and Practice mode.
+        /// <para>
+        /// Even if a contest has no participants or the contest with the provided id does not exist,
+        /// it will be included in the result with 0 participants.
+        /// </para>
+        /// </summary>
+        /// <param name="contestIds">The contests for which to gather participants count</param>
+        /// <returns>Dictionary with all the provided <see cref="contestIds"/> as keys</returns>
         private IDictionary<int, ParticipantsCountCacheModel> GetContestsParticipantsCount(
             IReadOnlyCollection<int> contestIds)
         {
