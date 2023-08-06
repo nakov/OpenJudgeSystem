@@ -10,6 +10,7 @@
     using OJS.Common.Models;
     using OJS.Data;
     using OJS.Services.Cache;
+    using OJS.Services.Cache.Models;
     using OJS.Services.Data.ContestCategories;
     using OJS.Services.Data.Contests;
     using OJS.Services.Data.Participants;
@@ -31,22 +32,19 @@
         private readonly IContestCategoriesDataService contestCategoriesData;
         private readonly IParticipantsDataService participantsData;
         private readonly ICacheItemsProviderService cacheItems;
-        private readonly IRedisCacheService redisCache;
 
         public ListController(
             IOjsData data,
             IContestsDataService contestsData,
             IContestCategoriesDataService contestCategoriesData,
             IParticipantsDataService participantsData,
-            ICacheItemsProviderService cacheItems,
-            IRedisCacheService redisCache)
+            ICacheItemsProviderService cacheItems)
             : base(data)
         {
             this.contestsData = contestsData;
             this.contestCategoriesData = contestCategoriesData;
             this.participantsData = participantsData;
             this.cacheItems = cacheItems;
-            this.redisCache = redisCache;
         }
 
         public ActionResult Index() => this.View();
@@ -76,10 +74,8 @@
 
                 var contests = this.GetContestsListPage(contestCategory.Id, userId, page.Value, DefaultContestsPerPage);
                 var contestIds = contests.Select(c => c.Id).ToArray();
-                var participantsCount = this.redisCache.GetOrSet(
-                    $"ParticipantsCountByCategoryAndPage:{contestCategory.Id}:{page.Value}",
-                    () => this.GetCategoryParticipantsCount(contestIds),
-                    TimeSpan.FromMinutes(2));
+                var participantsCount =
+                    this.cacheItems.GetParticipantsCountForContestsInCategoryPage(contestIds, contestCategory.Id, page);
                 
                 var userParticipants = this.participantsData.GetAllByManyContestsAndUserId(contestIds, userId)
                     .Select(ParticipantStatusModel.FromParticipant)
@@ -88,9 +84,9 @@
                 // Operations in memory to speed up db query
                 foreach (var contest in contests)
                 {
-                    var participantsCountForContest = participantsCount.GetValuerOrDefault(contest.Id, (0, 0));
-                    contest.OfficialParticipants = participantsCountForContest.Item1;
-                    contest.PracticeParticipants = participantsCountForContest.Item2;
+                    var participantsCountForContest = participantsCount.GetValuerOrDefault(contest.Id, new ParticipantsCountCacheModel());
+                    contest.OfficialParticipants = participantsCountForContest.OfficialParticipantsCount;
+                    contest.PracticeParticipants = participantsCountForContest.PracticeParticipantsCount;
                     var contestUserParticipants = userParticipants.Where(p => p.ContestId == contest.Id).ToList();
                     this.FillCurrentParticipantInfo(contest, contestUserParticipants);
 
@@ -195,26 +191,5 @@
                 .ThenByDescending(c => c.EndTime ?? c.PracticeEndTime ?? c.PracticeStartTime)
                 .Select(ContestListViewModel.FromContest(userId, this.User.IsAdmin()))
                 .ToPagedList(page, pageSize);
-        
-        private IDictionary<int, (
-            int officialParticipantsCount, int practiceParticipantsCount)
-            > GetCategoryParticipantsCount(IReadOnlyCollection<int> contestIds)
-        {
-            var officialParticipants = this.GetContestParticipantsCount(contestIds, true);
-            var practiceParticipants = this.GetContestParticipantsCount(contestIds, false);
-            
-            return contestIds.ToDictionary(
-                id => id,
-                id => (
-                    officialParticipants.GetValuerOrDefault(id),
-                    practiceParticipants.GetValuerOrDefault(id)));
-        }
-
-        private IDictionary<int, int> GetContestParticipantsCount(IEnumerable<int> contestIds, bool isOfficial)
-            => // Not doing .ToDictionary directly after .GroupBy as it will generate slower query
-                this.participantsData.GetAllByContestIdsAndIsOfficial(contestIds, isOfficial)
-                .GroupBy(p => p.ContestId)
-                .Select(g => new { ContestId = g.Key, ParticipantsCount = g.Count() })
-                .ToDictionary(p => p.ContestId, p => p.ParticipantsCount);
     }
 }

@@ -29,6 +29,13 @@
 
         IEnumerable<HomeContestViewModel> GetPastContests();
 
+        IDictionary<int, ParticipantsCountCacheModel> GetParticipantsCountForContestsInCategoryPage(
+            IReadOnlyCollection<int> contestIds,
+            int contestCategoryId,
+            int? page);
+        
+        ParticipantsCountCacheModel GetParticipantsCountForContest(int contestId);
+
         void ClearContests();
     }
 }

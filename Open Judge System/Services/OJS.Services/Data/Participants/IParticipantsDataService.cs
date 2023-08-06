@@ -37,6 +37,8 @@
             DateTime participationStartTimeRangeStart,
             DateTime participationStartTimeRangeEnd);
 
+        IDictionary<int, int> GetContestParticipantsCount(IEnumerable<int> contestIds, bool isOfficial);
+
         bool ExistsByIdAndContest(int id, int contestId);
 
         bool ExistsByContestAndUser(int contestId, string userId);
