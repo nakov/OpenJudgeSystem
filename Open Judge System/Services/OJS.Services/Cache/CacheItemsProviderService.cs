@@ -17,6 +17,8 @@
         private readonly IContestsDataService contestsData;
         private readonly IRedisCacheService redisCache;
         private readonly IParticipantsDataService participantsData;
+        
+        private static readonly TimeSpan TimeToCacheParticipantsCount = TimeSpan.FromMinutes(5);
 
         public CacheItemsProviderService(
             IContestCategoriesDataService contestCategoriesData,
@@ -191,13 +193,13 @@
             this.redisCache.GetOrSet(
                 $"ParticipantsCountByContestCategoryAndPage:{contestCategoryId}:{page}",
                 () => this.GetContestsParticipantsCount(contestIds),
-                TimeSpan.FromMinutes(5));
+                TimeToCacheParticipantsCount);
 
         public ParticipantsCountCacheModel GetParticipantsCountForContest(int contestId)
             => this.redisCache.GetOrSet(
                 $"ParticipantsCountByContest:{contestId}",
                 () => this.GetContestsParticipantsCount(new []{ contestId })[contestId],
-                TimeSpan.FromMinutes(5));
+                TimeToCacheParticipantsCount);
 
         public void ClearContests()
         {
