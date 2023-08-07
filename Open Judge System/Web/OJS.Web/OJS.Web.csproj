@@ -1857,6 +1857,7 @@
     <Compile Include="Areas\Contests\Models\BinarySubmissionModel.cs" />
     <Compile Include="Areas\Contests\Models\ContestQuestionAnswerModel.cs" />
     <Compile Include="Areas\Contests\Models\ContestRegistrationModel.cs" />
+    <Compile Include="Areas\Contests\Models\ParticipantStatusModel.cs" />
     <Compile Include="Areas\Contests\Models\SubmissionExportType.cs" />
     <Compile Include="Areas\Contests\Models\SubmissionModel.cs" />
     <Compile Include="Areas\Contests\ViewModels\Contests\ContestPointsRangeViewModel.cs" />
@@ -1866,6 +1867,7 @@
     <Compile Include="Areas\Contests\ViewModels\Contests\ContestProblemViewModel.cs" />
     <Compile Include="Areas\Contests\ViewModels\Contests\ContestRegistrationViewModel.cs" />
     <Compile Include="Areas\Contests\ViewModels\Contests\ContestListViewModel.cs" />
+    <Compile Include="Areas\Contests\ViewModels\Contests\ContestSimpleViewModel.cs" />
     <Compile Include="Areas\Contests\ViewModels\Contests\ContestStatsChartViewModel.cs" />
     <Compile Include="Areas\Contests\ViewModels\Contests\ContestStatsViewModel.cs" />
     <Compile Include="Areas\Contests\ViewModels\Contests\DropDownAnswerViewModel.cs" />

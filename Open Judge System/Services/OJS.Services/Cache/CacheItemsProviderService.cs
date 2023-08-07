@@ -5,24 +5,31 @@
     using System.Linq;
 
     using OJS.Common.Constants;
+    using OJS.Common.Extensions;
     using OJS.Services.Cache.Models;
     using OJS.Services.Data.ContestCategories;
     using OJS.Services.Data.Contests;
+    using OJS.Services.Data.Participants;
 
     public class CacheItemsProviderService : ICacheItemsProviderService
     {
         private readonly IContestCategoriesDataService contestCategoriesData;
         private readonly IContestsDataService contestsData;
-        private readonly IRedisCacheService redisCacheService;
+        private readonly IRedisCacheService redisCache;
+        private readonly IParticipantsDataService participantsData;
+        
+        private static readonly TimeSpan TimeToCacheParticipantsCount = TimeSpan.FromMinutes(5);
 
         public CacheItemsProviderService(
             IContestCategoriesDataService contestCategoriesData,
             IContestsDataService contestsData,
-            IRedisCacheService redisCacheService)
+            IRedisCacheService redisCache,
+            IParticipantsDataService participantsData)
         {
             this.contestCategoriesData = contestCategoriesData;
             this.contestsData = contestsData;
-            this.redisCacheService = redisCacheService;
+            this.redisCache = redisCache;
+            this.participantsData = participantsData;
         }
 
         public IEnumerable<ContestCategoryListViewModel> GetContestSubCategoriesList(
@@ -35,10 +42,10 @@
 
             if (cacheSeconds.HasValue)
             {
-                return this.redisCacheService.GetOrSet(cacheId, GetSubCategories, TimeSpan.FromSeconds(cacheSeconds.Value));
+                return this.redisCache.GetOrSet(cacheId, GetSubCategories, TimeSpan.FromSeconds(cacheSeconds.Value));
             }
 
-            return this.redisCacheService.GetOrSet(cacheId, GetSubCategories);
+            return this.redisCache.GetOrSet(cacheId, GetSubCategories);
 
 
             IEnumerable<ContestCategoryListViewModel> GetSubCategories() =>
@@ -56,9 +63,8 @@
         {
             var cacheId = string.Format(CacheConstants.ContestParentCategoriesFormat, categoryId);
 
-
             var contestCategories = 
-                this.redisCacheService.GetOrSet(cacheId, GetParentCategories, TimeSpan.FromSeconds(cacheSeconds.Value));
+                this.redisCache.GetOrSet(cacheId, GetParentCategories, TimeSpan.FromSeconds(cacheSeconds.Value));
 
             IEnumerable<ContestCategoryListViewModel> GetParentCategories()
             {
@@ -85,7 +91,7 @@
         }
 
         public IEnumerable<CategoryMenuItemViewModel> GetMainContestCategories(int? cacheSeconds) =>
-            this.redisCacheService.GetOrSet(
+            this.redisCache.GetOrSet(
                 CacheConstants.MainContestCategoriesDropDown,
                 () =>
                      this.contestCategoriesData
@@ -98,7 +104,7 @@
 
 
         public string GetContestCategoryName(int categoryId, int? cacheSeconds) =>
-            this.redisCacheService.GetOrSet(
+            this.redisCache.GetOrSet(
                 string.Format(CacheConstants.ContestCategoryNameFormat, categoryId),
                 () => this.contestCategoriesData.GetNameById(categoryId),
                 TimeSpan.FromSeconds(cacheSeconds.Value));
@@ -138,9 +144,9 @@
                     CacheConstants.ContestParentCategoriesFormat,
                     contestCategoryId);
 
-                this.redisCacheService.Remove(categoryNameCacheId);
-                this.redisCacheService.Remove(subCategoriesCacheId);
-                this.redisCacheService.Remove(parentCategoriesCacheId);
+                this.redisCache.Remove(categoryNameCacheId);
+                this.redisCache.Remove(subCategoriesCacheId);
+                this.redisCache.Remove(parentCategoriesCacheId);
             }
         }
 
@@ -148,7 +154,7 @@
         {
             var upcomingMaxTime = DateTime.Now.AddHours(2);
 
-            var cachedResult = this.redisCacheService.GetOrSet(
+            var cachedResult = this.redisCache.GetOrSet(
                 CacheConstants.ActiveContests,
                 () => this.contestsData
                     .GetAllUpcoming()
@@ -170,7 +176,7 @@
         }
 
         public IEnumerable<HomeContestViewModel> GetPastContests() =>
-            this.redisCacheService.GetOrSet(
+            this.redisCache.GetOrSet(
                 CacheConstants.PastContests,
                 () => this.contestsData
                     .GetAllPast()
@@ -180,6 +186,21 @@
                     .ToList(),
                 TimeSpan.FromSeconds(CacheConstants.OneHourInSeconds));
 
+        public IDictionary<int, ParticipantsCountCacheModel> GetParticipantsCountForContestsInCategoryPage(
+            IReadOnlyCollection<int> contestIds,
+            int contestCategoryId,
+            int? page) =>
+            this.redisCache.GetOrSet(
+                $"ParticipantsCountByContestCategoryAndPage:{contestCategoryId}:{page}",
+                () => this.GetContestsParticipantsCount(contestIds),
+                TimeToCacheParticipantsCount);
+
+        public ParticipantsCountCacheModel GetParticipantsCountForContest(int contestId)
+            => this.redisCache.GetOrSet(
+                $"ParticipantsCountByContest:{contestId}",
+                () => this.GetContestsParticipantsCount(new []{ contestId })[contestId],
+                TimeToCacheParticipantsCount);
+
         public void ClearContests()
         {
             this.ClearActiveContests();
@@ -187,9 +208,34 @@
         }
 
         private void ClearActiveContests() =>
-            this.redisCacheService.Remove(CacheConstants.ActiveContests);
+            this.redisCache.Remove(CacheConstants.ActiveContests);
 
         private void ClearPastContests() =>
-            this.redisCacheService.Remove(CacheConstants.PastContests);
+            this.redisCache.Remove(CacheConstants.PastContests);
+        
+        /// <summary>
+        /// Gets a dictionary with all provided contests (Id as Key) and their corresponding
+        /// participants count, separated by Compete and Practice mode.
+        /// <para>
+        /// Even if a contest has no participants or the contest with the provided id does not exist,
+        /// it will be included in the result with 0 participants.
+        /// </para>
+        /// </summary>
+        /// <param name="contestIds">The contests for which to gather participants count</param>
+        /// <returns>Dictionary with all the provided <see cref="contestIds"/> as keys</returns>
+        private IDictionary<int, ParticipantsCountCacheModel> GetContestsParticipantsCount(
+            IReadOnlyCollection<int> contestIds)
+        {
+            var officialParticipants = this.participantsData.GetContestParticipantsCount(contestIds, true);
+            var practiceParticipants = this.participantsData.GetContestParticipantsCount(contestIds, false);
+            
+            return contestIds.ToDictionary(
+                id => id,
+                id => new ParticipantsCountCacheModel
+                {
+                    Official = officialParticipants.GetValuerOrDefault(id),
+                    Practice = practiceParticipants.GetValuerOrDefault(id),
+                });
+        }
     }
 }
