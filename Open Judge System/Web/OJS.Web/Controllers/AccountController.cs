@@ -46,8 +46,7 @@
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
-        {      
-
+        {
             if (!this.ModelState.IsValid)
             {
                 return this.View(model);
@@ -78,7 +77,7 @@
                 var user = await this.UserManager.FindAsync(model.UserName, model.Password);
                 if (user != null)
                 {
-                    await this.SignInAsync(user, model.RememberMe);
+                    await this.SignInAsync(userEntity, model.RememberMe);
                     return this.RedirectToLocal(returnUrl);
                 }
             }
