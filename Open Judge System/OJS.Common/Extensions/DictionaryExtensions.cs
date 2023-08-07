@@ -6,8 +6,11 @@ namespace OJS.Common.Extensions
     {
         public static TValue GetValuerOrDefault<TKey, TValue>(
             this IDictionary<TKey, TValue> dictionary,
+            TKey key) => dictionary.ContainsKey(key) ? dictionary[key] : default(TValue);
+
+        public static TValue GetValuerOrDefault<TKey, TValue>(
+            this IDictionary<TKey, TValue> dictionary,
             TKey key,
-            TValue defaultValue = default(TValue)) =>
-            dictionary.ContainsKey(key) ? dictionary[key] : defaultValue;
+            TValue defaultValue) => dictionary.ContainsKey(key) ? dictionary[key] : defaultValue;
     }
 }
