@@ -175,7 +175,6 @@ public class ContestServiceModel : IMapExplicitly
             .ForMember(
                 d => d.ProblemsCount,
                 opt => opt.MapFrom(s => s.ProblemGroups.SelectMany(pg => pg.Problems).Count(p => !p.IsDeleted)))
-            .ForMember(d => d.Type, opt => opt.MapFrom(s => s.Type))
             .ForMember(
                 d => d.AllowedSubmissionTypes,
                 opt =>

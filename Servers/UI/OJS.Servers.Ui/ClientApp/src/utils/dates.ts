@@ -25,6 +25,7 @@ const getLocalDateTimeInUTC = () => {
     const now = new Date();
     return new Date(now.getTime() + now.getTimezoneOffset() * 60000);
 };
+
 const convertToSecondsRemaining = (date: Date) => {
     const currentDate = getLocalDateTimeInUTC();
     const { hours, minutes, seconds } = intervalToDuration({
@@ -47,7 +48,8 @@ const convertToSecondsRemaining = (date: Date) => {
 // The remaining seconds are computed using the modulus operator (%)
 // The function 'intervalToDuration' is then used to break down the remaining seconds into h, m, s
 const secondsToFullTime = (duration: number) => {
-    const days = Math.floor(duration / 86400); // Number of seconds in a day: 86400 (60 seconds * 60 minutes * 24 hours)
+    // Number of seconds in a day: 86400 (60 seconds * 60 minutes * 24 hours)
+    const days = Math.floor(duration / 86400);
     const remainingSeconds = duration % 86400;
     const { hours: hoursInitial, minutes: minutesInitial, seconds: secondsInitial } =
         intervalToDuration({ start: 0, end: remainingSeconds * 1000 });
