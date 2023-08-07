@@ -36,6 +36,11 @@
         /// Calculates the the average runtime in seconds for specific contest
         /// </summary>
         /// <param name="contest">The contest for which the calculation will be done.</param>
-        int GetContestSubmissionsAverageRunTimeSeconds(Contest contest);
+        /// <param name="onlyOfficialSubmissions">Determines weather it takes all or only official submissions</param>
+        /// /// <param name="maxAlloweSubmissionCompletionTime">If it has value, will take only submission where completion time is lower or equal to this parameter</param>
+        int GetContestSubmissionsAverageRunTimeSeconds(
+            Contest contest,
+            bool onlyOfficialSubmissions,
+            int? maxAlloweSubmissionCompletionTime);
     }
 }
