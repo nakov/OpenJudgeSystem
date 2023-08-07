@@ -46,7 +46,7 @@ interface ICurrentContestContext {
         requirePassword: boolean | null;
         contestPasswordError: IErrorDataType | null;
         isPasswordValid: boolean | null;
-        remainingTimeInMilliseconds: number;
+        endDateTimeForParticipantOrContest: Date | null;
         userSubmissionsTimeLimit: number;
         totalParticipantsCount: number;
         activeParticipantsCount: number;
@@ -78,7 +78,6 @@ const defaultState = {
         maxScore: 0,
         isOfficial: false,
         isPasswordValid: false,
-        remainingTimeInMilliseconds: 0.0,
         userSubmissionsTimeLimit: 0,
         totalParticipantsCount: 0,
         activeParticipantsCount: 0,
@@ -124,7 +123,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ contestPasswordError, setContestPasswordError ] = useState<IErrorDataType | null>(null);
     const [ isPasswordValid, setIsPasswordValid ] = useState<boolean>(defaultState.state.isPasswordValid);
     const [ userSubmissionsTimeLimit, setUserSubmissionsTimeLimit ] = useState<number>(0);
-    const [ remainingTimeInMilliseconds, setRemainingTimeInMilliseconds ] = useState(defaultState.state.remainingTimeInMilliseconds);
+    const [ endDateTimeForParticipantOrContest, setEndDateTimeForParticipantOrContest ] = useState<Date | null>(null);
     const [ totalParticipantsCount, setTotalParticipantsCount ] = useState(defaultState.state.totalParticipantsCount);
     const [ activeParticipantsCount, setActiveParticipantsCount ] = useState(defaultState.state.activeParticipantsCount);
     const [ isSubmitAllowed, setIsSubmitAllowed ] = useState<boolean>(true);
@@ -338,7 +337,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 contest: newContest,
                 contestIsCompete,
                 participantId: currentParticipantId,
-                remainingTimeInMilliseconds: newRemainingTimeInMilliseconds,
+                endDateTimeForParticipantOrContest: newEndDateTimeForParticipantOrContest,
                 totalParticipantsCount: newTotalParticipants,
                 activeParticipantsCount: newActiveParticipants,
             } = startContestData;
@@ -346,7 +345,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             setContest(newContest);
             setIsOfficial(contestIsCompete);
             setParticipantId(currentParticipantId);
-            setRemainingTimeInMilliseconds(newRemainingTimeInMilliseconds);
+            setEndDateTimeForParticipantOrContest(newEndDateTimeForParticipantOrContest);
             setUserSubmissionsTimeLimit(startContestData.userSubmissionsTimeLimit);
             setTotalParticipantsCount(newTotalParticipants);
             setActiveParticipantsCount(newActiveParticipants);
@@ -395,7 +394,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 requirePassword,
                 contestPasswordError,
                 isPasswordValid,
-                remainingTimeInMilliseconds,
+                endDateTimeForParticipantOrContest,
                 userSubmissionsTimeLimit,
                 totalParticipantsCount,
                 activeParticipantsCount,
@@ -426,7 +425,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             isPasswordValid,
             maxScore,
             registerParticipant,
-            remainingTimeInMilliseconds,
+            endDateTimeForParticipantOrContest,
             userSubmissionsTimeLimit,
             requirePassword,
             score,
