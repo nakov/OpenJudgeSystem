@@ -24,9 +24,7 @@
                 .FirstOrDefaultAsync();
 
         public async Task<int> GetAllUnprocessedCount()
-            => await this.DbSet
-                .Where(sfp => !sfp.Processed && sfp.Processing)
-                .CountAsync();
+            => await this.GetAllUnprocessed().CountAsync();
 
         public IQueryable<SubmissionForProcessing> GetAllUnprocessed() =>
             this.DbSet
