@@ -90,6 +90,9 @@ namespace OJS.Data.Models.Problems
                     opt => opt.MapFrom(src => (DateTime?)null))
                 .ForMember(
                     d => d.ModifiedOn,
-                    opt => opt.MapFrom(src => (DateTime?)null));
+                    opt => opt.MapFrom(src => (DateTime?)null))
+                .ForMember(
+                    d => d.SubmissionTypesInProblems,
+                    opt => opt.Ignore());
     }
 }
