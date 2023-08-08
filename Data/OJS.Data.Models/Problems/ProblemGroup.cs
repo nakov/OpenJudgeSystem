@@ -35,6 +35,12 @@ namespace OJS.Data.Models.Problems
                     d => d.ModifiedOn,
                     opt => opt.MapFrom(src => (DateTime?)null))
                 .ForMember(
+                    d => d.ContestId,
+                    opt => opt.MapFrom(src => 0))
+                .ForMember(
+                    d => d.Contest,
+                    opt => opt.Ignore())
+                .ForMember(
                     d => d.Problems,
                     opt => opt.MapFrom(src => Enumerable.Empty<Problem>()));
     }
