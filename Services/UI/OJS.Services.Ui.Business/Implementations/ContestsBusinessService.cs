@@ -56,6 +56,43 @@ namespace OJS.Services.Ui.Business.Implementations
             this.contestValidationService = contestValidationService;
         }
 
+        public async Task<ContestDetailsServiceModel> GetContestDetails(int id, bool official)
+        {
+            var user = this.userProviderService.GetCurrentUser();
+            var contest = await this.contestsData.GetByIdWithProblems(id);
+
+            var validationResult = this.contestValidationService.GetValidationResult((
+                contest,
+                id,
+                user.Id,
+                user.IsAdmin,
+                official) !);
+
+            if (!validationResult.IsValid)
+            {
+                throw new BusinessServiceException(validationResult.Message);
+            }
+
+            var participant = await this.participantsData
+                .GetWithContestByContestByUserAndIsOfficial(
+                    id,
+                    user.Id!,
+                    official);
+
+            var userIsAdminInContest = user.IsAdmin || IsUserLecturerInContest(contest!, user.Id!);
+            var isOfficialOnlineContest = contest!.CanBeCompeted && contest.IsOnlineExam;
+
+            var contestDetailsServiceModel = contest.Map<ContestDetailsServiceModel>();
+            if (!userIsAdminInContest && isOfficialOnlineContest && participant != null)
+            {
+                var problemsForParticipant = participant.ProblemsForParticipants.Select(x => x.Problem);
+                contestDetailsServiceModel.Problems = problemsForParticipant.Map<ICollection<ContestProblemServiceModel>>();
+                contestDetailsServiceModel.IsUserParticipant = true;
+            }
+
+            return contestDetailsServiceModel;
+        }
+
         public async Task<RegisterUserForContestServiceModel> RegisterUserForContest(int id, bool official)
         {
             var user = this.userProviderService.GetCurrentUser();

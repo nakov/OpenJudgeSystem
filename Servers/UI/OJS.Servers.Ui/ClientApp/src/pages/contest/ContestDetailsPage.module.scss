@@ -1,0 +1,28 @@
+@use 'src/styles/components';
+
+.buttonsContainer {
+  display: flex;
+  justify-content: space-evenly;
+  margin: 30px;
+}
+
+.contestContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.descriptionAndProblemsContainer {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.contestHeading {
+  border: 0;
+  margin-bottom: 30px;
+  padding: 0;
+  text-align: center;
+}
+
+.headingContest {
+  @extend %contentSize;
+}

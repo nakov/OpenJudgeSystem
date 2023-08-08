@@ -4,6 +4,7 @@ import { IContestResultsUrl, IParticipateInContestTypeUrlParams, IProblemSubmiss
     from '../common/app-url-types';
 import { ContestResultType } from '../common/constants';
 import { FilterType } from '../common/contest-types';
+import { IContestUrlParams } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
 interface IAppUrlsContext {
@@ -14,6 +15,9 @@ interface IAppUrlsContext {
     getAdministrationRetestSubmissionInternalUrl: () => string;
     getHomePageUrl: () => string;
     getLoginUrl: () => string;
+    getContestDetailsUrl: (params: IContestUrlParams) => string;
+    getAdministrationContestProblemsInternalUrl: (id: string) => string;
+    getAdministrationContestEditInternalUrl: (id: string) => string;
 }
 
 const AppUrlsContext = createContext<IAppUrlsContext>({} as IAppUrlsContext);
@@ -21,6 +25,11 @@ const AppUrlsContext = createContext<IAppUrlsContext>({} as IAppUrlsContext);
 type IAppUrlsProviderProps = IHaveChildrenProps
 
 // contests
+const getContestDetailsUrl = ({
+    id,
+    official,
+}: IContestUrlParams) => `/contests/details/${id}/${official}`;
+
 const getParticipateInContestUrl = ({
     id,
     participationType,
@@ -40,6 +49,10 @@ const getContestResultsUrl = ({
 
 const getAdministrationRetestSubmissionInternalUrl = () => '/Submissions/Retest';
 
+const getAdministrationContestProblemsInternalUrl = (id: string) => `/Contest/Problems/${id}`;
+
+const getAdministrationContestEditInternalUrl = (id: string) => `/Contest/Edit/${id}`;
+
 const getHomePageUrl = () => '/';
 
 const getLoginUrl = () => '/Login';
@@ -55,6 +68,9 @@ const AppUrlsProvider = ({ children }: IAppUrlsProviderProps) => {
                 getAdministrationRetestSubmissionInternalUrl,
                 getHomePageUrl,
                 getLoginUrl,
+                getContestDetailsUrl,
+                getAdministrationContestProblemsInternalUrl,
+                getAdministrationContestEditInternalUrl,
             }
         ),
         [],

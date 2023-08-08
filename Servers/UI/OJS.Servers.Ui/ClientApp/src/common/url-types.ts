@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import { IFilter, ISort } from './contest-types';
 
-interface IStartContestUrlParams {
+interface IContestUrlParams {
     id: number;
     official: boolean;
 }
@@ -69,6 +69,14 @@ interface IRetestSubmissionUrlParams {
     id: number;
 }
 
+interface IContestProblemsUrlParams {
+    id: number;
+}
+
+interface IContestEditUrlParams {
+    id: number;
+}
+
 interface IGetSearchResultsUrlParams {
     searchTerm: string;
     page: number;
@@ -78,7 +86,7 @@ interface IGetSearchResultsUrlParams {
 export type {
     IRegisterForContestUrlParams,
     ISubmitContestPasswordUrlParams,
-    IStartContestUrlParams,
+    IContestUrlParams,
     IAllContestsUrlParams,
     IContestCategoriesUrlParams,
     IStartContestParticipationUrlParams,
@@ -91,4 +99,6 @@ export type {
     IGetSearchResultsUrlParams,
     IGetContestByProblemUrlParams,
     IDownloadSubmissionFileUrlParams,
+    IContestProblemsUrlParams,
+    IContestEditUrlParams,
 };

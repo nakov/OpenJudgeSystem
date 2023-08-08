@@ -31,6 +31,22 @@ interface IProblemType {
     allowedSubmissionTypes: ISubmissionTypeType[];
 }
 
+interface IContestDetailsProblemType {
+    name: string;
+    orderBy: number;
+    resources?: IProblemResourceType[];
+}
+
+interface IContestDetailsResponseType {
+    id: number;
+    name: string;
+    description: string;
+    problems: IContestDetailsProblemType[];
+    isUserParticipant: boolean;
+    isOnlineExam: boolean;
+    canBeCompeted: boolean;
+}
+
 interface IContestType {
     id: number;
     name: string;
@@ -166,4 +182,6 @@ export type {
     IUserPermissionsType,
     ISearchResponseModel,
     IContestModal,
+    IContestDetailsResponseType,
+    IContestDetailsProblemType,
 };

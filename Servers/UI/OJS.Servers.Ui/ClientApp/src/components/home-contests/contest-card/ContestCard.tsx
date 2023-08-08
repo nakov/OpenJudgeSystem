@@ -40,7 +40,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const contestCardControlBtns = 'card-control-buttons';
     const contestCardControlBtnsClassName = concatClassNames(styles.contestCardControls, contestCardControlBtns);
 
-    const { getParticipateInContestUrl } = useAppUrls();
+    const { getParticipateInContestUrl, getContestDetailsUrl } = useAppUrls();
     const { actions: { setIsShowing } } = useModal();
     const navigate = useNavigate();
 
@@ -100,9 +100,23 @@ const ContestCard = ({ contest }: IContestCardProps) => {
         <div className={contestCardClassName}>
             <div className={contestCardHeaderClassName}>
                 <div className={styles.tooltip}>
-                    <span className={styles.tooltipText}>{name}</span>
+                    <span className={styles.tooltipText}>
+                        <LinkButton
+                          type={LinkButtonType.plain}
+                          size={ButtonSize.none}
+                          to={getContestDetailsUrl({ id, official: canBeCompeted })}
+                          text={name}
+                        />
+                    </span>
                 </div>
-                <span className={styles.contestCardTitle}>{name}</span>
+                <span className={styles.contestCardTitle}>
+                    <LinkButton
+                      type={LinkButtonType.plain}
+                      size={ButtonSize.none}
+                      to={getContestDetailsUrl({ id, official: canBeCompeted })}
+                      text={name}
+                    />
+                </span>
                 { renderContestLockIcon() }
             </div>
             <div className={contestCardCategoryClassName}>{category}</div>
