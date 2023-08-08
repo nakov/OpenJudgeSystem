@@ -6,9 +6,7 @@ import isNil from 'lodash/isNil';
 
 import { FilterType, IFilter } from '../../../common/contest-types';
 import { groupByType } from '../../../common/filter-utils';
-import { useContestCategories } from '../../../hooks/use-contest-categories';
 import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
-import { useContestStrategyFilters } from '../../../hooks/use-contest-strategy-filters';
 import { useContests } from '../../../hooks/use-contests';
 import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 import List from '../../guidelines/lists/List';
@@ -35,14 +33,6 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const [ filteredStrategyFilters, setFilteredStrategyFilters ] = useState<IFilter[]>([]);
     const [ searchParams ] = useSearchParams();
     const [ isLoaded, setIsLoaded ] = useState(false);
-    const {
-        state: { isLoaded: isLoadedStrategies },
-        actions: { load: loadStrategies },
-    } = useContestStrategyFilters();
-    const {
-        state: { isLoaded: isLoadedCategories },
-        actions: { load: loadCategories },
-    } = useContestCategories();
 
     const {
         state: { possibleFilters },
@@ -173,32 +163,6 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
             setDefaultSelected(selectedCategory.toString());
         },
         [ isLoaded, searchParams ],
-    );
-
-    useEffect(
-        () => {
-            if (isLoadedCategories) {
-                return;
-            }
-
-            (async () => {
-                await loadStrategies();
-            })();
-        },
-        [ isLoadedCategories, loadStrategies ],
-    );
-
-    useEffect(
-        () => {
-            if (isLoadedStrategies) {
-                return;
-            }
-
-            (async () => {
-                await loadCategories();
-            })();
-        },
-        [ isLoadedStrategies, loadCategories ],
     );
 
     const clearFiltersAndBreadcrumbAndSorting = useCallback(
