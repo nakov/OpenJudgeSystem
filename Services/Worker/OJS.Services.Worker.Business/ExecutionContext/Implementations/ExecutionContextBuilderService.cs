@@ -50,6 +50,8 @@ public class ExecutionContextBuilderService : IExecutionContextBuilderService
                 string.Format(CannotCreateInputTemplate, submissionServiceModel.ExecutionType))
             .VerifyResult();
 
+        submission.StartedExecutionOn = DateTime.UtcNow;
+
         submission.CompilerType = this.executionContextValuesProvider
             .GetDefaultCompilerTypeByExecutionStrategyType(submission.ExecutionStrategyType);
 
@@ -69,8 +71,6 @@ public class ExecutionContextBuilderService : IExecutionContextBuilderService
         submission.AllowedFileExtensions = submissionServiceModel.FileContent?.Length > 0
             ? DefaultAllowedFileExtension
             : default!;
-
-        submission.StartedExecutionOn = DateTime.UtcNow;
 
         return submission;
     }
