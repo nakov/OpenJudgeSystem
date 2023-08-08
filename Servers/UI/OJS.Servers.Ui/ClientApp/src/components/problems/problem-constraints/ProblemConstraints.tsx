@@ -30,7 +30,8 @@ const ProblemConstraints = () => {
                 : '',
             !isNil(checkerName)
                 ? `Checker: ${checkerName}`
-                : '' ];
+                : '',
+        ].filter((item) => item !== '');
     }, [ currentProblem ]);
 
     const renderConstraint = useCallback(
