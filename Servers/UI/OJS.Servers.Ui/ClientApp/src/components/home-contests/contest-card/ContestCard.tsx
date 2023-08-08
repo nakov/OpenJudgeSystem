@@ -7,7 +7,7 @@ import { IIndexContestsType } from '../../../common/types';
 import { useAppUrls } from '../../../hooks/use-app-urls';
 import { useModal } from '../../../hooks/use-modal';
 import concatClassNames from '../../../utils/class-names';
-import { convertToSecondsRemaining } from '../../../utils/dates';
+import { convertToSecondsRemaining, getLocalDateTimeInUTC } from '../../../utils/dates';
 import { Button, ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
 import LockIcon from '../../guidelines/icons/LockIcon';
@@ -32,7 +32,13 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const contestCard = 'card-contests';
     const contestCardClassName = concatClassNames(styles.contestCard, contestCard);
     const contestCardHeader = 'card-header';
-    const contestCardHeaderClassName = concatClassNames(styles.contestCardHeader, contestCardHeader);
+    const contestCardHeaderClassName = concatClassNames(
+        styles.contestCardHeader,
+        contestCardHeader,
+        name.length >= 23
+            ? styles.contestTitleHoverable
+            : '',
+    );
     const contestCardCategory = 'card-category';
     const contestCardCategoryClassName = concatClassNames(styles.contestCardCategoryLabel, contestCardCategory);
     const contestCardCounter = 'card-counter';
@@ -46,15 +52,13 @@ const ContestCard = ({ contest }: IContestCardProps) => {
 
     const renderCountdown = useCallback(
         () => {
-            const endDate = canBeCompeted
+            const endDate = endTime !== null
                 ? endTime
-                : practiceEndTime;
+                : practiceEndTime !== null
+                    ? practiceEndTime
+                    : null;
 
-            if (canBePracticed && isNil(practiceEndTime) && isNil(endDate)) {
-                return <p>No practice end time.</p>;
-            }
-
-            if ((!canBePracticed && !canBeCompeted) || isNil(endDate)) {
+            if (isNil(endDate) || new Date(endDate) < getLocalDateTimeInUTC()) {
                 return null;
             }
 
@@ -66,7 +70,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                 />
             );
         },
-        [ canBeCompeted, canBePracticed, endTime, id, practiceEndTime ],
+        [ endTime, id, practiceEndTime ],
     );
 
     const renderContestLockIcon = useCallback(

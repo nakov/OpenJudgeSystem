@@ -3,6 +3,8 @@
 
 .contestCardsContainer {
   margin-top: 2vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .contestsSeeAllButton {
@@ -10,17 +12,30 @@
   margin-top: 15px;
 }
 
-.contestList {
-  align-content: center;
-  align-items: center;
-  box-sizing: border-box;
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-between;
+.customSlider {
+  margin-left: 30px;
 }
 
-.contestListItem {
-  @media only screen and (max-width: variables.$r-laptop-max) {
-    flex-basis: 50%;
+@media (max-width: 1349px) {
+  .customSlider {
+    margin-left: 60px;
+  }
+}
+
+@media (max-width: 1010px) {
+  .customSlider {
+    margin-left: 30px;
+  }
+}
+
+@media (max-width: 950px) {
+  .customSlider {
+    margin-left: 100px;
+  }
+}
+
+@media (max-width: 800px) {
+  .customSlider {
+    margin-left: 60px;
   }
 }

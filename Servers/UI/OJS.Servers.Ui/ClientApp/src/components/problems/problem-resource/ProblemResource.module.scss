@@ -9,16 +9,7 @@
   
   > a {
     padding: 0;
-  }
-}
-
-.resourceLink,
-.resourceLinkButton {
-  color: colors.$text-dark-gray-color;
-  text-decoration: none;
-
-  .icon {
-    margin-right: 10px;
+    text-decoration: none;
   }
 }
 
@@ -29,7 +20,30 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #42abf8;
+
+  &:link {
+    text-decoration: none;
+  }
+
+  &:visited {
+    text-decoration: none;
+  }
+  
   &:hover {
     background-color: #e3f3fd;
+  }
+  
+  > i {
+    margin-right: 10px;
+  }
+}
+
+.resourceLinkButton {
+  color: colors.$text-dark-gray-color;
+  text-decoration: none;
+
+  .icon {
+    margin-right: 10px;
   }
 }

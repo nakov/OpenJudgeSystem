@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { convertToTwoDigitValues, secondsToFullTime } from '../../../utils/dates';
+import Text, { TextType } from '../text/Text';
 
 enum Metric {
     seconds = 1,
@@ -24,20 +25,63 @@ interface ICountdownProps {
     handleOnCountdownChange?: (seconds: number) => void;
 }
 
+const remainingTimeClassName = 'remainingTime';
+
+const renderTimeOut = () => (
+    <p className={remainingTimeClassName}>
+        Remaining time:
+        {' '}
+        <Text type={TextType.Bold}>
+            {' '}
+            00, 00, 00
+        </Text>
+    </p>
+);
+
 const defaultRender = (remainingTime: ICountdownRemainingType) => {
-    const { hours, minutes, seconds } = convertToTwoDigitValues(remainingTime);
+    const { days, hours, minutes, seconds } = convertToTwoDigitValues(remainingTime);
+
+    if (!Number(days)) {
+        return (
+            <p className={remainingTimeClassName}>
+                Remaining time:
+                {' '}
+                <Text type={TextType.Bold}>
+                    {' '}
+                    {hours}
+                    {' '}
+                    h,
+                    {' '}
+                    {minutes}
+                    {' '}
+                    m,
+                    {' '}
+                    {seconds}
+                    {' '}
+                    s
+                </Text>
+            </p>
+        );
+    }
 
     return (
-        <p>
+        <p className={remainingTimeClassName}>
             Remaining time:
             {' '}
-            <span>
+            <Text type={TextType.Bold}>
+                {' '}
+                {days}
+                {' '}
+                d,
+                {' '}
                 {hours}
-                :
+                {' '}
+                h,
+                {' '}
                 {minutes}
-                :
-                {seconds}
-            </span>
+                {' '}
+                m
+            </Text>
         </p>
     );
 };
@@ -70,8 +114,6 @@ const Countdown = ({
     useEffect(() => {
         if (remainingInSeconds < 0) {
             handleOnCountdownEnd();
-
-            return () => null;
         }
 
         const timer = setTimeout(decreaseRemainingTime, 1000);
@@ -83,11 +125,9 @@ const Countdown = ({
         handleOnCountdownChange(remainingInSeconds);
     }, [ handleOnCountdownChange, remainingInSeconds ]);
 
-    return (
-        <>
-            {renderRemainingTime(secondsToFullTime(remainingInSeconds))}
-        </>
-    );
+    return remainingInSeconds <= 0
+        ? renderTimeOut()
+        : renderRemainingTime(secondsToFullTime(remainingInSeconds));
 };
 
 export default Countdown;

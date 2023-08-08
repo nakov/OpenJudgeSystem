@@ -130,13 +130,13 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
                         {testRun.memoryUsed}
                     </span>
                 </span>
-                {testRun.showInput
-                    ? renderCollapsibleTestInput()
-                    : null}
                 <span className={styles.testRunDataParagraph}>
                     {renderResultTypeLabel()}
                 </span>
             </span>
+            {testRun.showInput
+                ? renderCollapsibleTestInput()
+                : null}
             {executionComment}
         </div>
     ), [ testRun, renderResultTypeLabel, renderCollapsibleTestInput, executionComment, testRunHeadingClassName, testRunHeadingText ]);
@@ -147,25 +147,15 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
 
     const renderTestRunDetailsCollapsible = useCallback(() => (
         <span className={styles.testRunDetailsCollapsible}>
-            <span className={styles.testRunDetailsCollapsible}>
-                <span className={styles.collapsibleHeader}>
-                {renderTestRunData()}
-                <div className={styles.detailsCollapsibleButton}>
-                    <ExpandButton
-                      collapsedText="Details"
-                      expandedText="Hide"
-                      expanded={isTestRunDetailCollapsed}
-                      onExpandChanged={handleTestRunDetailsToggleCollapsible}
-                      className="testRunDetailsExpandBtn"
-                    />
-                </div>
                 </span>
-            <Collapsible collapsed={isTestRunDetailCollapsed}>
+                <ExpandButton
+                  collapsedText="Show Details"
+                  expandedText="Hide Details"
+                  expanded={isTestRunDetailCollapsed}
+                  onExpandChanged={handleTestRunDetailsToggleCollapsible}
+                  className={styles.testRunDetailsExpandBtn}
+                />
                     <Collapsible collapsed={isTestRunDetailCollapsed}>
-                        <TestRunDiffView testRun={testRun} />
-                    </Collapsible>
-        </span>
-    ), [ renderTestRunData, handleTestRunDetailsToggleCollapsible, isTestRunDetailCollapsed, testRun ]);
         </div>
     ), [ renderTestRunData, handleTestRunDetailsToggleCollapsible, isTestRunDetailCollapsed, testRun ]);
 
