@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-
     using OJS.Common.Constants;
     using OJS.Common.Extensions;
     using OJS.Services.Cache.Models;
@@ -17,7 +16,7 @@
         private readonly IContestsDataService contestsData;
         private readonly IRedisCacheService redisCache;
         private readonly IParticipantsDataService participantsData;
-        
+
         private static readonly TimeSpan TimeToCacheParticipantsCount = TimeSpan.FromMinutes(5);
 
         public CacheItemsProviderService(
@@ -63,7 +62,7 @@
         {
             var cacheId = string.Format(CacheConstants.ContestParentCategoriesFormat, categoryId);
 
-            var contestCategories = 
+            var contestCategories =
                 this.redisCache.GetOrSet(cacheId, GetParentCategories, TimeSpan.FromSeconds(cacheSeconds.Value));
 
             IEnumerable<ContestCategoryListViewModel> GetParentCategories()
@@ -94,7 +93,7 @@
             this.redisCache.GetOrSet(
                 CacheConstants.MainContestCategoriesDropDown,
                 () =>
-                     this.contestCategoriesData
+                    this.contestCategoriesData
                         .GetAllVisible()
                         .Where(x => !x.ParentId.HasValue)
                         .OrderBy(x => x.OrderBy)
@@ -191,14 +190,14 @@
             int contestCategoryId,
             int? page) =>
             this.redisCache.GetOrSet(
-                $"ParticipantsCountByContestCategoryAndPage:{contestCategoryId}:{page}",
+                string.Format(CacheConstants.ParticipantsCountByContest, contestCategoryId, page),
                 () => this.GetContestsParticipantsCount(contestIds),
                 TimeToCacheParticipantsCount);
 
         public ParticipantsCountCacheModel GetParticipantsCountForContest(int contestId)
             => this.redisCache.GetOrSet(
-                $"ParticipantsCountByContest:{contestId}",
-                () => this.GetContestsParticipantsCount(new []{ contestId })[contestId],
+                string.Format(CacheConstants.ParticipantsCountByContest, contestId),
+                () => this.GetContestsParticipantsCount(new[] { contestId })[contestId],
                 TimeToCacheParticipantsCount);
 
         public void ClearContests()
@@ -212,7 +211,7 @@
 
         private void ClearPastContests() =>
             this.redisCache.Remove(CacheConstants.PastContests);
-        
+
         /// <summary>
         /// Gets a dictionary with all provided contests (Id as Key) and their corresponding
         /// participants count, separated by Compete and Practice mode.
@@ -228,7 +227,7 @@
         {
             var officialParticipants = this.participantsData.GetContestParticipantsCount(contestIds, true);
             var practiceParticipants = this.participantsData.GetContestParticipantsCount(contestIds, false);
-            
+
             return contestIds.ToDictionary(
                 id => id,
                 id => new ParticipantsCountCacheModel
