@@ -115,3 +115,23 @@
     font-size: variables.$f-size-18;
   }
 }
+
+@media (max-width: 950px) {
+  .contestCard {
+    width: 320px;
+  }
+  
+  .tooltipText {
+    width: 111% !important;
+  }
+}
+
+@media (max-width: 710px) {
+  .contestCard {
+    width: 250px;
+  }
+  
+  .tooltipText {
+    width: 80%;
+  }
+}

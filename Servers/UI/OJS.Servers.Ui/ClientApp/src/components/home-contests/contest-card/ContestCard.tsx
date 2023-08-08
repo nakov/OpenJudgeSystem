@@ -35,7 +35,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const contestCardHeaderClassName = concatClassNames(
         styles.contestCardHeader,
         contestCardHeader,
-        name.length >= 24
+        name.length >= 23
             ? styles.contestTitleHoverable
             : '',
     );
