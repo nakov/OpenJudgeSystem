@@ -8,6 +8,7 @@ import { FilterType, IFilter } from '../../../common/contest-types';
 import { groupByType } from '../../../common/filter-utils';
 import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
 import { useContests } from '../../../hooks/use-contests';
+import { usePages } from '../../../hooks/use-pages';
 import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 import List from '../../guidelines/lists/List';
 import ContestCategories from '../contest-categories/ContestCategories';
@@ -27,11 +28,12 @@ interface IFiltersGroup {
 const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const maxFiltersToDisplayCount = 3;
     const { search } = useLocation();
+    const { clearPageValue } = usePages();
     const [ selectValue, setSelectValue ] = useState('');
     const [ filtersGroups, setFiltersGroups ] = useState<IFiltersGroup[]>([]);
     const [ defaultSelected, setDefaultSelected ] = useState('');
     const [ filteredStrategyFilters, setFilteredStrategyFilters ] = useState<IFilter[]>([]);
-    const [ searchParams ] = useSearchParams();
+    const [ searchParams, setSearchParams ] = useSearchParams();
     const [ isLoaded, setIsLoaded ] = useState(false);
 
     const {
@@ -165,20 +167,22 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         [ isLoaded, searchParams ],
     );
 
-    const clearFiltersAndBreadcrumbAndSorting = useCallback(
+    const clearFiltersBreadcrumbSortingPagesAndParameters = useCallback(
         () => {
             clearFilters();
             clearBreadcrumb();
             clearSorts();
+            clearPageValue();
+            setSearchParams('');
         },
-        [ clearFilters, clearBreadcrumb, clearSorts ],
+        [ clearFilters, clearBreadcrumb, clearSorts, clearPageValue, setSearchParams ],
     );
 
     return (
         <div className={styles.container}>
             <Button
               type={ButtonType.secondary}
-              onClick={() => clearFiltersAndBreadcrumbAndSorting()}
+              onClick={() => clearFiltersBreadcrumbSortingPagesAndParameters()}
               className={styles.button}
               text="clear filters"
               size={ButtonSize.small}
