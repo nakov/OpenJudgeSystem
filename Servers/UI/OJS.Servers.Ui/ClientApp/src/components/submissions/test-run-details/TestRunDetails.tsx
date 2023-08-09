@@ -145,19 +145,30 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         setIsTestRunDetailCollapsed(collapsed);
     }, []);
 
-    const renderTestRunDetailsCollapsible = useCallback(() => (
-        <span className={styles.testRunDetailsCollapsible}>
+    const renderTestRunDetailsCollapsible = useCallback(
+        () => (
+            <div className={styles.zeroTestWrapper}>
+                <span className={styles.testRunDetailsCollapsible}>
+                    <span className={styles.collapsibleHeader}>
+                        {renderTestRunData()}
+                    </span>
+                    <ExpandButton
+                      collapsedText="Show Details"
+                      expandedText="Hide Details"
+                      expanded={isTestRunDetailCollapsed}
+                      onExpandChanged={handleTestRunDetailsToggleCollapsible}
+                      className={styles.testRunDetailsExpandBtn}
+                    />
+                    <div className={styles.collapsibleContainer}>
+                        <Collapsible collapsed={isTestRunDetailCollapsed}>
+                            <TestRunDiffView testRun={testRun} />
+                        </Collapsible>
+                    </div>
                 </span>
-                <ExpandButton
-                  collapsedText="Show Details"
-                  expandedText="Hide Details"
-                  expanded={isTestRunDetailCollapsed}
-                  onExpandChanged={handleTestRunDetailsToggleCollapsible}
-                  className={styles.testRunDetailsExpandBtn}
-                />
-                    <Collapsible collapsed={isTestRunDetailCollapsed}>
-        </div>
-    ), [ renderTestRunData, handleTestRunDetailsToggleCollapsible, isTestRunDetailCollapsed, testRun ]);
+            </div>
+        ),
+        [ renderTestRunData, handleTestRunDetailsToggleCollapsible, isTestRunDetailCollapsed, testRun ],
+    );
 
     const render = useCallback(() => {
         if (getResultIsWrongAnswerResultType(testRun) &&
