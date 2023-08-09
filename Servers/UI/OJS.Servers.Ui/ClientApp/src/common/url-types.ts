@@ -1,9 +1,9 @@
 /* eslint-disable import/prefer-default-export */
 import { IFilter, ISort } from './contest-types';
 
-interface IContestUrlParams {
+interface IContestDetailsUrlParams {
     id: number;
-    official: boolean;
+    isOfficial: boolean;
 }
 
 interface IGetContestByProblemUrlParams {
@@ -86,7 +86,7 @@ interface IGetSearchResultsUrlParams {
 export type {
     IRegisterForContestUrlParams,
     ISubmitContestPasswordUrlParams,
-    IContestUrlParams,
+    IContestDetailsUrlParams,
     IAllContestsUrlParams,
     IContestCategoriesUrlParams,
     IStartContestParticipationUrlParams,

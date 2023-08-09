@@ -9,7 +9,7 @@ import {
     IStartParticipationResponseType,
 } from '../common/types';
 import {
-    IContestUrlParams,
+    IContestDetailsUrlParams,
     IGetContestParticipationScoresForParticipantUrlParams,
     IRegisterForContestUrlParams,
     IStartContestParticipationUrlParams,
@@ -74,7 +74,7 @@ interface ICurrentContestContext {
         loadParticipantScores: () => void;
         setIsSubmitAllowed: (isSubmitAllowed: boolean) => void;
         setIsUserParticipant: (isUserParticipant: boolean) => void;
-        getContestDetails: (info: IContestUrlParams) => void;
+        getContestDetails: (info: IContestDetailsUrlParams) => void;
     };
 }
 
@@ -142,7 +142,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const { state: { user } } = useAuth();
     const [ contestDetailsError, setContestDetailsError ] = useState<IErrorDataType | null>(null);
     const [ contestDetails, setContestDetails ] = useState<IContestDetailsResponseType | null>(defaultState.state.contestDetails);
-    const [ contestDetailsParams, setContestDetailsParams ] = useState<IContestUrlParams | null>(null);
+    const [ contestDetailsParams, setContestDetailsParams ] = useState<IContestDetailsUrlParams | null>(null);
 
     const {
         isLoading: contestIsLoading,
@@ -160,7 +160,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         data: contestDetailsData,
         error: contestDetailsErrorData,
         isSuccess: isContestDetailsLoadingSuccessful,
-    } = useHttp<IContestUrlParams, IContestDetailsResponseType>({
+    } = useHttp<IContestDetailsUrlParams, IContestDetailsResponseType>({
         url: getContestDetailsUrl,
         parameters: contestDetailsParams,
     });
@@ -204,8 +204,8 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         [ user ],
     );
 
-    const getContestDetails = useCallback(({ id, official }: IContestUrlParams) => {
-        setContestDetailsParams({ id, official });
+    const getContestDetails = useCallback(({ id, isOfficial: isOfficialUrlParam }: IContestDetailsUrlParams) => {
+        setContestDetailsParams({ id, isOfficial: isOfficialUrlParam });
     }, []);
 
     useEffect(() => {

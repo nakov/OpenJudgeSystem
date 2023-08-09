@@ -3,7 +3,7 @@ import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../common/constants';
 import { IContestDetailsProblemType, IProblemResourceType } from '../../common/types';
-import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
+import { ButtonState, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import List from '../../components/guidelines/lists/List';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
@@ -43,12 +43,23 @@ const ContestDetailsPage = () => {
 
     const { contestId, participationType } = params;
 
+    const contestIdToNumber = useMemo(
+        () => Number(contestId),
+        [ contestId ],
+    );
+
+    const isOfficial = useMemo(
+        () => participationType === ContestParticipationType.Compete,
+        [ participationType ],
+    );
+
     useEffect(
         () => {
             console.log(params);
-            if (isNil(contestDetails) && isNil(contestDetailsError) && !contestDetailsIsLoading && !isNil(contestId)) {
+            if (isNil(contestDetails) && isNil(contestDetailsError) && !contestDetailsIsLoading && !isNil(contestId) &&
+            !isContestDetailsLoadingSuccessful) {
                 console.log('TEST');
-                getContestDetails({ id: contestId.toString(), official: participationType });
+                getContestDetails({ id: contestId.toString(), isOfficial });
             }
         },
         [ contestId,
@@ -58,7 +69,7 @@ const ContestDetailsPage = () => {
             contestDetails,
             isContestDetailsLoadingSuccessful,
             params,
-            participationType,
+            isOfficial,
         ],
     );
 
@@ -69,16 +80,6 @@ const ContestDetailsPage = () => {
             return canAccessAdministration;
         },
         [ user ],
-    );
-
-    const contestIdToNumber = useMemo(
-        () => Number(contestId),
-        [ contestId ],
-    );
-
-    const isOfficial = useMemo(
-        () => !!contestDetails?.canBeCompeted,
-        [ contestDetails?.canBeCompeted ],
     );
 
     const renderContestButtons = useCallback(
@@ -122,7 +123,6 @@ const ContestDetailsPage = () => {
                         ? ButtonState.enabled
                         : ButtonState.disabled
                 }
-                  size={ButtonSize.small}
                 />
                 <LinkButton
                   id="button-card-practice"
@@ -137,7 +137,6 @@ const ContestDetailsPage = () => {
                         ? ButtonState.disabled
                         : ButtonState.enabled
                 }
-                  size={ButtonSize.small}
                 />
             </div>
         ),
@@ -168,48 +167,40 @@ const ContestDetailsPage = () => {
             }
 
             return (
-                <>
-                    <div>{problem.name}</div>
+                <div>
+                    <div className={styles.taskSideNavigationItem}>{problem.name}</div>
                     {renderResources(resources)}
-                </>
-
+                </div>
             );
         },
         [ renderResources ],
     );
 
     const renderTasksList = useCallback(
-        () => {
-            if (isNil(contestDetails)) {
-                return null;
-            }
-
-            const { problems } = contestDetails;
-            if (isNil(problems)) {
-                return null;
-            }
-
-            return (
-                <List
-                  values={contestDetails.problems.sort(compareByOrderBy)}
-                  itemFunc={renderTask}
-                />
-            );
-        },
-        [ renderTask, contestDetails ],
+        (problems: IContestDetailsProblemType[]) => (
+            <List
+              values={problems.sort(compareByOrderBy)}
+              itemFunc={renderTask}
+              className={styles.tasksListSideNavigation}
+              itemClassName={styles.taskListItem}
+            />
+        ),
+        [ renderTask ],
     );
 
     const renderContestDetails = useCallback(
         () => {
-            if (isNil(contestDetails)) {
+            if (isNil(contestDetails) || isNil(contestDetails.problems)) {
                 return null;
             }
+
+            const { problems } = contestDetails;
 
             return (
                 <div className={styles.contestContainer}>
                     <div className={styles.descriptionAndProblemsContainer}>
-                        <div>{contestDetails?.description}</div>
-                        <div>{renderTasksList()}</div>
+                        <div className={styles.description}>{contestDetails?.description}</div>
+                        <div className={styles.tasksSideNavigation}>{renderTasksList(problems)}</div>
                     </div>
                     <div className={styles.buttonsContainer}>
                         {renderContestButtons()}
