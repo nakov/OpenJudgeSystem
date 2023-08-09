@@ -10,7 +10,5 @@
         Task ResetAllProcessingSubmissions();
 
         Task<int> GetUnprocessedTotalCount();
-
-        Task<IEnumerable<SubmissionForProcessingServiceModel>> GetAllStale();
     }
 }

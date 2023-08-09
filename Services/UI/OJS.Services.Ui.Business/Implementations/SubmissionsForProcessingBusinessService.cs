@@ -43,11 +43,4 @@ public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessing
 
     public Task<int> GetUnprocessedTotalCount()
         => this.submissionsForProcessingData.GetAllUnprocessedCount();
-
-    public async Task<IEnumerable<SubmissionForProcessingServiceModel>> GetAllStale()
-        => await this.submissionsForProcessingData
-            .GetAllUnprocessed()
-            .Where(sp => DateTime.UtcNow.Subtract(sp.CreatedOn).TotalMinutes >= 2)
-            .MapCollection<SubmissionForProcessingServiceModel>()
-            .ToListAsync();
 }

@@ -1,5 +1,6 @@
 ﻿namespace OJS.Services.Administration.Business.Implementations
 {
+    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using FluentExtensions.Extensions;
@@ -47,6 +48,7 @@
         {
             var submissionsForProcessing = this.submissionsForProcessingData
                 .GetAllUnprocessed()
+                .Where(sp => DateTime.UtcNow.Subtract(sp!.CreatedOn).TotalMinutes >= 1)
                 .ToListAsync()
                 .Result;
 
