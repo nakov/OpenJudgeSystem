@@ -33,7 +33,7 @@
 
         Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPublicSubmissions(SubmissionForPublicSubmissionsServiceModel model);
 
-        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetUnprocessedSubmissions(SubmissionForPublicSubmissionsServiceModel model);
+        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetProcessingSubmissions(int page);
 
         Task<int> GetTotalCount();
 

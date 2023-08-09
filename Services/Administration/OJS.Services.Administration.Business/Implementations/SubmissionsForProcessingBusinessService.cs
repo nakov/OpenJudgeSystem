@@ -2,15 +2,26 @@
 {
     using System.Linq;
     using System.Threading.Tasks;
+    using FluentExtensions.Extensions;
+    using Microsoft.EntityFrameworkCore;
     using OJS.Services.Administration.Data;
+    using OJS.Services.Common;
 
     public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessingBusinessService
     {
         private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
+        private readonly ISubmissionsDataService submissionsData;
+        private readonly ISubmissionPublisherService submissionPublisherService;
 
         public SubmissionsForProcessingBusinessService(
-            ISubmissionsForProcessingDataService submissionsForProcessingData) =>
+            ISubmissionsForProcessingDataService submissionsForProcessingData,
+            ISubmissionsDataService submissionsData,
+            ISubmissionPublisherService submissionPublisherService)
+        {
             this.submissionsForProcessingData = submissionsForProcessingData;
+            this.submissionsData = submissionsData;
+            this.submissionPublisherService = submissionPublisherService;
+        }
 
         /// <summary>
         /// Sets the Processing property to False for all submissions
@@ -30,6 +41,28 @@
             {
                 await this.submissionsForProcessingData.ResetProcessingStatusById(submissionForProcessingId);
             }
+        }
+
+        public void EnqueueStaleSubmissions()
+        {
+            var submissionsForProcessing = this.submissionsForProcessingData
+                .GetAllUnprocessed()
+                .ToListAsync()
+                .Result;
+
+            if (!submissionsForProcessing.Any())
+            {
+                return;
+            }
+
+            var submissions = this.submissionsData
+                .GetByIds(submissionsForProcessing
+                    .Select(sp => sp!.SubmissionId)
+                    .ToList())
+                .ToListAsync()
+                .Result;
+
+            submissions.ForEachSequential(this.submissionPublisherService.Publish);
         }
     }
 }

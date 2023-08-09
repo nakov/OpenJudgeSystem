@@ -1,14 +1,18 @@
 ﻿namespace OJS.Services.Ui.Data.Implementations
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
     using OJS.Common;
     using OJS.Common.Helpers;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Data.Implementations;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using SoftUni.Common.Extensions;
+    using SoftUni.Common.Models;
 
     public class SubmissionsForProcessingDataService : DataService<SubmissionForProcessing>,
         ISubmissionsForProcessingDataService
@@ -24,13 +28,19 @@
                 .FirstOrDefaultAsync();
 
         public async Task<int> GetAllUnprocessedCount()
-            => await this.DbSet
-                .Where(sfp => !sfp.Processed && sfp.Processing)
+            => await this
+                .GetAllUnprocessed()
                 .CountAsync();
 
         public IQueryable<SubmissionForProcessing> GetAllUnprocessed() =>
             this.DbSet
-                .Where(sfp => !sfp.Processed && sfp.Processing);
+                .Where(sfp => !sfp.Processed && !sfp.Processing);
+
+        public async Task<IEnumerable<TServiceModel>> GetAllProcessing<TServiceModel>()
+            => await this.DbSet
+                .Where(sfp => !sfp.Processed && sfp.Processing)
+                .ToListAsync()
+                .MapCollection<TServiceModel>();
 
         public async Task<IEnumerable<int>> GetIdsOfAllProcessing() =>
             await this.DbSet
@@ -63,6 +73,7 @@
             {
                 submissionForProcessing.Processing = true;
                 submissionForProcessing.Processed = false;
+                submissionForProcessing.CreatedOn = DateTime.Now.ToUniversalTime();
 
                 await this.Update(submissionForProcessing);
             }
@@ -73,12 +84,11 @@
                     SubmissionId = submissionId,
                     Processed = false,
                     Processing = true,
+                    CreatedOn = DateTime.Now.ToUniversalTime(),
                 };
 
                 await this.Add(submissionForProcessing);
             }
-
-            await this.SaveChanges();
         }
 
         public async Task EndProcessingBySubmission(int submissionId)
@@ -113,8 +123,26 @@
             {
                 submissionForProcessing.Processing = false;
                 submissionForProcessing.Processed = false;
+                submissionForProcessing.CreatedOn = DateTime.Now.ToUniversalTime();
+
                 await this.SaveChanges();
             }
+        }
+
+        public async Task MarkProcessed(int submissionId)
+        {
+            var submissionForProcessing = await this.GetBySubmission(submissionId);
+
+            if (submissionForProcessing == null)
+            {
+                return;
+            }
+
+            submissionForProcessing.Processing = false;
+            submissionForProcessing.Processed = true;
+
+            await this.Update(submissionForProcessing);
+            await this.SaveChanges();
         }
 
         public void Clean() =>

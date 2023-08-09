@@ -18,12 +18,15 @@ using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Transactions;
 using System.Threading.Tasks;
+using SoftUni.Common.Extensions;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 using OJS.Services.Ui.Models.Contests;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Submissions;
 using OJS.Workers.Common.Models;
+using Microsoft.Extensions.Logging;
 
 using static Constants.PublicSubmissions;
 
@@ -46,6 +49,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmissionResultsValidationService submissionResultsValidationService;
     private readonly ISubmissionFileDownloadValidationService submissionFileDownloadValidationService;
     private readonly ISubmissionPublisherService submissionPublisher;
+    private readonly ILogger<SubmissionsBusinessService> logger;
 
     public SubmissionsBusinessService(
         ISubmissionsDataService submissionsData,
@@ -63,7 +67,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ISubmissionFileDownloadValidationService submissionFileDownloadValidationService,
         ISubmissionsForProcessingDataService submissionsForProcessingData,
         ISubmissionPublisherService submissionPublisher,
-        IContestsDataService contestsDataService)
+        IContestsDataService contestsDataService,
+        ILogger<SubmissionsBusinessService> logger)
     {
         this.submissionsData = submissionsData;
         this.usersBusiness = usersBusiness;
@@ -81,6 +86,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.submissionPublisher = submissionPublisher;
         this.submissionsForProcessingData = submissionsForProcessingData;
         this.contestsDataService = contestsDataService;
+        this.logger = logger;
     }
 
     public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
@@ -360,13 +366,13 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             this.submissionsData.HasUserNotProcessedSubmissionForProblem(problem.Id, currentUser.Id!);
 
         var submitSubmissionValidationServiceResult = this.submitSubmissionValidationService.GetValidationResult(
-        (problem,
-        currentUser,
-        participant,
-        contestValidationResult,
-        userSubmissionTimeLimit,
-        hasUserNotProcessedSubmissionForProblem,
-        model));
+            (problem,
+            currentUser,
+            participant,
+            contestValidationResult,
+            userSubmissionTimeLimit,
+            hasUserNotProcessedSubmissionForProblem,
+            model));
 
         if (!submitSubmissionValidationServiceResult.IsValid)
         {
@@ -397,30 +403,37 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .First(st => st.SubmissionTypeId == model.SubmissionTypeId)
             .SubmissionType;
 
-        if (submissionType.ExecutionStrategyType != ExecutionStrategyType.NotFound &&
-            submissionType.ExecutionStrategyType != ExecutionStrategyType.DoNothing)
+        using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+        try
         {
+            if (submissionType.ExecutionStrategyType is ExecutionStrategyType.NotFound or ExecutionStrategyType.DoNothing)
+            {
+                // Submission is just uploaded and should not be processed
+                await this.AddNewDefaultProcessedSubmission(newSubmission);
+
+                scope.Complete();
+                return;
+            }
+
             await this.submissionsData.Add(newSubmission);
             await this.submissionsData.SaveChanges();
 
             await this.submissionsForProcessingData.AddOrUpdateReprocessingBySubmission(newSubmission.Id);
+            await this.submissionsData.SaveChanges();
 
             newSubmission.Problem = problem;
             newSubmission.SubmissionType = submissionType;
 
             await this.submissionPublisher.Publish(newSubmission);
+
+            scope.Complete();
+            scope.Dispose();
         }
-        else
+        catch (Exception ex)
         {
-            newSubmission.Processed = true;
-            newSubmission.Points = 0;
-
-            await this.submissionsData.Add(newSubmission);
-            await this.submissionsData.SaveChanges();
-
-            newSubmission.Problem = problem;
-
-            await this.participantScoresBusinessService.SaveForSubmission(newSubmission);
+            this.logger.LogError($"Exception in submitting solution {newSubmission.Id} by {participant.User.UserName}{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.InnerException}");
+            scope.Dispose();
+            throw;
         }
     }
 
@@ -450,6 +463,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         if (executionResult != null)
         {
             await this.ProcessTestsExecutionResult(submission, executionResult);
+
+            await this.submissionsForProcessingData.MarkProcessed(submission.Id);
             this.submissionsData.Update(submission);
             await this.submissionsData.SaveChanges();
             await this.UpdateResults(submission);
@@ -485,11 +500,25 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         return modelResult;
     }
 
-    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetUnprocessedSubmissions(SubmissionForPublicSubmissionsServiceModel model)
+    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetProcessingSubmissions(int page)
     {
-        var user = this.userProviderService.GetCurrentUser();
+        var submissionsForProcessing =
+            await this.submissionsForProcessingData
+                .GetAllProcessing<SubmissionForProcessingServiceModel>();
 
-        return await this.submissionsData.GetAllUnprocessedByUser<SubmissionForPublicSubmissionsServiceModel>(user, DefaultSubmissionsPerPage, model.PageNumber);
+        if (submissionsForProcessing.IsEmpty())
+        {
+            return new PagedResult<SubmissionForPublicSubmissionsServiceModel>();
+        }
+
+        var submissions = this.submissionsData
+            .GetAllByIdsQuery(
+                submissionsForProcessing
+                    .Select(sp => sp.SubmissionId));
+
+        return submissions
+            .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
+            .ToPagedResult(DefaultSubmissionsPerPage, page);
     }
 
     public Task<int> GetTotalCount()
@@ -509,6 +538,17 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         {
             submission.ProcessingComment = $"Exception in CacheTestRuns: {ex.Message}";
         }
+    }
+
+    private async Task AddNewDefaultProcessedSubmission(Submission submission)
+    {
+        submission.Processed = true;
+        submission.Points = 0;
+
+        await this.submissionsData.Add(submission);
+        await this.submissionsData.SaveChanges();
+
+        await this.participantScoresBusinessService.SaveForSubmission(submission);
     }
 
     private async Task ProcessTestsExecutionResult(

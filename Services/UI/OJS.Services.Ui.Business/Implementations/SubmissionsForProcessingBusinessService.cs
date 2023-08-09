@@ -1,15 +1,25 @@
 ﻿namespace OJS.Services.Ui.Business.Implementations;
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using OJS.Services.Common.Models.Submissions;
+using Microsoft.EntityFrameworkCore;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
 
 public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessingBusinessService
 {
     private readonly Data.ISubmissionsForProcessingDataService submissionsForProcessingData;
+    private readonly IUserProviderService userProviderService;
 
     public SubmissionsForProcessingBusinessService(
-        Data.ISubmissionsForProcessingDataService submissionsForProcessingData) =>
+        Data.ISubmissionsForProcessingDataService submissionsForProcessingData,
+        IUserProviderService userProviderService)
+    {
         this.submissionsForProcessingData = submissionsForProcessingData;
+        this.userProviderService = userProviderService;
+    }
 
     /// <summary>
     /// Sets the Processing property to False for all submissions
@@ -33,4 +43,11 @@ public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessing
 
     public Task<int> GetUnprocessedTotalCount()
         => this.submissionsForProcessingData.GetAllUnprocessedCount();
+
+    public async Task<IEnumerable<SubmissionForProcessingServiceModel>> GetAllStale()
+        => await this.submissionsForProcessingData
+            .GetAllUnprocessed()
+            .Where(sp => DateTime.UtcNow.Subtract(sp.CreatedOn).TotalMinutes >= 2)
+            .MapCollection<SubmissionForProcessingServiceModel>()
+            .ToListAsync();
 }

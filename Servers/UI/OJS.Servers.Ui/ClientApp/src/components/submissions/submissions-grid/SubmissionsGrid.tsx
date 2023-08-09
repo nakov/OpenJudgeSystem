@@ -126,7 +126,7 @@ const SubmissionsGrid = () => {
                                   ? `${styles.active}`
                                   : ''}
                              `}
-                              text="Show all solutions"
+                              text="All"
                             />
                             /
                             <Button
@@ -138,7 +138,7 @@ const SubmissionsGrid = () => {
                                   ? `${styles.active}`
                                   : ''}
                              `}
-                              text="Show submissions in queue"
+                              text="In Queue"
                             />
                             )
                         </Heading>

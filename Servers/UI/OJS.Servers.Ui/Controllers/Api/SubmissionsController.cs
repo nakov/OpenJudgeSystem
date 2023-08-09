@@ -151,12 +151,9 @@ public class SubmissionsController : BaseApiController
     /// <returns>A page with unprocessed submissions.</returns>
     [HttpGet]
     [ProducesResponseType(typeof(PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>), Status200OK)]
-    public async Task<IActionResult> Unprocessed([FromQuery]int page)
+    public async Task<IActionResult> GetProcessingSubmissions([FromQuery]int page)
         => await this.submissionsBusiness
-            .GetUnprocessedSubmissions(new SubmissionForPublicSubmissionsServiceModel
-            {
-                PageNumber = page,
-            })
+            .GetProcessingSubmissions(page)
             .Map<PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>>()
             .ToOkResult();
 

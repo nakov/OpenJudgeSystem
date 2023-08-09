@@ -58,7 +58,7 @@ namespace OJS.Services.Administration.Business.Implementations
         public async Task AddAllUnprocessed()
         {
             var unprocessedSubmissionIds = await this.submissionsForProcessingData
-                .GetAllUnprocessed()
+                .GetAllUnprocessedAndNotProcessing()
                 .Select(s => s!.SubmissionId)
                 .ToListAsync();
 

@@ -22,9 +22,13 @@ public class SubmissionsForProcessingDataService : DataService<SubmissionForProc
             .Where(s => s.SubmissionId == submissionId)
             .FirstOrDefaultAsync();
 
-    public IQueryable<SubmissionForProcessing> GetAllUnprocessed() =>
+    public IQueryable<SubmissionForProcessing> GetAllUnprocessedAndNotProcessing() =>
         this.DbSet
             .Where(sfp => !sfp.Processed && !sfp.Processing);
+
+    public IQueryable<SubmissionForProcessing> GetAllUnprocessed() =>
+        this.DbSet
+            .Where(sfp => !sfp.Processed);
 
     public async Task<IEnumerable<int>> GetIdsOfAllProcessing() =>
         await this.DbSet

@@ -14,6 +14,8 @@
 
         IQueryable<SubmissionForProcessing> GetAllUnprocessed();
 
+        Task<IEnumerable<TServiceModel>> GetAllProcessing<TServiceModel>();
+
         Task<IEnumerable<int>> GetIdsOfAllProcessing();
 
         Task AddOrUpdateBySubmissionIds(ICollection<int> submissionIds);
@@ -27,6 +29,8 @@
         Task ResetProcessingStatusById(int id);
 
         Task Update(SubmissionForProcessing submissionForProcessing);
+
+        Task MarkProcessed(int submissionId);
 
         void Clean();
     }

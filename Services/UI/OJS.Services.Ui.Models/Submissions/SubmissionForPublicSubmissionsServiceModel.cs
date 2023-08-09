@@ -107,7 +107,7 @@ public class SubmissionForPublicSubmissionsServiceModel : IMapExplicitly
                 opt => opt.MapFrom(
                     y => y.Processed
                         ? StateResultForPublicSubmissionsServiceModel.Ready
-                        : StateResultForPublicSubmissionsServiceModel.Processing))
+                        : StateResultForPublicSubmissionsServiceModel.Queued))
             .ForMember(
                 x => x.Result,
                 opt => opt.MapFrom(

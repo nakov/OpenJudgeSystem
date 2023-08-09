@@ -10,6 +10,8 @@
     {
         Task<SubmissionForProcessing?> GetBySubmission(int submissionId);
 
+        IQueryable<SubmissionForProcessing?> GetAllUnprocessedAndNotProcessing();
+
         IQueryable<SubmissionForProcessing?> GetAllUnprocessed();
 
         Task<IEnumerable<int>> GetIdsOfAllProcessing();

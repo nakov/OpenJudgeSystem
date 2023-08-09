@@ -48,8 +48,7 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
         int pageNumber)
     {
         var submissionsQuery = this.GetQuery(
-                filter: s => !s.SubmissionForProcessing!.Processed
-                             && s.SubmissionForProcessing.Processing && !s.IsDeleted,
+                filter: s => !s.Processed && !s.IsDeleted,
                 orderBy: s => s.Id,
                 descending: true);
 

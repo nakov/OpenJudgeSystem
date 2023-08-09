@@ -124,7 +124,7 @@ const getUnprocessedSubmissionsUrl = ({ page }: IGetSubmissionsUrlParams) => {
         ? ''
         : `page=${page}`;
 
-    return `${baseApiUrl}/Submissions/Unprocessed?${pageQuery}`;
+    return `${baseApiUrl}/Submissions/GetProcessingSubmissions?${pageQuery}`;
 };
 const getSubmissionsTotalCountUrl = () => `${baseApiUrl}/Submissions/TotalCount`;
 const getSubmissionsUnprocessedTotalCountUrl = () => `${baseApiUrl}/Submissions/UnprocessedTotalCount`;
