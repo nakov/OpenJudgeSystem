@@ -70,7 +70,7 @@
 }
 
 .submissionsList {
-  height: 60vh;
+  height: 465px;
 
   ul {
     @extend %customScroll;
@@ -114,5 +114,78 @@
 }
 
 .buttonsSection {
+  margin-top: 20px;
+}
+
+.toggleButtonWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  width: 100%;
+  margin: 10px 0;
+  box-shadow: 0 4px 5px 0 rgb(0 0 0 / 14%), 0 1px 10px 0 rgb(0 0 0 / 12%), 0 2px 4px -1px rgb(0 0 0 / 20%);
+  
+  div {
+    padding: 10px 30px;
+    color: #42abf8;
+    background-color: white;
+    cursor: pointer;
+    text-transform: uppercase;
+    width: 50%;
+    text-align: center;
+    font-family: montserrat, serif;
+    transition: all .2s ease-in-out;
+  }
+  
+  .activeToggle {
+    background-color: #42abf8;
+    color: white;
+    transition: all .2s ease-in-out;
+  }
+}
+
+.submissionReloadBtn {
+  margin-top: 10px;
+  margin-right: 20px;
+}
+
+.submissionResultDetailsWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.submissionResultDetails {
+  display: flex;
+  flex-direction: column;
+  font-family: lato, montserrat, serif;
+  padding-bottom: 30px;
+  margin-top: 30px;
+  border-bottom: 1px solid #bebebe;
+  width: 50%;
+}
+
+.showInputButton {
+  display: flex;
+  background-color: #42abf8;
+  align-self: flex-start;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 10px;
+  margin: 10px 0;
+  color: white;
+  cursor: pointer;
+
+  div {
+    margin-left: 10px;
+    margin-right: -6px;
+  }
+}
+
+.zeroTestDataWrapper {
+  display: flex;
+  justify-content: space-between;
   margin-top: 20px;
 }
