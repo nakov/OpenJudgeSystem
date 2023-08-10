@@ -17,36 +17,34 @@
 }
 
 .contestContainer {
+  align-self: center;
   display: flex;
   flex-direction: column;
+  width: 50%;
 }
 
 .descriptionAndProblemsContainer {
   display: flex;
-  flex: 1 1 0;
-  width: 100%;
+  justify-content: space-between;
 }
 
 .description {
+  @extend %font-family-lato;
   
+  align-self: flex-start;
+  font-size: variables.$f-size-20;
+  margin: 50px;
 }
 
 .headingContest {
   @extend %contentSize;
 }
 
-.tasksSideNavigation {
-  text-align: center;
-}
-
 .taskListItem {
-  align-items: center;
   border-bottom: 1px solid colors.$bottom-border-color;
   display: flex;
   justify-content: space-between;
   padding: 35px 0 5px;
-  position: relative;
-  width: 100%;
 
   @media only screen and (max-width: variables.$r-large-desktop-max) {
     font-size: variables.$f-size-16;

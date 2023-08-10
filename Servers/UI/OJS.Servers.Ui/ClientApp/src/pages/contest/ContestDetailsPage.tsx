@@ -199,8 +199,10 @@ const ContestDetailsPage = () => {
             return (
                 <div className={styles.contestContainer}>
                     <div className={styles.descriptionAndProblemsContainer}>
-                        <div className={styles.description}>{contestDetails?.description}</div>
-                        <div className={styles.tasksSideNavigation}>{renderTasksList(problems)}</div>
+                        <div className={styles.description}>
+                            {contestDetails?.description}
+                        </div>
+                        <div>{renderTasksList(problems)}</div>
                     </div>
                     <div className={styles.buttonsContainer}>
                         {renderContestButtons()}
