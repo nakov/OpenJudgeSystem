@@ -4,11 +4,6 @@
   display: flex;
 }
 
-.contestItem {
-  flex: 0 0 20em;
-  width: 20em;
-}
-
 .breadcrumbBtn {
   color: colors.$text-light-gray-color;
 
@@ -34,5 +29,6 @@
 
 .contestsList {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
+  margin-left: 10px;
 }
