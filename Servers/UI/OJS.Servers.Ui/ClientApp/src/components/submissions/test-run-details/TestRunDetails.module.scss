@@ -12,6 +12,8 @@
   align-content: space-around;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  padding: 5px 15px;
 }
 
 .testRun {
@@ -22,9 +24,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 10px;
-  padding: 20px;
+  padding: 20px 0;
   width: 100%;
+  transition: all .2s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #dff0ff;
+  }
 }
 
 %heading {
@@ -39,15 +46,15 @@
   margin-bottom: 0 !important;
 }
 
-.testRunDetailsCollapsible {
-  @extend %font-family-lato;
-
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  margin-top: -10px;
-  width: 130px;
-}
+//.testRunDetailsCollapsible {
+//  @extend %font-family-lato;
+//
+//  display: flex;
+//  flex-direction: column;
+//  flex-grow: 1;
+//  margin-top: -10px;
+//  width: 130px;
+//}
 
 .wrongTestRunHeading {
   @extend %heading;
@@ -55,17 +62,17 @@
   color: colors.$primary-red;
 }
 
-.collapsibleHeader {
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  width: 100%;
-}
+//.collapsibleHeader {
+//  align-items: center;
+//  display: flex;
+//  flex-direction: row;
+//  justify-content: space-between;
+//  width: 100%;
+//}
 
-.collapsibleContainer {
-  margin-top: 10px;  
-}
+//.collapsibleContainer {
+//  margin-top: 10px;  
+//}
 
 .correctTestRunHeading {
   @extend %heading;
@@ -75,6 +82,7 @@
 
 .testRunData {
   align-items: center;
+  justify-content: space-between;
   display: flex;
   gap: 10px;
 }
@@ -84,15 +92,26 @@
 
   color: colors.$text-dark-gray-color;
   font-size: variables.$f-size-14;
-}
-
-.zeroTestWrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
 }
 
-.testRunDetailsExpandBtn {
-  margin-top: -17px !important;
+//.zeroTestWrapper {
+//  display: flex;
+//  flex-direction: column;
+//  align-items: center;
+//  justify-content: space-between;
+//}
+
+//.testRunDetailsExpandBtn {
+//  margin-top: -17px !important;
+//}
+
+.iconActiveColor {
+  color: #42abf8;
+}
+
+.iconPassiveColor {
+  color: #bebebe;
 }

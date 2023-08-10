@@ -22,10 +22,17 @@ import IconSize from '../../guidelines/icons/common/icon-sizes';
 import LeftArrowIcon from '../../guidelines/icons/LeftArrowIcon';
 import SubmissionResults from '../submission-results/SubmissionResults';
 import SubmissionsList from '../submissions-list/SubmissionsList';
+import SubmissionResultsDetails from "./submission-result-details/SubmissionResultsDetails";
 
 import styles from './SubmissionDetails.module.scss';
 
+enum toggleOption {
+    Practice = 'PRACTICE',
+    Compete = 'COMPETE'
+}
+
 const SubmissionDetails = () => {
+    const [ toggledElement, setToggledElement ] = React.useState(toggleOption.Practice);
     const {
         state: {
             currentSubmission,
@@ -144,13 +151,16 @@ const SubmissionDetails = () => {
     );
 
     const detailsHeadingText = useMemo(
-        () => `Details #${currentSubmission?.id}`,
+        () => (
+            <div style={{ marginBottom: '24px' }}>
+                Details #
+                {currentSubmission?.id}
+            </div>
+        ),
         [ currentSubmission?.id ],
     );
 
     const { submissionType } = currentSubmission || {};
-
-    const submissionsNavigationClassName = 'submissionsNavigation';
 
     const submissionsDetails = 'submissionDetails';
     const submissionDetailsClassName = concatClassNames(
@@ -174,8 +184,6 @@ const SubmissionDetails = () => {
         [ currentSubmission, getSubmissionDetailsResults ],
     );
 
-    const submissionsReloadBtnClassName = 'submissionReloadBtn';
-
     const handleReloadClick = useCallback(
         async () => {
             if (isNil(currentSubmission)) {
@@ -189,25 +197,15 @@ const SubmissionDetails = () => {
         [ currentSubmission, getSubmissionDetailsResults ],
     );
 
-    const renderReloadButton = useCallback(
-        () => (
+    const renderButtonsSection = useCallback(() => (
+        <div className={styles.buttonsSection}>
             <Button
               onClick={handleReloadClick}
               text="Reload"
               type={ButtonType.secondary}
-              className={submissionsReloadBtnClassName}
+              className={styles.submissionReloadBtn}
             />
-        ),
-        [ handleReloadClick ],
-    );
-
-    const renderRetestButton = useCallback(
-        () => {
-            if (!canAccessAdministration) {
-                return null;
-            }
-
-            return (
+            { canAccessAdministration && (
                 <LinkButton
                   type={LinkButtonType.secondary}
                   size={ButtonSize.medium}
@@ -215,20 +213,9 @@ const SubmissionDetails = () => {
                   text="Retest"
                   className={styles.retestButton}
                 />
-            );
-        },
-        [ canAccessAdministration, getAdministrationRetestSubmissionInternalUrl ],
-    );
-
-    const renderButtonsSection = useCallback(
-        () => (
-            <div className={styles.buttonsSection}>
-                { renderReloadButton() }
-                { renderRetestButton() }
-            </div>
-        ),
-        [ renderReloadButton, renderRetestButton ],
-    );
+            )}
+        </div>
+    ), [ canAccessAdministration, getAdministrationRetestSubmissionInternalUrl, handleReloadClick ]);
 
     const renderSubmissionInfo = useCallback(
         () => {
@@ -277,11 +264,38 @@ const SubmissionDetails = () => {
         [ contest ],
     );
 
+    const handleToggleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        const { innerText } = e.target as HTMLDivElement;
+        const selectedToggleOption = innerText.toUpperCase() === toggleOption.Compete
+            ? toggleOption.Compete
+            : toggleOption.Practice;
+
+        setToggledElement(selectedToggleOption);
+    };
+
     const refreshableSubmissionsList = useCallback(
         () => (
             <div className={styles.navigation}>
-                <div className={submissionsNavigationClassName}>
+                <div style={{ marginBottom: '24px' }}>
                     <Heading type={HeadingType.secondary}>Submissions</Heading>
+                </div>
+                <div className={styles.toggleButtonWrapper}>
+                    <div
+                      className={toggledElement === toggleOption.Practice
+                          ? styles.activeToggle
+                          : ''}
+                      onClick={handleToggleClick}
+                    >
+                        PRACTICE
+                    </div>
+                    <div
+                      className={toggledElement === toggleOption.Compete
+                          ? styles.activeToggle
+                          : ''}
+                      onClick={handleToggleClick}
+                    >
+                        COMPETE
+                    </div>
                 </div>
                 <SubmissionsList
                   items={currentSubmissionDetailsResults}
@@ -292,7 +306,7 @@ const SubmissionDetails = () => {
                 { renderSubmissionInfo() }
             </div>
         ),
-        [ currentSubmissionDetailsResults, currentSubmission, renderButtonsSection, renderSubmissionInfo ],
+        [ currentSubmissionDetailsResults, currentSubmission, renderButtonsSection, renderSubmissionInfo, toggledElement ],
     );
 
     const setSubmissionAndStartParticipation = useCallback(
@@ -377,56 +391,39 @@ const SubmissionDetails = () => {
         [ currentSubmission, detailsHeadingText, submissionDetailsClassName ],
     );
 
-    const renderErrorHeading = useCallback(
-        (message: string) => (
-            <div className={styles.headingContest}>
-                <Heading
-                  type={HeadingType.primary}
-                  className={styles.contestHeading}
-                >
-                    {message}
-                </Heading>
-            </div>
-        ),
-        [],
-    );
-
     const renderErrorMessage = useCallback(
         () => {
             const error = first(validationErrors);
             if (!isNil(error)) {
                 const { detail } = error;
-                return renderErrorHeading(detail);
+                return (<div className={styles.headingContest}>
+                    <Heading type={HeadingType.primary} className={styles.contestHeading}>
+                        {detail}
+                    </Heading>
+                </div>)
             }
 
             return null;
         },
-        [ renderErrorHeading, validationErrors ],
-    );
-
-    const renderSubmission = useCallback(
-        () => (
-            <div className={styles.detailsWrapper}>
-                {refreshableSubmissionsList()}
-                {codeEditor()}
-                {submissionResults()}
-            </div>
-        ),
-        [ codeEditor, refreshableSubmissionsList, submissionResults ],
-    );
-
-    const renderPage = useCallback(
-        () => isEmpty(validationErrors)
-            ? renderSubmission()
-            : renderErrorMessage(),
-        [ renderErrorMessage, validationErrors, renderSubmission ],
+        [ validationErrors ],
     );
 
     if (isNil(currentSubmission) && isEmpty(validationErrors)) {
         return <div>No details fetched.</div>;
     }
-
-    return renderPage();
+    
+    if (!isEmpty(validationErrors)) {
+        return renderErrorMessage()
+    }
+    
+    return (<>
+        <div className={styles.detailsWrapper}>
+            {refreshableSubmissionsList()}
+            {codeEditor()}
+            {submissionResults()}
+        </div>
+        <SubmissionResultsDetails testRuns={currentSubmission?.testRuns} />
+    </>)
 };
 
 export default SubmissionDetails;
