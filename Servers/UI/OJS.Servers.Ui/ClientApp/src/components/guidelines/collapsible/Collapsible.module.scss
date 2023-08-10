@@ -1,12 +1,13 @@
 .collapsibleContainer {
+  width: 350px;
   overflow: hidden;
   transition: max-height 0.55s ease-out;
-
   &.visible {
     max-height: max-content;
+    margin: 5px 0;
   }
-
   &.hidden {
     max-height: 0;
   }
 }
+

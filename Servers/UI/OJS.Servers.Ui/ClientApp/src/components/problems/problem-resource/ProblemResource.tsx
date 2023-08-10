@@ -13,9 +13,9 @@ interface IProblemResourceProps {
 
 // TODO: These should be extracted into `Icons`
 const resourceTypeToIconClassName : { [name: number]: string } = {
-    1: 'fa-file-alt',
-    2: 'fa-lightbulb',
-    3: 'fa-link',
+    1: 'fas fa-file-alt',
+    2: 'fas fa-lightbulb',
+    3: 'fas fa-link',
 };
 
 const ProblemResource = ({ resource }: IProblemResourceProps) => {
@@ -59,10 +59,10 @@ const ProblemResource = ({ resource }: IProblemResourceProps) => {
     );
 
     const getResourceLinkContent = useCallback(() => (
-        <>
+        <div className={styles.resourceLink}>
             <i className={resourceIconClassName} />
-            {resource.name}
-        </>
+            <div>{resource.name}</div>
+        </div>
     ), [ resource.name, resourceIconClassName ]);
 
     return (

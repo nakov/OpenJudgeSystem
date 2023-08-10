@@ -50,27 +50,22 @@ const ContestsPage = () => {
     const { state: { categoriesFlat }, actions: { load: loadCategories } } = useContestCategories();
     const navigate = useNavigate();
     const { state: params } = useUrlParams();
-    const { state: { strategies }, actions: { load } } = useContestStrategyFilters();
+    const { state: { strategies } } = useContestStrategyFilters();
+    const { actions: { load: loadStrategies } } = useContestStrategyFilters();
 
     useEffect(
         () => {
             initiateGetAllContestsQuery();
-
-            if (isEmpty(strategies)) {
-                (async () => {
-                    await load();
-                })();
-            }
-
             if (!isEmpty(categoriesFlat)) {
                 return;
             }
 
             (async () => {
                 await loadCategories();
+                await loadStrategies();
             })();
         },
-        [ initiateGetAllContestsQuery, categoriesFlat, loadCategories, load, strategies ],
+        [ initiateGetAllContestsQuery, categoriesFlat, loadCategories, loadStrategies ],
     );
 
     const filtersArray = useMemo(
@@ -159,7 +154,6 @@ const ContestsPage = () => {
                     <List
                       values={contests}
                       itemFunc={renderContest}
-                      itemClassName={styles.contestItem}
                       className={styles.contestsList}
                       orientation={Orientation.horizontal}
                       wrap
