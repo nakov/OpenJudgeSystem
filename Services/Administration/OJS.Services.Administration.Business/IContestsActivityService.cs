@@ -8,8 +8,6 @@ public interface IContestsActivityService : IService
 {
     Task<IContestActivityServiceModel> GetContestActivity(int id);
 
-    Task<IContestActivityServiceModel> GetContestActivity(IContestForActivityServiceModel model);
-
     bool CanBeCompeted(IContestForActivityServiceModel contest);
 
     bool CanBePracticed(IContestForActivityServiceModel contest);
