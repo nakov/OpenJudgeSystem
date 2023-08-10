@@ -93,6 +93,9 @@ namespace OJS.Data.Models.Problems
                     opt => opt.MapFrom(src => (DateTime?)null))
                 .ForMember(
                     d => d.SubmissionTypesInProblems,
+                    opt => opt.Ignore())
+                .ForMember(
+                    d => d.ProblemsForParticipants,
                     opt => opt.Ignore());
     }
 }
