@@ -7,6 +7,7 @@ namespace OJS.Services.Administration.Business.Implementations
     using Microsoft.EntityFrameworkCore;
     using OJS.Data.Models;
     using OJS.Data.Models.Problems;
+    using OJS.Data.Models.Tests;
     using OJS.Services.Administration.Data;
     using OJS.Services.Common.Models;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
@@ -19,6 +20,8 @@ namespace OJS.Services.Administration.Business.Implementations
         private readonly IContestsDataService contestsData;
         private readonly IProblemsDataService problemsData;
         private readonly ISubmissionTypesInProblemsDataService submissionTypesInProblemsData;
+        private readonly IProblemResourcesDataService problemResourcesData;
+        private readonly ITestsDataService testsData;
         private readonly IOrderableService<ProblemGroup> problemGroupsOrderableService;
         private readonly IOrderableService<Problem> problemsOrderableService;
 
@@ -26,9 +29,11 @@ namespace OJS.Services.Administration.Business.Implementations
             IProblemGroupsDataService problemGroupsData,
             IContestsDataService contestsData,
             IProblemsDataService problemsData,
+            IProblemResourcesDataService problemResourcesData,
             ISubmissionTypesInProblemsDataService submissionTypesInProblemsData,
             IOrderableService<Problem> problemsOrderableService,
-            IOrderableService<ProblemGroup> problemGroupsOrderableService)
+            IOrderableService<ProblemGroup> problemGroupsOrderableService,
+            ITestsDataService testsData)
         {
             this.problemGroupsData = problemGroupsData;
             this.contestsData = contestsData;
@@ -36,6 +41,8 @@ namespace OJS.Services.Administration.Business.Implementations
             this.problemsData = problemsData;
             this.problemsOrderableService = problemsOrderableService;
             this.problemGroupsOrderableService = problemGroupsOrderableService;
+            this.testsData = testsData;
+            this.problemResourcesData = problemResourcesData;
         }
 
         public async Task<ServiceResult> DeleteById(int id)
@@ -140,10 +147,8 @@ namespace OJS.Services.Administration.Business.Implementations
         private async Task GenerateNewProblem(
             Problem problem,
             ProblemGroup currentNewProblemGroup,
-            List<Problem> problemsToAdd)
+            ICollection<Problem> problemsToAdd)
         {
-            var problemId = problem.Id;
-
             var currentNewProblem = problem.Map<Problem>();
 
             currentNewProblem.ProblemGroupId = currentNewProblemGroup.Id;
@@ -153,21 +158,73 @@ namespace OJS.Services.Administration.Business.Implementations
             await this.problemsData.SaveChanges();
 
             var newSubmissionTypeInSourceProblemsToAdd = new List<SubmissionTypeInProblem>();
+            var newResourcesToAdd = new List<ProblemResource>();
+            var newTestsToAdd = new List<Test>();
+
+            await this.GenerateNewTests(problem.Id, newTestsToAdd, currentNewProblem);
+
+            await this.GenerateNewResources(problem.Id, newResourcesToAdd, currentNewProblem);
 
             this.submissionTypesInProblemsData
-                .GetAllByProblem(problemId)
+                .GetAllByProblem(problem.Id)
                 .ForEach(stp =>
                     this.GenerateNewSubmissionTypesInProblem(stp, newSubmissionTypeInSourceProblemsToAdd, currentNewProblem));
 
+            currentNewProblem.Resources = newResourcesToAdd;
+            currentNewProblem.Tests = newTestsToAdd;
             currentNewProblem.SubmissionTypesInProblems = newSubmissionTypeInSourceProblemsToAdd;
             problemsToAdd.Add(currentNewProblem);
 
             this.problemsData.Update(currentNewProblem);
         }
 
+        private async Task GenerateNewTests(
+            int problemId,
+            ICollection<Test> newTestsToAdd,
+            Problem currentNewProblem)
+        {
+            var problemTests = await this.testsData
+                .GetAllByProblem(problemId)
+                .ToListAsync();
+
+            foreach (var test in problemTests)
+            {
+                var newTest = test.Map<Test>();
+                newTest.Id = 0;
+                newTest.ProblemId = currentNewProblem.Id;
+                newTest.Problem = currentNewProblem;
+
+                await this.testsData.Add(newTest);
+                await this.testsData.SaveChanges();
+                System.Console.WriteLine(newTest.Id);
+                newTestsToAdd.Add(newTest);
+            }
+        }
+
+        private async Task GenerateNewResources(
+            int problemId,
+            ICollection<ProblemResource> newResourcesToAdd,
+            Problem currentNewProblem)
+        {
+            var problemResources = await this.problemResourcesData
+                .GetByProblemQuery(problemId)
+                .ToListAsync();
+
+            foreach (var problemResource in problemResources)
+            {
+                var newResource = problemResource.Map<ProblemResource>();
+                newResource.ProblemId = currentNewProblem.Id;
+                newResource.Problem = currentNewProblem;
+
+                await this.problemResourcesData.Add(newResource);
+                await this.problemResourcesData.SaveChanges();
+                newResourcesToAdd.Add(newResource);
+            }
+        }
+
         private void GenerateNewSubmissionTypesInProblem(
             SubmissionTypeInProblem submissionTypeInProblem,
-            List<SubmissionTypeInProblem> submissionTypeInSourceProblems,
+            ICollection<SubmissionTypeInProblem> submissionTypeInSourceProblems,
             Problem currentNewProblem)
         {
             var newSubmissionTypeInProblem = submissionTypeInProblem.Map<SubmissionTypeInProblem>();
