@@ -13,7 +13,7 @@ interface ISubmissionResultsDetails {
 
 const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
     const [ testRunDetailsCollapsed, setTestRunDetailsCollapsed ] = React.useState<object>({});
-    const renderTestHeading = (testRun: any) => {
+    const renderTestHeading = (testRun: any, idx: number) => {
         const isWrongAnswer = testRun.resultType === 'WrongAnswer' || 'RunTimeError';
         let testRunText = `Test #${testRun.orderBy}`;
         if (testRun.isTrialTest) {
@@ -22,7 +22,7 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
         
         isWrongAnswer ? testRunText += ' (Incorrect Answer)' : testRunText += ' (Correct Answer)'
 
-        return (<h2 style={{fontSize: 30, margin: '10px 0',color: isWrongAnswer ? '#fc4c50' : 'green'}}>
+        return (<h2 id={`test-heading-${idx}`} style={{fontSize: 30, margin: '10px 0',color: isWrongAnswer ? '#fc4c50' : 'green'}}>
             {testRunText}
         </h2>);
     };
@@ -66,9 +66,9 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
     }, [testRunDetailsCollapsed]);
     
     return(<div className={styles.submissionResultDetailsWrapper}>
-        {testRuns?.map((test: any) => {
+        {testRuns?.map((test: any, idx: number) => {
             return(<div key={`test-run-details-${test.id}`} className={styles.submissionResultDetails}>
-                {renderTestHeading(test)}
+                {renderTestHeading(test, idx)}
                 {test.isTrialTest && renderTrialTestData(test)}
                 {test.showInput && test.executionComment && <span className={styles.executionComment}>{test.executionComment}</span>}
             </div>)

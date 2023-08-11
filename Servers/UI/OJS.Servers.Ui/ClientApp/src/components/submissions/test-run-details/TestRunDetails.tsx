@@ -34,9 +34,23 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
 
         return testRunText;
     };
+    
+    const handleTestClick = (e: any) => {
+        const { target } = e;
+        const h3Element = target.querySelector('h3');
+        if (!h3Element) return;
+        
+        const { innerText } = h3Element;
+        const elementNumber = innerText.split('#')[1];
+        const scrollToElement = document.querySelector(`#test-heading-${elementNumber - 1}`);
+        if (!scrollToElement) return;
+        
+        const yCoordinate = scrollToElement.getBoundingClientRect().top + window.scrollY;
+        window.scrollTo({ top: yCoordinate, behavior: 'smooth' });
+    }
 
     return (
-        <div className={styles.testRun}>
+        <div className={styles.testRun} onClick={handleTestClick}>
             <div className={styles.testRunContainer}>
                 <span className={styles.testRunData}>
                     <Heading type={HeadingType.small} className={testRunHeadingClassName}>
