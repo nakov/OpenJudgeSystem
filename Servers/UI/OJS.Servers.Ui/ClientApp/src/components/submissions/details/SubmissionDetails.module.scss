@@ -197,8 +197,21 @@
   }
 }
 
-.zeroTestDataWrapper {
+.collapsibleContainerWrapper {
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  transition: max-height 0.3s ease-in-out;
+}
+
+.showDetailsButton {
+  margin: 15px 0;
+  background-color: #42abf8;
+  padding: 5px 10px;
+  cursor: pointer;
+  color: white;
+  display: inline-block;
+}
+
+.collapsibleElement {
+  flex: 1;
 }

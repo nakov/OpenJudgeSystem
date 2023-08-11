@@ -58,9 +58,6 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
                     </span>
                     <Icon Component={BiInfoCircle} size={IconSize.Large} className={styles.iconActiveColor} />
                 </span>
-                {testRun.showInput && testRun.executionComment && (
-                    <span className={styles.executionComment}>{testRun.executionComment}</span>
-                )}
             </div>
         </div>
     );
