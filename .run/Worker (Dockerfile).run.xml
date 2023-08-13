@@ -2,8 +2,8 @@
   <configuration default="false" name="Worker (Dockerfile)" type="docker-deploy" factoryName="dockerfile" server-name="Docker">
     <deployment type="dockerfile">
       <settings>
-        <option name="imageTag" value="rider" />
-        <option name="containerName" value="worker_rider_instance" />
+        <option name="imageTag" value="rider_judge_worker" />
+        <option name="containerName" value="rider_judge_worker_instance" />
         <option name="contextFolderPath" value="." />
         <option name="envVars">
           <list>
