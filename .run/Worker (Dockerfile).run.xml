@@ -3,7 +3,7 @@
     <deployment type="dockerfile">
       <settings>
         <option name="imageTag" value="rider" />
-        <option name="containerName" value="judge_rider_instance" />
+        <option name="containerName" value="worker_rider_instance" />
         <option name="contextFolderPath" value="." />
         <option name="envVars">
           <list>
