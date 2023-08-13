@@ -30,7 +30,7 @@
         "RUNS_IN_DOCKER": "false",
         "SUBMISSIONS_PROCESSOR_IDENTIFIER_NUMBER": "1",
         "MessageQueueConfig__Host": "localhost",
-        "MessageQueueConfig__VirtualHost": "/ojs",
+        "MessageQueueConfig__VirtualHost": "ojs",
         "MessageQueueConfig__User": "ojsuser",
         "MessageQueueConfig__Password": "myS3cretPass2",
         "MessageQueueConfig__PrefetchCount": "1"
