@@ -166,12 +166,6 @@
             this.UpdateResults();
         }
 
-        private static void UpdateParticipantTotalScore(Participant participant, int totalScore)
-        {
-            participant.TotalScoreSnapshot = totalScore;
-            participant.TotalScoreSnapshotModifiedOn = DateTime.Now;
-        }
-
         private void UpdateResults()
         {
             this.CalculatePointsForSubmission();
@@ -233,10 +227,12 @@
                             Participant = p,
                             IsOfficial = p.IsOfficial,
                             UserName = p.User.UserName,
-                            TotalScore = p.Scores
-                                .Where(ps => !ps.Problem.IsDeleted)
-                                .Select(ps => ps.Points)
-                                .Sum()
+                            TotalScore = p.Scores.Any()
+                                ? p.Scores
+                                    .Where(ps => !ps.Problem.IsDeleted)
+                                    .Select(ps => ps.Points)
+                                    .Sum()
+                                : 0
                         })
                     .FirstOrDefault();
 
@@ -259,9 +255,9 @@
                         this.participantScoresData.AddBySubmissionByUsernameAndIsOfficial(
                             this.submission,
                             participantObject.UserName,
-                            participantObject.IsOfficial);
+                            participantObject.Participant,
+                            participantObject.TotalScore);
 
-                        UpdateParticipantTotalScore(participantObject.Participant, participantObject.TotalScore);
                         return;
                     }
                 }
@@ -272,10 +268,10 @@
                     this.participantScoresData.UpdateBySubmissionAndPoints(
                         existingScore,
                         this.submission.Id,
-                        this.submission.Points);
+                        this.submission.Points,
+                        participantObject.Participant,
+                        participantObject.TotalScore);
                 }
-
-                UpdateParticipantTotalScore(participantObject.Participant,participantObject.TotalScore);
             }
             catch (Exception ex)
             {

@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-
     using EntityFramework.Extensions;
     using OJS.Common;
     using OJS.Data.Models;
@@ -12,14 +11,17 @@
     public class ParticipantScoresDataService : IParticipantScoresDataService
     {
         private readonly IEfGenericRepository<ParticipantScore> participantScores;
+        private readonly IEfGenericRepository<Participant> participantRepository;
         private readonly IParticipantsDataService participantsData;
 
         public ParticipantScoresDataService(
             IEfGenericRepository<ParticipantScore> participantScores,
-            IParticipantsDataService participantsData)
+            IParticipantsDataService participantsData,
+            IEfGenericRepository<Participant> participantRepository)
         {
             this.participantScores = participantScores;
             this.participantsData = participantsData;
+            this.participantRepository = participantRepository;
         }
 
         public ParticipantScore GetByParticipantIdAndProblemId(int participantId, int problemId) =>
@@ -29,7 +31,8 @@
                     ps.ParticipantId == participantId &&
                     ps.ProblemId == problemId);
 
-        public ParticipantScore GetByParticipantIdProblemIdAndIsOfficial(int participantId, int problemId, bool isOfficial) =>
+        public ParticipantScore GetByParticipantIdProblemIdAndIsOfficial(int participantId, int problemId,
+            bool isOfficial) =>
             this.participantScores
                 .All()
                 .FirstOrDefault(ps =>
@@ -65,8 +68,15 @@
                 .GetByIdQuery(submission.ParticipantId.Value)
                 .Select(p => new
                 {
+                    Participant = p,
                     p.IsOfficial,
-                    p.User.UserName
+                    p.User.UserName,
+                    TotalScore = p.Scores.Any()
+                        ? p.Scores
+                            .Where(ps => !ps.Problem.IsDeleted)
+                            .Select(ps => ps.Points)
+                            .Sum()
+                        : 0
                 })
                 .FirstOrDefault();
 
@@ -82,11 +92,13 @@
 
             if (existingScore == null)
             {
-                this.AddBySubmissionByUsernameAndIsOfficial(submission, participant.UserName, participant.IsOfficial);
+                this.AddBySubmissionByUsernameAndIsOfficial(submission, participant.UserName, participant.Participant,
+                    participant.TotalScore);
             }
             else
             {
-                this.UpdateBySubmissionAndPoints(existingScore, submission.Id, submission.Points);
+                this.UpdateBySubmissionAndPoints(existingScore, submission.Id, submission.Points,
+                    participant.Participant, participant.TotalScore);
             }
         }
 
@@ -119,31 +131,41 @@
             this.participantScores.SaveChanges();
         }
 
-        public void AddBySubmissionByUsernameAndIsOfficial(Submission submission, string username, bool isOfficial)
+        public void AddBySubmissionByUsernameAndIsOfficial(
+            Submission submission,
+            string userName,
+            Participant participant,
+            int totalScore)
         {
-            this.participantScores.Add(new ParticipantScore
+            participant.Scores.Add(new ParticipantScore
             {
                 ParticipantId = submission.ParticipantId.Value,
                 ProblemId = submission.ProblemId.Value,
                 SubmissionId = submission.Id,
-                ParticipantName = username,
+                ParticipantName = userName,
                 Points = submission.Points,
-                IsOfficial = isOfficial
+                IsOfficial = participant.IsOfficial
             });
+            participant.TotalScoreSnapshot = totalScore + submission.Points;
 
-            this.participantScores.SaveChanges();
+            this.participantRepository.Update(participant);
+            this.participantRepository.SaveChanges();
         }
 
         public void UpdateBySubmissionAndPoints(
             ParticipantScore participantScore,
             int? submissionId,
-            int submissionPoints)
+            int submissionPoints,
+            Participant participant,
+            int totalScore)
         {
+            participant.TotalScoreSnapshot = totalScore + submissionPoints;
+
             participantScore.SubmissionId = submissionId;
             participantScore.Points = submissionPoints;
 
-            this.participantScores.Update(participantScore);
-            this.participantScores.SaveChanges();
+            this.participantRepository.Update(participant);
+            this.participantRepository.SaveChanges();
         }
 
         public void RemoveSubmissionIdsBySubmissionIds(IEnumerable<int> submissionIds) =>
