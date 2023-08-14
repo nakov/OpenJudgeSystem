@@ -115,7 +115,7 @@ namespace OJS.Services.Administration.Business.Implementations
 
         private async Task CopyProblemGroupToContest(ProblemGroup problemGroup, int contestId)
         {
-            var currentNewProblemGroup = new ProblemGroup()
+            var currentNewProblemGroup = new ProblemGroup
             {
                 ContestId = contestId,
                 OrderBy = problemGroup.OrderBy,
@@ -152,7 +152,7 @@ namespace OJS.Services.Administration.Business.Implementations
             ProblemGroup currentNewProblemGroup,
             ICollection<Problem> problemsToAdd)
         {
-            var currentNewProblem = new Problem()
+            var currentNewProblem = new Problem
             {
                 ProblemGroupId = currentNewProblemGroup.Id,
                 ProblemGroup = currentNewProblemGroup,
