@@ -1,9 +1,10 @@
-﻿namespace OJS.Data
+﻿using System.Threading.Tasks;
+
+namespace OJS.Data
 {
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
-
     using OJS.Data.Models;
 
     public interface IOjsDbContext : IDisposable
@@ -57,6 +58,8 @@
         DbContext DbContext { get; }
 
         int SaveChanges();
+
+        Task<int> SaveChangesAsync();
 
         void ClearDatabase();
 
