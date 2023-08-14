@@ -372,62 +372,34 @@ namespace OJS.Web.Controllers
             }
         }
 
-        public async Task<ActionResult> UpdateParticipantsTotalScore()
+        public ActionResult UpdateParticipantsTotalScore()
         {
-            int batchContestSize = 25;
+            var query = @"DECLARE @BatchSize INT = 5000;
+           DECLARE @MaxId INT = (SELECT MAX(Id) FROM Participants);
+           DECLARE @Offset INT = 0;
 
-            var currentContestId = 0;
-            var currentParticipantId = 0;
-            var count = 0;
-            var allContests = await this.db.Contests.ToListAsync();
+           WHILE @Offset <= @MaxId
+           BEGIN
+               WITH OrderedParticipants AS (
+               SELECT TOP (@BatchSize) Id
+           FROM Participants
+           WHERE Id > @Offset
+           ORDER BY Id
+               )
+           UPDATE p
+           SET TotalScoreSnapshot = ISNULL((
+               SELECT SUM(ps.Points)
+           FROM ParticipantScores ps
+               JOIN Problems pr ON ps.ProblemId = pr.Id AND pr.IsDeleted = 0
+           WHERE ps.ParticipantId = p.Id
+               ), 0)
+           FROM OrderedParticipants op
+               JOIN Participants p ON op.Id = p.Id;
 
-            var stopWatch = new Stopwatch();
-
-            stopWatch.Start();
-            var tasks = new List<Task>();
-
-            for (int i = 0; i < allContests.Count; i += batchContestSize)
-            {
-                var currentBatch = allContests.Skip(i).Take(batchContestSize).ToList();
-                tasks.Add(Task.Run(async () =>
-                {
-                    foreach (var contest in currentBatch)
-                    {
-                        currentContestId = contest.Id;
-                        var participants = await contest.Participants
-                            .ToListAsync();
-                        foreach (var participant in participants)
-                        {
-                            currentParticipantId = participant.Id;
-
-                            try
-                            {
-                                count++;
-                                var participantScores = participant.Scores.ToList();
-                                if (participantScores.Count > 0 &&
-                                    participantScores.Any(ps => ps.Problem.IsDeleted == true))
-                                {
-                                    participant.TotalScoreSnapshot = participant.Scores
-                                        .Where(ps => !ps.Problem.IsDeleted).Sum(x => x.Points);
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                // Console.WriteLine(e.Message);
-                                var part = this.db.Participants.FirstOrDefault(x => x.Id == currentParticipantId);
-                                // Console.WriteLine($"{currentContestId} {currentParticipantId}");
-                            }
-                        }
-
-                        // Console.WriteLine($"{count}");
-                        Console.WriteLine($"Contest:{contest.Id} elapsed for {stopWatch.ElapsedMilliseconds}");
-                    }
-                }));
-            }
-
-            await Task.WhenAll(tasks);
-            await this.db.SaveChangesAsync();
-
+           SET @Offset = @Offset + @BatchSize;
+           END;";
+            
+            this.db.DbExecuteSqlCommand(query);
             return this.Content("UPDATED");
         }
 

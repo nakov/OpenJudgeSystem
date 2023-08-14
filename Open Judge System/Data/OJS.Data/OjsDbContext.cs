@@ -153,6 +153,11 @@ namespace OJS.Data
             this.SaveChanges();
         }
 
+        public void DbExecuteSqlCommand(string query)
+        {
+            this.Database.ExecuteSqlCommand(query);
+        }
+
         public new IDbSet<T> Set<T>()
             where T : class => base.Set<T>();
 

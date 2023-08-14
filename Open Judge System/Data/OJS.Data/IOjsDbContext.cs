@@ -63,6 +63,8 @@ namespace OJS.Data
 
         void ClearDatabase();
 
+        void DbExecuteSqlCommand(string query);
+
         DbEntityEntry<TEntity> Entry<TEntity>(TEntity entity)
             where TEntity : class;
 
