@@ -10,7 +10,6 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Data.Models.Tests;
     using OJS.Services.Administration.Data;
     using OJS.Services.Common.Models;
-    using SoftUni.AutoMapper.Infrastructure.Extensions;
     using Resource = OJS.Common.Resources.ProblemGroupsBusiness;
     using SharedResource = OJS.Common.Resources.ContestsGeneral;
 
@@ -116,8 +115,12 @@ namespace OJS.Services.Administration.Business.Implementations
 
         private async Task CopyProblemGroupToContest(ProblemGroup problemGroup, int contestId)
         {
-            var currentNewProblemGroup = problemGroup.Map<ProblemGroup>();
-            currentNewProblemGroup.ContestId = contestId;
+            var currentNewProblemGroup = new ProblemGroup()
+            {
+                ContestId = contestId,
+                OrderBy = problemGroup.OrderBy,
+                Type = problemGroup.Type,
+            };
 
             await this.problemGroupsData.Add(currentNewProblemGroup);
             await this.problemGroupsData.SaveChanges();
@@ -149,10 +152,24 @@ namespace OJS.Services.Administration.Business.Implementations
             ProblemGroup currentNewProblemGroup,
             ICollection<Problem> problemsToAdd)
         {
-            var currentNewProblem = problem.Map<Problem>();
-
-            currentNewProblem.ProblemGroupId = currentNewProblemGroup.Id;
-            currentNewProblem.ProblemGroup = currentNewProblemGroup;
+            var currentNewProblem = new Problem()
+            {
+                ProblemGroupId = currentNewProblemGroup.Id,
+                ProblemGroup = currentNewProblemGroup,
+                Name = problem.Name,
+                MaximumPoints = problem.MaximumPoints,
+                TimeLimit = problem.MaximumPoints,
+                MemoryLimit = problem.MemoryLimit,
+                SourceCodeSizeLimit = problem.SourceCodeSizeLimit,
+                CheckerId = problem.CheckerId,
+                Checker = problem.Checker,
+                OrderBy = problem.OrderBy,
+                SolutionSkeleton = problem.SolutionSkeleton,
+                AdditionalFiles = problem.AdditionalFiles,
+                ShowResults = problem.ShowResults,
+                ShowDetailedFeedback = problem.ShowDetailedFeedback,
+                TagsInProblems = problem.TagsInProblems,
+            };
 
             await this.problemsData.Add(currentNewProblem);
             await this.problemsData.SaveChanges();
@@ -167,6 +184,7 @@ namespace OJS.Services.Administration.Business.Implementations
 
             this.submissionTypesInProblemsData
                 .GetAllByProblem(problem.Id)
+                .AsNoTracking()
                 .ForEach(stp =>
                     this.GenerateNewSubmissionTypesInProblem(stp, newSubmissionTypeInSourceProblemsToAdd, currentNewProblem));
 
@@ -185,20 +203,21 @@ namespace OJS.Services.Administration.Business.Implementations
         {
             var problemTests = await this.testsData
                 .GetAllByProblem(problemId)
+                .AsNoTracking()
                 .ToListAsync();
 
             foreach (var test in problemTests)
             {
-                var newTest = test.Map<Test>();
+                var newTest = test;
                 newTest.Id = 0;
                 newTest.ProblemId = currentNewProblem.Id;
                 newTest.Problem = currentNewProblem;
 
                 await this.testsData.Add(newTest);
-                await this.testsData.SaveChanges();
-                System.Console.WriteLine(newTest.Id);
                 newTestsToAdd.Add(newTest);
             }
+
+            await this.testsData.SaveChanges();
         }
 
         private async Task GenerateNewResources(
@@ -208,18 +227,22 @@ namespace OJS.Services.Administration.Business.Implementations
         {
             var problemResources = await this.problemResourcesData
                 .GetByProblemQuery(problemId)
+                .AsNoTracking()
                 .ToListAsync();
 
             foreach (var problemResource in problemResources)
             {
-                var newResource = problemResource.Map<ProblemResource>();
+                var newResource = problemResource;
+                newResource.Id = 0;
                 newResource.ProblemId = currentNewProblem.Id;
                 newResource.Problem = currentNewProblem;
+                newResource.ModifiedOn = null;
 
                 await this.problemResourcesData.Add(newResource);
-                await this.problemResourcesData.SaveChanges();
                 newResourcesToAdd.Add(newResource);
             }
+
+            await this.problemResourcesData.SaveChanges();
         }
 
         private void GenerateNewSubmissionTypesInProblem(
@@ -227,7 +250,7 @@ namespace OJS.Services.Administration.Business.Implementations
             ICollection<SubmissionTypeInProblem> submissionTypeInSourceProblems,
             Problem currentNewProblem)
         {
-            var newSubmissionTypeInProblem = submissionTypeInProblem.Map<SubmissionTypeInProblem>();
+            var newSubmissionTypeInProblem = submissionTypeInProblem;
             newSubmissionTypeInProblem.ProblemId = currentNewProblem.Id;
 
             submissionTypeInSourceProblems.Add(newSubmissionTypeInProblem);

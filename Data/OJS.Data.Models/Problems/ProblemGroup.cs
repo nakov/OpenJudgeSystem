@@ -1,15 +1,11 @@
 namespace OJS.Data.Models.Problems
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using AutoMapper;
     using OJS.Common.Enumerations;
     using OJS.Data.Models.Contests;
-    using SoftUni.AutoMapper.Infrastructure.Models;
     using SoftUni.Data.Infrastructure.Models;
 
-    public class ProblemGroup : DeletableAuditInfoEntity<int>, IOrderableEntity, IMapExplicitly
+    public class ProblemGroup : DeletableAuditInfoEntity<int>, IOrderableEntity
     {
         public int ContestId { get; set; }
 
@@ -22,26 +18,5 @@ namespace OJS.Data.Models.Problems
         public virtual ICollection<Problem> Problems { get; set; } = new HashSet<Problem>();
 
         public override string ToString() => $"{this.OrderBy}";
-
-        public void RegisterMappings(IProfileExpression configuration)
-            => configuration.CreateMap<ProblemGroup, ProblemGroup>()
-                .ForMember(
-                    d => d.Id,
-                    opt => opt.MapFrom(src => 0))
-                .ForMember(
-                    d => d.CreatedOn,
-                    opt => opt.MapFrom(src => (DateTime?)null))
-                .ForMember(
-                    d => d.ModifiedOn,
-                    opt => opt.MapFrom(src => (DateTime?)null))
-                .ForMember(
-                    d => d.ContestId,
-                    opt => opt.MapFrom(src => 0))
-                .ForMember(
-                    d => d.Contest,
-                    opt => opt.Ignore())
-                .ForMember(
-                    d => d.Problems,
-                    opt => opt.MapFrom(src => Enumerable.Empty<Problem>()));
     }
 }

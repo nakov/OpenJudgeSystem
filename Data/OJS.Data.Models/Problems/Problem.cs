@@ -1,19 +1,16 @@
 namespace OJS.Data.Models.Problems
 {
-    using System;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
-    using AutoMapper;
     using OJS.Data.Models.Checkers;
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Submissions;
     using OJS.Data.Models.Tests;
-    using SoftUni.AutoMapper.Infrastructure.Models;
     using SoftUni.Data.Infrastructure.Models;
     using static OJS.Data.Validation.ConstraintConstants.Problem;
 
-    public class Problem : DeletableAuditInfoEntity<int>, IOrderableEntity, IMapExplicitly
+    public class Problem : DeletableAuditInfoEntity<int>, IOrderableEntity
     {
         public int ProblemGroupId { get; set; }
 
@@ -80,28 +77,5 @@ namespace OJS.Data.Models.Problems
             new HashSet<ProblemForParticipant>();
 
         public override string ToString() => $"#{this.Id} {this.Name}";
-        public void RegisterMappings(IProfileExpression configuration)
-            => configuration.CreateMap<Problem, Problem>()
-                .ForMember(
-                    d => d.Id,
-                    opt => opt.MapFrom(src => 0))
-                .ForMember(
-                    d => d.CreatedOn,
-                    opt => opt.MapFrom(src => (DateTime?)null))
-                .ForMember(
-                    d => d.ModifiedOn,
-                    opt => opt.MapFrom(src => (DateTime?)null))
-                .ForMember(
-                    d => d.Tests,
-                    opt => opt.Ignore())
-                .ForMember(
-                    d => d.Resources,
-                    opt => opt.Ignore())
-                .ForMember(
-                    d => d.SubmissionTypesInProblems,
-                    opt => opt.Ignore())
-                .ForMember(
-                    d => d.ProblemsForParticipants,
-                    opt => opt.Ignore());
     }
 }
