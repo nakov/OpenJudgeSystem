@@ -275,6 +275,7 @@ const SubmissionBox = () => {
                         />
                         <p className={styles.fileSubmissionDetailsParagraph}>
                             Allowed file extensions:
+                            {' '}
                             {allowedFileExtensions.join(', ')}
                         </p>
                     </>

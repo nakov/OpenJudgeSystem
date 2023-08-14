@@ -10,6 +10,8 @@ public interface IContestForActivityServiceModel : IMapFrom<Contest>
 {
     int Id { get; set; }
 
+    string? Name { get; set; }
+
     ContestType Type { get; set; }
 
     bool IsVisible { get; set; }

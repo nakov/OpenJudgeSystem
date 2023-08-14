@@ -87,22 +87,11 @@ const SubmissionsGrid = () => {
 
             if (selectedActive) {
                 initiatePublicSubmissionsQuery();
-            }
-        },
-        [ initiatePublicSubmissionsQuery, selectedActive, totalSubmissionsCount ],
-    );
-
-    useEffect(
-        () => {
-            if (totalSubmissionsCount === 0) {
-                return;
-            }
-
-            if (!selectedActive) {
+            } else {
                 initiateUnprocessedSubmissionsQuery();
             }
         },
-        [ initiateUnprocessedSubmissionsQuery, selectedActive, totalSubmissionsCount ],
+        [ initiatePublicSubmissionsQuery, initiateUnprocessedSubmissionsQuery, selectedActive, totalSubmissionsCount ],
     );
 
     const { pagesCount } = pagesInfo;

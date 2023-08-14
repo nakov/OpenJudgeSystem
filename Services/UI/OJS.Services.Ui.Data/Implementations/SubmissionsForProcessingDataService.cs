@@ -11,8 +11,6 @@
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Data.Implementations;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
-    using SoftUni.Common.Extensions;
-    using SoftUni.Common.Models;
 
     public class SubmissionsForProcessingDataService : DataService<SubmissionForProcessing>,
         ISubmissionsForProcessingDataService

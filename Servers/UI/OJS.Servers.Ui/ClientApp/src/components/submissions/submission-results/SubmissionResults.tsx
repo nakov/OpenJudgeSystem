@@ -5,6 +5,8 @@ import List, { ListType, Orientation } from '../../guidelines/lists/List';
 import CompilerComment from '../compiler-comment/CompilerComment';
 import TestRunDetails from '../test-run-details/TestRunDetails';
 
+import styles from './SubmissionResults.module.scss';
+
 interface ISubmissionResultsProps {
     testRuns: ITestRunDetailsType[];
     isCompiledSuccessfully: boolean;
@@ -27,7 +29,7 @@ const SubmissionResults = ({ testRuns, isCompiledSuccessfully, compilerComment }
             <CompilerComment compilerComment={compilerComment} isCompiledSuccessfully={isCompiledSuccessfully} />
             <List
               values={testRuns.sort(compareByTestTypeAndOrderByAsc)}
-              className="submissionTestRunsList"
+              className={styles.submissionTestRunsList}
               itemClassName="testRunDetails"
               orientation={Orientation.vertical}
               itemFunc={renderTestRunsDetails}
