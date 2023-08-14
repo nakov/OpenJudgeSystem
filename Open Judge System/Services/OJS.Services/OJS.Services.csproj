@@ -173,6 +173,9 @@
     <Compile Include="Business\Submissions\Models\SubmissionCountByMonthStatisticsModel.cs" />
     <Compile Include="Business\Submissions\SubmissionsBusinessService.cs" />
     <Compile Include="Cache\CacheItemsProviderService.cs" />
+    <Compile Include="Cache\ICacheService.cs" />
+    <Compile Include="Cache\IMemoryCacheService.cs" />
+    <Compile Include="Cache\Implementations\MemoryCacheService.cs" />
     <Compile Include="Cache\IRedisCacheService.cs" />
     <Compile Include="Cache\Models\CategoryMenuItemViewModel.cs" />
     <Compile Include="Cache\Models\ContestCategoryListViewModel.cs" />

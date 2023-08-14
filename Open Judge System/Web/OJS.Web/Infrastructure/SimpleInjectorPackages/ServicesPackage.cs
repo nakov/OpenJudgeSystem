@@ -1,4 +1,6 @@
-﻿namespace OJS.Web.Infrastructure.SimpleInjectorPackages
+﻿using OJS.Services.Cache.Implementations;
+
+namespace OJS.Web.Infrastructure.SimpleInjectorPackages
 {
     using System.Linq;
     using MissingFeatures;
@@ -51,21 +53,32 @@
                 Lifestyle.Scoped);
 
             container.Register<IEmailSenderService>(
-            () => new EmailSenderService(
-                Settings.EmailServerHost,
-                Settings.EmailServerPort,
-                Settings.EmailServerUsername,
-                Settings.EmailServerPassword,
-                Settings.EmailSenderEmail,
-                Settings.EmailSenderDisplayName),
-            Lifestyle.Scoped);
+                () => new EmailSenderService(
+                    Settings.EmailServerHost,
+                    Settings.EmailServerPort,
+                    Settings.EmailServerUsername,
+                    Settings.EmailServerPassword,
+                    Settings.EmailSenderEmail,
+                    Settings.EmailSenderDisplayName),
+                Lifestyle.Scoped);
 
-            container.Register<IRedisCacheService>(
+#if DEBUG
+            container.Register<ICacheService>(
+                () => new MemoryCacheService(),
+                Lifestyle.Scoped);
+#else
+             container.Register<IMemoryCacheService>(
+                () => new MemoryCacheService(),
+                Lifestyle.Scoped);
+            
+            container.Register<ICacheService>(
                 () => new RedisCacheService(
                     container.GetInstance<IDatabase>(),
                     container.GetInstance<IEmailSenderService>(),
-                    Settings.DevEmail),
+                    Settings.DevEmail,
+                    container.GetInstance<IMemoryCacheService>()),
                 Lifestyle.Scoped);
+#endif
         }
 
         private void RegisterNonGenericTypes(Container container)
