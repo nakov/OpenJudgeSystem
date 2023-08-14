@@ -19,7 +19,7 @@
 
         public const int DefaultPastContestsToTake = 15;
 
-        public static readonly string ContestResultsFormat = "ContestId:{0}official:{1}full:{2}export{3}";
+        public static readonly string ContestResultsFormat = "ContestResults:{0}official:{1}full:{2}export:{3}";
 
         public static readonly string ContestView = "Contest:{0}";
 
