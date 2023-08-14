@@ -470,7 +470,16 @@
 
             return this.PartialView("_StatsChartPartial", contestId);
         }
-
+        
+        private static void SetContestResults(ContestResultsViewModel contestResults, IOrderedEnumerable<ParticipantResultViewModel> participantResults)
+        {
+            contestResults.Results = participantResults
+                .ThenBy(parResult => parResult.ProblemResults
+                    .OrderByDescending(pr => pr.BestSubmission.Id)
+                    .Select(pr => pr.BestSubmission.Id)
+                    .FirstOrDefault());
+        }
+        
         private ContestResultsViewModel GetContestResults(
             Contest contest,
             bool official,
@@ -621,16 +630,6 @@
                 outputStream.ToArray(), // The binary data of the XLS file
                 GlobalConstants.ExcelMimeType, // MIME type of Excel files
                 fileName);
-        }
-
-        private static void SetContestResults(ContestResultsViewModel contestResults, IOrderedEnumerable<ParticipantResultViewModel> participantResults)
-        {
-            contestResults.Results = participantResults
-                            .ThenBy(parResult => parResult.ProblemResults
-                                .OrderByDescending(pr => pr.BestSubmission.Id)
-                                .Select(pr => pr.BestSubmission.Id)
-                                .FirstOrDefault())
-                            .ToList();
         }
     }
 }
