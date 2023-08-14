@@ -140,15 +140,20 @@ namespace OJS.Services.Administration.Data.Implementations
         private async Task<int> GetMaxPointsByIdAndProblemGroupsFilter(int id, Expression<Func<ProblemGroup, bool>> filter)
         {
             var problemGroups = await this.GetByIdQuery(id)
+                .Include(pg => pg.ProblemGroups)
+                .ThenInclude(p => p.Problems)
                 .SelectMany(c => c.ProblemGroups)
                 .Where(pg => pg.Problems.Any(p => !p.IsDeleted))
                 .Where(filter)
                 .ToListAsync();
 
-            return problemGroups
-                .Sum(pg => pg.Problems.First().MaximumPoints);
+            return problemGroups.Sum(pg => pg.Problems
+                                                        .Select(p => p.MaximumPoints)
+                                                        .First());
         }
 
+        // return problemGroups
+        //     .Sum(pg => pg.Problems.First().MaximumPoints);}
         private IQueryable<Contest> GetAllVisibleQuery()
             => this.DbSet
                 .Where(c => c.IsVisible);
