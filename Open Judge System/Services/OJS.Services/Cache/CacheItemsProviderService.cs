@@ -14,7 +14,7 @@
     {
         private readonly IContestCategoriesDataService contestCategoriesData;
         private readonly IContestsDataService contestsData;
-        private readonly IRedisCacheService redisCache;
+        private readonly ICacheService redisCache;
         private readonly IParticipantsDataService participantsData;
 
         private static readonly TimeSpan TimeToCacheParticipantsCount = TimeSpan.FromMinutes(5);
@@ -22,7 +22,7 @@
         public CacheItemsProviderService(
             IContestCategoriesDataService contestCategoriesData,
             IContestsDataService contestsData,
-            IRedisCacheService redisCache,
+            ICacheService redisCache,
             IParticipantsDataService participantsData)
         {
             this.contestCategoriesData = contestCategoriesData;

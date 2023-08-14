@@ -16,12 +16,16 @@ namespace OJS.Services
         private readonly double memoryCacheExpirationInMinutes = 5;
         private readonly IEmailSenderService emailSenderService;
         private readonly string devEmail;
+        private readonly IMemoryCacheService memoryCacheService;
 
-        public RedisCacheService(IDatabase redisCache, IEmailSenderService emailSenderService, string devEmail)
+        public RedisCacheService(IDatabase redisCache,
+            IEmailSenderService emailSenderService,
+            string devEmail, IMemoryCacheService memoryCacheService)
         {
             this.redisCache = redisCache;
             this.emailSenderService = emailSenderService;
             this.devEmail = devEmail;
+            this.memoryCacheService = memoryCacheService;
         }
 
         public T Get<T>(string cacheId, Func<T> getItemCallback) =>
@@ -92,7 +96,7 @@ namespace OJS.Services
                     return await this.GetAsync(cacheId, getItemCallback);
                 },
                 getItemCallback);
-        
+
         public void Set<T>(string cacheId, T value, TimeSpan expiration)
         {
             try
@@ -177,6 +181,7 @@ namespace OJS.Services
         }
 
         #region private
+
         private async Task VerifyValueInCacheAsync<T>(
             string cacheId,
             Func<Task<T>> getItemCallback,
@@ -208,7 +213,7 @@ namespace OJS.Services
             {
                 return;
             }
-            
+
             var result = getItemCallback();
 
             if (expiration != null)
@@ -223,18 +228,16 @@ namespace OJS.Services
 
         private bool ShouldSendEmail(string key, string value)
         {
-            if (HttpRuntime.Cache.Get(key) == null)
+            if (this.memoryCacheService.ContainsKey(key))
             {
-                HttpContext.Current.Cache.Add(
-                   key,
-                   value,
-                   null,
-                   DateTime.Now.AddMinutes(this.memoryCacheExpirationInMinutes),
-                   TimeSpan.Zero,
-                   CacheItemPriority.Default,
-                   null);
                 return false;
             }
+            else
+            {
+                this.memoryCacheService.Set(key, value);
+            }
+
+            this.memoryCacheService.Set(key, value, TimeSpan.FromMinutes(memoryCacheExpirationInMinutes));
             return true;
         }
 
@@ -253,7 +256,7 @@ namespace OJS.Services
                 await this.emailSenderService.SendEmailAsync(this.devEmail, exTypeAsString, exMessage);
             }
         }
-        
+
         private T GetItemResult<T>(Func<T> resultAction, Func<T> fallbackResultAction)
         {
             if (!this.RedisIsConnected())
@@ -261,7 +264,7 @@ namespace OJS.Services
                 SendEmail("RedisConnection", "Redis is not connected");
                 return fallbackResultAction();
             }
-            
+
             try
             {
                 return resultAction();
@@ -280,7 +283,7 @@ namespace OJS.Services
                 await SendEmailAsync("RedisConnection", "Redis is not connected");
                 return await fallbackResultAction();
             }
-            
+
             try
             {
                 return await resultAction();
@@ -291,7 +294,7 @@ namespace OJS.Services
                 return await fallbackResultAction();
             }
         }
-        
+
         private bool RedisIsConnected() =>
             !redisCache.Multiplexer.IsConnecting && redisCache.Multiplexer.IsConnected;
 
@@ -299,6 +302,6 @@ namespace OJS.Services
         {
             return $"{CacheConstants.KeysPrefix}{key}";
         }
-        #endregion
+
     }
 }

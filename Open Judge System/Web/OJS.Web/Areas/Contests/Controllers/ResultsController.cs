@@ -43,20 +43,20 @@
         private readonly IContestsDataService contestsData;
         private readonly IParticipantsDataService participantsData;
         private readonly IParticipantScoresDataService participantScoresData;
-        private readonly IRedisCacheService redisCacheService;
+        private readonly ICacheService cacheService;
 
         public ResultsController(
             IOjsData data,
             IContestsDataService contestsData,
             IParticipantsDataService participantsData,
             IParticipantScoresDataService participantScoresData,
-            IRedisCacheService redisCacheService)
+            ICacheService cacheService)
             : base(data)
         {
             this.contestsData = contestsData;
             this.participantsData = participantsData;
             this.participantScoresData = participantScoresData;
-            this.redisCacheService = redisCacheService;
+            this.cacheService = cacheService;
         }
 
         /// <summary>
@@ -82,7 +82,7 @@
                 throw new HttpException((int)HttpStatusCode.Forbidden, Resource.Problem_results_not_available);
             }
 
-            var results = this.redisCacheService.GetOrSet<List<ProblemResultViewModel>>(
+            var results = this.cacheService.GetOrSet<List<ProblemResultViewModel>>(
               string.Format(CacheConstants.ResultsByProblem, problem.Id, official),
                 () =>
             {
@@ -478,7 +478,7 @@
             bool isFullResults,
             bool isExportResults = false)
         {
-            return this.redisCacheService.GetOrSet<ContestResultsViewModel>(
+            return this.cacheService.GetOrSet<ContestResultsViewModel>(
                 string.Format(
                     CacheConstants.ContestResultsFormat,
                     contest.Id,

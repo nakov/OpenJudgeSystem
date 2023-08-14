@@ -13,11 +13,11 @@
     // </summary
     public class ClearContestFromProblemFilter : IActionFilter<ClearContestFromProblemAttribute>
     {
-        private readonly IRedisCacheService redisCacheService;
+        private readonly ICacheService cacheService;
 
-        public ClearContestFromProblemFilter(IRedisCacheService redisCacheService)
+        public ClearContestFromProblemFilter(ICacheService cacheService)
         {
-            this.redisCacheService = redisCacheService;
+            this.cacheService = cacheService;
         }
 
         public void OnActionExecuted(ClearContestFromProblemAttribute attribute, ActionExecutedContext filterContext)
@@ -34,7 +34,7 @@
                 throw new ArgumentNullException("The id is not presenting in the model");
             }
 
-            this.redisCacheService.Remove(string.Format(CacheConstants.ContestView, contestId));
+            this.cacheService.Remove(string.Format(CacheConstants.ContestView, contestId));
         }
     }
 }

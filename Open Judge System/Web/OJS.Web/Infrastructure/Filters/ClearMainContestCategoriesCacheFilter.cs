@@ -9,11 +9,11 @@
 
     public class ClearMainContestCategoriesCacheFilter : IActionFilter<ClearMainContestCategoriesCacheAttribute>
     {
-        private readonly IRedisCacheService redisCacheService;
+        private readonly ICacheService cacheService;
 
-        public ClearMainContestCategoriesCacheFilter(IRedisCacheService redisCacheService)
+        public ClearMainContestCategoriesCacheFilter(ICacheService cacheService)
         {
-            this.redisCacheService = redisCacheService;
+            this.cacheService = cacheService;
         }
 
         public void OnActionExecuting(
@@ -26,8 +26,8 @@
             ClearMainContestCategoriesCacheAttribute attribute,
             ActionExecutedContext filterContext)
         {
-            this.redisCacheService.Remove(CacheConstants.MainContestCategoriesDropDown);
-            this.redisCacheService.Remove(CacheConstants.ContestCategoriesTree);
+            this.cacheService.Remove(CacheConstants.MainContestCategoriesDropDown);
+            this.cacheService.Remove(CacheConstants.ContestCategoriesTree);
         }
     }
 }
