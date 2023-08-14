@@ -49,7 +49,7 @@
   .link {
     @extend %r-heading-primary;
 
-    color: #42abf8;
+    color: colors.$light-blue-color;
     display: inline-block;
     margin: 0 5px;
   }
