@@ -13,7 +13,9 @@ using OJS.Servers.Infrastructure.Extensions;
 using OJS.Servers.Ui.Models.Submissions.Profile;
 using OJS.Servers.Ui.Models.Submissions.Details;
 using OJS.Servers.Ui.Models.Submissions.Results;
+using Microsoft.AspNetCore.Authorization;
 using OJS.Servers.Infrastructure.Controllers;
+using static OJS.Common.GlobalConstants.Roles;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 public class SubmissionsController : BaseApiController
@@ -150,6 +152,7 @@ public class SubmissionsController : BaseApiController
     /// <param name="page">The current page number.</param>
     /// <returns>A page with unprocessed submissions.</returns>
     [HttpGet]
+    [Authorize(Roles = Administrator)]
     [ProducesResponseType(typeof(PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetProcessingSubmissions([FromQuery]int page)
         => await this.submissionsBusiness
@@ -171,6 +174,7 @@ public class SubmissionsController : BaseApiController
     /// Gets the count of all unprocessed submissions.
     /// </summary>
     [HttpGet]
+    [Authorize(Roles = Administrator)]
     [ProducesResponseType(typeof(int), Status200OK)]
     public async Task<IActionResult> UnprocessedTotalCount()
         => await this.submissionsForProcessingBusiness
