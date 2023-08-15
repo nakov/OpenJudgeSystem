@@ -18,8 +18,13 @@ public interface IEmailService : IService
         string recipient,
         string subject,
         string body,
-        IEnumerable<string>? bccRecipients = null,
-        AttachmentCollection? attachments = null);
+        IEnumerable<string> bccRecipients);
+    void SendEmail(
+        string recipient,
+        string subject,
+        string body,
+        IEnumerable<string> bccRecipients,
+        AttachmentCollection attachments);
 
     Task SendEmailAsync(
         string recipient,
@@ -30,5 +35,5 @@ public interface IEmailService : IService
         string recipient,
         string subject,
         string body,
-        IEnumerable<string>? bccRecipients = null);
+        IEnumerable<string> bccRecipients);
 }

@@ -39,12 +39,19 @@ public class EmailService : IEmailService, IDisposable
         this.mailClient.Send(message);
     }
 
+    public void SendEmail(string recipient, string subject, string body, IEnumerable<string> bccRecipients)
+    {
+        var message = this.PrepareMessage(recipient, subject, body, bccRecipients, null);
+
+        this.mailClient.Send(message);
+    }
+
     public void SendEmail(
         string recipient,
         string subject,
         string body,
-        IEnumerable<string>? bccRecipients = null,
-        AttachmentCollection? attachments = null)
+        IEnumerable<string>? bccRecipients,
+        AttachmentCollection? attachments)
     {
         var message = this.PrepareMessage(recipient, subject, body, bccRecipients, attachments);
 
@@ -64,7 +71,7 @@ public class EmailService : IEmailService, IDisposable
         string recipient,
         string subject,
         string body,
-        IEnumerable<string>? bccRecipients = null)
+        IEnumerable<string> bccRecipients)
     {
         var message = this.PrepareMessage(recipient, subject, body, bccRecipients, null);
         await this.mailClient.SendMailAsync(message);
