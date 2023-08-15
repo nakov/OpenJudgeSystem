@@ -103,8 +103,8 @@ namespace OJS.Services.Administration.Data.Implementations
         public Task<int> GetMaxPointsForExportById(int id)
             => this.GetMaxPointsByIdAndProblemGroupsFilter(id, pg => pg.Type != ProblemGroupType.ExcludedFromHomework);
 
-        public Task<string?> GetNameById(int id)
-            => this.GetByIdQuery(id)
+        public async Task<string?> GetNameById(int id)
+            => await this.GetByIdQuery(id)
                 .Select(c => c.Name)
                 .FirstOrDefaultAsync();
 
