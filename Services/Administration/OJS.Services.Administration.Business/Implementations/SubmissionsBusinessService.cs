@@ -173,6 +173,7 @@ namespace OJS.Services.Administration.Business.Implementations
                         submissionProblemId);
                 }
 
+                await this.submissionsForProcessingDataService.Add(submission.Id);
                 await this.submissionsData.SaveChanges();
 
                 return ServiceResult.Success;

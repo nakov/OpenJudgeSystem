@@ -429,7 +429,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         scope.Dispose();
 
         await this.submissionsCommonBusinessService
-            .PublishSubmissionForProcessing(BuildSubmissionForProcessing(newSubmission, problem, submissionType));
+            .PublishSubmissionForProcessing(this.BuildSubmissionForProcessing(newSubmission, problem, submissionType));
     }
 
     public async Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult)
@@ -462,6 +462,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             await this.submissionsForProcessingData.MarkProcessed(submission.Id);
             this.submissionsData.Update(submission);
             await this.submissionsData.SaveChanges();
+
             await this.UpdateResults(submission);
         }
         else
@@ -471,6 +472,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 ?? "Invalid execution result received. Please contact an administrator.";
             submission.ProcessingComment = errorMessage;
             submission.CompilerComment = errorMessage;
+
             this.submissionsData.Update(submission);
             await this.submissionsData.SaveChanges();
         }
@@ -537,15 +539,18 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
     }
 
-    private static SubmissionServiceModel BuildSubmissionForProcessing(Submission submission, Problem problem, SubmissionType submissionType)
+    private SubmissionServiceModel BuildSubmissionForProcessing(Submission submission, Problem problem, SubmissionType submissionType)
     {
-        var submissionCopy = submission.Map<Submission>();
-        submissionCopy.Problem = problem;
-        submissionCopy.SubmissionType = submissionType;
+        // We detach the existing entity, in order to avoid tracking exception on Update.
+        this.submissionsData.Detach(submission);
 
-        var serviceModel = submissionCopy.Map<SubmissionServiceModel>();
+        // Needed to map execution details
+        submission.Problem = problem;
+        submission.SubmissionType = submissionType;
 
-        serviceModel.TestsExecutionDetails!.TaskSkeleton = submission.Problem!.SubmissionTypesInProblems
+        var serviceModel = submission.Map<SubmissionServiceModel>();
+
+        serviceModel.TestsExecutionDetails!.TaskSkeleton = problem.SubmissionTypesInProblems
             .Where(x => x.SubmissionTypeId == submission.SubmissionTypeId)
             .Select(x => x.SolutionSkeleton)
             .FirstOrDefault();
