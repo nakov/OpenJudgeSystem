@@ -645,6 +645,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     private async Task PrepareViewModelForCopyAll(CopyAllToAnotherContestViewModel model, int fromContestId)
     {
         model.FromContestId = fromContestId;
+        model.Name = await this.contestsData.GetNameById(fromContestId);
         model.ContestsToCopyTo = await this.GetContestsToCopyToSelectList();
     }
 
