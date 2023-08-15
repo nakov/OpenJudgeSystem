@@ -507,12 +507,32 @@
                     .Select(ContestProblemListViewModel.FromProblem),
             };
 
+            var participantsToSkip = 0;
+            var participantsToTake = int.MaxValue;
+
+            if (page.HasValue)
+            {
+                participantsToSkip = (page.Value - 1) *
+                                     (official
+                                         ? OfficialResultsPageSize
+                                         : NotOfficialResultsPageSize);
+
+                participantsToTake = official
+                    ? OfficialResultsPageSize
+                    : NotOfficialResultsPageSize;
+            }
+
             var participants = this.participantsData
                 .GetAllByContestAndIsOfficial(contest.Id, official)
-                .ToList()
-                .OrderByDescending(p => p.TotalScoreSnapshot);
+                .OrderByDescending(p => p.TotalScoreSnapshot)
+                .Skip(participantsToSkip)
+                .Take(participantsToTake)
+                .ToList();
 
-            contestResults.TotalCount = participants.Count();
+
+            contestResults.TotalCount =
+                this.participantsData.GetAllByContestAndIsOfficial(contest.Id, official).Count();
+            
             if (isExportResults)
             {
                 contestResults.Results = participants
@@ -532,24 +552,9 @@
                 return contestResults;
             }
 
-            List<Participant> participantList;
-            if (page.HasValue)
-            {
-                participantList = participants
-                    .Skip((page.Value - 1) *
-                          (official
-                              ? OfficialResultsPageSize
-                              : NotOfficialResultsPageSize))
-                    .Take(official ? OfficialResultsPageSize : NotOfficialResultsPageSize).ToList();
-            }
-            else
-            {
-                participantList = participants.ToList();
-            }
-
             if (isFullResults)
             {
-                contestResults.Results = participantList
+                contestResults.Results = participants
                     .Select(p => new ParticipantResultViewModel()
                     {
                         ParticipantUsername = p.User.UserName,
@@ -564,7 +569,7 @@
             }
             else
             {
-                contestResults.Results = participantList
+                contestResults.Results = participants
                     .Select(p => new ParticipantResultViewModel()
                     {
                         ParticipantUsername = p.User.UserName,
@@ -579,7 +584,6 @@
                     .ToList();
             }
 
-            // SetContestResults(contestResults, participantResults);
             return contestResults;
         }
 
