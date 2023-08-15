@@ -35,16 +35,18 @@ namespace OJS.Services.Data.Settings
             return ConvertValue<T>(value);
         }
 
-        public void AddOrUpdate(string name, string value)
+        public string AddOrUpdate(string name, string value)
         {
-            var setting = this.dbContext.Settings.FirstOrDefault(s => s.Name == value);
+            var setting = this.dbContext.Settings.FirstOrDefault(s => s.Name == name);
             if (setting == null)
             {
-                this.dbContext.Settings.Add(new Setting()
+                setting = new Setting()
                 {
                     Name = name,
                     Value = value
-                });
+                };
+                
+                this.dbContext.Settings.Add(setting);
                 this.AddToCache(name, value);
             }
             else
@@ -54,6 +56,7 @@ namespace OJS.Services.Data.Settings
             }
 
             this.dbContext.SaveChanges();
+            return setting.Name;
         }
 
         public void Delete(string name)

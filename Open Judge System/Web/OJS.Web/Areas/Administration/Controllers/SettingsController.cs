@@ -46,23 +46,30 @@ namespace OJS.Web.Areas.Administration.Controllers
         [HttpPost]
         public ActionResult Create([DataSourceRequest] DataSourceRequest request, ViewModelType model)
         {
-            var id = this.BaseCreate(model.GetEntityModel());
-            model.Name = (string)id;
+            if (model != null && this.ModelState.IsValid)
+            {
+                var name = this.settingsService.AddOrUpdate(model.Name, model.Value);
+                model.Name = name;
+            }
+
             return this.GridOperation(request, model);
         }
 
         [HttpPost]
         public ActionResult Update([DataSourceRequest] DataSourceRequest request, ViewModelType model)
         {
-            var entity = this.GetById(model.Name) as DatabaseModelType;
-            this.BaseUpdate(model.GetEntityModel(entity));
+            if (model != null && this.ModelState.IsValid)
+            {
+                var name = this.settingsService.AddOrUpdate(model.Name, model.Value);
+            }
+
             return this.GridOperation(request, model);
         }
 
         [HttpPost]
         public ActionResult Destroy([DataSourceRequest] DataSourceRequest request, ViewModelType model)
         {
-            this.BaseDestroy(model.Name);
+            this.settingsService.Delete(model.Name);
             return this.GridOperation(request, model);
         }
     }
