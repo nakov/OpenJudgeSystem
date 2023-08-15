@@ -36,18 +36,23 @@ namespace OJS.Services.Data.Settings
             return ConvertValue<T>(value);
         }
 
-        public T Get<T>(string name, string defaultValue)
+        public T Get<T>(string name, T defaultValue)
         {
             var value = cacheService.GetOrSet(name, () =>
             {
                 var dbSetting = this.dbContext.Settings.FirstOrDefault(s => s.Name == name);
                 if (dbSetting == null)
                 {
-                    return defaultValue;
+                    return null;
                 }
 
                 return dbSetting.Value;
             });
+            
+            if (value == null)
+            {
+                return defaultValue;
+            }
 
             return ConvertValue<T>(value);
         }
@@ -62,7 +67,7 @@ namespace OJS.Services.Data.Settings
                     Name = name,
                     Value = value
                 };
-                
+
                 this.dbContext.Settings.Add(setting);
                 this.AddToCache(name, value);
             }
