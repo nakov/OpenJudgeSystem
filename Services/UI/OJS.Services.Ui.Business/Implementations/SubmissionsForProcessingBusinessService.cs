@@ -1,20 +1,16 @@
 ﻿namespace OJS.Services.Ui.Business.Implementations;
 
-using System;
 using System.Linq;
+using OJS.Services.Common.Data;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using OJS.Services.Common.Models.Submissions;
-using Microsoft.EntityFrameworkCore;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
 
 public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessingBusinessService
 {
-    private readonly Data.ISubmissionsForProcessingDataService submissionsForProcessingData;
+    private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
     private readonly IUserProviderService userProviderService;
 
     public SubmissionsForProcessingBusinessService(
-        Data.ISubmissionsForProcessingDataService submissionsForProcessingData,
+        ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
         IUserProviderService userProviderService)
     {
         this.submissionsForProcessingData = submissionsForProcessingData;

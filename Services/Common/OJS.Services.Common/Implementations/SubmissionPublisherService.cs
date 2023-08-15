@@ -1,11 +1,9 @@
 namespace OJS.Services.Common.Implementations;
 
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.PubSub.Worker.Models.Submissions;
-using OJS.Data.Models.Submissions;
 
 public class SubmissionPublisherService : ISubmissionPublisherService
 {
@@ -15,14 +13,9 @@ public class SubmissionPublisherService : ISubmissionPublisherService
         IPublisherService publisher)
         => this.publisher = publisher;
 
-    public Task Publish(Submission submission)
+    public Task Publish(SubmissionServiceModel submission)
     {
         var pubSubModel = submission.Map<SubmissionForProcessingPubSubModel>();
-
-        pubSubModel.TestsExecutionDetails!.TaskSkeleton = submission.Problem!.SubmissionTypesInProblems
-            .Where(x => x.SubmissionTypeId == submission.SubmissionTypeId)
-            .Select(x => x.SolutionSkeleton)
-            .FirstOrDefault();
 
         return this.publisher.Publish(pubSubModel);
     }

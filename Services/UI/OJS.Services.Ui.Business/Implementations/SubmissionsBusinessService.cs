@@ -8,6 +8,7 @@ using OJS.Common.Helpers;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
+using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Users;
 using OJS.Services.Ui.Business.Validations.Implementations.Submissions;
 using Infrastructure.Exceptions;
@@ -24,6 +25,8 @@ using SoftUni.Common.Extensions;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 using OJS.Services.Ui.Models.Contests;
 using OJS.Services.Common;
+using OJS.Data.Models.Problems;
+using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Services.Common.Models.Submissions;
 using OJS.Workers.Common.Models;
 using Microsoft.Extensions.Logging;
@@ -33,10 +36,11 @@ using static Constants.PublicSubmissions;
 public class SubmissionsBusinessService : ISubmissionsBusinessService
 {
     private readonly ISubmissionsDataService submissionsData;
-    private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
+    private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
     private readonly IUsersBusinessService usersBusiness;
     private readonly IParticipantScoresBusinessService participantScoresBusinessService;
     private readonly IParticipantsBusinessService participantsBusinessService;
+    private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
     // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/624
     private readonly IParticipantsDataService participantsDataService;
     private readonly IProblemsDataService problemsDataService;
@@ -57,6 +61,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         IProblemsDataService problemsDataService,
         IParticipantsBusinessService participantsBusinessService,
         IParticipantsDataService participantsDataService,
+        ISubmissionsCommonBusinessService submissionsCommonBusinessService,
         IUserProviderService userProviderService,
         ITestRunsDataService testRunsDataService,
         IParticipantScoresBusinessService participantScoresBusinessService,
@@ -65,7 +70,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ISubmitSubmissionValidationService submitSubmissionValidationService,
         ISubmissionResultsValidationService submissionResultsValidationService,
         ISubmissionFileDownloadValidationService submissionFileDownloadValidationService,
-        ISubmissionsForProcessingDataService submissionsForProcessingData,
+        ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
         ISubmissionPublisherService submissionPublisher,
         IContestsDataService contestsDataService,
         ILogger<SubmissionsBusinessService> logger)
@@ -74,6 +79,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.usersBusiness = usersBusiness;
         this.problemsDataService = problemsDataService;
         this.participantsBusinessService = participantsBusinessService;
+        this.submissionsCommonBusinessService = submissionsCommonBusinessService;
         this.participantsDataService = participantsDataService;
         this.userProviderService = userProviderService;
         this.testRunsDataService = testRunsDataService;
@@ -404,37 +410,26 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .SubmissionType;
 
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-        try
+        if (submissionType.ExecutionStrategyType is ExecutionStrategyType.NotFound or ExecutionStrategyType.DoNothing)
         {
-            if (submissionType.ExecutionStrategyType is ExecutionStrategyType.NotFound or ExecutionStrategyType.DoNothing)
-            {
-                // Submission is just uploaded and should not be processed
-                await this.AddNewDefaultProcessedSubmission(newSubmission);
-
-                scope.Complete();
-                return;
-            }
-
-            await this.submissionsData.Add(newSubmission);
-            await this.submissionsData.SaveChanges();
-
-            await this.submissionsForProcessingData.AddOrUpdateReprocessingBySubmission(newSubmission.Id);
-            await this.submissionsData.SaveChanges();
-
-            newSubmission.Problem = problem;
-            newSubmission.SubmissionType = submissionType;
-
-            await this.submissionPublisher.Publish(newSubmission);
+            // Submission is just uploaded and should not be processed
+            await this.AddNewDefaultProcessedSubmission(newSubmission);
 
             scope.Complete();
-            scope.Dispose();
+            return;
         }
-        catch (Exception ex)
-        {
-            this.logger.LogError($"Exception in submitting solution {newSubmission.Id} by {participant.User.UserName}{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.InnerException}");
-            scope.Dispose();
-            throw;
-        }
+
+        await this.submissionsData.Add(newSubmission);
+        await this.submissionsData.SaveChanges();
+
+        await this.submissionsForProcessingData.Add(newSubmission.Id);
+        await this.submissionsData.SaveChanges();
+
+        scope.Complete();
+        scope.Dispose();
+
+        await this.submissionsCommonBusinessService
+            .PublishSubmissionForProcessing(BuildSubmissionForProcessing(newSubmission, problem, submissionType));
     }
 
     public async Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult)
@@ -479,6 +474,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             this.submissionsData.Update(submission);
             await this.submissionsData.SaveChanges();
         }
+
+        await this.submissionsForProcessingData.RemoveBySubmission(submission.Id);
     }
 
     public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPublicSubmissions(
@@ -540,6 +537,22 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
     }
 
+    private static SubmissionServiceModel BuildSubmissionForProcessing(Submission submission, Problem problem, SubmissionType submissionType)
+    {
+        var submissionCopy = submission.Map<Submission>();
+        submissionCopy.Problem = problem;
+        submissionCopy.SubmissionType = submissionType;
+
+        var serviceModel = submissionCopy.Map<SubmissionServiceModel>();
+
+        serviceModel.TestsExecutionDetails!.TaskSkeleton = submission.Problem!.SubmissionTypesInProblems
+            .Where(x => x.SubmissionTypeId == submission.SubmissionTypeId)
+            .Select(x => x.SolutionSkeleton)
+            .FirstOrDefault();
+
+        return serviceModel;
+    }
+
     private async Task AddNewDefaultProcessedSubmission(Submission submission)
     {
         submission.Processed = true;
@@ -568,7 +581,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var testResults =
             executionResult.TaskResult?.TestResults ?? Enumerable.Empty<TestResultServiceModel>();
 
-        await this.submissionsForProcessingData.EndProcessingBySubmission(submission.Id);
+        await this.submissionsForProcessingData.MarkProcessed(submission.Id);
 
         submission.TestRuns.AddRange(
             testResults.Select(testResult => testResult.Map<TestRun>()));

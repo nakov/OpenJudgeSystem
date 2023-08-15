@@ -8,26 +8,26 @@ namespace OJS.Services.Administration.Business.Implementations
     using Microsoft.Extensions.Options;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Administration.Data;
+    using OJS.Services.Common.Data;
     using OJS.Services.Common.Models;
     using OJS.Services.Common.Models.Configurations;
     using OJS.Services.Common.Models.Submissions;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Models;
-    using OJS.Workers.SubmissionProcessors.Formatters;
     using static OJS.Common.GlobalConstants.Urls;
 
     public class SubmissionsDistributorCommunicationService : ISubmissionsDistributorCommunicationService
     {
         private readonly IDistributorHttpClientService distributorHttpClient;
         private readonly ISubmissionsCommonDataService submissionsData;
-        private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
+        private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
         private readonly DistributorConfig distributorConfig;
 
         public SubmissionsDistributorCommunicationService(
             IDistributorHttpClientService distributorHttpClient,
             ISubmissionsCommonDataService submissionsData,
-            ISubmissionsForProcessingDataService submissionsForProcessingData,
+            ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
             IOptions<DistributorConfig> distributorConfigAccessor)
         {
             this.distributorHttpClient = distributorHttpClient;

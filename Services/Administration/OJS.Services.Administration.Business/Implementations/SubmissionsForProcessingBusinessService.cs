@@ -4,24 +4,29 @@
     using System.Linq;
     using System.Threading.Tasks;
     using FluentExtensions.Extensions;
-    using Microsoft.EntityFrameworkCore;
     using OJS.Services.Administration.Data;
     using OJS.Services.Common;
+    using OJS.Services.Common.Data;
+    using OJS.Services.Common.Models.Submissions.ExecutionContext;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
 
     public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessingBusinessService
     {
-        private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
+        private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
+        private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
         private readonly ISubmissionsDataService submissionsData;
         private readonly ISubmissionPublisherService submissionPublisherService;
 
         public SubmissionsForProcessingBusinessService(
-            ISubmissionsForProcessingDataService submissionsForProcessingData,
+            ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
             ISubmissionsDataService submissionsData,
-            ISubmissionPublisherService submissionPublisherService)
+            ISubmissionPublisherService submissionPublisherService,
+            ISubmissionsCommonBusinessService submissionsCommonBusinessService)
         {
             this.submissionsForProcessingData = submissionsForProcessingData;
             this.submissionsData = submissionsData;
             this.submissionPublisherService = submissionPublisherService;
+            this.submissionsCommonBusinessService = submissionsCommonBusinessService;
         }
 
         /// <summary>
@@ -47,10 +52,9 @@
         public void EnqueueStaleSubmissions()
         {
             var submissionsForProcessing = this.submissionsForProcessingData
-                .GetAllUnprocessed()
-                .Where(sp => DateTime.UtcNow.Subtract(sp!.CreatedOn).TotalMinutes >= 1)
-                .ToListAsync()
-                .Result;
+                .GetAllUnprocessedAndNotProcessing()
+                .ToList()
+                .Where(sfp => Math.Abs(sfp!.CreatedOn.Subtract(DateTime.UtcNow).TotalMinutes) >= 1);
 
             if (!submissionsForProcessing.Any())
             {
@@ -61,10 +65,14 @@
                 .GetByIds(submissionsForProcessing
                     .Select(sp => sp!.SubmissionId)
                     .ToList())
-                .ToListAsync()
-                .Result;
+                .ToList();
 
-            submissions.ForEachSequential(this.submissionPublisherService.Publish);
+            submissions
+                .ForEachSequential((submission) =>
+                    this.submissionsCommonBusinessService
+                    .PublishSubmissionForProcessing(submission.Map<SubmissionServiceModel>()))
+                .GetAwaiter()
+                .GetResult();
         }
     }
 }

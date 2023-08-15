@@ -11,30 +11,33 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models;
     using OJS.Services.Common;
+    using OJS.Services.Common.Data;
     using OJS.Services.Common.Models;
+    using OJS.Services.Common.Models.Submissions.ExecutionContext;
     using OJS.Services.Infrastructure;
     using OJS.Workers.Common.Models;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.Data.Infrastructure;
 
     public class SubmissionsBusinessService : ISubmissionsBusinessService
     {
         private readonly ISubmissionsDataService submissionsData;
-        private readonly ISubmissionsForProcessingDataService submissionsForProcessingDataService;
-        // private readonly IArchivedSubmissionsDataService archivedSubmissionsData;
+        private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingDataService;
         private readonly IParticipantScoresDataService participantScoresData;
-        private readonly ITransactionsProvider transactions;
         private readonly IParticipantScoresBusinessService participantScoresBusinessService;
-        private readonly ISubmissionPublisherService submissionPublisherService;
+        private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
+        private readonly ITransactionsProvider transactions;
         private readonly IDatesService dates;
 
         public SubmissionsBusinessService(
             ISubmissionsDataService submissionsData,
             IParticipantScoresDataService participantScoresData,
             ITransactionsProvider transactions,
-            ISubmissionsForProcessingDataService submissionsForProcessingDataService,
+            ISubmissionsForProcessingCommonDataService submissionsForProcessingDataService,
             IParticipantScoresBusinessService participantScoresBusinessService,
             ISubmissionPublisherService submissionPublisherService,
-            IDatesService dates)
+            IDatesService dates,
+            ISubmissionsCommonBusinessService submissionsCommonBusinessService)
         {
             this.submissionsData = submissionsData;
             // this.archivedSubmissionsData = archivedSubmissionsData;
@@ -42,8 +45,8 @@ namespace OJS.Services.Administration.Business.Implementations
             this.transactions = transactions;
             this.submissionsForProcessingDataService = submissionsForProcessingDataService;
             this.participantScoresBusinessService = participantScoresBusinessService;
-            this.submissionPublisherService = submissionPublisherService;
             this.dates = dates;
+            this.submissionsCommonBusinessService = submissionsCommonBusinessService;
         }
 
         public Task<IQueryable<Submission>> GetAllForArchiving()
@@ -158,8 +161,6 @@ namespace OJS.Services.Administration.Business.Implementations
                 submission.Processed = false;
                 submission.ModifiedOn = this.dates.GetUtcNow();
 
-                await this.submissionsForProcessingDataService.AddOrUpdateReprocessingBySubmission(submission.Id);
-
                 var submissionIsBestSubmission = await this.IsBestSubmission(
                     submissionProblemId,
                     submissionParticipantId,
@@ -174,10 +175,10 @@ namespace OJS.Services.Administration.Business.Implementations
 
                 await this.submissionsData.SaveChanges();
 
-                await this.submissionPublisherService.Publish(submission);
-
                 return ServiceResult.Success;
             });
+
+            await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submission.Map<SubmissionServiceModel>());
 
             return result;
         }

@@ -1,18 +1,19 @@
-﻿namespace OJS.Services.Administration.Data.Implementations;
+namespace OJS.Services.Common.Data.Implementations;
 
+using System;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Submissions;
-using OJS.Services.Common.Data.Implementations;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using FluentExtensions.Extensions;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Common;
 using OJS.Common.Helpers;
 
-public class SubmissionsForProcessingDataService : DataService<SubmissionForProcessing>, ISubmissionsForProcessingDataService
+public class SubmissionsForProcessingCommonDataService : DataService<SubmissionForProcessing>, ISubmissionsForProcessingCommonDataService
 {
-    public SubmissionsForProcessingDataService(DbContext submissionsForProcessing)
+    public SubmissionsForProcessingCommonDataService(DbContext submissionsForProcessing)
         : base(submissionsForProcessing)
     {
     }
@@ -30,11 +31,35 @@ public class SubmissionsForProcessingDataService : DataService<SubmissionForProc
         this.DbSet
             .Where(sfp => !sfp.Processed);
 
+    public async Task<int> GetAllUnprocessedCount()
+        => await this
+            .GetAllUnprocessed()
+            .CountAsync();
+
     public async Task<IEnumerable<int>> GetIdsOfAllProcessing() =>
         await this.DbSet
             .Where(sfp => sfp.Processing && !sfp.Processed)
             .Select(sfp => sfp.Id)
             .ToListAsync();
+
+    public async Task<IEnumerable<TServiceModel>> GetAllProcessing<TServiceModel>()
+        => await this.DbSet
+            .Where(sfp => !sfp.Processed && sfp.Processing)
+            .ToListAsync()
+            .MapCollection<TServiceModel>();
+
+    public async Task Add(int submissionId)
+    {
+        var submissionForProcessing = new SubmissionForProcessing
+        {
+            SubmissionId = submissionId,
+            Processed = false,
+            Processing = false,
+            CreatedOn = DateTime.Now.ToUniversalTime(),
+        };
+
+        await this.Add(submissionForProcessing);
+    }
 
     public async Task AddOrUpdateBySubmissionIds(ICollection<int> submissionIds)
     {
@@ -54,39 +79,13 @@ public class SubmissionsForProcessingDataService : DataService<SubmissionForProc
         scope.Complete();
     }
 
-    public async Task AddOrUpdateReprocessingBySubmission(int submissionId)
-    {
-        var submissionForProcessing = await this.GetBySubmission(submissionId);
-
-        if (submissionForProcessing != null)
-        {
-            submissionForProcessing.Processing = true;
-            submissionForProcessing.Processed = false;
-
-            await this.Update(submissionForProcessing);
-        }
-        else
-        {
-            submissionForProcessing = new SubmissionForProcessing
-            {
-                SubmissionId = submissionId,
-                Processed = false,
-                Processing = true,
-            };
-
-            await this.Add(submissionForProcessing);
-        }
-
-        await this.SaveChanges();
-    }
-
     public async Task RemoveBySubmission(int submissionId)
     {
         var submissionForProcessing = await this.GetBySubmission(submissionId);
 
         if (submissionForProcessing != null)
         {
-            await this.DeleteById(submissionId);
+            await this.DeleteById(submissionForProcessing.Id);
             await this.SaveChanges();
         }
     }
@@ -108,6 +107,40 @@ public class SubmissionsForProcessingDataService : DataService<SubmissionForProc
     public new async Task Update(SubmissionForProcessing submissionForProcessing)
     {
         base.Update(submissionForProcessing);
+        await this.SaveChanges();
+    }
+
+    public async Task MarkProcessing(int submissionId)
+    {
+        var submissionForProcessing = await this
+            .DbSet
+            .Where(sp => sp.SubmissionId == submissionId)
+            .FirstOrDefaultAsync();
+
+        if (submissionForProcessing == null)
+        {
+            return;
+        }
+
+        submissionForProcessing.Processing = true;
+        submissionForProcessing.Processed = false;
+
+        await this.Update(submissionForProcessing);
+    }
+
+    public async Task MarkProcessed(int submissionId)
+    {
+        var submissionForProcessing = await this.GetBySubmission(submissionId);
+
+        if (submissionForProcessing == null)
+        {
+            return;
+        }
+
+        submissionForProcessing.Processing = false;
+        submissionForProcessing.Processed = true;
+
+        await this.Update(submissionForProcessing);
         await this.SaveChanges();
     }
 }

@@ -1,10 +1,10 @@
 namespace OJS.Services.Common;
 
-using OJS.Data.Models.Submissions;
+using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using SoftUni.Services.Infrastructure;
 using System.Threading.Tasks;
 
 public interface ISubmissionPublisherService : IService
 {
-    Task Publish(Submission submission);
+    Task Publish(SubmissionServiceModel submission);
 }
