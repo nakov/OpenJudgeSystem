@@ -490,10 +490,10 @@
             return this.cacheService.GetOrSet<ContestResultsViewModel>(
                 string.Format(
                     CacheConstants.ContestResultsFormat,
-                    contest.Id,
                     official,
                     isFullResults,
-                    isExportResults),
+                    isExportResults,
+                    contest.Id),
                 () =>
                 {
                     var contestResults = new ContestResultsViewModel
