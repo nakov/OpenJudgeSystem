@@ -43,7 +43,7 @@
         "UI_HOME_YOUTUBE_VIDEO_ID": "IwLET8SDBE4",
         "REDIS_CONNECTION_STRING": "localhost,password=redisPass123,ConnectTimeout=10000,abortConnect=false",
         "MessageQueueConfig__Host": "localhost",
-        "MessageQueueConfig__VirtualHost": "/ojs",
+        "MessageQueueConfig__VirtualHost": "ojs",
         "MessageQueueConfig__User": "ojsuser",
         "MessageQueueConfig__Password": "myS3cretPass2",
         "EmailServiceConfig__ServerHost": "YOUR_HOST",

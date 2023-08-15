@@ -1,8 +1,8 @@
 namespace OJS.Data.Models.Problems
 {
+    using System.Collections.Generic;
     using OJS.Common.Enumerations;
     using OJS.Data.Models.Contests;
-    using System.Collections.Generic;
     using SoftUni.Data.Infrastructure.Models;
 
     public class ProblemGroup : DeletableAuditInfoEntity<int>, IOrderableEntity

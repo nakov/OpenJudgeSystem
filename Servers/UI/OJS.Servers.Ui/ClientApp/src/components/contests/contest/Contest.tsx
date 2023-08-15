@@ -31,9 +31,19 @@ const Contest = () => {
             contestError,
             contestIsLoading,
         },
-        actions: { setIsSubmitAllowed },
+        actions:
+            {
+                setIsSubmitAllowed,
+                removeCurrentContest,
+            },
     } = useCurrentContest();
-    const { actions: { initiateProblems } } = useProblems();
+    const {
+        actions: {
+            changeCurrentHash,
+            removeCurrentProblem,
+            removeCurrentProblems,
+        },
+    } = useProblems();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const { actions: { setPageTitle } } = usePageTitles();
 
@@ -165,9 +175,18 @@ const Contest = () => {
 
     useEffect(
         () => {
-            initiateProblems();
+            changeCurrentHash();
         },
-        [ initiateProblems ],
+        [ changeCurrentHash ],
+    );
+
+    useEffect(
+        () => () => {
+            removeCurrentProblem();
+            removeCurrentContest();
+            removeCurrentProblems();
+        },
+        [ removeCurrentContest, removeCurrentProblem, removeCurrentProblems ],
     );
 
     const renderErrorHeading = useCallback(
