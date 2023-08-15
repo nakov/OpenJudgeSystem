@@ -13,14 +13,14 @@
     public class SubmissionStatisticsCacheService : ISubmissionStatisticsCacheService
     {
         private readonly ISubmissionsDataService submissionsData;
-        private readonly IRedisCacheService redisCacheService;
+        private readonly ICacheService cacheService;
 
         public SubmissionStatisticsCacheService(
             ISubmissionsDataService submissionsData,
-            IRedisCacheService redisCacheService)
+            ICacheService cacheService)
         {
             this.submissionsData = submissionsData;
-            this.redisCacheService = redisCacheService;
+            this.cacheService = cacheService;
         }
 
         public IEnumerable<SubmissionCountByMonthStatisticsModel> GetSubsmissionsCountByMonthForPastYear()
@@ -35,7 +35,7 @@
             if (eleventhMonth == lastMonth)
             {
                 // Next month has just started before the cache for last month is expired
-                this.redisCacheService.Remove(SubmissionsCountForLastMonthKey);
+                this.cacheService.Remove(SubmissionsCountForLastMonthKey);
                 lastMonthSubmissionsResult = this.GetSubsmissionsCountByMonthForLastMonth(currentDate);
             };
 
@@ -46,13 +46,13 @@
 
         private IEnumerable<SubmissionCountByMonthStatisticsModel> GetSubsmissionsCountByMonthForPastYearExceptLastMonth(
             DateTime currentDate)
-            => this.redisCacheService.GetOrSet(
+            => this.cacheService.GetOrSet(
                 SubmissionsCountByMonthsForPastElevenMonthsKey,
                 () => this.GetSubmissionsCountGroupsForPastYearExceptLastMonth(currentDate),
                 TimeSpan.FromTicks(this.GetAbsoluteEndOfMonth(currentDate).Ticks));
 
         private IEnumerable<SubmissionCountByMonthStatisticsModel> GetSubsmissionsCountByMonthForLastMonth(DateTime currentDate)
-            => this.redisCacheService.GetOrSet(
+            => this.cacheService.GetOrSet(
                 SubmissionsCountForLastMonthKey,
                 () => this.GetSubmissionsCountGroupForLastMonth(currentDate),
                 TimeSpan.FromSeconds(OneHourInSeconds));

@@ -84,7 +84,6 @@
         {
             this.submission.ProcessingComment = null;
             this.submission.ExceptionType = ExceptionType.None;
-            this.submission.StartedExecutionOn = DateTime.Now;
             this.submission.CompilerComment = null;
             this.submission.ExecutionComment = null;
             this.testRunsData.DeleteBySubmission(this.submission.Id);
@@ -162,8 +161,10 @@
                 this.submission.TestRuns.Add(testRun);
             }
 
+            this.submission.StartedExecutionOn = executionResult.StartedExecutionOn;
+            this.submission.CompletedExecutionOn = executionResult.CompletedExecutionOn;
+            
             this.submissionsData.Update(this.submission);
-
             this.UpdateResults();
         }
 

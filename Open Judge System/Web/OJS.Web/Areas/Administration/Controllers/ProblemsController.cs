@@ -64,7 +64,7 @@
         private readonly ISubmissionsDataService submissionsData;
         private readonly ISubmissionTypesDataService submissionTypesData;
         private readonly IProblemsBusinessService problemsBusiness;
-        private readonly IRedisCacheService redisCacheService;
+        private readonly ICacheService cacheService;
 
         public ProblemsController(
             IOjsData data,
@@ -76,7 +76,7 @@
             ISubmissionsDataService submissionsData,
             ISubmissionTypesDataService submissionTypesData,
             IProblemsBusinessService problemsBusiness,
-            IRedisCacheService redisCacheService)
+            ICacheService cacheService)
             : base(data)
         {
             this.contestsData = contestsData;
@@ -87,7 +87,7 @@
             this.submissionsData = submissionsData;
             this.submissionTypesData = submissionTypesData;
             this.problemsBusiness = problemsBusiness;
-            this.redisCacheService = redisCacheService;
+            this.cacheService = cacheService;
         }
 
         public ActionResult Index() => this.View();
@@ -465,7 +465,7 @@
 
             this.problemsBusiness.DeleteById(problemId);
 
-            this.redisCacheService.Remove(string.Format(CacheConstants.ContestView, problem.ProblemGroup.ContestId));
+            this.cacheService.Remove(string.Format(CacheConstants.ContestView, problem.ProblemGroup.ContestId));
             this.TempData.AddInfoMessage(GlobalResource.Problem_deleted);
             return this.RedirectToAction(c => c.Index(problem.ProblemGroup.ContestId));
         }

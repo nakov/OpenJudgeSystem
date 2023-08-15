@@ -1,4 +1,6 @@
-﻿namespace OJS.Web.Infrastructure.Filters
+﻿using Kendo.Mvc.Infrastructure;
+
+namespace OJS.Web.Infrastructure.Filters
 {
     using System;
     using System.Web.Mvc;
@@ -14,11 +16,11 @@
     // </summary> 
     public class ClearContestCacheFilter : IActionFilter<ClearContestAttribute>
     {
-        private readonly IRedisCacheService redisCacheService;
+        private readonly ICacheService cacheService;
 
-        public ClearContestCacheFilter(IRedisCacheService redisCacheService)
+        public ClearContestCacheFilter(ICacheService cacheService)
         {
-            this.redisCacheService = redisCacheService;
+            this.cacheService = cacheService;
         }
 
         public void OnActionExecuting(ClearContestAttribute attribute, ActionExecutingContext filterContext)
@@ -31,7 +33,7 @@
                 throw new ArgumentNullException("The id is not presenting in the model");
             }
 
-            this.redisCacheService.Remove(string.Format(CacheConstants.ContestView, contestId.ToString()));
+            this.cacheService.Remove(string.Format(CacheConstants.ContestView, contestId.ToString()));
         }
 
         public void OnActionExecuted(ClearContestAttribute attribute, ActionExecutedContext filterContext)

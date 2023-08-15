@@ -56,7 +56,7 @@
         private readonly ISubmissionsDataService submissionsData;
         private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
         private readonly IIpsDataService ipsData;
-        private readonly IRedisCacheService redisCacheService;
+        private readonly ICacheService cacheService;
 
         public CompeteController(
             IOjsData data,
@@ -68,7 +68,7 @@
             ISubmissionsDataService submissionsData,
             ISubmissionsForProcessingDataService submissionsForProcessingData,
             IIpsDataService ipsData,
-             IRedisCacheService redisCacheService)
+             ICacheService cacheService)
             : base(data)
         {
             this.participantsBusiness = participantsBusiness;
@@ -79,7 +79,7 @@
             this.submissionsData = submissionsData;
             this.submissionsForProcessingData = submissionsForProcessingData;
             this.ipsData = ipsData;
-            this.redisCacheService = redisCacheService;
+            this.cacheService = cacheService;
         }
 
         protected CompeteController(
@@ -223,7 +223,7 @@
                 official,
                 isUserAdminOrLecturerInContest)
             {
-                Contest = this.redisCacheService.GetOrSet<ContestViewModel>(
+                Contest = this.cacheService.GetOrSet<ContestViewModel>(
                     string.Format(CacheConstants.ContestView, participant.ContestId),
                      () => { return ContestViewModel.FromContest.Compile()(participant.Contest); })
             };

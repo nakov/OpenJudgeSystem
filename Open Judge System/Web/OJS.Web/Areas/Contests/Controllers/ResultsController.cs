@@ -43,20 +43,20 @@
         private readonly IContestsDataService contestsData;
         private readonly IParticipantsDataService participantsData;
         private readonly IParticipantScoresDataService participantScoresData;
-        private readonly IRedisCacheService redisCacheService;
+        private readonly ICacheService cacheService;
 
         public ResultsController(
             IOjsData data,
             IContestsDataService contestsData,
             IParticipantsDataService participantsData,
             IParticipantScoresDataService participantScoresData,
-            IRedisCacheService redisCacheService)
+            ICacheService cacheService)
             : base(data)
         {
             this.contestsData = contestsData;
             this.participantsData = participantsData;
             this.participantScoresData = participantScoresData;
-            this.redisCacheService = redisCacheService;
+            this.cacheService = cacheService;
         }
 
         /// <summary>
@@ -82,7 +82,7 @@
                 throw new HttpException((int)HttpStatusCode.Forbidden, Resource.Problem_results_not_available);
             }
 
-            var results = this.redisCacheService.GetOrSet<List<ProblemResultViewModel>>(
+            var results = this.cacheService.GetOrSet<List<ProblemResultViewModel>>(
               string.Format(CacheConstants.ResultsByProblem, problem.Id, official),
                 () =>
             {
@@ -470,7 +470,16 @@
 
             return this.PartialView("_StatsChartPartial", contestId);
         }
-
+        
+        private static void SetContestResults(ContestResultsViewModel contestResults, IOrderedEnumerable<ParticipantResultViewModel> participantResults)
+        {
+            contestResults.Results = participantResults
+                .ThenBy(parResult => parResult.ProblemResults
+                    .OrderByDescending(pr => pr.BestSubmission.Id)
+                    .Select(pr => pr.BestSubmission.Id)
+                    .FirstOrDefault());
+        }
+        
         private ContestResultsViewModel GetContestResults(
             Contest contest,
             bool official,
@@ -478,13 +487,13 @@
             bool isFullResults,
             bool isExportResults = false)
         {
-            return this.redisCacheService.GetOrSet<ContestResultsViewModel>(
+            return this.cacheService.GetOrSet<ContestResultsViewModel>(
                 string.Format(
                     CacheConstants.ContestResultsFormat,
-                    contest.Id,
                     official,
                     isFullResults,
-                    isExportResults),
+                    isExportResults,
+                    contest.Id),
                 () =>
                 {
                     var contestResults = new ContestResultsViewModel
@@ -621,16 +630,6 @@
                 outputStream.ToArray(), // The binary data of the XLS file
                 GlobalConstants.ExcelMimeType, // MIME type of Excel files
                 fileName);
-        }
-
-        private static void SetContestResults(ContestResultsViewModel contestResults, IOrderedEnumerable<ParticipantResultViewModel> participantResults)
-        {
-            contestResults.Results = participantResults
-                            .ThenBy(parResult => parResult.ProblemResults
-                                .OrderByDescending(pr => pr.BestSubmission.Id)
-                                .Select(pr => pr.BestSubmission.Id)
-                                .FirstOrDefault())
-                            .ToList();
         }
     }
 }

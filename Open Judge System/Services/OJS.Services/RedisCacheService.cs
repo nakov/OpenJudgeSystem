@@ -6,6 +6,7 @@ using System;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Caching;
+using OJS.Common.Constants;
 
 namespace OJS.Services
 {
@@ -15,19 +16,23 @@ namespace OJS.Services
         private readonly double memoryCacheExpirationInMinutes = 5;
         private readonly IEmailSenderService emailSenderService;
         private readonly string devEmail;
+        private readonly IMemoryCacheService memoryCacheService;
 
-        public RedisCacheService(IDatabase redisCache, IEmailSenderService emailSenderService, string devEmail)
+        public RedisCacheService(IDatabase redisCache,
+            IEmailSenderService emailSenderService,
+            string devEmail, IMemoryCacheService memoryCacheService)
         {
             this.redisCache = redisCache;
             this.emailSenderService = emailSenderService;
             this.devEmail = devEmail;
+            this.memoryCacheService = memoryCacheService;
         }
 
         public T Get<T>(string cacheId, Func<T> getItemCallback) =>
             GetItemResult(
                 () =>
                 {
-                    var valueAsString = this.redisCache.StringGet(cacheId);
+                    var valueAsString = this.redisCache.StringGet(this.AddKeyPrefix(cacheId));
 
                     if (valueAsString.IsNull)
                     {
@@ -42,7 +47,7 @@ namespace OJS.Services
             await GetItemResultAsync(
                 async () =>
                 {
-                    var valueAsString = await this.redisCache.StringGetAsync(cacheId);
+                    var valueAsString = await this.redisCache.StringGetAsync(this.AddKeyPrefix(cacheId));
                     if (valueAsString.IsNull)
                     {
                         return await getItemCallback();
@@ -57,6 +62,7 @@ namespace OJS.Services
                 () =>
                 {
                     this.VerifyValueInCache(cacheId, getItemCallback, expiration);
+                    
                     return this.Get(cacheId, getItemCallback);
                 },
                 getItemCallback);
@@ -66,6 +72,7 @@ namespace OJS.Services
                 () =>
                 {
                     this.VerifyValueInCache(cacheId, getItemCallback, null);
+                    
                     return this.Get(cacheId, getItemCallback);
                 },
                 getItemCallback);
@@ -75,6 +82,7 @@ namespace OJS.Services
                 async () =>
                 {
                     await this.VerifyValueInCacheAsync(cacheId, getItemCallback, expiration);
+                    
                     return await this.GetAsync(cacheId, getItemCallback);
                 },
                 getItemCallback);
@@ -84,16 +92,17 @@ namespace OJS.Services
                 async () =>
                 {
                     await this.VerifyValueInCacheAsync(cacheId, getItemCallback, null);
+                    
                     return await this.GetAsync(cacheId, getItemCallback);
                 },
                 getItemCallback);
-        
+
         public void Set<T>(string cacheId, T value, TimeSpan expiration)
         {
             try
             {
                 string serializedObject = JsonConvert.SerializeObject(value);
-                this.redisCache.StringSet(cacheId, serializedObject, expiration);
+                this.redisCache.StringSet(this.AddKeyPrefix(cacheId), serializedObject, expiration);
             }
             catch (RedisConnectionException ex)
             {
@@ -106,7 +115,7 @@ namespace OJS.Services
             try
             {
                 string serializedObject = JsonConvert.SerializeObject(value);
-                this.redisCache.StringSet(cacheId, serializedObject);
+                this.redisCache.StringSet(this.AddKeyPrefix(cacheId), serializedObject);
             }
             catch (RedisConnectionException ex)
             {
@@ -119,7 +128,7 @@ namespace OJS.Services
             try
             {
                 string serializedObject = JsonConvert.SerializeObject(value);
-                await this.redisCache.StringSetAsync(cacheId, serializedObject, expiration);
+                await this.redisCache.StringSetAsync(this.AddKeyPrefix(cacheId), serializedObject, expiration);
             }
             catch (RedisConnectionException ex)
             {
@@ -132,7 +141,7 @@ namespace OJS.Services
             try
             {
                 string serializedObject = JsonConvert.SerializeObject(value);
-                await this.redisCache.StringSetAsync(cacheId, serializedObject);
+                await this.redisCache.StringSetAsync(this.AddKeyPrefix(cacheId), serializedObject);
             }
             catch (RedisConnectionException ex)
             {
@@ -144,7 +153,7 @@ namespace OJS.Services
         {
             try
             {
-                this.redisCache.KeyDelete(cacheId);
+                this.redisCache.KeyDelete(this.AddKeyPrefix(cacheId));
             }
             catch (RedisConnectionException ex)
             {
@@ -156,7 +165,7 @@ namespace OJS.Services
         {
             try
             {
-                await this.redisCache.KeyDeleteAsync(cacheId);
+                await this.redisCache.KeyDeleteAsync(this.AddKeyPrefix(cacheId));
             }
             catch (RedisConnectionException ex)
             {
@@ -164,14 +173,15 @@ namespace OJS.Services
             }
         }
 
-        public bool ContainsKey(string cacheId) => this.redisCache.KeyExists(cacheId);
+        public bool ContainsKey(string cacheId) => this.redisCache.KeyExists(this.AddKeyPrefix(cacheId));
 
         public async Task<bool> ContainsKeyAsync(string cacheId)
         {
-            return await this.redisCache.KeyExistsAsync(cacheId);
+            return await this.redisCache.KeyExistsAsync(this.AddKeyPrefix(cacheId));
         }
 
         #region private
+
         private async Task VerifyValueInCacheAsync<T>(
             string cacheId,
             Func<Task<T>> getItemCallback,
@@ -199,11 +209,11 @@ namespace OJS.Services
             Func<T> getItemCallback,
             TimeSpan? expiration)
         {
-            if (this.redisCache.KeyExists(cacheId))
+            if (this.redisCache.KeyExists(this.AddKeyPrefix(cacheId)))
             {
                 return;
             }
-            
+
             var result = getItemCallback();
 
             if (expiration != null)
@@ -218,18 +228,16 @@ namespace OJS.Services
 
         private bool ShouldSendEmail(string key, string value)
         {
-            if (HttpRuntime.Cache.Get(key) == null)
+            if (this.memoryCacheService.ContainsKey(key))
             {
-                HttpContext.Current.Cache.Add(
-                   key,
-                   value,
-                   null,
-                   DateTime.Now.AddMinutes(this.memoryCacheExpirationInMinutes),
-                   TimeSpan.Zero,
-                   CacheItemPriority.Default,
-                   null);
                 return false;
             }
+            else
+            {
+                this.memoryCacheService.Set(key, value);
+            }
+
+            this.memoryCacheService.Set(key, value, TimeSpan.FromMinutes(memoryCacheExpirationInMinutes));
             return true;
         }
 
@@ -248,7 +256,7 @@ namespace OJS.Services
                 await this.emailSenderService.SendEmailAsync(this.devEmail, exTypeAsString, exMessage);
             }
         }
-        
+
         private T GetItemResult<T>(Func<T> resultAction, Func<T> fallbackResultAction)
         {
             if (!this.RedisIsConnected())
@@ -256,7 +264,7 @@ namespace OJS.Services
                 SendEmail("RedisConnection", "Redis is not connected");
                 return fallbackResultAction();
             }
-            
+
             try
             {
                 return resultAction();
@@ -275,7 +283,7 @@ namespace OJS.Services
                 await SendEmailAsync("RedisConnection", "Redis is not connected");
                 return await fallbackResultAction();
             }
-            
+
             try
             {
                 return await resultAction();
@@ -286,9 +294,16 @@ namespace OJS.Services
                 return await fallbackResultAction();
             }
         }
-        
+
         private bool RedisIsConnected() =>
             !redisCache.Multiplexer.IsConnecting && redisCache.Multiplexer.IsConnected;
-        #endregion
+
+        private string AddKeyPrefix(string key)
+        {
+            return $"{CacheConstants.KeysPrefix}{key}";
+        }
+
     }
+    
+    #endregion
 }
