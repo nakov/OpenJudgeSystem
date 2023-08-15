@@ -12,8 +12,8 @@ using OJS.Data;
 namespace OJS.Data.Migrations
 {
     [DbContext(typeof(OjsDbContext))]
-    [Migration("20230808095158_AddedSubmissionsForProcessingCreatedOn")]
-    partial class AddedSubmissionsForProcessingCreatedOn
+    [Migration("20230815115221_AddedSubmissionForProcessing")]
+    partial class AddedSubmissionForProcessing
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -1033,6 +1033,9 @@ namespace OJS.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("Processed")

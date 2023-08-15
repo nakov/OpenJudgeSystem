@@ -55,7 +55,6 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
             SubmissionId = submissionId,
             Processed = false,
             Processing = false,
-            CreatedOn = DateTime.Now.ToUniversalTime(),
         };
 
         await this.Add(submissionForProcessing);
