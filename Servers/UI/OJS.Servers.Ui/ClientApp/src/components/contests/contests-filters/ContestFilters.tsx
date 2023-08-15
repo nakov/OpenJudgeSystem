@@ -6,9 +6,8 @@ import isNil from 'lodash/isNil';
 
 import { FilterType, IFilter } from '../../../common/contest-types';
 import { groupByType } from '../../../common/filter-utils';
-import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
+import { useUrlParams } from '../../../hooks/common/use-url-params';
 import { useContests } from '../../../hooks/use-contests';
-import { usePages } from '../../../hooks/use-pages';
 import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 import List from '../../guidelines/lists/List';
 import ContestCategories from '../contest-categories/ContestCategories';
@@ -28,24 +27,18 @@ interface IFiltersGroup {
 const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const maxFiltersToDisplayCount = 3;
     const { search } = useLocation();
-    const { clearPageValue } = usePages();
+    const { actions: { clearParams } } = useUrlParams();
     const [ selectValue, setSelectValue ] = useState('');
     const [ filtersGroups, setFiltersGroups ] = useState<IFiltersGroup[]>([]);
     const [ defaultSelected, setDefaultSelected ] = useState('');
     const [ filteredStrategyFilters, setFilteredStrategyFilters ] = useState<IFilter[]>([]);
-    const [ searchParams, setSearchParams ] = useSearchParams();
+    const [ searchParams ] = useSearchParams();
     const [ isLoaded, setIsLoaded ] = useState(false);
 
     const {
         state: { possibleFilters },
-        actions: {
-            toggleParam,
-            clearFilters,
-            clearSorts,
-        },
+        actions: { toggleParam },
     } = useContests();
-
-    const { actions: { clearBreadcrumb } } = useCategoriesBreadcrumbs();
 
     React.useEffect(() => {
         const allSearches = search.split('&');
@@ -169,13 +162,9 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
 
     const clearFiltersBreadcrumbSortingPagesAndParameters = useCallback(
         () => {
-            clearFilters();
-            clearBreadcrumb();
-            clearSorts();
-            clearPageValue();
-            setSearchParams('');
+            clearParams();
         },
-        [ clearFilters, clearBreadcrumb, clearSorts, clearPageValue, setSearchParams ],
+        [ clearParams ],
     );
 
     return (
