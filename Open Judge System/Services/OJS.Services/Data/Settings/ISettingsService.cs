@@ -7,7 +7,9 @@ namespace OJS.Services.Data.Settings
 
     public interface ISettingsService : IService
     {
-        T Get<T>(string name, T type);
+        T Get<T>(string name);
+        
+        T Get<T>(string name, string defaultValue);
 
         string AddOrUpdate(string name, string value);
 

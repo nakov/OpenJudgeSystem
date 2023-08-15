@@ -20,7 +20,7 @@ namespace OJS.Services.Data.Settings
             this.cacheService = cacheService;
         }
 
-        public T Get<T>(string name, T type)
+        public T Get<T>(string name)
         {
             var value = cacheService.GetOrSet(name, () =>
             {
@@ -28,6 +28,22 @@ namespace OJS.Services.Data.Settings
                 if (dbSetting == null)
                 {
                     throw new NullReferenceException();
+                }
+
+                return dbSetting.Value;
+            });
+
+            return ConvertValue<T>(value);
+        }
+
+        public T Get<T>(string name, string defaultValue)
+        {
+            var value = cacheService.GetOrSet(name, () =>
+            {
+                var dbSetting = this.dbContext.Settings.FirstOrDefault(s => s.Name == name);
+                if (dbSetting == null)
+                {
+                    return defaultValue;
                 }
 
                 return dbSetting.Value;
