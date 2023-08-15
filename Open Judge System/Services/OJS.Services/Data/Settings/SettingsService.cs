@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using OJS.Common.Constants;
 using OJS.Data;
 using OJS.Data.Models;
 using OJS.Services.Cache;
@@ -11,9 +12,9 @@ namespace OJS.Services.Data.Settings
     public class SettingsService : ISettingsService
     {
         private readonly IOjsDbContext dbContext;
-        private readonly IRedisCacheService cacheService;
+        private readonly ICacheService cacheService;
 
-        public SettingsService(IOjsDbContext dbContext, IRedisCacheService cacheService)
+        public SettingsService(IOjsDbContext dbContext, ICacheService cacheService)
         {
             this.dbContext = dbContext;
             this.cacheService = cacheService;
