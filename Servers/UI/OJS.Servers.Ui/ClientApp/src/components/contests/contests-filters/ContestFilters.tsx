@@ -40,7 +40,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         actions: { toggleParam },
     } = useContests();
 
-    React.useEffect(() => {
+    useEffect(() => {
         const allSearches = search.split('&');
         const strategySearch = allSearches.filter((s) => s.includes('strategy'))[0];
         if (!allSearches || !strategySearch) {
