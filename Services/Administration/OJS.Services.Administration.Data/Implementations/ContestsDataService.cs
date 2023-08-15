@@ -152,8 +152,6 @@ namespace OJS.Services.Administration.Data.Implementations
                                                         .First());
         }
 
-        // return problemGroups
-        //     .Sum(pg => pg.Problems.First().MaximumPoints);}
         private IQueryable<Contest> GetAllVisibleQuery()
             => this.DbSet
                 .Where(c => c.IsVisible);
