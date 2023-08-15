@@ -229,25 +229,13 @@ namespace OJS.Data
             }
             catch (DbUpdateException ex)
             {
-                Exception currentException = ex;
-                while (currentException != null)
-                {
-                    Trace.TraceError(currentException.Message);
-                    currentException = currentException.InnerException;
-                }
+                HandleDbUpdateException(ex);
 
                 throw;
             }
             catch (DbEntityValidationException ex)
             {
-                foreach (var validationErrors in ex.EntityValidationErrors)
-                {
-                    foreach (var validationError in validationErrors.ValidationErrors)
-                    {
-                        Trace.TraceError(
-                            $"Property: {validationError.PropertyName}{Environment.NewLine} Error: {validationError.ErrorMessage}");
-                    }
-                }
+                HandleDbEntityValidationException(ex);
 
                 throw;
             }
@@ -261,27 +249,37 @@ namespace OJS.Data
             }
             catch (DbUpdateException ex)
             {
-                Exception currentException = ex;
-                while (currentException != null)
-                {
-                    Trace.TraceError(currentException.Message);
-                    currentException = currentException.InnerException;
-                }
+                HandleDbUpdateException(ex);
 
                 throw;
             }
             catch (DbEntityValidationException ex)
             {
-                foreach (var validationErrors in ex.EntityValidationErrors)
-                {
-                    foreach (var validationError in validationErrors.ValidationErrors)
-                    {
-                        Trace.TraceError(
-                            $"Property: {validationError.PropertyName}{Environment.NewLine} Error: {validationError.ErrorMessage}");
-                    }
-                }
+                HandleDbEntityValidationException(ex);
 
                 throw;
+            }
+        }
+
+        private static void HandleDbEntityValidationException(DbEntityValidationException ex)
+        {
+            foreach (var validationErrors in ex.EntityValidationErrors)
+            {
+                foreach (var validationError in validationErrors.ValidationErrors)
+                {
+                    Trace.TraceError(
+                        $"Property: {validationError.PropertyName}{Environment.NewLine} Error: {validationError.ErrorMessage}");
+                }
+            }
+        }
+
+        private static void HandleDbUpdateException(DbUpdateException ex)
+        {
+            Exception currentException = ex;
+            while (currentException != null)
+            {
+                Trace.TraceError(currentException.Message);
+                currentException = currentException.InnerException;
             }
         }
     }
