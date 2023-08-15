@@ -1,4 +1,6 @@
-﻿namespace OJS.LocalWorker
+﻿using OJS.Services.Business.ParticipantScores.Models;
+
+namespace OJS.LocalWorker
 {
     using System;
     using System.Linq;
@@ -222,7 +224,7 @@
                 var participantObject = this.participantsData
                     .GetByIdQuery(this.submission.ParticipantId.Value)
                     .Select(p =>
-                        new
+                        new ParticipantScoreDataModel()
                         {
                             Participant = p,
                             IsOfficial = p.IsOfficial,

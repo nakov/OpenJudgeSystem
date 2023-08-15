@@ -1,4 +1,6 @@
-﻿namespace OJS.Services.Data.ParticipantScores
+﻿using OJS.Services.Business.ParticipantScores.Models;
+
+namespace OJS.Services.Data.ParticipantScores
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -66,11 +68,11 @@
 
             var participant = this.participantsData
                 .GetByIdQuery(submission.ParticipantId.Value)
-                .Select(p => new
+                .Select(p => new ParticipantScoreDataModel()
                 {
                     Participant = p,
-                    p.IsOfficial,
-                    p.User.UserName,
+                    IsOfficial = p.IsOfficial,
+                    UserName = p.User.UserName,
                     TotalScore = p.Scores.Any()
                         ? p.Scores
                             .Where(ps => !ps.Problem.IsDeleted)
@@ -159,7 +161,7 @@
             Participant participant,
             int totalScore)
         {
-            participant.TotalScoreSnapshot = totalScore + submissionPoints;
+            participant.TotalScoreSnapshot = (totalScore - participantScore.Points) + submissionPoints;
 
             participantScore.SubmissionId = submissionId;
             participantScore.Points = submissionPoints;
