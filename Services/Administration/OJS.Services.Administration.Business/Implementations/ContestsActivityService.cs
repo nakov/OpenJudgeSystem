@@ -38,17 +38,10 @@ public class ContestsActivityService : IContestsActivityService
             .ValidateValueIsNotDefault(contest, nameof(contest))
             .VerifyResult();
 
-        return await this.GetContestActivity(contest!);
-    }
-
-    public async Task<IContestActivityServiceModel> GetContestActivity(IContestForActivityServiceModel contest)
-    {
-        this.notDefaultValueValidationHelper
-            .ValidateValueIsNotDefault(contest, nameof(contest))
-            .VerifyResult();
-
         return new ContestActivityServiceModel
         {
+            Id = contest!.Id,
+            Name = contest.Name,
             CanBeCompeted = this.CanBeCompeted(contest),
             CanBePracticed = this.CanBePracticed(contest),
             IsActive = await this.IsActive(contest),

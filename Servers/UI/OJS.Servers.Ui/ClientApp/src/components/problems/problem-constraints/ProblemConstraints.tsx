@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { useProblems } from '../../../hooks/use-problems';
@@ -30,7 +31,8 @@ const ProblemConstraints = () => {
                 : '',
             !isNil(checkerName)
                 ? `Checker: ${checkerName}`
-                : '' ];
+                : '',
+        ].filter((item) => !isEmpty(item));
     }, [ currentProblem ]);
 
     const renderConstraint = useCallback(
