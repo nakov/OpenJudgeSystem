@@ -525,6 +525,7 @@
             var participants = this.participantsData
                 .GetAllByContestAndIsOfficial(contest.Id, official)
                 .OrderByDescending(p => p.TotalScoreSnapshot)
+                .ThenBy(p => p.TotalScoreSnapshotModifiedOn)
                 .Skip(participantsToSkip)
                 .Take(participantsToTake)
                 .ToList();
@@ -532,7 +533,7 @@
 
             contestResults.TotalCount =
                 this.participantsData.GetAllByContestAndIsOfficial(contest.Id, official).Count();
-            
+
             if (isExportResults)
             {
                 contestResults.Results = participants
