@@ -38,23 +38,18 @@ namespace OJS.Services.Data.Settings
 
         public T Get<T>(string name, T defaultValue)
         {
-            var value = cacheService.GetOrSet(name, () =>
+            var value = cacheService.GetOrSet<T>(name, () =>
             {
                 var dbSetting = this.dbContext.Settings.FirstOrDefault(s => s.Name == name);
                 if (dbSetting == null)
                 {
-                    return null;
+                    return defaultValue;
                 }
 
-                return dbSetting.Value;
+                return ConvertValue<T>(dbSetting.Value);
             });
-            
-            if (value == null)
-            {
-                return defaultValue;
-            }
 
-            return ConvertValue<T>(value);
+            return value;
         }
 
         public string AddOrUpdate(string name, string value)

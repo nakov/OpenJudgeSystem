@@ -9,7 +9,7 @@ namespace OJS.Services.Data.Settings
     {
         T Get<T>(string name);
         
-        T Get<T>(string name, string defaultValue);
+        T Get<T>(string name, T defaultValue);
 
         string AddOrUpdate(string name, string value);
 
