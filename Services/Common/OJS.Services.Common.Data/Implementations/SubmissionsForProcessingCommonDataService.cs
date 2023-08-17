@@ -137,6 +137,5 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
         submissionForProcessing.Processed = true;
 
         await this.Update(submissionForProcessing);
-        await this.SaveChanges();
     }
 }
