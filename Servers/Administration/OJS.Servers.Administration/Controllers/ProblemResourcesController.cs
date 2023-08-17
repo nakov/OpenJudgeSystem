@@ -166,7 +166,7 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         }
     }
 
-    protected override Task ModifyFormControls(
+    protected override async Task ModifyFormControls(
         ICollection<FormControlViewModel> formControls,
         ProblemResource entity,
         EntityAction action,
@@ -183,7 +183,11 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         problemInput.Value = problemId;
         problemInput.IsReadOnly = true;
 
-        return Task.CompletedTask;
+        if (action == EntityAction.Create)
+        {
+            var orderByInput = formControls.First(fc => fc.Name == nameof(ProblemResource.OrderBy));
+            orderByInput.Value = await this.GetNewOrderBy(problemId);
+        }
     }
 
     protected override async Task AfterEntitySaveAsync(ProblemResource entity, AdminActionContext actionContext)
@@ -206,6 +210,21 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
     {
         var problemName = resource.ProblemName.Replace(" ", string.Empty);
         return $"Resource-{resource.Id}-{problemName}.{resource.FileExtension}";
+    }
+
+    private async Task<int> GetNewOrderBy(int problemId)
+    {
+        var resourcesForProblemOrderBys = await this.problemResourcesData.GetByProblemQuery(problemId)
+            .Where(x => !x.IsDeleted)
+            .Select(x => x.OrderBy)
+            .ToListAsync();
+
+        if (!resourcesForProblemOrderBys.Any())
+        {
+            return 1;
+        }
+
+        return (int)Math.Ceiling(resourcesForProblemOrderBys.Max()) + 1;
     }
 
     private IEnumerable<AutoCrudAdminGridToolbarActionViewModel> GetCustomToolbarActions(int problemId)
