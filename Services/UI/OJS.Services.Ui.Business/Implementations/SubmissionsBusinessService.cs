@@ -455,6 +455,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         submission.Processed = true;
         submission.ProcessingComment = null;
 
+        using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
         if (executionResult != null)
         {
             ProcessTestsExecutionResult(submission, executionResult);
@@ -469,13 +470,16 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         {
             submission.IsCompiledSuccessfully = false;
             var errorMessage = exception?.Message
-                ?? "Invalid execution result received. Please contact an administrator.";
+                               ?? "Invalid execution result received. Please contact an administrator.";
             submission.ProcessingComment = errorMessage;
             submission.CompilerComment = errorMessage;
 
             this.submissionsData.Update(submission);
             await this.submissionsData.SaveChanges();
         }
+
+        scope.Complete();
+        scope.Dispose();
 
         await this.submissionsForProcessingData.RemoveBySubmission(submission.Id);
     }
