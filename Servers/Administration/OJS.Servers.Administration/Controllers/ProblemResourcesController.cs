@@ -30,6 +30,7 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
 
     private readonly IValidatorsFactory<ProblemResource> problemResourceValidatorsFactory;
     private readonly IProblemResourcesDataService problemResourcesData;
+    private readonly IOrderableService<ProblemResource> problemResourcesOrderableService;
     private readonly IValidationService<ProblemResourceDownloadServiceModel> problemResourcesDownloadValidation;
     private readonly IContentTypesService contentTypes;
     private readonly IProblemsValidationHelper problemsValidationHelper;
@@ -39,13 +40,15 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         IProblemResourcesDataService problemResourcesData,
         IValidationService<ProblemResourceDownloadServiceModel> problemResourcesDownloadValidation,
         IContentTypesService contentTypes,
-        IProblemsValidationHelper problemsValidationHelper)
+        IProblemsValidationHelper problemsValidationHelper,
+        IOrderableService<ProblemResource> problemResourcesOrderableService)
     {
         this.problemResourceValidatorsFactory = problemResourceValidatorsFactory;
         this.problemResourcesData = problemResourcesData;
         this.problemResourcesDownloadValidation = problemResourcesDownloadValidation;
         this.contentTypes = contentTypes;
         this.problemsValidationHelper = problemsValidationHelper;
+        this.problemResourcesOrderableService = problemResourcesOrderableService;
     }
 
     protected override Expression<Func<ProblemResource, bool>>? MasterGridFilter
@@ -163,7 +166,7 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         }
     }
 
-    protected override async Task ModifyFormControls(
+    protected override Task ModifyFormControls(
         ICollection<FormControlViewModel> formControls,
         ProblemResource entity,
         EntityAction action,
@@ -180,8 +183,19 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         problemInput.Value = problemId;
         problemInput.IsReadOnly = true;
 
-        var orderByInput = formControls.First(fc => fc.Name == nameof(ProblemResource.OrderBy));
-        orderByInput.Value = await this.GetNewOrderBy(problemId);
+       // var orderByInput = formControls.First(fc => fc.Name == nameof(ProblemResource.OrderBy));
+       // orderByInput.Value = await this.GetNewOrderBy(problemId);
+        return Task.CompletedTask;
+    }
+
+    protected override async Task AfterEntitySaveAsync(ProblemResource entity, AdminActionContext actionContext)
+    {
+        var problemId = actionContext.GetEntityIdOrDefault<Problem>() ?? entity.ProblemId;
+
+        var problemResources = await this.problemResourcesData.GetByProblemQuery(problemId)
+                                                            .ToListAsync();
+
+        await this.problemResourcesOrderableService.ReevaluateOrder(problemResources);
     }
 
     private static IEnumerable<FormControlViewModel> GetAdditionalFormControls()
@@ -194,21 +208,6 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
     {
         var problemName = resource.ProblemName.Replace(" ", string.Empty);
         return $"Resource-{resource.Id}-{problemName}.{resource.FileExtension}";
-    }
-
-    private async Task<int> GetNewOrderBy(int problemId)
-    {
-        var resourcesForProblem = await this.problemResourcesData.GetByProblemQuery(problemId)
-            .Where(x => !x.IsDeleted)
-            .Select(x => x.OrderBy)
-            .ToListAsync();
-
-        if (!resourcesForProblem.Any())
-        {
-            return 0;
-        }
-
-        return (int)Math.Ceiling(resourcesForProblem.Max()) + 1;
     }
 
     private IEnumerable<AutoCrudAdminGridToolbarActionViewModel> GetCustomToolbarActions(int problemId)
