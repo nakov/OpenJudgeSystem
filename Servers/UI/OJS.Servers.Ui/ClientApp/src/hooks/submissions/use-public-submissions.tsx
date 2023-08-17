@@ -6,6 +6,7 @@ import { IPagedResultType, ISubmissionResponseModel } from '../../common/types';
 import { IGetSubmissionsUrlParams } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import {
+    getPendingSubmissionsUrl,
     getPublicSubmissionsUrl,
     getSubmissionsTotalCountUrl,
     getSubmissionsUnprocessedTotalCountUrl, getUnprocessedSubmissionsUrl,
@@ -25,12 +26,14 @@ interface IPublicSubmissionsContext {
         totalUnprocessedSubmissionsCount: number;
         publicSubmissions: ISubmissionResponseModel[];
         unprocessedSubmissions: ISubmissionResponseModel[];
+        pendingSubmissions: ISubmissionResponseModel[];
     };
     actions : {
         loadTotalSubmissionsCount: () => Promise<void>;
         loadTotalUnprocessedSubmissionsCount: () => Promise<void>;
         initiatePublicSubmissionsQuery: () => void;
         initiateUnprocessedSubmissionsQuery: () => void;
+        initiatePendingSubmissionsQuery: () => void;
     };
 }
 
@@ -43,8 +46,11 @@ type IPublicSubmissionsProviderProps = IHaveChildrenProps
 const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps) => {
     const [ getPublicSubmissionsUrlParams, setPublicSubmissionsUrlParams ] = useState<IGetSubmissionsUrlParams | null>();
     const [ getUnprocessedSubmissionsUrlParams, setUnprocessedSubmissionsUrlParams ] = useState<IGetSubmissionsUrlParams | null>();
+    const [ getPendingSubmissionsUrlParams, setPendingSubmissionsUrlParams ] = useState<IGetSubmissionsUrlParams | null>();
     const [ publicSubmissions, setPublicSubmissions ] = useState<ISubmissionResponseModel[]>(defaultState.state.publicSubmissions);
     const [ unprocessedSubmissions, setUnprocessedSubmissions ] =
+        useState<ISubmissionResponseModel[]>(defaultState.state.publicSubmissions);
+    const [ pendingSubmissions, setPendingSubmissions ] =
         useState<ISubmissionResponseModel[]>(defaultState.state.publicSubmissions);
     const [ previousPage, setPreviousPage ] = useState(0);
 
@@ -71,6 +77,16 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         IPagedResultType<ISubmissionResponseModel>>({
             url: getUnprocessedSubmissionsUrl,
             parameters: getUnprocessedSubmissionsUrlParams,
+        });
+
+    const {
+        get: getPendingSubmissions,
+        data: pendingSubmissionsData,
+    } = useHttp<
+        IGetSubmissionsUrlParams,
+        IPagedResultType<ISubmissionResponseModel>>({
+            url: getPendingSubmissionsUrl,
+            parameters: getPendingSubmissionsUrlParams,
         });
 
     const {
@@ -105,6 +121,13 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
             await getUnprocessedSubmissions();
         },
         [ getUnprocessedSubmissions ],
+    );
+
+    const loadPendingSubmissions = useCallback(
+        async () => {
+            await getPendingSubmissions();
+        },
+        [ getPendingSubmissions ],
     );
 
     const loadTotalSubmissionsCount = useCallback(
@@ -143,34 +166,52 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         [ currentPage, previousPage ],
     );
 
+    const initiatePendingSubmissionsQuery = useCallback(
+        () => {
+            if (currentPage === previousPage && currentPage !== 1) {
+                return;
+            }
+
+            setPendingSubmissionsUrlParams({ page: currentPage });
+        },
+        [ currentPage, previousPage ],
+    );
+
+    const proccessSubmissionsQueryResult = useCallback((
+        queryResult: IPagedResultType<ISubmissionResponseModel>,
+        handleSetData: (submissions: ISubmissionResponseModel[]) => void,
+    ) => {
+        const newSubmissionsData = queryResult.items as ISubmissionResponseModel[];
+        const {
+            pageNumber,
+            itemsPerPage,
+            pagesCount,
+            totalItemsCount,
+        } = queryResult;
+
+        const newPagesInfo = {
+            pageNumber,
+            itemsPerPage,
+            pagesCount,
+            totalItemsCount,
+        };
+
+        setPreviousPage(pageNumber);
+
+        handleSetData(newSubmissionsData);
+        populatePageInformation(newPagesInfo);
+    }, [ populatePageInformation ]);
+
+    // Proccess results
     useEffect(
         () => {
             if (isNil(publicSubmissionsData) || isEmpty(publicSubmissionsData)) {
                 return;
             }
 
-            const publicSubmissionsResult = publicSubmissionsData as IPagedResultType<ISubmissionResponseModel>;
-            const newPublicSubmissionsData = publicSubmissionsResult.items as ISubmissionResponseModel[];
-            const {
-                pageNumber,
-                itemsPerPage,
-                pagesCount,
-                totalItemsCount,
-            } = publicSubmissionsResult;
-
-            const newPagesInfo = {
-                pageNumber,
-                itemsPerPage,
-                pagesCount,
-                totalItemsCount,
-            };
-
-            setPreviousPage(pageNumber);
-
-            setPublicSubmissions(newPublicSubmissionsData);
-            populatePageInformation(newPagesInfo);
+            proccessSubmissionsQueryResult(publicSubmissionsData, setPublicSubmissions);
         },
-        [ populatePageInformation, publicSubmissionsData ],
+        [ populatePageInformation, proccessSubmissionsQueryResult, publicSubmissionsData ],
     );
 
     useEffect(
@@ -179,30 +220,23 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
                 return;
             }
 
-            const unprocessedSubmissionsResult = unprocessedSubmissionsData as IPagedResultType<ISubmissionResponseModel>;
-            const newUnprocessedSubmissionsData = unprocessedSubmissionsResult.items as ISubmissionResponseModel[];
-            const {
-                pageNumber,
-                itemsPerPage,
-                pagesCount,
-                totalItemsCount,
-            } = unprocessedSubmissionsResult;
-
-            const newPagesInfo = {
-                pageNumber,
-                itemsPerPage,
-                pagesCount,
-                totalItemsCount,
-            };
-
-            setPreviousPage(pageNumber);
-
-            setUnprocessedSubmissions(newUnprocessedSubmissionsData);
-            populatePageInformation(newPagesInfo);
+            proccessSubmissionsQueryResult(unprocessedSubmissionsData, setUnprocessedSubmissions);
         },
-        [ populatePageInformation, unprocessedSubmissionsData ],
+        [ populatePageInformation, proccessSubmissionsQueryResult, unprocessedSubmissionsData ],
     );
 
+    useEffect(
+        () => {
+            if (isNil(pendingSubmissionsData) || isEmpty(pendingSubmissionsData)) {
+                return;
+            }
+
+            proccessSubmissionsQueryResult(pendingSubmissionsData, setPendingSubmissions);
+        },
+        [ pendingSubmissionsData, populatePageInformation, proccessSubmissionsQueryResult ],
+    );
+
+    // Make requests
     useEffect(
         () => {
             if (isNil(getPublicSubmissionsUrlParams)) {
@@ -229,11 +263,25 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         [ getUnprocessedSubmissionsUrlParams, loadUnprocessedSubmissions ],
     );
 
+    useEffect(
+        () => {
+            if (isNil(getPendingSubmissionsUrlParams)) {
+                return;
+            }
+
+            (async () => {
+                await loadPendingSubmissions();
+            })();
+        },
+        [ getPendingSubmissionsUrlParams, loadPendingSubmissions ],
+    );
+
     const value = useMemo(
         () => ({
             state: {
                 publicSubmissions,
                 unprocessedSubmissions,
+                pendingSubmissions,
                 totalSubmissionsCount,
                 totalUnprocessedSubmissionsCount,
             },
@@ -242,10 +290,12 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
                 loadTotalUnprocessedSubmissionsCount,
                 initiatePublicSubmissionsQuery,
                 initiateUnprocessedSubmissionsQuery,
+                initiatePendingSubmissionsQuery,
             },
         }),
         [ publicSubmissions, unprocessedSubmissions, totalSubmissionsCount, totalUnprocessedSubmissionsCount, loadTotalSubmissionsCount,
-            loadTotalUnprocessedSubmissionsCount, initiatePublicSubmissionsQuery, initiateUnprocessedSubmissionsQuery ],
+            loadTotalUnprocessedSubmissionsCount,
+            initiatePublicSubmissionsQuery, initiateUnprocessedSubmissionsQuery, initiatePendingSubmissionsQuery ],
     );
 
     return (

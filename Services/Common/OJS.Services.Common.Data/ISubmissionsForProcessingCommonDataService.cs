@@ -8,7 +8,7 @@ using SoftUni.Services.Infrastructure;
 
 public interface ISubmissionsForProcessingCommonDataService : IService
 {
-    IQueryable<SubmissionForProcessing?> GetAllUnprocessedAndNotProcessing();
+    IQueryable<SubmissionForProcessing?> GetAllPending();
 
     IQueryable<SubmissionForProcessing?> GetAllUnprocessed();
 

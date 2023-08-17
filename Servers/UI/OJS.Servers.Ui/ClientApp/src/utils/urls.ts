@@ -126,6 +126,14 @@ const getUnprocessedSubmissionsUrl = ({ page }: IGetSubmissionsUrlParams) => {
 
     return `${baseApiUrl}/Submissions/GetProcessingSubmissions?${pageQuery}`;
 };
+
+const getPendingSubmissionsUrl = ({ page }: IGetSubmissionsUrlParams) => {
+    const pageQuery = isNil(page)
+        ? ''
+        : `page=${page}`;
+
+    return `${baseApiUrl}/Submissions/GetPendingSubmissions?${pageQuery}`;
+};
 const getSubmissionsTotalCountUrl = () => `${baseApiUrl}/Submissions/TotalCount`;
 const getSubmissionsUnprocessedTotalCountUrl = () => `${baseApiUrl}/Submissions/UnprocessedTotalCount`;
 const getSubmissionsDetailsUrl = () => `${baseApiUrl}/Submissions/Details`;
@@ -184,6 +192,7 @@ export {
     getSubmissionDetailsResultsUrl,
     getPublicSubmissionsUrl,
     getUnprocessedSubmissionsUrl,
+    getPendingSubmissionsUrl,
     getSubmissionsTotalCountUrl,
     getSubmissionsUnprocessedTotalCountUrl,
     getSubmissionsDetailsUrl,

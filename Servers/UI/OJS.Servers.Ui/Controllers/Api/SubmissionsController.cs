@@ -161,6 +161,20 @@ public class SubmissionsController : BaseApiController
             .ToOkResult();
 
     /// <summary>
+    /// Gets all pending submissions.
+    /// </summary>
+    /// <param name="page">The current page number.</param>
+    /// <returns>A page with unprocessed submissions.</returns>
+    [HttpGet]
+    [Authorize(Roles = Administrator)]
+    [ProducesResponseType(typeof(PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>), Status200OK)]
+    public async Task<IActionResult> GetPendingSubmissions([FromQuery]int page)
+        => await this.submissionsBusiness
+            .GetPendingSubmissions(page)
+            .Map<PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>>()
+            .ToOkResult();
+
+    /// <summary>
     /// Gets the count of all submissions.
     /// </summary>
     [HttpGet]

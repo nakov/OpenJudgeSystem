@@ -22,7 +22,7 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
             .Where(s => s.SubmissionId == submissionId)
             .FirstOrDefaultAsync();
 
-    public IQueryable<SubmissionForProcessing> GetAllUnprocessedAndNotProcessing() =>
+    public IQueryable<SubmissionForProcessing> GetAllPending() =>
         this.DbSet
             .Where(sfp => !sfp.Processed && !sfp.Processing);
 

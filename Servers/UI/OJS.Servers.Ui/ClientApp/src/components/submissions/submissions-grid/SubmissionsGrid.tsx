@@ -1,35 +1,53 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { IDictionary } from '../../../common/common-types';
 import { ISubmissionResponseModel, usePublicSubmissions } from '../../../hooks/submissions/use-public-submissions';
 import { useAuth } from '../../../hooks/use-auth';
 import { usePages } from '../../../hooks/use-pages';
-import generateId from '../../../utils/id-generator';
 import { format } from '../../../utils/number-utils';
-import Button, { ButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List from '../../guidelines/lists/List';
 import PaginationControls from '../../guidelines/pagination/PaginationControls';
 import SubmissionGridRow from '../submission-grid-row/SubmissionGridRow';
 
+import SubmissionStateLink from './SubmissionStateLink';
+
 import styles from './SubmissionsGrid.module.scss';
 
+const selectedSubmissionsStateMapping = {
+    1: 'All',
+    2: 'In Queue',
+    3: 'Pending',
+} as IDictionary<string>;
+
 const SubmissionsGrid = () => {
-    const [ selectedActive, setSelectedActive ] = useState<boolean>(true);
+    const [ selectedActive, setSelectedActive ] = useState<number>(1);
 
     const {
         state: {
             publicSubmissions,
             unprocessedSubmissions,
+            pendingSubmissions,
             totalSubmissionsCount,
             totalUnprocessedSubmissionsCount,
         },
         actions: {
             initiatePublicSubmissionsQuery,
             initiateUnprocessedSubmissionsQuery,
+            initiatePendingSubmissionsQuery,
         },
     } = usePublicSubmissions();
 
     const { state: { user } } = useAuth();
+
+    const selectedSubmissionStateToRequestMapping = useMemo(
+        () => ({
+            1: initiatePublicSubmissionsQuery,
+            2: initiateUnprocessedSubmissionsQuery,
+            3: initiatePendingSubmissionsQuery,
+        } as IDictionary<() => void>),
+        [ initiatePendingSubmissionsQuery, initiatePublicSubmissionsQuery, initiateUnprocessedSubmissionsQuery ],
+    );
 
     const {
         state: { currentPage, pagesInfo },
@@ -49,35 +67,13 @@ const SubmissionsGrid = () => {
         [],
     );
 
-    const btnId = useMemo(
-        () => {
-            const privilegedIdBtn = generateId();
-            return `btn-submit-${privilegedIdBtn}`;
-        },
-        [],
-    );
+    const handleSelectSubmissionType = useCallback((typeKey: number) => {
+        if (selectedActive) {
+            clearPageValue();
 
-    const handleShowSubmissionsInQueue = useCallback(
-        () => {
-            if (selectedActive) {
-                clearPageValue();
-
-                setSelectedActive(false);
-            }
-        },
-        [ selectedActive, clearPageValue ],
-    );
-
-    const handlePublicSubmissions = useCallback(
-        () => {
-            if (!selectedActive) {
-                clearPageValue();
-
-                setSelectedActive(true);
-            }
-        },
-        [ clearPageValue, selectedActive ],
-    );
+            setSelectedActive(typeKey);
+        }
+    }, [ clearPageValue, selectedActive ]);
 
     useEffect(
         () => {
@@ -85,13 +81,16 @@ const SubmissionsGrid = () => {
                 return;
             }
 
-            if (selectedActive) {
-                initiatePublicSubmissionsQuery();
-            } else {
-                initiateUnprocessedSubmissionsQuery();
-            }
+            selectedSubmissionStateToRequestMapping[selectedActive]();
         },
-        [ initiatePublicSubmissionsQuery, initiateUnprocessedSubmissionsQuery, selectedActive, totalSubmissionsCount ],
+        [
+            initiatePendingSubmissionsQuery,
+            initiatePublicSubmissionsQuery,
+            initiateUnprocessedSubmissionsQuery,
+            selectedActive,
+            selectedSubmissionStateToRequestMapping,
+            totalSubmissionsCount,
+        ],
     );
 
     const { pagesCount } = pagesInfo;
@@ -107,27 +106,25 @@ const SubmissionsGrid = () => {
                             {totalUnprocessedSubmissionsCount}
                             {' '}
                             (
-                            <Button
-                              id={btnId}
-                              onClick={handlePublicSubmissions}
-                              internalClassName={`${styles.privilegedButtonClassName} 
-                              ${selectedActive
-                                  ? `${styles.active}`
-                                  : ''}
-                             `}
-                              text="All"
+                            <SubmissionStateLink
+                              stateIndex={1}
+                              isSelected={selectedActive === 1}
+                              text={selectedSubmissionsStateMapping[1]}
+                              handleOnSelect={handleSelectSubmissionType}
                             />
                             /
-                            <Button
-                              id={btnId}
-                              onClick={handleShowSubmissionsInQueue}
-                              type={ButtonType.submit}
-                              internalClassName={`${styles.privilegedButtonClassName} 
-                              ${!selectedActive
-                                  ? `${styles.active}`
-                                  : ''}
-                             `}
-                              text="In Queue"
+                            <SubmissionStateLink
+                              stateIndex={2}
+                              isSelected={selectedActive === 2}
+                              text={selectedSubmissionsStateMapping[2]}
+                              handleOnSelect={handleSelectSubmissionType}
+                            />
+                            /
+                            <SubmissionStateLink
+                              stateIndex={3}
+                              isSelected={selectedActive === 3}
+                              text={selectedSubmissionsStateMapping[3]}
+                              handleOnSelect={handleSelectSubmissionType}
                             />
                             )
                         </Heading>
@@ -142,15 +139,24 @@ const SubmissionsGrid = () => {
 
             return null;
         },
-        [ btnId, currentPage, handlePageChange, handlePublicSubmissions,
-            handleShowSubmissionsInQueue, pagesCount, selectedActive, totalUnprocessedSubmissionsCount, user ],
+        [
+            user,
+            totalUnprocessedSubmissionsCount,
+            selectedActive,
+            handleSelectSubmissionType,
+            pagesCount,
+            currentPage,
+            handlePageChange,
+        ],
     );
 
     const renderSubmissionsList = useCallback(
         () => {
-            const submissions = selectedActive
+            const submissions = selectedActive === 1
                 ? publicSubmissions
-                : unprocessedSubmissions;
+                : selectedActive === 2
+                    ? unprocessedSubmissions
+                    : pendingSubmissions;
 
             return (
                 <List
@@ -161,7 +167,7 @@ const SubmissionsGrid = () => {
                 />
             );
         },
-        [ publicSubmissions, renderSubmissionRow, selectedActive, unprocessedSubmissions ],
+        [ pendingSubmissions, publicSubmissions, renderSubmissionRow, selectedActive, unprocessedSubmissions ],
     );
 
     return (

@@ -520,6 +520,27 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .ToPagedResult(DefaultSubmissionsPerPage, page);
     }
 
+    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPendingSubmissions(int page)
+    {
+        var pendingSubmissions = await this.submissionsForProcessingData
+            .GetAllPending()
+            .ToListAsync();
+
+        if (pendingSubmissions.IsEmpty())
+        {
+            return new PagedResult<SubmissionForPublicSubmissionsServiceModel>();
+        }
+
+        var submissions = this.submissionsData
+            .GetAllByIdsQuery(
+                pendingSubmissions
+                    .Select(sp => sp!.SubmissionId));
+
+        return submissions
+            .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
+            .ToPagedResult(DefaultSubmissionsPerPage, page);
+    }
+
     public Task<int> GetTotalCount()
         => this.submissionsData.GetTotalSubmissionsCount();
 

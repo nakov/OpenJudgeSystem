@@ -52,7 +52,7 @@
         public void EnqueueStaleSubmissions()
         {
             var submissionsForProcessing = this.submissionsForProcessingData
-                .GetAllUnprocessedAndNotProcessing()
+                .GetAllPending()
                 .ToList()
                 .Where(sfp => Math.Abs(sfp!.CreatedOn.Subtract(DateTime.UtcNow).TotalMinutes) >= 1);
 

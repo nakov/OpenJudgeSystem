@@ -35,6 +35,8 @@
 
         Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetProcessingSubmissions(int page);
 
+        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPendingSubmissions(int page);
+
         Task<int> GetTotalCount();
 
         SubmissionFileDownloadServiceModel GetSubmissionFile(int submissionId);
