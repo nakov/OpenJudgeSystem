@@ -59,6 +59,21 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
         await this.Add(submissionForProcessing);
     }
 
+    public async Task<SubmissionForProcessing> AddOrUpdate(int submissionId)
+    {
+        var entity = await this.GetBySubmission(submissionId);
+
+        if (entity == null)
+        {
+            await this.Add(submissionId);
+        }
+
+        entity!.Processing = false;
+        entity.Processed = false;
+
+        return entity;
+    }
+
     public async Task AddOrUpdateBySubmissionIds(ICollection<int> submissionIds)
     {
         var newSubmissionsForProcessing = submissionIds
