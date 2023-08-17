@@ -1,6 +1,5 @@
 namespace OJS.Services.Common.Data.Implementations;
 
-using System;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
@@ -45,8 +44,8 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
     public async Task<IEnumerable<TServiceModel>> GetAllProcessing<TServiceModel>()
         => await this.DbSet
             .Where(sfp => !sfp.Processed && sfp.Processing)
-            .ToListAsync()
-            .MapCollection<TServiceModel>();
+            .MapCollection<TServiceModel>()
+            .ToListAsync();
 
     public async Task Add(int submissionId)
     {
@@ -112,9 +111,7 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
     public async Task MarkProcessing(int submissionId)
     {
         var submissionForProcessing = await this
-            .DbSet
-            .Where(sp => sp.SubmissionId == submissionId)
-            .FirstOrDefaultAsync();
+            .GetBySubmission(submissionId);
 
         if (submissionForProcessing == null)
         {

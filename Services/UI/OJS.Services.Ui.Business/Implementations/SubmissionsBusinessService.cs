@@ -457,7 +457,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         if (executionResult != null)
         {
-            await this.ProcessTestsExecutionResult(submission, executionResult);
+            ProcessTestsExecutionResult(submission, executionResult);
 
             await this.submissionsForProcessingData.MarkProcessed(submission.Id);
             this.submissionsData.Update(submission);
@@ -527,6 +527,27 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         contest.LecturersInContests.Any(c => c.LecturerId == userId) ||
         contest.Category!.LecturersInContestCategories.Any(cl => cl.LecturerId == userId);
 
+    private static void ProcessTestsExecutionResult(
+        Submission submission,
+        ExecutionResultServiceModel executionResult)
+    {
+        submission.IsCompiledSuccessfully = executionResult.IsCompiledSuccessfully;
+        submission.CompilerComment = executionResult.CompilerComment;
+        submission.Points = executionResult.TaskResult!.Points;
+
+        if (!executionResult.IsCompiledSuccessfully)
+        {
+            submission.TestRuns.Clear();
+            return;
+        }
+
+        var testResults =
+            executionResult.TaskResult?.TestResults ?? Enumerable.Empty<TestResultServiceModel>();
+
+        submission.TestRuns.AddRange(
+            testResults.Select(testResult => testResult.Map<TestRun>()));
+    }
+
     private static void CacheTestRuns(Submission submission)
     {
         try
@@ -567,29 +588,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         await this.submissionsData.SaveChanges();
 
         await this.participantScoresBusinessService.SaveForSubmission(submission);
-    }
-
-    private async Task ProcessTestsExecutionResult(
-        Submission submission,
-        ExecutionResultServiceModel executionResult)
-    {
-        submission.IsCompiledSuccessfully = executionResult.IsCompiledSuccessfully;
-        submission.CompilerComment = executionResult.CompilerComment;
-        submission.Points = executionResult.TaskResult!.Points;
-
-        if (!executionResult.IsCompiledSuccessfully)
-        {
-            submission.TestRuns.Clear();
-            return;
-        }
-
-        var testResults =
-            executionResult.TaskResult?.TestResults ?? Enumerable.Empty<TestResultServiceModel>();
-
-        await this.submissionsForProcessingData.MarkProcessed(submission.Id);
-
-        submission.TestRuns.AddRange(
-            testResults.Select(testResult => testResult.Map<TestRun>()));
     }
 
     private async Task UpdateResults(Submission submission)
