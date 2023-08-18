@@ -8,7 +8,7 @@ namespace OJS.Services.Administration.Data.Implementations
 
     public class IpsDataService : DataService<Ip>, IIpsDataService
     {
-        public IpsDataService(AdminDbContext db)
+        public IpsDataService(OjsDbContext db)
             : base(db)
         {
         }
