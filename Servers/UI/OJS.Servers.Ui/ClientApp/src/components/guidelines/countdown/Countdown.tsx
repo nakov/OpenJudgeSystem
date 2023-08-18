@@ -27,17 +27,6 @@ interface ICountdownProps {
 
 const remainingTimeClassName = 'remainingTime';
 
-const renderTimeOut = () => (
-    <p className={remainingTimeClassName}>
-        Remaining time:
-        {' '}
-        <Text type={TextType.Bold}>
-            {' '}
-            00, 00, 00
-        </Text>
-    </p>
-);
-
 const defaultRender = (remainingTime: ICountdownRemainingType) => {
     const { days, hours, minutes, seconds } = convertToTwoDigitValues(remainingTime);
 
@@ -125,9 +114,11 @@ const Countdown = ({
         handleOnCountdownChange(remainingInSeconds);
     }, [ handleOnCountdownChange, remainingInSeconds ]);
 
-    return remainingInSeconds <= 0
-        ? renderTimeOut()
-        : renderRemainingTime(secondsToFullTime(remainingInSeconds));
+    return (
+        <>
+            {renderRemainingTime(secondsToFullTime(remainingInSeconds))}
+        </>
+    );
 };
 
 export default Countdown;
