@@ -6,7 +6,7 @@ import isNil from 'lodash/isNil';
 
 import { FilterType, IFilter } from '../../../common/contest-types';
 import { groupByType } from '../../../common/filter-utils';
-import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
+import { useUrlParams } from '../../../hooks/common/use-url-params';
 import { useContests } from '../../../hooks/use-contests';
 import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 import List from '../../guidelines/lists/List';
@@ -27,6 +27,7 @@ interface IFiltersGroup {
 const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const maxFiltersToDisplayCount = 3;
     const { search } = useLocation();
+    const { actions: { clearParams } } = useUrlParams();
     const [ selectValue, setSelectValue ] = useState('');
     const [ filtersGroups, setFiltersGroups ] = useState<IFiltersGroup[]>([]);
     const [ defaultSelected, setDefaultSelected ] = useState('');
@@ -36,16 +37,10 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
 
     const {
         state: { possibleFilters },
-        actions: {
-            toggleParam,
-            clearFilters,
-            clearSorts,
-        },
+        actions: { toggleParam },
     } = useContests();
 
-    const { actions: { clearBreadcrumb } } = useCategoriesBreadcrumbs();
-
-    React.useEffect(() => {
+    useEffect(() => {
         const allSearches = search.split('&');
         const strategySearch = allSearches.filter((s) => s.includes('strategy'))[0];
         if (!allSearches || !strategySearch) {
@@ -165,20 +160,18 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         [ isLoaded, searchParams ],
     );
 
-    const clearFiltersAndBreadcrumbAndSorting = useCallback(
+    const clearFiltersBreadcrumbSortingPagesAndParameters = useCallback(
         () => {
-            clearFilters();
-            clearBreadcrumb();
-            clearSorts();
+            clearParams();
         },
-        [ clearFilters, clearBreadcrumb, clearSorts ],
+        [ clearParams ],
     );
 
     return (
         <div className={styles.container}>
             <Button
               type={ButtonType.secondary}
-              onClick={() => clearFiltersAndBreadcrumbAndSorting()}
+              onClick={() => clearFiltersBreadcrumbSortingPagesAndParameters()}
               className={styles.button}
               text="clear filters"
               size={ButtonSize.small}
