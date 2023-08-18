@@ -6,7 +6,6 @@ using AutoCrudAdmin.ViewModels;
 using AutoCrudAdmin.Models;
 using FluentExtensions.Extensions;
 using NonFactors.Mvc.Grid;
-using OJS.Common.Utils;
 using OJS.Services.Infrastructure.Exceptions;
 using SoftUni.Data.Infrastructure.Models;
 using System;
@@ -15,14 +14,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
-
-using static Common.GlobalConstants.EnvironmentVariables;
+using static OJS.Services.Administration.Business.AdministrationConstants;
 
 public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEntity>
     where TEntity : class
 {
-    private static readonly TimeZoneInfo LocalTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(EnvironmentUtils.GetRequiredByKey(LocalTimeZone));
-
     protected override IEnumerable<string> HiddenFormControlNames
         => new[]
         {
