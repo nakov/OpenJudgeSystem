@@ -36,11 +36,11 @@ public class ContestParticipationServiceModel : IMapExplicitly
             .ForMember(d => d.EndDateTimeForParticipantOrContest, opt => opt.MapFrom(s =>
                 s.ParticipationEndTime.HasValue
                     ? s.ParticipationEndTime
-                    : (s.Contest.EndTime.HasValue
+                    : s.Contest.EndTime.HasValue && s.Contest.EndTime >= DateTime.UtcNow
                         ? s.Contest.EndTime
-                        : (s.Contest.PracticeEndTime.HasValue
+                        : s.Contest.PracticeEndTime.HasValue
                             ? s.Contest.PracticeEndTime
-                            : null))))
+                            : null))
             .ForMember(d => d.TotalParticipantsCount, opt => opt.MapFrom(s =>
                 s.Contest.Participants.Count))
             .ForMember(d => d.ActiveParticipantsCount, opt => opt.MapFrom(s =>
