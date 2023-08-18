@@ -5,6 +5,7 @@ using AutoCrudAdmin.Controllers;
 using AutoCrudAdmin.ViewModels;
 using AutoCrudAdmin.Models;
 using FluentExtensions.Extensions;
+using NonFactors.Mvc.Grid;
 using OJS.Common.Utils;
 using OJS.Services.Infrastructure.Exceptions;
 using SoftUni.Data.Infrastructure.Models;
@@ -84,6 +85,51 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
     }
 
 #nullable disable
+    protected override IGridColumnsOf<TEntity> BuildGridColumns(IGridColumnsOf<TEntity> columns, int? stringMaxLength)
+    {
+        var gridColumns = base.BuildGridColumns(columns, stringMaxLength);
+
+        // Convert DateTime values to local time before displaying, as the admins will be working with local time,
+        // but in the database are always stored in UTC.
+        // TODO: provide option to override a method that just generates the expression that gets the property value.
+        // This is a workaround, but if option to override the method that gets the lambda is provided,
+        // in the AutoCrudAdminOptions (GenerateColumnConfiguration), it will be much easier to just override the expression.
+        gridColumns.ForEach(gc =>
+        {
+            var propertyInfo = typeof(TEntity).GetProperty(gc.Name);
+            if (propertyInfo == null || !TypeIsDateTime(propertyInfo.PropertyType))
+            {
+                return;
+            }
+
+            gridColumns.Remove(gc);
+
+            switch (gc)
+            {
+                case IGridColumn<TEntity, DateTime> dateTimeGridColumn:
+                    gridColumns
+                        .Add(
+                            this.GetDateTimeToLocalExpression<DateTime>(propertyInfo)
+                            ?? dateTimeGridColumn.Expression)
+                        .Titled(propertyInfo.Name)
+                        .Filterable(true)
+                        .Sortable(true);
+                    break;
+                case IGridColumn<TEntity, DateTime?> nullableDateTimeGridColumn:
+                    gridColumns
+                        .Add(
+                            this.GetDateTimeToLocalExpression<DateTime?>(propertyInfo)
+                            ?? nullableDateTimeGridColumn.Expression)
+                        .Titled(propertyInfo.Name)
+                        .Filterable(true)
+                        .Sortable(true);
+                    break;
+            }
+        });
+
+        return gridColumns;
+    }
+
     protected override IEnumerable<FormControlViewModel> GenerateFormControls(
         TEntity entity,
         EntityAction action,
@@ -162,4 +208,43 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
 
     private static bool TypeIsDateTime(Type type)
         => type == typeof(DateTime) || type == typeof(DateTime?);
+
+    private Expression<Func<TEntity, TProperty>>? GetDateTimeToLocalExpression<TProperty>(PropertyInfo property)
+    {
+        if (!TypeIsDateTime(property.PropertyType))
+        {
+            return null;
+        }
+
+        var dateTimeProperty = typeof(TEntity).GetProperty(property.Name) !;
+        var parameter = Expression.Parameter(typeof(TEntity), "model");
+        var dateTimePropertyAccess = Expression.Property(parameter, dateTimeProperty);
+
+        var convertMethod = typeof(TimeZoneInfo)
+            .GetMethod(nameof(TimeZoneInfo.ConvertTimeFromUtc), new[] { typeof(DateTime), typeof(TimeZoneInfo) }) !;
+        var localTimeZoneInfo = Expression.Constant(LocalTimeZoneInfo);
+
+        if (typeof(TProperty) == typeof(DateTime?))
+        {
+            var nullCheckExpression = Expression.Equal(dateTimePropertyAccess, Expression.Constant(null));
+            var convertCall = Expression.Condition(
+                nullCheckExpression,
+                Expression.Constant(null, typeof(DateTime?)),
+                Expression.Convert(
+                    Expression.Call(
+                        convertMethod,
+                        Expression.Convert(dateTimePropertyAccess, typeof(DateTime)),
+                        localTimeZoneInfo),
+                    typeof(DateTime?)));
+
+            var getLocalDateTimeLambda = Expression.Lambda<Func<TEntity, TProperty>>(convertCall, parameter);
+            return getLocalDateTimeLambda;
+        }
+        else
+        {
+            var convertCall = Expression.Call(convertMethod, dateTimePropertyAccess, localTimeZoneInfo);
+            var getLocalDateTimeLambda = Expression.Lambda<Func<TEntity, TProperty>>(convertCall, parameter);
+            return getLocalDateTimeLambda;
+        }
+    }
 }
