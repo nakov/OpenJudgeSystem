@@ -104,26 +104,25 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
 
             gridColumns.Remove(gc);
 
-            switch (gc)
+            if (gc is IGridColumn<TEntity, DateTime> dateTimeGridColumn)
             {
-                case IGridColumn<TEntity, DateTime> dateTimeGridColumn:
-                    gridColumns
-                        .Add(
-                            this.GetDateTimeToLocalExpression<DateTime>(propertyInfo)
-                            ?? dateTimeGridColumn.Expression)
-                        .Titled(propertyInfo.Name)
-                        .Filterable(true)
-                        .Sortable(true);
-                    break;
-                case IGridColumn<TEntity, DateTime?> nullableDateTimeGridColumn:
-                    gridColumns
-                        .Add(
-                            this.GetDateTimeToLocalExpression<DateTime?>(propertyInfo)
-                            ?? nullableDateTimeGridColumn.Expression)
-                        .Titled(propertyInfo.Name)
-                        .Filterable(true)
-                        .Sortable(true);
-                    break;
+                gridColumns
+                    .Add(
+                        this.GetDateTimeToLocalExpression<DateTime>(propertyInfo)
+                        ?? dateTimeGridColumn.Expression)
+                    .Titled(propertyInfo.Name)
+                    .Filterable(true)
+                    .Sortable(true);
+            }
+            else if (gc is IGridColumn<TEntity, DateTime?> nullableDateTimeGridColumn)
+            {
+                gridColumns
+                    .Add(
+                        this.GetDateTimeToLocalExpression<DateTime?>(propertyInfo)
+                        ?? nullableDateTimeGridColumn.Expression)
+                    .Titled(propertyInfo.Name)
+                    .Filterable(true)
+                    .Sortable(true);
             }
         });
 
@@ -135,7 +134,7 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
         EntityAction action,
         IDictionary<string, string> entityDict,
         IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters,
-        Type autocompleteType = null)
+        Type autocompleteType)
     {
         var formControls =
             base.GenerateFormControls(entity, action, entityDict, complexOptionFilters, autocompleteType)
