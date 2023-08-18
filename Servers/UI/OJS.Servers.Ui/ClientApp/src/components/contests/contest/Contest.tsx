@@ -92,9 +92,11 @@ const Contest = () => {
 
     const handleCountdownEnd = useCallback(
         () => {
-            setIsSubmitAllowed(canAccessAdministration || false);
+            if (!isNil(endDateTimeForParticipantOrContest) && new Date(endDateTimeForParticipantOrContest) <= getLocalDateTimeInUTC()) {
+                setIsSubmitAllowed(canAccessAdministration || false);
+            }
         },
-        [ canAccessAdministration, setIsSubmitAllowed ],
+        [ canAccessAdministration, setIsSubmitAllowed, endDateTimeForParticipantOrContest ],
     );
 
     const renderTimeRemaining = useCallback(
