@@ -16,6 +16,7 @@
     using OJS.Web.Areas.Contests.ViewModels.Contests;
     using OJS.Web.Areas.Contests.ViewModels.Problems;
     using OJS.Web.Areas.Contests.ViewModels.Submissions;
+    using OJS.Web.Common.Attributes;
     using OJS.Web.Common.Extensions;
     using OJS.Web.Controllers;
 
@@ -88,7 +89,7 @@
             return this.View(contestViewModel);
         }
 
-        [Authorize]
+        [AuthorizeCustom]
         [HttpPost]
         public ActionResult UserSubmissions([DataSourceRequest]DataSourceRequest request, int contestId)
         {

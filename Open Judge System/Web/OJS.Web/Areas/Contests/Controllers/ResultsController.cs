@@ -66,7 +66,7 @@
         /// <param name="id">The id of the problem.</param>
         /// <param name="official">A flag checking if the requested results are for practice or for a competition.</param>
         /// <returns>Returns the best result for each user who has at least one submission for the problem.</returns>
-        [Authorize]
+        [AuthorizeCustom]
         public ActionResult ByProblem([DataSourceRequest] DataSourceRequest request, int id, bool official)
         {
             var problem = this.Data.Problems.GetById(id);
@@ -111,7 +111,7 @@
         /// or for competition</param>
         /// <param name="page">The page on which to open the results table</param>
         /// <returns>Returns a view with the results of the contest.</returns>
-        [Authorize]
+        [AuthorizeCustom]
         public async Task<ActionResult> Simple(int id, bool official, int? page)
         {
             var contest = this.contestsData.GetByIdWithProblems(id);
@@ -199,7 +199,7 @@
         }
 
         // TODO: Unit test
-        [Authorize]
+        [AuthorizeCustom]
         public async Task<ActionResult> Full(int id, bool official, int? page)
         {
             if (!this.CheckIfUserHasContestPermissions(id))
