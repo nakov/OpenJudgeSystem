@@ -42,7 +42,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
     {
         var participant = new Participant(contest.Id, userId, isOfficial) { Contest = contest };
 
-        var utcNow = this.datesService.GetUtcNow();
+        var utcNow = DateTime.SpecifyKind(this.datesService.GetUtcNow(), DateTimeKind.Unspecified);
         if (isOfficial && contest.IsOnlineExam)
         {
             participant.ParticipationStartTime = utcNow;
