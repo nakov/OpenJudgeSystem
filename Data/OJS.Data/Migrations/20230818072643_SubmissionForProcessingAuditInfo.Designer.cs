@@ -12,8 +12,8 @@ using OJS.Data;
 namespace OJS.Data.Migrations
 {
     [DbContext(typeof(OjsDbContext))]
-    [Migration("20230815115221_AddedSubmissionForProcessing")]
-    partial class AddedSubmissionForProcessing
+    [Migration("20230818072643_SubmissionForProcessingAuditInfo")]
+    partial class SubmissionForProcessingAuditInfo
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
