@@ -60,7 +60,7 @@ namespace OJS.Web.Areas.Administration.Controllers
         {
             if (model != null && this.ModelState.IsValid)
             {
-                var name = this.settingsService.AddOrUpdate(model.Name, model.Value);
+                this.settingsService.AddOrUpdate(model.Name, model.Value);
             }
 
             return this.GridOperation(request, model);

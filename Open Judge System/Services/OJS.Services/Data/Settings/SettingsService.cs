@@ -57,7 +57,7 @@ namespace OJS.Services.Data.Settings
             var setting = this.dbContext.Settings.FirstOrDefault(s => s.Name == name);
             if (setting == null)
             {
-                setting = new Setting()
+                setting = new Setting
                 {
                     Name = name,
                     Value = value
