@@ -204,40 +204,60 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
     private static bool TypeIsDateTime(Type type)
         => type == typeof(DateTime) || type == typeof(DateTime?);
 
+    /// <summary>
+    /// Gets expression that converts a DateTime property to it's local time equivalent.
+    /// Returns null if the property is not DateTime or DateTime?.
+    /// </summary>
+    /// <param name="property">The property holding the DateTime.</param>
+    /// <typeparam name="TProperty">DateTime or DateTime? property type.</typeparam>
+    /// <returns>Property access expression that converts DateTime property to it's Local Time equivalent.</returns>
     private Expression<Func<TEntity, TProperty>>? GetDateTimeToLocalExpression<TProperty>(PropertyInfo property)
     {
+        // Check if the property is DateTime or DateTime? and return null if it is not, as we can't convert it.
         if (!TypeIsDateTime(property.PropertyType))
         {
             return null;
         }
 
+        // Get the property access expression:
+        // model => model.DateTime
         var dateTimeProperty = typeof(TEntity).GetProperty(property.Name) !;
         var parameter = Expression.Parameter(typeof(TEntity), "model");
         var dateTimePropertyAccess = Expression.Property(parameter, dateTimeProperty);
 
+        // Get the method TimeZoneInfo.ConvertTimeFromUtc(dateTime, LocalTimeZoneInfo);
         var convertMethod = typeof(TimeZoneInfo)
             .GetMethod(nameof(TimeZoneInfo.ConvertTimeFromUtc), new[] { typeof(DateTime), typeof(TimeZoneInfo) }) !;
         var localTimeZoneInfo = Expression.Constant(LocalTimeZoneInfo);
 
         if (typeof(TProperty) == typeof(DateTime?))
         {
+            // Build the converting expression for nullable datetime:
+            // dateTime == null ? null : (DateTime?)TimeZoneInfo.ConvertTimeFromUtc(dateTime, LocalTimeZoneInfo)
             var nullCheckExpression = Expression.Equal(dateTimePropertyAccess, Expression.Constant(null));
             var convertCall = Expression.Condition(
                 nullCheckExpression,
-                Expression.Constant(null, typeof(DateTime?)),
+                Expression.Constant(null, typeof(DateTime?)), // Return null if dateTime is null
                 Expression.Convert(
                     Expression.Call(
                         convertMethod,
-                        Expression.Convert(dateTimePropertyAccess, typeof(DateTime)),
+                        Expression.Convert(dateTimePropertyAccess, typeof(DateTime)), // When not null, convert to DateTime
                         localTimeZoneInfo),
-                    typeof(DateTime?)));
+                    typeof(DateTime?))); // Cast to nullable DateTime, as the method returns DateTime
 
+            // Build the full property access expression:
+            // model => dateTime == null ? null : (DateTime?)TimeZoneInfo.ConvertTimeFromUtc(model.dateTime, LocalTimeZoneInfo)
             var getLocalDateTimeLambda = Expression.Lambda<Func<TEntity, TProperty>>(convertCall, parameter);
             return getLocalDateTimeLambda;
         }
         else
         {
+            // Build the converting expression for non-nullable datetime:
+            // TimeZoneInfo.ConvertTimeFromUtc(dateTime, LocalTimeZoneInfo);
             var convertCall = Expression.Call(convertMethod, dateTimePropertyAccess, localTimeZoneInfo);
+
+            // Build the full property access expression:
+            // model => TimeZoneInfo.ConvertTimeFromUtc(model.dateTime, LocalTimeZoneInfo);
             var getLocalDateTimeLambda = Expression.Lambda<Func<TEntity, TProperty>>(convertCall, parameter);
             return getLocalDateTimeLambda;
         }
