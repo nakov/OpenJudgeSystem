@@ -8,5 +8,7 @@ namespace OJS.Services.Business.Contests.Models
         public DateTime? ModifiedOn { get; set; }
 
         public DateTime? CreatedOn { get; set; }
+
+        public DateTime? CompletedExecutionOn { get; set; }
     }
 }
