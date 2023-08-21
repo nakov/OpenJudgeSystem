@@ -27,7 +27,7 @@ namespace OJS.Services.Data.Settings
                 var dbSetting = this.dbContext.Settings.FirstOrDefault(s => s.Name == name);
                 if (dbSetting == null)
                 {
-                    throw new NullReferenceException();
+                    throw new ArgumentNullException();
                 }
 
                 return dbSetting.Value;
