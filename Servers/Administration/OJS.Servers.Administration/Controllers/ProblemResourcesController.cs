@@ -142,6 +142,8 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
 
     protected override async Task BeforeEntitySaveAsync(ProblemResource entity, AdminActionContext actionContext)
     {
+        await base.BeforeEntitySaveAsync(entity, actionContext);
+
         await this.problemsValidationHelper
             .ValidatePermissionsOfCurrentUser(entity.ProblemId)
             .VerifyResult();
