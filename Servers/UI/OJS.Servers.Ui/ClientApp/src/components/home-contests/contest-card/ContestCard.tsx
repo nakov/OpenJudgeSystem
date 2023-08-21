@@ -32,7 +32,13 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const contestCard = 'card-contests';
     const contestCardClassName = concatClassNames(styles.contestCard, contestCard);
     const contestCardHeader = 'card-header';
-    const contestCardHeaderClassName = concatClassNames(styles.contestCardHeader, contestCardHeader);
+    const contestCardHeaderClassName = concatClassNames(
+        styles.contestCardHeader,
+        contestCardHeader,
+        name.length >= 23
+            ? styles.contestTitleHoverable
+            : '',
+    );
     const contestCardCategory = 'card-category';
     const contestCardCategoryClassName = concatClassNames(styles.contestCardCategoryLabel, contestCardCategory);
     const contestCardCounter = 'card-counter';

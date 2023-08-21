@@ -27,11 +27,19 @@
 
 %helperText {
   bottom: 100%;
-  display: none;
+  opacity: 0;
   left: 100%;
   position: absolute;
-  width: 200px;
+  width: 150px;
   z-index: 1000;
+  padding: 5px 10px;
+  background-color: #fff;
+  border: 1px solid colors.$light-blue-color;
+  color: colors.$light-blue-color;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: 400;
+  transition: all .2s ease-in-out;
 }
 
 %icon {
@@ -45,6 +53,7 @@
       box-shadow: 1px 4px 4px 4px #e5e5e5;
       display: inline-block;
       padding: 5px;
+      opacity: 1;
     }
   }
 }
