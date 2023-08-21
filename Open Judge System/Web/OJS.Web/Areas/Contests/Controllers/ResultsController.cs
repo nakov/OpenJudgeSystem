@@ -479,16 +479,7 @@
 
             return this.PartialView("_StatsChartPartial", contestId);
         }
-        
-        private static void SetContestResults(ContestResultsViewModel contestResults, IOrderedEnumerable<ParticipantResultViewModel> participantResults)
-        {
-            contestResults.Results = participantResults
-                .ThenBy(parResult => parResult.ProblemResults
-                    .OrderByDescending(pr => pr.BestSubmission.Id)
-                    .Select(pr => pr.BestSubmission.Id)
-                    .FirstOrDefault());
-        }
-        
+
         private ContestResultsViewModel GetContestResults(
             Contest contest,
             bool official,
@@ -530,7 +521,6 @@
                     ? OfficialResultsPageSize
                     : NotOfficialResultsPageSize;
             }
-            
 
             var participants = this.participantsData
                 .GetAllByContestAndIsOfficial(contest.Id, official)
