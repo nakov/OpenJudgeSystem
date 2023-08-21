@@ -494,6 +494,8 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
     protected override async Task BeforeEntitySaveAsync(Problem entity, AdminActionContext actionContext)
     {
+        await base.BeforeEntitySaveAsync(entity, actionContext);
+
         var contestId = GetContestId(entity, actionContext.EntityDict);
 
         await this.contestsValidationHelper

@@ -19,7 +19,7 @@ namespace OJS.Services.Administration.Data.Implementations
     {
         private readonly IDatesService dates;
 
-        public ContestsDataService(AdminDbContext db, IDatesService dates)
+        public ContestsDataService(OjsDbContext db, IDatesService dates)
             : base(db)
             => this.dates = dates;
 

@@ -96,10 +96,13 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
         return formControls;
     }
 
-    protected override Task BeforeEntitySaveAsync(ProblemGroup entity, AdminActionContext actionContext)
-        => this.contestsValidationHelper
+    protected override async Task BeforeEntitySaveAsync(ProblemGroup entity, AdminActionContext actionContext)
+    {
+        await base.BeforeEntitySaveAsync(entity, actionContext);
+        await this.contestsValidationHelper
             .ValidatePermissionsOfCurrentUser(entity.ContestId)
             .VerifyResult();
+    }
 
     protected override Task BeforeGeneratingForm(
         ProblemGroup entity,
