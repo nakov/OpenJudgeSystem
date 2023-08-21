@@ -220,7 +220,7 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
         }
 
         // Get the property access expression:
-        // model => model.DateTime
+        // model => model.DateTimeProp
         var dateTimeProperty = typeof(TEntity).GetProperty(property.Name) !;
         var parameter = Expression.Parameter(typeof(TEntity), "model");
         var dateTimePropertyAccess = Expression.Property(parameter, dateTimeProperty);
@@ -246,7 +246,7 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
                     typeof(DateTime?))); // Cast to nullable DateTime, as the method returns DateTime
 
             // Build the full property access expression:
-            // model => dateTime == null ? null : (DateTime?)TimeZoneInfo.ConvertTimeFromUtc(model.dateTime, LocalTimeZoneInfo)
+            // model => dateTime == null ? null : (DateTime?)TimeZoneInfo.ConvertTimeFromUtc(model.DateTimeProp, LocalTimeZoneInfo)
             var getLocalDateTimeLambda = Expression.Lambda<Func<TEntity, TProperty>>(convertCall, parameter);
             return getLocalDateTimeLambda;
         }
@@ -257,7 +257,7 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
             var convertCall = Expression.Call(convertMethod, dateTimePropertyAccess, localTimeZoneInfo);
 
             // Build the full property access expression:
-            // model => TimeZoneInfo.ConvertTimeFromUtc(model.dateTime, LocalTimeZoneInfo);
+            // model => TimeZoneInfo.ConvertTimeFromUtc(model.DateTimeProp, LocalTimeZoneInfo);
             var getLocalDateTimeLambda = Expression.Lambda<Func<TEntity, TProperty>>(convertCall, parameter);
             return getLocalDateTimeLambda;
         }
