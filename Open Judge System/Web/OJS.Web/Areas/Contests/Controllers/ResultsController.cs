@@ -530,6 +530,7 @@
                     ? OfficialResultsPageSize
                     : NotOfficialResultsPageSize;
             }
+            
 
             var participants = this.participantsData
                 .GetAllByContestAndIsOfficial(contest.Id, official)
