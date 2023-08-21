@@ -66,6 +66,20 @@
         public CategoryContestsParticipationSummary GetCategoryParticipationSummary(
             int categoryId, 
             bool showHidden,
+            bool official)
+        {
+            return this.GetCategoryParticipationSummaryData(categoryId, showHidden, official);
+        }
+
+        public CategoryContestsParticipationSummary GetCategoryParticipationSummary(
+            int categoryId, 
+            bool showHidden)
+        {
+            return this.GetCategoryParticipationSummaryData(categoryId, showHidden);
+        }
+        private CategoryContestsParticipationSummary GetCategoryParticipationSummaryData(
+            int categoryId,
+            bool showHidden,
             bool official = true)
         {
             var contests = this.contestsDataService
@@ -102,7 +116,6 @@
                 Results = results,
             };
         }
-
         public ContestParticipationSummary GetContestParticipationSummary(int contestId, bool official = true)
         {
             var participants = this.participantsData.GetAllByContestAndIsOfficial(contestId, official)
