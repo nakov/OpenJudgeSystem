@@ -537,7 +537,7 @@
             if (isExportResults)
             {
                 contestResults.Results = participants
-                    .Select(p => new ParticipantResultViewModel()
+                    .Select(p => new ParticipantResultViewModel
                     {
                         ParticipantUsername = p.User.UserName,
                         ParticipantFirstName = p.User.UserSettings.FirstName,

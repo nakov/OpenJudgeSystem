@@ -63,7 +63,9 @@
             }
         }
 
-        public CategoryContestsParticipationSummary GetCategoryParticipationSummary(int categoryId, bool showHidden,
+        public CategoryContestsParticipationSummary GetCategoryParticipationSummary(
+            int categoryId, 
+            bool showHidden,
             bool official = true)
         {
             var contests = this.contestsDataService
