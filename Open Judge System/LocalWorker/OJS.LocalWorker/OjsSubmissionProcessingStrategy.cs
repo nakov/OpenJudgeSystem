@@ -223,19 +223,7 @@ namespace OJS.LocalWorker
 
                 var participantObject = this.participantsData
                     .GetByIdQuery(this.submission.ParticipantId.Value)
-                    .Select(p =>
-                        new ParticipantScoreDataModel()
-                        {
-                            Participant = p,
-                            IsOfficial = p.IsOfficial,
-                            UserName = p.User.UserName,
-                            TotalScore = p.Scores.Any()
-                                ? p.Scores
-                                    .Where(ps => !ps.Problem.IsDeleted)
-                                    .Select(ps => ps.Points)
-                                    .Sum()
-                                : 0
-                        })
+                    .Select(ParticipantScoreDataModel.FromParticipant)
                     .FirstOrDefault();
 
                 if (participantObject == null)

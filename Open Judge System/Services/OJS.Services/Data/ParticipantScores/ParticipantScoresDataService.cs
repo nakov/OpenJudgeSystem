@@ -13,17 +13,14 @@ namespace OJS.Services.Data.ParticipantScores
     public class ParticipantScoresDataService : IParticipantScoresDataService
     {
         private readonly IEfGenericRepository<ParticipantScore> participantScores;
-        private readonly IEfGenericRepository<Participant> participantRepository;
         private readonly IParticipantsDataService participantsData;
 
         public ParticipantScoresDataService(
             IEfGenericRepository<ParticipantScore> participantScores,
-            IParticipantsDataService participantsData,
-            IEfGenericRepository<Participant> participantRepository)
+            IParticipantsDataService participantsData)
         {
             this.participantScores = participantScores;
             this.participantsData = participantsData;
-            this.participantRepository = participantRepository;
         }
 
         public ParticipantScore GetByParticipantIdAndProblemId(int participantId, int problemId) =>
@@ -68,18 +65,7 @@ namespace OJS.Services.Data.ParticipantScores
 
             var participant = this.participantsData
                 .GetByIdQuery(submission.ParticipantId.Value)
-                .Select(p => new ParticipantScoreDataModel()
-                {
-                    Participant = p,
-                    IsOfficial = p.IsOfficial,
-                    UserName = p.User.UserName,
-                    TotalScore = p.Scores.Any()
-                        ? p.Scores
-                            .Where(ps => !ps.Problem.IsDeleted)
-                            .Select(ps => ps.Points)
-                            .Sum()
-                        : 0
-                })
+                .Select(ParticipantScoreDataModel.FromParticipant)
                 .FirstOrDefault();
 
             if (participant == null)
@@ -150,8 +136,7 @@ namespace OJS.Services.Data.ParticipantScores
             });
             participant.TotalScoreSnapshot = totalScore + submission.Points;
 
-            this.participantRepository.Update(participant);
-            this.participantRepository.SaveChanges();
+            this.participantsData.Update(participant);
         }
 
         public void UpdateBySubmissionAndPoints(
@@ -165,9 +150,8 @@ namespace OJS.Services.Data.ParticipantScores
 
             participantScore.SubmissionId = submissionId;
             participantScore.Points = submissionPoints;
-
-            this.participantRepository.Update(participant);
-            this.participantRepository.SaveChanges();
+            
+            this.participantsData.Update(participant);
         }
 
         public void RemoveSubmissionIdsBySubmissionIds(IEnumerable<int> submissionIds) =>
