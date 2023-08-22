@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
@@ -7,6 +7,7 @@ import { ContestStatus, FilterType, IFilter, SortType } from '../../common/conte
 import { PageParams } from '../../common/pages-types';
 import { IIndexContestsType } from '../../common/types';
 import ContestFilters from '../../components/contests/contests-filters/ContestFilters';
+import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../components/guidelines/alert/Alert';
 import Breadcrumb from '../../components/guidelines/breadcrumb/Breadcrumb';
 import { Button, ButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
@@ -24,7 +25,6 @@ import { usePages } from '../../hooks/use-pages';
 import concatClassNames from '../../utils/class-names';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { toLowerCase } from '../../utils/string-utils';
-import NotFoundPage from '../not-found/NotFoundPage';
 import { setLayout } from '../shared/set-layout';
 
 import styles from './ContestsPage.module.scss';
@@ -49,10 +49,10 @@ const ContestsPage = () => {
     const { getContestCategoryBreadcrumbItemPath } = useAppUrls();
     const { state: { categoriesFlat }, actions: { load: loadCategories } } = useContestCategories();
     const navigate = useNavigate();
-    const { state: params } = useUrlParams();
+    const { state: params, actions: { clearParams } } = useUrlParams();
     const { state: { strategies } } = useContestStrategyFilters();
     const { actions: { load: loadStrategies } } = useContestStrategyFilters();
-
+    const [ showAlert, setShowAlert ] = useState<boolean>(false);
     useEffect(
         () => {
             initiateGetAllContestsQuery();
@@ -193,31 +193,43 @@ const ContestsPage = () => {
         [ updateBreadcrumbAndNavigateToCategory ],
     );
 
-    const renderPage = useCallback(
+    useEffect(
         () => {
-            if (contestsAreLoading) {
-                return <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>;
+            if (!areQueryParamsValid() && isLoaded) {
+                setShowAlert(true);
+                clearParams();
             }
-            if (!areQueryParamsValid()) {
-                return <NotFoundPage />;
-            }
-
-            return (
-                <>
-                    <Breadcrumb items={breadcrumbItems} itemFunc={renderCategoriesBreadcrumbItem} />
-                    <div className={styles.container}>
-                        <ContestFilters onFilterClick={handleFilterClick} />
-                        <div className={styles.mainHeader}>
-                            {renderContests()}
-                        </div>
-                    </div>
-                </>
-            );
         },
-        [ areQueryParamsValid, breadcrumbItems, handleFilterClick, renderCategoriesBreadcrumbItem, renderContests, contestsAreLoading ],
+        [
+            areQueryParamsValid,
+            isLoaded,
+            clearParams,
+        ],
     );
 
-    return renderPage();
+    return (
+        <>
+            {contestsAreLoading && <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>}
+            {showAlert &&
+              (
+                  <Alert
+                    message="The category you requested was not valid, all contest were loaded."
+                    severity={AlertSeverity.Error}
+                    variant={AlertVariant.Filled}
+                    autoHideDuration={3000}
+                    vertical={AlertVerticalOrientation.Top}
+                    horizontal={AlertHorizontalOrientation.Right}
+                  />
+              )}
+            <Breadcrumb items={breadcrumbItems} itemFunc={renderCategoriesBreadcrumbItem} />
+            <div className={styles.container}>
+                <ContestFilters onFilterClick={handleFilterClick} />
+                <div className={styles.mainHeader}>
+                    {renderContests()}
+                </div>
+            </div>
+        </>
+    );
 };
 
 export default setLayout(ContestsPage, true);
