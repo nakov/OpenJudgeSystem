@@ -27,15 +27,13 @@
 
         void Delete(IEnumerable<ParticipantScore> participantScores);
 
-        void AddBySubmissionByUsernameAndIsOfficial(Submission submission, string userName, Participant participant,
-            int totalScore);
+        void AddBySubmissionByUsernameAndIsOfficial(Submission submission, string userName, Participant participant);
 
         void UpdateBySubmissionAndPoints(
             ParticipantScore participantScore,
             int? submissionId,
             int submissionPoints,
-            Participant participant,
-            int totalScore);
+            Participant participant);
 
         void RemoveSubmissionIdsBySubmissionIds(IEnumerable<int> submissionIds);
     }

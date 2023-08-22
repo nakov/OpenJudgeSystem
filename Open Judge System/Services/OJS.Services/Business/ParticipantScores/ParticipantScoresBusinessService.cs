@@ -412,7 +412,6 @@
                         x.ParticipantScore,
                         x.ParticipantScore.SubmissionId,
                         x.ProblemMaxPoints,
-                        x.Particinapnt,
-                        x.totalScore));
+                        x.Particinapnt));
     }
 }

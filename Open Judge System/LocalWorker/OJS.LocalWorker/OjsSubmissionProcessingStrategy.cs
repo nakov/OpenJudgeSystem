@@ -246,8 +246,7 @@ namespace OJS.LocalWorker
                         this.participantScoresData.AddBySubmissionByUsernameAndIsOfficial(
                             this.submission,
                             participantObject.UserName,
-                            participantObject.Participant,
-                            participantObject.TotalScore);
+                            participantObject.Participant);
 
                         return;
                     }
@@ -260,8 +259,7 @@ namespace OJS.LocalWorker
                         existingScore,
                         this.submission.Id,
                         this.submission.Points,
-                        participantObject.Participant,
-                        participantObject.TotalScore);
+                        participantObject.Participant);
                 }
             }
             catch (Exception ex)

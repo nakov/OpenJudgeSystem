@@ -80,13 +80,12 @@ namespace OJS.Services.Data.ParticipantScores
 
             if (existingScore == null)
             {
-                this.AddBySubmissionByUsernameAndIsOfficial(submission, participant.UserName, participant.Participant,
-                    participant.TotalScore);
+                this.AddBySubmissionByUsernameAndIsOfficial(submission, participant.UserName, participant.Participant);
             }
             else
             {
                 this.UpdateBySubmissionAndPoints(existingScore, submission.Id, submission.Points,
-                    participant.Participant, participant.TotalScore);
+                    participant.Participant);
             }
         }
 
@@ -122,8 +121,7 @@ namespace OJS.Services.Data.ParticipantScores
         public void AddBySubmissionByUsernameAndIsOfficial(
             Submission submission,
             string userName,
-            Participant participant,
-            int totalScore)
+            Participant participant)
         {
             participant.Scores.Add(new ParticipantScore
             {
@@ -134,7 +132,7 @@ namespace OJS.Services.Data.ParticipantScores
                 Points = submission.Points,
                 IsOfficial = participant.IsOfficial
             });
-            participant.TotalScoreSnapshot = totalScore + submission.Points;
+            participant.TotalScoreSnapshot += submission.Points;
 
             this.participantsData.Update(participant);
         }
@@ -143,14 +141,13 @@ namespace OJS.Services.Data.ParticipantScores
             ParticipantScore participantScore,
             int? submissionId,
             int submissionPoints,
-            Participant participant,
-            int totalScore)
+            Participant participant)
         {
-            participant.TotalScoreSnapshot = (totalScore - participantScore.Points) + submissionPoints;
+            participant.TotalScoreSnapshot = (participant.TotalScoreSnapshot - participantScore.Points) + submissionPoints;
 
             participantScore.SubmissionId = submissionId;
             participantScore.Points = submissionPoints;
-            
+
             this.participantsData.Update(participant);
         }
 
