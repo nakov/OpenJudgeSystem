@@ -204,6 +204,10 @@ const ContestsPage = () => {
             areQueryParamsValid,
             isLoaded,
             clearParams,
+            breadcrumbItems,
+            handleFilterClick,
+            renderCategoriesBreadcrumbItem,
+            renderContests,
         ],
     );
 
