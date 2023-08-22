@@ -52,6 +52,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .GetValidationResult(submission)
             .VerifyResult();
 
+        submission.StartedExecutionOn = DateTime.UtcNow;
         switch (submission.ExecutionType)
         {
             case ExecutionType.SimpleExecution:
