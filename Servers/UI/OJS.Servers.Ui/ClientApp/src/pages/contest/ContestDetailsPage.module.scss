@@ -20,12 +20,12 @@
   align-self: center;
   display: flex;
   flex-direction: column;
-  width: 50%;
+  width: 60%;
 }
 
 .descriptionAndProblemsContainer {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 .description {
@@ -43,15 +43,12 @@
 .taskListItem {
   border-bottom: 1px solid colors.$bottom-border-color;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding: 35px 0 5px;
-
-  @media only screen and (max-width: variables.$r-large-desktop-max) {
-    font-size: variables.$f-size-16;
-  }
 }
 
 .tasksListSideNavigation {
+  align-items: flex-start;
   display: flex;
   padding: 20px;
 
@@ -61,6 +58,6 @@
     color: colors.$text-dark-gray-color;
     font-size: variables.$f-size-18;
     margin-top: 10px;
-    text-align: start;
   }
 }
+

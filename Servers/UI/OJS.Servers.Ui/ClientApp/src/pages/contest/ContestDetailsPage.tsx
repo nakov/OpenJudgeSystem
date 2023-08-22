@@ -39,7 +39,7 @@ const ContestDetailsPage = () => {
         getAdministrationContestProblemsInternalUrl,
         getAdministrationContestEditInternalUrl,
     } = useAppUrls();
-    const { state: { user } } = useAuth();
+    const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
 
     const { contestId, participationType } = params;
 
@@ -55,10 +55,7 @@ const ContestDetailsPage = () => {
 
     useEffect(
         () => {
-            console.log(params);
-            if (isNil(contestDetails) && isNil(contestDetailsError) && !contestDetailsIsLoading && !isNil(contestId) &&
-            !isContestDetailsLoadingSuccessful) {
-                console.log('TEST');
+            if (isNil(contestDetails) && isNil(contestDetailsError) && !contestDetailsIsLoading && !isNil(contestId)) {
                 getContestDetails({ id: contestId.toString(), isOfficial });
             }
         },
@@ -73,19 +70,10 @@ const ContestDetailsPage = () => {
         ],
     );
 
-    const isUserAdmin = useMemo(
-        () => {
-            const { permissions: { canAccessAdministration } } = user;
-
-            return canAccessAdministration;
-        },
-        [ user ],
-    );
-
     const renderContestButtons = useCallback(
         () => (
             <div>
-                {isUserParticipant || isUserAdmin
+                {isUserParticipant || canAccessAdministration
                     ? (
                         <LinkButton
                           type={LinkButtonType.secondary}
@@ -94,7 +82,7 @@ const ContestDetailsPage = () => {
                         />
                     )
                     : null}
-                {isUserAdmin
+                {canAccessAdministration
                     ? (
                         <>
                             <LinkButton
@@ -147,15 +135,15 @@ const ContestDetailsPage = () => {
             getParticipateInContestUrl,
             isOfficial,
             isUserParticipant,
-            isUserAdmin,
+            canAccessAdministration,
             participationType,
             getAdministrationContestProblemsInternalUrl,
             getAdministrationContestEditInternalUrl,
         ],
     );
 
-    const renderResources = useCallback(
-        (resources: IProblemResourceType[]) => resources.map((r) => <ProblemResource resource={r} />),
+    const renderResource = useCallback(
+        (resource: IProblemResourceType) => <ProblemResource resource={resource} />,
         [],
     );
 
@@ -169,11 +157,14 @@ const ContestDetailsPage = () => {
             return (
                 <div>
                     <div className={styles.taskSideNavigationItem}>{problem.name}</div>
-                    {renderResources(resources)}
+                    <List
+                      values={resources}
+                      itemFunc={renderResource}
+                    />
                 </div>
             );
         },
-        [ renderResources ],
+        [ renderResource ],
     );
 
     const renderTasksList = useCallback(
