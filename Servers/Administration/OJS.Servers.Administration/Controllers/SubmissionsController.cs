@@ -172,10 +172,13 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         return base.GenerateFormControls(entity, action, entityDict, complexOptionFilters, autocompleteType);
     }
 
-    protected override async Task BeforeEntitySaveAsync(Submission submission, AdminActionContext actionContext)
-        => await this.problemsValidationHelper
-            .ValidatePermissionsOfCurrentUser(submission.ProblemId ?? default)
+    protected override async Task BeforeEntitySaveAsync(Submission entity, AdminActionContext actionContext)
+    {
+        await base.BeforeEntitySaveAsync(entity, actionContext);
+        await this.problemsValidationHelper
+            .ValidatePermissionsOfCurrentUser(entity.ProblemId ?? default)
             .VerifyResult();
+    }
 
     protected override async Task DeleteEntityAndSaveAsync(Submission submission, AdminActionContext actionContext)
     {

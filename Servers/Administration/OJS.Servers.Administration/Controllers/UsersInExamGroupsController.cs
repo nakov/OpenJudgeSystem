@@ -95,6 +95,8 @@ public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExa
 
     protected override async Task BeforeEntitySaveAsync(UserInExamGroup entity, AdminActionContext actionContext)
     {
+        await base.BeforeEntitySaveAsync(entity, actionContext);
+
         var contestId = await this.examGroupsData.GetContestIdById(entity.ExamGroupId);
 
         var validationModel = new UserInExamGroupCreateDeleteValidationServiceModel

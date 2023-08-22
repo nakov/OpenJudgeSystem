@@ -93,8 +93,11 @@ public class ParticipantsController : BaseAutoCrudAdminController<Participant>
         IDictionary<string, string> entityDict)
         => this.ValidateContestPermissions(entity);
 
-    protected override Task BeforeEntitySaveAsync(Participant entity, AdminActionContext actionContext)
-        => this.ValidateContestPermissions(entity);
+    protected override async Task BeforeEntitySaveAsync(Participant entity, AdminActionContext actionContext)
+    {
+        await base.BeforeEntitySaveAsync(entity, actionContext);
+        await this.ValidateContestPermissions(entity);
+    }
 
     private Task ValidateContestPermissions(Participant entity)
         => this.contestsValidationHelper
