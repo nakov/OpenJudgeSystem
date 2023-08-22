@@ -8,7 +8,7 @@ namespace OJS.Services.Business.ParticipantScores.Models
     public class ParticipantScoreDataModel
     {
         public Participant Participant { get; set; }
-        
+
         public bool IsOfficial { get; set; }
 
         public string UserName { get; set; }
@@ -21,12 +21,11 @@ namespace OJS.Services.Business.ParticipantScores.Models
                 Participant = participant,
                 IsOfficial = participant.IsOfficial,
                 UserName = participant.User.UserName,
-                TotalScore = participant.Scores.Any()
-                    ? participant.Scores
-                        .Where(ps => !ps.Problem.IsDeleted)
-                        .Select(ps => ps.Points)
-                        .Sum()
-                    : 0
+                TotalScore = participant.Scores
+                    .Where(ps => !ps.Problem.IsDeleted)
+                    .Select(ps => ps.Points)
+                    .DefaultIfEmpty(0)
+                    .Sum()
             };
     }
 }
