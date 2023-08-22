@@ -401,10 +401,6 @@
                     ParticipantScore = ps,
                     ProblemMaxPoints = ps.Problem.MaximumPoints,
                     Particinapnt = ps.Participant,
-                    totalScore = ps.Participant.Scores
-                        .Where(scores => !scores.Problem.IsDeleted)
-                        .Select(scores => scores.Points)
-                        .Sum()
                 })
                 .ToList()
                 .ForEach(x =>
