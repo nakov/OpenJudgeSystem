@@ -331,14 +331,13 @@ const SubmissionDetails = () => {
                           size={ButtonSize.small}
                           onClick={() => setSubmissionAndStartParticipation()}
                           className={styles.backBtn}
-                          text="Back To Contest"
+                          text=" "
                           state={backButtonState}
                         />
                     </div>
                     <div>
                         {problemNameHeadingText}
                     </div>
-                    <div className={styles.itemInvisible}>Other</div>
                 </Heading>
                 {currentSubmission?.submissionType.allowBinaryFilesUpload
                     ? (

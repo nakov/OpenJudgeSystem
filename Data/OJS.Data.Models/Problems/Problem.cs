@@ -1,12 +1,12 @@
 namespace OJS.Data.Models.Problems
 {
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
     using OJS.Data.Models.Checkers;
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Submissions;
     using OJS.Data.Models.Tests;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.ComponentModel.DataAnnotations;
     using SoftUni.Data.Infrastructure.Models;
     using static OJS.Data.Validation.ConstraintConstants.Problem;
 

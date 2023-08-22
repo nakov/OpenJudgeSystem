@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Administration.Data
+namespace OJS.Services.Administration.Data
 {
     using System.Linq;
     using OJS.Data.Models.Submissions;
