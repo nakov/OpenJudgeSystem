@@ -80,10 +80,9 @@ namespace OJS.Services.Ui.Business.Implementations
                     official);
 
             var userIsAdminInContest = user.IsAdmin || IsUserLecturerInContest(contest!, user.Id!);
-            var isOfficialOnlineContest = contest!.CanBeCompeted && contest.IsOnlineExam;
 
-            var contestDetailsServiceModel = contest.Map<ContestDetailsServiceModel>();
-            if (!userIsAdminInContest && isOfficialOnlineContest && participant != null)
+            var contestDetailsServiceModel = contest!.Map<ContestDetailsServiceModel>();
+            if (!userIsAdminInContest && contest!.IsOnlineExam && participant != null)
             {
                 var problemsForParticipant = participant.ProblemsForParticipants.Select(x => x.Problem);
                 contestDetailsServiceModel.Problems = problemsForParticipant.Map<ICollection<ContestProblemServiceModel>>();
