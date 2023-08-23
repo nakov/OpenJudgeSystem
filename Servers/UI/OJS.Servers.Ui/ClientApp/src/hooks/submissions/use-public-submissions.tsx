@@ -293,9 +293,18 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
                 initiatePendingSubmissionsQuery,
             },
         }),
-        [ publicSubmissions, unprocessedSubmissions, totalSubmissionsCount, totalUnprocessedSubmissionsCount, loadTotalSubmissionsCount,
+        [
+            publicSubmissions,
+            unprocessedSubmissions,
+            pendingSubmissions,
+            totalSubmissionsCount,
+            totalUnprocessedSubmissionsCount,
+            loadTotalSubmissionsCount,
             loadTotalUnprocessedSubmissionsCount,
-            initiatePublicSubmissionsQuery, initiateUnprocessedSubmissionsQuery, initiatePendingSubmissionsQuery ],
+            initiatePublicSubmissionsQuery,
+            initiateUnprocessedSubmissionsQuery,
+            initiatePendingSubmissionsQuery,
+        ],
     );
 
     return (
