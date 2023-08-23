@@ -84,8 +84,6 @@ namespace OJS.Services.Administration.Business.Implementations
 
                 await this.submissionsForProcessingData.AddOrUpdateBySubmissionIds(submissionIds);
 
-                // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/878
-
                 scope.Complete();
             }
 

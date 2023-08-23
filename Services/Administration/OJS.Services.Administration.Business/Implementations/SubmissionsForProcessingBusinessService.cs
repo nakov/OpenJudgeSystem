@@ -63,12 +63,10 @@
 
             var submissions = this.submissionsData
                 .GetByIds(submissionsForProcessing
-                    .Select(sp => sp!.SubmissionId)
-                    .ToList())
+                    .Select(sp => sp!.SubmissionId))
                 .MapCollection<SubmissionServiceModel>()
                 .ToList();
 
-            // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/878
             submissions
                 .ForEachSequential((submission) =>
                     this.submissionsCommonBusinessService
