@@ -11,7 +11,7 @@
         public const string ContestCategoriesTree = "ContestCategoriesTree";
         public const string ContestSubCategoriesFormat = "ContestSubCategories:{0}";
         public const string ContestParentCategoriesFormat = "ContestParentCategories:{0}";
-        public const string ContestCategoryNameFormat = "ContestCategoryNameid:{0}";
+        public const string ContestCategoryNameFormat = "ContestCategoryName:{0}";
 
         public const string SubmissionTypesByUsage = "SubmissionTypesByUsage";
     }
