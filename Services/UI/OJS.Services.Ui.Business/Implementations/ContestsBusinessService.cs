@@ -193,10 +193,11 @@ namespace OJS.Services.Ui.Business.Implementations
                     .FirstOrDefault();
             });
 
-            participationModel.ActiveParticipantsCount = this.contestParticipantsCacheService.GetParticipantsCountByContestAndIsOfficial(
-                    model.ContestId,
-                    true);
-            participationModel.TotalParticipantsCount = this.contestParticipantsCacheService.GetParticipantsCountByContest(model.ContestId);
+            var practiceContestParticipantsViewModel = await this.contestParticipantsCacheService.GetPracticeContestParticipantsCount(model.ContestId);
+            participationModel.PracticeParticipantsCount = practiceContestParticipantsViewModel.PracticeParticipantsCount;
+
+            var competeContestParticipantsViewModel = await this.contestParticipantsCacheService.GetCompeteContestParticipantsCount(model.ContestId);
+            participationModel.CompeteParticipantsCount = competeContestParticipantsViewModel.CompeteParticipantsCount;
 
             return participationModel;
         }

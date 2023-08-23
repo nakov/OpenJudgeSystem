@@ -22,9 +22,9 @@ public class ContestParticipationServiceModel : IMapExplicitly
 
     public bool ShouldEnterPassword { get; set; }
 
-    public int TotalParticipantsCount { get; set; }
+    public int CompeteParticipantsCount { get; set; }
 
-    public int ActiveParticipantsCount { get; set; }
+    public int PracticeParticipantsCount { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Participant, ContestParticipationServiceModel>()

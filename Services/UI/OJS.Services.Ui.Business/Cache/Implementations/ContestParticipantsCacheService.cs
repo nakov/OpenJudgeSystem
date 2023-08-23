@@ -1,38 +1,38 @@
 ﻿namespace OJS.Services.Ui.Business.Cache.Implementations;
 
 using OJS.Services.Infrastructure.Constants;
-using System.Linq;
 using OJS.Services.Infrastructure.Cache;
-using Data;
+using OJS.Services.Common.Models.Cache;
+using System.Threading.Tasks;
 
 public class ContestParticipantsCacheService : IContestParticipantsCacheService
 {
     private readonly ICacheService cache;
-    private readonly IParticipantsDataService participantsDataService;
+    private readonly IParticipantsBusinessService participantsBusinessService;
 
-    public ContestParticipantsCacheService(ICacheService cache, IParticipantsDataService participantsDataService)
+    public ContestParticipantsCacheService(ICacheService cache, IParticipantsBusinessService participantsBusinessService)
     {
         this.cache = cache;
-        this.participantsDataService = participantsDataService;
+        this.participantsBusinessService = participantsBusinessService;
     }
 
-    public int GetParticipantsCountByContestAndIsOfficial(int contestId, int? cacheSeconds = CacheConstants.FiveMinutesInSeconds)
+    public Task<ContestParticipantsViewModel> GetCompeteContestParticipantsCount(int contestId, int? cacheSeconds = CacheConstants.FiveMinutesInSeconds)
         => cacheSeconds.HasValue
             ? this.cache.Get(
-                string.Format(CacheConstants.ContestParticipants, contestId),
-                () => this.participantsDataService.GetAllOfficialByContest(contestId),
-                cacheSeconds.Value).Count()
+                string.Format(CacheConstants.CompeteContestParticipantsCount, contestId),
+                () => this.participantsBusinessService.GetParticipantsCountByContest(contestId),
+                cacheSeconds.Value)
             : this.cache.Get(
-                string.Format(CacheConstants.ContestParticipants, contestId),
-                () => this.participantsDataService.GetAllOfficialByContest(contestId)).Count();
+                string.Format(CacheConstants.CompeteContestParticipantsCount, contestId),
+                () => this.participantsBusinessService.GetParticipantsCountByContest(contestId));
 
-    public int GetParticipantsCountByContest(int contestId, int? cacheSeconds = CacheConstants.FiveMinutesInSeconds)
+    public Task<ContestParticipantsViewModel> GetPracticeContestParticipantsCount(int contestId, int? cacheSeconds = CacheConstants.FiveMinutesInSeconds)
         => cacheSeconds.HasValue
             ? this.cache.Get(
-                string.Format(CacheConstants.ContestParticipants, contestId),
-                () => this.participantsDataService.GetAllByContest(contestId),
-                cacheSeconds.Value).Count()
+                string.Format(CacheConstants.PracticeContestParticipantsCount, contestId),
+                () => this.participantsBusinessService.GetParticipantsCountByContest(contestId),
+                cacheSeconds.Value)
             : this.cache.Get(
-                string.Format(CacheConstants.ContestParticipants, contestId),
-                () => this.participantsDataService.GetAllByContest(contestId).Count());
+                string.Format(CacheConstants.PracticeContestParticipantsCount, contestId),
+                () => this.participantsBusinessService.GetParticipantsCountByContest(contestId));
 }

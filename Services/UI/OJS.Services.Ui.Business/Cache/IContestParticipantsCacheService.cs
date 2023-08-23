@@ -2,10 +2,12 @@
 
 using SoftUni.Services.Infrastructure;
 using OJS.Services.Infrastructure.Constants;
+using OJS.Services.Common.Models.Cache;
+using System.Threading.Tasks;
 
 public interface IContestParticipantsCacheService : IService
 {
-    int GetParticipantsCountByContestAndIsOfficial(int contestId, bool official, int? cacheSeconds = CacheConstants.FiveMinutesInSeconds);
+    Task<ContestParticipantsViewModel> GetCompeteContestParticipantsCount(int contestId, int? cacheSeconds = CacheConstants.FiveMinutesInSeconds);
 
-    int GetParticipantsCountByContest(int contestId, int? cacheSeconds = CacheConstants.FiveMinutesInSeconds);
+    Task<ContestParticipantsViewModel> GetPracticeContestParticipantsCount(int contestId, int? cacheSeconds = CacheConstants.FiveMinutesInSeconds);
 }

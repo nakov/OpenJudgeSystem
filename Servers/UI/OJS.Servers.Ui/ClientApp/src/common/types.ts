@@ -109,8 +109,8 @@ interface IStartParticipationResponseType {
     lastSubmissionTime: Date;
     remainingTimeInMilliseconds: number;
     userSubmissionsTimeLimit: number;
-    totalParticipantsCount: number;
-    activeParticipantsCount: number;
+    practiceParticipantsCount: number;
+    competeParticipantsCount: number;
 }
 
 interface IPagedResultType<TItem> {

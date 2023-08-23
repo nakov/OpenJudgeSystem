@@ -48,8 +48,8 @@ interface ICurrentContestContext {
         isPasswordValid: boolean | null;
         remainingTimeInMilliseconds: number;
         userSubmissionsTimeLimit: number;
-        totalParticipantsCount: number;
-        activeParticipantsCount: number;
+        practiceParticipantsCount: number;
+        competeParticipantsCount: number;
         isSubmitAllowed: boolean;
         contestError: IErrorDataType | null;
         isRegisterForContestSuccessful: boolean;
@@ -81,8 +81,8 @@ const defaultState = {
         isPasswordValid: false,
         remainingTimeInMilliseconds: 0.0,
         userSubmissionsTimeLimit: 0,
-        totalParticipantsCount: 0,
-        activeParticipantsCount: 0,
+        practiceParticipantsCount: 0,
+        competeParticipantsCount: 0,
         isUserParticipant: false,
     },
 };
@@ -126,8 +126,8 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ isPasswordValid, setIsPasswordValid ] = useState<boolean>(defaultState.state.isPasswordValid);
     const [ userSubmissionsTimeLimit, setUserSubmissionsTimeLimit ] = useState<number>(0);
     const [ remainingTimeInMilliseconds, setRemainingTimeInMilliseconds ] = useState(defaultState.state.remainingTimeInMilliseconds);
-    const [ totalParticipantsCount, setTotalParticipantsCount ] = useState(defaultState.state.totalParticipantsCount);
-    const [ activeParticipantsCount, setActiveParticipantsCount ] = useState(defaultState.state.activeParticipantsCount);
+    const [ practiceParticipantsCount, setPracticeParticipantsCount ] = useState(defaultState.state.practiceParticipantsCount);
+    const [ competeParticipantsCount, setCompeteParticipantsCount ] = useState(defaultState.state.competeParticipantsCount);
     const [ isSubmitAllowed, setIsSubmitAllowed ] = useState<boolean>(true);
     const [ contestError, setContestError ] = useState<IErrorDataType | null>(null);
     const [ isUserParticipant, setIsUserParticipant ] = useState<boolean>(defaultState.state.isUserParticipant);
@@ -347,8 +347,8 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 contestIsCompete,
                 participantId: currentParticipantId,
                 remainingTimeInMilliseconds: newRemainingTimeInMilliseconds,
-                totalParticipantsCount: newTotalParticipants,
-                activeParticipantsCount: newActiveParticipants,
+                practiceParticipantsCount: newPracticeParticipants,
+                competeParticipantsCount: newCompeteParticipants,
             } = startContestData;
 
             setContest(newContest);
@@ -356,8 +356,8 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             setParticipantId(currentParticipantId);
             setRemainingTimeInMilliseconds(newRemainingTimeInMilliseconds);
             setUserSubmissionsTimeLimit(startContestData.userSubmissionsTimeLimit);
-            setTotalParticipantsCount(newTotalParticipants);
-            setActiveParticipantsCount(newActiveParticipants);
+            setPracticeParticipantsCount(newPracticeParticipants);
+            setCompeteParticipantsCount(newCompeteParticipants);
 
             setRequirePassword(null);
             setIsPasswordValid(defaultState.state.isPasswordValid);
@@ -405,8 +405,8 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 isPasswordValid,
                 remainingTimeInMilliseconds,
                 userSubmissionsTimeLimit,
-                totalParticipantsCount,
-                activeParticipantsCount,
+                practiceParticipantsCount,
+                competeParticipantsCount,
                 isSubmitAllowed,
                 contestError,
                 isRegisterForContestSuccessful,
@@ -443,8 +443,8 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             contestPasswordError,
             submitPassword,
             loadParticipantScores,
-            totalParticipantsCount,
-            activeParticipantsCount,
+            practiceParticipantsCount,
+            competeParticipantsCount,
             isSubmitAllowed,
             setIsSubmitAllowed,
             contestError,

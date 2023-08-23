@@ -9,7 +9,8 @@
 
         public const string MainContestCategoriesDropDown = "MainContestCategoriesDropDown";
         public const string ContestResults = "Contest_id_{0}official{1}full{2}";
-        public const string ContestParticipants = "Contest_id_{0}";
+        public const string PracticeContestParticipantsCount = "ContestPartcipantsCount:Practice:{0}";
+        public const string CompeteContestParticipantsCount = "ContestPartcipantsCount:Compete:{0}";
         public const string ContestCategoriesTree = "ContestCategoriesTree";
         public const string ContestSubCategoriesFormat = "ContestSubCategories_id_{0}";
         public const string ContestParentCategoriesFormat = "ContestParentCategories_id_{0}";
