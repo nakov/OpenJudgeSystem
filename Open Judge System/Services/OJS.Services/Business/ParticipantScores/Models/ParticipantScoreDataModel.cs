@@ -13,19 +13,12 @@ namespace OJS.Services.Business.ParticipantScores.Models
 
         public string UserName { get; set; }
 
-        public int TotalScore { get; set; }
-
         public static Expression<Func<Participant, ParticipantScoreDataModel>> FromParticipant =>
             participant => new ParticipantScoreDataModel
             {
                 Participant = participant,
                 IsOfficial = participant.IsOfficial,
                 UserName = participant.User.UserName,
-                TotalScore = participant.Scores
-                    .Where(ps => !ps.Problem.IsDeleted)
-                    .Select(ps => ps.Points)
-                    .DefaultIfEmpty(0)
-                    .Sum()
             };
     }
 }
