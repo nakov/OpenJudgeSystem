@@ -154,21 +154,13 @@ namespace OJS.Servers.Infrastructure.Extensions
                 });
 
         public static IServiceCollection AddDistributedCaching(
+            this IServiceCollection services)
+            => services.AddRedis(ApplicationFullName);
+
+        public static IServiceCollection AddDistributedCaching(
             this IServiceCollection services,
-            string? instanceName = null)
-        {
-            EnvironmentUtils.ValidateEnvironmentVariableExists(
-                new[] { RedisConnectionString });
-
-            services.AddSingleton<ICacheService, CacheService>();
-            instanceName = (instanceName ?? ApplicationFullName) + ":";
-
-            return services.AddStackExchangeRedisCache(options =>
-            {
-                options.Configuration = EnvironmentUtils.GetRequiredByKey(RedisConnectionString);
-                options.InstanceName = instanceName;
-            });
-        }
+            string instanceName)
+            => services.AddRedis(instanceName);
 
         public static IServiceCollection AddMessageQueue<TStartup>(
             this IServiceCollection services,
@@ -237,6 +229,20 @@ namespace OJS.Servers.Infrastructure.Extensions
             services.AddHttpClient<IDistributorHttpClientService, DistributorHttpClientService>(ConfigureHttpClient);
 
             return services;
+        }
+
+        private static IServiceCollection AddRedis(this IServiceCollection services, string instanceName)
+        {
+            EnvironmentUtils.ValidateEnvironmentVariableExists(
+                new[] { RedisConnectionString });
+
+            services.AddSingleton<ICacheService, CacheService>();
+
+            return services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = EnvironmentUtils.GetRequiredByKey(RedisConnectionString);
+                options.InstanceName = instanceName;
+            });
         }
 
         private static void ConfigureHttpClient(HttpClient client)
