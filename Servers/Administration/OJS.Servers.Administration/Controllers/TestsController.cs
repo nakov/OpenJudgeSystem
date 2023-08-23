@@ -262,10 +262,10 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         return formControls;
     }
 
-    protected override Task BeforeEntitySaveAsync(Test entity, AdminActionContext actionContext)
+    protected override async Task BeforeEntitySaveAsync(Test entity, AdminActionContext actionContext)
     {
+        await base.BeforeEntitySaveAsync(entity, actionContext);
         UpdateInputAndOutput(entity, actionContext);
-        return Task.CompletedTask;
     }
 
     private static void UpdateInputAndOutput(Test entity, AdminActionContext actionContext)
