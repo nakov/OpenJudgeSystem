@@ -241,7 +241,7 @@ namespace OJS.Servers.Infrastructure.Extensions
             return services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = EnvironmentUtils.GetRequiredByKey(RedisConnectionString);
-                options.InstanceName = instanceName;
+                options.InstanceName = $"{instanceName}:";
             });
         }
 
