@@ -193,11 +193,16 @@ namespace OJS.Services.Ui.Business.Implementations
                     .FirstOrDefault();
             });
 
-            var practiceContestParticipantsViewModel = await this.contestParticipantsCacheService.GetPracticeContestParticipantsCount(model.ContestId);
-            participationModel.PracticeParticipantsCount = practiceContestParticipantsViewModel.PracticeParticipantsCount;
-
-            var competeContestParticipantsViewModel = await this.contestParticipantsCacheService.GetCompeteContestParticipantsCount(model.ContestId);
-            participationModel.CompeteParticipantsCount = competeContestParticipantsViewModel.CompeteParticipantsCount;
+            if (model.IsOfficial)
+            {
+                var competeContestParticipantsViewModel = await this.contestParticipantsCacheService.GetCompeteContestParticipantsCount(model.ContestId);
+                participationModel.ParticipantsCount = competeContestParticipantsViewModel.CompeteParticipantsCount;
+            }
+            else
+            {
+                var practiceContestParticipantsViewModel = await this.contestParticipantsCacheService.GetPracticeContestParticipantsCount(model.ContestId);
+                participationModel.ParticipantsCount = practiceContestParticipantsViewModel.PracticeParticipantsCount;
+            }
 
             return participationModel;
         }

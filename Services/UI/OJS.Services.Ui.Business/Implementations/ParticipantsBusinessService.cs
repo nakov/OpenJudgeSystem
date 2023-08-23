@@ -35,13 +35,16 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
         this.datesService = datesService;
     }
 
-    public Task<ContestParticipantsViewModel> GetParticipantsCountByContest(int contestId)
+    public Task<ContestParticipantsViewModel> GetPracticeParticipantsCount(int contestId)
         => Task.FromResult(new ContestParticipantsViewModel
         {
-            CompeteParticipantsCount =
-                this.participantsData.GetAllByContestAndIsOfficial(contestId, true).Count(),
-            PracticeParticipantsCount =
-                this.participantsData.GetAllByContestAndIsOfficial(contestId, false).Count(),
+            PracticeParticipantsCount = this.participantsData.GetAllByContestAndIsOfficial(contestId, false).Count(),
+        });
+
+    public Task<ContestParticipantsViewModel> GetCompeteParticipantsCount(int contestId)
+        => Task.FromResult(new ContestParticipantsViewModel
+        {
+            CompeteParticipantsCount = this.participantsData.GetAllByContestAndIsOfficial(contestId, true).Count(),
         });
 
     public async Task<Participant> CreateNewByContestByUserByIsOfficialAndIsAdmin(

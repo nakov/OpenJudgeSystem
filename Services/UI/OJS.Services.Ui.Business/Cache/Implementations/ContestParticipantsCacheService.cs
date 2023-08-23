@@ -16,23 +16,15 @@ public class ContestParticipantsCacheService : IContestParticipantsCacheService
         this.participantsBusinessService = participantsBusinessService;
     }
 
-    public Task<ContestParticipantsViewModel> GetCompeteContestParticipantsCount(int contestId, int? cacheSeconds = CacheConstants.FiveMinutesInSeconds)
-        => cacheSeconds.HasValue
-            ? this.cache.Get(
-                string.Format(CacheConstants.CompeteContestParticipantsCount, contestId),
-                () => this.participantsBusinessService.GetParticipantsCountByContest(contestId),
-                cacheSeconds.Value)
-            : this.cache.Get(
-                string.Format(CacheConstants.CompeteContestParticipantsCount, contestId),
-                () => this.participantsBusinessService.GetParticipantsCountByContest(contestId));
+    public Task<ContestParticipantsViewModel> GetCompeteContestParticipantsCount(int contestId, int cacheSeconds = CacheConstants.FiveMinutesInSeconds)
+        => this.cache.Get(
+            string.Format(CacheConstants.CompeteContestParticipantsCount, contestId),
+            () => this.participantsBusinessService.GetCompeteParticipantsCount(contestId),
+            cacheSeconds);
 
-    public Task<ContestParticipantsViewModel> GetPracticeContestParticipantsCount(int contestId, int? cacheSeconds = CacheConstants.FiveMinutesInSeconds)
-        => cacheSeconds.HasValue
-            ? this.cache.Get(
-                string.Format(CacheConstants.PracticeContestParticipantsCount, contestId),
-                () => this.participantsBusinessService.GetParticipantsCountByContest(contestId),
-                cacheSeconds.Value)
-            : this.cache.Get(
-                string.Format(CacheConstants.PracticeContestParticipantsCount, contestId),
-                () => this.participantsBusinessService.GetParticipantsCountByContest(contestId));
+    public Task<ContestParticipantsViewModel> GetPracticeContestParticipantsCount(int contestId, int cacheSeconds = CacheConstants.FiveMinutesInSeconds)
+        => this.cache.Get(
+            string.Format(CacheConstants.PracticeContestParticipantsCount, contestId),
+            () => this.participantsBusinessService.GetPracticeParticipantsCount(contestId),
+            cacheSeconds);
 }
