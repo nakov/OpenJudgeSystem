@@ -73,7 +73,7 @@ services:
       - rabbitmq_data:/var/lib/rabbitmqvolumes:rw
       - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
   redis:
-    image: "redis:5.0"
+    image: "redis:7"
     ports:
       - "6379:6379"
     container_name: redis_instance
