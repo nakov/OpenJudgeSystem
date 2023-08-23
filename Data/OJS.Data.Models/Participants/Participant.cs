@@ -3,7 +3,6 @@ namespace OJS.Data.Models.Participants
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Submissions;
     using OJS.Data.Models.Users;
-    using OJS.Data.Validation.Attributes;
     using System;
     using System.Collections.Generic;
     using SoftUni.Data.Infrastructure.Models;
@@ -29,10 +28,8 @@ namespace OJS.Data.Models.Participants
 
         public virtual UserProfile User { get; set; } = null!;
 
-        [UtcConvertable]
         public DateTime? ParticipationStartTime { get; set; }
 
-        [UtcConvertable]
         public DateTime? ParticipationEndTime { get; set; }
 
         public bool IsOfficial { get; set; }
