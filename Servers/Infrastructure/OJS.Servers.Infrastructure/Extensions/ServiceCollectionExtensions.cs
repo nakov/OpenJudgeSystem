@@ -220,7 +220,8 @@ namespace OJS.Servers.Infrastructure.Extensions
         public static IServiceCollection AddHttpContextServices(this IServiceCollection services)
             => services
                 .AddHttpContextAccessor()
-                .AddTransient(s => s.GetRequiredService<IHttpContextAccessor>().HttpContext?.User ?? new ClaimsPrincipal());
+                .AddTransient(s =>
+                    s.GetRequiredService<IHttpContextAccessor>().HttpContext?.User ?? new ClaimsPrincipal());
 
         private static IServiceCollection AddWebServerServices<TStartUp>(this IServiceCollection services)
         {

@@ -60,8 +60,11 @@ public class ExamGroupsController : BaseAutoCrudAdminController<ExamGroup>
         IDictionary<string, string> entityDict)
         => this.ValidateContestPermissions(entity);
 
-    protected override Task BeforeEntitySaveAsync(ExamGroup entity, AdminActionContext actionContext)
-        => this.ValidateContestPermissions(entity);
+    protected override async Task BeforeEntitySaveAsync(ExamGroup entity, AdminActionContext actionContext)
+    {
+        await base.BeforeEntitySaveAsync(entity, actionContext);
+        await this.ValidateContestPermissions(entity);
+    }
 
     protected override async Task BeforeEntitySaveOnDeleteAsync(ExamGroup entity, AdminActionContext actionContext)
     {
