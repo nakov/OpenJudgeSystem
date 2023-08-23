@@ -153,17 +153,20 @@ namespace OJS.Servers.Infrastructure.Extensions
                     }
                 });
 
-        public static IServiceCollection AddDistributedCaching<TStartup>(this IServiceCollection services)
+        public static IServiceCollection AddDistributedCaching(
+            this IServiceCollection services,
+            string? instanceName = null)
         {
             EnvironmentUtils.ValidateEnvironmentVariableExists(
                 new[] { RedisConnectionString });
 
             services.AddSingleton<ICacheService, CacheService>();
+            instanceName = (instanceName ?? ApplicationFullName) + ":";
 
             return services.AddStackExchangeRedisCache(options =>
             {
-                options.Configuration = EnvironmentUtils.GetByKey(RedisConnectionString);
-                options.InstanceName = typeof(TStartup).FullName;
+                options.Configuration = EnvironmentUtils.GetRequiredByKey(RedisConnectionString);
+                options.InstanceName = instanceName;
             });
         }
 
