@@ -21,13 +21,21 @@ const formatDate = (
     ? preciseFormatDate(date, formatString)
     : moment(date).utc(true).local().fromNow());
 
-const getLocalDateTimeInUTC = () => {
-    const now = new Date();
-    return new Date(now.getTime() + now.getTimezoneOffset() * 60000);
+const getCurrentTimeInUTC = () => {
+    const now = moment().utc();
+    return new Date(
+        now.year(),
+        now.month(),
+        now.date(),
+        now.hour(),
+        now.minute(),
+        now.second(),
+        now.millisecond(),
+    );
 };
 
 const convertToSecondsRemaining = (date: Date) => {
-    const currentDate = getLocalDateTimeInUTC();
+    const currentDate = getCurrentTimeInUTC();
     const { hours, minutes, seconds } = intervalToDuration({
         start: currentDate,
         end: date,
@@ -106,7 +114,7 @@ export default {
     calculateTimeUntil,
     convertToSecondsRemaining,
     convertToTwoDigitValues,
-    getLocalDateTimeInUTC,
+    getLocalDateTimeInUTC: getCurrentTimeInUTC,
 };
 
 export {
@@ -116,5 +124,5 @@ export {
     calculateTimeUntil,
     convertToSecondsRemaining,
     convertToTwoDigitValues,
-    getLocalDateTimeInUTC,
+    getCurrentTimeInUTC,
 };

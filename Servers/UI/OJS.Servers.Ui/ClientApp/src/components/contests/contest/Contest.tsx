@@ -6,7 +6,7 @@ import { useCurrentContest } from '../../../hooks/use-current-contest';
 import { usePageTitles } from '../../../hooks/use-page-titles';
 import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
-import { convertToSecondsRemaining, getLocalDateTimeInUTC } from '../../../utils/dates';
+import { convertToSecondsRemaining, getCurrentTimeInUTC } from '../../../utils/dates';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
@@ -92,7 +92,7 @@ const Contest = () => {
 
     const handleCountdownEnd = useCallback(
         () => {
-            if (!isNil(endDateTimeForParticipantOrContest) && new Date(endDateTimeForParticipantOrContest) <= getLocalDateTimeInUTC()) {
+            if (!isNil(endDateTimeForParticipantOrContest) && new Date(endDateTimeForParticipantOrContest) <= getCurrentTimeInUTC()) {
                 setIsSubmitAllowed(canAccessAdministration || false);
             }
         },
@@ -101,7 +101,7 @@ const Contest = () => {
 
     const renderTimeRemaining = useCallback(
         () => {
-            if (isNil(endDateTimeForParticipantOrContest) || new Date(endDateTimeForParticipantOrContest) < getLocalDateTimeInUTC()) {
+            if (isNil(endDateTimeForParticipantOrContest) || new Date(endDateTimeForParticipantOrContest) < getCurrentTimeInUTC()) {
                 return null;
             }
 

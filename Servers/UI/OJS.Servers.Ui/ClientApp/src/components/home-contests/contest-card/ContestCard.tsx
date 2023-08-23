@@ -7,7 +7,7 @@ import { IIndexContestsType } from '../../../common/types';
 import { useAppUrls } from '../../../hooks/use-app-urls';
 import { useModal } from '../../../hooks/use-modal';
 import concatClassNames from '../../../utils/class-names';
-import { convertToSecondsRemaining, getLocalDateTimeInUTC } from '../../../utils/dates';
+import { convertToSecondsRemaining, getCurrentTimeInUTC } from '../../../utils/dates';
 import { Button, ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
 import LockIcon from '../../guidelines/icons/LockIcon';
@@ -58,7 +58,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                     ? practiceEndTime
                     : null;
 
-            if (isNil(endDate) || new Date(endDate) < getLocalDateTimeInUTC()) {
+            if (isNil(endDate) || new Date(endDate) < getCurrentTimeInUTC()) {
                 return null;
             }
 
