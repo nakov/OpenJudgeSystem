@@ -37,11 +37,5 @@ public class ContestParticipationServiceModel : IMapExplicitly
                 s.ParticipationEndTime.HasValue
                     ? (s.ParticipationEndTime.Value - DateTime.UtcNow).TotalMilliseconds
                     : 0))
-            .ForMember(d => d.TotalParticipantsCount, opt => opt.MapFrom(s =>
-                s.Contest.Participants.Count))
-            .ForMember(d => d.ActiveParticipantsCount, opt => opt.MapFrom(s =>
-                s.Contest.Participants.Count(x =>
-                    x.ParticipationStartTime != null && x.ParticipationEndTime != null &&
-                    x.ParticipationStartTime <= DateTime.UtcNow && DateTime.UtcNow < x.ParticipationEndTime)))
             .ForAllOtherMembers(opt => opt.Ignore());
 }
