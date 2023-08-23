@@ -27,8 +27,13 @@ public class SubmissionCacheService : ISubmissionCacheService
         this.submissionsDataService = submissionsDataService;
     }
 
-    public Task<int> GetTotalCount()
-        => this.cache.Get(
-            string.Format(CacheConstants.TotalSubmissionsCount),
-            this.submissionsBusiness.GetTotalCount);
+    public Task<int> GetTotalCount(int? cacheSeconds)
+        => cacheSeconds.HasValue
+            ? this.cache.Get(
+                CacheConstants.SubmissionTypesByUsage,
+                this.submissionsBusiness.GetTotalCount,
+                cacheSeconds.Value)
+            : this.cache.Get(
+                CacheConstants.SubmissionTypesByUsage,
+                this.submissionsBusiness.GetTotalCount);
 }
