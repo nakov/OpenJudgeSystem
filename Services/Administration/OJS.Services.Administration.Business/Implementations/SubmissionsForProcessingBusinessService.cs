@@ -49,7 +49,7 @@
             }
         }
 
-        public void EnqueueStaleSubmissions()
+        public void EnqueuePendingSubmissions()
         {
             var submissionsForProcessing = this.submissionsForProcessingData
                 .GetAllPending()
@@ -65,12 +65,14 @@
                 .GetByIds(submissionsForProcessing
                     .Select(sp => sp!.SubmissionId)
                     .ToList())
+                .MapCollection<SubmissionServiceModel>()
                 .ToList();
 
+            // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/878
             submissions
                 .ForEachSequential((submission) =>
                     this.submissionsCommonBusinessService
-                    .PublishSubmissionForProcessing(submission.Map<SubmissionServiceModel>()))
+                        .PublishSubmissionForProcessing(submission))
                 .GetAwaiter()
                 .GetResult();
         }

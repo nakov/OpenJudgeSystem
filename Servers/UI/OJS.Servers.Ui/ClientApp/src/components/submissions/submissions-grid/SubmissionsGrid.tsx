@@ -101,7 +101,7 @@ const SubmissionsGrid = () => {
                 return (
                     <>
                         <Heading type={HeadingType.secondary}>
-                            Submissions in queue:
+                            Submissions awaiting execution:
                             {' '}
                             {totalUnprocessedSubmissionsCount}
                             {' '}
