@@ -4,7 +4,7 @@ using AutoCrudAdmin.Models;
 using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Data;
-using System;
+using OJS.Services.Infrastructure.Exceptions;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,7 +27,7 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
     {
         if (string.IsNullOrEmpty(entity.Name))
         {
-            throw new Exception(GlobalResource.RequiredName);
+            throw new BusinessServiceException(GlobalResource.RequiredName);
         }
 
         if (entity.ParentId == 0)
@@ -45,7 +45,7 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
     {
         if (string.IsNullOrEmpty(newEntity.Name))
         {
-            throw new Exception(GlobalResource.RequiredName);
+            throw new BusinessServiceException(GlobalResource.RequiredName);
         }
 
         if (newEntity.ParentId == 0)
