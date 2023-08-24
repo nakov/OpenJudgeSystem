@@ -3,11 +3,13 @@ import isNil from 'lodash/isNil';
 import sum from 'lodash/sum';
 
 import {
+    IContestDetailsResponseType,
     IContestType,
     IRegisterForContestResponseType,
     IStartParticipationResponseType,
 } from '../common/types';
 import {
+    IContestDetailsUrlParams,
     IGetContestParticipationScoresForParticipantUrlParams,
     IRegisterForContestUrlParams,
     IStartContestParticipationUrlParams,
@@ -15,6 +17,7 @@ import {
 } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 import {
+    getContestDetailsUrl,
     getContestParticipantScoresForParticipantUrl,
     getRegisterForContestUrl,
     getStartContestParticipationUrl,
@@ -54,9 +57,13 @@ interface ICurrentContestContext {
         isRegisterForContestSuccessful: boolean;
         contestIsLoading: boolean;
         registerForContestLoading: boolean;
+        contestDetailsIsLoading: boolean;
         submitContestPasswordIsLoading: boolean;
         getParticipantScoresIsLoading: boolean;
         isUserParticipant: boolean;
+        contestDetailsError: IErrorDataType | null;
+        contestDetails: IContestDetailsResponseType | null;
+        isContestDetailsLoadingSuccessful: boolean;
     };
     actions: {
         setContestPassword: (password: string) => void;
@@ -67,6 +74,7 @@ interface ICurrentContestContext {
         setIsSubmitAllowed: (isSubmitAllowed: boolean) => void;
         removeCurrentContest: () => void;
         setIsUserParticipant: (isUserParticipant: boolean) => void;
+        getContestDetails: (info: IContestDetailsUrlParams) => void;
     };
 }
 
@@ -82,6 +90,7 @@ const defaultState = {
         userSubmissionsTimeLimit: 0,
         participantsCount: 0,
         isUserParticipant: false,
+        contestDetails: null,
     },
 };
 
@@ -129,6 +138,9 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ contestError, setContestError ] = useState<IErrorDataType | null>(null);
     const [ isUserParticipant, setIsUserParticipant ] = useState<boolean>(defaultState.state.isUserParticipant);
     const { state: { user } } = useAuth();
+    const [ contestDetailsError, setContestDetailsError ] = useState<IErrorDataType | null>(null);
+    const [ contestDetails, setContestDetails ] = useState<IContestDetailsResponseType | null>(defaultState.state.contestDetails);
+    const [ contestDetailsParams, setContestDetailsParams ] = useState<IContestDetailsUrlParams | null>(null);
 
     const {
         isLoading: contestIsLoading,
@@ -138,6 +150,17 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     } = useHttp<IStartContestParticipationUrlParams, IStartParticipationResponseType>({
         url: getStartContestParticipationUrl,
         parameters: contestToStart,
+    });
+
+    const {
+        isLoading: contestDetailsIsLoading,
+        get: getContestDetailsData,
+        data: contestDetailsData,
+        error: contestDetailsErrorData,
+        isSuccess: isContestDetailsLoadingSuccessful,
+    } = useHttp<IContestDetailsUrlParams, IContestDetailsResponseType>({
+        url: getContestDetailsUrl,
+        parameters: contestDetailsParams,
     });
 
     const {
@@ -177,6 +200,40 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             return canAccessAdministration;
         },
         [ user ],
+    );
+
+    const getContestDetails = useCallback(({ id, isOfficial: isOfficialUrlParam }: IContestDetailsUrlParams) => {
+        setContestDetailsParams({ id, isOfficial: isOfficialUrlParam });
+    }, []);
+
+    useEffect(() => {
+        if (isNil(contestDetailsParams)) {
+            return;
+        }
+
+        (async () => {
+            await getContestDetailsData();
+        })();
+    }, [
+        contestDetailsParams,
+        getContestDetailsData,
+    ]);
+
+    useEffect(
+        () => {
+            if (isNil(contestDetailsData)) {
+                return;
+            }
+
+            if (!isNil(contestDetailsErrorData)) {
+                setContestDetailsError(contestDetailsErrorData);
+                return;
+            }
+
+            setContestDetails(contestDetailsData);
+            setContestError(null);
+        },
+        [ contestDetailsData, contestDetailsErrorData ],
     );
 
     const start = useCallback((obj: IContestToStartType) => {
@@ -409,6 +466,10 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 registerForContestLoading,
                 submitContestPasswordIsLoading,
                 getParticipantScoresIsLoading,
+                contestDetailsError,
+                contestDetails,
+                contestDetailsIsLoading,
+                isContestDetailsLoadingSuccessful,
             },
             actions: {
                 setContestPassword,
@@ -418,6 +479,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 loadParticipantScores,
                 setIsSubmitAllowed,
                 setIsUserParticipant,
+                getContestDetails,
                 removeCurrentContest,
             },
         }),
@@ -449,6 +511,11 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             registerForContestLoading,
             submitContestPasswordIsLoading,
             getParticipantScoresIsLoading,
+            getContestDetails,
+            contestDetailsError,
+            contestDetails,
+            contestDetailsIsLoading,
+            isContestDetailsLoadingSuccessful,
         ],
     );
 

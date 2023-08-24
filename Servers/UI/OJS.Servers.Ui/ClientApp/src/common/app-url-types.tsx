@@ -2,6 +2,11 @@
 
 import { ContestParticipationType } from './constants';
 
+interface IContestDetailsUrlParams {
+    id: number;
+    participationType: ContestParticipationType;
+}
+
 interface IParticipateInContestTypeUrlParams {
     id: number;
     participationType: ContestParticipationType;
@@ -17,4 +22,4 @@ interface IContestResultsUrl {
     participationType: ContestParticipationType;
 }
 
-export type { IParticipateInContestTypeUrlParams, IProblemSubmissionDetailsUrlParams, IContestResultsUrl };
+export type { IParticipateInContestTypeUrlParams, IProblemSubmissionDetailsUrlParams, IContestResultsUrl, IContestDetailsUrlParams };
