@@ -128,6 +128,8 @@ namespace OJS.Servers.Administration.Controllers
 
         protected override async Task BeforeEntitySaveAsync(Contest entity, AdminActionContext actionContext)
         {
+            await base.BeforeEntitySaveAsync(entity, actionContext);
+
             if (entity.CategoryId.HasValue)
             {
                 await this.contestCategoriesValidationHelper

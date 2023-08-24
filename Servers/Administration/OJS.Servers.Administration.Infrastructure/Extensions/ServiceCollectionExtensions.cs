@@ -8,6 +8,7 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
     using OJS.Data;
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Extensions;
+    using OJS.Services.Common.Models.Configurations;
     using SoftUni.Data.Infrastructure.Enumerations;
     using static OJS.Common.GlobalConstants;
 
@@ -30,11 +31,17 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
                 .AddMessageQueue<TProgram>(configuration)
                 .ConfigureGlobalDateFormat()
                 .ValidateLaunchSettings(RequiredConfigValues)
-                .AddIdentityDatabase<AdminDbContext, UserProfile, Role, UserInRole>(Enumerable.Empty<GlobalQueryFilterType>())
-                .AddScoped<OjsDbContext, AdminDbContext>()
-                .AddDistributedCaching<TProgram>()
+                .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(Enumerable.Empty<GlobalQueryFilterType>())
+                .AddDistributedCaching()
                 .AddSoftUniJudgeCommonServices()
+                .ConfigureSettings(configuration)
                 .UseAutoCrudAdmin()
                 .AddControllersWithViews();
+
+        private static IServiceCollection ConfigureSettings(
+            this IServiceCollection services,
+            IConfiguration configuration)
+            => services
+                .Configure<EmailServiceConfig>(configuration.GetSection(nameof(EmailServiceConfig)));
     }
 }
