@@ -26,10 +26,8 @@ namespace OJS.Services.Administration.Business.Implementations
         private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
         private readonly ITestRunsDataService testRunsData;
         private readonly ISubmissionTypesDataService submissionTypesData;
-        private readonly IProblemGroupsDataService problemGroupData;
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
         private readonly IContestsBusinessService contestsBusiness;
-        private readonly IOrderableService<Problem> problemsOrderableService;
         private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
 
         public ProblemsBusinessService(
@@ -43,8 +41,6 @@ namespace OJS.Services.Administration.Business.Implementations
             ISubmissionTypesDataService submissionTypesData,
             IProblemGroupsBusinessService problemGroupsBusiness,
             IContestsBusinessService contestsBusiness,
-            IProblemGroupsDataService problemGroupData,
-            IOrderableService<Problem> problemsOrderableService,
             ISubmissionsDistributorCommunicationService submissionsDistributorCommunication)
         {
             this.contestsData = contestsData;
@@ -57,8 +53,6 @@ namespace OJS.Services.Administration.Business.Implementations
             this.submissionTypesData = submissionTypesData;
             this.problemGroupsBusiness = problemGroupsBusiness;
             this.contestsBusiness = contestsBusiness;
-            this.problemGroupData = problemGroupData;
-            this.problemsOrderableService = problemsOrderableService;
             this.submissionsDistributorCommunication = submissionsDistributorCommunication;
         }
 
@@ -183,32 +177,8 @@ namespace OJS.Services.Administration.Business.Implementations
             return await this.contestsBusiness.UserHasContestPermissions(problem.ContestId, userId, isUserAdmin);
         }
 
-        public async Task ReevaluateProblemsOrder(int contestId, Problem problem)
-        {
-            var problemsGroups = this.problemGroupData.GetAllByContestId(contestId);
-
-            if (problemsGroups.All(pg => pg.Problems.Count(p => !p.IsDeleted) == 1))
-            {
-               await this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsOrder(contestId, problem.ProblemGroup);
-            }
-            else
-            {
-                // We detach the existing entity, in order to avoid tracking exception on Update.
-                if (problem.ProblemGroup != null)
-                {
-                     this.problemGroupData.Detach(problem.ProblemGroup);
-                }
-
-                var problems = problemsGroups.FirstOrDefault(pg => pg.Problems
-                                                    .Any(p => p.Id == problem.Id))?.Problems
-                                                    .Where(p => !p.IsDeleted);
-
-                if (problems != null)
-                {
-                    await this.problemsOrderableService.ReevaluateOrder(problems);
-                }
-            }
-        }
+        public Task ReevaluateProblemsOrder(int contestId, Problem problem)
+            => this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsOrder(contestId, problem.ProblemGroup);
 
         private async Task CopyProblemToContest(Problem? problem, int contestId, int? problemGroupId)
         {

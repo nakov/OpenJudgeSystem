@@ -95,20 +95,19 @@ namespace OJS.Services.Administration.Business.Implementations
             return ServiceResult.Success;
         }
 
-        public async Task ReevaluateProblemsAndProblemGroupsOrder(int contestId, ProblemGroup problemGroup)
+        public async Task ReevaluateProblemsAndProblemGroupsOrder(int contestId, ProblemGroup? problemGroup)
         {
             var problemGroups = this.problemGroupsData.GetAllByContestId(contestId);
 
             await this.problemGroupsOrderableService.ReevaluateOrder(problemGroups);
 
-            // We detach the existing entity, in order to avoid tracking exception on Update.
-            if (problemGroup != null)
-            {
-                this.problemGroupsData.Detach(problemGroup);
-            }
-
+            // Assign new OrderBy values to the problems in the contest, in order to avoid duplicate values,
+            // and ensure every problem is in the correct order, depending on its group order first.
             var problems = problemGroups.SelectMany(p => p.Problems)
-                .Where(p => !p.IsDeleted);
+                .Where(p => !p.IsDeleted)
+                .OrderBy(p => p.ProblemGroup.OrderBy)
+                .ThenBy(p => p.OrderBy)
+                .Mutate((p, i) => p.OrderBy = i);
 
             await this.problemsOrderableService.ReevaluateOrder(problems);
         }
