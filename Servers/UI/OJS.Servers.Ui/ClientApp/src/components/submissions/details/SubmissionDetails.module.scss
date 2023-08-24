@@ -36,6 +36,7 @@
 .detailsWrapper {
   @extend %wrapper;
   @extend %columnsThree;
+  margin-bottom: 40px;
 }
 
 .headingContest {
@@ -94,19 +95,23 @@
 
 .submissionDetails {
   border-left: 0;
+  
+  ul {
+    max-height: 700px;
+    overflow: auto;
+  }
 }
 
 .taskHeading {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-  margin-bottom: 24px;
-
+  
   > div {
     > div {
       pointer-events: none;
     }
-
+    
     button {
       margin-left: -30px;
     }
@@ -126,7 +131,8 @@
   margin: 10px 0;
   box-shadow: 0 4px 5px 0 rgb(0 0 0 / 14%), 0 1px 10px 0 rgb(0 0 0 / 12%), 0 2px 4px -1px rgb(0 0 0 / 20%);
   
-  div {
+  button {
+    border: none;
     padding: 10px 30px;
     color: #42abf8;
     background-color: white;
@@ -148,57 +154,4 @@
 .submissionReloadBtn {
   margin-top: 10px;
   margin-right: 20px;
-}
-
-.submissionResultDetailsWrapper {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.submissionResultDetails {
-  display: flex;
-  flex-direction: column;
-  font-family: lato, montserrat, serif;
-  padding-bottom: 30px;
-  margin-top: 30px;
-  border-bottom: 1px solid #bebebe;
-  width: 50%;
-}
-
-.showInputButton {
-  display: flex;
-  background-color: #42abf8;
-  align-self: flex-start;
-  align-items: center;
-  justify-content: center;
-  padding: 3px 10px;
-  margin: 10px 0;
-  color: white;
-  cursor: pointer;
-
-  div {
-    margin-left: 10px;
-    margin-right: -6px;
-  }
-}
-
-.collapsibleContainerWrapper {
-  display: flex;
-  justify-content: space-between;
-  transition: max-height 0.3s ease-in-out;
-}
-
-.showDetailsButton {
-  margin: 15px 0;
-  background-color: #42abf8;
-  padding: 5px 10px;
-  cursor: pointer;
-  color: white;
-  display: inline-block;
-}
-
-.collapsibleElement {
-  flex: 1;
 }

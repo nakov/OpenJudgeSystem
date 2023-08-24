@@ -2,12 +2,6 @@
 @use 'src/styles/fonts';
 @use 'src/styles/variables';
 
-.executionComment {
-  @extend %font-family-lato;
-
-  padding-top: 10px;
-}
-
 .testRunContainer {
   align-content: space-around;
   display: flex;
@@ -19,6 +13,8 @@
 .testRun {
   @extend %font-family-lato;
 
+  border: none;
+  background-color: transparent;
   border-bottom: 1px solid colors.$bottom-border-color;
   color: colors.$text-dark-gray-color;
   display: flex;
@@ -51,10 +47,6 @@
   @extend %heading;
 
   color: colors.$primary-red;
-}
-
-.collapsibleContainer {
-  margin-top: 10px;
 }
 
 .correctTestRunHeading {
