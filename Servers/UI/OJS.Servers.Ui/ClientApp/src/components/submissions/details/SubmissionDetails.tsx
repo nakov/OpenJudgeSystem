@@ -22,7 +22,7 @@ import IconSize from '../../guidelines/icons/common/icon-sizes';
 import LeftArrowIcon from '../../guidelines/icons/LeftArrowIcon';
 import SubmissionResults from '../submission-results/SubmissionResults';
 import SubmissionsList from '../submissions-list/SubmissionsList';
-import SubmissionResultsDetails from "./submission-result-details/SubmissionResultsDetails";
+import SubmissionResultsDetails from './submission-result-details/SubmissionResultsDetails';
 
 import styles from './SubmissionDetails.module.scss';
 
@@ -264,8 +264,8 @@ const SubmissionDetails = () => {
         [ contest ],
     );
 
-    const handleToggleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-        const { innerText } = e.target as HTMLDivElement;
+    const handleToggleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        const { innerText } = e.target as HTMLButtonElement;
         const selectedToggleOption = innerText.toUpperCase() === toggleOption.Compete
             ? toggleOption.Compete
             : toggleOption.Practice;
@@ -280,22 +280,24 @@ const SubmissionDetails = () => {
                     <Heading type={HeadingType.secondary}>Submissions</Heading>
                 </div>
                 <div className={styles.toggleButtonWrapper}>
-                    <div
+                    <button
+                      type="button"
                       className={toggledElement === toggleOption.Practice
                           ? styles.activeToggle
                           : ''}
                       onClick={handleToggleClick}
                     >
                         PRACTICE
-                    </div>
-                    <div
+                    </button>
+                    <button
+                      type="button"
                       className={toggledElement === toggleOption.Compete
                           ? styles.activeToggle
                           : ''}
                       onClick={handleToggleClick}
                     >
                         COMPETE
-                    </div>
+                    </button>
                 </div>
                 <SubmissionsList
                   items={currentSubmissionDetailsResults}
@@ -330,6 +332,9 @@ const SubmissionDetails = () => {
                 <Heading
                   type={HeadingType.secondary}
                   className={styles.taskHeading}
+                  style={problemNameHeadingText.length >= 30
+                      ? { marginBottom: 0 }
+                      : { marginBottom: '24px' }}
                 >
                     <div className={styles.btnContainer}>
                         <LeftArrowIcon className={styles.leftArrow} size={IconSize.Large} />
@@ -342,7 +347,7 @@ const SubmissionDetails = () => {
                           state={backButtonState}
                         />
                     </div>
-                    <div>
+                    <div style={{ maxWidth: '30ch', textAlign: 'center' }}>
                         {problemNameHeadingText}
                     </div>
                 </Heading>
@@ -396,11 +401,13 @@ const SubmissionDetails = () => {
             const error = first(validationErrors);
             if (!isNil(error)) {
                 const { detail } = error;
-                return (<div className={styles.headingContest}>
-                    <Heading type={HeadingType.primary} className={styles.contestHeading}>
-                        {detail}
-                    </Heading>
-                </div>)
+                return (
+                    <div className={styles.headingContest}>
+                        <Heading type={HeadingType.primary} className={styles.contestHeading}>
+                            {detail}
+                        </Heading>
+                    </div>
+                );
             }
 
             return null;
@@ -411,19 +418,21 @@ const SubmissionDetails = () => {
     if (isNil(currentSubmission) && isEmpty(validationErrors)) {
         return <div>No details fetched.</div>;
     }
-    
+
     if (!isEmpty(validationErrors)) {
-        return renderErrorMessage()
+        return renderErrorMessage();
     }
-    
-    return (<>
-        <div className={styles.detailsWrapper}>
-            {refreshableSubmissionsList()}
-            {codeEditor()}
-            {submissionResults()}
-        </div>
-        <SubmissionResultsDetails testRuns={currentSubmission?.testRuns} />
-    </>)
+
+    return (
+        <>
+            <div className={styles.detailsWrapper}>
+                {refreshableSubmissionsList()}
+                {codeEditor()}
+                {submissionResults()}
+            </div>
+            <SubmissionResultsDetails testRuns={currentSubmission?.testRuns} />
+        </>
+    );
 };
 
 export default SubmissionDetails;

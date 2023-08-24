@@ -1,0 +1,60 @@
+﻿.submissionResultDetailsWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.submissionResultDetails {
+  display: flex;
+  flex-direction: column;
+  font-family: lato, montserrat, serif;
+  padding-bottom: 30px;
+  margin-top: 30px;
+  border-bottom: 1px solid #bebebe;
+  width: 50%;
+}
+
+.showInputButton {
+  border: none;
+  display: flex;
+  background-color: #42abf8;
+  align-self: flex-start;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 10px;
+  margin: 10px 0;
+  color: white;
+  cursor: pointer;
+
+  div {
+    margin-left: 10px;
+    margin-right: -6px;
+  }
+}
+
+.collapsibleContainerWrapper {
+  width: 100%;
+  transition: max-height 0.3s ease-in-out;
+}
+
+.showDetailsButton {
+  border: none;
+  margin: 15px 0;
+  background-color: #42abf8;
+  padding: 5px 10px;
+  cursor: pointer;
+  color: white;
+  display: inline-block;
+}
+
+.collapsibleElement {
+  flex: 1;
+}
+
+.administrationButtonsWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 50%;
+}
