@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../common/constants';
@@ -28,8 +29,6 @@ const ContestDetailsPage = () => {
                 contestDetails,
                 contestDetailsError,
                 contestDetailsIsLoading,
-                isContestDetailsLoadingSuccessful,
-                isUserParticipant,
             },
         actions: { getContestDetails },
     } = useCurrentContest();
@@ -55,17 +54,12 @@ const ContestDetailsPage = () => {
 
     useEffect(
         () => {
-            if (isNil(contestDetails) && isNil(contestDetailsError) && !contestDetailsIsLoading && !isNil(contestId)) {
+            if (!isNil(contestId)) {
                 getContestDetails({ id: contestId.toString(), isOfficial });
             }
         },
         [ contestId,
             getContestDetails,
-            contestDetailsError,
-            contestDetailsIsLoading,
-            contestDetails,
-            isContestDetailsLoadingSuccessful,
-            params,
             isOfficial,
         ],
     );
@@ -73,7 +67,7 @@ const ContestDetailsPage = () => {
     const renderContestButtons = useCallback(
         () => (
             <div>
-                {isUserParticipant || canAccessAdministration
+                {contestDetails?.isUserParticipant || canAccessAdministration
                     ? (
                         <LinkButton
                           type={LinkButtonType.secondary}
@@ -89,11 +83,13 @@ const ContestDetailsPage = () => {
                               type={LinkButtonType.secondary}
                               to={getAdministrationContestProblemsInternalUrl(contestIdToNumber.toString())}
                               text="Problems"
+                              isToExternal
                             />
                             <LinkButton
                               type={LinkButtonType.secondary}
                               to={getAdministrationContestEditInternalUrl(contestIdToNumber.toString())}
                               text="Edit"
+                              isToExternal
                             />
                         </>
                     )
@@ -134,12 +130,32 @@ const ContestDetailsPage = () => {
             getContestResultsUrl,
             getParticipateInContestUrl,
             isOfficial,
-            isUserParticipant,
             canAccessAdministration,
             participationType,
             getAdministrationContestProblemsInternalUrl,
             getAdministrationContestEditInternalUrl,
+            contestDetails?.isUserParticipant,
         ],
+    );
+
+    const renderAllowedSubmissionTypes = useCallback(
+        () => {
+            if (isNil(contestDetails)) {
+                return null;
+            }
+
+            const { allowedSubmissionTypes } = contestDetails;
+
+            return allowedSubmissionTypes.map((x) => (
+                <span>
+                    {' '}
+                    {x.name}
+                    {' '}
+                    |
+                </span>
+            ));
+        },
+        [ contestDetails ],
     );
 
     const renderResource = useCallback(
@@ -169,12 +185,16 @@ const ContestDetailsPage = () => {
 
     const renderTasksList = useCallback(
         (problems: IContestDetailsProblemType[]) => (
-            <List
-              values={problems.sort(compareByOrderBy)}
-              itemFunc={renderTask}
-              className={styles.tasksListSideNavigation}
-              itemClassName={styles.taskListItem}
-            />
+            isEmpty(problems)
+                ? <div className={styles.emptyProblemsMessage}>The problems for this contest are not public.</div>
+                : (
+                    <List
+                      values={problems.sort(compareByOrderBy)}
+                      itemFunc={renderTask}
+                      className={styles.tasksListSideNavigation}
+                      itemClassName={styles.taskListItem}
+                    />
+                )
         ),
         [ renderTask ],
     );
@@ -189,9 +209,21 @@ const ContestDetailsPage = () => {
 
             return (
                 <div className={styles.contestContainer}>
-                    <div className={styles.descriptionAndProblemsContainer}>
-                        <div className={styles.description}>
-                            {contestDetails?.description}
+                    <div className={styles.detailsAndButtonsContainer}>
+                        <div className={styles.detailsContainer}>
+                            <div
+                              className={styles.description}
+                              dangerouslySetInnerHTML={{
+                                  __html: isNil(contestDetails?.description)
+                                      ? 'There is no description for the selected contest.'
+                                      : contestDetails?.description,
+                              }}
+                            />
+                            <div className={styles.allowedLanguages}>
+                                Allowed languages:
+                                {' '}
+                                {renderAllowedSubmissionTypes()}
+                            </div>
                         </div>
                         <div>{renderTasksList(problems)}</div>
                     </div>
@@ -201,7 +233,7 @@ const ContestDetailsPage = () => {
                 </div>
             );
         },
-        [ renderTasksList, contestDetails, renderContestButtons ],
+        [ renderTasksList, contestDetails, renderContestButtons, renderAllowedSubmissionTypes ],
     );
 
     const renderErrorHeading = useCallback(

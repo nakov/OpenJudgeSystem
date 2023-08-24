@@ -15,6 +15,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Contests;
     using OJS.Services.Ui.Models.Search;
+    using OJS.Services.Ui.Models.Submissions;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.Common.Models;
     using X.PagedList;
@@ -79,15 +80,34 @@ namespace OJS.Services.Ui.Business.Implementations
                     user.Id!,
                     official);
 
-            var userIsAdminInContest = user.IsAdmin || IsUserLecturerInContest(contest!, user.Id!);
+            var userIsAdminOrLecturerInContest = user.IsAdmin || IsUserLecturerInContest(contest!, user.Id!);
 
             var contestDetailsServiceModel = contest!.Map<ContestDetailsServiceModel>();
-            if (!userIsAdminInContest && contest!.IsOnlineExam && participant != null)
+            if (!userIsAdminOrLecturerInContest && participant != null && contest!.CanBeCompeted)
             {
                 var problemsForParticipant = participant.ProblemsForParticipants.Select(x => x.Problem);
                 contestDetailsServiceModel.Problems = problemsForParticipant.Map<ICollection<ContestProblemServiceModel>>();
                 contestDetailsServiceModel.IsUserParticipant = true;
             }
+
+            var canShowProblemsInPractice = !contest!.HasPracticePassword || userIsAdminOrLecturerInContest;
+            var canShowProblemsInCompete = (!contest.HasContestPassword && !contest.IsActive && !contest.IsOnlineExam) || userIsAdminOrLecturerInContest;
+
+            if ((contest.CanBePracticed && !canShowProblemsInPractice) ||
+                (contest.CanBeCompeted && !canShowProblemsInCompete) ||
+                (!userIsAdminOrLecturerInContest && participant == null))
+            {
+                contestDetailsServiceModel.Problems = new List<ContestProblemServiceModel>();
+            }
+
+            contestDetailsServiceModel.AllowedSubmissionTypes = contest!.ProblemGroups
+                .SelectMany(pg => pg.Problems)
+                .AsQueryable()
+                .SelectMany(p => p.SubmissionTypesInProblems)
+                .GroupBy(st => st.SubmissionTypeId)
+                .Select(g => g.First())
+                .Select(x => new ContestDetailsSubmissionTypeServiceModel { Id = x.SubmissionTypeId, Name = x.SubmissionType.Name })
+                .ToList();
 
             return contestDetailsServiceModel;
         }

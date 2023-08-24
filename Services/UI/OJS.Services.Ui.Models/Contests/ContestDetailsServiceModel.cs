@@ -5,6 +5,7 @@ using OJS.Data.Models.Contests;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System.Collections.Generic;
 using System.Linq;
+using Submissions;
 
 public class ContestDetailsServiceModel : IMapExplicitly
 {
@@ -20,6 +21,9 @@ public class ContestDetailsServiceModel : IMapExplicitly
 
     public bool CanBeCompeted { get; set; }
 
+    public ICollection<ContestDetailsSubmissionTypeServiceModel> AllowedSubmissionTypes { get; set; } =
+        new HashSet<ContestDetailsSubmissionTypeServiceModel>();
+
     public ICollection<ContestProblemServiceModel> Problems { get; set; } = new HashSet<ContestProblemServiceModel>();
 
     public void RegisterMappings(IProfileExpression configuration) =>
@@ -31,5 +35,6 @@ public class ContestDetailsServiceModel : IMapExplicitly
                         .SelectMany(pg => pg.Problems)
                         .OrderBy(p => p.ProblemGroup.OrderBy)
                         .ThenBy(p => p.OrderBy)))
-            .ForMember(d => d.IsUserParticipant, opt => opt.Ignore());
+            .ForMember(d => d.IsUserParticipant, opt => opt.Ignore())
+            .ForMember(d => d.AllowedSubmissionTypes, opt => opt.Ignore());
 }

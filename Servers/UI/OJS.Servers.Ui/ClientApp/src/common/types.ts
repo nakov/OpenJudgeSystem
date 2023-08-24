@@ -37,6 +37,11 @@ interface IContestDetailsProblemType {
     resources?: IProblemResourceType[];
 }
 
+interface IContestDetailsSubmissionType {
+    id: number;
+    name: string;
+}
+
 interface IContestDetailsResponseType {
     id: number;
     name: string;
@@ -45,6 +50,7 @@ interface IContestDetailsResponseType {
     isUserParticipant: boolean;
     isOnlineExam: boolean;
     canBeCompeted: boolean;
+    allowedSubmissionTypes: IContestDetailsSubmissionType[];
 }
 
 interface IContestType {
