@@ -118,10 +118,10 @@ namespace OJS.Services.Infrastructure.Cache.Implementations
                         exceptionTypeAsString,
                         ex.Message))
                 {
-                    // await this.emailService.SendEmailAsync(
-                    //     this.emailConfig.DevEmail,
-                    //     exceptionTypeAsString,
-                    //     ex.Message);
+                    await this.emailService.SendEmailAsync(
+                        this.emailConfig.DevEmail,
+                        exceptionTypeAsString,
+                        ex.Message);
                 }
             }
         }
