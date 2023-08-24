@@ -25,6 +25,8 @@ interface IProblemsContext {
         changeCurrentHash: () => void;
         selectCurrentProblem: (id: number) => void;
         initiateRedirectionToProblem: (problemId: number, contestId: number, participationType: ContestParticipationType) => void;
+        removeCurrentProblem: () => void;
+        removeCurrentProblems: () => void;
     };
 }
 
@@ -109,6 +111,13 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         [ selectProblemById ],
     );
 
+    const removeCurrentProblems = useCallback(
+        () => {
+            setProblems(defaultState.state.problems);
+        },
+        [],
+    );
+
     // use it to redirect to contest from externalPage (such as SearchPage) which will search for
     // his the problemId in the normalized problems and set it in the hash.
     const initiateRedirectionToProblem = useCallback(
@@ -162,6 +171,13 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         setProblemResourceIdToDownload(resourceId);
     }, []);
 
+    const removeCurrentProblem = useCallback(
+        () => {
+            setCurrentProblem(defaultState.state.currentProblem);
+        },
+        [],
+    );
+
     useEffect(() => {
         if (isNil(downloadProblemResourceResponse)) {
             return;
@@ -199,10 +215,12 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
                 downloadProblemResourceFile,
                 changeCurrentHash,
                 initiateRedirectionToProblem,
+                removeCurrentProblem,
+                removeCurrentProblems,
             },
         }),
         [ problems, currentProblem, isLoading, selectCurrentProblem, downloadProblemResourceFile, changeCurrentHash,
-            initiateRedirectionToProblem ],
+            initiateRedirectionToProblem, removeCurrentProblem, removeCurrentProblems ],
     );
 
     return (
