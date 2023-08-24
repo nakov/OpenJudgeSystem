@@ -1,10 +1,11 @@
 namespace OJS.Services.Administration.Business.Implementations;
 
-using OJS.Services.Administration.Data;
-using OJS.Services.Infrastructure.Cache;
-using OJS.Services.Infrastructure.Constants;
+using Data;
+using Infrastructure.Cache;
+using Infrastructure.Constants;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentExtensions.Extensions;
 
 public class ContestCategoriesCacheService : IContestCategoriesCacheService
 {
@@ -19,11 +20,10 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
         this.contestCategoriesData = contestCategoriesData;
     }
 
-    public void ClearMainContestCategoriesCache()
-    {
-        this.cache.Remove(CacheConstants.MainContestCategoriesDropDown);
-        this.cache.Remove(CacheConstants.ContestCategoriesTree);
-    }
+    public async Task ClearMainContestCategoriesCache()
+        => await Task.WhenAll(
+            this.cache.Remove(CacheConstants.MainContestCategoriesDropDown),
+            this.cache.Remove(CacheConstants.ContestCategoriesTree));
 
     public async Task ClearContestCategory(int categoryId)
     {
@@ -34,19 +34,20 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
             return;
         }
 
-        contestCategory.Children
+        await contestCategory.Children
             .Select(cc => cc.Id)
             .ToList()
-            .ForEach(RemoveCacheFromCategory);
+            .ForEachSequential(this.RemoveCacheFromCategory);
 
         while (contestCategory != null)
         {
-            RemoveCacheFromCategory(contestCategory.Id);
+            await this.RemoveCacheFromCategory(contestCategory.Id);
 
             contestCategory = contestCategory.Parent;
         }
+    }
 
-        void RemoveCacheFromCategory(int contestCategoryId)
+    private async Task RemoveCacheFromCategory(int contestCategoryId)
         {
             var categoryNameCacheId = string.Format(
                 CacheConstants.ContestCategoryNameFormat,
@@ -60,9 +61,9 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
                 CacheConstants.ContestParentCategoriesFormat,
                 contestCategoryId);
 
-            this.cache.Remove(categoryNameCacheId);
-            this.cache.Remove(subCategoriesCacheId);
-            this.cache.Remove(parentCategoriesCacheId);
+            await Task.WhenAll(
+                this.cache.Remove(categoryNameCacheId),
+                this.cache.Remove(subCategoriesCacheId),
+                this.cache.Remove(parentCategoriesCacheId));
         }
-    }
 }

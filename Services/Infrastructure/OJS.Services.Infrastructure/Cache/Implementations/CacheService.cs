@@ -104,7 +104,27 @@ namespace OJS.Services.Infrastructure.Cache.Implementations
         public Task<T> Get<T>(string cacheId, Func<Task<T>> getItemCallback, int cacheSeconds)
             => this.Get(cacheId, getItemCallback, this.GetAbsoluteExpirationByCacheSeconds(cacheSeconds));
 
-        public void Remove(string cacheId) => this.cache.Remove(cacheId);
+        public async Task Remove(string cacheId)
+        {
+            try
+            {
+                await this.cache.RemoveAsync(cacheId);
+            }
+            catch (RedisConnectionException ex)
+            {
+                var exceptionTypeAsString = GetExceptionTypeAsString(ex);
+
+                if (this.ShouldSendExceptionEmail(
+                        exceptionTypeAsString,
+                        ex.Message))
+                {
+                    // await this.emailService.SendEmailAsync(
+                    //     this.emailConfig.DevEmail,
+                    //     exceptionTypeAsString,
+                    //     ex.Message);
+                }
+            }
+        }
 
         private static T ParseValue<T>(byte[] valueAsByteArray)
             => new StreamReader(new MemoryStream(valueAsByteArray))

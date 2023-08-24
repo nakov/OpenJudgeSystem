@@ -17,6 +17,6 @@
 
         Task<T> Get<T>(string cacheId, Func<Task<T>> getItemCallback, int cacheSeconds);
 
-        void Remove(string cacheId);
+        Task Remove(string cacheId);
     }
 }
