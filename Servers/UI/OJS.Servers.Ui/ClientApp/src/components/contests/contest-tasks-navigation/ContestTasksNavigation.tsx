@@ -3,10 +3,10 @@ import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IProblemType } from '../../../common/types';
-import { useAppUrls } from '../../../hooks/use-app-urls';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
+import { getContestResultsUrl } from '../../../utils/urls';
 import { Button, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List, { ListType } from '../../guidelines/lists/List';
@@ -32,7 +32,6 @@ const ContestTasksNavigation = () => {
             isOfficial,
         },
     } = useCurrentContest();
-    const { getContestResultsUrl } = useAppUrls();
 
     const participationType = useMemo(
         () => isOfficial

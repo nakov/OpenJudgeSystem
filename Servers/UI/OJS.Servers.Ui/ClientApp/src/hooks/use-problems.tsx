@@ -8,10 +8,9 @@ import { ContestParticipationType } from '../common/constants';
 import { IProblemType } from '../common/types';
 import { IDownloadProblemResourceUrlParams } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
-import { getDownloadProblemResourceUrl } from '../utils/urls';
+import { getDownloadProblemResourceUrl, getParticipateInContestUrl } from '../utils/urls';
 
 import { useHashUrlParams } from './common/use-hash-url-params';
-import { useAppUrls } from './use-app-urls';
 import { useCurrentContest } from './use-current-contest';
 import { useHttp } from './use-http';
 
@@ -62,7 +61,6 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     const [ internalProblemId, setInternalProblemId ] = useState<number | null>();
     const [ problemResourceIdToDownload, setProblemResourceIdToDownload ] = useState<number | null>(null);
 
-    const { getParticipateInContestUrl } = useAppUrls();
     const navigate = useNavigate();
 
     const {
@@ -131,7 +129,7 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
 
             setInternalProblemId(problemId);
         },
-        [ getParticipateInContestUrl, navigate ],
+        [ navigate ],
     );
 
     const changeCurrentHash = useCallback(

@@ -1,5 +1,12 @@
 import isNil from 'lodash/isNil';
 
+import {
+    IContestResultsUrl,
+    IParticipateInContestTypeUrlParams,
+    IProblemSubmissionDetailsUrlParams,
+} from '../common/app-url-types';
+import { ContestResultType } from '../common/constants';
+import { FilterType } from '../common/contest-types';
 import { SearchParams } from '../common/search-types';
 import {
     IAllContestsUrlParams,
@@ -28,6 +35,9 @@ const
 
 const baseApiUrl = `${baseUrl}/api`;
 
+// home
+const getHomePageUrl = () => '/';
+
 // auth
 const getLoginSubmitUrl = () => `${baseUrl}/Account/Login`;
 const getLogoutUrl = () => `${baseUrl}/Account/Logout`;
@@ -40,6 +50,7 @@ const getAdministrationContestsGridUrl = () => `${administrationBaseUrl}/Contest
 const getAdministrationNavigation = () => '/administration';
 const getAdministrationRetestSubmission = ({ id }: IRetestSubmissionUrlParams) => `
 ${administrationBaseUrl}/Submissions/Retest?PK=${id}`;
+const getAdministrationRetestSubmissionInternalUrl = () => '/Submissions/Retest';
 
 // profile
 const getProfileInfoUrl = () => `${baseApiUrl}/Users/GetProfileInfo`;
@@ -66,6 +77,11 @@ const getAllContestsUrl = ({ filters, sorting, page }: IAllContestsUrlParams) =>
     return `${baseApiUrl}/Contests/GetAll?${filtersQuery}&${sortingQuery}&${pageQuery}`;
 };
 
+const getParticipateInContestUrl = ({
+    id,
+    participationType,
+}: IParticipateInContestTypeUrlParams) => `/contests/${id}/${participationType}`;
+
 const getRegisterForContestUrl = ({
     id,
     isOfficial,
@@ -90,7 +106,14 @@ const getContestByProblemUrl = ({ problemId }: IGetContestByProblemUrlParams) =>
 const getCategoriesTreeUrl =
     () => `${baseApiUrl}/ContestCategories/GetCategoriesTree`;
 
+const getContestCategoryBreadcrumbItemPath = (id: string) => `/Contests?${FilterType.Category.toString()}=${id}`;
+
 const getContestResultsUrl = ({
+    id,
+    participationType,
+}: IContestResultsUrl) => `/contests/${id}/${participationType}/results/${ContestResultType.Simple}`;
+
+const getContestResultsApiUrl = ({
     id,
     official,
     full,
@@ -103,6 +126,11 @@ const getSubmissionResultsByProblemUrl = ({
     take,
 }: IGetSubmissionResultsByProblemUrlParams) => `
     ${baseApiUrl}/Submissions/GetSubmissionResultsByProblem/${problemId}?isOfficial=${isOfficial}&take=${take}`;
+
+const getProblemSubmissionDetailsUrl = ({
+    submissionId,
+    hashParam,
+}: IProblemSubmissionDetailsUrlParams) => `/submissions/${submissionId}/details#${hashParam}`;
 
 const getSubmissionDetailsResultsUrl = ({
     submissionId,
@@ -153,15 +181,20 @@ export {
     getAdministrationNavigation,
     getAdministrationRetestSubmission,
     getProfileInfoUrl,
+    getParticipateInContestUrl,
+    getContestCategoryBreadcrumbItemPath,
     getSubmissionsForProfileUrl,
     getParticipationsForProfileUrl,
     getIndexContestsUrl,
     getAllContestsUrl,
+    getAdministrationRetestSubmissionInternalUrl,
     getSubmitContestPasswordUrl,
+    getHomePageUrl,
     getRegisterForContestUrl,
     getStartContestParticipationUrl,
     getContestParticipantScoresForParticipantUrl,
     getContestResultsUrl,
+    getContestResultsApiUrl,
     getCategoriesTreeUrl,
     getContestByProblemUrl,
     getSubmissionResultsByProblemUrl,
@@ -172,6 +205,7 @@ export {
     getSubmissionDetailsByIdUrl,
     getSubmitUrl,
     getSubmitFileUrl,
+    getProblemSubmissionDetailsUrl,
     getSubmissionFileDownloadUrl,
     getAllContestStrategyFiltersUrl,
     getDownloadProblemResourceUrl,

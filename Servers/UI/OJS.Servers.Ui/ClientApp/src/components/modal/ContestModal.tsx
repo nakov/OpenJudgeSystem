@@ -7,8 +7,8 @@ import Typography from '@mui/material/Typography';
 import { IParticipateInContestTypeUrlParams } from '../../common/app-url-types';
 import { ContestParticipationType } from '../../common/constants';
 import { IContestModal } from '../../common/types';
-import { useAppUrls } from '../../hooks/use-app-urls';
 import { useCurrentContest } from '../../hooks/use-current-contest';
+import { getHomePageUrl, getParticipateInContestUrl } from '../../utils/urls';
 import Button, { ButtonSize, ButtonType } from '../guidelines/buttons/Button';
 
 import styles from './ContestModal.module.scss';
@@ -20,10 +20,8 @@ interface IContestModalProps {
 }
 
 const ContestModal = ({ contest, isShowing, toggle }: IContestModalProps) => {
-    const { getParticipateInContestUrl } = useAppUrls();
     const navigate = useNavigate();
     const { actions: { setIsUserParticipant } } = useCurrentContest();
-    const { getHomePageUrl } = useAppUrls();
 
     const startContestAndHideModal = useCallback(
         () => {
@@ -37,7 +35,7 @@ const ContestModal = ({ contest, isShowing, toggle }: IContestModalProps) => {
 
             toggle();
         },
-        [ contest, getParticipateInContestUrl, navigate, toggle, setIsUserParticipant ],
+        [ contest, navigate, toggle, setIsUserParticipant ],
     );
 
     const toggleAndRedirectToHomePage = useCallback(
@@ -45,7 +43,7 @@ const ContestModal = ({ contest, isShowing, toggle }: IContestModalProps) => {
             toggle();
             navigate(getHomePageUrl());
         },
-        [ toggle, navigate, getHomePageUrl ],
+        [ toggle, navigate ],
     );
 
     return isShowing

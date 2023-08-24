@@ -8,12 +8,12 @@ import { ContestParticipationType } from '../../../common/constants';
 import { IIndexContestsType } from '../../../common/types';
 import { useHashUrlParams } from '../../../hooks/common/use-hash-url-params';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
-import { useAppUrls } from '../../../hooks/use-app-urls';
 import { useAuth } from '../../../hooks/use-auth';
 import { useContests } from '../../../hooks/use-contests';
 import { usePageTitles } from '../../../hooks/use-page-titles';
 import concatClassNames from '../../../utils/class-names';
 import { preciseFormatDate } from '../../../utils/dates';
+import { getAdministrationRetestSubmissionInternalUrl, getParticipateInContestUrl } from '../../../utils/urls';
 import CodeEditor from '../../code-editor/CodeEditor';
 import AlertBox, { AlertBoxType } from '../../guidelines/alert-box/AlertBox';
 import { Button, ButtonSize, ButtonState, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
@@ -54,7 +54,6 @@ const SubmissionDetails = () => {
         actions: { loadContestByProblemId },
     } = useContests();
 
-    const { getAdministrationRetestSubmissionInternalUrl, getParticipateInContestUrl } = useAppUrls();
     const { state: { user } } = useAuth();
     const { state: { hashParam } } = useHashUrlParams();
     const navigate = useNavigate();
@@ -217,7 +216,7 @@ const SubmissionDetails = () => {
                 />
             );
         },
-        [ canAccessAdministration, getAdministrationRetestSubmissionInternalUrl ],
+        [ canAccessAdministration ],
     );
 
     const renderButtonsSection = useCallback(
@@ -307,7 +306,7 @@ const SubmissionDetails = () => {
             setCurrentSubmission(null);
             selectSubmissionById(null);
         },
-        [ contest, navigate, getParticipateInContestUrl, participationType, hashParam, setCurrentSubmission, selectSubmissionById ],
+        [ contest, navigate, participationType, hashParam, setCurrentSubmission, selectSubmissionById ],
     );
 
     const codeEditor = useCallback(
