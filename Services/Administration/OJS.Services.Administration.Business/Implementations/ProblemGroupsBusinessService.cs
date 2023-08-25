@@ -95,7 +95,7 @@ namespace OJS.Services.Administration.Business.Implementations
             return ServiceResult.Success;
         }
 
-        public async Task ReevaluateProblemsAndProblemGroupsOrder(int contestId, ProblemGroup? problemGroup)
+        public async Task ReevaluateProblemsAndProblemGroupsOrder(int contestId, ProblemGroup problemGroup)
         {
             var problemGroups = this.problemGroupsData.GetAllByContestId(contestId);
 
