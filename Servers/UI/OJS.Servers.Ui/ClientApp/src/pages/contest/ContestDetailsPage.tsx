@@ -67,7 +67,7 @@ const ContestDetailsPage = () => {
     const renderContestButtons = useCallback(
         () => (
             <div>
-                {contestDetails?.isUserParticipant || canAccessAdministration
+                {contestDetails?.canViewResults || canAccessAdministration
                     ? (
                         <LinkButton
                           type={LinkButtonType.secondary}
@@ -134,7 +134,7 @@ const ContestDetailsPage = () => {
             participationType,
             getAdministrationContestProblemsInternalUrl,
             getAdministrationContestEditInternalUrl,
-            contestDetails?.isUserParticipant,
+            contestDetails?.canViewResults,
         ],
     );
 
