@@ -17,8 +17,6 @@ public interface ISubmissionsDataService : IDataService<Submission>
 
     Task<PagedResult<TServiceModel>> GetLatestSubmissions<TServiceModel>(int submissionsPerPage, int pageNumber);
 
-    Task<PagedResult<TServiceModel>> GetAllUnprocessedByUser<TServiceModel>(UserInfoModel user, int submissionsPerPage, int pageNumber);
-
     Task<int> GetTotalSubmissionsCount();
 
     Task<TServiceModel> GetParticipantBySubmission<TServiceModel>(int submissionId);

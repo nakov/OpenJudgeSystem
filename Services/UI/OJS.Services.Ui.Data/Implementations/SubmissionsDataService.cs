@@ -42,26 +42,6 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
                 .MapCollection<TServiceModel>()
                 .ToPagedResultAsync(submissionsPerPage, pageNumber);
 
-    public async Task<PagedResult<TServiceModel>> GetAllUnprocessedByUser<TServiceModel>(
-        UserInfoModel user,
-        int submissionsPerPage,
-        int pageNumber)
-    {
-        var submissionsQuery = this.GetQuery(
-                filter: s => !s.Processed && !s.IsDeleted,
-                orderBy: s => s.Id,
-                descending: true);
-
-        if (user.IsLecturer)
-        {
-            submissionsQuery = submissionsQuery.Where(s => s.Participant!.UserId == user.Id);
-        }
-
-        return await submissionsQuery
-            .MapCollection<TServiceModel>()
-            .ToPagedResultAsync(submissionsPerPage, pageNumber);
-    }
-
     public async Task<int> GetTotalSubmissionsCount()
         => await this.DbSet
                     .CountAsync();
