@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
-import { IPublicSubmission, PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
+import { ISubmissionResponseModel, PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
 import { useAuth } from '../../../hooks/use-auth';
 import { formatDate } from '../../../utils/dates';
 import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../utils/strategy-type-utils';
@@ -12,7 +12,7 @@ import IconSize from '../../guidelines/icons/common/icon-sizes';
 import styles from './SubmissionGridRow.module.scss';
 
 interface ISubmissionGridRowProps {
-    submission: IPublicSubmission;
+    submission: ISubmissionResponseModel;
 }
 
 const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
@@ -23,14 +23,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
         result: { points, maxPoints },
         strategyName,
         state,
-        problem: {
-            name: problemName,
-            contest: {
-                id: contestId,
-                name: contestName,
-            },
-            orderBy,
-        },
+        problem,
         isOfficial,
     } = submission;
 
@@ -95,15 +88,22 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
         [ isOfficial ],
     );
 
-    return (
-        <div className={styles.container}>
-            <div className={styles.strategyContainer}>
-                {renderStrategyIcon()}
-            </div>
-            <div className={styles.pointsContainer}>
-                {renderPoints()}
-            </div>
-            <div className={styles.detailsContainer}>
+    const renderProblemInformation = useCallback(
+        () => {
+            if (isNil(problem)) {
+                return null;
+            }
+
+            const {
+                name: problemName,
+                contest: {
+                    id: contestId,
+                    name: contestName,
+                },
+                orderBy,
+            } = problem;
+
+            return (
                 <div>
                     <LinkButton
                       text={problemName}
@@ -119,6 +119,21 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
                       className={styles.link}
                     />
                 </div>
+            );
+        },
+        [ participationType, problem ],
+    );
+
+    return (
+        <div className={styles.container}>
+            <div className={styles.strategyContainer}>
+                {renderStrategyIcon()}
+            </div>
+            <div className={styles.pointsContainer}>
+                {renderPoints()}
+            </div>
+            <div className={styles.detailsContainer}>
+                {renderProblemInformation()}
                 <div className={styles.dateAndUsernameContainer}>
                     <span>
                         {formatDate(createdOn)}
