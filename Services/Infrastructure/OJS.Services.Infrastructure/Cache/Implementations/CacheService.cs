@@ -117,7 +117,10 @@ namespace OJS.Services.Infrastructure.Cache.Implementations
         {
             if (!this.IsRedisConnected())
             {
-                this.emailService.SendEmail(this.emailConfig.DevEmail, EmailConstants.RedisSubject, EmailConstants.RedisBody);
+                this.emailService.SendEmail(
+                    this.emailConfig.DevEmail,
+                    EmailConstants.RedisSubject,
+                    EmailConstants.RedisBody);
             }
 
             try
@@ -170,10 +173,14 @@ namespace OJS.Services.Infrastructure.Cache.Implementations
         {
             if (!this.IsRedisConnected())
             {
-                await this.emailService.SendEmailAsync(
-                    this.emailConfig.DevEmail,
-                    EmailConstants.RedisSubject,
-                    EmailConstants.RedisBody);
+                if (this.ShouldSendExceptionEmail(EmailConstants.RedisSubject, EmailConstants.RedisBody))
+                {
+                    await this.emailService.SendEmailAsync(
+                        this.emailConfig.DevEmail,
+                        EmailConstants.RedisSubject,
+                        EmailConstants.RedisBody);
+                }
+
                 return await fallbackResultAction();
             }
 
@@ -192,7 +199,14 @@ namespace OJS.Services.Infrastructure.Cache.Implementations
         {
             if (!this.IsRedisConnected())
             {
-                this.emailService.SendEmail(this.emailConfig.DevEmail, EmailConstants.RedisSubject, EmailConstants.RedisBody);
+                if (this.ShouldSendExceptionEmail(EmailConstants.RedisSubject, EmailConstants.RedisBody))
+                {
+                    this.emailService.SendEmail(
+                        this.emailConfig.DevEmail,
+                        EmailConstants.RedisSubject,
+                        EmailConstants.RedisBody);
+                }
+
                 return fallbackResultAction();
             }
 
