@@ -22,8 +22,6 @@ namespace OJS.Services.Infrastructure.Cache.Implementations
         private readonly IEmailService emailService;
         private readonly EmailServiceConfig emailConfig;
         private readonly IConnectionMultiplexer redisConnection;
-        private readonly string defaultSubject = "RedisConnection";
-        private readonly string defaultBody = "Redis is not connected";
 
         public CacheService(
             IDistributedCache cache,
@@ -119,7 +117,7 @@ namespace OJS.Services.Infrastructure.Cache.Implementations
         {
             if (!this.IsRedisConnected())
             {
-                this.emailService.SendEmail(this.emailConfig.DevEmail, this.defaultSubject, this.defaultBody);
+                this.emailService.SendEmail(this.emailConfig.DevEmail, EmailConstants.RedisSubject, EmailConstants.RedisBody);
             }
 
             try
@@ -174,8 +172,8 @@ namespace OJS.Services.Infrastructure.Cache.Implementations
             {
                 await this.emailService.SendEmailAsync(
                     this.emailConfig.DevEmail,
-                    this.defaultSubject,
-                    this.defaultBody);
+                    EmailConstants.RedisSubject,
+                    EmailConstants.RedisBody);
                 return await fallbackResultAction();
             }
 
@@ -194,7 +192,7 @@ namespace OJS.Services.Infrastructure.Cache.Implementations
         {
             if (!this.IsRedisConnected())
             {
-                this.emailService.SendEmail(this.emailConfig.DevEmail, this.defaultSubject, this.defaultBody);
+                this.emailService.SendEmail(this.emailConfig.DevEmail, EmailConstants.RedisSubject, EmailConstants.RedisBody);
                 return fallbackResultAction();
             }
 
