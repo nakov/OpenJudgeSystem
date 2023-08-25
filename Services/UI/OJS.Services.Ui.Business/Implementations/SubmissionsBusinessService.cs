@@ -480,8 +480,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         scope.Complete();
         scope.Dispose();
-
-        await this.submissionsForProcessingData.RemoveBySubmission(submission.Id);
     }
 
     public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPublicSubmissions(
