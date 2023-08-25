@@ -6,7 +6,5 @@
     {
         // [Required]
         public string? Code { get; set; }
-
-        public DateTime? StartedExecutionOn { get; set; }
     }
 }

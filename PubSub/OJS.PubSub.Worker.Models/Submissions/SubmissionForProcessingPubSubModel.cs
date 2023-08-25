@@ -23,8 +23,6 @@ public class SubmissionForProcessingPubSubModel : IMapExplicitly
 
     public int MemoryLimit { get; set; }
 
-    public DateTime? StartedExecutionOn { get; set; }
-
     public SimpleExecutionDetailsServiceModel? SimpleExecutionDetails { get; set; }
 
     public TestsExecutionDetailsServiceModel? TestsExecutionDetails { get; set; }
@@ -35,6 +33,9 @@ public class SubmissionForProcessingPubSubModel : IMapExplicitly
             .CreateMap<SubmissionForProcessingPubSubModel, SubmissionServiceModel>()
             .ForMember(
                 d => d.ExecutionOptions,
+                opt => opt.Ignore())
+            .ForMember(
+                d => d.StartedExecutionOn,
                 opt => opt.Ignore())
             .ReverseMap();
 

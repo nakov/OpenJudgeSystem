@@ -151,7 +151,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var executionResult = this.mapper.Map<ExecutionResultServiceModel>(ojsWorkerExecutionResult);
 
-        executionResult.StartedExecutionOn = ojsSubmission.StartedExecutionOn;
+        executionResult.StartedExecutionOn = submission.StartedExecutionOn;
 
         var taskMaxPoints = submission.TestsExecutionDetails?.MaxPoints ?? TaskDefaultMaxPoints;
 
