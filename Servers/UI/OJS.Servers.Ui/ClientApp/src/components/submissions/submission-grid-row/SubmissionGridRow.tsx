@@ -119,7 +119,14 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
                       className={styles.link}
                     />
                 </div>
-                <div className={styles.dateAndUsernameContainer}>
+                <div className={styles.IDAndDateAndUsernameContainer}>
+                    <span className={styles.IDContainer}>
+                        #
+                        {submissionId}
+                    </span>
+                    <span className="delimiter">
+                        |
+                    </span>
                     <span>
                         {formatDate(createdOn)}
                         {' '}

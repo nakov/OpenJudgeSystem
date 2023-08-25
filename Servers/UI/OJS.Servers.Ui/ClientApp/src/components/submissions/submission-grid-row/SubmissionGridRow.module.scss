@@ -40,10 +40,14 @@
     flex: 1 0 6vw;
   }
 
-  .dateAndUsernameContainer {
+  .IDAndDateAndUsernameContainer {
     display: flex;
     gap: 5px;
     margin: 0 5px;
+  }
+
+  .IDContainer {
+    color: colors.$text-light-gray-color;
   }
 
   .link {
