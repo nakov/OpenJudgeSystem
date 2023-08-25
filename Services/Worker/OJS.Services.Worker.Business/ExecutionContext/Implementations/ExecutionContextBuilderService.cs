@@ -43,14 +43,14 @@ public class ExecutionContextBuilderService : IExecutionContextBuilderService
     {
         var submission = submissionServiceModel.Map<OjsSubmission<TInput>>();
 
+        submission.StartedExecutionOn = submissionServiceModel.StartedExecutionOn;
+
         this.notDefaultValueValidationService
             .GetValidationResult(
                 submission.Input,
                 nameof(submission.Input),
                 string.Format(CannotCreateInputTemplate, submissionServiceModel.ExecutionType))
             .VerifyResult();
-
-        submission.StartedExecutionOn = submissionServiceModel.StartedExecutionOn;
 
         submission.CompilerType = this.executionContextValuesProvider
             .GetDefaultCompilerTypeByExecutionStrategyType(submission.ExecutionStrategyType);
