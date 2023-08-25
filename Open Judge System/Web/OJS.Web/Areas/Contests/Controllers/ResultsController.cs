@@ -78,8 +78,9 @@
                 throw new HttpException((int)HttpStatusCode.Forbidden, Resource.Problem_results_not_available);
             }
 
+            string resultsByProblemOfficialConstFormat = official ? "Official" : "Practice";
             var results = this.cacheService.GetOrSet<List<ProblemResultViewModel>>(
-                string.Format(CacheConstants.ResultsByProblem, problem.Id, official),
+                string.Format(CacheConstants.ResultsByProblem, resultsByProblemOfficialConstFormat, problem.Id),
                 () =>
                 {
                     return this.participantScoresData
