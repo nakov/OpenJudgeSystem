@@ -37,8 +37,8 @@ namespace OJS.Services.Ui.Business
 
         Task<int> GetParticipantLimitBetweenSubmissions(int participantId, int contestLimitBetweenSubmissions);
 
-        Task<ContestParticipantsViewModel> GetPracticeParticipantsCount(int contestId);
+        Task<int> GetPracticeParticipantsCount(int contestId);
 
-        Task<ContestParticipantsViewModel> GetCompeteParticipantsCount(int contestId);
+        Task<int> GetCompeteParticipantsCount(int contestId);
     }
 }

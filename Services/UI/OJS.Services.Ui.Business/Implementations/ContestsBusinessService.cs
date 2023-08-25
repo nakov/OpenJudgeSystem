@@ -251,13 +251,11 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (model.IsOfficial)
             {
-                var competeContestParticipantsViewModel = await this.contestParticipantsCacheService.GetCompeteContestParticipantsCount(model.ContestId);
-                participationModel.ParticipantsCount = competeContestParticipantsViewModel.CompeteParticipantsCount;
+                participationModel.ParticipantsCount = await this.contestParticipantsCacheService.GetCompeteContestParticipantsCount(model.ContestId);
             }
             else
             {
-                var practiceContestParticipantsViewModel = await this.contestParticipantsCacheService.GetPracticeContestParticipantsCount(model.ContestId);
-                participationModel.ParticipantsCount = practiceContestParticipantsViewModel.PracticeParticipantsCount;
+                participationModel.ParticipantsCount = await this.contestParticipantsCacheService.GetPracticeContestParticipantsCount(model.ContestId);
             }
 
             return participationModel;
