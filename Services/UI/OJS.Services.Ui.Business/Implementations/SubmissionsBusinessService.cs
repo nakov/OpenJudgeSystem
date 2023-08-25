@@ -460,9 +460,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         {
             ProcessTestsExecutionResult(submission, executionResult);
 
-            await this.submissionsForProcessingData.MarkProcessed(submission.Id);
             this.submissionsData.Update(submission);
-            await this.submissionsData.SaveChanges();
 
             await this.UpdateResults(submission);
         }
@@ -475,8 +473,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             submission.CompilerComment = errorMessage;
 
             this.submissionsData.Update(submission);
-            await this.submissionsData.SaveChanges();
         }
+
+        await this.submissionsForProcessingData.MarkProcessed(submission.Id);
+        await this.submissionsData.SaveChanges();
 
         scope.Complete();
         scope.Dispose();
