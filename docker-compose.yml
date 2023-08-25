@@ -70,7 +70,7 @@ services:
     environment:
       DEFAULT_USER_PASSWORD: myS3cretPass2
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmqvolumes:rw
+      - ./rabbitmq/data:/var/lib/rabbitmq/mnesia
       - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
   redis:
     image: "redis:5.0"
