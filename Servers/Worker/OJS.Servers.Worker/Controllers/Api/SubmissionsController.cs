@@ -25,15 +25,6 @@ public class SubmissionsController : BaseApiController
         ILogger<SubmissionsController> logger) =>
         this.submissionsBusiness = submissionsBusiness;
 
-    // this.logger = logger;
-    [HttpGet]
-    public IActionResult TempAction()
-    {
-        Console.WriteLine("temp2");
-
-        return this.Ok();
-    }
-
     [HttpPost]
     [ProducesResponseType(typeof(FullExecutionResultResponseModel), Status200OK)]
     [Route("/" + nameof(ExecuteSubmission))]
@@ -88,8 +79,6 @@ public class SubmissionsController : BaseApiController
         }
         catch (Exception ex)
         {
-            // this.logger.LogError(ex, "Error in executing submission");
-
             result.SetException(ex, withStackTrace);
         }
 

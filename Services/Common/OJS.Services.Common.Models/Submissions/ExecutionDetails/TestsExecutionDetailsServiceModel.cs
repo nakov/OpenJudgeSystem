@@ -12,7 +12,7 @@
         : BaseExecutionDetailsServiceModel,
             IMapExplicitly
     {
-        public int? MaxPoints { get; set; }
+        public short MaxPoints { get; set; }
 
         public string? TaskId { get; set; }
 

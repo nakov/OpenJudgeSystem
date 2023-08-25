@@ -6,5 +6,7 @@
     public interface ISubmissionsForProcessingBusinessService : IService
     {
         Task ResetAllProcessingSubmissions();
+
+        void EnqueuePendingSubmissions();
     }
 }
