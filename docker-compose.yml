@@ -73,7 +73,7 @@ services:
       - ./rabbitmq/data:/var/lib/rabbitmq/mnesia
       - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
   redis:
-    image: "redis:5.0"
+    image: "redis:7"
     ports:
       - "6379:6379"
     container_name: redis_instance
