@@ -2,6 +2,7 @@
 
 public static class EmailConstants
 {
-    public const string RedisSubject = "RedisConnection";
-    public const string RedisBody = "Redis is not connected";
+    public static string RedisSubject => "RedisConnection";
+
+    public static string RedisBody => "Redis is not connected";
 }
