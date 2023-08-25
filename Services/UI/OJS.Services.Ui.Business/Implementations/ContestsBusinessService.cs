@@ -90,20 +90,22 @@ namespace OJS.Services.Ui.Business.Implementations
             {
                 var problemsForParticipant = participant.ProblemsForParticipants.Select(x => x.Problem);
                 contestDetailsServiceModel.Problems = problemsForParticipant.Map<ICollection<ContestProblemServiceModel>>();
-                contestDetailsServiceModel.IsUserParticipant = true;
             }
 
             var canShowProblemsInPractice = !contest!.HasPracticePassword || userIsAdminOrLecturerInContest;
             var canShowProblemsInCompete = (!contest.HasContestPassword && !contest.IsActive && !contest.IsOnlineExam) || userIsAdminOrLecturerInContest;
 
-            if ((contest.CanBePracticed && !canShowProblemsInPractice) ||
-                (contest.CanBeCompeted && !canShowProblemsInCompete) ||
-                (!userIsAdminOrLecturerInContest && participant == null))
+            if ((contest.CanBePracticed && !canShowProblemsInPractice) || (contest.CanBeCompeted && !canShowProblemsInCompete))
             {
                 contestDetailsServiceModel.Problems = new List<ContestProblemServiceModel>();
             }
 
-            contestDetailsServiceModel.AllowedSubmissionTypes = contest!.ProblemGroups
+            if (userIsAdminOrLecturerInContest || (contest.IsActive && participant != null && contest.CanBeCompeted))
+            {
+                contestDetailsServiceModel.CanViewResults = true;
+            }
+
+            contestDetailsServiceModel.AllowedSubmissionTypes = contest.ProblemGroups
                 .SelectMany(pg => pg.Problems)
                 .AsQueryable()
                 .SelectMany(p => p.SubmissionTypesInProblems)

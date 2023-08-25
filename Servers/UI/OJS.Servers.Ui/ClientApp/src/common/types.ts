@@ -47,7 +47,7 @@ interface IContestDetailsResponseType {
     name: string;
     description: string;
     problems: IContestDetailsProblemType[];
-    isUserParticipant: boolean;
+    canViewResults: boolean;
     isOnlineExam: boolean;
     canBeCompeted: boolean;
     allowedSubmissionTypes: IContestDetailsSubmissionType[];

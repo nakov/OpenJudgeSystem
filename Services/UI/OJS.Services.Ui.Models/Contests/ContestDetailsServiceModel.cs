@@ -15,7 +15,7 @@ public class ContestDetailsServiceModel : IMapExplicitly
 
     public string? Description { get; set; }
 
-    public bool IsUserParticipant { get; set; }
+    public bool CanViewResults { get; set; }
 
     public bool IsOnlineExam { get; set; }
 
@@ -35,6 +35,6 @@ public class ContestDetailsServiceModel : IMapExplicitly
                         .SelectMany(pg => pg.Problems)
                         .OrderBy(p => p.ProblemGroup.OrderBy)
                         .ThenBy(p => p.OrderBy)))
-            .ForMember(d => d.IsUserParticipant, opt => opt.Ignore())
+            .ForMember(d => d.CanViewResults, opt => opt.Ignore())
             .ForMember(d => d.AllowedSubmissionTypes, opt => opt.Ignore());
 }
