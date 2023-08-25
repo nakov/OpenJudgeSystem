@@ -1,7 +1,6 @@
 namespace OJS.Services.Ui.Data;
 
 using OJS.Data.Models.Submissions;
-using OJS.Services.Common.Models.Users;
 using OJS.Services.Common.Data;
 using System;
 using System.Collections.Generic;

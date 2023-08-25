@@ -15,17 +15,14 @@
         private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
         private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
         private readonly ISubmissionsDataService submissionsData;
-        private readonly ISubmissionPublisherService submissionPublisherService;
 
         public SubmissionsForProcessingBusinessService(
             ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
             ISubmissionsDataService submissionsData,
-            ISubmissionPublisherService submissionPublisherService,
             ISubmissionsCommonBusinessService submissionsCommonBusinessService)
         {
             this.submissionsForProcessingData = submissionsForProcessingData;
             this.submissionsData = submissionsData;
-            this.submissionPublisherService = submissionPublisherService;
             this.submissionsCommonBusinessService = submissionsCommonBusinessService;
         }
 

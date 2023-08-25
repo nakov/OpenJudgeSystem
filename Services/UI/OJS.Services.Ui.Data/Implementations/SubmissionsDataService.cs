@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Infrastructure.Extensions;
 using OJS.Common.Extensions;
 using OJS.Data.Models.Submissions;
-using OJS.Services.Common.Models.Users;
 using OJS.Services.Common.Data.Implementations;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
