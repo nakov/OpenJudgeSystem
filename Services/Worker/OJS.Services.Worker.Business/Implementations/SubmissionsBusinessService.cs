@@ -48,11 +48,12 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
     public ExecutionResultServiceModel ExecuteSubmission(SubmissionServiceModel submission)
     {
+        submission.StartedExecutionOn = DateTime.UtcNow;
+
         this.submissionsValidation
             .GetValidationResult(submission)
             .VerifyResult();
 
-        submission.StartedExecutionOn = DateTime.UtcNow;
         switch (submission.ExecutionType)
         {
             case ExecutionType.SimpleExecution:
