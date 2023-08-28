@@ -34,6 +34,7 @@ namespace OJS.Services.Ui.Business.Implementations
         private readonly IUsersBusinessService usersBusinessService;
         private readonly IUserProviderService userProviderService;
         private readonly IContestValidationService contestValidationService;
+        private readonly IContestParticipantsCacheService contestParticipantsCacheService;
 
         public ContestsBusinessService(
             IContestsDataService contestsData,
@@ -44,7 +45,8 @@ namespace OJS.Services.Ui.Business.Implementations
             IUserProviderService userProviderService,
             IParticipantsBusinessService participantsBusiness,
             IContestCategoriesCacheService contestCategoriesCache,
-            IContestValidationService contestValidationService)
+            IContestValidationService contestValidationService,
+            IContestParticipantsCacheService contestParticipantsCacheService)
         {
             this.contestsData = contestsData;
             this.examGroupsData = examGroupsData;
@@ -55,6 +57,7 @@ namespace OJS.Services.Ui.Business.Implementations
             this.participantsBusiness = participantsBusiness;
             this.contestCategoriesCache = contestCategoriesCache;
             this.contestValidationService = contestValidationService;
+            this.contestParticipantsCacheService = contestParticipantsCacheService;
         }
 
         public async Task<ContestDetailsServiceModel> GetContestDetails(int id, bool official)
@@ -247,6 +250,15 @@ namespace OJS.Services.Ui.Business.Implementations
                     .Select(x => x.Points)
                     .FirstOrDefault();
             });
+
+            if (model.IsOfficial)
+            {
+                participationModel.ParticipantsCount = await this.contestParticipantsCacheService.GetCompeteContestParticipantsCount(model.ContestId);
+            }
+            else
+            {
+                participationModel.ParticipantsCount = await this.contestParticipantsCacheService.GetPracticeContestParticipantsCount(model.ContestId);
+            }
 
             return participationModel;
         }

@@ -131,8 +131,7 @@ interface IStartParticipationResponseType {
     lastSubmissionTime: Date;
     remainingTimeInMilliseconds: number;
     userSubmissionsTimeLimit: number;
-    totalParticipantsCount: number;
-    activeParticipantsCount: number;
+    participantsCount: number;
 }
 
 interface IPagedResultType<TItem> {
