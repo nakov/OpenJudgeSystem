@@ -11,6 +11,7 @@ import {
     IGetSearchResultsUrlParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
+    IGetSubmissionsUrlParams,
     IRetestSubmissionUrlParams,
     IStartContestParticipationUrlParams,
     ISubmitContestPasswordUrlParams,
@@ -110,8 +111,31 @@ const getSubmissionDetailsResultsUrl = ({
     take,
 }: IGetSubmissionDetailsByIdUrlParams) => `
     ${baseApiUrl}/Submissions/GetSubmissionDetailsResults/${submissionId}?isOfficial=${isOfficial}&take=${take}`;
-const getPublicSubmissionsUrl = () => `${baseApiUrl}/Submissions/Public`;
+const getPublicSubmissionsUrl = ({ page }: IGetSubmissionsUrlParams) => {
+    const pageQuery = isNil(page)
+        ? ''
+        : `page=${page}`;
+
+    return `${baseApiUrl}/Submissions/Public?${pageQuery}`;
+};
+
+const getUnprocessedSubmissionsUrl = ({ page }: IGetSubmissionsUrlParams) => {
+    const pageQuery = isNil(page)
+        ? ''
+        : `page=${page}`;
+
+    return `${baseApiUrl}/Submissions/GetProcessingSubmissions?${pageQuery}`;
+};
+
+const getPendingSubmissionsUrl = ({ page }: IGetSubmissionsUrlParams) => {
+    const pageQuery = isNil(page)
+        ? ''
+        : `page=${page}`;
+
+    return `${baseApiUrl}/Submissions/GetPendingSubmissions?${pageQuery}`;
+};
 const getSubmissionsTotalCountUrl = () => `${baseApiUrl}/Submissions/TotalCount`;
+const getSubmissionsUnprocessedTotalCountUrl = () => `${baseApiUrl}/Submissions/UnprocessedTotalCount`;
 const getSubmissionsDetailsUrl = () => `${baseApiUrl}/Submissions/Details`;
 const getSubmissionDetailsByIdUrl =
     ({ submissionId }: IGetSubmissionDetailsByIdUrlParams) => `${getSubmissionsDetailsUrl()}/${submissionId}`;
@@ -167,7 +191,10 @@ export {
     getSubmissionResultsByProblemUrl,
     getSubmissionDetailsResultsUrl,
     getPublicSubmissionsUrl,
+    getUnprocessedSubmissionsUrl,
+    getPendingSubmissionsUrl,
     getSubmissionsTotalCountUrl,
+    getSubmissionsUnprocessedTotalCountUrl,
     getSubmissionsDetailsUrl,
     getSubmissionDetailsByIdUrl,
     getSubmitUrl,

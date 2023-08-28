@@ -153,19 +153,14 @@ namespace OJS.Servers.Infrastructure.Extensions
                     }
                 });
 
-        public static IServiceCollection AddDistributedCaching<TStartup>(this IServiceCollection services)
-        {
-            EnvironmentUtils.ValidateEnvironmentVariableExists(
-                new[] { RedisConnectionString });
+        public static IServiceCollection AddDistributedCaching(
+            this IServiceCollection services)
+            => services.AddRedis(ApplicationFullName);
 
-            services.AddSingleton<ICacheService, CacheService>();
-
-            return services.AddStackExchangeRedisCache(options =>
-            {
-                options.Configuration = EnvironmentUtils.GetByKey(RedisConnectionString);
-                options.InstanceName = typeof(TStartup).FullName;
-            });
-        }
+        public static IServiceCollection AddDistributedCaching(
+            this IServiceCollection services,
+            string instanceName)
+            => services.AddRedis(instanceName);
 
         public static IServiceCollection AddMessageQueue<TStartup>(
             this IServiceCollection services,
@@ -182,7 +177,16 @@ namespace OJS.Servers.Infrastructure.Extensions
 
             services.AddMassTransit(config =>
             {
-                consumers.ForEach(consumer => config.AddConsumer(consumer));
+                consumers.ForEach(consumer => config
+                    .AddConsumer(consumer)
+                    .Endpoint(endpointConfig =>
+                    {
+                        endpointConfig.Name = consumer.Name;
+                        if (endpointConfig is IRabbitMqReceiveEndpointConfigurator r)
+                        {
+                            r.Durable = false;
+                        }
+                    }));
 
                 config.UsingRabbitMq((context, rmq) =>
                 {
@@ -234,6 +238,20 @@ namespace OJS.Servers.Infrastructure.Extensions
             services.AddHttpClient<IDistributorHttpClientService, DistributorHttpClientService>(ConfigureHttpClient);
 
             return services;
+        }
+
+        private static IServiceCollection AddRedis(this IServiceCollection services, string instanceName)
+        {
+            EnvironmentUtils.ValidateEnvironmentVariableExists(
+                new[] { RedisConnectionString });
+
+            services.AddSingleton<ICacheService, CacheService>();
+
+            return services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = EnvironmentUtils.GetRequiredByKey(RedisConnectionString);
+                options.InstanceName = $"{instanceName}:";
+            });
         }
 
         private static void ConfigureHttpClient(HttpClient client)
