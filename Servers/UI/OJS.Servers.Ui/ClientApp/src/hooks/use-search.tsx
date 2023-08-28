@@ -26,7 +26,6 @@ interface ISearchContext {
     };
     actions: {
         clearSearchValue: () => void;
-        load: () => Promise<void>;
         initiateSearchResultsUrlQuery: () => void;
         toggleVisibility: () => void;
     };
@@ -205,7 +204,6 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
             },
             actions: {
                 clearSearchValue,
-                load,
                 initiateSearchResultsUrlQuery,
                 toggleVisibility,
             },
@@ -219,7 +217,6 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
             urlParam,
             isVisible,
             clearSearchValue,
-            load,
             initiateSearchResultsUrlQuery,
             toggleVisibility,
             isLoading,
