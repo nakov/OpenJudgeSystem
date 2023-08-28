@@ -1,3 +1,5 @@
+import { PublicSubmissionState } from '../hooks/submissions/use-public-submissions';
+
 import { IContestSearchType, IProblemSearchType, IUserSearchType } from './search-types';
 
 interface ISubmissionTypeType {
@@ -6,6 +8,39 @@ interface ISubmissionTypeType {
     isSelectedByDefault: boolean;
     allowBinaryFilesUpload: boolean;
     allowedFileExtensions: string[];
+}
+
+interface IPublicSubmissionContest {
+    id: number;
+    name: string;
+}
+
+interface IPublicSubmissionUser {
+    id: string;
+    username: string;
+}
+
+interface IPublicSubmissionProblem {
+    id: number;
+    name: string;
+    contest: IPublicSubmissionContest;
+    orderBy: number;
+}
+
+interface IPublicSubmissionResult {
+    points: number;
+    maxPoints: number;
+}
+
+interface ISubmissionResponseModel {
+    id: number;
+    createdOn: Date;
+    strategyName: string;
+    user: IPublicSubmissionUser;
+    problem: IPublicSubmissionProblem;
+    result: IPublicSubmissionResult;
+    state: PublicSubmissionState;
+    isOfficial: boolean;
 }
 
 interface IProblemResourceType {
@@ -147,6 +182,7 @@ interface IUserType {
     username: string;
     email: string;
     permissions: IUserPermissionsType;
+    isInRole: boolean;
 }
 
 interface IUserRoleType {
@@ -180,6 +216,7 @@ export type {
     IContestType,
     IProblemType,
     IProblemResourceType,
+    ISubmissionResponseModel,
     ISubmissionTypeType,
     IPagedResultType,
     IUserType,
