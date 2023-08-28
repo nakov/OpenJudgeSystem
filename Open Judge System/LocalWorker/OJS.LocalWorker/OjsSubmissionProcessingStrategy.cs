@@ -1,10 +1,9 @@
-﻿using OJS.Services.Business.ParticipantScores.Models;
-
-namespace OJS.LocalWorker
+﻿namespace OJS.LocalWorker
 {
     using System;
     using System.Linq;
     using Data.Models;
+    using OJS.Services.Business.ParticipantScores.Models;
     using OJS.Services.Data.Participants;
     using OJS.Services.Data.ParticipantScores;
     using OJS.Services.Data.Submissions;

@@ -65,6 +65,8 @@ namespace OJS.Data
 
         void DbExecuteSqlCommand(string query);
 
+        void ExecuteSqlCommandWithTimeout(string query, int timeoutInSeconds);
+
         DbEntityEntry<TEntity> Entry<TEntity>(TEntity entity)
             where TEntity : class;
 

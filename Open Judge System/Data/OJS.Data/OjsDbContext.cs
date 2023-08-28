@@ -158,6 +158,20 @@ namespace OJS.Data
             this.Database.ExecuteSqlCommand(query);
         }
 
+        public void ExecuteSqlCommandWithTimeout(string query, int timeoutInSeconds)
+        {
+            var originalTimeout = this.Database.CommandTimeout;
+            try
+            {
+                this.Database.CommandTimeout = timeoutInSeconds;
+                this.DbExecuteSqlCommand(query);
+            }
+            finally
+            {
+                this.Database.CommandTimeout = originalTimeout;
+            }
+        }
+
         public new IDbSet<T> Set<T>()
             where T : class => base.Set<T>();
 

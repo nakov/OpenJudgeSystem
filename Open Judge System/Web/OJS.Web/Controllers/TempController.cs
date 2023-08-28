@@ -398,8 +398,9 @@ namespace OJS.Web.Controllers
 
            SET @Offset = @Offset + @BatchSize;
            END;";
-            
-            this.db.DbExecuteSqlCommand(query);
+
+            this.db.ExecuteSqlCommandWithTimeout(query, 0);
+
             return this.Content("UPDATED");
         }
 
@@ -429,7 +430,8 @@ namespace OJS.Web.Controllers
                 var contestCategoryResponse = await this.FetchContestCategory(id);
 
                 contestCategory.Children.Add(contestCategoryResponse.Data);
-                await this.LoadContestCategoryAndAssignCheckerAndSubmissionTypes(contestCategoryResponse.Data, checkers,
+                await this.LoadContestCategoryAndAssignCheckerAndSubmissionTypes(contestCategoryResponse.Data,
+                    checkers,
                     submissionTypes);
             }
         }
