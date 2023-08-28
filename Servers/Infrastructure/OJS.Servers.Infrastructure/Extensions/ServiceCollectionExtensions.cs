@@ -184,7 +184,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                         endpointConfig.Name = consumer.Name;
                         if (endpointConfig is IRabbitMqReceiveEndpointConfigurator r)
                         {
-                            r.Durable = false;
+                            r.Durable = true;
                         }
                     }));
 
