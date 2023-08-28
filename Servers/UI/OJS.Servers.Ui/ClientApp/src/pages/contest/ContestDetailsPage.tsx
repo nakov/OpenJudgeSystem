@@ -52,6 +52,13 @@ const ContestDetailsPage = () => {
         [ participationType ],
     );
 
+    const participantsCountByContestType = useMemo(
+        () => isOfficial
+            ? `Compete participants: ${contestDetails?.participantsCountByContestType}`
+            : `Practice participants: ${contestDetails?.participantsCountByContestType}`,
+        [ isOfficial, contestDetails?.participantsCountByContestType ],
+    );
+
     useEffect(
         () => {
             if (!isNil(contestId)) {
@@ -212,17 +219,25 @@ const ContestDetailsPage = () => {
                     <div className={styles.detailsAndButtonsContainer}>
                         <div className={styles.detailsContainer}>
                             <div
-                              className={styles.description}
+                              className={styles.margin}
                               dangerouslySetInnerHTML={{
                                   __html: isNil(contestDetails?.description)
                                       ? 'There is no description for the selected contest.'
                                       : contestDetails?.description,
                               }}
                             />
-                            <div className={styles.allowedLanguages}>
+                            <div className={styles.margin}>
                                 Allowed languages:
                                 {' '}
                                 {renderAllowedSubmissionTypes()}
+                            </div>
+                            <div className={styles.margin}>
+                                Contest participants:
+                                {' '}
+                                {contestDetails?.totalContestParticipantsCount}
+                            </div>
+                            <div className={styles.margin}>
+                                {participantsCountByContestType}
                             </div>
                         </div>
                         <div>{renderTasksList(problems)}</div>
@@ -233,7 +248,7 @@ const ContestDetailsPage = () => {
                 </div>
             );
         },
-        [ renderTasksList, contestDetails, renderContestButtons, renderAllowedSubmissionTypes ],
+        [ renderTasksList, contestDetails, renderContestButtons, renderAllowedSubmissionTypes, participantsCountByContestType ],
     );
 
     const renderErrorHeading = useCallback(

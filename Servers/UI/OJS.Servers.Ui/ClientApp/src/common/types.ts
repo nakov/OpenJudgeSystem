@@ -86,6 +86,8 @@ interface IContestDetailsResponseType {
     isOnlineExam: boolean;
     canBeCompeted: boolean;
     allowedSubmissionTypes: IContestDetailsSubmissionType[];
+    totalContestParticipantsCount: number;
+    participantsCountByContestType: number;
 }
 
 interface IContestType {

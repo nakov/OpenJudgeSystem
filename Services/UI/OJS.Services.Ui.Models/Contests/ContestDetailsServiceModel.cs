@@ -21,6 +21,10 @@ public class ContestDetailsServiceModel : IMapExplicitly
 
     public bool CanBeCompeted { get; set; }
 
+    public int TotalContestParticipantsCount { get; set; }
+
+    public int ParticipantsCountByContestType { get; set; }
+
     public ICollection<ContestDetailsSubmissionTypeServiceModel> AllowedSubmissionTypes { get; set; } =
         new HashSet<ContestDetailsSubmissionTypeServiceModel>();
 
@@ -36,5 +40,7 @@ public class ContestDetailsServiceModel : IMapExplicitly
                         .OrderBy(p => p.ProblemGroup.OrderBy)
                         .ThenBy(p => p.OrderBy)))
             .ForMember(d => d.CanViewResults, opt => opt.Ignore())
-            .ForMember(d => d.AllowedSubmissionTypes, opt => opt.Ignore());
+            .ForMember(d => d.AllowedSubmissionTypes, opt => opt.Ignore())
+            .ForMember(d => d.TotalContestParticipantsCount, opt => opt.Ignore())
+            .ForMember(d => d.ParticipantsCountByContestType, opt => opt.Ignore());
 }
