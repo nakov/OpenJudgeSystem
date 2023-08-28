@@ -35,7 +35,6 @@ const ContestPage = () => {
             isPasswordValid,
             contestError,
             isRegisterForContestSuccessful,
-            contestIsLoading,
             isUserParticipant,
             contest,
         },
@@ -45,7 +44,16 @@ const ContestPage = () => {
         },
     } = useCurrentContest();
 
-    const { state: { modalContest, isShowing }, actions: { toggle, setModalContest } } = useModal();
+    const {
+        state: {
+            modalContest,
+            isShowing,
+        },
+        actions: {
+            toggle,
+            setModalContest,
+        },
+    } = useModal();
     const { state: { user } } = useAuth();
 
     const isUserAdmin = useMemo(
@@ -113,29 +121,32 @@ const ContestPage = () => {
 
     const renderContestPage = useCallback(
         () => isNil(contestError)
-            ? contestIsLoading
+            ? isNil(contest)
                 ? (
                     <div style={{ ...flexCenterObjectStyles }}>
                         <SpinningLoader />
                     </div>
                 )
-                : isParticipationOfficial && contest?.isOnline && !isUserAdmin
-                    ? isUserParticipant
-                        ? <Contest />
-                        : <ContestModal contest={modalContest} isShowing={isShowing} toggle={toggle} />
+                : isParticipationOfficial && contest?.isOnline && !isUserAdmin && !isUserParticipant
+                    ? (
+                        <ContestModal
+                          contest={modalContest}
+                          isShowing={isShowing}
+                          toggle={toggle}
+                        />
+                    )
                     : <Contest />
             : renderErrorMessage(),
         [
             contestError,
             renderErrorMessage,
-            contestIsLoading,
             isUserParticipant,
             isParticipationOfficial,
             modalContest,
             toggle,
             isShowing,
             isUserAdmin,
-            contest?.isOnline,
+            contest,
         ],
     );
 
