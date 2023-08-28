@@ -119,8 +119,8 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
                       className={styles.link}
                     />
                 </div>
-                <div className={styles.IDAndDateAndUsernameContainer}>
-                    <span className={styles.IDContainer}>
+                <div className={styles.IdAndDateAndUsernameContainer}>
+                    <span className={styles.IdContainer}>
                         #
                         {submissionId}
                     </span>
