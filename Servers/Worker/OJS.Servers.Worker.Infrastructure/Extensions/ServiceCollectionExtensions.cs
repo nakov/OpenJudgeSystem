@@ -1,9 +1,11 @@
 ﻿namespace OJS.Servers.Worker.Infrastructure.Extensions
 {
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using OJS.Common.Utils;
+    using OJS.Data;
     using OJS.Servers.Infrastructure.Extensions;
     using OJS.Services.Worker.Models.Configuration;
     using OJS.Workers.Common;
@@ -20,6 +22,7 @@
             IConfiguration configuration)
             => services
                 .AddWebServer<TProgram>()
+                .AddScoped<DbContext, OjsDbContext>()
                 .AddSubmissionExecutor()
                 .AddMemoryCache()
                 .AddMessageQueue<TProgram>(configuration)

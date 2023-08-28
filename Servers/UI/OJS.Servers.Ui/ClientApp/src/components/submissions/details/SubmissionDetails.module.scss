@@ -101,12 +101,12 @@
   flex-direction: row;
   justify-content: space-evenly;
   margin-bottom: 24px;
-  
+
   > div {
     > div {
       pointer-events: none;
     }
-    
+
     button {
       margin-left: -30px;
     }
