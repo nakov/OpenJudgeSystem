@@ -7,6 +7,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Options;
     using OJS.Data.Models.Submissions;
+    using OJS.Services.Common.Data;
     using OJS.Services.Common.Models;
     using OJS.Services.Common.Models.Configurations;
     using OJS.Services.Common.Models.Submissions;
@@ -20,13 +21,13 @@ namespace OJS.Services.Ui.Business.Implementations
     {
         private readonly IDistributorHttpClientService distributorHttpClient;
         private readonly ISubmissionsCommonDataService submissionsData;
-        private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
+        private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
         private readonly DistributorConfig distributorConfig;
 
         public SubmissionsDistributorCommunicationService(
             IDistributorHttpClientService distributorHttpClient,
             ISubmissionsCommonDataService submissionsData,
-            ISubmissionsForProcessingDataService submissionsForProcessingData,
+            ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
             IOptions<DistributorConfig> distributorConfigAccessor)
         {
             this.distributorHttpClient = distributorHttpClient;

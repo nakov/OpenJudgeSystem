@@ -10,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SoftUni.Common.Extensions;
+using SoftUni.Common.Models;
 
 public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataService
 {
@@ -23,20 +25,25 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             .MapCollection<TServiceModel>()
             .FirstOrDefault();
 
-    public Task<IEnumerable<TServiceModel>> GetLatestSubmissions<TServiceModel>(int count)
-        => this.GetQuery(
+    public async Task<IEnumerable<TServiceModel>> GetLatestSubmissions<TServiceModel>(int submissionsPerPage)
+        => await this.GetQuery(
                 orderBy: s => s.Id,
                 descending: true,
-                take: count)
+                take: submissionsPerPage)
             .MapCollection<TServiceModel>()
             .ToEnumerableAsync();
 
+    public async Task<PagedResult<TServiceModel>> GetLatestSubmissions<TServiceModel>(int submissionsPerPage, int pageNumber)
+            => await this.GetQuery(
+                    filter: s => !s.IsDeleted,
+                    orderBy: s => s.Id,
+                    descending: true)
+                .MapCollection<TServiceModel>()
+                .ToPagedResultAsync(submissionsPerPage, pageNumber);
+
     public async Task<int> GetTotalSubmissionsCount()
-        => await this.GetQuery(
-                orderBy: s => s.Id,
-                descending: true)
-            .Select(s => s.Id)
-            .FirstOrDefaultAsync();
+        => await this.DbSet
+                    .CountAsync();
 
     public Submission? GetBestForParticipantByProblem(int participantId, int problemId) =>
         this.GetAllByProblemAndParticipant(problemId, participantId)

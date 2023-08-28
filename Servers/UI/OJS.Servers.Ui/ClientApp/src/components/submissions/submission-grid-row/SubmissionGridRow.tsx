@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
-import { IPublicSubmission, PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
+import { ISubmissionResponseModel, PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
 import { useAppUrls } from '../../../hooks/use-app-urls';
 import { useAuth } from '../../../hooks/use-auth';
 import { useProblems } from '../../../hooks/use-problems';
@@ -15,7 +15,7 @@ import IconSize from '../../guidelines/icons/common/icon-sizes';
 import styles from './SubmissionGridRow.module.scss';
 
 interface ISubmissionGridRowProps {
-    submission: IPublicSubmission;
+    submission: ISubmissionResponseModel;
 }
 
 const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
@@ -121,15 +121,13 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
         [ state, maxPoints, points ],
     );
 
-    return (
-        <div className={styles.container}>
-            <div className={styles.strategyContainer}>
-                {renderStrategyIcon()}
-            </div>
-            <div className={styles.pointsContainer}>
-                {renderPoints()}
-            </div>
-            <div className={styles.detailsContainer}>
+    const renderProblemInformation = useCallback(
+        () => {
+            if (isNil(problemId)) {
+                return null;
+            }
+
+            return (
                 <div>
                     <Button
                       internalClassName={styles.redirectButton}
@@ -146,6 +144,21 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
                       className={styles.link}
                     />
                 </div>
+            );
+        },
+        [ contestId, contestName, getParticipateInContestUrl, handleParticipateInContestSubmit, participationType, problemId, problemName ],
+    );
+
+    return (
+        <div className={styles.container}>
+            <div className={styles.strategyContainer}>
+                {renderStrategyIcon()}
+            </div>
+            <div className={styles.pointsContainer}>
+                {renderPoints()}
+            </div>
+            <div className={styles.detailsContainer}>
+                {renderProblemInformation()}
                 <div className={styles.dateAndUsernameContainer}>
                     <span>
                         {formatDate(createdOn)}
