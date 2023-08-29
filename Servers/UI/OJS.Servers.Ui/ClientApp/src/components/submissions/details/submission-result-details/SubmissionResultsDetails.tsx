@@ -177,7 +177,11 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
                     </button>
                 ) }
 
-                { test.executionComment && detailsExpanded && <span>{test.executionComment}</span> }
+                { test.executionComment && detailsExpanded && (
+                    <div>
+                        <span style={{ backgroundColor: '#fec112', padding: '10px 20px' }}>{test.executionComment}</span>
+                    </div>
+                )}
             </>
         );
     }, [ testRunDetailsCollapsed, renderShowButton ]);
