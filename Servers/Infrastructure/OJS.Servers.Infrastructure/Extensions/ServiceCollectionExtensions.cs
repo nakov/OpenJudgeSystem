@@ -182,9 +182,9 @@ namespace OJS.Servers.Infrastructure.Extensions
                     .Endpoint(endpointConfig =>
                     {
                         endpointConfig.Name = consumer.Name;
-                        if (endpointConfig is IRabbitMqReceiveEndpointConfigurator r)
+                        if (endpointConfig is IRabbitMqReceiveEndpointConfigurator configurator)
                         {
-                            r.Durable = true;
+                            configurator.Durable = true;
                         }
                     }));
 
