@@ -1,22 +1,17 @@
 import React from 'react';
 import { BiCaretDown, BiCaretUp } from 'react-icons/bi';
 
+import { ITestRunDetailsType } from '../../../../hooks/submissions/types';
 import { useHttp } from '../../../../hooks/use-http';
 import { getUserAuthInfoUrl } from '../../../../utils/urls';
-import Button, { ButtonSize, ButtonType } from '../../../guidelines/buttons/Button';
-import Collapsible from '../../../guidelines/collapsible/Collapsible';
 import IconSize from '../../../guidelines/icons/common/icon-sizes';
 import Icon from '../../../guidelines/icons/Icon';
 import TestRunDiffView from '../../test-run-diff-view/TestRunDiffView';
 
 import styles from './SubmissionResultsDetails.module.scss';
 
-interface IRole {
-    id: string;
-    name: string;
-}
-
 interface ITestCaseRun {
+    id: number;
     checkerComment?: string;
     executionComment?: string;
     expectedOutputFragment?: string;
@@ -41,29 +36,40 @@ interface ISubmissionResultsDetails {
     testRuns?: ITestCaseRun[];
 }
 
-const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
-    const [ testRunDetailsCollapsed, setTestRunDetailsCollapsed ] = React.useState<ITestRunDetailsCollapsed>({});
-    const [ isAdministratorRole, setIsAdministratorRole ] = React.useState<boolean>(false);
+interface IUserRole {
+    id: string;
+    name: string;
+}
 
-    const {
-        get,
-        data,
-    } = useHttp<null, any>({ url: getUserAuthInfoUrl() });
+interface IUserAuthData {
+    email: string;
+    id: string;
+    roles: IUserRole[];
+    userName: string;
+}
+
+const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
+    const [ isUserAdmin, setIsUserAdmin ] = React.useState<boolean>(false);
+    const [ testRunDetailsCollapsed, setTestRunDetailsCollapsed ] = React.useState<ITestRunDetailsCollapsed>({});
+
+    const { get, data } = useHttp<null, IUserAuthData>({ url: getUserAuthInfoUrl() });
 
     React.useEffect(() => {
         get();
-    });
+    }, [ get ]);
 
     React.useEffect(() => {
-        if (!data) {
-            return;
-        }
-        const { roles } = data;
-        const isAdministrator = roles.filter((role: IRole) => role.name === 'Administrator').length > 0;
+        const { roles } = data || {};
+        const isUserRoleAdmin = roles?.find((role: IUserRole) => role.name === 'Administrator');
 
-        setIsAdministratorRole(isAdministrator);
+        if (!isUserRoleAdmin) {
+            return setIsUserAdmin(false);
+        }
+
+        return setIsUserAdmin(true);
     }, [ data ]);
-    const renderTestHeading = (testRun: any, idx: number) => {
+
+    const renderTestHeading = (testRun: ITestCaseRun, idx: number) => {
         const isWrongAnswer = testRun.resultType === 'WrongAnswer' || testRun.resultType === 'RunTimeError';
         let testRunText = `Test #${testRun.orderBy}`;
         if (testRun.isTrialTest) {
@@ -71,7 +77,11 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
         }
 
         if (isWrongAnswer) {
-            testRunText += ' (Incorrect Answer)';
+            if (testRun.resultType === 'RunTimeError') {
+                testRunText += ' (Compile time Error)';
+            } else {
+                testRunText += ' (Incorrect Answer)';
+            }
         } else {
             testRunText += ' (Correct Answer)';
         }
@@ -92,7 +102,7 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
         );
     };
 
-    const renderShowButton = React.useCallback((id: string, isExpanded: boolean) => (
+    const renderShowButton = React.useCallback((id: number, isExpanded: boolean) => (
         <button
           type="button"
           className={styles.showInputButton}
@@ -120,90 +130,64 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
         </button>
     ), [ testRunDetailsCollapsed ]);
 
-    const renderTrialTestData = React.useCallback((test: any) => {
+    const renderTrialTestData = React.useCallback((test: ITestCaseRun) => {
         const { isExpanded, detailsExpanded } = testRunDetailsCollapsed[test.id] || {};
+
+        const testRunDiff = {
+            isTrialTest: test.isTrialTest,
+            input: test.input,
+            showInput: test.showInput,
+            expectedOutputFragment: test.expectedOutputFragment,
+            userOutputFragment: test.userOutputFragment,
+        } as ITestRunDetailsType;
 
         return (
             <>
-                <div>The zero tests are not included in the final result.</div>
-                { test.showInput && test.userOutputFragment && test.expectedOutputFragment && renderShowButton(test.id, isExpanded) }
-                { test.showInput && test.userOutputFragment && test.expectedOutputFragment && (
-                <div className={`${styles.collapsibleContainerWrapper} ${isExpanded
-                    ? 'expanded'
-                    : 'collapsed'}`}
-                >
-                    <Collapsible collapsed={isExpanded} className={styles.collapsibleElement}>
-                        <TestRunDiffView testRun={test} />
-                    </Collapsible>
-                </div>
+                { test.isTrialTest && <div>The zero tests are not included in the final result.</div>}
+                { renderShowButton(test.id, isExpanded) }
+                { isExpanded && (
+                    <div style={{ margin: '10px 0' }}>
+                        <span style={{ backgroundColor: '#fec112', padding: '10px 20px' }}>{ test.input }</span>
+                    </div>
                 ) }
-                { test.showInput && test.executionComment && (
-                <button
-                  type="button"
-                  className={styles.showDetailsButton}
-                  onClick={() => setTestRunDetailsCollapsed({
-                      ...testRunDetailsCollapsed,
-                      [test.id]: {
-                          isExpanded: testRunDetailsCollapsed[test.id]?.isExpanded,
-                          detailsExpanded: !testRunDetailsCollapsed[test.id]?.detailsExpanded,
-                      },
-                  })}
-                >
-                    {detailsExpanded
-                        ? 'HIDE'
-                        : 'SHOW'}
-                    {' '}
-                    DETAILS
-                </button>
+                { test.userOutputFragment && test.expectedOutputFragment && (
+                    <div style={{ width: '100%' }}>
+                        <TestRunDiffView testRun={testRunDiff} />
+                    </div>
+                ) }
+                { test.executionComment && (
+                    <button
+                      type="button"
+                      className={styles.showDetailsButton}
+                      onClick={() => setTestRunDetailsCollapsed({
+                          ...testRunDetailsCollapsed,
+                          [test.id]: {
+                              isExpanded: testRunDetailsCollapsed[test.id]?.isExpanded,
+                              detailsExpanded: !testRunDetailsCollapsed[test.id]?.detailsExpanded,
+                          },
+                      })}
+                    >
+                        <span>
+                            {detailsExpanded
+                                ? 'HIDE'
+                                : 'SHOW'}
+                            {' '}
+                            DETAILS
+                        </span>
+                    </button>
                 ) }
 
-                { test.showInput && test.executionComment && detailsExpanded && <span>{test.executionComment}</span> }
+                { test.executionComment && detailsExpanded && <span>{test.executionComment}</span> }
             </>
         );
     }, [ testRunDetailsCollapsed, renderShowButton ]);
 
-    const renderAdministrationButtons = React.useCallback(() => (
-        <div className={styles.administrationButtonsWrapper}>
-            <Button
-              text="EDIT"
-              onClick={() => console.log('edit')}
-              type={ButtonType.secondary}
-              size={ButtonSize.medium}
-            />
-            <Button
-              text="DELETE"
-              onClick={() => console.log('delete')}
-              type={ButtonType.secondary}
-              size={ButtonSize.medium}
-            />
-            <Button
-              text="TESTS"
-              onClick={() => console.log('tests')}
-              type={ButtonType.secondary}
-              size={ButtonSize.medium}
-            />
-            <Button
-              text="AUTHORS PROFILE"
-              onClick={() => console.log('authors profile')}
-              type={ButtonType.secondary}
-              size={ButtonSize.medium}
-            />
-            <Button
-              text="RETEST"
-              onClick={() => console.log('retest')}
-              type={ButtonType.secondary}
-              size={ButtonSize.medium}
-            />
-        </div>
-    ), []);
-
     return (
         <div className={styles.submissionResultDetailsWrapper}>
-            { isAdministratorRole && renderAdministrationButtons() }
-            {testRuns?.map((test: any, idx: number) => (
+            {testRuns?.map((test: ITestCaseRun, idx: number) => (
                 <div key={`test-run-details-${test.id}`} className={styles.submissionResultDetails}>
                     {renderTestHeading(test, idx)}
-                    {test.isTrialTest && renderTrialTestData(test)}
+                    {(test.isTrialTest || isUserAdmin) && renderTrialTestData(test)}
                 </div>
             ))}
         </div>
