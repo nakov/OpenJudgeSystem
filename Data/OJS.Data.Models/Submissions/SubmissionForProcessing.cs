@@ -2,7 +2,7 @@ namespace OJS.Data.Models.Submissions
 {
     using SoftUni.Data.Infrastructure.Models;
 
-    public class SubmissionForProcessing : Entity<int>
+    public class SubmissionForProcessing : AuditInfoEntity<int>
     {
         public int SubmissionId { get; set; }
 
