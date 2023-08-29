@@ -122,35 +122,6 @@
   margin-top: 20px;
 }
 
-.toggleButtonWrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  width: 100%;
-  margin: 10px 0;
-  box-shadow: 0 4px 5px 0 rgb(0 0 0 / 14%), 0 1px 10px 0 rgb(0 0 0 / 12%), 0 2px 4px -1px rgb(0 0 0 / 20%);
-  
-  button {
-    border: none;
-    padding: 10px 30px;
-    color: #42abf8;
-    background-color: white;
-    cursor: pointer;
-    text-transform: uppercase;
-    width: 50%;
-    text-align: center;
-    font-family: montserrat, serif;
-    transition: all .2s ease-in-out;
-  }
-  
-  .activeToggle {
-    background-color: #42abf8;
-    color: white;
-    transition: all .2s ease-in-out;
-  }
-}
-
 .submissionReloadBtn {
   margin-top: 10px;
   margin-right: 20px;

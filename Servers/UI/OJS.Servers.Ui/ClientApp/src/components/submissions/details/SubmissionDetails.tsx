@@ -26,13 +26,7 @@ import SubmissionResultsDetails from './submission-result-details/SubmissionResu
 
 import styles from './SubmissionDetails.module.scss';
 
-enum toggleOption {
-    Practice = 'PRACTICE',
-    Compete = 'COMPETE'
-}
-
 const SubmissionDetails = () => {
-    const [ toggledElement, setToggledElement ] = React.useState(toggleOption.Practice);
     const {
         state: {
             currentSubmission,
@@ -264,40 +258,11 @@ const SubmissionDetails = () => {
         [ contest ],
     );
 
-    const handleToggleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-        const { innerText } = e.target as HTMLButtonElement;
-        const selectedToggleOption = innerText.toUpperCase() === toggleOption.Compete
-            ? toggleOption.Compete
-            : toggleOption.Practice;
-
-        setToggledElement(selectedToggleOption);
-    };
-
     const refreshableSubmissionsList = useCallback(
         () => (
             <div className={styles.navigation}>
                 <div style={{ marginBottom: '24px' }}>
                     <Heading type={HeadingType.secondary}>Submissions</Heading>
-                </div>
-                <div className={styles.toggleButtonWrapper}>
-                    <button
-                      type="button"
-                      className={toggledElement === toggleOption.Practice
-                          ? styles.activeToggle
-                          : ''}
-                      onClick={handleToggleClick}
-                    >
-                        PRACTICE
-                    </button>
-                    <button
-                      type="button"
-                      className={toggledElement === toggleOption.Compete
-                          ? styles.activeToggle
-                          : ''}
-                      onClick={handleToggleClick}
-                    >
-                        COMPETE
-                    </button>
                 </div>
                 <SubmissionsList
                   items={currentSubmissionDetailsResults}
@@ -308,7 +273,7 @@ const SubmissionDetails = () => {
                 { renderSubmissionInfo() }
             </div>
         ),
-        [ currentSubmissionDetailsResults, currentSubmission, renderButtonsSection, renderSubmissionInfo, toggledElement ],
+        [ currentSubmissionDetailsResults, currentSubmission, renderButtonsSection, renderSubmissionInfo ],
     );
 
     const setSubmissionAndStartParticipation = useCallback(
