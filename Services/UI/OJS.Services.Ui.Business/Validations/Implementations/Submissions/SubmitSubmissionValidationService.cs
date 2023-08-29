@@ -26,6 +26,16 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
         }
 
         var problemId = problem.Id.ToString();
+
+        if (participant != null &&
+            participant.Contest.CantSubmitConcurrently &&
+            participant.Submissions.Any(s => s.Processed != true))
+        {
+            return ValidationResult.Invalid(
+                ValidationMessages.Submission.UserHasNotProcessedSubmissionForContest,
+                problemId);
+        }
+
         if (string.IsNullOrWhiteSpace(submitSubmissionServiceModel.StringContent) &&
             (submitSubmissionServiceModel.ByteContent == null || submitSubmissionServiceModel.ByteContent.Length == 0))
         {
@@ -80,7 +90,9 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
 
         if (hasUserNotProcessedSubmissionForProblem)
         {
-            return ValidationResult.Invalid(ValidationMessages.Submission.UserHasNotProcessedSubmissionForProblem, problemId);
+            return ValidationResult.Invalid(
+                ValidationMessages.Submission.UserHasNotProcessedSubmissionForProblem,
+                problemId);
         }
 
         if (submitSubmissionServiceModel.ByteContent != null &&

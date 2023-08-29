@@ -365,15 +365,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 currentUser.Id!,
                 model.Official);
 
-        if (participant is not null &&
-            participant.Contest.CantSubmitConcurrently &&
-            participant.Submissions.Any(s => s.Processed != true))
-        {
-            throw new BusinessServiceException(
-                ValidationMessages.Submission.UserHasNotProcessedSubmissionForContest,
-                JsonConvert.SerializeObject(new { ProblemId = problem.Id }));
-        }
-
         var contestValidationResult = this.contestValidationService.GetValidationResult(
             (participant?.Contest,
                 participant?.ContestId,
