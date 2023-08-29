@@ -28,6 +28,7 @@
   column-gap: 5%;
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
 }
 
 .detailsContainer {
@@ -35,7 +36,7 @@
   flex-direction: column;
   font-size: variables.$f-size-14;
   margin: 10px;
-  row-gap: 1%;
+  row-gap: 3%;
 }
 
 .heading {
@@ -57,7 +58,7 @@
   display: flex;
   font-size: variables.$f-size-12;
 
-  .taskSideNavigationItem {
+  .taskName {
     @extend %font-family-lato;
 
     color: colors.$text-dark-gray-color;

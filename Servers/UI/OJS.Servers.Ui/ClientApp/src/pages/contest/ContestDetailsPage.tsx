@@ -179,7 +179,7 @@ const ContestDetailsPage = () => {
 
             return (
                 <div>
-                    <div className={styles.taskSideNavigationItem}>{problem.name}</div>
+                    <div className={styles.taskName}>{problem.name}</div>
                     <List
                       values={resources}
                       itemFunc={renderResource}
@@ -206,7 +206,7 @@ const ContestDetailsPage = () => {
         [ renderTask ],
     );
 
-    const renderContestDetails = useCallback(
+    const renderContest = useCallback(
         () => {
             if (isNil(contestDetails) || isNil(contestDetails.problems)) {
                 return null;
@@ -285,13 +285,13 @@ const ContestDetailsPage = () => {
                         <SpinningLoader />
                     </div>
                 )
-                : renderContestDetails()
+                : renderContest()
             : renderErrorMessage(),
         [
             contestDetailsError,
             renderErrorMessage,
             contestDetailsIsLoading,
-            renderContestDetails,
+            renderContest,
         ],
     );
 
