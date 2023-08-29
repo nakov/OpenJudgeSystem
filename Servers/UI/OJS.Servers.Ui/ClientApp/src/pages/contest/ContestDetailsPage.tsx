@@ -240,7 +240,7 @@ const ContestDetailsPage = () => {
                                 {participantsCountByContestType}
                             </div>
                         </div>
-                        <div className={styles.tasks}>{renderTasksList(problems)}</div>
+                        <div>{renderTasksList(problems)}</div>
                     </div>
                     <div className={styles.buttonsContainer}>
                         {renderContestButtons()}
