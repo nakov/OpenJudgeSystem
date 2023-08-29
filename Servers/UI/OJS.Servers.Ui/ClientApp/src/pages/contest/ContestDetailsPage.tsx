@@ -193,7 +193,7 @@ const ContestDetailsPage = () => {
     const renderTasksList = useCallback(
         (problems: IContestDetailsProblemType[]) => (
             isEmpty(problems)
-                ? <div className={styles.emptyProblemsMessage}>The problems for this contest are not public.</div>
+                ? <div>The problems for this contest are not public.</div>
                 : (
                     <List
                       values={problems.sort(compareByOrderBy)}
@@ -215,32 +215,32 @@ const ContestDetailsPage = () => {
             const { problems } = contestDetails;
 
             return (
-                <div className={styles.contestContainer}>
-                    <div className={styles.detailsAndButtonsContainer}>
+                <div className={styles.container}>
+                    <div className={styles.heading}>{contestDetails?.name}</div>
+                    <div className={styles.contestDetailsAndTasks}>
                         <div className={styles.detailsContainer}>
                             <div
-                              className={styles.margin}
                               dangerouslySetInnerHTML={{
                                   __html: isNil(contestDetails?.description)
                                       ? 'There is no description for the selected contest.'
                                       : contestDetails?.description,
                               }}
                             />
-                            <div className={styles.margin}>
+                            <div>
                                 Allowed languages:
                                 {' '}
                                 {renderAllowedSubmissionTypes()}
                             </div>
-                            <div className={styles.margin}>
+                            <div>
                                 Contest participants:
                                 {' '}
                                 {contestDetails?.totalContestParticipantsCount}
                             </div>
-                            <div className={styles.margin}>
+                            <div>
                                 {participantsCountByContestType}
                             </div>
                         </div>
-                        <div>{renderTasksList(problems)}</div>
+                        <div className={styles.tasks}>{renderTasksList(problems)}</div>
                     </div>
                     <div className={styles.buttonsContainer}>
                         {renderContestButtons()}
