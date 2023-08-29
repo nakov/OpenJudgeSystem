@@ -42,7 +42,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
     private readonly IParticipantsBusinessService participantsBusinessService;
     private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
-    
     // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/624
     private readonly IParticipantsDataService participantsDataService;
     private readonly IProblemsDataService problemsDataService;
