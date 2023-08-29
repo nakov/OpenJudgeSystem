@@ -23,7 +23,6 @@ using OJS.Services.Ui.Models.Contests;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Submissions;
 using OJS.Workers.Common.Models;
-
 using static Constants.PublicSubmissions;
 
 public class SubmissionsBusinessService : ISubmissionsBusinessService
@@ -31,7 +30,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmissionsDataService submissionsData;
     private readonly IUsersBusinessService usersBusiness;
     private readonly IParticipantScoresBusinessService participantScoresBusinessService;
+
     private readonly IParticipantsBusinessService participantsBusinessService;
+
     // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/624
     private readonly IParticipantsDataService participantsDataService;
     private readonly IProblemsDataService problemsDataService;
@@ -99,14 +100,16 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .MapCollection<SubmissionDetailsServiceModel>()
             .FirstOrDefaultAsync();
 
-        var validationResult = this.submissionDetailsValidationService.GetValidationResult((submissionDetailsServiceModel, currentUser) !);
+        var validationResult =
+            this.submissionDetailsValidationService.GetValidationResult((submissionDetailsServiceModel, currentUser) !);
 
         if (!validationResult.IsValid)
         {
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        var contest = await this.contestsDataService.GetByProblemId<ContestServiceModel>(submissionDetailsServiceModel!.Problem.Id).Map<Contest>();
+        var contest = await this.contestsDataService
+            .GetByProblemId<ContestServiceModel>(submissionDetailsServiceModel!.Problem.Id).Map<Contest>();
         var userIsAdminOrLecturerInContest = currentUser.IsAdmin || IsUserLecturerInContest(contest, currentUser.Id!);
         var showTestInputForAllTests = submissionDetailsServiceModel.Problem.ShowDetailedFeedback;
         if (!userIsAdminOrLecturerInContest && !showTestInputForAllTests)
@@ -136,7 +139,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var currentUser = this.userProviderService.GetCurrentUser();
 
-        var validationResult = this.submissionFileDownloadValidationService.GetValidationResult((submissionDetailsServiceModel!, currentUser));
+        var validationResult =
+            this.submissionFileDownloadValidationService.GetValidationResult((submissionDetailsServiceModel!,
+                currentUser));
         if (!validationResult.IsValid)
         {
             throw new BusinessServiceException(validationResult.Message);
@@ -303,7 +308,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var participant =
             await this.participantsDataService.GetByContestByUserAndByIsOfficial(
-                problem.ProblemGroup.ContestId, user.Id!, isOfficial)
+                    problem.ProblemGroup.ContestId, user.Id!, isOfficial)
                 .Map<ParticipantSubmissionResultsServiceModel>();
 
         this.ValidateCanViewSubmissionResults(isOfficial, user, problem, participant);
@@ -316,10 +321,13 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         bool isOfficial,
         int take = 0)
     {
-        var problem = await this.submissionsData.GetProblemBySubmission<ProblemForSubmissionDetailsServiceModel>(submissionId);
+        var problem =
+            await this.submissionsData.GetProblemBySubmission<ProblemForSubmissionDetailsServiceModel>(submissionId);
         var user = this.userProviderService.GetCurrentUser();
 
-        var participant = await this.submissionsData.GetParticipantBySubmission<ParticipantSubmissionResultsServiceModel>(submissionId);
+        var participant =
+            await this.submissionsData.GetParticipantBySubmission<ParticipantSubmissionResultsServiceModel>(
+                submissionId);
 
         this.ValidateCanViewSubmissionResults(isOfficial, user, problem, participant);
 
@@ -341,6 +349,15 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 currentUser.Id!,
                 model.Official);
 
+        if (participant is not null &&
+            participant.Contest.CantSubmitConcurrently &&
+            participant.Submissions.Any(s => s.Processed != true))
+        {
+            throw new BusinessServiceException(
+                ValidationMessages.Submission.UserHasNotProcessedSubmissionForContest,
+                JsonConvert.SerializeObject(new { ProblemId = problem.Id }));
+        }
+
         var contestValidationResult = this.contestValidationService.GetValidationResult(
             (participant?.Contest,
                 participant?.ContestId,
@@ -356,13 +373,13 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             this.submissionsData.HasUserNotProcessedSubmissionForProblem(problem.Id, currentUser.Id!);
 
         var submitSubmissionValidationServiceResult = this.submitSubmissionValidationService.GetValidationResult(
-        (problem,
-        currentUser,
-        participant,
-        contestValidationResult,
-        userSubmissionTimeLimit,
-        hasUserNotProcessedSubmissionForProblem,
-        model));
+            (problem,
+                currentUser,
+                participant,
+                contestValidationResult,
+                userSubmissionTimeLimit,
+                hasUserNotProcessedSubmissionForProblem,
+                model));
 
         if (!submitSubmissionValidationServiceResult.IsValid)
         {
@@ -452,7 +469,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         {
             submission.IsCompiledSuccessfully = false;
             var errorMessage = exception?.Message
-                ?? "Invalid execution result received. Please contact an administrator.";
+                               ?? "Invalid execution result received. Please contact an administrator.";
             submission.ProcessingComment = errorMessage;
             submission.CompilerComment = errorMessage;
             this.submissionsData.Update(submission);
