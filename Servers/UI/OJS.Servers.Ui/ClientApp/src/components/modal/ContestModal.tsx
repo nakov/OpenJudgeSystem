@@ -4,8 +4,6 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 
-import { IParticipateInContestTypeUrlParams } from '../../common/app-url-types';
-import { ContestParticipationType } from '../../common/constants';
 import { IContestModal } from '../../common/types';
 import { useAppUrls } from '../../hooks/use-app-urls';
 import { useCurrentContest } from '../../hooks/use-current-contest';
@@ -20,7 +18,6 @@ interface IContestModalProps {
 }
 
 const ContestModal = ({ contest, isShowing, toggle }: IContestModalProps) => {
-    const { getParticipateInContestUrl } = useAppUrls();
     const navigate = useNavigate();
     const { actions: { setIsUserParticipant } } = useCurrentContest();
     const { getHomePageUrl } = useAppUrls();
@@ -29,15 +26,9 @@ const ContestModal = ({ contest, isShowing, toggle }: IContestModalProps) => {
         () => {
             setIsUserParticipant(true);
 
-            navigate(getParticipateInContestUrl({
-                id: contest.id,
-                participationType: ContestParticipationType.Compete,
-                problemIndex: 1,
-            } as IParticipateInContestTypeUrlParams));
-
             toggle();
         },
-        [ contest, getParticipateInContestUrl, navigate, toggle, setIsUserParticipant ],
+        [ setIsUserParticipant, toggle ],
     );
 
     const toggleAndRedirectToHomePage = useCallback(

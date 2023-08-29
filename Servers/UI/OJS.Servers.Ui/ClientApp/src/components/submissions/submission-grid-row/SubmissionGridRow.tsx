@@ -135,17 +135,26 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
             <div className={styles.detailsContainer}>
                 {renderProblemInformation()}
                 <div className={styles.dateAndUsernameContainer}>
-                    <span>
-                        {formatDate(createdOn)}
-                        {' '}
-                        by
-                        {' '}
-                        {username}
-                    </span>
+                    <div className={styles.IdAndDateAndUsernameContainer}>
+                        <span className={styles.IdContainer}>
+                            #
+                            {submissionId}
+                        </span>
+                        <span className="delimiter">
+                            |
+                        </span>
+                        <span>
+                            {formatDate(createdOn)}
+                            {' '}
+                            by
+                            {' '}
+                            {username}
+                        </span>
+                    </div>
                 </div>
-            </div>
-            <div className={styles.detailsButtonContainer}>
-                {renderDetailsBtn()}
+                <div className={styles.detailsButtonContainer}>
+                    {renderDetailsBtn()}
+                </div>
             </div>
         </div>
     );
