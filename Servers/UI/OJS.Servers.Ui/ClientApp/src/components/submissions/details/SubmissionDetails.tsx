@@ -22,6 +22,7 @@ import IconSize from '../../guidelines/icons/common/icon-sizes';
 import LeftArrowIcon from '../../guidelines/icons/LeftArrowIcon';
 import SubmissionResults from '../submission-results/SubmissionResults';
 import SubmissionsList from '../submissions-list/SubmissionsList';
+
 import SubmissionResultsDetails from './submission-result-details/SubmissionResultsDetails';
 
 import styles from './SubmissionDetails.module.scss';
