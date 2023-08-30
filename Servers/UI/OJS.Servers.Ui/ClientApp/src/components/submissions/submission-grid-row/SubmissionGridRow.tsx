@@ -150,9 +150,9 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
                         {username}
                     </span>
                 </div>
-                <div className={styles.detailsButtonContainer}>
-                    {renderDetailsBtn()}
-                </div>
+            </div>
+            <div className={styles.detailsButtonContainer}>
+                {renderDetailsBtn()}
             </div>
         </div>
     );
