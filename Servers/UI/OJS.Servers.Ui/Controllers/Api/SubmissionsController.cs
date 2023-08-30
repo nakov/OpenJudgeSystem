@@ -147,6 +147,20 @@ public class SubmissionsController : BaseApiController
             .ToOkResult();
 
     /// <summary>
+    /// Gets user latest submissions (default number of submissions) by participation mode.
+    /// </summary>
+    /// <param name="isOfficial">Boolean indicating submission participation mode (practice/compete).</param>
+    /// <param name="page">The current page number.</param>
+    /// <returns>A page with submissions containing information about their score and user.</returns>
+    [HttpGet]
+    [ProducesResponseType(typeof(PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>), Status200OK)]
+    public async Task<IActionResult> GetUserSubmissions([FromQuery] bool isOfficial, [FromQuery]int page)
+        => await this.submissionsBusiness
+            .GetUsersLastSubmissions(isOfficial, page)
+            .Map<PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>>()
+            .ToOkResult();
+
+    /// <summary>
     /// Gets all unprocessed submissions.
     /// </summary>
     /// <param name="page">The current page number.</param>
