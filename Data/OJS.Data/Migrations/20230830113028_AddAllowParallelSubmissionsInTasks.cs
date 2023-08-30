@@ -3,8 +3,7 @@
 namespace OJS.Data.Migrations
 {
     using Microsoft.EntityFrameworkCore.Migrations;
-
-    public partial class AddAllowParallelSubmissionsInTask : Migration
+    public partial class AddAllowParallelSubmissionsInTasks : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,7 +12,7 @@ namespace OJS.Data.Migrations
                 table: "Contests",
                 type: "bit",
                 nullable: false,
-                defaultValue: false);
+                defaultValue: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

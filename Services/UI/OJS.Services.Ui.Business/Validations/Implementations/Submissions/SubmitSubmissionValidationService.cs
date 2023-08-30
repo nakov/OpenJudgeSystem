@@ -28,8 +28,8 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
         var problemId = problem.Id.ToString();
 
         if (participant != null &&
-            participant.Contest.AllowParallelSubmissionsInTasks &&
-            participant.Submissions.Any(s => s.Processed != true))
+            !participant.Contest.AllowParallelSubmissionsInTasks == false &&
+            participant.Submissions.Any(s => !s.Processed))
         {
             return ValidationResult.Invalid(
                 ValidationMessages.Submission.UserHasNotProcessedSubmissionForContest,
