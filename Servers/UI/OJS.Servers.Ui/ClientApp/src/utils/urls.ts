@@ -1,5 +1,6 @@
 import isNil from 'lodash/isNil';
 
+import { ISubmissionDetailsUrlParams } from '../common/app-url-types';
 import { SearchParams } from '../common/search-types';
 import {
     IAllContestsUrlParams, IContestDetailsUrlParams,
@@ -153,6 +154,8 @@ const getSubmitFileUrl = () => `${baseApiUrl}/Compete/SubmitFileSubmission`;
 const getSubmissionFileDownloadUrl =
     ({ id }: IDownloadSubmissionFileUrlParams) => `${baseApiUrl}/Submissions/Download/${id}`;
 
+const getSubmissionDetailsUrl = ({ id }:ISubmissionDetailsUrlParams) => `/submissions/${id}/details`;
+
 // Submission types
 const getAllContestStrategyFiltersUrl =
     () => `${baseApiUrl}/SubmissionTypes/GetAllOrderedByLatestUsage`;
@@ -209,6 +212,7 @@ export {
     getSubmitUrl,
     getSubmitFileUrl,
     getSubmissionFileDownloadUrl,
+    getSubmissionDetailsUrl,
     getAllContestStrategyFiltersUrl,
     getDownloadProblemResourceUrl,
     getHomeStatisticsUrl,
