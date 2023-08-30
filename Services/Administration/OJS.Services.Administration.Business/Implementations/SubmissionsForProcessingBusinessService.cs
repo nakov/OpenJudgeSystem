@@ -71,5 +71,7 @@
                 .GetAwaiter()
                 .GetResult();
         }
+
+        public void DeleteProcessedSubmissionsOlderThanADay() => this.submissionsForProcessingData.Clean();
     }
 }
