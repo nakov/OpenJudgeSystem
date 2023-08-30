@@ -153,6 +153,7 @@ public class SubmissionsController : BaseApiController
     /// <param name="page">The current page number.</param>
     /// <returns>A page with submissions containing information about their score and user.</returns>
     [HttpGet]
+    [Authorize]
     [ProducesResponseType(typeof(PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetUserSubmissions([FromQuery] bool isOfficial, [FromQuery]int page)
         => await this.submissionsBusiness
