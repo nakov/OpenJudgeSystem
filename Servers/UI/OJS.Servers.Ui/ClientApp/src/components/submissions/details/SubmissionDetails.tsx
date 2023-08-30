@@ -328,10 +328,18 @@ const SubmissionDetails = () => {
                           state={backButtonState}
                         />
                     </div>
-                    <div>
-                        {problemNameHeadingText}
-                    </div>
+                    {problemNameHeadingText}
                 </Heading>
+                {!currentSubmission?.isProcessed
+                    ? (
+                        <AlertBox
+                          className={styles.alertBox}
+                          message="The submission is in queue and will be processed shortly. Please wait."
+                          type={AlertBoxType.info}
+                          isClosable={false}
+                        />
+                    )
+                    : null}
                 {currentSubmission?.submissionType.allowBinaryFilesUpload
                     ? (
                         <div className={styles.resourceWrapper}>

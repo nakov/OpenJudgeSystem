@@ -40,6 +40,12 @@
   width: 100%;
 }
 
+.textContainer {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  width: 100%;
+}
+
 .infoContainer {
   align-items: center;
   display: flex;
@@ -64,6 +70,14 @@
 }
 
 .submissionTypeText {
+  @media only screen and (max-width: variables.$r-large-desktop-max) {
+    font-size: variables.$f-size-16;
+  }
+}
+
+.isProcessingTypeText {
+  color: colors.$text-dark-gray-color;
+
   @media only screen and (max-width: variables.$r-large-desktop-max) {
     font-size: variables.$f-size-16;
   }

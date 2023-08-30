@@ -33,6 +33,8 @@
 
         public bool IsCompiledSuccessfully { get; set; }
 
+        public bool IsProcessed { get; set; }
+
         public string CompilerComment { get; set; } = null!;
 
         public DateTime CreatedOn { get; set; }
@@ -63,6 +65,7 @@
                 .ForMember(d => d.IsOfficial, opt => opt.MapFrom(s =>
                     s.Participant!.IsOfficial))
                 .ForMember(d => d.ByteContent, opt => opt.MapFrom(s =>
-                    s.Content));
+                    s.Content))
+                .ForMember(s => s.IsProcessed, opt => opt.MapFrom(s => s.Processed));
     }
 }

@@ -33,6 +33,7 @@ interface ISubmissionType {
     maxUsedMemory: number;
     isOfficial: boolean;
     isCompiledSuccessfully: boolean;
+    isProcessed: boolean;
     compilerComment: string;
     createdOn: Date;
     modifiedOn?: Date;
