@@ -28,7 +28,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
         var problemId = problem.Id.ToString();
 
         if (participant != null &&
-            participant.Contest.CantSubmitConcurrently &&
+            participant.Contest.AllowParallelSubmissionsInTasks &&
             participant.Submissions.Any(s => s.Processed != true))
         {
             return ValidationResult.Invalid(

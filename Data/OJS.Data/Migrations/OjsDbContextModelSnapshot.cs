@@ -222,10 +222,10 @@ namespace OJS.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<bool>("AutoChangeTestsFeedbackVisibility")
+                    b.Property<bool>("AllowParallelSubmissionsInTasks")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("CantSubmitConcurrently")
+                    b.Property<bool>("AutoChangeTestsFeedbackVisibility")
                         .HasColumnType("bit");
 
                     b.Property<int?>("CategoryId")

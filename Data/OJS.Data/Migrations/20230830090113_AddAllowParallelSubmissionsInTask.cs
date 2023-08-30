@@ -4,12 +4,12 @@ namespace OJS.Data.Migrations
 {
     using Microsoft.EntityFrameworkCore.Migrations;
 
-    public partial class CantSubmitConccurentlyForContest : Migration
+    public partial class AddAllowParallelSubmissionsInTask : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<bool>(
-                name: "CantSubmitConcurrently",
+                name: "AllowParallelSubmissionsInTasks",
                 table: "Contests",
                 type: "bit",
                 nullable: false,
@@ -19,7 +19,7 @@ namespace OJS.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "CantSubmitConcurrently",
+                name: "AllowParallelSubmissionsInTasks",
                 table: "Contests");
         }
     }

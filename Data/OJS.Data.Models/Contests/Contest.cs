@@ -84,7 +84,7 @@ namespace OJS.Data.Models.Contests
 
         public string? Description { get; set; }
 
-        public bool CantSubmitConcurrently { get; set; }
+        public bool AllowParallelSubmissionsInTasks { get; set; }
 
         public virtual ICollection<LecturerInContest> LecturersInContests { get; set; } = new HashSet<LecturerInContest>();
 

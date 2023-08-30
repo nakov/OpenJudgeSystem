@@ -12,8 +12,8 @@ using OJS.Data;
 namespace OJS.Data.Migrations
 {
     [DbContext(typeof(OjsDbContext))]
-    [Migration("20230825095052_CantSubmitConccurentlyForContest")]
-    partial class CantSubmitConccurentlyForContest
+    [Migration("20230830090113_AddAllowParallelSubmissionsInTask")]
+    partial class AddAllowParallelSubmissionsInTask
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -224,10 +224,10 @@ namespace OJS.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<bool>("AutoChangeTestsFeedbackVisibility")
+                    b.Property<bool>("AllowParallelSubmissionsInTasks")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("CantSubmitConcurrently")
+                    b.Property<bool>("AutoChangeTestsFeedbackVisibility")
                         .HasColumnType("bit");
 
                     b.Property<int?>("CategoryId")
@@ -1034,6 +1034,12 @@ namespace OJS.Data.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("Processed")
                         .HasColumnType("bit");
