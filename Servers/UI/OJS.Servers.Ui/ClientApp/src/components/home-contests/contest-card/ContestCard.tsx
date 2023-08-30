@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
@@ -50,14 +50,33 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const { actions: { setIsShowing } } = useModal();
     const navigate = useNavigate();
 
+    const [ competeTimeHasExpired, setCompeteTimeHasExpired ] = useState(false);
+    const [ practiceTimeHasExpired, setPracticeTimeHasExpired ] = useState(false);
+
+    const endDate = !isNil(endTime) && new Date(endTime) >= GetCurrentTimeInUTC()
+        ? endTime
+        : !isNil(practiceEndTime)
+            ? practiceEndTime
+            : null;
+
+    const handleCountdownEnd = useCallback(
+        () => {
+            if (!isNil(endDate) && new Date(endDate) <= GetCurrentTimeInUTC()) {
+                if (canBeCompeted) {
+                    setCompeteTimeHasExpired(true);
+                    return;
+                }
+
+                if (canBePracticed) {
+                    setPracticeTimeHasExpired(true);
+                }
+            }
+        },
+        [ endDate, canBeCompeted, canBePracticed ],
+    );
+
     const renderCountdown = useCallback(
         () => {
-            const endDate = endTime !== null
-                ? endTime
-                : practiceEndTime !== null
-                    ? practiceEndTime
-                    : null;
-
             if (isNil(endDate) || new Date(endDate) < GetCurrentTimeInUTC()) {
                 return null;
             }
@@ -67,10 +86,11 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   key={id}
                   duration={convertToSecondsRemaining(new Date(endDate))}
                   metric={Metric.seconds}
+                  handleOnCountdownEnd={handleCountdownEnd}
                 />
             );
         },
-        [ endTime, id, practiceEndTime ],
+        [ endDate, handleCountdownEnd, id ],
     );
 
     const renderContestLockIcon = useCallback(
@@ -119,7 +139,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   onClick={() => setIsShowingAndNavigateToContest()}
                   text="Compete"
                   state={
-                        canBeCompeted
+                        canBeCompeted && !competeTimeHasExpired
                             ? ButtonState.enabled
                             : ButtonState.disabled
                     }
@@ -134,7 +154,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   text="Practice"
                   type={LinkButtonType.secondary}
                   state={
-                        canBePracticed
+                        canBePracticed && !practiceTimeHasExpired
                             ? ButtonState.enabled
                             : ButtonState.disabled
                     }
