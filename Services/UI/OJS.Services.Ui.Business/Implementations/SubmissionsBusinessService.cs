@@ -508,6 +508,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var userParticipantsIds = await this.participantsDataService
             .GetAllByUser(user.Id)
+            .Where(p => p.IsOfficial == isOfficial)
             .Select(p => p.Id)
             .ToEnumerableAsync();
 
