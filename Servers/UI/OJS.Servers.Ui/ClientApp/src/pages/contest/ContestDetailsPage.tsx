@@ -298,4 +298,4 @@ const ContestDetailsPage = () => {
     return renderContestDetailsPage();
 };
 
-export default makePrivate(setLayout(ContestDetailsPage, true));
+export default makePrivate(setLayout(ContestDetailsPage, false));
