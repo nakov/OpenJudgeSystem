@@ -420,6 +420,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
 
         await this.submissionsData.Add(newSubmission);
+        await this.submissionsData.SaveChanges();
+
         await this.submissionsForProcessingData.Add(newSubmission.Id);
         await this.submissionsData.SaveChanges();
 
