@@ -31,4 +31,5 @@ export type {
     ISubmissionDetailsUrlParams,
     IProblemSubmissionDetailsUrlParams,
     IContestResultsUrl,
+    IContestDetailsUrlParams,
 };
