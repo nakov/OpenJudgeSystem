@@ -8,6 +8,8 @@ using SoftUni.Services.Infrastructure;
 
 public interface ISubmissionsForProcessingCommonDataService : IService
 {
+    Task<SubmissionForProcessing?> GetBySubmission(int submissionId);
+
     IQueryable<SubmissionForProcessing?> GetAllPending();
 
     IQueryable<SubmissionForProcessing?> GetAllUnprocessed();

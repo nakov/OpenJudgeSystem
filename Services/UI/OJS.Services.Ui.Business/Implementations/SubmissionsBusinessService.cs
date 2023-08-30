@@ -420,16 +420,22 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
 
         await this.submissionsData.Add(newSubmission);
-        await this.submissionsData.SaveChanges();
-
         await this.submissionsForProcessingData.Add(newSubmission.Id);
         await this.submissionsData.SaveChanges();
 
         scope.Complete();
         scope.Dispose();
 
+        var submissionToBePublished = this.BuildSubmissionForProcessing(newSubmission, problem, submissionType);
+        var submissionForProcessing = await this.submissionsForProcessingData.GetBySubmission(newSubmission.Id);
+        if (submissionForProcessing != null)
+        {
+            submissionForProcessing.SerializedExecutionDetails = JsonConvert.SerializeObject(submissionToBePublished);
+            await this.submissionsData.SaveChanges();
+        }
+
         await this.submissionsCommonBusinessService
-            .PublishSubmissionForProcessing(this.BuildSubmissionForProcessing(newSubmission, problem, submissionType));
+            .PublishSubmissionForProcessing(submissionToBePublished);
     }
 
     public async Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult)
@@ -455,9 +461,16 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         submission.Processed = true;
         submission.ProcessingComment = null;
 
+        var submissionForProcessing = await this.submissionsForProcessingData.GetBySubmission(submission.Id);
+
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
         if (executionResult != null)
         {
+            if (submissionForProcessing != null)
+            {
+                submissionForProcessing.SerializedExecutionResult = JsonConvert.SerializeObject(executionResult);
+            }
+
             ProcessTestsExecutionResult(submission, executionResult);
 
             this.submissionsData.Update(submission);
@@ -466,6 +479,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
         else
         {
+            if (submissionForProcessing != null)
+            {
+                submissionForProcessing.SerializedException = JsonConvert.SerializeObject(exception);
+            }
+
             submission.IsCompiledSuccessfully = false;
             var errorMessage = exception?.Message
                                ?? "Invalid execution result received. Please contact an administrator.";
