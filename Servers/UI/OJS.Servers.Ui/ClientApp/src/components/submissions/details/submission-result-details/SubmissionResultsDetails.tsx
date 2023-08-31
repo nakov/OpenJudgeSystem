@@ -7,7 +7,7 @@ import {
     IUserRole,
     ITestRunDetailsCollapsed,
     ISubmissionResultsDetails,
-    IUserAuthData
+    IUserAuthData,
 } from '../../../../hooks/submissions/types';
 import { useHttp } from '../../../../hooks/use-http';
 import { getUserAuthInfoUrl } from '../../../../utils/urls';
