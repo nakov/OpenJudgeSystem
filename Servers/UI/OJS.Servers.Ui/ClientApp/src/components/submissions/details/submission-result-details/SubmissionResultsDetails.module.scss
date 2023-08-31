@@ -1,4 +1,5 @@
 ﻿@use 'src/styles/colors';
+@use 'src/styles/fonts';
 
 .submissionResultDetailsWrapper {
   display: flex;
@@ -10,7 +11,7 @@
 .submissionResultDetails {
   display: flex;
   flex-direction: column;
-  font-family: lato, montserrat, serif;
+  font-family: fonts.$font-family-lato;
   padding-bottom: 30px;
   margin-top: 30px;
   border-bottom: 1px solid #bebebe;
@@ -20,7 +21,7 @@
 .showInputButton {
   border: none;
   display: flex;
-  background-color: #42abf8;
+  background-color: colors.$light-blue-color;
   align-self: flex-start;
   align-items: center;
   justify-content: center;
