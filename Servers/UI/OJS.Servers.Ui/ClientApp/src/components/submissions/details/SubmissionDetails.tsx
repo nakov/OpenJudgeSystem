@@ -4,7 +4,7 @@ import first from 'lodash/first';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { ContestParticipationType } from '../../../common/constants';
+import { contestParticipationType } from '../../../common/contest-helpers';
 import { IIndexContestsType } from '../../../common/types';
 import { useHashUrlParams } from '../../../hooks/common/use-hash-url-params';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
@@ -127,16 +127,14 @@ const SubmissionDetails = () => {
         [ handleDownloadSubmissionFile, canAccessAdministration, currentSubmission, user ],
     );
 
-    const participationType = useMemo(
-        () => currentSubmission?.isOfficial
-            ? ContestParticipationType.Compete
-            : ContestParticipationType.Practice,
-        [ currentSubmission ],
-    );
+    const participationType = contestParticipationType(currentSubmission!.isOfficial);
 
-    useEffect(() => {
-        setPageTitle(submissionTitle);
-    }, [ setPageTitle, submissionTitle ]);
+    useEffect(
+        () => {
+            setPageTitle(submissionTitle);
+        },
+        [ setPageTitle, submissionTitle ],
+    );
 
     const problemNameHeadingText = useMemo(
         () => `${currentSubmission?.problem.name} - ${currentSubmission?.problem.id}`,
@@ -147,8 +145,6 @@ const SubmissionDetails = () => {
         () => `Details #${currentSubmission?.id}`,
         [ currentSubmission?.id ],
     );
-
-    const { submissionType } = currentSubmission || {};
 
     const submissionsNavigationClassName = 'submissionsNavigation';
 
@@ -311,54 +307,57 @@ const SubmissionDetails = () => {
     );
 
     const codeEditor = useCallback(
-        () => (
-            <div className={styles.code}>
-                <Heading
-                  type={HeadingType.secondary}
-                  className={styles.taskHeading}
-                >
-                    <div className={styles.btnContainer}>
-                        <LeftArrowIcon className={styles.leftArrow} size={IconSize.Large} />
-                        <Button
-                          type={ButtonType.secondary}
-                          size={ButtonSize.small}
-                          onClick={() => setSubmissionAndStartParticipation()}
-                          className={styles.backBtn}
-                          text=" "
-                          state={backButtonState}
-                        />
-                    </div>
-                    {problemNameHeadingText}
-                </Heading>
-                {!currentSubmission?.isProcessed
-                    ? (
-                        <AlertBox
-                          className={styles.alertBox}
-                          message="The submission is in queue and will be processed shortly. Please wait."
-                          type={AlertBoxType.info}
-                          isClosable={false}
-                        />
-                    )
-                    : null}
-                {currentSubmission?.submissionType.allowBinaryFilesUpload
-                    ? (
-                        <div className={styles.resourceWrapper}>
-                            {renderResourceLink()}
-                            {renderDownloadErrorMessage()}
+        () => {
+            const { isProcessed, submissionType, content } = currentSubmission || {};
+
+            return (
+                <div className={styles.code}>
+                    <Heading
+                      type={HeadingType.secondary}
+                      className={styles.taskHeading}
+                    >
+                        <div className={styles.btnContainer}>
+                            <LeftArrowIcon className={styles.leftArrow} size={IconSize.Large} />
+                            <Button
+                              type={ButtonType.secondary}
+                              size={ButtonSize.small}
+                              onClick={() => setSubmissionAndStartParticipation()}
+                              className={styles.backBtn}
+                              text=" "
+                              state={backButtonState}
+                            />
                         </div>
-                    )
-                    : (
-                        <CodeEditor
-                          readOnly
-                          code={currentSubmission?.content}
-                          selectedSubmissionType={submissionType}
-                        />
-                    )}
-            </div>
-        ),
+                        {problemNameHeadingText}
+                    </Heading>
+                    {isProcessed
+                        ? (
+                            <AlertBox
+                              className={styles.alertBox}
+                              message="The submission is in queue and will be processed shortly. Please wait."
+                              type={AlertBoxType.info}
+                              isClosable={false}
+                            />
+                        )
+                        : null}
+                    {submissionType?.allowBinaryFilesUpload
+                        ? (
+                            <div className={styles.resourceWrapper}>
+                                {renderResourceLink()}
+                                {renderDownloadErrorMessage()}
+                            </div>
+                        )
+                        : (
+                            <CodeEditor
+                              readOnly
+                              code={content}
+                              selectedSubmissionType={submissionType}
+                            />
+                        )}
+                </div>
+            );
+        },
         [
             problemNameHeadingText,
-            submissionType,
             backButtonState,
             renderResourceLink,
             renderDownloadErrorMessage,

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { ContestParticipationType } from '../../../common/constants';
+import { contestParticipationType } from '../../../common/contest-helpers';
 import { useHashUrlParams } from '../../../hooks/common/use-hash-url-params';
 import { ISubmissionDetails, ISubmissionDetailsType } from '../../../hooks/submissions/types';
 import { useAppUrls } from '../../../hooks/use-app-urls';
@@ -75,9 +75,7 @@ const SubmissionsList = ({
                 ? ButtonState.disabled
                 : ButtonState.enabled;
 
-            const typeLabelText = isOfficial
-                ? ContestParticipationType.Compete
-                : ContestParticipationType.Practice;
+            const typeLabelText = contestParticipationType(isOfficial);
 
             return (
                 <div className={itemClassName}>
