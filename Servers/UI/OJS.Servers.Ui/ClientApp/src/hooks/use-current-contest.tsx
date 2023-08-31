@@ -68,6 +68,7 @@ interface ICurrentContestContext {
         setIsSubmitAllowed: (isSubmitAllowed: boolean) => void;
         removeCurrentContest: () => void;
         setIsUserParticipant: (isUserParticipant: boolean) => void;
+        clearContestError: () => void;
     };
 }
 
@@ -211,6 +212,13 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const removeCurrentContest = useCallback(
         () => {
             setContest(defaultState.state.contest);
+        },
+        [],
+    );
+
+    const clearContestError = useCallback(
+        () => {
+            setContestError(null);
         },
         [],
     );
@@ -425,6 +433,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 setIsSubmitAllowed,
                 setIsUserParticipant,
                 removeCurrentContest,
+                clearContestError,
             },
         }),
         [
@@ -448,6 +457,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             isSubmitAllowed,
             setIsSubmitAllowed,
             contestError,
+            clearContestError,
             isRegisterForContestSuccessful,
             isUserParticipant,
             removeCurrentContest,
