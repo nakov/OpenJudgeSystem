@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { BiCaretDown, BiCaretUp } from 'react-icons/bi';
 
 import {
@@ -26,16 +26,16 @@ enum testResultTypes {
 }
 
 const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
-    const [ isUserAdmin, setIsUserAdmin ] = React.useState<boolean>(false);
-    const [ testRunDetailsCollapsed, setTestRunDetailsCollapsed ] = React.useState<ITestRunDetailsCollapsed>({});
+    const [ isUserAdmin, setIsUserAdmin ] = useState<boolean>(false);
+    const [ testRunDetailsCollapsed, setTestRunDetailsCollapsed ] = useState<ITestRunDetailsCollapsed>({});
 
     const { get, data } = useHttp<null, IUserAuthData>({ url: getUserAuthInfoUrl() });
 
-    React.useEffect(() => {
+    useEffect(() => {
         get();
     }, [ get ]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const { roles } = data || {};
         const isUserRoleAdmin = roles?.find((role: IUserRole) => role.name === 'Administrator');
 
@@ -72,7 +72,7 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
                   margin: '10px 0',
                   color: isWrongAnswer
                       ? '#fc4c50'
-                      : 'green',
+                      : '#23be5e',
               }}
             >
                 {testRunText}
@@ -80,7 +80,7 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
         );
     };
 
-    const renderShowButton = React.useCallback((id: number, isExpanded: boolean) => (
+    const renderShowButton = useCallback((id: number, isExpanded: boolean) => (
         <button
           type="button"
           className={styles.showInputButton}
@@ -108,7 +108,7 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
         </button>
     ), [ testRunDetailsCollapsed ]);
 
-    const renderTrialTestData = React.useCallback((test: ITestCaseRun) => {
+    const renderTrialTestData = useCallback((test: ITestCaseRun) => {
         const { isExpanded, detailsExpanded } = testRunDetailsCollapsed[test.id] || {};
 
         const testRunDiff = {
