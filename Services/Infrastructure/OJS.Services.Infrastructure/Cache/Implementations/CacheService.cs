@@ -50,14 +50,7 @@ namespace OJS.Services.Infrastructure.Cache.Implementations
             }
             catch (RedisConnectionException ex)
             {
-                var exceptionTypeAsString = GetExceptionTypeAsString(ex);
-
-                if (this.ShouldSendExceptionEmail(
-                        exceptionTypeAsString,
-                        ex.Message))
-                {
-                    this.emailService.SendEmail(this.emailConfig.DevEmail, exceptionTypeAsString, ex.Message);
-                }
+                this.SendEmailMessage(ex);
 
                 return getItemCallback();
             }
@@ -76,17 +69,7 @@ namespace OJS.Services.Infrastructure.Cache.Implementations
             }
             catch (RedisConnectionException ex)
             {
-                var exceptionTypeAsString = GetExceptionTypeAsString(ex);
-
-                if (this.ShouldSendExceptionEmail(
-                        exceptionTypeAsString,
-                        ex.Message))
-                {
-                    await this.emailService.SendEmailAsync(
-                        this.emailConfig.DevEmail,
-                        exceptionTypeAsString,
-                        ex.Message);
-                }
+                this.SendEmailMessage(ex);
 
                 return await getItemCallback();
             }
@@ -112,17 +95,7 @@ namespace OJS.Services.Infrastructure.Cache.Implementations
             }
             catch (RedisConnectionException ex)
             {
-                var exceptionTypeAsString = GetExceptionTypeAsString(ex);
-
-                if (this.ShouldSendExceptionEmail(
-                        exceptionTypeAsString,
-                        ex.Message))
-                {
-                    await this.emailService.SendEmailAsync(
-                        this.emailConfig.DevEmail,
-                        exceptionTypeAsString,
-                        ex.Message);
-                }
+                this.SendEmailMessage(ex);
             }
         }
 
@@ -176,6 +149,18 @@ namespace OJS.Services.Infrastructure.Cache.Implementations
                     this.GetAbsoluteExpirationByCacheSeconds(this.memoryCacheExpirationInSeconds));
 
                 return true;
+            }
+        }
+
+        private void SendEmailMessage(RedisConnectionException ex)
+        {
+            var exceptionTypeAsString = GetExceptionTypeAsString(ex);
+
+            if (this.ShouldSendExceptionEmail(
+                    exceptionTypeAsString,
+                    ex.Message))
+            {
+                this.emailService.SendEmail(this.emailConfig.DevEmail, exceptionTypeAsString, ex.Message);
             }
         }
     }
