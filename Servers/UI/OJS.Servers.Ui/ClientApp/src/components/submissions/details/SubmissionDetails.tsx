@@ -127,8 +127,6 @@ const SubmissionDetails = () => {
         [ handleDownloadSubmissionFile, canAccessAdministration, currentSubmission, user ],
     );
 
-    const participationType = contestParticipationType(currentSubmission!.isOfficial);
-
     useEffect(
         () => {
             setPageTitle(submissionTitle);
@@ -295,6 +293,8 @@ const SubmissionDetails = () => {
         () => {
             const { id: contestId } = contest as IIndexContestsType;
 
+            const participationType = contestParticipationType(currentSubmission!.isOfficial);
+
             navigate({
                 pathname: getParticipateInContestUrl({ id: contestId, participationType }),
                 hash: hashParam,
@@ -303,7 +303,7 @@ const SubmissionDetails = () => {
             setCurrentSubmission(null);
             selectSubmissionById(null);
         },
-        [ contest, navigate, getParticipateInContestUrl, participationType, hashParam, setCurrentSubmission, selectSubmissionById ],
+        [ contest, currentSubmission, navigate, getParticipateInContestUrl, hashParam, setCurrentSubmission, selectSubmissionById ],
     );
 
     const codeEditor = useCallback(
@@ -329,7 +329,7 @@ const SubmissionDetails = () => {
                         </div>
                         {problemNameHeadingText}
                     </Heading>
-                    {isProcessed
+                    {!isProcessed
                         ? (
                             <AlertBox
                               className={styles.alertBox}
