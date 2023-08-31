@@ -2,12 +2,12 @@ import React from 'react';
 import { BiCaretDown, BiCaretUp } from 'react-icons/bi';
 
 import {
-    ITestRunDetailsType,
-    ITestCaseRun,
-    IUserRole,
-    ITestRunDetailsCollapsed,
     ISubmissionResultsDetails,
+    ITestCaseRun,
+    ITestRunDetailsCollapsed,
+    ITestRunDetailsType,
     IUserAuthData,
+    IUserRole,
 } from '../../../../hooks/submissions/types';
 import { useHttp } from '../../../../hooks/use-http';
 import { getUserAuthInfoUrl } from '../../../../utils/urls';
