@@ -61,7 +61,7 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
         return submissionForProcessing;
     }
 
-    public async Task<SubmissionForProcessing> AddOrUpdate(int submissionId)
+    public async Task<SubmissionForProcessing> CreateIfNotExists(int submissionId)
     {
         var entity = await this.GetBySubmission(submissionId) ?? await this.Add(submissionId);
 
