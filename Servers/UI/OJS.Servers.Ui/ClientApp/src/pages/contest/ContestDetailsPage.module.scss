@@ -36,7 +36,16 @@
   flex-direction: column;
   font-size: variables.$f-size-14;
   margin: 10px;
-  row-gap: 3%;
+  div {
+    margin: 10px 0;
+  }
+}
+
+.emptyProblemsMessage {
+  @extend %font-family-lato;
+  
+  font-size: 14px;
+  margin-top: 15px;
 }
 
 .heading {

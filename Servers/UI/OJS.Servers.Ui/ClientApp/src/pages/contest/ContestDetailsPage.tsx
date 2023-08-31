@@ -193,7 +193,7 @@ const ContestDetailsPage = () => {
     const renderTasksList = useCallback(
         (problems: IContestDetailsProblemType[]) => (
             isEmpty(problems)
-                ? <div>The problems for this contest are not public.</div>
+                ? <div className={styles.emptyProblemsMessage}>The problems for this contest are not public.</div>
                 : (
                     <List
                       values={problems.sort(compareByOrderBy)}
@@ -240,7 +240,7 @@ const ContestDetailsPage = () => {
                                 {participantsCountByContestType}
                             </div>
                         </div>
-                        <div>{renderTasksList(problems)}</div>
+                        {renderTasksList(problems)}
                     </div>
                     <div className={styles.buttonsContainer}>
                         {renderContestButtons()}
