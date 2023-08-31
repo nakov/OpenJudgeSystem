@@ -7,6 +7,10 @@ interface IParticipateInContestTypeUrlParams {
     participationType: ContestParticipationType;
 }
 
+interface ISubmissionDetailsUrlParams {
+    id: number;
+}
+
 interface IProblemSubmissionDetailsUrlParams {
     submissionId: number;
     hashParam: string;
@@ -17,4 +21,9 @@ interface IContestResultsUrl {
     participationType: ContestParticipationType;
 }
 
-export type { IParticipateInContestTypeUrlParams, IProblemSubmissionDetailsUrlParams, IContestResultsUrl };
+export type {
+    IParticipateInContestTypeUrlParams,
+    ISubmissionDetailsUrlParams,
+    IProblemSubmissionDetailsUrlParams,
+    IContestResultsUrl,
+};
