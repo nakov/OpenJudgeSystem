@@ -66,6 +66,8 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
         if (entity == null)
         {
             await this.Add(submissionId);
+            await this.SaveChanges();
+            entity = await this.GetBySubmission(submissionId);
         }
 
         entity!.Processing = false;
