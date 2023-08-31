@@ -42,7 +42,6 @@ const Alert = (props:IAlertProps) => {
     const alertClass = `${(severity === AlertSeverity.Success)}`
         ? 'success-alert'
         : '';
-    console.log(severity);
     const handleClose = () => {
         if (onClose) {
             onClose();
