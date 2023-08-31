@@ -1,4 +1,6 @@
-﻿.submissionResultDetailsWrapper {
+﻿@use 'src/styles/colors';
+
+.submissionResultDetailsWrapper {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -42,4 +44,9 @@
   color: white;
   display: inline-block;
   width: 10%;
+}
+
+.warningBlockWrapper {
+  background-color: colors.$warning-color;
+  padding: 10px 20px;
 }
