@@ -18,7 +18,7 @@ public interface ISubmissionsForProcessingCommonDataService : IService
 
     Task<IEnumerable<TServiceModel>> GetAllProcessing<TServiceModel>();
 
-    Task Add(int submissionId);
+    Task<SubmissionForProcessing> Add(int submissionId);
 
     Task<SubmissionForProcessing> AddOrUpdate(int submissionId);
 
