@@ -25,6 +25,7 @@ using SoftUni.Common.Extensions;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 using OJS.Services.Ui.Models.Contests;
 using OJS.Services.Common;
+using OJS.Services.Infrastructure.Extensions;
 using OJS.Data.Models.Problems;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Services.Common.Models.Submissions;
@@ -519,6 +520,23 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             DefaultSubmissionsPerPage);
 
         return modelResult;
+    }
+
+    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetUsersLastSubmissions(bool isOfficial, int page)
+    {
+        var user = this.userProviderService.GetCurrentUser();
+
+        var userParticipantsIds = await this.participantsDataService
+            .GetAllByUser(user.Id)
+            .Where(p => p.IsOfficial == isOfficial)
+            .Select(p => p.Id)
+            .ToEnumerableAsync();
+
+        return await this.submissionsData
+            .GetLatestSubmissionsByUserParticipations<SubmissionForPublicSubmissionsServiceModel>(
+                userParticipantsIds.MapCollection<int?>(),
+                DefaultSubmissionsPerPage,
+                page);
     }
 
     public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetProcessingSubmissions(int page)
