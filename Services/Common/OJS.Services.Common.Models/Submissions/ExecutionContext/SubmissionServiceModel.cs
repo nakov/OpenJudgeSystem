@@ -2,6 +2,7 @@
 {
     using System;
     using AutoMapper;
+    using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Models.Submissions.ExecutionContext.Mapping;
     using OJS.Services.Common.Models.Submissions.ExecutionDetails;
     using OJS.Workers.Common.Models;
@@ -31,7 +32,8 @@
 
         public ExecutionOptionsServiceModel ExecutionOptions { get; set; } = new ();
 
-        public void RegisterMappings(IProfileExpression configuration) =>
+        public void RegisterMappings(IProfileExpression configuration)
+        {
             configuration
                 .CreateMap(typeof(SubmissionServiceModel), typeof(OjsSubmission<>))
                 .ForMember(
@@ -59,5 +61,35 @@
                     nameof(OjsSubmission<object>.StartedExecutionOn),
                     opt => opt.MapFrom(nameof(SubmissionServiceModel.StartedExecutionOn)))
                 .ForAllOtherMembers(opt => opt.Ignore());
+
+            configuration.CreateMap<Submission, SubmissionServiceModel>()
+                .ForMember(
+                    d => d.Code,
+                    opt => opt.MapFrom(s => s.IsBinaryFile ? string.Empty : s.ContentAsString))
+                .ForMember(
+                    d => d.FileContent,
+                    opt => opt.MapFrom(s => s.IsBinaryFile ? s.Content : null))
+                .ForMember(
+                    d => d.ExecutionStrategy,
+                    opt => opt.MapFrom(s => s.SubmissionType!.ExecutionStrategyType))
+                .ForMember(
+                    d => d.ExecutionType,
+                    opt => opt.MapFrom(s => ExecutionType.TestsExecution))
+                .ForMember(
+                    d => d.TimeLimit,
+                    opt => opt.MapFrom(s => s.Problem!.TimeLimit))
+                .ForMember(
+                    d => d.MemoryLimit,
+                    opt => opt.MapFrom(s => s.Problem!.MemoryLimit))
+                .ForMember(
+                    d => d.TestsExecutionDetails,
+                    opt => opt.MapFrom(s => s.Problem))
+                .ForMember(
+                    d => d.SimpleExecutionDetails,
+                    opt => opt.Ignore())
+                .ForMember(
+                    d => d.ExecutionOptions,
+                    opt => opt.Ignore());
+        }
     }
 }

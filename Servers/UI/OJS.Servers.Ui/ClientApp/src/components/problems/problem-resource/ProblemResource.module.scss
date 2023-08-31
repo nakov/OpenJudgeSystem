@@ -6,7 +6,7 @@
   flex-direction: row;
   gap: 10px;
   min-height: 50px;
-  
+
   > a {
     padding: 0;
     text-decoration: none;
@@ -14,13 +14,13 @@
 }
 
 .resourceLink {
-  padding: 10px 20px;
-  border-radius: 4px;
-  transition: all .2s ease-in-out;
-  display: flex;
   align-items: center;
-  justify-content: center;
+  border-radius: 4px;
   color: #42abf8;
+  display: flex;
+  justify-content: center;
+  padding: 10px 20px;
+  transition: all 0.2s ease-in-out;
 
   &:link {
     text-decoration: none;
@@ -29,11 +29,11 @@
   &:visited {
     text-decoration: none;
   }
-  
+
   &:hover {
     background-color: #e3f3fd;
   }
-  
+
   > i {
     margin-right: 10px;
   }

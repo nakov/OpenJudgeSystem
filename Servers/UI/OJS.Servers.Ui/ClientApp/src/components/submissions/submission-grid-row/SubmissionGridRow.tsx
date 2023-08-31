@@ -2,17 +2,20 @@ import React, { useCallback, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
-import { IPublicSubmission, PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
+import { ISubmissionResponseModel, PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
+import { useAppUrls } from '../../../hooks/use-app-urls';
 import { useAuth } from '../../../hooks/use-auth';
+import { useProblems } from '../../../hooks/use-problems';
 import { formatDate } from '../../../utils/dates';
 import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../utils/strategy-type-utils';
-import { LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import { getSubmissionDetailsUrl } from '../../../utils/urls';
+import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import IconSize from '../../guidelines/icons/common/icon-sizes';
 
 import styles from './SubmissionGridRow.module.scss';
 
 interface ISubmissionGridRowProps {
-    submission: IPublicSubmission;
+    submission: ISubmissionResponseModel;
 }
 
 const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
@@ -24,17 +27,47 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
         strategyName,
         state,
         problem: {
+            id: problemId,
             name: problemName,
             contest: {
                 id: contestId,
                 name: contestName,
             },
-            orderBy,
         },
         isOfficial,
     } = submission;
 
+    const { actions: { initiateRedirectionToProblem } } = useProblems();
     const { state: loggedInUser } = useAuth();
+    const { getParticipateInContestUrl } = useAppUrls();
+
+    const participationType = useMemo(
+        () => isOfficial
+            ? ContestParticipationType.Compete
+            : ContestParticipationType.Practice,
+        [ isOfficial ],
+    );
+
+    const handleDetailsButtonSubmit = useCallback(
+        () => {
+            const submissionDetailsUrl = getSubmissionDetailsUrl({ id: submissionId });
+
+            initiateRedirectionToProblem(problemId, submissionDetailsUrl);
+        },
+        [ initiateRedirectionToProblem, problemId, submissionId ],
+    );
+
+    const handleParticipateInContestSubmit = useCallback(
+        () => {
+            const participateInContestUrl = getParticipateInContestUrl({
+                id: contestId,
+                participationType,
+            });
+
+            initiateRedirectionToProblem(problemId, participateInContestUrl);
+        },
+        [ contestId, participationType, problemId, getParticipateInContestUrl, initiateRedirectionToProblem ],
+    );
 
     const renderDetailsBtn = useCallback(
         () => {
@@ -42,15 +75,15 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
 
             if (username === loggedInUsername || canAccessAdministration) {
                 return (
-                    <LinkButton
-                      to={`/submissions/${submissionId}/details`}
+                    <Button
                       text="Details"
+                      onClick={handleDetailsButtonSubmit}
                     />
                 );
             }
             return null;
         },
-        [ loggedInUser, username, submissionId ],
+        [ handleDetailsButtonSubmit, loggedInUser, username ],
     );
 
     const renderStrategyIcon = useCallback(
@@ -88,11 +121,32 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
         [ state, maxPoints, points ],
     );
 
-    const participationType = useMemo(
-        () => isOfficial
-            ? ContestParticipationType.Compete
-            : ContestParticipationType.Practice,
-        [ isOfficial ],
+    const renderProblemInformation = useCallback(
+        () => {
+            if (isNil(problemId)) {
+                return null;
+            }
+
+            return (
+                <div>
+                    <Button
+                      internalClassName={styles.redirectButton}
+                      type={ButtonType.secondary}
+                      text={problemName}
+                      onClick={handleParticipateInContestSubmit}
+                      size={ButtonSize.small}
+                    />
+                    in
+                    <LinkButton
+                      text={contestName}
+                      to={getParticipateInContestUrl({ id: contestId, participationType })}
+                      type={LinkButtonType.plain}
+                      className={styles.link}
+                    />
+                </div>
+            );
+        },
+        [ contestId, contestName, getParticipateInContestUrl, handleParticipateInContestSubmit, participationType, problemId, problemName ],
     );
 
     return (
@@ -104,22 +158,15 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
                 {renderPoints()}
             </div>
             <div className={styles.detailsContainer}>
-                <div>
-                    <LinkButton
-                      text={problemName}
-                      to={`/contests/${contestId}/${participationType}#${orderBy + 1}`}
-                      type={LinkButtonType.plain}
-                      className={styles.link}
-                    />
-                    in
-                    <LinkButton
-                      text={contestName}
-                      to={`/contests/${contestId}/${participationType}`}
-                      type={LinkButtonType.plain}
-                      className={styles.link}
-                    />
-                </div>
-                <div className={styles.dateAndUsernameContainer}>
+                {renderProblemInformation()}
+                <div className={styles.IdAndDateAndUsernameContainer}>
+                    <span className={styles.IdContainer}>
+                        #
+                        {submissionId}
+                    </span>
+                    <span className="delimiter">
+                        |
+                    </span>
                     <span>
                         {formatDate(createdOn)}
                         {' '}
