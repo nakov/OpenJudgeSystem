@@ -1,7 +1,14 @@
 import React from 'react';
 import { BiCaretDown, BiCaretUp } from 'react-icons/bi';
 
-import { ITestRunDetailsType } from '../../../../hooks/submissions/types';
+import {
+    ITestRunDetailsType,
+    ITestCaseRun,
+    IUserRole,
+    ITestRunDetailsCollapsed,
+    ISubmissionResultsDetails,
+    IUserAuthData
+} from '../../../../hooks/submissions/types';
 import { useHttp } from '../../../../hooks/use-http';
 import { getUserAuthInfoUrl } from '../../../../utils/urls';
 import IconSize from '../../../guidelines/icons/common/icon-sizes';
@@ -10,42 +17,12 @@ import TestRunDiffView from '../../test-run-diff-view/TestRunDiffView';
 
 import styles from './SubmissionResultsDetails.module.scss';
 
-interface ITestCaseRun {
-    id: number;
-    checkerComment?: string;
-    executionComment?: string;
-    expectedOutputFragment?: string;
-    input?: string;
-    isTrialTest: boolean;
-    memoryUsed: number;
-    orderBy: number;
-    resultType: string;
-    showInput: boolean;
-    submissionId?: number;
-    timeUsed: number;
-    userOutputFragment?: string;
-}
-
-interface ITestRunDetailsCollapsed {
-    [id: string]: {
-        isExpanded: boolean;
-        detailsExpanded: boolean;
-    };
-}
-interface ISubmissionResultsDetails {
-    testRuns?: ITestCaseRun[];
-}
-
-interface IUserRole {
-    id: string;
-    name: string;
-}
-
-interface IUserAuthData {
-    email: string;
-    id: string;
-    roles: IUserRole[];
-    userName: string;
+enum testResultTypes {
+    correctAnswer = 'CorrectAnswer',
+    wrongAnswer = 'WrongAnswer',
+    runTimeError = 'RunTimeError',
+    timeLimit = 'TimeLimit',
+    memoryLimit = 'MemoryLimit'
 }
 
 const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
@@ -70,14 +47,15 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
     }, [ data ]);
 
     const renderTestHeading = (testRun: ITestCaseRun, idx: number) => {
-        const isWrongAnswer = testRun.resultType === 'WrongAnswer' || testRun.resultType === 'RunTimeError';
+        const isWrongAnswer = testRun.resultType !== testResultTypes.correctAnswer;
+
         let testRunText = `Test #${testRun.orderBy}`;
         if (testRun.isTrialTest) {
             testRunText = `Zero ${testRunText}`;
         }
 
         if (isWrongAnswer) {
-            if (testRun.resultType === 'RunTimeError') {
+            if (testRun.resultType === testResultTypes.runTimeError) {
                 testRunText += ' (Compile time Error)';
             } else {
                 testRunText += ' (Incorrect Answer)';
@@ -147,7 +125,7 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
                 { renderShowButton(test.id, isExpanded) }
                 { isExpanded && (
                     <div style={{ margin: '10px 0' }}>
-                        <span style={{ backgroundColor: '#fec112', padding: '10px 20px' }}>{ test.input }</span>
+                        <span className={styles.warningBlockWrapper}>{ test.input }</span>
                     </div>
                 ) }
                 { test.userOutputFragment && test.expectedOutputFragment && (
@@ -179,7 +157,7 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
 
                 { test.executionComment && detailsExpanded && (
                     <div>
-                        <span style={{ backgroundColor: '#fec112', padding: '10px 20px' }}>{test.executionComment}</span>
+                        <span className={styles.warningBlockWrapper}>{test.executionComment}</span>
                     </div>
                 )}
             </>

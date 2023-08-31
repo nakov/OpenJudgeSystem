@@ -38,7 +38,9 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
     const handleTestClick = (e: any) => {
         const { target } = e;
         const h3Element = target.querySelector('h3');
-        if (!h3Element) { return; }
+        if (!h3Element) {
+            return;
+        }
 
         const { innerText } = h3Element;
         const elementNumber = innerText.split('#')[1];
