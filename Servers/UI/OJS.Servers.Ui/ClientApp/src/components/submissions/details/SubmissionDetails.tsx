@@ -404,15 +404,43 @@ const SubmissionDetails = () => {
         [ renderErrorHeading, validationErrors ],
     );
 
+    const renderTestsChangeMessage = useCallback(() => (
+        currentSubmission?.testRuns.length === 0 &&
+            currentSubmission.isCompiledSuccessfully &&
+            currentSubmission.totalTests > 0 &&
+            !currentSubmission.processingComment
+            ? (
+                <div className={styles.testChangesWrapper}>
+                    <p>
+                        The input/output data changed. Your (
+                        {currentSubmission.points}
+                        /
+                        {currentSubmission.problem.maximumPoints}
+                        )
+                        submission is now outdated.
+                        Click &quot;Retest&quot; to resubmit your solution for re-evaluation against the new test cases.
+                        Your score may change.
+                    </p>
+                    {renderRetestButton()}
+                </div>
+            )
+            : ''
+    ), [ currentSubmission, renderRetestButton ]);
+
     const renderSubmission = useCallback(
         () => (
-            <div className={styles.detailsWrapper}>
-                {refreshableSubmissionsList()}
-                {codeEditor()}
-                {submissionResults()}
-            </div>
+            <>
+                <div>
+                    {renderTestsChangeMessage()}
+                </div>
+                <div className={styles.detailsWrapper}>
+                    {refreshableSubmissionsList()}
+                    {codeEditor()}
+                    {submissionResults()}
+                </div>
+            </>
         ),
-        [ codeEditor, refreshableSubmissionsList, submissionResults ],
+        [ codeEditor, refreshableSubmissionsList, submissionResults, renderTestsChangeMessage ],
     );
 
     const renderPage = useCallback(

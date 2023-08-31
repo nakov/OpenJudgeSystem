@@ -116,3 +116,16 @@
 .buttonsSection {
   margin-top: 20px;
 }
+
+.testChangesWrapper {
+  display: flex;
+  align-items: center;
+  border: 2px solid;
+  font-size: 16px;
+  padding: 1rem;
+  border-color: colors.$background-color-btn-primary;
+  border-radius: 12px;
+  background-color: colors.$background-color-btn-primary;
+  font-family:  Lato, serif;
+  margin-bottom: 1rem
+}
