@@ -20,10 +20,11 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
         this.contestCategoriesData = contestCategoriesData;
     }
 
-    public async Task ClearMainContestCategoriesCache()
-        => await Task.WhenAll(
-            this.cache.Remove(CacheConstants.MainContestCategoriesDropDown),
-            this.cache.Remove(CacheConstants.ContestCategoriesTree));
+    public void ClearMainContestCategoriesCache()
+    {
+        this.cache.Remove(CacheConstants.MainContestCategoriesDropDown);
+        this.cache.Remove(CacheConstants.ContestCategoriesTree);
+    }
 
     public async Task ClearContestCategory(int categoryId)
     {
@@ -34,20 +35,20 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
             return;
         }
 
-        await contestCategory.Children
+        contestCategory.Children
             .Select(cc => cc.Id)
             .ToList()
-            .ForEachSequential(this.RemoveCacheFromCategory);
+            .ForEach(this.RemoveCacheFromCategory);
 
         while (contestCategory != null)
         {
-            await this.RemoveCacheFromCategory(contestCategory.Id);
+            this.RemoveCacheFromCategory(contestCategory.Id);
 
             contestCategory = contestCategory.Parent;
         }
     }
 
-    private async Task RemoveCacheFromCategory(int contestCategoryId)
+    private void RemoveCacheFromCategory(int contestCategoryId)
         {
             var categoryNameCacheId = string.Format(
                 CacheConstants.ContestCategoryNameFormat,
@@ -61,9 +62,8 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
                 CacheConstants.ContestParentCategoriesFormat,
                 contestCategoryId);
 
-            await Task.WhenAll(
-                this.cache.Remove(categoryNameCacheId),
-                this.cache.Remove(subCategoriesCacheId),
-                this.cache.Remove(parentCategoriesCacheId));
+            this.cache.Remove(categoryNameCacheId);
+            this.cache.Remove(subCategoriesCacheId);
+            this.cache.Remove(parentCategoriesCacheId);
         }
 }

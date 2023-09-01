@@ -212,15 +212,13 @@ namespace OJS.Services.Infrastructure.Cache.Implementations
             {
                 return false;
             }
-            else
-            {
-                this.memoryCache.Set(
-                    exceptionName,
-                    exceptionValue,
-                    this.GetAbsoluteExpirationByCacheSeconds(this.memoryCacheExpirationInSeconds));
 
-                return true;
-            }
+            this.memoryCache.Set(
+                exceptionName,
+                exceptionValue,
+                this.GetAbsoluteExpirationByCacheSeconds(this.memoryCacheExpirationInSeconds));
+
+            return true;
         }
 
         private void SendEmailMessage(RedisConnectionException ex)

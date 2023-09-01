@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 public interface IContestCategoriesCacheService : IService
 {
-    Task ClearMainContestCategoriesCache();
+    void ClearMainContestCategoriesCache();
 
     Task ClearContestCategory(int categoryId);
 }

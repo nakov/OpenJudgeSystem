@@ -68,8 +68,12 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
             this.contestCategoriesCache.ClearContestCategory(entity.Id),
             this.CascadeDeleteCategories(entity));
 
-    protected override async Task AfterEntitySaveAsync(ContestCategory entity, AdminActionContext actionContext)
-        => await this.contestCategoriesCache.ClearMainContestCategoriesCache();
+    protected override Task AfterEntitySaveAsync(ContestCategory entity, AdminActionContext actionContext)
+    {
+        this.contestCategoriesCache.ClearMainContestCategoriesCache();
+
+        return Task.CompletedTask;
+    }
 
     private async Task CascadeDeleteCategories(ContestCategory contestCategory)
     {
