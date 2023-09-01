@@ -178,11 +178,13 @@ const ContestDetailsPage = () => {
             }
 
             return (
-                <div>
+                <div className={styles.taskNameAndResources}>
                     <div className={styles.taskName}>{problem.name}</div>
                     <List
                       values={resources}
                       itemFunc={renderResource}
+                      className={styles.resources}
+                      itemClassName={styles.resource}
                     />
                 </div>
             );
@@ -193,14 +195,22 @@ const ContestDetailsPage = () => {
     const renderTasksList = useCallback(
         (problems: IContestDetailsProblemType[]) => (
             isEmpty(problems)
-                ? <div className={styles.emptyProblemsMessage}>The problems for this contest are not public.</div>
+                ? (
+                    <div>
+                        <div className={styles.problemsHeading}>Problems</div>
+                        <div className={styles.emptyProblemsMessage}>The problems for this contest are not public.</div>
+                    </div>
+                )
                 : (
-                    <List
-                      values={problems.sort(compareByOrderBy)}
-                      itemFunc={renderTask}
-                      className={styles.tasksListSideNavigation}
-                      itemClassName={styles.taskListItem}
-                    />
+                    <div>
+                        <div className={styles.problemsHeading}>Problems</div>
+                        <List
+                          values={problems.sort(compareByOrderBy)}
+                          itemFunc={renderTask}
+                          className={styles.tasksListSideNavigation}
+                          itemClassName={styles.taskListItem}
+                        />
+                    </div>
                 )
         ),
         [ renderTask ],
@@ -216,9 +226,10 @@ const ContestDetailsPage = () => {
 
             return (
                 <div className={styles.container}>
-                    <div className={styles.heading}>{contestDetails?.name}</div>
+                    <div className={styles.headingContest}>{contestDetails?.name}</div>
                     <div className={styles.contestDetailsAndTasks}>
                         <div className={styles.detailsContainer}>
+                            <div className={styles.detailsHeading}>Contest details</div>
                             <div
                               dangerouslySetInnerHTML={{
                                   __html: isNil(contestDetails?.description)
@@ -226,7 +237,7 @@ const ContestDetailsPage = () => {
                                       : contestDetails?.description,
                               }}
                             />
-                            <div>
+                            <div className={styles.allowedLanguages}>
                                 Allowed languages:
                                 {' '}
                                 {renderAllowedSubmissionTypes()}
@@ -256,7 +267,7 @@ const ContestDetailsPage = () => {
             <div className={styles.headingContest}>
                 <Heading
                   type={HeadingType.primary}
-                  className={styles.contestHeading}
+                  className={styles.contestErrorHeading}
                 >
                     {message}
                 </Heading>
