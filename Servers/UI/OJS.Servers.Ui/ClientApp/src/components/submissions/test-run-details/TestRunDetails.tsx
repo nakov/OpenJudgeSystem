@@ -1,19 +1,13 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import isNil from 'lodash/isNil';
+import React from 'react';
+import { BiInfoCircle, BiMemoryCard, BiTime } from 'react-icons/bi';
 
 import { SubmissionResultType } from '../../../common/constants';
 import { ITestRunDetailsType } from '../../../hooks/submissions/types';
-import { useAuth } from '../../../hooks/use-auth';
 import concatClassNames from '../../../utils/class-names';
-import { splitByCapitalLetter, toLowerCase } from '../../../utils/string-utils';
-import ExpandButton from '../../guidelines/buttons/ExpandButton';
-import Collapsible from '../../guidelines/collapsible/Collapsible';
+import { toLowerCase } from '../../../utils/string-utils';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import IconSize from '../../guidelines/icons/common/icon-sizes';
-import MemoryIcon from '../../guidelines/icons/MemoryIcon';
-import TimeLimitIcon from '../../guidelines/icons/TimeLimitIcon';
-import Label, { LabelType } from '../../guidelines/labels/Label';
-import TestRunDiffView from '../test-run-diff-view/TestRunDiffView';
+import Icon from '../../guidelines/icons/Icon';
 
 import styles from './TestRunDetails.module.scss';
 
@@ -24,30 +18,14 @@ interface ITestRunDetailsProps {
 const getResultIsWrongAnswerResultType = (run: ITestRunDetailsType) => toLowerCase(run.resultType) !== SubmissionResultType.CorrectAnswer;
 
 const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
-    const { state: { user } } = useAuth();
-    const initialIsCollapsed = testRun.isTrialTest && getResultIsWrongAnswerResultType(testRun);
-    const [ isTestRunDetailCollapsed, setIsTestRunDetailCollapsed ] = useState<boolean>(initialIsCollapsed);
-    const [ isTestInputCollapsed, setIsTestInputCollapsed ] = useState<boolean>(false);
-
-    const testRunHeadingClass = 'testRunHeading';
-    const testRunHeadingClassName = useMemo(
-        () => concatClassNames(
-            styles.testRunHeading,
-            testRunHeadingClass,
-            getResultIsWrongAnswerResultType(testRun)
-                ? styles.wrongTestRunHeading
-                : styles.correctTestRunHeading,
-        ),
-        [ testRun ],
+    const testRunHeadingClassName = concatClassNames(
+        styles.testRunHeading,
+        getResultIsWrongAnswerResultType(testRun)
+            ? styles.wrongTestRunHeading
+            : styles.correctTestRunHeading,
     );
 
-    const isOutputDiffAvailable = useMemo(
-        () => !isNil(testRun.expectedOutputFragment) && testRun.expectedOutputFragment !== '' &&
-            !isNil(testRun.userOutputFragment) && testRun.userOutputFragment !== '',
-        [ testRun.expectedOutputFragment, testRun.userOutputFragment ],
-    );
-
-    const testRunHeadingText = useMemo(() => {
+    const testRunHeadingText = () => {
         const testRunText = `Test #${testRun.orderBy}`;
 
         if (testRun.isTrialTest) {
@@ -55,138 +33,49 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         }
 
         return testRunText;
-    }, [ testRun ]);
+    };
 
-    const renderResultTypeLabel = useCallback(
-        () => {
-            const result = toLowerCase(testRun.resultType);
-            const type = result === SubmissionResultType.CorrectAnswer
-                ? LabelType.success
-                : result === SubmissionResultType.WrongAnswer
-                    ? LabelType.danger
-                    : LabelType.warning;
-
-            const resultSplit = splitByCapitalLetter(testRun.resultType);
-
-            return (
-                <Label type={type}>
-                    {resultSplit}
-                </Label>
-            );
-        },
-        [ testRun ],
-    );
-
-    const handleCollapsibleTestInput = useCallback((collapsed: boolean) => {
-        setIsTestInputCollapsed(collapsed);
-    }, []);
-
-    const executionComment = useMemo(
-        () => testRun.showInput
-            ? <span className={styles.executionComment}>{testRun.executionComment}</span>
-            : null,
-        [ testRun ],
-    );
-
-    const renderCollapsibleTestInput = useCallback(() => (
-        <span className={styles.testRunDetailsCollapsible}>
-            <ExpandButton
-              collapsedText="Show input"
-              expandedText="Hide input"
-              expanded={isTestInputCollapsed}
-              onExpandChanged={handleCollapsibleTestInput}
-              className="testRunDetailsExpandBtn"
-            />
-            <br />
-            <Collapsible collapsed={isTestInputCollapsed}>
-                {testRun.input}
-            </Collapsible>
-        </span>
-    ), [ handleCollapsibleTestInput, isTestInputCollapsed, testRun ]);
-
-    const renderTestRunData = useCallback(() => (
-        <div className={styles.testRunContainer}>
-            <span className={styles.testRunData}>
-                <Heading
-                  type={HeadingType.small}
-                  className={testRunHeadingClassName}
-                >
-                    { testRunHeadingText }
-                </Heading>
-                <span className={styles.testRunDataParagraph}>
-                    <TimeLimitIcon
-                      size={IconSize.Medium}
-                    />
-                    <span>
-                        {testRun.timeUsed}
-                        s.
-                    </span>
-                </span>
-                <span className={styles.testRunDataParagraph}>
-                    <MemoryIcon
-                      size={IconSize.Medium}
-                    />
-                    <span>
-                        {testRun.memoryUsed}
-                    </span>
-                </span>
-                <span className={styles.testRunDataParagraph}>
-                    {renderResultTypeLabel()}
-                </span>
-            </span>
-            {testRun.showInput
-                ? renderCollapsibleTestInput()
-                : null}
-            {executionComment}
-        </div>
-    ), [ testRun, renderResultTypeLabel, renderCollapsibleTestInput, executionComment, testRunHeadingClassName, testRunHeadingText ]);
-
-    const handleTestRunDetailsToggleCollapsible = useCallback((collapsed: boolean) => {
-        setIsTestRunDetailCollapsed(collapsed);
-    }, []);
-
-    const renderTestRunDetailsCollapsible = useCallback(() => (
-        <div className={styles.zeroTestWrapper}>
-            <span className={styles.testRunDetailsCollapsible}>
-                <span className={styles.collapsibleHeader}>
-                    {renderTestRunData()}
-                </span>
-                <ExpandButton
-                  collapsedText="Show Details"
-                  expandedText="Hide Details"
-                  expanded={isTestRunDetailCollapsed}
-                  onExpandChanged={handleTestRunDetailsToggleCollapsible}
-                  className={styles.testRunDetailsExpandBtn}
-                />
-                <div className={styles.collapsibleContainer}>
-                    <Collapsible collapsed={isTestRunDetailCollapsed}>
-                        <TestRunDiffView testRun={testRun} />
-                    </Collapsible>
-                </div>
-            </span>
-        </div>
-    ), [ renderTestRunData, handleTestRunDetailsToggleCollapsible, isTestRunDetailCollapsed, testRun ]);
-
-    const render = useCallback(() => {
-        if (getResultIsWrongAnswerResultType(testRun) &&
-            (user.permissions.canAccessAdministration || testRun.isTrialTest || testRun.showInput) &&
-            isOutputDiffAvailable) {
-            return renderTestRunDetailsCollapsible();
+    const handleTestClick = (e: any) => {
+        const { target } = e;
+        const h3Element = target.querySelector('h3');
+        if (!h3Element) {
+            return;
         }
 
-        return renderTestRunData();
-    }, [
-        renderTestRunData,
-        isOutputDiffAvailable,
-        renderTestRunDetailsCollapsible,
-        testRun,
-        user.permissions.canAccessAdministration,
-    ]);
+        const { innerText } = h3Element;
+        const elementNumber = innerText.split('#')[1];
+        const scrollToElement = document.querySelector(`#test-heading-${elementNumber - 1}`);
+        if (!scrollToElement) { return; }
+
+        const yCoordinate = scrollToElement.getBoundingClientRect().top + window.scrollY;
+        window.scrollTo({ top: yCoordinate, behavior: 'smooth' });
+    };
 
     return (
-        <div className={styles.testRun}>
-            {render()}
-        </div>
+        <button type="button" className={styles.testRun} onClick={handleTestClick}>
+            <div className={styles.testRunContainer}>
+                <span className={styles.testRunData}>
+                    <Heading type={HeadingType.small} className={testRunHeadingClassName}>
+                        { testRunHeadingText() }
+                    </Heading>
+                    <span className={styles.testRunDataParagraph}>
+                        <Icon Component={BiTime} size={IconSize.Large} className={styles.iconPassiveColor} />
+                        <span style={{ marginTop: '5px' }}>
+                            {testRun.timeUsed}
+                            {' '}
+                            s.
+                        </span>
+                    </span>
+                    <span className={styles.testRunDataParagraph}>
+                        <Icon Component={BiMemoryCard} size={IconSize.Large} className={styles.iconPassiveColor} />
+                        <span style={{ marginTop: '5px' }}>
+                            {testRun.memoryUsed}
+                        </span>
+                    </span>
+                    <Icon Component={BiInfoCircle} size={IconSize.Large} className={styles.iconActiveColor} />
+                </span>
+            </div>
+        </button>
     );
 };
 

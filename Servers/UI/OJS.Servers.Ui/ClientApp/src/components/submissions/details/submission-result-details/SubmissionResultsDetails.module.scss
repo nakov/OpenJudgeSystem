@@ -1,0 +1,53 @@
+﻿@use 'src/styles/colors';
+@use 'src/styles/fonts';
+
+.submissionResultDetailsWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.submissionResultDetails {
+  display: flex;
+  flex-direction: column;
+  font-family: fonts.$font-family-lato;
+  padding-bottom: 30px;
+  margin-top: 30px;
+  border-bottom: 1px solid #bebebe;
+  width: 80%;
+}
+
+.showInputButton {
+  border: none;
+  display: flex;
+  background-color: colors.$light-blue-color;
+  align-self: flex-start;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 10px;
+  margin: 10px 0;
+  color: white;
+  cursor: pointer;
+
+  div {
+    margin-left: 10px;
+    margin-right: -6px;
+  }
+}
+
+.showDetailsButton {
+  border: none;
+  margin: 15px 0;
+  background-color: colors.$light-blue-color;
+  padding: 5px 10px;
+  cursor: pointer;
+  color: white;
+  display: inline-block;
+  width: 10%;
+}
+
+.warningBlockWrapper {
+  background-color: colors.$warning-color;
+  padding: 10px 20px;
+}
