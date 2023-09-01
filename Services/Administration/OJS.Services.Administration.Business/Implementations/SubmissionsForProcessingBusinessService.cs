@@ -72,6 +72,6 @@
                 .GetResult();
         }
 
-        public void DeleteProcessedSubmissionsOlderThanADay() => this.submissionsForProcessingData.Clean();
+        public void DeleteProcessedSubmissions() => this.submissionsForProcessingData.CleanProcessedSubmissions();
     }
 }

@@ -44,7 +44,7 @@ public class BackgroundJobsController : BaseAdminViewController
         this.hangfireBackgroundJobsService
             .AddOrUpdateRecurringJob<SubmissionsForProcessingBusinessService>(
                 BackgroundJobs.DeleteOldSubmissionsJobName,
-                m => m.DeleteProcessedSubmissionsOlderThanADay(),
+                m => m.DeleteProcessedSubmissions(),
                 BackgroundJobs.DeleteOldSubmissionsJobCron);
 
         this.TempData.AddSuccessMessage(BackgroundJobs.DeleteOldSubmissionsJobAddedMessage);

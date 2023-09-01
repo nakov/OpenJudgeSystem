@@ -114,7 +114,7 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
         }
     }
 
-    public void Clean() =>
+    public void CleanProcessedSubmissions() =>
         this.DbSet.RemoveRange(this.DbSet.Where(sfp => sfp.Processed && !sfp.Processing));
 
     public new async Task Update(SubmissionForProcessing submissionForProcessing)

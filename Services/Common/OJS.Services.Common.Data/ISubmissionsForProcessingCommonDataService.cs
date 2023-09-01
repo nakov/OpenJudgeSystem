@@ -32,5 +32,5 @@ public interface ISubmissionsForProcessingCommonDataService : IService
 
     Task MarkProcessed(int submissionId);
 
-    void Clean();
+    void CleanProcessedSubmissions();
 }
