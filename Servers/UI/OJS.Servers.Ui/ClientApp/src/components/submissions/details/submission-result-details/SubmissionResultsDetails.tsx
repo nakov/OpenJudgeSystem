@@ -124,8 +124,8 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
                 { test.isTrialTest && <div>The zero tests are not included in the final result.</div>}
                 { renderShowButton(test.id, isExpanded) }
                 { isExpanded && (
-                    <div style={{ margin: '10px 0' }}>
-                        <span className={styles.warningBlockWrapper}>{ test.input }</span>
+                    <div style={{ margin: '10px 0' }} className={styles.warningBlockWrapper}>
+                        <span>{ test.input }</span>
                     </div>
                 ) }
                 { test.userOutputFragment && test.expectedOutputFragment && (
@@ -156,8 +156,8 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
                 ) }
 
                 { test.executionComment && detailsExpanded && (
-                    <div>
-                        <span className={styles.warningBlockWrapper}>{test.executionComment}</span>
+                    <div className={styles.warningBlockWrapper}>
+                        <span>{test.executionComment}</span>
                     </div>
                 )}
             </>
