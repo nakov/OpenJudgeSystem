@@ -57,9 +57,6 @@
                 .ForMember(
                     nameof(OjsSubmission<object>.TimeLimit),
                     opt => opt.MapFrom(nameof(SubmissionServiceModel.TimeLimit)))
-                .ForMember(
-                    nameof(OjsSubmission<object>.StartedExecutionOn),
-                    opt => opt.MapFrom(nameof(SubmissionServiceModel.StartedExecutionOn)))
                 .ForAllOtherMembers(opt => opt.Ignore());
 
             configuration.CreateMap<Submission, SubmissionServiceModel>()
