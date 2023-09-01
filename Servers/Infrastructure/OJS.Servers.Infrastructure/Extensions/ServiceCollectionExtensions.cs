@@ -178,7 +178,16 @@ namespace OJS.Servers.Infrastructure.Extensions
 
             services.AddMassTransit(config =>
             {
-                consumers.ForEach(consumer => config.AddConsumer(consumer));
+                consumers.ForEach(consumer => config
+                    .AddConsumer(consumer)
+                    .Endpoint(endpointConfig =>
+                    {
+                        endpointConfig.Name = consumer.Name;
+                        if (endpointConfig is IRabbitMqReceiveEndpointConfigurator configurator)
+                        {
+                            configurator.Durable = true;
+                        }
+                    }));
 
                 config.UsingRabbitMq((context, rmq) =>
                 {
