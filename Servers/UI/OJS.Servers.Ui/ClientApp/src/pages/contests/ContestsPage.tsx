@@ -217,7 +217,7 @@ const ContestsPage = () => {
             {showAlert &&
               (
                   <Alert
-                    message="The category you requested was not valid, all contest were loaded."
+                    message="The category you requested was not valid, all contests were loaded."
                     severity={AlertSeverity.Error}
                     variant={AlertVariant.Filled}
                     autoHideDuration={3000}
