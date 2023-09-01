@@ -1,6 +1,5 @@
 namespace OJS.Services.Administration.Business.Implementations
 {
-    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Transactions;
@@ -10,9 +9,12 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Data.Models.Problems;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models.Contests.Problems;
+    using OJS.Services.Common;
     using OJS.Services.Common.Data;
     using OJS.Services.Common.Models;
+    using OJS.Services.Common.Models.Submissions.ExecutionContext;
     using OJS.Services.Infrastructure.Exceptions;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
     using IsolationLevel = System.Transactions.IsolationLevel;
     using Resource = OJS.Common.Resources.ProblemsBusiness;
     using SharedResource = OJS.Common.Resources.ContestsGeneral;
@@ -31,8 +33,7 @@ namespace OJS.Services.Administration.Business.Implementations
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
         private readonly IContestsBusinessService contestsBusiness;
         private readonly IOrderableService<Problem> problemsOrderableService;
-        private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
-
+        private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
         public ProblemsBusinessService(
             IContestsDataService contestsData,
             IParticipantScoresDataService participantScoresData,
@@ -46,7 +47,7 @@ namespace OJS.Services.Administration.Business.Implementations
             IContestsBusinessService contestsBusiness,
             IProblemGroupsDataService problemGroupData,
             IOrderableService<Problem> problemsOrderableService,
-            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication)
+            ISubmissionsCommonBusinessService submissionsCommonBusinessService)
         {
             this.contestsData = contestsData;
             this.participantScoresData = participantScoresData;
@@ -60,7 +61,7 @@ namespace OJS.Services.Administration.Business.Implementations
             this.contestsBusiness = contestsBusiness;
             this.problemGroupData = problemGroupData;
             this.problemsOrderableService = problemsOrderableService;
-            this.submissionsDistributorCommunication = submissionsDistributorCommunication;
+            this.submissionsCommonBusinessService = submissionsCommonBusinessService;
         }
 
         public async Task RetestById(int id)
@@ -87,12 +88,9 @@ namespace OJS.Services.Administration.Business.Implementations
                 scope.Complete();
             }
 
-            var response = await this.submissionsDistributorCommunication.AddSubmissionsForProcessing(submissions);
-            if (!response.IsSuccess)
-            {
-                throw new Exception(
-                    "An error has occured while sending submissions for processing: " + response.ErrorMessage);
-            }
+            await submissions.ForEachSequential(async s =>
+                await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(
+                    s.Map<SubmissionServiceModel>()));
         }
 
         public async Task DeleteById(int id)

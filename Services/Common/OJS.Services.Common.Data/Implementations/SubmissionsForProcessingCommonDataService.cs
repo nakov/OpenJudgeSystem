@@ -17,17 +17,17 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
     {
     }
 
-    public Task<SubmissionForProcessing?> GetBySubmission(int submissionId) =>
-        this.DbSet
+    public Task<SubmissionForProcessing?> GetBySubmission(int submissionId)
+        => this.DbSet
             .Where(s => s.SubmissionId == submissionId)
             .FirstOrDefaultAsync();
 
-    public IQueryable<SubmissionForProcessing> GetAllPending() =>
-        this.DbSet
+    public IQueryable<SubmissionForProcessing> GetAllPending()
+        => this.DbSet
             .Where(sfp => !sfp.Processed && !sfp.Processing);
 
-    public IQueryable<SubmissionForProcessing> GetAllUnprocessed() =>
-        this.DbSet
+    public IQueryable<SubmissionForProcessing> GetAllUnprocessed()
+        => this.DbSet
             .Where(sfp => !sfp.Processed);
 
     public async Task<int> GetAllUnprocessedCount()
@@ -35,8 +35,8 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
             .GetAllUnprocessed()
             .CountAsync();
 
-    public async Task<IEnumerable<int>> GetIdsOfAllProcessing() =>
-        await this.DbSet
+    public async Task<IEnumerable<int>> GetIdsOfAllProcessing()
+        => await this.DbSet
             .Where(sfp => sfp.Processing && !sfp.Processed)
             .Select(sfp => sfp.Id)
             .ToListAsync();
@@ -77,6 +77,8 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
             .Select(sId => new SubmissionForProcessing
             {
                 SubmissionId = sId,
+                Processed = false,
+                Processing = false,
             });
 
         using var scope = TransactionsHelper.CreateTransactionScope();

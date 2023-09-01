@@ -79,8 +79,8 @@ namespace OJS.Services.Administration.Data.Implementations
             }
         }
 
-        public Task DeleteAllByProblem(int problemId) =>
-            this.DbSet
+        public Task DeleteAllByProblem(int problemId)
+            => this.DbSet
                 .Where(x => x.ProblemId == problemId)
                 .DeleteFromQueryAsync();
 
