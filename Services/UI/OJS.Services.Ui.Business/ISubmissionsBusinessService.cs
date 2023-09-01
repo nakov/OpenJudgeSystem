@@ -33,6 +33,8 @@
 
         Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPublicSubmissions(SubmissionForPublicSubmissionsServiceModel model);
 
+        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetUsersLastSubmissions(bool isOfficial, int page);
+
         Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetProcessingSubmissions(int page);
 
         Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPendingSubmissions(int page);
