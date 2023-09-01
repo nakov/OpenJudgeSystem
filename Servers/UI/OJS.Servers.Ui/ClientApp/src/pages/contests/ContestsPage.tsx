@@ -221,7 +221,7 @@ const ContestsPage = () => {
                     severity={AlertSeverity.Error}
                     variant={AlertVariant.Filled}
                     autoHideDuration={3000}
-                    vertical={AlertVerticalOrientation.Top}
+                    vertical={AlertVerticalOrientation.Bottom}
                     horizontal={AlertHorizontalOrientation.Right}
                   />
               )}

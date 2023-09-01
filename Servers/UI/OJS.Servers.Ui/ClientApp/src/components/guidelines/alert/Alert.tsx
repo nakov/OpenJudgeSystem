@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert as MuiAlert, AlertTitle, Button, Snackbar } from '@mui/material';
+import { Alert as MuiAlert, Button, Snackbar } from '@mui/material';
 
 import './Alert.module.scss';
 
@@ -62,13 +62,9 @@ const Alert = (props:IAlertProps) => {
               severity={severity}
               variant={variant}
               onClose={onClose}
-              action={
-                  (
-                      <Button color="inherit" size="small">Close</Button>
-                  )
-                  }
             >
-                <AlertTitle>{message}</AlertTitle>
+                {message}
+                <Button className="alert-button" color="inherit" size="small">Close</Button>
             </MuiAlert>
         </Snackbar>
     );
