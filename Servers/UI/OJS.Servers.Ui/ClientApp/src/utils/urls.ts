@@ -4,10 +4,10 @@ import {
     IContestResultsUrl,
     IParticipateInContestTypeUrlParams,
     IProblemSubmissionDetailsUrlParams,
+    ISubmissionDetailsUrlParams,
 } from '../common/app-url-types';
 import { ContestResultType } from '../common/constants';
 import { FilterType } from '../common/contest-types';
-import { ISubmissionDetailsUrlParams } from '../common/app-url-types';
 import { SearchParams } from '../common/search-types';
 import {
     IAllContestsUrlParams,
