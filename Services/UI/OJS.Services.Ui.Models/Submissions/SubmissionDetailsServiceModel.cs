@@ -45,6 +45,10 @@
 
         public DateTime? StartedExecutionOn { get; set; }
 
+        public string? ProcessingComment { get; set; }
+
+        public int TotalTests { get; set; }
+
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<Submission, SubmissionDetailsServiceModel>()
                 .ForMember(s => s.User, opt => opt.MapFrom(s => s.Participant!.User))
@@ -63,6 +67,10 @@
                 .ForMember(d => d.IsOfficial, opt => opt.MapFrom(s =>
                     s.Participant!.IsOfficial))
                 .ForMember(d => d.ByteContent, opt => opt.MapFrom(s =>
-                    s.Content));
+                    s.Content))
+                .ForMember(d => d.TotalTests, opt => opt.MapFrom(s =>
+                    s.Problem != null
+                        ? s.Problem.Tests.Count
+                        : 0));
     }
 }

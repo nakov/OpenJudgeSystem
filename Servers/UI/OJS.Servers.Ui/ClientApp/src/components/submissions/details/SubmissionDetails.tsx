@@ -192,6 +192,24 @@ const SubmissionDetails = () => {
         [ currentSubmission, getSubmissionDetailsResults ],
     );
 
+    const renderRetestButton = useCallback(
+        () => {
+            if (!canAccessAdministration) {
+                return null;
+            }
+
+            return (
+                <LinkButton
+                  type={LinkButtonType.secondary}
+                  size={ButtonSize.medium}
+                  to={getAdministrationRetestSubmissionInternalUrl()}
+                  text="Retest"
+                  className={styles.retestButton}
+                />
+            );
+        },
+        [ canAccessAdministration, getAdministrationRetestSubmissionInternalUrl ],
+    );
     const renderButtonsSection = useCallback(() => (
         <div className={styles.buttonsSection}>
             <Button
@@ -200,17 +218,32 @@ const SubmissionDetails = () => {
               type={ButtonType.secondary}
               className={styles.submissionReloadBtn}
             />
-            { canAccessAdministration && (
-                <LinkButton
-                  type={LinkButtonType.secondary}
-                  size={ButtonSize.medium}
-                  to={getAdministrationRetestSubmissionInternalUrl()}
-                  text="Retest"
-                  className={styles.retestButton}
-                />
-            )}
+            {renderRetestButton()}
         </div>
-    ), [ canAccessAdministration, getAdministrationRetestSubmissionInternalUrl, handleReloadClick ]);
+    ), [ handleReloadClick, renderRetestButton ]);
+
+    const renderTestsChangeMessage = useCallback(() => (
+        currentSubmission?.testRuns.length === 0 &&
+            currentSubmission.isCompiledSuccessfully &&
+            currentSubmission.totalTests > 0 &&
+            !currentSubmission.processingComment
+            ? (
+                <div className={styles.testChangesWrapper}>
+                    <p>
+                        The input/output data changed. Your (
+                        {currentSubmission.points}
+                        /
+                        {currentSubmission.problem.maximumPoints}
+                        )
+                        submission is now outdated.
+                        Click &quot;Retest&quot; to resubmit your solution for re-evaluation against the new test cases.
+                        Your score may change.
+                    </p>
+                    {renderRetestButton()}
+                </div>
+            )
+            : ''
+    ), [ currentSubmission, renderRetestButton ]);
 
     const renderSubmissionInfo = useCallback(
         () => {
@@ -391,6 +424,9 @@ const SubmissionDetails = () => {
 
     return (
         <>
+            <div>
+                {renderTestsChangeMessage()}
+            </div>
             <div className={styles.detailsWrapper}>
                 {refreshableSubmissionsList()}
                 {codeEditor()}

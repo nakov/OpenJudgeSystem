@@ -126,3 +126,17 @@
   margin-top: 10px;
   margin-right: 20px;
 }
+
+.testChangesWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  border: 2px solid;
+  font-size: 16px;
+  padding: 1rem;
+  border-color: colors.$background-color-btn-primary;
+  border-radius: 12px;
+  background-color: colors.$background-color-btn-primary;
+  font-family: fonts.$font-family-lato;
+  margin-bottom: 1rem;
+}
