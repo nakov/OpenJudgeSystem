@@ -4,7 +4,6 @@ import first from 'lodash/first';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { ContestParticipationType } from '../common/constants';
 import { IProblemType } from '../common/types';
 import { IDownloadProblemResourceUrlParams } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
@@ -23,7 +22,7 @@ interface IProblemsContext {
         downloadProblemResourceFile: (resourceId: number) => Promise<void>;
         changeCurrentHash: () => void;
         selectCurrentProblem: (id: number) => void;
-        initiateRedirectionToProblem: (problemId: number, contestId: number, participationType: ContestParticipationType) => void;
+        initiateRedirectionToProblem: (problemId: number, url: string) => void;
         removeCurrentProblem: () => void;
         removeCurrentProblems: () => void;
     };
@@ -119,15 +118,10 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     // use it to redirect to contest from externalPage (such as SearchPage) which will search for
     // his the problemId in the normalized problems and set it in the hash.
     const initiateRedirectionToProblem = useCallback(
-        (problemId: number, contestId: number, participationType: ContestParticipationType) => {
-            const participateInContestUrl = getParticipateInContestUrl({
-                id: contestId,
-                participationType,
-            });
-
-            navigate(participateInContestUrl);
-
+        (problemId: number, url: string) => {
             setInternalProblemId(problemId);
+
+            navigate(url);
         },
         [ navigate ],
     );
@@ -141,7 +135,7 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
             }
 
             if (!isNil(internalProblemId)) {
-                selectProblemById(internalProblemId);
+                selectProblemById(internalProblemId, true);
             } else if (isLoadedFromHash) {
                 setCurrentProblem(problemFromHash);
             } else {
