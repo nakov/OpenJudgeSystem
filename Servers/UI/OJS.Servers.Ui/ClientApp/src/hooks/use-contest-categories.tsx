@@ -62,7 +62,7 @@ const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps
         () => ({
             state: {
                 categories,
-                isLoaded: isSuccess,
+                isLoaded: categories.length > 0 && isSuccess,
                 categoriesFlat,
             },
             actions: { load },
