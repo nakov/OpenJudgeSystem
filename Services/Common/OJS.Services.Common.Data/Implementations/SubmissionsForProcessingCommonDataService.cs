@@ -47,7 +47,7 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
             .MapCollection<TServiceModel>()
             .ToListAsync();
 
-    public async Task Add(int submissionId)
+    public async Task<SubmissionForProcessing> Add(int submissionId)
     {
         var submissionForProcessing = new SubmissionForProcessing
         {
@@ -57,18 +57,15 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
         };
 
         await this.Add(submissionForProcessing);
+
+        return submissionForProcessing;
     }
 
-    public async Task<SubmissionForProcessing> AddOrUpdate(int submissionId)
+    public async Task<SubmissionForProcessing> CreateIfNotExists(int submissionId)
     {
-        var entity = await this.GetBySubmission(submissionId);
+        var entity = await this.GetBySubmission(submissionId) ?? await this.Add(submissionId);
 
-        if (entity == null)
-        {
-            await this.Add(submissionId);
-        }
-
-        entity!.Processing = false;
+        entity.Processing = false;
         entity.Processed = false;
 
         return entity;
