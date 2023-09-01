@@ -42,6 +42,8 @@ namespace OJS.Data.Models.Submissions
 
         public DateTime? StartedExecutionOn { get; set; }
 
+        public DateTime? CompletedExecutionOn { get; set; }
+
         [StringLength(ConstraintConstants.IpAddressMaxLength)]
         [Column(TypeName = "varchar")]
         public string? IpAddress { get; set; }

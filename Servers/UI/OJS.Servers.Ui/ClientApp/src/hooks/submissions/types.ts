@@ -37,6 +37,7 @@ interface ISubmissionType {
     createdOn: Date;
     modifiedOn?: Date;
     startedExecutionOn?: Date;
+    completedExecutionOn?: Date;
 }
 
 interface ITestRunDetailsType extends ITestRunType {
