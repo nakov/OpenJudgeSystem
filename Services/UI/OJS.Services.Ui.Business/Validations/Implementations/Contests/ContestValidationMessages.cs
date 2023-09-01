@@ -52,6 +52,8 @@ public static class ValidationMessages
         public const string InvalidExtension = "Invalid file extension.";
 
         public const string NoContentToDownload = "There is no content to download.";
+
+        public const string UserHasNotProcessedSubmissionForContest = "You have unprocessed submission for this contest. Please wait until the submission is processed.";
     }
 
     public static class Problem
