@@ -40,6 +40,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
     private readonly IUsersBusinessService usersBusiness;
     private readonly IParticipantScoresBusinessService participantScoresBusinessService;
+
     private readonly IParticipantsBusinessService participantsBusinessService;
     private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
     // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/624
@@ -116,14 +117,16 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .MapCollection<SubmissionDetailsServiceModel>()
             .FirstOrDefaultAsync();
 
-        var validationResult = this.submissionDetailsValidationService.GetValidationResult((submissionDetailsServiceModel, currentUser) !);
+        var validationResult =
+            this.submissionDetailsValidationService.GetValidationResult((submissionDetailsServiceModel, currentUser) !);
 
         if (!validationResult.IsValid)
         {
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        var contest = await this.contestsDataService.GetByProblemId<ContestServiceModel>(submissionDetailsServiceModel!.Problem.Id).Map<Contest>();
+        var contest = await this.contestsDataService
+            .GetByProblemId<ContestServiceModel>(submissionDetailsServiceModel!.Problem.Id).Map<Contest>();
         var userIsAdminOrLecturerInContest = currentUser.IsAdmin || IsUserLecturerInContest(contest, currentUser.Id!);
         var showTestInputForAllTests = submissionDetailsServiceModel.Problem.ShowDetailedFeedback;
         if (!userIsAdminOrLecturerInContest && !showTestInputForAllTests)
@@ -153,7 +156,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var currentUser = this.userProviderService.GetCurrentUser();
 
-        var validationResult = this.submissionFileDownloadValidationService.GetValidationResult((submissionDetailsServiceModel!, currentUser));
+        var validationResult =
+            this.submissionFileDownloadValidationService.GetValidationResult((submissionDetailsServiceModel!,
+                currentUser));
         if (!validationResult.IsValid)
         {
             throw new BusinessServiceException(validationResult.Message);
@@ -320,7 +325,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var participant =
             await this.participantsDataService.GetByContestByUserAndByIsOfficial(
-                problem.ProblemGroup.ContestId, user.Id!, isOfficial)
+                    problem.ProblemGroup.ContestId, user.Id!, isOfficial)
                 .Map<ParticipantSubmissionResultsServiceModel>();
 
         this.ValidateCanViewSubmissionResults(isOfficial, user, problem, participant);
@@ -333,10 +338,13 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         bool isOfficial,
         int take = 0)
     {
-        var problem = await this.submissionsData.GetProblemBySubmission<ProblemForSubmissionDetailsServiceModel>(submissionId);
+        var problem =
+            await this.submissionsData.GetProblemBySubmission<ProblemForSubmissionDetailsServiceModel>(submissionId);
         var user = this.userProviderService.GetCurrentUser();
 
-        var participant = await this.submissionsData.GetParticipantBySubmission<ParticipantSubmissionResultsServiceModel>(submissionId);
+        var participant =
+            await this.submissionsData.GetParticipantBySubmission<ParticipantSubmissionResultsServiceModel>(
+                submissionId);
 
         this.ValidateCanViewSubmissionResults(isOfficial, user, problem, participant);
 
