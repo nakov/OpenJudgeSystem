@@ -37,6 +37,7 @@ interface ISubmissionType {
     createdOn: Date;
     modifiedOn?: Date;
     startedExecutionOn?: Date;
+    processingComment: string;
     completedExecutionOn?: Date;
 }
 
@@ -49,6 +50,7 @@ interface ITestRunDetailsType extends ITestRunType {
 interface ISubmissionDetailsType extends ISubmissionType {
     testRuns: ITestRunDetailsType[];
     user: IUserProfileType;
+    totalTests : number;
 }
 
 interface ISubmissionDetails {
