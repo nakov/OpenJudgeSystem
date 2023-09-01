@@ -9,8 +9,9 @@
 
 .buttonsContainer {
   display: flex;
-  justify-content: space-evenly;
-  margin: 30px;
+  column-gap: 1%;
+  justify-content: center;
+  margin: 15px;
 }
 
 .container {

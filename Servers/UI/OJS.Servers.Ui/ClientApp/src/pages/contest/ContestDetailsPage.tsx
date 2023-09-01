@@ -73,7 +73,7 @@ const ContestDetailsPage = () => {
 
     const renderContestButtons = useCallback(
         () => (
-            <div>
+            <div className={styles.buttonsContainer}>
                 {contestDetails?.canViewResults || canAccessAdministration
                     ? (
                         <LinkButton
@@ -253,7 +253,7 @@ const ContestDetailsPage = () => {
                         </div>
                         {renderTasksList(problems)}
                     </div>
-                    <div className={styles.buttonsContainer}>
+                    <div>
                         {renderContestButtons()}
                     </div>
                 </div>
