@@ -7,7 +7,7 @@ import isNil from 'lodash/isNil';
 import { IProblemType } from '../common/types';
 import { IDownloadProblemResourceUrlParams } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
-import { getDownloadProblemResourceUrl, getParticipateInContestUrl } from '../utils/urls';
+import { getDownloadProblemResourceUrl } from '../utils/urls';
 
 import { useHashUrlParams } from './common/use-hash-url-params';
 import { useCurrentContest } from './use-current-contest';
