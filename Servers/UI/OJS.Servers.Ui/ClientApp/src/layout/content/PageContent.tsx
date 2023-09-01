@@ -2,7 +2,10 @@ import React, { FC } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 import AdministrationPage from '../../pages/administration/AdministrationPage';
+import ContestEditPage from '../../pages/administration/ContestEditPage';
+import ContestProblemsPage from '../../pages/administration/ContestProblemsPage';
 import SubmissionRetestPage from '../../pages/administration/SubmissionRetestPage';
+import ContestDetailsPage from '../../pages/contest/ContestDetailsPage';
 import ContestPage from '../../pages/contest/ContestPage';
 import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';
 import ContestsPage from '../../pages/contests/ContestsPage';
@@ -62,6 +65,10 @@ const routes = [
         Element: ContestPage,
     },
     {
+        path: '/contests/details/:contestId/:participationType',
+        Element: ContestDetailsPage,
+    },
+    {
         path: '/contests/:contestId/:participationType/results/:resultType',
         Element: ContestResultsPage,
     },
@@ -72,6 +79,14 @@ const routes = [
     {
         path: '/Submissions/Retest',
         Element: SubmissionRetestPage,
+    },
+    {
+        path: '/Contest/Problems/:contestId',
+        Element: ContestProblemsPage,
+    },
+    {
+        path: '/Contest/Edit/:contestId',
+        Element: ContestEditPage,
     },
     {
         path: '/search',
