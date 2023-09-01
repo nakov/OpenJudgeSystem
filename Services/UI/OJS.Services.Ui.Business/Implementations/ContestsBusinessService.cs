@@ -15,6 +15,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Contests;
     using OJS.Services.Ui.Models.Search;
+    using OJS.Services.Ui.Models.Submissions;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.Common.Models;
     using X.PagedList;
@@ -33,6 +34,7 @@ namespace OJS.Services.Ui.Business.Implementations
         private readonly IUsersBusinessService usersBusinessService;
         private readonly IUserProviderService userProviderService;
         private readonly IContestValidationService contestValidationService;
+        private readonly IContestParticipantsCacheService contestParticipantsCacheService;
 
         public ContestsBusinessService(
             IContestsDataService contestsData,
@@ -43,7 +45,8 @@ namespace OJS.Services.Ui.Business.Implementations
             IUserProviderService userProviderService,
             IParticipantsBusinessService participantsBusiness,
             IContestCategoriesCacheService contestCategoriesCache,
-            IContestValidationService contestValidationService)
+            IContestValidationService contestValidationService,
+            IContestParticipantsCacheService contestParticipantsCacheService)
         {
             this.contestsData = contestsData;
             this.examGroupsData = examGroupsData;
@@ -54,6 +57,70 @@ namespace OJS.Services.Ui.Business.Implementations
             this.participantsBusiness = participantsBusiness;
             this.contestCategoriesCache = contestCategoriesCache;
             this.contestValidationService = contestValidationService;
+            this.contestParticipantsCacheService = contestParticipantsCacheService;
+        }
+
+        public async Task<ContestDetailsServiceModel> GetContestDetails(int id, bool official)
+        {
+            var user = this.userProviderService.GetCurrentUser();
+            var contest = await this.contestsData.GetByIdWithProblems(id);
+
+            var validationResult = this.contestValidationService.GetValidationResult((
+                contest,
+                id,
+                user.Id,
+                user.IsAdmin,
+                official) !);
+
+            if (!validationResult.IsValid)
+            {
+                throw new BusinessServiceException(validationResult.Message);
+            }
+
+            var participant = await this.participantsData
+                .GetWithContestByContestByUserAndIsOfficial(
+                    id,
+                    user.Id!,
+                    official);
+
+            var userIsAdminOrLecturerInContest = user.IsAdmin || IsUserLecturerInContest(contest!, user.Id!);
+
+            var contestDetailsServiceModel = contest!.Map<ContestDetailsServiceModel>();
+            if (!userIsAdminOrLecturerInContest && participant != null && contest!.CanBeCompeted)
+            {
+                var problemsForParticipant = participant.ProblemsForParticipants.Select(x => x.Problem);
+                contestDetailsServiceModel.Problems = problemsForParticipant.Map<ICollection<ContestProblemServiceModel>>();
+            }
+
+            var canShowProblemsInPractice = !contest!.HasPracticePassword || userIsAdminOrLecturerInContest;
+            var canShowProblemsInCompete = (!contest.HasContestPassword && !contest.IsActive && !contest.IsOnlineExam) || userIsAdminOrLecturerInContest;
+
+            if ((contest.CanBePracticed && !canShowProblemsInPractice) || (contest.CanBeCompeted && !canShowProblemsInCompete))
+            {
+                contestDetailsServiceModel.Problems = new List<ContestProblemServiceModel>();
+            }
+
+            if (userIsAdminOrLecturerInContest || (contest.IsActive && participant != null && contest.CanBeCompeted))
+            {
+                contestDetailsServiceModel.CanViewResults = true;
+            }
+
+            contestDetailsServiceModel.AllowedSubmissionTypes = contest.ProblemGroups
+                .SelectMany(pg => pg.Problems)
+                .AsQueryable()
+                .SelectMany(p => p.SubmissionTypesInProblems)
+                .GroupBy(st => st.SubmissionTypeId)
+                .Select(g => g.First())
+                .Select(x => new ContestDetailsSubmissionTypeServiceModel { Id = x.SubmissionTypeId, Name = x.SubmissionType.Name })
+                .ToList();
+
+            var competeContestParticipantsCount = await this.contestParticipantsCacheService.GetCompeteContestParticipantsCount(id);
+            var practiceContestParticipantsCount = await this.contestParticipantsCacheService.GetPracticeContestParticipantsCount(id);
+
+            contestDetailsServiceModel.ParticipantsCountByContestType = official ? competeContestParticipantsCount : practiceContestParticipantsCount;
+            contestDetailsServiceModel.TotalContestParticipantsCount = competeContestParticipantsCount + practiceContestParticipantsCount;
+
+            return contestDetailsServiceModel;
         }
 
         public async Task<RegisterUserForContestServiceModel> RegisterUserForContest(int id, bool official)
@@ -189,6 +256,15 @@ namespace OJS.Services.Ui.Business.Implementations
                     .Select(x => x.Points)
                     .FirstOrDefault();
             });
+
+            if (model.IsOfficial)
+            {
+                participationModel.ParticipantsCount = await this.contestParticipantsCacheService.GetCompeteContestParticipantsCount(model.ContestId);
+            }
+            else
+            {
+                participationModel.ParticipantsCount = await this.contestParticipantsCacheService.GetPracticeContestParticipantsCount(model.ContestId);
+            }
 
             return participationModel;
         }
