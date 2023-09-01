@@ -32,11 +32,11 @@
 }
 
 .actionsContainer {
+  align-items: flex-start;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
   gap: 5px;
+  justify-content: center;
   width: 100%;
 }
 
@@ -57,10 +57,10 @@
 }
 
 .submissionDetailsButtonsWrapper {
-  margin: 10px 0;
-  width: 100%;
   display: flex;
   justify-content: space-between;
+  margin: 10px 0;
+  width: 100%;
 }
 
 .submissionTypeText {
