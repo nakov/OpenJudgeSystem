@@ -43,8 +43,8 @@
 
 .emptyProblemsMessage {
   @extend %font-family-lato;
-  
-  font-size: 14px;
+
+  font-size: variables.$f-size-14;
   margin-top: 15px;
 }
 
