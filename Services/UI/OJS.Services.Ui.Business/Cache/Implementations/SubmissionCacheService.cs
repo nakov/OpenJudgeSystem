@@ -30,10 +30,10 @@ public class SubmissionCacheService : ISubmissionCacheService
     public Task<int> GetTotalCount(int? cacheSeconds)
         => cacheSeconds.HasValue
             ? this.cache.Get(
-                CacheConstants.SubmissionTypesByUsage,
+                CacheConstants.TotalSubmissionsCount,
                 this.submissionsBusiness.GetTotalCount,
                 cacheSeconds.Value)
             : this.cache.Get(
-                CacheConstants.SubmissionTypesByUsage,
+                CacheConstants.TotalSubmissionsCount,
                 this.submissionsBusiness.GetTotalCount);
 }
