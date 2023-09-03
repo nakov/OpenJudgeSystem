@@ -1,24 +1,22 @@
-﻿using OJS.Services.Data.Settings;
-
-namespace OJS.Web.Areas.Administration.Controllers
+﻿namespace OJS.Web.Areas.Administration.Controllers
 {
     using System.Collections;
     using System.Linq;
     using System.Web.Mvc;
+
     using Kendo.Mvc.UI;
+
     using OJS.Data;
     using OJS.Web.Areas.Administration.Controllers.Common;
+
     using DatabaseModelType = OJS.Data.Models.Setting;
     using ViewModelType = OJS.Web.Areas.Administration.ViewModels.Setting.SettingAdministrationViewModel;
 
     public class SettingsController : AdministrationBaseGridController
     {
-        private readonly ISettingsService settingsService;
-
-        public SettingsController(IOjsData data, ISettingsService settingsService)
+        public SettingsController(IOjsData data)
             : base(data)
         {
-            this.settingsService = settingsService;
         }
 
         public override IEnumerable GetData()
@@ -30,7 +28,9 @@ namespace OJS.Web.Areas.Administration.Controllers
 
         public override object GetById(object id)
         {
-            return this.settingsService.Get(id.ToString(), typeof(string));
+            return this.Data.Settings
+                .All()
+                .FirstOrDefault(o => o.Name == (string)id);
         }
 
         public override string GetEntityKeyName()
@@ -44,32 +44,25 @@ namespace OJS.Web.Areas.Administration.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create([DataSourceRequest] DataSourceRequest request, ViewModelType model)
+        public ActionResult Create([DataSourceRequest]DataSourceRequest request, ViewModelType model)
         {
-            if (model != null && this.ModelState.IsValid)
-            {
-                var name = this.settingsService.AddOrUpdate(model.Name, model.Value);
-                model.Name = name;
-            }
-
+            var id = this.BaseCreate(model.GetEntityModel());
+            model.Name = (string)id;
             return this.GridOperation(request, model);
         }
 
         [HttpPost]
-        public ActionResult Update([DataSourceRequest] DataSourceRequest request, ViewModelType model)
+        public ActionResult Update([DataSourceRequest]DataSourceRequest request, ViewModelType model)
         {
-            if (model != null && this.ModelState.IsValid)
-            {
-                this.settingsService.AddOrUpdate(model.Name, model.Value);
-            }
-
+            var entity = this.GetById(model.Name) as DatabaseModelType;
+            this.BaseUpdate(model.GetEntityModel(entity));
             return this.GridOperation(request, model);
         }
 
         [HttpPost]
-        public ActionResult Destroy([DataSourceRequest] DataSourceRequest request, ViewModelType model)
+        public ActionResult Destroy([DataSourceRequest]DataSourceRequest request, ViewModelType model)
         {
-            this.settingsService.Delete(model.Name);
+            this.BaseDestroy(model.Name);
             return this.GridOperation(request, model);
         }
     }

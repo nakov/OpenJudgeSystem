@@ -16,7 +16,6 @@
     using OJS.Web.Areas.Contests.ViewModels.Contests;
     using OJS.Web.Areas.Contests.ViewModels.Problems;
     using OJS.Web.Areas.Contests.ViewModels.Submissions;
-    using OJS.Web.Common.Attributes;
     using OJS.Web.Common.Extensions;
     using OJS.Web.Controllers;
 
@@ -71,10 +70,6 @@
                 .GetAllByContest(id)
                 .Select(ProblemListItemViewModel.FromProblem)
                 .ToList();
-            
-            var participantsCount = this.cacheItems.GetParticipantsCountForContest(id);
-            contestViewModel.OfficialParticipants = participantsCount.Official;
-            contestViewModel.PracticeParticipants = participantsCount.Practice;
 
             contestViewModel.UserIsAdminOrLecturerInContest = userHasContestRights;
 
@@ -89,7 +84,7 @@
             return this.View(contestViewModel);
         }
 
-        [AuthorizeCustom]
+        [Authorize]
         [HttpPost]
         public ActionResult UserSubmissions([DataSourceRequest]DataSourceRequest request, int contestId)
         {

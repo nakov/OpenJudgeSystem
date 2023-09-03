@@ -10,16 +10,17 @@
     using System.Web;
     using System.Web.Caching;
     using System.Web.Mvc;
+
     using Kendo.Mvc.Extensions;
     using Kendo.Mvc.UI;
+
     using NPOI.HSSF.UserModel;
     using NPOI.SS.UserModel;
+
     using OJS.Common;
-    using OJS.Common.Constants;
     using OJS.Common.Models;
     using OJS.Data;
     using OJS.Data.Models;
-    using OJS.Services.Cache;
     using OJS.Services.Data.Contests;
     using OJS.Services.Data.Participants;
     using OJS.Services.Data.ParticipantScores;
@@ -28,31 +29,28 @@
     using OJS.Web.Common.Attributes;
     using OJS.Web.Common.Extensions;
     using OJS.Web.Controllers;
+
     using Resource = Resources.Areas.Contests.ContestsGeneral;
 
     public class ResultsController : BaseController
     {
         public const int OfficialResultsPageSize = 100;
         public const int NotOfficialResultsPageSize = 50;
-        private const double CacheExpirationTimeInMinutes = 2;
 
         private readonly IContestsDataService contestsData;
         private readonly IParticipantsDataService participantsData;
         private readonly IParticipantScoresDataService participantScoresData;
-        private readonly ICacheService cacheService;
 
         public ResultsController(
             IOjsData data,
             IContestsDataService contestsData,
             IParticipantsDataService participantsData,
-            IParticipantScoresDataService participantScoresData,
-            ICacheService cacheService)
+            IParticipantScoresDataService participantScoresData)
             : base(data)
         {
             this.contestsData = contestsData;
             this.participantsData = participantsData;
             this.participantScoresData = participantScoresData;
-            this.cacheService = cacheService;
         }
 
         /// <summary>
@@ -62,7 +60,7 @@
         /// <param name="id">The id of the problem.</param>
         /// <param name="official">A flag checking if the requested results are for practice or for a competition.</param>
         /// <returns>Returns the best result for each user who has at least one submission for the problem.</returns>
-        [AuthorizeCustom]
+        [Authorize]
         public ActionResult ByProblem([DataSourceRequest] DataSourceRequest request, int id, bool official)
         {
             var problem = this.Data.Problems.GetById(id);
@@ -78,24 +76,17 @@
                 throw new HttpException((int)HttpStatusCode.Forbidden, Resource.Problem_results_not_available);
             }
 
-            string resultsByProblemOfficialConstFormat = official ? "Official" : "Practice";
-            var results = this.cacheService.GetOrSet<List<ProblemResultViewModel>>(
-                string.Format(CacheConstants.ResultsByProblem, resultsByProblemOfficialConstFormat, problem.Id),
-                () =>
+            var results = this.participantScoresData
+                .GetAll()
+                .Where(ps => ps.ProblemId == problem.Id && ps.IsOfficial == official)
+                .Select(ps => new ProblemResultViewModel
                 {
-                    return this.participantScoresData
-                        .GetAll()
-                        .Where(ps => ps.ProblemId == problem.Id && ps.IsOfficial == official)
-                        .Select(ps => new ProblemResultViewModel
-                        {
-                            SubmissionId = ps.SubmissionId,
-                            ParticipantName = ps.ParticipantName,
-                            MaximumPoints = problem.MaximumPoints,
-                            Result = ps.Points
-                        })
-                        .ToList();
-                },
-                TimeSpan.FromMinutes(CacheExpirationTimeInMinutes));
+                    SubmissionId = ps.SubmissionId,
+                    ParticipantName = ps.ParticipantName,
+                    MaximumPoints = problem.MaximumPoints,
+                    Result = ps.Points
+                })
+                .ToList();
 
             return this.Json(results.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         }
@@ -108,7 +99,7 @@
         /// or for competition</param>
         /// <param name="page">The page on which to open the results table</param>
         /// <returns>Returns a view with the results of the contest.</returns>
-        [AuthorizeCustom]
+        [Authorize]
         public async Task<ActionResult> Simple(int id, bool official, int? page)
         {
             var contest = this.contestsData.GetByIdWithProblems(id);
@@ -196,7 +187,7 @@
         }
 
         // TODO: Unit test
-        [AuthorizeCustom]
+        [Authorize]
         public async Task<ActionResult> Full(int id, bool official, int? page)
         {
             if (!this.CheckIfUserHasContestPermissions(id))
@@ -281,17 +272,17 @@
             }
 
             var contestInfo = this.contestsData
-                .GetByIdQuery(id)
-                .Select(c => new
-                {
-                    c.Id,
-                    ParticipantsCount = (double)c.Participants
-                        .Where(p => p.Scores.Any())
-                        .Count(p => p.IsOfficial),
-                    c.StartTime,
-                    c.EndTime
-                })
-                .FirstOrDefault();
+                    .GetByIdQuery(id)
+                    .Select(c => new
+                    {
+                        c.Id,
+                        ParticipantsCount = (double)c.Participants
+                            .Where(p => p.Scores.Any())
+                            .Count(p => p.IsOfficial),
+                        c.StartTime,
+                        c.EndTime
+                    })
+                    .FirstOrDefault();
 
             var submissions = this.participantsData
                 .GetAll()
@@ -314,9 +305,7 @@
 
             var viewModel = new List<ContestStatsChartViewModel>();
 
-            for (var time = contestInfo.StartTime.Value.AddMinutes(5);
-                 time <= contestInfo.EndTime.Value && time < DateTime.Now;
-                 time = time.AddMinutes(5))
+            for (var time = contestInfo.StartTime.Value.AddMinutes(5); time <= contestInfo.EndTime.Value && time < DateTime.Now; time = time.AddMinutes(5))
             {
                 if (!submissions.Any(pr => pr.CreatedOn >= contestInfo.StartTime && pr.CreatedOn <= time))
                 {
@@ -469,9 +458,8 @@
 
             return this.PartialView("_StatsChartPartial", contestId);
         }
-
-        private static void SetContestResults(ContestResultsViewModel contestResults,
-            IOrderedEnumerable<ParticipantResultViewModel> participantResults)
+        
+        private static void SetContestResults(ContestResultsViewModel contestResults, IOrderedEnumerable<ParticipantResultViewModel> participantResults)
         {
             contestResults.Results = participantResults
                 .ThenBy(parResult => parResult.ProblemResults
@@ -479,7 +467,7 @@
                     .Select(pr => pr.BestSubmission.Id)
                     .FirstOrDefault());
         }
-
+        
         private ContestResultsViewModel GetContestResults(
             Contest contest,
             bool official,
@@ -523,22 +511,22 @@
             else if (isExportResults)
             {
                 var participantExportResults = participants
-                    .Select(ParticipantResultViewModel.FromParticipantAsExportResultByContest(contest.Id))
-                    .ToList()
-                    .OrderByDescending(parRes => parRes.ProblemResults
-                        .Where(pr => pr.ShowResult && !pr.IsExcludedFromHomework)
-                        .Sum(pr => pr.BestSubmission.Points));
+                     .Select(ParticipantResultViewModel.FromParticipantAsExportResultByContest(contest.Id))
+                     .ToList()
+                     .OrderByDescending(parRes => parRes.ProblemResults
+                         .Where(pr => pr.ShowResult && !pr.IsExcludedFromHomework)
+                         .Sum(pr => pr.BestSubmission.Points));
 
                 SetContestResults(contestResults, participantExportResults);
             }
             else
             {
                 var participantResults = participants
-                    .Select(ParticipantResultViewModel.FromParticipantAsSimpleResultByContest(contest.Id))
-                    .ToList()
-                    .OrderByDescending(parRes => parRes.ProblemResults
-                        .Where(pr => pr.ShowResult)
-                        .Sum(pr => pr.BestSubmission.Points));
+                   .Select(ParticipantResultViewModel.FromParticipantAsSimpleResultByContest(contest.Id))
+                   .ToList()
+                   .OrderByDescending(parRes => parRes.ProblemResults
+                       .Where(pr => pr.ShowResult)
+                       .Sum(pr => pr.BestSubmission.Points));
 
                 SetContestResults(contestResults, participantResults);
             }

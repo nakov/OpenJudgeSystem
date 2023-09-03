@@ -11,7 +11,6 @@
     using OJS.Services.Data.Problems;
     using OJS.Services.Data.Submissions;
     using OJS.Web.Areas.Contests.ViewModels.Submissions;
-    using OJS.Web.Common.Attributes;
     using OJS.Web.Common.Extensions;
     using OJS.Web.Controllers;
 
@@ -36,7 +35,7 @@
         }
 
         [ActionName("View")]
-        [AuthorizeCustom]
+        [Authorize]
         public ActionResult Details(int id)
         {
             var submission = this.submissionsData
@@ -87,7 +86,7 @@
         }
 
         // TODO: Extract common validations between Download() and Details()
-        [AuthorizeCustom]
+        [Authorize]
         public FileResult Download(int id)
         {
             var submission = this.Data.Submissions

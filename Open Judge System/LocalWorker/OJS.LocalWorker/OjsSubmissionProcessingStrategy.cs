@@ -252,7 +252,7 @@
                         return;
                     }
                 }
-                
+
                 if (this.submission.Points > existingScore.Points ||
                     this.submission.Id == existingScore.SubmissionId)
                 {
