@@ -4,12 +4,13 @@
     using System.Linq;
     using System.Security.Principal;
     using System.Web;
+    using System.Web.Mvc;
 
     using OJS.Common.Extensions;
     using OJS.Common.Models;
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
-    public class AuthorizeRolesAttribute : AuthorizeCustomAttribute
+    public class AuthorizeRolesAttribute : AuthorizeAttribute
     {
         private readonly SystemRole[] allRoles;
 

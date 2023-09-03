@@ -19,13 +19,11 @@
     using MissingFeatures;
 
     using OJS.Common;
-    using OJS.Common.Constants;
     using OJS.Common.Extensions;
     using OJS.Common.Models;
     using OJS.Data;
     using OJS.Data.Models;
     using OJS.Services.Business.Problems;
-    using OJS.Services.Cache;
     using OJS.Services.Data.Checkers;
     using OJS.Services.Data.Contests;
     using OJS.Services.Data.ProblemGroups;
@@ -44,7 +42,6 @@
     using OJS.Web.Common.Extensions;
     using OJS.Web.Common.Helpers;
     using OJS.Web.Common.ZippedTestManipulator;
-    using OJS.Web.Infrastructure.Filters.Attributes;
     using OJS.Web.ViewModels.Common;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Extensions;
@@ -64,7 +61,6 @@
         private readonly ISubmissionsDataService submissionsData;
         private readonly ISubmissionTypesDataService submissionTypesData;
         private readonly IProblemsBusinessService problemsBusiness;
-        private readonly ICacheService cacheService;
 
         public ProblemsController(
             IOjsData data,
@@ -75,8 +71,7 @@
             IProblemResourcesDataService problemResourcesData,
             ISubmissionsDataService submissionsData,
             ISubmissionTypesDataService submissionTypesData,
-            IProblemsBusinessService problemsBusiness,
-            ICacheService cacheService)
+            IProblemsBusinessService problemsBusiness)
             : base(data)
         {
             this.contestsData = contestsData;
@@ -87,7 +82,6 @@
             this.submissionsData = submissionsData;
             this.submissionTypesData = submissionTypesData;
             this.problemsBusiness = problemsBusiness;
-            this.cacheService = cacheService;
         }
 
         public ActionResult Index() => this.View();
@@ -154,7 +148,6 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [ClearContestFromProblemAttribute(queryKeyForContestId: nameof(ViewModelType.ContestId))]
         public ActionResult Create(int id, ViewModelType problem)
         {
             if (!this.CheckIfUserHasContestPermissions(id))
@@ -323,7 +316,6 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [ClearContestFromProblemAttribute(queryKeyForContestId: nameof(ViewModelType.ContestId))]
         public ActionResult Edit(int id, ViewModelType problem)
         {
             if (!this.CheckIfUserHasProblemPermissions(id))
@@ -465,7 +457,6 @@
 
             this.problemsBusiness.DeleteById(problemId);
 
-            this.cacheService.Remove(string.Format(CacheConstants.ContestView, problem.ProblemGroup.ContestId));
             this.TempData.AddInfoMessage(GlobalResource.Problem_deleted);
             return this.RedirectToAction(c => c.Index(problem.ProblemGroup.ContestId));
         }
@@ -509,7 +500,6 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [ClearContestFromProblemAttribute(queryKeyForContestId: nameof(ViewModelType.ContestId))]
         public ActionResult ConfirmDeleteAll(int contestId)
         {
             if (!this.CheckIfUserHasContestPermissions(contestId))
