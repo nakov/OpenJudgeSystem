@@ -24,6 +24,7 @@
     using OJS.Web.Areas.Administration.ViewModels.Contest;
     using OJS.Web.Areas.Contests.Models;
     using OJS.Web.Common.Extensions;
+    using OJS.Web.Infrastructure.Filters.Attributes;
     using OJS.Web.ViewModels.Common;
     using ChangeTimeResource = Resources.Areas.Administration.Contests.Views.ChangeTime;
     using GeneralResource = Resources.Areas.Administration.AdministrationGeneral;
@@ -189,6 +190,7 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ClearContestAttribute(queryKeyForContestId: nameof(ContestAdministrationViewModel.Id))]
         public ActionResult Edit(ContestAdministrationViewModel model)
         {
             if (model.Id == null || !this.CheckIfUserHasContestPermissions(model.Id.Value))
@@ -249,6 +251,7 @@
         }
 
         [HttpPost]
+        [ClearContestAttribute(queryKeyForContestId: nameof(ContestAdministrationViewModel.Id))]
         public ActionResult Destroy([DataSourceRequest] DataSourceRequest request, ContestAdministrationViewModel model)
         {
             if (model.Id == null || !this.CheckIfUserHasContestPermissions(model.Id.Value))
