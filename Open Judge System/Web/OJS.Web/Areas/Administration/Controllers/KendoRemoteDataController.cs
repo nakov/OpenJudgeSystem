@@ -45,7 +45,6 @@
             }
 
             var result = users
-                .Take(DefaultItemsToTake)
                 .Select(u => new SelectListItem
                 {
                     Text = u.UserName,
