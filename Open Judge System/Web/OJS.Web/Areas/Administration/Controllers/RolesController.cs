@@ -89,7 +89,7 @@
         [HttpPost]
         public ActionResult AddUserToRole([DataSourceRequest]DataSourceRequest request, string id, string userId)
         {
-            var user = this.Data.Users.GetByUsername(userId);
+            var user = this.Data.Users.GetById(userId);
             var role = this.Data.Roles.All().FirstOrDefault(r => r.Id == id);
 
             user.Roles.Add(new IdentityUserRole { RoleId = role.Id, UserId = userId });
