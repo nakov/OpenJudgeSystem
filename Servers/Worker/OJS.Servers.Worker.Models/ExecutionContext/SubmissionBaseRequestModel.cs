@@ -51,6 +51,9 @@
                         .FromJson<TestsExecutionDetailsRequestModel>()))
                 .ForMember(
                     m => m.ExecutionOptions,
+                    opt => opt.Ignore())
+                .ForMember(
+                    m => m.StartedExecutionOn,
                     opt => opt.Ignore());
 
             this.MapAdditionalMembers(mapping);

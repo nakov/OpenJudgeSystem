@@ -70,8 +70,6 @@ public class ExecutionContextBuilderService : IExecutionContextBuilderService
             ? DefaultAllowedFileExtension
             : default!;
 
-        submission.StartedExecutionOn = DateTime.UtcNow;
-
         return submission;
     }
 }

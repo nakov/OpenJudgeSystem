@@ -26,9 +26,7 @@ const Contest = () => {
             score,
             maxScore,
             remainingTimeInMilliseconds,
-            totalParticipantsCount,
-            activeParticipantsCount,
-            isOfficial,
+            participantsCount,
             contestError,
             contestIsLoading,
         },
@@ -147,33 +145,17 @@ const Contest = () => {
         [],
     );
 
-    const participantsStateText = useMemo(
-        () => isOfficial && contest?.isExam
-            ? 'Active'
-            : 'Total',
-        [ contest?.isExam, isOfficial ],
-    );
-
-    const participantsValue = useMemo(
-        () => isOfficial && contest?.isExam
-            ? activeParticipantsCount
-            : totalParticipantsCount,
-        [ activeParticipantsCount, contest?.isExam, isOfficial, totalParticipantsCount ],
-    );
-
     const renderParticipants = useCallback(
         () => (
             <span>
-                {participantsStateText}
-                {' '}
-                Participants:
+                Total Participants:
                 {' '}
                 <Text type={TextType.Bold}>
-                    {participantsValue}
+                    {participantsCount}
                 </Text>
             </span>
         ),
-        [ participantsStateText, participantsValue ],
+        [ participantsCount ],
     );
 
     useEffect(
