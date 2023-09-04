@@ -27,6 +27,7 @@ interface ISubmissionsDetailsContext {
         currentSubmissionDetailsResults: ISubmissionDetails[];
         validationErrors: IErrorDataType[];
         downloadErrorMessage: string | null;
+        isLoading: boolean;
     };
     actions: {
         selectSubmissionById: (submissionId: number | null) => void;

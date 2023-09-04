@@ -61,7 +61,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
                     <span className={styles.testRunDataParagraph}>
                         <Icon Component={BiTime} size={IconSize.Large} className={styles.iconPassiveColor} />
                         <span style={{ marginTop: '5px' }}>
-                            {testRun.timeUsed}
+                            {testRun.timeUsed / 1000}
                             {' '}
                             s.
                         </span>

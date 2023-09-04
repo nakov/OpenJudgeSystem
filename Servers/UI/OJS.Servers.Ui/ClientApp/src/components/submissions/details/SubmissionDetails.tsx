@@ -14,12 +14,14 @@ import { useContests } from '../../../hooks/use-contests';
 import { usePageTitles } from '../../../hooks/use-page-titles';
 import concatClassNames from '../../../utils/class-names';
 import { preciseFormatDate } from '../../../utils/dates';
+import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import CodeEditor from '../../code-editor/CodeEditor';
 import AlertBox, { AlertBoxType } from '../../guidelines/alert-box/AlertBox';
 import { Button, ButtonSize, ButtonState, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import IconSize from '../../guidelines/icons/common/icon-sizes';
 import LeftArrowIcon from '../../guidelines/icons/LeftArrowIcon';
+import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import SubmissionResults from '../submission-results/SubmissionResults';
 import SubmissionsList from '../submissions-list/SubmissionsList';
 
@@ -30,11 +32,15 @@ import styles from './SubmissionDetails.module.scss';
 const SubmissionDetails = () => {
     const {
         state: {
+            isLoading,
             currentSubmission,
             currentSubmissionDetailsResults,
             validationErrors,
+            downloadErrorMessage,
         },
         actions: {
+            downloadProblemSubmissionFile,
+            setDownloadErrorMessage,
             getSubmissionDetailsResults,
             setCurrentSubmission,
             selectSubmissionById,
@@ -42,15 +48,6 @@ const SubmissionDetails = () => {
     } = useSubmissionsDetails();
     const { actions: { setPageTitle } } = usePageTitles();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
-    const {
-        state:
-            { downloadErrorMessage },
-        actions:
-            {
-                downloadProblemSubmissionFile,
-                setDownloadErrorMessage,
-            },
-    } = useSubmissionsDetails();
     const {
         state: { contest },
         actions: { loadContestByProblemId },
@@ -385,21 +382,27 @@ const SubmissionDetails = () => {
     );
 
     const submissionResults = useCallback(
-        () => (
-            <div className={submissionDetailsClassName}>
-                <Heading type={HeadingType.secondary}>{detailsHeadingText}</Heading>
-                {isNil(currentSubmission)
-                    ? ''
-                    : (
-                        <SubmissionResults
-                          testRuns={currentSubmission.testRuns}
-                          compilerComment={currentSubmission?.compilerComment}
-                          isCompiledSuccessfully={currentSubmission?.isCompiledSuccessfully}
-                        />
-                    )}
-            </div>
-        ),
-        [ currentSubmission, detailsHeadingText, submissionDetailsClassName ],
+        () => (isLoading
+            ? (
+                <div style={{ ...flexCenterObjectStyles }}>
+                    <SpinningLoader />
+                </div>
+            )
+            : (
+                <div className={submissionDetailsClassName}>
+                    <Heading type={HeadingType.secondary}>{detailsHeadingText}</Heading>
+                    {isNil(currentSubmission)
+                        ? ''
+                        : (
+                            <SubmissionResults
+                              testRuns={currentSubmission.testRuns}
+                              compilerComment={currentSubmission?.compilerComment}
+                              isCompiledSuccessfully={currentSubmission?.isCompiledSuccessfully}
+                            />
+                        )}
+                </div>
+            )),
+        [ currentSubmission, detailsHeadingText, submissionDetailsClassName, isLoading ],
     );
 
     const renderErrorMessage = useCallback(
@@ -421,7 +424,7 @@ const SubmissionDetails = () => {
         [ validationErrors ],
     );
 
-    if (isNil(currentSubmission) && isEmpty(validationErrors)) {
+    if (!isLoading && isNil(currentSubmission) && isEmpty(validationErrors)) {
         return <div>No details fetched.</div>;
     }
 
@@ -439,7 +442,13 @@ const SubmissionDetails = () => {
                 {codeEditor()}
                 {submissionResults()}
             </div>
-            <SubmissionResultsDetails testRuns={currentSubmission?.testRuns} />
+            { isLoading
+                ? (
+                    <div style={{ ...flexCenterObjectStyles }}>
+                        <SpinningLoader />
+                    </div>
+                )
+                : <SubmissionResultsDetails testRuns={currentSubmission?.testRuns} /> }
         </>
     );
 };

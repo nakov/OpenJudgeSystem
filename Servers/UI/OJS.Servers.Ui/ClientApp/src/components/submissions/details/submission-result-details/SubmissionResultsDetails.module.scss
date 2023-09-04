@@ -48,6 +48,8 @@
 }
 
 .warningBlockWrapper {
-  background-color: colors.$warning-color;
+  background-color: #d3d3d3;
   padding: 10px 20px;
+  max-height: 200px;
+  overflow: auto;
 }
