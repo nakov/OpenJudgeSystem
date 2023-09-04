@@ -61,7 +61,6 @@ interface ICurrentContestContext {
         submitContestPasswordIsLoading: boolean;
         getParticipantScoresIsLoading: boolean;
         isUserParticipant: boolean;
-        contestDetailsError: IErrorDataType | null;
         contestDetails: IContestDetailsResponseType | null;
         isContestDetailsLoadingSuccessful: boolean;
     };
@@ -139,7 +138,6 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ contestError, setContestError ] = useState<IErrorDataType | null>(null);
     const [ isUserParticipant, setIsUserParticipant ] = useState<boolean>(defaultState.state.isUserParticipant);
     const { state: { user } } = useAuth();
-    const [ contestDetailsError, setContestDetailsError ] = useState<IErrorDataType | null>(null);
     const [ contestDetails, setContestDetails ] = useState<IContestDetailsResponseType | null>(defaultState.state.contestDetails);
     const [ contestDetailsParams, setContestDetailsParams ] = useState<IContestDetailsUrlParams | null>(null);
 
@@ -227,7 +225,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             }
 
             if (!isNil(contestDetailsErrorData)) {
-                setContestDetailsError(contestDetailsErrorData);
+                setContestError(contestDetailsErrorData);
                 return;
             }
 
@@ -474,7 +472,6 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 registerForContestLoading,
                 submitContestPasswordIsLoading,
                 getParticipantScoresIsLoading,
-                contestDetailsError,
                 contestDetails,
                 contestDetailsIsLoading,
                 isContestDetailsLoadingSuccessful,
@@ -522,7 +519,6 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             submitContestPasswordIsLoading,
             getParticipantScoresIsLoading,
             getContestDetails,
-            contestDetailsError,
             contestDetails,
             contestDetailsIsLoading,
             isContestDetailsLoadingSuccessful,
