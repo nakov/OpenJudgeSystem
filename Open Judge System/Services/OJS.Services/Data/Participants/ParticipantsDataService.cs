@@ -68,6 +68,13 @@
                         p.ParticipationStartTime <= participationStartTimeRangeEnd &&
                         p.Contest.Type == ContestType.OnlinePracticalExam);
 
+        // Not doing .ToDictionary directly after .GroupBy as it will generate slower query
+        public IDictionary<int, int> GetContestParticipantsCount(IEnumerable<int> contestIds, bool isOfficial) =>
+            this.GetAllByContestIdsAndIsOfficial(contestIds, isOfficial)
+                .GroupBy(p => p.ContestId)
+                .Select(g => new { ContestId = g.Key, ParticipantsCount = g.Count() })
+                .ToDictionary(p => p.ContestId, p => p.ParticipantsCount);
+
         public bool ExistsByIdAndContest(int id, int contestId) =>
             this.GetByIdQuery(id)
                 .Any(p => p.ContestId == contestId);
