@@ -150,13 +150,9 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
     );
 
     return (
-        <div
-          className={styles.container}
-          style={{
-              backgroundColor: isOfficial
-                  ? 'rgba(66, 171, 248, 0.2)'
-                  : '',
-          }}
+        <div className={`${styles.container} ${isOfficial
+            ? styles.competeRowBackground
+            : ''}`}
         >
             { isOfficial && (
             <div className={styles.competeIconWrapper}>
