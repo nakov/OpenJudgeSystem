@@ -20,7 +20,7 @@ namespace OJS.Data.Models.Submissions
 
         public virtual Participant Participant { get; set; } = null!;
 
-        public int? ProblemId { get; set; }
+        public int ProblemId { get; set; }
 
         public virtual Problem Problem { get; set; } = null!;
 
