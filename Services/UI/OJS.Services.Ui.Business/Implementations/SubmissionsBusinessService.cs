@@ -433,7 +433,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var submissionForProcessing = await this.submissionsForProcessingData.GetBySubmission(newSubmission.Id);
         if (submissionForProcessing != null)
         {
-            submissionForProcessing.SerializedExecutionDetails = JsonConvert.SerializeObject(submissionToBePublished);
+            submissionForProcessing.SerializedExecutionDetails = submissionToBePublished.ToJson();
             await this.submissionsData.SaveChanges();
         }
 
@@ -471,7 +471,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         {
             if (submissionForProcessing != null)
             {
-                submissionForProcessing.SerializedExecutionResult = JsonConvert.SerializeObject(executionResult);
+                submissionForProcessing.SerializedExecutionResult = executionResult.ToJson();
             }
 
             ProcessTestsExecutionResult(submission, executionResult);
@@ -482,9 +482,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
         else
         {
-            if (submissionForProcessing != null)
+            if (submissionForProcessing != null && exception != null)
             {
-                submissionForProcessing.SerializedException = JsonConvert.SerializeObject(exception);
+                submissionForProcessing.SerializedException = exception.ToJson();
             }
 
             submission.IsCompiledSuccessfully = false;
