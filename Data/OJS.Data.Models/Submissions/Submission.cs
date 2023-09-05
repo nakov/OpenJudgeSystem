@@ -18,7 +18,7 @@ namespace OJS.Data.Models.Submissions
     {
         public int? ParticipantId { get; set; }
 
-        public virtual Participant Participant { get; set; } = null!;
+        public virtual Participant? Participant { get; set; }
 
         public int ProblemId { get; set; }
 
@@ -26,7 +26,7 @@ namespace OJS.Data.Models.Submissions
 
         public int? SubmissionTypeId { get; set; }
 
-        public virtual SubmissionType SubmissionType { get; set; } = null!;
+        public virtual SubmissionType? SubmissionType { get; set; }
 
         /// <remarks>
         /// Using byte[] (compressed with deflate) to save database space for text inputs. For other file types the actual file content is saved in the field.
