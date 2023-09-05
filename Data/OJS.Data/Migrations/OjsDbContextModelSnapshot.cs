@@ -1055,6 +1055,9 @@ namespace OJS.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("SubmissionId")
+                        .IsUnique();
+
                     b.ToTable("SubmissionsForProcessing");
                 });
 

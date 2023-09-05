@@ -114,6 +114,10 @@ namespace OJS.Data
                     .IsRequired();
             });
 
+            builder.Entity<SubmissionForProcessing>()
+                .HasIndex(s => s.SubmissionId)
+                .IsUnique();
+
             builder.Entity<Role>()
                 .HasMany(x => x.UsersInRoles)
                 .WithOne(x => x.Role)
