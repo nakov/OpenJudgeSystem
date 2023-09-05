@@ -13,6 +13,10 @@ import SubmissionGridRow from '../submission-grid-row/SubmissionGridRow';
 import SubmissionStateLink from './SubmissionStateLink';
 
 import styles from './SubmissionsGrid.module.scss';
+import {useHttp} from "../../../hooks/use-http";
+import {IGetSubmissionsUrlParams} from "../../../common/url-types";
+import {IPagedResultType} from "../../../common/types";
+import { getUserSubmissionsUrl } from "../../../utils/urls";
 
 const selectedSubmissionsStateMapping = {
     1: 'All',
@@ -20,8 +24,15 @@ const selectedSubmissionsStateMapping = {
     3: 'Pending',
 } as IDictionary<string>;
 
+enum toggleValues {
+    allSubmissions = 'all submissions',
+    mySubmissions = 'my submissions',
+}
+
 const SubmissionsGrid = () => {
+    const [ userSubmissions, setUserSubmissions ] = useState<any>([]);
     const [ selectedActive, setSelectedActive ] = useState<number>(1);
+    const [ activeToggleElement, setActiveToggleElement ] = useState<toggleValues>(toggleValues.allSubmissions);
 
     const {
         state: {
@@ -55,10 +66,30 @@ const SubmissionsGrid = () => {
         clearPageValue,
     } = usePages();
 
+    const {
+        get: getUserSubmissions,
+        data: userSubmissionsData,
+    } = useHttp<
+        IGetSubmissionsUrlParams,
+        IPagedResultType<ISubmissionResponseModel>>({
+        url: getUserSubmissionsUrl,
+        parameters: { page: 1 }
+    });
+
     const handlePageChange = useCallback(
         (page: number) => changePage(page),
         [ changePage ],
     );
+
+    useEffect(() => {
+        getUserSubmissions();
+    }, []);
+
+    useEffect(() => {
+        if (activeToggleElement === toggleValues.mySubmissions) {
+            // console.log('user submissions => ', userSubmissionsData);
+        }
+    }, [ activeToggleElement ]);
 
     const renderSubmissionRow = useCallback(
         (submission: ISubmissionResponseModel) => (
@@ -74,6 +105,17 @@ const SubmissionsGrid = () => {
             setSelectedActive(typeKey);
         }
     }, [ clearPageValue, selectedActive ]);
+
+    const handleToggleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        const clickedElement = e.target as HTMLDivElement;
+        const { textContent } = clickedElement;
+
+        if (textContent?.toLowerCase() === toggleValues.allSubmissions) {
+            setActiveToggleElement(toggleValues.allSubmissions);
+        } else {
+            setActiveToggleElement(toggleValues.mySubmissions);
+        }
+    };
 
     useEffect(
         () => {
@@ -150,6 +192,27 @@ const SubmissionsGrid = () => {
         ],
     );
 
+    const renderToggleButton = useCallback(() => (
+        <div className={styles.toggleButtonWrapper}>
+            <div
+                className={`${activeToggleElement === toggleValues.allSubmissions
+                    ? styles.activeElement
+                    : ''}`}
+                onClick={(e) => handleToggleClick(e)}
+            >
+                ALL SUBMISSIONS
+            </div>
+            <div
+                className={`${activeToggleElement === toggleValues.mySubmissions
+                    ? styles.activeElement
+                    : ''}`}
+                onClick={(e) => handleToggleClick(e)}
+            >
+                MY SUBMISSIONS
+            </div>
+        </div>
+    ), [ activeToggleElement ]);
+
     const renderSubmissionsList = useCallback(
         () => {
             const submissions = selectedActive === 1
@@ -183,6 +246,7 @@ const SubmissionsGrid = () => {
                 {' '}
                 total
             </Heading>
+            {renderToggleButton()}
             {renderPrivilegedComponent()}
             {renderSubmissionsList()}
         </>

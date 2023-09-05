@@ -147,6 +147,7 @@ const getPendingSubmissionsUrl = ({ page }: IGetSubmissionsUrlParams) => {
 const getSubmissionsTotalCountUrl = () => `${baseApiUrl}/Submissions/TotalCount`;
 const getSubmissionsUnprocessedTotalCountUrl = () => `${baseApiUrl}/Submissions/UnprocessedTotalCount`;
 const getSubmissionsDetailsUrl = () => `${baseApiUrl}/Submissions/Details`;
+const getUserSubmissionsUrl = () => `${baseApiUrl}/Submissions/GetUserSubmissions`;
 const getSubmissionDetailsByIdUrl =
     ({ submissionId }: IGetSubmissionDetailsByIdUrlParams) => `${getSubmissionsDetailsUrl()}/${submissionId}`;
 const getSubmitUrl = () => `${baseApiUrl}/Compete/Submit`;
@@ -208,6 +209,7 @@ export {
     getSubmissionsTotalCountUrl,
     getSubmissionsUnprocessedTotalCountUrl,
     getSubmissionsDetailsUrl,
+    getUserSubmissionsUrl,
     getSubmissionDetailsByIdUrl,
     getSubmitUrl,
     getSubmitFileUrl,
