@@ -154,18 +154,18 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
             ? styles.competeRowBackground
             : ''}`}
         >
-            { isOfficial && (
-            <div className={styles.competeIconWrapper}>
-                <i className={`${styles.competeIcon} fas fa-flag-checkered`} />
-                <span className={styles.competeIconHoverText}>Compete submission</span>
-            </div>
-            ) }
             <div className={styles.strategyContainer}>
                 {renderStrategyIcon()}
             </div>
             <div className={styles.pointsContainer}>
                 {renderPoints()}
             </div>
+            { isOfficial && (
+                <div className={styles.competeIconWrapper}>
+                    <i className={`${styles.competeIcon} fas fa-flag-checkered`} />
+                    <span className={styles.competeIconHoverText}>Compete submission</span>
+                </div>
+            ) }
             <div className={styles.detailsContainer}>
                 {renderProblemInformation()}
                 <div className={styles.IdAndDateAndUsernameContainer}>
