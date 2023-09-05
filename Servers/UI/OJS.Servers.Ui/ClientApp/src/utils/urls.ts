@@ -1,8 +1,11 @@
 import isNil from 'lodash/isNil';
 
+import { ISubmissionDetailsUrlParams } from '../common/app-url-types';
 import { SearchParams } from '../common/search-types';
 import {
-    IAllContestsUrlParams,
+    IAllContestsUrlParams, IContestDetailsUrlParams,
+    IContestEditUrlParams,
+    IContestProblemsUrlParams,
     IDownloadProblemResourceUrlParams,
     IDownloadSubmissionFileUrlParams,
     IGetContestByProblemUrlParams,
@@ -11,6 +14,7 @@ import {
     IGetSearchResultsUrlParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
+    IGetSubmissionsUrlParams,
     IRetestSubmissionUrlParams,
     IStartContestParticipationUrlParams,
     ISubmitContestPasswordUrlParams,
@@ -40,6 +44,10 @@ const getAdministrationContestsGridUrl = () => `${administrationBaseUrl}/Contest
 const getAdministrationNavigation = () => '/administration';
 const getAdministrationRetestSubmission = ({ id }: IRetestSubmissionUrlParams) => `
 ${administrationBaseUrl}/Submissions/Retest?PK=${id}`;
+const getAdministrationProblems = ({ id }: IContestProblemsUrlParams) => `
+${administrationBaseUrl}/Problems?ContestId-equals=${id}`;
+const getAdministrationContestEditUrl = ({ id }: IContestEditUrlParams) => `
+${administrationBaseUrl}/Contests/Edit?PK=${id}`;
 
 // profile
 const getProfileInfoUrl = () => `${baseApiUrl}/Users/GetProfileInfo`;
@@ -65,6 +73,9 @@ const getAllContestsUrl = ({ filters, sorting, page }: IAllContestsUrlParams) =>
 
     return `${baseApiUrl}/Contests/GetAll?${filtersQuery}&${sortingQuery}&${pageQuery}`;
 };
+
+const getContestDetailsUrl =
+    ({ id, isOfficial }: IContestDetailsUrlParams) => `${baseApiUrl}/Contests/Details/${id}?official=${isOfficial}`;
 
 const getRegisterForContestUrl = ({
     id,
@@ -110,8 +121,31 @@ const getSubmissionDetailsResultsUrl = ({
     take,
 }: IGetSubmissionDetailsByIdUrlParams) => `
     ${baseApiUrl}/Submissions/GetSubmissionDetailsResults/${submissionId}?isOfficial=${isOfficial}&take=${take}`;
-const getPublicSubmissionsUrl = () => `${baseApiUrl}/Submissions/Public`;
+const getPublicSubmissionsUrl = ({ page }: IGetSubmissionsUrlParams) => {
+    const pageQuery = isNil(page)
+        ? ''
+        : `page=${page}`;
+
+    return `${baseApiUrl}/Submissions/Public?${pageQuery}`;
+};
+
+const getUnprocessedSubmissionsUrl = ({ page }: IGetSubmissionsUrlParams) => {
+    const pageQuery = isNil(page)
+        ? ''
+        : `page=${page}`;
+
+    return `${baseApiUrl}/Submissions/GetProcessingSubmissions?${pageQuery}`;
+};
+
+const getPendingSubmissionsUrl = ({ page }: IGetSubmissionsUrlParams) => {
+    const pageQuery = isNil(page)
+        ? ''
+        : `page=${page}`;
+
+    return `${baseApiUrl}/Submissions/GetPendingSubmissions?${pageQuery}`;
+};
 const getSubmissionsTotalCountUrl = () => `${baseApiUrl}/Submissions/TotalCount`;
+const getSubmissionsUnprocessedTotalCountUrl = () => `${baseApiUrl}/Submissions/UnprocessedTotalCount`;
 const getSubmissionsDetailsUrl = () => `${baseApiUrl}/Submissions/Details`;
 const getSubmissionDetailsByIdUrl =
     ({ submissionId }: IGetSubmissionDetailsByIdUrlParams) => `${getSubmissionsDetailsUrl()}/${submissionId}`;
@@ -119,6 +153,8 @@ const getSubmitUrl = () => `${baseApiUrl}/Compete/Submit`;
 const getSubmitFileUrl = () => `${baseApiUrl}/Compete/SubmitFileSubmission`;
 const getSubmissionFileDownloadUrl =
     ({ id }: IDownloadSubmissionFileUrlParams) => `${baseApiUrl}/Submissions/Download/${id}`;
+
+const getSubmissionDetailsUrl = ({ id }:ISubmissionDetailsUrlParams) => `/submissions/${id}/details`;
 
 // Submission types
 const getAllContestStrategyFiltersUrl =
@@ -167,14 +203,21 @@ export {
     getSubmissionResultsByProblemUrl,
     getSubmissionDetailsResultsUrl,
     getPublicSubmissionsUrl,
+    getUnprocessedSubmissionsUrl,
+    getPendingSubmissionsUrl,
     getSubmissionsTotalCountUrl,
+    getSubmissionsUnprocessedTotalCountUrl,
     getSubmissionsDetailsUrl,
     getSubmissionDetailsByIdUrl,
     getSubmitUrl,
     getSubmitFileUrl,
     getSubmissionFileDownloadUrl,
+    getSubmissionDetailsUrl,
     getAllContestStrategyFiltersUrl,
     getDownloadProblemResourceUrl,
     getHomeStatisticsUrl,
     getSearchResults,
+    getContestDetailsUrl,
+    getAdministrationProblems,
+    getAdministrationContestEditUrl,
 };

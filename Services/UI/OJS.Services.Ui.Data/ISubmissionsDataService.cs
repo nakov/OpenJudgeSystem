@@ -6,12 +6,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SoftUni.Common.Models;
 
 public interface ISubmissionsDataService : IDataService<Submission>
 {
     TServiceModel? GetSubmissionById<TServiceModel>(int id);
 
-    Task<IEnumerable<TServiceModel>> GetLatestSubmissions<TServiceModel>(int count);
+    Task<IEnumerable<TServiceModel>> GetLatestSubmissions<TServiceModel>(int submissionsPerPage);
+
+    Task<PagedResult<TServiceModel>> GetLatestSubmissions<TServiceModel>(int submissionsPerPage, int pageNumber);
+
+    Task<PagedResult<TServiceModel>> GetLatestSubmissionsByUserParticipations<TServiceModel>(
+        IEnumerable<int?> userParticipantsIds,
+        int submissionsPerPage,
+        int pageNumber);
 
     Task<int> GetTotalSubmissionsCount();
 

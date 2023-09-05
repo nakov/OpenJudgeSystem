@@ -1,6 +1,7 @@
 ﻿namespace OJS.Services.Administration.Data.Implementations
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using Microsoft.EntityFrameworkCore;
     using OJS.Data.Models.Submissions;
@@ -26,6 +27,9 @@
 
         public IQueryable<Submission> GetAllByProblem(int problemId)
             => this.DbSet.Where(s => s.ProblemId == problemId);
+
+        public IQueryable<Submission> GetByIds(IEnumerable<int> ids)
+            => this.DbSet.Where(s => ids.Contains(s.Id));
 
         public IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId) =>
             this.DbSet

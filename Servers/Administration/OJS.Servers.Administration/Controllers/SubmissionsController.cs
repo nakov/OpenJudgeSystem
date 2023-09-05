@@ -6,6 +6,7 @@ using AutoCrudAdmin.ViewModels;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
+using OJS.Services.Common.Data;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Validation.Factories;
 using OJS.Services.Administration.Business.Validation.Helpers;
@@ -30,28 +31,25 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
     public const string SubmissionIdKey = nameof(Submission.Id);
 
     private readonly IProblemsValidationHelper problemsValidationHelper;
-    private readonly IParticipantScoresDataService participantScoresData;
     private readonly IParticipantScoresBusinessService participantScoresBusiness;
     private readonly ISubmissionsDataService submissionsData;
     private readonly ISubmissionsBusinessService submissionsBusinessService;
-    private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
+    private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
     private readonly ITestRunsDataService testRunsData;
     private readonly ITransactionsProvider transactions;
     private readonly IValidatorsFactory<Submission> submissionValidatorsFactory;
 
     public SubmissionsController(
         IProblemsValidationHelper problemsValidationHelper,
-        IParticipantScoresDataService participantScoresData,
         IParticipantScoresBusinessService participantScoresBusiness,
         ISubmissionsDataService submissionsData,
-        ISubmissionsForProcessingDataService submissionsForProcessingData,
+        ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
         ITestRunsDataService testRunsData,
         ITransactionsProvider transactions,
         IValidatorsFactory<Submission> submissionValidatorsFactory,
         ISubmissionsBusinessService submissionsBusinessService)
     {
         this.problemsValidationHelper = problemsValidationHelper;
-        this.participantScoresData = participantScoresData;
         this.participantScoresBusiness = participantScoresBusiness;
         this.submissionsData = submissionsData;
         this.submissionsForProcessingData = submissionsForProcessingData;

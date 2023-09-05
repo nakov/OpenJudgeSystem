@@ -43,7 +43,15 @@ public class EmailService : IEmailService, IDisposable
     {
         var message = this.PrepareMessage(recipient, subject, body, bccRecipients, null);
 
-        this.mailClient.Send(message);
+        try
+        {
+            this.mailClient.Send(message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            // TODO
+        }
     }
 
     public void SendEmail(
@@ -55,7 +63,15 @@ public class EmailService : IEmailService, IDisposable
     {
         var message = this.PrepareMessage(recipient, subject, body, bccRecipients, attachments);
 
-        this.mailClient.Send(message);
+        try
+        {
+            this.mailClient.Send(message);
+        }
+        catch (Exception e)
+        {
+           // TODO
+           Console.WriteLine(e);
+        }
     }
 
     public async Task SendEmailAsync(
@@ -64,7 +80,15 @@ public class EmailService : IEmailService, IDisposable
         string body)
     {
         var message = this.PrepareMessage(recipient, subject, body, null, null);
-        await this.mailClient.SendMailAsync(message);
+        try
+        {
+            await this.mailClient.SendMailAsync(message);
+        }
+        catch (Exception ex)
+        {
+          // TODO
+          Console.WriteLine(ex);
+        }
     }
 
     public async Task SendEmailAsync(
@@ -74,7 +98,15 @@ public class EmailService : IEmailService, IDisposable
         IEnumerable<string> bccRecipients)
     {
         var message = this.PrepareMessage(recipient, subject, body, bccRecipients, null);
-        await this.mailClient.SendMailAsync(message);
+        try
+        {
+            await this.mailClient.SendMailAsync(message);
+        }
+        catch (Exception ex)
+        {
+            // TODO
+            Console.WriteLine(ex);
+        }
     }
 
     public void Dispose()
