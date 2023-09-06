@@ -9,12 +9,6 @@ namespace OJS.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "ExecutingWorker",
-                table: "SubmissionsForProcessing",
-                type: "nvarchar(max)",
-                nullable: true);
-
-            migrationBuilder.AddColumn<string>(
                 name: "SerializedException",
                 table: "SubmissionsForProcessing",
                 type: "nvarchar(max)",
@@ -35,10 +29,6 @@ namespace OJS.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "ExecutingWorker",
-                table: "SubmissionsForProcessing");
-
             migrationBuilder.DropColumn(
                 name: "SerializedException",
                 table: "SubmissionsForProcessing");

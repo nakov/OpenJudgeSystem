@@ -15,7 +15,5 @@ namespace OJS.Data.Models.Submissions
         public string? SerializedExecutionResult { get; set; }
 
         public string? SerializedException { get; set; }
-
-        public string? ExecutingWorker { get; set; }
     }
 }

@@ -1033,9 +1033,6 @@ namespace OJS.Data.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ExecutingWorker")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("datetime2");
 
