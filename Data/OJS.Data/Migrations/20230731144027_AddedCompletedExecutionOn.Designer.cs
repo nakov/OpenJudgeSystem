@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OJS.Data;
 
@@ -11,13 +12,14 @@ using OJS.Data;
 namespace OJS.Data.Migrations
 {
     [DbContext(typeof(OjsDbContext))]
-    partial class OjsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230731144027_AddedCompletedExecutionOn")]
+    partial class AddedCompletedExecutionOn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.16")
+                .HasAnnotation("ProductVersion", "6.0.20")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -221,11 +223,6 @@ namespace OJS.Data.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<bool>("AllowParallelSubmissionsInTasks")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
 
                     b.Property<bool>("AutoChangeTestsFeedbackVisibility")
                         .HasColumnType("bit");
@@ -1038,26 +1035,11 @@ namespace OJS.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("datetime2");
-
                     b.Property<bool>("Processed")
                         .HasColumnType("bit");
 
                     b.Property<bool>("Processing")
                         .HasColumnType("bit");
-
-                    b.Property<string>("SerializedException")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SerializedExecutionDetails")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SerializedExecutionResult")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SubmissionId")
                         .HasColumnType("int");

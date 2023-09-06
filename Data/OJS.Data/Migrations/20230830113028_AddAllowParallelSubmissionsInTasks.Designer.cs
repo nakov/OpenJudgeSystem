@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OJS.Data;
 
@@ -11,9 +12,10 @@ using OJS.Data;
 namespace OJS.Data.Migrations
 {
     [DbContext(typeof(OjsDbContext))]
-    partial class OjsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230830113028_AddAllowParallelSubmissionsInTasks")]
+    partial class AddAllowParallelSubmissionsInTasks
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -960,9 +962,6 @@ namespace OJS.Data.Migrations
                     b.Property<string>("CompilerComment")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("CompletedExecutionOn")
-                        .HasColumnType("datetime2");
-
                     b.Property<byte[]>("Content")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
@@ -1049,15 +1048,6 @@ namespace OJS.Data.Migrations
 
                     b.Property<bool>("Processing")
                         .HasColumnType("bit");
-
-                    b.Property<string>("SerializedException")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SerializedExecutionDetails")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SerializedExecutionResult")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SubmissionId")
                         .HasColumnType("int");
