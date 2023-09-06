@@ -9,8 +9,6 @@ using Models.Submissions;
 
 public interface ISubmissionsForProcessingCommonDataService : IService
 {
-    Task<SubmissionForProcessing?> GetBySubmission(int submissionId);
-
     IQueryable<SubmissionForProcessing?> GetAllPending();
 
     IQueryable<SubmissionForProcessing?> GetAllUnprocessed();

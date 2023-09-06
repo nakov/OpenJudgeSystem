@@ -4,6 +4,7 @@ namespace OJS.Services.Administration.Business.Implementations
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
     using OJS.Common;
     using OJS.Common.Helpers;
@@ -173,7 +174,7 @@ namespace OJS.Services.Administration.Business.Implementations
                         submissionProblemId);
                 }
 
-                await this.submissionsForProcessingDataService.AddOrUpdate(submission.Id);
+                await this.submissionsForProcessingDataService.AddOrUpdate(submission.Id, submission.ToJson());
                 await this.submissionsData.SaveChanges();
 
                 return ServiceResult.Success;
