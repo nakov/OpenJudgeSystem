@@ -9,6 +9,7 @@ using FluentExtensions.Extensions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Common;
 using OJS.Common.Helpers;
+using Models.Submissions;
 
 public class SubmissionsForProcessingCommonDataService : DataService<SubmissionForProcessing>, ISubmissionsForProcessingCommonDataService
 {
@@ -47,25 +48,26 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
             .MapCollection<TServiceModel>()
             .ToListAsync();
 
-    public async Task Add(int submissionId)
+    public async Task Add(int submissionId, string serializedExecutionDetails)
     {
         var submissionForProcessing = new SubmissionForProcessing
         {
             SubmissionId = submissionId,
             Processed = false,
             Processing = false,
+            SerializedExecutionDetails = serializedExecutionDetails,
         };
 
         await this.Add(submissionForProcessing);
     }
 
-    public async Task<SubmissionForProcessing> AddOrUpdate(int submissionId)
+    public async Task<SubmissionForProcessing> AddOrUpdate(int submissionId, string serializedExecutionDetails)
     {
         var entity = await this.GetBySubmission(submissionId);
 
         if (entity == null)
         {
-            await this.Add(submissionId);
+            await this.Add(submissionId, serializedExecutionDetails);
         }
 
         entity!.Processing = false;
@@ -139,9 +141,9 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
         await this.Update(submissionForProcessing);
     }
 
-    public async Task MarkProcessed(int submissionId)
+    public async Task MarkProcessedAndSerializeWorkerResult(SubmissionExecutionResultServiceModel submissionExecutionResult)
     {
-        var submissionForProcessing = await this.GetBySubmission(submissionId);
+        var submissionForProcessing = await this.GetBySubmission(submissionExecutionResult.SubmissionId);
 
         if (submissionForProcessing == null)
         {
@@ -150,6 +152,8 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
 
         submissionForProcessing.Processing = false;
         submissionForProcessing.Processed = true;
+        submissionForProcessing.SerializedException = submissionExecutionResult.Exception;
+        submissionForProcessing.SerializedExecutionResult = submissionExecutionResult.ExecutionResult;
 
         await this.Update(submissionForProcessing);
     }

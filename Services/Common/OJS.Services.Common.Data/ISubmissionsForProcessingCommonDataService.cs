@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using OJS.Data.Models.Submissions;
 using SoftUni.Services.Infrastructure;
+using Models.Submissions;
 
 public interface ISubmissionsForProcessingCommonDataService : IService
 {
@@ -20,9 +21,9 @@ public interface ISubmissionsForProcessingCommonDataService : IService
 
     Task<IEnumerable<TServiceModel>> GetAllProcessing<TServiceModel>();
 
-    Task Add(int submissionId);
+    Task Add(int submissionId, string serializedExecutionDetails);
 
-    Task<SubmissionForProcessing> AddOrUpdate(int submissionId);
+    Task<SubmissionForProcessing> AddOrUpdate(int submissionId, string serializedExecutionDetails);
 
     Task AddOrUpdateBySubmissionIds(ICollection<int> submissionIds);
 
@@ -32,7 +33,7 @@ public interface ISubmissionsForProcessingCommonDataService : IService
 
     Task MarkProcessing(int submissionId);
 
-    Task MarkProcessed(int submissionId);
+    Task MarkProcessedAndSerializeWorkerResult(SubmissionExecutionResultServiceModel submissionExecutionResult);
 
     void Clean();
 }

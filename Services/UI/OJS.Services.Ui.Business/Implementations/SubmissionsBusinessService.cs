@@ -410,6 +410,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .First(st => st.SubmissionTypeId == model.SubmissionTypeId)
             .SubmissionType;
 
+        var submissionToBePublished = this.BuildSubmissionForProcessing(newSubmission, problem, submissionType);
+
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
         if (submissionType.ExecutionStrategyType is ExecutionStrategyType.NotFound or ExecutionStrategyType.DoNothing)
         {
@@ -423,19 +425,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         await this.submissionsData.Add(newSubmission);
         await this.submissionsData.SaveChanges();
 
-        await this.submissionsForProcessingData.Add(newSubmission.Id);
+        await this.submissionsForProcessingData.Add(newSubmission.Id, submissionToBePublished.ToJson());
         await this.submissionsData.SaveChanges();
 
         scope.Complete();
         scope.Dispose();
-
-        var submissionToBePublished = this.BuildSubmissionForProcessing(newSubmission, problem, submissionType);
-        var submissionForProcessing = await this.submissionsForProcessingData.GetBySubmission(newSubmission.Id);
-        if (submissionForProcessing != null)
-        {
-            submissionForProcessing.SerializedExecutionDetails = submissionToBePublished.ToJson();
-            await this.submissionsData.SaveChanges();
-        }
 
         await this.submissionsCommonBusinessService
             .PublishSubmissionForProcessing(submissionToBePublished);
@@ -464,16 +458,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         submission.Processed = true;
         submission.ProcessingComment = null;
 
-        var submissionForProcessing = await this.submissionsForProcessingData.GetBySubmission(submission.Id);
-
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
         if (executionResult != null)
         {
-            if (submissionForProcessing != null)
-            {
-                submissionForProcessing.SerializedExecutionResult = executionResult.ToJson();
-            }
-
             ProcessTestsExecutionResult(submission, executionResult);
 
             this.submissionsData.Update(submission);
@@ -482,11 +469,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
         else
         {
-            if (submissionForProcessing != null && exception != null)
-            {
-                submissionForProcessing.SerializedException = exception.ToJson();
-            }
-
             submission.IsCompiledSuccessfully = false;
             var errorMessage = exception?.Message
                                ?? "Invalid execution result received. Please contact an administrator.";
@@ -496,7 +478,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             this.submissionsData.Update(submission);
         }
 
-        await this.submissionsForProcessingData.MarkProcessed(submission.Id);
+        await this.submissionsForProcessingData.MarkProcessedAndSerializeWorkerResult(submissionExecutionResult.Map<SubmissionExecutionResultServiceModel>());
         await this.submissionsData.SaveChanges();
 
         scope.Complete();
