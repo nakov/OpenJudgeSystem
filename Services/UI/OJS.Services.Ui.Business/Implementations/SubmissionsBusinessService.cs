@@ -431,14 +431,22 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         await this.submissionsData.Add(newSubmission);
         await this.submissionsData.SaveChanges();
 
-        await this.submissionsForProcessingData.Add(newSubmission.Id, this.BuildSubmissionForProcessing(newSubmission, problem, submissionType).ToJson());
+        await this.submissionsForProcessingData.Add(
+            newSubmission.Id,
+            this.submissionsCommonBusinessService.BuildSubmissionForProcessing(
+                newSubmission,
+                problem,
+                submissionType).ToJson());
         await this.submissionsData.SaveChanges();
 
         scope.Complete();
         scope.Dispose();
 
         await this.submissionsCommonBusinessService
-            .PublishSubmissionForProcessing(this.BuildSubmissionForProcessing(newSubmission, problem, submissionType));
+            .PublishSubmissionForProcessing(this.submissionsCommonBusinessService.BuildSubmissionForProcessing(
+                newSubmission,
+                problem,
+                submissionType));
     }
 
     public async Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult)
@@ -608,25 +616,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         {
             submission.ProcessingComment = $"Exception in CacheTestRuns: {ex.Message}";
         }
-    }
-
-    private SubmissionServiceModel BuildSubmissionForProcessing(Submission submission, Problem problem, SubmissionType submissionType)
-    {
-        // We detach the existing entity, in order to avoid tracking exception on Update.
-        this.submissionsData.Detach(submission);
-
-        // Needed to map execution details
-        submission.Problem = problem;
-        submission.SubmissionType = submissionType;
-
-        var serviceModel = submission.Map<SubmissionServiceModel>();
-
-        serviceModel.TestsExecutionDetails!.TaskSkeleton = problem.SubmissionTypesInProblems
-            .Where(x => x.SubmissionTypeId == submission.SubmissionTypeId)
-            .Select(x => x.SolutionSkeleton)
-            .FirstOrDefault();
-
-        return serviceModel;
     }
 
     private async Task AddNewDefaultProcessedSubmission(Submission submission)

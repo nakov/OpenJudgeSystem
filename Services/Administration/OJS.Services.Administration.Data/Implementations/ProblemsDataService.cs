@@ -14,6 +14,13 @@
         {
         }
 
+        public Task<Problem?> GetWithProblemGroupCheckerAndTestsById(int id)
+            => this.DbSet
+                .Include(p => p.ProblemGroup)
+                .Include(p => p.Checker)
+                .Include(p => p.Tests)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
         public Problem? GetWithProblemGroupById(int id) =>
             this.DbSet
                 .Include(p => p.ProblemGroup)
