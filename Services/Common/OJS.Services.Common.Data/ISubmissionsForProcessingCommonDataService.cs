@@ -31,7 +31,7 @@ public interface ISubmissionsForProcessingCommonDataService : IService
 
     Task MarkProcessing(int submissionId);
 
-    Task MarkProcessedAndSerializeWorkerResult(SubmissionExecutionResultServiceModel submissionExecutionResult);
+    Task MarkProcessed(SubmissionExecutionResultServiceModel submissionExecutionResult);
 
     void Clean();
 }

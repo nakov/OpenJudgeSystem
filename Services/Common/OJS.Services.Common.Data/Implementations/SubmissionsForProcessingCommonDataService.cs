@@ -141,7 +141,7 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
         await this.Update(submissionForProcessing);
     }
 
-    public async Task MarkProcessedAndSerializeWorkerResult(SubmissionExecutionResultServiceModel submissionExecutionResult)
+    public async Task MarkProcessed(SubmissionExecutionResultServiceModel submissionExecutionResult)
     {
         var submissionForProcessing = await this.GetBySubmission(submissionExecutionResult.SubmissionId);
 

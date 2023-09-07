@@ -485,7 +485,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             this.submissionsData.Update(submission);
         }
 
-        await this.submissionsForProcessingData.MarkProcessedAndSerializeWorkerResult(submissionExecutionResult.Map<SubmissionExecutionResultServiceModel>());
+        await this.submissionsForProcessingData.MarkProcessed(submissionExecutionResult.Map<SubmissionExecutionResultServiceModel>());
         await this.submissionsData.SaveChanges();
 
         scope.Complete();
