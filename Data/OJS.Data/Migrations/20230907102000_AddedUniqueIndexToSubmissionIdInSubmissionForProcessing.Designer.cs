@@ -12,7 +12,7 @@ using OJS.Data;
 namespace OJS.Data.Migrations
 {
     [DbContext(typeof(OjsDbContext))]
-    [Migration("20230905073826_AddedUniqueIndexToSubmissionIdInSubmissionForProcessing")]
+    [Migration("20230907102000_AddedUniqueIndexToSubmissionIdInSubmissionForProcessing")]
     partial class AddedUniqueIndexToSubmissionIdInSubmissionForProcessing
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
