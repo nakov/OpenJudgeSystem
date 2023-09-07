@@ -157,7 +157,14 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
             <div className={styles.strategyContainer}>
                 {renderStrategyIcon()}
             </div>
-            <div className={styles.pointsContainer}>
+            <div
+              className={styles.pointsContainer}
+              style={{
+                  marginRight: !isOfficial
+                      ? '37px'
+                      : '',
+              }}
+            >
                 {renderPoints()}
             </div>
             { isOfficial && (
