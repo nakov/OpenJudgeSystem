@@ -147,7 +147,13 @@ const getPendingSubmissionsUrl = ({ page }: IGetSubmissionsUrlParams) => {
 const getSubmissionsTotalCountUrl = () => `${baseApiUrl}/Submissions/TotalCount`;
 const getSubmissionsUnprocessedTotalCountUrl = () => `${baseApiUrl}/Submissions/UnprocessedTotalCount`;
 const getSubmissionsDetailsUrl = () => `${baseApiUrl}/Submissions/Details`;
-const getUserSubmissionsUrl = () => `${baseApiUrl}/Submissions/GetUserSubmissions`;
+const getUserSubmissionsUrl = ({ page }: IGetSubmissionsUrlParams) => {
+    const pageQuery = isNil(page)
+        ? ''
+        : `page=${page}`;
+
+    return `${baseApiUrl}/Submissions/GetUserSubmissions?${pageQuery}`;
+};
 const getSubmissionDetailsByIdUrl =
     ({ submissionId }: IGetSubmissionDetailsByIdUrlParams) => `${getSubmissionsDetailsUrl()}/${submissionId}`;
 const getSubmitUrl = () => `${baseApiUrl}/Compete/Submit`;

@@ -1,22 +1,24 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { IDictionary } from '../../../common/common-types';
+import { IPagedResultType } from '../../../common/types';
+import { IGetSubmissionsUrlParams } from '../../../common/url-types';
 import { ISubmissionResponseModel, usePublicSubmissions } from '../../../hooks/submissions/use-public-submissions';
 import { useAuth } from '../../../hooks/use-auth';
+import { useHttp } from '../../../hooks/use-http';
 import { usePages } from '../../../hooks/use-pages';
 import { format } from '../../../utils/number-utils';
+import { flexCenterObjectStyles } from '../../../utils/object-utils';
+import { getUserSubmissionsUrl } from '../../../utils/urls';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List from '../../guidelines/lists/List';
 import PaginationControls from '../../guidelines/pagination/PaginationControls';
+import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import SubmissionGridRow from '../submission-grid-row/SubmissionGridRow';
 
 import SubmissionStateLink from './SubmissionStateLink';
 
 import styles from './SubmissionsGrid.module.scss';
-import {useHttp} from "../../../hooks/use-http";
-import {IGetSubmissionsUrlParams} from "../../../common/url-types";
-import {IPagedResultType} from "../../../common/types";
-import { getUserSubmissionsUrl } from "../../../utils/urls";
 
 const selectedSubmissionsStateMapping = {
     1: 'All',
@@ -30,7 +32,6 @@ enum toggleValues {
 }
 
 const SubmissionsGrid = () => {
-    const [ userSubmissions, setUserSubmissions ] = useState<any>([]);
     const [ selectedActive, setSelectedActive ] = useState<number>(1);
     const [ activeToggleElement, setActiveToggleElement ] = useState<toggleValues>(toggleValues.allSubmissions);
 
@@ -67,14 +68,15 @@ const SubmissionsGrid = () => {
     } = usePages();
 
     const {
+        isLoading: userSubmissionsLoading,
         get: getUserSubmissions,
         data: userSubmissionsData,
     } = useHttp<
         IGetSubmissionsUrlParams,
         IPagedResultType<ISubmissionResponseModel>>({
-        url: getUserSubmissionsUrl,
-        parameters: { page: 1 }
-    });
+            url: getUserSubmissionsUrl,
+            parameters: { page: currentPage },
+        });
 
     const handlePageChange = useCallback(
         (page: number) => changePage(page),
@@ -82,14 +84,10 @@ const SubmissionsGrid = () => {
     );
 
     useEffect(() => {
-        getUserSubmissions();
-    }, []);
-
-    useEffect(() => {
-        if (activeToggleElement === toggleValues.mySubmissions) {
-            // console.log('user submissions => ', userSubmissionsData);
+        if (activeToggleElement === toggleValues.mySubmissions && !userSubmissionsData?.items) {
+            getUserSubmissions();
         }
-    }, [ activeToggleElement ]);
+    }, [ activeToggleElement, getUserSubmissions, userSubmissionsData?.items ]);
 
     const renderSubmissionRow = useCallback(
         (submission: ISubmissionResponseModel) => (
@@ -106,8 +104,8 @@ const SubmissionsGrid = () => {
         }
     }, [ clearPageValue, selectedActive ]);
 
-    const handleToggleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-        const clickedElement = e.target as HTMLDivElement;
+    const handleToggleClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+        const clickedElement = e.target as HTMLButtonElement;
         const { textContent } = clickedElement;
 
         if (textContent?.toLowerCase() === toggleValues.allSubmissions) {
@@ -115,7 +113,9 @@ const SubmissionsGrid = () => {
         } else {
             setActiveToggleElement(toggleValues.mySubmissions);
         }
-    };
+
+        changePage(1);
+    }, [ changePage ]);
 
     useEffect(
         () => {
@@ -194,43 +194,66 @@ const SubmissionsGrid = () => {
 
     const renderToggleButton = useCallback(() => (
         <div className={styles.toggleButtonWrapper}>
-            <div
-                className={`${activeToggleElement === toggleValues.allSubmissions
-                    ? styles.activeElement
-                    : ''}`}
-                onClick={(e) => handleToggleClick(e)}
+            <button
+              type="button"
+              className={`${activeToggleElement === toggleValues.allSubmissions
+                  ? styles.activeElement
+                  : ''}`}
+              onClick={(e) => handleToggleClick(e)}
             >
                 ALL SUBMISSIONS
-            </div>
-            <div
-                className={`${activeToggleElement === toggleValues.mySubmissions
-                    ? styles.activeElement
-                    : ''}`}
-                onClick={(e) => handleToggleClick(e)}
+            </button>
+            <button
+              type="button"
+              className={`${activeToggleElement === toggleValues.mySubmissions
+                  ? styles.activeElement
+                  : ''}`}
+              onClick={(e) => handleToggleClick(e)}
             >
                 MY SUBMISSIONS
-            </div>
+            </button>
         </div>
-    ), [ activeToggleElement ]);
+    ), [ activeToggleElement, handleToggleClick ]);
 
     const renderSubmissionsList = useCallback(
         () => {
-            const submissions = selectedActive === 1
+            const toggleSubmissions = activeToggleElement === toggleValues.allSubmissions
                 ? publicSubmissions
+                : userSubmissionsData?.items;
+
+            const submissions = selectedActive === 1
+                ? toggleSubmissions
                 : selectedActive === 2
                     ? unprocessedSubmissions
                     : pendingSubmissions;
 
+            if (activeToggleElement === toggleValues.mySubmissions && userSubmissionsLoading) {
+                return (
+                    <div style={{ ...flexCenterObjectStyles }}>
+                        <SpinningLoader />
+                    </div>
+                );
+            }
+
             return (
                 <List
-                  values={submissions}
+                  values={submissions || []}
                   itemFunc={renderSubmissionRow}
                   itemClassName={styles.submissionRow}
                   fullWidth
                 />
             );
         },
-        [ pendingSubmissions, publicSubmissions, renderSubmissionRow, selectedActive, unprocessedSubmissions ],
+        [
+            activeToggleElement,
+            publicSubmissions,
+            userSubmissionsData?.items,
+            selectedActive,
+            unprocessedSubmissions,
+            pendingSubmissions,
+            userSubmissionsLoading,
+            renderSubmissionRow,
+        ],
     );
 
     return (
