@@ -9,7 +9,7 @@ namespace OJS.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateIndex(
-                name: "SubmissionsForProcessing_SubmissionId",
+                name: "IX_SubmissionsForProcessing_SubmissionId",
                 table: "SubmissionsForProcessing",
                 column: "SubmissionId",
                 unique: true);
@@ -18,7 +18,7 @@ namespace OJS.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropIndex(
-                name: "SubmissionsForProcessing_SubmissionId",
+                name: "IX_SubmissionsForProcessing_SubmissionId",
                 table: "SubmissionsForProcessing");
         }
     }
