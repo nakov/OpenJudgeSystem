@@ -4,20 +4,20 @@ using AutoMapper;
 using FluentExtensions.Extensions;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
-public class SubmissionExecutionResultServiceModel : IMapExplicitly
+public class SerializedSubmissionExecutionResultServiceModel : IMapExplicitly
 {
     public int SubmissionId { get; set; }
 
-    public string? Exception { get; set; }
+    public string? SerializedException { get; set; }
 
-    public string? ExecutionResult { get; set; }
+    public string? SerializedExecutionResult { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
-        => configuration.CreateMap<SubmissionExecutionResult, SubmissionExecutionResultServiceModel>()
+        => configuration.CreateMap<SubmissionExecutionResult, SerializedSubmissionExecutionResultServiceModel>()
             .ForMember(
-                d => d.Exception,
+                d => d.SerializedException,
                 opt => opt.MapFrom(s => s.Exception == null ? null : s.Exception.ToJson()))
             .ForMember(
-                d => d.ExecutionResult,
+                d => d.SerializedExecutionResult,
                 opt => opt.MapFrom(s => s.ExecutionResult == null ? null : s.ExecutionResult.ToJson()));
 }

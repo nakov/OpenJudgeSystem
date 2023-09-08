@@ -156,6 +156,7 @@ namespace OJS.Services.Administration.Business.Implementations
         {
             var submissionProblemId = submission.ProblemId!.Value;
             var submissionParticipantId = submission.ParticipantId!.Value;
+            var submissionServiceModel = submission.Map<SubmissionServiceModel>();
 
             var result = await this.transactions.ExecuteInTransaction(async () =>
             {
@@ -174,7 +175,7 @@ namespace OJS.Services.Administration.Business.Implementations
                         submissionProblemId);
                 }
 
-                var serializedExecutionDetails = submission.Map<SubmissionServiceModel>().ToJson();
+                var serializedExecutionDetails = submissionServiceModel.ToJson();
 
                 await this.submissionsForProcessingDataService.AddOrUpdate(submission.Id, serializedExecutionDetails);
                 await this.submissionsData.SaveChanges();
@@ -182,7 +183,7 @@ namespace OJS.Services.Administration.Business.Implementations
                 return ServiceResult.Success;
             });
 
-            await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submission.Map<SubmissionServiceModel>());
+            await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submissionServiceModel);
 
             return result;
         }

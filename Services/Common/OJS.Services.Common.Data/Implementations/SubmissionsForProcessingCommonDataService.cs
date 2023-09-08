@@ -141,7 +141,7 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
         await this.Update(submissionForProcessing);
     }
 
-    public async Task MarkProcessed(SubmissionExecutionResultServiceModel submissionExecutionResult)
+    public async Task MarkProcessed(SerializedSubmissionExecutionResultServiceModel submissionExecutionResult)
     {
         var submissionForProcessing = await this.GetBySubmission(submissionExecutionResult.SubmissionId);
 
@@ -152,8 +152,8 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
 
         submissionForProcessing.Processing = false;
         submissionForProcessing.Processed = true;
-        submissionForProcessing.SerializedException = submissionExecutionResult.Exception;
-        submissionForProcessing.SerializedExecutionResult = submissionExecutionResult.ExecutionResult;
+        submissionForProcessing.SerializedException = submissionExecutionResult.SerializedException;
+        submissionForProcessing.SerializedExecutionResult = submissionExecutionResult.SerializedExecutionResult;
 
         await this.Update(submissionForProcessing);
     }
