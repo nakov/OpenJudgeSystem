@@ -1,15 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { IDictionary } from '../../../common/common-types';
-import { IPagedResultType } from '../../../common/types';
-import { IGetSubmissionsUrlParams } from '../../../common/url-types';
 import { ISubmissionResponseModel, usePublicSubmissions } from '../../../hooks/submissions/use-public-submissions';
 import { useAuth } from '../../../hooks/use-auth';
-import { useHttp } from '../../../hooks/use-http';
 import { usePages } from '../../../hooks/use-pages';
 import { format } from '../../../utils/number-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import { getUserSubmissionsUrl } from '../../../utils/urls';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List from '../../guidelines/lists/List';
 import PaginationControls from '../../guidelines/pagination/PaginationControls';
@@ -37,6 +33,8 @@ const SubmissionsGrid = () => {
 
     const {
         state: {
+            userSubmissions,
+            userSubmissionsLoading,
             publicSubmissions,
             unprocessedSubmissions,
             pendingSubmissions,
@@ -47,6 +45,7 @@ const SubmissionsGrid = () => {
             initiatePublicSubmissionsQuery,
             initiateUnprocessedSubmissionsQuery,
             initiatePendingSubmissionsQuery,
+            initiateUserSubmissionsQuery,
         },
     } = usePublicSubmissions();
 
@@ -67,27 +66,10 @@ const SubmissionsGrid = () => {
         clearPageValue,
     } = usePages();
 
-    const {
-        isLoading: userSubmissionsLoading,
-        get: getUserSubmissions,
-        data: userSubmissionsData,
-    } = useHttp<
-        IGetSubmissionsUrlParams,
-        IPagedResultType<ISubmissionResponseModel>>({
-            url: getUserSubmissionsUrl,
-            parameters: { page: currentPage },
-        });
-
     const handlePageChange = useCallback(
         (page: number) => changePage(page),
         [ changePage ],
     );
-
-    useEffect(() => {
-        if (activeToggleElement === toggleValues.mySubmissions && !userSubmissionsData?.items) {
-            getUserSubmissions();
-        }
-    }, [ activeToggleElement, getUserSubmissions, userSubmissionsData?.items ]);
 
     const renderSubmissionRow = useCallback(
         (submission: ISubmissionResponseModel) => (
@@ -95,6 +77,12 @@ const SubmissionsGrid = () => {
         ),
         [],
     );
+
+    useEffect(() => {
+        if (activeToggleElement === toggleValues.mySubmissions) {
+            initiateUserSubmissionsQuery();
+        }
+    }, [ activeToggleElement, initiateUserSubmissionsQuery ]);
 
     const handleSelectSubmissionType = useCallback((typeKey: number) => {
         if (selectedActive) {
@@ -119,13 +107,14 @@ const SubmissionsGrid = () => {
 
     useEffect(
         () => {
-            if (totalSubmissionsCount === 0) {
+            if (totalSubmissionsCount === 0 || activeToggleElement === toggleValues.mySubmissions) {
                 return;
             }
 
             selectedSubmissionStateToRequestMapping[selectedActive]();
         },
         [
+            activeToggleElement,
             initiatePendingSubmissionsQuery,
             initiatePublicSubmissionsQuery,
             initiateUnprocessedSubmissionsQuery,
@@ -219,7 +208,7 @@ const SubmissionsGrid = () => {
         () => {
             const toggleSubmissions = activeToggleElement === toggleValues.allSubmissions
                 ? publicSubmissions
-                : userSubmissionsData?.items;
+                : userSubmissions;
 
             const submissions = selectedActive === 1
                 ? toggleSubmissions
@@ -247,7 +236,7 @@ const SubmissionsGrid = () => {
         [
             activeToggleElement,
             publicSubmissions,
-            userSubmissionsData?.items,
+            userSubmissions,
             selectedActive,
             unprocessedSubmissions,
             pendingSubmissions,
