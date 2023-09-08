@@ -11,6 +11,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Problems;
+    using OJS.Services.Common.Data;
     using OJS.Services.Common.Models;
     using OJS.Services.Infrastructure.Exceptions;
     using OJS.Services.Ui.Data;
@@ -28,7 +29,7 @@ namespace OJS.Services.Ui.Business.Implementations
         private readonly IProblemsDataService problemsData;
         private readonly IProblemResourcesDataService problemResourcesData;
         private readonly ISubmissionsDataService submissionsData;
-        private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
+        private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
         private readonly ITestRunsDataService testRunsData;
         private readonly ISubmissionTypesDataService submissionTypesData;
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
@@ -41,7 +42,7 @@ namespace OJS.Services.Ui.Business.Implementations
             IProblemsDataService problemsData,
             IProblemResourcesDataService problemResourcesData,
             ISubmissionsDataService submissionsData,
-            ISubmissionsForProcessingDataService submissionsForProcessingData,
+            ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
             ITestRunsDataService testRunsData,
             ISubmissionTypesDataService submissionTypesData,
             IProblemGroupsBusinessService problemGroupsBusiness,

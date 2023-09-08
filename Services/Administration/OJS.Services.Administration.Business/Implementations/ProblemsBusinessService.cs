@@ -10,6 +10,7 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Data.Models.Problems;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models.Contests.Problems;
+    using OJS.Services.Common.Data;
     using OJS.Services.Common.Models;
     using OJS.Services.Infrastructure.Exceptions;
     using IsolationLevel = System.Transactions.IsolationLevel;
@@ -23,7 +24,7 @@ namespace OJS.Services.Administration.Business.Implementations
         private readonly IProblemsDataService problemsData;
         private readonly IProblemResourcesDataService problemResourcesData;
         private readonly ISubmissionsDataService submissionsData;
-        private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
+        private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
         private readonly ITestRunsDataService testRunsData;
         private readonly ISubmissionTypesDataService submissionTypesData;
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
@@ -36,7 +37,7 @@ namespace OJS.Services.Administration.Business.Implementations
             IProblemsDataService problemsData,
             IProblemResourcesDataService problemResourcesData,
             ISubmissionsDataService submissionsData,
-            ISubmissionsForProcessingDataService submissionsForProcessingData,
+            ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
             ITestRunsDataService testRunsData,
             ISubmissionTypesDataService submissionTypesData,
             IProblemGroupsBusinessService problemGroupsBusiness,
@@ -76,8 +77,6 @@ namespace OJS.Services.Administration.Business.Implementations
                 this.submissionsData.SetAllToUnprocessedByProblem(id);
 
                 await this.submissionsForProcessingData.AddOrUpdateBySubmissionIds(submissionIds);
-
-                // TODO: Publish submissions for processing
 
                 scope.Complete();
             }
