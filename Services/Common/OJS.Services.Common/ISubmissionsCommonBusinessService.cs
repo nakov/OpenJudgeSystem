@@ -9,6 +9,4 @@ using OJS.Data.Models.Submissions;
 public interface ISubmissionsCommonBusinessService : IService
 {
     Task PublishSubmissionForProcessing(SubmissionServiceModel submission);
-
-    SubmissionServiceModel BuildSubmissionForProcessing(Submission submission, Problem problem, SubmissionType submissionType);
 }

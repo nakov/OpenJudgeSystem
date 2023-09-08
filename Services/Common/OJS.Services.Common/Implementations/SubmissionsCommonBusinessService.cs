@@ -43,23 +43,4 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
             throw;
         }
     }
-
-    public SubmissionServiceModel BuildSubmissionForProcessing(Submission submission, Problem problem, SubmissionType submissionType)
-    {
-        // We detach the existing entity, in order to avoid tracking exception on Update.
-        this.dataService.Detach(submission);
-
-        // Needed to map execution details
-        submission.Problem = problem;
-        submission.SubmissionType = submissionType;
-
-        var serviceModel = submission.Map<SubmissionServiceModel>();
-
-        serviceModel.TestsExecutionDetails!.TaskSkeleton = problem.SubmissionTypesInProblems
-            .Where(x => x.SubmissionTypeId == submission.SubmissionTypeId)
-            .Select(x => x.SolutionSkeleton)
-            .FirstOrDefault();
-
-        return serviceModel;
-    }
 }

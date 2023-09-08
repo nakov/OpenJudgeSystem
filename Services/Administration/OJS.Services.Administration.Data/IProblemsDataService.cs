@@ -22,7 +22,5 @@
         Task<double> GetNewOrderByProblemGroup(int problemGroupId);
 
         string? GetNameById(int id);
-
-        Task<Problem?> GetWithProblemGroupCheckerAndTestsById(int id);
     }
 }

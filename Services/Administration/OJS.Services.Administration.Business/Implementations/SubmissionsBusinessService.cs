@@ -16,7 +16,6 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Services.Common.Models;
     using OJS.Services.Common.Models.Submissions.ExecutionContext;
     using OJS.Services.Infrastructure;
-    using OJS.Services.Infrastructure.Exceptions;
     using OJS.Workers.Common.Models;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.Data.Infrastructure;
@@ -30,7 +29,6 @@ namespace OJS.Services.Administration.Business.Implementations
         private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
         private readonly ITransactionsProvider transactions;
         private readonly IDatesService dates;
-        private readonly IProblemsDataService problemsDataService;
 
         public SubmissionsBusinessService(
             ISubmissionsDataService submissionsData,
@@ -40,8 +38,7 @@ namespace OJS.Services.Administration.Business.Implementations
             IParticipantScoresBusinessService participantScoresBusinessService,
             ISubmissionPublisherService submissionPublisherService,
             IDatesService dates,
-            ISubmissionsCommonBusinessService submissionsCommonBusinessService,
-            IProblemsDataService problemsDataService)
+            ISubmissionsCommonBusinessService submissionsCommonBusinessService)
         {
             this.submissionsData = submissionsData;
             // this.archivedSubmissionsData = archivedSubmissionsData;
@@ -51,7 +48,6 @@ namespace OJS.Services.Administration.Business.Implementations
             this.participantScoresBusinessService = participantScoresBusinessService;
             this.dates = dates;
             this.submissionsCommonBusinessService = submissionsCommonBusinessService;
-            this.problemsDataService = problemsDataService;
         }
 
         public Task<IQueryable<Submission>> GetAllForArchiving()
@@ -161,16 +157,6 @@ namespace OJS.Services.Administration.Business.Implementations
             var submissionProblemId = submission.ProblemId!.Value;
             var submissionParticipantId = submission.ParticipantId!.Value;
 
-            var problem = await this.problemsDataService.GetWithProblemGroupCheckerAndTestsById(submissionProblemId);
-            if (problem == null)
-            {
-                throw new BusinessServiceException("Problem cannot be null");
-            }
-
-            var submissionType = problem.SubmissionTypesInProblems
-                .First(st => st.SubmissionTypeId == submission.SubmissionTypeId)
-                .SubmissionType;
-
             var result = await this.transactions.ExecuteInTransaction(async () =>
             {
                 submission.Processed = false;
@@ -188,15 +174,9 @@ namespace OJS.Services.Administration.Business.Implementations
                         submissionProblemId);
                 }
 
-                var submissionForProcessing = this.submissionsCommonBusinessService.BuildSubmissionForProcessing(
-                    submission,
-                    problem,
-                    submissionType);
+                var serializedExecutionDetails = submission.Map<SubmissionServiceModel>().ToJson();
 
-                await this.submissionsForProcessingDataService
-                    .AddOrUpdate(
-                        submission.Id,
-                        submissionForProcessing.ToJson());
+                await this.submissionsForProcessingDataService.AddOrUpdate(submission.Id, serializedExecutionDetails);
                 await this.submissionsData.SaveChanges();
 
                 return ServiceResult.Success;
