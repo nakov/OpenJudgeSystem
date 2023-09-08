@@ -10,10 +10,8 @@
       <ProjectReference Include="..\..\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj" />
       <ProjectReference Include="..\OJS.Services.Administration.Data\OJS.Services.Administration.Data.csproj" />
       <ProjectReference Include="..\OJS.Services.Administration.Models\OJS.Services.Administration.Models.csproj" />
-    </ItemGroup>
+      <ProjectReference Include="..\..\..\AutoCrudAdmin\src\AutoCrudAdmin\AutoCrudAdmin.csproj" />
 
-    <ItemGroup>
-      <PackageReference Include="AutoCrudAdmin" Version="1.1.26" />
     </ItemGroup>
 
 </Project>

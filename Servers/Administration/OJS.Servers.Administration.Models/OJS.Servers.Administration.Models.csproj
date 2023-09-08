@@ -9,6 +9,7 @@
     </ItemGroup>
     
     <ItemGroup>
+      <ProjectReference Include="..\..\..\AutoCrudAdmin\src\AutoCrudAdmin\AutoCrudAdmin.csproj" />
       <ProjectReference Include="..\..\..\Data\OJS.Data.Models\OJS.Data.Models.csproj" />
       <ProjectReference Include="..\..\..\Services\Administration\OJS.Services.Administration.Models\OJS.Services.Administration.Models.csproj" />
     </ItemGroup>
