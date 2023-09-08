@@ -134,9 +134,10 @@
   border: 2px solid;
   font-size: 16px;
   padding: 1rem;
-  border-color: colors.$background-color-btn-primary;
+  border-color: colors.$warning-color;
   border-radius: 12px;
-  background-color: colors.$background-color-btn-primary;
+  background-color: colors.$warning-color;
   font-family: fonts.$font-family-lato;
   margin-bottom: 1rem;
+  color: white;
 }

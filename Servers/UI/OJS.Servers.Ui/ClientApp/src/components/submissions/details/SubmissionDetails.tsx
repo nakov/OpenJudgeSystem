@@ -354,6 +354,9 @@ const SubmissionDetails = () => {
                         {problemNameHeadingText}
                     </div>
                 </Heading>
+                <div>
+                    {renderTestsChangeMessage()}
+                </div>
                 {currentSubmission?.submissionType.allowBinaryFilesUpload
                     ? (
                         <div className={styles.resourceWrapper}>
@@ -378,6 +381,7 @@ const SubmissionDetails = () => {
             renderDownloadErrorMessage,
             currentSubmission,
             setSubmissionAndStartParticipation,
+            renderTestsChangeMessage,
         ],
     );
 
@@ -434,9 +438,6 @@ const SubmissionDetails = () => {
 
     return (
         <>
-            <div>
-                {renderTestsChangeMessage()}
-            </div>
             <div className={styles.detailsWrapper}>
                 {refreshableSubmissionsList()}
                 {codeEditor()}
