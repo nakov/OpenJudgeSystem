@@ -3,12 +3,15 @@ namespace OJS.Servers.Infrastructure.Extensions
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Net;
     using System.Net.Http;
     using System.Reflection;
+    using System.Security.Claims;
     using System.Threading.Tasks;
     using Hangfire;
     using Hangfire.SqlServer;
+    using MassTransit;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.DataProtection;
@@ -18,21 +21,27 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Net.Http.Headers;
     using Microsoft.OpenApi.Models;
     using OJS.Common.Enumerations;
     using OJS.Common.Utils;
+    using OJS.Services.Common;
     using OJS.Services.Common.Data;
     using OJS.Services.Common.Data.Implementations;
+    using OJS.Services.Common.Implementations;
+    using OJS.Services.Common.Models.Configurations;
     using OJS.Services.Infrastructure.Cache;
     using OJS.Services.Infrastructure.Cache.Implementations;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Infrastructure.HttpClients.Implementations;
+    using OJS.Workers.SubmissionProcessors.Formatters;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.Data.Infrastructure.Enumerations;
     using SoftUni.Data.Infrastructure.Extensions;
     using SoftUni.Services.Infrastructure.Extensions;
+    using StackExchange.Redis;
     using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.EnvironmentVariables;
     using static OJS.Common.GlobalConstants.FileExtensions;
@@ -145,26 +154,85 @@ namespace OJS.Servers.Infrastructure.Extensions
                     }
                 });
 
-        public static IServiceCollection AddDistributedCaching<TStartup>(this IServiceCollection services)
+        public static IServiceCollection AddDistributedCaching(
+            this IServiceCollection services)
+            => services.AddRedis(ApplicationFullName);
+
+        public static IServiceCollection AddDistributedCaching(
+            this IServiceCollection services,
+            string instanceName)
+            => services.AddRedis(instanceName);
+
+        public static IServiceCollection AddMessageQueue<TStartup>(
+            this IServiceCollection services,
+            IConfiguration configuration)
         {
-            EnvironmentUtils.ValidateEnvironmentVariableExists(
-                new[] { RedisConnectionString });
+            services.AddTransient<IPublisherService, PublisherService>();
 
-            services.AddSingleton<ICacheService, CacheService>();
+            var consumers = typeof(TStartup).Assembly
+                .GetExportedTypes()
+                .Where(t => typeof(IConsumer).IsAssignableFrom(t))
+                .ToList();
 
-            return services.AddStackExchangeRedisCache(options =>
+            var messageQueueConfig = configuration.GetSection(nameof(MessageQueueConfig)).Get<MessageQueueConfig>();
+
+            services.AddMassTransit(config =>
             {
-                options.Configuration = EnvironmentUtils.GetByKey(RedisConnectionString);
-                options.InstanceName = typeof(TStartup).FullName;
+                consumers.ForEach(consumer => config
+                    .AddConsumer(consumer)
+                    .Endpoint(endpointConfig =>
+                    {
+                        endpointConfig.Name = consumer.Name;
+                        if (endpointConfig is IRabbitMqReceiveEndpointConfigurator configurator)
+                        {
+                            configurator.Durable = true;
+                        }
+                    }));
+
+                config.UsingRabbitMq((context, rmq) =>
+                {
+                    rmq.Host(messageQueueConfig.Host, messageQueueConfig.VirtualHost, h =>
+                    {
+                        h.Username(messageQueueConfig.User);
+                        h.Password(messageQueueConfig.Password);
+                    });
+
+                    consumers.ForEach(consumer => rmq.ReceiveEndpoint(consumer.FullName!, endpoint =>
+                    {
+                        if (messageQueueConfig.PrefetchCount.HasValue)
+                        {
+                            endpoint.PrefetchCount = messageQueueConfig.PrefetchCount.Value;
+                        }
+
+                        endpoint.UseMessageRetry(retry =>
+                            retry.Interval(messageQueueConfig.RetryCount, messageQueueConfig.RetryInterval));
+
+                        endpoint.ConfigureConsumer(context, consumer);
+                    }));
+                });
             });
+
+            return services;
         }
+
+        public static IServiceCollection AddSoftUniJudgeCommonServices(this IServiceCollection services)
+        {
+            services.AddFrom(typeof(IFormatterServiceFactory).Assembly);
+
+            return services;
+        }
+
+        public static IServiceCollection AddHttpContextServices(this IServiceCollection services)
+            => services
+                .AddHttpContextAccessor()
+                .AddTransient(s =>
+                    s.GetRequiredService<IHttpContextAccessor>().HttpContext?.User ?? new ClaimsPrincipal());
 
         private static IServiceCollection AddWebServerServices<TStartUp>(this IServiceCollection services)
         {
             services
                 .AddConventionServices<TStartUp>()
-                .AddTransient(typeof(IDataService<>), typeof(DataService<>))
-                .AddHttpContextServices();
+                .AddTransient(typeof(IDataService<>), typeof(DataService<>));
 
             services.AddHttpClient<IHttpClientService, HttpClientService>(ConfigureHttpClient);
             services.AddHttpClient<ISulsPlatformHttpClientService, SulsPlatformHttpClientService>(ConfigureHttpClient);
@@ -173,10 +241,23 @@ namespace OJS.Servers.Infrastructure.Extensions
             return services;
         }
 
-        private static IServiceCollection AddHttpContextServices(this IServiceCollection services)
-            => services
-                .AddHttpContextAccessor()
-                .AddTransient(s => s.GetRequiredService<IHttpContextAccessor>().HttpContext!.User);
+        private static IServiceCollection AddRedis(this IServiceCollection services, string instanceName)
+        {
+            EnvironmentUtils.ValidateEnvironmentVariableExists(
+                new[] { RedisConnectionString });
+
+            var redisConnectionString = EnvironmentUtils.GetRequiredByKey(RedisConnectionString);
+            var redisConnection = ConnectionMultiplexer.Connect(redisConnectionString);
+
+            services.AddSingleton<IConnectionMultiplexer>(redisConnection);
+            services.AddSingleton<ICacheService, CacheService>();
+
+            return services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = redisConnectionString;
+                options.InstanceName = $"{instanceName}:";
+            });
+        }
 
         private static void ConfigureHttpClient(HttpClient client)
             => client.DefaultRequestHeaders.Add(HeaderNames.Accept, MimeTypes.ApplicationJson);

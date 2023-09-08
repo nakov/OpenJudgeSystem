@@ -10,30 +10,34 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Data.Models.Submissions;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models;
+    using OJS.Services.Common;
+    using OJS.Services.Common.Data;
     using OJS.Services.Common.Models;
+    using OJS.Services.Common.Models.Submissions.ExecutionContext;
     using OJS.Services.Infrastructure;
+    using OJS.Workers.Common.Models;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.Data.Infrastructure;
-    using SoftUni.Judge.Common.Enumerations;
 
     public class SubmissionsBusinessService : ISubmissionsBusinessService
     {
         private readonly ISubmissionsDataService submissionsData;
-        private readonly ISubmissionsForProcessingDataService submissionsForProcessingDataService;
-        // private readonly IArchivedSubmissionsDataService archivedSubmissionsData;
+        private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingDataService;
         private readonly IParticipantScoresDataService participantScoresData;
-        private readonly ITransactionsProvider transactions;
         private readonly IParticipantScoresBusinessService participantScoresBusinessService;
-        private readonly Business.ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
+        private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
+        private readonly ITransactionsProvider transactions;
         private readonly IDatesService dates;
 
         public SubmissionsBusinessService(
             ISubmissionsDataService submissionsData,
             IParticipantScoresDataService participantScoresData,
             ITransactionsProvider transactions,
-            ISubmissionsForProcessingDataService submissionsForProcessingDataService,
+            ISubmissionsForProcessingCommonDataService submissionsForProcessingDataService,
             IParticipantScoresBusinessService participantScoresBusinessService,
-            Business.ISubmissionsDistributorCommunicationService submissionsDistributorCommunication,
-            IDatesService dates)
+            ISubmissionPublisherService submissionPublisherService,
+            IDatesService dates,
+            ISubmissionsCommonBusinessService submissionsCommonBusinessService)
         {
             this.submissionsData = submissionsData;
             // this.archivedSubmissionsData = archivedSubmissionsData;
@@ -41,8 +45,8 @@ namespace OJS.Services.Administration.Business.Implementations
             this.transactions = transactions;
             this.submissionsForProcessingDataService = submissionsForProcessingDataService;
             this.participantScoresBusinessService = participantScoresBusinessService;
-            this.submissionsDistributorCommunication = submissionsDistributorCommunication;
             this.dates = dates;
+            this.submissionsCommonBusinessService = submissionsCommonBusinessService;
         }
 
         public Task<IQueryable<Submission>> GetAllForArchiving()
@@ -157,8 +161,6 @@ namespace OJS.Services.Administration.Business.Implementations
                 submission.Processed = false;
                 submission.ModifiedOn = this.dates.GetUtcNow();
 
-                await this.submissionsForProcessingDataService.AddOrUpdateBySubmission(submission.Id);
-
                 var submissionIsBestSubmission = await this.IsBestSubmission(
                     submissionProblemId,
                     submissionParticipantId,
@@ -171,17 +173,13 @@ namespace OJS.Services.Administration.Business.Implementations
                         submissionProblemId);
                 }
 
+                await this.submissionsForProcessingDataService.AddOrUpdate(submission.Id);
                 await this.submissionsData.SaveChanges();
-
-                var response = await this.submissionsDistributorCommunication.AddSubmissionForProcessing(submission);
-
-                if (!response.IsSuccess && !string.IsNullOrEmpty(response.ErrorMessage))
-                {
-                    return new ServiceResult(response.ErrorMessage);
-                }
 
                 return ServiceResult.Success;
             });
+
+            await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submission.Map<SubmissionServiceModel>());
 
             return result;
         }
@@ -192,29 +190,5 @@ namespace OJS.Services.Administration.Business.Implementations
 
             return bestScore?.SubmissionId == submissionId;
         }
-
-        // public async Task HardDeleteAllArchived() =>
-        //     (await this.archivedSubmissionsData
-        //         .GetAllUndeletedFromMainDatabase())
-        //         .Select(s => s.Id)
-        //         .AsEnumerable()
-        //         .ChunkBy(GlobalConstants.BatchOperationsChunkSize)
-        //         .ForEach(submissionIds =>
-        //             this.HardDeleteByArchivedIds(new HashSet<int>(submissionIds)));
-
-        // private Task HardDeleteByArchivedIds(ICollection<int> ids)
-        // {
-        //     using (var scope = TransactionsHelper.CreateTransactionScope(IsolationLevel.ReadCommitted))
-        //     {
-        //         this.participantScoresData.RemoveSubmissionIdsBySubmissionIds(ids);
-        //         this.submissionsData.Delete(s => ids.Contains(s.Id));
-        //
-        //         this.archivedSubmissionsData.SetToHardDeletedFromMainDatabaseByIds(ids);
-        //
-        //         scope.Complete();
-        //     }
-        //
-        //     return Task.CompletedTask;
-        // }
     }
 }

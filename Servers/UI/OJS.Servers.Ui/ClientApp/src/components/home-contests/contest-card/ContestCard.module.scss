@@ -15,32 +15,36 @@
   flex-flow: wrap;
   grid-gap: 10px;
   grid-template-rows: auto 2fr auto;
-  margin: 10px;
-  min-height: 10vh;
+  height: 180px;
+  justify-content: center;
+  margin: 15px;
   min-width: 240px;
-  padding: 0.7vw;
-  width: 13vw;
-
-  @media only screen and (max-width: variables.$r-laptop-max) {
-    margin-left: auto;
-    margin-right: auto;
-  }
+  padding: 10px;
+  width: 220px;
 }
 
 .tooltip {
-  max-width: 245px;
+  max-width: 255px;
+  opacity: 0;
   position: absolute;
-  visibility: hidden;
+  transition: all 0.2s ease-in-out;
   width: 100%;
 
   .tooltipText {
+    background-color: #fff;
+    border: 2px solid colors.$light-blue-color;
+    border-radius: 4px;
     bottom: 100%;
-    font-size: 15px;
+    display: block;
+    font-size: 20px;
+    height: auto;
+    margin: -10px;
     overflow: hidden;
-    padding: 5px 0;
-    position: absolute;
+    padding: 10px;
     text-align: left;
-    white-space: nowrap;
+    transition: all 0.2s ease-in-out;
+    white-space: normal;
+    width: 80%;
   }
 }
 
@@ -54,11 +58,37 @@
   font-weight: 500;
   justify-content: space-between;
   margin: 10px;
-  min-height: 4vh;
+}
 
+.contestCardTitle {
+  display: block;
+  font-size: variables.$f-size-20;
+  max-height: 40px;
+  max-width: 200px;
+  overflow: hidden;
+  padding-bottom: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+
+  @media only screen and (max-width: variables.$r-small-desktop-max) {
+    font-size: variables.$f-size-18;
+  }
+}
+
+.contestTitleHoverable {
   &:hover {
     .tooltip {
-      visibility: visible;
+      cursor: auto;
+      opacity: 1;
+    }
+
+    .tooltipText {
+      display: block;
+    }
+
+    .contestCardTitle {
+      visibility: hidden;
     }
   }
 }
@@ -67,7 +97,8 @@
   align-items: flex-end;
   display: flex;
   grid-gap: 10px;
-  justify-content: center;
+  justify-content: space-between;
+  padding: 0 10px;
 }
 
 .contestCardCountdown {
@@ -79,22 +110,28 @@
 
 .contestCardCategoryLabel {
   color: colors.$text-light-gray-color;
-  font-size: variables.$f-size-10;
+  font-size: variables.$f-size-14;
   font-weight: bold;
   margin-left: 10px;
   text-transform: uppercase;
 }
 
-.contestCardTitle {
-  display: block;
-  font-size: variables.$f-size-20;
-  max-width: 11vw;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
+@media (max-width: 950px) {
+  .contestCard {
+    width: 320px;
+  }
 
-  @media only screen and (max-width: variables.$r-small-desktop-max) {
-    font-size: variables.$f-size-18;
+  .tooltipText {
+    width: 111% !important;
+  }
+}
+
+@media (max-width: 710px) {
+  .contestCard {
+    width: 250px;
+  }
+
+  .tooltipText {
+    width: 80%;
   }
 }

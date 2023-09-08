@@ -37,10 +37,13 @@ interface ISubmissionType {
     createdOn: Date;
     modifiedOn?: Date;
     startedExecutionOn?: Date;
+    completedExecutionOn?: Date;
 }
 
 interface ITestRunDetailsType extends ITestRunType {
     isTrialTest: boolean;
+    input: string;
+    showInput: boolean;
 }
 
 interface ISubmissionDetailsType extends ISubmissionType {

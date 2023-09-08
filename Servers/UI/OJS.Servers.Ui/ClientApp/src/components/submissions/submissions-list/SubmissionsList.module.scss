@@ -32,10 +32,11 @@
 }
 
 .actionsContainer {
-  align-items: center;
-  display: inline-flex;
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
   gap: 5px;
-  justify-content: space-between;
+  justify-content: center;
   width: 100%;
 }
 
@@ -53,6 +54,13 @@
   color: colors.$text-dark-gray-color;
   font-family: Lato, serif;
   font-size: variables.$f-size-14;
+}
+
+.submissionDetailsButtonsWrapper {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+  width: 100%;
 }
 
 .submissionTypeText {

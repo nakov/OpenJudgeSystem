@@ -4,14 +4,15 @@
     using AutoMapper;
     using FluentExtensions.Extensions;
     using OJS.Servers.Worker.Models.ExecutionContext.ExecutionDetails;
-    using OJS.Services.Worker.Models.ExecutionContext;
-    using OJS.Services.Worker.Models.ExecutionContext.Mapping;
+    using OJS.Services.Common.Models.Submissions.ExecutionContext;
     using SoftUni.AutoMapper.Infrastructure.Models;
 
     public abstract class SubmissionBaseRequestModel<TSubmissionRequestModel, TExecutionDetails>
         : IMapExplicitly
         where TSubmissionRequestModel : SubmissionBaseRequestModel<TSubmissionRequestModel, TExecutionDetails>
     {
+        public int Id { get; set; }
+
         [Required]
         public string? ExecutionType { get; set; }
 
@@ -36,21 +37,24 @@
             var mapping = configuration
                 .CreateMap<TSubmissionRequestModel, SubmissionServiceModel>()
                 .ForMember(
-                    m => m.ExecutionType,
-                    opt => opt.MapFrom<ExecutionTypeMemberValueResolver, string>(src =>
-                        src.ExecutionType!))
-                .ForMember(
-                    m => m.ExecutionStrategyType,
-                    opt => opt.MapFrom<ExecutionStrategyMemberValueResolver, string>(src =>
-                        src.ExecutionStrategy!))
+                    m => m.ExecutionStrategy,
+                    opt => opt.MapFrom(src => src.ExecutionStrategy))
                 .ForMember(
                     m => m.SimpleExecutionDetails,
                     opt => opt.MapFrom(src =>
-                        (src.ExecutionDetails!.ToString() ?? string.Empty).FromJson<SimpleExecutionDetailsRequestModel>()))
+                        (src.ExecutionDetails!.ToString() ?? string.Empty)
+                        .FromJson<SimpleExecutionDetailsRequestModel>()))
                 .ForMember(
                     m => m.TestsExecutionDetails,
                     opt => opt.MapFrom(src =>
-                        (src.ExecutionDetails!.ToString() ?? string.Empty).FromJson<TestsExecutionDetailsRequestModel>()));
+                        (src.ExecutionDetails!.ToString() ?? string.Empty)
+                        .FromJson<TestsExecutionDetailsRequestModel>()))
+                .ForMember(
+                    m => m.ExecutionOptions,
+                    opt => opt.Ignore())
+                .ForMember(
+                    m => m.StartedExecutionOn,
+                    opt => opt.Ignore());
 
             this.MapAdditionalMembers(mapping);
         }

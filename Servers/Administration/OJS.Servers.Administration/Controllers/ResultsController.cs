@@ -1,8 +1,7 @@
 namespace OJS.Servers.Administration.Controllers;
 
 using Microsoft.AspNetCore.Mvc;
-using NPOI.HSSF.UserModel;
-using NPOI.SS.UserModel;
+using ClosedXML.Excel;
 using OJS.Common;
 using OJS.Common.Extensions;
 using OJS.Servers.Administration.Models.Contests;
@@ -31,7 +30,6 @@ public class ResultsController : BaseAdminViewController
         this.contestResultsAggregator = contestResultsAggregator;
     }
 
-    // TODO: This method does not work on linux. Remove NPOI nuget package dependency and use another alternative.
     [HttpPost]
     public async Task<IActionResult> Export(ContestResultsExportRequestModel model)
     {
@@ -65,18 +63,17 @@ public class ResultsController : BaseAdminViewController
             official ? Resource.Contest : Resource.Practice,
             contest.Name);
 
-        return this.ExportResultsToExcel(contestResults, fileName);
+        return await this.ExportResultsToExcel(contestResults, fileName);
     }
 
-    private static void FillSheetWithParticipantResults(ISheet sheet, ContestResultsViewModel contestResults)
+    private static void FillSheetWithParticipantResults(IXLWorksheet sheet, ContestResultsViewModel contestResults)
     {
-        var rowNumber = 1;
+        var rowNumber = 2;
         foreach (var result in contestResults.Results)
         {
-            var colNumber = 0;
-            var row = sheet.CreateRow(rowNumber++);
-            row.CreateCell(colNumber++).SetCellValue(result.ParticipantUsername);
-            row.CreateCell(colNumber++).SetCellValue(result.ParticipantFullName);
+            var colNumber = 1;
+            sheet.Cell(rowNumber, colNumber++).Value = result.ParticipantUsername;
+            sheet.Cell(rowNumber, colNumber++).Value = result.ParticipantFullName;
 
             foreach (var problem in contestResults.Problems)
             {
@@ -84,24 +81,25 @@ public class ResultsController : BaseAdminViewController
 
                 if (problemResult != null)
                 {
-                    row.CreateCell(colNumber++).SetCellValue(problemResult.BestSubmission.Points);
+                   sheet.Cell(rowNumber, colNumber++).Value = problemResult.BestSubmission.Points;
                 }
                 else
                 {
-                    row.CreateCell(colNumber++, CellType.Blank);
+                    sheet.Cell(rowNumber, colNumber++).Value = string.Empty;
                 }
             }
 
-            row.CreateCell(colNumber).SetCellValue(result.ExportTotal);
+            sheet.Cell(rowNumber, colNumber).Value = result.ExportTotal;
+            rowNumber++;
         }
     }
 
-    private int CreateResultsSheetHeaderRow(ISheet sheet, ContestResultsViewModel contestResults)
+    private async Task CreateResultsSheetHeaderRow(IXLWorksheet sheet, ContestResultsViewModel contestResults)
     {
-        var headerRow = sheet.CreateRow(0);
-        var columnNumber = 0;
-        headerRow.CreateCell(columnNumber++).SetCellValue("Username");
-        headerRow.CreateCell(columnNumber++).SetCellValue("Name");
+        var columnNumber = 1;
+
+        sheet.Cell(1, columnNumber++).Value = "Username";
+        sheet.Cell(1, columnNumber++).Value = "Name";
 
         foreach (var problem in contestResults.Problems)
         {
@@ -110,32 +108,30 @@ public class ResultsController : BaseAdminViewController
                 problem.Name = $"(*){problem.Name}";
             }
 
-            headerRow.CreateCell(columnNumber++).SetCellValue(problem.Name);
+            sheet.Cell(1, columnNumber++).Value = problem.Name;
         }
 
-        var maxPoints = this.contestsData.GetMaxPointsForExportById(contestResults.Id);
+        var maxPoints = await this.contestsData.GetMaxPointsForExportById(contestResults.Id);
 
         var totalPointsCellTitle = $"Total (Max: {maxPoints})";
 
-        headerRow.CreateCell(columnNumber++).SetCellValue(totalPointsCellTitle);
-
-        return columnNumber;
+        sheet.Cell(1, columnNumber).Value = totalPointsCellTitle;
     }
 
-    private FileResult ExportResultsToExcel(ContestResultsViewModel contestResults, string fileName)
+    private async Task<FileResult> ExportResultsToExcel(ContestResultsViewModel contestResults, string fileName)
     {
-        var workbook = new HSSFWorkbook();
-        var sheet = workbook.CreateSheet();
+        using XLWorkbook workbook = new XLWorkbook();
+        var sheet = workbook.Worksheets.Add("Results");
 
-        var columnsCount = this.CreateResultsSheetHeaderRow(sheet, contestResults);
+        await this.CreateResultsSheetHeaderRow(sheet, contestResults);
 
         FillSheetWithParticipantResults(sheet, contestResults);
 
-        sheet.AutoSizeColumns(columnsCount);
+        sheet.Columns().AdjustToContents();
 
         // Write the workbook to a memory stream
         var outputStream = new MemoryStream();
-        workbook.Write(outputStream);
+        workbook.SaveAs(outputStream);
 
         // Return the result to the end user
         return this.File(

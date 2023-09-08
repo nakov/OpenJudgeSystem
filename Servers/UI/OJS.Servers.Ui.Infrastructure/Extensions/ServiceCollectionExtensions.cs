@@ -7,7 +7,6 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Extensions;
     using OJS.Services.Common.Models.Configurations;
-    using SoftUni.Judge.Common.Extensions;
     using static OJS.Common.GlobalConstants;
 
     public static class ServiceCollectionExtensions
@@ -29,12 +28,14 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
 
             services
                 .AddWebServer<TProgram>()
+                .AddHttpContextServices()
                 .AddSwaggerDocs(apiVersion.ToApiName(), ApiDocsTitle, apiVersion)
                 .AddHangfireServer(AppName)
+                .AddMessageQueue<TProgram>(configuration)
                 .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>()
                 .AddMemoryCache()
                 .AddSoftUniJudgeCommonServices()
-                .AddDistributedCaching<TProgram>()
+                .AddDistributedCaching()
                 .AddLogging()
                 .ConfigureSettings(configuration)
                 .AddControllersWithViews();
@@ -45,6 +46,7 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
             IConfiguration configuration)
             => services
                 .ValidateLaunchSettings()
-                .Configure<DistributorConfig>(configuration.GetSection(nameof(DistributorConfig)));
+                .Configure<DistributorConfig>(configuration.GetSection(nameof(DistributorConfig)))
+                .Configure<EmailServiceConfig>(configuration.GetSection(nameof(EmailServiceConfig)));
     }
 }

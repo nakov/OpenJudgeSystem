@@ -18,6 +18,7 @@ services:
       - Docker/applications/ui/ui.env
     extra_hosts:
       - "db:host-gateway"
+      - "mq:host-gateway"
       - "localhost:host-gateway"
       - "redis:host-gateway"
   administration:
@@ -37,12 +38,13 @@ services:
       - Docker/applications/administration/administration.env
     extra_hosts:
       - "db:host-gateway"
+      - "mq:host-gateway"
       - "localhost:host-gateway"
   worker:
     build:
       context: .
       dockerfile: ./Docker/Dockerfile.worker
-    image: judge_worker
+    image: ghcr.io/softuni-internal/judge_worker:v2-latest
     ports:
       - "8003:80"
     container_name: judge_worker_instance
@@ -55,23 +57,28 @@ services:
       - /tmp/ExecutionStrategies:/tmp/ExecutionStrategies
       - /var/run/docker.sock:/var/run/docker.sock
     extra_hosts:
+      - "mq:host-gateway"
+      - "localhost:host-gateway"
       - "host.docker.internal:host-gateway"
   mq:
-    image: "rabbitmq:3.8-management"
+    image: rabbitmq:3.12-management
     ports:
-      - "15672:15672"
       - "5672:5672"
+      - "15672:15672"
     container_name: mq_instance
     hostname: "judge-mq"
     environment:
-      RABBITMQ_ERLANG_COOKIE: SWQOKODSQALRPCLNMEQG
-      RABBITMQ_DEFAULT_USER: rabbitmq
-      RABBITMQ_DEFAULT_PASS: rabbitmq
-      RABBITMQ_DEFAULT_VHOST: /
+      DEFAULT_USER_PASSWORD: myS3cretPass2
+    volumes:
+      - ./rabbitmq/data:/var/lib/rabbitmq/mnesia
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
   redis:
-    image: "redis:5.0"
+    image: "redis:7"
     ports:
       - "6379:6379"
     container_name: redis_instance
     hostname: "judge-rd"
     command: "redis-server --requirepass redisPass123"
+    
+volumes:
+  rabbitmq_data:

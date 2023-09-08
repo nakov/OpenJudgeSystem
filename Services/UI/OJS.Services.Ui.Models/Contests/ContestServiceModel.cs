@@ -209,5 +209,6 @@ public class ContestServiceModel : IMapExplicitly
             .ForMember(d => d.UserIsAdminOrLecturerInContest, opt => opt.Ignore())
             .ForMember(d => d.UserCanCompete, opt => opt.Ignore())
             .ForMember(d => d.UserIsParticipant, opt => opt.Ignore())
-            .ForMember(d => d.IsActive, opt => opt.Ignore());
+            .ForMember(d => d.IsActive, opt => opt.Ignore())
+            .ReverseMap();
 }

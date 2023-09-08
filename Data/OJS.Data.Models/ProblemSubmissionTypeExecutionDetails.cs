@@ -2,8 +2,9 @@ namespace OJS.Data.Models
 {
     using OJS.Data.Models.Problems;
     using OJS.Data.Models.Submissions;
+    using SoftUni.Data.Infrastructure.Models;
 
-    public class ProblemSubmissionTypeExecutionDetails
+    public class ProblemSubmissionTypeExecutionDetails : IEntity
     {
         public int SubmissionTypeId { get; set; }
 

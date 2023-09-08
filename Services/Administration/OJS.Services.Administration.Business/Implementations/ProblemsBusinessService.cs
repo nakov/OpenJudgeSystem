@@ -10,6 +10,7 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Data.Models.Problems;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models.Contests.Problems;
+    using OJS.Services.Common.Data;
     using OJS.Services.Common.Models;
     using OJS.Services.Infrastructure.Exceptions;
     using IsolationLevel = System.Transactions.IsolationLevel;
@@ -23,14 +24,14 @@ namespace OJS.Services.Administration.Business.Implementations
         private readonly IProblemsDataService problemsData;
         private readonly IProblemResourcesDataService problemResourcesData;
         private readonly ISubmissionsDataService submissionsData;
-        private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
+        private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
         private readonly ITestRunsDataService testRunsData;
         private readonly ISubmissionTypesDataService submissionTypesData;
         private readonly IProblemGroupsDataService problemGroupData;
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
-        private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
         private readonly IContestsBusinessService contestsBusiness;
         private readonly IOrderableService<Problem> problemsOrderableService;
+        private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
 
         public ProblemsBusinessService(
             IContestsDataService contestsData,
@@ -38,14 +39,14 @@ namespace OJS.Services.Administration.Business.Implementations
             IProblemsDataService problemsData,
             IProblemResourcesDataService problemResourcesData,
             ISubmissionsDataService submissionsData,
-            ISubmissionsForProcessingDataService submissionsForProcessingData,
+            ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
             ITestRunsDataService testRunsData,
             ISubmissionTypesDataService submissionTypesData,
             IProblemGroupsBusinessService problemGroupsBusiness,
-            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication,
             IContestsBusinessService contestsBusiness,
             IProblemGroupsDataService problemGroupData,
-            IOrderableService<Problem> problemsOrderableService)
+            IOrderableService<Problem> problemsOrderableService,
+            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication)
         {
             this.contestsData = contestsData;
             this.participantScoresData = participantScoresData;
@@ -56,10 +57,10 @@ namespace OJS.Services.Administration.Business.Implementations
             this.testRunsData = testRunsData;
             this.submissionTypesData = submissionTypesData;
             this.problemGroupsBusiness = problemGroupsBusiness;
-            this.submissionsDistributorCommunication = submissionsDistributorCommunication;
             this.contestsBusiness = contestsBusiness;
             this.problemGroupData = problemGroupData;
             this.problemsOrderableService = problemsOrderableService;
+            this.submissionsDistributorCommunication = submissionsDistributorCommunication;
         }
 
         public async Task RetestById(int id)
@@ -102,10 +103,11 @@ namespace OJS.Services.Administration.Business.Implementations
                 {
                     p.ProblemGroupId,
                     p.ProblemGroup.ContestId,
+                    p.IsDeleted,
                 })
                 .FirstOrDefault();
 
-            if (problem == null)
+            if (problem == null || problem.IsDeleted)
             {
                 return;
             }
@@ -114,19 +116,18 @@ namespace OJS.Services.Administration.Business.Implementations
                        IsolationLevel.RepeatableRead,
                        TransactionScopeAsyncFlowOption.Enabled))
             {
+                if (!await this.contestsData.IsOnlineById(problem.ContestId))
+                {
+                    await this.problemGroupsBusiness.DeleteById(problem.ProblemGroupId);
+                }
+
+                await this.problemsData.DeleteById(id);
+                await this.problemsData.SaveChanges();
                 await this.testRunsData.DeleteByProblem(id);
 
                 this.problemResourcesData.DeleteByProblem(id);
 
                 this.submissionsData.DeleteByProblem(id);
-
-                await this.problemsData.DeleteById(id);
-                await this.problemsData.SaveChanges();
-
-                if (!await this.contestsData.IsOnlineById(problem.ContestId))
-                {
-                    await this.problemGroupsBusiness.DeleteById(problem.ProblemGroupId);
-                }
 
                 scope.Complete();
             }

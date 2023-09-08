@@ -19,7 +19,7 @@ namespace OJS.Services.Administration.Data.Implementations
     {
         private readonly IDatesService dates;
 
-        public ContestsDataService(AdminDbContext db, IDatesService dates)
+        public ContestsDataService(OjsDbContext db, IDatesService dates)
             : base(db)
             => this.dates = dates;
 
@@ -103,8 +103,8 @@ namespace OJS.Services.Administration.Data.Implementations
         public Task<int> GetMaxPointsForExportById(int id)
             => this.GetMaxPointsByIdAndProblemGroupsFilter(id, pg => pg.Type != ProblemGroupType.ExcludedFromHomework);
 
-        public Task<string?> GetNameById(int id)
-            => this.GetByIdQuery(id)
+        public async Task<string?> GetNameById(int id)
+            => await this.GetByIdQuery(id)
                 .Select(c => c.Name)
                 .FirstOrDefaultAsync();
 
@@ -138,13 +138,18 @@ namespace OJS.Services.Administration.Data.Implementations
                     c.ExamGroups.Any(eg => eg.UsersInExamGroups.Any(u => u.UserId == userId)));
 
         private async Task<int> GetMaxPointsByIdAndProblemGroupsFilter(int id, Expression<Func<ProblemGroup, bool>> filter)
-            => await this.GetByIdQuery(id)
-                .Select(c => c.ProblemGroups
-                    .AsQueryable()
-                    .Where(pg => pg.Problems.Any(p => !p.IsDeleted))
-                    .Where(filter)
-                    .Sum(pg => (int?)pg.Problems.First().MaximumPoints))
-                .FirstOrDefaultAsync() ?? default(int);
+        {
+            var problemsMaxPoints = await this.GetByIdQuery(id)
+                .SelectMany(c => c.ProblemGroups)
+                .Where(filter)
+                .Select(pg => pg.Problems
+                    .Where(p => !p.IsDeleted)
+                    .Select(p => (int)p.MaximumPoints)
+                    .FirstOrDefault())
+                .ToListAsync();
+
+            return problemsMaxPoints.Sum();
+        }
 
         private IQueryable<Contest> GetAllVisibleQuery()
             => this.DbSet

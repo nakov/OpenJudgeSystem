@@ -2,7 +2,8 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using OJS.Services.Worker.Models.ExecutionContext.ExecutionDetails;
+    using OJS.Services.Common.Models.Submissions.ExecutionDetails;
+    using OJS.Workers.ExecutionStrategies.Models;
     using SoftUni.AutoMapper.Infrastructure.Models;
 
     public class TestsExecutionDetailsRequestModel : IMapTo<TestsExecutionDetailsServiceModel>
@@ -21,6 +22,6 @@
 
         public string? TaskSkeletonAsString { get; set; }
 
-        public IEnumerable<TestContextRequestModel> Tests { get; set; } = Enumerable.Empty<TestContextRequestModel>();
+        public IEnumerable<TestContext> Tests { get; set; } = Enumerable.Empty<TestContext>();
     }
 }

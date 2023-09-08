@@ -12,7 +12,6 @@ import { getSearchResults } from '../utils/urls';
 
 import { useUrlParams } from './common/use-url-params';
 import { IErrorDataType, useHttp } from './use-http';
-import { useLoading } from './use-loading';
 import { usePages } from './use-pages';
 
 interface ISearchContext {
@@ -27,7 +26,6 @@ interface ISearchContext {
     };
     actions: {
         clearSearchValue: () => void;
-        load: () => Promise<void>;
         initiateSearchResultsUrlQuery: () => void;
         toggleVisibility: () => void;
     };
@@ -47,6 +45,7 @@ const defaultState = {
 const SearchContext = createContext<ISearchContext>(defaultState as ISearchContext);
 
 const SearchProvider = ({ children }: ISearchProviderProps) => {
+    const [ isLoading, setIsLoading ] = useState(false);
     const [ contests, setSearchedContests ] = useState(defaultState.state.contests);
     const [ problems, setSearchedProblems ] = useState(defaultState.state.problems);
     const [ users, setSearchedUsers ] = useState(defaultState.state.users);
@@ -62,7 +61,6 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
         state: { currentPage },
         populatePageInformation,
     } = usePages();
-    const { startLoading, stopLoading } = useLoading();
 
     const {
         get,
@@ -160,11 +158,11 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
 
     const load = useCallback(
         async () => {
-            startLoading();
+            setIsLoading(true);
             await get();
-            stopLoading();
+            setIsLoading(false);
         },
-        [ get, startLoading, stopLoading ],
+        [ get ],
     );
 
     useEffect(
@@ -202,10 +200,10 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
                 isLoaded: isSuccess,
                 searchValue: urlParam,
                 isVisible,
+                isLoading,
             },
             actions: {
                 clearSearchValue,
-                load,
                 initiateSearchResultsUrlQuery,
                 toggleVisibility,
             },
@@ -219,9 +217,9 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
             urlParam,
             isVisible,
             clearSearchValue,
-            load,
             initiateSearchResultsUrlQuery,
             toggleVisibility,
+            isLoading,
         ],
     );
 

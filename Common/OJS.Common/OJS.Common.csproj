@@ -5,11 +5,14 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="ClosedXML" Version="0.102.0" />
       <PackageReference Include="Core.Fluent.Extensions" Version="1.0.1" />
       <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
       <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="6.0.1" />
-      <PackageReference Include="NPOI" Version="2.5.5" />
-      <PackageReference Include="SoftUni.Judge.Common" Version="1.0.11" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Services\Common\OJS.Workers\OJS.Workers.Common\OJS.Workers.Common.csproj" />
     </ItemGroup>
 
 </Project>

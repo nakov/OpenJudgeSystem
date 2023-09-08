@@ -4,7 +4,9 @@
     using System.Linq;
     using System.Threading.Tasks;
     using OJS.Data.Models.Submissions;
+    using OJS.Services.Common.Models.Submissions;
     using OJS.Services.Ui.Models.Submissions;
+    using SoftUni.Common.Models;
     using SoftUni.Services.Infrastructure;
 
     public interface ISubmissionsBusinessService : IService
@@ -29,7 +31,13 @@
 
         // Task HardDeleteAllArchived();
 
-        Task<IEnumerable<SubmissionForPublicSubmissionsServiceModel>> GetPublicSubmissions();
+        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPublicSubmissions(SubmissionForPublicSubmissionsServiceModel model);
+
+        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetUsersLastSubmissions(bool isOfficial, int page);
+
+        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetProcessingSubmissions(int page);
+
+        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPendingSubmissions(int page);
 
         Task<int> GetTotalCount();
 

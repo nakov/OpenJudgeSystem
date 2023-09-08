@@ -26,11 +26,19 @@
 }
 
 %helperText {
+  background-color: #fff;
+  border: 1px solid colors.$light-blue-color;
+  border-radius: 4px;
   bottom: 100%;
-  display: none;
+  color: colors.$light-blue-color;
+  font-weight: 400;
   left: 100%;
+  opacity: 0;
+  padding: 5px 10px;
   position: absolute;
-  width: 200px;
+  text-align: center;
+  transition: all 0.2s ease-in-out;
+  width: 150px;
   z-index: 1000;
 }
 
@@ -44,6 +52,7 @@
       border-radius: 5%;
       box-shadow: 1px 4px 4px 4px #e5e5e5;
       display: inline-block;
+      opacity: 1;
       padding: 5px;
     }
   }

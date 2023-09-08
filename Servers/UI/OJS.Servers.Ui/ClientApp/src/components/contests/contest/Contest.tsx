@@ -7,8 +7,10 @@ import { usePageTitles } from '../../../hooks/use-page-titles';
 import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
 import { convertToTwoDigitValues } from '../../../utils/dates';
+import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import Countdown, { ICountdownRemainingType, Metric } from '../../guidelines/countdown/Countdown';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
+import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import Text, { TextType } from '../../guidelines/text/Text';
 import ContestProblemDetails from '../contest-problem-details/ContestProblemDetails';
 import ContestTasksNavigation from '../contest-tasks-navigation/ContestTasksNavigation';
@@ -23,14 +25,23 @@ const Contest = () => {
             score,
             maxScore,
             remainingTimeInMilliseconds,
-            totalParticipantsCount,
-            activeParticipantsCount,
-            isOfficial,
+            participantsCount,
             contestError,
+            contestIsLoading,
         },
-        actions: { setIsSubmitAllowed },
+        actions:
+            {
+                setIsSubmitAllowed,
+                removeCurrentContest,
+            },
     } = useCurrentContest();
-    const { actions: { initiateProblems } } = useProblems();
+    const {
+        actions: {
+            changeCurrentHash,
+            removeCurrentProblem,
+            removeCurrentProblems,
+        },
+    } = useProblems();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const { actions: { setPageTitle } } = usePageTitles();
 
@@ -131,40 +142,33 @@ const Contest = () => {
         [],
     );
 
-    const participantsStateText = useMemo(
-        () => isOfficial && contest?.isExam
-            ? 'Active'
-            : 'Total',
-        [ contest?.isExam, isOfficial ],
-    );
-
-    const participantsValue = useMemo(
-        () => isOfficial && contest?.isExam
-            ? activeParticipantsCount
-            : totalParticipantsCount,
-        [ activeParticipantsCount, contest?.isExam, isOfficial, totalParticipantsCount ],
-    );
-
     const renderParticipants = useCallback(
         () => (
             <span>
-                {participantsStateText}
-                {' '}
-                Participants:
+                Total Participants:
                 {' '}
                 <Text type={TextType.Bold}>
-                    {participantsValue}
+                    {participantsCount}
                 </Text>
             </span>
         ),
-        [ participantsStateText, participantsValue ],
+        [ participantsCount ],
     );
 
     useEffect(
         () => {
-            initiateProblems();
+            changeCurrentHash();
         },
-        [ initiateProblems ],
+        [ changeCurrentHash ],
+    );
+
+    useEffect(
+        () => () => {
+            removeCurrentProblem();
+            removeCurrentContest();
+            removeCurrentProblems();
+        },
+        [ removeCurrentContest, removeCurrentProblem, removeCurrentProblems ],
     );
 
     const renderErrorHeading = useCallback(
@@ -195,33 +199,43 @@ const Contest = () => {
 
     const renderContest = useCallback(
         () => (
-            <>
-                <div className={styles.headingContest}>
-                    <Heading
-                      type={HeadingType.primary}
-                      className={styles.contestHeading}
-                    >
-                        {contestTitle}
-                    </Heading>
-                    <Heading type={HeadingType.secondary} className={secondaryHeadingClassName}>
-                        {renderParticipants()}
-                        {renderTimeRemaining()}
-                        {renderScore()}
-                    </Heading>
-                </div>
+            <div>
+                {contestIsLoading
+                    ? (
+                        <div style={{ ...flexCenterObjectStyles, height: '500px' }}>
+                            <SpinningLoader />
+                        </div>
+                    )
+                    : (
+                        <>
+                            <div className={styles.headingContest}>
+                                <Heading
+                                  type={HeadingType.primary}
+                                  className={styles.contestHeading}
+                                >
+                                    {contestTitle}
+                                </Heading>
+                                <Heading type={HeadingType.secondary} className={secondaryHeadingClassName}>
+                                    {renderParticipants()}
+                                    {renderTimeRemaining()}
+                                    {renderScore()}
+                                </Heading>
+                            </div>
 
-                <div className={styles.contestWrapper}>
-                    <div className={navigationContestClassName}>
-                        <ContestTasksNavigation />
-                    </div>
-                    <div className={submissionBoxClassName}>
-                        <SubmissionBox />
-                    </div>
-                    <div className={problemInfoClassName}>
-                        <ContestProblemDetails />
-                    </div>
-                </div>
-            </>
+                            <div className={styles.contestWrapper}>
+                                <div className={navigationContestClassName}>
+                                    <ContestTasksNavigation />
+                                </div>
+                                <div className={submissionBoxClassName}>
+                                    <SubmissionBox />
+                                </div>
+                                <div className={problemInfoClassName}>
+                                    <ContestProblemDetails />
+                                </div>
+                            </div>
+                        </>
+                    )}
+            </div>
         ),
         [
             contestTitle,
@@ -232,6 +246,7 @@ const Contest = () => {
             secondaryHeadingClassName,
             submissionBoxClassName,
             renderParticipants,
+            contestIsLoading,
         ],
     );
 

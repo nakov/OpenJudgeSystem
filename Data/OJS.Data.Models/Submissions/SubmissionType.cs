@@ -1,14 +1,14 @@
 namespace OJS.Data.Models.Submissions
 {
-    using OJS.Common.Extensions;
-    using SoftUni.Data.Infrastructure.Models;
-    using SoftUni.Judge.Common.Enumerations;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
+    using OJS.Common.Extensions;
+    using OJS.Workers.Common.Models;
+    using SoftUni.Data.Infrastructure.Models;
     using static OJS.Data.Validation.ConstraintConstants.SubmissionTypes;
 
     public class SubmissionType : Entity<int>

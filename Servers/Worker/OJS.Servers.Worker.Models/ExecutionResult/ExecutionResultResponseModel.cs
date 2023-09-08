@@ -2,8 +2,8 @@
 
 using System;
 using SoftUni.AutoMapper.Infrastructure.Models;
-using OJS.Services.Worker.Models.ExecutionResult;
 using OJS.Servers.Worker.Models.ExecutionResult.Output;
+using OJS.Services.Common.Models.Submissions;
 
 public class ExecutionResultResponseModel : IMapFrom<ExecutionResultServiceModel>
 {
@@ -18,4 +18,6 @@ public class ExecutionResultResponseModel : IMapFrom<ExecutionResultServiceModel
     public TaskResultResponseModel? TaskResult { get; set; }
 
     public DateTime? StartedExecutionOn { get; set; }
+
+    public DateTime? CompletedExecutionOn { get; set; }
 }

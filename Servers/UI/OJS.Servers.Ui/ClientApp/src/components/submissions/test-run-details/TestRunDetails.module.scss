@@ -2,9 +2,22 @@
 @use 'src/styles/fonts';
 @use 'src/styles/variables';
 
+.executionComment {
+  @extend %font-family-lato;
+
+  padding-top: 10px;
+}
+
+.testRunContainer {
+  align-content: space-around;
+  display: flex;
+  flex-direction: column;
+}
+
 .testRun {
   @extend %font-family-lato;
 
+  align-items: center;
   border-bottom: 1px solid colors.$bottom-border-color;
   color: colors.$text-dark-gray-color;
   display: flex;
@@ -22,6 +35,18 @@
 
 .testRunHeading {
   @extend %heading;
+
+  margin-bottom: 0 !important;
+  width: 120px;
+}
+
+.testRunDetailsCollapsible {
+  @extend %font-family-lato;
+
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  margin-top: -10px;
 }
 
 .wrongTestRunHeading {
@@ -35,6 +60,11 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  width: 100%;
+}
+
+.collapsibleContainer {
+  margin-top: 10px;
 }
 
 .correctTestRunHeading {
@@ -44,10 +74,9 @@
 }
 
 .testRunData {
-  align-self: center;
+  align-items: center;
   display: flex;
   gap: 10px;
-  margin-left: 10px;
 }
 
 .testRunDataParagraph {
@@ -55,4 +84,15 @@
 
   color: colors.$text-dark-gray-color;
   font-size: variables.$f-size-14;
+}
+
+.zeroTestWrapper {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.testRunDetailsExpandBtn {
+  margin-top: -17px !important;
 }

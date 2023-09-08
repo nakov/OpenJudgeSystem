@@ -7,6 +7,8 @@ public class ContestForActivityServiceModel : IContestForActivityServiceModel
 {
     public int Id { get; set; }
 
+    public string? Name { get; set; }
+
     public ContestType Type { get; set; }
 
     public bool IsVisible { get; set; }

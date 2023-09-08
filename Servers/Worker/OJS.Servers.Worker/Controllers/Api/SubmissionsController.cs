@@ -8,7 +8,7 @@ using OJS.Servers.Worker.Models.ExecutionContext;
 using OJS.Servers.Worker.Models.ExecutionResult;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Worker.Business;
-using OJS.Services.Worker.Models.ExecutionContext;
+using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
 using System.Threading.Tasks;
@@ -24,15 +24,6 @@ public class SubmissionsController : BaseApiController
         ISubmissionsBusinessService submissionsBusiness,
         ILogger<SubmissionsController> logger) =>
         this.submissionsBusiness = submissionsBusiness;
-
-    // this.logger = logger;
-    [HttpGet]
-    public IActionResult TempAction()
-    {
-        Console.WriteLine("temp2");
-
-        return this.Ok();
-    }
 
     [HttpPost]
     [ProducesResponseType(typeof(FullExecutionResultResponseModel), Status200OK)]
@@ -88,8 +79,6 @@ public class SubmissionsController : BaseApiController
         }
         catch (Exception ex)
         {
-            // this.logger.LogError(ex, "Error in executing submission");
-
             result.SetException(ex, withStackTrace);
         }
 

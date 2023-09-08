@@ -222,6 +222,11 @@ namespace OJS.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<bool>("AllowParallelSubmissionsInTasks")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
                     b.Property<bool>("AutoChangeTestsFeedbackVisibility")
                         .HasColumnType("bit");
 
@@ -980,6 +985,9 @@ namespace OJS.Data.Migrations
                     b.Property<string>("CompilerComment")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("CompletedExecutionOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<byte[]>("Content")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
@@ -1054,6 +1062,12 @@ namespace OJS.Data.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("Processed")
                         .HasColumnType("bit");
