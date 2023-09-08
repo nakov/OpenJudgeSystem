@@ -47,6 +47,10 @@
 
         public DateTime? StartedExecutionOn { get; set; }
 
+        public string? ProcessingComment { get; set; }
+
+        public int TotalTests { get; set; }
+
         public DateTime? CompletedExecutionOn { get; set; }
 
         public void RegisterMappings(IProfileExpression configuration)
@@ -68,6 +72,10 @@
                     s.Participant!.IsOfficial))
                 .ForMember(d => d.ByteContent, opt => opt.MapFrom(s =>
                     s.Content))
-                .ForMember(s => s.IsProcessed, opt => opt.MapFrom(s => s.Processed));
+                .ForMember(s => s.IsProcessed, opt => opt.MapFrom(s => s.Processed))
+                .ForMember(d => d.TotalTests, opt => opt.MapFrom(s =>
+                    s.Problem != null
+                        ? s.Problem.Tests.Count
+                        : 0));
     }
 }
