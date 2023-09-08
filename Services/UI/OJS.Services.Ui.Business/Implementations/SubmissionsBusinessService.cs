@@ -621,7 +621,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var serviceModel = submission.Map<SubmissionServiceModel>();
 
-        serviceModel.TestsExecutionDetails!.TaskSkeleton = problem.SubmissionTypesInProblems
+        serviceModel.TestsExecutionDetails!.TaskSkeleton = problem.ProblemSubmissionTypeExecutionDetails
             .Where(x => x.SubmissionTypeId == submission.SubmissionTypeId)
             .Select(x => x.SolutionSkeleton)
             .FirstOrDefault();
