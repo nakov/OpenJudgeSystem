@@ -150,10 +150,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
     );
 
     return (
-        <div className={`${styles.container} ${isOfficial
-            ? styles.competeRowBackground
-            : ''}`}
-        >
+        <div className={styles.container}>
             <div className={styles.strategyContainer}>
                 {renderStrategyIcon()}
             </div>
