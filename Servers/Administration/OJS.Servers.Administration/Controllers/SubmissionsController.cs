@@ -122,7 +122,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
 
         var submission = await this.submissionsData.GetByIdQuery(submissionId).FirstOrDefaultAsync();
 
-        if (submission is null || !submission.ProblemId.HasValue || !submission.ParticipantId.HasValue)
+        if (submission is null || !submission.ParticipantId.HasValue)
         {
             this.TempData.AddDangerMessage(GlobalResource.SubmissionCanNotBeProcessed);
 
@@ -138,7 +138,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         }
 
         await this.problemsValidationHelper
-            .ValidatePermissionsOfCurrentUser(submission.ProblemId ?? default)
+            .ValidatePermissionsOfCurrentUser(submission.ProblemId)
             .VerifyResult();
 
         var retestResult = await this.submissionsBusinessService.Retest(submission);
@@ -174,13 +174,13 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
     {
         await base.BeforeEntitySaveAsync(entity, actionContext);
         await this.problemsValidationHelper
-            .ValidatePermissionsOfCurrentUser(entity.ProblemId ?? default)
+            .ValidatePermissionsOfCurrentUser(entity.ProblemId)
             .VerifyResult();
     }
 
     protected override async Task DeleteEntityAndSaveAsync(Submission submission, AdminActionContext actionContext)
     {
-        var submissionProblemId = submission.ProblemId!.Value;
+        var submissionProblemId = submission.ProblemId;
         var submissionParticipantId = submission.ParticipantId!.Value;
 
         await this.transactions.ExecuteInTransaction(async () =>
@@ -199,7 +199,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
             {
                 await this.participantScoresBusiness.RecalculateForParticipantByProblem(
                     submission.ParticipantId.Value,
-                    submission.ProblemId.Value);
+                    submission.ProblemId);
             }
         });
     }
