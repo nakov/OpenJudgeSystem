@@ -1,10 +1,11 @@
 namespace OJS.Services.Administration.Business.Implementations;
 
-using OJS.Services.Administration.Data;
-using OJS.Services.Infrastructure.Cache;
-using OJS.Services.Infrastructure.Constants;
+using Data;
+using Infrastructure.Cache;
+using Infrastructure.Constants;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentExtensions.Extensions;
 
 public class ContestCategoriesCacheService : IContestCategoriesCacheService
 {
@@ -37,16 +38,17 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
         contestCategory.Children
             .Select(cc => cc.Id)
             .ToList()
-            .ForEach(RemoveCacheFromCategory);
+            .ForEach(this.RemoveCacheFromCategory);
 
         while (contestCategory != null)
         {
-            RemoveCacheFromCategory(contestCategory.Id);
+            this.RemoveCacheFromCategory(contestCategory.Id);
 
             contestCategory = contestCategory.Parent;
         }
+    }
 
-        void RemoveCacheFromCategory(int contestCategoryId)
+    private void RemoveCacheFromCategory(int contestCategoryId)
         {
             var categoryNameCacheId = string.Format(
                 CacheConstants.ContestCategoryNameFormat,
@@ -64,5 +66,4 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
             this.cache.Remove(subCategoriesCacheId);
             this.cache.Remove(parentCategoriesCacheId);
         }
-    }
 }

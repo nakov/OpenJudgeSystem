@@ -19,8 +19,8 @@ namespace OJS.Services.Administration.Data.Implementations
                    x.Id == categoryId &&
                    x.LecturersInContestCategories.Any(y => y.LecturerId == userId)));
 
-        public IQueryable<ContestCategory> GetAllVisible() =>
-            this.DbSet
+        public IQueryable<ContestCategory> GetAllVisible()
+            => this.DbSet
                 .Where(cc => cc.IsVisible);
 
         public IQueryable<ContestCategory> GetAllVisibleByLecturer(string? lecturerId)
@@ -28,6 +28,10 @@ namespace OJS.Services.Administration.Data.Implementations
                 .Where(cc =>
                     cc.LecturersInContestCategories.Any(l => l.LecturerId == lecturerId) ||
                     cc.Contests.Any(c => c.LecturersInContests.Any(l => l.LecturerId == lecturerId)));
+
+        public async Task<ContestCategory> GetById(int? id)
+            => await this.GetByIdQuery(id!)
+                .FirstAsync();
 
         public Task<string?> GetNameById(int id)
             => this.DbSet
