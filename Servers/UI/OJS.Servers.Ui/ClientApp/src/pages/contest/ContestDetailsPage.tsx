@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -27,10 +28,13 @@ const ContestDetailsPage = () => {
         state:
             {
                 contestDetails,
-                contestDetailsError,
+                contestError,
                 contestDetailsIsLoading,
             },
-        actions: { getContestDetails },
+        actions: {
+            getContestDetails,
+            clearContestError,
+        },
     } = useCurrentContest();
     const {
         getParticipateInContestUrl,
@@ -39,6 +43,7 @@ const ContestDetailsPage = () => {
         getAdministrationContestEditInternalUrl,
     } = useAppUrls();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
+    const navigate = useNavigate();
 
     const { contestId, participationType } = params;
 
@@ -69,6 +74,22 @@ const ContestDetailsPage = () => {
             getContestDetails,
             isOfficial,
         ],
+    );
+
+    useEffect(
+        () => {
+            if (isNil(contestError)) {
+                return () => null;
+            }
+
+            const timer = setTimeout(() => {
+                clearContestError();
+                navigate('/');
+            }, 5000);
+
+            return () => clearTimeout(timer);
+        },
+        [ contestError, navigate, clearContestError ],
     );
 
     const renderContestButtons = useCallback(
@@ -278,18 +299,18 @@ const ContestDetailsPage = () => {
 
     const renderErrorMessage = useCallback(
         () => {
-            if (!isNil(contestDetailsError)) {
-                const { detail } = contestDetailsError;
+            if (!isNil(contestError)) {
+                const { detail } = contestError;
                 return renderErrorHeading(detail);
             }
 
             return null;
         },
-        [ renderErrorHeading, contestDetailsError ],
+        [ renderErrorHeading, contestError ],
     );
 
     const renderContestDetailsPage = useCallback(
-        () => isNil(contestDetailsError)
+        () => isNil(contestError)
             ? contestDetailsIsLoading
                 ? (
                     <div style={{ ...flexCenterObjectStyles }}>
@@ -299,7 +320,7 @@ const ContestDetailsPage = () => {
                 : renderContest()
             : renderErrorMessage(),
         [
-            contestDetailsError,
+            contestError,
             renderErrorMessage,
             contestDetailsIsLoading,
             renderContest,
