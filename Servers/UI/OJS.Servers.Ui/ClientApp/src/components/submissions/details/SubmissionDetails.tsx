@@ -359,9 +359,9 @@ const SubmissionDetails = () => {
                             {problemNameHeadingText}
                         </div>
                     </Heading>
-                <div>
-                    {renderTestsChangeMessage()}
-                </div>
+                    <div>
+                        {renderTestsChangeMessage()}
+                    </div>
                     {
                         !isProcessed
                             ? (
