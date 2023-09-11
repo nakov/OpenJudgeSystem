@@ -47,6 +47,8 @@
 
         public DateTime? StartedExecutionOn { get; set; }
 
+        public DateTime? CompletedExecutionOn { get; set; }
+
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<Submission, SubmissionDetailsServiceModel>()
                 .ForMember(s => s.User, opt => opt.MapFrom(s => s.Participant!.User))

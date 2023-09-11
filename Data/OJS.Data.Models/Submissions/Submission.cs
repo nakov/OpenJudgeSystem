@@ -20,9 +20,9 @@ namespace OJS.Data.Models.Submissions
 
         public virtual Participant? Participant { get; set; }
 
-        public int? ProblemId { get; set; }
+        public int ProblemId { get; set; }
 
-        public virtual Problem? Problem { get; set; }
+        public virtual Problem Problem { get; set; } = null!;
 
         public int? SubmissionTypeId { get; set; }
 
@@ -41,6 +41,8 @@ namespace OJS.Data.Models.Submissions
         public byte[]? SolutionSkeleton { get; set; }
 
         public DateTime? StartedExecutionOn { get; set; }
+
+        public DateTime? CompletedExecutionOn { get; set; }
 
         [StringLength(ConstraintConstants.IpAddressMaxLength)]
         [Column(TypeName = "varchar")]

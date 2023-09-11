@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router';
 import isNil from 'lodash/isNil';
 
 import { useAuth } from '../../../hooks/use-auth';
@@ -25,9 +26,7 @@ const Contest = () => {
             score,
             maxScore,
             remainingTimeInMilliseconds,
-            totalParticipantsCount,
-            activeParticipantsCount,
-            isOfficial,
+            participantsCount,
             contestError,
             contestIsLoading,
         },
@@ -35,6 +34,7 @@ const Contest = () => {
             {
                 setIsSubmitAllowed,
                 removeCurrentContest,
+                clearContestError,
             },
     } = useCurrentContest();
     const {
@@ -45,6 +45,7 @@ const Contest = () => {
         },
     } = useProblems();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
+    const navigate = useNavigate();
     const { actions: { setPageTitle } } = usePageTitles();
 
     const navigationContestClass = 'navigationContest';
@@ -144,33 +145,17 @@ const Contest = () => {
         [],
     );
 
-    const participantsStateText = useMemo(
-        () => isOfficial && contest?.isExam
-            ? 'Active'
-            : 'Total',
-        [ contest?.isExam, isOfficial ],
-    );
-
-    const participantsValue = useMemo(
-        () => isOfficial && contest?.isExam
-            ? activeParticipantsCount
-            : totalParticipantsCount,
-        [ activeParticipantsCount, contest?.isExam, isOfficial, totalParticipantsCount ],
-    );
-
     const renderParticipants = useCallback(
         () => (
             <span>
-                {participantsStateText}
-                {' '}
-                Participants:
+                Total Participants:
                 {' '}
                 <Text type={TextType.Bold}>
-                    {participantsValue}
+                    {participantsCount}
                 </Text>
             </span>
         ),
-        [ participantsStateText, participantsValue ],
+        [ participantsCount ],
     );
 
     useEffect(
@@ -178,6 +163,22 @@ const Contest = () => {
             changeCurrentHash();
         },
         [ changeCurrentHash ],
+    );
+
+    useEffect(
+        () => {
+            if (isNil(contestError)) {
+                return () => null;
+            }
+
+            const timer = setTimeout(() => {
+                clearContestError();
+                navigate('/');
+            }, 5000);
+
+            return () => clearTimeout(timer);
+        },
+        [ contestError, navigate, clearContestError ],
     );
 
     useEffect(

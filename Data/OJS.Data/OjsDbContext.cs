@@ -16,7 +16,8 @@ namespace OJS.Data
     using SoftUni.Data.Infrastructure;
     using SoftUni.Data.Infrastructure.Enumerations;
 
-    public class OjsDbContext : BaseAuthDbContext<OjsDbContext, UserProfile, Role, UserInRole>, IDataProtectionKeyContext
+    public class OjsDbContext : BaseAuthDbContext<OjsDbContext, UserProfile, Role, UserInRole>,
+        IDataProtectionKeyContext
     {
         private readonly IGlobalQueryFilterTypesCache? globalQueryFilterTypesCache;
 
@@ -147,6 +148,11 @@ namespace OJS.Data
             builder.Entity<TagInProblem>()
                 .HasKey(x => new { x.TagId, x.ProblemId });
 
+            builder.Entity<Contest>(c =>
+            {
+                c.Property(cn => cn.AllowParallelSubmissionsInTasks).HasDefaultValue(true);
+            });
+
             FixMultipleCascadePaths(builder);
 
             this.TryRegisterMatchingGlobalQueryFiltersForRequiredDeletableEntities(builder);
@@ -215,6 +221,9 @@ namespace OJS.Data
                 .HasQueryFilter(x => !x.Problem.IsDeleted);
 
             builder.Entity<Test>()
+                .HasQueryFilter(x => !x.Problem.IsDeleted);
+
+            builder.Entity<Submission>()
                 .HasQueryFilter(x => !x.Problem.IsDeleted);
 
             builder.Entity<SubmissionTypeInProblem>()

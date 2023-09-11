@@ -41,6 +41,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using SoftUni.Data.Infrastructure.Enumerations;
     using SoftUni.Data.Infrastructure.Extensions;
     using SoftUni.Services.Infrastructure.Extensions;
+    using StackExchange.Redis;
     using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.EnvironmentVariables;
     using static OJS.Common.GlobalConstants.FileExtensions;
@@ -245,11 +246,15 @@ namespace OJS.Servers.Infrastructure.Extensions
             EnvironmentUtils.ValidateEnvironmentVariableExists(
                 new[] { RedisConnectionString });
 
+            var redisConnectionString = EnvironmentUtils.GetRequiredByKey(RedisConnectionString);
+            var redisConnection = ConnectionMultiplexer.Connect(redisConnectionString);
+
+            services.AddSingleton<IConnectionMultiplexer>(redisConnection);
             services.AddSingleton<ICacheService, CacheService>();
 
             return services.AddStackExchangeRedisCache(options =>
             {
-                options.Configuration = EnvironmentUtils.GetRequiredByKey(RedisConnectionString);
+                options.Configuration = redisConnectionString;
                 options.InstanceName = $"{instanceName}:";
             });
         }
