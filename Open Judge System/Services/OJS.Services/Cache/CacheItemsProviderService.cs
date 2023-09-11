@@ -190,7 +190,7 @@
             int contestCategoryId,
             int? page) =>
             this.redisCache.GetOrSet(
-                string.Format(CacheConstants.ParticipantsCountByContest, contestCategoryId, page),
+                string.Format(CacheConstants.ParticipantsCountByContestCategoryAndPage, contestCategoryId, page),
                 () => this.GetContestsParticipantsCount(contestIds),
                 TimeToCacheParticipantsCount);
 
