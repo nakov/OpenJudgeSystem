@@ -38,6 +38,7 @@ interface ISubmissionType {
     createdOn: Date;
     modifiedOn?: Date;
     startedExecutionOn?: Date;
+    processingComment: string;
     completedExecutionOn?: Date;
 }
 
@@ -50,6 +51,7 @@ interface ITestRunDetailsType extends ITestRunType {
 interface ISubmissionDetailsType extends ISubmissionType {
     testRuns: ITestRunDetailsType[];
     user: IUserProfileType;
+    totalTests : number;
 }
 
 interface ISubmissionDetails {
@@ -67,6 +69,45 @@ interface ISubmissionDetails {
     testRuns: ITestRunDetailsType[];
 }
 
+interface ITestCaseRun {
+    id: number;
+    checkerComment?: string;
+    executionComment?: string;
+    expectedOutputFragment?: string;
+    input?: string;
+    isTrialTest: boolean;
+    memoryUsed: number;
+    orderBy: number;
+    resultType: string;
+    showInput: boolean;
+    submissionId?: number;
+    timeUsed: number;
+    userOutputFragment?: string;
+}
+
+interface ITestRunDetailsCollapsed {
+    [id: string]: {
+        isExpanded: boolean;
+        detailsExpanded: boolean;
+    };
+}
+
+interface ISubmissionResultsDetails {
+    testRuns?: ITestCaseRun[];
+}
+
+interface IUserRole {
+    id: string;
+    name: string;
+}
+
+interface IUserAuthData {
+    email: string;
+    id: string;
+    roles: IUserRole[];
+    userName: string;
+}
+
 export type {
     IProblemType,
     ITestRunType,
@@ -74,4 +115,9 @@ export type {
     ITestRunDetailsType,
     ISubmissionDetailsType,
     ISubmissionDetails,
+    ITestRunDetailsCollapsed,
+    ISubmissionResultsDetails,
+    IUserAuthData,
+    ITestCaseRun,
+    IUserRole,
 };

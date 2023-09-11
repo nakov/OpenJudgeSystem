@@ -26,20 +26,11 @@
   }
 }
 
-.contestHeading {
-  border: 0;
-  margin-bottom: 30px;
-  padding: 0;
-  text-align: center;
-}
-
 .detailsWrapper {
   @extend %wrapper;
   @extend %columnsThree;
-}
 
-.headingContest {
-  @extend %contentSize;
+  margin-bottom: 40px;
 }
 
 .leftArrow {
@@ -70,7 +61,7 @@
 }
 
 .submissionsList {
-  height: 60vh;
+  height: 465px;
 
   ul {
     @extend %customScroll;
@@ -94,13 +85,17 @@
 
 .submissionDetails {
   border-left: 0;
+
+  ul {
+    max-height: 700px;
+    overflow: auto;
+  }
 }
 
 .taskHeading {
   display: flex;
   flex-direction: row;
-  justify-content: center;
-  margin-bottom: 24px;
+  justify-content: space-evenly;
 
   > div {
     > div {
@@ -119,4 +114,23 @@
 
 .alertBox {
   margin-bottom: 20px;
+}
+
+.submissionReloadBtn {
+  margin-right: 20px;
+  margin-top: 10px;
+}
+
+.testChangesWrapper {
+  align-items: center;
+  background-color: colors.$background-color-btn-primary;
+  border: 2px solid;
+  border-color: colors.$background-color-btn-primary;
+  border-radius: 12px;
+  display: flex;
+  font-family: fonts.$font-family-lato;
+  font-size: 16px;
+  justify-content: space-around;
+  margin-bottom: 1rem;
+  padding: 1rem;
 }

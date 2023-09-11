@@ -1,0 +1,15 @@
+.diffDetailsText {
+  display: inline-block;
+  margin-bottom: 10px;
+  text-align: start;
+  width: 50%;
+}
+
+.diffWrapper {
+  height: 100px;
+  overflow: auto;
+
+  > table {
+    height: inherit;
+  }
+}
