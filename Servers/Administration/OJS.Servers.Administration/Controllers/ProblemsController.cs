@@ -111,14 +111,14 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     protected override IEnumerable<Func<Problem, Problem, AdminActionContext, ValidatorResult>> EntityValidators
         => this.problemValidatorsFactory.GetValidators();
 
-    public override Task<IActionResult> Create(IDictionary<string, string> complexId, string postEndpointName)
+    public override Task<IActionResult> Create(IDictionary<string, string> complexId, string? postEndpointName)
         => base.Create(complexId, nameof(this.Create));
 
     [HttpPost]
     public Task<IActionResult> Create(IDictionary<string, string> entityDict, IFormFile tests, IFormFile additionalFiles)
         => this.PostCreate(entityDict, new FormFilesContainer(tests, additionalFiles));
 
-    public override Task<IActionResult> Edit(IDictionary<string, string> complexId, string postEndpointName)
+    public override Task<IActionResult> Edit(IDictionary<string, string> complexId, string? postEndpointName)
         => base.Edit(complexId, nameof(this.Edit));
 
     [HttpPost]
@@ -396,7 +396,8 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         Problem entity,
         EntityAction action,
         IDictionary<string, string> entityDict,
-        IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters)
+        IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters,
+        Type? autocomplete)
     {
         var contestId = GetContestId(entityDict, entity);
 
@@ -417,7 +418,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                 nameof(entity.ProblemGroup),
                 pg => ((ProblemGroup)pg).ContestId == contestId));
 
-        var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters)
+        var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters, autocomplete)
             .ToListAsync();
 
         await this.ModifyFormControls(formControls, entity, action, entityDict).ConfigureAwait(false);
@@ -440,7 +441,11 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                 Value = entity.ProblemGroup?.Type ?? default(ProblemGroupType),
             });
 
-            formControls.First(x => x.Name == nameof(Data.Models.Problems.Problem.ProblemGroup)).IsHidden = true;
+            var test = formControls.FirstOrDefault(x => x.Name == nameof(Data.Models.Problems.Problem.ProblemGroup));
+            if (test != null)
+            {
+                test.IsHidden = true;
+            }
         }
 
         formControls.Add(new FormControlViewModel
@@ -475,6 +480,32 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                                 .FirstOrDefault()?.Decompress(),
                         Type = typeof(string),
                         FormControlType = FormControlType.TextArea,
+                    },
+                }),
+            FormControlType = FormControlType.ExpandableMultiChoiceCheckBox,
+            Type = typeof(object),
+        });
+
+        formControls.Add(new FormControlViewModel
+        {
+            Name = AdditionalFormFields.SubmissionTypes.ToString(),
+            Options = this.submissionTypesData
+                .GetQuery()
+                .ToList()
+                .Select(st => new ExpandableMultiChoiceCheckBoxFormControlViewModel
+                {
+                    Name = st.Name,
+                    Value = st.Id,
+                    IsChecked = problemSubmissionTypeExecutionDetails.Any(x => x.SubmissionTypeId == st.Id),
+                    Expand = new FormControlViewModel
+                    {
+                        Name = st.Name + " " + AdditionalFormFields.TimeLimit.ToString(),
+                        Value = problemSubmissionTypeExecutionDetails
+                            .Where(x => x.SubmissionTypeId == st.Id)
+                            .Select(x => x.TimeLimit)
+                            .FirstOrDefault(),
+                        Type = typeof(int),
+                        FormControlType = FormControlType.Auto,
                     },
                 }),
             FormControlType = FormControlType.ExpandableMultiChoiceCheckBox,
@@ -549,11 +580,14 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             throw new Exception($"A valid ContestId must be provided to be able to {action} a Problem.");
         }
 
-        var problemGroupInput = formControls.First(fc => fc.Name == nameof(ProblemGroup));
+        var problemGroupInput = formControls.FirstOrDefault(fc => fc.Name == nameof(ProblemGroup));
 
         var orderedProblemGroupsQuery = this.problemGroupsData.GetAllByContestId(contestId)
                                                                     .OrderBy(pg => pg.OrderBy);
-        problemGroupInput.Options = orderedProblemGroupsQuery;
+        if (problemGroupInput != null)
+        {
+            problemGroupInput.Options = orderedProblemGroupsQuery;
+        }
 
         return base.ModifyFormControls(formControls, entity, action, entityDict);
     }

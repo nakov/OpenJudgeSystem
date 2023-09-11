@@ -51,7 +51,7 @@ namespace OJS.Data.Models.Submissions
             }
         }
 
-        public virtual ICollection<ProblemSubmissionTypeExecutionDetails> ProblemSubmissionTypeExecutionDetails { get; set; }
+        public virtual IEnumerable<ProblemSubmissionTypeExecutionDetails> ProblemSubmissionTypeExecutionDetails { get; set; }
             = new HashSet<ProblemSubmissionTypeExecutionDetails>();
 
         [NotMapped]
