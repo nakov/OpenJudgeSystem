@@ -418,6 +418,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .First(st => st.SubmissionTypeId == model.SubmissionTypeId)
             .SubmissionType;
 
+        SubmissionServiceModel submissionServiceModel;
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
         if (submissionType.ExecutionStrategyType is ExecutionStrategyType.NotFound or ExecutionStrategyType.DoNothing)
         {
@@ -431,14 +432,15 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         await this.submissionsData.Add(newSubmission);
         await this.submissionsData.SaveChanges();
 
-        await this.submissionsForProcessingData.Add(newSubmission.Id, this.BuildSubmissionForProcessing(newSubmission, problem, submissionType).ToJson());
+        submissionServiceModel = this.BuildSubmissionForProcessing(newSubmission, problem, submissionType);
+        await this.submissionsForProcessingData.Add(newSubmission.Id, submissionServiceModel.ToJson());
         await this.submissionsData.SaveChanges();
 
         scope.Complete();
         scope.Dispose();
 
         await this.submissionsCommonBusinessService
-            .PublishSubmissionForProcessing(this.BuildSubmissionForProcessing(newSubmission, problem, submissionType));
+            .PublishSubmissionForProcessing(submissionServiceModel);
     }
 
     public async Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult)
