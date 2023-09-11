@@ -359,6 +359,9 @@ const SubmissionDetails = () => {
                             {problemNameHeadingText}
                         </div>
                     </Heading>
+                <div>
+                    {renderTestsChangeMessage()}
+                </div>
                     {
                         !isProcessed
                             ? (
@@ -396,6 +399,7 @@ const SubmissionDetails = () => {
             renderResourceLink,
             renderDownloadErrorMessage,
             setSubmissionAndStartParticipation,
+            renderTestsChangeMessage,
         ],
     );
 
@@ -444,9 +448,6 @@ const SubmissionDetails = () => {
 
     return (
         <>
-            <div>
-                {renderTestsChangeMessage()}
-            </div>
             <div className={styles.detailsWrapper}>
                 {refreshableSubmissionsList()}
                 {codeEditor()}
