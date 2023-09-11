@@ -154,7 +154,7 @@ namespace OJS.Services.Administration.Business.Implementations
 
         public async Task<ServiceResult> Retest(Submission submission)
         {
-            var submissionProblemId = submission.ProblemId!.Value;
+            var submissionProblemId = submission.ProblemId;
             var submissionParticipantId = submission.ParticipantId!.Value;
             var submissionServiceModel = submission.Map<SubmissionServiceModel>();
 
