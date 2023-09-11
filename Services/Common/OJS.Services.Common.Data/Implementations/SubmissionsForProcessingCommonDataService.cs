@@ -1,6 +1,7 @@
 namespace OJS.Services.Common.Data.Implementations;
 
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
@@ -47,7 +48,7 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
             .MapCollection<TServiceModel>()
             .ToListAsync();
 
-    public async Task Add(int submissionId)
+    public async Task<SubmissionForProcessing> Add(int submissionId)
     {
         var submissionForProcessing = new SubmissionForProcessing
         {
@@ -57,18 +58,15 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
         };
 
         await this.Add(submissionForProcessing);
+
+        return submissionForProcessing;
     }
 
-    public async Task<SubmissionForProcessing> AddOrUpdate(int submissionId)
+    public async Task<SubmissionForProcessing> CreateIfNotExists(int submissionId)
     {
-        var entity = await this.GetBySubmission(submissionId);
+        var entity = await this.GetBySubmission(submissionId) ?? await this.Add(submissionId);
 
-        if (entity == null)
-        {
-            await this.Add(submissionId);
-        }
-
-        entity!.Processing = false;
+        entity.Processing = false;
         entity.Processed = false;
 
         return entity;
@@ -84,13 +82,19 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
                 Processing = false,
             });
 
-        using var scope = TransactionsHelper.CreateTransactionScope();
+        using var scope = TransactionsHelper.CreateTransactionScope(
+            isolationLevel: IsolationLevel.RepeatableRead,
+            asyncFlowOption: TransactionScopeAsyncFlowOption.Enabled);
+
         submissionIds
             .Chunk(GlobalConstants.BatchOperationsChunkSize)
             .ForEach(chunk => this.Delete(sfp => chunk.Contains(sfp.SubmissionId)));
 
+        await this.SaveChanges();
+
         await this.AddMany(newSubmissionsForProcessing);
 
+        await this.SaveChanges();
         scope.Complete();
     }
 

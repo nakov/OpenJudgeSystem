@@ -7,6 +7,7 @@ namespace OJS.Services.Administration.Business.Implementations
     using Microsoft.EntityFrameworkCore;
     using OJS.Common.Helpers;
     using OJS.Data.Models.Problems;
+    using OJS.Data.Models.Submissions;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models.Contests.Problems;
     using OJS.Services.Common;
