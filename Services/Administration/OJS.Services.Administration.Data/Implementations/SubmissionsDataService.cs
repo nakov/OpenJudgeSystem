@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Data.Implementations;
@@ -65,8 +66,8 @@
             => this.GetByIdQuery(id)
                 .Any(s => s.Participant!.IsOfficial);
 
-        public void SetAllToUnprocessedByProblem(int problemId)
-            => this.GetAllByProblem(problemId)
+        public async Task SetAllToUnprocessedByProblem(int problemId)
+            => await this.GetAllByProblem(problemId)
                 .UpdateFromQueryAsync(s => new Submission { Processed = false });
 
         public void DeleteByProblem(int problemId)

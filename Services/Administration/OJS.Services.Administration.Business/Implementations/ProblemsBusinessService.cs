@@ -82,7 +82,7 @@ namespace OJS.Services.Administration.Business.Implementations
             {
                 await this.participantScoresData.DeleteAllByProblem(id);
 
-                this.submissionsData.SetAllToUnprocessedByProblem(id);
+                await this.submissionsData.SetAllToUnprocessedByProblem(id);
 
                 await this.submissionsForProcessingData.AddOrUpdateBySubmissionIds(submissionIds);
 
