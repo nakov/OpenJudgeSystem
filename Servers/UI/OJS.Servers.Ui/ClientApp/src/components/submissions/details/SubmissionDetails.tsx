@@ -138,8 +138,14 @@ const SubmissionDetails = () => {
     }, [ setPageTitle, submissionTitle ]);
 
     const problemNameHeadingText = useMemo(
-        () => `${currentSubmission?.problem.name} - ${currentSubmission?.problem.id}`,
-        [ currentSubmission?.problem.id, currentSubmission?.problem.name ],
+        () => {
+            if (!currentSubmission) {
+                return '';
+            }
+
+            return `${currentSubmission?.problem.name} - ${currentSubmission?.problem.id}`;
+        },
+        [ currentSubmission ],
     );
 
     const detailsHeadingText = useMemo(
@@ -432,6 +438,14 @@ const SubmissionDetails = () => {
         return renderErrorMessage();
     }
 
+    if (isLoading) {
+        return (
+            <div style={{ ...flexCenterObjectStyles }}>
+                <SpinningLoader />
+            </div>
+        );
+    }
+
     return (
         <>
             <div>
@@ -442,13 +456,7 @@ const SubmissionDetails = () => {
                 {codeEditor()}
                 {submissionResults()}
             </div>
-            { isLoading
-                ? (
-                    <div style={{ ...flexCenterObjectStyles }}>
-                        <SpinningLoader />
-                    </div>
-                )
-                : <SubmissionResultsDetails testRuns={currentSubmission?.testRuns} /> }
+            <SubmissionResultsDetails testRuns={currentSubmission?.testRuns} />
         </>
     );
 };

@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { BiCaretDown, BiCaretUp } from 'react-icons/bi';
 
 import {
     ISubmissionResultsDetails,
@@ -11,8 +10,7 @@ import {
 } from '../../../../hooks/submissions/types';
 import { useHttp } from '../../../../hooks/use-http';
 import { getUserAuthInfoUrl } from '../../../../utils/urls';
-import IconSize from '../../../guidelines/icons/common/icon-sizes';
-import Icon from '../../../guidelines/icons/Icon';
+import Button, { ButtonType } from '../../../guidelines/buttons/Button';
 import TestRunDiffView from '../../test-run-diff-view/TestRunDiffView';
 
 import styles from './SubmissionResultsDetails.module.scss';
@@ -81,8 +79,8 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
     };
 
     const renderShowButton = useCallback((id: number, isExpanded: boolean) => (
-        <button
-          type="button"
+        <Button
+          type={ButtonType.primary}
           className={styles.showInputButton}
           onClick={() => setTestRunDetailsCollapsed({
               ...testRunDetailsCollapsed,
@@ -91,21 +89,10 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
                   detailsExpanded: testRunDetailsCollapsed[id]?.detailsExpanded,
               },
           })}
-        >
-            <span>
-                {isExpanded
-                    ? 'HIDE'
-                    : 'SHOW'}
-                {' '}
-                INPUT
-            </span>
-            <Icon
-              Component={isExpanded
-                  ? BiCaretUp
-                  : BiCaretDown}
-              size={IconSize.Large}
-            />
-        </button>
+          text={`${isExpanded
+              ? 'HIDE'
+              : 'SHOW'} INPUT`}
+        />
     ), [ testRunDetailsCollapsed ]);
 
     const renderTrialTestData = useCallback((test: ITestCaseRun) => {
@@ -124,7 +111,7 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
                 { test.isTrialTest && <div>The zero tests are not included in the final result.</div>}
                 { renderShowButton(test.id, isExpanded) }
                 { isExpanded && (
-                    <div style={{ marginBottom: '10px' }} className={styles.warningBlockWrapper}>
+                    <div style={{ marginBottom: '15px' }} className={styles.warningBlockWrapper}>
                         <pre>
                             { test.input }
                         </pre>
@@ -162,7 +149,7 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
                     </div>
                 )}
                 <div style={{ marginTop: '10px' }}>
-                    <div>
+                    <div style={{ marginBottom: '5px' }}>
                         Time used:
                         {' '}
                         { test.timeUsed / 1000 }
