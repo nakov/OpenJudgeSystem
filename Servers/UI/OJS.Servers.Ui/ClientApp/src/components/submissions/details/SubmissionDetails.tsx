@@ -139,8 +139,14 @@ const SubmissionDetails = () => {
     }, [ setPageTitle, submissionTitle ]);
 
     const problemNameHeadingText = useMemo(
-        () => `${currentSubmission?.problem.name} - ${currentSubmission?.problem.id}`,
-        [ currentSubmission?.problem.id, currentSubmission?.problem.name ],
+        () => {
+            if (isNil(currentSubmission)) {
+                return null;
+            }
+
+            return `${currentSubmission?.problem.name} - ${currentSubmission?.problem.id}`;
+        },
+        [ currentSubmission ],
     );
 
     const detailsHeadingText = useMemo(

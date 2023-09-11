@@ -16,7 +16,7 @@ const SubmissionResultPointsLabel = ({
     maximumPoints,
     isProcessed,
 }: ISubmissionResultPointsLabelProps) => {
-    const labelType = points === 0 && !isProcessed
+    const labelType = !isProcessed
         ? LabelType.plain
         : points === 0 && isProcessed
             ? LabelType.warning
@@ -28,7 +28,10 @@ const SubmissionResultPointsLabel = ({
         ? points
         : '?';
 
-    const text = useMemo(() => `${currentPoints}/${maximumPoints}`, [ currentPoints, maximumPoints ]);
+    const text = useMemo(
+        () => `${currentPoints}/${maximumPoints}`,
+        [ currentPoints, maximumPoints ],
+    );
 
     const internalClassName = concatClassNames(styles.resultLabel, 'resultLabel');
 
