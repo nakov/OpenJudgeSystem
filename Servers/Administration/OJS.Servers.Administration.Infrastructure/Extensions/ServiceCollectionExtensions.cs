@@ -32,6 +32,7 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
                 .ConfigureGlobalDateFormat()
                 .ValidateLaunchSettings(RequiredConfigValues)
                 .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(Enumerable.Empty<GlobalQueryFilterType>())
+                .AddMemoryCache()
                 .AddDistributedCaching()
                 .AddSoftUniJudgeCommonServices()
                 .ConfigureSettings(configuration)
