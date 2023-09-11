@@ -41,6 +41,7 @@ const ContestPage = () => {
         actions: {
             registerParticipant,
             start,
+            clearContestError,
         },
     } = useCurrentContest();
 
@@ -165,11 +166,25 @@ const ContestPage = () => {
                 return;
             }
 
-            (async () => {
-                await registerParticipant(internalContest);
-            })();
+            registerParticipant(internalContest);
         },
         [ contestId, internalContest, registerParticipant ],
+    );
+
+    useEffect(
+        () => {
+            if (isNil(contestError)) {
+                return () => null;
+            }
+
+            const timer = setTimeout(() => {
+                clearContestError();
+                navigate('/');
+            }, 5000);
+
+            return () => clearTimeout(timer);
+        },
+        [ contestError, navigate, clearContestError ],
     );
 
     useEffect(
@@ -193,9 +208,7 @@ const ContestPage = () => {
             if (!isNil(contest)) {
                 const { isOnline } = contest;
                 if (isUserParticipant || !isOnline || !isParticipationOfficial) {
-                    (async () => {
-                        await start(internalContest);
-                    })();
+                    start(internalContest);
                 }
 
                 setModalContest({
