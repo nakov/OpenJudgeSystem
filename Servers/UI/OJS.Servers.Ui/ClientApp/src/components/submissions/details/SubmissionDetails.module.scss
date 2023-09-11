@@ -134,3 +134,17 @@
   margin-bottom: 1rem;
   padding: 1rem;
 }
+
+@media only screen and (max-width: 1430px) {
+  .buttonsSection {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    a {
+      margin-left: 0;
+      margin-right: 20px;
+      margin-top: 10px;
+    }
+  }
+}
