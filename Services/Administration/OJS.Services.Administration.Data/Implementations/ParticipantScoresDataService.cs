@@ -45,7 +45,7 @@ namespace OJS.Services.Administration.Data.Implementations
 
         public async Task ResetBySubmission(Submission submission)
         {
-            if (submission.ParticipantId == null || submission.ProblemId == null)
+            if (submission.ParticipantId == null)
             {
                 return;
             }
@@ -66,7 +66,7 @@ namespace OJS.Services.Administration.Data.Implementations
 
             var existingScore = await this.GetByParticipantIdProblemIdAndIsOfficial(
                 submission.ParticipantId.Value,
-                submission.ProblemId.Value,
+                submission.ProblemId,
                 participant.IsOfficial);
 
             if (existingScore == null)
@@ -112,7 +112,7 @@ namespace OJS.Services.Administration.Data.Implementations
             await this.Add(new ParticipantScore
             {
                 ParticipantId = submission.ParticipantId!.Value,
-                ProblemId = submission.ProblemId!.Value,
+                ProblemId = submission.ProblemId,
                 SubmissionId = submission.Id,
                 ParticipantName = username,
                 Points = submission.Points,

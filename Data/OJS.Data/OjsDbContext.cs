@@ -227,6 +227,9 @@ namespace OJS.Data
             builder.Entity<Test>()
                 .HasQueryFilter(x => !x.Problem.IsDeleted);
 
+            builder.Entity<Submission>()
+                .HasQueryFilter(x => !x.Problem.IsDeleted);
+
             builder.Entity<SubmissionTypeInProblem>()
                 .HasQueryFilter(x => !x.Problem.IsDeleted);
 
