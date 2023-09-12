@@ -166,7 +166,7 @@ interface IStartParticipationResponseType {
     participantId: number;
     contestIsCompete: boolean;
     lastSubmissionTime: Date;
-    remainingTimeInMilliseconds: number;
+    endDateTimeForParticipantOrContest: Date | null;
     userSubmissionsTimeLimit: number;
     participantsCount: number;
 }
