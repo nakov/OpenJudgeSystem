@@ -4,12 +4,15 @@ using AutoCrudAdmin.Models;
 using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Data;
+using OJS.Services.Infrastructure.Exceptions;
 using System.Linq;
 using System.Threading.Tasks;
 using OJS.Services.Administration.Models.Contests.Categories;
 using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Extensions;
 using System.Collections.Generic;
+
+using GlobalResource = OJS.Common.Resources.ContestCategoriesController;
 
 public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCategory>
 {
@@ -44,6 +47,36 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
         return Task.CompletedTask;
     }
 
+    protected override Task BeforeEntitySaveOnCreateAsync(ContestCategory entity, AdminActionContext actionContext)
+    {
+        if (string.IsNullOrEmpty(entity.Name))
+        {
+            throw new BusinessServiceException(GlobalResource.RequiredName);
+        }
+
+        if (entity.ParentId == 0)
+        {
+            entity.ParentId = null;
+        }
+
+        return base.BeforeEntitySaveOnCreateAsync(entity, actionContext);
+    }
+
+    protected override Task BeforeEntitySaveOnCreateAsync(ContestCategory entity, AdminActionContext actionContext)
+    {
+        if (string.IsNullOrEmpty(entity.Name))
+        {
+            throw new BusinessServiceException(GlobalResource.RequiredName);
+        }
+
+        if (entity.ParentId == 0)
+        {
+            entity.ParentId = null;
+        }
+
+        return base.BeforeEntitySaveOnCreateAsync(entity, actionContext);
+    }
+
     protected override Task BeforeEntitySaveOnEditAsync(
         ContestCategory existingEntity,
         ContestCategory newEntity,
@@ -58,12 +91,58 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
         return this.contestCategoriesCache.ClearContestCategory(existingEntity.Id);
     }
 
+    protected override async Task BeforeEntitySaveOnEditAsync(
+        ContestCategory existingEntity,
+        ContestCategory newEntity,
+        AdminActionContext actionContext)
+    {
+        if (string.IsNullOrEmpty(newEntity.Name))
+        {
+            throw new BusinessServiceException(GlobalResource.RequiredName);
+        }
+
+        if (newEntity.ParentId == 0)
+        {
+            newEntity.ParentId = null;
+            newEntity.Parent = null;
+        }
+        else
+        {
+            newEntity.Parent = await this.contestCategoriesData.GetById(newEntity.ParentId);
+        }
+
+        await this.contestCategoriesCache.ClearContestCategory(existingEntity.Id);
+    }
+
     protected override Task BeforeEntitySaveOnDeleteAsync(
         ContestCategory entity,
         AdminActionContext actionContext)
         => Task.WhenAll(
             this.contestCategoriesCache.ClearContestCategory(entity.Id),
             this.CascadeDeleteCategories(entity));
+
+    protected override async Task BeforeEntitySaveOnEditAsync(
+        ContestCategory existingEntity,
+        ContestCategory newEntity,
+        AdminActionContext actionContext)
+    {
+        if (string.IsNullOrEmpty(newEntity.Name))
+        {
+            throw new BusinessServiceException(GlobalResource.RequiredName);
+        }
+
+        if (newEntity.ParentId == 0)
+        {
+            newEntity.ParentId = null;
+            newEntity.Parent = null;
+        }
+        else
+        {
+            newEntity.Parent = await this.contestCategoriesData.GetById(newEntity.ParentId);
+        }
+
+        await this.contestCategoriesCache.ClearContestCategory(existingEntity.Id);
+    }
 
     protected override async Task AfterEntitySaveOnCreateAsync(
         ContestCategory entity,

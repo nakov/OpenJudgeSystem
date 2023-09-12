@@ -61,7 +61,6 @@ interface ICurrentContestContext {
         submitContestPasswordIsLoading: boolean;
         getParticipantScoresIsLoading: boolean;
         isUserParticipant: boolean;
-        contestDetailsError: IErrorDataType | null;
         contestDetails: IContestDetailsResponseType | null;
         isContestDetailsLoadingSuccessful: boolean;
     };
@@ -74,6 +73,7 @@ interface ICurrentContestContext {
         setIsSubmitAllowed: (isSubmitAllowed: boolean) => void;
         removeCurrentContest: () => void;
         setIsUserParticipant: (isUserParticipant: boolean) => void;
+        clearContestError: () => void;
         getContestDetails: (info: IContestDetailsUrlParams) => void;
     };
 }
@@ -138,7 +138,6 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ contestError, setContestError ] = useState<IErrorDataType | null>(null);
     const [ isUserParticipant, setIsUserParticipant ] = useState<boolean>(defaultState.state.isUserParticipant);
     const { state: { user } } = useAuth();
-    const [ contestDetailsError, setContestDetailsError ] = useState<IErrorDataType | null>(null);
     const [ contestDetails, setContestDetails ] = useState<IContestDetailsResponseType | null>(defaultState.state.contestDetails);
     const [ contestDetailsParams, setContestDetailsParams ] = useState<IContestDetailsUrlParams | null>(null);
 
@@ -226,7 +225,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             }
 
             if (!isNil(contestDetailsErrorData)) {
-                setContestDetailsError(contestDetailsErrorData);
+                setContestError(contestDetailsErrorData);
                 return;
             }
 
@@ -265,6 +264,13 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const removeCurrentContest = useCallback(
         () => {
             setContest(defaultState.state.contest);
+        },
+        [],
+    );
+
+    const clearContestError = useCallback(
+        () => {
+            setContestError(null);
         },
         [],
     );
@@ -466,7 +472,6 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 registerForContestLoading,
                 submitContestPasswordIsLoading,
                 getParticipantScoresIsLoading,
-                contestDetailsError,
                 contestDetails,
                 contestDetailsIsLoading,
                 isContestDetailsLoadingSuccessful,
@@ -481,6 +486,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 setIsUserParticipant,
                 getContestDetails,
                 removeCurrentContest,
+                clearContestError,
             },
         }),
         [
@@ -503,6 +509,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             isSubmitAllowed,
             setIsSubmitAllowed,
             contestError,
+            clearContestError,
             isRegisterForContestSuccessful,
             isUserParticipant,
             removeCurrentContest,
@@ -512,7 +519,6 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             submitContestPasswordIsLoading,
             getParticipantScoresIsLoading,
             getContestDetails,
-            contestDetailsError,
             contestDetails,
             contestDetailsIsLoading,
             isContestDetailsLoadingSuccessful,

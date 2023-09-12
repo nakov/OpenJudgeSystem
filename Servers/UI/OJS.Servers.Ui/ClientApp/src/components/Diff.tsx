@@ -7,6 +7,7 @@ import Prism from 'prismjs';
 import 'prismjs/components/prism-javascript';
 
 import 'prismjs/themes/prism-okaidia.css';
+import styles from './Diff.module.scss';
 
 interface ITestsRunDiffProps {
     expectedStr: string;
@@ -33,15 +34,30 @@ const Diff = ({ expectedStr, actualStr } : ITestsRunDiffProps) => {
     }, []);
 
     return (
-        <ReactDiffViewer
-          oldValue={expectedStr}
-          newValue={actualStr}
-          compareMethod={DiffMethod.CHARS}
-          splitView
-          showDiffOnly
-          renderContent={highlightSyntax}
-          styles={{ gutter: { minWidth: 'unset' } }}
-        />
+        <>
+            { expectedStr !== actualStr && (
+                <>
+                    <div className={styles.diffDetailsText}>
+                        <h4>Expected output:</h4>
+                    </div>
+                    <div className={styles.diffDetailsText}>
+                        <h4>Your output:</h4>
+                    </div>
+                </>
+            )}
+            <div className={styles.diffWrapper}>
+                <ReactDiffViewer
+                  oldValue={expectedStr}
+                  newValue={actualStr}
+                  compareMethod={DiffMethod.CHARS}
+                  splitView
+                  showDiffOnly
+                  renderContent={highlightSyntax}
+                  styles={{ gutter: { minWidth: 'unset', height: 'inherit' } }}
+                />
+            </div>
+        </>
+
     );
 };
 

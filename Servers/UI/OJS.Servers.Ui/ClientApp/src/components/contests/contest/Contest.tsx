@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router';
 import isNil from 'lodash/isNil';
 
 import { useAuth } from '../../../hooks/use-auth';
@@ -33,6 +34,7 @@ const Contest = () => {
             {
                 setIsSubmitAllowed,
                 removeCurrentContest,
+                clearContestError,
             },
     } = useCurrentContest();
     const {
@@ -43,6 +45,7 @@ const Contest = () => {
         },
     } = useProblems();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
+    const navigate = useNavigate();
     const { actions: { setPageTitle } } = usePageTitles();
 
     const navigationContestClass = 'navigationContest';
@@ -160,6 +163,22 @@ const Contest = () => {
             changeCurrentHash();
         },
         [ changeCurrentHash ],
+    );
+
+    useEffect(
+        () => {
+            if (isNil(contestError)) {
+                return () => null;
+            }
+
+            const timer = setTimeout(() => {
+                clearContestError();
+                navigate('/');
+            }, 5000);
+
+            return () => clearTimeout(timer);
+        },
+        [ contestError, navigate, clearContestError ],
     );
 
     useEffect(
