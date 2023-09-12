@@ -19,6 +19,7 @@ public class OrderableService<TEntity> : IOrderableService<TEntity>
     {
         var orderByIndex = 0;
 
+        // Using synchronous foreach because parallelism will not guarantee correct order.
         entities
             .OrderBy(p => p.OrderBy)
             .ForEach(p =>

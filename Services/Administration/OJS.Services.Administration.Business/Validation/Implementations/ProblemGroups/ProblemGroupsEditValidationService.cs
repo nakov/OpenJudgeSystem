@@ -1,5 +1,6 @@
 namespace OJS.Services.Administration.Business.Validation.Implementations.ProblemGroups;
 
+using OJS.Common.Enumerations;
 using OJS.Services.Administration.Models.ProblemGroups;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Validation;
@@ -23,7 +24,9 @@ public class ProblemGroupsEditValidationService : IValidationService<ProblemGrou
 
         if (Math.Abs(problemGroup!.ExistingOrderBy - problemGroup.NewOrderBy) > 0 && !problemGroup.ContestIsOnline)
         {
-            return ValidationResult.Invalid(Resource.CanEditOrderbyOnlyInOnlineContest);
+            return ValidationResult.Invalid(string.Format(
+                Resource.CanEditOrderbyOnlyInOnlineContest,
+                ContestType.OnlinePracticalExam.ToString()));
         }
 
         return ValidationResult.Valid();
