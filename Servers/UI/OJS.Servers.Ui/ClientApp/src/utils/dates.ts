@@ -21,7 +21,7 @@ const formatDate = (
     ? preciseFormatDate(date, formatString)
     : moment(date).utc(true).local().fromNow());
 
-const getCurrentTimeInUTC = () => {
+const getCurrentTimeInUtc = () => {
     const now = moment().utc();
     return new Date(
         now.year(),
@@ -34,7 +34,7 @@ const getCurrentTimeInUTC = () => {
     );
 };
 const convertToSecondsRemaining = (date: Date) => {
-    const currentDate = getCurrentTimeInUTC();
+    const currentDate = getCurrentTimeInUtc();
     const { hours, minutes, seconds } = intervalToDuration({
         start: currentDate,
         end: date,
@@ -113,7 +113,7 @@ export default {
     calculateTimeUntil,
     convertToSecondsRemaining,
     convertToTwoDigitValues,
-    getCurrentTimeInUTC,
+    getCurrentTimeInUtc,
 };
 
 export {
@@ -123,5 +123,5 @@ export {
     calculateTimeUntil,
     convertToSecondsRemaining,
     convertToTwoDigitValues,
-    getCurrentTimeInUTC,
+    getCurrentTimeInUtc,
 };
