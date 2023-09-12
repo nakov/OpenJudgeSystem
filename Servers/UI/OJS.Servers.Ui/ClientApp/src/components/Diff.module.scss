@@ -1,0 +1,21 @@
+@use 'src/styles/variables';
+
+.diffDetailsText {
+  display: inline-block;
+  margin-bottom: 10px;
+  text-align: start;
+  width: 50%;
+
+  > h4 {
+    font-size: variables.$f-size-20;
+  }
+}
+
+.diffWrapper {
+  height: 100px;
+  overflow: auto;
+
+  > table {
+    height: inherit;
+  }
+}

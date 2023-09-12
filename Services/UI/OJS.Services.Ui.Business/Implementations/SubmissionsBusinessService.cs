@@ -129,12 +129,16 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var contest = await this.contestsDataService
             .GetByProblemId<ContestServiceModel>(submissionDetailsServiceModel!.Problem.Id).Map<Contest>();
         var userIsAdminOrLecturerInContest = currentUser.IsAdmin || IsUserLecturerInContest(contest, currentUser.Id!);
-        var showTestInputForAllTests = submissionDetailsServiceModel.Problem.ShowDetailedFeedback;
-        if (!userIsAdminOrLecturerInContest && !showTestInputForAllTests)
+
+        if (!userIsAdminOrLecturerInContest)
         {
             submissionDetailsServiceModel.TestRuns = submissionDetailsServiceModel.TestRuns.Select(tr =>
             {
-                if (!tr.IsTrialTest)
+                var currentTestRunTest = submissionDetailsServiceModel.Tests.FirstOrDefault(t => t.Id == tr.TestId);
+                if (!tr.IsTrialTest
+                    && ((currentTestRunTest != null &&
+                         (currentTestRunTest.HideInput || !currentTestRunTest.IsOpenTest))
+                        || submissionDetailsServiceModel.Problem.ShowDetailedFeedback))
                 {
                     tr.ShowInput = false;
                     tr.Input = string.Empty;
