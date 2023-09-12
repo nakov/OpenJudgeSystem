@@ -7,7 +7,6 @@ namespace OJS.Services.Administration.Data.Implementations
     using OJS.Data.Models.Contests;
     using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Infrastructure.Extensions;
-    using SoftUni.AutoMapper.Infrastructure.Extensions;
 
     public class ContestCategoriesDataService : DataService<ContestCategory>, IContestCategoriesDataService
     {

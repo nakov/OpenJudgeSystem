@@ -66,10 +66,10 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
         }
 
         var validationModel = new ContestCategoriesValidationServiceModel
-            {
-                OrderBy = newEntity.OrderBy,
-                Name = newEntity.Name,
-            };
+        {
+            OrderBy = newEntity.OrderBy,
+            Name = newEntity.Name,
+        };
 
         this.contestCategoriesValidationService
             .GetValidationResult(validationModel)
