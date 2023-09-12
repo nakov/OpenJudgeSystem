@@ -32,6 +32,8 @@
 
         public bool ShowInput { get; set; } = true;
 
+        public int TestId { get; set; }
+
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<TestRun, TestRunDetailsServiceModel>()
                 .ForMember(d => d.ResultType, opt => opt.MapFrom(s => s.ResultType.ToString()))
