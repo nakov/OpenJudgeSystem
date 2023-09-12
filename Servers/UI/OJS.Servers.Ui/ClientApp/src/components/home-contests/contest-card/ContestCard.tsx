@@ -7,7 +7,7 @@ import { IIndexContestsType } from '../../../common/types';
 import { useModal } from '../../../hooks/use-modal';
 import concatClassNames from '../../../utils/class-names';
 import { convertToSecondsRemaining } from '../../../utils/dates';
-import { getParticipateInContestUrl } from '../../../utils/urls';
+import { getContestDetailsAppUrl, getParticipateInContestUrl } from '../../../utils/urls';
 import { Button, ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
 import LockIcon from '../../guidelines/icons/LockIcon';
@@ -46,7 +46,6 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const contestCardControlBtns = 'card-control-buttons';
     const contestCardControlBtnsClassName = concatClassNames(styles.contestCardControls, contestCardControlBtns);
 
-    const {  getContestDetailsUrl } = useAppUrls();
     const { actions: { setIsShowing } } = useModal();
     const navigate = useNavigate();
 
@@ -116,7 +115,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                         <LinkButton
                           type={LinkButtonType.plain}
                           size={ButtonSize.none}
-                          to={getContestDetailsUrl({ id, participationType })}
+                          to={getContestDetailsAppUrl({ id, participationType })}
                           text={name}
                         />
                     </span>
@@ -125,7 +124,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                     <LinkButton
                       type={LinkButtonType.plain}
                       size={ButtonSize.none}
-                      to={getContestDetailsUrl({ id, participationType })}
+                      to={getContestDetailsAppUrl({ id, participationType })}
                       text={name}
                     />
                 </span>
