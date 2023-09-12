@@ -1,10 +1,13 @@
 namespace OJS.Services.Administration.Data.Implementations
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using OJS.Data.Models.Contests;
     using OJS.Services.Common.Data.Implementations;
-    using System.Linq;
-    using System.Threading.Tasks;
+    using OJS.Services.Infrastructure.Extensions;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
 
     public class ContestCategoriesDataService : DataService<ContestCategory>, IContestCategoriesDataService
     {
@@ -12,6 +15,16 @@ namespace OJS.Services.Administration.Data.Implementations
             : base(db)
         {
         }
+
+        public Task<IEnumerable<ContestCategory>> GetContestCategoriesByParentId(int? parentId)
+            => this.DbSet
+                 .Where(cc => cc.ParentId == parentId)
+                 .ToEnumerableAsync();
+
+        public Task<IEnumerable<ContestCategory>> GetContestCategoriesWithoutParent()
+            => this.DbSet
+                .Where(cc => !cc.ParentId.HasValue)
+                .ToEnumerableAsync();
 
         public async Task<bool> UserHasContestCategoryPermissions(int categoryId, string? userId, bool isAdmin)
             => !string.IsNullOrWhiteSpace(userId) &&

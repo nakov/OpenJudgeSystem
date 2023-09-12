@@ -6,25 +6,57 @@ using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using OJS.Services.Administration.Models.Contests.Categories;
+using OJS.Services.Common.Validation;
+using OJS.Services.Infrastructure.Extensions;
+using System.Collections.Generic;
 
 public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCategory>
 {
     private readonly IContestCategoriesDataService contestCategoriesData;
     private readonly IContestCategoriesCacheService contestCategoriesCache;
+    private readonly IValidationService<ContestCategoriesValidationServiceModel> contestCategoriesValidationService;
+    private readonly IOrderableService<ContestCategory> contestCategoriesOrderableService;
 
     public ContestCategoriesController(
         IContestCategoriesDataService contestCategoriesData,
-        IContestCategoriesCacheService contestCategoriesCache)
+        IContestCategoriesCacheService contestCategoriesCache,
+        IValidationService<ContestCategoriesValidationServiceModel> contestCategoriesValidationService,
+        IOrderableService<ContestCategory> contestCategoriesOrderableService)
     {
         this.contestCategoriesData = contestCategoriesData;
         this.contestCategoriesCache = contestCategoriesCache;
+        this.contestCategoriesValidationService = contestCategoriesValidationService;
+        this.contestCategoriesOrderableService = contestCategoriesOrderableService;
+    }
+
+    protected override Task BeforeEntitySaveOnCreateAsync(ContestCategory entity, AdminActionContext actionContext)
+    {
+        var validationModel = new ContestCategoriesValidationServiceModel
+        {
+            OrderBy = entity.OrderBy,
+        };
+
+        this.contestCategoriesValidationService
+            .GetValidationResult(validationModel)
+            .VerifyResult();
+
+        return Task.CompletedTask;
     }
 
     protected override Task BeforeEntitySaveOnEditAsync(
         ContestCategory existingEntity,
         ContestCategory newEntity,
         AdminActionContext actionContext)
-        => this.contestCategoriesCache.ClearContestCategory(existingEntity.Id);
+    {
+        var validationModel = new ContestCategoriesValidationServiceModel { OrderBy = newEntity.OrderBy };
+
+        this.contestCategoriesValidationService
+            .GetValidationResult(validationModel)
+            .VerifyResult();
+
+        return this.contestCategoriesCache.ClearContestCategory(existingEntity.Id);
+    }
 
     protected override Task BeforeEntitySaveOnDeleteAsync(
         ContestCategory entity,
@@ -33,21 +65,21 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
             this.contestCategoriesCache.ClearContestCategory(entity.Id),
             this.CascadeDeleteCategories(entity));
 
-    protected override Task AfterEntitySaveOnCreateAsync(
+    protected override async Task AfterEntitySaveOnCreateAsync(
         ContestCategory entity,
         AdminActionContext actionContext)
     {
+        await this.OrderContestCategoriesByOrderBy(entity);
         this.contestCategoriesCache.ClearMainContestCategoriesCache();
-        return Task.CompletedTask;
     }
 
-    protected override Task AfterEntitySaveOnEditAsync(
+    protected override async Task AfterEntitySaveOnEditAsync(
         ContestCategory oldEntity,
         ContestCategory entity,
         AdminActionContext actionContext)
     {
+        await this.OrderContestCategoriesByOrderBy(entity);
         this.contestCategoriesCache.ClearMainContestCategoriesCache();
-        return Task.CompletedTask;
     }
 
     protected override Task AfterEntitySaveOnDeleteAsync(
@@ -66,5 +98,20 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
         }
 
         this.contestCategoriesData.Delete(contestCategory);
+    }
+
+    private async Task OrderContestCategoriesByOrderBy(ContestCategory contestCategory)
+    {
+        IEnumerable<ContestCategory> contestCategories;
+        if (contestCategory.ParentId.HasValue)
+        {
+            contestCategories = await this.contestCategoriesData.GetContestCategoriesByParentId(contestCategory.ParentId);
+        }
+        else
+        {
+            contestCategories = await this.contestCategoriesData.GetContestCategoriesWithoutParent();
+        }
+
+        await this.contestCategoriesOrderableService.ReevaluateOrder(contestCategories);
     }
 }

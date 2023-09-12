@@ -213,5 +213,11 @@ namespace OJS.Common
             public const string SubmissionNotFound = "Submission was not found!";
             public const string SubmissionNotFileUpload = "The submission does not have an attachment!";
         }
+
+        public static class ContestCategories
+        {
+            public const string ContestCategoryOrderByCanNotBeNegative =
+                "The order by of the contest category cannot be a negative number or zero!";
+        }
     }
 }
