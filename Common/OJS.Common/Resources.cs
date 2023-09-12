@@ -109,11 +109,6 @@ namespace OJS.Common
             public const string CategoryNotSelected = "Category not selected!";
         }
 
-        public static class ContestCategoriesController
-        {
-            public const string RequiredName = "Name cannot be null!";
-        }
-
         public static class ExamGroupsController
         {
             public const string CannotAddUsers = "You cannot add users to exam group that is not attached to a contest.";

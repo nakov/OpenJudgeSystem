@@ -4,15 +4,12 @@ using AutoCrudAdmin.Models;
 using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Data;
-using OJS.Services.Infrastructure.Exceptions;
 using System.Linq;
 using System.Threading.Tasks;
 using OJS.Services.Administration.Models.Contests.Categories;
 using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Extensions;
 using System.Collections.Generic;
-
-using GlobalResource = OJS.Common.Resources.ContestCategoriesController;
 
 public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCategory>
 {
