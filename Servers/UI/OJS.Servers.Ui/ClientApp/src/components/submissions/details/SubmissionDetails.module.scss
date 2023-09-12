@@ -26,11 +26,22 @@
   }
 }
 
+.contestHeading {
+  border: 0;
+  margin-bottom: 30px;
+  padding: 0;
+  text-align: center;
+}
+
 .detailsWrapper {
   @extend %wrapper;
   @extend %columnsThree;
 
   margin-bottom: 40px;
+}
+
+.headingContest {
+  @extend %contentSize;
 }
 
 .leftArrow {
@@ -123,10 +134,9 @@
 
 .testChangesWrapper {
   align-items: center;
-  background-color: colors.$warning-color;
-  border: 2px solid colors.$warning-color;
+  background-color: colors.$background-color-btn-primary;
+  border: 2px solid colors.$background-color-btn-primary;
   border-radius: 12px;
-  color: colors.$white-color;
   display: flex;
   font-family: fonts.$font-family-lato;
   font-size: 16px;

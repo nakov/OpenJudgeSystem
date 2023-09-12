@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import first from 'lodash/first';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../common/contest-helpers';
@@ -33,7 +35,7 @@ const SubmissionDetails = () => {
             isLoading,
             currentSubmission,
             currentSubmissionDetailsResults,
-            // validationErrors,
+            validationErrors,
             downloadErrorMessage,
         },
         actions: {
@@ -152,8 +154,6 @@ const SubmissionDetails = () => {
         [ currentSubmission?.id ],
     );
 
-    // const submissionsNavigationClassName = 'submissionsNavigation';
-
     const { submissionType } = currentSubmission || {};
 
     const submissionsDetails = 'submissionDetails';
@@ -223,9 +223,9 @@ const SubmissionDetails = () => {
 
     const renderTestsChangeMessage = useCallback(() => (
         currentSubmission?.testRuns.length === 0 &&
-        currentSubmission.isCompiledSuccessfully &&
-        currentSubmission.totalTests > 0 &&
-        !currentSubmission.processingComment
+            currentSubmission.isCompiledSuccessfully &&
+            currentSubmission.totalTests > 0 &&
+            !currentSubmission.processingComment
             ? (
                 <div className={styles.testChangesWrapper}>
                     <p>
@@ -334,42 +334,35 @@ const SubmissionDetails = () => {
     );
 
     const codeEditor = useCallback(
-        () => {
-            const {
-                isProcessed,
-                submissionType: currentSubmissionSubmissionType,
-                content,
-            } = currentSubmission || {};
-
-            return (
-                <div className={styles.code}>
-                    <Heading
-                      type={HeadingType.secondary}
-                      className={styles.taskHeading}
-                      style={problemNameHeadingText.length >= 30
-                          ? { marginBottom: 0 }
-                          : { marginBottom: '24px' }}
-                    >
-                        <div className={styles.btnContainer}>
-                            <LeftArrowIcon className={styles.leftArrow} size={IconSize.Large} />
-                            <Button
-                              type={ButtonType.secondary}
-                              size={ButtonSize.small}
-                              onClick={() => setSubmissionAndStartParticipation()}
-                              className={styles.backBtn}
-                              text=" "
-                              state={backButtonState}
-                            />
-                        </div>
-                        <div style={{ maxWidth: '30ch', textAlign: 'center' }}>
-                            {problemNameHeadingText}
-                        </div>
-                    </Heading>
-                    <div>
-                        {renderTestsChangeMessage()}
+        () => (
+            <div className={styles.code}>
+                <Heading
+                  type={HeadingType.secondary}
+                  className={styles.taskHeading}
+                  style={problemNameHeadingText.length >= 30
+                      ? { marginBottom: 0 }
+                      : { marginBottom: '24px' }}
+                >
+                    <div className={styles.btnContainer}>
+                        <LeftArrowIcon className={styles.leftArrow} size={IconSize.Large} />
+                        <Button
+                          type={ButtonType.secondary}
+                          size={ButtonSize.small}
+                          onClick={() => setSubmissionAndStartParticipation()}
+                          className={styles.backBtn}
+                          text=" "
+                          state={backButtonState}
+                        />
                     </div>
-                    {
-                        !isProcessed
+                    <div style={{ maxWidth: '30ch', textAlign: 'center' }}>
+                        {problemNameHeadingText}
+                    </div>
+                </Heading>
+                <div>
+                    {renderTestsChangeMessage()}
+                </div>
+                {
+                        !currentSubmission?.isProcessed
                             ? (
                                 <AlertBox
                                   className={styles.alertBox}
@@ -380,23 +373,22 @@ const SubmissionDetails = () => {
                             )
                             : null
                     }
-                    {submissionType?.allowBinaryFilesUpload
-                        ? (
-                            <div className={styles.resourceWrapper}>
-                                {renderResourceLink()}
-                                {renderDownloadErrorMessage()}
-                            </div>
-                        )
-                        : (
-                            <CodeEditor
-                              readOnly
-                              code={content}
-                              selectedSubmissionType={currentSubmissionSubmissionType}
-                            />
-                        )}
-                </div>
-            );
-        },
+                {submissionType?.allowBinaryFilesUpload
+                    ? (
+                        <div className={styles.resourceWrapper}>
+                            {renderResourceLink()}
+                            {renderDownloadErrorMessage()}
+                        </div>
+                    )
+                    : (
+                        <CodeEditor
+                          readOnly
+                          code={currentSubmission?.content}
+                          selectedSubmissionType={currentSubmission?.submissionType}
+                        />
+                    )}
+            </div>
+        ),
         [
             currentSubmission,
             problemNameHeadingText,
@@ -433,24 +425,32 @@ const SubmissionDetails = () => {
         [ currentSubmission, detailsHeadingText, submissionDetailsClassName, isLoading ],
     );
 
-    // const renderErrorMessage = useCallback(
-    //     () => {
-    //         const error = first(validationErrors);
-    //         if (!isNil(error)) {
-    //             const { detail } = error;
-    //             return (
-    //                 <div className={styles.headingContest}>
-    //                     <Heading type={HeadingType.primary} className={styles.contestHeading}>
-    //                         {detail}
-    //                     </Heading>
-    //                 </div>
-    //             );
-    //         }
-    //
-    //         return null;
-    //     },
-    //     [ validationErrors ],
-    // );
+    const renderErrorMessage = useCallback(
+        () => {
+            const error = first(validationErrors);
+            if (!isNil(error)) {
+                const { detail } = error;
+                return (
+                    <div className={styles.headingContest}>
+                        <Heading type={HeadingType.primary} className={styles.contestHeading}>
+                            {detail}
+                        </Heading>
+                    </div>
+                );
+            }
+
+            return null;
+        },
+        [ validationErrors ],
+    );
+
+    if (!isLoading && isNil(currentSubmission) && isEmpty(validationErrors)) {
+        return <div>No details fetched.</div>;
+    }
+
+    if (!isEmpty(validationErrors)) {
+        return renderErrorMessage();
+    }
 
     if (isLoading) {
         return (
@@ -462,6 +462,9 @@ const SubmissionDetails = () => {
 
     return (
         <>
+            <div>
+                {renderTestsChangeMessage()}
+            </div>
             <div className={styles.detailsWrapper}>
                 {refreshableSubmissionsList()}
                 {codeEditor()}

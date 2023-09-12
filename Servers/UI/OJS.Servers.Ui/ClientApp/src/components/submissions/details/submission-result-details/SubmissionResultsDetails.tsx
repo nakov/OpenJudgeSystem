@@ -1,15 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import {
     ISubmissionResultsDetails,
     ITestCaseRun,
     ITestRunDetailsCollapsed,
     ITestRunDetailsType,
-    IUserAuthData,
-    IUserRole,
 } from '../../../../hooks/submissions/types';
-import { useHttp } from '../../../../hooks/use-http';
-import { getUserAuthInfoUrl } from '../../../../utils/urls';
 import Button, { ButtonType } from '../../../guidelines/buttons/Button';
 import TestRunDiffView from '../../test-run-diff-view/TestRunDiffView';
 
@@ -24,25 +20,7 @@ enum testResultTypes {
 }
 
 const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
-    const [ isUserAdmin, setIsUserAdmin ] = useState<boolean>(false);
     const [ testRunDetailsCollapsed, setTestRunDetailsCollapsed ] = useState<ITestRunDetailsCollapsed>({});
-
-    const { get, data } = useHttp<null, IUserAuthData>({ url: getUserAuthInfoUrl() });
-
-    useEffect(() => {
-        get();
-    }, [ get ]);
-
-    useEffect(() => {
-        const { roles } = data || {};
-        const isUserRoleAdmin = roles?.find((role: IUserRole) => role.name === 'Administrator');
-
-        if (!isUserRoleAdmin) {
-            return setIsUserAdmin(false);
-        }
-
-        return setIsUserAdmin(true);
-    }, [ data ]);
 
     const renderTestHeading = (testRun: ITestCaseRun, idx: number) => {
         const isWrongAnswer = testRun.resultType !== testResultTypes.correctAnswer;
@@ -78,7 +56,7 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
         );
     };
 
-    const renderShowButton = useCallback((id: number, isExpanded: boolean) => (
+    const renderShowInputButton = useCallback((id: number, isExpanded: boolean) => (
         <Button
           type={ButtonType.primary}
           className={styles.showInputButton}
@@ -95,7 +73,7 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
         />
     ), [ testRunDetailsCollapsed ]);
 
-    const renderTrialTestData = useCallback((test: ITestCaseRun) => {
+    const renderTestData = useCallback((test: ITestCaseRun) => {
         const { isExpanded, detailsExpanded } = testRunDetailsCollapsed[test.id] || {};
 
         const testRunDiff = {
@@ -109,8 +87,8 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
         return (
             <>
                 { test.isTrialTest && <div>The zero tests are not included in the final result.</div>}
-                { renderShowButton(test.id, isExpanded) }
-                { isExpanded && (
+                { test.showInput && renderShowInputButton(test.id, isExpanded) }
+                { (isExpanded && test.showInput) && (
                     <div style={{ marginBottom: '15px' }} className={styles.warningBlockWrapper}>
                         <pre>
                             { test.input }
@@ -153,6 +131,7 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
                         Time used:
                         {' '}
                         { test.timeUsed / 1000 }
+                        {' '}
                         s
                     </div>
                     <div>
@@ -165,14 +144,14 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
                 </div>
             </>
         );
-    }, [ testRunDetailsCollapsed, renderShowButton ]);
+    }, [ testRunDetailsCollapsed, renderShowInputButton ]);
 
     return (
         <div className={styles.submissionResultDetailsWrapper}>
             {testRuns?.map((test: ITestCaseRun, idx: number) => (
                 <div key={`test-run-details-${test.id}`} className={styles.submissionResultDetails}>
                     {renderTestHeading(test, idx)}
-                    {(test.isTrialTest || isUserAdmin) && renderTrialTestData(test)}
+                    {renderTestData(test)}
                 </div>
             ))}
         </div>

@@ -5,6 +5,7 @@
     using System.Linq;
     using AutoMapper;
     using OJS.Data.Models.Submissions;
+    using OJS.Data.Models.Tests;
     using OJS.Services.Ui.Models.Users;
     using SoftUni.AutoMapper.Infrastructure.Models;
 
@@ -53,6 +54,9 @@
 
         public DateTime? CompletedExecutionOn { get; set; }
 
+        public IEnumerable<Test> Tests { get; set; } =
+            Enumerable.Empty<Test>();
+
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<Submission, SubmissionDetailsServiceModel>()
                 .ForMember(s => s.User, opt => opt.MapFrom(s => s.Participant!.User))
@@ -76,6 +80,10 @@
                 .ForMember(d => d.TotalTests, opt => opt.MapFrom(s =>
                     s.Problem != null
                         ? s.Problem.Tests.Count
-                        : 0));
+                        : 0))
+                .ForMember(d => d.Tests, opt => opt.MapFrom(s =>
+                    s.Problem != null
+                        ? s.Problem.Tests.ToList()
+                        : new List<Test>()));
     }
 }
