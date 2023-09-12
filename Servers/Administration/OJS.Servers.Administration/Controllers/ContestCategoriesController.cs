@@ -35,60 +35,22 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
 
     protected override Task BeforeEntitySaveOnCreateAsync(ContestCategory entity, AdminActionContext actionContext)
     {
+        if (entity.ParentId == 0)
+        {
+            entity.ParentId = null;
+        }
+
         var validationModel = new ContestCategoriesValidationServiceModel
         {
             OrderBy = entity.OrderBy,
+            Name = entity.Name,
         };
 
         this.contestCategoriesValidationService
             .GetValidationResult(validationModel)
             .VerifyResult();
 
-        return Task.CompletedTask;
-    }
-
-    protected override Task BeforeEntitySaveOnCreateAsync(ContestCategory entity, AdminActionContext actionContext)
-    {
-        if (string.IsNullOrEmpty(entity.Name))
-        {
-            throw new BusinessServiceException(GlobalResource.RequiredName);
-        }
-
-        if (entity.ParentId == 0)
-        {
-            entity.ParentId = null;
-        }
-
         return base.BeforeEntitySaveOnCreateAsync(entity, actionContext);
-    }
-
-    protected override Task BeforeEntitySaveOnCreateAsync(ContestCategory entity, AdminActionContext actionContext)
-    {
-        if (string.IsNullOrEmpty(entity.Name))
-        {
-            throw new BusinessServiceException(GlobalResource.RequiredName);
-        }
-
-        if (entity.ParentId == 0)
-        {
-            entity.ParentId = null;
-        }
-
-        return base.BeforeEntitySaveOnCreateAsync(entity, actionContext);
-    }
-
-    protected override Task BeforeEntitySaveOnEditAsync(
-        ContestCategory existingEntity,
-        ContestCategory newEntity,
-        AdminActionContext actionContext)
-    {
-        var validationModel = new ContestCategoriesValidationServiceModel { OrderBy = newEntity.OrderBy };
-
-        this.contestCategoriesValidationService
-            .GetValidationResult(validationModel)
-            .VerifyResult();
-
-        return this.contestCategoriesCache.ClearContestCategory(existingEntity.Id);
     }
 
     protected override async Task BeforeEntitySaveOnEditAsync(
@@ -96,11 +58,6 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
         ContestCategory newEntity,
         AdminActionContext actionContext)
     {
-        if (string.IsNullOrEmpty(newEntity.Name))
-        {
-            throw new BusinessServiceException(GlobalResource.RequiredName);
-        }
-
         if (newEntity.ParentId == 0)
         {
             newEntity.ParentId = null;
@@ -110,6 +67,16 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
         {
             newEntity.Parent = await this.contestCategoriesData.GetById(newEntity.ParentId);
         }
+
+        var validationModel = new ContestCategoriesValidationServiceModel
+            {
+                OrderBy = newEntity.OrderBy,
+                Name = newEntity.Name,
+            };
+
+        this.contestCategoriesValidationService
+            .GetValidationResult(validationModel)
+            .VerifyResult();
 
         await this.contestCategoriesCache.ClearContestCategory(existingEntity.Id);
     }
@@ -120,29 +87,6 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
         => Task.WhenAll(
             this.contestCategoriesCache.ClearContestCategory(entity.Id),
             this.CascadeDeleteCategories(entity));
-
-    protected override async Task BeforeEntitySaveOnEditAsync(
-        ContestCategory existingEntity,
-        ContestCategory newEntity,
-        AdminActionContext actionContext)
-    {
-        if (string.IsNullOrEmpty(newEntity.Name))
-        {
-            throw new BusinessServiceException(GlobalResource.RequiredName);
-        }
-
-        if (newEntity.ParentId == 0)
-        {
-            newEntity.ParentId = null;
-            newEntity.Parent = null;
-        }
-        else
-        {
-            newEntity.Parent = await this.contestCategoriesData.GetById(newEntity.ParentId);
-        }
-
-        await this.contestCategoriesCache.ClearContestCategory(existingEntity.Id);
-    }
 
     protected override async Task AfterEntitySaveOnCreateAsync(
         ContestCategory entity,

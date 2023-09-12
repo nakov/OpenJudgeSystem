@@ -3,4 +3,6 @@
 public class ContestCategoriesValidationServiceModel
 {
     public double OrderBy { get; set; }
+
+    public string? Name { get; set; }
 }

@@ -7,8 +7,18 @@ using OJS.Services.Common.Models;
 
 public class ContestCategoriesValidationService : IValidationService<ContestCategoriesValidationServiceModel>
 {
-    public ValidationResult GetValidationResult(ContestCategoriesValidationServiceModel? contest)
-        => contest!.OrderBy < 0
-            ? ValidationResult.Invalid(Resources.ContestCategories.ContestCategoryOrderByCanNotBeNegative)
-            : ValidationResult.Valid();
+    public ValidationResult GetValidationResult(ContestCategoriesValidationServiceModel? model)
+    {
+        if (model!.OrderBy < 0)
+        {
+            return ValidationResult.Invalid(Resources.ContestCategories.ContestCategoryOrderByCanNotBeNegative);
+        }
+
+        if (string.IsNullOrEmpty(model.Name))
+        {
+            return ValidationResult.Invalid(Resources.ContestCategories.ContestCategoryNameCannotBeNull);
+        }
+
+        return ValidationResult.Valid();
+    }
 }

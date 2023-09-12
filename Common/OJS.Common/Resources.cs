@@ -222,7 +222,9 @@ namespace OJS.Common
         public static class ContestCategories
         {
             public const string ContestCategoryOrderByCanNotBeNegative =
-                "The order by of the contest category cannot be a negative number or zero!";
+                "The order by of the contest category cannot be a negative number!";
+            public const string ContestCategoryNameCannotBeNull =
+                "The name of the contest category is required!";
         }
     }
 }
