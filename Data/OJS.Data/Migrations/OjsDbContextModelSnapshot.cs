@@ -222,6 +222,11 @@ namespace OJS.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<bool>("AllowParallelSubmissionsInTasks")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
                     b.Property<bool>("AutoChangeTestsFeedbackVisibility")
                         .HasColumnType("bit");
 
@@ -955,6 +960,9 @@ namespace OJS.Data.Migrations
                     b.Property<string>("CompilerComment")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("CompletedExecutionOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<byte[]>("Content")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
@@ -990,7 +998,7 @@ namespace OJS.Data.Migrations
                     b.Property<int>("Points")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProblemId")
+                    b.Property<int>("ProblemId")
                         .HasColumnType("int");
 
                     b.Property<bool>("Processed")
@@ -1690,7 +1698,9 @@ namespace OJS.Data.Migrations
 
                     b.HasOne("OJS.Data.Models.Problems.Problem", "Problem")
                         .WithMany("Submissions")
-                        .HasForeignKey("ProblemId");
+                        .HasForeignKey("ProblemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("OJS.Data.Models.Submissions.SubmissionType", "SubmissionType")
                         .WithMany()

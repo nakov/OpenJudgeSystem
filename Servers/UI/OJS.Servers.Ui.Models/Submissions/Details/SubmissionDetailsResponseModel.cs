@@ -38,5 +38,11 @@
         public DateTime? ModifiedOn { get; set; }
 
         public DateTime? StartedExecutionOn { get; set; }
+
+        public string? ProcessingComment { get; set; }
+
+        public int TotalTests { get; set; }
+
+        public DateTime? CompletedExecutionOn { get; set; }
     }
 }

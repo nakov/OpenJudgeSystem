@@ -10,7 +10,9 @@ import { ContestResultType } from '../common/constants';
 import { FilterType } from '../common/contest-types';
 import { SearchParams } from '../common/search-types';
 import {
-    IAllContestsUrlParams,
+    IAllContestsUrlParams, IContestDetailsUrlParams,
+    IContestEditUrlParams,
+    IContestProblemsUrlParams,
     IDownloadProblemResourceUrlParams,
     IDownloadSubmissionFileUrlParams,
     IGetContestByProblemUrlParams,
@@ -53,6 +55,10 @@ const getAdministrationNavigation = () => '/administration';
 const getAdministrationRetestSubmission = ({ id }: IRetestSubmissionUrlParams) => `
 ${administrationBaseUrl}/Submissions/Retest?PK=${id}`;
 const getAdministrationRetestSubmissionInternalUrl = () => '/Submissions/Retest';
+const getAdministrationProblems = ({ id }: IContestProblemsUrlParams) => `
+${administrationBaseUrl}/Problems?ContestId-equals=${id}`;
+const getAdministrationContestEditUrl = ({ id }: IContestEditUrlParams) => `
+${administrationBaseUrl}/Contests/Edit?PK=${id}`;
 
 // profile
 const getProfileInfoUrl = () => `${baseApiUrl}/Users/GetProfileInfo`;
@@ -83,6 +89,9 @@ const getParticipateInContestUrl = ({
     id,
     participationType,
 }: IParticipateInContestTypeUrlParams) => `/contests/${id}/${participationType}`;
+
+const getContestDetailsUrl =
+    ({ id, isOfficial }: IContestDetailsUrlParams) => `${baseApiUrl}/Contests/Details/${id}?official=${isOfficial}`;
 
 const getRegisterForContestUrl = ({
     id,
@@ -242,4 +251,7 @@ export {
     getDownloadProblemResourceUrl,
     getHomeStatisticsUrl,
     getSearchResults,
+    getContestDetailsUrl,
+    getAdministrationProblems,
+    getAdministrationContestEditUrl,
 };
