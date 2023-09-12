@@ -477,7 +477,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
             this.submissionsData.Update(submission);
 
-            await this.UpdateResults(submission);
+            await this.SaveParticipantScore(submission);
+
+            await this.submissionsForProcessingData.MarkProcessed(submission.Id);
+            await this.submissionsData.SaveChanges();
+            CacheTestRuns(submission);
         }
         else
         {
@@ -488,9 +492,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             submission.CompilerComment = errorMessage;
 
             this.submissionsData.Update(submission);
+            await this.submissionsForProcessingData.MarkProcessed(submission.Id);
         }
 
-        await this.submissionsForProcessingData.MarkProcessed(submission.Id);
         await this.submissionsData.SaveChanges();
 
         scope.Complete();
@@ -648,13 +652,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         await this.submissionsData.SaveChanges();
 
         await this.participantScoresBusinessService.SaveForSubmission(submission);
-    }
-
-    private async Task UpdateResults(Submission submission)
-    {
-        await this.SaveParticipantScore(submission);
-
-        CacheTestRuns(submission);
     }
 
     private async Task SaveParticipantScore(Submission submission)
