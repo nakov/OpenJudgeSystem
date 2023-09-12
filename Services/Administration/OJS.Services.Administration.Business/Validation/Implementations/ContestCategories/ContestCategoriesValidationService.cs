@@ -1,9 +1,10 @@
 ﻿namespace OJS.Services.Administration.Business.Validation.Implementations.ContestCategories;
 
-using OJS.Common;
 using Models.Contests.Categories;
 using OJS.Services.Common.Validation;
 using OJS.Services.Common.Models;
+
+using GlobalResource = OJS.Common.Resources.ContestCategoriesController;
 
 public class ContestCategoriesValidationService : IValidationService<ContestCategoriesValidationServiceModel>
 {
@@ -11,12 +12,12 @@ public class ContestCategoriesValidationService : IValidationService<ContestCate
     {
         if (model!.OrderBy < 0)
         {
-            return ValidationResult.Invalid(Resources.ContestCategories.ContestCategoryOrderByCanNotBeNegative);
+            return ValidationResult.Invalid(GlobalResource.ContestCategoryOrderByCanNotBeNegative);
         }
 
         if (string.IsNullOrEmpty(model.Name))
         {
-            return ValidationResult.Invalid(Resources.ContestCategories.ContestCategoryNameCannotBeNull);
+            return ValidationResult.Invalid(GlobalResource.RequiredName);
         }
 
         return ValidationResult.Valid();
