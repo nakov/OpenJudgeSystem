@@ -111,7 +111,6 @@ interface IContestType {
     resultsArePubliclyVisible: boolean;
     hasContestPassword: boolean;
     hasPracticePassword: boolean;
-    remainingTimeInMilliseconds: number;
     userIsAdminOrLecturerInContest: boolean;
     userCanCompete: boolean;
     userIsParticipant: false;
