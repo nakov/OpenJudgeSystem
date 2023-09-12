@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 
 import { IContestModal } from '../../common/types';
 import { useCurrentContest } from '../../hooks/use-current-contest';
-import { getHomePageUrl, getParticipateInContestUrl } from '../../utils/urls';
+import { getHomePageUrl } from '../../utils/urls';
 import Button, { ButtonSize, ButtonType } from '../guidelines/buttons/Button';
 
 import styles from './ContestModal.module.scss';
