@@ -39,7 +39,7 @@ const Alert = (props:IAlertProps) => {
     const { message, severity, variant, onClose, autoHideDuration, vertical, horizontal } = props;
     const [ open, setOpen ] = useState<boolean>(true);
 
-    const alertClass = `${(severity === AlertSeverity.Success)}`
+    const alertClass = `${severity === AlertSeverity.Success}`
         ? 'success-alert'
         : '';
     const handleClose = () => {
