@@ -31,7 +31,6 @@ using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Services.Common.Models.Submissions;
 using OJS.Workers.Common.Models;
 using Microsoft.Extensions.Logging;
-
 using static Constants.PublicSubmissions;
 
 public class SubmissionsBusinessService : ISubmissionsBusinessService
@@ -42,7 +41,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly IParticipantScoresBusinessService participantScoresBusinessService;
 
     private readonly IParticipantsBusinessService participantsBusinessService;
+
     private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
+
     // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/624
     private readonly IParticipantsDataService participantsDataService;
     private readonly IProblemsDataService problemsDataService;
@@ -128,12 +129,16 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var contest = await this.contestsDataService
             .GetByProblemId<ContestServiceModel>(submissionDetailsServiceModel!.Problem.Id).Map<Contest>();
         var userIsAdminOrLecturerInContest = currentUser.IsAdmin || IsUserLecturerInContest(contest, currentUser.Id!);
-        var showTestInputForAllTests = submissionDetailsServiceModel.Problem.ShowDetailedFeedback;
-        if (!userIsAdminOrLecturerInContest && !showTestInputForAllTests)
+
+        if (!userIsAdminOrLecturerInContest)
         {
             submissionDetailsServiceModel.TestRuns = submissionDetailsServiceModel.TestRuns.Select(tr =>
             {
-                if (!tr.IsTrialTest)
+                var currentTestRunTest = submissionDetailsServiceModel.Tests.FirstOrDefault(t => t.Id == tr.TestId);
+                if (!tr.IsTrialTest
+                    && ((currentTestRunTest != null &&
+                         (currentTestRunTest.HideInput || !currentTestRunTest.IsOpenTest))
+                        || submissionDetailsServiceModel.Problem.ShowDetailedFeedback))
                 {
                     tr.ShowInput = false;
                     tr.Input = string.Empty;
@@ -382,12 +387,12 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var submitSubmissionValidationServiceResult = this.submitSubmissionValidationService.GetValidationResult(
             (problem,
-            currentUser,
-            participant,
-            contestValidationResult,
-            userSubmissionTimeLimit,
-            hasUserNotProcessedSubmissionForProblem,
-            model));
+                currentUser,
+                participant,
+                contestValidationResult,
+                userSubmissionTimeLimit,
+                hasUserNotProcessedSubmissionForProblem,
+                model));
 
         if (!submitSubmissionValidationServiceResult.IsValid)
         {
@@ -472,7 +477,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
             this.submissionsData.Update(submission);
 
-            await this.UpdateResults(submission);
+            await this.SaveParticipantScore(submission);
+
+            await this.submissionsForProcessingData.MarkProcessed(submission.Id);
+            await this.submissionsData.SaveChanges();
+            CacheTestRuns(submission);
         }
         else
         {
@@ -483,9 +492,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             submission.CompilerComment = errorMessage;
 
             this.submissionsData.Update(submission);
+            await this.submissionsForProcessingData.MarkProcessed(submission.Id);
         }
 
-        await this.submissionsForProcessingData.MarkProcessed(submission.Id);
         await this.submissionsData.SaveChanges();
 
         scope.Complete();
@@ -511,7 +520,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         return modelResult;
     }
 
-    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetUsersLastSubmissions(bool isOfficial, int page)
+    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetUsersLastSubmissions(
+        bool isOfficial,
+        int page)
     {
         var user = this.userProviderService.GetCurrentUser();
 
@@ -610,7 +621,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
     }
 
-    private SubmissionServiceModel BuildSubmissionForProcessing(Submission submission, Problem problem, SubmissionType submissionType)
+    private SubmissionServiceModel BuildSubmissionForProcessing(
+        Submission submission,
+        Problem problem,
+        SubmissionType submissionType)
     {
         // We detach the existing entity, in order to avoid tracking exception on Update.
         this.submissionsData.Detach(submission);
@@ -638,13 +652,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         await this.submissionsData.SaveChanges();
 
         await this.participantScoresBusinessService.SaveForSubmission(submission);
-    }
-
-    private async Task UpdateResults(Submission submission)
-    {
-        await this.SaveParticipantScore(submission);
-
-        CacheTestRuns(submission);
     }
 
     private async Task SaveParticipantScore(Submission submission)
