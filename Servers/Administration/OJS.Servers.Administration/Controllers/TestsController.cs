@@ -167,7 +167,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
 
             if (model.RetestProblem)
             {
-                await this.problemsBusiness.RetestById(problemId);
+                await this.problemsBusiness.RetestById(problemId, retestBySingleTest: false);
             }
 
             scope.Complete();
@@ -259,7 +259,32 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             FormControlType = FormControlType.TextArea,
         });
 
+        if (action == EntityAction.Edit)
+        {
+            formControls.Add(new FormControlViewModel
+            {
+                Name = AdditionalFormFields.RetestProblem.ToString(),
+                Type = typeof(bool),
+                Value = false,
+            });
+        }
+
         return formControls;
+    }
+
+    protected override async Task AfterEntitySaveOnEditAsync(
+        Test oldTest,
+        Test newTest,
+        AdminActionContext actionContext)
+    {
+        var isForRetesting = bool.Parse(actionContext.GetFormValue(AdditionalFormFields.RetestProblem));
+
+        if (isForRetesting)
+        {
+            await this.problemsBusiness.RetestById(newTest.Id, retestBySingleTest: true);
+        }
+
+        await base.AfterEntitySaveOnEditAsync(oldTest, newTest, actionContext);
     }
 
     protected override async Task BeforeEntitySaveAsync(Test entity, AdminActionContext actionContext)

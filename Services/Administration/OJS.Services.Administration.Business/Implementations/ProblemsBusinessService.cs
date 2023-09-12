@@ -65,13 +65,18 @@ namespace OJS.Services.Administration.Business.Implementations
             this.submissionsCommonBusinessService = submissionsCommonBusinessService;
         }
 
-        public async Task RetestById(int id)
+        public async Task RetestById(int id, bool retestBySingleTest)
         {
-            var submissions = await this.submissionsData.GetAllByProblem(id)
+            var submissionsQueryable = retestBySingleTest
+                ? this.submissionsData.GetByTestId(id)
+                : this.submissionsData.GetAllByProblem(id);
+
+            var submissions = await submissionsQueryable
+                .Where(s => !s.IsDeleted)
                 .Include(s => s.SubmissionType)
                 .Include(s => s.Problem)
-                .Include(s => s.Problem!.Checker)
-                .Include(s => s.Problem!.Tests)
+                .Include(s => s.Problem.Checker)
+                .Include(s => s.Problem.Tests)
                 .ToListAsync();
 
             var submissionIds = submissions.Select(s => s.Id).ToList();

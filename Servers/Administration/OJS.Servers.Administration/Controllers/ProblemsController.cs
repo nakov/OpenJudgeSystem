@@ -186,7 +186,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             return this.RedirectToAction("Index", "Problems");
         }
 
-        await this.problemsBusiness.RetestById(model.Id);
+        await this.problemsBusiness.RetestById(model.Id, retestBySingleTest: false);
 
         this.TempData.AddSuccessMessage(GlobalResource.ProblemRetested);
         return this.RedirectToAction("Index");

@@ -32,6 +32,10 @@
         public IQueryable<Submission> GetByIds(IEnumerable<int> ids)
             => this.DbSet.Where(s => ids.Contains(s.Id));
 
+        public IQueryable<Submission> GetByTestId(int testId)
+            => this.DbSet
+                .Include(s => s.TestRuns)
+                .Where(s => s.TestRuns.Any(tr => tr.TestId == testId && !s.IsDeleted));
         public IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId)
             => this.DbSet
                 .Where(s => s.ParticipantId == participantId && s.ProblemId == problemId);
