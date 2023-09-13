@@ -1,4 +1,4 @@
-import { intervalToDuration } from 'date-fns';
+import { differenceInDays, intervalToDuration } from 'date-fns';
 import moment from 'moment';
 
 const defaultDateTimeFormat = 'HH:MM, DD/MMM/yyyy';
@@ -21,25 +21,45 @@ const formatDate = (
     ? preciseFormatDate(date, formatString)
     : moment(date).utc(true).local().fromNow());
 
+const getCurrentTimeInUTC = () => {
+    const now = moment().utc();
+    return new Date(
+        now.year(),
+        now.month(),
+        now.date(),
+        now.hour(),
+        now.minute(),
+        now.second(),
+        now.millisecond(),
+    );
+};
 const convertToSecondsRemaining = (date: Date) => {
-    const { days, hours, minutes, seconds } = intervalToDuration({
-        start: new Date(),
+    const currentDate = getCurrentTimeInUTC();
+    const { hours, minutes, seconds } = intervalToDuration({
+        start: currentDate,
         end: date,
     });
 
-    const daysRemaining = days ?? 0;
+    const daysRemaining = differenceInDays(date, currentDate);
 
     const hoursRemaining = daysRemaining * 24 + (hours ?? 0);
+
     const minutesRemaining = hoursRemaining * 60 + (minutes ?? 0);
 
     return minutesRemaining * 60 + (seconds ?? 0);
 };
 
+// This function converts a given duration in seconds into a time object that includes
+// days, hours, minutes, and seconds.
+// The function first calculates the number of whole days within the duration
+// The remaining seconds are computed using the modulus operator (%)
+// The function 'intervalToDuration' is then used to break down the remaining seconds into h, m, s
 const secondsToFullTime = (duration: number) => {
-    const { days: daysInitial, hours: hoursInitial, minutes: minutesInitial, seconds: secondsInitial } =
-        intervalToDuration({ start: 0, end: duration * 1000 });
-
-    const days = daysInitial ?? 0;
+    // Number of seconds in a day: 86400 (60 seconds * 60 minutes * 24 hours)
+    const days = Math.floor(duration / 86400);
+    const remainingSeconds = duration % 86400;
+    const { hours: hoursInitial, minutes: minutesInitial, seconds: secondsInitial } =
+        intervalToDuration({ start: 0, end: remainingSeconds * 1000 });
 
     const hours = hoursInitial ?? 0;
 
@@ -51,16 +71,21 @@ const secondsToFullTime = (duration: number) => {
 };
 
 interface IConvertToTwoDigitValuesParamType {
+    days: number;
     hours: number;
     minutes: number;
     seconds: number;
 }
 
 const convertToTwoDigitValues = ({
+    days: daysValue,
     hours: hoursValue,
     minutes: minutesValue,
     seconds: secondsValue,
 }: IConvertToTwoDigitValuesParamType) => {
+    const days = daysValue >= 10
+        ? daysValue.toString()
+        : `0${daysValue}`;
     const hours = hoursValue >= 10
         ? hoursValue.toString()
         : `0${hoursValue}`;
@@ -74,6 +99,7 @@ const convertToTwoDigitValues = ({
         : `0${secondsValue}`;
 
     return {
+        days,
         hours,
         minutes,
         seconds,
@@ -87,6 +113,7 @@ export default {
     calculateTimeUntil,
     convertToSecondsRemaining,
     convertToTwoDigitValues,
+    getCurrentTimeInUtc: getCurrentTimeInUTC,
 };
 
 export {
@@ -96,4 +123,5 @@ export {
     calculateTimeUntil,
     convertToSecondsRemaining,
     convertToTwoDigitValues,
+    getCurrentTimeInUTC,
 };
