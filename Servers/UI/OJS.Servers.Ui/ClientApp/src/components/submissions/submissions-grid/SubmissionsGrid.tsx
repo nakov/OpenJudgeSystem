@@ -160,11 +160,13 @@ const SubmissionsGrid = () => {
                             )
                         </Heading>
                     )}
+                    { (isInRole || activeToggleElement === toggleValues.mySubmissions) && (
                     <PaginationControls
                       count={pagesCount}
                       page={currentPage}
                       onChange={handlePageChange}
                     />
+                    ) }
                 </>
             );
         },
