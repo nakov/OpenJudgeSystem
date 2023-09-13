@@ -7,9 +7,9 @@ import { useCurrentContest } from '../../../hooks/use-current-contest';
 import { usePageTitles } from '../../../hooks/use-page-titles';
 import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
-import { convertToTwoDigitValues } from '../../../utils/dates';
+import { convertToSecondsRemaining, getCurrentTimeInUTC } from '../../../utils/dates';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import Countdown, { ICountdownRemainingType, Metric } from '../../guidelines/countdown/Countdown';
+import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import Text, { TextType } from '../../guidelines/text/Text';
@@ -25,7 +25,7 @@ const Contest = () => {
             contest,
             score,
             maxScore,
-            remainingTimeInMilliseconds,
+            endDateTimeForParticipantOrContest,
             participantsCount,
             contestError,
             contestIsLoading,
@@ -91,53 +91,30 @@ const Contest = () => {
         [ scoreText ],
     );
 
-    const remainingTimeClassName = 'remainingTime';
-    const renderCountdown = useCallback(
-        (remainingTime: ICountdownRemainingType) => {
-            const { hours, minutes, seconds } = convertToTwoDigitValues(remainingTime);
-
-            return (
-                <p className={remainingTimeClassName}>
-                    Remaining time:
-                    {' '}
-                    <Text type={TextType.Bold}>
-                        {hours}
-                        :
-                        {minutes}
-                        :
-                        {seconds}
-                    </Text>
-                </p>
-            );
-        },
-        [],
-    );
-
     const handleCountdownEnd = useCallback(
         () => {
-            setIsSubmitAllowed(canAccessAdministration || false);
+            if (!isNil(endDateTimeForParticipantOrContest) && new Date(endDateTimeForParticipantOrContest) <= getCurrentTimeInUTC()) {
+                setIsSubmitAllowed(canAccessAdministration);
+            }
         },
-        [ canAccessAdministration, setIsSubmitAllowed ],
+        [ canAccessAdministration, setIsSubmitAllowed, endDateTimeForParticipantOrContest ],
     );
 
     const renderTimeRemaining = useCallback(
         () => {
-            if (!remainingTimeInMilliseconds) {
+            if (isNil(endDateTimeForParticipantOrContest) || new Date(endDateTimeForParticipantOrContest) < getCurrentTimeInUTC()) {
                 return null;
             }
 
-            const currentSeconds = remainingTimeInMilliseconds / 1000;
-
             return (
                 <Countdown
-                  renderRemainingTime={renderCountdown}
-                  duration={currentSeconds}
+                  duration={convertToSecondsRemaining(new Date(endDateTimeForParticipantOrContest))}
                   metric={Metric.seconds}
                   handleOnCountdownEnd={handleCountdownEnd}
                 />
             );
         },
-        [ handleCountdownEnd, remainingTimeInMilliseconds, renderCountdown ],
+        [ endDateTimeForParticipantOrContest, handleCountdownEnd ],
     );
 
     const secondaryHeadingClassName = useMemo(
