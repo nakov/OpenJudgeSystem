@@ -16,16 +16,32 @@
   button {
     @extend %font-family-montserrat;
     border: none;
+    border-radius: 8px;
     cursor: pointer;
     margin: 30px 0 10px 0;
-    padding: 10px 20px;
+    padding: 13px 24px;
+    font-size: variables.$f-size-16;
+    font-weight: 700;
     color: colors.$light-blue-color;
     background-color: colors.$white-color;
+    box-shadow: colors.$box-shadow-color;
     transition: all .2s ease-in-out;
+
+    &:first-child {
+      margin-right: 20px;
+    }
   }
 
   .activeElement {
     background-color: colors.$light-blue-color;
     color: colors.$white-color;
   }
+}
+
+.noSubmissionsFound {
+  @extend %font-family-montserrat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
 }

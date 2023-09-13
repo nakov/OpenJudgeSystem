@@ -128,9 +128,9 @@ const SubmissionsGrid = () => {
     const renderPrivilegedComponent = useCallback(
         () => {
             const { isInRole } = user;
-            if (isInRole) {
-                return (
-                    <>
+            return (
+                <>
+                    { (isInRole && activeToggleElement === toggleValues.allSubmissions) && (
                         <Heading type={HeadingType.secondary}>
                             Submissions awaiting execution:
                             {' '}
@@ -159,16 +159,14 @@ const SubmissionsGrid = () => {
                             />
                             )
                         </Heading>
-                        <PaginationControls
-                          count={pagesCount}
-                          page={currentPage}
-                          onChange={handlePageChange}
-                        />
-                    </>
-                );
-            }
-
-            return null;
+                    )}
+                    <PaginationControls
+                      count={pagesCount}
+                      page={currentPage}
+                      onChange={handlePageChange}
+                    />
+                </>
+            );
         },
         [
             user,
@@ -178,6 +176,7 @@ const SubmissionsGrid = () => {
             pagesCount,
             currentPage,
             handlePageChange,
+            activeToggleElement,
         ],
     );
 
@@ -220,6 +219,14 @@ const SubmissionsGrid = () => {
                 return (
                     <div style={{ ...flexCenterObjectStyles }}>
                         <SpinningLoader />
+                    </div>
+                );
+            }
+
+            if (submissions.length === 0) {
+                return (
+                    <div className={styles.noSubmissionsFound}>
+                        No submissions found.
                     </div>
                 );
             }
