@@ -65,12 +65,13 @@ namespace OJS.Services.Administration.Business.Implementations
         public async Task RetestById(int id, bool retestBySingleTest)
         {
             IQueryable<Submission> submissionsQueryable;
+            var problemIdFromQuery = 0;
 
             if (retestBySingleTest)
             {
-               var problemId = await this.testData.GetProblemIdByTestId(id);
+                problemIdFromQuery = await this.testData.GetProblemIdByTestId(id);
 
-               submissionsQueryable = this.submissionsData.GetAllByProblem(problemId);
+                submissionsQueryable = this.submissionsData.GetAllByProblem(problemIdFromQuery);
             }
             else
             {
@@ -93,7 +94,9 @@ namespace OJS.Services.Administration.Business.Implementations
             {
                 await this.participantScoresData.DeleteAllByProblem(id);
 
-                await this.submissionsData.SetAllToUnprocessedByProblem(id);
+                var problemId = retestBySingleTest ? problemIdFromQuery : id;
+
+                await this.submissionsData.SetAllToUnprocessedByProblem(problemId);
 
                 await this.submissionsForProcessingData.AddOrUpdateBySubmissionIds(submissionIds);
 
