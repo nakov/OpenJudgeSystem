@@ -12,8 +12,17 @@ using System.Linq;
 
 public static class AdminActionContextExtensions
 {
-    public static string GetFormValue(this AdminActionContext actionContext, AdditionalFormFields field)
-        => actionContext.EntityDict[field.ToString()];
+    public static string? GetFormValue(this AdminActionContext actionContext, AdditionalFormFields field)
+    {
+        try
+        {
+            return actionContext.EntityDict[field.ToString()];
+        }
+        catch (KeyNotFoundException)
+        {
+            return null;
+        }
+    }
 
     public static IFormFile? GetFormFile(this AdminActionContext actionContext, AdditionalFormFields field)
         => actionContext.Files.SingleFiles.FirstOrDefault(f => f.Name == field.ToString());

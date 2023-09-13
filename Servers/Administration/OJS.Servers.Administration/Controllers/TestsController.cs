@@ -277,7 +277,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         Test newTest,
         AdminActionContext actionContext)
     {
-        var isForRetesting = bool.Parse(actionContext.GetFormValue(AdditionalFormFields.RetestProblem));
+        bool.TryParse(actionContext.GetFormValue(AdditionalFormFields.RetestProblem), out var isForRetesting);
 
         if (isForRetesting)
         {
