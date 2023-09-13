@@ -29,6 +29,10 @@
         public IQueryable<Submission> GetAllByProblem(int problemId)
             => this.DbSet.Where(s => s.ProblemId == problemId);
 
+        public IQueryable<Submission> GetAllNonDeletedByProblem(int problemId)
+            => this.GetAllByProblem(problemId)
+                .Where(s => !s.IsDeleted);
+
         public IQueryable<Submission> GetByIds(IEnumerable<int> ids)
             => this.DbSet.Where(s => ids.Contains(s.Id));
 

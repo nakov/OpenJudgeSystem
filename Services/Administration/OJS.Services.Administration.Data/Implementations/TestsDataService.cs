@@ -30,5 +30,10 @@
             this.Delete(t => t.ProblemId == problemId);
             await this.SaveChanges();
         }
+
+        public async Task<int> GetProblemIdByTestId(int testId)
+            => await this.GetByIdQuery(testId)
+                .Select(t => t.ProblemId)
+                .FirstAsync();
     }
 }

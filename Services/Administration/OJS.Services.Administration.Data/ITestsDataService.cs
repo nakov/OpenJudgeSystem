@@ -14,5 +14,7 @@
         IQueryable<Test> GetAllNonTrialByProblem(int problemId);
 
         Task DeleteByProblem(int problemId);
+
+        Task<int> GetProblemIdByTestId(int testId);
     }
 }

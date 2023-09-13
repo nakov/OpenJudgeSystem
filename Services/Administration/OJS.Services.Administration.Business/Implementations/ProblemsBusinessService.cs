@@ -29,6 +29,7 @@ namespace OJS.Services.Administration.Business.Implementations
         private readonly ISubmissionsDataService submissionsData;
         private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
         private readonly ITestRunsDataService testRunsData;
+        private readonly ITestsDataService testData;
         private readonly ISubmissionTypesDataService submissionTypesData;
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
         private readonly IContestsBusinessService contestsBusiness;
@@ -44,7 +45,8 @@ namespace OJS.Services.Administration.Business.Implementations
             ISubmissionTypesDataService submissionTypesData,
             IProblemGroupsBusinessService problemGroupsBusiness,
             IContestsBusinessService contestsBusiness,
-            ISubmissionsCommonBusinessService submissionsCommonBusinessService)
+            ISubmissionsCommonBusinessService submissionsCommonBusinessService,
+            ITestsDataService testData)
         {
             this.contestsData = contestsData;
             this.participantScoresData = participantScoresData;
@@ -57,13 +59,23 @@ namespace OJS.Services.Administration.Business.Implementations
             this.problemGroupsBusiness = problemGroupsBusiness;
             this.contestsBusiness = contestsBusiness;
             this.submissionsCommonBusinessService = submissionsCommonBusinessService;
+            this.testData = testData;
         }
 
         public async Task RetestById(int id, bool retestBySingleTest)
         {
-            var submissionsQueryable = retestBySingleTest
-                ? this.submissionsData.GetByTestId(id)
-                : this.submissionsData.GetAllByProblem(id);
+            IQueryable<Submission> submissionsQueryable;
+
+            if (retestBySingleTest)
+            {
+               var problemId = await this.testData.GetProblemIdByTestId(id);
+
+               submissionsQueryable = this.submissionsData.GetAllByProblem(problemId);
+            }
+            else
+            {
+                submissionsQueryable = this.submissionsData.GetAllByProblem(id);
+            }
 
             var submissions = await submissionsQueryable
                 .Where(s => !s.IsDeleted)
