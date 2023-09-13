@@ -18,7 +18,7 @@ public class ContestParticipationServiceModel : IMapExplicitly
 
     public int? UserSubmissionsTimeLimit { get; set; }
 
-    public double? RemainingTimeInMilliseconds { get; set; }
+    public DateTime? EndDateTimeForParticipantOrContest { get; set; }
 
     public bool ShouldEnterPassword { get; set; }
 
@@ -34,9 +34,13 @@ public class ContestParticipationServiceModel : IMapExplicitly
                 s.Submissions.Any()
                     ? (DateTime?)s.Submissions.Max(x => x.CreatedOn)
                     : null))
-            .ForMember(d => d.RemainingTimeInMilliseconds, opt => opt.MapFrom(s =>
+            .ForMember(d => d.EndDateTimeForParticipantOrContest, opt => opt.MapFrom(s =>
                 s.ParticipationEndTime.HasValue
-                    ? (s.ParticipationEndTime.Value - DateTime.UtcNow).TotalMilliseconds
-                    : 0))
+                ? s.ParticipationEndTime
+                : s.Contest.EndTime.HasValue && s.Contest.EndTime >= DateTime.UtcNow
+                    ? s.Contest.EndTime
+                    : s.Contest.PracticeEndTime.HasValue
+                        ? s.Contest.PracticeEndTime
+                        : null))
             .ForAllOtherMembers(opt => opt.Ignore());
 }
