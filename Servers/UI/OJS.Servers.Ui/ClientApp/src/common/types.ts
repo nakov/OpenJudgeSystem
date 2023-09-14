@@ -111,7 +111,6 @@ interface IContestType {
     resultsArePubliclyVisible: boolean;
     hasContestPassword: boolean;
     hasPracticePassword: boolean;
-    remainingTimeInMilliseconds: number;
     userIsAdminOrLecturerInContest: boolean;
     userCanCompete: boolean;
     userIsParticipant: false;
@@ -166,7 +165,7 @@ interface IStartParticipationResponseType {
     participantId: number;
     contestIsCompete: boolean;
     lastSubmissionTime: Date;
-    remainingTimeInMilliseconds: number;
+    endDateTimeForParticipantOrContest: Date | null;
     userSubmissionsTimeLimit: number;
     participantsCount: number;
 }

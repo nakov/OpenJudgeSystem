@@ -62,7 +62,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
         public async Task SaveForSubmission(Submission submission)
         {
-            if (submission.ParticipantId == null || submission.ProblemId == null)
+            if (submission.ParticipantId == null)
             {
                 return;
             }
@@ -79,7 +79,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var existingScore = await this.participantScoresData.GetByParticipantIdProblemIdAndIsOfficial(
                 submission.ParticipantId.Value,
-                submission.ProblemId.Value,
+                submission.ProblemId,
                 participant.IsOfficial);
 
             if (existingScore == null)

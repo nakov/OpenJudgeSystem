@@ -15,6 +15,7 @@ enum HeadingType {
 interface IHeadingProps extends IHaveChildrenProps, IHaveOptionalClassName {
     type?: HeadingType;
     id?: string;
+    style?: object;
 }
 
 const headingTypeToElementTypeMap = {
@@ -23,7 +24,7 @@ const headingTypeToElementTypeMap = {
     [HeadingType.small]: 'h3',
 };
 
-const Heading = ({ children, type = HeadingType.primary, className = '', id = generateId() }: IHeadingProps) => {
+const Heading = ({ children, type = HeadingType.primary, className = '', style, id = generateId() }: IHeadingProps) => {
     const headingTypeClassName = type === HeadingType.primary
         ? styles.primary
         : type === HeadingType.secondary
@@ -41,6 +42,7 @@ const Heading = ({ children, type = HeadingType.primary, className = '', id = ge
     return createElement(elementType, {
         id: { id },
         className: headingClassName,
+        style,
     }, children);
 };
 

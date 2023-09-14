@@ -49,7 +49,7 @@ interface ICurrentContestContext {
         requirePassword: boolean | null;
         contestPasswordError: IErrorDataType | null;
         isPasswordValid: boolean | null;
-        remainingTimeInMilliseconds: number;
+        endDateTimeForParticipantOrContest: Date | null;
         userSubmissionsTimeLimit: number;
         participantsCount: number;
         isSubmitAllowed: boolean;
@@ -61,7 +61,6 @@ interface ICurrentContestContext {
         submitContestPasswordIsLoading: boolean;
         getParticipantScoresIsLoading: boolean;
         isUserParticipant: boolean;
-        contestDetailsError: IErrorDataType | null;
         contestDetails: IContestDetailsResponseType | null;
         isContestDetailsLoadingSuccessful: boolean;
     };
@@ -74,6 +73,7 @@ interface ICurrentContestContext {
         setIsSubmitAllowed: (isSubmitAllowed: boolean) => void;
         removeCurrentContest: () => void;
         setIsUserParticipant: (isUserParticipant: boolean) => void;
+        clearContestError: () => void;
         getContestDetails: (info: IContestDetailsUrlParams) => void;
     };
 }
@@ -86,7 +86,6 @@ const defaultState = {
         maxScore: 0,
         isOfficial: false,
         isPasswordValid: false,
-        remainingTimeInMilliseconds: 0.0,
         userSubmissionsTimeLimit: 0,
         participantsCount: 0,
         isUserParticipant: false,
@@ -132,13 +131,12 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ contestPasswordError, setContestPasswordError ] = useState<IErrorDataType | null>(null);
     const [ isPasswordValid, setIsPasswordValid ] = useState<boolean>(defaultState.state.isPasswordValid);
     const [ userSubmissionsTimeLimit, setUserSubmissionsTimeLimit ] = useState<number>(0);
-    const [ remainingTimeInMilliseconds, setRemainingTimeInMilliseconds ] = useState(defaultState.state.remainingTimeInMilliseconds);
+    const [ endDateTimeForParticipantOrContest, setEndDateTimeForParticipantOrContest ] = useState<Date | null>(null);
     const [ participantsCount, setParticipantsCount ] = useState(defaultState.state.participantsCount);
     const [ isSubmitAllowed, setIsSubmitAllowed ] = useState<boolean>(true);
     const [ contestError, setContestError ] = useState<IErrorDataType | null>(null);
     const [ isUserParticipant, setIsUserParticipant ] = useState<boolean>(defaultState.state.isUserParticipant);
     const { state: { user } } = useAuth();
-    const [ contestDetailsError, setContestDetailsError ] = useState<IErrorDataType | null>(null);
     const [ contestDetails, setContestDetails ] = useState<IContestDetailsResponseType | null>(defaultState.state.contestDetails);
     const [ contestDetailsParams, setContestDetailsParams ] = useState<IContestDetailsUrlParams | null>(null);
 
@@ -226,7 +224,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             }
 
             if (!isNil(contestDetailsErrorData)) {
-                setContestDetailsError(contestDetailsErrorData);
+                setContestError(contestDetailsErrorData);
                 return;
             }
 
@@ -265,6 +263,13 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const removeCurrentContest = useCallback(
         () => {
             setContest(defaultState.state.contest);
+        },
+        [],
+    );
+
+    const clearContestError = useCallback(
+        () => {
+            setContestError(null);
         },
         [],
     );
@@ -400,14 +405,14 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 contest: newContest,
                 contestIsCompete,
                 participantId: currentParticipantId,
-                remainingTimeInMilliseconds: newRemainingTimeInMilliseconds,
+                endDateTimeForParticipantOrContest: newEndDateTimeForParticipantOrContest,
                 participantsCount: newParticipantsCount,
             } = startContestData;
 
             setContest(newContest);
             setIsOfficial(contestIsCompete);
             setParticipantId(currentParticipantId);
-            setRemainingTimeInMilliseconds(newRemainingTimeInMilliseconds);
+            setEndDateTimeForParticipantOrContest(newEndDateTimeForParticipantOrContest);
             setUserSubmissionsTimeLimit(startContestData.userSubmissionsTimeLimit);
             setParticipantsCount(newParticipantsCount);
 
@@ -455,7 +460,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 requirePassword,
                 contestPasswordError,
                 isPasswordValid,
-                remainingTimeInMilliseconds,
+                endDateTimeForParticipantOrContest,
                 userSubmissionsTimeLimit,
                 participantsCount,
                 isSubmitAllowed,
@@ -466,7 +471,6 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 registerForContestLoading,
                 submitContestPasswordIsLoading,
                 getParticipantScoresIsLoading,
-                contestDetailsError,
                 contestDetails,
                 contestDetailsIsLoading,
                 isContestDetailsLoadingSuccessful,
@@ -481,6 +485,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 setIsUserParticipant,
                 getContestDetails,
                 removeCurrentContest,
+                clearContestError,
             },
         }),
         [
@@ -491,7 +496,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             isPasswordValid,
             maxScore,
             registerParticipant,
-            remainingTimeInMilliseconds,
+            endDateTimeForParticipantOrContest,
             userSubmissionsTimeLimit,
             requirePassword,
             score,
@@ -503,6 +508,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             isSubmitAllowed,
             setIsSubmitAllowed,
             contestError,
+            clearContestError,
             isRegisterForContestSuccessful,
             isUserParticipant,
             removeCurrentContest,
@@ -512,7 +518,6 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             submitContestPasswordIsLoading,
             getParticipantScoresIsLoading,
             getContestDetails,
-            contestDetailsError,
             contestDetails,
             contestDetailsIsLoading,
             isContestDetailsLoadingSuccessful,

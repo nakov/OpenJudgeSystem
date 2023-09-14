@@ -114,6 +114,10 @@ namespace OJS.Data
                     .IsRequired();
             });
 
+            builder.Entity<SubmissionForProcessing>()
+                .HasIndex(s => s.SubmissionId)
+                .IsUnique();
+
             builder.Entity<Role>()
                 .HasMany(x => x.UsersInRoles)
                 .WithOne(x => x.Role)
@@ -221,6 +225,9 @@ namespace OJS.Data
                 .HasQueryFilter(x => !x.Problem.IsDeleted);
 
             builder.Entity<Test>()
+                .HasQueryFilter(x => !x.Problem.IsDeleted);
+
+            builder.Entity<Submission>()
                 .HasQueryFilter(x => !x.Problem.IsDeleted);
 
             builder.Entity<SubmissionTypeInProblem>()
