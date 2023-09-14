@@ -1,8 +1,11 @@
 import isNil from 'lodash/isNil';
 
+import { ISubmissionDetailsUrlParams } from '../common/app-url-types';
 import { SearchParams } from '../common/search-types';
 import {
-    IAllContestsUrlParams,
+    IAllContestsUrlParams, IContestDetailsUrlParams,
+    IContestEditUrlParams,
+    IContestProblemsUrlParams,
     IDownloadProblemResourceUrlParams,
     IDownloadSubmissionFileUrlParams,
     IGetContestByProblemUrlParams,
@@ -41,6 +44,10 @@ const getAdministrationContestsGridUrl = () => `${administrationBaseUrl}/Contest
 const getAdministrationNavigation = () => '/administration';
 const getAdministrationRetestSubmission = ({ id }: IRetestSubmissionUrlParams) => `
 ${administrationBaseUrl}/Submissions/Retest?PK=${id}`;
+const getAdministrationProblems = ({ id }: IContestProblemsUrlParams) => `
+${administrationBaseUrl}/Problems?ContestId-equals=${id}`;
+const getAdministrationContestEditUrl = ({ id }: IContestEditUrlParams) => `
+${administrationBaseUrl}/Contests/Edit?PK=${id}`;
 
 // profile
 const getProfileInfoUrl = () => `${baseApiUrl}/Users/GetProfileInfo`;
@@ -66,6 +73,9 @@ const getAllContestsUrl = ({ filters, sorting, page }: IAllContestsUrlParams) =>
 
     return `${baseApiUrl}/Contests/GetAll?${filtersQuery}&${sortingQuery}&${pageQuery}`;
 };
+
+const getContestDetailsUrl =
+    ({ id, isOfficial }: IContestDetailsUrlParams) => `${baseApiUrl}/Contests/Details/${id}?official=${isOfficial}`;
 
 const getRegisterForContestUrl = ({
     id,
@@ -144,6 +154,8 @@ const getSubmitFileUrl = () => `${baseApiUrl}/Compete/SubmitFileSubmission`;
 const getSubmissionFileDownloadUrl =
     ({ id }: IDownloadSubmissionFileUrlParams) => `${baseApiUrl}/Submissions/Download/${id}`;
 
+const getSubmissionDetailsUrl = ({ id }:ISubmissionDetailsUrlParams) => `/submissions/${id}/details`;
+
 // Submission types
 const getAllContestStrategyFiltersUrl =
     () => `${baseApiUrl}/SubmissionTypes/GetAllOrderedByLatestUsage`;
@@ -200,8 +212,12 @@ export {
     getSubmitUrl,
     getSubmitFileUrl,
     getSubmissionFileDownloadUrl,
+    getSubmissionDetailsUrl,
     getAllContestStrategyFiltersUrl,
     getDownloadProblemResourceUrl,
     getHomeStatisticsUrl,
     getSearchResults,
+    getContestDetailsUrl,
+    getAdministrationProblems,
+    getAdministrationContestEditUrl,
 };

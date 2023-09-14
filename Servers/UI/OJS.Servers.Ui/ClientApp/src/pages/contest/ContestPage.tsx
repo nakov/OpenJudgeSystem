@@ -35,17 +35,26 @@ const ContestPage = () => {
             isPasswordValid,
             contestError,
             isRegisterForContestSuccessful,
-            contestIsLoading,
             isUserParticipant,
             contest,
         },
         actions: {
             registerParticipant,
             start,
+            clearContestError,
         },
     } = useCurrentContest();
 
-    const { state: { modalContest, isShowing }, actions: { toggle, setModalContest } } = useModal();
+    const {
+        state: {
+            modalContest,
+            isShowing,
+        },
+        actions: {
+            toggle,
+            setModalContest,
+        },
+    } = useModal();
     const { state: { user } } = useAuth();
 
     const isUserAdmin = useMemo(
@@ -113,29 +122,32 @@ const ContestPage = () => {
 
     const renderContestPage = useCallback(
         () => isNil(contestError)
-            ? contestIsLoading
+            ? isNil(contest)
                 ? (
                     <div style={{ ...flexCenterObjectStyles }}>
                         <SpinningLoader />
                     </div>
                 )
-                : isParticipationOfficial && contest?.isOnline && !isUserAdmin
-                    ? isUserParticipant
-                        ? <Contest />
-                        : <ContestModal contest={modalContest} isShowing={isShowing} toggle={toggle} />
+                : isParticipationOfficial && contest?.isOnline && !isUserAdmin && !isUserParticipant
+                    ? (
+                        <ContestModal
+                          contest={modalContest}
+                          isShowing={isShowing}
+                          toggle={toggle}
+                        />
+                    )
                     : <Contest />
             : renderErrorMessage(),
         [
             contestError,
             renderErrorMessage,
-            contestIsLoading,
             isUserParticipant,
             isParticipationOfficial,
             modalContest,
             toggle,
             isShowing,
             isUserAdmin,
-            contest?.isOnline,
+            contest,
         ],
     );
 
@@ -154,11 +166,25 @@ const ContestPage = () => {
                 return;
             }
 
-            (async () => {
-                await registerParticipant(internalContest);
-            })();
+            registerParticipant(internalContest);
         },
         [ contestId, internalContest, registerParticipant ],
+    );
+
+    useEffect(
+        () => {
+            if (isNil(contestError)) {
+                return () => null;
+            }
+
+            const timer = setTimeout(() => {
+                clearContestError();
+                navigate('/');
+            }, 5000);
+
+            return () => clearTimeout(timer);
+        },
+        [ contestError, navigate, clearContestError ],
     );
 
     useEffect(
@@ -182,9 +208,7 @@ const ContestPage = () => {
             if (!isNil(contest)) {
                 const { isOnline } = contest;
                 if (isUserParticipant || !isOnline || !isParticipationOfficial) {
-                    (async () => {
-                        await start(internalContest);
-                    })();
+                    start(internalContest);
                 }
 
                 setModalContest({

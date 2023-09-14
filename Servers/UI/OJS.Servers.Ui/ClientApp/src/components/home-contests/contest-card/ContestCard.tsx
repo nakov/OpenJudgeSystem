@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
@@ -7,7 +7,7 @@ import { IIndexContestsType } from '../../../common/types';
 import { useAppUrls } from '../../../hooks/use-app-urls';
 import { useModal } from '../../../hooks/use-modal';
 import concatClassNames from '../../../utils/class-names';
-import { convertToSecondsRemaining } from '../../../utils/dates';
+import { convertToSecondsRemaining, getCurrentTimeInUTC } from '../../../utils/dates';
 import { Button, ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
 import LockIcon from '../../guidelines/icons/LockIcon';
@@ -46,21 +46,44 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const contestCardControlBtns = 'card-control-buttons';
     const contestCardControlBtnsClassName = concatClassNames(styles.contestCardControls, contestCardControlBtns);
 
-    const { getParticipateInContestUrl } = useAppUrls();
+    const { getParticipateInContestUrl, getContestDetailsUrl } = useAppUrls();
     const { actions: { setIsShowing } } = useModal();
     const navigate = useNavigate();
+    const [ competeTimeHasExpired, setCompeteTimeHasExpired ] = useState(false);
+    const [ practiceTimeHasExpired, setPracticeTimeHasExpired ] = useState(false);
+
+    const endDate = !isNil(endTime) && new Date(endTime) >= getCurrentTimeInUTC()
+        ? endTime
+        : !isNil(practiceEndTime)
+            ? practiceEndTime
+            : null;
+
+    const handleCountdownEnd = useCallback(
+        () => {
+            if (!isNil(endDate) && new Date(endDate) <= getCurrentTimeInUTC()) {
+                if (canBeCompeted) {
+                    setCompeteTimeHasExpired(true);
+                    return;
+                }
+
+                if (canBePracticed) {
+                    setPracticeTimeHasExpired(true);
+                }
+            }
+        },
+        [ endDate, canBeCompeted, canBePracticed ],
+    );
+
+    const participationType = useMemo(
+        () => canBeCompeted
+            ? ContestParticipationType.Compete
+            : ContestParticipationType.Practice,
+        [ canBeCompeted ],
+    );
 
     const renderCountdown = useCallback(
         () => {
-            const endDate = canBeCompeted
-                ? endTime
-                : practiceEndTime;
-
-            if (canBePracticed && isNil(practiceEndTime) && isNil(endDate)) {
-                return <p>No practice end time.</p>;
-            }
-
-            if ((!canBePracticed && !canBeCompeted) || isNil(endDate)) {
+            if (isNil(endDate) || new Date(endDate) < getCurrentTimeInUTC()) {
                 return null;
             }
 
@@ -69,10 +92,11 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   key={id}
                   duration={convertToSecondsRemaining(new Date(endDate))}
                   metric={Metric.seconds}
+                  handleOnCountdownEnd={handleCountdownEnd}
                 />
             );
         },
-        [ canBeCompeted, canBePracticed, endTime, id, practiceEndTime ],
+        [ endDate, handleCountdownEnd, id ],
     );
 
     const renderContestLockIcon = useCallback(
@@ -106,9 +130,23 @@ const ContestCard = ({ contest }: IContestCardProps) => {
         <div className={contestCardClassName}>
             <div className={contestCardHeaderClassName}>
                 <div className={styles.tooltip}>
-                    <span className={styles.tooltipText}>{name}</span>
+                    <span className={styles.tooltipText}>
+                        <LinkButton
+                          type={LinkButtonType.plain}
+                          size={ButtonSize.none}
+                          to={getContestDetailsUrl({ id, participationType })}
+                          text={name}
+                        />
+                    </span>
                 </div>
-                <span className={styles.contestCardTitle}>{name}</span>
+                <span className={styles.contestCardTitle}>
+                    <LinkButton
+                      type={LinkButtonType.plain}
+                      size={ButtonSize.none}
+                      to={getContestDetailsUrl({ id, participationType })}
+                      text={name}
+                    />
+                </span>
                 { renderContestLockIcon() }
             </div>
             <div className={contestCardCategoryClassName}>{category}</div>
@@ -121,7 +159,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   onClick={() => setIsShowingAndNavigateToContest()}
                   text="Compete"
                   state={
-                        canBeCompeted
+                        canBeCompeted && !competeTimeHasExpired
                             ? ButtonState.enabled
                             : ButtonState.disabled
                     }
@@ -136,7 +174,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   text="Practice"
                   type={LinkButtonType.secondary}
                   state={
-                        canBePracticed
+                        canBePracticed && !practiceTimeHasExpired
                             ? ButtonState.enabled
                             : ButtonState.disabled
                     }

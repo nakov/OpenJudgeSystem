@@ -66,6 +66,30 @@ interface IProblemType {
     allowedSubmissionTypes: ISubmissionTypeType[];
 }
 
+interface IContestDetailsProblemType {
+    name: string;
+    orderBy: number;
+    resources?: IProblemResourceType[];
+}
+
+interface IContestDetailsSubmissionType {
+    id: number;
+    name: string;
+}
+
+interface IContestDetailsResponseType {
+    id: number;
+    name: string;
+    description: string;
+    problems: IContestDetailsProblemType[];
+    canViewResults: boolean;
+    isOnlineExam: boolean;
+    canBeCompeted: boolean;
+    allowedSubmissionTypes: IContestDetailsSubmissionType[];
+    totalContestParticipantsCount: number;
+    participantsCountByContestType: number;
+}
+
 interface IContestType {
     id: number;
     name: string;
@@ -87,7 +111,6 @@ interface IContestType {
     resultsArePubliclyVisible: boolean;
     hasContestPassword: boolean;
     hasPracticePassword: boolean;
-    remainingTimeInMilliseconds: number;
     userIsAdminOrLecturerInContest: boolean;
     userCanCompete: boolean;
     userIsParticipant: false;
@@ -142,10 +165,9 @@ interface IStartParticipationResponseType {
     participantId: number;
     contestIsCompete: boolean;
     lastSubmissionTime: Date;
-    remainingTimeInMilliseconds: number;
+    endDateTimeForParticipantOrContest: Date | null;
     userSubmissionsTimeLimit: number;
-    totalParticipantsCount: number;
-    activeParticipantsCount: number;
+    participantsCount: number;
 }
 
 interface IPagedResultType<TItem> {
@@ -203,4 +225,6 @@ export type {
     IUserPermissionsType,
     ISearchResponseModel,
     IContestModal,
+    IContestDetailsResponseType,
+    IContestDetailsProblemType,
 };

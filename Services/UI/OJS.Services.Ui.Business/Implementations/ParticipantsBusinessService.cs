@@ -14,6 +14,7 @@ using OJS.Services.Common.Models;
 using OJS.Common.Extensions;
 using SharedResource = OJS.Common.Resources.ContestsGeneral;
 using Resource = OJS.Common.Resources.ParticipantsBusiness;
+using OJS.Services.Common.Models.Cache;
 
 public class ParticipantsBusinessService : IParticipantsBusinessService
 {
@@ -34,6 +35,12 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
         this.datesService = datesService;
     }
 
+    public Task<int> GetPracticeParticipantsCount(int contestId)
+        => this.participantsData.GetAllByContestAndIsOfficial(contestId, false).CountAsync();
+
+    public Task<int> GetCompeteParticipantsCount(int contestId)
+        => this.participantsData.GetAllByContestAndIsOfficial(contestId, true).CountAsync();
+
     public async Task<Participant> CreateNewByContestByUserByIsOfficialAndIsAdmin(
         Contest contest,
         string userId,
@@ -42,7 +49,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
     {
         var participant = new Participant(contest.Id, userId, isOfficial) { Contest = contest };
 
-        var utcNow = this.datesService.GetUtcNow();
+        var utcNow = DateTime.SpecifyKind(this.datesService.GetUtcNow(), DateTimeKind.Unspecified);
         if (isOfficial && contest.IsOnlineExam)
         {
             participant.ParticipationStartTime = utcNow;
