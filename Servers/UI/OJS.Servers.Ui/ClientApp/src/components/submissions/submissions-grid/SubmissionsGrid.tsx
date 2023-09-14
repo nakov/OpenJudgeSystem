@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { IDictionary } from '../../../common/common-types';
+import { useUrlParams } from '../../../hooks/common/use-url-params';
 import { ISubmissionResponseModel, usePublicSubmissions } from '../../../hooks/submissions/use-public-submissions';
 import { useAuth } from '../../../hooks/use-auth';
 import { usePages } from '../../../hooks/use-pages';
@@ -28,8 +29,14 @@ enum toggleValues {
 }
 
 const SubmissionsGrid = () => {
+    const { state: { params: urlParams }, actions: { setParam } } = useUrlParams();
+    const toggleParam = urlParams.find((urlParam) => urlParam.key === 'toggle')?.value;
     const [ selectedActive, setSelectedActive ] = useState<number>(1);
-    const [ activeToggleElement, setActiveToggleElement ] = useState<toggleValues>(toggleValues.allSubmissions);
+    const [ activeToggleElement, setActiveToggleElement ] = useState<toggleValues>(!toggleParam
+        ? toggleValues.allSubmissions
+        : toggleParam === 'my'
+            ? toggleValues.mySubmissions
+            : toggleValues.allSubmissions);
 
     const {
         state: {
@@ -98,12 +105,14 @@ const SubmissionsGrid = () => {
 
         if (textContent?.toLowerCase() === toggleValues.allSubmissions) {
             setActiveToggleElement(toggleValues.allSubmissions);
+            setParam('toggle', 'all');
         } else {
             setActiveToggleElement(toggleValues.mySubmissions);
+            setParam('toggle', 'my');
         }
 
         changePage(1);
-    }, [ changePage ]);
+    }, [ changePage, setParam ]);
 
     useEffect(
         () => {
