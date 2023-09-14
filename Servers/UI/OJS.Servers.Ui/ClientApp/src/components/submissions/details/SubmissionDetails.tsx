@@ -362,7 +362,7 @@ const SubmissionDetails = () => {
                     {renderTestsChangeMessage()}
                 </div>
                 {
-                        currentSubmission?.isProcessed
+                        !currentSubmission?.isProcessed
                             ? (
                                 <AlertBox
                                   className={styles.alertBox}
