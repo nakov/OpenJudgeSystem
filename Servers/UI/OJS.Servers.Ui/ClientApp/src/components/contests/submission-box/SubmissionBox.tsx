@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
+import { ExcludedFromHomeWorkTaskHeadingAddition } from '../../../common/constants';
 import { ISubmissionTypeType } from '../../../common/types';
 import { useSubmissions } from '../../../hooks/submissions/use-submissions';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
@@ -307,6 +308,14 @@ const SubmissionBox = () => {
                         {currentProblem?.name}
                     </span>
                 </Heading>
+                {currentProblem?.isExcludedFromHomework && (
+                    <Heading
+                      type={HeadingType.small}
+                      className={styles.heading}
+                    >
+                        {ExcludedFromHomeWorkTaskHeadingAddition}
+                    </Heading>
+                )}
                 <div className={styles.contestInnerLayout}>
                     <div className={styles.editorAndProblemControlsWrapper}>
                         {renderSubmissionInput()}
@@ -328,6 +337,7 @@ const SubmissionBox = () => {
         ),
         [
             currentProblem?.name,
+            currentProblem?.isExcludedFromHomework,
             executionTypeListClassName,
             renderCountdown,
             renderSubmissionInput,
