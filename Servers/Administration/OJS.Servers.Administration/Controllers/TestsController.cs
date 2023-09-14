@@ -22,6 +22,7 @@ using OJS.Services.Common;
 using OJS.Services.Common.Models;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
+using FluentExtensions.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -282,6 +283,16 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         if (isForRetesting)
         {
             await this.problemsBusiness.RetestSubmissionsByTestId(newTest.Id);
+        }
+        else
+        {
+            var problem = await this.testsData.GetProblemById(newTest.Id);
+
+            if (problem != null)
+            {
+                await problem.Submissions
+                    .ForEachSequential(async s => await this.testRunsData.DeleteBySubmission(s.Id));
+            }
         }
 
         await base.AfterEntitySaveOnEditAsync(oldTest, newTest, actionContext);
