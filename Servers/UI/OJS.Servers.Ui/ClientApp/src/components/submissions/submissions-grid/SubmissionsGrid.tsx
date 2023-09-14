@@ -164,7 +164,7 @@ const SubmissionsGrid = () => {
                             )
                         </Heading>
                     )}
-                    { ((isInRole || activeToggleElement === toggleValues.mySubmissions) && toggleSubmissions.length > 0) && (
+                    { ((isInRole || activeToggleElement === toggleValues.mySubmissions) && toggleSubmissions?.length > 0) && (
                     <PaginationControls
                       count={pagesCount}
                       page={currentPage}
