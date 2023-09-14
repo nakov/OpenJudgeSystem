@@ -223,9 +223,9 @@ const SubmissionDetails = () => {
 
     const renderTestsChangeMessage = useCallback(() => (
         currentSubmission?.testRuns.length === 0 &&
-            currentSubmission.isCompiledSuccessfully &&
-            currentSubmission.totalTests > 0 &&
-            !currentSubmission.processingComment
+        currentSubmission.isCompiledSuccessfully &&
+        currentSubmission.totalTests > 0 &&
+        !currentSubmission.processingComment
             ? (
                 <div className={styles.testChangesWrapper}>
                     <p>
@@ -339,7 +339,7 @@ const SubmissionDetails = () => {
                 <Heading
                   type={HeadingType.secondary}
                   className={styles.taskHeading}
-                  style={problemNameHeadingText.length >= 30
+                  style={!isNil(problemNameHeadingText) && problemNameHeadingText.length >= 30
                       ? { marginBottom: 0 }
                       : { marginBottom: '24px' }}
                 >
@@ -362,7 +362,7 @@ const SubmissionDetails = () => {
                     {renderTestsChangeMessage()}
                 </div>
                 {
-                        !currentSubmission?.isProcessed
+                        currentSubmission?.isProcessed
                             ? (
                                 <AlertBox
                                   className={styles.alertBox}
@@ -384,18 +384,18 @@ const SubmissionDetails = () => {
                         <CodeEditor
                           readOnly
                           code={currentSubmission?.content}
-                          selectedSubmissionType={currentSubmission?.submissionType}
+                          selectedSubmissionType={submissionType}
                         />
                     )}
             </div>
         ),
         [
-            currentSubmission,
             problemNameHeadingText,
+            submissionType,
             backButtonState,
-            submissionType?.allowBinaryFilesUpload,
             renderResourceLink,
             renderDownloadErrorMessage,
+            currentSubmission,
             setSubmissionAndStartParticipation,
             renderTestsChangeMessage,
         ],
@@ -462,9 +462,6 @@ const SubmissionDetails = () => {
 
     return (
         <>
-            <div>
-                {renderTestsChangeMessage()}
-            </div>
             <div className={styles.detailsWrapper}>
                 {refreshableSubmissionsList()}
                 {codeEditor()}
