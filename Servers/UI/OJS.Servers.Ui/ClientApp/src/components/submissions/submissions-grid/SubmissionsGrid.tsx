@@ -231,7 +231,7 @@ const SubmissionsGrid = () => {
                 );
             }
 
-            if (submissions.length === 0) {
+            if (!submissions || submissions?.length === 0) {
                 return (
                     <div className={styles.noSubmissionsFound}>
                         No submissions found.
@@ -265,7 +265,7 @@ const SubmissionsGrid = () => {
             <Heading type={HeadingType.primary}>
                 Latest
                 {' '}
-                {publicSubmissions.length}
+                {publicSubmissions?.length}
                 {' '}
                 submissions out of
                 {' '}
