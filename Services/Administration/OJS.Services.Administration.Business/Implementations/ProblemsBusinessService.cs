@@ -62,50 +62,20 @@ namespace OJS.Services.Administration.Business.Implementations
             this.testData = testData;
         }
 
-        public async Task RetestById(int id, bool retestBySingleTest)
+        public async Task RetestSubmissionsByProblemId(int problemId)
         {
-            IQueryable<Submission> submissionsQueryable;
-            var problemIdFromQuery = 0;
+            var submissionsQueryable = this.submissionsData.GetAllByProblem(problemId);
 
-            if (retestBySingleTest)
-            {
-                problemIdFromQuery = await this.testData.GetProblemIdByTestId(id);
+            await this.SetSubmissionsForProcessing(submissionsQueryable, problemId);
+        }
 
-                submissionsQueryable = this.submissionsData.GetAllByProblem(problemIdFromQuery);
-            }
-            else
-            {
-                submissionsQueryable = this.submissionsData.GetAllByProblem(id);
-            }
+        public async Task RetestSubmissionsByTestId(int testId)
+        {
+            var problemId = await this.testData.GetProblemIdByTestId(testId);
 
-            var submissions = await submissionsQueryable
-                .Where(s => !s.IsDeleted)
-                .Include(s => s.SubmissionType)
-                .Include(s => s.Problem)
-                .Include(s => s.Problem.Checker)
-                .Include(s => s.Problem.Tests)
-                .ToListAsync();
+            var submissionsQueryable = this.submissionsData.GetAllByProblem(problemId);
 
-            var submissionIds = submissions.Select(s => s.Id).ToList();
-
-            using (var scope = TransactionsHelper.CreateTransactionScope(
-                       IsolationLevel.RepeatableRead,
-                       TransactionScopeAsyncFlowOption.Enabled))
-            {
-                await this.participantScoresData.DeleteAllByProblem(id);
-
-                var problemId = retestBySingleTest ? problemIdFromQuery : id;
-
-                await this.submissionsData.SetAllToUnprocessedByProblem(problemId);
-
-                await this.submissionsForProcessingData.AddOrUpdateBySubmissionIds(submissionIds);
-
-                scope.Complete();
-            }
-
-            await submissions.ForEachSequential(async s =>
-                await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(
-                    s.Map<SubmissionServiceModel>()));
+            await this.SetSubmissionsForProcessing(submissionsQueryable, problemId);
         }
 
         public async Task DeleteById(int id)
@@ -197,6 +167,35 @@ namespace OJS.Services.Administration.Business.Implementations
 
         public Task ReevaluateProblemsOrder(int contestId, Problem problem)
             => this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsOrder(contestId, problem.ProblemGroup);
+
+        private async Task SetSubmissionsForProcessing(IQueryable<Submission> submissionsQueryable, int problemId)
+        {
+            var submissions = await submissionsQueryable
+                .Include(s => s.SubmissionType)
+                .Include(s => s.Problem)
+                .Include(s => s.Problem!.Checker)
+                .Include(s => s.Problem!.Tests)
+                .ToListAsync();
+
+            var submissionIds = submissions.Select(s => s.Id).ToList();
+
+            using (var scope = TransactionsHelper.CreateTransactionScope(
+                       IsolationLevel.RepeatableRead,
+                       TransactionScopeAsyncFlowOption.Enabled))
+            {
+                await this.participantScoresData.DeleteAllByProblem(problemId);
+
+                await this.submissionsData.SetAllToUnprocessedByProblem(problemId);
+
+                await this.submissionsForProcessingData.AddOrUpdateBySubmissionIds(submissionIds);
+
+                scope.Complete();
+            }
+
+            await submissions.ForEachSequential(async s =>
+                await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(
+                    s.Map<SubmissionServiceModel>()));
+        }
 
         private async Task CopyProblemToContest(Problem? problem, int contestId, int? problemGroupId)
         {

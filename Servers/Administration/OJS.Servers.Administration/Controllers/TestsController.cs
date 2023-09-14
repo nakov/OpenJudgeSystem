@@ -167,7 +167,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
 
             if (model.RetestProblem)
             {
-                await this.problemsBusiness.RetestById(problemId, retestBySingleTest: false);
+                await this.problemsBusiness.RetestSubmissionsByProblemId(problemId);
             }
 
             scope.Complete();
@@ -281,7 +281,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
 
         if (isForRetesting)
         {
-            await this.problemsBusiness.RetestById(newTest.Id, retestBySingleTest: true);
+            await this.problemsBusiness.RetestSubmissionsByTestId(newTest.Id);
         }
 
         await base.AfterEntitySaveOnEditAsync(oldTest, newTest, actionContext);

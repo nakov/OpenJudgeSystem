@@ -20,7 +20,7 @@ public interface ISubmissionsForProcessingCommonDataService : IService
 
     Task<SubmissionForProcessing> Add(int submissionId);
 
-    Task<SubmissionForProcessing> CreateIfNotExists(int submissionId);
+    Task<SubmissionForProcessing> AddOrUpdate(int submissionId);
 
     Task AddOrUpdateBySubmissionIds(ICollection<int> submissionIds);
 
