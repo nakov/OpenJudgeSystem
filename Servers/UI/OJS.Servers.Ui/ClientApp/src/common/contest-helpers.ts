@@ -1,7 +1,12 @@
 import { ContestParticipationType } from './constants';
 
-export const isParticipationTypeValid =
+const isParticipationTypeValid =
     (participationType: ContestParticipationType) => participationType === ContestParticipationType.Compete ||
         participationType === ContestParticipationType.Practice;
 
-export default { isParticipationTypeValid };
+const contestParticipationType =
+    (isOfficial: boolean) => isOfficial
+        ? ContestParticipationType.Compete
+        : ContestParticipationType.Practice;
+
+export { isParticipationTypeValid, contestParticipationType };
