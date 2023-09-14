@@ -128,6 +128,10 @@ const SubmissionsGrid = () => {
     const renderPrivilegedComponent = useCallback(
         () => {
             const { isInRole } = user;
+            const toggleSubmissions = activeToggleElement === toggleValues.allSubmissions
+                ? publicSubmissions
+                : userSubmissions;
+
             return (
                 <>
                     { (isInRole && activeToggleElement === toggleValues.allSubmissions) && (
@@ -160,7 +164,7 @@ const SubmissionsGrid = () => {
                             )
                         </Heading>
                     )}
-                    { (isInRole || activeToggleElement === toggleValues.mySubmissions) && (
+                    { ((isInRole || activeToggleElement === toggleValues.mySubmissions) && toggleSubmissions.length > 0) && (
                     <PaginationControls
                       count={pagesCount}
                       page={currentPage}
@@ -179,6 +183,8 @@ const SubmissionsGrid = () => {
             currentPage,
             handlePageChange,
             activeToggleElement,
+            publicSubmissions,
+            userSubmissions,
         ],
     );
 
