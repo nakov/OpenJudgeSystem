@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useMemo } from 'react';
 
 import {
-    IContestDetailsUrlParams,
     IContestResultsUrl,
     IParticipateInContestTypeUrlParams,
     IProblemSubmissionDetailsUrlParams,
@@ -19,7 +18,7 @@ interface IAppUrlsContext {
     getAdministrationRetestSubmissionInternalUrl: () => string;
     getHomePageUrl: () => string;
     getLoginUrl: () => string;
-    getContestDetailsUrl: (params: IContestDetailsUrlParams) => string;
+    getContestDetailsUrl: (id: number) => string;
     getAdministrationContestProblemsInternalUrl: (id: string) => string;
     getAdministrationContestEditInternalUrl: (id: string) => string;
 }
@@ -29,15 +28,12 @@ const AppUrlsContext = createContext<IAppUrlsContext>({} as IAppUrlsContext);
 type IAppUrlsProviderProps = IHaveChildrenProps
 
 // contests
-const getContestDetailsUrl = ({
-    id,
-    participationType,
-}: IContestDetailsUrlParams) => `/contests/details/${id}/${participationType}`;
+const getContestDetailsUrl = (id: number) => `/contests/${id}`;
 
 const getParticipateInContestUrl = ({
     id,
     participationType,
-}: IContestDetailsUrlParams) => `/contests/${id}/${participationType}`;
+}: IParticipateInContestTypeUrlParams) => `/contests/${id}/${participationType}`;
 
 const getProblemSubmissionDetailsUrl = ({
     submissionId,

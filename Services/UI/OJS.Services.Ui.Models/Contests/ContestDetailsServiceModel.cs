@@ -21,6 +21,8 @@ public class ContestDetailsServiceModel : IMapExplicitly
 
     public bool CanBeCompeted { get; set; }
 
+    public bool CanBePracticed { get; set; }
+
     public int TotalContestParticipantsCount { get; set; }
 
     public int ParticipantsCountByContestType { get; set; }

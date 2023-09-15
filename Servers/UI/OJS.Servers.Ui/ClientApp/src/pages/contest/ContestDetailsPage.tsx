@@ -14,6 +14,7 @@ import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
 import { useAppUrls } from '../../hooks/use-app-urls';
 import { useAuth } from '../../hooks/use-auth';
 import { useCurrentContest } from '../../hooks/use-current-contest';
+import { usePageTitles } from '../../hooks/use-page-titles';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
@@ -42,8 +43,21 @@ const ContestDetailsPage = () => {
         getAdministrationContestProblemsInternalUrl,
         getAdministrationContestEditInternalUrl,
     } = useAppUrls();
+    const { actions: { setPageTitle } } = usePageTitles();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const navigate = useNavigate();
+
+    const contestTitle = useMemo(
+        () => `${contestDetails?.name}`,
+        [ contestDetails?.name ],
+    );
+
+    useEffect(
+        () => {
+            setPageTitle(contestTitle);
+        },
+        [ contestTitle, setPageTitle ],
+    );
 
     const { contestId, participationType } = params;
 
@@ -62,6 +76,26 @@ const ContestDetailsPage = () => {
             ? `Compete participants: ${contestDetails?.participantsCountByContestType}`
             : `Practice participants: ${contestDetails?.participantsCountByContestType}`,
         [ isOfficial, contestDetails?.participantsCountByContestType ],
+    );
+
+    const canAccessCompeteButton = useMemo(
+        () => contestDetails?.canBeCompeted || canAccessAdministration,
+        [ contestDetails, canAccessAdministration ],
+    );
+
+    const canAccessPracticeButton = useMemo(
+        () => contestDetails?.canBePracticed || canAccessAdministration,
+        [ canAccessAdministration, contestDetails?.canBePracticed ],
+    );
+
+    const canOnlyAdminCompete = useMemo(
+        () => !contestDetails?.canBeCompeted && canAccessAdministration,
+        [ canAccessAdministration, contestDetails?.canBeCompeted ],
+    );
+
+    const canOnlyAdminPractice = useMemo(
+        () => !contestDetails?.canBePracticed && canAccessPracticeButton,
+        [ canAccessPracticeButton, contestDetails?.canBePracticed ],
     );
 
     useEffect(
@@ -124,20 +158,25 @@ const ContestDetailsPage = () => {
                     : null}
                 <LinkButton
                   id="button-card-compete"
+                  internalClassName={canOnlyAdminCompete
+                      ? styles.adminAccessibleButton
+                      : ''}
                   to={getParticipateInContestUrl({
                       id: contestIdToNumber,
                       participationType: ContestParticipationType.Compete,
                   })}
                   text="Compete"
-                  type={LinkButtonType.secondary}
                   state={
-                    isOfficial
-                        ? ButtonState.enabled
-                        : ButtonState.disabled
+                      canAccessCompeteButton
+                          ? ButtonState.enabled
+                          : ButtonState.disabled
                 }
                 />
                 <LinkButton
                   id="button-card-practice"
+                  internalClassName={canOnlyAdminPractice
+                      ? styles.adminAccessibleButton
+                      : ''}
                   to={getParticipateInContestUrl({
                       id: contestIdToNumber,
                       participationType: ContestParticipationType.Practice,
@@ -145,9 +184,9 @@ const ContestDetailsPage = () => {
                   text="Practice"
                   type={LinkButtonType.secondary}
                   state={
-                    isOfficial
-                        ? ButtonState.disabled
-                        : ButtonState.enabled
+                      canAccessPracticeButton
+                          ? ButtonState.enabled
+                          : ButtonState.disabled
                 }
                 />
             </div>
@@ -157,7 +196,10 @@ const ContestDetailsPage = () => {
             contestIdToNumber,
             getContestResultsUrl,
             getParticipateInContestUrl,
-            isOfficial,
+            canOnlyAdminPractice,
+            canAccessPracticeButton,
+            canOnlyAdminCompete,
+            canAccessCompeteButton,
             canAccessAdministration,
             participationType,
             getAdministrationContestProblemsInternalUrl,

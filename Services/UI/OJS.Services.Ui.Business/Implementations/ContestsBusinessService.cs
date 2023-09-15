@@ -60,7 +60,7 @@ namespace OJS.Services.Ui.Business.Implementations
             this.contestParticipantsCacheService = contestParticipantsCacheService;
         }
 
-        public async Task<ContestDetailsServiceModel> GetContestDetails(int id, bool official)
+        public async Task<ContestDetailsServiceModel> GetContestDetails(int id)
         {
             var user = this.userProviderService.GetCurrentUser();
             var contest = await this.contestsData.GetByIdWithProblems(id);
@@ -70,7 +70,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 id,
                 user.Id,
                 user.IsAdmin,
-                official) !);
+                contest!.CanBeCompeted) !);
 
             if (!validationResult.IsValid)
             {
@@ -81,19 +81,19 @@ namespace OJS.Services.Ui.Business.Implementations
                 .GetWithContestByContestByUserAndIsOfficial(
                     id,
                     user.Id!,
-                    official);
+                    contest.CanBeCompeted);
 
-            var userIsAdminOrLecturerInContest = user.IsAdmin || IsUserLecturerInContest(contest!, user.Id!);
+            var userIsAdminOrLecturerInContest = user.IsAdmin || IsUserLecturerInContest(contest, user.Id!);
 
-            var contestDetailsServiceModel = contest!.Map<ContestDetailsServiceModel>();
-            if (!userIsAdminOrLecturerInContest && participant != null && contest!.CanBeCompeted)
+            var contestDetailsServiceModel = contest.Map<ContestDetailsServiceModel>();
+            if (!userIsAdminOrLecturerInContest && participant != null && contest.CanBeCompeted)
             {
                 var problemsForParticipant = participant.ProblemsForParticipants.Select(x => x.Problem);
                 contestDetailsServiceModel.Problems = problemsForParticipant.Map<ICollection<ContestProblemServiceModel>>();
             }
 
             var canShowProblemsInPractice = !contest!.HasPracticePassword || userIsAdminOrLecturerInContest;
-            var canShowProblemsInCompete = (!contest.HasContestPassword && !contest.IsActive && !contest.IsOnlineExam) || userIsAdminOrLecturerInContest;
+            var canShowProblemsInCompete = (contest is { HasContestPassword: false, IsActive: false } && !contest.IsOnlineExam) || userIsAdminOrLecturerInContest;
 
             if ((contest.CanBePracticed && !canShowProblemsInPractice) || (contest.CanBeCompeted && !canShowProblemsInCompete))
             {
@@ -117,7 +117,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var competeContestParticipantsCount = await this.contestParticipantsCacheService.GetCompeteContestParticipantsCount(id);
             var practiceContestParticipantsCount = await this.contestParticipantsCacheService.GetPracticeContestParticipantsCount(id);
 
-            contestDetailsServiceModel.ParticipantsCountByContestType = official ? competeContestParticipantsCount : practiceContestParticipantsCount;
+            contestDetailsServiceModel.ParticipantsCountByContestType = contest.CanBeCompeted ? competeContestParticipantsCount : practiceContestParticipantsCount;
             contestDetailsServiceModel.TotalContestParticipantsCount = competeContestParticipantsCount + practiceContestParticipantsCount;
 
             return contestDetailsServiceModel;
