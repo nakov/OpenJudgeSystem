@@ -51,6 +51,11 @@ interface IGetSubmissionsUrlParams {
     page: number;
 }
 
+interface IGetSubmissionsByContestIdParams {
+    page: number;
+    contestId: string | string[] | undefined;
+}
+
 interface IGetSubmissionResultsByProblemUrlParams {
     problemId: number;
     isOfficial: boolean;
@@ -87,6 +92,11 @@ interface IGetSearchResultsUrlParams {
     selectedTerms: [];
 }
 
+interface IGetUserSubmissionsByContestUrlParams {
+    contestId: string | string[] | undefined;
+    page: number;
+}
+
 export type {
     IRegisterForContestUrlParams,
     ISubmitContestPasswordUrlParams,
@@ -106,4 +116,6 @@ export type {
     IDownloadSubmissionFileUrlParams,
     IContestProblemsUrlParams,
     IContestEditUrlParams,
+    IGetUserSubmissionsByContestUrlParams,
+    IGetSubmissionsByContestIdParams,
 };
