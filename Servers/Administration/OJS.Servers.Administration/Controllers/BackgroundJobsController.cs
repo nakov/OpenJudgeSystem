@@ -1,5 +1,6 @@
 namespace OJS.Servers.Administration.Controllers;
 
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Services.Infrastructure.BackgroundJobs;
@@ -23,6 +24,7 @@ public class BackgroundJobsController : BaseAdminViewController
         this.submissionsForProcessingBusinessService = submissionsForProcessingBusinessService;
     }
 
+    [HttpGet]
     public IActionResult AddRecurringEnqueuePendingSubmissionsForProcessingJob()
     {
         this.hangfireBackgroundJobsService
@@ -32,6 +34,20 @@ public class BackgroundJobsController : BaseAdminViewController
                 BackgroundJobs.EnqueuePendingSubmissionsJobCron);
 
         this.TempData.AddSuccessMessage(BackgroundJobs.EnqueuePendingSubmissionsJobAddedMessage);
+
+        return this.Redirect("/");
+    }
+
+    [HttpGet]
+    public IActionResult AddRecurringDeletingOldSubmissionsForProcessingJob()
+    {
+        this.hangfireBackgroundJobsService
+            .AddOrUpdateRecurringJob<SubmissionsForProcessingBusinessService>(
+                BackgroundJobs.DeleteOldSubmissionsJobName,
+                m => m.DeleteProcessedSubmissions(),
+                BackgroundJobs.DeleteOldSubmissionsJobCron);
+
+        this.TempData.AddSuccessMessage(BackgroundJobs.DeleteOldSubmissionsJobAddedMessage);
 
         return this.Redirect("/");
     }
