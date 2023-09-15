@@ -2,6 +2,10 @@
 @use 'src/styles/fonts';
 @use 'src/styles/variables';
 
+.excludedFromHomeworkIcon {
+  margin: 5px;
+}
+
 .tasksSideNavigation {
   text-align: center;
 }
