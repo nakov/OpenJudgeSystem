@@ -540,6 +540,8 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         Problem newEntity,
         AdminActionContext actionContext)
     {
+        newEntity.ProblemGroup.Type = actionContext.GetProblemGroupType().GetValidTypeOrNull();
+
         if (!originalEntity.ProblemGroup.Contest.IsOnlineExam)
         {
             newEntity.ProblemGroup.OrderBy = newEntity.OrderBy;

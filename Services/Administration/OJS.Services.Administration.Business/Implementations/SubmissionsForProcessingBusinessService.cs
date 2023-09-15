@@ -71,5 +71,7 @@
                 .GetAwaiter()
                 .GetResult();
         }
+
+        public void DeleteProcessedSubmissions() => this.submissionsForProcessingData.CleanProcessedSubmissions();
     }
 }
