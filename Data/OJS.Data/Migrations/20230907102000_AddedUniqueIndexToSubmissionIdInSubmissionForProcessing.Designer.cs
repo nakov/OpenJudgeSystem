@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OJS.Data;
 
@@ -11,9 +12,10 @@ using OJS.Data;
 namespace OJS.Data.Migrations
 {
     [DbContext(typeof(OjsDbContext))]
-    partial class OjsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230907102000_AddedUniqueIndexToSubmissionIdInSubmissionForProcessing")]
+    partial class AddedUniqueIndexToSubmissionIdInSubmissionForProcessing
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -998,7 +1000,7 @@ namespace OJS.Data.Migrations
                     b.Property<int>("Points")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProblemId")
+                    b.Property<int?>("ProblemId")
                         .HasColumnType("int");
 
                     b.Property<bool>("Processed")
@@ -1701,9 +1703,7 @@ namespace OJS.Data.Migrations
 
                     b.HasOne("OJS.Data.Models.Problems.Problem", "Problem")
                         .WithMany("Submissions")
-                        .HasForeignKey("ProblemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProblemId");
 
                     b.HasOne("OJS.Data.Models.Submissions.SubmissionType", "SubmissionType")
                         .WithMany()
