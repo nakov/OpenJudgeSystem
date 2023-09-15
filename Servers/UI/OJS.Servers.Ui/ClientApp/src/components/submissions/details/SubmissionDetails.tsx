@@ -225,7 +225,8 @@ const SubmissionDetails = () => {
         currentSubmission?.testRuns.length === 0 &&
         currentSubmission.isCompiledSuccessfully &&
         currentSubmission.totalTests > 0 &&
-        !currentSubmission.processingComment
+        !currentSubmission.processingComment &&
+        currentSubmission.isProcessed
             ? (
                 <div className={styles.testChangesWrapper}>
                     <p>
