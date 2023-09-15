@@ -2,14 +2,14 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { IPagedResultType, ISubmissionResponseModel } from '../../common/types';
+import { IPage, IPagedResultType, ISubmissionResponseModel } from '../../common/types';
 import { IGetSubmissionsUrlParams } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import {
     getPendingSubmissionsUrl,
     getPublicSubmissionsUrl,
     getSubmissionsTotalCountUrl,
-    getSubmissionsUnprocessedTotalCountUrl, getUnprocessedSubmissionsUrl,
+    getSubmissionsUnprocessedTotalCountUrl, getUnprocessedSubmissionsUrl, getUserSubmissionsUrl,
 } from '../../utils/urls';
 import { useHttp } from '../use-http';
 import { usePages } from '../use-pages';
@@ -24,9 +24,12 @@ interface IPublicSubmissionsContext {
     state: {
         totalSubmissionsCount: number;
         totalUnprocessedSubmissionsCount: number;
+        userSubmissions: ISubmissionResponseModel[];
+        userSubmissionsLoading: boolean;
         publicSubmissions: ISubmissionResponseModel[];
         unprocessedSubmissions: ISubmissionResponseModel[];
         pendingSubmissions: ISubmissionResponseModel[];
+        userSubmissionUrlParams?: IPage;
     };
     actions : {
         loadTotalSubmissionsCount: () => Promise<void>;
@@ -34,10 +37,17 @@ interface IPublicSubmissionsContext {
         initiatePublicSubmissionsQuery: () => void;
         initiateUnprocessedSubmissionsQuery: () => void;
         initiatePendingSubmissionsQuery: () => void;
+        initiateUserSubmissionsQuery: () => void;
     };
 }
 
-const defaultState = { state: { publicSubmissions: [] as ISubmissionResponseModel[] } };
+const defaultState = {
+    state: {
+        publicSubmissions: [] as ISubmissionResponseModel[],
+        userSubmissions: [] as ISubmissionResponseModel[],
+        userSubmissionUrlParams: { page: 1 },
+    },
+};
 
 const PublicSubmissionsContext = createContext<IPublicSubmissionsContext>(defaultState as IPublicSubmissionsContext);
 
@@ -48,6 +58,9 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
     const [ getUnprocessedSubmissionsUrlParams, setUnprocessedSubmissionsUrlParams ] = useState<IGetSubmissionsUrlParams | null>();
     const [ getPendingSubmissionsUrlParams, setPendingSubmissionsUrlParams ] = useState<IGetSubmissionsUrlParams | null>();
     const [ publicSubmissions, setPublicSubmissions ] = useState<ISubmissionResponseModel[]>(defaultState.state.publicSubmissions);
+    const [ userSubmissions, setUserSubmissions ] = useState<ISubmissionResponseModel[]>(defaultState.state.userSubmissions);
+    // eslint-disable-next-line max-len
+    const [ getUserSubmissionsUrlParams, setUserSubmissionsUrlParams ] = useState<IGetSubmissionsUrlParams | null>(defaultState.state.userSubmissionUrlParams);
     const [ unprocessedSubmissions, setUnprocessedSubmissions ] =
         useState<ISubmissionResponseModel[]>(defaultState.state.publicSubmissions);
     const [ pendingSubmissions, setPendingSubmissions ] =
@@ -67,6 +80,17 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         IPagedResultType<ISubmissionResponseModel>>({
             url: getPublicSubmissionsUrl,
             parameters: getPublicSubmissionsUrlParams,
+        });
+
+    const {
+        isLoading: userSubmissionsLoading,
+        get: getUserSubmissions,
+        data: userSubmissionsData,
+    } = useHttp<
+        IGetSubmissionsUrlParams,
+        IPagedResultType<ISubmissionResponseModel>>({
+            url: getUserSubmissionsUrl,
+            parameters: getUserSubmissionsUrlParams,
         });
 
     const {
@@ -109,13 +133,6 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         [ apiTotalUnprocessedSubmissionsCount ],
     );
 
-    const loadPublicSubmissions = useCallback(
-        async () => {
-            await getSubmissions();
-        },
-        [ getSubmissions ],
-    );
-
     const loadUnprocessedSubmissions = useCallback(
         async () => {
             await getUnprocessedSubmissions();
@@ -151,6 +168,17 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
             }
 
             setPublicSubmissionsUrlParams({ page: currentPage });
+        },
+        [ currentPage, previousPage ],
+    );
+
+    const initiateUserSubmissionsQuery = useCallback(
+        () => {
+            if (currentPage === previousPage && currentPage !== 1) {
+                return;
+            }
+
+            setUserSubmissionsUrlParams({ page: currentPage });
         },
         [ currentPage, previousPage ],
     );
@@ -214,6 +242,14 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         [ populatePageInformation, proccessSubmissionsQueryResult, publicSubmissionsData ],
     );
 
+    useEffect(() => {
+        if (isNil(userSubmissionsData) || isEmpty(userSubmissionsData)) {
+            return;
+        }
+
+        proccessSubmissionsQueryResult(userSubmissionsData, setUserSubmissions);
+    }, [ proccessSubmissionsQueryResult, userSubmissionsData ]);
+
     useEffect(
         () => {
             if (isNil(unprocessedSubmissionsData) || isEmpty(unprocessedSubmissionsData)) {
@@ -244,11 +280,17 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
             }
 
             (async () => {
-                await loadPublicSubmissions();
+                await getSubmissions();
             })();
         },
-        [ getPublicSubmissionsUrlParams, loadPublicSubmissions ],
+        [ getPublicSubmissionsUrlParams, getSubmissions ],
     );
+
+    useEffect(() => {
+        (async () => {
+            await getUserSubmissions();
+        })();
+    }, [ getUserSubmissions ]);
 
     useEffect(
         () => {
@@ -280,6 +322,8 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         () => ({
             state: {
                 publicSubmissions,
+                userSubmissions,
+                userSubmissionsLoading,
                 unprocessedSubmissions,
                 pendingSubmissions,
                 totalSubmissionsCount,
@@ -291,9 +335,12 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
                 initiatePublicSubmissionsQuery,
                 initiateUnprocessedSubmissionsQuery,
                 initiatePendingSubmissionsQuery,
+                initiateUserSubmissionsQuery,
             },
         }),
         [
+            userSubmissions,
+            userSubmissionsLoading,
             publicSubmissions,
             unprocessedSubmissions,
             pendingSubmissions,
@@ -304,6 +351,7 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
             initiatePublicSubmissionsQuery,
             initiateUnprocessedSubmissionsQuery,
             initiatePendingSubmissionsQuery,
+            initiateUserSubmissionsQuery,
         ],
     );
 
