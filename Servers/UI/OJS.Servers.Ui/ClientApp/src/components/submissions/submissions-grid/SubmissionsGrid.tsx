@@ -298,7 +298,9 @@ const SubmissionsGrid = () => {
         () => {
             const toggleSubmissions = activeToggleElement === toggleValues.allSubmissions
                 ? publicSubmissions
-                : userSubmissions;
+                : contestIdParam
+                    ? userByContestSubmissions
+                    : userSubmissions;
 
             const submissions = selectedActive === 1
                 ? toggleSubmissions
@@ -332,6 +334,8 @@ const SubmissionsGrid = () => {
             );
         },
         [
+            contestIdParam,
+            userByContestSubmissions,
             activeToggleElement,
             publicSubmissions,
             userSubmissions,
