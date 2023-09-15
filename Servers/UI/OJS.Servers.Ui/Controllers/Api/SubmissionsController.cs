@@ -161,6 +161,21 @@ public class SubmissionsController : BaseApiController
             .ToOkResult();
 
     /// <summary>
+    /// Gets user latest submissions for contest.
+    /// </summary>
+    /// <param name="contestId">Contest for which the submissions will be retrieved.</param>
+    /// <param name="page">The current page number.</param>
+    /// <returns>A page with submissions containing information about their score and user.</returns>
+    [HttpGet]
+    [Authorize]
+    [ProducesResponseType(typeof(PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>), Status200OK)]
+    public async Task<IActionResult> GetUserSubmissionsByContest([FromQuery] int contestId, [FromQuery] int page)
+        => await this.submissionsBusiness
+            .GetByContest(contestId, page)
+            .Map<PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>>()
+            .ToOkResult();
+
+    /// <summary>
     /// Gets all unprocessed submissions.
     /// </summary>
     /// <param name="page">The current page number.</param>

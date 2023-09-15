@@ -46,6 +46,8 @@ public interface ISubmissionsDataService : IDataService<Submission>
 
     IQueryable<int> GetIdsByProblem(int problemId);
 
+    IQueryable<Submission> GetAllForUserByContest(int contestId, string userId);
+
     bool IsOfficialById(int id);
 
     void SetAllToUnprocessedByProblem(int problemId);
