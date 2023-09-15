@@ -560,6 +560,18 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .ToPagedResult(DefaultSubmissionsPerPage, page);
     }
 
+    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetByContest(int contestId, int page)
+    {
+        var user = this.userProviderService.GetCurrentUser();
+
+        return await this.submissionsData
+            .GetAllForUserByContest(
+                contestId,
+                user.Id)
+            .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
+            .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
+    }
+
     public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPendingSubmissions(int page)
     {
         var pendingSubmissions = await this.submissionsForProcessingData
