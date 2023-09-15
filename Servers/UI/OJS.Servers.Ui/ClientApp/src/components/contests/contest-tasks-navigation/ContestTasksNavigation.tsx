@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../common/contest-helpers';
@@ -80,16 +81,25 @@ const ContestTasksNavigation = () => {
     const sideBarTasksList = 'all-tasks-list';
     const sideBarTasksListClassName = concatClassNames(styles.tasksListSideNavigation, sideBarTasksList);
     const renderTasksList = useCallback(
-        () => (
-            <List
-              values={problems.sort(compareByOrderBy)}
-              itemFunc={renderTask}
-              className={sideBarTasksListClassName}
-              itemClassName={styles.taskListItem}
-              type={ListType.numbered}
-            />
-        ),
-        [ problems, renderTask, sideBarTasksListClassName ],
+        () => isEmpty(contest?.problems)
+            ? (
+                <Heading
+                  type={HeadingType.secondary}
+                  className={styles.noTasksText}
+                >
+                    There are no tasks for this contest, yet.
+                </Heading>
+            )
+            : (
+                <List
+                  values={problems.sort(compareByOrderBy)}
+                  itemFunc={renderTask}
+                  className={sideBarTasksListClassName}
+                  itemClassName={styles.taskListItem}
+                  type={ListType.numbered}
+                />
+            ),
+        [ problems, renderTask, sideBarTasksListClassName, contest?.problems ],
     );
 
     const resultsButtonClass = 'resultsButton';
