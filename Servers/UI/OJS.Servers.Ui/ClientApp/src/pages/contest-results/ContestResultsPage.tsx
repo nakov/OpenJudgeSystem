@@ -138,11 +138,11 @@ const ContestResultsPage = () => {
         [ contestResults ],
     );
 
-    useEffect(() => {
-        if (contestResults) {
-            setNumberedRows(contestResults?.results.map((row, index) => ({ ...row, rowNumber: index + 1 })));
-        }
-    }, [ contestResults, numberedRows ]);
+    useEffect(
+        () => setNumberedRows(contestResults?.results.map((row, index) => ({ ...row, rowNumber: index + 1 })) || []),
+
+        [ contestResults ],
+    );
 
     useEffect(
         () => {
@@ -194,7 +194,6 @@ const ContestResultsPage = () => {
                           textAlign: 'center',
                       },
                   }}
-                  disableSelectionOnClick
                   getRowId={(row) => row.participantUsername}
                 />
             </>
