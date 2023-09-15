@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { useAuth } from '../../../hooks/use-auth';
@@ -222,12 +223,18 @@ const Contest = () => {
                                 <div className={navigationContestClassName}>
                                     <ContestTasksNavigation />
                                 </div>
-                                <div className={submissionBoxClassName}>
-                                    <SubmissionBox />
-                                </div>
-                                <div className={problemInfoClassName}>
-                                    <ContestProblemDetails />
-                                </div>
+                                {!isEmpty(contest?.problems)
+                                    ? (
+                                        <>
+                                            <div className={submissionBoxClassName}>
+                                                <SubmissionBox />
+                                            </div>
+                                            <div className={problemInfoClassName}>
+                                                <ContestProblemDetails />
+                                            </div>
+                                        </>
+                                    )
+                                    : null}
                             </div>
                         </>
                     )}
@@ -243,6 +250,7 @@ const Contest = () => {
             submissionBoxClassName,
             renderParticipants,
             contestIsLoading,
+            contest?.problems,
         ],
     );
 

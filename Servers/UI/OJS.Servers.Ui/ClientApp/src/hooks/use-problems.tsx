@@ -149,7 +149,7 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         () => {
             const { problems: newProblems } = contest || {};
 
-            if (!newProblems || !isEmpty(problems)) {
+            if (isNil(newProblems) || isEmpty(newProblems) || !isEmpty(problems)) {
                 return;
             }
 
