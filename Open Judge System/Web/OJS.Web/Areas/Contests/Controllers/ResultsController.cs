@@ -18,8 +18,10 @@
     using NPOI.HSSF.UserModel;
     using NPOI.SS.UserModel;
     using OJS.Common;
+    using OJS.Common.Constants;
     using OJS.Common.Models;
     using OJS.Data.Models;
+    using OJS.Services.Cache;
     using OJS.Services.Data.Contests;
     using OJS.Services.Data.Participants;
     using OJS.Services.Data.ParticipantScores;
@@ -30,23 +32,27 @@
 
     public class ResultsController : BaseController
     {
-        private const int OfficialResultsPageSize = 100;
-        private const int NotOfficialResultsPageSize = 50;
+        public const int OfficialResultsPageSize = 100;
+        public const int NotOfficialResultsPageSize = 50;
+        private const double CacheExpirationTimeInMinutes = 2;
 
         private readonly IContestsDataService contestsData;
         private readonly IParticipantsDataService participantsData;
         private readonly IParticipantScoresDataService participantScoresData;
+        private readonly ICacheService cacheService;
 
         public ResultsController(
             IOjsData data,
             IContestsDataService contestsData,
             IParticipantsDataService participantsData,
-            IParticipantScoresDataService participantScoresData)
+            IParticipantScoresDataService participantScoresData,
+            ICacheService cacheService)
             : base(data)
         {
             this.contestsData = contestsData;
             this.participantsData = participantsData;
             this.participantScoresData = participantScoresData;
+            this.cacheService = cacheService;
         }
 
         /// <summary>
@@ -56,7 +62,7 @@
         /// <param name="id">The id of the problem.</param>
         /// <param name="official">A flag checking if the requested results are for practice or for a competition.</param>
         /// <returns>Returns the best result for each user who has at least one submission for the problem.</returns>
-        [Authorize]
+        [AuthorizeCustom]
         public ActionResult ByProblem([DataSourceRequest] DataSourceRequest request, int id, bool official)
         {
             var problem = this.Data.Problems.GetById(id);
@@ -81,8 +87,7 @@
                     ParticipantName = ps.ParticipantName,
                     MaximumPoints = problem.MaximumPoints,
                     Result = ps.Points
-                })
-                .ToList();
+                });
 
             return this.Json(results.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         }
@@ -95,8 +100,8 @@
         /// or for competition</param>
         /// <param name="page">The page on which to open the results table</param>
         /// <returns>Returns a view with the results of the contest.</returns>
-        [Authorize]
-        public ActionResult Simple(int id, bool official, int? page)
+        [AuthorizeCustom]
+        public async Task<ActionResult> Simple(int id, bool official, int? page)
         {
             var contest = this.contestsData.GetByIdWithProblems(id);
 
@@ -192,8 +197,8 @@
         }
 
         // TODO: Unit test
-        [Authorize]
-        public ActionResult Full(int id, bool official, int? page)
+        [AuthorizeCustom]
+        public async Task<ActionResult> Full(int id, bool official, int? page)
         {
             if (!this.CheckIfUserHasContestPermissions(id))
             {
@@ -479,7 +484,6 @@
 
             return this.PartialView("_StatsChartPartial", contestId);
         }
-
         private ContestResultsViewModel GetContestResults(
             Contest contest,
             bool official,

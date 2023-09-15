@@ -424,7 +424,7 @@
         [HttpPost]
         [ValidateAntiForgeryToken]
         [OverrideAuthorization]
-        [Authorize]
+        [AuthorizeCustom]
         [RestrictRequests(
             RequestsPerInterval = RequestsPerInterval,
             RestrictInterval = RestrictInterval,
