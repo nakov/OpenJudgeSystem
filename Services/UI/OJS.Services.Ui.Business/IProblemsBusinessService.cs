@@ -9,8 +9,6 @@ namespace OJS.Services.Ui.Business
 
     public interface IProblemsBusinessService : IService
     {
-        Task RetestById(int id);
-
         Task DeleteById(int id);
 
         Task DeleteByContest(int contestId);
