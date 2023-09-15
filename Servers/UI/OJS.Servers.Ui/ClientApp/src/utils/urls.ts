@@ -14,8 +14,8 @@ import {
     IGetSearchResultsUrlParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
+    IGetSubmissionsByContestIdParams,
     IGetSubmissionsUrlParams,
-    IGetUserSubmissionsByContestUrlParams,
     IRetestSubmissionUrlParams,
     IStartContestParticipationUrlParams,
     ISubmitContestPasswordUrlParams,
@@ -163,7 +163,7 @@ const getSubmitUrl = () => `${baseApiUrl}/Compete/Submit`;
 const getSubmitFileUrl = () => `${baseApiUrl}/Compete/SubmitFileSubmission`;
 const getSubmissionFileDownloadUrl =
     ({ id }: IDownloadSubmissionFileUrlParams) => `${baseApiUrl}/Submissions/Download/${id}`;
-const getSubmissionsByContestIdUrl = ({ contestId = '', page }: IGetUserSubmissionsByContestUrlParams) => {
+const getSubmissionsByContestIdUrl = ({ contestId = '', page }: IGetSubmissionsByContestIdParams) => {
     const pageQuery = isNil(page)
         ? ''
         : `page=${page}`;

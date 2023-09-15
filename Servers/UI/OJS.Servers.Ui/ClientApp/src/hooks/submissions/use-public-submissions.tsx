@@ -33,6 +33,7 @@ interface IPublicSubmissionsContext {
         pendingSubmissions: ISubmissionResponseModel[];
         userByContestSubmissions: ISubmissionResponseModel[];
         userSubmissionUrlParams?: IPage;
+        submissionsByContestParams?: IGetSubmissionsByContestIdParams;
     };
     actions : {
         loadTotalSubmissionsCount: () => Promise<void>;
@@ -51,6 +52,7 @@ const defaultState = {
         userSubmissions: [] as ISubmissionResponseModel[],
         userByContestSubmissions: [] as ISubmissionResponseModel[],
         userSubmissionUrlParams: { page: 1 },
+        submissionsByContestParams: { page: 1, contestId: '' },
     },
 };
 
@@ -62,14 +64,24 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
     const { state: { params: urlParams } } = useUrlParams();
     const [ getPublicSubmissionsUrlParams, setPublicSubmissionsUrlParams ] = useState<IGetSubmissionsUrlParams | null>();
     const [ getUnprocessedSubmissionsUrlParams, setUnprocessedSubmissionsUrlParams ] = useState<IGetSubmissionsUrlParams | null>();
-    const [ getPendingSubmissionsUrlParams, setPendingSubmissionsUrlParams ] = useState<IGetSubmissionsUrlParams | null>();
+    const [
+        getPendingSubmissionsUrlParams,
+        setPendingSubmissionsUrlParams,
+    ] = useState<IGetSubmissionsUrlParams>();
     const [ publicSubmissions, setPublicSubmissions ] = useState<ISubmissionResponseModel[]>(defaultState.state.publicSubmissions);
     const [ userSubmissions, setUserSubmissions ] = useState<ISubmissionResponseModel[]>(defaultState.state.userSubmissions);
-    // eslint-disable-next-line max-len
-    const [ userByContestSubmissions, setUserByContestSubmissions ] = useState<ISubmissionResponseModel[]>(defaultState.state.userByContestSubmissions);
-    // eslint-disable-next-line max-len
-    const [ getUserSubmissionsUrlParams, setUserSubmissionsUrlParams ] = useState<IGetSubmissionsUrlParams | null>(defaultState.state.userSubmissionUrlParams);
-    const [ getSubmissionsByContestIdParams, setGetSubmissionsByContestIdParams ] = useState<IGetSubmissionsByContestIdParams | null>();
+    const [
+        userByContestSubmissions,
+        setUserByContestSubmissions,
+    ] = useState<ISubmissionResponseModel[]>(defaultState.state.userByContestSubmissions);
+    const [
+        getUserSubmissionsUrlParams,
+        setUserSubmissionsUrlParams,
+    ] = useState<IGetSubmissionsUrlParams | null>(defaultState.state.userSubmissionUrlParams);
+    const [
+        getSubmissionsByContestIdParams,
+        setGetSubmissionsByContestIdParams,
+    ] = useState<IGetSubmissionsByContestIdParams | null>(defaultState.state.submissionsByContestParams);
     const [ unprocessedSubmissions, setUnprocessedSubmissions ] =
         useState<ISubmissionResponseModel[]>(defaultState.state.publicSubmissions);
     const [ pendingSubmissions, setPendingSubmissions ] =
