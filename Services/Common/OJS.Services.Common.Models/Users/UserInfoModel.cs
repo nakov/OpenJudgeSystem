@@ -7,7 +7,7 @@ using System.Security.Claims;
 
 public class UserInfoModel : IMapExplicitly
 {
-    public string? Id { get; set; }
+    public string Id { get; set; } = null!;
 
     public bool IsAdmin { get; set; }
 
