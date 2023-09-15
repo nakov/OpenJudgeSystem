@@ -10,6 +10,8 @@ import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
 import { Button, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
+import IconSize from '../../guidelines/icons/common/icon-sizes';
+import ExcludedFromHomeworkIcon from '../../guidelines/icons/ExcludedFromHomeworkIcon';
 import List, { ListType } from '../../guidelines/lists/List';
 import SubmissionResultPointsLabel from '../../submissions/submission-result-points-label/SubmissionResultPointsLabel';
 
@@ -66,6 +68,8 @@ const ContestTasksNavigation = () => {
                       type={ButtonType.plain}
                     >
                         {problem.name}
+                        {problem?.isExcludedFromHomework &&
+                            <ExcludedFromHomeworkIcon className={styles.excludedFromHomeworkIcon} size={IconSize.Small} />}
                     </Button>
                     <SubmissionResultPointsLabel
                       points={problemScore}
