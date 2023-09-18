@@ -23,6 +23,8 @@ public class ContestDetailsServiceModel : IMapExplicitly
 
     public bool CanBePracticed { get; set; }
 
+    public bool IsAdminOrLecturerInContest { get; set; }
+
     public int TotalContestParticipantsCount { get; set; }
 
     public int ParticipantsCountByContestType { get; set; }
@@ -41,6 +43,7 @@ public class ContestDetailsServiceModel : IMapExplicitly
                         .SelectMany(pg => pg.Problems)
                         .OrderBy(p => p.ProblemGroup.OrderBy)
                         .ThenBy(p => p.OrderBy)))
+            .ForMember(d => d.IsAdminOrLecturerInContest, opt => opt.Ignore())
             .ForMember(d => d.CanViewResults, opt => opt.Ignore())
             .ForMember(d => d.AllowedSubmissionTypes, opt => opt.Ignore())
             .ForMember(d => d.TotalContestParticipantsCount, opt => opt.Ignore())

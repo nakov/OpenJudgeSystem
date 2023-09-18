@@ -21,11 +21,14 @@ public class LecturersInContestsBusinessService : ILecturersInContestsBusinessSe
     }
 
     public bool IsUserAdminOrLecturerInContest(Contest contest)
+        => this.userProviderService.GetCurrentUser().IsAdmin ||
+           this.IsUserAdminOrLecturerInContest(contest);
+
+    public bool IsUserLecturerInContest(Contest contest)
     {
         var currentUser = this.userProviderService.GetCurrentUser();
 
-        return this.userProviderService.GetCurrentUser().IsAdmin ||
-            contest.LecturersInContests.Any(c => c.LecturerId == currentUser.Id) ||
-            contest.Category!.LecturersInContestCategories.Any(cl => cl.LecturerId == currentUser.Id);
+        return contest.LecturersInContests.Any(c => c.LecturerId == currentUser.Id) ||
+               contest.Category!.LecturersInContestCategories.Any(cl => cl.LecturerId == currentUser.Id);
     }
 }

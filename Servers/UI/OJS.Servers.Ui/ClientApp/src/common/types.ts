@@ -86,6 +86,7 @@ interface IContestDetailsResponseType {
     isOnlineExam: boolean;
     canBeCompeted: boolean;
     canBePracticed: boolean;
+    isAdminOrLecturerInContest: boolean;
     allowedSubmissionTypes: IContestDetailsSubmissionType[];
     totalContestParticipantsCount: number;
     participantsCountByContestType: number;

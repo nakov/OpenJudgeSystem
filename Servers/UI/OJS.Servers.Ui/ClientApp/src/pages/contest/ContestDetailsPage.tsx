@@ -12,7 +12,6 @@ import SpinningLoader from '../../components/guidelines/spinning-loader/Spinning
 import ProblemResource from '../../components/problems/problem-resource/ProblemResource';
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
 import { useAppUrls } from '../../hooks/use-app-urls';
-import { useAuth } from '../../hooks/use-auth';
 import { useCurrentContest } from '../../hooks/use-current-contest';
 import { usePageTitles } from '../../hooks/use-page-titles';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
@@ -44,7 +43,6 @@ const ContestDetailsPage = () => {
         getAdministrationContestEditInternalUrl,
     } = useAppUrls();
     const { actions: { setPageTitle } } = usePageTitles();
-    const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const navigate = useNavigate();
 
     const contestTitle = useMemo(
@@ -79,18 +77,18 @@ const ContestDetailsPage = () => {
     );
 
     const canAccessCompeteButton = useMemo(
-        () => contestDetails?.canBeCompeted || canAccessAdministration,
-        [ contestDetails, canAccessAdministration ],
+        () => contestDetails?.canBeCompeted || contestDetails?.isAdminOrLecturerInContest,
+        [ contestDetails ],
     );
 
     const canAccessPracticeButton = useMemo(
-        () => contestDetails?.canBePracticed || canAccessAdministration,
-        [ canAccessAdministration, contestDetails?.canBePracticed ],
+        () => contestDetails?.canBePracticed || contestDetails?.isAdminOrLecturerInContest,
+        [ contestDetails ],
     );
 
     const canOnlyAdminCompete = useMemo(
-        () => !contestDetails?.canBeCompeted && canAccessAdministration,
-        [ canAccessAdministration, contestDetails?.canBeCompeted ],
+        () => !contestDetails?.canBeCompeted && contestDetails?.isAdminOrLecturerInContest,
+        [ contestDetails ],
     );
 
     const canOnlyAdminPractice = useMemo(
@@ -129,7 +127,7 @@ const ContestDetailsPage = () => {
     const renderContestButtons = useCallback(
         () => (
             <div className={styles.buttonsContainer}>
-                {contestDetails?.canViewResults || canAccessAdministration
+                {contestDetails?.canViewResults || contestDetails?.isAdminOrLecturerInContest
                     ? (
                         <LinkButton
                           type={LinkButtonType.secondary}
@@ -138,7 +136,7 @@ const ContestDetailsPage = () => {
                         />
                     )
                     : null}
-                {canAccessAdministration
+                {contestDetails?.isAdminOrLecturerInContest
                     ? (
                         <>
                             <LinkButton
@@ -200,11 +198,11 @@ const ContestDetailsPage = () => {
             canAccessPracticeButton,
             canOnlyAdminCompete,
             canAccessCompeteButton,
-            canAccessAdministration,
             participationType,
             getAdministrationContestProblemsInternalUrl,
             getAdministrationContestEditInternalUrl,
             contestDetails?.canViewResults,
+            contestDetails?.isAdminOrLecturerInContest,
         ],
     );
 
