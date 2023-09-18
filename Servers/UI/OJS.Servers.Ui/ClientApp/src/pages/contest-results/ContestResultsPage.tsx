@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import isNil from 'lodash/isNil';
 
@@ -7,7 +7,7 @@ import { contestParticipationType } from '../../common/contest-helpers';
 import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
-import { IContestResultsParticipationProblemType, IContestResultsType } from '../../hooks/contests/types';
+import { IContestResultsParticipationProblemType, IContestResultsParticipationType, IContestResultsType } from '../../hooks/contests/types';
 import { useCurrentContestResults } from '../../hooks/contests/use-current-contest-results';
 import { usePageTitles } from '../../hooks/use-page-titles';
 import { makePrivate } from '../shared/make-private';
@@ -49,6 +49,17 @@ const participantNamesColumns: GridColDef[] = [
     },
 ];
 
+const rowNumberColumn: GridColDef = {
+    field: 'rowNumber',
+    headerName: 'Position',
+    type: 'number',
+    minWidth: 70,
+    flex: 1,
+    headerAlign: 'center',
+    headerClassName: styles.headerContent,
+    align: 'center',
+};
+
 const totalResultColumn: GridColDef = {
     field: 'total',
     headerName: 'Total',
@@ -66,7 +77,7 @@ const getProblemResultColumns = (results: IContestResultsType) => results.proble
     headerName: p.name,
     description: p.name,
     type: 'number',
-    minWidth: 120,
+    minWidth: 50,
     flex: 1,
     sortable: true,
     headerAlign: 'center',
@@ -91,12 +102,17 @@ const getProblemResultColumns = (results: IContestResultsType) => results.proble
     },
 } as GridColDef));
 
+interface IContestResultsTypeWithRowNumber extends IContestResultsParticipationType {
+    rowNumber?: number;
+}
+
 const ContestResultsPage = () => {
     const { state: { params } } = useRouteUrlParams();
     const { contestId, participationType: participationUrlType, resultType } = params;
 
     const official = participationUrlType === ContestParticipationType.Compete;
     const full = resultType === ContestResultType.Full;
+    const [ numberedRows, setNumberedRows ] = useState<Array<IContestResultsTypeWithRowNumber>>([]);
 
     const participationType = contestParticipationType(official);
 
@@ -118,6 +134,12 @@ const ContestResultsPage = () => {
     );
 
     useEffect(
+        () => setNumberedRows(contestResults?.results.map((row, index) => ({ ...row, rowNumber: index + 1 })) || []),
+
+        [ contestResults ],
+    );
+
+    useEffect(
         () => {
             setPageTitle(contestResultsPageTitle);
         },
@@ -128,7 +150,8 @@ const ContestResultsPage = () => {
         (results: IContestResultsType) => {
             const problemResultColumns = getProblemResultColumns(results) || [];
 
-            return participantNamesColumns
+            return [ rowNumberColumn ]
+                .concat(participantNamesColumns)
                 .concat(problemResultColumns)
                 .concat(totalResultColumn);
         },
@@ -157,7 +180,7 @@ const ContestResultsPage = () => {
                     {contestResults?.name}
                 </Heading>
                 <DataGrid
-                  rows={contestResults!.results}
+                  rows={numberedRows}
                   columns={getColumns(contestResults!)}
                   sx={{
                       '& .MuiDataGrid-columnHeaderTitle': {
@@ -166,12 +189,11 @@ const ContestResultsPage = () => {
                           textAlign: 'center',
                       },
                   }}
-                  disableSelectionOnClick
                   getRowId={(row) => row.participantUsername}
                 />
             </>
         ),
-        [ contestResults, getColumns, participationType ],
+        [ contestResults, getColumns, participationType, numberedRows ],
     );
 
     const renderErrorHeading = useCallback(
