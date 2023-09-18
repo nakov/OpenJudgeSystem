@@ -271,11 +271,15 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             Name = AdditionalFormFields.Type.ToString(),
             Type = typeof(TestTypeEnum),
             Options = EnumUtils.GetValuesFrom<TestTypeEnum>().Cast<object>(),
-            Value = entity.IsTrialTest ? TestTypeEnum.TrialTest : TestTypeEnum.OpenTest,
+            Value = entity.IsTrialTest
+                ? TestTypeEnum.TrialTest
+                : TestTypeEnum.OpenTest,
         });
         formControls.Add(new FormControlViewModel
         {
-            Name = AdditionalFormFields.RetestProblem.ToString(), Type = typeof(bool), Value = false,
+            Name = AdditionalFormFields.RetestProblem.ToString(),
+            Type = typeof(bool),
+            Value = false,
         });
         return formControls;
     }
