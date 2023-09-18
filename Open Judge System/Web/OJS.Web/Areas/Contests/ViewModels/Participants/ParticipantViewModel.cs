@@ -12,7 +12,7 @@
 
         public ParticipantViewModel(Participant participant, bool official, bool isAdminOrLecturer)
         {
-            this.Contest = ContestViewModel.FromContest.Compile()(participant.Contest);
+            this.Contest = new ContestViewModel();
             this.LastSubmissionTime = participant.Submissions.Any()
                 ? (DateTime?)participant.Submissions.Max(x => x.CreatedOn)
                 : null;
