@@ -87,6 +87,10 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                 return null;
             }
 
+            if (competeTimeHasExpired && !canBePracticed) {
+                return null;
+            }
+
             return (
                 <Countdown
                   key={id}
@@ -96,7 +100,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                 />
             );
         },
-        [ endDate, handleCountdownEnd, id ],
+        [ endDate, handleCountdownEnd, id, canBePracticed, competeTimeHasExpired ],
     );
 
     const renderContestLockIcon = useCallback(
