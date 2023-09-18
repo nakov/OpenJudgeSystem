@@ -177,7 +177,7 @@ namespace OJS.Services.Administration.Business.Implementations
 
                 var serializedExecutionDetails = submissionServiceModel.ToJson();
 
-                await this.submissionsForProcessingDataService.AddOrUpdate(submission.Id, serializedExecutionDetails);
+                await this.submissionsForProcessingDataService.CreateIfNotExists(submission.Id, serializedExecutionDetails);
                 await this.submissionsData.SaveChanges();
 
                 return ServiceResult.Success;

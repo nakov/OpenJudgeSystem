@@ -525,20 +525,26 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     }
 
     public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetUsersLastSubmissions(
-        bool isOfficial,
+        bool? isOfficial,
         int page)
     {
         var user = this.userProviderService.GetCurrentUser();
 
-        var userParticipantsIds = await this.participantsDataService
-            .GetAllByUser(user.Id)
-            .Where(p => p.IsOfficial == isOfficial)
+        var userParticipantsIdsQuery = this.participantsDataService
+            .GetAllByUser(user.Id);
+
+        if (isOfficial.HasValue)
+        {
+            userParticipantsIdsQuery = userParticipantsIdsQuery.Where(p => p.IsOfficial == isOfficial);
+        }
+
+        var ids = await userParticipantsIdsQuery
             .Select(p => p.Id)
             .ToEnumerableAsync();
 
         return await this.submissionsData
             .GetLatestSubmissionsByUserParticipations<SubmissionForPublicSubmissionsServiceModel>(
-                userParticipantsIds.MapCollection<int?>(),
+                ids.MapCollection<int?>(),
                 DefaultSubmissionsPerPage,
                 page);
     }
@@ -562,6 +568,18 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         return submissions
             .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
             .ToPagedResult(DefaultSubmissionsPerPage, page);
+    }
+
+    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetByContest(int contestId, int page)
+    {
+        var user = this.userProviderService.GetCurrentUser();
+
+        return await this.submissionsData
+            .GetAllForUserByContest(
+                contestId,
+                user.Id)
+            .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
+            .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
     }
 
     public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPendingSubmissions(int page)

@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Data;
 
@@ -30,7 +31,7 @@
 
         bool IsOfficialById(int id);
 
-        void SetAllToUnprocessedByProblem(int problemId);
+        Task SetAllToUnprocessedByProblem(int problemId);
 
         void DeleteByProblem(int problemId);
 

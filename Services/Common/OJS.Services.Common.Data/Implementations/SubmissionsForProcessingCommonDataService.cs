@@ -1,6 +1,7 @@
 namespace OJS.Services.Common.Data.Implementations;
 
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
@@ -18,17 +19,17 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
     {
     }
 
-    public Task<SubmissionForProcessing?> GetBySubmission(int submissionId) =>
-        this.DbSet
+    public Task<SubmissionForProcessing?> GetBySubmission(int submissionId)
+        => this.DbSet
             .Where(s => s.SubmissionId == submissionId)
             .FirstOrDefaultAsync();
 
-    public IQueryable<SubmissionForProcessing> GetAllPending() =>
-        this.DbSet
+    public IQueryable<SubmissionForProcessing> GetAllPending()
+        => this.DbSet
             .Where(sfp => !sfp.Processed && !sfp.Processing);
 
-    public IQueryable<SubmissionForProcessing> GetAllUnprocessed() =>
-        this.DbSet
+    public IQueryable<SubmissionForProcessing> GetAllUnprocessed()
+        => this.DbSet
             .Where(sfp => !sfp.Processed);
 
     public async Task<int> GetAllUnprocessedCount()
@@ -36,8 +37,8 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
             .GetAllUnprocessed()
             .CountAsync();
 
-    public async Task<IEnumerable<int>> GetIdsOfAllProcessing() =>
-        await this.DbSet
+    public async Task<IEnumerable<int>> GetIdsOfAllProcessing()
+        => await this.DbSet
             .Where(sfp => sfp.Processing && !sfp.Processed)
             .Select(sfp => sfp.Id)
             .ToListAsync();
@@ -48,7 +49,7 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
             .MapCollection<TServiceModel>()
             .ToListAsync();
 
-    public async Task Add(int submissionId, string serializedExecutionDetails)
+    public async Task<SubmissionForProcessing> Add(int submissionId, string serializedExecutionDetails)
     {
         var submissionForProcessing = new SubmissionForProcessing
         {
@@ -59,18 +60,15 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
         };
 
         await this.Add(submissionForProcessing);
+
+        return submissionForProcessing;
     }
 
-    public async Task<SubmissionForProcessing> AddOrUpdate(int submissionId, string serializedExecutionDetails)
+    public async Task<SubmissionForProcessing> CreateIfNotExists(int submissionId, string serializedExecutionDetails)
     {
-        var entity = await this.GetBySubmission(submissionId);
+        var entity = await this.GetBySubmission(submissionId) ?? await this.Add(submissionId, serializedExecutionDetails);
 
-        if (entity == null)
-        {
-            await this.Add(submissionId, serializedExecutionDetails);
-        }
-
-        entity!.Processing = false;
+        entity.Processing = false;
         entity.Processed = false;
 
         return entity;
@@ -82,15 +80,23 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
             .Select(sId => new SubmissionForProcessing
             {
                 SubmissionId = sId,
+                Processed = false,
+                Processing = false,
             });
 
-        using var scope = TransactionsHelper.CreateTransactionScope();
+        using var scope = TransactionsHelper.CreateTransactionScope(
+            isolationLevel: IsolationLevel.RepeatableRead,
+            asyncFlowOption: TransactionScopeAsyncFlowOption.Enabled);
+
         submissionIds
             .Chunk(GlobalConstants.BatchOperationsChunkSize)
             .ForEach(chunk => this.Delete(sfp => chunk.Contains(sfp.SubmissionId)));
 
+        await this.SaveChanges();
+
         await this.AddMany(newSubmissionsForProcessing);
 
+        await this.SaveChanges();
         scope.Complete();
     }
 
@@ -116,8 +122,11 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
         }
     }
 
-    public void Clean() =>
+    public async Task CleanProcessedSubmissions()
+    {
         this.DbSet.RemoveRange(this.DbSet.Where(sfp => sfp.Processed && !sfp.Processing));
+        await this.SaveChanges();
+    }
 
     public new async Task Update(SubmissionForProcessing submissionForProcessing)
     {
