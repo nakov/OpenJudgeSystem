@@ -173,8 +173,9 @@ namespace OJS.Services.Administration.Business.Implementations
             var submissions = await submissionsQueryable
                 .Include(s => s.SubmissionType)
                 .Include(s => s.Problem)
-                .Include(s => s.Problem!.Checker)
-                .Include(s => s.Problem!.Tests)
+                .Include(s => s.Problem.Checker)
+                .Include(s => s.Problem.Tests)
+                .MapCollection<SubmissionServiceModel>()
                 .ToListAsync();
 
             var submissionIds = submissions.Select(s => s.Id).ToList();
@@ -184,17 +185,14 @@ namespace OJS.Services.Administration.Business.Implementations
                        TransactionScopeAsyncFlowOption.Enabled))
             {
                 await this.participantScoresData.DeleteAllByProblem(problemId);
-
                 await this.submissionsData.SetAllToUnprocessedByProblem(problemId);
-
                 await this.submissionsForProcessingData.AddOrUpdateBySubmissionIds(submissionIds);
 
                 scope.Complete();
             }
 
             await submissions.ForEachSequential(async s =>
-                await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(
-                    s.Map<SubmissionServiceModel>()));
+                await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(s));
         }
 
         private async Task CopyProblemToContest(Problem? problem, int contestId, int? problemGroupId)
