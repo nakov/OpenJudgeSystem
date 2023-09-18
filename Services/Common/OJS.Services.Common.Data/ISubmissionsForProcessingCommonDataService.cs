@@ -18,9 +18,9 @@ public interface ISubmissionsForProcessingCommonDataService : IService
 
     Task<IEnumerable<TServiceModel>> GetAllProcessing<TServiceModel>();
 
-    Task Add(int submissionId);
+    Task<SubmissionForProcessing> Add(int submissionId);
 
-    Task<SubmissionForProcessing> AddOrUpdate(int submissionId);
+    Task<SubmissionForProcessing> CreateIfNotExists(int submissionId);
 
     Task AddOrUpdateBySubmissionIds(ICollection<int> submissionIds);
 
@@ -32,5 +32,5 @@ public interface ISubmissionsForProcessingCommonDataService : IService
 
     Task MarkProcessed(int submissionId);
 
-    void Clean();
+    Task CleanProcessedSubmissions();
 }

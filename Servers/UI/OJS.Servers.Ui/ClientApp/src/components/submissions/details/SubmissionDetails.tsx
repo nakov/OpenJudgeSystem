@@ -4,7 +4,7 @@ import first from 'lodash/first';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { ContestParticipationType } from '../../../common/constants';
+import { contestParticipationType } from '../../../common/contest-helpers';
 import { IIndexContestsType } from '../../../common/types';
 import { useHashUrlParams } from '../../../hooks/common/use-hash-url-params';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
@@ -126,16 +126,12 @@ const SubmissionDetails = () => {
         [ handleDownloadSubmissionFile, canAccessAdministration, currentSubmission, user ],
     );
 
-    const participationType = useMemo(
-        () => currentSubmission?.isOfficial
-            ? ContestParticipationType.Compete
-            : ContestParticipationType.Practice,
-        [ currentSubmission ],
+    useEffect(
+        () => {
+            setPageTitle(submissionTitle);
+        },
+        [ setPageTitle, submissionTitle ],
     );
-
-    useEffect(() => {
-        setPageTitle(submissionTitle);
-    }, [ setPageTitle, submissionTitle ]);
 
     const problemNameHeadingText = useMemo(
         () => {
@@ -227,9 +223,9 @@ const SubmissionDetails = () => {
 
     const renderTestsChangeMessage = useCallback(() => (
         currentSubmission?.testRuns.length === 0 &&
-            currentSubmission.isCompiledSuccessfully &&
-            currentSubmission.totalTests > 0 &&
-            !currentSubmission.processingComment
+        currentSubmission.isCompiledSuccessfully &&
+        currentSubmission.totalTests > 0 &&
+        !currentSubmission.processingComment
             ? (
                 <div className={styles.testChangesWrapper}>
                     <p>
@@ -324,6 +320,8 @@ const SubmissionDetails = () => {
         () => {
             const { id: contestId } = contest as IIndexContestsType;
 
+            const participationType = contestParticipationType(currentSubmission!.isOfficial);
+
             navigate({
                 pathname: getParticipateInContestUrl({ id: contestId, participationType }),
                 hash: hashParam,
@@ -332,7 +330,7 @@ const SubmissionDetails = () => {
             setCurrentSubmission(null);
             selectSubmissionById(null);
         },
-        [ contest, navigate, getParticipateInContestUrl, participationType, hashParam, setCurrentSubmission, selectSubmissionById ],
+        [ contest, currentSubmission, navigate, getParticipateInContestUrl, hashParam, setCurrentSubmission, selectSubmissionById ],
     );
 
     const codeEditor = useCallback(
@@ -341,7 +339,7 @@ const SubmissionDetails = () => {
                 <Heading
                   type={HeadingType.secondary}
                   className={styles.taskHeading}
-                  style={problemNameHeadingText.length >= 30
+                  style={!isNil(problemNameHeadingText) && problemNameHeadingText.length >= 30
                       ? { marginBottom: 0 }
                       : { marginBottom: '24px' }}
                 >
@@ -360,6 +358,9 @@ const SubmissionDetails = () => {
                         {problemNameHeadingText}
                     </div>
                 </Heading>
+                <div>
+                    {renderTestsChangeMessage()}
+                </div>
                 {currentSubmission?.submissionType.allowBinaryFilesUpload
                     ? (
                         <div className={styles.resourceWrapper}>
@@ -384,6 +385,7 @@ const SubmissionDetails = () => {
             renderDownloadErrorMessage,
             currentSubmission,
             setSubmissionAndStartParticipation,
+            renderTestsChangeMessage,
         ],
     );
 
@@ -448,9 +450,6 @@ const SubmissionDetails = () => {
 
     return (
         <>
-            <div>
-                {renderTestsChangeMessage()}
-            </div>
             <div className={styles.detailsWrapper}>
                 {refreshableSubmissionsList()}
                 {codeEditor()}

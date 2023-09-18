@@ -178,6 +178,10 @@ interface IPagedResultType<TItem> {
     items?: TItem[];
 }
 
+interface IPage {
+    page: number;
+}
+
 interface IUserType {
     id: string;
     username: string;
@@ -221,6 +225,7 @@ export type {
     ISubmissionTypeType,
     IPagedResultType,
     IUserType,
+    IPage,
     IUserResponseType,
     IUserPermissionsType,
     ISearchResponseModel,
