@@ -33,7 +33,6 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
       SULS_PLATFORM_BASE_URL: "https://localhost:44304"
-      DISTRIBUTOR_BASE_URL: "https://localhost:44305"
       SULS_PLATFORM_API_KEY: "1234"
       SHARED_AUTH_COOKIE_DOMAIN: "localhost"
       UI_URL: "http://localhost:5002"
@@ -60,7 +59,6 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
       SULS_PLATFORM_BASE_URL: "https://localhost:44304"
-      DISTRIBUTOR_BASE_URL: "https://localhost:44305"
       SULS_PLATFORM_API_KEY: "1234"
       SHARED_AUTH_COOKIE_DOMAIN: "localhost"
       UI_URL: "http://localhost:5002"
