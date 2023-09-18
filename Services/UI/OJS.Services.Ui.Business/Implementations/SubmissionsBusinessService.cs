@@ -521,20 +521,26 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     }
 
     public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetUsersLastSubmissions(
-        bool isOfficial,
+        bool? isOfficial,
         int page)
     {
         var user = this.userProviderService.GetCurrentUser();
 
-        var userParticipantsIds = await this.participantsDataService
-            .GetAllByUser(user.Id)
-            .Where(p => p.IsOfficial == isOfficial)
+        var userParticipantsIdsQuery = this.participantsDataService
+            .GetAllByUser(user.Id);
+
+        if (isOfficial.HasValue)
+        {
+            userParticipantsIdsQuery = userParticipantsIdsQuery.Where(p => p.IsOfficial == isOfficial);
+        }
+
+        var ids = await userParticipantsIdsQuery
             .Select(p => p.Id)
             .ToEnumerableAsync();
 
         return await this.submissionsData
             .GetLatestSubmissionsByUserParticipations<SubmissionForPublicSubmissionsServiceModel>(
-                userParticipantsIds.MapCollection<int?>(),
+                ids.MapCollection<int?>(),
                 DefaultSubmissionsPerPage,
                 page);
     }
