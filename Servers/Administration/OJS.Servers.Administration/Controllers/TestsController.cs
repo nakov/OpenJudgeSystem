@@ -168,7 +168,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
 
             if (model.RetestProblem)
             {
-                await this.problemsBusiness.RetestSubmissionsByProblemId(problemId);
+                await this.problemsBusiness.RetestById(problemId);
             }
 
             scope.Complete();
@@ -282,7 +282,9 @@ public class TestsController : BaseAutoCrudAdminController<Test>
 
         if (isForRetesting)
         {
-            await this.problemsBusiness.RetestSubmissionsByTestId(newTest.Id);
+            var problemId = await this.testsData.GetProblemIdByTestId(newTest.Id);
+
+            await this.problemsBusiness.RetestById(problemId);
         }
         else
         {

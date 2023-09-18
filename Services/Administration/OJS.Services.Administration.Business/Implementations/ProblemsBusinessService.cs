@@ -7,7 +7,6 @@ namespace OJS.Services.Administration.Business.Implementations
     using Microsoft.EntityFrameworkCore;
     using OJS.Common.Helpers;
     using OJS.Data.Models.Problems;
-    using OJS.Data.Models.Submissions;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models.Contests.Problems;
     using OJS.Services.Common;
@@ -29,7 +28,6 @@ namespace OJS.Services.Administration.Business.Implementations
         private readonly ISubmissionsDataService submissionsData;
         private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
         private readonly ITestRunsDataService testRunsData;
-        private readonly ITestsDataService testData;
         private readonly ISubmissionTypesDataService submissionTypesData;
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
         private readonly IContestsBusinessService contestsBusiness;
@@ -45,8 +43,7 @@ namespace OJS.Services.Administration.Business.Implementations
             ISubmissionTypesDataService submissionTypesData,
             IProblemGroupsBusinessService problemGroupsBusiness,
             IContestsBusinessService contestsBusiness,
-            ISubmissionsCommonBusinessService submissionsCommonBusinessService,
-            ITestsDataService testData)
+            ISubmissionsCommonBusinessService submissionsCommonBusinessService)
         {
             this.contestsData = contestsData;
             this.participantScoresData = participantScoresData;
@@ -59,23 +56,6 @@ namespace OJS.Services.Administration.Business.Implementations
             this.problemGroupsBusiness = problemGroupsBusiness;
             this.contestsBusiness = contestsBusiness;
             this.submissionsCommonBusinessService = submissionsCommonBusinessService;
-            this.testData = testData;
-        }
-
-        public async Task RetestSubmissionsByProblemId(int problemId)
-        {
-            var submissionsQueryable = this.submissionsData.GetAllByProblem(problemId);
-
-            await this.SetSubmissionsForProcessing(submissionsQueryable, problemId);
-        }
-
-        public async Task RetestSubmissionsByTestId(int testId)
-        {
-            var problemId = await this.testData.GetProblemIdByTestId(testId);
-
-            var submissionsQueryable = this.submissionsData.GetAllByProblem(problemId);
-
-            await this.SetSubmissionsForProcessing(submissionsQueryable, problemId);
         }
 
         public async Task DeleteById(int id)
@@ -168,15 +148,9 @@ namespace OJS.Services.Administration.Business.Implementations
         public Task ReevaluateProblemsOrder(int contestId, Problem problem)
             => this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsOrder(contestId, problem.ProblemGroup);
 
-        private async Task SetSubmissionsForProcessing(IQueryable<Submission> submissionsQueryable, int problemId)
+        public async Task RetestById(int problemId)
         {
-            var submissions = await submissionsQueryable
-                .Include(s => s.SubmissionType)
-                .Include(s => s.Problem)
-                .Include(s => s.Problem.Checker)
-                .Include(s => s.Problem.Tests)
-                .MapCollection<SubmissionServiceModel>()
-                .ToListAsync();
+            var submissions = await this.submissionsData.GetAllNonDeletedByProblemId<SubmissionServiceModel>(problemId);
 
             var submissionIds = submissions.Select(s => s.Id).ToList();
 
