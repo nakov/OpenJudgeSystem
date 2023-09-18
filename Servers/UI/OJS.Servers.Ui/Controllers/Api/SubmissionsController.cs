@@ -115,10 +115,9 @@ public class SubmissionsController : BaseApiController
     /// <param name="submissionExecutionResult">The submission execution result.</param>
     /// <returns>Success model.</returns>
     /// <remarks>
-    /// The submission comes from the Judge distributor system.
+    /// The submission comes from the RabbitMQ execution result queue.
     /// It sends it to here after executing it on a remote worker.
     /// </remarks>
-    // TODO: align distributor endpoint and remove the custom path
     [HttpPost("/Submissions/SaveExecutionResult")]
     [ProducesResponseType(typeof(SaveExecutionResultResponseModel), Status200OK)]
     public async Task<IActionResult> SaveExecutionResult([FromBody] SubmissionExecutionResult submissionExecutionResult)
