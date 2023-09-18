@@ -138,7 +138,7 @@ interface IIndexContestsType {
     isLoading: boolean;
 }
 
-interface IContestModal {
+interface IContestModalInfoType {
     id: number;
     name: string;
     duration: number;
@@ -229,7 +229,7 @@ export type {
     IUserResponseType,
     IUserPermissionsType,
     ISearchResponseModel,
-    IContestModal,
+    IContestModalInfoType,
     IContestDetailsResponseType,
     IContestDetailsProblemType,
 };
