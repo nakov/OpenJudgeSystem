@@ -1,5 +1,6 @@
 namespace OJS.Servers.Administration.Controllers;
 
+using OJS.Common.Utils;
 using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
@@ -232,7 +233,8 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters,
         Type autocompleteType)
     {
-        var formControls = base.GenerateFormControls(entity, action, entityDict, complexOptionFilters, autocompleteType).ToList();
+        var formControls = base.GenerateFormControls(entity, action, entityDict, complexOptionFilters, autocompleteType)
+            .ToList();
 
         var problemId = entityDict.GetEntityIdOrDefault<Problem>();
 
@@ -243,6 +245,11 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             problemInput.IsReadOnly = true;
         }
 
+        var isTrialFormControl = formControls.First(x => x.Name == nameof(entity.IsTrialTest));
+        var isOpenFormControl = formControls.First(x => x.Name == nameof(entity.IsOpenTest));
+
+        isTrialFormControl.IsHidden = true;
+        isOpenFormControl.IsHidden = true;
         formControls.Add(new FormControlViewModel
         {
             Name = AdditionalFormFields.Input.ToString(),
@@ -259,6 +266,17 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             FormControlType = FormControlType.TextArea,
         });
 
+        formControls.Add(new FormControlViewModel
+        {
+            Name = AdditionalFormFields.Type.ToString(),
+            Type = typeof(TestTypeEnum),
+            Options = EnumUtils.GetValuesFrom<TestTypeEnum>().Cast<object>(),
+            Value = entity.IsTrialTest ? TestTypeEnum.TrialTest : TestTypeEnum.OpenTest,
+        });
+        formControls.Add(new FormControlViewModel
+        {
+            Name = AdditionalFormFields.RetestProblem.ToString(), Type = typeof(bool), Value = false,
+        });
         return formControls;
     }
 
@@ -266,6 +284,41 @@ public class TestsController : BaseAutoCrudAdminController<Test>
     {
         await base.BeforeEntitySaveAsync(entity, actionContext);
         UpdateInputAndOutput(entity, actionContext);
+        UpdateType(entity, actionContext);
+    }
+
+    protected override Task BeforeEntitySaveOnEditAsync(
+        Test existingEntity,
+        Test newEntity,
+        AdminActionContext actionContext)
+    {
+        base.BeforeEntitySaveOnEditAsync(existingEntity, newEntity, actionContext);
+        var retestProblem = bool.Parse(actionContext.GetFormValue(AdditionalFormFields.RetestProblem));
+
+        if (retestProblem)
+        {
+            this.problemsBusiness.RetestById(newEntity.ProblemId);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private static void UpdateType(Test entity, AdminActionContext actionContext)
+    {
+        var testType = Enum.Parse<TestTypeEnum>(actionContext.GetFormValue(AdditionalFormFields.Type));
+        switch (testType)
+        {
+            case TestTypeEnum.TrialTest:
+                entity.IsTrialTest = true;
+                entity.IsOpenTest = false;
+                break;
+            case TestTypeEnum.OpenTest:
+                entity.IsTrialTest = false;
+                entity.IsOpenTest = true;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(testType), testType, null);
+        }
     }
 
     private static void UpdateInputAndOutput(Test entity, AdminActionContext actionContext)
