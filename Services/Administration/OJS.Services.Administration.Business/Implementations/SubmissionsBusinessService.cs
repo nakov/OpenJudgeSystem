@@ -4,6 +4,7 @@ namespace OJS.Services.Administration.Business.Implementations
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
     using OJS.Common;
     using OJS.Common.Helpers;
@@ -155,6 +156,7 @@ namespace OJS.Services.Administration.Business.Implementations
         {
             var submissionProblemId = submission.ProblemId;
             var submissionParticipantId = submission.ParticipantId!.Value;
+            var submissionServiceModel = submission.Map<SubmissionServiceModel>();
 
             var result = await this.transactions.ExecuteInTransaction(async () =>
             {
@@ -173,13 +175,15 @@ namespace OJS.Services.Administration.Business.Implementations
                         submissionProblemId);
                 }
 
-                await this.submissionsForProcessingDataService.CreateIfNotExists(submission.Id);
+                var serializedExecutionDetails = submissionServiceModel.ToJson();
+
+                await this.submissionsForProcessingDataService.CreateIfNotExists(submission.Id, serializedExecutionDetails);
                 await this.submissionsData.SaveChanges();
 
                 return ServiceResult.Success;
             });
 
-            await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submission.Map<SubmissionServiceModel>());
+            await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submissionServiceModel);
 
             return result;
         }
