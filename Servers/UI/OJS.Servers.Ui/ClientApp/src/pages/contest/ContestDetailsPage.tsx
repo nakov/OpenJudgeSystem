@@ -217,7 +217,7 @@ const ContestDetailsPage = () => {
             const { allowedSubmissionTypes } = contestDetails;
 
             return allowedSubmissionTypes.map((x) => (
-                <span>
+                <span key={x.id}>
                     {' '}
                     {x.name}
                     {' '}
