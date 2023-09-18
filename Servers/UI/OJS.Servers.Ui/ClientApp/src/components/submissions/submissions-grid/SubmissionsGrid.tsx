@@ -89,10 +89,6 @@ const SubmissionsGrid = () => {
     } = usePages();
 
     useEffect(() => {
-        console.log('userByContestSubmissions => ', userByContestSubmissions);
-    }, [ userByContestSubmissions ]);
-
-    useEffect(() => {
         setParam('contestid', selectValue.value);
         if (!selectValue.value) {
             return;
