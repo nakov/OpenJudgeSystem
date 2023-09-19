@@ -99,6 +99,14 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
         => this.GetAllByProblem(problemId)
             .Select(s => s.Id);
 
+    public IQueryable<Submission> GetAllForUserByContest(int contestId, string userId)
+        => this
+            .DbSet
+            .Where(x =>
+                x.Participant!.UserId == userId &&
+                x.Problem.ProblemGroup.ContestId == contestId &&
+                x.Problem.ShowResults);
+
     public IQueryable<Submission> GetAllByIdsQuery(IEnumerable<int> ids)
         => this.GetQuery()
             .Where(s => ids.Contains(s.Id));
