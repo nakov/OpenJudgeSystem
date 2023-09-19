@@ -22,6 +22,12 @@ import styles from './ContestDetailsPage.module.scss';
 
 const compareByOrderBy = (p1: IContestDetailsProblemType, p2: IContestDetailsProblemType) => p1.orderBy - p2.orderBy;
 
+const getButtonAccessibility = (canParticipate: boolean | undefined, isAdminOrLecturer: boolean | undefined) => {
+    const isAccessible = canParticipate || isAdminOrLecturer;
+    const isAccessibleForAdminOrLecturerInContest = !canParticipate && isAdminOrLecturer;
+    return { isAccessible, isAccessibleForAdminOrLecturerInContest };
+};
+
 const ContestDetailsPage = () => {
     const { state: { params } } = useRouteUrlParams();
     const {
@@ -76,24 +82,20 @@ const ContestDetailsPage = () => {
         [ isOfficial, contestDetails?.participantsCountByContestType ],
     );
 
-    const canAccessCompeteButton = useMemo(
-        () => contestDetails?.canBeCompeted || contestDetails?.isAdminOrLecturerInContest,
+    const {
+        isAccessible: canAccessCompeteButton,
+        isAccessibleForAdminOrLecturerInContest: competableOnlyForAdminAndLecturers,
+    } = useMemo(
+        () => getButtonAccessibility(contestDetails?.canBeCompeted, contestDetails?.isAdminOrLecturerInContest),
         [ contestDetails ],
     );
 
-    const canAccessPracticeButton = useMemo(
-        () => contestDetails?.canBePracticed || contestDetails?.isAdminOrLecturerInContest,
+    const {
+        isAccessible: canAccessPracticeButton,
+        isAccessibleForAdminOrLecturerInContest: praticableOnlyForAdminOrLecturers,
+    } = useMemo(
+        () => getButtonAccessibility(contestDetails?.canBePracticed, contestDetails?.isAdminOrLecturerInContest),
         [ contestDetails ],
-    );
-
-    const canOnlyAdminCompete = useMemo(
-        () => !contestDetails?.canBeCompeted && contestDetails?.isAdminOrLecturerInContest,
-        [ contestDetails ],
-    );
-
-    const canOnlyAdminPractice = useMemo(
-        () => !contestDetails?.canBePracticed && canAccessPracticeButton,
-        [ canAccessPracticeButton, contestDetails?.canBePracticed ],
     );
 
     useEffect(
@@ -156,7 +158,7 @@ const ContestDetailsPage = () => {
                     : null}
                 <LinkButton
                   id="button-card-compete"
-                  internalClassName={canOnlyAdminCompete
+                  internalClassName={praticableOnlyForAdminOrLecturers
                       ? styles.adminAccessibleButton
                       : ''}
                   to={getParticipateInContestUrl({
@@ -172,7 +174,7 @@ const ContestDetailsPage = () => {
                 />
                 <LinkButton
                   id="button-card-practice"
-                  internalClassName={canOnlyAdminPractice
+                  internalClassName={competableOnlyForAdminAndLecturers
                       ? styles.adminAccessibleButton
                       : ''}
                   to={getParticipateInContestUrl({
@@ -194,9 +196,9 @@ const ContestDetailsPage = () => {
             contestIdToNumber,
             getContestResultsUrl,
             getParticipateInContestUrl,
-            canOnlyAdminPractice,
+            praticableOnlyForAdminOrLecturers,
             canAccessPracticeButton,
-            canOnlyAdminCompete,
+            competableOnlyForAdminAndLecturers,
             canAccessCompeteButton,
             participationType,
             getAdministrationContestProblemsInternalUrl,
