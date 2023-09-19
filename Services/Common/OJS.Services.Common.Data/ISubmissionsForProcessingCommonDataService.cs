@@ -21,7 +21,7 @@ public interface ISubmissionsForProcessingCommonDataService : IService
 
     Task<SubmissionForProcessing> Add(int submissionId, string serializedExecutionDetails);
 
-    Task<SubmissionForProcessing> CreateIfNotExists(int submissionId, string serializedExecutionDetails);
+    Task<SubmissionForProcessing> AddOrUpdate(int submissionId, string serializedExecutionDetails);
 
     Task AddOrUpdateBySubmissionIds(ICollection<int> submissionIds);
 

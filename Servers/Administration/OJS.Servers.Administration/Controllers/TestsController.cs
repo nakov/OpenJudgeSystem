@@ -23,6 +23,7 @@ using OJS.Services.Common;
 using OJS.Services.Common.Models;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
+using FluentExtensions.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -275,13 +276,45 @@ public class TestsController : BaseAutoCrudAdminController<Test>
                 ? TestTypeEnum.TrialTest
                 : TestTypeEnum.OpenTest,
         });
-        formControls.Add(new FormControlViewModel
+
+        if (action == EntityAction.Edit)
         {
-            Name = AdditionalFormFields.RetestProblem.ToString(),
-            Type = typeof(bool),
-            Value = false,
-        });
+            formControls.Add(new FormControlViewModel
+            {
+                Name = AdditionalFormFields.RetestProblem.ToString(),
+                Type = typeof(bool),
+                Value = false,
+            });
+        }
+
         return formControls;
+    }
+
+    protected override async Task AfterEntitySaveOnEditAsync(
+        Test oldTest,
+        Test newTest,
+        AdminActionContext actionContext)
+    {
+        bool.TryParse(actionContext.GetFormValue(AdditionalFormFields.RetestProblem), out var isForRetesting);
+
+        if (isForRetesting)
+        {
+            var problemId = await this.testsData.GetProblemIdByTestId(newTest.Id);
+
+            await this.problemsBusiness.RetestById(problemId);
+        }
+        else
+        {
+            var problem = await this.testsData.GetProblemById(newTest.Id);
+
+            if (problem != null)
+            {
+                await problem.Submissions
+                    .ForEachSequential(async s => await this.testRunsData.DeleteBySubmission(s.Id));
+            }
+        }
+
+        await base.AfterEntitySaveOnEditAsync(oldTest, newTest, actionContext);
     }
 
     protected override async Task BeforeEntitySaveAsync(Test entity, AdminActionContext actionContext)
@@ -291,25 +324,9 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         UpdateType(entity, actionContext);
     }
 
-    protected override Task BeforeEntitySaveOnEditAsync(
-        Test existingEntity,
-        Test newEntity,
-        AdminActionContext actionContext)
-    {
-        base.BeforeEntitySaveOnEditAsync(existingEntity, newEntity, actionContext);
-        var retestProblem = bool.Parse(actionContext.GetFormValue(AdditionalFormFields.RetestProblem));
-
-        if (retestProblem)
-        {
-            this.problemsBusiness.RetestById(newEntity.ProblemId);
-        }
-
-        return Task.CompletedTask;
-    }
-
     private static void UpdateType(Test entity, AdminActionContext actionContext)
     {
-        var testType = Enum.Parse<TestTypeEnum>(actionContext.GetFormValue(AdditionalFormFields.Type));
+        Enum.TryParse<TestTypeEnum>(actionContext.GetFormValue(AdditionalFormFields.Type), out var testType);
         switch (testType)
         {
             case TestTypeEnum.TrialTest:

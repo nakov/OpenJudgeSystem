@@ -7,6 +7,7 @@
     using Microsoft.EntityFrameworkCore;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Data.Implementations;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
 
     public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataService
     {
@@ -76,5 +77,15 @@
         public void RemoveTestRunsCacheByProblem(int problemId)
             => this.GetAllByProblem(problemId)
                 .UpdateFromQueryAsync(s => new Submission { TestRunsCache = null });
+
+        public async Task<IEnumerable<TServiceModel>> GetAllNonDeletedByProblemId<TServiceModel>(int problemId)
+            => await this.GetAllByProblem(problemId)
+                .Where(s => !s.IsDeleted)
+                .Include(s => s.SubmissionType)
+                .Include(s => s.Problem)
+                .Include(s => s.Problem.Checker)
+                .Include(s => s.Problem.Tests)
+                .MapCollection<TServiceModel>()
+                .ToListAsync();
     }
 }

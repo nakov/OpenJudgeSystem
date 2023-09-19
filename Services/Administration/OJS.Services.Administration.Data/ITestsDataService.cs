@@ -2,6 +2,7 @@
 {
     using System.Linq;
     using System.Threading.Tasks;
+    using OJS.Data.Models.Problems;
     using OJS.Data.Models.Tests;
     using OJS.Services.Common.Data;
 
@@ -14,5 +15,9 @@
         IQueryable<Test> GetAllNonTrialByProblem(int problemId);
 
         Task DeleteByProblem(int problemId);
+
+        Task<int> GetProblemIdByTestId(int testId);
+
+        Task<Problem?> GetProblemById(int testId);
     }
 }
