@@ -1,4 +1,6 @@
-﻿namespace OJS.Web.Areas.Administration.Controllers
+﻿using OJS.Services.Data.Settings;
+
+namespace OJS.Web.Areas.Administration.Controllers
 {
     using System;
     using System.Collections;
@@ -24,6 +26,7 @@
     using OJS.Web.Areas.Administration.ViewModels.Contest;
     using OJS.Web.Areas.Contests.Models;
     using OJS.Web.Common.Extensions;
+    using OJS.Web.Infrastructure.Filters.Attributes;
     using OJS.Web.ViewModels.Common;
     using ChangeTimeResource = Resources.Areas.Administration.Contests.Views.ChangeTime;
     using GeneralResource = Resources.Areas.Administration.AdministrationGeneral;
@@ -34,6 +37,8 @@
     public class ContestsController : LecturerBaseGridController
     {
         private const int ProblemGroupsCountLimit = 40;
+        private const int ActualWorkersDefaultValue = 36;
+        private const int MaxAllowedTimeForSubmissionCompletionInSecs = 200;
 
         private readonly IContestsDataService contestsData;
         private readonly IContestCategoriesDataService contestCategoriesData;
@@ -42,6 +47,7 @@
         private readonly IContestsBusinessService contestsBusiness;
         private readonly IParticipantsBusinessService participantsBusiness;
         private readonly ICacheItemsProviderService cacheItemsProvider;
+        private readonly ISettingsService settingsService;
 
         public ContestsController(
             IOjsData data,
@@ -51,8 +57,9 @@
             IIpsDataService ipsData,
             IContestsBusinessService contestsBusiness,
             IParticipantsBusinessService participantsBusiness,
-            ICacheItemsProviderService cacheItemsProvider)
-                : base(data)
+            ICacheItemsProviderService cacheItemsProvider,
+            ISettingsService settingsService)
+            : base(data)
         {
             this.contestsData = contestsData;
             this.contestCategoriesData = contestCategoriesData;
@@ -61,6 +68,7 @@
             this.contestsBusiness = contestsBusiness;
             this.participantsBusiness = participantsBusiness;
             this.cacheItemsProvider = cacheItemsProvider;
+            this.settingsService = settingsService;
         }
 
         public override IEnumerable GetData()
@@ -164,11 +172,16 @@
 
             if (contest.EnsureValidAuthorSubmisions)
             {
-                var submissionTypesForProblem = this.contestsData.GetSumbissionTypesForProblemsWithCurrentAuthorSolution(contest.Id.Value);
-                var typesWithoutAuthorSolutions = submissionTypesForProblem.Where(stp => stp.HasAuthorSubmission == false);
+                var submissionTypesForProblem =
+                    this.contestsData.GetSumbissionTypesForProblemsWithCurrentAuthorSolution(contest.Id.Value);
+                var typesWithoutAuthorSolutions =
+                    submissionTypesForProblem.Where(stp => stp.HasAuthorSubmission == false);
                 if (typesWithoutAuthorSolutions.Any())
                 {
-                    var text = "Missing currently passing Author submissions on: <br>" + string.Join("<br>", typesWithoutAuthorSolutions.Select(stp => $"Problem Name: {stp.ProblemName}, SubmissionType: {stp.SubmissionTypeName}"));
+                    var text = "Missing currently passing Author submissions on: <br>" + string.Join(
+                        "<br>",
+                        typesWithoutAuthorSolutions.Select(stp =>
+                            $"Problem Name: {stp.ProblemName}, SubmissionType: {stp.SubmissionTypeName}"));
                     this.TempData.AddDangerMessage(text);
                     var systemMessages = this.PrepareSystemMessages();
                     this.ViewBag.SystemMessages = systemMessages;
@@ -182,6 +195,7 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ClearContestAttribute(queryKeyForContestId: nameof(ContestAdministrationViewModel.Id))]
         public ActionResult Edit(ContestAdministrationViewModel model)
         {
             if (model.Id == null || !this.CheckIfUserHasContestPermissions(model.Id.Value))
@@ -211,7 +225,7 @@
             if (contest.IsOnline &&
                 contest.IsActive &&
                 (contest.Duration != model.Duration ||
-                    (int)contest.Type != model.Type))
+                 (int)contest.Type != model.Type))
             {
                 this.TempData.AddDangerMessage(Resource.Active_contest_cannot_edit_duration_type);
                 this.RedirectToAction<ContestsController>(c => c.Index());
@@ -242,6 +256,7 @@
         }
 
         [HttpPost]
+        [ClearContestAttribute(queryKeyForContestId: nameof(ContestAdministrationViewModel.Id))]
         public ActionResult Destroy([DataSourceRequest] DataSourceRequest request, ContestAdministrationViewModel model)
         {
             if (model.Id == null || !this.CheckIfUserHasContestPermissions(model.Id.Value))
@@ -485,9 +500,9 @@
         [HttpGet]
         public ActionResult TransferParticipants(int id, string returnUrl)
         {
-            returnUrl = string.IsNullOrWhiteSpace(returnUrl) ?
-                this.Request.UrlReferrer?.AbsolutePath :
-                UrlHelpers.ExtractFullContestsTreeUrlFromPath(returnUrl);
+            returnUrl = string.IsNullOrWhiteSpace(returnUrl)
+                ? this.Request.UrlReferrer?.AbsolutePath
+                : UrlHelpers.ExtractFullContestsTreeUrlFromPath(returnUrl);
 
             if (!this.User.IsAdmin())
             {
@@ -539,7 +554,7 @@
         }
 
         [HttpGet]
-        public ActionResult CalculateContestLoad(int categoryId, int currentContestId)
+        public ActionResult CalculateContestLoad(int currentContestId)
         {
             if (!this.CheckIfUserHasContestPermissions(currentContestId))
             {
@@ -548,33 +563,40 @@
 
             var contests = this.contestsData
                 .GetAll()
-                .Where(c => c.CategoryId == categoryId && c.StartTime.HasValue && c.EndTime.HasValue)
-                .OrderByDescending(x => x.StartTime.Value)
                 .ToList();
 
             var model = new ContestLoadCalculationViewModel();
+            model.MaxAllowedTimeForSubmissionCompletion = this.settingsService.Get<int>(
+                GlobalConstants.MaxAllowedTimeForSubmissionCompletion, MaxAllowedTimeForSubmissionCompletionInSecs);
+
             foreach (var contest in contests)
             {
                 if (contest.Id == currentContestId)
                 {
-                    model.ExamLengthInHours = (contest.EndTime.Value - contest.StartTime.Value).Hours;
-                    model.ExpectedExamProblemsCount = contest.ProblemGroups.Count();
-                    model.ExpectedStudentsCount = contest.Participants.Count();
+                    if (contest.StartTime.HasValue && contest.EndTime.HasValue)
+                    {
+                        model.ExamLengthInHours = (contest.EndTime.Value - contest.StartTime.Value).Hours;
+                    }
+
+                    model.ExpectedExamProblemsCount = contest.ProblemGroups.Count(pg => !pg.IsDeleted);
                     model.ContestName = contest.Name;
                     model.CurrentContestId = contest.Id;
+                    model.AverageProblemRunTimeInSeconds =
+                        this.contestsBusiness.GetContestSubmissionsAverageRunTimeSeconds(
+                            contest,
+                            false,
+                            model.MaxAllowedTimeForSubmissionCompletion);
 
-                    model.AverageProblemRunTimeInSeconds = 
-                        this.contestsBusiness.GetContestSubmissionsAverageRunTimeSeconds(contest);
+                    model.ActualWorkers =
+                        this.settingsService.Get<int>(GlobalConstants.RemoteWorkers, ActualWorkersDefaultValue);
+
+                    // Currently is setted to 0 because it is not fetched from the SULS
+                    model.ExpectedStudentsCount = 0;
                 }
                 else
                 {
                     model.ContestsDropdownData.Add(new PreviousContestLoadData(contest));
                 }
-            }
-
-            if (model.ContestsDropdownData.Any())
-            {
-                model.PreviousContestId = model.ContestsDropdownData.First().Id;
             }
 
             return this.View(model);
@@ -592,12 +614,24 @@
             {
                 var contest = this.contestsData.GetById(model.PreviousContestId.Value);
                 model.PreviousContestSubmissions = this.GetOfficialSubmissionsByContest(contest.Id);
-                model.PreviousContestExpectedProblems = contest.ProblemGroups.SelectMany(x => x.Problems).Count();
+                model.PreviousContestExpectedProblems = contest.ProblemGroups.Count(pg => !pg.IsDeleted);
                 model.PreviousContestParticipants = contest.Participants
-                    .Where(x => x.IsOfficial == true)
-                    .Count();
-                model.PreviousAverageProblemRunTimeInSeconds = 
-                    this.contestsBusiness.GetContestSubmissionsAverageRunTimeSeconds(contest);
+                    .Count(x => x.IsOfficial == true);
+                model.PreviousAverageProblemRunTimeInSeconds =
+                    this.contestsBusiness.GetContestSubmissionsAverageRunTimeSeconds(
+                        contest,
+                        true,
+                        model.MaxAllowedTimeForSubmissionCompletion);
+            }
+            else
+            {
+                if (model.PreviousAverageProblemRunTimeInSeconds == null
+                    || model.PreviousContestParticipants == null
+                    || model.PreviousContestExpectedProblems == null
+                    || model.PreviousContestSubmissions == null)
+                {
+                    return this.View(model);
+                }
             }
 
             var calculatedLoad = this.contestsBusiness.CalculateLoadForContest(model);
@@ -747,7 +781,7 @@
         private int GetOfficialSubmissionsByContest(int id)
         {
             var participants = this.participantsData
-               .GetAllByContestAndIsOfficial(id, true);
+                .GetAllByContestAndIsOfficial(id, true);
 
             return participants.SelectMany(p => p.Submissions).Count();
         }

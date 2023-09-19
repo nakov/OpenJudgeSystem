@@ -101,6 +101,8 @@
 
         public DateTime? StartedExecutionOn { get; set; }
 
+        public DateTime? CompletedExecutionOn { get; set; }
+
         public string ProcessingComment { get; set; }
 
         /// <summary>
