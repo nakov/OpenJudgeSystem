@@ -75,25 +75,23 @@ namespace OJS.Services.Administration.Business.Implementations
                 return;
             }
 
-            using (var scope = TransactionsHelper.CreateTransactionScope(
-                       IsolationLevel.RepeatableRead,
-                       TransactionScopeAsyncFlowOption.Enabled))
+            using var scope = TransactionsHelper.CreateTransactionScope(
+                IsolationLevel.RepeatableRead,
+                TransactionScopeAsyncFlowOption.Enabled);
+            if (!await this.contestsData.IsOnlineById(problem.ContestId))
             {
-                if (!await this.contestsData.IsOnlineById(problem.ContestId))
-                {
-                    await this.problemGroupsBusiness.DeleteById(problem.ProblemGroupId);
-                }
-
-                await this.problemsData.DeleteById(id);
-                await this.problemsData.SaveChanges();
-                await this.testRunsData.DeleteByProblem(id);
-
-                this.problemResourcesData.DeleteByProblem(id);
-
-                this.submissionsData.DeleteByProblem(id);
-
-                scope.Complete();
+                await this.problemGroupsBusiness.DeleteById(problem.ProblemGroupId);
             }
+
+            await this.problemsData.DeleteById(id);
+            await this.problemsData.SaveChanges();
+            await this.testRunsData.DeleteByProblem(id);
+
+            this.problemResourcesData.DeleteByProblem(id);
+
+            this.submissionsData.DeleteByProblem(id);
+
+            scope.Complete();
         }
 
         public async Task DeleteByContest(int contestId) =>

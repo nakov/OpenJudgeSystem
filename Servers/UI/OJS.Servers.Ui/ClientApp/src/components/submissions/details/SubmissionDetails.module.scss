@@ -6,7 +6,7 @@
 
 .backBtn {
   border: 0;
-  margin-left: -20px;
+  margin-left: -30px;
   margin-right: -30px;
 }
 
@@ -106,7 +106,7 @@
 .taskHeading {
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: center;
 
   > div {
     > div {
@@ -114,13 +114,17 @@
     }
 
     button {
-      margin-left: -30px;
+      margin-right: 30px;
     }
   }
 }
 
 .buttonsSection {
   margin-top: 20px;
+}
+
+.alertBox {
+  margin-bottom: 20px;
 }
 
 .submissionReloadBtn {
