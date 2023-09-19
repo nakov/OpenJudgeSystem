@@ -196,7 +196,6 @@ const ContestPage = () => {
             if (!isNil(contest)) {
                 const { isOnline } = contest;
                 if (isUserParticipant || !isOnline || !isParticipationOfficial) {
-                    console.log('asdasd');
                     start(internalContest);
                 }
 

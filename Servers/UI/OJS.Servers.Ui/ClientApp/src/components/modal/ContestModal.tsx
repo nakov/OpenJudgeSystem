@@ -15,8 +15,10 @@ interface IContestModalProps {
     contest: IContestModalInfoType;
 }
 
+const defaultState = { state: { isShowing: true } };
+
 const ContestModal = ({ contest }: IContestModalProps) => {
-    const [ isShowing, setIsShowing ] = useState<boolean>(true);
+    const [ isShowing, setIsShowing ] = useState<boolean>(defaultState.state.isShowing);
     const navigate = useNavigate();
     const { actions: { setIsUserParticipant } } = useCurrentContest();
     const { getHomePageUrl } = useAppUrls();
