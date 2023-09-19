@@ -166,7 +166,11 @@ namespace OJS.Services.Administration.Business.Implementations
             }
 
             await submissions.ForEachSequential(async s =>
-                await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(s));
+            {
+                await this.testRunsData.DeleteBySubmission(s.Id);
+
+                await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(s);
+            });
         }
 
         private async Task CopyProblemToContest(Problem? problem, int contestId, int? problemGroupId)
