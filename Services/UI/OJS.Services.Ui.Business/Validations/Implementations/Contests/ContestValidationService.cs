@@ -102,7 +102,7 @@ public class ContestValidationService : IContestValidationService
         canBeCompeted || (isUserAdminOrLecturerInContest && allowToAdminAlways);
 
     private static bool CanUserCompete(bool isUserAdminOrLecturerInContest, bool isContestActive) =>
-        isUserAdminOrLecturerInContest && isContestActive;
+        isUserAdminOrLecturerInContest || isContestActive;
 
     private static bool CanUserCompeteByContestByUserAndIsAdmin(
         Contest contest,

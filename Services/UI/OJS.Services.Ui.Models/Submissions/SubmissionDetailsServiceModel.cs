@@ -34,6 +34,8 @@
 
         public bool IsCompiledSuccessfully { get; set; }
 
+        public bool IsProcessed { get; set; }
+
         public string CompilerComment { get; set; } = null!;
 
         public DateTime CreatedOn { get; set; }
@@ -74,6 +76,7 @@
                     s.Participant!.IsOfficial))
                 .ForMember(d => d.ByteContent, opt => opt.MapFrom(s =>
                     s.Content))
+                .ForMember(s => s.IsProcessed, opt => opt.MapFrom(s => s.Processed))
                 .ForMember(d => d.TotalTests, opt => opt.MapFrom(s =>
                     s.Problem != null
                         ? s.Problem.Tests.Count
