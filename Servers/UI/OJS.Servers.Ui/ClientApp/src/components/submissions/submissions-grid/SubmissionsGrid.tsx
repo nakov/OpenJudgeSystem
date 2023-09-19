@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { InputLabel, MenuItem, Select } from '@mui/material';
+import isEmpty from 'lodash/isEmpty';
+import isNil from 'lodash/isNil';
 
 import { IDictionary, IKeyValuePair } from '../../../common/common-types';
 import { useUrlParams } from '../../../hooks/common/use-url-params';
@@ -32,10 +34,22 @@ enum toggleValues {
     mySubmissions = 'my submissions',
 }
 
+const contestIdParamName = 'contestId';
+
 const SubmissionsGrid = () => {
-    const { state: { params: urlParams }, actions: { setParam } } = useUrlParams();
-    const toggleParam = urlParams.find((urlParam) => urlParam.key === 'toggle')?.value;
-    const contestIdParam = urlParams.find((urlParam) => urlParam.key === 'contestid')?.value;
+    const {
+        state: { params: urlParams },
+        actions: { setParam, unsetParam },
+    } = useUrlParams();
+    const toggleParam = useMemo(
+        () => urlParams.find((urlParam) => urlParam.key === 'toggle')?.value,
+        [ urlParams ],
+    );
+
+    const contestIdParam = useMemo(
+        () => urlParams.find((urlParam) => urlParam.key === 'contestid')?.value,
+        [ urlParams ],
+    );
 
     const [ selectValue, setSelectValue ] = useState<IKeyValuePair<string>>({ key: '', value: '' });
     const [ selectMenuItems, setSelectMenuItems ] = useState<IKeyValuePair<string>[]>();
@@ -89,27 +103,32 @@ const SubmissionsGrid = () => {
     } = usePages();
 
     useEffect(() => {
-        setParam('contestid', selectValue.value);
-        if (!selectValue.value) {
+        if (isNil(selectValue.value) || isEmpty(selectValue.value)) {
             return;
         }
+
+        setParam(contestIdParamName, selectValue.value);
         initiateSubmissionsByContestQuery();
     }, [ selectValue, setParam, initiateSubmissionsByContestQuery ]);
 
     useEffect(() => {
-        getUserParticipations();
+        (async () => {
+            await getUserParticipations();
+        })();
     }, [ getUserParticipations ]);
 
     useEffect(() => {
-        const mappedMenuItems = (userParticipationsData || []).map((item: IParticipationType) => ({
+        const mappedMenuItems = (userParticipationsData ||
+        []).map((item: IParticipationType) => ({
             key: item.contestName,
             value: item.id.toString(),
         }));
+
         setSelectMenuItems(mappedMenuItems);
     }, [ userParticipationsData ]);
 
     useEffect(() => {
-        if (activeToggleElement === toggleValues.mySubmissions && !contestIdParam) {
+        if (activeToggleElement === toggleValues.mySubmissions && !isNil(contestIdParam)) {
             initiateUserSubmissionsQuery();
         }
     }, [ activeToggleElement, initiateUserSubmissionsQuery, contestIdParam ]);
@@ -141,6 +160,7 @@ const SubmissionsGrid = () => {
         if (textContent?.toLowerCase() === toggleValues.allSubmissions) {
             setActiveToggleElement(toggleValues.allSubmissions);
             setParam('toggle', 'all');
+            unsetParam(contestIdParamName);
         } else {
             setActiveToggleElement(toggleValues.mySubmissions);
             setParam('toggle', 'my');
@@ -148,7 +168,7 @@ const SubmissionsGrid = () => {
 
         setSelectValue({ key: '', value: '' });
         changePage(1);
-    }, [ changePage, setParam, setSelectValue ]);
+    }, [ changePage, setParam, unsetParam, setSelectValue ]);
 
     useEffect(
         () => {
