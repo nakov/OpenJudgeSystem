@@ -103,15 +103,6 @@ const SubmissionsGrid = () => {
     } = usePages();
 
     useEffect(() => {
-        if (isNil(selectValue.value) || isEmpty(selectValue.value)) {
-            return;
-        }
-
-        setParam(contestIdParamName, selectValue.value);
-        initiateSubmissionsByContestQuery();
-    }, [ selectValue, setParam, initiateSubmissionsByContestQuery ]);
-
-    useEffect(() => {
         (async () => {
             await getUserParticipations();
         })();
@@ -128,10 +119,20 @@ const SubmissionsGrid = () => {
     }, [ userParticipationsData ]);
 
     useEffect(() => {
-        if (activeToggleElement === toggleValues.mySubmissions && !isNil(contestIdParam)) {
+        if (activeToggleElement === toggleValues.mySubmissions && isNil(contestIdParam)) {
             initiateUserSubmissionsQuery();
         }
     }, [ activeToggleElement, initiateUserSubmissionsQuery, contestIdParam ]);
+
+    useEffect(() => {
+        if (isNil(selectValue.value) ||
+            isEmpty(selectValue.value)) {
+            return;
+        }
+
+        setParam(contestIdParamName, selectValue.value);
+        initiateSubmissionsByContestQuery();
+    }, [ selectValue, setParam, initiateSubmissionsByContestQuery, contestIdParam ]);
 
     const handlePageChange = useCallback(
         (page: number) => changePage(page),
@@ -172,7 +173,7 @@ const SubmissionsGrid = () => {
 
     useEffect(
         () => {
-            if ((totalSubmissionsCount === 0 || activeToggleElement === toggleValues.mySubmissions) && contestIdParam) {
+            if (activeToggleElement === toggleValues.mySubmissions || contestIdParam) {
                 return;
             }
 
@@ -279,7 +280,7 @@ const SubmissionsGrid = () => {
 
     const renderSubmissionsDropdown = useCallback(() => (
         <div style={{ marginTop: 15 }}>
-            <InputLabel id="contest-submissions-label">Contest Submissions</InputLabel>
+            <InputLabel id="contest-submissions-label">Choose Contest</InputLabel>
             <Select
               sx={{
                   width: 350,
