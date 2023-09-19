@@ -33,8 +33,6 @@ namespace OJS.Common
             public const string EnvironmentKey = "ASPNETCORE_ENVIRONMENT";
             public const string SulsPlatformBaseUrlKey = "SULS_PLATFORM_BASE_URL";
             public const string SulsPlatformApiKeyKey = "SULS_PLATFORM_API_KEY";
-            public const string DistributorBaseUrlKey = "DISTRIBUTOR_BASE_URL";
-            public const string DistributorApiKeyKey = "DISTRIBUTOR_API_KEY";
             public const string LoggerFilesFolderPath = "LOGGER_FILES_FOLDER_PATH";
             public const string SharedAuthCookieDomain = "SHARED_AUTH_COOKIE_DOMAIN";
             public const string ApplicationUrl = "UI_URL";
@@ -69,8 +67,6 @@ namespace OJS.Common
             public const string GetUserInfoByIdPath = "/api/users/getjudgeuserinfobyuserid";
             public const string GetUserInfoByUsernamePath = "/api/users/getjudgeuserinfobyusername";
             public const string ExternalRegisterPath = "/identity/externaljudgeregister";
-            public const string AddSubmissionToDistributorPath = "/submissions/add";
-            public const string AddManySubmissionsToDistributorPath = "/submissions/addmany";
         }
 
         public static class MimeTypes
