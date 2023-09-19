@@ -46,14 +46,8 @@ const ContestPage = () => {
     } = useCurrentContest();
 
     const {
-        state: {
-            modalContest,
-            isShowing,
-        },
-        actions: {
-            toggle,
-            setModalContest,
-        },
+        state: { modalContest },
+        actions: { setModalContest },
     } = useModal();
     const { state: { user } } = useAuth();
 
@@ -130,11 +124,7 @@ const ContestPage = () => {
                 )
                 : isParticipationOfficial && contest?.isOnline && !isUserAdmin && !isUserParticipant
                     ? (
-                        <ContestModal
-                          contest={modalContest}
-                          isShowing={isShowing}
-                          toggle={toggle}
-                        />
+                        <ContestModal contest={modalContest} />
                     )
                     : <Contest />
             : renderErrorMessage(),
@@ -144,8 +134,6 @@ const ContestPage = () => {
             isUserParticipant,
             isParticipationOfficial,
             modalContest,
-            toggle,
-            isShowing,
             isUserAdmin,
             contest,
         ],
@@ -208,6 +196,7 @@ const ContestPage = () => {
             if (!isNil(contest)) {
                 const { isOnline } = contest;
                 if (isUserParticipant || !isOnline || !isParticipationOfficial) {
+                    console.log('asdasd');
                     start(internalContest);
                 }
 

@@ -1,10 +1,10 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 
-import { IContestModal } from '../../common/types';
+import { IContestModalInfoType } from '../../common/types';
 import { useAppUrls } from '../../hooks/use-app-urls';
 import { useCurrentContest } from '../../hooks/use-current-contest';
 import Button, { ButtonSize, ButtonType } from '../guidelines/buttons/Button';
@@ -12,12 +12,11 @@ import Button, { ButtonSize, ButtonType } from '../guidelines/buttons/Button';
 import styles from './ContestModal.module.scss';
 
 interface IContestModalProps {
-    contest: IContestModal;
-    isShowing: boolean;
-    toggle: () => void;
+    contest: IContestModalInfoType;
 }
 
-const ContestModal = ({ contest, isShowing, toggle }: IContestModalProps) => {
+const ContestModal = ({ contest }: IContestModalProps) => {
+    const [ isShowing, setIsShowing ] = useState<boolean>(true);
     const navigate = useNavigate();
     const { actions: { setIsUserParticipant } } = useCurrentContest();
     const { getHomePageUrl } = useAppUrls();
@@ -25,18 +24,17 @@ const ContestModal = ({ contest, isShowing, toggle }: IContestModalProps) => {
     const startContestAndHideModal = useCallback(
         () => {
             setIsUserParticipant(true);
-
-            toggle();
+            setIsShowing(false);
         },
-        [ setIsUserParticipant, toggle ],
+        [ setIsUserParticipant ],
     );
 
     const toggleAndRedirectToHomePage = useCallback(
         () => {
-            toggle();
+            setIsShowing(false);
             navigate(getHomePageUrl());
         },
-        [ toggle, navigate, getHomePageUrl ],
+        [ navigate, getHomePageUrl ],
     );
 
     return isShowing
