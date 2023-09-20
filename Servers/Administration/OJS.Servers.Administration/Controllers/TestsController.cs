@@ -292,8 +292,10 @@ public class TestsController : BaseAutoCrudAdminController<Test>
 
             if (problem != null)
             {
-                await problem.Submissions
-                    .ForEachSequential(async s => await this.testRunsData.DeleteBySubmission(s.Id));
+                 problem.Submissions
+                    .ForEach(s => this.testRunsData.Delete(t => t.Id == s.Id));
+
+                 await this.testsData.SaveChanges();
             }
         }
 

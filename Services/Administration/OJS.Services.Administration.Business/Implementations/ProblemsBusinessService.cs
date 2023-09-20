@@ -1,10 +1,12 @@
 namespace OJS.Services.Administration.Business.Implementations
 {
+    using System.Diagnostics;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Transactions;
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
+    using OJS.Common;
     using OJS.Common.Helpers;
     using OJS.Data.Models.Problems;
     using OJS.Services.Administration.Data;
@@ -14,7 +16,6 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Services.Common.Models;
     using OJS.Services.Common.Models.Submissions.ExecutionContext;
     using OJS.Services.Infrastructure.Exceptions;
-    using SoftUni.AutoMapper.Infrastructure.Extensions;
     using IsolationLevel = System.Transactions.IsolationLevel;
     using Resource = OJS.Common.Resources.ProblemsBusiness;
     using SharedResource = OJS.Common.Resources.ContestsGeneral;
@@ -143,6 +144,8 @@ namespace OJS.Services.Administration.Business.Implementations
 
         public async Task RetestById(int problemId)
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
             var submissions = await this.submissionsData.GetAllNonDeletedByProblemId<SubmissionServiceModel>(problemId);
 
             var submissionIds = submissions.Select(s => s.Id).ToList();
@@ -151,6 +154,12 @@ namespace OJS.Services.Administration.Business.Implementations
                        IsolationLevel.RepeatableRead,
                        TransactionScopeAsyncFlowOption.Enabled))
             {
+                submissionIds
+                    .Chunk(GlobalConstants.BatchOperationsChunkSize)
+                    .ForEach(chunk => this.testRunsData.Delete(t => chunk.Contains(t.SubmissionId)));
+
+                await this.testRunsData.SaveChanges();
+
                 await this.participantScoresData.DeleteAllByProblem(problemId);
                 await this.submissionsData.SetAllToUnprocessedByProblem(problemId);
                 await this.submissionsForProcessingData.AddOrUpdateBySubmissionIds(submissionIds);
@@ -158,12 +167,23 @@ namespace OJS.Services.Administration.Business.Implementations
                 scope.Complete();
             }
 
-            await submissions.ForEachSequential(async s =>
-            {
-                await this.testRunsData.DeleteBySubmission(s.Id);
+            stopwatch.Stop();
+            System.Console.WriteLine($"Elapsed time: {stopwatch.Elapsed}");
 
-                await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(s);
+            stopwatch.Reset();
+            stopwatch.Start();
+            Parallel.ForEach(submissions, submission =>
+            {
+                this.submissionsCommonBusinessService.PublishSubmissionForProcessing(
+                    submission);
             });
+            // await submissions.ForEachSequential(async s =>
+            // {
+            //     await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(s);
+            // });
+
+            stopwatch.Stop();
+            System.Console.WriteLine($"Finished time: {stopwatch.Elapsed}");
         }
 
         private async Task CopyProblemToContest(Problem? problem, int contestId, int? problemGroupId)

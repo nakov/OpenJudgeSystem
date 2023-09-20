@@ -81,10 +81,6 @@
         public async Task<IEnumerable<TServiceModel>> GetAllNonDeletedByProblemId<TServiceModel>(int problemId)
             => await this.GetAllByProblem(problemId)
                 .Where(s => !s.IsDeleted)
-                .Include(s => s.SubmissionType)
-                .Include(s => s.Problem)
-                .Include(s => s.Problem.Checker)
-                .Include(s => s.Problem.Tests)
                 .MapCollection<TServiceModel>()
                 .ToListAsync();
     }
