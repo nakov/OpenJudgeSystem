@@ -1,8 +1,8 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { ContestParticipationType } from '../../../common/constants';
+import { contestParticipationType } from '../../../common/contest-helpers';
 import { IProblemType } from '../../../common/types';
 import { useAppUrls } from '../../../hooks/use-app-urls';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
@@ -37,12 +37,7 @@ const ContestTasksNavigation = () => {
     } = useCurrentContest();
     const { getContestResultsUrl } = useAppUrls();
 
-    const participationType = useMemo(
-        () => isOfficial
-            ? ContestParticipationType.Compete
-            : ContestParticipationType.Practice,
-        [ isOfficial ],
-    );
+    const participationType = contestParticipationType(isOfficial);
 
     const renderTask = useCallback(
         (problem: IProblemType) => {
