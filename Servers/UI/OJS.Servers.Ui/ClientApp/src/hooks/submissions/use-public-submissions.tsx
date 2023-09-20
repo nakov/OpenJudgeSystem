@@ -339,16 +339,30 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
     );
 
     useEffect(() => {
+        if (isNil(getUserSubmissionsUrlParams)) {
+            return;
+        }
+
         (async () => {
             await getUserSubmissions();
         })();
-    }, [ getUserSubmissions ]);
+    }, [ getUserSubmissions, getUserSubmissionsUrlParams ]);
 
     useEffect(() => {
+        if (isNil(getSubmissionsByContestIdParams)) {
+            return;
+        }
+
+        const { contestId } = getSubmissionsByContestIdParams;
+
+        if (isNil(contestId) || isEmpty(contestId)) {
+            return;
+        }
+
         (async () => {
             await getUserByContestSubmissions();
         })();
-    }, [ getUserByContestSubmissions ]);
+    }, [ getSubmissionsByContestIdParams, getUserByContestSubmissions ]);
 
     useEffect(
         () => {
