@@ -31,10 +31,21 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
         }
 
         if (isWrongAnswer) {
-            if (testRun.resultType === testResultTypes.runTimeError) {
-                testRunText += ' (Compile time Error)';
-            } else {
+            switch (testRun.resultType) {
+            case testResultTypes.wrongAnswer:
                 testRunText += ' (Incorrect Answer)';
+                break;
+            case testResultTypes.runTimeError:
+                testRunText += ' (Run Time Error)';
+                break;
+            case testResultTypes.timeLimit:
+                testRunText += ' (Time Limit Exceeded)';
+                break;
+            case testResultTypes.memoryLimit:
+                testRunText += ' (Memory Limit Exceeded)';
+                break;
+            default:
+                break;
             }
         } else {
             testRunText += ' (Correct Answer)';
