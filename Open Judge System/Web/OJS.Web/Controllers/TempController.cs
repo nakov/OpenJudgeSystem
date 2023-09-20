@@ -7,11 +7,9 @@
     using System.Text;
     using System.Threading.Tasks;
     using System.Web.Mvc;
-    using System.Web.Services.Protocols;
     using EntityFramework.Extensions;
     using Hangfire;
     using MissingFeatures;
-    using NPOI.SS.Formula.Functions;
     using OJS.Common;
     using OJS.Common.Helpers;
     using OJS.Common.Models;
@@ -26,6 +24,7 @@
     using OJS.Services.Common.HttpRequester.Models.Users;
     using OJS.Services.Data.Contests;
     using OJS.Services.Data.Participants;
+    using OJS.Services.Data.ParticipantScores;
     using OJS.Services.Data.ProblemGroups;
     using OJS.Services.Data.Problems;
     using OJS.Services.Data.SubmissionsForProcessing;
@@ -43,6 +42,7 @@
         private readonly IProblemsDataService problemsDataService;
         private readonly ISubmissionTypesDataService submissionTypesDataService;
         private readonly IContestsDataService contestsDataService;
+        private readonly IParticipantScoresDataService participantScoresData;
         private readonly IParticipantsDataService participantsData;
         private readonly IHttpRequesterService httpRequester;
 
@@ -54,7 +54,8 @@
             IHttpRequesterService httpRequester,
             IProblemsDataService problemsDataService,
             ISubmissionTypesDataService submissionTypesDataService,
-            IContestsDataService contestsDataService)
+            IContestsDataService contestsDataService,
+            IParticipantScoresDataService participantScoresData)
             : base(data)
         {
             this.backgroundJobs = backgroundJobs;
@@ -64,6 +65,7 @@
             this.problemsDataService = problemsDataService;
             this.submissionTypesDataService = submissionTypesDataService;
             this.contestsDataService = contestsDataService;
+            this.participantScoresData = participantScoresData;
         }
 
         public ActionResult RegisterJobForCleaningSubmissionsForProcessingTable()
@@ -398,6 +400,12 @@
 
                     var iteration = 0;
                     sb.AppendLine($" Deleted {submissionTypesToRemove.First(st => st.Key == stToRemove).Value}");
+
+                    if (contests.Any())
+                    {
+                        sb.AppendLine("The following Contests are left with Problems without a submission type:");
+                    }
+
                     foreach (var contest in contests)
                     {
                         iteration += 1;
@@ -407,7 +415,7 @@
                             .All(x => x.Problems
                                 .All(p => p.SubmissionTypes.Count == 1 && p.SubmissionTypes.First().Id == stToRemove)))
                         {
-                            sb.AppendLine($"   -All tasks");
+                            sb.AppendLine($"   -All Problems");
                         }
                         else
                         {
@@ -431,7 +439,23 @@
                     sb.AppendLine();
                 }
 
-                this.submissionTypesDataService.GetAll().Where(st => submissionTypesToRemove.ContainsKey(st.Id)).Delete();
+                var submissionTypeIds = submissionTypesToRemove.Keys.ToList();
+
+                var deletedParticipantScoresCount = this.participantScoresData.GetAll()
+                    .Where(ps => ps.Submission.SubmissionTypeId.HasValue && submissionTypeIds.Contains(ps.Submission.SubmissionTypeId.Value))
+                    .Delete();
+
+                var deletedSubmissionsCount = this.Data.Submissions.AllWithDeleted()
+                    .Where(x => x.SubmissionTypeId.HasValue && submissionTypeIds.Contains(x.SubmissionTypeId.Value))
+                    .Delete();
+
+                var deletedSubmissionTypesCount = this.submissionTypesDataService.GetAll()
+                    .Where(st => submissionTypeIds.Contains(st.Id))
+                    .Delete();
+
+                sb.AppendLine($"Deleted {deletedParticipantScoresCount} participant scores.");
+                sb.AppendLine($"Deleted {deletedSubmissionsCount} submissions.");
+                sb.AppendLine($"Deleted {deletedSubmissionTypesCount} submission types.");
 
                 var formattedString = string.Format(sb.ToString());
 
