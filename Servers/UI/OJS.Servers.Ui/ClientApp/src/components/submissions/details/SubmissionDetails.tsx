@@ -225,7 +225,8 @@ const SubmissionDetails = () => {
         currentSubmission?.testRuns.length === 0 &&
         currentSubmission.isCompiledSuccessfully &&
         currentSubmission.totalTests > 0 &&
-        !currentSubmission.processingComment
+        !currentSubmission.processingComment &&
+        currentSubmission.isProcessed
             ? (
                 <div className={styles.testChangesWrapper}>
                     <p>
@@ -361,7 +362,19 @@ const SubmissionDetails = () => {
                 <div>
                     {renderTestsChangeMessage()}
                 </div>
-                {currentSubmission?.submissionType.allowBinaryFilesUpload
+                {
+                        !currentSubmission?.isProcessed
+                            ? (
+                                <AlertBox
+                                  className={styles.alertBox}
+                                  message="The submission is in queue and will be processed shortly. Please wait."
+                                  type={AlertBoxType.info}
+                                  isClosable={false}
+                                />
+                            )
+                            : null
+                    }
+                {submissionType?.allowBinaryFilesUpload
                     ? (
                         <div className={styles.resourceWrapper}>
                             {renderResourceLink()}
