@@ -49,7 +49,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly IProblemsDataService problemsDataService;
     private readonly IContestsDataService contestsDataService;
     private readonly IUserProviderService userProviderService;
-    private readonly ITestRunsDataService testRunsDataService;
     private readonly ILecturersInContestsBusinessService lecturersInContestsBusiness;
     private readonly ISubmissionDetailsValidationService submissionDetailsValidationService;
     private readonly IContestValidationService contestValidationService;
@@ -67,7 +66,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         IParticipantsDataService participantsDataService,
         ISubmissionsCommonBusinessService submissionsCommonBusinessService,
         IUserProviderService userProviderService,
-        ITestRunsDataService testRunsDataService,
         IParticipantScoresBusinessService participantScoresBusinessService,
         ILecturersInContestsBusinessService lecturersInContestsBusiness,
         ISubmissionDetailsValidationService submissionDetailsValidationService,
@@ -87,7 +85,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.submissionsCommonBusinessService = submissionsCommonBusinessService;
         this.participantsDataService = participantsDataService;
         this.userProviderService = userProviderService;
-        this.testRunsDataService = testRunsDataService;
         this.participantScoresBusinessService = participantScoresBusinessService;
         this.submissionDetailsValidationService = submissionDetailsValidationService;
         this.contestValidationService = contestValidationService;
@@ -466,8 +463,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var exception = submissionExecutionResult.Exception;
         var executionResult = submissionExecutionResult.ExecutionResult;
-
-        await this.testRunsDataService.DeleteBySubmission(submission.Id);
 
         submission.Processed = true;
         submission.ProcessingComment = null;
