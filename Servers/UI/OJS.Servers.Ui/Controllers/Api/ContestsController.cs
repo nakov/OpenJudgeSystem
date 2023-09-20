@@ -35,13 +35,12 @@ public class ContestsController : BaseApiController
     /// Gets details of the current contest.
     /// </summary>
     /// <param name="id">ID of the contest.</param>
-    /// <param name="official">Practice or compete mode of the contest.</param>
     /// <returns>Model containing information about the name, description and problems of the contest.</returns>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(ContestDetailsServiceModel), Status200OK)]
-    public async Task<IActionResult> Details(int id, [FromQuery] bool official)
+    public async Task<IActionResult> Details(int id)
         => await this.contestsBusinessService
-            .GetContestDetails(id, official)
+            .GetContestDetails(id)
             .ToOkResult();
 
     /// <summary>
