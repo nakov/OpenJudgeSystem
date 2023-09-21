@@ -1,9 +1,9 @@
 namespace OJS.Data.Models.Contests
 {
-    using SoftUni.Data.Infrastructure.Models;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
+    using SoftUni.Data.Infrastructure.Models;
     using static OJS.Data.Validation.ConstraintConstants.Contest;
 
     public class ContestCategory : DeletableAuditInfoEntity<int>, IOrderableEntity, IVisibleEntity
