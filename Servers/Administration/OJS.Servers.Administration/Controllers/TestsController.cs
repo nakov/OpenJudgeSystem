@@ -275,12 +275,6 @@ public class TestsController : BaseAutoCrudAdminController<Test>
                 ? TestTypeEnum.TrialTest
                 : TestTypeEnum.OpenTest,
         });
-        formControls.Add(new FormControlViewModel
-        {
-            Name = AdditionalFormFields.RetestProblem.ToString(),
-            Type = typeof(bool),
-            Value = false,
-        });
         return formControls;
     }
 
@@ -289,22 +283,6 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         await base.BeforeEntitySaveAsync(entity, actionContext);
         UpdateInputAndOutput(entity, actionContext);
         UpdateType(entity, actionContext);
-    }
-
-    protected override Task BeforeEntitySaveOnEditAsync(
-        Test existingEntity,
-        Test newEntity,
-        AdminActionContext actionContext)
-    {
-        base.BeforeEntitySaveOnEditAsync(existingEntity, newEntity, actionContext);
-        var retestProblem = bool.Parse(actionContext.GetFormValue(AdditionalFormFields.RetestProblem));
-
-        if (retestProblem)
-        {
-            this.problemsBusiness.RetestById(newEntity.ProblemId);
-        }
-
-        return Task.CompletedTask;
     }
 
     private static void UpdateType(Test entity, AdminActionContext actionContext)
