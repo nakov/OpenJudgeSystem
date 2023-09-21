@@ -158,7 +158,7 @@ const ContestDetailsPage = () => {
                     : null}
                 <LinkButton
                   id="button-card-compete"
-                  internalClassName={praticableOnlyForAdminOrLecturers
+                  internalClassName={competableOnlyForAdminAndLecturers
                       ? styles.adminAccessibleButton
                       : ''}
                   to={getParticipateInContestUrl({
@@ -174,7 +174,7 @@ const ContestDetailsPage = () => {
                 />
                 <LinkButton
                   id="button-card-practice"
-                  internalClassName={competableOnlyForAdminAndLecturers
+                  internalClassName={praticableOnlyForAdminOrLecturers
                       ? styles.adminAccessibleButton
                       : ''}
                   to={getParticipateInContestUrl({
