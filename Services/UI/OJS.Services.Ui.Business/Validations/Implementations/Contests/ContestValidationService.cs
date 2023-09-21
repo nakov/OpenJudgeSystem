@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using OJS.Data.Models.Contests;
 using OJS.Services.Common.Models;
+using OJS.Services.Common.Models.Users;
 using Infrastructure;
 
 public class ContestValidationService : IContestValidationService
@@ -12,23 +13,24 @@ public class ContestValidationService : IContestValidationService
 
     public ContestValidationService(IDatesService datesService) => this.datesService = datesService;
 
-    public ValidationResult GetValidationResult((Contest?, int?, string, bool, bool) item)
+    public ValidationResult GetValidationResult((Contest?, int?, UserInfoModel?, bool) item)
     {
-        var (contest, contestId, userId, isUserAdmin, official) = item;
+        var (contest, contestId, user, official) = item;
 
-        var isUserLecturerInContest = contest != null && IsUserLecturerInContest(contest, userId);
+        var isUserLecturerInContest = contest != null && user != null && user.IsLecturer;
 
         if (contest == null ||
+            user == null ||
             contest.IsDeleted ||
-            (!contest.IsVisible && !isUserLecturerInContest && !isUserAdmin))
+            (!contest.IsVisible && !isUserLecturerInContest && !user.IsAdmin))
         {
             return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.NotFound, contestId));
         }
 
         if (IsContestExpired(
                 contest,
-                userId,
-                isUserAdmin,
+                user.Id,
+                user.IsAdmin,
                 official,
                 isUserLecturerInContest,
                 this.datesService.GetUtcNow()))
@@ -39,24 +41,20 @@ public class ContestValidationService : IContestValidationService
         if (official &&
             !CanUserCompeteByContestByUserAndIsAdmin(
                 contest,
-                isUserAdmin,
+                user.IsAdmin,
                 isUserLecturerInContest,
                 allowToAdminAlways: true))
         {
             return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.CanBeCompeted, contest.Name));
         }
 
-        if (!official && !contest.CanBePracticed && !isUserLecturerInContest && !isUserAdmin)
+        if (!official && !contest.CanBePracticed && !isUserLecturerInContest && !user.IsAdmin)
         {
             return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.CanBePracticed, contest.Name));
         }
 
         return ValidationResult.Valid();
     }
-
-    private static bool IsUserLecturerInContest(Contest contest, string userId) =>
-        contest.LecturersInContests.Any(c => c.LecturerId == userId) ||
-        contest.Category!.LecturersInContestCategories.Any(cl => cl.LecturerId == userId);
 
     private static bool IsContestExpired(
         Contest contest,
