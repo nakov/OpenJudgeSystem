@@ -6,11 +6,19 @@ using System.Linq;
 using OJS.Data.Models.Submissions;
 using System;
 using System.Linq.Expressions;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 public class SubmissionsForProcessing : BaseAutoCrudAdminController<SubmissionForProcessing>
 {
+    protected override IEnumerable<GridAction> CustomActions
+        => new[] { new GridAction { Action = nameof(this.Details) } };
+
     protected override IEnumerable<GridAction> DefaultActions
-        => new[] { new GridAction { Action = nameof(this.Edit) } };
+        => Enumerable.Empty<GridAction>();
+
+    public Task<IActionResult> Details([FromQuery] IDictionary<string, string> complexId)
+        => this.Edit(complexId, string.Empty);
 
     protected override IEnumerable<FormControlViewModel> GenerateFormControls(
         SubmissionForProcessing entity,
@@ -23,7 +31,17 @@ public class SubmissionsForProcessing : BaseAutoCrudAdminController<SubmissionFo
 
         if (action == EntityAction.Edit)
         {
-            formControls.ForEach(fc => fc.IsReadOnly = true);
+            formControls.ForEach(fc =>
+            {
+                if (fc.Name is nameof(SubmissionForProcessing.Processed) or nameof(SubmissionForProcessing.Processing))
+                {
+                    fc.IsHidden = true;
+                }
+                else
+                {
+                    fc.IsReadOnly = true;
+                }
+            });
         }
 
         return formControls;
