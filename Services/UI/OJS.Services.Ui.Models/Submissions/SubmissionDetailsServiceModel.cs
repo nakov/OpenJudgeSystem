@@ -54,6 +54,7 @@
 
         public DateTime? CompletedExecutionOn { get; set; }
 
+        public int ContestId { get; set; }
         public IEnumerable<Test> Tests { get; set; } =
             Enumerable.Empty<Test>();
 
@@ -84,6 +85,10 @@
                 .ForMember(d => d.Tests, opt => opt.MapFrom(s =>
                     s.Problem != null
                         ? s.Problem.Tests.ToList()
-                        : new List<Test>()));
+                        : new List<Test>()))
+                .ForMember(d => d.ContestId, opt => opt.MapFrom(s =>
+                    s.Problem != null
+                        ? s.Problem.ProblemGroup.ContestId
+                        : 0));
     }
 }

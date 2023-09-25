@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import isNil from 'lodash/isNil';
 
+import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../../common/constants';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import Button, { ButtonType } from '../../guidelines/buttons/Button';
 
@@ -15,7 +16,7 @@ const RefreshableSubmissionsList = ({
 }: IRefreshableSubmissionsListProps) => {
     const {
         state: { currentSubmission },
-        actions: { getSubmissionDetailsResults },
+        actions: { setSubmissionDetailsResultsUrlParams },
     } = useSubmissionsDetails();
 
     const submissionsReloadBtnClassName = 'submissionReloadBtn';
@@ -26,11 +27,15 @@ const RefreshableSubmissionsList = ({
                 return;
             }
 
-            const { id: submissionId, isOfficial } = currentSubmission;
+            // eslint-disable-next-line prefer-destructuring
+            const submissionId = currentSubmission.id;
 
-            await getSubmissionDetailsResults(submissionId, isOfficial);
+            setSubmissionDetailsResultsUrlParams({
+                submissionId,
+                take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
+            });
         },
-        [ currentSubmission, getSubmissionDetailsResults ],
+        [ currentSubmission, setSubmissionDetailsResultsUrlParams ],
     );
 
     return (
