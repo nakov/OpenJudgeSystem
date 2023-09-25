@@ -9,6 +9,7 @@ using OJS.Services.Common.Validation.Helpers;
 using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Extensions;
 using System.Threading.Tasks;
+using System.Linq;
 
 public class ContestsActivityService : IContestsActivityService
 {
@@ -16,17 +17,20 @@ public class ContestsActivityService : IContestsActivityService
     private readonly IParticipantsCommonDataService participantsCommonData;
     private readonly IDataService<Contest> contestsData;
     private readonly INotDefaultValueValidationHelper notDefaultValueValidationHelper;
+    private readonly IUserProviderService userProvider;
 
     public ContestsActivityService(
         IDatesService dates,
         IParticipantsCommonDataService participantsCommonData,
         IDataService<Contest> contestsData,
-        INotDefaultValueValidationHelper notDefaultValueValidationHelper)
+        INotDefaultValueValidationHelper notDefaultValueValidationHelper,
+        IUserProviderService userProvider)
     {
         this.dates = dates;
         this.participantsCommonData = participantsCommonData;
         this.contestsData = contestsData;
         this.notDefaultValueValidationHelper = notDefaultValueValidationHelper;
+        this.userProvider = userProvider;
     }
 
     public async Task<IContestActivityServiceModel> GetContestActivity(int id)
@@ -73,7 +77,20 @@ public class ContestsActivityService : IContestsActivityService
             return contest.StartTime <= now;
         }
 
-        return contest.StartTime <= now && now <= contest.EndTime;
+        //If the above criteria is not met, we have to check if the contest is online and if the current user is
+        //a participant with remaining ParticipationTime in the contest. If so, the contest CanBeCompeted
+        return (contest.StartTime <= now && now <= contest.EndTime) ||
+               (contest.IsOnline && this.IsActiveParticipantInOnlineContest(contest.Id));
+    }
+
+    public bool IsActiveParticipantInOnlineContest(int contestId)
+    {
+        var currentUser = this.userProvider.GetCurrentUser();
+        var participants = this.participantsCommonData.GetAllByContest(contestId);
+
+        return participants.Any(p => p.UserId == currentUser.Id &&
+                                     p.ParticipationEndTime.HasValue &&
+                                     p.ParticipationEndTime.Value >= this.dates.GetUtcNow());
     }
 
     public bool CanBePracticed(IContestForActivityServiceModel contest)
