@@ -15,7 +15,7 @@ namespace OJS.Services.Ui.Business
 
         Task ValidateContestPassword(int id, bool official, string password);
 
-        Task<ContestDetailsServiceModel> GetContestDetails(int id, bool official);
+        Task<ContestDetailsServiceModel> GetContestDetails(int id);
 
         Task<ContestParticipationServiceModel> StartContestParticipation(StartContestParticipationServiceModel model);
 

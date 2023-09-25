@@ -65,7 +65,7 @@ const routes = [
         Element: ContestPage,
     },
     {
-        path: '/contests/details/:contestId/:participationType',
+        path: '/contests/:contestId',
         Element: ContestDetailsPage,
     },
     {

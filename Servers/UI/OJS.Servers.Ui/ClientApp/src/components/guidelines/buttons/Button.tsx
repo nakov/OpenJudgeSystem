@@ -55,6 +55,7 @@ interface IButtonProps extends IButtonBaseProps<ButtonType> {
 interface ILinkButtonProps extends IButtonBaseProps<LinkButtonType> {
     to: string;
     isToExternal?: boolean;
+    internalClassName?: string;
 }
 
 const classNameToButonType = {
@@ -155,6 +156,7 @@ const LinkButton = ({
     isToExternal = false,
     imgSrc = '',
     altText = '',
+    internalClassName = '',
 }: ILinkButtonProps) => {
     validateOnlyChildrenOrText(text, children);
     const isDisabled = state === ButtonState.disabled;
@@ -167,13 +169,16 @@ const LinkButton = ({
         ? styles.disabled
         : '';
 
-    const buttonClassName = concatClassNames(
-        styles.btn,
-        typeClassName,
-        sizeClassName,
-        stateClassName,
-        className,
-    );
+    const buttonClassName =
+        isEmpty(internalClassName)
+            ? concatClassNames(
+                styles.btn,
+                typeClassName,
+                sizeClassName,
+                stateClassName,
+                className,
+            )
+            : internalClassName;
 
     const content = type === LinkButtonType.image
         ? <img src={imgSrc} alt={altText} />
