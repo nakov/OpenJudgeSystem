@@ -8,7 +8,6 @@ import {
 } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import {
-    getSubmissionDetailsByIdUrl,
     getSubmissionDetailsResultsUrl,
     getSubmissionFileDownloadUrl,
 } from '../../utils/urls';
@@ -66,22 +65,6 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         currentSubmissionDetailsResults,
         setCurrentProblemSubmissionResults,
     ] = useState(defaultState.state.currentSubmissionDetailsResults);
-
-    const [
-        getSubmissionDetailsByIdParams,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        setGetSubmissionDetailsByIdParams,
-    ] = useState<IGetSubmissionDetailsByIdUrlParams | null>(null);
-
-    // REMOVE
-    const {
-        get: getSubmissionDetails,
-        data: apiSubmissionDetails,
-        error: apiSubmissionDetailsError,
-    } = useHttp<IGetSubmissionDetailsByIdUrlParams, ISubmissionDetailsType>({
-        url: getSubmissionDetailsByIdUrl,
-        parameters: getSubmissionDetailsByIdParams,
-    });
 
     const [
         submissionDetailsResultsUrlParams,
@@ -174,26 +157,10 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         [ apiSubmissionDetailsResults, apiSubmissionDetailsResultsError ],
     );
 
-    useEffect(
-        () => {
-            if (isNil(getSubmissionDetailsByIdParams)) {
-                return;
-            }
-
-            (async () => {
-                setIsLoading(true);
-                await getSubmissionDetails();
-                setIsLoading(false);
-            })();
-        },
-        [ getSubmissionDetails, getSubmissionDetailsByIdParams ],
-    );
-
     const getDetails = useCallback(
         async (submissionId: number) => {
             if (isNil(submissionId) || Number.isNaN(submissionId)) {
-                // Will be removed from the code with https://github.com/SoftUni-Internal/exam-systems-issues/issues/937
-                // return;
+                return;
             }
 
             setSubmissionDetailsResultsUrlParams({
@@ -206,26 +173,12 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
 
     useEffect(
         () => {
-            if (isNil(apiSubmissionDetails)) {
-                return;
-            }
-
-            if (!isNil(apiSubmissionDetailsError)) {
-                setValidationErrors((validationErrorsArray) => [ ...validationErrorsArray, apiSubmissionDetailsError ]);
-                return;
-            }
-
-            setCurrentSubmission(apiSubmissionDetails);
-        },
-        [ apiSubmissionDetails, apiSubmissionDetailsError ],
-    );
-
-    useEffect(
-        () => {
             if (isNil(currentSubmissionId)) {
                 return;
             }
-
+            if (isNil(currentSubmissionId) || Number.isNaN(currentSubmissionId)) {
+                return;
+            }
             (async () => {
                 await getDetails(currentSubmissionId);
             })();

@@ -10,7 +10,6 @@ import { useHashUrlParams } from '../../../hooks/common/use-hash-url-params';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import { useAppUrls } from '../../../hooks/use-app-urls';
 import { useAuth } from '../../../hooks/use-auth';
-import { useContests } from '../../../hooks/use-contests';
 import { usePageTitles } from '../../../hooks/use-page-titles';
 import concatClassNames from '../../../utils/class-names';
 import { preciseFormatDate } from '../../../utils/dates';
@@ -48,26 +47,11 @@ const SubmissionDetails = () => {
     } = useSubmissionsDetails();
     const { actions: { setPageTitle } } = usePageTitles();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
-    const { actions: { loadContestByProblemId } } = useContests();
 
     const { getAdministrationRetestSubmissionInternalUrl, getParticipateInContestUrl } = useAppUrls();
     const { state: { user } } = useAuth();
     const { state: { hashParam } } = useHashUrlParams();
     const navigate = useNavigate();
-
-    // Will be removed from the code with https://github.com/SoftUni-Internal/exam-systems-issues/issues/937
-    useEffect(() => {
-        if (isNil(currentSubmission)) {
-            // return;
-        }
-
-        // loadContestByProblemId(id);
-    }, [ currentSubmission, loadContestByProblemId ]);
-
-    const submissionTitle = useMemo(
-        () => `Submission №${currentSubmission?.id}`,
-        [ currentSubmission?.id ],
-    );
 
     const renderDownloadErrorMessage = useCallback(() => {
         if (isNil(downloadErrorMessage)) {
@@ -124,9 +108,9 @@ const SubmissionDetails = () => {
 
     useEffect(
         () => {
-            setPageTitle(submissionTitle);
+            setPageTitle(`Submission №${currentSubmission?.id}`);
         },
-        [ setPageTitle, submissionTitle ],
+        [ setPageTitle, currentSubmission ],
     );
 
     const problemNameHeadingText = useMemo(
