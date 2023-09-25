@@ -63,6 +63,7 @@
                 .ForMember(
                     d => d.MemoryUsed,
                     opt => opt.MapFrom(s => s.MemoryUsed))
+                .ForMember(d => d.ExecutionComment, opt => opt.MapFrom(s => s.ExecutionComment))
                 .ForAllOtherMembers(opt => opt.Ignore());
         }
     }
