@@ -3,6 +3,7 @@
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+
     using OJS.Data.Models;
 
     public interface IOjsDbContext : IDisposable
