@@ -70,7 +70,6 @@ interface IGetContestResultsParams {
 
 interface IGetSubmissionDetailsByIdUrlParams {
     submissionId: number;
-    isOfficial: boolean;
     take: number;
 }
 
