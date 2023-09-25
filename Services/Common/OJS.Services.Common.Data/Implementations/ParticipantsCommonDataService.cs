@@ -1,7 +1,8 @@
-namespace OJS.Services.Administration.Data.Implementations;
+namespace OJS.Services.Common.Data.Implementations;
 
 using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Participants;
+using OJS.Services.Common.Data;
 using OJS.Services.Common.Data.Implementations;
 using System.Linq;
 

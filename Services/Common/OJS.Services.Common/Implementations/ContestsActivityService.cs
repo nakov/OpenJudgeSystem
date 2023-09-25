@@ -1,4 +1,4 @@
-namespace OJS.Services.Administration.Business.Implementations;
+namespace OJS.Services.Common.Implementations;
 
 using Microsoft.EntityFrameworkCore;
 using OJS.Common.Enumerations;
@@ -9,7 +9,6 @@ using OJS.Services.Common.Validation.Helpers;
 using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Extensions;
 using System.Threading.Tasks;
-using OJS.Services.Administration.Data;
 
 public class ContestsActivityService : IContestsActivityService
 {

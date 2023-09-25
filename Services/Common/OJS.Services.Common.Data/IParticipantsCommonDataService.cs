@@ -1,7 +1,6 @@
-namespace OJS.Services.Administration.Data;
+namespace OJS.Services.Common.Data;
 
 using OJS.Data.Models.Participants;
-using OJS.Services.Common.Data;
 using System.Linq;
 
 public interface IParticipantsCommonDataService : IDataService<Participant>

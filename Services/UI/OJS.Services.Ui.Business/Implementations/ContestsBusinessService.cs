@@ -7,6 +7,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Common;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Participants;
+    using OJS.Services.Common;
     using OJS.Services.Common.Models;
     using OJS.Services.Infrastructure.Constants;
     using OJS.Services.Infrastructure.Exceptions;

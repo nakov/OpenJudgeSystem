@@ -1,4 +1,4 @@
-namespace OJS.Services.Administration.Business;
+namespace OJS.Services.Common;
 
 using OJS.Services.Common.Models.Contests;
 using SoftUni.Services.Infrastructure;
