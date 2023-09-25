@@ -110,11 +110,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var submissionDetailsServiceModel = await this.submissionsData
             .GetByIdQuery(submissionId)
-            .Include(s => s.Participant)
-            .ThenInclude(p => p!.User)
-            .Include(s => s.TestRuns)
-            .ThenInclude(tr => tr.Test)
-            .Include(s => s.SubmissionType)
             .MapCollection<SubmissionDetailsServiceModel>()
             .FirstOrDefaultAsync();
 
@@ -178,6 +173,18 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 submissionDetailsServiceModel.Id,
                 submissionDetailsServiceModel.FileExtension),
         };
+    }
+
+    public async Task<SubmissionDetailsWithResultsModel> GetSubmissionDetailsWithResults(int submissionId, int take)
+    {
+        var responseModel = new SubmissionDetailsWithResultsModel();
+        responseModel.SubmissionDetails = await this.GetDetailsById(submissionId);
+        responseModel.SubmissionResults = await this.GetSubmissionDetailsResults(
+            submissionId,
+            responseModel.SubmissionDetails.IsOfficial,
+            take)
+            .ToListAsync();
+        return responseModel;
     }
 
     public Task<IQueryable<Submission>> GetAllForArchiving()

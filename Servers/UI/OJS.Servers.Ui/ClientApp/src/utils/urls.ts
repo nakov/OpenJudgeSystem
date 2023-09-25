@@ -119,10 +119,9 @@ const getSubmissionResultsByProblemUrl = ({
 
 const getSubmissionDetailsResultsUrl = ({
     submissionId,
-    isOfficial,
     take,
 }: IGetSubmissionDetailsByIdUrlParams) => `
-    ${baseApiUrl}/Submissions/GetSubmissionDetailsResults/${submissionId}?isOfficial=${isOfficial}&take=${take}`;
+    ${baseApiUrl}/Submissions/GetSubmissionDetailsWithResults/${submissionId}?take=${take}`;
 
 const getPublicSubmissionsUrl = ({ page }: IGetSubmissionsUrlParams) => {
     const pageQuery = isNil(page)
