@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace OJS.Data
+﻿namespace OJS.Data
 {
     using System;
     using System.Data.Entity;
@@ -59,13 +57,7 @@ namespace OJS.Data
 
         int SaveChanges();
 
-        Task<int> SaveChangesAsync();
-
         void ClearDatabase();
-
-        void DbExecuteSqlCommand(string query);
-
-        void ExecuteSqlCommandWithTimeout(string query, int timeoutInSeconds);
 
         DbEntityEntry<TEntity> Entry<TEntity>(TEntity entity)
             where TEntity : class;
