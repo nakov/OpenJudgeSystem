@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using X.PagedList;
-
-namespace OJS.Web.Controllers
+﻿namespace OJS.Web.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -25,10 +22,13 @@ namespace OJS.Web.Controllers
     using OJS.Services.Common.HttpRequester;
     using OJS.Services.Common.HttpRequester.Models;
     using OJS.Services.Common.HttpRequester.Models.Users;
+    using OJS.Services.Data.Contests;
     using OJS.Services.Data.Participants;
+    using OJS.Services.Data.ParticipantScores;
     using OJS.Services.Data.ProblemGroups;
     using OJS.Services.Data.Problems;
     using OJS.Services.Data.SubmissionsForProcessing;
+    using OJS.Services.Data.SubmissionTypes;
     using OJS.Web.Common.Attributes;
     using OJS.Web.Common.Helpers;
     using OJS.Workers.Common.Extensions;
@@ -40,9 +40,11 @@ namespace OJS.Web.Controllers
         private readonly IHangfireBackgroundJobService backgroundJobs;
         private readonly IProblemGroupsDataService problemGroupsData;
         private readonly IProblemsDataService problemsDataService;
+        private readonly ISubmissionTypesDataService submissionTypesDataService;
+        private readonly IContestsDataService contestsDataService;
+        private readonly IParticipantScoresDataService participantScoresData;
         private readonly IParticipantsDataService participantsData;
         private readonly IHttpRequesterService httpRequester;
-        private readonly IOjsDbContext db;
 
         public TempController(
             IOjsData data,
@@ -51,7 +53,9 @@ namespace OJS.Web.Controllers
             IParticipantsDataService participantsData,
             IHttpRequesterService httpRequester,
             IProblemsDataService problemsDataService,
-            IOjsDbContext db)
+            ISubmissionTypesDataService submissionTypesDataService,
+            IContestsDataService contestsDataService,
+            IParticipantScoresDataService participantScoresData)
             : base(data)
         {
             this.backgroundJobs = backgroundJobs;
@@ -59,7 +63,9 @@ namespace OJS.Web.Controllers
             this.participantsData = participantsData;
             this.httpRequester = httpRequester;
             this.problemsDataService = problemsDataService;
-            this.db = db;
+            this.submissionTypesDataService = submissionTypesDataService;
+            this.contestsDataService = contestsDataService;
+            this.participantScoresData = participantScoresData;
         }
 
         public ActionResult RegisterJobForCleaningSubmissionsForProcessingTable()
@@ -345,6 +351,123 @@ namespace OJS.Web.Controllers
                 $"Updated {changedTestsCount} test inputs.");
         }
 
+        public ActionResult RemoveUnusedSubmissionTypes()
+        {
+            var submissionTypesToRemove = new Dictionary<int, string>
+            {
+                // PhpProjectWithDbExecutionStrategy
+                { 38, "PHP Project with DB" },
+
+                // PhpProjectExecutionStrategy
+                { 36, "PHP Project" },
+
+                // CSharpAspProjectTestsExecutionStrategy
+                { 31, "C# ASP Project Tests" },
+
+                // DotNetCoreTestRunner
+                { 21 ,"C# test runner" },
+
+                // CSharpPerformanceProjectTestsExecutionStrategy
+                { 33, "C# Performance Project Tests" },
+
+                // RubyExecutionStrategy
+                { 34, "Ruby Code" },
+
+                // CSharpProjectTestsExecutionStrategy
+                { 27, "C# Project Tests" },
+
+                // SolidityCompileDeployAndRunUnitTestsExecutionStrategy
+                { 445, "Solidity code" },
+
+                // CSharpUnitTestsExecutionStrategy 
+                { 26, "C# Unit Tests" },
+
+                // C# project/solution
+                { 4, "C# project/solution" },
+            };
+
+            var sb = new StringBuilder();
+            try
+            {
+                foreach (var stToRemove in submissionTypesToRemove.Keys)
+                {
+                    var contests = this.contestsDataService
+                        .GetAll()
+                        .Where(c => c.IsVisible && c.ProblemGroups
+                            .Any(pg => pg.Problems
+                                .Any(p => p.SubmissionTypes.Count == 1
+                                    && p.SubmissionTypes.Any(st => st.Id == stToRemove))))
+                        .ToList();
+
+                    var iteration = 0;
+                    sb.AppendLine($" Deleted {submissionTypesToRemove.First(st => st.Key == stToRemove).Value}");
+
+                    if (contests.Any())
+                    {
+                        sb.AppendLine("The following Contests are left with Problems without a submission type:");
+                    }
+
+                    foreach (var contest in contests)
+                    {
+                        iteration += 1;
+                        sb.AppendLine($"  {iteration}. Contest: {contest.Name} (#{contest.Id})");
+
+                        if (contest.ProblemGroups
+                            .All(x => x.Problems
+                                .All(p => p.SubmissionTypes.Count == 1 && p.SubmissionTypes.First().Id == stToRemove)))
+                        {
+                            sb.AppendLine($"   -All Problems");
+                        }
+                        else
+                        {
+                            var problems = contest.ProblemGroups
+                                .SelectMany(x => x.Problems
+                                    .Where(p => p.SubmissionTypes.Count == 1 && p.SubmissionTypes.First().Id == stToRemove))
+                                .ToList();
+
+                            if (problems.Any())
+                            {
+                                foreach (var problem in problems)
+                                {
+                                    sb.AppendLine($"   - Problem: {problem.Name} (#{problem.Id})");
+                                }
+                            }
+                        }
+
+                        sb.AppendLine();
+                    }
+
+                    sb.AppendLine();
+                }
+
+                var submissionTypeIds = submissionTypesToRemove.Keys.ToList();
+
+                var deletedParticipantScoresCount = this.participantScoresData.GetAll()
+                    .Where(ps => ps.Submission.SubmissionTypeId.HasValue && submissionTypeIds.Contains(ps.Submission.SubmissionTypeId.Value))
+                    .Delete();
+
+                var deletedSubmissionsCount = this.Data.Submissions.AllWithDeleted()
+                    .Where(x => x.SubmissionTypeId.HasValue && submissionTypeIds.Contains(x.SubmissionTypeId.Value))
+                    .Delete();
+
+                var deletedSubmissionTypesCount = this.submissionTypesDataService.GetAll()
+                    .Where(st => submissionTypeIds.Contains(st.Id))
+                    .Delete();
+
+                sb.AppendLine($"Deleted {deletedParticipantScoresCount} participant scores.");
+                sb.AppendLine($"Deleted {deletedSubmissionsCount} submissions.");
+                sb.AppendLine($"Deleted {deletedSubmissionTypesCount} submission types.");
+
+                var formattedString = string.Format(sb.ToString());
+
+                return this.Content($"<pre>{formattedString}<pre>");
+            }
+            catch (Exception ex)
+            {
+                return this.Content($"Something failed, {ex.Message}");
+            }
+        }
+
         public async Task<ActionResult> MigrateContestCategoryFromRemoteJudge(string id)
         {
             try
@@ -376,36 +499,34 @@ namespace OJS.Web.Controllers
         {
             // This request causes 504 (Timeout error)
             // It will work if query is executed directly in database
-            return this.Content("Unsupported");
-            
-            var query = @"DECLARE @BatchSize INT = 5000;
-           DECLARE @MaxId INT = (SELECT MAX(Id) FROM Participants);
-           DECLARE @Offset INT = 0;
+            var command = @"DECLARE @BatchSize INT = 5000;
+               DECLARE @MaxId INT = (SELECT MAX(Id) FROM Participants);
+               DECLARE @Offset INT = 0;
 
-           WHILE @Offset <= @MaxId
-           BEGIN
-               WITH OrderedParticipants AS (
-               SELECT TOP (@BatchSize) Id
-           FROM Participants
-           WHERE Id > @Offset
-           ORDER BY Id
-               )
-           UPDATE p
-           SET TotalScoreSnapshot = ISNULL((
-               SELECT SUM(ps.Points)
-           FROM ParticipantScores ps
-               JOIN Problems pr ON ps.ProblemId = pr.Id AND pr.IsDeleted = 0
-           WHERE ps.ParticipantId = p.Id
-               ), 0)
-           FROM OrderedParticipants op
-               JOIN Participants p ON op.Id = p.Id;
+               WHILE @Offset <= @MaxId
+               BEGIN
+                   WITH OrderedParticipants AS (
+                   SELECT TOP (@BatchSize) Id
+               FROM Participants
+               WHERE Id > @Offset
+               ORDER BY Id
+                   )
+               UPDATE p
+               SET TotalScoreSnapshot = ISNULL((
+                   SELECT SUM(ps.Points)
+               FROM ParticipantScores ps
+                   JOIN Problems pr ON ps.ProblemId = pr.Id AND pr.IsDeleted = 0
+               WHERE ps.ParticipantId = p.Id
+                   ), 0)
+               FROM OrderedParticipants op
+                   JOIN Participants p ON op.Id = p.Id;
 
-           SET @Offset = @Offset + @BatchSize;
-           END;";
+               SET @Offset = @Offset + @BatchSize;
+               END;";
 
-            this.db.ExecuteSqlCommandWithTimeout(query, 0);
-
-            return this.Content("UPDATED");
+            return this.Content(
+                $"This method is unsupported, as it time outs. Execute the following command directly in the db: <br/>"
+                + command);
         }
 
         private async Task LoadContestCategoryAndAssignCheckerAndSubmissionTypes(
