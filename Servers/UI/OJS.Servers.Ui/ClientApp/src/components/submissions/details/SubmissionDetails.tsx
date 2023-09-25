@@ -4,8 +4,8 @@ import first from 'lodash/first';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
+import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../../common/constants';
 import { contestParticipationType } from '../../../common/contest-helpers';
-import { IIndexContestsType } from '../../../common/types';
 import { useHashUrlParams } from '../../../hooks/common/use-hash-url-params';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import { useAppUrls } from '../../../hooks/use-app-urls';
@@ -41,31 +41,27 @@ const SubmissionDetails = () => {
         actions: {
             downloadProblemSubmissionFile,
             setDownloadErrorMessage,
-            getSubmissionDetailsResults,
             setCurrentSubmission,
             selectSubmissionById,
+            setSubmissionDetailsResultsUrlParams,
         },
     } = useSubmissionsDetails();
     const { actions: { setPageTitle } } = usePageTitles();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
-    const {
-        state: { contest },
-        actions: { loadContestByProblemId },
-    } = useContests();
+    const { actions: { loadContestByProblemId } } = useContests();
 
     const { getAdministrationRetestSubmissionInternalUrl, getParticipateInContestUrl } = useAppUrls();
     const { state: { user } } = useAuth();
     const { state: { hashParam } } = useHashUrlParams();
     const navigate = useNavigate();
 
+    // Will be removed from the code with https://github.com/SoftUni-Internal/exam-systems-issues/issues/937
     useEffect(() => {
         if (isNil(currentSubmission)) {
-            return;
+            // return;
         }
 
-        const { problem: { id } } = currentSubmission;
-
-        loadContestByProblemId(id);
+        // loadContestByProblemId(id);
     }, [ currentSubmission, loadContestByProblemId ]);
 
     const submissionTitle = useMemo(
@@ -163,32 +159,21 @@ const SubmissionDetails = () => {
         submissionsDetails,
     );
 
-    useEffect(
-        () => {
-            if (isNil(currentSubmission)) {
-                return;
-            }
-
-            const { id: submissionId, isOfficial } = currentSubmission;
-
-            (async () => {
-                await getSubmissionDetailsResults(submissionId, isOfficial);
-            })();
-        },
-        [ currentSubmission, getSubmissionDetailsResults ],
-    );
-
     const handleReloadClick = useCallback(
         async () => {
             if (isNil(currentSubmission)) {
                 return;
             }
 
-            const { id: submissionId, isOfficial } = currentSubmission;
+            // eslint-disable-next-line prefer-destructuring
+            const submissionId = currentSubmission.id;
 
-            await getSubmissionDetailsResults(submissionId, isOfficial);
+            setSubmissionDetailsResultsUrlParams({
+                submissionId,
+                take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
+            });
         },
-        [ currentSubmission, getSubmissionDetailsResults ],
+        [ currentSubmission, setSubmissionDetailsResultsUrlParams ],
     );
 
     const renderRetestButton = useCallback(
@@ -225,7 +210,8 @@ const SubmissionDetails = () => {
         currentSubmission?.testRuns.length === 0 &&
         currentSubmission.isCompiledSuccessfully &&
         currentSubmission.totalTests > 0 &&
-        !currentSubmission.processingComment
+        !currentSubmission.processingComment &&
+        currentSubmission.isProcessed
             ? (
                 <div className={styles.testChangesWrapper}>
                     <p>
@@ -292,10 +278,10 @@ const SubmissionDetails = () => {
     );
 
     const backButtonState = useMemo(
-        () => isNil(contest)
+        () => isNil(currentSubmission?.contestId)
             ? ButtonState.disabled
             : ButtonState.enabled,
-        [ contest ],
+        [ currentSubmission ],
     );
 
     const refreshableSubmissionsList = useCallback(
@@ -317,11 +303,9 @@ const SubmissionDetails = () => {
     );
 
     const setSubmissionAndStartParticipation = useCallback(
-        () => {
-            const { id: contestId } = contest as IIndexContestsType;
-
+        (contestId: number) => {
+            // eslint-disable-next-line prefer-destructuring
             const participationType = contestParticipationType(currentSubmission!.isOfficial);
-
             navigate({
                 pathname: getParticipateInContestUrl({ id: contestId, participationType }),
                 hash: hashParam,
@@ -330,7 +314,7 @@ const SubmissionDetails = () => {
             setCurrentSubmission(null);
             selectSubmissionById(null);
         },
-        [ contest, currentSubmission, navigate, getParticipateInContestUrl, hashParam, setCurrentSubmission, selectSubmissionById ],
+        [ currentSubmission, getParticipateInContestUrl, hashParam, navigate, selectSubmissionById, setCurrentSubmission ],
     );
 
     const codeEditor = useCallback(
@@ -348,7 +332,7 @@ const SubmissionDetails = () => {
                         <Button
                           type={ButtonType.secondary}
                           size={ButtonSize.small}
-                          onClick={() => setSubmissionAndStartParticipation()}
+                          onClick={() => setSubmissionAndStartParticipation(currentSubmission!.contestId)}
                           className={styles.backBtn}
                           text=" "
                           state={backButtonState}
@@ -361,7 +345,19 @@ const SubmissionDetails = () => {
                 <div>
                     {renderTestsChangeMessage()}
                 </div>
-                {currentSubmission?.submissionType.allowBinaryFilesUpload
+                {
+                        !currentSubmission?.isProcessed
+                            ? (
+                                <AlertBox
+                                  className={styles.alertBox}
+                                  message="The submission is in queue and will be processed shortly. Please wait."
+                                  type={AlertBoxType.info}
+                                  isClosable={false}
+                                />
+                            )
+                            : null
+                    }
+                {submissionType?.allowBinaryFilesUpload
                     ? (
                         <div className={styles.resourceWrapper}>
                             {renderResourceLink()}

@@ -14,6 +14,7 @@ import {
     IGetSearchResultsUrlParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
+    IGetSubmissionsByContestIdParams,
     IGetSubmissionsUrlParams,
     IRetestSubmissionUrlParams,
     IStartContestParticipationUrlParams,
@@ -53,6 +54,7 @@ ${administrationBaseUrl}/Contests/Edit?PK=${id}`;
 const getProfileInfoUrl = () => `${baseApiUrl}/Users/GetProfileInfo`;
 const getSubmissionsForProfileUrl = () => `${baseApiUrl}/Submissions/GetForProfile`;
 const getParticipationsForProfileUrl = () => `${baseApiUrl}/Participations/GetForProfile`;
+const getAllParticipationsForUserUrl = () => '/api/Participations/GetAllForUser';
 
 // contests
 const getIndexContestsUrl = () => `${baseApiUrl}/Contests/GetForHomeIndex`;
@@ -117,10 +119,10 @@ const getSubmissionResultsByProblemUrl = ({
 
 const getSubmissionDetailsResultsUrl = ({
     submissionId,
-    isOfficial,
     take,
 }: IGetSubmissionDetailsByIdUrlParams) => `
-    ${baseApiUrl}/Submissions/GetSubmissionDetailsResults/${submissionId}?isOfficial=${isOfficial}&take=${take}`;
+    ${baseApiUrl}/Submissions/GetSubmissionDetailsWithResults/${submissionId}?take=${take}`;
+
 const getPublicSubmissionsUrl = ({ page }: IGetSubmissionsUrlParams) => {
     const pageQuery = isNil(page)
         ? ''
@@ -160,6 +162,17 @@ const getSubmitUrl = () => `${baseApiUrl}/Compete/Submit`;
 const getSubmitFileUrl = () => `${baseApiUrl}/Compete/SubmitFileSubmission`;
 const getSubmissionFileDownloadUrl =
     ({ id }: IDownloadSubmissionFileUrlParams) => `${baseApiUrl}/Submissions/Download/${id}`;
+const getSubmissionsByContestIdUrl = ({ contestId = '', page }: IGetSubmissionsByContestIdParams) => {
+    const pageQuery = isNil(page)
+        ? ''
+        : `page=${page}`;
+
+    const contestQuery = isNil(contestId)
+        ? ''
+        : `contestId=${contestId}`;
+
+    return `${baseApiUrl}/Submissions/getUserSubmissionsByContest?${contestQuery}&${pageQuery}`;
+};
 
 const getSubmissionDetailsUrl = ({ id }:ISubmissionDetailsUrlParams) => `/submissions/${id}/details`;
 
@@ -198,6 +211,7 @@ export {
     getProfileInfoUrl,
     getSubmissionsForProfileUrl,
     getParticipationsForProfileUrl,
+    getAllParticipationsForUserUrl,
     getIndexContestsUrl,
     getAllContestsUrl,
     getSubmitContestPasswordUrl,
@@ -210,6 +224,7 @@ export {
     getSubmissionResultsByProblemUrl,
     getSubmissionDetailsResultsUrl,
     getPublicSubmissionsUrl,
+    getSubmissionsByContestIdUrl,
     getUnprocessedSubmissionsUrl,
     getPendingSubmissionsUrl,
     getSubmissionsTotalCountUrl,

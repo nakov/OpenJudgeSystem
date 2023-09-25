@@ -63,9 +63,12 @@ const Contest = () => {
         [ contest?.name ],
     );
 
-    useEffect(() => {
-        setPageTitle(contestTitle);
-    }, [ contestTitle, setPageTitle ]);
+    useEffect(
+        () => {
+            setPageTitle(contestTitle);
+        },
+        [ contestTitle, setPageTitle ],
+    );
 
     const scoreText = useMemo(
         () => `${score}/${maxScore}`,

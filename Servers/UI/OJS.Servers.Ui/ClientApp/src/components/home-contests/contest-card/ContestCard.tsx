@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
@@ -74,13 +74,6 @@ const ContestCard = ({ contest }: IContestCardProps) => {
         [ endDate, canBeCompeted, canBePracticed ],
     );
 
-    const participationType = useMemo(
-        () => canBeCompeted
-            ? ContestParticipationType.Compete
-            : ContestParticipationType.Practice,
-        [ canBeCompeted ],
-    );
-
     const renderCountdown = useCallback(
         () => {
             if (isNil(endDate) || new Date(endDate) < getCurrentTimeInUTC()) {
@@ -134,7 +127,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                         <LinkButton
                           type={LinkButtonType.plain}
                           size={ButtonSize.none}
-                          to={getContestDetailsUrl({ id, participationType })}
+                          to={getContestDetailsUrl(id)}
                           text={name}
                         />
                     </span>
@@ -143,7 +136,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                     <LinkButton
                       type={LinkButtonType.plain}
                       size={ButtonSize.none}
-                      to={getContestDetailsUrl({ id, participationType })}
+                      to={getContestDetailsUrl(id)}
                       text={name}
                     />
                 </span>
