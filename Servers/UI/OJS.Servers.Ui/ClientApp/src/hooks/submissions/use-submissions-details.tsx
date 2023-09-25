@@ -160,7 +160,8 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     const getDetails = useCallback(
         async (submissionId: number) => {
             if (isNil(submissionId) || Number.isNaN(submissionId)) {
-                return;
+                // Will be removed from the code with https://github.com/SoftUni-Internal/exam-systems-issues/issues/937
+                // return;
             }
 
             setSubmissionDetailsResultsUrlParams({
