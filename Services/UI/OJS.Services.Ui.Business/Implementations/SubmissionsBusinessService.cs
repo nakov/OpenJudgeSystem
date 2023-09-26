@@ -131,9 +131,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             {
                 var currentTestRunTest = submissionDetailsServiceModel.Tests.FirstOrDefault(t => t.Id == tr.TestId);
                 if (!tr.IsTrialTest
-                    && ((currentTestRunTest != null &&
-                         (currentTestRunTest.HideInput || !currentTestRunTest.IsOpenTest))
-                        || submissionDetailsServiceModel.Problem.ShowDetailedFeedback))
+                    && ((currentTestRunTest!.HideInput || !currentTestRunTest!.IsOpenTest)
+                        && !submissionDetailsServiceModel.Problem.ShowDetailedFeedback))
                 {
                     tr.ShowInput = false;
                     tr.Input = string.Empty;
