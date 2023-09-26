@@ -272,20 +272,12 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             Name = AdditionalFormFields.Type.ToString(),
             Type = typeof(TestTypeEnum),
             Options = EnumUtils.GetValuesFrom<TestTypeEnum>().Cast<object>(),
-            Value = entity.IsTrialTest
-                ? TestTypeEnum.TrialTest
-                : TestTypeEnum.OpenTest,
+            Value = entity.IsOpenTest
+                ? TestTypeEnum.OpenTest
+                : entity.IsTrialTest
+                    ? TestTypeEnum.TrialTest
+                    : TestTypeEnum.Compete,
         });
-
-        if (action == EntityAction.Edit)
-        {
-            formControls.Add(new FormControlViewModel
-            {
-                Name = AdditionalFormFields.RetestProblem.ToString(),
-                Type = typeof(bool),
-                Value = false,
-            });
-        }
 
         return formControls;
     }
@@ -327,6 +319,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
     private static void UpdateType(Test entity, AdminActionContext actionContext)
     {
         Enum.TryParse<TestTypeEnum>(actionContext.GetFormValue(AdditionalFormFields.Type), out var testType);
+
         switch (testType)
         {
             case TestTypeEnum.TrialTest:
@@ -337,8 +330,10 @@ public class TestsController : BaseAutoCrudAdminController<Test>
                 entity.IsTrialTest = false;
                 entity.IsOpenTest = true;
                 break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(testType), testType, null);
+            case TestTypeEnum.Compete:
+                entity.IsTrialTest = false;
+                entity.IsOpenTest = false;
+                break;
         }
     }
 
