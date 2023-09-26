@@ -55,6 +55,7 @@ const SubmissionDetails = () => {
     const { state: { hashParam } } = useHashUrlParams();
     const navigate = useNavigate();
 
+    // Will be removed from the code with https://github.com/SoftUni-Internal/exam-systems-issues/issues/937
     useEffect(() => {
         if (isNil(currentSubmission)) {
             // return;
