@@ -271,9 +271,11 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             Name = AdditionalFormFields.Type.ToString(),
             Type = typeof(TestTypeEnum),
             Options = EnumUtils.GetValuesFrom<TestTypeEnum>().Cast<object>(),
-            Value = entity.IsTrialTest
-                ? TestTypeEnum.TrialTest
-                : TestTypeEnum.OpenTest,
+            Value = entity.IsOpenTest
+                ? TestTypeEnum.OpenTest
+                : entity.IsTrialTest
+                    ? TestTypeEnum.TrialTest
+                    : TestTypeEnum.Compete,
         });
         return formControls;
     }
@@ -297,6 +299,10 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             case TestTypeEnum.OpenTest:
                 entity.IsTrialTest = false;
                 entity.IsOpenTest = true;
+                break;
+            case TestTypeEnum.Compete:
+                entity.IsTrialTest = false;
+                entity.IsOpenTest = false;
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(testType), testType, null);

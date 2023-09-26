@@ -130,13 +130,26 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             submissionDetailsServiceModel.TestRuns = submissionDetailsServiceModel.TestRuns.Select(tr =>
             {
                 var currentTestRunTest = submissionDetailsServiceModel.Tests.FirstOrDefault(t => t.Id == tr.TestId);
-                if (!tr.IsTrialTest
-                    && ((currentTestRunTest!.HideInput || !currentTestRunTest!.IsOpenTest)
-                        && !submissionDetailsServiceModel.Problem.ShowDetailedFeedback))
+
+                var displayShowInput = !currentTestRunTest!.HideInput
+                                       && ((currentTestRunTest.IsTrialTest
+                                            || currentTestRunTest!.IsOpenTest)
+                                            || submissionDetailsServiceModel.Problem.ShowDetailedFeedback);
+
+                var showExecutionComment = !string.IsNullOrEmpty(tr.ExecutionComment)
+                                           && (currentTestRunTest!.IsOpenTest
+                                               || currentTestRunTest!.IsTrialTest
+                                               || submissionDetailsServiceModel.Problem.ShowDetailedFeedback);
+
+                if (!showExecutionComment)
+                {
+                    tr.ExecutionComment = string.Empty;
+                }
+
+                if (!displayShowInput)
                 {
                     tr.ShowInput = false;
                     tr.Input = string.Empty;
-                    tr.ExecutionComment = string.Empty;
                     tr.ExpectedOutputFragment = string.Empty;
                     tr.UserOutputFragment = string.Empty;
                 }
