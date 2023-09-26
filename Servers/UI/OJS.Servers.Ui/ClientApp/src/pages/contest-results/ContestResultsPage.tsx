@@ -3,6 +3,7 @@ import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType, ContestResultType } from '../../common/constants';
+import { contestParticipationType } from '../../common/contest-helpers';
 import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
@@ -113,13 +114,7 @@ const ContestResultsPage = () => {
     const full = resultType === ContestResultType.Full;
     const [ numberedRows, setNumberedRows ] = useState<Array<IContestResultsTypeWithRowNumber>>([]);
 
-    const participationType = useMemo(
-        () => (official
-            ? 'Compete'
-            : 'Practice'
-        ),
-        [ official ],
-    );
+    const participationType = contestParticipationType(official);
 
     const {
         state: {

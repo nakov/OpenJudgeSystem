@@ -44,5 +44,7 @@
         Task<int> GetTotalCount();
 
         SubmissionFileDownloadServiceModel GetSubmissionFile(int submissionId);
+
+        Task<SubmissionDetailsWithResultsModel> GetSubmissionDetailsWithResults(int submissionId, int take);
     }
 }
