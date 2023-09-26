@@ -131,15 +131,17 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             {
                 var currentTestRunTest = submissionDetailsServiceModel.Tests.FirstOrDefault(t => t.Id == tr.TestId);
 
-                var displayShowInput = !currentTestRunTest!.HideInput
-                                       && ((currentTestRunTest.IsTrialTest
-                                            || currentTestRunTest!.IsOpenTest)
-                                            || submissionDetailsServiceModel.Problem.ShowDetailedFeedback);
+                var displayShowInput = currentTestRunTest != null
+                                       && (!currentTestRunTest.HideInput
+                                           && ((currentTestRunTest.IsTrialTest
+                                                || currentTestRunTest.IsOpenTest)
+                                               || submissionDetailsServiceModel.Problem.ShowDetailedFeedback));
 
-                var showExecutionComment = !string.IsNullOrEmpty(tr.ExecutionComment)
-                                           && (currentTestRunTest!.IsOpenTest
-                                               || currentTestRunTest!.IsTrialTest
-                                               || submissionDetailsServiceModel.Problem.ShowDetailedFeedback);
+                var showExecutionComment = currentTestRunTest != null
+                                           && (!string.IsNullOrEmpty(tr.ExecutionComment)
+                                               && (currentTestRunTest!.IsOpenTest
+                                                   || currentTestRunTest!.IsTrialTest
+                                                   || submissionDetailsServiceModel.Problem.ShowDetailedFeedback));
 
                 if (!showExecutionComment)
                 {
@@ -192,9 +194,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var responseModel = new SubmissionDetailsWithResultsModel();
         responseModel.SubmissionDetails = await this.GetDetailsById(submissionId);
         responseModel.SubmissionResults = await this.GetSubmissionDetailsResults(
-            submissionId,
-            responseModel.SubmissionDetails.IsOfficial,
-            take)
+                submissionId,
+                responseModel.SubmissionDetails.IsOfficial,
+                take)
             .ToListAsync();
         return responseModel;
     }
