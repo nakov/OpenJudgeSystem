@@ -139,8 +139,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
                 var showExecutionComment = currentTestRunTest != null
                                            && (!string.IsNullOrEmpty(tr.ExecutionComment)
-                                               && (currentTestRunTest!.IsOpenTest
-                                                   || currentTestRunTest!.IsTrialTest
+                                               && (currentTestRunTest.IsOpenTest
+                                                   || currentTestRunTest.IsTrialTest
                                                    || submissionDetailsServiceModel.Problem.ShowDetailedFeedback));
 
                 if (!showExecutionComment)
