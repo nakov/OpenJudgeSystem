@@ -76,6 +76,7 @@ namespace OJS.Common
             public const string NoPrivilegesMessage = "You don't have privileges for this action!";
             public const string NoPermissionsForContest = "You don't have permissions for the contest!";
             public const string Remove = "Remove";
+            public const string CannotEditSubmissionForProcessing = "Submissions for processing cannot be edited!";
         }
 
         public static class ContestsControllers
