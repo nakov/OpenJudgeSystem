@@ -6,7 +6,7 @@
 
 .backBtn {
   border: 0;
-  margin-left: -20px;
+  margin-left: -30px;
   margin-right: -30px;
 }
 
@@ -36,6 +36,8 @@
 .detailsWrapper {
   @extend %wrapper;
   @extend %columnsThree;
+
+  margin-bottom: 40px;
 }
 
 .headingContest {
@@ -70,7 +72,7 @@
 }
 
 .submissionsList {
-  height: 60vh;
+  height: 465px;
 
   ul {
     @extend %customScroll;
@@ -94,13 +96,17 @@
 
 .submissionDetails {
   border-left: 0;
+
+  ul {
+    max-height: 700px;
+    overflow: auto;
+  }
 }
 
 .taskHeading {
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
-  margin-bottom: 24px;
+  justify-content: center;
 
   > div {
     > div {
@@ -108,11 +114,48 @@
     }
 
     button {
-      margin-left: -30px;
+      margin-right: 30px;
     }
   }
 }
 
 .buttonsSection {
   margin-top: 20px;
+}
+
+.alertBox {
+  margin-bottom: 20px;
+}
+
+.submissionReloadBtn {
+  margin-right: 20px;
+  margin-top: 10px;
+}
+
+.testChangesWrapper {
+  align-items: center;
+  background-color: colors.$warning-color;
+  border: 2px solid colors.$warning-color;
+  border-radius: 12px;
+  color: colors.$white-color;
+  display: flex;
+  font-family: fonts.$font-family-lato;
+  font-size: 16px;
+  justify-content: space-around;
+  margin-bottom: 1rem;
+  padding: 1rem;
+}
+
+@media only screen and (max-width: 1430px) {
+  .buttonsSection {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    a {
+      margin-left: 0;
+      margin-right: 20px;
+      margin-top: 10px;
+    }
+  }
 }

@@ -31,7 +31,6 @@ using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Services.Common.Models.Submissions;
 using OJS.Workers.Common.Models;
 using Microsoft.Extensions.Logging;
-
 using static Constants.PublicSubmissions;
 
 public class SubmissionsBusinessService : ISubmissionsBusinessService
@@ -42,13 +41,15 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly IParticipantScoresBusinessService participantScoresBusinessService;
 
     private readonly IParticipantsBusinessService participantsBusinessService;
+
     private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
+
     // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/624
     private readonly IParticipantsDataService participantsDataService;
     private readonly IProblemsDataService problemsDataService;
     private readonly IContestsDataService contestsDataService;
     private readonly IUserProviderService userProviderService;
-    private readonly ITestRunsDataService testRunsDataService;
+    private readonly ILecturersInContestsBusinessService lecturersInContestsBusiness;
     private readonly ISubmissionDetailsValidationService submissionDetailsValidationService;
     private readonly IContestValidationService contestValidationService;
     private readonly ISubmitSubmissionValidationService submitSubmissionValidationService;
@@ -65,8 +66,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         IParticipantsDataService participantsDataService,
         ISubmissionsCommonBusinessService submissionsCommonBusinessService,
         IUserProviderService userProviderService,
-        ITestRunsDataService testRunsDataService,
         IParticipantScoresBusinessService participantScoresBusinessService,
+        ILecturersInContestsBusinessService lecturersInContestsBusiness,
         ISubmissionDetailsValidationService submissionDetailsValidationService,
         IContestValidationService contestValidationService,
         ISubmitSubmissionValidationService submitSubmissionValidationService,
@@ -84,7 +85,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.submissionsCommonBusinessService = submissionsCommonBusinessService;
         this.participantsDataService = participantsDataService;
         this.userProviderService = userProviderService;
-        this.testRunsDataService = testRunsDataService;
         this.participantScoresBusinessService = participantScoresBusinessService;
         this.submissionDetailsValidationService = submissionDetailsValidationService;
         this.contestValidationService = contestValidationService;
@@ -95,6 +95,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.submissionsForProcessingData = submissionsForProcessingData;
         this.contestsDataService = contestsDataService;
         this.logger = logger;
+        this.lecturersInContestsBusiness = lecturersInContestsBusiness;
     }
 
     public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
@@ -109,11 +110,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var submissionDetailsServiceModel = await this.submissionsData
             .GetByIdQuery(submissionId)
-            .Include(s => s.Participant)
-            .ThenInclude(p => p!.User)
-            .Include(s => s.TestRuns)
-            .ThenInclude(tr => tr.Test)
-            .Include(s => s.SubmissionType)
             .MapCollection<SubmissionDetailsServiceModel>()
             .FirstOrDefaultAsync();
 
@@ -127,17 +123,35 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var contest = await this.contestsDataService
             .GetByProblemId<ContestServiceModel>(submissionDetailsServiceModel!.Problem.Id).Map<Contest>();
-        var userIsAdminOrLecturerInContest = currentUser.IsAdmin || IsUserLecturerInContest(contest, currentUser.Id!);
-        var showTestInputForAllTests = submissionDetailsServiceModel.Problem.ShowDetailedFeedback;
-        if (!userIsAdminOrLecturerInContest && !showTestInputForAllTests)
+        var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest);
+
+        if (!userIsAdminOrLecturerInContest)
         {
             submissionDetailsServiceModel.TestRuns = submissionDetailsServiceModel.TestRuns.Select(tr =>
             {
-                if (!tr.IsTrialTest)
+                var currentTestRunTest = submissionDetailsServiceModel.Tests.FirstOrDefault(t => t.Id == tr.TestId);
+
+                var displayShowInput = currentTestRunTest != null
+                                       && (!currentTestRunTest.HideInput
+                                           && ((currentTestRunTest.IsTrialTest
+                                                || currentTestRunTest.IsOpenTest)
+                                               || submissionDetailsServiceModel.Problem.ShowDetailedFeedback));
+
+                var showExecutionComment = currentTestRunTest != null
+                                           && (!string.IsNullOrEmpty(tr.ExecutionComment)
+                                               && (currentTestRunTest.IsOpenTest
+                                                   || currentTestRunTest.IsTrialTest
+                                                   || submissionDetailsServiceModel.Problem.ShowDetailedFeedback));
+
+                if (!showExecutionComment)
+                {
+                    tr.ExecutionComment = string.Empty;
+                }
+
+                if (!displayShowInput)
                 {
                     tr.ShowInput = false;
                     tr.Input = string.Empty;
-                    tr.ExecutionComment = string.Empty;
                     tr.ExpectedOutputFragment = string.Empty;
                     tr.UserOutputFragment = string.Empty;
                 }
@@ -173,6 +187,18 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 submissionDetailsServiceModel.Id,
                 submissionDetailsServiceModel.FileExtension),
         };
+    }
+
+    public async Task<SubmissionDetailsWithResultsModel> GetSubmissionDetailsWithResults(int submissionId, int take)
+    {
+        var responseModel = new SubmissionDetailsWithResultsModel();
+        responseModel.SubmissionDetails = await this.GetDetailsById(submissionId);
+        responseModel.SubmissionResults = await this.GetSubmissionDetailsResults(
+                submissionId,
+                responseModel.SubmissionDetails.IsOfficial,
+                take)
+            .ToListAsync();
+        return responseModel;
     }
 
     public Task<IQueryable<Submission>> GetAllForArchiving()
@@ -369,8 +395,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var contestValidationResult = this.contestValidationService.GetValidationResult(
             (participant?.Contest,
                 participant?.ContestId,
-                currentUser.Id,
-                currentUser.IsAdminOrLecturer,
+                currentUser,
                 model.Official) !);
 
         var userSubmissionTimeLimit = await this.participantsBusinessService.GetParticipantLimitBetweenSubmissions(
@@ -382,12 +407,12 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var submitSubmissionValidationServiceResult = this.submitSubmissionValidationService.GetValidationResult(
             (problem,
-            currentUser,
-            participant,
-            contestValidationResult,
-            userSubmissionTimeLimit,
-            hasUserNotProcessedSubmissionForProblem,
-            model));
+                currentUser,
+                participant,
+                contestValidationResult,
+                userSubmissionTimeLimit,
+                hasUserNotProcessedSubmissionForProblem,
+                model));
 
         if (!submitSubmissionValidationServiceResult.IsValid)
         {
@@ -460,8 +485,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var exception = submissionExecutionResult.Exception;
         var executionResult = submissionExecutionResult.ExecutionResult;
 
-        await this.testRunsDataService.DeleteBySubmission(submission.Id);
-
         submission.Processed = true;
         submission.ProcessingComment = null;
 
@@ -472,7 +495,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
             this.submissionsData.Update(submission);
 
-            await this.UpdateResults(submission);
+            await this.SaveParticipantScore(submission);
+
+            await this.submissionsForProcessingData.MarkProcessed(submission.Id);
+            await this.submissionsData.SaveChanges();
+            CacheTestRuns(submission);
         }
         else
         {
@@ -483,9 +510,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             submission.CompilerComment = errorMessage;
 
             this.submissionsData.Update(submission);
+            await this.submissionsForProcessingData.MarkProcessed(submission.Id);
         }
 
-        await this.submissionsForProcessingData.MarkProcessed(submission.Id);
         await this.submissionsData.SaveChanges();
 
         scope.Complete();
@@ -511,19 +538,27 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         return modelResult;
     }
 
-    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetUsersLastSubmissions(bool isOfficial, int page)
+    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetUsersLastSubmissions(
+        bool? isOfficial,
+        int page)
     {
         var user = this.userProviderService.GetCurrentUser();
 
-        var userParticipantsIds = await this.participantsDataService
-            .GetAllByUser(user.Id)
-            .Where(p => p.IsOfficial == isOfficial)
+        var userParticipantsIdsQuery = this.participantsDataService
+            .GetAllByUser(user.Id);
+
+        if (isOfficial.HasValue)
+        {
+            userParticipantsIdsQuery = userParticipantsIdsQuery.Where(p => p.IsOfficial == isOfficial);
+        }
+
+        var ids = await userParticipantsIdsQuery
             .Select(p => p.Id)
             .ToEnumerableAsync();
 
         return await this.submissionsData
             .GetLatestSubmissionsByUserParticipations<SubmissionForPublicSubmissionsServiceModel>(
-                userParticipantsIds.MapCollection<int?>(),
+                ids.MapCollection<int?>(),
                 DefaultSubmissionsPerPage,
                 page);
     }
@@ -549,6 +584,18 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .ToPagedResult(DefaultSubmissionsPerPage, page);
     }
 
+    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetByContest(int contestId, int page)
+    {
+        var user = this.userProviderService.GetCurrentUser();
+
+        return await this.submissionsData
+            .GetAllForUserByContest(
+                contestId,
+                user.Id)
+            .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
+            .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
+    }
+
     public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPendingSubmissions(int page)
     {
         var pendingSubmissions = await this.submissionsForProcessingData
@@ -572,10 +619,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
     public Task<int> GetTotalCount()
         => this.submissionsData.GetTotalSubmissionsCount();
-
-    private static bool IsUserLecturerInContest(Contest contest, string userId) =>
-        contest.LecturersInContests.Any(c => c.LecturerId == userId) ||
-        contest.Category!.LecturersInContestCategories.Any(cl => cl.LecturerId == userId);
 
     private static void ProcessTestsExecutionResult(
         Submission submission,
@@ -610,7 +653,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
     }
 
-    private SubmissionServiceModel BuildSubmissionForProcessing(Submission submission, Problem problem, SubmissionType submissionType)
+    private SubmissionServiceModel BuildSubmissionForProcessing(
+        Submission submission,
+        Problem problem,
+        SubmissionType submissionType)
     {
         // We detach the existing entity, in order to avoid tracking exception on Update.
         this.submissionsData.Detach(submission);
@@ -638,13 +684,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         await this.submissionsData.SaveChanges();
 
         await this.participantScoresBusinessService.SaveForSubmission(submission);
-    }
-
-    private async Task UpdateResults(Submission submission)
-    {
-        await this.SaveParticipantScore(submission);
-
-        CacheTestRuns(submission);
     }
 
     private async Task SaveParticipantScore(Submission submission)

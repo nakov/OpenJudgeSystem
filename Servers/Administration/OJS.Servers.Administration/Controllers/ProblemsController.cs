@@ -441,10 +441,18 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                 Value = entity.ProblemGroup?.Type ?? default(ProblemGroupType),
             });
 
-            var test = formControls.FirstOrDefault(x => x.Name == nameof(Data.Models.Problems.Problem.ProblemGroup));
-            if (test != null)
+            var problemGroupField = formControls.First(x => x.Name == nameof(Data.Models.Problems.Problem.ProblemGroup));
+
+            if (action == EntityAction.Create)
             {
-                test.IsHidden = true;
+                // On Create, we should always create new ProblemGroup for the Problem,
+                // not allow attaching the Problem to an existing ProblemGroup
+                formControls.Remove(problemGroupField);
+            }
+            else
+            {
+                // On Edit, we should not allow changing the ProblemGroup
+                problemGroupField.IsHidden = true;
             }
         }
 
@@ -559,6 +567,8 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         Problem newEntity,
         AdminActionContext actionContext)
     {
+        newEntity.ProblemGroup.Type = actionContext.GetProblemGroupType().GetValidTypeOrNull();
+
         if (!originalEntity.ProblemGroup.Contest.IsOnlineExam)
         {
             newEntity.ProblemGroup.OrderBy = newEntity.OrderBy;

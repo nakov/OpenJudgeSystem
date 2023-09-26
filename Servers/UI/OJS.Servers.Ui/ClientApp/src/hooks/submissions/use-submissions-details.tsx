@@ -17,6 +17,7 @@ import { IErrorDataType, useHttp } from '../use-http';
 import {
     ISubmissionDetails,
     ISubmissionDetailsType,
+    ISubmissionDetailsWithResults,
     ISubmissionType,
     ITestRunType,
 } from './types';
@@ -27,14 +28,15 @@ interface ISubmissionsDetailsContext {
         currentSubmissionDetailsResults: ISubmissionDetails[];
         validationErrors: IErrorDataType[];
         downloadErrorMessage: string | null;
+        isLoading: boolean;
     };
     actions: {
         selectSubmissionById: (submissionId: number | null) => void;
         getDetails: (submissionId: number) => Promise<void>;
-        getSubmissionDetailsResults: (submissionId: number, isOfficial: boolean) => Promise<void>;
         downloadProblemSubmissionFile: (submissionId: number) => Promise<void>;
         setDownloadErrorMessage: (message: string | null) => void;
         setCurrentSubmission: (submission: ISubmissionDetailsType | null) => void;
+        setSubmissionDetailsResultsUrlParams: (params: IGetSubmissionDetailsByIdUrlParams) => void;
     };
 }
 
@@ -67,9 +69,11 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
 
     const [
         getSubmissionDetailsByIdParams,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         setGetSubmissionDetailsByIdParams,
     ] = useState<IGetSubmissionDetailsByIdUrlParams | null>(null);
 
+    // REMOVE
     const {
         get: getSubmissionDetails,
         data: apiSubmissionDetails,
@@ -85,10 +89,11 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     ] = useState<IGetSubmissionDetailsByIdUrlParams | null>();
 
     const {
+        isLoading: submissionDetailsLoading,
         get: getSubmissionDetailsResultsRequest,
         data: apiSubmissionDetailsResults,
         error: apiSubmissionDetailsResultsError,
-    } = useHttp<IGetSubmissionDetailsByIdUrlParams, ISubmissionDetails[]>({
+    } = useHttp<IGetSubmissionDetailsByIdUrlParams, ISubmissionDetailsWithResults>({
         url: getSubmissionDetailsResultsUrl,
         parameters: submissionDetailsResultsUrlParams,
     });
@@ -106,21 +111,6 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     const downloadProblemSubmissionFile = useCallback(
         async (submissionId: number) => {
             setProblemSubmissionFileIdToDownload(submissionId);
-        },
-        [],
-    );
-
-    const getSubmissionDetailsResults = useCallback(
-        async (submissionId: number, isOfficial: boolean) => {
-            if (isNil(submissionId)) {
-                return;
-            }
-
-            setSubmissionDetailsResultsUrlParams({
-                submissionId,
-                isOfficial,
-                take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
-            });
         },
         [],
     );
@@ -161,7 +151,6 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             (async () => {
                 setIsLoading(true);
                 await getSubmissionDetailsResultsRequest();
-                setSubmissionDetailsResultsUrlParams(null);
                 setIsLoading(false);
             })();
         },
@@ -179,7 +168,8 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
                 return;
             }
 
-            setCurrentProblemSubmissionResults(apiSubmissionDetailsResults);
+            setCurrentSubmission(apiSubmissionDetailsResults.submissionDetails);
+            setCurrentProblemSubmissionResults(apiSubmissionDetailsResults.submissionResults);
         },
         [ apiSubmissionDetailsResults, apiSubmissionDetailsResultsError ],
     );
@@ -202,10 +192,14 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     const getDetails = useCallback(
         async (submissionId: number) => {
             if (isNil(submissionId) || Number.isNaN(submissionId)) {
-                return;
+                // Will be removed from the code with https://github.com/SoftUni-Internal/exam-systems-issues/issues/937
+                // return;
             }
 
-            setGetSubmissionDetailsByIdParams({ submissionId } as IGetSubmissionDetailsByIdUrlParams);
+            setSubmissionDetailsResultsUrlParams({
+                submissionId,
+                take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
+            });
         },
         [],
     );
@@ -244,6 +238,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             state: {
                 currentSubmission,
                 currentSubmissionDetailsResults,
+                submissionDetailsLoading,
                 validationErrors,
                 downloadErrorMessage,
                 isLoading,
@@ -251,23 +246,26 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             actions: {
                 selectSubmissionById,
                 getDetails,
-                getSubmissionDetailsResults,
                 downloadProblemSubmissionFile,
                 setDownloadErrorMessage,
                 setCurrentSubmission,
+                getSubmissionDetailsResultsRequest,
+                setSubmissionDetailsResultsUrlParams,
             },
         }),
         [
             currentSubmissionDetailsResults,
             currentSubmission,
             getDetails,
-            getSubmissionDetailsResults,
             validationErrors,
             downloadProblemSubmissionFile,
             downloadErrorMessage,
             setDownloadErrorMessage,
             setCurrentSubmission,
             isLoading,
+            submissionDetailsLoading,
+            getSubmissionDetailsResultsRequest,
+            setSubmissionDetailsResultsUrlParams,
         ],
     );
 

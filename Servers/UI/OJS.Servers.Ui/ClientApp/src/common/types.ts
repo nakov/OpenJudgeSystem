@@ -85,6 +85,8 @@ interface IContestDetailsResponseType {
     canViewResults: boolean;
     isOnlineExam: boolean;
     canBeCompeted: boolean;
+    canBePracticed: boolean;
+    isAdminOrLecturerInContest: boolean;
     allowedSubmissionTypes: IContestDetailsSubmissionType[];
     totalContestParticipantsCount: number;
     participantsCountByContestType: number;
@@ -111,7 +113,6 @@ interface IContestType {
     resultsArePubliclyVisible: boolean;
     hasContestPassword: boolean;
     hasPracticePassword: boolean;
-    remainingTimeInMilliseconds: number;
     userIsAdminOrLecturerInContest: boolean;
     userCanCompete: boolean;
     userIsParticipant: false;
@@ -166,7 +167,7 @@ interface IStartParticipationResponseType {
     participantId: number;
     contestIsCompete: boolean;
     lastSubmissionTime: Date;
-    remainingTimeInMilliseconds: number;
+    endDateTimeForParticipantOrContest: Date | null;
     userSubmissionsTimeLimit: number;
     participantsCount: number;
 }
@@ -177,6 +178,10 @@ interface IPagedResultType<TItem> {
     pagesCount: number;
     pageNumber: number;
     items?: TItem[];
+}
+
+interface IPage {
+    page: number;
 }
 
 interface IUserType {
@@ -222,6 +227,7 @@ export type {
     ISubmissionTypeType,
     IPagedResultType,
     IUserType,
+    IPage,
     IUserResponseType,
     IUserPermissionsType,
     ISearchResponseModel,

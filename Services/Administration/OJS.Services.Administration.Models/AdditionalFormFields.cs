@@ -13,4 +13,5 @@ public enum AdditionalFormFields
     File,
     TimeLimit,
     MemoryLimit,
+    Type,
 }

@@ -4,8 +4,8 @@ import first from 'lodash/first';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { ContestParticipationType } from '../../../common/constants';
-import { IIndexContestsType } from '../../../common/types';
+import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../../common/constants';
+import { contestParticipationType } from '../../../common/contest-helpers';
 import { useHashUrlParams } from '../../../hooks/common/use-hash-url-params';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import { useAppUrls } from '../../../hooks/use-app-urls';
@@ -14,59 +14,54 @@ import { useContests } from '../../../hooks/use-contests';
 import { usePageTitles } from '../../../hooks/use-page-titles';
 import concatClassNames from '../../../utils/class-names';
 import { preciseFormatDate } from '../../../utils/dates';
+import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import CodeEditor from '../../code-editor/CodeEditor';
 import AlertBox, { AlertBoxType } from '../../guidelines/alert-box/AlertBox';
 import { Button, ButtonSize, ButtonState, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import IconSize from '../../guidelines/icons/common/icon-sizes';
 import LeftArrowIcon from '../../guidelines/icons/LeftArrowIcon';
+import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import SubmissionResults from '../submission-results/SubmissionResults';
 import SubmissionsList from '../submissions-list/SubmissionsList';
+
+import SubmissionResultsDetails from './submission-result-details/SubmissionResultsDetails';
 
 import styles from './SubmissionDetails.module.scss';
 
 const SubmissionDetails = () => {
     const {
         state: {
+            isLoading,
             currentSubmission,
             currentSubmissionDetailsResults,
             validationErrors,
+            downloadErrorMessage,
         },
         actions: {
-            getSubmissionDetailsResults,
+            downloadProblemSubmissionFile,
+            setDownloadErrorMessage,
             setCurrentSubmission,
             selectSubmissionById,
+            setSubmissionDetailsResultsUrlParams,
         },
     } = useSubmissionsDetails();
     const { actions: { setPageTitle } } = usePageTitles();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
-    const {
-        state:
-            { downloadErrorMessage },
-        actions:
-            {
-                downloadProblemSubmissionFile,
-                setDownloadErrorMessage,
-            },
-    } = useSubmissionsDetails();
-    const {
-        state: { contest },
-        actions: { loadContestByProblemId },
-    } = useContests();
+    const { actions: { loadContestByProblemId } } = useContests();
 
     const { getAdministrationRetestSubmissionInternalUrl, getParticipateInContestUrl } = useAppUrls();
     const { state: { user } } = useAuth();
     const { state: { hashParam } } = useHashUrlParams();
     const navigate = useNavigate();
 
+    // Will be removed from the code with https://github.com/SoftUni-Internal/exam-systems-issues/issues/937
     useEffect(() => {
         if (isNil(currentSubmission)) {
-            return;
+            // return;
         }
 
-        const { problem: { id } } = currentSubmission;
-
-        loadContestByProblemId(id);
+        // loadContestByProblemId(id);
     }, [ currentSubmission, loadContestByProblemId ]);
 
     const submissionTitle = useMemo(
@@ -127,30 +122,35 @@ const SubmissionDetails = () => {
         [ handleDownloadSubmissionFile, canAccessAdministration, currentSubmission, user ],
     );
 
-    const participationType = useMemo(
-        () => currentSubmission?.isOfficial
-            ? ContestParticipationType.Compete
-            : ContestParticipationType.Practice,
+    useEffect(
+        () => {
+            setPageTitle(submissionTitle);
+        },
+        [ setPageTitle, submissionTitle ],
+    );
+
+    const problemNameHeadingText = useMemo(
+        () => {
+            if (!currentSubmission) {
+                return '';
+            }
+
+            return `${currentSubmission?.problem.name} - ${currentSubmission?.problem.id}`;
+        },
         [ currentSubmission ],
     );
 
-    useEffect(() => {
-        setPageTitle(submissionTitle);
-    }, [ setPageTitle, submissionTitle ]);
-
-    const problemNameHeadingText = useMemo(
-        () => `${currentSubmission?.problem.name} - ${currentSubmission?.problem.id}`,
-        [ currentSubmission?.problem.id, currentSubmission?.problem.name ],
-    );
-
     const detailsHeadingText = useMemo(
-        () => `Details #${currentSubmission?.id}`,
+        () => (
+            <div style={{ marginBottom: '24px' }}>
+                Details #
+                {currentSubmission?.id}
+            </div>
+        ),
         [ currentSubmission?.id ],
     );
 
     const { submissionType } = currentSubmission || {};
-
-    const submissionsNavigationClassName = 'submissionsNavigation';
 
     const submissionsDetails = 'submissionDetails';
     const submissionDetailsClassName = concatClassNames(
@@ -159,46 +159,21 @@ const SubmissionDetails = () => {
         submissionsDetails,
     );
 
-    useEffect(
-        () => {
-            if (isNil(currentSubmission)) {
-                return;
-            }
-
-            const { id: submissionId, isOfficial } = currentSubmission;
-
-            (async () => {
-                await getSubmissionDetailsResults(submissionId, isOfficial);
-            })();
-        },
-        [ currentSubmission, getSubmissionDetailsResults ],
-    );
-
-    const submissionsReloadBtnClassName = 'submissionReloadBtn';
-
     const handleReloadClick = useCallback(
         async () => {
             if (isNil(currentSubmission)) {
                 return;
             }
 
-            const { id: submissionId, isOfficial } = currentSubmission;
+            // eslint-disable-next-line prefer-destructuring
+            const submissionId = currentSubmission.id;
 
-            await getSubmissionDetailsResults(submissionId, isOfficial);
+            setSubmissionDetailsResultsUrlParams({
+                submissionId,
+                take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
+            });
         },
-        [ currentSubmission, getSubmissionDetailsResults ],
-    );
-
-    const renderReloadButton = useCallback(
-        () => (
-            <Button
-              onClick={handleReloadClick}
-              text="Reload"
-              type={ButtonType.secondary}
-              className={submissionsReloadBtnClassName}
-            />
-        ),
-        [ handleReloadClick ],
+        [ currentSubmission, setSubmissionDetailsResultsUrlParams ],
     );
 
     const renderRetestButton = useCallback(
@@ -219,16 +194,41 @@ const SubmissionDetails = () => {
         },
         [ canAccessAdministration, getAdministrationRetestSubmissionInternalUrl ],
     );
+    const renderButtonsSection = useCallback(() => (
+        <div className={styles.buttonsSection}>
+            <Button
+              onClick={handleReloadClick}
+              text="Reload"
+              type={ButtonType.secondary}
+              className={styles.submissionReloadBtn}
+            />
+            {renderRetestButton()}
+        </div>
+    ), [ handleReloadClick, renderRetestButton ]);
 
-    const renderButtonsSection = useCallback(
-        () => (
-            <div className={styles.buttonsSection}>
-                { renderReloadButton() }
-                { renderRetestButton() }
-            </div>
-        ),
-        [ renderReloadButton, renderRetestButton ],
-    );
+    const renderTestsChangeMessage = useCallback(() => (
+        currentSubmission?.testRuns.length === 0 &&
+        currentSubmission.isCompiledSuccessfully &&
+        currentSubmission.totalTests > 0 &&
+        !currentSubmission.processingComment &&
+        currentSubmission.isProcessed
+            ? (
+                <div className={styles.testChangesWrapper}>
+                    <p>
+                        The input/output data changed. Your (
+                        {currentSubmission.points}
+                        /
+                        {currentSubmission.problem.maximumPoints}
+                        )
+                        submission is now outdated.
+                        Click &quot;Retest&quot; to resubmit your solution for re-evaluation against the new test cases.
+                        Your score may change.
+                    </p>
+                    {renderRetestButton()}
+                </div>
+            )
+            : ''
+    ), [ currentSubmission, renderRetestButton ]);
 
     const renderSubmissionInfo = useCallback(
         () => {
@@ -278,16 +278,16 @@ const SubmissionDetails = () => {
     );
 
     const backButtonState = useMemo(
-        () => isNil(contest)
+        () => isNil(currentSubmission?.contestId)
             ? ButtonState.disabled
             : ButtonState.enabled,
-        [ contest ],
+        [ currentSubmission ],
     );
 
     const refreshableSubmissionsList = useCallback(
         () => (
             <div className={styles.navigation}>
-                <div className={submissionsNavigationClassName}>
+                <div style={{ marginBottom: '24px' }}>
                     <Heading type={HeadingType.secondary}>Submissions</Heading>
                 </div>
                 <SubmissionsList
@@ -303,9 +303,9 @@ const SubmissionDetails = () => {
     );
 
     const setSubmissionAndStartParticipation = useCallback(
-        () => {
-            const { id: contestId } = contest as IIndexContestsType;
-
+        (contestId: number) => {
+            // eslint-disable-next-line prefer-destructuring
+            const participationType = contestParticipationType(currentSubmission!.isOfficial);
             navigate({
                 pathname: getParticipateInContestUrl({ id: contestId, participationType }),
                 hash: hashParam,
@@ -314,7 +314,7 @@ const SubmissionDetails = () => {
             setCurrentSubmission(null);
             selectSubmissionById(null);
         },
-        [ contest, navigate, getParticipateInContestUrl, participationType, hashParam, setCurrentSubmission, selectSubmissionById ],
+        [ currentSubmission, getParticipateInContestUrl, hashParam, navigate, selectSubmissionById, setCurrentSubmission ],
     );
 
     const codeEditor = useCallback(
@@ -323,23 +323,41 @@ const SubmissionDetails = () => {
                 <Heading
                   type={HeadingType.secondary}
                   className={styles.taskHeading}
+                  style={!isNil(problemNameHeadingText) && problemNameHeadingText.length >= 30
+                      ? { marginBottom: 0 }
+                      : { marginBottom: '24px' }}
                 >
                     <div className={styles.btnContainer}>
                         <LeftArrowIcon className={styles.leftArrow} size={IconSize.Large} />
                         <Button
                           type={ButtonType.secondary}
                           size={ButtonSize.small}
-                          onClick={() => setSubmissionAndStartParticipation()}
+                          onClick={() => setSubmissionAndStartParticipation(currentSubmission!.contestId)}
                           className={styles.backBtn}
                           text=" "
                           state={backButtonState}
                         />
                     </div>
-                    <div>
+                    <div style={{ maxWidth: '30ch', textAlign: 'center' }}>
                         {problemNameHeadingText}
                     </div>
                 </Heading>
-                {currentSubmission?.submissionType.allowBinaryFilesUpload
+                <div>
+                    {renderTestsChangeMessage()}
+                </div>
+                {
+                        !currentSubmission?.isProcessed
+                            ? (
+                                <AlertBox
+                                  className={styles.alertBox}
+                                  message="The submission is in queue and will be processed shortly. Please wait."
+                                  type={AlertBoxType.info}
+                                  isClosable={false}
+                                />
+                            )
+                            : null
+                    }
+                {submissionType?.allowBinaryFilesUpload
                     ? (
                         <div className={styles.resourceWrapper}>
                             {renderResourceLink()}
@@ -363,39 +381,32 @@ const SubmissionDetails = () => {
             renderDownloadErrorMessage,
             currentSubmission,
             setSubmissionAndStartParticipation,
+            renderTestsChangeMessage,
         ],
     );
 
     const submissionResults = useCallback(
-        () => (
-            <div className={submissionDetailsClassName}>
-                <Heading type={HeadingType.secondary}>{detailsHeadingText}</Heading>
-                {isNil(currentSubmission)
-                    ? ''
-                    : (
-                        <SubmissionResults
-                          testRuns={currentSubmission.testRuns}
-                          compilerComment={currentSubmission?.compilerComment}
-                          isCompiledSuccessfully={currentSubmission?.isCompiledSuccessfully}
-                        />
-                    )}
-            </div>
-        ),
-        [ currentSubmission, detailsHeadingText, submissionDetailsClassName ],
-    );
-
-    const renderErrorHeading = useCallback(
-        (message: string) => (
-            <div className={styles.headingContest}>
-                <Heading
-                  type={HeadingType.primary}
-                  className={styles.contestHeading}
-                >
-                    {message}
-                </Heading>
-            </div>
-        ),
-        [],
+        () => (isLoading
+            ? (
+                <div style={{ ...flexCenterObjectStyles }}>
+                    <SpinningLoader />
+                </div>
+            )
+            : (
+                <div className={submissionDetailsClassName}>
+                    <Heading type={HeadingType.secondary}>{detailsHeadingText}</Heading>
+                    {isNil(currentSubmission)
+                        ? ''
+                        : (
+                            <SubmissionResults
+                              testRuns={currentSubmission.testRuns}
+                              compilerComment={currentSubmission?.compilerComment}
+                              isCompiledSuccessfully={currentSubmission?.isCompiledSuccessfully}
+                            />
+                        )}
+                </div>
+            )),
+        [ currentSubmission, detailsHeadingText, submissionDetailsClassName, isLoading ],
     );
 
     const renderErrorMessage = useCallback(
@@ -403,37 +414,46 @@ const SubmissionDetails = () => {
             const error = first(validationErrors);
             if (!isNil(error)) {
                 const { detail } = error;
-                return renderErrorHeading(detail);
+                return (
+                    <div className={styles.headingContest}>
+                        <Heading type={HeadingType.primary} className={styles.contestHeading}>
+                            {detail}
+                        </Heading>
+                    </div>
+                );
             }
 
             return null;
         },
-        [ renderErrorHeading, validationErrors ],
+        [ validationErrors ],
     );
 
-    const renderSubmission = useCallback(
-        () => (
+    if (!isLoading && isNil(currentSubmission) && isEmpty(validationErrors)) {
+        return <div>No details fetched.</div>;
+    }
+
+    if (!isEmpty(validationErrors)) {
+        return renderErrorMessage();
+    }
+
+    if (isLoading) {
+        return (
+            <div style={{ ...flexCenterObjectStyles }}>
+                <SpinningLoader />
+            </div>
+        );
+    }
+
+    return (
+        <>
             <div className={styles.detailsWrapper}>
                 {refreshableSubmissionsList()}
                 {codeEditor()}
                 {submissionResults()}
             </div>
-        ),
-        [ codeEditor, refreshableSubmissionsList, submissionResults ],
+            <SubmissionResultsDetails testRuns={currentSubmission?.testRuns} />
+        </>
     );
-
-    const renderPage = useCallback(
-        () => isEmpty(validationErrors)
-            ? renderSubmission()
-            : renderErrorMessage(),
-        [ renderErrorMessage, validationErrors, renderSubmission ],
-    );
-
-    if (isNil(currentSubmission) && isEmpty(validationErrors)) {
-        return <div>No details fetched.</div>;
-    }
-
-    return renderPage();
 };
 
 export default SubmissionDetails;

@@ -15,7 +15,7 @@ public class ContestServiceModel : IMapExplicitly
 
     public string Name { get; set; } = null!;
 
-    public int Type { get; set; }
+    public ContestType Type { get; set; }
 
     public int? CategoryId { get; set; }
 
@@ -54,8 +54,6 @@ public class ContestServiceModel : IMapExplicitly
     public int PracticeParticipants { get; set; }
 
     public int ProblemsCount { get; set; }
-
-    public ContestType ContestType { get; set; }
 
     public IEnumerable<SubmissionTypeServiceModel> AllowedSubmissionTypes { get; set; } = null!;
 
@@ -152,19 +150,6 @@ public class ContestServiceModel : IMapExplicitly
 
     public bool HasPracticePassword => this.PracticePassword != null;
 
-    public double? RemainingTimeInMilliseconds
-    {
-        get
-        {
-            if (this.EndTime.HasValue)
-            {
-                return (this.EndTime.Value - DateTime.Now).TotalMilliseconds;
-            }
-
-            return null;
-        }
-    }
-
     public bool UserIsAdminOrLecturerInContest { get; set; }
 
     public bool UserCanCompete { get; set; }
@@ -190,7 +175,7 @@ public class ContestServiceModel : IMapExplicitly
             .ForMember(
                 d => d.ProblemsCount,
                 opt => opt.MapFrom(s => s.ProblemGroups.SelectMany(pg => pg.Problems).Count(p => !p.IsDeleted)))
-            .ForMember(d => d.ContestType, opt => opt.MapFrom(s => s.Type))
+            .ForMember(d => d.Type, opt => opt.MapFrom(s => s.Type))
             .ForMember(
                 d => d.AllowedSubmissionTypes,
                 opt =>

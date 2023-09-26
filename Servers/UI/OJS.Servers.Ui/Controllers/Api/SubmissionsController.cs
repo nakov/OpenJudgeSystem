@@ -110,15 +110,30 @@ public class SubmissionsController : BaseApiController
             .ToOkResult();
 
     /// <summary>
+    /// Gets a subset of submission results and details  for the selected user by specific problem and given take count.
+    /// </summary>
+    /// <param name="submissionId">The id of the submission.</param>
+    /// <param name="take">Number of submissions to return.</param>
+    /// <returns>A collection of submissions for a specific problem.</returns>
+    [HttpGet("{submissionId:int}")]
+    [ProducesResponseType(typeof(IEnumerable<SubmissionResultsResponseModel>), Status200OK)]
+    public async Task<IActionResult> GetSubmissionDetailsWithResults(
+        int submissionId,
+        [FromQuery] int take)
+        => await this.submissionsBusiness
+            .GetSubmissionDetailsWithResults(submissionId, take)
+            .Map<SubmissionDetailsWIthResultsResponseModel>()
+            .ToOkResult();
+
+    /// <summary>
     /// Saves/updates the provided execution result for the given submission in the database.
     /// </summary>
     /// <param name="submissionExecutionResult">The submission execution result.</param>
     /// <returns>Success model.</returns>
     /// <remarks>
-    /// The submission comes from the Judge distributor system.
+    /// The submission comes from the RabbitMQ execution result queue.
     /// It sends it to here after executing it on a remote worker.
     /// </remarks>
-    // TODO: align distributor endpoint and remove the custom path
     [HttpPost("/Submissions/SaveExecutionResult")]
     [ProducesResponseType(typeof(SaveExecutionResultResponseModel), Status200OK)]
     public async Task<IActionResult> SaveExecutionResult([FromBody] SubmissionExecutionResult submissionExecutionResult)
@@ -149,15 +164,31 @@ public class SubmissionsController : BaseApiController
     /// <summary>
     /// Gets user latest submissions (default number of submissions) by participation mode.
     /// </summary>
-    /// <param name="isOfficial">Boolean indicating submission participation mode (practice/compete).</param>
+    /// <param name="isOfficial">Nullable oolean indicating submission participation mode (practice/compete).
+    /// If no value is passed, all submission for user will be loaded, otherwise they will be filtered by mode.</param>
     /// <param name="page">The current page number.</param>
     /// <returns>A page with submissions containing information about their score and user.</returns>
     [HttpGet]
     [Authorize]
     [ProducesResponseType(typeof(PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>), Status200OK)]
-    public async Task<IActionResult> GetUserSubmissions([FromQuery] bool isOfficial, [FromQuery]int page)
+    public async Task<IActionResult> GetUserSubmissions([FromQuery] bool? isOfficial, [FromQuery]int page)
         => await this.submissionsBusiness
             .GetUsersLastSubmissions(isOfficial, page)
+            .Map<PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>>()
+            .ToOkResult();
+
+    /// <summary>
+    /// Gets user latest submissions for contest.
+    /// </summary>
+    /// <param name="contestId">Contest for which the submissions will be retrieved.</param>
+    /// <param name="page">The current page number.</param>
+    /// <returns>A page with submissions containing information about their score and user.</returns>
+    [HttpGet]
+    [Authorize]
+    [ProducesResponseType(typeof(PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>), Status200OK)]
+    public async Task<IActionResult> GetUserSubmissionsByContest([FromQuery] int contestId, [FromQuery] int page)
+        => await this.submissionsBusiness
+            .GetByContest(contestId, page)
             .Map<PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>>()
             .ToOkResult();
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
@@ -7,7 +7,7 @@ import { IIndexContestsType } from '../../../common/types';
 import { useAppUrls } from '../../../hooks/use-app-urls';
 import { useModal } from '../../../hooks/use-modal';
 import concatClassNames from '../../../utils/class-names';
-import { convertToSecondsRemaining } from '../../../utils/dates';
+import { convertToSecondsRemaining, getCurrentTimeInUTC } from '../../../utils/dates';
 import { Button, ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
 import LockIcon from '../../guidelines/icons/LockIcon';
@@ -49,25 +49,34 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const { getParticipateInContestUrl, getContestDetailsUrl } = useAppUrls();
     const { actions: { setIsShowing } } = useModal();
     const navigate = useNavigate();
+    const [ competeTimeHasExpired, setCompeteTimeHasExpired ] = useState(false);
+    const [ practiceTimeHasExpired, setPracticeTimeHasExpired ] = useState(false);
 
-    const participationType = useMemo(
-        () => canBeCompeted
-            ? ContestParticipationType.Compete
-            : ContestParticipationType.Practice,
-        [ canBeCompeted ],
+    const endDate = !isNil(endTime) && new Date(endTime) >= getCurrentTimeInUTC()
+        ? endTime
+        : !isNil(practiceEndTime)
+            ? practiceEndTime
+            : null;
+
+    const handleCountdownEnd = useCallback(
+        () => {
+            if (!isNil(endDate) && new Date(endDate) <= getCurrentTimeInUTC()) {
+                if (canBeCompeted) {
+                    setCompeteTimeHasExpired(true);
+                    return;
+                }
+
+                if (canBePracticed) {
+                    setPracticeTimeHasExpired(true);
+                }
+            }
+        },
+        [ endDate, canBeCompeted, canBePracticed ],
     );
 
     const renderCountdown = useCallback(
         () => {
-            const endDate = canBeCompeted
-                ? endTime
-                : practiceEndTime;
-
-            if (canBePracticed && isNil(practiceEndTime) && isNil(endDate)) {
-                return <p>No practice end time.</p>;
-            }
-
-            if ((!canBePracticed && !canBeCompeted) || isNil(endDate)) {
+            if (isNil(endDate) || new Date(endDate) < getCurrentTimeInUTC()) {
                 return null;
             }
 
@@ -76,10 +85,11 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   key={id}
                   duration={convertToSecondsRemaining(new Date(endDate))}
                   metric={Metric.seconds}
+                  handleOnCountdownEnd={handleCountdownEnd}
                 />
             );
         },
-        [ canBeCompeted, canBePracticed, endTime, id, practiceEndTime ],
+        [ endDate, handleCountdownEnd, id ],
     );
 
     const renderContestLockIcon = useCallback(
@@ -117,7 +127,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                         <LinkButton
                           type={LinkButtonType.plain}
                           size={ButtonSize.none}
-                          to={getContestDetailsUrl({ id, participationType })}
+                          to={getContestDetailsUrl(id)}
                           text={name}
                         />
                     </span>
@@ -126,7 +136,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                     <LinkButton
                       type={LinkButtonType.plain}
                       size={ButtonSize.none}
-                      to={getContestDetailsUrl({ id, participationType })}
+                      to={getContestDetailsUrl(id)}
                       text={name}
                     />
                 </span>
@@ -142,7 +152,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   onClick={() => setIsShowingAndNavigateToContest()}
                   text="Compete"
                   state={
-                        canBeCompeted
+                        canBeCompeted && !competeTimeHasExpired
                             ? ButtonState.enabled
                             : ButtonState.disabled
                     }
@@ -157,7 +167,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   text="Practice"
                   type={LinkButtonType.secondary}
                   state={
-                        canBePracticed
+                        canBePracticed && !practiceTimeHasExpired
                             ? ButtonState.enabled
                             : ButtonState.disabled
                     }
