@@ -35,13 +35,14 @@ const ContestPage = () => {
             isPasswordValid,
             contestError,
             isRegisterForContestSuccessful,
-            isUserParticipant,
+            startedModalUserParticipation,
             contest,
         },
         actions: {
             registerParticipant,
             start,
             clearContestError,
+            setStartedModalUserParticipation,
         },
     } = useCurrentContest();
 
@@ -102,16 +103,17 @@ const ContestPage = () => {
         [],
     );
 
-    const renderErrorMessage = useCallback(
+    const renderErrorMessageAndSetStartedUserParticipation = useCallback(
         () => {
             if (!isNil(contestError)) {
                 const { detail } = contestError;
+                setStartedModalUserParticipation(false);
                 return renderErrorHeading(detail);
             }
 
             return null;
         },
-        [ renderErrorHeading, contestError ],
+        [ renderErrorHeading, contestError, setStartedModalUserParticipation ],
     );
 
     const renderContestPage = useCallback(
@@ -122,16 +124,14 @@ const ContestPage = () => {
                         <SpinningLoader />
                     </div>
                 )
-                : isParticipationOfficial && contest?.isOnline && !isUserAdmin && !isUserParticipant
-                    ? (
-                        <ContestModal contest={modalContest} />
-                    )
+                : isParticipationOfficial && contest?.isOnline && !isUserAdmin && !startedModalUserParticipation
+                    ? <ContestModal contest={modalContest} />
                     : <Contest />
-            : renderErrorMessage(),
+            : renderErrorMessageAndSetStartedUserParticipation(),
         [
             contestError,
-            renderErrorMessage,
-            isUserParticipant,
+            renderErrorMessageAndSetStartedUserParticipation,
+            startedModalUserParticipation,
             isParticipationOfficial,
             modalContest,
             isUserAdmin,
@@ -195,7 +195,7 @@ const ContestPage = () => {
 
             if (!isNil(contest)) {
                 const { isOnline } = contest;
-                if (isUserParticipant || !isOnline || !isParticipationOfficial) {
+                if (startedModalUserParticipation || !isOnline || !isParticipationOfficial) {
                     start(internalContest);
                 }
 
@@ -215,7 +215,7 @@ const ContestPage = () => {
             start,
             contest,
             setModalContest,
-            isUserParticipant,
+            startedModalUserParticipation,
             isPasswordValid,
             contestError,
             isParticipationOfficial,

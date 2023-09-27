@@ -20,15 +20,15 @@ const defaultState = { state: { isShowing: true } };
 const ContestModal = ({ contest }: IContestModalProps) => {
     const [ isShowing, setIsShowing ] = useState<boolean>(defaultState.state.isShowing);
     const navigate = useNavigate();
-    const { actions: { setIsUserParticipant } } = useCurrentContest();
+    const { actions: { setStartedModalUserParticipation } } = useCurrentContest();
     const { getHomePageUrl } = useAppUrls();
 
     const startContestAndHideModal = useCallback(
         () => {
-            setIsUserParticipant(true);
+            setStartedModalUserParticipation(true);
             setIsShowing(false);
         },
-        [ setIsUserParticipant ],
+        [ setStartedModalUserParticipation ],
     );
 
     const toggleAndRedirectToHomePage = useCallback(
