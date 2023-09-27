@@ -441,7 +441,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .First(st => st.SubmissionTypeId == model.SubmissionTypeId)
             .SubmissionType;
 
-        SubmissionServiceModel submissionServiceModel;
+        var submissionServiceModel = this.BuildSubmissionForProcessing(newSubmission, problem, submissionType);
+        var submissionServiceModelAsJson = submissionServiceModel.ToJson();
+
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
         if (submissionType.ExecutionStrategyType is ExecutionStrategyType.NotFound or ExecutionStrategyType.DoNothing)
         {
@@ -455,8 +457,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         await this.submissionsData.Add(newSubmission);
         await this.submissionsData.SaveChanges();
 
-        submissionServiceModel = this.BuildSubmissionForProcessing(newSubmission, problem, submissionType);
-        await this.submissionsForProcessingData.Add(newSubmission.Id, submissionServiceModel.ToJson());
+        await this.submissionsForProcessingData.Add(newSubmission.Id, submissionServiceModelAsJson);
         await this.submissionsData.SaveChanges();
 
         scope.Complete();
