@@ -192,9 +192,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var responseModel = new SubmissionDetailsWithResultsModel();
         responseModel.SubmissionDetails = await this.GetDetailsById(submissionId);
         responseModel.SubmissionResults = await this.GetSubmissionDetailsResults(
-            submissionId,
-            responseModel.SubmissionDetails.IsOfficial,
-            take)
+                submissionId,
+                responseModel.SubmissionDetails.IsOfficial,
+                take)
             .ToListAsync();
         return responseModel;
     }

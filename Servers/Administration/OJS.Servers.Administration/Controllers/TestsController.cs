@@ -334,6 +334,10 @@ public class TestsController : BaseAutoCrudAdminController<Test>
                 entity.IsTrialTest = false;
                 entity.IsOpenTest = false;
                 break;
+            case TestTypeEnum.Compete:
+                entity.IsTrialTest = false;
+                entity.IsOpenTest = false;
+                break;
         }
     }
 
