@@ -38,21 +38,6 @@ public class ContestValidationService : IContestValidationService
             return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.IsExpired, contest.Name));
         }
 
-        if (official &&
-            !CanUserCompeteByContestByUserAndIsAdmin(
-                contest,
-                user.IsAdmin,
-                isUserLecturerInContest,
-                allowToAdminAlways: true))
-        {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.CanBeCompeted, contest.Name));
-        }
-
-        if (!official && !contest.CanBePracticed && !isUserLecturerInContest && !user.IsAdmin)
-        {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.CanBePracticed, contest.Name));
-        }
-
         return ValidationResult.Valid();
     }
 
