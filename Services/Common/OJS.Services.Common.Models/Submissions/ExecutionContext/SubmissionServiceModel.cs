@@ -71,7 +71,7 @@
                     opt => opt.MapFrom(s => s.SubmissionType!.ExecutionStrategyType))
                 .ForMember(
                     d => d.ExecutionType,
-                    opt => opt.MapFrom(s => ExecutionType.TestsExecution))
+                    opt => opt.MapFrom(s => Workers.Common.Models.ExecutionType.TestsExecution))
                 .ForMember(
                     d => d.TimeLimit,
                     opt => opt.MapFrom(s => s.Problem!.TimeLimit))
