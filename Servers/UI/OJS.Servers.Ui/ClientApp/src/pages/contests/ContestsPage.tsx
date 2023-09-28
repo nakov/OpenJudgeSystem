@@ -25,7 +25,6 @@ import concatClassNames from '../../utils/class-names';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { toLowerCase } from '../../utils/string-utils';
 import { getContestCategoryBreadcrumbItemPath } from '../../utils/urls';
-import NotFoundPage from '../not-found/NotFoundPage';
 import { setLayout } from '../shared/set-layout';
 
 import styles from './ContestsPage.module.scss';
