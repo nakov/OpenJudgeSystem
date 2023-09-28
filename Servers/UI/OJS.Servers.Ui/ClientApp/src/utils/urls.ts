@@ -1,7 +1,6 @@
 import isNil from 'lodash/isNil';
 
 import {
-    IContestDetailsAppUrlParams,
     IContestResultsUrl,
     IParticipateInContestTypeUrlParams,
     IProblemSubmissionDetailsUrlParams,
@@ -96,10 +95,7 @@ const getParticipateInContestUrl = ({
 const getContestDetailsUrl =
     ({ id, isOfficial }: IContestDetailsUrlParams) => `${baseApiUrl}/Contests/Details/${id}?official=${isOfficial}`;
 
-const getContestDetailsAppUrl = ({
-    id,
-    participationType,
-}: IContestDetailsAppUrlParams) => `/contests/details/${id}/${participationType}`;
+const getContestDetailsAppUrl = (id: number) => `/contests/${id}`;
 
 const getRegisterForContestUrl = ({
     id,

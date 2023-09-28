@@ -124,7 +124,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                         <LinkButton
                           type={LinkButtonType.plain}
                           size={ButtonSize.none}
-                          to={getContestDetailsUrl(id)}
+                          to={getContestDetailsAppUrl(id)}
                           text={name}
                         />
                     </span>
@@ -133,7 +133,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                     <LinkButton
                       type={LinkButtonType.plain}
                       size={ButtonSize.none}
-                      to={getContestDetailsUrl(id)}
+                      to={getContestDetailsAppUrl(id)}
                       text={name}
                     />
                 </span>
