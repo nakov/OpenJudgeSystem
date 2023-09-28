@@ -61,6 +61,10 @@ ${administrationBaseUrl}/Problems?ContestId-equals=${id}`;
 const getAdministrationContestEditUrl = ({ id }: IContestEditUrlParams) => `
 ${administrationBaseUrl}/Contests/Edit?PK=${id}`;
 
+const getAdministrationContestProblemsInternalUrl = (id: string) => `/Contest/Problems/${id}`;
+
+const getAdministrationContestEditInternalUrl = (id: string) => `/Contest/Edit/${id}`;
+
 // profile
 const getProfileInfoUrl = () => `${baseApiUrl}/Users/GetProfileInfo`;
 const getSubmissionsForProfileUrl = () => `${baseApiUrl}/Submissions/GetForProfile`;
@@ -280,4 +284,6 @@ export {
     getContestDetailsAppUrl,
     getAdministrationProblems,
     getAdministrationContestEditUrl,
+    getAdministrationContestEditInternalUrl,
+    getAdministrationContestProblemsInternalUrl,
 };
