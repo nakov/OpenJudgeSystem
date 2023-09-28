@@ -1,9 +1,9 @@
-$(document).ready(function () {
-    $(":checkbox").on('click', function (event) {
-        if (event.target.value === "True") {
-            event.target.value = "False"
+$(document).ready(() => {
+    $(':checkbox').on('click', (event) => {
+        if (event.target.value === 'True') {
+            event.target.value = 'False';
         } else {
-            event.target.value = "True"
+            event.target.value = 'True';
         }
     });
 
@@ -11,27 +11,40 @@ $(document).ready(function () {
 
     forms.find('select').select2();
 
-    forms.submit(function (ev) {
+    forms.submit((ev) => {
         const form = $(ev.target);
 
         form.find('select').prop('disabled', false);
 
-        form.find('fieldset').each(function (ev, fs) {
+        form.find('fieldset').each((ev, fs) => {
             const selectedCheckboxes = $(fs).find('input[type=checkbox]').toArray();
 
-            const getExpandElement = (checkbox) => {
-                const expandElement = $('#' + $(checkbox).attr("expand") + ' :input')[0];
+            const getExpandElements = (checkbox) => {
+                const expandElementId = $(checkbox).attr('expand');
+                const result = [];
 
-                return expandElement && expandElement.name && expandElement.value
-                    ? {name: expandElement.name, value: expandElement.value}
+                if (expandElementId) {
+                    const expandElements = $(`#${$(checkbox).attr('expand')} :input`);
+
+                    expandElements.each(function () {
+                        const element = $(this);
+                        result.push({
+                            name: element.prop('name'),
+                            value: element.val(),
+                        });
+                    });
+                }
+
+                return result.length > 0
+                    ? result
                     : null;
             };
 
-            const result = selectedCheckboxes.map(x => ({
-                name: $(x).data("name"),
-                value: $(x).data("value"),
-                isChecked: $(x).is(":checked"),
-                expand: getExpandElement(x)
+            const result = selectedCheckboxes.map((x) => ({
+                name: $(x).data('name'),
+                value: $(x).data('value'),
+                isChecked: $(x).is(':checked'),
+                expand: getExpandElements(x),
             }));
 
             const input = $(`<input name="${fs.name}">`)

@@ -45,7 +45,6 @@ const ContestDetailsPage = () => {
         getAdministrationContestEditInternalUrl,
     } = useAppUrls();
     const { actions: { setPageTitle } } = usePageTitles();
-    const navigate = useNavigate();
 
     const contestTitle = useMemo(
         () => `${contestDetails?.name}`,

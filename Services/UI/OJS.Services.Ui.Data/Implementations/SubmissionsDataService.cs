@@ -104,6 +104,7 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             .DbSet
             .Where(x =>
                 x.Participant!.UserId == userId &&
+                x.Problem != null &&
                 x.Problem.ProblemGroup.ContestId == contestId &&
                 x.Problem.ShowResults);
 
