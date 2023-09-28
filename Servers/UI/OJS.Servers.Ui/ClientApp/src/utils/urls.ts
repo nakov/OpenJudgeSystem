@@ -1,6 +1,13 @@
 import isNil from 'lodash/isNil';
 
-import { ISubmissionDetailsUrlParams } from '../common/app-url-types';
+import {
+    IContestResultsUrl,
+    IParticipateInContestTypeUrlParams,
+    IProblemSubmissionDetailsUrlParams,
+    ISubmissionDetailsUrlParams,
+} from '../common/app-url-types';
+import { ContestResultType } from '../common/constants';
+import { FilterType } from '../common/contest-types';
 import { SearchParams } from '../common/search-types';
 import {
     IAllContestsUrlParams, IContestDetailsUrlParams,
@@ -33,6 +40,9 @@ const
 
 const baseApiUrl = `${baseUrl}/api`;
 
+// home
+const getHomePageUrl = () => '/';
+
 // auth
 const getLoginSubmitUrl = () => `${baseUrl}/Account/Login`;
 const getLogoutUrl = () => `${baseUrl}/Account/Logout`;
@@ -45,10 +55,15 @@ const getAdministrationContestsGridUrl = () => `${administrationBaseUrl}/Contest
 const getAdministrationNavigation = () => '/administration';
 const getAdministrationRetestSubmission = ({ id }: IRetestSubmissionUrlParams) => `
 ${administrationBaseUrl}/Submissions/Retest?PK=${id}`;
+const getAdministrationRetestSubmissionInternalUrl = () => '/Submissions/Retest';
 const getAdministrationProblems = ({ id }: IContestProblemsUrlParams) => `
 ${administrationBaseUrl}/Problems?ContestId-equals=${id}`;
 const getAdministrationContestEditUrl = ({ id }: IContestEditUrlParams) => `
 ${administrationBaseUrl}/Contests/Edit?PK=${id}`;
+
+const getAdministrationContestProblemsInternalUrl = (id: string) => `/Contest/Problems/${id}`;
+
+const getAdministrationContestEditInternalUrl = (id: string) => `/Contest/Edit/${id}`;
 
 // profile
 const getProfileInfoUrl = () => `${baseApiUrl}/Users/GetProfileInfo`;
@@ -76,8 +91,15 @@ const getAllContestsUrl = ({ filters, sorting, page }: IAllContestsUrlParams) =>
     return `${baseApiUrl}/Contests/GetAll?${filtersQuery}&${sortingQuery}&${pageQuery}`;
 };
 
+const getParticipateInContestUrl = ({
+    id,
+    participationType,
+}: IParticipateInContestTypeUrlParams) => `/contests/${id}/${participationType}`;
+
 const getContestDetailsUrl =
     ({ id, isOfficial }: IContestDetailsUrlParams) => `${baseApiUrl}/Contests/Details/${id}?official=${isOfficial}`;
+
+const getContestDetailsAppUrl = (id: number) => `/contests/${id}`;
 
 const getRegisterForContestUrl = ({
     id,
@@ -103,7 +125,14 @@ const getContestByProblemUrl = ({ problemId }: IGetContestByProblemUrlParams) =>
 const getCategoriesTreeUrl =
     () => `${baseApiUrl}/ContestCategories/GetCategoriesTree`;
 
+const getContestCategoryBreadcrumbItemPath = (id: string) => `/Contests?${FilterType.Category.toString()}=${id}`;
+
 const getContestResultsUrl = ({
+    id,
+    participationType,
+}: IContestResultsUrl) => `/contests/${id}/${participationType}/results/${ContestResultType.Simple}`;
+
+const getContestResultsApiUrl = ({
     id,
     official,
     full,
@@ -116,6 +145,11 @@ const getSubmissionResultsByProblemUrl = ({
     take,
 }: IGetSubmissionResultsByProblemUrlParams) => `
     ${baseApiUrl}/Submissions/GetSubmissionResultsByProblem/${problemId}?isOfficial=${isOfficial}&take=${take}`;
+
+const getProblemSubmissionDetailsUrl = ({
+    submissionId,
+    hashParam,
+}: IProblemSubmissionDetailsUrlParams) => `/submissions/${submissionId}/details#${hashParam}`;
 
 const getSubmissionDetailsResultsUrl = ({
     submissionId,
@@ -209,16 +243,21 @@ export {
     getAdministrationNavigation,
     getAdministrationRetestSubmission,
     getProfileInfoUrl,
+    getParticipateInContestUrl,
+    getContestCategoryBreadcrumbItemPath,
     getSubmissionsForProfileUrl,
     getParticipationsForProfileUrl,
     getAllParticipationsForUserUrl,
     getIndexContestsUrl,
     getAllContestsUrl,
+    getAdministrationRetestSubmissionInternalUrl,
     getSubmitContestPasswordUrl,
+    getHomePageUrl,
     getRegisterForContestUrl,
     getStartContestParticipationUrl,
     getContestParticipantScoresForParticipantUrl,
     getContestResultsUrl,
+    getContestResultsApiUrl,
     getCategoriesTreeUrl,
     getContestByProblemUrl,
     getSubmissionResultsByProblemUrl,
@@ -234,6 +273,7 @@ export {
     getSubmissionDetailsByIdUrl,
     getSubmitUrl,
     getSubmitFileUrl,
+    getProblemSubmissionDetailsUrl,
     getSubmissionFileDownloadUrl,
     getSubmissionDetailsUrl,
     getAllContestStrategyFiltersUrl,
@@ -241,6 +281,9 @@ export {
     getHomeStatisticsUrl,
     getSearchResults,
     getContestDetailsUrl,
+    getContestDetailsAppUrl,
     getAdministrationProblems,
     getAdministrationContestEditUrl,
+    getAdministrationContestEditInternalUrl,
+    getAdministrationContestProblemsInternalUrl,
 };
