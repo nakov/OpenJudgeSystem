@@ -1,6 +1,7 @@
 namespace OJS.Services.Ui.Business.Implementations
 {
     using Microsoft.EntityFrameworkCore;
+    using OJS.Common.Enumerations;
     using OJS.Data.Models;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Users;
@@ -50,6 +51,12 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (externalUserIds.Any())
             {
+                this.backgroundJobs.AddOrUpdateRecurringJob<IExamGroupsBusinessService>(
+                    "testjob",
+                    x => x.AddExternalUsersByIdAndUserIds(examGroup.Id, externalUserIds),
+                    "*/5 * * * *",
+                    "administration");
+
                 this.backgroundJobs.AddFireAndForgetJob<IExamGroupsBusinessService>(
                     x => x.AddExternalUsersByIdAndUserIds(examGroup.Id, externalUserIds));
             }

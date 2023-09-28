@@ -1,8 +1,8 @@
 namespace OJS.Servers.Administration.Controllers;
 
-using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OJS.Common.Enumerations;
 using OJS.Services.Infrastructure.BackgroundJobs;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Implementations;
@@ -15,6 +15,8 @@ public class BackgroundJobsController : BaseAdminViewController
 {
     private readonly IHangfireBackgroundJobsService hangfireBackgroundJobsService;
     private readonly ISubmissionsForProcessingBusinessService submissionsForProcessingBusinessService;
+
+    private string queueName = ApplicationName.Administration.ToString();
 
     public BackgroundJobsController(
         IHangfireBackgroundJobsService hangfireBackgroundJobsService,
@@ -29,11 +31,12 @@ public class BackgroundJobsController : BaseAdminViewController
     {
         this.hangfireBackgroundJobsService
             .AddOrUpdateRecurringJob<SubmissionsForProcessingBusinessService>(
-                BackgroundJobs.EnqueuePendingSubmissionsJobName,
+                BackgroundJobs.JobNames.EnqueuePendingSubmissionsJobName,
                 m => m.EnqueuePendingSubmissions(),
-                BackgroundJobs.EnqueuePendingSubmissionsJobCron);
+                BackgroundJobs.JobNames.EnqueuePendingSubmissionsJobCron,
+                this.queueName);
 
-        this.TempData.AddSuccessMessage(BackgroundJobs.EnqueuePendingSubmissionsJobAddedMessage);
+        this.TempData.AddSuccessMessage(BackgroundJobs.JobNames.EnqueuePendingSubmissionsJobAddedMessage);
 
         return this.Redirect("/");
     }
@@ -43,11 +46,12 @@ public class BackgroundJobsController : BaseAdminViewController
     {
         this.hangfireBackgroundJobsService
             .AddOrUpdateRecurringJob<SubmissionsForProcessingBusinessService>(
-                BackgroundJobs.DeleteOldSubmissionsJobName,
+                BackgroundJobs.JobNames.DeleteOldSubmissionsJobName,
                 m => m.DeleteProcessedSubmissions(),
-                BackgroundJobs.DeleteOldSubmissionsJobCron);
+                BackgroundJobs.JobNames.DeleteOldSubmissionsJobCron,
+                this.queueName);
 
-        this.TempData.AddSuccessMessage(BackgroundJobs.DeleteOldSubmissionsJobAddedMessage);
+        this.TempData.AddSuccessMessage(BackgroundJobs.JobNames.DeleteOldSubmissionsJobAddedMessage);
 
         return this.Redirect("/");
     }

@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\..\Services\Administration\OJS.Services.Administration.Business\OJS.Services.Administration.Business.csproj" />
       <ProjectReference Include="..\..\Infrastructure\OJS.Servers.Infrastructure\OJS.Servers.Infrastructure.csproj" />
     </ItemGroup>
 
