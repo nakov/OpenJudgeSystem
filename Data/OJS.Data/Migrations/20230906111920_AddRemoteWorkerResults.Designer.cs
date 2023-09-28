@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OJS.Data;
 
@@ -11,13 +12,14 @@ using OJS.Data;
 namespace OJS.Data.Migrations
 {
     [DbContext(typeof(OjsDbContext))]
-    partial class OjsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230906111920_AddRemoteWorkerResults")]
+    partial class AddRemoteWorkerResults
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.16")
+                .HasAnnotation("ProductVersion", "6.0.21")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -892,31 +894,6 @@ namespace OJS.Data.Migrations
                     b.ToTable("ProblemResources");
                 });
 
-            modelBuilder.Entity("OJS.Data.Models.ProblemSubmissionTypeExecutionDetails", b =>
-                {
-                    b.Property<int>("SubmissionTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProblemId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MemoryLimit")
-                        .HasColumnType("int");
-
-                    b.Property<byte[]>("SolutionSkeleton")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<int?>("TimeLimit")
-                        .HasColumnType("int");
-
-                    b.HasKey("SubmissionTypeId", "ProblemId");
-
-                    b.HasIndex("ProblemId");
-
-                    b.ToTable("ProblemSubmissionTypeExecutionDetails");
-                });
-
             modelBuilder.Entity("OJS.Data.Models.Setting", b =>
                 {
                     b.Property<string>("Name")
@@ -1089,9 +1066,6 @@ namespace OJS.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SubmissionId")
-                        .IsUnique();
-
                     b.ToTable("SubmissionsForProcessing");
                 });
 
@@ -1132,6 +1106,25 @@ namespace OJS.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SubmissionTypes");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.SubmissionTypeInProblem", b =>
+                {
+                    b.Property<int>("SubmissionTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProblemId")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("SolutionSkeleton")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.HasKey("SubmissionTypeId", "ProblemId");
+
+                    b.HasIndex("ProblemId");
+
+                    b.ToTable("SubmissionTypeProblems");
                 });
 
             modelBuilder.Entity("OJS.Data.Models.Tag", b =>
@@ -1691,25 +1684,6 @@ namespace OJS.Data.Migrations
                     b.Navigation("Problem");
                 });
 
-            modelBuilder.Entity("OJS.Data.Models.ProblemSubmissionTypeExecutionDetails", b =>
-                {
-                    b.HasOne("OJS.Data.Models.Problems.Problem", "Problem")
-                        .WithMany("ProblemSubmissionTypeExecutionDetails")
-                        .HasForeignKey("ProblemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OJS.Data.Models.Submissions.SubmissionType", "SubmissionType")
-                        .WithMany("ProblemSubmissionTypeExecutionDetails")
-                        .HasForeignKey("SubmissionTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Problem");
-
-                    b.Navigation("SubmissionType");
-                });
-
             modelBuilder.Entity("OJS.Data.Models.Submissions.SourceCode", b =>
                 {
                     b.HasOne("OJS.Data.Models.Users.UserProfile", "Author")
@@ -1742,6 +1716,25 @@ namespace OJS.Data.Migrations
                         .HasForeignKey("SubmissionTypeId");
 
                     b.Navigation("Participant");
+
+                    b.Navigation("Problem");
+
+                    b.Navigation("SubmissionType");
+                });
+
+            modelBuilder.Entity("OJS.Data.Models.SubmissionTypeInProblem", b =>
+                {
+                    b.HasOne("OJS.Data.Models.Problems.Problem", "Problem")
+                        .WithMany("SubmissionTypesInProblems")
+                        .HasForeignKey("ProblemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OJS.Data.Models.Submissions.SubmissionType", "SubmissionType")
+                        .WithMany("SubmissionTypesInProblems")
+                        .HasForeignKey("SubmissionTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Problem");
 
@@ -1948,11 +1941,11 @@ namespace OJS.Data.Migrations
                 {
                     b.Navigation("ParticipantScores");
 
-                    b.Navigation("ProblemSubmissionTypeExecutionDetails");
-
                     b.Navigation("ProblemsForParticipants");
 
                     b.Navigation("Resources");
+
+                    b.Navigation("SubmissionTypesInProblems");
 
                     b.Navigation("Submissions");
 
@@ -1973,7 +1966,7 @@ namespace OJS.Data.Migrations
 
             modelBuilder.Entity("OJS.Data.Models.Submissions.SubmissionType", b =>
                 {
-                    b.Navigation("ProblemSubmissionTypeExecutionDetails");
+                    b.Navigation("SubmissionTypesInProblems");
                 });
 
             modelBuilder.Entity("OJS.Data.Models.Tag", b =>

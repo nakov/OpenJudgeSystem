@@ -10,7 +10,6 @@ import ProblemSubmissionsProvider from './hooks/submissions/use-problem-submissi
 import PublicSubmissionsProvider from './hooks/submissions/use-public-submissions';
 import SubmissionsProvider from './hooks/submissions/use-submissions';
 import SubmissionsDetailsProvider from './hooks/submissions/use-submissions-details';
-import AppUrlsProvider from './hooks/use-app-urls';
 import AuthProvider from './hooks/use-auth';
 import ContestCategoriesProvider from './hooks/use-contest-categories';
 import CategoriesBreadcrumbProvider from './hooks/use-contest-categories-breadcrumb';
@@ -39,7 +38,6 @@ const App = () => {
     const providers = [
         UrlParamsProvider,
         RouteUrlParamsProvider,
-        AppUrlsProvider,
         ServicesProvider,
         PageProvider,
         NotificationsProvider,
