@@ -1,7 +1,8 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { ContestParticipationType } from '../../../common/constants';
+import { contestParticipationType } from '../../../common/contest-helpers';
 import { IProblemType } from '../../../common/types';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import { useProblems } from '../../../hooks/use-problems';
@@ -9,6 +10,8 @@ import concatClassNames from '../../../utils/class-names';
 import { getContestResultsUrl } from '../../../utils/urls';
 import { Button, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
+import IconSize from '../../guidelines/icons/common/icon-sizes';
+import ExcludedFromHomeworkIcon from '../../guidelines/icons/ExcludedFromHomeworkIcon';
 import List, { ListType } from '../../guidelines/lists/List';
 import SubmissionResultPointsLabel from '../../submissions/submission-result-points-label/SubmissionResultPointsLabel';
 
@@ -33,12 +36,7 @@ const ContestTasksNavigation = () => {
         },
     } = useCurrentContest();
 
-    const participationType = useMemo(
-        () => isOfficial
-            ? ContestParticipationType.Compete
-            : ContestParticipationType.Practice,
-        [ isOfficial ],
-    );
+    const participationType = contestParticipationType(isOfficial);
 
     const renderTask = useCallback(
         (problem: IProblemType) => {
@@ -69,6 +67,8 @@ const ContestTasksNavigation = () => {
                       type={ButtonType.plain}
                     >
                         {problem.name}
+                        {problem?.isExcludedFromHomework &&
+                            <ExcludedFromHomeworkIcon className={styles.excludedFromHomeworkIcon} size={IconSize.Small} />}
                     </Button>
                     <SubmissionResultPointsLabel
                       points={problemScore}
@@ -84,16 +84,25 @@ const ContestTasksNavigation = () => {
     const sideBarTasksList = 'all-tasks-list';
     const sideBarTasksListClassName = concatClassNames(styles.tasksListSideNavigation, sideBarTasksList);
     const renderTasksList = useCallback(
-        () => (
-            <List
-              values={problems.sort(compareByOrderBy)}
-              itemFunc={renderTask}
-              className={sideBarTasksListClassName}
-              itemClassName={styles.taskListItem}
-              type={ListType.numbered}
-            />
-        ),
-        [ problems, renderTask, sideBarTasksListClassName ],
+        () => isEmpty(contest?.problems)
+            ? (
+                <Heading
+                  type={HeadingType.secondary}
+                  className={styles.noTasksText}
+                >
+                    There are no tasks for this contest, yet.
+                </Heading>
+            )
+            : (
+                <List
+                  values={problems.sort(compareByOrderBy)}
+                  itemFunc={renderTask}
+                  className={sideBarTasksListClassName}
+                  itemClassName={styles.taskListItem}
+                  type={ListType.numbered}
+                />
+            ),
+        [ problems, renderTask, sideBarTasksListClassName, contest?.problems ],
     );
 
     const resultsButtonClass = 'resultsButton';

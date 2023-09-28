@@ -1,7 +1,7 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import isNil from 'lodash/isNil';
 
-import { ContestParticipationType } from '../../../common/constants';
+import { contestParticipationType } from '../../../common/contest-helpers';
 import { ISubmissionResponseModel, PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
 import { useAuth } from '../../../hooks/use-auth';
 import { useProblems } from '../../../hooks/use-problems';
@@ -39,12 +39,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
     const { actions: { initiateRedirectionToProblem } } = useProblems();
     const { state: loggedInUser } = useAuth();
 
-    const participationType = useMemo(
-        () => isOfficial
-            ? ContestParticipationType.Compete
-            : ContestParticipationType.Practice,
-        [ isOfficial ],
-    );
+    const participationType = contestParticipationType(isOfficial);
 
     const handleDetailsButtonSubmit = useCallback(
         () => {

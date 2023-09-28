@@ -1050,10 +1050,22 @@ namespace OJS.Data.Migrations
                     b.Property<bool>("Processing")
                         .HasColumnType("bit");
 
+                    b.Property<string>("SerializedException")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SerializedExecutionDetails")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SerializedExecutionResult")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("SubmissionId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SubmissionId")
+                        .IsUnique();
 
                     b.ToTable("SubmissionsForProcessing");
                 });

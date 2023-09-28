@@ -6,7 +6,7 @@
 
 .backBtn {
   border: 0;
-  margin-left: -20px;
+  margin-left: -30px;
   margin-right: -30px;
 }
 
@@ -36,6 +36,7 @@
 .detailsWrapper {
   @extend %wrapper;
   @extend %columnsThree;
+
   margin-bottom: 40px;
 }
 
@@ -95,7 +96,7 @@
 
 .submissionDetails {
   border-left: 0;
-  
+
   ul {
     max-height: 700px;
     overflow: auto;
@@ -105,15 +106,15 @@
 .taskHeading {
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
-  
+  justify-content: center;
+
   > div {
     > div {
       pointer-events: none;
     }
 
     button {
-      margin-left: -30px;
+      margin-right: 30px;
     }
   }
 }
@@ -122,23 +123,27 @@
   margin-top: 20px;
 }
 
+.alertBox {
+  margin-bottom: 20px;
+}
+
 .submissionReloadBtn {
-  margin-top: 10px;
   margin-right: 20px;
+  margin-top: 10px;
 }
 
 .testChangesWrapper {
-  display: flex;
   align-items: center;
-  justify-content: space-around;
-  border: 2px solid;
-  font-size: 16px;
-  padding: 1rem;
-  border-color: colors.$background-color-btn-primary;
+  background-color: colors.$warning-color;
+  border: 2px solid colors.$warning-color;
   border-radius: 12px;
-  background-color: colors.$background-color-btn-primary;
+  color: colors.$white-color;
+  display: flex;
   font-family: fonts.$font-family-lato;
+  font-size: 16px;
+  justify-content: space-around;
   margin-bottom: 1rem;
+  padding: 1rem;
 }
 
 @media only screen and (max-width: 1430px) {
@@ -148,9 +153,9 @@
     justify-content: flex-start;
 
     a {
-      margin-left: 0px;
-      margin-top: 10px;
+      margin-left: 0;
       margin-right: 20px;
+      margin-top: 10px;
     }
   }
 }

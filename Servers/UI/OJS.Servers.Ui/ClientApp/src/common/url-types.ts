@@ -51,6 +51,11 @@ interface IGetSubmissionsUrlParams {
     page: number;
 }
 
+interface IGetSubmissionsByContestIdParams {
+    page: number;
+    contestId: string | string[] | undefined;
+}
+
 interface IGetSubmissionResultsByProblemUrlParams {
     problemId: number;
     isOfficial: boolean;
@@ -65,7 +70,6 @@ interface IGetContestResultsParams {
 
 interface IGetSubmissionDetailsByIdUrlParams {
     submissionId: number;
-    isOfficial: boolean;
     take: number;
 }
 
@@ -106,4 +110,5 @@ export type {
     IDownloadSubmissionFileUrlParams,
     IContestProblemsUrlParams,
     IContestEditUrlParams,
+    IGetSubmissionsByContestIdParams,
 };

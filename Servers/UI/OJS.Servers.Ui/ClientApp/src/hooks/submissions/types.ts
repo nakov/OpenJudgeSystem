@@ -6,8 +6,13 @@ interface IProblemType {
     name: string;
     maximumPoints: number;
     orderBy: number;
+    contestId:number;
 }
 
+interface ISubmissionDetailsWithResults {
+    submissionDetails: ISubmissionDetailsType;
+    submissionResults:ISubmissionDetails[];
+}
 interface ITestRunType {
     id: number;
     timeUsed: number;
@@ -33,12 +38,14 @@ interface ISubmissionType {
     maxUsedMemory: number;
     isOfficial: boolean;
     isCompiledSuccessfully: boolean;
+    isProcessed: boolean;
     compilerComment: string;
     createdOn: Date;
     modifiedOn?: Date;
     startedExecutionOn?: Date;
     processingComment: string;
     completedExecutionOn?: Date;
+    contestId:number;
 }
 
 interface ITestRunDetailsType extends ITestRunType {
@@ -119,4 +126,5 @@ export type {
     IUserAuthData,
     ITestCaseRun,
     IUserRole,
+    ISubmissionDetailsWithResults,
 };

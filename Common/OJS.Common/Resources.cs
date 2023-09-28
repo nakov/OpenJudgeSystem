@@ -76,6 +76,7 @@ namespace OJS.Common
             public const string NoPrivilegesMessage = "You don't have privileges for this action!";
             public const string NoPermissionsForContest = "You don't have permissions for the contest!";
             public const string Remove = "Remove";
+            public const string CannotEditSubmissionForProcessing = "Submissions for processing cannot be edited!";
         }
 
         public static class ContestsControllers
@@ -112,6 +113,8 @@ namespace OJS.Common
         public static class ContestCategoriesController
         {
             public const string RequiredName = "Name cannot be null!";
+            public const string ContestCategoryOrderByCanNotBeNegative =
+                "The order by of the contest category cannot be a negative number!";
         }
 
         public static class ExamGroupsController

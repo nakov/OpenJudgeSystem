@@ -33,6 +33,8 @@
 
         public string CompilerComment { get; set; } = null!;
 
+        public bool IsProcessed { get; set; }
+
         public DateTime CreatedOn { get; set; }
 
         public DateTime? ModifiedOn { get; set; }
@@ -44,5 +46,7 @@
         public int TotalTests { get; set; }
 
         public DateTime? CompletedExecutionOn { get; set; }
+
+        public int ContestId { get; set; }
     }
 }
