@@ -163,6 +163,9 @@ namespace OJS.Servers.Administration.Controllers
             Contest newContest,
             AdminActionContext actionContext)
         {
+            await this.contestsValidationHelper.ValidateActiveContestCannotEditDurationTypeOnEdit(
+                existingContest, newContest).VerifyResult();
+
             if (newContest.IsOnlineExam && newContest.ProblemGroups.Count == 0)
             {
                 AddProblemGroupsToContest(newContest, newContest.NumberOfProblemGroups);
@@ -187,6 +190,10 @@ namespace OJS.Servers.Administration.Controllers
 
             await this.InvalidateParticipants(originalContestPassword, originalPracticePassword, contest);
         }
+
+        protected override async Task BeforeEntitySaveOnDeleteAsync(
+            Contest existingContest, AdminActionContext actionContext)
+            => await this.contestsValidationHelper.ValidateContestIsNotActiveOnDelete(existingContest).VerifyResult();
 
         protected override IEnumerable<FormControlViewModel> GenerateFormControls(
             Contest entity,
