@@ -8,6 +8,7 @@ using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Validation.Helpers;
 using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Extensions;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Threading.Tasks;
 using System.Linq;
 
@@ -33,6 +34,13 @@ public class ContestsActivityService : IContestsActivityService
         this.userProvider = userProvider;
     }
 
+    // public async Task<IContestActivityServiceModel> GetContestActivityFromContest(Contest contest)
+    // {
+    //     var contestForActivity = contest.Map<ContestForActivityServiceModel>();
+    //
+    //     return await this.GetContestActivity(contestForActivity);
+    // }
+
     public async Task<IContestActivityServiceModel> GetContestActivity(int id)
     {
         var contest = await this.contestsData.OneByIdTo<ContestForActivityServiceModel>(id);
@@ -50,6 +58,16 @@ public class ContestsActivityService : IContestsActivityService
             IsActive = await this.IsActive(contest),
         };
     }
+
+    public async Task<IContestActivityServiceModel> GetContestActivity(IContestForActivityServiceModel contest) =>
+        new ContestActivityServiceModel
+        {
+            Id = contest!.Id,
+            Name = contest.Name,
+            CanBeCompeted = this.CanBeCompeted(contest),
+            CanBePracticed = this.CanBePracticed(contest),
+            IsActive = await this.IsActive(contest),
+        };
 
     public bool CanBeCompeted(IContestForActivityServiceModel contest)
     {
