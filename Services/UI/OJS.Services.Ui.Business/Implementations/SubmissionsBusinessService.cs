@@ -337,7 +337,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         return data;
     }
 
-    public async Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(
+    public async Task<IEnumerable<SubmissionViewInResultsPageModel>> GetSubmissionResultsByProblem(
         int problemId,
         bool isOfficial,
         int take = 0)
@@ -354,10 +354,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         this.ValidateCanViewSubmissionResults(isOfficial, user, problem, participant);
 
-        return await this.GetUserSubmissions(problem.Id, participant, take);
+        return await this.GetUserSubmissions<SubmissionViewInResultsPageModel>(problem.Id, participant, take);
     }
 
-    public async Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionDetailsResults(
+    public async Task<IEnumerable<SubmissionViewInResultsPageModel>> GetSubmissionDetailsResults(
         int submissionId,
         bool isOfficial,
         int take = 0)
@@ -371,8 +371,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 submissionId);
 
         this.ValidateCanViewSubmissionResults(isOfficial, user, problem, participant);
-
-        return await this.GetUserSubmissions(problem.Id, participant, take);
+        return await this.GetUserSubmissions<SubmissionViewInResultsPageModel>(problem.Id, participant, take);
     }
 
     public async Task Submit(SubmitSubmissionServiceModel model)
@@ -700,7 +699,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
     }
 
-    private async Task<IEnumerable<SubmissionResultsServiceModel>> GetUserSubmissions(
+    private async Task<IEnumerable<T>> GetUserSubmissions<T>(
         int problemId,
         ParticipantSubmissionResultsServiceModel? participant,
         int take)
@@ -710,7 +709,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .Take(take);
 
         return await userSubmissions
-            .MapCollection<SubmissionResultsServiceModel>()
+            .MapCollection<T>()
             .ToListAsync();
     }
 
