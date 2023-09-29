@@ -35,14 +35,23 @@ const ProblemConstraints = () => {
         ].filter((item) => !isEmpty(item));
     }, [ currentProblem ]);
 
-    const renderConstraint = useCallback(
-        (constraint: string) => <span>{constraint}</span>,
-        [],
-    );
-
-    const description = useMemo(() => {
+    const renderConstraint = useCallback((constraint: string) => {
         const { checkerDescription = '' } = currentProblem || {};
-        return checkerDescription;
+
+        const constraintElement = <span>{constraint}</span>;
+
+        return constraint.toLowerCase().includes('checker')
+            ? (
+                <>
+                    {constraintElement}
+                    <QuestionIcon
+                      className={styles.questionIcon}
+                      size={IconSize.Medium}
+                      helperText={checkerDescription}
+                    />
+                </>
+            )
+            : constraintElement;
     }, [ currentProblem ]);
 
     return (
@@ -52,7 +61,6 @@ const ProblemConstraints = () => {
               itemFunc={renderConstraint}
               className={styles.constraintsList}
             />
-            <QuestionIcon size={IconSize.Medium} className={styles.questionIcon} helperText={description} />
         </div>
     );
 };

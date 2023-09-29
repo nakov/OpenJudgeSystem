@@ -12,8 +12,12 @@
 
 .constraintsList {
   align-items: start;
+  
+  & > li {
+    line-height: 20px;
+  }
 }
 
 .questionIcon {
-  padding-top: 1px;
+  margin-left: 5px;
 }
