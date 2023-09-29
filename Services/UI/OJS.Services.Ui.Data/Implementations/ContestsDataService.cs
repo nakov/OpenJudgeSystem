@@ -5,7 +5,9 @@ using OJS.Common.Enumerations;
 using OJS.Data;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
+using OJS.Services.Common;
 using OJS.Services.Common.Data.Implementations;
+using OJS.Services.Common.Models.Contests;
 using Infrastructure;
 using Models.Contests;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
@@ -20,10 +22,14 @@ using System.Threading.Tasks;
 public class ContestsDataService : DataService<Contest>, IContestsDataService
 {
     private readonly IDatesService dates;
+    private readonly IContestsActivityService activityService;
 
-    public ContestsDataService(OjsDbContext db, IDatesService dates)
+    public ContestsDataService(OjsDbContext db, IDatesService dates, IContestsActivityService activityService)
         : base(db)
-        => this.dates = dates;
+    {
+        this.dates = dates;
+        this.activityService = activityService;
+    }
 
     public async Task<TServiceModel?> GetByProblemId<TServiceModel>(int id)
         => await this.DbSet
@@ -141,7 +147,13 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
     public async Task<bool> IsActiveById(int id)
     {
         var contest = await this.OneById(id);
-        return contest != null && contest.IsActive;
+
+        if (contest == null)
+        {
+            return false;
+        }
+
+        return await this.activityService.IsActive(contest.Map<ContestForActivityServiceModel>());
     }
 
     public async Task<bool> IsOnlineById(int id)

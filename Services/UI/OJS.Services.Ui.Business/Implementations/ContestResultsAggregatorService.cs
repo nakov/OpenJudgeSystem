@@ -2,15 +2,22 @@ namespace OJS.Services.Ui.Business.Implementations;
 
 using OJS.Services.Ui.Data;
 using OJS.Data.Models.Contests;
+using OJS.Services.Common;
+using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Models.Contests.Results;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Linq;
 
 public class ContestResultsAggregatorService : IContestResultsAggregatorService
 {
     private readonly IParticipantsCommonDataService participantsCommonData;
+    private readonly IContestsActivityService activityService;
 
-    public ContestResultsAggregatorService(IParticipantsCommonDataService participantsCommonData)
-        => this.participantsCommonData = participantsCommonData;
+    public ContestResultsAggregatorService(IParticipantsCommonDataService participantsCommonData, IContestsActivityService activityService)
+    {
+        this.participantsCommonData = participantsCommonData;
+        this.activityService = activityService;
+    }
 
     public ContestResultsViewModel GetContestResults(
             Contest contest,
@@ -19,13 +26,18 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
             bool isFullResults,
             bool isExportResults = false)
         {
+            var contestActivityEntity = this.activityService
+                .GetContestActivity(contest.Map<ContestForActivityServiceModel>())
+                .GetAwaiter()
+                .GetResult();
+
             var contestResults = new ContestResultsViewModel
             {
                 Id = contest.Id,
                 Name = contest.Name,
                 IsCompete = official,
-                ContestCanBeCompeted = contest.CanBeCompeted,
-                ContestCanBePracticed = contest.CanBePracticed,
+                ContestCanBeCompeted = contestActivityEntity.CanBeCompeted,
+                ContestCanBePracticed = contestActivityEntity.CanBePracticed,
                 UserHasContestRights = isUserAdminOrLecturer,
                 ContestType = contest.Type,
                 Problems = contest.ProblemGroups
