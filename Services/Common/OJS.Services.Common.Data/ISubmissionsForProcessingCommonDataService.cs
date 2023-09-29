@@ -23,13 +23,13 @@ public interface ISubmissionsForProcessingCommonDataService : IService
 
     Task<SubmissionForProcessing> AddOrUpdate(int submissionId, string serializedExecutionDetails);
 
-    Task AddOrUpdateBySubmissionIds(ICollection<int> submissionIds);
-
     Task RemoveBySubmission(int submissionId);
 
     Task ResetProcessingStatusById(int id);
 
     Task MarkProcessing(int submissionId);
+
+    Task MarkMultipleForProcessing(ICollection<int> submissionsIds);
 
     Task MarkProcessed(SerializedSubmissionExecutionResultServiceModel submissionExecutionResult);
 

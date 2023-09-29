@@ -23,7 +23,6 @@ using OJS.Services.Common;
 using OJS.Services.Common.Models;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
-using FluentExtensions.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -320,10 +319,9 @@ public class TestsController : BaseAutoCrudAdminController<Test>
 
             if (problem != null)
             {
-                 problem.Submissions
-                    .ForEach(s => this.testRunsData.Delete(t => t.Id == s.Id));
+                var submissionIds = problem.Submissions.Select(s => s.Id);
 
-                 await this.testsData.SaveChanges();
+                await this.testRunsData.DeleteInBatchesBySubmissionsId(submissionIds);
             }
         }
 

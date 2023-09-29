@@ -1,12 +1,10 @@
 namespace OJS.Services.Administration.Business.Implementations
 {
-    using System.Diagnostics;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Transactions;
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
-    using OJS.Common;
     using OJS.Common.Helpers;
     using OJS.Data.Models.Problems;
     using OJS.Services.Administration.Data;
@@ -144,10 +142,6 @@ namespace OJS.Services.Administration.Business.Implementations
 
         public async Task RetestById(int problemId)
         {
-            var stopwatch = new Stopwatch();
-            var stopwatch1 = new Stopwatch();
-            stopwatch1.Start();
-            stopwatch.Start();
             var submissions = await this.submissionsData.GetAllNonDeletedByProblemId<SubmissionServiceModel>(problemId);
 
             var submissionIds = submissions.Select(s => s.Id).ToList();
@@ -156,53 +150,16 @@ namespace OJS.Services.Administration.Business.Implementations
                        IsolationLevel.RepeatableRead,
                        TransactionScopeAsyncFlowOption.Enabled))
             {
-                submissionIds
-                    .Chunk(GlobalConstants.BatchOperationsChunkSize)
-                    .ForEach(chunk => this.testRunsData.Delete(t => chunk.Contains(t.SubmissionId)));
-
-                await this.testRunsData.SaveChanges();
-
-                stopwatch.Stop();
-                System.Console.WriteLine($"Chunk deletion time: {stopwatch.Elapsed}");
-
-                stopwatch.Start();
+                await this.testRunsData.DeleteInBatchesBySubmissionsId(submissionIds);
 
                 await this.participantScoresData.DeleteAllByProblem(problemId);
 
-                stopwatch.Stop();
-                System.Console.WriteLine($"Delete All by problem deletion time: {stopwatch.Elapsed}");
-                stopwatch.Start();
-
                 await this.submissionsData.SetAllToUnprocessedByProblem(problemId);
-
-                stopwatch.Stop();
-                System.Console.WriteLine($"Set All Unprocessed by submission: {stopwatch.Elapsed}");
-                stopwatch.Start();
-
-                await this.submissionsForProcessingData.AddOrUpdateBySubmissionIds(submissionIds);
-                stopwatch.Stop();
-                System.Console.WriteLine($"Add or update by submission ids: {stopwatch.Elapsed}");
 
                 scope.Complete();
             }
 
-            stopwatch1.Stop();
-            System.Console.WriteLine($"Elapsed time: {stopwatch.Elapsed}");
-
-            stopwatch.Reset();
-            stopwatch.Start();
-            Parallel.ForEach(submissions, submission =>
-            {
-                this.submissionsCommonBusinessService.PublishSubmissionForProcessing(
-                    submission);
-            });
-            // await submissions.ForEachSequential(async s =>
-            // {
-            //     await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(s);
-            // });
-
-            stopwatch.Stop();
-            System.Console.WriteLine($"Finished time: {stopwatch.Elapsed}");
+            await this.submissionsCommonBusinessService.PublishSubmissionsForProcessing(submissions);
         }
 
         private async Task CopyProblemToContest(Problem? problem, int contestId, int? problemGroupId)
