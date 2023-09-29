@@ -4,6 +4,7 @@ namespace OJS.Services.Ui.Business
     using System.Threading.Tasks;
     using OJS.Data.Models.Contests;
     using OJS.Services.Common.Models;
+    using OJS.Services.Common.Models.Contests;
     using OJS.Services.Ui.Models.Contests;
     using OJS.Services.Ui.Models.Search;
     using SoftUni.Common.Models;
@@ -37,12 +38,10 @@ namespace OJS.Services.Ui.Business
         /// <param name="contest">The given contest.</param>
         /// <param name="userId">The id of the user.</param>
         /// <param name="isAdmin">Is the user administrator in the system.</param>
-        /// <param name="allowToAdminAlways">If true, and the user is admin he will always be able to compete.</param>
         Task<bool> CanUserCompeteByContestByUserAndIsAdmin(
-            Contest contest,
+            IContestActivityServiceModel contest,
             string userId,
-            bool isAdmin,
-            bool allowToAdminAlways = false);
+            bool isAdmin);
 
         Task<ServiceResult> TransferParticipantsToPracticeById(int contestId);
 

@@ -9,6 +9,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Data.Models.Participants;
     using OJS.Services.Common;
     using OJS.Services.Common.Models;
+    using OJS.Services.Common.Models.Contests;
     using OJS.Services.Infrastructure.Constants;
     using OJS.Services.Infrastructure.Exceptions;
     using OJS.Services.Ui.Business.Cache;
@@ -27,6 +28,7 @@ namespace OJS.Services.Ui.Business.Implementations
         private const int DefaultContestsPerPage = 12;
 
         private readonly IContestsDataService contestsData;
+        private readonly IContestsActivityService activityService;
         private readonly IExamGroupsDataService examGroupsData;
         private readonly IParticipantsDataService participantsData;
         private readonly IParticipantsBusinessService participantsBusiness;
@@ -40,6 +42,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
         public ContestsBusinessService(
             IContestsDataService contestsData,
+            IContestsActivityService activityService,
             IExamGroupsDataService examGroupsData,
             IParticipantsDataService participantsData,
             IParticipantScoresDataService participantScoresData,
@@ -52,6 +55,7 @@ namespace OJS.Services.Ui.Business.Implementations
             ILecturersInContestsBusinessService lecturersInContestsBusiness)
         {
             this.contestsData = contestsData;
+            this.activityService = activityService;
             this.examGroupsData = examGroupsData;
             this.participantsData = participantsData;
             this.participantScoresData = participantScoresData;
@@ -69,11 +73,16 @@ namespace OJS.Services.Ui.Business.Implementations
             var user = this.userProviderService.GetCurrentUser();
             var contest = await this.contestsData.GetByIdWithProblems(id);
 
+            var contestActivityEntity = contest != null
+                ? await this.activityService
+                .GetContestActivity(contest!.Map<ContestForActivityServiceModel>())
+                : new ContestActivityServiceModel();
+
             var validationResult = this.contestValidationService.GetValidationResult((
                 contest,
                 id,
                 user,
-                contest!.CanBeCompeted) !);
+                contestActivityEntity.CanBeCompeted) !);
 
             if (!validationResult.IsValid)
             {
@@ -84,29 +93,29 @@ namespace OJS.Services.Ui.Business.Implementations
                 .GetWithContestByContestByUserAndIsOfficial(
                     id,
                     user.Id,
-                    contest.CanBeCompeted);
+                    contestActivityEntity.CanBeCompeted);
 
-            var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest);
+            var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest!);
 
-            var contestDetailsServiceModel = contest.Map<ContestDetailsServiceModel>();
+            var contestDetailsServiceModel = contest!.Map<ContestDetailsServiceModel>();
 
             contestDetailsServiceModel.IsAdminOrLecturerInContest = userIsAdminOrLecturerInContest;
 
-            if (!userIsAdminOrLecturerInContest && participant != null && contest.CanBeCompeted)
+            if (!userIsAdminOrLecturerInContest && participant != null && contestActivityEntity.CanBeCompeted)
             {
                 var problemsForParticipant = participant.ProblemsForParticipants.Select(x => x.Problem);
                 contestDetailsServiceModel.Problems = problemsForParticipant.Map<ICollection<ContestProblemServiceModel>>();
             }
 
-            var canShowProblemsInPractice = !contest.HasPracticePassword || userIsAdminOrLecturerInContest;
-            var canShowProblemsInCompete = (contest is { HasContestPassword: false, IsActive: false } && !contest.IsOnlineExam) || userIsAdminOrLecturerInContest;
+            var canShowProblemsInPractice = !contest!.HasPracticePassword || userIsAdminOrLecturerInContest;
+            var canShowProblemsInCompete = (!contest.HasContestPassword && !contestActivityEntity.IsActive && !contest.IsOnlineExam) || userIsAdminOrLecturerInContest;
 
-            if ((contest.CanBePracticed && !canShowProblemsInPractice) || (contest.CanBeCompeted && !canShowProblemsInCompete))
+            if ((contestActivityEntity.CanBePracticed && !canShowProblemsInPractice) || (contestActivityEntity.CanBeCompeted && !canShowProblemsInCompete))
             {
                 contestDetailsServiceModel.Problems = new List<ContestProblemServiceModel>();
             }
 
-            if (userIsAdminOrLecturerInContest || (contest.IsActive && participant != null && contest.CanBeCompeted))
+            if (userIsAdminOrLecturerInContest || (contestActivityEntity.IsActive && participant != null && contestActivityEntity.CanBeCompeted))
             {
                 contestDetailsServiceModel.CanViewResults = true;
             }
@@ -123,7 +132,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var competeContestParticipantsCount = await this.contestParticipantsCacheService.GetCompeteContestParticipantsCount(id);
             var practiceContestParticipantsCount = await this.contestParticipantsCacheService.GetPracticeContestParticipantsCount(id);
 
-            contestDetailsServiceModel.ParticipantsCountByContestType = contest.CanBeCompeted ? competeContestParticipantsCount : practiceContestParticipantsCount;
+            contestDetailsServiceModel.ParticipantsCountByContestType = contestActivityEntity.CanBeCompeted ? competeContestParticipantsCount : practiceContestParticipantsCount;
             contestDetailsServiceModel.TotalContestParticipantsCount = competeContestParticipantsCount + practiceContestParticipantsCount;
 
             return contestDetailsServiceModel;
@@ -308,17 +317,19 @@ namespace OJS.Services.Ui.Business.Implementations
                 throw new BusinessServiceException("Contest not found");
             }
 
+            var contestActivityEntity = await this.activityService
+                .GetContestActivity(contest.Map<ContestForActivityServiceModel>());
+
             if (official &&
                 !await this.CanUserCompeteByContestByUserAndIsAdmin(
-                    contest,
+                    contestActivityEntity,
                     userId,
-                    isUserAdmin,
-                    allowToAdminAlways: true))
+                    isUserAdmin))
             {
                 throw new BusinessServiceException($"Contest cannot be competed");
             }
 
-            if (!official && !contest.CanBePracticed && !isUserLecturerInContest)
+            if (!official && !contestActivityEntity.CanBePracticed && !isUserLecturerInContest)
             {
                 throw new BusinessServiceException($"Contest cannot be practiced");
             }
@@ -366,20 +377,14 @@ namespace OJS.Services.Ui.Business.Implementations
                 .TakeAsync(DefaultContestsToTake);
 
         public async Task<bool> CanUserCompeteByContestByUserAndIsAdmin(
-            Contest contest,
+            IContestActivityServiceModel contest,
             string userId,
-            bool isAdmin,
-            bool allowToAdminAlways = false)
+            bool isAdmin)
         {
             var isUserAdminOrLecturerInContest = isAdmin || await this.contestsData
                 .IsUserLecturerInByContestAndUser(contest.Id, userId);
 
-            if (contest.CanBeCompeted || (isUserAdminOrLecturerInContest && allowToAdminAlways))
-            {
-                return true;
-            }
-
-            if (isUserAdminOrLecturerInContest && contest.IsActive)
+            if (contest.CanBeCompeted || isUserAdminOrLecturerInContest || contest.IsActive)
             {
                 return true;
             }
@@ -397,7 +402,9 @@ namespace OJS.Services.Ui.Business.Implementations
                 return new ServiceResult("Contest cannot be found");
             }
 
-            if (contest.IsActive)
+            var contestActivity = await this.activityService.GetContestActivity(contest.Id);
+
+            if (contestActivity.IsActive)
             {
                 return new ServiceResult("The Contest is active and participants cannot be transferred");
             }

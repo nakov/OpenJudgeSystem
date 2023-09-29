@@ -2,7 +2,11 @@
 
 using System;
 using System.Linq;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Data.Models.Contests;
+using OJS.Data.Models.Participants;
+using OJS.Services.Common.Models.Contests;
+using OJS.Services.Common;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Users;
 using Infrastructure;
@@ -10,8 +14,13 @@ using Infrastructure;
 public class ContestValidationService : IContestValidationService
 {
     private readonly IDatesService datesService;
+    private readonly IContestsActivityService activityService;
 
-    public ContestValidationService(IDatesService datesService) => this.datesService = datesService;
+    public ContestValidationService(IDatesService datesService, IContestsActivityService activityService)
+    {
+        this.datesService = datesService;
+        this.activityService = activityService;
+    }
 
     public ValidationResult GetValidationResult((Contest?, int?, UserInfoModel?, bool) item)
     {
@@ -27,9 +36,16 @@ public class ContestValidationService : IContestValidationService
             return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.NotFound, contestId));
         }
 
+        var contestActivityEntity = this.activityService
+            .GetContestActivity(contest.Map<ContestForActivityServiceModel>())
+            .GetAwaiter()
+            .GetResult();
+
+        var participant = contest.Participants.FirstOrDefault(p => p.UserId == user.Id && p.IsOfficial);
+
         if (IsContestExpired(
-                contest,
-                user.Id,
+                contestActivityEntity,
+                participant,
                 user.IsAdmin,
                 official,
                 isUserLecturerInContest,
@@ -38,9 +54,9 @@ public class ContestValidationService : IContestValidationService
             return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.IsExpired, contest.Name));
         }
 
-        if (official &&
+        if (contestActivityEntity.CanBeCompeted &&
             !CanUserCompeteByContestByUserAndIsAdmin(
-                contest,
+                contestActivityEntity,
                 user.IsAdmin,
                 isUserLecturerInContest,
                 allowToAdminAlways: true))
@@ -48,7 +64,7 @@ public class ContestValidationService : IContestValidationService
             return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.CanBeCompeted, contest.Name));
         }
 
-        if (!official && !contest.CanBePracticed && !isUserLecturerInContest && !user.IsAdmin)
+        if (!official && !contestActivityEntity.CanBePracticed && !isUserLecturerInContest && !user.IsAdmin)
         {
             return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.CanBePracticed, contest.Name));
         }
@@ -57,8 +73,8 @@ public class ContestValidationService : IContestValidationService
     }
 
     private static bool IsContestExpired(
-        Contest contest,
-        string userId,
+        IContestActivityServiceModel contest,
+        Participant? participant,
         bool isAdmin,
         bool official,
         bool isUserLecturerInContest,
@@ -71,7 +87,6 @@ public class ContestValidationService : IContestValidationService
             return false;
         }
 
-        var participant = contest.Participants.FirstOrDefault(p => p.UserId == userId && p.IsOfficial);
         if (participant != null)
         {
             if (official && participant.ParticipationEndTime != null)
@@ -80,14 +95,10 @@ public class ContestValidationService : IContestValidationService
             }
         }
 
-        if (!official && contest.PracticeEndTime.HasValue)
+        if ((!official && !contest.CanBePracticed) ||
+            (official && !contest.CanBeCompeted))
         {
-            return utcNow >= contest.PracticeEndTime;
-        }
-
-        if (official && contest.EndTime.HasValue)
-        {
-            return utcNow >= contest.EndTime;
+            return true;
         }
 
         return false;
@@ -103,7 +114,7 @@ public class ContestValidationService : IContestValidationService
         isUserAdminOrLecturerInContest || isContestActive;
 
     private static bool CanUserCompeteByContestByUserAndIsAdmin(
-        Contest contest,
+        IContestActivityServiceModel contest,
         bool isAdmin,
         bool isUserLecturerInContest = true,
         bool allowToAdminAlways = false)
