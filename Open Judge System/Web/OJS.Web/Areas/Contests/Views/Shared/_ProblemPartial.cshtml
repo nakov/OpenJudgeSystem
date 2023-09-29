@@ -115,9 +115,17 @@
                     </div>
                     <div class="submit-container pull-right">
                         <script>
+                        function setDefault(ev) {
+                            let defaultSubmissionName = @Html.Raw(Json.Encode(Model.DefaultSubmissionType))
+                            var defaultItem = this.dataSource.data().find( x=>x.Text === defaultSubmissionName);
+                            this.selectedIndex = this.dataSource.data().indexOf(defaultItem);
+                            let createDropdownId = `#dropdown_${@Model.ProblemId}`
+                            $(createDropdownId).data("kendoDropDownList").value(defaultItem.Value);
+                            onSubmissionTypeChange(ev)
+                        }
                             function onSubmissionTypeChange(e) {
-                                var index = this.selectedIndex;
-                                var dataItem = this.dataItem(index);
+                                var index = e.sender.selectedIndex;
+                                var dataItem = e.sender.dataSource.data()[index];
                                 var form = $("#problem_@Model.ProblemId");
                                 var fileUpload = $("#FileUploadInputFields_@Model.ProblemId");
                                 var codeArea = $("#SourceCodeInputFields_@Model.ProblemId");
@@ -191,9 +199,9 @@
                             .Name("SubmissionTypeId")
                             .DataTextField("Text")
                             .DataValueField("Value")
-                            .Events(ev => ev.Change("onSubmissionTypeChange").DataBound("onSubmissionTypeChange").Open("Ojs.KendoControls.DropDownList.alignDropDownToInput"))
+                            .Events(ev => ev.Change("onSubmissionTypeChange").DataBound("setDefault").Open("Ojs.KendoControls.DropDownList.alignDropDownToInput"))
                             .DataSource(data => data.Read("GetAllowedSubmissionTypes", ViewBag.CompeteType, new { id = Model.ProblemId }))
-                            .HtmlAttributes(new { id = "dropdown_" + Model.ProblemId }))
+                            .HtmlAttributes(new { @Id = "dropdown_" + Model.ProblemId}))
                         <input type="submit" value="@Resource.Submit" class="k-button submision-submit-button" />
                     </div>
                 </div>

@@ -40,7 +40,8 @@
                         .AsQueryable()
                         .Where(r => !r.IsDeleted)
                         .OrderBy(r => r.OrderBy)
-                        .Select(ContestProblemResourceViewModel.FromResource)
+                        .Select(ContestProblemResourceViewModel.FromResource),
+                    DefaultSubmissionType = problem.DefaultSubmissionTypeName,
                 };
             }
         }
@@ -95,5 +96,7 @@
         public IEnumerable<ContestProblemResourceViewModel> Resources { get; set; }
 
         public bool UserHasAdminRights { get; set; }
+
+        public string DefaultSubmissionType { get; set; }
     }
 }

@@ -371,6 +371,7 @@
             existingProblem.Checker = this.checkersData.GetByName(problem.Checker);
             existingProblem.SubmissionTypes.Clear();
             existingProblem.ProblemGroup.Type = ((ProblemGroupType?)problem.ProblemGroupType).GetValidTypeOrNull();
+            existingProblem.DefaultSubmissionTypeName = problem.DefaultSubmissionTypeName;
 
             if (!existingProblem.ProblemGroup.Contest.IsOnline)
             {
@@ -886,11 +887,12 @@
                 .FirstOrDefault();
 
             var contest = problemEntity.FirstOrDefault()?.ProblemGroup.Contest;
-
             if (problem == null || contest == null)
             {
                 return null;
             }
+            
+            problem.DefaultSubmissionTypeName = problemEntity.FirstOrDefault()?.DefaultSubmissionTypeName;
 
             this.AddCheckersAndProblemGroupsToProblemViewModel(
                 problem,
