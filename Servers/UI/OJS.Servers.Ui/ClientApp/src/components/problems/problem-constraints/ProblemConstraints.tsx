@@ -9,6 +9,13 @@ import List from '../../guidelines/lists/List';
 
 import styles from './ProblemConstraints.module.scss';
 
+enum ProblemConstraintsTitles {
+    TimeLimit = 'Allowed working time',
+    MemoryLimit = 'Allowed memory',
+    FileSizeLimit = 'Size limit',
+    Checker = 'Checker'
+}
+
 const ProblemConstraints = () => {
     const { state: { currentProblem } } = useProblems();
 
@@ -21,16 +28,16 @@ const ProblemConstraints = () => {
 
         return [
             !isNil(timeLimit)
-                ? `Allowed working time: ${timeLimit.toFixed(3).toString()} sec.`
+                ? `${ProblemConstraintsTitles.TimeLimit}: ${timeLimit.toFixed(3).toString()} sec.`
                 : '',
             !isNil(memoryLimit)
-                ? `Allowed memory: ${memoryLimit.toFixed(2).toString()} MB`
+                ? `${ProblemConstraintsTitles.MemoryLimit}: ${memoryLimit.toFixed(2).toString()} MB`
                 : '',
             !isNil(fileSizeLimit)
-                ? `Size limit: ${fileSizeLimit.toFixed(2).toString()} KB`
+                ? `${ProblemConstraintsTitles.FileSizeLimit}: ${fileSizeLimit.toFixed(2).toString()} KB`
                 : '',
             !isNil(checkerName)
-                ? `Checker: ${checkerName}`
+                ? `${ProblemConstraintsTitles.Checker}: ${checkerName}`
                 : '',
         ].filter((item) => !isEmpty(item));
     }, [ currentProblem ]);
@@ -40,7 +47,7 @@ const ProblemConstraints = () => {
 
         const constraintElement = <span>{constraint}</span>;
 
-        return constraint.toLowerCase().includes('checker')
+        return constraint.includes(ProblemConstraintsTitles.Checker)
             ? (
                 <>
                     {constraintElement}
