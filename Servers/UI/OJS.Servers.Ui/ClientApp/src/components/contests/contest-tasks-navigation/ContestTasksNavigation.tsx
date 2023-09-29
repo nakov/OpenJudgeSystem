@@ -4,10 +4,10 @@ import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../common/contest-helpers';
 import { IProblemType } from '../../../common/types';
-import { useAppUrls } from '../../../hooks/use-app-urls';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
+import { getContestResultsUrl } from '../../../utils/urls';
 import { Button, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import IconSize from '../../guidelines/icons/common/icon-sizes';
@@ -35,7 +35,6 @@ const ContestTasksNavigation = () => {
             isOfficial,
         },
     } = useCurrentContest();
-    const { getContestResultsUrl } = useAppUrls();
 
     const participationType = contestParticipationType(isOfficial);
 

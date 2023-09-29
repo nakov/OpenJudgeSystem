@@ -16,7 +16,6 @@ import PaginationControls from '../../components/guidelines/pagination/Paginatio
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
 import { useUrlParams } from '../../hooks/common/use-url-params';
-import { useAppUrls } from '../../hooks/use-app-urls';
 import { useContestCategories } from '../../hooks/use-contest-categories';
 import { ICategoriesBreadcrumbItem, useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
 import { useContestStrategyFilters } from '../../hooks/use-contest-strategy-filters';
@@ -25,6 +24,7 @@ import { usePages } from '../../hooks/use-pages';
 import concatClassNames from '../../utils/class-names';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { toLowerCase } from '../../utils/string-utils';
+import { getContestCategoryBreadcrumbItemPath } from '../../utils/urls';
 import { setLayout } from '../shared/set-layout';
 
 import styles from './ContestsPage.module.scss';
@@ -46,7 +46,6 @@ const ContestsPage = () => {
         changePage,
     } = usePages();
     const { state: { breadcrumbItems }, actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
-    const { getContestCategoryBreadcrumbItemPath } = useAppUrls();
     const { state: { categoriesFlat }, actions: { load: loadCategories } } = useContestCategories();
     const navigate = useNavigate();
     const { state: params, actions: { clearParams } } = useUrlParams();
@@ -171,7 +170,7 @@ const ContestsPage = () => {
             updateBreadcrumb(category, categoriesFlat);
             navigate(getContestCategoryBreadcrumbItemPath(breadcrumb.id));
         },
-        [ categoriesFlat, navigate, updateBreadcrumb, getContestCategoryBreadcrumbItemPath ],
+        [ categoriesFlat, navigate, updateBreadcrumb ],
     );
 
     const renderCategoriesBreadcrumbItem = useCallback(

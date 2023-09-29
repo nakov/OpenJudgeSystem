@@ -11,16 +11,24 @@ import List from '../../components/guidelines/lists/List';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import ProblemResource from '../../components/problems/problem-resource/ProblemResource';
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
-import { useAppUrls } from '../../hooks/use-app-urls';
-import { useAuth } from '../../hooks/use-auth';
 import { useCurrentContest } from '../../hooks/use-current-contest';
+import { usePageTitles } from '../../hooks/use-page-titles';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
+import { getAdministrationContestEditInternalUrl, getAdministrationContestProblemsInternalUrl,
+    getContestResultsUrl,
+    getParticipateInContestUrl } from '../../utils/urls';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 
 import styles from './ContestDetailsPage.module.scss';
 
 const compareByOrderBy = (p1: IContestDetailsProblemType, p2: IContestDetailsProblemType) => p1.orderBy - p2.orderBy;
+
+const getButtonAccessibility = (canParticipate: boolean | undefined, isAdminOrLecturer: boolean | undefined) => {
+    const isAccessible = canParticipate || isAdminOrLecturer;
+    const isAccessibleForAdminOrLecturerInContest = !canParticipate && isAdminOrLecturer;
+    return { isAccessible, isAccessibleForAdminOrLecturerInContest };
+};
 
 const ContestDetailsPage = () => {
     const { state: { params } } = useRouteUrlParams();
@@ -36,14 +44,20 @@ const ContestDetailsPage = () => {
             clearContestError,
         },
     } = useCurrentContest();
-    const {
-        getParticipateInContestUrl,
-        getContestResultsUrl,
-        getAdministrationContestProblemsInternalUrl,
-        getAdministrationContestEditInternalUrl,
-    } = useAppUrls();
-    const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
+    const { actions: { setPageTitle } } = usePageTitles();
     const navigate = useNavigate();
+
+    const contestTitle = useMemo(
+        () => `${contestDetails?.name}`,
+        [ contestDetails?.name ],
+    );
+
+    useEffect(
+        () => {
+            setPageTitle(contestTitle);
+        },
+        [ contestTitle, setPageTitle ],
+    );
 
     const { contestId, participationType } = params;
 
@@ -62,6 +76,22 @@ const ContestDetailsPage = () => {
             ? `Compete participants: ${contestDetails?.participantsCountByContestType}`
             : `Practice participants: ${contestDetails?.participantsCountByContestType}`,
         [ isOfficial, contestDetails?.participantsCountByContestType ],
+    );
+
+    const {
+        isAccessible: canAccessCompeteButton,
+        isAccessibleForAdminOrLecturerInContest: competableOnlyForAdminAndLecturers,
+    } = useMemo(
+        () => getButtonAccessibility(contestDetails?.canBeCompeted, contestDetails?.isAdminOrLecturerInContest),
+        [ contestDetails ],
+    );
+
+    const {
+        isAccessible: canAccessPracticeButton,
+        isAccessibleForAdminOrLecturerInContest: praticableOnlyForAdminOrLecturers,
+    } = useMemo(
+        () => getButtonAccessibility(contestDetails?.canBePracticed, contestDetails?.isAdminOrLecturerInContest),
+        [ contestDetails ],
     );
 
     useEffect(
@@ -95,7 +125,7 @@ const ContestDetailsPage = () => {
     const renderContestButtons = useCallback(
         () => (
             <div className={styles.buttonsContainer}>
-                {contestDetails?.canViewResults || canAccessAdministration
+                {contestDetails?.canViewResults || contestDetails?.isAdminOrLecturerInContest
                     ? (
                         <LinkButton
                           type={LinkButtonType.secondary}
@@ -104,7 +134,7 @@ const ContestDetailsPage = () => {
                         />
                     )
                     : null}
-                {canAccessAdministration
+                {contestDetails?.isAdminOrLecturerInContest
                     ? (
                         <>
                             <LinkButton
@@ -124,20 +154,25 @@ const ContestDetailsPage = () => {
                     : null}
                 <LinkButton
                   id="button-card-compete"
+                  internalClassName={competableOnlyForAdminAndLecturers
+                      ? styles.adminAccessibleButton
+                      : ''}
                   to={getParticipateInContestUrl({
                       id: contestIdToNumber,
                       participationType: ContestParticipationType.Compete,
                   })}
                   text="Compete"
-                  type={LinkButtonType.secondary}
                   state={
-                    isOfficial
-                        ? ButtonState.enabled
-                        : ButtonState.disabled
+                      canAccessCompeteButton
+                          ? ButtonState.enabled
+                          : ButtonState.disabled
                 }
                 />
                 <LinkButton
                   id="button-card-practice"
+                  internalClassName={praticableOnlyForAdminOrLecturers
+                      ? styles.adminAccessibleButton
+                      : ''}
                   to={getParticipateInContestUrl({
                       id: contestIdToNumber,
                       participationType: ContestParticipationType.Practice,
@@ -145,9 +180,9 @@ const ContestDetailsPage = () => {
                   text="Practice"
                   type={LinkButtonType.secondary}
                   state={
-                    isOfficial
-                        ? ButtonState.disabled
-                        : ButtonState.enabled
+                      canAccessPracticeButton
+                          ? ButtonState.enabled
+                          : ButtonState.disabled
                 }
                 />
             </div>
@@ -155,14 +190,13 @@ const ContestDetailsPage = () => {
         [
             contestId,
             contestIdToNumber,
-            getContestResultsUrl,
-            getParticipateInContestUrl,
-            isOfficial,
-            canAccessAdministration,
+            praticableOnlyForAdminOrLecturers,
+            canAccessPracticeButton,
+            competableOnlyForAdminAndLecturers,
+            canAccessCompeteButton,
             participationType,
-            getAdministrationContestProblemsInternalUrl,
-            getAdministrationContestEditInternalUrl,
             contestDetails?.canViewResults,
+            contestDetails?.isAdminOrLecturerInContest,
         ],
     );
 
@@ -175,7 +209,7 @@ const ContestDetailsPage = () => {
             const { allowedSubmissionTypes } = contestDetails;
 
             return allowedSubmissionTypes.map((x) => (
-                <span>
+                <span key={x.id}>
                     {' '}
                     {x.name}
                     {' '}
