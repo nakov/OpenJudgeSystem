@@ -181,7 +181,7 @@ public class ContestServiceModel : IMapExplicitly
                 opt =>
                     opt.MapFrom(s => s.ProblemGroups
                         .SelectMany(pg => pg.Problems
-                            .SelectMany(p => p.SubmissionTypesInProblems)
+                            .SelectMany(p => p.ProblemSubmissionTypeExecutionDetails)
                             .Select(st => st.SubmissionType))))
             .ForMember(
                 d => d.Problems,

@@ -83,7 +83,7 @@
                 .ForMember(d => d.UserHasAdminRights, opt => opt.Ignore())
                 .ForMember(
                     d => d.AllowedSubmissionTypes,
-                    opt => opt.MapFrom(s => s.SubmissionTypesInProblems.Select(st => st.SubmissionType)))
+                    opt => opt.MapFrom(s => s.ProblemSubmissionTypeExecutionDetails.Select(st => st.SubmissionType)))
                 .ForMember(
                     d => d.Points,
                     opt => opt.MapFrom(s => 0))

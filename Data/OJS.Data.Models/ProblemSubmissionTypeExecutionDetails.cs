@@ -4,7 +4,7 @@ namespace OJS.Data.Models
     using OJS.Data.Models.Submissions;
     using SoftUni.Data.Infrastructure.Models;
 
-    public class SubmissionTypeInProblem : IEntity
+    public class ProblemSubmissionTypeExecutionDetails : IEntity
     {
         public int SubmissionTypeId { get; set; }
 
@@ -18,5 +18,15 @@ namespace OJS.Data.Models
         /// Gets or sets a predefined skeleton for the task and strategy.
         /// </summary>
         public byte[] SolutionSkeleton { get; set; } = default!;
+
+        /// <summary>
+        /// Gets or sets a time limit for the task and strategy.
+        /// </summary>
+        public int? TimeLimit { get; set; }
+
+        /// <summary>
+        /// Gets or sets a memory limit for the task and strategy.
+        /// </summary>
+        public int? MemoryLimit { get; set; }
     }
 }

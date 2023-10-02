@@ -111,14 +111,14 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     protected override IEnumerable<Func<Problem, Problem, AdminActionContext, ValidatorResult>> EntityValidators
         => this.problemValidatorsFactory.GetValidators();
 
-    public override Task<IActionResult> Create(IDictionary<string, string> complexId, string postEndpointName)
+    public override Task<IActionResult> Create(IDictionary<string, string> complexId, string? postEndpointName)
         => base.Create(complexId, nameof(this.Create));
 
     [HttpPost]
     public Task<IActionResult> Create(IDictionary<string, string> entityDict, IFormFile tests, IFormFile additionalFiles)
         => this.PostCreate(entityDict, new FormFilesContainer(tests, additionalFiles));
 
-    public override Task<IActionResult> Edit(IDictionary<string, string> complexId, string postEndpointName)
+    public override Task<IActionResult> Edit(IDictionary<string, string> complexId, string? postEndpointName)
         => base.Edit(complexId, nameof(this.Edit));
 
     [HttpPost]
@@ -396,7 +396,8 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         Problem entity,
         EntityAction action,
         IDictionary<string, string> entityDict,
-        IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters)
+        IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters,
+        Type? autocomplete)
     {
         var contestId = GetContestId(entityDict, entity);
 
@@ -417,7 +418,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                 nameof(entity.ProblemGroup),
                 pg => ((ProblemGroup)pg).ContestId == contestId));
 
-        var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters)
+        var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters, autocomplete)
             .ToListAsync();
 
         await this.ModifyFormControls(formControls, entity, action, entityDict).ConfigureAwait(false);
@@ -430,6 +431,22 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             IsReadOnly = true,
         });
 
+        formControls.Add(new FormControlViewModel
+        {
+            Name = nameof(Data.Models.Problems.Problem.ProblemGroupId),
+            Value = entity.ProblemGroupId,
+            Type = typeof(int),
+            IsHidden = true,
+        });
+
+        formControls.Add(new FormControlViewModel
+        {
+            Name = nameof(AdditionalFormFields.ProblemGroupType),
+            Options = EnumUtils.GetValuesFrom<ProblemGroupType>().Cast<object>(),
+            Value = entity.ProblemGroup.Type ?? default(ProblemGroupType),
+            Type = typeof(ProblemGroupType),
+        });
+
         if (!contest.IsOnlineExam)
         {
             formControls.Add(new FormControlViewModel
@@ -440,18 +457,21 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                 Value = entity.ProblemGroup?.Type ?? default(ProblemGroupType),
             });
 
-            var problemGroupField = formControls.First(x => x.Name == nameof(Data.Models.Problems.Problem.ProblemGroup));
+            var problemGroupField = formControls.FirstOrDefault(x => x.Name == nameof(Data.Models.Problems.Problem.ProblemGroup));
 
-            if (action == EntityAction.Create)
+            if (problemGroupField != null)
             {
-                // On Create, we should always create new ProblemGroup for the Problem,
-                // not allow attaching the Problem to an existing ProblemGroup
-                formControls.Remove(problemGroupField);
-            }
-            else
-            {
-                // On Edit, we should not allow changing the ProblemGroup
-                problemGroupField.IsHidden = true;
+                if (action == EntityAction.Create)
+                {
+                    // On Create, we should always create new ProblemGroup for the Problem,
+                    // not allow attaching the Problem to an existing ProblemGroup
+                    formControls.Remove(problemGroupField);
+                }
+                else
+                {
+                    // On Edit, we should not allow changing the ProblemGroup
+                    problemGroupField.IsHidden = true;
+                }
             }
         }
 
@@ -465,7 +485,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             Name = AdditionalFormFields.AdditionalFiles.ToString(), Type = typeof(IFormFile),
         });
 
-        var submissionTypesInProblem = entity.SubmissionTypesInProblems.ToList();
+        var problemSubmissionTypeExecutionDetails = entity.ProblemSubmissionTypeExecutionDetails.ToList();
 
         formControls.Add(new FormControlViewModel
         {
@@ -477,16 +497,39 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                 {
                     Name = st.Name,
                     Value = st.Id,
-                    IsChecked = submissionTypesInProblem.Any(x => x.SubmissionTypeId == st.Id),
-                    Expand = new FormControlViewModel
+                    IsChecked = problemSubmissionTypeExecutionDetails.Any(x => x.SubmissionTypeId == st.Id),
+                    Expand = new List<FormControlViewModel>
                     {
-                        Name = st.Name + " " + AdditionalFormFields.SolutionSkeletonRaw.ToString(),
-                        Value = submissionTypesInProblem
-                            .Where(x => x.SubmissionTypeId == st.Id)
-                            .Select(x => x.SolutionSkeleton)
-                            .FirstOrDefault()?.Decompress(),
-                        Type = typeof(string),
-                        FormControlType = FormControlType.TextArea,
+                        new ()
+                        {
+                            Name = st.Name + " " + AdditionalFormFields.SolutionSkeletonRaw,
+                            Value = problemSubmissionTypeExecutionDetails
+                                .Where(x => x.SubmissionTypeId == st.Id)
+                                .Select(x => x.SolutionSkeleton)
+                                .FirstOrDefault()?.Decompress(),
+                            Type = typeof(string),
+                            FormControlType = FormControlType.TextArea,
+                        },
+                        new ()
+                        {
+                            Name = st.Name + " " + AdditionalFormFields.TimeLimit,
+                            Value = problemSubmissionTypeExecutionDetails
+                                .Where(x => x.SubmissionTypeId == st.Id)
+                                .Select(x => x.TimeLimit)
+                                .FirstOrDefault(),
+                            Type = typeof(int),
+                            FormControlType = FormControlType.Auto,
+                        },
+                        new ()
+                        {
+                            Name = st.Name + " " + AdditionalFormFields.MemoryLimit,
+                            Value = problemSubmissionTypeExecutionDetails
+                                .Where(x => x.SubmissionTypeId == st.Id)
+                                .Select(x => x.MemoryLimit)
+                                .FirstOrDefault(),
+                            Type = typeof(int),
+                            FormControlType = FormControlType.Auto,
+                        },
                     },
                 }),
             FormControlType = FormControlType.ExpandableMultiChoiceCheckBox,
@@ -542,7 +585,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     {
         newEntity.ProblemGroup.Type = actionContext.GetProblemGroupType().GetValidTypeOrNull();
 
-        if (!originalEntity.ProblemGroup.Contest.IsOnlineExam)
+        if (originalEntity.ProblemGroup != null && !originalEntity.ProblemGroup.Contest.IsOnlineExam)
         {
             newEntity.ProblemGroup.OrderBy = newEntity.OrderBy;
         }
@@ -563,11 +606,14 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             throw new Exception($"A valid ContestId must be provided to be able to {action} a Problem.");
         }
 
-        var problemGroupInput = formControls.First(fc => fc.Name == nameof(ProblemGroup));
+        var problemGroupInput = formControls.FirstOrDefault(fc => fc.Name == nameof(ProblemGroup));
 
         var orderedProblemGroupsQuery = this.problemGroupsData.GetAllByContestId(contestId)
                                                                     .OrderBy(pg => pg.OrderBy);
-        problemGroupInput.Options = orderedProblemGroupsQuery;
+        if (problemGroupInput != null)
+        {
+            problemGroupInput.Options = orderedProblemGroupsQuery;
+        }
 
         return base.ModifyFormControls(formControls, entity, action, entityDict);
     }
@@ -607,17 +653,41 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     {
         var newSubmissionTypes = actionContext.GetSubmissionTypes()
             .Where(x => x.IsChecked)
-            .Select(x => new SubmissionTypeInProblem
+            .Select(x =>
             {
-                ProblemId = problem.Id,
-                SubmissionTypeId = int.Parse(x.Value!.ToString() !),
-                SolutionSkeleton = x.Expand != null && x.Expand.Value != null
-                    ? x.Expand.Value!.ToString() !.Compress()
-                    : Array.Empty<byte>(),
+                var psted = new ProblemSubmissionTypeExecutionDetails();
+                psted.ProblemId = problem.Id;
+                psted.SubmissionTypeId = int.Parse(x.Value!.ToString() !);
+                if (x.Expand == null)
+                {
+                    return psted;
+                }
+
+                psted.SolutionSkeleton = x.Expand.First(y =>
+                    y.Name == x.Name + " " + AdditionalFormFields.SolutionSkeletonRaw).Value != null
+                    ? x.Expand.First(y => y.Name == x.Name + " " + AdditionalFormFields.SolutionSkeletonRaw)
+                        .Value!.ToString() !.Compress()
+                    : Array.Empty<byte>();
+
+                var timeLimitValue = x.Expand.First(y =>
+                    y.Name == x.Name + " " + AdditionalFormFields.TimeLimit).Value;
+                if (timeLimitValue != null)
+                {
+                    psted.TimeLimit = int.Parse(timeLimitValue.ToString() !);
+                }
+
+                var memoryLimitValue = x.Expand.First(y =>
+                    y.Name == x.Name + " " + AdditionalFormFields.MemoryLimit).Value;
+                if (memoryLimitValue != null)
+                {
+                    psted.MemoryLimit = int.Parse(memoryLimitValue.ToString() !);
+                }
+
+                return psted;
             });
 
-        problem.SubmissionTypesInProblems.Clear();
-        problem.SubmissionTypesInProblems.AddRange(newSubmissionTypes);
+        problem.ProblemSubmissionTypeExecutionDetails.Clear();
+        problem.ProblemSubmissionTypeExecutionDetails.AddRange(newSubmissionTypes);
     }
 
     private static int GetContestId(Problem entity, IDictionary<string, string> entityDict)

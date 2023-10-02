@@ -12,4 +12,6 @@ public enum AdditionalFormFields
     Output,
     File,
     Type,
+    TimeLimit,
+    MemoryLimit,
 }

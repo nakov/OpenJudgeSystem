@@ -438,7 +438,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                                  !participant.Contest.IsDeleted &&
                                  problem.ShowResults;
 
-        var submissionType = problem.SubmissionTypesInProblems
+        var submissionType = problem.ProblemSubmissionTypeExecutionDetails
             .First(st => st.SubmissionTypeId == model.SubmissionTypeId)
             .SubmissionType;
 
@@ -670,7 +670,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var serviceModel = submission.Map<SubmissionServiceModel>();
 
-        serviceModel.TestsExecutionDetails!.TaskSkeleton = problem.SubmissionTypesInProblems
+        serviceModel.TestsExecutionDetails!.TaskSkeleton = problem.ProblemSubmissionTypeExecutionDetails
             .Where(x => x.SubmissionTypeId == submission.SubmissionTypeId)
             .Select(x => x.SolutionSkeleton)
             .FirstOrDefault();

@@ -70,8 +70,8 @@ namespace OJS.Data.Models.Problems
 
         public virtual ICollection<ParticipantScore> ParticipantScores { get; set; } = new HashSet<ParticipantScore>();
 
-        public virtual ICollection<SubmissionTypeInProblem> SubmissionTypesInProblems { get; set; } =
-            new HashSet<SubmissionTypeInProblem>();
+        public virtual ICollection<ProblemSubmissionTypeExecutionDetails> ProblemSubmissionTypeExecutionDetails { get; set; } =
+            new HashSet<ProblemSubmissionTypeExecutionDetails>();
 
         public virtual ICollection<ProblemForParticipant> ProblemsForParticipants { get; set; } =
             new HashSet<ProblemForParticipant>();

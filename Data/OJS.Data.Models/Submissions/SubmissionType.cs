@@ -51,8 +51,8 @@ namespace OJS.Data.Models.Submissions
             }
         }
 
-        public virtual ICollection<SubmissionTypeInProblem> SubmissionTypesInProblems { get; set; } =
-            new HashSet<SubmissionTypeInProblem>();
+        public virtual ICollection<ProblemSubmissionTypeExecutionDetails> ProblemSubmissionTypeExecutionDetails { get; set; } =
+            new HashSet<ProblemSubmissionTypeExecutionDetails>();
 
         [NotMapped]
         public string FileNameExtension

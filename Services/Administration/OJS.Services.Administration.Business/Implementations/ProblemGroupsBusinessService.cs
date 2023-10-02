@@ -173,7 +173,7 @@ namespace OJS.Services.Administration.Business.Implementations
             await this.problemsData.Add(currentNewProblem);
             await this.problemsData.SaveChanges();
 
-            var newSubmissionTypeInSourceProblemsToAdd = new List<SubmissionTypeInProblem>();
+            var newSubmissionTypeExecutionDetailsInSourceProblemsToAdd = new List<ProblemSubmissionTypeExecutionDetails>();
             var newResourcesToAdd = new List<ProblemResource>();
             var newTestsToAdd = new List<Test>();
 
@@ -185,11 +185,11 @@ namespace OJS.Services.Administration.Business.Implementations
                 .GetAllByProblem(problem.Id)
                 .AsNoTracking()
                 .ForEach(stp =>
-                    this.GenerateNewSubmissionTypesInProblem(stp, newSubmissionTypeInSourceProblemsToAdd, currentNewProblem));
+                    this.GenerateNewSubmissionTypesInProblem(stp, newSubmissionTypeExecutionDetailsInSourceProblemsToAdd, currentNewProblem));
 
             currentNewProblem.Resources = newResourcesToAdd;
             currentNewProblem.Tests = newTestsToAdd;
-            currentNewProblem.SubmissionTypesInProblems = newSubmissionTypeInSourceProblemsToAdd;
+            currentNewProblem.ProblemSubmissionTypeExecutionDetails = newSubmissionTypeExecutionDetailsInSourceProblemsToAdd;
             problemsToAdd.Add(currentNewProblem);
 
             this.problemsData.Update(currentNewProblem);
@@ -245,16 +245,16 @@ namespace OJS.Services.Administration.Business.Implementations
         }
 
         private void GenerateNewSubmissionTypesInProblem(
-            SubmissionTypeInProblem submissionTypeInProblem,
-            ICollection<SubmissionTypeInProblem> submissionTypeInSourceProblems,
+            ProblemSubmissionTypeExecutionDetails problemSubmissionTypeExecutionDetails,
+            ICollection<ProblemSubmissionTypeExecutionDetails> submissionTypeExecutionDetailsInSourceProblems,
             Problem currentNewProblem)
         {
-            var newSubmissionTypeInProblem = submissionTypeInProblem;
-            newSubmissionTypeInProblem.ProblemId = currentNewProblem.Id;
+            var newProblemSubmissionTypeExecutionDetails = problemSubmissionTypeExecutionDetails;
+            newProblemSubmissionTypeExecutionDetails.ProblemId = currentNewProblem.Id;
 
-            submissionTypeInSourceProblems.Add(newSubmissionTypeInProblem);
+            submissionTypeExecutionDetailsInSourceProblems.Add(newProblemSubmissionTypeExecutionDetails);
 
-            this.submissionTypesInProblemsData.Add(newSubmissionTypeInProblem);
+            this.submissionTypesInProblemsData.Add(newProblemSubmissionTypeExecutionDetails);
         }
     }
 }

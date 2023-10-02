@@ -113,7 +113,7 @@ namespace OJS.Services.Ui.Business.Implementations
             contestDetailsServiceModel.AllowedSubmissionTypes = contest.ProblemGroups
                 .SelectMany(pg => pg.Problems)
                 .AsQueryable()
-                .SelectMany(p => p.SubmissionTypesInProblems)
+                .SelectMany(p => p.ProblemSubmissionTypeExecutionDetails)
                 .GroupBy(st => st.SubmissionTypeId)
                 .Select(g => g.First())
                 .Select(x => new ContestDetailsSubmissionTypeServiceModel { Id = x.SubmissionTypeId, Name = x.SubmissionType.Name })

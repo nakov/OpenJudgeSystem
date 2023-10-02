@@ -5,7 +5,7 @@ using OJS.Services.Common.Data;
 using SoftUni.Services.Infrastructure;
 using System.Linq;
 
-public interface ISubmissionTypesInProblemsDataService : IService, IDataService<SubmissionTypeInProblem>
+public interface ISubmissionTypesInProblemsDataService : IService, IDataService<ProblemSubmissionTypeExecutionDetails>
 {
-    IQueryable<SubmissionTypeInProblem> GetAllByProblem(int problemId);
+    IQueryable<ProblemSubmissionTypeExecutionDetails> GetAllByProblem(int problemId);
 }

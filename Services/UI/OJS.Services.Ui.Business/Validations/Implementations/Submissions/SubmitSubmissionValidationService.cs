@@ -61,7 +61,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
         }
 
         var submissionType =
-            problem.SubmissionTypesInProblems.FirstOrDefault(st =>
+            problem.ProblemSubmissionTypeExecutionDetails.FirstOrDefault(st =>
                 st.SubmissionTypeId == submitSubmissionServiceModel.SubmissionTypeId);
 
         if (submissionType == null)

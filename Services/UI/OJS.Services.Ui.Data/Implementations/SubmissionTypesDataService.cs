@@ -14,7 +14,7 @@ namespace OJS.Services.Ui.Data.Implementations
 
         public IQueryable<SubmissionType> GetAllByProblem(int problemId)
             => this.GetQuery()
-                .Where(st => st.SubmissionTypesInProblems
+                .Where(st => st.ProblemSubmissionTypeExecutionDetails
                     .Any(p => p.ProblemId == problemId));
     }
 }

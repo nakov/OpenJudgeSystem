@@ -83,7 +83,7 @@ namespace OJS.Services.Administration.Data.Implementations
             => this.GetAllVisible()
                 .Where(c => c.ProblemGroups
                     .SelectMany(pg => pg.Problems)
-                    .Any(p => p.SubmissionTypesInProblems.Any(s => s.SubmissionTypeId == submissionTypeId)));
+                    .Any(p => p.ProblemSubmissionTypeExecutionDetails.Any(s => s.SubmissionTypeId == submissionTypeId)));
 
         public IQueryable<Contest> GetAllByLecturer(string? lecturerId)
             => this.DbSet
