@@ -162,6 +162,7 @@ namespace OJS.Services.Administration.Business.Implementations
             {
                 submission.Processed = false;
                 submission.ModifiedOn = this.dates.GetUtcNow();
+
                 var submissionIsBestSubmission = await this.IsBestSubmission(
                     submissionProblemId,
                     submissionParticipantId,
