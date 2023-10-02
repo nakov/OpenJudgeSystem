@@ -3,9 +3,9 @@ import isEmpty from 'lodash/isEmpty';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IProblemSearchType } from '../../../common/search-types';
-import { useAppUrls } from '../../../hooks/use-app-urls';
 import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
+import { getParticipateInContestUrl } from '../../../utils/urls';
 import { Button, ButtonSize, ButtonState, ButtonType } from '../../guidelines/buttons/Button';
 
 import SearchProblemTooltip from './SearchProblemTooltip';
@@ -31,7 +31,6 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
     const searchProblemCardControlBtnsClassName = concatClassNames(styles.problemCardControls, contestCardControlBtns);
 
     const { actions: { initiateRedirectionToProblem } } = useProblems();
-    const { getParticipateInContestUrl } = useAppUrls();
 
     const handleButtonSubmit = useCallback(
         (participationType: ContestParticipationType) => {
@@ -42,7 +41,7 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
 
             initiateRedirectionToProblem(id, participateInContestUrl);
         },
-        [ contest.id, getParticipateInContestUrl, id, initiateRedirectionToProblem ],
+        [ contest.id, id, initiateRedirectionToProblem ],
     );
 
     const renderPage = useCallback(
