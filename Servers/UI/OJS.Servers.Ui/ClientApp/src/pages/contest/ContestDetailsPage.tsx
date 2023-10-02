@@ -11,10 +11,12 @@ import List from '../../components/guidelines/lists/List';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import ProblemResource from '../../components/problems/problem-resource/ProblemResource';
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
-import { useAppUrls } from '../../hooks/use-app-urls';
 import { useCurrentContest } from '../../hooks/use-current-contest';
 import { usePageTitles } from '../../hooks/use-page-titles';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
+import { getAdministrationContestEditInternalUrl, getAdministrationContestProblemsInternalUrl,
+    getContestResultsUrl,
+    getParticipateInContestUrl } from '../../utils/urls';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 
@@ -42,12 +44,6 @@ const ContestDetailsPage = () => {
             clearContestError,
         },
     } = useCurrentContest();
-    const {
-        getParticipateInContestUrl,
-        getContestResultsUrl,
-        getAdministrationContestProblemsInternalUrl,
-        getAdministrationContestEditInternalUrl,
-    } = useAppUrls();
     const { actions: { setPageTitle } } = usePageTitles();
     const navigate = useNavigate();
 
@@ -194,15 +190,11 @@ const ContestDetailsPage = () => {
         [
             contestId,
             contestIdToNumber,
-            getContestResultsUrl,
-            getParticipateInContestUrl,
             praticableOnlyForAdminOrLecturers,
             canAccessPracticeButton,
             competableOnlyForAdminAndLecturers,
             canAccessCompeteButton,
             participationType,
-            getAdministrationContestProblemsInternalUrl,
-            getAdministrationContestEditInternalUrl,
             contestDetails?.canViewResults,
             contestDetails?.isAdminOrLecturerInContest,
         ],

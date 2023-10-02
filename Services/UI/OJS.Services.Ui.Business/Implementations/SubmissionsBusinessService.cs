@@ -130,14 +130,28 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             submissionDetailsServiceModel.TestRuns = submissionDetailsServiceModel.TestRuns.Select(tr =>
             {
                 var currentTestRunTest = submissionDetailsServiceModel.Tests.FirstOrDefault(t => t.Id == tr.TestId);
-                if (!tr.IsTrialTest
-                    && ((currentTestRunTest != null &&
-                         (currentTestRunTest.HideInput || !currentTestRunTest.IsOpenTest))
-                        || submissionDetailsServiceModel.Problem.ShowDetailedFeedback))
+
+                var displayShowInput = currentTestRunTest != null
+                                       && (!currentTestRunTest.HideInput
+                                           && ((currentTestRunTest.IsTrialTest
+                                                || currentTestRunTest.IsOpenTest)
+                                               || submissionDetailsServiceModel.Problem.ShowDetailedFeedback));
+
+                var showExecutionComment = currentTestRunTest != null
+                                           && (!string.IsNullOrEmpty(tr.ExecutionComment)
+                                               && (currentTestRunTest.IsOpenTest
+                                                   || currentTestRunTest.IsTrialTest
+                                                   || submissionDetailsServiceModel.Problem.ShowDetailedFeedback));
+
+                if (!showExecutionComment)
+                {
+                    tr.ExecutionComment = string.Empty;
+                }
+
+                if (!displayShowInput)
                 {
                     tr.ShowInput = false;
                     tr.Input = string.Empty;
-                    tr.ExecutionComment = string.Empty;
                     tr.ExpectedOutputFragment = string.Empty;
                     tr.UserOutputFragment = string.Empty;
                 }
@@ -428,6 +442,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .First(st => st.SubmissionTypeId == model.SubmissionTypeId)
             .SubmissionType;
 
+        SubmissionServiceModel submissionServiceModel;
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
         if (submissionType.ExecutionStrategyType is ExecutionStrategyType.NotFound or ExecutionStrategyType.DoNothing)
         {
@@ -441,14 +456,15 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         await this.submissionsData.Add(newSubmission);
         await this.submissionsData.SaveChanges();
 
-        await this.submissionsForProcessingData.Add(newSubmission.Id);
+        submissionServiceModel = this.BuildSubmissionForProcessing(newSubmission, problem, submissionType);
+        await this.submissionsForProcessingData.Add(newSubmission.Id, submissionServiceModel.ToJson());
         await this.submissionsData.SaveChanges();
 
         scope.Complete();
         scope.Dispose();
 
         await this.submissionsCommonBusinessService
-            .PublishSubmissionForProcessing(this.BuildSubmissionForProcessing(newSubmission, problem, submissionType));
+            .PublishSubmissionForProcessing(submissionServiceModel);
     }
 
     public async Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult)
@@ -473,6 +489,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         submission.Processed = true;
         submission.ProcessingComment = null;
 
+        var serializedExecutionResultServiceModel =
+            submissionExecutionResult.Map<SerializedSubmissionExecutionResultServiceModel>();
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
         if (executionResult != null)
         {
@@ -482,7 +500,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
             await this.SaveParticipantScore(submission);
 
-            await this.submissionsForProcessingData.MarkProcessed(submission.Id);
+            await this.submissionsForProcessingData.MarkProcessed(serializedExecutionResultServiceModel);
             await this.submissionsData.SaveChanges();
             CacheTestRuns(submission);
         }
@@ -495,7 +513,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             submission.CompilerComment = errorMessage;
 
             this.submissionsData.Update(submission);
-            await this.submissionsForProcessingData.MarkProcessed(submission.Id);
+            await this.submissionsForProcessingData.MarkProcessed(serializedExecutionResultServiceModel);
         }
 
         await this.submissionsData.SaveChanges();
