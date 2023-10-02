@@ -313,12 +313,10 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         }
         else
         {
-            var problem = await this.problemsData.GetById(newTest.ProblemId);
+            var submissionIds = await this.submissionsData.GetIdsByProblemId(newTest.ProblemId);
 
-            if (problem != null)
+            if (submissionIds.Any())
             {
-                var submissionIds = problem.Submissions.Select(s => s.Id);
-
                 await this.testRunsData.DeleteInBatchesBySubmissionIds(submissionIds);
             }
         }

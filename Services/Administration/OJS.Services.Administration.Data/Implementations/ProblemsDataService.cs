@@ -32,10 +32,6 @@
             this.DbSet
                 .Where(p => p.ProblemGroupId == problemGroupId);
 
-        public async Task<Problem?> GetById(int id)
-            => await this.GetByIdQuery(id)
-                .FirstOrDefaultAsync();
-
         public Task<bool> ExistsById(int id) =>
             this.DbSet
                 .AnyAsync(p => p.Id == id);

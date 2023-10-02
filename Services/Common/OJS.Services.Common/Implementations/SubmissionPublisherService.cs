@@ -25,6 +25,6 @@ public class SubmissionPublisherService : ISubmissionPublisherService
     {
         var pubSubModels = submissions.MapCollection<SubmissionForProcessingPubSubModel>();
 
-        return this.publisher.Publish(pubSubModels);
+        return this.publisher.PublishBatch(pubSubModels);
     }
 }

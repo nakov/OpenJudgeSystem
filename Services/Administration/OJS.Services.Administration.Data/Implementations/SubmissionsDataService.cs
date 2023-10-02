@@ -39,12 +39,12 @@
 
         public IQueryable<Submission> GetAllFromContestsByLecturer(string lecturerId)
             => this.DbSet
-                .Include(s => s.Problem!.ProblemGroup.Contest.LecturersInContests)
-                .Include(s => s.Problem!.ProblemGroup.Contest.Category!.LecturersInContestCategories)
+                .Include(s => s.Problem.ProblemGroup.Contest.LecturersInContests)
+                .Include(s => s.Problem.ProblemGroup.Contest.Category!.LecturersInContestCategories)
                 .Where(s =>
                     (s.IsPublic.HasValue && s.IsPublic.Value) ||
-                    s.Problem!.ProblemGroup.Contest.LecturersInContests.Any(l => l.LecturerId == lecturerId) ||
-                    s.Problem!.ProblemGroup.Contest.Category!.LecturersInContestCategories.Any(l =>
+                    s.Problem.ProblemGroup.Contest.LecturersInContests.Any(l => l.LecturerId == lecturerId) ||
+                    s.Problem.ProblemGroup.Contest.Category!.LecturersInContestCategories.Any(l =>
                         l.LecturerId == lecturerId));
 
         public IQueryable<Submission> GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate(
@@ -57,7 +57,7 @@
 
         public IQueryable<Submission> GetAllHavingPointsExceedingLimit()
             => this.DbSet
-                .Where(s => s.Points > s.Problem!.MaximumPoints);
+                .Where(s => s.Points > s.Problem.MaximumPoints);
 
         public IQueryable<int> GetIdsByProblem(int problemId)
             => this.GetAllByProblem(problemId)
@@ -82,6 +82,11 @@
             => await this.GetAllByProblem(problemId)
                 .Where(s => !s.IsDeleted)
                 .MapCollection<TServiceModel>()
+                .ToListAsync();
+
+        public async Task<IEnumerable<int>> GetIdsByProblemId(int problemId)
+            => await this.GetAllByProblem(problemId)
+                .Select(s => s.Id)
                 .ToListAsync();
     }
 }
