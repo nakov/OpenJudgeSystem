@@ -443,7 +443,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         {
             Name = nameof(AdditionalFormFields.ProblemGroupType),
             Options = EnumUtils.GetValuesFrom<ProblemGroupType>().Cast<object>(),
-            Value = entity.ProblemGroup.Type ?? default(ProblemGroupType),
+            Value = entity.ProblemGroup != null ? entity.ProblemGroup.Type ?? default(ProblemGroupType) : default,
             Type = typeof(ProblemGroupType),
         });
 
@@ -673,14 +673,14 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                     y.Name == x.Name + " " + AdditionalFormFields.TimeLimit).Value;
                 if (timeLimitValue != null)
                 {
-                    psted.TimeLimit = int.Parse(timeLimitValue.ToString() !);
+                    psted.TimeLimit = string.IsNullOrEmpty(timeLimitValue.ToString()) ? null : int.Parse(timeLimitValue.ToString() !);
                 }
 
                 var memoryLimitValue = x.Expand.First(y =>
                     y.Name == x.Name + " " + AdditionalFormFields.MemoryLimit).Value;
                 if (memoryLimitValue != null)
                 {
-                    psted.MemoryLimit = int.Parse(memoryLimitValue.ToString() !);
+                    psted.MemoryLimit = string.IsNullOrEmpty(memoryLimitValue.ToString()) ? null : int.Parse(memoryLimitValue.ToString() !);
                 }
 
                 return psted;
