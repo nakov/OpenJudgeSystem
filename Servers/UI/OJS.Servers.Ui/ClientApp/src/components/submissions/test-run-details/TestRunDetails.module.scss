@@ -6,25 +6,25 @@
   align-content: space-around;
   display: flex;
   flex-direction: column;
-  width: 100%;
   padding: 5px 15px;
   pointer-events: none;
+  width: 100%;
 }
 
 .testRun {
   @extend %font-family-lato;
 
-  border: none;
+  align-items: center;
   background-color: transparent;
+  border: 0;
   border-bottom: 1px solid colors.$bottom-border-color;
   color: colors.$text-dark-gray-color;
+  cursor: pointer;
   display: flex;
   justify-content: space-between;
-  align-items: center;
   padding: 20px 0;
+  transition: all 0.2s ease-in-out;
   width: 100%;
-  transition: all .2s ease-in-out;
-  cursor: pointer;
 
   &:hover {
     background-color: #dff0ff;
@@ -40,8 +40,8 @@
 .testRunHeading {
   @extend %heading;
 
-  width: 120px;
   margin-bottom: 0 !important;
+  width: 120px;
 }
 
 .wrongTestRunHeading {
@@ -58,19 +58,19 @@
 
 .testRunData {
   align-items: center;
-  justify-content: space-between;
   display: flex;
   gap: 10px;
+  justify-content: space-between;
 }
 
 .testRunDataParagraph {
   @extend %font-family-lato;
 
+  align-items: center;
   color: colors.$text-dark-gray-color;
-  font-size: variables.$f-size-14;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  font-size: variables.$f-size-14;
 }
 
 .iconActiveColor {
