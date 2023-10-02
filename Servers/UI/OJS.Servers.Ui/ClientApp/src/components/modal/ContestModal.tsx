@@ -5,7 +5,6 @@ import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 
 import { IContestModalInfoType } from '../../common/types';
-import { useAppUrls } from '../../hooks/use-app-urls';
 import { useCurrentContest } from '../../hooks/use-current-contest';
 import { getHomePageUrl } from '../../utils/urls';
 import Button, { ButtonSize, ButtonType } from '../guidelines/buttons/Button';
@@ -22,7 +21,6 @@ const ContestModal = ({ contest }: IContestModalProps) => {
     const [ isShowing, setIsShowing ] = useState<boolean>(defaultState.state.isShowing);
     const navigate = useNavigate();
     const { actions: { setStartedModalUserParticipation } } = useCurrentContest();
-    const { getHomePageUrl } = useAppUrls();
 
     const startContestAndHideModal = useCallback(
         () => {
@@ -37,7 +35,7 @@ const ContestModal = ({ contest }: IContestModalProps) => {
             setIsShowing(false);
             navigate(getHomePageUrl());
         },
-        [ navigate, getHomePageUrl ],
+        [ navigate ],
     );
 
     return isShowing

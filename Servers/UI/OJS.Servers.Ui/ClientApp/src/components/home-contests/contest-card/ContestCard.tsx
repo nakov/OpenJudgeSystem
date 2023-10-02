@@ -3,9 +3,9 @@ import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IIndexContestsType } from '../../../common/types';
-import { useAppUrls } from '../../../hooks/use-app-urls';
 import concatClassNames from '../../../utils/class-names';
 import { convertToSecondsRemaining, getCurrentTimeInUTC } from '../../../utils/dates';
+import { getContestDetailsAppUrl, getParticipateInContestUrl } from '../../../utils/urls';
 import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
 import LockIcon from '../../guidelines/icons/LockIcon';
@@ -44,7 +44,6 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const contestCardControlBtns = 'card-control-buttons';
     const contestCardControlBtnsClassName = concatClassNames(styles.contestCardControls, contestCardControlBtns);
 
-    const { getParticipateInContestUrl, getContestDetailsUrl } = useAppUrls();
     const [ competeTimeHasExpired, setCompeteTimeHasExpired ] = useState(false);
     const [ practiceTimeHasExpired, setPracticeTimeHasExpired ] = useState(false);
 
