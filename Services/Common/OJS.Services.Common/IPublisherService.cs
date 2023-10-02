@@ -8,6 +8,6 @@ public interface IPublisherService
     Task Publish<T>(T obj)
         where T : class;
 
-    Task PublishMultiple<T>(IEnumerable<T> objs)
+    Task Publish<T>(IEnumerable<T> objs)
         where T : class;
 }

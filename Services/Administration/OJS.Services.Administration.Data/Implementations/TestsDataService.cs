@@ -3,7 +3,6 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
-    using OJS.Data.Models.Problems;
     using OJS.Data.Models.Tests;
     using OJS.Services.Common.Data.Implementations;
 
@@ -31,15 +30,5 @@
             this.Delete(t => t.ProblemId == problemId);
             await this.SaveChanges();
         }
-
-        public async Task<int> GetProblemIdByTestId(int testId)
-            => await this.GetByIdQuery(testId)
-                .Select(t => t.ProblemId)
-                .FirstOrDefaultAsync();
-
-        public async Task<Problem?> GetProblemById(int testId)
-            => await this.GetByIdQuery(testId)
-                .Select(t => t.Problem)
-                .FirstOrDefaultAsync();
     }
 }

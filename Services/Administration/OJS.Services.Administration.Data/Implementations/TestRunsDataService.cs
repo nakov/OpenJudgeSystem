@@ -38,7 +38,7 @@ public class TestRunsDataService : DataService<TestRun>, ITestRunsDataService
         await this.SaveChanges();
     }
 
-    public async Task DeleteInBatchesBySubmissionsId(IEnumerable<int> submissionIds)
+    public async Task DeleteInBatchesBySubmissionIds(IEnumerable<int> submissionIds)
         => await submissionIds
             .Chunk(GlobalConstants.BatchOperationsChunkSize)
             .ForEachSequential(async chunk =>

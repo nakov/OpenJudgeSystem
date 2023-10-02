@@ -309,19 +309,17 @@ public class TestsController : BaseAutoCrudAdminController<Test>
 
         if (isForRetesting)
         {
-            var problemId = await this.testsData.GetProblemIdByTestId(newTest.Id);
-
-            await this.problemsBusiness.RetestById(problemId);
+            await this.problemsBusiness.RetestById(newTest.ProblemId);
         }
         else
         {
-            var problem = await this.testsData.GetProblemById(newTest.Id);
+            var problem = await this.problemsData.GetById(newTest.ProblemId);
 
             if (problem != null)
             {
                 var submissionIds = problem.Submissions.Select(s => s.Id);
 
-                await this.testRunsData.DeleteInBatchesBySubmissionsId(submissionIds);
+                await this.testRunsData.DeleteInBatchesBySubmissionIds(submissionIds);
             }
         }
 

@@ -15,6 +15,8 @@
 
         IQueryable<Problem> GetAllByProblemGroup(int problemGroupId);
 
+        Task<Problem?> GetById(int id);
+
         Task<bool> ExistsById(int id);
 
         Task<double> GetNewOrderByContest(int contestId);
