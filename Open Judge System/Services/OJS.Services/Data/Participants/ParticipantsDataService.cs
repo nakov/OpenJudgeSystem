@@ -146,27 +146,31 @@ namespace OJS.Services.Data.Participants
 
         public void UpdateTotalScoreSnapshot()
         {
-            var command = @"DECLARE @BatchSize INT = 5000;
+            var totalScoreSnapshot = nameof(Participant.TotalScoreSnapshot);
+            var problemId = nameof(ParticipantScore.ProblemId);
+            var points = nameof(ParticipantScore.Points);
+            
+            var command = $@"DECLARE @BatchSize INT = 5000;
                DECLARE @MaxId INT = (SELECT MAX(Id) FROM Participants);
                DECLARE @Offset INT = 0;
 
                WHILE @Offset <= @MaxId
                BEGIN
                    WITH OrderedParticipants AS (
-                   SELECT TOP (@BatchSize) Id
+                   SELECT TOP (@BatchSize) {nameof(Participant.Id)}
                FROM Participants
-               WHERE Id > @Offset
-               ORDER BY Id
+               WHERE {nameof(Participant.Id)} > @Offset
+               ORDER BY {nameof(Participant.Id)}
                    )
                UPDATE p
-               SET TotalScoreSnapshot = ISNULL((
-                   SELECT SUM(ps.Points)
+               SET {totalScoreSnapshot} = ISNULL((
+                   SELECT SUM(ps.{points})
                FROM ParticipantScores ps
-                   JOIN Problems pr ON ps.ProblemId = pr.Id AND pr.IsDeleted = 0
-               WHERE ps.ParticipantId = p.Id
+                   JOIN Problems pr ON ps.{problemId} = pr.{nameof(ParticipantScore.Id)} AND pr.{nameof(Problem.IsDeleted)} = 0
+               WHERE ps.{nameof(ParticipantScore.ParticipantId)} = p.{nameof(Participant.Id)}
                    ), 0)
                FROM OrderedParticipants op
-                   JOIN Participants p ON op.Id = p.Id;
+                   JOIN Participants p ON op.{nameof(Participant.Id)} = p.{nameof(Participant.Id)};
 
                SET @Offset = @Offset + @BatchSize;
                END;";
