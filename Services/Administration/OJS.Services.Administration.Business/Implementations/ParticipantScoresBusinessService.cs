@@ -34,7 +34,7 @@ public class ParticipantScoresBusinessService : IParticipantScoresBusinessServic
         if (submission != null)
         {
             await this.participantScoresData.ResetBySubmission(submission);
-            await this.testRunsDataService.DeleteByProblem(problemId);
+            await this.testRunsDataService.DeleteBySubmission(submission.Id);
         }
         else
         {
