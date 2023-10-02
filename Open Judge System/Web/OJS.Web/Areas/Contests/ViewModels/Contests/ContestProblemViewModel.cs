@@ -41,7 +41,7 @@
                         .Where(r => !r.IsDeleted)
                         .OrderBy(r => r.OrderBy)
                         .Select(ContestProblemResourceViewModel.FromResource),
-                    DefaultSubmissionType = problem.DefaultSubmissionTypeName,
+                    DefaultSubmissionTypeId = problem.DefaultSubmissionTypeId,
                 };
             }
         }
@@ -97,6 +97,6 @@
 
         public bool UserHasAdminRights { get; set; }
 
-        public string DefaultSubmissionType { get; set; }
+        public int DefaultSubmissionTypeId { get; set; }
     }
 }

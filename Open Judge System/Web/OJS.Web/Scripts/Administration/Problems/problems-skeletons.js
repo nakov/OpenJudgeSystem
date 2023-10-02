@@ -4,15 +4,15 @@
 
         submissionTypesCheckboxes.change((ev) => {
             try {
-                var element = ev.target.parentNode.parentNode.children[0].children[0].children[3];
-                var name = element.innerText;
+                var submissionTypeId = ev.target.parentNode.parentNode.children[0].children[0].children[0].value;
+                var submissionTypeName = ev.target.parentNode.parentNode.children[0].children[0].children[1].value;
                 const index = getElementIndex(ev.currentTarget);
                 if (isChecked($(ev.currentTarget))) {
                     insertSkeleton(index, ev);
-                    updateKendoDropdown(true,name);
+                    updateKendoDropdown(true,submissionTypeId, submissionTypeName);
                 } else {
                     removeSkeleton(index);
-                    updateKendoDropdown(false,name);
+                    updateKendoDropdown(false,submissionTypeId, submissionTypeName);
                 }
             } catch (ex) {
                 console.log(ex);
@@ -55,16 +55,16 @@
     </div>`;
     };
 
-    const updateKendoDropdown = (isChecked, name) => {
-        let dropdown = $("#DefaultSubmissionTypeName").data("kendoDropDownList");
+    const updateKendoDropdown = (isChecked, id, name) => {
+        let dropdown = $("#DefaultSubmissionTypeId").data("kendoDropDownList");
         let dataSource = dropdown.dataSource;
         if(isChecked){
             let option = new Object();
             option.Text = name;
-            option.Value = name;
+            option.Value = id;
             dataSource.add(option);
         }else {
-            let itemToRemove =dataSource.data().find(item => item.Value === name);
+            let itemToRemove =dataSource.data().find(item => item.Value === id);
             dataSource.remove(itemToRemove);
         }
         dropdown.refresh();

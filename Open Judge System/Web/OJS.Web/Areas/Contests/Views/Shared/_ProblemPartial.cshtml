@@ -116,8 +116,8 @@
                     <div class="submit-container pull-right">
                         <script>
                         function setDefault(ev) {
-                            let defaultSubmissionName = @Html.Raw(Json.Encode(Model.DefaultSubmissionType))
-                            var defaultItem = this.dataSource.data().find( x=>x.Text === defaultSubmissionName);
+                            let defaultSubmissiontypeId = @Html.Raw(Json.Encode(Model.DefaultSubmissionTypeId))
+                            var defaultItem = this.dataSource.data().find(x => Number(x.Value) === defaultSubmissiontypeId);
                             this.selectedIndex = this.dataSource.data().indexOf(defaultItem);
                             let createDropdownId = `#dropdown_${@Model.ProblemId}`
                             $(createDropdownId).data("kendoDropDownList").value(defaultItem.Value);

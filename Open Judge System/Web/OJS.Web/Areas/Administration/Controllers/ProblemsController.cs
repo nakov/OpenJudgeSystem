@@ -285,8 +285,9 @@
                 };
             }
 
+            newProblem.DefaultSubmissionTypeId = problem.DefaultSubmissionTypeId;
             this.problemsData.Add(newProblem);
-
+            
             this.TempData.AddInfoMessage(GlobalResource.Problem_added);
             return this.RedirectToAction("Problem", "Tests", new { newProblem.Id });
         }
@@ -371,7 +372,7 @@
             existingProblem.Checker = this.checkersData.GetByName(problem.Checker);
             existingProblem.SubmissionTypes.Clear();
             existingProblem.ProblemGroup.Type = ((ProblemGroupType?)problem.ProblemGroupType).GetValidTypeOrNull();
-            existingProblem.DefaultSubmissionTypeName = problem.DefaultSubmissionTypeName;
+            existingProblem.DefaultSubmissionTypeId = problem.DefaultSubmissionTypeId;
 
             if (!existingProblem.ProblemGroup.Contest.IsOnline)
             {
@@ -892,7 +893,7 @@
                 return null;
             }
             
-            problem.DefaultSubmissionTypeName = problemEntity.FirstOrDefault()?.DefaultSubmissionTypeName;
+            problem.DefaultSubmissionTypeId = problemEntity.FirstOrDefault().DefaultSubmissionTypeId;
 
             this.AddCheckersAndProblemGroupsToProblemViewModel(
                 problem,

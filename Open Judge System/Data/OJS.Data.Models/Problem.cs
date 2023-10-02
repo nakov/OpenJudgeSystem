@@ -62,7 +62,7 @@
         [DefaultValue(false)]
         public bool ShowDetailedFeedback { get; set; }
 
-        public string DefaultSubmissionTypeName { get; set; }
+        public int DefaultSubmissionTypeId { get; set; }
 
         public virtual ICollection<Test> Tests { get; set; } = new HashSet<Test>();
 

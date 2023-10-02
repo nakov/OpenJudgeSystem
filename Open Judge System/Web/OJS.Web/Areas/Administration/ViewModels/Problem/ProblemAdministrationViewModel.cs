@@ -56,7 +56,7 @@
                     ProblemSubmissionTypesSkeletons = problem.ProblemSubmissionTypeExecutionDetails
                         .AsQueryable()
                         .Select(ProblemSubmissionTypeExecutionDetailsViewModel.ViewModel),
-                    DefaultSubmissionTypeName = problem.DefaultSubmissionTypeName,
+                    DefaultSubmissionTypeId = problem.DefaultSubmissionTypeId,
                 };
             }
         }
@@ -186,6 +186,6 @@
         public HttpPostedFileBase Tests { get; set; }
 
         [Display(Name = nameof(Resource.DefaultSubmissionTypeName), ResourceType = typeof(Resource))]
-        public string DefaultSubmissionTypeName { get; set; }
+        public int DefaultSubmissionTypeId { get; set; }
     }
 }
