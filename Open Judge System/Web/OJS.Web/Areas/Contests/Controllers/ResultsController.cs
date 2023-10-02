@@ -20,7 +20,6 @@
     using OJS.Common;
     using OJS.Common.Models;
     using OJS.Data.Models;
-    using OJS.Services.Cache;
     using OJS.Services.Data.Contests;
     using OJS.Services.Data.Participants;
     using OJS.Services.Data.ParticipantScores;
@@ -38,20 +37,17 @@
         private readonly IContestsDataService contestsData;
         private readonly IParticipantsDataService participantsData;
         private readonly IParticipantScoresDataService participantScoresData;
-        private readonly ICacheItemsProviderService cacheItemsProvider;
 
         public ResultsController(
             IOjsData data,
             IContestsDataService contestsData,
             IParticipantsDataService participantsData,
-            IParticipantScoresDataService participantScoresData,
-            ICacheItemsProviderService cacheItemsProvider)
+            IParticipantScoresDataService participantScoresData)
             : base(data)
         {
             this.contestsData = contestsData;
             this.participantsData = participantsData;
             this.participantScoresData = participantScoresData;
-            this.cacheItemsProvider = cacheItemsProvider;
         }
 
         /// <summary>
@@ -151,6 +147,7 @@
             int contestId,
             bool official,
             bool isUserAdminOrLecturerInContest,
+            int totalResulsCount,
             int page,
             int resultsInPage)
         {
@@ -177,6 +174,7 @@
                     isUserAdminOrLecturerInContest,
                     isFullResults: false,
                     isExportResults: false,
+                    totalResultsCount: totalResulsCount,
                     page: page,
                     itemsInPage: resultsInPage);
 
@@ -236,6 +234,7 @@
         public ActionResult FullPartial(
             int contestId,
             bool official,
+            int totalResulsCount,
             int page,
             int resultsInPage)
         {
@@ -252,6 +251,7 @@
                 isUserAdminOrLecturer: true,
                 isFullResults: true,
                 isExportResults: false,
+                totalResultsCount: totalResulsCount,
                 page: page,
                 itemsInPage: resultsInPage);
 
@@ -493,6 +493,7 @@
             bool isUserAdminOrLecturer,
             bool isFullResults,
             bool isExportResults = false,
+            int? totalResultsCount = null,
             int page = 1,
             int itemsInPage = int.MaxValue)
         {
@@ -506,8 +507,8 @@
                 .Select(ContestProblemListViewModel.FromProblem)
                 .ToList();
 
-            var participantsCount = this.cacheItemsProvider.GetParticipantsCountForContest(contest.Id);
-            var totalCount = official ? participantsCount.Official : participantsCount.Practice;
+            var totalParticipantsCount = totalResultsCount
+                ?? this.participantsData.GetAllByContestAndIsOfficial(contest.Id, official).Count();
 
             // Get the requested participants without their problem results.
             // Splitting the queries improves performance and avoids unexpected results from joins with Scores.
@@ -545,7 +546,7 @@
                 p.ProblemResults = problemResults.Where(pr => pr.ParticipantId == p.Id));
 
             var results =
-                new StaticPagedList<ParticipantResultViewModel>(participants, page, itemsInPage, totalCount);
+                new StaticPagedList<ParticipantResultViewModel>(participants, page, itemsInPage, totalParticipantsCount);
 
             return new ContestResultsViewModel
             {

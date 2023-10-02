@@ -21,7 +21,7 @@
         @Html.PagedListPager(
             results,
             page => Url.Action<ResultsController>(
-                c => c.SimplePartial(Model.Id, isOfficial, Model.UserHasContestRights, page, results.PageSize)),
+                c => c.SimplePartial(Model.Id, isOfficial, Model.UserHasContestRights, Model.Results.TotalItemCount, page, results.PageSize)),
             PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions
             {
                 HttpMethod = "GET",
@@ -143,7 +143,7 @@
         @Html.PagedListPager(
             results,
             page => Url.Action<ResultsController>(
-                c => c.SimplePartial(Model.Id, isOfficial, Model.UserHasContestRights, page, results.PageSize)),
+                c => c.SimplePartial(Model.Id, isOfficial, Model.UserHasContestRights, Model.Results.TotalItemCount, page, results.PageSize)),
             PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions
             {
                 HttpMethod = "GET",
