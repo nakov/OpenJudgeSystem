@@ -59,6 +59,10 @@
         int SaveChanges();
 
         void ClearDatabase();
+        
+        void ExecuteSqlCommandWithTimeout(string query, int timeoutInSeconds);
+        
+        void DbExecuteSqlCommand(string query);
 
         DbEntityEntry<TEntity> Entry<TEntity>(TEntity entity)
             where TEntity : class;
