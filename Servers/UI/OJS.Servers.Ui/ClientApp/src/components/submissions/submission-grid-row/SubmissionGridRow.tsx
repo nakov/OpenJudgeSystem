@@ -3,12 +3,11 @@ import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../common/contest-helpers';
 import { ISubmissionResponseModel, PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
-import { useAppUrls } from '../../../hooks/use-app-urls';
 import { useAuth } from '../../../hooks/use-auth';
 import { useProblems } from '../../../hooks/use-problems';
 import { formatDate } from '../../../utils/dates';
 import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../utils/strategy-type-utils';
-import { getSubmissionDetailsUrl } from '../../../utils/urls';
+import { getParticipateInContestUrl, getSubmissionDetailsUrl } from '../../../utils/urls';
 import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import IconSize from '../../guidelines/icons/common/icon-sizes';
 
@@ -39,7 +38,6 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
 
     const { actions: { initiateRedirectionToProblem } } = useProblems();
     const { state: loggedInUser } = useAuth();
-    const { getParticipateInContestUrl } = useAppUrls();
 
     const participationType = contestParticipationType(isOfficial);
 
@@ -61,7 +59,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
 
             initiateRedirectionToProblem(problemId, participateInContestUrl);
         },
-        [ contestId, participationType, problemId, getParticipateInContestUrl, initiateRedirectionToProblem ],
+        [ contestId, participationType, problemId, initiateRedirectionToProblem ],
     );
 
     const renderDetailsBtn = useCallback(
@@ -141,7 +139,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
                 </div>
             );
         },
-        [ contestId, contestName, getParticipateInContestUrl, handleParticipateInContestSubmit, participationType, problemId, problemName ],
+        [ contestId, contestName, handleParticipateInContestSubmit, participationType, problemId, problemName ],
     );
 
     return (

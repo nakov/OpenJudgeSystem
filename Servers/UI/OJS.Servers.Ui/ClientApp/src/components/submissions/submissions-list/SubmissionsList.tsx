@@ -3,9 +3,9 @@ import React, { useCallback, useMemo } from 'react';
 import { contestParticipationType } from '../../../common/contest-helpers';
 import { useHashUrlParams } from '../../../hooks/common/use-hash-url-params';
 import { ISubmissionDetails, ISubmissionDetailsType } from '../../../hooks/submissions/types';
-import { useAppUrls } from '../../../hooks/use-app-urls';
 import concatClassNames from '../../../utils/class-names';
 import { formatDate } from '../../../utils/dates';
+import { getProblemSubmissionDetailsUrl } from '../../../utils/urls';
 import { IHaveOptionalClassName } from '../../common/Props';
 import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Label, { LabelType } from '../../guidelines/labels/Label';
@@ -25,7 +25,6 @@ const SubmissionsList = ({
     selectedSubmission,
     className = '',
 }: ISubmissionsListProps) => {
-    const { getProblemSubmissionDetailsUrl } = useAppUrls();
     const { state: { hashParam } } = useHashUrlParams();
 
     const containerClassName = useMemo(
@@ -116,7 +115,7 @@ const SubmissionsList = ({
                 </div>
             );
         },
-        [ getProblemSubmissionDetailsUrl, hashParam, selectedSubmission, submissionsTypeLabelClassName ],
+        [ hashParam, selectedSubmission, submissionsTypeLabelClassName ],
     );
 
     return (

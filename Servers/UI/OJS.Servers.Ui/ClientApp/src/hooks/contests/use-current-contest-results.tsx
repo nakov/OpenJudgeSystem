@@ -5,7 +5,7 @@ import isNil from 'lodash/isNil';
 
 import { IGetContestResultsParams } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
-import { getContestResultsUrl } from '../../utils/urls';
+import { getContestResultsApiUrl } from '../../utils/urls';
 import { IErrorDataType, useHttp } from '../use-http';
 
 import { IContestResultsParticipationType, IContestResultsType } from './types';
@@ -39,7 +39,7 @@ const CurrentContestResultsProvider = ({ children }: ICurrentContestResultsProvi
         error: getContestResultsError,
         isSuccess: areContestResultsLoaded,
     } = useHttp<IGetContestResultsParams, IContestResultsType>({
-        url: getContestResultsUrl,
+        url: getContestResultsApiUrl,
         parameters: getContestResultsParams,
     });
 
