@@ -37,6 +37,11 @@
     background-color: colors.$light-blue-color;
     color: colors.$white-color;
   }
+
+  .unActiveElement {
+    background-color: colors.$white-color;
+    color: colors.$light-blue-color;
+  }
 }
 
 .noSubmissionsFound {
