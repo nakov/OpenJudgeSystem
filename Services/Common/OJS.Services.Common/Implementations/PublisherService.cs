@@ -17,5 +17,5 @@ public class PublisherService : IPublisherService
 
     public Task PublishBatch<T>(IEnumerable<T> objs)
         where T : class
-        => this.bus.Publish(objs);
+        => this.bus.PublishBatch(objs);
 }
