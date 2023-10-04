@@ -36,6 +36,7 @@ namespace OJS.Services.Ui.Business.Implementations
         private readonly IContestValidationService contestValidationService;
         private readonly IContestParticipantsCacheService contestParticipantsCacheService;
         private readonly ILecturersInContestsBusinessService lecturersInContestsBusiness;
+        private readonly IContestDetailsValidationService contestDetailsValidationService;
 
         public ContestsBusinessService(
             IContestsDataService contestsData,
@@ -48,7 +49,8 @@ namespace OJS.Services.Ui.Business.Implementations
             IContestCategoriesCacheService contestCategoriesCache,
             IContestValidationService contestValidationService,
             IContestParticipantsCacheService contestParticipantsCacheService,
-            ILecturersInContestsBusinessService lecturersInContestsBusiness)
+            ILecturersInContestsBusinessService lecturersInContestsBusiness,
+            IContestDetailsValidationService contestDetailsValidationService)
         {
             this.contestsData = contestsData;
             this.examGroupsData = examGroupsData;
@@ -61,25 +63,28 @@ namespace OJS.Services.Ui.Business.Implementations
             this.contestValidationService = contestValidationService;
             this.contestParticipantsCacheService = contestParticipantsCacheService;
             this.lecturersInContestsBusiness = lecturersInContestsBusiness;
+            this.contestDetailsValidationService = contestDetailsValidationService;
         }
 
         public async Task<ContestDetailsServiceModel> GetContestDetails(int id)
         {
             var user = this.userProviderService.GetCurrentUser();
             var contest = await this.contestsData.GetByIdWithProblems(id);
-            if (contest == null ||
-                user == null ||
-                contest.IsDeleted ||
-                (!contest.IsVisible && !user.IsLecturer && !user.IsAdmin))
+
+            var validationResult = this.contestDetailsValidationService.GetValidationResult((
+                contest,
+                id,
+                user) !);
+            if (!validationResult.IsValid)
             {
-                throw new BusinessServiceException(string.Format(ValidationMessages.Contest.NotFound, id));
+                throw new BusinessServiceException(validationResult.Message);
             }
 
             var participant = await this.participantsData
                 .GetWithContestByContestByUserAndIsOfficial(
                     id,
                     user.Id,
-                    contest.CanBeCompeted);
+                    contest!.CanBeCompeted);
 
             var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest);
 
