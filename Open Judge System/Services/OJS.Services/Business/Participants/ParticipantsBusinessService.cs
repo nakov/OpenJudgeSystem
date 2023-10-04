@@ -161,10 +161,11 @@ namespace OJS.Services.Business.Participants
             var participantScoresToRemove = new List<ParticipantScore>();
             foreach (var participantScoreGroup in participantScores)
             {
-                participantScoresToRemove.AddRange(participantScoreGroup.OrderByDescending(ps => ps.Points).Skip(1)
+                participantScoresToRemove
+                    .AddRange(participantScoreGroup.OrderByDescending(ps => ps.Points).Skip(1)
                     .ToList());
-                this.scoresDataService.Delete(participantScoresToRemove);
             }
+            this.scoresDataService.Delete(participantScoresToRemove);
         }
 
         private void AssignRandomProblemsToParticipant(Participant participant, Contest contest)
