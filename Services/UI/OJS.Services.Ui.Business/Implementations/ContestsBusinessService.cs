@@ -67,16 +67,12 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var user = this.userProviderService.GetCurrentUser();
             var contest = await this.contestsData.GetByIdWithProblems(id);
-
-            var validationResult = this.contestValidationService.GetValidationResult((
-                contest,
-                id,
-                user,
-                contest!.CanBeCompeted) !);
-
-            if (!validationResult.IsValid)
+            if (contest == null ||
+                user == null ||
+                contest.IsDeleted ||
+                (!contest.IsVisible && !user.IsLecturer && !user.IsAdmin))
             {
-                throw new BusinessServiceException(validationResult.Message);
+                throw new BusinessServiceException(string.Format(ValidationMessages.Contest.NotFound, id));
             }
 
             var participant = await this.participantsData
