@@ -1,5 +1,4 @@
-﻿using OJS.Common.Helpers;
-using OJS.Services.Data.ParticipantScores;
+﻿using OJS.Services.Data.ParticipantScores;
 
 namespace OJS.Services.Business.Participants
 {
@@ -7,12 +6,10 @@ namespace OJS.Services.Business.Participants
     using System.Collections.Generic;
     using System.Data.Entity.SqlServer;
     using System.Linq;
-
     using OJS.Data.Models;
     using OJS.Services.Common;
     using OJS.Services.Data.Contests;
     using OJS.Services.Data.Participants;
-
     using SharedResource = Resources.Contests.ContestsGeneral;
     using Resource = Resources.Services.Participants.ParticipantsBusiness;
 
@@ -91,11 +88,12 @@ namespace OJS.Services.Business.Participants
             return ServiceResult<string>.Success(participant.User.UserName);
         }
 
-        public ServiceResult<ICollection<string>> UpdateParticipationsEndTimeByContestByParticipationStartTimeRangeAndTimeInMinutes(
-            int contestId,
-            int timeInMinutes,
-            DateTime participationStartTimeRangeStart,
-            DateTime participationStartTimeRangeEnd)
+        public ServiceResult<ICollection<string>>
+            UpdateParticipationsEndTimeByContestByParticipationStartTimeRangeAndTimeInMinutes(
+                int contestId,
+                int timeInMinutes,
+                DateTime participationStartTimeRangeStart,
+                DateTime participationStartTimeRangeEnd)
         {
             const string minuteParamName = "minute";
 
@@ -154,21 +152,18 @@ namespace OJS.Services.Business.Participants
 
         public void RemoveParticipantMultipleScores()
         {
-            var participantScores = 
+            var participantScores =
                 this.scoresDataService.GetAll()
-                .GroupBy(ps => new { ps.IsOfficial, ps.ProblemId, ps.ParticipantId })
-                .Where(ps=>ps.Count() > 1)
-                .ToList();
-            
-            using (var scope = TransactionsHelper.CreateTransactionScope())
-            {
-                foreach (var participantScoreGroup in participantScores)
-                {
-                    var participantScoresToRemove = participantScoreGroup.OrderByDescending(ps => ps.Points).Skip(1).ToList();
-                    this.scoresDataService.Delete(participantScoresToRemove);
+                    .GroupBy(ps => new { ps.IsOfficial, ps.ProblemId, ps.ParticipantId })
+                    .Where(ps => ps.Count() > 1)
+                    .ToList();
 
-                }
-                scope.Complete();
+            var participantScoresToRemove = new List<ParticipantScore>();
+            foreach (var participantScoreGroup in participantScores)
+            {
+                participantScoresToRemove.AddRange(participantScoreGroup.OrderByDescending(ps => ps.Points).Skip(1)
+                    .ToList());
+                this.scoresDataService.Delete(participantScoresToRemove);
             }
         }
 
