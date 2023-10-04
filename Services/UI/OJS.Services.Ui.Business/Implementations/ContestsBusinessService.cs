@@ -97,10 +97,10 @@ namespace OJS.Services.Ui.Business.Implementations
                 contestDetailsServiceModel.Problems = problemsForParticipant.Map<ICollection<ContestProblemServiceModel>>();
             }
 
-            var canShowProblemsInPractice = !contest.HasPracticePassword || userIsAdminOrLecturerInContest;
-            var canShowProblemsInCompete = (contest is { HasContestPassword: false, IsActive: false } && !contest.IsOnlineExam) || userIsAdminOrLecturerInContest;
+            var canShowProblemsInPractice = (!contest.HasPracticePassword && contest.CanBePracticed) || userIsAdminOrLecturerInContest;
+            var canShowProblemsInCompete = (contest is { HasContestPassword: false, IsActive: false } && !contest.IsOnlineExam && contest.CanBeCompeted) || userIsAdminOrLecturerInContest;
 
-            if ((contest.CanBePracticed && !canShowProblemsInPractice) || (contest.CanBeCompeted && !canShowProblemsInCompete))
+            if (!canShowProblemsInPractice || !canShowProblemsInCompete)
             {
                 contestDetailsServiceModel.Problems = new List<ContestProblemServiceModel>();
             }

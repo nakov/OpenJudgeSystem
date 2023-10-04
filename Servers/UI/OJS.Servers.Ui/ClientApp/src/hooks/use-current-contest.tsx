@@ -200,8 +200,8 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         [ user ],
     );
 
-    const getContestDetails = useCallback(({ id, isOfficial: isOfficialUrlParam }: IContestDetailsUrlParams) => {
-        setContestDetailsParams({ id, isOfficial: isOfficialUrlParam });
+    const getContestDetails = useCallback(({ id }: IContestDetailsUrlParams) => {
+        setContestDetailsParams({ id });
     }, []);
 
     useEffect(() => {

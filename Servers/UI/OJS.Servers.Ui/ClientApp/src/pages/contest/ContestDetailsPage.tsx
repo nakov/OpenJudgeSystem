@@ -88,7 +88,7 @@ const ContestDetailsPage = () => {
 
     const {
         isAccessible: canAccessPracticeButton,
-        isAccessibleForAdminOrLecturerInContest: praticableOnlyForAdminOrLecturers,
+        isAccessibleForAdminOrLecturerInContest: practicableOnlyForAdminOrLecturers,
     } = useMemo(
         () => getButtonAccessibility(contestDetails?.canBePracticed, contestDetails?.isAdminOrLecturerInContest),
         [ contestDetails ],
@@ -97,7 +97,7 @@ const ContestDetailsPage = () => {
     useEffect(
         () => {
             if (!isNil(contestId)) {
-                getContestDetails({ id: contestId.toString(), isOfficial });
+                getContestDetails({ id: contestId.toString() });
             }
         },
         [ contestId,
@@ -152,45 +152,53 @@ const ContestDetailsPage = () => {
                         </>
                     )
                     : null}
-                <LinkButton
-                  id="button-card-compete"
-                  internalClassName={competableOnlyForAdminAndLecturers
-                      ? styles.adminAccessibleButton
-                      : ''}
-                  to={getParticipateInContestUrl({
-                      id: contestIdToNumber,
-                      participationType: ContestParticipationType.Compete,
-                  })}
-                  text="Compete"
-                  state={
-                      canAccessCompeteButton
-                          ? ButtonState.enabled
-                          : ButtonState.disabled
-                }
-                />
-                <LinkButton
-                  id="button-card-practice"
-                  internalClassName={praticableOnlyForAdminOrLecturers
-                      ? styles.adminAccessibleButton
-                      : ''}
-                  to={getParticipateInContestUrl({
-                      id: contestIdToNumber,
-                      participationType: ContestParticipationType.Practice,
-                  })}
-                  text="Practice"
-                  type={LinkButtonType.secondary}
-                  state={
-                      canAccessPracticeButton
-                          ? ButtonState.enabled
-                          : ButtonState.disabled
-                }
-                />
+                {canAccessCompeteButton
+                    ? (
+                        <LinkButton
+                          id="button-card-compete"
+                          internalClassName={competableOnlyForAdminAndLecturers
+                              ? styles.adminAccessibleButton
+                              : ''}
+                          to={getParticipateInContestUrl({
+                              id: contestIdToNumber,
+                              participationType: ContestParticipationType.Compete,
+                          })}
+                          text="Compete"
+                          state={
+                        canAccessCompeteButton
+                            ? ButtonState.enabled
+                            : ButtonState.disabled
+                    }
+                        />
+                    )
+                    : null}
+                {canAccessPracticeButton
+                    ? (
+                        <LinkButton
+                          id="button-card-practice"
+                          internalClassName={practicableOnlyForAdminOrLecturers
+                              ? styles.adminAccessibleButton
+                              : ''}
+                          to={getParticipateInContestUrl({
+                              id: contestIdToNumber,
+                              participationType: ContestParticipationType.Practice,
+                          })}
+                          text="Practice"
+                          type={LinkButtonType.secondary}
+                          state={
+                        canAccessPracticeButton
+                            ? ButtonState.enabled
+                            : ButtonState.disabled
+                    }
+                        />
+                    )
+                    : null}
             </div>
         ),
         [
             contestId,
             contestIdToNumber,
-            praticableOnlyForAdminOrLecturers,
+            practicableOnlyForAdminOrLecturers,
             canAccessPracticeButton,
             competableOnlyForAdminAndLecturers,
             canAccessCompeteButton,

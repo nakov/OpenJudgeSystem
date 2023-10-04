@@ -97,7 +97,7 @@ const getParticipateInContestUrl = ({
 }: IParticipateInContestTypeUrlParams) => `/contests/${id}/${participationType}`;
 
 const getContestDetailsUrl =
-    ({ id, isOfficial }: IContestDetailsUrlParams) => `${baseApiUrl}/Contests/Details/${id}?official=${isOfficial}`;
+    ({ id }: IContestDetailsUrlParams) => `${baseApiUrl}/Contests/Details/${id}`;
 
 const getContestDetailsAppUrl = (id: number) => `/contests/${id}`;
 
