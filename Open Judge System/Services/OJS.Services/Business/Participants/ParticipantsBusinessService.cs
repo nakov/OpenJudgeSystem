@@ -154,7 +154,7 @@ namespace OJS.Services.Business.Participants
 
         public void RemoveParticipantMultipleScores()
         {
-            var participants = 
+            var participantScores = 
                 this.scoresDataService.GetAll()
                 .GroupBy(ps => new { ps.IsOfficial, ps.ProblemId, ps.ParticipantId })
                 .Where(ps=>ps.Count() > 1)
@@ -162,10 +162,10 @@ namespace OJS.Services.Business.Participants
             
             using (var scope = TransactionsHelper.CreateTransactionScope())
             {
-                foreach (var participant in participants)
+                foreach (var participantScoreGroup in participantScores)
                 {
-                    var participantsToRemove = participant.OrderByDescending(ps => ps.Points).Skip(1).ToList();
-                    this.scoresDataService.Delete(participantsToRemove);
+                    var participantScoresToRemove = participantScoreGroup.OrderByDescending(ps => ps.Points).Skip(1).ToList();
+                    this.scoresDataService.Delete(participantScoresToRemove);
 
                 }
                 scope.Complete();
