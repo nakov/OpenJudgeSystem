@@ -5,6 +5,7 @@
     using System.Linq;
     using AutoMapper;
     using OJS.Data.Models.Submissions;
+    using OJS.Data.Models.Tests;
     using OJS.Services.Ui.Models.Users;
     using SoftUni.AutoMapper.Infrastructure.Models;
 
@@ -33,6 +34,8 @@
 
         public bool IsCompiledSuccessfully { get; set; }
 
+        public bool IsProcessed { get; set; }
+
         public string CompilerComment { get; set; } = null!;
 
         public DateTime CreatedOn { get; set; }
@@ -44,6 +47,16 @@
         public string? FileExtension { get; set; }
 
         public DateTime? StartedExecutionOn { get; set; }
+
+        public string? ProcessingComment { get; set; }
+
+        public int TotalTests { get; set; }
+
+        public DateTime? CompletedExecutionOn { get; set; }
+
+        public int ContestId { get; set; }
+        public IEnumerable<Test> Tests { get; set; } =
+            Enumerable.Empty<Test>();
 
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<Submission, SubmissionDetailsServiceModel>()
@@ -63,6 +76,19 @@
                 .ForMember(d => d.IsOfficial, opt => opt.MapFrom(s =>
                     s.Participant!.IsOfficial))
                 .ForMember(d => d.ByteContent, opt => opt.MapFrom(s =>
-                    s.Content));
+                    s.Content))
+                .ForMember(s => s.IsProcessed, opt => opt.MapFrom(s => s.Processed))
+                .ForMember(d => d.TotalTests, opt => opt.MapFrom(s =>
+                    s.Problem != null
+                        ? s.Problem.Tests.Count
+                        : 0))
+                .ForMember(d => d.Tests, opt => opt.MapFrom(s =>
+                    s.Problem != null
+                        ? s.Problem.Tests.ToList()
+                        : new List<Test>()))
+                .ForMember(d => d.ContestId, opt => opt.MapFrom(s =>
+                    s.Problem != null
+                        ? s.Problem.ProblemGroup.ContestId
+                        : 0));
     }
 }

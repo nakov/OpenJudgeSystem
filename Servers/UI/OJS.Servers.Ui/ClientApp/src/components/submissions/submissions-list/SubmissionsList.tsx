@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { ContestParticipationType } from '../../../common/constants';
+import { contestParticipationType } from '../../../common/contest-helpers';
 import { useHashUrlParams } from '../../../hooks/common/use-hash-url-params';
 import { ISubmissionDetails, ISubmissionDetailsType } from '../../../hooks/submissions/types';
-import { useAppUrls } from '../../../hooks/use-app-urls';
 import concatClassNames from '../../../utils/class-names';
 import { formatDate } from '../../../utils/dates';
+import { getProblemSubmissionDetailsUrl } from '../../../utils/urls';
 import { IHaveOptionalClassName } from '../../common/Props';
 import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Label, { LabelType } from '../../guidelines/labels/Label';
@@ -25,7 +25,6 @@ const SubmissionsList = ({
     selectedSubmission,
     className = '',
 }: ISubmissionsListProps) => {
-    const { getProblemSubmissionDetailsUrl } = useAppUrls();
     const { state: { hashParam } } = useHashUrlParams();
 
     const containerClassName = useMemo(
@@ -49,67 +48,75 @@ const SubmissionsList = ({
     const submissionBtnClass = 'submissionBtn';
     const submissionsTypeLabelClassName = concatClassNames(styles.submissionTypeLabel);
 
-    const renderSubmissionListItem = useCallback((submission: ISubmissionDetails) => {
-        const { id: selectedSubmissionId } = selectedSubmission || {};
-        const {
-            id,
-            points,
-            maximumPoints,
-            isProcessed,
-            createdOn,
-            submissionType,
-            isOfficial,
-        } = submission;
-        const isSelectedSubmission = id === selectedSubmissionId;
-        const selectedClassName = isSelectedSubmission
-            ? styles.selected
-            : '';
+    const renderSubmissionListItem = useCallback(
+        (submission: ISubmissionDetails) => {
+            const { id: selectedSubmissionId } = selectedSubmission || {};
+            const {
+                id,
+                points,
+                maximumPoints,
+                isProcessed,
+                createdOn,
+                submissionType,
+                isOfficial,
+            } = submission;
+            const isSelectedSubmission = id === selectedSubmissionId;
+            const selectedClassName = isSelectedSubmission
+                ? styles.selected
+                : '';
 
-        const itemClassName = concatClassNames(
-            styles.submissionContainer,
-            selectedClassName,
-        );
+            const itemClassName = concatClassNames(
+                styles.submissionContainer,
+                selectedClassName,
+            );
 
-        const buttonState = isSelectedSubmission
-            ? ButtonState.disabled
-            : ButtonState.enabled;
+            const buttonState = isSelectedSubmission
+                ? ButtonState.disabled
+                : ButtonState.enabled;
 
-        const typeLabelText = isOfficial
-            ? ContestParticipationType.Compete
-            : ContestParticipationType.Practice;
+            const typeLabelText = contestParticipationType(isOfficial);
 
-        return (
-            <div className={itemClassName}>
-                <div className={styles.infoContainer}>
-                    <SubmissionResultPointsLabel
-                      points={points}
-                      maximumPoints={maximumPoints}
-                      isProcessed={isProcessed}
-                    />
-                    <p className={styles.submissionCreatedOnParagraph}>{formatDate(createdOn)}</p>
-                </div>
-                <div className={styles.actionsContainer}>
-                    <Text className={styles.submissionTypeText}>
-                        {submissionType}
-                    </Text>
-                    <div className={styles.submissionDetailsButtonsWrapper}>
-                        <Label type={LabelType.plain} text={typeLabelText} className={submissionsTypeLabelClassName} />
-                        <LinkButton
-                          size={ButtonSize.small}
-                          to={getProblemSubmissionDetailsUrl({
-                              submissionId: id,
-                              hashParam,
-                          })}
-                          className={submissionBtnClass}
-                          type={LinkButtonType.secondary}
-                          text="Details"
-                          state={buttonState}
+            return (
+                <div className={itemClassName}>
+                    <div className={styles.infoContainer}>
+                        <SubmissionResultPointsLabel
+                          points={points}
+                          maximumPoints={maximumPoints}
+                          isProcessed={isProcessed}
                         />
+                        <p className={styles.submissionCreatedOnParagraph}>{formatDate(createdOn)}</p>
+                    </div>
+                    <div className={styles.actionsContainer}>
+                        <div className={styles.textContainer}>
+                            <Text className={styles.submissionTypeText}>
+                                {submissionType}
+                            </Text>
+                            {!isProcessed
+                                ? (
+                                    <Text className={styles.isProcessingTypeText}>Not processed yet</Text>
+                                )
+                                : null}
+                        </div>
+                        <div className={styles.submissionDetailsButtonsWrapper}>
+                            <Label type={LabelType.plain} text={typeLabelText} className={submissionsTypeLabelClassName} />
+                            <LinkButton
+                              size={ButtonSize.small}
+                              to={getProblemSubmissionDetailsUrl({
+                                  submissionId: id,
+                                  hashParam,
+                              })}
+                              className={submissionBtnClass}
+                              type={LinkButtonType.secondary}
+                              text="Details"
+                              state={buttonState}
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
-        );
-    }, [ getProblemSubmissionDetailsUrl, hashParam, selectedSubmission, submissionsTypeLabelClassName ]);
+            );
+        },
+        [ hashParam, selectedSubmission, submissionsTypeLabelClassName ],
+    );
 
     return (
         <div className={containerClassName}>

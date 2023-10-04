@@ -6,6 +6,7 @@
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Models.Submissions;
     using OJS.Services.Ui.Models.Submissions;
+    using SoftUni.Common.Models;
     using SoftUni.Services.Infrastructure;
 
     public interface ISubmissionsBusinessService : IService
@@ -22,18 +23,28 @@
 
         Task<IEnumerable<SubmissionForProfileServiceModel>> GetForProfileByUser(string? username);
 
-        Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(int problemId, bool isOfficial, int take = 0);
+        Task<IEnumerable<SubmissionViewInResultsPageModel>> GetSubmissionResultsByProblem(int problemId, bool isOfficial, int take = 0);
 
-        Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionDetailsResults(int submissionId, bool isOfficial, int take = 0);
+        Task<IEnumerable<SubmissionViewInResultsPageModel>> GetSubmissionDetailsResults(int submissionId, bool isOfficial, int take = 0);
 
         Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult);
 
         // Task HardDeleteAllArchived();
 
-        Task<IEnumerable<SubmissionForPublicSubmissionsServiceModel>> GetPublicSubmissions();
+        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPublicSubmissions(SubmissionForPublicSubmissionsServiceModel model);
+
+        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetUsersLastSubmissions(bool? isOfficial, int page);
+
+        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetProcessingSubmissions(int page);
+
+        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetByContest(int contestId, int page);
+
+        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPendingSubmissions(int page);
 
         Task<int> GetTotalCount();
 
         SubmissionFileDownloadServiceModel GetSubmissionFile(int submissionId);
+
+        Task<SubmissionDetailsWithResultsModel> GetSubmissionDetailsWithResults(int submissionId, int take);
     }
 }

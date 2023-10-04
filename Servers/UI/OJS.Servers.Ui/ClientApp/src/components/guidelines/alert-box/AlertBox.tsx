@@ -11,47 +11,71 @@ enum AlertBoxType {
     info = 2
 }
 
-const alertBoxTypeToDefaulClassName = {
+const alertBoxTypeToDefaultClassName = {
     [AlertBoxType.error]: styles.error,
-    [AlertBoxType.info]: 'info',
+    [AlertBoxType.info]: styles.info,
 };
 
 interface IAlertBoxProps extends IHaveOptionalClassName {
     message: string;
     type: AlertBoxType;
-    onClose: () => void;
+    isClosable?: boolean;
+    onClose?: () => void;
 }
 
 const AlertBox = ({
     message,
     type,
     className,
+    isClosable = true,
     onClose,
 }: IAlertBoxProps) => {
     const [ isHidden, setIsHidden ] = useState<boolean>(false);
 
-    const internalClassName = useMemo(() => {
-        const baseClsName = concatClassNames(alertBoxTypeToDefaulClassName[type], styles.alertBox, className);
+    const internalClassName = useMemo(
+        () => {
+            const baseClsName = concatClassNames(alertBoxTypeToDefaultClassName[type], styles.alertBox, className);
 
-        return isHidden
-            ? concatClassNames(styles.hidden, baseClsName)
-            : baseClsName;
-    }, [ className, isHidden, type ]);
+            return isHidden
+                ? concatClassNames(styles.hidden, baseClsName)
+                : baseClsName;
+        },
+        [ className, isHidden, type ],
+    );
 
-    const handleOnClickClose = useCallback(() => {
-        setIsHidden(true);
-        onClose();
-    }, [ onClose ]);
+    const handleOnClickClose = useCallback(
+        () => {
+            setIsHidden(true);
+
+            if (onClose) {
+                onClose();
+            }
+        },
+        [ onClose ],
+    );
+
+    const closeButton = useCallback(
+        () => {
+            if (isClosable) {
+                return (
+                    <Button
+                      type={ButtonType.plain}
+                      onClick={handleOnClickClose}
+                    >
+                        close
+                    </Button>
+                );
+            }
+
+            return null;
+        },
+        [ handleOnClickClose, isClosable ],
+    );
 
     return (
         <div className={internalClassName}>
             <span>{message}</span>
-            <Button
-              type={ButtonType.plain}
-              onClick={handleOnClickClose}
-            >
-                close
-            </Button>
+            {closeButton()}
         </div>
     );
 };

@@ -10,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SoftUni.Common.Extensions;
+using SoftUni.Common.Models;
 
 public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataService
 {
@@ -23,20 +25,37 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             .MapCollection<TServiceModel>()
             .FirstOrDefault();
 
-    public Task<IEnumerable<TServiceModel>> GetLatestSubmissions<TServiceModel>(int count)
-        => this.GetQuery(
+    public async Task<IEnumerable<TServiceModel>> GetLatestSubmissions<TServiceModel>(int submissionsPerPage)
+        => await this.GetQuery(
                 orderBy: s => s.Id,
                 descending: true,
-                take: count)
+                take: submissionsPerPage)
             .MapCollection<TServiceModel>()
             .ToEnumerableAsync();
 
+    public async Task<PagedResult<TServiceModel>> GetLatestSubmissions<TServiceModel>(int submissionsPerPage, int pageNumber)
+            => await this.GetQuery(
+                    filter: s => !s.IsDeleted,
+                    orderBy: s => s.Id,
+                    descending: true)
+                .MapCollection<TServiceModel>()
+                .ToPagedResultAsync(submissionsPerPage, pageNumber);
+
+    // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/903
+    public async Task<PagedResult<TServiceModel>> GetLatestSubmissionsByUserParticipations<TServiceModel>(
+        IEnumerable<int?> userParticipantsIds,
+        int submissionsPerPage,
+        int pageNumber)
+            => await this.GetQuery(
+                    filter: s => !s.IsDeleted && userParticipantsIds.Contains(s.ParticipantId!),
+                    orderBy: s => s.Id,
+                    descending: true)
+                .MapCollection<TServiceModel>()
+                .ToPagedResultAsync(submissionsPerPage, pageNumber);
+
     public async Task<int> GetTotalSubmissionsCount()
-        => await this.GetQuery(
-                orderBy: s => s.Id,
-                descending: true)
-            .Select(s => s.Id)
-            .FirstOrDefaultAsync();
+        => await this.DbSet
+                    .CountAsync();
 
     public Submission? GetBestForParticipantByProblem(int participantId, int problemId) =>
         this.GetAllByProblemAndParticipant(problemId, participantId)
@@ -79,6 +98,14 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
     public IQueryable<int> GetIdsByProblem(int problemId)
         => this.GetAllByProblem(problemId)
             .Select(s => s.Id);
+
+    public IQueryable<Submission> GetAllForUserByContest(int contestId, string userId)
+        => this
+            .DbSet
+            .Where(x =>
+                x.Participant!.UserId == userId &&
+                x.Problem.ProblemGroup.ContestId == contestId &&
+                x.Problem.ShowResults);
 
     public IQueryable<Submission> GetAllByIdsQuery(IEnumerable<int> ids)
         => this.GetQuery()

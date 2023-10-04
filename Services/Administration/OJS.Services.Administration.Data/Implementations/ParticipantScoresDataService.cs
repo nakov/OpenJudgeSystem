@@ -14,7 +14,7 @@ namespace OJS.Services.Administration.Data.Implementations
         private readonly IParticipantsDataService participantsData;
 
         public ParticipantScoresDataService(
-            AdminDbContext db,
+            OjsDbContext db,
             IParticipantsDataService participantsData)
             : base(db)
             => this.participantsData = participantsData;
@@ -45,7 +45,7 @@ namespace OJS.Services.Administration.Data.Implementations
 
         public async Task ResetBySubmission(Submission submission)
         {
-            if (submission.ParticipantId == null || submission.ProblemId == null)
+            if (submission.ParticipantId == null)
             {
                 return;
             }
@@ -66,7 +66,7 @@ namespace OJS.Services.Administration.Data.Implementations
 
             var existingScore = await this.GetByParticipantIdProblemIdAndIsOfficial(
                 submission.ParticipantId.Value,
-                submission.ProblemId.Value,
+                submission.ProblemId,
                 participant.IsOfficial);
 
             if (existingScore == null)
@@ -79,8 +79,8 @@ namespace OJS.Services.Administration.Data.Implementations
             }
         }
 
-        public Task DeleteAllByProblem(int problemId) =>
-            this.DbSet
+        public Task DeleteAllByProblem(int problemId)
+            => this.DbSet
                 .Where(x => x.ProblemId == problemId)
                 .DeleteFromQueryAsync();
 
@@ -112,7 +112,7 @@ namespace OJS.Services.Administration.Data.Implementations
             await this.Add(new ParticipantScore
             {
                 ParticipantId = submission.ParticipantId!.Value,
-                ProblemId = submission.ProblemId!.Value,
+                ProblemId = submission.ProblemId,
                 SubmissionId = submission.Id,
                 ParticipantName = username,
                 Points = submission.Points,

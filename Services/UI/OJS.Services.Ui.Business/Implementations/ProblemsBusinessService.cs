@@ -11,6 +11,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Problems;
+    using OJS.Services.Common.Data;
     using OJS.Services.Common.Models;
     using OJS.Services.Infrastructure.Exceptions;
     using OJS.Services.Ui.Data;
@@ -28,12 +29,11 @@ namespace OJS.Services.Ui.Business.Implementations
         private readonly IProblemsDataService problemsData;
         private readonly IProblemResourcesDataService problemResourcesData;
         private readonly ISubmissionsDataService submissionsData;
-        private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
+        private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
         private readonly ITestRunsDataService testRunsData;
         private readonly ISubmissionTypesDataService submissionTypesData;
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
         private readonly ILecturersInContestsBusinessService lecturersInContestsBusinessService;
-        private readonly ISubmissionsDistributorCommunicationService submissionsDistributorCommunication;
 
         public ProblemsBusinessService(
             IContestsDataService contestsData,
@@ -41,12 +41,11 @@ namespace OJS.Services.Ui.Business.Implementations
             IProblemsDataService problemsData,
             IProblemResourcesDataService problemResourcesData,
             ISubmissionsDataService submissionsData,
-            ISubmissionsForProcessingDataService submissionsForProcessingData,
+            ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
             ITestRunsDataService testRunsData,
             ISubmissionTypesDataService submissionTypesData,
             IProblemGroupsBusinessService problemGroupsBusiness,
-            ILecturersInContestsBusinessService lecturersInContestsBusinessService,
-            ISubmissionsDistributorCommunicationService submissionsDistributorCommunication)
+            ILecturersInContestsBusinessService lecturersInContestsBusinessService)
         {
             this.contestsData = contestsData;
             this.participantScoresData = participantScoresData;
@@ -58,39 +57,6 @@ namespace OJS.Services.Ui.Business.Implementations
             this.submissionTypesData = submissionTypesData;
             this.problemGroupsBusiness = problemGroupsBusiness;
             this.lecturersInContestsBusinessService = lecturersInContestsBusinessService;
-            this.submissionsDistributorCommunication = submissionsDistributorCommunication;
-        }
-
-        public async Task RetestById(int id)
-        {
-            var submissions = await this.submissionsData.GetAllByProblem(id)
-                .Include(s => s.SubmissionType)
-                .Include(s => s.Problem)
-                .Include(s => s.Problem!.Checker)
-                .Include(s => s.Problem!.Tests)
-                .ToListAsync();
-
-            var submissionIds = submissions.Select(s => s.Id).ToList();
-
-            using (var scope = TransactionsHelper.CreateTransactionScope(
-                       IsolationLevel.RepeatableRead,
-                       TransactionScopeAsyncFlowOption.Enabled))
-            {
-                await this.participantScoresData.DeleteAllByProblem(id);
-
-                this.submissionsData.SetAllToUnprocessedByProblem(id);
-
-                await this.submissionsForProcessingData.AddOrUpdateBySubmissionIds(submissionIds);
-
-                scope.Complete();
-            }
-
-            var response = await this.submissionsDistributorCommunication.AddSubmissionsForProcessing(submissions);
-            if (!response.IsSuccess)
-            {
-                throw new Exception(
-                    "An error has occured while sending submissions for processing: " + response.ErrorMessage);
-            }
         }
 
         public async Task DeleteById(int id)

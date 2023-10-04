@@ -1,9 +1,9 @@
 /* eslint-disable import/prefer-default-export */
 import { IFilter, ISort } from './contest-types';
 
-interface IStartContestUrlParams {
+interface IContestDetailsUrlParams {
     id: number;
-    official: boolean;
+    isOfficial: boolean;
 }
 
 interface IGetContestByProblemUrlParams {
@@ -47,6 +47,15 @@ interface IDownloadSubmissionFileUrlParams {
     id: number | null;
 }
 
+interface IGetSubmissionsUrlParams {
+    page: number;
+}
+
+interface IGetSubmissionsByContestIdParams {
+    page: number;
+    contestId: string | string[] | undefined;
+}
+
 interface IGetSubmissionResultsByProblemUrlParams {
     problemId: number;
     isOfficial: boolean;
@@ -61,11 +70,18 @@ interface IGetContestResultsParams {
 
 interface IGetSubmissionDetailsByIdUrlParams {
     submissionId: number;
-    isOfficial: boolean;
     take: number;
 }
 
 interface IRetestSubmissionUrlParams {
+    id: number;
+}
+
+interface IContestProblemsUrlParams {
+    id: number;
+}
+
+interface IContestEditUrlParams {
     id: number;
 }
 
@@ -78,12 +94,13 @@ interface IGetSearchResultsUrlParams {
 export type {
     IRegisterForContestUrlParams,
     ISubmitContestPasswordUrlParams,
-    IStartContestUrlParams,
+    IContestDetailsUrlParams,
     IAllContestsUrlParams,
     IContestCategoriesUrlParams,
     IStartContestParticipationUrlParams,
     IGetContestParticipationScoresForParticipantUrlParams,
     IDownloadProblemResourceUrlParams,
+    IGetSubmissionsUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetContestResultsParams,
@@ -91,4 +108,7 @@ export type {
     IGetSearchResultsUrlParams,
     IGetContestByProblemUrlParams,
     IDownloadSubmissionFileUrlParams,
+    IContestProblemsUrlParams,
+    IContestEditUrlParams,
+    IGetSubmissionsByContestIdParams,
 };

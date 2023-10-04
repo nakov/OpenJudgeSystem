@@ -15,13 +15,16 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DbContext": "Server=.;Database=OpenJudgeSystem;Integrated Security=True;",
         "SULS_PLATFORM_BASE_URL": "https://localhost:44304",
-        "DISTRIBUTOR_BASE_URL": "https://localhost:6000",
-        "DISTRIBUTOR_API_KEY": "f04101a2-0ae3-46a2-8f4d-057de2fd4e69",
         "SULS_PLATFORM_API_KEY": "1234",
         "LOGGER_FILES_FOLDER_PATH": "../../../../Logs",
         "SHARED_AUTH_COOKIE_DOMAIN": "localhost",
         "UI_URL": "http://localhost:5002",
-        "ADMINISTRATION_URL": "http://localhost:5001"
+        "ADMINISTRATION_URL": "http://localhost:5001",
+        "REDIS_CONNECTION_STRING": "localhost,password=redisPass123,ConnectTimeout=10000,abortConnect=false",
+        "MessageQueueConfig__Host": "localhost",
+        "MessageQueueConfig__VirtualHost": "ojs",
+        "MessageQueueConfig__User": "ojsuser",
+        "MessageQueueConfig__Password": "myS3cretPass2"
       }
     },
     "OJS.Servers.Ui": {
@@ -33,8 +36,6 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DbContext": "Server=.;Database=OpenJudgeSystem;Integrated Security=True;",
         "SULS_PLATFORM_BASE_URL": "https://localhost:44304",
-        "DISTRIBUTOR_BASE_URL": "http://localhost:6000",
-        "DISTRIBUTOR_API_KEY": "f04101a2-0ae3-46a2-8f4d-057de2fd4e69",
         "SULS_PLATFORM_API_KEY": "1234",
         "LOGGER_FILES_FOLDER_PATH": "../../../Logs",
         "SHARED_AUTH_COOKIE_DOMAIN": "localhost",

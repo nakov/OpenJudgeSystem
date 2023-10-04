@@ -6,6 +6,7 @@ using AutoCrudAdmin.ViewModels;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
+using OJS.Services.Common.Data;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Validation.Factories;
 using OJS.Services.Administration.Business.Validation.Helpers;
@@ -30,28 +31,25 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
     public const string SubmissionIdKey = nameof(Submission.Id);
 
     private readonly IProblemsValidationHelper problemsValidationHelper;
-    private readonly IParticipantScoresDataService participantScoresData;
     private readonly IParticipantScoresBusinessService participantScoresBusiness;
     private readonly ISubmissionsDataService submissionsData;
     private readonly ISubmissionsBusinessService submissionsBusinessService;
-    private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
+    private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
     private readonly ITestRunsDataService testRunsData;
     private readonly ITransactionsProvider transactions;
     private readonly IValidatorsFactory<Submission> submissionValidatorsFactory;
 
     public SubmissionsController(
         IProblemsValidationHelper problemsValidationHelper,
-        IParticipantScoresDataService participantScoresData,
         IParticipantScoresBusinessService participantScoresBusiness,
         ISubmissionsDataService submissionsData,
-        ISubmissionsForProcessingDataService submissionsForProcessingData,
+        ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
         ITestRunsDataService testRunsData,
         ITransactionsProvider transactions,
         IValidatorsFactory<Submission> submissionValidatorsFactory,
         ISubmissionsBusinessService submissionsBusinessService)
     {
         this.problemsValidationHelper = problemsValidationHelper;
-        this.participantScoresData = participantScoresData;
         this.participantScoresBusiness = participantScoresBusiness;
         this.submissionsData = submissionsData;
         this.submissionsForProcessingData = submissionsForProcessingData;
@@ -124,7 +122,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
 
         var submission = await this.submissionsData.GetByIdQuery(submissionId).FirstOrDefaultAsync();
 
-        if (submission is null || !submission.ProblemId.HasValue || !submission.ParticipantId.HasValue)
+        if (submission is null || !submission.ParticipantId.HasValue)
         {
             this.TempData.AddDangerMessage(GlobalResource.SubmissionCanNotBeProcessed);
 
@@ -140,7 +138,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         }
 
         await this.problemsValidationHelper
-            .ValidatePermissionsOfCurrentUser(submission.ProblemId ?? default)
+            .ValidatePermissionsOfCurrentUser(submission.ProblemId)
             .VerifyResult();
 
         var retestResult = await this.submissionsBusinessService.Retest(submission);
@@ -172,14 +170,17 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         return base.GenerateFormControls(entity, action, entityDict, complexOptionFilters, autocompleteType);
     }
 
-    protected override async Task BeforeEntitySaveAsync(Submission submission, AdminActionContext actionContext)
-        => await this.problemsValidationHelper
-            .ValidatePermissionsOfCurrentUser(submission.ProblemId ?? default)
+    protected override async Task BeforeEntitySaveAsync(Submission entity, AdminActionContext actionContext)
+    {
+        await base.BeforeEntitySaveAsync(entity, actionContext);
+        await this.problemsValidationHelper
+            .ValidatePermissionsOfCurrentUser(entity.ProblemId)
             .VerifyResult();
+    }
 
     protected override async Task DeleteEntityAndSaveAsync(Submission submission, AdminActionContext actionContext)
     {
-        var submissionProblemId = submission.ProblemId!.Value;
+        var submissionProblemId = submission.ProblemId;
         var submissionParticipantId = submission.ParticipantId!.Value;
 
         await this.transactions.ExecuteInTransaction(async () =>
@@ -198,7 +199,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
             {
                 await this.participantScoresBusiness.RecalculateForParticipantByProblem(
                     submission.ParticipantId.Value,
-                    submission.ProblemId.Value);
+                    submission.ProblemId);
             }
         });
     }

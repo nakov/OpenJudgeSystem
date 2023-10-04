@@ -1,16 +1,30 @@
 ﻿namespace OJS.Services.Administration.Business.Implementations
 {
+    using System;
     using System.Linq;
     using System.Threading.Tasks;
+    using FluentExtensions.Extensions;
     using OJS.Services.Administration.Data;
+    using OJS.Services.Common;
+    using OJS.Services.Common.Data;
+    using OJS.Services.Common.Models.Submissions.ExecutionContext;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
 
     public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessingBusinessService
     {
-        private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
+        private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
+        private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
+        private readonly ISubmissionsDataService submissionsData;
 
         public SubmissionsForProcessingBusinessService(
-            ISubmissionsForProcessingDataService submissionsForProcessingData) =>
+            ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
+            ISubmissionsDataService submissionsData,
+            ISubmissionsCommonBusinessService submissionsCommonBusinessService)
+        {
             this.submissionsForProcessingData = submissionsForProcessingData;
+            this.submissionsData = submissionsData;
+            this.submissionsCommonBusinessService = submissionsCommonBusinessService;
+        }
 
         /// <summary>
         /// Sets the Processing property to False for all submissions
@@ -31,5 +45,33 @@
                 await this.submissionsForProcessingData.ResetProcessingStatusById(submissionForProcessingId);
             }
         }
+
+        public void EnqueuePendingSubmissions()
+        {
+            var submissionsForProcessing = this.submissionsForProcessingData
+                .GetAllPending()
+                .ToList()
+                .Where(sfp => Math.Abs(sfp!.CreatedOn.Subtract(DateTime.UtcNow).TotalMinutes) >= 1);
+
+            if (!submissionsForProcessing.Any())
+            {
+                return;
+            }
+
+            var submissions = this.submissionsData
+                .GetByIds(submissionsForProcessing
+                    .Select(sp => sp!.SubmissionId))
+                .MapCollection<SubmissionServiceModel>()
+                .ToList();
+
+            submissions
+                .ForEachSequential((submission) =>
+                    this.submissionsCommonBusinessService
+                        .PublishSubmissionForProcessing(submission))
+                .GetAwaiter()
+                .GetResult();
+        }
+
+        public void DeleteProcessedSubmissions() => this.submissionsForProcessingData.CleanProcessedSubmissions();
     }
 }

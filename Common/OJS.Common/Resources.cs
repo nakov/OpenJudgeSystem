@@ -76,6 +76,7 @@ namespace OJS.Common
             public const string NoPrivilegesMessage = "You don't have privileges for this action!";
             public const string NoPermissionsForContest = "You don't have permissions for the contest!";
             public const string Remove = "Remove";
+            public const string CannotEditSubmissionForProcessing = "Submissions for processing cannot be edited!";
         }
 
         public static class ContestsControllers
@@ -107,6 +108,13 @@ namespace OJS.Common
             public const string SubtractedTimeFromParticipantsOnline = "Successfully subtracted {0} minutes from the times of all selected active participants in the contest {1}";
             public const string SubtractedTimeFromSingleParticipantOnline = "Successfully subtracted {0} minutes from the time of the participant with username: {1}, in the contest {2}";
             public const string CategoryNotSelected = "Category not selected!";
+        }
+
+        public static class ContestCategoriesController
+        {
+            public const string RequiredName = "Name cannot be null!";
+            public const string ContestCategoryOrderByCanNotBeNegative =
+                "The order by of the contest category cannot be a negative number!";
         }
 
         public static class ExamGroupsController

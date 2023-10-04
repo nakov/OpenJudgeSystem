@@ -1,7 +1,9 @@
 ﻿namespace OJS.Services.Administration.Data
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Data;
 
@@ -12,6 +14,8 @@
         IQueryable<Submission> GetByIdQuery(int id);
 
         IQueryable<Submission> GetAllByProblem(int problemId);
+
+        IQueryable<Submission> GetByIds(IEnumerable<int> ids);
 
         IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId);
 
@@ -27,7 +31,7 @@
 
         bool IsOfficialById(int id);
 
-        void SetAllToUnprocessedByProblem(int problemId);
+        Task SetAllToUnprocessedByProblem(int problemId);
 
         void DeleteByProblem(int problemId);
 

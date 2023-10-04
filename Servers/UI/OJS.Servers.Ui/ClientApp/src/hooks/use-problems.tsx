@@ -4,14 +4,12 @@ import first from 'lodash/first';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { ContestParticipationType } from '../common/constants';
 import { IProblemType } from '../common/types';
 import { IDownloadProblemResourceUrlParams } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 import { getDownloadProblemResourceUrl } from '../utils/urls';
 
 import { useHashUrlParams } from './common/use-hash-url-params';
-import { useAppUrls } from './use-app-urls';
 import { useCurrentContest } from './use-current-contest';
 import { useHttp } from './use-http';
 
@@ -24,7 +22,7 @@ interface IProblemsContext {
         downloadProblemResourceFile: (resourceId: number) => Promise<void>;
         changeCurrentHash: () => void;
         selectCurrentProblem: (id: number) => void;
-        initiateRedirectionToProblem: (problemId: number, contestId: number, participationType: ContestParticipationType) => void;
+        initiateRedirectionToProblem: (problemId: number, url: string) => void;
         removeCurrentProblem: () => void;
         removeCurrentProblems: () => void;
     };
@@ -62,7 +60,6 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     const [ internalProblemId, setInternalProblemId ] = useState<number | null>();
     const [ problemResourceIdToDownload, setProblemResourceIdToDownload ] = useState<number | null>(null);
 
-    const { getParticipateInContestUrl } = useAppUrls();
     const navigate = useNavigate();
 
     const {
@@ -121,17 +118,12 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     // use it to redirect to contest from externalPage (such as SearchPage) which will search for
     // his the problemId in the normalized problems and set it in the hash.
     const initiateRedirectionToProblem = useCallback(
-        (problemId: number, contestId: number, participationType: ContestParticipationType) => {
-            const participateInContestUrl = getParticipateInContestUrl({
-                id: contestId,
-                participationType,
-            });
-
-            navigate(participateInContestUrl);
-
+        (problemId: number, url: string) => {
             setInternalProblemId(problemId);
+
+            navigate(url);
         },
-        [ getParticipateInContestUrl, navigate ],
+        [ navigate ],
     );
 
     const changeCurrentHash = useCallback(
@@ -143,7 +135,7 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
             }
 
             if (!isNil(internalProblemId)) {
-                selectProblemById(internalProblemId);
+                selectProblemById(internalProblemId, true);
             } else if (isLoadedFromHash) {
                 setCurrentProblem(problemFromHash);
             } else {
@@ -157,7 +149,7 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
         () => {
             const { problems: newProblems } = contest || {};
 
-            if (!newProblems || !isEmpty(problems)) {
+            if (isNil(newProblems) || isEmpty(newProblems) || !isEmpty(problems)) {
                 return;
             }
 

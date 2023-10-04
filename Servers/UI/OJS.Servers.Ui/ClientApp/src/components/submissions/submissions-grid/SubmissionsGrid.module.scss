@@ -1,4 +1,6 @@
 @use 'src/styles/colors';
+@use 'src/styles/variables';
+@use 'src/styles/fonts';
 
 .submissionRow {
   border-bottom: 1px solid colors.$bottom-border-color;
@@ -6,4 +8,48 @@
   &:last-of-type {
     border-bottom: 0;
   }
+}
+
+.toggleButtonWrapper {
+  display: flex;
+
+  button {
+    @extend %font-family-montserrat;
+
+    background-color: colors.$white-color;
+    border: 0;
+    border-radius: 8px;
+    box-shadow: colors.$box-shadow-color;
+    color: colors.$light-blue-color;
+    cursor: pointer;
+    font-size: variables.$f-size-16;
+    font-weight: 700;
+    margin: 30px 0 10px;
+    padding: 13px 24px;
+    transition: all 0.2s ease-in-out;
+
+    &:first-child {
+      margin-right: 20px;
+    }
+  }
+
+  .activeElement {
+    background-color: colors.$light-blue-color;
+    color: colors.$white-color;
+  }
+}
+
+.noSubmissionsFound {
+  @extend %font-family-montserrat;
+
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.filtersContainer {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
 }

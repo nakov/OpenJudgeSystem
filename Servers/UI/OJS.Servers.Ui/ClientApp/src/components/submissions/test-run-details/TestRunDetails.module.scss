@@ -2,29 +2,33 @@
 @use 'src/styles/fonts';
 @use 'src/styles/variables';
 
-.executionComment {
-  @extend %font-family-lato;
-
-  padding-top: 10px;
-}
-
 .testRunContainer {
   align-content: space-around;
   display: flex;
   flex-direction: column;
+  padding: 5px 15px;
+  pointer-events: none;
+  width: 100%;
 }
 
 .testRun {
   @extend %font-family-lato;
 
+  align-items: center;
+  background-color: transparent;
+  border: 0;
   border-bottom: 1px solid colors.$bottom-border-color;
   color: colors.$text-dark-gray-color;
+  cursor: pointer;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-top: 10px;
-  padding: 20px;
+  padding: 20px 0;
+  transition: all 0.2s ease-in-out;
   width: 100%;
+
+  &:hover {
+    background-color: #dff0ff;
+  }
 }
 
 %heading {
@@ -36,35 +40,14 @@
 .testRunHeading {
   @extend %heading;
 
-  width: 120px;
   margin-bottom: 0 !important;
-}
-
-.testRunDetailsCollapsible {
-  @extend %font-family-lato;
-
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  margin-top: -10px;
+  width: 120px;
 }
 
 .wrongTestRunHeading {
   @extend %heading;
 
   color: colors.$primary-red;
-}
-
-.collapsibleHeader {
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.collapsibleContainer {
-  margin-top: 10px;  
 }
 
 .correctTestRunHeading {
@@ -77,22 +60,23 @@
   align-items: center;
   display: flex;
   gap: 10px;
+  justify-content: space-between;
 }
 
 .testRunDataParagraph {
   @extend %font-family-lato;
 
+  align-items: center;
   color: colors.$text-dark-gray-color;
+  display: flex;
+  flex-direction: column;
   font-size: variables.$f-size-14;
 }
 
-.zeroTestWrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
+.iconActiveColor {
+  color: #42abf8;
 }
 
-.testRunDetailsExpandBtn {
-  margin-top: -17px !important;
+.iconPassiveColor {
+  color: #bebebe;
 }

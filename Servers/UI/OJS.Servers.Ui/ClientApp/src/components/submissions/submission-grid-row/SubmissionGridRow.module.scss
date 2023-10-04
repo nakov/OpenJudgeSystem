@@ -18,15 +18,11 @@
     padding: 0 10px;
   }
 
-  .strategyContainer {
-    flex: 1;
-  }
-
   .pointsContainer {
     @extend %r-heading-primary;
 
-    flex: 2 0 2vw;
-    width: 2vw;
+    text-align: center;
+    width: 100px;
   }
 
   .detailsContainer {
@@ -40,10 +36,14 @@
     flex: 1 0 6vw;
   }
 
-  .dateAndUsernameContainer {
+  .IdAndDateAndUsernameContainer {
     display: flex;
     gap: 5px;
     margin: 0 5px;
+  }
+
+  .IdContainer {
+    color: colors.$text-light-gray-color;
   }
 
   .link {
@@ -52,5 +52,44 @@
     color: colors.$light-blue-color;
     display: inline-block;
     margin: 0 5px;
+  }
+
+  .redirectButton {
+    background-color: inherit;
+    border: 0;
+    color: colors.$light-blue-color;
+    cursor: pointer;
+    font: inherit;
+    font-size: variables.$f-size-16;
+  }
+
+  .competeIcon {
+    margin: 0 10px;
+  }
+
+  .competeIconHoverText {
+    background-color: colors.$white-color;
+    border: 1px solid colors.$light-blue-color;
+    border-radius: 4px;
+    color: colors.$light-blue-color;
+    font-weight: 400;
+    opacity: 0;
+    padding: 5px 10px;
+    position: absolute;
+    text-align: center;
+    top: -40px;
+    transform: translateX(-50%);
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+
+  .competeIconWrapper {
+    position: relative;
+
+    &:hover {
+      .competeIconHoverText {
+        opacity: 1;
+      }
+    }
   }
 }

@@ -1,3 +1,5 @@
+import { PublicSubmissionState } from '../hooks/submissions/use-public-submissions';
+
 import { IContestSearchType, IProblemSearchType, IUserSearchType } from './search-types';
 
 interface ISubmissionTypeType {
@@ -6,6 +8,39 @@ interface ISubmissionTypeType {
     isSelectedByDefault: boolean;
     allowBinaryFilesUpload: boolean;
     allowedFileExtensions: string[];
+}
+
+interface IPublicSubmissionContest {
+    id: number;
+    name: string;
+}
+
+interface IPublicSubmissionUser {
+    id: string;
+    username: string;
+}
+
+interface IPublicSubmissionProblem {
+    id: number;
+    name: string;
+    contest: IPublicSubmissionContest;
+    orderBy: number;
+}
+
+interface IPublicSubmissionResult {
+    points: number;
+    maxPoints: number;
+}
+
+interface ISubmissionResponseModel {
+    id: number;
+    createdOn: Date;
+    strategyName: string;
+    user: IPublicSubmissionUser;
+    problem: IPublicSubmissionProblem;
+    result: IPublicSubmissionResult;
+    state: PublicSubmissionState;
+    isOfficial: boolean;
 }
 
 interface IProblemResourceType {
@@ -31,6 +66,32 @@ interface IProblemType {
     allowedSubmissionTypes: ISubmissionTypeType[];
 }
 
+interface IContestDetailsProblemType {
+    name: string;
+    orderBy: number;
+    resources?: IProblemResourceType[];
+}
+
+interface IContestDetailsSubmissionType {
+    id: number;
+    name: string;
+}
+
+interface IContestDetailsResponseType {
+    id: number;
+    name: string;
+    description: string;
+    problems: IContestDetailsProblemType[];
+    canViewResults: boolean;
+    isOnlineExam: boolean;
+    canBeCompeted: boolean;
+    canBePracticed: boolean;
+    isAdminOrLecturerInContest: boolean;
+    allowedSubmissionTypes: IContestDetailsSubmissionType[];
+    totalContestParticipantsCount: number;
+    participantsCountByContestType: number;
+}
+
 interface IContestType {
     id: number;
     name: string;
@@ -52,7 +113,6 @@ interface IContestType {
     resultsArePubliclyVisible: boolean;
     hasContestPassword: boolean;
     hasPracticePassword: boolean;
-    remainingTimeInMilliseconds: number;
     userIsAdminOrLecturerInContest: boolean;
     userCanCompete: boolean;
     userIsParticipant: false;
@@ -107,10 +167,9 @@ interface IStartParticipationResponseType {
     participantId: number;
     contestIsCompete: boolean;
     lastSubmissionTime: Date;
-    remainingTimeInMilliseconds: number;
+    endDateTimeForParticipantOrContest: Date | null;
     userSubmissionsTimeLimit: number;
-    totalParticipantsCount: number;
-    activeParticipantsCount: number;
+    participantsCount: number;
 }
 
 interface IPagedResultType<TItem> {
@@ -121,11 +180,16 @@ interface IPagedResultType<TItem> {
     items?: TItem[];
 }
 
+interface IPage {
+    page: number;
+}
+
 interface IUserType {
     id: string;
     username: string;
     email: string;
     permissions: IUserPermissionsType;
+    isInRole: boolean;
 }
 
 interface IUserRoleType {
@@ -159,11 +223,15 @@ export type {
     IContestType,
     IProblemType,
     IProblemResourceType,
+    ISubmissionResponseModel,
     ISubmissionTypeType,
     IPagedResultType,
     IUserType,
+    IPage,
     IUserResponseType,
     IUserPermissionsType,
     ISearchResponseModel,
     IContestModal,
+    IContestDetailsResponseType,
+    IContestDetailsProblemType,
 };

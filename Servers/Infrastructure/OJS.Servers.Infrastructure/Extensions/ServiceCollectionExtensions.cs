@@ -41,6 +41,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using SoftUni.Data.Infrastructure.Enumerations;
     using SoftUni.Data.Infrastructure.Extensions;
     using SoftUni.Services.Infrastructure.Extensions;
+    using StackExchange.Redis;
     using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.EnvironmentVariables;
     using static OJS.Common.GlobalConstants.FileExtensions;
@@ -153,19 +154,14 @@ namespace OJS.Servers.Infrastructure.Extensions
                     }
                 });
 
-        public static IServiceCollection AddDistributedCaching<TStartup>(this IServiceCollection services)
-        {
-            EnvironmentUtils.ValidateEnvironmentVariableExists(
-                new[] { RedisConnectionString });
+        public static IServiceCollection AddDistributedCaching(
+            this IServiceCollection services)
+            => services.AddRedis(ApplicationFullName);
 
-            services.AddSingleton<ICacheService, CacheService>();
-
-            return services.AddStackExchangeRedisCache(options =>
-            {
-                options.Configuration = EnvironmentUtils.GetByKey(RedisConnectionString);
-                options.InstanceName = typeof(TStartup).FullName;
-            });
-        }
+        public static IServiceCollection AddDistributedCaching(
+            this IServiceCollection services,
+            string instanceName)
+            => services.AddRedis(instanceName);
 
         public static IServiceCollection AddMessageQueue<TStartup>(
             this IServiceCollection services,
@@ -182,7 +178,16 @@ namespace OJS.Servers.Infrastructure.Extensions
 
             services.AddMassTransit(config =>
             {
-                consumers.ForEach(consumer => config.AddConsumer(consumer));
+                consumers.ForEach(consumer => config
+                    .AddConsumer(consumer)
+                    .Endpoint(endpointConfig =>
+                    {
+                        endpointConfig.Name = consumer.Name;
+                        if (endpointConfig is IRabbitMqReceiveEndpointConfigurator configurator)
+                        {
+                            configurator.Durable = true;
+                        }
+                    }));
 
                 config.UsingRabbitMq((context, rmq) =>
                 {
@@ -231,9 +236,26 @@ namespace OJS.Servers.Infrastructure.Extensions
 
             services.AddHttpClient<IHttpClientService, HttpClientService>(ConfigureHttpClient);
             services.AddHttpClient<ISulsPlatformHttpClientService, SulsPlatformHttpClientService>(ConfigureHttpClient);
-            services.AddHttpClient<IDistributorHttpClientService, DistributorHttpClientService>(ConfigureHttpClient);
 
             return services;
+        }
+
+        private static IServiceCollection AddRedis(this IServiceCollection services, string instanceName)
+        {
+            EnvironmentUtils.ValidateEnvironmentVariableExists(
+                new[] { RedisConnectionString });
+
+            var redisConnectionString = EnvironmentUtils.GetRequiredByKey(RedisConnectionString);
+            var redisConnection = ConnectionMultiplexer.Connect(redisConnectionString);
+
+            services.AddSingleton<IConnectionMultiplexer>(redisConnection);
+            services.AddSingleton<ICacheService, CacheService>();
+
+            return services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = redisConnectionString;
+                options.InstanceName = $"{instanceName}:";
+            });
         }
 
         private static void ConfigureHttpClient(HttpClient client)

@@ -11,7 +11,6 @@ public static class LaunchSettingsValidationExtensions
     {
         var requiredGlobalConfigValues = new List<string>
         {
-            DistributorBaseUrlKey,
             ApplicationUrl,
             RedisConnectionString,
             SharedAuthCookieDomain,

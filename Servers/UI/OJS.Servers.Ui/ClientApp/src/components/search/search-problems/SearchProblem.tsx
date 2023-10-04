@@ -5,6 +5,7 @@ import { ContestParticipationType } from '../../../common/constants';
 import { IProblemSearchType } from '../../../common/search-types';
 import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
+import { getParticipateInContestUrl } from '../../../utils/urls';
 import { Button, ButtonSize, ButtonState, ButtonType } from '../../guidelines/buttons/Button';
 
 import SearchProblemTooltip from './SearchProblemTooltip';
@@ -30,6 +31,18 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
     const searchProblemCardControlBtnsClassName = concatClassNames(styles.problemCardControls, contestCardControlBtns);
 
     const { actions: { initiateRedirectionToProblem } } = useProblems();
+
+    const handleButtonSubmit = useCallback(
+        (participationType: ContestParticipationType) => {
+            const participateInContestUrl = getParticipateInContestUrl({
+                id: contest.id,
+                participationType,
+            });
+
+            initiateRedirectionToProblem(id, participateInContestUrl);
+        },
+        [ contest.id, id, initiateRedirectionToProblem ],
+    );
 
     const renderPage = useCallback(
         () => isEmpty(contest)
@@ -62,7 +75,7 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
                                   ? ButtonState.enabled
                                   : ButtonState.disabled
                           }
-                          onClick={() => initiateRedirectionToProblem(id, contest.id, ContestParticipationType.Compete)}
+                          onClick={() => handleButtonSubmit(ContestParticipationType.Compete)}
                           text="Compete"
                           size={ButtonSize.small}
                         />
@@ -74,15 +87,15 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
                                     ? ButtonState.enabled
                                     : ButtonState.disabled
                             }
-                          onClick={() => initiateRedirectionToProblem(id, contest.id, ContestParticipationType.Practice)}
+                          onClick={() => handleButtonSubmit(ContestParticipationType.Practice)}
                           text="Practice"
                           size={ButtonSize.small}
                         />
                     </div>
                 </div>
             ),
-        [ contest, searchContestElementClassName, problem, searchProblemCategoryClassName,
-            searchProblemContestClassName, searchProblemCardControlBtnsClassName, initiateRedirectionToProblem, id ],
+        [ contest, handleButtonSubmit, problem, searchContestElementClassName, searchProblemCardControlBtnsClassName,
+            searchProblemCategoryClassName, searchProblemContestClassName ],
     );
 
     return (

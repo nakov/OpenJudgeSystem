@@ -1,5 +1,6 @@
 namespace OJS.Servers.Administration.Controllers;
 
+using OJS.Common.Utils;
 using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
@@ -232,7 +233,8 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters,
         Type autocompleteType)
     {
-        var formControls = base.GenerateFormControls(entity, action, entityDict, complexOptionFilters, autocompleteType).ToList();
+        var formControls = base.GenerateFormControls(entity, action, entityDict, complexOptionFilters, autocompleteType)
+            .ToList();
 
         var problemId = entityDict.GetEntityIdOrDefault<Problem>();
 
@@ -243,6 +245,11 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             problemInput.IsReadOnly = true;
         }
 
+        var isTrialFormControl = formControls.First(x => x.Name == nameof(entity.IsTrialTest));
+        var isOpenFormControl = formControls.First(x => x.Name == nameof(entity.IsOpenTest));
+
+        isTrialFormControl.IsHidden = true;
+        isOpenFormControl.IsHidden = true;
         formControls.Add(new FormControlViewModel
         {
             Name = AdditionalFormFields.Input.ToString(),
@@ -259,13 +266,47 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             FormControlType = FormControlType.TextArea,
         });
 
+        formControls.Add(new FormControlViewModel
+        {
+            Name = AdditionalFormFields.Type.ToString(),
+            Type = typeof(TestTypeEnum),
+            Options = EnumUtils.GetValuesFrom<TestTypeEnum>().Cast<object>(),
+            Value = entity.IsOpenTest
+                ? TestTypeEnum.OpenTest
+                : entity.IsTrialTest
+                    ? TestTypeEnum.TrialTest
+                    : TestTypeEnum.Compete,
+        });
         return formControls;
     }
 
-    protected override Task BeforeEntitySaveAsync(Test entity, AdminActionContext actionContext)
+    protected override async Task BeforeEntitySaveAsync(Test entity, AdminActionContext actionContext)
     {
+        await base.BeforeEntitySaveAsync(entity, actionContext);
         UpdateInputAndOutput(entity, actionContext);
-        return Task.CompletedTask;
+        UpdateType(entity, actionContext);
+    }
+
+    private static void UpdateType(Test entity, AdminActionContext actionContext)
+    {
+        var testType = Enum.Parse<TestTypeEnum>(actionContext.GetFormValue(AdditionalFormFields.Type));
+        switch (testType)
+        {
+            case TestTypeEnum.TrialTest:
+                entity.IsTrialTest = true;
+                entity.IsOpenTest = false;
+                break;
+            case TestTypeEnum.OpenTest:
+                entity.IsTrialTest = false;
+                entity.IsOpenTest = true;
+                break;
+            case TestTypeEnum.Compete:
+                entity.IsTrialTest = false;
+                entity.IsOpenTest = false;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(testType), testType, null);
+        }
     }
 
     private static void UpdateInputAndOutput(Test entity, AdminActionContext actionContext)
