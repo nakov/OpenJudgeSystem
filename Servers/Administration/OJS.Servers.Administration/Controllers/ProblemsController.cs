@@ -430,16 +430,16 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             IsReadOnly = true,
         });
 
+        formControls.Add(new FormControlViewModel
+        {
+            Name = AdditionalFormFields.ProblemGroupType.ToString(),
+            Options = EnumUtils.GetValuesFrom<ProblemGroupType>().Cast<object>(),
+            Type = typeof(ProblemGroupType),
+            Value = entity.ProblemGroup != null ? entity.ProblemGroup.Type ?? default(ProblemGroupType) : default,
+        });
+
         if (!contest.IsOnlineExam)
         {
-            formControls.Add(new FormControlViewModel
-            {
-                Name = AdditionalFormFields.ProblemGroupType.ToString(),
-                Options = EnumUtils.GetValuesFrom<ProblemGroupType>().Cast<object>(),
-                Type = typeof(ProblemGroupType),
-                Value = entity.ProblemGroup?.Type ?? default(ProblemGroupType),
-            });
-
             var problemGroupField = formControls.First(x => x.Name == nameof(Data.Models.Problems.Problem.ProblemGroup));
 
             if (action == EntityAction.Create)
@@ -566,7 +566,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         var problemGroupInput = formControls.First(fc => fc.Name == nameof(ProblemGroup));
 
         var orderedProblemGroupsQuery = this.problemGroupsData.GetAllByContestId(contestId)
-                                                                    .OrderBy(pg => pg.OrderBy);
+            .OrderBy(pg => pg.OrderBy);
         problemGroupInput.Options = orderedProblemGroupsQuery;
 
         return base.ModifyFormControls(formControls, entity, action, entityDict);
