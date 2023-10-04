@@ -9,6 +9,13 @@ import List from '../../guidelines/lists/List';
 
 import styles from './ProblemConstraints.module.scss';
 
+enum ProblemConstraintsTitles {
+    TimeLimit = 'Allowed working time',
+    MemoryLimit = 'Allowed memory',
+    FileSizeLimit = 'Size limit',
+    Checker = 'Checker'
+}
+
 const ProblemConstraints = () => {
     const { state: { currentProblem } } = useProblems();
 
@@ -21,28 +28,37 @@ const ProblemConstraints = () => {
 
         return [
             !isNil(timeLimit)
-                ? `Allowed working time: ${timeLimit.toFixed(3).toString()} sec.`
+                ? `${ProblemConstraintsTitles.TimeLimit}: ${timeLimit.toFixed(3).toString()} sec.`
                 : '',
             !isNil(memoryLimit)
-                ? `Allowed memory: ${memoryLimit.toFixed(2).toString()} MB`
+                ? `${ProblemConstraintsTitles.MemoryLimit}: ${memoryLimit.toFixed(2).toString()} MB`
                 : '',
             !isNil(fileSizeLimit)
-                ? `Size limit: ${fileSizeLimit.toFixed(2).toString()} KB`
+                ? `${ProblemConstraintsTitles.FileSizeLimit}: ${fileSizeLimit.toFixed(2).toString()} KB`
                 : '',
             !isNil(checkerName)
-                ? `Checker: ${checkerName}`
+                ? `${ProblemConstraintsTitles.Checker}: ${checkerName}`
                 : '',
         ].filter((item) => !isEmpty(item));
     }, [ currentProblem ]);
 
-    const renderConstraint = useCallback(
-        (constraint: string) => <span>{constraint}</span>,
-        [],
-    );
-
-    const description = useMemo(() => {
+    const renderConstraint = useCallback((constraint: string) => {
         const { checkerDescription = '' } = currentProblem || {};
-        return checkerDescription;
+
+        const constraintElement = <span>{constraint}</span>;
+
+        return constraint.includes(ProblemConstraintsTitles.Checker)
+            ? (
+                <>
+                    {constraintElement}
+                    <QuestionIcon
+                      className={styles.questionIcon}
+                      size={IconSize.Medium}
+                      helperText={checkerDescription}
+                    />
+                </>
+            )
+            : constraintElement;
     }, [ currentProblem ]);
 
     return (
@@ -52,7 +68,6 @@ const ProblemConstraints = () => {
               itemFunc={renderConstraint}
               className={styles.constraintsList}
             />
-            <QuestionIcon size={IconSize.Medium} className={styles.questionIcon} helperText={description} />
         </div>
     );
 };
