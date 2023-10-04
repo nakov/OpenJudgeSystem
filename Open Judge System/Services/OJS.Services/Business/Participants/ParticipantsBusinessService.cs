@@ -1,4 +1,7 @@
-﻿namespace OJS.Services.Business.Participants
+﻿using OJS.Common.Helpers;
+using OJS.Services.Data.ParticipantScores;
+
+namespace OJS.Services.Business.Participants
 {
     using System;
     using System.Collections.Generic;
@@ -17,13 +20,16 @@
     {
         private readonly IParticipantsDataService participantsData;
         private readonly IContestsDataService contestsData;
+        private readonly IParticipantScoresDataService scoresDataService;
 
         public ParticipantsBusinessService(
             IParticipantsDataService participantsData,
-            IContestsDataService contestsData)
+            IContestsDataService contestsData,
+            IParticipantScoresDataService scoresDataService)
         {
             this.participantsData = participantsData;
             this.contestsData = contestsData;
+            this.scoresDataService = scoresDataService;
         }
 
         public Participant CreateNewByContestByUserByIsOfficialAndIsAdmin(
@@ -144,6 +150,26 @@
         public void UpdateTotalScoreSnapshotOfParticipants()
         {
             this.participantsData.UpdateTotalScoreSnapshot();
+        }
+
+        public void RemoveParticipantMultipleScores()
+        {
+            var participants = 
+                this.scoresDataService.GetAll()
+                .GroupBy(ps => new { ps.IsOfficial, ps.ProblemId, ps.ParticipantId })
+                .Where(ps=>ps.Count() > 1)
+                .ToList();
+            
+            using (var scope = TransactionsHelper.CreateTransactionScope())
+            {
+                foreach (var participant in participants)
+                {
+                    var participantsToRemove = participant.OrderByDescending(ps => ps.Points).Skip(1).ToList();
+                    this.scoresDataService.Delete(participantsToRemove);
+
+                }
+                scope.Complete();
+            }
         }
 
         private void AssignRandomProblemsToParticipant(Participant participant, Contest contest)
