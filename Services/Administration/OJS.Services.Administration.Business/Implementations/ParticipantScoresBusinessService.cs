@@ -13,18 +13,15 @@ public class ParticipantScoresBusinessService : IParticipantScoresBusinessServic
     private readonly IParticipantScoresDataService participantScoresData;
     private readonly IParticipantsDataService participantsData;
     private readonly ISubmissionsDataService submissionsData;
-    private readonly ITestRunsDataService testRunsDataService;
 
     public ParticipantScoresBusinessService(
         IParticipantScoresDataService participantScoresData,
         IParticipantsDataService participantsData,
-        ISubmissionsDataService submissionsData,
-        ITestRunsDataService testRunsDataService)
+        ISubmissionsDataService submissionsData)
     {
         this.participantScoresData = participantScoresData;
         this.participantsData = participantsData;
         this.submissionsData = submissionsData;
-        this.testRunsDataService = testRunsDataService;
     }
 
     public async Task RecalculateForParticipantByProblem(int participantId, int problemId)
@@ -34,7 +31,6 @@ public class ParticipantScoresBusinessService : IParticipantScoresBusinessServic
         if (submission != null)
         {
             await this.participantScoresData.ResetBySubmission(submission);
-            await this.testRunsDataService.DeleteBySubmission(submission.Id);
         }
         else
         {
