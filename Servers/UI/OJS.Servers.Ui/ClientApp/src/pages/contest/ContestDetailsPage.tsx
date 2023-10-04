@@ -14,9 +14,12 @@ import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
 import { useCurrentContest } from '../../hooks/use-current-contest';
 import { usePageTitles } from '../../hooks/use-page-titles';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
-import { getAdministrationContestEditInternalUrl, getAdministrationContestProblemsInternalUrl,
+import {
+    getAdministrationContestEditInternalUrl,
+    getAdministrationContestProblemsInternalUrl,
     getContestResultsUrl,
-    getParticipateInContestUrl } from '../../utils/urls';
+    getParticipateInContestUrl,
+} from '../../utils/urls';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 
@@ -59,7 +62,7 @@ const ContestDetailsPage = () => {
         [ contestTitle, setPageTitle ],
     );
 
-    const { contestId, participationType } = params;
+    const { contestId } = params;
 
     const contestIdToNumber = useMemo(
         () => Number(contestId),
@@ -67,14 +70,35 @@ const ContestDetailsPage = () => {
     );
 
     const isOfficial = useMemo(
-        () => participationType === ContestParticipationType.Compete,
-        [ participationType ],
+        () => {
+            if (isNil(contestDetails)) {
+                return null;
+            }
+
+            return contestDetails?.canBeCompeted;
+        },
+        [ contestDetails ],
+    );
+
+    const participationType = useMemo(
+        () => {
+            if (isNil(contestDetails)) {
+                return null;
+            }
+
+            return contestDetails?.canBeCompeted
+                ? ContestParticipationType.Compete
+                : ContestParticipationType.Practice;
+        },
+        [ contestDetails ],
     );
 
     const participantsCountByContestType = useMemo(
-        () => isOfficial
-            ? `Compete participants: ${contestDetails?.participantsCountByContestType}`
-            : `Practice participants: ${contestDetails?.participantsCountByContestType}`,
+        () => isNil(isOfficial)
+            ? ''
+            : isOfficial
+                ? `Compete participants: ${contestDetails?.participantsCountByContestType}`
+                : `Practice participants: ${contestDetails?.participantsCountByContestType}`,
         [ isOfficial, contestDetails?.participantsCountByContestType ],
     );
 
@@ -125,7 +149,7 @@ const ContestDetailsPage = () => {
     const renderContestButtons = useCallback(
         () => (
             <div className={styles.buttonsContainer}>
-                {contestDetails?.canViewResults || contestDetails?.isAdminOrLecturerInContest
+                {(contestDetails?.canViewResults || contestDetails?.isAdminOrLecturerInContest) && !isNil(participationType)
                     ? (
                         <LinkButton
                           type={LinkButtonType.secondary}
