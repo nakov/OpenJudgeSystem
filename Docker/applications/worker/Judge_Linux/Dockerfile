@@ -100,7 +100,7 @@ ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
 RUN set -ex \
     && curl https://pyenv.run | bash \
     && pyenv update \
-    && pyenv install 3.11 \
+    && pyenv install 3.11.5 \
     && pyenv rehash
 
 RUN eval "$(pyenv init -)"
