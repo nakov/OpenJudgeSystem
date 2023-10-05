@@ -339,7 +339,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         return data;
     }
 
-    public async Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(
+    public async Task<IEnumerable<SubmissionViewInResultsPageModel>> GetSubmissionResultsByProblem(
         int problemId,
         bool isOfficial,
         int take = 0)
@@ -356,10 +356,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         this.ValidateCanViewSubmissionResults(isOfficial, user, problem, participant);
 
-        return await this.GetUserSubmissions(problem.Id, participant, take);
+        return await this.GetUserSubmissions<SubmissionViewInResultsPageModel>(problem.Id, participant, take);
     }
 
-    public async Task<IEnumerable<SubmissionResultsServiceModel>> GetSubmissionDetailsResults(
+    public async Task<IEnumerable<SubmissionViewInResultsPageModel>> GetSubmissionDetailsResults(
         int submissionId,
         bool isOfficial,
         int take = 0)
@@ -373,8 +373,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 submissionId);
 
         this.ValidateCanViewSubmissionResults(isOfficial, user, problem, participant);
-
-        return await this.GetUserSubmissions(problem.Id, participant, take);
+        return await this.GetUserSubmissions<SubmissionViewInResultsPageModel>(problem.Id, participant, take);
     }
 
     public async Task Submit(SubmitSubmissionServiceModel model)
@@ -443,6 +442,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .First(st => st.SubmissionTypeId == model.SubmissionTypeId)
             .SubmissionType;
 
+        SubmissionServiceModel submissionServiceModel;
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
         if (submissionType.ExecutionStrategyType is ExecutionStrategyType.NotFound or ExecutionStrategyType.DoNothing)
         {
@@ -456,14 +456,15 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         await this.submissionsData.Add(newSubmission);
         await this.submissionsData.SaveChanges();
 
-        await this.submissionsForProcessingData.Add(newSubmission.Id);
+        submissionServiceModel = this.BuildSubmissionForProcessing(newSubmission, problem, submissionType);
+        await this.submissionsForProcessingData.Add(newSubmission.Id, submissionServiceModel.ToJson());
         await this.submissionsData.SaveChanges();
 
         scope.Complete();
         scope.Dispose();
 
         await this.submissionsCommonBusinessService
-            .PublishSubmissionForProcessing(this.BuildSubmissionForProcessing(newSubmission, problem, submissionType));
+            .PublishSubmissionForProcessing(submissionServiceModel);
     }
 
     public async Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult)
@@ -488,6 +489,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         submission.Processed = true;
         submission.ProcessingComment = null;
 
+        var serializedExecutionResultServiceModel =
+            submissionExecutionResult.Map<SerializedSubmissionExecutionResultServiceModel>();
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
         if (executionResult != null)
         {
@@ -497,7 +500,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
             await this.SaveParticipantScore(submission);
 
-            await this.submissionsForProcessingData.MarkProcessed(submission.Id);
+            await this.submissionsForProcessingData.MarkProcessed(serializedExecutionResultServiceModel);
             await this.submissionsData.SaveChanges();
             CacheTestRuns(submission);
         }
@@ -510,7 +513,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             submission.CompilerComment = errorMessage;
 
             this.submissionsData.Update(submission);
-            await this.submissionsForProcessingData.MarkProcessed(submission.Id);
+            await this.submissionsForProcessingData.MarkProcessed(serializedExecutionResultServiceModel);
         }
 
         await this.submissionsData.SaveChanges();
@@ -698,7 +701,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
     }
 
-    private async Task<IEnumerable<SubmissionResultsServiceModel>> GetUserSubmissions(
+    private async Task<IEnumerable<T>> GetUserSubmissions<T>(
         int problemId,
         ParticipantSubmissionResultsServiceModel? participant,
         int take)
@@ -708,7 +711,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .Take(take);
 
         return await userSubmissions
-            .MapCollection<SubmissionResultsServiceModel>()
+            .MapCollection<T>()
             .ToListAsync();
     }
 

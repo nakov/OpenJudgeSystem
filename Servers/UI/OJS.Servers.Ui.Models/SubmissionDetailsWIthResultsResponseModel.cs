@@ -8,5 +8,5 @@ using SoftUni.AutoMapper.Infrastructure.Models;
 public class SubmissionDetailsWIthResultsResponseModel : IMapFrom<SubmissionDetailsWithResultsModel>
 {
     public SubmissionDetailsResponseModel? SubmissionDetails { get; set; }
-    public IEnumerable<SubmissionResultsResponseModel>? SubmissionResults { get; set; }
+    public IEnumerable<SubmissionViewInResultsResponseModel>? SubmissionResults { get; set; }
 }
