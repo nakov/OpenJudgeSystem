@@ -894,7 +894,6 @@
             }
             
             problem.DefaultSubmissionTypeId = problemEntity.FirstOrDefault().DefaultSubmissionTypeId;
-
             this.AddCheckersAndProblemGroupsToProblemViewModel(
                 problem,
                 contest.ProblemGroups.Count,

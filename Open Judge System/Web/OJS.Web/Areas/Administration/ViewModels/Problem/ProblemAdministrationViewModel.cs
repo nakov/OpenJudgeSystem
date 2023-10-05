@@ -186,6 +186,6 @@
         public HttpPostedFileBase Tests { get; set; }
 
         [Display(Name = nameof(Resource.DefaultSubmissionTypeName), ResourceType = typeof(Resource))]
-        public int DefaultSubmissionTypeId { get; set; }
+        public int? DefaultSubmissionTypeId { get; set; }
     }
 }

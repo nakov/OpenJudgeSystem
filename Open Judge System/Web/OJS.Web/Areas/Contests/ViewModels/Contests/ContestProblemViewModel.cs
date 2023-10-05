@@ -97,6 +97,6 @@
 
         public bool UserHasAdminRights { get; set; }
 
-        public int DefaultSubmissionTypeId { get; set; }
+        public int? DefaultSubmissionTypeId { get; set; }
     }
 }
