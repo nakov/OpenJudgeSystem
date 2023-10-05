@@ -136,74 +136,82 @@ const ContestDetailsPage = () => {
     const renderContestButtons = useCallback(
         () => (
             <div className={styles.buttonsContainer}>
-                {contestDetails?.canViewResults || contestDetails?.isAdminOrLecturerInContest
-                    ? (
-                        <LinkButton
-                          type={LinkButtonType.secondary}
-                          to={getContestResultsUrl({ id: contestId, participationType: ContestParticipationType.Compete })}
-                          text="Results"
-                        />
-                    )
-                    : null}
-                {contestDetails?.isAdminOrLecturerInContest
-                    ? (
-                        <>
+                {
+                    contestDetails?.canViewResults || contestDetails?.isAdminOrLecturerInContest
+                        ? (
                             <LinkButton
                               type={LinkButtonType.secondary}
-                              to={getAdministrationContestProblemsInternalUrl(contestIdToNumber.toString())}
-                              text="Problems"
-                              isToExternal
+                              to={getContestResultsUrl({ id: contestId, participationType: ContestParticipationType.Compete })}
+                              text="Results"
                             />
+                        )
+                        : null
+                }
+                {
+                    contestDetails?.isAdminOrLecturerInContest
+                        ? (
+                            <>
+                                <LinkButton
+                                  type={LinkButtonType.secondary}
+                                  to={getAdministrationContestProblemsInternalUrl(contestIdToNumber.toString())}
+                                  text="Problems"
+                                  isToExternal
+                                />
+                                <LinkButton
+                                  type={LinkButtonType.secondary}
+                                  to={getAdministrationContestEditInternalUrl(contestIdToNumber.toString())}
+                                  text="Edit"
+                                  isToExternal
+                                />
+                            </>
+                        )
+                        : null
+                }
+                {
+                    canAccessCompeteButton
+                        ? (
                             <LinkButton
-                              type={LinkButtonType.secondary}
-                              to={getAdministrationContestEditInternalUrl(contestIdToNumber.toString())}
-                              text="Edit"
-                              isToExternal
-                            />
-                        </>
-                    )
-                    : null}
-                {canAccessCompeteButton
-                    ? (
-                        <LinkButton
-                          id="button-card-compete"
-                          internalClassName={competableOnlyForAdminAndLecturers
-                              ? styles.adminAccessibleButton
-                              : ''}
-                          to={getParticipateInContestUrl({
-                              id: contestIdToNumber,
-                              participationType: ContestParticipationType.Compete,
-                          })}
-                          text="Compete"
-                          state={
+                              id="button-card-compete"
+                              internalClassName={competableOnlyForAdminAndLecturers
+                                  ? styles.adminAccessibleButton
+                                  : ''}
+                              to={getParticipateInContestUrl({
+                                  id: contestIdToNumber,
+                                  participationType: ContestParticipationType.Compete,
+                              })}
+                              text="Compete"
+                              state={
                         isOfficial
                             ? ButtonState.enabled
                             : ButtonState.disabled
                     }
-                        />
-                    )
-                    : null}
-                {canAccessPracticeButton
-                    ? (
-                        <LinkButton
-                          id="button-card-practice"
-                          internalClassName={practicableOnlyForAdminOrLecturers
-                              ? styles.adminAccessibleButton
-                              : ''}
-                          to={getParticipateInContestUrl({
-                              id: contestIdToNumber,
-                              participationType: ContestParticipationType.Practice,
-                          })}
-                          text="Practice"
-                          type={LinkButtonType.secondary}
-                          state={
+                            />
+                        )
+                        : null
+                }
+                {
+                    canAccessPracticeButton
+                        ? (
+                            <LinkButton
+                              id="button-card-practice"
+                              internalClassName={practicableOnlyForAdminOrLecturers
+                                  ? styles.adminAccessibleButton
+                                  : ''}
+                              to={getParticipateInContestUrl({
+                                  id: contestIdToNumber,
+                                  participationType: ContestParticipationType.Practice,
+                              })}
+                              text="Practice"
+                              type={LinkButtonType.secondary}
+                              state={
                               isOfficial
                                   ? ButtonState.disabled
                                   : ButtonState.enabled
                     }
-                        />
-                    )
-                    : null}
+                            />
+                        )
+                        : null
+                }
             </div>
         ),
         [
