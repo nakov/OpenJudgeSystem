@@ -46,7 +46,7 @@
             }
         }
 
-        public void EnqueuePendingSubmissions()
+        public int EnqueuePendingSubmissions()
         {
             var submissionsForProcessing = this.submissionsForProcessingData
                 .GetAllPending()
@@ -55,7 +55,7 @@
 
             if (!submissionsForProcessing.Any())
             {
-                return;
+                return 0;
             }
 
             var submissions = this.submissionsData
@@ -70,6 +70,8 @@
                         .PublishSubmissionForProcessing(submission))
                 .GetAwaiter()
                 .GetResult();
+
+            return submissions.Count;
         }
 
         public void DeleteProcessedSubmissions() => this.submissionsForProcessingData.CleanProcessedSubmissions();
