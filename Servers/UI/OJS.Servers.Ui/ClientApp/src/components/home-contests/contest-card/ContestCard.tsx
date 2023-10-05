@@ -1,9 +1,10 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IIndexContestsType } from '../../../common/types';
+import { useAuth } from '../../../hooks/use-auth';
 import { useModal } from '../../../hooks/use-modal';
 import concatClassNames from '../../../utils/class-names';
 import { convertToSecondsRemaining, getCurrentTimeInUTC } from '../../../utils/dates';
@@ -27,6 +28,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
         practiceEndTime,
         canBeCompeted,
         endTime,
+        startTime,
     } = contest;
 
     const contestCard = 'card-contests';
@@ -47,8 +49,16 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const contestCardControlBtnsClassName = concatClassNames(styles.contestCardControls, contestCardControlBtns);
     const { actions: { setIsShowing } } = useModal();
     const navigate = useNavigate();
-    const [ competeTimeHasExpired, setCompeteTimeHasExpired ] = useState(false);
-    const [ practiceTimeHasExpired, setPracticeTimeHasExpired ] = useState(false);
+    const { state: { user } } = useAuth();
+
+    const isUserAdmin = useMemo(
+        () => {
+            const { permissions: { canAccessAdministration } } = user;
+
+            return canAccessAdministration;
+        },
+        [ user ],
+    );
 
     const endDate = !isNil(endTime) && new Date(endTime) >= getCurrentTimeInUTC()
         ? endTime
@@ -56,29 +66,13 @@ const ContestCard = ({ contest }: IContestCardProps) => {
             ? practiceEndTime
             : null;
 
-    const handleCountdownEnd = useCallback(
-        () => {
-            if (!isNil(endDate) && new Date(endDate) <= getCurrentTimeInUTC()) {
-                if (canBeCompeted) {
-                    setCompeteTimeHasExpired(true);
-                    return;
-                }
-
-                if (canBePracticed) {
-                    setPracticeTimeHasExpired(true);
-                }
-            }
-        },
-        [ endDate, canBeCompeted, canBePracticed ],
-    );
-
     const renderCountdown = useCallback(
         () => {
             if (isNil(endDate) || new Date(endDate) < getCurrentTimeInUTC()) {
                 return null;
             }
 
-            if (competeTimeHasExpired && !canBePracticed) {
+            if (isNil(startTime) || new Date(startTime) > getCurrentTimeInUTC()) {
                 return null;
             }
 
@@ -87,11 +81,10 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   key={id}
                   duration={convertToSecondsRemaining(new Date(endDate))}
                   metric={Metric.seconds}
-                  handleOnCountdownEnd={handleCountdownEnd}
                 />
             );
         },
-        [ endDate, handleCountdownEnd, id, canBePracticed, competeTimeHasExpired ],
+        [ startTime, endDate, id ],
     );
 
     const renderContestLockIcon = useCallback(
@@ -153,7 +146,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   onClick={() => setIsShowingAndNavigateToContest()}
                   text="Compete"
                   state={
-                        canBeCompeted && !competeTimeHasExpired
+                        canBeCompeted || isUserAdmin
                             ? ButtonState.enabled
                             : ButtonState.disabled
                     }
@@ -168,7 +161,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   text="Practice"
                   type={LinkButtonType.secondary}
                   state={
-                        canBePracticed && !practiceTimeHasExpired
+                        canBePracticed || isUserAdmin
                             ? ButtonState.enabled
                             : ButtonState.disabled
                     }
