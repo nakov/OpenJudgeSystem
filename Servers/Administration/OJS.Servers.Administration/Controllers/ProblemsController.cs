@@ -424,35 +424,31 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         formControls.Add(new FormControlViewModel
         {
-            Name = this.GetComplexFormControlNameFor<Contest>(),
-            Value = contestId,
-            Type = typeof(int),
-            IsReadOnly = true,
-        });
-
-        formControls.Add(new FormControlViewModel
-        {
             Name = AdditionalFormFields.ProblemGroupType.ToString(),
             Options = EnumUtils.GetValuesFrom<ProblemGroupType>().Cast<object>(),
             Type = typeof(ProblemGroupType),
             Value = entity.ProblemGroup != null ? entity.ProblemGroup.Type ?? default(ProblemGroupType) : default,
         });
 
-        if (!contest.IsOnlineExam)
+        formControls.Add(new FormControlViewModel
+        {
+            Name = this.GetComplexFormControlNameFor<Contest>(),
+            Value = contestId,
+            Type = typeof(int),
+            IsReadOnly = true,
+        });
+
+        if (contest.IsOnlineExam)
+        {
+            var problemGroupFieldType = formControls.First(x => x.Name == AdditionalFormFields.ProblemGroupType.ToString());
+
+            formControls.Remove(problemGroupFieldType);
+        }
+        else
         {
             var problemGroupField = formControls.First(x => x.Name == nameof(Data.Models.Problems.Problem.ProblemGroup));
 
-            if (action == EntityAction.Create)
-            {
-                // On Create, we should always create new ProblemGroup for the Problem,
-                // not allow attaching the Problem to an existing ProblemGroup
-                formControls.Remove(problemGroupField);
-            }
-            else
-            {
-                // On Edit, we should not allow changing the ProblemGroup
-                problemGroupField.IsHidden = true;
-            }
+            formControls.Remove(problemGroupField);
         }
 
         formControls.Add(new FormControlViewModel
