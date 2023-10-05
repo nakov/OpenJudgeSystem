@@ -51,12 +51,6 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (externalUserIds.Any())
             {
-                this.backgroundJobs.AddOrUpdateRecurringJob<IExamGroupsBusinessService>(
-                    "testjob",
-                    x => x.AddExternalUsersByIdAndUserIds(examGroup.Id, externalUserIds),
-                    "*/5 * * * *",
-                    "administration");
-
                 this.backgroundJobs.AddFireAndForgetJob<IExamGroupsBusinessService>(
                     x => x.AddExternalUsersByIdAndUserIds(examGroup.Id, externalUserIds));
             }

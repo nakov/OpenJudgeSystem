@@ -13,10 +13,5 @@ public static class Constants
             public const string DeleteOldSubmissionsJobCron = "0 2 * * *";
             public const string DeleteOldSubmissionsJobAddedMessage = $"{DeleteOldSubmissionsJobName} job added successfully! It will run daily at {DeleteOldSubmissionsJobCron}";
         }
-
-        public static class Queues
-        {
-            public const string SubmissionsQueueName = "submissions";
-        }
     }
 }

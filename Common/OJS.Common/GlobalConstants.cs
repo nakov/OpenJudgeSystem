@@ -45,8 +45,6 @@ namespace OJS.Common
             // Values
             public const string DockerValue = "Docker";
             public const string ProductionValue = "Production";
-
-            public const string HangfireQueues = "HANGFIRE_QUEUES";
         }
 
         public static class ApplicationDateFormats
