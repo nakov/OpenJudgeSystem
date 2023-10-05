@@ -80,19 +80,6 @@ const ContestDetailsPage = () => {
         [ contestDetails ],
     );
 
-    const participationType = useMemo(
-        () => {
-            if (isNil(contestDetails)) {
-                return null;
-            }
-
-            return contestDetails?.canBeCompeted
-                ? ContestParticipationType.Compete
-                : ContestParticipationType.Practice;
-        },
-        [ contestDetails ],
-    );
-
     const participantsCountByContestType = useMemo(
         () => isNil(isOfficial)
             ? ''
@@ -149,11 +136,11 @@ const ContestDetailsPage = () => {
     const renderContestButtons = useCallback(
         () => (
             <div className={styles.buttonsContainer}>
-                {(contestDetails?.canViewResults || contestDetails?.isAdminOrLecturerInContest) && !isNil(participationType)
+                {contestDetails?.canViewResults || contestDetails?.isAdminOrLecturerInContest
                     ? (
                         <LinkButton
                           type={LinkButtonType.secondary}
-                          to={getContestResultsUrl({ id: contestId, participationType })}
+                          to={getContestResultsUrl({ id: contestId, participationType: ContestParticipationType.Compete })}
                           text="Results"
                         />
                     )
@@ -189,7 +176,7 @@ const ContestDetailsPage = () => {
                           })}
                           text="Compete"
                           state={
-                        canAccessCompeteButton
+                        isOfficial
                             ? ButtonState.enabled
                             : ButtonState.disabled
                     }
@@ -210,9 +197,9 @@ const ContestDetailsPage = () => {
                           text="Practice"
                           type={LinkButtonType.secondary}
                           state={
-                        canAccessPracticeButton
-                            ? ButtonState.enabled
-                            : ButtonState.disabled
+                              isOfficial
+                                  ? ButtonState.disabled
+                                  : ButtonState.enabled
                     }
                         />
                     )
@@ -226,9 +213,9 @@ const ContestDetailsPage = () => {
             canAccessPracticeButton,
             competableOnlyForAdminAndLecturers,
             canAccessCompeteButton,
-            participationType,
             contestDetails?.canViewResults,
             contestDetails?.isAdminOrLecturerInContest,
+            isOfficial,
         ],
     );
 
