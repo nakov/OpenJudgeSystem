@@ -1,7 +1,6 @@
 namespace OJS.Services.Ui.Business.Implementations
 {
     using Microsoft.EntityFrameworkCore;
-    using OJS.Common.Enumerations;
     using OJS.Data.Models;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Users;
