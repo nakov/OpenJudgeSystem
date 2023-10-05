@@ -34,13 +34,6 @@ public class ContestsActivityService : IContestsActivityService
         this.userProvider = userProvider;
     }
 
-    // public async Task<IContestActivityServiceModel> GetContestActivityFromContest(Contest contest)
-    // {
-    //     var contestForActivity = contest.Map<ContestForActivityServiceModel>();
-    //
-    //     return await this.GetContestActivity(contestForActivity);
-    // }
-
     public async Task<IContestActivityServiceModel> GetContestActivity(int id)
     {
         var contest = await this.contestsData.OneByIdTo<ContestForActivityServiceModel>(id);
@@ -71,12 +64,7 @@ public class ContestsActivityService : IContestsActivityService
 
     public bool CanBeCompeted(IContestForActivityServiceModel contest)
     {
-        if (!contest.IsVisible)
-        {
-            return false;
-        }
-
-        if (contest.IsDeleted)
+        if (!contest.IsVisible || contest.IsDeleted)
         {
             return false;
         }
@@ -95,10 +83,23 @@ public class ContestsActivityService : IContestsActivityService
             return contest.StartTime <= now;
         }
 
-        //If the above criteria is not met, we have to check if the contest is online and if the current user is
-        //a participant with remaining ParticipationTime in the contest. If so, the contest CanBeCompeted
+        //If the above conditional statements are not entered, first we have to check
+        //the the start and end time > check if start is before now and end is after now
+        //if this check returns false we have to check if the current user is a participant
+        //with a remaining time in an online contest
         return (contest.StartTime <= now && now <= contest.EndTime) ||
                (contest.IsOnline && this.IsActiveParticipantInOnlineContest(contest.Id));
+    }
+
+    // Usage: assign value to the CanBeCompeted/Practiced properties in the different Contest models sent to the UI
+    // method must be called on model/collection after retrieving it from the db
+    // and before sending it to the UI as response
+    public void SetCanBeCompetedAndPracticed<T>(T contestModel)
+        where T : ICanBeCompetedAndPracticed
+    {
+        var contestActivity = this.GetContestActivity(contestModel.Id).GetAwaiter().GetResult();
+        contestModel.CanBeCompeted = contestActivity.CanBeCompeted;
+        contestModel.CanBePracticed = contestActivity.CanBePracticed;
     }
 
     public bool IsActiveParticipantInOnlineContest(int contestId)
@@ -113,12 +114,7 @@ public class ContestsActivityService : IContestsActivityService
 
     public bool CanBePracticed(IContestForActivityServiceModel contest)
     {
-        if (!contest.IsVisible)
-        {
-            return false;
-        }
-
-        if (contest.IsDeleted)
+        if (!contest.IsVisible || contest.IsDeleted)
         {
             return false;
         }

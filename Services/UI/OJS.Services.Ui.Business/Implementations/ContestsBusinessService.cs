@@ -98,6 +98,8 @@ namespace OJS.Services.Ui.Business.Implementations
             var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest!);
 
             var contestDetailsServiceModel = contest!.Map<ContestDetailsServiceModel>();
+            // set CanBeCompeted and CanBePracticed properties in contest
+            this.activityService.SetCanBeCompetedAndPracticed(contestDetailsServiceModel);
 
             contestDetailsServiceModel.IsAdminOrLecturerInContest = userIsAdminOrLecturerInContest;
 
@@ -290,11 +292,12 @@ namespace OJS.Services.Ui.Business.Implementations
             var allContestsQueryable = this.contestsData.GetAllNonDeletedContests()
                 .Where(c => c.Name!.Contains(model.SearchTerm!));
 
-            var searchContests = await allContestsQueryable
-                .MapCollection<ContestSearchServiceModel>()
-                .ToPagedListAsync(model.PageNumber, model.ItemsPerPage);
+            var searchContests = allContestsQueryable.MapCollection<ContestSearchServiceModel>();
+            //set CanBeCompeted and CanBePracticed properties in each contest from the result
+            searchContests.ForEach(c => this.activityService.SetCanBeCompetedAndPracticed(c));
+            var pagedResult = await searchContests.ToPagedListAsync(model.PageNumber, model.ItemsPerPage);
 
-            modelResult.Contests = searchContests;
+            modelResult.Contests = pagedResult;
             modelResult.TotalContestsCount = allContestsQueryable.Count();
 
             return modelResult;
@@ -351,15 +354,26 @@ namespace OJS.Services.Ui.Business.Implementations
                     .Concat(subcategories.Select(cc => cc.Id).ToList());
             }
 
-            return await this.contestsData.GetAllAsPageByFiltersAndSorting<ContestForListingServiceModel>(model);
+            var pagedContests =
+                await this.contestsData.GetAllAsPageByFiltersAndSorting<ContestForListingServiceModel>(model);
+
+            //set CanBeCompeted and CanBePracticed properties in each contest for the page
+            pagedContests.Items.ForEach(c => this.activityService.SetCanBeCompetedAndPracticed(c));
+
+            return pagedContests;
         }
 
         public async Task<ContestsForHomeIndexServiceModel> GetAllForHomeIndex()
         {
             var active = await this.GetAllCompetable()
                 .ToListAsync();
+            //set CanBeCompeted and CanBePracticed properties in each active contest
+            active.ForEach(c => this.activityService.SetCanBeCompetedAndPracticed(c));
+
             var past = await this.GetAllPastContests()
                 .ToListAsync();
+            //set CanBeCompeted and CanBePracticed properties in each active contest
+            past.ForEach(c => this.activityService.SetCanBeCompetedAndPracticed(c));
 
             return new ContestsForHomeIndexServiceModel { ActiveContests = active, PastContests = past, };
         }
