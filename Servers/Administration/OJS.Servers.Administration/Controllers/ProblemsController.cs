@@ -427,7 +427,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             Name = AdditionalFormFields.ProblemGroupType.ToString(),
             Options = EnumUtils.GetValuesFrom<ProblemGroupType>().Cast<object>(),
             Type = typeof(ProblemGroupType),
-            Value = entity.ProblemGroup != null ? entity.ProblemGroup.Type ?? default(ProblemGroupType) : default,
+            Value = entity.ProblemGroup?.Type ?? default(ProblemGroupType),
         });
 
         formControls.Add(new FormControlViewModel
@@ -442,13 +442,13 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         {
             var problemGroupFieldType = formControls.First(x => x.Name == AdditionalFormFields.ProblemGroupType.ToString());
 
-            formControls.Remove(problemGroupFieldType);
+            problemGroupFieldType.IsHidden = true;
         }
         else
         {
             var problemGroupField = formControls.First(x => x.Name == nameof(Data.Models.Problems.Problem.ProblemGroup));
 
-            formControls.Remove(problemGroupField);
+            problemGroupField.IsHidden = true;
         }
 
         formControls.Add(new FormControlViewModel
