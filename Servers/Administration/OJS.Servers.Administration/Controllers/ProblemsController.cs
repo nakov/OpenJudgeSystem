@@ -449,14 +449,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         if (!contest.IsOnlineExam)
         {
-            formControls.Add(new FormControlViewModel
-            {
-                Name = AdditionalFormFields.ProblemGroupType.ToString(),
-                Options = EnumUtils.GetValuesFrom<ProblemGroupType>().Cast<object>(),
-                Type = typeof(ProblemGroupType),
-                Value = entity.ProblemGroup?.Type ?? default(ProblemGroupType),
-            });
-
             var problemGroupField = formControls.FirstOrDefault(x => x.Name == nameof(Data.Models.Problems.Problem.ProblemGroup));
 
             if (problemGroupField != null)
