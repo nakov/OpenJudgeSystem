@@ -47,7 +47,19 @@ const SubmissionBox = () => {
     const { state: { currentProblem } } = useProblems();
     const { allowedSubmissionTypes } = currentProblem || {};
 
-    const showSubmissionLimitTimer = useMemo(() => submitLimit > 0, [ submitLimit ]);
+    const showSubmissionLimitTimer = useMemo(
+        () => {
+            const { id: problemId } = currentProblem || {};
+            if (isNil(problemId)) {
+                return false;
+            }
+
+            const { [problemId.toString()]: error } = problemSubmissionErrors;
+
+            return isNil(error) && submitLimit > 0;
+        },
+        [ submitLimit, currentProblem, problemSubmissionErrors ],
+    );
 
     const handleCodeChanged = useCallback(
         (newValue: string | File) => {
