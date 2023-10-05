@@ -1,8 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
-import Typography from '@mui/material/Typography';
 
 import { IContestModalInfoType } from '../../common/types';
 import { useCurrentContest } from '../../hooks/use-current-contest';
@@ -20,14 +18,14 @@ const defaultState = { state: { isShowing: true } };
 const ContestModal = ({ contest }: IContestModalProps) => {
     const [ isShowing, setIsShowing ] = useState<boolean>(defaultState.state.isShowing);
     const navigate = useNavigate();
-    const { actions: { setStartedModalUserParticipation } } = useCurrentContest();
+    const { actions: { setUserHasConfirmedModal } } = useCurrentContest();
 
     const startContestAndHideModal = useCallback(
         () => {
-            setStartedModalUserParticipation(true);
+            setUserHasConfirmedModal(true);
             setIsShowing(false);
         },
-        [ setStartedModalUserParticipation ],
+        [ setUserHasConfirmedModal ],
     );
 
     const toggleAndRedirectToHomePage = useCallback(
@@ -45,11 +43,9 @@ const ContestModal = ({ contest }: IContestModalProps) => {
                   open={isShowing}
                   sx={{ '& .MuiBackdrop-root': { backgroundColor: 'transparent' }, backdropFilter: 'blur(5px)' }}
                   onClose={() => toggleAndRedirectToHomePage()}
-                  aria-labelledby="modal-modal-title"
-                  aria-describedby="modal-modal-description"
                 >
-                    <Box className={styles.modal}>
-                        <Typography id="modal-modal-title" variant="h6" className={styles.modalHeading}>
+                    <div className={styles.modal}>
+                        <span className={styles.modalHeading}>
                             <p className={styles.headingText}>
                                 Starting now
                                 {' '}
@@ -68,8 +64,8 @@ const ContestModal = ({ contest }: IContestModalProps) => {
                                 <span className={styles.boldedText}>{contest.name}</span>
                                 .
                             </p>
-                        </Typography>
-                        <Typography id="modal-modal-description">
+                        </span>
+                        <span className={styles.bodyTextSpacing}>
                             <span className={styles.bodyText}>
                                 Your time will start counting down when you press the &quot;Compete&quot; button.
                                 <br />
@@ -99,7 +95,7 @@ const ContestModal = ({ contest }: IContestModalProps) => {
                                 <br />
                                 <span className={styles.questionText}>Are you sure you want to start the contest now?</span>
                             </span>
-                        </Typography>
+                        </span>
                         <div className={styles.horizontalLine} />
                         <span className={styles.buttons}>
                             <Button
@@ -116,7 +112,7 @@ const ContestModal = ({ contest }: IContestModalProps) => {
                                 Cancel
                             </Button>
                         </span>
-                    </Box>
+                    </div>
                 </Modal>
             </div>
         )

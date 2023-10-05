@@ -60,7 +60,7 @@ interface ICurrentContestContext {
         contestDetailsIsLoading: boolean;
         submitContestPasswordIsLoading: boolean;
         getParticipantScoresIsLoading: boolean;
-        startedModalUserParticipation: boolean;
+        userHasConfirmedModal: boolean;
         contestDetails: IContestDetailsResponseType | null;
         isContestDetailsLoadingSuccessful: boolean;
     };
@@ -72,7 +72,7 @@ interface ICurrentContestContext {
         loadParticipantScores: () => void;
         setIsSubmitAllowed: (isSubmitAllowed: boolean) => void;
         removeCurrentContest: () => void;
-        setStartedModalUserParticipation: (startedModalUserParticipation: boolean) => void;
+        setUserHasConfirmedModal: (userHasConfirmedModal: boolean) => void;
         clearContestError: () => void;
         getContestDetails: (info: IContestDetailsUrlParams) => void;
     };
@@ -88,7 +88,7 @@ const defaultState = {
         isPasswordValid: false,
         userSubmissionsTimeLimit: 0,
         participantsCount: 0,
-        startedModalUserParticipation: false,
+        userHasConfirmedModal: false,
         contestDetails: null,
     },
 };
@@ -136,9 +136,9 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ isSubmitAllowed, setIsSubmitAllowed ] = useState<boolean>(true);
     const [ contestError, setContestError ] = useState<IErrorDataType | null>(null);
     const [
-        startedModalUserParticipation,
-        setStartedModalUserParticipation,
-    ] = useState<boolean>(defaultState.state.startedModalUserParticipation);
+        userHasConfirmedModal,
+        setUserHasConfirmedModal,
+    ] = useState<boolean>(defaultState.state.userHasConfirmedModal);
     const { state: { user } } = useAuth();
     const [ contestDetails, setContestDetails ] = useState<IContestDetailsResponseType | null>(defaultState.state.contestDetails);
     const [ contestDetailsParams, setContestDetailsParams ] = useState<IContestDetailsUrlParams | null>(null);
@@ -340,7 +340,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
 
             const { participantId: registerParticipantId } = registerForContestData;
             if (!isNil(registerParticipantId) || isUserAdmin) {
-                setStartedModalUserParticipation(true);
+                setUserHasConfirmedModal(true);
             }
 
             setRequirePassword(responseRequirePassword);
@@ -401,6 +401,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
 
             if (!isNil(startContestError)) {
                 setContestError(startContestError);
+                setUserHasConfirmedModal(false);
                 return;
             }
 
@@ -469,7 +470,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 isSubmitAllowed,
                 contestError,
                 isRegisterForContestSuccessful,
-                startedModalUserParticipation,
+                userHasConfirmedModal,
                 contestIsLoading,
                 registerForContestLoading,
                 submitContestPasswordIsLoading,
@@ -485,7 +486,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 submitPassword,
                 loadParticipantScores,
                 setIsSubmitAllowed,
-                setStartedModalUserParticipation,
+                setUserHasConfirmedModal,
                 getContestDetails,
                 removeCurrentContest,
                 clearContestError,
@@ -513,9 +514,9 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             contestError,
             clearContestError,
             isRegisterForContestSuccessful,
-            startedModalUserParticipation,
+            userHasConfirmedModal,
             removeCurrentContest,
-            setStartedModalUserParticipation,
+            setUserHasConfirmedModal,
             contestIsLoading,
             registerForContestLoading,
             submitContestPasswordIsLoading,

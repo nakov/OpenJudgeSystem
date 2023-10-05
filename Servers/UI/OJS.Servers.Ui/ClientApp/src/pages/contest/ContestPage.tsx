@@ -5,6 +5,7 @@ import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../common/constants';
 import { isParticipationTypeValid } from '../../common/contest-helpers';
+import { IContestModalInfoType } from '../../common/types';
 import Contest from '../../components/contests/contest/Contest';
 import ContestPasswordForm from '../../components/contests/contest-password-form/ContestPasswordForm';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
@@ -13,7 +14,6 @@ import ContestModal from '../../components/modal/ContestModal';
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
 import { useAuth } from '../../hooks/use-auth';
 import { useCurrentContest } from '../../hooks/use-current-contest';
-import { useModal } from '../../hooks/use-modal';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
@@ -35,21 +35,16 @@ const ContestPage = () => {
             isPasswordValid,
             contestError,
             isRegisterForContestSuccessful,
-            startedModalUserParticipation,
+            userHasConfirmedModal,
             contest,
         },
         actions: {
             registerParticipant,
             start,
             clearContestError,
-            setStartedModalUserParticipation,
         },
     } = useCurrentContest();
 
-    const {
-        state: { modalContest },
-        actions: { setModalContest },
-    } = useModal();
     const { state: { user } } = useAuth();
 
     const isUserAdmin = useMemo(
@@ -89,6 +84,22 @@ const ContestPage = () => {
         [ contestIdToNumber, isParticipationOfficial ],
     );
 
+    const modalContest = useMemo(
+        () => {
+            if (isNil(contest)) {
+                return {} as IContestModalInfoType;
+            }
+
+            return {
+                id: contest.id,
+                name: contest.name,
+                duration: contest.duration,
+                numberOfProblems: contest.numberOfProblems,
+            };
+        },
+        [ contest ],
+    );
+
     const renderErrorHeading = useCallback(
         (message: string) => (
             <div className={styles.headingContest}>
@@ -103,17 +114,16 @@ const ContestPage = () => {
         [],
     );
 
-    const renderErrorMessageAndSetStartedUserParticipation = useCallback(
+    const renderErrorMessage = useCallback(
         () => {
             if (!isNil(contestError)) {
                 const { detail } = contestError;
-                setStartedModalUserParticipation(false);
                 return renderErrorHeading(detail);
             }
 
             return null;
         },
-        [ renderErrorHeading, contestError, setStartedModalUserParticipation ],
+        [ renderErrorHeading, contestError ],
     );
 
     const renderContestPage = useCallback(
@@ -124,14 +134,14 @@ const ContestPage = () => {
                         <SpinningLoader />
                     </div>
                 )
-                : isParticipationOfficial && contest?.isOnline && !isUserAdmin && !startedModalUserParticipation
+                : contest?.isOnline && isParticipationOfficial && !userHasConfirmedModal && !isUserAdmin
                     ? <ContestModal contest={modalContest} />
                     : <Contest />
-            : renderErrorMessageAndSetStartedUserParticipation(),
+            : renderErrorMessage(),
         [
             contestError,
-            renderErrorMessageAndSetStartedUserParticipation,
-            startedModalUserParticipation,
+            renderErrorMessage,
+            userHasConfirmedModal,
             isParticipationOfficial,
             modalContest,
             isUserAdmin,
@@ -195,16 +205,9 @@ const ContestPage = () => {
 
             if (!isNil(contest)) {
                 const { isOnline } = contest;
-                if (startedModalUserParticipation || !isOnline || !isParticipationOfficial) {
+                if (userHasConfirmedModal || !isOnline || !isParticipationOfficial) {
                     start(internalContest);
                 }
-
-                setModalContest({
-                    id: contest.id,
-                    name: contest.name,
-                    duration: contest.duration,
-                    numberOfProblems: contest.numberOfProblems,
-                });
             }
         },
         [
@@ -214,8 +217,7 @@ const ContestPage = () => {
             requirePassword,
             start,
             contest,
-            setModalContest,
-            startedModalUserParticipation,
+            userHasConfirmedModal,
             isPasswordValid,
             contestError,
             isParticipationOfficial,
