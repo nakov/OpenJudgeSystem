@@ -1,4 +1,4 @@
-namespace OJS.Servers.Administration.Infrastructure;
+namespace OJS.Services.Administration.Business;
 
 public static class Constants
 {
