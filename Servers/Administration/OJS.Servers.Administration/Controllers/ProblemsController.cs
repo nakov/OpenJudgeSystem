@@ -425,46 +425,31 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         formControls.Add(new FormControlViewModel
         {
+            Name = AdditionalFormFields.ProblemGroupType.ToString(),
+            Options = EnumUtils.GetValuesFrom<ProblemGroupType>().Cast<object>(),
+            Type = typeof(ProblemGroupType),
+            Value = entity.ProblemGroup?.Type ?? default(ProblemGroupType),
+        });
+
+        formControls.Add(new FormControlViewModel
+        {
             Name = this.GetComplexFormControlNameFor<Contest>(),
             Value = contestId,
             Type = typeof(int),
             IsReadOnly = true,
         });
 
-        formControls.Add(new FormControlViewModel
+        if (contest.IsOnlineExam)
         {
-            Name = nameof(Data.Models.Problems.Problem.ProblemGroupId),
-            Value = entity.ProblemGroupId,
-            Type = typeof(int),
-            IsHidden = true,
-        });
+            var problemGroupFieldType = formControls.First(x => x.Name == AdditionalFormFields.ProblemGroupType.ToString());
 
-        formControls.Add(new FormControlViewModel
+            problemGroupFieldType.IsHidden = true;
+        }
+        else
         {
-            Name = nameof(AdditionalFormFields.ProblemGroupType),
-            Options = EnumUtils.GetValuesFrom<ProblemGroupType>().Cast<object>(),
-            Value = entity.ProblemGroup != null ? entity.ProblemGroup.Type ?? default(ProblemGroupType) : default,
-            Type = typeof(ProblemGroupType),
-        });
+            var problemGroupField = formControls.First(x => x.Name == nameof(Data.Models.Problems.Problem.ProblemGroup));
 
-        if (!contest.IsOnlineExam)
-        {
-            var problemGroupField = formControls.FirstOrDefault(x => x.Name == nameof(Data.Models.Problems.Problem.ProblemGroup));
-
-            if (problemGroupField != null)
-            {
-                if (action == EntityAction.Create)
-                {
-                    // On Create, we should always create new ProblemGroup for the Problem,
-                    // not allow attaching the Problem to an existing ProblemGroup
-                    formControls.Remove(problemGroupField);
-                }
-                else
-                {
-                    // On Edit, we should not allow changing the ProblemGroup
-                    problemGroupField.IsHidden = true;
-                }
-            }
+            problemGroupField.IsHidden = true;
         }
 
         formControls.Add(new FormControlViewModel
@@ -577,7 +562,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     {
         newEntity.ProblemGroup.Type = actionContext.GetProblemGroupType().GetValidTypeOrNull();
 
-        if (originalEntity.ProblemGroup != null && !originalEntity.ProblemGroup.Contest.IsOnlineExam)
+        if (!originalEntity.ProblemGroup.Contest.IsOnlineExam)
         {
             newEntity.ProblemGroup.OrderBy = newEntity.OrderBy;
         }
@@ -598,14 +583,11 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             throw new Exception($"A valid ContestId must be provided to be able to {action} a Problem.");
         }
 
-        var problemGroupInput = formControls.FirstOrDefault(fc => fc.Name == nameof(ProblemGroup));
+        var problemGroupInput = formControls.First(fc => fc.Name == nameof(ProblemGroup));
 
         var orderedProblemGroupsQuery = this.problemGroupsData.GetAllByContestId(contestId)
-                                                                    .OrderBy(pg => pg.OrderBy);
-        if (problemGroupInput != null)
-        {
-            problemGroupInput.Options = orderedProblemGroupsQuery;
-        }
+            .OrderBy(pg => pg.OrderBy);
+        problemGroupInput.Options = orderedProblemGroupsQuery;
 
         return base.ModifyFormControls(formControls, entity, action, entityDict);
     }
