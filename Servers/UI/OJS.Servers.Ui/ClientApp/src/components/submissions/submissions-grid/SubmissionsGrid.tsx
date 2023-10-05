@@ -32,11 +32,14 @@ enum toggleValues {
     mySubmissions = 'my submissions',
 }
 
-enum stringQueryNames {
-    contestIdParamName ='contestid',
-    mySubmissionsParamName = 'my',
-    allSubmissionsParamName= 'all',
-    toggleValue = 'toggle',
+enum queryKeys {
+    contestId = 'contestid',
+    toggle = 'toggle'
+}
+
+enum queryValues {
+    mySubmissions = 'my',
+    allSubmissions = 'all'
 }
 
 const defaultState = {
@@ -81,18 +84,18 @@ const SubmissionsGrid = () => {
     } = usePages();
 
     const contestIdParam = useMemo(
-        () => urlParams.find((urlParam) => urlParam.key === stringQueryNames.contestIdParamName)?.value as string,
+        () => urlParams.find((urlParam) => urlParam.key === queryKeys.contestId)?.value as string,
         [ urlParams ],
     );
 
     const toggleParam = useMemo(
-        () => urlParams.find((urlParam) => urlParam.key === stringQueryNames.toggleValue)?.value,
+        () => urlParams.find((urlParam) => urlParam.key === queryKeys.toggle)?.value,
         [ urlParams ],
     );
 
     const [ activeToggleElement, setActiveToggleElement ] = useState<toggleValues>(!toggleParam
         ? toggleValues.allSubmissions
-        : toggleParam === stringQueryNames.mySubmissionsParamName
+        : toggleParam === queryValues.mySubmissions
             ? toggleValues.mySubmissions
             : toggleValues.allSubmissions);
 
@@ -150,7 +153,7 @@ const SubmissionsGrid = () => {
             clearPageValues();
 
             setSelectValue(item);
-            setParam(stringQueryNames.contestIdParamName, item.key);
+            setParam(queryKeys.contestId, item.key);
         },
         [ clearPageValues, setParam ],
     );
@@ -162,15 +165,15 @@ const SubmissionsGrid = () => {
 
             if (textContent?.toLowerCase() === toggleValues.allSubmissions) {
                 setActiveToggleElement(toggleValues.allSubmissions);
-                setParam(stringQueryNames.toggleValue, stringQueryNames.allSubmissionsParamName);
+                setParam(queryKeys.toggle, queryValues.allSubmissions);
             } else {
                 setActiveToggleElement(toggleValues.mySubmissions);
-                setParam(stringQueryNames.toggleValue, stringQueryNames.mySubmissionsParamName);
+                setParam(queryKeys.toggle, queryValues.mySubmissions);
             }
 
             setSelectValue(defaultState.state.selectValue);
 
-            unsetParam(stringQueryNames.contestIdParamName);
+            unsetParam(queryKeys.contestId);
             clearPageValues();
         },
         [ unsetParam, clearPageValues, setParam ],
@@ -200,7 +203,8 @@ const SubmissionsGrid = () => {
         () => {
             if (selectedActive === 1) {
                 return publicSubmissions;
-            } if (selectedActive === 2) {
+            }
+            if (selectedActive === 2) {
                 return unprocessedSubmissions;
             }
             return pendingSubmissions;
