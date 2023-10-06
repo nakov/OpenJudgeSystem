@@ -434,12 +434,16 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 return;
             }
 
-            setScore(sum(problems.map((p) => isNil(p.points)
+            const currentScore = sum(currentContestParticipantScores.map((p) => isNil(p.points)
                 ? 0
-                : p.points)));
-            setMaxScore(sum(problems.map((p) => p.maximumPoints)));
+                : p.points));
+
+            const currentMaxScore = sum(problems.map((p) => p.maximumPoints));
+
+            setScore(currentScore);
+            setMaxScore(currentMaxScore);
         },
-        [ contest ],
+        [ contest, currentContestParticipantScores ],
     );
 
     useEffect(() => {
