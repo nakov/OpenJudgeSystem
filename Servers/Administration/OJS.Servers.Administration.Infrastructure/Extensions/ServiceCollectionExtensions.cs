@@ -5,9 +5,11 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using OJS.Common.Enumerations;
+    using OJS.Common.Extensions.Strings;
     using OJS.Data;
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Extensions;
+    using OJS.Services.Administration.Business;
     using OJS.Services.Common.Models.Configurations;
     using SoftUni.Data.Infrastructure.Enumerations;
     using static OJS.Common.GlobalConstants;
@@ -28,6 +30,7 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
                 .AddWebServer<TProgram>()
                 .AddHttpContextServices()
                 .AddHangfireServer(AppName)
+                .AddHostedService<BackgroundJobsHostedService>()
                 .AddMessageQueue<TProgram>(configuration)
                 .ConfigureGlobalDateFormat()
                 .ValidateLaunchSettings(RequiredConfigValues)

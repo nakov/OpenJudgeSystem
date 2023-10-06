@@ -7,6 +7,6 @@
     {
         Task ResetAllProcessingSubmissions();
 
-        void EnqueuePendingSubmissions();
+        int EnqueuePendingSubmissions();
     }
 }
