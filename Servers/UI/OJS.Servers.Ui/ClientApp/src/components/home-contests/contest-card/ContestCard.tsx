@@ -1,10 +1,9 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IIndexContestsType } from '../../../common/types';
-import { useAuth } from '../../../hooks/use-auth';
 import { useModal } from '../../../hooks/use-modal';
 import concatClassNames from '../../../utils/class-names';
 import { convertToSecondsRemaining, getCurrentTimeInUTC } from '../../../utils/dates';
@@ -49,16 +48,6 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const contestCardControlBtnsClassName = concatClassNames(styles.contestCardControls, contestCardControlBtns);
     const { actions: { setIsShowing } } = useModal();
     const navigate = useNavigate();
-    const { state: { user } } = useAuth();
-
-    const isUserAdmin = useMemo(
-        () => {
-            const { permissions: { canAccessAdministration } } = user;
-
-            return canAccessAdministration;
-        },
-        [ user ],
-    );
 
     const endDate = !isNil(endTime) && new Date(endTime) >= getCurrentTimeInUTC()
         ? endTime
@@ -146,7 +135,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   onClick={() => setIsShowingAndNavigateToContest()}
                   text="Compete"
                   state={
-                        canBeCompeted || isUserAdmin
+                        canBeCompeted
                             ? ButtonState.enabled
                             : ButtonState.disabled
                     }
@@ -161,7 +150,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   text="Practice"
                   type={LinkButtonType.secondary}
                   state={
-                        canBePracticed || isUserAdmin
+                        canBePracticed
                             ? ButtonState.enabled
                             : ButtonState.disabled
                     }
