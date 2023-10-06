@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import isEmpty from 'lodash/isEmpty';
 
 import { IDictionary, IUrlParam } from '../../common/common-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
@@ -45,6 +46,8 @@ const searchParamsToParams = (searchParams: URLSearchParams) => {
 
 const UrlParamsProvider = ({ children }: IUrlParamsProviderProps) => {
     const [ searchParams, setSearchParams ] = useSearchParams();
+    const location = useLocation();
+    const navigate = useNavigate();
 
     const params = useMemo(
         () => searchParamsToParams(searchParams),
@@ -62,16 +65,25 @@ const UrlParamsProvider = ({ children }: IUrlParamsProviderProps) => {
 
             searchParams.append(keyToLower, value);
 
-            setSearchParams(searchParams);
+            if (isEmpty(location.hash)) {
+                setSearchParams(searchParams);
+            } else {
+                const url = `${location.pathname}?${searchParams}${location.hash}`;
+                navigate(url);
+            }
         },
-        [ searchParams, setSearchParams ],
+        [ navigate, searchParams, location, setSearchParams ],
     );
 
     const unsetParam = useCallback(
         (key: string) => {
-            searchParams.delete(key);
-            searchParams.delete(key.toLowerCase());
-            setSearchParams(searchParams);
+            const keyToLower = key.toLowerCase();
+
+            if (searchParams.has(keyToLower) || searchParams.has(key)) {
+                searchParams.delete(key);
+                searchParams.delete(keyToLower);
+                setSearchParams(searchParams);
+            }
         },
         [ searchParams, setSearchParams ],
     );

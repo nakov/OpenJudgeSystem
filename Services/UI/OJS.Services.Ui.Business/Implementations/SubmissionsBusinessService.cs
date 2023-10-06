@@ -339,10 +339,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         return data;
     }
 
-    public async Task<IEnumerable<SubmissionViewInResultsPageModel>> GetSubmissionResultsByProblem(
+    public async Task<PagedResult<SubmissionViewInResultsPageModel>> GetSubmissionResultsByProblem(
         int problemId,
         bool isOfficial,
-        int take = 0)
+        int page)
     {
         var problem =
             await this.problemsDataService.GetWithProblemGroupById(problemId)
@@ -356,7 +356,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         this.ValidateCanViewSubmissionResults(isOfficial, user, problem, participant);
 
-        return await this.GetUserSubmissions<SubmissionViewInResultsPageModel>(problem.Id, participant, take);
+        return await this.submissionsData
+            .GetAllByProblemAndParticipant(problemId, participant!.Id)
+            .MapCollection<SubmissionViewInResultsPageModel>()
+            .ToPagedResultAsync(DefaultSubmissionResultsByProblemPerPage, page);
     }
 
     public async Task<IEnumerable<SubmissionViewInResultsPageModel>> GetSubmissionDetailsResults(

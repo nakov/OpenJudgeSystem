@@ -59,7 +59,7 @@ interface IGetSubmissionsByContestIdParams {
 interface IGetSubmissionResultsByProblemUrlParams {
     problemId: number;
     isOfficial: boolean;
-    take: number;
+    page: number;
 }
 
 interface IGetContestResultsParams {

@@ -12,6 +12,7 @@ import { getDownloadProblemResourceUrl } from '../utils/urls';
 import { useHashUrlParams } from './common/use-hash-url-params';
 import { useCurrentContest } from './use-current-contest';
 import { useHttp } from './use-http';
+import { usePages } from './use-pages';
 
 interface IProblemsContext {
     state: {
@@ -61,6 +62,7 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     const [ problemResourceIdToDownload, setProblemResourceIdToDownload ] = useState<number | null>(null);
 
     const navigate = useNavigate();
+    const { clearPageValue } = usePages();
 
     const {
         get: downloadProblemResource,
@@ -101,11 +103,13 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
 
     const selectCurrentProblem = useCallback(
         (problemId: number) => {
+            clearPageValue();
+
             selectProblemById(problemId);
 
             setInternalProblemId(null);
         },
-        [ selectProblemById ],
+        [ selectProblemById, clearPageValue ],
     );
 
     const removeCurrentProblems = useCallback(

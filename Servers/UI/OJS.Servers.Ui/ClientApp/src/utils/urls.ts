@@ -142,9 +142,9 @@ const getContestResultsApiUrl = ({
 const getSubmissionResultsByProblemUrl = ({
     problemId,
     isOfficial,
-    take,
+    page,
 }: IGetSubmissionResultsByProblemUrlParams) => `
-    ${baseApiUrl}/Submissions/GetSubmissionResultsByProblem/${problemId}?isOfficial=${isOfficial}&take=${take}`;
+    ${baseApiUrl}/Submissions/GetSubmissionResultsByProblem/${problemId}?isOfficial=${isOfficial}&page=${page}`;
 
 const getProblemSubmissionDetailsUrl = ({
     submissionId,

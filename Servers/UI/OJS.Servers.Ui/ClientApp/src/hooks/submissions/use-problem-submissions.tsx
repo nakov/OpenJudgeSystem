@@ -1,11 +1,12 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
-import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../common/constants';
+import { IPagedResultType } from '../../common/types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { getSubmissionResultsByProblemUrl } from '../../utils/urls';
 import { useCurrentContest } from '../use-current-contest';
 import { IErrorDataType, useHttp } from '../use-http';
+import { usePages } from '../use-pages';
 
 import { ISubmissionDetails } from './types';
 
@@ -24,7 +25,7 @@ type IProblemSubmissionsProviderProps = IHaveChildrenProps
 interface IProblemSubmissionResultsRequestParametersType {
     problemId: number;
     isOfficial: boolean;
-    take: number;
+    page: number;
 }
 
 const ProblemSubmissionsContext = createContext<IProblemSubmissionsContext>({} as IProblemSubmissionsContext);
@@ -38,12 +39,16 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
     ] = useState<IProblemSubmissionResultsRequestParametersType | null>(null);
 
     const { state: { isOfficial } } = useCurrentContest();
+    const {
+        state: { currentPage },
+        populatePageInformation,
+    } = usePages();
 
     const {
         get: getProblemSubmissions,
-        data: apiProblemSubmissions,
+        data: apiProblemSubmissionsData,
         error: problemSubmissionsError,
-    } = useHttp<IProblemSubmissionResultsRequestParametersType, ISubmissionDetails[]>({
+    } = useHttp<IProblemSubmissionResultsRequestParametersType, IPagedResultType<ISubmissionDetails>>({
         url: getSubmissionResultsByProblemUrl,
         parameters: submissionResultsToGetParameters,
     });
@@ -57,15 +62,15 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
             setSubmissionResultsToGetParameters({
                 problemId: id,
                 isOfficial,
-                take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
+                page: currentPage,
             } as IProblemSubmissionResultsRequestParametersType);
         },
-        [ isOfficial ],
+        [ isOfficial, currentPage ],
     );
 
     useEffect(
         () => {
-            if (isNil(apiProblemSubmissions)) {
+            if (isNil(apiProblemSubmissionsData)) {
                 return;
             }
 
@@ -73,10 +78,29 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
                 return;
             }
 
-            setSubmissions(apiProblemSubmissions);
+            const newSubmissionsData = apiProblemSubmissionsData as IPagedResultType<ISubmissionDetails>;
+            const submissionsResult = newSubmissionsData.items as ISubmissionDetails[];
+
+            const {
+                pageNumber,
+                itemsPerPage,
+                pagesCount,
+                totalItemsCount,
+            } = newSubmissionsData || {};
+
+            const newPagesInfo = {
+                pageNumber,
+                itemsPerPage,
+                pagesCount,
+                totalItemsCount,
+            };
+
+            setSubmissions(submissionsResult);
+            populatePageInformation(newPagesInfo);
+
             setSubmissionResultsToGetParameters(null);
         },
-        [ apiProblemSubmissions, problemSubmissionsError ],
+        [ apiProblemSubmissionsData, populatePageInformation, problemSubmissionsError ],
     );
 
     useEffect(

@@ -78,17 +78,17 @@ public class SubmissionsController : BaseApiController
     /// </summary>
     /// <param name="id">The id of the problem.</param>
     /// <param name="isOfficial">Should the submissions be only from compete mode.</param>
-    /// <param name="take">Number of submissions to return.</param>
+    /// <param name="page">Current submissions page.</param>
     /// <returns>A collection of submissions for a specific problem.</returns>
     [HttpGet("{id:int}")]
-    [ProducesResponseType(typeof(IEnumerable<SubmissionResultsResponseModel>), Status200OK)]
+    [ProducesResponseType(typeof(PagedResultResponse<SubmissionResultsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetSubmissionResultsByProblem(
         int id,
         [FromQuery] bool isOfficial,
-        [FromQuery] int take)
+        [FromQuery] int page)
         => await this.submissionsBusiness
-            .GetSubmissionResultsByProblem(id, isOfficial, take)
-            .MapCollection<SubmissionViewInResultsResponseModel>()
+            .GetSubmissionResultsByProblem(id, isOfficial, page)
+            .Map<PagedResultResponse<SubmissionViewInResultsResponseModel>>()
             .ToOkResult();
 
     /// <summary>

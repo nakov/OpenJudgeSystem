@@ -67,8 +67,8 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
     public IQueryable<Submission> GetAllByProblem(int problemId)
         => this.DbSet.Where(s => s.ProblemId == problemId);
 
-    public IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId) =>
-        this.GetQuery(
+    public IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId)
+        => this.GetQuery(
             filter: s => s.ParticipantId == participantId && s.ProblemId == problemId,
             orderBy: q => q.CreatedOn,
             descending: true);
