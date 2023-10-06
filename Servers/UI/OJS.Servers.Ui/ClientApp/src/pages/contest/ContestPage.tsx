@@ -135,7 +135,7 @@ const ContestPage = () => {
                     </div>
                 )
                 : contest?.isOnline && isParticipationOfficial && !userHasConfirmedModal && !isUserAdmin
-                    ? <ContestModal contest={modalContest} />
+                    ? <ContestModal showModal contest={modalContest} />
                     : <Contest />
             : renderErrorMessage(),
         [

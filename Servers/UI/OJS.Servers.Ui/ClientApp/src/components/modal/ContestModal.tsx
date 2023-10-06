@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Modal from '@mui/material/Modal';
 
@@ -11,14 +11,24 @@ import styles from './ContestModal.module.scss';
 
 interface IContestModalProps {
     contest: IContestModalInfoType;
+    showModal: boolean;
 }
 
-const defaultState = { state: { isShowing: true } };
+const defaultState = { state: { isShowing: false } };
 
-const ContestModal = ({ contest }: IContestModalProps) => {
+const ContestModal = ({ contest, showModal }: IContestModalProps) => {
     const [ isShowing, setIsShowing ] = useState<boolean>(defaultState.state.isShowing);
     const navigate = useNavigate();
     const { actions: { setUserHasConfirmedModal } } = useCurrentContest();
+
+    useEffect(
+        () => {
+            if (showModal) {
+                setIsShowing(true);
+            }
+        },
+        [ showModal ],
+    );
 
     const startContestAndHideModal = useCallback(
         () => {
