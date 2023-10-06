@@ -64,7 +64,7 @@
 
         public int? DefaultSubmissionTypeId { get; set; }
 
-        public Problem DefaultSubmissionType { get; set; }
+        public virtual SubmissionType DefaultSubmissionType { get; set; }
 
         public virtual ICollection<Test> Tests { get; set; } = new HashSet<Test>();
 
