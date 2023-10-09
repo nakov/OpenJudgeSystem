@@ -3,6 +3,7 @@
 using System.Linq;
 using OJS.Services.Common.Data;
 using System.Threading.Tasks;
+using OJS.Services.Common;
 
 public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessingBusinessService
 {
@@ -38,6 +39,7 @@ public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessing
     }
 
     public int EnqueuePendingSubmissions() => throw new System.NotImplementedException();
+    public void DeleteProcessedSubmissions() => throw new System.NotImplementedException();
 
     public Task<int> GetUnprocessedTotalCount()
         => this.submissionsForProcessingData.GetAllUnprocessedCount();

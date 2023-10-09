@@ -6,7 +6,9 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
     using OJS.Data;
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Extensions;
+    using OJS.Services.Common;
     using OJS.Services.Common.Models.Configurations;
+    using OJS.Services.Ui.Business.Implementations;
     using static OJS.Common.GlobalConstants;
 
     public static class ServiceCollectionExtensions
@@ -39,6 +41,8 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
                 .AddLogging()
                 .ConfigureSettings(configuration)
                 .AddControllersWithViews();
+
+            services.AddScoped<ISubmissionsForProcessingBusinessService, SubmissionsForProcessingBusinessService>();
         }
 
         private static IServiceCollection ConfigureSettings(
