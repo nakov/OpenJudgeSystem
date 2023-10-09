@@ -629,40 +629,42 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             .Where(x => x.IsChecked)
             .Select(x =>
             {
-                var psted = new ProblemSubmissionTypeExecutionDetails();
-                psted.ProblemId = problem.Id;
-                psted.SubmissionTypeId = int.Parse(x.Value!.ToString() !);
+                var submissionTypeDetails = new ProblemSubmissionTypeExecutionDetails();
+                submissionTypeDetails.ProblemId = problem.Id;
+                submissionTypeDetails.SubmissionTypeId = int.Parse(x.Value!.ToString() !);
                 if (x.Expand == null)
                 {
-                    return psted;
+                    return submissionTypeDetails;
                 }
 
-                psted.SolutionSkeleton = x.Expand.First(y =>
+                submissionTypeDetails.SolutionSkeleton = x.Expand.First(y =>
                     y.Name == x.Name + " " + AdditionalFormFields.SolutionSkeletonRaw).Value != null
                     ? x.Expand.First(y => y.Name == x.Name + " " + AdditionalFormFields.SolutionSkeletonRaw)
                         .Value!.ToString() !.Compress()
                     : Array.Empty<byte>();
 
-                var timeLimitValue = x.Expand.First(y =>
-                    y.Name == x.Name + " " + AdditionalFormFields.TimeLimit).Value;
+                var timeLimitValue = GetLimitValue(x, AdditionalFormFields.TimeLimit);
                 if (timeLimitValue != null)
                 {
-                    psted.TimeLimit = string.IsNullOrEmpty(timeLimitValue.ToString()) ? null : int.Parse(timeLimitValue.ToString() !);
+                    submissionTypeDetails.TimeLimit = string.IsNullOrEmpty(timeLimitValue.ToString()) ? null : int.Parse(timeLimitValue.ToString() !);
                 }
 
-                var memoryLimitValue = x.Expand.First(y =>
-                    y.Name == x.Name + " " + AdditionalFormFields.MemoryLimit).Value;
+                var memoryLimitValue = GetLimitValue(x, AdditionalFormFields.MemoryLimit);
                 if (memoryLimitValue != null)
                 {
-                    psted.MemoryLimit = string.IsNullOrEmpty(memoryLimitValue.ToString()) ? null : int.Parse(memoryLimitValue.ToString() !);
+                    submissionTypeDetails.MemoryLimit = string.IsNullOrEmpty(memoryLimitValue.ToString()) ? null : int.Parse(memoryLimitValue.ToString() !);
                 }
 
-                return psted;
+                return submissionTypeDetails;
             });
 
         problem.ProblemSubmissionTypeExecutionDetails.Clear();
         problem.ProblemSubmissionTypeExecutionDetails.AddRange(newSubmissionTypes);
     }
+
+    private static object? GetLimitValue(
+        ExpandableMultiChoiceCheckBoxFormControlViewModel viewModel, AdditionalFormFields fieldName)
+        => viewModel.Expand!.First(y => y.Name == viewModel.Name + " " + fieldName).Value;
 
     private static int GetContestId(Problem entity, IDictionary<string, string> entityDict)
         => entityDict.GetEntityIdOrDefault<Contest>() ?? entity.ProblemGroup?.ContestId ?? default;

@@ -24,7 +24,7 @@ $(document).ready(() => {
                 const result = [];
 
                 if (expandElementId) {
-                    const expandElements = $(`#${$(checkbox).attr('expand')} :input`);
+                    const expandElements = $(`#${expandElementId} :input`);
 
                     expandElements.each(function () {
                         const element = $(this);
