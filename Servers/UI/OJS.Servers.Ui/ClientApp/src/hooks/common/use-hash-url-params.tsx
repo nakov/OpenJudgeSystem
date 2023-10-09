@@ -30,18 +30,18 @@ const HashUrlParamProvider = ({ children }: IHashUrlParamProviderProps) => {
     );
 
     const setHash = useCallback(
-        (param: string, isDefaultHashParam: boolean) => {
+        (param: string, isDefaultHashParam?: boolean) => {
+            const url = `${location.pathname}#${param}`;
+            location.hash = `${param}`;
+            setHashParam(param);
+
             if (isDefaultHashParam) {
-                const url = `${location.pathname}${location.search}#${param}`;
                 window.history.replaceState('', document.title, `${url}`);
-                location.hash = param;
 
-                setHashParam(param);
-            } else {
-                window.location.hash = param;
-
-                setHashParam(param);
+                return;
             }
+
+            window.location.hash = param;
         },
         [ location ],
     );

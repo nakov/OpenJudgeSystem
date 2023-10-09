@@ -1,12 +1,13 @@
 ﻿namespace OJS.Servers.Ui.Models;
-using System.Collections.Generic;
+
+using SoftUni.Common.Models;
 using Submissions.Details;
-using Submissions.Results;
 using OJS.Services.Ui.Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
 public class SubmissionDetailsWIthResultsResponseModel : IMapFrom<SubmissionDetailsWithResultsModel>
 {
     public SubmissionDetailsResponseModel? SubmissionDetails { get; set; }
-    public IEnumerable<SubmissionViewInResultsResponseModel>? SubmissionResults { get; set; }
+
+    public PagedResult<SubmissionViewInResultsPageModel>? SubmissionResults { get; set; }
 }

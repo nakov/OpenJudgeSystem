@@ -13,6 +13,7 @@ interface ISubmissionDetailsUrlParams {
 
 interface IProblemSubmissionDetailsUrlParams {
     submissionId: number;
+    currentPage: number;
     hashParam: string;
 }
 

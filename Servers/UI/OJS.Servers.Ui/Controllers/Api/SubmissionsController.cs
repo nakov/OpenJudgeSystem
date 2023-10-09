@@ -95,15 +95,15 @@ public class SubmissionsController : BaseApiController
     /// Gets a subset of submission results and details  for the selected user by specific problem and given take count.
     /// </summary>
     /// <param name="submissionId">The id of the submission.</param>
-    /// <param name="take">Number of submissions to return.</param>
+    /// <param name="page">Current submissions page.</param>
     /// <returns>A collection of submissions for a specific problem.</returns>
     [HttpGet("{submissionId:int}")]
-    [ProducesResponseType(typeof(IEnumerable<SubmissionResultsResponseModel>), Status200OK)]
+    [ProducesResponseType(typeof(SubmissionResultsResponseModel), Status200OK)]
     public async Task<IActionResult> GetSubmissionDetailsWithResults(
         int submissionId,
-        [FromQuery] int take)
+        [FromQuery] int page)
         => await this.submissionsBusiness
-            .GetSubmissionDetailsWithResults(submissionId, take)
+            .GetSubmissionDetailsWithResults(submissionId, page)
             .Map<SubmissionDetailsWIthResultsResponseModel>()
             .ToOkResult();
 

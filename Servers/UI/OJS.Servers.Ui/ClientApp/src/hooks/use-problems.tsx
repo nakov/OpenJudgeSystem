@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import first from 'lodash/first';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
@@ -10,9 +10,10 @@ import { IHaveChildrenProps } from '../components/common/Props';
 import { getDownloadProblemResourceUrl } from '../utils/urls';
 
 import { useHashUrlParams } from './common/use-hash-url-params';
+import { useUrlParams } from './common/use-url-params';
+import { useProblemSubmissions } from './submissions/use-problem-submissions';
 import { useCurrentContest } from './use-current-contest';
 import { useHttp } from './use-http';
-import { usePages } from './use-pages';
 
 interface IProblemsContext {
     state: {
@@ -51,18 +52,23 @@ const ProblemsContext = createContext<IProblemsContext>(defaultState as IProblem
 
 const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     const { state: { contest } } = useCurrentContest();
-    const {
-        state: { hashParam },
-        actions: { setHash },
-    } = useHashUrlParams();
+    const { actions: { setHash } } = useHashUrlParams();
     const [ isLoading, setIsLoading ] = useState(false);
     const [ problems, setProblems ] = useState(defaultState.state.problems);
     const [ currentProblem, setCurrentProblem ] = useState<IProblemType | null>(defaultState.state.currentProblem);
     const [ internalProblemId, setInternalProblemId ] = useState<number | null>();
     const [ problemResourceIdToDownload, setProblemResourceIdToDownload ] = useState<number | null>(null);
 
+    const {
+        actions:
+        {
+            loadSubmissions,
+            changePreviousProblemSubmissionsPage,
+        },
+    } = useProblemSubmissions();
     const navigate = useNavigate();
-    const { clearPageValue } = usePages();
+    const location = useLocation();
+    const { actions: { clearParams } } = useUrlParams();
 
     const {
         get: downloadProblemResource,
@@ -85,31 +91,18 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
             const { orderBy } = newProblem;
             setHash(orderBy.toString(), isDefaultHashParam);
         },
-        [ setHash, problems ],
-    );
-
-    const problemFromHash = useMemo(
-        () => {
-            const hashIndex = Number(hashParam) - 1;
-            return problems[hashIndex];
-        },
-        [ hashParam, problems ],
-    );
-
-    const isLoadedFromHash = useMemo(
-        () => !isNil(problemFromHash),
-        [ problemFromHash ],
+        [ problems, setHash ],
     );
 
     const selectCurrentProblem = useCallback(
         (problemId: number) => {
-            clearPageValue();
-
+            changePreviousProblemSubmissionsPage(0);
             selectProblemById(problemId);
 
+            clearParams();
             setInternalProblemId(null);
         },
-        [ selectProblemById, clearPageValue ],
+        [ clearParams, changePreviousProblemSubmissionsPage, selectProblemById ],
     );
 
     const removeCurrentProblems = useCallback(
@@ -140,13 +133,38 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
 
             if (!isNil(internalProblemId)) {
                 selectProblemById(internalProblemId, true);
-            } else if (isLoadedFromHash) {
-                setCurrentProblem(problemFromHash);
+            } else if (!isEmpty(window.location.hash)) {
+                const hashParameter = window.location.hash.substring(1);
+
+                const hashIndex = Number(hashParameter) - 1;
+
+                setCurrentProblem(problems[hashIndex]);
             } else {
                 selectProblemById(id, true);
             }
+
+            setInternalProblemId(null);
         },
-        [ internalProblemId, isLoadedFromHash, problems, problemFromHash, selectProblemById ],
+        [ internalProblemId, problems, selectProblemById ],
+    );
+
+    useEffect(
+        () => {
+            const hashParameter = window.location.hash.substring(1);
+
+            const hashIndex = Number(hashParameter) - 1;
+
+            const { [hashIndex]: problem } = problems;
+
+            if (isNil(problem)) {
+                return;
+            }
+
+            const { id } = problem;
+
+            loadSubmissions(id);
+        },
+        [ location, loadSubmissions, problems ],
     );
 
     useEffect(
@@ -215,8 +233,8 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
                 removeCurrentProblems,
             },
         }),
-        [ problems, currentProblem, isLoading, selectCurrentProblem, downloadProblemResourceFile, changeCurrentHash,
-            initiateRedirectionToProblem, removeCurrentProblem, removeCurrentProblems ],
+        [ problems, currentProblem, isLoading, selectCurrentProblem, downloadProblemResourceFile,
+            changeCurrentHash, removeCurrentProblem, initiateRedirectionToProblem, removeCurrentProblems ],
     );
 
     return (

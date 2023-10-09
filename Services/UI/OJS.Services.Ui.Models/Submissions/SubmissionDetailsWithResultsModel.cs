@@ -1,9 +1,10 @@
 ﻿namespace OJS.Services.Ui.Models.Submissions;
 
-using System.Collections.Generic;
+using SoftUni.Common.Models;
 
 public class SubmissionDetailsWithResultsModel
 {
     public SubmissionDetailsServiceModel? SubmissionDetails { get; set; }
-    public IEnumerable<SubmissionViewInResultsPageModel>? SubmissionResults { get; set; }
+
+    public PagedResult<SubmissionViewInResultsPageModel>? SubmissionResults { get; set; }
 }

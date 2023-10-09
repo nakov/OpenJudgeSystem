@@ -4,12 +4,13 @@ import first from 'lodash/first';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../../common/constants';
 import { contestParticipationType } from '../../../common/contest-helpers';
+import { PageParams } from '../../../common/pages-types';
 import { useHashUrlParams } from '../../../hooks/common/use-hash-url-params';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import { useAuth } from '../../../hooks/use-auth';
 import { usePageTitles } from '../../../hooks/use-page-titles';
+import { usePages } from '../../../hooks/use-pages';
 import concatClassNames from '../../../utils/class-names';
 import { preciseFormatDate } from '../../../utils/dates';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
@@ -20,6 +21,7 @@ import { Button, ButtonSize, ButtonState, ButtonType, LinkButton, LinkButtonType
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import IconSize from '../../guidelines/icons/common/icon-sizes';
 import LeftArrowIcon from '../../guidelines/icons/LeftArrowIcon';
+import PaginationControls from '../../guidelines/pagination/PaginationControls';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import SubmissionResults from '../submission-results/SubmissionResults';
 import SubmissionsList from '../submissions-list/SubmissionsList';
@@ -51,6 +53,13 @@ const SubmissionDetails = () => {
     const { state: { user } } = useAuth();
     const { state: { hashParam } } = useHashUrlParams();
     const navigate = useNavigate();
+    const {
+        state: {
+            currentPage,
+            pagesInfo,
+        },
+        changePage,
+    } = usePages();
 
     const renderDownloadErrorMessage = useCallback(() => {
         if (isNil(downloadErrorMessage)) {
@@ -153,10 +162,15 @@ const SubmissionDetails = () => {
 
             setSubmissionDetailsResultsUrlParams({
                 submissionId,
-                take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
+                page: currentPage,
             });
         },
-        [ currentSubmission, setSubmissionDetailsResultsUrlParams ],
+        [ currentPage, currentSubmission, setSubmissionDetailsResultsUrlParams ],
+    );
+
+    const handlePageChange = useCallback(
+        (page: number) => changePage(page),
+        [ changePage ],
     );
 
     const renderRetestButton = useCallback(
@@ -267,6 +281,7 @@ const SubmissionDetails = () => {
         [ currentSubmission ],
     );
 
+    const { pagesCount } = pagesInfo;
     const refreshableSubmissionsList = useCallback(
         () => (
             <div className={styles.navigation}>
@@ -278,26 +293,35 @@ const SubmissionDetails = () => {
                   selectedSubmission={currentSubmission}
                   className={styles.submissionsList}
                 />
+                <PaginationControls
+                  count={pagesCount}
+                  page={currentPage}
+                  onChange={handlePageChange}
+                />
                 { renderButtonsSection() }
                 { renderSubmissionInfo() }
             </div>
         ),
-        [ currentSubmissionDetailsResults, currentSubmission, renderButtonsSection, renderSubmissionInfo ],
+        [ currentSubmissionDetailsResults, currentSubmission, pagesCount,
+            currentPage, handlePageChange, renderButtonsSection, renderSubmissionInfo ],
     );
 
     const setSubmissionAndStartParticipation = useCallback(
         (contestId: number) => {
             // eslint-disable-next-line prefer-destructuring
             const participationType = contestParticipationType(currentSubmission!.isOfficial);
+
             navigate({
                 pathname: getParticipateInContestUrl({ id: contestId, participationType }),
+                search: isNil(currentPage)
+                    ? ''
+                    : `${PageParams.page}=${currentPage}`,
                 hash: hashParam,
             });
-
             setCurrentSubmission(null);
             selectSubmissionById(null);
         },
-        [ currentSubmission, hashParam, navigate, selectSubmissionById, setCurrentSubmission ],
+        [ currentPage, currentSubmission, hashParam, navigate, selectSubmissionById, setCurrentSubmission ],
     );
 
     const codeEditor = useCallback(

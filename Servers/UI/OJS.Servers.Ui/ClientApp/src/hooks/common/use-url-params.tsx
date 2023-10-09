@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useMemo } from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 
 import { IDictionary, IUrlParam } from '../../common/common-types';
@@ -47,7 +47,6 @@ const searchParamsToParams = (searchParams: URLSearchParams) => {
 const UrlParamsProvider = ({ children }: IUrlParamsProviderProps) => {
     const [ searchParams, setSearchParams ] = useSearchParams();
     const location = useLocation();
-    const navigate = useNavigate();
 
     const params = useMemo(
         () => searchParamsToParams(searchParams),
@@ -65,14 +64,16 @@ const UrlParamsProvider = ({ children }: IUrlParamsProviderProps) => {
 
             searchParams.append(keyToLower, value);
 
-            if (isEmpty(location.hash)) {
-                setSearchParams(searchParams);
-            } else {
-                const url = `${location.pathname}?${searchParams}${location.hash}`;
-                navigate(url);
+            setSearchParams(searchParams);
+
+            if (!isEmpty(location.hash)) {
+                const { hash } = location;
+                const url = `${location.pathname}${hash}`;
+
+                window.history.replaceState('', document.title, url);
             }
         },
-        [ navigate, searchParams, location, setSearchParams ],
+        [ searchParams, setSearchParams, location ],
     );
 
     const unsetParam = useCallback(
@@ -90,9 +91,21 @@ const UrlParamsProvider = ({ children }: IUrlParamsProviderProps) => {
 
     const clearParams = useCallback(
         () => {
-            setSearchParams({});
+            if (isEmpty(location.search)) {
+                return;
+            }
+
+            const { hash } = location;
+            if (isEmpty(hash)) {
+                setSearchParams({});
+            } else {
+                setSearchParams({}, { replace: true });
+
+                const url = `${location.pathname}#${hash}`;
+                window.history.replaceState('', document.title, url);
+            }
         },
-        [ setSearchParams ],
+        [ setSearchParams, location ],
     );
 
     const value = useMemo(

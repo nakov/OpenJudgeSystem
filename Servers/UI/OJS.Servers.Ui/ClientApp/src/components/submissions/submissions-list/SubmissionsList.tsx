@@ -3,6 +3,7 @@ import React, { useCallback, useMemo } from 'react';
 import { contestParticipationType } from '../../../common/contest-helpers';
 import { useHashUrlParams } from '../../../hooks/common/use-hash-url-params';
 import { ISubmissionDetails, ISubmissionDetailsType } from '../../../hooks/submissions/types';
+import { usePages } from '../../../hooks/use-pages';
 import concatClassNames from '../../../utils/class-names';
 import { formatDate } from '../../../utils/dates';
 import { getProblemSubmissionDetailsUrl } from '../../../utils/urls';
@@ -25,6 +26,7 @@ const SubmissionsList = ({
     selectedSubmission,
     className = '',
 }: ISubmissionsListProps) => {
+    const { state: { currentPage } } = usePages();
     const { state: { hashParam } } = useHashUrlParams();
 
     const containerClassName = useMemo(
@@ -103,6 +105,7 @@ const SubmissionsList = ({
                               size={ButtonSize.small}
                               to={getProblemSubmissionDetailsUrl({
                                   submissionId: id,
+                                  currentPage,
                                   hashParam,
                               })}
                               className={submissionBtnClass}
@@ -115,7 +118,7 @@ const SubmissionsList = ({
                 </div>
             );
         },
-        [ hashParam, selectedSubmission, submissionsTypeLabelClassName ],
+        [ currentPage, hashParam, selectedSubmission, submissionsTypeLabelClassName ],
     );
 
     return (

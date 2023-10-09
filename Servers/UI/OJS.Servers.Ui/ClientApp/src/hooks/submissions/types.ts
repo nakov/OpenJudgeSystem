@@ -1,4 +1,4 @@
-import { ISubmissionTypeType } from '../../common/types';
+import { IPagedResultType, ISubmissionTypeType } from '../../common/types';
 import { IUserProfileType } from '../use-users';
 
 interface IProblemType {
@@ -11,7 +11,7 @@ interface IProblemType {
 
 interface ISubmissionDetailsWithResults {
     submissionDetails: ISubmissionDetailsType;
-    submissionResults:ISubmissionDetails[];
+    submissionResults: IPagedResultType<ISubmissionDetails>;
 }
 interface ITestRunType {
     id: number;

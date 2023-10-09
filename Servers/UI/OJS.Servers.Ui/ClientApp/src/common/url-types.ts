@@ -70,7 +70,7 @@ interface IGetContestResultsParams {
 
 interface IGetSubmissionDetailsByIdUrlParams {
     submissionId: number;
-    take: number;
+    page: number;
 }
 
 interface IRetestSubmissionUrlParams {

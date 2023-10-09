@@ -143,19 +143,36 @@ const getSubmissionResultsByProblemUrl = ({
     problemId,
     isOfficial,
     page,
-}: IGetSubmissionResultsByProblemUrlParams) => `
-    ${baseApiUrl}/Submissions/GetSubmissionResultsByProblem/${problemId}?isOfficial=${isOfficial}&page=${page}`;
+}: IGetSubmissionResultsByProblemUrlParams) => {
+    const pageQuery = isNil(page)
+        ? ''
+        : `page=${page}`;
+
+    return `${baseApiUrl}/Submissions/GetSubmissionResultsByProblem/${problemId}?isOfficial=${isOfficial}&${pageQuery}`;
+};
 
 const getProblemSubmissionDetailsUrl = ({
     submissionId,
+    currentPage,
     hashParam,
-}: IProblemSubmissionDetailsUrlParams) => `/submissions/${submissionId}/details#${hashParam}`;
+}: IProblemSubmissionDetailsUrlParams) => {
+    const pageQuery = isNil(currentPage)
+        ? ''
+        : `?page=${currentPage}`;
+
+    return `/submissions/${submissionId}/details${pageQuery}#${hashParam}`;
+};
 
 const getSubmissionDetailsResultsUrl = ({
     submissionId,
-    take,
-}: IGetSubmissionDetailsByIdUrlParams) => `
-    ${baseApiUrl}/Submissions/GetSubmissionDetailsWithResults/${submissionId}?take=${take}`;
+    page,
+}: IGetSubmissionDetailsByIdUrlParams) => {
+    const pageQuery = isNil(page)
+        ? ''
+        : `page=${page}`;
+
+    return `${baseApiUrl}/Submissions/GetSubmissionDetailsWithResults/${submissionId}?${pageQuery}`;
+};
 
 const getPublicSubmissionsUrl = ({ page }: IGetSubmissionsUrlParams) => {
     const pageQuery = isNil(page)

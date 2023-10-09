@@ -16,7 +16,8 @@ interface IProblemSubmissionsContext {
         problemSubmissionsError: IErrorDataType | null;
     };
     actions: {
-        loadSubmissions: (problemId: number) => Promise<void>;
+        loadSubmissions: (problemId: number) => void;
+        changePreviousProblemSubmissionsPage: (page: number) => void;
     };
 }
 
@@ -37,6 +38,7 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
         submissionResultsToGetParameters,
         setSubmissionResultsToGetParameters,
     ] = useState<IProblemSubmissionResultsRequestParametersType | null>(null);
+    const [ previousProblemSubmissionsPage, setPreviousProblemSubmissionsPage ] = useState<number>(0);
 
     const { state: { isOfficial } } = useCurrentContest();
     const {
@@ -53,9 +55,16 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
         parameters: submissionResultsToGetParameters,
     });
 
+    const changePreviousProblemSubmissionsPage = useCallback(
+        (page: number) => {
+            setPreviousProblemSubmissionsPage(page);
+        },
+        [],
+    );
+
     const loadSubmissions = useCallback(
-        async (id: number) => {
-            if (isNil(id) || isNil(isOfficial)) {
+        (id: number) => {
+            if (isNil(id) || isNil(isOfficial) || currentPage === previousProblemSubmissionsPage) {
                 return;
             }
 
@@ -64,8 +73,10 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
                 isOfficial,
                 page: currentPage,
             } as IProblemSubmissionResultsRequestParametersType);
+
+            setPreviousProblemSubmissionsPage(0);
         },
-        [ isOfficial, currentPage ],
+        [ isOfficial, currentPage, previousProblemSubmissionsPage ],
     );
 
     useEffect(
@@ -120,10 +131,17 @@ const ProblemSubmissionsProvider = ({ children }: IProblemSubmissionsProviderPro
 
     const value = useMemo(
         () => ({
-            state: { submissions, problemSubmissionsError, isLoading },
-            actions: { loadSubmissions },
+            state: {
+                submissions,
+                problemSubmissionsError,
+                isLoading,
+            },
+            actions: {
+                loadSubmissions,
+                changePreviousProblemSubmissionsPage,
+            },
         }),
-        [ loadSubmissions, submissions, problemSubmissionsError, isLoading ],
+        [ loadSubmissions, submissions, problemSubmissionsError, isLoading, changePreviousProblemSubmissionsPage ],
     );
 
     return (

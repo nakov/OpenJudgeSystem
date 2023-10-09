@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
 import isNil from 'lodash/isNil';
 
-import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../../common/constants';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
+import { usePages } from '../../../hooks/use-pages';
 import Button, { ButtonType } from '../../guidelines/buttons/Button';
 
 import SubmissionsList, { ISubmissionsListProps } from './SubmissionsList';
@@ -18,6 +18,7 @@ const RefreshableSubmissionsList = ({
         state: { currentSubmission },
         actions: { setSubmissionDetailsResultsUrlParams },
     } = useSubmissionsDetails();
+    const { state: { currentPage } } = usePages();
 
     const submissionsReloadBtnClassName = 'submissionReloadBtn';
 
@@ -32,10 +33,10 @@ const RefreshableSubmissionsList = ({
 
             setSubmissionDetailsResultsUrlParams({
                 submissionId,
-                take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
+                page: currentPage,
             });
         },
-        [ currentSubmission, setSubmissionDetailsResultsUrlParams ],
+        [ currentPage, currentSubmission, setSubmissionDetailsResultsUrlParams ],
     );
 
     return (

@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
-import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE, FileType } from '../../common/constants';
+import { FileType } from '../../common/constants';
 import {
     IDownloadSubmissionFileUrlParams,
     IGetSubmissionDetailsByIdUrlParams,
@@ -12,6 +12,7 @@ import {
     getSubmissionFileDownloadUrl,
 } from '../../utils/urls';
 import { IErrorDataType, useHttp } from '../use-http';
+import { usePages } from '../use-pages';
 
 import {
     ISubmissionDetails,
@@ -70,6 +71,11 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         submissionDetailsResultsUrlParams,
         setSubmissionDetailsResultsUrlParams,
     ] = useState<IGetSubmissionDetailsByIdUrlParams | null>();
+
+    const {
+        state: { currentPage },
+        populatePageInformation,
+    } = usePages();
 
     const {
         isLoading: submissionDetailsLoading,
@@ -152,24 +158,38 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             }
 
             setCurrentSubmission(apiSubmissionDetailsResults.submissionDetails);
-            setCurrentProblemSubmissionResults(apiSubmissionDetailsResults.submissionResults);
+
+            const { submissionResults } = apiSubmissionDetailsResults;
+            const submissionDetailsResult = submissionResults.items as ISubmissionDetails[];
+
+            const {
+                pageNumber,
+                itemsPerPage,
+                pagesCount,
+                totalItemsCount,
+            } = submissionResults || {};
+
+            const newPagesInfo = {
+                pageNumber,
+                itemsPerPage,
+                pagesCount,
+                totalItemsCount,
+            };
+
+            populatePageInformation(newPagesInfo);
+            setCurrentProblemSubmissionResults(submissionDetailsResult);
         },
-        [ apiSubmissionDetailsResults, apiSubmissionDetailsResultsError ],
+        [ apiSubmissionDetailsResults, apiSubmissionDetailsResultsError, populatePageInformation ],
     );
 
     const getDetails = useCallback(
         async (submissionId: number) => {
-            if (isNil(submissionId) || Number.isNaN(submissionId)) {
-                // Will be removed from the code with https://github.com/SoftUni-Internal/exam-systems-issues/issues/937
-                // return;
-            }
-
             setSubmissionDetailsResultsUrlParams({
                 submissionId,
-                take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
+                page: currentPage,
             });
         },
-        [],
+        [ currentPage ],
     );
 
     useEffect(
