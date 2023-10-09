@@ -37,6 +37,8 @@ public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessing
         }
     }
 
+    public int EnqueuePendingSubmissions() => throw new System.NotImplementedException();
+
     public Task<int> GetUnprocessedTotalCount()
         => this.submissionsForProcessingData.GetAllUnprocessedCount();
 }
