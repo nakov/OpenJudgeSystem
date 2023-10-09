@@ -4,7 +4,7 @@ ENV TZ=Etc/UTC
 
 # Base Setup
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
-    apt-get update -y && \
+    apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y wget curl sudo apt-transport-https ca-certificates gnupg lsb-release build-essential unzip && \
     rm -rf /var/lib/apt/lists/*
@@ -17,8 +17,8 @@ RUN wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-p
     dpkg -i packages-microsoft-prod.deb && \
     rm packages-microsoft-prod.deb
 
-# Install .NET Core SDK, JDK, NodeJs, PHP, Python, Playwrith
-RUN apt-get update -y && apt-get install -y \
+# Install supported languages and frameworks
+RUN apt-get update && apt-get install -y \
     dotnet-sdk-6.0 \
     dotnet-sdk-3.1 \
     dotnet-runtime-3.1 \
@@ -63,10 +63,6 @@ RUN npm install && \
 ENV JAVA_LIBS_DIR=/judge-resources/javaLibs/
 ENV JS_NODE_MODULES_DIR=/judge-resources/js/node_modules
 
-# Python
-## TODO: move this into requirements.txt
-RUN pip3 install docker
-
 # Python 11 with Django support
 RUN apt-get update && apt-get install -y --no-install-recommends \
     make \
@@ -75,7 +71,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libbz2-dev \
     libreadline-dev \
     libsqlite3-dev \
-    wget \
     llvm \
     libncurses5-dev \
     xz-utils \
@@ -94,6 +89,10 @@ ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
 RUN curl https://pyenv.run | bash && \
     pyenv update && \
     pyenv install 3.11.5
+
+# Install Python packages from requirements.txt
+COPY ./python/requirements.txt /tmp/
+RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
 
 # Go
 ENV GO111MODULE=off
