@@ -12,6 +12,7 @@ using FluentExtensions.Extensions;
 using OJS.Common.Enumerations;
 using OJS.Services.Infrastructure.BackgroundJobs;
 using OJS.Services.Administration.Business.Implementations;
+using OJS.Services.Common;
 using static OJS.Services.Administration.Business.Constants;
 
 public class BackgroundJobsHostedService : IHostedService
@@ -54,7 +55,7 @@ public class BackgroundJobsHostedService : IHostedService
     private void AddOrUpdateRecurringJobs()
     {
         this.hangfireBackgroundJobs
-            .AddOrUpdateRecurringJob<SubmissionsForProcessingBusinessService>(
+            .AddOrUpdateRecurringJob<ISubmissionsForProcessingBusinessService>(
                 BackgroundJobs.JobNames.EnqueuePendingSubmissionsJobName,
                 m => m.EnqueuePendingSubmissions(),
                 BackgroundJobs.JobNames.EnqueuePendingSubmissionsJobCron,
@@ -65,7 +66,7 @@ public class BackgroundJobsHostedService : IHostedService
             BackgroundJobs.JobNames.EnqueuePendingSubmissionsJobCron);
 
         this.hangfireBackgroundJobs
-            .AddOrUpdateRecurringJob<SubmissionsForProcessingBusinessService>(
+            .AddOrUpdateRecurringJob<ISubmissionsForProcessingBusinessService>(
                 BackgroundJobs.JobNames.DeleteOldSubmissionsJobName,
                 m => m.DeleteProcessedSubmissions(),
                 BackgroundJobs.JobNames.DeleteOldSubmissionsJobCron,
