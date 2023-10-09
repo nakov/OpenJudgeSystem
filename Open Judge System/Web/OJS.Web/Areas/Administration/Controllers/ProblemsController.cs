@@ -887,13 +887,20 @@
                 .Select(ViewModelType.FromProblem)
                 .FirstOrDefault();
 
-            var contest = problemEntity.FirstOrDefault()?.ProblemGroup.Contest;
+            var problemEntityWithData = problemEntity.FirstOrDefault();
+            Contest contest = null;
+
+            if (problemEntityWithData != null)
+            {
+                contest = problemEntityWithData.ProblemGroup.Contest;
+            }
+             
             if (problem == null || contest == null)
             {
                 return null;
             }
             
-            problem.DefaultSubmissionTypeId = problemEntity.FirstOrDefault().DefaultSubmissionTypeId;
+            problem.DefaultSubmissionTypeId = problemEntityWithData.DefaultSubmissionTypeId;
             this.AddCheckersAndProblemGroupsToProblemViewModel(
                 problem,
                 contest.ProblemGroups.Count,
