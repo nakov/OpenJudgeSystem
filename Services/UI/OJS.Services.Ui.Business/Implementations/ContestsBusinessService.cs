@@ -98,6 +98,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest!);
 
             var contestDetailsServiceModel = contest!.Map<ContestDetailsServiceModel>();
+
             // set CanBeCompeted and CanBePracticed properties in contest
             this.activityService.SetCanBeCompetedAndPracticed(contestDetailsServiceModel);
 
@@ -293,6 +294,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 .Where(c => c.Name!.Contains(model.SearchTerm!));
 
             var searchContests = allContestsQueryable.MapCollection<ContestSearchServiceModel>();
+
             //set CanBeCompeted and CanBePracticed properties in each contest from the result
             searchContests.ForEach(c => this.activityService.SetCanBeCompetedAndPracticed(c));
             var pagedResult = await searchContests.ToPagedListAsync(model.PageNumber, model.ItemsPerPage);
