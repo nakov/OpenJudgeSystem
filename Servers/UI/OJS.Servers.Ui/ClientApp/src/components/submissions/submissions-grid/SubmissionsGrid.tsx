@@ -319,11 +319,15 @@ const SubmissionsGrid = () => {
                     ? userByContestSubmissions
                     : userSubmissions;
 
-            const submissions = selectedActive === 1
+            let submissions = selectedActive === 1
                 ? toggleSubmissions
                 : selectedActive === 2
                     ? unprocessedSubmissions
                     : pendingSubmissions;
+
+            if (activeToggleElement === toggleValues.mySubmissions) {
+                submissions = submissions.filter((x) => x.user.id === user.id);
+            }
 
             if (activeToggleElement === toggleValues.mySubmissions && userSubmissionsLoading) {
                 return (
@@ -361,6 +365,7 @@ const SubmissionsGrid = () => {
             pendingSubmissions,
             userSubmissionsLoading,
             renderSubmissionRow,
+            user.id,
         ],
     );
 
