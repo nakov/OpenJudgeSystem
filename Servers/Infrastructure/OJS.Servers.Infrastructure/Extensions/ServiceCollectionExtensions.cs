@@ -129,6 +129,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                     QueuePollInterval = TimeSpan.Zero,
                     UseRecommendedIsolationLevel = true,
                     DisableGlobalLocks = true,
+                    SchemaName = app.ToString(),
                 }));
 
             services.AddHangfireServer(options =>
