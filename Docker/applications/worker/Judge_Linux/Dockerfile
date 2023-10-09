@@ -89,3 +89,19 @@ RUN pip3 install docker
 ENV GO111MODULE=off
 
 CMD tail -f /dev/null
+
+# Python 11 with Django support
+# RUN apt update && apt install zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev wget libbz2-dev pkg-config libpq-dev -y
+RUN apt-get update && apt-get install -y --no-install-recommends make libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev mecab-ipadic-utf8 git libpq-dev
+ENV PYENV_ROOT /root/.pyenv
+ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
+
+# Install pyenv
+RUN set -ex \
+    && curl https://pyenv.run | bash \
+    && pyenv update \
+    && pyenv install 3.11.5 \
+    && pyenv rehash
+
+RUN eval "$(pyenv init -)"
+RUN eval "$(pyenv virtualenv-init -)"
