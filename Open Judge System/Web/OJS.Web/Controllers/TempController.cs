@@ -16,6 +16,7 @@
     using OJS.Data;
     using OJS.Data.Models;
     using OJS.Data.Repositories.Base;
+    using OJS.Services.Business.Participants;
     using OJS.Services.Business.ParticipantScores;
     using OJS.Services.Business.Submissions.ArchivedSubmissions;
     using OJS.Services.Common.BackgroundJobs;
@@ -112,7 +113,8 @@
         {
             this.backgroundJobs.AddOrUpdateRecurringJob<IArchivedSubmissionsBusinessService>(
                 "ArchiveOldSubmissionsDailyBatch",
-                s => s.ArchiveOldSubmissionsDailyBatch(null, Settings.ArchiveDailyBatchSize, Settings.ArchiveMaxSubBatchSize),
+                s => s.ArchiveOldSubmissionsDailyBatch(null, Settings.ArchiveDailyBatchSize,
+                    Settings.ArchiveMaxSubBatchSize),
                 Cron.Daily(1, 30));
 
             return null;
@@ -186,7 +188,7 @@
                 .Delete();
 
             return this.Content($"Done! ProblemGroups set to deleted: {softDeleted}" +
-                $"<br/> ProblemGroups hard deleted: {hardDeleted}");
+                                $"<br/> ProblemGroups hard deleted: {hardDeleted}");
         }
 
         public ActionResult DeleteDuplicatedParticipantsInSameContest()
@@ -476,7 +478,8 @@
                 var checkers = this.Data.Checkers.All().ToList();
                 var submissionTypes = this.Data.SubmissionTypes.All().ToList();
 
-                await this.LoadContestCategoryAndAssignCheckerAndSubmissionTypes(contestCategoryResponse.Data, checkers, submissionTypes);
+                await this.LoadContestCategoryAndAssignCheckerAndSubmissionTypes(contestCategoryResponse.Data, checkers,
+                    submissionTypes);
 
                 using (var scope = TransactionsHelper.CreateTransactionScope())
                 {
@@ -491,6 +494,26 @@
                 return this.Content(
                     $"Contest categories can't be migrated and exception {e}");
             }
+        }
+
+        public ActionResult RegisterJobForUpdatingParticipantTotalScoreSnapshot()
+        {
+            this.backgroundJobs.AddOrUpdateRecurringJob<IParticipantsBusinessService>(
+                "UpdateTotalScoreSnapshotOfParticipants",
+                p => p.UpdateTotalScoreSnapshotOfParticipants(),
+                Cron.Daily(4));
+            
+            return null;
+        }
+        
+        public ActionResult RegisterJobForRemovingMultipleParticipantScoresForProblem()
+        {
+            this.backgroundJobs.AddOrUpdateRecurringJob<IParticipantsBusinessService>(
+                "RemoveParticipantMultipleScores",
+                p => p.RemoveParticipantMultipleScores(),
+                Cron.Daily(3));
+            
+            return null;
         }
 
         private async Task LoadContestCategoryAndAssignCheckerAndSubmissionTypes(
@@ -519,7 +542,9 @@
                 var contestCategoryResponse = await this.FetchContestCategory(id);
 
                 contestCategory.Children.Add(contestCategoryResponse.Data);
-                await this.LoadContestCategoryAndAssignCheckerAndSubmissionTypes(contestCategoryResponse.Data, checkers, submissionTypes);
+                await this.LoadContestCategoryAndAssignCheckerAndSubmissionTypes(contestCategoryResponse.Data,
+                    checkers,
+                    submissionTypes);
             }
         }
 
