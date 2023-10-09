@@ -3,10 +3,9 @@ FROM ubuntu:20.04
 ENV TZ=Etc/UTC
 
 # Base Setup
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
-    apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y wget curl sudo apt-transport-https ca-certificates gnupg lsb-release build-essential unzip && \
+RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
+      wget curl sudo apt-transport-https ca-certificates gnupg lsb-release build-essential unzip && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
     rm -rf /var/lib/apt/lists/*
 
 # Setup for installing Node.js 12 (LTS)
