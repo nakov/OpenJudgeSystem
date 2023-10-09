@@ -44,7 +44,7 @@ const ProblemSubmissions = () => {
         [ loadParticipantScores, loadSubmissions, currentProblem ],
     );
 
-    const handleReloadClick = useCallback(
+    const handleRefreshClick = useCallback(
         async () => {
             await reload();
         },
@@ -123,13 +123,13 @@ const ProblemSubmissions = () => {
                     <Button
                       type={ButtonType.secondary}
                       className={refreshButtonClassName}
-                      onClick={() => handleReloadClick()}
+                      onClick={() => handleRefreshClick()}
                       text="Refresh"
                     />
                 </div>
             </>
         ),
-        [ handleReloadClick, refreshButtonClassName, renderSubmissions, submissionResultsContentClassName ],
+        [ handleRefreshClick, refreshButtonClassName, renderSubmissions, submissionResultsContentClassName ],
     );
 
     const renderPage = useCallback(
