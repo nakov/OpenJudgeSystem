@@ -637,22 +637,21 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                     return submissionTypeDetails;
                 }
 
-                submissionTypeDetails.SolutionSkeleton = x.Expand.First(y =>
-                    y.Name == x.Name + " " + AdditionalFormFields.SolutionSkeletonRaw).Value != null
-                    ? x.Expand.First(y => y.Name == x.Name + " " + AdditionalFormFields.SolutionSkeletonRaw)
-                        .Value!.ToString() !.Compress()
+                var solutionsSkeletonValue = GetSubmissionTypeDetailsFieldValue(x, AdditionalFormFields.SolutionSkeletonRaw);
+                submissionTypeDetails.SolutionSkeleton = !string.IsNullOrEmpty(solutionsSkeletonValue)
+                    ? solutionsSkeletonValue.Compress()
                     : Array.Empty<byte>();
 
-                var timeLimitValue = GetLimitValue(x, AdditionalFormFields.TimeLimit);
-                if (timeLimitValue != null)
+                var timeLimitValue = GetSubmissionTypeDetailsFieldValue(x, AdditionalFormFields.TimeLimit);
+                if (!string.IsNullOrEmpty(timeLimitValue))
                 {
-                    submissionTypeDetails.TimeLimit = string.IsNullOrEmpty(timeLimitValue.ToString()) ? null : int.Parse(timeLimitValue.ToString() !);
+                    submissionTypeDetails.TimeLimit = int.Parse(timeLimitValue);
                 }
 
-                var memoryLimitValue = GetLimitValue(x, AdditionalFormFields.MemoryLimit);
-                if (memoryLimitValue != null)
+                var memoryLimitValue = GetSubmissionTypeDetailsFieldValue(x, AdditionalFormFields.MemoryLimit);
+                if (!string.IsNullOrEmpty(memoryLimitValue))
                 {
-                    submissionTypeDetails.MemoryLimit = string.IsNullOrEmpty(memoryLimitValue.ToString()) ? null : int.Parse(memoryLimitValue.ToString() !);
+                    submissionTypeDetails.MemoryLimit = int.Parse(memoryLimitValue);
                 }
 
                 return submissionTypeDetails;
@@ -662,9 +661,9 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         problem.ProblemSubmissionTypeExecutionDetails.AddRange(newSubmissionTypes);
     }
 
-    private static object? GetLimitValue(
+    private static string? GetSubmissionTypeDetailsFieldValue(
         ExpandableMultiChoiceCheckBoxFormControlViewModel viewModel, AdditionalFormFields fieldName)
-        => viewModel.Expand!.First(y => y.Name == viewModel.Name + " " + fieldName).Value;
+        => viewModel.Expand!.First(y => y.Name == viewModel.Name + " " + fieldName).Value?.ToString();
 
     private static int GetContestId(Problem entity, IDictionary<string, string> entityDict)
         => entityDict.GetEntityIdOrDefault<Contest>() ?? entity.ProblemGroup?.ContestId ?? default;
