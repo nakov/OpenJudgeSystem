@@ -20,10 +20,7 @@ RUN wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-p
 RUN apt-get update && apt-get install -y \
     dotnet-sdk-6.0 \
     dotnet-sdk-3.1 \
-    dotnet-runtime-3.1 \
     dotnet-sdk-5.0 \
-    dotnet-runtime-5.0 \
-    dotnet-runtime-6.0 \
     openjdk-11-jdk \
     nodejs \
     python3.6 \
