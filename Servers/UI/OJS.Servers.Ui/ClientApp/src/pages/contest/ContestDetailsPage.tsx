@@ -71,13 +71,6 @@ const ContestDetailsPage = () => {
         [ participationType ],
     );
 
-    const participantsCountByContestType = useMemo(
-        () => isOfficial
-            ? `Compete participants: ${contestDetails?.participantsCountByContestType}`
-            : `Practice participants: ${contestDetails?.participantsCountByContestType}`,
-        [ isOfficial, contestDetails?.participantsCountByContestType ],
-    );
-
     const {
         isAccessible: canAccessCompeteButton,
         isAccessibleForAdminOrLecturerInContest: competableOnlyForAdminAndLecturers,
@@ -300,10 +293,12 @@ const ContestDetailsPage = () => {
                             <div>
                                 Contest participants:
                                 {' '}
-                                {contestDetails?.totalContestParticipantsCount}
+                                {contestDetails?.competeParticipantsCount}
                             </div>
                             <div>
-                                {participantsCountByContestType}
+                                Practice participants:
+                                {' '}
+                                {contestDetails?.practiceParticipantsCount}
                             </div>
                         </div>
                         {renderTasksList(problems)}
@@ -314,7 +309,7 @@ const ContestDetailsPage = () => {
                 </div>
             );
         },
-        [ renderTasksList, contestDetails, renderContestButtons, renderAllowedSubmissionTypes, participantsCountByContestType ],
+        [ renderTasksList, contestDetails, renderContestButtons, renderAllowedSubmissionTypes ],
     );
 
     const renderErrorHeading = useCallback(
