@@ -137,6 +137,8 @@ namespace OJS.Servers.Infrastructure.Extensions
                 options.Queues = new[] { app.ToString().ToLowerInvariant() };
             });
 
+            services.AddHostedService<BackgroundJobsHostedService>();
+
             return services;
         }
 

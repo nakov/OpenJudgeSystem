@@ -1,19 +1,14 @@
-namespace OJS.Services.Administration.Business;
+namespace OJS.Services.Common;
 
+using FluentExtensions.Extensions;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using OJS.Common.Enumerations;
+using OJS.Services.Infrastructure.BackgroundJobs;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-
-using FluentExtensions.Extensions;
-
-using OJS.Common.Enumerations;
-using OJS.Services.Infrastructure.BackgroundJobs;
-using OJS.Services.Administration.Business.Implementations;
-using OJS.Services.Common;
-using static OJS.Services.Administration.Business.Constants;
+using static ServiceConstants;
 
 public class BackgroundJobsHostedService : IHostedService
 {
@@ -55,9 +50,9 @@ public class BackgroundJobsHostedService : IHostedService
     private void AddOrUpdateRecurringJobs()
     {
         this.hangfireBackgroundJobs
-            .AddOrUpdateRecurringJob<ISubmissionsForProcessingBusinessService>(
+            .AddOrUpdateRecurringJob<IHangfireBackgroundJobsBusinessService>(
                 BackgroundJobs.JobNames.EnqueuePendingSubmissionsJobName,
-                m => m.EnqueuePendingSubmissions(),
+                m => m.EnqueuePendingSubmissionsJob(),
                 BackgroundJobs.JobNames.EnqueuePendingSubmissionsJobCron,
                 this.applicationQueueName);
 
@@ -66,9 +61,16 @@ public class BackgroundJobsHostedService : IHostedService
             BackgroundJobs.JobNames.EnqueuePendingSubmissionsJobCron);
 
         this.hangfireBackgroundJobs
-            .AddOrUpdateRecurringJob<ISubmissionsForProcessingBusinessService>(
+            .AddOrUpdateRecurringJob<IHangfireBackgroundJobsBusinessService>(
                 BackgroundJobs.JobNames.DeleteOldSubmissionsJobName,
-                m => m.DeleteProcessedSubmissions(),
+                m => m.DeleteProcessedSubmissionsJob(),
+                BackgroundJobs.JobNames.DeleteOldSubmissionsJobCron,
+                this.applicationQueueName);
+
+        this.hangfireBackgroundJobs
+            .AddOrUpdateRecurringJob<IHangfireBackgroundJobsBusinessService>(
+                BackgroundJobs.JobNames.DeleteOldSubmissionsJobName,
+                m => m.DeleteProcessedSubmissionsJob(),
                 BackgroundJobs.JobNames.DeleteOldSubmissionsJobCron,
                 this.applicationQueueName);
 

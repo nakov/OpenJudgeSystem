@@ -42,7 +42,7 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
                 .ConfigureSettings(configuration)
                 .AddControllersWithViews();
 
-            services.AddScoped<ISubmissionsForProcessingBusinessService, SubmissionsForProcessingBusinessService>();
+            services.AddScoped<IHangfireBackgroundJobsBusinessService, HangfireBackgroundJobsBusinessService>();
         }
 
         private static IServiceCollection ConfigureSettings(

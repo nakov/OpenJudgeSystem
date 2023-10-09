@@ -1,15 +1,16 @@
-namespace OJS.Services.Ui.Business.Implementations;
+﻿namespace OJS.Services.Ui.Business.Implementations;
 
-using OJS.Services.Common.Data;
 using System.Linq;
+using OJS.Services.Common.Data;
 using System.Threading.Tasks;
+using OJS.Services.Common;
 
-public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessingBusinessService
+public class HangfireBackgroundJobsBusinessService : IHangfireBackgroundJobsBusinessService
 {
     private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
     private readonly IUserProviderService userProviderService;
 
-    public SubmissionsForProcessingBusinessService(
+    public HangfireBackgroundJobsBusinessService(
         ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
         IUserProviderService userProviderService)
     {
@@ -22,7 +23,7 @@ public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessing
     /// thus ensuring that the worker will process them eventually instead
     /// of getting stuck in perpetual "Processing..." state.
     /// </summary>
-    public async Task ResetAllProcessingSubmissions()
+    public async Task ResetAllProcessingSubmissionsJob()
     {
         var allProcessingSubmissionIds = await this.submissionsForProcessingData.GetIdsOfAllProcessing();
 
@@ -37,6 +38,9 @@ public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessing
         }
     }
 
-    public Task<int> GetUnprocessedTotalCount()
+    public int EnqueuePendingSubmissionsJob() => throw new System.NotImplementedException();
+    public void DeleteProcessedSubmissionsJob() => throw new System.NotImplementedException();
+
+    public Task<int> GetUnprocessedTotalCountJob()
         => this.submissionsForProcessingData.GetAllUnprocessedCount();
 }
