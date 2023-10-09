@@ -27,8 +27,6 @@ RUN apt-get update -y && apt-get install -y \
     dotnet-runtime-6.0 \
     openjdk-11-jdk \
     nodejs \
-    php \
-    php-cgi \
     python3.6 \
     python3-pip \
     golang-go \
