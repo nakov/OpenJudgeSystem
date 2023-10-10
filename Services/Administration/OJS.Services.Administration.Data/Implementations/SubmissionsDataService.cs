@@ -39,8 +39,8 @@
 
         public IQueryable<Submission> GetAllFromContestsByLecturer(string lecturerId)
             => this.DbSet
-                .Include(s => s.Problem.ProblemGroup.Contest.LecturersInContests)
-                .Include(s => s.Problem.ProblemGroup.Contest.Category!.LecturersInContestCategories)
+                .Include(s => s.Problem!.ProblemGroup.Contest.LecturersInContests)
+                .ThenInclude(s => s.Contest.Category!.LecturersInContestCategories)
                 .Where(s =>
                     (s.IsPublic.HasValue && s.IsPublic.Value) ||
                     s.Problem.ProblemGroup.Contest.LecturersInContests.Any(l => l.LecturerId == lecturerId) ||
