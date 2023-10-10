@@ -145,9 +145,9 @@ namespace OJS.Services.Administration.Business.Implementations
         public Task ReevaluateProblemsOrder(int contestId, Problem problem)
             => this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsOrder(contestId, problem.ProblemGroup);
 
-        public async Task RetestById(int problemId)
+        public async Task RetestById(int id)
         {
-            var submissions = await this.submissionsData.GetAllNonDeletedByProblemId<SubmissionServiceModel>(problemId);
+            var submissions = await this.submissionsData.GetAllNonDeletedByProblemId<SubmissionServiceModel>(id);
 
             var submissionIds = submissions.Select(s => s.Id).ToList();
 
@@ -155,19 +155,16 @@ namespace OJS.Services.Administration.Business.Implementations
                        IsolationLevel.RepeatableRead,
                        TransactionScopeAsyncFlowOption.Enabled))
             {
-                await this.participantScoresData.DeleteAllByProblem(problemId);
-                await this.submissionsData.SetAllToUnprocessedByProblem(problemId);
-                await this.submissionsForProcessingData.AddOrUpdateBySubmissionIds(submissionIds);
+                await this.testRunsData.DeleteInBatchesBySubmissionIds(submissionIds);
+
+                await this.participantScoresData.DeleteAllByProblem(id);
+
+                await this.submissionsData.SetAllToUnprocessedByProblem(id);
 
                 scope.Complete();
             }
 
-            await submissions.ForEachSequential(async s =>
-            {
-                await this.testRunsData.DeleteBySubmission(s.Id);
-
-                await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(s);
-            });
+            await this.submissionsCommonBusinessService.PublishSubmissionsForProcessing(submissions);
         }
 
         private async Task CopyProblemToContest(Problem? problem, int contestId, int? problemGroupId)

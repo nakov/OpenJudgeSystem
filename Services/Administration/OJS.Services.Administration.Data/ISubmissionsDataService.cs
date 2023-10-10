@@ -40,5 +40,7 @@
         void RemoveTestRunsCacheByProblem(int problemId);
 
         Task<IEnumerable<TServiceModel>> GetAllNonDeletedByProblemId<TServiceModel>(int problemId);
+
+        Task<IEnumerable<int>> GetIdsByProblemId(int problemId);
     }
 }

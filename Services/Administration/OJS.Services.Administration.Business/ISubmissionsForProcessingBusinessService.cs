@@ -10,6 +10,4 @@ public interface ISubmissionsForProcessingBusinessService : IService
     int EnqueuePendingSubmissions();
 
     void DeleteProcessedSubmissions();
-
-    Task<int> GetUnprocessedTotalCount();
 }

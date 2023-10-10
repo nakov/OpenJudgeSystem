@@ -57,7 +57,7 @@
 
         public IQueryable<Submission> GetAllHavingPointsExceedingLimit()
             => this.DbSet
-                .Where(s => s.Points > s.Problem!.MaximumPoints);
+                .Where(s => s.Points > s.Problem.MaximumPoints);
 
         public IQueryable<int> GetIdsByProblem(int problemId)
             => this.GetAllByProblem(problemId)
@@ -81,11 +81,12 @@
         public async Task<IEnumerable<TServiceModel>> GetAllNonDeletedByProblemId<TServiceModel>(int problemId)
             => await this.GetAllByProblem(problemId)
                 .Where(s => !s.IsDeleted)
-                .Include(s => s.SubmissionType)
-                .Include(s => s.Problem)
-                .Include(s => s.Problem.Checker)
-                .Include(s => s.Problem.Tests)
                 .MapCollection<TServiceModel>()
+                .ToListAsync();
+
+        public async Task<IEnumerable<int>> GetIdsByProblemId(int problemId)
+            => await this.GetAllByProblem(problemId)
+                .Select(s => s.Id)
                 .ToListAsync();
     }
 }

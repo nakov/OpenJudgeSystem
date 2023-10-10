@@ -23,7 +23,6 @@ using OJS.Services.Common;
 using OJS.Services.Common.Models;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
-using FluentExtensions.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -267,7 +266,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             FormControlType = FormControlType.TextArea,
         });
 
-        formControls.Add(new FormControlViewModel
+        var testTypeFormField = new FormControlViewModel
         {
             Name = AdditionalFormFields.Type.ToString(),
             Type = typeof(TestTypeEnum),
@@ -277,7 +276,16 @@ public class TestsController : BaseAutoCrudAdminController<Test>
                 : entity.IsTrialTest
                     ? TestTypeEnum.TrialTest
                     : TestTypeEnum.Compete,
-        });
+        };
+
+        if (action == EntityAction.Delete)
+        {
+            testTypeFormField.Type = typeof(string);
+            testTypeFormField.IsReadOnly = true;
+            testTypeFormField.Options = Array.Empty<object>();
+        }
+
+        formControls.Add(testTypeFormField);
 
         return formControls;
     }
@@ -291,18 +299,15 @@ public class TestsController : BaseAutoCrudAdminController<Test>
 
         if (isForRetesting)
         {
-            var problemId = await this.testsData.GetProblemIdByTestId(newTest.Id);
-
-            await this.problemsBusiness.RetestById(problemId);
+            await this.problemsBusiness.RetestById(newTest.ProblemId);
         }
         else
         {
-            var problem = await this.testsData.GetProblemById(newTest.Id);
+            var submissionIds = await this.submissionsData.GetIdsByProblemId(newTest.ProblemId);
 
-            if (problem != null)
+            if (submissionIds.Any())
             {
-                await problem.Submissions
-                    .ForEachSequential(async s => await this.testRunsData.DeleteBySubmission(s.Id));
+                await this.testRunsData.DeleteInBatchesBySubmissionIds(submissionIds);
             }
         }
 
@@ -334,6 +339,8 @@ public class TestsController : BaseAutoCrudAdminController<Test>
                 entity.IsTrialTest = false;
                 entity.IsOpenTest = false;
                 break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(testType), testType, null);
         }
     }
 

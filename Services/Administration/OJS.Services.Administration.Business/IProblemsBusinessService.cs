@@ -7,7 +7,7 @@ namespace OJS.Services.Administration.Business
 
     public interface IProblemsBusinessService : IService
     {
-        Task RetestById(int problemId);
+        Task RetestById(int id);
 
         Task DeleteById(int id);
 
