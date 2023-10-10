@@ -449,9 +449,9 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         if (contest.IsOnlineExam)
         {
-            var problemGroupFieldType = formControls.First(x => x.Name == AdditionalFormFields.ProblemGroupType.ToString());
+            var problemGroupTypeField = formControls.First(x => x.Name == AdditionalFormFields.ProblemGroupType.ToString());
 
-            problemGroupFieldType.IsHidden = true;
+            problemGroupTypeField.IsHidden = true;
         }
         else
         {
