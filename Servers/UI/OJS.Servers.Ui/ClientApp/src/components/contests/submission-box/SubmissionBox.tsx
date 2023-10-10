@@ -34,6 +34,7 @@ const SubmissionBox = () => {
             selectedSubmissionType,
             problemSubmissionCode,
             problemSubmissionErrors,
+            alertBoxErrorIsClosed,
         },
         actions: {
             submit,
@@ -56,9 +57,9 @@ const SubmissionBox = () => {
 
             const { [problemId.toString()]: error } = problemSubmissionErrors;
 
-            return isNil(error) && submitLimit > 0;
+            return isNil(error) && submitLimit > 0 && !alertBoxErrorIsClosed;
         },
-        [ submitLimit, currentProblem, problemSubmissionErrors ],
+        [ submitLimit, currentProblem, problemSubmissionErrors, alertBoxErrorIsClosed ],
     );
 
     const handleCodeChanged = useCallback(
