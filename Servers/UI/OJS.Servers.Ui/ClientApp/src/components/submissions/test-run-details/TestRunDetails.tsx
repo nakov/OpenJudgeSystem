@@ -25,15 +25,30 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
             : styles.correctTestRunHeading,
     );
 
-    const testRunHeadingText = () => {
-        const testRunText = `Test #${testRun.orderBy} Run #${testRun.id} Test #${testRun.testId}`;
-
-        if (testRun.isTrialTest) {
-            return `Zero ${testRunText}`;
-        }
-
-        return testRunText;
-    };
+    const testRunHeadingText = () => (
+        <div>
+            <span>
+                {testRun.isTrialTest
+                    ? 'Zero '
+                    : null}
+                Test
+                #
+                {testRun.orderBy}
+            </span>
+            <br />
+            <span>
+                Run
+                #
+                {testRun.id}
+            </span>
+            <br />
+            <span>
+                Test
+                #
+                {testRun.testId}
+            </span>
+        </div>
+    );
 
     const handleTestClick = (e: any) => {
         const { target } = e;
