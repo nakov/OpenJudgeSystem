@@ -50,11 +50,10 @@ const ContestDetailsPage = () => {
     useEffect(
         () => {
             if (contestDetails) {
-                setPageTitle(contestDetails?.name);
+                setPageTitle(contestDetails.name);
             }
         },
-        // eslint-disable-next-line
-        [ contestDetails ],
+        [ contestDetails, setPageTitle ],
     );
 
     const { contestId, participationType } = params;

@@ -108,11 +108,10 @@ const SubmissionDetails = () => {
     useEffect(
         () => {
             if (currentSubmission) {
-                setPageTitle(`Submission №${currentSubmission?.id}`);
+                setPageTitle(`Submission №${currentSubmission.id}`);
             }
         },
-        // eslint-disable-next-line
-        [ currentSubmission ],
+        [ currentSubmission, setPageTitle ],
     );
 
     const problemNameHeadingText = useMemo(
