@@ -67,13 +67,6 @@ public class BackgroundJobsHostedService : IHostedService
                 BackgroundJobs.JobNames.DeleteOldSubmissionsJobCron,
                 this.applicationQueueName);
 
-        this.hangfireBackgroundJobs
-            .AddOrUpdateRecurringJob<IHangfireBackgroundJobsBusinessService>(
-                BackgroundJobs.JobNames.DeleteOldSubmissionsJobName,
-                m => m.DeleteProcessedSubmissionsJob(),
-                BackgroundJobs.JobNames.DeleteOldSubmissionsJobCron,
-                this.applicationQueueName);
-
         this.LogJobAddedOrUpdated(
             BackgroundJobs.JobNames.DeleteOldSubmissionsJobName,
             BackgroundJobs.JobNames.DeleteOldSubmissionsJobCron);
