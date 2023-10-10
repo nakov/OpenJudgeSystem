@@ -29,6 +29,7 @@ namespace OJS.Services.Administration.Business.Implementations
         private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
         private readonly ITransactionsProvider transactions;
         private readonly IDatesService dates;
+        private readonly ITestRunsDataService testRunsDataService;
 
         public SubmissionsBusinessService(
             ISubmissionsDataService submissionsData,
@@ -38,7 +39,8 @@ namespace OJS.Services.Administration.Business.Implementations
             IParticipantScoresBusinessService participantScoresBusinessService,
             ISubmissionPublisherService submissionPublisherService,
             IDatesService dates,
-            ISubmissionsCommonBusinessService submissionsCommonBusinessService)
+            ISubmissionsCommonBusinessService submissionsCommonBusinessService,
+            ITestRunsDataService testRunsDataService)
         {
             this.submissionsData = submissionsData;
             // this.archivedSubmissionsData = archivedSubmissionsData;
@@ -48,6 +50,7 @@ namespace OJS.Services.Administration.Business.Implementations
             this.participantScoresBusinessService = participantScoresBusinessService;
             this.dates = dates;
             this.submissionsCommonBusinessService = submissionsCommonBusinessService;
+            this.testRunsDataService = testRunsDataService;
         }
 
         public Task<IQueryable<Submission>> GetAllForArchiving()
@@ -176,6 +179,8 @@ namespace OJS.Services.Administration.Business.Implementations
                 }
 
                 var serializedExecutionDetails = submissionServiceModel.ToJson();
+
+                await this.testRunsDataService.DeleteBySubmission(submission.Id);
 
                 await this.submissionsForProcessingDataService.AddOrUpdate(submission.Id, serializedExecutionDetails);
                 await this.submissionsData.SaveChanges();
