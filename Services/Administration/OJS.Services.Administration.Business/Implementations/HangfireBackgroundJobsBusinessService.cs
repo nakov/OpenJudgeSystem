@@ -11,9 +11,8 @@
         public HangfireBackgroundJobsBusinessService(ISubmissionsForProcessingBusinessService submissionsForProcessing)
             => this.submissionsForProcessing = submissionsForProcessing;
 
-        public int EnqueuePendingSubmissionsJob() => this.submissionsForProcessing.EnqueuePendingSubmissions();
+        public int EnqueuePendingSubmissions() => this.submissionsForProcessing.EnqueuePendingSubmissions();
 
-        public void DeleteProcessedSubmissionsJob() => throw new NotImplementedException();
-        public Task<int> GetUnprocessedTotalCountJob() => throw new NotImplementedException();
+        public void DeleteProcessedSubmissions() => this.submissionsForProcessing.DeleteProcessedSubmissions();
     }
 }

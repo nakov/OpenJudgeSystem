@@ -52,7 +52,7 @@ public class BackgroundJobsHostedService : IHostedService
         this.hangfireBackgroundJobs
             .AddOrUpdateRecurringJob<IHangfireBackgroundJobsBusinessService>(
                 BackgroundJobs.JobNames.EnqueuePendingSubmissionsJobName,
-                m => m.EnqueuePendingSubmissionsJob(),
+                m => m.EnqueuePendingSubmissions(),
                 BackgroundJobs.JobCrons.EnqueuePendingSubmissionsJobCron,
                 this.applicationQueueName);
 
@@ -63,7 +63,7 @@ public class BackgroundJobsHostedService : IHostedService
         this.hangfireBackgroundJobs
             .AddOrUpdateRecurringJob<IHangfireBackgroundJobsBusinessService>(
                 BackgroundJobs.JobNames.DeleteOldSubmissionsJobName,
-                m => m.DeleteProcessedSubmissionsJob(),
+                m => m.DeleteProcessedSubmissions(),
                 BackgroundJobs.JobCrons.DeleteOldSubmissionsJobCron,
                 this.applicationQueueName);
 

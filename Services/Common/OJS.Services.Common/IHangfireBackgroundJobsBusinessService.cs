@@ -4,8 +4,8 @@
 
     public interface IHangfireBackgroundJobsBusinessService : IService
     {
-        int EnqueuePendingSubmissionsJob();
+        int EnqueuePendingSubmissions();
 
-        void DeleteProcessedSubmissionsJob();
+        void DeleteProcessedSubmissions();
     }
 }
