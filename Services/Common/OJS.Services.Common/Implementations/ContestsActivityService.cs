@@ -75,19 +75,19 @@ public class ContestsActivityService : IContestsActivityService
             return false;
         }
 
-        var now = this.dates.GetUtcNow();
+        var currentTimeInUtc = this.dates.GetUtcNow();
 
         if (!contest.EndTime.HasValue)
         {
             // Compete forever
-            return contest.StartTime <= now;
+            return contest.StartTime <= currentTimeInUtc;
         }
 
         //If the above conditional statements are not entered, first we have to check
         //the the start and end time > check if start is before now and end is after now
         //if this check returns false we have to check if the current user is a participant
         //with a remaining time in an online contest
-        return (contest.StartTime <= now && now <= contest.EndTime) ||
+        return (contest.StartTime <= currentTimeInUtc && currentTimeInUtc <= contest.EndTime) ||
                (contest.IsOnline && this.IsActiveParticipantInOnlineContest(contest.Id));
     }
 
