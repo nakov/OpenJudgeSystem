@@ -33,6 +33,7 @@ const HashUrlParamProvider = ({ children }: IHashUrlParamProviderProps) => {
         (param: string, isDefaultHashParam?: boolean) => {
             const url = `${location.pathname}#${param}`;
             location.hash = `${param}`;
+
             setHashParam(param);
 
             if (isDefaultHashParam) {
