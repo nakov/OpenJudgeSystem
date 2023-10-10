@@ -75,5 +75,4 @@ public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessing
     }
 
     public void DeleteProcessedSubmissions() => this.submissionsForProcessingData.CleanProcessedSubmissions();
-    public Task<int> GetUnprocessedTotalCount() => throw new NotImplementedException();
 }
