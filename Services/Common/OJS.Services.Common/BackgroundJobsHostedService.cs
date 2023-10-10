@@ -53,23 +53,23 @@ public class BackgroundJobsHostedService : IHostedService
             .AddOrUpdateRecurringJob<IHangfireBackgroundJobsBusinessService>(
                 BackgroundJobs.JobNames.EnqueuePendingSubmissionsJobName,
                 m => m.EnqueuePendingSubmissionsJob(),
-                BackgroundJobs.JobNames.EnqueuePendingSubmissionsJobCron,
+                BackgroundJobs.JobCrons.EnqueuePendingSubmissionsJobCron,
                 this.applicationQueueName);
 
         this.LogJobAddedOrUpdated(
             BackgroundJobs.JobNames.EnqueuePendingSubmissionsJobName,
-            BackgroundJobs.JobNames.EnqueuePendingSubmissionsJobCron);
+            BackgroundJobs.JobCrons.EnqueuePendingSubmissionsJobCron);
 
         this.hangfireBackgroundJobs
             .AddOrUpdateRecurringJob<IHangfireBackgroundJobsBusinessService>(
                 BackgroundJobs.JobNames.DeleteOldSubmissionsJobName,
                 m => m.DeleteProcessedSubmissionsJob(),
-                BackgroundJobs.JobNames.DeleteOldSubmissionsJobCron,
+                BackgroundJobs.JobCrons.DeleteOldSubmissionsJobCron,
                 this.applicationQueueName);
 
         this.LogJobAddedOrUpdated(
             BackgroundJobs.JobNames.DeleteOldSubmissionsJobName,
-            BackgroundJobs.JobNames.DeleteOldSubmissionsJobCron);
+            BackgroundJobs.JobCrons.DeleteOldSubmissionsJobCron);
     }
 
     private void LogJobAddedOrUpdated(string jobName, string jobCron)
