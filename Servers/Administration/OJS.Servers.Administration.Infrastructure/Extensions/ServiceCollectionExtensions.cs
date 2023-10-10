@@ -8,8 +8,6 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
     using OJS.Data;
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Extensions;
-    using OJS.Services.Administration.Business.Implementations;
-    using OJS.Services.Common;
     using OJS.Services.Common.Models.Configurations;
     using SoftUni.Data.Infrastructure.Enumerations;
     using static OJS.Common.GlobalConstants;
@@ -26,24 +24,20 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
         public static void ConfigureServices<TProgram>(
             this IServiceCollection services,
             IConfiguration configuration)
-        {
-            services
-                .AddWebServer<TProgram>()
-                .AddHttpContextServices()
-                .AddHangfireServer(AppName)
-                .AddMessageQueue<TProgram>(configuration)
-                .ConfigureGlobalDateFormat()
-                .ValidateLaunchSettings(RequiredConfigValues)
-                .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(Enumerable.Empty<GlobalQueryFilterType>())
-                .AddMemoryCache()
-                .AddDistributedCaching()
-                .AddSoftUniJudgeCommonServices()
-                .ConfigureSettings(configuration)
-                .UseAutoCrudAdmin()
-                .AddControllersWithViews();
-
-            services.AddScoped<IHangfireBackgroundJobsBusinessService, HangfireBackgroundJobsBusinessService>();
-        }
+                => services
+                    .AddWebServer<TProgram>()
+                    .AddHttpContextServices()
+                    .AddHangfireServer(AppName)
+                    .AddMessageQueue<TProgram>(configuration)
+                    .ConfigureGlobalDateFormat()
+                    .ValidateLaunchSettings(RequiredConfigValues)
+                    .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(Enumerable.Empty<GlobalQueryFilterType>())
+                    .AddMemoryCache()
+                    .AddDistributedCaching()
+                    .AddSoftUniJudgeCommonServices()
+                    .ConfigureSettings(configuration)
+                    .UseAutoCrudAdmin()
+                    .AddControllersWithViews();
 
         private static IServiceCollection ConfigureSettings(
             this IServiceCollection services,
