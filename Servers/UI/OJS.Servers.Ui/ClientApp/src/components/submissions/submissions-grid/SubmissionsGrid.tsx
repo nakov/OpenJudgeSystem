@@ -65,6 +65,7 @@ const SubmissionsGrid = () => {
             menuItems,
         },
         actions: {
+            loadTotalUnprocessedSubmissionsCount,
             initiatePublicSubmissionsQuery,
             initiateUnprocessedSubmissionsQuery,
             initiatePendingSubmissionsQuery,
@@ -106,6 +107,23 @@ const SubmissionsGrid = () => {
             3: initiatePendingSubmissionsQuery,
         } as IDictionary<() => void>),
         [ initiatePendingSubmissionsQuery, initiatePublicSubmissionsQuery, initiateUnprocessedSubmissionsQuery ],
+    );
+
+    useEffect(
+        () => {
+            if (!user.isInRole) {
+                return;
+            }
+
+            if (activeToggleElement !== toggleValues.allSubmissions || !isNil(totalUnprocessedSubmissionsCount)) {
+                return;
+            }
+
+            (async () => {
+                await loadTotalUnprocessedSubmissionsCount();
+            })();
+        },
+        [ loadTotalUnprocessedSubmissionsCount, user.isInRole, activeToggleElement, totalUnprocessedSubmissionsCount ],
     );
 
     useEffect(() => {
