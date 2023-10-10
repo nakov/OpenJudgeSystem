@@ -88,8 +88,8 @@ interface IContestDetailsResponseType {
     canBePracticed: boolean;
     isAdminOrLecturerInContest: boolean;
     allowedSubmissionTypes: IContestDetailsSubmissionType[];
-    totalContestParticipantsCount: number;
-    participantsCountByContestType: number;
+    competeParticipantsCount: number;
+    practiceParticipantsCount: number;
 }
 
 interface IContestType {
