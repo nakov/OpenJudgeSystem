@@ -1,52 +1,51 @@
-namespace OJS.Services.Administration.Business.Implementations
+namespace OJS.Services.Administration.Business.Implementations;
+
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using OJS.Services.Administration.Data;
+using OJS.Services.Common;
+using OJS.Services.Common.Data;
+using OJS.Services.Common.Models.Submissions.ExecutionContext;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
+
+public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessingBusinessService
 {
-    using System;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using FluentExtensions.Extensions;
-    using OJS.Services.Administration.Data;
-    using OJS.Services.Common;
-    using OJS.Services.Common.Data;
-    using OJS.Services.Common.Models.Submissions.ExecutionContext;
-    using SoftUni.AutoMapper.Infrastructure.Extensions;
+    private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
+    private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
+    private readonly ISubmissionsDataService submissionsData;
 
-    public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessingBusinessService
+    public SubmissionsForProcessingBusinessService(
+        ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
+        ISubmissionsDataService submissionsData,
+        ISubmissionsCommonBusinessService submissionsCommonBusinessService)
     {
-        private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
-        private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
-        private readonly ISubmissionsDataService submissionsData;
+        this.submissionsForProcessingData = submissionsForProcessingData;
+        this.submissionsData = submissionsData;
+        this.submissionsCommonBusinessService = submissionsCommonBusinessService;
+    }
 
-        public SubmissionsForProcessingBusinessService(
-            ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
-            ISubmissionsDataService submissionsData,
-            ISubmissionsCommonBusinessService submissionsCommonBusinessService)
+    /// <summary>
+    /// Sets the Processing property to False for all submissions
+    /// thus ensuring that the worker will process them eventually instead
+    /// of getting stuck in perpetual "Processing..." state.
+    /// </summary>
+    public async Task ResetAllProcessingSubmissions()
+    {
+        var allProcessingSubmissionIds = await this.submissionsForProcessingData.GetIdsOfAllProcessing();
+
+        if (allProcessingSubmissionIds.Count() <= 0)
         {
-            this.submissionsForProcessingData = submissionsForProcessingData;
-            this.submissionsData = submissionsData;
-            this.submissionsCommonBusinessService = submissionsCommonBusinessService;
+            return;
         }
 
-        /// <summary>
-        /// Sets the Processing property to False for all submissions
-        /// thus ensuring that the worker will process them eventually instead
-        /// of getting stuck in perpetual "Processing..." state.
-        /// </summary>
-        public async Task ResetAllProcessingSubmissions()
+        foreach (var submissionForProcessingId in allProcessingSubmissionIds)
         {
-            var allProcessingSubmissionIds = await this.submissionsForProcessingData.GetIdsOfAllProcessing();
-
-            if (allProcessingSubmissionIds.Count() <= 0)
-            {
-                return;
-            }
-
-            foreach (var submissionForProcessingId in allProcessingSubmissionIds)
-            {
-                await this.submissionsForProcessingData.ResetProcessingStatusById(submissionForProcessingId);
-            }
+            await this.submissionsForProcessingData.ResetProcessingStatusById(submissionForProcessingId);
         }
+    }
 
-        public int EnqueuePendingSubmissions()
+    public int EnqueuePendingSubmissions()
     {
         var submissionsForProcessing = this.submissionsForProcessingData
             .GetAllPending()
@@ -59,18 +58,17 @@ namespace OJS.Services.Administration.Business.Implementations
         }
 
         var submissions = this.submissionsData
-                .GetByIds(submissionsForProcessing
-                    .Select(sp => sp!.SubmissionId))
-                .MapCollection<SubmissionServiceModel>()
-                .ToList();
+            .GetByIds(submissionsForProcessing
+                .Select(sp => sp!.SubmissionId))
+            .MapCollection<SubmissionServiceModel>()
+            .ToList();
 
         this.submissionsCommonBusinessService.PublishSubmissionsForProcessing(submissions)
-                                                  .GetAwaiter()
-                                                  .GetResult();
+            .GetAwaiter()
+            .GetResult();
 
         return submissions.Count;
     }
 
-        public void DeleteProcessedSubmissions() => this.submissionsForProcessingData.CleanProcessedSubmissions();
-    }
+    public void DeleteProcessedSubmissions() => this.submissionsForProcessingData.CleanProcessedSubmissions();
 }

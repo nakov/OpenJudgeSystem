@@ -38,9 +38,10 @@ public class HangfireBackgroundJobsBusinessService : IHangfireBackgroundJobsBusi
         }
     }
 
-    public int EnqueuePendingSubmissionsJob() => throw new System.NotImplementedException();
-    public void DeleteProcessedSubmissionsJob() => throw new System.NotImplementedException();
-
     public Task<int> GetUnprocessedTotalCountJob()
         => this.submissionsForProcessingData.GetAllUnprocessedCount();
+
+    public int EnqueuePendingSubmissionsJob() => throw new System.NotImplementedException();
+
+    public void DeleteProcessedSubmissionsJob() => throw new System.NotImplementedException();
 }
