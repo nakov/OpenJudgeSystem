@@ -31,22 +31,25 @@ RUN curl -o packages-microsoft-prod.deb https://packages.microsoft.com/config/ub
 
 # Install supported languages and frameworks
 RUN apt-get update && apt-get install -y \
-    dotnet-sdk-6.0 \
-    dotnet-sdk-3.1 \
-    dotnet-sdk-5.0 \
-    openjdk-11-jdk \
-    nodejs \
-    python3.6 \
-    python3-pip \
-    golang-go \
-    libgtk-3-0 \
-    libgbm1 && \
+      dotnet-sdk-6.0 \
+      dotnet-sdk-3.1 \
+      dotnet-sdk-5.0 \
+      openjdk-11-jdk \
+      nodejs \
+      python3.6 \
+      python3-pip \
+      golang-go \
+      libgtk-3-0 \
+      libgbm1 && \
     rm -rf /var/lib/apt/lists/*
 
 # Docker setup
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && \
     echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
-    apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io && \
+    apt-get update && apt-get install -y --no-install-recommends \
+      docker-ce \
+      docker-ce-cli \
+      containerd.io && \
     rm -rf /var/lib/apt/lists/*
 
 # Java setup
@@ -74,23 +77,23 @@ ENV JS_NODE_MODULES_DIR=/judge-resources/js/node_modules
 
 # Python 11 with Django support
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    make \
-    libssl-dev \
-    zlib1g-dev \
-    libbz2-dev \
-    libreadline-dev \
-    libsqlite3-dev \
-    llvm \
-    libncurses5-dev \
-    xz-utils \
-    tk-dev \
-    libxml2-dev \
-    libxmlsec1-dev \
-    libffi-dev \
-    liblzma-dev \
-    mecab-ipadic-utf8 \
-    git \
-    libpq-dev && \
+      make \
+      libssl-dev \
+      zlib1g-dev \
+      libbz2-dev \
+      libreadline-dev \
+      libsqlite3-dev \
+      llvm \
+      libncurses5-dev \
+      xz-utils \
+      tk-dev \
+      libxml2-dev \
+      libxmlsec1-dev \
+      libffi-dev \
+      liblzma-dev \
+      mecab-ipadic-utf8 \
+      git \
+      libpq-dev && \
     rm -rf /var/lib/apt/lists/*
     
 ENV PYENV_ROOT /root/.pyenv
