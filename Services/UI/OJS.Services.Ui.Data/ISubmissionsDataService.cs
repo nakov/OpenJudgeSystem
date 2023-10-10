@@ -35,8 +35,6 @@ public interface ISubmissionsDataService : IDataService<Submission>
 
     IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId);
 
-    IQueryable<Submission> GetAllFromContestsByLecturer(string lecturerId);
-
     IQueryable<Submission> GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate(
         DateTime createdBeforeDate,
         DateTime nonBestCreatedBeforeDate);
