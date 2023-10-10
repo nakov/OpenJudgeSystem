@@ -37,6 +37,16 @@
             => this.DbSet
                 .Where(s => s.ParticipantId == participantId && s.ProblemId == problemId);
 
+        public IQueryable<Submission> GetAllFromContestsByLecturer(string lecturerId)
+            => this.DbSet
+                .Include(s => s.Problem!.ProblemGroup.Contest.LecturersInContests)
+                .Include(s => s.Problem!.ProblemGroup.Contest.Category!.LecturersInContestCategories)
+                .Where(s =>
+                    (s.IsPublic.HasValue && s.IsPublic.Value) ||
+                    s.Problem!.ProblemGroup.Contest.LecturersInContests.Any(l => l.LecturerId == lecturerId) ||
+                    s.Problem!.ProblemGroup.Contest.Category!.LecturersInContestCategories.Any(l =>
+                        l.LecturerId == lecturerId));
+
         public IQueryable<Submission> GetAllCreatedBeforeDateAndNonBestCreatedBeforeDate(
             DateTime createdBeforeDate,
             DateTime nonBestCreatedBeforeDate)
