@@ -1,8 +1,9 @@
 ﻿namespace OJS.Services.Common
 {
     using System.Threading.Tasks;
+    using SoftUni.Services.Infrastructure;
 
-    public interface IHangfireBackgroundJobsBusinessService
+    public interface IHangfireBackgroundJobsBusinessService : IService
     {
         Task ResetAllProcessingSubmissionsJob();
 

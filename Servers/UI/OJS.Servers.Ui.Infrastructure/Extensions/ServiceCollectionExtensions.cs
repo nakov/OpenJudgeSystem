@@ -41,8 +41,6 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
                 .AddLogging()
                 .ConfigureSettings(configuration)
                 .AddControllersWithViews();
-
-            services.AddScoped<IHangfireBackgroundJobsBusinessService, HangfireBackgroundJobsBusinessService>();
         }
 
         private static IServiceCollection ConfigureSettings(
