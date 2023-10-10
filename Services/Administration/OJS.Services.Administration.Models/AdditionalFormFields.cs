@@ -12,4 +12,5 @@ public enum AdditionalFormFields
     Output,
     File,
     Type,
+    RetestProblem,
 }

@@ -38,5 +38,7 @@
         new void Update(Submission submission);
 
         void RemoveTestRunsCacheByProblem(int problemId);
+
+        Task<IEnumerable<TServiceModel>> GetAllNonDeletedByProblemId<TServiceModel>(int problemId);
     }
 }
