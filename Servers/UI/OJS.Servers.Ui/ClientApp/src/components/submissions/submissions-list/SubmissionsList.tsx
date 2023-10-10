@@ -3,6 +3,7 @@ import React, { useCallback, useMemo } from 'react';
 import { contestParticipationType } from '../../../common/contest-helpers';
 import { useHashUrlParams } from '../../../hooks/common/use-hash-url-params';
 import { ISubmissionDetails, ISubmissionDetailsType } from '../../../hooks/submissions/types';
+import { useCurrentContest } from '../../../hooks/use-current-contest';
 import { usePages } from '../../../hooks/use-pages';
 import concatClassNames from '../../../utils/class-names';
 import { formatDate } from '../../../utils/dates';
@@ -26,6 +27,7 @@ const SubmissionsList = ({
     selectedSubmission,
     className = '',
 }: ISubmissionsListProps) => {
+    const { state: { isOfficial } } = useCurrentContest();
     const { state: { currentPage } } = usePages();
     const { state: { hashParam } } = useHashUrlParams();
 
@@ -60,7 +62,6 @@ const SubmissionsList = ({
                 isProcessed,
                 createdOn,
                 submissionType,
-                isOfficial,
             } = submission;
             const isSelectedSubmission = id === selectedSubmissionId;
             const selectedClassName = isSelectedSubmission
@@ -118,7 +119,7 @@ const SubmissionsList = ({
                 </div>
             );
         },
-        [ currentPage, hashParam, selectedSubmission, submissionsTypeLabelClassName ],
+        [ currentPage, hashParam, selectedSubmission, submissionsTypeLabelClassName, isOfficial ],
     );
 
     return (

@@ -355,7 +355,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         this.ValidateCanViewSubmissionResults(isOfficial, user, problem, participant);
 
-        return await this.GetUserSubmissions<SubmissionViewInResultsPageModel>(problem.Id, participant, page);
+        return await this.GetUserSubmissions<SubmissionViewInResultsPageModel>(problem.Id, participant.Id, page);
     }
 
     public async Task<PagedResult<SubmissionViewInResultsPageModel>> GetSubmissionDetailsResults(
@@ -373,7 +373,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         this.ValidateCanViewSubmissionResults(isOfficial, user, problem, participant);
 
-        return await this.GetUserSubmissions<SubmissionViewInResultsPageModel>(problem.Id, participant, page);
+        return await this.GetUserSubmissions<SubmissionViewInResultsPageModel>(problem.Id, participant.Id, page);
     }
 
     public async Task Submit(SubmitSubmissionServiceModel model)
@@ -703,11 +703,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
     private async Task<PagedResult<T>> GetUserSubmissions<T>(
         int problemId,
-        ParticipantSubmissionResultsServiceModel? participant,
+        int participantId,
         int page)
     {
         var userSubmissions = this.submissionsData
-            .GetAllByProblemAndParticipant(problemId, participant!.Id);
+            .GetAllByProblemAndParticipant(problemId, participantId);
 
         return await userSubmissions
             .MapCollection<T>()
