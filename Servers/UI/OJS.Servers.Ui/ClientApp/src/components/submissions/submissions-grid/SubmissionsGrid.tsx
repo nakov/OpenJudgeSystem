@@ -237,13 +237,18 @@ const SubmissionsGrid = () => {
         [ contestIdParam, userByContestSubmissions, userSubmissions ],
     );
 
+    const currentSubmissions = useMemo(
+        () => activeToggleElement === toggleValues.allSubmissions
+            ? getCurrentAllSubmissions
+            : getCurrentMySubmissions,
+
+        [ activeToggleElement, getCurrentMySubmissions, getCurrentAllSubmissions ],
+    );
+
     const { pagesCount } = pagesInfo;
     const renderPrivilegedComponent = useCallback(
         () => {
             const { isInRole } = user;
-            const toggleSubmissions = activeToggleElement === toggleValues.allSubmissions
-                ? getCurrentAllSubmissions.length
-                : getCurrentMySubmissions.length;
 
             return (
                 <>
@@ -277,7 +282,7 @@ const SubmissionsGrid = () => {
                             )
                         </Heading>
                     )}
-                    { ((isInRole || activeToggleElement === toggleValues.mySubmissions) && toggleSubmissions > 0) && (
+                    { ((isInRole || activeToggleElement === toggleValues.mySubmissions) && currentSubmissions.length > 0) && (
                     <PaginationControls
                       count={pagesCount}
                       page={currentPage}
@@ -296,8 +301,7 @@ const SubmissionsGrid = () => {
             currentPage,
             handlePageChange,
             activeToggleElement,
-            getCurrentAllSubmissions,
-            getCurrentMySubmissions,
+            currentSubmissions.length,
         ],
     );
 
@@ -363,15 +367,6 @@ const SubmissionsGrid = () => {
             <SubmissionGridRow submission={submission} />
         ),
         [],
-    );
-
-    const currentSubmissions = useMemo(
-        () => activeToggleElement === toggleValues.allSubmissions
-            ? getCurrentAllSubmissions
-            : contestIdParam
-                ? userByContestSubmissions
-                : userSubmissions,
-        [ activeToggleElement, contestIdParam, getCurrentAllSubmissions, userByContestSubmissions, userSubmissions ],
     );
 
     const renderSubmissionsList = useCallback(
