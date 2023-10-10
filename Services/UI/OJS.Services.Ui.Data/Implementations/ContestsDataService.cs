@@ -24,7 +24,10 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
     private readonly IDatesService dates;
     private readonly IContestsActivityService activityService;
 
-    public ContestsDataService(OjsDbContext db, IDatesService dates, IContestsActivityService activityService)
+    public ContestsDataService(
+        OjsDbContext db,
+        IDatesService dates,
+        IContestsActivityService activityService)
         : base(db)
     {
         this.dates = dates;

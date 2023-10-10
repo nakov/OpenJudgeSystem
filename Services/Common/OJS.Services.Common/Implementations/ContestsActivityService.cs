@@ -52,8 +52,8 @@ public class ContestsActivityService : IContestsActivityService
         };
     }
 
-    public async Task<IContestActivityServiceModel> GetContestActivity(IContestForActivityServiceModel contest) =>
-        new ContestActivityServiceModel
+    public async Task<IContestActivityServiceModel> GetContestActivity(IContestForActivityServiceModel contest)
+        => new ContestActivityServiceModel
         {
             Id = contest!.Id,
             Name = contest.Name,
@@ -61,7 +61,6 @@ public class ContestsActivityService : IContestsActivityService
             CanBePracticed = this.CanBePracticed(contest),
             IsActive = await this.IsActive(contest),
         };
-
     public bool CanBeCompeted(IContestForActivityServiceModel contest)
     {
         if (!contest.IsVisible || contest.IsDeleted)

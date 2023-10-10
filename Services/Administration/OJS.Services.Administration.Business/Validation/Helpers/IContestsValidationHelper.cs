@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 public interface IContestsValidationHelper : IService
 {
     Task<ValidationResult> ValidatePermissionsOfCurrentUser(int? contestId);
+
     Task<ValidationResult> ValidateActiveContestCannotEditDurationTypeOnEdit(Contest existingContest, Contest newContest);
+
     Task<ValidationResult> ValidateContestIsNotActiveOnDelete(Contest existingContest);
 }
