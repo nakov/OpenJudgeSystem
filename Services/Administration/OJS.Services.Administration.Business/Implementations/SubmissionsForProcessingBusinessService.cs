@@ -3,7 +3,6 @@ namespace OJS.Services.Administration.Business.Implementations;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentExtensions.Extensions;
 using OJS.Services.Administration.Data;
 using OJS.Services.Common;
 using OJS.Services.Common.Data;
@@ -64,10 +63,7 @@ public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessing
             .MapCollection<SubmissionServiceModel>()
             .ToList();
 
-        submissions
-            .ForEachSequential((submission) =>
-                this.submissionsCommonBusinessService
-                    .PublishSubmissionForProcessing(submission))
+        this.submissionsCommonBusinessService.PublishSubmissionsForProcessing(submissions)
             .GetAwaiter()
             .GetResult();
 

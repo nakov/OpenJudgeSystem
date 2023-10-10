@@ -8,4 +8,6 @@ public interface ISubmissionsForProcessingBusinessService : IService
     Task ResetAllProcessingSubmissions();
 
     int EnqueuePendingSubmissions();
+
+    void DeleteProcessedSubmissions();
 }
