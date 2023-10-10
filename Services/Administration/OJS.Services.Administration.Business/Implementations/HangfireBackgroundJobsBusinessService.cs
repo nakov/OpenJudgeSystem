@@ -16,7 +16,7 @@
 
         public int EnqueuePendingSubmissionsJob() => this.submissionsForProcessing.EnqueuePendingSubmissions();
 
-        public void DeleteProcessedSubmissionsJob() => this.submissionsForProcessing.DeleteProcessedSubmissions();
+        public void DeleteProcessedSubmissionsJob() => throw new NotImplementedException();
         public Task<int> GetUnprocessedTotalCountJob() => throw new NotImplementedException();
     }
 }

@@ -24,20 +24,20 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
         public static void ConfigureServices<TProgram>(
             this IServiceCollection services,
             IConfiguration configuration)
-                => services
-                    .AddWebServer<TProgram>()
-                    .AddHttpContextServices()
-                    .AddHangfireServer(AppName)
-                    .AddMessageQueue<TProgram>(configuration)
-                    .ConfigureGlobalDateFormat()
-                    .ValidateLaunchSettings(RequiredConfigValues)
-                    .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(Enumerable.Empty<GlobalQueryFilterType>())
-                    .AddMemoryCache()
-                    .AddDistributedCaching()
-                    .AddSoftUniJudgeCommonServices()
-                    .ConfigureSettings(configuration)
-                    .UseAutoCrudAdmin()
-                    .AddControllersWithViews();
+            => services
+                .AddWebServer<TProgram>()
+                .AddHttpContextServices()
+                .AddHangfireServer(AppName)
+                .AddMessageQueue<TProgram>(configuration)
+                .ConfigureGlobalDateFormat()
+                .ValidateLaunchSettings(RequiredConfigValues)
+                .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(Enumerable.Empty<GlobalQueryFilterType>())
+                .AddMemoryCache()
+                .AddDistributedCaching()
+                .AddSoftUniJudgeCommonServices()
+                .ConfigureSettings(configuration)
+                .UseAutoCrudAdmin()
+                .AddControllersWithViews();
 
         private static IServiceCollection ConfigureSettings(
             this IServiceCollection services,
