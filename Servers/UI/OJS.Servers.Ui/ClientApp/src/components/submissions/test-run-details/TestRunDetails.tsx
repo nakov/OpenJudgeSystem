@@ -26,7 +26,7 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
     );
 
     const testRunHeadingText = () => {
-        const testRunText = `Test #${testRun.orderBy}`;
+        const testRunText = `Test #${testRun.orderBy} Run #${testRun.id} Test #${testRun.testId}`;
 
         if (testRun.isTrialTest) {
             return `Zero ${testRunText}`;
