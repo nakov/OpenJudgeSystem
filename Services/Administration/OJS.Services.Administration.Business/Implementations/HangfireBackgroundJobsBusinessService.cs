@@ -11,9 +11,6 @@
         public HangfireBackgroundJobsBusinessService(ISubmissionsForProcessingBusinessService submissionsForProcessing)
             => this.submissionsForProcessing = submissionsForProcessing;
 
-        public async Task ResetAllProcessingSubmissionsJob()
-            => await this.submissionsForProcessing.ResetAllProcessingSubmissions();
-
         public int EnqueuePendingSubmissionsJob() => this.submissionsForProcessing.EnqueuePendingSubmissions();
 
         public void DeleteProcessedSubmissionsJob() => throw new NotImplementedException();

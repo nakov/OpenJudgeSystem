@@ -14,7 +14,6 @@
 
     <ItemGroup>
       <PackageReference Include="AutoCrudAdmin" Version="1.1.26" />
-      <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
     </ItemGroup>
 
 </Project>
