@@ -1,18 +1,31 @@
 FROM ubuntu:20.04
 
 ENV TZ=Etc/UTC
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
 
 # Base Setup
-RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
-      wget curl sudo apt-transport-https ca-certificates gnupg lsb-release build-essential unzip && \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      curl \
+      sudo \
+      apt-transport-https \
+      ca-certificates \
+      gnupg \
+      lsb-release \
+      build-essential \
+      locales \
+      unzip && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
+    sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
+    locale-gen && \
     rm -rf /var/lib/apt/lists/*
 
 # Setup for installing Node.js 12 (LTS)
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
 
 # Setup for installing .NET Core SDK
-RUN wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && \
+RUN curl -o packages-microsoft-prod.deb https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb && \
     dpkg -i packages-microsoft-prod.deb && \
     rm packages-microsoft-prod.deb
 
