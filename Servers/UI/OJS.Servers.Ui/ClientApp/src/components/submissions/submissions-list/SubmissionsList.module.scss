@@ -22,6 +22,7 @@
 .submissionContainer {
   border-bottom: 1px solid colors.$bottom-border-color;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   padding: 45px 0 5px;
   position: relative;

@@ -1,12 +1,10 @@
+.testRunIcons {
+  display: flex;
+  flex-direction: row;
+}
+
 .testResultsList {
   display: flex;
-  gap: 2px;
-}
-
-.correctAnswerIcon {
-  color: #0f0;
-}
-
-.wrongAnswerIcon {
-  color: #f00;
+  gap: 10px;
+  justify-content: space-between;
 }

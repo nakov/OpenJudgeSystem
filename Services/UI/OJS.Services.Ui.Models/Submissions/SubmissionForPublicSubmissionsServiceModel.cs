@@ -8,6 +8,8 @@ using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Users;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System;
+using System.Linq;
+using System.Collections.Generic;
 
 public class UserForPublicSubmissionsServiceModel
     : IMapExplicitly
@@ -84,6 +86,14 @@ public class SubmissionForPublicSubmissionsServiceModel : IMapExplicitly
 
     public int PageNumber { get; set; }
 
+    public bool IsCompiledSuccessfully { get; set; }
+
+    public long? MaxMemoryUsed { get; set; }
+
+    public int? MaxTimeUsed { get; set; }
+
+    public IEnumerable<TestRunServiceModel> TestRuns { get; set; } = Enumerable.Empty<TestRunServiceModel>();
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Submission, SubmissionForPublicSubmissionsServiceModel>()
             .ForMember(
@@ -125,5 +135,12 @@ public class SubmissionForPublicSubmissionsServiceModel : IMapExplicitly
                     y => y.Participant!.IsOfficial))
             .ForMember(
                 x => x.PageNumber,
-                opt => opt.Ignore());
+                opt => opt.Ignore())
+            .ForMember(
+                d => d.MaxMemoryUsed,
+                opt => opt.MapFrom(s => s.TestRuns.Any() ? s.TestRuns.Max(testRun => testRun.MemoryUsed) : (long?)null))
+            .ForMember(
+                d => d.MaxTimeUsed,
+                opt => opt.MapFrom(s =>
+                    s.TestRuns.Any() ? s.TestRuns.Max(testRun => testRun.TimeUsed) : (int?)null));
 }

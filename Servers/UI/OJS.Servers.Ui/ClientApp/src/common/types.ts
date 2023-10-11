@@ -1,3 +1,4 @@
+import { ITestRunType } from '../hooks/submissions/types';
 import { PublicSubmissionState } from '../hooks/submissions/use-public-submissions';
 
 import { IContestSearchType, IProblemSearchType, IUserSearchType } from './search-types';
@@ -41,6 +42,10 @@ interface ISubmissionResponseModel {
     result: IPublicSubmissionResult;
     state: PublicSubmissionState;
     isOfficial: boolean;
+    isCompiledSuccessfully: boolean;
+    maxMemoryUsed: number;
+    maxTimeUsed: number;
+    testRuns: ITestRunType[];
 }
 
 interface IProblemResourceType {

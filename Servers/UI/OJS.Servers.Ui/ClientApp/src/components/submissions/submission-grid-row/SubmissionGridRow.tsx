@@ -10,6 +10,7 @@ import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../uti
 import { getParticipateInContestUrl, getSubmissionDetailsUrl } from '../../../utils/urls';
 import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import IconSize from '../../guidelines/icons/common/icon-sizes';
+import ExecutionResult from '../execution-result/ExecutionResult';
 
 import styles from './SubmissionGridRow.module.scss';
 
@@ -34,6 +35,10 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
             },
         },
         isOfficial,
+        isCompiledSuccessfully,
+        maxMemoryUsed,
+        maxTimeUsed,
+        testRuns,
     } = submission;
 
     const { actions: { initiateRedirectionToProblem } } = useProblems();
@@ -182,6 +187,12 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
                     </span>
                 </div>
             </div>
+            <ExecutionResult
+              testRuns={testRuns}
+              maxMemoryUsed={maxMemoryUsed}
+              maxTimeUsed={maxTimeUsed}
+              isCompiledSuccessfully={isCompiledSuccessfully}
+            />
             <div className={styles.detailsButtonContainer}>
                 {renderDetailsBtn()}
             </div>
