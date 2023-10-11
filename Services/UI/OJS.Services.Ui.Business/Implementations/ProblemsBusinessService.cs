@@ -137,8 +137,12 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var modelResult = new ProblemSearchServiceResultModel();
 
-            var allProblemsQueryable = this.problemsData.GetAllNonDeletedProblems()
-                .Where(p => p.Name.Contains(model.SearchTerm!));
+            var allProblemsQueryable = this.problemsData
+                .GetAllNonDeletedProblems()
+                .Where(p => p.Name.Contains(model.SearchTerm!) &&
+                            p.ProblemGroup.Contest.IsVisible &&
+                            (p.ProblemGroup.Contest.Category != null &&
+                             p.ProblemGroup.Contest.Category.IsVisible));
 
             var searchProblems = await allProblemsQueryable
                 .MapCollection<ProblemSearchServiceModel>()
