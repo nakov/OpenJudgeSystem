@@ -5,7 +5,7 @@
 
     public interface IParticipantScoresBusinessService : IService
     {
-        void RecalculateForParticipantByProblem(int participantId, int problemId, bool shouldUpdateTotalScoreSnapshot = true);
+        void RecalculateForParticipantByProblem(int participantId, int problemId);
 
         void NormalizeAllPointsThatExceedAllowedLimit();
 

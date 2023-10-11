@@ -38,13 +38,13 @@
             this.contestsDataService = contestsDataService;
         }
 
-        public void RecalculateForParticipantByProblem(int participantId, int problemId, bool shouldUpdateTotalScoreModifiedOn = true)
+        public void RecalculateForParticipantByProblem(int participantId, int problemId)
         {
             var submission = this.submissionsData.GetBestForParticipantByProblem(participantId, problemId);
 
             if (submission != null)
             {
-                this.participantScoresData.ResetBySubmission(submission,shouldUpdateTotalScoreModifiedOn);
+                this.participantScoresData.ResetBySubmission(submission);
             }
             else
             {
@@ -408,7 +408,6 @@
                         x.ParticipantScore,
                         x.ParticipantScore.SubmissionId,
                         x.ProblemMaxPoints,
-                        x.Particinapnt,
-                        false));
+                        x.Particinapnt));
     }
 }

@@ -21,7 +21,7 @@
 
         IQueryable<ParticipantScore> GetAllByParticipants(IEnumerable<int> participantIds);
 
-        void ResetBySubmission(Submission submission, bool shouldUpdateTotalScoreModfiedOn);
+        void ResetBySubmission(Submission submission);
 
         void DeleteAllByProblem(int problemId);
 
@@ -29,14 +29,13 @@
 
         void Delete(IEnumerable<ParticipantScore> participantScores);
 
-        void AddBySubmissionByUsernameAndIsOfficial(Submission submission, string userName, Participant participant, bool updateTotalScoreModifiedOn = true);
+        void AddBySubmissionByUsernameAndIsOfficial(Submission submission, string userName, Participant participant);
 
         void UpdateBySubmissionAndPoints(
             ParticipantScore participantScore,
             int? submissionId,
             int submissionPoints,
-            Participant participant,
-            bool updateTotalScoreModifiedOn = true);
+            Participant participant);
 
         void RemoveSubmissionIdsBySubmissionIds(IEnumerable<int> submissionIds);
     }
