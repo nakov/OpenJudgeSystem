@@ -153,6 +153,7 @@ namespace OJS.Services.Data.ParticipantScores
             int submissionPoints,
             Participant participant)
         {
+            //The submission TotalScoreSnapshotModifiedOn must be changed only if it is new submission in other way the results will not be ordered correctly.
             bool shouldUpdateTotalScoreDate = submissionId != null && submissionId != participantScore.SubmissionId;
             UpdateTotalScoreSnapshot(
                 participant, 
