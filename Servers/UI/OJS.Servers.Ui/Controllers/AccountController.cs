@@ -1,6 +1,8 @@
 namespace OJS.Servers.Ui.Controllers
 {
+    using System;
     using System.Threading.Tasks;
+    using FluentExtensions.Extensions;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
@@ -10,6 +12,7 @@ namespace OJS.Servers.Ui.Controllers
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Controllers;
     using OJS.Servers.Ui.Models;
+    using OJS.Services.Common.Models;
     using OJS.Services.Common.Models.Users;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Ui.Business;
@@ -50,14 +53,24 @@ namespace OJS.Servers.Ui.Controllers
 
             ExternalUserInfoModel? externalUser;
 
-            this.logger.LogInformation("START PLATFORM LOGIN CALL");
-            var platformCallResult = await this.sulsPlatformHttpClient.GetAsync<ExternalUserInfoModel>(
-                new { model.UserName },
-                string.Format(GetUserInfoByUsernamePath));
-            this.logger.LogInformation("ЕND PLATFORM LOGIN CALL");
-            this.logger.LogInformation($"PLATFORM RESULT: {platformCallResult.IsSuccess}");
-            this.logger.LogInformation($"PLATFORM RESULT: {platformCallResult.ErrorMessage}");
-            this.logger.LogInformation($"PLATFORM RESULT: {platformCallResult.Data}");
+            var platformCallResult = new ExternalDataRetrievalResult<ExternalUserInfoModel>();
+
+            try
+            {
+                this.logger.LogInformation("START PLATFORM LOGIN CALL");
+                platformCallResult = await this.sulsPlatformHttpClient.GetAsync<ExternalUserInfoModel>(
+                    new { model.UserName },
+                    string.Format(GetUserInfoByUsernamePath));
+                this.logger.LogInformation("ЕND PLATFORM LOGIN CALL");
+                this.logger.LogInformation($"PLATFORM RESULT: {platformCallResult.IsSuccess}");
+                this.logger.LogInformation($"PLATFORM RESULT: {platformCallResult.ErrorMessage}");
+                this.logger.LogInformation($"PLATFORM RESULT: {platformCallResult.Data}");
+            }
+            catch (Exception e)
+            {
+                this.logger.LogError("EXCEPTION IN PLATFORM CALL");
+                this.logger.LogError(e.GetAllMessages());
+            }
 
             if (platformCallResult.IsSuccess)
             {
