@@ -61,7 +61,7 @@ namespace OJS.Services.Data.ParticipantScores
             this.GetAll()
                 .Where(ps => !ps.Problem.IsDeleted && participantIds.Contains(ps.ParticipantId));
 
-        public void ResetBySubmission(Submission submission)
+        public void ResetBySubmission(Submission submission, bool shouldUpdateTotalScoreModifiedOn)
         {
             if (submission.ParticipantId == null || submission.ProblemId == null)
             {
@@ -85,12 +85,20 @@ namespace OJS.Services.Data.ParticipantScores
 
             if (existingScore == null)
             {
-                this.AddBySubmissionByUsernameAndIsOfficial(submission, participant.UserName, participant.Participant);
+                this.AddBySubmissionByUsernameAndIsOfficial(
+                    submission,
+                    participant.UserName,
+                    participant.Participant,
+                    shouldUpdateTotalScoreModifiedOn);
             }
             else
             {
-                this.UpdateBySubmissionAndPoints(existingScore, submission.Id, submission.Points,
-                    participant.Participant);
+                this.UpdateBySubmissionAndPoints(
+                    existingScore,
+                    submission.Id,
+                    submission.Points,
+                    participant.Participant,
+                    shouldUpdateTotalScoreModifiedOn);
             }
         }
 
@@ -126,7 +134,8 @@ namespace OJS.Services.Data.ParticipantScores
         public void AddBySubmissionByUsernameAndIsOfficial(
             Submission submission,
             string userName,
-            Participant participant)
+            Participant participant,
+            bool shouldUpdateTotalScoreModifierOn = true)
         {
             participant.Scores.Add(new ParticipantScore
             {
@@ -137,7 +146,7 @@ namespace OJS.Services.Data.ParticipantScores
                 Points = submission.Points,
                 IsOfficial = participant.IsOfficial
             });
-            UpdateTotalScoreSnapshot(participant, 0, submission.Points);
+            UpdateTotalScoreSnapshot(participant, 0, submission.Points, shouldUpdateTotalScoreModifierOn);
             this.participantsData.Update(participant);
         }
 
@@ -145,9 +154,14 @@ namespace OJS.Services.Data.ParticipantScores
             ParticipantScore participantScore,
             int? submissionId,
             int submissionPoints,
-            Participant participant)
+            Participant participant,
+            bool shouldUpdateTotalScoreModifierOn = true)
         {
-            UpdateTotalScoreSnapshot(participant, participantScore.Points, submissionPoints);
+            UpdateTotalScoreSnapshot(
+                participant, 
+                participantScore.Points, 
+                submissionPoints,
+                shouldUpdateTotalScoreModifierOn);
 
             participantScore.SubmissionId = submissionId;
             participantScore.Points = submissionPoints;
@@ -165,10 +179,17 @@ namespace OJS.Services.Data.ParticipantScores
                     },
                     batchSize: GlobalConstants.BatchOperationsChunkSize);
 
-        private void UpdateTotalScoreSnapshot(Participant participant, int previousPoints, int newPoints)
+        private void UpdateTotalScoreSnapshot(
+            Participant participant, 
+            int previousPoints, 
+            int newPoints, 
+            bool shouldUpdateDate)
         {
             participant.TotalScoreSnapshot = (participant.TotalScoreSnapshot - previousPoints) + newPoints;
-            participant.TotalScoreSnapshotModifiedOn = DateTime.Now;
+            if (shouldUpdateDate)
+            {
+                participant.TotalScoreSnapshotModifiedOn = DateTime.Now;
+            }
         }
     }
 }

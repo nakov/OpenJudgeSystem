@@ -334,7 +334,8 @@
                 {
                     this.participantScoresBusiness.RecalculateForParticipantByProblem(
                         submission.ParticipantId.Value,
-                        submission.ProblemId.Value);
+                        submission.ProblemId.Value,
+                        false);
                 }
 
                 this.Data.SaveChanges();
@@ -385,7 +386,8 @@
                     {
                         this.participantScoresBusiness.RecalculateForParticipantByProblem(
                             dbSubmission.ParticipantId.Value,
-                            dbSubmission.ProblemId.Value);
+                            dbSubmission.ProblemId.Value,
+                            false);
                     }
                 }
 
