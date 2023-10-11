@@ -127,11 +127,18 @@ const ContestDetailsPage = () => {
                 {
                     contestDetails?.canViewResults || contestDetails?.isAdminOrLecturerInContest
                         ? (
-                            <LinkButton
-                              type={LinkButtonType.secondary}
-                              to={getContestResultsUrl({ id: contestId, participationType: ContestParticipationType.Compete })}
-                              text="Results"
-                            />
+                            <>
+                                <LinkButton
+                                  type={LinkButtonType.secondary}
+                                  to={getContestResultsUrl({ id: contestId, participationType: ContestParticipationType.Compete })}
+                                  text="Contest results"
+                                />
+                                <LinkButton
+                                  type={LinkButtonType.secondary}
+                                  to={getContestResultsUrl({ id: contestId, participationType: ContestParticipationType.Practice })}
+                                  text="Practice results"
+                                />
+                            </>
                         )
                         : null
                 }
