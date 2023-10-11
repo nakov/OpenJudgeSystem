@@ -132,11 +132,13 @@ const ContestDetailsPage = () => {
                                   type={LinkButtonType.secondary}
                                   to={getContestResultsUrl({ id: contestId, participationType: ContestParticipationType.Compete })}
                                   text="Contest results"
+                                  isToExternal
                                 />
                                 <LinkButton
                                   type={LinkButtonType.secondary}
                                   to={getContestResultsUrl({ id: contestId, participationType: ContestParticipationType.Practice })}
                                   text="Practice results"
+                                  isToExternal
                                 />
                             </>
                         )
