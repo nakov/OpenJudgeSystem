@@ -28,7 +28,15 @@ const ExecutionResult = ({ testRuns, maxMemoryUsed, maxTimeUsed, isCompiledSucce
             case SubmissionResultType.MemoryLimit: return <MemoryIcon key={testRun.id} />;
             case SubmissionResultType.TimeLimit: return <TimeLimitIcon key={testRun.id} />;
             case SubmissionResultType.RunTimeError: return <RuntimeErrorIcon key={testRun.id} />;
-            default: return <div>Something went wrong...</div>;
+            default: return (
+                <div>
+                    <ErrorIcon />
+                    <span>
+                        {' '}
+                        Something went wrong...
+                    </span>
+                </div>
+            );
             }
         },
         [],
