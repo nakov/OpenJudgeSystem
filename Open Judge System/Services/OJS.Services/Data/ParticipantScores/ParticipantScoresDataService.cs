@@ -1,4 +1,5 @@
-﻿using OJS.Services.Business.ParticipantScores.Models;
+﻿using System;
+using OJS.Services.Business.ParticipantScores.Models;
 
 namespace OJS.Services.Data.ParticipantScores
 {
@@ -136,8 +137,7 @@ namespace OJS.Services.Data.ParticipantScores
                 Points = submission.Points,
                 IsOfficial = participant.IsOfficial
             });
-            participant.TotalScoreSnapshot += submission.Points;
-
+            UpdateTotalScoreSnapshot(participant, 0, submission.Points);
             this.participantsData.Update(participant);
         }
 
@@ -147,7 +147,7 @@ namespace OJS.Services.Data.ParticipantScores
             int submissionPoints,
             Participant participant)
         {
-            participant.TotalScoreSnapshot = (participant.TotalScoreSnapshot - participantScore.Points) + submissionPoints;
+            UpdateTotalScoreSnapshot(participant, participantScore.Points, submissionPoints);
 
             participantScore.SubmissionId = submissionId;
             participantScore.Points = submissionPoints;
@@ -164,5 +164,11 @@ namespace OJS.Services.Data.ParticipantScores
                         SubmissionId = null
                     },
                     batchSize: GlobalConstants.BatchOperationsChunkSize);
+
+        private void UpdateTotalScoreSnapshot(Participant participant, int previousPoints, int newPoints)
+        {
+            participant.TotalScoreSnapshot = (participant.TotalScoreSnapshot - previousPoints) + newPoints;
+            participant.TotalScoreSnapshotModifiedOn = DateTime.Now;
+        }
     }
 }
