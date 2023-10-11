@@ -4,6 +4,7 @@ namespace OJS.Servers.Ui.Controllers
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
     using OJS.Common;
     using OJS.Common.Utils;
     using OJS.Data.Models.Users;
@@ -21,17 +22,20 @@ namespace OJS.Servers.Ui.Controllers
         private readonly IUsersBusinessService usersBusinessService;
         private readonly SignInManager<UserProfile> signInManager;
         private readonly ISulsPlatformHttpClientService sulsPlatformHttpClient;
+        private readonly ILogger<AccountController> logger;
 
         public AccountController(
             UserManager<UserProfile> userManager,
             IUsersBusinessService usersBusinessService,
             SignInManager<UserProfile> signInManager,
-            ISulsPlatformHttpClientService sulsPlatformHttpClient)
+            ISulsPlatformHttpClientService sulsPlatformHttpClient,
+            ILogger<AccountController> logger)
         {
             this.userManager = userManager;
             this.usersBusinessService = usersBusinessService;
             this.signInManager = signInManager;
             this.sulsPlatformHttpClient = sulsPlatformHttpClient;
+            this.logger = logger;
         }
 
         [HttpPost]
@@ -46,9 +50,14 @@ namespace OJS.Servers.Ui.Controllers
 
             ExternalUserInfoModel? externalUser;
 
+            this.logger.LogInformation("START PLATFORM LOGIN CALL");
             var platformCallResult = await this.sulsPlatformHttpClient.GetAsync<ExternalUserInfoModel>(
                 new { model.UserName },
                 string.Format(GetUserInfoByUsernamePath));
+            this.logger.LogInformation("ЕND PLATFORM LOGIN CALL");
+            this.logger.LogInformation($"PLATFORM RESULT: {platformCallResult.IsSuccess}");
+            this.logger.LogInformation($"PLATFORM RESULT: {platformCallResult.ErrorMessage}");
+            this.logger.LogInformation($"PLATFORM RESULT: {platformCallResult.Data}");
 
             if (platformCallResult.IsSuccess)
             {
