@@ -82,10 +82,10 @@ public class ContestsActivityService : IContestsActivityService
             return contest.StartTime <= currentTimeInUtc;
         }
 
-        //If the above conditional statements are not entered, first we have to check
-        //the the start and end time > check if start is before now and end is after now
-        //if this check returns false we have to check if the current user is a participant
-        //with a remaining time in an online contest
+        // If the above conditional statements are not entered, first we have to check the start and end time -
+        // if StartTime is before current moment and EndTime is after current moment contest CanBeCompeted.
+        // If this check returns false we have to check if the current user is a participant with remaining time
+        // in an online contest
         return (contest.StartTime <= currentTimeInUtc && currentTimeInUtc <= contest.EndTime) ||
                (contest.IsOnline && this.IsActiveParticipantInOnlineContest(contest.Id));
     }

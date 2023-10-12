@@ -193,7 +193,7 @@ namespace OJS.Servers.Administration.Controllers
 
         protected override async Task BeforeEntitySaveOnDeleteAsync(
             Contest existingContest, AdminActionContext actionContext)
-            => await this.contestsValidationHelper.ValidateContestIsNotActiveOnDelete(existingContest).VerifyResult();
+            => await this.contestsValidationHelper.ValidateContestIsNotActive(existingContest).VerifyResult();
 
         protected override IEnumerable<FormControlViewModel> GenerateFormControls(
             Contest entity,

@@ -11,5 +11,5 @@ public interface IContestsValidationHelper : IService
 
     Task<ValidationResult> ValidateActiveContestCannotEditDurationTypeOnEdit(Contest existingContest, Contest newContest);
 
-    Task<ValidationResult> ValidateContestIsNotActiveOnDelete(Contest existingContest);
+    Task<ValidationResult> ValidateContestIsNotActive(Contest existingContest);
 }

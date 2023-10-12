@@ -58,7 +58,7 @@ public class ContestsValidationHelper : IContestsValidationHelper
         return ValidationResult.Valid();
     }
 
-    public async Task<ValidationResult> ValidateContestIsNotActiveOnDelete(Contest contest)
+    public async Task<ValidationResult> ValidateContestIsNotActive(Contest contest)
     {
         var isActive = await this.activityService.IsActive(contest.Map<ContestForActivityServiceModel>());
 
