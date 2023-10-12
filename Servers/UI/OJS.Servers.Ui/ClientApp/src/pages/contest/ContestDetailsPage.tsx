@@ -148,7 +148,7 @@ const ContestDetailsPage = () => {
                     )
                 }
                 {
-                    contestDetails?.canBePracticed && contestDetails.isAdminOrLecturerInContest &&
+                    contestDetails?.canBePracticed &&
                     (
                         <LinkButton
                           type={LinkButtonType.secondary}
