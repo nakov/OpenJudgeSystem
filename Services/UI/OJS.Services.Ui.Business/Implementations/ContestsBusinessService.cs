@@ -106,7 +106,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 contestDetailsServiceModel.Problems = new List<ContestProblemServiceModel>();
             }
 
-            if (userIsAdminOrLecturerInContest || (contest.IsActive && participant != null && contest.CanBeCompeted) || !contest.CanBeCompeted)
+            if (userIsAdminOrLecturerInContest || (contest.IsActive && participant != null && contest.CanBeCompeted) || (!contest.CanBeCompeted && participant != null))
             {
                 contestDetailsServiceModel.CanViewResults = true;
             }
