@@ -139,20 +139,24 @@ const ContestDetailsPage = () => {
                 {
                     contestDetails?.canViewResults || contestDetails?.isAdminOrLecturerInContest
                         ? (
-                            <>
-                                <LinkButton
-                                  type={LinkButtonType.secondary}
-                                  to={getContestResultsUrl({ id: contestId, participationType: ContestParticipationType.Compete })}
-                                  text="Contest results"
-                                  isToExternal
-                                />
-                                <LinkButton
-                                  type={LinkButtonType.secondary}
-                                  to={getContestResultsUrl({ id: contestId, participationType: ContestParticipationType.Practice })}
-                                  text="Practice results"
-                                  isToExternal
-                                />
-                            </>
+                            <LinkButton
+                              type={LinkButtonType.secondary}
+                              to={getContestResultsUrl({ id: contestId, participationType: ContestParticipationType.Compete })}
+                              text="Contest results"
+                              isToExternal
+                            />
+                        )
+                        : null
+                }
+                {
+                    contestDetails?.canBePracticed && contestDetails.isAdminOrLecturerInContest
+                        ? (
+                            <LinkButton
+                              type={LinkButtonType.secondary}
+                              to={getContestResultsUrl({ id: contestId, participationType: ContestParticipationType.Practice })}
+                              text="Practice results"
+                              isToExternal
+                            />
                         )
                         : null
                 }
@@ -233,6 +237,7 @@ const ContestDetailsPage = () => {
             contestDetails?.canViewResults,
             contestDetails?.isAdminOrLecturerInContest,
             isOfficial,
+            contestDetails?.canBePracticed,
         ],
     );
 
