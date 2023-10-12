@@ -1,14 +1,18 @@
 namespace OJS.Servers.Ui.Controllers
 {
+    using System;
     using System.Threading.Tasks;
+    using FluentExtensions.Extensions;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
     using OJS.Common;
     using OJS.Common.Utils;
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Controllers;
     using OJS.Servers.Ui.Models;
+    using OJS.Services.Common.Models;
     using OJS.Services.Common.Models.Users;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Ui.Business;
@@ -21,17 +25,20 @@ namespace OJS.Servers.Ui.Controllers
         private readonly IUsersBusinessService usersBusinessService;
         private readonly SignInManager<UserProfile> signInManager;
         private readonly ISulsPlatformHttpClientService sulsPlatformHttpClient;
+        private readonly ILogger<AccountController> logger;
 
         public AccountController(
             UserManager<UserProfile> userManager,
             IUsersBusinessService usersBusinessService,
             SignInManager<UserProfile> signInManager,
-            ISulsPlatformHttpClientService sulsPlatformHttpClient)
+            ISulsPlatformHttpClientService sulsPlatformHttpClient,
+            ILogger<AccountController> logger)
         {
             this.userManager = userManager;
             this.usersBusinessService = usersBusinessService;
             this.signInManager = signInManager;
             this.sulsPlatformHttpClient = sulsPlatformHttpClient;
+            this.logger = logger;
         }
 
         [HttpPost]
@@ -46,9 +53,24 @@ namespace OJS.Servers.Ui.Controllers
 
             ExternalUserInfoModel? externalUser;
 
-            var platformCallResult = await this.sulsPlatformHttpClient.GetAsync<ExternalUserInfoModel>(
-                new { model.UserName },
-                string.Format(GetUserInfoByUsernamePath));
+            var platformCallResult = new ExternalDataRetrievalResult<ExternalUserInfoModel>();
+
+            try
+            {
+                this.logger.LogInformation("START PLATFORM LOGIN CALL");
+                platformCallResult = await this.sulsPlatformHttpClient.GetAsync<ExternalUserInfoModel>(
+                    new { model.UserName },
+                    string.Format(GetUserInfoByUsernamePath));
+                this.logger.LogInformation("ЕND PLATFORM LOGIN CALL");
+                this.logger.LogInformation($"PLATFORM RESULT: {platformCallResult.IsSuccess}");
+                this.logger.LogInformation($"PLATFORM RESULT: {platformCallResult.ErrorMessage}");
+                this.logger.LogInformation($"PLATFORM RESULT: {platformCallResult.Data}");
+            }
+            catch (Exception e)
+            {
+                this.logger.LogError("EXCEPTION IN PLATFORM CALL");
+                this.logger.LogError(e.GetAllMessages());
+            }
 
             if (platformCallResult.IsSuccess)
             {
