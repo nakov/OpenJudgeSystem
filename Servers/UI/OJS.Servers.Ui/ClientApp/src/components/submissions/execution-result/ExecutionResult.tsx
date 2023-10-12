@@ -17,9 +17,10 @@ interface IExecutionResultDetailsProps {
     maxMemoryUsed: number;
     maxTimeUsed: number;
     isCompiledSuccessfully: boolean;
+    isProcessed: boolean;
 }
 
-const ExecutionResult = ({ testRuns, maxMemoryUsed, maxTimeUsed, isCompiledSuccessfully }: IExecutionResultDetailsProps) => {
+const ExecutionResult = ({ testRuns, maxMemoryUsed, maxTimeUsed, isCompiledSuccessfully, isProcessed }: IExecutionResultDetailsProps) => {
     const renderTestRunIcon = useCallback(
         (testRun: ITestRunType) => {
             switch (toLowerCase(testRun.resultType)) {
@@ -31,7 +32,7 @@ const ExecutionResult = ({ testRuns, maxMemoryUsed, maxTimeUsed, isCompiledSucce
             default: return (
                 <div>
                     <ErrorIcon />
-                    <span>
+                    <span className={styles.compileAndUnknownError}>
                         {' '}
                         Something went wrong...
                     </span>
@@ -48,35 +49,37 @@ const ExecutionResult = ({ testRuns, maxMemoryUsed, maxTimeUsed, isCompiledSucce
     );
 
     return (
-        isCompiledSuccessfully
-            ? (
-                <div className={styles.testResultsList}>
-                    <div className={styles.testRunIcons}>{renderTestRunIcons(testRuns)}</div>
-                    <div>
-                        <MemoryIcon />
-                        {' '}
-                        {(maxMemoryUsed / 1000000).toFixed(2)}
-                        {' '}
-                        MB
+        isProcessed
+            ? isCompiledSuccessfully
+                ? (
+                    <div className={styles.testResultsList}>
+                        <div className={styles.testRunIcons}>{renderTestRunIcons(testRuns)}</div>
+                        <div>
+                            <MemoryIcon />
+                            {' '}
+                            {(maxMemoryUsed / 1000000).toFixed(2)}
+                            {' '}
+                            MB
+                        </div>
+                        <div>
+                            <TimeLimitIcon />
+                            {' '}
+                            {maxTimeUsed / 1000}
+                            {' '}
+                            s.
+                        </div>
                     </div>
-                    <div>
-                        <TimeLimitIcon />
-                        {' '}
-                        {maxTimeUsed / 1000}
-                        {' '}
-                        s.
+                )
+                : (
+                    <div className={styles.testResultsList}>
+                        <ErrorIcon />
+                        <span className={styles.compileAndUnknownError}>
+                            {' '}
+                            Compile time error
+                        </span>
                     </div>
-                </div>
-            )
-            : (
-                <div className={styles.testResultsList}>
-                    <ErrorIcon />
-                    <span>
-                        {' '}
-                        Compile time error
-                    </span>
-                </div>
-            )
+                )
+            : null
     );
 };
 

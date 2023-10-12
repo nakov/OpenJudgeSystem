@@ -118,6 +118,7 @@ const SubmissionsList = ({
                       maxMemoryUsed={submission.maxMemoryUsed}
                       maxTimeUsed={submission.maxTimeUsed}
                       isCompiledSuccessfully={submission.isCompiledSuccessfully}
+                      isProcessed={isProcessed}
                     />
                 </div>
             );

@@ -46,6 +46,7 @@ interface ISubmissionResponseModel {
     maxMemoryUsed: number;
     maxTimeUsed: number;
     testRuns: ITestRunType[];
+    processed: boolean;
 }
 
 interface IProblemResourceType {

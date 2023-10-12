@@ -29,5 +29,7 @@ public class SubmissionForPublicSubmissionsResponseModel : IMapFrom<SubmissionFo
 
     public int? MaxTimeUsed { get; set; }
 
+    public bool Processed { get; set; }
+
     public IEnumerable<TestRunServiceModel> TestRuns { get; set; } = Enumerable.Empty<TestRunServiceModel>();
 }

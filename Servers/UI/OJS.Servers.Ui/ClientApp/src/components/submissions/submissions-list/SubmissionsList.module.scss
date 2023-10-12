@@ -43,8 +43,8 @@
 }
 
 .textContainer {
-  display: grid;
-  grid-template-columns: 1fr 1.5fr;
+  display: flex;
+  justify-content: space-between;
   width: 100%;
 }
 

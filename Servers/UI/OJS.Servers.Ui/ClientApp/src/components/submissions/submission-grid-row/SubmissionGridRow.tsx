@@ -38,6 +38,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
         isCompiledSuccessfully,
         maxMemoryUsed,
         maxTimeUsed,
+        processed,
         testRuns,
     } = submission;
 
@@ -192,6 +193,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
               maxMemoryUsed={maxMemoryUsed}
               maxTimeUsed={maxTimeUsed}
               isCompiledSuccessfully={isCompiledSuccessfully}
+              isProcessed={processed}
             />
             <div className={styles.detailsButtonContainer}>
                 {renderDetailsBtn()}

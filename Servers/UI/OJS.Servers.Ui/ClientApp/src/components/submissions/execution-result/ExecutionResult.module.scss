@@ -1,3 +1,14 @@
+@use 'src/styles/colors';
+@use 'src/styles/variables';
+
+.compileAndUnknownError {
+  color: colors.$text-dark-gray-color;
+
+  @media only screen and (max-width: variables.$r-large-desktop-max) {
+    font-size: variables.$f-size-16;
+  }
+}
+
 .testRunIcons {
   display: flex;
   flex-direction: row;
