@@ -125,8 +125,8 @@ const ContestDetailsPage = () => {
         () => (
             <div className={styles.buttonsContainer}>
                 {
-                    contestDetails?.canViewResults || contestDetails?.isAdminOrLecturerInContest
-                        ? (
+                    (contestDetails?.canViewResults || contestDetails?.isAdminOrLecturerInContest) &&
+                        (
                             <LinkButton
                               type={LinkButtonType.secondary}
                               to={getContestResultsUrl({ id: contestId, participationType: ContestParticipationType.Compete })}
@@ -134,11 +134,10 @@ const ContestDetailsPage = () => {
                               isToExternal
                             />
                         )
-                        : null
                 }
                 {
-                    contestDetails?.canBePracticed && contestDetails.isAdminOrLecturerInContest
-                        ? (
+                    contestDetails?.canBePracticed && contestDetails.isAdminOrLecturerInContest &&
+                        (
                             <LinkButton
                               type={LinkButtonType.secondary}
                               to={getContestResultsUrl({ id: contestId, participationType: ContestParticipationType.Practice })}
@@ -146,11 +145,10 @@ const ContestDetailsPage = () => {
                               isToExternal
                             />
                         )
-                        : null
                 }
                 {
-                    contestDetails?.isAdminOrLecturerInContest
-                        ? (
+                    contestDetails?.isAdminOrLecturerInContest &&
+                        (
                             <>
                                 <LinkButton
                                   type={LinkButtonType.secondary}
@@ -166,11 +164,10 @@ const ContestDetailsPage = () => {
                                 />
                             </>
                         )
-                        : null
                 }
                 {
-                    canAccessCompeteButton
-                        ? (
+                    canAccessCompeteButton &&
+                        (
                             <LinkButton
                               id="button-card-compete"
                               internalClassName={competableOnlyForAdminAndLecturers
@@ -182,17 +179,16 @@ const ContestDetailsPage = () => {
                               })}
                               text="Compete"
                               state={
-                        isOfficial
-                            ? ButtonState.enabled
-                            : ButtonState.disabled
-                    }
+                              isOfficial
+                                  ? ButtonState.enabled
+                                  : ButtonState.disabled
+                              }
                             />
                         )
-                        : null
                 }
                 {
-                    canAccessPracticeButton
-                        ? (
+                    canAccessPracticeButton &&
+                        (
                             <LinkButton
                               id="button-card-practice"
                               internalClassName={practicableOnlyForAdminOrLecturers
@@ -205,13 +201,12 @@ const ContestDetailsPage = () => {
                               text="Practice"
                               type={LinkButtonType.secondary}
                               state={
-                              isOfficial
-                                  ? ButtonState.disabled
-                                  : ButtonState.enabled
-                    }
+                                  isOfficial
+                                      ? ButtonState.enabled
+                                      : ButtonState.disabled
+                              }
                             />
                         )
-                        : null
                 }
             </div>
         ),
