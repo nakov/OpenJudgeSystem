@@ -136,15 +136,15 @@ const ContestDetailsPage = () => {
                         )
                 }
                 {
-                    contestDetails?.canBePracticed && contestDetails.isAdminOrLecturerInContest &&
-                        (
-                            <LinkButton
-                              type={LinkButtonType.secondary}
-                              to={getContestResultsUrl({ id: contestId, participationType: ContestParticipationType.Practice })}
-                              text="Practice results"
-                              isToExternal
-                            />
-                        )
+                    contestDetails?.canBePracticed &&
+                    (
+                        <LinkButton
+                          type={LinkButtonType.secondary}
+                          to={getContestResultsUrl({ id: contestId, participationType: ContestParticipationType.Practice })}
+                          text="Practice results"
+                          isToExternal
+                        />
+                    )
                 }
                 {
                     contestDetails?.isAdminOrLecturerInContest &&
@@ -188,25 +188,25 @@ const ContestDetailsPage = () => {
                 }
                 {
                     canAccessPracticeButton &&
-                        (
-                            <LinkButton
-                              id="button-card-practice"
-                              internalClassName={practicableOnlyForAdminOrLecturers
-                                  ? styles.adminAccessibleButton
-                                  : ''}
-                              to={getParticipateInContestUrl({
-                                  id: contestIdToNumber,
-                                  participationType: ContestParticipationType.Practice,
-                              })}
-                              text="Practice"
-                              type={LinkButtonType.secondary}
-                              state={
-                                  isOfficial
-                                      ? ButtonState.enabled
-                                      : ButtonState.disabled
-                              }
-                            />
-                        )
+                    (
+                        <LinkButton
+                          id="button-card-practice"
+                          internalClassName={practicableOnlyForAdminOrLecturers
+                              ? styles.adminAccessibleButton
+                              : ''}
+                          to={getParticipateInContestUrl({
+                              id: contestIdToNumber,
+                              participationType: ContestParticipationType.Practice,
+                          })}
+                          text="Practice"
+                          type={LinkButtonType.secondary}
+                          state={
+                                isOfficial
+                                    ? ButtonState.disabled
+                                    : ButtonState.enabled
+                            }
+                        />
+                    )
                 }
             </div>
         ),
