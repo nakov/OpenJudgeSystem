@@ -214,8 +214,8 @@ const ContestDetailsPage = () => {
                           type={LinkButtonType.secondary}
                           state={
                                 isOfficial
-                                    ? ButtonState.enabled
-                                    : ButtonState.disabled
+                                    ? ButtonState.disabled
+                                    : ButtonState.enabled
                             }
                         />
                     )
