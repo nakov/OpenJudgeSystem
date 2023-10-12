@@ -82,6 +82,8 @@ public class ContestsActivityService : IContestsActivityService
             return contest.StartTime <= currentTimeInUtc;
         }
 
+        bool isaf = this.IsActiveParticipantInOnlineContest(contest.Id);
+
         // If the above conditional statements are not entered, first we have to check the start and end time -
         // if StartTime is before current moment and EndTime is after current moment contest CanBeCompeted.
         // If this check returns false we have to check if the current user is a participant with remaining time
@@ -104,9 +106,9 @@ public class ContestsActivityService : IContestsActivityService
     public bool IsActiveParticipantInOnlineContest(int contestId)
     {
         var currentUser = this.userProvider.GetCurrentUser();
-        var participants = this.participantsCommonData.GetAllByContest(contestId);
+        var participants = this.participantsCommonData.GetAllByUserId(currentUser.Id);
 
-        return participants.Any(p => p.UserId == currentUser.Id &&
+        return participants.Any(p => p.ContestId == contestId &&
                                      p.ParticipationEndTime.HasValue &&
                                      p.ParticipationEndTime.Value >= this.dates.GetUtcNow());
     }

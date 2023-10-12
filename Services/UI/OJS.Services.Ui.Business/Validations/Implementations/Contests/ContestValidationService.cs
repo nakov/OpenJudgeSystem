@@ -9,6 +9,7 @@ using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Users;
+using OJS.Services.Ui.Models.Participants;
 using Infrastructure;
 
 public class ContestValidationService : IContestValidationService
@@ -41,7 +42,9 @@ public class ContestValidationService : IContestValidationService
             .GetAwaiter()
             .GetResult();
 
-        var participant = contest.Participants.FirstOrDefault(p => p.UserId == user.Id && p.IsOfficial);
+        var participant = contest.Participants
+            .FirstOrDefault(p => p.UserId == user.Id && p.IsOfficial)
+            ?.Map<ParticipantServiceModel>() ?? new ParticipantServiceModel();
 
         if (IsContestExpired(
                 contestActivityEntity,
@@ -74,7 +77,7 @@ public class ContestValidationService : IContestValidationService
 
     private static bool IsContestExpired(
         IContestActivityServiceModel contest,
-        Participant? participant,
+        ParticipantServiceModel? participant,
         bool isAdmin,
         bool official,
         bool isUserLecturerInContest,
