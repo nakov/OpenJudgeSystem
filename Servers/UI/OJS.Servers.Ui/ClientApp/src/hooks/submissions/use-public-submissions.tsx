@@ -51,7 +51,6 @@ const defaultState = {
         publicSubmissions: [] as ISubmissionResponseModel[],
         userSubmissions: [] as ISubmissionResponseModel[],
         userByContestSubmissions: [] as ISubmissionResponseModel[],
-        userSubmissionUrlParams: { page: 1 },
         submissionsByContestParams: { page: 1, contestId: '' },
     },
 };
@@ -77,7 +76,7 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
     const [
         getUserSubmissionsUrlParams,
         setUserSubmissionsUrlParams,
-    ] = useState<IGetSubmissionsUrlParams | null>(defaultState.state.userSubmissionUrlParams);
+    ] = useState<IGetSubmissionsUrlParams | null>(null);
     const [
         getSubmissionsByContestIdParams,
         setGetSubmissionsByContestIdParams,
