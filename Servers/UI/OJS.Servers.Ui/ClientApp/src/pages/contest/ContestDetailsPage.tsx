@@ -129,9 +129,9 @@ const ContestDetailsPage = () => {
                         (
                             <LinkButton
                               type={LinkButtonType.secondary}
-                              to={getContestResultsUrl({ id: contestId, participationType: ContestParticipationType.Compete })}
-                              text="Contest results"
-                              isToExternal
+                          to={getContestResultsUrl({ id: contestId, participationType: ContestParticipationType.Compete })}
+                          text="Contest results"
+                          isToExternal
                             />
                         )
                 }
@@ -179,11 +179,11 @@ const ContestDetailsPage = () => {
                               })}
                               text="Compete"
                               state={
-                              isOfficial
-                                  ? ButtonState.enabled
-                                  : ButtonState.disabled
-                              }
-                            />
+                                isOfficial
+                                    ? ButtonState.enabled
+                                    : ButtonState.disabled
+                            }
+                        />
                         )
                 }
                 {
