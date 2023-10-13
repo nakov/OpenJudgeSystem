@@ -90,6 +90,7 @@ interface ITestCaseRun {
     submissionId?: number;
     timeUsed: number;
     userOutputFragment?: string;
+    testId: number;
 }
 
 interface ITestRunDetailsCollapsed {
