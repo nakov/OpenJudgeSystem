@@ -101,7 +101,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var canShowProblemsInPractice = (!contest.HasPracticePassword && contest.CanBePracticed) || userIsAdminOrLecturerInContest;
             var canShowProblemsInCompete = (contest is { HasContestPassword: false, IsActive: false } && !contest.IsOnlineExam && contest.CanBeCompeted) || userIsAdminOrLecturerInContest;
 
-            if (!canShowProblemsInPractice || !canShowProblemsInCompete)
+            if (!canShowProblemsInPractice && !canShowProblemsInCompete)
             {
                 contestDetailsServiceModel.Problems = new List<ContestProblemServiceModel>();
             }
