@@ -13,11 +13,12 @@ import styles from './TestRunDetails.module.scss';
 
 interface ITestRunDetailsProps {
     testRun: ITestRunDetailsType;
+    trialTestsCount: number;
 }
 
 const getResultIsWrongAnswerResultType = (run: ITestRunDetailsType) => toLowerCase(run.resultType) !== SubmissionResultType.CorrectAnswer;
 
-const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
+const TestRunDetails = ({ testRun, trialTestsCount }: ITestRunDetailsProps) => {
     const testRunHeadingClassName = concatClassNames(
         styles.testRunHeading,
         getResultIsWrongAnswerResultType(testRun)
@@ -43,7 +44,13 @@ const TestRunDetails = ({ testRun }: ITestRunDetailsProps) => {
         }
 
         const { innerText } = h3Element;
-        const elementNumber = innerText.split('#')[1];
+        const numberOfTest = Number(innerText.split('#')[1]);
+        console.log(numberOfTest);
+        console.log(typeof numberOfTest);
+        const elementNumber = testRun.isTrialTest
+            ? numberOfTest
+            : parseInt('10', numberOfTest) + trialTestsCount;
+        console.log(parseInt('10', numberOfTest));
         const scrollToElement = document.querySelector(`#test-heading-${elementNumber - 1}`);
         if (!scrollToElement) { return; }
 
