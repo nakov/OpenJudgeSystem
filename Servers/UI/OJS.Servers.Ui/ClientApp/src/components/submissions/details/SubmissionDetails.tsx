@@ -107,9 +107,11 @@ const SubmissionDetails = () => {
 
     useEffect(
         () => {
-            setPageTitle(`Submission №${currentSubmission?.id}`);
+            if (currentSubmission) {
+                setPageTitle(`Submission №${currentSubmission.id}`);
+            }
         },
-        [ setPageTitle, currentSubmission ],
+        [ currentSubmission, setPageTitle ],
     );
 
     const problemNameHeadingText = useMemo(

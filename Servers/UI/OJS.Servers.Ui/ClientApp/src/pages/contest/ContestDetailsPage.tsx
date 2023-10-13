@@ -47,16 +47,13 @@ const ContestDetailsPage = () => {
     const { actions: { setPageTitle } } = usePageTitles();
     const navigate = useNavigate();
 
-    const contestTitle = useMemo(
-        () => `${contestDetails?.name}`,
-        [ contestDetails?.name ],
-    );
-
     useEffect(
         () => {
-            setPageTitle(contestTitle);
+            if (contestDetails) {
+                setPageTitle(contestDetails.name);
+            }
         },
-        [ contestTitle, setPageTitle ],
+        [ contestDetails, setPageTitle ],
     );
 
     const { contestId, participationType } = params;
