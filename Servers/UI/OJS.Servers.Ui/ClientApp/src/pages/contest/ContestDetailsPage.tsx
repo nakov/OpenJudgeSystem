@@ -179,10 +179,10 @@ const ContestDetailsPage = () => {
                               })}
                               text="Compete"
                               state={
-                              isOfficial
-                                  ? ButtonState.enabled
-                                  : ButtonState.disabled
-                              }
+                                isOfficial
+                                    ? ButtonState.enabled
+                                    : ButtonState.disabled
+                            }
                             />
                         )
                 }
