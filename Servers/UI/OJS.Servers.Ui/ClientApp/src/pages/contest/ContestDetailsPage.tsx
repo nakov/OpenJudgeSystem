@@ -111,9 +111,9 @@ const ContestDetailsPage = () => {
                 getContestDetails({ id: contestId.toString() });
             }
         },
-        [ contestId,
+        [
+            contestId,
             getContestDetails,
-            isOfficial,
         ],
     );
 
