@@ -44,13 +44,10 @@ const TestRunDetails = ({ testRun, trialTestsCount }: ITestRunDetailsProps) => {
         }
 
         const { innerText } = h3Element;
-        const numberOfTest = Number(innerText.split('#')[1]);
-        console.log(numberOfTest);
-        console.log(typeof numberOfTest);
+        const numberOfTest = innerText.split('#')[1];
         const elementNumber = testRun.isTrialTest
             ? numberOfTest
-            : parseInt('10', numberOfTest) + trialTestsCount;
-        console.log(parseInt('10', numberOfTest));
+            : parseInt(numberOfTest, 10) + trialTestsCount;
         const scrollToElement = document.querySelector(`#test-heading-${elementNumber - 1}`);
         if (!scrollToElement) { return; }
 
