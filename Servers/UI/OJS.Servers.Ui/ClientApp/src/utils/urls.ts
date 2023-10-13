@@ -47,8 +47,10 @@ const getHomePageUrl = () => '/';
 const getLoginSubmitUrl = () => `${baseUrl}/Account/Login`;
 const getLogoutUrl = () => `${baseUrl}/Account/Logout`;
 
+const getLoginPageUrl = () => `${baseUrl}/login`;
+
 const getUserAuthInfoUrl = () => `${baseApiUrl}/Users/GetUserAuthInfo`;
-const getPlatformRegisterUrl = () => `${platformBaseUrl}/identity/register`;
+const getPlatformRegisterUrl = () => `${platformBaseUrl}/identity/register?returnUrl=${encodeURIComponent(getLoginPageUrl())}`;
 
 // admin
 const getAdministrationContestsGridUrl = () => `${administrationBaseUrl}/Contests`;
@@ -97,7 +99,7 @@ const getParticipateInContestUrl = ({
 }: IParticipateInContestTypeUrlParams) => `/contests/${id}/${participationType}`;
 
 const getContestDetailsUrl =
-    ({ id, isOfficial }: IContestDetailsUrlParams) => `${baseApiUrl}/Contests/Details/${id}?official=${isOfficial}`;
+    ({ id }: IContestDetailsUrlParams) => `${baseApiUrl}/Contests/Details/${id}`;
 
 const getContestDetailsAppUrl = (id: number) => `/contests/${id}`;
 

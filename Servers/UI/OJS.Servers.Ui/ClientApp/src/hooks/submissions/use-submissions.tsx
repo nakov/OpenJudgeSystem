@@ -20,6 +20,7 @@ interface ISubmissionsContext {
         problemSubmissionCode: IDictionary<string | File>;
         selectedSubmissionType: ISubmissionTypeType | null;
         problemSubmissionErrors: IDictionary<IErrorDataType | null>;
+        alertBoxErrorIsClosed: boolean;
     };
     actions: {
         submit: () => Promise<void>;
@@ -35,6 +36,7 @@ const defaultState = {
         problemSubmissionCode: {},
         selectedSubmissionType: null,
         problemSubmissionErrors: {},
+        alertBoxErrorIsClosed: false,
     },
 };
 
@@ -57,6 +59,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
         useState<IDictionary<string | File>>(defaultState.state.problemSubmissionCode);
     const [ problemSubmissionErrors, setProblemSubmissionErrors ] =
         useState<IDictionary<IErrorDataType | null>>(defaultState.state.problemSubmissionErrors);
+    const [ alertBoxErrorIsClosed, setAlertBoxErrorIsClosed ] = useState<boolean>(defaultState.state.alertBoxErrorIsClosed);
 
     const { state: { currentProblem } } = useProblems();
     const { state: { isOfficial } } = useCurrentContest();
@@ -164,6 +167,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             }
 
             setIsLoading(false);
+            setAlertBoxErrorIsClosed(false);
             resetProblemSubmissionError();
         },
         [
@@ -242,6 +246,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                 ...problemSubmissionErrors,
                 [problemId]: null,
             });
+            setAlertBoxErrorIsClosed(true);
         },
         [ problemSubmissionErrors ],
     );
@@ -287,6 +292,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                 selectedSubmissionType,
                 problemSubmissionErrors,
                 isLoading,
+                alertBoxErrorIsClosed,
             },
             actions: {
                 updateSubmissionCode,
@@ -306,6 +312,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             closeErrorMessage,
             problemSubmissionErrors,
             isLoading,
+            alertBoxErrorIsClosed,
         ],
     );
 

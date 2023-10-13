@@ -18,7 +18,6 @@ import ContestsProvider from './hooks/use-contests';
 import CurrentContestsProvider from './hooks/use-current-contest';
 import HomeContestsProvider from './hooks/use-home-contests';
 import HomeStatisticsProvider from './hooks/use-home-statistics';
-import ContestModalProvider from './hooks/use-modal';
 import NotificationsProvider from './hooks/use-notifications';
 import PageWithTitleProvider from './hooks/use-page-titles';
 import PageProvider from './hooks/use-pages';
@@ -49,7 +48,6 @@ const App = () => {
         ContestStrategyFiltersProvider,
         CategoriesBreadcrumbProvider,
         ContestsProvider,
-        ContestModalProvider,
         HomeContestsProvider,
         ParticipationsProvider,
         CurrentContestsProvider,

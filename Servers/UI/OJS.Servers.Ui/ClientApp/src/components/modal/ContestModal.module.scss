@@ -7,10 +7,15 @@
 
   color: colors.$text-dark-gray-color;
   display: inline-block;
-  font-size: variables.$f-size-24;
+  font-size: variables.$f-size-18;
   margin-bottom: -40px;
   margin-top: -40px;
   padding: 35px;
+}
+
+.bodyTextSpacing {
+  line-height: 1.5;
+  letter-spacing: 0.15px;
 }
 
 .boldedText {
@@ -30,7 +35,7 @@
   align-self: center;
   color: colors.$white-color;
   display: inline-block;
-  font-size: variables.$f-size-24;
+  font-size: variables.$f-size-18;
   padding: 15px;
 }
 
@@ -66,6 +71,6 @@
 }
 
 .questionText {
-  font-size: variables.$f-size-30;
+  font-size: variables.$f-size-24;
   font-style: italic;
 }

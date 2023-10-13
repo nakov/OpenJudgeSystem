@@ -11,6 +11,8 @@ import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
 import { convertToSecondsRemaining, getCurrentTimeInUTC } from '../../../utils/dates';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
+import { getContestDetailsAppUrl } from '../../../utils/urls';
+import { LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
@@ -203,47 +205,62 @@ const Contest = () => {
     const renderContest = useCallback(
         () => (
             <div>
-                {contestIsLoading
-                    ? (
-                        <div style={{ ...flexCenterObjectStyles, height: '500px' }}>
-                            <SpinningLoader />
-                        </div>
-                    )
-                    : (
-                        <>
-                            <div className={styles.headingContest}>
-                                <Heading
-                                  type={HeadingType.primary}
-                                  className={styles.contestHeading}
-                                >
-                                    {contestTitle}
-                                </Heading>
-                                <Heading type={HeadingType.secondary} className={secondaryHeadingClassName}>
-                                    {renderParticipants()}
-                                    {renderTimeRemaining()}
-                                    {renderScore()}
-                                </Heading>
+                {
+                    contestIsLoading
+                        ? (
+                            <div style={{ ...flexCenterObjectStyles, height: '500px' }}>
+                                <SpinningLoader />
                             </div>
-
-                            <div className={styles.contestWrapper}>
-                                <div className={navigationContestClassName}>
-                                    <ContestTasksNavigation />
+                        )
+                        : (
+                            <>
+                                <div className={styles.headingContest}>
+                                    <Heading
+                                      type={HeadingType.primary}
+                                      className={styles.contestHeading}
+                                    >
+                                        {
+                                            isNil(contest)
+                                                ? contestTitle
+                                                : (
+                                                    <LinkButton
+                                                      type={LinkButtonType.plain}
+                                                      to={getContestDetailsAppUrl(contest.id)}
+                                                      text={contestTitle}
+                                                      className={styles.title}
+                                                    />
+                                                )
+                                        }
+                                    </Heading>
+                                    <Heading type={HeadingType.secondary} className={secondaryHeadingClassName}>
+                                        {renderParticipants()}
+                                        {renderTimeRemaining()}
+                                        {renderScore()}
+                                    </Heading>
                                 </div>
-                                {!isEmpty(contest?.problems)
-                                    ? (
-                                        <>
-                                            <div className={submissionBoxClassName}>
-                                                <SubmissionBox />
-                                            </div>
-                                            <div className={problemInfoClassName}>
-                                                <ContestProblemDetails />
-                                            </div>
-                                        </>
-                                    )
-                                    : null}
-                            </div>
-                        </>
-                    )}
+
+                                <div className={styles.contestWrapper}>
+                                    <div className={navigationContestClassName}>
+                                        <ContestTasksNavigation />
+                                    </div>
+                                    {
+                                    !isEmpty(contest?.problems)
+                                        ? (
+                                            <>
+                                                <div className={submissionBoxClassName}>
+                                                    <SubmissionBox />
+                                                </div>
+                                                <div className={problemInfoClassName}>
+                                                    <ContestProblemDetails />
+                                                </div>
+                                            </>
+                                        )
+                                        : null
+                                }
+                                </div>
+                            </>
+                        )
+                }
             </div>
         ),
         [
@@ -256,7 +273,7 @@ const Contest = () => {
             submissionBoxClassName,
             renderParticipants,
             contestIsLoading,
-            contest?.problems,
+            contest,
         ],
     );
 
