@@ -8,13 +8,11 @@ interface IParticipateInContestTypeUrlParams {
 }
 
 interface ISubmissionDetailsUrlParams {
-    id: number;
+    submissionId: number;
 }
 
 interface IProblemSubmissionDetailsUrlParams {
     submissionId: number;
-    currentPage: number;
-    hashParam: string;
 }
 
 interface IContestResultsUrl {

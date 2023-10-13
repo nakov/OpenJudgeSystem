@@ -43,7 +43,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
 
     const handleDetailsButtonSubmit = useCallback(
         () => {
-            const submissionDetailsUrl = getSubmissionDetailsUrl({ id: submissionId });
+            const submissionDetailsUrl = getSubmissionDetailsUrl({ submissionId });
 
             initiateRedirectionToProblem(problemId, submissionDetailsUrl);
         },

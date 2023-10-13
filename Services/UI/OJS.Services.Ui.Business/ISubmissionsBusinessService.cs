@@ -17,8 +17,6 @@
 
         Task<SubmissionDetailsServiceModel> GetDetailsById(int submissionId);
 
-        Task<SubmissionDetailsWithResultsModel> GetSubmissionDetailsWithResults(int submissionId, int page);
-
         Task<IQueryable<Submission>> GetAllForArchiving();
 
         Task RecalculatePointsByProblem(int problemId);
@@ -28,9 +26,11 @@
         Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult);
 
         // Task HardDeleteAllArchived();
-        Task<PagedResult<SubmissionViewInResultsPageModel>> GetSubmissionDetailsResults(int submissionId, bool isOfficial, int page);
+       // SubmissionDetailsWithResultsModel
 
-        Task<PagedResult<SubmissionViewInResultsPageModel>> GetSubmissionResultsByProblem(int problemId, bool isOfficial, int page);
+        Task<PagedResult<SubmissionResultsServiceModel>> GetSubmissionResults(int submissionId, int page);
+
+        Task<PagedResult<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(int problemId, bool isOfficial, int page);
 
         Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPublicSubmissions(SubmissionForPublicSubmissionsServiceModel model);
 

@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import first from 'lodash/first';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
@@ -10,7 +10,6 @@ import { IHaveChildrenProps } from '../components/common/Props';
 import { getDownloadProblemResourceUrl } from '../utils/urls';
 
 import { useHashUrlParams } from './common/use-hash-url-params';
-import { useUrlParams } from './common/use-url-params';
 import { useProblemSubmissions } from './submissions/use-problem-submissions';
 import { useCurrentContest } from './use-current-contest';
 import { useHttp } from './use-http';
@@ -60,15 +59,16 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     const [ problemResourceIdToDownload, setProblemResourceIdToDownload ] = useState<number | null>(null);
 
     const {
+        state: { problemSubmissionsPage },
         actions:
         {
             loadSubmissions,
             changePreviousProblemSubmissionsPage,
+            clearProblemSubmissionsPage,
         },
     } = useProblemSubmissions();
     const navigate = useNavigate();
-    const location = useLocation();
-    const { actions: { clearParams } } = useUrlParams();
+    const { state: { hashParam } } = useHashUrlParams();
 
     const {
         get: downloadProblemResource,
@@ -99,10 +99,10 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
             changePreviousProblemSubmissionsPage(0);
             selectProblemById(problemId);
 
-            clearParams();
+            clearProblemSubmissionsPage();
             setInternalProblemId(null);
         },
-        [ clearParams, changePreviousProblemSubmissionsPage, selectProblemById ],
+        [ clearProblemSubmissionsPage, changePreviousProblemSubmissionsPage, selectProblemById ],
     );
 
     const removeCurrentProblems = useCallback(
@@ -133,10 +133,8 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
 
             if (!isNil(internalProblemId)) {
                 selectProblemById(internalProblemId, true);
-            } else if (!isEmpty(window.location.hash)) {
-                const hashParameter = window.location.hash.substring(1);
-
-                const hashIndex = Number(hashParameter) - 1;
+            } else if (!isEmpty(hashParam)) {
+                const hashIndex = Number(hashParam) - 1;
 
                 setCurrentProblem(problems[hashIndex]);
             } else {
@@ -145,14 +143,12 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
 
             setInternalProblemId(null);
         },
-        [ internalProblemId, problems, selectProblemById ],
+        [ internalProblemId, problems, selectProblemById, hashParam ],
     );
 
     useEffect(
         () => {
-            const hashParameter = window.location.hash.substring(1);
-
-            const hashIndex = Number(hashParameter) - 1;
+            const hashIndex = Number(hashParam) - 1;
 
             const { [hashIndex]: problem } = problems;
 
@@ -162,9 +158,9 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
 
             const { id } = problem;
 
-            loadSubmissions(id);
+            loadSubmissions(id, problemSubmissionsPage);
         },
-        [ location, loadSubmissions, problems ],
+        [ problemSubmissionsPage, loadSubmissions, problems, hashParam ],
     );
 
     useEffect(

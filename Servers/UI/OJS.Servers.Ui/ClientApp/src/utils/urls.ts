@@ -151,19 +151,9 @@ const getSubmissionResultsByProblemUrl = ({
     return `${baseApiUrl}/Submissions/GetSubmissionResultsByProblem/${problemId}?isOfficial=${isOfficial}&${pageQuery}`;
 };
 
-const getProblemSubmissionDetailsUrl = ({
-    submissionId,
-    currentPage,
-    hashParam,
-}: IProblemSubmissionDetailsUrlParams) => {
-    const pageQuery = isNil(currentPage)
-        ? ''
-        : `?page=${currentPage}`;
+const getProblemSubmissionDetailsUrl = ({ submissionId }: IProblemSubmissionDetailsUrlParams) => `/submissions/${submissionId}/details`;
 
-    return `/submissions/${submissionId}/details${pageQuery}#${hashParam}`;
-};
-
-const getSubmissionDetailsResultsUrl = ({
+const getSubmissionResultsUrl = ({
     submissionId,
     page,
 }: IGetSubmissionDetailsByIdUrlParams) => {
@@ -171,8 +161,10 @@ const getSubmissionDetailsResultsUrl = ({
         ? ''
         : `page=${page}`;
 
-    return `${baseApiUrl}/Submissions/GetSubmissionDetailsWithResults/${submissionId}?${pageQuery}`;
+    return `${baseApiUrl}/Submissions/GetSubmissionResults/${submissionId}?${pageQuery}`;
 };
+
+const getSubmissionDetailsUrl = ({ submissionId }:ISubmissionDetailsUrlParams) => `${baseApiUrl}/Submissions/Details/${submissionId}`;
 
 const getPublicSubmissionsUrl = ({ page }: IGetSubmissionsUrlParams) => {
     const pageQuery = isNil(page)
@@ -199,7 +191,6 @@ const getPendingSubmissionsUrl = ({ page }: IGetSubmissionsUrlParams) => {
 };
 const getSubmissionsTotalCountUrl = () => `${baseApiUrl}/Submissions/TotalCount`;
 const getSubmissionsUnprocessedTotalCountUrl = () => `${baseApiUrl}/Submissions/UnprocessedTotalCount`;
-const getSubmissionsDetailsUrl = () => `${baseApiUrl}/Submissions/Details`;
 const getUserSubmissionsUrl = ({ page }: IGetSubmissionsUrlParams) => {
     const pageQuery = isNil(page)
         ? ''
@@ -207,8 +198,6 @@ const getUserSubmissionsUrl = ({ page }: IGetSubmissionsUrlParams) => {
 
     return `${baseApiUrl}/Submissions/GetUserSubmissions?${pageQuery}`;
 };
-const getSubmissionDetailsByIdUrl =
-    ({ submissionId }: IGetSubmissionDetailsByIdUrlParams) => `${getSubmissionsDetailsUrl()}/${submissionId}`;
 const getSubmitUrl = () => `${baseApiUrl}/Compete/Submit`;
 const getSubmitFileUrl = () => `${baseApiUrl}/Compete/SubmitFileSubmission`;
 const getSubmissionFileDownloadUrl =
@@ -224,8 +213,6 @@ const getSubmissionsByContestIdUrl = ({ contestId = '', page }: IGetSubmissionsB
 
     return `${baseApiUrl}/Submissions/getUserSubmissionsByContest?${contestQuery}&${pageQuery}`;
 };
-
-const getSubmissionDetailsUrl = ({ id }:ISubmissionDetailsUrlParams) => `/submissions/${id}/details`;
 
 // Submission types
 const getAllContestStrategyFiltersUrl =
@@ -278,16 +265,14 @@ export {
     getCategoriesTreeUrl,
     getContestByProblemUrl,
     getSubmissionResultsByProblemUrl,
-    getSubmissionDetailsResultsUrl,
+    getSubmissionResultsUrl,
     getPublicSubmissionsUrl,
     getSubmissionsByContestIdUrl,
     getUnprocessedSubmissionsUrl,
     getPendingSubmissionsUrl,
     getSubmissionsTotalCountUrl,
     getSubmissionsUnprocessedTotalCountUrl,
-    getSubmissionsDetailsUrl,
     getUserSubmissionsUrl,
-    getSubmissionDetailsByIdUrl,
     getSubmitUrl,
     getSubmitFileUrl,
     getProblemSubmissionDetailsUrl,

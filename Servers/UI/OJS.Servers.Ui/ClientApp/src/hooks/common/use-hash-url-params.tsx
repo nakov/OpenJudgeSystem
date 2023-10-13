@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { IHaveChildrenProps } from '../../components/common/Props';
 
@@ -19,6 +19,7 @@ const HashUrlParamContext = createContext<IHashUrlParamsContext>({} as IHashUrlP
 
 const HashUrlParamProvider = ({ children }: IHashUrlParamProviderProps) => {
     const location = useLocation();
+    const navigate = useNavigate();
     const [ hashParam, setHashParam ] = useState<string>(defaultState.state.hashParam);
 
     useEffect(
@@ -31,20 +32,20 @@ const HashUrlParamProvider = ({ children }: IHashUrlParamProviderProps) => {
 
     const setHash = useCallback(
         (param: string, isDefaultHashParam?: boolean) => {
-            const url = `${location.pathname}#${param}`;
-            location.hash = `${param}`;
-
             setHashParam(param);
 
             if (isDefaultHashParam) {
-                window.history.replaceState('', document.title, `${url}`);
+                navigate({
+                    pathname: window.location.pathname,
+                    hash: param,
+                }, { replace: true });
 
                 return;
             }
 
             window.location.hash = param;
         },
-        [ location ],
+        [ navigate ],
     );
 
     const clearHash = useCallback(

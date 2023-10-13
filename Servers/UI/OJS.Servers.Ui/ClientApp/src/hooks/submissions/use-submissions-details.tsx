@@ -1,48 +1,51 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
+import { ISubmissionDetailsUrlParams } from '../../common/app-url-types';
 import { FileType } from '../../common/constants';
+import { IPagedResultType } from '../../common/types';
 import {
     IDownloadSubmissionFileUrlParams,
     IGetSubmissionDetailsByIdUrlParams,
 } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import {
-    getSubmissionDetailsResultsUrl,
+    getSubmissionDetailsUrl,
     getSubmissionFileDownloadUrl,
+    getSubmissionResultsUrl,
 } from '../../utils/urls';
 import { IErrorDataType, useHttp } from '../use-http';
 import { usePages } from '../use-pages';
 
 import {
-    ISubmissionDetails,
     ISubmissionDetailsType,
-    ISubmissionDetailsWithResults,
+    ISubmissionResults,
     ISubmissionType,
     ITestRunType,
 } from './types';
+import { useProblemSubmissions } from './use-problem-submissions';
 
 interface ISubmissionsDetailsContext {
     state: {
         currentSubmission: ISubmissionDetailsType | null;
-        currentSubmissionDetailsResults: ISubmissionDetails[];
+        currentSubmissionResults: ISubmissionResults[];
         validationErrors: IErrorDataType[];
         downloadErrorMessage: string | null;
         isLoading: boolean;
     };
     actions: {
         selectSubmissionById: (submissionId: number | null) => void;
-        getDetails: (submissionId: number) => Promise<void>;
+        getResults: (submissionId: number, page: number) => void;
         downloadProblemSubmissionFile: (submissionId: number) => Promise<void>;
         setDownloadErrorMessage: (message: string | null) => void;
         setCurrentSubmission: (submission: ISubmissionDetailsType | null) => void;
-        setSubmissionDetailsResultsUrlParams: (params: IGetSubmissionDetailsByIdUrlParams) => void;
+        setSubmissionResultsUrlParams: (params: IGetSubmissionDetailsByIdUrlParams) => void;
     };
 }
 
 const defaultState = {
     state: {
-        currentSubmissionDetailsResults: [] as ISubmissionDetails[],
+        currentSubmissionResults: [] as ISubmissionResults[],
         validationErrors: [] as IErrorDataType[],
     },
 };
@@ -62,29 +65,39 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
     const [ downloadErrorMessage, setDownloadErrorMessage ] = useState<string | null>(null);
     const [ problemSubmissionFileIdToDownload, setProblemSubmissionFileIdToDownload ] = useState<number | null>(null);
 
-    const [
-        currentSubmissionDetailsResults,
-        setCurrentProblemSubmissionResults,
-    ] = useState(defaultState.state.currentSubmissionDetailsResults);
+    const [ currentSubmissionResults,
+        setCurrentSubmissionResults,
+    ] = useState(defaultState.state.currentSubmissionResults);
 
     const [
-        submissionDetailsResultsUrlParams,
-        setSubmissionDetailsResultsUrlParams,
+        submissionDetailsUrlParams,
+        setSubmissionDetailsUrlParams,
+    ] = useState<ISubmissionDetailsUrlParams | null>();
+
+    const [
+        submissionResultsUrlParams,
+        setSubmissionResultsUrlParams,
     ] = useState<IGetSubmissionDetailsByIdUrlParams | null>();
 
-    const {
-        state: { currentPage },
-        populatePageInformation,
-    } = usePages();
+    const { state: { problemSubmissionsPage } } = useProblemSubmissions();
+    const { populatePageInformation } = usePages();
 
     const {
         isLoading: submissionDetailsLoading,
-        get: getSubmissionDetailsResultsRequest,
-        data: apiSubmissionDetailsResults,
-        error: apiSubmissionDetailsResultsError,
-    } = useHttp<IGetSubmissionDetailsByIdUrlParams, ISubmissionDetailsWithResults>({
-        url: getSubmissionDetailsResultsUrl,
-        parameters: submissionDetailsResultsUrlParams,
+        get: getSubmissionDetailsRequest,
+        data: apiSubmissionDetailsData,
+        error: submissionDetailsError,
+    } = useHttp<ISubmissionDetailsUrlParams, ISubmissionDetailsType>({
+        url: getSubmissionDetailsUrl,
+        parameters: submissionDetailsUrlParams,
+    });
+
+    const {
+        get: getSubmissionsResultsRequest,
+        data: apiSubmissionsResultsData,
+    } = useHttp<IGetSubmissionDetailsByIdUrlParams, IPagedResultType<ISubmissionResults>>({
+        url: getSubmissionResultsUrl,
+        parameters: submissionResultsUrlParams,
     });
 
     const {
@@ -117,57 +130,83 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         saveAttachment();
     }, [ downloadSubmissionFileResponse, saveAttachment, downloadSubmissionFileError ]);
 
-    useEffect(() => {
-        if (isNil(problemSubmissionFileIdToDownload)) {
-            return;
-        }
-
-        (async () => {
-            setIsLoading(true);
-            await downloadSubmissionFile(FileType.Blob);
-            setIsLoading(false);
-        })();
-
-        setProblemSubmissionFileIdToDownload(null);
-    }, [ problemSubmissionFileIdToDownload, downloadSubmissionFile ]);
-
     useEffect(
         () => {
-            if (isNil(submissionDetailsResultsUrlParams)) {
+            if (isNil(problemSubmissionFileIdToDownload)) {
                 return;
             }
 
             (async () => {
                 setIsLoading(true);
-                await getSubmissionDetailsResultsRequest();
+                await downloadSubmissionFile(FileType.Blob);
                 setIsLoading(false);
             })();
+
+            setProblemSubmissionFileIdToDownload(null);
         },
-        [ getSubmissionDetailsResultsRequest, submissionDetailsResultsUrlParams ],
+        [ problemSubmissionFileIdToDownload, downloadSubmissionFile ],
     );
 
     useEffect(
         () => {
-            if (isNil(apiSubmissionDetailsResults)) {
+            if (isNil(submissionDetailsUrlParams)) {
                 return;
             }
 
-            if (!isNil(apiSubmissionDetailsResultsError)) {
-                setValidationErrors((validationErrorsArray) => [ ...validationErrorsArray, apiSubmissionDetailsResultsError ]);
+            (async () => {
+                setIsLoading(true);
+                await getSubmissionDetailsRequest();
+                setIsLoading(false);
+            })();
+        },
+        [ getSubmissionDetailsRequest, submissionDetailsUrlParams ],
+    );
+
+    useEffect(
+        () => {
+            if (isNil(submissionResultsUrlParams)) {
                 return;
             }
 
-            setCurrentSubmission(apiSubmissionDetailsResults.submissionDetails);
+            (async () => {
+                await getSubmissionsResultsRequest();
+            })();
+        },
+        [ getSubmissionsResultsRequest, submissionResultsUrlParams ],
+    );
 
-            const { submissionResults } = apiSubmissionDetailsResults;
-            const submissionDetailsResult = submissionResults.items as ISubmissionDetails[];
+    useEffect(
+        () => {
+            if (isNil(apiSubmissionDetailsData)) {
+                return;
+            }
+
+            if (!isNil(submissionDetailsError)) {
+                setValidationErrors((validationErrorsArray) => [ ...validationErrorsArray, submissionDetailsError ]);
+                return;
+            }
+
+            setCurrentSubmission(apiSubmissionDetailsData);
+        },
+        [ apiSubmissionDetailsData, apiSubmissionsResultsData, submissionDetailsError ],
+    );
+
+    useEffect(
+        () => {
+            if (isNil(apiSubmissionsResultsData)) {
+                return;
+            }
+
+            const newSubmissionsResultsData = apiSubmissionsResultsData as IPagedResultType<ISubmissionResults>;
+
+            const submissionDetailsResult = newSubmissionsResultsData.items as ISubmissionResults[];
 
             const {
                 pageNumber,
                 itemsPerPage,
                 pagesCount,
                 totalItemsCount,
-            } = submissionResults || {};
+            } = newSubmissionsResultsData || {};
 
             const newPagesInfo = {
                 pageNumber,
@@ -177,26 +216,30 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             };
 
             populatePageInformation(newPagesInfo);
-            setCurrentProblemSubmissionResults(submissionDetailsResult);
+            setCurrentSubmissionResults(submissionDetailsResult);
         },
-        [ apiSubmissionDetailsResults, apiSubmissionDetailsResultsError, populatePageInformation ],
+        [ apiSubmissionsResultsData, populatePageInformation ],
     );
 
     const getDetails = useCallback(
         async (submissionId: number) => {
-            setSubmissionDetailsResultsUrlParams({
+            setSubmissionDetailsUrlParams({ submissionId });
+        },
+        [],
+    );
+
+    const getResults = useCallback(
+        (submissionId: number, page: number) => {
+            setSubmissionResultsUrlParams({
                 submissionId,
-                page: currentPage,
+                page,
             });
         },
-        [ currentPage ],
+        [],
     );
 
     useEffect(
         () => {
-            if (isNil(currentSubmissionId)) {
-                return;
-            }
             if (isNil(currentSubmissionId) || Number.isNaN(currentSubmissionId)) {
                 return;
             }
@@ -207,11 +250,22 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         [ currentSubmissionId, getDetails ],
     );
 
+    useEffect(
+        () => {
+            if (isNil(currentSubmissionId) || Number.isNaN(currentSubmissionId) || !isNil(submissionResultsUrlParams)) {
+                return;
+            }
+
+            getResults(currentSubmissionId, problemSubmissionsPage);
+        },
+        [ currentSubmissionId, getResults, problemSubmissionsPage, submissionResultsUrlParams ],
+    );
+
     const value = useMemo(
         () => ({
             state: {
                 currentSubmission,
-                currentSubmissionDetailsResults,
+                currentSubmissionResults,
                 submissionDetailsLoading,
                 validationErrors,
                 downloadErrorMessage,
@@ -219,18 +273,17 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             },
             actions: {
                 selectSubmissionById,
-                getDetails,
+                getResults,
                 downloadProblemSubmissionFile,
                 setDownloadErrorMessage,
                 setCurrentSubmission,
-                getSubmissionDetailsResultsRequest,
-                setSubmissionDetailsResultsUrlParams,
+                setSubmissionResultsUrlParams,
             },
         }),
         [
-            currentSubmissionDetailsResults,
+            currentSubmissionResults,
             currentSubmission,
-            getDetails,
+            getResults,
             validationErrors,
             downloadProblemSubmissionFile,
             downloadErrorMessage,
@@ -238,8 +291,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             setCurrentSubmission,
             isLoading,
             submissionDetailsLoading,
-            getSubmissionDetailsResultsRequest,
-            setSubmissionDetailsResultsUrlParams,
+            setSubmissionResultsUrlParams,
         ],
     );
 

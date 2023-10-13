@@ -1,9 +1,10 @@
-﻿namespace OJS.Servers.Ui.Models.Submissions.Results;
+﻿namespace OJS.Servers.Ui.Models.Submissions.Details;
 
+using System;
 using OJS.Services.Ui.Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Models;
-using System;
-public class SubmissionViewInResultsResponseModel : IMapFrom<SubmissionViewInResultsPageModel>
+
+public class SubmissionResultsResponseModel : IMapFrom<SubmissionResultsServiceModel>
 {
     public int Id { get; set; }
 

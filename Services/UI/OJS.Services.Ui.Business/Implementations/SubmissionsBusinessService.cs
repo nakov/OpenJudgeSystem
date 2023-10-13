@@ -9,7 +9,6 @@ using OJS.Data.Models.Contests;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
 using OJS.Services.Common.Data;
-using OJS.Services.Common.Models.Users;
 using OJS.Services.Ui.Business.Validations.Implementations.Submissions;
 using Infrastructure.Exceptions;
 using Data;
@@ -189,17 +188,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         };
     }
 
-    public async Task<SubmissionDetailsWithResultsModel> GetSubmissionDetailsWithResults(int submissionId, int page)
-    {
-        var responseModel = new SubmissionDetailsWithResultsModel();
-        responseModel.SubmissionDetails = await this.GetDetailsById(submissionId);
-        responseModel.SubmissionResults = await this.GetSubmissionDetailsResults(
-                submissionId,
-                responseModel.SubmissionDetails.IsOfficial,
-                page);
-        return responseModel;
-    }
-
     public Task<IQueryable<Submission>> GetAllForArchiving()
     {
         var archiveBestSubmissionsLimit = DateTime.Now.AddYears(
@@ -338,7 +326,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         return data;
     }
 
-    public async Task<PagedResult<SubmissionViewInResultsPageModel>> GetSubmissionResultsByProblem(
+    public async Task<PagedResult<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(
         int problemId,
         bool isOfficial,
         int page)
@@ -353,27 +341,15 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                     problem.ProblemGroup.ContestId, user.Id!, isOfficial)
                 .Map<ParticipantSubmissionResultsServiceModel>();
 
-        this.ValidateCanViewSubmissionResults(isOfficial, user, problem, participant);
+        var validationResult =
+            this.submissionResultsValidationService.GetValidationResult((user, problem, participant, isOfficial));
 
-        return await this.GetUserSubmissions<SubmissionViewInResultsPageModel>(problem.Id, participant.Id, page);
-    }
+        if (!validationResult.IsValid)
+        {
+            throw new BusinessServiceException(validationResult.Message);
+        }
 
-    public async Task<PagedResult<SubmissionViewInResultsPageModel>> GetSubmissionDetailsResults(
-        int submissionId,
-        bool isOfficial,
-        int page)
-    {
-        var problem =
-            await this.submissionsData.GetProblemBySubmission<ProblemForSubmissionDetailsServiceModel>(submissionId);
-        var user = this.userProviderService.GetCurrentUser();
-
-        var participant =
-            await this.submissionsData.GetParticipantBySubmission<ParticipantSubmissionResultsServiceModel>(
-                submissionId);
-
-        this.ValidateCanViewSubmissionResults(isOfficial, user, problem, participant);
-
-        return await this.GetUserSubmissions<SubmissionViewInResultsPageModel>(problem.Id, participant.Id, page);
+        return await this.GetUserSubmissions<SubmissionResultsServiceModel>(problem.Id, participant.Id, page);
     }
 
     public async Task Submit(SubmitSubmissionServiceModel model)
@@ -520,6 +496,21 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         scope.Complete();
         scope.Dispose();
+    }
+
+    public async Task<PagedResult<SubmissionResultsServiceModel>> GetSubmissionResults(int submissionId, int page)
+    {
+        var problemId = await this.submissionsData.GetProblemIdBySubmission(submissionId);
+
+        var participantId =
+            await this.submissionsData.GetParticipantIdBySubmission(submissionId);
+
+        if (problemId == 0 || participantId == 0)
+        {
+            return new PagedResult<SubmissionResultsServiceModel>();
+        }
+
+        return await this.GetUserSubmissions<SubmissionResultsServiceModel>(problemId, participantId, page);
     }
 
     public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPublicSubmissions(
@@ -712,20 +703,5 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         return await userSubmissions
             .MapCollection<T>()
             .ToPagedResultAsync(DefaultSubmissionResultsPerPage, page);
-    }
-
-    private void ValidateCanViewSubmissionResults(
-        bool isOfficial,
-        UserInfoModel user,
-        ProblemForSubmissionDetailsServiceModel? problem,
-        ParticipantSubmissionResultsServiceModel? participant)
-    {
-        var validationResult =
-            this.submissionResultsValidationService.GetValidationResult((user, problem, participant, isOfficial));
-
-        if (!validationResult.IsValid)
-        {
-            throw new BusinessServiceException(validationResult.Message);
-        }
     }
 }

@@ -1,4 +1,4 @@
-import { IPagedResultType, ISubmissionTypeType } from '../../common/types';
+import { ISubmissionTypeType } from '../../common/types';
 import { IUserProfileType } from '../use-users';
 
 interface IProblemType {
@@ -9,10 +9,6 @@ interface IProblemType {
     contestId:number;
 }
 
-interface ISubmissionDetailsWithResults {
-    submissionDetails: ISubmissionDetailsType;
-    submissionResults: IPagedResultType<ISubmissionDetails>;
-}
 interface ITestRunType {
     id: number;
     timeUsed: number;
@@ -60,7 +56,7 @@ interface ISubmissionDetailsType extends ISubmissionType {
     totalTests : number;
 }
 
-interface ISubmissionDetails {
+interface ISubmissionResults {
     id: number;
     submissionType: string;
     points: number;
@@ -114,11 +110,10 @@ export type {
     ISubmissionType,
     ITestRunDetailsType,
     ISubmissionDetailsType,
-    ISubmissionDetails,
+    ISubmissionResults,
     ITestRunDetailsCollapsed,
     ISubmissionResultsDetails,
     IUserAuthData,
     ITestCaseRun,
     IUserRole,
-    ISubmissionDetailsWithResults,
 };

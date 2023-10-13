@@ -18,30 +18,28 @@ const ProblemSubmissions = () => {
     const {
         state: {
             submissions,
+            problemSubmissionsPage,
             problemSubmissionsError,
         },
-        actions: { loadSubmissions },
+        actions: {
+            loadSubmissions,
+            changeProblemSubmissionsPage,
+        },
     } = useProblemSubmissions();
 
     const { actions: { loadParticipantScores } } = useCurrentContest();
     const { state: { currentProblem } } = useProblems();
-    const {
-        state: {
-            currentPage,
-            pagesInfo,
-        },
-        changePage,
-    } = usePages();
+    const { state: { pagesInfo } } = usePages();
 
     const reload = useCallback(
         async () => {
             if (!isNil(currentProblem)) {
                 const { id } = currentProblem;
-                await loadSubmissions(id);
-                await loadParticipantScores();
+                loadSubmissions(id, problemSubmissionsPage);
+                loadParticipantScores();
             }
         },
-        [ loadParticipantScores, loadSubmissions, currentProblem ],
+        [ loadParticipantScores, loadSubmissions, currentProblem, problemSubmissionsPage ],
     );
 
     const handleRefreshClick = useCallback(
@@ -52,8 +50,12 @@ const ProblemSubmissions = () => {
     );
 
     const handlePageChange = useCallback(
-        (page: number) => changePage(page),
-        [ changePage ],
+        (page: number) => {
+            changeProblemSubmissionsPage(page);
+
+            loadSubmissions(currentProblem!.id, page);
+        },
+        [ changeProblemSubmissionsPage, currentProblem, loadSubmissions ],
     );
 
     const refreshButtonClass = 'refreshButton';
@@ -103,13 +105,13 @@ const ProblemSubmissions = () => {
                     />
                     <PaginationControls
                       count={pagesCount}
-                      page={currentPage}
+                      page={problemSubmissionsPage}
                       onChange={handlePageChange}
                     />
                 </>
             );
         },
-        [ currentPage, handlePageChange, pagesInfo, submissions ],
+        [ problemSubmissionsPage, handlePageChange, pagesInfo, submissions ],
     );
 
     const renderProblemSubmissions = useCallback(

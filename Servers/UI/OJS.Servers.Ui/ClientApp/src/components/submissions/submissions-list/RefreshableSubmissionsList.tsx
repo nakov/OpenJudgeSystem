@@ -16,7 +16,7 @@ const RefreshableSubmissionsList = ({
 }: IRefreshableSubmissionsListProps) => {
     const {
         state: { currentSubmission },
-        actions: { setSubmissionDetailsResultsUrlParams },
+        actions: { setSubmissionResultsUrlParams },
     } = useSubmissionsDetails();
     const { state: { currentPage } } = usePages();
 
@@ -31,12 +31,12 @@ const RefreshableSubmissionsList = ({
             // eslint-disable-next-line prefer-destructuring
             const submissionId = currentSubmission.id;
 
-            setSubmissionDetailsResultsUrlParams({
+            setSubmissionResultsUrlParams({
                 submissionId,
                 page: currentPage,
             });
         },
-        [ currentPage, currentSubmission, setSubmissionDetailsResultsUrlParams ],
+        [ currentPage, currentSubmission, setSubmissionResultsUrlParams ],
     );
 
     return (

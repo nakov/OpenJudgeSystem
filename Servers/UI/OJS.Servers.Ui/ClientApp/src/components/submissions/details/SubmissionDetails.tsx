@@ -1,16 +1,15 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import first from 'lodash/first';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../common/contest-helpers';
-import { PageParams } from '../../../common/pages-types';
-import { useHashUrlParams } from '../../../hooks/common/use-hash-url-params';
+import { useProblemSubmissions } from '../../../hooks/submissions/use-problem-submissions';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import { useAuth } from '../../../hooks/use-auth';
 import { usePageTitles } from '../../../hooks/use-page-titles';
 import { usePages } from '../../../hooks/use-pages';
+import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
 import { preciseFormatDate } from '../../../utils/dates';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
@@ -35,31 +34,29 @@ const SubmissionDetails = () => {
         state: {
             isLoading,
             currentSubmission,
-            currentSubmissionDetailsResults,
+            currentSubmissionResults,
             validationErrors,
             downloadErrorMessage,
         },
         actions: {
+            getResults,
             downloadProblemSubmissionFile,
             setDownloadErrorMessage,
             setCurrentSubmission,
             selectSubmissionById,
-            setSubmissionDetailsResultsUrlParams,
+            setSubmissionResultsUrlParams,
         },
     } = useSubmissionsDetails();
+    const {
+        state: { problemSubmissionsPage },
+        actions: { changeProblemSubmissionsPage },
+    } = useProblemSubmissions();
+    const { actions: { initiateRedirectionToProblem } } = useProblems();
     const { actions: { setPageTitle } } = usePageTitles();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
 
     const { state: { user } } = useAuth();
-    const { state: { hashParam } } = useHashUrlParams();
-    const navigate = useNavigate();
-    const {
-        state: {
-            currentPage,
-            pagesInfo,
-        },
-        changePage,
-    } = usePages();
+    const { state: { pagesInfo } } = usePages();
 
     const renderDownloadErrorMessage = useCallback(() => {
         if (isNil(downloadErrorMessage)) {
@@ -157,20 +154,25 @@ const SubmissionDetails = () => {
                 return;
             }
 
-            // eslint-disable-next-line prefer-destructuring
-            const submissionId = currentSubmission.id;
+            const { id: submissionId } = currentSubmission;
 
-            setSubmissionDetailsResultsUrlParams({
+            setSubmissionResultsUrlParams({
                 submissionId,
-                page: currentPage,
+                page: problemSubmissionsPage,
             });
         },
-        [ currentPage, currentSubmission, setSubmissionDetailsResultsUrlParams ],
+        [ problemSubmissionsPage, currentSubmission, setSubmissionResultsUrlParams ],
     );
 
     const handlePageChange = useCallback(
-        (page: number) => changePage(page),
-        [ changePage ],
+        (page: number) => {
+            changeProblemSubmissionsPage(page);
+
+            const { id } = currentSubmission!;
+
+            getResults(id, page);
+        },
+        [ changeProblemSubmissionsPage, currentSubmission, getResults ],
     );
 
     const renderRetestButton = useCallback(
@@ -289,39 +291,40 @@ const SubmissionDetails = () => {
                     <Heading type={HeadingType.secondary}>Submissions</Heading>
                 </div>
                 <SubmissionsList
-                  items={currentSubmissionDetailsResults}
+                  items={currentSubmissionResults}
                   selectedSubmission={currentSubmission}
                   className={styles.submissionsList}
                 />
                 <PaginationControls
                   count={pagesCount}
-                  page={currentPage}
+                  page={problemSubmissionsPage}
                   onChange={handlePageChange}
                 />
                 { renderButtonsSection() }
                 { renderSubmissionInfo() }
             </div>
         ),
-        [ currentSubmissionDetailsResults, currentSubmission, pagesCount,
-            currentPage, handlePageChange, renderButtonsSection, renderSubmissionInfo ],
+        [ currentSubmissionResults, currentSubmission, pagesCount,
+            problemSubmissionsPage, handlePageChange, renderButtonsSection, renderSubmissionInfo ],
     );
 
     const setSubmissionAndStartParticipation = useCallback(
         (contestId: number) => {
-            // eslint-disable-next-line prefer-destructuring
             const participationType = contestParticipationType(currentSubmission!.isOfficial);
 
-            navigate({
-                pathname: getParticipateInContestUrl({ id: contestId, participationType }),
-                search: isNil(currentPage)
-                    ? ''
-                    : `${PageParams.page}=${currentPage}`,
-                hash: hashParam,
+            const participateInContestUrl = getParticipateInContestUrl({
+                id: contestId,
+                participationType,
             });
+
+            const { problem: { id: problemId } } = currentSubmission!;
+
+            initiateRedirectionToProblem(problemId, participateInContestUrl);
+
             setCurrentSubmission(null);
             selectSubmissionById(null);
         },
-        [ currentPage, currentSubmission, hashParam, navigate, selectSubmissionById, setCurrentSubmission ],
+        [ currentSubmission, selectSubmissionById, setCurrentSubmission, initiateRedirectionToProblem ],
     );
 
     const codeEditor = useCallback(
