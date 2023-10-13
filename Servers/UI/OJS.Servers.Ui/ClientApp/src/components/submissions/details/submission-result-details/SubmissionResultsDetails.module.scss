@@ -1,5 +1,10 @@
 ﻿@use 'src/styles/colors';
 @use 'src/styles/fonts';
+@use 'src/styles/variables';
+
+.test {
+  font-size: variables.$f-size-16;
+}
 
 .submissionResultDetailsWrapper {
   align-items: center;

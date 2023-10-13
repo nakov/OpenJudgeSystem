@@ -63,6 +63,19 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
               }}
             >
                 {testRunText}
+                <div>
+                    <span>
+                        Run
+                        #
+                        {testRun.id}
+                    </span>
+                    <br />
+                    <span>
+                        Test
+                        #
+                        {testRun.testId}
+                    </span>
+                </div>
             </h2>
         );
     };
