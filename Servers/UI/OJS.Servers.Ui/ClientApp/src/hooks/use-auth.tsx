@@ -48,8 +48,8 @@ const AuthContext = createContext<IAuthContext>({} as IAuthContext);
 type IAuthProviderProps = IHaveChildrenProps
 
 enum UserRoles {
-    Lecturer,
-    Administrator
+    Lecturer = 'Lecturer',
+    Administrator = 'Administrator'
 }
 
 interface ILoginDetailsType {
@@ -118,12 +118,12 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
         const isAdmin = isEmpty(authInfoResponse.roles)
             ? false
             : !isNil(authInfoResponse?.roles
-                .find((role) => role.name.toLowerCase() === UserRoles.Administrator.toString().toLowerCase()));
+                .find((role) => role.name.toLowerCase() === UserRoles.Administrator.toLowerCase()));
 
         const isLecturer = isEmpty(authInfoResponse.roles)
             ? false
             : !isNil(authInfoResponse?.roles
-                .find((role) => role.name.toLowerCase() === UserRoles.Lecturer.toString().toLowerCase()));
+                .find((role) => role.name.toLowerCase() === UserRoles.Lecturer.toLowerCase()));
 
         const isInRole = !isEmpty(authInfoResponse.roles);
 
