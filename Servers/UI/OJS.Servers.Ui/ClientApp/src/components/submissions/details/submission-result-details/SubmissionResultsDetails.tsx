@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import {
     ISubmissionResultsDetails,
@@ -79,6 +79,25 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
             </h2>
         );
     };
+
+    const renderTestIds = useMemo(
+        (testRun: ITestCaseRun) => (
+            <div>
+                <span>
+                    Run
+                    #
+                    {testRun.id}
+                </span>
+                <br />
+                <span>
+                    Test
+                    #
+                    {testRun.testId}
+                </span>
+            </div>
+        ),
+        [],
+    );
 
     const renderShowInputButton = useCallback((id: number, isExpanded: boolean) => (
         <Button
