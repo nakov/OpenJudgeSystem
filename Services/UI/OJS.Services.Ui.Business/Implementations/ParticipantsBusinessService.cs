@@ -63,14 +63,10 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
                 AssignRandomProblemsToParticipant(participant, contest);
             }
         }
-        else if (isOfficial && contest.IsOnsiteExam)
-        {
-            participant.ParticipationStartTime = utcNow;
-            participant.ParticipationEndTime = contest.EndTime;
-        }
 
         await this.participantsData.Add(participant);
         await this.participantsData.SaveChanges();
+
         return participant;
     }
 

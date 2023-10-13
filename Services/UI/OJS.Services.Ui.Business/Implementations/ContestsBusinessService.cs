@@ -119,11 +119,8 @@ namespace OJS.Services.Ui.Business.Implementations
                 .Select(x => new ContestDetailsSubmissionTypeServiceModel { Id = x.SubmissionTypeId, Name = x.SubmissionType.Name })
                 .ToList();
 
-            var competeContestParticipantsCount = await this.contestParticipantsCacheService.GetCompeteContestParticipantsCount(id);
-            var practiceContestParticipantsCount = await this.contestParticipantsCacheService.GetPracticeContestParticipantsCount(id);
-
-            contestDetailsServiceModel.ParticipantsCountByContestType = contest.CanBeCompeted ? competeContestParticipantsCount : practiceContestParticipantsCount;
-            contestDetailsServiceModel.TotalContestParticipantsCount = competeContestParticipantsCount + practiceContestParticipantsCount;
+            contestDetailsServiceModel.CompeteParticipantsCount = await this.contestParticipantsCacheService.GetCompeteContestParticipantsCount(id);
+            contestDetailsServiceModel.PracticeParticipantsCount = await this.contestParticipantsCacheService.GetPracticeContestParticipantsCount(id);
 
             return contestDetailsServiceModel;
         }
