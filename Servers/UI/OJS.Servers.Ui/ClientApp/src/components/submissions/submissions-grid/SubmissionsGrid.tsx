@@ -10,7 +10,7 @@ import { useAuth } from '../../../hooks/use-auth';
 import { usePages } from '../../../hooks/use-pages';
 import { format } from '../../../utils/number-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import Button from '../../guidelines/buttons/Button';
+import Button, { ButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List from '../../guidelines/lists/List';
 import PaginationControls from '../../guidelines/pagination/PaginationControls';
@@ -308,17 +308,17 @@ const SubmissionsGrid = () => {
     const renderToggleButton = useCallback(() => (
         <div className={styles.toggleButtonWrapper}>
             <Button
-              internalClassName={`${activeToggleElement === toggleValues.allSubmissions
-                  ? styles.activeElement
-                  : styles.unActiveElement}`}
+              type={activeToggleElement === toggleValues.allSubmissions
+                  ? ButtonType.toggled
+                  : ButtonType.untoggled}
               onClick={(e) => handleToggleClick(e)}
             >
                 ALL SUBMISSIONS
             </Button>
             <Button
-              internalClassName={`${activeToggleElement === toggleValues.mySubmissions
-                  ? styles.activeElement
-                  : styles.unActiveElement}`}
+              type={activeToggleElement === toggleValues.mySubmissions
+                  ? ButtonType.toggled
+                  : ButtonType.untoggled}
               onClick={(e) => handleToggleClick(e)}
             >
                 MY SUBMISSIONS

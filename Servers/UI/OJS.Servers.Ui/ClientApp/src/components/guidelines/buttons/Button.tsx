@@ -20,6 +20,8 @@ enum ButtonType {
     plain = 3,
     image = 4,
     submit = 5,
+    toggled = 6,
+    untoggled = 7,
 }
 
 enum LinkButtonType {
@@ -64,6 +66,8 @@ const classNameToButonType = {
     [ButtonType.secondary]: styles.secondary,
     [ButtonType.plain]: styles.plain,
     [ButtonType.image]: styles.image,
+    [ButtonType.toggled]: styles.toggled,
+    [ButtonType.untoggled]: styles.untoggled,
 };
 
 const classNameToLinkButonType = {
