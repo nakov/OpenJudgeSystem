@@ -75,6 +75,7 @@ const ContestsPage = () => {
     const areQueryParamsValid = useCallback(
         () => {
             const queryParamsArray = Object.values(params).flat();
+
             const { length: initialQueryParamsCount } = Object.values(params).flat();
 
             const resultQueryParamsArray = queryParamsArray.filter((y) => {
@@ -83,8 +84,11 @@ const ContestsPage = () => {
 
                 if (isNil(filter) ||
                     (filter === FilterType.Status &&
-                        (filterValue !== toLowerCase(ContestStatus.All) && filterValue !== toLowerCase(ContestStatus.Active) &&
-                            filterValue !== toLowerCase(ContestStatus.Past)))) {
+                        (filterValue !== toLowerCase(ContestStatus.All) &&
+                            filterValue !== toLowerCase(ContestStatus.Active) &&
+                            filterValue !== toLowerCase(ContestStatus.Past) &&
+                            filterValue !== toLowerCase(ContestStatus.Upcoming) &&
+                            (filterValue !== toLowerCase(ContestStatus.Practice))))) {
                     return false;
                 }
 

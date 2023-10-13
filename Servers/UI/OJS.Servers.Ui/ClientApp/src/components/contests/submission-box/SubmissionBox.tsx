@@ -34,6 +34,7 @@ const SubmissionBox = () => {
             selectedSubmissionType,
             problemSubmissionCode,
             problemSubmissionErrors,
+            alertBoxErrorIsClosed,
         },
         actions: {
             submit,
@@ -47,7 +48,19 @@ const SubmissionBox = () => {
     const { state: { currentProblem } } = useProblems();
     const { allowedSubmissionTypes } = currentProblem || {};
 
-    const showSubmissionLimitTimer = useMemo(() => submitLimit > 0, [ submitLimit ]);
+    const showSubmissionLimitTimer = useMemo(
+        () => {
+            const { id: problemId } = currentProblem || {};
+            if (isNil(problemId)) {
+                return false;
+            }
+
+            const { [problemId.toString()]: error } = problemSubmissionErrors;
+
+            return isNil(error) && submitLimit > 0 && !alertBoxErrorIsClosed;
+        },
+        [ submitLimit, currentProblem, problemSubmissionErrors, alertBoxErrorIsClosed ],
+    );
 
     const handleCodeChanged = useCallback(
         (newValue: string | File) => {
@@ -129,11 +142,21 @@ const SubmissionBox = () => {
                 return;
             }
 
-            removeProblemSubmissionCode(problemId);
+            const { [problemId.toString()]: error } = problemSubmissionErrors;
 
-            restartSubmissionTimeLimitCountdown();
+            removeProblemSubmissionCode(problemId);
+            if (isNil(error)) {
+                restartSubmissionTimeLimitCountdown();
+            }
         },
-        [ submit, currentProblem, problemSubmissionCode, removeProblemSubmissionCode, restartSubmissionTimeLimitCountdown ],
+        [
+            submit,
+            currentProblem,
+            problemSubmissionCode,
+            removeProblemSubmissionCode,
+            restartSubmissionTimeLimitCountdown,
+            problemSubmissionErrors,
+        ],
     );
 
     const renderSubmissionLimitCountdown = useCallback((remainingTime: ICountdownRemainingType) => {

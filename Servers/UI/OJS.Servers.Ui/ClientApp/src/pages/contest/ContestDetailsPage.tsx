@@ -47,16 +47,13 @@ const ContestDetailsPage = () => {
     const { actions: { setPageTitle } } = usePageTitles();
     const navigate = useNavigate();
 
-    const contestTitle = useMemo(
-        () => `${contestDetails?.name}`,
-        [ contestDetails?.name ],
-    );
-
     useEffect(
         () => {
-            setPageTitle(contestTitle);
+            if (contestDetails) {
+                setPageTitle(contestDetails.name);
+            }
         },
-        [ contestTitle, setPageTitle ],
+        [ contestDetails, setPageTitle ],
     );
 
     const { contestId, participationType } = params;
@@ -69,13 +66,6 @@ const ContestDetailsPage = () => {
     const isOfficial = useMemo(
         () => participationType === ContestParticipationType.Compete,
         [ participationType ],
-    );
-
-    const participantsCountByContestType = useMemo(
-        () => isOfficial
-            ? `Compete participants: ${contestDetails?.participantsCountByContestType}`
-            : `Practice participants: ${contestDetails?.participantsCountByContestType}`,
-        [ isOfficial, contestDetails?.participantsCountByContestType ],
     );
 
     const {
@@ -300,10 +290,12 @@ const ContestDetailsPage = () => {
                             <div>
                                 Contest participants:
                                 {' '}
-                                {contestDetails?.totalContestParticipantsCount}
+                                {contestDetails?.competeParticipantsCount}
                             </div>
                             <div>
-                                {participantsCountByContestType}
+                                Practice participants:
+                                {' '}
+                                {contestDetails?.practiceParticipantsCount}
                             </div>
                         </div>
                         {renderTasksList(problems)}
@@ -314,7 +306,7 @@ const ContestDetailsPage = () => {
                 </div>
             );
         },
-        [ renderTasksList, contestDetails, renderContestButtons, renderAllowedSubmissionTypes, participantsCountByContestType ],
+        [ renderTasksList, contestDetails, renderContestButtons, renderAllowedSubmissionTypes ],
     );
 
     const renderErrorHeading = useCallback(
