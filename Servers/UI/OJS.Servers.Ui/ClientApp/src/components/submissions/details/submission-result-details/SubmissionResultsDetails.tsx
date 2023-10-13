@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import {
     ISubmissionResultsDetails,
@@ -63,40 +63,24 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
               }}
             >
                 {testRunText}
-                <div>
-                    <span>
-                        Run
-                        #
-                        {testRun.id}
-                    </span>
-                    <br />
-                    <span>
-                        Test
-                        #
-                        {testRun.testId}
-                    </span>
-                </div>
             </h2>
         );
     };
 
-    const renderTestIds = useMemo(
-        (testRun: ITestCaseRun) => (
-            <div>
-                <span>
-                    Run
-                    #
-                    {testRun.id}
-                </span>
-                <br />
-                <span>
-                    Test
-                    #
-                    {testRun.testId}
-                </span>
-            </div>
-        ),
-        [],
+    const renderTestIds = (testRun: ITestCaseRun) => (
+        <div className={styles.testIds}>
+            <span className={styles.testRunIdColor}>
+                Run
+                #
+                {testRun.id}
+            </span>
+            <br />
+            <span className={styles.testIdColor}>
+                Test
+                #
+                {testRun.testId}
+            </span>
+        </div>
     );
 
     const renderShowInputButton = useCallback((id: number, isExpanded: boolean) => (
@@ -193,7 +177,10 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
         <div className={styles.submissionResultDetailsWrapper}>
             {testRuns?.map((test: ITestCaseRun, idx: number) => (
                 <div key={`test-run-details-${test.id}`} className={styles.submissionResultDetails}>
-                    {renderTestHeading(test, idx)}
+                    <div className={styles.testHeadingAndIds}>
+                        {renderTestHeading(test, idx)}
+                        {renderTestIds(test)}
+                    </div>
                     {renderTestData(test)}
                 </div>
             ))}
