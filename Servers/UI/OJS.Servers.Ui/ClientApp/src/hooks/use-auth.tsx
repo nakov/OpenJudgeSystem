@@ -38,12 +38,19 @@ const defaultState = {
         email: '',
         permissions: { canAccessAdministration: false } as IUserPermissionsType,
         isInRole: false,
+        isAdmin: false,
+        isLecturer: false,
     },
 };
 
 const AuthContext = createContext<IAuthContext>({} as IAuthContext);
 
 type IAuthProviderProps = IHaveChildrenProps
+
+enum UserRoles {
+    Lecturer,
+    Administrator
+}
 
 interface ILoginDetailsType {
     Username: string;
@@ -111,7 +118,12 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
         const isAdmin = isEmpty(authInfoResponse.roles)
             ? false
             : !isNil(authInfoResponse?.roles
-                .find((role) => role.name.toLowerCase() === 'administrator'));
+                .find((role) => role.name.toLowerCase() === UserRoles.Administrator.toString().toLowerCase()));
+
+        const isLecturer = isEmpty(authInfoResponse.roles)
+            ? false
+            : !isNil(authInfoResponse?.roles
+                .find((role) => role.name.toLowerCase() === UserRoles.Lecturer.toString().toLowerCase()));
 
         const isInRole = !isEmpty(authInfoResponse.roles);
 
@@ -121,6 +133,8 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
             email: authInfoResponse.email,
             permissions: { canAccessAdministration: isAdmin } as IUserPermissionsType,
             isInRole,
+            isAdmin,
+            isLecturer,
         } as IUserType;
     }, []);
 

@@ -17,6 +17,14 @@ const SubmissionsPage = () => {
 
     useEffect(
         () => {
+            if (!user.isAdmin) {
+                return;
+            }
+
+            (async () => {
+                await loadTotalUnprocessedSubmissionsCount();
+            })();
+
             if (totalSubmissionsCount !== 0) {
                 return;
             }
@@ -25,20 +33,7 @@ const SubmissionsPage = () => {
                 await loadTotalSubmissionsCount();
             })();
         },
-        [ loadTotalSubmissionsCount, totalSubmissionsCount ],
-    );
-
-    useEffect(
-        () => {
-            if (!user.isInRole) {
-                return;
-            }
-
-            (async () => {
-                await loadTotalUnprocessedSubmissionsCount();
-            })();
-        },
-        [ loadTotalUnprocessedSubmissionsCount, user.isInRole ],
+        [ loadTotalSubmissionsCount, loadTotalUnprocessedSubmissionsCount, totalSubmissionsCount, user.isAdmin ],
     );
 
     return (
