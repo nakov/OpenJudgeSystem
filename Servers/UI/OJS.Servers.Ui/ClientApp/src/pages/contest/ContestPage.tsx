@@ -160,13 +160,13 @@ const ContestPage = () => {
 
     useEffect(
         () => {
-            if (isEmpty(contestId)) {
+            if (isEmpty(contestId) || isNil(participationType)) {
                 return;
             }
 
             registerParticipant(internalContest);
         },
-        [ contestId, internalContest, registerParticipant ],
+        [ contestId, internalContest, registerParticipant, participationType ],
     );
 
     useEffect(
