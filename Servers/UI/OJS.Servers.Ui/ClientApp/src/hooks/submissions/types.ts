@@ -73,6 +73,7 @@ interface ISubmissionDetails {
     submissionType: string;
     compilerComment: string;
     testRuns: ITestRunDetailsType[];
+    testRunsCount: number;
 }
 
 interface ITestCaseRun {

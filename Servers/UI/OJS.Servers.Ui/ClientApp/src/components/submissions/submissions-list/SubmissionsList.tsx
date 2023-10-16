@@ -59,6 +59,7 @@ const SubmissionsList = ({
                 createdOn,
                 submissionType,
                 isOfficial,
+                testRunsCount,
             } = submission;
             const isSelectedSubmission = id === selectedSubmissionId;
             const selectedClassName = isSelectedSubmission
@@ -83,6 +84,7 @@ const SubmissionsList = ({
                           points={points}
                           maximumPoints={maximumPoints}
                           isProcessed={isProcessed}
+                          testRunsCount={testRunsCount}
                         />
                         <p className={styles.submissionCreatedOnParagraph}>{formatDate(createdOn)}</p>
                     </div>
@@ -95,7 +97,11 @@ const SubmissionsList = ({
                                 ? (
                                     <Text className={styles.isProcessingTypeText}>Not processed yet</Text>
                                 )
-                                : null}
+                                : testRunsCount === 0
+                                    ? (
+                                        <Text className={styles.isProcessingTypeText}>For retesting</Text>
+                                    )
+                                    : null}
                         </div>
                         <div className={styles.submissionDetailsButtonsWrapper}>
                             <Label type={LabelType.plain} text={typeLabelText} className={submissionsTypeLabelClassName} />

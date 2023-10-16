@@ -18,11 +18,14 @@ public class SubmissionViewInResultsPageModel : IMapExplicitly
 
     public bool IsProcessed { get; set; }
 
+    public int TestRunsCount { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Submission, SubmissionViewInResultsPageModel>()
             .ForMember(
                 sm => sm.SubmissionType,
                 opt => opt.MapFrom(s => s.SubmissionType!.Name))
             .ForMember(d => d.MaximumPoints, opt => opt.MapFrom(s => s.Problem!.MaximumPoints))
-            .ForMember(d => d.IsProcessed, opt => opt.MapFrom(s => s.Processed));
+            .ForMember(d => d.IsProcessed, opt => opt.MapFrom(s => s.Processed))
+            .ForMember(d => d.TestRunsCount, opt => opt.MapFrom(s => s.TestRuns.Count));
 }
