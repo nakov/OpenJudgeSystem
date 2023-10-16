@@ -122,7 +122,12 @@ namespace OJS.Services.Ui.Business.Implementations
             var competeContestParticipantsCount = await this.contestParticipantsCacheService.GetCompeteContestParticipantsCount(id);
             var practiceContestParticipantsCount = await this.contestParticipantsCacheService.GetPracticeContestParticipantsCount(id);
 
-            contestDetailsServiceModel.ParticipantsCountByContestType = contest.CanBeCompeted ? competeContestParticipantsCount : practiceContestParticipantsCount;
+            contestDetailsServiceModel.IsAdminOrLecturerInContest = userIsAdminOrLecturerInContest;
+
+            contestDetailsServiceModel.ParticipantsCountByContestType = contest.CanBeCompeted
+                ? competeContestParticipantsCount
+                : practiceContestParticipantsCount;
+
             contestDetailsServiceModel.TotalContestParticipantsCount = competeContestParticipantsCount + practiceContestParticipantsCount;
 
             return contestDetailsServiceModel;

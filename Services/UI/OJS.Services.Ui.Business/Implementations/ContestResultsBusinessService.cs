@@ -1,12 +1,10 @@
 namespace OJS.Services.Ui.Business.Implementations;
 
-using System.Linq;
 using System.Threading.Tasks;
 
 using Data;
 using Infrastructure.Exceptions;
 using OJS.Services.Common.Models.Contests.Results;
-
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 
 public class ContestResultsBusinessService : IContestResultsBusinessService
@@ -14,17 +12,20 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
     private readonly IContestResultsAggregatorService contestResultsAggregator;
     private readonly IContestsDataService contestsData;
     private readonly IContestResultsValidationService contestResultsValidation;
+    private readonly ILecturersInContestsBusinessService lecturersInContestsBusinessService;
     private readonly IUserProviderService userProvider;
 
     public ContestResultsBusinessService(
         IContestResultsAggregatorService contestResultsAggregator,
         IContestsDataService contestsData,
         IContestResultsValidationService contestResultsValidation,
+        ILecturersInContestsBusinessService lecturersInContestsBusinessService,
         IUserProviderService userProvider)
     {
         this.contestResultsAggregator = contestResultsAggregator;
         this.contestsData = contestsData;
         this.contestResultsValidation = contestResultsValidation;
+        this.lecturersInContestsBusinessService = lecturersInContestsBusinessService;
         this.userProvider = userProvider;
     }
 
@@ -44,25 +45,12 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        var user = this.userProvider.GetCurrentUser();
-
         var results = this.contestResultsAggregator.GetContestResults(
-            contest!,
+            contest,
             official,
-            user.IsAdminOrLecturer,
             full);
 
-        var userIsLecturerInContest = contest
-            .LecturersInContests
-            .FirstOrDefault(lc => lc.LecturerId == user.Id) != null;
-
-        var userIsLecturerInCategory =
-            contest
-                .Category?
-                .LecturersInContestCategories
-                .FirstOrDefault(l => l.LecturerId == user.Id) != null;
-
-        results.UserHasContestRights = user.IsAdmin || (userIsLecturerInContest || userIsLecturerInCategory);
+        results.UserHasContestRights = this.lecturersInContestsBusinessService.IsUserAdminOrLecturerInContest(contest);
 
         return results;
     }
