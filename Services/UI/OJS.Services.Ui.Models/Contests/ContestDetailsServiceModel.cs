@@ -26,9 +26,9 @@ public class ContestDetailsServiceModel : IMapExplicitly, ICanBeCompetedAndPract
 
     public bool IsAdminOrLecturerInContest { get; set; }
 
-    public int TotalContestParticipantsCount { get; set; }
+    public int CompeteParticipantsCount { get; set; }
 
-    public int ParticipantsCountByContestType { get; set; }
+    public int PracticeParticipantsCount { get; set; }
 
     public ICollection<ContestDetailsSubmissionTypeServiceModel> AllowedSubmissionTypes { get; set; } =
         new HashSet<ContestDetailsSubmissionTypeServiceModel>();
@@ -47,8 +47,8 @@ public class ContestDetailsServiceModel : IMapExplicitly, ICanBeCompetedAndPract
             .ForMember(d => d.IsAdminOrLecturerInContest, opt => opt.Ignore())
             .ForMember(d => d.CanViewResults, opt => opt.Ignore())
             .ForMember(d => d.AllowedSubmissionTypes, opt => opt.Ignore())
-            .ForMember(d => d.TotalContestParticipantsCount, opt => opt.Ignore())
+            .ForMember(d => d.CompeteParticipantsCount, opt => opt.Ignore())
+            .ForMember(d => d.PracticeParticipantsCount, opt => opt.Ignore())
             .ForMember(d => d.CanBeCompeted, opt => opt.Ignore())
-            .ForMember(d => d.CanBePracticed, opt => opt.Ignore())
-            .ForMember(d => d.ParticipantsCountByContestType, opt => opt.Ignore());
+            .ForMember(d => d.CanBePracticed, opt => opt.Ignore());
 }

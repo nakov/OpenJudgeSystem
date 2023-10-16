@@ -1,10 +1,8 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
-import Typography from '@mui/material/Typography';
 
-import { IContestModal } from '../../common/types';
+import { IContestModalInfoType } from '../../common/types';
 import { useCurrentContest } from '../../hooks/use-current-contest';
 import { getHomePageUrl } from '../../utils/urls';
 import Button, { ButtonSize, ButtonType } from '../guidelines/buttons/Button';
@@ -12,30 +10,40 @@ import Button, { ButtonSize, ButtonType } from '../guidelines/buttons/Button';
 import styles from './ContestModal.module.scss';
 
 interface IContestModalProps {
-    contest: IContestModal;
-    isShowing: boolean;
-    toggle: () => void;
+    contest: IContestModalInfoType;
+    showModal: boolean;
 }
 
-const ContestModal = ({ contest, isShowing, toggle }: IContestModalProps) => {
+const defaultState = { state: { isShowing: false } };
+
+const ContestModal = ({ contest, showModal }: IContestModalProps) => {
+    const [ isShowing, setIsShowing ] = useState<boolean>(defaultState.state.isShowing);
     const navigate = useNavigate();
-    const { actions: { setIsUserParticipant } } = useCurrentContest();
+    const { actions: { setUserHasConfirmedModal } } = useCurrentContest();
+
+    useEffect(
+        () => {
+            if (showModal) {
+                setIsShowing(true);
+            }
+        },
+        [ showModal ],
+    );
 
     const startContestAndHideModal = useCallback(
         () => {
-            setIsUserParticipant(true);
-
-            toggle();
+            setUserHasConfirmedModal(true);
+            setIsShowing(false);
         },
-        [ setIsUserParticipant, toggle ],
+        [ setUserHasConfirmedModal ],
     );
 
     const toggleAndRedirectToHomePage = useCallback(
         () => {
-            toggle();
+            setIsShowing(false);
             navigate(getHomePageUrl());
         },
-        [ toggle, navigate ],
+        [ navigate ],
     );
 
     return isShowing
@@ -45,11 +53,9 @@ const ContestModal = ({ contest, isShowing, toggle }: IContestModalProps) => {
                   open={isShowing}
                   sx={{ '& .MuiBackdrop-root': { backgroundColor: 'transparent' }, backdropFilter: 'blur(5px)' }}
                   onClose={() => toggleAndRedirectToHomePage()}
-                  aria-labelledby="modal-modal-title"
-                  aria-describedby="modal-modal-description"
                 >
-                    <Box className={styles.modal}>
-                        <Typography id="modal-modal-title" variant="h6" className={styles.modalHeading}>
+                    <div className={styles.modal}>
+                        <span className={styles.modalHeading}>
                             <p className={styles.headingText}>
                                 Starting now
                                 {' '}
@@ -68,8 +74,8 @@ const ContestModal = ({ contest, isShowing, toggle }: IContestModalProps) => {
                                 <span className={styles.boldedText}>{contest.name}</span>
                                 .
                             </p>
-                        </Typography>
-                        <Typography id="modal-modal-description">
+                        </span>
+                        <span className={styles.bodyTextSpacing}>
                             <span className={styles.bodyText}>
                                 Your time will start counting down when you press the &quot;Compete&quot; button.
                                 <br />
@@ -99,7 +105,7 @@ const ContestModal = ({ contest, isShowing, toggle }: IContestModalProps) => {
                                 <br />
                                 <span className={styles.questionText}>Are you sure you want to start the contest now?</span>
                             </span>
-                        </Typography>
+                        </span>
                         <div className={styles.horizontalLine} />
                         <span className={styles.buttons}>
                             <Button
@@ -116,7 +122,7 @@ const ContestModal = ({ contest, isShowing, toggle }: IContestModalProps) => {
                                 Cancel
                             </Button>
                         </span>
-                    </Box>
+                    </div>
                 </Modal>
             </div>
         )

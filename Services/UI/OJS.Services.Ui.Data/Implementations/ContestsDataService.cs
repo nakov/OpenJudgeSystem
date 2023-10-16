@@ -289,6 +289,9 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
         => c => c.StartTime <= this.dates.GetUtcNow()
                 && (!c.EndTime.HasValue || c.EndTime >= this.dates.GetUtcNow());
 
+    private Expression<Func<Contest, bool>> IsUpcoming()
+        => c => c.StartTime > this.dates.GetUtcNow();
+
     private Expression<Func<Contest, bool>> IsExpired()
         => c => c.StartTime <= this.dates.GetUtcNow()
                 && c.EndTime < this.dates.GetUtcNow();
@@ -303,15 +306,27 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
     {
         var active = statuses.Any(s => s == ContestStatus.Active);
         var past = statuses.Any(s => s == ContestStatus.Past);
+        var upcoming = statuses.Any(s => s == ContestStatus.Upcoming);
+        var practice = statuses.Any(s => s == ContestStatus.Practice);
 
-        if (active && !past)
+        if (active && !past && !upcoming && !practice)
         {
             return contests.Where(this.CanBeCompeted());
         }
 
-        if (!active && past)
+        if (past && !active && !upcoming && !practice)
         {
             return contests.Where(this.IsExpired());
+        }
+
+        if (upcoming && !active && !past && !practice)
+        {
+            return contests.Where(this.IsUpcoming());
+        }
+
+        if (practice && !active && !past && !upcoming)
+        {
+            return contests.Where(this.CanBePracticed());
         }
 
         if (active && past)

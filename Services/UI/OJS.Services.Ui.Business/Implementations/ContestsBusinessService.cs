@@ -39,6 +39,7 @@ namespace OJS.Services.Ui.Business.Implementations
         private readonly IContestValidationService contestValidationService;
         private readonly IContestParticipantsCacheService contestParticipantsCacheService;
         private readonly ILecturersInContestsBusinessService lecturersInContestsBusiness;
+        private readonly IContestDetailsValidationService contestDetailsValidationService;
 
         public ContestsBusinessService(
             IContestsDataService contestsData,
@@ -52,7 +53,8 @@ namespace OJS.Services.Ui.Business.Implementations
             IContestCategoriesCacheService contestCategoriesCache,
             IContestValidationService contestValidationService,
             IContestParticipantsCacheService contestParticipantsCacheService,
-            ILecturersInContestsBusinessService lecturersInContestsBusiness)
+            ILecturersInContestsBusinessService lecturersInContestsBusiness,
+            IContestDetailsValidationService contestDetailsValidationService)
         {
             this.contestsData = contestsData;
             this.activityService = activityService;
@@ -66,6 +68,7 @@ namespace OJS.Services.Ui.Business.Implementations
             this.contestValidationService = contestValidationService;
             this.contestParticipantsCacheService = contestParticipantsCacheService;
             this.lecturersInContestsBusiness = lecturersInContestsBusiness;
+            this.contestDetailsValidationService = contestDetailsValidationService;
         }
 
         public async Task<ContestDetailsServiceModel> GetContestDetails(int id)
@@ -73,21 +76,20 @@ namespace OJS.Services.Ui.Business.Implementations
             var user = this.userProviderService.GetCurrentUser();
             var contest = await this.contestsData.GetByIdWithProblems(id);
 
-            var contestActivityEntity = contest != null
-                ? await this.activityService
-                .GetContestActivity(contest!.Map<ContestForActivityServiceModel>())
-                : new ContestActivityServiceModel();
 
-            var validationResult = this.contestValidationService.GetValidationResult((
+            var validationResult = this.contestDetailsValidationService.GetValidationResult((
                 contest,
                 id,
-                user,
-                contestActivityEntity.CanBeCompeted) !);
-
+                user) !);
             if (!validationResult.IsValid)
             {
                 throw new BusinessServiceException(validationResult.Message);
             }
+
+            var contestActivityEntity = contest != null
+                ? await this.activityService
+                .GetContestActivity(contest!.Map<ContestForActivityServiceModel>())
+                : new ContestActivityServiceModel();
 
             var participant = await this.participantsData
                 .GetWithContestByContestByUserAndIsOfficial(
@@ -110,15 +112,15 @@ namespace OJS.Services.Ui.Business.Implementations
                 contestDetailsServiceModel.Problems = problemsForParticipant.Map<ICollection<ContestProblemServiceModel>>();
             }
 
-            var canShowProblemsInPractice = !contest!.HasPracticePassword || userIsAdminOrLecturerInContest;
-            var canShowProblemsInCompete = (!contest.HasContestPassword && !contestActivityEntity.IsActive && !contest.IsOnlineExam) || userIsAdminOrLecturerInContest;
+            var canShowProblemsInPractice = (!contest.HasPracticePassword && contestActivityEntity.CanBePracticed) || userIsAdminOrLecturerInContest;
+            var canShowProblemsInCompete = (!contest.HasContestPassword && !contestActivityEntity.IsActive && !contest.IsOnlineExam && contestActivityEntity.CanBeCompeted) || userIsAdminOrLecturerInContest;
 
-            if ((contestActivityEntity.CanBePracticed && !canShowProblemsInPractice) || (contestActivityEntity.CanBeCompeted && !canShowProblemsInCompete))
+            if (!canShowProblemsInPractice && !canShowProblemsInCompete)
             {
                 contestDetailsServiceModel.Problems = new List<ContestProblemServiceModel>();
             }
 
-            if (userIsAdminOrLecturerInContest || (contestActivityEntity.IsActive && participant != null && contestActivityEntity.CanBeCompeted))
+            if (userIsAdminOrLecturerInContest || (contestActivityEntity.IsActive && participant != null && contestActivityEntity.CanBeCompeted) || (!contestActivityEntity.CanBeCompeted && participant != null))
             {
                 contestDetailsServiceModel.CanViewResults = true;
             }
@@ -132,11 +134,8 @@ namespace OJS.Services.Ui.Business.Implementations
                 .Select(x => new ContestDetailsSubmissionTypeServiceModel { Id = x.SubmissionTypeId, Name = x.SubmissionType.Name })
                 .ToList();
 
-            var competeContestParticipantsCount = await this.contestParticipantsCacheService.GetCompeteContestParticipantsCount(id);
-            var practiceContestParticipantsCount = await this.contestParticipantsCacheService.GetPracticeContestParticipantsCount(id);
-
-            contestDetailsServiceModel.ParticipantsCountByContestType = contestActivityEntity.CanBeCompeted ? competeContestParticipantsCount : practiceContestParticipantsCount;
-            contestDetailsServiceModel.TotalContestParticipantsCount = competeContestParticipantsCount + practiceContestParticipantsCount;
+            contestDetailsServiceModel.CompeteParticipantsCount = await this.contestParticipantsCacheService.GetCompeteContestParticipantsCount(id);
+            contestDetailsServiceModel.PracticeParticipantsCount = await this.contestParticipantsCacheService.GetPracticeContestParticipantsCount(id);
 
             return contestDetailsServiceModel;
         }
@@ -293,13 +292,11 @@ namespace OJS.Services.Ui.Business.Implementations
             var allContestsQueryable = this.contestsData.GetAllNonDeletedContests()
                 .Where(c => c.Name!.Contains(model.SearchTerm!));
 
-            var searchContests = allContestsQueryable.MapCollection<ContestSearchServiceModel>();
+            var searchContests = await allContestsQueryable
+                .MapCollection<ContestSearchServiceModel>()
+                .ToPagedListAsync(model.PageNumber, model.ItemsPerPage);
 
-            //set CanBeCompeted and CanBePracticed properties in each contest from the result
-            searchContests.ForEach(c => this.activityService.SetCanBeCompetedAndPracticed(c));
-            var pagedResult = await searchContests.ToPagedListAsync(model.PageNumber, model.ItemsPerPage);
-
-            modelResult.Contests = pagedResult;
+            modelResult.Contests = searchContests;
             modelResult.TotalContestsCount = allContestsQueryable.Count();
 
             return modelResult;
