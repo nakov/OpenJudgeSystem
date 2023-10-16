@@ -39,7 +39,6 @@ const defaultState = {
         permissions: { canAccessAdministration: false } as IUserPermissionsType,
         isInRole: false,
         isAdmin: false,
-        isLecturer: false,
     },
 };
 
@@ -120,11 +119,6 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
             : !isNil(authInfoResponse?.roles
                 .find((role) => role.name.toLowerCase() === UserRoles.Administrator.toLowerCase()));
 
-        const isLecturer = isEmpty(authInfoResponse.roles)
-            ? false
-            : !isNil(authInfoResponse?.roles
-                .find((role) => role.name.toLowerCase() === UserRoles.Lecturer.toLowerCase()));
-
         const isInRole = !isEmpty(authInfoResponse.roles);
 
         return {
@@ -134,7 +128,6 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
             permissions: { canAccessAdministration: isAdmin } as IUserPermissionsType,
             isInRole,
             isAdmin,
-            isLecturer,
         } as IUserType;
     }, []);
 
