@@ -76,7 +76,6 @@ namespace OJS.Services.Ui.Business.Implementations
             var user = this.userProviderService.GetCurrentUser();
             var contest = await this.contestsData.GetByIdWithProblems(id);
 
-
             var validationResult = this.contestDetailsValidationService.GetValidationResult((
                 contest,
                 id,
@@ -86,10 +85,8 @@ namespace OJS.Services.Ui.Business.Implementations
                 throw new BusinessServiceException(validationResult.Message);
             }
 
-            var contestActivityEntity = contest != null
-                ? await this.activityService
-                .GetContestActivity(contest!.Map<ContestForActivityServiceModel>())
-                : new ContestActivityServiceModel();
+            var contestActivityEntity = await this.activityService
+                .GetContestActivity(contest!.Map<ContestForActivityServiceModel>());
 
             var participant = await this.participantsData
                 .GetWithContestByContestByUserAndIsOfficial(
@@ -112,8 +109,8 @@ namespace OJS.Services.Ui.Business.Implementations
                 contestDetailsServiceModel.Problems = problemsForParticipant.Map<ICollection<ContestProblemServiceModel>>();
             }
 
+            var canShowProblemsInCompete = (!contest!.HasContestPassword && !contestActivityEntity.IsActive && !contest.IsOnlineExam && contestActivityEntity.CanBeCompeted) || userIsAdminOrLecturerInContest;
             var canShowProblemsInPractice = (!contest.HasPracticePassword && contestActivityEntity.CanBePracticed) || userIsAdminOrLecturerInContest;
-            var canShowProblemsInCompete = (!contest.HasContestPassword && !contestActivityEntity.IsActive && !contest.IsOnlineExam && contestActivityEntity.CanBeCompeted) || userIsAdminOrLecturerInContest;
 
             if (!canShowProblemsInPractice && !canShowProblemsInCompete)
             {
