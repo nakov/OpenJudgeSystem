@@ -6,7 +6,7 @@ using SoftUni.Services.Infrastructure;
 
 public interface IContestResultsAggregatorService : IService
 {
-    ContestResultsViewModel GetContestResults(
+    ContestResultsServiceModel GetContestResults(
         Contest contest,
         bool official,
         bool isUserAdminOrLecturer,

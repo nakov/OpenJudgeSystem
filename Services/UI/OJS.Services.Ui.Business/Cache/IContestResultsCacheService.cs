@@ -7,7 +7,7 @@ using SoftUni.Services.Infrastructure;
 
 public interface IContestResultsCacheService : IService
 {
-    Task<ContestResultsViewModel> GetContestResults(
+    Task<ContestResultsServiceModel> GetContestResults(
         int contestId,
         bool official,
         bool full,

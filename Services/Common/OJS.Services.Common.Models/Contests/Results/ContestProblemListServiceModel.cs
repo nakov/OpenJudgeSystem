@@ -5,10 +5,10 @@ using OJS.Data.Models.Problems;
 using System;
 using System.Linq.Expressions;
 
-public class ContestProblemListViewModel
+public class ContestProblemListServiceModel
 {
-    public static Expression<Func<Problem, ContestProblemListViewModel>> FromProblem =>
-        pr => new ContestProblemListViewModel
+    public static Expression<Func<Problem, ContestProblemListServiceModel>> FromProblem =>
+        pr => new ContestProblemListServiceModel
         {
             Id = pr.Id,
             Name = pr.Name,

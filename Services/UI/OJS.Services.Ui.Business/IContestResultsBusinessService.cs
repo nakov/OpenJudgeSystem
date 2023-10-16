@@ -6,5 +6,9 @@ using System.Threading.Tasks;
 
 public interface IContestResultsBusinessService : IService
 {
-    Task<ContestResultsViewModel> GetContestResults(int contestId, bool official, bool isFullResults);
+    Task<ContestResultsServiceModel> GetContestResults(
+        int contestId,
+        bool official,
+        bool isFullResults,
+        int? cacheSeconds);
 }

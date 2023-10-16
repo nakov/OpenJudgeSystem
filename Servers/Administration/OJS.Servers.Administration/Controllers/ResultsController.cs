@@ -66,7 +66,7 @@ public class ResultsController : BaseAdminViewController
         return await this.ExportResultsToExcel(contestResults, fileName);
     }
 
-    private static void FillSheetWithParticipantResults(IXLWorksheet sheet, ContestResultsViewModel contestResults)
+    private static void FillSheetWithParticipantResults(IXLWorksheet sheet, ContestResultsServiceModel contestResults)
     {
         var rowNumber = 2;
         foreach (var result in contestResults.Results)
@@ -94,7 +94,7 @@ public class ResultsController : BaseAdminViewController
         }
     }
 
-    private async Task CreateResultsSheetHeaderRow(IXLWorksheet sheet, ContestResultsViewModel contestResults)
+    private async Task CreateResultsSheetHeaderRow(IXLWorksheet sheet, ContestResultsServiceModel contestResults)
     {
         var columnNumber = 1;
 
@@ -118,7 +118,7 @@ public class ResultsController : BaseAdminViewController
         sheet.Cell(1, columnNumber).Value = totalPointsCellTitle;
     }
 
-    private async Task<FileResult> ExportResultsToExcel(ContestResultsViewModel contestResults, string fileName)
+    private async Task<FileResult> ExportResultsToExcel(ContestResultsServiceModel contestResults, string fileName)
     {
         using XLWorkbook workbook = new XLWorkbook();
         var sheet = workbook.Worksheets.Add("Results");

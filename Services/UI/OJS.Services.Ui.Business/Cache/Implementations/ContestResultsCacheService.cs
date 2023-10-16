@@ -18,17 +18,10 @@ public class ContestResultsCacheService : IContestResultsCacheService
         this.contestResultsBusiness = contestResultsBusiness;
     }
 
-    public Task<ContestResultsViewModel> GetContestResults(
+    public Task<ContestResultsServiceModel> GetContestResults(
         int contestId,
         bool official,
         bool full,
         int? cacheSeconds = CacheConstants.TwoMinutesInSeconds)
-        => cacheSeconds.HasValue
-            ? this.cache.Get(
-                string.Format(CacheConstants.ContestResults, contestId, official, full),
-                () => this.contestResultsBusiness.GetContestResults(contestId, official, full),
-                cacheSeconds.Value)
-            : this.cache.Get(
-                string.Format(CacheConstants.ContestResults, contestId, official, full),
-                () => this.contestResultsBusiness.GetContestResults(contestId, official, full));
+        => this.contestResultsBusiness.GetContestResults(contestId, official, full, cacheSeconds);
 }

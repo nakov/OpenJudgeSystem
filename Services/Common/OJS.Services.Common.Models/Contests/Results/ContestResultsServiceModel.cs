@@ -5,17 +5,17 @@ using System.Collections.Generic;
 using System.Linq;
 using X.PagedList;
 
-public class ContestResultsViewModel
+public class ContestResultsServiceModel
 {
     public int Id { get; set; }
 
     public string? Name { get; set; }
 
-    public IEnumerable<ContestProblemListViewModel> Problems { get; set; } = Enumerable.Empty<ContestProblemListViewModel>();
+    public IEnumerable<ContestProblemListServiceModel> Problems { get; set; } = Enumerable.Empty<ContestProblemListServiceModel>();
 
-    public IEnumerable<ParticipantResultViewModel> Results { get; set; } = Enumerable.Empty<ParticipantResultViewModel>();
+    public IEnumerable<ParticipantResultServiceModel> Results { get; set; } = Enumerable.Empty<ParticipantResultServiceModel>();
 
-    public IPagedList<ParticipantResultViewModel>? PagedResults { get; private set; }
+    public IPagedList<ParticipantResultServiceModel>? PagedResults { get; private set; }
 
     public bool ContestCanBeCompeted { get; set; }
 
@@ -27,7 +27,7 @@ public class ContestResultsViewModel
 
     public bool IsCompete { get; set; }
 
-    public ContestResultsViewModel ToPagedResults(int page, int pageSize)
+    public ContestResultsServiceModel ToPagedResults(int page, int pageSize)
     {
         this.PagedResults = this.Results.ToPagedList(page, pageSize);
 

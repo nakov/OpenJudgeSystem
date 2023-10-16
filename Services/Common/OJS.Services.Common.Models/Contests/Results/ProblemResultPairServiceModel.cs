@@ -6,23 +6,23 @@ using OJS.Services.Common.Models.Submissions;
 using System;
 using System.Linq.Expressions;
 
-public class ProblemResultPairViewModel
+public class ProblemResultPairServiceModel
 {
-    public static Expression<Func<ParticipantScore, ProblemResultPairViewModel>> FromParticipantScoreAsSimpleResult =>
-        score => new ProblemResultPairViewModel
+    public static Expression<Func<ParticipantScore, ProblemResultPairServiceModel>> FromParticipantScoreAsSimpleResult =>
+        score => new ProblemResultPairServiceModel
         {
             ProblemId = score.ProblemId,
             ShowResult = score.Problem.ShowResults,
-            BestSubmission = new BestSubmissionViewModel { Id = score.SubmissionId, Points = score.Points },
+            BestSubmission = new BestSubmissionServiceModel { Id = score.SubmissionId, Points = score.Points },
         };
 
-    public static Expression<Func<ParticipantScore, ProblemResultPairViewModel>> FromParticipantScoreAsFullResult =>
-        score => new ProblemResultPairViewModel
+    public static Expression<Func<ParticipantScore, ProblemResultPairServiceModel>> FromParticipantScoreAsFullResult =>
+        score => new ProblemResultPairServiceModel
         {
             ProblemId = score.ProblemId,
             ShowResult = score.Problem.ShowResults,
             MaximumPoints = score.Problem.MaximumPoints,
-            BestSubmission = new BestSubmissionViewModel
+            BestSubmission = new BestSubmissionServiceModel
             {
                 Id = score.SubmissionId,
                 Points = score.Points,
@@ -37,13 +37,13 @@ public class ProblemResultPairViewModel
             },
         };
 
-    public static Expression<Func<ParticipantScore, ProblemResultPairViewModel>> FromParticipantScoreAsExportResult =>
-        score => new ProblemResultPairViewModel
+    public static Expression<Func<ParticipantScore, ProblemResultPairServiceModel>> FromParticipantScoreAsExportResult =>
+        score => new ProblemResultPairServiceModel
         {
             ProblemId = score.ProblemId,
             ShowResult = score.Problem.ShowResults,
             IsExcludedFromHomework = score.Problem.ProblemGroup.Type == ProblemGroupType.ExcludedFromHomework,
-            BestSubmission = new BestSubmissionViewModel { Id = score.SubmissionId, Points = score.Points },
+            BestSubmission = new BestSubmissionServiceModel { Id = score.SubmissionId, Points = score.Points },
         };
 
     public int ProblemId { get; set; }
@@ -54,5 +54,5 @@ public class ProblemResultPairViewModel
 
     public int MaximumPoints { get; set; }
 
-    public BestSubmissionViewModel BestSubmission { get; set; } = new ();
+    public BestSubmissionServiceModel BestSubmission { get; set; } = new ();
 }

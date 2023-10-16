@@ -12,14 +12,14 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
     public ContestResultsAggregatorService(IParticipantsCommonDataService participantsCommonData)
         => this.participantsCommonData = participantsCommonData;
 
-    public ContestResultsViewModel GetContestResults(
+    public ContestResultsServiceModel GetContestResults(
             Contest contest,
             bool official,
             bool isUserAdminOrLecturer,
             bool isFullResults,
             bool isExportResults = false)
         {
-            var contestResults = new ContestResultsViewModel
+            var contestResults = new ContestResultsServiceModel
             {
                 Id = contest.Id,
                 Name = contest.Name,
@@ -34,14 +34,14 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
                     .Where(p => !p.IsDeleted)
                     .OrderBy(p => p.OrderBy)
                     .ThenBy(p => p.Name)
-                    .Select(ContestProblemListViewModel.FromProblem),
+                    .Select(ContestProblemListServiceModel.FromProblem),
             };
 
             var participants = this.participantsCommonData
                 .GetAllByContestAndIsOfficial(contest.Id, official);
 
             var participantResults = participants
-                .Select(ParticipantResultViewModel.FromParticipantAsSimpleResultByContest(contest.Id))
+                .Select(ParticipantResultServiceModel.FromParticipantAsSimpleResultByContest(contest.Id))
                 .OrderByDescending(parRes => parRes.ProblemResults
                     .Where(pr => pr.ShowResult)
                     .Sum(pr => pr.BestSubmission.Points));
@@ -49,14 +49,14 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
             if (isFullResults)
             {
                 participantResults = participants
-                    .Select(ParticipantResultViewModel.FromParticipantAsFullResultByContest(contest.Id))
+                    .Select(ParticipantResultServiceModel.FromParticipantAsFullResultByContest(contest.Id))
                     .OrderByDescending(parRes => parRes.ProblemResults
                         .Sum(pr => pr.BestSubmission.Points));
             }
             else if (isExportResults)
             {
                 participantResults = participants
-                    .Select(ParticipantResultViewModel.FromParticipantAsExportResultByContest(contest.Id))
+                    .Select(ParticipantResultServiceModel.FromParticipantAsExportResultByContest(contest.Id))
                     .OrderByDescending(parRes => parRes.ProblemResults
                         .Where(pr => pr.ShowResult && !pr.IsExcludedFromHomework)
                         .Sum(pr => pr.BestSubmission.Points));

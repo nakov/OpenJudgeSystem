@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-public class ParticipantResultViewModel
+public class ParticipantResultServiceModel
 {
     public string? ParticipantUsername { get; set; }
 
@@ -14,8 +14,8 @@ public class ParticipantResultViewModel
 
     public string? ParticipantLastName { get; set; }
 
-    public IEnumerable<ProblemResultPairViewModel> ProblemResults { get; set; }
-        = Enumerable.Empty<ProblemResultPairViewModel>();
+    public IEnumerable<ProblemResultPairServiceModel> ProblemResults { get; set; }
+        = Enumerable.Empty<ProblemResultPairServiceModel>();
 
     public string ParticipantFullName => $"{this.ParticipantFirstName?.Trim()} {this.ParticipantLastName?.Trim()}";
 
@@ -32,8 +32,8 @@ public class ParticipantResultViewModel
 
     public IEnumerable<int> ParticipantProblemIds { get; set; } = Enumerable.Empty<int>();
 
-    public static Expression<Func<Participant, ParticipantResultViewModel>> FromParticipantAsSimpleResultByContest(int contestId) =>
-        participant => new ParticipantResultViewModel
+    public static Expression<Func<Participant, ParticipantResultServiceModel>> FromParticipantAsSimpleResultByContest(int contestId) =>
+        participant => new ParticipantResultServiceModel
         {
             ParticipantUsername = participant.User.UserName,
             ParticipantFirstName = participant.User.UserSettings.FirstName,
@@ -42,12 +42,12 @@ public class ParticipantResultViewModel
             ProblemResults = participant.Scores
                 .Where(sc => !sc.Problem.IsDeleted && sc.Problem.ProblemGroup.ContestId == contestId)
                 .AsQueryable()
-                .Select(ProblemResultPairViewModel.FromParticipantScoreAsSimpleResult)
+                .Select(ProblemResultPairServiceModel.FromParticipantScoreAsSimpleResult)
                 .ToList(),
         };
 
-    public static Expression<Func<Participant, ParticipantResultViewModel>> FromParticipantAsFullResultByContest(int contestId) =>
-        participant => new ParticipantResultViewModel
+    public static Expression<Func<Participant, ParticipantResultServiceModel>> FromParticipantAsFullResultByContest(int contestId) =>
+        participant => new ParticipantResultServiceModel
         {
             ParticipantUsername = participant.User.UserName,
             ParticipantFirstName = participant.User.UserSettings.FirstName,
@@ -55,12 +55,12 @@ public class ParticipantResultViewModel
             ProblemResults = participant.Scores
                 .Where(sc => !sc.Problem.IsDeleted && sc.Problem.ProblemGroup.ContestId == contestId)
                 .AsQueryable()
-                .Select(ProblemResultPairViewModel.FromParticipantScoreAsFullResult)
+                .Select(ProblemResultPairServiceModel.FromParticipantScoreAsFullResult)
                 .ToList(),
         };
 
-    public static Expression<Func<Participant, ParticipantResultViewModel>> FromParticipantAsExportResultByContest(int contestId) =>
-        participant => new ParticipantResultViewModel
+    public static Expression<Func<Participant, ParticipantResultServiceModel>> FromParticipantAsExportResultByContest(int contestId) =>
+        participant => new ParticipantResultServiceModel
         {
             ParticipantUsername = participant.User.UserName,
             ParticipantFirstName = participant.User.UserSettings.FirstName,
@@ -68,7 +68,7 @@ public class ParticipantResultViewModel
             ProblemResults = participant.Scores
                 .Where(sc => !sc.Problem.IsDeleted && sc.Problem.ProblemGroup.ContestId == contestId)
                 .AsQueryable()
-                .Select(ProblemResultPairViewModel.FromParticipantScoreAsExportResult)
+                .Select(ProblemResultPairServiceModel.FromParticipantScoreAsExportResult)
                 .ToList(),
         };
 }

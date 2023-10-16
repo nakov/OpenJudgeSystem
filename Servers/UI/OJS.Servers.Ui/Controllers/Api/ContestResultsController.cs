@@ -24,7 +24,7 @@ public class ContestResultsController : BaseApiController
     /// <param name="full">Full results with test run details or just the scores.</param>
     /// <returns>A complete collection of all the participants and their results.</returns>
     [HttpGet("{id:int}")]
-    [ProducesResponseType(typeof(ContestResultsViewModel), Status200OK)]
+    [ProducesResponseType(typeof(ContestResultsServiceModel), Status200OK)]
     public async Task<IActionResult> GetResults(int id, bool official, bool full)
         => await this.contestResultsCache
             .GetContestResults(id, official, full)
