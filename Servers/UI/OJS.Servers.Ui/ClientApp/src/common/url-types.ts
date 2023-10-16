@@ -3,7 +3,6 @@ import { IFilter, ISort } from './contest-types';
 
 interface IContestDetailsUrlParams {
     id: number;
-    isOfficial: boolean;
 }
 
 interface IGetContestByProblemUrlParams {
