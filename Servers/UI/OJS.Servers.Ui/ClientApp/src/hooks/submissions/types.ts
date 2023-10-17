@@ -52,6 +52,7 @@ interface ITestRunDetailsType extends ITestRunType {
     isTrialTest: boolean;
     input: string;
     showInput: boolean;
+    testId: number;
 }
 
 interface ISubmissionDetailsType extends ISubmissionType {
@@ -89,6 +90,7 @@ interface ITestCaseRun {
     submissionId?: number;
     timeUsed: number;
     userOutputFragment?: string;
+    testId: number;
 }
 
 interface ITestRunDetailsCollapsed {
