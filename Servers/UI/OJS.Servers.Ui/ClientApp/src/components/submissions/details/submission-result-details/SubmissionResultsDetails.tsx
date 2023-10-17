@@ -67,6 +67,22 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
         );
     };
 
+    const renderTestIds = (testRun: ITestCaseRun) => (
+        <div className={styles.testIds}>
+            <span className={styles.testRunIdColor}>
+                Run
+                #
+                {testRun.id}
+            </span>
+            <br />
+            <span className={styles.testIdColor}>
+                Test
+                #
+                {testRun.testId}
+            </span>
+        </div>
+    );
+
     const renderShowInputButton = useCallback((id: number, isExpanded: boolean) => (
         <Button
           type={ButtonType.primary}
@@ -161,7 +177,10 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
         <div className={styles.submissionResultDetailsWrapper}>
             {testRuns?.map((test: ITestCaseRun, idx: number) => (
                 <div key={`test-run-details-${test.id}`} className={styles.submissionResultDetails}>
-                    {renderTestHeading(test, idx)}
+                    <div className={styles.testHeadingAndIds}>
+                        {renderTestHeading(test, idx)}
+                        {renderTestIds(test)}
+                    </div>
                     {renderTestData(test)}
                 </div>
             ))}
