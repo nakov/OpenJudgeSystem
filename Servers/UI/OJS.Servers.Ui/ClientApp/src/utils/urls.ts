@@ -168,6 +168,8 @@ const getSubmissionResultsUrl = ({
 
 const getSubmissionDetailsUrl = ({ submissionId }:ISubmissionDetailsUrlParams) => `${baseApiUrl}/Submissions/Details/${submissionId}`;
 
+const getSubmissionDetailsRedirectionUrl = ({ submissionId }:ISubmissionDetailsUrlParams) => `/submissions/${submissionId}/details`;
+
 const getPublicSubmissionsUrl = ({ page }: IGetSubmissionsUrlParams) => {
     const pageQuery = isNil(page)
         ? ''
@@ -278,6 +280,7 @@ export {
     getSubmitUrl,
     getSubmitFileUrl,
     getProblemSubmissionDetailsUrl,
+    getSubmissionDetailsRedirectionUrl,
     getSubmissionFileDownloadUrl,
     getSubmissionDetailsUrl,
     getAllContestStrategyFiltersUrl,

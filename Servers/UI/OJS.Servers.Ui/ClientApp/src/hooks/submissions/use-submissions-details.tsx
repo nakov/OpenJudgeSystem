@@ -39,7 +39,7 @@ interface ISubmissionsDetailsContext {
         downloadProblemSubmissionFile: (submissionId: number) => Promise<void>;
         setDownloadErrorMessage: (message: string | null) => void;
         setCurrentSubmission: (submission: ISubmissionDetailsType | null) => void;
-        setSubmissionResultsUrlParams: (params: IGetSubmissionDetailsByIdUrlParams) => void;
+        setSubmissionResultsUrlParams: (params: IGetSubmissionDetailsByIdUrlParams | null) => void;
     };
 }
 
