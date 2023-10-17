@@ -266,6 +266,16 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             FormControlType = FormControlType.TextArea,
         });
 
+        if (action == EntityAction.Edit)
+        {
+            formControls.Add(new FormControlViewModel
+            {
+                Name = AdditionalFormFields.RetestProblem.ToString(),
+                Type = typeof(bool),
+                Value = false,
+            });
+        }
+
         var testTypeFormField = new FormControlViewModel
         {
             Name = AdditionalFormFields.Type.ToString(),

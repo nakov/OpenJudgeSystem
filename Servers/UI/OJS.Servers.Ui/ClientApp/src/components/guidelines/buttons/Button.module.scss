@@ -69,6 +69,16 @@
     }
   }
 
+  &.toggled {
+    background-color: colors.$light-blue-color;
+    color: colors.$white-color;
+  }
+
+  &.untoggled {
+    background-color: colors.$white-color;
+    color: colors.$light-blue-color;
+  }
+
   &.small {
     @extend %small;
   }

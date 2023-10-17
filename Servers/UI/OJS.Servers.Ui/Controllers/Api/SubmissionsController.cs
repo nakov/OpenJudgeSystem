@@ -193,7 +193,7 @@ public class SubmissionsController : BaseApiController
     /// Gets all pending submissions.
     /// </summary>
     /// <param name="page">The current page number.</param>
-    /// <returns>A page with unprocessed submissions.</returns>
+    /// <returns>A page with pending submissions.</returns>
     [HttpGet]
     [Authorize(Roles = Administrator)]
     [ProducesResponseType(typeof(PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>), Status200OK)]

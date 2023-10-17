@@ -9,29 +9,31 @@ interface ISubmissionResultPointsLabelProps {
     points: number;
     maximumPoints: number;
     isProcessed: boolean;
+    testRunsCount: number;
 }
 
 const SubmissionResultPointsLabel = ({
     points,
     maximumPoints,
     isProcessed,
+    testRunsCount,
 }: ISubmissionResultPointsLabelProps) => {
     const labelType = useMemo(
-        () => !isProcessed
+        () => !isProcessed && testRunsCount === 0
             ? LabelType.plain
-            : points === 0 && isProcessed
+            : (points === 0 && isProcessed) || testRunsCount === 0
                 ? LabelType.warning
                 : points === maximumPoints
                     ? LabelType.success
                     : LabelType.info,
-        [ points, isProcessed, maximumPoints ],
+        [ points, isProcessed, maximumPoints, testRunsCount ],
     );
 
     const currentPoints = useMemo(
-        () => isProcessed
+        () => isProcessed && testRunsCount > 0
             ? points
             : '?',
-        [ isProcessed, points ],
+        [ isProcessed, points, testRunsCount ],
     );
 
     const text = useMemo(

@@ -22,7 +22,7 @@ public class TestRunsDataService : DataService<TestRun>, ITestRunsDataService
 
     public async Task DeleteByProblem(int problemId)
     {
-        this.Delete(tr => tr.Submission.ProblemId == problemId);
+        this.Delete(tr => tr.Test.ProblemId == problemId);
         await this.SaveChanges();
     }
 
