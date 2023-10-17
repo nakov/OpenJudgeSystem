@@ -97,11 +97,7 @@ const SubmissionsList = ({
                                 ? (
                                     <Text className={styles.isProcessingTypeText}>Not processed yet</Text>
                                 )
-                                : testRunsCount === 0
-                                    ? (
-                                        <Text className={styles.isProcessingTypeText}>For retesting</Text>
-                                    )
-                                    : null}
+                                : null}
                         </div>
                         <div className={styles.submissionDetailsButtonsWrapper}>
                             <Label type={LabelType.plain} text={typeLabelText} className={submissionsTypeLabelClassName} />
