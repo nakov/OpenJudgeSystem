@@ -163,7 +163,7 @@ const SubmissionDetails = () => {
 
     const renderRetestButton = useCallback(
         () => {
-            if (!canAccessAdministration) {
+            if (!canAccessAdministration || isNil(currentSubmission)) {
                 return null;
             }
 
@@ -171,13 +171,14 @@ const SubmissionDetails = () => {
                 <LinkButton
                   type={LinkButtonType.secondary}
                   size={ButtonSize.medium}
-                  to={getAdministrationRetestSubmissionInternalUrl()}
+                  to={getAdministrationRetestSubmissionInternalUrl(currentSubmission?.id.toString())}
                   text="Retest"
                   className={styles.retestButton}
+                  isToExternal
                 />
             );
         },
-        [ canAccessAdministration ],
+        [ canAccessAdministration, currentSubmission ],
     );
     const renderButtonsSection = useCallback(() => (
         <div className={styles.buttonsSection}>
