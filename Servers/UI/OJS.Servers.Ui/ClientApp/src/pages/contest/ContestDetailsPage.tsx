@@ -18,6 +18,7 @@ import {
     getAdministrationContestEditInternalUrl,
     getAdministrationContestProblemsInternalUrl,
     getContestResultsUrl,
+    getContestsByStrategyUrl,
     getParticipateInContestUrl,
 } from '../../utils/urls';
 import { makePrivate } from '../shared/make-private';
@@ -234,10 +235,15 @@ const ContestDetailsPage = () => {
 
             return allowedSubmissionTypes.map((x) => (
                 <span key={x.id}>
-                    {' '}
-                    {x.name}
+                    <LinkButton
+                      to={getContestsByStrategyUrl(x.id)}
+                      text={x.name}
+                      type={LinkButtonType.plain}
+                      className={styles.allowedLanguagesColor}
+                    />
                     {' '}
                     |
+                    {' '}
                 </span>
             ));
         },
