@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaAsterisk } from 'react-icons/fa';
+import { FaBell } from 'react-icons/fa';
 
 import concatClassNames from '../../../utils/class-names';
 
@@ -19,7 +19,7 @@ const RuntimeErrorIcon = ({
       className={concatClassNames(styles.icon, className)}
       size={size}
       helperText={helperText}
-      Component={FaAsterisk}
+      Component={FaBell}
     />
 );
 

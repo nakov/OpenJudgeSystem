@@ -54,14 +54,14 @@ const ExecutionResult = ({ testRuns, maxMemoryUsed, maxTimeUsed, isCompiledSucce
                 ? (
                     <div className={styles.testResultsList}>
                         <div className={styles.testRunIcons}>{renderTestRunIcons(testRuns)}</div>
-                        <div>
+                        <div className={styles.maxMemoryUsed}>
                             <MemoryIcon />
                             {' '}
                             {(maxMemoryUsed / 1000000).toFixed(2)}
                             {' '}
                             MB
                         </div>
-                        <div>
+                        <div className={styles.maxTimeUsed}>
                             <TimeLimitIcon />
                             {' '}
                             {maxTimeUsed / 1000}

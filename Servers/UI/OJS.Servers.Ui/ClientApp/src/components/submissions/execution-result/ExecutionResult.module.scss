@@ -1,7 +1,9 @@
 @use 'src/styles/colors';
 @use 'src/styles/variables';
 
-.compileAndUnknownError {
+.compileAndUnknownError,
+.maxTimeUsed,
+.maxMemoryUsed {
   color: colors.$text-dark-gray-color;
   font-size: variables.$f-size-16;
 }
