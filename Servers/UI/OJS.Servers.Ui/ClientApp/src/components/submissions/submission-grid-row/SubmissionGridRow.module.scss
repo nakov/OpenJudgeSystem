@@ -9,13 +9,13 @@
   align-items: center;
   color: colors.$text-dark-gray-color;
   display: flex;
-  gap: 30px;
   justify-content: flex-start;
   padding: 25px;
 
   .strategyContainer,
   .pointsContainer,
-  .detailsContainer {
+  .detailsContainer,
+  .executionResultContainer {
     padding: 0 10px;
   }
 
@@ -34,7 +34,7 @@
   }
 
   .detailsButtonContainer {
-    flex: 1 0 6vw;
+    flex: 1 0 2vw;
   }
 
   .IdAndDateAndUsernameContainer {

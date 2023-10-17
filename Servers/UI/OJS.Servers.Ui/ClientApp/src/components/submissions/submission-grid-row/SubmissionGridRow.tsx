@@ -188,13 +188,15 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
                     </span>
                 </div>
             </div>
-            <ExecutionResult
-              testRuns={testRuns}
-              maxMemoryUsed={maxMemoryUsed}
-              maxTimeUsed={maxTimeUsed}
-              isCompiledSuccessfully={isCompiledSuccessfully}
-              isProcessed={processed}
-            />
+            <div className={styles.executionResultContainer}>
+                <ExecutionResult
+                  testRuns={testRuns}
+                  maxMemoryUsed={maxMemoryUsed}
+                  maxTimeUsed={maxTimeUsed}
+                  isCompiledSuccessfully={isCompiledSuccessfully}
+                  isProcessed={processed}
+                />
+            </div>
             <div className={styles.detailsButtonContainer}>
                 {renderDetailsBtn()}
             </div>
