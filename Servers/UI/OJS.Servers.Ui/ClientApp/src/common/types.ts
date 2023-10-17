@@ -88,8 +88,8 @@ interface IContestDetailsResponseType {
     canBePracticed: boolean;
     isAdminOrLecturerInContest: boolean;
     allowedSubmissionTypes: IContestDetailsSubmissionType[];
-    totalContestParticipantsCount: number;
-    participantsCountByContestType: number;
+    competeParticipantsCount: number;
+    practiceParticipantsCount: number;
 }
 
 interface IContestType {
@@ -140,7 +140,7 @@ interface IIndexContestsType {
     isLoading: boolean;
 }
 
-interface IContestModal {
+interface IContestModalInfoType {
     id: number;
     name: string;
     duration: number;
@@ -232,7 +232,7 @@ export type {
     IUserResponseType,
     IUserPermissionsType,
     ISearchResponseModel,
-    IContestModal,
+    IContestModalInfoType,
     IContestDetailsResponseType,
     IContestDetailsProblemType,
 };

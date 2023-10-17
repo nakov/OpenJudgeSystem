@@ -34,6 +34,8 @@ const generateStatusFilters = (() => {
         { name: ContestStatus.All, value: ContestStatus.All },
         { name: ContestStatus.Active, value: ContestStatus.Active },
         { name: ContestStatus.Past, value: ContestStatus.Past },
+        { name: ContestStatus.Upcoming, value: ContestStatus.Upcoming },
+        { name: ContestStatus.Practice, value: ContestStatus.Practice },
     );
 
     return () => result;

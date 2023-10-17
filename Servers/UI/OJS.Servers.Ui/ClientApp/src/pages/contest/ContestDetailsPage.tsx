@@ -14,9 +14,12 @@ import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
 import { useCurrentContest } from '../../hooks/use-current-contest';
 import { usePageTitles } from '../../hooks/use-page-titles';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
-import { getAdministrationContestEditInternalUrl, getAdministrationContestProblemsInternalUrl,
+import {
+    getAdministrationContestEditInternalUrl,
+    getAdministrationContestProblemsInternalUrl,
     getContestResultsUrl,
-    getParticipateInContestUrl } from '../../utils/urls';
+    getParticipateInContestUrl,
+} from '../../utils/urls';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 
@@ -59,7 +62,7 @@ const ContestDetailsPage = () => {
         [ contestDetails, setPageTitle ],
     );
 
-    const { contestId, participationType } = params;
+    const { contestId } = params;
 
     const contestIdToNumber = useMemo(
         () => Number(contestId),
@@ -67,15 +70,14 @@ const ContestDetailsPage = () => {
     );
 
     const isOfficial = useMemo(
-        () => participationType === ContestParticipationType.Compete,
-        [ participationType ],
-    );
+        () => {
+            if (isNil(contestDetails)) {
+                return null;
+            }
 
-    const participantsCountByContestType = useMemo(
-        () => isOfficial
-            ? `Compete participants: ${contestDetails?.participantsCountByContestType}`
-            : `Practice participants: ${contestDetails?.participantsCountByContestType}`,
-        [ isOfficial, contestDetails?.participantsCountByContestType ],
+            return contestDetails?.canBeCompeted;
+        },
+        [ contestDetails ],
     );
 
     const {
@@ -88,7 +90,7 @@ const ContestDetailsPage = () => {
 
     const {
         isAccessible: canAccessPracticeButton,
-        isAccessibleForAdminOrLecturerInContest: praticableOnlyForAdminOrLecturers,
+        isAccessibleForAdminOrLecturerInContest: practicableOnlyForAdminOrLecturers,
     } = useMemo(
         () => getButtonAccessibility(contestDetails?.canBePracticed, contestDetails?.isAdminOrLecturerInContest),
         [ contestDetails ],
@@ -97,12 +99,12 @@ const ContestDetailsPage = () => {
     useEffect(
         () => {
             if (!isNil(contestId)) {
-                getContestDetails({ id: contestId.toString(), isOfficial });
+                getContestDetails({ id: contestId.toString() });
             }
         },
-        [ contestId,
+        [
+            contestId,
             getContestDetails,
-            isOfficial,
         ],
     );
 
@@ -125,17 +127,31 @@ const ContestDetailsPage = () => {
     const renderContestButtons = useCallback(
         () => (
             <div className={styles.buttonsContainer}>
-                {contestDetails?.canViewResults || contestDetails?.isAdminOrLecturerInContest
-                    ? (
+                {
+                    (contestDetails?.canViewResults || contestDetails?.isAdminOrLecturerInContest) &&
+                    (
                         <LinkButton
                           type={LinkButtonType.secondary}
-                          to={getContestResultsUrl({ id: contestId, participationType })}
-                          text="Results"
+                          to={getContestResultsUrl({ id: contestId, participationType: ContestParticipationType.Compete })}
+                          text="Contest results"
+                          isToExternal
                         />
                     )
-                    : null}
-                {contestDetails?.isAdminOrLecturerInContest
-                    ? (
+                }
+                {
+                    contestDetails?.canBePracticed &&
+                    (
+                        <LinkButton
+                          type={LinkButtonType.secondary}
+                          to={getContestResultsUrl({ id: contestId, participationType: ContestParticipationType.Practice })}
+                          text="Practice results"
+                          isToExternal
+                        />
+                    )
+                }
+                {
+                    contestDetails?.isAdminOrLecturerInContest &&
+                    (
                         <>
                             <LinkButton
                               type={LinkButtonType.secondary}
@@ -151,52 +167,63 @@ const ContestDetailsPage = () => {
                             />
                         </>
                     )
-                    : null}
-                <LinkButton
-                  id="button-card-compete"
-                  internalClassName={competableOnlyForAdminAndLecturers
-                      ? styles.adminAccessibleButton
-                      : ''}
-                  to={getParticipateInContestUrl({
-                      id: contestIdToNumber,
-                      participationType: ContestParticipationType.Compete,
-                  })}
-                  text="Compete"
-                  state={
-                      canAccessCompeteButton
-                          ? ButtonState.enabled
-                          : ButtonState.disabled
                 }
-                />
-                <LinkButton
-                  id="button-card-practice"
-                  internalClassName={praticableOnlyForAdminOrLecturers
-                      ? styles.adminAccessibleButton
-                      : ''}
-                  to={getParticipateInContestUrl({
-                      id: contestIdToNumber,
-                      participationType: ContestParticipationType.Practice,
-                  })}
-                  text="Practice"
-                  type={LinkButtonType.secondary}
-                  state={
-                      canAccessPracticeButton
-                          ? ButtonState.enabled
-                          : ButtonState.disabled
+                {
+                    canAccessCompeteButton &&
+                    (
+                        <LinkButton
+                          id="button-card-compete"
+                          internalClassName={competableOnlyForAdminAndLecturers
+                              ? styles.adminAccessibleButton
+                              : ''}
+                          to={getParticipateInContestUrl({
+                              id: contestIdToNumber,
+                              participationType: ContestParticipationType.Compete,
+                          })}
+                          text="Compete"
+                          state={
+                                isOfficial
+                                    ? ButtonState.enabled
+                                    : ButtonState.disabled
+                            }
+                        />
+                    )
                 }
-                />
+                {
+                    canAccessPracticeButton &&
+                    (
+                        <LinkButton
+                          id="button-card-practice"
+                          internalClassName={practicableOnlyForAdminOrLecturers
+                              ? styles.adminAccessibleButton
+                              : ''}
+                          to={getParticipateInContestUrl({
+                              id: contestIdToNumber,
+                              participationType: ContestParticipationType.Practice,
+                          })}
+                          text="Practice"
+                          type={LinkButtonType.secondary}
+                          state={
+                                isOfficial
+                                    ? ButtonState.disabled
+                                    : ButtonState.enabled
+                            }
+                        />
+                    )
+                }
             </div>
         ),
         [
             contestId,
             contestIdToNumber,
-            praticableOnlyForAdminOrLecturers,
+            practicableOnlyForAdminOrLecturers,
             canAccessPracticeButton,
             competableOnlyForAdminAndLecturers,
             canAccessCompeteButton,
-            participationType,
             contestDetails?.canViewResults,
             contestDetails?.isAdminOrLecturerInContest,
+            isOfficial,
+            contestDetails?.canBePracticed,
         ],
     );
 
@@ -300,10 +327,12 @@ const ContestDetailsPage = () => {
                             <div>
                                 Contest participants:
                                 {' '}
-                                {contestDetails?.totalContestParticipantsCount}
+                                {contestDetails?.competeParticipantsCount}
                             </div>
                             <div>
-                                {participantsCountByContestType}
+                                Practice participants:
+                                {' '}
+                                {contestDetails?.practiceParticipantsCount}
                             </div>
                         </div>
                         {renderTasksList(problems)}
@@ -314,7 +343,7 @@ const ContestDetailsPage = () => {
                 </div>
             );
         },
-        [ renderTasksList, contestDetails, renderContestButtons, renderAllowedSubmissionTypes, participantsCountByContestType ],
+        [ renderTasksList, contestDetails, renderContestButtons, renderAllowedSubmissionTypes ],
     );
 
     const renderErrorHeading = useCallback(
