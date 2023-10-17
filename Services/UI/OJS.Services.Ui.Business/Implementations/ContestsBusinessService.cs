@@ -36,6 +36,7 @@ namespace OJS.Services.Ui.Business.Implementations
         private readonly IContestValidationService contestValidationService;
         private readonly IContestParticipantsCacheService contestParticipantsCacheService;
         private readonly ILecturersInContestsBusinessService lecturersInContestsBusiness;
+        private readonly IContestDetailsValidationService contestDetailsValidationService;
 
         public ContestsBusinessService(
             IContestsDataService contestsData,
@@ -48,7 +49,8 @@ namespace OJS.Services.Ui.Business.Implementations
             IContestCategoriesCacheService contestCategoriesCache,
             IContestValidationService contestValidationService,
             IContestParticipantsCacheService contestParticipantsCacheService,
-            ILecturersInContestsBusinessService lecturersInContestsBusiness)
+            ILecturersInContestsBusinessService lecturersInContestsBusiness,
+            IContestDetailsValidationService contestDetailsValidationService)
         {
             this.contestsData = contestsData;
             this.examGroupsData = examGroupsData;
@@ -61,6 +63,7 @@ namespace OJS.Services.Ui.Business.Implementations
             this.contestValidationService = contestValidationService;
             this.contestParticipantsCacheService = contestParticipantsCacheService;
             this.lecturersInContestsBusiness = lecturersInContestsBusiness;
+            this.contestDetailsValidationService = contestDetailsValidationService;
         }
 
         public async Task<ContestDetailsServiceModel> GetContestDetails(int id)
@@ -68,12 +71,10 @@ namespace OJS.Services.Ui.Business.Implementations
             var user = this.userProviderService.GetCurrentUser();
             var contest = await this.contestsData.GetByIdWithProblems(id);
 
-            var validationResult = this.contestValidationService.GetValidationResult((
+            var validationResult = this.contestDetailsValidationService.GetValidationResult((
                 contest,
                 id,
-                user,
-                contest!.CanBeCompeted) !);
-
+                user) !);
             if (!validationResult.IsValid)
             {
                 throw new BusinessServiceException(validationResult.Message);
@@ -83,7 +84,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 .GetWithContestByContestByUserAndIsOfficial(
                     id,
                     user.Id,
-                    contest.CanBeCompeted);
+                    contest!.CanBeCompeted);
 
             var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest);
 
@@ -97,15 +98,15 @@ namespace OJS.Services.Ui.Business.Implementations
                 contestDetailsServiceModel.Problems = problemsForParticipant.Map<ICollection<ContestProblemServiceModel>>();
             }
 
-            var canShowProblemsInPractice = !contest.HasPracticePassword || userIsAdminOrLecturerInContest;
-            var canShowProblemsInCompete = (contest is { HasContestPassword: false, IsActive: false } && !contest.IsOnlineExam) || userIsAdminOrLecturerInContest;
+            var canShowProblemsInPractice = (!contest.HasPracticePassword && contest.CanBePracticed) || userIsAdminOrLecturerInContest;
+            var canShowProblemsInCompete = (contest is { HasContestPassword: false, IsActive: false } && !contest.IsOnlineExam && contest.CanBeCompeted) || userIsAdminOrLecturerInContest;
 
-            if ((contest.CanBePracticed && !canShowProblemsInPractice) || (contest.CanBeCompeted && !canShowProblemsInCompete))
+            if (!canShowProblemsInPractice && !canShowProblemsInCompete)
             {
                 contestDetailsServiceModel.Problems = new List<ContestProblemServiceModel>();
             }
 
-            if (userIsAdminOrLecturerInContest || (contest.IsActive && participant != null && contest.CanBeCompeted))
+            if (userIsAdminOrLecturerInContest || (contest.IsActive && participant != null && contest.CanBeCompeted) || (!contest.CanBeCompeted && participant != null))
             {
                 contestDetailsServiceModel.CanViewResults = true;
             }
