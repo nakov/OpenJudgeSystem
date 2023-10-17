@@ -30,10 +30,10 @@ const SubmissionResultPointsLabel = ({
     );
 
     const currentPoints = useMemo(
-        () => isProcessed && testRunsCount > 0
+        () => isProcessed
             ? points
             : '?',
-        [ isProcessed, points, testRunsCount ],
+        [ isProcessed, points ],
     );
 
     const text = useMemo(
