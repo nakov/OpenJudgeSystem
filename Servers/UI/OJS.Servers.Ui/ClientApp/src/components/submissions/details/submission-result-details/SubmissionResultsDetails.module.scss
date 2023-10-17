@@ -1,5 +1,6 @@
 ﻿@use 'src/styles/colors';
 @use 'src/styles/fonts';
+@use 'src/styles/variables';
 
 .submissionResultDetailsWrapper {
   align-items: center;
@@ -46,6 +47,26 @@
   margin: 15px 0;
   padding: 5px 10px;
   width: 10%;
+}
+
+.testHeadingAndIds {
+  display: flex;
+  gap: 20px;
+
+  .testIds {
+    align-items: center;
+    display: flex;
+    font-size: variables.$f-size-20;
+    gap: 20px;
+    
+    .testIdColor {
+      color: colors.$primary-green
+    }
+    
+    .testRunIdColor {
+      color: colors.$text-light-gray-color
+    }
+  }
 }
 
 .warningBlockWrapper {
