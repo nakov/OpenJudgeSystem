@@ -16,4 +16,6 @@ public class SubmissionViewInResultsResponseModel : IMapFrom<SubmissionViewInRes
     public DateTime CreatedOn { get; set; }
 
     public bool IsProcessed { get; set; }
+
+    public int TestRunsCount { get; set; }
 }

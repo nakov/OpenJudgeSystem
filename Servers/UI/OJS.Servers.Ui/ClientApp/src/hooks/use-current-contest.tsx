@@ -105,6 +105,7 @@ interface IContestToStartType {
 type IMaximumParticipantScores = {
     problemId: number;
     points: number;
+    testRunsCount: number;
 }
 
 type ISubmitContestPasswordType = {
