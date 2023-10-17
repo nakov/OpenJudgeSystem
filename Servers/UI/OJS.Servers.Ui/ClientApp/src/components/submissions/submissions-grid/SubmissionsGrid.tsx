@@ -144,6 +144,10 @@ const SubmissionsGrid = () => {
 
             const selectedMenuItem = menuItems.find((mi) => mi.key === contestIdParam) as IKeyValuePair<string>;
 
+            if (isNil(selectedMenuItem)) {
+                return;
+            }
+
             setSelectValue(selectedMenuItem);
             initiateSubmissionsByContestQuery(contestIdParam);
         },
@@ -167,13 +171,22 @@ const SubmissionsGrid = () => {
     );
 
     const handleMenuItemSelection = useCallback(
-        (item: IKeyValuePair<string>) => {
+        (value: string) => {
+            const item = menuItems.find((i) => i.value === value) as IKeyValuePair<string>;
+
             clearPageValues();
+
+            if (isNil(item)) {
+                unsetParam(queryKeys.contestId);
+                setSelectValue(defaultState.state.selectValue);
+
+                return;
+            }
 
             setSelectValue(item);
             setParam(queryKeys.contestId, item.key);
         },
-        [ clearPageValues, setParam ],
+        [ clearPageValues, setParam, unsetParam, menuItems ],
     );
 
     const handleToggleClick = useCallback(
@@ -305,30 +318,33 @@ const SubmissionsGrid = () => {
         ],
     );
 
-    const renderToggleButton = useCallback(() => (
-        <div className={styles.toggleButtonWrapper}>
-            <Button
-              type={activeToggleElement === toggleValues.allSubmissions
-                  ? ButtonType.toggled
-                  : ButtonType.untoggled}
-              onClick={(e) => handleToggleClick(e)}
-            >
-                ALL SUBMISSIONS
-            </Button>
-            <Button
-              type={activeToggleElement === toggleValues.mySubmissions
-                  ? ButtonType.toggled
-                  : ButtonType.untoggled}
-              onClick={(e) => handleToggleClick(e)}
-            >
-                MY SUBMISSIONS
-            </Button>
-        </div>
-    ), [ activeToggleElement, handleToggleClick ]);
+    const renderToggleButton = useCallback(
+        () => (
+            <div className={styles.toggleButtonWrapper}>
+                <Button
+                  type={activeToggleElement === toggleValues.allSubmissions
+                      ? ButtonType.toggled
+                      : ButtonType.untoggled}
+                  onClick={(e) => handleToggleClick(e)}
+                >
+                    ALL SUBMISSIONS
+                </Button>
+                <Button
+                  type={activeToggleElement === toggleValues.mySubmissions
+                      ? ButtonType.toggled
+                      : ButtonType.untoggled}
+                  onClick={(e) => handleToggleClick(e)}
+                >
+                    MY SUBMISSIONS
+                </Button>
+            </div>
+        ),
+        [ activeToggleElement, handleToggleClick ],
+    );
 
     const renderSubmissionsDropdown = useCallback(
         () => (
-            <div style={{ marginTop: 15 }}>
+            <div>
                 <InputLabel id="contest-submissions-label">Choose Contest</InputLabel>
                 <Select
                   sx={{
@@ -345,13 +361,13 @@ const SubmissionsGrid = () => {
                   autoWidth
                   displayEmpty
                   value={selectValue.value}
+                  onChange={(e) => handleMenuItemSelection(e.target.value)}
                 >
                     <MenuItem key="contest-submissions-item-default" value="">Select contest</MenuItem>
                     {menuItems.map((item: IKeyValuePair<string>) => (
                         <MenuItem
                           key={`contest-submissions-item-${item.key}`}
                           value={item.value}
-                          onClick={() => handleMenuItemSelection(item)}
                         >
                             {item.value}
                         </MenuItem>

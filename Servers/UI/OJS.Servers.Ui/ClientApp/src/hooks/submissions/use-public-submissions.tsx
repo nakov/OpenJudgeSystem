@@ -170,7 +170,7 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
     } = useHttp({ url: getSubmissionsUnprocessedTotalCountUrl });
 
     const totalUnprocessedSubmissionsCount = useMemo(
-        () => apiTotalUnprocessedSubmissionsCount as number ?? null,
+        () => (apiTotalUnprocessedSubmissionsCount || 0) as number ?? null,
         [ apiTotalUnprocessedSubmissionsCount ],
     );
 
