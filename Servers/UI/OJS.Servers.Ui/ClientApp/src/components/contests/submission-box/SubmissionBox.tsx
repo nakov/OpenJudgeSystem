@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router';
 import isNil from 'lodash/isNil';
 
 import { ExcludedFromHomeWorkTaskHeadingAddition } from '../../../common/constants';
@@ -8,10 +9,11 @@ import { useCurrentContest } from '../../../hooks/use-current-contest';
 import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
 import { convertToTwoDigitValues } from '../../../utils/dates';
+import { administrationDeleteProblem, administrationEditProblem, getAdministrationParticipants, getAdministrationTestsByProblem } from '../../../utils/urls';
 import CodeEditor from '../../code-editor/CodeEditor';
 import FileUploader from '../../file-uploader/FileUploader';
 import AlertBox, { AlertBoxType } from '../../guidelines/alert-box/AlertBox';
-import { Button, ButtonState } from '../../guidelines/buttons/Button';
+import { Button, ButtonSize, ButtonState, ButtonType } from '../../guidelines/buttons/Button';
 import Countdown, { ICountdownRemainingType, Metric } from '../../guidelines/countdown/Countdown';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List, { Orientation } from '../../guidelines/lists/List';
@@ -45,6 +47,7 @@ const SubmissionBox = () => {
         },
     } = useSubmissions();
 
+    const navigate = useNavigate();
     const { state: { currentProblem } } = useProblems();
     const { allowedSubmissionTypes } = currentProblem || {};
 
@@ -319,6 +322,10 @@ const SubmissionBox = () => {
         [ handleCodeChanged, selectedSubmissionType, submissionCode, currentProblem, setInvalidExtensionError ],
     );
 
+    const redirectToAdministration = (url: string) => {
+        window.location.href = url;
+    };
+
     const renderSubmissionBox = useCallback(
         () => (
             <div className={styles.contestMainWrapper}>
@@ -330,6 +337,36 @@ const SubmissionBox = () => {
                     <span className={styles.taskName}>
                         {currentProblem?.name}
                     </span>
+                    {
+                    contest?.userIsAdminOrLecturerInContest && (
+                    <div className={styles.navigationalButtonsWrapper}>
+                        <Button
+                          onClick={() => redirectToAdministration(getAdministrationParticipants(Number(contest?.id)))}
+                          text="Participants"
+                          size={ButtonSize.small}
+                          type={ButtonType.secondary}
+                        />
+                        <Button
+                          onClick={() => redirectToAdministration(getAdministrationTestsByProblem(Number(currentProblem?.id)))}
+                          text="Tests"
+                          size={ButtonSize.small}
+                          type={ButtonType.secondary}
+                        />
+                        <Button
+                          onClick={() => redirectToAdministration(administrationEditProblem(Number(currentProblem?.id)))}
+                          text="Change"
+                          size={ButtonSize.small}
+                          type={ButtonType.secondary}
+                        />
+                        <Button
+                          onClick={() => redirectToAdministration(administrationDeleteProblem(Number(currentProblem?.id)))}
+                          text="Delete"
+                          size={ButtonSize.small}
+                          type={ButtonType.secondary}
+                        />
+                    </div>
+                    )
+                    }
                 </Heading>
                 {currentProblem?.isExcludedFromHomework && (
                     <Heading
@@ -358,6 +395,7 @@ const SubmissionBox = () => {
                 </div>
             </div>
         ),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [
             currentProblem?.name,
             currentProblem?.isExcludedFromHomework,
@@ -367,6 +405,7 @@ const SubmissionBox = () => {
             renderSubmissionTypesSelectorsList,
             renderSubmitBtn,
             renderSubmitMessage,
+            navigate,
         ],
     );
 
