@@ -101,16 +101,6 @@ public class ContestsActivityService : IContestsActivityService
         contestModel.CanBePracticed = contestActivity.CanBePracticed;
     }
 
-    public bool IsActiveParticipantInOnlineContest(int contestId)
-    {
-        var currentUser = this.userProvider.GetCurrentUser();
-        var participants = this.participantsCommonData.GetAllByUserId(currentUser.Id);
-
-        return participants.Any(p => p.ContestId == contestId &&
-                                     p.ParticipationEndTime.HasValue &&
-                                     p.ParticipationEndTime.Value >= this.dates.GetUtcNow());
-    }
-
     public bool CanBePracticed(IContestForActivityServiceModel contest)
     {
         if (!contest.IsVisible || contest.IsDeleted)
@@ -118,7 +108,7 @@ public class ContestsActivityService : IContestsActivityService
             return false;
         }
 
-        var now = this.dates.GetUtcNow();
+        var currentTimeInUtc = this.dates.GetUtcNow();
 
         if (!contest.PracticeStartTime.HasValue)
         {
@@ -129,10 +119,10 @@ public class ContestsActivityService : IContestsActivityService
         if (!contest.PracticeEndTime.HasValue)
         {
             // Practice forever
-            return contest.PracticeStartTime <= now;
+            return contest.PracticeStartTime <= currentTimeInUtc;
         }
 
-        return contest.PracticeStartTime <= now && now <= contest.PracticeEndTime;
+        return contest.PracticeStartTime <= currentTimeInUtc && currentTimeInUtc <= contest.PracticeEndTime;
     }
 
     public async Task<bool> IsActive(IContestForActivityServiceModel contest)
@@ -143,4 +133,15 @@ public class ContestsActivityService : IContestsActivityService
                     .AnyAsync(p =>
                         p.ParticipationEndTime.HasValue &&
                         p.ParticipationEndTime.Value >= this.dates.GetUtcNow()));
+
+    private bool IsActiveParticipantInOnlineContest(int contestId)
+    {
+        var currentUser = this.userProvider.GetCurrentUser();
+        var participants = this.participantsCommonData.GetAllByUserAndContest(currentUser.Id, contestId);
+        var currentTimeInUtc = this.dates.GetUtcNow();
+
+        return participants.Any(p =>
+            p.ParticipationEndTime.HasValue &&
+            p.ParticipationEndTime.Value >= currentTimeInUtc);
+    }
 }
