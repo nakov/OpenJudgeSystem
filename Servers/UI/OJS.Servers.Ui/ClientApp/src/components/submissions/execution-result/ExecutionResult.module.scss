@@ -1,12 +1,17 @@
+@use 'src/styles/colors';
+@use 'src/styles/variables';
+
+.compileAndUnknownError {
+  color: colors.$text-dark-gray-color;
+  font-size: variables.$f-size-16;
+}
+
+.testRunIcons {
+  display: flex;
+  flex-direction: row;
+}
+
 .testResultsList {
   display: flex;
-  gap: 2px;
-}
-
-.correctAnswerIcon {
-  color: #0f0;
-}
-
-.wrongAnswerIcon {
-  color: #f00;
+  gap: 10px;
 }

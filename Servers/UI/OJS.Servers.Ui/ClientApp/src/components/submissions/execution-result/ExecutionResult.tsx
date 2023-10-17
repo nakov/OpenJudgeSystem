@@ -1,45 +1,85 @@
 import React, { useCallback } from 'react';
 
 import { SubmissionResultType } from '../../../common/constants';
-import { ITestRunType } from '../../../hooks/submissions/use-submissions';
-import concatClassNames from '../../../utils/class-names';
+import { ITestRunType } from '../../../hooks/submissions/types';
+import { toLowerCase } from '../../../utils/string-utils';
+import ErrorIcon from '../../guidelines/icons/ErrorIcon';
+import MemoryIcon from '../../guidelines/icons/MemoryIcon';
+import RuntimeErrorIcon from '../../guidelines/icons/RuntimeErrorIcon';
+import TickIcon from '../../guidelines/icons/TickIcon';
+import TimeLimitIcon from '../../guidelines/icons/TimeLimitIcon';
+import WrongAnswerIcon from '../../guidelines/icons/WrongAnswerIcon';
 
 import styles from './ExecutionResult.module.scss';
 
 interface IExecutionResultDetailsProps {
     testRuns: ITestRunType[];
+    maxMemoryUsed: number;
+    maxTimeUsed: number;
+    isCompiledSuccessfully: boolean;
+    isProcessed: boolean;
 }
 
-const classnameToTestRunResultType: { [name: string]: string } = {
-    CorrectAnswer: 'fa-check',
-    WrongAnswer: 'fa-times',
-    TimeLimit: 'fa-clock',
-    MemoryLimit: 'fa-archive',
-    RunTimeError: 'fa-asterisk',
-};
-
-const concatResultTypeIconClassname = (resultType: string): string => concatClassNames(
-    'fas',
-    classnameToTestRunResultType[resultType],
-    resultType === SubmissionResultType.CorrectAnswer
-        ? styles.correctAnswerIcon
-        : styles.wrongAnswerIcon,
-);
-
-const ExecutionResult = ({ testRuns }: IExecutionResultDetailsProps) => {
-    const renderRun = useCallback(
-        (run: ITestRunType) => (
-            <i key={run.id} className={concatResultTypeIconClassname(run.resultType)} />),
+const ExecutionResult = ({ testRuns, maxMemoryUsed, maxTimeUsed, isCompiledSuccessfully, isProcessed }: IExecutionResultDetailsProps) => {
+    const renderTestRunIcon = useCallback(
+        (testRun: ITestRunType) => {
+            switch (toLowerCase(testRun.resultType)) {
+            case SubmissionResultType.CorrectAnswer: return <TickIcon key={testRun.id} />;
+            case SubmissionResultType.WrongAnswer: return <WrongAnswerIcon key={testRun.id} />;
+            case SubmissionResultType.MemoryLimit: return <MemoryIcon key={testRun.id} />;
+            case SubmissionResultType.TimeLimit: return <TimeLimitIcon key={testRun.id} />;
+            case SubmissionResultType.RunTimeError: return <RuntimeErrorIcon key={testRun.id} />;
+            default: return (
+                <div>
+                    <ErrorIcon />
+                    <span className={styles.compileAndUnknownError}>
+                        {' '}
+                        Something went wrong...
+                    </span>
+                </div>
+            );
+            }
+        },
         [],
     );
 
     const renderTestRunIcons = useCallback(
-        (runs: ITestRunType[]) => runs.map(renderRun),
-        [ renderRun ],
+        (runs: ITestRunType[]) => runs.map((testRun) => renderTestRunIcon(testRun)),
+        [ renderTestRunIcon ],
     );
 
     return (
-        <div className={styles.testResultsList}>{renderTestRunIcons(testRuns)}</div>
+        isProcessed
+            ? isCompiledSuccessfully
+                ? (
+                    <div className={styles.testResultsList}>
+                        <div className={styles.testRunIcons}>{renderTestRunIcons(testRuns)}</div>
+                        <div>
+                            <MemoryIcon />
+                            {' '}
+                            {(maxMemoryUsed / 1000000).toFixed(2)}
+                            {' '}
+                            MB
+                        </div>
+                        <div>
+                            <TimeLimitIcon />
+                            {' '}
+                            {maxTimeUsed / 1000}
+                            {' '}
+                            s.
+                        </div>
+                    </div>
+                )
+                : (
+                    <div className={styles.testResultsList}>
+                        <ErrorIcon />
+                        <span className={styles.compileAndUnknownError}>
+                            {' '}
+                            Compile time error
+                        </span>
+                    </div>
+                )
+            : null
     );
 };
 
