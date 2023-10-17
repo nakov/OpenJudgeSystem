@@ -21,6 +21,7 @@ interface ITreeProps {
     defaultExpanded?: string[];
     itemFunc?: (item: ITreeItemType) => React.ReactElement;
     treeItemHasTooltip?: boolean;
+    shouldReset?: boolean;
 
 }
 
@@ -31,6 +32,7 @@ const Tree = ({
     defaultExpanded = [],
     itemFunc,
     treeItemHasTooltip = false,
+    shouldReset,
 }: ITreeProps) => {
     const [ expandedIds, setExpandedIds ] = useState([] as string[]);
     const [ selectedId, setSelectedId ] = useState('');
@@ -51,7 +53,7 @@ const Tree = ({
             setSelectedId(node.id.toString());
             onSelect(node);
         },
-        [ expandedIds, onSelect ],
+        [ expandedIds, onSelect, setSelectedId ],
     );
 
     const renderTreeItem = useCallback((node: ITreeItemType) => (
@@ -111,6 +113,14 @@ const Tree = ({
             }
         },
         [ defaultExpanded, expandedIds, selectedFromUrl ],
+    );
+
+    useEffect(
+        () => {
+            setExpandedIds([]);
+            setSelectedId('');
+        },
+        [ shouldReset ],
     );
 
     const renderTreeView = useCallback(
