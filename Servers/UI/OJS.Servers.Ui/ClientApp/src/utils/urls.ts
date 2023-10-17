@@ -57,7 +57,7 @@ const getAdministrationContestsGridUrl = () => `${administrationBaseUrl}/Contest
 const getAdministrationNavigation = () => '/administration';
 const getAdministrationRetestSubmission = ({ id }: IRetestSubmissionUrlParams) => `
 ${administrationBaseUrl}/Submissions/Retest?PK=${id}`;
-const getAdministrationRetestSubmissionInternalUrl = (id: string) => `/Submissions/Retest/${id}`;
+const getAdministrationRetestSubmissionInternalUrl = ({ id }: IRetestSubmissionUrlParams) => `/Submissions/Retest/${id}`;
 const getAdministrationProblems = ({ id }: IContestProblemsUrlParams) => `
 ${administrationBaseUrl}/Problems?ContestId-equals=${id}`;
 const getAdministrationContestEditUrl = ({ id }: IContestEditUrlParams) => `
