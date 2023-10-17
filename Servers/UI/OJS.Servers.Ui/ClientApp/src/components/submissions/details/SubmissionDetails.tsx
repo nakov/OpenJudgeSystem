@@ -171,7 +171,7 @@ const SubmissionDetails = () => {
                 <LinkButton
                   type={LinkButtonType.secondary}
                   size={ButtonSize.medium}
-                  to={getAdministrationRetestSubmissionInternalUrl({ id: currentSubmission?.id })}
+                  to={getAdministrationRetestSubmissionInternalUrl({ id: currentSubmission.id })}
                   text="Retest"
                   className={styles.retestButton}
                   isToExternal
