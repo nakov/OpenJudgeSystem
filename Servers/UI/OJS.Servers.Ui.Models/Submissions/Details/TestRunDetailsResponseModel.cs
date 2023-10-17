@@ -30,5 +30,7 @@
         public double OrderBy { get; set; }
 
         public bool ShowInput { get; set; }
+
+        public int TestId { get; set; }
     }
 }
