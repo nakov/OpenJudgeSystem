@@ -11,6 +11,7 @@ import { ButtonSize, ButtonState, LinkButton, LinkButtonType } from '../../guide
 import Label, { LabelType } from '../../guidelines/labels/Label';
 import List, { ListType, Orientation } from '../../guidelines/lists/List';
 import Text from '../../guidelines/text/Text';
+import ExecutionResult from '../execution-result/ExecutionResult';
 import SubmissionResultPointsLabel from '../submission-result-points-label/SubmissionResultPointsLabel';
 
 import styles from './SubmissionsList.module.scss';
@@ -114,6 +115,13 @@ const SubmissionsList = ({
                             />
                         </div>
                     </div>
+                    <ExecutionResult
+                      testRuns={submission.testRuns}
+                      maxMemoryUsed={submission.maxMemoryUsed}
+                      maxTimeUsed={submission.maxTimeUsed}
+                      isCompiledSuccessfully={submission.isCompiledSuccessfully}
+                      isProcessed={isProcessed}
+                    />
                 </div>
             );
         },
