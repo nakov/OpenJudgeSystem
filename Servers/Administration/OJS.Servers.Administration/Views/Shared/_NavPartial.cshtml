@@ -20,7 +20,7 @@
                 {
                     @await Html.PartialAsync("_AutoCrudAdminNavItems")
                 }
-                @if (isLecturer)
+                else if (isLecturer)
                 {
                     @await Html.PartialAsync("_AutoCrudLecturerNavItems")
                 }
