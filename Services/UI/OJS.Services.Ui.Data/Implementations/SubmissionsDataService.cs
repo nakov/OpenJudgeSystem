@@ -100,12 +100,12 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             .Select(s => s.Id);
 
     public IQueryable<Submission> GetAllForUserByContest(int contestId, string userId)
-        => this
-            .DbSet
-            .Where(x =>
-                x.Participant!.UserId == userId &&
-                x.Problem.ProblemGroup.ContestId == contestId &&
-                x.Problem.ShowResults);
+        => this.GetQuery(
+        filter: s => s.Participant!.UserId == userId
+                     && s.Problem.ProblemGroup.ContestId == contestId
+                     && s.Problem.ShowResults,
+        orderBy: s => s.Id,
+        descending: true);
 
     public IQueryable<Submission> GetAllByIdsQuery(IEnumerable<int> ids)
         => this.GetQuery()

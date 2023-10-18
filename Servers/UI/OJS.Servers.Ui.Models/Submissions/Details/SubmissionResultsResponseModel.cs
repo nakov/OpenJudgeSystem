@@ -3,6 +3,9 @@
 using System;
 using OJS.Services.Ui.Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Models;
+using System.Collections.Generic;
+using System.Linq;
+
 
 public class SubmissionResultsResponseModel : IMapFrom<SubmissionResultsServiceModel>
 {
@@ -17,4 +20,12 @@ public class SubmissionResultsResponseModel : IMapFrom<SubmissionResultsServiceM
     public DateTime CreatedOn { get; set; }
 
     public bool IsProcessed { get; set; }
+
+    public bool IsCompiledSuccessfully { get; set; }
+
+    public long? MaxMemoryUsed { get; set; }
+
+    public int? MaxTimeUsed { get; set; }
+
+    public IEnumerable<TestResultResponseModel> TestRuns { get; set; } = Enumerable.Empty<TestResultResponseModel>();
 }

@@ -59,11 +59,19 @@ interface ISubmissionDetailsType extends ISubmissionType {
 
 interface ISubmissionResults {
     id: number;
+    problemId: number;
     submissionType: string;
     points: number;
     maximumPoints: number;
     createdOn: Date;
+    content: string;
     isProcessed: boolean;
+    isCompiledSuccessfully: boolean;
+    isOfficial: boolean;
+    compilerComment: string;
+    testRuns: ITestRunDetailsType[];
+    maxMemoryUsed: number;
+    maxTimeUsed: number;
 }
 
 interface ITestCaseRun {

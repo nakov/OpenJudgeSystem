@@ -574,6 +574,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                     .Select(sp => sp.SubmissionId));
 
         return submissions
+            .OrderByDescending(s => s.Id)
             .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
             .ToPagedResult(DefaultSubmissionsPerPage, page);
     }
@@ -607,6 +608,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                     .Select(sp => sp!.SubmissionId));
 
         return submissions
+            .OrderByDescending(s => s.Id)
             .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
             .ToPagedResult(DefaultSubmissionsPerPage, page);
     }
