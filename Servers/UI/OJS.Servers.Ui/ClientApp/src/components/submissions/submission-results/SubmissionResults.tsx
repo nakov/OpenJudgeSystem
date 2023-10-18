@@ -12,9 +12,10 @@ interface ISubmissionResultsProps {
 }
 
 const SubmissionResults = ({ testRuns, isCompiledSuccessfully, compilerComment }: ISubmissionResultsProps) => {
+    const { length: testRunsCount } = testRuns.filter((tr) => tr.isTrialTest);
     const renderTestRunsDetails = useCallback((run: ITestRunDetailsType) => (
-        <TestRunDetails testRun={run} />
-    ), []);
+        <TestRunDetails testRun={run} trialTestsCount={testRunsCount} />
+    ), [ testRunsCount ]);
 
     const compareByTestTypeAndOrderByAsc = (tr1: ITestRunDetailsType, tr2: ITestRunDetailsType) => tr1.isTrialTest === tr2.isTrialTest
         ? tr1.orderBy - tr2.orderBy
