@@ -37,97 +37,26 @@ public class ContestValidationService : IContestValidationService
             return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.NotFound, contestId));
         }
 
+        if (user.IsAdmin || isUserLecturerInContest)
+        {
+            return ValidationResult.Valid();
+        }
+
         var contestActivityEntity = this.activityService
             .GetContestActivity(contest.Map<ContestForActivityServiceModel>())
             .GetAwaiter()
             .GetResult();
 
-        var participant = contest.Participants
-            .FirstOrDefault(p => p.UserId == user.Id && p.IsOfficial)
-            ?.Map<ParticipantServiceModel>() ?? new ParticipantServiceModel();
-
-        if (IsContestExpired(
-                contestActivityEntity,
-                participant,
-                user.IsAdmin,
-                official,
-                isUserLecturerInContest,
-                this.datesService.GetUtcNow()))
-        {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.IsExpired, contest.Name));
-        }
-
-        if (contestActivityEntity.CanBeCompeted &&
-            !CanUserCompeteByContestByUserAndIsAdmin(
-                contestActivityEntity,
-                user.IsAdmin,
-                isUserLecturerInContest,
-                allowToAdminAlways: true))
+        if (official && !contestActivityEntity.CanBeCompeted)
         {
             return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.CanBeCompeted, contest.Name));
         }
 
-        if (!official && !contestActivityEntity.CanBePracticed && !isUserLecturerInContest && !user.IsAdmin)
+        if (!official && !contestActivityEntity.CanBePracticed)
         {
             return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.CanBePracticed, contest.Name));
         }
 
         return ValidationResult.Valid();
-    }
-
-    private static bool IsContestExpired(
-        IContestActivityServiceModel contest,
-        ParticipantServiceModel? participant,
-        bool isAdmin,
-        bool official,
-        bool isUserLecturerInContest,
-        DateTime utcNow)
-    {
-        var isUserAdminOrLecturerInContest = isAdmin || isUserLecturerInContest;
-
-        if (isUserAdminOrLecturerInContest)
-        {
-            return false;
-        }
-
-        if (participant != null)
-        {
-            if (official && participant.ParticipationEndTime != null)
-            {
-                return utcNow >= participant.ParticipationEndTime;
-            }
-        }
-
-        if ((!official && !contest.CanBePracticed) ||
-            (official && !contest.CanBeCompeted))
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    private static bool IsAccessibleToLecturerOrAdmin(
-        bool canBeCompeted,
-        bool isUserAdminOrLecturerInContest,
-        bool allowToAdminAlways) =>
-        canBeCompeted || (isUserAdminOrLecturerInContest && allowToAdminAlways);
-
-    private static bool CanUserCompete(bool isUserAdminOrLecturerInContest, bool isContestActive) =>
-        isUserAdminOrLecturerInContest || isContestActive;
-
-    private static bool CanUserCompeteByContestByUserAndIsAdmin(
-        IContestActivityServiceModel contest,
-        bool isAdmin,
-        bool isUserLecturerInContest = true,
-        bool allowToAdminAlways = false)
-    {
-        var isUserAdminOrLecturerInContest = isAdmin || isUserLecturerInContest;
-
-        return IsAccessibleToLecturerOrAdmin(
-                   contest.CanBeCompeted,
-                   isUserAdminOrLecturerInContest,
-                   allowToAdminAlways)
-               || CanUserCompete(isUserAdminOrLecturerInContest, contest.IsActive);
     }
 }
