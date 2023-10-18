@@ -48,8 +48,6 @@ namespace OJS.Services.Ui.Data
 
         Task<string?> GetNameById(int id);
 
-        Task<bool> IsActiveById(int id);
-
         Task<bool> IsOnlineById(int id);
 
         Task<bool> IsUserLecturerInByContestAndUser(int id, string userId);

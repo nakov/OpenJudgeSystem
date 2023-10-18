@@ -147,18 +147,6 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             .Select(c => c.Name)
             .FirstOrDefaultAsync();
 
-    public async Task<bool> IsActiveById(int id)
-    {
-        var contest = await this.OneById(id);
-
-        if (contest == null)
-        {
-            return false;
-        }
-
-        return await this.activityService.IsActive(contest.Map<ContestForActivityServiceModel>());
-    }
-
     public async Task<bool> IsOnlineById(int id)
         => await this.GetByIdQuery(id)
             .Select(c => c.Type)

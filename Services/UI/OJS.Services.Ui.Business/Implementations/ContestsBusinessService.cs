@@ -109,7 +109,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 contestDetailsServiceModel.Problems = problemsForParticipant.Map<ICollection<ContestProblemServiceModel>>();
             }
 
-            var canShowProblemsInCompete = (!contest!.HasContestPassword && !contestActivityEntity.IsActive && !contest.IsOnlineExam && contestActivityEntity.CanBeCompeted) || userIsAdminOrLecturerInContest;
+            var canShowProblemsInCompete = (!contest!.HasContestPassword && !contest.IsOnlineExam && contestActivityEntity.CanBeCompeted) || userIsAdminOrLecturerInContest;
             var canShowProblemsInPractice = (!contest.HasPracticePassword && contestActivityEntity.CanBePracticed) || userIsAdminOrLecturerInContest;
 
             if (!canShowProblemsInPractice && !canShowProblemsInCompete)
@@ -117,7 +117,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 contestDetailsServiceModel.Problems = new List<ContestProblemServiceModel>();
             }
 
-            if (userIsAdminOrLecturerInContest || (contestActivityEntity.IsActive && participant != null && contestActivityEntity.CanBeCompeted) || (!contestActivityEntity.CanBeCompeted && participant != null))
+            if (userIsAdminOrLecturerInContest || participant != null)
             {
                 contestDetailsServiceModel.CanViewResults = true;
             }
@@ -305,35 +305,6 @@ namespace OJS.Services.Ui.Business.Implementations
                     c.Id == contestId &&
                     (!c.IpsInContests.Any() || c.IpsInContests.Any(ai => ai.Ip.Value == ip)));
 
-        public async Task ValidateContest(Contest contest, string userId, bool isUserAdmin, bool official)
-        {
-            var isUserLecturerInContest = this.lecturersInContestsBusiness.IsUserLecturerInContest(contest);
-
-            if (contest == null ||
-                contest.IsDeleted ||
-                (!contest.IsVisible && !isUserLecturerInContest))
-            {
-                throw new BusinessServiceException("Contest not found");
-            }
-
-            var contestActivityEntity = await this.activityService
-                .GetContestActivity(contest.Map<ContestForActivityServiceModel>());
-
-            if (official &&
-                !await this.CanUserCompeteByContestByUserAndIsAdmin(
-                    contestActivityEntity,
-                    userId,
-                    isUserAdmin))
-            {
-                throw new BusinessServiceException($"Contest cannot be competed");
-            }
-
-            if (!official && !contestActivityEntity.CanBePracticed && !isUserLecturerInContest)
-            {
-                throw new BusinessServiceException($"Contest cannot be practiced");
-            }
-        }
-
         public async Task<PagedResult<ContestForListingServiceModel>> GetAllByFiltersAndSorting(
             ContestFiltersServiceModel? model)
         {
@@ -385,113 +356,6 @@ namespace OJS.Services.Ui.Business.Implementations
                 .GetAllExpired<ContestForHomeIndexServiceModel>()
                 .OrderByDescendingAsync(ac => ac.EndTime)
                 .TakeAsync(DefaultContestsToTake);
-
-        public async Task<bool> CanUserCompeteByContestByUserAndIsAdmin(
-            IContestActivityServiceModel contest,
-            string userId,
-            bool isAdmin)
-        {
-            var isUserAdminOrLecturerInContest = isAdmin || await this.contestsData
-                .IsUserLecturerInByContestAndUser(contest.Id, userId);
-
-            if (contest.CanBeCompeted || isUserAdminOrLecturerInContest || contest.IsActive)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        // TODO: Extract different logic blocks in separate services
-        public async Task<ServiceResult> TransferParticipantsToPracticeById(int contestId)
-        {
-            var contest = await this.contestsData.GetByIdWithParticipants(contestId);
-
-            if (contest == null)
-            {
-                return new ServiceResult("Contest cannot be found");
-            }
-
-            var contestActivity = await this.activityService.GetContestActivity(contest.Id);
-
-            if (contestActivity.IsActive)
-            {
-                return new ServiceResult("The Contest is active and participants cannot be transferred");
-            }
-
-            var competeOnlyParticipants = contest.Participants
-                .GroupBy(p => p.UserId)
-                .Where(g => g.Count() == 1 && g.All(p => p.IsOfficial))
-                .Select(gr => gr.FirstOrDefault());
-
-            foreach (var participant in competeOnlyParticipants)
-            {
-                if (participant == null)
-                {
-                    continue;
-                }
-
-                foreach (var participantScore in participant.Scores)
-                {
-                    participantScore.IsOfficial = false;
-                }
-
-                participant.IsOfficial = false;
-            }
-
-            var competeAndPracticeParticipants = contest.Participants
-                .GroupBy(p => p.UserId)
-                .Where(g => g.Count() == 2)
-                .ToDictionary(grp => grp.Key, grp => grp.OrderBy(p => p.IsOfficial));
-
-            var participantsForDeletion = new List<Participant>();
-
-            foreach (var competeAndPracticeParticipant in competeAndPracticeParticipants)
-            {
-                var unofficialParticipant = competeAndPracticeParticipants[competeAndPracticeParticipant.Key].First();
-                var officialParticipant = competeAndPracticeParticipants[competeAndPracticeParticipant.Key].Last();
-                participantsForDeletion.Add(officialParticipant);
-
-                foreach (var officialParticipantSubmission in officialParticipant.Submissions)
-                {
-                    officialParticipantSubmission.Participant = unofficialParticipant;
-                }
-
-                var scoresForDeletion = new List<ParticipantScore>();
-
-                foreach (var officialParticipantScore in officialParticipant.Scores)
-                {
-                    var unofficialParticipantScore = unofficialParticipant
-                        .Scores
-                        .FirstOrDefault(s => s.ProblemId == officialParticipantScore.ProblemId);
-
-                    if (unofficialParticipantScore != null)
-                    {
-                        if (unofficialParticipantScore.Points < officialParticipantScore.Points ||
-                            (unofficialParticipantScore.Points == officialParticipantScore.Points &&
-                             unofficialParticipantScore.Id < officialParticipantScore.Id))
-                        {
-                            unofficialParticipantScore = officialParticipantScore;
-                            unofficialParticipantScore.IsOfficial = false;
-                            unofficialParticipantScore.Participant = unofficialParticipant;
-                        }
-
-                        scoresForDeletion.Add(officialParticipantScore);
-                    }
-                    else
-                    {
-                        officialParticipantScore.IsOfficial = false;
-                        officialParticipantScore.Participant = unofficialParticipant;
-                    }
-                }
-
-                await this.participantScoresData.Delete(scoresForDeletion);
-            }
-
-            await this.participantsData.Delete(participantsForDeletion);
-
-            return ServiceResult.Success;
-        }
 
         public async Task DeleteById(int id)
         {
