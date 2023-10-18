@@ -6,7 +6,6 @@ using SoftUni.AutoMapper.Infrastructure.Models;
 using System.Collections.Generic;
 using System.Linq;
 
-
 public class SubmissionResultsResponseModel : IMapFrom<SubmissionResultsServiceModel>
 {
     public int Id { get; set; }
