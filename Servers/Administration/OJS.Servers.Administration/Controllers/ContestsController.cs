@@ -46,6 +46,7 @@ namespace OJS.Servers.Administration.Controllers
 
         protected override Expression<Func<Contest, bool>>? MasterGridFilter
             => this.GetMasterGridFilter();
+
         protected override IEnumerable<Func<Contest, Contest, AdminActionContext, ValidatorResult>> EntityValidators
             => this.contestValidatorsFactory.GetValidators();
 
