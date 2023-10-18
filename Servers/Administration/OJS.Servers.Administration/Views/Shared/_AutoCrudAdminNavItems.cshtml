@@ -29,20 +29,17 @@
                 <li>
                     <a class="dropdown-item" asp-action="Create" asp-controller="ContestCategories">Create</a>
                 </li>
-
             </ul>
         </li>
         <li>
             <a class="dropdown-item" href="#">Lecturers In Contests &raquo;</a>
             <ul class="dropdown-menu dropdown-submenu">
-
                 <li>
                     <a class="dropdown-item" asp-action="Index" asp-controller="LecturersInContests">All</a>
                 </li>
                 <li>
                     <a class="dropdown-item" asp-action="Create" asp-controller="LecturersInContests">Create</a>
                 </li>
-
             </ul>
         </li>
         <li>
@@ -123,24 +120,23 @@
         Submissions
     </a>
     <ul class="dropdown-menu">
+    <li>
+        <a class="dropdown-item" asp-action="Index" asp-controller="Submissions">Submissions</a>
+    </li>
         <li>
-            <a class="dropdown-item" asp-action="Index" asp-controller="Submissions">Submissions</a>
+            <a class="dropdown-item" href="#">Submission Types &raquo;</a>
+            <ul class="dropdown-menu dropdown-submenu">
+                <li>
+                    <a class="dropdown-item" asp-action="Index" asp-controller="SubmissionTypes">All</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-action="Create" asp-controller="SubmissionTypes">Create</a>
+                </li>
+            </ul>
         </li>
-            <li>
-                <a class="dropdown-item" href="#">Submission Types &raquo;</a>
-                <ul class="dropdown-menu dropdown-submenu">
-                    <li>
-                        <a class="dropdown-item" asp-action="Index" asp-controller="SubmissionTypes">All</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" asp-action="Create" asp-controller="SubmissionTypes">Create</a>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <a class="dropdown-item" asp-action="Index" asp-controller="SubmissionsForProcessing">Submissions For Processing</a>
-            </li>
-        
+        <li>
+            <a class="dropdown-item" asp-action="Index" asp-controller="SubmissionsForProcessing">Submissions For Processing</a>
+        </li>
     </ul>
 </li>
 <li class="nav-item dropdown">
