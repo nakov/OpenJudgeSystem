@@ -115,7 +115,7 @@ const SubmissionsGrid = () => {
                 return;
             }
 
-            if (activeToggleElement !== toggleValues.allSubmissions || !isNil(totalUnprocessedSubmissionsCount)) {
+            if (activeToggleElement !== toggleValues.allSubmissions) {
                 return;
             }
 
@@ -123,7 +123,7 @@ const SubmissionsGrid = () => {
                 await loadTotalUnprocessedSubmissionsCount();
             })();
         },
-        [ loadTotalUnprocessedSubmissionsCount, user.isInRole, activeToggleElement, totalUnprocessedSubmissionsCount ],
+        [ loadTotalUnprocessedSubmissionsCount, user.isInRole, activeToggleElement ],
     );
 
     useEffect(() => {
