@@ -13,11 +13,13 @@
   overflow: hidden;
 
   .listFilterItem {
+    flex-basis: calc(33%);
     margin-top: 5px;
   }
 
   &.expanded {
     max-height: none;
+    flex-wrap: wrap;
     overflow: visible;
   }
 }

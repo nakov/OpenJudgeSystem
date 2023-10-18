@@ -27,13 +27,14 @@ interface IFiltersGroup {
 const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const maxFiltersToDisplayCount = 3;
     const { search } = useLocation();
-    const { actions: { clearParams } } = useUrlParams();
+    const { state: { params }, actions: { clearParams } } = useUrlParams();
     const [ selectValue, setSelectValue ] = useState('');
     const [ filtersGroups, setFiltersGroups ] = useState<IFiltersGroup[]>([]);
     const [ defaultSelected, setDefaultSelected ] = useState('');
     const [ filteredStrategyFilters, setFilteredStrategyFilters ] = useState<IFilter[]>([]);
     const [ searchParams ] = useSearchParams();
     const [ isLoaded, setIsLoaded ] = useState(false);
+    const [ shouldResetCategoriesAndBreadcrumbs, setShouldResetCategoriesAndBreadcrumbs ] = useState(false);
 
     const {
         state: { possibleFilters },
@@ -68,6 +69,16 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
     const handleStrategySelect = useCallback((param: IFilter) => {
         toggleParam(param);
     }, [ toggleParam ]);
+
+    const clearFiltersBreadcrumbSortingPagesAndParameters = useCallback(
+        () => {
+            clearParams();
+            setDefaultSelected('');
+            setFilteredStrategyFilters([]);
+            setShouldResetCategoriesAndBreadcrumbs((prev) => !prev);
+        },
+        [ clearParams ],
+    );
 
     const renderFilter = useCallback(
         (fg: IFiltersGroup) => {
@@ -128,6 +139,12 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         [ filteredStrategyFilters, handleFilterClick, handleStrategySelect, selectValue ],
     );
 
+    useEffect(() => {
+        if (isEmpty(params)) {
+            clearFiltersBreadcrumbSortingPagesAndParameters();
+        }
+    }, [ params, clearFiltersBreadcrumbSortingPagesAndParameters ]);
+
     useEffect(
         () => {
             const plainFilters = possibleFilters.filter(({ type }) => type !== FilterType.Category);
@@ -160,13 +177,6 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         [ isLoaded, searchParams ],
     );
 
-    const clearFiltersBreadcrumbSortingPagesAndParameters = useCallback(
-        () => {
-            clearParams();
-        },
-        [ clearParams ],
-    );
-
     return (
         <div className={styles.container}>
             <Button
@@ -181,6 +191,7 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
               onCategoryClick={onFilterClick}
               defaultSelected={defaultSelected}
               setStrategyFilters={setFilteredStrategyFilters}
+              shouldReset={shouldResetCategoriesAndBreadcrumbs}
             />
             {/* Commented out because displaying sorting menu to
             the user is no longer a wanted feature
