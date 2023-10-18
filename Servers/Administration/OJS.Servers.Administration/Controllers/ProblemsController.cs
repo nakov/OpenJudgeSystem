@@ -1,10 +1,17 @@
 namespace OJS.Servers.Administration.Controllers;
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using FluentExtensions.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -28,16 +35,12 @@ using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 using GlobalResource = OJS.Common.Resources.ProblemsController;
 using Resource = OJS.Common.Resources.ProblemGroupsControllers;
+using static Common.GlobalConstants.Roles;
 
+[Authorize(Roles = Administrator)]
 public class ProblemsController : BaseAutoCrudAdminController<Problem>
 {
     public const string ContestIdKey = nameof(OJS.Data.Models.Problems.Problem.ProblemGroup.ContestId);

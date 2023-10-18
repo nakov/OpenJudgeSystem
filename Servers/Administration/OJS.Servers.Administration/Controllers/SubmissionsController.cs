@@ -1,5 +1,10 @@
 namespace OJS.Servers.Administration.Controllers;
 
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+using System.Linq;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
@@ -13,14 +18,11 @@ using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.Data.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OJS.Servers.Administration.Infrastructure.Extensions;
 using OJS.Common;
+using OJS.Common.Extensions;
 using GlobalResource = OJS.Common.Resources.SubmissionsController;
 
 public class SubmissionsController : BaseAutoCrudAdminController<Submission>
@@ -226,7 +228,28 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
             return x => x.Id == submissionId;
         }
 
-        return base.MasterGridFilter;
+        ParameterExpression parameter = Expression.Parameter(typeof(Submission), "x");
+
+        Expression<Func<Submission, bool>> firstExpression = x =>
+        (
+            x.Problem.ProblemGroup.Contest.LecturersInContests.Any(l => l.LecturerId == this.User.GetId()) ||
+            x.Problem.ProblemGroup.Contest.Category!.LecturersInContestCategories.Any(lc => lc.LecturerId == this.User.GetId()) ||
+            this.User.IsAdmin());
+
+        Expression<Func<Submission, bool>>? secondExpression = base.MasterGridFilter;
+
+        if (base.MasterGridFilter == null)
+        {
+            return firstExpression;
+        }
+
+        var orElse = Expression.OrElse(
+            Expression.Invoke(firstExpression, parameter),
+            Expression.Invoke(secondExpression!, parameter));
+
+        var combinedExpression = Expression.Lambda<Func<Submission, bool>>(orElse, parameter);
+
+        return combinedExpression;
     }
 
     private IActionResult RedirectToSubmissionById(int id)

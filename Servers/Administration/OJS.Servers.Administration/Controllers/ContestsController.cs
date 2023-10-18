@@ -8,6 +8,7 @@ namespace OJS.Servers.Administration.Controllers
     using AutoCrudAdmin.Models;
     using AutoCrudAdmin.ViewModels;
     using Microsoft.AspNetCore.Mvc;
+    using OJS.Common.Extensions;
     using OJS.Data.Models;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Problems;
@@ -43,6 +44,8 @@ namespace OJS.Servers.Administration.Controllers
             this.contestsValidationHelper = contestsValidationHelper;
         }
 
+        protected override Expression<Func<Contest, bool>>? MasterGridFilter
+            => this.GetMasterGridFilter();
         protected override IEnumerable<Func<Contest, Contest, AdminActionContext, ValidatorResult>> EntityValidators
             => this.contestValidatorsFactory.GetValidators();
 
@@ -247,5 +250,10 @@ namespace OJS.Servers.Administration.Controllers
                 await this.participantsData.InvalidateByContestAndIsOfficial(contest.Id, isOfficial: false);
             }
         }
+
+        private Expression<Func<Contest, bool>>? GetMasterGridFilter()
+            => c => c.LecturersInContests.Any(l => l.LecturerId == this.User.GetId()) ||
+                 c.Category!.LecturersInContestCategories.Any(lc => lc.LecturerId == this.User.GetId()) ||
+                 this.User.IsAdmin();
     }
 }
