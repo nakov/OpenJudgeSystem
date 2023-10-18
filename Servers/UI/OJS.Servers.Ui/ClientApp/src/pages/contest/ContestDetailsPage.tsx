@@ -239,7 +239,7 @@ const ContestDetailsPage = () => {
                       to={getContestsByStrategyUrl(x.id)}
                       text={x.name}
                       type={LinkButtonType.plain}
-                      className={styles.allowedLanguagesColor}
+                      className={styles.allowedStrategiesColor}
                     />
                     {' '}
                     |
@@ -322,7 +322,7 @@ const ContestDetailsPage = () => {
                                       : contestDetails?.description,
                               }}
                             />
-                            <div className={styles.allowedLanguages}>
+                            <div className={styles.allowedStrategies}>
                                 Allowed languages:
                                 {' '}
                                 {renderAllowedSubmissionTypes()}
