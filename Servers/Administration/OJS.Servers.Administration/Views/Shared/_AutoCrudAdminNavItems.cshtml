@@ -1,8 +1,3 @@
-@using OJS.Common.Extensions
-@{
-    var isAdmin = User.IsAdmin();
-}
-
 <li class="nav-item dropdown">
     <a
         class="nav-link dropdown-toggle"
@@ -25,53 +20,42 @@
                 </li>
             </ul>
         </li>
-        @if (isAdmin)
-        {
-            <li>
-                <a class="dropdown-item" href="#">Contests Categories &raquo;</a>
-                <ul class="dropdown-menu dropdown-submenu">
-                    <li>
-                        <a class="dropdown-item" asp-action="Index" asp-controller="ContestCategories">All</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" asp-action="Create" asp-controller="ContestCategories">Create</a>
-                    </li>
+        <li>
+            <a class="dropdown-item" href="#">Contests Categories &raquo;</a>
+            <ul class="dropdown-menu dropdown-submenu">
+                <li>
+                    <a class="dropdown-item" asp-action="Index" asp-controller="ContestCategories">All</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-action="Create" asp-controller="ContestCategories">Create</a>
+                </li>
 
-                </ul>
-            </li>
-        }
-        @if (isAdmin)
-        {
-            <li>
-                <a class="dropdown-item" href="#">Lecturers In Contests &raquo;</a>
-                <ul class="dropdown-menu dropdown-submenu">
+            </ul>
+        </li>
+        <li>
+            <a class="dropdown-item" href="#">Lecturers In Contests &raquo;</a>
+            <ul class="dropdown-menu dropdown-submenu">
 
-                    <li>
-                        <a class="dropdown-item" asp-action="Index" asp-controller="LecturersInContests">All</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" asp-action="Create" asp-controller="LecturersInContests">Create</a>
-                    </li>
+                <li>
+                    <a class="dropdown-item" asp-action="Index" asp-controller="LecturersInContests">All</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-action="Create" asp-controller="LecturersInContests">Create</a>
+                </li>
 
-                </ul>
-            </li>
-        }
-        @if (isAdmin)
-        {
-            <li>
-                <a class="dropdown-item" href="#">Lecturers In Contest Categories &raquo;</a>
-                <ul class="dropdown-menu dropdown-submenu">
-
-                    <li>
-                        <a class="dropdown-item" asp-action="Index" asp-controller="LecturersInContestCategories">All</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" asp-action="Create" asp-controller="LecturersInContestCategories">Create</a>
-                    </li>
-
-                </ul>
-            </li>
-        }
+            </ul>
+        </li>
+        <li>
+            <a class="dropdown-item" href="#">Lecturers In Contest Categories &raquo;</a>
+            <ul class="dropdown-menu dropdown-submenu">
+                <li>
+                    <a class="dropdown-item" asp-action="Index" asp-controller="LecturersInContestCategories">All</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-action="Create" asp-controller="LecturersInContestCategories">Create</a>
+                </li>
+            </ul>
+        </li>
         <li>
             <a class="dropdown-item" href="#">Exam Groups &raquo;</a>
             <ul class="dropdown-menu dropdown-submenu">
@@ -83,57 +67,51 @@
                 </li>
             </ul>
         </li>
-        @if (isAdmin)
-        {
-            <li>
-                <a class="dropdown-item" href="#">Participants &raquo;</a>
-                <ul class="dropdown-menu dropdown-submenu">
-                    <li>
-                        <a class="dropdown-item" asp-action="Index" asp-controller="Participants">All</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" asp-action="Create" asp-controller="Participants">Create</a>
-                    </li>
-                </ul>
-            </li>
-        }
+        <li>
+            <a class="dropdown-item" href="#">Participants &raquo;</a>
+            <ul class="dropdown-menu dropdown-submenu">
+                <li>
+                    <a class="dropdown-item" asp-action="Index" asp-controller="Participants">All</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-action="Create" asp-controller="Participants">Create</a>
+                </li>
+            </ul>
+        </li>
     </ul>
 </li>
-@if (isAdmin)
-{
-    <li class="nav-item dropdown">
-        <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            role="button"
-            data-toggle="dropdown"
-            aria-expanded="false">
-            Problems
-        </a>
-        <ul class="dropdown-menu">
-            <li>
-                <a class="dropdown-item" asp-action="Index" asp-controller="Problems">Problems</a>
-            </li>
-            <li>
-                <a class="dropdown-item" asp-action="Index" asp-controller="ProblemResources">Problem Resources</a>
-            </li>
-            <li>
-                <a class="dropdown-item" href="#">Problem Groups &raquo;</a>
-                <ul class="dropdown-menu dropdown-submenu">
-                    <li>
-                        <a class="dropdown-item" asp-action="Index" asp-controller="ProblemGroups">All</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" asp-action="Create" asp-controller="ProblemGroups">Create</a>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <a class="dropdown-item" asp-action="Index" asp-controller="Tests">Tests</a>
-            </li>
-        </ul>
-    </li>
-}
+<li class="nav-item dropdown">
+    <a
+        class="nav-link dropdown-toggle"
+        href="#"
+        role="button"
+        data-toggle="dropdown"
+        aria-expanded="false">
+        Problems
+    </a>
+    <ul class="dropdown-menu">
+        <li>
+            <a class="dropdown-item" asp-action="Index" asp-controller="Problems">Problems</a>
+        </li>
+        <li>
+            <a class="dropdown-item" asp-action="Index" asp-controller="ProblemResources">Problem Resources</a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="#">Problem Groups &raquo;</a>
+            <ul class="dropdown-menu dropdown-submenu">
+                <li>
+                    <a class="dropdown-item" asp-action="Index" asp-controller="ProblemGroups">All</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-action="Create" asp-controller="ProblemGroups">Create</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a class="dropdown-item" asp-action="Index" asp-controller="Tests">Tests</a>
+        </li>
+    </ul>
+</li>
 <li class="nav-item dropdown">
     <a
         class="nav-link dropdown-toggle"
@@ -148,8 +126,6 @@
         <li>
             <a class="dropdown-item" asp-action="Index" asp-controller="Submissions">Submissions</a>
         </li>
-        @if (isAdmin)
-        {
             <li>
                 <a class="dropdown-item" href="#">Submission Types &raquo;</a>
                 <ul class="dropdown-menu dropdown-submenu">
@@ -164,67 +140,64 @@
             <li>
                 <a class="dropdown-item" asp-action="Index" asp-controller="SubmissionsForProcessing">Submissions For Processing</a>
             </li>
-        }
+        
     </ul>
 </li>
-@if (isAdmin)
-{
-    <li class="nav-item dropdown">
-        <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            role="button"
-            data-toggle="dropdown"
-            aria-expanded="false">
-            Checkers
-        </a>
-        <ul class="dropdown-menu">
-            <li>
-                <a class="dropdown-item" asp-action="Index" asp-controller="Checkers">All</a>
-            </li>
-            <li>
-                <a class="dropdown-item" asp-action="Create" asp-controller="Checkers">Create</a>
-            </li>
-        </ul>
-    </li>
-    <li class="nav-item dropdown">
-        <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            role="button"
-            data-toggle="dropdown"
-            aria-expanded="false">
-            Users
-        </a>
-        <ul class="dropdown-menu">
-            <li>
-                <a class="dropdown-item" asp-action="Index" asp-controller="Users">All</a>
-            </li>
-            <li>
-                <a class="dropdown-item" asp-action="Index" asp-controller="FeedbackReports">Feedback Reports</a>
-            </li>
-            <li>
-                <a class="dropdown-item" href="#">Users in Roles &raquo;</a>
-                <ul class="dropdown-menu dropdown-submenu">
-                    <li>
-                        <a class="dropdown-item" asp-action="Index" asp-controller="UserRoles">All</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" asp-action="Create" asp-controller="UserRoles">Create</a>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <a class="dropdown-item" href="#">Roles &raquo;</a>
-                <ul class="dropdown-menu dropdown-submenu">
-                    <li>
-                        <a class="dropdown-item" asp-action="Index" asp-controller="Roles">All</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" asp-action="Create" asp-controller="Roles">Create</a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-    </li>
-}
+<li class="nav-item dropdown">
+    <a
+        class="nav-link dropdown-toggle"
+        href="#"
+        role="button"
+        data-toggle="dropdown"
+        aria-expanded="false">
+        Checkers
+    </a>
+    <ul class="dropdown-menu">
+        <li>
+            <a class="dropdown-item" asp-action="Index" asp-controller="Checkers">All</a>
+        </li>
+        <li>
+            <a class="dropdown-item" asp-action="Create" asp-controller="Checkers">Create</a>
+        </li>
+    </ul>
+</li>
+<li class="nav-item dropdown">
+    <a
+        class="nav-link dropdown-toggle"
+        href="#"
+        role="button"
+        data-toggle="dropdown"
+        aria-expanded="false">
+        Users
+    </a>
+    <ul class="dropdown-menu">
+        <li>
+            <a class="dropdown-item" asp-action="Index" asp-controller="Users">All</a>
+        </li>
+        <li>
+            <a class="dropdown-item" asp-action="Index" asp-controller="FeedbackReports">Feedback Reports</a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="#">Users in Roles &raquo;</a>
+            <ul class="dropdown-menu dropdown-submenu">
+                <li>
+                    <a class="dropdown-item" asp-action="Index" asp-controller="UserRoles">All</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-action="Create" asp-controller="UserRoles">Create</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a class="dropdown-item" href="#">Roles &raquo;</a>
+            <ul class="dropdown-menu dropdown-submenu">
+                <li>
+                    <a class="dropdown-item" asp-action="Index" asp-controller="Roles">All</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-action="Create" asp-controller="Roles">Create</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</li>
