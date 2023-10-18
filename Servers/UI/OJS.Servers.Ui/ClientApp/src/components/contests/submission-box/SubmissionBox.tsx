@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router';
 import isNil from 'lodash/isNil';
 
 import { ExcludedFromHomeWorkTaskHeadingAddition } from '../../../common/constants';
@@ -47,7 +46,6 @@ const SubmissionBox = () => {
         },
     } = useSubmissions();
 
-    const navigate = useNavigate();
     const { state: { currentProblem } } = useProblems();
     const { allowedSubmissionTypes } = currentProblem || {};
 
@@ -341,7 +339,7 @@ const SubmissionBox = () => {
                     contest?.userIsAdminOrLecturerInContest && (
                     <div className={styles.navigationalButtonsWrapper}>
                         <Button
-                          onClick={() => redirectToAdministration(getAdministrationParticipants(Number(contest?.id)))}
+                          onClick={() => redirectToAdministration(getAdministrationParticipants(Number(contest.id)))}
                           text="Participants"
                           size={ButtonSize.small}
                           type={ButtonType.secondary}
@@ -395,7 +393,6 @@ const SubmissionBox = () => {
                 </div>
             </div>
         ),
-        // eslint-disable-next-line react-hooks/exhaustive-deps
         [
             currentProblem?.name,
             currentProblem?.isExcludedFromHomework,
@@ -405,7 +402,9 @@ const SubmissionBox = () => {
             renderSubmissionTypesSelectorsList,
             renderSubmitBtn,
             renderSubmitMessage,
-            navigate,
+            contest?.id,
+            contest?.userIsAdminOrLecturerInContest,
+            currentProblem?.id,
         ],
     );
 
