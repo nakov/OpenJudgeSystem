@@ -25,13 +25,11 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
             bool isUserAdminOrLecturer,
             bool isFullResults,
             bool isExportResults = false)
-        {
-            var contestActivityEntity = this.activityService
-                .GetContestActivity(contest.Map<ContestForActivityServiceModel>())
-                .GetAwaiter()
-                .GetResult();
+    {
+        var contestActivityEntity = this.activityService
+            .GetContestActivity(contest.Map<ContestForActivityServiceModel>());
 
-            var contestResults = new ContestResultsViewModel
+        var contestResults = new ContestResultsViewModel
             {
                 Id = contest.Id,
                 Name = contest.Name,
@@ -49,16 +47,16 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
                     .Select(ContestProblemListViewModel.FromProblem),
             };
 
-            var participants = this.participantsCommonData
+        var participants = this.participantsCommonData
                 .GetAllByContestAndIsOfficial(contest.Id, official);
 
-            var participantResults = participants
+        var participantResults = participants
                 .Select(ParticipantResultViewModel.FromParticipantAsSimpleResultByContest(contest.Id))
                 .OrderByDescending(parRes => parRes.ProblemResults
                     .Where(pr => pr.ShowResult)
                     .Sum(pr => pr.BestSubmission.Points));
 
-            if (isFullResults)
+        if (isFullResults)
             {
                 participantResults = participants
                     .Select(ParticipantResultViewModel.FromParticipantAsFullResultByContest(contest.Id))
@@ -74,12 +72,12 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
                         .Sum(pr => pr.BestSubmission.Points));
             }
 
-            contestResults.Results = participantResults
+        contestResults.Results = participantResults
                 .ThenBy(parResult => parResult.ProblemResults
                     .OrderByDescending(pr => pr.BestSubmission.Id)
                     .Select(pr => pr.BestSubmission.Id)
                     .FirstOrDefault());
 
-            return contestResults;
-        }
+        return contestResults;
+    }
 }

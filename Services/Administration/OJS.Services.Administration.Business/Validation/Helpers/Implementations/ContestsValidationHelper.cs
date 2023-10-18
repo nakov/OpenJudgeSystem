@@ -46,7 +46,7 @@ public class ContestsValidationHelper : IContestsValidationHelper
         Contest existingContest,
         Contest newContest)
     {
-        var isActive = await this.activityService.IsActive(existingContest.Map<ContestForActivityServiceModel>());
+        var isActive = await this.activityService.IsContestActive(existingContest.Map<ContestForActivityServiceModel>());
 
         if (isActive &&
             (existingContest.Duration != newContest.Duration ||
@@ -60,7 +60,7 @@ public class ContestsValidationHelper : IContestsValidationHelper
 
     public async Task<ValidationResult> ValidateContestIsNotActive(Contest contest)
     {
-        var isActive = await this.activityService.IsActive(contest.Map<ContestForActivityServiceModel>());
+        var isActive = await this.activityService.IsContestActive(contest.Map<ContestForActivityServiceModel>());
 
         if (isActive)
         {

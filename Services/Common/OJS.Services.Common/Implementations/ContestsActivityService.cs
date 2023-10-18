@@ -46,22 +46,20 @@ public class ContestsActivityService : IContestsActivityService
         {
             Id = contest!.Id,
             Name = contest.Name,
-            CanBeCompeted = this.CanBeCompeted(contest),
+            CanBeCompeted = this.CanUserCompete(contest),
             CanBePracticed = this.CanBePracticed(contest),
-            IsActive = await this.IsActive(contest),
         };
     }
 
-    public async Task<IContestActivityServiceModel> GetContestActivity(IContestForActivityServiceModel contest)
+    public IContestActivityServiceModel GetContestActivity(IContestForActivityServiceModel contest)
         => new ContestActivityServiceModel
         {
             Id = contest!.Id,
             Name = contest.Name,
-            CanBeCompeted = this.CanBeCompeted(contest),
+            CanBeCompeted = this.CanUserCompete(contest),
             CanBePracticed = this.CanBePracticed(contest),
-            IsActive = await this.IsActive(contest),
         };
-    public bool CanBeCompeted(IContestForActivityServiceModel contest)
+    public bool CanUserCompete(IContestForActivityServiceModel contest)
     {
         if (!contest.IsVisible || contest.IsDeleted)
         {
@@ -125,14 +123,31 @@ public class ContestsActivityService : IContestsActivityService
         return contest.PracticeStartTime <= currentTimeInUtc && currentTimeInUtc <= contest.PracticeEndTime;
     }
 
-    public async Task<bool> IsActive(IContestForActivityServiceModel contest)
-        => this.CanBeCompeted(contest) ||
+    public async Task<bool> IsContestActive(IContestForActivityServiceModel contest)
+        => this.CanUserCompete(contest) ||
            (contest.Type == ContestType.OnlinePracticalExam &&
                 await this.participantsCommonData
                     .GetAllByContestAndIsOfficial(contest.Id, true)
                     .AnyAsync(p =>
                         p.ParticipationEndTime.HasValue &&
                         p.ParticipationEndTime.Value >= this.dates.GetUtcNow()));
+
+    public async Task<bool> IsContestActive(int contestId)
+    {
+        var contest = await this.contestsData.OneByIdTo<ContestForActivityServiceModel>(contestId);
+
+        this.notDefaultValueValidationHelper
+            .ValidateValueIsNotDefault(contest, nameof(contest))
+            .VerifyResult();
+
+        return this.CanUserCompete(contest!) ||
+               (contest!.Type == ContestType.OnlinePracticalExam &&
+                await this.participantsCommonData
+                    .GetAllByContestAndIsOfficial(contest.Id, true)
+                    .AnyAsync(p =>
+                        p.ParticipationEndTime.HasValue &&
+                        p.ParticipationEndTime.Value >= this.dates.GetUtcNow()));
+    }
 
     private bool IsActiveParticipantInOnlineContest(int contestId)
     {

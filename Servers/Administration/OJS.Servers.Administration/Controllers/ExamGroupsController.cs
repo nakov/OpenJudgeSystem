@@ -75,9 +75,7 @@ public class ExamGroupsController : BaseAutoCrudAdminController<ExamGroup>
 
         var validationModel = entity.Map<ExamGroupDeleteValidationServiceModel>();
 
-        var contest = await this.contestsActivity.GetContestActivity(entity.ContestId.Value);
-
-        validationModel.ContestIsActive = contest.IsActive;
+        validationModel.ContestIsActive = await this.contestsActivity.IsContestActive(entity.ContestId.Value);
 
         this.examGroupsDeleteValidation
             .GetValidationResult(validationModel)

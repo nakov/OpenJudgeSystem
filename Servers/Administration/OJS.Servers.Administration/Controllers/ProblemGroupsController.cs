@@ -119,7 +119,7 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
 
         var validationModel = new ProblemGroupCreateValidationServiceModel
         {
-            ContestIsActive = await this.contestsActivity.IsActive(contest!),
+            ContestIsActive = await this.contestsActivity.IsContestActive(contest!),
             ContestIsOnline = contest!.IsOnline,
         };
 
@@ -147,11 +147,9 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
 
     protected override async Task BeforeEntitySaveOnDeleteAsync(ProblemGroup entity, AdminActionContext actionContext)
     {
-        var contest = await this.contestsActivity.GetContestActivity(entity.ContestId);
-
         var validationModel = new ProblemGroupDeleteValidationServiceModel
         {
-            ContestIsActive = contest.IsActive,
+            ContestIsActive = await this.contestsActivity.IsContestActive(entity.ContestId),
         };
 
         this.problemGroupsDeleteValidation

@@ -9,13 +9,15 @@ public interface IContestsActivityService : IService
 {
     Task<IContestActivityServiceModel> GetContestActivity(int id);
 
-    Task<IContestActivityServiceModel> GetContestActivity(IContestForActivityServiceModel contest);
+    IContestActivityServiceModel GetContestActivity(IContestForActivityServiceModel contest);
 
-    bool CanBeCompeted(IContestForActivityServiceModel contest);
+    bool CanUserCompete(IContestForActivityServiceModel contest);
 
     bool CanBePracticed(IContestForActivityServiceModel contest);
 
-    Task<bool> IsActive(IContestForActivityServiceModel contest);
+    Task<bool> IsContestActive(IContestForActivityServiceModel contest);
+
+    Task<bool> IsContestActive(int contestId);
 
     void SetCanBeCompetedAndPracticed<T>(T contestModel)
         where T : ICanBeCompetedAndPracticed;

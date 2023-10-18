@@ -85,7 +85,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 throw new BusinessServiceException(validationResult.Message);
             }
 
-            var contestActivityEntity = await this.activityService
+            var contestActivityEntity = this.activityService
                 .GetContestActivity(contest!.Map<ContestForActivityServiceModel>());
 
             var participant = await this.participantsData

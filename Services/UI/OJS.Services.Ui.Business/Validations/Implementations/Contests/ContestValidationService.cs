@@ -43,9 +43,7 @@ public class ContestValidationService : IContestValidationService
         }
 
         var contestActivityEntity = this.activityService
-            .GetContestActivity(contest.Map<ContestForActivityServiceModel>())
-            .GetAwaiter()
-            .GetResult();
+            .GetContestActivity(contest.Map<ContestForActivityServiceModel>());
 
         if (official && !contestActivityEntity.CanBeCompeted)
         {

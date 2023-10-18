@@ -123,7 +123,7 @@ namespace OJS.Services.Administration.Data.Implementations
                 return false;
             }
 
-            return await this.activityService.IsActive(contest.Map<ContestForActivityServiceModel>());
+            return await this.activityService.IsContestActive(contest.Map<ContestForActivityServiceModel>());
         }
 
         public async Task<bool> IsOnlineById(int id)
