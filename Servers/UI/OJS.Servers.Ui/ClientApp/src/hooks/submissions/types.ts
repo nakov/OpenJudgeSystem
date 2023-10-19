@@ -72,6 +72,7 @@ interface ISubmissionResults {
     testRuns: ITestRunDetailsType[];
     maxMemoryUsed: number;
     maxTimeUsed: number;
+    testRunsCount: number;
 }
 
 interface ITestCaseRun {

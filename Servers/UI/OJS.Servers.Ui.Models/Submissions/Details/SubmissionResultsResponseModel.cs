@@ -27,4 +27,6 @@ public class SubmissionResultsResponseModel : IMapFrom<SubmissionResultsServiceM
     public int? MaxTimeUsed { get; set; }
 
     public IEnumerable<TestResultResponseModel> TestRuns { get; set; } = Enumerable.Empty<TestResultResponseModel>();
+
+    public int TestRunsCount { get; set; }
 }
