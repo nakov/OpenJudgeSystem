@@ -13,16 +13,16 @@
         {
         }
 
-        public IQueryable<Test> GetByIdQuery(int id) =>
-            this.DbSet
+        public IQueryable<Test> GetByIdQuery(int id)
+            => this.DbSet
                 .Where(t => t.Id == id);
 
-        public IQueryable<Test> GetAllByProblem(int problemId) =>
-            this.DbSet
+        public IQueryable<Test> GetAllByProblem(int problemId)
+            => this.DbSet
                 .Where(t => t.ProblemId == problemId);
 
-        public IQueryable<Test> GetAllNonTrialByProblem(int problemId) =>
-            this.GetAllByProblem(problemId)
+        public IQueryable<Test> GetAllNonTrialByProblem(int problemId)
+            => this.GetAllByProblem(problemId)
                 .Where(t => !t.IsTrialTest);
 
         public void DeleteByProblem(int problemId)
