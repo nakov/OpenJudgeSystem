@@ -52,8 +52,10 @@
 
         void Add(Participant participant);
 
-        void Update(Participant participant, bool ignoreSaveChanges = false);
+        void Update(Participant participant);
 
+        void Update(Participant participant, bool ignoreSaveChanges);
+        
         void Update(
             IQueryable<Participant> participantsQuery,
             Expression<Func<Participant, Participant>> updateExpression);

@@ -116,13 +116,22 @@ namespace OJS.Services.Data.Participants
             this.participants.SaveChanges();
         }
 
-        public void Update(Participant participant, bool ignoreSaveChanges = false)
+        public void Update(Participant participant, bool ignoreSaveChanges)
         {
-            this.participants.Update(participant);
+           
             if (ignoreSaveChanges)
             {
-                return;
+                this.participants.Update(participant);
             }
+            else
+            {
+                this.Update(participant);
+            }
+        }
+        
+        public void Update(Participant participant)
+        {
+            this.participants.Update(participant);
             this.participants.SaveChanges();
         }
 
