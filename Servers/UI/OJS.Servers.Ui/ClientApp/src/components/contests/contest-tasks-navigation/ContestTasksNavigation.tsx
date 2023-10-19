@@ -52,12 +52,16 @@ const ContestTasksNavigation = () => {
                 selectedClassName,
             );
 
-            const maxParticipantScoreLoaded = currentContestParticipantScores
+            const currentParticipantScore = currentContestParticipantScores
                 .find((ps) => ps.problemId === problem.id);
 
-            const problemScore = isNil(maxParticipantScoreLoaded)
+            const problemScore = isNil(currentParticipantScore)
                 ? 0
-                : maxParticipantScoreLoaded.points;
+                : currentParticipantScore.points;
+
+            const testRunsCount = isNil(currentParticipantScore)
+                ? 0
+                : currentParticipantScore?.testRunsCount;
 
             return (
                 <>
@@ -73,7 +77,8 @@ const ContestTasksNavigation = () => {
                     <SubmissionResultPointsLabel
                       points={problemScore}
                       maximumPoints={problem.maximumPoints}
-                      isProcessed={!isNil(maxParticipantScoreLoaded)}
+                      isProcessed={!isNil(currentParticipantScore)}
+                      testRunsCount={testRunsCount}
                     />
                 </>
             );

@@ -182,7 +182,7 @@ namespace OJS.Services.Administration.Business.Implementations
 
                 await this.testRunsDataService.DeleteBySubmission(submission.Id);
 
-                await this.submissionsForProcessingDataService.CreateIfNotExists(submission.Id, serializedExecutionDetails);
+                await this.submissionsForProcessingDataService.AddOrUpdate(submission.Id, serializedExecutionDetails);
                 await this.submissionsData.SaveChanges();
 
                 return ServiceResult.Success;

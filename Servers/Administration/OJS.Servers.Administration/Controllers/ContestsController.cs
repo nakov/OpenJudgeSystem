@@ -223,7 +223,7 @@ namespace OJS.Servers.Administration.Controllers
             }
         }
 
-        private async Task AddIpsToContest(Contest contest, string mergedIps)
+        private async Task AddIpsToContest(Contest contest, string? mergedIps)
         {
             if (!string.IsNullOrWhiteSpace(mergedIps))
             {
