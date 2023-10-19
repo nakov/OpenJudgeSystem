@@ -46,8 +46,10 @@
 
         void DeleteByProblem(int problemId);
 
-        void Update(Submission submission);
+        void Update(Submission submission, bool ignoreSaveChanges = false);
 
         void RemoveTestRunsCacheByProblem(int problemId);
+
+        void SaveChanges();
     }
 }

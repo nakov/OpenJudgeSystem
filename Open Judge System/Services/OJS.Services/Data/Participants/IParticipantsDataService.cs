@@ -52,7 +52,7 @@
 
         void Add(Participant participant);
 
-        void Update(Participant participant);
+        void Update(Participant participant, bool ignoreSaveChanges = false);
 
         void Update(
             IQueryable<Participant> participantsQuery,
@@ -63,5 +63,7 @@
         void InvalidateByContestAndIsOfficial(int contestId, bool isOfficial);
 
         void UpdateTotalScoreSnapshot();
+
+        void SaveChanges();
     }
 }

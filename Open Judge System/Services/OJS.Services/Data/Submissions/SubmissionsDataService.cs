@@ -120,17 +120,27 @@
         public void DeleteByProblem(int problemId) =>
             this.submissions.Delete(s => s.ProblemId == problemId);
 
-        public void Update(Submission submission)
+        public void Update(Submission submission, bool ignoreSaveChanges = false)
         {
             this.submissions.Update(submission);
+            if (ignoreSaveChanges)
+            {
+                return;
+            }
+            
             this.submissions.SaveChanges();
         }
-
+        
         public void RemoveTestRunsCacheByProblem(int problemId) =>
             this.GetAllByProblem(problemId)
                 .Update(s => new Submission
                 {
                     TestRunsCache = null
                 });
+
+        public void SaveChanges()
+        {
+            this.submissions.SaveChanges();
+        }
     }
 }

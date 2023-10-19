@@ -35,7 +35,8 @@
             ParticipantScore participantScore,
             int? submissionId,
             int submissionPoints,
-            Participant participant);
+            Participant participant,
+            bool ignoreSaveChanges = false);
 
         void RemoveSubmissionIdsBySubmissionIds(IEnumerable<int> submissionIds);
     }

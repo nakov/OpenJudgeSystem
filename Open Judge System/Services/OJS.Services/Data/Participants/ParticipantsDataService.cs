@@ -116,9 +116,13 @@ namespace OJS.Services.Data.Participants
             this.participants.SaveChanges();
         }
 
-        public void Update(Participant participant)
+        public void Update(Participant participant, bool ignoreSaveChanges = false)
         {
             this.participants.Update(participant);
+            if (ignoreSaveChanges)
+            {
+                return;
+            }
             this.participants.SaveChanges();
         }
 
@@ -177,6 +181,11 @@ namespace OJS.Services.Data.Participants
                END;";
 
             this.db.ExecuteSqlCommandWithTimeout(command, 0);
+        }
+
+        public void SaveChanges()
+        {
+            this.db.SaveChanges();
         }
 
         private IQueryable<Participant> GetAllByContestAndUser(int contestId, string userId) =>
