@@ -2,6 +2,8 @@ namespace OJS.Services.Common.Implementations;
 
 using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using Microsoft.Extensions.Logging;
@@ -33,6 +35,23 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
         catch (Exception ex)
         {
             this.logger.LogError($"Exception in submitting solution {submission.Id} by {Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.InnerException}");
+            throw;
+        }
+    }
+
+    public async Task PublishSubmissionsForProcessing(IEnumerable<SubmissionServiceModel> submissions)
+    {
+        try
+        {
+            await this.submissionPublisherService.PublishMultiple(submissions);
+
+            var submissionsIds = submissions.Select(s => s.Id).ToList();
+
+            await this.submissionForProcessingData.MarkMultipleForProcessing(submissionsIds);
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError($"Exception in submitting solution {submissions} by {Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.InnerException}");
             throw;
         }
     }

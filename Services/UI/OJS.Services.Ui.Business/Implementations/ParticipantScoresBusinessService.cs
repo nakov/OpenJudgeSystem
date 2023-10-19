@@ -151,11 +151,20 @@ namespace OJS.Services.Ui.Business.Implementations
                 .MapCollection<ParticipantScoreModel>()
                 .ToEnumerableAsync();
 
-        public Task<IEnumerable<ParticipationForProblemMaxScoreServiceModel>> GetAllForParticipant(
+        public async Task<IEnumerable<ParticipationForProblemMaxScoreServiceModel>> GetAllForParticipant(
             int participantId)
-            => this.participantScoresData
-                .GetMaxByParticipation(participantId)
-                .ToEnumerableAsync();
+        {
+            var participantScores = await this.participantScoresData.GetByParticipantId(participantId);
+
+            return participantScores
+                .GroupBy(r => r.ProblemId)
+                .Select(g => new ParticipationForProblemMaxScoreServiceModel
+                {
+                    ProblemId = g.Key,
+                    Points = g.Max(x => x.Points),
+                    TestRunsCount = g.Sum(x => x.Submission!.TestRuns.Count),
+                });
+        }
 
         private async Task NormalizeSubmissionPoints()
             => await (await this.submissionsData
