@@ -1,5 +1,6 @@
 ﻿namespace OJS.Services.Administration.Data
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using OJS.Data.Models.Tests;
@@ -14,5 +15,7 @@
         Task DeleteByTest(int testId);
 
         Task DeleteBySubmission(int submissionId);
+
+        Task DeleteInBatchesBySubmissionIds(IEnumerable<int> submissionIds);
     }
 }

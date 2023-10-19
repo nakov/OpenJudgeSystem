@@ -105,6 +105,8 @@ const getAllContestsUrl = ({ filters, sorting, page }: IAllContestsUrlParams) =>
     return `${baseApiUrl}/Contests/GetAll?${filtersQuery}&${sortingQuery}&${pageQuery}`;
 };
 
+const getContestsByStrategyUrl = (id: number) => `${baseUrl}/Contests?strategy=${id}&page=1`;
+
 const getParticipateInContestUrl = ({
     id,
     participationType,
@@ -304,4 +306,5 @@ export {
     administrationDeleteProblem,
     getAdministrationTestsByProblem,
     getAdministrationParticipants,
+    getContestsByStrategyUrl,
 };

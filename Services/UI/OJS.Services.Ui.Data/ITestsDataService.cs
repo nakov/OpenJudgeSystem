@@ -3,9 +3,8 @@
     using System.Linq;
     using OJS.Data.Models.Tests;
     using OJS.Services.Common.Data;
-    using SoftUni.Services.Infrastructure;
 
-    public interface ITestsDataService : IService, IDataService<Test>
+    public interface ITestsDataService : IDataService<Test>
     {
         IQueryable<Test> GetByIdQuery(int id);
 
