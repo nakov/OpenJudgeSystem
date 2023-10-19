@@ -5,6 +5,7 @@ import AdministrationPage from '../../pages/administration/AdministrationPage';
 import ContestEditPage from '../../pages/administration/ContestEditPage';
 import ContestProblemsPage from '../../pages/administration/ContestProblemsPage';
 import SubmissionRetestPage from '../../pages/administration/SubmissionRetestPage';
+import TestEditPage from '../../pages/administration/TestEditPage';
 import ContestDetailsPage from '../../pages/contest/ContestDetailsPage';
 import ContestPage from '../../pages/contest/ContestPage';
 import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';
@@ -87,6 +88,10 @@ const routes = [
     {
         path: '/Contest/Edit/:contestId',
         Element: ContestEditPage,
+    },
+    {
+        path: '/Tests/Edit/:testId',
+        Element: TestEditPage,
     },
     {
         path: '/search',
