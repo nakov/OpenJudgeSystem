@@ -335,6 +335,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
     {
         Enum.TryParse<TestTypeEnum>(actionContext.GetFormValue(AdditionalFormFields.Type), out var testType);
 
+
         switch (testType)
         {
             case TestTypeEnum.TrialTest:

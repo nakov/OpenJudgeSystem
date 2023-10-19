@@ -243,6 +243,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest);
             var isOfficialOnlineContest = participationModel.ContestIsCompete && contest.IsOnlineExam;
+            participationModel.Contest.UserIsAdminOrLecturerInContest = userIsAdminOrLecturerInContest;
 
             if (!userIsAdminOrLecturerInContest && isOfficialOnlineContest)
             {

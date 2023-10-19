@@ -1,4 +1,4 @@
-namespace OJS.Services.Administration.Business.Implementations;
+﻿namespace OJS.Services.Administration.Business.Implementations;
 
 using System;
 using System.Linq;

@@ -61,12 +61,7 @@ namespace OJS.Services.Administration.Business.Implementations
         {
             var problem = this.problemsData
                 .GetByIdQuery(id)
-                .Select(p => new
-                {
-                    p.ProblemGroupId,
-                    p.ProblemGroup.ContestId,
-                    p.IsDeleted,
-                })
+                .Select(p => new { p.ProblemGroupId, p.ProblemGroup.ContestId, p.IsDeleted, })
                 .FirstOrDefault();
 
             if (problem == null || problem.IsDeleted)
