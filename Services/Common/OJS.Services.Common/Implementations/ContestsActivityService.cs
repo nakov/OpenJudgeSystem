@@ -59,34 +59,13 @@ public class ContestsActivityService : IContestsActivityService
             CanBeCompeted = this.CanUserCompete(contest),
             CanBePracticed = this.CanBePracticed(contest),
         };
-    public bool CanUserCompete(IContestForActivityServiceModel contest)
-    {
-        if (!contest.IsVisible || contest.IsDeleted)
-        {
-            return false;
-        }
 
-        if (!contest.StartTime.HasValue)
-        {
-            // Cannot be competed
-            return false;
-        }
-
-        var currentTimeInUtc = this.dates.GetUtcNow();
-
-        if (!contest.EndTime.HasValue)
-        {
-            // Compete forever
-            return contest.StartTime <= currentTimeInUtc;
-        }
-
-        // If the above conditional statements are not entered, first we have to check the start and end time -
-        // if StartTime is before current moment and EndTime is after current moment contest CanBeCompeted.
-        // If this check returns false we have to check if the current user is a participant with remaining time
-        // in an online contest
-        return (contest.StartTime <= currentTimeInUtc && currentTimeInUtc <= contest.EndTime) ||
-               (contest.IsOnline && this.IsActiveParticipantInOnlineContest(contest.Id));
-    }
+    // Method is firstly checking if the Contest can be competed based in it's StartTime and EndTime
+    // If this check returns false we have to check if the current user is a participant with remaining time
+    // in an online contest
+    public bool CanUserCompete(IContestForActivityServiceModel contest) =>
+        this.CanBeCompeted(contest) ||
+        (contest.IsOnline && this.IsActiveParticipantInOnlineContest(contest.Id));
 
     // Usage: assign value to the CanBeCompeted/Practiced properties in the different Contest models sent to the UI
     // method must be called on model/collection after retrieving it from the db
@@ -124,7 +103,7 @@ public class ContestsActivityService : IContestsActivityService
     }
 
     public async Task<bool> IsContestActive(IContestForActivityServiceModel contest)
-        => this.CanUserCompete(contest) ||
+        => this.CanBeCompeted(contest) ||
            (contest.Type == ContestType.OnlinePracticalExam &&
                 await this.participantsCommonData
                     .GetAllByContestAndIsOfficial(contest.Id, true)
@@ -140,13 +119,7 @@ public class ContestsActivityService : IContestsActivityService
             .ValidateValueIsNotDefault(contest, nameof(contest))
             .VerifyResult();
 
-        return this.CanUserCompete(contest!) ||
-               (contest!.Type == ContestType.OnlinePracticalExam &&
-                await this.participantsCommonData
-                    .GetAllByContestAndIsOfficial(contest.Id, true)
-                    .AnyAsync(p =>
-                        p.ParticipationEndTime.HasValue &&
-                        p.ParticipationEndTime.Value >= this.dates.GetUtcNow()));
+        return await this.IsContestActive(contest!);
     }
 
     private bool IsActiveParticipantInOnlineContest(int contestId)
@@ -158,5 +131,29 @@ public class ContestsActivityService : IContestsActivityService
         return participants.Any(p =>
             p.ParticipationEndTime.HasValue &&
             p.ParticipationEndTime.Value >= currentTimeInUtc);
+    }
+
+    private bool CanBeCompeted(IContestForActivityServiceModel contest)
+    {
+        if (!contest.IsVisible || contest.IsDeleted)
+        {
+            return false;
+        }
+
+        if (!contest.StartTime.HasValue)
+        {
+            // Cannot be competed
+            return false;
+        }
+
+        var currentTimeInUtc = this.dates.GetUtcNow();
+
+        if (!contest.EndTime.HasValue)
+        {
+            // Compete forever
+            return contest.StartTime <= currentTimeInUtc;
+        }
+
+        return contest.StartTime <= currentTimeInUtc && currentTimeInUtc <= contest.EndTime;
     }
 }
