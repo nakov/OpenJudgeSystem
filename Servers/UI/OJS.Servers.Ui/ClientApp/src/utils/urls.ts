@@ -47,8 +47,10 @@ const getHomePageUrl = () => '/';
 const getLoginSubmitUrl = () => `${baseUrl}/Account/Login`;
 const getLogoutUrl = () => `${baseUrl}/Account/Logout`;
 
+const getLoginPageUrl = () => `${baseUrl}/login`;
+
 const getUserAuthInfoUrl = () => `${baseApiUrl}/Users/GetUserAuthInfo`;
-const getPlatformRegisterUrl = () => `${platformBaseUrl}/identity/register`;
+const getPlatformRegisterUrl = () => `${platformBaseUrl}/identity/register?returnUrl=${encodeURIComponent(getLoginPageUrl())}`;
 
 // admin
 const getAdministrationContestsGridUrl = () => `${administrationBaseUrl}/Contests`;
@@ -91,13 +93,15 @@ const getAllContestsUrl = ({ filters, sorting, page }: IAllContestsUrlParams) =>
     return `${baseApiUrl}/Contests/GetAll?${filtersQuery}&${sortingQuery}&${pageQuery}`;
 };
 
+const getContestsByStrategyUrl = (id: number) => `${baseUrl}/Contests?strategy=${id}&page=1`;
+
 const getParticipateInContestUrl = ({
     id,
     participationType,
 }: IParticipateInContestTypeUrlParams) => `/contests/${id}/${participationType}`;
 
 const getContestDetailsUrl =
-    ({ id, isOfficial }: IContestDetailsUrlParams) => `${baseApiUrl}/Contests/Details/${id}?official=${isOfficial}`;
+    ({ id }: IContestDetailsUrlParams) => `${baseApiUrl}/Contests/Details/${id}`;
 
 const getContestDetailsAppUrl = (id: number) => `/contests/${id}`;
 
@@ -286,4 +290,5 @@ export {
     getAdministrationContestEditUrl,
     getAdministrationContestEditInternalUrl,
     getAdministrationContestProblemsInternalUrl,
+    getContestsByStrategyUrl,
 };

@@ -424,35 +424,31 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         formControls.Add(new FormControlViewModel
         {
+            Name = AdditionalFormFields.ProblemGroupType.ToString(),
+            Options = EnumUtils.GetValuesFrom<ProblemGroupType>().Cast<object>(),
+            Type = typeof(ProblemGroupType),
+            Value = entity.ProblemGroup?.Type ?? default(ProblemGroupType),
+        });
+
+        formControls.Add(new FormControlViewModel
+        {
             Name = this.GetComplexFormControlNameFor<Contest>(),
             Value = contestId,
             Type = typeof(int),
             IsReadOnly = true,
         });
 
-        if (!contest.IsOnlineExam)
+        if (contest.IsOnlineExam)
         {
-            formControls.Add(new FormControlViewModel
-            {
-                Name = AdditionalFormFields.ProblemGroupType.ToString(),
-                Options = EnumUtils.GetValuesFrom<ProblemGroupType>().Cast<object>(),
-                Type = typeof(ProblemGroupType),
-                Value = entity.ProblemGroup?.Type ?? default(ProblemGroupType),
-            });
+            var problemGroupFieldType = formControls.First(x => x.Name == AdditionalFormFields.ProblemGroupType.ToString());
 
+            problemGroupFieldType.IsHidden = true;
+        }
+        else
+        {
             var problemGroupField = formControls.First(x => x.Name == nameof(Data.Models.Problems.Problem.ProblemGroup));
 
-            if (action == EntityAction.Create)
-            {
-                // On Create, we should always create new ProblemGroup for the Problem,
-                // not allow attaching the Problem to an existing ProblemGroup
-                formControls.Remove(problemGroupField);
-            }
-            else
-            {
-                // On Edit, we should not allow changing the ProblemGroup
-                problemGroupField.IsHidden = true;
-            }
+            problemGroupField.IsHidden = true;
         }
 
         formControls.Add(new FormControlViewModel
@@ -566,7 +562,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         var problemGroupInput = formControls.First(fc => fc.Name == nameof(ProblemGroup));
 
         var orderedProblemGroupsQuery = this.problemGroupsData.GetAllByContestId(contestId)
-                                                                    .OrderBy(pg => pg.OrderBy);
+            .OrderBy(pg => pg.OrderBy);
         problemGroupInput.Options = orderedProblemGroupsQuery;
 
         return base.ModifyFormControls(formControls, entity, action, entityDict);

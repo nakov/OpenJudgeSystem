@@ -1,26 +1,26 @@
 import React from 'react';
-import { FaCheck } from 'react-icons/fa';
+import { FaTimes } from 'react-icons/fa';
 
 import concatClassNames from '../../../utils/class-names';
 
 import IconSize from './common/icon-sizes';
 import Icon, { IIconProps } from './Icon';
 
-import styles from './TickIcon.module.scss';
+import styles from './WrongAnswerIcon.module.scss';
 
-type ITickIconProps = IIconProps
+type IErrorIconProps = IIconProps
 
-const TickIcon = ({
+const WrongAnswerIcon = ({
     className = '',
     size = IconSize.Medium,
     helperText = '',
-}: ITickIconProps) => (
+}: IErrorIconProps) => (
     <Icon
       className={concatClassNames(styles.icon, className)}
       size={size}
       helperText={helperText}
-      Component={FaCheck}
+      Component={FaTimes}
     />
 );
 
-export default TickIcon;
+export default WrongAnswerIcon;

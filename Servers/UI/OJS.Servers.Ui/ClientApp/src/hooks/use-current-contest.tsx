@@ -60,7 +60,7 @@ interface ICurrentContestContext {
         contestDetailsIsLoading: boolean;
         submitContestPasswordIsLoading: boolean;
         getParticipantScoresIsLoading: boolean;
-        isUserParticipant: boolean;
+        userHasConfirmedModal: boolean;
         contestDetails: IContestDetailsResponseType | null;
         isContestDetailsLoadingSuccessful: boolean;
     };
@@ -72,7 +72,7 @@ interface ICurrentContestContext {
         loadParticipantScores: () => void;
         setIsSubmitAllowed: (isSubmitAllowed: boolean) => void;
         removeCurrentContest: () => void;
-        setIsUserParticipant: (isUserParticipant: boolean) => void;
+        setUserHasConfirmedModal: (userHasConfirmedModal: boolean) => void;
         clearContestError: () => void;
         getContestDetails: (info: IContestDetailsUrlParams) => void;
     };
@@ -88,7 +88,7 @@ const defaultState = {
         isPasswordValid: false,
         userSubmissionsTimeLimit: 0,
         participantsCount: 0,
-        isUserParticipant: false,
+        userHasConfirmedModal: false,
         contestDetails: null,
     },
 };
@@ -105,6 +105,7 @@ interface IContestToStartType {
 type IMaximumParticipantScores = {
     problemId: number;
     points: number;
+    testRunsCount: number;
 }
 
 type ISubmitContestPasswordType = {
@@ -135,7 +136,10 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
     const [ participantsCount, setParticipantsCount ] = useState(defaultState.state.participantsCount);
     const [ isSubmitAllowed, setIsSubmitAllowed ] = useState<boolean>(true);
     const [ contestError, setContestError ] = useState<IErrorDataType | null>(null);
-    const [ isUserParticipant, setIsUserParticipant ] = useState<boolean>(defaultState.state.isUserParticipant);
+    const [
+        userHasConfirmedModal,
+        setUserHasConfirmedModal,
+    ] = useState<boolean>(defaultState.state.userHasConfirmedModal);
     const { state: { user } } = useAuth();
     const [ contestDetails, setContestDetails ] = useState<IContestDetailsResponseType | null>(defaultState.state.contestDetails);
     const [ contestDetailsParams, setContestDetailsParams ] = useState<IContestDetailsUrlParams | null>(null);
@@ -200,8 +204,8 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         [ user ],
     );
 
-    const getContestDetails = useCallback(({ id, isOfficial: isOfficialUrlParam }: IContestDetailsUrlParams) => {
-        setContestDetailsParams({ id, isOfficial: isOfficialUrlParam });
+    const getContestDetails = useCallback(({ id }: IContestDetailsUrlParams) => {
+        setContestDetailsParams({ id });
     }, []);
 
     useEffect(() => {
@@ -337,7 +341,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
 
             const { participantId: registerParticipantId } = registerForContestData;
             if (!isNil(registerParticipantId) || isUserAdmin) {
-                setIsUserParticipant(true);
+                setUserHasConfirmedModal(true);
             }
 
             setRequirePassword(responseRequirePassword);
@@ -398,6 +402,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
 
             if (!isNil(startContestError)) {
                 setContestError(startContestError);
+                setUserHasConfirmedModal(false);
                 return;
             }
 
@@ -470,7 +475,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 isSubmitAllowed,
                 contestError,
                 isRegisterForContestSuccessful,
-                isUserParticipant,
+                userHasConfirmedModal,
                 contestIsLoading,
                 registerForContestLoading,
                 submitContestPasswordIsLoading,
@@ -486,7 +491,7 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
                 submitPassword,
                 loadParticipantScores,
                 setIsSubmitAllowed,
-                setIsUserParticipant,
+                setUserHasConfirmedModal,
                 getContestDetails,
                 removeCurrentContest,
                 clearContestError,
@@ -514,9 +519,9 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             contestError,
             clearContestError,
             isRegisterForContestSuccessful,
-            isUserParticipant,
+            userHasConfirmedModal,
             removeCurrentContest,
-            setIsUserParticipant,
+            setUserHasConfirmedModal,
             contestIsLoading,
             registerForContestLoading,
             submitContestPasswordIsLoading,
