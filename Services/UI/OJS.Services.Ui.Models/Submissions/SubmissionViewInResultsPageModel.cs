@@ -29,6 +29,8 @@ public class SubmissionViewInResultsPageModel : IMapExplicitly
 
     public IEnumerable<TestRunServiceModel> TestRuns { get; set; } = Enumerable.Empty<TestRunServiceModel>();
 
+    public int TestRunsCount { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Submission, SubmissionViewInResultsPageModel>()
             .ForMember(
@@ -42,5 +44,6 @@ public class SubmissionViewInResultsPageModel : IMapExplicitly
             .ForMember(
                 d => d.MaxTimeUsed,
                 opt => opt.MapFrom(s =>
-                    s.TestRuns.Any() ? s.TestRuns.Max(testRun => testRun.TimeUsed) : (int?)null));
+                    s.TestRuns.Any() ? s.TestRuns.Max(testRun => testRun.TimeUsed) : (int?)null))
+            .ForMember(d => d.TestRunsCount, opt => opt.MapFrom(s => s.TestRuns.Count));
 }
