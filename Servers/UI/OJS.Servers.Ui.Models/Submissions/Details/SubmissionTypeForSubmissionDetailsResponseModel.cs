@@ -6,9 +6,5 @@ using SoftUni.AutoMapper.Infrastructure.Models;
 public class
     SubmissionTypeForSubmissionDetailsResponseModel : IMapFrom<SubmissionTypeForSubmissionDetailsServiceModel>
 {
-    public int Id { get; set; }
-
-    public string Name { get; set; } = null!;
-
     public bool AllowBinaryFilesUpload { get; set; }
 }

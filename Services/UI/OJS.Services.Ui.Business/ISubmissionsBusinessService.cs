@@ -23,13 +23,14 @@
 
         Task<IEnumerable<SubmissionForProfileServiceModel>> GetForProfileByUser(string? username);
 
-        Task<IEnumerable<SubmissionViewInResultsPageModel>> GetSubmissionResultsByProblem(int problemId, bool isOfficial, int take = 0);
-
-        Task<IEnumerable<SubmissionViewInResultsPageModel>> GetSubmissionDetailsResults(int submissionId, bool isOfficial, int take = 0);
-
         Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult);
 
         // Task HardDeleteAllArchived();
+       // SubmissionDetailsWithResultsModel
+
+        Task<PagedResult<SubmissionResultsServiceModel>> GetSubmissionResults(int submissionId, int page);
+
+        Task<PagedResult<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(int problemId, bool isOfficial, int page);
 
         Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPublicSubmissions(SubmissionForPublicSubmissionsServiceModel model);
 
@@ -44,7 +45,5 @@
         Task<int> GetTotalCount();
 
         SubmissionFileDownloadServiceModel GetSubmissionFile(int submissionId);
-
-        Task<SubmissionDetailsWithResultsModel> GetSubmissionDetailsWithResults(int submissionId, int take);
     }
 }

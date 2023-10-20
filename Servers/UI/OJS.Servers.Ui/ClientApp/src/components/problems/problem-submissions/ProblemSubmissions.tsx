@@ -4,10 +4,12 @@ import isNil from 'lodash/isNil';
 
 import { useProblemSubmissions } from '../../../hooks/submissions/use-problem-submissions';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
+import { usePages } from '../../../hooks/use-pages';
 import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
 import { Button, ButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
+import PaginationControls from '../../guidelines/pagination/PaginationControls';
 import SubmissionsList from '../../submissions/submissions-list/SubmissionsList';
 
 import styles from './ProblemSubmissions.module.scss';
@@ -16,28 +18,45 @@ const ProblemSubmissions = () => {
     const {
         state: {
             submissions,
+            problemSubmissionsPage,
             problemSubmissionsError,
         },
-        actions: { loadSubmissions },
+        actions: {
+            loadSubmissions,
+            changeProblemSubmissionsPage,
+        },
     } = useProblemSubmissions();
 
     const { actions: { loadParticipantScores } } = useCurrentContest();
     const { state: { currentProblem } } = useProblems();
+    const { state: { pagesInfo } } = usePages();
 
     const reload = useCallback(
         async () => {
             if (!isNil(currentProblem)) {
                 const { id } = currentProblem;
-                await loadSubmissions(id);
-                await loadParticipantScores();
+                loadSubmissions(id, problemSubmissionsPage);
+                loadParticipantScores();
             }
         },
-        [ loadParticipantScores, loadSubmissions, currentProblem ],
+        [ loadParticipantScores, loadSubmissions, currentProblem, problemSubmissionsPage ],
     );
 
-    const handleRefreshClick = useCallback(async () => {
-        await reload();
-    }, [ reload ]);
+    const handleRefreshClick = useCallback(
+        async () => {
+            await reload();
+        },
+        [ reload ],
+    );
+
+    const handlePageChange = useCallback(
+        (page: number) => {
+            changeProblemSubmissionsPage(page);
+
+            loadSubmissions(currentProblem!.id, page);
+        },
+        [ changeProblemSubmissionsPage, currentProblem, loadSubmissions ],
+    );
 
     const refreshButtonClass = 'refreshButton';
     const refreshButtonClassName = concatClassNames(styles.refreshBtn, refreshButtonClass);
@@ -75,15 +94,24 @@ const ProblemSubmissions = () => {
                 );
             }
 
+            const { pagesCount } = pagesInfo;
+
             return (
-                <SubmissionsList
-                  items={submissions}
-                  selectedSubmission={null}
-                  className={styles.submissionsList}
-                />
+                <>
+                    <SubmissionsList
+                      items={submissions}
+                      selectedSubmission={null}
+                      className={styles.submissionsList}
+                    />
+                    <PaginationControls
+                      count={pagesCount}
+                      page={problemSubmissionsPage}
+                      onChange={handlePageChange}
+                    />
+                </>
             );
         },
-        [ submissions ],
+        [ problemSubmissionsPage, handlePageChange, pagesInfo, submissions ],
     );
 
     const renderProblemSubmissions = useCallback(

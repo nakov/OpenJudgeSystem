@@ -14,7 +14,6 @@ import { IErrorDataType, useHttp } from '../use-http';
 import { useProblems } from '../use-problems';
 
 import { ISubmissionType, ITestRunType } from './types';
-import { useProblemSubmissions } from './use-problem-submissions';
 
 interface ISubmissionsContext {
     state: {
@@ -63,7 +62,6 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const [ alertBoxErrorIsClosed, setAlertBoxErrorIsClosed ] = useState<boolean>(defaultState.state.alertBoxErrorIsClosed);
 
     const { state: { currentProblem } } = useProblems();
-    const { actions: { loadSubmissions } } = useProblemSubmissions();
     const { state: { isOfficial } } = useCurrentContest();
 
     const submitCodeParams = useMemo(() => {
@@ -278,22 +276,10 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             if (!isNil(errorSubmitFile)) {
                 setProblemSubmissionError(errorSubmitFile);
             }
-
-            const { id: problemId } = currentProblem || {};
-
-            if (isNil(problemId)) {
-                return;
-            }
-
-            (async () => {
-                await loadSubmissions(problemId);
-            })();
         },
         [
-            loadSubmissions,
             errorSubmitCode,
             errorSubmitFile,
-            currentProblem,
             setProblemSubmissionError,
             problemSubmissionErrors,
         ],
