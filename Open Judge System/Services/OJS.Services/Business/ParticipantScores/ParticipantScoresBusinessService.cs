@@ -400,9 +400,7 @@
 
         private void NormalizeParticipantScorePoints()
         {
-            using (var scope = TransactionsHelper.CreateLongRunningTransactionScope())
-            {
-                this.participantScoresData
+            this.participantScoresData
                     .GetAllHavingPointsExceedingLimit()
                     .Select(ps => new
                     {
@@ -419,7 +417,6 @@
                             x.Particinapnt,
                             withSaveChanges:false));
                 this.participantsData.SaveChanges();
-            }
         }
     }
 }
