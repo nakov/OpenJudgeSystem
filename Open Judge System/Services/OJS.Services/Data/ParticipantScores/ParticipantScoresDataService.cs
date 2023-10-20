@@ -168,7 +168,7 @@ namespace OJS.Services.Data.ParticipantScores
         }
 
         public void UpdateBySubmissionAndPoints(ParticipantScore participantScore, int? submissionId, int submissionPoints,
-            Participant participant, bool ignoreSaveChanges)
+            Participant participant, bool withSaveChanges)
         {
             //The submission TotalScoreSnapshotModifiedOn must be changed only if it is new submission in other way the results will not be ordered correctly.
             bool shouldUpdateTotalScoreDate = submissionId != null && submissionId != participantScore.SubmissionId;
@@ -181,7 +181,7 @@ namespace OJS.Services.Data.ParticipantScores
             participantScore.SubmissionId = submissionId;
             participantScore.Points = submissionPoints;
 
-            this.participantsData.Update(participant,ignoreSaveChanges);
+            this.participantsData.Update(participant,withSaveChanges);
         }
 
         public void RemoveSubmissionIdsBySubmissionIds(IEnumerable<int> submissionIds) =>

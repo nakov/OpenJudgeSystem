@@ -126,15 +126,15 @@
             this.submissions.SaveChanges();
         }
 
-        public void Update(Submission submission, bool ignoreSaveChanges)
+        public void Update(Submission submission, bool withSaveChanges)
         {
-            if (ignoreSaveChanges)
+            if (withSaveChanges)
             {
-                this.submissions.Update(submission);
+                this.Update(submission);
             }
             else
             {
-                this.Update(submission);
+                this.submissions.Update(submission);
             }
         }
         

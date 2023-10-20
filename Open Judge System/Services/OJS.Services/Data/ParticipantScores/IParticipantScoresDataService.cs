@@ -42,7 +42,7 @@
             int? submissionId,
             int submissionPoints,
             Participant participant,
-            bool ignoreSaveChanges);
+            bool withSaveChanges);
 
         void RemoveSubmissionIdsBySubmissionIds(IEnumerable<int> submissionIds);
     }

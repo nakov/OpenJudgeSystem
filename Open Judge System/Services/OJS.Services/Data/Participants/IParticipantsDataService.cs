@@ -54,7 +54,7 @@
 
         void Update(Participant participant);
 
-        void Update(Participant participant, bool ignoreSaveChanges);
+        void Update(Participant participant, bool withSaveChanges);
         
         void Update(
             IQueryable<Participant> participantsQuery,

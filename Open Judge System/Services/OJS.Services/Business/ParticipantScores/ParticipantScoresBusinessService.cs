@@ -386,20 +386,14 @@
                 .ToList();
             while (itemsToSkip < submissionsWithProblemMaxPoints.Count)
             {
-                using (var scope = TransactionsHelper.CreateLongRunningTransactionScope())
-                {
                     submissionsWithProblemMaxPoints.Skip(itemsToSkip).Take(itemsToTake).ToList().ForEach(x =>
                     {
                         x.Submission.Points = x.ProblemMaxPoints;
 
-                        this.submissionsData.Update(x.Submission, true);
+                        this.submissionsData.Update(x.Submission, withSaveChanges:false);
                     });
-                    
                     this.submissionsData.SaveChanges();
-                    scope.Complete();
-                }
-
-                itemsToSkip += itemsToTake;
+                    itemsToSkip += itemsToTake;
             }
         }
 
@@ -423,7 +417,7 @@
                             x.ParticipantScore.SubmissionId,
                             x.ProblemMaxPoints,
                             x.Particinapnt,
-                            true));
+                            withSaveChanges:false));
                 this.participantsData.SaveChanges();
             }
         }
