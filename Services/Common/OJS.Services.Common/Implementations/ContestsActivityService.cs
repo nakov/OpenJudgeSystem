@@ -104,7 +104,7 @@ public class ContestsActivityService : IContestsActivityService
 
     public async Task<bool> IsContestActive(IContestForActivityServiceModel contest)
         => this.CanBeCompeted(contest) ||
-           (contest.Type == ContestType.OnlinePracticalExam &&
+           (contest.IsOnline &&
                 await this.participantsCommonData
                     .GetAllByContestAndIsOfficial(contest.Id, true)
                     .AnyAsync(p =>
