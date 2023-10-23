@@ -11,7 +11,6 @@ using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using FluentExtensions.Extensions;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -38,9 +37,7 @@ using SoftUni.AutoMapper.Infrastructure.Extensions;
 using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 using GlobalResource = OJS.Common.Resources.ProblemsController;
 using Resource = OJS.Common.Resources.ProblemGroupsControllers;
-using static Common.GlobalConstants.Roles;
 
-[Authorize(Roles = Administrator)]
 public class ProblemsController : BaseAutoCrudAdminController<Problem>
 {
     public const string ContestIdKey = nameof(OJS.Data.Models.Problems.Problem.ProblemGroup.ContestId);
@@ -90,9 +87,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     }
 
     protected override Expression<Func<Problem, bool>>? MasterGridFilter
-        => this.TryGetEntityIdForNumberColumnFilter(ContestIdKey, out var contestId)
-            ? t => t.ProblemGroup.ContestId == contestId
-            : base.MasterGridFilter;
+        => this.GetMasterGridFilter();
 
     protected override IEnumerable<AutoCrudAdminGridToolbarActionViewModel> CustomToolbarActions
         => this.TryGetEntityIdForNumberColumnFilter(ContestIdKey, out var problemId)
@@ -114,14 +109,14 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     protected override IEnumerable<Func<Problem, Problem, AdminActionContext, ValidatorResult>> EntityValidators
         => this.problemValidatorsFactory.GetValidators();
 
-    public override Task<IActionResult> Create(IDictionary<string, string> complexId, string postEndpointName)
+    public override Task<IActionResult> Create(IDictionary<string, string> complexId, string? postEndpointName)
         => base.Create(complexId, nameof(this.Create));
 
     [HttpPost]
     public Task<IActionResult> Create(IDictionary<string, string> entityDict, IFormFile tests, IFormFile additionalFiles)
         => this.PostCreate(entityDict, new FormFilesContainer(tests, additionalFiles));
 
-    public override Task<IActionResult> Edit(IDictionary<string, string> complexId, string postEndpointName)
+    public override Task<IActionResult> Edit(IDictionary<string, string> complexId, string? postEndpointName)
         => base.Edit(complexId, nameof(this.Edit));
 
     [HttpPost]
@@ -685,5 +680,20 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             new () { Name = "Delete all", Action = nameof(this.DeleteAll), RouteValues = routeValues, },
             new () { Name = "Copy all", Action = nameof(this.CopyAll), RouteValues = routeValues, },
         };
+    }
+
+    private Expression<Func<Problem, bool>> GetMasterGridFilter()
+    {
+        Expression<Func<Problem, bool>> filterByLecturerRightsExpression = x =>
+        (
+            x.ProblemGroup.Contest.LecturersInContests.Any(l => l.LecturerId == this.User.GetId()) ||
+            x.ProblemGroup.Contest.Category!.LecturersInContestCategories.Any(lc => lc.LecturerId == this.User.GetId()) ||
+            this.User.IsAdmin());
+
+        var filter = this.TryGetEntityIdForNumberColumnFilter(ContestIdKey, out var contestId)
+            ? x => x.ProblemGroup.ContestId == contestId
+            : base.MasterGridFilter;
+
+        return filterByLecturerRightsExpression.OrElse(filter);
     }
 }

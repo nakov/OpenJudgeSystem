@@ -39,6 +39,38 @@
         href="#"
         role="button"
         data-toggle="dropdown"
+        aria-expanded="false">
+        Problems
+    </a>
+    <ul class="dropdown-menu">
+        <li>
+            <a class="dropdown-item" asp-action="Index" asp-controller="Problems">Problems</a>
+        </li>
+        <li>
+            <a class="dropdown-item" asp-action="Index" asp-controller="ProblemResources">Problem Resources</a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="#">Problem Groups &raquo;</a>
+            <ul class="dropdown-menu dropdown-submenu">
+                <li>
+                    <a class="dropdown-item" asp-action="Index" asp-controller="ProblemGroups">All</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-action="Create" asp-controller="ProblemGroups">Create</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a class="dropdown-item" asp-action="Index" asp-controller="Tests">Tests</a>
+        </li>
+    </ul>
+</li>
+<li class="nav-item dropdown">
+    <a
+        class="nav-link dropdown-toggle"
+        href="#"
+        role="button"
+        data-toggle="dropdown"
         aria-expanded="false"
     >
         Submissions

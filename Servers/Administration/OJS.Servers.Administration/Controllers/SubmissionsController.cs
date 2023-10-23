@@ -2,9 +2,9 @@ namespace OJS.Servers.Administration.Controllers;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using System.Linq;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
@@ -36,6 +36,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
     private readonly IParticipantScoresBusinessService participantScoresBusiness;
     private readonly ISubmissionsDataService submissionsData;
     private readonly ISubmissionsBusinessService submissionsBusinessService;
+    private readonly ILecturersInContestsBusinessService lecturersInContestsBusinessService;
     private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
     private readonly ITestRunsDataService testRunsData;
     private readonly ITransactionsProvider transactions;
@@ -49,7 +50,8 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         ITestRunsDataService testRunsData,
         ITransactionsProvider transactions,
         IValidatorsFactory<Submission> submissionValidatorsFactory,
-        ISubmissionsBusinessService submissionsBusinessService)
+        ISubmissionsBusinessService submissionsBusinessService,
+        ILecturersInContestsBusinessService lecturersInContestsBusinessService)
     {
         this.problemsValidationHelper = problemsValidationHelper;
         this.participantScoresBusiness = participantScoresBusiness;
@@ -59,6 +61,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         this.transactions = transactions;
         this.submissionValidatorsFactory = submissionValidatorsFactory;
         this.submissionsBusinessService = submissionsBusinessService;
+        this.lecturersInContestsBusinessService = lecturersInContestsBusinessService;
     }
 
     protected override Expression<Func<Submission, bool>>? MasterGridFilter
@@ -208,48 +211,35 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
 
     private Expression<Func<Submission, bool>>? GetMasterGridFilter()
     {
+        Expression<Func<Submission, bool>> filterByLecturerRightsExpression = s => this.lecturersInContestsBusinessService
+            .GetUserPrivilegesExpression(
+                s,
+                this.User.GetId(),
+                this.User.IsAdmin());
+
+        Expression<Func<Submission, bool>> filterByKeyExpression = null!;
+
         if (this.TryGetEntityIdForNumberColumnFilter(ContestIdKey, out var contestId))
         {
-            return x => x.Problem != null && x.Problem.ProblemGroup.ContestId == contestId;
+            filterByKeyExpression = x => x.Problem != null && x.Problem.ProblemGroup.ContestId == contestId;
         }
 
         if (this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId))
         {
-            return x => x.ProblemId == problemId;
+            filterByKeyExpression = x => x.ProblemId == problemId;
         }
 
         if (this.TryGetEntityIdForNumberColumnFilter(ParticipantIdKey, out var participantId))
         {
-            return x => x.ParticipantId == participantId;
+            filterByKeyExpression = x => x.ParticipantId == participantId;
         }
 
         if (this.TryGetEntityIdForNumberColumnFilter(ParticipantIdKey, out var submissionId))
         {
-            return x => x.Id == submissionId;
+            filterByKeyExpression = x => x.Id == submissionId;
         }
 
-        ParameterExpression parameter = Expression.Parameter(typeof(Submission), "x");
-
-        Expression<Func<Submission, bool>> firstExpression = x =>
-        (
-            x.Problem.ProblemGroup.Contest.LecturersInContests.Any(l => l.LecturerId == this.User.GetId()) ||
-            x.Problem.ProblemGroup.Contest.Category!.LecturersInContestCategories.Any(lc => lc.LecturerId == this.User.GetId()) ||
-            this.User.IsAdmin());
-
-        Expression<Func<Submission, bool>>? secondExpression = base.MasterGridFilter;
-
-        if (base.MasterGridFilter == null)
-        {
-            return firstExpression;
-        }
-
-        var orElse = Expression.OrElse(
-            Expression.Invoke(firstExpression, parameter),
-            Expression.Invoke(secondExpression!, parameter));
-
-        var combinedExpression = Expression.Lambda<Func<Submission, bool>>(orElse, parameter);
-
-        return combinedExpression;
+        return filterByLecturerRightsExpression.OrElse(filterByKeyExpression);
     }
 
     private IActionResult RedirectToSubmissionById(int id)

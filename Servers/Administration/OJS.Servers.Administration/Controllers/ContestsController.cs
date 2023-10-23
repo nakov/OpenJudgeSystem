@@ -13,6 +13,7 @@ namespace OJS.Servers.Administration.Controllers
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Problems;
     using OJS.Servers.Administration.Models.Contests;
+    using OJS.Services.Administration.Business;
     using OJS.Services.Administration.Business.Extensions;
     using OJS.Services.Administration.Business.Validation.Factories;
     using OJS.Services.Administration.Business.Validation.Helpers;
@@ -26,6 +27,7 @@ namespace OJS.Servers.Administration.Controllers
     {
         private readonly IIpsDataService ipsData;
         private readonly IParticipantsDataService participantsData;
+        private readonly ILecturersInContestsBusinessService lecturersInContestsBusinessService;
         private readonly IValidatorsFactory<Contest> contestValidatorsFactory;
         private readonly IContestCategoriesValidationHelper contestCategoriesValidationHelper;
         private readonly IContestsValidationHelper contestsValidationHelper;
@@ -33,12 +35,14 @@ namespace OJS.Servers.Administration.Controllers
         public ContestsController(
             IIpsDataService ipsData,
             IParticipantsDataService participantsData,
+            ILecturersInContestsBusinessService lecturersInContestsBusinessService,
             IValidatorsFactory<Contest> contestValidatorsFactory,
             IContestCategoriesValidationHelper contestCategoriesValidationHelper,
             IContestsValidationHelper contestsValidationHelper)
         {
             this.ipsData = ipsData;
             this.participantsData = participantsData;
+            this.lecturersInContestsBusinessService = lecturersInContestsBusinessService;
             this.contestValidatorsFactory = contestValidatorsFactory;
             this.contestCategoriesValidationHelper = contestCategoriesValidationHelper;
             this.contestsValidationHelper = contestsValidationHelper;
@@ -275,8 +279,9 @@ namespace OJS.Servers.Administration.Controllers
         }
 
         private Expression<Func<Contest, bool>>? GetMasterGridFilter()
-            => c => c.LecturersInContests.Any(l => l.LecturerId == this.User.GetId()) ||
-                 c.Category!.LecturersInContestCategories.Any(lc => lc.LecturerId == this.User.GetId()) ||
-                 this.User.IsAdmin();
+            => c => this.lecturersInContestsBusinessService.GetUserPrivilegesExpression(
+                c,
+                this.User.GetId(),
+                this.User.IsAdmin());
     }
 }
