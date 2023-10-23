@@ -36,7 +36,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
     private readonly IParticipantScoresBusinessService participantScoresBusiness;
     private readonly ISubmissionsDataService submissionsData;
     private readonly ISubmissionsBusinessService submissionsBusinessService;
-    private readonly ILecturersInContestsBusinessService lecturersInContestsBusinessService;
+    private readonly ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService;
     private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
     private readonly ITestRunsDataService testRunsData;
     private readonly ITransactionsProvider transactions;
@@ -51,7 +51,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         ITransactionsProvider transactions,
         IValidatorsFactory<Submission> submissionValidatorsFactory,
         ISubmissionsBusinessService submissionsBusinessService,
-        ILecturersInContestsBusinessService lecturersInContestsBusinessService)
+        ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService)
     {
         this.problemsValidationHelper = problemsValidationHelper;
         this.participantScoresBusiness = participantScoresBusiness;
@@ -61,7 +61,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         this.transactions = transactions;
         this.submissionValidatorsFactory = submissionValidatorsFactory;
         this.submissionsBusinessService = submissionsBusinessService;
-        this.lecturersInContestsBusinessService = lecturersInContestsBusinessService;
+        this.lecturerContestPrivilegesBusinessService = lecturerContestPrivilegesBusinessService;
     }
 
     protected override Expression<Func<Submission, bool>>? MasterGridFilter
@@ -211,9 +211,8 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
 
     private Expression<Func<Submission, bool>>? GetMasterGridFilter()
     {
-        Expression<Func<Submission, bool>> filterByLecturerRightsExpression = s => this.lecturersInContestsBusinessService
-            .GetUserPrivilegesExpression(
-                s,
+        Expression<Func<Submission, bool>> filterByLecturerRightsExpression = this.lecturerContestPrivilegesBusinessService
+            .GetSubmissionsUserPrivilegesExpression(
                 this.User.GetId(),
                 this.User.IsAdmin());
 

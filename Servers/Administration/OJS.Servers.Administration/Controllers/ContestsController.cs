@@ -27,7 +27,7 @@ namespace OJS.Servers.Administration.Controllers
     {
         private readonly IIpsDataService ipsData;
         private readonly IParticipantsDataService participantsData;
-        private readonly ILecturersInContestsBusinessService lecturersInContestsBusinessService;
+        private readonly ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService;
         private readonly IValidatorsFactory<Contest> contestValidatorsFactory;
         private readonly IContestCategoriesValidationHelper contestCategoriesValidationHelper;
         private readonly IContestsValidationHelper contestsValidationHelper;
@@ -35,14 +35,14 @@ namespace OJS.Servers.Administration.Controllers
         public ContestsController(
             IIpsDataService ipsData,
             IParticipantsDataService participantsData,
-            ILecturersInContestsBusinessService lecturersInContestsBusinessService,
+            ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService,
             IValidatorsFactory<Contest> contestValidatorsFactory,
             IContestCategoriesValidationHelper contestCategoriesValidationHelper,
             IContestsValidationHelper contestsValidationHelper)
         {
             this.ipsData = ipsData;
             this.participantsData = participantsData;
-            this.lecturersInContestsBusinessService = lecturersInContestsBusinessService;
+            this.lecturerContestPrivilegesBusinessService = lecturerContestPrivilegesBusinessService;
             this.contestValidatorsFactory = contestValidatorsFactory;
             this.contestCategoriesValidationHelper = contestCategoriesValidationHelper;
             this.contestsValidationHelper = contestsValidationHelper;
@@ -279,8 +279,7 @@ namespace OJS.Servers.Administration.Controllers
         }
 
         private Expression<Func<Contest, bool>>? GetMasterGridFilter()
-            => c => this.lecturersInContestsBusinessService.GetUserPrivilegesExpression(
-                c,
+            => this.lecturerContestPrivilegesBusinessService.GetContestUserPrivilegesExpression(
                 this.User.GetId(),
                 this.User.IsAdmin());
     }

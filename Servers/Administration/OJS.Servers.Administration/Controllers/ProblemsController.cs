@@ -44,6 +44,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
     private readonly IProblemsBusinessService problemsBusiness;
     private readonly IContestsBusinessService contestsBusiness;
+    private readonly ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusiness;
     private readonly IContestsDataService contestsData;
     private readonly IProblemsDataService problemsData;
     private readonly IZippedTestsParserService zippedTestsParser;
@@ -59,6 +60,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     public ProblemsController(
         IProblemsBusinessService problemsBusiness,
         IContestsBusinessService contestsBusiness,
+        ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusiness,
         IContestsDataService contestsData,
         IProblemsDataService problemsData,
         IZippedTestsParserService zippedTestsParser,
@@ -73,6 +75,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     {
         this.problemsBusiness = problemsBusiness;
         this.contestsBusiness = contestsBusiness;
+        this.lecturerContestPrivilegesBusiness = lecturerContestPrivilegesBusiness;
         this.contestsData = contestsData;
         this.problemsData = problemsData;
         this.zippedTestsParser = zippedTestsParser;
@@ -684,11 +687,10 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
     private Expression<Func<Problem, bool>> GetMasterGridFilter()
     {
-        Expression<Func<Problem, bool>> filterByLecturerRightsExpression = x =>
-        (
-            x.ProblemGroup.Contest.LecturersInContests.Any(l => l.LecturerId == this.User.GetId()) ||
-            x.ProblemGroup.Contest.Category!.LecturersInContestCategories.Any(lc => lc.LecturerId == this.User.GetId()) ||
-            this.User.IsAdmin());
+        Expression<Func<Problem, bool>> filterByLecturerRightsExpression =
+            this.lecturerContestPrivilegesBusiness.GetProblemsUserPrivilegesExpression(
+                this.User.GetId(),
+                this.User.IsAdmin());
 
         var filter = this.TryGetEntityIdForNumberColumnFilter(ContestIdKey, out var contestId)
             ? x => x.ProblemGroup.ContestId == contestId
