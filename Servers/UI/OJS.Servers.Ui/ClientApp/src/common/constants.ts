@@ -12,6 +12,9 @@ const { OrderBy: DEFAULT_SORT_TYPE } = SortType;
 enum SubmissionResultType {
     CorrectAnswer = 'correctanswer',
     WrongAnswer = 'wronganswer',
+    TimeLimit = 'timelimit',
+    MemoryLimit = 'memorylimit',
+    RunTimeError = 'runtimeerror',
 }
 
 enum ContestParticipationType {
