@@ -8,7 +8,9 @@ public class HangfireBackgroundJobsBusinessService : IHangfireBackgroundJobsBusi
     {
     }
 
+    // Method is executed by administration implementation
     public int EnqueuePendingSubmissions() => throw new System.NotImplementedException();
 
+    // Method is executed by administration implementation
     public void DeleteProcessedSubmissions() => throw new System.NotImplementedException();
 }

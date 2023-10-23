@@ -15,7 +15,7 @@ public class BackgroundJobsHostedService : IHostedService
     private readonly IHangfireBackgroundJobsService hangfireBackgroundJobs;
     private readonly ILogger<BackgroundJobsHostedService> logger;
 
-    private readonly string applicationQueueName = ApplicationName.Administration.ToString();
+    private readonly string administrationQueueName = ApplicationName.Administration.ToString();
 
     public BackgroundJobsHostedService(
         IHangfireBackgroundJobsService hangfireBackgroundJobs,
@@ -54,7 +54,7 @@ public class BackgroundJobsHostedService : IHostedService
                 BackgroundJobs.JobNames.EnqueuePendingSubmissionsJobName,
                 m => m.EnqueuePendingSubmissions(),
                 BackgroundJobs.JobCrons.EnqueuePendingSubmissionsJobCron,
-                this.applicationQueueName);
+                this.administrationQueueName);
 
         this.LogJobAddedOrUpdated(
             BackgroundJobs.JobNames.EnqueuePendingSubmissionsJobName,
@@ -65,7 +65,7 @@ public class BackgroundJobsHostedService : IHostedService
                 BackgroundJobs.JobNames.DeleteOldSubmissionsJobName,
                 m => m.DeleteProcessedSubmissions(),
                 BackgroundJobs.JobCrons.DeleteOldSubmissionsJobCron,
-                this.applicationQueueName);
+                this.administrationQueueName);
 
         this.LogJobAddedOrUpdated(
             BackgroundJobs.JobNames.DeleteOldSubmissionsJobName,
@@ -73,5 +73,5 @@ public class BackgroundJobsHostedService : IHostedService
     }
 
     private void LogJobAddedOrUpdated(string jobName, string jobCron)
-        => this.logger.LogInformation($"Job {jobName} is setup to run at {jobCron} in {this.applicationQueueName} queue");
+        => this.logger.LogInformation($"Job {jobName} is setup to run at {jobCron} in {this.administrationQueueName} queue");
 }
