@@ -50,7 +50,7 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
             official,
             full);
 
-        results.UserHasContestRights = this.lecturersInContestsBusinessService.IsUserAdminOrLecturerInContest(contest);
+        results.UserIsInRoleForContest = this.lecturersInContestsBusinessService.IsUserAdminOrLecturerInContest(contest);
 
         return results;
     }

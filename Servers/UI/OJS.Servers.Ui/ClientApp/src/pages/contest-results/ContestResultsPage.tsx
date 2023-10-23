@@ -121,7 +121,8 @@ const ContestResultsPage = () => {
                 .find((pr: IContestResultsParticipationProblemType) => pr.problemId === p.id) as IContestResultsParticipationProblemType;
             const bestSubmission = problemResult?.bestSubmission;
 
-            return (results.userHasContestRights || cellParams.row.participantUsername === user.username) && !isNil(bestSubmission)
+            // User is admin or lecturer for contest or is the participant of the submission
+            return (results.userIsInRoleForContest || cellParams.row.participantUsername === user.username) && !isNil(bestSubmission)
                 ? (
                     <LinkButton
                       className={styles.pointsResult}
