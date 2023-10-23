@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { DataGrid, getGridNumericOperators, getGridStringOperators, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType, ContestResultType } from '../../common/constants';
@@ -36,6 +36,9 @@ const getBestSubmission = (
     return bestSubmission ?? null;
 };
 
+const stringFilterOperators = getGridStringOperators().filter(({ value }) => [ 'equals', 'contains' ].includes(value));
+const numericFilterOperators = getGridNumericOperators().filter(({ value }) => [ '=', '!=', '>', '<' ].includes(value));
+
 const participantNamesColumns: GridColDef[] = [
     {
         field: 'participantUsername',
@@ -43,6 +46,7 @@ const participantNamesColumns: GridColDef[] = [
         minWidth: 160,
         flex: 1,
         sortable: true,
+        filterOperators: stringFilterOperators,
         headerClassName: styles.headerContent,
         headerAlign: 'center',
         align: 'center',
@@ -59,6 +63,8 @@ const participantNamesColumns: GridColDef[] = [
         minWidth: 100,
         flex: 1,
         sortable: false,
+        filterable: true,
+        filterOperators: stringFilterOperators,
         headerClassName: styles.headerContent,
         headerAlign: 'center',
         align: 'center',
@@ -79,6 +85,7 @@ const rowNumberColumn: GridColDef = {
     headerAlign: 'center',
     headerClassName: styles.headerContent,
     align: 'center',
+    filterOperators: numericFilterOperators,
 };
 
 const totalResultColumn: GridColDef = {
@@ -88,6 +95,7 @@ const totalResultColumn: GridColDef = {
     minWidth: 70,
     flex: 1,
     sortable: true,
+    filterOperators: numericFilterOperators,
     headerAlign: 'center',
     headerClassName: styles.headerContent,
     align: 'center',
@@ -105,8 +113,8 @@ const getProblemResultColumns = (results: IContestResultsType) => results.proble
         const bestSubmission = getBestSubmission(params, p);
         return bestSubmission?.points ?? -1;
     },
-    sortingOrder: [ 'desc', 'asc' ],
     sortComparator: (v1: number, v2: number) => v1 - v2,
+    filterable: false,
     headerAlign: 'center',
     headerClassName: styles.headerContent,
     align: 'center',
