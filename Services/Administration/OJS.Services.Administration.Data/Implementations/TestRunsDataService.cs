@@ -1,10 +1,13 @@
 ﻿namespace OJS.Services.Administration.Data.Implementations;
 
+using FluentExtensions.Extensions;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using OJS.Common;
 using OJS.Data.Models.Tests;
 using OJS.Services.Common.Data.Implementations;
-using System.Linq;
 
 public class TestRunsDataService : DataService<TestRun>, ITestRunsDataService
 {
@@ -19,7 +22,7 @@ public class TestRunsDataService : DataService<TestRun>, ITestRunsDataService
 
     public async Task DeleteByProblem(int problemId)
     {
-        this.Delete(tr => tr.Submission.ProblemId == problemId);
+        this.Delete(tr => tr.Test.ProblemId == problemId);
         await this.SaveChanges();
     }
 
@@ -34,4 +37,14 @@ public class TestRunsDataService : DataService<TestRun>, ITestRunsDataService
         this.Delete(tr => tr.SubmissionId == submissionId);
         await this.SaveChanges();
     }
+
+    public async Task DeleteInBatchesBySubmissionIds(IEnumerable<int> submissionIds)
+        => await submissionIds
+            .Chunk(GlobalConstants.BatchOperationsChunkSize)
+            .ForEachSequential(async chunk =>
+            {
+                this.Delete(t => chunk.Contains(t.SubmissionId));
+
+                await this.SaveChanges();
+            });
 }

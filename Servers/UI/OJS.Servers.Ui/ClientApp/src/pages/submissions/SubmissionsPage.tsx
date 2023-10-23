@@ -8,11 +8,9 @@ import { setLayout } from '../shared/set-layout';
 const SubmissionsPage = () => {
     const {
         state: { totalSubmissionsCount },
-        actions: {
-            loadTotalSubmissionsCount,
-            loadTotalUnprocessedSubmissionsCount,
-        },
+        actions: { loadTotalSubmissionsCount, loadTotalUnprocessedSubmissionsCount },
     } = usePublicSubmissions();
+
     const { state: { user } } = useAuth();
 
     useEffect(

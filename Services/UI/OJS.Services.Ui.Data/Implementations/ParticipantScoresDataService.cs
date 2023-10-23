@@ -21,6 +21,11 @@ namespace OJS.Services.Ui.Data.Implementations
             : base(db)
             => this.participantsData = participantsData;
 
+        public Task<IEnumerable<ParticipantScore>> GetByParticipantId(int participantId)
+            => this.DbSet
+                .Where(ps => ps.ParticipantId == participantId)
+                .ToEnumerableAsync();
+
         public Task<ParticipantScore?> GetByParticipantIdAndProblemId(int participantId, int problemId) =>
             this.DbSet
                 .FirstOrDefaultAsync(ps =>
@@ -157,19 +162,6 @@ namespace OJS.Services.Ui.Data.Implementations
                 .Where(ps =>
                     problemIds.Contains(ps.ProblemId)
                     && participantIds.Contains(ps.ParticipantId))
-                .GroupBy(ps => ps.ProblemId)
-                .Select(ps =>
-                    new ParticipationForProblemMaxScoreServiceModel
-                    {
-                        ProblemId = ps.Key,
-                        Points = ps.Select(ps => ps.Points)
-                            .Max(),
-                    })
-                .ToEnumerableAsync();
-
-        public Task<IEnumerable<ParticipationForProblemMaxScoreServiceModel>> GetMaxByParticipation(int participantId)
-            => this.DbSet
-                .Where(ps => ps.ParticipantId == participantId)
                 .GroupBy(ps => ps.ProblemId)
                 .Select(ps =>
                     new ParticipationForProblemMaxScoreServiceModel

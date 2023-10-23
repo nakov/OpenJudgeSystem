@@ -74,6 +74,9 @@ interface ISubmissionDetails {
     submissionType: string;
     compilerComment: string;
     testRuns: ITestRunDetailsType[];
+    maxMemoryUsed: number;
+    maxTimeUsed: number;
+    testRunsCount: number;
 }
 
 interface ITestCaseRun {
