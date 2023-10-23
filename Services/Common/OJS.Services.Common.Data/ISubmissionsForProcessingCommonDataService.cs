@@ -21,15 +21,15 @@ public interface ISubmissionsForProcessingCommonDataService : IService
 
     Task<SubmissionForProcessing> Add(int submissionId, string serializedExecutionDetails);
 
-    Task<SubmissionForProcessing> CreateIfNotExists(int submissionId, string serializedExecutionDetails);
-
-    Task AddOrUpdateBySubmissionIds(ICollection<int> submissionIds);
+    Task<SubmissionForProcessing> AddOrUpdate(int submissionId, string serializedExecutionDetails);
 
     Task RemoveBySubmission(int submissionId);
 
     Task ResetProcessingStatusById(int id);
 
     Task MarkProcessing(int submissionId);
+
+    Task MarkMultipleForProcessing(ICollection<int> submissionsIds);
 
     Task MarkProcessed(SerializedSubmissionExecutionResultServiceModel submissionExecutionResult);
 

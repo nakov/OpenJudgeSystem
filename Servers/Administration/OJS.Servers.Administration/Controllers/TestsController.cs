@@ -268,7 +268,17 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             FormControlType = FormControlType.TextArea,
         });
 
-        formControls.Add(new FormControlViewModel
+        if (action == EntityAction.Edit)
+        {
+            formControls.Add(new FormControlViewModel
+            {
+                Name = AdditionalFormFields.RetestProblem.ToString(),
+                Type = typeof(bool),
+                Value = false,
+            });
+        }
+
+        var testTypeFormField = new FormControlViewModel
         {
             Name = AdditionalFormFields.Type.ToString(),
             Type = typeof(TestTypeEnum),
@@ -278,8 +288,42 @@ public class TestsController : BaseAutoCrudAdminController<Test>
                 : entity.IsTrialTest
                     ? TestTypeEnum.TrialTest
                     : TestTypeEnum.Compete,
-        });
+        };
+
+        if (action == EntityAction.Delete)
+        {
+            testTypeFormField.Type = typeof(string);
+            testTypeFormField.IsReadOnly = true;
+            testTypeFormField.Options = Array.Empty<object>();
+        }
+
+        formControls.Add(testTypeFormField);
+
         return formControls;
+    }
+
+    protected override async Task AfterEntitySaveOnEditAsync(
+        Test oldTest,
+        Test newTest,
+        AdminActionContext actionContext)
+    {
+        bool.TryParse(actionContext.GetFormValue(AdditionalFormFields.RetestProblem), out var isForRetesting);
+
+        if (isForRetesting)
+        {
+            await this.problemsBusiness.RetestById(newTest.ProblemId);
+        }
+        else
+        {
+            var submissionIds = await this.submissionsData.GetIdsByProblemId(newTest.ProblemId);
+
+            if (submissionIds.Any())
+            {
+                await this.testRunsData.DeleteInBatchesBySubmissionIds(submissionIds);
+            }
+        }
+
+        await base.AfterEntitySaveOnEditAsync(oldTest, newTest, actionContext);
     }
 
     protected override async Task BeforeEntitySaveAsync(Test entity, AdminActionContext actionContext)
@@ -291,7 +335,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
 
     private static void UpdateType(Test entity, AdminActionContext actionContext)
     {
-        var testType = Enum.Parse<TestTypeEnum>(actionContext.GetFormValue(AdditionalFormFields.Type));
+        Enum.TryParse<TestTypeEnum>(actionContext.GetFormValue(AdditionalFormFields.Type), out var testType);
         switch (testType)
         {
             case TestTypeEnum.TrialTest:
