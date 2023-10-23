@@ -7,7 +7,7 @@ public static class ExpressionExtensions
     public static Expression<Func<T, bool>> OrElse<T>(
         this Expression<Func<T, bool>> a,
         Expression<Func<T, bool>>? b,
-        string parameterName = "x")
+        string? parameterName = "x")
     {
         ParameterExpression parameter = Expression.Parameter(typeof(T), parameterName);
 
