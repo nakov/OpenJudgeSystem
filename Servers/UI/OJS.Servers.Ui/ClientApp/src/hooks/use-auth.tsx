@@ -37,8 +37,7 @@ const defaultState = {
         username: '',
         email: '',
         permissions: { canAccessAdministration: false } as IUserPermissionsType,
-        isInRole: false,
-        isLecturer: false,
+        isInRole: false
     },
 };
 
