@@ -60,6 +60,7 @@ const SubmissionsList = ({
                 createdOn,
                 submissionType,
                 isOfficial,
+                testRunsCount,
             } = submission;
             const isSelectedSubmission = id === selectedSubmissionId;
             const selectedClassName = isSelectedSubmission
@@ -84,6 +85,7 @@ const SubmissionsList = ({
                           points={points}
                           maximumPoints={maximumPoints}
                           isProcessed={isProcessed}
+                          testRunsCount={testRunsCount}
                         />
                         <p className={styles.submissionCreatedOnParagraph}>{formatDate(createdOn)}</p>
                     </div>

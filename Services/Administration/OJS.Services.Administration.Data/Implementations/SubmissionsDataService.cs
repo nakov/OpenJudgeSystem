@@ -7,6 +7,7 @@
     using Microsoft.EntityFrameworkCore;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Data.Implementations;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
 
     public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataService
     {
@@ -56,7 +57,7 @@
 
         public IQueryable<Submission> GetAllHavingPointsExceedingLimit()
             => this.DbSet
-                .Where(s => s.Points > s.Problem!.MaximumPoints);
+                .Where(s => s.Points > s.Problem.MaximumPoints);
 
         public IQueryable<int> GetIdsByProblem(int problemId)
             => this.GetAllByProblem(problemId)
@@ -76,5 +77,16 @@
         public void RemoveTestRunsCacheByProblem(int problemId)
             => this.GetAllByProblem(problemId)
                 .UpdateFromQueryAsync(s => new Submission { TestRunsCache = null });
+
+        public async Task<IEnumerable<TServiceModel>> GetAllNonDeletedByProblemId<TServiceModel>(int problemId)
+            => await this.GetAllByProblem(problemId)
+                .Where(s => !s.IsDeleted)
+                .MapCollection<TServiceModel>()
+                .ToListAsync();
+
+        public async Task<IEnumerable<int>> GetIdsByProblemId(int problemId)
+            => await this.GetAllByProblem(problemId)
+                .Select(s => s.Id)
+                .ToListAsync();
     }
 }
