@@ -2,12 +2,13 @@
 
 using AutoMapper;
 using OJS.Data.Models.Contests;
+using OJS.Services.Common.Models.Contests;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System.Collections.Generic;
 using System.Linq;
 using Submissions;
 
-public class ContestDetailsServiceModel : IMapExplicitly
+public class ContestDetailsServiceModel : IMapExplicitly, ICanBeCompetedAndPracticed
 {
     public int Id { get; set; }
 
@@ -47,5 +48,7 @@ public class ContestDetailsServiceModel : IMapExplicitly
             .ForMember(d => d.CanViewResults, opt => opt.Ignore())
             .ForMember(d => d.AllowedSubmissionTypes, opt => opt.Ignore())
             .ForMember(d => d.CompeteParticipantsCount, opt => opt.Ignore())
-            .ForMember(d => d.PracticeParticipantsCount, opt => opt.Ignore());
+            .ForMember(d => d.PracticeParticipantsCount, opt => opt.Ignore())
+            .ForMember(d => d.CanBeCompeted, opt => opt.Ignore())
+            .ForMember(d => d.CanBePracticed, opt => opt.Ignore());
 }

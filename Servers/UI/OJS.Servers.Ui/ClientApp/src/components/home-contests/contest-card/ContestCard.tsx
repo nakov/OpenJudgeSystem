@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
@@ -25,6 +25,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
         practiceEndTime,
         canBeCompeted,
         endTime,
+        startTime,
     } = contest;
 
     const contestCard = 'card-contests';
@@ -44,34 +45,19 @@ const ContestCard = ({ contest }: IContestCardProps) => {
     const contestCardControlBtns = 'card-control-buttons';
     const contestCardControlBtnsClassName = concatClassNames(styles.contestCardControls, contestCardControlBtns);
 
-    const [ competeTimeHasExpired, setCompeteTimeHasExpired ] = useState(false);
-    const [ practiceTimeHasExpired, setPracticeTimeHasExpired ] = useState(false);
-
     const endDate = !isNil(endTime) && new Date(endTime) >= getCurrentTimeInUTC()
         ? endTime
         : !isNil(practiceEndTime)
             ? practiceEndTime
             : null;
 
-    const handleCountdownEnd = useCallback(
-        () => {
-            if (!isNil(endDate) && new Date(endDate) <= getCurrentTimeInUTC()) {
-                if (canBeCompeted) {
-                    setCompeteTimeHasExpired(true);
-                    return;
-                }
-
-                if (canBePracticed) {
-                    setPracticeTimeHasExpired(true);
-                }
-            }
-        },
-        [ endDate, canBeCompeted, canBePracticed ],
-    );
-
     const renderCountdown = useCallback(
         () => {
             if (isNil(endDate) || new Date(endDate) < getCurrentTimeInUTC()) {
+                return null;
+            }
+
+            if (isNil(startTime) || new Date(startTime) > getCurrentTimeInUTC()) {
                 return null;
             }
 
@@ -80,11 +66,10 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   key={id}
                   duration={convertToSecondsRemaining(new Date(endDate))}
                   metric={Metric.seconds}
-                  handleOnCountdownEnd={handleCountdownEnd}
                 />
             );
         },
-        [ endDate, handleCountdownEnd, id ],
+        [ startTime, endDate, id ],
     );
 
     const renderContestLockIcon = useCallback(
@@ -134,7 +119,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   })}
                   text="Compete"
                   state={
-                        canBeCompeted && !competeTimeHasExpired
+                        canBeCompeted
                             ? ButtonState.enabled
                             : ButtonState.disabled
                     }
@@ -149,7 +134,7 @@ const ContestCard = ({ contest }: IContestCardProps) => {
                   text="Practice"
                   type={LinkButtonType.secondary}
                   state={
-                        canBePracticed && !practiceTimeHasExpired
+                        canBePracticed
                             ? ButtonState.enabled
                             : ButtonState.disabled
                     }
