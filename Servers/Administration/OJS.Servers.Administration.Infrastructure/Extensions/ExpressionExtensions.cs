@@ -4,12 +4,11 @@ using System.Linq.Expressions;
 
 public static class ExpressionExtensions
 {
-    public static Expression<Func<T, bool>> OrElse<T>(
+    public static Expression<Func<T, bool>> CombineOrElse<T>(
         this Expression<Func<T, bool>> a,
-        Expression<Func<T, bool>>? b,
-        string? parameterName = "x")
+        Expression<Func<T, bool>>? b)
     {
-        ParameterExpression parameter = Expression.Parameter(typeof(T), parameterName);
+        ParameterExpression parameter = Expression.Parameter(typeof(T));
 
         if (b == null)
         {

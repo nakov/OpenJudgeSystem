@@ -696,6 +696,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             ? x => x.ProblemGroup.ContestId == contestId
             : base.MasterGridFilter;
 
-        return filterByLecturerRightsExpression.OrElse(filter);
+        return filterByLecturerRightsExpression.CombineOrElse(filter);
     }
 }

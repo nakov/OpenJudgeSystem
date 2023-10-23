@@ -407,6 +407,6 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             ? t => t.ProblemId == problemId
             : base.MasterGridFilter;
 
-        return filterByLecturerRightsExpression.OrElse(filter);
+        return filterByLecturerRightsExpression.CombineOrElse(filter);
     }
 }
