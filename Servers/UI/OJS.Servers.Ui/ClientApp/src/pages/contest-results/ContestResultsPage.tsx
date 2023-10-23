@@ -14,6 +14,7 @@ import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 
 import styles from './ContestResultPage.module.scss';
+import {useAuth} from "../../hooks/use-auth";
 
 const participantNamesColumns: GridColDef[] = [
     {
@@ -72,42 +73,13 @@ const totalResultColumn: GridColDef = {
     align: 'center',
 };
 
-const getProblemResultColumns = (results: IContestResultsType) => results.problems?.map((p) => ({
-    field: `${p.id}`,
-    headerName: p.name,
-    description: p.name,
-    type: 'number',
-    minWidth: 50,
-    flex: 1,
-    sortable: true,
-    headerAlign: 'center',
-    headerClassName: styles.headerContent,
-    align: 'center',
-    renderCell: (params: GridRenderCellParams<number>) => {
-        const problemResult = params.row.problemResults
-            .find((pr: IContestResultsParticipationProblemType) => pr.problemId === p.id) as IContestResultsParticipationProblemType;
-        const bestSubmission = problemResult?.bestSubmission;
-
-        return results.userHasContestRights && !isNil(bestSubmission)
-            ? (
-                <LinkButton
-                  className={styles.pointsResult}
-                  type={LinkButtonType.plain}
-                  size={ButtonSize.small}
-                  text={`${bestSubmission.points}`}
-                  to={`/submissions/${bestSubmission.id}/details`}
-                />
-            )
-            : <p>{bestSubmission?.points || '-'}</p>;
-    },
-} as GridColDef));
-
 interface IContestResultsTypeWithRowNumber extends IContestResultsParticipationType {
     rowNumber?: number;
 }
 
 const ContestResultsPage = () => {
     const { state: { params } } = useRouteUrlParams();
+    const { state: { user }} = useAuth();
     const { contestId, participationType: participationUrlType, resultType } = params;
 
     const official = participationUrlType === ContestParticipationType.Compete;
@@ -132,6 +104,36 @@ const ContestResultsPage = () => {
             : `Results for ${contestResults.name}`,
         [ contestResults ],
     );
+
+    const getProblemResultColumns = (results: IContestResultsType) => results.problems?.map((p) => ({
+        field: `${p.id}`,
+        headerName: p.name,
+        description: p.name,
+        type: 'number',
+        minWidth: 50,
+        flex: 1,
+        sortable: true,
+        headerAlign: 'center',
+        headerClassName: styles.headerContent,
+        align: 'center',
+        renderCell: (params: GridRenderCellParams<number>) => {
+            const problemResult = params.row.problemResults
+                .find((pr: IContestResultsParticipationProblemType) => pr.problemId === p.id) as IContestResultsParticipationProblemType;
+            const bestSubmission = problemResult?.bestSubmission;
+
+            return (results.userHasContestRights || params.row.participantUsername == user.username) && !isNil(bestSubmission)
+                ? (
+                    <LinkButton
+                        className={styles.pointsResult}
+                        type={LinkButtonType.plain}
+                        size={ButtonSize.small}
+                        text={`${bestSubmission.points}`}
+                        to={`/submissions/${bestSubmission.id}/details`}
+                    />
+                )
+                : <p>{bestSubmission?.points || '-'}</p>;
+        },
+    } as GridColDef));
 
     useEffect(
         () => setNumberedRows(contestResults?.results.map((row, index) => ({ ...row, rowNumber: index + 1 })) || []),
